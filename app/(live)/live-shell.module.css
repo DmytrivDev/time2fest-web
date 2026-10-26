@@ -1,0 +1,77 @@
+/* LiveShell: точки перелому ІНВ 4.2 (<768 / 768–1199 / ≥1200; висота <500 — плеєр не закріплено).
+   Окремий модуль, бо 1200 px немає серед точок Tailwind, а довільні значення в класах заборонені. */
+
+.shell {
+  display: block;
+  width: 100%;
+  max-width: var(--spacing-content-max);
+  margin-inline: auto;
+}
+
+.main {
+  min-width: 0;
+}
+.main:focus {
+  outline: none;
+}
+
+/* Телефон і планшет-портрет: колонки чату немає (чат — вкладка сторінки). */
+.chat {
+  display: none;
+}
+
+/* Телефон / планшет-портрет: відео закріплене вгорі на всю ширину, без кутів, ≥ 200 px. */
+@media (max-width: 1199.98px) and (min-height: 500px) {
+  .main :global([data-player-slot='main']) {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+}
+
+/* Планшет-альбом: як десктоп, вужчий чат. */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) {
+  .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--spacing-4);
+    padding-inline: var(--spacing-margin-mobile);
+  }
+  .chat {
+    display: block;
+  }
+  .main :global([data-player-slot='main']) {
+    position: static;
+    border-radius: var(--player-block-radius-desktop);
+  }
+}
+
+/* Десктоп: плеєр ліворуч (rounded.lg), чат праворуч — sticky-колонка на висоту вікна. */
+@media (min-width: 1200px) {
+  .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: var(--spacing-6);
+    padding-inline: var(--spacing-margin-desktop);
+  }
+  .chat {
+    display: block;
+  }
+  .main :global([data-player-slot='main']) {
+    border-radius: var(--player-block-radius-desktop);
+  }
+}
+
+.chat {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Сюди ChatPanel, а ChatSlotPanel (P18) порталиться на його місце. */
+.chatSlot {
+  position: relative;
+  height: 100%;
+}

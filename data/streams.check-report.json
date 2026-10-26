@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-26T10:31:09Z",
+  "quotaUsedEstimate": 1,
+  "summary": {
+    "sources": 18,
+    "ok": 18,
+    "notLive": 0,
+    "notEmbeddable": 0,
+    "missing": 0,
+    "skipped": 0
+  },
+  "problems": [],
+  "eventsWithoutUsableSource": []
+}

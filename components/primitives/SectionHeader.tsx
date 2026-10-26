@@ -1,0 +1,29 @@
+import type { ReactNode } from 'react';
+import { cn } from './cn';
+
+export interface SectionHeaderProps {
+  /** Заголовок блоку (`h2` за замовчуванням: кожен блок має h2). */
+  title: ReactNode;
+  as?: 'h2' | 'h3';
+  /** Мета: «за вашим часом (Київ)». */
+  meta?: ReactNode;
+  /** Слот дії праворуч: Switch, «Згорнути», лічильник. */
+  action?: ReactNode;
+  id?: string;
+  className?: string;
+}
+
+/** P34. Заголовок секції: h2 + мета + дія. */
+export function SectionHeader({ title, as: Heading = 'h2', meta, action, id, className }: SectionHeaderProps) {
+  return (
+    <div className={cn('flex min-h-touch-min items-center justify-between gap-3', className)}>
+      <div className="flex min-w-0 flex-col">
+        <Heading id={id} className="text-headline-sm text-text">
+          {title}
+        </Heading>
+        {meta ? <p className="text-caption text-text-muted">{meta}</p> : null}
+      </div>
+      {action ? <div className="flex shrink-0 items-center">{action}</div> : null}
+    </div>
+  );
+}

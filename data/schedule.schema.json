@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schedule.schema.json",
+  "title": "Time2Fest schedule.json (specs/001-live-viewing/contracts/schedule.md)",
+  "type": "object",
+  "required": [
+    "version",
+    "season",
+    "generatedAt",
+    "tzdbVersion",
+    "zones"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "const": 1
+    },
+    "season": {
+      "const": "2026-27"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "tzdbVersion": {
+      "const": "2026e"
+    },
+    "zones": {
+      "type": "array",
+      "minItems": 38,
+      "maxItems": 38,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "order",
+          "offsetMinutes",
+          "midnightUtc",
+          "representativeCityId",
+          "countries"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^utc[+-]\\d{4}$"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 37
+          },
+          "offsetMinutes": {
+            "type": "integer",
+            "minimum": -720,
+            "maximum": 840
+          },
+          "midnightUtc": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+          },
+          "representativeCityId": {
+            "type": "string"
+          },
+          "countries": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "iso",
+                "cities"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "iso": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "cities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "celebrationType",
+                      "isCountryMain",
+                      "mapPoint",
+                      "events"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9-]+$"
+                      },
+                      "name": {
+                        "type": "object",
+                        "required": [
+                          "uk"
+                        ],
+                        "properties": {
+                          "uk": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "landmark": {
+                        "type": "object",
+                        "required": [
+                          "uk"
+                        ],
+                        "properties": {
+                          "uk": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "celebrationType": {
+                        "enum": [
+                          "main",
+                          "webcam",
+                          "tv",
+                          "countdown-only"
+                        ]
+                      },
+                      "isCountryMain": {
+                        "type": "boolean"
+                      },
+                      "mapPoint": {
+                        "type": "object",
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "properties": {
+                          "x": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "y": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "midnightUtc",
+                            "isMainCelebration",
+                            "type",
+                            "popularity"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "pattern": "^evt_[a-z0-9-]+_2027$"
+                            },
+                            "midnightUtc": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+                            },
+                            "isMainCelebration": {
+                              "type": "boolean"
+                            },
+                            "type": {
+                              "enum": [
+                                "main",
+                                "webcam",
+                                "tv",
+                                "countdown-only"
+                              ]
+                            },
+                            "popularity": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 100
+                            },
+                            "restrained": {
+                              "type": "object",
+                              "required": [
+                                "note"
+                              ],
+                              "properties": {
+                                "note": {
+                                  "type": "object",
+                                  "required": [
+                                    "uk"
+                                  ],
+                                  "properties": {
+                                    "uk": {
+                                      "type": "string",
+                                      "minLength": 1
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "firstRow": {
+                              "type": "object",
+                              "required": [
+                                "saleEnabled"
+                              ],
+                              "properties": {
+                                "saleEnabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1116 @@
+{
+  "version": 1,
+  "season": "2026-27",
+  "authors": [
+    {
+      "id": "u_amira",
+      "nick": "Аміра",
+      "flagCode": "CA",
+      "badges": [
+        "pass"
+      ]
+    },
+    {
+      "id": "u_karim",
+      "nick": "Karim",
+      "flagCode": "EG",
+      "badges": [
+        "pass"
+      ],
+      "path": [
+        {
+          "eventId": "evt_auckland_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_dubai_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_cairo_2027",
+          "planned": true
+        }
+      ]
+    },
+    {
+      "id": "u_olena",
+      "nick": "Олена",
+      "flagCode": "UA",
+      "badges": [
+        "pass",
+        "first-row"
+      ],
+      "path": [
+        {
+          "eventId": "evt_tokyo_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_dubai_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_kyiv_2027",
+          "planned": true
+        },
+        {
+          "eventId": "evt_london_2027",
+          "planned": true
+        }
+      ]
+    },
+    {
+      "id": "u_taras",
+      "nick": "Тарас",
+      "flagCode": "UA",
+      "badges": []
+    },
+    {
+      "id": "u_marta",
+      "nick": "Марта",
+      "flagCode": "PL",
+      "badges": []
+    },
+    {
+      "id": "u_hiro",
+      "nick": "Hiro",
+      "flagCode": "JP",
+      "badges": [
+        "pass"
+      ],
+      "path": [
+        {
+          "eventId": "evt_sydney_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_tokyo_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_paris_2027",
+          "planned": true
+        }
+      ]
+    },
+    {
+      "id": "u_sofia",
+      "nick": "Sofía",
+      "flagCode": "ES",
+      "badges": []
+    },
+    {
+      "id": "u_pierre",
+      "nick": "Pierre",
+      "flagCode": "FR",
+      "badges": []
+    },
+    {
+      "id": "u_jess",
+      "nick": "Jess",
+      "flagCode": "AU",
+      "badges": [
+        "first-row"
+      ]
+    },
+    {
+      "id": "u_liam",
+      "nick": "Liam",
+      "flagCode": "NZ",
+      "badges": []
+    },
+    {
+      "id": "u_ana",
+      "nick": "Ana Clara",
+      "flagCode": "BR",
+      "badges": [
+        "pass"
+      ]
+    },
+    {
+      "id": "u_mike",
+      "nick": "Mike",
+      "flagCode": "US",
+      "badges": []
+    },
+    {
+      "id": "u_emma",
+      "nick": "Emma",
+      "flagCode": "GB",
+      "badges": [
+        "vip"
+      ]
+    },
+    {
+      "id": "u_jonas",
+      "nick": "Jonas",
+      "flagCode": "DE",
+      "badges": []
+    },
+    {
+      "id": "u_leyla",
+      "nick": "Leyla",
+      "flagCode": "TR",
+      "badges": []
+    },
+    {
+      "id": "u_min",
+      "nick": "Min-jun",
+      "flagCode": "KR",
+      "badges": []
+    },
+    {
+      "id": "u_dasha",
+      "nick": "Даша",
+      "flagCode": "UA",
+      "badges": []
+    },
+    {
+      "id": "u_bohdan",
+      "nick": "Богдан",
+      "flagCode": "UA",
+      "badges": [
+        "pass"
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "lang": "uk",
+      "flagCode": "UA",
+      "text": "З Новим роком!"
+    },
+    {
+      "lang": "uk",
+      "flagCode": "UA",
+      "text": "Щастя, здоров’я й миру в новому році!"
+    },
+    {
+      "lang": "en",
+      "flagCode": "GB",
+      "text": "Happy New Year!"
+    },
+    {
+      "lang": "en",
+      "flagCode": "US",
+      "text": "Wishing everyone a wonderful new year!"
+    },
+    {
+      "lang": "es",
+      "flagCode": "ES",
+      "text": "¡Feliz Año Nuevo!"
+    },
+    {
+      "lang": "es",
+      "flagCode": "MX",
+      "text": "¡Feliz Año Nuevo a todos!"
+    },
+    {
+      "lang": "fr",
+      "flagCode": "FR",
+      "text": "Bonne année !"
+    },
+    {
+      "lang": "fr",
+      "flagCode": "FR",
+      "text": "Bonne année et bonne santé à tous !"
+    }
+  ],
+  "ambient": [
+    {
+      "room": "world",
+      "ratePerMin": {
+        "idle": 6,
+        "nearMidnight": 25
+      },
+      "pool": [
+        {
+          "authorId": "u_amira",
+          "text": "Тут уже майже північ!"
+        },
+        {
+          "authorId": "u_karim",
+          "text": "Вітаю з Новим роком усіх!",
+          "reactionsHint": {
+            "clap": 5
+          }
+        },
+        {
+          "authorId": "u_taras",
+          "text": "Хто з якої країни? Пишіть, будь ласка!"
+        },
+        {
+          "authorId": "u_marta",
+          "text": "Cześć z Polski! Czekamy na północ",
+          "reactionsHint": {
+            "heart": 2
+          }
+        },
+        {
+          "authorId": "u_sofia",
+          "text": "¡Feliz Año Nuevo desde aquí!"
+        },
+        {
+          "authorId": "u_pierre",
+          "text": "Bonne année à tous !",
+          "reactionsHint": {
+            "clap": 3
+          }
+        },
+        {
+          "authorId": "u_hiro",
+          "text": "明けましておめでとうございます！"
+        },
+        {
+          "authorId": "u_ana",
+          "text": "Feliz Ano Novo, pessoal!",
+          "reactionsHint": {
+            "fireworks": 4
+          }
+        },
+        {
+          "authorId": "u_mike",
+          "text": "Counting down with you all 🎉"
+        },
+        {
+          "authorId": "u_emma",
+          "text": "Happy New Year, everyone!",
+          "reactionsHint": {
+            "heart": 6
+          }
+        },
+        {
+          "authorId": "u_jonas",
+          "text": "Frohes neues Jahr!"
+        },
+        {
+          "authorId": "u_leyla",
+          "text": "Yeni yılınız kutlu olsun!"
+        },
+        {
+          "authorId": "u_olena",
+          "text": "Дивимося разом із бабусею, вона вперше онлайн 🥹",
+          "reactionsHint": {
+            "hug": 7,
+            "heart": 4
+          }
+        },
+        {
+          "authorId": "u_dasha",
+          "text": "Скільки ще до півночі?"
+        },
+        {
+          "authorId": "u_taras",
+          "text": "Приблизно хвилин десять",
+          "replyToPoolIndex": 13
+        },
+        {
+          "authorId": "u_bohdan",
+          "text": "Чудова картинка, дякую за трансляцію!",
+          "reactionsHint": {
+            "clap": 8
+          }
+        },
+        {
+          "authorId": "u_min",
+          "text": "새해 복 많이 받으세요!"
+        },
+        {
+          "authorId": "u_liam",
+          "text": "Салют уже видно з вікна 🎆",
+          "reactionsHint": {
+            "fireworks": 3
+          }
+        },
+        {
+          "authorId": "u_jess",
+          "text": "Загадав бажання, лишилось дочекатися!"
+        },
+        {
+          "authorId": "u_amira",
+          "text": "Дуже круто, що можна дивитися різні країни одразу",
+          "reactionsHint": {
+            "clap": 4
+          }
+        }
+      ]
+    },
+    {
+      "room": "country:*",
+      "ratePerMin": {
+        "idle": 3,
+        "nearMidnight": 12
+      },
+      "pool": [
+        {
+          "authorId": "u_olena",
+          "text": "Вітаємо з нашої країни!",
+          "reactionsHint": {
+            "heart": 3
+          }
+        },
+        {
+          "authorId": "u_taras",
+          "text": "У нас уже святкують!"
+        },
+        {
+          "authorId": "u_dasha",
+          "text": "Дякуємо, що показуєте нас усьому світу!",
+          "reactionsHint": {
+            "clap": 3
+          }
+        },
+        {
+          "authorId": "u_bohdan",
+          "text": "Хто ще тут із нашого міста?"
+        },
+        {
+          "authorId": "u_marta",
+          "text": "Я тут",
+          "replyToPoolIndex": 3
+        },
+        {
+          "authorId": "u_hiro",
+          "text": "Усім добра в новому році!"
+        },
+        {
+          "authorId": "u_sofia",
+          "text": "Це найкраща ніч року 🥂",
+          "reactionsHint": {
+            "glasses": 2
+          }
+        },
+        {
+          "authorId": "u_emma",
+          "text": "Яка гарна атмосфера!"
+        }
+      ]
+    }
+  ],
+  "moments": [
+    {
+      "eventId": "*",
+      "offsets": [
+        {
+          "atSec": -5,
+          "room": "world",
+          "message": {
+            "kind": "regular",
+            "authorId": "u_mike",
+            "text": "П’ять… чотири… три… два… один!"
+          }
+        },
+        {
+          "atSec": 2,
+          "room": "world",
+          "message": {
+            "kind": "regular",
+            "authorId": "u_ana",
+            "text": "ЗІ НОВИМ РОКОМ! 🎆🎆🎆"
+          }
+        },
+        {
+          "atSec": 3,
+          "room": "world",
+          "message": {
+            "kind": "regular",
+            "authorId": "u_olena",
+            "text": "Ураааа! Обіймаю всіх 🤗"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world+country",
+          "message": {
+            "kind": "system",
+            "system": {
+              "kind": "country-midnight",
+              "countries": [],
+              "eventIds": []
+            }
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 15,
+          "room": "world",
+          "message": {
+            "kind": "greeting",
+            "seatFrom": "seed"
+          }
+        },
+        {
+          "atSec": 16,
+          "room": "world",
+          "message": {
+            "kind": "system",
+            "system": {
+              "kind": "greetings-counter",
+              "count": 1240,
+              "flagCodes": [
+                "GB",
+                "FR",
+                "UA",
+                "JP",
+                "BR"
+              ],
+              "eventId": ""
+            }
+          }
+        },
+        {
+          "atSec": 20,
+          "room": "world",
+          "message": {
+            "kind": "burst",
+            "count": 40,
+            "spreadSec": 25,
+            "pool": "world"
+          }
+        },
+        {
+          "atSec": 45,
+          "room": "world",
+          "message": {
+            "kind": "regular",
+            "authorId": "u_emma",
+            "text": "Дякую всім, хто був із нами цієї ночі!"
+          }
+        }
+      ]
+    }
+  ],
+  "firstRowSeed": [
+    {
+      "eventId": "evt_london_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "taken",
+          "name": "Ana Clara",
+          "flagCode": "BR",
+          "greeting": "Feliz Ano Novo!",
+          "emojiId": "party",
+          "takenAtOffsetSec": -25200
+        },
+        {
+          "number": 6,
+          "state": "taken",
+          "name": "Богдан з родиною",
+          "flagCode": "UA",
+          "greeting": "Скоро додому",
+          "emojiId": "star",
+          "takenAtOffsetSec": -28800
+        },
+        {
+          "number": 7,
+          "state": "taken",
+          "name": "Jess",
+          "flagCode": "AU",
+          "greeting": "Cheers from the other side",
+          "emojiId": "clap",
+          "takenAtOffsetSec": -32400
+        },
+        {
+          "number": 8,
+          "state": "taken",
+          "name": "Sofía і Pierre",
+          "flagCode": "ES",
+          "greeting": "¡Salud!",
+          "emojiId": "sparkles",
+          "takenAtOffsetSec": -36000
+        },
+        {
+          "number": 9,
+          "state": "taken",
+          "name": "Mike",
+          "flagCode": "US",
+          "greeting": "Happy New Year, mom!",
+          "emojiId": "laugh",
+          "takenAtOffsetSec": -39600
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ],
+      "takeOverTime": [
+        {
+          "number": 10,
+          "atOffsetFromNowSec": 90
+        }
+      ]
+    },
+    {
+      "eventId": "evt_paris_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "taken",
+          "name": "Ana Clara",
+          "flagCode": "BR",
+          "greeting": "Feliz Ano Novo!",
+          "emojiId": "party",
+          "takenAtOffsetSec": -25200
+        },
+        {
+          "number": 6,
+          "state": "taken",
+          "name": "Богдан з родиною",
+          "flagCode": "UA",
+          "greeting": "Скоро додому",
+          "emojiId": "star",
+          "takenAtOffsetSec": -28800
+        },
+        {
+          "number": 7,
+          "state": "taken",
+          "name": "Jess",
+          "flagCode": "AU",
+          "greeting": "Cheers from the other side",
+          "emojiId": "clap",
+          "takenAtOffsetSec": -32400
+        },
+        {
+          "number": 8,
+          "state": "held",
+          "heldUntilOffsetSec": 240
+        },
+        {
+          "number": 9,
+          "state": "free"
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ],
+      "takeOverTime": [
+        {
+          "number": 9,
+          "atOffsetFromNowSec": 180
+        }
+      ]
+    },
+    {
+      "eventId": "evt_sydney_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "taken",
+          "name": "Ana Clara",
+          "flagCode": "BR",
+          "greeting": "Feliz Ano Novo!",
+          "emojiId": "party",
+          "takenAtOffsetSec": -25200
+        },
+        {
+          "number": 6,
+          "state": "taken",
+          "name": "Богдан з родиною",
+          "flagCode": "UA",
+          "greeting": "Скоро додому",
+          "emojiId": "star",
+          "takenAtOffsetSec": -28800
+        },
+        {
+          "number": 7,
+          "state": "taken",
+          "name": "Jess",
+          "flagCode": "AU",
+          "greeting": "Cheers from the other side",
+          "emojiId": "clap",
+          "takenAtOffsetSec": -32400
+        },
+        {
+          "number": 8,
+          "state": "taken",
+          "name": "Sofía і Pierre",
+          "flagCode": "ES",
+          "greeting": "¡Salud!",
+          "emojiId": "sparkles",
+          "takenAtOffsetSec": -36000
+        },
+        {
+          "number": 9,
+          "state": "free"
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ]
+    },
+    {
+      "eventId": "evt_auckland_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "taken",
+          "name": "Ana Clara",
+          "flagCode": "BR",
+          "greeting": "Feliz Ano Novo!",
+          "emojiId": "party",
+          "takenAtOffsetSec": -25200
+        },
+        {
+          "number": 6,
+          "state": "held",
+          "heldUntilOffsetSec": 120
+        },
+        {
+          "number": 7,
+          "state": "free"
+        },
+        {
+          "number": 8,
+          "state": "free"
+        },
+        {
+          "number": 9,
+          "state": "free"
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ]
+    },
+    {
+      "eventId": "evt_tokyo_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "free"
+        },
+        {
+          "number": 6,
+          "state": "free"
+        },
+        {
+          "number": 7,
+          "state": "free"
+        },
+        {
+          "number": 8,
+          "state": "free"
+        },
+        {
+          "number": 9,
+          "state": "free"
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ]
+    },
+    {
+      "eventId": "evt_rio-de-janeiro_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "taken",
+          "name": "Ana Clara",
+          "flagCode": "BR",
+          "greeting": "Feliz Ano Novo!",
+          "emojiId": "party",
+          "takenAtOffsetSec": -25200
+        },
+        {
+          "number": 6,
+          "state": "taken",
+          "name": "Богдан з родиною",
+          "flagCode": "UA",
+          "greeting": "Скоро додому",
+          "emojiId": "star",
+          "takenAtOffsetSec": -28800
+        },
+        {
+          "number": 7,
+          "state": "taken",
+          "name": "Jess",
+          "flagCode": "AU",
+          "greeting": "Cheers from the other side",
+          "emojiId": "clap",
+          "takenAtOffsetSec": -32400
+        },
+        {
+          "number": 8,
+          "state": "taken",
+          "name": "Sofía і Pierre",
+          "flagCode": "ES",
+          "greeting": "¡Salud!",
+          "emojiId": "sparkles",
+          "takenAtOffsetSec": -36000
+        },
+        {
+          "number": 9,
+          "state": "taken",
+          "name": "Mike",
+          "flagCode": "US",
+          "greeting": "Happy New Year, mom!",
+          "emojiId": "laugh",
+          "takenAtOffsetSec": -39600
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ]
+    },
+    {
+      "eventId": "evt_new-york_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "free"
+        },
+        {
+          "number": 5,
+          "state": "free"
+        },
+        {
+          "number": 6,
+          "state": "free"
+        },
+        {
+          "number": 7,
+          "state": "free"
+        },
+        {
+          "number": 8,
+          "state": "free"
+        },
+        {
+          "number": 9,
+          "state": "free"
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ]
+    }
+  ],
+  "slowMode": {
+    "room": "world",
+    "seconds": 15,
+    "from": "2027-01-01T00:00:00Z",
+    "to": "2027-01-01T00:10:00Z"
+  }
+}

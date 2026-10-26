@@ -1,0 +1,386 @@
+{
+  "version": 1,
+  "season": "2026-27",
+  "generatedAt": "2026-10-26T10:31:09Z",
+  "lastCheckedAt": "2026-10-26T10:31:09Z",
+  "chains": [
+    {
+      "eventId": "evt_london_2027",
+      "sources": [
+        {
+          "id": "src_london_1",
+          "platform": "youtube",
+          "videoId": "zMCea32gpmg",
+          "url": "https://www.youtube.com/watch?v=zMCea32gpmg",
+          "kind": "webcam",
+          "title": {
+            "uk": "Лондон · Еббі-Роуд"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_london_2",
+          "platform": "youtube",
+          "videoId": "MXmzsjABC-U",
+          "url": "https://www.youtube.com/watch?v=MXmzsjABC-U",
+          "kind": "webcam",
+          "title": {
+            "uk": "Лондон · Темза й Лондонський міст"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_london_3",
+          "platform": "youtube",
+          "videoId": "Y6gzQmbSpEg",
+          "url": "https://www.youtube.com/watch?v=Y6gzQmbSpEg",
+          "kind": "webcam",
+          "title": {
+            "uk": "Лондон · Ноттінг-Гілл"
+          },
+          "order": 2,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_paris_2027",
+      "sources": [
+        {
+          "id": "src_paris_1",
+          "platform": "youtube",
+          "videoId": "QI-PPEW2Bgc",
+          "url": "https://www.youtube.com/watch?v=QI-PPEW2Bgc",
+          "kind": "webcam",
+          "title": {
+            "uk": "Париж · Ейфелева вежа"
+          },
+          "order": 0,
+          "status": "expected",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true,
+          "startsAt": "2026-12-31T22:50:00Z"
+        },
+        {
+          "id": "src_paris_2",
+          "platform": "youtube",
+          "videoId": "-xzg3wujOVM",
+          "url": "https://www.youtube.com/watch?v=-xzg3wujOVM",
+          "kind": "webcam",
+          "title": {
+            "uk": "Париж · Сакре-Кер"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_paris_3",
+          "platform": "youtube",
+          "videoId": "IOGYiO96eHA",
+          "url": "https://www.youtube.com/watch?v=IOGYiO96eHA",
+          "kind": "webcam",
+          "title": {
+            "uk": "Париж · Сена й Нотр-Дам"
+          },
+          "order": 2,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_sydney_2027",
+      "sources": [
+        {
+          "id": "src_sydney_1",
+          "platform": "youtube",
+          "videoId": "5uZa3-RMFos",
+          "url": "https://www.youtube.com/watch?v=5uZa3-RMFos",
+          "kind": "webcam",
+          "title": {
+            "uk": "Сідней · Гавань"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_sydney_2",
+          "platform": "youtube",
+          "videoId": "6Xxb5uikewE",
+          "url": "https://www.youtube.com/watch?v=6Xxb5uikewE",
+          "kind": "webcam",
+          "title": {
+            "uk": "Сідней · Гавань (запасна)"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_auckland_2027",
+      "sources": [
+        {
+          "id": "src_auckland_1",
+          "platform": "youtube",
+          "videoId": "PaLDpyFxpXE",
+          "url": "https://www.youtube.com/watch?v=PaLDpyFxpXE",
+          "kind": "webcam",
+          "title": {
+            "uk": "Окленд · Гавань"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_auckland_2",
+          "platform": "youtube",
+          "videoId": "Ql7graq0I9M",
+          "url": "https://www.youtube.com/watch?v=Ql7graq0I9M",
+          "kind": "webcam",
+          "title": {
+            "uk": "Окленд · Скай-Тауер"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_tokyo_2027",
+      "sources": [
+        {
+          "id": "src_tokyo_1",
+          "platform": "youtube",
+          "videoId": "dfVK7ld38Ys",
+          "url": "https://www.youtube.com/watch?v=dfVK7ld38Ys",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · Перехрестя Сібуя"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_tokyo_2",
+          "platform": "youtube",
+          "videoId": "5B4LmH4JbnY",
+          "url": "https://www.youtube.com/watch?v=5B4LmH4JbnY",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · Перехрестя Сібуя (запасна)"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_tokyo_3",
+          "platform": "youtube",
+          "videoId": "GLQhbRGv5qU",
+          "url": "https://www.youtube.com/watch?v=GLQhbRGv5qU",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · Сіндзюку"
+          },
+          "order": 2,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_rio-de-janeiro_2027",
+      "sources": [
+        {
+          "id": "src_rio-de-janeiro_1",
+          "platform": "youtube",
+          "videoId": "wyEi0OPai5g",
+          "url": "https://www.youtube.com/watch?v=wyEi0OPai5g",
+          "kind": "webcam",
+          "title": {
+            "uk": "Ріо · Копакабана, пост 6"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_rio-de-janeiro_2",
+          "platform": "youtube",
+          "videoId": "Bz9Hkrk1NcY",
+          "url": "https://www.youtube.com/watch?v=Bz9Hkrk1NcY",
+          "kind": "webcam",
+          "title": {
+            "uk": "Ріо · Копакабана, панорама"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_new-york_2027",
+      "sources": [
+        {
+          "id": "src_new-york_1",
+          "platform": "youtube",
+          "videoId": "VGnFLdQW39A",
+          "url": "https://www.youtube.com/watch?v=VGnFLdQW39A",
+          "kind": "webcam",
+          "title": {
+            "uk": "Нью-Йорк · Таймс-сквер"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_new-york_2",
+          "platform": "youtube",
+          "videoId": "dD5BV_lH-0w",
+          "url": "https://www.youtube.com/watch?v=dD5BV_lH-0w",
+          "kind": "webcam",
+          "title": {
+            "uk": "Нью-Йорк · камери міста"
+          },
+          "order": 1,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_new-york_3",
+          "platform": "youtube",
+          "videoId": "QIIVxUJzJQw",
+          "url": "https://www.youtube.com/watch?v=QIIVxUJzJQw",
+          "kind": "webcam",
+          "title": {
+            "uk": "Нью-Йорк · Брайант-парк"
+          },
+          "order": 2,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "alwaysOn": true
+        }
+      ]
+    }
+  ]
+}

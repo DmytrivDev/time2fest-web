@@ -1,0 +1,6888 @@
+{
+ "version": 1,
+ "countries": [
+  {
+   "iso": "AD",
+   "slug": "andorra",
+   "name": {
+    "uk": "Андорра"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "andorra",
+     "name": {
+      "uk": "Андорра"
+     },
+     "tz": "Europe/Andorra",
+     "mapPoint": {
+      "x": 0.5042,
+      "y": 0.2639
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AE",
+   "slug": "oae",
+   "name": {
+    "uk": "ОАЕ"
+   },
+   "gender": "pl",
+   "popularity": 85,
+   "illustrationId": "ae-postcard",
+   "cities": [
+    {
+     "id": "dubai",
+     "name": {
+      "uk": "Дубай"
+     },
+     "tz": "Asia/Dubai",
+     "mapPoint": {
+      "x": 0.6536,
+      "y": 0.3594
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Бурдж-Халіфа"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "AF",
+   "slug": "afhanistan",
+   "name": {
+    "uk": "Афганістан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kabul",
+     "name": {
+      "uk": "Кабул"
+     },
+     "tz": "Asia/Kabul",
+     "mapPoint": {
+      "x": 0.6922,
+      "y": 0.3082
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AG",
+   "slug": "antyhua-i-barbuda",
+   "name": {
+    "uk": "Антигуа і Барбуда"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "st-johns-ag",
+     "name": {
+      "uk": "Сент-Джонс"
+     },
+     "tz": "America/Antigua",
+     "mapPoint": {
+      "x": 0.3283,
+      "y": 0.4053
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AI",
+   "slug": "anhilia",
+   "name": {
+    "uk": "Ангілья"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "the-valley",
+     "name": {
+      "uk": "Веллі"
+     },
+     "tz": "America/Anguilla",
+     "mapPoint": {
+      "x": 0.3248,
+      "y": 0.3989
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AL",
+   "slug": "albaniia",
+   "name": {
+    "uk": "Албанія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tirane",
+     "name": {
+      "uk": "Тирана"
+     },
+     "tz": "Europe/Tirane",
+     "mapPoint": {
+      "x": 0.5551,
+      "y": 0.2704
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AM",
+   "slug": "virmeniia",
+   "name": {
+    "uk": "Вірменія"
+   },
+   "gender": "f",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "yerevan",
+     "name": {
+      "uk": "Єреван"
+     },
+     "tz": "Asia/Yerevan",
+     "mapPoint": {
+      "x": 0.6236,
+      "y": 0.2768
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AO",
+   "slug": "anhola",
+   "name": {
+    "uk": "Ангола"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "luanda",
+     "name": {
+      "uk": "Луанда"
+     },
+     "tz": "Africa/Luanda",
+     "mapPoint": {
+      "x": 0.5368,
+      "y": 0.5489
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AR",
+   "slug": "arhentyna",
+   "name": {
+    "uk": "Аргентина"
+   },
+   "gender": "f",
+   "popularity": 65,
+   "illustrationId": "ar-postcard",
+   "cities": [
+    {
+     "id": "buenos-aires",
+     "name": {
+      "uk": "Буенос-Айрес"
+     },
+     "tz": "America/Argentina/Buenos_Aires",
+     "mapPoint": {
+      "x": 0.3376,
+      "y": 0.6922
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Обеліск"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "AS",
+   "slug": "amerykanske-samoa",
+   "name": {
+    "uk": "Американське Самоа"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "pago-pago",
+     "name": {
+      "uk": "Паго-Паго"
+     },
+     "tz": "Pacific/Pago_Pago",
+     "mapPoint": {
+      "x": 0.0258,
+      "y": 0.5793
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AT",
+   "slug": "avstriia",
+   "name": {
+    "uk": "Австрія"
+   },
+   "gender": "f",
+   "popularity": 50,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "vienna",
+     "name": {
+      "uk": "Відень"
+     },
+     "tz": "Europe/Vienna",
+     "mapPoint": {
+      "x": 0.5454,
+      "y": 0.2321
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Ратушна площа"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "AU",
+   "slug": "avstraliia",
+   "name": {
+    "uk": "Австралія"
+   },
+   "gender": "f",
+   "popularity": 95,
+   "illustrationId": "au-postcard",
+   "cities": [
+    {
+     "id": "sydney",
+     "name": {
+      "uk": "Сідней"
+     },
+     "tz": "Australia/Sydney",
+     "mapPoint": {
+      "x": 0.92,
+      "y": 0.6881
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Оперний театр"
+     }
+    },
+    {
+     "id": "melbourne",
+     "name": {
+      "uk": "Мельбурн"
+     },
+     "tz": "Australia/Melbourne",
+     "mapPoint": {
+      "x": 0.9027,
+      "y": 0.7101
+     },
+     "celebrationType": "countdown-only",
+     "main": false
+    },
+    {
+     "id": "adelaide",
+     "name": {
+      "uk": "Аделаїда"
+     },
+     "tz": "Australia/Adelaide",
+     "mapPoint": {
+      "x": 0.885,
+      "y": 0.694
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "brisbane",
+     "name": {
+      "uk": "Брісбен"
+     },
+     "tz": "Australia/Brisbane",
+     "mapPoint": {
+      "x": 0.9251,
+      "y": 0.6526
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "darwin",
+     "name": {
+      "uk": "Дарвін"
+     },
+     "tz": "Australia/Darwin",
+     "mapPoint": {
+      "x": 0.8634,
+      "y": 0.5693
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "eucla",
+     "name": {
+      "uk": "Евкла"
+     },
+     "tz": "Australia/Eucla",
+     "mapPoint": {
+      "x": 0.858,
+      "y": 0.6762
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "perth",
+     "name": {
+      "uk": "Перт"
+     },
+     "tz": "Australia/Perth",
+     "mapPoint": {
+      "x": 0.8218,
+      "y": 0.6775
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AW",
+   "slug": "aruba",
+   "name": {
+    "uk": "Аруба"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "oranjestad",
+     "name": {
+      "uk": "Оранєстад"
+     },
+     "tz": "America/Aruba",
+     "mapPoint": {
+      "x": 0.3056,
+      "y": 0.4306
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AX",
+   "slug": "alandski-ostrovy",
+   "name": {
+    "uk": "Аландські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "mariehamn",
+     "name": {
+      "uk": "Марієгамн"
+     },
+     "tz": "Europe/Mariehamn",
+     "mapPoint": {
+      "x": 0.5554,
+      "y": 0.1661
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "AZ",
+   "slug": "azerbaidzhan",
+   "name": {
+    "uk": "Азербайджан"
+   },
+   "gender": "m",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "baku",
+     "name": {
+      "uk": "Баку"
+     },
+     "tz": "Asia/Baku",
+     "mapPoint": {
+      "x": 0.6385,
+      "y": 0.2756
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BA",
+   "slug": "bosniia-i-hertsehovyna",
+   "name": {
+    "uk": "Боснія і Герцеговина"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "sarajevo",
+     "name": {
+      "uk": "Сараєво"
+     },
+     "tz": "Europe/Sarajevo",
+     "mapPoint": {
+      "x": 0.5512,
+      "y": 0.2563
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BB",
+   "slug": "barbados",
+   "name": {
+    "uk": "Барбадос"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bridgetown",
+     "name": {
+      "uk": "Бріджтаун"
+     },
+     "tz": "America/Barbados",
+     "mapPoint": {
+      "x": 0.3344,
+      "y": 0.4272
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BD",
+   "slug": "banhladesh",
+   "name": {
+    "uk": "Бангладеш"
+   },
+   "gender": "m",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "dhaka",
+     "name": {
+      "uk": "Дакка"
+     },
+     "tz": "Asia/Dhaka",
+     "mapPoint": {
+      "x": 0.7512,
+      "y": 0.3682
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BE",
+   "slug": "belhiia",
+   "name": {
+    "uk": "Бельгія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "brussels",
+     "name": {
+      "uk": "Брюссель"
+     },
+     "tz": "Europe/Brussels",
+     "mapPoint": {
+      "x": 0.512,
+      "y": 0.2176
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BF",
+   "slug": "burkina-faso",
+   "name": {
+    "uk": "Буркіна-Фасо"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "ouagadougou",
+     "name": {
+      "uk": "Уагадугу"
+     },
+     "tz": "Africa/Ouagadougou",
+     "mapPoint": {
+      "x": 0.4958,
+      "y": 0.4313
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BG",
+   "slug": "bolhariia",
+   "name": {
+    "uk": "Болгарія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "sofia",
+     "name": {
+      "uk": "Софія"
+     },
+     "tz": "Europe/Sofia",
+     "mapPoint": {
+      "x": 0.5648,
+      "y": 0.2629
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BH",
+   "slug": "bakhrein",
+   "name": {
+    "uk": "Бахрейн"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "manama",
+     "name": {
+      "uk": "Манама"
+     },
+     "tz": "Asia/Bahrain",
+     "mapPoint": {
+      "x": 0.6405,
+      "y": 0.3534
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BI",
+   "slug": "burundi",
+   "name": {
+    "uk": "Бурунді"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bujumbura",
+     "name": {
+      "uk": "Бужумбура"
+     },
+     "tz": "Africa/Bujumbura",
+     "mapPoint": {
+      "x": 0.5816,
+      "y": 0.5188
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BJ",
+   "slug": "benin",
+   "name": {
+    "uk": "Бенін"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "porto-novo",
+     "name": {
+      "uk": "Порто-Ново"
+     },
+     "tz": "Africa/Porto-Novo",
+     "mapPoint": {
+      "x": 0.5073,
+      "y": 0.464
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BL",
+   "slug": "sen-bartelemi",
+   "name": {
+    "uk": "Сен-Бартелемі"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "st-barthelemy",
+     "name": {
+      "uk": "Сен-Бартелемі"
+     },
+     "tz": "America/St_Barthelemy",
+     "mapPoint": {
+      "x": 0.3254,
+      "y": 0.4006
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BM",
+   "slug": "bermudski-ostrovy",
+   "name": {
+    "uk": "Бермудські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "hamilton",
+     "name": {
+      "uk": "Гамільтон"
+     },
+     "tz": "Atlantic/Bermuda",
+     "mapPoint": {
+      "x": 0.3201,
+      "y": 0.3206
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BN",
+   "slug": "brunei",
+   "name": {
+    "uk": "Бруней"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bandar-seri-begawan",
+     "name": {
+      "uk": "Бандар-Сері-Бегаван"
+     },
+     "tz": "Asia/Brunei",
+     "mapPoint": {
+      "x": 0.8192,
+      "y": 0.4726
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BO",
+   "slug": "boliviia",
+   "name": {
+    "uk": "Болівія"
+   },
+   "gender": "f",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "la-paz",
+     "name": {
+      "uk": "Ла-Пас"
+     },
+     "tz": "America/La_Paz",
+     "mapPoint": {
+      "x": 0.3107,
+      "y": 0.5917
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BQ",
+   "slug": "karybski-niderlandy",
+   "name": {
+    "uk": "Карибські Нідерланди"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kralendijk",
+     "name": {
+      "uk": "Кралендейк"
+     },
+     "tz": "America/Kralendijk",
+     "mapPoint": {
+      "x": 0.3103,
+      "y": 0.4325
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BR",
+   "slug": "brazyliia",
+   "name": {
+    "uk": "Бразилія"
+   },
+   "gender": "f",
+   "popularity": 90,
+   "illustrationId": "br-postcard",
+   "cities": [
+    {
+     "id": "fernando-de-noronha",
+     "name": {
+      "uk": "Фернанду-ді-Норонья"
+     },
+     "tz": "America/Noronha",
+     "mapPoint": {
+      "x": 0.41,
+      "y": 0.5214
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "rio-de-janeiro",
+     "name": {
+      "uk": "Ріо-де-Жанейро"
+     },
+     "tz": "America/Sao_Paulo",
+     "mapPoint": {
+      "x": 0.3801,
+      "y": 0.6273
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Копакабана"
+     }
+    },
+    {
+     "id": "manaus",
+     "name": {
+      "uk": "Манаус"
+     },
+     "tz": "America/Manaus",
+     "mapPoint": {
+      "x": 0.3333,
+      "y": 0.5174
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "rio-branco",
+     "name": {
+      "uk": "Ріо-Бранко"
+     },
+     "tz": "America/Rio_Branco",
+     "mapPoint": {
+      "x": 0.3117,
+      "y": 0.5554
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BS",
+   "slug": "bahamski-ostrovy",
+   "name": {
+    "uk": "Багамські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "nassau",
+     "name": {
+      "uk": "Насау"
+     },
+     "tz": "America/Nassau",
+     "mapPoint": {
+      "x": 0.2851,
+      "y": 0.3606
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BT",
+   "slug": "butan",
+   "name": {
+    "uk": "Бутан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "thimphu",
+     "name": {
+      "uk": "Тхімпху"
+     },
+     "tz": "Asia/Thimphu",
+     "mapPoint": {
+      "x": 0.749,
+      "y": 0.3474
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BW",
+   "slug": "botsvana",
+   "name": {
+    "uk": "Ботсвана"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "gaborone",
+     "name": {
+      "uk": "Габороне"
+     },
+     "tz": "Africa/Gaborone",
+     "mapPoint": {
+      "x": 0.572,
+      "y": 0.6369
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BY",
+   "slug": "bilorus",
+   "name": {
+    "uk": "Білорусь"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "minsk",
+     "name": {
+      "uk": "Мінськ"
+     },
+     "tz": "Europe/Minsk",
+     "mapPoint": {
+      "x": 0.5766,
+      "y": 0.2006
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "BZ",
+   "slug": "beliz",
+   "name": {
+    "uk": "Беліз"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "belmopan",
+     "name": {
+      "uk": "Бельмопан"
+     },
+     "tz": "America/Belize",
+     "mapPoint": {
+      "x": 0.255,
+      "y": 0.4028
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CA",
+   "slug": "kanada",
+   "name": {
+    "uk": "Канада"
+   },
+   "gender": "f",
+   "popularity": 75,
+   "illustrationId": "ca-postcard",
+   "cities": [
+    {
+     "id": "st-johns",
+     "name": {
+      "uk": "Сент-Джонс"
+     },
+     "tz": "America/St_Johns",
+     "mapPoint": {
+      "x": 0.3536,
+      "y": 0.2357
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "halifax",
+     "name": {
+      "uk": "Галіфакс"
+     },
+     "tz": "America/Halifax",
+     "mapPoint": {
+      "x": 0.3233,
+      "y": 0.2519
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "toronto",
+     "name": {
+      "uk": "Торонто"
+     },
+     "tz": "America/Toronto",
+     "mapPoint": {
+      "x": 0.2795,
+      "y": 0.2575
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "edmonton",
+     "name": {
+      "uk": "Едмонтон"
+     },
+     "tz": "America/Edmonton",
+     "mapPoint": {
+      "x": 0.1848,
+      "y": 0.2025
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "vancouver",
+     "name": {
+      "uk": "Ванкувер"
+     },
+     "tz": "America/Vancouver",
+     "mapPoint": {
+      "x": 0.158,
+      "y": 0.2263
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CC",
+   "slug": "kokosovi-kilinh-ostrovy",
+   "name": {
+    "uk": "Кокосові (Кілінг) Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "cocos",
+     "name": {
+      "uk": "Кокосові острови"
+     },
+     "tz": "Indian/Cocos",
+     "mapPoint": {
+      "x": 0.7692,
+      "y": 0.5676
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CD",
+   "slug": "dr-konho",
+   "name": {
+    "uk": "ДР Конго"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "lubumbashi",
+     "name": {
+      "uk": "Лубумбаші"
+     },
+     "tz": "Africa/Lubumbashi",
+     "mapPoint": {
+      "x": 0.5763,
+      "y": 0.5648
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "kinshasa",
+     "name": {
+      "uk": "Кіншаса"
+     },
+     "tz": "Africa/Kinshasa",
+     "mapPoint": {
+      "x": 0.5425,
+      "y": 0.5239
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CF",
+   "slug": "tsentralnoafrykanska-respublika",
+   "name": {
+    "uk": "Центральноафриканська Республіка"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bangui",
+     "name": {
+      "uk": "Бангі"
+     },
+     "tz": "Africa/Bangui",
+     "mapPoint": {
+      "x": 0.5516,
+      "y": 0.4757
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CG",
+   "slug": "respublika-konho",
+   "name": {
+    "uk": "Республіка Конго"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "brazzaville",
+     "name": {
+      "uk": "Браззавіль"
+     },
+     "tz": "Africa/Brazzaville",
+     "mapPoint": {
+      "x": 0.5425,
+      "y": 0.5237
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CH",
+   "slug": "shveitsariia",
+   "name": {
+    "uk": "Швейцарія"
+   },
+   "gender": "f",
+   "popularity": 45,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "zurich",
+     "name": {
+      "uk": "Цюріх"
+     },
+     "tz": "Europe/Zurich",
+     "mapPoint": {
+      "x": 0.5237,
+      "y": 0.2368
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CI",
+   "slug": "kot-divuar",
+   "name": {
+    "uk": "Кот-д’Івуар"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "abidjan",
+     "name": {
+      "uk": "Абіджан"
+     },
+     "tz": "Africa/Abidjan",
+     "mapPoint": {
+      "x": 0.4888,
+      "y": 0.4705
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CK",
+   "slug": "ostrovy-kuka",
+   "name": {
+    "uk": "Острови Кука"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "rarotonga",
+     "name": {
+      "uk": "Раротонга"
+     },
+     "tz": "Pacific/Rarotonga",
+     "mapPoint": {
+      "x": 0.0562,
+      "y": 0.618
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CL",
+   "slug": "chyli",
+   "name": {
+    "uk": "Чилі"
+   },
+   "gender": "n",
+   "popularity": 55,
+   "illustrationId": "cl-postcard",
+   "cities": [
+    {
+     "id": "santiago",
+     "name": {
+      "uk": "Сантьяго"
+     },
+     "tz": "America/Santiago",
+     "mapPoint": {
+      "x": 0.3037,
+      "y": 0.6858
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "easter",
+     "name": {
+      "uk": "Острів Пасхи"
+     },
+     "tz": "Pacific/Easter",
+     "mapPoint": {
+      "x": 0.196,
+      "y": 0.6508
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CM",
+   "slug": "kamerun",
+   "name": {
+    "uk": "Камерун"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "yaounde",
+     "name": {
+      "uk": "Яунде"
+     },
+     "tz": "Africa/Douala",
+     "mapPoint": {
+      "x": 0.5269,
+      "y": 0.4775
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CN",
+   "slug": "kytai",
+   "name": {
+    "uk": "Китай"
+   },
+   "gender": "m",
+   "popularity": 70,
+   "illustrationId": "cn-postcard",
+   "cities": [
+    {
+     "id": "beijing",
+     "name": {
+      "uk": "Пекін"
+     },
+     "tz": "Asia/Shanghai",
+     "mapPoint": {
+      "x": 0.8234,
+      "y": 0.2783
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "urumqi",
+     "name": {
+      "uk": "Урумчі"
+     },
+     "tz": "Asia/Urumqi",
+     "mapPoint": {
+      "x": 0.7433,
+      "y": 0.2567
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CO",
+   "slug": "kolumbiia",
+   "name": {
+    "uk": "Колумбія"
+   },
+   "gender": "f",
+   "popularity": 55,
+   "illustrationId": "co-postcard",
+   "cities": [
+    {
+     "id": "bogota",
+     "name": {
+      "uk": "Богота"
+     },
+     "tz": "America/Bogota",
+     "mapPoint": {
+      "x": 0.2942,
+      "y": 0.4744
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CR",
+   "slug": "kosta-ryka",
+   "name": {
+    "uk": "Коста-Рика"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "san-jose-cr",
+     "name": {
+      "uk": "Сан-Хосе"
+     },
+     "tz": "America/Costa_Rica",
+     "mapPoint": {
+      "x": 0.2664,
+      "y": 0.4448
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CU",
+   "slug": "kuba",
+   "name": {
+    "uk": "Куба"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "havana",
+     "name": {
+      "uk": "Гавана"
+     },
+     "tz": "America/Havana",
+     "mapPoint": {
+      "x": 0.2712,
+      "y": 0.3715
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CV",
+   "slug": "kabo-verde",
+   "name": {
+    "uk": "Кабо-Верде"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "praia",
+     "name": {
+      "uk": "Прая"
+     },
+     "tz": "Atlantic/Cape_Verde",
+     "mapPoint": {
+      "x": 0.4347,
+      "y": 0.4171
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CW",
+   "slug": "kiurasao",
+   "name": {
+    "uk": "Кюрасао"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "willemstad",
+     "name": {
+      "uk": "Віллемстад"
+     },
+     "tz": "America/Curacao",
+     "mapPoint": {
+      "x": 0.3083,
+      "y": 0.4323
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CX",
+   "slug": "ostriv-rizdva",
+   "name": {
+    "uk": "Острів Різдва"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "christmas",
+     "name": {
+      "uk": "Острів Різдва"
+     },
+     "tz": "Indian/Christmas",
+     "mapPoint": {
+      "x": 0.7937,
+      "y": 0.5579
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CY",
+   "slug": "kipr",
+   "name": {
+    "uk": "Кіпр"
+   },
+   "gender": "m",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "nicosia",
+     "name": {
+      "uk": "Нікосія"
+     },
+     "tz": "Asia/Nicosia",
+     "mapPoint": {
+      "x": 0.5927,
+      "y": 0.3046
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "CZ",
+   "slug": "chekhiia",
+   "name": {
+    "uk": "Чехія"
+   },
+   "gender": "f",
+   "popularity": 45,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "prague",
+     "name": {
+      "uk": "Прага"
+     },
+     "tz": "Europe/Prague",
+     "mapPoint": {
+      "x": 0.5401,
+      "y": 0.2218
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Староміська площа"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "DE",
+   "slug": "nimechchyna",
+   "name": {
+    "uk": "Німеччина"
+   },
+   "gender": "f",
+   "popularity": 80,
+   "illustrationId": "de-postcard",
+   "cities": [
+    {
+     "id": "berlin",
+     "name": {
+      "uk": "Берлін"
+     },
+     "tz": "Europe/Berlin",
+     "mapPoint": {
+      "x": 0.5371,
+      "y": 0.2083
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Бранденбурзькі ворота"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "DJ",
+   "slug": "dzhybuti",
+   "name": {
+    "uk": "Джибуті"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "djibouti",
+     "name": {
+      "uk": "Джібуті"
+     },
+     "tz": "Africa/Djibouti",
+     "mapPoint": {
+      "x": 0.6199,
+      "y": 0.4356
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "DK",
+   "slug": "daniia",
+   "name": {
+    "uk": "Данія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "copenhagen",
+     "name": {
+      "uk": "Копенгаген"
+     },
+     "tz": "Europe/Copenhagen",
+     "mapPoint": {
+      "x": 0.535,
+      "y": 0.1907
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "DM",
+   "slug": "dominika",
+   "name": {
+    "uk": "Домініка"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "roseau",
+     "name": {
+      "uk": "Розо"
+     },
+     "tz": "America/Dominica",
+     "mapPoint": {
+      "x": 0.3294,
+      "y": 0.415
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "DO",
+   "slug": "dominikanska-respublika",
+   "name": {
+    "uk": "Домініканська Республіка"
+   },
+   "gender": "f",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "santo-domingo",
+     "name": {
+      "uk": "Санто-Домінго"
+     },
+     "tz": "America/Santo_Domingo",
+     "mapPoint": {
+      "x": 0.3058,
+      "y": 0.3974
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "DZ",
+   "slug": "alzhyr",
+   "name": {
+    "uk": "Алжир"
+   },
+   "gender": "m",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "algiers",
+     "name": {
+      "uk": "Алжир"
+     },
+     "tz": "Africa/Algiers",
+     "mapPoint": {
+      "x": 0.5085,
+      "y": 0.2956
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "EC",
+   "slug": "ekvador",
+   "name": {
+    "uk": "Еквадор"
+   },
+   "gender": "m",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "guayaquil",
+     "name": {
+      "uk": "Гуаякіль"
+     },
+     "tz": "America/Guayaquil",
+     "mapPoint": {
+      "x": 0.2782,
+      "y": 0.512
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "galapagos",
+     "name": {
+      "uk": "Галапагос"
+     },
+     "tz": "Pacific/Galapagos",
+     "mapPoint": {
+      "x": 0.2511,
+      "y": 0.505
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "EE",
+   "slug": "estoniia",
+   "name": {
+    "uk": "Естонія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tallinn",
+     "name": {
+      "uk": "Таллінн"
+     },
+     "tz": "Europe/Tallinn",
+     "mapPoint": {
+      "x": 0.5687,
+      "y": 0.1699
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "EG",
+   "slug": "yehypet",
+   "name": {
+    "uk": "Єгипет"
+   },
+   "gender": "m",
+   "popularity": 55,
+   "illustrationId": "eg-postcard",
+   "cities": [
+    {
+     "id": "cairo",
+     "name": {
+      "uk": "Каїр"
+     },
+     "tz": "Africa/Cairo",
+     "mapPoint": {
+      "x": 0.5868,
+      "y": 0.3331
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "EH",
+   "slug": "zakhidna-sakhara",
+   "name": {
+    "uk": "Західна Сахара"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "el-aaiun",
+     "name": {
+      "uk": "Ель-Аюн"
+     },
+     "tz": "Africa/El_Aaiun",
+     "mapPoint": {
+      "x": 0.4633,
+      "y": 0.3492
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ER",
+   "slug": "erytreia",
+   "name": {
+    "uk": "Еритрея"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "asmara",
+     "name": {
+      "uk": "Асмера"
+     },
+     "tz": "Africa/Asmara",
+     "mapPoint": {
+      "x": 0.608,
+      "y": 0.4148
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ES",
+   "slug": "ispaniia",
+   "name": {
+    "uk": "Іспанія"
+   },
+   "gender": "f",
+   "popularity": 75,
+   "illustrationId": "es-postcard",
+   "cities": [
+    {
+     "id": "madrid",
+     "name": {
+      "uk": "Мадрид"
+     },
+     "tz": "Europe/Madrid",
+     "mapPoint": {
+      "x": 0.4898,
+      "y": 0.2756
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Пуерта-дель-Соль"
+     }
+    },
+    {
+     "id": "canary",
+     "name": {
+      "uk": "Канарські острови"
+     },
+     "tz": "Atlantic/Canary",
+     "mapPoint": {
+      "x": 0.4572,
+      "y": 0.3439
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ET",
+   "slug": "efiopiia",
+   "name": {
+    "uk": "Ефіопія"
+   },
+   "gender": "f",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "addis-ababa",
+     "name": {
+      "uk": "Аддис-Абеба"
+     },
+     "tz": "Africa/Addis_Ababa",
+     "mapPoint": {
+      "x": 0.6075,
+      "y": 0.4498
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "FI",
+   "slug": "finliandiia",
+   "name": {
+    "uk": "Фінляндія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "helsinki",
+     "name": {
+      "uk": "Гельсінкі"
+     },
+     "tz": "Europe/Helsinki",
+     "mapPoint": {
+      "x": 0.5694,
+      "y": 0.1657
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "FJ",
+   "slug": "fidzhi",
+   "name": {
+    "uk": "Фіджі"
+   },
+   "gender": "n",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "suva",
+     "name": {
+      "uk": "Сува"
+     },
+     "tz": "Pacific/Fiji",
+     "mapPoint": {
+      "x": 0.9956,
+      "y": 0.6007
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "FK",
+   "slug": "folklendski-ostrovy",
+   "name": {
+    "uk": "Фолклендські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "stanley",
+     "name": {
+      "uk": "Стенлі"
+     },
+     "tz": "Atlantic/Stanley",
+     "mapPoint": {
+      "x": 0.3393,
+      "y": 0.7872
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "FM",
+   "slug": "mikroneziia",
+   "name": {
+    "uk": "Мікронезія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "pohnpei",
+     "name": {
+      "uk": "Понпеї"
+     },
+     "tz": "Pacific/Pohnpei",
+     "mapPoint": {
+      "x": 0.9395,
+      "y": 0.4613
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "chuuk",
+     "name": {
+      "uk": "Чуук"
+     },
+     "tz": "Pacific/Chuuk",
+     "mapPoint": {
+      "x": 0.9216,
+      "y": 0.4588
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "FO",
+   "slug": "farerski-ostrovy",
+   "name": {
+    "uk": "Фарерські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "faroe",
+     "name": {
+      "uk": "Торсгавн"
+     },
+     "tz": "Atlantic/Faroe",
+     "mapPoint": {
+      "x": 0.4812,
+      "y": 0.1555
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "FR",
+   "slug": "frantsiia",
+   "name": {
+    "uk": "Франція"
+   },
+   "gender": "f",
+   "popularity": 90,
+   "illustrationId": "fr-postcard",
+   "cities": [
+    {
+     "id": "paris",
+     "name": {
+      "uk": "Париж"
+     },
+     "tz": "Europe/Paris",
+     "mapPoint": {
+      "x": 0.5065,
+      "y": 0.2285
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Ейфелева вежа"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "GA",
+   "slug": "habon",
+   "name": {
+    "uk": "Габон"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "libreville",
+     "name": {
+      "uk": "Лібревіль"
+     },
+     "tz": "Africa/Libreville",
+     "mapPoint": {
+      "x": 0.5262,
+      "y": 0.4979
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GB",
+   "slug": "velyka-brytaniia",
+   "name": {
+    "uk": "Велика Британія"
+   },
+   "gender": "f",
+   "popularity": 95,
+   "illustrationId": "gb-postcard",
+   "cities": [
+    {
+     "id": "london",
+     "name": {
+      "uk": "Лондон"
+     },
+     "tz": "Europe/London",
+     "mapPoint": {
+      "x": 0.4997,
+      "y": 0.2138
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Біг-Бен"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "GD",
+   "slug": "hrenada",
+   "name": {
+    "uk": "Гренада"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "st-georges",
+     "name": {
+      "uk": "Сент-Джорджес"
+     },
+     "tz": "America/Grenada",
+     "mapPoint": {
+      "x": 0.3285,
+      "y": 0.4331
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GE",
+   "slug": "hruziia",
+   "name": {
+    "uk": "Грузія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tbilisi",
+     "name": {
+      "uk": "Тбілісі"
+     },
+     "tz": "Asia/Tbilisi",
+     "mapPoint": {
+      "x": 0.6245,
+      "y": 0.2682
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GF",
+   "slug": "frantsuzka-hviana",
+   "name": {
+    "uk": "Французька Гвіана"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "cayenne",
+     "name": {
+      "uk": "Каєнна"
+     },
+     "tz": "America/Cayenne",
+     "mapPoint": {
+      "x": 0.3546,
+      "y": 0.4726
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GG",
+   "slug": "hernsi",
+   "name": {
+    "uk": "Гернсі"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "guernsey",
+     "name": {
+      "uk": "Гернсі"
+     },
+     "tz": "Europe/Guernsey",
+     "mapPoint": {
+      "x": 0.493,
+      "y": 0.2253
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GH",
+   "slug": "hana",
+   "name": {
+    "uk": "Гана"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "accra",
+     "name": {
+      "uk": "Аккра"
+     },
+     "tz": "Africa/Accra",
+     "mapPoint": {
+      "x": 0.4994,
+      "y": 0.4692
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GI",
+   "slug": "hibraltar",
+   "name": {
+    "uk": "Гібралтар"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "gibraltar",
+     "name": {
+      "uk": "Гібралтар"
+     },
+     "tz": "Europe/Gibraltar",
+     "mapPoint": {
+      "x": 0.4851,
+      "y": 0.2993
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GL",
+   "slug": "hrenlandiia",
+   "name": {
+    "uk": "Гренландія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "danmarkshavn",
+     "name": {
+      "uk": "Денмарксхавн"
+     },
+     "tz": "America/Danmarkshavn",
+     "mapPoint": {
+      "x": 0.4481,
+      "y": 0.0735
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "nuuk",
+     "name": {
+      "uk": "Нуук"
+     },
+     "tz": "America/Nuuk",
+     "mapPoint": {
+      "x": 0.3563,
+      "y": 0.1434
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "thule",
+     "name": {
+      "uk": "Туле"
+     },
+     "tz": "America/Thule",
+     "mapPoint": {
+      "x": 0.3089,
+      "y": 0.0746
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GM",
+   "slug": "hambiia",
+   "name": {
+    "uk": "Гамбія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "banjul",
+     "name": {
+      "uk": "Банжул"
+     },
+     "tz": "Africa/Banjul",
+     "mapPoint": {
+      "x": 0.4537,
+      "y": 0.4252
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GN",
+   "slug": "hvineia",
+   "name": {
+    "uk": "Гвінея"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "conakry",
+     "name": {
+      "uk": "Конакрі"
+     },
+     "tz": "Africa/Conakry",
+     "mapPoint": {
+      "x": 0.4619,
+      "y": 0.4471
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GP",
+   "slug": "hvadelupa",
+   "name": {
+    "uk": "Гваделупа"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "basse-terre",
+     "name": {
+      "uk": "Бас-Тер"
+     },
+     "tz": "America/Guadeloupe",
+     "mapPoint": {
+      "x": 0.3291,
+      "y": 0.4098
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GQ",
+   "slug": "ekvatorialna-hvineia",
+   "name": {
+    "uk": "Екваторіальна Гвінея"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "malabo",
+     "name": {
+      "uk": "Малабо"
+     },
+     "tz": "Africa/Malabo",
+     "mapPoint": {
+      "x": 0.5244,
+      "y": 0.4792
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GR",
+   "slug": "hretsiia",
+   "name": {
+    "uk": "Греція"
+   },
+   "gender": "f",
+   "popularity": 50,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "athens",
+     "name": {
+      "uk": "Афіни"
+     },
+     "tz": "Europe/Athens",
+     "mapPoint": {
+      "x": 0.5659,
+      "y": 0.2891
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Акрополь"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "GS",
+   "slug": "pivdenna-dzhordzhiia-ta-pivdenni-sandvichevi-ostrovy",
+   "name": {
+    "uk": "Південна Джорджія та Південні Сандвічеві Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "south-georgia",
+     "name": {
+      "uk": "Південна Джорджія"
+     },
+     "tz": "Atlantic/South_Georgia",
+     "mapPoint": {
+      "x": 0.3985,
+      "y": 0.8015
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GT",
+   "slug": "hvatemala",
+   "name": {
+    "uk": "Гватемала"
+   },
+   "gender": "f",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "guatemala",
+     "name": {
+      "uk": "Гватемала"
+     },
+     "tz": "America/Guatemala",
+     "mapPoint": {
+      "x": 0.2486,
+      "y": 0.4187
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GU",
+   "slug": "huam",
+   "name": {
+    "uk": "Гуам"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "guam",
+     "name": {
+      "uk": "Гуам"
+     },
+     "tz": "Pacific/Guam",
+     "mapPoint": {
+      "x": 0.9021,
+      "y": 0.4252
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GW",
+   "slug": "hvineia-bisau",
+   "name": {
+    "uk": "Гвінея-Бісау"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bissau",
+     "name": {
+      "uk": "Бісау"
+     },
+     "tz": "Africa/Bissau",
+     "mapPoint": {
+      "x": 0.4567,
+      "y": 0.4342
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "GY",
+   "slug": "haiana",
+   "name": {
+    "uk": "Гаяна"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "georgetown",
+     "name": {
+      "uk": "Джорджтаун"
+     },
+     "tz": "America/Guyana",
+     "mapPoint": {
+      "x": 0.3384,
+      "y": 0.4622
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "HK",
+   "slug": "honkonh",
+   "name": {
+    "uk": "Гонконг"
+   },
+   "gender": "m",
+   "popularity": 70,
+   "illustrationId": "hk-postcard",
+   "cities": [
+    {
+     "id": "hong-kong",
+     "name": {
+      "uk": "Гонконг"
+     },
+     "tz": "Asia/Hong_Kong",
+     "mapPoint": {
+      "x": 0.8171,
+      "y": 0.3762
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Вікторія-Гарбор"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "HN",
+   "slug": "honduras",
+   "name": {
+    "uk": "Гондурас"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tegucigalpa",
+     "name": {
+      "uk": "Тегусігальпа"
+     },
+     "tz": "America/Tegucigalpa",
+     "mapPoint": {
+      "x": 0.2577,
+      "y": 0.4217
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "HR",
+   "slug": "khorvatiia",
+   "name": {
+    "uk": "Хорватія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "zagreb",
+     "name": {
+      "uk": "Загреб"
+     },
+     "tz": "Europe/Zagreb",
+     "mapPoint": {
+      "x": 0.5444,
+      "y": 0.2456
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "HT",
+   "slug": "haiti",
+   "name": {
+    "uk": "Гаїті"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "port-au-prince",
+     "name": {
+      "uk": "Порт-о-Пренс"
+     },
+     "tz": "America/Port-au-Prince",
+     "mapPoint": {
+      "x": 0.2991,
+      "y": 0.397
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "HU",
+   "slug": "uhorshchyna",
+   "name": {
+    "uk": "Угорщина"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "budapest",
+     "name": {
+      "uk": "Будапешт"
+     },
+     "tz": "Europe/Budapest",
+     "mapPoint": {
+      "x": 0.553,
+      "y": 0.2361
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ID",
+   "slug": "indoneziia",
+   "name": {
+    "uk": "Індонезія"
+   },
+   "gender": "f",
+   "popularity": 60,
+   "illustrationId": "id-postcard",
+   "cities": [
+    {
+     "id": "jayapura",
+     "name": {
+      "uk": "Джаяпура"
+     },
+     "tz": "Asia/Jayapura",
+     "mapPoint": {
+      "x": 0.8908,
+      "y": 0.5141
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "makassar",
+     "name": {
+      "uk": "Макассар"
+     },
+     "tz": "Asia/Makassar",
+     "mapPoint": {
+      "x": 0.8317,
+      "y": 0.5284
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "jakarta",
+     "name": {
+      "uk": "Джакарта"
+     },
+     "tz": "Asia/Jakarta",
+     "mapPoint": {
+      "x": 0.7967,
+      "y": 0.5343
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IE",
+   "slug": "irlandiia",
+   "name": {
+    "uk": "Ірландія"
+   },
+   "gender": "f",
+   "popularity": 50,
+   "illustrationId": "ie-postcard",
+   "cities": [
+    {
+     "id": "dublin",
+     "name": {
+      "uk": "Дублін"
+     },
+     "tz": "Europe/Dublin",
+     "mapPoint": {
+      "x": 0.4826,
+      "y": 0.2037
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IL",
+   "slug": "izrail",
+   "name": {
+    "uk": "Ізраїль"
+   },
+   "gender": "m",
+   "popularity": 45,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "jerusalem",
+     "name": {
+      "uk": "Єрусалим"
+     },
+     "tz": "Asia/Jerusalem",
+     "mapPoint": {
+      "x": 0.5978,
+      "y": 0.3234
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IM",
+   "slug": "ostriv-men",
+   "name": {
+    "uk": "Острів Мен"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "isle-of-man",
+     "name": {
+      "uk": "Острів Мен"
+     },
+     "tz": "Europe/Isle_of_Man",
+     "mapPoint": {
+      "x": 0.4876,
+      "y": 0.1992
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IN",
+   "slug": "indiia",
+   "name": {
+    "uk": "Індія"
+   },
+   "gender": "f",
+   "popularity": 70,
+   "illustrationId": "in-postcard",
+   "cities": [
+    {
+     "id": "new-delhi",
+     "name": {
+      "uk": "Нью-Делі"
+     },
+     "tz": "Asia/Kolkata",
+     "mapPoint": {
+      "x": 0.7145,
+      "y": 0.341
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IO",
+   "slug": "brytanska-terytoriia-v-indiiskomu-okeani",
+   "name": {
+    "uk": "Британська територія в Індійському океані"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "chagos",
+     "name": {
+      "uk": "Чагос"
+     },
+     "tz": "Indian/Chagos",
+     "mapPoint": {
+      "x": 0.7012,
+      "y": 0.5407
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IQ",
+   "slug": "irak",
+   "name": {
+    "uk": "Ірак"
+   },
+   "gender": "m",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "baghdad",
+     "name": {
+      "uk": "Багдад"
+     },
+     "tz": "Asia/Baghdad",
+     "mapPoint": {
+      "x": 0.6234,
+      "y": 0.3147
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IR",
+   "slug": "iran",
+   "name": {
+    "uk": "Іран"
+   },
+   "gender": "m",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tehran",
+     "name": {
+      "uk": "Тегеран"
+     },
+     "tz": "Asia/Tehran",
+     "mapPoint": {
+      "x": 0.6429,
+      "y": 0.3019
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IS",
+   "slug": "islandiia",
+   "name": {
+    "uk": "Ісландія"
+   },
+   "gender": "f",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "reykjavik",
+     "name": {
+      "uk": "Рейк’явік"
+     },
+     "tz": "Atlantic/Reykjavik",
+     "mapPoint": {
+      "x": 0.4393,
+      "y": 0.1436
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "IT",
+   "slug": "italiia",
+   "name": {
+    "uk": "Італія"
+   },
+   "gender": "f",
+   "popularity": 75,
+   "illustrationId": "it-postcard",
+   "cities": [
+    {
+     "id": "rome",
+     "name": {
+      "uk": "Рим"
+     },
+     "tz": "Europe/Rome",
+     "mapPoint": {
+      "x": 0.5347,
+      "y": 0.2672
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Колізей"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "JE",
+   "slug": "dzhersi",
+   "name": {
+    "uk": "Джерсі"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "jersey",
+     "name": {
+      "uk": "Джерсі"
+     },
+     "tz": "Europe/Jersey",
+     "mapPoint": {
+      "x": 0.4941,
+      "y": 0.2268
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "JM",
+   "slug": "yamaika",
+   "name": {
+    "uk": "Ямайка"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kingston",
+     "name": {
+      "uk": "Кінгстон"
+     },
+     "tz": "America/Jamaica",
+     "mapPoint": {
+      "x": 0.2867,
+      "y": 0.4002
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "JO",
+   "slug": "yordaniia",
+   "name": {
+    "uk": "Йорданія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "amman",
+     "name": {
+      "uk": "Амман"
+     },
+     "tz": "Asia/Amman",
+     "mapPoint": {
+      "x": 0.5998,
+      "y": 0.3225
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "JP",
+   "slug": "yaponiia",
+   "name": {
+    "uk": "Японія"
+   },
+   "gender": "f",
+   "popularity": 90,
+   "illustrationId": "jp-postcard",
+   "cities": [
+    {
+     "id": "tokyo",
+     "name": {
+      "uk": "Токіо"
+     },
+     "tz": "Asia/Tokyo",
+     "mapPoint": {
+      "x": 0.8882,
+      "y": 0.3019
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Перехрестя Сібуя"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "KE",
+   "slug": "keniia",
+   "name": {
+    "uk": "Кенія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "nairobi",
+     "name": {
+      "uk": "Найробі"
+     },
+     "tz": "Africa/Nairobi",
+     "mapPoint": {
+      "x": 0.6023,
+      "y": 0.5071
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KG",
+   "slug": "kyrhyzstan",
+   "name": {
+    "uk": "Киргизстан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bishkek",
+     "name": {
+      "uk": "Бішкек"
+     },
+     "tz": "Asia/Bishkek",
+     "mapPoint": {
+      "x": 0.7072,
+      "y": 0.2617
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KH",
+   "slug": "kambodzha",
+   "name": {
+    "uk": "Камбоджа"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "phnom-penh",
+     "name": {
+      "uk": "Пномпень"
+     },
+     "tz": "Asia/Phnom_Penh",
+     "mapPoint": {
+      "x": 0.7914,
+      "y": 0.4358
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KI",
+   "slug": "kirybati",
+   "name": {
+    "uk": "Кірибаті"
+   },
+   "gender": "n",
+   "popularity": 55,
+   "illustrationId": "ki-postcard",
+   "cities": [
+    {
+     "id": "kiritimati",
+     "name": {
+      "uk": "Кірітіматі"
+     },
+     "tz": "Pacific/Kiritimati",
+     "mapPoint": {
+      "x": 0.063,
+      "y": 0.4896
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "kanton",
+     "name": {
+      "uk": "Кантон"
+     },
+     "tz": "Pacific/Kanton",
+     "mapPoint": {
+      "x": 0.023,
+      "y": 0.5155
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "tarawa",
+     "name": {
+      "uk": "Тарава"
+     },
+     "tz": "Pacific/Tarawa",
+     "mapPoint": {
+      "x": 0.9806,
+      "y": 0.4921
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KM",
+   "slug": "komory",
+   "name": {
+    "uk": "Комори"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "moroni",
+     "name": {
+      "uk": "Морoні"
+     },
+     "tz": "Indian/Comoro",
+     "mapPoint": {
+      "x": 0.6202,
+      "y": 0.5649
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KN",
+   "slug": "sent-kits-i-nevis",
+   "name": {
+    "uk": "Сент-Кітс і Невіс"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "basseterre",
+     "name": {
+      "uk": "Бастер"
+     },
+     "tz": "America/St_Kitts",
+     "mapPoint": {
+      "x": 0.3258,
+      "y": 0.4039
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KP",
+   "slug": "pivnichna-koreia",
+   "name": {
+    "uk": "Північна Корея"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "pyongyang",
+     "name": {
+      "uk": "Пхеньян"
+     },
+     "tz": "Asia/Pyongyang",
+     "mapPoint": {
+      "x": 0.8493,
+      "y": 0.2832
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KR",
+   "slug": "pivdenna-koreia",
+   "name": {
+    "uk": "Південна Корея"
+   },
+   "gender": "f",
+   "popularity": 70,
+   "illustrationId": "kr-postcard",
+   "cities": [
+    {
+     "id": "seoul",
+     "name": {
+      "uk": "Сеул"
+     },
+     "tz": "Asia/Seoul",
+     "mapPoint": {
+      "x": 0.8527,
+      "y": 0.2914
+     },
+     "celebrationType": "main",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KW",
+   "slug": "kuveit",
+   "name": {
+    "uk": "Кувейт"
+   },
+   "gender": "m",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kuwait",
+     "name": {
+      "uk": "Кувейт"
+     },
+     "tz": "Asia/Kuwait",
+     "mapPoint": {
+      "x": 0.6333,
+      "y": 0.337
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KY",
+   "slug": "kaimanovi-ostrovy",
+   "name": {
+    "uk": "Кайманові Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "george-town",
+     "name": {
+      "uk": "Джордж-Таун"
+     },
+     "tz": "America/Cayman",
+     "mapPoint": {
+      "x": 0.2739,
+      "y": 0.3928
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "KZ",
+   "slug": "kazakhstan",
+   "name": {
+    "uk": "Казахстан"
+   },
+   "gender": "m",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "almaty",
+     "name": {
+      "uk": "Алмати"
+     },
+     "tz": "Asia/Almaty",
+     "mapPoint": {
+      "x": 0.7137,
+      "y": 0.2597
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LA",
+   "slug": "laos",
+   "name": {
+    "uk": "Лаос"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "vientiane",
+     "name": {
+      "uk": "В’єнтьян"
+     },
+     "tz": "Asia/Vientiane",
+     "mapPoint": {
+      "x": 0.785,
+      "y": 0.4002
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LB",
+   "slug": "livan",
+   "name": {
+    "uk": "Ліван"
+   },
+   "gender": "m",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "beirut",
+     "name": {
+      "uk": "Бейрут"
+     },
+     "tz": "Asia/Beirut",
+     "mapPoint": {
+      "x": 0.5986,
+      "y": 0.3118
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LC",
+   "slug": "sent-liusiia",
+   "name": {
+    "uk": "Сент-Люсія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "castries",
+     "name": {
+      "uk": "Кастрі"
+     },
+     "tz": "America/St_Lucia",
+     "mapPoint": {
+      "x": 0.3306,
+      "y": 0.4221
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LI",
+   "slug": "likhtenshtein",
+   "name": {
+    "uk": "Ліхтенштейн"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "vaduz",
+     "name": {
+      "uk": "Вадуц"
+     },
+     "tz": "Europe/Vaduz",
+     "mapPoint": {
+      "x": 0.5264,
+      "y": 0.2381
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LK",
+   "slug": "shri-lanka",
+   "name": {
+    "uk": "Шрі-Ланка"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "colombo",
+     "name": {
+      "uk": "Коломбо"
+     },
+     "tz": "Asia/Colombo",
+     "mapPoint": {
+      "x": 0.7218,
+      "y": 0.4615
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LR",
+   "slug": "liberiia",
+   "name": {
+    "uk": "Ліберія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "monrovia",
+     "name": {
+      "uk": "Монровія"
+     },
+     "tz": "Africa/Monrovia",
+     "mapPoint": {
+      "x": 0.47,
+      "y": 0.465
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LS",
+   "slug": "lesoto",
+   "name": {
+    "uk": "Лесото"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "maseru",
+     "name": {
+      "uk": "Масеру"
+     },
+     "tz": "Africa/Maseru",
+     "mapPoint": {
+      "x": 0.5764,
+      "y": 0.6637
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LT",
+   "slug": "lytva",
+   "name": {
+    "uk": "Литва"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "vilnius",
+     "name": {
+      "uk": "Вільнюс"
+     },
+     "tz": "Europe/Vilnius",
+     "mapPoint": {
+      "x": 0.5703,
+      "y": 0.1962
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LU",
+   "slug": "liuksemburh",
+   "name": {
+    "uk": "Люксембург"
+   },
+   "gender": "m",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "luxembourg",
+     "name": {
+      "uk": "Люксембург"
+     },
+     "tz": "Europe/Luxembourg",
+     "mapPoint": {
+      "x": 0.5171,
+      "y": 0.2244
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LV",
+   "slug": "latviia",
+   "name": {
+    "uk": "Латвія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "riga",
+     "name": {
+      "uk": "Рига"
+     },
+     "tz": "Europe/Riga",
+     "mapPoint": {
+      "x": 0.5669,
+      "y": 0.1836
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "LY",
+   "slug": "liviia",
+   "name": {
+    "uk": "Лівія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tripoli",
+     "name": {
+      "uk": "Триполі"
+     },
+     "tz": "Africa/Tripoli",
+     "mapPoint": {
+      "x": 0.5366,
+      "y": 0.3172
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MA",
+   "slug": "marokko",
+   "name": {
+    "uk": "Марокко"
+   },
+   "gender": "n",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "casablanca",
+     "name": {
+      "uk": "Касабланка"
+     },
+     "tz": "Africa/Casablanca",
+     "mapPoint": {
+      "x": 0.4789,
+      "y": 0.3131
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MC",
+   "slug": "monako",
+   "name": {
+    "uk": "Монако"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "monaco",
+     "name": {
+      "uk": "Монако"
+     },
+     "tz": "Europe/Monaco",
+     "mapPoint": {
+      "x": 0.5205,
+      "y": 0.2572
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MD",
+   "slug": "moldova",
+   "name": {
+    "uk": "Молдова"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "chisinau",
+     "name": {
+      "uk": "Кишинів"
+     },
+     "tz": "Europe/Chisinau",
+     "mapPoint": {
+      "x": 0.5801,
+      "y": 0.2389
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ME",
+   "slug": "chornohoriia",
+   "name": {
+    "uk": "Чорногорія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "podgorica",
+     "name": {
+      "uk": "Подгориця"
+     },
+     "tz": "Europe/Podgorica",
+     "mapPoint": {
+      "x": 0.5535,
+      "y": 0.2643
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MF",
+   "slug": "sen-marten",
+   "name": {
+    "uk": "Сен-Мартен"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "marigot",
+     "name": {
+      "uk": "Маріго"
+     },
+     "tz": "America/Marigot",
+     "mapPoint": {
+      "x": 0.3248,
+      "y": 0.3996
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MG",
+   "slug": "madahaskar",
+   "name": {
+    "uk": "Мадагаскар"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "antananarivo",
+     "name": {
+      "uk": "Антананаріву"
+     },
+     "tz": "Indian/Antananarivo",
+     "mapPoint": {
+      "x": 0.632,
+      "y": 0.6051
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MH",
+   "slug": "marshallovi-ostrovy",
+   "name": {
+    "uk": "Маршаллові Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "majuro",
+     "name": {
+      "uk": "Маджуро"
+     },
+     "tz": "Pacific/Majuro",
+     "mapPoint": {
+      "x": 0.9756,
+      "y": 0.4603
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MK",
+   "slug": "pivnichna-makedoniia",
+   "name": {
+    "uk": "Північна Македонія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "skopje",
+     "name": {
+      "uk": "Скоп’є"
+     },
+     "tz": "Europe/Skopje",
+     "mapPoint": {
+      "x": 0.5595,
+      "y": 0.2668
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ML",
+   "slug": "mali",
+   "name": {
+    "uk": "Малі"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bamako",
+     "name": {
+      "uk": "Бамако"
+     },
+     "tz": "Africa/Bamako",
+     "mapPoint": {
+      "x": 0.4778,
+      "y": 0.4297
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MM",
+   "slug": "mianma",
+   "name": {
+    "uk": "М’янма"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "yangon",
+     "name": {
+      "uk": "Янгон"
+     },
+     "tz": "Asia/Yangon",
+     "mapPoint": {
+      "x": 0.7671,
+      "y": 0.4068
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MN",
+   "slug": "monholiia",
+   "name": {
+    "uk": "Монголія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "ulaanbaatar",
+     "name": {
+      "uk": "Улан-Батор"
+     },
+     "tz": "Asia/Ulaanbaatar",
+     "mapPoint": {
+      "x": 0.7969,
+      "y": 0.2338
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "hovd",
+     "name": {
+      "uk": "Ховд"
+     },
+     "tz": "Asia/Hovd",
+     "mapPoint": {
+      "x": 0.7546,
+      "y": 0.2332
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MO",
+   "slug": "makao",
+   "name": {
+    "uk": "Макао"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "macau",
+     "name": {
+      "uk": "Макао"
+     },
+     "tz": "Asia/Macau",
+     "mapPoint": {
+      "x": 0.8154,
+      "y": 0.3767
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MP",
+   "slug": "pivnichni-marianski-ostrovy",
+   "name": {
+    "uk": "Північні Маріанські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "saipan",
+     "name": {
+      "uk": "Сайпан"
+     },
+     "tz": "Pacific/Saipan",
+     "mapPoint": {
+      "x": 0.9049,
+      "y": 0.4156
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MQ",
+   "slug": "martynika",
+   "name": {
+    "uk": "Мартиніка"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "fort-de-france",
+     "name": {
+      "uk": "Фор-де-Франс"
+     },
+     "tz": "America/Martinique",
+     "mapPoint": {
+      "x": 0.3303,
+      "y": 0.4189
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MR",
+   "slug": "mavrytaniia",
+   "name": {
+    "uk": "Мавританія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "nouakchott",
+     "name": {
+      "uk": "Нуакшотт"
+     },
+     "tz": "Africa/Nouakchott",
+     "mapPoint": {
+      "x": 0.4557,
+      "y": 0.3994
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MS",
+   "slug": "montserrat",
+   "name": {
+    "uk": "Монтсеррат"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "plymouth",
+     "name": {
+      "uk": "Плімут"
+     },
+     "tz": "America/Montserrat",
+     "mapPoint": {
+      "x": 0.3272,
+      "y": 0.4071
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MT",
+   "slug": "malta",
+   "name": {
+    "uk": "Мальта"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "valletta",
+     "name": {
+      "uk": "Валлетта"
+     },
+     "tz": "Europe/Malta",
+     "mapPoint": {
+      "x": 0.5403,
+      "y": 0.3006
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MU",
+   "slug": "mavrykii",
+   "name": {
+    "uk": "Маврикій"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "port-louis",
+     "name": {
+      "uk": "Порт-Луї"
+     },
+     "tz": "Indian/Mauritius",
+     "mapPoint": {
+      "x": 0.6597,
+      "y": 0.612
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MV",
+   "slug": "maldivy",
+   "name": {
+    "uk": "Мальдіви"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "maldives",
+     "name": {
+      "uk": "Мальдіви"
+     },
+     "tz": "Indian/Maldives",
+     "mapPoint": {
+      "x": 0.7042,
+      "y": 0.4769
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MW",
+   "slug": "malavi",
+   "name": {
+    "uk": "Малаві"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "blantyre",
+     "name": {
+      "uk": "Блантайр"
+     },
+     "tz": "Africa/Blantyre",
+     "mapPoint": {
+      "x": 0.5972,
+      "y": 0.5877
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MX",
+   "slug": "meksyka",
+   "name": {
+    "uk": "Мексика"
+   },
+   "gender": "f",
+   "popularity": 70,
+   "illustrationId": "mx-postcard",
+   "cities": [
+    {
+     "id": "cancun",
+     "name": {
+      "uk": "Канкун"
+     },
+     "tz": "America/Cancun",
+     "mapPoint": {
+      "x": 0.259,
+      "y": 0.3829
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "mexico-city",
+     "name": {
+      "uk": "Мехіко"
+     },
+     "tz": "America/Mexico_City",
+     "mapPoint": {
+      "x": 0.2246,
+      "y": 0.3922
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Сокало"
+     }
+    },
+    {
+     "id": "mazatlan",
+     "name": {
+      "uk": "Масатлан"
+     },
+     "tz": "America/Mazatlan",
+     "mapPoint": {
+      "x": 0.2044,
+      "y": 0.371
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "tijuana",
+     "name": {
+      "uk": "Тіхуана"
+     },
+     "tz": "America/Tijuana",
+     "mapPoint": {
+      "x": 0.175,
+      "y": 0.3193
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MY",
+   "slug": "malaiziia",
+   "name": {
+    "uk": "Малайзія"
+   },
+   "gender": "f",
+   "popularity": 50,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kuala-lumpur",
+     "name": {
+      "uk": "Куала-Лумпур"
+     },
+     "tz": "Asia/Kuala_Lumpur",
+     "mapPoint": {
+      "x": 0.7825,
+      "y": 0.4824
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "MZ",
+   "slug": "mozambik",
+   "name": {
+    "uk": "Мозамбік"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "maputo",
+     "name": {
+      "uk": "Мапуту"
+     },
+     "tz": "Africa/Maputo",
+     "mapPoint": {
+      "x": 0.5905,
+      "y": 0.6443
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NA",
+   "slug": "namibiia",
+   "name": {
+    "uk": "Намібія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "windhoek",
+     "name": {
+      "uk": "Віндгук"
+     },
+     "tz": "Africa/Windhoek",
+     "mapPoint": {
+      "x": 0.5475,
+      "y": 0.6254
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NC",
+   "slug": "nova-kaledoniia",
+   "name": {
+    "uk": "Нова Каледонія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "noumea",
+     "name": {
+      "uk": "Нумеа"
+     },
+     "tz": "Pacific/Noumea",
+     "mapPoint": {
+      "x": 0.9624,
+      "y": 0.6237
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NE",
+   "slug": "niher",
+   "name": {
+    "uk": "Нігер"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "niamey",
+     "name": {
+      "uk": "Ніамей"
+     },
+     "tz": "Africa/Niamey",
+     "mapPoint": {
+      "x": 0.5059,
+      "y": 0.4249
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NF",
+   "slug": "ostriv-norfolk",
+   "name": {
+    "uk": "Острів Норфолк"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "norfolk",
+     "name": {
+      "uk": "Норфолк"
+     },
+     "tz": "Pacific/Norfolk",
+     "mapPoint": {
+      "x": 0.9666,
+      "y": 0.6614
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NG",
+   "slug": "niheriia",
+   "name": {
+    "uk": "Нігерія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "lagos",
+     "name": {
+      "uk": "Лагос"
+     },
+     "tz": "Africa/Lagos",
+     "mapPoint": {
+      "x": 0.5094,
+      "y": 0.4642
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NI",
+   "slug": "nikarahua",
+   "name": {
+    "uk": "Нікарагуа"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "managua",
+     "name": {
+      "uk": "Манагуа"
+     },
+     "tz": "America/Managua",
+     "mapPoint": {
+      "x": 0.2603,
+      "y": 0.4325
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NL",
+   "slug": "niderlandy",
+   "name": {
+    "uk": "Нідерланди"
+   },
+   "gender": "pl",
+   "popularity": 55,
+   "illustrationId": "nl-postcard",
+   "cities": [
+    {
+     "id": "amsterdam",
+     "name": {
+      "uk": "Амстердам"
+     },
+     "tz": "Europe/Amsterdam",
+     "mapPoint": {
+      "x": 0.5136,
+      "y": 0.2091
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Площа Дам"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "NO",
+   "slug": "norvehiia",
+   "name": {
+    "uk": "Норвегія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "oslo",
+     "name": {
+      "uk": "Осло"
+     },
+     "tz": "Europe/Oslo",
+     "mapPoint": {
+      "x": 0.5299,
+      "y": 0.1671
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NP",
+   "slug": "nepal",
+   "name": {
+    "uk": "Непал"
+   },
+   "gender": "m",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kathmandu",
+     "name": {
+      "uk": "Катманду"
+     },
+     "tz": "Asia/Kathmandu",
+     "mapPoint": {
+      "x": 0.737,
+      "y": 0.346
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NR",
+   "slug": "nauru",
+   "name": {
+    "uk": "Науру"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "yaren",
+     "name": {
+      "uk": "Ярен"
+     },
+     "tz": "Pacific/Nauru",
+     "mapPoint": {
+      "x": 0.9637,
+      "y": 0.5029
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NU",
+   "slug": "niue",
+   "name": {
+    "uk": "Ніуе"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "alofi",
+     "name": {
+      "uk": "Алофі"
+     },
+     "tz": "Pacific/Niue",
+     "mapPoint": {
+      "x": 0.028,
+      "y": 0.6056
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "NZ",
+   "slug": "nova-zelandiia",
+   "name": {
+    "uk": "Нова Зеландія"
+   },
+   "gender": "f",
+   "popularity": 88,
+   "illustrationId": "nz-postcard",
+   "cities": [
+    {
+     "id": "chatham",
+     "name": {
+      "uk": "Чатем"
+     },
+     "tz": "Pacific/Chatham",
+     "mapPoint": {
+      "x": 0.0096,
+      "y": 0.7442
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "auckland",
+     "name": {
+      "uk": "Окленд"
+     },
+     "tz": "Pacific/Auckland",
+     "mapPoint": {
+      "x": 0.9855,
+      "y": 0.7048
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Скай-Тауер"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "OM",
+   "slug": "oman",
+   "name": {
+    "uk": "Оман"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "muscat",
+     "name": {
+      "uk": "Маскат"
+     },
+     "tz": "Asia/Muscat",
+     "mapPoint": {
+      "x": 0.6627,
+      "y": 0.3689
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PA",
+   "slug": "panama",
+   "name": {
+    "uk": "Панама"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "panama",
+     "name": {
+      "uk": "Панама"
+     },
+     "tz": "America/Panama",
+     "mapPoint": {
+      "x": 0.2791,
+      "y": 0.4502
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PE",
+   "slug": "peru",
+   "name": {
+    "uk": "Перу"
+   },
+   "gender": "n",
+   "popularity": 45,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "lima",
+     "name": {
+      "uk": "Ліма"
+     },
+     "tz": "America/Lima",
+     "mapPoint": {
+      "x": 0.286,
+      "y": 0.5669
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PF",
+   "slug": "frantsuzka-polineziia",
+   "name": {
+    "uk": "Французька Полінезія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "gambier",
+     "name": {
+      "uk": "Гамб’є"
+     },
+     "tz": "Pacific/Gambier",
+     "mapPoint": {
+      "x": 0.1251,
+      "y": 0.6285
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "marquesas",
+     "name": {
+      "uk": "Маркізькі острови"
+     },
+     "tz": "Pacific/Marquesas",
+     "mapPoint": {
+      "x": 0.1125,
+      "y": 0.55
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "tahiti",
+     "name": {
+      "uk": "Таїті"
+     },
+     "tz": "Pacific/Tahiti",
+     "mapPoint": {
+      "x": 0.0845,
+      "y": 0.5974
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PG",
+   "slug": "papua-nova-hvineia",
+   "name": {
+    "uk": "Папуа-Нова Гвінея"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bougainville",
+     "name": {
+      "uk": "Бугенвіль"
+     },
+     "tz": "Pacific/Bougainville",
+     "mapPoint": {
+      "x": 0.9321,
+      "y": 0.5345
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "port-moresby",
+     "name": {
+      "uk": "Порт-Морсбі"
+     },
+     "tz": "Pacific/Port_Moresby",
+     "mapPoint": {
+      "x": 0.9088,
+      "y": 0.5528
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PH",
+   "slug": "filippiny",
+   "name": {
+    "uk": "Філіппіни"
+   },
+   "gender": "pl",
+   "popularity": 55,
+   "illustrationId": "ph-postcard",
+   "cities": [
+    {
+     "id": "manila",
+     "name": {
+      "uk": "Маніла"
+     },
+     "tz": "Asia/Manila",
+     "mapPoint": {
+      "x": 0.836,
+      "y": 0.419
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PK",
+   "slug": "pakystan",
+   "name": {
+    "uk": "Пакистан"
+   },
+   "gender": "m",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "karachi",
+     "name": {
+      "uk": "Карачі"
+     },
+     "tz": "Asia/Karachi",
+     "mapPoint": {
+      "x": 0.6863,
+      "y": 0.3619
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PL",
+   "slug": "polshcha",
+   "name": {
+    "uk": "Польща"
+   },
+   "gender": "f",
+   "popularity": 60,
+   "illustrationId": "pl-postcard",
+   "cities": [
+    {
+     "id": "warsaw",
+     "name": {
+      "uk": "Варшава"
+     },
+     "tz": "Europe/Warsaw",
+     "mapPoint": {
+      "x": 0.5583,
+      "y": 0.2097
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Палац культури і науки"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "PM",
+   "slug": "sen-pier-i-mikelon",
+   "name": {
+    "uk": "Сен-П’єр і Мікелон"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "miquelon",
+     "name": {
+      "uk": "Мікелон"
+     },
+     "tz": "America/Miquelon",
+     "mapPoint": {
+      "x": 0.3435,
+      "y": 0.2386
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PN",
+   "slug": "ostrovy-pitkern",
+   "name": {
+    "uk": "Острови Піткерн"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "pitcairn",
+     "name": {
+      "uk": "Піткерн"
+     },
+     "tz": "Pacific/Pitcairn",
+     "mapPoint": {
+      "x": 0.1387,
+      "y": 0.6393
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PR",
+   "slug": "puerto-ryko",
+   "name": {
+    "uk": "Пуерто-Рико"
+   },
+   "gender": "n",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "san-juan",
+     "name": {
+      "uk": "Сан-Хуан"
+     },
+     "tz": "America/Puerto_Rico",
+     "mapPoint": {
+      "x": 0.3164,
+      "y": 0.3974
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PS",
+   "slug": "palestyna",
+   "name": {
+    "uk": "Палестина"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "gaza",
+     "name": {
+      "uk": "Газа"
+     },
+     "tz": "Asia/Gaza",
+     "mapPoint": {
+      "x": 0.5957,
+      "y": 0.325
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PT",
+   "slug": "portuhaliia",
+   "name": {
+    "uk": "Португалія"
+   },
+   "gender": "f",
+   "popularity": 55,
+   "illustrationId": "pt-postcard",
+   "cities": [
+    {
+     "id": "lisbon",
+     "name": {
+      "uk": "Лісабон"
+     },
+     "tz": "Europe/Lisbon",
+     "mapPoint": {
+      "x": 0.4746,
+      "y": 0.2849
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Площа Комерсу"
+     }
+    },
+    {
+     "id": "azores",
+     "name": {
+      "uk": "Азорські острови"
+     },
+     "tz": "Atlantic/Azores",
+     "mapPoint": {
+      "x": 0.4287,
+      "y": 0.2904
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PW",
+   "slug": "palau",
+   "name": {
+    "uk": "Палау"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "ngerulmud",
+     "name": {
+      "uk": "Нгерулмуд"
+     },
+     "tz": "Pacific/Palau",
+     "mapPoint": {
+      "x": 0.8736,
+      "y": 0.4593
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "PY",
+   "slug": "parahvai",
+   "name": {
+    "uk": "Парагвай"
+   },
+   "gender": "m",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "asuncion",
+     "name": {
+      "uk": "Асунсьйон"
+     },
+     "tz": "America/Asuncion",
+     "mapPoint": {
+      "x": 0.3398,
+      "y": 0.6404
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "QA",
+   "slug": "katar",
+   "name": {
+    "uk": "Катар"
+   },
+   "gender": "m",
+   "popularity": 45,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "doha",
+     "name": {
+      "uk": "Доха"
+     },
+     "tz": "Asia/Qatar",
+     "mapPoint": {
+      "x": 0.6431,
+      "y": 0.3595
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "RE",
+   "slug": "reiunion",
+   "name": {
+    "uk": "Реюньйон"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "saint-denis",
+     "name": {
+      "uk": "Сен-Дені"
+     },
+     "tz": "Indian/Reunion",
+     "mapPoint": {
+      "x": 0.6541,
+      "y": 0.6159
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "RO",
+   "slug": "rumuniia",
+   "name": {
+    "uk": "Румунія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bucharest",
+     "name": {
+      "uk": "Бухарест"
+     },
+     "tz": "Europe/Bucharest",
+     "mapPoint": {
+      "x": 0.5725,
+      "y": 0.2531
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "RS",
+   "slug": "serbiia",
+   "name": {
+    "uk": "Сербія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "belgrade",
+     "name": {
+      "uk": "Белград"
+     },
+     "tz": "Europe/Belgrade",
+     "mapPoint": {
+      "x": 0.5569,
+      "y": 0.2509
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "RU",
+   "slug": "rosiia",
+   "name": {
+    "uk": "Росія"
+   },
+   "gender": "f",
+   "popularity": 60,
+   "illustrationId": "ru-postcard",
+   "cities": [
+    {
+     "id": "kamchatka",
+     "name": {
+      "uk": "Камчатка"
+     },
+     "tz": "Asia/Kamchatka",
+     "mapPoint": {
+      "x": 0.9407,
+      "y": 0.2055
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "magadan",
+     "name": {
+      "uk": "Магадан"
+     },
+     "tz": "Asia/Magadan",
+     "mapPoint": {
+      "x": 0.9189,
+      "y": 0.1691
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "vladivostok",
+     "name": {
+      "uk": "Владивосток"
+     },
+     "tz": "Asia/Vladivostok",
+     "mapPoint": {
+      "x": 0.8665,
+      "y": 0.2602
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "yakutsk",
+     "name": {
+      "uk": "Якутськ"
+     },
+     "tz": "Asia/Yakutsk",
+     "mapPoint": {
+      "x": 0.8602,
+      "y": 0.1556
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "irkutsk",
+     "name": {
+      "uk": "Іркутськ"
+     },
+     "tz": "Asia/Irkutsk",
+     "mapPoint": {
+      "x": 0.7898,
+      "y": 0.2096
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "novosibirsk",
+     "name": {
+      "uk": "Новосибірськ"
+     },
+     "tz": "Asia/Novosibirsk",
+     "mapPoint": {
+      "x": 0.7303,
+      "y": 0.1943
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "omsk",
+     "name": {
+      "uk": "Омськ"
+     },
+     "tz": "Asia/Omsk",
+     "mapPoint": {
+      "x": 0.7039,
+      "y": 0.1944
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "yekaterinburg",
+     "name": {
+      "uk": "Єкатеринбург"
+     },
+     "tz": "Asia/Yekaterinburg",
+     "mapPoint": {
+      "x": 0.6683,
+      "y": 0.1842
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "samara",
+     "name": {
+      "uk": "Самара"
+     },
+     "tz": "Europe/Samara",
+     "mapPoint": {
+      "x": 0.6393,
+      "y": 0.2044
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "moscow",
+     "name": {
+      "uk": "Москва"
+     },
+     "tz": "Europe/Moscow",
+     "mapPoint": {
+      "x": 0.6045,
+      "y": 0.1902
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "kaliningrad",
+     "name": {
+      "uk": "Калінінград"
+     },
+     "tz": "Europe/Kaliningrad",
+     "mapPoint": {
+      "x": 0.5569,
+      "y": 0.196
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "RW",
+   "slug": "ruanda",
+   "name": {
+    "uk": "Руанда"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kigali",
+     "name": {
+      "uk": "Кігалі"
+     },
+     "tz": "Africa/Kigali",
+     "mapPoint": {
+      "x": 0.5835,
+      "y": 0.5108
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SA",
+   "slug": "saudivska-araviia",
+   "name": {
+    "uk": "Саудівська Аравія"
+   },
+   "gender": "f",
+   "popularity": 40,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "riyadh",
+     "name": {
+      "uk": "Ер-Ріяд"
+     },
+     "tz": "Asia/Riyadh",
+     "mapPoint": {
+      "x": 0.6298,
+      "y": 0.3631
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SB",
+   "slug": "solomonovi-ostrovy",
+   "name": {
+    "uk": "Соломонові Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "guadalcanal",
+     "name": {
+      "uk": "Гуадалканал"
+     },
+     "tz": "Pacific/Guadalcanal",
+     "mapPoint": {
+      "x": 0.945,
+      "y": 0.553
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SC",
+   "slug": "seishelski-ostrovy",
+   "name": {
+    "uk": "Сейшельські Острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "victoria-sc",
+     "name": {
+      "uk": "Вікторія"
+     },
+     "tz": "Indian/Mahe",
+     "mapPoint": {
+      "x": 0.6541,
+      "y": 0.5259
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SD",
+   "slug": "sudan",
+   "name": {
+    "uk": "Судан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "khartoum",
+     "name": {
+      "uk": "Хартум"
+     },
+     "tz": "Africa/Khartoum",
+     "mapPoint": {
+      "x": 0.5904,
+      "y": 0.4133
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SE",
+   "slug": "shvetsiia",
+   "name": {
+    "uk": "Швеція"
+   },
+   "gender": "f",
+   "popularity": 45,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "stockholm",
+     "name": {
+      "uk": "Стокгольм"
+     },
+     "tz": "Europe/Stockholm",
+     "mapPoint": {
+      "x": 0.5501,
+      "y": 0.1704
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SG",
+   "slug": "sinhapur",
+   "name": {
+    "uk": "Сінгапур"
+   },
+   "gender": "m",
+   "popularity": 70,
+   "illustrationId": "sg-postcard",
+   "cities": [
+    {
+     "id": "singapore",
+     "name": {
+      "uk": "Сінгапур"
+     },
+     "tz": "Asia/Singapore",
+     "mapPoint": {
+      "x": 0.7885,
+      "y": 0.4929
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Марина-Бей"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "SH",
+   "slug": "ostriv-sviatoi-yeleny",
+   "name": {
+    "uk": "Острів Святої Єлени"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "st-helena",
+     "name": {
+      "uk": "Острів Святої Єлени"
+     },
+     "tz": "Atlantic/St_Helena",
+     "mapPoint": {
+      "x": 0.4842,
+      "y": 0.5884
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SI",
+   "slug": "sloveniia",
+   "name": {
+    "uk": "Словенія"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "ljubljana",
+     "name": {
+      "uk": "Любляна"
+     },
+     "tz": "Europe/Ljubljana",
+     "mapPoint": {
+      "x": 0.5403,
+      "y": 0.2442
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SJ",
+   "slug": "shpitsberhen-ta-yan-maien",
+   "name": {
+    "uk": "Шпіцберген та Ян-Маєн"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "longyearbyen",
+     "name": {
+      "uk": "Лонг’їр"
+     },
+     "tz": "Arctic/Longyearbyen",
+     "mapPoint": {
+      "x": 0.5444,
+      "y": 0.0667
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SK",
+   "slug": "slovachchyna",
+   "name": {
+    "uk": "Словаччина"
+   },
+   "gender": "f",
+   "popularity": 30,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "bratislava",
+     "name": {
+      "uk": "Братислава"
+     },
+     "tz": "Europe/Bratislava",
+     "mapPoint": {
+      "x": 0.5475,
+      "y": 0.2325
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SL",
+   "slug": "sierra-leone",
+   "name": {
+    "uk": "Сьєрра-Леоне"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "freetown",
+     "name": {
+      "uk": "Фрітаун"
+     },
+     "tz": "Africa/Freetown",
+     "mapPoint": {
+      "x": 0.4632,
+      "y": 0.4528
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SM",
+   "slug": "san-maryno",
+   "name": {
+    "uk": "Сан-Марино"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "san-marino",
+     "name": {
+      "uk": "Сан-Марино"
+     },
+     "tz": "Europe/San_Marino",
+     "mapPoint": {
+      "x": 0.5346,
+      "y": 0.256
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SN",
+   "slug": "senehal",
+   "name": {
+    "uk": "Сенегал"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "dakar",
+     "name": {
+      "uk": "Дакар"
+     },
+     "tz": "Africa/Dakar",
+     "mapPoint": {
+      "x": 0.4516,
+      "y": 0.4185
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SO",
+   "slug": "somali",
+   "name": {
+    "uk": "Сомалі"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "mogadishu",
+     "name": {
+      "uk": "Могадішо"
+     },
+     "tz": "Africa/Mogadishu",
+     "mapPoint": {
+      "x": 0.626,
+      "y": 0.4885
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SR",
+   "slug": "surynam",
+   "name": {
+    "uk": "Суринам"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "paramaribo",
+     "name": {
+      "uk": "Парамарибо"
+     },
+     "tz": "America/Paramaribo",
+     "mapPoint": {
+      "x": 0.3468,
+      "y": 0.4676
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SS",
+   "slug": "pivdennyi-sudan",
+   "name": {
+    "uk": "Південний Судан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "juba",
+     "name": {
+      "uk": "Джуба"
+     },
+     "tz": "Africa/Juba",
+     "mapPoint": {
+      "x": 0.5878,
+      "y": 0.4731
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ST",
+   "slug": "san-tome-i-prynsipi",
+   "name": {
+    "uk": "Сан-Томе і Принсіпі"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "sao-tome",
+     "name": {
+      "uk": "Сан-Томе"
+     },
+     "tz": "Africa/Sao_Tome",
+     "mapPoint": {
+      "x": 0.5187,
+      "y": 0.4981
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SV",
+   "slug": "salvador",
+   "name": {
+    "uk": "Сальвадор"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "san-salvador",
+     "name": {
+      "uk": "Сан-Сальвадор"
+     },
+     "tz": "America/El_Salvador",
+     "mapPoint": {
+      "x": 0.2522,
+      "y": 0.4239
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SX",
+   "slug": "sint-marten",
+   "name": {
+    "uk": "Сінт-Мартен"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "philipsburg",
+     "name": {
+      "uk": "Філіпсбург"
+     },
+     "tz": "America/Lower_Princes",
+     "mapPoint": {
+      "x": 0.3249,
+      "y": 0.3997
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SY",
+   "slug": "syriia",
+   "name": {
+    "uk": "Сирія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "damascus",
+     "name": {
+      "uk": "Дамаск"
+     },
+     "tz": "Asia/Damascus",
+     "mapPoint": {
+      "x": 0.6008,
+      "y": 0.3139
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "SZ",
+   "slug": "esvatini",
+   "name": {
+    "uk": "Есватіні"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "mbabane",
+     "name": {
+      "uk": "Мбабане"
+     },
+     "tz": "Africa/Mbabane",
+     "mapPoint": {
+      "x": 0.5864,
+      "y": 0.6461
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TC",
+   "slug": "ostrovy-terks-i-kaikos",
+   "name": {
+    "uk": "Острови Теркс і Кайкос"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "cockburn-town",
+     "name": {
+      "uk": "Коктаун"
+     },
+     "tz": "America/Grand_Turk",
+     "mapPoint": {
+      "x": 0.3024,
+      "y": 0.3807
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TD",
+   "slug": "chad",
+   "name": {
+    "uk": "Чад"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "ndjamena",
+     "name": {
+      "uk": "Нджамена"
+     },
+     "tz": "Africa/Ndjamena",
+     "mapPoint": {
+      "x": 0.5418,
+      "y": 0.4327
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TF",
+   "slug": "frantsuzki-pivdenni-terytorii",
+   "name": {
+    "uk": "Французькі Південні Території"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kerguelen",
+     "name": {
+      "uk": "Кергелен"
+     },
+     "tz": "Indian/Kerguelen",
+     "mapPoint": {
+      "x": 0.695,
+      "y": 0.7742
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TG",
+   "slug": "toho",
+   "name": {
+    "uk": "Того"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "lome",
+     "name": {
+      "uk": "Ломе"
+     },
+     "tz": "Africa/Lome",
+     "mapPoint": {
+      "x": 0.5034,
+      "y": 0.4659
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TH",
+   "slug": "tailand",
+   "name": {
+    "uk": "Таїланд"
+   },
+   "gender": "m",
+   "popularity": 70,
+   "illustrationId": "th-postcard",
+   "cities": [
+    {
+     "id": "bangkok",
+     "name": {
+      "uk": "Бангкок"
+     },
+     "tz": "Asia/Bangkok",
+     "mapPoint": {
+      "x": 0.7792,
+      "y": 0.4236
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TJ",
+   "slug": "tadzhykystan",
+   "name": {
+    "uk": "Таджикистан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "dushanbe",
+     "name": {
+      "uk": "Душанбе"
+     },
+     "tz": "Asia/Dushanbe",
+     "mapPoint": {
+      "x": 0.6911,
+      "y": 0.2856
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TK",
+   "slug": "tokelau",
+   "name": {
+    "uk": "Токелау"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "fakaofo",
+     "name": {
+      "uk": "Факаофо"
+     },
+     "tz": "Pacific/Fakaofo",
+     "mapPoint": {
+      "x": 0.0244,
+      "y": 0.552
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TL",
+   "slug": "skhidnyi-tymor",
+   "name": {
+    "uk": "Східний Тимор"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "dili",
+     "name": {
+      "uk": "Ділі"
+     },
+     "tz": "Asia/Dili",
+     "mapPoint": {
+      "x": 0.8488,
+      "y": 0.5475
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TM",
+   "slug": "turkmenistan",
+   "name": {
+    "uk": "Туркменістан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "ashgabat",
+     "name": {
+      "uk": "Ашгабат"
+     },
+     "tz": "Asia/Ashgabat",
+     "mapPoint": {
+      "x": 0.6622,
+      "y": 0.2892
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TN",
+   "slug": "tunis",
+   "name": {
+    "uk": "Туніс"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tunis",
+     "name": {
+      "uk": "Туніс"
+     },
+     "tz": "Africa/Tunis",
+     "mapPoint": {
+      "x": 0.5283,
+      "y": 0.2956
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TO",
+   "slug": "tonha",
+   "name": {
+    "uk": "Тонга"
+   },
+   "gender": "f",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tongatapu",
+     "name": {
+      "uk": "Тонгатапу"
+     },
+     "tz": "Pacific/Tongatapu",
+     "mapPoint": {
+      "x": 0.0133,
+      "y": 0.6174
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TR",
+   "slug": "turechchyna",
+   "name": {
+    "uk": "Туреччина"
+   },
+   "gender": "f",
+   "popularity": 65,
+   "illustrationId": "tr-postcard",
+   "cities": [
+    {
+     "id": "istanbul",
+     "name": {
+      "uk": "Стамбул"
+     },
+     "tz": "Europe/Istanbul",
+     "mapPoint": {
+      "x": 0.5805,
+      "y": 0.2721
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Галатська вежа"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "TT",
+   "slug": "trynidad-i-tobaho",
+   "name": {
+    "uk": "Тринідад і Тобаго"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "port-of-spain",
+     "name": {
+      "uk": "Порт-оф-Спейн"
+     },
+     "tz": "America/Port_of_Spain",
+     "mapPoint": {
+      "x": 0.3291,
+      "y": 0.4408
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TV",
+   "slug": "tuvalu",
+   "name": {
+    "uk": "Тувалу"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "funafuti",
+     "name": {
+      "uk": "Фунафуті"
+     },
+     "tz": "Pacific/Funafuti",
+     "mapPoint": {
+      "x": 0.9978,
+      "y": 0.5473
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TW",
+   "slug": "taivan",
+   "name": {
+    "uk": "Тайвань"
+   },
+   "gender": "m",
+   "popularity": 60,
+   "illustrationId": "tw-postcard",
+   "cities": [
+    {
+     "id": "taipei",
+     "name": {
+      "uk": "Тайбей"
+     },
+     "tz": "Asia/Taipei",
+     "mapPoint": {
+      "x": 0.8375,
+      "y": 0.3608
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "TZ",
+   "slug": "tanzaniia",
+   "name": {
+    "uk": "Танзанія"
+   },
+   "gender": "f",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "dar-es-salaam",
+     "name": {
+      "uk": "Дар-ес-Салам"
+     },
+     "tz": "Africa/Dar_es_Salaam",
+     "mapPoint": {
+      "x": 0.6091,
+      "y": 0.5378
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "UA",
+   "slug": "ukraina",
+   "name": {
+    "uk": "Україна"
+   },
+   "gender": "f",
+   "popularity": 90,
+   "illustrationId": "ua-postcard",
+   "cities": [
+    {
+     "id": "kyiv",
+     "name": {
+      "uk": "Київ"
+     },
+     "tz": "Europe/Kyiv",
+     "mapPoint": {
+      "x": 0.5848,
+      "y": 0.2198
+     },
+     "celebrationType": "main",
+     "main": true,
+     "landmark": {
+      "uk": "Майдан Незалежності"
+     }
+    }
+   ]
+  },
+  {
+   "iso": "UG",
+   "slug": "uhanda",
+   "name": {
+    "uk": "Уганда"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kampala",
+     "name": {
+      "uk": "Кампала"
+     },
+     "tz": "Africa/Kampala",
+     "mapPoint": {
+      "x": 0.59,
+      "y": 0.4982
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "UM",
+   "slug": "mali-viddaleni-ostrovy-ssha",
+   "name": {
+    "uk": "Малі віддалені острови США"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "wake",
+     "name": {
+      "uk": "Вейк"
+     },
+     "tz": "Pacific/Wake",
+     "mapPoint": {
+      "x": 0.9628,
+      "y": 0.3929
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "midway",
+     "name": {
+      "uk": "Мідвей"
+     },
+     "tz": "Pacific/Midway",
+     "mapPoint": {
+      "x": 0.0073,
+      "y": 0.3432
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "baker-island",
+     "name": {
+      "uk": "Острів Бейкер"
+     },
+     "tz": "Etc/GMT+12",
+     "mapPoint": {
+      "x": 0.0098,
+      "y": 0.4989
+     },
+     "celebrationType": "countdown-only",
+     "main": true,
+     "manualOffsetMinutes": -720
+    }
+   ]
+  },
+  {
+   "iso": "US",
+   "slug": "ssha",
+   "name": {
+    "uk": "США"
+   },
+   "gender": "pl",
+   "popularity": 98,
+   "illustrationId": "us-postcard",
+   "cities": [
+    {
+     "id": "new-york",
+     "name": {
+      "uk": "Нью-Йорк"
+     },
+     "tz": "America/New_York",
+     "mapPoint": {
+      "x": 0.2944,
+      "y": 0.2738
+     },
+     "celebrationType": "webcam",
+     "main": true,
+     "landmark": {
+      "uk": "Таймс-сквер"
+     }
+    },
+    {
+     "id": "chicago",
+     "name": {
+      "uk": "Чікаго"
+     },
+     "tz": "America/Chicago",
+     "mapPoint": {
+      "x": 0.2565,
+      "y": 0.2675
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "denver",
+     "name": {
+      "uk": "Денвер"
+     },
+     "tz": "America/Denver",
+     "mapPoint": {
+      "x": 0.2084,
+      "y": 0.2792
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "los-angeles",
+     "name": {
+      "uk": "Лос-Анджелес"
+     },
+     "tz": "America/Los_Angeles",
+     "mapPoint": {
+      "x": 0.1715,
+      "y": 0.3108
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "anchorage",
+     "name": {
+      "uk": "Анкоридж"
+     },
+     "tz": "America/Anchorage",
+     "mapPoint": {
+      "x": 0.0836,
+      "y": 0.1599
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    },
+    {
+     "id": "honolulu",
+     "name": {
+      "uk": "Гонолулу"
+     },
+     "tz": "Pacific/Honolulu",
+     "mapPoint": {
+      "x": 0.0615,
+      "y": 0.3816
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "UY",
+   "slug": "uruhvai",
+   "name": {
+    "uk": "Уругвай"
+   },
+   "gender": "m",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "montevideo",
+     "name": {
+      "uk": "Монтевідео"
+     },
+     "tz": "America/Montevideo",
+     "mapPoint": {
+      "x": 0.3439,
+      "y": 0.6939
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "UZ",
+   "slug": "uzbekystan",
+   "name": {
+    "uk": "Узбекистан"
+   },
+   "gender": "m",
+   "popularity": 25,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "tashkent",
+     "name": {
+      "uk": "Ташкент"
+     },
+     "tz": "Asia/Tashkent",
+     "mapPoint": {
+      "x": 0.6925,
+      "y": 0.2704
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VA",
+   "slug": "vatykan",
+   "name": {
+    "uk": "Ватикан"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "vatican",
+     "name": {
+      "uk": "Ватикан"
+     },
+     "tz": "Europe/Vatican",
+     "mapPoint": {
+      "x": 0.5346,
+      "y": 0.2672
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VC",
+   "slug": "sent-vinsent-i-hrenadiny",
+   "name": {
+    "uk": "Сент-Вінсент і Гренадіни"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "kingstown",
+     "name": {
+      "uk": "Кінгстаун"
+     },
+     "tz": "America/St_Vincent",
+     "mapPoint": {
+      "x": 0.3299,
+      "y": 0.4269
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VE",
+   "slug": "venesuela",
+   "name": {
+    "uk": "Венесуела"
+   },
+   "gender": "f",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "caracas",
+     "name": {
+      "uk": "Каракас"
+     },
+     "tz": "America/Caracas",
+     "mapPoint": {
+      "x": 0.3141,
+      "y": 0.4417
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VG",
+   "slug": "brytanski-virhinski-ostrovy",
+   "name": {
+    "uk": "Британські Віргінські острови"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "road-town",
+     "name": {
+      "uk": "Роуд-Таун"
+     },
+     "tz": "America/Tortola",
+     "mapPoint": {
+      "x": 0.3205,
+      "y": 0.3975
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VI",
+   "slug": "virhinski-ostrovy-ssha",
+   "name": {
+    "uk": "Віргінські Острови (США)"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "charlotte-amalie",
+     "name": {
+      "uk": "Шарлотта-Амалі"
+     },
+     "tz": "America/St_Thomas",
+     "mapPoint": {
+      "x": 0.3196,
+      "y": 0.3981
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VN",
+   "slug": "vietnam",
+   "name": {
+    "uk": "В’єтнам"
+   },
+   "gender": "m",
+   "popularity": 55,
+   "illustrationId": "vn-postcard",
+   "cities": [
+    {
+     "id": "ho-chi-minh",
+     "name": {
+      "uk": "Хошимін"
+     },
+     "tz": "Asia/Ho_Chi_Minh",
+     "mapPoint": {
+      "x": 0.7963,
+      "y": 0.4403
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "VU",
+   "slug": "vanuatu",
+   "name": {
+    "uk": "Вануату"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "port-vila",
+     "name": {
+      "uk": "Порт-Віла"
+     },
+     "tz": "Pacific/Efate",
+     "mapPoint": {
+      "x": 0.9678,
+      "y": 0.5981
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "WF",
+   "slug": "uollis-i-futuna",
+   "name": {
+    "uk": "Уолліс і Футуна"
+   },
+   "gender": "pl",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "mata-utu",
+     "name": {
+      "uk": "Мата-Уту"
+     },
+     "tz": "Pacific/Wallis",
+     "mapPoint": {
+      "x": 0.0106,
+      "y": 0.5739
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "WS",
+   "slug": "samoa",
+   "name": {
+    "uk": "Самоа"
+   },
+   "gender": "n",
+   "popularity": 35,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "apia",
+     "name": {
+      "uk": "Апіа"
+     },
+     "tz": "Pacific/Apia",
+     "mapPoint": {
+      "x": 0.023,
+      "y": 0.5769
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "YE",
+   "slug": "yemen",
+   "name": {
+    "uk": "Ємен"
+   },
+   "gender": "m",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "aden",
+     "name": {
+      "uk": "Аден"
+     },
+     "tz": "Asia/Aden",
+     "mapPoint": {
+      "x": 0.6256,
+      "y": 0.4292
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "YT",
+   "slug": "maiotta",
+   "name": {
+    "uk": "Майотта"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "mamoudzou",
+     "name": {
+      "uk": "Мамудзу"
+     },
+     "tz": "Indian/Mayotte",
+     "mapPoint": {
+      "x": 0.6256,
+      "y": 0.571
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ZA",
+   "slug": "pivdenno-afrykanska-respublika",
+   "name": {
+    "uk": "Південно-Африканська Республіка"
+   },
+   "gender": "f",
+   "popularity": 55,
+   "illustrationId": "za-postcard",
+   "cities": [
+    {
+     "id": "johannesburg",
+     "name": {
+      "uk": "Йоганнесбург"
+     },
+     "tz": "Africa/Johannesburg",
+     "mapPoint": {
+      "x": 0.5778,
+      "y": 0.6458
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ZM",
+   "slug": "zambiia",
+   "name": {
+    "uk": "Замбія"
+   },
+   "gender": "f",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "lusaka",
+     "name": {
+      "uk": "Лусака"
+     },
+     "tz": "Africa/Lusaka",
+     "mapPoint": {
+      "x": 0.5786,
+      "y": 0.5856
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  },
+  {
+   "iso": "ZW",
+   "slug": "zimbabve",
+   "name": {
+    "uk": "Зімбабве"
+   },
+   "gender": "n",
+   "popularity": 20,
+   "illustrationId": "postcard-template",
+   "cities": [
+    {
+     "id": "harare",
+     "name": {
+      "uk": "Хараре"
+     },
+     "tz": "Africa/Harare",
+     "mapPoint": {
+      "x": 0.5863,
+      "y": 0.5991
+     },
+     "celebrationType": "countdown-only",
+     "main": true
+    }
+   ]
+  }
+ ]
+}

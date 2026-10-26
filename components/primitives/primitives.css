@@ -1,0 +1,142 @@
+/* Спільні стилі примітивів: те, що не виразити утилітами Tailwind без довільних значень.
+   Усі кольори й розміри — з токенів (styles/tokens.css). */
+
+/* Фокус клавіатури (DESIGN «Стани взаємодії»): 2 px focus-ring + 2 px focus-ring-outer; на ТВ ≥ 4 px. */
+.t2f-focus:focus-visible {
+  outline: var(--t2f-focus-w, 2px) solid var(--color-focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 calc(var(--t2f-focus-w, 2px) + 2px) var(--color-focus-ring-outer);
+}
+[data-surface='tv'] {
+  --t2f-focus-w: 4px;
+}
+
+/* Натискання: стискання на 2%, вимкнено під «зменшити рух» (ІНВ 5.2). */
+.t2f-press:active:not(:disabled):not([aria-disabled='true']) {
+  transform: scale(0.98);
+}
+.t2f-transition {
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out,
+    color 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+/* Точка «наживо» з ореолом. */
+@keyframes t2f-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+.t2f-halo {
+  animation: t2f-halo 1.8s ease-out infinite;
+}
+
+/* Відблиск скелетона. */
+@keyframes t2f-shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+.t2f-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
+  animation: t2f-shine 1.6s ease-in-out infinite;
+}
+
+/* Тонка смуга прокрутки (не системна) — для нативних контейнерів, що прокручуються (Carousel). */
+.t2f-no-scrollbar {
+  scrollbar-width: none;
+}
+.t2f-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* «Зменшити рух»: системне налаштування або перемикач сайту (<html data-reduce-motion="true">). */
+@media (prefers-reduced-motion: reduce) {
+  .t2f-press:active:not(:disabled):not([aria-disabled='true']) {
+    transform: none;
+  }
+  .t2f-transition {
+    transition: none;
+  }
+  .t2f-halo {
+    animation: none;
+    transform: scale(2);
+    opacity: 0.3;
+  }
+  .t2f-shine::after {
+    animation: none;
+    display: none;
+  }
+}
+html[data-reduce-motion='true'] .t2f-press:active:not(:disabled):not([aria-disabled='true']) {
+  transform: none;
+}
+html[data-reduce-motion='true'] .t2f-transition {
+  transition: none;
+}
+html[data-reduce-motion='true'] .t2f-halo {
+  animation: none;
+  transform: scale(2);
+  opacity: 0.3;
+}
+html[data-reduce-motion='true'] .t2f-shine::after {
+  animation: none;
+  display: none;
+}
+
+/* Індикатор завантаження кнопки. */
+@keyframes t2f-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.t2f-spin {
+  animation: t2f-spin 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t2f-spin {
+    animation: none;
+  }
+}
+html[data-reduce-motion='true'] .t2f-spin {
+  animation: none;
+}
+
+/* Адаптивні помічники оболонки: точки перелому з ІНВ 4.2 (телефон < 768, планшет 768–1199, десктоп ≥ 1200 —
+   значення токенів --spacing-bp-tablet / --spacing-bp-desktop; у медіазапитах змінні недоступні). */
+@media (max-width: 767.98px) {
+  .t2f-hide-until-tablet {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) {
+  .t2f-hide-from-tablet {
+    display: none !important;
+  }
+}
+@media (max-width: 1199.98px) {
+  .t2f-hide-until-desktop {
+    display: none !important;
+  }
+}
+@media (min-width: 1200px) {
+  .t2f-hide-from-desktop {
+    display: none !important;
+  }
+}

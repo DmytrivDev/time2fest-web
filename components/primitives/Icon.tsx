@@ -1,0 +1,219 @@
+import type { ReactNode, SVGProps } from 'react';
+import { cn } from './cn';
+
+/** Набір штрихових іконок (P32): stroke 1.8, розміри 16 / 18 / 20 / 22, завжди aria-hidden. */
+export type IconName =
+  | 'speaker'
+  | 'speaker-off'
+  | 'ticket'
+  | 'ticket-check'
+  | 'calendar'
+  | 'calendar-add'
+  | 'calendar-check'
+  | 'clock'
+  | 'broadcast'
+  | 'broadcast-dashed'
+  | 'user'
+  | 'menu'
+  | 'more'
+  | 'close'
+  | 'plus'
+  | 'minus'
+  | 'check'
+  | 'chevron-right'
+  | 'chevron-left'
+  | 'chevron-down'
+  | 'chevron-up'
+  | 'arrow-down'
+  | 'arrow-left'
+  | 'globe'
+  | 'pause'
+  | 'play'
+  | 'search'
+  | 'info'
+  | 'alert'
+  | 'wifi-off'
+  | 'send'
+  | 'smile'
+  | 'tv'
+  | 'share'
+  | 'expand'
+  | 'star'
+  | 'dot';
+
+export type IconSize = 16 | 18 | 20 | 22;
+
+const PATHS: Record<IconName, ReactNode> = {
+  speaker: (
+    <>
+      <path d="M4 9h4l5-4v14l-5-4H4z" />
+      <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
+    </>
+  ),
+  'speaker-off': (
+    <>
+      <path d="M4 9h4l5-4v14l-5-4H4z" />
+      <path d="M17 9l4 6M21 9l-4 6" />
+    </>
+  ),
+  ticket: (
+    <>
+      <path d="M3 8 V6 H21 V8 A2.5 2.5 0 0 0 21 13 V18 H3 V13 A2.5 2.5 0 0 0 3 8 Z" />
+      <path d="M14 6 V18" strokeDasharray="2 2" />
+    </>
+  ),
+  'ticket-check': (
+    <>
+      <path d="M3 8 V6 H21 V8 A2.5 2.5 0 0 0 21 13 V18 H3 V13 A2.5 2.5 0 0 0 3 8 Z" />
+      <path d="M8.5 12l2 2 3.5-4" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </>
+  ),
+  'calendar-add': (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4M12 12.5v5.5M9.25 15.25h5.5" />
+    </>
+  ),
+  'calendar-check': (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4M8.8 15.2l2.3 2.3 4.4-4.6" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  ),
+  broadcast: (
+    <>
+      <circle cx="12" cy="12" r="2.2" />
+      <path d="M8 8a5.6 5.6 0 0 0 0 8M16 8a5.6 5.6 0 0 1 0 8M5 5a9.9 9.9 0 0 0 0 14M19 5a9.9 9.9 0 0 1 0 14" />
+    </>
+  ),
+  'broadcast-dashed': (
+    <>
+      <circle cx="12" cy="12" r="2.2" />
+      <path
+        d="M8 8a5.6 5.6 0 0 0 0 8M16 8a5.6 5.6 0 0 1 0 8M5 5a9.9 9.9 0 0 0 0 14M19 5a9.9 9.9 0 0 1 0 14"
+        strokeDasharray="2.2 2.6"
+      />
+    </>
+  ),
+  user: (
+    <>
+      <circle cx="12" cy="8.5" r="4" />
+      <path d="M4 20 C5.5 15 18.5 15 20 20" />
+    </>
+  ),
+  menu: <path d="M4 7 H20 M4 12 H20 M4 17 H20" />,
+  more: (
+    <>
+      <circle cx="5" cy="12" r="1.2" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+      <circle cx="19" cy="12" r="1.2" fill="currentColor" />
+    </>
+  ),
+  close: <path d="M6 6l12 12M18 6L6 18" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  minus: <path d="M5 12h14" />,
+  check: <path d="M5 12l5 5 9-10" />,
+  'chevron-right': <path d="M9 6l6 6-6 6" />,
+  'chevron-left': <path d="M15 6l-6 6 6 6" />,
+  'chevron-down': <path d="M6 9l6 6 6-6" />,
+  'chevron-up': <path d="M6 15l6-6 6 6" />,
+  'arrow-down': <path d="M12 5v14M6 13l6 6 6-6" />,
+  'arrow-left': <path d="M19 12H5M11 6l-6 6 6 6" />,
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" />
+    </>
+  ),
+  pause: <path d="M9 5v14M15 5v14" />,
+  play: <path d="M8 5l11 7-11 7z" />,
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4.5 4.5" />
+    </>
+  ),
+  info: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5.5M12 7.5h.01" />
+    </>
+  ),
+  alert: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5v5.5M12 16.5h.01" />
+    </>
+  ),
+  'wifi-off': (
+    <>
+      <path d="M3 9.5a14 14 0 0 1 4-2.4M21 9.5a14 14 0 0 0-8-3.4M6.5 13a8 8 0 0 1 3-1.8M17.5 13a8 8 0 0 0-3-1.8M10 16.5a3.5 3.5 0 0 1 4 0" />
+      <path d="M12 19.5h.01M4 4l16 16" />
+    </>
+  ),
+  send: (
+    <>
+      <path d="M4 12l16-8-6 16-2.5-6.5z" />
+      <path d="M11.5 13.5L20 4" />
+    </>
+  ),
+  smile: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 14.5c1.8 2 5.2 2 7 0M9 9.5h.01M15 9.5h.01" />
+    </>
+  ),
+  tv: (
+    <>
+      <rect x="3" y="5" width="18" height="12" rx="2" />
+      <path d="M8 20.5h8M12 17v3.5" />
+    </>
+  ),
+  share: (
+    <>
+      <path d="M12 15V4M7.5 8.5L12 4l4.5 4.5" />
+      <path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12" />
+    </>
+  ),
+  expand: <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />,
+  star: <path d="M12 3.5l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.8l6-.8z" />,
+  dot: <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />,
+};
+
+export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'> {
+  name: IconName;
+  size?: IconSize;
+}
+
+export function Icon({ name, size = 18, className, ...rest }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      className={cn('shrink-0', className)}
+      {...rest}
+    >
+      {PATHS[name]}
+    </svg>
+  );
+}

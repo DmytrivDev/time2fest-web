@@ -1,0 +1,11 @@
+/*
+ * «Зменшити рух» (принцип V; research.md, розділ 9): атрибут <html data-reduce-motion="true|false">
+ * ставить вбудований скрипт до гідратації (lib/a11y/reducedMotion.ts) — системне АБО сайтове.
+ * Вбудований `motion-reduce:` бачить лише систему, тому власні варіанти:
+ *   calm:   — коли рух зменшено;
+ *   lively: — коли рух дозволено.
+ * Приклад: `lively:animate-pulse calm:animate-none`.
+ * (ІНВ 5.2 називає варіант `motion-ok`; діє research.md — `lively`.)
+ */
+@custom-variant calm (&:where([data-reduce-motion="true"], [data-reduce-motion="true"] *));
+@custom-variant lively (&:where([data-reduce-motion="false"], [data-reduce-motion="false"] *));
