@@ -7,7 +7,7 @@
  */
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { emit } from '@/lib/events/bus';
-import { useTimeSource } from '@/lib/time/TimeProvider';
+import { useNow, useTimeSource } from '@/lib/time/TimeProvider';
 import { advanceChain, consentEventFor, selectSource, type ChainCause } from './chain';
 import type { ChainSelection, PlayerSlotId, PlayerSource, PlayerSourceSwitched } from './types';
 import { createYouTubePlayer, YTState, type YouTubePlayerHandle } from './youtubeApi';
@@ -19,6 +19,11 @@ export type PlayerStatus = 'idle' | 'loading' | 'playing' | 'paused' | 'autoplay
 export interface PlayerChainInput {
   eventId: string;
   sources: readonly PlayerSource[];
+  /**
+   * Вибране людиною джерело (сторінка країни, дотик до рядка трансляції): береться першим, якщо придатне
+   * й не позначене недоступним; інакше — звичайний порядок ланцюжка.
+   */
+  preferredSourceId?: string;
 }
 
 export interface PlayerState {
@@ -112,14 +117,30 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const chainRef = useRef<PlayerChainInput | null>(null);
 
-  // Вибір джерела: зміна ланцюжка, згоди чи списку недоступних.
-  const selection = useMemo<ChainSelection | null>(
-    () =>
-      chain
-        ? selectSource({ slot: 'main', eventId: chain.eventId, sources: chain.sources, failed, facebookConsent, now: time.now() })
-        : null,
-    [chain, failed, facebookConsent, time],
-  );
+  // Очікувані джерела (`startsAt`) стають придатними самі: ключ змінюється, щойно настає `startsAt` котрогось із них,
+  // і вибір перераховується без перезавантаження (US2 acc.2). Провайдер перерендерюється щосекунди, але значення
+  // контекстів мемоізовані — діти не перерендерюються.
+  const clockNow = useNow();
+  const startedKey = useMemo(() => {
+    if (!chain) return '';
+    return chain.sources
+      .filter((s) => s.startsAt !== undefined && Date.parse(s.startsAt) <= clockNow)
+      .map((s) => s.id)
+      .join('|');
+  }, [chain, clockNow]);
+
+  // Вибір джерела: зміна ланцюжка, згоди, списку недоступних чи початок очікуваного джерела.
+  const selection = useMemo<ChainSelection | null>(() => {
+    void startedKey;
+    if (!chain) return null;
+    const ctx = { slot: 'main' as const, eventId: chain.eventId, sources: chain.sources, failed, facebookConsent, now: time.now() };
+    const preferred = chain.preferredSourceId ? chain.sources.find((s) => s.id === chain.preferredSourceId) : undefined;
+    if (preferred && !failed.includes(preferred.id)) {
+      const picked = selectSource({ ...ctx, sources: [preferred] });
+      if (picked.kind !== 'countdown-scene') return picked;
+    }
+    return selectSource(ctx);
+  }, [chain, failed, facebookConsent, time, startedKey]);
 
   // Стан для обробників IFrame API (вони створюються один раз).
   const live = useRef({ chain, failed, facebookConsent, selection });
@@ -246,9 +267,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           }
           return;
         }
-        if (prev && prev.eventId === input.eventId && sameSources(prev.sources, input.sources)) return;
+        if (prev && prev.eventId === input.eventId && prev.preferredSourceId === input.preferredSourceId && sameSources(prev.sources, input.sources)) return;
         if (!prev || prev.eventId !== input.eventId) {
           setFailed([]);
+          setLastSwitch(null);
+        } else if (input.preferredSourceId && input.preferredSourceId !== prev.preferredSourceId) {
+          // Людина сама обрала джерело: даємо йому ще одну спробу й прибираємо повідомлення про автоперемикання.
+          const id = input.preferredSourceId;
+          setFailed((f) => (f.includes(id) ? f.filter((x) => x !== id) : f));
           setLastSwitch(null);
         }
         chainRef.current = input;

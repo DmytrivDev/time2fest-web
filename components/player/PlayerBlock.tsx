@@ -1,7 +1,11 @@
 'use client';
 
 /**
- * C1. PlayerBlock — блок плеєра, режим `broadcast` (головна, ефір).
+ * C1. PlayerBlock — блок плеєра: режим `broadcast` (головна, ефір) і `remote` (сторінка країни, пульт).
+ *
+ * `remote`: сторінка сама не переходить за ефіром (FR-024) — плеєр показує те, що обрала людина (ланцюжок задає сторінка);
+ * після півночі відео лишається, у підписі «Запис» і «північ була 40 хв тому», рядок 3 — `met-and-next`;
+ * «Подивитися північ ще раз» — лише коли джерело дає повтор (`source.replay`); у рядку дій «Ще трансляції».
  *
  * Частини: `VideoArea` (= `PlayerSlot`: хост плеєра з макета сідає над ним; на місці відео — сцена відліку,
  * картка Facebook чи скелетон, ніколи не поверх) · `Caption` (3 рядки за фазою `captionPhase`) · `ActionRow` ·
@@ -42,7 +46,7 @@ export interface ScheduleHintData {
 }
 
 export interface PlayerBlockProps {
-  mode: 'broadcast';
+  mode: 'broadcast' | 'remote';
   /** Час відомий (після синхронізації); до того — скелетони. */
   ready: boolean;
   phase: CaptionPhase | null;
@@ -60,6 +64,12 @@ export interface PlayerBlockProps {
   timeZone?: string;
   /** id заголовка блоку (фокус повертається сюди після закриття вікон). */
   titleId?: string;
+  /** Пульт: назва вибраної трансляції в рядку 2 («Париж · Ейфелева вежа»). */
+  title?: string;
+  /** Пульт: «Ще трансляції» / «Записи». */
+  onMoreStreams?: () => void;
+  /** Пульт: «Подивитися північ ще раз». */
+  onWatchAgain?: () => void;
   className?: string;
 }
 
@@ -110,6 +120,7 @@ function VideoFallback({ kind, current }: { kind: VideoAreaKind; current: AirPla
 }
 
 export function PlayerBlock({
+  mode,
   ready,
   phase,
   current,
@@ -121,6 +132,9 @@ export function PlayerBlock({
   switched: switchedProp,
   timeZone,
   titleId: titleIdProp,
+  title,
+  onMoreStreams,
+  onWatchAgain,
   className,
 }: PlayerBlockProps) {
   const t = useTranslations('player');
@@ -139,7 +153,7 @@ export function PlayerBlock({
       <section
         aria-labelledby={current && phase ? titleId : undefined}
         aria-busy={current && phase ? undefined : true}
-        data-player-block="broadcast"
+        data-player-block={mode}
         data-video-area-kind={area.kind}
         className={cn(styles.pad, 'flex flex-col gap-3 pb-4 pt-3', className)}
       >
@@ -153,9 +167,15 @@ export function PlayerBlock({
               verified={verified}
               timeZone={timeZone}
               titleId={titleId}
+              mode={mode}
+              {...(title !== undefined ? { title } : {})}
             />
             <ActionRow
+              mode={mode}
               button={phase.button}
+              onMoreStreams={onMoreStreams}
+              onWatchAgain={onWatchAgain}
+              recordings={phase.row1Right.kind === 'ago'}
               href={current.href}
               onStayHere={onStayHere}
               sound={{

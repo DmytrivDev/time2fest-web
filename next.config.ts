@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
+  // Inline the build flavour so test-only code (time machine panel, window.__t2f) is pruned from production bundles.
+  env: { NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV ?? 'production' },
 };
 
 export default withNextIntl(nextConfig);

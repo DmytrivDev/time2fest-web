@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { HowToCard } from '@/components/live/HowToCard';
 import { Stage, StateRow } from '../_support/Stage';
-import { TRADITIONS } from '../_support/liveFixtures';
+import { GALLERY, HOW_TO_TEXT, TRADITIONS } from '../_support/liveFixtures';
 
 const meta = {
   title: 'Живий ефір/HowToCard',
@@ -27,6 +27,31 @@ export const FullPhone: Story = {
   render: (args) => (
     <Stage>
       <HowToCard {...args} variant="full" />
+    </Stage>
+  ),
+};
+
+export const FullGalleryText: Story = {
+  name: 'Повна: галерея 60/40 і текстовий блок',
+  globals: { surface: 'desktop' },
+  render: (args) => (
+    <Stage>
+      <StateRow label="3 фото">
+        <HowToCard {...args} variant="full" gallery={GALLERY} text={HOW_TO_TEXT} className="w-full" />
+      </StateRow>
+      <StateRow label="2 фото">
+        <HowToCard {...args} variant="full" gallery={GALLERY.slice(0, 2)} text={HOW_TO_TEXT} className="w-full" />
+      </StateRow>
+    </Stage>
+  ),
+};
+
+export const FullGalleryTextPhone: Story = {
+  name: 'Повна на телефоні: галерея стовпчиком, текст одразу',
+  globals: { surface: 'phone' },
+  render: (args) => (
+    <Stage>
+      <HowToCard {...args} variant="full" gallery={GALLERY} text={HOW_TO_TEXT} />
     </Stage>
   ),
 };

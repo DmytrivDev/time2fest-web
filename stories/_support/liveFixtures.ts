@@ -126,6 +126,17 @@ export const TRADITIONS = [
   { id: 't4', title: 'Листівки', text: '1 січня надсилають новорічні листівки рідним і колегам.', iconId: 'cards' },
 ];
 
+/** Фото галереї «Як святкувати» (data-URI заглушки: без мережі в Storybook). */
+const photo = (c: string) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90"><rect width="160" height="90" fill="${c}"/></svg>`)}`;
+export const GALLERY = [
+  { src: photo('#3b4a6b'), alt: 'Ейфелева вежа вночі', author: 'Автор Один', license: 'CC BY-SA 4.0' },
+  { src: photo('#6b4a3b'), alt: 'Новорічний стіл', author: 'Автор Два', license: 'CC BY 2.0' },
+  { src: photo('#3b6b52'), alt: 'Святковий ярмарок', author: 'Автор Три', license: 'CC0' },
+];
+
+export const HOW_TO_TEXT =
+  'Французи зустрічають Новий рік довгою вечерею з родиною й друзями — Le Réveillon. Опівночі цілуються під омелою, вітають одне одного й дзвонять рідним. Увесь січень можна вітатися словами «Bonne année!».';
+
 export const ZONE_COUNTRIES = [
   { iso: 'FR', name: 'Франція', flagCode: 'FR' },
   { iso: 'DE', name: 'Німеччина', flagCode: 'DE' },

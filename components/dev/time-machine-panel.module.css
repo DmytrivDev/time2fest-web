@@ -1,0 +1,28 @@
+/* Плаваюча панель «машини часу» (contracts/time-machine.md): не перекриває плеєр.
+   Телефон і планшет: смуга знизу (плеєр закріплено вгорі, ≤ 40 % висоти вікна під панель).
+   Десктоп ≥ 1200: у колонці чату праворуч, під шапкою (плеєр ліворуч). Окремий модуль:
+   точки перелому 1200 px немає серед точок Tailwind, а довільні значення заборонені. */
+
+.panel {
+  position: fixed;
+  inset-inline: var(--spacing-2);
+  bottom: var(--spacing-2);
+  max-height: 40vh;
+  max-height: 40dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 1200px) {
+  .panel {
+    inset-inline: auto var(--spacing-margin-desktop);
+    top: calc(var(--spacing-16) + var(--spacing-2));
+    bottom: auto;
+    width: 340px;
+    max-height: calc(100dvh - var(--spacing-16) - var(--spacing-4));
+  }
+}
+
+.panel:focus {
+  outline: none;
+}

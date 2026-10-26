@@ -52,7 +52,7 @@ const CHAT_ROOMS = ['world'] as const;
 const HOWTO_AFTER = 10 * 60_000;
 const PLAYER_TITLE_ID = 'player-title';
 
-function useChatLookup(): MessageLookup {
+export function useChatLookup(): MessageLookup {
   return useMemo(() => {
     const data = getData();
     const byFlag = new Map(data.countries.map((c) => [c.flagCode, c]));

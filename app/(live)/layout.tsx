@@ -5,6 +5,7 @@
  * Один `<main>` на сторінку; прихований `<h1>` ставить сама сторінка.
  */
 import type { ReactNode } from 'react';
+import { TimeMachineMount } from '@/components/dev/TimeMachineMount';
 import { PlayerHost } from '@/components/player/PlayerHost';
 import { LiveAnnouncer } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
@@ -24,6 +25,7 @@ export default function LiveLayout({ children }: { children: ReactNode }) {
 function LiveShell({ children }: { children: ReactNode }) {
   return (
     <TimeProvider>
+      <TimeMachineMount />
       <CoralProvider>
         <PlayerProvider>
           <LiveAnnouncer>

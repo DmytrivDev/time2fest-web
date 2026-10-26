@@ -1,0 +1,68 @@
+/* Сторінка «Країни й міста» (C19): десктоп від 1200 px — список ліворуч, мапа поясів праворуч; телефон — перемикач
+   «Мапа / Список». Точка 1200 px відсутня серед точок Tailwind, а довільні значення в класах заборонені — тому окремий модуль. */
+
+.page {
+  padding-inline: var(--spacing-margin-mobile);
+}
+
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) {
+  .page {
+    padding-inline: 0;
+  }
+}
+
+.cols {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.listCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
+.listBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.mapPane {
+  min-width: 0;
+}
+
+.phoneOnly {
+  display: inline-flex;
+}
+
+/* Телефон: або список, або мапа. */
+.cols[data-view='map'] .listBody {
+  display: none;
+}
+.cols[data-view='list'] .mapPane {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--spacing-8);
+  }
+  .cols[data-view] .listBody,
+  .cols[data-view] .mapPane {
+    display: flex;
+    flex-direction: column;
+  }
+  .phoneOnly {
+    display: none;
+  }
+  .mapPane {
+    position: sticky;
+    top: var(--spacing-4);
+  }
+}

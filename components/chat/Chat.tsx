@@ -9,7 +9,7 @@
  * не є live-областю (оголошення «Нові повідомлення» — справа сторінки, не частіше ніж раз на 30 с).
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
@@ -35,12 +35,14 @@ export interface ChatProps {
   onToEvents?: () => void;
   /** Початковий стан паузи (кнопка «Пауза чату»). */
   defaultPaused?: boolean;
+  /** Перемикач кімнат («Світ» / «Країна», сторінка країни) замість назви кімнати в шапці. */
+  roomSwitcher?: ReactNode;
   className?: string;
 }
 
 const NEAR_BOTTOM = 24;
 
-export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onHide, onToEvents, defaultPaused = false, className }: ChatProps) {
+export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onHide, onToEvents, defaultPaused = false, roomSwitcher, className }: ChatProps) {
   const t = useTranslations('chat');
   const common = useTranslations('common');
 
@@ -103,12 +105,14 @@ export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onH
   return (
     <div data-chat={state} data-room={room.id} className={cn('flex min-h-0 flex-col bg-background', className)}>
       <div className="flex h-12 shrink-0 items-center gap-1 border-b border-border ps-3 pe-1">
-        <span
-          aria-label={`${t('title')}: ${room.label}`}
-          className="inline-flex h-7.5 items-center rounded-full bg-surface-raised px-3.5 text-caption font-semibold text-text"
-        >
-          {room.label}
-        </span>
+        {roomSwitcher ?? (
+          <span
+            aria-label={`${t('title')}: ${room.label}`}
+            className="inline-flex h-7.5 items-center rounded-full bg-surface-raised px-3.5 text-caption font-semibold text-text"
+          >
+            {room.label}
+          </span>
+        )}
         <span className="flex-1" />
         <IconButton
           icon={manualPause ? 'play' : 'pause'}

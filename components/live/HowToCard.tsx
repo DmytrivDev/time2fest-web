@@ -22,6 +22,10 @@ export interface HowToCardProps {
   variant?: HowToVariant;
   /** Рівень заголовка (за замовчуванням `h2`). */
   headingLevel?: 'h2' | 'h3';
+  /** `full`: до трьох фото (≈60/40) з автором і ліцензією; порожньо — блоку немає. */
+  gallery?: HowTo['gallery'];
+  /** `full`: текстовий блок країни під заголовком «Як <Країна> зустрічає Новий рік» (без «Читати більше»). */
+  text?: string;
   className?: string;
 }
 
@@ -42,8 +46,9 @@ function TraditionIcon({ size }: { size: 'md' | 'lg' }) {
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /** C20. «Як святкувати»: ключові традиції країни. */
-export function HowToCard({ country, traditions, variant = 'full', headingLevel: Heading = 'h2', className }: HowToCardProps) {
+export function HowToCard({ country, traditions, variant = 'full', headingLevel: Heading = 'h2', gallery, text, className }: HowToCardProps) {
   const t = useTranslations('liveCards.howTo');
+  const tc = useTranslations('country.howTo');
   const headingId = useId();
 
   if (variant === 'compact') {
@@ -89,6 +94,7 @@ export function HowToCard({ country, traditions, variant = 'full', headingLevel:
     );
   }
 
+  const photos = (gallery ?? []).slice(0, 3);
   return (
     <section aria-labelledby={headingId} data-how-to="full" className={cn('flex flex-col gap-5', className)}>
       <Heading id={headingId} className="text-headline-md text-text">
@@ -120,6 +126,40 @@ export function HowToCard({ country, traditions, variant = 'full', headingLevel:
           </li>
         ))}
       </ol>
+      {photos.length ? (
+        <ul
+          aria-label={tc('gallery')}
+          className={cn('m-0 grid list-none gap-3 p-0 md:h-80 md:grid-rows-2', photos.length > 1 && 'md:grid-flow-col md:grid-cols-5')}
+        >
+          {photos.map((ph, i) => (
+            <li
+              key={ph.src}
+              className={cn(
+                'relative min-h-0 overflow-hidden rounded-lg border border-border bg-surface',
+                photos.length === 1 && 'md:row-span-2',
+                photos.length > 1 && (i === 0 ? 'md:col-span-3 md:row-span-2' : cn('md:col-span-2', photos.length === 2 && 'md:row-span-2')),
+              )}
+            >
+              <figure className="m-0 size-full">
+                {/* Статичний експорт: next/image без оптимізації не дає переваг — звичайний img. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={ph.src} alt={tc('photoAlt', { alt: ph.alt })} loading="lazy" className="aspect-video size-full object-cover md:aspect-auto" />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-bg/80 px-3 py-1.5 text-caption text-text-secondary">
+                  {tc('photoCredit', { author: ph.author, license: ph.license })}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {text ? (
+        <div className="flex max-w-prose flex-col gap-2">
+          <h3 className="text-headline-sm text-text">
+            {tc('textTitle', { country })}
+          </h3>
+          <p className="text-body text-text-secondary">{text}</p>
+        </div>
+      ) : null}
     </section>
   );
 }

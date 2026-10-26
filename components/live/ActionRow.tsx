@@ -6,6 +6,10 @@
  * телефон і планшет — «⋯» праворуч з аркушем «Ще дії» (через `OverlayManager`, вікно `nonmodal`).
  * Кімната (US3), режим вечірки, «Поділитися трансляцією» (US6) і «Повідомити про проблему» тут ще інертні.
  * «Лишитися тут ›» — клієнтський перехід у межах `(live)`: макет і плеєр не перемонтовуються (SC-003).
+ *
+ * Режим `remote` (сторінка країни, пульт): [SoundToggle] [«Ще трансляції» — десктоп прокручує до блоків трансляцій,
+ * телефон відкриває аркуш; після півночі — «Записи»] [«Подивитися північ ще раз», лише коли джерело дає повтор]
+ * + ті самі інертні дії кімнати й вечірки. Переходу на іншу сторінку тут немає: пульт сам нікуди не веде.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -21,13 +25,21 @@ import styles from './live.module.css';
 export const MORE_ACTIONS_ID = 'O-MORE-ACTIONS';
 
 export interface ActionRowProps {
-  /** Кнопка з фази підпису: «Обрати трансляцію ›» або «Лишитися тут ›». */
+  /** `broadcast` — головна (ефір); `remote` — сторінка країни. */
+  mode?: 'broadcast' | 'remote';
+  /** Кнопка з фази підпису: «Обрати трансляцію ›», «Лишитися тут ›» або (пульт) «Подивитися північ ще раз». */
   button: CaptionButton;
   /** Сторінка країни поточної події. */
   href: string | null;
   sound: SoundToggleProps;
   /** «Лишитися тут ›»: запам’ятати подію перед переходом (BroadcastController.stayHere). */
   onStayHere?: () => void;
+  /** Пульт: «Ще трансляції» / «Записи». */
+  onMoreStreams?: () => void;
+  /** Пульт: після півночі кнопка називається «Записи». */
+  recordings?: boolean;
+  /** Пульт: «Подивитися північ ще раз» (повтор із `source.replay`). */
+  onWatchAgain?: () => void;
   className?: string;
 }
 
@@ -48,9 +60,21 @@ function MoreActions() {
   );
 }
 
-export function ActionRow({ button, href, sound, onStayHere, className }: ActionRowProps) {
+export function ActionRow({
+  mode = 'broadcast',
+  button,
+  href,
+  sound,
+  onStayHere,
+  onMoreStreams,
+  recordings = false,
+  onWatchAgain,
+  className,
+}: ActionRowProps) {
   const t = useTranslations('player');
+  const tc = useTranslations('country.actions');
   const overlay = useOverlay();
+  const remote = mode === 'remote';
   const stay = button === 'stay-here';
   const label = stay ? t('stayHere') : t('chooseStream');
 
@@ -60,7 +84,18 @@ export function ActionRow({ button, href, sound, onStayHere, className }: Action
   return (
     <div data-action-row="" className={cn('flex flex-wrap items-center gap-2', className)}>
       <SoundToggle {...sound} />
-      {href ? (
+      {remote ? (
+        <>
+          <Button variant="secondary" data-action="more-streams" onClick={onMoreStreams} className="min-w-0">
+            {recordings ? tc('recordings') : tc('moreStreams')}
+          </Button>
+          {button === 'watch-again' ? (
+            <Button variant="secondary" iconLeft="play" data-action="watch-again" onClick={onWatchAgain}>
+              {t('watchMidnightAgain')}
+            </Button>
+          ) : null}
+        </>
+      ) : href ? (
         <Button asChild variant="secondary" className="min-w-0 pe-3.5">
           <NextLink href={href} onClick={stay ? onStayHere : undefined} data-action={button}>
             {label}

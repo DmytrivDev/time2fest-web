@@ -2,13 +2,15 @@ import type { Decorator, Preview } from '@storybook/nextjs';
 import { NextIntlClientProvider } from 'next-intl';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import '../app/globals.css';
+import { TimeMachinePanel } from '../components/dev/TimeMachinePanel';
 import { TimeProvider } from '../lib/time/TimeProvider';
 import messages from '../messages/uk.json';
 import { useGuestStore } from '../stores/guest';
 import { assertSingleCoral, isPageOrWindowStory } from './coral-check';
 
 // Декоратори (T056): ширина (телефон / десктоп / ТВ), «зменшити рух», «машина часу».
-// «Машина часу» — `TimeProvider override` (T019); той самий механізм використає панель розробника (T086).
+// «Машина часу» — `TimeProvider override` (T019); та сама обгортка діє для панелі розробника (T086):
+// історія з `parameters.timeMachinePanel` показує `TimeMachinePanel` усередині цього ж `TimeProvider`.
 
 type Surface = 'auto' | 'phone' | 'desktop' | 'tv';
 const WIDTH: Record<Exclude<Surface, 'auto'>, number> = { phone: 390, desktop: 1440, tv: 1920 };
@@ -38,10 +40,11 @@ interface ShellProps {
   reduce: boolean;
   preset: string;
   time: StoryTime | undefined;
+  panel: boolean;
   children: ReactNode;
 }
 
-function Shell({ surface, reduce, preset, time, children }: ShellProps) {
+function Shell({ surface, reduce, preset, time, panel, children }: ShellProps) {
   useEffect(() => {
     const root = document.documentElement;
     root.lang = 'uk';
@@ -74,6 +77,7 @@ function Shell({ surface, reduce, preset, time, children }: ShellProps) {
         >
           {children}
         </div>
+        {panel && <TimeMachinePanel defaultOpen />}
       </TimeProvider>
     </NextIntlClientProvider>
   );
@@ -85,6 +89,7 @@ const withShell: Decorator = (Story, context) => (
     reduce={context.globals.reduceMotion === 'on'}
     preset={(context.globals.time as string | undefined) ?? 'real'}
     time={context.parameters.time as StoryTime | undefined}
+    panel={context.parameters.timeMachinePanel === true}
   >
     <Story />
   </Shell>

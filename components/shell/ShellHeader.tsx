@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
@@ -20,8 +21,11 @@ export interface ShellHeaderProps extends Pick<HeaderProps, 'current' | 'hasPass
  * Хедер макета `(live)` з підключеним повноекранним меню (телефон, планшет) і панеллю мови (планшет-альбом, десктоп).
  * Відкриття меню ставить плеєр на паузу й закриває будь-яке відкрите вікно; закриття — продовжує, якщо відео грало.
  */
-export function ShellHeader({ current, hasPass, user, pausedPlace }: ShellHeaderProps) {
+export function ShellHeader({ current: currentProp, hasPass, user, pausedPlace }: ShellHeaderProps) {
   const t = useTranslations('menu');
+  // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
+  const pathname = usePathname();
+  const current = pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : currentProp;
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState('uk');
   const overlay = useOverlay();

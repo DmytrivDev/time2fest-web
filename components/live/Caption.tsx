@@ -13,9 +13,9 @@ import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import type { City, Country, Ms } from '@/lib/data/types';
-import type { CaptionPhase } from '@/lib/engine/captionPhase';
+import type { CaptionMode, CaptionPhase } from '@/lib/engine/captionPhase';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
-import { formatClock, formatCountdown, formatShortCountdown } from '@/lib/i18n/time';
+import { formatAgo, formatClock, formatCountdown, formatShortCountdown } from '@/lib/i18n/time';
 import styles from './live.module.css';
 
 export interface CaptionPlace {
@@ -39,6 +39,13 @@ export interface CaptionProps {
   timeZone?: string;
   /** id заголовка блоку плеєра (сюди повертається фокус після закриття вікон). */
   titleId?: string;
+  /**
+   * `remote` — сторінка країни (пульт): сама не переходить; після півночі «Запис» і «північ була 40 хв тому»
+   * на місці таймера, рядок 3 — «Франція зустріла Новий рік · далі: Велика Британія о 02:00».
+   */
+  mode?: CaptionMode;
+  /** Назва рядка 2 замість «Місто · пам’ятка» (пульт: назва вибраної трансляції). */
+  title?: string;
   className?: string;
 }
 
@@ -65,8 +72,20 @@ function useSpoken() {
   };
 }
 
-export function Caption({ phase, current, next, live = false, verified = false, timeZone, titleId, className }: CaptionProps) {
+export function Caption({
+  phase,
+  current,
+  next,
+  live = false,
+  verified = false,
+  timeZone,
+  titleId,
+  mode = 'broadcast',
+  title: titleProp,
+  className,
+}: CaptionProps) {
   const t = useTranslations('player');
+  const tc = useTranslations('country.caption');
   const tMet = useTranslations('met');
   const tBadge = useTranslations('primitives.badge');
   const spoken = useSpoken();
@@ -81,11 +100,14 @@ export function Caption({ phase, current, next, live = false, verified = false, 
         }
       : null;
 
+  const ago = r1.kind === 'ago' ? r1.ms : null;
+  const tzOpts = timeZone ? { timeZone } : {};
+
   const countryName = current.country?.name.uk ?? '';
   let row3: string;
   switch (phase.row3.kind) {
     case 'midnight-at':
-      row3 = t('lineBefore', { country: countryName, time: formatClock(current.midnightMs, timeZone ? { timeZone } : {}) });
+      row3 = t('lineBefore', { country: countryName, time: formatClock(current.midnightMs, tzOpts) });
       break;
     case 'met':
     case 'met-and-next': {
@@ -95,6 +117,10 @@ export function Caption({ phase, current, next, live = false, verified = false, 
       }
       const p = metPhrase(current.country);
       row3 = p.kind === 'single' ? tMet('single', p.params) : p.kind === 'multi' ? tMet('multi', { names: joinNamesUk(p.params.names) }) : tMet('fallback', p.params);
+      if (phase.row3.kind === 'met-and-next' && next) {
+        const place = next.country?.name.uk ?? next.city?.name.uk ?? '';
+        row3 = tc('metAndNext', { met: row3, place, time: formatClock(next.midnightMs, tzOpts) });
+      }
       break;
     }
     case 'next':
@@ -102,12 +128,19 @@ export function Caption({ phase, current, next, live = false, verified = false, 
       break;
   }
 
-  const title = eventTitle(current.city);
+  const title = titleProp ?? eventTitle(current.city);
+  // Пульт: ми вже на сторінці країни — назва не посилання.
+  const href = mode === 'remote' ? null : current.href;
 
   return (
     <div data-caption="" data-phase={phase.id} className={cn('flex flex-col gap-1.5', className)}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        {live ? <Badge variant="live">{tBadge('live')}</Badge> : null}
+        {live && ago === null ? <Badge variant="live">{tBadge('live')}</Badge> : null}
+        {ago !== null ? (
+          <span data-caption-recording="" className="inline-flex">
+            <Badge variant="recording">{tc('recording')}</Badge>
+          </span>
+        ) : null}
         {verified ? (
           <span className={cn(styles.deskOnly, 'items-center gap-1 text-caption text-text-muted')}>
             {tBadge('verified')}
@@ -130,10 +163,15 @@ export function Caption({ phase, current, next, live = false, verified = false, 
             </span>
           </span>
         ) : null}
+        {ago !== null ? (
+          <span data-caption-ago="" className="ms-auto whitespace-nowrap text-caption text-text-muted">
+            {tc('ago', { ago: formatAgo(ago) })}
+          </span>
+        ) : null}
       </div>
       <h2 id={titleId} tabIndex={-1} className="text-headline-sm text-text focus:outline-none">
-        {current.href ? (
-          <NextLink href={current.href} className="t2f-focus t2f-transition rounded-sm hover:text-text-secondary">
+        {href ? (
+          <NextLink href={href} className="t2f-focus t2f-transition rounded-sm hover:text-text-secondary">
             {title}
             <span aria-hidden="true" className="text-text-secondary">
               {' ›'}
