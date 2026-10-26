@@ -109,8 +109,11 @@ export function ActionRow({
         <Button variant="tonal" disabled iconLeft="tv">
           {t('roomOpen')}
         </Button>
-        <Button variant="tonal" disabled iconLeft="expand">
-          {t('partyMode')}
+        <Button asChild variant="tonal">
+          <NextLink href="/tv/" data-action="party-mode">
+            <Icon name="expand" size={18} />
+            {t('partyMode')}
+          </NextLink>
         </Button>
       </span>
       <span className={styles.phoneOnly}>

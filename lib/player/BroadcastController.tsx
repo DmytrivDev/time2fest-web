@@ -20,6 +20,7 @@ import { captionPhase, type CaptionPhase } from '@/lib/engine/captionPhase';
 import { currentAirEvent, type AirState } from '@/lib/engine/currentAirEvent';
 import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
 import { isRateInteracting } from '@/lib/live/rateInteraction';
+import { buildOfferContext } from '@/lib/offers/context';
 import { surfacePresence } from '@/lib/presence/useStampGrant';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
@@ -154,7 +155,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
 
   return (
     <BroadcastContext.Provider value={value}>
-      <EngineScheduler data={getData()} getPresence={surfacePresence} stayedHere={stayedHere} rate={RATE_DEPS} />
+      <EngineScheduler data={getData()} getPresence={surfacePresence} stayedHere={stayedHere} rate={RATE_DEPS} getOfferContext={buildOfferContext} />
       {children}
     </BroadcastContext.Provider>
   );

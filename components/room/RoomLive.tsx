@@ -48,6 +48,8 @@ import { AddStreamPanel } from './AddStreamPanel';
 import { RoomGrid, type RoomWindowView } from './RoomGrid';
 import { roomPlayers, RoomWindowPlayer } from './RoomWindowPlayer';
 import { useRoomViewport } from './useRoomViewport';
+import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
+import { firstRowEventFor } from '@/lib/firstrow/pick';
 
 const SOUND_POLL_MS = 1_000;
 
@@ -363,8 +365,10 @@ export function RoomLive() {
     <div data-room-page="" className="flex flex-col gap-6 px-4 py-4 md:px-6">
       {windows.length === 0 && known ? <p className="text-body text-text-secondary">{t('emptyRoom')}</p> : null}
       {grid}
-      {/* Слот «Першого ряду» події вікна зі звуком: блок додається в US5. */}
-      <div data-first-row-slot="" data-event-id={soundWindow?.eventId} />
+      {/* Слот «Першого ряду» події вікна зі звуком (US5). */}
+      <div data-first-row-slot="" data-event-id={soundWindow?.eventId}>
+        <FirstRowModule event={firstRowEventFor(data, now, soundWindow ? data.eventsById.get(soundWindow.eventId) : null)} />
+      </div>
       {vis.hidden ? (
         <ChatHiddenButton
           placement={chatColumn ? 'desktop' : 'phone'}

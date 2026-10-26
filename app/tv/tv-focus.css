@@ -1,0 +1,8 @@
+/* ТВ: пульт — це клавіатура, мишки немає, тож контур фокуса (4 px, `data-surface="tv"`) показуємо на :focus,
+   а не лише на :focus-visible. Початковий фокус на першій картці черги ставиться програмно, ще до першого натискання клавіші:
+   без цього правила Chrome міг би не малювати контур, доки людина не торкнулась пульта. */
+[data-surface='tv'] .t2f-focus:focus {
+  outline: var(--t2f-focus-w, 4px) solid var(--color-focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 calc(var(--t2f-focus-w, 4px) + 2px) var(--color-focus-ring-outer);
+}

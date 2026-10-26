@@ -25,6 +25,8 @@ import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
 import { MORE_STREAMS_ID, MoreStreamsSheet, StreamList, ZoneStreamsBlock } from '@/components/live/StreamList';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
+import { CookieInflow } from '@/components/offers/CookieLayer';
+import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { ConnectedMiniPlayer } from '@/components/player/MiniPlayer';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
@@ -58,6 +60,8 @@ import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { eventTitle } from './Caption';
 import styles from './live.module.css';
+import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
+import { firstRowEventForCountry } from '@/lib/firstrow/pick';
 
 const PLAYER_TITLE_ID = 'player-title';
 const STREAMS_ID = 'country-streams';
@@ -155,6 +159,8 @@ export function CountryLive({ iso }: { iso: string }) {
   useStampGrant(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
   useChatSimulator(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
   useMomentWindows(mainEvent?.id ?? null);
+  // Пропозиції пасу й чайових (offer:show) і стан введення для рушія пропозицій.
+  useOfferWindows();
 
   const countryRows = useMemo(() => (zoneId ? countryStreamRows(data, iso, zoneId, minute) : []), [data, iso, zoneId, minute]);
   const zoneRows = useMemo(() => (zoneId ? zoneStreamRows(data, zoneId, iso, minute) : []), [data, iso, zoneId, minute]);
@@ -329,8 +335,10 @@ export function CountryLive({ iso }: { iso: string }) {
         titleId={PLAYER_TITLE_ID}
       />
       {chatColumn ? null : header}
-      {/* Слот «Першого ряду» сторінки країни: блок додається в US5. */}
-      <div data-first-row-slot="" />
+      {/* Слот «Першого ряду» сторінки країни (US5). */}
+      <div data-first-row-slot="">
+        <FirstRowModule event={firstRowEventForCountry(data, iso)} className={styles.pad} />
+      </div>
       {vis.hidden ? (
         <div className={cn(styles.pad, 'pt-3')}>
           <ChatHiddenButton
@@ -343,6 +351,9 @@ export function CountryLive({ iso }: { iso: string }) {
           />
         </div>
       ) : null}
+      <div className={styles.pad}>
+        <CookieInflow />
+      </div>
       <div data-moment-slot="" className={styles.pad}>
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
       </div>

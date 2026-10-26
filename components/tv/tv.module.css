@@ -1,0 +1,372 @@
+/* Режим вечірки (S-TV, C22): розкладка 1920×1080. Плеєр ≥ 70% ширини (7fr з 10) може йти до краю;
+   усе інше — у безпечній зоні 96 / 54 px (токени --spacing-tv-safe-x / --spacing-tv-safe-y).
+   Окремий модуль: пропорції 7fr 3fr і прокручувані області не виразити утилітами Tailwind без довільних значень.
+   Розміри тексту — лише токени (--text-tv-text 22 px). */
+
+.root {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--text-tv-text);
+  line-height: 1.3;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Плеєр: 65% висоти колонки (702 з 1080) на всю ширину колонки; нічого поверх. */
+.playerArea {
+  position: relative;
+  flex: 0 0 65%;
+  min-height: 0;
+  background: var(--color-background);
+}
+
+.lower {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--spacing-2) var(--spacing-6) var(--spacing-tv-safe-y) var(--spacing-tv-safe-x);
+}
+
+/* ── таймлайн ─────────────────────────────────────────────────────────── */
+
+.timeline {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-height: 0;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-12);
+  padding-inline: var(--spacing-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--text-tv-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.filter:hover {
+  background: var(--color-surface-raised);
+}
+.filter[aria-pressed='true'] {
+  border-color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  min-height: var(--spacing-8);
+}
+.progressTrack {
+  flex: 1 1 auto;
+  height: var(--spacing-2);
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+}
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+}
+
+.showAll {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  min-height: var(--spacing-16);
+  padding-inline: var(--spacing-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-tv-text);
+  font-weight: 600;
+  text-align: start;
+}
+.showAll:hover {
+  background: var(--color-surface-raised);
+}
+
+.hideAll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-10);
+  padding-inline: var(--spacing-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-tv-text);
+  font-weight: 600;
+}
+
+.keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: var(--spacing-8);
+  padding-inline: var(--spacing-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: var(--text-tv-text);
+}
+
+.hintRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-6);
+  margin-top: auto;
+  color: var(--color-text-muted);
+  font-size: var(--text-tv-text);
+}
+.hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2) var(--spacing-6);
+}
+
+.stripWrap {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: 0;
+}
+.strip {
+  display: flex;
+  gap: var(--spacing-3);
+  min-width: 0;
+  margin: 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  margin-inline: calc(-1 * var(--spacing-3));
+  list-style: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.strip::-webkit-scrollbar {
+  display: none;
+}
+/* Картка смуги: 304 px = 4 × 64 + 4 × 12. */
+.stripCard {
+  flex: 0 0 auto;
+  width: calc(var(--spacing-16) * 4 + var(--spacing-3) * 4);
+  padding-block: var(--spacing-3);
+}
+/* Стрілки гортання стоять поруч зі смугою, не на картках. */
+.stripPrev,
+.stripNext {
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+.stripPrev:disabled,
+.stripNext:disabled {
+  visibility: hidden;
+}
+
+.scheduleMark {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+
+/* ── бічна колонка ───────────────────────────────────────────────────── */
+
+.sidebar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--spacing-tv-safe-y) var(--spacing-tv-safe-x) var(--spacing-tv-safe-y) var(--spacing-8);
+  border-inline-start: 1px solid var(--color-border);
+  background: var(--color-background);
+}
+.sidebarBody {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-height: 0;
+}
+
+/* Прокручувана область: внутрішній відступ вміщує контур фокуса 4 px, мінус-поле повертає вирівнювання. */
+.scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: calc(-1 * var(--spacing-3));
+  padding: var(--spacing-3);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+.panel {
+  min-height: 0;
+}
+
+.tabs {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-height: 0;
+}
+/* Вкладки `tv` в один рядок (у примітиві вони йдуть стовпчиком). */
+.tabs [role='tablist'] {
+  flex-direction: row;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.tabs [role='tab'] {
+  flex: 1 1 auto;
+  justify-content: center;
+  padding-inline: var(--spacing-2);
+}
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+.countdown > div {
+  align-items: flex-start;
+  text-align: start;
+}
+
+.statusChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-10);
+  padding-inline: var(--spacing-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--text-tv-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.controlBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacing-3);
+}
+.controlBar > :is(button, a) {
+  min-width: 0;
+  padding-inline: var(--spacing-2);
+  border-radius: var(--radius-lg);
+}
+
+/* ── стіна «Першого ряду» і штамп ────────────────────────────────────── */
+
+/* Місця стіни (FirstRowWall живе в Tailwind-розмірах 14 px) — на ТВ не менше 22 px. */
+.wall {
+  --first-row-wall-emoji-size: var(--text-tv-title);
+}
+.wall [data-seat],
+.wall [data-seat] *,
+.wall [data-slot],
+.wall [data-row] {
+  font-size: var(--text-tv-text);
+}
+.wall [data-seat] {
+  min-height: var(--spacing-12);
+  max-width: 100%;
+  font-weight: 600;
+}
+.wall [data-seat] > span:not([aria-hidden='true']) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wall [data-slot] {
+  white-space: normal;
+}
+
+.stampRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+}
+/* Листівка 208 px = 3 × 64 + 16: решта ширини колонки лишає QR-коду місце для адреси в два рядки «…/s/» і код. */
+.stampArt {
+  flex: 0 0 auto;
+  width: calc(var(--spacing-16) * 3 + var(--spacing-4));
+}
+
+/* ── сцена відліку на місці плеєра ───────────────────────────────────── */
+
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-surface-raised);
+}
+.sceneShade {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+  padding: var(--spacing-8) var(--spacing-8) var(--spacing-8) var(--spacing-tv-safe-x);
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-background) 92%, transparent), color-mix(in srgb, var(--color-background) 45%, transparent) 65%, transparent);
+}
+.sceneCountdown {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-4);
+}
+.sceneCountdown > div {
+  align-items: flex-start;
+  text-align: start;
+}
+.sceneTraditions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

@@ -9,7 +9,7 @@ import { TimeMachineMount } from '@/components/dev/TimeMachineMount';
 import { PlayerHost } from '@/components/player/PlayerHost';
 import { LiveAnnouncer } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
-import { Footer } from '@/components/shell/Footer';
+import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
 import { CoralProvider } from '@/lib/overlay/coral';
@@ -33,6 +33,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               {/* Подія ефіру й фаза підпису — раз на макет: ланцюжок плеєра на головній, EngineScheduler (події шини). */}
               <BroadcastController>
               <SkipLinks targets={['content', 'chat']} />
+              {/* Згода на cookies: у DOM одразу після посилань-пропусків (кут/смуга; у потоці — на сторінці з плеєром). */}
+              <CookieLayer />
               {/* TODO: current — з маршруту, коли з’являться сторінки країн. */}
               <ShellHeader current="home" />
               <div className={styles.shell}>
@@ -47,7 +49,7 @@ function LiveShell({ children }: { children: ReactNode }) {
                   <div id="chat-slot" className={styles.chatSlot} />
                 </aside>
               </div>
-              <Footer />
+              <CookieFooter />
               </BroadcastController>
             </OverlayManager>
           </LiveAnnouncer>

@@ -15,6 +15,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { Rate, type RateRow } from '@/components/windows/Rate';
+import { shareWindowSpec } from '@/components/windows/Share';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { getData } from '@/lib/data/load';
 import type { Stars } from '@/lib/data/types';
@@ -60,9 +61,11 @@ function RateWindow({ eventIds, closesAt, onDone }: { eventIds: string[]; closes
     if (stars !== undefined) values[id] = stars;
   }
   useEffect(() => () => setRateInteracting(false), []);
+  const { open } = useOverlay();
+  const tShare = useTranslations('share');
   return (
     <div className="flex flex-col gap-2">
-      <Stamp stamps={entries(eventIds)} defaultMode="collapsed" />
+      <Stamp stamps={entries(eventIds)} defaultMode="collapsed" onShare={() => open(shareWindowSpec(entries(eventIds), tShare('title')))} />
       <Rate
         rows={rows}
         ratings={values}
@@ -83,6 +86,7 @@ export function useMomentWindows(currentEventId: string | null): void {
   const announce = useAnnounce();
   const tA11y = useTranslations('a11y');
   const tWin = useTranslations('windows');
+  const tShare = useTranslations('share');
   const { open, close, current } = overlay;
   const dismissed = useRef(new Set<string>());
 
@@ -108,6 +112,7 @@ export function useMomentWindows(currentEventId: string | null): void {
             stamps={list}
             defaultMode={opts.collapsed ? 'collapsed' : 'expanded'}
             stamping={opts.stamping}
+            onShare={() => open(shareWindowSpec(list, tShare('title')))}
             onClose={
               opts.collapsed
                 ? () => {
@@ -120,7 +125,7 @@ export function useMomentWindows(currentEventId: string | null): void {
         ),
       });
     },
-    [open, close, tWin],
+    [open, close, tWin, tShare],
   );
 
   // +15 с: штамп + оголошення.

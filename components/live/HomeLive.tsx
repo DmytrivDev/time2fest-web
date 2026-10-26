@@ -23,11 +23,13 @@ import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { CelebrationsSlider } from '@/components/live/CelebrationsSlider';
 import { CountryChips } from '@/components/live/CountryChips';
-import { FirstRowWall, seedToSeats } from '@/components/live/FirstRowWall';
+import { FirstRowChatRowConnected, FirstRowModule } from '@/components/firstrow/FirstRowModule';
 import { HowToCard } from '@/components/live/HowToCard';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
+import { CookieInflow } from '@/components/offers/CookieLayer';
+import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
 import { ConnectedMiniPlayer } from '@/components/player/MiniPlayer';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
@@ -35,12 +37,11 @@ import { cn } from '@/components/primitives/cn';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
 import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
-import { useReducedMotion } from '@/lib/a11y/reducedMotion';
-import { CHAT_SCRIPT, useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
+import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { HOWTO_BEFORE } from '@/lib/engine/config';
-import { firstRowView } from '@/lib/engine/firstRowView';
+import { firstRowEventFor } from '@/lib/firstrow/pick';
 import { viewerTimeZone } from '@/lib/i18n/time';
 import { festProgress, mainCelebrations, nowNextItems, scheduleNow, zoneCountries } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
@@ -57,41 +58,22 @@ const PLAYER_TITLE_ID = 'player-title';
 
 export { useChatLookup };
 
-/** Стіна «Першого ряду» поточної події (C6/C7): фаза загоряння — з `firstRowView().wall`. */
+/** Модуль «Перший ряд» (C6/C7/C8, US5): подія ефіру з «Першим рядом» або найближча з відкритим продажем. */
 function FirstRowSection({ place, now }: { place: AirPlace; now: Ms }) {
-  const t = useTranslations('firstRow');
-  const reduced = useReducedMotion();
-  const guestId = useGuestStore((s) => s.id);
-  const hasPass = useGuestStore((s) => s.hasPass);
-  const entry = useGuestStore((s) => s.firstRow[place.event.id]);
-  const lookup = useChatLookup();
-  const seed = CHAT_SCRIPT.firstRowSeed.find((s) => s.eventId === place.event.id);
-  const seats = useMemo(() => (seed ? seedToSeats(seed, place.event.midnightMs) : []), [seed, place.event.midnightMs]);
-  if (!seed || !place.event.firstRow?.saleEnabled) return null;
-  const view = firstRowView(now, place.event, seats, { ...(entry ?? {}), id: guestId, hasPass }, { reducedMotion: reduced });
-  const city = place.city?.name.uk ?? '';
-  return (
-    <section
-      aria-labelledby="first-row-title"
-      className={cn(styles.pad, 'flex flex-col gap-2')}
-    >
-      <h2 id="first-row-title" className="text-headline-sm text-highlight">
-        {t('heading', { city })}
-      </h2>
-      <FirstRowWall
-        city={city}
-        seats={seats}
-        freeCount={view.freeCount}
-        phase={view.wall.phase}
-        lightingFrom={view.wall.lightingFrom}
-        restrained={view.state === 'restrained'}
-        countryName={lookup.countryName}
-      />
-    </section>
-  );
+  return <FirstRowModule event={firstRowEventFor(getData(), now, place.event)} className={styles.pad} />;
 }
 
-function EventsBlocks({ now, layout, howTo }: { now: Ms; layout: 'carousel' | 'stack'; howTo: boolean }) {
+function EventsBlocks({
+  now,
+  layout,
+  howTo,
+  onToggleSchedule,
+}: {
+  now: Ms;
+  layout: 'carousel' | 'stack';
+  howTo: boolean;
+  onToggleSchedule?: (eventId: string, next: boolean) => void;
+}) {
   const tNav = useTranslations('nav');
   const { current } = useBroadcast();
   const schedule = useGuestStore((s) => s.schedule);
@@ -118,7 +100,7 @@ function EventsBlocks({ now, layout, howTo }: { now: Ms; layout: 'carousel' | 's
           <CountryChips countries={chips} selectedIso={current?.country?.iso} />
         </section>
       ) : null}
-      <CelebrationsSlider items={celebrations} className={styles.pad} />
+      <CelebrationsSlider items={celebrations} onToggleSchedule={onToggleSchedule} className={styles.pad} />
       {/* C18 мапа поясів (T080); `id` — ціль «Перейти до мапи». */}
       <div id="zone-map" className={styles.pad}>
         <ZoneMap {...mapModel} />
@@ -142,6 +124,8 @@ export function HomeLive() {
   useStampGrant(eventId ? { source: 'air', eventIds: [eventId] } : null);
   useChatSimulator(CHAT_ROOMS);
   useMomentWindows(eventId);
+  // Пропозиції пасу й чайових (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
+  const passWindows = useOfferWindows();
 
   const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
   const t0 = current?.event.midnightMs;
@@ -191,6 +175,10 @@ export function HomeLive() {
           />
         </div>
       ) : null}
+      {/* Cookies смугою на місці штампа, коли вільного кута немає (чат сховано). */}
+      <div className={styles.pad}>
+        <CookieInflow />
+      </div>
       <div data-moment-slot="" className={styles.pad}>
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
       </div>
@@ -198,7 +186,7 @@ export function HomeLive() {
       {chatColumn ? (
         <>
           <div className="pt-6">
-            <EventsBlocks now={now} layout="carousel" howTo={howTo} />
+            <EventsBlocks now={now} layout="carousel" howTo={howTo} onToggleSchedule={passWindows.requestSchedule} />
           </div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
         </>
@@ -211,9 +199,14 @@ export function HomeLive() {
             </TabsList>
           )}
           <TabsContent value="events" className="pt-4">
-            <EventsBlocks now={now} layout="stack" howTo={howTo} />
+            <EventsBlocks now={now} layout="stack" howTo={howTo} onToggleSchedule={passWindows.requestSchedule} />
           </TabsContent>
-          <TabsContent value="chat">{panel(styles.phoneChat)}</TabsContent>
+          <TabsContent value="chat">
+            {current && ready ? (
+              <FirstRowChatRowConnected event={firstRowEventFor(getData(), now, current.event)} onClick={() => setTab('events')} className={styles.pad} />
+            ) : null}
+            {panel(styles.phoneChat)}
+          </TabsContent>
         </Tabs>
       )}
 
