@@ -11,6 +11,7 @@ const NAMES: IconName[] = [
   'broadcast-dashed', 'user', 'menu', 'more', 'close', 'plus', 'minus', 'check', 'chevron-right', 'chevron-left',
   'chevron-down', 'chevron-up', 'arrow-down', 'arrow-left', 'globe', 'pause', 'play', 'search', 'info', 'alert', 'wifi-off',
   'send', 'smile', 'tv', 'share', 'expand', 'star', 'dot',
+  'home', 'map', 'passport', 'heart', 'help', 'motion',
 ];
 const SIZES: IconSize[] = [16, 18, 20, 22];
 

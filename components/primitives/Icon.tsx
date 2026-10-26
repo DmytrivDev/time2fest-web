@@ -39,7 +39,13 @@ export type IconName =
   | 'share'
   | 'expand'
   | 'star'
-  | 'dot';
+  | 'dot'
+  | 'home'
+  | 'map'
+  | 'passport'
+  | 'heart'
+  | 'help'
+  | 'motion';
 
 export type IconSize = 16 | 18 | 20 | 22;
 
@@ -190,6 +196,29 @@ const PATHS: Record<IconName, ReactNode> = {
   expand: <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />,
   star: <path d="M12 3.5l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.8l6-.8z" />,
   dot: <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />,
+  home: <path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />,
+  map: (
+    <>
+      <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" />
+      <path d="M9 4v14M15 6v14" />
+    </>
+  ),
+  passport: (
+    <>
+      <path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+      <circle cx="11.5" cy="10" r="3" />
+      <path d="M8.5 16h6" />
+    </>
+  ),
+  heart: <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />,
+  help: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14" />
+      <path d="M12 17.5v.01" />
+    </>
+  ),
+  motion: <path d="M3 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0" />,
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'> {
