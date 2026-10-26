@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * C9. Chat — читана частина чату (без поля введення: воно в US4). Кімната «Світ» (або «Країна», «Перший ряд»).
+ * C9. Chat — шапка, стрічка й місце під поле введення (`composer`). Кімната «Світ» (або «Країна», «Перший ряд»).
  * Стани: `live` (нові внизу, автопрокрутка), `paused` (стрічку зупинено: прокрутка вгору, «Пауза чату» або фокус у списку;
  * капсула «Нові повідомлення N ↓»), `l` (скелетони), `empty`, `unavailable`.
  * Доступність: обгортка `role="log"` з `aria-live="polite"`, сам `<ol>` — список; один Tab-стоп із рухомим фокусом
@@ -10,13 +10,15 @@
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/primitives/DropdownMenu';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import type { Author, ChatMessage, RoomId } from '@/lib/data/types';
-import { Message, type MessageLookup } from './Message';
+import { Message, type MessageLookup, type MessageProps } from './Message';
 
 export type ChatState = 'live' | 'l' | 'empty' | 'unavailable';
 
@@ -28,7 +30,7 @@ export interface ChatProps {
   state?: ChatState;
   lookup?: MessageLookup;
   /** Дотик до ніка / Enter (O-AUTHOR). */
-  onAuthorOpen?: (author: Author) => void;
+  onAuthorOpen?: (author: Author, message: ChatMessage) => void;
   /** Є — показуємо кнопку «Сховати чат». */
   onHide?: () => void;
   /** Для `unavailable`: «До подій». */
@@ -37,14 +39,44 @@ export interface ChatProps {
   defaultPaused?: boolean;
   /** Перемикач кімнат («Світ» / «Країна», сторінка країни) замість назви кімнати в шапці. */
   roomSwitcher?: ReactNode;
+  /** Кнопки шапки між перемикачем і «Паузою» (напр. «Моя емоція» кімнати «Перший ряд»). */
+  headerExtra?: ReactNode;
+  /** Поле введення під стрічкою (C11). */
+  composer?: ReactNode;
+  /** Смуга між шапкою й стрічкою (напр. «Немає з’єднання», нота кімнати). */
+  banner?: ReactNode;
+  /** «Правила чату» в меню «Ще дії чату»; без нього меню немає. */
+  onRules?: () => void;
+  /** Дії над повідомленням: меню (десктоп) або кнопка → аркуш (телефон); без значення дій немає. */
+  messageActions?: Pick<MessageProps, 'actions' | 'onOpenActions' | 'onReact' | 'onReply' | 'onReport'>;
+  /** Нове повідомлення «ввічливо» оголошується не частіше ніж раз на 30 с. */
+  announceNew?: boolean;
   className?: string;
 }
 
 const NEAR_BOTTOM = 24;
 
-export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onHide, onToEvents, defaultPaused = false, roomSwitcher, className }: ChatProps) {
+export function Chat({
+  room,
+  messages,
+  state = 'live',
+  lookup,
+  onAuthorOpen,
+  onHide,
+  onToEvents,
+  defaultPaused = false,
+  roomSwitcher,
+  headerExtra,
+  composer,
+  banner,
+  onRules,
+  messageActions,
+  announceNew = false,
+  className,
+}: ChatProps) {
   const t = useTranslations('chat');
   const common = useTranslations('common');
+  const announce = useAnnounce();
 
   const logRef = useRef<HTMLDivElement>(null);
   const [manualPause, setManualPause] = useState(defaultPaused);
@@ -66,6 +98,16 @@ export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onH
   const [baseline, setBaseline] = useState(visible.length);
   if (!paused && baseline !== visible.length) setBaseline(visible.length);
   const newCount = paused ? Math.max(0, visible.length - baseline) : 0;
+
+  // Лічильник нових на вкладці не є live-областю: оголошення «Нові повідомлення N» — не частіше ніж раз на 30 с.
+  const lastAnnounce = useRef(0);
+  useEffect(() => {
+    if (!announceNew || newCount === 0) return;
+    const at = Date.now();
+    if (at - lastAnnounce.current < 30_000) return;
+    lastAnnounce.current = at;
+    announce(`${t('newMessages')} ${newCount}`);
+  }, [newCount, announceNew, announce, t]);
 
   const onScroll = useCallback(() => {
     const el = logRef.current;
@@ -114,6 +156,7 @@ export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onH
           </span>
         )}
         <span className="flex-1" />
+        {headerExtra}
         <IconButton
           icon={manualPause ? 'play' : 'pause'}
           variant="toggle"
@@ -122,8 +165,22 @@ export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onH
           onPressedChange={setManualPause}
           disabled={state !== 'live'}
         />
+        {onRules ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <IconButton icon="more" variant="plain" aria-label={t('moreActions')} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={onRules}>
+                <Icon name="info" size={18} />
+                {t('rules')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
         {onHide ? <IconButton icon="close" variant="plain" aria-label={t('hide')} onClick={onHide} /> : null}
       </div>
+      {banner}
 
       {state === 'unavailable' ? (
         <div role="status" className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center" data-row="unavailable">
@@ -172,9 +229,10 @@ export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onH
                     message={m}
                     lookup={lookup}
                     tabStop={m.id === stopId}
-                    onAuthorOpen={onAuthorOpen}
+                    onAuthorOpen={onAuthorOpen ? (a) => onAuthorOpen(a, m) : undefined}
                     onAuthorFocus={() => setActiveId(m.id)}
                     onAuthorKeyDown={onAuthorKeyDown}
+                    {...messageActions}
                   />
                 ))}
               </ol>
@@ -192,6 +250,7 @@ export function Chat({ room, messages, state = 'live', lookup, onAuthorOpen, onH
           ) : null}
         </div>
       )}
+      {state === 'live' || state === 'empty' ? composer : null}
     </div>
   );
 }

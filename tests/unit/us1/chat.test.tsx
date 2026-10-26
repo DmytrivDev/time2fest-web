@@ -187,7 +187,7 @@ describe('Chat', () => {
     const onOpen = vi.fn();
     renderApp(<Chat room={room} messages={messages} lookup={lookup} onAuthorOpen={onOpen} />);
     fireEvent.click(screen.getByRole('button', { name: 'Аміра, Канада' }));
-    expect(onOpen).toHaveBeenCalledWith(AMIRA);
+    expect(onOpen).toHaveBeenCalledWith(AMIRA, expect.objectContaining({ kind: 'regular' }));
   });
 
   it('стан l: скелетони, aria-busy, без списку', () => {

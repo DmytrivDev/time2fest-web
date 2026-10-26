@@ -49,6 +49,8 @@ export interface PlayerActions {
   /** Кнопка «Грати» після `onAutoplayBlocked`. */
   play(): void;
   pause(): void;
+  /** Фактичний стан звуку плеєра (кнопка звуку YouTube теж його змінює); кімната стежить, щоб звук був в одному вікні. */
+  isMuted(): boolean;
 }
 
 interface PlayerInternals {
@@ -301,6 +303,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       },
       pause() {
         handleRef.current?.pause();
+      },
+      isMuted() {
+        return handleRef.current?.isMuted() ?? true;
       },
     }),
     [],

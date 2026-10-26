@@ -3,13 +3,14 @@
 /**
  * Підключення імітатора до спільного годинника: на кожному такті нові повідомлення кімнат
  * потрапляють у `useChatFeed`. Ставиться один раз на сторінку (головна — `['world']`).
+ * Разом із моментами тече фоновий потік `ambient` і повільний режим (US4).
  * Системне повідомлення й привітання «+15 с» з’являються в тому самому такті, що й `moment:stamp`.
  */
 import { useEffect } from 'react';
 import chatScript from '@/data/chat-script.json';
 import type { ChatScriptFile, RoomId } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
-import { useClock } from '@/lib/time/TimeProvider';
+import { useClock, useTimeSource } from '@/lib/time/TimeProvider';
 import { buildMomentContexts, createChatSimulator, type MomentContext } from './simulator';
 import { useChatFeed } from './store';
 
@@ -23,15 +24,24 @@ export function chatMoments(): MomentContext[] {
 
 export function useChatSimulator(rooms: readonly RoomId[]): void {
   const clock = useClock();
+  const source = useTimeSource();
   const key = rooms.join('|');
   useEffect(() => {
     if (!key) return;
-    const sim = createChatSimulator({ script: CHAT_SCRIPT, moments: chatMoments(), rooms: key.split('|') as RoomId[] });
+    const sim = createChatSimulator({
+      script: CHAT_SCRIPT,
+      moments: chatMoments(),
+      rooms: key.split('|') as RoomId[],
+      ambient: true,
+      getSpeed: () => source.speed,
+    });
     const run = () => {
-      const batch = sim.advance(clock.getSnapshot());
+      const now = clock.getSnapshot();
+      if (!(now > 0)) return; // час ще невідомий (до першої синхронізації)
+      const batch = sim.advance(now);
       if (batch.length) useChatFeed.getState().append(batch);
     };
     run();
     return clock.subscribe(run);
-  }, [clock, key]);
+  }, [clock, source, key]);
 }

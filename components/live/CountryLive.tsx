@@ -16,25 +16,25 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Chat } from '@/components/chat/Chat';
+import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { CountryHeader } from '@/components/live/CountryHeader';
 import { Faq, type FaqItem } from '@/components/live/Faq';
-import { useChatLookup } from '@/components/live/HomeLive';
 import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
 import { MORE_STREAMS_ID, MoreStreamsSheet, StreamList, ZoneStreamsBlock } from '@/components/live/StreamList';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
+import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { ConnectedMiniPlayer } from '@/components/player/MiniPlayer';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { cn } from '@/components/primitives/cn';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
 import { OverlayInFlowOutlet, useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
-import { useChatMessages } from '@/lib/chat-sim/store';
 import { getData } from '@/lib/data/load';
-import type { Country, Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
+import type { Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
 import { captionPhase } from '@/lib/engine/captionPhase';
 import { STAMP_DELAY } from '@/lib/engine/config';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
@@ -61,8 +61,6 @@ import styles from './live.module.css';
 
 const PLAYER_TITLE_ID = 'player-title';
 const STREAMS_ID = 'country-streams';
-/** Кімната перегляду: до 4 вікон (повний шлях і ліміти за шириною — US3, `stores/room`). */
-const ROOM_MAX = 4;
 
 function placeOf(data: Dataset, event: ScheduledEvent | undefined | null): AirPlace | null {
   if (!event) return null;
@@ -93,34 +91,6 @@ function utcLabel(offsetMinutes: number): string {
 function zoneChip(data: Dataset, iso: string, zone: LoadedZone): { id: string; label: string } {
   const city = data.citiesById.get(countryMainEvent(data, iso, zone.id)?.cityId ?? '');
   return { id: zone.id, label: city ? `${utcLabel(zone.offsetMinutes)} · ${city.name.uk}` : utcLabel(zone.offsetMinutes) };
-}
-
-function CountryChat({ country, className }: { country: Country; className?: string }) {
-  const t = useTranslations('chat');
-  const [room, setRoom] = useState<'country' | 'world'>('country');
-  const roomId: RoomId = room === 'world' ? 'world' : `country:${country.iso}`;
-  const messages = useChatMessages(roomId);
-  const lookup = useChatLookup();
-  const label = room === 'world' ? t('roomWorld') : t('roomCountryPicker', { country: country.name.uk });
-  return (
-    <Chat
-      room={{ id: roomId, label }}
-      messages={messages}
-      lookup={lookup}
-      className={className}
-      roomSwitcher={
-        <SegmentedControl
-          label={t('roomsLabel')}
-          value={room}
-          onValueChange={(v) => setRoom(v === 'world' ? 'world' : 'country')}
-          options={[
-            { value: 'world', label: t('roomWorld') },
-            { value: 'country', label: t('roomCountry') },
-          ]}
-        />
-      }
-    />
-  );
 }
 
 export function CountryLive({ iso }: { iso: string }) {
@@ -206,18 +176,15 @@ export function CountryLive({ iso }: { iso: string }) {
     },
     [actions, data, iso],
   );
-  const roomWindows = useGuestStore((s) => s.room.windows);
-  const setRoomWindows = useGuestStore((s) => s.setRoomWindows);
-  // «+»: поки лише запис у `guest.room` (повний шлях із переходом у кімнату — US3, `stores/room`).
+  const addRoom = useAddToRoom();
+  // «+»: трансляція йде в кімнату (`stores/room`), головне вікно — те, що грає зараз; далі відкривається кімната (US3).
   const addToRoom = useCallback(
-    (row: StreamRowData) => {
-      const list = [...roomWindows];
-      if (!list.length && currentSource && shownEvent) list.push({ slot: 0, sourceId: currentSource.id, eventId: shownEvent.id });
-      if (list.some((w) => w.sourceId === row.id) || list.length >= ROOM_MAX) return;
-      list.push({ slot: list.length, sourceId: row.id, eventId: row.eventId });
-      setRoomWindows(list);
-    },
-    [roomWindows, setRoomWindows, currentSource, shownEvent],
+    (row: StreamRowData) =>
+      addRoom(
+        { sourceId: row.id, eventId: row.eventId },
+        currentSource && shownEvent ? { sourceId: currentSource.id, eventId: shownEvent.id } : null,
+      ),
+    [addRoom, currentSource, shownEvent],
   );
 
   const watchAgain = useCallback(() => {
@@ -327,6 +294,22 @@ export function CountryLive({ iso }: { iso: string }) {
   );
 
   const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
+  const vis = useChatVisibility();
+  const [tab, setTab] = useState('events');
+  const chatRoom: RoomId = `country:${iso}`;
+  const panel = (className?: string) => (
+    <ChatPanel
+      country={{ iso, name: country.name.uk }}
+      eventId={mainEvent?.id ?? null}
+      cityName={current?.city?.name.uk}
+      onHide={() => {
+        vis.hide();
+        setTab('events');
+      }}
+      onToEvents={() => setTab('events')}
+      className={className}
+    />
+  );
   const title = currentSource?.title.uk ?? (current ? eventTitle(current.city) : '');
 
   return (
@@ -348,6 +331,18 @@ export function CountryLive({ iso }: { iso: string }) {
       {chatColumn ? null : header}
       {/* Слот «Першого ряду» сторінки країни: блок додається в US5. */}
       <div data-first-row-slot="" />
+      {vis.hidden ? (
+        <div className={cn(styles.pad, 'pt-3')}>
+          <ChatHiddenButton
+            placement={chatColumn ? 'desktop' : 'phone'}
+            room={chatRoom}
+            onShow={() => {
+              vis.show();
+              setTab('chat');
+            }}
+          />
+        </div>
+      ) : null}
       <div data-moment-slot="" className={styles.pad}>
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
       </div>
@@ -355,20 +350,20 @@ export function CountryLive({ iso }: { iso: string }) {
       {chatColumn ? (
         <>
           <div className="pt-6">{events}</div>
-          {chatSlot ? createPortal(<CountryChat country={country} className="h-full" />, chatSlot) : null}
+          {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
         </>
       ) : (
-        <Tabs defaultValue="events" className="pt-2">
-          <TabsList>
-            <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
-            <TabsTrigger value="chat">{tNav('chat')}</TabsTrigger>
-          </TabsList>
+        <Tabs value={vis.hidden ? 'events' : tab} onValueChange={setTab} className="pt-2">
+          {vis.hidden ? null : (
+            <TabsList>
+              <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
+              <TabsTrigger value="chat">{tNav('chat')}</TabsTrigger>
+            </TabsList>
+          )}
           <TabsContent value="events" className="pt-4">
             {events}
           </TabsContent>
-          <TabsContent value="chat">
-            <CountryChat country={country} className={styles.phoneChat} />
-          </TabsContent>
+          <TabsContent value="chat">{panel(styles.phoneChat)}</TabsContent>
         </Tabs>
       )}
 

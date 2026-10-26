@@ -45,6 +45,10 @@ export interface SimulatorOptions {
   backfillMs?: number;
   /** Скільки повідомлень віддавати щонайбільше за раз (решта — найстаріші — відкидаються). */
   maxBatch?: number;
+  /** Фоновий потік `ambient` і системне `slow-mode` (US4). За замовчуванням вимкнено — лише моменти. */
+  ambient?: boolean;
+  /** Поточна швидкість часу («машина часу»); потік не перевищує 40 повідомлень/с реального часу на кімнату. */
+  getSpeed?: () => number;
 }
 
 export interface ChatSimulator {
@@ -54,6 +58,10 @@ export interface ChatSimulator {
 
 export const DEFAULT_BACKFILL_MS = 10 * 60_000;
 export const DEFAULT_MAX_BATCH = 200;
+/** Біля півночі (|t| ≤ 5 хв) частота `nearMidnight`. */
+export const NEAR_MIDNIGHT_MS = 5 * 60_000;
+/** Стеля фонового потоку, повідомлень/с реального часу на кімнату (`contracts/chat.md`). */
+export const MAX_AMBIENT_PER_SEC = 40;
 
 // ── ULID-подібні ідентифікатори ────────────────────────────────────────────
 
@@ -152,7 +160,8 @@ export function momentMessages(script: ChatScriptFile, moment: MomentContext, ro
       const msg = offset.message;
       const isGreeting = msg.kind === 'greeting';
       const seat = isGreeting ? seatsTaken[greetingIndex++] : undefined;
-      if (!roomsOf(offset.room, moment).includes(room)) return;
+      const mirrored = isGreeting && room === `firstrow:${moment.eventId}`; // привітання йдуть і в кімнату «Перший ряд»
+      if (!roomsOf(offset.room, moment).includes(room) && !mirrored) return;
       const base = { room, moderation: 'ok' as const };
 
       switch (msg.kind) {
@@ -220,6 +229,125 @@ function momentSpan(script: ChatScriptFile): { from: number; to: number } {
   return { from, to };
 }
 
+// ── Фоновий потік і повільний режим (US4) ──────────────────────────────────
+
+function hash32(a: number, b: string): number {
+  let h = (2166136261 ^ a) >>> 0;
+  for (let i = 0; i < b.length; i++) {
+    h ^= b.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  h ^= h >>> 15;
+  h = Math.imul(h, 2246822519) >>> 0;
+  h ^= h >>> 13;
+  return h >>> 0;
+}
+
+function ruleFor(script: ChatScriptFile, room: RoomId) {
+  if (room === 'world') return script.ambient.find((r) => r.room === 'world');
+  if (room.startsWith('country:')) return script.ambient.find((r) => r.room === 'country:*');
+  return undefined;
+}
+
+function nearMidnight(moments: readonly MomentContext[], t: Ms): boolean {
+  for (const m of moments) if (Math.abs(t - m.t0) <= NEAR_MIDNIGHT_MS) return true;
+  return false;
+}
+
+/**
+ * Фоновий потік кімнати за `ambient`-правилами: час ділиться на секундні відра, у кожному кількість повідомлень і вибір
+ * з `pool` визначає хеш (кімната, секунда) — перемотка повертає ті самі повідомлення з тими самими `id`.
+ * Кімнати `firstrow:*` беруть репліки авторів із позначкою «Перший ряд» зі «світового» пулу.
+ */
+export function ambientBetween(
+  script: ChatScriptFile,
+  moments: readonly MomentContext[],
+  rooms: readonly RoomId[],
+  from: Ms,
+  to: Ms,
+  speed = 1,
+): ChatMessage[] {
+  if (to <= from) return [];
+  const out: ChatMessage[] = [];
+  const cap = MAX_AMBIENT_PER_SEC / Math.max(1, speed);
+  for (const room of rooms) {
+    const rule = ruleFor(script, room) ?? (room.startsWith('firstrow:') ? script.ambient.find((r) => r.room === 'country:*') : undefined);
+    if (!rule) continue;
+    let pool = rule.pool;
+    if (room.startsWith('firstrow:')) {
+      const worldPool = script.ambient.find((r) => r.room === 'world')?.pool ?? [];
+      const firstRowIds = new Set(script.authors.filter((a) => a.badges.includes('first-row')).map((a) => a.id));
+      pool = [...worldPool, ...rule.pool].filter((p) => firstRowIds.has(p.authorId));
+    }
+    if (!pool.length) continue;
+    for (let sec = Math.floor(from / 1_000); sec <= Math.floor(to / 1_000); sec++) {
+      const rate = nearMidnight(moments, sec * 1_000) ? rule.ratePerMin.nearMidnight : rule.ratePerMin.idle;
+      const p = Math.min(rate / 60, cap);
+      const h = hash32(sec, room);
+      let n = Math.floor(p);
+      if ((h % 10_000) / 10_000 < p - n) n += 1;
+      for (let j = 0; j < n; j++) {
+        const hj = hash32(sec * 31 + j + 1, room);
+        const createdAt = sec * 1_000 + (hj % 1_000);
+        if (createdAt <= from || createdAt > to) continue;
+        const idx = (hj >>> 10) % pool.length;
+        const item = pool[idx]!;
+        const author = authorOf(script, item.authorId);
+        if (!author) continue;
+        const reply = item.replyToPoolIndex !== undefined ? pool[item.replyToPoolIndex] : undefined;
+        const replyAuthor = reply ? authorOf(script, reply.authorId) : undefined;
+        out.push({
+          id: messageId(createdAt, 1_024 + j, idx, room),
+          room,
+          kind: 'regular',
+          createdAt,
+          author,
+          text: item.text,
+          moderation: 'ok',
+          ...(reply && replyAuthor
+            ? { replyTo: { id: `ambient:${room}:${item.replyToPoolIndex}`, nick: replyAuthor.nick, excerpt: reply.text.slice(0, 60) } }
+            : {}),
+          ...(item.reactionsHint
+            ? {
+                reactions: Object.fromEntries(
+                  Object.entries(item.reactionsHint).map(([k, count]) => [k, { count: count ?? 0, mine: false }]),
+                ),
+              }
+            : {}),
+        });
+      }
+    }
+  }
+  return out;
+}
+
+/** Повільний режим кімнати в момент `now`, с (0 — вимкнено): `slowMode` сценарію з вікном `from…to`. */
+export function slowSecondsAt(script: ChatScriptFile, room: RoomId, now: Ms): number {
+  const s = script.slowMode;
+  if (!s || s.room !== room) return 0;
+  const from = s.from ? Date.parse(s.from) : -Infinity;
+  const to = s.to ? Date.parse(s.to) : Infinity;
+  return now >= from && now < to ? s.seconds : 0;
+}
+
+/** Системне `slow-mode` на початку вікна повільного режиму. */
+export function slowModeMessages(script: ChatScriptFile, rooms: readonly RoomId[], from: Ms, to: Ms): ChatMessage[] {
+  const s = script.slowMode;
+  if (!s?.from || !rooms.includes(s.room)) return [];
+  const at = Date.parse(s.from);
+  if (!(at > from && at <= to)) return [];
+  return [
+    {
+      id: messageId(at, 2_000, 0, s.room),
+      room: s.room,
+      kind: 'system',
+      createdAt: at,
+      system: { kind: 'slow-mode', seconds: s.seconds },
+      moderation: 'ok',
+    },
+  ];
+}
+
 /** Повідомлення кімнат `rooms` із `createdAt ∈ (from, to]`. */
 export function messagesBetween(
   script: ChatScriptFile,
@@ -254,6 +382,15 @@ export function createChatSimulator(opts: SimulatorOptions): ChatSimulator {
       }
       prev = now;
       const batch = messagesBetween(opts.script, opts.moments, opts.rooms, from, now);
+      if (opts.ambient) {
+        // Після стрибка часу фон не відтворюємо за години назад: лише останній проміжок `backfill`.
+        const ambientFrom = Math.max(from, now - backfill);
+        batch.push(
+          ...ambientBetween(opts.script, opts.moments, opts.rooms, ambientFrom, now, opts.getSpeed?.() ?? 1),
+          ...slowModeMessages(opts.script, opts.rooms, from, now),
+        );
+        batch.sort(compareMessages);
+      }
       return batch.length > maxBatch ? batch.slice(-maxBatch) : batch;
     },
   };

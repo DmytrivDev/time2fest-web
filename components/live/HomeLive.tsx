@@ -11,12 +11,16 @@
  *
  * Дані ефіру лише читаються з `useBroadcast()` (один `BroadcastController` на макет). Сторінка реєструє присутність
  * для штампа (`useStampGrant`), запускає імітатор чату й відкриває вікна моменту (`useMomentWindows`).
+ * Чат — `ChatPanel` («Світ», учасникам ще «Перший ряд»). Сховано (FR-053): десктоп — колонки немає, біля плеєра
+ * «Показати чат N»; телефон — вкладок немає, «Відкрити чат N».
  */
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Chat } from '@/components/chat/Chat';
-import type { MessageLookup } from '@/components/chat/Message';
+import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { useChatLookup } from '@/components/chat/useChatLookup';
+import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { CelebrationsSlider } from '@/components/live/CelebrationsSlider';
 import { CountryChips } from '@/components/live/CountryChips';
 import { FirstRowWall, seedToSeats } from '@/components/live/FirstRowWall';
@@ -33,7 +37,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitive
 import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { CHAT_SCRIPT, useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
-import { useChatMessages } from '@/lib/chat-sim/store';
 import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { HOWTO_BEFORE } from '@/lib/engine/config';
@@ -52,24 +55,7 @@ const CHAT_ROOMS = ['world'] as const;
 const HOWTO_AFTER = 10 * 60_000;
 const PLAYER_TITLE_ID = 'player-title';
 
-export function useChatLookup(): MessageLookup {
-  return useMemo(() => {
-    const data = getData();
-    const byFlag = new Map(data.countries.map((c) => [c.flagCode, c]));
-    return {
-      countryName: (flag) => byFlag.get(flag)?.name.uk ?? data.countriesByIso.get(flag)?.name.uk,
-      country: (iso) => data.countriesByIso.get(iso),
-      cityName: (id) => data.citiesById.get(id)?.name.uk,
-    };
-  }, []);
-}
-
-function WorldChat({ className }: { className?: string }) {
-  const t = useTranslations('chat');
-  const messages = useChatMessages('world');
-  const lookup = useChatLookup();
-  return <Chat room={{ id: 'world', label: t('roomWorld') }} messages={messages} lookup={lookup} className={className} />;
-}
+export { useChatLookup };
 
 /** Стіна «Першого ряду» поточної події (C6/C7): фаза загоряння — з `firstRowView().wall`. */
 function FirstRowSection({ place, now }: { place: AirPlace; now: Ms }) {
@@ -163,6 +149,20 @@ export function HomeLive() {
   const city = current?.city?.name.uk;
 
   const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
+  const vis = useChatVisibility();
+  const [tab, setTab] = useState('events');
+  const panel = (className?: string) => (
+    <ChatPanel
+      eventId={eventId}
+      cityName={city}
+      onHide={() => {
+        vis.hide();
+        setTab('events');
+      }}
+      onToEvents={() => setTab('events')}
+      className={className}
+    />
+  );
 
   return (
     <>
@@ -179,6 +179,18 @@ export function HomeLive() {
         titleId={PLAYER_TITLE_ID}
       />
       {current && ready ? <FirstRowSection place={current} now={now} /> : null}
+      {vis.hidden ? (
+        <div className={cn(styles.pad, 'pt-3')}>
+          <ChatHiddenButton
+            placement={chatColumn ? 'desktop' : 'phone'}
+            room="world"
+            onShow={() => {
+              vis.show();
+              setTab('chat');
+            }}
+          />
+        </div>
+      ) : null}
       <div data-moment-slot="" className={styles.pad}>
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
       </div>
@@ -188,20 +200,20 @@ export function HomeLive() {
           <div className="pt-6">
             <EventsBlocks now={now} layout="carousel" howTo={howTo} />
           </div>
-          {chatSlot ? createPortal(<WorldChat className="h-full" />, chatSlot) : null}
+          {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
         </>
       ) : (
-        <Tabs defaultValue="events" className="pt-2">
-          <TabsList>
-            <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
-            <TabsTrigger value="chat">{tNav('chat')}</TabsTrigger>
-          </TabsList>
+        <Tabs value={vis.hidden ? 'events' : tab} onValueChange={setTab} className="pt-2">
+          {vis.hidden ? null : (
+            <TabsList>
+              <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
+              <TabsTrigger value="chat">{tNav('chat')}</TabsTrigger>
+            </TabsList>
+          )}
           <TabsContent value="events" className="pt-4">
             <EventsBlocks now={now} layout="stack" howTo={howTo} />
           </TabsContent>
-          <TabsContent value="chat">
-            <WorldChat className={styles.phoneChat} />
-          </TabsContent>
+          <TabsContent value="chat">{panel(styles.phoneChat)}</TabsContent>
         </Tabs>
       )}
 

@@ -8,7 +8,10 @@
  *   «<ім’я> тепер у першому ряду · <місто>», лічильник «+1 240 людей привітали», повільний режим, голосування;
  * - `greeting`: картка з жовтою межею ліворуч, «Перший ряд», привітання від Time2Fest.
  * Позначки не клікабельні. Емодзі в доступних назвах — назвами з набору O-EMOJI. Назви країн — лише в називному.
- * Реакції (C12) і дії над повідомленням — поза цим завданням.
+ * Реакції під текстом і дії над повідомленням (C12): `actions="menu"` — DropdownMenu (десктоп), `actions="sheet"` —
+ * кнопка відкриває аркуш через `onOpenActions` (телефон); без `actions` кнопки дій немає. Кнопки дій і реакції
+ * потрапляють у Tab лише в повідомленні з єдиним Tab-стопом (`tabStop`), решта — `tabindex=-1`.
+ * `mention`: «@нік» у тексті виділено.
  * Компонент повертає `<li>`; обгортку `<ol>` дає Chat (або історія).
  */
 import { useTranslations } from 'next-intl';
@@ -18,9 +21,11 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { emojiSymbol } from '@/components/live/SeatPill';
+import { IconButton } from '@/components/primitives/IconButton';
 import type { Author, ChatMessage, Country, Gender } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock } from '@/lib/i18n/time';
+import { MessageActionsMenu, ReactionsRow, type MessageActionHandlers } from './MessageActions';
 
 export interface MessageLookup {
   /** Назва країни за кодом прапора («Австралія»). */
@@ -31,8 +36,11 @@ export interface MessageLookup {
   cityName?: (cityId: string) => string | undefined;
 }
 
-export interface MessageProps {
+export interface MessageProps extends MessageActionHandlers {
   message: ChatMessage;
+  /** Дії над повідомленням: меню (десктоп), кнопка → аркуш (телефон); без значення дій немає. */
+  actions?: 'menu' | 'sheet';
+  onOpenActions?: (message: ChatMessage) => void;
   lookup?: MessageLookup;
   /** Нік — єдиний Tab-стоп чату (рухомий tabindex): `true` лише для одного повідомлення. */
   tabStop?: boolean;
@@ -71,7 +79,36 @@ function PassMark({ label }: { label: string }) {
 
 const ROW = 'flex h-4.5 items-center gap-1.5';
 
-export function Message({ message, lookup, tabStop = false, onAuthorOpen, onAuthorFocus, onAuthorKeyDown, className }: MessageProps) {
+/** «@Аміра» у тексті — виділено (mention). */
+function withMentions(text: string | undefined): ReactNode {
+  if (!text) return text;
+  const parts = text.split(/(@[\p{L}\d_-]+)/u);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    part.startsWith('@') ? (
+      <span key={i} data-mention="" className="font-semibold text-highlight">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
+export function Message({
+  message,
+  lookup,
+  tabStop = false,
+  actions,
+  onOpenActions,
+  onReact,
+  onReply,
+  onReport,
+  onAuthorOpen,
+  onAuthorFocus,
+  onAuthorKeyDown,
+  className,
+}: MessageProps) {
   const t = useTranslations('chat');
   const met = useTranslations('met');
   const names = useTranslations('windows.emoji.names');
@@ -221,13 +258,27 @@ export function Message({ message, lookup, tabStop = false, onAuthorOpen, onAuth
         <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto text-label-badge-chat text-text-muted">
           {time}
         </time>
+        {actions === 'menu' ? (
+          <MessageActionsMenu message={message} tabStop={tabStop} onReact={onReact} onReply={onReply} onReport={onReport} className="-my-3.5 -me-2" />
+        ) : actions === 'sheet' ? (
+          <IconButton
+            icon="more"
+            compact
+            iconSize={16}
+            tabIndex={tabStop ? 0 : -1}
+            aria-label={t('actionsLabel', { nick: a?.nick ?? '' })}
+            onClick={() => onOpenActions?.(message)}
+            className="-my-3.5 -me-2"
+          />
+        ) : null}
       </div>
       {message.replyTo ? (
         <p className="border-s-2 border-border-strong ps-2 text-caption text-text-muted" data-row="reply">
           <span className="font-semibold">{t('replyTo', { nick: message.replyTo.nick })}</span> {message.replyTo.excerpt}
         </p>
       ) : null}
-      <p className="text-chat text-text">{message.text}</p>
+      <p className="text-chat text-text">{withMentions(message.text)}</p>
+      <ReactionsRow message={message} tabStop={tabStop} onReact={actions ? onReact : undefined} className="pt-1" />
     </li>
   );
 }

@@ -79,3 +79,14 @@
   position: relative;
   height: 100%;
 }
+
+/* Чат сховано (FR-053): колонки немає, відео й усе під ним — на всю ширину. Вікно з полем введення (O-NICK тощо)
+   тимчасово повертає колонку: OverlayManager ставить `data-chat-forced`. */
+.chat[data-chat-hidden='true']:not([data-chat-forced='true']) {
+  display: none;
+}
+@media (min-width: 768px) {
+  .shell:has(> .chat[data-chat-hidden='true']:not([data-chat-forced='true'])) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

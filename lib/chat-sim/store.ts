@@ -3,7 +3,8 @@
  * дописують сюди; `Chat` читає `useChatMessages(room)`. Повідомлення не мутуються, крім `reactions` і `moderation`.
  */
 import { create } from 'zustand';
-import type { ChatMessage, RoomId } from '@/lib/data/types';
+import type { ChatMessage, ReactionId, RoomId } from '@/lib/data/types';
+import { toggleReaction } from './send';
 import { compareMessages } from './simulator';
 
 /** Скільки повідомлень тримати в кімнаті. */
@@ -14,6 +15,8 @@ export interface ChatFeedState {
   append(messages: readonly ChatMessage[]): void;
   /** Замінити повідомлення (реакції, модерація) за `id`. */
   update(room: RoomId, id: string, patch: Pick<Partial<ChatMessage>, 'reactions' | 'moderation'>): void;
+  /** Поставити/зняти реакцію гостя (лише на цьому пристрої). */
+  react(room: RoomId, id: string, reaction: ReactionId, on: boolean): void;
   reset(): void;
 }
 
@@ -39,6 +42,14 @@ export const useChatFeed = create<ChatFeedState>()((set) => ({
       const list = s.rooms[room];
       if (!list) return s;
       return { rooms: { ...s.rooms, [room]: list.map((m) => (m.id === id ? { ...m, ...patch } : m)) } };
+    }),
+  react: (room, id, reaction, on) =>
+    set((s) => {
+      const list = s.rooms[room];
+      if (!list) return s;
+      return {
+        rooms: { ...s.rooms, [room]: list.map((m) => (m.id === id ? { ...m, reactions: toggleReaction(m.reactions, reaction, on) } : m)) },
+      };
     }),
   reset: () => set({ rooms: {} }),
 }));

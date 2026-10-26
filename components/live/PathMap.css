@@ -1,0 +1,22 @@
+/* Мінікарта шляху автора (C13). Лише токени. Пояси приглушені; зустрінуті точки жовті з пунктирною лінією,
+   заплановані — порожні із сірим пунктиром. Колір не єдиний носій змісту: заповнення/порожнеча + підказка + текст. */
+.t2f-pathmap-zone {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-background);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.t2f-pathmap-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.t2f-pathmap-line[data-kind='met'] {
+  stroke: var(--color-highlight);
+}
+.t2f-pathmap-line[data-kind='planned'] {
+  stroke: var(--color-text-muted);
+}

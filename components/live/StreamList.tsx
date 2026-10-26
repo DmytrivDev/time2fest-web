@@ -3,8 +3,8 @@
 /**
  * C2 StreamList: «Міста й трансляції · <Країна>» і «Трансляції в цьому поясі».
  * - `StreamRow`: дотик до рядка перемикає трансляцію; праворуч `ring` «+» (або «−» для поточної);
- * - `PlusMenu` (Popover, десктоп і планшет) / `PlusConfirm` (телефон, під рядком) — кімнати перегляду ще немає (US3),
- *   тож «Додати…» / «Відкрити кімнату» викликають `onAddToRoom(row)`;
+ * - `PlusMenu` (Popover, десктоп і планшет) / `PlusConfirm` (телефон, під рядком): «Додати…» / «Відкрити кімнату»
+ *   викликають `onAddToRoom(row)` (сторінка додає в `stores/room` і відкриває кімнату); у кімнаті (`context="room"`) «+» додає одразу;
  * - `ZoneStreamsBlock`: згортання зберігається в `guest.zoneStreamsCollapsed`;
  * - `MoreStreamsSheet`: ВМІСТ аркуша телефона (відкриває сторінка через `useOverlay`).
  * Міста «Лише відлік» сюди не потрапляють (їх відсікає `streamRows`). Назви міст і країн — лише в називному.
@@ -304,11 +304,25 @@ export interface ZoneStreamsBlockProps {
   onSelect(row: StreamRowData): void;
   onAddToRoom?(row: StreamRowData): void;
   timeZone?: string;
+  /** У кімнаті «+» додає одразу (без меню). */
+  context?: 'country' | 'room';
+  /** Підказка під заголовком (кімната: «"+" додає трансляцію в кімнату · вільні 3 з 4»). */
+  hint?: ReactNode;
   className?: string;
 }
 
 /** «Трансляції в цьому поясі»: інші країни з тією самою північчю. Згортання запам’ятовується. */
-export function ZoneStreamsBlock({ streams, currentStreamId, midnightMs, onSelect, onAddToRoom, timeZone, className }: ZoneStreamsBlockProps) {
+export function ZoneStreamsBlock({
+  streams,
+  currentStreamId,
+  midnightMs,
+  onSelect,
+  onAddToRoom,
+  timeZone,
+  context = 'country',
+  hint,
+  className,
+}: ZoneStreamsBlockProps) {
   const t = useTranslations('country.streams');
   const tNav = useTranslations('nav');
   const tc = useTranslations('common');
@@ -328,6 +342,7 @@ export function ZoneStreamsBlock({ streams, currentStreamId, midnightMs, onSelec
             {tNav('streamsInZone')}
           </h3>
           <span className="text-caption text-text-muted">{t('zoneSub', { time })}</span>
+          {hint ? <span className="w-full text-caption text-text-secondary">{hint}</span> : null}
         </div>
         <Button
           variant="ghost"
@@ -351,6 +366,7 @@ export function ZoneStreamsBlock({ streams, currentStreamId, midnightMs, onSelec
             onAddToRoom={onAddToRoom}
             timeZone={timeZone}
             currentTitle={currentTitle}
+            context={context}
           />
         ))}
       </ul>
