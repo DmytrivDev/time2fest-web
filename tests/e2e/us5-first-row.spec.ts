@@ -7,15 +7,18 @@
  * Часи й id подій беруться з `data/schedule.json`; сторінка країни — зі `data/countries.json`.
  */
 import type { Locator, Page } from '@playwright/test';
-import countriesFile from '../../data/countries.json';
-import scheduleFile from '../../data/schedule.json';
+import countriesFile from '../../data/countries.json' with { type: 'json' };
+import scheduleFile from '../../data/schedule.json' with { type: 'json' };
 import { advance, gotoAt, setPayResult, waitForTimeApi } from './fixtures/time';
 import { expect, test } from './fixtures/youtube-stub';
 
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
 test.beforeEach(async ({ page }, testInfo) => {
   void page;
-  test.skip(testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'US5: телефон і десктоп');
+  test.skip(
+    testInfo.project.name === 'tv' || testInfo.project.name === 'prod',
+    'US5: телефон і десктоп',
+  );
 });
 test.describe.configure({ timeout: 90_000 });
 
@@ -27,15 +30,20 @@ interface Ev {
   midnightUtc: string;
 }
 function eventById(id: string): Ev {
-  for (const z of (scheduleFile as { zones: { countries: { cities: { events: Ev[] }[] }[] }[] }).zones) {
-    for (const c of z.countries) for (const city of c.cities) for (const e of city.events) if (e.id === id) return e;
+  for (const z of (scheduleFile as { zones: { countries: { cities: { events: Ev[] }[] }[] }[] })
+    .zones) {
+    for (const c of z.countries)
+      for (const city of c.cities) for (const e of city.events) if (e.id === id) return e;
   }
   throw new Error(`немає події ${id} у schedule.json`);
 }
 const LONDON = eventById('evt_london_2027');
 const LONDON_MS = Date.parse(LONDON.midnightUtc);
 const iso = (ms: number) => new Date(ms).toISOString();
-const countryList = ((countriesFile as { countries?: unknown }).countries ?? countriesFile) as { iso: string; slug: string }[];
+const countryList = ((countriesFile as { countries?: unknown }).countries ?? countriesFile) as {
+  iso: string;
+  slug: string;
+}[];
 const GB_SLUG = countryList.find((c) => c.iso === 'GB')?.slug ?? 'united-kingdom';
 const LONDON_PAGE = `/country/${GB_SLUG}/`;
 
@@ -57,12 +65,27 @@ async function start(page: Page, at = OPEN_AT, path = LONDON_PAGE) {
   await expect(strip(page)).toBeVisible();
 }
 
-async function presetGuest(page: Page, firstRow: Record<string, unknown>, extra: Record<string, unknown> = {}) {
-  await page.evaluate(
+async function presetGuest(
+  page: Page,
+  firstRow: Record<string, unknown>,
+  extra: Record<string, unknown> = {},
+) {
+  // Запис до завантаження застосунку: інакше persist-стор гостя встигає перезаписати localStorage до reload.
+  await page.addInitScript(
     ([k, fr, ex]) => {
+      if (sessionStorage.getItem('e2e:preset-applied')) return;
+      sessionStorage.setItem('e2e:preset-applied', '1');
       const raw = localStorage.getItem(k as string);
       const parsed = raw ? JSON.parse(raw) : { state: {}, version: 1 };
-      parsed.state = { ...parsed.state, ...(ex as object), firstRow: { ...(parsed.state?.firstRow ?? {}), ...(fr as object) } };
+      // Без `v` та `id` стор гостя відкидає збережене як несумісне (sanitizeGuest): буває, коли застосунок ще нічого не записав.
+      parsed.state = {
+        v: 1,
+        id: 'g-e2e-us5',
+        nightId: '2026-27',
+        ...parsed.state,
+        ...(ex as object),
+        firstRow: { ...(parsed.state?.firstRow ?? {}), ...(fr as object) },
+      };
       localStorage.setItem(k as string, JSON.stringify(parsed));
     },
     [LS_KEY, firstRow, extra] as const,
@@ -89,9 +112,17 @@ async function pay(page: Page) {
 }
 
 const variantOf = (loc: Locator) => loc.getAttribute('data-variant');
+/** Кімната чату «Світ» (вкладка або перемикач). */
+const worldRoom = (page: Page) =>
+  page
+    .getByRole('tab', { name: 'Світ' })
+    .or(page.getByRole('radio', { name: 'Світ' }))
+    .first();
 
 test.describe('US5 · модуль «Перший ряд»', () => {
-  test('сторінка країни Лондона: відкрито, лічильник «лишилось 1 з 10», $7,99, кнопки', async ({ page }) => {
+  test('сторінка країни Лондона: відкрито, лічильник «лишилось 1 з 10», $7,99, кнопки', async ({
+    page,
+  }) => {
     await start(page);
     const s = strip(page);
     await expect(s).toHaveAttribute('data-state', 'last3');
@@ -125,7 +156,9 @@ test.describe('US5 · модуль «Перший ряд»', () => {
 });
 
 test.describe('US5 · форма й утримання', () => {
-  test('«Зайняти місце» відкриває вікно: поля, емоція, «Місце тримаємо до», коралова «Оплатити»', async ({ page }) => {
+  test('«Зайняти місце» відкриває вікно: поля, емоція, «Місце тримаємо до», коралова «Оплатити»', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     const w = win(page);
@@ -139,7 +172,9 @@ test.describe('US5 · форма й утримання', () => {
     if (isPhone(page)) await expect(page.getByRole('dialog').first()).toBeVisible();
   });
 
-  test('правило однієї коралової: форма відкрита → «Оплатити» коралова, звук нейтральний', async ({ page }) => {
+  test('правило однієї коралової: форма відкрита → «Оплатити» коралова, звук нейтральний', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     expect(await variantOf(payBtn(page))).toBe('coral');
@@ -168,10 +203,14 @@ test.describe('US5 · форма й утримання', () => {
     await expect(win(page).getByText('Напиши ім’я — так тебе побачать на стіні')).toBeVisible();
     await fillForm(page, { greeting: 'зайди на https://x.io' });
     await pay(page);
-    await expect(win(page).getByText('Привітання не пройшло модерацію — зміни текст')).toBeVisible();
+    await expect(
+      win(page).getByText('Привітання не пройшло модерацію — зміни текст'),
+    ).toBeVisible();
   });
 
-  test('за ≤2 хв до кінця — табло «Лишилось m:ss з 10 хвилин» і «Продовжити» (один раз)', async ({ page }) => {
+  test('за ≤2 хв до кінця — табло «Лишилось m:ss з 10 хвилин» і «Продовжити» (один раз)', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     await expect(win(page).locator('[data-row="hold-board"]')).toHaveCount(0);
@@ -180,12 +219,19 @@ test.describe('US5 · форма й утримання', () => {
     const extend = win(page).locator('[data-action="extend"]');
     await expect(extend).toBeVisible();
     await extend.click();
-    await expect(win(page).locator('[data-row="extended"]')).toContainText('Продовжили — тримаємо до');
+    await expect(win(page).locator('[data-row="extended"]')).toContainText(
+      'Продовжили — тримаємо до',
+    );
     await expect(win(page).locator('[data-action="extend"]')).toHaveCount(0);
   });
 
-  test('утримання минуло: «Час утримання вийшов — місце знову вільне.» і нове утримання', async ({ page }) => {
-    await start(page);
+  test('утримання минуло: «Час утримання вийшов — місце знову вільне.» і нове утримання', async ({
+    page,
+  }) => {
+    // Токіо (6 вільних): у Лондоні останнє місце за 10 хв забирає імітований учасник (гонка) — там буде «Розпродано».
+    const tokyo = eventById('evt_tokyo_2027');
+    const jp = countryList.find((c) => c.iso === 'JP')?.slug ?? 'yaponiia';
+    await start(page, iso(Date.parse(tokyo.midnightUtc) - 40 * MIN), `/country/${jp}/`);
     await openForm(page);
     await advance(page, 10 * MIN + 5 * SEC);
     const notice = win(page).locator('[data-row="notice"]');
@@ -196,16 +242,23 @@ test.describe('US5 · форма й утримання', () => {
   test('зміна ціни: зафіксовано $4,99, зараз $7,99 → «Ціна змінилася»', async ({ page }) => {
     await start(page);
     await presetGuest(page, {
-      [LONDON.id]: { hold: { seat: 10, until: Date.parse(OPEN_AT) + 30 * MIN, extended: false }, priceLocked: 4.99 },
+      [LONDON.id]: {
+        hold: { seat: 10, until: Date.parse(OPEN_AT) + 30 * MIN, extended: false },
+        priceLocked: 4.99,
+      },
     });
     await openForm(page);
-    await expect(win(page).locator('[data-row="price-changed"]')).toContainText('Ціна змінилася: $7,99 замість $4,99');
+    await expect(win(page).locator('[data-row="price-changed"]')).toContainText(
+      'Ціна змінилася: $7,99 замість $4,99',
+    );
     await expect(payBtn(page)).toContainText('Оплатити $7,99');
   });
 });
 
 test.describe('US5 · результат оплати', () => {
-  test('success: підтверджено, квиток, «Змінити напис чи емоцію», модуль mine, чат і кімната', async ({ page }) => {
+  test('success: підтверджено, квиток, «Змінити напис чи емоцію», модуль mine, чат і кімната', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     await fillForm(page);
@@ -221,8 +274,17 @@ test.describe('US5 · результат оплати', () => {
     await expect(strip(page)).toContainText('Твоє місце');
 
     if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
-    await expect(page.locator('[data-kind="system"]').filter({ hasText: 'тепер у першому ряду' }).first()).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Перший ряд' }).or(page.getByRole('radio', { name: 'Перший ряд' })).first()).toBeVisible();
+    // На сторінці країни чат відкривається в кімнаті країни; системне повідомлення — у «Світі» й «Першому ряду».
+    await worldRoom(page).click();
+    await expect(
+      page.locator('[data-kind="system"]').filter({ hasText: 'тепер у першому ряду' }).first(),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByRole('tab', { name: 'Перший ряд' })
+        .or(page.getByRole('radio', { name: 'Перший ряд' }))
+        .first(),
+    ).toBeVisible();
   });
 
   test('опівночі +15 с у чаті з’являється привітальна картка Першого ряду', async ({ page }) => {
@@ -235,10 +297,15 @@ test.describe('US5 · результат оплати', () => {
     await page.keyboard.press('Escape');
     await advance(page, 40 * MIN + 16 * SEC);
     if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
-    await expect(page.locator('[data-kind="greeting"]').first()).toContainText('Time2Fest вітає з Новим роком');
+    await worldRoom(page).click();
+    await expect(page.locator('[data-kind="greeting"]').first()).toContainText(
+      'Time2Fest вітає з Новим роком',
+    );
   });
 
-  test('pending: «Чекаємо підтвердження оплати», через 30 с сайту — підтверджено', async ({ page }) => {
+  test('pending: «Чекаємо підтвердження оплати», через 30 с сайту — підтверджено', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     await fillForm(page);
@@ -249,18 +316,25 @@ test.describe('US5 · результат оплати', () => {
     await expect(payWin(page)).toContainText('Оплату підтверджено');
   });
 
-  test('declined: «Оплата не пройшла — гроші не списано.», дані форми збережені', async ({ page }) => {
+  test('declined: «Оплата не пройшла — гроші не списано.», дані форми збережені', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     await fillForm(page, { name: 'Олег' });
     await setPayResult(page, 'declined');
     await pay(page);
-    await expect(win(page).locator('[data-row="notice"]')).toContainText('Оплата не пройшла — гроші не списано.', { timeout: 10_000 });
+    await expect(win(page).locator('[data-row="notice"]')).toContainText(
+      'Оплата не пройшла — гроші не списано.',
+      { timeout: 10_000 },
+    );
     await expect(win(page).getByLabel('Ім’я на стіні')).toHaveValue('Олег');
     await expect(win(page).getByLabel('Email')).toHaveValue('guest@example.com');
   });
 
-  test('soldout: «Останнє місце щойно зайняли», «Гроші не списано.», «Розпродано»', async ({ page }) => {
+  test('soldout: «Останнє місце щойно зайняли», «Гроші не списано.», «Розпродано»', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     await fillForm(page);
@@ -272,16 +346,23 @@ test.describe('US5 · результат оплати', () => {
     await expect(w).toContainText(/Перший ряд · .+ — розпродано\./);
   });
 
-  test('expired: повернулися з оплати після спливу утримання → повідомлення про вихід часу', async ({ page }) => {
+  test('expired: повернулися з оплати після спливу утримання → повідомлення про вихід часу', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page);
     await fillForm(page);
     await setPayResult(page, 'expired');
     await pay(page);
-    await expect(win(page).locator('[data-row="notice"]')).toContainText('Час утримання вийшов — місце знову вільне.', { timeout: 10_000 });
+    await expect(win(page).locator('[data-row="notice"]')).toContainText(
+      'Час утримання вийшов — місце знову вільне.',
+      { timeout: 10_000 },
+    );
   });
 
-  test('гонка Лондона: форма тримає місце 10, +90 с учасник займає → оплата дає «розпродано»', async ({ page }) => {
+  test('гонка Лондона: форма тримає місце 10, +90 с учасник займає → оплата дає «розпродано»', async ({
+    page,
+  }) => {
     await start(page);
     await openForm(page); // утримує місце 10
     await fillForm(page);

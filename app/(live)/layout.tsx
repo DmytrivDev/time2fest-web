@@ -10,6 +10,7 @@ import { PlayerHost } from '@/components/player/PlayerHost';
 import { LiveAnnouncer } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
 import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
+import { OfflineNotice } from '@/components/shell/Offline';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
 import { CoralProvider } from '@/lib/overlay/coral';
@@ -37,6 +38,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               <CookieLayer />
               {/* TODO: current — з маршруту, коли з’являться сторінки країн. */}
               <ShellHeader current="home" />
+              {/* Немає мережі: одна смуга в потоці (не поверх відео); відлік іде далі, зникає сама. */}
+              <OfflineNotice />
               <div className={styles.shell}>
                 <main id="main" tabIndex={-1} className={styles.main}>
                   {/* Один хост на весь макет; стоїть першим у <main>, тож у порядку Tab плеєр іде перед вмістом сторінки. */}

@@ -37,7 +37,9 @@ function harness(): Harness {
     clock.perf += back;
     return new Response(JSON.stringify({ now }), { status: 200 });
   });
-  const doc = Object.assign(new EventTarget(), { visibilityState: 'visible' as DocumentVisibilityState });
+  const doc = Object.assign(new EventTarget(), {
+    visibilityState: 'visible' as DocumentVisibilityState,
+  });
   const win = new EventTarget();
   const deps: TimeSourceDeps = {
     fetch: fetch as unknown as typeof globalThis.fetch,
@@ -86,7 +88,19 @@ describe('TimeSource', () => {
     expect(h.clock.perf - p0).toBe(4 * 300 + 500 + 40 + 60 + 50 + 1100);
     expect(ts.status).toBe('server');
     expect(ts.ready).toBe(true);
+    // Якір ставиться з першої відповіді (SC-001), медіана серії доводить його плавно за SLEW_MS.
+    h.clock.perf += 2_000;
     expect(Math.abs(ts.now() - truth(h))).toBeLessThan(1);
+  });
+
+  it('ready одразу після першої вдалої відповіді, не чекаючи серії', async () => {
+    h.plan.push([20, 20], [20, 20], [20, 20], [20, 20], [20, 20]);
+    const ts = new TimeSource(h.deps);
+    const seen: boolean[] = [];
+    ts.subscribe(() => seen.push(ts.ready));
+    await ts.sync();
+    expect(seen[0]).toBe(true);
+    expect(seen.length).toBe(2); // перша відповідь + уточнення медіаною
   });
 
   it('відкидає спроби з rtt > 2000 мс і невдалі', async () => {
@@ -127,7 +141,9 @@ describe('TimeSource', () => {
     expect(ts.now()).toBe(EPOCH + h.clock.perf + h.clock.skew);
     await ts.sync();
     expect(h.warn).toHaveBeenCalledTimes(1);
-    expect(h.warn.mock.calls[0]![0]).toBe('[time] /api/time недоступний, відлік від годинника пристрою');
+    expect(h.warn.mock.calls[0]![0]).toBe(
+      '[time] /api/time недоступний, відлік від годинника пристрою',
+    );
   });
 
   it('експонентна пауза 5 → 10 → 20 → 60 с, після успіху — сервер', async () => {
@@ -157,12 +173,14 @@ describe('TimeSource', () => {
     expect(ts.now()).toBe(truth(h) + 600);
     h.plan.push([10, 10], [10, 10], [10, 10], [10, 10], [10, 10]);
     await ts.sync();
-    // одразу після синхронізації показання не стрибають (плавна поправка)
-    expect(Math.abs(ts.now() - (truth(h) + 600))).toBeLessThan(1);
-    h.clock.perf += 1_000;
+    // показання не стрибають: поправка йде плавно від резерву (+0,6 с) до якоря
+    const right = ts.now() - truth(h);
+    expect(right).toBeGreaterThan(0);
+    expect(right).toBeLessThanOrEqual(600);
+    h.clock.perf += 500;
     const mid = ts.now() - truth(h);
-    expect(mid).toBeGreaterThan(0);
-    expect(mid).toBeLessThan(600);
+    expect(mid).toBeGreaterThanOrEqual(0);
+    expect(mid).toBeLessThan(right);
     // за кілька секунд поправка завершена
     h.clock.perf += 5_000;
     expect(Math.abs(ts.now() - truth(h))).toBeLessThan(1);

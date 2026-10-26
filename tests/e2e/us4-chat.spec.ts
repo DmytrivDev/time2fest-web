@@ -15,7 +15,10 @@ import { expect, test } from './fixtures/youtube-stub';
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
 test.beforeEach(async ({ page }, testInfo) => {
   void page;
-  test.skip(testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'US4: телефон і десктоп');
+  test.skip(
+    testInfo.project.name === 'tv' || testInfo.project.name === 'prod',
+    'US4: телефон і десктоп',
+  );
 });
 test.describe.configure({ timeout: 90_000 });
 
@@ -23,6 +26,8 @@ test.describe.configure({ timeout: 90_000 });
 const QUIET = '2027-01-01T02:20:00+02:00';
 /** П’ята хвилина після півночі: повільний режим «Світу» діє (15 с). */
 const SLOW = '2027-01-01T02:05:00+02:00';
+/** До півночі Лондона: ефір з трансляцією (о 02:20 ефір — Азори без трансляції, плеєра немає). */
+const LIVE = '2027-01-01T01:50:00+02:00';
 
 const isPhone = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
 const field = (page: Page) => page.getByRole('textbox', { name: /Повідомлення в чат/ });
@@ -44,7 +49,9 @@ async function startChat(page: Page, iso = QUIET, speed = 1) {
 
 async function expectAxeClean(page: Page) {
   const violations = await runAxe(page);
-  expect(violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+  expect(
+    violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
+  ).toEqual([]);
 }
 
 async function setNick(page: Page, nick: string) {
@@ -61,15 +68,21 @@ async function setNick(page: Page, nick: string) {
 }
 
 test.describe('US4 · чат свята', () => {
-  test('перше власне повідомлення відкриває нік і прапор; нік 2–20 символів; прапор за розташуванням', async ({ page, ytStub }) => {
-    await startChat(page);
+  test('перше власне повідомлення відкриває нік і прапор; нік 2–20 символів; прапор за розташуванням', async ({
+    page,
+    ytStub,
+  }) => {
+    await startChat(page, LIVE);
     await ytStub.waitForPlayer();
     await field(page).fill('З Новим роком із Києва!');
     await send(page).click();
 
     const dialog = page.getByRole('dialog', { name: /Як тебе підписати в чаті/ });
     await expect(dialog).toBeVisible();
-    await expect(field(page)).toHaveValue('З Новим роком із Києва!');
+    // На телефоні вікно ніка модальне: поле під ним приховане від дерева доступності, але текст лишається.
+    await expect(
+      page.getByRole('textbox', { name: /Повідомлення в чат/, includeHidden: true }),
+    ).toHaveValue('З Новим роком із Києва!');
     await expect(dialog.getByText('Україна')).toBeVisible(); // прапор за розташуванням (uk-UA / Київ)
     // Одна коралова кнопка на екрані: «Готово» (звук стає нейтральним).
     expect(await page.locator('[data-variant="coral"]:visible').count()).toBe(1);
@@ -93,7 +106,9 @@ test.describe('US4 · чат свята', () => {
     await expect(field(page)).toHaveValue('');
   });
 
-  test('пауза: прокрутка вгору зупиняє стрічку, «Нові повідомлення N ↓» повертає до кінця', async ({ page }) => {
+  test('пауза: прокрутка вгору зупиняє стрічку, «Нові повідомлення N ↓» повертає до кінця', async ({
+    page,
+  }) => {
     await startChat(page, QUIET, 10);
     await setNick(page, 'Мирон');
     const log = page.getByRole('log').first();
@@ -121,15 +136,20 @@ test.describe('US4 · чат свята', () => {
     await setNick(page, 'Мирон');
     await field(page).fill('Перше');
     await send(page).click();
-    await expect(page.getByRole('log').first().getByText('Перше')).toBeVisible();
+    await expect(page.getByRole('log').first().getByText('Перше', { exact: true })).toBeVisible();
     await field(page).fill('Друге');
-    await expect(page.getByRole('button', { name: /Надіслати — зачекай \d+ с/ })).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByRole('button', { name: /Надіслати — зачекай \d+ с/ })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
     await expect(page.getByText(/можна писати через \d+ с/)).toBeVisible();
     await advance(page, 16_000);
     await expect(send(page)).not.toHaveAttribute('aria-disabled', 'true');
   });
 
-  test('200 символів: лічильник від 180, «Досить» на межі; посилання не надсилаються, текст лишається', async ({ page }) => {
+  test('200 символів: лічильник від 180, «Досить» на межі; посилання не надсилаються, текст лишається', async ({
+    page,
+  }) => {
     await startChat(page);
     await setNick(page, 'Мирон');
     await field(page).fill('а'.repeat(179));
@@ -143,7 +163,9 @@ test.describe('US4 · чат свята', () => {
 
     await field(page).fill('дивись www.example.com');
     await send(page).click();
-    await expect(page.getByText(/Посилання в чаті не надсилаються — прибери його, текст лишиться/)).toBeVisible();
+    await expect(
+      page.getByText(/Посилання в чаті не надсилаються — прибери його, текст лишиться/),
+    ).toBeVisible();
     await expect(field(page)).toHaveValue('дивись www.example.com');
     await expectAxeClean(page);
   });
@@ -152,33 +174,65 @@ test.describe('US4 · чат свята', () => {
     await startChat(page);
     await setNick(page, 'Мирон');
     await page.getByRole('button', { name: 'Готові привітання' }).click();
-    await page.getByRole('button', { name: /З Новим роком!/ }).first().click();
+    await page
+      .getByRole('button', { name: /З Новим роком!/ })
+      .first()
+      .click();
     const log = page.getByRole('log').first();
     await expect(log.locator('[data-own="true"]')).toHaveCount(1);
 
-    await log.getByRole('button', { name: /^Дії з повідомленням/ }).first().click();
-    await page.getByRole('menuitem', { name: /Хлопавка/ }).or(page.getByRole('button', { name: 'Реакція Хлопавка' })).first().click();
-    await expect(log.getByRole('button', { name: /^Реакція Хлопавка: \d+, твоя\. Прибрати/ }).first()).toBeVisible();
+    await log
+      .getByRole('button', { name: /^Дії з повідомленням/ })
+      .first()
+      .click();
+    // Меню дій (десктоп) або аркуш (телефон); чипи реакцій у стрічці під модальним меню не клікабельні.
+    const actions = page.locator('[role="menu"], [data-sheet]').first();
+    await expect(actions).toBeVisible();
+    await actions
+      .getByRole('menuitem', { name: /Хлопавка/ })
+      .or(actions.getByRole('button', { name: 'Реакція Хлопавка' }))
+      .first()
+      .click();
+    await expect(
+      log.getByRole('button', { name: /^Реакція Хлопавка: \d+, твоя\. Прибрати/ }).first(),
+    ).toBeVisible();
   });
 
-  test('чат недоступний: повідомлення замість стрічки, відео й «Події» працюють', async ({ page, ytStub }) => {
-    await startChat(page);
+  test('чат недоступний: повідомлення замість стрічки, відео й «Події» працюють', async ({
+    page,
+    ytStub,
+  }) => {
+    await startChat(page, LIVE);
     await ytStub.waitForPlayer();
     await setChatAvailable(page, false);
     await expect(page.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeVisible();
     await expect(field(page)).toHaveCount(0);
     await expect(page.locator('[data-player-host] iframe')).toHaveCount(1);
-    await page.getByRole('button', { name: 'До подій' }).click().catch(() => undefined);
+    await page
+      .getByRole('button', { name: 'До подій' })
+      .click()
+      .catch(() => undefined);
     await setChatAvailable(page, true);
     await expect(page.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeHidden();
   });
 
-  test('дотик до ніка з пасом → панель автора з «Шлях <нік>»: зустрінуті жовті, заплановані порожні, підказки', async ({ page }) => {
+  test('дотик до ніка з пасом → панель автора з «Шлях <нік>»: зустрінуті жовті, заплановані порожні, підказки', async ({
+    page,
+  }) => {
+    // Чекаємо, поки сценарій дійде до Karim (до 60 с), а потім axe: довше за типовий таймаут файлу.
+    test.setTimeout(180_000);
     await startChat(page, '2027-01-01T02:03:00+02:00', 5);
     const log = page.getByRole('log').first();
     // Автори з пасом у сценарії: Karim має шлях (Окленд → Дубай → Каїр).
-    await expect.poll(async () => await log.getByRole('button', { name: /^Karim, / }).count(), { timeout: 60_000 }).toBeGreaterThan(0);
-    await log.getByRole('button', { name: /^Karim, / }).first().click();
+    await expect
+      .poll(async () => await log.getByRole('button', { name: /^Karim, / }).count(), {
+        timeout: 60_000,
+      })
+      .toBeGreaterThan(0);
+    await log
+      .getByRole('button', { name: /^Karim, / })
+      .first()
+      .click();
 
     const panel = page.getByRole('dialog', { name: 'Автор повідомлення' });
     await expect(panel.getByRole('heading', { name: 'Шлях Karim' })).toBeVisible();
@@ -189,22 +243,35 @@ test.describe('US4 · чат свята', () => {
     await expect(panel.getByText('Оформи пас, щоб інші бачили твій шлях')).toBeVisible();
     await expectAxeClean(page);
 
+    // Підказка точки — верхній шар: перший Esc закриває її, наступний — панель.
     await page.keyboard.press('Escape');
+    if (await panel.isVisible()) await page.keyboard.press('Escape');
     await expect(panel).toBeHidden();
   });
 
   test('автор без пасу: лише нік і прапор, шляху немає', async ({ page }) => {
+    // Чекаємо, поки сценарій дійде до Karim (до 60 с), а потім axe: довше за типовий таймаут файлу.
+    test.setTimeout(180_000);
     await startChat(page, '2027-01-01T02:03:00+02:00', 5);
     const log = page.getByRole('log').first();
-    await expect.poll(async () => await log.getByRole('button', { name: /^Тарас, / }).count(), { timeout: 60_000 }).toBeGreaterThan(0);
-    await log.getByRole('button', { name: /^Тарас, / }).first().click();
+    await expect
+      .poll(async () => await log.getByRole('button', { name: /^Тарас, / }).count(), {
+        timeout: 60_000,
+      })
+      .toBeGreaterThan(0);
+    await log
+      .getByRole('button', { name: /^Тарас, / })
+      .first()
+      .click();
     const panel = page.getByRole('dialog', { name: 'Автор повідомлення' });
     await expect(panel.getByText('Тарас').first()).toBeVisible();
     await expect(panel.getByRole('heading', { name: /^Шлях/ })).toHaveCount(0);
     await expect(panel.getByText('Згадати @Тарас')).toBeVisible();
   });
 
-  test('чат сховано: телефон — «Відкрити чат» з лічильником; десктоп — колонки немає, «Показати чат» повертає її', async ({ page }) => {
+  test('чат сховано: телефон — «Відкрити чат» з лічильником; десктоп — колонки немає, «Показати чат» повертає її', async ({
+    page,
+  }) => {
     await startChat(page, QUIET, 10);
     await page.getByRole('button', { name: 'Сховати чат' }).click();
 

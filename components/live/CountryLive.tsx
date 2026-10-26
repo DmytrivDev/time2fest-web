@@ -160,7 +160,7 @@ export function CountryLive({ iso }: { iso: string }) {
   useChatSimulator(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
   useMomentWindows(mainEvent?.id ?? null);
   // Пропозиції пасу й чайових (offer:show) і стан введення для рушія пропозицій.
-  useOfferWindows();
+  const passWindows = useOfferWindows();
 
   const countryRows = useMemo(() => (zoneId ? countryStreamRows(data, iso, zoneId, minute) : []), [data, iso, zoneId, minute]);
   const zoneRows = useMemo(() => (zoneId ? zoneStreamRows(data, zoneId, iso, minute) : []), [data, iso, zoneId, minute]);
@@ -285,7 +285,14 @@ export function CountryLive({ iso }: { iso: string }) {
         )}
       </div>
       {recording ? (
-        <NowNext items={nowNext} zoneLabel={zoneLabel} layout={chatColumn ? 'carousel' : 'stack'} progress={progress} className={styles.pad} />
+        <NowNext
+          items={nowNext}
+          zoneLabel={zoneLabel}
+          layout={chatColumn ? 'carousel' : 'stack'}
+          progress={progress}
+          onToggleSchedule={passWindows.requestSchedule}
+          className={styles.pad}
+        />
       ) : null}
       <HowToCard
         country={country.name.uk}

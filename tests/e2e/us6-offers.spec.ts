@@ -17,7 +17,10 @@ import { expect, test } from './fixtures/youtube-stub';
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
 test.beforeEach(async ({ page }, testInfo) => {
   void page;
-  test.skip(testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'US6: телефон і десктоп');
+  test.skip(
+    testInfo.project.name === 'tv' || testInfo.project.name === 'prod',
+    'US6: телефон і десктоп',
+  );
 });
 test.describe.configure({ timeout: 90_000 });
 
@@ -30,7 +33,8 @@ const LONDON_PLUS_52 = '2027-01-01T02:52:00+02:00';
 const AZORES_PLUS_6 = '2027-01-01T03:06:00+02:00';
 
 const slot = (page: Page) => page.locator('[data-in-flow-slot="occupied"]');
-const offerCard = (page: Page, name: string | RegExp) => page.getByRole('heading', { level: 2, name });
+const offerCard = (page: Page, name: string | RegExp) =>
+  page.getByRole('heading', { level: 2, name });
 const visibleCoral = (page: Page) => page.locator('[data-variant="coral"]:visible');
 
 interface Seed {
@@ -88,7 +92,9 @@ async function seedGuest(page: Page, seed: Seed = {}) {
 const TWO_STAMPS = ['evt_paris_2027', 'evt_london_2027'];
 
 test.describe('US6 · пропозиція пасу після 2-го Нового року', () => {
-  test('не раніше +5 хв після події: о +3 хв картки немає, о +6 хв — є, одна коралова, звук нейтральний', async ({ page }) => {
+  test('не раніше +5 хв після події: о +3 хв картки немає, о +6 хв — є, одна коралова, звук нейтральний', async ({
+    page,
+  }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_3, 0);
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
@@ -103,8 +109,14 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
 
     // Одна коралова кнопка на екрані — «Оформити пас»; кнопка звуку нейтральна.
     await expect(visibleCoral(page)).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Оформити пас' })).toHaveAttribute('data-variant', 'coral');
-    await expect(page.getByRole('button', { name: /Увімкнути звук/ }).first()).not.toHaveAttribute('data-variant', 'coral');
+    await expect(page.getByRole('button', { name: 'Оформити пас' })).toHaveAttribute(
+      'data-variant',
+      'coral',
+    );
+    await expect(page.getByRole('button', { name: /Увімкнути звук/ }).first()).not.toHaveAttribute(
+      'data-variant',
+      'coral',
+    );
 
     // Фокус сторінка не забрала.
     expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
@@ -117,7 +129,9 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
   });
 
-  test('«Оформити пас» не веде на фальшивий чекаут — лише «Оплата буде на наступному етапі»', async ({ page }) => {
+  test('«Оформити пас» не веде на фальшивий чекаут — лише «Оплата буде на наступному етапі»', async ({
+    page,
+  }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
     await page.getByRole('button', { name: 'Оформити пас' }).click();
@@ -125,7 +139,9 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     expect(new URL(page.url()).pathname).toBe('/');
   });
 
-  test('закрита хрестиком не повертається тієї ночі (і після перезавантаження)', async ({ page }) => {
+  test('закрита хрестиком не повертається тієї ночі (і після перезавантаження)', async ({
+    page,
+  }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
     await page.getByRole('button', { name: 'Закрити пропозицію' }).click();
@@ -155,18 +171,26 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
   });
 
-  test('«Детальніше» → «Що дає Новорічний пас» (3 головні + «Ще в пасі:»), axe чистий', async ({ page }) => {
+  test('«Детальніше» → «Що дає Новорічний пас» (3 головні + «Ще в пасі:»), axe чистий', async ({
+    page,
+  }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
     await page.getByRole('button', { name: 'Детальніше' }).click();
     await expect(offerCard(page, 'Що дає Новорічний пас')).toBeVisible();
-    await expect(slot(page).getByRole('list', { name: 'Головне в пасі' }).getByRole('listitem')).toHaveCount(3);
+    await expect(
+      slot(page).getByRole('list', { name: 'Головне в пасі' }).getByRole('listitem'),
+    ).toHaveCount(3);
     await expect(slot(page).getByText('Ще в пасі:')).toBeVisible();
     const violations = await runAxe(page);
-    expect(violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+    expect(
+      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
+    ).toEqual([]);
   });
 
-  test('не під час введення в чаті: фокус у полі блокує картку, після виходу вона з’являється', async ({ page }) => {
+  test('не під час введення в чаті: фокус у полі блокує картку, після виходу вона з’являється', async ({
+    page,
+  }) => {
     test.skip(isPhone(page), 'поле чату на телефоні — у вкладці; правило перевіряє юніт (uiState)');
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, '2027-01-01T02:04:30+02:00', 0);
@@ -175,19 +199,24 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await setTime(page, { at: LONDON_PLUS_6 });
     await page.waitForTimeout(2_500);
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
-    await field.press('Tab');
+    // Не клавішею: час заморожено (speed 0), а натискання в полі — «введення» ще 10 с віртуального часу.
+    await field.blur();
     await expect(offerCard(page, /Уже 2 країни/)).toBeVisible({ timeout: 10_000 });
   });
 
   test('писав у чаті — серед головних «−50% на «Перший ряд»»', async ({ page }) => {
     await seedGuest(page, { stamps: TWO_STAMPS, sentMessages: 1 });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await expect(slot(page).getByRole('list', { name: 'Головне в пасі' })).toContainText('−50% на «Перший ряд»');
+    await expect(slot(page).getByRole('list', { name: 'Головне в пасі' })).toContainText(
+      '−50% на «Перший ряд»',
+    );
   });
 });
 
 test.describe('US6 · чайові після 3-го Нового року', () => {
-  test('після 3-го штампа (пас уже показували) — «Чайові»: $2 / $5 / $10, «Підтримати $5»', async ({ page }) => {
+  test('після 3-го штампа (пас уже показували) — «Чайові»: $2 / $5 / $10, «Підтримати $5»', async ({
+    page,
+  }) => {
     await seedGuest(page, {
       stamps: [...TWO_STAMPS, 'evt_azores_2027'],
       offers: [{ kind: 'pass-offer', triggerEventId: 'evt_london_2027' }],
@@ -196,8 +225,13 @@ test.describe('US6 · чайові після 3-го Нового року', () 
     await expect(offerCard(page, 'Чайові')).toBeVisible({ timeout: 10_000 });
     await expect(slot(page).getByRole('radio')).toHaveText(['$2', '$5', '$10']);
     await slot(page).getByRole('radio', { name: '$5' }).click();
-    await expect(page.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute('data-variant', 'coral');
-    await expect(slot(page)).toContainText('Входити не треба — email для квитанції попросить сторінка оплати');
+    await expect(page.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute(
+      'data-variant',
+      'coral',
+    );
+    await expect(slot(page)).toContainText(
+      'Входити не треба — email для квитанції попросить сторінка оплати',
+    );
     await expect(visibleCoral(page)).toHaveCount(1);
     await page.getByRole('button', { name: 'Підтримати $5' }).click();
     await expect(slot(page).getByRole('status')).toHaveText('Оплата буде на наступному етапі');
@@ -205,20 +239,29 @@ test.describe('US6 · чайові після 3-го Нового року', () 
 });
 
 test.describe('US6 · «Потрібен пас»', () => {
-  test('кнопка графіка без пасу → «Щоб додавати в графік, потрібен Новорічний пас» → «Що дає пас»', async ({ page }) => {
+  test('кнопка графіка без пасу → «Щоб додавати в графік, потрібен Новорічний пас» → «Що дає пас»', async ({
+    page,
+  }) => {
     await seedGuest(page, {});
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
-    await page.getByRole('button', { name: /^Додати в графік: / }).first().click();
+    await page
+      .getByRole('button', { name: /^Додати в графік: / })
+      .first()
+      .click();
     await expect(offerCard(page, 'Щоб додавати в графік, потрібен Новорічний пас')).toBeVisible();
     await expect(slot(page)).toContainText('Перше нагадування — безплатно.');
-    await expect(visibleCoral(page)).toHaveCount(0);
+    // У «Потрібен пас» коралової кнопки немає; коралова на екрані лишається одна (звук), не більше.
+    await expect(slot(page).locator('[data-variant="coral"]')).toHaveCount(0);
+    expect(await visibleCoral(page).count()).toBeLessThanOrEqual(1);
     await page.getByRole('button', { name: 'Що дає пас' }).click();
     await expect(offerCard(page, 'Що дає Новорічний пас')).toBeVisible();
   });
 });
 
 test.describe('US6 · «Поділитися» штампом', () => {
-  test('штамп → «Поділитися» → панель із прев’ю й чотирма діями; системний шеринг першим', async ({ page }) => {
+  test('штамп → «Поділитися» → панель із прев’ю й чотирма діями; системний шеринг першим', async ({
+    page,
+  }) => {
     await seedGuest(page, { stamps: ['evt_london_2027'] });
     await gotoAt(page, '2027-01-01T02:00:20+02:00', 0);
     await page.getByRole('button', { name: 'Поділитися' }).first().click();
@@ -237,12 +280,18 @@ test.describe('US6 · «Поділитися» штампом', () => {
 });
 
 test.describe('US6 · cookies', () => {
-  test('перший візит: банер із трьома рівноцінними кнопками; «Прийняти» зберігає вибір і ховає банер', async ({ page }) => {
+  test('перший візит: банер із трьома рівноцінними кнопками; «Прийняти» зберігає вибір і ховає банер', async ({
+    page,
+  }) => {
     await seedGuest(page, { consentAnswered: false });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
     const banner = page.locator('[data-cookie-banner]');
     await expect(banner).toBeVisible();
-    await expect(banner.getByRole('button')).toHaveText(['Прийняти', 'Лише необхідні', 'Налаштувати']);
+    await expect(banner.getByRole('button')).toHaveText([
+      'Прийняти',
+      'Лише необхідні',
+      'Налаштувати',
+    ]);
     await expect(banner.locator('[data-variant="coral"]')).toHaveCount(0);
 
     if (isPhone(page)) {
@@ -265,17 +314,28 @@ test.describe('US6 · cookies', () => {
     // DOM рано: одразу після посилань-пропусків, до хедера.
     const order = await page.evaluate(() => {
       const all = [...document.querySelectorAll('nav[aria-label], [data-cookie-banner], header')];
-      return all.map((el) => (el.hasAttribute('data-cookie-banner') ? 'cookies' : el.tagName.toLowerCase()));
+      return all.map((el) =>
+        el.hasAttribute('data-cookie-banner') ? 'cookies' : el.tagName.toLowerCase(),
+      );
     });
     expect(order.indexOf('cookies')).toBeLessThan(order.indexOf('header'));
 
     await banner.getByRole('button', { name: 'Прийняти' }).click();
     await expect(banner).toHaveCount(0);
-    const consent = await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.consent);
-    expect(consent).toMatchObject({ answered: true, analytics: true, marketing: true, facebookVideo: true });
+    const consent = await page.evaluate(
+      () => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.consent,
+    );
+    expect(consent).toMatchObject({
+      answered: true,
+      analytics: true,
+      marketing: true,
+      facebookVideo: true,
+    });
   });
 
-  test('чат сховано (десктоп): банер — смуга в потоці під кнопками плеєра, на місці штампа, не на відео', async ({ page }) => {
+  test('чат сховано (десктоп): банер — смуга в потоці під кнопками плеєра, на місці штампа, не на відео', async ({
+    page,
+  }) => {
     test.skip(isPhone(page), 'на телефоні завжди смуга внизу');
     await seedGuest(page, { consentAnswered: false, chatHidden: true });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
@@ -288,7 +348,9 @@ test.describe('US6 · cookies', () => {
     expect(await banner.evaluate((el) => getComputedStyle(el).position)).not.toBe('fixed');
   });
 
-  test('«Налаштувати» — 4 категорії; «Відео з Facebook» пишеться в guest.consent', async ({ page }) => {
+  test('«Налаштувати» — 4 категорії; «Відео з Facebook» пишеться в guest.consent', async ({
+    page,
+  }) => {
     await seedGuest(page, { consentAnswered: false });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
     await page.locator('[data-cookie-banner]').getByRole('button', { name: 'Налаштувати' }).click();
@@ -302,8 +364,15 @@ test.describe('US6 · cookies', () => {
     await dialog.getByRole('switch', { name: 'Відео з Facebook' }).click();
     await dialog.getByRole('button', { name: 'Зберегти вибір' }).click();
     await expect(page.locator('[data-cookie-banner]')).toHaveCount(0);
-    const consent = await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.consent);
-    expect(consent).toMatchObject({ answered: true, analytics: false, marketing: false, facebookVideo: true });
+    const consent = await page.evaluate(
+      () => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.consent,
+    );
+    expect(consent).toMatchObject({
+      answered: true,
+      analytics: false,
+      marketing: false,
+      facebookVideo: true,
+    });
     // Ту саму згоду читає картка плеєра `FacebookConsentCard` (див. us1-edge: сцена «єдине джерело — Facebook»).
   });
 

@@ -76,8 +76,14 @@ export function Carousel({
   useEffect(() => {
     const player = api?.plugins().autoplay;
     if (!player) return;
-    if (paused) player.stop();
-    else player.play();
+    // Після reInit (змінився набір слайдів чи плагінів) плагін може бути ще не ініціалізованим:
+    // `play()` тоді падає всередині Embla (`delay` undefined) і валить усю сторінку.
+    try {
+      if (paused) player.stop();
+      else player.play();
+    } catch {
+      // наступний select/reInit запустить автогортання сам (playOnInit)
+    }
   }, [api, paused]);
 
   // Стрілки клавіатури гортають, коли фокус усередині каруселі.

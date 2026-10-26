@@ -2,6 +2,7 @@
  * Серверний час для всього сайту за `contracts/time-api.md` (принцип II, III).
  * Вимірює час між опитуваннями монотонним `performance.now()`, а не годинником пристрою.
  */
+import { takeTimePrefetch } from './timePrefetch';
 import type { TimeSourceLike, TimeStatus } from './types';
 
 export const SAMPLE_COUNT = 5;
@@ -135,8 +136,15 @@ export class TimeSource implements TimeSourceLike {
     const samples: Sample[] = [];
     for (let i = 0; i < count; i++) {
       if (i > 0) await this.sleep(SAMPLE_INTERVAL_MS);
-      const s = await this.sample();
-      if (s && s.rtt <= MAX_RTT_MS) samples.push(s);
+      // Перша проба першої серії — рання відповідь з інлайн-скрипта в <head>, якщо вона є (SC-001).
+      const early = i === 0 && !this.anchor && this.endpoint === '/api/time' ? await takeTimePrefetch(this.win) : null;
+      const s = early ?? (await this.sample());
+      if (s && s.rtt <= MAX_RTT_MS) {
+        samples.push(s);
+        // Якір з першої відповіді, щоб ефір не чекав усієї серії (~5 × RTT + 4 × 300 мс на мобільному).
+        // Медіана серії потім уточнює його плавно (`slew`), якщо різниця < 1 с.
+        if (!this.anchor) this.applyOffset(s.offset);
+      }
     }
     if (samples.length === 0) {
       this.onFailure();

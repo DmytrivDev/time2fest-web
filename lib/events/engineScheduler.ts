@@ -30,7 +30,8 @@ export interface SchedulerData {
   chainsByEventId: ReadonlyMap<string, StreamChain>;
 }
 
-export type Emit = <K extends UiEventType>(type: K, payload: UiEventMap[K]) => void;
+/** Повертає `false`, якщо подію ніхто не отримав (немає підписників); `void` — невідомо (тести). */
+export type Emit = <K extends UiEventType>(type: K, payload: UiEventMap[K]) => boolean | void;
 
 export interface SchedulerDeps {
   data: SchedulerData;
@@ -89,7 +90,15 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
   function once<K extends UiEventType>(type: K, payload: UiEventMap[K] & { eventKey: string }) {
     if (emitted.has(payload.eventKey)) return;
     remember(payload.eventKey);
-    deps.emit(type, payload);
+    const delivered = deps.emit(type, payload);
+    // Пропозицію, яку ніхто не отримав (поверхня з плеєром ще не підписалась — перший такт після завантаження),
+    // не позначаємо показаною: наступний такт спробує знову, поки вікно правил відкрите.
+    if (delivered === false && type === 'offer:show') forget(payload.eventKey);
+  }
+
+  function forget(key: string) {
+    emitted.delete(key);
+    writeJson(deps.storage, EMITTED_KEY, [...emitted]);
   }
 
   function tick(now: Ms) {

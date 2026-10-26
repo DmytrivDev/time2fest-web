@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { PlayerBlock, type PlayerBlockProps, type VideoAreaKind } from '@/components/player/PlayerBlock';
+import { captionPhase } from '@/lib/engine/captionPhase';
 import { computeBroadcast } from '@/lib/player/BroadcastController';
 import { Stage } from '../_support/Stage';
 
@@ -116,4 +117,34 @@ export const Loading: Story = {
   name: 'l — час ще невідомий (скелетони)',
   globals: { surface: 'phone' },
   args: { mode: 'broadcast', ready: false, phase: null, current: null, next: null, videoArea: 'loading' },
+};
+
+/** Пульт (сторінка країни) після півночі: запис, «північ була … тому», кнопка повтору лише якщо джерело дає повтор. */
+function remoteAt(offsetMs: number, hasReplay: boolean): PlayerBlockProps {
+  const now = LONDON + offsetMs;
+  const b = computeBroadcast(now);
+  return {
+    mode: 'remote',
+    ready: true,
+    phase: b.current ? captionPhase(now, b.current.event, 'remote', b.next?.event ?? null, { hasReplay }) : null,
+    current: b.current,
+    next: b.next,
+    timeZone: 'Europe/Kyiv',
+    videoArea: 'video',
+    onWatchAgain: () => undefined,
+  };
+}
+
+export const RemoteAfterMidnightReplay: Story = {
+  name: 'Пульт після півночі (+40 хв) — «Запис», «північ була … тому», «Подивитися північ ще раз»',
+  globals: { surface: 'desktop' },
+  args: remoteAt(40 * MIN, true),
+  parameters: { time: { at: iso(40 * MIN), frozen: true } },
+};
+
+export const RemoteAfterMidnightNoReplay: Story = {
+  name: 'Пульт після півночі (+40 хв) — джерело без повтору: кнопки повтору немає',
+  globals: { surface: 'phone' },
+  args: remoteAt(40 * MIN, false),
+  parameters: { time: { at: iso(40 * MIN), frozen: true } },
 };

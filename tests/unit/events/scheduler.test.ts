@@ -16,7 +16,9 @@ function setup(over: Partial<SchedulerDeps> = {}) {
   const real = { t: 0 };
   const s = createEngineScheduler({
     data,
-    emit: (type, payload) => log.push({ type, payload }),
+    emit: (type, payload) => {
+      log.push({ type, payload });
+    },
     storage: sessionStorage,
     realNow: () => real.t,
     ...over,
@@ -63,7 +65,14 @@ describe('шина подій', () => {
       throw new Error('boom');
     });
     on('offer:show', ok);
-    emit('offer:show', { eventKey: 'k', at: 0, kind: 'tips', triggerEventId: 'e', stampCount: 3, neutralizeSound: true });
+    emit('offer:show', {
+      eventKey: 'k',
+      at: 0,
+      kind: 'tips',
+      triggerEventId: 'e',
+      stampCount: 3,
+      neutralizeSound: true,
+    });
     expect(ok).toHaveBeenCalledOnce();
     spy.mockRestore();
   });
@@ -72,7 +81,8 @@ describe('шина подій', () => {
 describe('EngineScheduler', () => {
   it('опівночі +15 с подія moment:stamp одна на слот', () => {
     const { log, run } = setup({
-      getPresence: (ids): Record<string, PresenceSource> => (ids.includes('evt_london_2027') ? { evt_london_2027: 'air' } : {}),
+      getPresence: (ids): Record<string, PresenceSource> =>
+        ids.includes('evt_london_2027') ? { evt_london_2027: 'air' } : {},
     });
     run(LONDON_MIDNIGHT - 5 * SEC, LONDON_MIDNIGHT + 30 * SEC);
     const stamps = ofType(log, 'moment:stamp');
@@ -156,7 +166,11 @@ describe('EngineScheduler', () => {
     run(LONDON_MIDNIGHT + 5 * MIN + 11 * SEC, LONDON_MIDNIGHT + 5 * MIN + 11 * SEC);
     const close = ofType(log, 'moment:rate-close');
     expect(close).toHaveLength(1);
-    expect(close[0]).toMatchObject({ reason: 'timeout', at: LONDON_MIDNIGHT + 5 * MIN, deferredMs: 11 * SEC });
+    expect(close[0]).toMatchObject({
+      reason: 'timeout',
+      at: LONDON_MIDNIGHT + 5 * MIN,
+      deferredMs: 11 * SEC,
+    });
   });
 
   it('без штампа оцінки немає', () => {
@@ -202,7 +216,11 @@ describe('EngineScheduler', () => {
     s.tick(PARIS_MIDNIGHT - MIN);
     real.t = 2_000;
     s.tick(LONDON_MIDNIGHT + 30 * SEC);
-    const types = log.map((e) => [e.type, (e.payload as { at: number }).at, (e.payload as { late?: boolean }).late]);
+    const types = log.map((e) => [
+      e.type,
+      (e.payload as { at: number }).at,
+      (e.payload as { late?: boolean }).late,
+    ]);
     expect(types).toEqual([
       ['moment:stamp', PARIS_MIDNIGHT + 15 * SEC, true],
       ['air:handover-soon', PARIS_MIDNIGHT + 14 * MIN, true],
@@ -215,8 +233,22 @@ describe('EngineScheduler', () => {
     const { log, run } = setup({
       getOfferContext: () => ({
         stamps: [
-          { eventId: 'evt_paris_2027', grantedAt: 0, presenceSource: 'air', illustrationId: 'x', cityName: 'Париж', countryIso: 'FR' },
-          { eventId: 'evt_london_2027', grantedAt: 0, presenceSource: 'air', illustrationId: 'x', cityName: 'Лондон', countryIso: 'GB' },
+          {
+            eventId: 'evt_paris_2027',
+            grantedAt: 0,
+            presenceSource: 'air',
+            illustrationId: 'x',
+            cityName: 'Париж',
+            countryIso: 'FR',
+          },
+          {
+            eventId: 'evt_london_2027',
+            grantedAt: 0,
+            presenceSource: 'air',
+            illustrationId: 'x',
+            cityName: 'Лондон',
+            countryIso: 'GB',
+          },
         ],
         lastEvent: data.eventsById.get('evt_london_2027')!,
         nextEvent: data.eventsById.get('evt_rio_2027')!,
@@ -237,5 +269,49 @@ describe('EngineScheduler', () => {
         neutralizeSound: true,
       },
     ]);
+  });
+
+  it('offer:show без підписників (перший такт після завантаження) не позначається показаним і повторюється', () => {
+    let delivered = false;
+    const got: string[] = [];
+    const { run } = setup({
+      emit: (type, payload) => {
+        if (type !== 'offer:show') return true;
+        if (!delivered) return false;
+        got.push((payload as UiEventMap['offer:show']).eventKey);
+        return true;
+      },
+      getOfferContext: () => ({
+        stamps: [
+          {
+            eventId: 'evt_paris_2027',
+            grantedAt: 0,
+            presenceSource: 'air',
+            illustrationId: 'x',
+            cityName: 'Париж',
+            countryIso: 'FR',
+          },
+          {
+            eventId: 'evt_london_2027',
+            grantedAt: 0,
+            presenceSource: 'air',
+            illustrationId: 'x',
+            cityName: 'Лондон',
+            countryIso: 'GB',
+          },
+        ],
+        lastEvent: data.eventsById.get('evt_london_2027')!,
+        nextEvent: data.eventsById.get('evt_rio_2027')!,
+        hasPass: false,
+        rate: 'closed',
+        offers: { nightId: '2026-27', history: [], visible: null },
+        ui: { overlayOpen: false, composerFocused: false },
+      }),
+    });
+    run(LONDON_MIDNIGHT + 6 * MIN, LONDON_MIDNIGHT + 6 * MIN + 2 * SEC);
+    expect(got).toEqual([]);
+    delivered = true;
+    run(LONDON_MIDNIGHT + 6 * MIN + 3 * SEC, LONDON_MIDNIGHT + 6 * MIN + 5 * SEC);
+    expect(got).toEqual(['offer:pass-offer:evt_london_2027']);
   });
 });

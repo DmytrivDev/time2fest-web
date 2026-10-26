@@ -21,9 +21,10 @@ export function on<K extends UiEventType>(type: K, handler: UiEventHandler<K>): 
   };
 }
 
-export function emit<K extends UiEventType>(type: K, payload: UiEventMap[K]): void {
+/** `true`, якщо подію отримав хоча б один обробник. */
+export function emit<K extends UiEventType>(type: K, payload: UiEventMap[K]): boolean {
   const list = handlers.get(type);
-  if (!list?.length) return;
+  if (!list?.length) return false;
   for (const h of [...list]) {
     try {
       (h as UiEventHandler<K>)(payload);
@@ -31,6 +32,7 @@ export function emit<K extends UiEventType>(type: K, payload: UiEventMap[K]): vo
       console.error(`[events] обробник ${type} упав`, err);
     }
   }
+  return true;
 }
 
 /** Для тестів: прибрати всі підписки. */

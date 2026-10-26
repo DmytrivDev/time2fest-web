@@ -76,23 +76,45 @@ function subscribePhone(cb: () => void): () => void {
 }
 const getPhone = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_QUERY).matches : false);
 
-function useGeometry(initial: ZoneMapGeometry | undefined) {
+/**
+ * Геометрія мапи (~75 КБ) вантажиться, коли мапа наближається до екрана (SC-001): на першому екрані її немає,
+ * і на мобільному вона не має забирати канал у плеєра. Без IntersectionObserver — одразу.
+ */
+function useGeometry(initial: ZoneMapGeometry | undefined, root: RefObject<HTMLElement | null>) {
   const [loaded, setLoaded] = useState<ZoneMapGeometry | null>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     if (initial) return;
     let alive = true;
-    import('@/data/zonemap.json')
-      .then((m) => {
-        if (alive) setLoaded(m.default as unknown as ZoneMapGeometry);
-      })
-      .catch(() => {
-        if (alive) setFailed(true);
-      });
+    const load = () =>
+      import('@/data/zonemap.json')
+        .then((m) => {
+          if (alive) setLoaded(m.default as unknown as ZoneMapGeometry);
+        })
+        .catch(() => {
+          if (alive) setFailed(true);
+        });
+    const el = root.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      void load();
+      return () => {
+        alive = false;
+      };
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((en) => en.isIntersecting)) return;
+        io.disconnect();
+        void load();
+      },
+      { rootMargin: '600px 0px' },
+    );
+    io.observe(el);
     return () => {
       alive = false;
+      io.disconnect();
     };
-  }, [initial]);
+  }, [initial, root]);
   return { geometry: initial ?? loaded, failed };
 }
 
@@ -132,7 +154,8 @@ export function ZoneMap({
   const isPhone = layout === 'phone';
 
   const now = useNow({ granularity: 'minute' });
-  const { geometry, failed } = useGeometry(geometryProp);
+  const rootRef = useRef<HTMLElement>(null);
+  const { geometry, failed } = useGeometry(geometryProp, rootRef);
 
   const [view, setView] = useState<'map' | 'list'>(defaultView);
   const [layer, setLayer] = useState<'zones' | 'viewers'>(defaultLayer);
@@ -253,6 +276,7 @@ export function ZoneMap({
     // Esc із будь-якого місця мапи й картки закриває картку (клавіатурний прийом, не окрема дія).
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <section
+      ref={rootRef}
       aria-labelledby={headId}
       data-zone-map=""
       data-layout={layout}

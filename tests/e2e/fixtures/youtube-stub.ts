@@ -240,13 +240,20 @@ export class YouTubeStub {
   }
 }
 
-/** `test` з фікстурою `ytStub`: заглушка встановлена до першого `page.goto`. */
+/**
+ * `test` з фікстурою `ytStub`: заглушка встановлена до першого `page.goto`.
+ * `auto: true` — і в тестах, що фікстуру не просять: справжній YouTube у e2e не вантажиться ніколи
+ * (повільно, нестабільно, а axe знаходить порушення всередині чужого iframe).
+ */
 export const test = base.extend<{ ytStub: YouTubeStub }>({
-  ytStub: async ({ page }, provide) => {
-    const stub = new YouTubeStub(page);
-    await stub.install();
-    await provide(stub);
-  },
+  ytStub: [
+    async ({ page }, provide) => {
+      const stub = new YouTubeStub(page);
+      await stub.install();
+      await provide(stub);
+    },
+    { auto: true },
+  ],
 });
 
 export { expect } from '@playwright/test';

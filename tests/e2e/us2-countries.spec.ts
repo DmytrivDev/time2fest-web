@@ -6,14 +6,17 @@
  * Момент за замовчуванням: 2027-01-01T01:38+02:00 — Лондон (UTC+0) наживо, Франція вже зустріла.
  */
 import type { Page } from '@playwright/test';
-import { test, expect } from '@playwright/test';
+import { expect, test } from './fixtures/youtube-stub';
 import { runAxe } from './fixtures/axe';
 import { DEFAULT_START, gotoAt } from './fixtures/time';
 
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
 test.beforeEach(async ({ page }, testInfo) => {
   void page;
-  test.skip(testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'US2: телефон і десктоп');
+  test.skip(
+    testInfo.project.name === 'tv' || testInfo.project.name === 'prod',
+    'US2: телефон і десктоп',
+  );
 });
 
 const EMPTY = 'Нічого не знайшли — спробуй іншу назву';
@@ -48,11 +51,17 @@ test.describe('Список країн', () => {
     await expect(group(page, 'met').getByRole('heading', { name: /^Уже зустріли/ })).toBeVisible();
   });
 
-  test('пошук: «Бра» знаходить Бразилію, нісенітниця дає порожній стан, очищення повертає групи', async ({ page }) => {
+  test('пошук: «Бра» знаходить Бразилію, нісенітниця дає порожній стан, очищення повертає групи', async ({
+    page,
+  }) => {
     await openList(page);
     await search(page).fill('Бра');
     // Бразилія має кілька поясів — рядок UTC−3 (Ріо-де-Жанейро).
-    await expect(row(page, 'BR').filter({ hasText: 'Ріо-де-Жанейро' }).getByRole('link', { name: /Бразилія/ })).toBeVisible();
+    await expect(
+      row(page, 'BR')
+        .filter({ hasText: 'Ріо-де-Жанейро' })
+        .getByRole('link', { name: /Бразилія/ }),
+    ).toBeVisible();
     await expect(page.getByText(EMPTY)).toHaveCount(0);
 
     await search(page).fill('ццццйййй');
@@ -65,7 +74,9 @@ test.describe('Список країн', () => {
     await expect(group(page, 'next')).toBeVisible();
   });
 
-  test('«Лише з трансляціями» лишає наживо й очікувані; інший статус у фільтрах вимикає перемикач', async ({ page }) => {
+  test('«Лише з трансляціями» лишає наживо й очікувані; інший статус у фільтрах вимикає перемикач', async ({
+    page,
+  }) => {
     await openList(page);
     const toggle = streamsOnly(page);
     await expect(toggle).not.toBeChecked();
@@ -74,7 +85,9 @@ test.describe('Список країн', () => {
     await toggle.click();
     await expect(toggle).toBeChecked();
     await expect(row(page, 'GB')).toBeVisible();
-    await expect(page.locator('[data-country-row][data-status="countdown-only"]:visible')).toHaveCount(0);
+    await expect(
+      page.locator('[data-country-row][data-status="countdown-only"]:visible'),
+    ).toHaveCount(0);
     await expect(page.locator('[data-country-row][data-status="possible"]:visible')).toHaveCount(0);
     await expect(page.locator('[data-country-row="GH"]:visible')).toHaveCount(0); // Гана без трансляції
 
@@ -90,10 +103,17 @@ test.describe('Список країн', () => {
     await expect(toggle).not.toBeChecked();
   });
 
-  test('фільтри: 0 статусів — «Показати 0 країн» неактивна з поясненням, «Скинути» повертає', async ({ page }) => {
+  test('фільтри: 0 статусів — «Показати 0 країн» неактивна з поясненням, «Скинути» повертає', async ({
+    page,
+  }) => {
     await openList(page);
     const dialog = await openFilters(page);
-    for (const name of [/^Наживо/, /^Трансляція очікується/, /^Трансляція можлива/, /^Лише відлік/]) {
+    for (const name of [
+      /^Наживо/,
+      /^Трансляція очікується/,
+      /^Трансляція можлива/,
+      /^Лише відлік/,
+    ]) {
       await dialog.getByRole('checkbox', { name }).uncheck();
     }
     const show = dialog.getByRole('button', { name: 'Показати 0 країн' });
@@ -122,13 +142,17 @@ test.describe('Список країн: доступність', () => {
     await openList(page);
     await expect(row(page, 'GB')).toBeVisible();
     const violations = await runAxe(page);
-    expect(violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+    expect(
+      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
+    ).toEqual([]);
   });
 
   test('axe: відкритий діалог «Фільтри» без порушень', async ({ page }) => {
     await openList(page);
     await openFilters(page);
     const violations = await runAxe(page);
-    expect(violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+    expect(
+      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
+    ).toEqual([]);
   });
 });

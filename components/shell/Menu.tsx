@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { Dialog, RadioGroup, VisuallyHidden } from 'radix-ui';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
@@ -119,6 +119,9 @@ export function Menu({
   const setStored = useGuestStore((s) => s.setReducedMotion);
   const motion = reducedMotion ?? stored;
   const close = () => onOpenChange(false);
+  // Меню відкривається без Dialog.Trigger (кнопка — у хедері), тож Radix не знає, куди повернути фокус:
+  // запам’ятовуємо елемент з фокусом до відкриття й повертаємо на нього після закриття (WCAG 2.4.3).
+  const returnFocus = useRef<HTMLElement | null>(null);
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -126,6 +129,15 @@ export function Menu({
         <Dialog.Content
           data-menu=""
           aria-describedby={undefined}
+          onOpenAutoFocus={() => {
+            const el = document.activeElement;
+            returnFocus.current = el instanceof HTMLElement && el !== document.body ? el : null;
+          }}
+          onCloseAutoFocus={(e) => {
+            if (!returnFocus.current?.isConnected) return;
+            e.preventDefault();
+            returnFocus.current.focus();
+          }}
           className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-background text-text"
         >
           <header className="flex h-14 shrink-0 items-center gap-0.5 border-b border-border ps-4 pe-1">

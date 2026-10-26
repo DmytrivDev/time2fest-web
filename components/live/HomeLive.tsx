@@ -91,7 +91,7 @@ function EventsBlocks({
       {howTo && current?.country ? (
         <HowToCard country={current.country.name.uk} traditions={current.country.howTo.traditions} variant="compact" className={styles.pad} />
       ) : null}
-      <NowNext items={items} zoneLabel={zoneLabel} layout={layout} progress={progress} mapHref="#zone-map" className={styles.pad} />
+      <NowNext items={items} zoneLabel={zoneLabel} layout={layout} progress={progress} mapHref="#zone-map" onToggleSchedule={onToggleSchedule} className={styles.pad} />
       {chips.length ? (
         <section aria-labelledby="zone-countries-title" className={cn(styles.pad, 'flex flex-col gap-3')}>
           <h2 id="zone-countries-title" className="text-headline-sm text-text">

@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ReducedMotionScript } from '@/lib/a11y/ReducedMotionHeadScript';
 import { ReducedMotionSync } from '@/lib/a11y/ReducedMotionSync';
+import { TIME_PREFETCH_SCRIPT } from '@/lib/time/timePrefetch';
 import './globals.css';
 
 const manrope = Manrope({
@@ -24,6 +25,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} className={`${manrope.variable} dark`} style={{ colorScheme: 'dark' }} suppressHydrationWarning>
       <head>
         <ReducedMotionScript />
+        {/* Ранній /api/time (SC-001): ефір не чекає гідратації, щоб дізнатися серверний час. */}
+        <script dangerouslySetInnerHTML={{ __html: TIME_PREFETCH_SCRIPT }} />
       </head>
       <body>
         <ReducedMotionSync />
