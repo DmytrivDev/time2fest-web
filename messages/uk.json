@@ -188,7 +188,16 @@
     "calmNotice": "Примітка про причину від власника",
     "cancelledNote": "Цього року без феєрверків",
     "noMoreWindows": "Більше вікон — на комп’ютері",
-    "dismissBack": "Назад до сторінки країни: {country}"
+    "dismissBack": "Назад до сторінки країни: {country}",
+    "scene": {
+      "caption": "Сцена відліку Time2Fest · трансляції тут немає",
+      "expected": "Трансляція почнеться сама, щойно з’явиться",
+      "expectedNote": "сцена відліку · місцевий час {time}",
+      "midnightAt": "Північ о <time>{value}</time> за вашим часом",
+      "localTime": "Місцевий час · {time}",
+      "noStreamNote": "сцена відліку · трансляції тут немає",
+      "howTo": "Як святкують"
+    }
   },
   "nav": {
     "nowAndNext": "Зараз і далі",
@@ -274,7 +283,18 @@
     "myEmotion": "Моя емоція",
     "unreadCount": "Нових повідомлень: {count}",
     "firstRowRow": "Перший ряд · {city} · {taken}",
-    "bannedInput": "Поле неактивне: бан у чаті"
+    "bannedInput": "Поле неактивне: бан у чаті",
+    "logLabel": "Повідомлення чату «{room}»",
+    "pausedNote": "Стрічку зупинено — читай у своєму темпі",
+    "systemSlowMode": "Повільний режим: одне повідомлення кожні {seconds, plural, one {# секунду} few {# секунди} many {# секунд} other {# секунди}}",
+    "systemPoll": "Відкрито голосування",
+    "systemFirstRowTail": "тепер у першому ряду · {city}",
+    "greetingPrefix": "Time2Fest вітає з Новим роком:",
+    "greetingSuffix": "— Перший ряд · {city}, місце {seat}",
+    "greetingQuote": "«{text}»",
+    "replyTo": "Відповідь · {nick}",
+    "emotionLabel": "емоція: {emotion}",
+    "toEvents": "До подій"
   },
   "windows": {
     "nick": {
@@ -313,13 +333,22 @@
       "saveFailed": "Збережемо самі, щойно з’явиться зв’язок",
       "retry": "Спробувати ще",
       "multi": "{first} · {second}",
-      "firstRow": "Перший ряд · {city}"
+      "firstRow": "Перший ряд · {city}",
+      "heading": "Новий штамп у паспорті",
+      "inPassport": "Уже в твоєму паспорті",
+      "savedLocal": "Збережено на цьому пристрої · <signIn>Увійди</signIn>, щоб не загубити"
     },
     "rate": {
       "title": "Як тобі шоу?",
       "row": "{country} · {city}",
       "stars": "Оцінка: {n} з 5",
-      "star": "{n} з 5"
+      "star": "{n} з 5",
+      "close": "Закрити оцінку",
+      "low": "слабко",
+      "high": "неймовірно",
+      "later": "Можна оцінити й пізніше — у <link>рейтингу міст</link> до кінця свята",
+      "thanks": "Дякуємо",
+      "error": "Не вдалося надіслати оцінку. Спробуй ще раз"
     },
     "offer": {
       "pass": "Уже {count, plural, one {# країна} few {# країни} many {# країн} other {# країни}} у твоєму паспорті — зроби свій шлях видимим і збирай розклад",
@@ -377,7 +406,10 @@
         "gift": "Подарунок",
         "clock": "Годинник",
         "sparkles": "Іскри",
-        "peace": "Мир"
+        "peace": "Мир",
+        "party": "Вечірка",
+        "clap": "Оплески",
+        "laugh": "Сміх"
       }
     },
     "schedule": {
@@ -438,7 +470,12 @@
       "stamp": "ачівка «Перший ряд» і персоналізована картка для шерингу",
       "pass": "Новорічний пас у подарунок або знижка 50%, якщо пас уже куплено"
     },
-    "refund": "Повернути гроші"
+    "refund": "Повернути гроші",
+    "you": "Ти",
+    "seatLabelFull": "Місце {n}: {name}, {country}, емоція: {emotion}",
+    "seatLabelShort": "Місце {n}: {name}, емоція: {emotion}",
+    "wallLit": "З Новим роком, перший ряд!",
+    "wallAllLit": "усі {count, plural, one {# місце} few {# місця} many {# місць} other {# місця}} загорілись"
   },
   "tv": {
     "exit": "Вийти",
@@ -481,5 +518,44 @@
     "single": "{name} {gender, select, m {зустрів} f {зустріла} n {зустріло} pl {зустріли} other {зустріли}} Новий рік",
     "multi": "{names} зустріли Новий рік",
     "fallback": "{name} · Новий рік настав"
+  },
+  "liveCards": {
+    "eventCard": {
+      "midnight": "Північ",
+      "countryHint": ", {country}",
+      "type": {
+        "main": "Головне святкування",
+        "webcam": "Вебкамера",
+        "tv": "Телетрансляція",
+        "countdownOnly": "Лише відлік"
+      },
+      "scheduleRemove": "Прибрати з графіка: {city}",
+      "schedulePast": "{city} · північ уже минула, додати в графік не можна"
+    },
+    "nowNext": {
+      "meta": "за вашим часом ({zone})",
+      "listLabel": "Події: зараз і далі",
+      "showMore": "Показати ще {count}",
+      "showLess": "Показати менше",
+      "toMap": "Перейти до мапи",
+      "empty": "Поки немає подій з трансляціями",
+      "showAll": "Показати всі події"
+    },
+    "howTo": {
+      "title": "Як святкувати · {country}",
+      "compactTitle": "Як святкувати",
+      "list": "Ключові традиції"
+    },
+    "miniPlayer": {
+      "region": "Мініплеєр · {title}",
+      "poster": "Відео трансляції · {title}",
+      "return": "Повернутися",
+      "fullscreen": "Повний екран",
+      "move": "Перемістити в інший кут",
+      "close": "Закрити мініплеєр і зупинити відео"
+    },
+    "celebrations": {
+      "listLabel": "Слайдер основних святкувань"
+    }
   }
 }

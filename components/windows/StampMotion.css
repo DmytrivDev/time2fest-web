@@ -1,0 +1,83 @@
+/* Рух штампа (C14): «удар» штемпеля ≈ 0,6 с і конфеті. Грають лише у `lively` — коли рух дозволено
+   (<html data-reduce-motion="false">, lib/a11y/reducedMotion). Інакше все стоїть на місці: штемпель одразу на листівці.
+   Кольори — токени (styles/tokens.css). */
+
+@keyframes t2f-stamp-hit {
+  0% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(0.94);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+html[data-reduce-motion='false'] [data-stamping='true'] .t2f-stamp-hit {
+  animation: t2f-stamp-hit 600ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/* Іскри від удару: ховаємо, якщо рух зменшено. */
+@keyframes t2f-stamp-spark {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--spark-x), var(--spark-y)) scale(1);
+    opacity: 0;
+  }
+}
+
+.t2f-stamp-spark,
+.t2f-confetti {
+  display: none;
+}
+
+html[data-reduce-motion='false'] [data-stamping='true'] .t2f-stamp-spark {
+  display: block;
+  position: absolute;
+  top: 2.5rem;
+  right: 3.5rem;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  animation: t2f-stamp-spark 700ms ease-out 350ms both;
+}
+
+@keyframes t2f-confetti-fall {
+  0% {
+    transform: translate3d(0, -12px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift), 200px, 0) rotate(var(--spin));
+    opacity: 0;
+  }
+}
+
+html[data-reduce-motion='false'] [data-stamping='true'] .t2f-confetti {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: var(--left);
+  width: 6px;
+  height: 10px;
+  border-radius: 1px;
+  background: var(--tone);
+  animation: t2f-confetti-fall 1800ms ease-in var(--delay) both;
+}

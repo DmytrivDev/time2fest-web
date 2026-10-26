@@ -1,0 +1,125 @@
+'use client';
+
+import { useId } from 'react';
+import { useTranslations } from 'next-intl';
+import { cn } from '@/components/primitives/cn';
+import { Icon } from '@/components/primitives/Icon';
+import type { HowTo } from '@/lib/data/types';
+
+export type Tradition = HowTo['traditions'][number];
+
+export type HowToVariant = 'full' | 'compact' | 'tv';
+
+export interface HowToCardProps {
+  /** Назва країни для заголовка «Як святкувати · Франція» (без відмінювання). */
+  country: string;
+  traditions: readonly Tradition[];
+  /**
+   * `full` — сторінка країни: три картки (на телефоні гортаються вбік) ·
+   * `compact` — біля плеєра (−15…+10 хв): жовта смуга ліворуч, 2–4 пункти ·
+   * `tv` — бічна колонка S-TV.
+   */
+  variant?: HowToVariant;
+  /** Рівень заголовка (за замовчуванням `h2`). */
+  headingLevel?: 'h2' | 'h3';
+  className?: string;
+}
+
+function TraditionIcon({ size }: { size: 'md' | 'lg' }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'inline-flex shrink-0 items-center justify-center rounded-full bg-highlight-tint text-highlight ring-1 ring-inset ring-highlight/30',
+        size === 'lg' ? 'size-16' : 'size-12',
+      )}
+    >
+      <Icon name="star" size={22} />
+    </span>
+  );
+}
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** C20. «Як святкувати»: ключові традиції країни. */
+export function HowToCard({ country, traditions, variant = 'full', headingLevel: Heading = 'h2', className }: HowToCardProps) {
+  const t = useTranslations('liveCards.howTo');
+  const headingId = useId();
+
+  if (variant === 'compact') {
+    const items = traditions.slice(0, 4);
+    return (
+      <section
+        aria-labelledby={headingId}
+        data-how-to="compact"
+        className={cn('flex flex-col gap-2 rounded-md border-s-2 border-highlight bg-surface px-4 py-3', className)}
+      >
+        <Heading id={headingId} className="text-label-sm text-highlight">
+          {t('compactTitle')}
+        </Heading>
+        <ul aria-label={t('list')} className="m-0 flex list-none flex-col gap-1 p-0">
+          {items.map((item) => (
+            <li key={item.id} className="text-body-lg text-text-secondary">
+              <strong className="font-semibold text-text">{item.title}.</strong> {item.text}
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
+
+  if (variant === 'tv') {
+    return (
+      <section aria-labelledby={headingId} data-how-to="tv" className={cn('flex flex-col gap-3', className)}>
+        <Heading id={headingId} className="text-tv-title text-text">
+          {t('title', { country })}
+        </Heading>
+        <ol aria-label={t('list')} className="m-0 flex list-none flex-col gap-3 p-0">
+          {traditions.map((item) => (
+            <li key={item.id} className="flex items-start gap-4 rounded-lg border border-border bg-surface px-4 py-3">
+              <TraditionIcon size="md" />
+              <div className="min-w-0">
+                <h3 className="text-tv-title text-text">{item.title}</h3>
+                <p className="mt-2 text-tv-text text-text-secondary">{item.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    );
+  }
+
+  return (
+    <section aria-labelledby={headingId} data-how-to="full" className={cn('flex flex-col gap-5', className)}>
+      <Heading id={headingId} className="text-headline-md text-text">
+        {t('title', { country })}
+      </Heading>
+      {/* Телефон: ряд гортається вбік (область з фокусом), від 768 px — три колонки. */}
+      {/* Прокручувана область має бути досяжною з клавіатури (WCAG 2.1.1). */}
+      <ol
+        aria-label={t('list')}
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- прокручувана область
+        tabIndex={0}
+        className="t2f-focus t2f-no-scrollbar m-0 flex list-none snap-x gap-4 overflow-x-auto p-0 md:grid md:grid-cols-3 md:overflow-visible"
+      >
+        {traditions.map((item, i) => (
+          <li
+            key={item.id}
+            className="flex w-72 shrink-0 snap-start flex-col gap-3.5 rounded-lg border border-border bg-surface p-6 md:w-auto"
+          >
+            <div className="flex items-center justify-between">
+              <TraditionIcon size="lg" />
+              <span aria-hidden="true" className="text-label-badge tabular-nums text-text-muted">
+                {pad(i + 1)}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-headline-sm text-text">{item.title}</h3>
+              <p className="mt-1.5 text-body text-text-secondary">{item.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
