@@ -1,0 +1,6 @@
+{
+  "stub": {
+    "title": "Time2Fest",
+    "welcome": "{gender, select, m {{name} зустрів Новий рік} f {{name} зустріла Новий рік} n {{name} зустріло Новий рік} pl {{name} зустріли Новий рік} other {Новий рік: {name}}}"
+  }
+}

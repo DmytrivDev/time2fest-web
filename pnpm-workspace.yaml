@@ -1,0 +1,9 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  esbuild: true
+  msgpackr-extract: true
+  unrs-resolver: true
+  workerd: true
+  better-sqlite3: false
+  core-js-pure: false

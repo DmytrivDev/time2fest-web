@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/typography.css";
+@import "../styles/theme.css";
+
+html,
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-manrope), var(--font-sans);
+}

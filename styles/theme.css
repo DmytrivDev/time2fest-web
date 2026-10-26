@@ -1,0 +1,4 @@
+/* Відображення токенів, яких немає в @theme самого tokens.css (colors, radius, spacing, text вже там). */
+@theme inline {
+  --shadow-mini-player: var(--mini-player-shadow);
+}

@@ -1,0 +1,12 @@
+node_modules
+out
+.next
+.env*
+!.env.example
+playwright-report
+test-results
+storybook-static
+__pycache__
+data/streams.candidates.json
+*.tsbuildinfo
+next-env.d.ts
