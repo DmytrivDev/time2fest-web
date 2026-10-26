@@ -19,6 +19,7 @@ import { getData } from '@/lib/data/load';
 import { captionPhase, type CaptionPhase } from '@/lib/engine/captionPhase';
 import { currentAirEvent, type AirState } from '@/lib/engine/currentAirEvent';
 import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
+import { isRateInteracting } from '@/lib/live/rateInteraction';
 import { surfacePresence } from '@/lib/presence/useStampGrant';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
@@ -63,6 +64,9 @@ export interface BroadcastState {
 }
 
 const BroadcastContext = createContext<BroadcastState | null>(null);
+
+/** Закриття оцінки за часом відкладається, поки людина працює з карткою (WCAG 2.2.1). */
+const RATE_DEPS = { isInteracting: () => isRateInteracting() };
 
 function placeOf(event: ScheduledEvent | null | undefined): AirPlace | null {
   if (!event) return null;
@@ -150,7 +154,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
 
   return (
     <BroadcastContext.Provider value={value}>
-      <EngineScheduler data={getData()} getPresence={surfacePresence} stayedHere={stayedHere} />
+      <EngineScheduler data={getData()} getPresence={surfacePresence} stayedHere={stayedHere} rate={RATE_DEPS} />
       {children}
     </BroadcastContext.Provider>
   );

@@ -1,13 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { HowToCard } from '@/components/live/HowToCard';
 import { Stage, StateRow } from '../_support/Stage';
-import { withUs1Messages } from '../_support/us1Messages';
 import { TRADITIONS } from '../_support/liveFixtures';
 
 const meta = {
   title: 'Живий ефір/HowToCard',
   component: HowToCard,
-  decorators: [withUs1Messages],
   args: { country: 'Франція', traditions: TRADITIONS.slice(0, 3) },
 } satisfies Meta<typeof HowToCard>;
 export default meta;

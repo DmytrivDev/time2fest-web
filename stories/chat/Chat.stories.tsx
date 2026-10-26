@@ -5,7 +5,6 @@ import { Chat } from '@/components/chat/Chat';
 import { Message } from '@/components/chat/Message';
 import type { ChatMessage } from '@/lib/data/types';
 import { Stage, StateRow } from '../_support/Stage';
-import { PendingIntl } from '../us1/PendingIntl';
 import {
   AMIRA,
   CHAT_SAMPLE,
@@ -30,13 +29,13 @@ const meta = {
   args: { room: { id: 'world', label: 'Світ' }, messages: CHAT_SAMPLE, lookup: LOOKUP },
   decorators: [
     (Story) => (
-      <PendingIntl>
+      <>
         <Stage>
           <div className="flex h-120 min-h-0 flex-col overflow-hidden rounded-lg border border-border">
             <Story />
           </div>
         </Stage>
-      </PendingIntl>
+      </>
     ),
   ],
 } satisfies Meta<typeof Chat>;
@@ -114,9 +113,9 @@ export const Messages: Story = {
   name: 'Message — усі варіанти',
   decorators: [
     (Story) => (
-      <PendingIntl>
+      <>
         <Story />
-      </PendingIntl>
+      </>
     ),
   ],
   render: () => (

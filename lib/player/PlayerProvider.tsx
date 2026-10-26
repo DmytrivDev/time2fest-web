@@ -352,3 +352,8 @@ export function useOptionalPlayer(): PlayerState | null {
 export function useOptionalPlayerInternals(): PlayerInternals | null {
   return useContext(InternalsContext);
 }
+
+/** Без провайдера — `null` (історії Storybook): кнопки плеєра нічого не роблять. */
+export function useOptionalPlayerActions(): PlayerActions | null {
+  return useContext(ActionsContext);
+}

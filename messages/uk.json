@@ -197,7 +197,13 @@
       "localTime": "Місцевий час · {time}",
       "noStreamNote": "сцена відліку · трансляції тут немає",
       "howTo": "Як святкують"
-    }
+    },
+    "timerUntil": "до півночі",
+    "timerNext": "далі через",
+    "soundUnavailable": "Увімкнути звук — трансляції зараз немає",
+    "scheduleHint": "За вашим графіком зараз — {place}",
+    "inFlowLabel": "Повідомлення під відео",
+    "secondsSpoken": "{seconds, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}"
   },
   "nav": {
     "nowAndNext": "Зараз і далі",
@@ -475,7 +481,8 @@
     "seatLabelFull": "Місце {n}: {name}, {country}, емоція: {emotion}",
     "seatLabelShort": "Місце {n}: {name}, емоція: {emotion}",
     "wallLit": "З Новим роком, перший ряд!",
-    "wallAllLit": "усі {count, plural, one {# місце} few {# місця} many {# місць} other {# місця}} загорілись"
+    "wallAllLit": "усі {count, plural, one {# місце} few {# місця} many {# місць} other {# місця}} загорілись",
+    "heading": "Перший ряд · {city}"
   },
   "tv": {
     "exit": "Вийти",
@@ -557,5 +564,50 @@
     "celebrations": {
       "listLabel": "Слайдер основних святкувань"
     }
+  },
+  "liveMap": {
+    "layerLabel": "Шар мапи",
+    "viewLabel": "Вигляд",
+    "mapRegion": "Мапа поясів",
+    "mapGroup": "Мапа поясів. Пояси за стрілками, Enter — картка поясу",
+    "loading": "Завантажуємо мапу",
+    "loadError": "Мапу не вдалося завантажити. Скористайся списком.",
+    "hintDesktop": "Наведи або обери пояс клавішами — країни, час за вашим часом і «Як святкувати».",
+    "hintPhone": "Торкнись міста чи поясу — картка з’явиться під мапою.",
+    "state": {
+      "past": "уже зустрів Новий рік",
+      "live": "північ зараз",
+      "next": "найближча північ",
+      "future": "ще попереду"
+    },
+    "legend": {
+      "past": "Вже зустріли",
+      "live": "Наживо зараз",
+      "next": "Найближча північ",
+      "future": "Ще попереду",
+      "stream": "Трансляція зараз — натисни, щоб побачити картку",
+      "streamDesktop": "Трансляція зараз — натисни, щоб дивитися",
+      "city": "Основне місто — засвітиться, коли почнеться трансляція"
+    },
+    "zoneName": "Пояс {offset}",
+    "zoneAria": "Пояс, {when}: {countries}. {state}",
+    "cityAriaStreamCard": "{city} — трансляція наживо, показати картку",
+    "cityAriaQuietCard": "{city} — трансляції ще немає, показати картку",
+    "cityAriaStreamLink": "{city} — трансляція наживо, перейти до країни",
+    "cityAriaQuietLink": "{city} — трансляції ще немає, перейти до країни",
+    "midnightAt": "північ о {time} за вашим часом",
+    "midnightAtDate": "північ {date} о {time} за вашим часом",
+    "midnightAgo": "північ була {ago}",
+    "untilMidnight": "до півночі",
+    "alsoInZone": "Ще в поясі: {countries}",
+    "alsoInZoneMore": "Ще в поясі: {countries} · ще {count}",
+    "zoneLine": "Пояс {offset} · {when}",
+    "cityLine": "{city} · {type}",
+    "openCountry": "Відкрити країну",
+    "closeCard": "Закрити картку",
+    "countriesOfZone": "Країни поясу",
+    "showMoreCountries": "Ще {count}",
+    "showFewerCountries": "Згорнути",
+    "previewHint": "Клікни, щоб закріпити картку поясу"
   }
 }

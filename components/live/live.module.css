@@ -1,0 +1,34 @@
+/* Точки перелому головної (ІНВ 4.2): десктоп від 1200 px — цього значення немає серед точок Tailwind,
+   а довільні значення в класах заборонені, тож перемикання «лише десктоп / лише телефон» — тут. */
+
+.deskOnly {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .deskOnly {
+    display: inline-flex;
+  }
+  .phoneOnly {
+    display: none;
+  }
+}
+
+/* Відступи блоків сторінки: телефон / планшет-портрет — поля 16 px (плеєр на всю ширину без полів);
+   є колонка чату (десктоп, планшет-альбом) — поля дає сама сітка LiveShell. */
+.pad {
+  padding-inline: var(--spacing-margin-mobile);
+}
+
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) {
+  .pad {
+    padding-inline: 0;
+  }
+}
+
+/* Вкладка «Чат» на телефоні: стрічка на решту екрана під закріпленим плеєром. */
+.phoneChat {
+  height: 70vh;
+  height: 70dvh;
+  min-height: 360px;
+}

@@ -2,21 +2,9 @@ import { render } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import type { ReactElement } from 'react';
 import base from '@/messages/uk.json';
-import pending from '@/messages/_pending/us1-windows.json';
 import { TimeProvider } from '@/lib/time/TimeProvider';
 
-type Tree = { [key: string]: string | Tree };
-
-function merge(a: Tree, b: Tree): Tree {
-  const out: Tree = { ...a };
-  for (const [k, v] of Object.entries(b)) {
-    const cur = out[k];
-    out[k] = typeof v === 'object' && typeof cur === 'object' ? merge(cur, v) : v;
-  }
-  return out;
-}
-
-export const messages = merge(base as Tree, pending as Tree);
+export const messages = base;
 
 /** 31 грудня 2026, 20:37 UTC. */
 export const NOW = '2026-12-31T20:37:00Z';

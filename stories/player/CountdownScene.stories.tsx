@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { CountdownScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { Stage, StateRow } from '../_support/Stage';
-import { PendingIntl } from '../us1/PendingIntl';
 import { countryOf } from '../us1/fixtures';
 
 /** Нуук: півночі 2027 о 02:00 UTC (зсув −2 год). «Зараз» — 20:37 UTC, тож місцевий час 18:37. */
@@ -15,7 +14,6 @@ const meta = {
   component: CountdownScene,
   parameters: { time: { at: NOW, frozen: true } },
   args: { country: countryOf('GL'), cityName: 'Нуук', midnightMs: NUUK_MIDNIGHT, offsetMinutes: -120 },
-  decorators: [(Story) => <PendingIntl>{Story()}</PendingIntl>],
 } satisfies Meta<typeof CountdownScene>;
 export default meta;
 type Story = StoryObj<typeof meta>;

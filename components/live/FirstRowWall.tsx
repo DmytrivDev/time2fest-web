@@ -160,6 +160,8 @@ export function FirstRowWall({
   return (
     <div
       data-wall={restrained ? 'restrained' : effectivePhase}
+      data-first-row-wall=""
+      data-phase={effectivePhase}
       className={cn('flex flex-col gap-2.5', className)}
     >
       {layout === 'grid' ? (

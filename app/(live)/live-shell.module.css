@@ -22,6 +22,10 @@
 
 /* Телефон / планшет-портрет: відео закріплене вгорі на всю ширину, без кутів, ≥ 200 px. */
 @media (max-width: 1199.98px) and (min-height: 500px) {
+  /* Фокус і прокрутка до елемента не ховаються під закріпленим плеєром (C1): 16:9 на всю ширину, ≥ 200 px. */
+  :global(html) {
+    scroll-padding-top: max(var(--spacing-player-min-height), 56.25vw);
+  }
   .main :global([data-player-slot='main']) {
     position: sticky;
     top: 0;

@@ -5,13 +5,11 @@ import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { useGuestStore } from '@/stores/guest';
 import { Stage } from '../_support/Stage';
-import { PendingIntl } from '../us1/PendingIntl';
 
 const meta = {
   title: 'Плеєр/FacebookConsentCard',
   component: FacebookConsentCard,
   globals: { surface: 'phone' },
-  decorators: [(Story) => <PendingIntl>{Story()}</PendingIntl>],
 } satisfies Meta<typeof FacebookConsentCard>;
 export default meta;
 type Story = StoryObj<typeof meta>;

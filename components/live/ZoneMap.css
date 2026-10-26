@@ -1,0 +1,101 @@
+/* Мапа поясів (C18). Стани поясу — клас на шляху `is-past | is-live | is-next | is-ahead`;
+   колір завжди дублюється штрихуванням, іконкою й підписом (легенда, картка, aria-label).
+   Лише токени: --color-zone-*, --color-background, --color-border, --color-text. */
+.t2f-zone {
+  stroke: var(--color-background);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  outline: none;
+}
+.t2f-zone.is-live {
+  fill: var(--color-zone-live);
+}
+.t2f-zone.is-next {
+  fill: var(--color-zone-next);
+}
+.t2f-zone.is-ahead {
+  fill: var(--color-zone-future);
+}
+/* «Вже зустріли»: штрихування задає інлайн-fill на pattern з унікальним id (див. ZoneMap). */
+.t2f-zone-hatch-bg {
+  fill: var(--color-zone-past);
+}
+.t2f-zone-hatch-line {
+  stroke: var(--color-border);
+  stroke-width: 2;
+}
+.t2f-zone:hover {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1.5;
+}
+.t2f-zone-ring {
+  fill: none;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+.t2f-zone-ring[data-ring='selected'] {
+  stroke: var(--color-text);
+  stroke-width: 2;
+}
+.t2f-zone-ring[data-ring='focus-outer'] {
+  stroke: var(--color-focus-ring-outer);
+  stroke-width: 6;
+}
+.t2f-zone-ring[data-ring='focus'] {
+  stroke: var(--color-focus-ring);
+  stroke-width: 3;
+}
+
+/* Легенда: зразки станів. */
+.t2f-zm-sw {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 14px;
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+.t2f-zm-sw[data-sw='past'] {
+  border: 1px solid var(--color-border-strong);
+  background: repeating-linear-gradient(45deg, var(--color-zone-past) 0 3px, var(--color-border) 3px 5px);
+}
+.t2f-zm-sw[data-sw='live'] {
+  background: var(--color-zone-live);
+}
+.t2f-zm-sw[data-sw='next'] {
+  background: var(--color-zone-next);
+  color: var(--color-on-highlight);
+}
+.t2f-zm-sw[data-sw='ahead'] {
+  background: var(--color-zone-future);
+}
+
+/* Точки міст: коралова пульсація — лише при «рух дозволено» (<html data-reduce-motion="false">). */
+@keyframes t2f-zm-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+.t2f-zm-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--color-zone-live);
+  opacity: 0.3;
+  transform: scale(2);
+}
+html[data-reduce-motion='false'] .t2f-zm-halo {
+  animation: t2f-zm-halo 1.8s ease-out infinite;
+}

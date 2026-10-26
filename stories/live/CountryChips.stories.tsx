@@ -3,13 +3,11 @@ import { useState } from 'react';
 import { userEvent } from 'storybook/test';
 import { CountryChips, type CountryChipsProps } from '@/components/live/CountryChips';
 import { Stage, StateRow } from '../_support/Stage';
-import { withUs1Messages } from '../_support/us1Messages';
 import { ZONE_COUNTRIES } from '../_support/liveFixtures';
 
 const meta = {
   title: 'Живий ефір/CountryChips',
   component: CountryChips,
-  decorators: [withUs1Messages],
   args: { countries: ZONE_COUNTRIES, selectedIso: 'FR' },
 } satisfies Meta<typeof CountryChips>;
 export default meta;

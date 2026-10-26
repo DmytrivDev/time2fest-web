@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { FirstRowWall, type FirstRowWallProps } from '@/components/live/FirstRowWall';
 import { SeatPill } from '@/components/live/SeatPill';
 import { Stage, StateRow } from '../_support/Stage';
-import { PendingIntl } from '../us1/PendingIntl';
 import { MIDNIGHT, countryName, fullSeats, londonSeats, seatsWithMine } from '../us1/fixtures';
 
 const meta = {
@@ -12,11 +11,11 @@ const meta = {
   args: { city: 'Лондон', seats: londonSeats(), freeCount: 1, phase: 'idle', countryName },
   decorators: [
     (Story) => (
-      <PendingIntl>
+      <>
         <Stage>
           <Story />
         </Stage>
-      </PendingIntl>
+      </>
     ),
   ],
 } satisfies Meta<typeof FirstRowWall>;

@@ -12,6 +12,7 @@ import { Footer } from '@/components/shell/Footer';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
 import { CoralProvider } from '@/lib/overlay/coral';
+import { BroadcastController } from '@/lib/player/BroadcastController';
 import { PlayerProvider } from '@/lib/player/PlayerProvider';
 import { TimeProvider } from '@/lib/time/TimeProvider';
 import styles from './live-shell.module.css';
@@ -27,8 +28,8 @@ function LiveShell({ children }: { children: ReactNode }) {
         <PlayerProvider>
           <LiveAnnouncer>
             <OverlayManager>
-              {/* TODO(T045): <EngineScheduler /> — перепади стану двигунів → події шини. */}
-              {/* TODO(T063): <BroadcastController /> (lib/engine/BroadcastController.tsx) — подія ефіру й фаза підпису раз на макет; задає ланцюжок плеєра через usePlayerActions().setChain. */}
+              {/* Подія ефіру й фаза підпису — раз на макет: ланцюжок плеєра на головній, EngineScheduler (події шини). */}
+              <BroadcastController>
               <SkipLinks targets={['content', 'chat']} />
               {/* TODO: current — з маршруту, коли з’являться сторінки країн. */}
               <ShellHeader current="home" />
@@ -45,6 +46,7 @@ function LiveShell({ children }: { children: ReactNode }) {
                 </aside>
               </div>
               <Footer />
+              </BroadcastController>
             </OverlayManager>
           </LiveAnnouncer>
         </PlayerProvider>

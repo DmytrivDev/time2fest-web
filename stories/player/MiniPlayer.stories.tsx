@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState, type ReactNode } from 'react';
 import { userEvent } from 'storybook/test';
 import { MiniPlayer, type MiniPlayerCorner } from '@/components/player/MiniPlayer';
-import { withUs1Messages } from '../_support/us1Messages';
 
 const meta = {
   title: 'Плеєр/MiniPlayer',
   component: MiniPlayer,
-  decorators: [withUs1Messages],
   globals: { surface: 'desktop' },
   parameters: { layout: 'fullscreen' },
   args: { title: 'Лондон · Біг-Бен', visible: true },

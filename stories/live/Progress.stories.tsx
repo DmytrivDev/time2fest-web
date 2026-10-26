@@ -1,12 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { FestProgress } from '@/components/live/Progress';
 import { Stage, StateRow } from '../_support/Stage';
-import { withUs1Messages } from '../_support/us1Messages';
 
 const meta = {
   title: 'Живий ефір/FestProgress',
   component: FestProgress,
-  decorators: [withUs1Messages],
   args: { hoursPassed: 13, hoursTotal: 26, zonesDone: 23, zonesTotal: 38, startLabel: '12:00 · Кірибаті', endLabel: '14:00 · 1 січня' },
 } satisfies Meta<typeof FestProgress>;
 export default meta;

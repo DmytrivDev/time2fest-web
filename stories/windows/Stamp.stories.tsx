@@ -4,7 +4,6 @@ import { InFlowSlot } from '@/components/primitives/Panel';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { Stage } from '../_support/Stage';
-import { PendingIntl } from '../us1/PendingIntl';
 
 const SYDNEY: StampEntry = { eventId: 'evt_sydney_2027', city: 'Сідней', countryName: 'Австралія', flagCode: 'AU', illustrationId: 'au-postcard' };
 const MELBOURNE: StampEntry = { eventId: 'evt_melbourne_2027', city: 'Мельбурн', countryName: 'Австралія', flagCode: 'AU', illustrationId: 'au-postcard' };
@@ -18,7 +17,7 @@ const meta = {
   args: { stamps: [SYDNEY] },
   decorators: [
     (Story) => (
-      <PendingIntl>
+      <>
         <CoralProvider>
           <Stage>
             <InFlowSlot reserveHeight={120}>
@@ -26,7 +25,7 @@ const meta = {
             </InFlowSlot>
           </Stage>
         </CoralProvider>
-      </PendingIntl>
+      </>
     ),
   ],
 } satisfies Meta<typeof Stamp>;

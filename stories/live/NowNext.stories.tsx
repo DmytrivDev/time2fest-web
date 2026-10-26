@@ -1,13 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { NowNext } from '@/components/live/NowNext';
 import { Stage } from '../_support/Stage';
-import { withUs1Messages } from '../_support/us1Messages';
 import { STRIP, sceneTime } from '../_support/liveFixtures';
 
 const meta = {
   title: 'Живий ефір/NowNext',
   component: NowNext,
-  decorators: [withUs1Messages],
   parameters: { time: sceneTime },
   args: {
     items: STRIP,

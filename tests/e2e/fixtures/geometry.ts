@@ -2,7 +2,7 @@
  * Фікстура геометрії плеєра (конституція I, research.md 3):
  * - iframe плеєра не менший за 200×200 px;
  * - «нічого поверх плеєра»: у жодній точці прямокутника плеєра верхнім елементом не є
- *   щось, крім самого iframe (виняток — мініплеєр `[data-miniplayer]`, той самий хост).
+ *   щось, крім самого iframe (виняток — мініплеєр `[data-mini-player]`, той самий хост).
  */
 import { expect, type Page } from '@playwright/test';
 
@@ -45,18 +45,20 @@ export interface OverlapReport {
 
 /**
  * Елементи, що лежать поверх плеєра. Сітка `grid × grid` точок усередині прямокутника iframe
- * (з відступом 1 px від країв) + `elementFromPoint`. Точки поза в’юпортом пропускаються.
+ * (з відступом 8 px від країв: кути хоста заокруглені) + `elementFromPoint`. Точки поза в’юпортом пропускаються.
  */
 export async function findElementsOverPlayer(
   page: Page,
   opts: { selector?: string; grid?: number; allow?: string[] } = {},
 ): Promise<OverlapReport[]> {
-  const { selector = PLAYER_IFRAME, grid = 9, allow = ['[data-miniplayer]'] } = opts;
+  const { selector = PLAYER_IFRAME, grid = 9, allow = ['[data-mini-player]'] } = opts;
   return page.evaluate(
     ({ sel, n, allowed }) => {
       const frame = document.querySelector<HTMLElement>(sel);
       if (!frame) return [];
       const r = frame.getBoundingClientRect();
+      // Відступ від країв: кути хоста заокруглені (rounded.lg на десктопі), кутова точка — поза iframe.
+      const INSET = 8;
       const out: { x: number; y: number; element: string }[] = [];
       const describe = (el: Element) => {
         const id = el.id ? `#${el.id}` : '';
@@ -65,8 +67,8 @@ export async function findElementsOverPlayer(
       };
       for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-          const x = r.left + 1 + ((r.width - 2) * i) / (n - 1);
-          const y = r.top + 1 + ((r.height - 2) * j) / (n - 1);
+          const x = r.left + INSET + ((r.width - 2 * INSET) * i) / (n - 1);
+          const y = r.top + INSET + ((r.height - 2 * INSET) * j) / (n - 1);
           if (x < 0 || y < 0 || x >= window.innerWidth || y >= window.innerHeight) continue;
           const top = document.elementFromPoint(x, y);
           if (!top || top === frame || frame.contains(top)) continue;

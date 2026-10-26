@@ -102,7 +102,7 @@ test.describe('US1 · крайні випадки ефіру', () => {
     await gotoAt(page, '2027-01-01T01:50:00+02:00', 1);
     await ytStub.waitForPlayer();
     await page.mouse.wheel(0, 2_000);
-    const mini = page.locator('[data-miniplayer]');
+    const mini = page.locator('[data-mini-player]');
     await expect(mini).toBeVisible();
     const box = await mini.boundingBox();
     expect(box!.width).toBeGreaterThanOrEqual(200);

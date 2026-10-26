@@ -10,3 +10,5 @@ __pycache__
 data/streams.candidates.json
 *.tsbuildinfo
 next-env.d.ts
+.cache
+AGENTS.md

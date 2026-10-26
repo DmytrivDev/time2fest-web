@@ -3,13 +3,11 @@ import { useState } from 'react';
 import { userEvent } from 'storybook/test';
 import { EventCard } from '@/components/live/EventCard';
 import { Stage, StateRow } from '../_support/Stage';
-import { withUs1Messages } from '../_support/us1Messages';
 import { AZORES, CAPE_VERDE, LONDON, PARIS, RIO, sceneTime } from '../_support/liveFixtures';
 
 const meta = {
   title: 'Живий ефір/EventCard',
   component: EventCard,
-  decorators: [withUs1Messages],
   parameters: { time: sceneTime },
   args: { ...AZORES, status: 'soon' },
 } satisfies Meta<typeof EventCard>;

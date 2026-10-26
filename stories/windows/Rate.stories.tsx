@@ -5,7 +5,6 @@ import { InFlowSlot } from '@/components/primitives/Panel';
 import { Rate, type RateProps, type RateRow } from '@/components/windows/Rate';
 import type { Stars } from '@/lib/data/types';
 import { Stage } from '../_support/Stage';
-import { PendingIntl } from '../us1/PendingIntl';
 
 const LONDON: RateRow = { eventId: 'evt_london_2027', countryName: 'Велика Британія', city: 'Лондон', flagCode: 'GB' };
 const DUBLIN: RateRow = { eventId: 'evt_dublin_2027', countryName: 'Ірландія', city: 'Дублін', flagCode: 'IE' };
@@ -17,13 +16,13 @@ const meta = {
   args: { rows: [LONDON] },
   decorators: [
     (Story) => (
-      <PendingIntl>
+      <>
         <Stage>
           <InFlowSlot reserveHeight={120}>
             <Story />
           </InFlowSlot>
         </Stage>
-      </PendingIntl>
+      </>
     ),
   ],
 } satisfies Meta<typeof Rate>;
