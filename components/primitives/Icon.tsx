@@ -50,7 +50,11 @@ export type IconName =
   | 'monitor'
   | 'chevrons-right'
   | 'broadcast-live'
-  | 'message';
+  | 'message'
+  | 'reply'
+  | 'at'
+  | 'flag'
+  | 'lock';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -240,6 +244,30 @@ const PATHS: Record<IconName, ReactNode> = {
   ),
   'chevrons-right': <path d="M13 6l6 6-6 6M5 6l6 6-6 6" />,
   message: <path d="M4 5h16v11H9l-5 4z" />,
+  reply: (
+    <>
+      <path d="M10 8L5 12l5 4" />
+      <path d="M5 12h9a5 5 0 0 1 5 5v1" />
+    </>
+  ),
+  at: (
+    <>
+      <circle cx="12" cy="12" r="3.6" />
+      <path d="M15.6 12v1.6a2.4 2.4 0 0 0 4.8 0V12a8.4 8.4 0 1 0-3.3 6.7" />
+    </>
+  ),
+  flag: (
+    <>
+      <path d="M5 21V4" />
+      <path d="M5 4h11l-2 4 2 4H5" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </>
+  ),
   /** Трансляція наживо: центр залитий (картка події в ефірі, макет `Main`). */
   'broadcast-live': (
     <>

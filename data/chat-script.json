@@ -171,6 +171,16 @@
       "flagCode": "UA",
       "badges": [
         "pass"
+      ],
+      "path": [
+        {
+          "eventId": "evt_kyiv_2027",
+          "planned": true
+        },
+        {
+          "eventId": "evt_london_2027",
+          "planned": true
+        }
       ]
     }
   ],

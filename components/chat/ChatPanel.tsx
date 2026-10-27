@@ -12,6 +12,7 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
+import { passInfoSpec } from '@/components/offers/OfferWindows';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SegmentedControl, type SegmentOption } from '@/components/primitives/SegmentedControl';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
@@ -26,7 +27,7 @@ import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage, ReactionId, RoomId } from '@/lib/data/types';
 import { detectFlag } from '@/lib/geo/detectFlag';
-import { useNow, useTimeSource } from '@/lib/time/TimeProvider';
+import { useClock, useNow, useTimeSource } from '@/lib/time/TimeProvider';
 import { excerptOf } from '@/lib/chat-sim/send';
 import { useChatUi } from '@/stores/chat';
 import { useGuestStore } from '@/stores/guest';
@@ -64,6 +65,8 @@ export function ChatPanel({
   className,
 }: ChatPanelProps) {
   const t = useTranslations('chat');
+  const tPass = useTranslations('pass');
+  const clock = useClock();
   const announce = useAnnounce();
   const overlay = useOverlay();
   const column = useChatColumn();
@@ -244,9 +247,12 @@ export function ChatPanel({
     (author: Author, message: ChatMessage) => {
       const hasPass = authorHasPass(author);
       const path = buildAuthorPath(author, CHAT_SCRIPT, getData());
+      const viewerHasPass = useGuestStore.getState().hasPass;
       overlay.open({
         id: AUTHOR_WINDOW_ID,
         kind: 'nonmodal',
+        chrome: 'author',
+        coral: !viewerHasPass,
         title: t('author.title'),
         content: (
           <AuthorPanel
@@ -256,10 +262,13 @@ export function ChatPanel({
             roomLabel={roomLabel}
             hasPass={hasPass}
             path={path}
-            viewerHasPass={useGuestStore.getState().hasPass}
-            onReact={onReact}
+            viewerHasPass={viewerHasPass}
             onReply={onReply}
             onReport={onReport}
+            onPassInfo={() => {
+              overlay.open(passInfoSpec({ now: () => clock.getSnapshot() }, tPass('infoTitle')));
+              useGuestStore.getState().showOffer('pass-info', useGuestStore.getState().stamps.at(-1)?.eventId ?? '', clock.getSnapshot());
+            }}
             onMention={(a) => {
               setDraft((v) => `${v}${v && !v.endsWith(' ') ? ' ' : ''}@${a.nick} `);
               overlay.close(AUTHOR_WINDOW_ID);
@@ -269,7 +278,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, lookup, roomLabel, onReact, onReply, onReport, focusField, setDraft],
+    [overlay, t, tPass, clock, lookup, roomLabel, onReply, onReport, focusField, setDraft],
   );
 
   const openRules = useCallback(

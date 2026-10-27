@@ -258,7 +258,12 @@ test.describe('US4 · чат свята', () => {
     await expect(panel.locator('[data-point="planned"]').first()).toBeVisible();
     await panel.locator('[data-point="met"]').first().hover();
     await expect(page.getByText(/північ о \d\d:\d\d за вашим часом/).first()).toBeVisible();
-    await expect(panel.getByText('Оформи пас, щоб інші бачили твій шлях')).toBeVisible();
+    await expect(panel.getByText('Хочеш, щоб інші бачили твій шлях? Оформи Новорічний пас.')).toBeVisible();
+    // Картка «Переглянути шлях»: зустрінуті місця, далі заплановані (без часу), прапори з’єднані пунктиром.
+    await panel.getByRole('button', { name: /Переглянути шлях/ }).click();
+    await expect(panel.locator('[data-row="rows"] li').first()).toContainText('Окленд');
+    await expect(panel.locator('[data-row="rows"] li[data-planned]').first()).toContainText('У графіку');
+    expect(await panel.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await expectAxeClean(page);
 
     // Підказка точки — верхній шар: перший Esc закриває її, наступний — панель.
@@ -267,7 +272,7 @@ test.describe('US4 · чат свята', () => {
     await expect(panel).toBeHidden();
   });
 
-  test('автор без пасу: лише нік і прапор, шляху немає', async ({ page }) => {
+  test('автор без пасу: картки шляху немає, мапа затемнена з плашкою', async ({ page }) => {
     // Чекаємо, поки сценарій дійде до Karim (до 60 с), а потім axe: довше за типовий таймаут файлу.
     test.setTimeout(180_000);
     await startChat(page, '2027-01-01T02:03:00+02:00', 5);
@@ -283,8 +288,9 @@ test.describe('US4 · чат свята', () => {
       .click();
     const panel = page.getByRole('dialog', { name: 'Автор повідомлення' });
     await expect(panel.getByText('Тарас').first()).toBeVisible();
-    await expect(panel.getByRole('heading', { name: /^Шлях/ })).toHaveCount(0);
-    await expect(panel.getByText('Згадати @Тарас')).toBeVisible();
+    await expect(panel.getByRole('button', { name: /Переглянути шлях/ })).toHaveCount(0);
+    await expect(panel.getByText(/не ділиться шляхом: у нього немає Новорічного пасу/)).toBeVisible();
+    await expect(panel.getByRole('button', { name: 'Згадати Тарас' })).toBeVisible();
   });
 
   test('чат сховано: телефон — «Відкрити чат» з лічильником; десктоп — колонки немає, «Показати чат» повертає її', async ({

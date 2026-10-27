@@ -1,0 +1,195 @@
+/* O-AUTHOR (макети `Desk-Author`, `Phone-Author*`). Лише токени; два кольори пунктиру — з дошок. */
+.t2f-author-body {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  padding: 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.t2f-author-action {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--spacing-touch-min);
+  box-sizing: border-box;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.t2f-author-action:hover {
+  background: var(--color-border);
+}
+.t2f-author-action[data-muted] {
+  color: var(--color-text-secondary);
+}
+.t2f-author-action > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t2f-author-pass-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight-tint);
+  color: var(--color-highlight);
+  font-size: 12px;
+  font-weight: 600;
+}
+.t2f-author-pass-badge > i {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-background);
+}
+/* Картка «Переглянути шлях». */
+/* Приглушений пунктир між запланованими місцями (на дошках #4A4A52; у токенах такого сірого немає). */
+.t2f-author-card {
+  --t2f-author-dim: #4a4a52;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+}
+.t2f-author-card-trigger {
+  display: flex;
+  width: 100%;
+  min-height: var(--spacing-touch-min);
+  box-sizing: border-box;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
+}
+.t2f-author-card-trigger:hover {
+  background: var(--color-border);
+}
+.t2f-author-card-rows {
+  border-top: 1px solid var(--color-border);
+  overflow-x: hidden;
+}
+/* Телефон: відкрита картка фіксованої висоти з власною прокруткою; десктоп — природна висота. */
+[data-author-compact='true'] .t2f-author-card-rows {
+  max-height: 232px;
+  overflow-y: auto;
+}
+.t2f-author-row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px 10px 12px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.t2f-author-seg {
+  position: absolute;
+  left: 21px;
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, var(--color-text-muted) 0 4px, transparent 4px 8px);
+}
+.t2f-author-seg[data-dim] {
+  background: repeating-linear-gradient(to bottom, var(--t2f-author-dim) 0 4px, transparent 4px 8px);
+}
+.t2f-author-seg[data-part='top'] {
+  top: 0;
+  height: 22px;
+}
+.t2f-author-seg[data-part='bottom'] {
+  top: 22px;
+  height: calc(100% - 22px);
+}
+.t2f-author-flag {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  flex: 0 0 auto;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 0 3px var(--color-surface-raised);
+}
+.t2f-author-row[data-planned] .t2f-author-flag > span {
+  opacity: 0.55;
+}
+/* Затемнена мапа автора без пасу. */
+.t2f-author-lock {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  background: rgba(18, 18, 20, 0.78);
+}
+.t2f-author-plate {
+  display: flex;
+  max-width: 250px;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+}
+/* Кнопки плашки пасу: коралова — відступ 12, «Що ще дає пас?» — 10 (макет); перебивають розмір md кнопки. */
+.t2f-author-promo .t2f-author-promo-btn {
+  padding-inline: 12px;
+}
+.t2f-author-promo .t2f-author-promo-btn[class*='border-border-strong'] {
+  padding-inline: 10px;
+  gap: 6px;
+}
+.t2f-author-nick {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.t2f-author-h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.t2f-author-fine {
+  font-size: 12px;
+}
+.t2f-author-empty {
+  padding: 10px 16px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}

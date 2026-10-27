@@ -32,7 +32,7 @@ export interface OverlaySpec {
   /** Стан `l` аркуша. */
   loading?: boolean;
   /** Шапка вікна за макетом O-NICK (заголовок з підзаголовком, × 44 px, тіло без відступів — відступи дає вміст). */
-  chrome?: 'board';
+  chrome?: 'board' | 'author';
   /** У вікні є власна коралова кнопка (звук стає нейтральним). */
   coral?: boolean;
   /** Події шини, після яких вікно закривається саме. */
@@ -156,7 +156,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
       {children}
       {current && current.coral ? <CoralClaim key={current.id} /> : null}
       {current && placement === 'sheet' ? (
-        <Sheet open onOpenChange={onOpenChange} title={current.title} description={current.description} loading={current.loading} boardHeader={current.chrome === 'board'}>
+        <Sheet open onOpenChange={onOpenChange} title={current.title} description={current.description} loading={current.loading} boardHeader={current.chrome === 'board'} authorHeader={current.chrome === 'author'}>
           {current.content}
         </Sheet>
       ) : null}
@@ -168,6 +168,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           title={current.title}
           description={current.description}
           boardHeader={current.chrome === 'board'}
+          authorHeader={current.chrome === 'author'}
         >
           {current.content}
         </ChatSlotPanel>

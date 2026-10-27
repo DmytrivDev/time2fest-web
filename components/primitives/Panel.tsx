@@ -20,6 +20,7 @@ import { FocusScope } from 'radix-ui/internal';
 import type { ReactNode } from 'react';
 import { Button } from './Button';
 import { cn } from './cn';
+import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 
 export const CHAT_SLOT_ID = 'chat-slot';
@@ -40,6 +41,8 @@ export interface ChatSlotPanelProps {
   backLabel?: string;
   /** Шапка за макетом O-NICK: заголовок 18/700 з підзаголовком, × 44 px, без лінії під шапкою, тіло без відступів. */
   boardHeader?: boolean;
+  /** Шапка O-AUTHOR: «‹ Назад» ліворуч, приглушений заголовок праворуч; тіло без відступів і прокрутки (її веде вміст). */
+  authorHeader?: boolean;
   className?: string;
 }
 
@@ -59,6 +62,7 @@ export function ChatSlotPanel({
   closeLabel = 'Закрити',
   backLabel = 'Назад',
   boardHeader = false,
+  authorHeader = false,
   className,
 }: ChatSlotPanelProps) {
   const container = chatSlot(open);
@@ -88,7 +92,19 @@ export function ChatSlotPanel({
               </Dialog.Close>
             </div>
           ) : null}
-          {!boardHeader ? (
+          {authorHeader ? (
+            <div className="t2f-author-header" data-author-header="">
+              <Dialog.Close asChild>
+                <button type="button" className="t2f-focus t2f-transition t2f-author-back">
+                  <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
+                  {backLabel}
+                </button>
+              </Dialog.Close>
+              <span className="flex-1" />
+              <Dialog.Title className="text-caption font-normal text-text-muted">{title}</Dialog.Title>
+            </div>
+          ) : null}
+          {!boardHeader && !authorHeader ? (
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2">
               {variant === 'nonmodal' ? (
                 <Dialog.Close asChild>
@@ -105,10 +121,14 @@ export function ChatSlotPanel({
               ) : null}
             </div>
           ) : null}
-          {description && !boardHeader ? (
+          {description && !boardHeader && !authorHeader ? (
             <Dialog.Description className="px-4 pt-3 text-body text-text-secondary">{description}</Dialog.Description>
           ) : null}
-          <div className={cn('min-h-0 flex-1 overflow-y-auto', !boardHeader && 'p-4')}>{children}</div>
+          {authorHeader ? (
+            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          ) : (
+            <div className={cn('min-h-0 flex-1 overflow-y-auto', !boardHeader && 'p-4')}>{children}</div>
+          )}
         </div>
       </FocusScope.Root>
     </Dialog.Content>

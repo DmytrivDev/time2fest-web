@@ -844,3 +844,32 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   background: var(--color-border);
   box-shadow: inset 0 0 0 1px var(--color-border-strong);
 }
+
+/* O-AUTHOR: кнопка «‹ Назад» у шапці вікна (макети `Desk-Author`, `Phone-Author`). */
+.t2f-author-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--spacing-touch-min);
+  padding: 0 12px 0 8px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.t2f-author-back:hover {
+  background: var(--color-surface-raised);
+}
+.t2f-author-header {
+  display: flex;
+  height: 52px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  padding: 0 12px 0 4px;
+  border-bottom: 1px solid var(--color-border);
+}

@@ -6,7 +6,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { cn } from './cn';
 
 /** Розміри за ІНВ I-11 (4 штуки): xs чат і чипи, sm рядки й картки, md ТВ і картка мапи, lg герой країни. */
-export type FlagSize = 'xs' | 'card' | 'pill' | 'sm' | 'md' | 'lg';
+export type FlagSize = 'xs' | 'card' | 'pill' | 'sm' | 'md' | 'lg' | 'xl';
 const DIMENSIONS: Record<FlagSize, { w: number; h: number }> = {
   xs: { w: 16, h: 11 },
   /** Макет `Main`: картки «Зараз і далі». */
@@ -16,6 +16,8 @@ const DIMENSIONS: Record<FlagSize, { w: number; h: number }> = {
   sm: { w: 24, h: 16 },
   md: { w: 30, h: 20 },
   lg: { w: 54, h: 36 },
+  /** Лише круглий (шапка панелі автора): 40 px. */
+  xl: { w: 60, h: 40 },
 };
 
 /** Особливі прапори (O-NICK), яких немає в бібліотеці країн. */
@@ -77,7 +79,7 @@ export interface FlagProps {
 }
 
 /** Діаметр круглого прапора: `xs` — 16 px, як ширина прямокутного на макетах чату. */
-const ROUND_DIAMETER: Record<FlagSize, number> = { xs: 16, card: 16, pill: 18, sm: 20, md: 26, lg: 48 };
+const ROUND_DIAMETER: Record<FlagSize, number> = { xs: 16, card: 16, pill: 18, sm: 20, md: 26, lg: 48, xl: 40 };
 
 /** Файл у `public/flags/round`: ISO — малими, `GB-ENG` → `gb-eng`, `EU` → `eu`, `un` — ООН; решта особливих — власні SVG. */
 function roundFile(code: string): string | null {

@@ -329,15 +329,17 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     expect(within(dialog).getByRole('heading', { name: 'Шлях Karim' })).toBeInTheDocument();
     await waitFor(() => expect(within(dialog).getAllByRole('button', { name: /· Зустріли ·/ }).length).toBeGreaterThan(0));
     expect(within(dialog).getAllByRole('button', { name: /· У графіку ·/ }).length).toBeGreaterThan(0);
-    expect(within(dialog).getByText('Згадати @Karim')).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Згадати Karim' })).toHaveTextContent('Згадати');
+    expect(within(dialog).getByRole('button', { name: /Переглянути шлях/ })).toBeInTheDocument();
     await user.keyboard('{Escape}');
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument());
 
     await user.click(screen.getByRole('button', { name: /Тарас, Україна/ }));
     const plain = await screen.findByRole('dialog', { name: 'Автор повідомлення' });
-    expect(within(plain).queryByRole('heading', { name: /Шлях/ })).not.toBeInTheDocument();
-    expect(within(plain).getByText('Тарас')).toBeInTheDocument();
-    expect(within(plain).getByText('Згадати @Тарас')).toBeInTheDocument();
+    expect(within(plain).getByRole('heading', { name: 'Тарас' })).toBeInTheDocument();
+    expect(within(plain).queryByRole('button', { name: /Переглянути шлях/ })).not.toBeInTheDocument();
+    expect(within(plain).getByText(/не ділиться шляхом: у нього немає Новорічного пасу/)).toBeInTheDocument();
+    expect(within(plain).getByRole('button', { name: 'Згадати Тарас' })).toBeInTheDocument();
   });
 
   it('клік по рядку повідомлення (текст) і Enter на рядку відкривають панель автора; ⋯ — лише меню дій', async () => {
@@ -404,7 +406,7 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     const user = userEvent.setup();
     setup();
     await user.click(screen.getByRole('button', { name: /Тарас, Україна/ }));
-    await user.click(await screen.findByText('Згадати @Тарас'));
+    await user.click(await screen.findByRole('button', { name: 'Згадати Тарас' }));
     await waitFor(() => expect(field()).toHaveValue('@Тарас '));
   });
 

@@ -86,7 +86,7 @@ function PassMark({ label }: { label: string }) {
 const ROW = 'flex h-4.5 items-center gap-1.5';
 
 /** «@Аміра» у тексті — виділено (mention). */
-function withMentions(text: string | undefined): ReactNode {
+export function withMentions(text: string | undefined): ReactNode {
   if (!text) return text;
   const parts = text.split(/(@[\p{L}\d_-]+)/u);
   if (parts.length === 1) return text;

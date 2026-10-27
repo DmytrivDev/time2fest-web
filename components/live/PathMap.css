@@ -20,3 +20,23 @@
 .t2f-pathmap-line[data-kind='planned'] {
   stroke: var(--color-text-muted);
 }
+/* Точки за дошками `Phone-Author`: зустрінута 8 px, остання 10 px з кільцем, «Перший ряд» — подвійне кільце, у графіку — порожня. */
+.t2f-pathmap-dot {
+  box-shadow: 0 0 0 1.5px var(--color-background);
+}
+.t2f-pathmap-dot-last {
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-highlight);
+}
+.t2f-pathmap-dot.t2f-pathmap-dot-first {
+  width: 6px;
+  height: 6px;
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 1.5px var(--color-background), 0 0 0 3px var(--color-highlight), 0 0 0 4.5px var(--color-background), 0 0 0 6px var(--color-highlight);
+}
+.t2f-pathmap-legend-ring {
+  border-radius: 9999px;
+  width: 4px;
+  height: 4px;
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 1px var(--color-surface), 0 0 0 2px var(--color-highlight), 0 0 0 3px var(--color-surface), 0 0 0 4px var(--color-highlight);
+}

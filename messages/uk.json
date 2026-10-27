@@ -408,15 +408,19 @@
       "passLabel": "Новорічний пас",
       "messageHeading": "Повідомлення",
       "messageMeta": "Повідомлення · {time} · чат «{room}»",
-      "reactionHeading": "Реакція на повідомлення",
-      "reactWith": "Реакція {name}",
       "pointSeat": "Перший ряд · місце {seat}",
       "mapLabel": "Мапа шляху {name}: {route}",
       "summaryMet": "{count, plural, one {# країна} few {# країни} many {# країн} other {# країни}}",
+      "summaryNone": "Зустрічей ще нема",
       "summaryPlanned": "ще {count} у графіку",
       "routeNext": "далі: {cities}",
+      "noMeetings": "Ще ніде не зустрів Новий рік",
+      "noPass": "<b>{nick}</b> не ділиться шляхом: у нього немає Новорічного пасу",
+      "promoText": "Хочеш, щоб інші бачили твій шлях? Оформи Новорічний пас.",
+      "passMore": "Що ще дає пас?",
       "reply": "Відповісти",
-      "mention": "Згадати @{nick}",
+      "mention": "Згадати",
+      "mentionAria": "Згадати {nick}",
       "report": "Поскаржитись"
     }
   },
@@ -440,11 +444,11 @@
     "author": {
       "back": "Назад",
       "pathOf": "Шлях {name}",
-      "wholePath": "Весь шлях",
+      "viewPath": "Переглянути шлях",
       "passport": "Паспорт Нових років · {countries, plural, one {# країна} few {# країни} many {# країн} other {# країни}} · {continents, plural, one {# континент} few {# континенти} many {# континентів} other {# континенти}}",
       "legendMet": "Зустріли",
       "legendSchedule": "У графіку",
-      "upsell": "Оформи пас, щоб інші бачили твій шлях",
+      "legendFirstRow": "Перший ряд",
       "pointTooltip": "{place} · північ о {time} за вашим часом"
     },
     "achievement": {

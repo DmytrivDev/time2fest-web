@@ -11,6 +11,7 @@
 import { Dialog } from 'radix-ui';
 import { useCallback, useEffect, useRef, useState, type ComponentProps, type PointerEvent, type ReactNode } from 'react';
 import { cn } from './cn';
+import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 
 /** Нижній край області плеєра у в’юпорті (0, якщо плеєра на сторінці немає або він прокручений). */
@@ -73,8 +74,11 @@ export interface SheetProps {
   loading?: boolean;
   /** TODO(i18n): з messages. */
   closeLabel?: string;
+  backLabel?: string;
   /** Шапка за макетом O-NICK (ручка 36×4, заголовок 18/700 з підзаголовком, × 44 px, тіло без бічних відступів). */
   boardHeader?: boolean;
+  /** Шапка O-AUTHOR (як на дошці): без ручки, «‹ Назад» і приглушений заголовок; аркуш на всю висоту під плеєром, тіло керує прокруткою саме. */
+  authorHeader?: boolean;
   className?: string;
 }
 
@@ -88,7 +92,9 @@ export function Sheet({
   children,
   loading = false,
   closeLabel = 'Закрити',
+  backLabel = 'Назад',
   boardHeader = false,
+  authorHeader = false,
   className,
 }: SheetProps) {
   const top = usePlayerBottom(open);
@@ -126,9 +132,10 @@ export function Sheet({
             'fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg bg-surface text-text shadow-overlay',
             className,
           )}
-          style={{ maxHeight: `calc(100dvh - ${top}px)`, transform: dragY ? `translateY(${dragY}px)` : undefined }}
+          style={{ maxHeight: `calc(100dvh - ${top}px)`, height: authorHeader ? `calc(100dvh - ${top}px)` : undefined, transform: dragY ? `translateY(${dragY}px)` : undefined }}
           {...(description ? {} : { 'aria-describedby': undefined })}
         >
+          {authorHeader ? null : (
           <div
             className={cn('flex shrink-0 touch-none justify-center', boardHeader ? 'h-4 items-end pb-1' : 'h-6 items-center')}
             onPointerDown={onPointerDown}
@@ -139,7 +146,19 @@ export function Sheet({
           >
             <span className={cn('h-1 rounded-full', boardHeader ? 'w-9 bg-border' : 'w-10 bg-border-strong')} />
           </div>
-          {boardHeader ? (
+          )}
+          {authorHeader ? (
+            <div className="t2f-author-header" data-author-header="">
+              <Dialog.Close asChild>
+                <button type="button" className="t2f-focus t2f-transition t2f-author-back">
+                  <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
+                  {backLabel}
+                </button>
+              </Dialog.Close>
+              <span className="flex-1" />
+              <Dialog.Title className="text-caption font-normal text-text-muted">{title}</Dialog.Title>
+            </div>
+          ) : boardHeader ? (
             <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="">
               <div className="min-w-0 flex-1 pt-1.5">
                 <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
@@ -162,7 +181,10 @@ export function Sheet({
               ) : null}
             </>
           )}
-          <div className={cn('min-h-0 flex-1 overflow-y-auto', boardHeader ? 'pb-0' : 'px-4 pb-6 pt-2')} aria-busy={loading || undefined}>
+          <div
+            className={cn(authorHeader ? 'flex min-h-0 flex-1 flex-col' : 'min-h-0 flex-1 overflow-y-auto', !authorHeader && (boardHeader ? 'pb-0' : 'px-4 pb-6 pt-2'))}
+            aria-busy={loading || undefined}
+          >
             {loading ? (
               // TODO(T053): <Skeleton variant="line" />
               <div className="flex flex-col gap-3" role="status">

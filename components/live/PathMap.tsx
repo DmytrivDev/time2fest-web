@@ -50,13 +50,23 @@ export function PathLegend({ className }: { className?: string }) {
   const t = useTranslations('windows.author');
   return (
     <ul className={cn('flex flex-wrap gap-x-4 gap-y-1 text-caption text-text-secondary', className)} data-row="legend">
-      <li className="flex items-center gap-1.5">
-        <span aria-hidden="true" className="size-3 rounded-full bg-highlight" />
+      <li className="flex min-h-5 items-center gap-1.5">
+        <span aria-hidden="true" className="flex size-3.5 items-center justify-center">
+          <span className="size-2 rounded-full bg-highlight" />
+        </span>
         {t('legendMet')}
       </li>
-      <li className="flex items-center gap-1.5">
-        <span aria-hidden="true" className="size-3 rounded-full border-2 border-text-muted bg-background" />
+      <li className="flex min-h-5 items-center gap-1.5">
+        <span aria-hidden="true" className="flex size-3.5 items-center justify-center">
+          <span className="size-2.5 rounded-full border-2 border-text-secondary" />
+        </span>
         {t('legendSchedule')}
+      </li>
+      <li className="flex min-h-5 items-center gap-1.5">
+        <span aria-hidden="true" className="flex size-3.5 items-center justify-center">
+          <span className="t2f-pathmap-legend-ring" />
+        </span>
+        <span className="font-semibold text-highlight">{t('legendFirstRow')}</span>
       </li>
     </ul>
   );
@@ -103,8 +113,10 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
         {placed.map(({ p, pos }, i) => {
           const time = formatClock(p.midnightMs);
           const dot = p.planned
-            ? 'size-3 border-2 border-text-muted bg-background'
-            : cn('border-2 border-background bg-highlight', i === lastMet ? 'size-4' : 'size-3');
+            ? 't2f-pathmap-dot size-2.5 border-2 border-text-secondary'
+            : i === lastMet
+              ? 't2f-pathmap-dot t2f-pathmap-dot-last size-2.5 bg-highlight'
+              : 't2f-pathmap-dot size-2 bg-highlight';
           return (
             <div
               key={p.id}
@@ -133,7 +145,13 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
                 >
                   <span
                     aria-hidden="true"
-                    className={cn('rounded-full', dot, p.firstRowSeat ? 'outline-2 outline-offset-2 outline-highlight' : undefined)}
+                    className={cn(
+                      'rounded-full',
+                      dot,
+                      p.firstRowSeat
+                        ? 't2f-pathmap-dot-first'
+                        : undefined,
+                    )}
                   />
                 </button>
               </Tooltip>
