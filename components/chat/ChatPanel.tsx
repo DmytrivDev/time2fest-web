@@ -19,7 +19,7 @@ import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { MyEmotionButton } from '@/components/windows/Emoji';
 import { Nick } from '@/components/windows/Nick';
-import { authorHasPass, buildAuthorPath } from '@/lib/chat-sim/authorPath';
+import { authorHasPass, buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
 import { slowSecondsAt } from '@/lib/chat-sim/simulator';
 import { sendMessage, slowRemainingSec, type SendContext } from '@/lib/chat-sim/send';
 import { useChatFeed, useChatMessages } from '@/lib/chat-sim/store';
@@ -246,7 +246,10 @@ export function ChatPanel({
   const openAuthor = useCallback(
     (author: Author, message: ChatMessage) => {
       const hasPass = authorHasPass(author);
-      const path = buildAuthorPath(author, CHAT_SCRIPT, getData());
+      const guest = useGuestStore.getState();
+      const path = author.isMine
+        ? buildOwnPath(guest.stamps, guest.schedule, getData(), clock.getSnapshot())
+        : buildAuthorPath(author, CHAT_SCRIPT, getData());
       const viewerHasPass = useGuestStore.getState().hasPass;
       overlay.open({
         id: AUTHOR_WINDOW_ID,

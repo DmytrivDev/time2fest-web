@@ -134,9 +134,16 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(document.querySelector('[data-row="promo"]')).toBeNull();
   });
 
-  it('свій нік: без шляху й дій', () => {
+  it('свій нік: «Ти» в рядку ніка, мапа й «Переглянути шлях» навіть без пасу, без «Поскаржитись»', async () => {
+    const user = userEvent.setup();
     show({ id: 'me', nick: 'Мирон', flagCode: 'UA', badges: [], isMine: true }, { hasPass: false, path: [], viewerHasPass: true });
-    expect(document.querySelector('[data-row="path"]')).toBeNull();
+    const nick = screen.getByRole('heading', { name: 'Мирон' });
+    expect(nick.parentElement).toHaveTextContent('Ти');
+    expect(document.querySelector('[data-row="path"]')).not.toBeNull();
+    expect(document.querySelector('[data-row="locked"]')).toBeNull();
+    expect(screen.getByText('Зустрічей ще нема')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Переглянути шлях/ }));
+    expect(screen.getByText('Ще ніде не зустрів Новий рік')).toBeInTheDocument();
     expect(document.querySelector('[data-row="actions"]')).toBeNull();
   });
 });

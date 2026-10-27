@@ -2,7 +2,7 @@
  * Шлях автора для O-AUTHOR / PathMap (C13, FR-055): `ScriptAuthor.path` сценарію чату + розклад → точки на мапі.
  * Жодних відмінкових форм: міста й країни — у називному. Автор без пасу шляху не показує.
  */
-import type { Author, ChatScriptFile, Dataset, Ms } from '@/lib/data/types';
+import type { Author, ChatScriptFile, Dataset, Ms, Stamp } from '@/lib/data/types';
 
 export interface PathPoint {
   /** `eventId` події. */
@@ -49,6 +49,38 @@ export function buildAuthorPath(author: Pick<Author, 'id' | 'nick' | 'badges'>, 
       midnightMs: event.midnightMs,
       planned: step.planned,
       ...(seat ? { firstRowSeat: seat.number } : {}),
+    });
+  }
+  return points.sort((a, b) => a.midnightMs - b.midnightMs);
+}
+
+/**
+ * Власний шлях глядача (своє вікно в чаті): зустрінуті — зі штампів (з місцем «Першого ряду»), заплановані — події
+ * з «Мого графіка», північ яких ще попереду й штампа ще немає. Показується завжди, з пасом чи без.
+ */
+export function buildOwnPath(stamps: readonly Stamp[], schedule: readonly string[], data: Dataset, now: Ms): PathPoint[] {
+  const stamped = new Set(stamps.map((s) => s.eventId));
+  const steps = [
+    ...stamps.map((s) => ({ eventId: s.eventId, planned: false, seat: s.firstRowSeat })),
+    ...schedule.filter((id) => !stamped.has(id)).map((eventId) => ({ eventId, planned: true, seat: undefined })),
+  ];
+  const points: PathPoint[] = [];
+  for (const step of steps) {
+    const event = data.eventsById.get(step.eventId);
+    const city = event ? data.citiesById.get(event.cityId) : undefined;
+    const country = event ? data.countriesByIso.get(event.countryIso) : undefined;
+    if (!event || !city || !country) continue;
+    if (step.planned && event.midnightMs <= now) continue;
+    points.push({
+      id: event.id,
+      city: city.name.uk,
+      country: country.name.uk,
+      flagCode: country.flagCode,
+      x: city.mapPoint.x,
+      y: city.mapPoint.y,
+      midnightMs: event.midnightMs,
+      planned: step.planned,
+      ...(step.seat ? { firstRowSeat: step.seat } : {}),
     });
   }
   return points.sort((a, b) => a.midnightMs - b.midnightMs);

@@ -7,7 +7,8 @@
  * Зверху вниз: автор (круглий прапор 40 px, нік, країна, «Новорічний пас») ·
  * «Шлях <нік>» + підсумок · мініатюра `PathMap` з легендою · картка «Переглянути шлях» (зустрінуті, далі заплановані;
  * прапори з’єднані пунктиром) · «Поскаржитись» (повідомлення, «Відповісти» і «Згадати» — у меню «⋯») · плашка «Оформи Новорічний пас» (глядач без пасу).
- * Стани автора: пас і зустрічі · пас, але ще нічого · без пасу (картки немає, мапа затемнена з плашкою) · свій нік (лише «це ти»).
+ * Стани автора: пас і зустрічі · пас, але ще нічого · без пасу (картки немає, мапа затемнена з плашкою) · свій нік —
+ * «Ти» поруч з ніком, мапа й «Переглянути шлях» завжди (зі штампів і «Мого графіка»; нічого — порожня мапа), без «Поскаржитись».
  * Десктоп: картка природної висоти, прокручується вся панель; телефон: відкрита картка 232 px з власною прокруткою.
  */
 import { Collapsible as Radix } from 'radix-ui';
@@ -78,8 +79,7 @@ export function AuthorPanel({
   const column = useChatColumn();
   const [notice, setNotice] = useState(false);
   const isMine = !!author.isMine;
-  const showPath = !isMine;
-  const showCard = showPath && hasPass;
+  const showCard = isMine || hasPass;
   const { met, planned } = pathSummary(path);
   const rows = orderedRows(path);
   const route = routeCities(path);
@@ -93,12 +93,14 @@ export function AuthorPanel({
         <header className="flex items-center gap-3">
           <Flag round code={author.flagCode} size="xl" name={countryName} decorative={!countryName} />
           <div className="min-w-0 flex-1">
-            <h2 tabIndex={-1} className="t2f-author-nick">
-              {author.nick}
-            </h2>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2">
+              <h2 tabIndex={-1} className="t2f-author-nick">
+                {author.nick}
+              </h2>
+              {isMine ? <Badge variant="you" /> : null}
+            </div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-text-secondary">
               {countryName ? <span>{countryName}</span> : null}
-              {isMine ? <Badge variant="you" /> : null}
               {hasPass ? (
                 <span data-badge="pass" className="t2f-author-pass-badge">
                   <i aria-hidden="true">
@@ -112,8 +114,7 @@ export function AuthorPanel({
         </header>
 
 
-        {showPath ? (
-          <section aria-labelledby="author-path-title" className="flex min-w-0 flex-col gap-2" data-row="path">
+        <section aria-labelledby="author-path-title" className="flex min-w-0 flex-col gap-2" data-row="path">
             <div>
               <h3 id="author-path-title" className="m-0 flex items-center gap-1.5 whitespace-nowrap t2f-author-h3">
                 <span className="flex text-highlight">
@@ -179,7 +180,6 @@ export function AuthorPanel({
               </Radix.Root>
             ) : null}
           </section>
-        ) : null}
 
         {!isMine && message && onReport ? (
           <div className="flex" data-row="actions">
