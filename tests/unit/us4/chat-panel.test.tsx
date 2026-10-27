@@ -388,6 +388,15 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     await screen.findByRole('menu');
     await user.click(document.body);
     await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
+
+    // «×» у рядку дій закриває меню; повторне натискання «⋯» — теж.
+    await user.click(more);
+    await user.click(await screen.findByRole('menuitem', { name: 'Закрити меню' }));
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
+    await user.click(more);
+    await screen.findByRole('menu');
+    await user.click(more);
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
   });
 
   it('меню «⋯»: «Поскаржитись» і повторний клік по «⋯» закривають меню', async () => {

@@ -588,6 +588,18 @@ html[data-reduce-motion='true'] .t2f-spin {
 .t2f-mm-report:hover {
   color: var(--color-text);
 }
+/* «×» праворуч у рядку «Відповісти · Згадати»: 44×44, значок 20, приглушений. */
+.t2f-mm-close {
+  flex: 0 0 auto;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  padding: 0;
+  color: var(--color-text-muted);
+}
+.t2f-mm-close:hover {
+  color: var(--color-text);
+}
 .t2f-mm-item:hover {
   background: var(--color-border);
 }

@@ -331,6 +331,7 @@
     "reactionPickLabel": "Реакція {name}",
     "actionsLabel": "Дії з повідомленням · {nick}",
     "actionsTitle": "Дії з повідомленням",
+    "menuClose": "Закрити меню",
     "reactions": {
       "clap": "Хлопавка",
       "heart": "Серце",

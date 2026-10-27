@@ -207,6 +207,18 @@ export function MessageMenu({
           </Svg>
           {t('mention')}
         </button>
+        <button
+          type="button"
+          role="menuitem"
+          data-menu-item=""
+          aria-label={t('menuClose')}
+          className="t2f-mm-item t2f-mm-close"
+          onClick={(e) => onClose({ restoreFocus: e.detail === 0 })}
+        >
+          <Svg>
+            <path d="M6 6l12 12M18 6L6 18" />
+          </Svg>
+        </button>
       </div>
       <div aria-hidden="true" className="t2f-mm-sep" />
       <EmojiGrid
