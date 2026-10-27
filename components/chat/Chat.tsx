@@ -360,7 +360,7 @@ export function Chat({
             onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusInside(false);
             }}
-            className="t2f-focus t2f-chat-log min-h-0 flex-1 overflow-y-auto"
+            className="t2f-focus t2f-chat-log min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
           >
             {visible.length === 0 || state === 'empty' ? (
               <p className="p-6 text-center text-body text-text-secondary" data-row="empty">

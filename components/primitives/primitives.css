@@ -823,6 +823,7 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   margin: 0;
   padding: 0 max(0px, calc(4px - var(--t2f-gutter))) 0 0;
   list-style: none;
+  overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-strong) transparent;

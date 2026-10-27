@@ -127,7 +127,7 @@ export function ChatSlotPanel({
           {authorHeader ? (
             <div className="flex min-h-0 flex-1 flex-col">{children}</div>
           ) : (
-            <div className={cn('t2f-chat-log min-h-0 flex-1 overflow-y-auto', !boardHeader && 't2f-slot-body p-4')}>{children}</div>
+            <div className={cn('t2f-chat-log min-h-0 flex-1 overflow-x-hidden overflow-y-auto', !boardHeader && 't2f-slot-body p-4')}>{children}</div>
           )}
         </div>
       </FocusScope.Root>
