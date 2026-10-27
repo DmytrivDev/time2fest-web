@@ -24,11 +24,21 @@ export function ChatHiddenButton({ placement, room, onShow, className }: ChatHid
   const count = useHiddenCount(room);
   return (
     // Макет `Desk-Cookies-Wide`: secondary, іконка повідомлення, лічильник на border-фоні.
-    <Button type="button" variant="secondary" iconLeft="message" onClick={onShow} className={cn('ps-3.5 pe-3', className)} data-chat-hidden-button={placement}>
+    <Button
+      type="button"
+      variant="secondary"
+      iconLeft="message"
+      onClick={onShow}
+      className={cn('ps-3.5 pe-3', className)}
+      data-chat-hidden-button={placement}
+    >
       {placement === 'desktop' ? t('showChat') : t('show')}
       {count > 0 ? (
         <>
-          <span aria-hidden="true" className="inline-flex h-5.5 items-center rounded-full bg-border px-1.75 text-label-badge-chat font-bold text-text">
+          <span
+            aria-hidden="true"
+            className="inline-flex h-5.5 items-center rounded-full bg-border px-1.75 text-label-badge-chat font-bold text-text"
+          >
             {formatCount(count)}
           </span>
           <span className="sr-only">{t('unreadCount', { count })}</span>

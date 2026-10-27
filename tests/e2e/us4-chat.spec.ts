@@ -180,14 +180,24 @@ test.describe('US4 · чат свята', () => {
     await expectAxeClean(page);
   });
 
-  test('«Готові привітання» надсилають одним дотиком; відповідь і реакція', async ({ page }) => {
+  test('емодзі в полі: вибір над рядком поля, вставка, відправлення; відповідь і реакція', async ({ page }) => {
     await startChat(page);
     await setNick(page, 'Мирон');
-    await page.getByRole('button', { name: 'Готові привітання' }).click();
-    await page
-      .getByRole('button', { name: /З Новим роком!/ })
-      .first()
-      .click();
+    await field(page).fill('Ура ');
+    await page.getByRole('button', { name: 'Емодзі' }).click();
+    const picker = page.getByRole('group', { name: 'Вибір емодзі' });
+    await expect(picker).toBeVisible();
+    // Над рядком поля: нижній край вибору вище за верх поля й «Надіслати», від лівого краю поля до правого краю кнопки.
+    const [pb, fb, sb] = await Promise.all([picker.boundingBox(), field(page).boundingBox(), send(page).boundingBox()]);
+    expect(pb!.y + pb!.height).toBeLessThanOrEqual(fb!.y);
+    expect(pb!.x).toBeLessThanOrEqual(fb!.x);
+    expect(pb!.x + pb!.width).toBeGreaterThanOrEqual(sb!.x + sb!.width - 1);
+    await picker.getByRole('button', { name: 'Вставити Хлопавка' }).click();
+    await expect(field(page)).toHaveValue('Ура 🎉');
+    await expect(field(page)).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(picker).toBeHidden();
+    await send(page).click();
     const log = page.getByRole('log').first();
     await expect(log.locator('[data-own="true"]')).toHaveCount(1);
 

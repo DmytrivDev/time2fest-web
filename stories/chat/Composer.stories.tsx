@@ -2,11 +2,8 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Composer, type ComposerProps } from '@/components/chat/Composer';
-import chatScript from '@/data/chat-script.json';
-import type { ChatScriptFile } from '@/lib/data/types';
 import { Stage } from '../_support/Stage';
 
-const presets = (chatScript as unknown as ChatScriptFile).presets;
 
 function Stateful(args: ComposerProps) {
   const [value, setValue] = useState(args.value);
@@ -22,7 +19,6 @@ const meta = {
     value: '',
     onValueChange: () => undefined,
     onSubmit: () => undefined,
-    presets,
   },
   render: (args) => (
     <Stage>

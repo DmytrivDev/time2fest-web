@@ -832,3 +832,15 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   font-weight: 600;
   white-space: nowrap;
 }
+
+/* Вибір емодзі в полі: над рядком поля (від лівого краю поля до правого краю «Надіслати»), відступ 4 px; поверхня меню «⋯». */
+.t2f-ep {
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 4px);
+}
+/* Кнопка-емодзі при відкритому виборі — натиснута (як «⋯» при відкритому меню). */
+.t2f-chat-input button[aria-expanded='true'] > span {
+  background: var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}

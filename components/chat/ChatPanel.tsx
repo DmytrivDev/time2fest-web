@@ -55,7 +55,14 @@ export interface ChatPanelProps {
   className?: string;
 }
 
-export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, className }: ChatPanelProps) {
+export function ChatPanel({
+  country,
+  eventId,
+  cityName,
+  onHide,
+  onToEvents,
+  className,
+}: ChatPanelProps) {
   const t = useTranslations('chat');
   const announce = useAnnounce();
   const overlay = useOverlay();
@@ -73,11 +80,20 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
 
   const participant = !!eventId && guest.firstRow[eventId]?.seat !== undefined;
   const [roomKey, setRoomKey] = useState<RoomKey>(country ? 'country' : 'world');
-  const activeKey: RoomKey = roomKey === 'firstrow' && !participant ? (country ? 'country' : 'world') : roomKey;
+  const activeKey: RoomKey =
+    roomKey === 'firstrow' && !participant ? (country ? 'country' : 'world') : roomKey;
   const roomId: RoomId =
-    activeKey === 'firstrow' && eventId ? `firstrow:${eventId}` : activeKey === 'country' && country ? `country:${country.iso}` : 'world';
+    activeKey === 'firstrow' && eventId
+      ? `firstrow:${eventId}`
+      : activeKey === 'country' && country
+        ? `country:${country.iso}`
+        : 'world';
   const roomLabel =
-    activeKey === 'firstrow' ? t('roomFirstRow') : activeKey === 'country' && country ? t('roomCountryPicker', { country: country.name }) : t('roomWorld');
+    activeKey === 'firstrow'
+      ? t('roomFirstRow')
+      : activeKey === 'country' && country
+        ? t('roomCountryPicker', { country: country.name })
+        : t('roomWorld');
 
   useEffect(() => setLastRoom(roomId), [roomId, setLastRoom]);
 
@@ -121,12 +137,18 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
         canWrite: (r) => !r.startsWith('firstrow:') || participant,
         slowSeconds: slowSecondsAt(CHAT_SCRIPT, roomId, nowMs),
         sentAt: store.chat.sentAt,
-        available: useTestControls.getState().chatAvailable && !useTestControls.getState().offlineSimulated,
+        available:
+          useTestControls.getState().chatAvailable && !useTestControls.getState().offlineSimulated,
         ...(emojiId ? { firstRowEmojiId: emojiId } : {}),
-        ...(replyTo && replyTo.room === roomId ? { replyTo: { id: replyTo.id, nick: replyTo.nick, excerpt: replyTo.excerpt } } : {}),
+        ...(replyTo && replyTo.room === roomId
+          ? { replyTo: { id: replyTo.id, nick: replyTo.nick, excerpt: replyTo.excerpt } }
+          : {}),
       };
       seq.current += 1;
-      const res = sendMessage({ clientId: `${store.id}:${nowMs}:${seq.current}`, room: roomId, text }, ctx);
+      const res = sendMessage(
+        { clientId: `${store.id}:${nowMs}:${seq.current}`, room: roomId, text },
+        ctx,
+      );
       if (res.ok) {
         append([res.message]);
         recordSent(nowMs);
@@ -143,7 +165,10 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
     [source, roomId, participant, emojiId, replyTo, append, recordSent, setReplyTo, setDraft],
   );
 
-  const flagOptions = useMemo(() => getData().countries.map((c) => ({ code: c.flagCode, name: c.name.uk })), []);
+  const flagOptions = useMemo(
+    () => getData().countries.map((c) => ({ code: c.flagCode, name: c.name.uk })),
+    [],
+  );
   const takenNicks = useMemo(() => CHAT_SCRIPT.authors.map((a) => a.nick), []);
 
   const openNick = useCallback(
@@ -186,7 +211,10 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
     [trySend, openNick],
   );
 
-  const onReact = useCallback((m: ChatMessage, reaction: ReactionId, on: boolean) => react(m.room, m.id, reaction, on), [react]);
+  const onReact = useCallback(
+    (m: ChatMessage, reaction: ReactionId, on: boolean) => react(m.room, m.id, reaction, on),
+    [react],
+  );
   const onReply = useCallback(
     (m: ChatMessage) => {
       if (!m.author) return;
@@ -272,7 +300,12 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
   ];
   const switcher =
     options.length > 1 ? (
-      <SegmentedControl label={t('roomsLabel')} value={activeKey} onValueChange={(v) => setRoomKey(v as RoomKey)} options={options} />
+      <SegmentedControl
+        label={t('roomsLabel')}
+        value={activeKey}
+        onValueChange={(v) => setRoomKey(v as RoomKey)}
+        options={options}
+      />
     ) : undefined;
 
   const banner = offline ? (
@@ -280,12 +313,13 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
   ) : reported ? (
     <StatusMessage kind="success">{t('reportedVisible')}</StatusMessage>
   ) : activeKey === 'firstrow' ? (
-    <p className="border-b border-border px-3.5 py-2 text-caption text-text-secondary" data-row="room-note">
+    <p
+      className="border-b border-border px-3.5 py-2 text-caption text-text-secondary"
+      data-row="room-note"
+    >
       {t('firstRowRoomNote', { city: cityName ?? '' })}
     </p>
   ) : undefined;
-
-  const presets = CHAT_SCRIPT.presets;
 
   return (
     <Chat
@@ -294,7 +328,14 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
       state={available ? 'live' : 'unavailable'}
       lookup={lookup}
       roomSwitcher={switcher}
-      headerExtra={activeKey === 'firstrow' && eventId ? <MyEmotionButton eventId={eventId} seatLabel={cityName ? t('firstRowSeatLabel', { city: cityName }) : undefined} /> : undefined}
+      headerExtra={
+        activeKey === 'firstrow' && eventId ? (
+          <MyEmotionButton
+            eventId={eventId}
+            seatLabel={cityName ? t('firstRowSeatLabel', { city: cityName }) : undefined}
+          />
+        ) : undefined
+      }
       banner={banner}
       onAuthorOpen={openAuthor}
       onHide={onHide}
@@ -311,13 +352,15 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
             if (error) setError(null);
           }}
           onSubmit={() => submit(draft)}
-          onPreset={(text) => submit(text)}
-          presets={presets}
           error={error}
           slowRemaining={slowRemaining}
           slowTotal={slowTotal}
           offline={offline}
-          reply={replyTo && replyTo.room === roomId ? { nick: replyTo.nick, excerpt: replyTo.excerpt } : null}
+          reply={
+            replyTo && replyTo.room === roomId
+              ? { nick: replyTo.nick, excerpt: replyTo.excerpt }
+              : null
+          }
           onCancelReply={() => setReplyTo(null)}
           textareaRef={textareaRef}
         />

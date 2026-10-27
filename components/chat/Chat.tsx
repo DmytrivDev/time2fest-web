@@ -9,9 +9,23 @@
  * не є live-областю (оголошення «Нові повідомлення» — справа сторінки, не частіше ніж раз на 30 с).
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/primitives/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/primitives/DropdownMenu';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
@@ -89,9 +103,17 @@ export function Chat({
   const [focusInside, setFocusInside] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [menu, setMenu] = useState<{ message: ChatMessage; anchor: HTMLElement; container: HTMLElement; scroller: HTMLElement } | null>(null);
+  const [menu, setMenu] = useState<{
+    message: ChatMessage;
+    anchor: HTMLElement;
+    container: HTMLElement;
+    scroller: HTMLElement;
+  } | null>(null);
 
-  const visible = useMemo(() => messages.filter((m) => m.moderation !== 'hidden' || m.author?.isMine), [messages]);
+  const visible = useMemo(
+    () => messages.filter((m) => m.moderation !== 'hidden' || m.author?.isMine),
+    [messages],
+  );
 
   // Меню «⋯»: перемикається тією ж кнопкою; зникає разом із повідомленням.
   const openMenu = useCallback((message: ChatMessage, trigger: HTMLElement) => {
@@ -99,11 +121,14 @@ export function Chat({
     const container = wrapRef.current;
     const scroller = logRef.current;
     if (!anchor || !container || !scroller) return;
-    setMenu((cur) => (cur?.message.id === message.id ? null : { message, anchor, container, scroller }));
+    setMenu((cur) =>
+      cur?.message.id === message.id ? null : { message, anchor, container, scroller },
+    );
   }, []);
   const closeMenu = useCallback((opts?: { restoreFocus?: boolean }) => {
     setMenu((cur) => {
-      if (cur && opts?.restoreFocus) cur.anchor.querySelector<HTMLElement>('[data-msg-trigger]')?.focus();
+      if (cur && opts?.restoreFocus)
+        cur.anchor.querySelector<HTMLElement>('[data-msg-trigger]')?.focus();
       return null;
     });
   }, []);
@@ -188,7 +213,9 @@ export function Chat({
     setFocusInside(false);
     const el = logRef.current;
     const first = visible[baseline];
-    const node = first ? el?.querySelector<HTMLElement>(`[data-msg-id="${CSS.escape(first.id)}"]`) : null;
+    const node = first
+      ? el?.querySelector<HTMLElement>(`[data-msg-id="${CSS.escape(first.id)}"]`)
+      : null;
     if (!el) return;
     if (!node) {
       setScrolledUp(false);
@@ -201,7 +228,9 @@ export function Chat({
 
   // Єдиний Tab-стоп: останній сфокусований автор, інакше найновіше повідомлення з автором.
   const authored = visible.filter((m) => m.kind === 'regular' && m.author);
-  const stopId = authored.some((m) => m.id === activeId) ? activeId : (authored[authored.length - 1]?.id ?? null);
+  const stopId = authored.some((m) => m.id === activeId)
+    ? activeId
+    : (authored[authored.length - 1]?.id ?? null);
 
   const onAuthorKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     const keys = ['ArrowUp', 'ArrowDown', 'Home', 'End'];
@@ -211,7 +240,14 @@ export function Chat({
     const items = [...root.querySelectorAll<HTMLButtonElement>('[data-chat-author]')];
     const i = items.indexOf(e.currentTarget);
     if (i === -1) return;
-    const next = e.key === 'ArrowUp' ? i - 1 : e.key === 'ArrowDown' ? i + 1 : e.key === 'Home' ? 0 : items.length - 1;
+    const next =
+      e.key === 'ArrowUp'
+        ? i - 1
+        : e.key === 'ArrowDown'
+          ? i + 1
+          : e.key === 'Home'
+            ? 0
+            : items.length - 1;
     const target = items[Math.max(0, Math.min(items.length - 1, next))];
     if (!target) return;
     e.preventDefault();
@@ -248,7 +284,12 @@ export function Chat({
           </span>
         </button>
         {onHide ? (
-          <button type="button" aria-label={t('hide')} onClick={onHide} className="t2f-focus t2f-chat-hbtn">
+          <button
+            type="button"
+            aria-label={t('hide')}
+            onClick={onHide}
+            className="t2f-focus t2f-chat-hbtn"
+          >
             <span aria-hidden="true">
               <Icon name="chevrons-right" size={18} strokeWidth={2} />
             </span>
@@ -257,7 +298,11 @@ export function Chat({
         {onRules ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button type="button" aria-label={t('moreActions')} className="t2f-focus t2f-chat-hbtn">
+              <button
+                type="button"
+                aria-label={t('moreActions')}
+                className="t2f-focus t2f-chat-hbtn"
+              >
                 <span aria-hidden="true">
                   <Icon name="more" size={18} />
                 </span>
@@ -275,7 +320,11 @@ export function Chat({
       {banner}
 
       {state === 'unavailable' ? (
-        <div role="status" className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center" data-row="unavailable">
+        <div
+          role="status"
+          className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center"
+          data-row="unavailable"
+        >
           <Icon name="wifi-off" size={22} className="text-text-secondary" />
           <p className="text-body text-text">{t('unavailable')}</p>
           {onToEvents ? (
@@ -285,7 +334,11 @@ export function Chat({
           ) : null}
         </div>
       ) : state === 'l' ? (
-        <div aria-busy="true" className="flex flex-1 flex-col justify-end gap-4 overflow-hidden px-3.5 py-3" data-row="loading">
+        <div
+          aria-busy="true"
+          className="flex flex-1 flex-col justify-end gap-4 overflow-hidden px-3.5 py-3"
+          data-row="loading"
+        >
           <span className="sr-only" role="status">
             {common('loading')}
           </span>
@@ -354,9 +407,13 @@ export function Chat({
             </p>
           ) : null}
           {paused && newCount > 0 ? (
-            <button type="button" onClick={jumpToUnseen} className="t2f-focus t2f-chat-newpill" data-row="new-messages">
-              {t('newMessages')}{' '}
-              <span className="t2f-chat-newcount">{newCount}</span>
+            <button
+              type="button"
+              onClick={jumpToUnseen}
+              className="t2f-focus t2f-chat-newpill"
+              data-row="new-messages"
+            >
+              {t('newMessages')} <span className="t2f-chat-newcount">{newCount}</span>
               <Icon name="arrow-down" size={16} strokeWidth={2} />
             </button>
           ) : null}

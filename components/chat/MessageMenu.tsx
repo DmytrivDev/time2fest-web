@@ -11,9 +11,14 @@
 import { useTranslations } from 'next-intl';
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import type { ChatMessage } from '@/lib/data/types';
-import { MENU_HEIGHT_GUESS, chooseMenuPlacement, menuTopInContainer, type MenuPlacement } from './menuPlacement';
+import {
+  MENU_HEIGHT_GUESS,
+  chooseMenuPlacement,
+  menuTopInContainer,
+  type MenuPlacement,
+} from './menuPlacement';
 import { reactOptimistic, type MessageActionHandlers } from './MessageActions';
-import { MENU_REACTION_ROWS, REACTION_SYMBOLS } from './reactions';
+import { EmojiGrid, arrowTarget } from './EmojiGrid';
 
 export interface MessageMenuProps extends MessageActionHandlers {
   message: ChatMessage;
@@ -29,16 +34,41 @@ export interface MessageMenuProps extends MessageActionHandlers {
 
 function Svg({ children }: { children: ReactNode }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       {children}
     </svg>
   );
 }
 
-export function MessageMenu({ message, anchor, container, scroller, onClose, onReact, onReply, onMention, onReport }: MessageMenuProps) {
+export function MessageMenu({
+  message,
+  anchor,
+  container,
+  scroller,
+  onClose,
+  onReact,
+  onReply,
+  onMention,
+  onReport,
+}: MessageMenuProps) {
   const t = useTranslations('chat');
   const ref = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ top: number; left: number; width: number; placement: MenuPlacement } | null>(null);
+  const [pos, setPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    placement: MenuPlacement;
+  } | null>(null);
 
   // Положення: перераховується при відкритті, прокрутці стрічки, зміні розміру вікна й обгортки.
   useLayoutEffect(() => {
@@ -48,7 +78,11 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
       const a = anchor.getBoundingClientRect();
       const v = scroller.getBoundingClientRect();
       const menuHeight = menu?.offsetHeight || MENU_HEIGHT_GUESS;
-      const placement = chooseMenuPlacement({ anchorBottom: a.bottom, viewBottom: v.bottom, menuHeight });
+      const placement = chooseMenuPlacement({
+        anchorBottom: a.bottom,
+        viewBottom: v.bottom,
+        menuHeight,
+      });
       const top = menuTopInContainer({
         placement,
         anchorTop: a.top,
@@ -59,7 +93,13 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
       });
       setPos((p) => {
         const next = { top, left: a.left - c.left, width: a.width, placement };
-        return p && p.top === next.top && p.left === next.left && p.width === next.width && p.placement === next.placement ? p : next;
+        return p &&
+          p.top === next.top &&
+          p.left === next.left &&
+          p.width === next.width &&
+          p.placement === next.placement
+          ? p
+          : next;
       });
     };
     place();
@@ -113,27 +153,7 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
     const i = items.indexOf(document.activeElement as HTMLElement);
     if (i === -1) return;
     e.preventDefault();
-    let target: HTMLElement | undefined;
-    if (e.key === 'ArrowRight') target = items[(i + 1) % items.length];
-    else if (e.key === 'ArrowLeft') target = items[(i - 1 + items.length) % items.length];
-    else if (e.key === 'Home') target = items[0];
-    else if (e.key === 'End') target = items[items.length - 1];
-    else {
-      // Вгору/вниз — найближчий по горизонталі елемент сусіднього ряду.
-      const rect = (el: HTMLElement) => el.getBoundingClientRect();
-      const cur = rect(items[i]!);
-      const cx = cur.left + cur.width / 2;
-      const dir = e.key === 'ArrowDown' ? 1 : -1;
-      const rowTops = [...new Set(items.map((el) => Math.round(rect(el).top)))].sort((x, y) => x - y);
-      const rowIndex = rowTops.indexOf(Math.round(cur.top));
-      const nextTop = rowTops[(rowIndex + dir + rowTops.length) % rowTops.length]!;
-      const row = items.filter((el) => Math.round(rect(el).top) === nextTop);
-      target = row.reduce((best, el) => {
-        const r = rect(el);
-        const b = rect(best);
-        return Math.abs(r.left + r.width / 2 - cx) < Math.abs(b.left + b.width / 2 - cx) ? el : best;
-      });
-    }
+    const target = arrowTarget(items, i, e.key);
     target?.focus();
   };
 
@@ -153,17 +173,34 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
       data-placement={pos?.placement}
       onKeyDown={onKeyDown}
       className="t2f-mm"
-      style={{ top: pos?.top ?? 0, left: pos?.left ?? 0, width: pos?.width, visibility: pos ? 'visible' : 'hidden' }}
+      style={{
+        top: pos?.top ?? 0,
+        left: pos?.left ?? 0,
+        width: pos?.width,
+        visibility: pos ? 'visible' : 'hidden',
+      }}
     >
       <div className="t2f-mm-row">
-        <button type="button" role="menuitem" data-menu-item="" className="t2f-mm-item t2f-mm-action" onClick={() => done(() => onReply?.(message), false)}>
+        <button
+          type="button"
+          role="menuitem"
+          data-menu-item=""
+          className="t2f-mm-item t2f-mm-action"
+          onClick={() => done(() => onReply?.(message), false)}
+        >
           <Svg>
             <path d="M10 7 4 12l6 5" />
             <path d="M4 12h9a7 7 0 0 1 7 7v0" />
           </Svg>
           {t('reply')}
         </button>
-        <button type="button" role="menuitem" data-menu-item="" className="t2f-mm-item t2f-mm-action" onClick={() => done(() => onMention?.(message), false)}>
+        <button
+          type="button"
+          role="menuitem"
+          data-menu-item=""
+          className="t2f-mm-item t2f-mm-action"
+          onClick={() => done(() => onMention?.(message), false)}
+        >
           <Svg>
             <circle cx="12" cy="12" r="4" />
             <path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.5 7.1" />
@@ -172,36 +209,25 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
         </button>
       </div>
       <div aria-hidden="true" className="t2f-mm-sep" />
-      <div className="t2f-mm-grid">
-        {MENU_REACTION_ROWS.map((row, r) => (
-          <div key={r} role="group" aria-label={t('reactionsPick')} className="t2f-mm-gridrow">
-            {row.map((id) => {
-              const mine = message.reactions?.[id]?.mine ?? false;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  role="menuitemcheckbox"
-                  data-menu-item=""
-                  aria-label={t('reactionPickLabel', { name: t(`reactions.${id}`) })}
-                  aria-checked={mine}
-                  className="t2f-mm-item t2f-mm-emoji"
-                  onClick={(e) => {
-                    reactOptimistic(message, id, onReact);
-                    // Фокус на «⋯» — лише після клавіатури (Enter/Пробіл дають detail 0); після миші «⋯» не лишається видимим.
-                    onClose({ restoreFocus: e.detail === 0 });
-                  }}
-                >
-                  <span aria-hidden="true">{REACTION_SYMBOLS[id]}</span>
-                </button>
-              );
-            })}
-          </div>
-        ))}
-      </div>
+      <EmojiGrid
+        cellRole="menuitemcheckbox"
+        checked={(id) => message.reactions?.[id]?.mine ?? false}
+        groupLabel={t('reactionsPick')}
+        onPick={(id, _symbol, e) => {
+          reactOptimistic(message, id, onReact);
+          // Фокус на «⋯» — лише після клавіатури (Enter/Пробіл дають detail 0); після миші «⋯» не лишається видимим.
+          onClose({ restoreFocus: e.detail === 0 });
+        }}
+      />
       <div aria-hidden="true" className="t2f-mm-sep" />
       <div className="t2f-mm-row">
-        <button type="button" role="menuitem" data-menu-item="" className="t2f-mm-item t2f-mm-action t2f-mm-report" onClick={(e) => done(() => onReport?.(message), e.detail === 0)}>
+        <button
+          type="button"
+          role="menuitem"
+          data-menu-item=""
+          className="t2f-mm-item t2f-mm-action t2f-mm-report"
+          onClick={(e) => done(() => onReport?.(message), e.detail === 0)}
+        >
           <Svg>
             <path d="M5 21V4" />
             <path d="M5 4h11l-2 4 2 4H5" />

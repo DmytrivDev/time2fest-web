@@ -216,12 +216,57 @@ describe('ChatPanel — ліміти й режими (FR-052)', () => {
     expect(field()).toHaveValue('ще одне');
   });
 
-  it('«Готові привітання» надсилають одним дотиком', async () => {
+  it('кнопка-емодзі: вибір над полем, вставка в позицію курсора, відкритий для нових, закриває Esc / повторний клік / клік поза ним', async () => {
     const user = userEvent.setup();
     setup();
-    await user.click(screen.getByRole('button', { name: 'Готові привітання' }));
-    await user.click(await screen.findByRole('button', { name: /З Новим роком!/ }));
-    expect(within(screen.getByRole('log')).getByText('З Новим роком!')).toBeInTheDocument();
+    const input = field() as HTMLTextAreaElement;
+    await user.type(input, 'Аб');
+    input.setSelectionRange(1, 1);
+    const btn = screen.getByRole('button', { name: 'Емодзі' });
+    await user.click(btn);
+    expect(btn).toHaveAttribute('aria-expanded', 'true');
+    const picker = screen.getByRole('group', { name: 'Вибір емодзі' });
+    // Без кнопок дій меню повідомлення.
+    expect(within(picker).queryByText('Відповісти')).not.toBeInTheDocument();
+    expect(within(picker).getAllByRole('button')).toHaveLength(24);
+    await user.click(within(picker).getByRole('button', { name: 'Вставити Хлопавка' }));
+    expect(input).toHaveValue('А🎉б');
+    await waitFor(() => expect(input.selectionStart).toBe(3));
+    expect(input).toHaveFocus();
+    await user.click(within(picker).getByRole('button', { name: 'Вставити Серце' }));
+    expect(input).toHaveValue('А🎉❤️б');
+    expect(screen.getByRole('group', { name: 'Вибір емодзі' })).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('group', { name: 'Вибір емодзі' })).not.toBeInTheDocument();
+    await waitFor(() => expect(btn).toHaveFocus());
+
+    await user.click(btn);
+    expect(screen.getByRole('group', { name: 'Вибір емодзі' })).toBeInTheDocument();
+    await user.click(btn);
+    expect(screen.queryByRole('group', { name: 'Вибір емодзі' })).not.toBeInTheDocument();
+
+    await user.click(btn);
+    await user.click(document.body);
+    expect(screen.queryByRole('group', { name: 'Вибір емодзі' })).not.toBeInTheDocument();
+  });
+
+  it('кнопка-емодзі: з клавіатури — фокус на першу клітинку, стрілки, Enter вставляє, ліміт 200 діє', async () => {
+    const user = userEvent.setup();
+    setup();
+    const btn = screen.getByRole('button', { name: 'Емодзі' });
+    btn.focus();
+    await user.keyboard('{Enter}');
+    const picker = screen.getByRole('group', { name: 'Вибір емодзі' });
+    const cells = within(picker).getAllByRole('button');
+    expect(cells[0]).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(cells[1]).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(field()).toHaveValue('🥂');
+    fireEvent.change(field(), { target: { value: 'а'.repeat(200) } });
+    await user.click(cells[0]!);
+    expect(field()).toHaveValue('а'.repeat(200));
   });
 
   it('чат недоступний: повідомлення замість стрічки, поля введення немає', () => {

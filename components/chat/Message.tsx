@@ -124,13 +124,18 @@ export function Message({
   if (message.moderation === 'hidden') {
     if (!message.author?.isMine) return null;
     return (
-      <li data-kind="moderated" data-msg-id={message.id} className={cn('px-2 py-1.5 text-caption italic text-text-muted', className)}>
+      <li
+        data-kind="moderated"
+        data-msg-id={message.id}
+        className={cn('px-2 py-1.5 text-caption italic text-text-muted', className)}
+      >
         {t('removed')}
       </li>
     );
   }
 
-  const emotionName = (id: string) => (names.has(id as never) ? names(id as never) : names('sparkles'));
+  const emotionName = (id: string) =>
+    names.has(id as never) ? names(id as never) : names('sparkles');
 
   if (message.kind === 'system') {
     const s = message.system;
@@ -139,7 +144,10 @@ export function Message({
     if (s?.kind === 'country-midnight') {
       const countries = s.countries.map((c) => {
         const found = lookup?.country?.(c.iso);
-        return { name: { uk: found?.name.uk ?? c.iso }, gender: (found?.gender ?? c.gender) as Gender };
+        return {
+          name: { uk: found?.name.uk ?? c.iso },
+          gender: (found?.gender ?? c.gender) as Gender,
+        };
       });
       if (countries.length > 0) {
         const p = metPhrase(countries);
@@ -156,7 +164,14 @@ export function Message({
       body = (
         <>
           {s.participantName}{' '}
-          <Flag round code={s.flagCode} size="xs" name={lookup?.countryName?.(s.flagCode)} decorative={!lookup?.countryName?.(s.flagCode)} className="t2f-sys-flag" />{' '}
+          <Flag
+            round
+            code={s.flagCode}
+            size="xs"
+            name={lookup?.countryName?.(s.flagCode)}
+            decorative={!lookup?.countryName?.(s.flagCode)}
+            className="t2f-sys-flag"
+          />{' '}
           {t('systemFirstRowTail', { city })}
         </>
       );
@@ -167,7 +182,14 @@ export function Message({
           <span>{t('repeat', { count: new Intl.NumberFormat('uk').format(s.count) })}</span>
           <span aria-hidden="true" className="ms-1.5 inline-flex">
             {s.flagCodes.slice(0, 5).map((code, i) => (
-              <Flag round key={code + i} code={code} size="xs" decorative className={i > 0 ? '-ms-1' : undefined} />
+              <Flag
+                round
+                key={code + i}
+                code={code}
+                size="xs"
+                decorative
+                className={i > 0 ? '-ms-1' : undefined}
+              />
             ))}
           </span>
         </>
@@ -183,7 +205,10 @@ export function Message({
           data-kind="system"
           data-system="greetings-counter"
           data-msg-id={message.id}
-          className={cn('flex items-center gap-1.5 px-2 py-1.5 text-label-badge-chat text-text-muted', className)}
+          className={cn(
+            'flex items-center gap-1.5 px-2 py-1.5 text-label-badge-chat text-text-muted',
+            className,
+          )}
         >
           {body}
         </li>
@@ -194,7 +219,10 @@ export function Message({
         data-kind="system"
         data-system={s?.kind}
         data-msg-id={message.id}
-        className={cn('t2f-sys mx-2 my-1.5 flex items-center gap-2 rounded-sm bg-highlight-tint px-2 py-1 text-highlight', className)}
+        className={cn(
+          't2f-sys mx-2 my-1.5 flex items-center gap-2 rounded-sm bg-highlight-tint px-2 py-1 text-highlight',
+          className,
+        )}
       >
         <Mark />
         <span className={cn('min-w-0', s?.kind === 'firstrow-joined' && 'truncate')}>{body}</span>
@@ -210,13 +238,19 @@ export function Message({
       <li
         data-kind="greeting"
         data-msg-id={message.id}
-        className={cn('mx-2 my-1.5 flex flex-col gap-1 rounded-sm border-s-3 border-highlight bg-highlight-tint py-2 pe-2.5 ps-3', className)}
+        className={cn(
+          'mx-2 my-1.5 flex flex-col gap-1 rounded-sm border-s-3 border-highlight bg-highlight-tint py-2 pe-2.5 ps-3',
+          className,
+        )}
       >
         <div className={ROW}>
           <Mark label={false} />
           <span className="text-label-badge-chat font-bold text-highlight">Time2Fest</span>
           <Badge variant="first-row" />
-          <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto text-label-badge-chat text-text-muted">
+          <time
+            dateTime={new Date(message.createdAt).toISOString()}
+            className="ms-auto text-label-badge-chat text-text-muted"
+          >
             {time}
           </time>
         </div>
@@ -228,7 +262,9 @@ export function Message({
           </span>{' '}
           {t('greetingSuffix', { city, seat: g.seat })}
         </p>
-        {g.text ? <p className="text-chat text-text-secondary">{t('greetingQuote', { text: g.text })}</p> : null}
+        {g.text ? (
+          <p className="text-chat text-text-secondary">{t('greetingQuote', { text: g.text })}</p>
+        ) : null}
       </li>
     );
   }
@@ -254,7 +290,11 @@ export function Message({
         if (!a || !onAuthorOpen) return;
         const target = e.target as HTMLElement;
         // Портали (меню дій) спливають через React-дерево, але лежать поза рядком.
-        if (!e.currentTarget.contains(target) || target.closest('button, a, input, textarea, [role="menu"], [role="menuitem"]')) return;
+        if (
+          !e.currentTarget.contains(target) ||
+          target.closest('button, a, input, textarea, [role="menu"], [role="menuitem"]')
+        )
+          return;
         onAuthorOpen(a);
       }}
       onKeyDown={(e) => {
@@ -262,7 +302,11 @@ export function Message({
         e.preventDefault();
         onAuthorOpen(a);
       }}
-      className={cn('t2f-msg t2f-focus relative flex flex-col gap-0.5 my-px px-2.5 py-2', a && onAuthorOpen && 'cursor-pointer', className)}
+      className={cn(
+        't2f-msg t2f-focus relative flex flex-col gap-0.5 my-px px-2.5 py-2',
+        a && onAuthorOpen && 'cursor-pointer',
+        className,
+      )}
     >
       <div className={cn(ROW, 't2f-msg-head')}>
         {a ? (
@@ -289,14 +333,21 @@ export function Message({
           <>
             <Badge variant="first-row" />
             {a?.firstRowEmojiId ? (
-              <span role="img" aria-label={t('emotionLabel', { emotion: emotionName(a.firstRowEmojiId) })} className="text-label-sm leading-none">
+              <span
+                role="img"
+                aria-label={t('emotionLabel', { emotion: emotionName(a.firstRowEmojiId) })}
+                className="text-label-sm leading-none"
+              >
                 {emojiSymbol(a.firstRowEmojiId)}
               </span>
             ) : null}
           </>
         ) : null}
         {a?.isMine ? <Badge variant="you" /> : null}
-        <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto text-text-muted">
+        <time
+          dateTime={new Date(message.createdAt).toISOString()}
+          className="ms-auto text-text-muted"
+        >
           {time}
         </time>
         {onOpenMenu ? (
@@ -317,12 +368,21 @@ export function Message({
         ) : null}
       </div>
       {message.replyTo ? (
-        <p className="border-s-2 border-border-strong ps-2 text-caption text-text-muted" data-row="reply">
-          <span className="font-semibold">{t('replyTo', { nick: message.replyTo.nick })}</span> {message.replyTo.excerpt}
+        <p
+          className="border-s-2 border-border-strong ps-2 text-caption text-text-muted"
+          data-row="reply"
+        >
+          <span className="font-semibold">{t('replyTo', { nick: message.replyTo.nick })}</span>{' '}
+          {message.replyTo.excerpt}
         </p>
       ) : null}
       <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>
-      <ReactionsRow message={message} tabStop={tabStop} onReact={onOpenMenu ? onReact : undefined} className="pt-1" />
+      <ReactionsRow
+        message={message}
+        tabStop={tabStop}
+        onReact={onOpenMenu ? onReact : undefined}
+        className="pt-1"
+      />
     </li>
   );
 }

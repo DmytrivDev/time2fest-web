@@ -3,7 +3,7 @@
 /**
  * C11. Composer — поле введення чату (FR-050…052).
  * Частини: цитата відповіді («Скасувати відповідь») · Textarea (приховану мітку «Повідомлення в чат «Світ»» задає `inputLabel`) ·
- * «Готові привітання» (Popover, привітання одним дотиком мовою автора, з прапором) · «Надіслати» · підказка · лічильник.
+ * кнопка-емодзі (вибір емодзі над рядком поля, `EmojiPicker`: вставка в позицію курсора, ліміт 200 діє) · «Надіслати» · підказка · лічильник.
  * Стани: гість (перше «Надіслати» відкриває O-NICK — це справа батька через `onSubmit`), лічильник від 180 з 200
  * (за 5 до межі — `text`, на 200 — кораловий «Досить», оголошення на 180/195/200), `link-error`
  * («Посилання в чаті не надсилаються — прибери його, текст лишиться»), `slow` (кнопка неактивна з причиною:
@@ -11,22 +11,15 @@
  * Поле керується батьком (`value`), щоб текст переживав вікно ніка.
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState, type KeyboardEvent, type Ref } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type Ref } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { cn } from '@/components/primitives/cn';
-import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/primitives/Popover';
 import { Textarea } from '@/components/primitives/Textarea';
 import type { RoomId } from '@/lib/data/types';
 import { ANNOUNCE_AT, COUNTER_FROM, MAX_TEXT } from '@/lib/chat-sim/send';
-
-export interface ComposerPreset {
-  lang: string;
-  flagCode: string;
-  text: string;
-}
+import { EmojiPicker } from './EmojiPicker';
 
 export type ComposerError = 'link' | 'too-long' | null;
 
@@ -36,9 +29,6 @@ export interface ComposerProps {
   onValueChange: (value: string) => void;
   /** Надіслати поточний `value`. */
   onSubmit: () => void;
-  /** Привітання одним дотиком: надсилається одразу. */
-  onPreset?: (text: string) => void;
-  presets?: readonly ComposerPreset[];
   error?: ComposerError;
   /** Скільки секунд лишилось до наступного відправлення (0 — можна). */
   slowRemaining?: number;
@@ -58,8 +48,6 @@ export function Composer({
   value,
   onValueChange,
   onSubmit,
-  onPreset,
-  presets = [],
   error = null,
   slowRemaining = 0,
   slowTotal = 0,
@@ -72,7 +60,12 @@ export function Composer({
 }: ComposerProps) {
   const t = useTranslations('chat');
   const announce = useAnnounce();
-  const [presetsOpen, setPresetsOpen] = useState(false);
+  // Вибір емодзі: `kb` — відкрито з клавіатури (фокус на першу клітинку).
+  const [picker, setPicker] = useState<{ kb: boolean } | null>(null);
+  const uid = useId();
+  const inputId = `${uid}-input`;
+  const emojiBtnId = `${uid}-emoji`;
+  const pickerId = `${uid}-picker`;
   const inactive = banned || offline;
   const slow = slowRemaining > 0;
 
@@ -103,7 +96,32 @@ export function Composer({
 
   const errorText = error === 'link' ? t('linkError') : error === 'too-long' ? t('tooLong') : undefined;
   const sendLabel = slow ? t('sendWait', { seconds: slowRemaining }) : t('send');
-  const ordered = [...presets].sort((a, b) => Number(b.lang === 'uk') - Number(a.lang === 'uk'));
+
+  const closePicker = useCallback(
+    (opts?: { restoreFocus?: boolean }) => {
+      setPicker(null);
+      if (opts?.restoreFocus) requestAnimationFrame(() => document.getElementById(emojiBtnId)?.focus());
+    },
+    [emojiBtnId],
+  );
+
+  /** Вставка в позицію курсора (виділення замінюється); ліміт 200 символів діє; курсор — після емодзі. */
+  const insertEmoji = (symbol: string) => {
+    const el = document.getElementById(inputId) as HTMLTextAreaElement | null;
+    const start = el?.selectionStart ?? value.length;
+    const end = el?.selectionEnd ?? start;
+    const next = value.slice(0, start) + symbol + value.slice(end);
+    if (next.length > MAX_TEXT) {
+      announce(t('limitAnnounce'));
+      return;
+    }
+    onValueChange(next);
+    const caret = start + symbol.length;
+    requestAnimationFrame(() => {
+      const field = document.getElementById(inputId) as HTMLTextAreaElement | null;
+      field?.setSelectionRange(caret, caret);
+    });
+  };
 
   return (
     <div data-composer="" className={cn('flex shrink-0 flex-col gap-2 border-t border-border px-3 pb-3 pt-2.5', className)}>
@@ -115,8 +133,20 @@ export function Composer({
           <IconButton icon="close" compact iconSize={16} aria-label={t('cancelReply')} onClick={onCancelReply} />
         </div>
       ) : null}
-      <div className="flex items-start gap-2">
+      {/* Рядок поля: відносна основа для вибору емодзі (над рядком, від поля до «Надіслати»). Esc закриває вибір. */}
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+      <div
+        className="relative flex items-start gap-2"
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' && picker) {
+            e.preventDefault();
+            closePicker({ restoreFocus: true });
+          }
+        }}
+      >
+      {picker ? <EmojiPicker id={pickerId} onInsert={insertEmoji} onClose={closePicker} focusFirst={picker.kb} /> : null}
       <Textarea
+        id={inputId}
         ref={textareaRef}
         className="min-w-0 flex-1"
         frameClassName="t2f-chat-input"
@@ -135,32 +165,27 @@ export function Composer({
         onKeyDown={onKeyDown}
         endSlot={
           <>
-            <Popover open={presetsOpen} onOpenChange={setPresetsOpen}>
-              <PopoverTrigger asChild>
-                <IconButton icon="smile" compact aria-label={t('greetings')} disabled={inactive} />
-              </PopoverTrigger>
-              <PopoverContent align="end" side="top" className="w-72 p-1">
-                <p className="px-3 pb-1 pt-2 text-caption text-text-muted">{t('greetingsHint')}</p>
-                <ul className="flex flex-col" aria-label={t('greetings')}>
-                  {ordered.map((p) => (
-                    <li key={`${p.lang}:${p.text}`}>
-                      <button
-                        type="button"
-                        lang={p.lang}
-                        onClick={() => {
-                          setPresetsOpen(false);
-                          onPreset?.(p.text);
-                        }}
-                        className="t2f-focus t2f-transition flex min-h-touch-min w-full items-center gap-3 rounded-md px-3 text-start text-body text-text hover:bg-border"
-                      >
-                        <Flag round code={p.flagCode} size="xs" decorative />
-                        <span className="flex-1">{p.text}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </PopoverContent>
-            </Popover>
+            <IconButton
+              id={emojiBtnId}
+              icon="smile"
+              compact
+              aria-label={t('emojiButton')}
+              aria-haspopup="dialog"
+              aria-expanded={picker !== null}
+              aria-controls={picker ? pickerId : undefined}
+              data-emoji-trigger=""
+              disabled={inactive}
+              onClick={(e) => {
+                if (picker) {
+                  closePicker();
+                  return;
+                }
+                const kb = e.detail === 0;
+                setPicker({ kb });
+                // Мишею: фокус лишається в полі, щоб вставка йшла в позицію курсора.
+                if (!kb) requestAnimationFrame(() => document.getElementById(inputId)?.focus());
+              }}
+            />
           </>
         }
       />

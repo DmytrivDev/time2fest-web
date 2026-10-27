@@ -26,7 +26,11 @@ export interface ReactionsRowProps {
 }
 
 /** Ставить або знімає реакцію оптимістично: лічильник міняється одразу, чип показує «надсилається» і не приймає повторів. */
-export function reactOptimistic(message: ChatMessage, id: ReactionId, onReact: MessageActionHandlers['onReact']): void {
+export function reactOptimistic(
+  message: ChatMessage,
+  id: ReactionId,
+  onReact: MessageActionHandlers['onReact'],
+): void {
   const key = reactKey(message.id, id);
   if (isReactPending(key)) return;
   const mine = message.reactions?.[id]?.mine ?? false;
@@ -59,7 +63,10 @@ function ReactionChip({
       onClick={() => reactOptimistic(message, id, onReact)}
       className="t2f-chip -my-2.5 inline-flex min-h-touch-min items-center rounded-full"
     >
-      <span aria-hidden="true" className="t2f-chip-body inline-flex h-6 items-center gap-1 rounded-full border border-border-strong px-2 text-caption text-text">
+      <span
+        aria-hidden="true"
+        className="t2f-chip-body inline-flex h-6 items-center gap-1 rounded-full border border-border-strong px-2 text-caption text-text"
+      >
         <span>{REACTION_SYMBOLS[id]}</span>
         <span className="t2f-chip-count">{r.count}</span>
         {busy ? <span className="t2f-chip-spin" /> : null}
@@ -74,7 +81,12 @@ export function ReactionsRow({ message, onReact, tabStop = false, className }: R
   const entries = REACTION_DISPLAY_ORDER.filter((id) => (message.reactions?.[id]?.count ?? 0) > 0);
   if (!entries.length) return null;
   return (
-    <div role="group" aria-label={t('reactionsGroup')} data-row="reactions" className={cn('flex flex-wrap gap-1.5', className)}>
+    <div
+      role="group"
+      aria-label={t('reactionsGroup')}
+      data-row="reactions"
+      className={cn('flex flex-wrap gap-1.5', className)}
+    >
       {entries.map((id) => {
         if (!onReact) {
           const r = message.reactions![id]!;
@@ -90,7 +102,9 @@ export function ReactionsRow({ message, onReact, tabStop = false, className }: R
             </span>
           );
         }
-        return <ReactionChip key={id} message={message} id={id} tabStop={tabStop} onReact={onReact} />;
+        return (
+          <ReactionChip key={id} message={message} id={id} tabStop={tabStop} onReact={onReact} />
+        );
       })}
     </div>
   );
