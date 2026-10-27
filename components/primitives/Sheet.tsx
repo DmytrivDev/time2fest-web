@@ -73,6 +73,8 @@ export interface SheetProps {
   loading?: boolean;
   /** TODO(i18n): з messages. */
   closeLabel?: string;
+  /** Шапка за макетом O-NICK (ручка 36×4, заголовок 18/700 з підзаголовком, × 44 px, тіло без бічних відступів). */
+  boardHeader?: boolean;
   className?: string;
 }
 
@@ -86,6 +88,7 @@ export function Sheet({
   children,
   loading = false,
   closeLabel = 'Закрити',
+  boardHeader = false,
   className,
 }: SheetProps) {
   const top = usePlayerBottom(open);
@@ -127,25 +130,39 @@ export function Sheet({
           {...(description ? {} : { 'aria-describedby': undefined })}
         >
           <div
-            className="flex h-6 shrink-0 touch-none items-center justify-center"
+            className={cn('flex shrink-0 touch-none justify-center', boardHeader ? 'h-4 items-end pb-1' : 'h-6 items-center')}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerEnd}
             onPointerCancel={onPointerEnd}
             aria-hidden="true"
           >
-            <span className="h-1 w-10 rounded-full bg-border-strong" />
+            <span className={cn('h-1 rounded-full', boardHeader ? 'w-9 bg-border' : 'w-10 bg-border-strong')} />
           </div>
-          <div className="flex shrink-0 items-center justify-between gap-2 px-4">
-            <Dialog.Title className="text-headline-sm">{title}</Dialog.Title>
-            <Dialog.Close asChild>
-              <IconButton icon="close" aria-label={closeLabel} />
-            </Dialog.Close>
-          </div>
-          {description ? (
-            <Dialog.Description className="px-4 text-body text-text-secondary">{description}</Dialog.Description>
-          ) : null}
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-2" aria-busy={loading || undefined}>
+          {boardHeader ? (
+            <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="">
+              <div className="min-w-0 flex-1 pt-1.5">
+                <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
+                {description ? <Dialog.Description className="text-caption text-text-muted">{description}</Dialog.Description> : null}
+              </div>
+              <Dialog.Close asChild>
+                <IconButton icon="close" aria-label={closeLabel} />
+              </Dialog.Close>
+            </div>
+          ) : (
+            <>
+              <div className="flex shrink-0 items-center justify-between gap-2 px-4">
+                <Dialog.Title className="text-headline-sm">{title}</Dialog.Title>
+                <Dialog.Close asChild>
+                  <IconButton icon="close" aria-label={closeLabel} />
+                </Dialog.Close>
+              </div>
+              {description ? (
+                <Dialog.Description className="px-4 text-body text-text-secondary">{description}</Dialog.Description>
+              ) : null}
+            </>
+          )}
+          <div className={cn('min-h-0 flex-1 overflow-y-auto', boardHeader ? 'pb-0' : 'px-4 pb-6 pt-2')} aria-busy={loading || undefined}>
             {loading ? (
               // TODO(T053): <Skeleton variant="line" />
               <div className="flex flex-col gap-3" role="status">

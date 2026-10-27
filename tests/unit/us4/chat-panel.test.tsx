@@ -74,10 +74,13 @@ describe('ChatPanel — вікно ніка на першому власному
     const dialog = await screen.findByRole('dialog', { name: /Як тебе підписати/ });
     const nick = within(dialog).getByRole('textbox', { name: /Нік/ });
 
+    // Порожній нік — без помилки; 1 символ — одразу «Мінімум 2 символи» під полем, підказка нижче.
+    expect(within(dialog).queryByText('Мінімум 2 символи')).not.toBeInTheDocument();
     await user.type(nick, 'М');
+    expect(within(dialog).getByText('Мінімум 2 символи')).toBeInTheDocument();
+    expect(nick).toHaveAttribute('aria-invalid', 'true');
     await user.click(within(dialog).getByRole('button', { name: 'Готово' }));
     expect(screen.getByRole('dialog', { name: /Як тебе підписати/ })).toBeInTheDocument();
-    expect(within(dialog).getByText(/від 2 до 20 символів/)).toBeInTheDocument();
 
     await user.type(nick, 'ирон');
     await user.click(within(dialog).getByRole('button', { name: 'Готово' }));
@@ -91,19 +94,79 @@ describe('ChatPanel — вікно ніка на першому власному
     expect(useGuestStore.getState().chat.sentAt).toHaveLength(1);
   });
 
-  it('нік понад 20 символів не вводиться (maxLength 20), «заборонений» і «зайнятий» показують причину', async () => {
+  it('нік: понад 20 — «Максимум 20 символів», посилання — «Без посилань», «заборонений» і «зайнятий» показують причину', async () => {
     const user = userEvent.setup();
     setup();
     await user.type(field(), 'Привіт');
     await user.click(screen.getByRole('button', { name: 'Надіслати' }));
     const dialog = await screen.findByRole('dialog', { name: /Як тебе підписати/ });
     const nick = within(dialog).getByRole('textbox', { name: /Нік/ });
-    await user.type(nick, 'а'.repeat(30));
-    expect((nick as HTMLInputElement).value).toHaveLength(20);
+    // Підпис без «від 2 до 20 символів»; лічильник N/20 справа.
+    expect(within(dialog).queryByText(/від 2 до 20/)).not.toBeInTheDocument();
+    fireEvent.change(nick, { target: { value: 'а'.repeat(25) } });
+    expect(within(dialog).getByText('Максимум 20 символів')).toBeInTheDocument();
+    expect(within(dialog).getByText('25/20')).toBeInTheDocument();
+    fireEvent.change(nick, { target: { value: 'www.example.com' } });
+    expect(within(dialog).getByText('Без посилань', { selector: 'p' })).toBeInTheDocument();
+    fireEvent.change(nick, { target: { value: 'Олег' } });
+    expect(within(dialog).queryByText('Без посилань', { selector: 'p' })).not.toBeInTheDocument();
     fireEvent.change(nick, { target: { value: 'Аміра' } });
     expect(within(dialog).getByText('Цей нік уже зайнято')).toBeInTheDocument();
     fireEvent.change(nick, { target: { value: 'Admin' } });
     expect(within(dialog).getByText('Цей нік не пройшов модерацію')).toBeInTheDocument();
+  });
+});
+
+describe('O-NICK — прапор: пошук замість поля, список, клавіатура', () => {
+  async function openNick(user: ReturnType<typeof userEvent.setup>) {
+    setup();
+    await user.type(field(), 'Привіт');
+    await user.click(screen.getByRole('button', { name: 'Надіслати' }));
+    return screen.findByRole('dialog', { name: /Як тебе підписати/ });
+  }
+
+  it('«Змінити» замінює поле прапора пошуком і відкриває список з групами; фільтр, ↓ + Enter обирають, Esc повертає на «Змінити»', async () => {
+    const user = userEvent.setup();
+    const dialog = await openNick(user);
+    const change = within(dialog).getByRole('button', { name: /^Прапор: .*Змінити$/ });
+    await user.click(change);
+    expect(within(dialog).queryByRole('button', { name: /^Прапор: .*Змінити$/ })).not.toBeInTheDocument();
+    const search = within(dialog).getByRole('combobox');
+    expect(search).toHaveFocus();
+    expect(search).toHaveAttribute('aria-expanded', 'true');
+    const list = within(dialog).getByRole('listbox', { name: 'Прапори' });
+    expect(within(list).getByText('Особливі прапори')).toBeInTheDocument();
+    expect(within(list).getByText('Усі країни')).toBeInTheDocument();
+    expect(within(list).getByRole('option', { name: /Без країни/ })).toBeInTheDocument();
+    expect(within(list).getByRole('option', { name: /Європейський Союз/ })).toBeInTheDocument();
+    expect(within(list).getByRole('option', { name: /Англія/ })).toBeInTheDocument();
+    expect(within(list).getByRole('option', { name: /Прайд-прапор ЛГБТ/ })).toBeInTheDocument();
+
+    await user.type(search, 'Єгип');
+    const found = within(list).getAllByRole('option');
+    expect(found).toHaveLength(1);
+    await user.keyboard('{Enter}');
+    expect(within(dialog).queryByRole('listbox')).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Прапор: Єгипет. Змінити' })).toBeInTheDocument();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Прапор: Єгипет. Змінити' }));
+    await user.keyboard('{ArrowDown}{ArrowDown}');
+    expect(within(dialog).getByRole('combobox').getAttribute('aria-activedescendant')).toBeTruthy();
+    await user.keyboard('{Escape}');
+    expect(screen.getByRole('dialog', { name: /Як тебе підписати/ })).toBeInTheDocument();
+    expect(within(dialog).queryByRole('listbox')).not.toBeInTheDocument();
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Прапор: Єгипет. Змінити' })).toHaveFocus());
+  });
+
+  it('прев’ю «У чаті:» з довгим ніком; «Оформити пас» показує повідомлення про імітовану оплату; посилання на правила', async () => {
+    const user = userEvent.setup();
+    const dialog = await openNick(user);
+    fireEvent.change(within(dialog).getByRole('textbox', { name: /Нік/ }), { target: { value: 'ШШШШШШШШШШШШШШШШШШШШ' } });
+    expect(within(dialog).getByText('У чаті:')).toBeInTheDocument();
+    expect(within(dialog).getByRole('img', { name: /ШШШШШШШШШШШШШШШШШШШШ/ })).toBeInTheDocument();
+    await user.click(within(dialog).getByRole('button', { name: 'Оформити пас' }));
+    expect(within(dialog).getByText('Оплата буде на наступному етапі')).toBeInTheDocument();
+    expect(within(dialog).getByRole('link', { name: 'Умови й правила чату' })).toHaveAttribute('href', '/rules/');
   });
 });
 

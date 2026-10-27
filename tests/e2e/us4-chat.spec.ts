@@ -92,10 +92,11 @@ test.describe('US4 · чат свята', () => {
     await nick.fill('М');
     await dialog.getByRole('button', { name: 'Готово' }).click();
     await expect(dialog).toBeVisible(); // менше 2 символів не проходить
-    await expect(dialog.getByText(/від 2 до 20 символів/).first()).toBeVisible();
+    await expect(dialog.getByText('Мінімум 2 символи')).toBeVisible();
 
     await nick.fill('а'.repeat(25));
-    await expect(nick).toHaveValue('а'.repeat(20)); // більше 20 не вводиться
+    await expect(dialog.getByText('Максимум 20 символів')).toBeVisible(); // більше 20 — помилка, не обрізання
+    await expect(dialog.getByText('25/20')).toBeVisible();
 
     await nick.fill('Мирон');
     await dialog.getByRole('button', { name: 'Готово' }).click();

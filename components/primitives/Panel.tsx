@@ -38,6 +38,8 @@ export interface ChatSlotPanelProps {
   /** TODO(i18n): з messages. */
   closeLabel?: string;
   backLabel?: string;
+  /** Шапка за макетом O-NICK: заголовок 18/700 з підзаголовком, × 44 px, без лінії під шапкою, тіло без відступів. */
+  boardHeader?: boolean;
   className?: string;
 }
 
@@ -56,6 +58,7 @@ export function ChatSlotPanel({
   children,
   closeLabel = 'Закрити',
   backLabel = 'Назад',
+  boardHeader = false,
   className,
 }: ChatSlotPanelProps) {
   const container = chatSlot(open);
@@ -74,25 +77,38 @@ export function ChatSlotPanel({
     >
       <FocusScope.Root asChild trapped={isForm && open} loop={isForm}>
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2">
-            {variant === 'nonmodal' ? (
-              <Dialog.Close asChild>
-                <Button variant="ghost" iconLeft="chevron-left">
-                  {backLabel}
-                </Button>
-              </Dialog.Close>
-            ) : null}
-            <Dialog.Title className="flex-1 text-headline-sm">{title}</Dialog.Title>
-            {isForm ? (
+          {boardHeader ? (
+            <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-2" data-board-header="">
+              <div className="min-w-0 flex-1 pt-1.5">
+                <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
+                {description ? <Dialog.Description className="text-caption text-text-muted">{description}</Dialog.Description> : null}
+              </div>
               <Dialog.Close asChild>
                 <IconButton icon="close" aria-label={closeLabel} />
               </Dialog.Close>
-            ) : null}
-          </div>
-          {description ? (
+            </div>
+          ) : null}
+          {!boardHeader ? (
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2">
+              {variant === 'nonmodal' ? (
+                <Dialog.Close asChild>
+                  <Button variant="ghost" iconLeft="chevron-left">
+                    {backLabel}
+                  </Button>
+                </Dialog.Close>
+              ) : null}
+              <Dialog.Title className="flex-1 text-headline-sm">{title}</Dialog.Title>
+              {isForm ? (
+                <Dialog.Close asChild>
+                  <IconButton icon="close" aria-label={closeLabel} />
+                </Dialog.Close>
+              ) : null}
+            </div>
+          ) : null}
+          {description && !boardHeader ? (
             <Dialog.Description className="px-4 pt-3 text-body text-text-secondary">{description}</Dialog.Description>
           ) : null}
-          <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+          <div className={cn('min-h-0 flex-1 overflow-y-auto', !boardHeader && 'p-4')}>{children}</div>
         </div>
       </FocusScope.Root>
     </Dialog.Content>

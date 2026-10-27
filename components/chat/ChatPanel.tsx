@@ -154,6 +154,7 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
       overlay.open({
         id: NICK_WINDOW_ID,
         kind: 'form',
+        chrome: 'board',
         coral: true,
         title: t('nick.title'),
         description: t('nick.description'),
