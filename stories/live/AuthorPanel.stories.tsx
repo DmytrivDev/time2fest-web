@@ -34,13 +34,10 @@ const meta = {
     author: KARIM,
     countryName: 'Єгипет',
     message: message(KARIM, '@Аміра Привіт з Каїра! У нас уже 2027 🎆'),
-    roomLabel: 'Світ',
     hasPass: true,
     path: buildAuthorPath(KARIM, script, getData()),
     viewerHasPass: false,
-    onReply: () => undefined,
     onReport: () => undefined,
-    onMention: () => undefined,
     onPassInfo: () => undefined,
   },
   render: (args) => (

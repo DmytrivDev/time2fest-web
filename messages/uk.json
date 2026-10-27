@@ -406,8 +406,6 @@
     "author": {
       "title": "Автор повідомлення",
       "passLabel": "Новорічний пас",
-      "messageHeading": "Повідомлення",
-      "messageMeta": "Повідомлення · {time} · чат «{room}»",
       "pointSeat": "Перший ряд · місце {seat}",
       "mapLabel": "Мапа шляху {name}: {route}",
       "summaryMet": "{count, plural, one {# країна} few {# країни} many {# країн} other {# країни}}",
@@ -415,12 +413,9 @@
       "summaryPlanned": "ще {count} у графіку",
       "routeNext": "далі: {cities}",
       "noMeetings": "Ще ніде не зустрів Новий рік",
-      "noPass": "<b>{nick}</b> не ділиться шляхом: у нього немає Новорічного пасу",
+      "noPass": "<b>{nick}</b> поки не може показати шлях: це можливість Новорічного пасу",
       "promoText": "Хочеш, щоб інші бачили твій шлях? Оформи Новорічний пас.",
       "passMore": "Що ще дає пас?",
-      "reply": "Відповісти",
-      "mention": "Згадати",
-      "mentionAria": "Згадати {nick}",
       "report": "Поскаржитись"
     }
   },

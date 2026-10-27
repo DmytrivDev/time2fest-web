@@ -332,6 +332,55 @@ html[data-reduce-motion='true'] .t2f-spin {
 .t2f-chat-log::-webkit-scrollbar-track {
   background: transparent;
 }
+/* Chromium/Safari: стандартні scrollbar-width/color вимикають ::-webkit-scrollbar — лишаємо їх лише Firefox,
+   щоб смуга була 6 px, як на дошках. */
+@supports selector(::-webkit-scrollbar) {
+  .t2f-chat-log,
+  .t2f-nk-list {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+}
+.t2f-nk-list::-webkit-scrollbar {
+  width: 6px;
+}
+.t2f-nk-list::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+}
+.t2f-nk-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Десктоп (миша): місце під смугу прокрутки зарезервоване в усіх прокручуваних областях чату — коли смуга
+   з’являється, вміст не стрибає (рішення 2026-10-27). Резерв береться з правого відступу: без смуги відступи
+   зліва й справа однакові, смуга стає в правий відступ (--t2f-gutter = її ширина). */
+:root {
+  --t2f-gutter: 0px;
+}
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --t2f-gutter: 6px;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    :root {
+      --t2f-gutter: 8px;
+    }
+  }
+  .t2f-chat-log,
+  .t2f-nk-list,
+  .t2f-slot-body {
+    scrollbar-gutter: stable;
+  }
+  [data-author-compact='false'] .t2f-author-card-rows {
+    scrollbar-gutter: auto;
+  }
+}
+.t2f-chat-feed {
+  padding-inline-end: max(0px, calc(6px - var(--t2f-gutter)));
+}
+.t2f-slot-body {
+  padding-inline-end: calc(16px - var(--t2f-gutter));
+}
 /* «Нові повідомлення N ↓» (`Phone-Chat-Paused`): поверх стрічки, по центру, 12 px від низу. */
 .t2f-chat-newpill {
   position: absolute;
@@ -772,7 +821,7 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   display: flex;
   flex-direction: column;
   margin: 0;
-  padding: 0 4px 0 0;
+  padding: 0 max(0px, calc(4px - var(--t2f-gutter))) 0 0;
   list-style: none;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -860,8 +909,32 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   font-weight: 600;
   cursor: pointer;
 }
-.t2f-author-back:hover {
+/* Підсвітка нижча за саму кнопку: зона дотику 44 px, плашка — 32 px. */
+.t2f-author-back {
+  position: relative;
+  isolation: isolate;
+}
+.t2f-author-back::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  z-index: -1;
+  border-radius: var(--radius-md);
+  background: transparent;
+  transition: background-color var(--duration-fast, 120ms) ease;
+}
+.t2f-author-back:hover::before {
   background: var(--color-surface-raised);
+}
+/* Рамка фокусу — теж по плашці 32 px, а не по всій зоні дотику. */
+.t2f-author-back.t2f-focus:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.t2f-author-back:focus-visible::before {
+  outline: var(--t2f-focus-w, 2px) solid var(--color-focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 calc(var(--t2f-focus-w, 2px) + 2px) var(--color-focus-ring-outer);
 }
 .t2f-author-header {
   display: flex;

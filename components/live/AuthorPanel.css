@@ -7,7 +7,7 @@
   flex-direction: column;
   gap: 16px;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 16px calc(16px - var(--t2f-gutter)) 16px 16px;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -147,7 +147,7 @@
   justify-content: center;
   padding: 10px;
   border-radius: var(--radius-md);
-  background: rgba(18, 18, 20, 0.78);
+  background: rgba(18, 18, 20, 0.5);
 }
 .t2f-author-plate {
   display: flex;

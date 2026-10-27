@@ -4,16 +4,15 @@
  * C13 AuthorPanel — O-AUTHOR (FR-055; макети `Desk-Author`, `Phone-Author`, `Phone-Author-NoPass`, `Phone-Author-States`).
  * Немодальне вікно: десктоп — `ChatSlotPanel` на місці колонки чату, телефон — Sheet під плеєром (розміщення й шапку
  * «‹ Назад · Автор повідомлення» дає `OverlayManager`, `chrome: 'author'`). Тіло прокручується саме, плашка пасу внизу закріплена.
- * Зверху вниз: автор (круглий прапор 40 px, нік, країна, «Новорічний пас») · повідомлення, яке відкрили (час і кімната) ·
+ * Зверху вниз: автор (круглий прапор 40 px, нік, країна, «Новорічний пас») ·
  * «Шлях <нік>» + підсумок · мініатюра `PathMap` з легендою · картка «Переглянути шлях» (зустрінуті, далі заплановані;
- * прапори з’єднані пунктиром) · «Відповісти» і «Згадати» (по 50%), «Поскаржитись» · плашка «Оформи Новорічний пас» (глядач без пасу).
+ * прапори з’єднані пунктиром) · «Поскаржитись» (повідомлення, «Відповісти» і «Згадати» — у меню «⋯») · плашка «Оформи Новорічний пас» (глядач без пасу).
  * Стани автора: пас і зустрічі · пас, але ще нічого · без пасу (картки немає, мапа затемнена з плашкою) · свій нік (лише «це ти»).
  * Десктоп: картка природної висоти, прокручується вся панель; телефон: відкрита картка 232 px з власною прокруткою.
  */
 import { Collapsible as Radix } from 'radix-ui';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { withMentions } from '@/components/chat/Message';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -23,7 +22,6 @@ import { useChatColumn } from '@/components/shell/OverlayManager';
 import { PaymentNotice } from '@/components/windows/OfferCard';
 import { pathSummary, routeCities, type PathPoint } from '@/lib/chat-sim/authorPath';
 import type { Author, ChatMessage } from '@/lib/data/types';
-import { formatClock } from '@/lib/i18n/time';
 import { PathLegend, PathMap } from './PathMap';
 import type { ZoneMapGeometry } from './MapModel';
 import './AuthorPanel.css';
@@ -32,19 +30,15 @@ export interface AuthorPanelProps {
   author: Author;
   /** Назва країни прапора автора («Єгипет»). */
   countryName?: string;
-  /** Повідомлення, яке відкрили, і назва кімнати («Світ»). */
+  /** Повідомлення, яке відкрили (для «Поскаржитись»). */
   message?: ChatMessage;
-  roomLabel?: string;
   /** Автор має пас (показуємо шлях). */
   hasPass: boolean;
   /** Шлях автора (зустрінуті й заплановані); порожній з пасом — «зустрічей ще нема». */
   path?: readonly PathPoint[];
   /** У глядача є пас: плашку «Оформи пас» не показуємо. */
   viewerHasPass?: boolean;
-  onReply?: (message: ChatMessage) => void;
   onReport?: (message: ChatMessage) => void;
-  /** «Згадати»: вставити @нік у поле чату й закрити панель. */
-  onMention?: (author: Author) => void;
   /** «Що ще дає пас?» — відкрити опис пасу. */
   onPassInfo?: () => void;
   /** Готова геометрія мапи (історії, тести). */
@@ -57,9 +51,9 @@ function orderedRows(path: readonly PathPoint[]): PathPoint[] {
   return [...path.filter((p) => !p.planned), ...path.filter((p) => p.planned)];
 }
 
-function ActionButton({ icon, label, ariaLabel, muted, onClick }: { icon: 'reply' | 'at' | 'flag'; label: string; ariaLabel?: string; muted?: boolean; onClick?: () => void }) {
+function ActionButton({ icon, label, muted, onClick }: { icon: 'flag'; label: string; muted?: boolean; onClick?: () => void }) {
   return (
-    <button type="button" className="t2f-focus t2f-transition t2f-author-action" data-muted={muted ? '' : undefined} aria-label={ariaLabel} onClick={onClick}>
+    <button type="button" className="t2f-focus t2f-transition t2f-author-action" data-muted={muted ? '' : undefined} onClick={onClick}>
       <Icon name={icon} size={18} />
       <span>{label}</span>
     </button>
@@ -70,13 +64,10 @@ export function AuthorPanel({
   author,
   countryName,
   message,
-  roomLabel,
   hasPass,
   path = [],
   viewerHasPass = false,
-  onReply,
   onReport,
-  onMention,
   onPassInfo,
   geometry,
   className,
@@ -120,12 +111,6 @@ export function AuthorPanel({
           </div>
         </header>
 
-        {message ? (
-          <section aria-label={t('messageHeading')} className="flex min-w-0 flex-col gap-0.5 rounded-md bg-surface-raised px-3 py-2.5" data-row="message">
-            <p className="t2f-author-fine text-text-muted">{t('messageMeta', { time: formatClock(message.createdAt), room: roomLabel ?? '' })}</p>
-            <p className="text-chat text-text [overflow-wrap:anywhere]">{withMentions(message.text)}</p>
-          </section>
-        ) : null}
 
         {showPath ? (
           <section aria-labelledby="author-path-title" className="flex min-w-0 flex-col gap-2" data-row="path">
@@ -196,17 +181,9 @@ export function AuthorPanel({
           </section>
         ) : null}
 
-        {!isMine ? (
-          <div className="flex flex-col gap-1" data-row="actions">
-            <div className="flex gap-1">
-              {message && onReply ? <ActionButton icon="reply" label={t('reply')} onClick={() => onReply(message)} /> : null}
-              <ActionButton icon="at" label={t('mention')} ariaLabel={t('mentionAria', { nick: author.nick })} onClick={() => onMention?.(author)} />
-            </div>
-            {message && onReport ? (
-              <div className="flex">
-                <ActionButton icon="flag" label={t('report')} muted onClick={() => onReport(message)} />
-              </div>
-            ) : null}
+        {!isMine && message && onReport ? (
+          <div className="flex" data-row="actions">
+            <ActionButton icon="flag" label={t('report')} muted onClick={() => onReport(message)} />
           </div>
         ) : null}
       </div>

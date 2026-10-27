@@ -367,7 +367,7 @@ export function Chat({
                 {emptyText}
               </p>
             ) : (
-              <ol className="flex min-h-full list-none flex-col justify-end px-1.5 py-2">
+              <ol className="t2f-chat-feed flex min-h-full list-none flex-col justify-end px-1.5 py-2">
                 {visible.map((m) => (
                   <Message
                     key={m.id}

@@ -289,8 +289,8 @@ test.describe('US4 · чат свята', () => {
     const panel = page.getByRole('dialog', { name: 'Автор повідомлення' });
     await expect(panel.getByText('Тарас').first()).toBeVisible();
     await expect(panel.getByRole('button', { name: /Переглянути шлях/ })).toHaveCount(0);
-    await expect(panel.getByText(/не ділиться шляхом: у нього немає Новорічного пасу/)).toBeVisible();
-    await expect(panel.getByRole('button', { name: 'Згадати Тарас' })).toBeVisible();
+    await expect(panel.getByText(/поки не може показати шлях: це можливість Новорічного пасу/)).toBeVisible();
+    await expect(panel.getByRole('button', { name: 'Поскаржитись' })).toBeVisible();
   });
 
   test('чат сховано: телефон — «Відкрити чат» з лічильником; десктоп — колонки немає, «Показати чат» повертає її', async ({

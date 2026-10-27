@@ -259,26 +259,19 @@ export function ChatPanel({
             author={author}
             countryName={lookup.countryName?.(author.flagCode)}
             message={message}
-            roomLabel={roomLabel}
             hasPass={hasPass}
             path={path}
             viewerHasPass={viewerHasPass}
-            onReply={onReply}
             onReport={onReport}
             onPassInfo={() => {
               overlay.open(passInfoSpec({ now: () => clock.getSnapshot() }, tPass('infoTitle')));
               useGuestStore.getState().showOffer('pass-info', useGuestStore.getState().stamps.at(-1)?.eventId ?? '', clock.getSnapshot());
             }}
-            onMention={(a) => {
-              setDraft((v) => `${v}${v && !v.endsWith(' ') ? ' ' : ''}@${a.nick} `);
-              overlay.close(AUTHOR_WINDOW_ID);
-              focusField();
-            }}
           />
         ),
       });
     },
-    [overlay, t, tPass, clock, lookup, roomLabel, onReply, onReport, focusField, setDraft],
+    [overlay, t, tPass, clock, lookup, onReport],
   );
 
   const openRules = useCallback(

@@ -35,13 +35,10 @@ function show(author: Author, extra: Partial<AuthorPanelProps> = {}) {
     author,
     countryName: 'Україна',
     message: msg(author),
-    roomLabel: 'Світ',
     hasPass,
     path: buildAuthorPath(author, script, data),
     geometry,
-    onReply: vi.fn(),
     onReport: vi.fn(),
-    onMention: vi.fn(),
     onPassInfo: vi.fn(),
     ...extra,
   };
@@ -58,7 +55,7 @@ describe('панель автора O-AUTHOR (C13)', () => {
     show(KARIM, { countryName: 'Єгипет' });
     expect(screen.getByRole('heading', { name: 'Karim' })).toBeInTheDocument();
     expect(document.querySelector('[data-badge="pass"]')).toHaveTextContent('Новорічний пас');
-    expect(screen.getByText(/^Повідомлення · \d\d:\d\d · чат «Світ»$/)).toBeInTheDocument();
+    expect(document.querySelector('[data-row="message"]')).toBeNull();
     expect(screen.queryByText('Реакція на повідомлення')).not.toBeInTheDocument();
     expect(screen.getByText('2 країни · ще 1 у графіку')).toBeInTheDocument();
     const trigger = screen.getByRole('button', { name: /Переглянути шлях/ });
@@ -109,26 +106,17 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(screen.getByRole('heading', { name: 'Шлях Тарас' })).toBeInTheDocument();
     const locked = document.querySelector('[data-row="locked"]') as HTMLElement;
     expect(locked.querySelector('[inert]')).not.toBeNull();
-    expect(within(locked).getByText(/не ділиться шляхом: у нього немає Новорічного пасу/)).toBeInTheDocument();
+    expect(within(locked).getByText(/поки не може показати шлях: це можливість Новорічного пасу/)).toBeInTheDocument();
     expect(within(locked).getByText('Тарас', { selector: 'b' })).toBeInTheDocument();
     expect(document.querySelector('[data-badge="pass"]')).toBeNull();
   });
 
-  it('кнопки: «Відповісти» і «Згадати» поруч (без ніка в підписі, є в aria-label), «Поскаржитись» нижче; дії викликаються', async () => {
+  it('кнопки: лише «Поскаржитись» («Відповісти» і «Згадати» — у меню «⋯»)', async () => {
     const user = userEvent.setup();
     const props = show(KARIM);
     const actions = document.querySelector('[data-row="actions"]') as HTMLElement;
-    const mention = within(actions).getByRole('button', { name: 'Згадати Karim' });
-    expect(mention).toHaveTextContent(/^Згадати$/);
-    const reply = within(actions).getByRole('button', { name: 'Відповісти' });
-    const report = within(actions).getByRole('button', { name: 'Поскаржитись' });
-    expect(reply.parentElement).toBe(mention.parentElement);
-    expect(report.parentElement).not.toBe(mention.parentElement);
-    await user.click(reply);
-    await user.click(mention);
-    await user.click(report);
-    expect(props.onReply).toHaveBeenCalledOnce();
-    expect(props.onMention).toHaveBeenCalledWith(KARIM);
+    expect(within(actions).getAllByRole('button')).toHaveLength(1);
+    await user.click(within(actions).getByRole('button', { name: 'Поскаржитись' }));
     expect(props.onReport).toHaveBeenCalledOnce();
   });
 

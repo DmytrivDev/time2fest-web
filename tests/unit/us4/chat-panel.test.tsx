@@ -329,7 +329,7 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     expect(within(dialog).getByRole('heading', { name: 'Шлях Karim' })).toBeInTheDocument();
     await waitFor(() => expect(within(dialog).getAllByRole('button', { name: /· Зустріли ·/ }).length).toBeGreaterThan(0));
     expect(within(dialog).getAllByRole('button', { name: /· У графіку ·/ }).length).toBeGreaterThan(0);
-    expect(within(dialog).getByRole('button', { name: 'Згадати Karim' })).toHaveTextContent('Згадати');
+    expect(within(dialog).getByRole('button', { name: 'Поскаржитись' })).toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: /Переглянути шлях/ })).toBeInTheDocument();
     await user.keyboard('{Escape}');
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument());
@@ -338,8 +338,9 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     const plain = await screen.findByRole('dialog', { name: 'Автор повідомлення' });
     expect(within(plain).getByRole('heading', { name: 'Тарас' })).toBeInTheDocument();
     expect(within(plain).queryByRole('button', { name: /Переглянути шлях/ })).not.toBeInTheDocument();
-    expect(within(plain).getByText(/не ділиться шляхом: у нього немає Новорічного пасу/)).toBeInTheDocument();
-    expect(within(plain).getByRole('button', { name: 'Згадати Тарас' })).toBeInTheDocument();
+    expect(within(plain).getByText(/поки не може показати шлях: це можливість Новорічного пасу/)).toBeInTheDocument();
+    expect(within(plain).getByRole('button', { name: 'Поскаржитись' })).toBeInTheDocument();
+    expect(within(plain).queryByRole('button', { name: /Згадати|Відповісти/ })).not.toBeInTheDocument();
   });
 
   it('клік по рядку повідомлення (текст) і Enter на рядку відкривають панель автора; ⋯ — лише меню дій', async () => {
@@ -402,13 +403,6 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
   });
 
-  it('«Згадати @нік» вставляє згадку в поле і закриває панель', async () => {
-    const user = userEvent.setup();
-    setup();
-    await user.click(screen.getByRole('button', { name: /Тарас, Україна/ }));
-    await user.click(await screen.findByRole('button', { name: 'Згадати Тарас' }));
-    await waitFor(() => expect(field()).toHaveValue('@Тарас '));
-  });
 
   it('одна зупинка Tab у стрічці: лише найновіший нік tabindex=0', () => {
     setup();
