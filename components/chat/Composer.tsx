@@ -15,6 +15,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type Ref } from 'react
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
+import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/primitives/Popover';
 import { Textarea } from '@/components/primitives/Textarea';
@@ -105,7 +106,7 @@ export function Composer({
   const ordered = [...presets].sort((a, b) => Number(b.lang === 'uk') - Number(a.lang === 'uk'));
 
   return (
-    <div data-composer="" className={cn('flex shrink-0 flex-col gap-2 border-t border-border bg-background px-3 pb-3 pt-2', className)}>
+    <div data-composer="" className={cn('flex shrink-0 flex-col gap-2 border-t border-border px-3 pb-3 pt-2.5', className)}>
       {reply ? (
         <div className="flex items-center gap-2 rounded-md bg-surface px-3" data-row="reply-draft">
           <p className="min-w-0 flex-1 truncate py-2 text-caption text-text-secondary">
@@ -114,11 +115,14 @@ export function Composer({
           <IconButton icon="close" compact iconSize={16} aria-label={t('cancelReply')} onClick={onCancelReply} />
         </div>
       ) : null}
+      <div className="flex items-start gap-2">
       <Textarea
         ref={textareaRef}
+        className="min-w-0 flex-1"
+        frameClassName="t2f-chat-input"
         label={t('inputLabel', { room: room.label })}
         hideLabel
-        placeholder={t('inputPlaceholder')}
+        placeholder={t('inputLabel', { room: room.label })}
         value={value}
         maxLength={MAX_TEXT}
         counter
@@ -156,18 +160,23 @@ export function Composer({
                 </ul>
               </PopoverContent>
             </Popover>
-            <IconButton
-              icon="send"
-              aria-label={sendLabel}
-              aria-disabled={inactive || slow || undefined}
-              title={slow ? sendLabel : undefined}
-              onClick={() => {
-                if (!inactive && !slow) onSubmit();
-              }}
-            />
           </>
         }
       />
+      {/* Макет: «Надіслати» — окреме коло 44 px на border-фоні праворуч від поля. */}
+      <button
+        type="button"
+        aria-label={sendLabel}
+        aria-disabled={inactive || slow || undefined}
+        title={slow ? sendLabel : undefined}
+        onClick={() => {
+          if (!inactive && !slow) onSubmit();
+        }}
+        className="t2f-focus t2f-press t2f-transition inline-flex size-touch-min shrink-0 items-center justify-center rounded-full bg-border text-text hover:bg-border-strong aria-disabled:text-text-muted"
+      >
+        <Icon name="send" size={18} />
+      </button>
+      </div>
     </div>
   );
 }

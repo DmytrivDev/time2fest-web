@@ -6,10 +6,10 @@ import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
-import { IconButton } from '@/components/primitives/IconButton';
-import { TimeText } from '@/components/primitives/TimeText';
 import type { CelebrationType, EventStatus, Ms } from '@/lib/data/types';
-import { formatClock } from '@/lib/i18n/time';
+import { formatClock, formatMidnightAgo } from '@/lib/i18n/time';
+import { useNow } from '@/lib/time/TimeProvider';
+import s from './nowNext.module.css';
 
 /** Стан трансляції події для рядка статусу картки (чотири статуси — `Badge stream-status`). */
 export type EventCardStream = 'live' | 'expected' | 'possible' | 'countdown-only';
@@ -43,6 +43,8 @@ export interface EventCardProps extends EventCardData {
   onToggleSchedule?: (id: string, next: boolean) => void;
   /** `carousel` — фіксована ширина слайда · `stack` — на всю ширину (телефон). */
   layout?: 'carousel' | 'stack';
+  /** Подія зараз у плеєрі ефіру (макет: «В ефірі» й «Наживо» ще до півночі). */
+  onAir?: boolean;
   className?: string;
 }
 
@@ -66,7 +68,7 @@ const STATUS_ICON: Record<EventCardStream, IconName> = {
   'countdown-only': 'clock',
 };
 
-/** C4. Картка події: прапор і назва, час за часом глядача, статус трансляції. Веде на сторінку країни. */
+/** C4. Картка події (макет `Main` / `Phone-Home-Live`): прапор і назва, час за часом глядача, статус трансляції. */
 export function EventCard({
   id,
   title,
@@ -81,15 +83,18 @@ export function EventCard({
   status,
   onToggleSchedule,
   layout = 'carousel',
+  onAir = false,
   className,
 }: EventCardProps) {
   const t = useTranslations('liveCards.eventCard');
   const tBadge = useTranslations('primitives.badge');
   const tNav = useTranslations('nav');
+  const tTime = useTranslations('primitives.time');
   const locale = useLocale();
+  const now = useNow({ granularity: 'minute' });
 
-  const isOnAir = status === 'live';
-  const isPast = status === 'ended' || status === 'recording';
+  const isPast = (status === 'ended' || status === 'recording') && !onAir;
+  const isOnAir = status === 'live' || onAir;
   const typeLabel = t(`type.${TYPE_KEY[celebrationType]}`);
   const statusLabel = stream === 'live' ? typeLabel : tBadge(`status.${STATUS_KEY[stream]}`);
   const scheduleLabel = isPast
@@ -98,81 +103,58 @@ export function EventCard({
       ? t('scheduleRemove', { city: title })
       : tNav('addToSchedule', { city: title });
   const scheduleInert = isPast || !onToggleSchedule;
-  const extras = inSchedule || isOwnMidnight;
+  const icon: IconName = stream === 'live' && isOnAir ? 'broadcast-live' : STATUS_ICON[stream];
+  const iconClass = stream === 'live' ? (isOnAir || !isPast ? s.iconLive : undefined) : stream === 'expected' ? s.iconExpected : undefined;
 
   return (
-    <article
-      data-event-card=""
-      data-status={status}
-      data-stream={stream}
-      data-layout={layout}
-      className={cn('relative', layout === 'carousel' ? 'w-58' : 'w-full', className)}
-    >
+    <article data-event-card="" data-status={status} data-stream={stream} data-layout={layout} className={cn(s.card, className)}>
       <NextLink
         href={href}
         aria-current={isOnAir ? 'true' : undefined}
-        className={cn(
-          't2f-focus t2f-transition flex min-h-35 flex-col justify-between gap-2 rounded-md border py-3.5 pe-4 no-underline',
-          isOnAir
-            ? 'border-border-strong border-s-4 border-s-primary bg-surface-raised ps-3 text-text'
-            : 'border-transparent bg-surface ps-4 hover:bg-surface-raised',
-          isPast ? 'text-text-muted' : 'text-text',
-        )}
+        className={cn('t2f-focus t2f-transition', s.link, isOnAir && s.onAir, isPast && s.past)}
       >
-        <span className="flex min-h-touch-min items-center gap-2 pe-12">
-          <Flag code={flagCode} size="sm" decorative className={isPast ? 'opacity-60' : undefined} />
-          <span className="min-w-0 truncate text-headline-sm">
+        <span className={s.top}>
+          <Flag code={flagCode} size="card" decorative className={isPast ? 'opacity-60' : undefined} />
+          <span className={s.name}>
             {title}
             {countryName ? <span className="sr-only">{t('countryHint', { country: countryName })}</span> : null}
           </span>
-          {isOnAir ? <Badge variant="on-air" className="shrink-0" /> : null}
+          {isOnAir ? <span className={s.onAirLabel}>{tBadge('onAir')}</span> : null}
         </span>
 
-        <span className="flex flex-col gap-1.5">
+        <span className={s.mid}>
           <span className="sr-only">{t('midnight')}</span>
-          {isPast ? (
-            <span className="inline-flex flex-col">
-              <time dateTime={new Date(midnightMs).toISOString()} className="text-countdown-card tabular-nums">
-                {formatClock(midnightMs, { locale })}
-              </time>
-              <TimeText at={midnightMs} variant="relative" midnight />
-            </span>
-          ) : (
-            <span className="flex items-start gap-2.5">
-              <TimeText at={midnightMs} variant="card" />
-              {isOnAir ? <Badge variant="live" className="mt-1" /> : null}
-            </span>
-          )}
-
-          <span
-            className={cn(
-              'flex min-h-5 items-center gap-1.5 text-caption font-medium',
-              stream === 'live' && !isPast ? 'text-text' : 'text-text-secondary',
-            )}
-          >
-            <Icon name={STATUS_ICON[stream]} size={16} />
-            <span className="min-w-0 truncate">{statusLabel}</span>
+          <span className={s.timeRow}>
+            <time dateTime={new Date(midnightMs).toISOString()} className={s.time}>
+              {formatClock(midnightMs, { locale })}
+            </time>
+            {isOnAir ? <Badge variant="live" /> : null}
           </span>
+          <span className={s.yours}>
+            {isPast ? formatMidnightAgo(Math.max(0, now - midnightMs), locale) : tTime('yourTime')}
+            {inSchedule ? <span className={s.inSchedule}>{t('inScheduleShort')}</span> : null}
+            {isOwnMidnight ? <span className={s.inSchedule}>{tBadge('yourMidnight')}</span> : null}
+          </span>
+        </span>
 
-          {extras ? (
-            <span className="flex flex-wrap gap-1.5">
-              {inSchedule ? <Badge variant="in-schedule" /> : null}
-              {isOwnMidnight ? <Badge variant="your-midnight" /> : null}
-            </span>
-          ) : null}
+        <span className={cn(s.status, stream === 'live' && !isPast && s.statusLive)}>
+          <Icon name={icon} size={16} strokeWidth={2.2} className={iconClass} />
+          <span>{statusLabel}</span>
         </span>
       </NextLink>
 
-      <IconButton
-        variant="toggle"
-        compact
-        icon={inSchedule ? 'calendar-check' : 'calendar-add'}
+      <button
+        type="button"
         aria-label={scheduleLabel}
-        pressed={inSchedule}
+        aria-pressed={inSchedule}
         disabled={scheduleInert}
-        onPressedChange={(next) => onToggleSchedule?.(id, next)}
-        className="absolute end-1 top-1"
-      />
+        onClick={() => onToggleSchedule?.(id, !inSchedule)}
+        className={cn('t2f-focus t2f-press rounded-full', s.cal)}
+      >
+        <span aria-hidden="true" className={s.calCircle}>
+          <Icon name={inSchedule ? 'calendar-check' : 'calendar-add'} size={16} strokeWidth={inSchedule ? 2.2 : 2} />
+        </span>
+      </button>
     </article>
   );
 }

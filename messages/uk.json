@@ -43,7 +43,8 @@
       "countMax": "99+",
       "discount": "−50%",
       "yourMidnight": "ваша північ",
-      "you": "Ти"
+      "you": "Ти",
+      "verifiedShort": "Перевірено"
     },
     "chip": {
       "zoneLive": "зараз",
@@ -59,7 +60,9 @@
       "prev": "Попередня",
       "next": "Наступна",
       "pause": "Пауза",
-      "play": "Відновити"
+      "play": "Відновити",
+      "prevEvents": "Попередні події",
+      "nextEvents": "Наступні події"
     },
     "countdown": {
       "days": "{days} д",
@@ -97,7 +100,8 @@
     "payments": "Оплата й повернення",
     "cookies": "Налаштування cookies",
     "flashWarning": "Трансляції феєрверків можуть містити спалахи",
-    "reduceMotion": "Зменшити рух"
+    "reduceMotion": "Зменшити рух",
+    "privacyShort": "Конфіденційність"
   },
   "menu": {
     "title": "Меню",
@@ -203,7 +207,9 @@
     "soundUnavailable": "Увімкнути звук — трансляції зараз немає",
     "scheduleHint": "За вашим графіком зараз — {place}",
     "inFlowLabel": "Повідомлення під відео",
-    "secondsSpoken": "{seconds, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}"
+    "secondsSpoken": "{seconds, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}",
+    "lineNextLabel": "Далі:",
+    "watchersShort": "Дивляться люди з {count} країн"
   },
   "nav": {
     "nowAndNext": "Зараз і далі",
@@ -243,7 +249,9 @@
     "countriesCount": "{count, plural, one {# країна} few {# країни} many {# країн} other {# країни}}",
     "progressTitle": "Прогрес свята",
     "progressCaption": "Минуло {hours} год із {total} · Новий рік зустріли {zones, plural, one {# пояс} few {# пояси} many {# поясів} other {# пояса}} з {zonesTotal}",
-    "progressSpoken": "Минуло {hours} год із {total}, Новий рік зустріли {zones, plural, one {# пояс} few {# пояси} many {# поясів} other {# пояса}} з {zonesTotal}"
+    "progressSpoken": "Минуло {hours} год із {total}, Новий рік зустріли {zones, plural, one {# пояс} few {# пояси} many {# поясів} other {# пояса}} з {zonesTotal}",
+    "progressHours": "Минуло {hours} год із {total}",
+    "progressZones": "Новий рік зустріли {zones, plural, one {# пояс} few {# пояси} many {# поясів} other {# пояса}} з {zonesTotal}"
   },
   "chat": {
     "title": "Чат",
@@ -420,7 +428,8 @@
       "firstRow": "Перший ряд · {city}",
       "heading": "Новий штамп у паспорті",
       "inPassport": "Уже в твоєму паспорті",
-      "savedLocal": "Збережено на цьому пристрої · <signIn>Увійди</signIn>, щоб не загубити"
+      "savedLocal": "Збережено на цьому пристрої · <signIn>Увійди</signIn>, щоб не загубити",
+      "expandHint": "Розгорнути штамп"
     },
     "rate": {
       "title": "Як тобі шоу?",
@@ -660,7 +669,20 @@
       "meta": "{city} · північ о {time} за вашим часом · 10 місць",
       "left": "{free, plural, one {Лишилось # місце} few {Лишилось # місця} many {Лишилось # місць} other {Лишилось # місця}}",
       "collapse": "Згорнути"
-    }
+    },
+    "freeShort": "{count, plural, one {# вільне} few {# вільні} many {# вільних} other {# вільного}}",
+    "freeTakeLabel": "{count, plural, one {# вільне місце} few {# вільні місця} many {# вільних місць} other {# вільного місця}} — зайняти місце",
+    "wallLighting": "Перший ряд · {city}: місця загоряються",
+    "prevSeats": "Попередні місця",
+    "nextSeats": "Наступні місця",
+    "lightingNote": "Північ · місця загоряються",
+    "leftCount": "Лишилось <b>{count, plural, one {# місце} few {# місця} many {# місць} other {# місця}}</b>",
+    "pitch": "Твоє ім’я й емоція на стіні опівночі, привітання від Time2Fest у чаті.",
+    "collapse": "Згорнути «Перший ряд»",
+    "expand": "Розгорнути «Перший ряд»",
+    "leftPrefix": "лишилось",
+    "leftValue": "{free} з {total}",
+    "pricePrefix": "Місце"
   },
   "tv": {
     "exit": "Вийти",
@@ -767,7 +789,8 @@
         "countdownOnly": "Лише відлік"
       },
       "scheduleRemove": "Прибрати з графіка: {city}",
-      "schedulePast": "{city} · північ уже минула, додати в графік не можна"
+      "schedulePast": "{city} · північ уже минула, додати в графік не можна",
+      "inScheduleShort": "У графіку"
     },
     "nowNext": {
       "meta": "за вашим часом ({zone})",
@@ -838,7 +861,10 @@
     "countriesOfZone": "Країни поясу",
     "showMoreCountries": "Ще {count}",
     "showFewerCountries": "Згорнути",
-    "previewHint": "Клікни, щоб закріпити картку поясу"
+    "previewHint": "Клікни, щоб закріпити картку поясу",
+    "liveLabel": "{city} · наживо",
+    "liveLabelWatch": "— дивитися",
+    "liveLabelWatchPhone": "дивитися"
   },
   "timeMachine": {
     "title": "Машина часу",

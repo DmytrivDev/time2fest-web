@@ -65,7 +65,7 @@ export function RadioGroup({
       className={cn(
         variant === 'list' && 'flex flex-col',
         variant === 'grid' && 'grid grid-cols-4 gap-1',
-        variant === 'stars' && 'flex',
+        variant === 'stars' && 'flex gap-2',
         className,
       )}
     >
@@ -100,10 +100,11 @@ export function RadioGroup({
               aria-label={o.label}
               className={cn(
                 't2f-focus t2f-transition inline-flex size-touch-min items-center justify-center rounded-md hover:bg-surface-raised',
-                i <= selectedIndex ? 'text-highlight' : 'text-border-strong',
+                i <= selectedIndex ? 'text-highlight' : 'text-text-muted',
               )}
             >
-              <Icon name="star" size={22} fill={i <= selectedIndex ? 'currentColor' : 'none'} />
+              {/* Макет `Desk-Rate`: зірка 32 px, штрих 1.6. */}
+              <Icon name="star" size={32} strokeWidth={1.6} fill={i <= selectedIndex ? 'currentColor' : 'none'} />
             </Radix.Item>
           )}
         </Fragment>

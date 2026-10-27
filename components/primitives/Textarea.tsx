@@ -19,6 +19,8 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
   counterFrom?: number;
   /** Вбудовані кнопки справа (готові привітання, надіслати). */
   endSlot?: ReactNode;
+  /** Клас рамки поля (чат: пігулка за макетом `Main`). */
+  frameClassName?: string;
   ref?: Ref<HTMLTextAreaElement>;
 }
 
@@ -34,6 +36,7 @@ export function Textarea({
   counter,
   counterFrom = 0,
   endSlot,
+  frameClassName,
   maxLength,
   className,
   id,
@@ -76,6 +79,7 @@ export function Textarea({
           't2f-transition flex min-h-touch-min items-end gap-1 rounded-md border bg-background ps-3 focus-within:border-highlight',
           error ? 'border-primary' : 'border-border-strong',
           disabled && 'border-border',
+          frameClassName,
         )}
       >
         <textarea

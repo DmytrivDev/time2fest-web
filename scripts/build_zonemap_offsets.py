@@ -4,7 +4,7 @@
 Вхід:  .cache/tbb/combined-with-oceans-now.json (timezone-boundary-builder 2026e, не комітиться)
 Вихід: .cache/tbb/offsets.json — { "<tzid>": <хвилини від UTC> }
 
-Запуск: python -X utf8 scripts/build_zonemap_offsets.py
+Запуск: python -X utf8 scripts/build_zonemap_offsets.py [вхід.geojson] [вихід.json]
 """
 import json
 import sys
@@ -18,8 +18,8 @@ EXPECTED_TZDB = "2026e"
 AT = datetime(2027, 1, 1, 0, 0, tzinfo=timezone.utc)
 
 root = Path(__file__).resolve().parent.parent
-src = root / ".cache" / "tbb" / "combined-with-oceans-now.json"
-out = root / ".cache" / "tbb" / "offsets.json"
+src = Path(sys.argv[1]) if len(sys.argv) > 1 else root / ".cache" / "tbb" / "combined-with-oceans-now.json"
+out = Path(sys.argv[2]) if len(sys.argv) > 2 else root / ".cache" / "tbb" / "offsets.json"
 
 if tzdata.IANA_VERSION != EXPECTED_TZDB:
     sys.exit(f"tzdata.IANA_VERSION = {tzdata.IANA_VERSION!r}, очікується {EXPECTED_TZDB!r}")

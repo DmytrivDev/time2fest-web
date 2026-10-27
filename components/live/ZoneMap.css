@@ -1,10 +1,28 @@
 /* Мапа поясів (C18). Стани поясу — клас на шляху `is-past | is-live | is-next | is-ahead`;
    колір завжди дублюється штрихуванням, іконкою й підписом (легенда, картка, aria-label).
    Лише токени: --color-zone-*, --color-background, --color-border, --color-text. */
-.t2f-zone {
-  stroke: var(--color-background);
+/* Макет `Main` (assets/map.svg): океан #16161A, лінії поясів в океані #3C3C44 1 px, межі на суходолі — колір фону
+   0.5 px, «Вже зустріли» — штрихування #26262B / #3A3A41. Цих відтінків немає серед токенів (вони між surface і
+   border), тож вони тут як значення мапи. */
+.t2f-zm-ocean {
+  fill: #16161a;
+}
+.t2f-zm-grid {
+  fill: none;
+  stroke: #3c3c44;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.t2f-zm-borders {
+  fill: none;
+  stroke: var(--color-background);
+  stroke-width: 0.5;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.t2f-zone {
+  stroke: none;
   cursor: pointer;
   outline: none;
 }
@@ -19,15 +37,27 @@
 }
 /* «Вже зустріли»: штрихування задає інлайн-fill на pattern з унікальним id (див. ZoneMap). */
 .t2f-zone-hatch-bg {
-  fill: var(--color-zone-past);
+  fill: #26262b;
 }
 .t2f-zone-hatch-line {
-  stroke: var(--color-border);
+  stroke: #3a3a41;
   stroke-width: 2;
 }
 .t2f-zone:hover {
   stroke: var(--color-text-secondary);
   stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Точки міст (макет): тиха — 8 px text 70 % з кільцем фону; у ефірі — 10 px коралова, біле кільце, тінь. */
+.t2f-zm-dot-quiet {
+  background: rgba(236, 236, 239, 0.7);
+  box-shadow: 0 0 0 1.5px var(--color-background);
+}
+.t2f-zm-dot-live {
+  box-shadow:
+    0 0 0 2px var(--color-on-primary),
+    0 1px 4px 2px rgba(0, 0, 0, 0.45);
 }
 .t2f-zone-ring {
   fill: none;
@@ -59,6 +89,12 @@
   box-sizing: border-box;
   border-radius: 3px;
 }
+/* Колонка легенди на десктопі (макет `Main`): зразки 28×18, rounded.sm. */
+[data-map-legend='column'] .t2f-zm-sw {
+  width: 28px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+}
 .t2f-zm-sw[data-sw='past'] {
   border: 1px solid var(--color-border-strong);
   background: repeating-linear-gradient(45deg, var(--color-zone-past) 0 3px, var(--color-border) 3px 5px);
@@ -89,8 +125,13 @@
   }
 }
 .t2f-zm-halo {
+  /* Ореол завжди по центру точки 10 px (у легенді обгортка ширша за точку — inset: 0 зсував його вліво й угору). */
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
   border-radius: 9999px;
   background: var(--color-zone-live);
   opacity: 0.3;
@@ -98,4 +139,10 @@
 }
 html[data-reduce-motion='false'] .t2f-zm-halo {
   animation: t2f-zm-halo 1.8s ease-out infinite;
+}
+
+.t2f-zm-dot-legend {
+  box-shadow:
+    0 0 0 1.5px var(--color-background),
+    0 0 0 2.5px var(--color-border);
 }

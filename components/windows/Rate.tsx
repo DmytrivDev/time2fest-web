@@ -13,6 +13,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from '@/components/primitives/Button';
+import rs from './rate.module.css';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -128,7 +129,8 @@ export function Rate({
     <section
       aria-labelledby={titleId}
       data-rate={status === 'error' ? 'error' : rated ? 'rated' : 'open'}
-      className={cn('relative flex flex-col gap-2 rounded-lg border border-border bg-surface-raised px-4 pb-2 pt-3.5', className)}
+      data-single={rows.length === 1 ? 'true' : undefined}
+      className={cn('relative flex flex-col gap-2 rounded-lg border border-border bg-surface-raised px-4 pb-2 pt-3.5', rs.rate, className)}
       onFocus={() => setFocusWithin(true)}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusWithin(false);
@@ -137,7 +139,7 @@ export function Rate({
       onPointerLeave={() => setHover(false)}
     >
       {closesAt !== undefined && onClose ? <RateTimeout closesAt={closesAt} interacting={interacting} onClose={onClose} /> : null}
-      <h2 id={titleId} className="pe-10 text-headline-sm text-text">
+      <h2 id={titleId} className={cn(rs.title, 'text-text')}>
         {t('title')}
       </h2>
       <IconButton
@@ -145,7 +147,7 @@ export function Rate({
         variant="plain"
         iconSize={18}
         aria-label={t('close')}
-        className="absolute right-0.5 top-0.5"
+        className="absolute right-0.5 top-0.5 md:right-1.5 md:top-1.5"
         onClick={() => onClose?.('dismissed')}
       />
       {rows.map((row) => {
@@ -153,12 +155,12 @@ export function Rate({
         const rowText = t('row', { country: row.countryName, city: row.city });
         const value = values[row.eventId];
         return (
-          <div key={row.eventId} className="flex flex-col" data-event={row.eventId}>
-            <div id={rowId} className="flex items-center gap-2 text-label-sm text-text-secondary">
-              <Flag code={row.flagCode} size="sm" decorative />
+          <div key={row.eventId} className={cn('flex flex-col', rs.item)} data-event={row.eventId}>
+            <div id={rowId} className={cn('flex items-center gap-2 text-text-secondary', rs.row)}>
+              <Flag code={row.flagCode} size="card" decorative />
               {rowText}
             </div>
-            <div className="-mx-1.5 mt-0.5 flex flex-col self-start">
+            <div className={cn('-mx-1.5 mt-0.5 flex flex-col self-start', rs.stars)}>
               <RadioGroup
                 variant="stars"
                 label={`${t('title')} ${rowText}`}
@@ -166,7 +168,7 @@ export function Rate({
                 value={value === undefined ? '' : String(value)}
                 onValueChange={(v) => rate(row.eventId, Number(v) as Stars)}
               />
-              <div aria-hidden="true" className="flex justify-between px-1 text-caption text-text-muted">
+              <div aria-hidden="true" className="flex justify-between px-1 text-label-badge-chat text-text-muted">
                 <span>{t('low')}</span>
                 <span>{t('high')}</span>
               </div>

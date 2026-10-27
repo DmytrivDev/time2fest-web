@@ -140,3 +140,394 @@ html[data-reduce-motion='true'] .t2f-spin {
     display: none !important;
   }
 }
+
+/* Сегментований перемикач (P11) за макетом `Main`: доріжка 34 px, пігулка 30 px, ціль дотику 44 px. */
+.t2f-seg {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+}
+.t2f-seg-item {
+  display: flex;
+  align-items: center;
+  height: var(--spacing-touch-min);
+  margin: -5px 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+}
+.t2f-seg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  height: 30px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+@media (max-width: 767.98px) {
+  .t2f-seg-pill {
+    padding: 0 10px;
+  }
+}
+.t2f-seg-item:hover .t2f-seg-pill {
+  color: var(--color-text);
+}
+.t2f-seg-item[aria-pressed='true'] .t2f-seg-pill,
+.t2f-seg-item[aria-checked='true'] .t2f-seg-pill,
+.t2f-seg-item[data-state='on'] .t2f-seg-pill {
+  background: var(--color-border);
+  color: var(--color-text);
+  font-weight: 600;
+}
+.t2f-seg-item:disabled .t2f-seg-pill {
+  color: var(--color-text-muted);
+}
+
+/* Заголовок секції (P34) за макетами: 18 px телефон / 20 px ширше, 700, міжлітерний −0.01em. */
+.t2f-h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .t2f-h2 {
+    font-size: 20px;
+  }
+}
+
+/* Банер cookies (макети `Desk-Cookies`, `Phone-Cookies`). */
+.t2f-cookie-corner {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+.t2f-cookie-strip {
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+}
+.t2f-cookie-text {
+  font-size: 14px;
+  line-height: 1.45;
+}
+@media (min-width: 768px) {
+  .t2f-cookie-copy {
+    flex: 1 1 420px;
+    min-width: 0;
+  }
+  .t2f-cookie-actions {
+    flex: 0 1 600px;
+    min-width: 0;
+  }
+}
+
+/* Чат за макетом `Main`: пігулка поля, іконки шапки text-secondary, дії повідомлення — при наведенні чи фокусі
+   (на макеті їх не видно; ціль лишається клікабельною на дотик). */
+.t2f-chat-input {
+  min-height: var(--spacing-touch-min);
+  border-radius: var(--radius-full);
+  padding-inline-start: 14px;
+}
+.t2f-chat-input textarea {
+  font-size: 14px;
+}
+/* Фокус поля чату — кільце по контуру всієї пігулки, без внутрішнього прямокутника. */
+.t2f-chat-input textarea.t2f-focus:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.t2f-chat-input:has(textarea:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-focus-ring-outer);
+}
+.t2f-chat-hbtn {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.t2f-chat-hbtn > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+.t2f-chat-hbtn:hover:not(:disabled) > span,
+.t2f-chat-hbtn[aria-expanded='true'] > span {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.t2f-chat-hbtn[aria-pressed='true'] {
+  color: var(--color-highlight);
+}
+.t2f-chat-hbtn[aria-pressed='true']:hover > span {
+  color: var(--color-highlight);
+}
+.t2f-chat-hbtn:disabled {
+  color: var(--color-text-muted);
+}
+/* Фокус — кільце навколо видимого кола 30 px, не навколо невидимої цілі. */
+.t2f-chat-hbtn.t2f-focus:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.t2f-chat-hbtn:focus-visible > span {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-focus-ring-outer);
+}
+/* Стрічка чату: тонка темна смуга прокрутки. */
+.t2f-chat-log {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+  overflow-anchor: auto;
+}
+.t2f-chat-log::-webkit-scrollbar {
+  width: 6px;
+}
+.t2f-chat-log::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+}
+.t2f-chat-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* «Нові повідомлення N ↓» (`Phone-Chat-Paused`): поверх стрічки, по центру, 12 px від низу. */
+.t2f-chat-newpill {
+  position: absolute;
+  left: 50%;
+  bottom: var(--spacing-3);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-touch-min);
+  padding: 0 var(--spacing-4) 0 18px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+}
+.t2f-chat-newpill:hover {
+  background: var(--color-border-strong);
+}
+.t2f-chat-newcount {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-text);
+  color: var(--color-on-highlight);
+  font-size: 12px;
+  font-weight: 700;
+}
+/* Нік: без підсвітки цілі; наведення — підкреслення, фокус — рамка навколо прапора й імені. */
+.t2f-nick {
+  border: 0;
+  background: transparent;
+  outline: none;
+}
+.t2f-nick:focus-visible .t2f-nick-label {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+.t2f-msg-actions {
+  position: absolute;
+  top: -7px;
+  right: -4px;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+.t2f-msg:hover .t2f-msg-actions,
+.t2f-msg:focus-within .t2f-msg-actions,
+.t2f-msg[data-actions-open='true'] .t2f-msg-actions,
+.t2f-msg-actions:has([aria-expanded='true']) {
+  opacity: 1;
+}
+.t2f-msg:hover time,
+.t2f-msg:focus-within time,
+.t2f-msg[data-actions-open='true'] time {
+  visibility: hidden;
+}
+/* Наведення на повідомлення — легке затемнення всього рядка (рішення власника); ⋯ і чипи реакцій — свої. */
+.t2f-msg {
+  transition: background-color 120ms ease-out;
+}
+.t2f-msg:hover,
+.t2f-msg[data-actions-open='true'] {
+  background: rgba(0, 0, 0, 0.22);
+}
+.t2f-msg-actions button:hover > span {
+  background: var(--color-border);
+}
+/* Чип реакції: підсвічується лише він; своя реакція — жовтий лічильник; «надсилається» — крихітне кільце. */
+.t2f-chip {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.t2f-chip-body {
+  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+}
+.t2f-chip:hover .t2f-chip-body {
+  background: var(--color-border);
+}
+.t2f-chip[data-mine='true'] .t2f-chip-count {
+  color: var(--color-highlight);
+  font-weight: 600;
+}
+.t2f-chip[aria-busy='true'] {
+  cursor: progress;
+}
+.t2f-chip:focus-visible {
+  outline: none;
+}
+.t2f-chip:focus-visible .t2f-chip-body {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+@keyframes t2f-chip-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.t2f-chip-spin {
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--color-text-muted);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: t2f-chip-spin 0.6s linear infinite;
+}
+html[data-reduce-motion='true'] .t2f-chip-spin {
+  animation: none;
+  border-top-color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* Карусель (P26): стрічка на всю ширину, нативна прокрутка з прилипанням, без смуги прокрутки; стрілки поза стрічкою. */
+.t2f-carousel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+.t2f-carousel-viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: -4px 0;
+  padding: 4px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.t2f-carousel-viewport::-webkit-scrollbar {
+  display: none;
+}
+.t2f-carousel-viewport[data-dragging='true'] {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
+}
+/* Стіна (`Main`): правий край м’яко згасає — дозволено власником. */
+.t2f-carousel-viewport[data-fade='true'] {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+.t2f-carousel-track {
+  display: flex;
+  gap: var(--spacing-2);
+  width: max-content;
+}
+.t2f-carousel-slide {
+  flex: none;
+  scroll-snap-align: start;
+}
+.t2f-carousel-arrow {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text);
+}
+.t2f-carousel-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  transition: background-color 120ms ease-out;
+}
+.t2f-carousel-arrow-sm .t2f-carousel-circle {
+  width: 30px;
+  height: 30px;
+}
+.t2f-carousel-arrow-md .t2f-carousel-circle {
+  width: 36px;
+  height: 36px;
+}
+.t2f-carousel-arrow:not(:disabled):hover .t2f-carousel-circle {
+  background: var(--color-border);
+}
+.t2f-carousel-arrow:disabled {
+  color: var(--color-border-strong);
+}
+.t2f-carousel-arrow:disabled .t2f-carousel-circle {
+  border-color: var(--color-border);
+  background: transparent;
+}
+/* Стіна (`Main`): ліва стрілка на 6 px заходить у поле модуля. */
+.t2f-carousel[data-carousel='sides'] > .t2f-carousel-arrow:first-child {
+  margin-left: -6px;
+}
+
+/* Системні повідомлення чату (макет `Main`): 13/500, рядок 18 px, знак 16 px з радіусом 4, прапор 14×10. */
+.t2f-sys {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+}
+.t2f-sys-mark {
+  border-radius: 4px;
+}
+.t2f-sys-flag {
+  width: 14px !important;
+  height: 10px !important;
+  vertical-align: -1px;
+}

@@ -19,3 +19,20 @@
 html[data-reduce-motion='false'] [data-seat][data-fresh='true'] {
   animation: t2f-seat-pop 450ms ease-out both;
 }
+
+/* Макет `Main` / `Desk-Moment`: емоція 18 px; щойно загоріле місце — ореол і емоція 24 px; прапор на жовтому — тонка рамка. */
+.t2f-seat-emoji {
+  font-size: 18px;
+  line-height: 1;
+}
+[data-seat][data-state='lit'] .t2f-seat-flag {
+  box-shadow: 0 0 0 1px rgba(18, 18, 20, 0.25);
+}
+[data-seat][data-fresh='true'] {
+  box-shadow:
+    0 0 0 4px rgba(252, 226, 134, 0.28),
+    0 0 18px rgba(252, 226, 134, 0.55);
+}
+[data-seat][data-fresh='true'] .t2f-seat-emoji {
+  font-size: 24px;
+}

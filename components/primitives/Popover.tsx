@@ -33,7 +33,7 @@ export function PopoverContent({
         align={align}
         style={{ maxHeight: 'var(--radix-popover-content-available-height)', ...style }}
         className={cn(
-          'z-30 overflow-y-auto rounded-lg border border-border bg-surface-raised p-3 text-body text-text shadow-mini-player',
+          'z-30 overflow-y-auto rounded-lg border border-border bg-surface-raised p-3 text-body text-text shadow-overlay',
           className,
         )}
         {...rest}

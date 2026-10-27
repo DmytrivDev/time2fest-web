@@ -2,7 +2,7 @@
  * Фікстура геометрії плеєра (конституція I, research.md 3):
  * - iframe плеєра не менший за 200×200 px;
  * - «нічого поверх плеєра»: у жодній точці прямокутника плеєра верхнім елементом не є
- *   щось, крім самого iframe (виняток — мініплеєр `[data-mini-player]`, той самий хост).
+ *   щось, крім самого iframe.
  */
 import { expect, type Page } from '@playwright/test';
 
@@ -51,7 +51,7 @@ export async function findElementsOverPlayer(
   page: Page,
   opts: { selector?: string; grid?: number; allow?: string[] } = {},
 ): Promise<OverlapReport[]> {
-  const { selector = PLAYER_IFRAME, grid = 9, allow = ['[data-mini-player]'] } = opts;
+  const { selector = PLAYER_IFRAME, grid = 9, allow = [] as string[] } = opts;
   return page.evaluate(
     ({ sel, n, allowed }) => {
       const frame = document.querySelector<HTMLElement>(sel);

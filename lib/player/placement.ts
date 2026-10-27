@@ -9,7 +9,14 @@ export interface RectLike {
   height: number;
 }
 
+/**
+ * `absolute` — у системі координат оболонки макета (прокрутка нічого не змінює) ·
+ * `fixed` — слот нерухомий відносно вікна (телефонний закріплений плеєр).
+ */
+export type HostMode = 'absolute' | 'fixed';
+
 export interface HostPlacement {
+  mode: HostMode;
   visible: boolean;
   top: number;
   left: number;
@@ -18,19 +25,24 @@ export interface HostPlacement {
 }
 
 /**
- * - слот поза екраном → хост `visibility: hidden` (не `display: none`: деякі браузери ставлять відео на паузу);
+ * - `rect` — прямокутник слоту у вікні; `origin` — лівий верхній кут оболонки у вікні (для `absolute`) або `{0, 0}`;
  * - слот менший за 200×200 → хост схований (політика YouTube: мінімум 200×200 px);
- * - немає відео → схований.
+ * - немає відео → схований (`visibility: hidden`, не `display: none`: деякі браузери ставлять відео на паузу).
  */
 export function computeHostPlacement(
   rect: RectLike | null,
-  viewport: { width: number; height: number },
+  origin: { top: number; left: number },
+  mode: HostMode,
   hasVideo: boolean,
 ): HostPlacement {
-  if (!rect) return { visible: false, top: 0, left: 0, width: 0, height: 0 };
-  const placement = { top: rect.top, left: rect.left, width: rect.width, height: rect.height };
-  const offscreen =
-    rect.top + rect.height <= 0 || rect.left + rect.width <= 0 || rect.top >= viewport.height || rect.left >= viewport.width;
+  if (!rect) return { mode, visible: false, top: 0, left: 0, width: 0, height: 0 };
   const tooSmall = rect.width < PLAYER_MIN_PX || rect.height < PLAYER_MIN_PX;
-  return { visible: hasVideo && !offscreen && !tooSmall, ...placement };
+  return {
+    mode,
+    visible: hasVideo && !tooSmall,
+    top: rect.top - origin.top,
+    left: rect.left - origin.left,
+    width: rect.width,
+    height: rect.height,
+  };
 }

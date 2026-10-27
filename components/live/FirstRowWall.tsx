@@ -9,17 +9,20 @@
  * Дані: `FirstRowSeat[]` (див. `seedToSeats` для `firstRowSeed` з `data/chat-script.json`) і фаза з `firstRowView().wall`.
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Carousel } from '@/components/primitives/Carousel';
+import { Icon } from '@/components/primitives/Icon';
+import fr from '@/components/firstrow/firstRow.module.css';
 import { cn } from '@/components/primitives/cn';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { FirstRowSeat, FirstRowSeedEntry, Ms } from '@/lib/data/types';
 import { SEATS, WALL_LIGHTING_MS } from '@/lib/engine/config';
 import { useNow } from '@/lib/time/TimeProvider';
-import { SeatPill } from './SeatPill';
+import { emojiSymbol, SeatPill } from './SeatPill';
 
 export type WallPhase = 'idle' | 'lighting' | 'lit';
-export type WallLayout = 'carousel' | 'grid';
+/** `row` — один ряд зі стрілками (десктоп, `Main`) · `wrap` — два ряди, гортаються вбік (телефон) · `grid` — 2 колонки (ТВ). */
+export type WallLayout = 'row' | 'wrap' | 'grid';
 
 export interface FirstRowWallProps {
   /** Назва міста в називному відмінку («Лондон»). */
@@ -33,8 +36,12 @@ export interface FirstRowWallProps {
   lightingFrom?: Ms;
   /** Стриманий режим: без руху й без привітання. */
   restrained?: boolean;
-  /** Розкладка: карусель (за замовчуванням) чи сітка 2 колонки (екран «моменту» на телефоні). */
+  /** Розкладка: ряд зі стрілками (за замовчуванням), два ряди (телефон) чи сітка 2 колонки (ТВ). */
   layout?: WallLayout;
+  /** Пігулка «+ N вільні» — кнопка «зайняти місце». */
+  onTakeFree?: () => void;
+  /** Бігучий рядок «З Новим роком, перший ряд! · імена» після півночі (модуль на сторінці). */
+  ticker?: boolean;
   /** Назва країни за кодом прапора — для доступної назви місця. */
   countryName?: (flagCode: string) => string | undefined;
   /** Дотик до свого місця (O-EMOJI). */
@@ -111,9 +118,11 @@ export function FirstRowWall({
   phase,
   lightingFrom,
   restrained = false,
-  layout = 'carousel',
+  layout = 'row',
   countryName,
   onOpenEmoji,
+  onTakeFree,
+  ticker = false,
   className,
 }: FirstRowWallProps) {
   const t = useTranslations('firstRow');
@@ -142,49 +151,105 @@ export function FirstRowWall({
     );
   });
 
+  const freeText = taken.length === 0 && freeCount === SEATS ? t('allFree') : t('freeShort', { count: freeCount });
   const freeCard =
-    taken.length === 0 && freeCount === SEATS ? (
-      <div data-slot="free" className="inline-flex min-h-touch-min items-center rounded-full border border-dashed border-border-strong px-3.5 text-label-sm text-text-muted">
-        {t('allFree')}
-      </div>
-    ) : freeCount > 0 ? (
-      <div data-slot="free" className="inline-flex min-h-touch-min items-center whitespace-nowrap rounded-full border border-dashed border-border-strong px-3.5 text-label-sm text-text-muted">
-        {t('freeSeats', { count: freeCount })}
-      </div>
+    freeCount > 0 && effectivePhase === 'idle' ? (
+      onTakeFree ? (
+        <button
+          key="free"
+          type="button"
+          data-slot="free"
+          aria-label={t('freeTakeLabel', { count: freeCount })}
+          onClick={onTakeFree}
+          className={cn('t2f-focus t2f-transition', fr.free)}
+        >
+          <Icon name="plus" size={14} strokeWidth={2.2} />
+          {freeText}
+        </button>
+      ) : (
+        <div key="free" data-slot="free" className={fr.free}>
+          <Icon name="plus" size={14} strokeWidth={2.2} />
+          {freeText}
+        </div>
+      )
     ) : null;
 
-  const slides = [...pills, ...(freeCard ? [freeCard] : [])];
-  const wallLabel = t('wall', { city, free: freeCount, total: SEATS });
+  const wallLabel = effectivePhase === 'idle' ? t('wall', { city, free: freeCount, total: SEATS }) : t('wallLighting', { city });
   const gridLabel = t('wallRow', { city, taken: taken.length, total: SEATS });
+  const items = [...pills, ...(freeCard ? [freeCard] : [])];
+
+  let body;
+  if (layout === 'grid') {
+    body = (
+      <section aria-label={gridLabel}>
+        <ul className="grid grid-cols-2 gap-1.5">
+          {pills.map((p, i) => (
+            <li key={taken[i]!.number} className="flex *:w-full">
+              {p}
+            </li>
+          ))}
+          {freeCard ? <li className="col-span-2 flex *:w-full">{freeCard}</li> : null}
+        </ul>
+      </section>
+    );
+  } else if (layout === 'wrap') {
+    // Телефон (`Phone-Home-Live`): два ряди — стовпчики по два місця; по колу, гортання свайпом.
+    const columns: ReactNode[][] = [];
+    items.forEach((it, i) => {
+      if (i % 2 === 0) columns.push([it]);
+      else columns[columns.length - 1]!.push(it);
+    });
+    body = (
+      <Carousel label={wallLabel} arrows="none" loop prevLabel={t('prevSeats')} nextLabel={t('nextSeats')}>
+        {columns.map((col, i) => (
+          <div key={i} className="flex flex-col items-start gap-2">
+            {col}
+          </div>
+        ))}
+      </Carousel>
+    );
+  } else {
+    body = (
+      <Carousel label={wallLabel} arrows="sides" loop fade prevLabel={t('prevSeats')} nextLabel={t('nextSeats')}>
+        {items}
+      </Carousel>
+    );
+  }
 
   return (
     <div
       data-wall={restrained ? 'restrained' : effectivePhase}
       data-first-row-wall=""
       data-phase={effectivePhase}
-      className={cn('flex flex-col gap-2.5', className)}
+      data-layout={layout}
+      className={cn('flex flex-col gap-1.5', className)}
     >
-      {layout === 'grid' ? (
-        <section aria-label={gridLabel}>
-          <ul className="grid grid-cols-2 gap-1.5">
-            {pills.map((p, i) => (
-              <li key={taken[i]!.number} className="flex *:w-full">
-                {p}
-              </li>
-            ))}
-            {freeCard ? <li className="col-span-2 flex *:w-full">{freeCard}</li> : null}
-          </ul>
-        </section>
-      ) : (
-        <Carousel label={wallLabel} autoplay={slides.length > 1 && effectivePhase !== 'lighting' && !restrained} autoplayDelay={4000}>
-          {slides}
-        </Carousel>
-      )}
+      {body}
       {allLit ? (
-        <div role="status" className="text-center text-label-sm text-highlight" data-row="lit">
-          {full ? <span className="me-2 text-text-muted">{t('wallAllLit', { count: taken.length })}</span> : null}
-          {t('wallLit')}
-        </div>
+        ticker ? (
+          <>
+            <div aria-hidden="true" className={fr.ticker} data-row="ticker">
+              <span>{t('wallLit')}</span>
+              {taken.map((s) => (
+                <span key={s.number} className="contents">
+                  <span className={fr.tickerSep}>·</span>
+                  <span className={fr.tickerName}>
+                    {s.participant.name} {emojiSymbol(s.participant.emojiId)}
+                  </span>
+                </span>
+              ))}
+            </div>
+            <p role="status" className="sr-only" data-row="lit">
+              {full ? `${t('wallAllLit', { count: taken.length })}. ` : ''}
+              {t('wallLit')}
+            </p>
+          </>
+        ) : (
+          <div role="status" className="text-center text-label-sm text-highlight" data-row="lit">
+            {full ? <span className="me-2 text-text-muted">{t('wallAllLit', { count: taken.length })}</span> : null}
+            {t('wallLit')}
+          </div>
+        )
       ) : null}
     </div>
   );

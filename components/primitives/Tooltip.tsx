@@ -34,7 +34,7 @@ export interface TooltipProps {
 }
 
 const CONTENT =
-  'z-30 max-w-64 rounded-md border border-border bg-surface-raised px-3 py-2 text-caption text-text shadow-mini-player';
+  'z-30 max-w-64 rounded-md border border-border bg-surface-raised px-3 py-2 text-caption text-text shadow-overlay';
 
 /**
  * P14. Підказка (WCAG 1.4.13): не зникає сама, на неї можна навести курсор, Esc закриває.

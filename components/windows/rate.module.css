@@ -1,0 +1,47 @@
+/* «Як тобі шоу?» за макетами `Desk-Rate` (рядок: назва й подія ліворуч, зірки праворуч) і `Phone-Rate` (стовпчик). */
+.title {
+  margin: 0;
+  padding-right: 40px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.row {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+@media (min-width: 768px) {
+  .rate[data-single='true'] {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 40px;
+    row-gap: var(--spacing-1);
+    padding: var(--spacing-4) 64px var(--spacing-3) var(--spacing-5);
+  }
+  .rate[data-single='true'] .title {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+    padding-right: 0;
+    font-size: 20px;
+  }
+  .rate[data-single='true'] .item {
+    display: contents;
+  }
+  .rate[data-single='true'] .row {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+  }
+  .rate[data-single='true'] .stars {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 0;
+  }
+  .rate[data-single='true'] > [data-row] {
+    grid-column: 1 / -1;
+  }
+}

@@ -113,12 +113,13 @@ test.describe('US4 · чат свята', () => {
     await setNick(page, 'Мирон');
     const log = page.getByRole('log').first();
     await log.evaluate((el) => (el.scrollTop = 0));
-    await expect(page.getByText('Стрічку зупинено — читай у своєму темпі')).toBeVisible();
+    // Примітка про паузу — лише для зчитувача (на макеті видно тільки капсулу «Нові повідомлення N ↓»).
+    await expect(page.locator('[data-row="paused"]')).toHaveText('Стрічку зупинено — читай у своєму темпі');
     await advance(page, 5 * 60_000);
     const pill = page.getByRole('button', { name: /^Нові повідомлення \d+/ });
     await expect(pill).toBeVisible();
     await pill.click();
-    await expect(page.getByText('Стрічку зупинено — читай у своєму темпі')).toBeHidden();
+    await expect(page.locator('[data-row="paused"]')).toHaveCount(0);
     await expectAxeClean(page);
   });
 

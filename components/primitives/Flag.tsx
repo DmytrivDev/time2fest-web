@@ -6,9 +6,13 @@ import type { CSSProperties, ReactNode } from 'react';
 import { cn } from './cn';
 
 /** Розміри за ІНВ I-11 (4 штуки): xs чат і чипи, sm рядки й картки, md ТВ і картка мапи, lg герой країни. */
-export type FlagSize = 'xs' | 'sm' | 'md' | 'lg';
+export type FlagSize = 'xs' | 'card' | 'pill' | 'sm' | 'md' | 'lg';
 const DIMENSIONS: Record<FlagSize, { w: number; h: number }> = {
   xs: { w: 16, h: 11 },
+  /** Макет `Main`: картки «Зараз і далі». */
+  card: { w: 18, h: 12 },
+  /** Макет `Main`: місця стіни «Першого ряду». */
+  pill: { w: 20, h: 14 },
   sm: { w: 24, h: 16 },
   md: { w: 30, h: 20 },
   lg: { w: 54, h: 36 },

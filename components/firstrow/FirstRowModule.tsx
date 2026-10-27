@@ -36,6 +36,7 @@ import {
   FIRST_ROW_WINDOW_ID,
   guestGreetingMessages,
   openForm,
+  seatJoinedMessages,
   snapshot,
   type FirstRowEvent,
 } from './controller';
@@ -83,6 +84,21 @@ function useFirstRowEffects(event: FirstRowEvent, now: Ms) {
   useEffect(() => {
     if (pendingSince !== undefined && now - pendingSince >= PENDING_CONFIRM_MS) confirmPayment(event, now);
   }, [pendingSince, now, event]);
+
+  // Хтось зайняв місце (імітатор) — системне повідомлення в чаті, щоразу. Лише нові місця відтоді, як модуль на екрані.
+  const joinedSince = useRef<Ms | null>(null);
+  useEffect(() => {
+    if (now <= 0) return;
+    if (joinedSince.current === null || now < joinedSince.current) {
+      joinedSince.current = now;
+      return;
+    }
+    const since = joinedSince.current;
+    joinedSince.current = now;
+    const { seats } = snapshot(event, now);
+    const messages = seatJoinedMessages(event, seats, since, now);
+    if (messages.length) useChatFeed.getState().append(messages);
+  }, [event, now]);
 
   // Привітання учасника на «+15 с» — разом із загорянням стіни.
   const seat = entry?.seat;

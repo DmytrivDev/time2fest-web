@@ -17,11 +17,12 @@ export interface SectionHeaderProps {
 export function SectionHeader({ title, as: Heading = 'h2', meta, action, id, className }: SectionHeaderProps) {
   return (
     <div className={cn('flex min-h-touch-min items-center justify-between gap-3', className)}>
-      <div className="flex min-w-0 flex-col">
-        <Heading id={id} className="text-headline-sm text-text">
+      {/* Макети: телефон — мета під заголовком; ширше — в рядок за базовою лінією, відступ 12 px. */}
+      <div className="flex min-w-0 flex-col md:flex-row md:items-baseline md:gap-3">
+        <Heading id={id} className="t2f-h2 text-text">
           {title}
         </Heading>
-        {meta ? <p className="text-caption text-text-muted">{meta}</p> : null}
+        {meta ? <p className="whitespace-nowrap text-caption text-text-muted">{meta}</p> : null}
       </div>
       {action ? <div className="flex shrink-0 items-center">{action}</div> : null}
     </div>

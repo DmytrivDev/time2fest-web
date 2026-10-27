@@ -16,15 +16,16 @@ const pathTags = [...svg.matchAll(/<path\b[^>]*>/g)].map((m) => m[0]);
 const attr = (tag: string, name: string) => new RegExp(`${name}="([^"]*)"`).exec(tag)?.[1];
 
 describe('zonemap.svg', () => {
-  it('має рівно 38 шляхів з data-offset, усі унікальні', () => {
+  it('кожен пояс суходолу — один шлях з data-offset; пояс без суходолу (UTC−12) — маркер', () => {
     const withOffset = pathTags.filter((t) => attr(t, 'data-offset') !== undefined);
-    expect(withOffset).toHaveLength(38);
-    expect(new Set(withOffset.map((t) => attr(t, 'data-offset'))).size).toBe(38);
-    expect(new Set(withOffset.map((t) => attr(t, 'data-zone'))).size).toBe(38);
+    expect(withOffset.length).toBeGreaterThanOrEqual(37);
+    expect(new Set(withOffset.map((t) => attr(t, 'data-offset'))).size).toBe(withOffset.length);
+    const drawn = new Set([...withOffset.map((t) => attr(t, 'data-zone')), ...geo.markers.map((m) => m.zoneId)]);
+    expect(drawn.size).toBe(38);
   });
 
-  it('кожен шлях — непорожній d, початковий клас is-ahead (стани лише від TimeSource)', () => {
-    for (const tag of pathTags) {
+  it('кожен шлях поясу — непорожній d, початковий клас is-ahead (стани лише від TimeSource)', () => {
+    for (const tag of pathTags.filter((t) => attr(t, 'data-zone'))) {
       expect(attr(tag, 'd')?.length ?? 0).toBeGreaterThan(20);
       expect(attr(tag, 'class')).toBe('is-ahead');
     }
@@ -36,15 +37,16 @@ describe('zonemap.svg', () => {
       const m = a % 60;
       return `${min < 0 ? '-' : '+'}${Math.floor(a / 60)}${m ? `:${String(m).padStart(2, '0')}` : ''}`;
     };
-    const byZone = new Map(pathTags.map((t) => [attr(t, 'data-zone')!, attr(t, 'data-offset')!]));
-    expect([...byZone.keys()].sort()).toEqual(schedule.zones.map((z) => z.id).sort());
-    for (const z of schedule.zones) expect(byZone.get(z.id)).toBe(fmt(z.offsetMinutes));
+    const byZone = new Map(pathTags.filter((t) => attr(t, 'data-zone')).map((t) => [attr(t, 'data-zone')!, attr(t, 'data-offset')!]));
+    const ids = new Set(schedule.zones.map((z) => z.id));
+    for (const id of byZone.keys()) expect(ids.has(id)).toBe(true);
+    for (const z of schedule.zones) if (byZone.has(z.id)) expect(byZone.get(z.id)).toBe(fmt(z.offsetMinutes));
   });
 
   it('маркери-кружечки для Кірітіматі й Чатема (дрібні пояси)', () => {
     expect(svg).toMatch(/data-zone-marker="utc\+1400"/);
     expect(svg).toMatch(/data-zone-marker="utc\+1345"/);
-    expect(geo.markers.map((m) => m.zoneId).sort()).toEqual(['utc+1345', 'utc+1400']);
+    expect(geo.markers.map((m) => m.zoneId)).toEqual(expect.arrayContaining(['utc+1345', 'utc+1400']));
   });
 
   it('розмір ≤ ~250 КБ (research.md, розділ 6)', () => {
@@ -58,13 +60,13 @@ describe('zonemap.json', () => {
     expect(geo.zones).toHaveLength(38);
     expect(geo.zones[0]!.zoneId).toBe('utc+1400');
     expect(geo.zones.at(-1)!.zoneId).toBe('utc-1200');
-    const svgD = new Map(pathTags.map((t) => [attr(t, 'data-zone')!, attr(t, 'd')!]));
-    for (const z of geo.zones) expect(svgD.get(z.zoneId)).toBe(z.d);
+    const svgD = new Map(pathTags.filter((t) => attr(t, 'data-zone')).map((t) => [attr(t, 'data-zone')!, attr(t, 'd')!]));
+    for (const z of geo.zones) if (z.d) expect(svgD.get(z.zoneId)).toBe(z.d);
   });
 
-  it('походження: timezone-boundary-builder 2026e, рівнопроміжна проекція', () => {
+  it('походження: timezone-boundary-builder 2026e без океанів, проекція Міллера (кадр макета)', () => {
     expect(geo.meta.source).toMatch(/2026e/);
-    expect(geo.meta.projection).toMatch(/equirectangular/);
+    expect(geo.meta.projection).toMatch(/miller/);
   });
 
   it('точка підпису кожного поясу лежить усередині полотна', () => {
@@ -88,9 +90,11 @@ describe('zonemap.json', () => {
         }
   });
 
-  it('Лондон: mapPoint проектується на нульовий меридіан (50 %)', () => {
+  it('Лондон стоїть там, де на макеті (46.6 % / 32.5 %)', () => {
     const london = schedule.zones.flatMap((z) => z.countries.flatMap((c) => c.cities)).find((c) => c.id === 'london')!;
-    expect(pointToPercent(london.mapPoint, geo.meta).left).toBeCloseTo(49.97, 1);
+    const p = pointToPercent(london.mapPoint, geo.meta);
+    expect(p.left).toBeCloseTo(46.6, 0);
+    expect(Math.abs(p.top - 32.5)).toBeLessThan(1.5);
   });
 });
 

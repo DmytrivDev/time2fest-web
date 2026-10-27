@@ -172,7 +172,7 @@ function PanelBody({
       aria-label={t('title')}
       tabIndex={-1}
       data-t2f-time-machine=""
-      className={`${styles.panel} z-50 flex flex-col gap-4 rounded-lg border border-border-strong bg-surface p-4 text-text shadow-mini-player`}
+      className={`${styles.panel} z-50 flex flex-col gap-4 rounded-lg border border-border-strong bg-surface p-4 text-text shadow-overlay`}
     >
       <header className="flex items-center justify-between gap-2">
         <h2 className="text-body-strong">{t('title')}</h2>

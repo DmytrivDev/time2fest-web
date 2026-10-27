@@ -19,11 +19,12 @@
  * Без провайдерів (історії) область відео задається пропом `videoArea`.
  */
 import { useTranslations } from 'next-intl';
-import { useId } from 'react';
+import { useId, type ReactNode } from 'react';
 import { ActionRow } from '@/components/live/ActionRow';
 import { Caption, eventTitle } from '@/components/live/Caption';
-import styles from '@/components/live/live.module.css';
+import home from '@/components/live/home.module.css';
 import { cn } from '@/components/primitives/cn';
+import { Icon } from '@/components/primitives/Icon';
 import { Link } from '@/components/primitives/Link';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
@@ -33,6 +34,7 @@ import type { AirView } from '@/lib/engine/currentAirEvent';
 import type { AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useGuestStore } from '@/stores/guest';
+import { useCoralWindowOpen } from '@/lib/overlay/coral';
 import { CountdownScene } from './CountdownScene';
 import { FacebookConsentCard } from './FacebookConsentCard';
 import { PlayerSlot } from './PlayerSlot';
@@ -70,6 +72,12 @@ export interface PlayerBlockProps {
   onMoreStreams?: () => void;
   /** Пульт: «Подивитися північ ще раз». */
   onWatchAgain?: () => void;
+  /** «Зараз дивляться люди з N країн» у рядку 1 підпису (від 768 px). */
+  watchers?: number;
+  /** Праворуч від таймера (від 768 px): «Показати чат», коли чат сховано (`Desk-Cookies-Wide`). */
+  captionAside?: ReactNode;
+  /** Телефон, вкладка «Чат» (`Phone-Chat`): підпис одним рядком зі звуком, без рядка дій. */
+  bar?: boolean;
   className?: string;
 }
 
@@ -119,6 +127,29 @@ function VideoFallback({ kind, current }: { kind: VideoAreaKind; current: AirPla
   );
 }
 
+/** Звук у рядку `Phone-Chat`: ціль 44, видимий квадрат 36, коралова, поки звук вимкнено. */
+function BarSound({ muted, available, onUnmute, onMute }: { muted: boolean; available: boolean; onUnmute(): void; onMute(): void }) {
+  const t = useTranslations('player');
+  const foreignCoral = useCoralWindowOpen();
+  const on = available && !muted;
+  const variant = !available || on ? 'secondary' : foreignCoral ? 'neutral' : 'coral';
+  return (
+    <button
+      type="button"
+      data-variant={variant}
+      disabled={!available}
+      aria-label={!available ? t('soundUnavailable') : on ? t('soundIsOn') : t('soundOn')}
+      data-sound={!available ? 'unavailable' : on ? 'on' : 'off'}
+      onClick={() => (on ? onMute() : onUnmute())}
+      className={cn('t2f-focus t2f-press rounded-md', home.barSound)}
+    >
+      <span aria-hidden="true" className={home.barSoundInner}>
+        <Icon name={on ? 'speaker' : 'speaker-off'} size={18} strokeWidth={2} />
+      </span>
+    </button>
+  );
+}
+
 export function PlayerBlock({
   mode,
   ready,
@@ -135,6 +166,9 @@ export function PlayerBlock({
   title,
   onMoreStreams,
   onWatchAgain,
+  watchers,
+  captionAside,
+  bar = false,
   className,
 }: PlayerBlockProps) {
   const t = useTranslations('player');
@@ -155,7 +189,7 @@ export function PlayerBlock({
         aria-busy={current && phase ? undefined : true}
         data-player-block={mode}
         data-video-area-kind={area.kind}
-        className={cn(styles.pad, 'flex flex-col gap-3 pb-4 pt-3', className)}
+        className={cn(bar ? undefined : home.block, className)}
       >
         {current && phase ? (
           <>
@@ -168,8 +202,22 @@ export function PlayerBlock({
               timeZone={timeZone}
               titleId={titleId}
               mode={mode}
+              watchers={watchers}
+              aside={captionAside}
+              variant={bar ? 'bar' : 'full'}
+              lead={
+                bar ? (
+                  <BarSound
+                    muted={area.muted}
+                    available={area.kind === 'video'}
+                    onUnmute={() => actions?.unmute()}
+                    onMute={() => actions?.mute()}
+                  />
+                ) : null
+              }
               {...(title !== undefined ? { title } : {})}
             />
+            {bar ? null : (
             <ActionRow
               mode={mode}
               button={phase.button}
@@ -185,6 +233,7 @@ export function PlayerBlock({
                 onMute: () => actions?.mute(),
               }}
             />
+            )}
           </>
         ) : (
           <div className="flex flex-col gap-2" aria-hidden="true">

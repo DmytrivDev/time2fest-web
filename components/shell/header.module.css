@@ -1,0 +1,167 @@
+/* Хедер за макетами `Main` (десктоп 64 px) і `Phone-Home-Live` (телефон 56 px). Значення — з макетів;
+   кольори й радіуси — токени. Планшет (768–1199): навігація й мова як на десктопі, «Пас» і меню як на телефоні. */
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--header-background);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  max-width: var(--spacing-content-max);
+  height: var(--header-height-mobile);
+  margin: 0 auto;
+  padding: 0 4px 0 var(--spacing-4);
+}
+
+.logo {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-height: var(--spacing-touch-min);
+}
+.logo img {
+  display: block;
+  width: 112px;
+  height: auto;
+}
+
+.nav {
+  display: none;
+}
+
+/* Кнопки хедера: 44 px, радіус md, 14 px; без розрядки. */
+.btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-touch-min);
+  padding: 0 var(--spacing-3);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 120ms ease-out,
+    color 120ms ease-out;
+}
+.btn:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.lang {
+  gap: 6px;
+}
+.lang[aria-expanded='true'] {
+  color: var(--color-text);
+}
+/* «Новорічний пас» / «Пас» — secondary: рамка border-strong, текст 600. */
+.pass {
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+  font-weight: 600;
+  gap: 6px;
+}
+.signIn {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.iconBtn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+}
+.iconBtn:hover {
+  background: var(--color-surface-raised);
+}
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.deskOnly,
+.tabletUp {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .bar {
+    gap: var(--spacing-1);
+    height: var(--header-height-desktop);
+    padding: 0 var(--spacing-8);
+  }
+  .logo {
+    flex: none;
+    margin-right: 28px;
+  }
+  .logo img {
+    width: 150px;
+  }
+  .nav {
+    display: flex;
+    flex: 1 1 auto;
+    gap: var(--spacing-1);
+    align-self: stretch;
+  }
+  .navLink {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-3);
+    color: var(--color-text-muted);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 120ms ease-out;
+  }
+  .navLink:hover {
+    color: var(--color-text);
+  }
+  .navLink[aria-current='page'] {
+    color: var(--color-text);
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 var(--color-text);
+  }
+  .tabletUp {
+    display: inline-flex !important;
+  }
+  .pass {
+    padding: 0 var(--spacing-4);
+  }
+}
+
+@media (min-width: 1200px) {
+  .deskOnly {
+    display: inline-flex !important;
+  }
+  .phoneTablet {
+    display: none !important;
+  }
+  .pass,
+  .signIn {
+    margin-left: var(--spacing-1);
+  }
+  .pass {
+    gap: var(--spacing-2);
+  }
+}

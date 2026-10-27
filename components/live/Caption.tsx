@@ -9,6 +9,7 @@
  * Нових смуг між фазами немає: змінюються лише таймер і рядок 3. Назви — лише в називному відмінку.
  */
 import NextLink from 'next/link';
+import type { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
@@ -16,7 +17,8 @@ import type { City, Country, Ms } from '@/lib/data/types';
 import type { CaptionMode, CaptionPhase } from '@/lib/engine/captionPhase';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatAgo, formatClock, formatCountdown, formatShortCountdown } from '@/lib/i18n/time';
-import styles from './live.module.css';
+import { Icon } from '@/components/primitives/Icon';
+import home from './home.module.css';
 
 export interface CaptionPlace {
   /** Північ події, мс epoch UTC. */
@@ -46,6 +48,13 @@ export interface CaptionProps {
   mode?: CaptionMode;
   /** Назва рядка 2 замість «Місто · пам’ятка» (пульт: назва вибраної трансляції). */
   title?: string;
+  /** «Зараз дивляться люди з N країн» (рядок 1, від 768 px). */
+  watchers?: number;
+  /** Від 768 px праворуч від таймера (`Desk-Cookies-Wide`: «Показати чат», коли чат сховано). */
+  aside?: ReactNode;
+  /** `bar` — один рядок над вкладкою «Чат» на телефоні (`Phone-Chat`); `lead` — що стоїть ліворуч (кнопка звуку). */
+  variant?: 'full' | 'bar';
+  lead?: ReactNode;
   className?: string;
 }
 
@@ -82,6 +91,10 @@ export function Caption({
   titleId,
   mode = 'broadcast',
   title: titleProp,
+  watchers,
+  aside,
+  variant = 'full',
+  lead,
   className,
 }: CaptionProps) {
   const t = useTranslations('player');
@@ -132,46 +145,71 @@ export function Caption({
   // Пульт: ми вже на сторінці країни — назва не посилання.
   const href = mode === 'remote' ? null : current.href;
 
+  // Телефон, вкладка «Чат» (`Phone-Chat`): один рядок 48 px — звук · «Лондон · до півночі 00:22:15» · «Наживо».
+  if (variant === 'bar') {
+    return (
+      <div data-caption="" data-phase={phase.id} data-caption-variant="bar" className={cn(home.bar, className)}>
+        {lead}
+        <div className={home.barText}>
+          <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, 'focus:outline-none')}>
+            {current.city?.name.uk ?? title} <span className={home.barDot}>·</span>
+          </h2>
+          {timer ? (
+            <span role="timer" aria-live="off" aria-label={`${timer.label}: ${spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimer}>
+              <span aria-hidden="true">{timer.label}</span>
+              <span aria-hidden="true" className={home.barDigits}>
+                {timer.digits}
+              </span>
+            </span>
+          ) : (
+            <span aria-hidden="true" className={home.barTimer}>
+              {row3}
+            </span>
+          )}
+        </div>
+        {/* Рядок 3 лишається для зчитувача (і подій ефіру), навіть коли видно таймер. */}
+        <p data-caption-row3={phase.row3.kind} role={phase.row3.kind === 'next' ? 'status' : undefined} className="sr-only">
+          {row3}
+        </p>
+        {live && ago === null ? (
+          <Badge variant="live" still>
+            {tBadge('live')}
+          </Badge>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
-    <div data-caption="" data-phase={phase.id} className={cn('flex flex-col gap-1.5', className)}>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        {live && ago === null ? <Badge variant="live">{tBadge('live')}</Badge> : null}
+    <div data-caption="" data-phase={phase.id} className={cn(home.caption, className)}>
+      <div className={home.badges}>
+        {live && ago === null ? (
+          <Badge variant="live" still>
+            {tBadge('live')}
+          </Badge>
+        ) : null}
         {ago !== null ? (
           <span data-caption-recording="" className="inline-flex">
             <Badge variant="recording">{tc('recording')}</Badge>
           </span>
         ) : null}
         {verified ? (
-          <span className={cn(styles.deskOnly, 'items-center gap-1 text-caption text-text-muted')}>
-            {tBadge('verified')}
+          <span className={cn(home.badgeItem, home.deskItem)}>
+            <Icon name="check" size={14} strokeWidth={2.2} />
+            {tBadge('verifiedShort')}
           </span>
         ) : null}
-        {phase.flags.delayNotice ? <span className="text-caption text-text-muted">{t('delayNote')}</span> : null}
-        {timer ? (
-          <span
-            role="timer"
-            aria-live="off"
-            aria-label={`${timer.label}: ${spoken(timer.ms)}`}
-            data-caption-timer={r1.kind}
-            className="ms-auto inline-flex items-baseline gap-2 whitespace-nowrap"
-          >
-            <span aria-hidden="true" className="text-caption text-text-muted">
-              {timer.label}
-            </span>{' '}
-            <span aria-hidden="true" className="text-countdown-inline tabular-nums text-highlight">
-              {timer.digits}
-            </span>
+        {watchers ? (
+          <span className={cn(home.badgeItem, home.deskItem)}>
+            <Icon name="globe" size={14} strokeWidth={2} />
+            {t('watchersFrom', { count: watchers })}
           </span>
         ) : null}
-        {ago !== null ? (
-          <span data-caption-ago="" className="ms-auto whitespace-nowrap text-caption text-text-muted">
-            {tc('ago', { ago: formatAgo(ago) })}
-          </span>
-        ) : null}
+        {phase.flags.delayNotice ? <span>{t('delayNote')}</span> : null}
       </div>
-      <h2 id={titleId} tabIndex={-1} className="text-headline-sm text-text focus:outline-none">
+      <h2 id={titleId} tabIndex={-1} className={cn(home.title, 'focus:outline-none')}>
         {href ? (
-          <NextLink href={href} className="t2f-focus t2f-transition rounded-sm hover:text-text-secondary">
+          <NextLink href={href} className="t2f-focus t2f-transition rounded-sm">
             {title}
             <span aria-hidden="true" className="text-text-secondary">
               {' ›'}
@@ -181,13 +219,33 @@ export function Caption({
           title
         )}
       </h2>
-      <p
-        data-caption-row3={phase.row3.kind}
-        role={phase.row3.kind === 'next' ? 'status' : undefined}
-        className="-mt-1 text-caption text-text-muted"
+      <p data-caption-row3={phase.row3.kind} role={phase.row3.kind === 'next' ? 'status' : undefined}
+        className={cn(home.sub, (phase.row3.kind === 'met' || phase.row3.kind === 'met-and-next') && home.subMet)}
       >
-        {row3}
+        {phase.row3.kind === 'next' ? (
+          <>
+            {t('lineNextLabel')} <strong className="font-semibold text-text">{next?.city?.name.uk ?? ''}</strong>
+          </>
+        ) : (
+          row3
+        )}
       </p>
+      {timer ? (
+        <span role="timer" aria-live="off" aria-label={`${timer.label}: ${spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.timer}>
+          <span aria-hidden="true" className={home.timerLabel}>
+            {timer.label}
+          </span>{' '}
+          <span aria-hidden="true" className={home.timerDigits}>
+            {timer.digits}
+          </span>
+        </span>
+      ) : null}
+      {ago !== null ? (
+        <span data-caption-ago="" className={home.ago}>
+          {tc('ago', { ago: formatAgo(ago) })}
+        </span>
+      ) : null}
+      {aside ? <div className={home.aside}>{aside}</div> : null}
     </div>
   );
 }

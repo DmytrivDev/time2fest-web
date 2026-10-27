@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
-import { Link } from '@/components/primitives/Link';
+import NextLink from 'next/link';
 import { Switch } from '@/components/primitives/Switch';
 import { useGuestStore } from '@/stores/guest';
 
@@ -28,33 +28,39 @@ export function Footer({ reducedMotion, onReducedMotionChange, onCookiesClick, c
   const setStored = useGuestStore((s) => s.setReducedMotion);
   const checked = reducedMotion ?? stored;
 
+  const link = 't2f-focus t2f-transition inline-flex min-h-touch-min items-center rounded-sm text-body text-text-muted underline underline-offset-2 hover:text-text';
   return (
     <footer className={cn('mt-8 border-t border-border bg-background', className)}>
-      <div className="mx-auto flex max-w-content-max flex-col px-4 pb-4 pt-2 md:flex-row md:flex-wrap md:items-center md:gap-x-5 md:px-8 md:py-1.5">
+      {/* Макети: телефон — посилання в рядки з проміжком 20 (поля 8/16/16); ширше — один рядок 32 px від краю. */}
+      <div className="mx-auto flex max-w-content-max flex-wrap items-center gap-x-5 px-4 pb-4 pt-2 md:gap-y-1 md:px-8 md:py-1.5">
         <nav aria-label={t('navLabel')} className="contents">
           {LINKS.map((key) => (
-            <Link key={key} variant="footer" href="#">
-              {t(key)}
-            </Link>
+            <NextLink key={key} href="#" className={link}>
+              {key === 'privacy' ? (
+                <>
+                  <span className="md:hidden">{t('privacyShort')}</span>
+                  <span className="max-md:hidden">{t(key)}</span>
+                </>
+              ) : (
+                t(key)
+              )}
+            </NextLink>
           ))}
           {onCookiesClick ? (
-            <button
-              type="button"
-              onClick={onCookiesClick}
-              className="t2f-focus t2f-transition flex min-h-touch-min items-center rounded-sm text-start text-caption text-text-muted hover:text-text md:inline-flex"
-            >
+            <button type="button" onClick={onCookiesClick} className={cn(link, 'text-start')}>
               {t('cookies')}
             </button>
           ) : (
-            <Link variant="footer" href="#">
+            <NextLink href="#" className={link}>
               {t('cookies')}
-            </Link>
+            </NextLink>
           )}
         </nav>
         <span className="hidden flex-1 md:block" aria-hidden="true" />
-        <p className="py-2 text-caption text-text-muted md:py-0">{t('flashWarning')}</p>
+        <p className="py-2 text-caption text-text-muted md:py-0 md:text-body">{t('flashWarning')}</p>
         <Switch
           compact
+          labelSide="end"
           label={t('reduceMotion')}
           checked={checked}
           onCheckedChange={(v) => {

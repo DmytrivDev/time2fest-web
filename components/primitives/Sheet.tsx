@@ -120,7 +120,7 @@ export function Sheet({
         <Dialog.Content
           data-sheet=""
           className={cn(
-            'fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg bg-surface text-text shadow-mini-player',
+            'fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg bg-surface text-text shadow-overlay',
             className,
           )}
           style={{ maxHeight: `calc(100dvh - ${top}px)`, transform: dragY ? `translateY(${dragY}px)` : undefined }}

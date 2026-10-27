@@ -38,7 +38,9 @@ export function SoundToggle({ muted, available, onUnmute, onMute, className }: S
       onClick={() => (on ? onMute?.() : onUnmute?.())}
       className={cn('max-md:size-touch-min max-md:px-0', className)}
     >
-      <Icon name={on ? 'speaker' : 'speaker-off'} size={18} />
+      {/* Макети: телефон — 44×44 з іконкою 20 (вимкнено — перекреслений динамік); ширше — динамік із хвилями 18 + підпис. */}
+      <Icon name={on ? 'speaker' : 'speaker-off'} size={20} strokeWidth={2} className="md:hidden" />
+      <Icon name="speaker" size={18} strokeWidth={2} className="max-md:hidden" />
       <span aria-hidden="true" className="max-md:hidden">
         {text}
       </span>

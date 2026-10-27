@@ -145,6 +145,35 @@ export function afterSuccess(event: FirstRowEvent, now: Ms): void {
   useChatFeed.getState().append(messages);
 }
 
+/**
+ * «<ім’я> тепер у першому ряду · <місто>» для чужих місць, зайнятих у проміжку `(since, now]` (імітатор: розклад
+ * місць і «гонки»). Своє місце гість отримує через `afterSuccess`. Id повідомлення стабільний — повторів немає.
+ */
+export function seatJoinedMessages(event: FirstRowEvent, seats: readonly FirstRowSeat[], since: Ms, now: Ms): ChatMessage[] {
+  const out: ChatMessage[] = [];
+  for (const seat of seats) {
+    if (seat.state !== 'taken' || seat.participant.isMine) continue;
+    if (seat.takenAt <= since || seat.takenAt > now) continue;
+    for (const room of ['world', `firstrow:${event.id}`] as RoomId[]) {
+      out.push({
+        id: messageId(seat.takenAt, 902, seat.number, room),
+        room,
+        kind: 'system',
+        createdAt: seat.takenAt,
+        moderation: 'ok',
+        system: {
+          kind: 'firstrow-joined',
+          participantName: seat.participant.name,
+          flagCode: seat.participant.flagCode,
+          eventId: event.id,
+          cityId: event.cityId,
+        },
+      });
+    }
+  }
+  return out;
+}
+
 /** Привітання гостя-учасника на «+15 с» — синхронно зі стіною (картка `first-row-greeting`). */
 export function guestGreetingMessages(event: FirstRowEvent): ChatMessage[] {
   const p = participantOf(event.id);

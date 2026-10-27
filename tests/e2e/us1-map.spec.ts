@@ -24,6 +24,9 @@ const zone = (page: Page, id: string) => map(page).locator(`path[data-zone="${id
 
 async function openMap(page: Page, at = SCENE) {
   await gotoAt(page, at, 0);
+  // Смуга cookies (телефон) — фіксована внизу за макетом: прибираємо, щоб не лежала на мапі під час кліків.
+  const necessary = page.getByRole('button', { name: 'Лише необхідні' });
+  if (await necessary.isVisible().catch(() => false)) await necessary.click();
   const m = map(page);
   await m.scrollIntoViewIfNeeded();
   await expect(m.locator('path[data-offset]').first()).toBeVisible();
@@ -105,11 +108,11 @@ test.describe('Мапа поясів: телефон', () => {
     expect(box.height).toBeGreaterThanOrEqual(44);
   });
 
-  test('«Список» — текстова альтернатива без мапи', async ({ page }) => {
+  test('«Список» поки сховано: у перемикачі вигляду лише «Мапа»', async ({ page }) => {
     const m = await openMap(page);
-    await m.getByRole('button', { name: 'Список' }).click();
-    await expect(m.locator('svg[data-zone-map-svg]')).toHaveCount(0);
-    await expect(m.locator('[data-zone-list] button')).toHaveCount(38);
+    const view = m.getByRole('group', { name: 'Вигляд' });
+    await expect(view.getByRole('button', { name: 'Мапа' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(view.getByRole('button', { name: 'Список' })).toHaveCount(0);
   });
 });
 
@@ -138,7 +141,7 @@ test.describe('Мапа поясів: клавіатура', () => {
   test('Tab проходить мапу одним стопом і виходить далі', async ({ page }) => {
     test.skip(isPhone(page), 'клавіатура: десктоп');
     const m = await openMap(page);
-    await m.getByRole('button', { name: 'Збільшити мапу' }).focus();
+    await m.getByRole('button', { name: 'Мапа', exact: true }).focus();
     await page.keyboard.press('Tab');
     const onPath = await page.evaluate(() => document.activeElement?.matches('path[data-offset]') ?? false);
     expect(onPath).toBe(true);
@@ -164,7 +167,9 @@ test.describe('Мапа поясів: клавіатура', () => {
 test.describe('Мапа поясів: доступність', () => {
   test('axe: мапа, легенда й відкрита картка без порушень (WCAG 2.1 AA)', async ({ page }) => {
     const m = await openMap(page);
-    await zone(page, 'utc+0000').click();
+    // Центр рамки поясу UTC+0 на вузькій мапі припадає на ціль міста (Азорські острови) — відкриваємо картку з клавіатури.
+    await zone(page, 'utc+0000').focus();
+    await page.keyboard.press('Enter');
     await expect(m.locator('[data-zone-card]')).toBeVisible();
     const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).include('[data-zone-map]').analyze();
     expect(violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);

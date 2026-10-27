@@ -37,9 +37,11 @@ export interface CookieBannerProps {
   className?: string;
 }
 
+/* Макети: кут — 360 px, 16 px від низу й 32 px від лівого краю, тінь 0 12 32; смуга — тінь угору; у потоці — рядок.
+   z-index вище за хост плеєра, але банер ніколи не стоїть на відео (див. useCookiePlacement). */
 const SHELL: Record<CookieVariant, string> = {
-  corner: 'fixed bottom-4 left-8 z-30 w-full gap-3 rounded-lg border border-border bg-surface-raised p-4 shadow-mini-player',
-  strip: 'fixed inset-x-0 bottom-0 z-30 gap-2 border-t border-border bg-surface-raised px-3 pb-4 pt-3 shadow-mini-player',
+  corner: 't2f-cookie-corner fixed bottom-4 left-8 z-40 w-full gap-3 rounded-lg border border-border bg-surface-raised p-4',
+  strip: 't2f-cookie-strip fixed inset-x-0 bottom-0 z-40 gap-2.5 border-t border-border bg-surface-raised px-3 pb-4 pt-3',
   inflow: 'gap-3 rounded-lg border border-border bg-surface-raised p-4 md:flex-row md:flex-wrap md:items-center md:gap-x-8 md:ps-5',
 };
 
@@ -48,7 +50,12 @@ export function CookieBanner({ variant, onAccept, onNecessaryOnly, onCustomize, 
   const titleId = useId();
   const labelled = variant !== 'strip';
   const buttons = (
-    <div className={cn('grid gap-2', variant === 'inflow' ? 'md:flex-none md:grid-cols-3' : variant === 'corner' ? 'grid-cols-2' : 'grid-cols-3')}>
+    <div
+      className={cn(
+        variant === 'strip' ? 'flex gap-1.5 *:min-w-0 *:flex-1 *:px-2' : 'grid gap-2 *:px-3',
+        variant === 'inflow' ? 't2f-cookie-actions md:grid-cols-3' : variant === 'corner' ? 'grid-cols-2' : '',
+      )}
+    >
       <Button variant="secondary" compact={variant === 'strip'} onClick={onAccept}>
         {t('accept')}
       </Button>
@@ -74,14 +81,14 @@ export function CookieBanner({ variant, onAccept, onNecessaryOnly, onCustomize, 
       className={cn('flex flex-col', SHELL[variant], className)}
     >
       {labelled ? (
-        <div className={cn('flex flex-col gap-0.5', variant === 'inflow' && 'md:min-w-0 md:flex-1')}>
-          <h2 id={titleId} className="text-body-strong text-text">
+        <div className={cn('flex flex-col', variant === 'inflow' ? 't2f-cookie-copy gap-0.5' : 'gap-0')}>
+          <h2 id={titleId} className="text-body font-bold leading-tight text-text">
             {t('title')}
           </h2>
-          <p className="text-caption text-text-secondary">{t('text')}</p>
+          <p className={cn('t2f-cookie-text text-text-secondary', variant === 'corner' && 'mt-2')}>{t('text')}</p>
         </div>
       ) : (
-        <p className="px-1 text-caption text-text">{t('text')}</p>
+        <p className="t2f-cookie-text px-1 text-text">{t('text')}</p>
       )}
       {buttons}
       {saveFailed ? (

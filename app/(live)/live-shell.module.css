@@ -1,11 +1,19 @@
-/* LiveShell: точки перелому ІНВ 4.2 (<768 / 768–1199 / ≥1200; висота <500 — плеєр не закріплено).
+/* LiveShell за макетом `Main`: точки перелому ІНВ 4.2 (<768 / 768–1199 / ≥1200; висота <500 — плеєр не закріплено).
+   Будова: `.shell` (position: relative — система координат PlayerHost) →
+     `.top` — сітка «основна колонка | чат» (плеєр, підпис, «Перший ряд», «Зараз і далі» поруч із чатом);
+     `.wide` — секції на всю ширину під обома колонками (мапа поясів), сторінка порталить їх сюди.
    Окремий модуль, бо 1200 px немає серед точок Tailwind, а довільні значення в класах заборонені. */
 
 .shell {
-  display: block;
+  position: relative;
   width: 100%;
   max-width: var(--spacing-content-max);
   margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.top {
+  display: block;
 }
 
 .main {
@@ -15,8 +23,11 @@
   outline: none;
 }
 
-/* Телефон і планшет-портрет: колонки чату немає (чат — вкладка сторінки). */
+/* Телефон і планшет-портрет: колонки чату немає (чат — вкладка сторінки), широкого слоту теж (мапа у вкладці). */
 .chat {
+  display: none;
+}
+.wide:empty {
   display: none;
 }
 
@@ -36,10 +47,13 @@
 /* Планшет-альбом: як десктоп, вужчий чат. */
 @media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) {
   .shell {
+    padding: var(--spacing-6) var(--spacing-margin-mobile) 0;
+  }
+  .top {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
     gap: var(--spacing-4);
-    padding-inline: var(--spacing-margin-mobile);
+    align-items: start;
   }
   .chat {
     display: block;
@@ -50,13 +64,16 @@
   }
 }
 
-/* Десктоп: плеєр ліворуч (rounded.lg), чат праворуч — sticky-колонка на висоту вікна. */
+/* Десктоп (`Main`): поля 24/32, основна колонка й чат 340 px з проміжком 24; плеєр rounded.lg. */
 @media (min-width: 1200px) {
   .shell {
+    padding: var(--spacing-6) var(--spacing-margin-desktop) 0;
+  }
+  .top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     gap: var(--spacing-6);
-    padding-inline: var(--spacing-margin-desktop);
+    align-items: start;
   }
   .chat {
     display: block;
@@ -66,12 +83,19 @@
   }
 }
 
+/* Колонка чату (`Main`): sticky 16 px від верху, висота вікна − 104 px (560…840), surface, rounded.lg. */
 .chat {
   position: sticky;
-  top: 0;
+  top: var(--spacing-4);
   align-self: start;
-  height: 100vh;
-  height: 100dvh;
+  box-sizing: border-box;
+  height: calc(100vh - 104px);
+  height: calc(100dvh - 104px);
+  min-height: 560px;
+  max-height: 840px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
 }
 
 /* Сюди ChatPanel, а ChatSlotPanel (P18) порталиться на його місце. */
@@ -86,7 +110,17 @@
   display: none;
 }
 @media (min-width: 768px) {
-  .shell:has(> .chat[data-chat-hidden='true']:not([data-chat-forced='true'])) {
+  .top:has(> .chat[data-chat-hidden='true']:not([data-chat-forced='true'])) {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Секції на всю ширину (`Main`: мапа поясів — 32 px під сіткою). */
+.wide {
+  min-width: 0;
+}
+@media (min-width: 768px) {
+  .wide {
+    margin-top: var(--spacing-8);
   }
 }

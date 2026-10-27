@@ -7,6 +7,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/primitives/Button';
+import { cn } from '@/components/primitives/cn';
 import type { RoomId } from '@/lib/data/types';
 import { formatCount, useHiddenCount } from '@/stores/chat';
 
@@ -22,11 +23,12 @@ export function ChatHiddenButton({ placement, room, onShow, className }: ChatHid
   const t = useTranslations('chat');
   const count = useHiddenCount(room);
   return (
-    <Button type="button" variant="tonal" compact iconLeft="smile" onClick={onShow} className={className} data-chat-hidden-button={placement}>
+    // Макет `Desk-Cookies-Wide`: secondary, іконка повідомлення, лічильник на border-фоні.
+    <Button type="button" variant="secondary" iconLeft="message" onClick={onShow} className={cn('ps-3.5 pe-3', className)} data-chat-hidden-button={placement}>
       {placement === 'desktop' ? t('showChat') : t('show')}
       {count > 0 ? (
         <>
-          <span aria-hidden="true" className="rounded-full bg-highlight px-1.5 text-label-badge-chat text-on-highlight">
+          <span aria-hidden="true" className="inline-flex h-5.5 items-center rounded-full bg-border px-1.75 text-label-badge-chat font-bold text-text">
             {formatCount(count)}
           </span>
           <span className="sr-only">{t('unreadCount', { count })}</span>

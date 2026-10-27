@@ -78,18 +78,29 @@ export function buildMapModel(data: Dataset): MapModel {
   return { zones, cities };
 }
 
-/** Геометрія з `data/zonemap.json` (T079). */
+/** Геометрія з `data/zonemap.json` (T079): проекція Міллера в кадрі макета (`scripts/build_zonemap.mjs`). */
 export interface ZoneMapGeometry {
-  meta: { width: number; height: number; latTop: number; latBottom: number };
+  meta: { width: number; height: number; lon0: number; pxPerDeg: number; equatorY: number };
   zones: { offset: string; offsetMinutes: number; zoneId: string; d: string; label: [number, number] }[];
   markers: { zoneId: string; x: number; y: number }[];
+  /** Межі між tzid на суходолі (≈ кордони країн), один шлях. */
+  borders?: string;
+  /** Лінії поясів в океані, один шлях. */
+  grid?: string;
 }
 
-/** `mapPoint` (0–1 по всьому світу, lat +90…−90) → відсотки видимої частини мапи. */
+/** lon/lat → пікселі мапи (та сама проекція Міллера, що й у скрипті збирання). */
+export function projectLonLat(lon: number, lat: number, meta: ZoneMapGeometry['meta']): { x: number; y: number } {
+  const dLon = (((lon - meta.lon0) % 360) + 360) % 360;
+  const r = (meta.pxPerDeg * 180) / Math.PI;
+  const phi = (lat * Math.PI) / 180;
+  return { x: dLon * meta.pxPerDeg, y: meta.equatorY - r * 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * phi)) };
+}
+
+/** `mapPoint` (0–1 по всьому світу в рівнопроміжних координатах, lat +90…−90) → відсотки полотна мапи. */
 export function pointToPercent(p: { x: number; y: number }, meta: ZoneMapGeometry['meta']): { left: number; top: number } {
-  const lat = 90 - p.y * 180;
-  const top = ((meta.latTop - lat) / (meta.latTop - meta.latBottom)) * 100;
-  return { left: p.x * 100, top };
+  const { x, y } = projectLonLat(p.x * 360 - 180, 90 - p.y * 180, meta);
+  return { left: (x / meta.width) * 100, top: (y / meta.height) * 100 };
 }
 
 /** «UTC+5:45» для підпису в картці поясу (UTC лише там). */

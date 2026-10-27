@@ -1,7 +1,7 @@
 /**
  * US1 — крайні випадки ефіру (T066): подія без трансляції → сцена відліку (FR-015);
  * Facebook без згоди → картка на місці плеєра (FR-044); `onError(101)` → наступне джерело й повідомлення (FR-043);
- * рядок «За вашим графіком зараз — <Місто> · Перейти ›» (FR-014); мініплеєр на десктопі (FR-045);
+ * рядок «За вашим графіком зараз — <Місто> · Перейти ›» (FR-014); під відео при прокрутці нічого не плаває (мініплеєра немає — рішення власника);
  * закріплений плеєр ≥ 200 px на телефоні.
  */
 import type { Page } from '@playwright/test';
@@ -97,23 +97,25 @@ test.describe('US1 · крайні випадки ефіру', () => {
     await expect(page.locator('[data-schedule-hint]')).toHaveCount(0);
   });
 
-  test('десктоп: мініплеєр при прокрутці ≥ 200×200 і не закриває чат (FR-045)', async ({ page, ytStub }) => {
-    test.skip(isPhone(page), 'мініплеєр лише на десктопі');
+  test('десктоп: під відео при прокрутці нічого не плаває; плеєр точно над слотом і прокручується разом із ним', async ({ page, ytStub }) => {
+    test.skip(isPhone(page), 'десктоп');
     await gotoAt(page, '2027-01-01T01:50:00+02:00', 1);
     await ytStub.waitForPlayer();
-    await page.mouse.wheel(0, 2_000);
-    const mini = page.locator('[data-mini-player]');
-    await expect(mini).toBeVisible();
-    const box = await mini.boundingBox();
-    expect(box!.width).toBeGreaterThanOrEqual(200);
-    await expectPlayerMinSize(page);
-    const chat = await page.locator('#chat').boundingBox();
-    const player = await playerBox(page);
-    if (chat && player) {
-      const overlapX = Math.max(0, Math.min(chat.x + chat.width, player.x + player.width) - Math.max(chat.x, player.x));
-      const overlapY = Math.max(0, Math.min(chat.y + chat.height, player.y + player.height) - Math.max(chat.y, player.y));
-      expect(overlapX * overlapY, 'мініплеєр не закриває чат').toBe(0);
-    }
+    const rects = () =>
+      page.evaluate(() => {
+        const r = (s: string) => {
+          const b = document.querySelector(s)!.getBoundingClientRect();
+          return [b.x, b.y, b.width, b.height].map((v) => Math.round(v));
+        };
+        return { host: r('[data-player-host] iframe'), slot: r('[data-player-slot="main"]') };
+      });
+    const before = await rects();
+    expect(before.host).toEqual(before.slot);
+    await page.mouse.wheel(0, 800);
+    await expect.poll(async () => (await rects()).slot[1]).toBeLessThan((before.slot[1] ?? 0) - 500);
+    const after = await rects();
+    expect(after.host).toEqual(after.slot);
+    await expect(page.locator('[data-mini-player]')).toHaveCount(0);
     expect((await ytStub.counters()).created).toBe(1);
   });
 

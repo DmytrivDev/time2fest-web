@@ -79,9 +79,9 @@ export function SeatPill({ seat, participant, countryName, state = 'idle', fresh
 
   const body = (
     <>
-      <Flag code={participant.flagCode} size="sm" decorative />
+      <Flag code={participant.flagCode} size="pill" decorative className="t2f-seat-flag" />
       <span className="whitespace-nowrap">{participant.name}</span>
-      <span aria-hidden="true" className="leading-none" style={{ fontSize: 'var(--first-row-wall-emoji-size)' }}>
+      <span aria-hidden="true" className="t2f-seat-emoji">
         {emojiSymbol(participant.emojiId)}
       </span>
       {mine ? (

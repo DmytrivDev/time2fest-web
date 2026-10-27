@@ -23,6 +23,8 @@ import { cn } from './cn';
 import { IconButton } from './IconButton';
 
 export const CHAT_SLOT_ID = 'chat-slot';
+/** Слот секцій на всю ширину під сіткою «колонка | чат» (LiveShell). */
+export const WIDE_SLOT_ID = 'page-wide';
 
 export type ChatSlotPanelVariant = 'form' | 'nonmodal' | 'accent';
 

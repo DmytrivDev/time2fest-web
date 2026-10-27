@@ -15,8 +15,6 @@ import {
 } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
-import { IconButton } from '@/components/primitives/IconButton';
-import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
@@ -33,6 +31,7 @@ import {
 } from './MapModel';
 import { MapTapCard, ZoneCard, ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
 import './ZoneMap.css';
+import m from './zoneMap.module.css';
 
 export { MapLegend } from './MapLegend';
 export { HowToPopover, MapTapCard, ZoneCard } from './ZoneMapCards';
@@ -57,6 +56,8 @@ export interface ZoneMapProps {
   defaultLayer?: 'zones' | 'viewers';
   /** Вибраний пояс на старті (картка поясу вже відкрита). */
   defaultSelectedZoneId?: string;
+  /** Місто ефіру: біля його точки — підпис «Лондон · наживо — дивитися» (макет). */
+  airCityId?: string;
   /** Геометрія (`data/zonemap.json`); без неї підвантажується окремим шматком, поки показано скелетон. */
   geometry?: ZoneMapGeometry;
   className?: string;
@@ -64,7 +65,6 @@ export interface ZoneMapProps {
 
 type Selection = { kind: 'zone'; id: string } | { kind: 'city'; id: string } | null;
 
-const ZOOM_STEPS = [1, 1.5, 2, 3] as const;
 const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
 const PHONE_QUERY = '(max-width: 767.98px)';
 
@@ -120,7 +120,7 @@ function useGeometry(initial: ZoneMapGeometry | undefined, root: RefObject<HTMLE
 
 const FILL_CLASS: Record<ZoneState, string> = { past: 'is-past', live: 'is-live', next: 'is-next', future: 'is-ahead' };
 const MARKER_CLASS: Record<ZoneState, string> = {
-  past: 'bg-zone-past border-border-strong',
+  past: 'bg-border border-border-strong',
   live: 'bg-zone-live border-background',
   next: 'bg-zone-next border-background',
   future: 'bg-zone-future border-background',
@@ -139,6 +139,7 @@ export function ZoneMap({
   defaultView = 'map',
   defaultLayer = 'zones',
   defaultSelectedZoneId,
+  airCityId,
   geometry: geometryProp,
   className,
 }: ZoneMapProps) {
@@ -159,12 +160,11 @@ export function ZoneMap({
 
   const [view, setView] = useState<'map' | 'list'>(defaultView);
   const [layer, setLayer] = useState<'zones' | 'viewers'>(defaultLayer);
-  const [zoomIdx, setZoomIdx] = useState(0);
   const [selection, setSelection] = useState<Selection>(
     defaultSelectedZoneId ? { kind: 'zone', id: defaultSelectedZoneId } : null,
   );
-  const [hoverId, setHoverId] = useState<string | null>(null);
-  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [, setHoverId] = useState<string | null>(null);
+  const [, setFocusedId] = useState<string | null>(null);
   const [ringId, setRingId] = useState<string | null>(null);
   const [tabStopId, setTabStopId] = useState<string | null>(null);
 
@@ -261,16 +261,218 @@ export function ZoneMap({
     closeSelection();
   }
 
-  const aspect = geometry ? geometry.meta.width / geometry.meta.height : 2.6;
-  const zoom = ZOOM_STEPS[zoomIdx] ?? 1;
+  const aspect = geometry ? geometry.meta.width / geometry.meta.height : 1781 / 911;
   const hatchId = `${uid}-hatch`;
 
-  const previewId = !selection && !isPhone ? (hoverId ?? focusedId) : null;
-  const previewZone = previewId ? zoneById.get(previewId) : undefined;
   const pinnedZone = selectedZoneId ? zoneById.get(selectedZoneId) : undefined;
 
   const liveZone = ordered.find((z) => stateOf(z.id) === 'live');
   const summary = liveZone ? `${liveZone.countries.slice(0, 3).map((c) => c.name).join(', ')} · ${t('state.live')}` : '';
+  // Підпис біля точки трансляції в ефірі (макет: «Лондон · наживо — дивитися»).
+  const labelCity = cities.find((c) => c.stream === 'live' && stateOf(c.zoneId) === 'live' && (!airCityId || c.id === airCityId));
+
+  const card =
+    selectedCity && pinnedZone && isPhone ? (
+      <MapTapCard
+        ref={cardRef}
+        city={selectedCity}
+        country={countryByIso.get(selectedCity.countryIso) ?? pinnedZone.countries[0]!}
+        zone={pinnedZone}
+        state={stateOf(pinnedZone.id)}
+        typeLabel={tType(TYPE_KEY[selectedCity.celebrationType])}
+        onClose={closeSelection}
+      />
+    ) : pinnedZone ? (
+      // Наведення нічого не показує (рішення власника); картка — лише після вибору поясу (клік, Enter).
+      <ZoneCard ref={cardRef} zone={pinnedZone} state={stateOf(pinnedZone.id)} onClose={closeSelection} />
+    ) : null;
+  const cardSlot = (
+    <div id={cardId} data-zone-map-card-slot="" className={cn(!isPhone && 'mt-auto')}>
+      {card}
+    </div>
+  );
+  const hint = (
+    <p id={`${uid}-hint`} className={cn(m.hint, (isPhone || card) && 'sr-only')}>
+      {isPhone ? t('hintPhone') : t('hintDesktop')}
+    </p>
+  );
+
+  const canvas = !geometry ? (
+    failed ? (
+      <StatusMessage kind="error">{t('loadError')}</StatusMessage>
+    ) : (
+      <div aria-busy="true" style={{ aspectRatio: aspect }}>
+        <Skeleton variant="block" className="size-full rounded-md" />
+        <span className="sr-only">{t('loading')}</span>
+      </div>
+    )
+  ) : (
+    <div className={m.mapBox} data-zone-map-scroll="">
+      <div className="relative" style={{ aspectRatio: aspect }}>
+        <svg
+          viewBox={`0 0 ${geometry.meta.width} ${geometry.meta.height}`}
+          role="group"
+          aria-label={summary ? `${t('mapGroup')}. ${summary}` : t('mapGroup')}
+          aria-describedby={`${uid}-hint`}
+          data-zone-map-svg=""
+          className="block size-full"
+        >
+          <defs>
+            <pattern id={hatchId} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="6" height="6" className="t2f-zone-hatch-bg" />
+              <line x1="0" y1="0" x2="0" y2="6" className="t2f-zone-hatch-line" />
+            </pattern>
+          </defs>
+          <rect width={geometry.meta.width} height={geometry.meta.height} className="t2f-zm-ocean" />
+          {geometry.grid ? <path d={geometry.grid} className="t2f-zm-grid" /> : null}
+          <g>
+            {geometry.zones.map((g) => {
+              const zone = zoneById.get(g.zoneId);
+              if (!zone || !g.d) return null;
+              const state = stateOf(g.zoneId);
+              return (
+                <ZonePath
+                  key={g.zoneId}
+                  g={g}
+                  zone={zone}
+                  state={state}
+                  hatchId={hatchId}
+                  tabbable={tabStop === g.zoneId}
+                  selected={selectedZoneId === g.zoneId}
+                  pathRefs={pathRefs}
+                  onKeyDown={onZoneKeyDown}
+                  onFocus={onZoneFocus}
+                  onBlur={() => {
+                    setFocusedId(null);
+                    setRingId(null);
+                  }}
+                  onSelect={() => setSelection({ kind: 'zone', id: g.zoneId })}
+                  onHover={setHoverId}
+                />
+              );
+            })}
+          </g>
+          {geometry.borders ? <path d={geometry.borders} className="t2f-zm-borders" /> : null}
+          {geometry.zones.map((g) =>
+            ringId === g.zoneId ? (
+              <g key={`ring-${g.zoneId}`}>
+                <path d={g.d} data-ring="focus-outer" className="t2f-zone-ring" />
+                <path d={g.d} data-ring="focus" className="t2f-zone-ring" />
+              </g>
+            ) : null,
+          )}
+          {geometry.zones.map((g) =>
+            selectedZoneId === g.zoneId ? <path key={`sel-${g.zoneId}`} d={g.d} data-ring="selected" className="t2f-zone-ring" /> : null,
+          )}
+        </svg>
+
+        <div className="pointer-events-none absolute inset-0" data-zone-map-overlay="">
+          {geometry.markers.map((mk) => {
+            const left = (mk.x / geometry.meta.width) * 100;
+            const top = (mk.y / geometry.meta.height) * 100;
+            return (
+              <span
+                key={mk.zoneId}
+                aria-hidden="true"
+                data-zone-marker={mk.zoneId}
+                className={cn('absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border', MARKER_CLASS[stateOf(mk.zoneId)])}
+                style={{ left: `${left}%`, top: `${top}%` }}
+              />
+            );
+          })}
+          {geometry.zones.map((g) => {
+            const st = stateOf(g.zoneId);
+            if (st !== 'live' && st !== 'next') return null;
+            return (
+              <span
+                key={`icon-${g.zoneId}`}
+                aria-hidden="true"
+                data-zone-icon={st}
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
+                style={{ left: `${(g.label[0] / geometry.meta.width) * 100}%`, top: `${(g.label[1] / geometry.meta.height) * 100}%` }}
+              >
+                {st === 'live' ? (
+                  <span className="block size-1.5 rounded-full bg-background" />
+                ) : (
+                  <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                )}
+              </span>
+            );
+          })}
+          {cities.map((city) => {
+            const country = countryByIso.get(city.countryIso);
+            const st = stateOf(city.zoneId);
+            const onAir = city.stream === 'live' && st === 'live';
+            const pos = pointToPercent(city, geometry.meta);
+            const label = isPhone
+              ? t(onAir ? 'cityAriaStreamCard' : 'cityAriaQuietCard', { city: city.name })
+              : t(onAir ? 'cityAriaStreamLink' : 'cityAriaQuietLink', { city: city.name });
+            const dot = (
+              <span aria-hidden="true" className="relative inline-flex items-center justify-center">
+                {onAir ? (
+                  <>
+                    <span className="t2f-zm-halo size-2.5" />
+                    <span className="t2f-zm-dot-live relative size-2.5 rounded-full bg-zone-live" data-city-dot="live" />
+                  </>
+                ) : (
+                  <span className="t2f-zm-dot-quiet size-2 rounded-full" data-city-dot="quiet" />
+                )}
+              </span>
+            );
+            const cls =
+              't2f-focus pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
+            const style = { left: `${pos.left}%`, top: `${pos.top}%` };
+            if (!isPhone && country) {
+              return (
+                <NextLink key={city.id} href={country.href} aria-label={label} tabIndex={-1} data-city={city.id} className={cls} style={style}>
+                  {dot}
+                </NextLink>
+              );
+            }
+            return (
+              <button
+                key={city.id}
+                type="button"
+                ref={(el) => {
+                  if (el) dotRefs.current.set(city.id, el);
+                  else dotRefs.current.delete(city.id);
+                }}
+                aria-label={label}
+                aria-expanded={selection?.kind === 'city' && selection.id === city.id}
+                aria-controls={cardId}
+                tabIndex={-1}
+                data-city={city.id}
+                // Цілі сусідніх міст (44 px) перекриваються: вибране місто (його картка вже відкрита) — під іншими.
+                className={cn(cls, selection?.kind === 'city' && selection.id === city.id ? 'z-0' : 'z-10')}
+                style={style}
+                onClick={() => setSelection({ kind: 'city', id: city.id })}
+              >
+                {dot}
+              </button>
+            );
+          })}
+          {labelCity ? (
+            <span
+              aria-hidden="true"
+              data-zone-map-live-label=""
+              className={cn(m.liveLabel, isPhone ? m.liveLabelPhone : m.liveLabelDesk)}
+              style={
+                isPhone
+                  ? { left: `calc(${pointToPercent(labelCity, geometry.meta).left}% + 14px)`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
+                  : { right: `calc(${100 - pointToPercent(labelCity, geometry.meta).left}% + 18px)`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
+              }
+            >
+              {t('liveLabel', { city: labelCity.name })}
+              <span className={m.liveLabelWatch}>{isPhone ? t('liveLabelWatchPhone') : t('liveLabelWatch')}</span>
+            </span>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     // Esc із будь-якого місця мапи й картки закриває картку (клавіатурний прийом, не окрема дія).
@@ -281,238 +483,56 @@ export function ZoneMap({
       data-zone-map=""
       data-layout={layout}
       onKeyDown={onRootKeyDown}
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(m.section, className)}
     >
-      <SectionHeader id={headId} title={tNav('map')} />
-
-      <div className="flex flex-wrap justify-between gap-2">
-        {viewers && viewers.length > 0 ? (
+      <div className={m.head}>
+        <h2 id={headId} className={cn('t2f-h2', m.title)}>
+          {tNav('map')}
+        </h2>
+        <div className={m.controls}>
           <SegmentedControl
             semantics="pressed"
             label={t('layerLabel')}
-            value={layer}
+            value={viewers && viewers.length > 0 ? layer : 'zones'}
             onValueChange={(v) => setLayer(v as 'zones' | 'viewers')}
             options={[
               { value: 'zones', label: tNav('zones') },
-              { value: 'viewers', label: tNav('viewersFrom') },
+              { value: 'viewers', label: tNav('viewersFrom'), disabled: !viewers || viewers.length === 0 },
             ]}
           />
-        ) : (
-          <span />
-        )}
-        <SegmentedControl
-          semantics="pressed"
-          label={t('viewLabel')}
-          value={view}
-          onValueChange={(v) => setView(v as 'map' | 'list')}
-          options={[
-            { value: 'map', label: tNav('mapShort') },
-            { value: 'list', label: tNav('list') },
-          ]}
-        />
+          <SegmentedControl
+            semantics="pressed"
+            label={t('viewLabel')}
+            value={view}
+            onValueChange={(v) => setView(v as 'map' | 'list')}
+            // «Список» поки сховано (рішення власника): у макетах головної його вигляду немає; повернеться у вигляді
+            // списку з макета Desk-Countries / Phone-Countries. Компонент ZoneList лишається.
+            options={[{ value: 'map', label: tNav('mapShort') }]}
+          />
+        </div>
       </div>
 
       {view === 'map' ? (
-        <div className="flex flex-col gap-2 rounded-lg bg-surface p-2.5" data-zone-map-canvas="">
-          {geometry ? (
-            <div className="flex justify-end gap-1">
-              <IconButton
-                icon="minus"
-                variant="ring"
-                compact
-                aria-label={tNav('zoomOut')}
-                disabled={zoomIdx === 0}
-                onClick={() => setZoomIdx((i) => Math.max(0, i - 1))}
-              />
-              <IconButton
-                icon="plus"
-                variant="ring"
-                compact
-                aria-label={tNav('zoomIn')}
-                disabled={zoomIdx === ZOOM_STEPS.length - 1}
-                onClick={() => setZoomIdx((i) => Math.min(ZOOM_STEPS.length - 1, i + 1))}
-              />
+        isPhone ? (
+          <>
+            <div className={m.canvas} data-zone-map-canvas="">
+              {canvas}
+              {hint}
             </div>
-          ) : null}
-
-          {failed ? (
-            <StatusMessage kind="error">{t('loadError')}</StatusMessage>
-          ) : !geometry ? (
-            <div aria-busy="true" style={{ aspectRatio: aspect }}>
-              <Skeleton variant="block" className="size-full rounded-md" />
-              <span className="sr-only">{t('loading')}</span>
+            {cardSlot}
+          </>
+        ) : (
+          <div className={m.canvas} data-zone-map-canvas="">
+            <div className={m.mapCol}>{canvas}</div>
+            <div className={m.side}>
+              <MapLegend layout={layout} variant="column" />
+              {cardSlot}
+              {hint}
             </div>
-          ) : (
-            <div className={cn('rounded-md', zoom > 1 ? 'overflow-auto' : 'overflow-hidden')} data-zone-map-scroll="">
-              <div className="relative" style={{ width: `${zoom * 100}%`, aspectRatio: aspect }}>
-                <svg
-                  viewBox={`0 0 ${geometry.meta.width} ${geometry.meta.height}`}
-                  role="group"
-                  aria-label={summary ? `${t('mapGroup')}. ${summary}` : t('mapGroup')}
-                  aria-describedby={`${uid}-hint`}
-                  data-zone-map-svg=""
-                  className="block size-full"
-                >
-                  <defs>
-                    <pattern id={hatchId} width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                      <rect width="10" height="10" className="t2f-zone-hatch-bg" />
-                      <line x1="0" y1="0" x2="0" y2="10" className="t2f-zone-hatch-line" />
-                    </pattern>
-                  </defs>
-                  <g>
-                    {geometry.zones.map((g) => {
-                      const zone = zoneById.get(g.zoneId);
-                      if (!zone) return null;
-                      const state = stateOf(g.zoneId);
-                      return (
-                        <ZonePath
-                          key={g.zoneId}
-                          g={g}
-                          zone={zone}
-                          state={state}
-                          hatchId={hatchId}
-                          tabbable={tabStop === g.zoneId}
-                          selected={selectedZoneId === g.zoneId}
-                          pathRefs={pathRefs}
-                          onKeyDown={onZoneKeyDown}
-                          onFocus={onZoneFocus}
-                          onBlur={() => {
-                            setFocusedId(null);
-                            setRingId(null);
-                          }}
-                          onSelect={() => setSelection({ kind: 'zone', id: g.zoneId })}
-                          onHover={setHoverId}
-                        />
-                      );
-                    })}
-                  </g>
-                  {geometry.zones.map((g) =>
-                    ringId === g.zoneId ? (
-                      <g key={`ring-${g.zoneId}`}>
-                        <path d={g.d} data-ring="focus-outer" className="t2f-zone-ring" />
-                        <path d={g.d} data-ring="focus" className="t2f-zone-ring" />
-                      </g>
-                    ) : null,
-                  )}
-                  {geometry.zones.map((g) =>
-                    selectedZoneId === g.zoneId ? <path key={`sel-${g.zoneId}`} d={g.d} data-ring="selected" className="t2f-zone-ring" /> : null,
-                  )}
-                </svg>
-
-                <div className="pointer-events-none absolute inset-0" data-zone-map-overlay="">
-                  {geometry.markers.map((m) => {
-                    const left = (m.x / geometry.meta.width) * 100;
-                    const top = (m.y / geometry.meta.height) * 100;
-                    return (
-                      <span
-                        key={m.zoneId}
-                        aria-hidden="true"
-                        data-zone-marker={m.zoneId}
-                        className={cn(
-                          'absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2',
-                          MARKER_CLASS[stateOf(m.zoneId)],
-                        )}
-                        style={{ left: `${left}%`, top: `${top}%` }}
-                      />
-                    );
-                  })}
-                  {geometry.zones.map((g) => {
-                    const st = stateOf(g.zoneId);
-                    if (st !== 'live' && st !== 'next') return null;
-                    return (
-                      <span
-                        key={`icon-${g.zoneId}`}
-                        aria-hidden="true"
-                        data-zone-icon={st}
-                        className="absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
-                        style={{ left: `${(g.label[0] / geometry.meta.width) * 100}%`, top: `${(g.label[1] / geometry.meta.height) * 100}%` }}
-                      >
-                        {st === 'live' ? (
-                          <span className="block size-2.5 rounded-full bg-background" />
-                        ) : (
-                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                            <circle cx="12" cy="12" r="9" />
-                            <path d="M12 7v5l3 2" />
-                          </svg>
-                        )}
-                      </span>
-                    );
-                  })}
-                  {cities.map((city) => {
-                    const country = countryByIso.get(city.countryIso);
-                    const st = stateOf(city.zoneId);
-                    const onAir = city.stream === 'live' && st === 'live';
-                    const pos = pointToPercent(city, geometry.meta);
-                    const label = isPhone
-                      ? t(onAir ? 'cityAriaStreamCard' : 'cityAriaQuietCard', { city: city.name })
-                      : t(onAir ? 'cityAriaStreamLink' : 'cityAriaQuietLink', { city: city.name });
-                    const dot = (
-                      <span aria-hidden="true" className="relative inline-flex items-center justify-center">
-                        {onAir ? (
-                          <>
-                            <span className="t2f-zm-halo size-2.5" />
-                            <span className="relative size-2.5 rounded-full bg-zone-live ring-2 ring-text" data-city-dot="live" />
-                          </>
-                        ) : (
-                          <span className="size-2 rounded-full bg-text-secondary ring-2 ring-background" data-city-dot="quiet" />
-                        )}
-                      </span>
-                    );
-                    const cls =
-                      't2f-focus pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
-                    const style = { left: `${pos.left}%`, top: `${pos.top}%` };
-                    if (!isPhone && country) {
-                      return (
-                        <NextLink
-                          key={city.id}
-                          href={country.href}
-                          aria-label={label}
-                          tabIndex={-1}
-                          data-city={city.id}
-                          className={cls}
-                          style={style}
-                        >
-                          {dot}
-                        </NextLink>
-                      );
-                    }
-                    return (
-                      <button
-                        key={city.id}
-                        type="button"
-                        ref={(el) => {
-                          if (el) dotRefs.current.set(city.id, el);
-                          else dotRefs.current.delete(city.id);
-                        }}
-                        aria-label={label}
-                        aria-expanded={selection?.kind === 'city' && selection.id === city.id}
-                        aria-controls={cardId}
-                        tabIndex={-1}
-                        data-city={city.id}
-                        // Цілі сусідніх міст (44 px) перекриваються: вибране місто (його картка вже відкрита) — під іншими.
-                        className={cn(cls, selection?.kind === 'city' && selection.id === city.id ? 'z-0' : 'z-10')}
-                        style={style}
-                        onClick={() => setSelection({ kind: 'city', id: city.id })}
-                      >
-                        {dot}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
-          <p id={`${uid}-hint`} className="text-caption text-text-muted">
-            {isPhone ? t('hintPhone') : t('hintDesktop')}
-          </p>
-        </div>
+          </div>
+        )
       ) : (
-        <ZoneList
-          zones={ordered}
-          stateOf={stateOf}
-          selectedId={selectedZoneId}
-          onSelect={(id) => setSelection({ kind: 'zone', id })}
-        />
+        <ZoneList zones={ordered} stateOf={stateOf} selectedId={selectedZoneId} onSelect={(id) => setSelection({ kind: 'zone', id })} />
       )}
 
       {layer === 'viewers' && viewers && viewers.length > 0 ? (
@@ -531,25 +551,8 @@ export function ZoneMap({
         </details>
       ) : null}
 
-      <div id={cardId} data-zone-map-card-slot="">
-        {selectedCity && pinnedZone && isPhone ? (
-          <MapTapCard
-            ref={cardRef}
-            city={selectedCity}
-            country={countryByIso.get(selectedCity.countryIso) ?? pinnedZone.countries[0]!}
-            zone={pinnedZone}
-            state={stateOf(pinnedZone.id)}
-            typeLabel={tType(TYPE_KEY[selectedCity.celebrationType])}
-            onClose={closeSelection}
-          />
-        ) : pinnedZone ? (
-          <ZoneCard ref={cardRef} zone={pinnedZone} state={stateOf(pinnedZone.id)} onClose={closeSelection} />
-        ) : previewZone ? (
-          <ZoneCard zone={previewZone} state={stateOf(previewZone.id)} pinned={false} />
-        ) : null}
-      </div>
-
-      <MapLegend layout={layout} className="mt-1" />
+      {view === 'list' ? cardSlot : null}
+      {isPhone || view === 'list' ? <MapLegend layout={layout} className={m.legendBelow} /> : null}
     </section>
   );
 }

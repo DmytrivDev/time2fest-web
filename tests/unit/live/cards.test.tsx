@@ -67,7 +67,7 @@ describe('EventCard', () => {
 
   it('у графіку й ваша північ: дві позначки, назва кнопки «Прибрати з графіка»', () => {
     renderWithApp(<EventCard {...AZORES} status="soon" inSchedule isOwnMidnight onToggleSchedule={() => undefined} />);
-    expect(screen.getByText('У вашому графіку')).toBeInTheDocument();
+    expect(screen.getByText('У графіку')).toBeInTheDocument();
     expect(screen.getByText('ваша північ')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Прибрати з графіка: Азорські острови' })).toHaveAttribute('aria-pressed', 'true');
   });

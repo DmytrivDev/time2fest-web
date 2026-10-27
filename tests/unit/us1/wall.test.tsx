@@ -74,7 +74,7 @@ describe('FirstRowWall', () => {
     const { container } = renderApp(<FirstRowWall city="Лондон" seats={seats} freeCount={1} phase="idle" countryName={countryName} />);
     expect(container.querySelectorAll('[data-seat]')).toHaveLength(9);
     expect(container.querySelectorAll('[data-seat][data-state="lit"]')).toHaveLength(0);
-    expect(screen.getByText('+ 1 вільне місце')).toBeInTheDocument();
+    expect(screen.getByText('1 вільне')).toBeInTheDocument();
     expect(screen.queryByText('З Новим роком, перший ряд!')).toBeNull();
   });
 

@@ -2,12 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
-import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import { IconButton, IconLink } from '@/components/primitives/IconButton';
-import { Link } from '@/components/primitives/Link';
-import { Logo } from '@/components/primitives/Logo';
+import styles from './header.module.css';
 
 export interface HeaderUser {
   /** Нік; з нього береться літера аватара й назва кнопки. */
@@ -35,10 +32,10 @@ export interface HeaderProps {
 const PASS_ICON_ACTIVE = 'ticket-check' as const;
 
 /**
- * Хедер (ІНВ C23). Телефон 56 px: логотип, «Пас», вхід / аватар, «Меню».
- * Планшет: + «Головна», «Країни», мова. Десктоп 64 px: логотип, «Головна», «Країни», мова,
- * «Підтримати», «Новорічний пас», «Увійти» / аватар; меню немає.
- * Поверхня змінюється лише CSS (помічники `t2f-hide-*` у primitives.css), тож на сервері й клієнті розмітка однакова.
+ * Хедер (ІНВ C23) за макетами `Main` / `Phone-Home-Live`. Телефон 56 px: знак, «Пас», вхід / аватар, «Меню».
+ * Планшет: + «Головна», «Країни», мова. Десктоп 64 px: знак, «Головна», «Країни» (підкреслення поточної),
+ * мова «УКР ⌄», «Підтримати», «Новорічний пас» (рамка), «Увійти»; меню немає.
+ * Поверхня змінюється лише CSS (`header.module.css`), тож на сервері й клієнті розмітка однакова.
  */
 export function Header({
   hasPass = false,
@@ -54,93 +51,93 @@ export function Header({
   const t = useTranslations('header');
 
   return (
-    <header
-      className={cn(
-        'border-b border-border bg-background',
-        className,
-      )}
-    >
-      <div className="mx-auto flex h-14 max-w-content-max items-center gap-1 ps-4 pe-1 md:h-16 md:gap-2 md:px-8">
-        <Logo label={t('logoLabel')} className="me-auto" />
+    <header className={cn(styles.header, className)}>
+      <div className={styles.bar}>
+        <NextLink href="/" aria-label={t('logoLabel')} className={cn('t2f-focus rounded-sm', styles.logo)}>
+          {/* Знак із макетів (PNG 300×86); ширина 112 px телефон / 150 px ширше. */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- статичний експорт, зображення вже потрібного розміру */}
+          <img src="/brand/logo.png" alt="" width={150} height={43} />
+        </NextLink>
 
-        <nav aria-label={t('navLabel')} className="t2f-hide-until-tablet me-2 flex items-center gap-1">
-          <Link variant="nav" href="/" current={current === 'home'}>
+        <nav aria-label={t('navLabel')} className={styles.nav}>
+          <NextLink href="/" aria-current={current === 'home' ? 'page' : undefined} className={cn('t2f-focus', styles.navLink)}>
             {t('home')}
-          </Link>
-          <Link variant="nav" href="/countries" current={current === 'countries'}>
+          </NextLink>
+          <NextLink
+            href="/countries"
+            aria-current={current === 'countries' ? 'page' : undefined}
+            className={cn('t2f-focus', styles.navLink)}
+          >
             {t('countries')}
-          </Link>
+          </NextLink>
         </nav>
 
-        <Button
-          variant="ghost"
-          iconLeft="globe"
-          className="t2f-hide-until-tablet"
+        <button
+          type="button"
+          className={cn('t2f-focus', styles.btn, styles.lang, styles.tabletUp)}
           aria-label={t('language', { language: language.name })}
           aria-expanded={languageOpen}
           onClick={onLanguageClick}
         >
+          <Icon name="globe" size={18} />
           {language.code}
-        </Button>
+          <Icon name="chevron-down" size={14} strokeWidth={2} />
+        </button>
 
         {/* «Підтримати» — інертне посилання: чайові (O-TIPS) з'являться в наступній області. */}
-        <Button variant="tonal" asChild className="t2f-hide-until-desktop">
-          <NextLink href="#">{t('support')}</NextLink>
-        </Button>
+        <NextLink href="#" className={cn('t2f-focus', styles.btn, styles.deskOnly)}>
+          <Icon name="heart" size={18} />
+          {t('support')}
+        </NextLink>
 
         {/* «Пас» — інертне посилання до S-PASS (наступна область). Телефон і планшет: коротко. */}
-        <Button
-          variant="secondary"
-          size="md"
-          compact
-          asChild
-          className="t2f-hide-from-desktop"
+        <NextLink
+          href="#"
+          aria-label={hasPass ? t('passActiveA11y') : t('passA11y')}
+          className={cn('t2f-focus', styles.btn, styles.pass, styles.phoneTablet)}
         >
-          <NextLink href="#" aria-label={hasPass ? t('passActiveA11y') : t('passA11y')}>
-            <Icon name={hasPass ? PASS_ICON_ACTIVE : 'ticket'} size={18} />
-            {hasPass ? t('passShortActive') : t('passShort')}
-          </NextLink>
-        </Button>
+          <Icon name={hasPass ? PASS_ICON_ACTIVE : 'ticket'} size={18} />
+          {hasPass ? t('passShortActive') : t('passShort')}
+        </NextLink>
         {/* Десктоп: повна назва. */}
-        <Button variant="secondary" size="md" asChild className="t2f-hide-until-desktop">
-          <NextLink href="#" aria-label={hasPass ? t('passFullActiveA11y') : t('passFull')}>
-            <Icon name={hasPass ? PASS_ICON_ACTIVE : 'ticket'} size={18} />
-            {hasPass ? t('passFullActive') : t('passFull')}
-          </NextLink>
-        </Button>
+        <NextLink
+          href="#"
+          aria-label={hasPass ? t('passFullActiveA11y') : undefined}
+          className={cn('t2f-focus', styles.btn, styles.pass, styles.deskOnly)}
+        >
+          <Icon name={hasPass ? PASS_ICON_ACTIVE : 'ticket'} size={18} />
+          {hasPass ? t('passFullActive') : t('passFull')}
+        </NextLink>
 
         {/* Вхід / профіль — інертні (наступна область). */}
         {user ? (
-          <NextLink
-            href="#"
-            aria-label={t('profile', { name: user.name })}
-            className="t2f-focus inline-flex size-touch-min items-center justify-center rounded-full"
-          >
-            <span
-              aria-hidden="true"
-              className="inline-flex size-8 items-center justify-center rounded-full bg-surface-raised text-label-sm text-text"
-            >
+          <NextLink href="#" aria-label={t('profile', { name: user.name })} className={cn('t2f-focus', styles.iconBtn)}>
+            <span aria-hidden="true" className={styles.avatar}>
               {user.name.trim().charAt(0).toUpperCase()}
             </span>
           </NextLink>
         ) : (
           <>
-            <IconLink icon="user" aria-label={t('signIn')} href="#" className="t2f-hide-from-desktop" iconSize={22} />
-            <Button variant="ghost" asChild className="t2f-hide-until-desktop">
-              <NextLink href="#">{t('signIn')}</NextLink>
-            </Button>
+            <NextLink href="#" aria-label={t('signIn')} className={cn('t2f-focus', styles.iconBtn, styles.phoneTablet)}>
+              <Icon name="user" size={22} />
+            </NextLink>
+            <NextLink href="#" className={cn('t2f-focus', styles.btn, styles.signIn, styles.deskOnly)}>
+              <Icon name="user" size={18} />
+              {t('signIn')}
+            </NextLink>
           </>
         )}
 
-        <IconButton
-          icon="menu"
-          iconSize={22}
+        <button
+          type="button"
           aria-label={t('menu')}
           aria-expanded={menuOpen}
           aria-haspopup="dialog"
           onClick={onMenuClick}
-          className="t2f-hide-from-desktop"
-        />
+          className={cn('t2f-focus', styles.iconBtn, styles.phoneTablet)}
+        >
+          <Icon name="menu" size={22} />
+        </button>
       </div>
     </header>
   );

@@ -153,10 +153,15 @@ describe('ZoneMap: клавіатура', () => {
 });
 
 describe('ZoneMap: інше', () => {
-  it('перемикач «Мапа / Список»: список — текстова альтернатива з 38 кнопками-поясами', () => {
+  it('перемикач вигляду: «Список» поки сховано, лише «Мапа» (рішення власника)', () => {
     const { view } = setup();
-    fireEvent.click(screen.getByRole('button', { name: 'Список' }));
-    expect(view.container.querySelector('svg[data-zone-map-svg]')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Мапа' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.queryByRole('button', { name: 'Список' })).toBeNull();
+    expect(view.container.querySelector('svg[data-zone-map-svg]')).not.toBeNull();
+  });
+
+  it('defaultView="list": текстовий список з 38 кнопками-поясами лишається доступним', () => {
+    const { view } = setup({ defaultView: 'list' });
     expect(view.container.querySelectorAll('[data-zone-list] button')).toHaveLength(38);
   });
 

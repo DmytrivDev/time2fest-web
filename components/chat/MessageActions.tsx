@@ -8,6 +8,7 @@
  * - `ReactionsRow` — реакції під текстом: кнопка-лічильник «Реакція Хлопавка: 12, твоя. Прибрати».
  */
 import { useTranslations } from 'next-intl';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import {
@@ -38,11 +39,39 @@ export interface ReactionsRowProps {
   className?: string;
 }
 
-/** Реакції під повідомленням; без реакцій нічого не малюється. */
+/** Імітована затримка «надсилання» реакції: поки йде, на чипі крихітний індикатор і повторний клік ігнорується. */
+const REACT_PENDING_MS = 450;
+
+/**
+ * Реакції під повідомленням; без реакцій нічого не малюється. Клік — оптимістично й одразу (лічильник змінюється
+ * миттєво), чип показує крихітне «надсилається» і не приймає повторних кліків. Своя реакція — лічильник жовтий.
+ */
 export function ReactionsRow({ message, onReact, tabStop = false, className }: ReactionsRowProps) {
   const t = useTranslations('chat');
+  const [pending, setPending] = useState<ReadonlySet<ReactionId>>(() => new Set());
+  const timers = useRef(new Map<ReactionId, number>());
+  useEffect(() => {
+    const map = timers.current;
+    return () => map.forEach((id) => window.clearTimeout(id));
+  }, []);
   const entries = REACTION_ORDER.filter((id) => (message.reactions?.[id]?.count ?? 0) > 0);
   if (!entries.length) return null;
+  const toggle = (id: ReactionId, mine: boolean) => {
+    if (pending.has(id)) return;
+    onReact?.(message, id, !mine);
+    setPending((p) => new Set(p).add(id));
+    timers.current.set(
+      id,
+      window.setTimeout(() => {
+        timers.current.delete(id);
+        setPending((p) => {
+          const n = new Set(p);
+          n.delete(id);
+          return n;
+        });
+      }, REACT_PENDING_MS),
+    );
+  };
   return (
     <div role="group" aria-label={t('reactionsGroup')} data-row="reactions" className={cn('flex flex-wrap gap-1.5', className)}>
       {entries.map((id) => {
@@ -61,24 +90,22 @@ export function ReactionsRow({ message, onReact, tabStop = false, className }: R
             </span>
           );
         }
+        const busy = pending.has(id);
         return (
           <button
             key={id}
             type="button"
             tabIndex={tabStop ? 0 : -1}
             aria-label={t('reactionLabel', { name, count: r.count, mine: r.mine ? 'yes' : 'no' })}
-            onClick={() => onReact?.(message, id, !r.mine)}
-            className="t2f-focus t2f-transition -my-2.5 inline-flex min-h-touch-min items-center rounded-full"
+            aria-busy={busy || undefined}
+            data-mine={r.mine ? 'true' : undefined}
+            onClick={() => toggle(id, r.mine ?? false)}
+            className="t2f-chip -my-2.5 inline-flex min-h-touch-min items-center rounded-full"
           >
-            <span
-              aria-hidden="true"
-              className={cn(
-                'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-caption text-text',
-                r.mine ? 'border-text bg-surface-raised' : 'border-border-strong',
-              )}
-            >
+            <span aria-hidden="true" className="t2f-chip-body inline-flex h-6 items-center gap-1 rounded-full border border-border-strong px-2 text-caption text-text">
               <span>{REACTION_SYMBOLS[id]}</span>
-              {r.count}
+              <span className="t2f-chip-count">{r.count}</span>
+              {busy ? <span className="t2f-chip-spin" /> : null}
             </span>
           </button>
         );
@@ -156,14 +183,17 @@ export function MessageActionsSheet({ message, onReact, onReply, onReport, onDon
 export interface MessageActionsMenuProps extends MessageActionHandlers {
   message: ChatMessage;
   tabStop?: boolean;
+  /** Кероване відкриття (клік по повідомленню відкриває те саме меню). */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   className?: string;
 }
 
 /** Меню дій (десктоп): кнопка «Дії з повідомленням» відкриває DropdownMenu. */
-export function MessageActionsMenu({ message, onReact, onReply, onReport, tabStop = false, className }: MessageActionsMenuProps) {
+export function MessageActionsMenu({ message, onReact, onReply, onReport, tabStop = false, open, onOpenChange, className }: MessageActionsMenuProps) {
   const t = useTranslations('chat');
   return (
-    <DropdownMenu>
+    <DropdownMenu {...(open !== undefined ? { open, onOpenChange } : {})}>
       <DropdownMenuTrigger asChild>
         <IconButton
           icon="more"

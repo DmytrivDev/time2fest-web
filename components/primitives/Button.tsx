@@ -68,7 +68,8 @@ export function Button({
   const styleKey: ButtonVariant | 'neutral' = neutral ? 'neutral' : variant;
   const iconSize = size === 'tv' ? 22 : 18;
   const isDisabled = Boolean(disabled) || loading;
-  const text = size === 'tv' ? 'text-tv-text' : compact ? 'text-label-sm' : variant === 'ghost' ? 'text-body-strong' : 'text-label-button';
+  // Макети: підписи кнопок без розрядки (токен label-button має 0.04em — на макетах її немає).
+  const text = size === 'tv' ? 'text-tv-text' : compact ? 'text-label-sm' : variant === 'ghost' ? 'text-body-strong' : 'text-label-button tracking-normal';
 
   const classes = cn(
     't2f-focus t2f-press t2f-transition inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md border',

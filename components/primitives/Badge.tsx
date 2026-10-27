@@ -37,23 +37,26 @@ export interface BadgeProps {
   season?: string;
   /** ТВ-розмір (`live`: 22 px текст, 40 px висота). */
   size?: 'md' | 'tv';
+  /** `live`: точка без ореолу (підпис під плеєром — макет `Main`). */
+  still?: boolean;
   /** Без точки з ореолом (для `live`, коли поруч уже є рух). */
   className?: string;
 }
 
 const BOX = 'inline-flex shrink-0 items-center whitespace-nowrap';
 
-function Dot({ className }: { className?: string }) {
+function Dot({ className, still = false }: { className?: string; still?: boolean }) {
+  if (still) return <span className={cn('size-1.5 shrink-0 rounded-full bg-current', className)} aria-hidden="true" />;
   return (
-    <span className={cn('relative inline-flex size-2 shrink-0', className)} aria-hidden="true">
-      <span className="t2f-halo absolute inset-0 rounded-full bg-current opacity-60" />
-      <span className="relative size-2 rounded-full bg-current" />
+    <span className={cn('relative inline-flex size-1.75 shrink-0', className)} aria-hidden="true">
+      <span className="t2f-halo absolute inset-0 rounded-full bg-current" />
+      <span className="relative size-1.75 rounded-full bg-current" />
     </span>
   );
 }
 
 /** P6. Позначка: жодна не інтерактивна; стан передається і текстом, не лише кольором. */
-export function Badge({ variant, children, status = 'live', value = 0, season = '2025/26', size = 'md', className }: BadgeProps) {
+export function Badge({ variant, children, status = 'live', value = 0, season = '2025/26', size = 'md', still = false, className }: BadgeProps) {
   const t = useTranslations('primitives.badge');
 
   switch (variant) {
@@ -64,12 +67,12 @@ export function Badge({ variant, children, status = 'live', value = 0, season = 
           data-variant="live"
           className={cn(
             BOX,
-            'gap-1.5 rounded-sm bg-primary-fill-hover text-on-primary uppercase',
-            tv ? 'h-10 px-3 text-tv-text' : 'h-5.5 px-2 text-label-badge-chat font-semibold',
+            'gap-1.5 rounded-sm bg-primary-fill-hover text-on-primary',
+            tv ? 'h-10 px-3 text-tv-text uppercase' : 'h-5.5 px-2 text-label-badge-chat font-semibold',
             className,
           )}
         >
-          <Dot />
+          <Dot still={still && !tv} />
           {children ?? t('live')}
         </span>
       );

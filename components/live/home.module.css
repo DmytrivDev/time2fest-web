@@ -1,0 +1,354 @@
+/* Головна за макетами `Main` (десктоп 1440) і `Phone-Home-Live` (телефон 390): значення, яких немає серед
+   утиліт Tailwind (довільні значення в класах заборонені). Кольори, радіуси, відступи — токени; нові значення
+   з макетів позначені «макет». Точки: телефон < 768, ширше — як десктоп (планшет-альбом має колонку чату). */
+
+/* ── Блок під плеєром (C1) ─────────────────────────────────────────────────────────────── */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* макет */
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-4);
+}
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) {
+  .block {
+    gap: var(--spacing-4);
+    padding: var(--spacing-4) 0 0;
+  }
+}
+
+/* Підпис: телефон — «позначка · таймер» / назва / рядок 3; десктоп — позначки / «назва + рядок 3 | таймер». */
+.caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'badges timer'
+    'title title'
+    'sub sub';
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+}
+.badges {
+  grid-area: badges;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px var(--spacing-4);
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.badgeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+.badgeItem:last-child {
+  gap: 6px;
+}
+@media (max-width: 767.98px) {
+  .deskItem {
+    display: none;
+  }
+}
+.title {
+  grid-area: title;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+  color: var(--color-text);
+}
+.title a {
+  color: inherit;
+  text-decoration: none;
+}
+.title a:hover {
+  color: var(--color-text-secondary);
+}
+.sub {
+  grid-area: sub;
+  margin: -4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.subMet {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.timer {
+  grid-area: timer;
+  display: inline-flex;
+  align-items: baseline;
+  justify-self: end;
+  gap: var(--spacing-2);
+  white-space: nowrap;
+}
+.timerLabel {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.timerDigits {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--countdown-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.ago {
+  grid-area: timer;
+  justify-self: end;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.aside {
+  display: none;
+}
+@media (min-width: 768px) {
+  .caption {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'badges badges'
+      'title timer'
+      'sub timer';
+    column-gap: var(--spacing-6);
+    row-gap: 0;
+  }
+  .caption:has(> .aside) {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'badges badges badges'
+      'title timer aside'
+      'sub timer aside';
+  }
+  .badges {
+    margin-bottom: 6px;
+  }
+  .title {
+    font-size: 24px;
+  }
+  .sub {
+    margin: 0;
+  }
+  .timer,
+  .ago {
+    align-self: end;
+    gap: 10px;
+    padding-bottom: 2px;
+  }
+  .timerDigits {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .aside {
+    grid-area: aside;
+    display: flex;
+    align-self: end;
+    margin-left: calc(var(--spacing-2) - var(--spacing-6));
+  }
+}
+
+/* Рядок дій: телефон — звук-іконка · «Обрати трансляцію ›» (14 px) · ⋯; десктоп — підписи 16 px + кімната, вечірка. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-1);
+}
+@media (min-width: 768px) {
+  .actions {
+    margin-top: 0;
+  }
+}
+.choose {
+  gap: 6px;
+  padding: 0 var(--spacing-3) 0 14px;
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  .choose {
+    gap: var(--spacing-2);
+    padding: 0 14px 0 var(--spacing-4);
+    font-size: 16px;
+  }
+}
+.tonal {
+  padding: 0 var(--spacing-4) 0 14px;
+}
+/* Іконки кімнати й вечірки — приглушений жовтий (макет: #E9D48A; токена немає, highlight надто яскравий). */
+.accentIcon {
+  color: #e9d48a; /* макет */
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+}
+.more:hover {
+  background: var(--color-surface-raised);
+}
+
+/* ── Основна колонка десктопа: плеєр, підпис, дії, «Перший ряд», «Зараз і далі» з проміжком 16 px ── */
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* ── Телефон: вкладки «Події | Чат» і вміст «Подій» (поля 16, проміжок 24) ──────────────── */
+.tabs {
+  border-top: 1px solid var(--color-border);
+}
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  padding: var(--spacing-4);
+}
+.watchers {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: calc(-1 * var(--spacing-1));
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.events > [data-first-row-strip] {
+  margin-top: calc(-1 * var(--spacing-2));
+}
+
+/* Вкладка «Чат» на телефоні: стрічка на решту екрана під закріпленим плеєром. */
+.phoneChat {
+  height: 70vh;
+  height: 70dvh;
+  min-height: 360px;
+}
+
+/* Порожній InFlowSlot (жива область лишається в DOM) не додає проміжку колонки. */
+.column > [data-moment-slot]:has(> [data-in-flow-slot='empty']) {
+  margin-bottom: calc(-1 * var(--spacing-4));
+}
+.phoneInflow:has([data-in-flow-slot='occupied']),
+.phoneInflow:has([data-cookie-banner]) {
+  padding-bottom: var(--spacing-4);
+}
+
+/* ── Телефон, вкладка «Чат» (`Phone-Chat`): підпис одним рядком 48 px ─────────────────── */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  height: 48px;
+  padding: 0 var(--spacing-3);
+}
+.barText {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  min-width: 0;
+  white-space: nowrap;
+}
+.barTitle {
+  margin: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+.barDot {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+.barTimer {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.barDigits {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--countdown-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.barSound {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  margin: 0 calc(-1 * var(--spacing-1));
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.barSoundInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--button-primary-background);
+  color: var(--button-primary-foreground);
+}
+.barSound[data-variant='neutral'] .barSoundInner {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-raised);
+}
+.barSound[data-sound='on'] .barSoundInner {
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+}
+.barSound:disabled .barSoundInner {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+/* «Перший ряд» над вкладками у стані «Чат» (`Phone-Chat`): рядок 44 px з межею зверху. */
+.frRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  height: var(--spacing-touch-min);
+  padding: 0 var(--spacing-4);
+  border: 0;
+  border-top: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+  text-align: start;
+  font-size: 13px;
+}
+.frRowTitle {
+  font-weight: 600;
+  color: var(--color-highlight);
+  white-space: nowrap;
+}
+.frRowCount {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.frRowCount b {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.events[data-state='inactive'] {
+  display: none;
+}

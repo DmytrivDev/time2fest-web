@@ -24,7 +24,7 @@ export function DropdownMenuContent({
         collisionPadding={collisionPadding}
         style={{ maxHeight: 'var(--radix-dropdown-menu-content-available-height)', ...style }}
         className={cn(
-          'z-30 min-w-56 overflow-y-auto rounded-lg border border-border bg-surface-raised p-1 text-body text-text shadow-mini-player',
+          'z-30 min-w-56 overflow-y-auto rounded-lg border border-border bg-surface-raised p-1 text-body text-text shadow-overlay',
           className,
         )}
         {...rest}

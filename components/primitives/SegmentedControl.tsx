@@ -26,22 +26,22 @@ export interface SegmentedControlProps {
   className?: string;
 }
 
-const ITEM =
-  't2f-focus t2f-transition inline-flex min-h-touch-min items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent px-4 text-label-sm text-text-secondary hover:text-text disabled:text-text-muted';
-// Вибране — surface-raised + межа text, не жовтий (ІНВ I-14).
-const SELECTED = 'aria-checked:border-text aria-checked:bg-surface-raised aria-checked:text-text aria-pressed:border-text aria-pressed:bg-surface-raised aria-pressed:text-text';
+/* Макет (`Main`, «Пояси / Звідки дивляться»): доріжка 34 px surface-raised, пігулка 30 px, вибрана — border-колір;
+   ціль дотику — 44 px (кнопка виходить за доріжку на 5 px згори й знизу). Розміри — у primitives.css (`t2f-seg*`). */
+const ITEM = 't2f-focus t2f-seg-item';
+const SELECTED = '';
 
 /** P11. Сегментований перемикач. */
 export function SegmentedControl({ label, options, value, onValueChange, semantics = 'radio', className }: SegmentedControlProps) {
   const body = (o: SegmentOption) => (
-    <>
+    <span className="t2f-seg-pill">
       {o.label}
       {o.dot && <span className="size-2 rounded-full bg-highlight" aria-hidden="true" />}
-    </>
+    </span>
   );
   if (semantics === 'pressed') {
     return (
-      <div role="group" aria-label={label} className={cn('inline-flex rounded-full bg-surface', className)}>
+      <div role="group" aria-label={label} className={cn('t2f-seg', className)}>
         {options.map((o) => (
           <button
             key={o.value}
@@ -65,7 +65,7 @@ export function SegmentedControl({ label, options, value, onValueChange, semanti
       onValueChange={(v) => {
         if (v) onValueChange(v);
       }}
-      className={cn('inline-flex rounded-full bg-surface', className)}
+      className={cn('t2f-seg', className)}
     >
       {options.map((o) => (
         <ToggleGroup.Item key={o.value} value={o.value} disabled={o.disabled} className={cn(ITEM, SELECTED)}>

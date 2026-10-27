@@ -15,11 +15,13 @@ export interface SwitchProps extends Omit<ComponentProps<typeof Radix.Root>, 'ch
 
 /** P7. Перемикач. Весь рядок — ціль 44 px; доріжка 36×20, повзунок 14. */
 export function Switch({ label, labelSide = 'start', compact = false, className, ...rest }: SwitchProps) {
-  const text = <span className={cn('text-start', compact ? 'text-caption text-text' : 'text-label-sm text-text-secondary')}>{label}</span>;
+  // Макети: 14/500 text-secondary (фільтри), 13/500 text (футер).
+  const text = <span className={cn('text-start font-medium', compact ? 'text-caption text-text' : 'text-label-sm text-text-secondary')}>{label}</span>;
   return (
     <Radix.Root
       className={cn(
-        't2f-focus t2f-transition group inline-flex min-h-touch-min items-center gap-2.5 rounded-md bg-transparent text-text disabled:text-text-muted',
+        't2f-focus t2f-transition group inline-flex min-h-touch-min items-center rounded-md bg-transparent text-text disabled:text-text-muted',
+        compact ? 'gap-2.5' : 'gap-2',
         className,
       )}
       {...rest}

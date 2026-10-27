@@ -47,7 +47,7 @@ export const Wall: Story = {
   name: 'Стіна «Першого ряду»: автогортання по колу, пауза на наведенні й фокусі',
   render: () => (
     <Stage>
-      <Carousel label="Перший ряд · Лондон" autoplay autoplayDelay={3000} showPause>
+      <Carousel label="Перший ряд · Лондон">
         {CITIES.map((c) => (
           <div key={c.city} className="flex h-16 w-48 items-center gap-3 rounded-md bg-surface-raised px-3">
             <Flag code={c.flag} size="sm" decorative />
@@ -65,7 +65,7 @@ export const WallReducedMotion: Story = {
   globals: { reduceMotion: 'on' },
   render: () => (
     <Stage>
-      <Carousel label="Перший ряд · Лондон" autoplay showPause>
+      <Carousel label="Перший ряд · Лондон" arrows="none">
         {CITIES.map((c) => (
           <div key={c.city} className="flex h-16 w-48 items-center gap-3 rounded-md bg-surface-raised px-3">
             <Flag code={c.flag} size="sm" decorative />

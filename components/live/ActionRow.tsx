@@ -16,10 +16,10 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import { IconButton } from '@/components/primitives/IconButton';
 import { SoundToggle, type SoundToggleProps } from '@/components/player/SoundToggle';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import type { CaptionButton } from '@/lib/engine/captionPhase';
+import home from './home.module.css';
 import styles from './live.module.css';
 
 export const MORE_ACTIONS_ID = 'O-MORE-ACTIONS';
@@ -82,7 +82,7 @@ export function ActionRow({
     overlay.open({ id: MORE_ACTIONS_ID, kind: 'nonmodal', title: t('moreActions'), content: <MoreActions /> });
 
   return (
-    <div data-action-row="" className={cn('flex flex-wrap items-center gap-2', className)}>
+    <div data-action-row="" className={cn(home.actions, className)}>
       <SoundToggle {...sound} />
       {remote ? (
         <>
@@ -96,34 +96,39 @@ export function ActionRow({
           ) : null}
         </>
       ) : href ? (
-        <Button asChild variant="secondary" className="min-w-0 pe-3.5">
+        <Button asChild variant="secondary" className={cn('min-w-0', home.choose)}>
           <NextLink href={href} onClick={stay ? onStayHere : undefined} data-action={button}>
             {label}
-            <Icon name="chevron-right" size={16} />
+            <Icon name="chevron-right" size={16} strokeWidth={2} />
           </NextLink>
         </Button>
       ) : null}
       <span className="flex-1" />
       <span className={cn(styles.deskOnly, 'flex-wrap gap-2')}>
-        {/* Інертні до US3 (кімната) і режиму вечірки. */}
-        <Button variant="tonal" disabled iconLeft="tv">
-          {t('roomOpen')}
+        <Button asChild variant="tonal" className={home.tonal}>
+          <NextLink href="/room/" data-action="room">
+            <Icon name="grid4" size={18} className={home.accentIcon} />
+            {t('roomOpen')}
+          </NextLink>
         </Button>
-        <Button asChild variant="tonal">
+        <Button asChild variant="tonal" className={home.tonal}>
           <NextLink href="/tv/" data-action="party-mode">
-            <Icon name="expand" size={18} />
+            <Icon name="monitor" size={18} className={home.accentIcon} />
             {t('partyMode')}
           </NextLink>
         </Button>
       </span>
       <span className={styles.phoneOnly}>
-        <IconButton
-          icon="more"
+        <button
+          type="button"
           aria-label={t('moreActions')}
           aria-haspopup="dialog"
           aria-expanded={overlay.current?.id === MORE_ACTIONS_ID}
           onClick={openMore}
-        />
+          className={cn('t2f-focus t2f-transition', home.more)}
+        >
+          <Icon name="more" size={20} />
+        </button>
       </span>
     </div>
   );

@@ -10,26 +10,12 @@ export type LogoProps = {
   className?: string;
 };
 
-/** Знак Time2Fest: слово з жовтою «2». Розмір задано атрибутами SVG. */
+/** Знак Time2Fest — той самий, що на макетах (`/brand/logo.png`, 300×86). */
 export function LogoMark({ variant = 'header' }: { variant?: 'header' | 'tv' }) {
   const w = variant === 'tv' ? 140 : 112;
-  const h = variant === 'tv' ? 40 : 32;
-  return (
-    <svg width={w} height={h} viewBox="0 0 112 32" aria-hidden="true" focusable="false" className="block">
-      <text
-        x="0"
-        y="23"
-        fontFamily="var(--font-manrope), var(--font-sans)"
-        fontWeight="700"
-        fontSize="22"
-        fill="var(--color-text)"
-      >
-        Time
-        <tspan fill="var(--color-highlight)">2</tspan>
-        Fest
-      </text>
-    </svg>
-  );
+  const h = Math.round((w * 86) / 300);
+  // eslint-disable-next-line @next/next/no-img-element -- статичний експорт, зображення вже потрібного розміру
+  return <img src="/brand/logo.png" alt="" width={w} height={h} className="block" style={{ width: w, height: 'auto' }} />;
 }
 
 /** P33. Посилання на головну; ціль щонайменше 44 px, фокус двошаровий. */

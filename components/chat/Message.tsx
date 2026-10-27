@@ -15,7 +15,7 @@
  * Компонент повертає `<li>`; обгортку `<ol>` дає Chat (або історія).
  */
 import { useTranslations } from 'next-intl';
-import type { KeyboardEvent, ReactNode } from 'react';
+import { useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -57,9 +57,12 @@ function Mark({ label = true }: { label?: boolean }) {
       role={label ? 'img' : undefined}
       aria-label={label ? 'Time2Fest' : undefined}
       aria-hidden={label ? undefined : true}
-      className="flex size-4 shrink-0 items-center justify-center rounded-sm bg-highlight text-on-highlight"
+      className="t2f-sys-mark flex size-4 shrink-0 items-center justify-center bg-highlight text-on-highlight"
     >
-      <Icon name="star" size={16} className="size-3" />
+      {/* Макет `Main`: чотирипроменева зірка 10 px на жовтому квадраті 16 px (радіус 4). */}
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z" />
+      </svg>
     </span>
   );
 }
@@ -114,12 +117,13 @@ export function Message({
   const names = useTranslations('windows.emoji.names');
   const badges = useTranslations('primitives.badge');
   const time = formatClock(message.createdAt);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Приховане модерацією бачить лише автор.
   if (message.moderation === 'hidden') {
     if (!message.author?.isMine) return null;
     return (
-      <li data-kind="moderated" className={cn('text-caption italic text-text-muted', className)}>
+      <li data-kind="moderated" data-msg-id={message.id} className={cn('px-2 py-1.5 text-caption italic text-text-muted', className)}>
         {t('removed')}
       </li>
     );
@@ -147,9 +151,11 @@ export function Message({
       }
     } else if (s?.kind === 'firstrow-joined') {
       const city = lookup?.cityName?.(s.cityId) ?? s.cityId;
+      // Макет `Main`: «Олена і друзі 🇺🇦 тепер у першому ряду · Лондон» — один рядок, без жирного, з трьома крапками.
       body = (
         <>
-          <strong className="font-bold">{s.participantName}</strong> <Flag code={s.flagCode} size="xs" name={lookup?.countryName?.(s.flagCode)} decorative={!lookup?.countryName?.(s.flagCode)} />{' '}
+          {s.participantName}{' '}
+          <Flag code={s.flagCode} size="xs" name={lookup?.countryName?.(s.flagCode)} decorative={!lookup?.countryName?.(s.flagCode)} className="t2f-sys-flag" />{' '}
           {t('systemFirstRowTail', { city })}
         </>
       );
@@ -172,7 +178,12 @@ export function Message({
     }
     if (counter) {
       return (
-        <li data-kind="system" data-system="greetings-counter" className={cn('flex items-center gap-1.5 text-label-badge-chat text-text-muted', className)}>
+        <li
+          data-kind="system"
+          data-system="greetings-counter"
+          data-msg-id={message.id}
+          className={cn('flex items-center gap-1.5 px-2 py-1.5 text-label-badge-chat text-text-muted', className)}
+        >
           {body}
         </li>
       );
@@ -181,10 +192,11 @@ export function Message({
       <li
         data-kind="system"
         data-system={s?.kind}
-        className={cn('flex items-center gap-2 rounded-sm bg-highlight-tint px-2 py-1 text-caption text-highlight', className)}
+        data-msg-id={message.id}
+        className={cn('t2f-sys mx-2 my-1.5 flex items-center gap-2 rounded-sm bg-highlight-tint px-2 py-1 text-highlight', className)}
       >
         <Mark />
-        <span className="min-w-0">{body}</span>
+        <span className={cn('min-w-0', s?.kind === 'firstrow-joined' && 'truncate')}>{body}</span>
       </li>
     );
   }
@@ -196,7 +208,8 @@ export function Message({
     return (
       <li
         data-kind="greeting"
-        className={cn('flex flex-col gap-1 rounded-sm border-s-3 border-highlight bg-highlight-tint py-2 pe-2.5 ps-3', className)}
+        data-msg-id={message.id}
+        className={cn('mx-2 my-1.5 flex flex-col gap-1 rounded-sm border-s-3 border-highlight bg-highlight-tint py-2 pe-2.5 ps-3', className)}
       >
         <div className={ROW}>
           <Mark label={false} />
@@ -226,7 +239,21 @@ export function Message({
   const firstRow = a?.badges.includes('first-row') ?? false;
   const pass = a?.badges.includes('pass') || a?.badges.includes('vip');
   return (
-    <li data-kind="regular" data-own={a?.isMine ? 'true' : undefined} className={cn('flex flex-col gap-px', className)}>
+    // Клік по повідомленню (не по ніку, кнопках і посиланнях) відкриває його дії — те саме, що ⋯ (рішення власника).
+    // Клавіатурний шлях — кнопка ⋯, тож обробник на <li> лише дублює її для миші й дотику.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events
+    <li
+      data-kind="regular"
+      data-own={a?.isMine ? 'true' : undefined}
+      data-msg-id={message.id}
+      data-actions-open={menuOpen ? 'true' : undefined}
+      onClick={(e) => {
+        if (!actions || (e.target as HTMLElement).closest('button, a, input, textarea')) return;
+        if (actions === 'menu') setMenuOpen(true);
+        else onOpenActions?.(message);
+      }}
+      className={cn('t2f-msg relative flex flex-col gap-0.5 rounded-md px-2 py-1.5', actions && 'cursor-pointer', className)}
+    >
       <div className={ROW}>
         {a ? (
           <button
@@ -237,10 +264,14 @@ export function Message({
             onClick={() => onAuthorOpen?.(a)}
             onFocus={onAuthorFocus}
             onKeyDown={onAuthorKeyDown}
-            className="t2f-focus t2f-transition -mx-1 -my-3.5 inline-flex min-h-touch-min items-center gap-1.5 rounded-sm px-1 text-label-sm text-text hover:bg-surface-raised"
+            className="t2f-nick -mx-1 -my-3.5 inline-flex min-h-touch-min items-center px-1 text-label-sm text-text"
           >
-            <Flag code={a.flagCode} size="xs" decorative />
-            {a.nick}
+            {/* Ціль 44 px невидима; наведення — підсвітка всього рядка повідомлення, фокус — рамка лише навколо
+                прапора й імені (раніше підсвітка 44-піксельної цілі заходила на попереднє повідомлення). */}
+            <span className="t2f-nick-label inline-flex items-center gap-1.5 rounded-sm">
+              <Flag code={a.flagCode} size="xs" decorative />
+              <span className="t2f-nick-name">{a.nick}</span>
+            </span>
           </button>
         ) : null}
         {pass ? <PassMark label={badges('vip')} /> : null}
@@ -259,8 +290,19 @@ export function Message({
           {time}
         </time>
         {actions === 'menu' ? (
-          <MessageActionsMenu message={message} tabStop={tabStop} onReact={onReact} onReply={onReply} onReport={onReport} className="-my-3.5 -me-2" />
+          <span className="t2f-msg-actions">
+            <MessageActionsMenu
+              message={message}
+              tabStop={tabStop}
+              open={menuOpen}
+              onOpenChange={setMenuOpen}
+              onReact={onReact}
+              onReply={onReply}
+              onReport={onReport}
+            />
+          </span>
         ) : actions === 'sheet' ? (
+          <span className="t2f-msg-actions">
           <IconButton
             icon="more"
             compact
@@ -268,8 +310,8 @@ export function Message({
             tabIndex={tabStop ? 0 : -1}
             aria-label={t('actionsLabel', { nick: a?.nick ?? '' })}
             onClick={() => onOpenActions?.(message)}
-            className="-my-3.5 -me-2"
           />
+          </span>
         ) : null}
       </div>
       {message.replyTo ? (

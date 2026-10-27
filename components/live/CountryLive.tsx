@@ -7,7 +7,7 @@
  * слот «Першого ряду» (US5) · InFlowSlot · вкладки «Події | Чат»: «Події» — «Міста й трансляції», «Трансляції в цьому
  * поясі» (після півночі — «Зараз і далі»), «Як святкувати», «Питання й відповіді»; «Чат» — «Країна» (за замовчуванням) / «Світ».
  * Десктоп: ліва колонка — CountryHeader · PlayerBlock · слот «Першого ряду» · InFlowSlot · ті самі блоки; права колонка
- * макета — чат «Країна» / «Світ» (sticky); мініплеєр при прокрутці.
+ * макета — чат «Країна» / «Світ» (sticky).
  *
  * Плеєр: сторінка сама НЕ переходить за ефіром (FR-024). Ланцюжок задається лише двічі: один раз після відкриття
  * (якщо вже грає подія цієї країни — після «Лишитися тут ›» — нічого не чіпаємо, відео не перезапускається) і на дію
@@ -28,7 +28,6 @@ import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { CookieInflow } from '@/components/offers/CookieLayer';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
-import { ConnectedMiniPlayer } from '@/components/player/MiniPlayer';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { cn } from '@/components/primitives/cn';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
@@ -385,7 +384,6 @@ export function CountryLive({ iso }: { iso: string }) {
         </Tabs>
       )}
 
-      <ConnectedMiniPlayer title={title} />
     </>
   );
 }

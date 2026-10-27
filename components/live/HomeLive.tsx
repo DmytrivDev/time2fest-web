@@ -1,18 +1,20 @@
 'use client';
 
 /**
- * Головна, ефір (S-HOME-LIVE, ІНВ 4.3; T081).
+ * Головна, ефір (S-HOME-LIVE, ІНВ 4.3; T081) — за макетами `Main`, `Desk-Home-Handover`, `Desk-Moment`, `Desk-Rate`,
+ * `Desk-Cookies(-Wide)` і телефонними `Phone-Home-Live`, `Phone-Home-Handover`, `Phone-Moment`,
+ * `Phone-Rate`, `Phone-Cookies`, `Phone-Chat`, `Phone-Map-Card`.
  *
- * Телефон (зверху вниз): PlayerBlock(`broadcast`, плеєр закріплений угорі) · «Перший ряд» (стіна) · InFlowSlot ·
- * вкладки «Події | Чат»: «Події» — «Як святкувати» (−15…+10 хв), «Зараз і далі» + прогрес свята, країни поясу,
- * слайдер основних святкувань, мапа поясів; «Чат» — кімната «Світ».
- * Десктоп: ліва колонка — PlayerBlock · «Перший ряд» · InFlowSlot · «Як святкувати» · «Зараз і далі» · країни поясу ·
- * слайдер · мапа; права колонка макета — чат «Світ» (sticky); мініплеєр при прокрутці.
+ * Десктоп: основна колонка — PlayerBlock (плеєр, підпис, рядок дій) · InFlowSlot (штамп, оцінка; cookies смугою,
+ * коли вільного кута немає) · «Перший ряд» · «Зараз і далі» + «Прогрес свята»; права колонка макета — чат «Світ»
+ * (sticky); мапа поясів — на всю ширину під обома колонками (портал у `#page-wide`). Під відео при прокрутці нічого не плаває.
+ * Телефон (зверху вниз): PlayerBlock (плеєр закріплений угорі) · InFlowSlot · вкладки «Події | Чат»: «Події» —
+ * «Дивляться люди з N країн», «Перший ряд» (згортається), «Зараз і далі» + прогрес, мапа поясів; «Чат» — кімната «Світ».
  *
  * Дані ефіру лише читаються з `useBroadcast()` (один `BroadcastController` на макет). Сторінка реєструє присутність
  * для штампа (`useStampGrant`), запускає імітатор чату й відкриває вікна моменту (`useMomentWindows`).
- * Чат — `ChatPanel` («Світ», учасникам ще «Перший ряд»). Сховано (FR-053): десктоп — колонки немає, біля плеєра
- * «Показати чат N»; телефон — вкладок немає, «Відкрити чат N».
+ * Чат сховано (FR-053): десктоп — колонки немає, «Показати чат N» праворуч від таймера; телефон — вкладок немає,
+ * «Відкрити чат N».
  */
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
@@ -21,92 +23,78 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
-import { CelebrationsSlider } from '@/components/live/CelebrationsSlider';
-import { CountryChips } from '@/components/live/CountryChips';
 import { FirstRowChatRowConnected, FirstRowModule } from '@/components/firstrow/FirstRowModule';
-import { HowToCard } from '@/components/live/HowToCard';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
+import { ZoneMap } from '@/components/live/ZoneMap';
 import { CookieInflow } from '@/components/offers/CookieLayer';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
-import { ZoneMap } from '@/components/live/ZoneMap';
-import { ConnectedMiniPlayer } from '@/components/player/MiniPlayer';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { cn } from '@/components/primitives/cn';
-import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
+import { Icon } from '@/components/primitives/Icon';
+import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
 import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
-import type { Ms } from '@/lib/data/types';
-import { HOWTO_BEFORE } from '@/lib/engine/config';
+import type { Dataset, Ms } from '@/lib/data/types';
 import { firstRowEventFor } from '@/lib/firstrow/pick';
-import { viewerTimeZone } from '@/lib/i18n/time';
-import { festProgress, mainCelebrations, nowNextItems, scheduleNow, zoneCountries } from '@/lib/live/homeData';
+import { formatClock, viewerTimeZone } from '@/lib/i18n/time';
+import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
+import { simulatedViewers } from '@/lib/presence/viewers';
 import { useStampGrant } from '@/lib/presence/useStampGrant';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
-import { eventTitle } from './Caption';
-import styles from './live.module.css';
+import { formatCount } from '@/stores/chat';
+import { useChatFeed } from '@/lib/chat-sim/store';
+import home from './home.module.css';
 
 const CHAT_ROOMS = ['world'] as const;
-/** «Як святкувати» біля плеєра: −15 хв … +10 хв від півночі (C20, компактна версія). */
-const HOWTO_AFTER = 10 * 60_000;
 const PLAYER_TITLE_ID = 'player-title';
 
 export { useChatLookup };
 
 /** Модуль «Перший ряд» (C6/C7/C8, US5): подія ефіру з «Першим рядом» або найближча з відкритим продажем. */
-function FirstRowSection({ place, now }: { place: AirPlace; now: Ms }) {
-  return <FirstRowModule event={firstRowEventFor(getData(), now, place.event)} className={styles.pad} />;
+function FirstRowSection({ place, now, className }: { place: AirPlace; now: Ms; className?: string }) {
+  return <FirstRowModule event={firstRowEventFor(getData(), now, place.event)} className={className} />;
 }
 
-function EventsBlocks({
-  now,
-  layout,
-  howTo,
-  onToggleSchedule,
-}: {
-  now: Ms;
-  layout: 'carousel' | 'stack';
-  howTo: boolean;
-  onToggleSchedule?: (eventId: string, next: boolean) => void;
-}) {
-  const tNav = useTranslations('nav');
-  const { current } = useBroadcast();
+/** Краї «Прогресу свята»: «12:00 · Кірибаті» і «14:00 · 1 січня» за часом глядача. */
+function progressEdges(data: Dataset): { startLabel?: string; endLabel?: string } {
+  const first = data.zones[0];
+  const last = data.zones[data.zones.length - 1];
+  if (!first || !last) return {};
+  const firstCity = data.citiesById.get(first.representativeCityId);
+  const firstCountry = firstCity ? data.countriesByIso.get(firstCity.countryIso) : undefined;
+  let date = '';
+  try {
+    date = new Intl.DateTimeFormat('uk', { day: 'numeric', month: 'long', timeZone: viewerTimeZone() }).format(last.midnightMs);
+  } catch {
+    date = '';
+  }
+  return {
+    startLabel: `${formatClock(first.midnightMs)}${firstCountry ? ` · ${firstCountry.name.uk}` : ''}`,
+    endLabel: `${formatClock(last.midnightMs)}${date ? ` · ${date}` : ''}`,
+  };
+}
+
+function useNowNextData(now: Ms) {
   const schedule = useGuestStore((s) => s.schedule);
   const minute = Math.floor(now / 60_000) * 60_000;
   const data = getData();
   const items = useMemo(() => nowNextItems(data, minute, schedule), [data, minute, schedule]);
-  const progress = useMemo(() => festProgress(data, minute), [data, minute]);
-  const celebrations = useMemo(() => mainCelebrations(data, minute, schedule), [data, minute, schedule]);
-  const chips = useMemo(() => (current ? zoneCountries(data, current.event.zoneId) : []), [data, current]);
-  const mapModel = useMemo(() => buildMapModel(data), [data]);
+  const progress = useMemo(() => ({ ...festProgress(data, minute), ...progressEdges(data) }), [data, minute]);
   const zoneLabel = viewerTimeZone().split('/').pop()?.replace(/_/g, ' ') ?? '';
+  return { items, progress, zoneLabel };
+}
 
-  return (
-    <div className="flex flex-col gap-8 pb-8">
-      {howTo && current?.country ? (
-        <HowToCard country={current.country.name.uk} traditions={current.country.howTo.traditions} variant="compact" className={styles.pad} />
-      ) : null}
-      <NowNext items={items} zoneLabel={zoneLabel} layout={layout} progress={progress} mapHref="#zone-map" onToggleSchedule={onToggleSchedule} className={styles.pad} />
-      {chips.length ? (
-        <section aria-labelledby="zone-countries-title" className={cn(styles.pad, 'flex flex-col gap-3')}>
-          <h2 id="zone-countries-title" className="text-headline-sm text-text">
-            {tNav('countriesOfZone')}
-          </h2>
-          <CountryChips countries={chips} selectedIso={current?.country?.iso} />
-        </section>
-      ) : null}
-      <CelebrationsSlider items={celebrations} onToggleSchedule={onToggleSchedule} className={styles.pad} />
-      {/* C18 мапа поясів (T080); `id` — ціль «Перейти до мапи». */}
-      <div id="zone-map" className={styles.pad}>
-        <ZoneMap {...mapModel} />
-      </div>
-    </div>
-  );
+function useMapData() {
+  const data = getData();
+  const mapModel = useMemo(() => buildMapModel(data), [data]);
+  const viewers = useMemo(() => simulatedViewers(data), [data]);
+  return { mapModel, viewers };
 }
 
 export function HomeLive() {
@@ -128,13 +116,22 @@ export function HomeLive() {
   const passWindows = useOfferWindows();
 
   const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
-  const t0 = current?.event.midnightMs;
-  const howTo = t0 !== undefined && now >= t0 - HOWTO_BEFORE && now < t0 + HOWTO_AFTER;
   const city = current?.city?.name.uk;
+  const { items, progress, zoneLabel } = useNowNextData(now);
+  const { mapModel, viewers } = useMapData();
+  // Лічильник на вкладці «Чат» (макет «Чат 99+»): повідомлення «Світу», поки відкрито «Події».
+  const roomCount = useChatFeed((st) => {
+    let n = 0;
+    for (const msg of st.rooms.world ?? []) if (!msg.author?.isMine && msg.kind !== 'system') n += 1;
+    return n;
+  });
 
   const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
+  const wideSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(WIDE_SLOT_ID) : null;
   const vis = useChatVisibility();
   const [tab, setTab] = useState('events');
+  // Телефон, відкрита вкладка «Чат» (`Phone-Chat`): підпис одним рядком, «Перший ряд» рядком над вкладками.
+  const phoneChat = !chatColumn && !vis.hidden && tab === 'chat';
   const panel = (className?: string) => (
     <ChatPanel
       eventId={eventId}
@@ -146,6 +143,43 @@ export function HomeLive() {
       onToEvents={() => setTab('events')}
       className={className}
     />
+  );
+
+  const map = (
+    // `id` — ціль «Перейти до мапи» і посилання-пропуску.
+    <div id="zone-map">
+      <ZoneMap {...mapModel} viewers={viewers} airCityId={current?.city?.id} />
+    </div>
+  );
+  const nowNext = (layout: 'carousel' | 'stack') => (
+    <NowNext
+      items={items}
+      zoneLabel={zoneLabel}
+      layout={layout}
+      progress={progress}
+      mapHref={layout === 'stack' ? '#zone-map' : undefined}
+      onToggleSchedule={passWindows.requestSchedule}
+      airEventId={eventId}
+    />
+  );
+  const showChatButton = vis.hidden ? (
+    <ChatHiddenButton
+      placement={chatColumn ? 'desktop' : 'phone'}
+      room="world"
+      onShow={() => {
+        vis.show();
+        setTab('chat');
+      }}
+    />
+  ) : null;
+  // Вікна моменту (штамп, оцінка) і cookies смугою — одразу під рядком дій плеєра.
+  const inflow = (
+    <>
+      <CookieInflow />
+      <div data-moment-slot="">
+        <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
+      </div>
+    </>
   );
 
   return (
@@ -161,56 +195,56 @@ export function HomeLive() {
         onStayHere={stayHere}
         scheduleHint={hint}
         titleId={PLAYER_TITLE_ID}
+        watchers={viewers.length}
+        captionAside={chatColumn ? showChatButton : null}
+        bar={phoneChat}
       />
-      {current && ready ? <FirstRowSection place={current} now={now} /> : null}
-      {vis.hidden ? (
-        <div className={cn(styles.pad, 'pt-3')}>
-          <ChatHiddenButton
-            placement={chatColumn ? 'desktop' : 'phone'}
-            room="world"
-            onShow={() => {
-              vis.show();
-              setTab('chat');
-            }}
-          />
-        </div>
-      ) : null}
-      {/* Cookies смугою на місці штампа, коли вільного кута немає (чат сховано). */}
-      <div className={styles.pad}>
-        <CookieInflow />
-      </div>
-      <div data-moment-slot="" className={styles.pad}>
-        <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
-      </div>
 
       {chatColumn ? (
-        <>
-          <div className="pt-6">
-            <EventsBlocks now={now} layout="carousel" howTo={howTo} onToggleSchedule={passWindows.requestSchedule} />
-          </div>
+        <div className={cn(home.column, 'pt-4')}>
+          {inflow}
+          {current && ready ? <FirstRowSection place={current} now={now} /> : null}
+          <div className="mt-2">{nowNext('carousel')}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
-        </>
+          {wideSlot ? createPortal(map, wideSlot) : null}
+        </div>
       ) : (
-        <Tabs value={vis.hidden ? 'events' : tab} onValueChange={setTab} className="pt-2">
-          {vis.hidden ? null : (
-            <TabsList>
-              <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
-              <TabsTrigger value="chat">{tNav('chat')}</TabsTrigger>
-            </TabsList>
-          )}
-          <TabsContent value="events" className="pt-4">
-            <EventsBlocks now={now} layout="stack" howTo={howTo} onToggleSchedule={passWindows.requestSchedule} />
-          </TabsContent>
-          <TabsContent value="chat">
-            {current && ready ? (
-              <FirstRowChatRowConnected event={firstRowEventFor(getData(), now, current.event)} onClick={() => setTab('events')} className={styles.pad} />
-            ) : null}
-            {panel(styles.phoneChat)}
-          </TabsContent>
-        </Tabs>
+        <>
+          {vis.hidden ? <div className="px-4 pb-3">{showChatButton}</div> : null}
+          <div className={cn("px-4", home.phoneInflow)}>{inflow}</div>
+          {phoneChat && current && ready ? (
+            <FirstRowChatRowConnected event={firstRowEventFor(getData(), now, current.event)} onClick={() => setTab('events')} />
+          ) : null}
+          <Tabs value={vis.hidden ? 'events' : tab} onValueChange={setTab} className={home.tabs}>
+            {vis.hidden ? null : (
+              <TabsList>
+                <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
+                <TabsTrigger value="chat">
+                  {tNav('chat')}
+                  {tab !== 'chat' && roomCount > 0 ? (
+                    <span aria-hidden="true" className="inline-flex h-4.5 items-center rounded-full bg-surface-raised px-1.5 text-label-badge-chat font-semibold text-text">
+                      {formatCount(roomCount)}
+                    </span>
+                  ) : null}
+                </TabsTrigger>
+              </TabsList>
+            )}
+            {/* forceMount: стіна «Першого ряду» й мапа живуть і поки відкрито «Чат» (загоряння опівночі синхронне). */}
+            <TabsContent value="events" forceMount className={home.events}>
+              <p className={home.watchers}>
+                <Icon name="globe" size={14} strokeWidth={2} />
+                {tPlayer('watchersShort', { count: viewers.length })}
+              </p>
+              {current && ready ? <FirstRowSection place={current} now={now} /> : null}
+              {nowNext('stack')}
+              {map}
+            </TabsContent>
+            <TabsContent value="chat">
+              {panel(home.phoneChat)}
+            </TabsContent>
+          </Tabs>
+        </>
       )}
-
-      <ConnectedMiniPlayer title={eventTitle(current?.city)} />
     </>
   );
 }

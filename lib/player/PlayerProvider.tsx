@@ -313,7 +313,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const registerSlot = useCallback((id: PlayerSlotId, el: HTMLElement) => {
     slotsRef.current.set(id, el);
-    // Хост сидить над слотом `main` (мініплеєр і кімната — та сама позиція іншим місцем, US3/US5).
+    // Хост сидить над слотом `main` (кімната — та сама позиція іншим місцем, US3).
     setSlotElement(slotsRef.current.get('main') ?? null);
     return () => {
       if (slotsRef.current.get(id) === el) slotsRef.current.delete(id);

@@ -9,13 +9,12 @@
  * не є live-областю (оголошення «Нові повідомлення» — справа сторінки, не частіше ніж раз на 30 с).
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/primitives/DropdownMenu';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import { IconButton } from '@/components/primitives/IconButton';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import type { Author, ChatMessage, RoomId } from '@/lib/data/types';
 import { Message, type MessageLookup, type MessageProps } from './Message';
@@ -95,8 +94,27 @@ export function Chat({
   }, [visible.length, paused, state]);
 
   // Скільки повідомлень прийшло відтоді, як стрічку зупинено (поки не на паузі — відлік іде за кінцем списку).
+  // Побачене (верх повідомлення у вікні стрічки) стає прочитаним: лічильник зменшується, а коли непрочитаних нижче
+  // не лишилось — капсула зникає (рішення власника: не лише в самому низу).
   const [baseline, setBaseline] = useState(visible.length);
   if (!paused && baseline !== visible.length) setBaseline(visible.length);
+  const markSeen = useCallback(() => {
+    const el = logRef.current;
+    if (!el) return;
+    const bottom = el.getBoundingClientRect().bottom - 4;
+    setBaseline((base) => {
+      let next = base;
+      for (let i = base; i < visible.length; i += 1) {
+        const node = el.querySelector<HTMLElement>(`[data-msg-id="${CSS.escape(visible[i]!.id)}"]`);
+        if (!node || node.getBoundingClientRect().top > bottom) break;
+        next = i + 1;
+      }
+      return next;
+    });
+  }, [visible]);
+  useLayoutEffect(() => {
+    if (paused) markSeen();
+  }, [paused, markSeen]);
   const newCount = paused ? Math.max(0, visible.length - baseline) : 0;
 
   // Лічильник нових на вкладці не є live-областю: оголошення «Нові повідомлення N» — не частіше ніж раз на 30 с.
@@ -113,7 +131,8 @@ export function Chat({
     const el = logRef.current;
     if (!el) return;
     setScrolledUp(el.scrollHeight - el.scrollTop - el.clientHeight > NEAR_BOTTOM);
-  }, []);
+    markSeen();
+  }, [markSeen]);
 
   const jumpToEnd = () => {
     setManualPause(false);
@@ -145,8 +164,8 @@ export function Chat({
   const emptyText = room.id.startsWith('firstrow:') ? t('emptyFirstRow') : t('emptyCountry');
 
   return (
-    <div data-chat={state} data-room={room.id} className={cn('flex min-h-0 flex-col bg-background', className)}>
-      <div className="flex h-12 shrink-0 items-center gap-1 border-b border-border ps-3 pe-1">
+    <div data-chat={state} data-room={room.id} className={cn('flex min-h-0 flex-col', className)}>
+      <div className="t2f-chat-head flex h-13 shrink-0 items-center border-b border-border ps-3 pe-1">
         {roomSwitcher ?? (
           <span
             aria-label={`${t('title')}: ${room.label}`}
@@ -157,18 +176,35 @@ export function Chat({
         )}
         <span className="flex-1" />
         {headerExtra}
-        <IconButton
-          icon={manualPause ? 'play' : 'pause'}
-          variant="toggle"
+        {/* Макети `Main` / `Phone-Chat`: іконки без кіл; ціль 44 px невидима, коло при наведенні — 30 px (висота «Світ»).
+            На паузі (рішення власника) — жовта іконка «відтворити». */}
+        <button
+          type="button"
           aria-label={t('pause')}
-          pressed={manualPause}
-          onPressedChange={setManualPause}
+          aria-pressed={manualPause}
           disabled={state !== 'live'}
-        />
+          onClick={() => setManualPause((v) => !v)}
+          className="t2f-focus t2f-chat-hbtn"
+        >
+          <span aria-hidden="true">
+            <Icon name={manualPause ? 'play' : 'pause'} size={18} strokeWidth={2} />
+          </span>
+        </button>
+        {onHide ? (
+          <button type="button" aria-label={t('hide')} onClick={onHide} className="t2f-focus t2f-chat-hbtn">
+            <span aria-hidden="true">
+              <Icon name="chevrons-right" size={18} strokeWidth={2} />
+            </span>
+          </button>
+        ) : null}
         {onRules ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <IconButton icon="more" variant="plain" aria-label={t('moreActions')} />
+              <button type="button" aria-label={t('moreActions')} className="t2f-focus t2f-chat-hbtn">
+                <span aria-hidden="true">
+                  <Icon name="more" size={18} />
+                </span>
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={onRules}>
@@ -178,7 +214,6 @@ export function Chat({
             </DropdownMenuContent>
           </DropdownMenu>
         ) : null}
-        {onHide ? <IconButton icon="close" variant="plain" aria-label={t('hide')} onClick={onHide} /> : null}
       </div>
       {banner}
 
@@ -215,14 +250,14 @@ export function Chat({
             onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusInside(false);
             }}
-            className="t2f-focus min-h-0 flex-1 overflow-y-auto"
+            className="t2f-focus t2f-chat-log min-h-0 flex-1 overflow-y-auto"
           >
             {visible.length === 0 || state === 'empty' ? (
               <p className="p-6 text-center text-body text-text-secondary" data-row="empty">
                 {emptyText}
               </p>
             ) : (
-              <ol className="flex min-h-full list-none flex-col justify-end gap-2 px-3.5 py-1">
+              <ol className="flex min-h-full list-none flex-col justify-end px-1.5 py-1.5">
                 {visible.map((m) => (
                   <Message
                     key={m.id}
@@ -238,15 +273,18 @@ export function Chat({
               </ol>
             )}
           </div>
+          {/* Пауза (`Phone-Chat-Paused`): лише «Нові повідомлення N ↓» поверх стрічки (absolute) — висота не змінюється. */}
           {paused ? (
-            <div className="flex shrink-0 flex-col items-center gap-1 px-3 pb-2" data-row="paused">
-              <p className="text-caption text-text-muted">{t('pausedNote')}</p>
-              {newCount > 0 ? (
-                <Button variant="secondary" compact iconRight="arrow-down" onClick={jumpToEnd} className="bg-background">
-                  {t('newMessages')} {newCount}
-                </Button>
-              ) : null}
-            </div>
+            <p role="status" className="sr-only" data-row="paused">
+              {t('pausedNote')}
+            </p>
+          ) : null}
+          {paused && newCount > 0 ? (
+            <button type="button" onClick={jumpToEnd} className="t2f-focus t2f-chat-newpill" data-row="new-messages">
+              {t('newMessages')}{' '}
+              <span className="t2f-chat-newcount">{newCount}</span>
+              <Icon name="arrow-down" size={16} strokeWidth={2} />
+            </button>
           ) : null}
         </div>
       )}

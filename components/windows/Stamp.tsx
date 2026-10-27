@@ -14,6 +14,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
+import st from './stamp.module.css';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -123,25 +124,26 @@ export function Stamp({
         aria-label={common('stamp')}
         data-stamp="collapsed"
         data-first-row={frStamp ? 'true' : undefined}
-        className={cn(
-          'flex items-center gap-2 rounded-lg border bg-surface-raised py-1 pe-1 ps-2',
-          frStamp ? 'border-highlight' : 'border-border',
-          className,
-        )}
+        className={cn('flex items-center gap-1 rounded-lg border border-highlight bg-surface-raised pe-1', st.row, className)}
       >
+        {/* Макет `Desk-Rate`: мініатюра в кремовій рамці, «Штамп у паспорті» / «Розгорнути штамп», стрілка. */}
         <button
           type="button"
           aria-expanded={false}
           onClick={() => setMode('expanded')}
-          className="t2f-focus t2f-transition flex min-h-touch-min min-w-0 flex-1 items-center gap-3 rounded-md text-start hover:bg-border"
+          className={cn('t2f-focus flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-2 text-start', st.rowBtn)}
         >
-          <StampArt illustrationId={first.illustrationId} stampText={stampText} thumbnail className="block h-10 w-14 shrink-0" />
-          <span className="min-w-0 truncate text-label-sm text-text">
-            {common('stamp')}
+          <span aria-hidden="true" className={st.thumb}>
+            <StampArt illustrationId={first.illustrationId} stampText={stampText} thumbnail className="block size-full" />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate text-body font-semibold leading-snug text-text">{common('stamp')}</span>
+            <span className="truncate text-caption font-medium text-text-secondary">{t('expandHint')}</span>
             <span className="sr-only">. {t('expand')}</span>
           </span>
+          <Icon name="chevron-down" size={18} className="text-text-secondary max-md:hidden" />
         </button>
-        <Button variant="secondary" compact iconLeft="share" onClick={onShare}>
+        <Button variant="secondary" compact iconLeft="share" onClick={onShare} className={st.rowShare}>
           {t('share')}
         </Button>
       </section>
@@ -150,7 +152,8 @@ export function Stamp({
 
   const content: ReactNode = (
     <>
-      <p className="pe-9 text-label-sm text-highlight">{t('heading')}</p>
+      <p className={st.head}>{t('heading')}</p>
+      <div className={st.art}>
       <div data-stamping={playing ? 'true' : 'false'} className="relative overflow-hidden rounded-md">
         <StampArt illustrationId={first.illustrationId} stampText={stampText} stamping={playing} />
         <span aria-hidden="true" className="t2f-stamp-spark" />
@@ -164,13 +167,15 @@ export function Stamp({
           ))}
         </span>
       </div>
-      <div className="flex items-start gap-2">
+      </div>
+      <div className={st.body}>
+      <div className="flex items-start gap-2.5">
         <span className="mt-1.5 flex shrink-0 gap-1">
           {stamps.map((s) => (
             <Flag key={s.flagCode + (s.eventId ?? s.city)} code={s.flagCode} size="sm" name={s.countryName} />
           ))}
         </span>
-        <h2 id={titleId} className="text-headline-sm text-text">
+        <h2 id={titleId} className={cn(st.title, 'text-text')}>
           {t('title', { place })}
         </h2>
       </div>
@@ -189,12 +194,12 @@ export function Stamp({
         </div>
       ) : (
         <>
-          <p className="flex items-center gap-1.5 text-caption text-highlight" data-row="in-passport">
+          <p className={cn('flex items-center gap-1.5', st.inPassport)} data-row="in-passport">
             <Icon name="check" size={16} />
             {t('inPassport')}
           </p>
           {!signedIn ? (
-            <p className="text-caption text-text-secondary" data-row="saved-local">
+            <p className={st.saved} data-row="saved-local">
               {t.rich('savedLocal', {
                 signIn: (chunks) => (
                   <button
@@ -210,13 +215,14 @@ export function Stamp({
           ) : null}
         </>
       )}
-      <div className="flex gap-2">
+      <div className={st.actions}>
         <Button variant="coral" size="lg" iconLeft="share" className="min-w-0 flex-3" onClick={onShare}>
           {t('share')}
         </Button>
         <Button variant="secondary" size="lg" iconLeft="passport" className="min-w-0 flex-2" onClick={onPassport}>
           {t('passport')}
         </Button>
+      </div>
       </div>
     </>
   );
@@ -228,14 +234,14 @@ export function Stamp({
       data-first-row={frStamp ? 'true' : undefined}
       data-save-state={saveState}
       className={cn(
-        'relative flex flex-col gap-3 rounded-lg border border-highlight bg-surface-raised',
+        'relative rounded-lg border border-highlight bg-surface-raised',
         // Подвійна жовта рамка «Першого ряду»: друга тонка рамка всередині з проміжком.
-        frStamp ? 'p-1' : 'p-4',
+        frStamp ? 'p-1' : st.card,
         className,
       )}
     >
       {frStamp ? (
-        <div className="flex flex-col gap-3 rounded-md border border-highlight p-3" data-frame="inner">
+        <div className={cn('rounded-md border border-highlight', st.card)} data-frame="inner">
           {content}
         </div>
       ) : (
@@ -246,7 +252,7 @@ export function Stamp({
         variant="plain"
         iconSize={18}
         aria-label={common('close')}
-        className="absolute right-0.5 top-0.5 text-text-muted"
+        className="absolute right-0.5 top-0.5 text-text-muted md:right-1.5 md:top-1.5"
         onClick={onClose ?? (() => setMode('collapsed'))}
       />
     </section>

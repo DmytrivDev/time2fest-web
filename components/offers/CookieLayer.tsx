@@ -34,13 +34,63 @@ function useHydrated(): boolean {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
 
-/** Де показати банер: телефон — смуга; десктоп — кут, а без вільного кута (чат сховано) — смуга в потоці сторінки. */
+/** Орієнтовна висота кутової картки (`Desk-Cookies`) і смуги (`Phone-Cookies`), поки банер ще не виміряно. */
+const CORNER_H = 216;
+const STRIP_H = 120;
+const EDGE = 16;
+
+/**
+ * Банер ніколи не лягає на відео: кут (смуга) зайнятий, якщо на першому екрані (прокрутка 0 — найгірший випадок,
+ * далі відео лише піднімається) низ слоту плеєра глибше за верх банера. Телефон: закріплений плеєр угорі.
+ */
+function useFixedSpotBlocked(column: boolean): boolean {
+  const [blocked, setBlocked] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
+      if (!slot) {
+        setBlocked(false);
+        return;
+      }
+      const r = slot.getBoundingClientRect();
+      const banner = document.querySelector<HTMLElement>('[data-cookie-banner="corner"], [data-cookie-banner="strip"]');
+      const h = banner?.getBoundingClientRect().height || (column ? CORNER_H : STRIP_H);
+      const videoBottom = column ? r.top + window.scrollY + r.height : r.height;
+      const bannerTop = window.innerHeight - (column ? EDGE : 0) - h;
+      setBlocked(videoBottom > bannerTop);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener('resize', schedule, { passive: true });
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(schedule) : null;
+    const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
+    if (slot) ro?.observe(slot);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', schedule);
+      ro?.disconnect();
+    };
+  }, [column]);
+  return blocked;
+}
+
+/**
+ * Де показати банер (макети `Desk-Cookies`, `Desk-Cookies-Wide`, `Phone-Cookies`): телефон — смуга внизу; десктоп —
+ * кутова картка ліворуч унизу, поки є чат праворуч; без вільного кута (чат сховано або картка лягла б на відео) —
+ * смуга в потоці сторінки під рядком дій.
+ */
 export function useCookiePlacement(): CookieVariant {
   const column = useChatColumn();
   const chatHidden = useGuestStore((s) => s.chatHidden);
   const hasHost = useHasInflowHost();
-  if (!column) return 'strip';
-  return chatHidden && hasHost ? 'inflow' : 'corner';
+  const blocked = useFixedSpotBlocked(column);
+  if (hasHost && (blocked || (column && chatHidden))) return 'inflow';
+  return column ? 'corner' : 'strip';
 }
 
 function SettingsWindow() {
