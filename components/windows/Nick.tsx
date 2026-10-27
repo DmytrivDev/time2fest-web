@@ -121,7 +121,7 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
             {c('flagLabel')}
           </h3>
           <span className="flex flex-1 items-center gap-2 text-body text-text">
-            <Flag code={flag} size="sm" decorative />
+            <Flag round code={flag} size="sm" decorative />
             {currentName}
           </span>
           <Button type="button" variant="ghost" compact aria-expanded={choosing} aria-controls={listId} onClick={() => setChoosing((v) => !v)}>
@@ -139,7 +139,7 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
                 value={flag}
                 onValueChange={setFlag}
                 options={options.map((o) => ({ value: o.code, label: o.name }))}
-                renderExtra={(o) => <Flag code={o.value} size="sm" decorative />}
+                renderExtra={(o) => <Flag round code={o.value} size="sm" decorative />}
                 className="max-h-60 overflow-y-auto"
               />
             ) : (
@@ -152,7 +152,7 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
       <section aria-label={t('previewLabel')} className="flex flex-col gap-1 rounded-md bg-surface px-3 py-2" data-row="preview">
         <p className="text-caption text-text-muted">{t('previewLabel')}</p>
         <p className="flex items-center gap-2 text-label-sm text-text">
-          <Flag code={flag} size="xs" decorative />
+          <Flag round code={flag} size="xs" decorative />
           {trimmed || c('previewEmpty')}
         </p>
       </section>

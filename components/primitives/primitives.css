@@ -388,15 +388,28 @@ html[data-reduce-motion='true'] .t2f-spin {
   background: var(--color-surface-raised);
 }
 .t2f-msg:hover time,
-.t2f-msg:focus-within time,
+.t2f-msg:has(:focus-visible) time,
 .t2f-msg[data-actions-open='true'] time {
   visibility: hidden;
 }
-/* «⋯»: невидима зона 44×44, кружок 28; центр — на лінії імені й часу, правий край кружка за 4 px від краю рядка. */
+/* «⋯»: невидима зона 44×44, кружок 28; центр — на лінії часу (рядок 18 px, відступ 8 → центр 17), відступи кружка від верху й правого краю рівні (3 px). */
+.t2f-msg-head time {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+.t2f-msg-text {
+  line-height: 1.45;
+}
+.t2f-msg .t2f-nick {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
 .t2f-msg-more {
   position: absolute;
-  top: -7px;
-  right: -4px;
+  top: -5px;
+  right: -5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,7 +433,7 @@ html[data-reduce-motion='true'] .t2f-spin {
   transition: background-color 120ms ease-out, color 120ms ease-out;
 }
 .t2f-msg:hover .t2f-msg-more,
-.t2f-msg:focus-within .t2f-msg-more,
+.t2f-msg:has(:focus-visible) .t2f-msg-more,
 .t2f-msg[data-actions-open='true'] .t2f-msg-more {
   opacity: 1;
 }
@@ -452,7 +465,7 @@ html[data-reduce-motion='true'] .t2f-spin {
   padding-inline-end: 28px;
 }
 .t2f-msg[data-menu-always='true']:hover time,
-.t2f-msg[data-menu-always='true']:focus-within time,
+.t2f-msg[data-menu-always='true']:has(:focus-visible) time,
 .t2f-msg[data-menu-always='true'][data-actions-open='true'] time {
   visibility: visible;
 }
@@ -680,4 +693,7 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   width: 14px !important;
   height: 10px !important;
   vertical-align: -1px;
+}
+.t2f-sys-flag[data-round='true'] {
+  height: 14px !important;
 }

@@ -23,7 +23,7 @@ export interface MessageMenuProps extends MessageActionHandlers {
   container: HTMLElement;
   /** Прокручувана стрічка: її видимий низ вирішує «під чи над». */
   scroller: HTMLElement;
-  /** `restoreFocus` — повернути фокус на «⋯» (Esc, Tab, реакція, скарга). */
+  /** `restoreFocus` — повернути фокус на «⋯» (лише після клавіатури: Esc, Tab, Enter на клітинці чи пункті). */
   onClose: (opts?: { restoreFocus?: boolean }) => void;
 }
 
@@ -186,9 +186,10 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
                   aria-label={t('reactionPickLabel', { name: t(`reactions.${id}`) })}
                   aria-checked={mine}
                   className="t2f-mm-item t2f-mm-emoji"
-                  onClick={() => {
+                  onClick={(e) => {
                     reactOptimistic(message, id, onReact);
-                    onClose({ restoreFocus: true });
+                    // Фокус на «⋯» — лише після клавіатури (Enter/Пробіл дають detail 0); після миші «⋯» не лишається видимим.
+                    onClose({ restoreFocus: e.detail === 0 });
                   }}
                 >
                   <span aria-hidden="true">{REACTION_SYMBOLS[id]}</span>
@@ -200,7 +201,7 @@ export function MessageMenu({ message, anchor, container, scroller, onClose, onR
       </div>
       <div aria-hidden="true" className="t2f-mm-sep" />
       <div className="t2f-mm-row">
-        <button type="button" role="menuitem" data-menu-item="" className="t2f-mm-item t2f-mm-action t2f-mm-report" onClick={() => done(() => onReport?.(message), true)}>
+        <button type="button" role="menuitem" data-menu-item="" className="t2f-mm-item t2f-mm-action t2f-mm-report" onClick={(e) => done(() => onReport?.(message), e.detail === 0)}>
           <Svg>
             <path d="M5 21V4" />
             <path d="M5 4h11l-2 4 2 4H5" />

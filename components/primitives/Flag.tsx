@@ -71,7 +71,19 @@ export interface FlagProps {
   name?: string;
   /** Поруч є текст з назвою — прапор лише прикраса (aria-hidden). */
   decorative?: boolean;
+  /** Круглий прапор (пакет `circle-flags`, файли в `public/flags/round`) — зараз лише в чаті. */
+  round?: boolean;
   className?: string;
+}
+
+/** Діаметр круглого прапора: `xs` — 16 px, як ширина прямокутного на макетах чату. */
+const ROUND_DIAMETER: Record<FlagSize, number> = { xs: 16, card: 16, pill: 18, sm: 20, md: 26, lg: 48 };
+
+/** Файл у `public/flags/round`: ISO — малими, `GB-ENG` → `gb-eng`, `EU` → `eu`, `un` — ООН; решта особливих — власні SVG. */
+function roundFile(code: string): string | null {
+  if (code === 'un') return 'un';
+  if (isSpecial(code)) return null;
+  return code.toLowerCase();
 }
 
 function isSpecial(code: string): code is SpecialFlag {
@@ -79,7 +91,7 @@ function isSpecial(code: string): code is SpecialFlag {
 }
 
 /** P23. Прапор — SVG, не емодзі; тонка темна обводка однакова для всіх розмірів. */
-export function Flag({ code, size = 'sm', name, decorative, className }: FlagProps) {
+export function Flag({ code, size = 'sm', name, decorative, round, className }: FlagProps) {
   const t = useTranslations('primitives.flag');
   const { w, h } = DIMENSIONS[size];
   const style: CSSProperties = { width: w, height: h };
@@ -90,6 +102,35 @@ export function Flag({ code, size = 'sm', name, decorative, className }: FlagPro
     className: 'block size-full',
     preserveAspectRatio: 'none' as const,
   };
+
+  if (round) {
+    const d = ROUND_DIAMETER[size];
+    const file = roundFile(code);
+    return (
+      <span
+        className={cn('relative inline-block shrink-0 overflow-hidden rounded-full align-middle', className)}
+        style={{ width: d, height: d }}
+        role={hidden ? undefined : 'img'}
+        aria-label={hidden ? undefined : label}
+        aria-hidden={hidden ? true : undefined}
+        data-flag={code}
+        data-size={size}
+        data-round="true"
+      >
+        {file ? (
+          // Статичний SVG із нашого домену: next/image для нього зайвий (експорт без оптимізації).
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={`/flags/round/${file}.svg`} alt="" draggable={false} decoding="async" className="block size-full" />
+        ) : (
+          // Власні особливі прапори — кадр 20×20 із середини прямокутного (30×20), заокруглений контейнером.
+          <svg viewBox="5 0 20 20" className="block size-full" preserveAspectRatio="xMidYMid slice">
+            {SPECIAL[code as SpecialFlag]}
+          </svg>
+        )}
+        <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-border" aria-hidden="true" />
+      </span>
+    );
+  }
 
   let art: ReactNode;
   if (isSpecial(code)) {

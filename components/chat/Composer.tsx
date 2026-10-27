@@ -153,7 +153,7 @@ export function Composer({
                         }}
                         className="t2f-focus t2f-transition flex min-h-touch-min w-full items-center gap-3 rounded-md px-3 text-start text-body text-text hover:bg-border"
                       >
-                        <Flag code={p.flagCode} size="xs" decorative />
+                        <Flag round code={p.flagCode} size="xs" decorative />
                         <span className="flex-1">{p.text}</span>
                       </button>
                     </li>

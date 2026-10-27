@@ -23,6 +23,7 @@
     "sync:tokens": "node scripts/sync_tokens.mjs"
   },
   "dependencies": {
+    "circle-flags": "2.8.3",
     "country-flag-icons": "1.6.20",
     "embla-carousel-autoplay": "8.6.0",
     "embla-carousel-react": "8.6.0",

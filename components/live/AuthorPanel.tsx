@@ -72,7 +72,7 @@ export function AuthorPanel({
   return (
     <div data-window="O-AUTHOR" data-pass={hasPass ? 'yes' : 'no'} className={cn('flex flex-col gap-5', className)}>
       <header className="flex items-center gap-3">
-        <Flag code={author.flagCode} size="md" name={countryName} decorative={!countryName} />
+        <Flag round code={author.flagCode} size="md" name={countryName} decorative={!countryName} />
         <div className="flex min-w-0 flex-1 flex-col">
           <p className="flex flex-wrap items-center gap-2 text-headline-sm text-text">
             <span className="break-words">{author.nick}</span>
@@ -130,7 +130,7 @@ export function AuthorPanel({
             <ol className="flex flex-col gap-2">
               {path.map((p) => (
                 <li key={p.id} className="flex items-center gap-3" data-planned={p.planned ? '' : undefined}>
-                  <Flag code={p.flagCode} size="xs" decorative />
+                  <Flag round code={p.flagCode} size="xs" decorative />
                   <span className="flex-1 text-body text-text">
                     {p.city}
                     <span className="text-text-muted">

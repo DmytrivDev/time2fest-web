@@ -156,7 +156,7 @@ export function Message({
       body = (
         <>
           {s.participantName}{' '}
-          <Flag code={s.flagCode} size="xs" name={lookup?.countryName?.(s.flagCode)} decorative={!lookup?.countryName?.(s.flagCode)} className="t2f-sys-flag" />{' '}
+          <Flag round code={s.flagCode} size="xs" name={lookup?.countryName?.(s.flagCode)} decorative={!lookup?.countryName?.(s.flagCode)} className="t2f-sys-flag" />{' '}
           {t('systemFirstRowTail', { city })}
         </>
       );
@@ -167,7 +167,7 @@ export function Message({
           <span>{t('repeat', { count: new Intl.NumberFormat('uk').format(s.count) })}</span>
           <span aria-hidden="true" className="ms-1.5 inline-flex">
             {s.flagCodes.slice(0, 5).map((code, i) => (
-              <Flag key={code + i} code={code} size="xs" decorative className={i > 0 ? '-ms-1' : undefined} />
+              <Flag round key={code + i} code={code} size="xs" decorative className={i > 0 ? '-ms-1' : undefined} />
             ))}
           </span>
         </>
@@ -222,7 +222,7 @@ export function Message({
         </div>
         <p className="text-chat text-text">
           {t('greetingPrefix')} <strong className="font-bold">{g.participantName}</strong>{' '}
-          <Flag code={g.flagCode} size="xs" name={country} decorative={!country} />{' '}
+          <Flag round code={g.flagCode} size="xs" name={country} decorative={!country} />{' '}
           <span role="img" aria-label={t('emotionLabel', { emotion: emotionName(g.emojiId) })}>
             {emojiSymbol(g.emojiId)}
           </span>{' '}
@@ -262,7 +262,7 @@ export function Message({
         e.preventDefault();
         onAuthorOpen(a);
       }}
-      className={cn('t2f-msg t2f-focus relative flex flex-col gap-0.5 px-2.5 py-1.5', a && onAuthorOpen && 'cursor-pointer', className)}
+      className={cn('t2f-msg t2f-focus relative flex flex-col gap-0.5 my-px px-2.5 py-2', a && onAuthorOpen && 'cursor-pointer', className)}
     >
       <div className={cn(ROW, 't2f-msg-head')}>
         {a ? (
@@ -274,12 +274,12 @@ export function Message({
             onClick={() => onAuthorOpen?.(a)}
             onFocus={onAuthorFocus}
             onKeyDown={onAuthorKeyDown}
-            className="t2f-nick -mx-1 -my-3.5 inline-flex min-h-touch-min items-center px-1 text-label-sm text-text"
+            className="t2f-nick -mx-1 -my-3.5 inline-flex min-h-touch-min items-center px-1 text-text"
           >
             {/* Ціль 44 px невидима; наведення — підсвітка всього рядка повідомлення, фокус — рамка лише навколо
                 прапора й імені (раніше підсвітка 44-піксельної цілі заходила на попереднє повідомлення). */}
             <span className="t2f-nick-label inline-flex items-center gap-1.5 rounded-sm">
-              <Flag code={a.flagCode} size="xs" decorative />
+              <Flag round code={a.flagCode} size="xs" decorative />
               <span className="t2f-nick-name">{a.nick}</span>
             </span>
           </button>
@@ -296,7 +296,7 @@ export function Message({
           </>
         ) : null}
         {a?.isMine ? <Badge variant="you" /> : null}
-        <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto text-label-badge-chat text-text-muted">
+        <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto text-text-muted">
           {time}
         </time>
         {onOpenMenu ? (
@@ -321,7 +321,7 @@ export function Message({
           <span className="font-semibold">{t('replyTo', { nick: message.replyTo.nick })}</span> {message.replyTo.excerpt}
         </p>
       ) : null}
-      <p className="text-chat text-text">{withMentions(message.text)}</p>
+      <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>
       <ReactionsRow message={message} tabStop={tabStop} onReact={onOpenMenu ? onReact : undefined} className="pt-1" />
     </li>
   );
