@@ -60,7 +60,11 @@ export function Textarea({
     const node = el.current;
     if (!node) return;
     node.style.height = 'auto';
-    node.style.height = `${Math.min(node.scrollHeight, LINE * maxRows)}px`;
+    // Максимум — maxRows рядків тексту плюс вертикальні відступи поля (box-sizing: border-box).
+    const cs = getComputedStyle(node);
+    const line = Number.parseFloat(cs.lineHeight) || LINE;
+    const pad = Number.parseFloat(cs.paddingTop) + Number.parseFloat(cs.paddingBottom) || 0;
+    node.style.height = `${Math.min(node.scrollHeight, Math.round(line * maxRows + pad))}px`;
   }, [text, maxRows]);
 
   const setRef = (node: HTMLTextAreaElement | null) => {

@@ -122,6 +122,7 @@ export function Composer({
         frameClassName="t2f-chat-input"
         label={t('inputLabel', { room: room.label })}
         hideLabel
+        maxRows={3}
         placeholder={t('inputLabel', { room: room.label })}
         value={value}
         maxLength={MAX_TEXT}

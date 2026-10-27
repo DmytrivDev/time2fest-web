@@ -239,20 +239,28 @@ export function Message({
   const firstRow = a?.badges.includes('first-row') ?? false;
   const pass = a?.badges.includes('pass') || a?.badges.includes('vip');
   return (
-    // Клік по повідомленню (не по ніку, кнопках і посиланнях) відкриває його дії — те саме, що ⋯ (рішення власника).
-    // Клавіатурний шлях — кнопка ⋯, тож обробник на <li> лише дублює її для миші й дотику.
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events
+    // Клік по рядку (крім ⋯ і чипів реакцій) відкриває панель автора — те саме, що клік по ніку (рішення власника 2026-10-27).
+    // Enter на сфокусованому рядку — так само. Кнопка ⋯ відкриває меню дій окремо.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <li
       data-kind="regular"
       data-own={a?.isMine ? 'true' : undefined}
       data-msg-id={message.id}
       data-actions-open={menuOpen ? 'true' : undefined}
+      tabIndex={a && onAuthorOpen ? -1 : undefined}
       onClick={(e) => {
-        if (!actions || (e.target as HTMLElement).closest('button, a, input, textarea')) return;
-        if (actions === 'menu') setMenuOpen(true);
-        else onOpenActions?.(message);
+        if (!a || !onAuthorOpen) return;
+        const target = e.target as HTMLElement;
+        // Портали (меню дій) спливають через React-дерево, але лежать поза рядком.
+        if (!e.currentTarget.contains(target) || target.closest('button, a, input, textarea, [role="menu"], [role="menuitem"]')) return;
+        onAuthorOpen(a);
       }}
-      className={cn('t2f-msg relative flex flex-col gap-0.5 rounded-md px-2 py-1.5', actions && 'cursor-pointer', className)}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter' || e.target !== e.currentTarget || !a || !onAuthorOpen) return;
+        e.preventDefault();
+        onAuthorOpen(a);
+      }}
+      className={cn('t2f-msg t2f-focus relative flex flex-col gap-0.5 rounded-md px-2 py-1.5', a && onAuthorOpen && 'cursor-pointer', className)}
     >
       <div className={ROW}>
         {a ? (

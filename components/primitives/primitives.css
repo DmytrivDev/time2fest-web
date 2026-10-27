@@ -234,21 +234,41 @@ html[data-reduce-motion='true'] .t2f-spin {
    (на макеті їх не видно; ціль лишається клікабельною на дотик). */
 .t2f-chat-input {
   min-height: var(--spacing-touch-min);
-  border-radius: var(--radius-full);
+  /* Радіус фіксований = половина висоти однорядкового поля: у кілька рядків заокруглені лише кути, не «таблетка». */
+  border-radius: calc(var(--spacing-touch-min) / 2);
   padding-inline-start: 14px;
 }
 .t2f-chat-input textarea {
   font-size: 14px;
+  /* Вертикальні відступи — полями, а не padding: текст не просвічує крізь них, видно рівно 3 рядки. */
+  padding-block: 0;
+  margin-block: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
-/* Фокус поля чату — кільце по контуру всієї пігулки, без внутрішнього прямокутника. */
+.t2f-chat-input textarea::-webkit-scrollbar {
+  width: 6px;
+}
+.t2f-chat-input textarea::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.t2f-chat-input textarea::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+}
+.t2f-chat-input textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Фокус поля чату — одна рамка по контуру поля (колір кільця фокусу, 2 px); зовнішнього кільця немає. */
 .t2f-chat-input textarea.t2f-focus:focus-visible {
   outline: none;
   box-shadow: none;
 }
-.t2f-chat-input:has(textarea:focus-visible) {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--color-focus-ring-outer);
+.t2f-chat-input.t2f-chat-input:focus-within {
+  border-color: var(--color-focus-ring);
+  box-shadow: inset 0 0 0 1px var(--color-focus-ring);
 }
 .t2f-chat-hbtn {
   display: flex;
@@ -334,7 +354,7 @@ html[data-reduce-motion='true'] .t2f-spin {
   transform: translateX(-50%);
 }
 .t2f-chat-newpill:hover {
-  background: var(--color-border-strong);
+  background: var(--color-surface-raised);
 }
 .t2f-chat-newcount {
   display: inline-flex;

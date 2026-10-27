@@ -118,8 +118,16 @@ test.describe('US4 · чат свята', () => {
     await advance(page, 5 * 60_000);
     const pill = page.getByRole('button', { name: /^Нові повідомлення \d+/ });
     await expect(pill).toBeVisible();
+    const count = async () => Number(/(\d+)/.exec((await pill.textContent()) ?? '')?.[1] ?? 0);
+    const before = await count();
     await pill.click();
-    await expect(page.locator('[data-row="paused"]')).toHaveCount(0);
+    // Клік веде до першого непобаченого повідомлення (не до кінця): побачені рахуються прочитаними, капсула
+    // або зникає (усі в полі зору), або лічильник меншає.
+    await expect(async () => {
+      if (await pill.isVisible()) {
+        expect(await count()).toBeLessThan(before);
+      }
+    }).toPass();
     await expectAxeClean(page);
   });
 

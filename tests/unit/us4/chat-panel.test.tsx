@@ -221,6 +221,25 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     expect(within(plain).getByText('Згадати @Тарас')).toBeInTheDocument();
   });
 
+  it('клік по рядку повідомлення (текст) і Enter на рядку відкривають панель автора; ⋯ — лише меню дій', async () => {
+    const user = userEvent.setup();
+    setup();
+    const row = screen.getByText('Привіт з Каїра!').closest('li')!;
+    await user.click(screen.getByText('Привіт з Каїра!'));
+    const dialog = await screen.findByRole('dialog', { name: 'Автор повідомлення' });
+    expect(dialog).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument());
+    row.focus();
+    await user.keyboard('{Enter}');
+    expect(await screen.findByRole('dialog', { name: 'Автор повідомлення' })).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument());
+    await user.click(screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!);
+    expect(await screen.findByRole('button', { name: 'Відповісти' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument();
+  });
+
   it('«Згадати @нік» вставляє згадку в поле і закриває панель', async () => {
     const user = userEvent.setup();
     setup();

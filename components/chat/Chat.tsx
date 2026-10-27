@@ -17,7 +17,11 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import type { Author, ChatMessage, RoomId } from '@/lib/data/types';
+import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { Message, type MessageLookup, type MessageProps } from './Message';
+
+const SCROLL_MS = 250;
+const SCROLL_PAD = 8;
 
 export type ChatState = 'live' | 'l' | 'empty' | 'unavailable';
 
@@ -134,12 +138,45 @@ export function Chat({
     markSeen();
   }, [markSeen]);
 
-  const jumpToEnd = () => {
+  const reduceMotion = useReducedMotion();
+  const scrollAnim = useRef(0);
+  useEffect(() => () => cancelAnimationFrame(scrollAnim.current), []);
+
+  /** Швидка плавна прокрутка (≈250 мс); за «зменшити рух» — стрибок. */
+  const scrollLogTo = (target: number) => {
+    const el = logRef.current;
+    if (!el) return;
+    cancelAnimationFrame(scrollAnim.current);
+    const to = Math.max(0, Math.min(target, el.scrollHeight - el.clientHeight));
+    const from = el.scrollTop;
+    if (reduceMotion || Math.abs(to - from) < 1) {
+      el.scrollTop = to;
+      return;
+    }
+    const start = performance.now();
+    const step = (now: number) => {
+      const k = Math.min(1, (now - start) / SCROLL_MS);
+      el.scrollTop = from + (to - from) * (1 - (1 - k) ** 3);
+      if (k < 1) scrollAnim.current = requestAnimationFrame(step);
+    };
+    scrollAnim.current = requestAnimationFrame(step);
+  };
+
+  // «Нові повідомлення N ↓»: до першого непобаченого повідомлення (рішення власника 2026-10-27).
+  const jumpToUnseen = () => {
     setManualPause(false);
-    setScrolledUp(false);
     setFocusInside(false);
     const el = logRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    const first = visible[baseline];
+    const node = first ? el?.querySelector<HTMLElement>(`[data-msg-id="${CSS.escape(first.id)}"]`) : null;
+    if (!el) return;
+    if (!node) {
+      setScrolledUp(false);
+      scrollLogTo(el.scrollHeight);
+      return;
+    }
+    const offset = node.getBoundingClientRect().top - el.getBoundingClientRect().top;
+    scrollLogTo(el.scrollTop + offset - SCROLL_PAD);
   };
 
   // Єдиний Tab-стоп: останній сфокусований автор, інакше найновіше повідомлення з автором.
@@ -280,7 +317,7 @@ export function Chat({
             </p>
           ) : null}
           {paused && newCount > 0 ? (
-            <button type="button" onClick={jumpToEnd} className="t2f-focus t2f-chat-newpill" data-row="new-messages">
+            <button type="button" onClick={jumpToUnseen} className="t2f-focus t2f-chat-newpill" data-row="new-messages">
               {t('newMessages')}{' '}
               <span className="t2f-chat-newcount">{newCount}</span>
               <Icon name="arrow-down" size={16} strokeWidth={2} />
