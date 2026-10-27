@@ -184,8 +184,9 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     const user = userEvent.setup();
     setup();
     await user.click(screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!);
-    // Аркуш телефона: реакція в рядку «Реакція»
-    await user.click(await screen.findByRole('button', { name: 'Реакція Хлопавка' }));
+    // Меню «⋯»: сітка емодзі, клітинка з підписом лише для зчитувача
+    await user.click(await screen.findByRole('menuitemcheckbox', { name: 'Реакція Хлопавка' }));
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
     expect(await screen.findByRole('button', { name: 'Реакція Хлопавка: 1, твоя. Прибрати' })).toBeInTheDocument();
   });
 
@@ -193,7 +194,7 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     const user = userEvent.setup();
     setup();
     await user.click(screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!);
-    await user.click(await screen.findByRole('button', { name: 'Відповісти' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Відповісти' }));
     expect(await screen.findByText(/Відповідь · Karim/)).toBeInTheDocument();
     await user.type(field(), 'Дякую!');
     await user.click(screen.getByRole('button', { name: 'Надіслати' }));
@@ -236,8 +237,49 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     await user.keyboard('{Escape}');
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument());
     await user.click(screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!);
-    expect(await screen.findByRole('button', { name: 'Відповісти' })).toBeInTheDocument();
+    expect(await screen.findByRole('menuitem', { name: 'Відповісти' })).toBeInTheDocument();
     expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument();
+  });
+
+  it('меню «⋯»: 24 емодзі без підписів, «Згадати» вставляє @нік, Esc повертає фокус на «⋯», клік поза меню закриває', async () => {
+    const user = userEvent.setup();
+    setup();
+    const more = screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!;
+    await user.click(more);
+    const menu = await screen.findByRole('menu', { name: 'Дії з повідомленням' });
+    expect(more).toHaveAttribute('aria-expanded', 'true');
+    expect(within(menu).getAllByRole('menuitemcheckbox')).toHaveLength(24);
+    expect(within(menu).getByRole('menuitem', { name: 'Поскаржитись' })).toBeInTheDocument();
+    // Перша клітинка сітки; стрілка вправо — наступна клітинка, вниз — той самий стовпець наступного ряду.
+    const first = within(menu).getAllByRole('menuitemcheckbox')[0]!;
+    first.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(within(menu).getAllByRole('menuitemcheckbox')[1]);
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
+    expect(document.activeElement).toBe(more);
+
+    await user.click(more);
+    await user.click(await screen.findByRole('menuitem', { name: 'Згадати' }));
+    await waitFor(() => expect(field()).toHaveValue('@Karim '));
+
+    await user.click(more);
+    await screen.findByRole('menu');
+    await user.click(document.body);
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
+  });
+
+  it('меню «⋯»: «Поскаржитись» і повторний клік по «⋯» закривають меню', async () => {
+    const user = userEvent.setup();
+    setup();
+    const more = screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!;
+    await user.click(more);
+    await user.click(await screen.findByRole('menuitem', { name: 'Поскаржитись' }));
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
+    await user.click(more);
+    await screen.findByRole('menu');
+    await user.click(more);
+    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
   });
 
   it('«Згадати @нік» вставляє згадку в поле і закриває панель', async () => {

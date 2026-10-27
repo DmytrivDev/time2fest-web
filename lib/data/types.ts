@@ -157,7 +157,32 @@ export interface ChatRoom {
 }
 
 export type MessageKind = 'regular' | 'system' | 'greeting';
-export type ReactionId = 'clap' | 'heart' | 'glasses' | 'fireworks' | 'laugh' | 'hug';
+export type ReactionId =
+  | 'clap'
+  | 'heart'
+  | 'glasses'
+  | 'fireworks'
+  | 'laugh'
+  | 'hug'
+  | 'party'
+  | 'champagne'
+  | 'sparkles'
+  | 'pray'
+  | 'loveeyes'
+  | 'fire'
+  | 'applause'
+  | 'starstruck'
+  | 'smile'
+  | 'sad'
+  | 'tree'
+  | 'thumbs'
+  | 'raised'
+  | 'dancer'
+  | 'dancing'
+  | 'gift'
+  | 'star'
+  | 'earth'
+  | 'yellowheart';
 export type AuthorBadge = 'pass' | 'first-row' | 'vip';
 
 export interface Author {

@@ -18,7 +18,9 @@ import { Icon } from '@/components/primitives/Icon';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import type { Author, ChatMessage, RoomId } from '@/lib/data/types';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
-import { Message, type MessageLookup, type MessageProps } from './Message';
+import { Message, type MessageLookup } from './Message';
+import type { MessageActionHandlers } from './MessageActions';
+import { MessageMenu } from './MessageMenu';
 
 const SCROLL_MS = 250;
 const SCROLL_PAD = 8;
@@ -50,8 +52,8 @@ export interface ChatProps {
   banner?: ReactNode;
   /** «Правила чату» в меню «Ще дії чату»; без нього меню немає. */
   onRules?: () => void;
-  /** Дії над повідомленням: меню (десктоп) або кнопка → аркуш (телефон); без значення дій немає. */
-  messageActions?: Pick<MessageProps, 'actions' | 'onOpenActions' | 'onReact' | 'onReply' | 'onReport'>;
+  /** Дії над повідомленням: «⋯» відкриває меню в шарі чату; `menuAlways` — телефон (кнопка завжди видна). Без значення дій немає. */
+  messageActions?: MessageActionHandlers & { menuAlways?: boolean };
   /** Нове повідомлення «ввічливо» оголошується не частіше ніж раз на 30 с. */
   announceNew?: boolean;
   className?: string;
@@ -86,9 +88,27 @@ export function Chat({
   const [scrolledUp, setScrolledUp] = useState(false);
   const [focusInside, setFocusInside] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [menu, setMenu] = useState<{ message: ChatMessage; anchor: HTMLElement; container: HTMLElement; scroller: HTMLElement } | null>(null);
 
   const visible = useMemo(() => messages.filter((m) => m.moderation !== 'hidden' || m.author?.isMine), [messages]);
-  const paused = manualPause || scrolledUp || focusInside;
+
+  // Меню «⋯»: перемикається тією ж кнопкою; зникає разом із повідомленням.
+  const openMenu = useCallback((message: ChatMessage, trigger: HTMLElement) => {
+    const anchor = trigger.closest<HTMLElement>('[data-msg-id]');
+    const container = wrapRef.current;
+    const scroller = logRef.current;
+    if (!anchor || !container || !scroller) return;
+    setMenu((cur) => (cur?.message.id === message.id ? null : { message, anchor, container, scroller }));
+  }, []);
+  const closeMenu = useCallback((opts?: { restoreFocus?: boolean }) => {
+    setMenu((cur) => {
+      if (cur && opts?.restoreFocus) cur.anchor.querySelector<HTMLElement>('[data-msg-trigger]')?.focus();
+      return null;
+    });
+  }, []);
+  const menuMessage = menu ? (visible.find((m) => m.id === menu.message.id) ?? null) : null;
+  const paused = manualPause || scrolledUp || focusInside || menuMessage !== null;
 
   // Автопрокрутка вниз, поки стрічка не зупинена.
   useEffect(() => {
@@ -274,7 +294,7 @@ export function Chat({
           ))}
         </div>
       ) : (
-        <div className="relative flex min-h-0 flex-1 flex-col">
+        <div ref={wrapRef} className="relative flex min-h-0 flex-1 flex-col">
           <div
             ref={logRef}
             role="log"
@@ -304,13 +324,30 @@ export function Chat({
                     onAuthorOpen={onAuthorOpen ? (a) => onAuthorOpen(a, m) : undefined}
                     onAuthorFocus={() => setActiveId(m.id)}
                     onAuthorKeyDown={onAuthorKeyDown}
-                    {...messageActions}
+                    onReact={messageActions?.onReact}
+                    onOpenMenu={messageActions ? openMenu : undefined}
+                    menuOpen={menuMessage?.id === m.id}
+                    menuAlways={messageActions?.menuAlways}
                   />
                 ))}
               </ol>
             )}
           </div>
           {/* Пауза (`Phone-Chat-Paused`): лише «Нові повідомлення N ↓» поверх стрічки (absolute) — висота не змінюється. */}
+          {menu && menuMessage ? (
+            <MessageMenu
+              key={menuMessage.id}
+              message={menuMessage}
+              anchor={menu.anchor}
+              container={menu.container}
+              scroller={menu.scroller}
+              onClose={closeMenu}
+              onReact={messageActions?.onReact}
+              onReply={messageActions?.onReply}
+              onMention={messageActions?.onMention}
+              onReport={messageActions?.onReport}
+            />
+          ) : null}
           {paused ? (
             <p role="status" className="sr-only" data-row="paused">
               {t('pausedNote')}

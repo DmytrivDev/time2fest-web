@@ -194,14 +194,12 @@ test.describe('US4 · чат свята', () => {
       .getByRole('button', { name: /^Дії з повідомленням/ })
       .first()
       .click();
-    // Меню дій (десктоп) або аркуш (телефон); чипи реакцій у стрічці під модальним меню не клікабельні.
-    const actions = page.locator('[role="menu"], [data-sheet]').first();
+    // Меню «⋯» (однакове на десктопі й телефоні) живе в шарі чату: емодзі без підписів, `aria-label` на клітинці.
+    const actions = page.getByRole('menu', { name: 'Дії з повідомленням' });
     await expect(actions).toBeVisible();
-    await actions
-      .getByRole('menuitem', { name: /Хлопавка/ })
-      .or(actions.getByRole('button', { name: 'Реакція Хлопавка' }))
-      .first()
-      .click();
+    await expect(actions.getByRole('menuitemcheckbox')).toHaveCount(24);
+    await actions.getByRole('menuitemcheckbox', { name: 'Реакція Хлопавка' }).click();
+    await expect(actions).toBeHidden();
     await expect(
       log.getByRole('button', { name: /^Реакція Хлопавка: \d+, твоя\. Прибрати/ }).first(),
     ).toBeVisible();

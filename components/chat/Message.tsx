@@ -8,24 +8,24 @@
  *   «<ім’я> тепер у першому ряду · <місто>», лічильник «+1 240 людей привітали», повільний режим, голосування;
  * - `greeting`: картка з жовтою межею ліворуч, «Перший ряд», привітання від Time2Fest.
  * Позначки не клікабельні. Емодзі в доступних назвах — назвами з набору O-EMOJI. Назви країн — лише в називному.
- * Реакції під текстом і дії над повідомленням (C12): `actions="menu"` — DropdownMenu (десктоп), `actions="sheet"` —
- * кнопка відкриває аркуш через `onOpenActions` (телефон); без `actions` кнопки дій немає. Кнопки дій і реакції
- * потрапляють у Tab лише в повідомленні з єдиним Tab-стопом (`tabStop`), решта — `tabindex=-1`.
+ * Реакції під текстом і кнопка «⋯» (C12): при наведенні чи фокусі вона стає на місце часу (час ховається на місці);
+ * на телефоні (`menuAlways`) завжди видно, час лівіше. Меню відкриває Chat (`onOpenMenu`); без `onOpenMenu` дій немає.
+ * Клік по рядку (крім «⋯» і чипів) відкриває панель автора. Кнопка «⋯» і реакції потрапляють у Tab лише в повідомленні
+ * з єдиним Tab-стопом (`tabStop`), решта — `tabindex=-1`.
  * `mention`: «@нік» у тексті виділено.
  * Компонент повертає `<li>`; обгортку `<ol>` дає Chat (або історія).
  */
 import { useTranslations } from 'next-intl';
-import { useState, type KeyboardEvent, type ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { emojiSymbol } from '@/components/live/SeatPill';
-import { IconButton } from '@/components/primitives/IconButton';
 import type { Author, ChatMessage, Country, Gender } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock } from '@/lib/i18n/time';
-import { MessageActionsMenu, ReactionsRow, type MessageActionHandlers } from './MessageActions';
+import { ReactionsRow, type MessageActionHandlers } from './MessageActions';
 
 export interface MessageLookup {
   /** Назва країни за кодом прапора («Австралія»). */
@@ -36,11 +36,14 @@ export interface MessageLookup {
   cityName?: (cityId: string) => string | undefined;
 }
 
-export interface MessageProps extends MessageActionHandlers {
+export interface MessageProps extends Pick<MessageActionHandlers, 'onReact'> {
   message: ChatMessage;
-  /** Дії над повідомленням: меню (десктоп), кнопка → аркуш (телефон); без значення дій немає. */
-  actions?: 'menu' | 'sheet';
-  onOpenActions?: (message: ChatMessage) => void;
+  /** Кнопка «⋯» відкриває меню повідомлення (його малює Chat у своєму шарі); без значення дій немає. */
+  onOpenMenu?: (message: ChatMessage, trigger: HTMLElement) => void;
+  /** Меню цього повідомлення відкрито: рядок лишається підсвіченим, «⋯» натиснуто. */
+  menuOpen?: boolean;
+  /** Телефон: «⋯» завжди видно в куті, час лівіше нього. */
+  menuAlways?: boolean;
   lookup?: MessageLookup;
   /** Нік — єдиний Tab-стоп чату (рухомий tabindex): `true` лише для одного повідомлення. */
   tabStop?: boolean;
@@ -102,11 +105,10 @@ export function Message({
   message,
   lookup,
   tabStop = false,
-  actions,
-  onOpenActions,
+  onOpenMenu,
+  menuOpen = false,
+  menuAlways = false,
   onReact,
-  onReply,
-  onReport,
   onAuthorOpen,
   onAuthorFocus,
   onAuthorKeyDown,
@@ -117,7 +119,6 @@ export function Message({
   const names = useTranslations('windows.emoji.names');
   const badges = useTranslations('primitives.badge');
   const time = formatClock(message.createdAt);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   // Приховане модерацією бачить лише автор.
   if (message.moderation === 'hidden') {
@@ -247,6 +248,7 @@ export function Message({
       data-own={a?.isMine ? 'true' : undefined}
       data-msg-id={message.id}
       data-actions-open={menuOpen ? 'true' : undefined}
+      data-menu-always={menuAlways && onOpenMenu ? 'true' : undefined}
       tabIndex={a && onAuthorOpen ? -1 : undefined}
       onClick={(e) => {
         if (!a || !onAuthorOpen) return;
@@ -260,9 +262,9 @@ export function Message({
         e.preventDefault();
         onAuthorOpen(a);
       }}
-      className={cn('t2f-msg t2f-focus relative flex flex-col gap-0.5 rounded-md px-2 py-1.5', a && onAuthorOpen && 'cursor-pointer', className)}
+      className={cn('t2f-msg t2f-focus relative flex flex-col gap-0.5 px-2.5 py-1.5', a && onAuthorOpen && 'cursor-pointer', className)}
     >
-      <div className={ROW}>
+      <div className={cn(ROW, 't2f-msg-head')}>
         {a ? (
           <button
             type="button"
@@ -297,29 +299,21 @@ export function Message({
         <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto text-label-badge-chat text-text-muted">
           {time}
         </time>
-        {actions === 'menu' ? (
-          <span className="t2f-msg-actions">
-            <MessageActionsMenu
-              message={message}
-              tabStop={tabStop}
-              open={menuOpen}
-              onOpenChange={setMenuOpen}
-              onReact={onReact}
-              onReply={onReply}
-              onReport={onReport}
-            />
-          </span>
-        ) : actions === 'sheet' ? (
-          <span className="t2f-msg-actions">
-          <IconButton
-            icon="more"
-            compact
-            iconSize={16}
+        {onOpenMenu ? (
+          <button
+            type="button"
+            data-msg-trigger=""
             tabIndex={tabStop ? 0 : -1}
             aria-label={t('actionsLabel', { nick: a?.nick ?? '' })}
-            onClick={() => onOpenActions?.(message)}
-          />
-          </span>
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            onClick={(e) => onOpenMenu(message, e.currentTarget)}
+            className="t2f-msg-more"
+          >
+            <span aria-hidden="true">
+              <Icon name="more" size={18} />
+            </span>
+          </button>
         ) : null}
       </div>
       {message.replyTo ? (
@@ -328,7 +322,7 @@ export function Message({
         </p>
       ) : null}
       <p className="text-chat text-text">{withMentions(message.text)}</p>
-      <ReactionsRow message={message} tabStop={tabStop} onReact={actions ? onReact : undefined} className="pt-1" />
+      <ReactionsRow message={message} tabStop={tabStop} onReact={onOpenMenu ? onReact : undefined} className="pt-1" />
     </li>
   );
 }

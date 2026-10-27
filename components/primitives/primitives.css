@@ -377,34 +377,164 @@ html[data-reduce-motion='true'] .t2f-spin {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
-.t2f-msg-actions {
-  position: absolute;
-  top: -7px;
-  right: -4px;
-  opacity: 0;
-  transition: opacity 120ms ease-out;
+/* Повідомлення (макет `Desk-Chat-MessageMenu`, варіант 2): кут рядка 10, правий верхній 14 (= радіус кружка «⋯»);
+   наведення чи фокус усередині — поверхня рядка, час ховається на місці, «⋯» стає на його місце. */
+.t2f-msg {
+  border-radius: var(--radius-md) var(--radius-lg) var(--radius-md) var(--radius-md);
+  transition: background-color 120ms ease-out;
 }
-.t2f-msg:hover .t2f-msg-actions,
-.t2f-msg:focus-within .t2f-msg-actions,
-.t2f-msg[data-actions-open='true'] .t2f-msg-actions,
-.t2f-msg-actions:has([aria-expanded='true']) {
-  opacity: 1;
+.t2f-msg:hover,
+.t2f-msg[data-actions-open='true'] {
+  background: var(--color-surface-raised);
 }
 .t2f-msg:hover time,
 .t2f-msg:focus-within time,
 .t2f-msg[data-actions-open='true'] time {
   visibility: hidden;
 }
-/* Наведення на повідомлення — легке затемнення всього рядка (рішення власника); ⋯ і чипи реакцій — свої. */
-.t2f-msg {
-  transition: background-color 120ms ease-out;
+/* «⋯»: невидима зона 44×44, кружок 28; центр — на лінії імені й часу, правий край кружка за 4 px від краю рядка. */
+.t2f-msg-more {
+  position: absolute;
+  top: -7px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
 }
-.t2f-msg:hover,
-.t2f-msg[data-actions-open='true'] {
-  background: rgba(0, 0, 0, 0.22);
-}
-.t2f-msg-actions button:hover > span {
+.t2f-msg-more > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
   background: var(--color-border);
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+.t2f-msg:hover .t2f-msg-more,
+.t2f-msg:focus-within .t2f-msg-more,
+.t2f-msg[data-actions-open='true'] .t2f-msg-more {
+  opacity: 1;
+}
+.t2f-msg-more:hover > span {
+  background: var(--t2f-mm-press);
+  color: var(--color-text);
+}
+.t2f-msg-more[aria-expanded='true'] > span {
+  background: var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+  color: var(--color-text);
+}
+/* Фокус «⋯» — кільце по кружку, не по невидимій цілі. */
+.t2f-msg-more:focus-visible {
+  outline: none;
+}
+.t2f-msg-more:focus-visible > span {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+/* Телефон: «⋯» завжди в куті, час лівіше за нього на 8 px. */
+.t2f-msg[data-menu-always='true'] {
+  padding-inline: 12px;
+}
+.t2f-msg[data-menu-always='true'] .t2f-msg-more {
+  opacity: 1;
+}
+.t2f-msg[data-menu-always='true'] .t2f-msg-head {
+  padding-inline-end: 28px;
+}
+.t2f-msg[data-menu-always='true']:hover time,
+.t2f-msg[data-menu-always='true']:focus-within time,
+.t2f-msg[data-menu-always='true'][data-actions-open='true'] time {
+  visibility: visible;
+}
+
+/* Меню «⋯» (`MessageMenu`): на всю ширину колонки, поверхня raised, рамка border-strong, радіус 14, відступ 6. */
+:root {
+  /* «Натиснуто» (#3C3C44 на макеті): трохи світліше за border, з токенів. */
+  --t2f-mm-press: color-mix(in srgb, var(--color-border) 82%, var(--color-border-strong));
+}
+.t2f-mm {
+  position: absolute;
+  z-index: 10;
+  box-sizing: border-box;
+  padding: 6px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+.t2f-mm-row {
+  display: flex;
+  gap: 4px;
+}
+.t2f-mm-sep {
+  height: 1px;
+  margin: 6px;
+  background: var(--color-border);
+}
+.t2f-mm-grid {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2px;
+}
+.t2f-mm-gridrow {
+  display: flex;
+  justify-content: space-between;
+}
+.t2f-mm-item {
+  display: flex;
+  align-items: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+.t2f-mm-action {
+  flex: 1;
+  min-width: 0;
+  height: var(--spacing-touch-min);
+  gap: 10px;
+  padding: 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: start;
+}
+.t2f-mm-emoji {
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+.t2f-mm-report {
+  color: var(--color-text-secondary);
+}
+.t2f-mm-report:hover {
+  color: var(--color-text);
+}
+.t2f-mm-item:hover {
+  background: var(--color-border);
+}
+.t2f-mm-item:active {
+  background: var(--t2f-mm-press);
+}
+.t2f-mm-item:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 0;
 }
 /* Чип реакції: підсвічується лише він; своя реакція — жовтий лічильник; «надсилається» — крихітне кільце. */
 .t2f-chip {

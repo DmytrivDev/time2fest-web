@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Chat } from '@/components/chat/Chat';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { Composer } from '@/components/chat/Composer';
-import { MessageActionsMenu, MessageActionsSheet, ReactionsRow } from '@/components/chat/MessageActions';
+import { ReactionsRow } from '@/components/chat/MessageActions';
 import { Message } from '@/components/chat/Message';
 import { MyEmotionButton } from '@/components/windows/Emoji';
 import { useChatFeed } from '@/lib/chat-sim/store';
@@ -101,26 +101,18 @@ export const Unavailable: Story = {
 };
 
 export const Actions: Story = {
-  name: 'Phone-Chat-Actions — реакції, меню дій, аркуш, згадка, відповідь',
+  name: 'Phone-Chat-Actions — реакції, згадка, відповідь (меню «⋯» — у Chat)',
   render: () => (
     <Stage>
       <StateRow label="реакції під текстом, згадка, відповідь">
         <ol className="flex w-full flex-col gap-2">
-          <Message message={withReactions} lookup={LOOKUP} actions="menu" {...handlers} />
-          <Message message={mention} lookup={LOOKUP} actions="menu" {...handlers} />
-          <Message message={reply} lookup={LOOKUP} actions="menu" {...handlers} />
+          <Message message={withReactions} lookup={LOOKUP} onOpenMenu={noop} {...handlers} />
+          <Message message={mention} lookup={LOOKUP} onOpenMenu={noop} {...handlers} />
+          <Message message={reply} lookup={LOOKUP} onOpenMenu={noop} {...handlers} />
         </ol>
       </StateRow>
       <StateRow label="ReactionsRow окремо">
         <ReactionsRow message={withReactions} onReact={noop} />
-      </StateRow>
-      <StateRow label="меню дій (десктоп)">
-        <MessageActionsMenu message={withReactions} {...handlers} />
-      </StateRow>
-      <StateRow label="аркуш дій (телефон)">
-        <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-4">
-          <MessageActionsSheet message={withReactions} {...handlers} />
-        </div>
       </StateRow>
     </Stage>
   ),

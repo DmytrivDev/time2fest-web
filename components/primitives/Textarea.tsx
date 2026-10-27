@@ -1,7 +1,7 @@
 'use client';
 
 import { Label } from 'radix-ui';
-import { useId, useLayoutEffect, useRef, useState, type ReactNode, type Ref, type TextareaHTMLAttributes } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type Ref, type TextareaHTMLAttributes } from 'react';
 import { cn } from './cn';
 import { Icon } from './Icon';
 import { FieldCounter } from './TextField';
@@ -56,7 +56,7 @@ export function Textarea({
   const text = value !== undefined ? String(value) : uncontrolled;
   const describedBy = [error ? errId : null, hint ? hintId : null].filter(Boolean).join(' ') || undefined;
 
-  useLayoutEffect(() => {
+  const resize = useCallback(() => {
     const node = el.current;
     if (!node) return;
     node.style.height = 'auto';
@@ -64,8 +64,26 @@ export function Textarea({
     const cs = getComputedStyle(node);
     const line = Number.parseFloat(cs.lineHeight) || LINE;
     const pad = Number.parseFloat(cs.paddingTop) + Number.parseFloat(cs.paddingBottom) || 0;
-    node.style.height = `${Math.min(node.scrollHeight, Math.round(line * maxRows + pad))}px`;
-  }, [text, maxRows]);
+    // Порожнє поле — завжди один рядок: довгий placeholder, що переноситься у вузькому полі, не має роздувати висоту.
+    const natural = node.value === '' ? line + pad : node.scrollHeight;
+    node.style.height = `${Math.min(Math.round(natural), Math.round(line * maxRows + pad))}px`;
+  }, [maxRows]);
+
+  useLayoutEffect(resize, [text, resize]);
+
+  // Зміна ширини (колонка чату, шрифти, вікно) перераховує висоту; без цього вона лишалась би застарілою.
+  useEffect(() => {
+    const node = el.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    let width = node.clientWidth;
+    const ro = new ResizeObserver(() => {
+      if (node.clientWidth === width) return;
+      width = node.clientWidth;
+      resize();
+    });
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [resize]);
 
   const setRef = (node: HTMLTextAreaElement | null) => {
     el.current = node;

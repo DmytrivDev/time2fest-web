@@ -33,12 +33,10 @@ import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { Chat } from './Chat';
 import { Composer, type ComposerError } from './Composer';
-import { MessageActionsSheet } from './MessageActions';
 import { useChatLookup } from './useChatLookup';
 
 export const NICK_WINDOW_ID = 'O-NICK';
 export const AUTHOR_WINDOW_ID = 'O-AUTHOR';
-export const ACTIONS_WINDOW_ID = 'O-MSG-ACTIONS';
 export const RULES_WINDOW_ID = 'O-CHAT-RULES';
 
 type RoomKey = 'world' | 'country' | 'firstrow';
@@ -202,17 +200,15 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
     announce(t('reported'));
   }, [announce, t]);
 
-  const openActions = useCallback(
-    (m: ChatMessage) =>
-      overlay.open({
-        id: ACTIONS_WINDOW_ID,
-        kind: 'nonmodal',
-        title: t('actionsTitle'),
-        content: (
-          <MessageActionsSheet message={m} onReact={onReact} onReply={onReply} onReport={onReport} onDone={() => overlay.close(ACTIONS_WINDOW_ID)} />
-        ),
-      }),
-    [overlay, t, onReact, onReply, onReport],
+  const onMention = useCallback(
+    (m: ChatMessage) => {
+      const nick = m.author?.nick;
+      if (!nick) return;
+      setDraft((v) => `${v}${v && !v.endsWith(' ') ? ' ' : ''}@${nick} `);
+      overlay.close(AUTHOR_WINDOW_ID);
+      focusField();
+    },
+    [overlay, focusField, setDraft],
   );
 
   const openAuthor = useCallback(
@@ -304,13 +300,7 @@ export function ChatPanel({ country, eventId, cityName, onHide, onToEvents, clas
       onToEvents={onToEvents}
       onRules={openRules}
       announceNew
-      messageActions={{
-        actions: column ? 'menu' : 'sheet',
-        onOpenActions: openActions,
-        onReact,
-        onReply,
-        onReport,
-      }}
+      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport }}
       composer={
         <Composer
           room={{ id: roomId, label: roomLabel }}
