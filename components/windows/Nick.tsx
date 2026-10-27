@@ -16,7 +16,16 @@
  * Текст повідомлення, заради якого відкрито вікно, лишається в полі чату — вікно про нього не знає.
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -72,7 +81,16 @@ interface Group {
   items: Item[];
 }
 
-export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, takenNicks = [], forcedIssue, onDone, className }: NickProps) {
+export function Nick({
+  initialNick = '',
+  initialFlag,
+  detectedFlag,
+  flags,
+  takenNicks = [],
+  forcedIssue,
+  onDone,
+  className,
+}: NickProps) {
   const t = useTranslations('windows.nick');
   const c = useTranslations('chat.nick');
   const offers = useTranslations('offers');
@@ -108,8 +126,9 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
   const special = (code: string) => c(`flags.${code}`);
   const trimmed = nick.trim();
   const issue: NickIssue | null = validateNick(nick, takenNicks) ?? forcedIssue ?? null;
-  // «Мінімум» показуємо, щойно в полі є символ (1 символ — помилка) або після спроби надіслати; решта — одразу.
-  const shown: NickIssue | null = issue === 'short' ? (trimmed.length > 0 || touched ? issue : null) : issue;
+  // Помилку вперше показуємо лише після виходу з поля (blur) або «Готово»; далі перевіряємо наживо на кожну зміну.
+  // Примусовий стан (сервер, історії) видно одразу.
+  const shown: NickIssue | null = touched || forcedIssue ? issue : null;
   const errorText = shown
     ? shown === 'taken'
       ? t('taken')
@@ -123,16 +142,21 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
     : undefined;
 
   const nameOf = (code: string): string =>
-    (SPECIAL_ALL as readonly string[]).includes(code) ? special(code) : (flags.find((f) => f.code === code)?.name ?? code);
+    (SPECIAL_ALL as readonly string[]).includes(code)
+      ? special(code)
+      : (flags.find((f) => f.code === code)?.name ?? code);
 
   // Групи списку з урахуванням пошуку.
   const groups = useMemo<Group[]>(() => {
     const q = query.trim().toLowerCase();
-    const match = (name: string, sub?: string) => !q || name.toLowerCase().includes(q) || (sub?.toLowerCase().includes(q) ?? false);
+    const match = (name: string, sub?: string) =>
+      !q || name.toLowerCase().includes(q) || (sub?.toLowerCase().includes(q) ?? false);
     const make = (key: Group['key'], code: string): Item => ({
       id: `${listId}-${key}-${code}`,
       code,
-      name: (SPECIAL_ALL as readonly string[]).includes(code) ? c(`flags.${code}`) : (flags.find((f) => f.code === code)?.name ?? code),
+      name: (SPECIAL_ALL as readonly string[]).includes(code)
+        ? c(`flags.${code}`)
+        : (flags.find((f) => f.code === code)?.name ?? code),
       ...(code === 'earth' ? { sub: c('flags.earthSub') } : {}),
     });
     const out: Group[] = [];
@@ -140,7 +164,9 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
       const items = [make('detected', detectedFlag)].filter((i) => match(i.name, i.sub));
       if (items.length) out.push({ key: 'detected', label: c('groupDetected'), items });
     }
-    const spec = SPECIAL_ALL.map((code) => make('special', code)).filter((i) => match(i.name, i.sub));
+    const spec = SPECIAL_ALL.map((code) => make('special', code)).filter((i) =>
+      match(i.name, i.sub),
+    );
     if (spec.length) out.push({ key: 'special', label: c('groupSpecial'), items: spec });
     const all = [...flags]
       .sort((a, b) => a.name.localeCompare(b.name, 'uk'))
@@ -174,7 +200,10 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
     if (!open) return;
     searchRef.current?.focus();
   }, [open]);
-  const effectiveActive = activeId && flat.some((i) => i.id === activeId) ? activeId : (flat.find((i) => i.code === flag)?.id ?? flat[0]?.id ?? null);
+  const effectiveActive =
+    activeId && flat.some((i) => i.id === activeId)
+      ? activeId
+      : (flat.find((i) => i.code === flag)?.id ?? flat[0]?.id ?? null);
   useEffect(() => {
     if (!open || !effectiveActive) return;
     document.getElementById(effectiveActive)?.scrollIntoView?.({ block: 'nearest' });
@@ -254,176 +283,210 @@ export function Nick({ initialNick = '', initialFlag, detectedFlag, flags, taken
         submit();
       }}
       data-window="O-NICK"
-      className={cn('flex flex-col gap-4 px-4 pb-4 pt-3', className)}
+      className={cn('flex min-h-full flex-col gap-4 px-4 pb-4 pt-3', className)}
     >
-      <div className="flex flex-col gap-1">
-        <div className="flex items-baseline justify-between">
-          <label htmlFor={nickId} className="text-label-sm">
-            {t('field')}
-          </label>
-          <span id={countId} className={cn('text-label-badge-chat tabular-nums', overLimit ? 'text-primary' : 'text-text-muted')} data-row="nick-count">
-            {nick.length}/{NICK_MAX}
+      {/* Верх — нік і прапор, низ (прев’ю, кнопки, футер) притиснуто до низу вікна: вільне місце між ними. */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-baseline justify-between">
+            <label htmlFor={nickId} className="text-label-sm">
+              {t('field')}
+            </label>
+            <span
+              id={countId}
+              className={cn(
+                'text-label-badge-chat tabular-nums',
+                overLimit ? 'text-primary' : 'text-text-muted',
+              )}
+              data-row="nick-count"
+            >
+              {nick.length}/{NICK_MAX}
+            </span>
+          </div>
+          <input
+            ref={nickRef}
+            id={nickId}
+            type="text"
+            value={nick}
+            autoComplete="nickname"
+            aria-invalid={errorText ? true : undefined}
+            aria-describedby={describedBy}
+            onChange={(e) => setNick(e.target.value)}
+            onBlur={() => setTouched(true)}
+            className="t2f-nk-input"
+          />
+          {/* Помилка — лише коли нік недійсний; ввічливе оголошення, підказка нижче зсувається. */}
+          <div aria-live="polite" id={errId} data-row="nick-error">
+            {errorText ? (
+              <p className="flex items-center gap-1 text-caption text-primary">
+                <Icon name="alert" size={16} />
+                {errorText}
+              </p>
+            ) : null}
+          </div>
+          <p id={hintId} className="t2f-nk-hint">
+            {t('hint')}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <span id={`${uid}-flag-label`} className="text-label-sm">
+            {c('flagLabel')}
+          </span>
+          {open ? (
+            <div ref={popRef} className="relative" data-row="flag-search">
+              <label className="relative flex">
+                <span className="sr-only">{c('searchLabel')}</span>
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute start-3 top-3.25 flex text-text-muted"
+                >
+                  <Icon name="search" size={18} />
+                </span>
+                <input
+                  ref={searchRef}
+                  type="search"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded="true"
+                  aria-controls={listId}
+                  aria-activedescendant={effectiveActive ?? undefined}
+                  autoComplete="off"
+                  placeholder={c('searchPlaceholder')}
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setActiveId(null);
+                  }}
+                  onKeyDown={onSearchKeyDown}
+                  className="t2f-nk-input t2f-nk-search"
+                />
+              </label>
+              <div className={cn('t2f-nk-pop', column && 't2f-nk-pop-float')}>
+                <ul
+                  ref={listRef}
+                  id={listId}
+                  role="listbox"
+                  aria-label={c('flagList')}
+                  className="t2f-nk-list"
+                  style={{ maxHeight: column ? listMax : LIST_MAX }}
+                >
+                  {groups.length === 0 ? (
+                    <li role="presentation" className="t2f-nk-empty">
+                      {c('noFlags')}
+                    </li>
+                  ) : (
+                    groups.map((g) => [
+                      <li key={g.key} role="presentation" className="t2f-nk-group">
+                        {g.label}
+                      </li>,
+                      ...g.items.map((item) => {
+                        const selected = item.code === flag;
+                        return (
+                          // Клавіатура — через combobox (aria-activedescendant); пункт лише клікається мишею.
+                          // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                          <li
+                            key={item.id}
+                            id={item.id}
+                            role="option"
+                            aria-selected={selected}
+                            data-active={item.id === effectiveActive ? 'true' : undefined}
+                            data-code={item.code}
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => pick(item)}
+                            className="t2f-nk-opt"
+                          >
+                            <Flag round code={item.code} size="sm" decorative />
+                            <span className="flex min-w-0 flex-1 items-baseline gap-2 overflow-hidden whitespace-nowrap">
+                              {item.name}
+                              {item.sub ? (
+                                <span className="text-caption text-text-muted">{item.sub}</span>
+                              ) : null}
+                            </span>
+                            {selected ? (
+                              <Icon
+                                name="check"
+                                size={16}
+                                className="text-highlight"
+                                strokeWidth={2.6}
+                              />
+                            ) : null}
+                          </li>
+                        );
+                      }),
+                    ])
+                  )}
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <button
+              id={flagBtnId}
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={false}
+              aria-describedby={flagHintId}
+              aria-label={c('flagButton', { name: nameOf(flag) })}
+              onClick={openList}
+              className="t2f-nk-input t2f-nk-flagbtn"
+            >
+              <Flag round code={flag} size="md" decorative />
+              <span className="min-w-0 flex-1 truncate">{nameOf(flag)}</span>
+              <span className="text-label-sm font-medium text-text-secondary">{c('change')}</span>
+              <Icon name="chevron-down" size={16} className="text-text-secondary" />
+            </button>
+          )}
+          <p id={flagHintId} className="t2f-nk-hint">
+            {undetected ? t('flagUnknown') : c('detected')}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-auto flex flex-col gap-4" data-row="bottom">
+        <div className="t2f-nk-preview" data-row="preview">
+          <span className="text-caption text-text-muted">{t('previewLabel')}</span>
+          <span
+            role="img"
+            aria-label={`${trimmed || c('previewEmpty')}, ${nameOf(flag)}`}
+            className="t2f-nk-chip"
+            data-row="preview-chip"
+          >
+            <Flag round code={flag} size="xs" decorative />
+            <span aria-hidden="true">{trimmed || c('previewEmpty')}</span>
           </span>
         </div>
-        <input
-          ref={nickRef}
-          id={nickId}
-          type="text"
-          value={nick}
-          autoComplete="nickname"
-          aria-invalid={errorText ? true : undefined}
-          aria-describedby={describedBy}
-          onChange={(e) => setNick(e.target.value)}
-          onBlur={() => setTouched(true)}
-          className="t2f-nk-input"
-        />
-        {/* Помилка — лише коли нік недійсний; ввічливе оголошення, підказка нижче зсувається. */}
-        <div aria-live="polite" id={errId} data-row="nick-error">
-          {errorText ? (
-            <p className="flex items-center gap-1 text-caption text-primary">
-              <Icon name="alert" size={16} />
-              {errorText}
-            </p>
-          ) : null}
-        </div>
-        <p id={hintId} className="t2f-nk-hint">
-          {t('hint')}
-        </p>
-      </div>
 
-      <div className="flex flex-col gap-1">
-        <span id={`${uid}-flag-label`} className="text-label-sm">
-          {c('flagLabel')}
-        </span>
-        {open ? (
-          <div ref={popRef} className="relative" data-row="flag-search">
-            <label className="relative flex">
-              <span className="sr-only">{c('searchLabel')}</span>
-              <span aria-hidden="true" className="pointer-events-none absolute start-3 top-3.25 flex text-text-muted">
-                <Icon name="search" size={18} />
-              </span>
-              <input
-                ref={searchRef}
-                type="search"
-                role="combobox"
-                aria-autocomplete="list"
-                aria-expanded="true"
-                aria-controls={listId}
-                aria-activedescendant={effectiveActive ?? undefined}
-                autoComplete="off"
-                placeholder={c('searchPlaceholder')}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setActiveId(null);
-                }}
-                onKeyDown={onSearchKeyDown}
-                className="t2f-nk-input t2f-nk-search"
-              />
-            </label>
-            <div className={cn('t2f-nk-pop', column && 't2f-nk-pop-float')}>
-              <ul
-                ref={listRef}
-                id={listId}
-                role="listbox"
-                aria-label={c('flagList')}
-                className="t2f-nk-list"
-                style={{ maxHeight: column ? listMax : LIST_MAX }}
-              >
-                {groups.length === 0 ? (
-                  <li role="presentation" className="t2f-nk-empty">
-                    {c('noFlags')}
-                  </li>
-                ) : (
-                  groups.map((g) => [
-                    <li key={g.key} role="presentation" className="t2f-nk-group">
-                      {g.label}
-                    </li>,
-                    ...g.items.map((item) => {
-                      const selected = item.code === flag;
-                      return (
-                        // Клавіатура — через combobox (aria-activedescendant); пункт лише клікається мишею.
-                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                        <li
-                          key={item.id}
-                          id={item.id}
-                          role="option"
-                          aria-selected={selected}
-                          data-active={item.id === effectiveActive ? 'true' : undefined}
-                          data-code={item.code}
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => pick(item)}
-                          className="t2f-nk-opt"
-                        >
-                          <Flag round code={item.code} size="sm" decorative />
-                          <span className="flex min-w-0 flex-1 items-baseline gap-2 overflow-hidden whitespace-nowrap">
-                            {item.name}
-                            {item.sub ? <span className="text-caption text-text-muted">{item.sub}</span> : null}
-                          </span>
-                          {selected ? <Icon name="check" size={16} className="text-highlight" strokeWidth={2.6} /> : null}
-                        </li>
-                      );
-                    }),
-                  ])
-                )}
-              </ul>
-            </div>
+        <div className="flex flex-col gap-2">
+          <Button type="submit" variant="coral" size="lg" className="w-full">
+            {t('done')}
+          </Button>
+          <div className="flex gap-2">
+            {/* Вхід — поза областю цієї збірки (як у шапці): кнопка на місці. */}
+            <Button type="button" className="min-h-touch-min flex-1">
+              {t('signIn')}
+            </Button>
+            <Button
+              type="button"
+              className="min-h-touch-min flex-1"
+              aria-expanded={notice}
+              onClick={() => setNotice((v) => !v)}
+            >
+              {t('whatPassGives')}
+            </Button>
           </div>
-        ) : (
-          <button
-            id={flagBtnId}
-            type="button"
-            aria-haspopup="listbox"
-            aria-expanded={false}
-            aria-describedby={flagHintId}
-            aria-label={c('flagButton', { name: nameOf(flag) })}
-            onClick={openList}
-            className="t2f-nk-input t2f-nk-flagbtn"
-          >
-            <Flag round code={flag} size="md" decorative />
-            <span className="min-w-0 flex-1 truncate">{nameOf(flag)}</span>
-            <span className="text-label-sm font-medium text-text-secondary">{c('change')}</span>
-            <Icon name="chevron-down" size={16} className="text-text-secondary" />
-          </button>
-        )}
-        <p id={flagHintId} className="t2f-nk-hint">
-          {undetected ? t('flagUnknown') : c('detected')}
-        </p>
-      </div>
-
-      <div className="t2f-nk-preview" data-row="preview">
-        <span className="text-caption text-text-muted">{t('previewLabel')}</span>
-        <span role="img" aria-label={`${trimmed || c('previewEmpty')}, ${nameOf(flag)}`} className="t2f-nk-chip" data-row="preview-chip">
-          <Flag round code={flag} size="xs" decorative />
-          <span aria-hidden="true">{trimmed || c('previewEmpty')}</span>
-        </span>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Button type="submit" variant="coral" size="lg" className="w-full">
-          {t('done')}
-        </Button>
-        <div className="flex gap-2">
-          {/* Вхід — поза областю цієї збірки (як у шапці): кнопка на місці. */}
-          <Button type="button" className="min-h-touch-min flex-1">
-            {t('signIn')}
-          </Button>
-          <Button type="button" className="min-h-touch-min flex-1" aria-expanded={notice} onClick={() => setNotice((v) => !v)}>
-            {t('whatPassGives')}
-          </Button>
+          {notice ? <PaymentNotice>{offers('paymentLater')}</PaymentNotice> : null}
+          <p className="text-center text-caption text-text-muted">
+            {t('age')} ·{' '}
+            <a
+              href="/rules/"
+              target="_blank"
+              rel="noopener"
+              className="t2f-focus -my-3 inline-flex min-h-touch-min items-center rounded-sm text-text-secondary underline underline-offset-2"
+            >
+              {c('termsLink')}
+            </a>
+          </p>
         </div>
-        {notice ? <PaymentNotice>{offers('paymentLater')}</PaymentNotice> : null}
-        <p className="text-center text-caption text-text-muted">
-          {t('age')} ·{' '}
-          <a
-            href="/rules/"
-            target="_blank"
-            rel="noopener"
-            className="t2f-focus -my-3 inline-flex min-h-touch-min items-center rounded-sm text-text-secondary underline underline-offset-2"
-          >
-            {c('termsLink')}
-          </a>
-        </p>
       </div>
     </form>
   );

@@ -74,11 +74,17 @@ describe('ChatPanel — вікно ніка на першому власному
     const dialog = await screen.findByRole('dialog', { name: /Як тебе підписати/ });
     const nick = within(dialog).getByRole('textbox', { name: /Нік/ });
 
-    // Порожній нік — без помилки; 1 символ — одразу «Мінімум 2 символи» під полем, підказка нижче.
-    expect(within(dialog).queryByText('Мінімум 2 символи')).not.toBeInTheDocument();
+    // Поки людина вперше вводить — помилки немає; вперше з’являється на blur, далі — наживо.
     await user.type(nick, 'М');
+    expect(within(dialog).queryByText('Мінімум 2 символи')).not.toBeInTheDocument();
+    await user.tab();
     expect(within(dialog).getByText('Мінімум 2 символи')).toBeInTheDocument();
     expect(nick).toHaveAttribute('aria-invalid', 'true');
+    await user.type(nick, 'и');
+    expect(within(dialog).queryByText('Мінімум 2 символи')).not.toBeInTheDocument();
+    await user.clear(nick);
+    await user.type(nick, 'М');
+    expect(within(dialog).getByText('Мінімум 2 символи')).toBeInTheDocument();
     await user.click(within(dialog).getByRole('button', { name: 'Готово' }));
     expect(screen.getByRole('dialog', { name: /Як тебе підписати/ })).toBeInTheDocument();
 
@@ -103,6 +109,10 @@ describe('ChatPanel — вікно ніка на першому власному
     const nick = within(dialog).getByRole('textbox', { name: /Нік/ });
     // Підпис без «від 2 до 20 символів»; лічильник N/20 справа.
     expect(within(dialog).queryByText(/від 2 до 20/)).not.toBeInTheDocument();
+    fireEvent.change(nick, { target: { value: 'www.example.com' } });
+    expect(within(dialog).queryByText('Без посилань', { selector: 'p' })).not.toBeInTheDocument(); // ще не було blur
+    fireEvent.blur(nick);
+    expect(within(dialog).getByText('Без посилань', { selector: 'p' })).toBeInTheDocument();
     fireEvent.change(nick, { target: { value: 'а'.repeat(25) } });
     expect(within(dialog).getByText('Максимум 20 символів')).toBeInTheDocument();
     expect(within(dialog).getByText('25/20')).toBeInTheDocument();

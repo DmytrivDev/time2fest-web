@@ -137,7 +137,7 @@ export function Composer({
           <>
             <Popover open={presetsOpen} onOpenChange={setPresetsOpen}>
               <PopoverTrigger asChild>
-                <IconButton icon="smile" aria-label={t('greetings')} disabled={inactive} />
+                <IconButton icon="smile" compact aria-label={t('greetings')} disabled={inactive} />
               </PopoverTrigger>
               <PopoverContent align="end" side="top" className="w-72 p-1">
                 <p className="px-3 pb-1 pt-2 text-caption text-text-muted">{t('greetingsHint')}</p>
