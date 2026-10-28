@@ -51,6 +51,20 @@ const FLICK_PX_PER_MS = 0.5;
 const INTERACTIVE = 'button, a, input, textarea, select, [role="radiogroup"], [role="group"], [role="menu"]';
 const ZONE = '[data-dock-grip], .t2f-dock-grip-handle';
 
+/**
+ * Стабільна висота екрана — `100svh` (найменша: з видимою адресною стрічкою). Висота вікна на телефоні змінюється,
+ * коли під час прокрутки ховається адресна стрічка; від неї висота чату стрибала б (рішення 2026-10-28).
+ */
+function stableViewportH(): number {
+  if (typeof document === 'undefined') return 0;
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;top:0;height:100svh;width:0;visibility:hidden;pointer-events:none';
+  document.body.appendChild(probe);
+  const h = probe.getBoundingClientRect().height || window.innerHeight;
+  probe.remove();
+  return h;
+}
+
 /** Нижній край того, що лишається видимим над вікном: відео, рядок часу, смуга «Перший ряд». */
 function measureTop(): number {
   let bottom = 0;
@@ -63,7 +77,7 @@ function measureTop(): number {
     if (fallback) bottom = fallback.getBoundingClientRect().bottom;
   }
   // Положення на початку сторінки (не за прокруткою): нічого не липне, чат займає місце під смугою при scrollTop = 0.
-  return Math.max(0, Math.min(Math.round(bottom + window.scrollY), Math.max(0, window.innerHeight - 240)));
+  return Math.max(0, Math.min(Math.round(bottom + window.scrollY), Math.max(0, stableViewportH() - 240)));
 }
 
 /**
@@ -244,19 +258,26 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     const measure = () => setTop(measureTop());
     measure();
     const frame = requestAnimationFrame(measure);
-    window.addEventListener('resize', measure);
+    // Лише зміна ширини (поворот, інше вікно): зміна самої висоти — це адресна стрічка, на неї висота чату не реагує.
+    let width = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      measure();
+    };
+    window.addEventListener('resize', onResize);
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
     document.querySelectorAll('[data-dock-above], [data-player-slot="main"]').forEach((el) => ro?.observe(el));
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('resize', measure);
+      window.removeEventListener('resize', onResize);
       ro?.disconnect();
     };
   }, [expanded, land]);
 
   // Розгорнутий (портрет): запас унизу сторінки = висота чату, щоб усе можна було прокрутити над ним. Після згортання
   // запас лишається, доки вікно не доїде вниз (без стрибка під час анімації), потім знімається.
-  const padH = expanded && !land ? Math.max(0, (typeof window === 'undefined' ? 0 : window.innerHeight) - top) : null;
+  const padH = expanded && !land ? Math.max(0, stableViewportH() - top) : null;
   useEffect(() => {
     if (padH === null) return;
     const html = document.documentElement;
@@ -350,7 +371,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     const el = sectionRef.current;
     if (!el) return;
     const collapsedH = !expanded && el.offsetHeight ? el.offsetHeight : COLLAPSED_ROW + 12;
-    const expandedH = Math.max(collapsedH + 1, window.innerHeight - (expanded ? top : measureTop()));
+    const expandedH = Math.max(collapsedH + 1, stableViewportH() - (expanded ? top : measureTop()));
     dragRef.current = {
       id: e.pointerId,
       startY: e.clientY,
@@ -424,9 +445,10 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     collapse();
   };
 
-  // Портрет, розгорнутий: чат у видимій області над клавіатурою; замало місця під смугою — на всю видиму область.
+  // Портрет, розгорнутий, відкрита клавіатура: чат у видимій області над нею; замало місця під смугою — на всю видиму
+  // область. Без клавіатури висота завжди одна — під смугою «Перший ряд» (рішення 2026-10-28).
   let geo: CSSProperties | null = null;
-  if (expanded && !land && vv.h > 0 && (inset > 0 || vv.h - top < MIN_DOCK)) {
+  if (expanded && !land && vv.h > 0 && inset > 0) {
     const free = vv.h - top;
     geo = { height: free >= MIN_DOCK ? free : vv.h, bottom: inset };
   }

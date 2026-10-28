@@ -364,8 +364,10 @@ export function Chat({
             className="t2f-focus t2f-chat-tovideo"
             data-chat-to-video=""
           >
-            <Icon name="chevron-up" size={18} strokeWidth={2} />
-            {t('toVideo')}
+            <span>
+              <Icon name="chevron-up" size={16} strokeWidth={2.2} />
+              {t('toVideo')}
+            </span>
           </button>
         ) : null}
         {onHide ? (
