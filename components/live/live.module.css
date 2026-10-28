@@ -20,7 +20,7 @@
   padding-inline: var(--spacing-margin-mobile);
 }
 
-@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) {
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
   .pad {
     padding-inline: 0;
   }

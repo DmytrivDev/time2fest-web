@@ -10,6 +10,7 @@
  */
 import { useTranslations } from 'next-intl';
 import {
+  Fragment,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -137,6 +138,8 @@ export function Chat({
   }, []);
   const menuMessage = menu ? (visible.find((m) => m.id === menu.message.id) ?? null) : null;
   const paused = manualPause || scrolledUp || focusInside || menuMessage !== null;
+  // Телефон (вікно чату внизу): меню стоїть у потоці стрічки просто під повідомленням.
+  const inlineMenu = collapseMode || !!messageActions?.menuAlways;
 
   const lastId = visible[visible.length - 1]?.id;
   // Автопрокрутка вниз, поки стрічка не зупинена.
@@ -249,6 +252,27 @@ export function Chat({
     scrollAnim.current = requestAnimationFrame(step);
   };
 
+  // Меню в потоці: при відкритті показуємо повідомлення разом із меню, наскільки вистачає місця (плавно).
+  const menuId = inlineMenu && menu ? menu.message.id : null;
+  useLayoutEffect(() => {
+    if (!menuId) return;
+    const el = logRef.current;
+    const a = el?.querySelector<HTMLElement>(`[data-msg-id="${CSS.escape(menuId)}"]`);
+    const mm = a?.nextElementSibling;
+    if (!el || !a || !mm) return;
+    // Стрічка не «приклеєна» до низу, поки меню відкрите: ResizeObserver не повинен смикати вид.
+    pinned.current = false;
+    const v = el.getBoundingClientRect();
+    const ar = a.getBoundingClientRect();
+    const mr = mm.getBoundingClientRect();
+    const need = mr.bottom - (v.bottom - SCROLL_PAD);
+    const room = ar.top - (v.top + SCROLL_PAD);
+    // Прокрутити вниз на `need`, але не так, щоб верх повідомлення зник; якщо все не вміщається — верх повідомлення нагорі.
+    const delta = Math.min(need, room);
+    if (delta > 0.5) scrollLogTo(el.scrollTop + delta);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuId]);
+
   // «Нові повідомлення N ↓»: до першого непобаченого повідомлення (рішення власника 2026-10-27).
   const jumpToUnseen = () => {
     setManualPause(false);
@@ -340,7 +364,11 @@ export function Chat({
             {...(collapseMode ? { 'data-chat-collapse': '' } : {})}
           >
             <span aria-hidden="true">
-              <Icon name={collapseMode ? 'chevron-down' : 'chevrons-right'} size={18} strokeWidth={2} />
+              <Icon
+                name={collapseMode ? 'chevron-down' : 'chevrons-right'}
+                size={18}
+                strokeWidth={2}
+              />
             </span>
           </button>
         ) : null}
@@ -366,7 +394,7 @@ export function Chat({
           </DropdownMenu>
         ) : null}
       </div>
-      {manualPause || scrolledUp ? (
+      {manualPause || (scrolledUp && !(inlineMenu && menuMessage)) ? (
         <p role="status" className="t2f-chat-pausednote" data-row="paused">
           <Icon name="pause" size={14} strokeWidth={2} />
           {t('pausedNote')}
@@ -424,25 +452,43 @@ export function Chat({
             ) : (
               <ol className="t2f-chat-feed flex min-h-full list-none flex-col justify-end px-1.5 py-2">
                 {visible.map((m) => (
-                  <Message
-                    key={m.id}
-                    message={m}
-                    lookup={lookup}
-                    tabStop={m.id === stopId}
-                    onAuthorOpen={onAuthorOpen ? (a) => onAuthorOpen(a, m) : undefined}
-                    onAuthorFocus={() => setActiveId(m.id)}
-                    onAuthorKeyDown={onAuthorKeyDown}
-                    onReact={messageActions?.onReact}
-                    onOpenMenu={messageActions ? openMenu : undefined}
-                    menuOpen={menuMessage?.id === m.id}
-                    menuAlways={messageActions?.menuAlways}
-                  />
+                  <Fragment key={m.id}>
+                    <Message
+                      message={m}
+                      lookup={lookup}
+                      tabStop={m.id === stopId}
+                      onAuthorOpen={onAuthorOpen ? (a) => onAuthorOpen(a, m) : undefined}
+                      onAuthorFocus={() => setActiveId(m.id)}
+                      onAuthorKeyDown={onAuthorKeyDown}
+                      onReact={messageActions?.onReact}
+                      onOpenMenu={messageActions ? openMenu : undefined}
+                      menuOpen={menuMessage?.id === m.id}
+                      menuAlways={messageActions?.menuAlways}
+                    />
+                    {inlineMenu && menu && menuMessage?.id === m.id ? (
+                      <li role="presentation" className="t2f-mm-inline-item">
+                        <MessageMenu
+                          key={m.id}
+                          inline
+                          message={m}
+                          anchor={menu.anchor}
+                          container={menu.container}
+                          scroller={menu.scroller}
+                          onClose={closeMenu}
+                          onReact={messageActions?.onReact}
+                          onReply={messageActions?.onReply}
+                          onMention={messageActions?.onMention}
+                          onReport={messageActions?.onReport}
+                        />
+                      </li>
+                    ) : null}
+                  </Fragment>
                 ))}
               </ol>
             )}
           </div>
           {/* Пауза (`Phone-Chat-Paused`): лише «Нові повідомлення N ↓» поверх стрічки (absolute) — висота не змінюється. */}
-          {menu && menuMessage ? (
+          {menu && menuMessage && !inlineMenu ? (
             <MessageMenu
               key={menuMessage.id}
               message={menuMessage}
@@ -461,7 +507,7 @@ export function Chat({
               {t('pausedNote')}
             </p>
           ) : null}
-          {paused && newCount > 0 ? (
+          {paused && newCount > 0 && !(inlineMenu && menuMessage) ? (
             <button
               type="button"
               onClick={jumpToUnseen}

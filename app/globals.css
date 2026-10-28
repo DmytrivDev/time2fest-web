@@ -11,10 +11,14 @@ body {
   font-family: var(--font-manrope), var(--font-sans);
 }
 
-/* Телефонне вікно чату внизу (`ChatDock`): нижній відступ сторінки на висоту згорнутого вікна — 56 px + безпечна зона (≥ 68). */
+/* Телефонне вікно чату внизу (`ChatDock`): нижній відступ сторінки на висоту згорнутого вікна — 46 px + безпечна зона (≥ 58). */
 html[data-has-chat-dock] {
-  --chat-dock-h: calc(56px + max(12px, env(safe-area-inset-bottom)));
+  --chat-dock-h: calc(46px + max(12px, env(safe-area-inset-bottom)));
 }
 html[data-has-chat-dock] body {
   padding-bottom: var(--chat-dock-h);
+}
+/* Розгорнутий чат на телефоні-портреті накриває низ сторінки: запас знизу = висота чату (знімається після згортання). */
+html[data-chat-dock-pad][data-has-chat-dock] body {
+  padding-bottom: var(--chat-dock-pad) !important; /* сильніше за inline-відступ смуги cookies */
 }

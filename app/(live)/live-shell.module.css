@@ -45,7 +45,7 @@
 }
 
 /* Планшет-альбом: як десктоп, вужчий чат. */
-@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) {
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
   .shell {
     padding: var(--spacing-6) var(--spacing-margin-mobile) 0;
   }

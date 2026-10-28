@@ -77,7 +77,7 @@ export function useOverlayOpen(): boolean {
 }
 
 /** Колонка чату є: десктоп ≥ 1200 і планшет-альбом (збігається з live-shell.module.css). */
-export const CHAT_COLUMN_QUERY = '(min-width: 1200px), (min-width: 768px) and (orientation: landscape)';
+export const CHAT_COLUMN_QUERY = '(min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse)))';
 
 function subscribeColumn(cb: () => void): () => void {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
@@ -86,6 +86,20 @@ function subscribeColumn(cb: () => void): () => void {
   return () => mq.removeEventListener('change', cb);
 }
 const getColumn = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(CHAT_COLUMN_QUERY).matches : false);
+
+/** Телефон у альбомній орієнтації (низький екран, дотик): окремий режим вікна чату (`ChatDock`), без колонки. */
+export const PHONE_LANDSCAPE_QUERY = '(orientation: landscape) and (max-height: 500px) and (pointer: coarse)';
+function subscribeLandscape(cb: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
+  const mq = window.matchMedia(PHONE_LANDSCAPE_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+const getLandscape = () =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_LANDSCAPE_QUERY).matches : false;
+export function usePhoneLandscape(): boolean {
+  return useSyncExternalStore(subscribeLandscape, getLandscape, () => false);
+}
 
 export function useChatColumn(): boolean {
   return useSyncExternalStore(subscribeColumn, getColumn, () => false);

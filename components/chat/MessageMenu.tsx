@@ -28,6 +28,8 @@ export interface MessageMenuProps extends MessageActionHandlers {
   container: HTMLElement;
   /** Прокручувана стрічка: її видимий низ вирішує «під чи над». */
   scroller: HTMLElement;
+  /** Телефон: меню стоїть у потоці стрічки під повідомленням (не плаває), прокручується разом зі стрічкою. */
+  inline?: boolean;
   /** `restoreFocus` — повернути фокус на «⋯» (лише після клавіатури: Esc, Tab, Enter на клітинці чи пункті). */
   onClose: (opts?: { restoreFocus?: boolean }) => void;
 }
@@ -55,6 +57,7 @@ export function MessageMenu({
   anchor,
   container,
   scroller,
+  inline = false,
   onClose,
   onReact,
   onReply,
@@ -72,6 +75,7 @@ export function MessageMenu({
 
   // Положення: перераховується при відкритті, прокрутці стрічки, зміні розміру вікна й обгортки.
   useLayoutEffect(() => {
+    if (inline) return;
     const place = () => {
       const menu = ref.current;
       const c = container.getBoundingClientRect();
@@ -112,10 +116,10 @@ export function MessageMenu({
       window.removeEventListener('resize', place);
       ro?.disconnect();
     };
-  }, [anchor, container, scroller]);
+  }, [anchor, container, scroller, inline]);
 
   // Фокус — на «Відповісти» при відкритті (щойно меню стало видимим: у прихованого елемента фокусу не буває).
-  const placed = pos !== null;
+  const placed = inline || pos !== null;
   const focused = useRef(false);
   useLayoutEffect(() => {
     if (!placed || focused.current) return;
@@ -170,15 +174,19 @@ export function MessageMenu({
       role="menu"
       aria-label={t('actionsTitle')}
       data-message-menu=""
-      data-placement={pos?.placement}
+      data-placement={inline ? 'inline' : pos?.placement}
       onKeyDown={onKeyDown}
-      className="t2f-mm"
-      style={{
-        top: pos?.top ?? 0,
-        left: pos?.left ?? 0,
-        width: pos?.width,
-        visibility: pos ? 'visible' : 'hidden',
-      }}
+      className={inline ? 't2f-mm t2f-mm-inline' : 't2f-mm'}
+      style={
+        inline
+          ? undefined
+          : {
+              top: pos?.top ?? 0,
+              left: pos?.left ?? 0,
+              width: pos?.width,
+              visibility: pos ? 'visible' : 'hidden',
+            }
+      }
     >
       <div className="t2f-mm-row">
         <button

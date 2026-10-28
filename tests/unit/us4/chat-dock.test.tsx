@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChatDock } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
-import { OverlayManager } from '@/components/shell/OverlayManager';
+import { OverlayManager, PHONE_LANDSCAPE_QUERY } from '@/components/shell/OverlayManager';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { Author, ChatMessage } from '@/lib/data/types';
 import { CoralProvider } from '@/lib/overlay/coral';
@@ -64,7 +64,9 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     setup();
     expect(dock()).toHaveAttribute('data-state', 'collapsed');
     expect(screen.getByRole('button', { name: 'Розгорнути чат «Світ»' })).toBeInTheDocument();
-    expect(dock().querySelector('[data-dock-pill]')).toBeNull();
+    // Без нових — темна пілюля «0 нових» (жовта лише коли N > 0).
+    expect(dock().querySelector('[data-dock-pill]')).toHaveAttribute('data-zero', 'true');
+    expect(dock().querySelector('[data-dock-pill]')).toHaveTextContent('0 нових');
     expect(document.querySelector('.t2f-dock-body')).toHaveAttribute('inert');
   });
 
@@ -82,7 +84,9 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     setup();
     await user.click(screen.getByRole('button', { name: /^Розгорнути чат/ }));
     expect(dock()).toHaveAttribute('data-state', 'expanded');
-    expect(document.documentElement.style.overflow).toBe('hidden');
+    // Сторінка не блокується: чат накриває низ, запас унизу сторінки = висота чату.
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(document.documentElement).toHaveAttribute('data-chat-dock-pad');
     expect(screen.getByRole('button', { name: 'Згорнути чат' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Згорнути чат' }));
@@ -101,7 +105,7 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     await user.click(screen.getByRole('button', { name: /^Розгорнути чат/ }));
     expect(useChatUi.getState().hiddenAt).toBeNull();
     await user.click(screen.getByRole('button', { name: 'Згорнути чат' }));
-    expect(dock().querySelector('[data-dock-pill]')).toBeNull();
+    expect(dock().querySelector('[data-dock-pill]')).toHaveAttribute('data-zero', 'true');
   });
 
   it('вікно чату (правила) відкривається всередині розгорнутого вікна, а не аркушем', async () => {
@@ -113,5 +117,65 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     const slot = document.getElementById('chat-dock-slot')!;
     await waitFor(() => expect(slot.querySelector('[data-chat-slot-panel]')).not.toBeNull());
     expect(document.querySelector('[data-sheet]')).toBeNull();
+  });
+
+  it('телефон: меню «⋯» стоїть у потоці стрічки одразу під своїм повідомленням', async () => {
+    const user = userEvent.setup();
+    setup();
+    await user.click(screen.getByRole('button', { name: /^Розгорнути чат/ }));
+    await user.click(document.querySelector<HTMLElement>('[data-msg-trigger]')!);
+    const menu = await screen.findByRole('menu', { name: 'Дії з повідомленням' });
+    const item = menu.closest('li')!;
+    expect(item).toHaveClass('t2f-mm-inline-item');
+    expect(menu).toHaveAttribute('data-placement', 'inline');
+    const message = item.previousElementSibling as HTMLElement;
+    expect(message).toHaveAttribute('data-msg-id', 'm1');
+    expect(message).toHaveAttribute('data-actions-open', 'true');
+    expect(document.querySelectorAll('[data-message-menu]')).toHaveLength(1);
+    fireEvent.keyDown(menu, { key: 'Escape' });
+    await waitFor(() => expect(document.querySelector('[data-message-menu]')).toBeNull());
+  });
+});
+
+describe('ChatDock — телефон в альбомній орієнтації', () => {
+  const original = window.matchMedia;
+  beforeEach(() => {
+    window.matchMedia = ((q: string) => ({
+      matches: q === PHONE_LANDSCAPE_QUERY,
+      media: q,
+      addEventListener() {},
+      removeEventListener() {},
+      addListener() {},
+      removeListener() {},
+      dispatchEvent: () => false,
+      onchange: null,
+    })) as unknown as typeof window.matchMedia;
+    window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
+  });
+  afterEach(() => {
+    window.matchMedia = original;
+    document.documentElement.removeAttribute('data-chat-land-expanded');
+  });
+
+  it('згорнуте вікно сховане, поки не прокручено нижче смуги; відступ футера лише коли воно видно', () => {
+    setup();
+    expect(dock()).toHaveAttribute('data-land', 'true');
+    expect(dock()).toHaveAttribute('data-land-hidden', 'true');
+    expect(document.documentElement).not.toHaveAttribute('data-has-chat-dock');
+    expect(dock().querySelector('[data-dock-expand]')).toHaveAttribute('inert');
+  });
+
+  it('розгорнутий чат — блок у потоці: сторінка не блокується', async () => {
+    useChatDock.setState({ expanded: true });
+    setup();
+    expect(dock()).toHaveAttribute('data-state', 'expanded');
+    expect(document.documentElement).toHaveAttribute('data-chat-land-expanded');
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(document.body.style.overflow).toBe('');
+    expect(document.documentElement).not.toHaveAttribute('data-has-chat-dock');
+    expect(window.scrollTo).toHaveBeenCalled();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(dock()).toHaveAttribute('data-state', 'collapsed');
+    expect(document.documentElement).not.toHaveAttribute('data-chat-land-expanded');
   });
 });

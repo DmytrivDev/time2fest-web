@@ -9,7 +9,7 @@
   gap: 6px; /* макет */
   padding: var(--spacing-3) var(--spacing-4) var(--spacing-4);
 }
-@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) {
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
   .block {
     gap: var(--spacing-4);
     padding: var(--spacing-4) 0 0;
