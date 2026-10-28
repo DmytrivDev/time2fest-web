@@ -133,6 +133,8 @@ function PanelBody({
   const payResult = useTestControls((s) => s.payResult);
   const chatAvailable = useTestControls((s) => s.chatAvailable);
   const offline = useTestControls((s) => s.offlineSimulated);
+  const slowForced = useTestControls((s) => s.slowForcedSec);
+  const emptyCountry = useTestControls((s) => s.emptyCountry);
 
   useEffect(() => {
     ref.current?.focus({ preventScroll: true });
@@ -301,6 +303,16 @@ function PanelBody({
           }}
         />
         <Switch label={t('offline')} checked={offline} onCheckedChange={(v) => useTestControls.getState().setOfflineSimulated(v)} />
+        <Switch
+          label={t('chatSlow')}
+          checked={slowForced > 0}
+          onCheckedChange={(v) => useTestControls.getState().setSlowForcedSec(v ? 15 : 0)}
+        />
+        <Switch
+          label={t('chatEmptyCountry')}
+          checked={emptyCountry}
+          onCheckedChange={(v) => useTestControls.getState().setEmptyCountry(v)}
+        />
       </div>
     </section>
   );

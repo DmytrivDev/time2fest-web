@@ -89,10 +89,21 @@ export function Composer({
 
   const hints: string[] = [];
   if (value.length >= MAX_TEXT) hints.push(t('limitReached'));
-  if (slow) hints.push(t('slowNote', { seconds: slowRemaining }));
-  else if (slowTotal > 0) hints.push(t('slowActive', { seconds: slowTotal }));
   if (banned) hints.push(t('bannedInput'));
   if (offline) hints.push(t('offlineInput'));
+  // Макет `Phone-Chat-Slow`: годинник, секунди жирним світлим.
+  const slowHint =
+    slow || slowTotal > 0 ? (
+      <span data-row="slow-hint" className="inline-flex items-center gap-1.5 text-text-secondary">
+        <Icon name="clock" size={14} strokeWidth={2} className="shrink-0" />
+        <span>
+          {t.rich(slow ? 'slowNote' : 'slowActive', {
+            seconds: slow ? slowRemaining : slowTotal,
+            b: (chunks) => <b className="font-bold text-text tabular-nums">{chunks}</b>,
+          })}
+        </span>
+      </span>
+    ) : null;
 
   const errorText = error === 'link' ? t('linkError') : error === 'too-long' ? t('tooLong') : undefined;
   const sendLabel = slow ? t('sendWait', { seconds: slowRemaining }) : t('send');
@@ -164,7 +175,15 @@ export function Composer({
         counterFrom={COUNTER_FROM}
         disabled={banned}
         error={errorText}
-        hint={hints.length ? hints.join(' · ') : undefined}
+        hint={
+          slowHint || hints.length ? (
+            <>
+              {slowHint}
+              {slowHint && hints.length ? ' · ' : null}
+              {hints.length ? hints.join(' · ') : null}
+            </>
+          ) : undefined
+        }
         onChange={(e) => onValueChange(e.target.value)}
         onKeyDown={onKeyDown}
         endSlot={

@@ -35,6 +35,7 @@ import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage, ReactionId, RoomId } from '@/lib/data/types';
 import { detectFlag } from '@/lib/geo/detectFlag';
+import { Flag } from '@/components/primitives/Flag';
 import { useClock, useNow, useTimeSource } from '@/lib/time/TimeProvider';
 import { excerptOf } from '@/lib/chat-sim/send';
 import { useChatUi } from '@/stores/chat';
@@ -95,6 +96,8 @@ export function ChatPanel({
   const { setNick, setDetectedFlag, recordSent, setLastRoom } = guest;
   const available = useTestControls((s) => s.chatAvailable);
   const offline = useTestControls((s) => s.offlineSimulated);
+  const slowForced = useTestControls((s) => s.slowForcedSec);
+  const emptyCountry = useTestControls((s) => s.emptyCountry);
   // Чат повернувся: лічильник «нових» у згорнутому/схованому чаті рахуємо відтоді (рішення 2026-10-28).
   const wasAvailable = useRef(available);
   useEffect(() => {
@@ -137,13 +140,13 @@ export function ChatPanel({
   const rawMessages = useChatMessages(roomId);
   const ownSeat = eventId ? guest.firstRow[eventId]?.seat : undefined;
   // Привітання власного місця гості дає `guestGreetingMessages` («це ти»); сид того самого місця не дублюємо.
-  const messages = useMemo(
-    () =>
-      ownSeat === undefined
-        ? rawMessages
-        : rawMessages.filter((m) => !(m.kind === 'greeting' && m.greeting && !m.greeting.mine && m.greeting.seat === ownSeat && m.greeting.eventId === eventId)),
-    [rawMessages, ownSeat, eventId],
-  );
+  const messages = useMemo(() => {
+    // Перемикач «Порожня кімната «Країна»» (машина часу): лишаються тільки свої повідомлення.
+    if (emptyCountry && roomId.startsWith('country:')) return rawMessages.filter((m) => m.author?.isMine);
+    return ownSeat === undefined
+      ? rawMessages
+      : rawMessages.filter((m) => !(m.kind === 'greeting' && m.greeting && !m.greeting.mine && m.greeting.seat === ownSeat && m.greeting.eventId === eventId));
+  }, [rawMessages, ownSeat, eventId, emptyCountry, roomId]);
   const append = useChatFeed((s) => s.append);
   const react = useChatFeed((s) => s.react);
 
@@ -198,7 +201,19 @@ export function ChatPanel({
     return () => clearTimeout(id);
   }, [reported]);
 
-  const slowTotal = slowSecondsAt(CHAT_SCRIPT, roomId, now);
+  const slowAt = useCallback(
+    (at: number) => slowForced || slowSecondsAt(CHAT_SCRIPT, roomId, at),
+    [slowForced, roomId],
+  );
+  const slowTotal = slowAt(now);
+  // Увімкнули повільний режим перемикачем — у кімнаті з’являється системне повідомлення, як на початку вікна сценарію.
+  useEffect(() => {
+    if (!slowForced) return;
+    const at = source.now();
+    append([
+      { id: `slow-forced:${roomId}:${at}`, room: roomId, kind: 'system', createdAt: at, system: { kind: 'slow-mode', seconds: slowForced }, moderation: 'ok' },
+    ]);
+  }, [slowForced, roomId, source, append]);
   const slowRemaining = slowRemainingSec(guest.chat.sentAt, now, slowTotal);
   const emojiId = eventId ? guest.firstRow[eventId]?.draft?.emojiId : undefined;
 
@@ -219,7 +234,7 @@ export function ChatPanel({
         flagCode: override?.flagCode ?? store.flagCode ?? store.detectedFlag,
         hasPass: store.hasPass,
         canWrite: (r) => !r.startsWith('firstrow:') || participant,
-        slowSeconds: slowSecondsAt(CHAT_SCRIPT, roomId, nowMs),
+        slowSeconds: slowAt(nowMs),
         sentAt: store.chat.sentAt,
         available:
           useTestControls.getState().chatAvailable && !useTestControls.getState().offlineSimulated,
@@ -246,7 +261,7 @@ export function ChatPanel({
       else setError(null);
       return res.error === 'nick-required' ? 'nick' : 'error';
     },
-    [source, roomId, participant, emojiId, replyTo, append, recordSent, setReplyTo, setDraft, setError],
+    [source, roomId, slowAt, participant, emojiId, replyTo, append, recordSent, setReplyTo, setDraft, setError],
   );
 
   const flagOptions = useMemo(
@@ -453,6 +468,26 @@ export function ChatPanel({
     </>
   ) : undefined;
 
+  const ownFlag = guest.flagCode ?? guest.detectedFlag;
+  const emptyInfo =
+    activeKey === 'country' && country
+      ? {
+          flagCode: country.iso,
+          sub: (
+            <>
+              {t('emptyCountryRoom', { country: country.name })}
+              {ownFlag ? (
+                <>
+                  {' '}
+                  {t('emptyCountryFlag')}{' '}
+                  <Flag round code={ownFlag} size="xs" name={getData().countries.find((c) => c.flagCode === ownFlag)?.name.uk} className="inline-block align-text-bottom" />
+                </>
+              ) : null}
+            </>
+          ),
+        }
+      : undefined;
+
   return (
     <Chat
       room={{ id: roomId, label: roomLabel }}
@@ -460,6 +495,7 @@ export function ChatPanel({
       state={available ? 'live' : 'unavailable'}
       lookup={lookup}
       roomSwitcher={switcher}
+      emptyInfo={emptyInfo}
       banner={banner}
       onAuthorOpen={openAuthor}
       onHide={onHide}

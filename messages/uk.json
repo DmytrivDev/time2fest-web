@@ -280,6 +280,8 @@
     "emojiPicker": "Вибір емодзі",
     "emojiInsertLabel": "Вставити {name}",
     "emptyCountry": "Тут поки тихо — привітай першим",
+    "emptyCountryRoom": "Кімната «Країна» · {country}.",
+    "emptyCountryFlag": "Привітання піде з твоїм прапором",
     "emptyFirstRow": "Ти перший у першому ряду — привітай тих, хто прийде",
     "unavailable": "Чат тимчасово недоступний, повернемося за хвилину",
     "unavailableNote": "Трансляція й «Події» працюють як звичайно.",
@@ -308,7 +310,7 @@
     "bannedInput": "Поле неактивне: бан у чаті",
     "logLabel": "Повідомлення чату «{room}»",
     "pausedNote": "Стрічку зупинено — читай у своєму темпі",
-    "systemSlowMode": "Повільний режим: одне повідомлення кожні {seconds, plural, one {# секунду} few {# секунди} many {# секунд} other {# секунди}}",
+    "systemSlowMode": "У чаті багато людей — тепер пауза між повідомленнями: {seconds, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}",
     "systemPoll": "Відкрито голосування",
     "systemFirstRowTail": "тепер у першому ряду · {city}",
     "greetingPrefix": "Time2Fest вітає з Новим роком:",
@@ -319,8 +321,8 @@
     "emotionLabel": "емоція: {emotion}",
     "toEvents": "До подій",
     "sendWait": "Надіслати — зачекай {seconds} с",
-    "slowNote": "Повільний режим: можна писати через {seconds} с",
-    "slowActive": "Повільний режим: одне повідомлення кожні {seconds} с",
+    "slowNote": "Повільний режим: можна писати через <b>{seconds} с</b>",
+    "slowActive": "Повільний режим: одне повідомлення кожні <b>{seconds} с</b>",
     "linkError": "Посилання в чаті не надсилаються — прибери його, текст лишиться",
     "counterAnnounce": "{count} з {max} символів",
     "limitAnnounce": "Досить: 200 символів",
@@ -961,6 +963,8 @@
       "expired": "Час вийшов"
     },
     "chatUnavailable": "Чат недоступний",
+    "chatSlow": "Повільний режим (15 с)",
+    "chatEmptyCountry": "Порожня кімната «Країна»",
     "offline": "Немає з’єднання"
   },
   "country": {

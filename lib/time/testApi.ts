@@ -17,6 +17,8 @@ export interface T2FTestApi {
   resetGuest(): void;
   setPayResult(r: PayResult): void;
   setChatAvailable(ok: boolean): void;
+  setChatSlow(seconds: number): void;
+  setChatEmpty(on: boolean): void;
 }
 
 declare global {
@@ -49,6 +51,8 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     resetGuest: () => resetGuest(),
     setPayResult: (r) => useTestControls.getState().setPayResult(r),
     setChatAvailable: (ok) => useTestControls.getState().setChatAvailable(ok),
+    setChatSlow: (seconds) => useTestControls.getState().setSlowForcedSec(seconds),
+    setChatEmpty: (on) => useTestControls.getState().setEmptyCountry(on),
   };
 }
 

@@ -29,6 +29,7 @@ import {
 } from '@/components/primitives/DropdownMenu';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
+import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import type { Author, ChatMessage, RoomId } from '@/lib/data/types';
@@ -66,6 +67,8 @@ export interface ChatProps {
   headerExtra?: ReactNode;
   /** Поле введення під стрічкою (C11). */
   composer?: ReactNode;
+  /** Порожня кімната (макет `Phone-Country-Chat`): прапор країни в колі й рядок під заголовком. */
+  emptyInfo?: { flagCode?: string; sub?: ReactNode };
   /** Смуга між шапкою й стрічкою (напр. «Немає з’єднання», нота кімнати). */
   banner?: ReactNode;
   /** «Правила чату» в меню «Ще дії чату»; без нього меню немає. */
@@ -92,6 +95,7 @@ export function Chat({
   roomSwitcher,
   headerExtra,
   composer,
+  emptyInfo,
   banner,
   onRules,
   messageActions,
@@ -492,9 +496,15 @@ export function Chat({
             className="t2f-focus t2f-chat-log min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
           >
             {visible.length === 0 || state === 'empty' ? (
-              <p className="p-6 text-center text-body text-text-secondary" data-row="empty">
-                {emptyText}
-              </p>
+              <div className="flex min-h-full flex-col items-center justify-center gap-2 px-5 pb-4 pt-5 text-center" data-row="empty">
+                {emptyInfo?.flagCode ? (
+                  <span aria-hidden="true" className="flex size-12 items-center justify-center rounded-full border border-border bg-surface">
+                    <Flag round code={emptyInfo.flagCode} size="md" decorative />
+                  </span>
+                ) : null}
+                <h2 className="m-0 text-lg leading-snug font-bold text-text">{emptyText}</h2>
+                {emptyInfo?.sub ? <p className="m-0 text-caption text-text-secondary">{emptyInfo.sub}</p> : null}
+              </div>
             ) : (
               <ol className="t2f-chat-feed flex min-h-full list-none flex-col justify-end px-1.5 py-2">
                 {visible.map((m) => (

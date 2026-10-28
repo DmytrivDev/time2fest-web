@@ -209,7 +209,7 @@ describe('ChatPanel — ліміти й режими (FR-052)', () => {
     setup(SLOW);
     useGuestStore.setState({ chat: { lastRoom: 'world', sentAt: [SLOW - 7_000] } });
     await waitFor(() => expect(screen.getByRole('button', { name: /Надіслати — зачекай 8 с/ })).toHaveAttribute('aria-disabled', 'true'));
-    expect(screen.getByText(/Повільний режим: можна писати через 8 с/)).toBeInTheDocument();
+    expect(document.querySelector('[data-row="slow-hint"]')?.textContent).toMatch(/Повільний режим: можна писати через 8 с/);
     await user.type(field(), 'ще одне');
     await user.click(screen.getByRole('button', { name: /зачекай/ }));
     expect(useGuestStore.getState().chat.sentAt).toHaveLength(1);
