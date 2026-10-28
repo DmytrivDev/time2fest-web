@@ -15,8 +15,11 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
+  createContext,
+  useContext,
   type CSSProperties,
   type MouseEvent,
   type PointerEvent,
@@ -30,6 +33,10 @@ import type { RoomId } from '@/lib/data/types';
 import { useNow } from '@/lib/time/TimeProvider';
 import { formatCount, useChatUi, useHiddenCount } from '@/stores/chat';
 import { useChatDock } from '@/stores/chatDock';
+
+/** Дані вікна для його вмісту: у альбомі розгорнутий чат дає кнопку «До відео» в шапку. */
+export const ChatDockContext = createContext<{ toVideo: (() => void) | null }>({ toVideo: null });
+export const useChatDockContext = () => useContext(ChatDockContext);
 
 /** Висота зони жестів у згорнутому стані: ручка + рядок. */
 const COLLAPSED_ROW = 46;
@@ -55,7 +62,8 @@ function measureTop(): number {
     const fallback = slot ?? document.querySelector<HTMLElement>('header');
     if (fallback) bottom = fallback.getBoundingClientRect().bottom;
   }
-  return Math.max(0, Math.min(Math.round(bottom), Math.max(0, window.innerHeight - 240)));
+  // Положення на початку сторінки (не за прокруткою): нічого не липне, чат займає місце під смугою при scrollTop = 0.
+  return Math.max(0, Math.min(Math.round(bottom + window.scrollY), Math.max(0, window.innerHeight - 240)));
 }
 
 /**
@@ -231,18 +239,17 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   // Розгорнутий: вікно починається під смугою «Перший ряд»; сторінка нагорі й не прокручується.
   useLayoutEffect(() => {
     if (!expanded || land) return;
-    // Сторінка не блокується: чат накриває низ під смугою (смуга й відео липкі), верх чату йде за прокруткою.
+    // Сторінка не блокується й нічого не липне: чат фіксований унизу, його висота — місце під смугою при scrollTop = 0
+    // (міряємо при розгортанні й зміні розміру, за прокруткою не слідуємо).
     const measure = () => setTop(measureTop());
     measure();
     const frame = requestAnimationFrame(measure);
     window.addEventListener('resize', measure);
-    window.addEventListener('scroll', measure, { passive: true });
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
     document.querySelectorAll('[data-dock-above], [data-player-slot="main"]').forEach((el) => ro?.observe(el));
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', measure);
-      window.removeEventListener('scroll', measure);
       ro?.disconnect();
     };
   }, [expanded, land]);
@@ -300,6 +307,15 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     }
     wasLandKb.current = landKb;
   }, [landKb, landFlow]);
+
+  // Альбом, розгорнутий: верх відео — на верх вікна (не шапка сайту); плавно, за «зменшити рух» — миттєво.
+  const toVideo = useCallback(() => {
+    const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
+    if (!slot) return;
+    const y = slot.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: Math.max(0, y), behavior: reduceMotion ? 'instant' : 'smooth' });
+  }, [reduceMotion]);
+  const ctx = useMemo(() => ({ toVideo: landFlow ? toVideo : null }), [landFlow, toVideo]);
 
   // Фокус іде на шапку після розгортання/згортання (не при першому показі й не коли фокус забрало вікно чату).
   const firstRun = useRef(true);
@@ -484,7 +500,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
         <div aria-hidden="true" className="t2f-dock-grip-handle">
           <span className="t2f-dock-handle" />
         </div>
-        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        <ChatDockContext.Provider value={ctx}>
+          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        </ChatDockContext.Provider>
         <div id={CHAT_DOCK_SLOT_ID} className="pointer-events-none absolute inset-0 z-20 [&>*]:pointer-events-auto" />
       </div>
     </section>

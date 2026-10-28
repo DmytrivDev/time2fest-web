@@ -270,6 +270,25 @@ html[data-reduce-motion='true'] .t2f-spin {
   border-color: var(--color-focus-ring);
   box-shadow: inset 0 0 0 1px var(--color-focus-ring);
 }
+/* Альбом на телефоні: «↑ До відео» — пігулка з підписом (значок сам по собі читався як «Поділитися»). */
+.t2f-chat-tovideo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  height: var(--spacing-touch-min);
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.t2f-chat-tovideo:hover {
+  background: var(--color-surface-raised);
+}
 .t2f-chat-hbtn {
   display: flex;
   flex: none;

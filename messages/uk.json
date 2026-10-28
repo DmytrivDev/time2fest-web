@@ -326,6 +326,7 @@
     "reportedVisible": "Дякуємо, скаргу передано",
     "showChat": "Показати чат",
     "collapse": "Згорнути чат",
+    "toVideo": "До відео",
     "expand": "Розгорнути чат",
     "dockLabel": "Чат «{room}»",
     "dockExpandLabel": "Розгорнути чат «{room}»",

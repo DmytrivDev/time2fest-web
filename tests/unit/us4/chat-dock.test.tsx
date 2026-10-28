@@ -87,6 +87,7 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     // Сторінка не блокується: чат накриває низ, запас унизу сторінки = висота чату.
     expect(document.documentElement.style.overflow).toBe('');
     expect(document.documentElement).toHaveAttribute('data-chat-dock-pad');
+    expect(screen.queryByRole('button', { name: 'До відео' })).toBeNull();
     expect(screen.getByRole('button', { name: 'Згорнути чат' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Згорнути чат' }));
@@ -174,6 +175,8 @@ describe('ChatDock — телефон в альбомній орієнтації
     expect(document.body.style.overflow).toBe('');
     expect(document.documentElement).not.toHaveAttribute('data-has-chat-dock');
     expect(window.scrollTo).toHaveBeenCalled();
+    // Кнопка «До відео» — лише в розгорнутому чаті в альбомі.
+    expect(screen.getByRole('button', { name: 'До відео' })).toHaveTextContent('До відео');
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(dock()).toHaveAttribute('data-state', 'collapsed');
     expect(document.documentElement).not.toHaveAttribute('data-chat-land-expanded');

@@ -357,7 +357,7 @@
 .stickyBar {
   background: var(--color-background);
 }
-@media (max-width: 1199.98px) and (min-height: 500px) {
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (min-height: 500px) {
   .stickyBar {
     position: sticky;
     top: max(var(--spacing-player-min-height), 56.25vw);

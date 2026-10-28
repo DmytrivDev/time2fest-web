@@ -35,6 +35,7 @@ import type { Author, ChatMessage, RoomId } from '@/lib/data/types';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { Message, type MessageLookup } from './Message';
 import type { MessageActionHandlers } from './MessageActions';
+import { useChatDockContext } from './ChatDock';
 import { MessageMenu } from './MessageMenu';
 
 const SCROLL_MS = 250;
@@ -100,6 +101,7 @@ export function Chat({
   const t = useTranslations('chat');
   const common = useTranslations('common');
   const announce = useAnnounce();
+  const { toVideo } = useChatDockContext();
 
   const logRef = useRef<HTMLDivElement>(null);
   const [manualPause, setManualPause] = useState(defaultPaused);
@@ -355,6 +357,17 @@ export function Chat({
             <Icon name="pause" size={manualPause ? 16 : 18} strokeWidth={manualPause ? 2.4 : 2} />
           </span>
         </button>
+        {collapseMode && toVideo ? (
+          <button
+            type="button"
+            onClick={toVideo}
+            className="t2f-focus t2f-chat-tovideo"
+            data-chat-to-video=""
+          >
+            <Icon name="chevron-up" size={18} strokeWidth={2} />
+            {t('toVideo')}
+          </button>
+        ) : null}
         {onHide ? (
           <button
             type="button"
