@@ -25,7 +25,7 @@ const player = (page: Page) => page.locator('iframe[data-yt-stub]').first();
 
 async function openChat(page: Page) {
   if ((page.viewportSize()?.width ?? 0) < 1200) {
-    const tab = page.getByRole('tab', { name: /^Чат/ });
+    const tab = page.getByRole('button', { name: /^Розгорнути чат/ });
     if (await tab.isVisible()) await tab.click();
   }
 }

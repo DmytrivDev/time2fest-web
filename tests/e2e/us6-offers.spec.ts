@@ -300,7 +300,8 @@ test.describe('US6 · cookies', () => {
       const vp = page.viewportSize()!;
       expect(box.x).toBe(0);
       expect(Math.round(box.width)).toBe(vp.width);
-      expect(Math.round(box.y + box.height)).toBe(vp.height);
+      // Телефон: смуга стоїть над згорнутим вікном чату (68 px).
+      expect(Math.round(box.y + box.height)).toBe(vp.height - 68);
     } else {
       await expect(banner).toHaveAttribute('data-cookie-banner', 'corner');
       const box = (await banner.boundingBox())!;

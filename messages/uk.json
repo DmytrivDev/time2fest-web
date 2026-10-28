@@ -150,6 +150,7 @@
     "seatsLeft": "{count, plural, one {Лишилось # місце} few {Лишилось # місця} many {Лишилось # місць} other {Лишилось # місця}}"
   },
   "player": {
+    "barLabel": "Поточна трансляція",
     "untilMidnight": "до півночі {time}",
     "nextIn": "далі через {time}",
     "lineBefore": "{country} · північ о {time} за вашим часом",
@@ -324,6 +325,13 @@
     "reported": "Дякуємо, скаргу передано",
     "reportedVisible": "Дякуємо, скаргу передано",
     "showChat": "Показати чат",
+    "collapse": "Згорнути чат",
+    "expand": "Розгорнути чат",
+    "dockLabel": "Чат «{room}»",
+    "dockExpandLabel": "Розгорнути чат «{room}»",
+    "dockExpandLabelUnread": "Розгорнути чат «{room}», нових повідомлень: {count}",
+    "dockNewPill": "{count} нових",
+    "showChatUnread": "Показати чат, нових повідомлень: {count}",
     "reactionsGroup": "Реакції",
     "reactionsPick": "Реакція",
     "reactionLabel": "{mine, select, yes {Реакція {name}: {count}, твоя. Прибрати} other {Реакція {name}: {count}. Додати}}",

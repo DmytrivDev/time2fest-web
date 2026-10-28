@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { ZoneStreamsBlock } from '@/components/live/StreamList';
@@ -32,7 +33,6 @@ import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { Button } from '@/components/primitives/Button';
 import { Countdown } from '@/components/primitives/Countdown';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
 import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
@@ -72,6 +72,7 @@ function sourceTitle(data: Dataset, w: Pick<GuestRoomWindow, 'eventId' | 'source
 export function RoomLive() {
   const t = useTranslations('room.page');
   const tHeader = useTranslations('room.header');
+  const tChat = useTranslations('chat');
   const data = getData();
   const router = useRouter();
   const announce = useAnnounce();
@@ -346,17 +347,15 @@ export function RoomLive() {
   // ── Чат ──
   const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
   const vis = useChatVisibility();
-  const [tab, setTab] = useState('streams');
+  const { collapse } = useChatDockControls();
   const panel = (className?: string) => (
     <ChatPanel
       country={country ? { iso: country.iso, name: country.name.uk } : undefined}
       eventId={soundWindow?.eventId ?? null}
       cityName={soundEvent ? data.citiesById.get(soundEvent.cityId)?.name.uk : undefined}
-      onHide={() => {
-        vis.hide();
-        setTab('streams');
-      }}
-      onToEvents={() => setTab('streams')}
+      onHide={chatColumn ? vis.hide : collapse}
+      collapseMode={!chatColumn}
+      onToEvents={chatColumn ? undefined : collapse}
       className={className}
     />
   );
@@ -369,16 +368,7 @@ export function RoomLive() {
       <div data-first-row-slot="" data-event-id={soundWindow?.eventId}>
         <FirstRowModule event={firstRowEventFor(data, now, soundWindow ? data.eventsById.get(soundWindow.eventId) : null)} />
       </div>
-      {vis.hidden ? (
-        <ChatHiddenButton
-          placement={chatColumn ? 'desktop' : 'phone'}
-          room={chatRoomCountry ?? 'world'}
-          onShow={() => {
-            vis.show();
-            setTab('chat');
-          }}
-        />
-      ) : null}
+      {chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoomCountry ?? 'world'} onShow={vis.show} /> : null}
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={t('heading')} />
       </div>
@@ -388,18 +378,15 @@ export function RoomLive() {
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
         </>
       ) : (
-        <Tabs value={vis.hidden ? 'streams' : tab} onValueChange={setTab}>
-          {vis.hidden ? null : (
-            <TabsList>
-              <TabsTrigger value="streams">{t('tabStreams')}</TabsTrigger>
-              <TabsTrigger value="chat">{t('tabChat')}</TabsTrigger>
-            </TabsList>
-          )}
-          <TabsContent value="streams" className="pt-4">
-            {streams}
-          </TabsContent>
-          <TabsContent value="chat">{panel()}</TabsContent>
-        </Tabs>
+        <>
+          <div className="pt-4">{streams}</div>
+          <ChatDock
+            room={chatRoomCountry ?? 'world'}
+            roomLabel={country ? tChat('roomCountryPicker', { country: country.name.uk }) : tChat('roomWorld')}
+          >
+            {panel('min-h-0 flex-1')}
+          </ChatDock>
+        </>
       )}
     </div>
   );

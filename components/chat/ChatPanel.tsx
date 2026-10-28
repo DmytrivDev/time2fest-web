@@ -51,6 +51,8 @@ export interface ChatPanelProps {
   cityName?: string;
   /** Сховати чат (кнопка в шапці); без значення — кнопки немає. */
   onHide?: () => void;
+  /** Телефон: чат у закріпленому вікні — кнопка шапки «Згорнути чат». */
+  collapseMode?: boolean;
   /** «До подій» у стані «чат недоступний». */
   onToEvents?: () => void;
   className?: string;
@@ -61,6 +63,7 @@ export function ChatPanel({
   eventId,
   cityName,
   onHide,
+  collapseMode,
   onToEvents,
   className,
 }: ChatPanelProps) {
@@ -181,6 +184,7 @@ export function ChatPanel({
       if (detected && detected !== store.detectedFlag) setDetectedFlag(detected);
       overlay.open({
         id: NICK_WINDOW_ID,
+        inChat: true,
         kind: 'form',
         chrome: 'board',
         coral: true,
@@ -253,6 +257,7 @@ export function ChatPanel({
       const viewerHasPass = useGuestStore.getState().hasPass;
       overlay.open({
         id: AUTHOR_WINDOW_ID,
+        inChat: true,
         kind: 'nonmodal',
         chrome: 'author',
         coral: !viewerHasPass,
@@ -281,6 +286,7 @@ export function ChatPanel({
     () =>
       overlay.open({
         id: RULES_WINDOW_ID,
+        inChat: true,
         kind: 'nonmodal',
         title: t('rules'),
         content: (
@@ -344,6 +350,7 @@ export function ChatPanel({
       banner={banner}
       onAuthorOpen={openAuthor}
       onHide={onHide}
+      collapseMode={collapseMode}
       onToEvents={onToEvents}
       onRules={openRules}
       announceNew

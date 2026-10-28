@@ -119,17 +119,14 @@ export const Actions: Story = {
 };
 
 export const Hidden: Story = {
-  name: 'Phone-Chat-Hidden / Desk-Chat-Hidden-Input — «Відкрити чат 99+»',
+  name: 'Phone-Chat-Hidden / Desk-Chat-Hidden-Input — «Показати чат 99+»',
   render: () => {
     useChatUi.getState().markHidden(0);
     useChatFeed.getState().append(Array.from({ length: 120 }, (_, i) => ({ ...regular(LIAM, `m${i}`, 0), id: `h${i}`, createdAt: 1 + i })));
     return (
       <Stage>
-        <StateRow label="телефон">
-          <ChatHiddenButton placement="phone" room="world" onShow={noop} />
-        </StateRow>
         <StateRow label="десктоп">
-          <ChatHiddenButton placement="desktop" room="world" onShow={noop} />
+          <ChatHiddenButton room="world" onShow={noop} />
         </StateRow>
       </Stage>
     );

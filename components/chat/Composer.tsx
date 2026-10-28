@@ -126,11 +126,15 @@ export function Composer({
   return (
     <div data-composer="" className={cn('flex shrink-0 flex-col gap-2 border-t border-border px-3 pb-3 pt-2.5', className)}>
       {reply ? (
-        <div className="flex items-center gap-2 rounded-md bg-surface px-3" data-row="reply-draft">
-          <p className="min-w-0 flex-1 truncate py-2 text-caption text-text-secondary">
-            <span className="font-semibold text-text">{t('replyTo', { nick: reply.nick })}</span> {reply.excerpt}
-          </p>
-          <IconButton icon="close" compact iconSize={16} aria-label={t('cancelReply')} onClick={onCancelReply} />
+        <div className="t2f-reply-bar" data-row="reply-draft">
+          <Icon name="reply" size={16} strokeWidth={2} className="shrink-0 text-highlight" />
+          <div className="t2f-reply-bar-text">
+            <p className="t2f-reply-bar-nick">{t('replyTo', { nick: reply.nick })}</p>
+            <p className="t2f-reply-bar-excerpt">{reply.excerpt}</p>
+          </div>
+          <button type="button" className="t2f-focus t2f-reply-bar-x" aria-label={t('cancelReply')} onClick={onCancelReply}>
+            <Icon name="close" size={18} strokeWidth={2} />
+          </button>
         </div>
       ) : null}
       {/* Рядок поля: відносна основа для вибору емодзі (над рядком, від поля до «Надіслати»). Esc закриває вибір. */}

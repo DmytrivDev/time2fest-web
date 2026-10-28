@@ -53,8 +53,10 @@ export interface CaptionProps {
   /** Від 768 px праворуч від таймера (`Desk-Cookies-Wide`: «Показати чат», коли чат сховано). */
   aside?: ReactNode;
   /** `bar` — один рядок над вкладкою «Чат» на телефоні (`Phone-Chat`); `lead` — що стоїть ліворуч (кнопка звуку). */
-  variant?: 'full' | 'bar';
+  variant?: 'full' | 'bar' | 'title';
   lead?: ReactNode;
+  /** Рядок 3 для зчитувача в `bar` (вимкнено, коли блок назви з тим самим рядком стоїть поруч). */
+  srRow3?: boolean;
   className?: string;
 }
 
@@ -95,6 +97,7 @@ export function Caption({
   aside,
   variant = 'full',
   lead,
+  srRow3 = true,
   className,
 }: CaptionProps) {
   const t = useTranslations('player');
@@ -168,9 +171,11 @@ export function Caption({
           )}
         </div>
         {/* Рядок 3 лишається для зчитувача (і подій ефіру), навіть коли видно таймер. */}
-        <p data-caption-row3={phase.row3.kind} role={phase.row3.kind === 'next' ? 'status' : undefined} className="sr-only">
-          {row3}
-        </p>
+        {srRow3 ? (
+          <p data-caption-row3={phase.row3.kind} role={phase.row3.kind === 'next' ? 'status' : undefined} className="sr-only">
+            {row3}
+          </p>
+        ) : null}
         {live && ago === null ? (
           <Badge variant="live" still>
             {tBadge('live')}
@@ -180,9 +185,10 @@ export function Caption({
     );
   }
 
+  const titleOnly = variant === 'title';
   return (
-    <div data-caption="" data-phase={phase.id} className={cn(home.caption, className)}>
-      <div className={home.badges}>
+    <div data-caption={titleOnly ? 'title' : ''} data-phase={phase.id} className={cn(home.caption, titleOnly && home.captionTitleOnly, className)}>
+      {titleOnly ? null : <div className={home.badges}>
         {live && ago === null ? (
           <Badge variant="live" still>
             {tBadge('live')}
@@ -206,7 +212,7 @@ export function Caption({
           </span>
         ) : null}
         {phase.flags.delayNotice ? <span>{t('delayNote')}</span> : null}
-      </div>
+      </div>}
       <h2 id={titleId} tabIndex={-1} className={cn(home.title, 'focus:outline-none')}>
         {href ? (
           <NextLink href={href} className="t2f-focus t2f-transition rounded-sm">
@@ -230,7 +236,7 @@ export function Caption({
           row3
         )}
       </p>
-      {timer ? (
+      {timer && !titleOnly ? (
         <span role="timer" aria-live="off" aria-label={`${timer.label}: ${spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.timer}>
           <span aria-hidden="true" className={home.timerLabel}>
             {timer.label}
@@ -240,12 +246,12 @@ export function Caption({
           </span>
         </span>
       ) : null}
-      {ago !== null ? (
+      {ago !== null && !titleOnly ? (
         <span data-caption-ago="" className={home.ago}>
           {tc('ago', { ago: formatAgo(ago) })}
         </span>
       ) : null}
-      {aside ? <div className={home.aside}>{aside}</div> : null}
+      {aside && !titleOnly ? <div className={home.aside}>{aside}</div> : null}
     </div>
   );
 }

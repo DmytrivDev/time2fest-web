@@ -10,3 +10,11 @@ body {
   color: var(--color-text);
   font-family: var(--font-manrope), var(--font-sans);
 }
+
+/* Телефонне вікно чату внизу (`ChatDock`): нижній відступ сторінки на висоту згорнутого вікна — 56 px + безпечна зона (≥ 68). */
+html[data-has-chat-dock] {
+  --chat-dock-h: calc(56px + max(12px, env(safe-area-inset-bottom)));
+}
+html[data-has-chat-dock] body {
+  padding-bottom: var(--chat-dock-h);
+}

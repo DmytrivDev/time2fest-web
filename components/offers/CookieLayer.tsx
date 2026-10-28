@@ -128,7 +128,7 @@ function useReservedBottom(el: HTMLElement | null, active: boolean) {
     if (!active || !el) return;
     const prev = document.body.style.paddingBottom;
     const apply = () => {
-      document.body.style.paddingBottom = `${el.getBoundingClientRect().height}px`;
+      document.body.style.paddingBottom = `calc(${el.getBoundingClientRect().height}px + var(--chat-dock-h, 0px))`;
     };
     apply();
     let ro: ResizeObserver | undefined;

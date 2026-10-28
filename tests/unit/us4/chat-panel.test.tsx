@@ -420,25 +420,24 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
   });
 });
 
-describe('ChatHiddenButton — чат сховано (FR-053)', () => {
+describe('ChatHiddenButton — чат сховано на десктопі (FR-053)', () => {
   it('рахує нові чужі повідомлення й показує «99+» від ста', async () => {
     const user = userEvent.setup();
     let shown = false;
-    renderApp(<ChatHiddenButton placement="phone" room="world" onShow={() => (shown = true)} />, QUIET);
-    expect(screen.getByRole('button', { name: 'Відкрити чат' })).toBeInTheDocument();
+    renderApp(<ChatHiddenButton room="world" onShow={() => (shown = true)} />, QUIET);
+    expect(screen.getByRole('button', { name: 'Показати чат' })).toBeInTheDocument();
     act(() => {
       useChatUi.getState().markHidden(QUIET);
       useChatFeed.getState().append(Array.from({ length: 120 }, (_, i) => message(`n${i}`, TARAS, `m${i}`, QUIET + 1_000 + i)));
     });
-    const button = await screen.findByRole('button', { name: /Відкрити чат/ });
+    const button = await screen.findByRole('button', { name: 'Показати чат, нових повідомлень: 120' });
     expect(button).toHaveTextContent('99+');
-    expect(button).toHaveTextContent('Нових повідомлень: 120');
     await user.click(button);
     expect(shown).toBe(true);
   });
 
-  it('desktop-варіант називається «Показати чат»', () => {
-    renderApp(<ChatHiddenButton placement="desktop" room="world" onShow={() => undefined} />, QUIET);
-    expect(screen.getByRole('button', { name: 'Показати чат' })).toBeInTheDocument();
+  it('без нових лічильника немає', () => {
+    renderApp(<ChatHiddenButton room="world" onShow={() => undefined} />, QUIET);
+    expect(screen.getByRole('button', { name: 'Показати чат' })).not.toHaveTextContent(/\d/);
   });
 });

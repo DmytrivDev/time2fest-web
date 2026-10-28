@@ -32,6 +32,8 @@ export interface ActionRowProps {
   /** Сторінка країни поточної події. */
   href: string | null;
   sound: SoundToggleProps;
+  /** Телефон, головна: звук стоїть у липкому рядку над блоком (`PlayerBlock dock`). */
+  hideSound?: boolean;
   /** «Лишитися тут ›»: запам’ятати подію перед переходом (BroadcastController.stayHere). */
   onStayHere?: () => void;
   /** Пульт: «Ще трансляції» / «Записи». */
@@ -69,6 +71,7 @@ export function ActionRow({
   onMoreStreams,
   recordings = false,
   onWatchAgain,
+  hideSound = false,
   className,
 }: ActionRowProps) {
   const t = useTranslations('player');
@@ -83,7 +86,7 @@ export function ActionRow({
 
   return (
     <div data-action-row="" className={cn(home.actions, className)}>
-      <SoundToggle {...sound} />
+      {hideSound ? null : <SoundToggle {...sound} />}
       {remote ? (
         <>
           <Button variant="secondary" data-action="more-streams" onClick={onMoreStreams} className="min-w-0">

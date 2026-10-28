@@ -368,12 +368,13 @@ export function Message({
         ) : null}
       </div>
       {message.replyTo ? (
-        <p
-          className="border-s-2 border-border-strong ps-2 text-caption text-text-muted"
-          data-row="reply"
-        >
-          <span className="font-semibold">{t('replyTo', { nick: message.replyTo.nick })}</span>{' '}
-          {message.replyTo.excerpt}
+        <p className="t2f-quote" data-row="reply">
+          <Icon name="reply" size={14} strokeWidth={2} className="shrink-0" />
+          <span className="sr-only">{t('replyTo', { nick: message.replyTo.nick })}</span>
+          <span aria-hidden="true" className="t2f-quote-nick">
+            {message.replyTo.nick}
+          </span>
+          <span className="t2f-quote-text">{message.replyTo.excerpt}</span>
         </p>
       ) : null}
       <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>

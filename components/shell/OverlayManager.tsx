@@ -13,14 +13,15 @@
  * `closeOn` — події шини (`lib/events/bus`), після яких вікно закривається саме (напр. оцінка — після `moment:rate-close`).
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { ChatSlotPanel, InFlowSlot } from '@/components/primitives/Panel';
+import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot } from '@/components/primitives/Panel';
 import { Sheet } from '@/components/primitives/Sheet';
 import { on, type UiEventType } from '@/lib/events/bus';
 import { useRegisterCoral } from '@/lib/overlay/coral';
+import { useChatDock } from '@/stores/chatDock';
 import { useGuestStore } from '@/stores/guest';
 
 export type OverlayKind = 'form' | 'accent' | 'nonmodal' | 'inflow';
-export type OverlayPlacement = 'sheet' | 'panel' | 'inflow';
+export type OverlayPlacement = 'sheet' | 'panel' | 'inflow' | 'dock';
 
 export interface OverlaySpec {
   /** Ідентифікатор вікна (O-NICK тощо); повторне `open` з тим самим id оновлює вміст. */
@@ -37,14 +38,17 @@ export interface OverlaySpec {
   coral?: boolean;
   /** Події шини, після яких вікно закривається саме. */
   closeOn?: UiEventType[];
+  /** Вікно чату (O-NICK, O-AUTHOR, правила, «Моя емоція»): на телефоні відкривається всередині розгорнутого вікна чату. */
+  inChat?: boolean;
   /** Викликається, коли вікно закрито (людиною, заміною чи подією). */
   onClose?: () => void;
 }
 
 /** Розміщення за типом і наявністю колонки чату. */
-export function placementFor(kind: OverlayKind, chatColumn: boolean): OverlayPlacement {
+export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false): OverlayPlacement {
   if (kind === 'inflow') return 'inflow';
-  return chatColumn ? 'panel' : 'sheet';
+  if (chatColumn) return 'panel';
+  return inDock ? 'dock' : 'sheet';
 }
 
 export interface OverlayApi {
@@ -52,6 +56,10 @@ export interface OverlayApi {
   open(spec: OverlaySpec): void;
   /** Без `id` закриває будь-яке відкрите вікно; з `id` — лише якщо відкрите саме воно. */
   close(id?: string): void;
+}
+
+function dockSlotExists(): boolean {
+  return typeof document !== 'undefined' && document.getElementById(CHAT_DOCK_SLOT_ID) !== null;
 }
 
 const OverlayContext = createContext<OverlayApi | null>(null);
@@ -107,10 +115,12 @@ export function OverlayManager({ children }: OverlayManagerProps) {
   const open = useCallback(
     (spec: OverlaySpec) => {
       const prev = ref.current;
+      // Телефон: вікно чату відкривається всередині розгорнутого чату — спершу розгортаємо його.
+      if (spec.inChat && spec.kind !== 'inflow' && !chatColumn && dockSlotExists()) useChatDock.getState().setExpanded(true);
       set(spec);
       if (prev && prev.id !== spec.id) prev.onClose?.();
     },
-    [set],
+    [set, chatColumn],
   );
 
   const close = useCallback(
@@ -132,7 +142,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
     return () => offs.forEach((off) => off());
   }, [currentId, closeOnKey, close]);
 
-  const placement = current ? placementFor(current.kind, chatColumn) : null;
+  const placement = current ? placementFor(current.kind, chatColumn, !!current.inChat && dockSlotExists()) : null;
 
   // Чат сховано на десктопі: колонка тимчасово відкривається під панель.
   const forceColumn = placement === 'panel' && chatHidden;
@@ -159,6 +169,20 @@ export function OverlayManager({ children }: OverlayManagerProps) {
         <Sheet open onOpenChange={onOpenChange} title={current.title} description={current.description} loading={current.loading} boardHeader={current.chrome === 'board'} authorHeader={current.chrome === 'author'}>
           {current.content}
         </Sheet>
+      ) : null}
+      {current && placement === 'dock' ? (
+        <ChatSlotPanel
+          open
+          onOpenChange={onOpenChange}
+          containerId={CHAT_DOCK_SLOT_ID}
+          variant={current.kind === 'accent' ? 'accent' : current.kind === 'nonmodal' ? 'nonmodal' : 'form'}
+          title={current.title}
+          description={current.description}
+          boardHeader={current.chrome === 'board'}
+          authorHeader={current.chrome === 'author'}
+        >
+          {current.content}
+        </ChatSlotPanel>
       ) : null}
       {current && placement === 'panel' ? (
         <ChatSlotPanel

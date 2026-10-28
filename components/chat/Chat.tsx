@@ -50,8 +50,10 @@ export interface ChatProps {
   lookup?: MessageLookup;
   /** Дотик до ніка / Enter (O-AUTHOR). */
   onAuthorOpen?: (author: Author, message: ChatMessage) => void;
-  /** Є — показуємо кнопку «Сховати чат». */
+  /** Є — показуємо кнопку «Сховати чат» (на телефоні з `collapseMode` — «Згорнути чат»). */
   onHide?: () => void;
+  /** Телефон, закріплене вікно: кнопка «Згорнути чат» (шеврон вниз), шапка 48 px, зона жестів. */
+  collapseMode?: boolean;
   /** Для `unavailable`: «До подій». */
   onToEvents?: () => void;
   /** Початковий стан паузи (кнопка «Пауза чату»). */
@@ -82,6 +84,7 @@ export function Chat({
   lookup,
   onAuthorOpen,
   onHide,
+  collapseMode = false,
   onToEvents,
   defaultPaused = false,
   roomSwitcher,
@@ -135,12 +138,14 @@ export function Chat({
   const menuMessage = menu ? (visible.find((m) => m.id === menu.message.id) ?? null) : null;
   const paused = manualPause || scrolledUp || focusInside || menuMessage !== null;
 
+  const lastId = visible[visible.length - 1]?.id;
   // Автопрокрутка вниз, поки стрічка не зупинена.
   useEffect(() => {
     if (paused) return;
     const el = logRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [visible.length, paused, state]);
+    // Останнє повідомлення, а не довжина: коли стрічка досягла ліміту, довжина лишається сталою.
+  }, [lastId, paused, state]);
 
   // Скільки повідомлень прийшло відтоді, як стрічку зупинено (поки не на паузі — відлік іде за кінцем списку).
   // Побачене (верх повідомлення у вікні стрічки) стає прочитаним: лічильник зменшується, а коли непрочитаних нижче
@@ -176,10 +181,47 @@ export function Chat({
     announce(`${t('newMessages')} ${newCount}`);
   }, [newCount, announceNew, announce, t]);
 
+  // Зміна висоти стрічки (вікно чату на телефоні розгортається, з’являється напис паузи, екранна клавіатура) не є
+  // прокруткою людини: коли стрічка була внизу, лишаємо її внизу, а «прокрутка» від стиснення не зупиняє стрічку.
+  const noMessages = visible.length === 0;
+  const pinned = useRef(true);
+  const lastClientHeight = useRef(0);
+  useEffect(() => {
+    const el = logRef.current;
+    if (!el || typeof ResizeObserver !== 'function') return;
+    let frame = 0;
+    const pin = () => {
+      if (pinned.current) {
+        el.scrollTop = el.scrollHeight;
+        setScrolledUp(false);
+      }
+    };
+    const ro = new ResizeObserver(() => {
+      pin();
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(pin);
+    });
+    ro.observe(el);
+    if (el.firstElementChild) ro.observe(el.firstElementChild);
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
+  }, [state, noMessages]);
+
   const onScroll = useCallback(() => {
     const el = logRef.current;
     if (!el) return;
-    setScrolledUp(el.scrollHeight - el.scrollTop - el.clientHeight > NEAR_BOTTOM);
+    // Прокрутка від зміни висоти стрічки — не жест людини.
+    const resized = el.clientHeight !== lastClientHeight.current;
+    lastClientHeight.current = el.clientHeight;
+    if (resized) {
+      markSeen();
+      return;
+    }
+    const up = el.scrollHeight - el.scrollTop - el.clientHeight > NEAR_BOTTOM;
+    pinned.current = !up;
+    setScrolledUp(up);
     markSeen();
   }, [markSeen]);
 
@@ -258,7 +300,13 @@ export function Chat({
 
   return (
     <div data-chat={state} data-room={room.id} className={cn('flex min-h-0 flex-col', className)}>
-      <div className="t2f-chat-head flex h-13 shrink-0 items-center border-b border-border ps-3 pe-1">
+      <div
+        className={cn(
+          't2f-chat-head flex shrink-0 items-center border-b border-border ps-3 pe-1',
+          collapseMode ? 'h-12' : 'h-13',
+        )}
+        {...(collapseMode ? { 'data-dock-grip': '' } : {})}
+      >
         {roomSwitcher ?? (
           <span
             aria-label={`${t('title')}: ${room.label}`}
@@ -280,18 +328,19 @@ export function Chat({
           className="t2f-focus t2f-chat-hbtn"
         >
           <span aria-hidden="true">
-            <Icon name={manualPause ? 'play' : 'pause'} size={18} strokeWidth={2} />
+            <Icon name="pause" size={manualPause ? 16 : 18} strokeWidth={manualPause ? 2.4 : 2} />
           </span>
         </button>
         {onHide ? (
           <button
             type="button"
-            aria-label={t('hide')}
+            aria-label={collapseMode ? t('collapse') : t('hide')}
             onClick={onHide}
             className="t2f-focus t2f-chat-hbtn"
+            {...(collapseMode ? { 'data-chat-collapse': '' } : {})}
           >
             <span aria-hidden="true">
-              <Icon name="chevrons-right" size={18} strokeWidth={2} />
+              <Icon name={collapseMode ? 'chevron-down' : 'chevrons-right'} size={18} strokeWidth={2} />
             </span>
           </button>
         ) : null}
@@ -317,6 +366,12 @@ export function Chat({
           </DropdownMenu>
         ) : null}
       </div>
+      {manualPause || scrolledUp ? (
+        <p role="status" className="t2f-chat-pausednote" data-row="paused">
+          <Icon name="pause" size={14} strokeWidth={2} />
+          {t('pausedNote')}
+        </p>
+      ) : null}
       {banner}
 
       {state === 'unavailable' ? (
@@ -401,7 +456,7 @@ export function Chat({
               onReport={messageActions?.onReport}
             />
           ) : null}
-          {paused ? (
+          {paused && !(manualPause || scrolledUp) ? (
             <p role="status" className="sr-only" data-row="paused">
               {t('pausedNote')}
             </p>

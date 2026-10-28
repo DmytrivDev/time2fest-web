@@ -24,6 +24,8 @@ import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 
 export const CHAT_SLOT_ID = 'chat-slot';
+/** Контейнер усередині розгорнутого вікна чату на телефоні (`ChatDock`). */
+export const CHAT_DOCK_SLOT_ID = 'chat-dock-slot';
 /** Слот секцій на всю ширину під сіткою «колонка | чат» (LiveShell). */
 export const WIDE_SLOT_ID = 'page-wide';
 
@@ -43,13 +45,15 @@ export interface ChatSlotPanelProps {
   boardHeader?: boolean;
   /** Шапка O-AUTHOR: «‹ Назад» ліворуч, приглушений заголовок праворуч; тіло без відступів і прокрутки (її веде вміст). */
   authorHeader?: boolean;
+  /** Контейнер, куди порталиться панель: колонка чату (за замовчуванням) або вікно чату внизу на телефоні. */
+  containerId?: string;
   className?: string;
 }
 
 /** Контейнер колонки чату; вікно відкривається лише на клієнті (дією людини), тож читання DOM тут безпечне. */
-function chatSlot(open: boolean): HTMLElement | null {
+function chatSlot(open: boolean, id: string): HTMLElement | null {
   if (!open || typeof document === 'undefined') return null;
-  return document.getElementById(CHAT_SLOT_ID);
+  return document.getElementById(id);
 }
 
 export function ChatSlotPanel({
@@ -63,9 +67,10 @@ export function ChatSlotPanel({
   backLabel = 'Назад',
   boardHeader = false,
   authorHeader = false,
+  containerId = CHAT_SLOT_ID,
   className,
 }: ChatSlotPanelProps) {
-  const container = chatSlot(open);
+  const container = chatSlot(open, containerId);
   const isForm = variant !== 'nonmodal';
 
   const content = (
@@ -77,6 +82,8 @@ export function ChatSlotPanel({
         className,
       )}
       onInteractOutside={isForm ? (e) => e.preventDefault() : undefined}
+      // Фокус, що повертається на тригер після закриття меню (напр. «Правила чату» з «⋯»), не закриває панель.
+      onFocusOutside={(e) => e.preventDefault()}
       {...(description ? {} : { 'aria-describedby': undefined })}
     >
       <FocusScope.Root asChild trapped={isForm && open} loop={isForm}>

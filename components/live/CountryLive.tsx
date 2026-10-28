@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { CountryHeader } from '@/components/live/CountryHeader';
@@ -31,7 +32,6 @@ import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { cn } from '@/components/primitives/cn';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
 import { OverlayInFlowOutlet, useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
@@ -99,7 +99,7 @@ function zoneChip(data: Dataset, iso: string, zone: LoadedZone): { id: string; l
 export function CountryLive({ iso }: { iso: string }) {
   const tc = useTranslations('country');
   const tStreams = useTranslations('country.streams');
-  const tNav = useTranslations('nav');
+  const tChat = useTranslations('chat');
   const tPlayer = useTranslations('player');
   const data = getData();
   const country = data.countriesByIso.get(iso)!;
@@ -307,18 +307,16 @@ export function CountryLive({ iso }: { iso: string }) {
 
   const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
   const vis = useChatVisibility();
-  const [tab, setTab] = useState('events');
   const chatRoom: RoomId = `country:${iso}`;
+  const { collapse } = useChatDockControls();
   const panel = (className?: string) => (
     <ChatPanel
       country={{ iso, name: country.name.uk }}
       eventId={mainEvent?.id ?? null}
       cityName={current?.city?.name.uk}
-      onHide={() => {
-        vis.hide();
-        setTab('events');
-      }}
-      onToEvents={() => setTab('events')}
+      onHide={chatColumn ? vis.hide : collapse}
+      collapseMode={!chatColumn}
+      onToEvents={chatColumn ? undefined : collapse}
       className={className}
     />
   );
@@ -345,16 +343,9 @@ export function CountryLive({ iso }: { iso: string }) {
       <div data-first-row-slot="">
         <FirstRowModule event={firstRowEventForCountry(data, iso)} className={styles.pad} />
       </div>
-      {vis.hidden ? (
+      {chatColumn && vis.hidden ? (
         <div className={cn(styles.pad, 'pt-3')}>
-          <ChatHiddenButton
-            placement={chatColumn ? 'desktop' : 'phone'}
-            room={chatRoom}
-            onShow={() => {
-              vis.show();
-              setTab('chat');
-            }}
-          />
+          <ChatHiddenButton room={chatRoom} onShow={vis.show} />
         </div>
       ) : null}
       <div className={styles.pad}>
@@ -370,18 +361,12 @@ export function CountryLive({ iso }: { iso: string }) {
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
         </>
       ) : (
-        <Tabs value={vis.hidden ? 'events' : tab} onValueChange={setTab} className="pt-2">
-          {vis.hidden ? null : (
-            <TabsList>
-              <TabsTrigger value="events">{tNav('events')}</TabsTrigger>
-              <TabsTrigger value="chat">{tNav('chat')}</TabsTrigger>
-            </TabsList>
-          )}
-          <TabsContent value="events" className="pt-4">
-            {events}
-          </TabsContent>
-          <TabsContent value="chat">{panel(styles.phoneChat)}</TabsContent>
-        </Tabs>
+        <>
+          <div className="pt-4">{events}</div>
+          <ChatDock room={`country:${iso}`} roomLabel={tChat('roomCountryPicker', { country: country.name.uk })}>
+            {panel('min-h-0 flex-1')}
+          </ChatDock>
+        </>
       )}
 
     </>

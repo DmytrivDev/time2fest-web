@@ -297,11 +297,12 @@ html[data-reduce-motion='true'] .t2f-spin {
   background: var(--color-surface-raised);
   color: var(--color-text);
 }
-.t2f-chat-hbtn[aria-pressed='true'] {
-  color: var(--color-highlight);
-}
+.t2f-chat-hbtn[aria-pressed='true'] > span,
 .t2f-chat-hbtn[aria-pressed='true']:hover > span {
-  color: var(--color-highlight);
+  width: 34px;
+  height: 34px;
+  background: var(--color-text);
+  color: var(--color-on-highlight);
 }
 .t2f-chat-hbtn:disabled {
   color: var(--color-text-muted);
@@ -958,4 +959,266 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   box-sizing: border-box;
   padding: 0 12px 0 4px;
   border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Пауза чату: видимий напис під рядком інструментів (`Phone-Chat-Paused`, `Desk-Chat-Paused`) ── */
+.t2f-chat-pausednote {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── Смужка відповіді над полем (`Phone-Chat-Actions`, однаково на десктопі) ── */
+.t2f-reply-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--color-highlight);
+  border-radius: 4px;
+  background: var(--color-highlight-tint);
+}
+.t2f-reply-bar-text {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+.t2f-reply-bar-nick,
+.t2f-reply-bar-excerpt {
+  margin: 0;
+  font-size: 13px;
+}
+.t2f-reply-bar-nick {
+  font-weight: 600;
+  color: var(--color-highlight);
+}
+.t2f-reply-bar-excerpt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+.t2f-reply-bar-x {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  height: var(--spacing-touch-min);
+  margin: -6px 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+@media (hover: hover) {
+  .t2f-reply-bar-x:hover {
+    background: var(--color-border);
+  }
+}
+
+/* Цитата в повідомленні-відповіді: «↩ нік текст», один рядок. */
+.t2f-quote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 2px;
+  padding: 4px 8px;
+  border-left: 2px solid var(--color-border-strong);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.t2f-quote-nick {
+  flex: none;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.t2f-quote-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Телефонне вікно чату внизу (`Phone-Chat-Dock`, `Phone-Chat-Expanded`) ── */
+.t2f-dock {
+  --dock-collapsed: calc(56px + max(12px, env(safe-area-inset-bottom)));
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: var(--dock-collapsed);
+  overflow: hidden;
+  border-top: 1px solid #3c3c44; /* макет */
+  border-radius: 16px 16px 0 0;
+  background: var(--color-surface);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+  transition: height 200ms ease-out;
+}
+.t2f-dock[data-state='expanded'] {
+  height: calc(100dvh - var(--dock-top, 0px));
+}
+.t2f-dock[data-dragging='true'] {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t2f-dock {
+    transition: none;
+  }
+}
+:root[data-reduce-motion='true'] .t2f-dock {
+  transition: none;
+}
+.t2f-dock-collapsed {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  text-align: start;
+  touch-action: none;
+  opacity: 1;
+  transition: opacity 120ms linear;
+}
+.t2f-dock[data-state='expanded'] .t2f-dock-collapsed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 120ms linear, visibility 0s linear 120ms;
+}
+.t2f-dock-handle {
+  align-self: center;
+  flex: none;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border-strong);
+}
+.t2f-dock-collapsed .t2f-dock-handle {
+  margin-top: 8px;
+}
+.t2f-dock-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.t2f-dock-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.t2f-dock-body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  visibility: hidden;
+  transition: visibility 0s linear 200ms;
+}
+.t2f-dock[data-state='expanded'] .t2f-dock-body,
+.t2f-dock[data-dragging='true'] .t2f-dock-body {
+  visibility: visible;
+  transition: none;
+}
+.t2f-dock-grip-handle {
+  display: flex;
+  flex: none;
+  align-items: flex-end;
+  justify-content: center;
+  height: 18px;
+  padding-bottom: 2px;
+  box-sizing: border-box;
+  touch-action: none;
+}
+.t2f-dock [data-dock-grip] {
+  touch-action: none;
+}
+.t2f-dock [data-composer] {
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.t2f-dock .t2f-chat-log {
+  overscroll-behavior: contain;
+}
+
+/* ── «Показати чат» (десктоп, `Desk-Chat-ShowButton`, варіант 1) ── */
+.t2f-show-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  box-sizing: border-box;
+  min-height: var(--spacing-touch-min);
+  padding: 0 8px 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.t2f-show-chat-plain {
+  padding-inline-end: 14px;
+}
+.t2f-show-chat:hover {
+  border-color: var(--color-text-secondary);
+  background: var(--color-border);
+}
+.t2f-show-chat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 24px;
+  min-width: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.t2f-dock[data-dragging='true'] .t2f-dock-collapsed {
+  opacity: 0;
+}
+
+/* Смуга cookies на телефоні стоїть над згорнутим вікном чату; розгорнутий чат її тимчасово ховає. */
+html[data-has-chat-dock] .t2f-cookie-strip {
+  bottom: var(--chat-dock-h);
+}
+html[data-chat-dock-expanded] .t2f-cookie-strip {
+  display: none;
 }

@@ -2,7 +2,7 @@
  * US4 — «Чат свята» на імітаторі (quickstart 9; T101, FR-050…056).
  * Нік і прапор на першому власному повідомленні (2–20 символів, прапор за розташуванням), пауза з
  * «Нові повідомлення N ↓», повільний режим, 200 символів з лічильником від 180 і без посилань, «чат недоступний»,
- * панель автора зі шляхом, сховано чат (телефон: «Відкрити чат»; десктоп: вікно з полем тимчасово відкриває колонку), axe.
+ * панель автора зі шляхом, сховано чат (телефон: згорнути вікно; десктоп: вікно з полем тимчасово відкриває колонку), axe.
  *
  * ПОКИ НЕ ЗАПУСКАЄТЬСЯ: рішення власника 2026-10-27 — e2e пишемо, але не проганяємо; перевірка — typecheck, lint, юніти, build.
  * Часовий пояс браузера — Київ; мова — uk-UA (прапор за розташуванням — UA).
@@ -34,7 +34,7 @@ const field = (page: Page) => page.getByRole('textbox', { name: /Повідом�
 const send = (page: Page) => page.getByRole('button', { name: /^Надіслати/ });
 
 async function openChat(page: Page) {
-  if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
+  if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
   await expect(page.getByRole('log').first()).toBeVisible();
 }
 
@@ -216,7 +216,7 @@ test.describe('US4 · чат свята', () => {
     ).toBeVisible();
   });
 
-  test('чат недоступний: повідомлення замість стрічки, відео й «Події» працюють', async ({
+  test('чат недоступний: повідомлення замість стрічки, відео й сторінка працюють', async ({
     page,
     ytStub,
   }) => {
@@ -226,10 +226,8 @@ test.describe('US4 · чат свята', () => {
     await expect(page.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeVisible();
     await expect(field(page)).toHaveCount(0);
     await expect(page.locator('[data-player-host] iframe')).toHaveCount(1);
-    await page
-      .getByRole('button', { name: 'До подій' })
-      .click()
-      .catch(() => undefined);
+    // Телефон: «До подій» згортає вікно чату; на десктопі кнопки немає.
+    if (isPhone(page)) await page.getByRole('button', { name: 'До подій' }).click();
     await setChatAvailable(page, true);
     await expect(page.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeHidden();
   });
@@ -293,23 +291,23 @@ test.describe('US4 · чат свята', () => {
     await expect(panel.getByRole('button', { name: 'Поскаржитись' })).toBeVisible();
   });
 
-  test('чат сховано: телефон — «Відкрити чат» з лічильником; десктоп — колонки немає, «Показати чат» повертає її', async ({
+  test('чат сховано: телефон — згорнуте вікно з «N нових»; десктоп — колонки немає, «Показати чат» повертає її', async ({
     page,
   }) => {
     await startChat(page, QUIET, 10);
-    await page.getByRole('button', { name: 'Сховати чат' }).click();
-
     if (isPhone(page)) {
-      await expect(page.getByRole('tab', { name: /^Чат/ })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Згорнути чат', exact: true }).click();
+      await expect(page.getByRole('log')).toHaveCount(0);
       await advance(page, 5 * 60_000);
-      const open = page.getByRole('button', { name: /^Відкрити чат/ });
+      const open = page.getByRole('button', { name: /^Розгорнути чат/ });
       await expect(open).toBeVisible();
-      await expect(open).toContainText(/\d+\+?/);
+      await expect(open).toContainText(/\d+\+? нових/);
       await open.click();
       await expect(field(page)).toBeVisible();
       return;
     }
 
+    await page.getByRole('button', { name: 'Сховати чат' }).click();
     await expect(page.locator('#chat')).toBeHidden();
     const show = page.getByRole('button', { name: /^Показати чат/ });
     await expect(show).toBeVisible();

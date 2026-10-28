@@ -78,6 +78,12 @@ export interface PlayerBlockProps {
   captionAside?: ReactNode;
   /** Телефон, вкладка «Чат» (`Phone-Chat`): підпис одним рядком зі звуком, без рядка дій. */
   bar?: boolean;
+  /**
+   * Телефон, головна (`Phone-Chat-Dock`): під закріпленим плеєром — липкий рядок «Лондон · до півночі 00:22:15 · Наживо»
+   * зі звуком, далі `belowBar` (смуга «Перший ряд»), далі блок назви без таймера й без кнопки звуку.
+   */
+  dock?: boolean;
+  belowBar?: ReactNode;
   className?: string;
 }
 
@@ -169,6 +175,8 @@ export function PlayerBlock({
   watchers,
   captionAside,
   bar = false,
+  dock = false,
+  belowBar,
   className,
 }: PlayerBlockProps) {
   const t = useTranslations('player');
@@ -181,15 +189,46 @@ export function PlayerBlock({
   const chain = current ? getData().chainsByEventId.get(current.event.id) : undefined;
   const verified = area.kind === 'video' && !!chain?.sources.some((s) => s.verified);
 
+  const place = current
+    ? { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }
+    : null;
+  const nextPlace = next ? { midnightMs: next.event.midnightMs, city: next.city, country: next.country, href: next.href } : null;
+  const barSound = (
+    <BarSound muted={area.muted} available={area.kind === 'video'} onUnmute={() => actions?.unmute()} onMute={() => actions?.mute()} />
+  );
+
   return (
     <>
       <PlayerSlot id="main" fallback={<VideoFallback kind={area.kind} current={current} />} />
+      {dock ? (
+        <section aria-label={t('barLabel')} data-player-bar="" data-dock-above="" className={home.stickyBar}>
+          {place && phase ? (
+            <Caption
+              phase={phase}
+              current={place}
+              next={nextPlace}
+              live={area.kind === 'video'}
+              timeZone={timeZone}
+              mode={mode}
+              variant="bar"
+              lead={barSound}
+              srRow3={false}
+            />
+          ) : (
+            <div className={home.bar} aria-hidden="true">
+              <Skeleton variant="line" className="w-2/3" />
+            </div>
+          )}
+        </section>
+      ) : null}
+      {dock ? belowBar : null}
       <section
         aria-labelledby={current && phase ? titleId : undefined}
         aria-busy={current && phase ? undefined : true}
         data-player-block={mode}
         data-video-area-kind={area.kind}
-        className={cn(bar ? undefined : home.block, className)}
+        {...(bar ? { 'data-dock-above': '' } : {})}
+        className={cn(bar && !dock ? undefined : home.block, className)}
       >
         {current && phase ? (
           <>
@@ -204,7 +243,7 @@ export function PlayerBlock({
               mode={mode}
               watchers={watchers}
               aside={captionAside}
-              variant={bar ? 'bar' : 'full'}
+              variant={dock ? 'title' : bar ? 'bar' : 'full'}
               lead={
                 bar ? (
                   <BarSound
@@ -219,6 +258,7 @@ export function PlayerBlock({
             />
             {bar ? null : (
             <ActionRow
+              hideSound={dock}
               mode={mode}
               button={phase.button}
               onMoreStreams={onMoreStreams}

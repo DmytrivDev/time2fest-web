@@ -172,6 +172,44 @@ button.free:hover {
   margin-left: 0;
   font-weight: 500;
 }
+/* Телефон, головна (`Phone-Chat-Dock`): смуга на всю ширину під липким рядком; згорнута — липне, розгорнута — у потоці. */
+.dockBar {
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-background);
+  overflow: visible;
+  box-shadow: none;
+}
+@media (max-width: 1199.98px) and (min-height: 500px) {
+  :global([data-player-bar]) ~ .dockBar[data-open='false'] {
+    position: sticky;
+    top: calc(max(var(--spacing-player-min-height), 56.25vw) + 48px);
+    z-index: 15;
+  }
+}
+.dockBar .toggle {
+  box-sizing: border-box;
+  gap: 8px;
+  padding: 0 var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background);
+}
+.dockBar .toggle .heading {
+  font-size: 14px;
+}
+.dockBar .toggle .counter {
+  font-size: 13px;
+}
+.dockBar .panel {
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.panel[hidden] {
+  display: none;
+}
 .panel {
   display: flex;
   flex-direction: column;

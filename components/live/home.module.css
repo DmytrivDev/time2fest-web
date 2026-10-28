@@ -352,3 +352,35 @@
 .events[data-state='inactive'] {
   display: none;
 }
+
+/* ── Телефон, головна (`Phone-Chat-Dock`): рядок «Лондон · до півночі …» липне під плеєром ───────────────── */
+.stickyBar {
+  background: var(--color-background);
+}
+@media (max-width: 1199.98px) and (min-height: 500px) {
+  .stickyBar {
+    position: sticky;
+    top: max(var(--spacing-player-min-height), 56.25vw);
+    z-index: 15;
+  }
+}
+/* Блок назви під смугою «Перший ряд»: без таймера й позначки (вони в липкому рядку). */
+.captionTitleOnly {
+  row-gap: 6px;
+}
+.captionTitleOnly .sub {
+  margin-top: 0;
+}
+.captionTitleOnly .title {
+  grid-area: title;
+}
+/* Смуга «Перший ряд» на телефоні: заголовок-рядок 44 px липне під рядком; розгорнута — звичайний потік. */
+.barTitle {
+  flex: none;
+}
+.barText .barTimer {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

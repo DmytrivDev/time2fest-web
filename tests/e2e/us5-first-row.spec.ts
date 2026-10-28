@@ -139,6 +139,8 @@ test.describe('US5 · модуль «Перший ряд»', () => {
     const s = strip(page);
     if ((await s.getAttribute('data-midnight')) === String(Date.parse(tokyo.midnightUtc))) {
       await expect(s.locator('[data-row="counter"]')).toContainText('лишилось 6 з 10');
+      // Телефон: смуга на головній спочатку згорнута (`Phone-Chat-Dock`).
+      if ((await s.getAttribute('data-open')) === 'false') await s.locator('button[aria-expanded]').first().click();
       await expect(s).toContainText('$4,99');
     }
   });
@@ -273,7 +275,7 @@ test.describe('US5 · результат оплати', () => {
     await expect(strip(page)).toHaveAttribute('data-state', 'mine');
     await expect(strip(page)).toContainText('Твоє місце');
 
-    if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
+    if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
     // На сторінці країни чат відкривається в кімнаті країни; системне повідомлення — у «Світі» й «Першому ряду».
     await worldRoom(page).click();
     await expect(
@@ -296,7 +298,7 @@ test.describe('US5 · результат оплати', () => {
     await expect(payWin(page)).toContainText('Оплату підтверджено', { timeout: 10_000 });
     await page.keyboard.press('Escape');
     await advance(page, 40 * MIN + 16 * SEC);
-    if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
+    if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
     await worldRoom(page).click();
     await expect(page.locator('[data-kind="greeting"]').first()).toContainText(
       'Time2Fest вітає з Новим роком',

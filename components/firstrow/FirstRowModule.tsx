@@ -11,6 +11,8 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 import { useChatLookup } from '@/components/chat/useChatLookup';
+import { useChatDockControls } from '@/components/chat/ChatDock';
+import { useChatDock } from '@/stores/chatDock';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { EmojiPicker, EMOJI_WINDOW_ID } from '@/components/windows/Emoji';
 import { FirstRowInfo } from '@/components/windows/FirstRowInfo';
@@ -46,6 +48,8 @@ export interface FirstRowModuleProps {
   event: FirstRowEvent | null;
   /** Рівень заголовка модуля. */
   headingLevel?: 2 | 3;
+  /** Телефон, головна: смуга під липким рядком плеєра, спочатку згорнута (`Phone-Chat-Dock`). */
+  dockBar?: boolean;
   className?: string;
 }
 
@@ -152,18 +156,24 @@ function InfoBody({ event, city, onTake }: { event: FirstRowEvent; city: string;
   );
 }
 
-export function FirstRowModule({ event, headingLevel = 2, className }: FirstRowModuleProps) {
+export function FirstRowModule({ event, headingLevel = 2, dockBar = false, className }: FirstRowModuleProps) {
   if (!event?.firstRow?.saleEnabled) return null;
-  return <ConnectedModule event={event} headingLevel={headingLevel} className={className} />;
+  return <ConnectedModule event={event} headingLevel={headingLevel} dockBar={dockBar} className={className} />;
 }
 
-function ConnectedModule({ event, headingLevel, className }: { event: FirstRowEvent; headingLevel: 2 | 3; className?: string }) {
+function ConnectedModule({ event, headingLevel, dockBar, className }: { event: FirstRowEvent; headingLevel: 2 | 3; dockBar: boolean; className?: string }) {
   const t = useTranslations('firstRow');
   const tChat = useTranslations('chat');
   const now = useNow();
   const reduced = useReducedMotion();
   const overlay = useOverlay();
   const column = useChatColumn();
+  // Розгортання смуги «Перший ряд» на телефоні згортає чат (рішення 2026-10-27).
+  const dockExpanded = useChatDock((st) => st.expanded);
+  const { collapse } = useChatDockControls();
+  const collapseChat = () => {
+    if (dockExpanded) collapse();
+  };
   const lookup = useChatLookup();
   const player = useOptionalPlayer();
   const coralWindow = useCoralWindowOpen();
@@ -238,6 +248,9 @@ function ConnectedModule({ event, headingLevel, className }: { event: FirstRowEv
       countryName={lookup.countryName}
       layout={column ? 'module' : 'compact'}
       headingLevel={headingLevel}
+      onToggle={column ? undefined : collapseChat}
+      dockBar={dockBar && !column}
+      defaultOpen={!(dockBar && !column)}
       className={className}
     />
   );

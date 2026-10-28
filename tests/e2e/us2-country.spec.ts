@@ -127,7 +127,7 @@ test.describe('US2 · сторінка країни', () => {
     await expect(page.locator('[data-moment-slot]')).toContainText(/Мій паспорт/, { timeout: 10_000 });
 
     // Чат є завжди: кімнати «Світ» і «Країна».
-    if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
+    if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
     const rooms = page.getByRole('radiogroup', { name: 'Кімнати чату' });
     await expect(rooms.getByRole('radio', { name: 'Країна' })).toBeVisible();
     await expect(rooms.getByRole('radio', { name: 'Світ' })).toBeVisible();

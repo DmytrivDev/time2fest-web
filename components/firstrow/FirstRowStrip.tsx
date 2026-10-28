@@ -39,11 +39,14 @@ export function FirstRowStrip({
   countryName,
   layout = 'module',
   headingLevel = 2,
+  onToggle,
+  defaultOpen = true,
+  dockBar = false,
   className,
 }: FirstRowStripProps) {
   const t = useTranslations('firstRow');
   const compact = layout === 'compact';
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(defaultOpen);
   const Heading = headingLevel === 2 ? 'h2' : 'h3';
   const { state, price } = view;
   const sellable = price.current !== null && (state === 'empty' || state === 'open' || state === 'last3');
@@ -202,16 +205,20 @@ export function FirstRowStrip({
 
   if (compact) {
     return (
-      <section {...common} className={cn(fr.strip, fr.compact, className)}>
-        <Heading className="m-0">
+      <section {...common} data-open={open} className={cn(fr.strip, fr.compact, dockBar && fr.dockBar, className)}>
+        <Heading className="m-0" {...(dockBar ? { 'data-dock-above': '' } : {})}>
           <button
             type="button"
             id={headingId}
             aria-expanded={open}
             aria-controls={panelId}
-            onClick={() => setOpen((v) => !v)}
-            className={cn('t2f-focus rounded-sm', fr.toggle)}
+            onClick={() => {
+              setOpen((v) => !v);
+              onToggle?.();
+            }}
+            className={cn('t2f-focus', fr.toggle)}
           >
+            {dockBar ? <Icon name="ticket" size={16} className="text-highlight" /> : null}
             <span className={fr.heading}>{t('heading', { city })}</span>
             {counter}
             {state === 'soldout' ? (
@@ -220,11 +227,12 @@ export function FirstRowStrip({
               </span>
             ) : null}
             <span className={fr.spacer} />
-            <Icon name={open ? 'chevron-up' : 'chevron-down'} size={18} className="text-text-secondary" />
+            <Icon name={open ? 'chevron-up' : dockBar ? 'chevron-right' : 'chevron-down'} size={18} className="text-text-secondary" />
           </button>
         </Heading>
-        {open ? (
-          <div id={panelId} className={fr.panel}>
+        {/* Телефон-головна: панель лишається в DOM і згорнутою — стіна загоряється опівночі синхронно (як було з forceMount). */}
+        {open || dockBar ? (
+          <div id={panelId} className={fr.panel} hidden={!open}>
             {wall}
             {sellable || state === 'mine' || state === 'closed' || state === 'soldout' || restrained ? (
               <div className={cn(fr.details, !wall && 'border-t-0 pt-0')}>

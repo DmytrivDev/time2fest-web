@@ -34,7 +34,7 @@ function isPhone(page: Page) {
 
 /** На телефоні чат — у вкладці «Чат». */
 async function openChat(page: Page) {
-  if (isPhone(page)) await page.getByRole('tab', { name: /^Чат/ }).click();
+  if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
 }
 
 async function expectAxeClean(page: Page) {

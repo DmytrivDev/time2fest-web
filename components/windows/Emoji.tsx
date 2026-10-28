@@ -148,6 +148,7 @@ export function MyEmotionButton({ eventId, seatLabel, className }: MyEmotionButt
       onClick={() =>
         overlay.open({
           id: EMOJI_WINDOW_ID,
+          inChat: true,
           kind: 'nonmodal',
           title: c('emotionTitle'),
           content: <EmojiPicker value={current} onSelect={pick} waitSec={wait} seatLabel={seatLabel} />,
