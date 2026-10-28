@@ -4,6 +4,7 @@ import type { ChatScriptFile } from '@/lib/data/types';
 import { data } from '@/lib/data/load';
 import {
   buildMomentContexts,
+  ambientBetween,
   createChatSimulator,
   messageId,
   messagesBetween,
@@ -154,5 +155,14 @@ describe('useChatFeed', () => {
     useChatFeed.getState().append(msgs);
     const room = useChatFeed.getState().rooms.world!;
     expect(room.map((m) => m.id)).toEqual(msgs.map((m) => m.id));
+  });
+});
+
+describe('ambientBetween', () => {
+  it('однакова репліка не йде поспіль (кімната країни біля півночі)', () => {
+    const msgs = ambientBetween(script, [london], ['country:GB'], T0 - 120 * SEC, T0 + 120 * SEC).sort((a, b) => a.createdAt - b.createdAt || (a.id < b.id ? -1 : 1));
+    expect(msgs.length).toBeGreaterThan(20);
+    for (let i = 1; i < msgs.length; i++) expect(msgs[i]!.text).not.toBe(msgs[i - 1]!.text);
+    expect(new Set(msgs.map((m) => m.id)).size).toBe(msgs.length);
   });
 });

@@ -14,7 +14,7 @@ import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatDockControls } from '@/components/chat/ChatDock';
 import { useChatDock } from '@/stores/chatDock';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
-import { EmojiPicker, EMOJI_WINDOW_ID } from '@/components/windows/Emoji';
+import { useOpenMyEmotion } from '@/components/windows/Emoji';
 import { FirstRowInfo } from '@/components/windows/FirstRowInfo';
 import { FirstRowWindow } from '@/components/windows/FirstRowWindow';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
@@ -28,7 +28,6 @@ import { useCoralWindowOpen } from '@/lib/overlay/coral';
 import { countryHref } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
-import { emotionWaitSec, useChatUi } from '@/stores/chat';
 import { useFirstRowStore } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import {
@@ -117,28 +116,6 @@ function useFirstRowEffects(event: FirstRowEvent, now: Ms) {
   }, [due, event, seat]);
 }
 
-function EmojiBody({ eventId }: { eventId: string }) {
-  const now = useNow();
-  const overlay = useOverlay();
-  const entry = useGuestStore((s) => s.firstRow[eventId]);
-  const updateFirstRow = useGuestStore((s) => s.updateFirstRow);
-  const changedAt = useChatUi((s) => s.emotionChangedAt);
-  const markChanged = useChatUi((s) => s.markEmotionChanged);
-  const wait = emotionWaitSec(changedAt, now);
-  return (
-    <EmojiPicker
-      value={entry?.draft?.emojiId ?? 'glasses'}
-      waitSec={wait}
-      onSelect={(emojiId) => {
-        if (emotionWaitSec(changedAt, now) > 0) return;
-        updateFirstRow(eventId, (prev) => ({ ...prev, draft: { name: prev.draft?.name ?? '', greeting: prev.draft?.greeting ?? '', emojiId } }));
-        markChanged(now);
-        overlay.close(EMOJI_WINDOW_ID);
-      }}
-    />
-  );
-}
-
 function InfoBody({ event, city, onTake }: { event: FirstRowEvent; city: string; onTake(): void }) {
   const now = useNow();
   const reduced = useReducedMotion();
@@ -163,7 +140,6 @@ export function FirstRowModule({ event, headingLevel = 2, dockBar = false, class
 
 function ConnectedModule({ event, headingLevel, dockBar, className }: { event: FirstRowEvent; headingLevel: 2 | 3; dockBar: boolean; className?: string }) {
   const t = useTranslations('firstRow');
-  const tChat = useTranslations('chat');
   const now = useNow();
   const reduced = useReducedMotion();
   const overlay = useOverlay();
@@ -219,13 +195,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
     });
   };
 
-  const openEmoji = () =>
-    overlay.open({
-      id: EMOJI_WINDOW_ID,
-      kind: 'nonmodal',
-      title: tChat('emotionTitle'),
-      content: <EmojiBody eventId={event.id} />,
-    });
+  const openEmoji = useOpenMyEmotion(event.id);
 
   const coralSound = !!player && player.muted;
   const elsewhere = view.state === 'closed' || view.state === 'soldout' ? saleLink(now, event.id) : undefined;

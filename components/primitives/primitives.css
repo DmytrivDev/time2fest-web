@@ -1323,3 +1323,146 @@ html[data-chat-land-expanded] body {
 .t2f-dock[data-land='true'][data-kb='true'] .t2f-dock-grip-handle {
   display: none;
 }
+
+/* «Моя емоція» (макет `Phone-Chat-FirstRow`, кадр в): заголовок біля «Назад», «· Моя емоція» 17/700. */
+.t2f-author-header:has(.t2f-emo-title) > .flex-1 {
+  display: none;
+}
+.t2f-emo-title {
+  margin-inline-start: 4px;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.t2f-emo-title::before {
+  content: '·';
+  margin-inline-end: 8px;
+  color: var(--color-border-strong);
+  font-weight: 400;
+}
+
+.t2f-emo-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px 8px 12px;
+  border-radius: 10px;
+  background: var(--color-background);
+}
+.t2f-emo-hint {
+  flex: 1 1 8rem;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.3;
+}
+.t2f-emo-wall {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
+  height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 0 10px;
+  border: 1px solid rgba(252, 226, 134, 0.4);
+  border-radius: 9999px;
+  background: rgba(252, 226, 134, 0.09);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.t2f-emo-flag {
+  flex: none;
+  border-radius: 2px;
+}
+.t2f-emo-wall-glyph {
+  flex: none;
+  font-size: 17px;
+  line-height: 1;
+}
+.t2f-emo-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.t2f-emo-count {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.t2f-emo-input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 16px;
+}
+.t2f-emo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+}
+.t2f-emo-glyph {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background: var(--color-surface-raised);
+  font-size: 22px;
+  line-height: 1;
+}
+[aria-checked='true'] > .t2f-emo-glyph {
+  border: 2px solid var(--color-highlight);
+  background: rgba(252, 226, 134, 0.14);
+}
+.t2f-emo-rate {
+  margin: 0;
+  color: var(--color-highlight);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.t2f-emo-btn {
+  height: 44px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.t2f-emo-cancel {
+  flex: none;
+  padding: 0 18px;
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+}
+.t2f-emo-chip {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 9px;
+  border: 1px solid rgba(252, 226, 134, 0.4);
+  border-radius: 9999px;
+  background: var(--color-highlight-tint);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.t2f-emo-chip-glyph {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Перемикач кімнат у шапці чату на телефоні: тісніші чипи, щоб «Світ · GB ⌄ · Перший ряд» + кнопки вміщались у 375 px. */
+@media (max-width: 767.98px) {
+  .t2f-chat-head .t2f-seg-pill {
+    gap: 5px;
+    padding: 0 8px;
+  }
+}

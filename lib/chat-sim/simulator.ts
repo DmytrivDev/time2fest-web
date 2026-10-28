@@ -254,6 +254,38 @@ function nearMidnight(moments: readonly MomentContext[], t: Ms): boolean {
   return false;
 }
 
+/** Початок ночі, від якого рахуємо порядкові номери ambient-реплік. */
+const ORDINAL_ORIGIN_SEC = Math.floor(Date.UTC(2026, 11, 31) / 1_000);
+const ordinalCaches = new Map<string, { hours: Int32Array[]; base: number[] }>();
+
+/** Скільки ambient-реплік було від початку ночі до початку секунди `sec` (кеш по годинах). */
+function ordinalFor(key: string, countAt: (sec: number) => number): (sec: number) => number {
+  let cache = ordinalCaches.get(key);
+  if (!cache) {
+    if (ordinalCaches.size > 40) ordinalCaches.clear();
+    cache = { hours: [], base: [0] };
+    ordinalCaches.set(key, cache);
+  }
+  const c = cache;
+  const hour = (h: number): Int32Array => {
+    while (c.hours.length <= h) {
+      const i = c.hours.length;
+      const prefix = new Int32Array(3_601);
+      for (let k = 0; k < 3_600; k++) prefix[k + 1] = prefix[k]! + countAt(ORDINAL_ORIGIN_SEC + i * 3_600 + k);
+      c.hours.push(prefix);
+      c.base.push(c.base[i]! + prefix[3_600]!);
+    }
+    return c.hours[h]!;
+  };
+  return (sec) => {
+    const rel = sec - ORDINAL_ORIGIN_SEC;
+    if (rel < 0 || rel > 14 * 86_400) return Math.abs(hash32(sec, key)) % 1_000_003;
+    const h = Math.floor(rel / 3_600);
+    const prefix = hour(h);
+    return c.base[h]! + prefix[rel - h * 3_600]!;
+  };
+}
+
 /**
  * Фоновий потік кімнати за `ambient`-правилами: час ділиться на секундні відра, у кожному кількість повідомлень і вибір
  * з `pool` визначає хеш (кімната, секунда) — перемотка повертає ті самі повідомлення з тими самими `id`.
@@ -280,17 +312,41 @@ export function ambientBetween(
       pool = [...worldPool, ...rule.pool].filter((p) => firstRowIds.has(p.authorId));
     }
     if (!pool.length) continue;
-    for (let sec = Math.floor(from / 1_000); sec <= Math.floor(to / 1_000); sec++) {
+    // Скільки повідомлень у секундному відрі — чиста функція (id стабільні при перемотці).
+    const countAt = (sec: number): number => {
       const rate = nearMidnight(moments, sec * 1_000) ? rule.ratePerMin.nearMidnight : rule.ratePerMin.idle;
       const p = Math.min(rate / 60, cap);
-      const h = hash32(sec, room);
       let n = Math.floor(p);
-      if ((h % 10_000) / 10_000 < p - n) n += 1;
+      if ((hash32(sec, room) % 10_000) / 10_000 < p - n) n += 1;
+      return n;
+    };
+    // Порядковий номер репліки від фіксованого початку ночі; репліки беруться з пулу «колами» (перемішаний пул на коло),
+    // тож однакова репліка не йде поспіль і не повторюється, доки не вичерпано пул.
+    const ordinalAt = ordinalFor(`${room}|${cap}|${moments.map((m) => m.t0).join(',')}`, countAt);
+    const cycleOrder = (cycle: number): number[] => {
+      const order = pool.map((_, i) => i);
+      for (let i = order.length - 1; i > 0; i--) {
+        const k = hash32(cycle * 977 + i, room) % (i + 1);
+        [order[i], order[k]] = [order[k]!, order[i]!];
+      }
+      return order;
+    };
+    const pickIndex = (ord: number): number => {
+      const len = pool.length;
+      const cycle = Math.floor(ord / len);
+      const order = cycleOrder(cycle);
+      if (len > 2 && ord % len < 2 && cycleOrder(cycle - 1)[len - 1] === order[0]) [order[0], order[1]] = [order[1]!, order[0]!];
+      return order[((ord % len) + len) % len]!;
+    };
+    for (let sec = Math.floor(from / 1_000); sec <= Math.floor(to / 1_000); sec++) {
+      const n = countAt(sec);
       for (let j = 0; j < n; j++) {
         const hj = hash32(sec * 31 + j + 1, room);
-        const createdAt = sec * 1_000 + (hj % 1_000);
+        // Повідомлення відра йдуть у порядку j (хронологія збігається з порядком пулу).
+        const slot = Math.max(1, Math.floor(1_000 / n));
+        const createdAt = sec * 1_000 + Math.min(999, j * slot + (hj % slot));
         if (createdAt <= from || createdAt > to) continue;
-        const idx = (hj >>> 10) % pool.length;
+        const idx = pickIndex(ordinalAt(sec) + j);
         const item = pool[idx]!;
         const author = authorOf(script, item.authorId);
         if (!author) continue;

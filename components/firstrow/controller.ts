@@ -120,7 +120,7 @@ function participantOf(eventId: string) {
     name: entry.draft?.name || g.nick || '',
     greeting: entry.draft?.greeting ?? '',
     emojiId: entry.draft?.emojiId ?? 'glasses',
-    flagCode: g.flagCode ?? g.detectedFlag ?? 'UN',
+    flagCode: g.flagCode ?? g.detectedFlag ?? '',
   };
 }
 
@@ -186,6 +186,6 @@ export function guestGreetingMessages(event: FirstRowEvent): ChatMessage[] {
     kind: 'greeting',
     createdAt,
     moderation: 'ok',
-    greeting: { eventId: event.id, seat: p.seat!, participantName: p.name, flagCode: p.flagCode, emojiId: p.emojiId, cityId: event.cityId, text: p.greeting },
+    greeting: { eventId: event.id, seat: p.seat!, participantName: p.name, flagCode: p.flagCode, emojiId: p.emojiId, cityId: event.cityId, text: p.greeting, mine: true },
   }));
 }

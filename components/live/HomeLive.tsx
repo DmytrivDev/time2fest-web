@@ -39,7 +39,7 @@ import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
 import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
-import type { Dataset, Ms } from '@/lib/data/types';
+import type { Dataset, Ms, RoomId } from '@/lib/data/types';
 import { firstRowEventFor } from '@/lib/firstrow/pick';
 import { formatClock, viewerTimeZone } from '@/lib/i18n/time';
 import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
@@ -108,7 +108,13 @@ export function HomeLive() {
 
   // Присутність для штампа: ефір показує подію поточного слота.
   useStampGrant(eventId ? { source: 'air', eventIds: [eventId] } : null);
-  useChatSimulator(CHAT_ROOMS);
+  // Кімната «Країна» на головній — країна ефіру, що йде зараз (змінюється разом зі зміною ефіру).
+  const airCountry = current?.event.countryIso ? getData().countriesByIso.get(current.event.countryIso) : undefined;
+  const chatRooms = useMemo<RoomId[]>(
+    () => (airCountry ? ['world', `country:${airCountry.iso}`] : [...CHAT_ROOMS]),
+    [airCountry],
+  );
+  useChatSimulator(chatRooms);
   useMomentWindows(eventId);
   // Пропозиції пасу й чайових (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();
@@ -124,6 +130,8 @@ export function HomeLive() {
   const { collapse } = useChatDockControls();
   const panel = (className?: string) => (
     <ChatPanel
+      country={airCountry ? { iso: airCountry.iso, name: airCountry.name.uk } : undefined}
+      startInWorld
       eventId={eventId}
       cityName={city}
       onHide={chatColumn ? vis.hide : collapse}

@@ -54,7 +54,7 @@ describe('Message', () => {
     inList(<Message message={regular(JAMES, 'The Thames is packed!')} lookup={lookup} />);
     expect(screen.getAllByRole('button')).toHaveLength(1);
     expect(screen.getByText('Перший ряд')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'емоція: Конфеті' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'емоція: Хлопавка' })).toBeInTheDocument();
   });
 
   it('own: «це ти»; відповідь: цитата', () => {
@@ -134,7 +134,7 @@ describe('Message', () => {
     expect(card).toHaveTextContent('Перший ряд · Лондон, місце 2');
     expect(card).toHaveTextContent('«Happy New Year!»');
     expect(card.className).toMatch(/border-highlight/);
-    expect(within(card as HTMLElement).getByRole('img', { name: 'емоція: Конфеті' })).toBeInTheDocument();
+    expect(within(card as HTMLElement).getByRole('img', { name: 'емоція: Хлопавка' })).toBeInTheDocument();
   });
 
   it('приховане модерацією бачить лише автор', () => {

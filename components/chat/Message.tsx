@@ -22,6 +22,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { emojiSymbol } from '@/components/live/SeatPill';
+import { canonicalEmotion } from '@/lib/firstrow/emotions';
 import type { Author, ChatMessage, Country, Gender } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock } from '@/lib/i18n/time';
@@ -85,6 +86,11 @@ function PassMark({ label }: { label: string }) {
 
 const ROW = 'flex h-4.5 items-center gap-1.5';
 
+/** Прапор показуємо лише для відомого коду: гість без прапора — без значка (не порожнє коло). */
+function hasFlag(code: string | undefined): code is string {
+  return !!code && code.toUpperCase() !== 'UN';
+}
+
 /** «@Аміра» у тексті — виділено (mention). */
 export function withMentions(text: string | undefined): ReactNode {
   if (!text) return text;
@@ -134,8 +140,7 @@ export function Message({
     );
   }
 
-  const emotionName = (id: string) =>
-    names.has(id as never) ? names(id as never) : names('sparkles');
+  const emotionName = (id: string) => names(canonicalEmotion(id));
 
   if (message.kind === 'system') {
     const s = message.system;
@@ -164,14 +169,17 @@ export function Message({
       body = (
         <>
           {s.participantName}{' '}
-          <Flag
-            round
-            code={s.flagCode}
-            size="xs"
-            name={lookup?.countryName?.(s.flagCode)}
-            decorative={!lookup?.countryName?.(s.flagCode)}
-            className="t2f-sys-flag"
-          />{' '}
+          {hasFlag(s.flagCode) ? (
+            <>
+              <Flag
+                code={s.flagCode}
+                size="xs"
+                name={lookup?.countryName?.(s.flagCode)}
+                decorative={!lookup?.countryName?.(s.flagCode)}
+                className="t2f-sys-flag"
+              />{' '}
+            </>
+          ) : null}
           {t('systemFirstRowTail', { city })}
         </>
       );
@@ -247,6 +255,11 @@ export function Message({
           <Mark label={false} />
           <span className="text-label-badge-chat font-bold text-highlight">Time2Fest</span>
           <Badge variant="first-row" />
+          {g.mine ? (
+            <span className="text-label-badge-chat font-semibold text-highlight" data-mine="">
+              {t('greetingMine')}
+            </span>
+          ) : null}
           <time
             dateTime={new Date(message.createdAt).toISOString()}
             className="ms-auto text-label-badge-chat text-text-muted"
@@ -256,7 +269,11 @@ export function Message({
         </div>
         <p className="text-chat text-text">
           {t('greetingPrefix')} <strong className="font-bold">{g.participantName}</strong>{' '}
-          <Flag round code={g.flagCode} size="xs" name={country} decorative={!country} />{' '}
+          {hasFlag(g.flagCode) ? (
+            <>
+              <Flag round code={g.flagCode} size="xs" name={country} decorative={!country} />{' '}
+            </>
+          ) : null}
           <span role="img" aria-label={t('emotionLabel', { emotion: emotionName(g.emojiId) })}>
             {emojiSymbol(g.emojiId)}
           </span>{' '}

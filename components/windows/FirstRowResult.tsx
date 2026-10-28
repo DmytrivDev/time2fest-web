@@ -14,6 +14,7 @@ import type {
   FirstRowSuccessProps,
 } from '@/components/firstrow/types';
 import { EMOJI_SYMBOLS } from '@/components/live/SeatPill';
+import { canonicalEmotion } from '@/lib/firstrow/emotions';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -128,7 +129,7 @@ function Ticket({ city, cityId, seat, name, flagCode, emojiId, greeting, ticketC
           <p className="flex min-w-0 items-center gap-2">
             <Flag code={flagCode} size="sm" decorative />
             <span className="truncate text-body-strong">{name}</span>
-            <span className="leading-none">{EMOJI_SYMBOLS[emojiId] ?? '✨'}</span>
+            <span className="leading-none">{EMOJI_SYMBOLS[canonicalEmotion(emojiId)] ?? '✨'}</span>
           </p>
           {greeting ? <p className="text-caption">«{greeting}»</p> : null}
         </div>
@@ -188,9 +189,9 @@ export function FirstRowSuccess({
         <p className="text-body-strong text-text">{t('success.youAre', { city })}</p>
         <p className="flex items-center gap-2 text-body text-text-secondary">
           <span>{name}</span>
-          {names.has(emojiId as never) ? (
-            <span role="img" aria-label={names(emojiId as never)} className="leading-none">
-              {EMOJI_SYMBOLS[emojiId] ?? '✨'}
+          {names.has(canonicalEmotion(emojiId)) ? (
+            <span role="img" aria-label={names(canonicalEmotion(emojiId))} className="leading-none">
+              {EMOJI_SYMBOLS[canonicalEmotion(emojiId)] ?? '✨'}
             </span>
           ) : null}
         </p>

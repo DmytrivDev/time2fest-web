@@ -625,7 +625,7 @@
           "name": "Jess",
           "flagCode": "AU",
           "greeting": "Cheers from the other side",
-          "emojiId": "clap",
+          "emojiId": "confetti",
           "takenAtOffsetSec": -32400
         },
         {
@@ -643,7 +643,7 @@
           "name": "Mike",
           "flagCode": "US",
           "greeting": "Happy New Year, mom!",
-          "emojiId": "laugh",
+          "emojiId": "joy",
           "takenAtOffsetSec": -39600
         },
         {
@@ -721,7 +721,7 @@
           "name": "Jess",
           "flagCode": "AU",
           "greeting": "Cheers from the other side",
-          "emojiId": "clap",
+          "emojiId": "confetti",
           "takenAtOffsetSec": -32400
         },
         {
@@ -808,7 +808,7 @@
           "name": "Jess",
           "flagCode": "AU",
           "greeting": "Cheers from the other side",
-          "emojiId": "clap",
+          "emojiId": "confetti",
           "takenAtOffsetSec": -32400
         },
         {
@@ -1029,7 +1029,7 @@
           "name": "Jess",
           "flagCode": "AU",
           "greeting": "Cheers from the other side",
-          "emojiId": "clap",
+          "emojiId": "confetti",
           "takenAtOffsetSec": -32400
         },
         {
@@ -1047,7 +1047,7 @@
           "name": "Mike",
           "flagCode": "US",
           "greeting": "Happy New Year, mom!",
-          "emojiId": "laugh",
+          "emojiId": "joy",
           "takenAtOffsetSec": -39600
         },
         {

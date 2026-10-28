@@ -18,6 +18,7 @@ import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { TextField } from '@/components/primitives/TextField';
 import { Textarea } from '@/components/primitives/Textarea';
 import { EMOJI_PICKER_IDS } from '@/components/windows/Emoji';
+import { canonicalEmotion } from '@/lib/firstrow/emotions';
 import type { Ms } from '@/lib/data/types';
 import { PRICE_LAST3 } from '@/lib/engine/config';
 import { formatHoldLeft, formatPrice } from '@/lib/firstrow/format';
@@ -54,7 +55,8 @@ export function FirstRowHeaderLines({
 export function FirstRowPreview({ name, emojiId, className }: { name: string; emojiId: string; className?: string }) {
   const t = useTranslations('firstRow');
   const names = useTranslations('windows.emoji.names');
-  const known = names.has(emojiId as never);
+  const id = canonicalEmotion(emojiId);
+  const known = names.has(id);
   return (
     <section
       aria-label={t('form.preview')}
@@ -65,8 +67,8 @@ export function FirstRowPreview({ name, emojiId, className }: { name: string; em
       <p className="inline-flex min-h-touch-min w-fit max-w-full items-center gap-2 rounded-full border border-highlight/40 bg-highlight-tint px-3.5 text-label-sm text-text">
         <span className="truncate">{name.trim() || t('form.name')}</span>
         {known ? (
-          <span role="img" aria-label={names(emojiId as never)} className="leading-none">
-            {EMOJI_SYMBOLS[emojiId] ?? '✨'}
+          <span role="img" aria-label={names(id)} className="leading-none">
+            {EMOJI_SYMBOLS[id] ?? '✨'}
           </span>
         ) : null}
       </p>

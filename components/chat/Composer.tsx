@@ -157,7 +157,7 @@ export function Composer({
         label={t('inputLabel', { room: room.label })}
         hideLabel
         maxRows={3}
-        placeholder={t('inputLabel', { room: room.label })}
+        placeholder={room.id.startsWith('country:') ? t('inputPlaceholderCountry') : t('inputLabel', { room: room.label })}
         value={value}
         maxLength={MAX_TEXT}
         counter

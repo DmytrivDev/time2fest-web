@@ -230,6 +230,21 @@ export function Chat({
     markSeen();
   }, [markSeen]);
 
+  // Інша кімната — нова стрічка: знову внизу й не «прокручена вгору» (прокрутка зміни вмісту не є жестом людини).
+  const [shownRoom, setShownRoom] = useState(room.id);
+  if (shownRoom !== room.id) {
+    setShownRoom(room.id);
+    setScrolledUp(false);
+  }
+  const prevRoomEl = useRef(room.id);
+  useLayoutEffect(() => {
+    if (prevRoomEl.current === room.id) return;
+    prevRoomEl.current = room.id;
+    pinned.current = true;
+    const el = logRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [room.id]);
+
   const reduceMotion = useReducedMotion();
   const scrollAnim = useRef(0);
   useEffect(() => () => cancelAnimationFrame(scrollAnim.current), []);
@@ -328,7 +343,7 @@ export function Chat({
     <div data-chat={state} data-room={room.id} className={cn('flex min-h-0 flex-col', className)}>
       <div
         className={cn(
-          't2f-chat-head flex shrink-0 items-center border-b border-border ps-3 pe-1',
+          't2f-chat-head flex shrink-0 items-center border-b border-border ps-3 pe-2',
           collapseMode ? 'h-12' : 'h-13',
         )}
         {...(collapseMode ? { 'data-dock-grip': '' } : {})}

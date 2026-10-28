@@ -15,9 +15,14 @@ import { AuthorPanel } from '@/components/live/AuthorPanel';
 import { passInfoSpec } from '@/components/offers/OfferWindows';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SegmentedControl, type SegmentOption } from '@/components/primitives/SegmentedControl';
+import { emojiSymbol } from '@/components/live/SeatPill';
+import { momentMessages } from '@/lib/chat-sim/simulator';
+import { chatMoments } from '@/lib/chat-sim/useChatSimulator';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
+import { Icon } from '@/components/primitives/Icon';
+import { cn } from '@/components/primitives/cn';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
-import { MyEmotionButton } from '@/components/windows/Emoji';
+import { MyEmotionPill, type SavedEmotion } from '@/components/windows/Emoji';
 import { Nick } from '@/components/windows/Nick';
 import { authorHasPass, buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
 import { slowSecondsAt } from '@/lib/chat-sim/simulator';
@@ -43,8 +48,13 @@ export const RULES_WINDOW_ID = 'O-CHAT-RULES';
 type RoomKey = 'world' | 'country' | 'firstrow';
 
 export interface ChatPanelProps {
-  /** Сторінка країни: з’являється кімната «Країна». */
+  /** Кімната «Країна»: країна сторінки; на головній — країна ефіру, що йде зараз (без країни чипа немає). */
   country?: { iso: string; name: string };
+  /** Лише кімната перегляду з вікнами кількох країн: список країн (чип «Країна» відкриває його). */
+  countries?: { iso: string; name: string }[];
+  onCountryChange?: (iso: string) => void;
+  /** Головна: чат відкривається у «Світ», хоча кімната країни є. */
+  startInWorld?: boolean;
   /** Подія сторінки: за нею — кімната «Перший ряд» (лише учасникам). */
   eventId?: string | null;
   /** Місто події для підписів «Перший ряд · Лондон». */
@@ -60,6 +70,9 @@ export interface ChatPanelProps {
 
 export function ChatPanel({
   country,
+  countries,
+  onCountryChange,
+  startInWorld,
   eventId,
   cityName,
   onHide,
@@ -85,9 +98,13 @@ export function ChatPanel({
   const setReplyTo = useChatUi((s) => s.setReplyTo);
 
   const participant = !!eventId && guest.firstRow[eventId]?.seat !== undefined;
-  const [roomKey, setRoomKey] = useState<RoomKey>(country ? 'country' : 'world');
+  const [roomKey, setRoomKey] = useState<RoomKey>(country && !startInWorld ? 'country' : 'world');
   const activeKey: RoomKey =
-    roomKey === 'firstrow' && !participant ? (country ? 'country' : 'world') : roomKey;
+    (roomKey === 'firstrow' && !participant) || (roomKey === 'country' && !country)
+      ? country && !startInWorld
+        ? 'country'
+        : 'world'
+      : roomKey;
   const roomId: RoomId =
     activeKey === 'firstrow' && eventId
       ? `firstrow:${eventId}`
@@ -103,9 +120,37 @@ export function ChatPanel({
 
   useEffect(() => setLastRoom(roomId), [roomId, setLastRoom]);
 
-  const messages = useChatMessages(roomId);
+  const rawMessages = useChatMessages(roomId);
+  const ownSeat = eventId ? guest.firstRow[eventId]?.seat : undefined;
+  // Привітання власного місця гості дає `guestGreetingMessages` («це ти»); сид того самого місця не дублюємо.
+  const messages = useMemo(
+    () =>
+      ownSeat === undefined
+        ? rawMessages
+        : rawMessages.filter((m) => !(m.kind === 'greeting' && m.greeting && !m.greeting.mine && m.greeting.seat === ownSeat && m.greeting.eventId === eventId)),
+    [rawMessages, ownSeat, eventId],
+  );
   const append = useChatFeed((s) => s.append);
   const react = useChatFeed((s) => s.react);
+
+  // Кімната «Перший ряд» опівночі: привітання всіх власників місць (симулятор світу кімнату не слухає).
+  const mirroredDone = useRef(0);
+  const mirrored = useMemo(() => {
+    if (!participant || !eventId) return [];
+    const moment = chatMoments().find((m) => m.eventId === eventId);
+    return moment ? momentMessages(CHAT_SCRIPT, moment, `firstrow:${eventId}`).filter((m) => m.kind === 'greeting') : [];
+  }, [participant, eventId]);
+  useEffect(() => {
+    mirroredDone.current = 0;
+  }, [mirrored]);
+  useEffect(() => {
+    if (!(now > 0) || mirroredDone.current >= mirrored.length) return;
+    const due = mirrored.filter((m) => m.createdAt <= now);
+    if (due.length > mirroredDone.current) {
+      append(due);
+      mirroredDone.current = due.length;
+    }
+  }, [mirrored, now, append]);
 
   const draft = useChatUi((s) => s.draft);
   const setDraft = useChatUi((s) => s.setDraft);
@@ -300,13 +345,31 @@ export function ChatPanel({
     [overlay, t],
   );
 
+  const multi = !!countries && countries.length > 1 && !!country;
   const options: SegmentOption[] = [
+    { value: 'world', label: t('roomWorld') },
     ...(country
       ? [
-          { value: 'country', label: t('roomCountry') },
-          { value: 'world', label: t('roomWorld') },
+          {
+            value: 'country',
+            label: country.iso.toUpperCase(),
+            flag: country.iso,
+            ariaLabel: t('roomCountryAria', { country: country.name }),
+            ...(multi
+              ? {
+                  menu: {
+                    selected: country.iso,
+                    items: countries!.map((c) => ({ value: c.iso, label: c.name, flag: c.iso })),
+                    onSelect: (iso: string) => {
+                      onCountryChange?.(iso);
+                      setRoomKey('country');
+                    },
+                  },
+                }
+              : {}),
+          } satisfies SegmentOption,
         ]
-      : [{ value: 'world', label: t('roomWorld') }]),
+      : []),
     ...(participant ? [{ value: 'firstrow', label: t('roomFirstRow'), dot: true }] : []),
   ];
   const switcher =
@@ -319,17 +382,42 @@ export function ChatPanel({
       />
     ) : undefined;
 
+  const [saved, setSaved] = useState<SavedEmotion | null>(null);
+  useEffect(() => {
+    if (!saved) return;
+    const id = setTimeout(() => setSaved(null), 10_000);
+    return () => clearTimeout(id);
+  }, [saved]);
+
   const banner = offline ? (
     <StatusMessage kind="offline">{t('offline')}</StatusMessage>
   ) : reported ? (
     <StatusMessage kind="success">{t('reportedVisible')}</StatusMessage>
-  ) : activeKey === 'firstrow' ? (
-    <p
-      className="border-b border-border px-3.5 py-2 text-caption text-text-secondary"
-      data-row="room-note"
-    >
-      {t('firstRowRoomNote', { city: cityName ?? '' })}
-    </p>
+  ) : activeKey === 'firstrow' && eventId ? (
+    <>
+      {saved ? (
+        <p
+          role="status"
+          data-row="emotion-saved"
+          className="flex items-start gap-2 border-b border-border bg-highlight-tint px-3.5 py-2 text-caption text-text"
+        >
+          <Icon name="check" size={16} className="mt-0.5 shrink-0 text-highlight" />
+          <span>
+            {t('emotionSaved', { emoji: emojiSymbol(saved.emojiId) })}
+            {saved.greetingChanged ? ` ${t('emotionSavedGreeting')}` : ''}
+          </span>
+        </p>
+      ) : null}
+      <div
+        className={cn('flex shrink-0 items-center gap-2 border-b border-border pe-1 ps-3.5', column ? 'h-10' : 'h-9')}
+        data-row="room-note"
+      >
+        <span className="min-w-0 flex-1 truncate text-caption text-text-muted">
+          {column ? t('emotionRoomRowShort') : t('emotionRoomRow', { city: cityName ?? '' })}
+        </span>
+        <MyEmotionPill eventId={eventId} onSaved={setSaved} />
+      </div>
+    </>
   ) : undefined;
 
   return (
@@ -339,14 +427,6 @@ export function ChatPanel({
       state={available ? 'live' : 'unavailable'}
       lookup={lookup}
       roomSwitcher={switcher}
-      headerExtra={
-        activeKey === 'firstrow' && eventId ? (
-          <MyEmotionButton
-            eventId={eventId}
-            seatLabel={cityName ? t('firstRowSeatLabel', { city: cityName }) : undefined}
-          />
-        ) : undefined
-      }
       banner={banner}
       onAuthorOpen={openAuthor}
       onHide={onHide}

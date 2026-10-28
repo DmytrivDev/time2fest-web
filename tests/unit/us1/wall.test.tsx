@@ -50,17 +50,17 @@ describe('SeatPill', () => {
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 
-  it('emoji id з chat-script (party, clap, laugh) мають назви', () => {
+  it('emoji id з chat-script (party, confetti, joy) і старі id мають назви нового набору', () => {
     renderApp(
       <>
         <SeatPill seat={5} participant={{ name: 'Ana Clara', flagCode: 'BR', emojiId: 'party' }} />
-        <SeatPill seat={7} participant={{ name: 'Jess', flagCode: 'AU', emojiId: 'clap' }} />
+        <SeatPill seat={7} participant={{ name: 'Jess', flagCode: 'AU', emojiId: 'confetti' }} />
         <SeatPill seat={9} participant={{ name: 'Mike', flagCode: 'US', emojiId: 'laugh' }} />
       </>,
     );
-    expect(screen.getByRole('img', { name: 'Місце 5: Ana Clara, емоція: Вечірка' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Місце 7: Jess, емоція: Оплески' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Місце 9: Mike, емоція: Сміх' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Місце 5: Ana Clara, емоція: Свято' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Місце 7: Jess, емоція: Хлопавка' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Місце 9: Mike, емоція: Радість' })).toBeInTheDocument();
   });
 });
 

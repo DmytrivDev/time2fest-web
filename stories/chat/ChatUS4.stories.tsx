@@ -5,7 +5,7 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { Composer } from '@/components/chat/Composer';
 import { ReactionsRow } from '@/components/chat/MessageActions';
 import { Message } from '@/components/chat/Message';
-import { MyEmotionButton } from '@/components/windows/Emoji';
+import { MyEmotionPill } from '@/components/windows/Emoji';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { ChatMessage } from '@/lib/data/types';
 import { useChatUi } from '@/stores/chat';
@@ -85,7 +85,7 @@ export const FirstRow: Story = {
   args: {
     room: { id: 'firstrow:evt_london_2027', label: 'Перший ряд' },
     messages: [GREETING, regular(JAMES, 'Lucía, feliz año! 🎆', 1)],
-    headerExtra: <MyEmotionButton eventId="evt_london_2027" seatLabel="Перший ряд · Лондон" />,
+    banner: <MyEmotionPill eventId="evt_london_2027" />,
     composer: composer({ room: { id: 'firstrow:evt_london_2027', label: 'Перший ряд' } }),
   },
 };

@@ -12,34 +12,14 @@ import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import type { SeatParticipant } from '@/lib/data/types';
+import { canonicalEmotion, emotionSymbol, EMOTIONS } from '@/lib/firstrow/emotions';
 import './SeatPill.css';
 
 /** Символи набору емоцій (O-EMOJI). Назви — у `windows.emoji.names.<id>`. */
-export const EMOJI_SYMBOLS: Record<string, string> = {
-  glasses: '🥂',
-  heart: '❤️',
-  fireworks: '🎆',
-  tree: '🎄',
-  star: '⭐',
-  smile: '🙂',
-  dance: '💃',
-  confetti: '🎉',
-  hug: '🤗',
-  tears: '😂',
-  fire: '🔥',
-  hat: '🥳',
-  gift: '🎁',
-  clock: '🕛',
-  sparkles: '✨',
-  peace: '🕊️',
-  // Ідентифікатори з chat-script.json, яких немає в наборі вибору, але які бувають у сидів.
-  party: '🥳',
-  clap: '👏',
-  laugh: '😄',
-};
+export const EMOJI_SYMBOLS: Record<string, string> = Object.fromEntries(EMOTIONS.map((e) => [e.id, e.symbol]));
 
 export function emojiSymbol(id: string | undefined): string {
-  return (id && EMOJI_SYMBOLS[id]) || '✨';
+  return id ? emotionSymbol(id) : '✨';
 }
 
 export type SeatPillState = 'idle' | 'lit';
@@ -62,7 +42,7 @@ export function SeatPill({ seat, participant, countryName, state = 'idle', fresh
   const t = useTranslations('firstRow');
   const names = useTranslations('windows.emoji.names');
   const mine = participant.isMine === true;
-  const emotionId = names.has(participant.emojiId as never) ? participant.emojiId : 'sparkles';
+  const emotionId = canonicalEmotion(participant.emojiId);
   const emotion = names(emotionId as never);
   const base = countryName
     ? t('seatLabelFull', { n: seat, name: participant.name, country: countryName, emotion })

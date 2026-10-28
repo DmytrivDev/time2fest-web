@@ -65,6 +65,10 @@ export function FirstRowStrip({
     <span data-row="counter" className={fr.counter}>
       {state === 'empty' ? (
         `· ${t('allFree')}`
+      ) : state === 'mine' && mine ? (
+        <>
+          · <b>{t('yourSeat')} {mine.number}</b>
+        </>
       ) : (
         <>
           <span aria-hidden="true">

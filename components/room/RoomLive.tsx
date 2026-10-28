@@ -216,8 +216,21 @@ export function RoomLive() {
 
   // ── Країна вікна зі звуком ──
   const soundEvent = soundWindow ? data.eventsById.get(soundWindow.eventId) : undefined;
-  const country = soundEvent ? data.countriesByIso.get(soundEvent.countryIso) : undefined;
-  const backHref = country ? countryHref(country) : '/';
+  const soundCountry = soundEvent ? data.countriesByIso.get(soundEvent.countryIso) : undefined;
+  // Країни вікон кімнати перегляду: чип «Країна» з переліком — лише коли їх кілька.
+  const windowCountries = (() => {
+    const out: { iso: string; name: string }[] = [];
+    for (const w of windows) {
+      const iso = data.eventsById.get(w.eventId)?.countryIso;
+      const c = iso ? data.countriesByIso.get(iso) : undefined;
+      if (c && !out.some((x) => x.iso === c.iso)) out.push({ iso: c.iso, name: c.name.uk });
+    }
+    return out;
+  })();
+  const [pickedIso, setPickedIso] = useState<string | null>(null);
+  const country =
+    (pickedIso ? windowCountries.find((c) => c.iso === pickedIso) && data.countriesByIso.get(pickedIso) : undefined) ?? soundCountry;
+  const backHref = soundCountry ? countryHref(soundCountry) : '/';
 
   const onBack = (e: MouseEvent<HTMLAnchorElement>) => {
     if (!soundWindow || !main || soundWindow.slot === main.slot || !actions) return;
@@ -234,7 +247,13 @@ export function RoomLive() {
   useStampGrant(eventIds.length ? { source: 'room', eventIds } : null);
   useMomentWindows(soundWindow?.eventId ?? null);
   const chatRoomCountry: RoomId | null = country ? `country:${country.iso}` : null;
-  useChatSimulator(useMemo(() => (chatRoomCountry ? (['world', chatRoomCountry] as RoomId[]) : (['world'] as RoomId[])), [chatRoomCountry]));
+  const simRooms = windowCountries.map((c) => `country:${c.iso}`).join('|');
+  useChatSimulator(
+    useMemo(
+      () => ['world', ...(simRooms ? simRooms.split('|') : chatRoomCountry ? [chatRoomCountry] : [])] as RoomId[],
+      [simRooms, chatRoomCountry],
+    ),
+  );
 
   // ── Перегляд вікон ──
   const views: RoomWindowView[] = windows.map((w) => {
@@ -296,7 +315,7 @@ export function RoomLive() {
       open={addOpen}
       onOpenChange={setAddOpen}
       trigger={addTrigger}
-      countryName={country?.name.uk ?? ''}
+      countryName={soundCountry?.name.uk ?? ''}
       countryStreams={countryRows}
       zoneStreams={zoneRows}
       midnightMs={midnightMs}
@@ -313,7 +332,7 @@ export function RoomLive() {
   const grid = (
     <RoomGrid
       layout={viewport}
-      countryName={country?.name.uk ?? ''}
+      countryName={soundCountry?.name.uk ?? ''}
       countryHref={backHref}
       onBack={onBack}
       windows={views}
@@ -351,6 +370,8 @@ export function RoomLive() {
   const panel = (className?: string) => (
     <ChatPanel
       country={country ? { iso: country.iso, name: country.name.uk } : undefined}
+      countries={windowCountries}
+      onCountryChange={setPickedIso}
       eventId={soundWindow?.eventId ?? null}
       cityName={soundEvent ? data.citiesById.get(soundEvent.cityId)?.name.uk : undefined}
       onHide={chatColumn ? vis.hide : collapse}

@@ -209,6 +209,8 @@ export interface GreetingPayload {
   emojiId: string;
   cityId: string;
   text: string;
+  /** Привітання власного місця гостя («це ти»). */
+  mine?: boolean;
 }
 
 export interface ChatMessage {
