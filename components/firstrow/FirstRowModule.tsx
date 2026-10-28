@@ -10,6 +10,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
+import { Icon } from '@/components/primitives/Icon';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatDockControls } from '@/components/chat/ChatDock';
 import { useChatDock } from '@/stores/chatDock';
@@ -27,6 +28,7 @@ import { nextOpenSale } from '@/lib/firstrow/pick';
 import { useCoralWindowOpen } from '@/lib/overlay/coral';
 import { countryHref } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
+import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useFirstRowStore } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
@@ -55,6 +57,60 @@ export interface FirstRowModuleProps {
 
 function cityOf(cityId: string): string {
   return getData().citiesById.get(cityId)?.name.uk ?? '';
+}
+
+/** Стан вікна покупки для шапки — так само, як його визначає `FirstRowWindow`. */
+function useSeatPhase(event: FirstRowEvent) {
+  const flow = useFirstRowStore((st) => (st.flow?.eventId === event.id ? st.flow : null));
+  const seat = useGuestStore((st) => st.firstRow[event.id]?.seat);
+  const phase = flow?.phase ?? (seat !== undefined ? 'success' : 'form');
+  return { phase, seat };
+}
+
+/**
+ * Шапка вікна O-FIRST-ROW / O-PAY за макетами `*-FR-*`: жовтий заголовок із кріслом; «Оплату підтверджено» — жовтий
+ * рядок 13/700 з галочкою; «Змінити напис чи емоцію» — білий заголовок; «Останнє місце щойно зайняли» — лише «×»
+ * (заголовок у тілі, тут — для зчитувача).
+ */
+function SeatTitle({ event, city }: { event: FirstRowEvent; city: string }) {
+  const t = useTranslations('firstRow');
+  const { phase, seat } = useSeatPhase(event);
+  if (phase === 'success' && seat !== undefined) {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-caption font-bold text-highlight">
+        <Icon name="check" size={16} strokeWidth={2.2} className="shrink-0" />
+        {t('success.title')}
+      </span>
+    );
+  }
+  if (phase === 'edit' && seat !== undefined) return <span className="text-text">{t('edit.title')}</span>;
+  if (phase === 'soldout') return <span className="sr-only">{t('heading', { city })}</span>;
+  return (
+    <span className="inline-flex items-center gap-2 text-highlight">
+      <Icon name="seat" size={18} strokeWidth={2} className="shrink-0" />
+      {t('heading', { city })}
+    </span>
+  );
+}
+
+/**
+ * Підрядок шапки: «Північ о 02:00 за вашим часом · лишилось 2 з 10» (оновлюється разом зі стіною; місце, яке тримаємо
+ * для людини, рахуємо вільним — інакше «лишилось 0» над її ж формою); у «Змінити напис» — «Місце 9 · Перший ряд · Лондон».
+ */
+function SeatSubline({ event, city }: { event: FirstRowEvent; city: string }) {
+  const t = useTranslations('firstRow');
+  const now = useNow();
+  const reduced = useReducedMotion();
+  const { phase, seat } = useSeatPhase(event);
+  const { view } = snapshot(event, now, { reducedMotion: reduced });
+  if ((phase === 'success' && seat !== undefined) || phase === 'soldout') return null;
+  if (phase === 'edit' && seat !== undefined) return <>{t('edit.seat', { n: seat, city })}</>;
+  return (
+    <>
+      {t('midnightAt', { time: formatClock(event.midnightMs) })} ·{' '}
+      <span className="whitespace-nowrap font-semibold text-text">{t('left', { free: view.freeCount + (view.hold ? 1 : 0), total: view.total })}</span>
+    </>
+  );
 }
 
 function saleLink(now: Ms, excludeId: string): { city: string; midnightMs: Ms; href?: string } | undefined {
@@ -162,7 +218,6 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
 
   const city = cityOf(event.cityId);
   const { seats, view } = snapshot(event, now, { reducedMotion: reduced });
-  const heading = t('heading', { city });
 
   const blocker = blockingEvent(event, now);
   const openOwn = () => {
@@ -173,7 +228,9 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       id: FIRST_ROW_WINDOW_ID,
       kind: 'accent',
       coral: true,
-      title: t('heading', { city: cityOf(blocker.cityId) }),
+      chrome: 'board',
+      title: <SeatTitle event={blocker} city={cityOf(blocker.cityId)} />,
+      description: <SeatSubline event={blocker} city={cityOf(blocker.cityId)} />,
       content: <FirstRowWindow event={blocker} city={cityOf(blocker.cityId)} />,
       onClose: () => useFirstRowStore.getState().setFlow(null),
     });
@@ -186,7 +243,9 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       id: FIRST_ROW_WINDOW_ID,
       kind: 'accent',
       coral: true,
-      title: heading,
+      chrome: 'board',
+      title: <SeatTitle event={event} city={city} />,
+      description: <SeatSubline event={event} city={city} />,
       content: <FirstRowWindow event={event} city={city} />,
       onClose: () => {
         const s = useFirstRowStore.getState();

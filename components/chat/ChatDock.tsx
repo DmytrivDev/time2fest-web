@@ -9,6 +9,10 @@
  * відпустили далі середини або швидким рухом — доїжджає (200 мс, без анімації за «зменшити рух»). Дотик до шапки поза
  * кнопками перемикає стан; Esc і шеврон «Згорнути чат» згортають, фокус іде на шапку.
  * Вікна чату (O-NICK, O-AUTHOR, правила, «Моя емоція») відкриваються всередині вікна — у `#chat-dock-slot`.
+ * Вікно покупки «Першого ряду» (O-FIRST-ROW / O-PAY) — окремий шар поверх чату (`#seat-dock-slot`, рішення 2026-10-29):
+ * поки воно відкрите, вікно має геометрію розгорнутого (портрет, альбом, клавіатура — як у чату), але чат під ним не
+ * розгортається; з шару в чат не перейти — лише закрити. Ручка й шапка шару: свайп униз (чи дотик до ручки) закриває
+ * вікно покупки; розгорнути шар не можна — він відкривається лише кнопкою «Зайняти місце».
  */
 import { useTranslations } from 'next-intl';
 import {
@@ -26,7 +30,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Icon } from '@/components/primitives/Icon';
-import { CHAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
+import { CHAT_DOCK_SLOT_ID, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
 import { useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { RoomId } from '@/lib/data/types';
@@ -50,6 +54,10 @@ const FLICK_PX_PER_MS = 0.5;
 /** Усе, що в шапці працює саме по собі (дотик не перемикає вікно). */
 const INTERACTIVE = 'button, a, input, textarea, select, [role="radiogroup"], [role="group"], [role="menu"]';
 const ZONE = '[data-dock-grip], .t2f-dock-grip-handle';
+/** Зона жестів шару «Першого ряду»: ручка й шапка вікна. */
+const SEAT_ZONE = '.t2f-seat-grip, [data-seat-layer] [data-board-header]';
+/** Скільки протягнути шар униз (px), щоб він закрився, якщо відпустили повільно. */
+const SEAT_CLOSE_PX = 80;
 
 /**
  * Стабільна висота екрана — `100svh` (найменша: з видимою адресною стрічкою). Висота вікна на телефоні змінюється,
@@ -138,6 +146,10 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const t = useTranslations('chat');
   const expanded = useChatDock((s) => s.expanded);
   const overlay = useOverlay();
+  // Відкрите вікно покупки «Першого ряду»: вікно чату займає місце розгорнутого, але сам чат не розгортається.
+  const seat = overlay.current?.kind === 'accent';
+  const open = expanded || seat;
+  const [seatDy, setSeatDy] = useState(0);
   const { expand, collapse } = useChatDockControls();
   const count = useHiddenCount(room);
 
@@ -154,7 +166,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const land = frozenLand ?? landRaw;
   const reduceMotion = useReducedMotion();
   const [past, setPast] = useState(false);
-  const landHidden = land && !expanded && !past;
+  const landHidden = land && !open && !past;
 
   // Екранна клавіатура: visualViewport (Android/iOS зменшують лише візуальну область, макет лишається). Якщо клавіатура
   // зменшує сам макет (`resizes-content`, зміна розміру вікна) — inset = 0, а розміри вже правильні самі собою.
@@ -182,8 +194,8 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     };
   }, []);
   const inset = vv.h ? Math.max(0, vv.inner - vv.h - vv.off) : 0;
-  const kbOpen = expanded && vv.h > 0 && (inset > KB_MIN || (typing && vv.idle - vv.h > KB_MIN));
-  const landFlow = land && expanded;
+  const kbOpen = open && vv.h > 0 && (inset > KB_MIN || (typing && vv.idle - vv.h > KB_MIN));
+  const landFlow = land && open;
 
   // Згорнутий з першого показу: нові рахуємо від завантаження сторінки.
   const hiddenAt = useChatUi((s) => s.hiddenAt);
@@ -195,7 +207,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   }, []);
 
   // Нижній відступ сторінки на висоту згорнутого вікна (globals.css); у альбомі — лише коли вікно видно внизу.
-  const reserve = !(land && (landHidden || expanded));
+  const reserve = !(land && (landHidden || open));
   useEffect(() => {
     if (!reserve) return;
     document.documentElement.setAttribute('data-has-chat-dock', '');
@@ -207,7 +219,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const [slim, setSlim] = useState(false);
   useEffect(() => {
     // Лише портрет: в альбомі згорнутий чат завжди повний (з'являється нижче смуги «Перший ряд»).
-    if (expanded || land) return;
+    if (open || land) return;
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
@@ -222,11 +234,11 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       window.removeEventListener('scroll', onScroll);
       setSlim(false); // після розгортання згорнутий чат знову повний
     };
-  }, [expanded, land]);
+  }, [open, land]);
 
   // Телефон-альбом, згорнутий: чи прокручено нижче смуги (низ останнього елемента над чатом вище верху вікна).
   useEffect(() => {
-    if (!land || expanded) return;
+    if (!land || open) return;
     const main = sectionRef.current?.parentElement ?? null;
     const update = () => {
       const a = findAnchor(main);
@@ -242,14 +254,14 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       window.removeEventListener('resize', update);
       ro?.disconnect();
     };
-  }, [land, expanded]);
+  }, [land, open]);
 
   // Розгорнутий чат: смуга cookies тимчасово ховається (inline-стиль не потрібен — правило в primitives.css).
   useEffect(() => {
-    if (!expanded) return;
+    if (!open) return;
     document.documentElement.setAttribute('data-chat-dock-expanded', '');
     return () => document.documentElement.removeAttribute('data-chat-dock-expanded');
-  }, [expanded]);
+  }, [open]);
 
   // Телефон-альбом, розгорнутий: чат — блок у потоці одразу після смуги (висота вікна), сторінка прокручується як завжди;
   // при розгортанні прокручуємо так, щоб чат заповнив екран.
@@ -273,7 +285,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
 
   // Розгорнутий: вікно починається під смугою «Перший ряд»; сторінка нагорі й не прокручується.
   useLayoutEffect(() => {
-    if (!expanded || land) return;
+    if (!open || land) return;
     // Сторінка не блокується й нічого не липне: чат фіксований унизу, його висота — місце під смугою при scrollTop = 0
     // (міряємо при розгортанні й зміні розміру, за прокруткою не слідуємо).
     const measure = () => setTop(measureTop());
@@ -294,11 +306,11 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       window.removeEventListener('resize', onResize);
       ro?.disconnect();
     };
-  }, [expanded, land]);
+  }, [open, land]);
 
   // Розгорнутий (портрет): запас унизу сторінки = висота чату, щоб усе можна було прокрутити над ним. Після згортання
   // запас лишається, доки вікно не доїде вниз (без стрибка під час анімації), потім знімається.
-  const padH = expanded && !land ? Math.max(0, stableViewportH() - top) : null;
+  const padH = open && !land ? Math.max(0, stableViewportH() - top) : null;
   useEffect(() => {
     if (padH === null) return;
     const html = document.documentElement;
@@ -306,7 +318,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     html.style.setProperty('--chat-dock-pad', `${padH}px`);
   }, [padH]);
   useEffect(() => {
-    if (expanded) return;
+    if (open) return;
     const html = document.documentElement;
     if (!html.hasAttribute('data-chat-dock-pad')) return;
     const clear = () => {
@@ -319,7 +331,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     }
     const id = window.setTimeout(clear, 260);
     return () => window.clearTimeout(id);
-  }, [expanded, reduceMotion, land]);
+  }, [open, reduceMotion, land]);
   useEffect(
     () => () => {
       document.documentElement.removeAttribute('data-chat-dock-pad');
@@ -383,13 +395,69 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     return () => document.removeEventListener('keydown', onKey);
   }, [expanded, overlay, collapse]);
 
+  // Шар «Першого ряду»: свайп униз з ручки чи шапки закриває вікно покупки. Нативні події: шапка вікна — у порталі
+  // (у дереві React вона не всередині вікна чату), а миша, на відміну від пальця, не «прилипає» до елемента під нею.
+  const layerRef = useRef<HTMLDivElement>(null);
+  const closeSeat = overlay.close;
+  useEffect(() => {
+    const layer = layerRef.current;
+    if (!seat || !layer) return;
+    let drag: { id: number; startY: number; lastY: number; lastT: number; v: number; moved: boolean } | null = null;
+    const onDown = (e: globalThis.PointerEvent) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (!(e.target as HTMLElement).closest(SEAT_ZONE)) return;
+      drag = { id: e.pointerId, startY: e.clientY, lastY: e.clientY, lastT: e.timeStamp, v: 0, moved: false };
+    };
+    const onMove = (e: globalThis.PointerEvent) => {
+      if (!drag || drag.id !== e.pointerId) return;
+      const dy = e.clientY - drag.startY;
+      if (!drag.moved) {
+        if (Math.abs(dy) < MOVE_THRESHOLD) return;
+        drag.moved = true;
+      }
+      const dt = e.timeStamp - drag.lastT;
+      if (dt > 0) drag.v = 0.6 * drag.v + 0.4 * ((e.clientY - drag.lastY) / dt);
+      drag.lastY = e.clientY;
+      drag.lastT = e.timeStamp;
+      // Шар їде за пальцем лише вниз (угору розгортати нікуди); в альбомі (вікно в потоці) — без руху, лише закриття.
+      if (!landFlow) setSeatDy(Math.max(0, dy));
+    };
+    const onEnd = (e: globalThis.PointerEvent) => {
+      if (!drag || drag.id !== e.pointerId) return;
+      const d = drag;
+      drag = null;
+      setSeatDy(0);
+      if (!d.moved || e.type === 'pointercancel') return;
+      // Після жесту клік (напр. по «×» чи ручці) не потрібен.
+      const swallow = (ev: Event) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      };
+      window.addEventListener('click', swallow, { capture: true, once: true });
+      window.setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
+      if (d.lastY - d.startY > SEAT_CLOSE_PX || d.v > FLICK_PX_PER_MS) closeSeat();
+    };
+    layer.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onEnd);
+    window.addEventListener('pointercancel', onEnd);
+    return () => {
+      layer.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onEnd);
+      window.removeEventListener('pointercancel', onEnd);
+      setSeatDy(0);
+    };
+  }, [seat, landFlow, closeSeat]);
+
   const onPointerDown = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const target = e.target as HTMLElement;
-    const inCollapsedRow = !!target.closest('.t2f-dock-collapsed');
-    if (!inCollapsedRow && !target.closest(ZONE)) return;
     const el = sectionRef.current;
     if (!el) return;
+    if (seat) return; // жести шару «Першого ряду» — нативні (див. ефект вище)
+    const inCollapsedRow = !!target.closest('.t2f-dock-collapsed');
+    if (!inCollapsedRow && !target.closest(ZONE)) return;
     const collapsedH = !expanded && el.offsetHeight ? el.offsetHeight : COLLAPSED_ROW + 12;
     const expandedH = Math.max(collapsedH + 1, stableViewportH() - (expanded ? top : measureTop()));
     dragRef.current = {
@@ -437,8 +505,8 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     setTimeout(() => {
       suppressClick.current = false;
     }, 0);
-    const progress = (d.h - d.collapsedH) / (d.expandedH - d.collapsedH);
     const dyTotal = d.lastY - d.startY;
+    const progress = (d.h - d.collapsedH) / (d.expandedH - d.collapsedH);
     const goExpanded = landFlow
       ? !(dyTotal > 60 || d.v > FLICK_PX_PER_MS)
       : Math.abs(d.v) > FLICK_PX_PER_MS
@@ -459,8 +527,12 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     }
   };
   const onClick = (e: MouseEvent<HTMLElement>) => {
-    if (!expanded) return;
     const target = e.target as HTMLElement;
+    if (seat) {
+      if (target.closest('.t2f-seat-grip')) overlay.close();
+      return;
+    }
+    if (!expanded) return;
     if (!target.closest(ZONE) || target.closest(INTERACTIVE)) return;
     collapse();
   };
@@ -468,7 +540,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   // Портрет, розгорнутий, відкрита клавіатура: чат у видимій області над нею; замало місця під смугою — на всю видиму
   // область. Без клавіатури висота завжди одна — під смугою «Перший ряд» (рішення 2026-10-28).
   let geo: CSSProperties | null = null;
-  if (expanded && !land && vv.h > 0 && inset > 0) {
+  if (open && !land && vv.h > 0 && inset > 0) {
     const free = vv.h - top;
     geo = { height: free >= MIN_DOCK ? free : vv.h, bottom: inset };
   }
@@ -486,7 +558,8 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       ref={sectionRef}
       aria-label={t('dockLabel', { room: roomLabel })}
       data-chat-dock=""
-      data-state={expanded ? 'expanded' : 'collapsed'}
+      data-state={open ? 'expanded' : 'collapsed'}
+      data-seat={seat ? 'true' : undefined}
       data-dragging={dragH !== null ? 'true' : 'false'}
       data-land={land ? 'true' : undefined}
       data-land-hidden={landHidden ? 'true' : undefined}
@@ -525,7 +598,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
             : t('dockExpandLabel', { room: roomLabel })
         }
         className="t2f-focus t2f-dock-collapsed"
-        inert={expanded || landHidden}
+        inert={open || landHidden}
         onClick={expand}
         data-dock-expand=""
       >
@@ -539,7 +612,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
           </span>
         </span>
       </button>
-      <div className="t2f-dock-body" inert={!expanded}>
+      <div className="t2f-dock-body" inert={!expanded || seat}>
         <div aria-hidden="true" className="t2f-dock-grip-handle">
           <span className="t2f-dock-handle" />
         </div>
@@ -547,6 +620,19 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
           <div className="flex min-h-0 flex-1 flex-col">{children}</div>
         </ChatDockContext.Provider>
         <div id={CHAT_DOCK_SLOT_ID} className="t2f-dock-slot pointer-events-none z-20 [&>*]:pointer-events-auto" />
+      </div>
+      {/* Шар вікна покупки «Першого ряду»: контейнер є завжди (портал вікна шукає його в DOM), видно лише з вікном. */}
+      <div
+        ref={layerRef}
+        data-seat-layer=""
+        className="t2f-seat-layer"
+        hidden={!seat}
+        style={seatDy ? { transform: `translateY(${seatDy}px)`, transition: 'none' } : undefined}
+      >
+        <div aria-hidden="true" className="t2f-seat-grip">
+          <span className="t2f-dock-handle" />
+        </div>
+        <div id={SEAT_DOCK_SLOT_ID} className="t2f-seat-slot" />
       </div>
     </section>
   );

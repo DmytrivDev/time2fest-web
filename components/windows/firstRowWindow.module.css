@@ -1,0 +1,692 @@
+/* Тіла вікна «Перший ряд» за макетами `Desk-FR-*` / `Phone-FR-*` (visual-design). Кольори — токени; значення,
+   яких немає в токенах, взято з макетів і позначено «макет». Заголовок і «Закрити» дає контейнер вікна. */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* макет */
+  margin: 0;
+  padding: 12px 16px 16px; /* макет */
+  min-width: 0;
+}
+
+/* ── Поля ───────────────────────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.label,
+.legend {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+.qualifier {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+.counter {
+  flex: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.counter[data-state='near'] {
+  color: var(--color-text);
+}
+.counter[data-state='limit'] {
+  color: var(--color-primary);
+}
+.input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px; /* макет */
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-background);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 16px;
+}
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+.input:focus-visible {
+  border-color: var(--color-highlight);
+}
+.input[aria-invalid='true'] {
+  border-color: var(--color-primary);
+}
+.hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.hintStrong {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-primary);
+}
+.passLink {
+  display: inline-block;
+  min-height: 44px;
+  margin: -12px 0;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* ── Емоції: сітка 4 колонки, круглі кнопки 44 px з підписом ────────────── */
+.emotion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.legend {
+  margin-bottom: 0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px 4px; /* макет */
+}
+.emo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+.emo:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.emoDot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  font-size: 24px;
+  line-height: 1;
+}
+.emoName {
+  font-size: 12px;
+  font-weight: 500;
+}
+.emo[aria-checked='true'] {
+  color: var(--color-text);
+}
+.emo[aria-checked='true'] .emoDot {
+  border: 2px solid var(--color-highlight);
+  background: rgba(252, 226, 134, 0.14); /* макет */
+}
+.emo[aria-checked='true'] .emoName {
+  font-weight: 600;
+}
+.emoWait {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-primary);
+}
+
+/* ── «Так тебе побачать на стіні» ───────────────────────────────────────── */
+.preview {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px 12px 10px; /* макет */
+  border-radius: var(--radius-md);
+  background: var(--color-background);
+  min-width: 0;
+}
+.previewLoose {
+  gap: 8px;
+  padding: 10px 12px 12px;
+}
+.previewLabel {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 36px;
+  max-width: 100%;
+  padding: 0 12px 0 10px;
+  border: 1px solid rgba(252, 226, 134, 0.4); /* макет */
+  border-radius: var(--radius-full);
+  background: rgba(252, 226, 134, 0.09); /* макет */
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pillName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pillEmoji {
+  font-size: 17px;
+  line-height: 1;
+}
+
+/* ── Утримання, ціна, оплата ────────────────────────────────────────────── */
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-size: 13px;
+  min-width: 0;
+}
+.holdLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 600;
+}
+.holdLine svg {
+  color: var(--color-highlight);
+}
+.infoSecondary {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+.infoMuted {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.warn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-block: 4px;
+}
+.warnText {
+  margin: 0;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.discount {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--color-text);
+}
+.payGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.centerNote {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.centerNote svg {
+  display: inline;
+  margin-right: 6px;
+  vertical-align: -2px;
+}
+.termsRow {
+  display: flex;
+  justify-content: center;
+  font-size: 13px;
+}
+.terms {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.termsRow .terms {
+  margin-bottom: -12px;
+}
+
+/* ── Рядок причини (declined / expired) і зміна ціни ─────────────────────── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: -2px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(249, 74, 81, 0.5); /* макет */
+  border-radius: var(--radius-md);
+  background: var(--color-primary-tint);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+.alert svg {
+  margin-top: 1px;
+  color: var(--color-primary);
+}
+.alertText {
+  display: block;
+  min-width: 0;
+}
+.alertText strong {
+  font-weight: 700;
+}
+.alertAction {
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  min-height: 44px;
+  margin-bottom: -10px;
+  cursor: pointer;
+}
+
+/* ── Очікування (pending) ───────────────────────────────────────────────── */
+.pendingBody {
+  gap: 16px;
+}
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px 4px;
+  text-align: center;
+}
+.spinner {
+  animation: spin 1.1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+.statusTitle {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+.statusText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.smallNote {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.helpRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: -8px 0 -12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.helpLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-secondary);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* ── Успіх ──────────────────────────────────────────────────────────────── */
+.title {
+  margin: -4px 0 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+.seatRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text);
+}
+.mine {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 44px;
+  max-width: 100%;
+  padding: 0 14px 0 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 0 0 4px rgba(252, 226, 134, 0.18); /* макет */
+}
+.seatNo {
+  font-weight: 700;
+  color: var(--color-highlight);
+  font-variant-numeric: tabular-nums;
+}
+.passLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e3d3a0; /* макет */
+}
+.passLine svg {
+  color: var(--color-highlight);
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(252, 226, 134, 0.08); /* макет */
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+.calloutMark {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border-radius: 4px;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+.calloutTime {
+  font-weight: 700;
+  color: var(--color-highlight);
+  font-variant-numeric: tabular-nums;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ── Квиток ─────────────────────────────────────────────────────────────── */
+.ticket {
+  position: relative;
+  display: flex;
+  border-radius: 12px; /* макет */
+  background: #efe7d6; /* макет */
+  color: #2a2620; /* макет */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+.ticketMain {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 6px 10px;
+}
+.ticketArt {
+  position: relative;
+}
+.ticketArt > :first-child {
+  display: block;
+  width: 100%;
+  border-radius: 7px;
+}
+.ticketStamp {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 76px;
+  height: 76px;
+  transform: rotate(-12deg);
+  color: var(--color-highlight);
+}
+.ticketWho {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 6px;
+}
+.ticketName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ticketNameText {
+  overflow: hidden;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ticketEmoji {
+  font-size: 18px;
+  line-height: 1;
+}
+.ticketGreeting {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #5e5444; /* макет */
+}
+.ticketDots {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+.ticketDots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cfc4ae; /* макет */
+}
+.ticketDots span[data-mine] {
+  background: #e3b23c; /* макет */
+  box-shadow: 0 0 0 2px #2a2620;
+}
+.ticketStub {
+  display: flex;
+  flex: 0 0 84px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 12px 8px;
+  border-left: 2px dashed #b9ae9c; /* макет */
+  text-align: center;
+}
+.stubCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.stubKey {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #6b5f4c; /* макет */
+  text-transform: uppercase;
+}
+.stubVal {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.stubSeat {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.stubMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 10px;
+  line-height: 1.3;
+  color: #4a4133; /* макет */
+}
+.stubMeta strong {
+  font-weight: 700;
+}
+.notch {
+  position: absolute;
+  right: 74px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface);
+}
+.notchTop {
+  top: -9px;
+}
+.notchBottom {
+  bottom: -9px;
+}
+
+/* ── «Місце щойно зайняли» ──────────────────────────────────────────────── */
+.soldIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.soldTitle {
+  margin: 4px 0 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+.soldText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.soldText strong {
+  font-weight: 700;
+  color: var(--color-text);
+}
+.dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.dots span {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-border-strong);
+}
+.dotsNote {
+  margin: -4px 0 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.gapTop {
+  margin-top: 8px;
+}

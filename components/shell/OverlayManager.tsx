@@ -13,7 +13,7 @@
  * `closeOn` — події шини (`lib/events/bus`), після яких вікно закривається саме (напр. оцінка — після `moment:rate-close`).
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot } from '@/components/primitives/Panel';
+import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
 import { Sheet } from '@/components/primitives/Sheet';
 import { on, type UiEventType } from '@/lib/events/bus';
 import { useRegisterCoral } from '@/lib/overlay/coral';
@@ -21,7 +21,7 @@ import { useChatDock } from '@/stores/chatDock';
 import { useGuestStore } from '@/stores/guest';
 
 export type OverlayKind = 'form' | 'accent' | 'nonmodal' | 'inflow';
-export type OverlayPlacement = 'sheet' | 'panel' | 'inflow' | 'dock';
+export type OverlayPlacement = 'sheet' | 'panel' | 'inflow' | 'dock' | 'seat';
 
 export interface OverlaySpec {
   /** Ідентифікатор вікна (O-NICK тощо); повторне `open` з тим самим id оновлює вміст. */
@@ -44,10 +44,14 @@ export interface OverlaySpec {
   onClose?: () => void;
 }
 
-/** Розміщення за типом і наявністю колонки чату. */
-export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false): OverlayPlacement {
+/**
+ * Розміщення за типом і наявністю колонки чату. Телефон з вікном чату внизу: вікна чату — усередині нього (`dock`),
+ * вікно покупки «Першого ряду» (`accent`) — окремим шаром поверх чату (`seat`, рішення 2026-10-29).
+ */
+export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, seatDock = false): OverlayPlacement {
   if (kind === 'inflow') return 'inflow';
   if (chatColumn) return 'panel';
+  if (kind === 'accent' && seatDock) return 'seat';
   return inDock ? 'dock' : 'sheet';
 }
 
@@ -58,8 +62,8 @@ export interface OverlayApi {
   close(id?: string): void;
 }
 
-function dockSlotExists(): boolean {
-  return typeof document !== 'undefined' && document.getElementById(CHAT_DOCK_SLOT_ID) !== null;
+function dockSlotExists(id = CHAT_DOCK_SLOT_ID): boolean {
+  return typeof document !== 'undefined' && document.getElementById(id) !== null;
 }
 
 const OverlayContext = createContext<OverlayApi | null>(null);
@@ -156,7 +160,9 @@ export function OverlayManager({ children }: OverlayManagerProps) {
     return () => offs.forEach((off) => off());
   }, [currentId, closeOnKey, close]);
 
-  const placement = current ? placementFor(current.kind, chatColumn, !!current.inChat && dockSlotExists()) : null;
+  const placement = current
+    ? placementFor(current.kind, chatColumn, !!current.inChat && dockSlotExists(), dockSlotExists(SEAT_DOCK_SLOT_ID))
+    : null;
 
   // Чат сховано на десктопі: колонка тимчасово відкривається під панель.
   const forceColumn = placement === 'panel' && chatHidden;
@@ -194,6 +200,20 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           description={current.description}
           boardHeader={current.chrome === 'board'}
           authorHeader={current.chrome === 'author'}
+        >
+          {current.content}
+        </ChatSlotPanel>
+      ) : null}
+      {current && placement === 'seat' ? (
+        <ChatSlotPanel
+          open
+          onOpenChange={onOpenChange}
+          containerId={SEAT_DOCK_SLOT_ID}
+          variant="accent"
+          title={current.title}
+          description={current.description}
+          boardHeader={current.chrome === 'board'}
+          className="t2f-seat-panel"
         >
           {current.content}
         </ChatSlotPanel>

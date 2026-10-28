@@ -26,6 +26,8 @@ import { IconButton } from './IconButton';
 export const CHAT_SLOT_ID = 'chat-slot';
 /** Контейнер усередині розгорнутого вікна чату на телефоні (`ChatDock`). */
 export const CHAT_DOCK_SLOT_ID = 'chat-dock-slot';
+/** Шар вікна покупки «Першого ряду» поверх вікна чату на телефоні (`ChatDock`, рішення 2026-10-29). */
+export const SEAT_DOCK_SLOT_ID = 'seat-dock-slot';
 /** Слот секцій на всю ширину під сіткою «колонка | чат» (LiveShell). */
 export const WIDE_SLOT_ID = 'page-wide';
 
@@ -78,7 +80,7 @@ export function ChatSlotPanel({
       data-chat-slot-panel={variant}
       className={cn(
         'absolute inset-0 z-20 flex flex-col bg-surface text-text',
-        variant === 'accent' ? 'border-2 border-highlight' : 'border-l border-border',
+        variant === 'accent' ? 'border border-highlight' : 'border-l border-border',
         className,
       )}
       // Дотик до ручки вікна чату на телефоні (згорнути/розгорнути) — не «поза панеллю»: вікно лишається (рішення 2026-10-28).

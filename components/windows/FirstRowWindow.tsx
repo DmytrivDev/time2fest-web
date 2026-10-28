@@ -97,6 +97,16 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
         pass={boughtPass ? 'discount' : 'gifted'}
         ticketCode={ticketCode(event.cityId, entry.seat)}
         onEdit={() => patchFlow({ phase: 'edit' })}
+        onShare={() => {
+          // Системне меню «Поділитися»; без нього — копіюємо посилання.
+          const url = window.location.origin + '/';
+          const text = t('success.shareText', { city });
+          if (typeof navigator.share === 'function') {
+            navigator.share({ title: t('heading', { city }), text, url }).catch(() => undefined);
+          } else {
+            navigator.clipboard?.writeText(`${text} ${url}`).catch(() => undefined);
+          }
+        }}
       />
     );
   }
@@ -105,6 +115,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
     return (
       <EditBody
         city={city}
+        flagCode={flagCode}
         seat={entry.seat}
         initial={values}
         waitSec={emojiWaitSec(emotionChangedAt, now)}
@@ -134,6 +145,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
         midnightMs={event.midnightMs}
         freeCount={view.freeCount}
         total={view.total}
+        flagCode={flagCode}
         preview={{ name: values.name, emojiId: values.emojiId }}
         holdUntil={holdUntil}
         email={email}
@@ -177,6 +189,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
   return (
     <FirstRowForm
       city={city}
+      flagCode={flagCode}
       midnightMs={event.midnightMs}
       freeCount={view.freeCount}
       total={view.total}
@@ -211,6 +224,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
 
 function EditBody({
   city,
+  flagCode,
   seat,
   initial,
   waitSec,
@@ -218,6 +232,7 @@ function EditBody({
   onCancel,
 }: {
   city: string;
+  flagCode: string;
   seat: number;
   initial: FirstRowDraftValues;
   waitSec: number;
@@ -229,6 +244,7 @@ function EditBody({
   return (
     <FirstRowEdit
       city={city}
+      flagCode={flagCode}
       seat={seat}
       values={values}
       onChange={(patch) => {

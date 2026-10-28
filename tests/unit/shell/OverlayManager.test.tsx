@@ -71,6 +71,10 @@ describe('placementFor', () => {
     expect(placementFor('accent', true)).toBe('panel');
     expect(placementFor('inflow', false)).toBe('inflow');
     expect(placementFor('inflow', true)).toBe('inflow');
+    // Телефон з вікном чату: покупка «Першого ряду» — шаром поверх чату, вікна чату — у ньому.
+    expect(placementFor('accent', false, false, true)).toBe('seat');
+    expect(placementFor('form', false, true, true)).toBe('dock');
+    expect(placementFor('accent', true, false, true)).toBe('panel');
   });
 });
 

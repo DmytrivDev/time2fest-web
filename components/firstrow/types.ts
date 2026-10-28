@@ -77,6 +77,8 @@ export interface FirstRowInfoProps {
 /** C8. Форма O-FIRST-ROW (також стани `declined` і `expired`). Корінь: `data-window="O-FIRST-ROW"`, `data-phase`. */
 export interface FirstRowFormProps {
   city: string;
+  /** Прапор гостя для прев’ю «Так тебе побачать на стіні». */
+  flagCode?: string;
   midnightMs: Ms;
   freeCount: number;
   total: number;
@@ -112,6 +114,8 @@ export interface FirstRowFormProps {
 
 export interface FirstRowPendingProps {
   city: string;
+  /** Прапор гостя для прев’ю «Так тебе побачать на стіні». */
+  flagCode?: string;
   midnightMs: Ms;
   freeCount: number;
   total: number;
@@ -152,6 +156,8 @@ export interface FirstRowSoldOutProps {
 
 export interface FirstRowEditProps {
   city: string;
+  /** Прапор гостя для прев’ю «Так тебе побачать на стіні». */
+  flagCode?: string;
   seat: number;
   values: Pick<FirstRowDraftValues, 'name' | 'greeting' | 'emojiId'>;
   onChange(patch: Partial<Pick<FirstRowDraftValues, 'name' | 'greeting' | 'emojiId'>>): void;

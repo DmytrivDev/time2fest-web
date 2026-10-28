@@ -54,7 +54,8 @@ export type IconName =
   | 'reply'
   | 'at'
   | 'flag'
-  | 'lock';
+  | 'lock'
+  | 'seat';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -266,6 +267,14 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <rect x="5" y="11" width="14" height="9" rx="2" />
       <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </>
+  ),
+  /** Крісло «Першого ряду» (шапка вікна O-FIRST-ROW, макети `*-FR-*`). */
+  seat: (
+    <>
+      <path d="M6 11V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
+      <path d="M4 11h16v5H4z" />
+      <path d="M6 16v3M18 16v3" />
     </>
   ),
   /** Трансляція наживо: центр залитий (картка події в ефірі, макет `Main`). */
