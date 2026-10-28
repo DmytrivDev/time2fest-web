@@ -1466,3 +1466,19 @@ html[data-chat-land-expanded] body {
     padding: 0 8px;
   }
 }
+
+/* Колонка чату на десктопі (340 px): розміри підібрано під найдовші підписи запланованих мов («Mundo» + прапор + шеврон +
+   «1er rang»): відступи шапки зліва/справа однакові для ока (12 px до краю чипа / кружечка «⋯»), проміжки між чипами 4 px
+   у чипі й ≥ 11 px до кнопок, між кружечками кнопок 6 px; зона дотику кнопок лишається 44 px (сусідні перекриваються). */
+@media (min-width: 768px) {
+  .t2f-chat-head {
+    padding-inline-end: 9px;
+  }
+  .t2f-chat-head .t2f-seg-pill {
+    gap: 4px;
+    padding: 0 7px;
+  }
+  .t2f-chat-head .t2f-chat-hbtn {
+    margin-inline: -4px;
+  }
+}

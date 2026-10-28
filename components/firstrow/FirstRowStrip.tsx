@@ -40,6 +40,7 @@ export function FirstRowStrip({
   layout = 'module',
   headingLevel = 2,
   onToggle,
+  blocked,
   defaultOpen = true,
   dockBar = false,
   className,
@@ -50,6 +51,7 @@ export function FirstRowStrip({
   const Heading = headingLevel === 2 ? 'h2' : 'h3';
   const { state, price } = view;
   const sellable = price.current !== null && (state === 'empty' || state === 'open' || state === 'last3');
+  const blockedNow = !!blocked && sellable;
   const discounted = sellable && price.discountReason === 'pass' && price.discounted !== undefined;
   const stateName = discounted ? 'pass-discount' : state;
   const showCounter = state === 'empty' || state === 'open' || state === 'last3' || state === 'mine' || state === 'restrained';
@@ -81,7 +83,7 @@ export function FirstRowStrip({
   ) : null;
 
   const priceText =
-    sellable && price.current !== null ? (
+    sellable && !blockedNow && price.current !== null ? (
       discounted && price.discounted !== undefined ? (
         <span>
           <span className="sr-only">{t('priceFullSpoken', { full: formatPrice(price.current), discounted: formatPrice(price.discounted) })}</span>
@@ -102,7 +104,7 @@ export function FirstRowStrip({
     ) : null;
 
   const tier =
-    sellable && !discounted ? (
+    sellable && !blockedNow && !discounted ? (
       <span data-row="tier" className={fr.tier}>
         {state === 'last3' ? t('tierLast3', { price: formatPrice(7.99) }) : t('tierHint', { price: formatPrice(7.99) })}
       </span>
@@ -162,6 +164,16 @@ export function FirstRowStrip({
       {t('take')}
     </Button>
   );
+  const blockedNote = blockedNow ? (
+    <p data-row="blocked" className={fr.meta}>
+      {t('blocked', { city: blocked!.city })}
+    </p>
+  ) : null;
+  const ownSeatBtn = blockedNow ? (
+    <Button variant="secondary" compact data-action="own-seat" onClick={blocked!.onOwn}>
+      {t('mySeatButton')}
+    </Button>
+  ) : null;
   const mineActions =
     state === 'mine' ? (
       <>
@@ -238,9 +250,15 @@ export function FirstRowStrip({
         {open || dockBar ? (
           <div id={panelId} className={fr.panel} hidden={!open}>
             {wall}
-            {sellable || state === 'mine' || state === 'closed' || state === 'soldout' || restrained ? (
+            {sellable || blockedNow || state === 'mine' || state === 'closed' || state === 'soldout' || restrained ? (
               <div className={cn(fr.details, !wall && 'border-t-0 pt-0')}>
-                {sellable ? (
+                {blockedNow ? (
+                  <>
+                    {blockedNote}
+                    <div className={fr.phoneActions}>{ownSeatBtn}</div>
+                  </>
+                ) : null}
+                {sellable && !blockedNow ? (
                   <>
                     <div className={fr.thumbRow}>
                       {/* eslint-disable-next-line @next/next/no-img-element -- статичний експорт, мініатюра 80×80 */}
@@ -308,8 +326,9 @@ export function FirstRowStrip({
           </div>
         ) : null}
         {state === 'mine' ? <p className={fr.mineNote}>{mineText}</p> : null}
+        {blockedNow ? <p className={fr.mineNote}>{blockedNote?.props.children}</p> : null}
         {soldOutNode ? <p className={fr.mineNote}>{soldOutNode}</p> : null}
-        {state === 'empty' ? <p className={fr.mineNote}>{t('emptyPitch')}</p> : null}
+        {state === 'empty' && !blockedNow ? <p className={fr.mineNote}>{t('emptyPitch')}</p> : null}
         <span className={fr.spacer} />
         {wallPhase !== 'idle' ? (
           <span className={fr.stateNote}>{t('lightingNote')}</span>
@@ -318,7 +337,8 @@ export function FirstRowStrip({
             {t('saleClosed')}
           </span>
         ) : null}
-        {sellable ? (
+        {blockedNow ? ownSeatBtn : null}
+        {sellable && !blockedNow ? (
           <>
             {info}
             {take}

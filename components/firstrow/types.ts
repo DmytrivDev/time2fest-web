@@ -47,6 +47,8 @@ export interface FirstRowStripProps {
   onToggle?(): void;
   /** Смуга спочатку розгорнута (за замовчуванням так; телефон-головна починає згорнутою). */
   defaultOpen?: boolean;
+  /** Є місце (чи утримання) в тому ж поясі, місті або країні: «Зайняти місце» немає — пояснення й «Моє місце». */
+  blocked?: { city: string; onOwn(): void };
   /** Телефон, головна: смуга на всю ширину під липким рядком плеєра. */
   dockBar?: boolean;
   className?: string;

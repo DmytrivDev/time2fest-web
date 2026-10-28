@@ -22,6 +22,9 @@ import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { Icon } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
+import { guestGreetingMessages } from '@/components/firstrow/controller';
+import { STAMP_DELAY } from '@/lib/engine/config';
+import { pickSeatRoomEvent } from '@/lib/firstrow/rooms';
 import { MyEmotionPill, type SavedEmotion } from '@/components/windows/Emoji';
 import { Nick } from '@/components/windows/Nick';
 import { authorHasPass, buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
@@ -55,7 +58,7 @@ export interface ChatPanelProps {
   onCountryChange?: (iso: string) => void;
   /** Головна: чат відкривається у «Світ», хоча кімната країни є. */
   startInWorld?: boolean;
-  /** Подія сторінки: за нею — кімната «Перший ряд» (лише учасникам). */
+  /** Не використовується: кімната «Перший ряд» визначається місцем гостя й часом (`pickSeatRoomEvent`). */
   eventId?: string | null;
   /** Місто події для підписів «Перший ряд · Лондон». */
   cityName?: string;
@@ -73,8 +76,6 @@ export function ChatPanel({
   countries,
   onCountryChange,
   startInWorld,
-  eventId,
-  cityName,
   onHide,
   collapseMode,
   onToEvents,
@@ -97,7 +98,12 @@ export function ChatPanel({
   const replyTo = useChatUi((s) => s.replyTo);
   const setReplyTo = useChatUi((s) => s.setReplyTo);
 
-  const participant = !!eventId && guest.firstRow[eventId]?.seat !== undefined;
+  // Кімната «Перший ряд» — події, на яку є місце й кімната відкрита зараз (на будь-якій сторінці з чатом).
+  const seatFirstRow = guest.firstRow;
+  const seatEvent = useMemo(() => pickSeatRoomEvent(getData().events, seatFirstRow, now), [seatFirstRow, now]);
+  const eventId = seatEvent?.id ?? null;
+  const cityName = seatEvent ? getData().citiesById.get(seatEvent.cityId)?.name.uk : undefined;
+  const participant = !!seatEvent;
   const [roomKey, setRoomKey] = useState<RoomKey>(country && !startInWorld ? 'country' : 'world');
   const activeKey: RoomKey =
     (roomKey === 'firstrow' && !participant) || (roomKey === 'country' && !country)
@@ -137,7 +143,18 @@ export function ChatPanel({
   const mirroredDone = useRef(0);
   const mirrored = useMemo(() => {
     if (!participant || !eventId) return [];
-    const moment = chatMoments().find((m) => m.eventId === eventId);
+    const ev = getData().eventsById.get(eventId);
+    const moment =
+      chatMoments().find((m) => m.eventId === eventId) ??
+      (ev
+        ? {
+            t0: ev.midnightMs,
+            eventId,
+            cityId: ev.cityId,
+            countries: [{ iso: ev.countryIso, gender: getData().countriesByIso.get(ev.countryIso)?.gender ?? null }],
+            eventIds: [eventId],
+          }
+        : undefined);
     return moment ? momentMessages(CHAT_SCRIPT, moment, `firstrow:${eventId}`).filter((m) => m.kind === 'greeting') : [];
   }, [participant, eventId]);
   useEffect(() => {
@@ -151,6 +168,14 @@ export function ChatPanel({
       mirroredDone.current = due.length;
     }
   }, [mirrored, now, append]);
+
+  // Власне привітання на «+15 с» своєї півночі — і коли сторінка показує інший ефір.
+  const greetAt = seatEvent ? seatEvent.midnightMs + STAMP_DELAY : 0;
+  const ownGreetDue = !!seatEvent && now >= greetAt;
+  useEffect(() => {
+    if (ownGreetDue && seatEvent) append(guestGreetingMessages(seatEvent));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownGreetDue, eventId, ownSeat]);
 
   const draft = useChatUi((s) => s.draft);
   const setDraft = useChatUi((s) => s.setDraft);
@@ -213,7 +238,7 @@ export function ChatPanel({
       else setError(null);
       return res.error === 'nick-required' ? 'nick' : 'error';
     },
-    [source, roomId, participant, emojiId, replyTo, append, recordSent, setReplyTo, setDraft],
+    [source, roomId, participant, emojiId, replyTo, append, recordSent, setReplyTo, setDraft, setError],
   );
 
   const flagOptions = useMemo(
@@ -370,7 +395,7 @@ export function ChatPanel({
           } satisfies SegmentOption,
         ]
       : []),
-    ...(participant ? [{ value: 'firstrow', label: t('roomFirstRow'), dot: true }] : []),
+    ...(participant ? [{ value: 'firstrow', label: column ? t('roomFirstRowShort') : t('roomFirstRow'), ...(column ? { ariaLabel: t('roomFirstRowAria') } : {}), dot: true }] : []),
   ];
   const switcher =
     options.length > 1 ? (

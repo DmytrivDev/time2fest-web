@@ -259,6 +259,8 @@
     "roomWorld": "Світ",
     "roomCountry": "Країна",
     "roomFirstRow": "Перший ряд",
+    "roomFirstRowShort": "1-й ряд",
+    "roomFirstRowAria": "Кімната «Перший ряд»",
     "roomCountryPicker": "Країна: {country}",
     "roomsLabel": "Кімнати чату",
     "pause": "Пауза чату",
@@ -736,6 +738,8 @@
     "collapse": "Згорнути «Перший ряд»",
     "expand": "Розгорнути «Перший ряд»",
     "leftPrefix": "лишилось",
+    "blocked": "У тебе вже є місце в першому ряду · {city} — в одному поясі, місті й країні можна мати лише одне місце",
+    "mySeatButton": "Моє місце",
     "leftValue": "{free} з {total}",
     "pricePrefix": "Місце"
   },

@@ -14,6 +14,8 @@ import { firstFreeSeat, simulateSeats } from '@/lib/firstrow/seatsSim';
 import { applyOutcome, emptyFlow, readEntry, useFirstRowStore, writeEntry } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
+import { getData } from '@/lib/data/load';
+import { seatConflict } from '@/lib/firstrow/rooms';
 
 export const FIRST_ROW_WINDOW_ID = 'O-FIRST-ROW';
 export const FIRST_ROW_INFO_ID = 'O-FIRST-ROW-INFO';
@@ -45,7 +47,15 @@ export function snapshot(event: FirstRowEvent, now: Ms, opts: { reducedMotion?: 
   return { seats, holdLost, view };
 }
 
-export type OpenResult = 'success' | 'form' | 'returned' | 'pending' | 'soldout' | 'closed';
+export type OpenResult = 'success' | 'form' | 'returned' | 'pending' | 'soldout' | 'closed' | 'blocked';
+
+/** Подія, де в гостя вже є місце (або утримання) в тому ж поясі, місті чи країні — купівля на `event` заблокована. */
+export function blockingEvent(event: Pick<FirstRowEvent, 'id'>, now: Ms) {
+  const data = getData();
+  const target = data.eventsById.get(event.id);
+  if (!target) return null;
+  return seatConflict(data.events, useGuestStore.getState().firstRow, target, now);
+}
 
 /** «Зайняти місце»: нове утримання (або повернення до наявного), фіксація ціни. */
 export function openForm(event: FirstRowEvent, now: Ms): OpenResult {
@@ -57,6 +67,7 @@ export function openForm(event: FirstRowEvent, now: Ms): OpenResult {
     return 'success';
   }
   if (store.flow?.eventId === event.id && store.flow.phase === 'pending') return 'pending';
+  if (blockingEvent(event, now)) return 'blocked';
   if (entry.hold && entry.hold.until > now) {
     store.setFlow({ ...emptyFlow(event.id, 'form'), returned: true });
     return 'returned';

@@ -31,6 +31,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useFirstRowStore } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import {
+  blockingEvent,
   confirmPayment,
   expireHold,
   FIRST_ROW_INFO_ID,
@@ -116,12 +117,12 @@ function useFirstRowEffects(event: FirstRowEvent, now: Ms) {
   }, [due, event, seat]);
 }
 
-function InfoBody({ event, city, onTake }: { event: FirstRowEvent; city: string; onTake(): void }) {
+function InfoBody({ event, city, onTake }: { event: FirstRowEvent; city: string; onTake?(): void }) {
   const now = useNow();
   const reduced = useReducedMotion();
   const overlay = useOverlay();
   const { view } = snapshot(event, now, { reducedMotion: reduced });
-  const sellable = view.state === 'empty' || view.state === 'open' || view.state === 'last3';
+  const sellable = !!onTake && (view.state === 'empty' || view.state === 'open' || view.state === 'last3');
   return (
     <FirstRowInfo
       city={city}
@@ -163,9 +164,24 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
   const { seats, view } = snapshot(event, now, { reducedMotion: reduced });
   const heading = t('heading', { city });
 
+  const blocker = blockingEvent(event, now);
+  const openOwn = () => {
+    if (!blocker) return;
+    const res = openForm(blocker, now);
+    if (res === 'closed') return;
+    overlay.open({
+      id: FIRST_ROW_WINDOW_ID,
+      kind: 'accent',
+      coral: true,
+      title: t('heading', { city: cityOf(blocker.cityId) }),
+      content: <FirstRowWindow event={blocker} city={cityOf(blocker.cityId)} />,
+      onClose: () => useFirstRowStore.getState().setFlow(null),
+    });
+  };
+
   const openWindow = () => {
     const res = openForm(event, now);
-    if (res === 'closed') return;
+    if (res === 'closed' || res === 'blocked') return;
     overlay.open({
       id: FIRST_ROW_WINDOW_ID,
       kind: 'accent',
@@ -191,7 +207,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       kind: 'inflow',
       coral: true,
       title: t('infoTitle'),
-      content: <InfoBody event={event} city={city} onTake={openWindow} />,
+      content: <InfoBody event={event} city={city} onTake={blocker ? undefined : openWindow} />,
     });
   };
 
@@ -208,6 +224,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       seats={seats}
       takeVariant={coralSound || coralWindow ? 'tonal' : 'coral'}
       onTake={openWindow}
+      blocked={blocker ? { city: cityOf(blocker.cityId), onOwn: openOwn } : undefined}
       onInfo={toggleInfo}
       infoOpen={infoOpen}
       onOpenEmoji={view.state === 'mine' ? openEmoji : undefined}
