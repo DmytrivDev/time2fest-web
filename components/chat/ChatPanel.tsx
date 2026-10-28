@@ -395,7 +395,7 @@ export function ChatPanel({
           } satisfies SegmentOption,
         ]
       : []),
-    ...(participant ? [{ value: 'firstrow', label: column ? t('roomFirstRowShort') : t('roomFirstRow'), ...(column ? { ariaLabel: t('roomFirstRowAria') } : {}), dot: true }] : []),
+    ...(participant ? [{ value: 'firstrow', label: t('roomFirstRowShort'), ariaLabel: t('roomFirstRowAria'), dot: true }] : []),
   ];
   const switcher =
     options.length > 1 ? (

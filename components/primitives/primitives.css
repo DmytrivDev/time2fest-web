@@ -1459,11 +1459,11 @@ html[data-chat-land-expanded] body {
   line-height: 1;
 }
 
-/* Перемикач кімнат у шапці чату на телефоні: тісніші чипи, щоб «Світ · GB ⌄ · Перший ряд» + кнопки вміщались у 375 px. */
+/* Перемикач кімнат у шапці чату на телефоні: «Світ · GB ⌄ · 1-й ряд» + кнопки вміщаються в 375 px усіма мовами старту. */
 @media (max-width: 767.98px) {
   .t2f-chat-head .t2f-seg-pill {
     gap: 5px;
-    padding: 0 8px;
+    padding: 0 10px;
   }
 }
 
@@ -1476,7 +1476,7 @@ html[data-chat-land-expanded] body {
   }
   .t2f-chat-head .t2f-seg-pill {
     gap: 4px;
-    padding: 0 7px;
+    padding: 0 8px;
   }
   .t2f-chat-head .t2f-chat-hbtn {
     margin-inline: -4px;
