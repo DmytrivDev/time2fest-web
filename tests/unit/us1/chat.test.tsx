@@ -205,12 +205,25 @@ describe('Chat', () => {
     expect(screen.getByText('Ти перший у першому ряду — привітай тих, хто прийде')).toBeInTheDocument();
   });
 
-  it('недоступний: повідомлення й «До подій»', () => {
-    const onBack = vi.fn();
-    renderApp(<Chat room={room} messages={[]} state="unavailable" onToEvents={onBack} />);
-    expect(screen.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'До подій' }));
-    expect(onBack).toHaveBeenCalled();
+  it('недоступний: заголовок, друга лінія, без шапки з чипами; «Згорнути чат» на телефоні', () => {
+    const onHide = vi.fn();
+    renderApp(
+      <Chat room={room} messages={[]} state="unavailable" collapseMode onHide={onHide} roomSwitcher={<span>чипи</span>} composer={<textarea />} />,
+    );
+    expect(screen.getByRole('heading', { name: 'Чат тимчасово недоступний, повернемося за хвилину' })).toBeInTheDocument();
+    expect(screen.getByText('Трансляція й «Події» працюють як звичайно.')).toBeInTheDocument();
+    expect(screen.queryByText('чипи')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Пауза чату' })).toBeNull();
+    expect(screen.queryByRole('textbox')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Згорнути чат' }));
+    expect(onHide).toHaveBeenCalled();
+  });
+
+  it('недоступний, десктоп: кнопка «Сховати чат»', () => {
+    const onHide = vi.fn();
+    renderApp(<Chat room={room} messages={[]} state="unavailable" onHide={onHide} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Сховати чат' }));
+    expect(onHide).toHaveBeenCalled();
   });
 
   it('«Пауза чату» — перемикач; на паузі видно примітку', () => {

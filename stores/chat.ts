@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import type { Ms, RoomId } from '@/lib/data/types';
 import { useChatFeed } from '@/lib/chat-sim/store';
+import { useTestControls } from '@/stores/testControls';
 
 export interface ReplyDraft {
   id: string;
@@ -45,8 +46,10 @@ export const useChatUi = create<ChatUiState>()((set) => ({
 /** Скільки повідомлень кімнати прийшло, відколи чат сховано (власні не рахуємо). */
 export function useHiddenCount(room: RoomId): number {
   const hiddenAt = useChatUi((s) => s.hiddenAt);
+  // Поки чат недоступний, лічильника немає (повідомлень не видно).
+  const available = useTestControls((s) => s.chatAvailable);
   return useChatFeed((s) => {
-    if (hiddenAt === null) return 0;
+    if (hiddenAt === null || !available) return 0;
     let n = 0;
     for (const m of s.rooms[room] ?? []) if (m.createdAt > hiddenAt && !m.author?.isMine && m.kind !== 'system') n += 1;
     return n;

@@ -276,6 +276,29 @@ describe('ChatPanel — ліміти й режими (FR-052)', () => {
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
+  it('десктоп: «Сховати чат» у недоступному стані; пілюля без лічильника, після повернення — нові відтоді', async () => {
+    const user = userEvent.setup();
+    useTestControls.setState({ chatAvailable: false });
+    const onHide = vi.fn(() => useChatUi.getState().markHidden(QUIET - 10_000));
+    setup(
+      QUIET,
+      <>
+        <ChatPanel onHide={onHide} />
+        <ChatHiddenButton room="world" onShow={() => undefined} />
+      </>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Сховати чат' }));
+    expect(onHide).toHaveBeenCalled();
+    act(() => useChatFeed.getState().append([message('n1', TARAS, 'нове', QUIET - 5_000)]));
+    expect(screen.getByRole('button', { name: 'Показати чат' })).toBeInTheDocument();
+    act(() => useTestControls.setState({ chatAvailable: true }));
+    // Повернувся: рахунок іде відтепер, раніше пропущене не рахуємо.
+    expect(useChatUi.getState().hiddenAt).toBe(QUIET);
+    expect(screen.getByRole('button', { name: 'Показати чат' })).toBeInTheDocument();
+    act(() => useChatFeed.getState().append([message('n2', TARAS, 'ще', QUIET + 1_000)]));
+    expect(await screen.findByRole('button', { name: 'Показати чат, нових повідомлень: 1' })).toBeInTheDocument();
+  });
+
   it('немає з’єднання: смуга й неактивна кнопка', () => {
     useTestControls.setState({ offlineSimulated: true });
     setup();

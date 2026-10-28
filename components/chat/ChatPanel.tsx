@@ -95,6 +95,14 @@ export function ChatPanel({
   const { setNick, setDetectedFlag, recordSent, setLastRoom } = guest;
   const available = useTestControls((s) => s.chatAvailable);
   const offline = useTestControls((s) => s.offlineSimulated);
+  // Чат повернувся: лічильник «нових» у згорнутому/схованому чаті рахуємо відтоді (рішення 2026-10-28).
+  const wasAvailable = useRef(available);
+  useEffect(() => {
+    if (available && !wasAvailable.current && useChatUi.getState().hiddenAt !== null) {
+      useChatUi.getState().markHidden(source.now());
+    }
+    wasAvailable.current = available;
+  }, [available, source]);
   const replyTo = useChatUi((s) => s.replyTo);
   const setReplyTo = useChatUi((s) => s.setReplyTo);
 

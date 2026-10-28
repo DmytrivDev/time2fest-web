@@ -339,8 +339,11 @@ export function Chat({
 
   const emptyText = room.id.startsWith('firstrow:') ? t('emptyFirstRow') : t('emptyCountry');
 
+  const down = state === 'unavailable';
+
   return (
     <div data-chat={state} data-room={room.id} className={cn('flex min-h-0 flex-col', className)}>
+      {down ? null : (
       <div
         className={cn(
           't2f-chat-head flex shrink-0 items-center border-b border-border ps-3 pe-2',
@@ -424,28 +427,41 @@ export function Chat({
           </DropdownMenu>
         ) : null}
       </div>
-      {manualPause || (scrolledUp && !(inlineMenu && menuMessage)) ? (
+      )}
+      {!down && (manualPause || (scrolledUp && !(inlineMenu && menuMessage))) ? (
         <p role="status" className="t2f-chat-pausednote" data-row="paused">
           <Icon name="pause" size={14} strokeWidth={2} />
           {t('pausedNote')}
         </p>
       ) : null}
-      {banner}
+      {down ? null : banner}
 
       {state === 'unavailable' ? (
-        <div
+        <section
           role="status"
-          className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center"
+          aria-labelledby="chat-down-title"
+          className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-8 text-center"
           data-row="unavailable"
         >
-          <Icon name="wifi-off" size={22} className="text-text-secondary" />
-          <p className="text-body text-text">{t('unavailable')}</p>
-          {onToEvents ? (
-            <Button variant="secondary" onClick={onToEvents}>
-              {t('toEvents')}
+          <span
+            aria-hidden="true"
+            className="flex size-14 items-center justify-center rounded-full border border-border bg-surface text-text-secondary"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+              <path d="M4 5h16v11H9l-5 4z" />
+              <path d="M12 8v3.5M12 13.6v.01" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </span>
+          <h2 id="chat-down-title" className="m-0 max-w-75 text-lg leading-snug font-bold text-text">
+            {t('unavailable')}
+          </h2>
+          <p className="m-0 max-w-75 text-body text-text-secondary">{t('unavailableNote')}</p>
+          {onHide || onToEvents ? (
+            <Button variant="secondary" className="mt-1" onClick={onHide ?? onToEvents}>
+              {onHide ? (collapseMode ? t('collapse') : t('hide')) : t('toEvents')}
             </Button>
           ) : null}
-        </div>
+        </section>
       ) : state === 'l' ? (
         <div
           aria-busy="true"

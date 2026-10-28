@@ -226,8 +226,18 @@ test.describe('US4 · чат свята', () => {
     await expect(page.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeVisible();
     await expect(field(page)).toHaveCount(0);
     await expect(page.locator('[data-player-host] iframe')).toHaveCount(1);
-    // Телефон: «До подій» згортає вікно чату; на десктопі кнопки немає.
-    if (isPhone(page)) await page.getByRole('button', { name: 'До подій' }).click();
+    await expect(page.getByRole('heading', { name: 'Чат тимчасово недоступний, повернемося за хвилину' })).toBeVisible();
+    await expect(page.getByText('Трансляція й «Події» працюють як звичайно.')).toBeVisible();
+    if (isPhone(page)) {
+      // Телефон: «Згорнути чат» згортає вікно, у згорнутому — «0 нових».
+      await page.getByRole('button', { name: 'Згорнути чат' }).click();
+      await expect(page.locator('[data-dock-pill]')).toHaveText('0 нових');
+    } else {
+      // Десктоп: «Сховати чат» ховає колонку, пілюля «Показати чат» без лічильника.
+      await page.getByRole('button', { name: 'Сховати чат' }).click();
+      await expect(page.locator('[data-chat-hidden-button]')).toBeVisible();
+      await expect(page.locator('.t2f-show-chat-count')).toHaveCount(0);
+    }
     await setChatAvailable(page, true);
     await expect(page.getByText('Чат тимчасово недоступний, повернемося за хвилину')).toBeHidden();
   });

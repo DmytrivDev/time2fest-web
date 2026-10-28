@@ -99,6 +99,21 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     expect(dock()).toHaveAttribute('data-state', 'collapsed');
   });
 
+  it('недоступний: у розгорнутому вікні заголовок і «Згорнути чат», без чипів і поля; у згорнутому «0 нових»', async () => {
+    const user = userEvent.setup();
+    useTestControls.setState({ chatAvailable: false });
+    setup();
+    act(() => useChatFeed.getState().append([msg('n1', NOW + 1_000)]));
+    expect(dock().querySelector('[data-dock-pill]')).toHaveTextContent('0 нових');
+    await user.click(screen.getByRole('button', { name: /^Розгорнути чат/ }));
+    expect(screen.getByRole('heading', { name: /Чат тимчасово недоступний/ })).toBeInTheDocument();
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Пауза чату' })).toBeNull();
+    expect(document.querySelector('.t2f-dock-grip-handle')).not.toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Згорнути чат' }));
+    expect(dock()).toHaveAttribute('data-state', 'collapsed');
+  });
+
   it('при розгортанні лічильник скидається, при згортанні рахунок іде знову', async () => {
     const user = userEvent.setup();
     setup();
