@@ -1098,6 +1098,12 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
   transition: height 200ms ease-out;
 }
+.t2f-dock[data-slim='true'] {
+  height: calc(18px + env(safe-area-inset-bottom, 0px));
+}
+.t2f-dock[data-slim='true'] .t2f-dock-row {
+  opacity: 0;
+}
 .t2f-dock[data-state='expanded'] {
   height: calc(100svh - var(--dock-top, 0px));
 }
@@ -1185,6 +1191,14 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 .t2f-dock[data-dragging='true'] .t2f-dock-body {
   visibility: visible;
   transition: none;
+}
+/* Вікна чату (автор, нік, правила) — під ручкою: її видно й можна згорнути/розгорнути чат разом із вікном. */
+.t2f-dock-slot {
+  position: absolute;
+  inset: 13px 0 0;
+}
+.t2f-dock[data-land='true'][data-kb='true'] .t2f-dock-slot {
+  inset: 0;
 }
 .t2f-dock-grip-handle {
   display: flex;

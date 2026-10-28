@@ -81,7 +81,10 @@ export function ChatSlotPanel({
         variant === 'accent' ? 'border-2 border-highlight' : 'border-l border-border',
         className,
       )}
-      onInteractOutside={isForm ? (e) => e.preventDefault() : undefined}
+      // Дотик до ручки вікна чату на телефоні (згорнути/розгорнути) — не «поза панеллю»: вікно лишається (рішення 2026-10-28).
+      onInteractOutside={(e) => {
+        if (isForm || (e.target as HTMLElement | null)?.closest?.('[data-chat-dock]')) e.preventDefault();
+      }}
       // Фокус, що повертається на тригер після закриття меню (напр. «Правила чату» з «⋯»), не закриває панель.
       onFocusOutside={(e) => e.preventDefault()}
       {...(description ? {} : { 'aria-describedby': undefined })}

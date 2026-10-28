@@ -112,7 +112,6 @@ interface DragState {
 /** Керування вікном з будь-якого місця сторінки (смуга «Перший ряд», вікна). */
 export function useChatDockControls() {
   const now = useNow();
-  const overlay = useOverlay();
   const setExpanded = useChatDock((s) => s.setExpanded);
   const markHidden = useChatUi((s) => s.markHidden);
   const expand = useCallback(() => {
@@ -120,10 +119,10 @@ export function useChatDockControls() {
     setExpanded(true);
   }, [markHidden, setExpanded]);
   const collapse = useCallback(() => {
+    // Вікно чату (автор, нік, правила) не закриваємо: згорнули — розгорнули й бачимо його в тому самому вигляді.
     markHidden(now);
-    if (overlay.current?.inChat) overlay.close();
     setExpanded(false);
-  }, [markHidden, now, overlay, setExpanded]);
+  }, [markHidden, now, setExpanded]);
   return { expand, collapse };
 }
 
@@ -202,6 +201,28 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     document.documentElement.setAttribute('data-has-chat-dock', '');
     return () => document.documentElement.removeAttribute('data-has-chat-dock');
   }, [reserve]);
+
+  // Згорнутий: гортаємо вгору — від плашки лишається тонка смужка з ручкою (дотик розгортає); униз чи в самому низу
+  // сторінки — знову вся плашка (рішення 2026-10-28).
+  const [slim, setSlim] = useState(false);
+  useEffect(() => {
+    // Лише портрет: в альбомі згорнутий чат завжди повний (з'являється нижче смуги «Перший ряд»).
+    if (expanded || land) return;
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const atBottom = y + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      if (atBottom || y <= 0) setSlim(false);
+      else if (y < lastY - 6) setSlim(true);
+      else if (y > lastY + 6) setSlim(false);
+      if (Math.abs(y - lastY) > 6) lastY = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      setSlim(false); // після розгортання згорнутий чат знову повний
+    };
+  }, [expanded, land]);
 
   // Телефон-альбом, згорнутий: чи прокручено нижче смуги (низ останнього елемента над чатом вище верху вікна).
   useEffect(() => {
@@ -339,13 +360,13 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const ctx = useMemo(() => ({ toVideo: landFlow ? toVideo : null }), [landFlow, toVideo]);
 
   // Фокус іде на шапку після розгортання/згортання (не при першому показі й не коли фокус забрало вікно чату).
-  const firstRun = useRef(true);
+  // Порівнюємо з попереднім станом (а не «перший запуск»): у dev StrictMode ефект виконується двічі, і фокус із жовтою
+  // рамкою опинявся на згорнутому чаті одразу після завантаження.
+  const prevExpanded = useRef(expanded);
   useEffect(() => {
-    if (firstRun.current) {
-      firstRun.current = false;
-      return;
-    }
-    if (overlay.current) return;
+    if (prevExpanded.current === expanded) return;
+    prevExpanded.current = expanded;
+    if (expanded && overlay.current) return;
     if (expanded) sectionRef.current?.querySelector<HTMLElement>('[data-chat-collapse]')?.focus({ preventScroll: true });
     else collapsedRef.current?.focus({ preventScroll: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -367,7 +388,6 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     const target = e.target as HTMLElement;
     const inCollapsedRow = !!target.closest('.t2f-dock-collapsed');
     if (!inCollapsedRow && !target.closest(ZONE)) return;
-    if (overlay.current?.inChat) return;
     const el = sectionRef.current;
     if (!el) return;
     const collapsedH = !expanded && el.offsetHeight ? el.offsetHeight : COLLAPSED_ROW + 12;
@@ -471,6 +491,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       data-land={land ? 'true' : undefined}
       data-land-hidden={landHidden ? 'true' : undefined}
       data-kb={kbOpen ? 'true' : undefined}
+      data-slim={slim && !expanded && !land ? 'true' : undefined}
       onFocus={(e) => {
         if ((e.target as HTMLElement).matches(FIELD)) {
           typingRef.current = true;
@@ -525,7 +546,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
         <ChatDockContext.Provider value={ctx}>
           <div className="flex min-h-0 flex-1 flex-col">{children}</div>
         </ChatDockContext.Provider>
-        <div id={CHAT_DOCK_SLOT_ID} className="pointer-events-none absolute inset-0 z-20 [&>*]:pointer-events-auto" />
+        <div id={CHAT_DOCK_SLOT_ID} className="t2f-dock-slot pointer-events-none z-20 [&>*]:pointer-events-auto" />
       </div>
     </section>
   );
