@@ -327,6 +327,16 @@ export function ChatPanel({
     },
     [setReplyTo, overlay, focusField],
   );
+  // Своє повідомлення: видалити назавжди (у стрічці лишається рядок «Твоє повідомлення видалено»), фокус — у поле.
+  const remove = useChatFeed((s) => s.remove);
+  const onDelete = useCallback(
+    (m: ChatMessage) => {
+      remove(m.room, m.id);
+      announce(t('deletedOwn'));
+      focusField();
+    },
+    [remove, announce, t, focusField],
+  );
   const onReport = useCallback(() => {
     setReported(true);
     announce(t('reported'));
@@ -507,7 +517,7 @@ export function ChatPanel({
       onToEvents={onToEvents}
       onRules={openRules}
       announceNew
-      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport }}
+      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete }}
       composer={
         <Composer
           room={{ id: roomId, label: roomLabel }}

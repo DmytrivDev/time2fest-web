@@ -1,7 +1,8 @@
 'use client';
 
 /**
- * Вхід під час трансляції (дошки `Desk-Auth-Stream`, `Phone-Auth-Stream`): вікно O-AUTH типу `form` —
+ * Вхід під час трансляції (дошки `Desk-Auth-Stream`, `Phone-Auth-Stream`): вікно O-AUTH типу `form` без підзаголовка
+ * (правка власника 2026-10-29: що трансляція грає далі — й так видно) —
  * десктоп: панель на місці чату; телефон: усередині вікна чату під плеєром (як O-NICK). Трансляція грає далі.
  * Кроки — ті самі, що на сторінці (`AuthSteps variant="stream"`): лист, код, помилки — усередині вікна.
  * Вхід у наявний акаунт закриває вікно й оголошує «Ти увійшов»; новий акаунт — «Акаунт створено» у вікні.
@@ -9,7 +10,7 @@
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
-import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
+import { useOverlay } from '@/components/shell/OverlayManager';
 import type { AuthIntent } from '@/lib/auth/sim';
 import type { SignInResult } from '@/stores/auth';
 import { AuthSteps } from './AuthSteps';
@@ -47,7 +48,6 @@ function AuthWindowContent({
 export function useOpenAuthWindow(): (mode?: AuthIntent) => void {
   const t = useTranslations('auth');
   const overlay = useOverlay();
-  const chatColumn = useChatColumn();
   const announce = useAnnounce();
 
   const open = useCallback(
@@ -60,7 +60,6 @@ export function useOpenAuthWindow(): (mode?: AuthIntent) => void {
         chrome: 'board',
         coral: true,
         title: mode === 'signup' ? t('signup.title') : t('signin.title'),
-        description: chatColumn ? t('stream.descDesk') : t('stream.descPhone'),
         content: (
           <AuthWindowContent
             key={mode}
@@ -76,7 +75,7 @@ export function useOpenAuthWindow(): (mode?: AuthIntent) => void {
         ),
       });
     },
-    [overlay, chatColumn, announce, t],
+    [overlay, announce, t],
   );
 
   return useCallback((mode?: AuthIntent) => open(mode), [open]);

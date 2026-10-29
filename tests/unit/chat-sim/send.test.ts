@@ -141,6 +141,18 @@ describe('фоновий потік (ambient)', () => {
   };
   const idle = T0 - 3 * 3_600 * SEC;
 
+  it('дехто з авторів згодом видаляє своє повідомлення (deleteAt через 15–45 с; приблизно 1 з 12)', () => {
+    const near = ambientBetween(script, [london], ['world'], T0 - 300 * SEC, T0 + 300 * SEC);
+    const marked = near.filter((m) => m.deleteAt !== undefined);
+    expect(marked.length).toBeGreaterThan(0);
+    expect(marked.length).toBeLessThan(near.length / 5);
+    for (const m of marked) {
+      expect(m.deleteAt! - m.createdAt).toBeGreaterThanOrEqual(15 * SEC);
+      expect(m.deleteAt! - m.createdAt).toBeLessThanOrEqual(45 * SEC);
+      expect(m.replyTo).toBeUndefined();
+    }
+  });
+
   it('детермінований: той самий проміжок — ті самі повідомлення з тими самими id', () => {
     const a = ambientBetween(script, [london], ['world'], idle, idle + 600 * SEC);
     const b = ambientBetween(script, [london], ['world'], idle, idle + 600 * SEC);

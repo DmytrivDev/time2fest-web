@@ -321,24 +321,34 @@ const PERKS = [
 /** Три головні можливості; решта — під «Що ще дає пас». */
 const MAIN_PERKS = 3;
 
+/** Рядок можливості: значок у колонці 40 px (на одній осі зі значком заголовка картки), назва й пояснення. */
+function PerkItem({ icon, name, text, dense }: { icon: AuthIconName; name: string; text: string; dense?: boolean }) {
+  return (
+    <li className={s.offerItem}>
+      <span aria-hidden="true" className={dense ? s.iconCol : undefined}>
+        <span className={cn(s.dot, s.yel, dense ? s.badgeXs : s.badgeSm)}>
+          <AuthIcon name={icon} size={dense ? 16 : 18} />
+        </span>
+      </span>
+      <span>
+        <span className={s.offerName}>{name}</span>
+        <span className={s.offerText}>{text}</span>
+      </span>
+    </li>
+  );
+}
+
 /**
- * Можливості пасу рядками з жовтими значками (як «Навіщо акаунт»). `from`/`to` — зріз списку;
- * `dense` — менші значки й текст (картка «Ще немає пасу?», рядок у вікні під трансляцією).
+ * Можливості пасу рядками з жовтими значками. `from`/`to` — зріз списку.
+ * `dense` — усередині картки: під тонкою лінією, значки на одній осі зі значком заголовка, текст — на одному рівні з ним
+ * (правка власника 2026-10-29: без «каскаду»).
  */
 export function PassPerks({ from = 0, to = PERKS.length, dense, id }: { from?: number; to?: number; dense?: boolean; id?: string }) {
   const t = useTranslations('auth.passOffer');
   return (
     <ul id={id} className={cn(s.offerList, dense && s.perksDense)} data-block="pass-perks">
       {PERKS.slice(from, to).map((it) => (
-        <li key={it.key} className={s.offerItem}>
-          <span aria-hidden="true" className={cn(s.dot, s.yel, dense ? s.badgeXs : s.badgeSm)}>
-            <AuthIcon name={it.icon} size={dense ? 16 : 18} />
-          </span>
-          <span>
-            <span className={s.offerName}>{t(it.key)}</span>
-            <span className={s.offerText}>{t(`${it.key}Text`)}</span>
-          </span>
-        </li>
+        <PerkItem key={it.key} icon={it.icon} name={t(it.key)} text={t(`${it.key}Text`)} dense={dense} />
       ))}
     </ul>
   );
@@ -380,7 +390,7 @@ export function PassHint({ className }: { className?: string }) {
           <AuthIcon name="ticket" />
         </span>
         <span>
-          <span id={`${uid}-t`} className={s.passHintTitle}>
+          <span id={`${uid}-t`} role="heading" aria-level={2} className={s.passHintTitle}>
             {t('title')}
           </span>
           <span className={s.passHintText}>{t('text')}</span>
@@ -466,7 +476,11 @@ export function PassRow({ mt }: { mt?: number }) {
   return (
     <div className={s.passRow} style={mtStyle(mt)} data-block="pass-row">
       <span className={s.passRowText}>
-        <AuthIcon name="ticket" size={18} />
+        <span aria-hidden="true" className={s.iconCol}>
+          <span className={cn(s.dot, s.yel, s.badgeXs)}>
+            <AuthIcon name="ticket" size={16} />
+          </span>
+        </span>
         <span>{t.rich('passRow', { price: formatUsd(PASS_PRICE), b: Bold })}</span>
       </span>
       {open ? <PassPerks id={`${uid}-more`} dense /> : null}
@@ -493,22 +507,31 @@ const ACCOUNT_PERKS = [
   { icon: 'ticket', key: 'purchases' },
 ] as const;
 
-/** «Навіщо акаунт» списком (вікно під трансляцією; на сторінці — ліва колонка `WhyCard`). */
+/**
+ * «Безплатний акаунт» карткою — так само зібрана, як картка пасу під нею (значок заголовка й рядків на одній осі),
+ * тож дві картки читаються як дві пропозиції поруч (вікно під трансляцією; на сторінці — ліва колонка `WhyCard`).
+ */
 export function AccountPerks() {
-  const t = useTranslations('auth.why');
+  const t = useTranslations('auth');
+  const uid = useId();
   return (
-    <ul className={s.offerList} data-block="account-perks">
-      {ACCOUNT_PERKS.map((it) => (
-        <li key={it.key} className={s.offerItem}>
-          <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeSm)}>
-            <AuthIcon name={it.icon} size={18} />
+    <section aria-labelledby={`${uid}-t`} className={s.accountCard} data-block="account-perks">
+      <div className={s.passHintHead}>
+        <span aria-hidden="true" className={cn(s.dot, s.grey, s.badgeMd)}>
+          <AuthIcon name="user" />
+        </span>
+        <span>
+          <span id={`${uid}-t`} role="heading" aria-level={2} className={s.passHintTitle}>
+            {t('stream.accountTitle')}
           </span>
-          <span>
-            <span className={s.offerName}>{t(it.key)}</span>
-            <span className={s.offerText}>{t(`${it.key}Text`)}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
+          <span className={s.passHintText}>{t('stream.accountText')}</span>
+        </span>
+      </div>
+      <ul className={cn(s.offerList, s.perksDense)}>
+        {ACCOUNT_PERKS.map((it) => (
+          <PerkItem key={it.key} icon={it.icon} name={t(`why.${it.key}`)} text={t(`why.${it.key}Text`)} dense />
+        ))}
+      </ul>
+    </section>
   );
 }

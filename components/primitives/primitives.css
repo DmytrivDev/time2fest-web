@@ -633,6 +633,60 @@ html[data-reduce-motion='true'] .t2f-spin {
 .t2f-mm-report:hover {
   color: var(--color-text);
 }
+/* Своє повідомлення: «Видалити повідомлення» (кораловий текст), підтвердження на місці. */
+.t2f-mm-delete {
+  justify-content: flex-start;
+  color: var(--color-primary);
+}
+.t2f-mm-confirm {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--spacing-touch-min);
+  margin: 0;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+.t2f-mm-confirm-row {
+  gap: 8px;
+  padding: 4px 8px 8px;
+}
+.t2f-mm-delete-yes,
+.t2f-mm-delete-no {
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+.t2f-mm-delete-yes {
+  background: var(--color-primary-fill);
+  color: var(--color-on-primary);
+}
+.t2f-mm-delete-yes:hover {
+  background: var(--color-primary-fill-hover);
+}
+.t2f-mm-delete-no {
+  border: 1px solid var(--color-border-strong);
+}
+/* Видалене автором повідомлення: тонкий приглушений рядок у стрічці (бачать усі). */
+.t2f-msg-deleted {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 1px 0;
+  padding: 4px 10px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+.t2f-msg-deleted > svg {
+  flex: 0 0 auto;
+}
+.t2f-msg-deleted time {
+  font-size: 12px;
+}
 /* «×» праворуч у рядку «Відповісти · Згадати»: 44×44, значок 20, приглушений. */
 .t2f-mm-close {
   flex: 0 0 auto;

@@ -15,6 +15,8 @@ export interface MessageActionHandlers {
   onReply?: (message: ChatMessage) => void;
   onMention?: (message: ChatMessage) => void;
   onReport?: (message: ChatMessage) => void;
+  /** Своє повідомлення: видалити назавжди. */
+  onDelete?: (message: ChatMessage) => void;
 }
 
 export interface ReactionsRowProps {

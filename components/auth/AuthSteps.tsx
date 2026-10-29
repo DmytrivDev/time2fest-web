@@ -232,7 +232,7 @@ function PerksStep({ flow }: { flow: AuthFlow }) {
       </button>
       <Title>{t('stream.perksTitle')}</Title>
       <AccountPerks />
-      <PassHint className={s.mt20} />
+      <PassHint className={s.mt12} />
       <button type="button" onClick={back} className={cn('t2f-focus', s.btn, s.coral, s.mt20)}>
         {flow.mode === 'signup' ? t('signup.submit') : t('signin.title')}
       </button>

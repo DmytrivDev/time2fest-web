@@ -124,6 +124,7 @@ export function Chat({
     () => messages.filter((m) => m.moderation !== 'hidden' || m.author?.isMine),
     [messages],
   );
+  const deletedIds = useMemo(() => new Set(messages.filter((m) => m.deleted).map((m) => m.id)), [messages]);
 
   // Меню «⋯»: перемикається тією ж кнопкою; зникає разом із повідомленням.
   const openMenu = useCallback((message: ChatMessage, trigger: HTMLElement) => {
@@ -517,7 +518,8 @@ export function Chat({
                       onAuthorFocus={() => setActiveId(m.id)}
                       onAuthorKeyDown={onAuthorKeyDown}
                       onReact={messageActions?.onReact}
-                      onOpenMenu={messageActions ? openMenu : undefined}
+                      onOpenMenu={messageActions && !m.deleted ? openMenu : undefined}
+                      quoteDeleted={!!m.replyTo && deletedIds.has(m.replyTo.id)}
                       menuOpen={menuMessage?.id === m.id}
                       menuAlways={messageActions?.menuAlways}
                     />
@@ -535,6 +537,7 @@ export function Chat({
                           onReply={messageActions?.onReply}
                           onMention={messageActions?.onMention}
                           onReport={messageActions?.onReport}
+                          onDelete={messageActions?.onDelete}
                         />
                       </li>
                     ) : null}
@@ -556,6 +559,7 @@ export function Chat({
               onReply={messageActions?.onReply}
               onMention={messageActions?.onMention}
               onReport={messageActions?.onReport}
+              onDelete={messageActions?.onDelete}
             />
           ) : null}
           {paused && !(manualPause || scrolledUp) ? (

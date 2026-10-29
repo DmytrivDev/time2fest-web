@@ -41,6 +41,8 @@ export interface MessageProps extends Pick<MessageActionHandlers, 'onReact'> {
   message: ChatMessage;
   /** Кнопка «⋯» відкриває меню повідомлення (його малює Chat у своєму шарі); без значення дій немає. */
   onOpenMenu?: (message: ChatMessage, trigger: HTMLElement) => void;
+  /** Повідомлення, на яке відповідали, видалено — у цитаті «Повідомлення видалено». */
+  quoteDeleted?: boolean;
   /** Меню цього повідомлення відкрито: рядок лишається підсвіченим, «⋯» натиснуто. */
   menuOpen?: boolean;
   /** Телефон: «⋯» завжди видно в куті, час лівіше нього. */
@@ -112,6 +114,7 @@ export function Message({
   lookup,
   tabStop = false,
   onOpenMenu,
+  quoteDeleted,
   menuOpen = false,
   menuAlways = false,
   onReact,
@@ -125,6 +128,29 @@ export function Message({
   const names = useTranslations('windows.emoji.names');
   const badges = useTranslations('primitives.badge');
   const time = formatClock(message.createdAt);
+
+  // Видалене автором: тонкий рядок замість повідомлення — бачать усі (своє — «Твоє повідомлення видалено»).
+  if (message.deleted) {
+    const own = !!message.author?.isMine;
+    return (
+      <li data-kind="deleted" data-own={own ? 'true' : undefined} data-msg-id={message.id} className={cn('t2f-msg-deleted', className)}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+        </svg>
+        {own || !message.author ? (
+          <span>{own ? t('deletedOwn') : t('deletedQuote')}</span>
+        ) : (
+          <span className="inline-flex min-w-0 items-center gap-1.5">
+            <Flag round code={message.author.flagCode} size="xs" decorative />
+            <span className="truncate">{t('deletedOther', { nick: message.author.nick })}</span>
+          </span>
+        )}
+        <time dateTime={new Date(message.createdAt).toISOString()} className="ms-auto">
+          {time}
+        </time>
+      </li>
+    );
+  }
 
   // Приховане модерацією бачить лише автор.
   if (message.moderation === 'hidden') {
@@ -391,7 +417,7 @@ export function Message({
           <span aria-hidden="true" className="t2f-quote-nick">
             {message.replyTo.nick}
           </span>
-          <span className="t2f-quote-text">{message.replyTo.excerpt}</span>
+          <span className="t2f-quote-text">{quoteDeleted ? t('deletedQuote') : message.replyTo.excerpt}</span>
         </p>
       ) : null}
       <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>

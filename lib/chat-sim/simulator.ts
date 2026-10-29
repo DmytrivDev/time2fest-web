@@ -62,6 +62,8 @@ export const DEFAULT_MAX_BATCH = 200;
 export const NEAR_MIDNIGHT_MS = 5 * 60_000;
 /** Стеля фонового потоку, повідомлень/с реального часу на кімнату (`contracts/chat.md`). */
 export const MAX_AMBIENT_PER_SEC = 40;
+/** Скільки фонових повідомлень на одне, яке автор згодом видалить (імітація; рішення власника 2026-10-29). */
+export const DELETE_ONE_IN = 12;
 
 // ── ULID-подібні ідентифікатори ────────────────────────────────────────────
 
@@ -351,6 +353,8 @@ export function ambientBetween(
         const author = authorOf(script, item.authorId);
         if (!author) continue;
         const reply = item.replyToPoolIndex !== undefined ? pool[item.replyToPoolIndex] : undefined;
+        // Приблизно кожне 12-те повідомлення (крім відповідей) автор видаляє за 15–45 с — у стрічці лишається рядок «видалено».
+        const deletes = !reply && hash32(createdAt, `del:${room}`) % DELETE_ONE_IN === 0;
         const replyAuthor = reply ? authorOf(script, reply.authorId) : undefined;
         out.push({
           id: messageId(createdAt, 1_024 + j, idx, room),
@@ -360,6 +364,7 @@ export function ambientBetween(
           author,
           text: item.text,
           moderation: 'ok',
+          ...(deletes ? { deleteAt: createdAt + 15_000 + (hj % 31) * 1_000 } : {}),
           ...(reply && replyAuthor
             ? { replyTo: { id: `ambient:${room}:${item.replyToPoolIndex}`, nick: replyAuthor.nick, excerpt: reply.text.slice(0, 60) } }
             : {}),

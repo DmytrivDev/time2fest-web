@@ -688,9 +688,18 @@
 .perksMore > .offerList {
   margin-top: 0;
 }
+/* Рядки всередині картки: під тонкою лінією, значки — у колонці 40 px (як значок заголовка), текст — на рівні з заголовком. */
 .perksDense {
   margin: 0;
-  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(252, 226, 134, 0.16);
+  gap: 12px;
+}
+.iconCol {
+  flex: 0 0 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
 }
 .perksDense .offerName {
   font-size: 14px;
@@ -726,14 +735,25 @@
 .passRowText {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   font-size: 14px;
   line-height: 1.4;
   color: var(--color-text-secondary);
 }
-.passRowText > svg {
-  color: var(--color-highlight);
-  flex: 0 0 auto;
+/* Картка «Безплатний акаунт» (вікно «Що дає акаунт»): та сама будова, що картка пасу, нейтральне тло. */
+.accountCard {
+  margin-top: 16px;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.accountCard .perksDense {
+  border-top-color: var(--color-border);
 }
 .passRowText b {
   color: var(--color-text);

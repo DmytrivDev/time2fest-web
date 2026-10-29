@@ -225,6 +225,10 @@ export interface ChatMessage {
   system?: SystemPayload;
   greeting?: GreetingPayload;
   moderation: 'ok' | 'hidden';
+  /** Автор видалив повідомлення назавжди: у стрічці — тонкий рядок «видалено» (рішення власника 2026-10-29). */
+  deleted?: boolean;
+  /** Імітатор: коли автор видалить це повідомлення (інші люди теж видаляють свої). */
+  deleteAt?: Ms;
 }
 
 // ── 1.10 Stamp, 1.11 Path ──────────────────────────────────────────────────

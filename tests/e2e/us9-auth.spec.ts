@@ -204,4 +204,28 @@ test.describe('S-AUTH · під час трансляції', () => {
     await page.getByRole('button', { name: 'Змінити нік і прапор' }).click();
     await expect(page.locator('[data-window="O-NICK"]')).toBeVisible();
   });
+
+  test('своє повідомлення: «⋯» — лише «Видалити повідомлення», підтвердження, рядок «Твоє повідомлення видалено»', async ({ page }) => {
+    await gotoAt(page, LIVE, 1);
+    await waitForTimeApi(page);
+    await page.evaluate(() => {
+      const k = 't2f:guest:v1';
+      const raw = JSON.parse(localStorage.getItem(k) ?? '{"state":{},"version":1}');
+      raw.state = { ...raw.state, nick: 'Тест', flagCode: 'CO' };
+      localStorage.setItem(k, JSON.stringify(raw));
+    });
+    await page.reload();
+    await waitForTimeApi(page);
+    if ((page.viewportSize()?.width ?? 0) < 768) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
+    await page.getByRole('textbox', { name: /Повідомлення в чат/ }).fill('Видали мене');
+    await page.getByRole('button', { name: /^Надіслати/ }).click();
+    await page.locator('[data-own="true"][data-kind="regular"] [data-msg-trigger]').last().click();
+    const menu = page.locator('[data-message-menu][data-own="true"]');
+    await expect(menu.getByRole('menuitem', { name: 'Поскаржитись' })).toHaveCount(0);
+    await menu.getByRole('menuitem', { name: 'Видалити повідомлення' }).click();
+    await expect(menu.getByText('Видалити назавжди? Повернути не вийде.')).toBeVisible();
+    await menu.getByRole('menuitem', { name: 'Видалити', exact: true }).click();
+    await expect(page.locator('[data-kind="deleted"][data-own="true"]')).toContainText('Твоє повідомлення видалено');
+    await expect(page.getByText('Видали мене')).toHaveCount(0);
+  });
 });

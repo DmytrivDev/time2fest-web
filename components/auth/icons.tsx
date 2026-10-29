@@ -92,6 +92,12 @@ const PATHS = {
       <circle cx="16.5" cy="12" r="2" />
     </>
   ),
+  user: (
+    <>
+      <circle cx="12" cy="8.5" r="4" />
+      <path d="M4 20 C5.5 15 18.5 15 20 20" />
+    </>
+  ),
   'chevron-left': <path d="M15 6l-6 6 6 6" />,
 } satisfies Record<string, ReactNode>;
 

@@ -40,6 +40,7 @@ export function useChatSimulator(rooms: readonly RoomId[]): void {
       if (!(now > 0)) return; // час ще невідомий (до першої синхронізації)
       const batch = sim.advance(now);
       if (batch.length) useChatFeed.getState().append(batch);
+      useChatFeed.getState().applyDeletions(now);
     };
     run();
     return clock.subscribe(run);
