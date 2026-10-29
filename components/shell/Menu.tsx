@@ -10,6 +10,7 @@ import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Logo } from '@/components/primitives/Logo';
 import { Switch } from '@/components/primitives/Switch';
+import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useGuestStore } from '@/stores/guest';
 
 export interface MenuLanguage {
@@ -37,6 +38,8 @@ export interface MenuProps {
   pausedPlace?: string;
   hasPass?: boolean;
   signedIn?: boolean;
+  /** «Увійти» гостя: сторінка входу або (`onSignIn`) вікно входу під трансляцією. */
+  onSignIn?: () => void;
   /** Штампів на цьому пристрої (підпис «Мій паспорт»). */
   stampCount?: number;
   /** Керований «Зменшити рух» (історії, тести); без нього — стор гостя. */
@@ -109,6 +112,7 @@ export function Menu({
   pausedPlace,
   hasPass = false,
   signedIn = false,
+  onSignIn,
   stampCount = 0,
   reducedMotion,
   onReducedMotionChange,
@@ -228,7 +232,18 @@ export function Menu({
               <div className="mx-1 mt-3 flex flex-col gap-2.5 rounded-lg bg-surface p-3">
                 <p className="text-caption text-text-secondary">{t('signInHint')}</p>
                 <Button variant="secondary" size="lg" asChild>
-                  <NextLink href="#" onClick={close}>
+                  <NextLink
+                    href="/login/"
+                    onClick={(e) => {
+                      if (onSignIn) {
+                        e.preventDefault();
+                        onSignIn();
+                      } else {
+                        rememberReturn(currentPath());
+                        close();
+                      }
+                    }}
+                  >
                     <Icon name="user" size={20} />
                     {t('signIn')}
                   </NextLink>

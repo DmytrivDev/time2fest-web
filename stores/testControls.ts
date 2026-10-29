@@ -1,6 +1,6 @@
 /**
  * Перемикачі прихованої панелі тестової збірки (contracts/time-machine.md):
- * результат імітованої оплати, «Чат недоступний», «Немає з’єднання», «Повільний режим», «Порожня кімната «Країна»».
+ * результат імітованої оплати, «Чат недоступний», «Немає з’єднання», «Повільний режим», «Порожня кімната «Країна»», вхід (недоступний, Google скасовано).
  * Не зберігаються; у робочій збірці лишаються значеннями за замовчуванням.
  */
 import { create } from 'zustand';
@@ -14,11 +14,17 @@ export interface TestControlsState {
   slowForcedSec: number;
   /** Кімнати «Країна» без чужих повідомлень — видно стан «Тут поки тихо». */
   emptyCountry: boolean;
+  /** Сервіс входу не відповідає — «Вхід тимчасово недоступний». */
+  authUnavailable: boolean;
+  /** Імітований Google повертає «скасовано». */
+  googleCancelled: boolean;
   setPayResult(r: PayResult): void;
   setChatAvailable(ok: boolean): void;
   setOfflineSimulated(v: boolean): void;
   setSlowForcedSec(sec: number): void;
   setEmptyCountry(v: boolean): void;
+  setAuthUnavailable(v: boolean): void;
+  setGoogleCancelled(v: boolean): void;
 }
 
 export const useTestControls = create<TestControlsState>()((set) => ({
@@ -27,9 +33,13 @@ export const useTestControls = create<TestControlsState>()((set) => ({
   offlineSimulated: false,
   slowForcedSec: 0,
   emptyCountry: false,
+  authUnavailable: false,
+  googleCancelled: false,
   setPayResult: (payResult) => set({ payResult }),
   setChatAvailable: (chatAvailable) => set({ chatAvailable }),
   setOfflineSimulated: (offlineSimulated) => set({ offlineSimulated }),
   setSlowForcedSec: (slowForcedSec) => set({ slowForcedSec }),
   setEmptyCountry: (emptyCountry) => set({ emptyCountry }),
+  setAuthUnavailable: (authUnavailable) => set({ authUnavailable }),
+  setGoogleCancelled: (googleCancelled) => set({ googleCancelled }),
 }));

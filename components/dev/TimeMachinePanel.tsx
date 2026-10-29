@@ -19,6 +19,7 @@ import { currentAirEvent } from '@/lib/engine/currentAirEvent';
 import { computeJumps, JUMP_IDS, type JumpId } from '@/lib/time/jumps';
 import { parseIsoWithOffset, parseMachineParams } from '@/lib/time/params';
 import { useNow, useTimeMachine, useTimeSource } from '@/lib/time/TimeProvider';
+import { useAuthStore } from '@/stores/auth';
 import { resetGuest } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import styles from './time-machine-panel.module.css';
@@ -135,6 +136,9 @@ function PanelBody({
   const offline = useTestControls((s) => s.offlineSimulated);
   const slowForced = useTestControls((s) => s.slowForcedSec);
   const emptyCountry = useTestControls((s) => s.emptyCountry);
+  const authUnavailable = useTestControls((s) => s.authUnavailable);
+  const googleCancelled = useTestControls((s) => s.googleCancelled);
+  const signedIn = useAuthStore((s) => s.user !== null);
 
   useEffect(() => {
     ref.current?.focus({ preventScroll: true });
@@ -313,6 +317,21 @@ function PanelBody({
           checked={emptyCountry}
           onCheckedChange={(v) => useTestControls.getState().setEmptyCountry(v)}
         />
+        <Switch
+          label={t('authUnavailable')}
+          checked={authUnavailable}
+          onCheckedChange={(v) => useTestControls.getState().setAuthUnavailable(v)}
+        />
+        <Switch
+          label={t('googleCancelled')}
+          checked={googleCancelled}
+          onCheckedChange={(v) => useTestControls.getState().setGoogleCancelled(v)}
+        />
+        {signedIn ? (
+          <Button variant="secondary" compact onClick={() => useAuthStore.getState().signOut()} className="self-start">
+            {t('signOut')}
+          </Button>
+        ) : null}
       </div>
     </section>
   );

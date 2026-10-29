@@ -3,6 +3,7 @@
  * Встановлюється лише за `IS_TEST_BUILD` (див. `TimeProvider`).
  */
 import type { ISO, PayResult } from '@/lib/data/types';
+import { useAuthStore, type AuthLetter } from '@/stores/auth';
 import { resetGuest } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { parseIsoWithOffset } from './params';
@@ -19,6 +20,11 @@ export interface T2FTestApi {
   setChatAvailable(ok: boolean): void;
   setChatSlow(seconds: number): void;
   setChatEmpty(on: boolean): void;
+  /** Вхід (імітація): сервіс недоступний, Google скасовано, вийти, останній лист (код і посилання). */
+  setAuthUnavailable(on: boolean): void;
+  setGoogleCancelled(on: boolean): void;
+  signOut(): void;
+  lastLetter(): AuthLetter | null;
 }
 
 declare global {
@@ -53,6 +59,10 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     setChatAvailable: (ok) => useTestControls.getState().setChatAvailable(ok),
     setChatSlow: (seconds) => useTestControls.getState().setSlowForcedSec(seconds),
     setChatEmpty: (on) => useTestControls.getState().setEmptyCountry(on),
+    setAuthUnavailable: (on) => useTestControls.getState().setAuthUnavailable(on),
+    setGoogleCancelled: (on) => useTestControls.getState().setGoogleCancelled(on),
+    signOut: () => useAuthStore.getState().signOut(),
+    lastLetter: () => useAuthStore.getState().letter,
   };
 }
 

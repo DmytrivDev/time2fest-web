@@ -1,0 +1,59 @@
+/**
+ * Імітація входу без бекенда (рішення 2026-10-29, `auth-2026-10-29.md`): лист із посиланням і 6-значним кодом,
+ * Google — одразу успішний (або «скасовано» з машини часу). Справжні Google, листи й сесії — у технічному завданні.
+ * Правила, які покаже й справжній вхід: лист діє 15 хвилин і спрацьовує раз; новий лист — не частіше ніж раз на хвилину;
+ * не більше 3 листів за 10 хвилин (далі «Забагато спроб» до часу, коли найстаріший лист вийде з вікна);
+ * 5 невірних кодів — код згорає.
+ */
+export const LETTER_TTL_MS = 15 * 60_000;
+export const RESEND_GAP_MS = 60_000;
+export const SEND_LIMIT = 3;
+export const SEND_WINDOW_MS = 10 * 60_000;
+export const MAX_CODE_TRIES = 5;
+/** Адреса імітованого акаунта Google. */
+export const GOOGLE_DEMO_EMAIL = 'you@gmail.com';
+/** Скільки триває імітований перехід до Google. */
+export const GOOGLE_DELAY_MS = 1_500;
+
+export type AuthIntent = 'signin' | 'signup';
+
+/** Проста перевірка: щось@домен.зона, без пробілів. */
+export function isEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
+}
+
+export function normalizeEmail(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function randomDigits(n: number): string {
+  let out = '';
+  try {
+    const buf = new Uint32Array(n);
+    crypto.getRandomValues(buf);
+    for (const v of buf) out += String(v % 10);
+    return out;
+  } catch {
+    for (let i = 0; i < n; i++) out += String(Math.floor(Math.random() * 10));
+    return out;
+  }
+}
+
+export function newCode(): string {
+  return randomDigits(6);
+}
+
+export function newToken(): string {
+  return randomDigits(12);
+}
+
+/** «23:42» — час людини (локальний пояс браузера). */
+export function formatClock(ms: number): string {
+  return new Intl.DateTimeFormat('uk-UA', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(ms);
+}
+
+/** «0:42» для відліку до нового листа. */
+export function formatCountdown(ms: number): string {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}

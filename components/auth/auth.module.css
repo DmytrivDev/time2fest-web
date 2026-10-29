@@ -1,0 +1,833 @@
+/*
+ * Вхід і реєстрація за дошками `Phone-Auth-*` / `Desk-Auth-*` (полотно «Візуальний дизайн», розділ «Вхід і реєстрація»).
+ * Розміри — як на дошках: телефон 390 (заголовок 28), десктоп ≥ 1024 — дві колонки 1040 (картка 440, заголовок 32).
+ */
+
+/* ---------- сторінка ---------- */
+.main {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 4px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+.back {
+  align-self: flex-start;
+  min-height: 44px;
+  margin-left: -6px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+}
+.back:hover {
+  color: var(--color-text);
+}
+.layout {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.side {
+  display: none;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1024px) {
+  .main {
+    padding: 12px 32px 64px;
+  }
+  .layout {
+    max-width: 1040px;
+    margin: 32px auto 0;
+    flex-direction: row;
+    gap: 48px;
+    align-items: stretch;
+  }
+  .side {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .card {
+    flex: 0 0 440px;
+    box-sizing: border-box;
+    padding: 32px;
+    border-radius: 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+  .cardWide {
+    flex-basis: 520px;
+  }
+  /* Реєстрація: пропозиція пасу — у лівій колонці, тож у картці її немає. */
+  .phoneOnly {
+    display: none !important;
+  }
+}
+
+/* ---------- «Навіщо акаунт» (ліва колонка десктопа) ---------- */
+.gold {
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(ellipse at 85% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
+    linear-gradient(160deg, #23211b 0%, var(--color-surface) 60%);
+}
+.why {
+  flex: 1 1 0;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.whyTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.whyList {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.whyItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.whyItem > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.whyName {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.whyText {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.whyFree {
+  margin: auto 0 0;
+  padding-top: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.whyFree svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+/* ---------- значки ---------- */
+.badge,
+.dot {
+  flex: 0 0 auto;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.badge {
+  align-self: flex-start;
+  width: 56px;
+  height: 56px;
+}
+.badgeSm {
+  width: 36px;
+  height: 36px;
+}
+.badgeMd {
+  width: 40px;
+  height: 40px;
+}
+.badgeWhy {
+  width: 44px;
+  height: 44px;
+}
+.yel {
+  background: rgba(252, 226, 134, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(252, 226, 134, 0.25);
+  color: var(--color-highlight);
+}
+.grey {
+  background: var(--color-surface-raised);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text-secondary);
+}
+.pageTop {
+  margin-top: 8px;
+}
+@media (min-width: 1024px) {
+  .pageTop {
+    margin-top: 0;
+  }
+}
+
+/* ---------- текст ---------- */
+.h1 {
+  margin: 8px 0 0;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.h1AfterBadge {
+  margin-top: 16px;
+}
+@media (min-width: 1024px) {
+  .h1 {
+    font-size: 32px;
+  }
+  .card > .h1:first-child {
+    margin-top: 0;
+  }
+}
+.lead {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.lead b,
+.strong {
+  font-weight: 700;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.hint b {
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.center {
+  text-align: center;
+}
+.note {
+  margin: 20px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.note svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.error {
+  margin: 12px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.error svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.age {
+  margin: 20px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.age a {
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 2px;
+}
+.sep {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.sep::before,
+.sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+.switchRow {
+  margin: 16px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 6px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.switchRow a,
+.switchRow button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+/* ---------- поля ---------- */
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.field {
+  margin-top: 6px;
+}
+
+/* ---------- кнопки (як на дошках: 48 px, 600/16, радіус 10) ---------- */
+.btn {
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+.coral {
+  border: 0;
+  background: var(--color-primary-fill);
+  color: var(--color-on-primary);
+  gap: 8px;
+}
+.coral:hover {
+  background: var(--color-primary-fill-hover);
+}
+.second {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.ghost {
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+}
+.second:hover,
+.ghost:hover {
+  background: #2c2c31;
+}
+/* Пас — спокійна кнопка з жовтою межею (рішення 2026-10-29: коралова лише «Створити акаунт»). */
+.passBtn {
+  border: 1px solid var(--color-highlight);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.passBtn:hover {
+  background: #2c2c31;
+}
+.disabled,
+.btn[aria-disabled='true'] {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.linkBtn {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.linkStart {
+  align-self: flex-start;
+  margin-left: -4px;
+}
+.mt8 {
+  margin-top: 8px;
+}
+.mt12 {
+  margin-top: 12px;
+}
+.mt16 {
+  margin-top: 16px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.mt24 {
+  margin-top: 24px;
+}
+
+/* Реєстрація: Google після пропозиції пасу (телефон) чи після вступу (десктоп). */
+.signupGoogle {
+  margin-top: 16px;
+}
+@media (min-width: 1024px) {
+  .signupGoogle {
+    margin-top: 24px;
+  }
+}
+
+/* ---------- Google ---------- */
+.progress {
+  margin-top: 20px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-surface-raised);
+  overflow: hidden;
+}
+.progress > span {
+  display: block;
+  width: 45%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--color-highlight);
+  animation: t2f-auth-progress 1.4s ease-in-out infinite;
+}
+@keyframes t2f-auth-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(230%);
+  }
+}
+/* «Зменшити рух» — атрибут на <html> (styles/motion.css). */
+:global([data-reduce-motion='true']) .progress > span,
+:global([data-reduce-motion='true']) .otpCaret {
+  animation: none;
+}
+
+/* ---------- код ---------- */
+.otp {
+  position: relative;
+  margin-top: 6px;
+}
+.otpInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;
+  caret-color: transparent;
+  cursor: text;
+}
+.otpCells {
+  display: flex;
+  gap: 8px;
+}
+.otpCell {
+  flex: 1 1 0;
+  height: 56px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.otpFilled {
+  border-color: var(--color-border-strong);
+}
+.otpActive {
+  border: 2px solid var(--color-highlight);
+}
+.otpCaret {
+  width: 2px;
+  height: 26px;
+  background: var(--color-text);
+  animation: t2f-auth-caret 1s steps(1) infinite;
+}
+@keyframes t2f-auth-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.otpError .otpCell {
+  border: 1px solid var(--color-primary);
+}
+.codeQ {
+  margin: 24px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* ---------- плашки ---------- */
+.alertBox {
+  margin-top: 20px;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(249, 74, 81, 0.08);
+  border: 1px solid rgba(249, 74, 81, 0.4);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.alertBox > svg {
+  color: var(--color-primary);
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.boxBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.boxTitle {
+  font-weight: 700;
+  font-size: 16px;
+}
+.boxText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.boxText b {
+  color: var(--color-text);
+}
+.infoBox {
+  margin-top: 24px;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.infoBox .boxBody {
+  gap: 4px;
+}
+@media (min-width: 1024px) {
+  .infoBox {
+    background: var(--color-background);
+  }
+}
+
+/* ---------- пас ---------- */
+.passHint {
+  margin-top: 12px;
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.passHintHead {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.passHintHead > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.passHintTitle {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.passHintText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.priceSm {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.priceNote {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.pair {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pair > * {
+  flex: 1 1 0;
+  white-space: nowrap;
+}
+.offer {
+  box-sizing: border-box;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1024px) {
+  .offer {
+    padding: 28px;
+  }
+  .side > .offer {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 40px;
+  }
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-highlight);
+}
+.offerTitle {
+  margin: 10px 0 0;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 1024px) {
+  .offerTitle {
+    font-size: 24px;
+  }
+}
+.offerList {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.offerItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.offerItem > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.offerName {
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.35;
+}
+.offerText {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.priceLg {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.priceLgNote {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.passRow {
+  margin-top: 8px;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--color-surface-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.passRowText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+.passRowText > svg {
+  color: var(--color-highlight);
+  flex: 0 0 auto;
+}
+.passRowText b {
+  color: var(--color-text);
+}
+.passRow .btn {
+  min-height: 44px;
+  font-size: 15px;
+}
+.passRow .ghost {
+  background: transparent;
+}
+.passRow .passBtn {
+  background: transparent;
+}
+
+/* ---------- «Акаунт створено» ---------- */
+.facts {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fact {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.nickPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: var(--color-surface-raised);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* ---------- вікно під час трансляції ---------- */
+.stream {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px 16px;
+}
+.stream .h1 {
+  font-size: 22px;
+}
+.stream .badge {
+  width: 44px;
+  height: 44px;
+}
+.streamLead {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- тестова пошта (лише тестова збірка) ---------- */
+.mailbox {
+  margin-top: 20px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px dashed var(--color-border-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.mailboxTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.mailboxCode {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.15em;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.mailbox .pair .btn {
+  min-height: 40px;
+  font-size: 13px;
+}
+@media (max-width: 767px) {
+  /* Телефон (дошка Phone-Auth-Stream): під плеєром місця мало — без вступного рядка. */
+  .streamLead {
+    display: none;
+  }
+}

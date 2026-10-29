@@ -75,6 +75,11 @@
   color: var(--color-text);
   font-weight: 600;
 }
+/* Сторінка входу (`Desk-Auth`): кнопка «Увійти» — поточна, з піднятим тлом. */
+.signIn[aria-current='page'],
+.iconBtn[aria-current='page'] {
+  background: var(--color-surface-raised);
+}
 .iconBtn {
   display: inline-flex;
   flex: none;

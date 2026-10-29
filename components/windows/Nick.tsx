@@ -11,7 +11,7 @@
  *   й повернутись до «Змінити». Круглі прапори. Десктоп: список лежить поверх нижньої частини, висота панелі не
  *   змінюється, зменшується лише список; телефон: список у потоці й зсуває все нижче;
  * - «У чаті:» + чип (круглий прапор і нік; чип переходить на новий рядок, але нік не переноситься й не обрізається);
- * - coral «Готово» (єдина коралова кнопка), «Увійти», «Оформити пас» (імітована оплата), «Акаунт — з 13 років (16 у ЄС) ·
+ * - coral «Готово» (єдина коралова кнопка), «Увійти» (вікно входу O-AUTH), «Оформити пас» (імітована оплата), «Акаунт — з 13 років (16 у ЄС) ·
  *   Умови й правила чату» (посилання на `/rules/`).
  * Текст повідомлення, заради якого відкрито вікно, лишається в полі чату — вікно про нього не знає.
  */
@@ -47,6 +47,8 @@ export interface NickProps {
   /** Примусовий стан помилки (історії, сервер): `taken` / `forbidden`. */
   forcedIssue?: Extract<NickIssue, 'taken' | 'forbidden'>;
   onDone: (result: NickResult) => void;
+  /** «Увійти» — вікно входу (O-AUTH) на місці цього. */
+  onSignIn?: () => void;
   className?: string;
 }
 
@@ -58,6 +60,7 @@ export function Nick({
   takenNicks = [],
   forcedIssue,
   onDone,
+  onSignIn,
   className,
 }: NickProps) {
   const t = useTranslations('windows.nick');
@@ -197,8 +200,7 @@ export function Nick({
             {t('done')}
           </Button>
           <div className="flex gap-2">
-            {/* Вхід — поза областю цієї збірки (як у шапці): кнопка на місці. */}
-            <Button type="button" className="min-h-touch-min flex-1">
+            <Button type="button" className="min-h-touch-min flex-1" onClick={onSignIn}>
               {t('signIn')}
             </Button>
             <Button

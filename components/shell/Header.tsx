@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
+import type { MouseEvent } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import styles from './header.module.css';
@@ -26,6 +27,11 @@ export interface HeaderProps {
   /** Відкрити панель мови (планшет, десктоп) — панель на місці чату, не на відео. */
   onLanguageClick?: () => void;
   languageOpen?: boolean;
+  /** «Увійти»: сторінка входу; `onSignInClick` може відкрити вхід вікном (трансляція грає) — `preventDefault`. */
+  signInHref?: string;
+  /** Сторінка входу відкрита — «Увійти» позначено поточною. */
+  signInCurrent?: boolean;
+  onSignInClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
   className?: string;
 }
 
@@ -46,6 +52,9 @@ export function Header({
   menuOpen = false,
   onLanguageClick,
   languageOpen = false,
+  signInHref = '/login/',
+  signInCurrent = false,
+  onSignInClick,
   className,
 }: HeaderProps) {
   const t = useTranslations('header');
@@ -109,7 +118,7 @@ export function Header({
           {hasPass ? t('passFullActive') : t('passFull')}
         </NextLink>
 
-        {/* Вхід / профіль — інертні (наступна область). */}
+        {/* Вхід — сторінка `/login/` (або вікно під час трансляції); профіль — наступна ітерація (меню профілю). */}
         {user ? (
           <NextLink href="#" aria-label={t('profile', { name: user.name })} className={cn('t2f-focus', styles.iconBtn)}>
             <span aria-hidden="true" className={styles.avatar}>
@@ -118,10 +127,10 @@ export function Header({
           </NextLink>
         ) : (
           <>
-            <NextLink href="#" aria-label={t('signIn')} className={cn('t2f-focus', styles.iconBtn, styles.phoneTablet)}>
+            <NextLink href={signInHref} onClick={onSignInClick} aria-current={signInCurrent ? 'page' : undefined} aria-label={t('signIn')} className={cn('t2f-focus', styles.iconBtn, styles.phoneTablet)}>
               <Icon name="user" size={22} />
             </NextLink>
-            <NextLink href="#" className={cn('t2f-focus', styles.btn, styles.signIn, styles.deskOnly)}>
+            <NextLink href={signInHref} onClick={onSignInClick} aria-current={signInCurrent ? 'page' : undefined} className={cn('t2f-focus', styles.btn, styles.signIn, styles.deskOnly)}>
               <Icon name="user" size={18} />
               {t('signIn')}
             </NextLink>

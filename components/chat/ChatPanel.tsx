@@ -11,6 +11,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
 import { passInfoSpec } from '@/components/offers/OfferWindows';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
@@ -87,6 +88,7 @@ export function ChatPanel({
   const clock = useClock();
   const announce = useAnnounce();
   const overlay = useOverlay();
+  const openAuthWindow = useOpenAuthWindow();
   const column = useChatColumn();
   const source = useTimeSource();
   const now = useNow();
@@ -291,6 +293,7 @@ export function ChatPanel({
             detectedFlag={detected}
             flags={flagOptions}
             takenNicks={takenNicks}
+            onSignIn={() => openAuthWindow()}
             onDone={({ nick, flagCode }) => {
               setNick(nick, flagCode);
               overlay.close(NICK_WINDOW_ID);
@@ -300,7 +303,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, flagOptions, takenNicks, setNick, setDetectedFlag, trySend, focusField],
+    [overlay, t, flagOptions, takenNicks, setNick, setDetectedFlag, trySend, focusField, openAuthWindow],
   );
 
   const submit = useCallback(

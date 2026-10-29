@@ -1,9 +1,12 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
+import { useHeaderUser } from '@/components/auth/session';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
+import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { usePlayer, usePlayerActions } from '@/lib/player/PlayerProvider';
 import { Header, type HeaderProps } from './Header';
 import { Menu, MENU_LANGUAGES } from './Menu';
@@ -20,8 +23,10 @@ export interface ShellHeaderProps extends Pick<HeaderProps, 'current' | 'hasPass
 /**
  * Хедер макета `(live)` з підключеним повноекранним меню (телефон, планшет) і панеллю мови (планшет-альбом, десктоп).
  * Відкриття меню ставить плеєр на паузу й закриває будь-яке відкрите вікно; закриття — продовжує, якщо відео грало.
+ * «Увійти»: трансляція грає — вікно входу (панель на місці чату / аркуш під плеєром, відео не зупиняється);
+ * інакше — сторінка `/login/` з поверненням сюди ж.
  */
-export function ShellHeader({ current: currentProp, hasPass, user, pausedPlace }: ShellHeaderProps) {
+export function ShellHeader({ current: currentProp, hasPass, user: userProp, pausedPlace }: ShellHeaderProps) {
   const t = useTranslations('menu');
   // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
   const pathname = usePathname();
@@ -32,6 +37,30 @@ export function ShellHeader({ current: currentProp, hasPass, user, pausedPlace }
   const { status } = usePlayer();
   const { pause, play } = usePlayerActions();
   const resumeOnClose = useRef(false);
+  const sessionUser = useHeaderUser();
+  const user = userProp ?? sessionUser;
+  const openAuthWindow = useOpenAuthWindow();
+  const router = useRouter();
+
+  const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (status === 'playing') {
+      e.preventDefault();
+      openAuthWindow();
+      return;
+    }
+    rememberReturn(currentPath());
+  };
+  // Меню ставить відео на паузу: «грало» — це стан до відкриття меню.
+  const onMenuSignIn = () => {
+    const wasPlaying = resumeOnClose.current;
+    onMenuChange(false);
+    if (wasPlaying) {
+      openAuthWindow();
+      return;
+    }
+    rememberReturn(currentPath());
+    router.push('/login/');
+  };
 
   const onMenuChange = (open: boolean) => {
     if (open) {
@@ -82,6 +111,7 @@ export function ShellHeader({ current: currentProp, hasPass, user, pausedPlace }
         menuOpen={menuOpen}
         onLanguageClick={openLanguage}
         languageOpen={languageOpen}
+        onSignInClick={onSignInClick}
       />
       <Menu
         open={menuOpen}
@@ -89,6 +119,7 @@ export function ShellHeader({ current: currentProp, hasPass, user, pausedPlace }
         current={current}
         hasPass={hasPass}
         signedIn={Boolean(user)}
+        onSignIn={onMenuSignIn}
         language={language}
         onLanguageChange={setLanguage}
         pausedPlace={pausedPlace}
