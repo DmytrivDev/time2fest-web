@@ -149,7 +149,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const expanded = useChatDock((s) => s.expanded);
   const overlay = useOverlay();
   // Відкрите вікно покупки «Першого ряду» — окремий шар; вікно чату під ним не змінюється.
-  const seat = overlay.current?.kind === 'accent';
+  const seat = overlay.current?.kind === 'accent' || !!overlay.current?.separate;
   const open = expanded;
   const [seatDy, setSeatDy] = useState(0);
   const { expand, collapse } = useChatDockControls();

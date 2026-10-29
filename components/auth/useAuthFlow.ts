@@ -12,6 +12,8 @@ import { useTestControls } from '@/stores/testControls';
 
 export type AuthStep =
   | { kind: 'form' }
+  /** Вікно під трансляцією: «Що дає акаунт» (і пас) замість форми. */
+  | { kind: 'perks' }
   | { kind: 'google' }
   | { kind: 'sent' }
   | { kind: 'code' }

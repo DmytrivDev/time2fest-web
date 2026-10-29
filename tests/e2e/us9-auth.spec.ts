@@ -1,7 +1,8 @@
 /**
  * Вхід і реєстрація (S-AUTH, рішення 2026-10-29; дошки `Phone-Auth-*`, `Desk-Auth-*`) на імітації:
  * сторінка `/login/` і `/signup/` (лист, код, помилки, «Акаунт створено», посилання з листа),
- * вхід під час трансляції — вікно на місці O-NICK, після входу аватар у хедері.
+ * вхід під час трансляції — вікно на місці O-NICK, після входу аватар у хедері; на телефоні вікно, відкрите при згорнутому
+ * чаті, — окремий шар, чат не розгортається.
  *
  * ПОКИ НЕ ЗАПУСКАЄТЬСЯ: рішення власника 2026-10-27 — e2e пишемо, але не проганяємо; перевірка — typecheck, lint, юніти, build.
  */
@@ -47,15 +48,17 @@ test.describe('S-AUTH · сторінка', () => {
     await expect(page.locator('[data-block="pass-hint"]').getByText('$4,99')).toBeVisible();
     // «Що дає пас» розгортає можливості на місці.
     await page.getByRole('button', { name: 'Що дає пас' }).click();
-    await expect(page.getByRole('button', { name: 'Що дає пас' })).toHaveAttribute('aria-expanded', 'true');
+    // Розгорнуто — кнопка стає «Згорнути».
+    await expect(page.getByRole('button', { name: 'Згорнути' })).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('[data-block="pass-hint"] [data-block="pass-perks"]')).toBeVisible();
     await expectAxeClean(page);
   });
 
-  test('реєстрація: коралова «Створити акаунт», пас — спокійна кнопка', async ({ page }) => {
+  test('реєстрація: як вхід — картка «Ще немає пасу?» під формою, коралова «Створити акаунт»', async ({ page }) => {
     await fresh(page, '/signup/');
     await expect(page.getByRole('heading', { level: 1, name: 'Створити акаунт' })).toBeVisible();
-    await expect(page.locator('[data-block="pass-offer"]').filter({ visible: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Оформити пас — $4,99' }).filter({ visible: true })).toBeVisible();
+    await expect(page.locator('[data-block="pass-hint"]')).toBeVisible();
+    await expect(page.locator('[data-block="pass-offer"]')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Створити акаунт', exact: true })).toBeVisible();
     await expectAxeClean(page);
   });
@@ -168,6 +171,11 @@ test.describe('S-AUTH · під час трансляції', () => {
     const win = page.locator('[data-window="O-AUTH"]');
     await expect(win.getByRole('button', { name: 'Продовжити з Google' })).toBeVisible();
     await expect(win.locator('[data-block="pass-row"]')).toBeVisible();
+    // «Що дає акаунт» — можливості акаунта й картка пасу замість форми; «Назад» повертає.
+    await win.getByRole('button', { name: 'Що дає акаунт' }).click();
+    await expect(win.locator('[data-block="account-perks"]')).toBeVisible();
+    await expect(win.locator('[data-block="pass-hint"]')).toBeVisible();
+    await win.getByRole('button', { name: 'Назад' }).click();
     await win.getByRole('button', { name: 'Створити акаунт' }).click();
     await expect(page.locator('[data-window="O-AUTH"] [data-auth-mode="signup"]')).toBeVisible();
     await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Увійти' }).click();
@@ -176,5 +184,24 @@ test.describe('S-AUTH · під час трансляції', () => {
     await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Повернутися до трансляції' }).click();
     await expect(page.locator('[data-window="O-AUTH"]')).toHaveCount(0);
     await expect(page.getByRole('link', { name: /Профіль/ })).toBeVisible();
+  });
+
+  test('свій нік у панелі автора — олівець відкриває «Нік і прапор»', async ({ page }) => {
+    await gotoAt(page, LIVE, 1);
+    await waitForTimeApi(page);
+    await page.evaluate(() => {
+      const k = 't2f:guest:v1';
+      const raw = JSON.parse(localStorage.getItem(k) ?? '{"state":{},"version":1}');
+      raw.state = { ...raw.state, nick: 'Тест', flagCode: 'CO' };
+      localStorage.setItem(k, JSON.stringify(raw));
+    });
+    await page.reload();
+    await waitForTimeApi(page);
+    if ((page.viewportSize()?.width ?? 0) < 768) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
+    await page.getByRole('textbox', { name: /Повідомлення в чат/ }).fill('Привіт');
+    await page.getByRole('button', { name: /^Надіслати/ }).click();
+    await page.locator('[data-own="true"] [data-chat-author]').last().click();
+    await page.getByRole('button', { name: 'Змінити нік і прапор' }).click();
+    await expect(page.locator('[data-window="O-NICK"]')).toBeVisible();
   });
 });

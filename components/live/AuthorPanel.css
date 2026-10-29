@@ -193,3 +193,22 @@
   line-height: 1.4;
   color: var(--color-text-secondary);
 }
+
+/* Своє повідомлення: олівець між ніком і «Ти» — змінити нік і прапор. */
+.t2f-author-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: -10px -8px;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.t2f-author-edit:hover {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}

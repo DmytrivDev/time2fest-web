@@ -103,7 +103,7 @@ export function ChatSlotPanel({
             >
               <div className="min-w-0 flex-1 pt-1.5">
                 <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
-                {description ? <Dialog.Description className="text-caption text-text-muted">{description}</Dialog.Description> : null}
+                {description ? <Dialog.Description className="mt-1 text-caption text-text-muted">{description}</Dialog.Description> : null}
               </div>
               <Dialog.Close asChild>
                 <IconButton icon="close" aria-label={closeLabel} />

@@ -85,6 +85,13 @@ const PATHS = {
     </>
   ),
   spark: <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18" />,
+  card: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M7 10h6M7 14h4" />
+      <circle cx="16.5" cy="12" r="2" />
+    </>
+  ),
   'chevron-left': <path d="M15 6l-6 6 6 6" />,
 } satisfies Record<string, ReactNode>;
 

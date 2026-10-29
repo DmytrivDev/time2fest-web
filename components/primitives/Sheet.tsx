@@ -162,7 +162,7 @@ export function Sheet({
             <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="">
               <div className="min-w-0 flex-1 pt-1.5">
                 <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
-                {description ? <Dialog.Description className="text-caption text-text-muted">{description}</Dialog.Description> : null}
+                {description ? <Dialog.Description className="mt-1 text-caption text-text-muted">{description}</Dialog.Description> : null}
               </div>
               <Dialog.Close asChild>
                 <IconButton icon="close" aria-label={closeLabel} />

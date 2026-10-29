@@ -55,7 +55,8 @@ export type IconName =
   | 'at'
   | 'flag'
   | 'lock'
-  | 'seat';
+  | 'seat'
+  | 'pencil';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -282,6 +283,12 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
       <path d="M8 8a5.6 5.6 0 0 0 0 8M16 8a5.6 5.6 0 0 1 0 8M5 5a9.9 9.9 0 0 0 0 14M19 5a9.9 9.9 0 0 1 0 14" />
+    </>
+  ),
+  pencil: (
+    <>
+      <path d="M4 20h4L19 9l-4-4L4 16z" />
+      <path d="M13.5 6.5l4 4" />
     </>
   ),
 };

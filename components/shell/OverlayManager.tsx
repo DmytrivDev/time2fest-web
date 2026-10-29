@@ -38,20 +38,26 @@ export interface OverlaySpec {
   coral?: boolean;
   /** Події шини, після яких вікно закривається саме. */
   closeOn?: UiEventType[];
-  /** Вікно чату (O-NICK, O-AUTHOR, правила, «Моя емоція»): на телефоні відкривається всередині розгорнутого вікна чату. */
+  /**
+   * Вікно чату (O-NICK, O-AUTHOR, правила, «Моя емоція», вхід O-AUTH): на телефоні — усередині вікна чату, якщо воно вже
+   * розгорнуте; якщо згорнуте — окремим шаром поверх сторінки (`separate`), сам чат не розгортається (правка 2026-10-29).
+   */
   inChat?: boolean;
+  /** Окремий шар на телефоні (як вікно покупки «Першого ряду»); ставить сам менеджер у `open`. */
+  separate?: boolean;
   /** Викликається, коли вікно закрито (людиною, заміною чи подією). */
   onClose?: () => void;
 }
 
 /**
  * Розміщення за типом і наявністю колонки чату. Телефон з вікном чату внизу: вікна чату — усередині нього (`dock`),
- * вікно покупки «Першого ряду» (`accent`) — окремим шаром поверх чату (`seat`, рішення 2026-10-29).
+ * вікно покупки «Першого ряду» (`accent`) і вікна, відкриті при згорнутому чаті (`separate`), — окремим шаром поверх
+ * чату (`seat`, рішення 2026-10-29): чат не розгортається й лишається таким, яким був.
  */
-export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, seatDock = false): OverlayPlacement {
+export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, seatDock = false, separate = false): OverlayPlacement {
   if (kind === 'inflow') return 'inflow';
   if (chatColumn) return 'panel';
-  if (kind === 'accent' && seatDock) return 'seat';
+  if ((kind === 'accent' || separate) && seatDock) return 'seat';
   return inDock ? 'dock' : 'sheet';
 }
 
@@ -133,9 +139,12 @@ export function OverlayManager({ children }: OverlayManagerProps) {
   const open = useCallback(
     (spec: OverlaySpec) => {
       const prev = ref.current;
-      // Телефон: вікно чату відкривається всередині розгорнутого чату — спершу розгортаємо його.
-      if (spec.inChat && spec.kind !== 'inflow' && !chatColumn && dockSlotExists()) useChatDock.getState().setExpanded(true);
-      set(spec);
+      // Телефон: вікно чату — усередині розгорнутого чату; чат згорнутий — окремий шар, чат не розгортаємо.
+      const separate =
+        !!spec.inChat && spec.kind !== 'inflow' && !chatColumn && dockSlotExists() && !useChatDock.getState().expanded;
+      // Те саме вікно оновлюється на місці (напр. вхід ↔ реєстрація): шар не змінюємо.
+      const keep = prev && prev.id === spec.id ? prev.separate : undefined;
+      set({ ...spec, separate: keep ?? separate });
       if (prev && prev.id !== spec.id) prev.onClose?.();
     },
     [set, chatColumn],
@@ -161,7 +170,13 @@ export function OverlayManager({ children }: OverlayManagerProps) {
   }, [currentId, closeOnKey, close]);
 
   const placement = current
-    ? placementFor(current.kind, chatColumn, !!current.inChat && dockSlotExists(), dockSlotExists(SEAT_DOCK_SLOT_ID))
+    ? placementFor(
+        current.kind,
+        chatColumn,
+        !!current.inChat && !current.separate && dockSlotExists(),
+        dockSlotExists(SEAT_DOCK_SLOT_ID),
+        !!current.separate,
+      )
     : null;
 
   // Чат сховано на десктопі: колонка тимчасово відкривається під панель.
@@ -209,10 +224,11 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           open
           onOpenChange={onOpenChange}
           containerId={SEAT_DOCK_SLOT_ID}
-          variant="accent"
+          variant={current.kind === 'accent' ? 'accent' : current.kind === 'nonmodal' ? 'nonmodal' : 'form'}
           title={current.title}
           description={current.description}
           boardHeader={current.chrome === 'board'}
+          authorHeader={current.chrome === 'author'}
           className="t2f-seat-panel"
         >
           {current.content}

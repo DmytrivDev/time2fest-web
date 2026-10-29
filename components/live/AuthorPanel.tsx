@@ -42,6 +42,8 @@ export interface AuthorPanelProps {
   onReport?: (message: ChatMessage) => void;
   /** «Що ще дає пас?» — відкрити опис пасу. */
   onPassInfo?: () => void;
+  /** Своє повідомлення: олівець біля ніка — змінити нік і прапор (O-NICK). */
+  onEditProfile?: () => void;
   /** Готова геометрія мапи (історії, тести). */
   geometry?: ZoneMapGeometry;
   className?: string;
@@ -70,6 +72,7 @@ export function AuthorPanel({
   viewerHasPass = false,
   onReport,
   onPassInfo,
+  onEditProfile,
   geometry,
   className,
 }: AuthorPanelProps) {
@@ -97,6 +100,17 @@ export function AuthorPanel({
               <h2 tabIndex={-1} className="t2f-author-nick">
                 {author.nick}
               </h2>
+              {isMine && onEditProfile ? (
+                <button
+                  type="button"
+                  aria-label={t('editProfile')}
+                  onClick={onEditProfile}
+                  className="t2f-focus t2f-transition t2f-author-edit"
+                  data-row="edit-profile"
+                >
+                  <Icon name="pencil" size={18} />
+                </button>
+              ) : null}
               {isMine ? <Badge variant="you" /> : null}
             </div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-text-secondary">

@@ -18,6 +18,7 @@ import { formatClock, LETTER_TTL_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import {
+  AccountPerks,
   AgeLine,
   Badge,
   Bold,
@@ -85,6 +86,8 @@ function Step({ flow, stream, onSwitchMode, onExit, exitHref }: Omit<AuthStepsPr
       ) : (
         <SigninForm flow={flow} stream={stream} onSwitchMode={onSwitchMode} />
       );
+    case 'perks':
+      return <PerksStep flow={flow} />;
     case 'google':
       return <GoogleStep flow={flow} stream={stream} />;
     case 'sent':
@@ -137,7 +140,7 @@ function SigninForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
   return (
     <form noValidate onSubmit={onSubmit(flow)} className="flex flex-col">
       {stream ? (
-        <p className={s.streamLead}>{t('stream.lead')}</p>
+        <StreamIntro flow={flow} />
       ) : (
         <>
           <Title>{t('signin.title')}</Title>
@@ -176,23 +179,15 @@ function SignupForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
   return (
     <form noValidate onSubmit={onSubmit(flow)} className="flex flex-col">
       {stream ? (
-        <p className={s.streamLead}>{t('stream.lead')}</p>
+        <StreamIntro flow={flow} />
       ) : (
         <>
           <Title>{t('signup.title')}</Title>
-          <Lead>
-            <span className="lg:hidden">{t('signup.leadPhone')}</span>
-            <span className="max-lg:hidden">{t('signup.leadDesk')}</span>
-          </Lead>
-          {/* Телефон: пропозиція пасу в потоці; десктоп — у лівій колонці (AuthPage). */}
-          <div className={cn(s.phoneOnly, 'mt-5 flex flex-col')}>
-            <PassOfferCard />
-            <Separator label={t('signup.orFree')} margin="24px 0 0" />
-          </div>
+          <Lead>{t('signup.lead')}</Lead>
         </>
       )}
       <GoogleFailed flow={flow} />
-      <GoogleButton label={t('signup.google')} onClick={flow.startGoogle} className={stream ? s.mt16 : s.signupGoogle} />
+      <GoogleButton label={t('signup.google')} onClick={flow.startGoogle} className={stream ? s.mt16 : s.mt24} />
       <Separator label={t('signin.orEmail')} margin={stream ? '16px 0' : undefined} />
       <EmailField value={flow.email} onChange={flow.setEmail} error={err} hint={t('email.hintSignup')} />
       <button type="submit" className={cn('t2f-focus', s.btn, s.coral, stream ? s.mt12 : s.mt16)}>
@@ -206,9 +201,42 @@ function SignupForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
         onClick={onSwitchMode}
         mt={12}
       />
-      {stream ? <PassRow /> : null}
-      <AgeLine mode="signup" mt={stream ? 8 : 12} />
+      {stream ? <PassRow /> : <PassHint />}
+      <AgeLine mode="signup" mt={stream ? 8 : undefined} />
     </form>
+  );
+}
+
+/** Вікно під трансляцією: вступ і «Що дає акаунт». */
+function StreamIntro({ flow }: { flow: AuthFlow }) {
+  const t = useTranslations('auth.stream');
+  return (
+    <div className={s.streamIntro}>
+      <p className={s.streamLead}>{t('lead')}</p>
+      <button type="button" onClick={() => flow.setStep({ kind: 'perks' })} className={cn('t2f-focus', s.linkBtn, s.linkStart)}>
+        {t('perks')}
+      </button>
+    </div>
+  );
+}
+
+/** «Що дає акаунт» у вікні під трансляцією: можливості акаунта, картка пасу, повернення до форми. */
+function PerksStep({ flow }: { flow: AuthFlow }) {
+  const t = useTranslations('auth');
+  const back = () => flow.setStep({ kind: 'form' });
+  return (
+    <div className="flex flex-col">
+      <button type="button" onClick={back} className={cn('t2f-focus', s.linkBtn, s.linkStart, s.backBtn)}>
+        <AuthIcon name="chevron-left" size={16} />
+        {t('stream.back')}
+      </button>
+      <Title>{t('stream.perksTitle')}</Title>
+      <AccountPerks />
+      <PassHint className={s.mt20} />
+      <button type="button" onClick={back} className={cn('t2f-focus', s.btn, s.coral, s.mt20)}>
+        {flow.mode === 'signup' ? t('signup.submit') : t('signin.title')}
+      </button>
+    </div>
   );
 }
 

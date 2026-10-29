@@ -72,10 +72,6 @@
   .cardWide {
     flex-basis: 520px;
   }
-  /* Реєстрація: пропозиція пасу — у лівій колонці, тож у картці її немає. */
-  .phoneOnly {
-    display: none !important;
-  }
 }
 
 /* ---------- «Навіщо акаунт» (ліва колонка десктопа) ---------- */
@@ -416,16 +412,6 @@
   margin-top: 24px;
 }
 
-/* Реєстрація: Google після пропозиції пасу (телефон) чи після вступу (десктоп). */
-.signupGoogle {
-  margin-top: 16px;
-}
-@media (min-width: 1024px) {
-  .signupGoogle {
-    margin-top: 24px;
-  }
-}
-
 /* ---------- Google ---------- */
 .progress {
   margin-top: 20px;
@@ -696,6 +682,26 @@
   line-height: 1.45;
   color: var(--color-text-secondary);
 }
+.perksMore {
+  margin-top: 14px;
+}
+.perksMore > .offerList {
+  margin-top: 0;
+}
+.perksDense {
+  margin: 0;
+  gap: 10px;
+}
+.perksDense .offerName {
+  font-size: 14px;
+}
+.perksDense .offerText {
+  font-size: 13px;
+}
+.badgeXs {
+  width: 28px;
+  height: 28px;
+}
 .priceLg {
   font-weight: 700;
   font-size: 32px;
@@ -786,6 +792,18 @@
 .stream .badge {
   width: 44px;
   height: 44px;
+}
+.streamIntro {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--color-text-secondary);
 }
 .streamLead {
   margin: 0;

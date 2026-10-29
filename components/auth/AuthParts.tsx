@@ -11,11 +11,9 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { AlsoInPass, MainFeatures, usePassFeatures } from '@/components/windows/PassInfo';
 import { PaymentNotice } from '@/components/windows/OfferCard';
 import { formatCountdown } from '@/lib/auth/sim';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
-import { useGuestStore } from '@/stores/guest';
 import { AuthIcon, GoogleMark, type AuthIconName } from './icons';
 import s from './auth.module.css';
 
@@ -313,18 +311,68 @@ export function ResendButton({
   );
 }
 
-function useWroteInChat(): boolean {
-  return useGuestStore((g) => g.chat.sentAt.length > 0);
+const PERKS = [
+  { icon: 'calendar', key: 'schedule' },
+  { icon: 'ticket', key: 'path' },
+  { icon: 'spark', key: 'discount' },
+  { icon: 'card', key: 'card' },
+  { icon: 'moon', key: 'quiet' },
+] as const;
+/** Три головні можливості; решта — під «Що ще дає пас». */
+const MAIN_PERKS = 3;
+
+/**
+ * Можливості пасу рядками з жовтими значками (як «Навіщо акаунт»). `from`/`to` — зріз списку;
+ * `dense` — менші значки й текст (картка «Ще немає пасу?», рядок у вікні під трансляцією).
+ */
+export function PassPerks({ from = 0, to = PERKS.length, dense, id }: { from?: number; to?: number; dense?: boolean; id?: string }) {
+  const t = useTranslations('auth.passOffer');
+  return (
+    <ul id={id} className={cn(s.offerList, dense && s.perksDense)} data-block="pass-perks">
+      {PERKS.slice(from, to).map((it) => (
+        <li key={it.key} className={s.offerItem}>
+          <span aria-hidden="true" className={cn(s.dot, s.yel, dense ? s.badgeXs : s.badgeSm)}>
+            <AuthIcon name={it.icon} size={dense ? 16 : 18} />
+          </span>
+          <span>
+            <span className={s.offerName}>{t(it.key)}</span>
+            <span className={s.offerText}>{t(`${it.key}Text`)}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
-/** Вхід: «Ще немає Новорічного пасу?» — коротко, ціна, «Оформити пас», «Що дає пас». */
+/** «Що дає пас» ↔ «Згорнути»: розгортає можливості на місці. */
+function ToggleButton({
+  open,
+  onToggle,
+  controls,
+  label,
+  className,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  controls: string;
+  label: string;
+  className: string;
+}) {
+  const t = useTranslations('auth.passHint');
+  return (
+    <button type="button" aria-expanded={open} aria-controls={open ? controls : undefined} onClick={onToggle} className={className}>
+      {open ? t('collapse') : label}
+    </button>
+  );
+}
+
+/** Вхід і реєстрація: «Ще немає Новорічного пасу?» — коротко, ціна, «Оформити пас», «Що дає пас». */
 export function PassHint({ className }: { className?: string }) {
   const t = useTranslations('auth.passHint');
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
   const [notice, setNotice] = useState(false);
-  const { main, also } = usePassFeatures(useWroteInChat());
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.passHint, className)} data-block="pass-hint">
       <div className={s.passHintHead}>
@@ -338,49 +386,35 @@ export function PassHint({ className }: { className?: string }) {
           <span className={s.passHintText}>{t('text')}</span>
         </span>
       </div>
+      {open ? <PassPerks id={`${uid}-more`} dense /> : null}
       <div className={s.priceRow}>
         <span className={s.priceSm}>{formatUsd(PASS_PRICE)}</span>
         <span className={s.priceNote}>{o('priceNote')}</span>
       </div>
-      {open ? (
-        <div id={`${uid}-more`} className="flex flex-col gap-3">
-          <MainFeatures items={main} />
-          <AlsoInPass items={also} />
-        </div>
-      ) : null}
       <div className={s.pair}>
         <button type="button" onClick={() => setNotice(true)} className={cn('t2f-focus', s.btn, s.passBtn)}>
           {t('get')}
         </button>
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={open ? `${uid}-more` : undefined}
-          onClick={() => setOpen((v) => !v)}
+        <ToggleButton
+          open={open}
+          onToggle={() => setOpen((v) => !v)}
+          controls={`${uid}-more`}
+          label={t('what')}
           className={cn('t2f-focus', s.btn, s.ghost)}
-        >
-          {t('what')}
-        </button>
+        />
       </div>
       {notice ? <PaymentNotice>{o('paymentLater')}</PaymentNotice> : null}
     </section>
   );
 }
 
-const OFFER_ITEMS = [
-  { icon: 'calendar', key: 'schedule' },
-  { icon: 'ticket', key: 'path' },
-  { icon: 'spark', key: 'discount' },
-] as const;
-
-/** Реєстрація й «Акаунт створено»: розгорнута пропозиція пасу. */
+/** «Акаунт створено»: розгорнута пропозиція пасу. */
 export function PassOfferCard({ welcome, className }: { welcome?: boolean; className?: string }) {
   const t = useTranslations('auth.passOffer');
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
   const [notice, setNotice] = useState(false);
-  const { also } = usePassFeatures(useWroteInChat());
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.offer, className)} data-block="pass-offer">
       <span className={s.eyebrow}>
@@ -390,19 +424,12 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
       <h2 id={`${uid}-t`} className={s.offerTitle}>
         {welcome ? t('titleWelcome') : t('title')}
       </h2>
-      <ul className={s.offerList}>
-        {OFFER_ITEMS.map((it) => (
-          <li key={it.key} className={s.offerItem}>
-            <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeSm)}>
-              <AuthIcon name={it.icon} size={18} />
-            </span>
-            <span>
-              <span className={s.offerName}>{t(it.key)}</span>
-              <span className={s.offerText}>{t(`${it.key}Text`)}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <PassPerks to={MAIN_PERKS} />
+      {open ? (
+        <div className={s.perksMore}>
+          <PassPerks id={`${uid}-more`} from={MAIN_PERKS} />
+        </div>
+      ) : null}
       <div className={s.priceRow} style={mtStyle(18)}>
         <span className={s.priceLg}>{formatUsd(PASS_PRICE)}</span>
         <span className={s.priceLgNote}>{o('priceNote')}</span>
@@ -415,21 +442,14 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
           <PaymentNotice>{o('paymentLater')}</PaymentNotice>
         </div>
       ) : null}
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={open ? `${uid}-more` : undefined}
-        onClick={() => setOpen((v) => !v)}
-        className={cn('t2f-focus self-center', s.linkBtn, 'mt-1')}
-      >
-        {t('more')}
-      </button>
-      {open ? (
-        <div id={`${uid}-more`} className="mt-2">
-          <AlsoInPass items={also} />
-        </div>
-      ) : null}
-      <p className={cn(s.hint, s.center)} style={mtStyle(4)}>
+      <ToggleButton
+        open={open}
+        onToggle={() => setOpen((v) => !v)}
+        controls={`${uid}-more`}
+        label={t('more')}
+        className={cn('t2f-focus self-center', s.linkBtn, s.mt8)}
+      />
+      <p className={cn(s.hint, s.center)} style={mtStyle(8)}>
         {t('note')}
       </p>
     </section>
@@ -443,33 +463,52 @@ export function PassRow({ mt }: { mt?: number }) {
   const uid = useId();
   const [open, setOpen] = useState(false);
   const [notice, setNotice] = useState(false);
-  const { main } = usePassFeatures(useWroteInChat());
   return (
     <div className={s.passRow} style={mtStyle(mt)} data-block="pass-row">
       <span className={s.passRowText}>
         <AuthIcon name="ticket" size={18} />
         <span>{t.rich('passRow', { price: formatUsd(PASS_PRICE), b: Bold })}</span>
       </span>
-      {open ? (
-        <div id={`${uid}-more`}>
-          <MainFeatures items={main} compact />
-        </div>
-      ) : null}
+      {open ? <PassPerks id={`${uid}-more`} dense /> : null}
       <span className={s.pair}>
         <button type="button" onClick={() => setNotice(true)} className={cn('t2f-focus', s.btn, s.passBtn)}>
           {t('passHint.get')}
         </button>
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={open ? `${uid}-more` : undefined}
-          onClick={() => setOpen((v) => !v)}
+        <ToggleButton
+          open={open}
+          onToggle={() => setOpen((v) => !v)}
+          controls={`${uid}-more`}
+          label={t('passHint.what')}
           className={cn('t2f-focus', s.btn, s.ghost)}
-        >
-          {t('passHint.what')}
-        </button>
+        />
       </span>
       {notice ? <PaymentNotice>{o('paymentLater')}</PaymentNotice> : null}
     </div>
+  );
+}
+
+const ACCOUNT_PERKS = [
+  { icon: 'stamp', key: 'passport' },
+  { icon: 'calendar', key: 'schedule' },
+  { icon: 'ticket', key: 'purchases' },
+] as const;
+
+/** «Навіщо акаунт» списком (вікно під трансляцією; на сторінці — ліва колонка `WhyCard`). */
+export function AccountPerks() {
+  const t = useTranslations('auth.why');
+  return (
+    <ul className={s.offerList} data-block="account-perks">
+      {ACCOUNT_PERKS.map((it) => (
+        <li key={it.key} className={s.offerItem}>
+          <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeSm)}>
+            <AuthIcon name={it.icon} size={18} />
+          </span>
+          <span>
+            <span className={s.offerName}>{t(it.key)}</span>
+            <span className={s.offerText}>{t(`${it.key}Text`)}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }

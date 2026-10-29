@@ -367,6 +367,7 @@ export function ChatPanel({
             path={path}
             viewerHasPass={viewerHasPass}
             onReport={onReport}
+            onEditProfile={author.isMine ? () => openNick(null) : undefined}
             onPassInfo={() => {
               overlay.open(passInfoSpec({ now: () => clock.getSnapshot() }, tPass('infoTitle')));
               useGuestStore.getState().showOffer('pass-info', useGuestStore.getState().stamps.at(-1)?.eventId ?? '', clock.getSnapshot());
@@ -375,7 +376,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, tPass, clock, lookup, onReport],
+    [overlay, t, tPass, clock, lookup, onReport, openNick],
   );
 
   const openRules = useCallback(

@@ -2,8 +2,8 @@
 
 /**
  * S-AUTH сторінкою: `/login/` («Увійти») і `/signup/` («Створити акаунт») за дошками `Phone-Auth*` / `Desk-Auth*`.
- * Телефон — одна колонка; десктоп (≥ 1024) — ліворуч «Навіщо акаунт» (на реєстрації — розгорнута пропозиція пасу),
- * праворуч картка кроку. Посилання з листа відкривається тут же: `/login/?link=<токен>` → «Акаунт створено»
+ * Телефон — одна колонка; десктоп (≥ 1024) — ліворуч «Навіщо акаунт», праворуч картка кроку. Пас на вході й реєстрації —
+ * однаково, карткою «Ще немає Новорічного пасу?» під формою (правка власника 2026-10-29). Посилання з листа відкривається тут же: `/login/?link=<токен>` → «Акаунт створено»
  * (новий акаунт), «Вхід виконано на цьому пристрої» (наявний) або «Посилання вже не діє».
  * Після входу в наявний акаунт — повернення туди, звідки прийшли (`lib/auth/returnTo`).
  */
@@ -15,7 +15,6 @@ import { cn } from '@/components/primitives/cn';
 import { LETTER_TTL_MS, type AuthIntent } from '@/lib/auth/sim';
 import { returnPath } from '@/lib/auth/returnTo';
 import { useAuthStore, useAuthTabSync, type SignInResult } from '@/stores/auth';
-import { PassOfferCard } from './AuthParts';
 import { AuthSteps } from './AuthSteps';
 import { AuthIcon, type AuthIconName } from './icons';
 import { useAuthFlow, type AuthStep } from './useAuthFlow';
@@ -99,10 +98,11 @@ function Flow({
 }) {
   const flow = useAuthFlow({ mode, initialStep: start.step, initialEmail: start.email, onSignedIn });
   const kind = flow.step.kind;
-  const signupForm = mode === 'signup' && kind === 'form';
   return (
     <div className={s.layout}>
-      <div className={s.side}>{signupForm ? <PassOfferCard /> : <WhyCard />}</div>
+      <div className={s.side}>
+        <WhyCard />
+      </div>
       <section className={cn(s.card, kind === 'welcome' && s.cardWide)}>
         <AuthSteps flow={flow} variant="page" onExit={onExit} exitHref={exitHref} />
       </section>
