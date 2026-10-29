@@ -7,8 +7,8 @@
  * позиціонується в обгортці стрічки) і переставляється при прокрутці й зміні розміру; під повідомленням, якщо вистачає
  * місця, інакше над ним. Esc, клік поза меню, Tab — закривають; Esc/Tab повертають фокус на «⋯».
  * Стрілки рухають фокус між елементами (по рядках і стовпцях).
- * Своє повідомлення (рішення власника 2026-10-29): маленьке меню лише з «Видалити повідомлення» і «×»; видалення —
- * назавжди, тому спершу підтвердження на місці («Видалити назавжди? Повернути не вийде.» · «Видалити» · «Скасувати»).
+ * Своє повідомлення (рішення власника 2026-10-29): маленьке компактне меню біля «⋯» лише з «Видалити повідомлення» і «×»;
+ * видалення — назавжди, тому спершу підтвердження на місці («Видалити назавжди?» · «Скасувати» · «Видалити»).
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
@@ -36,11 +36,11 @@ export interface MessageMenuProps extends MessageActionHandlers {
   onClose: (opts?: { restoreFocus?: boolean }) => void;
 }
 
-function Svg({ children }: { children: ReactNode }) {
+function Svg({ children, size = 20 }: { children: ReactNode; size?: number }) {
   return (
     <svg
-      width="20"
-      height="20"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -202,63 +202,62 @@ export function MessageMenu({
       }
     >
       {own ? (
-        <>
-          <div className="t2f-mm-row">
-            {confirm ? (
-              <p className="t2f-mm-confirm" role="status">
-                {t('deleteConfirm')}
-              </p>
-            ) : (
+        confirm ? (
+          <div className="t2f-mm-own-confirm">
+            <p className="t2f-mm-confirm" role="status">
+              <span className="t2f-mm-confirm-q">{t('deleteConfirmQ')}</span>
+              <span className="t2f-mm-confirm-note">{t('deleteConfirmNote')}</span>
+            </p>
+            <div className="t2f-mm-confirm-row">
               <button
                 type="button"
                 role="menuitem"
                 data-menu-item=""
-                className="t2f-mm-item t2f-mm-action t2f-mm-delete"
-                onClick={() => setConfirm(true)}
+                className="t2f-mm-item t2f-mm-small t2f-mm-delete-no"
+                onClick={() => setConfirm(false)}
               >
-                <Svg>
-                  <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
-                </Svg>
-                {t('deleteOwn')}
+                {t('deleteNo')}
               </button>
-            )}
-            <button
-              type="button"
-              role="menuitem"
-              data-menu-item=""
-              aria-label={t('menuClose')}
-              className="t2f-mm-item t2f-mm-close"
-              onClick={(e) => onClose({ restoreFocus: e.detail === 0 })}
-            >
-              <Svg>
-                <path d="M6 6l12 12M18 6L6 18" />
-              </Svg>
-            </button>
-          </div>
-          {confirm ? (
-            <div className="t2f-mm-row t2f-mm-confirm-row">
               <button
                 type="button"
                 role="menuitem"
                 data-menu-item=""
                 data-delete-yes=""
-                className="t2f-mm-item t2f-mm-action t2f-mm-delete-yes"
+                className="t2f-mm-item t2f-mm-small t2f-mm-delete-yes"
                 onClick={() => done(() => onDelete?.(message), false)}
               >
                 {t('deleteYes')}
               </button>
-              <button
-                type="button"
-                role="menuitem"
-                data-menu-item=""
-                className="t2f-mm-item t2f-mm-action t2f-mm-delete-no"
-                onClick={() => setConfirm(false)}
-              >
-                {t('deleteNo')}
-              </button>
             </div>
-          ) : null}
-        </>
+          </div>
+        ) : (
+          <div className="t2f-mm-row">
+            <button
+              type="button"
+              role="menuitem"
+              data-menu-item=""
+              className="t2f-mm-item t2f-mm-small t2f-mm-delete"
+              onClick={() => setConfirm(true)}
+            >
+              <Svg size={16}>
+                <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+              </Svg>
+              {t('deleteOwn')}
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              data-menu-item=""
+              aria-label={t('menuClose')}
+              className="t2f-mm-item t2f-mm-small-close"
+              onClick={(e) => onClose({ restoreFocus: e.detail === 0 })}
+            >
+              <Svg size={16}>
+                <path d="M6 6l12 12M18 6L6 18" />
+              </Svg>
+            </button>
+          </div>
+        )
       ) : (
         <>
       <div className="t2f-mm-row">

@@ -223,7 +223,7 @@ test.describe('S-AUTH · під час трансляції', () => {
     const menu = page.locator('[data-message-menu][data-own="true"]');
     await expect(menu.getByRole('menuitem', { name: 'Поскаржитись' })).toHaveCount(0);
     await menu.getByRole('menuitem', { name: 'Видалити повідомлення' }).click();
-    await expect(menu.getByText('Видалити назавжди? Повернути не вийде.')).toBeVisible();
+    await expect(menu.getByText('Видалити назавжди?')).toBeVisible();
     await menu.getByRole('menuitem', { name: 'Видалити', exact: true }).click();
     await expect(page.locator('[data-kind="deleted"][data-own="true"]')).toContainText('Твоє повідомлення видалено');
     await expect(page.getByText('Видали мене')).toHaveCount(0);
