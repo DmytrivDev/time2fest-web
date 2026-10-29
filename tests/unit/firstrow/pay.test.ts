@@ -143,15 +143,19 @@ describe('validateForm', () => {
     expect(validateForm({ ...ok, email: 'nope' }).email).toBe('email');
     expect(validateForm({ ...ok, email: 'a@b' }).email).toBe('email');
   });
-  it('порожнє ім’я і ім’я >30', () => {
+  it('ім’я — від 2 до 20 символів', () => {
     expect(validateForm({ ...ok, name: '   ' }).name).toBe('name');
-    expect(validateForm({ ...ok, name: 'а'.repeat(31) }).name).toBe('name');
-    expect(validateForm({ ...ok, name: 'а'.repeat(30) }).name).toBeUndefined();
+    expect(validateForm({ ...ok, name: 'а' }).name).toBe('name');
+    expect(validateForm({ ...ok, name: ' а ' }).name).toBe('name');
+    expect(validateForm({ ...ok, name: 'аб' }).name).toBeUndefined();
+    expect(validateForm({ ...ok, name: 'а'.repeat(21) }).name).toBe('name');
+    expect(validateForm({ ...ok, name: 'а'.repeat(20) }).name).toBeUndefined();
   });
   it('привітання з посиланням або задовге → moderation', () => {
     expect(validateForm({ ...ok, greeting: 'зайди на https://x.io' }).greeting).toBe('moderation');
     expect(validateForm({ ...ok, greeting: 'www.spam.example' }).greeting).toBe('moderation');
-    expect(validateForm({ ...ok, greeting: 'a'.repeat(81) }).greeting).toBe('moderation');
+    expect(validateForm({ ...ok, greeting: 'a'.repeat(85) }).greeting).toBe('moderation');
+    expect(validateForm({ ...ok, greeting: 'a'.repeat(84) }).greeting).toBeUndefined();
   });
 });
 

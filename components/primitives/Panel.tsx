@@ -8,7 +8,7 @@
  * - `form` (O-NICK, O-FIRST-ROW, O-REMIND, O-SHARE): фокус усередині (FocusScope trapped),
  *   дотик поза панеллю не закриває (не губимо введене);
  * - `nonmodal` (O-AUTHOR, мова, профіль): «Назад» / Esc повертає фокус на тригер;
- * - `accent`: як `form`, з жовтою межею («Перший ряд»).
+ * - `accent`: як `form` («Перший ряд»); рамка — як у чату (жовту межу прибрано, рішення 2026-10-29).
  * Основа — Radix Dialog `modal={false}` + FocusScope.
  *
  * InFlowSlot — зарезервоване місце одразу під рядком дій плеєра для вікон без введення
@@ -17,7 +17,7 @@
  */
 import { Dialog } from 'radix-ui';
 import { FocusScope } from 'radix-ui/internal';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Button } from './Button';
 import { cn } from './cn';
 import { Icon } from './Icon';
@@ -74,13 +74,15 @@ export function ChatSlotPanel({
 }: ChatSlotPanelProps) {
   const container = chatSlot(open, containerId);
   const isForm = variant !== 'nonmodal';
+  // Вміст прокручено — під шапкою з’являється лінія: текст форми не зливається з підрядком шапки.
+  const [scrolled, setScrolled] = useState(false);
 
   const content = (
     <Dialog.Content
       data-chat-slot-panel={variant}
       className={cn(
         'absolute inset-0 z-20 flex flex-col bg-surface text-text',
-        variant === 'accent' ? 'border border-highlight' : 'border-l border-border',
+        'border-l border-border',
         className,
       )}
       // Дотик до ручки вікна чату на телефоні (згорнути/розгорнути) — не «поза панеллю»: вікно лишається (рішення 2026-10-28).
@@ -94,7 +96,11 @@ export function ChatSlotPanel({
       <FocusScope.Root asChild trapped={isForm && open} loop={isForm}>
         <div className="flex min-h-0 flex-1 flex-col">
           {boardHeader ? (
-            <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-2" data-board-header="">
+            <div
+              className={cn('flex shrink-0 items-start gap-1 border-b pb-3 pe-2 ps-4 pt-2', scrolled ? 'border-border' : 'border-transparent')}
+              data-board-header=""
+              data-scrolled={scrolled ? 'true' : undefined}
+            >
               <div className="min-w-0 flex-1 pt-1.5">
                 <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
                 {description ? <Dialog.Description className="text-caption text-text-muted">{description}</Dialog.Description> : null}
@@ -139,7 +145,13 @@ export function ChatSlotPanel({
           {authorHeader ? (
             <div className="flex min-h-0 flex-1 flex-col">{children}</div>
           ) : (
-            <div className={cn('t2f-chat-log min-h-0 flex-1 overflow-x-hidden overflow-y-auto', !boardHeader && 't2f-slot-body p-4')}>{children}</div>
+            <div
+              className={cn('t2f-chat-log min-h-0 flex-1 overflow-x-hidden overflow-y-auto', !boardHeader && 't2f-slot-body p-4')}
+              data-slot-body=""
+              onScroll={boardHeader ? (e) => setScrolled(e.currentTarget.scrollTop > 0) : undefined}
+            >
+              {children}
+            </div>
           )}
         </div>
       </FocusScope.Root>

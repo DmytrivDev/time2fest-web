@@ -20,6 +20,7 @@ import { HOLD_EXTEND_OFFER, HOLD_SEC } from '@/lib/engine/config';
 import { emojiWaitSec, extendHold, PAY_ROUNDTRIP_MS, validateForm, type FormErrors } from '@/lib/firstrow/pay';
 import { ticketCode } from '@/lib/firstrow/seatsSim';
 import { useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
+import { detectFlag } from '@/lib/geo/detectFlag';
 import { useNow, useTimeSource } from '@/lib/time/TimeProvider';
 import { useChatUi } from '@/stores/chat';
 import { readEntry, useBoughtPass, useFirstRowStore, writeEntry } from '@/stores/firstRow';
@@ -48,7 +49,13 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
   const patchFlow = useFirstRowStore((s) => s.patchFlow);
   const entry = useGuestStore((s) => s.firstRow[event.id]) ?? {};
   const nick = useGuestStore((s) => s.nick);
-  const flagCode = useGuestStore((s) => s.flagCode ?? s.detectedFlag ?? 'UN');
+  // Ім’я й прапор — спільні з чатом (рішення 2026-10-29): що обрано в чаті, те й тут, і навпаки.
+  const chosenFlag = useGuestStore((s) => s.flagCode);
+  const detectedFlag = useGuestStore((s) => s.detectedFlag);
+  const flagCode = chosenFlag ?? detectedFlag ?? 'earth';
+  const setFlag = useGuestStore((s) => s.setFlag);
+  const setNick = useGuestStore((s) => s.setNick);
+  const setDetectedFlag = useGuestStore((s) => s.setDetectedFlag);
   const updateFirstRow = useGuestStore((s) => s.updateFirstRow);
   const boughtPass = useBoughtPass();
   const hasPass = useGuestStore((s) => s.hasPass);
@@ -60,8 +67,25 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
     if (timer.current !== null) window.clearTimeout(timer.current);
   }, []);
 
+  // Прапор за розташуванням — як при першому повідомленні в чат.
+  useEffect(() => {
+    if (detectedFlag) return;
+    const detected = detectFlag();
+    if (detected) setDetectedFlag(detected);
+  }, [detectedFlag, setDetectedFlag]);
+
   const { view } = snapshot(event, now, { reducedMotion: reduced });
   const phase = flow?.phase ?? (entry.seat !== undefined ? 'success' : 'form');
+
+  // Будь-яка зміна стану вікна (оплата не пройшла, час вийшов, очікування, успіх) — прокрутка на самий верх: новий
+  // заголовок чи причина стоять угорі, інакше їх не видно після натискання кнопки внизу (рішення 2026-10-29).
+  const prevPhase = useRef(phase);
+  useEffect(() => {
+    if (prevPhase.current === phase) return;
+    prevPhase.current = phase;
+    const body = document.querySelector<HTMLElement>('[data-chat-slot-panel="accent"] [data-slot-body]');
+    body?.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' });
+  }, [phase, reduced]);
   const draft = entry.draft;
   const values: FirstRowDraftValues = {
     email,
@@ -126,6 +150,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
             markEmotionChanged(now);
           }
           setDraft(next);
+          setNick(next.name.trim());
           patchFlow({ phase: 'success' });
           return true;
         }}
@@ -175,6 +200,8 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
       patchFlow({ errors });
       return;
     }
+    // Ім’я й прапор з квитка — і для чату.
+    setNick(values.name.trim(), flagCode);
     // Людина підтверджує нову ціну натисканням «Оплатити $7,99».
     if (view.priceChanged) writeEntry(event.id, { ...readEntry(event.id), priceLocked: view.priceChanged.to });
     patchFlow({ errors: {}, submitting: true });
@@ -213,6 +240,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
           patchFlow({ errors: next });
         }
       }}
+      flag={{ detected: detectedFlag, undetected: !chosenFlag && !detectedFlag, onChange: setFlag }}
       errors={flow?.errors}
       onPay={onPay}
       submitting={flow?.submitting ?? false}

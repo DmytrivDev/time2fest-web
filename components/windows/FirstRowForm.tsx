@@ -8,7 +8,7 @@
  */
 import { RadioGroup as Radix } from 'radix-ui';
 import { useTranslations } from 'next-intl';
-import { useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import type { FirstRowFormProps } from '@/components/firstrow/types';
 import { EMOJI_SYMBOLS } from '@/components/live/SeatPill';
 import { Badge } from '@/components/primitives/Badge';
@@ -18,12 +18,21 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { Link } from '@/components/primitives/Link';
 import { EMOJI_PICKER_IDS } from '@/components/windows/Emoji';
+import { FlagField } from '@/components/windows/FlagField';
 import s from '@/components/windows/firstRowWindow.module.css';
 import { canonicalEmotion } from '@/lib/firstrow/emotions';
 import { PRICE_LAST3 } from '@/lib/engine/config';
 import { formatHoldLeft, formatPrice } from '@/lib/firstrow/format';
 import { GREETING_MAX, NAME_MAX } from '@/lib/firstrow/pay';
+import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
+
+/** Країни для вибору прапора (той самий список, що в O-NICK). */
+let flagOptions: { code: string; name: string }[] | null = null;
+function FLAG_OPTIONS() {
+  flagOptions ??= getData().countries.map((c) => ({ code: c.flagCode, name: c.name.uk }));
+  return flagOptions;
+}
 
 /** Вісім емодзі, які показує форма «Першого ряду» (решта набору — у O-EMOJI). */
 export const FIRST_ROW_EMOJI_IDS = EMOJI_PICKER_IDS.slice(0, 8);
@@ -133,7 +142,7 @@ export function FirstRowPreview({
     <section aria-label={t('form.preview')} className={cn(s.preview, loose && s.previewLoose, className)} data-row="preview">
       <p className={s.previewLabel}>{t('form.preview')}</p>
       <p className={s.pill}>
-        {flagCode ? <Flag code={flagCode} size="pill" decorative /> : null}
+        {flagCode ? <Flag round code={flagCode} size="pill" decorative /> : null}
         <span className={s.pillName}>{name.trim() || t('form.name')}</span>
         {known ? (
           <span role="img" aria-label={names(id)} className={s.pillEmoji}>
@@ -203,6 +212,7 @@ export function FirstRowForm({
   notice,
   values,
   onChange,
+  flag,
   errors,
   onPay,
   submitting = false,
@@ -214,9 +224,24 @@ export function FirstRowForm({
   const t = useTranslations('firstRow');
   const discounted = view.price.discounted;
   const current = view.price.current;
+  const formRef = useRef<HTMLFormElement>(null);
+  // Після «Оплатити» з помилками — прокрутити до першого поля з помилкою й поставити в нього фокус (помилку вгорі
+  // форми інакше не видно); під кнопкою — рядок «Перевір поля форми: …».
+  const focusError = useRef(false);
+  const errorKeys = (['email', 'name', 'greeting'] as const).filter((k) => errors?.[k]);
+  const errorSig = errorKeys.join(',');
+  useEffect(() => {
+    if (!focusError.current || !errorSig) return;
+    focusError.current = false;
+    const first = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]');
+    first?.focus({ preventScroll: true });
+    first?.scrollIntoView?.({ block: 'center' });
+  }, [errorSig, errors]);
+  const fieldName = { email: t('form.email'), name: t('form.name'), greeting: t('form.greeting') };
 
   return (
     <form
+      ref={formRef}
       noValidate
       data-window="O-FIRST-ROW"
       data-phase={notice?.kind ?? 'form'}
@@ -224,7 +249,9 @@ export function FirstRowForm({
       className={cn(s.body, className)}
       onSubmit={(e) => {
         e.preventDefault();
-        if (!submitting) onPay();
+        if (submitting) return;
+        focusError.current = true;
+        onPay();
       }}
     >
       {notice?.kind === 'declined' ? (
@@ -297,6 +324,15 @@ export function FirstRowForm({
         autoComplete="nickname"
         error={errors?.name ? t('form.nameError') : undefined}
       />
+      {flag ? (
+        <FlagField
+          value={flagCode ?? 'earth'}
+          onChange={flag.onChange}
+          detectedFlag={flag.detected}
+          undetected={flag.undetected}
+          flags={FLAG_OPTIONS()}
+        />
+      ) : null}
       <FirstRowField
         label={t('form.greeting')}
         qualifier={t('form.greetingHint')}
@@ -371,6 +407,14 @@ export function FirstRowForm({
         <Button type="submit" variant="coral" size="lg" className="w-full" data-action="pay" loading={submitting}>
           {submitting ? t('form.submitting') : t('payAmount', { price: formatPrice(payPrice) })}
         </Button>
+        <div aria-live="polite" data-row="fix-errors">
+          {errorKeys.length ? (
+            <p className={s.error}>
+              <Icon name="alert" size={16} />
+              {t('form.fixErrors', { fields: errorKeys.map((k) => fieldName[k]).join(', ') })}
+            </p>
+          ) : null}
+        </div>
         <p className={s.centerNote}>
           <Icon name="lock" size={14} />
           {t('form.payNote')}

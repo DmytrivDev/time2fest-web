@@ -121,7 +121,7 @@ function Ticket({ city, cityId, seat, name, flagCode, emojiId, greeting, ticketC
         </div>
         <div className={s.ticketWho}>
           <p className={s.ticketName}>
-            <Flag code={flagCode} size="pill" decorative />
+            <Flag round code={flagCode} size="pill" decorative />
             <span className={s.ticketNameText}>{name}</span>
             <span className={s.ticketEmoji}>{EMOJI_SYMBOLS[canonicalEmotion(emojiId)] ?? '✨'}</span>
           </p>
@@ -187,7 +187,7 @@ export function FirstRowSuccess({
       <h3 className={s.title}>{t('success.youAre', { city })}</h3>
       <div className={s.seatRow}>
         <span className={s.mine}>
-          <Flag code={flagCode} size="pill" decorative />
+          <Flag round code={flagCode} size="pill" decorative />
           {name}
           {names.has(emotion) ? (
             <span role="img" aria-label={names(emotion)} className={s.pillEmoji}>

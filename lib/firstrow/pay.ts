@@ -122,8 +122,10 @@ export function changeEmoji(
 
 // ── Поля форми ─────────────────────────────────────────────────────────────
 
-export const NAME_MAX = 30;
-export const GREETING_MAX = 80;
+/** Ім’я на стіні — як нік у чаті: від 2 до 20 символів (рішення 2026-10-29). */
+export const NAME_MIN = 2;
+export const NAME_MAX = 20;
+export const GREETING_MAX = 84;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const LINK_RE = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|ru|ua|io|me|xyz)\b)/i;
@@ -138,7 +140,7 @@ export interface FormErrors {
 export function validateForm(v: { email: string; name: string; greeting: string }): FormErrors {
   const errors: FormErrors = {};
   if (!EMAIL_RE.test(v.email.trim())) errors.email = 'email';
-  if (!v.name.trim() || v.name.length > NAME_MAX) errors.name = 'name';
+  if (v.name.trim().length < NAME_MIN || v.name.length > NAME_MAX) errors.name = 'name';
   if (v.greeting.length > GREETING_MAX || LINK_RE.test(v.greeting)) errors.greeting = 'moderation';
   return errors;
 }

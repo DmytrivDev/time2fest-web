@@ -100,6 +100,8 @@ export interface FirstRowFormProps {
   notice?: { kind: 'declined' } | { kind: 'expired'; free: number; price: number; holdUntil: Ms; priceChanged: boolean };
   values: FirstRowDraftValues;
   onChange(patch: Partial<FirstRowDraftValues>): void;
+  /** Вибір прапора (той самий, що в O-NICK): прапор спільний для чату й квитка. */
+  flag?: { detected?: string; undetected: boolean; onChange(code: string): void };
   errors?: FormErrors;
   onPay(): void;
   /** Іде перехід на сторінку оплати. */

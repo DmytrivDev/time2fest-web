@@ -202,7 +202,7 @@ test.describe('US5 · форма й утримання', () => {
     await pay(page);
     await expect(win(page)).toBeVisible();
     await expect(win(page).getByText('Перевір email — схоже, в ньому помилка')).toBeVisible();
-    await expect(win(page).getByText('Напиши ім’я — так тебе побачать на стіні')).toBeVisible();
+    await expect(win(page).getByText('Ім’я — від 2 до 20 символів: так тебе побачать на стіні')).toBeVisible();
     await fillForm(page, { greeting: 'зайди на https://x.io' });
     await pay(page);
     await expect(

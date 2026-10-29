@@ -98,7 +98,7 @@ export function Textarea({
       </Label.Root>
       <div
         className={cn(
-          't2f-transition flex min-h-touch-min items-end gap-1 rounded-md border bg-background ps-3 focus-within:border-highlight',
+          't2f-transition t2f-field-frame flex min-h-touch-min items-end gap-1 rounded-md border bg-background ps-3',
           error ? 'border-primary' : 'border-border-strong',
           disabled && 'border-border',
           frameClassName,

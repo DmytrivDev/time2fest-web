@@ -94,7 +94,7 @@ export function TextField({
             onChange?.(e);
           }}
           className={cn(
-            't2f-focus t2f-transition block min-h-touch-min w-full rounded-md border bg-background px-3 text-body text-text placeholder:text-text-muted focus-visible:border-highlight disabled:border-border disabled:text-text-muted',
+            't2f-focus t2f-transition block min-h-touch-min w-full rounded-md border bg-background px-3 text-body text-text placeholder:text-text-muted disabled:border-border disabled:text-text-muted',
             error ? 'border-primary' : 'border-border-strong',
             type === 'search' && 'ps-10 pe-11',
           )}

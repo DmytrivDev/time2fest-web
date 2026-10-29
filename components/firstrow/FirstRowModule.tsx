@@ -10,6 +10,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
+import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatDockControls } from '@/components/chat/ChatDock';
@@ -68,16 +69,18 @@ function useSeatPhase(event: FirstRowEvent) {
 }
 
 /**
- * Шапка вікна O-FIRST-ROW / O-PAY за макетами `*-FR-*`: жовтий заголовок із кріслом; «Оплату підтверджено» — жовтий
+ * Шапка вікна O-FIRST-ROW / O-PAY: жовтий надзаголовок «Перший ряд» із кріслом і місто рядком нижче; «Оплату підтверджено» — жовтий
  * рядок 13/700 з галочкою; «Змінити напис чи емоцію» — білий заголовок; «Останнє місце щойно зайняли» — лише «×»
  * (заголовок у тілі, тут — для зчитувача).
  */
 function SeatTitle({ event, city }: { event: FirstRowEvent; city: string }) {
   const t = useTranslations('firstRow');
   const { phase, seat } = useSeatPhase(event);
+  // Надзаголовок (13/700, жовтий) стоїть на одній лінії з «×»: блок 32 px під відступом 6 px — центр на висоті центру «×».
+  const eyebrow = 'flex h-8 items-center gap-1.5 text-caption font-bold text-highlight';
   if (phase === 'success' && seat !== undefined) {
     return (
-      <span className="inline-flex items-center gap-1.5 text-caption font-bold text-highlight">
+      <span className={eyebrow}>
         <Icon name="check" size={16} strokeWidth={2.2} className="shrink-0" />
         {t('success.title')}
       </span>
@@ -85,11 +88,16 @@ function SeatTitle({ event, city }: { event: FirstRowEvent; city: string }) {
   }
   if (phase === 'edit' && seat !== undefined) return <span className="text-text">{t('edit.title')}</span>;
   if (phase === 'soldout') return <span className="sr-only">{t('heading', { city })}</span>;
+  // Варіант А (рішення 2026-10-29): «ПЕРШИЙ РЯД» надзаголовком, місто окремим рядком 16/700 — без переносу всередині назви.
   return (
-    <span className="inline-flex items-center gap-2 text-highlight">
-      <Icon name="seat" size={18} strokeWidth={2} className="shrink-0" />
-      {t('heading', { city })}
-    </span>
+    <>
+      <span className={cn(eyebrow, 'uppercase tracking-wide')}>
+        <Icon name="seat" size={16} strokeWidth={2} className="shrink-0" />
+        {t('title')}
+      </span>
+      <span className="sr-only"> · </span>
+      <span className="block truncate text-body-strong font-bold text-text">{city}</span>
+    </>
   );
 }
 

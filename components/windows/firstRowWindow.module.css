@@ -63,9 +63,6 @@
 .input::placeholder {
   color: var(--color-text-muted);
 }
-.input:focus-visible {
-  border-color: var(--color-highlight);
-}
 .input[aria-invalid='true'] {
   border-color: var(--color-primary);
 }

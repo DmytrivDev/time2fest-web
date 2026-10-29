@@ -10,6 +10,22 @@
 [data-surface='tv'] {
   --t2f-focus-w: 4px;
 }
+/* Поля введення — по всьому сайту одна рамка фокусу по контуру поля (2 px кольору кільця, як у полі чату), без
+   зовнішнього кільця поверх рамки поля (рішення 2026-10-29). Поле без власної рамки (textarea в `Textarea`) — рамку
+   малює обгортка `.t2f-field-frame`. */
+input.t2f-focus:not([type='checkbox']):not([type='radio']):not([type='range']):focus-visible {
+  outline: none;
+  border-color: var(--color-focus-ring);
+  box-shadow: inset 0 0 0 1px var(--color-focus-ring);
+}
+textarea.t2f-focus:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.t2f-field-frame:focus-within {
+  border-color: var(--color-focus-ring);
+  box-shadow: inset 0 0 0 1px var(--color-focus-ring);
+}
 
 /* Натискання: стискання на 2%, вимкнено під «зменшити рух» (ІНВ 5.2). */
 .t2f-press:active:not(:disabled):not([aria-disabled='true']) {
@@ -1259,17 +1275,27 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   font-variant-numeric: tabular-nums;
 }
 /* Шар вікна покупки «Першого ряду» поверх чату (макети `Phone-FR-*`, рішення 2026-10-29): жовта межа зверху, своя ручка. */
-.t2f-dock[data-seat='true'] {
-  border-top-color: var(--color-highlight);
-}
+/* Шар вікна покупки «Першого ряду» (телефон): окремо від вікна чату, та сама рамка й тінь; з’являється знизу. */
 .t2f-seat-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 40;
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 35;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-top: 1px solid #3c3c44; /* як у вікна чату */
+  border-radius: 16px 16px 0 0;
   background: var(--color-surface);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
   transition: transform 200ms ease-out;
+  animation: t2f-seat-in 200ms ease-out;
+}
+@keyframes t2f-seat-in {
+  from {
+    transform: translateY(100%);
+  }
 }
 .t2f-seat-layer[hidden] {
   display: none;
@@ -1277,7 +1303,12 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 @media (prefers-reduced-motion: reduce) {
   .t2f-seat-layer {
     transition: none;
+    animation: none;
   }
+}
+:root[data-reduce-motion='true'] .t2f-seat-layer {
+  transition: none;
+  animation: none;
 }
 .t2f-seat-grip {
   display: flex;
