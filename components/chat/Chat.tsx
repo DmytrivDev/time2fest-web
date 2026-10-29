@@ -519,6 +519,7 @@ export function Chat({
                       onAuthorKeyDown={onAuthorKeyDown}
                       onReact={messageActions?.onReact}
                       onOpenMenu={messageActions && !m.deleted ? openMenu : undefined}
+                      onDelete={messageActions?.onDelete}
                       quoteDeleted={!!m.replyTo && deletedIds.has(m.replyTo.id)}
                       menuOpen={menuMessage?.id === m.id}
                       menuAlways={messageActions?.menuAlways}
@@ -537,7 +538,6 @@ export function Chat({
                           onReply={messageActions?.onReply}
                           onMention={messageActions?.onMention}
                           onReport={messageActions?.onReport}
-                          onDelete={messageActions?.onDelete}
                         />
                       </li>
                     ) : null}
@@ -559,7 +559,6 @@ export function Chat({
               onReply={messageActions?.onReply}
               onMention={messageActions?.onMention}
               onReport={messageActions?.onReport}
-              onDelete={messageActions?.onDelete}
             />
           ) : null}
           {paused && !(manualPause || scrolledUp) ? (

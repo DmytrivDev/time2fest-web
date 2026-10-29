@@ -7,11 +7,9 @@
  * позиціонується в обгортці стрічки) і переставляється при прокрутці й зміні розміру; під повідомленням, якщо вистачає
  * місця, інакше над ним. Esc, клік поза меню, Tab — закривають; Esc/Tab повертають фокус на «⋯».
  * Стрілки рухають фокус між елементами (по рядках і стовпцях).
- * Своє повідомлення (рішення власника 2026-10-29): маленьке компактне меню біля «⋯» лише з «Видалити повідомлення» і «×»;
- * видалення — назавжди, тому спершу підтвердження на місці («Видалити назавжди?» · «Скасувати» · «Видалити»).
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import type { ChatMessage } from '@/lib/data/types';
 import {
   MENU_HEIGHT_GUESS,
@@ -36,11 +34,11 @@ export interface MessageMenuProps extends MessageActionHandlers {
   onClose: (opts?: { restoreFocus?: boolean }) => void;
 }
 
-function Svg({ children, size = 20 }: { children: ReactNode; size?: number }) {
+function Svg({ children }: { children: ReactNode }) {
   return (
     <svg
-      width={size}
-      height={size}
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -65,19 +63,9 @@ export function MessageMenu({
   onReply,
   onMention,
   onReport,
-  onDelete,
 }: MessageMenuProps) {
   const t = useTranslations('chat');
   const ref = useRef<HTMLDivElement>(null);
-  const own = !!message.author?.isMine;
-  const [confirm, setConfirm] = useState(false);
-  // Підтвердження з’явилось / зникло — фокус на перший пункт (за підтвердження — «Видалити»).
-  const confirmShown = useRef(false);
-  useEffect(() => {
-    if (confirm === confirmShown.current) return;
-    confirmShown.current = confirm;
-    ref.current?.querySelector<HTMLElement>(confirm ? '[data-delete-yes]' : '[data-menu-item]')?.focus({ preventScroll: true });
-  }, [confirm]);
   const [pos, setPos] = useState<{
     top: number;
     left: number;
@@ -184,9 +172,8 @@ export function MessageMenu({
     <div
       ref={ref}
       role="menu"
-      aria-label={own ? t('ownActionsTitle') : t('actionsTitle')}
+      aria-label={t('actionsTitle')}
       data-message-menu=""
-      data-own={own ? 'true' : undefined}
       data-placement={inline ? 'inline' : pos?.placement}
       onKeyDown={onKeyDown}
       className={inline ? 't2f-mm t2f-mm-inline' : 't2f-mm'}
@@ -201,65 +188,6 @@ export function MessageMenu({
             }
       }
     >
-      {own ? (
-        confirm ? (
-          <div className="t2f-mm-own-confirm">
-            <p className="t2f-mm-confirm" role="status">
-              <span className="t2f-mm-confirm-q">{t('deleteConfirmQ')}</span>
-              <span className="t2f-mm-confirm-note">{t('deleteConfirmNote')}</span>
-            </p>
-            <div className="t2f-mm-confirm-row">
-              <button
-                type="button"
-                role="menuitem"
-                data-menu-item=""
-                className="t2f-mm-item t2f-mm-small t2f-mm-delete-no"
-                onClick={() => setConfirm(false)}
-              >
-                {t('deleteNo')}
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                data-menu-item=""
-                data-delete-yes=""
-                className="t2f-mm-item t2f-mm-small t2f-mm-delete-yes"
-                onClick={() => done(() => onDelete?.(message), false)}
-              >
-                {t('deleteYes')}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="t2f-mm-row">
-            <button
-              type="button"
-              role="menuitem"
-              data-menu-item=""
-              className="t2f-mm-item t2f-mm-small t2f-mm-delete"
-              onClick={() => setConfirm(true)}
-            >
-              <Svg size={16}>
-                <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
-              </Svg>
-              {t('deleteOwn')}
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              data-menu-item=""
-              aria-label={t('menuClose')}
-              className="t2f-mm-item t2f-mm-small-close"
-              onClick={(e) => onClose({ restoreFocus: e.detail === 0 })}
-            >
-              <Svg size={16}>
-                <path d="M6 6l12 12M18 6L6 18" />
-              </Svg>
-            </button>
-          </div>
-        )
-      ) : (
-        <>
       <div className="t2f-mm-row">
         <button
           type="button"
@@ -327,8 +255,6 @@ export function MessageMenu({
           {t('report')}
         </button>
       </div>
-        </>
-      )}
     </div>
   );
 }

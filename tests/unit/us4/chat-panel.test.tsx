@@ -344,6 +344,22 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     expect(screen.queryByRole('button', { name: 'Скасувати відповідь' })).not.toBeInTheDocument();
   });
 
+  it('своє повідомлення: замість «⋯» — «×», один клік видаляє без підтвердження', async () => {
+    const user = userEvent.setup();
+    setup();
+    await user.click(screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!);
+    await user.click(await screen.findByRole('menuitem', { name: 'Відповісти' }));
+    await user.type(field(), 'Видали мене');
+    await user.click(screen.getByRole('button', { name: 'Надіслати' }));
+    const log = screen.getByRole('log');
+    const own = log.querySelector<HTMLElement>('[data-own="true"][data-kind="regular"]')!;
+    expect(own.querySelector('[data-msg-trigger]')).toBeNull();
+    await user.click(within(own).getByRole('button', { name: 'Видалити повідомлення' }));
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    expect(within(log).queryByText('Видали мене')).not.toBeInTheDocument();
+    expect(log.querySelector('[data-kind="deleted"][data-own="true"]')).toHaveTextContent('Твоє повідомлення видалено');
+  });
+
   it('нік з пасом відкриває панель автора зі «Шлях Karim», нік без пасу — лише нік і прапор', async () => {
     const user = userEvent.setup();
     setup();

@@ -452,14 +452,9 @@
       "editProfile": "Змінити нік і прапор"
     },
     "deleteOwn": "Видалити повідомлення",
-    "deleteYes": "Видалити",
-    "deleteNo": "Скасувати",
     "deletedOwn": "Твоє повідомлення видалено",
     "deletedOther": "{nick}: повідомлення видалено",
-    "deletedQuote": "Повідомлення видалено",
-    "ownActionsTitle": "Дії з твоїм повідомленням",
-    "deleteConfirmQ": "Видалити назавжди?",
-    "deleteConfirmNote": "Повернути не вийде."
+    "deletedQuote": "Повідомлення видалено"
   },
   "windows": {
     "nick": {

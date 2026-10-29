@@ -41,6 +41,8 @@ export interface MessageProps extends Pick<MessageActionHandlers, 'onReact'> {
   message: ChatMessage;
   /** Кнопка «⋯» відкриває меню повідомлення (його малює Chat у своєму шарі); без значення дій немає. */
   onOpenMenu?: (message: ChatMessage, trigger: HTMLElement) => void;
+  /** Своє повідомлення: замість «⋯» — червоний «×», клік видаляє одразу, без підтвердження (рішення власника 2026-10-29). */
+  onDelete?: (message: ChatMessage) => void;
   /** Повідомлення, на яке відповідали, видалено — у цитаті «Повідомлення видалено». */
   quoteDeleted?: boolean;
   /** Меню цього повідомлення відкрито: рядок лишається підсвіченим, «⋯» натиснуто. */
@@ -114,6 +116,7 @@ export function Message({
   lookup,
   tabStop = false,
   onOpenMenu,
+  onDelete,
   quoteDeleted,
   menuOpen = false,
   menuAlways = false,
@@ -135,7 +138,7 @@ export function Message({
     return (
       <li data-kind="deleted" data-own={own ? 'true' : undefined} data-msg-id={message.id} className={cn('t2f-msg-deleted', className)}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+          <path d="M4 6h16M9 6V3.5h6V6M6 6l1 14h10l1-14" />
         </svg>
         {own || !message.author ? (
           <span>{own ? t('deletedOwn') : t('deletedQuote')}</span>
@@ -318,6 +321,8 @@ export function Message({
   const authorLabel = a ? (country ? t('authorLabel', { name: a.nick, country }) : a.nick) : '';
   const firstRow = a?.badges.includes('first-row') ?? false;
   const pass = a?.badges.includes('pass') || a?.badges.includes('vip');
+  const del = a?.isMine ? onDelete : undefined;
+  const more = del ? undefined : onOpenMenu;
   return (
     // Клік по рядку (крім ⋯ і чипів реакцій) відкриває панель автора — те саме, що клік по ніку (рішення власника 2026-10-27).
     // Enter на сфокусованому рядку — так само. Кнопка ⋯ відкриває меню дій окремо.
@@ -327,7 +332,7 @@ export function Message({
       data-own={a?.isMine ? 'true' : undefined}
       data-msg-id={message.id}
       data-actions-open={menuOpen ? 'true' : undefined}
-      data-menu-always={menuAlways && onOpenMenu ? 'true' : undefined}
+      data-menu-always={menuAlways && (more || del) ? 'true' : undefined}
       tabIndex={a && onAuthorOpen ? -1 : undefined}
       onClick={(e) => {
         if (!a || !onAuthorOpen) return;
@@ -393,7 +398,21 @@ export function Message({
         >
           {time}
         </time>
-        {onOpenMenu ? (
+        {del ? (
+          <button
+            type="button"
+            data-msg-delete=""
+            tabIndex={tabStop ? 0 : -1}
+            aria-label={t('deleteOwn')}
+            title={t('deleteOwn')}
+            onClick={() => del(message)}
+            className="t2f-msg-more t2f-msg-del"
+          >
+            <span aria-hidden="true">
+              <Icon name="close" size={16} strokeWidth={2.25} />
+            </span>
+          </button>
+        ) : more ? (
           <button
             type="button"
             data-msg-trigger=""
@@ -401,7 +420,7 @@ export function Message({
             aria-label={t('actionsLabel', { nick: a?.nick ?? '' })}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
-            onClick={(e) => onOpenMenu(message, e.currentTarget)}
+            onClick={(e) => more(message, e.currentTarget)}
             className="t2f-msg-more"
           >
             <span aria-hidden="true">

@@ -219,12 +219,9 @@ test.describe('S-AUTH · під час трансляції', () => {
     if ((page.viewportSize()?.width ?? 0) < 768) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
     await page.getByRole('textbox', { name: /Повідомлення в чат/ }).fill('Видали мене');
     await page.getByRole('button', { name: /^Надіслати/ }).click();
-    await page.locator('[data-own="true"][data-kind="regular"] [data-msg-trigger]').last().click();
-    const menu = page.locator('[data-message-menu][data-own="true"]');
-    await expect(menu.getByRole('menuitem', { name: 'Поскаржитись' })).toHaveCount(0);
-    await menu.getByRole('menuitem', { name: 'Видалити повідомлення' }).click();
-    await expect(menu.getByText('Видалити назавжди?')).toBeVisible();
-    await menu.getByRole('menuitem', { name: 'Видалити', exact: true }).click();
+    const own = page.locator('[data-own="true"][data-kind="regular"]').last();
+    await expect(own.locator('[data-msg-trigger]')).toHaveCount(0);
+    await own.getByRole('button', { name: 'Видалити повідомлення' }).click();
     await expect(page.locator('[data-kind="deleted"][data-own="true"]')).toContainText('Твоє повідомлення видалено');
     await expect(page.getByText('Видали мене')).toHaveCount(0);
   });

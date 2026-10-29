@@ -548,6 +548,14 @@ html[data-reduce-motion='true'] .t2f-spin {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 0;
 }
+/* Своє повідомлення: червоний «×» на місці «⋯» — клік видаляє одразу. */
+.t2f-msg-del {
+  color: var(--color-primary);
+}
+.t2f-msg-del:hover > span {
+  background: var(--color-primary-fill);
+  color: var(--color-on-primary);
+}
 /* Телефон: «⋯» завжди в куті, час лівіше за нього на 8 px. */
 .t2f-msg[data-menu-always='true'] {
   padding-inline: 12px;
@@ -633,100 +641,6 @@ html[data-reduce-motion='true'] .t2f-spin {
 .t2f-mm-report:hover {
   color: var(--color-text);
 }
-/* Своє повідомлення: компактне меню біля «⋯» (не на всю ширину) — «Видалити повідомлення» і «×»; підтвердження на місці. */
-.t2f-mm[data-own='true'] {
-  left: auto !important;
-  right: 6px;
-  width: max-content !important;
-  max-width: calc(100% - 12px);
-  padding: 4px;
-  border-radius: var(--radius-md);
-}
-.t2f-mm.t2f-mm-inline[data-own='true'] {
-  margin: 0 6px 0 auto;
-}
-.t2f-mm-small {
-  height: 36px;
-  gap: 8px;
-  padding: 0 10px;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.t2f-mm-small-close {
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  color: var(--color-text-muted);
-}
-.t2f-mm-small:hover,
-.t2f-mm-small-close:hover {
-  background: var(--color-border);
-}
-.t2f-mm-delete {
-  color: var(--color-primary);
-}
-.t2f-mm-own-confirm {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 6px 6px 4px;
-}
-.t2f-mm-confirm {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.t2f-mm-confirm-q {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--color-text);
-}
-.t2f-mm-confirm-note {
-  font-size: 12px;
-  line-height: 1.3;
-  color: var(--color-text-muted);
-}
-.t2f-mm-confirm-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 6px;
-}
-.t2f-mm-delete-yes,
-.t2f-mm-delete-no {
-  justify-content: center;
-  height: 32px;
-  padding: 0 12px;
-  font-size: 13px;
-}
-.t2f-mm-delete-yes {
-  background: var(--color-primary-fill);
-  color: var(--color-on-primary);
-}
-.t2f-mm-delete-yes:hover {
-  background: var(--color-primary-fill-hover);
-}
-.t2f-mm-delete-no {
-  box-shadow: inset 0 0 0 1px var(--color-border-strong);
-}
-/* Дотик: трохи більші цілі, але так само компактно. */
-@media (pointer: coarse) {
-  .t2f-mm-small,
-  .t2f-mm-small-close {
-    height: 40px;
-  }
-  .t2f-mm-small-close {
-    width: 40px;
-  }
-  .t2f-mm-delete-yes,
-  .t2f-mm-delete-no {
-    height: 36px;
-    padding: 0 14px;
-  }
-}
 /* Видалене автором повідомлення: тонкий приглушений рядок у стрічці (бачать усі). */
 .t2f-msg-deleted {
   display: flex;
@@ -739,8 +653,10 @@ html[data-reduce-motion='true'] .t2f-spin {
   line-height: 1.35;
   color: var(--color-text-muted);
 }
+/* Кошик — на одній лінії з великими літерами тексту (правка власника 2026-10-29): піднято на 1 px. */
 .t2f-msg-deleted > svg {
   flex: 0 0 auto;
+  transform: translateY(-1px);
 }
 .t2f-msg-deleted time {
   font-size: 12px;
