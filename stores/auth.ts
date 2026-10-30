@@ -4,6 +4,8 @@
  * (екран «Акаунт створено»), повторний — просто вхід. Лист (`letter`) один: новий замінює попередній.
  * Вкладки синхронізуються через подію `storage` (`useAuthTabSync`): посилання з листа, відкрите в новій вкладці,
  * впускає й ту вкладку, що чекала на лист.
+ * `passes` — адреси акаунтів з Новорічним пасом і коли його оформлено (імітація сервера): вхід у такий акаунт
+ * вмикає пас і на цьому пристрої (`guest.hasPass`).
  */
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -21,6 +23,7 @@ import {
   type AuthIntent,
 } from '@/lib/auth/sim';
 import { safeJsonStorage } from '@/lib/storage/safe';
+import { useGuestStore } from '@/stores/guest';
 
 export const AUTH_STORAGE_KEY = 't2f:auth:v1';
 export const AUTH_VERSION = 1 as const;
@@ -58,6 +61,8 @@ interface AuthData {
   accounts: string[];
   letter: AuthLetter | null;
   sends: number[];
+  /** email → коли оформлено пас (мс). */
+  passes: Record<string, number>;
 }
 
 interface AuthActions {
@@ -67,6 +72,10 @@ interface AuthActions {
   verifyCode(code: string, now: number): CodeResult;
   openLink(token: string, now: number): LinkResult;
   signInGoogle(now: number): SignInResult;
+  /** Акаунт створюється разом з оплатою пасу (email з форми) — і людина одразу входить. */
+  signInWithPurchase(email: string, now: number): SignInResult;
+  /** Пас оформлено на акаунт `email`. */
+  grantPass(email: string, now: number): void;
   signOut(): void;
   /** Тестова пошта: зробити лист простроченим. */
   expireLetter(): void;
@@ -74,7 +83,7 @@ interface AuthActions {
 
 export type AuthStore = AuthData & AuthActions;
 
-const EMPTY: AuthData = { user: null, accounts: [], letter: null, sends: [] };
+const EMPTY: AuthData = { user: null, accounts: [], letter: null, sends: [], passes: {} };
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -82,6 +91,8 @@ export const useAuthStore = create<AuthStore>()(
       const signIn = (email: string, via: AuthUser['via'], now: number): SignInResult => {
         const isNew = !get().accounts.includes(email);
         set((s) => ({ user: { email, via, signedInAt: now }, accounts: isNew ? [...s.accounts, email] : s.accounts }));
+        // Пас на акаунті — вмикається й тут.
+        if (get().passes[email] !== undefined) useGuestStore.getState().setHasPass(true);
         return { ok: true, isNew, email };
       };
       return {
@@ -124,6 +135,12 @@ export const useAuthStore = create<AuthStore>()(
           return signIn(letter.email, 'email', now);
         },
         signInGoogle: (now) => signIn(GOOGLE_DEMO_EMAIL, 'google', now),
+        signInWithPurchase: (raw, now) => signIn(normalizeEmail(raw), 'email', now),
+        grantPass: (raw, now) => {
+          const email = normalizeEmail(raw);
+          set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? now } }));
+          useGuestStore.getState().setHasPass(true);
+        },
         signOut: () => set({ user: null }),
         expireLetter: () =>
           set((s) => (s.letter ? { letter: { ...s.letter, sentAt: s.letter.sentAt - LETTER_TTL_MS - 1 } } : s)),
@@ -133,8 +150,10 @@ export const useAuthStore = create<AuthStore>()(
       name: AUTH_STORAGE_KEY,
       version: AUTH_VERSION,
       storage: safeJsonStorage<AuthData>('local'),
-      partialize: (s) => ({ user: s.user, accounts: s.accounts, letter: s.letter, sends: s.sends }),
+      partialize: (s) => ({ user: s.user, accounts: s.accounts, letter: s.letter, sends: s.sends, passes: s.passes }),
       migrate: (persisted, version) => (version === AUTH_VERSION ? (persisted as AuthData) : EMPTY),
+      // Збережене до появи `passes` — без нього.
+      merge: (persisted, current) => ({ ...current, ...(persisted as Partial<AuthData>), passes: (persisted as Partial<AuthData> | undefined)?.passes ?? {} }),
     },
   ),
 );

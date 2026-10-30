@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { Dialog, RadioGroup, VisuallyHidden } from 'radix-ui';
-import { useRef, type ReactNode } from 'react';
+import { useRef, type MouseEvent, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
@@ -40,6 +40,8 @@ export interface MenuProps {
   signedIn?: boolean;
   /** «Увійти» гостя: сторінка входу або (`onSignIn`) вікно входу під трансляцією. */
   onSignIn?: () => void;
+  /** «Новорічний пас»: сторінка `/pass/` або (`onPass`) вікно оформлення під трансляцією. */
+  onPass?: () => void;
   /** Штампів на цьому пристрої (підпис «Мій паспорт»). */
   stampCount?: number;
   /** Керований «Зменшити рух» (історії, тести); без нього — стор гостя. */
@@ -80,7 +82,7 @@ function NavRow({
   hint?: ReactNode;
   current?: boolean;
   highlight?: boolean;
-  onNavigate: () => void;
+  onNavigate: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   return (
     <li>
@@ -113,6 +115,7 @@ export function Menu({
   hasPass = false,
   signedIn = false,
   onSignIn,
+  onPass,
   stampCount = 0,
   reducedMotion,
   onReducedMotionChange,
@@ -200,7 +203,19 @@ export function Menu({
               <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
                 <NavRow icon="calendar" title={t('schedule')} hint={hasPass ? undefined : t('scheduleHint')} onNavigate={close} />
                 <NavRow icon="passport" title={t('passport')} hint={t('passportHint', { count: stampCount })} onNavigate={close} />
-                <NavRow icon={hasPass ? 'ticket-check' : 'ticket'} title={t('pass')} hint={t('passHint')} highlight onNavigate={close} />
+                <NavRow
+                  href="/pass/"
+                  icon={hasPass ? 'ticket-check' : 'ticket'}
+                  title={t('pass')}
+                  hint={t('passHint')}
+                  highlight
+                  onNavigate={(e) => {
+                    if (onPass) {
+                      e.preventDefault();
+                      onPass();
+                    } else close();
+                  }}
+                />
                 <NavRow icon="heart" title={t('support')} hint={t('supportHint')} onNavigate={close} />
               </ul>
               <Divider />

@@ -42,12 +42,12 @@ describe('PassOffer', () => {
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Уже 5 країн у твоєму паспорті');
   });
 
-  it('«Оформити пас» — імітоване повідомлення, без чекауту', () => {
-    renderPage(<PassOffer count={2} countries={countries} />);
-    expect(screen.queryByText('Оплата буде на наступному етапі')).toBeNull();
+  it('«Оформити пас» веде до оформлення пасу (без заглушки «Оплата буде…»)', () => {
+    const onGetPass = vi.fn();
+    renderPage(<PassOffer count={2} countries={countries} onGetPass={onGetPass} />);
     fireEvent.click(screen.getByRole('button', { name: 'Оформити пас' }));
-    expect(screen.getByRole('status')).toHaveTextContent('Оплата буде на наступному етапі');
-    expect(document.querySelector('iframe, form')).toBeNull();
+    expect(onGetPass).toHaveBeenCalledOnce();
+    expect(screen.queryByText('Оплата буде на наступному етапі')).toBeNull();
   });
 
   it('«×», Esc і «Детальніше»', () => {

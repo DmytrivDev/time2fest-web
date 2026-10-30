@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { LETTER_TTL_MS, type AuthIntent } from '@/lib/auth/sim';
-import { returnPath } from '@/lib/auth/returnTo';
+import { returnPath, takeLetterSent } from '@/lib/auth/returnTo';
 import { useAuthStore, useAuthTabSync, type SignInResult } from '@/stores/auth';
 import { AuthSteps } from './AuthSteps';
 import { AuthIcon, type AuthIconName } from './icons';
@@ -29,7 +29,12 @@ interface Start {
 function resolveStart(): Start {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('link');
-  if (!token) return {};
+  if (!token) {
+    // Лист уже надіслано з іншої сторінки (пас) — одразу «Лист надіслано».
+    const letter = useAuthStore.getState().letter;
+    if (takeLetterSent() && letter && !letter.used) return { step: { kind: 'sent' }, email: letter.email };
+    return {};
+  }
   window.history.replaceState(null, '', window.location.pathname);
   const now = Date.now();
   const res = useAuthStore.getState().openLink(token, now);

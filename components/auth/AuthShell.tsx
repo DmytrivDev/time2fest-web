@@ -7,7 +7,7 @@ import { Footer } from '@/components/shell/Footer';
 import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
 import { TimeProvider } from '@/lib/time/TimeProvider';
-import { useHeaderUser } from './session';
+import { useHeaderPass, useHeaderUser } from './session';
 
 /**
  * Хедер + сторінка + футер для `/login/` і `/signup/`: поза `(live)`, тож без плеєра й чату (як `StaticShell`),
@@ -16,13 +16,14 @@ import { useHeaderUser } from './session';
 export function AuthShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = useHeaderUser();
+  const hasPass = useHeaderPass();
   return (
     <TimeProvider>
       <TimeMachineMount />
       <div className="flex min-h-dvh flex-col bg-background text-text">
         <SkipLinks targets={['content']} />
-        <Header user={user} signInCurrent onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
-        <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} />
+        <Header user={user} hasPass={hasPass} signInCurrent onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
+        <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
         {children}
         <Footer className="mt-0" />
       </div>

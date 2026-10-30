@@ -25,6 +25,20 @@ export function clearReturn(): void {
   safeRemove('session', KEY);
 }
 
+const SENT_KEY = 't2f:session:authSent';
+
+/** Лист для входу вже надіслано (напр. зі сторінки пасу: «На цю адресу пас уже оформлено») — `/login/` відкриється з кроку «Лист надіслано». */
+export function rememberLetterSent(): void {
+  safeSet('session', SENT_KEY, '1');
+}
+
+/** Чи прийшли з надісланим листом (одноразово). */
+export function takeLetterSent(): boolean {
+  const sent = safeGet('session', SENT_KEY) === '1';
+  if (sent) safeRemove('session', SENT_KEY);
+  return sent;
+}
+
 /** Поточна адреса сторінки для `rememberReturn`. */
 export function currentPath(): string {
   if (typeof window === 'undefined') return '/';

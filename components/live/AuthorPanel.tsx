@@ -13,14 +13,12 @@
  */
 import { Collapsible as Radix } from 'radix-ui';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { PaymentNotice } from '@/components/windows/OfferCard';
 import { pathSummary, routeCities, type PathPoint } from '@/lib/chat-sim/authorPath';
 import type { Author, ChatMessage } from '@/lib/data/types';
 import { PathLegend, PathMap } from './PathMap';
@@ -42,6 +40,8 @@ export interface AuthorPanelProps {
   onReport?: (message: ChatMessage) => void;
   /** «Що ще дає пас?» — відкрити опис пасу. */
   onPassInfo?: () => void;
+  /** «Оформити пас» — оформлення (вікно під трансляцією чи сторінка пасу). */
+  onGetPass?: () => void;
   /** Своє повідомлення: олівець біля ніка — змінити нік і прапор (O-NICK). */
   onEditProfile?: () => void;
   /** Готова геометрія мапи (історії, тести). */
@@ -72,6 +72,7 @@ export function AuthorPanel({
   viewerHasPass = false,
   onReport,
   onPassInfo,
+  onGetPass,
   onEditProfile,
   geometry,
   className,
@@ -80,7 +81,6 @@ export function AuthorPanel({
   const w = useTranslations('windows.author');
   const offers = useTranslations('offers');
   const column = useChatColumn();
-  const [notice, setNotice] = useState(false);
   const isMine = !!author.isMine;
   const showCard = isMine || hasPass;
   const { met, planned } = pathSummary(path);
@@ -206,14 +206,13 @@ export function AuthorPanel({
         <div className="t2f-author-promo flex shrink-0 flex-col gap-2.5 border-t border-border p-3" data-row="promo">
           <p className="px-1 text-caption text-text-secondary">{t('promoText')}</p>
           <div className="flex gap-2">
-            <Button variant="coral" className="t2f-author-promo-btn shrink-0" onClick={() => setNotice((v) => !v)}>
+            <Button variant="coral" className="t2f-author-promo-btn shrink-0" onClick={() => onGetPass?.()}>
               {offers('getPass')}
             </Button>
             <Button variant="secondary" iconLeft="help" className="t2f-author-promo-btn min-w-0 flex-1" onClick={() => onPassInfo?.()}>
               {t('passMore')}
             </Button>
           </div>
-          {notice ? <PaymentNotice>{offers('paymentLater')}</PaymentNotice> : null}
         </div>
       ) : null}
     </div>

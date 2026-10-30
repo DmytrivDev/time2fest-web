@@ -22,7 +22,6 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { FlagField, useFlagName, type FlagOption } from '@/components/windows/FlagField';
-import { PaymentNotice } from '@/components/windows/OfferCard';
 import { validateNick, type NickIssue } from '@/lib/chat-sim/nick';
 import { NICK_MAX } from '@/lib/chat-sim/send';
 
@@ -49,6 +48,8 @@ export interface NickProps {
   onDone: (result: NickResult) => void;
   /** «Увійти» — вікно входу (O-AUTH) на місці цього. */
   onSignIn?: () => void;
+  /** «Оформити пас» — оформлення (вікно під трансляцією чи сторінка пасу). */
+  onGetPass?: () => void;
   className?: string;
 }
 
@@ -61,17 +62,16 @@ export function Nick({
   forcedIssue,
   onDone,
   onSignIn,
+  onGetPass,
   className,
 }: NickProps) {
   const t = useTranslations('windows.nick');
   const c = useTranslations('chat.nick');
-  const offers = useTranslations('offers');
   const [nick, setNick] = useState(initialNick);
   const [touched, setTouched] = useState(false);
   const initial = initialFlag ?? detectedFlag ?? 'earth';
   const [flag, setFlag] = useState(initial);
   const undetected = !initialFlag && !detectedFlag;
-  const [notice, setNotice] = useState(false);
 
   const uid = useId();
   const nickId = `${uid}-nick`;
@@ -206,13 +206,11 @@ export function Nick({
             <Button
               type="button"
               className="min-h-touch-min flex-1"
-              aria-expanded={notice}
-              onClick={() => setNotice((v) => !v)}
+              onClick={onGetPass}
             >
               {t('whatPassGives')}
             </Button>
           </div>
-          {notice ? <PaymentNotice>{offers('paymentLater')}</PaymentNotice> : null}
           <p className="text-center text-caption text-text-muted">
             {t('age')} ·{' '}
             <a

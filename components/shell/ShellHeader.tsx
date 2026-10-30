@@ -4,7 +4,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
-import { useHeaderUser } from '@/components/auth/session';
+import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
+import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { usePlayer, usePlayerActions } from '@/lib/player/PlayerProvider';
@@ -26,7 +27,7 @@ export interface ShellHeaderProps extends Pick<HeaderProps, 'current' | 'hasPass
  * «Увійти»: трансляція грає — вікно входу (панель на місці чату / аркуш під плеєром, відео не зупиняється);
  * інакше — сторінка `/login/` з поверненням сюди ж.
  */
-export function ShellHeader({ current: currentProp, hasPass, user: userProp, pausedPlace }: ShellHeaderProps) {
+export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: userProp, pausedPlace }: ShellHeaderProps) {
   const t = useTranslations('menu');
   // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
   const pathname = usePathname();
@@ -39,7 +40,10 @@ export function ShellHeader({ current: currentProp, hasPass, user: userProp, pau
   const resumeOnClose = useRef(false);
   const sessionUser = useHeaderUser();
   const user = userProp ?? sessionUser;
+  const storedPass = useHeaderPass();
+  const hasPass = hasPassProp ?? storedPass;
   const openAuthWindow = useOpenAuthWindow();
+  const openPassWindow = useOpenPassWindow();
   const router = useRouter();
 
   const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -49,6 +53,22 @@ export function ShellHeader({ current: currentProp, hasPass, user: userProp, pau
       return;
     }
     rememberReturn(currentPath());
+  };
+  // «Пас»: трансляція грає — оформлення вікном; інакше — сторінка пасу.
+  const onPassClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (status === 'playing') {
+      e.preventDefault();
+      openPassWindow();
+    }
+  };
+  const onMenuPass = () => {
+    const wasPlaying = resumeOnClose.current;
+    onMenuChange(false);
+    if (wasPlaying) {
+      openPassWindow();
+      return;
+    }
+    router.push('/pass/');
   };
   // Меню ставить відео на паузу: «грало» — це стан до відкриття меню.
   const onMenuSignIn = () => {
@@ -112,6 +132,7 @@ export function ShellHeader({ current: currentProp, hasPass, user: userProp, pau
         onLanguageClick={openLanguage}
         languageOpen={languageOpen}
         onSignInClick={onSignInClick}
+        onPassClick={onPassClick}
       />
       <Menu
         open={menuOpen}
@@ -120,6 +141,7 @@ export function ShellHeader({ current: currentProp, hasPass, user: userProp, pau
         hasPass={hasPass}
         signedIn={Boolean(user)}
         onSignIn={onMenuSignIn}
+        onPass={onMenuPass}
         language={language}
         onLanguageChange={setLanguage}
         pausedPlace={pausedPlace}

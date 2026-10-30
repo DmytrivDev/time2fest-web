@@ -8,7 +8,6 @@
  * одна за раз, не під час введення); тут лише вигляд. Оплата — наступний етап: імітоване повідомлення.
  */
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Flag } from '@/components/primitives/Flag';
 import { AlsoInPass, MainFeatures, PassActions, usePassFeatures } from './PassInfo';
 import { OfferCard } from './OfferCard';
@@ -33,7 +32,6 @@ export interface PassOfferProps {
 
 export function PassOffer({ count, countries, wroteInChat = false, onClose, onDetails, onGetPass, className }: PassOfferProps) {
   const t = useTranslations('offers');
-  const [notice, setNotice] = useState(false);
   const { main, also } = usePassFeatures(wroteInChat);
   return (
     <OfferCard variant="pass-offer" title={t('passTitle', { count })} closeLabel={t('dismiss')} onClose={onClose} className={className}>
@@ -50,14 +48,7 @@ export function PassOffer({ count, countries, wroteInChat = false, onClose, onDe
       <p className="text-body text-text-secondary">{t('passLead')}</p>
       <MainFeatures items={main} compact />
       <AlsoInPass items={also} />
-      <PassActions
-        notice={notice}
-        onDetails={onDetails}
-        onGetPass={() => {
-          setNotice(true);
-          onGetPass?.();
-        }}
-      />
+      <PassActions onDetails={onDetails} onGetPass={onGetPass} />
     </OfferCard>
   );
 }

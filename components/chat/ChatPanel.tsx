@@ -28,6 +28,7 @@ import { STAMP_DELAY } from '@/lib/engine/config';
 import { pickSeatRoomEvent } from '@/lib/firstrow/rooms';
 import { MyEmotionPill, type SavedEmotion } from '@/components/windows/Emoji';
 import { Nick } from '@/components/windows/Nick';
+import { useGetPass } from '@/components/pass/PassWindow';
 import { authorHasPass, buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
 import { slowSecondsAt } from '@/lib/chat-sim/simulator';
 import { sendMessage, slowRemainingSec, type SendContext } from '@/lib/chat-sim/send';
@@ -89,6 +90,7 @@ export function ChatPanel({
   const announce = useAnnounce();
   const overlay = useOverlay();
   const openAuthWindow = useOpenAuthWindow();
+  const getPass = useGetPass();
   const column = useChatColumn();
   const source = useTimeSource();
   const now = useNow();
@@ -294,6 +296,7 @@ export function ChatPanel({
             flags={flagOptions}
             takenNicks={takenNicks}
             onSignIn={() => openAuthWindow()}
+            onGetPass={() => getPass()}
             onDone={({ nick, flagCode }) => {
               setNick(nick, flagCode);
               overlay.close(NICK_WINDOW_ID);
@@ -303,7 +306,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, flagOptions, takenNicks, setNick, setDetectedFlag, trySend, focusField, openAuthWindow],
+    [overlay, t, flagOptions, takenNicks, setNick, setDetectedFlag, trySend, focusField, openAuthWindow, getPass],
   );
 
   const submit = useCallback(
@@ -378,6 +381,7 @@ export function ChatPanel({
             viewerHasPass={viewerHasPass}
             onReport={onReport}
             onEditProfile={author.isMine ? () => openNick(null) : undefined}
+            onGetPass={() => getPass()}
             onPassInfo={() => {
               overlay.open(passInfoSpec({ now: () => clock.getSnapshot() }, tPass('infoTitle')));
               useGuestStore.getState().showOffer('pass-info', useGuestStore.getState().stamps.at(-1)?.eventId ?? '', clock.getSnapshot());
@@ -386,7 +390,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, tPass, clock, lookup, onReport, openNick],
+    [overlay, t, tPass, clock, lookup, onReport, openNick, getPass],
   );
 
   const openRules = useCallback(

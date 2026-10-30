@@ -4,9 +4,10 @@
  * Вікна пропозицій (O-PASS-OFFER, O-TIPS, O-PASS-GATE, O-PASS-INFO) для `OverlayManager` (`inflow`):
  * з’єднують чисті картки з `windows/*` зі станом гостя (`guest.offers`, країни штампів) і самим менеджером.
  * Закриття (×, Esc, заміна іншим вікном) записує `dismissedAt` у `guest.offers` — закрита пропозиція
- * не повертається тієї ночі (`offerEligibility`). Оплата — наступний етап: «Оформити пас» і «Підтримати» лише
- * записують `acted: 'primary'`, а картка показує імітоване «Оплата буде на наступному етапі».
+ * не повертається тієї ночі (`offerEligibility`). «Оформити пас» записує `acted: 'primary'` і відкриває оформлення
+ * пасу (`useGetPass`); «Підтримати» поки показує імітоване «Оплата буде на наступному етапі».
  */
+import { useGetPass } from '@/components/pass/PassWindow';
 import { PassGate, type PassGateFeature } from '@/components/windows/PassGate';
 import { PassInfo } from '@/components/windows/PassInfo';
 import { PassOffer, type PassOfferCountry } from '@/components/windows/PassOffer';
@@ -55,9 +56,19 @@ export interface OfferSpecDeps {
   now: () => Ms;
 }
 
+/** «Оформити пас» з пропозиції: записати дію й відкрити оформлення (вікно під трансляцією чи сторінку пасу). */
+function useOfferGetPass(): () => void {
+  const getPass = useGetPass();
+  return () => {
+    useGuestStore.getState().actOffer('primary');
+    getPass();
+  };
+}
+
 function PassInfoWindow() {
   const { close } = useOverlay();
-  return <PassInfo wroteInChat={wroteInChat()} onClose={() => close(PASS_INFO_WINDOW_ID)} onGetPass={() => useGuestStore.getState().actOffer('primary')} />;
+  const onGetPass = useOfferGetPass();
+  return <PassInfo wroteInChat={wroteInChat()} onClose={() => close(PASS_INFO_WINDOW_ID)} onGetPass={onGetPass} />;
 }
 
 export function passInfoSpec(deps: OfferSpecDeps, title: string): OverlaySpec {
@@ -72,13 +83,14 @@ export function passInfoSpec(deps: OfferSpecDeps, title: string): OverlaySpec {
 
 function PassOfferWindow({ count, deps, infoTitle }: { count: number; deps: OfferSpecDeps; infoTitle: string }) {
   const { open, close } = useOverlay();
+  const onGetPass = useOfferGetPass();
   return (
     <PassOffer
       count={count}
       countries={stampCountries()}
       wroteInChat={wroteInChat()}
       onClose={() => close(PASS_OFFER_WINDOW_ID)}
-      onGetPass={() => useGuestStore.getState().actOffer('primary')}
+      onGetPass={onGetPass}
       onDetails={() => {
         const guest = useGuestStore.getState();
         const trigger = guest.offers.history.at(-1)?.triggerEventId ?? '';

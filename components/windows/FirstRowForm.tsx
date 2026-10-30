@@ -218,6 +218,7 @@ export function FirstRowForm({
   submitting = false,
   giftPass,
   onLoginForPass,
+  account,
   onHelp,
   className,
 }: FirstRowFormProps) {
@@ -289,6 +290,29 @@ export function FirstRowForm({
         </div>
       ) : null}
 
+      {account ? (
+        <div className={s.field} data-row="account">
+          <p className={s.label}>{t('form.account')}</p>
+          <div className={s.account}>
+            <span aria-hidden="true" className={s.accountAvatar}>
+              {(values.name.trim() || account.email).charAt(0).toUpperCase()}
+            </span>
+            <span className={s.accountEmail}>{account.email}</span>
+            <button type="button" onClick={account.onNotYou} className={cn(s.notYou, 't2f-focus')}>
+              {t('form.notYou')}
+            </button>
+          </div>
+          <p className={s.hint}>{t('form.accountHint')}</p>
+          {account.onPassInfo ? (
+            <p className={s.hintStrong} data-row="account-pass">
+              {t('form.accountPass')}{' '}
+              <button type="button" onClick={account.onPassInfo} className={cn(s.passLink, 't2f-focus')}>
+                {t('form.accountPassLink')}
+              </button>
+            </p>
+          ) : null}
+        </div>
+      ) : (
       <FirstRowField
         label={t('form.email')}
         qualifier={t('form.required')}
@@ -312,6 +336,7 @@ export function FirstRowForm({
           ) : null
         }
       />
+      )}
 
       <FirstRowField
         label={t('form.name')}
@@ -417,7 +442,7 @@ export function FirstRowForm({
         </div>
         <p className={s.centerNote}>
           <Icon name="lock" size={14} />
-          {t('form.payNote')}
+          {account ? t('form.payNoteSigned') : t('form.payNote')}
         </p>
         <div className={s.termsRow}>
           <Link href="/legal/terms" className={s.terms}>

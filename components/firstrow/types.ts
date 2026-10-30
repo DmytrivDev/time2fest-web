@@ -110,6 +110,11 @@ export interface FirstRowFormProps {
   giftPass: boolean;
   /** «Маєш Новорічний пас? Увійди — місце на 50% дешевше» (у гостя немає купленого пасу). */
   onLoginForPass?(): void;
+  /**
+   * Людина увійшла: замість поля email — рядок акаунта («Квиток і лист — сюди», «Не ти?»), дошки
+   * `O-FIRST-ROW · Форма, увійшов — без email`. `onPassInfo` — «що дає пас» (без купленого пасу).
+   */
+  account?: { email: string; onNotYou(): void; onPassInfo?(): void };
   onHelp?(): void;
   className?: string;
 }

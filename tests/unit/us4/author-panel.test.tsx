@@ -40,6 +40,7 @@ function show(author: Author, extra: Partial<AuthorPanelProps> = {}) {
     geometry,
     onReport: vi.fn(),
     onPassInfo: vi.fn(),
+    onGetPass: vi.fn(),
     ...extra,
   };
   renderApp(<AuthorPanel {...props} />);
@@ -128,7 +129,7 @@ describe('панель автора O-AUTHOR (C13)', () => {
     await user.click(within(promo).getByRole('button', { name: 'Що ще дає пас?' }));
     expect(props.onPassInfo).toHaveBeenCalledOnce();
     await user.click(within(promo).getByRole('button', { name: 'Оформити пас' }));
-    expect(within(promo).getByRole('status')).toHaveTextContent('Оплата буде на наступному етапі');
+    expect(props.onGetPass).toHaveBeenCalledOnce();
     cleanup();
     show(KARIM, { viewerHasPass: true });
     expect(document.querySelector('[data-row="promo"]')).toBeNull();

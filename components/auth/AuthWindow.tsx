@@ -14,24 +14,26 @@ import { useOverlay } from '@/components/shell/OverlayManager';
 import type { AuthIntent } from '@/lib/auth/sim';
 import type { SignInResult } from '@/stores/auth';
 import { AuthSteps } from './AuthSteps';
-import { useAuthFlow } from './useAuthFlow';
+import { useAuthFlow, type AuthStep } from './useAuthFlow';
 
 export const AUTH_WINDOW_ID = 'O-AUTH';
 
 function AuthWindowContent({
   mode,
   initialEmail,
+  initialStep,
   onSwitch,
   onSignedIn,
   onExit,
 }: {
   mode: AuthIntent;
   initialEmail?: string;
+  initialStep?: AuthStep;
   onSwitch: (mode: AuthIntent, email: string) => void;
   onSignedIn: (r: SignInResult) => void;
   onExit: () => void;
 }) {
-  const flow = useAuthFlow({ mode, initialEmail, onSignedIn });
+  const flow = useAuthFlow({ mode, initialEmail, initialStep, onSignedIn });
   return (
     <div data-window={AUTH_WINDOW_ID}>
       <AuthSteps
@@ -44,14 +46,22 @@ function AuthWindowContent({
   );
 }
 
+export interface AuthWindowOptions {
+  /** Почати з кроку (напр. «Лист надіслано» — лист уже надіслано з вікна пасу). */
+  step?: AuthStep;
+  email?: string;
+  /** Після входу в наявний акаунт (вікно закрито) — напр. повернутися до вікна пасу. */
+  afterSignIn?: () => void;
+}
+
 /** Відкрити вхід вікном (трансляція не зупиняється). */
-export function useOpenAuthWindow(): (mode?: AuthIntent) => void {
+export function useOpenAuthWindow(): (mode?: AuthIntent, opts?: AuthWindowOptions) => void {
   const t = useTranslations('auth');
   const overlay = useOverlay();
   const announce = useAnnounce();
 
   const open = useCallback(
-    function openWindow(mode: AuthIntent = 'signin', email?: string) {
+    function openWindow(mode: AuthIntent = 'signin', email?: string, opts: AuthWindowOptions = {}) {
       const close = () => overlay.close(AUTH_WINDOW_ID);
       overlay.open({
         id: AUTH_WINDOW_ID,
@@ -65,10 +75,12 @@ export function useOpenAuthWindow(): (mode?: AuthIntent) => void {
             key={mode}
             mode={mode}
             initialEmail={email}
-            onSwitch={(next, value) => openWindow(next, value)}
+            initialStep={opts.step}
+            onSwitch={(next, value) => openWindow(next, value, { afterSignIn: opts.afterSignIn })}
             onSignedIn={(r) => {
               close();
               announce(t('signedIn', { email: r.email }));
+              opts.afterSignIn?.();
             }}
             onExit={close}
           />
@@ -78,5 +90,5 @@ export function useOpenAuthWindow(): (mode?: AuthIntent) => void {
     [overlay, announce, t],
   );
 
-  return useCallback((mode?: AuthIntent) => open(mode), [open]);
+  return useCallback((mode?: AuthIntent, opts?: AuthWindowOptions) => open(mode, opts?.email, opts), [open]);
 }

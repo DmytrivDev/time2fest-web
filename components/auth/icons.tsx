@@ -99,6 +99,29 @@ const PATHS = {
     </>
   ),
   'chevron-left': <path d="M15 6l-6 6 6 6" />,
+  // Пас (`S-PASS`, `O-PASS-BUY`): тихий режим, місце, нагадування, замок оплати, стрілка, галочка.
+  filter: <path d="M4 6h16M7 12h10M10 18h4" />,
+  seat: (
+    <>
+      <path d="M6 11V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
+      <path d="M4 11h16v5H4z" />
+      <path d="M6 16v3M18 16v3" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="10" width="14" height="10" rx="2" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </>
+  ),
+  'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
+  tick: <path d="M5 12.5l4.5 4.5L19 7.5" />,
 } satisfies Record<string, ReactNode>;
 
 export type AuthIconName = keyof typeof PATHS;

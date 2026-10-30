@@ -32,6 +32,10 @@ export interface HeaderProps {
   /** Сторінка входу відкрита — «Увійти» позначено поточною. */
   signInCurrent?: boolean;
   onSignInClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
+  /** «Пас»: сторінка `/pass/`; `onPassClick` може відкрити оформлення вікном (трансляція грає) — `preventDefault`. */
+  onPassClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
+  /** Сторінка пасу відкрита — «Пас» позначено поточною. */
+  passCurrent?: boolean;
   className?: string;
 }
 
@@ -55,6 +59,8 @@ export function Header({
   signInHref = '/login/',
   signInCurrent = false,
   onSignInClick,
+  onPassClick,
+  passCurrent = false,
   className,
 }: HeaderProps) {
   const t = useTranslations('header');
@@ -99,9 +105,11 @@ export function Header({
           {t('support')}
         </NextLink>
 
-        {/* «Пас» — інертне посилання до S-PASS (наступна область). Телефон і планшет: коротко. */}
+        {/* «Пас» — сторінка пасу (або вікно оформлення під трансляцією). Телефон і планшет: коротко. */}
         <NextLink
-          href="#"
+          href="/pass/"
+          onClick={onPassClick}
+          aria-current={passCurrent ? 'page' : undefined}
           aria-label={hasPass ? t('passActiveA11y') : t('passA11y')}
           className={cn('t2f-focus', styles.btn, styles.pass, styles.phoneTablet)}
         >
@@ -110,7 +118,9 @@ export function Header({
         </NextLink>
         {/* Десктоп: повна назва. */}
         <NextLink
-          href="#"
+          href="/pass/"
+          onClick={onPassClick}
+          aria-current={passCurrent ? 'page' : undefined}
           aria-label={hasPass ? t('passFullActiveA11y') : undefined}
           className={cn('t2f-focus', styles.btn, styles.pass, styles.deskOnly)}
         >

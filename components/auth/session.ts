@@ -15,6 +15,13 @@ export function useHydrated(): boolean {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
 
+/** Пас на цьому пристрої — «Пас ✓» у хедері (після гідратації, як і користувач). */
+export function useHeaderPass(): boolean {
+  const hydrated = useHydrated();
+  const hasPass = useGuestStore((s) => s.hasPass);
+  return hydrated && hasPass;
+}
+
 export function useHeaderUser(): HeaderUser | null {
   useAuthTabSync();
   const hydrated = useHydrated();

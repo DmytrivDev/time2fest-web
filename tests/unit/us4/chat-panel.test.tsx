@@ -168,14 +168,14 @@ describe('O-NICK — прапор: пошук замість поля, спис�
     await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Прапор: Єгипет. Змінити' })).toHaveFocus());
   });
 
-  it('прев’ю «У чаті:» з довгим ніком; «Оформити пас» показує повідомлення про імітовану оплату; посилання на правила', async () => {
+  it('прев’ю «У чаті:» з довгим ніком; «Оформити пас» без заглушки оплати; посилання на правила', async () => {
     const user = userEvent.setup();
     const dialog = await openNick(user);
     fireEvent.change(within(dialog).getByRole('textbox', { name: /Нік/ }), { target: { value: 'ШШШШШШШШШШШШШШШШШШШШ' } });
     expect(within(dialog).getByText('У чаті:')).toBeInTheDocument();
     expect(within(dialog).getByRole('img', { name: /ШШШШШШШШШШШШШШШШШШШШ/ })).toBeInTheDocument();
-    await user.click(within(dialog).getByRole('button', { name: 'Оформити пас' }));
-    expect(within(dialog).getByText('Оплата буде на наступному етапі')).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Оформити пас' })).toBeInTheDocument();
+    expect(within(dialog).queryByText('Оплата буде на наступному етапі')).not.toBeInTheDocument();
     expect(within(dialog).getByRole('link', { name: 'Умови й правила чату' })).toHaveAttribute('href', '/rules/');
   });
 });

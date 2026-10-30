@@ -7,7 +7,6 @@
  * Оплата поза цією областю: «Оформити пас» показує імітоване повідомлення (без фальшивої оплати).
  */
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { Icon } from '@/components/primitives/Icon';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
@@ -64,8 +63,8 @@ export function PassPrice() {
 export interface PassActionsProps {
   onGetPass?: () => void;
   onDetails?: () => void;
-  /** Показати імітоване «Оплата буде на наступному етапі». */
-  notice: boolean;
+  /** Показати імітоване «Оплата буде на наступному етапі» (історії; на сайті «Оформити пас» веде до оформлення). */
+  notice?: boolean;
 }
 
 /** Низ картки пасу: ціна, коралова «Оформити пас», «Детальніше» (якщо є куди вести). Єдина коралова кнопка картки. */
@@ -112,26 +111,19 @@ export interface PassInfoProps {
   /** Гість писав у чаті → серед головних «−50% на «Перший ряд»». */
   wroteInChat?: boolean;
   onClose?: () => void;
-  /** «Оформити пас» (оплата — наступний етап: показується імітоване повідомлення). */
+  /** «Оформити пас»: вікно оформлення (трансляція грає) чи сторінка пасу. */
   onGetPass?: () => void;
   className?: string;
 }
 
 export function PassInfo({ wroteInChat = false, onClose, onGetPass, className }: PassInfoProps) {
   const t = useTranslations('pass');
-  const [notice, setNotice] = useState(false);
   const { main, also } = usePassFeatures(wroteInChat);
   return (
     <OfferCard variant="pass-info" title={t('infoTitle')} closeLabel={t('infoDismiss')} onClose={onClose} className={className}>
       <MainFeatures items={main} />
       <AlsoInPass items={also} />
-      <PassActions
-        notice={notice}
-        onGetPass={() => {
-          setNotice(true);
-          onGetPass?.();
-        }}
-      />
+      <PassActions onGetPass={onGetPass} />
     </OfferCard>
   );
 }

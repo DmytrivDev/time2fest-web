@@ -11,6 +11,7 @@ import { PlayerHost } from '@/components/player/PlayerHost';
 import { LiveAnnouncer } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
 import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
+import { PassPaymentWatcher } from '@/components/pass/PassPaymentWatcher';
 import { OfflineNotice } from '@/components/shell/Offline';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
@@ -35,6 +36,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               {/* Подія ефіру й фаза підпису — раз на макет: ланцюжок плеєра на головній, EngineScheduler (події шини). */}
               <BroadcastController>
               <SkipLinks targets={['content', 'chat']} />
+              {/* Оплата пасу «чекає підтвердження» — підтверджується й при закритому вікні. */}
+              <PassPaymentWatcher />
               {/* Згода на cookies: у DOM одразу після посилань-пропусків (кут/смуга; у потоці — на сторінці з плеєром). */}
               <CookieLayer />
               {/* TODO: current — з маршруту, коли з’являться сторінки країн. */}

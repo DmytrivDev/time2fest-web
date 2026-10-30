@@ -4,14 +4,14 @@
  * Дрібні частини екранів входу за дошками `*-Auth-*`: поле email, Google, роздільник, рядок помилки, віковий рядок,
  * перемикач «вхід / реєстрація», поле коду, «Надіслати ще раз» з відліком і блоки пасу (картка «Ще немає пасу?»,
  * розгорнута пропозиція, рядок у вікні під час трансляції).
- * «Оформити пас» — спокійна кнопка з жовтою межею (рішення 2026-10-29); оплата — наступна область, тож кнопка
- * показує «Оплата буде на наступному етапі». «Що дає пас» розгортає список можливостей на місці.
+ * «Оформити пас» — спокійна кнопка з жовтою межею (рішення 2026-10-29): веде до оформлення (`useGetPass`: вікно під
+ * трансляцією чи сторінка `/pass/`). «Що дає пас» розгортає список можливостей на місці.
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { PaymentNotice } from '@/components/windows/OfferCard';
+import { useGetPass } from '@/components/pass/PassWindow';
 import { formatCountdown } from '@/lib/auth/sim';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { AuthIcon, GoogleMark, type AuthIconName } from './icons';
@@ -382,7 +382,7 @@ export function PassHint({ className }: { className?: string }) {
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
-  const [notice, setNotice] = useState(false);
+  const getPass = useGetPass();
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.passHint, className)} data-block="pass-hint">
       <div className={s.passHintHead}>
@@ -402,7 +402,7 @@ export function PassHint({ className }: { className?: string }) {
         <span className={s.priceNote}>{o('priceNote')}</span>
       </div>
       <div className={s.pair}>
-        <button type="button" onClick={() => setNotice(true)} className={cn('t2f-focus', s.btn, s.passBtn)}>
+        <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn)}>
           {t('get')}
         </button>
         <ToggleButton
@@ -413,7 +413,6 @@ export function PassHint({ className }: { className?: string }) {
           className={cn('t2f-focus', s.btn, s.ghost)}
         />
       </div>
-      {notice ? <PaymentNotice>{o('paymentLater')}</PaymentNotice> : null}
     </section>
   );
 }
@@ -424,7 +423,7 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
-  const [notice, setNotice] = useState(false);
+  const getPass = useGetPass();
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.offer, className)} data-block="pass-offer">
       <span className={s.eyebrow}>
@@ -444,14 +443,9 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
         <span className={s.priceLg}>{formatUsd(PASS_PRICE)}</span>
         <span className={s.priceLgNote}>{o('priceNote')}</span>
       </div>
-      <button type="button" onClick={() => setNotice(true)} className={cn('t2f-focus', s.btn, s.passBtn, s.mt16)}>
+      <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn, s.mt16)}>
         {t('get', { price: formatUsd(PASS_PRICE) })}
       </button>
-      {notice ? (
-        <div className="mt-2">
-          <PaymentNotice>{o('paymentLater')}</PaymentNotice>
-        </div>
-      ) : null}
       <ToggleButton
         open={open}
         onToggle={() => setOpen((v) => !v)}
@@ -469,10 +463,9 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
 /** Вікно під час трансляції: «Ще немає пасу? $4,99 разово, на весь сезон» і дві кнопки. */
 export function PassRow({ mt }: { mt?: number }) {
   const t = useTranslations('auth');
-  const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
-  const [notice, setNotice] = useState(false);
+  const getPass = useGetPass();
   return (
     <div className={s.passRow} style={mtStyle(mt)} data-block="pass-row">
       <span className={s.passRowText}>
@@ -485,7 +478,7 @@ export function PassRow({ mt }: { mt?: number }) {
       </span>
       {open ? <PassPerks id={`${uid}-more`} dense /> : null}
       <span className={s.pair}>
-        <button type="button" onClick={() => setNotice(true)} className={cn('t2f-focus', s.btn, s.passBtn)}>
+        <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn)}>
           {t('passHint.get')}
         </button>
         <ToggleButton
@@ -496,7 +489,6 @@ export function PassRow({ mt }: { mt?: number }) {
           className={cn('t2f-focus', s.btn, s.ghost)}
         />
       </span>
-      {notice ? <PaymentNotice>{o('paymentLater')}</PaymentNotice> : null}
     </div>
   );
 }

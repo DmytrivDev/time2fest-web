@@ -1,0 +1,1047 @@
+/*
+ * Новорічний пас за дошками розділу «Купівля Новорічного пасу» (полотно «Візуальний дизайн», v100):
+ * `S-PASS · …` (сторінка, телефон 390 / десктоп 1440) і `O-PASS-BUY · Під час трансляції: …` (вікно).
+ * Кнопки, поля, роздільник і дрібний текст — спільні з входом (`auth.module.css`).
+ */
+
+/* ---------- сторінка ---------- */
+.main {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 4px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+@media (min-width: 1024px) {
+  .main {
+    padding: 12px 32px 56px;
+  }
+  .top {
+    margin-top: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: stretch;
+  }
+}
+
+/* ---------- герой: квиток, назва, ціна ---------- */
+.gold {
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
+    linear-gradient(160deg, #23211b 0%, var(--color-surface) 60%);
+}
+.hero {
+  position: relative;
+  box-sizing: border-box;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+.heroArt {
+  display: block;
+  width: 292px;
+  height: auto;
+  max-width: 100%;
+  transform: rotate(-3deg);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+}
+.heroText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title {
+  margin: 16px 0 0;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.price {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.activePill {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-weight: 700;
+  font-size: 18px;
+}
+.priceNote {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.lead {
+  margin: 4px 0 0;
+  max-width: 300px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+@media (min-width: 1024px) {
+  .hero {
+    flex: 999 1 640px;
+    min-width: 0;
+    padding: 40px 48px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 32px 48px;
+    text-align: left;
+    background:
+      radial-gradient(ellipse at 85% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
+      linear-gradient(160deg, #23211b 0%, var(--color-surface) 60%);
+  }
+  .heroArt {
+    flex: 0 0 auto;
+    width: 400px;
+    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
+  }
+  .heroText {
+    flex: 1 1 280px;
+    min-width: 0;
+    align-items: flex-start;
+  }
+  .title {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.15;
+  }
+  .price {
+    margin-top: 14px;
+  }
+  .activePill {
+    margin-top: 16px;
+  }
+  .priceNote {
+    margin-top: 10px;
+    font-size: 16px;
+    color: var(--color-text);
+  }
+  .lead {
+    margin-top: 14px;
+    max-width: 440px;
+    line-height: 1.55;
+  }
+}
+
+/* ---------- картка оформлення ---------- */
+.card {
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+}
+.card[data-gold='true'] {
+  border: 1px solid var(--color-highlight);
+}
+@media (min-width: 1024px) {
+  .card {
+    flex: 1 1 380px;
+    min-width: 0;
+    max-width: 440px;
+    padding: 24px;
+    border: 1px solid var(--color-border);
+  }
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-highlight);
+}
+.headPrice {
+  font-weight: 700;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.h3 {
+  margin: 8px 0 0;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.lockLine {
+  margin: 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.lockLine svg {
+  flex: 0 0 auto;
+}
+.giftLink {
+  align-self: center;
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: #e3d3a0;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
+}
+.linkRow {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 16px;
+}
+.linkRow a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* «Оформлюємо на акаунт …» */
+.account {
+  box-sizing: border-box;
+  padding: 12px 12px 12px 14px;
+  border-radius: 10px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #2d3a5c;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+.accountText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.accountLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.accountEmail {
+  font-weight: 700;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+.notYou {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* «На цю адресу пас уже оформлено» */
+.paid {
+  margin-top: 12px;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(252, 226, 134, 0.08);
+  border: 1px solid rgba(252, 226, 134, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.paidHead {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.paidHead > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--color-highlight);
+}
+.paidBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.paidTitle {
+  font-weight: 700;
+  font-size: 15px;
+}
+.paidText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.paidText b {
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+/* очікування */
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 8px 4px 4px;
+}
+.spinner {
+  animation: t2f-pass-spin 1s linear infinite;
+}
+@keyframes t2f-pass-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+/* Зменшений рух сайту. */
+:global(html[data-reduce-motion='true']) .spinner {
+  animation: none;
+}
+.statusTitle {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.3;
+}
+.statusText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.note {
+  margin: 16px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.note svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.note b {
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.noteSm {
+  font-size: 13px;
+}
+
+/* помилка оплати */
+.failBadge {
+  align-self: flex-start;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: var(--color-primary-tint);
+  box-shadow: inset 0 0 0 1px rgba(249, 74, 81, 0.35);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.failTitle {
+  margin: 12px 0 0;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.25;
+}
+.text {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.text b {
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+/* успіх */
+.success {
+  position: relative;
+}
+.confetti {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  pointer-events: none;
+}
+.successStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--color-highlight);
+}
+.successTitle {
+  margin: 6px 0 0;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.ticket {
+  margin-top: 14px;
+  position: relative;
+  display: flex;
+  border-radius: 12px;
+  background: #efe7d6;
+  color: #2a2620;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.ticketMain {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 14px 12px;
+  background: linear-gradient(160deg, #1b2142 0%, #5a3f5e 100%);
+  color: #f2ebdd;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ticketBrand {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #e8c872;
+}
+.ticketName {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.1;
+  color: var(--color-highlight);
+}
+.ticketWho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 0;
+}
+.ticketWho > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ticketStub {
+  flex: 0 0 88px;
+  box-sizing: border-box;
+  border-left: 2px dashed #b9ae9c;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+}
+.ticketStar {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--color-primary-fill);
+}
+.ticketSeason {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.ticketYear {
+  font-size: 10px;
+  color: #6b5f4c;
+}
+.works {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.works li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.dot {
+  flex: 0 0 auto;
+  border-radius: 9999px;
+  background: rgba(252, 226, 134, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(252, 226, 134, 0.25);
+  color: var(--color-highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dot28 {
+  width: 28px;
+  height: 28px;
+}
+.dot40 {
+  width: 40px;
+  height: 40px;
+}
+
+/* пас уже є */
+.activeHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.activeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-weight: 700;
+  font-size: 13px;
+}
+.discountRow {
+  margin-top: 16px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(252, 226, 134, 0.08);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.discountRow > svg {
+  flex: 0 0 auto;
+  color: var(--color-highlight);
+}
+
+/* ---------- «Що дає пас»: плитки з міні-прев’ю ---------- */
+.perks {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+}
+.perksTitle {
+  margin: 6px 0 0;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.tiles {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tile {
+  box-sizing: border-box;
+  padding: 16px;
+  border-color: rgba(252, 226, 134, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.tileText {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tileName {
+  margin-top: 6px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.tileDesc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.tilePreview {
+  min-width: 0;
+  margin-top: auto;
+}
+@media (min-width: 768px) {
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .tile:first-child {
+    grid-column: span 2;
+  }
+}
+@media (min-width: 1024px) {
+  .perks {
+    margin-top: 56px;
+  }
+  .perksTitle {
+    font-size: 32px;
+  }
+  .tiles {
+    margin-top: 20px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .tile {
+    padding: 20px;
+  }
+  .tileDesc {
+    font-size: 15px;
+  }
+  .tile:first-child {
+    padding: 24px;
+    flex-direction: row;
+    gap: 24px;
+  }
+  .tile:first-child .tileText,
+  .tile:first-child .tilePreview {
+    flex: 1 1 0;
+    margin-top: 0;
+  }
+  .tile:first-child .tileName {
+    font-size: 22px;
+  }
+}
+
+/* міні-прев’ю (декоративні, `aria-hidden`) */
+.mini {
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.miniPad {
+  padding: 10px;
+  gap: 8px;
+}
+.miniMsg {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.miniMine {
+  background: rgba(252, 226, 134, 0.1);
+  color: var(--color-text);
+}
+.miniNick {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.flag {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+}
+.flagSm {
+  width: 12px;
+  height: 9px;
+}
+.miniBadge {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.miniRoute {
+  margin-top: 4px;
+  padding: 6px 8px 2px;
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+.miniRoute b {
+  color: var(--color-text);
+}
+.miniRoute > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.arrow {
+  color: var(--color-highlight);
+}
+.miniRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.miniRowOn {
+  background: var(--color-surface-raised);
+}
+.miniTime {
+  width: 38px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.miniCity {
+  flex: 1;
+}
+.miniBell {
+  display: flex;
+  color: var(--color-text-muted);
+}
+.miniRowOn .miniBell {
+  color: var(--color-highlight);
+}
+.miniSoon {
+  margin-top: 4px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(252, 226, 134, 0.1);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-highlight);
+}
+.miniSwitchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+}
+.miniSwitch {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--color-highlight);
+}
+.miniSwitch::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-background);
+}
+.miniHidden {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+.miniCard {
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #1b2142 0%, #5a3f5e 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.miniCardEyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #e8c872;
+}
+.miniCardTitle {
+  font-weight: 700;
+  font-size: 16px;
+  color: #f2ebdd;
+}
+.stamps {
+  display: flex;
+  gap: 6px;
+}
+.stamps > span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+.miniSeat {
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--color-background);
+  border: 1px solid rgba(252, 226, 134, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.miniSeat > svg {
+  color: var(--color-highlight);
+}
+.miniSeatText {
+  display: flex;
+  flex-direction: column;
+}
+.miniSeatLabel {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.miniSeatPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.miniSeatPrice s {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.miniSeatPrice b {
+  font-size: 20px;
+  color: var(--color-highlight);
+}
+
+/* ---------- питання й відповіді ---------- */
+.faq {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+}
+.faqTitle {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.faqGrid {
+  display: flex;
+  flex-direction: column;
+}
+.faqItem {
+  border-bottom: 1px solid var(--color-border);
+}
+.faqItem h3 {
+  margin: 0;
+}
+.faqBtn {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.faqBtn > span {
+  flex: 1;
+}
+.faqBtn > svg {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  transition: transform 0.15s ease;
+}
+.faqBtn[aria-expanded='true'] > svg {
+  transform: rotate(180deg);
+}
+.faqAnswer {
+  margin: 0 0 16px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+@media (min-width: 1024px) {
+  .faq {
+    margin-top: 48px;
+  }
+  .faqTitle {
+    font-size: 24px;
+  }
+  .faqGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 48px;
+    align-items: start;
+  }
+}
+
+/* ---------- вікно під трансляцією ---------- */
+.window {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.windowTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.windowTitle > svg {
+  color: var(--color-highlight);
+}
+.perksCard {
+  margin-top: 0;
+  box-sizing: border-box;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.priceRow > span:first-child {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.priceRow > span:last-child {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.compact {
+  margin: 2px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid rgba(252, 226, 134, 0.16);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.compact li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+.allLink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  color: var(--color-highlight);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
+}

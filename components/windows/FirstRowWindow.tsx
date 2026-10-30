@@ -14,6 +14,8 @@ import {
   type FirstRowEvent,
 } from '@/components/firstrow/controller';
 import type { FirstRowDraftValues, FirstRowFormProps } from '@/components/firstrow/types';
+import { useHydrated } from '@/components/auth/session';
+import { passInfoSpec } from '@/components/offers/OfferWindows';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { HOLD_EXTEND_OFFER, HOLD_SEC } from '@/lib/engine/config';
@@ -22,6 +24,7 @@ import { ticketCode } from '@/lib/firstrow/seatsSim';
 import { useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { useNow, useTimeSource } from '@/lib/time/TimeProvider';
+import { useAuthStore } from '@/stores/auth';
 import { useChatUi } from '@/stores/chat';
 import { readEntry, useBoughtPass, useFirstRowStore, writeEntry } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
@@ -44,7 +47,13 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
   const overlay = useOverlay();
   const player = useOptionalPlayerActions();
   const flow = useFirstRowStore((s) => (s.flow?.eventId === event.id ? s.flow : null));
-  const email = useFirstRowStore((s) => s.email);
+  const typedEmail = useFirstRowStore((s) => s.email);
+  // Увійшла людина — email з акаунта, поле не показуємо (рішення власника 2026-10-30).
+  const accountEmail = useAuthStore((s) => s.user?.email ?? null);
+  const hydrated = useHydrated();
+  const signedEmail = hydrated ? accountEmail : null;
+  const email = signedEmail ?? typedEmail;
+  const tPass = useTranslations('pass');
   const setEmail = useFirstRowStore((s) => s.setEmail);
   const patchFlow = useFirstRowStore((s) => s.patchFlow);
   const entry = useGuestStore((s) => s.firstRow[event.id]) ?? {};
@@ -245,7 +254,16 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
       onPay={onPay}
       submitting={flow?.submitting ?? false}
       giftPass={!hasPass}
-      onLoginForPass={boughtPass ? undefined : () => undefined}
+      onLoginForPass={boughtPass || signedEmail ? undefined : () => undefined}
+      account={
+        signedEmail
+          ? {
+              email: signedEmail,
+              onNotYou: () => useAuthStore.getState().signOut(),
+              onPassInfo: boughtPass ? undefined : () => overlay.open(passInfoSpec({ now: () => source.now() }, tPass('infoTitle'))),
+            }
+          : undefined
+      }
     />
   );
 }
