@@ -1588,7 +1588,3 @@ html[data-chat-land-expanded] body {
   }
 }
 
-/* Вікно пасу O-PASS-BUY: пас активний — жовта межа (дошки «Під час трансляції: пас оформлено / пас уже є»). */
-[data-chat-slot-panel][data-pass-gold='true'] {
-  box-shadow: inset 0 0 0 1px var(--color-highlight);
-}

@@ -4,7 +4,8 @@
  * S-PASS — сторінка Новорічного пасу `/pass/` за дошками `S-PASS · …` (розділ «Купівля Новорічного пасу», v100):
  * «На головну» (сторінка пасу — не трансляція, правка власника 2026-10-30), герой з квитком і ціною, картка оформлення
  * (усі стани — `PassBuy`), «Що вмикається одразу після оплати» (плитки), «Питання й відповіді».
- * Телефон — одна колонка; десктоп (≥ 1024) — герой і картка в ряд, плитки сіткою, питання у дві колонки.
+ * Телефон — одна колонка; десктоп (≥ 1024, дошки v102) — ліва колонка (герой, плитки, питання) і оформлення
+ * в закріпленому сайдбарі праворуч, як чат на головній.
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
@@ -159,9 +160,8 @@ export function PassPage() {
   const t = useTranslations('pass.page');
   const router = useRouter();
   const view = usePassView();
+  // Після оплати змінюється лише картка оформлення (v102): герой — «✓ Активний», плитки й питання лишаються.
   const done = view === 'success' || view === 'active';
-  // Після оплати сторінка зосереджена на результаті (дошки «Пас оформлено», «Пас уже є»): без плиток і питань.
-  const full = !done;
   const toLogin = () => {
     rememberReturn(currentPath());
     router.push('/login/');
@@ -172,25 +172,19 @@ export function PassPage() {
         <AuthIcon name="chevron-left" size={16} />
         {t('back')}
       </NextLink>
-      <div className={s.top}>
-        <Hero active={done} />
-        <section aria-label={t('buyTitle')} className={s.card} data-gold={done ? 'true' : undefined} data-block="pass-buy">
-          <PassBuy
-            variant="page"
-            onSignIn={toLogin}
-            onLetterSent={() => {
-              rememberLetterSent();
-              toLogin();
-            }}
-          />
-        </section>
-      </div>
-      {full ? (
-        <>
-          <PassPerksTiles />
-          <Faq />
-        </>
-      ) : null}
+      <Hero active={done} />
+      <section aria-label={t('buyTitle')} className={s.card} data-block="pass-buy">
+        <PassBuy
+          variant="page"
+          onSignIn={toLogin}
+          onLetterSent={() => {
+            rememberLetterSent();
+            toLogin();
+          }}
+        />
+      </section>
+      <PassPerksTiles />
+      <Faq />
     </main>
   );
 }

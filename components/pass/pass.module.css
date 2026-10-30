@@ -1,5 +1,5 @@
 /*
- * Новорічний пас за дошками розділу «Купівля Новорічного пасу» (полотно «Візуальний дизайн», v100):
+ * Новорічний пас за дошками розділу «Купівля Новорічного пасу» (полотно «Візуальний дизайн», v102):
  * `S-PASS · …` (сторінка, телефон 390 / десктоп 1440) і `O-PASS-BUY · Під час трансляції: …` (вікно).
  * Кнопки, поля, роздільник і дрібний текст — спільні з входом (`auth.module.css`).
  */
@@ -15,22 +15,29 @@
   flex-direction: column;
   flex: 1 0 auto;
 }
-.top {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 4px;
-}
+/*
+ * Десктоп (v102, правка власника 2026-10-30): ліва колонка — «На головну», герой, «Що вмикається…», питання (прокручується);
+ * права — оформлення в закріпленому сайдбарі, як колонка чату на головній (sticky 16 px, висота вікна − 104 px).
+ * Порядок у розмітці — як на телефоні (герой, картка, плитки, питання); колонки задає сітка.
+ */
 @media (min-width: 1024px) {
   .main {
     padding: 12px 32px 56px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    column-gap: 24px;
+    align-items: start;
   }
-  .top {
-    margin-top: 8px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 24px;
-    align-items: stretch;
+  .main > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+  .main > a:first-child {
+    justify-self: start;
+  }
+  .main > .card {
+    grid-column: 2;
+    grid-row: 1 / span 4;
   }
 }
 
@@ -44,6 +51,7 @@
 }
 .hero {
   position: relative;
+  margin-top: 4px;
   box-sizing: border-box;
   padding: 20px 16px;
   display: flex;
@@ -107,12 +115,11 @@
 }
 @media (min-width: 1024px) {
   .hero {
-    flex: 999 1 640px;
-    min-width: 0;
-    padding: 40px 48px;
+    margin-top: 8px;
+    padding: 32px 40px;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 32px 48px;
+    gap: 24px 40px;
     text-align: left;
     background:
       radial-gradient(ellipse at 85% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
@@ -120,7 +127,7 @@
   }
   .heroArt {
     flex: 0 0 auto;
-    width: 400px;
+    width: 300px;
     filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
   }
   .heroText {
@@ -130,11 +137,12 @@
   }
   .title {
     margin: 0;
-    font-size: 40px;
+    font-size: 36px;
     line-height: 1.15;
   }
   .price {
-    margin-top: 14px;
+    margin-top: 12px;
+    font-size: 40px;
   }
   .activePill {
     margin-top: 16px;
@@ -153,6 +161,7 @@
 
 /* ---------- картка оформлення ---------- */
 .card {
+  margin-top: 16px;
   box-sizing: border-box;
   padding: 16px;
   border-radius: 14px;
@@ -160,16 +169,23 @@
   display: flex;
   flex-direction: column;
 }
-.card[data-gold='true'] {
-  border: 1px solid var(--color-highlight);
+/* Тіло картки росте на всю висоту сайдбару — «Інші шляхи» притискаються донизу. */
+.body {
+  flex: 1 0 auto;
 }
 @media (min-width: 1024px) {
   .card {
-    flex: 1 1 380px;
-    min-width: 0;
-    max-width: 440px;
+    position: sticky;
+    top: 16px;
+    margin-top: 0;
+    height: calc(100vh - 104px);
+    height: calc(100dvh - 104px);
+    min-height: 560px;
+    max-height: 840px;
     padding: 24px;
-    border: 1px solid var(--color-border);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }
 .head {
@@ -200,32 +216,82 @@
   line-height: 1.25;
   letter-spacing: -0.01em;
 }
+/* Дрібний текст під кнопкою оплати: замок на рівні першого рядка, згода — у тій самій колонці тексту. */
 .lockLine {
-  margin: 10px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  column-gap: 8px;
+  row-gap: 4px;
+  text-align: left;
   font-size: 13px;
+  line-height: 1.45;
   color: var(--color-text-muted);
-  text-align: center;
 }
-.lockLine svg {
-  flex: 0 0 auto;
+.lockLine p {
+  margin: 0;
 }
-.giftLink {
-  align-self: center;
-  margin-top: 4px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  color: #e3d3a0;
-  font-size: 13px;
-  font-weight: 600;
+.lockLine a {
+  color: var(--color-text-secondary);
   text-decoration: underline;
   text-underline-offset: 3px;
   border-radius: 4px;
+}
+.lockIcon {
+  display: flex;
+  align-items: center;
+  height: 19px;
+}
+.consent {
+  grid-column: 2;
+}
+/* Інші шляхи: лінія, «Вже маєш акаунт? Увійти», «Перший ряд». */
+.alt {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.altLine {
+  margin: 0;
+  width: 100%;
+  height: 1px;
+  border: 0;
+  background: var(--color-border);
+}
+.gift {
+  box-sizing: border-box;
+  padding: 12px 12px 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(252, 226, 134, 0.22);
+  background: rgba(252, 226, 134, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.giftText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.giftTitle {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.giftSub {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #e3d3a0;
+}
+.giftArrow {
+  flex: 0 0 auto;
+  display: flex;
+  color: var(--color-text-secondary);
 }
 .linkRow {
   margin-top: 8px;
@@ -340,6 +406,16 @@
 .paidText b {
   color: var(--color-text);
   overflow-wrap: anywhere;
+}
+.paidHint {
+  margin-top: 4px;
+  padding-left: 30px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.paidBtn {
+  margin-top: -2px;
 }
 
 /* очікування */
@@ -558,6 +634,10 @@
   width: 28px;
   height: 28px;
 }
+.dot36 {
+  width: 36px;
+  height: 36px;
+}
 .dot40 {
   width: 40px;
   height: 40px;
@@ -662,14 +742,13 @@
 }
 @media (min-width: 1024px) {
   .perks {
-    margin-top: 56px;
+    margin-top: 40px;
   }
   .perksTitle {
-    font-size: 32px;
+    font-size: 28px;
   }
   .tiles {
     margin-top: 20px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .tile {
     padding: 20px;
@@ -971,7 +1050,7 @@
   .faqGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 48px;
+    column-gap: 32px;
     align-items: start;
   }
 }

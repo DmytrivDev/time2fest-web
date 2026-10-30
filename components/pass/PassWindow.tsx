@@ -11,7 +11,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { useCallback, useContext, useEffect, useRef, type MouseEvent } from 'react';
+import { useCallback, useContext, useLayoutEffect, useRef, type MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { AuthIcon } from '@/components/auth/icons';
 import { useOverlay } from '@/components/shell/OverlayManager';
@@ -29,15 +29,15 @@ function PassWindowContent({ onClose, onSignIn }: { onClose: () => void; onSignI
   const view = usePassView();
   const ref = useRef<HTMLDivElement>(null);
   const openAuthWindow = useOpenAuthWindow();
-  const gold = view === 'success' || view === 'active';
-  // Пас активний — жовта межа вікна, як на дошках «пас оформлено» / «пас уже є».
-  useEffect(() => {
-    const panel = ref.current?.closest<HTMLElement>('[data-chat-slot-panel]');
-    if (!panel) return;
-    if (gold) panel.setAttribute('data-pass-gold', 'true');
-    else panel.removeAttribute('data-pass-gold');
-    return () => panel.removeAttribute('data-pass-gold');
-  }, [gold]);
+  const result = view === 'pending' || view === 'failed' || view === 'success' || view === 'active';
+  // Вікно відкрилося на місці іншого (напр. «Оформити пас» у вході) чи оплата дала результат — вміст з початку,
+  // а не з місця, до якого прокрутили попереднє вікно (правка власника 2026-10-30).
+  useLayoutEffect(() => {
+    for (let el = ref.current?.parentElement; el; el = el.parentElement) {
+      if (el.scrollTop > 0) el.scrollTop = 0;
+      if (el.hasAttribute('data-chat-slot-panel')) break;
+    }
+  }, [result]);
   const form = view === 'guest' || view === 'signed' || view === 'opening';
   return (
     <div ref={ref} data-window={PASS_WINDOW_ID} data-view={view} className={s.window}>

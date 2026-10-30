@@ -109,6 +109,21 @@ describe('PassBuy — картка оформлення', () => {
     expect(props.onSignIn).toHaveBeenCalled();
   });
 
+  it('дрібний текст під кнопкою: оплата й згода разом; інші шляхи — окремою групою з карткою «Першого ряду»', () => {
+    const { unmount } = renderWithApp(<PassBuy variant="page" {...props} />);
+    const fine = document.querySelector('[data-row="fine-print"]');
+    expect(fine).toHaveTextContent('Оплата на сторінці PayPro Global.');
+    expect(fine).toHaveTextContent('Акаунт — з 13 років');
+    const alt = document.querySelector('[data-row="alternatives"]') as HTMLElement;
+    expect(within(alt).getByRole('button', { name: 'Увійти' })).toBeInTheDocument();
+    expect(within(alt).getByRole('link', { name: /Місце в «Першому ряду».*Новорічний пас у подарунок/ })).toBeInTheDocument();
+    unmount();
+    // У вікні — без «Першого ряду», рядок оплати про трансляцію.
+    renderWithApp(<PassBuy variant="stream" {...props} />);
+    expect(document.querySelector('[data-row="fine-print"]')).toHaveTextContent('трансляція грає далі.');
+    expect(document.querySelector('[data-row="first-row"]')).toBeNull();
+  });
+
   it('помилка email: рядок під полем, поле позначене', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example' } });
@@ -117,15 +132,16 @@ describe('PassBuy — картка оформлення', () => {
     expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute('aria-invalid', 'true');
   });
 
-  it('адреса з пасом: «Надіслати посилання для входу» надсилає лист і веде до кроку «Лист надіслано»', () => {
+  it('адреса з пасом: «Надіслати посилання» надсилає лист і веде до кроку «Лист надіслано»', () => {
     useAuthStore.setState({ accounts: ['olena@example.com'], passes: { 'olena@example.com': 1 } });
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $4,99' }));
     const box = screen.getByRole('alert');
     expect(box).toHaveTextContent('На цю адресу пас уже оформлено');
+    expect(box).toHaveTextContent('Посилання для входу надішлемо на цю пошту.');
     expect(screen.getByRole('button', { name: 'Оформити пас — $4,99' })).toHaveAttribute('aria-disabled', 'true');
-    fireEvent.click(within(box).getByRole('button', { name: 'Надіслати посилання для входу' }));
+    fireEvent.click(within(box).getByRole('button', { name: 'Надіслати посилання' }));
     expect(useAuthStore.getState().letter?.email).toBe('olena@example.com');
     expect(props.onLetterSent).toHaveBeenCalled();
   });
@@ -150,6 +166,7 @@ describe('PassBuy — картка оформлення', () => {
     expect(screen.getByRole('link', { name: 'Повернутися на головну' })).toHaveAttribute('href', '/');
     unmount();
     renderWithApp(<PassBuy variant="stream" {...props} />);
+    expect(screen.getByRole('link', { name: 'Детальніше про пас' }).getAttribute('href')).toMatch(/^\/pass\/?$/);
     fireEvent.click(screen.getByRole('button', { name: 'Дивитися далі' }));
     expect(props.onDone).toHaveBeenCalled();
   });
@@ -160,6 +177,15 @@ describe('PassBuy — картка оформлення', () => {
     expect(screen.getByRole('heading', { name: 'Твій пас уже діє' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Оформити пас/ })).toBeNull();
     expect(screen.getByRole('link', { name: 'На головну' })).toHaveAttribute('href', '/');
+    expect(screen.getByText('Сезон 2026/27')).toBeInTheDocument();
+  });
+
+  it('пас уже є, вікно: «Дивитися далі» і «Детальніше про пас», без «Мій паспорт»', () => {
+    useGuestStore.getState().setHasPass(true);
+    renderWithApp(<PassBuy variant="stream" {...props} />);
+    expect(screen.getByRole('button', { name: 'Дивитися далі' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Детальніше про пас' }).getAttribute('href')).toMatch(/^\/pass\/?$/);
+    expect(screen.queryByRole('link', { name: 'Мій паспорт Нових років' })).toBeNull();
   });
 });
 

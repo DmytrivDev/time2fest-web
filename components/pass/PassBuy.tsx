@@ -2,7 +2,7 @@
 
 /**
  * Оформлення Новорічного пасу — тіло картки на сторінці (`S-PASS · …`) і у вікні під трансляцією (`O-PASS-BUY · …`).
- * Стани (дошки v100): гість (Google або email; помилка email; «На цю адресу пас уже оформлено»), увійшов — без email
+ * Стани (дошки v100, правки v102): гість (Google або email; помилка email; «На цю адресу пас уже оформлено»), увійшов — без email
  * («Оформлюємо на акаунт … · Не ти?»), «Відкриваємо оплату…», «Чекаємо підтвердження оплати», «Оплата не пройшла»,
  * «Пас активний — свято на повну!», «Твій пас уже діє». Логіку тримає `stores/pass`.
  * Кнопка після оплати: на сторінці — «Повернутися на головну»; у вікні (воно поруч із трансляцією) — «Дивитися далі»:
@@ -10,7 +10,7 @@
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Bold, EmailField, ErrorLine, GoogleButton, Separator, authStyles as a } from '@/components/auth/AuthParts';
 import { AuthIcon } from '@/components/auth/icons';
 import { useHydrated } from '@/components/auth/session';
@@ -52,7 +52,7 @@ export interface PassBuyProps {
 
 const PRICE = formatUsd(PASS_PRICE);
 /** На сторінці картка тримає крок 6 px між рядками (як на дошці), у вікні — без нього. */
-const col = (variant: PassBuyVariant) => (variant === 'page' ? 'flex flex-col gap-1.5' : 'flex flex-col');
+const col = (variant: PassBuyVariant) => cn(s.body, variant === 'page' ? 'flex flex-col gap-1.5' : 'flex flex-col');
 
 function Head({ signed }: { signed: boolean }) {
   const t = useTranslations('pass.buy');
@@ -70,13 +70,43 @@ function Head({ signed }: { signed: boolean }) {
   );
 }
 
-function LockLine({ stream }: { stream: boolean }) {
+/** Дрібний текст під кнопкою оплати (v102): по лівому краю, замок на рівні першого рядка; згода — другим абзацом поруч. */
+function LockLine({ stream, consent }: { stream: boolean; consent?: boolean }) {
   const t = useTranslations('pass.buy');
   return (
-    <p className={s.lockLine}>
-      <AuthIcon name="lock" size={14} />
-      {stream ? t('payNoteStream') : t('payNote')}
-    </p>
+    <div className={s.lockLine} data-row="fine-print">
+      <span aria-hidden="true" className={s.lockIcon}>
+        <AuthIcon name="lock" size={14} />
+      </span>
+      <p>{stream ? t('payNoteStream') : t('payNote')}</p>
+      {consent ? (
+        <p className={s.consent}>
+          {t.rich('age', {
+            terms: (c) => (
+              <a href="/rules/" target="_blank" rel="noopener" className="t2f-focus">
+                {c}
+              </a>
+            ),
+            // Сторінки політики ще немає — як у футері, інертне посилання.
+            privacy: (c) => (
+              <NextLink href="#" className="t2f-focus">
+                {c}
+              </NextLink>
+            ),
+          })}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+/** Інші шляхи (увійти, «Перший ряд») — окремою групою під лінією; у сайдбарі десктопа притиснуті донизу. */
+function Alternatives({ children }: { children: ReactNode }) {
+  return (
+    <div className={s.alt} data-row="alternatives">
+      <hr aria-hidden="true" className={s.altLine} />
+      {children}
+    </div>
   );
 }
 
@@ -143,12 +173,21 @@ function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled
   );
 }
 
-function FirstRowGift({ mt = 4 }: { mt?: number }) {
+/** «Перший ряд» — інший шлях до пасу: картка-посилання, щоб не скидатися на дрібний текст (v102). */
+function FirstRowGift({ mt = 12 }: { mt?: number }) {
   const t = useTranslations('pass.buy');
   return (
-    <NextLink href="/" className={cn('t2f-focus', s.giftLink)} style={{ marginTop: mt }}>
-      <AuthIcon name="seat" size={16} />
-      {t('firstRow')}
+    <NextLink href="/" className={cn('t2f-focus', s.gift)} style={{ marginTop: mt }} data-row="first-row">
+      <span aria-hidden="true" className={cn(s.dot, s.dot36)}>
+        <AuthIcon name="seat" size={18} />
+      </span>
+      <span className={s.giftText}>
+        <span className={s.giftTitle}>{t.rich('firstRowTitle', { nb: (c) => <span className="whitespace-nowrap">{c}</span> })}</span>
+        <span className={s.giftSub}>{t('firstRowText')}</span>
+      </span>
+      <span aria-hidden="true" className={s.giftArrow}>
+        <AuthIcon name="arrow-right" size={18} />
+      </span>
     </NextLink>
   );
 }
@@ -205,35 +244,24 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
               <span className={s.paidText}>{t('paidText')}</span>
             </span>
           </span>
-          <button type="button" className={cn('t2f-focus', a.btn, a.coral)} onClick={sendLink} data-action="send-link">
+          <span className={s.paidHint}>{t('paidHint')}</span>
+          <button type="button" className={cn('t2f-focus', a.btn, a.coral, s.paidBtn)} onClick={sendLink} data-action="send-link">
+            <AuthIcon name="mail" size={18} />
             {t('paidSend')}
           </button>
         </div>
       ) : null}
       <PayButton busy={busy} disabled={flow.paidEmail} mt={flow.paidEmail ? 12 : stream ? 12 : 16} />
-      <LockLine stream={stream} />
-      <p className={a.switchRow} style={{ marginTop: stream ? 0 : 4 }}>
-        {t('haveAccount')}
-        <button type="button" onClick={onSignIn} className="t2f-focus">
-          {t('signIn')}
-        </button>
-      </p>
-      <p className={a.age} style={{ marginTop: stream ? 2 : 4 }}>
-        {t.rich('age', {
-          terms: (c) => (
-            <a href="/rules/" target="_blank" rel="noopener" className="t2f-focus">
-              {c}
-            </a>
-          ),
-          // Сторінки політики ще немає — як у футері, інертне посилання.
-          privacy: (c) => (
-            <NextLink href="#" className="t2f-focus">
-              {c}
-            </NextLink>
-          ),
-        })}
-      </p>
-      {!stream ? <FirstRowGift /> : null}
+      <LockLine stream={stream} consent />
+      <Alternatives>
+        <p className={a.switchRow} style={{ marginTop: 4 }}>
+          {t('haveAccount')}
+          <button type="button" onClick={onSignIn} className="t2f-focus">
+            {t('signIn')}
+          </button>
+        </p>
+        {!stream ? <FirstRowGift mt={4} /> : null}
+      </Alternatives>
     </form>
   );
 }
@@ -272,7 +300,11 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
       ) : (
         <LockLine stream={stream} />
       )}
-      {!stream ? <FirstRowGift /> : null}
+      {!stream ? (
+        <Alternatives>
+          <FirstRowGift mt={16} />
+        </Alternatives>
+      ) : null}
     </form>
   );
 }
@@ -305,7 +337,7 @@ function Failed() {
   return (
     <form
       noValidate
-      className="flex flex-col gap-1.5"
+      className={cn(s.body, 'flex flex-col gap-1.5')}
       data-phase="failed"
       onSubmit={(e) => {
         e.preventDefault();
@@ -340,6 +372,16 @@ function DoneButton({ variant, onDone, ghost, mt, homeLabel }: { variant: PassBu
   return (
     <NextLink href="/" className={cls} style={{ marginTop: mt }} data-action="done">
       {homeLabel ?? t('home')}
+    </NextLink>
+  );
+}
+
+/** Вікно: «Детальніше про пас» під «Дивитися далі» — сторінка пасу (вікно закривається). */
+function MoreButton({ onDone }: { onDone?: () => void }) {
+  const t = useTranslations('pass.buy');
+  return (
+    <NextLink href="/pass/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: 8 }} onClick={() => onDone?.()} data-action="more">
+      {t('more')}
     </NextLink>
   );
 }
@@ -385,7 +427,7 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
           <span className={s.ticketBrand}>{t('ticketBrand')}</span>
           <span className={s.ticketName}>{t('ticketName')}</span>
           <span className={s.ticketWho}>
-            <Flag code={flagCode} size="xs" decorative />
+            <Flag code={flagCode} size="xs" round decorative />
             <span>{name}</span>
           </span>
         </div>
@@ -406,6 +448,7 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
         ))}
       </ul>
       <DoneButton variant={variant} onDone={onDone} mt={18} />
+      {variant === 'stream' ? <MoreButton onDone={onDone} /> : null}
       <p className={cn(s.note, s.noteSm)} style={{ marginTop: 14 }}>
         <AuthIcon name="user" size={18} />
         <span>{t.rich('signedAs', { email, b: Bold })}</span>
@@ -425,10 +468,8 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
   return (
     <div className={col(variant)} data-phase="active">
       <div className={s.activeHead}>
-        <span className={s.eyebrow}>
-          <AuthIcon name="ticket" size={16} />
-          {t('activeEyebrow')}
-        </span>
+        {/* Без іконки квитка: вона вже в заголовку вікна й у герої сторінки (v102). */}
+        <span className={s.eyebrow}>{t('activeEyebrow')}</span>
         <span className={s.activeBadge}>
           <AuthIcon name="tick" size={14} />
           {p('active')}
@@ -443,7 +484,9 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
         <NextLink href="#" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: 8 }}>
           {t('passport')}
         </NextLink>
-      ) : null}
+      ) : (
+        <MoreButton onDone={onDone} />
+      )}
       {bought ? (
         <p className={s.discountRow}>
           <AuthIcon name="seat" size={18} />
