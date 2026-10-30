@@ -783,27 +783,34 @@ html[data-reduce-motion='true'] .t2f-spin {
   color: var(--color-text-secondary);
   box-shadow: inset 0 0 0 1px var(--color-border);
 }
+/* Дії за шириною підпису (правка власника 2026-10-30): у кожної кнопки 8 px з боків, між кнопками — рівні проміжки
+   (space-between), а не чотири рівні колонки. Меню — контейнер: у вузькій колонці чату (≤ 340) підпис 11 px — інакше
+   чотири підписи з відступами 8 не вміщаються. */
+.t2f-mm {
+  container-type: inline-size;
+}
 .t2f-mm-cols {
   display: flex;
-  gap: 0;
+  justify-content: space-between;
 }
 .t2f-mm-col {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   min-width: 0;
   min-height: 56px;
-  padding: 6px 0;
+  padding: 6px 8px;
   flex-direction: column;
   justify-content: center;
   gap: 4px;
   font-size: 12px;
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.01em;
   text-align: center;
+  white-space: nowrap;
 }
-/* «Поскаржитись» — найдовший підпис: трохи ширша колонка, щоб не різався в колонці чату 340 px. */
-.t2f-mm-col.t2f-mm-report {
-  flex-grow: 1.2;
+@container (max-width: 340px) {
+  .t2f-mm-col {
+    font-size: 11px;
+  }
 }
 .t2f-mm-colicon {
   position: relative;

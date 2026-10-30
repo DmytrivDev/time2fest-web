@@ -109,18 +109,29 @@ describe('«⋯» — налаштування чату на місці стрі
     expect(screen.getByText('Хто з якої країни? Пишіть!')).toBeInTheDocument();
   });
 
-  it('без пасу: перемикачі вимкнені зі значком пасу, дотик — «Потрібен Новорічний пас»; картка пасу внизу', async () => {
+  it('без пасу: рядки зі значком пасу; дотик розгортає під рядком «Щоб увімкнути …, потрібен Новорічний пас» (одна за раз); картка пасу внизу', async () => {
     setup();
     fireEvent.click(dots());
-    const quiet = screen.getByRole('switch', { name: /Тихий режим/ });
-    expect(quiet).toHaveAttribute('aria-checked', 'false');
-    expect(quiet).toHaveAttribute('aria-disabled', 'true');
+    const quiet = screen.getByRole('button', { name: /Тихий режим/ });
+    expect(quiet).toHaveAttribute('aria-expanded', 'false');
     expect(within(quiet).getByRole('img', { name: 'Потрібен Новорічний пас' })).toBeInTheDocument();
-    expect(screen.getByRole('switch', { name: /Показувати мій шлях/ })).toHaveAttribute('aria-checked', 'false');
-    expect(screen.getByRole('button', { name: 'Оформити пас — $4,99' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Дізнатись більше' })).toHaveAttribute('href', expect.stringMatching(/^\/pass\/?$/));
+    expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Оформити пас — $4,99' })).toHaveLength(1);
+    expect(screen.getAllByRole('link', { name: 'Дізнатись більше' })[0]).toHaveAttribute('href', expect.stringMatching(/^\/pass\/?$/));
     fireEvent.click(quiet);
-    expect(await screen.findByText('Щоб увімкнути тихий режим чату, потрібен Новорічний пас')).toBeInTheDocument();
+    expect(quiet).toHaveAttribute('aria-expanded', 'true');
+    const panel = document.getElementById(quiet.getAttribute('aria-controls')!)!;
+    expect(panel).toHaveAttribute('data-open', 'true');
+    expect(within(panel).getByText('Щоб увімкнути тихий режим, потрібен Новорічний пас.')).toBeInTheDocument();
+    // Інший рядок — його плашка, попередня згортається; повторний дотик згортає.
+    const route = screen.getByRole('button', { name: /Показувати мій шлях/ });
+    fireEvent.click(route);
+    expect(quiet).toHaveAttribute('aria-expanded', 'false');
+    expect(route).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(route);
+    expect(route).toHaveAttribute('aria-expanded', 'false');
+    // Вікно «Потрібен пас» не відкривається.
+    expect(screen.queryByRole('dialog', { name: /Потрібен Новорічний пас/ })).not.toBeInTheDocument();
   });
 
   it('з пасом: шлях увімкнено одразу; тихий режим ховає привітання й рахує сховане', () => {

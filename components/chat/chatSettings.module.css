@@ -276,3 +276,28 @@
   text-underline-offset: 3px;
   border-radius: 4px;
 }
+
+/* Без пасу: плашка під рядком (акордеон), а не вікно «Потрібен пас» (правка власника 2026-10-30). */
+.lock {
+  margin: 2px 0 8px;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(252, 226, 134, 0.22);
+  background:
+    radial-gradient(ellipse at 90% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
+    #1c1b18;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lockActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+.lockBtn {
+  min-height: 40px;
+  font-size: 14px;
+}

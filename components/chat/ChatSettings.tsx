@@ -4,15 +4,17 @@
  * «Налаштування чату» — меню «⋯» у шапці чату (рішення власника 2026-10-30, дошки `O-CHAT-MENU · Налаштування чату на
  * місці стрічки`, v110). Стоїть на місці стрічки: кімнати вгорі й поле введення лишаються.
  * Перемикачі (усі — з пасом): тихий режим, перекладати повідомлення, сповіщати про відповіді, показувати мій шлях.
- * Без пасу перемикачі затемнені зі значком пасу; дотик відкриває «Потрібен Новорічний пас»; унизу — картка пасу.
+ * Без пасу перемикачі затемнені зі значком пасу; дотик розгортає під рядком плашку «Щоб увімкнути …, потрібен Новорічний пас»
+ * з «Оформити пас» і «Дізнатись більше» (правка власника 2026-10-30: не вікно, а акордеон на місці); унизу — картка пасу.
  * Далі «Мій нік і прапор» (олівець → O-NICK) і «Правила чату».
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
-import { useId, type Ref } from 'react';
+import { useId, useState, type Ref } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
+import { Reveal } from '@/components/primitives/Reveal';
 import type { PassGateFeature } from '@/components/windows/PassGate';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { effectivePref, useChatPrefs, type ChatPrefKey } from '@/stores/chatPrefs';
@@ -28,7 +30,8 @@ export interface ChatSettingsProps {
   onEditNick: () => void;
   onRules: () => void;
   onGetPass: () => void;
-  onPassGate: (feature: PassGateFeature) => void;
+  /** Більше не відкривається з рядків (там плашка-акордеон); лишено для сумісності викликів. */
+  onPassGate?: (feature: PassGateFeature) => void;
   titleRef?: Ref<HTMLHeadingElement>;
   id?: string;
 }
@@ -57,7 +60,6 @@ export function ChatSettings({
   onEditNick,
   onRules,
   onGetPass,
-  onPassGate,
   titleRef,
   id,
 }: ChatSettingsProps) {
@@ -66,6 +68,8 @@ export function ChatSettings({
   const uid = useId();
   const prefs = useChatPrefs();
   const cardId = `${uid}-pass`;
+  // Без пасу: яка плашка «потрібен пас» розгорнута під рядком (одна за раз).
+  const [lockOpen, setLockOpen] = useState<ChatPrefKey | null>(null);
 
   const sub = (key: ChatPrefKey, on: boolean) => {
     if (key === 'quiet') return on && quietHidden > 0 ? t('quietHidden', { count: quietHidden }) : t('quietSub');
@@ -92,13 +96,12 @@ export function ChatSettings({
             <li key={key}>
               <button
                 type="button"
-                role="switch"
-                aria-checked={on}
-                aria-disabled={hasPass ? undefined : true}
-                aria-describedby={hasPass ? undefined : cardId}
+                {...(hasPass
+                  ? { role: 'switch', 'aria-checked': on }
+                  : { 'aria-expanded': lockOpen === key, 'aria-controls': `${uid}-lock-${key}` })}
                 data-pref={key}
                 className={cn('t2f-focus', s.row, !hasPass && s.locked, on && s.on)}
-                onClick={() => (hasPass ? prefs.set(key, !on) : onPassGate(gate))}
+                onClick={() => (hasPass ? prefs.set(key, !on) : setLockOpen((v) => (v === key ? null : key)))}
               >
                 <span aria-hidden="true" className={s.icon}>
                   <Icon name={icon} size={20} />
@@ -114,6 +117,27 @@ export function ChatSettings({
                   <span className={s.knob} />
                 </span>
               </button>
+              {hasPass ? null : (
+                <Reveal open={lockOpen === key} id={`${uid}-lock-${key}`}>
+                  <div className={s.lock} data-row="pass-lock" data-gate={gate}>
+                    <p className={s.cardText}>
+                      <span aria-hidden="true" className={s.cardBadge}>
+                        <Icon name="ticket" size={14} strokeWidth={2.4} />
+                      </span>
+                      <span>{t(`lock.${key}`)}</span>
+                    </p>
+                    <div className={s.lockActions}>
+                      <button type="button" onClick={onGetPass} className={cn('t2f-focus t2f-transition', s.cardBtn, s.lockBtn)}>
+                        {t('getPass', { price: formatUsd(PASS_PRICE) })}
+                      </button>
+                      <NextLink href="/pass/" className={cn('t2f-focus', s.cardLink)}>
+                        {t('more')}
+                        <Icon name="arrow-right" size={14} strokeWidth={2} />
+                      </NextLink>
+                    </div>
+                  </div>
+                </Reveal>
+              )}
             </li>
           );
         })}
