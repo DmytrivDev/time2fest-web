@@ -211,19 +211,6 @@
 .rules:hover {
   background: rgba(255, 255, 255, 0.03);
 }
-.card {
-  margin-top: 8px;
-  box-sizing: border-box;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(252, 226, 134, 0.22);
-  background:
-    radial-gradient(ellipse at 90% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
-    #1c1b18;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 .cardText {
   margin: 0;
   display: flex;
@@ -300,4 +287,24 @@
 .lockBtn {
   min-height: 40px;
   font-size: 14px;
+}
+
+/* Без пасу: внизу один тихий рядок — значок пасу, «— функції Новорічного пасу · Дізнатись більше». */
+.legend {
+  margin: 12px 0 0;
+  padding: 0 4px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.legendLink {
+  color: var(--color-highlight);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
 }

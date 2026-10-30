@@ -749,21 +749,22 @@
   padding: 8px;
   border-color: rgba(252, 226, 134, 0.22);
 }
+/* Пункти — картки-кнопки (правка власника 2026-10-30): тло, рамка, стрілка; наведення — світліше; вибраний — жовтий. */
 .perkList {
   margin: 0;
-  padding: 4px 0;
+  padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 .perkItem {
   width: 100%;
   box-sizing: border-box;
-  padding: 12px 14px;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #1f1f23;
   color: var(--color-text-primary);
   font: inherit;
   text-align: left;
@@ -771,14 +772,42 @@
   gap: 12px;
   align-items: center;
   cursor: pointer;
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out;
 }
 .perkItem:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: #26262b;
+  border-color: var(--color-border-strong);
 }
 .perkItemOn,
 .perkItemOn:hover {
   background: #26241e;
+  border-color: rgba(252, 226, 134, 0.45);
   box-shadow: inset 3px 0 0 var(--color-highlight);
+}
+.perkChev {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: flex;
+  color: var(--color-text-muted);
+}
+.perkItemOn .perkChev {
+  color: var(--color-highlight);
+}
+.perkChevDesk {
+  display: none;
+}
+.perkChevPhone {
+  transition: transform 200ms ease-out;
+}
+.perkItemOn .perkChevPhone {
+  transform: rotate(180deg);
+}
+.perksHint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
 }
 .dotGrey {
   background: var(--color-surface-raised);
@@ -825,7 +854,7 @@
   gap: 12px;
 }
 .perkPanelInline {
-  margin: 6px 0 8px;
+  margin: 6px 0 4px;
 }
 .perkReveal {
   min-width: 0;
@@ -906,10 +935,16 @@
   }
   .showcase {
     display: grid;
-    grid-template-columns: 330px minmax(0, 1fr);
-    gap: 8px;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 10px;
   }
   .perkReveal {
+    display: none;
+  }
+  .perkChevDesk {
+    display: block;
+  }
+  .perkChevPhone {
     display: none;
   }
   .perkPanelSide {
@@ -1340,4 +1375,14 @@
   text-decoration: underline;
   text-underline-offset: 3px;
   border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .perkItem,
+  .perkChevPhone {
+    transition: none;
+  }
+}
+:global(html[data-reduce-motion='true']) .perkItem,
+:global(html[data-reduce-motion='true']) .perkChevPhone {
+  transition: none;
 }

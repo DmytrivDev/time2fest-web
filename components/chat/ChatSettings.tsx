@@ -98,7 +98,7 @@ export function ChatSettings({
                 type="button"
                 {...(hasPass
                   ? { role: 'switch', 'aria-checked': on }
-                  : { 'aria-expanded': lockOpen === key, 'aria-controls': `${uid}-lock-${key}` })}
+                  : { 'aria-expanded': lockOpen === key, 'aria-controls': `${uid}-lock-${key}`, 'aria-describedby': cardId })}
                 data-pref={key}
                 className={cn('t2f-focus', s.row, !hasPass && s.locked, on && s.on)}
                 onClick={() => (hasPass ? prefs.set(key, !on) : setLockOpen((v) => (v === key ? null : key)))}
@@ -167,21 +167,15 @@ export function ChatSettings({
         <Icon name="chevron-right" size={18} className="text-text-muted" />
       </button>
       {hasPass ? null : (
-        <div id={cardId} className={s.card} data-row="pass-card">
-          <p className={s.cardText}>
-            <span aria-hidden="true" className={s.cardBadge}>
-              <Icon name="ticket" size={14} strokeWidth={2.4} />
-            </span>
-            <span>{t.rich('passCard', { b: (c) => <b>{c}</b> })}</span>
-          </p>
-          <button type="button" onClick={onGetPass} className={cn('t2f-focus t2f-transition', s.cardBtn)}>
-            {t('getPass', { price: formatUsd(PASS_PRICE) })}
-          </button>
-          <NextLink href="/pass/" className={cn('t2f-focus', s.cardLink)}>
+        // Одним тихим рядком (правка власника 2026-10-30): що означає значок і куди дізнатись більше; купують — у плашці під рядком.
+        <p id={cardId} className={s.legend} data-row="pass-legend">
+          <PassBadge label={t('passBadge')} />
+          <span>{t('legend')}</span>
+          <span aria-hidden="true">·</span>
+          <NextLink href="/pass/" className={cn('t2f-focus', s.legendLink)}>
             {t('more')}
-            <Icon name="arrow-right" size={14} strokeWidth={2} />
           </NextLink>
-        </div>
+        </p>
       )}
     </section>
   );

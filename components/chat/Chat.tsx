@@ -39,6 +39,7 @@ import { Message, type MessageLookup } from './Message';
 import type { MessageActionHandlers } from './MessageActions';
 import { useChatDockContext } from './ChatDock';
 import { MessageMenu } from './MessageMenu';
+import { ChatRules } from './ChatRules';
 
 const SCROLL_MS = 250;
 const SCROLL_PAD = 8;
@@ -78,7 +79,7 @@ export interface ChatProps {
    * «⋯» → «Налаштування чату» на місці стрічки (рішення власника 2026-10-30): кімнати й поле введення лишаються,
    * «⋯» підсвічена; ще раз «⋯», Esc чи надіслане своє повідомлення — назад до стрічки.
    */
-  settings?: (api: { titleRef: RefObject<HTMLHeadingElement | null>; id: string }) => ReactNode;
+  settings?: (api: { titleRef: RefObject<HTMLHeadingElement | null>; id: string; openRules: () => void }) => ReactNode;
   /** Дії над повідомленням: «⋯» відкриває меню в шарі чату; `menuAlways` — телефон (кнопка завжди видна). Без значення дій немає. */
   messageActions?: MessageActionHandlers & { menuAlways?: boolean };
   /** Нове повідомлення «ввічливо» оголошується не частіше ніж раз на 30 с. */
@@ -153,17 +154,24 @@ export function Chat({
   const menuMessage = menu ? (visible.find((m) => m.id === menu.message.id) ?? null) : null;
 
   // «Налаштування чату» на місці стрічки.
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  // «Правила чату» — теж на місці стрічки, з налаштувань («‹» повертає до них).
+  const [panel, setPanel] = useState<null | 'settings' | 'rules'>(null);
+  const settingsOpen = panel !== null;
+  const setSettingsOpen = useCallback((v: boolean) => setPanel(v ? 'settings' : null), []);
+  const openRulesPanel = useCallback(() => setPanel('rules'), []);
   const dotsRef = useRef<HTMLButtonElement>(null);
   const settingsTitleRef = useRef<HTMLHeadingElement | null>(null);
   const settingsId = `chat-settings-${room.id.replace(/[^a-z0-9]/gi, '-')}`;
-  const closeSettings = useCallback((restoreFocus = true) => {
-    setSettingsOpen(false);
-    if (restoreFocus) requestAnimationFrame(() => dotsRef.current?.focus());
-  }, []);
+  const closeSettings = useCallback(
+    (restoreFocus = true) => {
+      setSettingsOpen(false);
+      if (restoreFocus) requestAnimationFrame(() => dotsRef.current?.focus());
+    },
+    [setSettingsOpen],
+  );
   useEffect(() => {
-    if (settingsOpen) settingsTitleRef.current?.focus();
-  }, [settingsOpen]);
+    if (panel) settingsTitleRef.current?.focus();
+  }, [panel]);
   // Надіслав повідомлення з відкритими налаштуваннями — показуємо чат із новим повідомленням.
   const lastMine = [...visible].reverse().find((m) => m.author?.isMine)?.id ?? null;
   const [seenMine, setSeenMine] = useState(lastMine);
@@ -541,7 +549,17 @@ export function Chat({
         </div>
       ) : settings && settingsOpen ? (
         <div ref={settingsBoxRef} className="relative flex min-h-0 flex-1 flex-col">
-          {settings({ titleRef: settingsTitleRef, id: settingsId })}
+          {panel === 'rules' ? (
+            <ChatRules
+              id={settingsId}
+              titleRef={settingsTitleRef}
+              fromSettings
+              onBack={() => setPanel('settings')}
+              onDone={() => closeSettings()}
+            />
+          ) : null}
+          {/* eslint-disable-next-line react-hooks/refs -- реф передається, щоб його прикріпили до заголовка, а не читається */}
+          {panel === 'settings' && settings({ titleRef: settingsTitleRef, id: settingsId, openRules: openRulesPanel })}
         </div>
       ) : (
         <div ref={wrapRef} className="relative flex min-h-0 flex-1 flex-col">

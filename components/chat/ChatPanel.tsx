@@ -53,7 +53,6 @@ import { useChatLookup } from './useChatLookup';
 
 export const NICK_WINDOW_ID = 'O-NICK';
 export const AUTHOR_WINDOW_ID = 'O-AUTHOR';
-export const RULES_WINDOW_ID = 'O-CHAT-RULES';
 
 type RoomKey = 'world' | 'country' | 'firstrow';
 
@@ -406,23 +405,6 @@ export function ChatPanel({
     [overlay, t, tPass, clock, lookup, onReport, openNick, getPass],
   );
 
-  const openRules = useCallback(
-    () =>
-      overlay.open({
-        id: RULES_WINDOW_ID,
-        inChat: true,
-        kind: 'nonmodal',
-        title: t('rules'),
-        content: (
-          <ul className="flex list-disc flex-col gap-2 ps-5 text-body text-text-secondary">
-            {(['kind', 'length', 'links', 'slow'] as const).map((k) => (
-              <li key={k}>{t(`rulesList.${k}`)}</li>
-            ))}
-          </ul>
-        ),
-      }),
-    [overlay, t],
-  );
 
   const openPassGate = useCallback(
     (feature: PassGateFeature) =>
@@ -540,8 +522,7 @@ export function ChatPanel({
       onHide={onHide}
       collapseMode={collapseMode}
       onToEvents={onToEvents}
-      onRules={openRules}
-      settings={({ titleRef, id }) => (
+      settings={({ titleRef, id, openRules: openRulesPanel }) => (
         <ChatSettings
           id={id}
           titleRef={titleRef}
@@ -551,7 +532,7 @@ export function ChatPanel({
           flagCode={guest.flagCode ?? guest.detectedFlag ?? null}
           countryName={getData().countries.find((c) => c.flagCode === (guest.flagCode ?? guest.detectedFlag))?.name.uk}
           onEditNick={() => openNick(null)}
-          onRules={openRules}
+          onRules={openRulesPanel}
           onGetPass={() => getPass()}
           onPassGate={openPassGate}
         />

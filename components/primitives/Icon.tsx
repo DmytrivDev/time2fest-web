@@ -62,7 +62,11 @@ export type IconName =
   | 'bell'
   | 'route'
   | 'eye-off'
-  | 'arrow-right';
+  | 'arrow-right'
+  | 'shield-check'
+  | 'party'
+  | 'text-short'
+  | 'link-off';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -328,6 +332,31 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
+  'shield-check': (
+    <>
+      <path d="M12 3l7 3v6c0 4.4-3 7.9-7 9-4-1.1-7-4.6-7-9V6z" />
+      <path d="M9 12l2 2 4-4" />
+    </>
+  ),
+  party: (
+    <>
+      <path d="M4 20l5-14 9 9z" />
+      <path d="M14 4l1 2M19 9l2-1M17 3l-1 3" />
+    </>
+  ),
+  'text-short': (
+    <>
+      <path d="M4 7h16M4 12h10M4 17h7" />
+      <path d="M17 15l2 2 3-4" />
+    </>
+  ),
+  'link-off': (
+    <>
+      <path d="M9 7l1-1a4 4 0 0 1 5.7 5.7l-1 1" />
+      <path d="M15 17l-1 1a4 4 0 0 1-5.7-5.7l1-1" />
+      <path d="M4 4l16 16" />
+    </>
+  ),
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'> {

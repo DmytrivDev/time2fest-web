@@ -109,20 +109,25 @@ describe('«⋯» — налаштування чату на місці стрі
     expect(screen.getByText('Хто з якої країни? Пишіть!')).toBeInTheDocument();
   });
 
-  it('без пасу: рядки зі значком пасу; дотик розгортає під рядком «Щоб увімкнути …, потрібен Новорічний пас» (одна за раз); картка пасу внизу', async () => {
+  it('без пасу: рядки зі значком пасу; дотик розгортає під рядком «Щоб увімкнути …, потрібен Новорічний пас» (одна за раз); унизу — один рядок «— функції Новорічного пасу · Дізнатись більше»', async () => {
     setup();
     fireEvent.click(dots());
     const quiet = screen.getByRole('button', { name: /Тихий режим/ });
     expect(quiet).toHaveAttribute('aria-expanded', 'false');
     expect(within(quiet).getByRole('img', { name: 'Потрібен Новорічний пас' })).toBeInTheDocument();
     expect(screen.queryByRole('switch')).not.toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: 'Оформити пас — $4,99' })).toHaveLength(1);
-    expect(screen.getAllByRole('link', { name: 'Дізнатись більше' })[0]).toHaveAttribute('href', expect.stringMatching(/^\/pass\/?$/));
+    // Купують у плашці під рядком; унизу — лише тихий рядок із поясненням значка.
+    expect(screen.queryAllByRole('button', { name: 'Оформити пас — $4,99' })).toHaveLength(0);
+    const legend = document.querySelector('[data-row="pass-legend"]')!;
+    expect(legend).toHaveTextContent('— функції Новорічного пасу');
+    expect(within(legend as HTMLElement).getByRole('link', { name: 'Дізнатись більше' })).toHaveAttribute('href', expect.stringMatching(/^\/pass\/?$/));
+    expect(quiet).toHaveAttribute('aria-describedby', legend.id);
     fireEvent.click(quiet);
     expect(quiet).toHaveAttribute('aria-expanded', 'true');
     const panel = document.getElementById(quiet.getAttribute('aria-controls')!)!;
     expect(panel).toHaveAttribute('data-open', 'true');
     expect(within(panel).getByText('Щоб увімкнути тихий режим, потрібен Новорічний пас.')).toBeInTheDocument();
+    expect(within(panel).getByRole('button', { name: 'Оформити пас — $4,99' })).toBeInTheDocument();
     // Інший рядок — його плашка, попередня згортається; повторний дотик згортає.
     const route = screen.getByRole('button', { name: /Показувати мій шлях/ });
     fireEvent.click(route);

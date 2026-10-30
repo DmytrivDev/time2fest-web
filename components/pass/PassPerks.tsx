@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useId, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
+import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { AuthIcon, type AuthIconName } from '@/components/auth/icons';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
@@ -262,6 +263,7 @@ export function PassPerksShowcase() {
         </span>
         {t('free')}
       </p>
+      <p className={s.perksHint}>{t('hint')}</p>
       <div className={cn(s.gold, s.showcase)}>
         <ul className={s.perkList}>
           {SHOWCASE_PERKS.map((perk) => {
@@ -284,6 +286,11 @@ export function PassPerksShowcase() {
                     <span className={s.perkItemCmp}>
                       {cmp.without} → <span className={s.perkItemWith}>{cmp.with}</span>
                     </span>
+                  </span>
+                  {/* Пункт — кнопка (правка власника 2026-10-30): стрілка › на десктопі, шеврон на телефоні (акордеон). */}
+                  <span aria-hidden="true" className={s.perkChev}>
+                    <Icon name="chevron-right" size={18} strokeWidth={2} className={s.perkChevDesk} />
+                    <Icon name="chevron-down" size={18} strokeWidth={2} className={s.perkChevPhone} />
                   </span>
                 </button>
                 {/* телефон: розгортається плавно під рядком (на десктопі сховано, панель праворуч) */}

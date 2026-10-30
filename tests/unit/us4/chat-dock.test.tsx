@@ -124,16 +124,25 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     expect(dock().querySelector('[data-dock-pill]')).toHaveAttribute('data-zero', 'true');
   });
 
-  it('вікно чату (правила) відкривається всередині розгорнутого вікна, а не аркушем', async () => {
+  it('правила чату — на місці стрічки в розгорнутому вікні: «‹» повертає до налаштувань, «Зрозуміло» — до чату', async () => {
     const user = userEvent.setup();
     setup();
     await user.click(screen.getByRole('button', { name: /^Розгорнути чат/ }));
     // «⋯» відкриває налаштування чату на місці стрічки; звідти — «Правила чату».
     await user.click(screen.getByRole('button', { name: 'Налаштування чату' }));
     await user.click(await screen.findByRole('button', { name: /Правила чату/ }));
-    const slot = document.getElementById('chat-dock-slot')!;
-    await waitFor(() => expect(slot.querySelector('[data-chat-slot-panel]')).not.toBeNull());
+    const rules = await waitFor(() => document.querySelector('[data-chat-rules]')!);
+    expect(rules).not.toBeNull();
+    expect(screen.getByRole('heading', { name: 'Правила чату' })).toHaveFocus();
+    expect(rules.querySelectorAll('[data-rule]')).toHaveLength(5);
     expect(document.querySelector('[data-sheet]')).toBeNull();
+    expect(document.querySelector('[data-chat-slot-panel]')).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Назад до налаштувань чату' }));
+    expect(document.querySelector('[data-chat-settings]')).not.toBeNull();
+    await user.click(screen.getByRole('button', { name: /Правила чату/ }));
+    await user.click(screen.getByRole('button', { name: 'Зрозуміло' }));
+    await waitFor(() => expect(document.querySelector('[data-chat-rules]')).toBeNull());
+    expect(document.querySelector('[data-chat-settings]')).toBeNull();
   });
 
   it('телефон: меню «⋯» стоїть у потоці стрічки одразу під своїм повідомленням', async () => {
