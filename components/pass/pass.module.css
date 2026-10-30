@@ -692,53 +692,179 @@
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
-.tiles {
-  margin: 16px 0 0;
-  padding: 0;
+.perksFree {
+  margin: 14px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.perksFreeDot {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--color-surface-raised);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Вітрина: список «назва + без → з»; вибрана — панель (телефон: під рядком; десктоп: праворуч). */
+.showcase {
+  margin-top: 16px;
+  box-sizing: border-box;
+  padding: 8px;
+  border-color: rgba(252, 226, 134, 0.22);
+}
+.perkList {
+  margin: 0;
+  padding: 4px 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.perkItem {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  text-align: left;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+}
+.perkItem:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.perkItemOn,
+.perkItemOn:hover {
+  background: #26241e;
+  box-shadow: inset 3px 0 0 var(--color-highlight);
+}
+.dotGrey {
+  background: var(--color-surface-raised);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text-secondary);
+}
+.perkItemText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.perkItemName {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--color-text-secondary);
+}
+.perkItemOn .perkItemName {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.perkItemCmp {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+.perkItemWith {
+  color: var(--color-text-secondary);
+}
+.perkItemOn .perkItemWith {
+  color: var(--color-highlight);
+}
+.perkPanel {
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 90% 0%, rgba(252, 226, 134, 0.16), transparent 60%),
+    var(--color-surface);
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.tile {
-  box-sizing: border-box;
-  padding: 16px;
-  border-color: rgba(252, 226, 134, 0.22);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.perkPanelInline {
+  margin: 6px 0 8px;
 }
-.tileText {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.perkPanelSide {
+  display: none;
 }
-.tileName {
-  margin-top: 6px;
+.perkPanelTitle {
+  margin: 0;
   font-weight: 700;
-  font-size: 18px;
-  line-height: 1.3;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
-.tileDesc {
+.perkChips {
+  display: flex;
+  gap: 8px;
+}
+.perkChip {
+  flex: 1 1 0;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.perkChipOn {
+  border-color: rgba(252, 226, 134, 0.35);
+  background: rgba(252, 226, 134, 0.08);
+}
+.perkChipLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.perkChipOn .perkChipLabel {
+  color: var(--color-highlight);
+}
+.perkChipValue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+.perkChipValue > svg {
+  flex: 0 0 auto;
+  color: #74747d;
+}
+.perkChipOn .perkChipValue {
+  color: var(--color-text-primary);
+}
+.perkChipOn .perkChipValue > svg {
+  color: var(--color-highlight);
+}
+.perkPanelDesc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
   color: var(--color-text-secondary);
 }
-.tilePreview {
+.perkPanelPreview {
+  margin-top: 4px;
   min-width: 0;
-  margin-top: auto;
-}
-@media (min-width: 768px) {
-  .tiles {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-  }
-  .tile:first-child {
-    grid-column: span 2;
-  }
 }
 @media (min-width: 1024px) {
   .perks {
@@ -747,27 +873,20 @@
   .perksTitle {
     font-size: 28px;
   }
-  .tiles {
-    margin-top: 20px;
+  .showcase {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    gap: 8px;
   }
-  .tile {
-    padding: 20px;
+  .perkPanelInline {
+    display: none;
   }
-  .tileDesc {
-    font-size: 15px;
-  }
-  .tile:first-child {
+  .perkPanelSide {
+    display: flex;
     padding: 24px;
-    flex-direction: row;
-    gap: 24px;
   }
-  .tile:first-child .tileText,
-  .tile:first-child .tilePreview {
-    flex: 1 1 0;
-    margin-top: 0;
-  }
-  .tile:first-child .tileName {
-    font-size: 22px;
+  .perkPanelTitle {
+    font-size: 24px;
   }
 }
 

@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * «Що вмикається одразу після оплати» — плитки можливостей пасу з маленьким прикладом кожної (правка власника
- * 2026-10-29: не однакові інфо-картки, а видно, що саме дає пас). Телефон — стовпчик; планшет — дві колонки;
- * десктоп — сітка 3 колонки, перша плитка на дві (дошки `S-PASS · Новорічний пас · гість`).
- * Приклади декоративні (`aria-hidden`): зміст плитки — у назві й описі.
+ * «Що вмикається одразу після оплати» — вітрина можливостей пасу з порівнянням «без пасу / з пасом» і прикладом
+ * кожної (`PassPerksShowcase`), і короткий список для вікна під трансляцією (`PassPerksCompact`).
+ * Приклади декоративні (`aria-hidden`): зміст — у назві, порівнянні й описі.
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
+import { useId, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { AuthIcon, type AuthIconName } from '@/components/auth/icons';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
@@ -149,9 +149,65 @@ export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'seat';
   { key: 'seat', icon: 'seat', Preview: MiniSeat },
 ];
 
-/** Сторінка пасу: плитки з прикладами. */
-export function PassPerksTiles() {
+type PerkKey = (typeof PASS_PERKS)[number]['key'];
+
+/** Ціна місця в «Першому ряду» без пасу й з пасом (−50%), як у прикладі `MiniSeat`. */
+const SEAT_FULL = 4.99;
+const SEAT_HALF = 2.49;
+
+/** «Без пасу → з пасом» для рядка списку й плашок вибраної можливості. */
+function useCompare() {
   const t = useTranslations('pass.perks');
+  return (key: PerkKey) =>
+    key === 'seat'
+      ? { without: t('seatWithout', { full: formatUsd(SEAT_FULL) }), with: t('seatWith', { half: formatUsd(SEAT_HALF) }) }
+      : { without: t(`${key}Without`), with: t(`${key}With`) };
+}
+
+/** Вибрана можливість: назва, «без пасу / з пасом», опис і великий приклад. */
+function PerkPanel({ perk, id, inline }: { perk: (typeof PASS_PERKS)[number]; id: string; inline?: boolean }) {
+  const t = useTranslations('pass.perks');
+  const cmp = useCompare()(perk.key);
+  const { Preview } = perk;
+  return (
+    <div id={id} className={cn(s.perkPanel, inline ? s.perkPanelInline : s.perkPanelSide)} data-panel={perk.key}>
+      {/* на телефоні назва вже в рядку над панеллю */}
+      {inline ? null : <h3 className={s.perkPanelTitle}>{t(perk.key)}</h3>}
+      <div className={s.perkChips}>
+        <div className={s.perkChip}>
+          <span className={s.perkChipLabel}>{t('without')}</span>
+          <span className={s.perkChipValue}>
+            <AuthIcon name="minus" size={16} />
+            {cmp.without}
+          </span>
+        </div>
+        <div className={cn(s.perkChip, s.perkChipOn)}>
+          <span className={s.perkChipLabel}>{t('with')}</span>
+          <span className={s.perkChipValue}>
+            <AuthIcon name="tick" size={16} />
+            {cmp.with}
+          </span>
+        </div>
+      </div>
+      <p className={s.perkPanelDesc}>{t(`${perk.key}Text`)}</p>
+      <div className={s.perkPanelPreview}>
+        <Preview />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Сторінка пасу: вітрина з порівнянням (вибір власника 2026-10-30, дошка `S-PASS · «Що вмикається…» — гібрид Ґ`).
+ * Ліворуч список «назва + без → з», праворуч вибрана можливість. Телефон і планшет — той самий список, вибрана
+ * розгортається під своїм рядком. Один шаблон для обох — кнопки-розкривачки (`aria-expanded`), відкрита завжди одна.
+ */
+export function PassPerksShowcase() {
+  const t = useTranslations('pass.perks');
+  const compare = useCompare();
+  const uid = useId();
+  const [active, setActive] = useState<PerkKey>('chat');
+  const current = PASS_PERKS.find((p) => p.key === active);
   return (
     <section aria-labelledby="pass-perks-title" className={s.perks} data-block="pass-perks">
       <span className={s.eyebrow}>
@@ -161,22 +217,43 @@ export function PassPerksTiles() {
       <h2 id="pass-perks-title" className={s.perksTitle}>
         {t('title')}
       </h2>
-      <ul className={s.tiles}>
-        {PASS_PERKS.map(({ key, icon, Preview }) => (
-          <li key={key} className={cn(s.gold, s.tile)} data-perk={key}>
-            <div className={s.tileText}>
-              <span aria-hidden="true" className={cn(s.dot, s.dot40)}>
-                <AuthIcon name={icon} size={20} />
-              </span>
-              <span className={s.tileName}>{t(key)}</span>
-              <span className={s.tileDesc}>{t(`${key}Text`)}</span>
-            </div>
-            <div className={s.tilePreview}>
-              <Preview />
-            </div>
-          </li>
-        ))}
-      </ul>
+      <p className={s.perksFree}>
+        <span aria-hidden="true" className={s.perksFreeDot}>
+          <AuthIcon name="chat" size={15} />
+        </span>
+        {t('free')}
+      </p>
+      <div className={cn(s.gold, s.showcase)}>
+        <ul className={s.perkList}>
+          {PASS_PERKS.map((perk) => {
+            const on = perk.key === active;
+            const cmp = compare(perk.key);
+            return (
+              <li key={perk.key} data-perk={perk.key}>
+                <button
+                  type="button"
+                  aria-expanded={on}
+                  aria-controls={`${uid}-side ${uid}-${perk.key}`}
+                  className={cn('t2f-focus', s.perkItem, on && s.perkItemOn)}
+                  onClick={() => setActive(perk.key)}
+                >
+                  <span aria-hidden="true" className={cn(s.dot, s.dot36, !on && s.dotGrey)}>
+                    <AuthIcon name={perk.icon} size={18} />
+                  </span>
+                  <span className={s.perkItemText}>
+                    <span className={s.perkItemName}>{t(perk.key)}</span>
+                    <span className={s.perkItemCmp}>
+                      {cmp.without} → <span className={s.perkItemWith}>{cmp.with}</span>
+                    </span>
+                  </span>
+                </button>
+                {on ? <PerkPanel perk={perk} id={`${uid}-${perk.key}`} inline /> : null}
+              </li>
+            );
+          })}
+        </ul>
+        {current ? <PerkPanel perk={current} id={`${uid}-side`} /> : null}
+      </div>
     </section>
   );
 }

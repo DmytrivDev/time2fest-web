@@ -1,7 +1,7 @@
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PassBuy } from '@/components/pass/PassBuy';
-import { PassPerksTiles } from '@/components/pass/PassPerks';
+import { PassPerksShowcase } from '@/components/pass/PassPerks';
 import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
 import { PAY_ROUNDTRIP_MS } from '@/lib/firstrow/pay';
 import { useAuthStore } from '@/stores/auth';
@@ -189,13 +189,25 @@ describe('PassBuy — картка оформлення', () => {
   });
 });
 
-describe('«Що вмикається одразу після оплати» — плитки', () => {
-  it('п’ять плиток з назвою й описом; приклади сховані від читачів екрана', () => {
-    renderWithApp(<PassPerksTiles />);
-    const tiles = document.querySelectorAll('[data-perk]');
-    expect(tiles).toHaveLength(5);
-    expect(screen.getByRole('heading', { name: 'Що вмикається одразу після оплати' })).toBeInTheDocument();
-    for (const tile of tiles) expect(tile.querySelector('[aria-hidden="true"] + *, [aria-hidden="true"]')).not.toBeNull();
-    expect(screen.getByText('−50% на «Перший ряд»')).toBeInTheDocument();
+describe('«Що вмикається одразу після оплати» — вітрина з порівнянням', () => {
+  it('п’ять можливостей «без → з»; відкрита одна — з порівнянням, описом і прикладом (схованим від читачів екрана)', () => {
+    renderWithApp(<PassPerksShowcase />);
+    expect(document.querySelectorAll('[data-perk]')).toHaveLength(5);
+    expect(screen.getByRole('heading', { level: 2, name: 'Що вмикається одразу після оплати' })).toBeInTheDocument();
+    expect(screen.getByText('Усі трансляції й чат — безплатно для всіх. Пас додає ось що:')).toBeInTheDocument();
+    const chat = screen.getByRole('button', { name: /Позначка в чаті й видимий шлях/ });
+    expect(chat).toHaveAttribute('aria-expanded', 'true');
+    const side = document.querySelector('[data-panel="chat"]');
+    expect(side).toHaveTextContent('Без пасуЗвичайне ім’я');
+    expect(side?.querySelector('[aria-hidden="true"]')).not.toBeNull();
+  });
+
+  it('клік по іншій можливості відкриває її, попередня закривається', () => {
+    renderWithApp(<PassPerksShowcase />);
+    const seat = screen.getByRole('button', { name: /−50% на «Перший ряд»/ });
+    fireEvent.click(seat);
+    expect(seat).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: /Позначка в чаті/ })).toHaveAttribute('aria-expanded', 'false');
+    expect(document.querySelector('[data-panel="seat"]')).toHaveTextContent('$2,49 (−50%)');
   });
 });

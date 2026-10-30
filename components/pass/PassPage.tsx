@@ -19,7 +19,7 @@ import { currentPath, rememberLetterSent, rememberReturn } from '@/lib/auth/retu
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useAuthTabSync } from '@/stores/auth';
 import { PassBuy, usePassView } from './PassBuy';
-import { PassPerksTiles } from './PassPerks';
+import { PassPerksShowcase } from './PassPerks';
 import s from './pass.module.css';
 
 /** Квиток пасу (той самий малюнок, що на дошках): небо з феєрверками, місто, корінець «СЕЗОН 2026/27». */
@@ -183,7 +183,7 @@ export function PassPage() {
           }}
         />
       </section>
-      <PassPerksTiles />
+      <PassPerksShowcase />
       <Faq />
     </main>
   );
