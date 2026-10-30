@@ -41,3 +41,6 @@ export const REACTION_ORDER: readonly ReactionId[] = ['clap', 'heart', 'glasses'
 
 /** Порядок чипів під повідомленням: усі реакції. */
 export const REACTION_DISPLAY_ORDER: readonly ReactionId[] = [...MENU_REACTION_ROWS.flat(), 'hug'];
+
+/** Швидкий ряд меню «⋯» (варіант А): сім найчастіших; решта — за «ще» (повна сітка `MENU_REACTION_ROWS`). */
+export const QUICK_REACTIONS: readonly ReactionId[] = ['clap', 'glasses', 'heart', 'fireworks', 'laugh', 'fire', 'applause'];

@@ -401,15 +401,18 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     expect(screen.queryByRole('dialog', { name: 'Автор повідомлення' })).not.toBeInTheDocument();
   });
 
-  it('меню «⋯»: 24 емодзі без підписів, «Згадати» вставляє @нік, Esc повертає фокус на «⋯», клік поза меню закриває', async () => {
+  it('меню «⋯» (варіант А): 7 емодзі й «Усі реакції» → 24, дії колонками, «Згадати» вставляє @нік, Esc повертає фокус на «⋯», клік поза меню закриває', async () => {
     const user = userEvent.setup();
     setup();
     const more = screen.getAllByRole('button', { name: /Дії з повідомленням · Karim/ })[0]!;
     await user.click(more);
     const menu = await screen.findByRole('menu', { name: 'Дії з повідомленням' });
     expect(more).toHaveAttribute('aria-expanded', 'true');
-    expect(within(menu).getAllByRole('menuitemcheckbox')).toHaveLength(24);
+    expect(within(menu).getAllByRole('menuitemcheckbox')).toHaveLength(7);
     expect(within(menu).getByRole('menuitem', { name: 'Поскаржитись' })).toBeInTheDocument();
+    expect(within(menu).getByRole('menuitem', { name: 'Відповісти' })).toHaveFocus();
+    await user.click(within(menu).getByRole('menuitem', { name: 'Усі реакції' }));
+    expect(within(menu).getAllByRole('menuitemcheckbox')).toHaveLength(24);
     // Перша клітинка сітки; стрілка вправо — наступна клітинка, вниз — той самий стовпець наступного ряду.
     const first = within(menu).getAllByRole('menuitemcheckbox')[0]!;
     first.focus();
@@ -428,10 +431,7 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     await user.click(document.body);
     await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
 
-    // «×» у рядку дій закриває меню; повторне натискання «⋯» — теж.
-    await user.click(more);
-    await user.click(await screen.findByRole('menuitem', { name: 'Закрити меню' }));
-    await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
+    // Повторне натискання «⋯» закриває меню.
     await user.click(more);
     await screen.findByRole('menu');
     await user.click(more);

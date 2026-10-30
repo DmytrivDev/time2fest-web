@@ -766,6 +766,60 @@ html[data-reduce-motion='true'] .t2f-spin {
 .t2f-mm-close:hover {
   color: var(--color-text);
 }
+/* Варіант А (2026-10-30): швидкий ряд емодзі + «ще» і дії колонками «іконка + підпис». Клітинки 40 — щоб 8 вміщалися
+   в колонку чату 340 px. */
+.t2f-mm-quick {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px;
+}
+.t2f-mm-quick .t2f-mm-emoji {
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+}
+.t2f-mm-more {
+  color: var(--color-text-secondary);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+.t2f-mm-cols {
+  display: flex;
+  gap: 0;
+}
+.t2f-mm-col {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 56px;
+  padding: 6px 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+/* «Поскаржитись» — найдовший підпис: трохи ширша колонка, щоб не різався в колонці чату 340 px. */
+.t2f-mm-col.t2f-mm-report {
+  flex-grow: 1.2;
+}
+.t2f-mm-colicon {
+  position: relative;
+  display: inline-flex;
+}
+/* Без пасу: жовта цятка на іконці «Перекласти» — функція пасу. */
+.t2f-mm-passdot {
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 2px var(--color-surface-raised);
+}
 .t2f-mm-item:hover {
   background: var(--color-border);
 }

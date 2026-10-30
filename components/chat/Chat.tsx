@@ -601,6 +601,7 @@ export function Chat({
                           onReply={messageActions?.onReply}
                           onMention={messageActions?.onMention}
                           onReport={messageActions?.onReport}
+                          onTranslateLocked={messageActions?.onTranslateLocked}
                         />
                       </li>
                     ) : null}
@@ -622,6 +623,7 @@ export function Chat({
               onReply={messageActions?.onReply}
               onMention={messageActions?.onMention}
               onReport={messageActions?.onReport}
+              onTranslateLocked={messageActions?.onTranslateLocked}
             />
           ) : null}
           {paused && !(manualPause || scrolledUp) ? (

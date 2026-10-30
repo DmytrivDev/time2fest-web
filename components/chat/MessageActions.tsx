@@ -15,6 +15,8 @@ export interface MessageActionHandlers {
   onReply?: (message: ChatMessage) => void;
   onMention?: (message: ChatMessage) => void;
   onReport?: (message: ChatMessage) => void;
+  /** «Перекласти» без пасу: відкрити «Потрібен Новорічний пас» (переклад — функція пасу). Без обробника — перекладає одразу. */
+  onTranslateLocked?: () => void;
   /** Своє повідомлення: видалити назавжди. */
   onDelete?: (message: ChatMessage) => void;
 }

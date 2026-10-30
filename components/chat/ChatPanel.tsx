@@ -557,7 +557,7 @@ export function ChatPanel({
         />
       )}
       announceNew
-      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete }}
+      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete, onTranslateLocked: guest.hasPass ? undefined : () => openPassGate('translate') }}
       composer={
         <Composer
           room={{ id: roomId, label: roomLabel }}

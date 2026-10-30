@@ -1,12 +1,12 @@
 'use client';
 
 /**
- * C12. MessageMenu — меню «⋯» над повідомленням (макети `Desk-Chat-MessageMenu`, `Phone-Chat-MessageMenu`, варіант 2).
- * На всю ширину колонки чату, 4 px від повідомлення: «Відповісти» і «Згадати» поруч, сітка емодзі 3×8 (клітинки 44×44,
- * без видимих підписів — `aria-label` на кожній), роздільник, «Поскаржитись». Живе в шарі самого чату (абсолютно
- * позиціонується в обгортці стрічки) і переставляється при прокрутці й зміні розміру; під повідомленням, якщо вистачає
- * місця, інакше над ним. Esc, клік поза меню, Tab — закривають; Esc/Tab повертають фокус на «⋯».
- * Стрілки рухають фокус між елементами (по рядках і стовпцях).
+ * C12. MessageMenu — меню «⋯» над повідомленням, варіант А (вибір власника 2026-10-30, дошки `Chat · меню повідомлення —
+ * варіант А`): угорі сім найчастіших емодзі й «ще» (розгортає повну сітку 3×8 на тому самому місці), під лінією — дії
+ * рівними колонками «іконка + підпис»: «Відповісти», «Згадати», «Перекласти» (лише повідомлення іншою мовою; без пасу —
+ * значок пасу й «Потрібен Новорічний пас»), «Поскаржитись» (приглушено). Живе в шарі чату (абсолютно в обгортці стрічки),
+ * під повідомленням, якщо вистачає місця, інакше над ним; на телефоні — у потоці стрічки. Esc, клік поза меню, Tab —
+ * закривають; Esc/Tab повертають фокус на «⋯». Стрілки рухають фокус між елементами (по рядках і стовпцях).
  */
 import { useTranslations } from 'next-intl';
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
@@ -19,6 +19,9 @@ import {
 } from './menuPlacement';
 import { reactOptimistic, type MessageActionHandlers } from './MessageActions';
 import { EmojiGrid, arrowTarget } from './EmojiGrid';
+import { QUICK_REACTIONS, REACTION_SYMBOLS } from './reactions';
+import { useTranslateMessage } from '@/lib/chat/translate';
+import { useChatPref } from '@/stores/chatPrefs';
 
 export interface MessageMenuProps extends MessageActionHandlers {
   message: ChatMessage;
@@ -63,8 +66,11 @@ export function MessageMenu({
   onReply,
   onMention,
   onReport,
+  onTranslateLocked,
 }: MessageMenuProps) {
   const t = useTranslations('chat');
+  const tr = useTranslateMessage(message, useChatPref('translate'));
+  const [allEmoji, setAllEmoji] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{
     top: number;
@@ -124,7 +130,7 @@ export function MessageMenu({
   useLayoutEffect(() => {
     if (!placed || focused.current) return;
     focused.current = true;
-    ref.current?.querySelector<HTMLElement>('[data-menu-item]')?.focus({ preventScroll: true });
+    ref.current?.querySelector<HTMLElement>('[data-menu-first]')?.focus({ preventScroll: true });
   }, [placed]);
 
   // Клік поза меню закриває (клік по «⋯» обробляє сама кнопка — перемикає).
@@ -188,12 +194,66 @@ export function MessageMenu({
             }
       }
     >
-      <div className="t2f-mm-row">
+      {allEmoji ? (
+        <EmojiGrid
+          cellRole="menuitemcheckbox"
+          checked={(id) => message.reactions?.[id]?.mine ?? false}
+          groupLabel={t('reactionsPick')}
+          onPick={(id, _symbol, e) => {
+            reactOptimistic(message, id, onReact);
+            onClose({ restoreFocus: e.detail === 0 });
+          }}
+        />
+      ) : (
+        <div role="group" aria-label={t('reactionsPick')} className="t2f-mm-quick">
+          {QUICK_REACTIONS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="menuitemcheckbox"
+              aria-checked={message.reactions?.[id]?.mine ?? false}
+              data-menu-item=""
+              aria-label={t('reactionPickLabel', { name: t(`reactions.${id}`) })}
+              className="t2f-mm-item t2f-mm-emoji"
+              onClick={(e) => {
+                reactOptimistic(message, id, onReact);
+                // Фокус на «⋯» — лише після клавіатури (Enter/Пробіл дають detail 0).
+                onClose({ restoreFocus: e.detail === 0 });
+              }}
+            >
+              <span aria-hidden="true">{REACTION_SYMBOLS[id]}</span>
+            </button>
+          ))}
+          <button
+            type="button"
+            role="menuitem"
+            data-menu-item=""
+            aria-label={t('reactionsAll')}
+            aria-expanded={false}
+            className="t2f-mm-item t2f-mm-emoji t2f-mm-more"
+            onClick={() => {
+              setAllEmoji(true);
+              // фокус — на першу клітинку повної сітки
+              requestAnimationFrame(() => ref.current?.querySelector<HTMLElement>('.t2f-mm-grid [data-menu-item]')?.focus());
+            }}
+          >
+            <Svg>
+              <circle cx="11" cy="12" r="8" />
+              <path d="M8 14s1 1.5 3 1.5 3-1.5 3-1.5" />
+              <path d="M8.5 9.5h.01M13.5 9.5h.01" strokeWidth="2.4" />
+              <path d="M19 3v4M17 5h4" />
+            </Svg>
+          </button>
+        </div>
+      )}
+      <div aria-hidden="true" className="t2f-mm-sep" />
+      <div className="t2f-mm-cols">
         <button
           type="button"
           role="menuitem"
           data-menu-item=""
-          className="t2f-mm-item t2f-mm-action"
+          data-menu-first=""
+          className="t2f-mm-item t2f-mm-col"
           onClick={() => done(() => onReply?.(message), false)}
         >
           <Svg>
@@ -206,7 +266,7 @@ export function MessageMenu({
           type="button"
           role="menuitem"
           data-menu-item=""
-          className="t2f-mm-item t2f-mm-action"
+          className="t2f-mm-item t2f-mm-col"
           onClick={() => done(() => onMention?.(message), false)}
         >
           <Svg>
@@ -215,37 +275,32 @@ export function MessageMenu({
           </Svg>
           {t('mention')}
         </button>
+        {tr.lang ? (
+          <button
+            type="button"
+            role="menuitem"
+            data-menu-item=""
+            data-action="translate"
+            className="t2f-mm-item t2f-mm-col"
+            onClick={(e) => done(() => (onTranslateLocked ? onTranslateLocked() : tr.showing ? tr.toggle() : tr.translateNow()), e.detail === 0)}
+          >
+            <span className="t2f-mm-colicon">
+              <Svg>
+                <path d="M3 5h9M7.5 3v2" />
+                <path d="M10 5c-.8 3.6-3 6.4-6 8" />
+                <path d="M5.5 8.5c1 1.8 2.6 3.3 4.5 4.3" />
+                <path d="M12.5 21l4-9 4 9M13.8 18h5.4" />
+              </Svg>
+              {onTranslateLocked ? <span className="t2f-mm-passdot" role="img" aria-label={t('passOnly')} /> : null}
+            </span>
+            {tr.showing ? t('translate.original') : t('translate.action')}
+          </button>
+        ) : null}
         <button
           type="button"
           role="menuitem"
           data-menu-item=""
-          aria-label={t('menuClose')}
-          className="t2f-mm-item t2f-mm-close"
-          onClick={(e) => onClose({ restoreFocus: e.detail === 0 })}
-        >
-          <Svg>
-            <path d="M6 6l12 12M18 6L6 18" />
-          </Svg>
-        </button>
-      </div>
-      <div aria-hidden="true" className="t2f-mm-sep" />
-      <EmojiGrid
-        cellRole="menuitemcheckbox"
-        checked={(id) => message.reactions?.[id]?.mine ?? false}
-        groupLabel={t('reactionsPick')}
-        onPick={(id, _symbol, e) => {
-          reactOptimistic(message, id, onReact);
-          // Фокус на «⋯» — лише після клавіатури (Enter/Пробіл дають detail 0); після миші «⋯» не лишається видимим.
-          onClose({ restoreFocus: e.detail === 0 });
-        }}
-      />
-      <div aria-hidden="true" className="t2f-mm-sep" />
-      <div className="t2f-mm-row">
-        <button
-          type="button"
-          role="menuitem"
-          data-menu-item=""
-          className="t2f-mm-item t2f-mm-action t2f-mm-report"
+          className="t2f-mm-item t2f-mm-col t2f-mm-report"
           onClick={(e) => done(() => onReport?.(message), e.detail === 0)}
         >
           <Svg>
