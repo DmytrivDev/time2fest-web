@@ -93,7 +93,8 @@ export function ChatSettings({
           const on = effectivePref(prefs, key, hasPass);
           const hi = key === 'quiet' && on && quietHidden > 0;
           return (
-            <li key={key}>
+            // Відкрита плашка без пасу — одне ціле з рядком: спільна рамка, рядок підсвічено (правка власника 2026-10-30).
+            <li key={key} className={s.group} data-open={!hasPass && lockOpen === key ? 'true' : undefined}>
               <button
                 type="button"
                 {...(hasPass
@@ -120,12 +121,7 @@ export function ChatSettings({
               {hasPass ? null : (
                 <Reveal open={lockOpen === key} id={`${uid}-lock-${key}`}>
                   <div className={s.lock} data-row="pass-lock" data-gate={gate}>
-                    <p className={s.cardText}>
-                      <span aria-hidden="true" className={s.cardBadge}>
-                        <Icon name="ticket" size={14} strokeWidth={2.4} />
-                      </span>
-                      <span>{t(`lock.${key}`)}</span>
-                    </p>
+                    <p className={s.cardText}>{t(`lock.${key}`)}</p>
                     <div className={s.lockActions}>
                       <button type="button" onClick={onGetPass} className={cn('t2f-focus t2f-transition', s.cardBtn, s.lockBtn)}>
                         {t('getPass', { price: formatUsd(PASS_PRICE) })}
@@ -167,13 +163,15 @@ export function ChatSettings({
         <Icon name="chevron-right" size={18} className="text-text-muted" />
       </button>
       {hasPass ? null : (
-        // Одним тихим рядком (правка власника 2026-10-30): що означає значок і куди дізнатись більше; купують — у плашці під рядком.
+        // Один рядок (правка власника 2026-10-30): ліворуч значок і «Функції Новорічного пасу», праворуч «Дізнатись більше →».
         <p id={cardId} className={s.legend} data-row="pass-legend">
-          <PassBadge label={t('passBadge')} />
-          <span>{t('legend')}</span>
-          <span aria-hidden="true">·</span>
+          <span className={s.legendText}>
+            <PassBadge label={t('passBadge')} />
+            <span>{t('legend')}</span>
+          </span>
           <NextLink href="/pass/" className={cn('t2f-focus', s.legendLink)}>
             {t('more')}
+            <Icon name="arrow-right" size={14} strokeWidth={2} />
           </NextLink>
         </p>
       )}

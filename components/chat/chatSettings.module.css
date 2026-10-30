@@ -41,7 +41,7 @@
 .row {
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 4px;
+  padding: 10px 3px;
   border: 0;
   border-radius: 10px;
   background: transparent;
@@ -264,16 +264,40 @@
   border-radius: 4px;
 }
 
-/* Без пасу: плашка під рядком (акордеон), а не вікно «Потрібен пас» (правка власника 2026-10-30). */
-.lock {
-  margin: 2px 0 8px;
-  box-sizing: border-box;
-  padding: 12px;
+/* Без пасу: дотик до рядка розгортає під ним плашку (акордеон). Рядок і плашка — одне ціле (правка власника 2026-10-30):
+   спільна жовтувата рамка й радіус 12, рядок підсвічено, плашка — у тій самій рамці під волосяною лінією.
+   Рамка є завжди (прозора), щоб при відкритті нічого не зсувалося; рядок +3 px відступу = вміст на тій самій вертикалі. */
+.group {
+  border: 1px solid transparent;
   border-radius: 12px;
-  border: 1px solid rgba(252, 226, 134, 0.22);
+  overflow: hidden;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.group[data-open='true'] {
+  margin: 2px 0 6px;
+  border-color: rgba(252, 226, 134, 0.35);
   background:
-    radial-gradient(ellipse at 90% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
+    radial-gradient(ellipse at 90% 0%, rgba(252, 226, 134, 0.12), transparent 60%),
     #1c1b18;
+}
+.group .row {
+  border-radius: 11px;
+}
+.group[data-open='true'] .row {
+  border-radius: 0;
+  background: rgba(252, 226, 134, 0.06);
+}
+.group[data-open='true'] .rowTitle {
+  color: var(--color-text);
+}
+.group[data-open='true'] .icon {
+  color: var(--color-highlight);
+}
+.lock {
+  box-sizing: border-box;
+  /* текст плашки — на вертикалі назви рядка: 3 (відступ) + 20 (іконка) + 12 (проміжок) */
+  padding: 10px 12px 12px 35px;
+  border-top: 1px solid rgba(252, 226, 134, 0.16);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -288,20 +312,39 @@
   min-height: 40px;
   font-size: 14px;
 }
+@media (prefers-reduced-motion: reduce) {
+  .group {
+    transition: none;
+  }
+}
+:global(html[data-reduce-motion='true']) .group {
+  transition: none;
+}
 
-/* Без пасу: внизу один тихий рядок — значок пасу, «— функції Новорічного пасу · Дізнатись більше». */
+/* Без пасу: внизу один рядок — ліворуч значок і «Функції Новорічного пасу», праворуч «Дізнатись більше →». */
 .legend {
   margin: 12px 0 0;
   padding: 0 4px;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 8px;
   font-size: 13px;
   line-height: 1.45;
   color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.legendText {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .legendLink {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: var(--color-highlight);
   font-size: 13px;
   text-decoration: underline;
