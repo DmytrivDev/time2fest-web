@@ -190,9 +190,9 @@ describe('PassBuy — картка оформлення', () => {
 });
 
 describe('«Що вмикається одразу після оплати» — вітрина з порівнянням', () => {
-  it('п’ять можливостей «без → з»; відкрита одна — з порівнянням, описом і прикладом (схованим від читачів екрана)', () => {
+  it('шість можливостей «без → з»; відкрита одна — з порівнянням, описом і прикладом (схованим від читачів екрана)', () => {
     renderWithApp(<PassPerksShowcase />);
-    expect(document.querySelectorAll('[data-perk]')).toHaveLength(5);
+    expect(document.querySelectorAll('[data-perk]')).toHaveLength(6);
     expect(screen.getByRole('heading', { level: 2, name: 'Що вмикається одразу після оплати' })).toBeInTheDocument();
     expect(screen.getByText('Усі трансляції й чат — безплатно для всіх. Пас додає ось що:')).toBeInTheDocument();
     const chat = screen.getByRole('button', { name: /Позначка в чаті й видимий шлях/ });
@@ -209,5 +209,16 @@ describe('«Що вмикається одразу після оплати» —
     expect(seat).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('button', { name: /Позначка в чаті/ })).toHaveAttribute('aria-expanded', 'false');
     expect(document.querySelector('[data-panel="seat"]')).toHaveTextContent('$2,49 (−50%)');
+  });
+  it('шостий пункт «Переклад і сповіщення в чаті»: порівняння й два приклади в ряд', () => {
+    renderWithApp(<PassPerksShowcase />);
+    expect(screen.getByText('У пасі — 6 можливостей')).toBeInTheDocument();
+    const item = screen.getByRole('button', { name: /Переклад і сповіщення в чаті/ });
+    fireEvent.click(item);
+    expect(item).toHaveAttribute('aria-expanded', 'true');
+    const panel = document.querySelector('[data-panel="chatx"]')!;
+    expect(panel).toHaveTextContent('Мовою автора, без сповіщень');
+    expect(panel).toHaveTextContent('Тобі відповіли');
+    expect(panel).toHaveTextContent('Обійми з Бразилії!');
   });
 });

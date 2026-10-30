@@ -26,6 +26,8 @@ import { canonicalEmotion } from '@/lib/firstrow/emotions';
 import type { Author, ChatMessage, Country, Gender } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock } from '@/lib/i18n/time';
+import { useTranslateMessage } from '@/lib/chat/translate';
+import { useChatPref } from '@/stores/chatPrefs';
 import { ReactionsRow, type MessageActionHandlers } from './MessageActions';
 
 export interface MessageLookup {
@@ -108,6 +110,45 @@ export function withMentions(text: string | undefined): ReactNode {
     ) : (
       part
     ),
+  );
+}
+
+/**
+ * Текст повідомлення. З «Перекладати повідомлення» (пас) чи після «Перекласти» в меню — переклад мовою сайту й
+ * рядок «Перекладено з {мова} · Оригінал» («Оригінал» повертає текст автора для цього повідомлення).
+ */
+function MessageText({ message }: { message: ChatMessage }) {
+  const t = useTranslations('chat.translate');
+  const auto = useChatPref('translate');
+  const tr = useTranslateMessage(message, auto);
+  if (tr.lang && !tr.showing && tr.text !== undefined) {
+    // Переклад був, людина повернула оригінал — дати змогу знову побачити переклад.
+    return (
+      <>
+        <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>
+        <p className="t2f-msg-tr" data-row="original">
+          <button type="button" onClick={tr.toggle} className="t2f-focus t2f-msg-tr-btn">
+            {t('show')}
+          </button>
+        </p>
+      </>
+    );
+  }
+  if (!tr.showing || tr.text === undefined) return <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>;
+  return (
+    <>
+      <p className="t2f-msg-text text-chat text-text" lang="uk">
+        {withMentions(tr.text)}
+      </p>
+      <p className="t2f-msg-tr" data-row="translated">
+        <Icon name="translate" size={12} className="shrink-0" />
+        <span>{t('from', { lang: t(`langs.${tr.lang ?? 'en'}`) })}</span>
+        <span aria-hidden="true">·</span>
+        <button type="button" onClick={tr.toggle} className="t2f-focus t2f-msg-tr-btn">
+          {t('original')}
+        </button>
+      </p>
+    </>
   );
 }
 
@@ -439,7 +480,7 @@ export function Message({
           <span className="t2f-quote-text">{quoteDeleted ? t('deletedQuote') : message.replyTo.excerpt}</span>
         </p>
       ) : null}
-      <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>
+      <MessageText message={message} />
       <ReactionsRow
         message={message}
         tabStop={tabStop}

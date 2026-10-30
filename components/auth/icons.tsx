@@ -117,6 +117,14 @@ const PATHS = {
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
   tick: <path d="M5 12.5l4.5 4.5L19 7.5" />,
   minus: <path d="M6 12h12" />,
+  translate: (
+    <>
+      <path d="M3 5h9M7.5 3v2" />
+      <path d="M10 5c-.8 3.6-3 6.4-6 8" />
+      <path d="M5.5 8.5c1 1.8 2.6 3.3 4.5 4.3" />
+      <path d="M12.5 21l4-9 4 9M13.8 18h5.4" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>;
 
 export type AuthIconName = keyof typeof PATHS;

@@ -19,6 +19,7 @@ import {
   useState,
   type KeyboardEvent,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import {
@@ -71,8 +72,13 @@ export interface ChatProps {
   emptyInfo?: { flagCode?: string; sub?: ReactNode };
   /** Смуга між шапкою й стрічкою (напр. «Немає з’єднання», нота кімнати). */
   banner?: ReactNode;
-  /** «Правила чату» в меню «Ще дії чату»; без нього меню немає. */
+  /** «Правила чату» в меню «Ще дії чату»; без нього меню немає (коли немає `settings`). */
   onRules?: () => void;
+  /**
+   * «⋯» → «Налаштування чату» на місці стрічки (рішення власника 2026-10-30): кімнати й поле введення лишаються,
+   * «⋯» підсвічена; ще раз «⋯», Esc чи надіслане своє повідомлення — назад до стрічки.
+   */
+  settings?: (api: { titleRef: RefObject<HTMLHeadingElement | null>; id: string }) => ReactNode;
   /** Дії над повідомленням: «⋯» відкриває меню в шарі чату; `menuAlways` — телефон (кнопка завжди видна). Без значення дій немає. */
   messageActions?: MessageActionHandlers & { menuAlways?: boolean };
   /** Нове повідомлення «ввічливо» оголошується не частіше ніж раз на 30 с. */
@@ -98,6 +104,7 @@ export function Chat({
   emptyInfo,
   banner,
   onRules,
+  settings,
   messageActions,
   announceNew = false,
   className,
@@ -144,6 +151,38 @@ export function Chat({
     });
   }, []);
   const menuMessage = menu ? (visible.find((m) => m.id === menu.message.id) ?? null) : null;
+
+  // «Налаштування чату» на місці стрічки.
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const dotsRef = useRef<HTMLButtonElement>(null);
+  const settingsTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const settingsId = `chat-settings-${room.id.replace(/[^a-z0-9]/gi, '-')}`;
+  const closeSettings = useCallback((restoreFocus = true) => {
+    setSettingsOpen(false);
+    if (restoreFocus) requestAnimationFrame(() => dotsRef.current?.focus());
+  }, []);
+  useEffect(() => {
+    if (settingsOpen) settingsTitleRef.current?.focus();
+  }, [settingsOpen]);
+  // Надіслав повідомлення з відкритими налаштуваннями — показуємо чат із новим повідомленням.
+  const lastMine = [...visible].reverse().find((m) => m.author?.isMine)?.id ?? null;
+  const [seenMine, setSeenMine] = useState(lastMine);
+  if (lastMine !== seenMine) {
+    setSeenMine(lastMine);
+    if (settingsOpen) setSettingsOpen(false);
+  }
+  // Esc у налаштуваннях — назад до стрічки, фокус на «⋯».
+  const settingsBoxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key !== 'Escape' || !settingsBoxRef.current?.contains(e.target as Node)) return;
+      e.stopPropagation();
+      closeSettings();
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => document.removeEventListener('keydown', onKey, true);
+  }, [settingsOpen, closeSettings]);
   const paused = manualPause || scrolledUp || focusInside || menuMessage !== null;
   // Телефон (вікно чату внизу): меню стоїть у потоці стрічки просто під повідомленням.
   const inlineMenu = collapseMode || !!messageActions?.menuAlways;
@@ -410,7 +449,27 @@ export function Chat({
             </span>
           </button>
         ) : null}
-        {onRules ? (
+        {settings ? (
+          <button
+            ref={dotsRef}
+            type="button"
+            aria-label={t('settings.open')}
+            aria-expanded={settingsOpen}
+            aria-controls={settingsOpen ? settingsId : undefined}
+            onClick={() => {
+              closeMenu();
+              if (settingsOpen) closeSettings();
+              else setSettingsOpen(true);
+            }}
+            className="t2f-focus t2f-chat-hbtn"
+            data-chat-settings-toggle=""
+            data-active={settingsOpen ? 'true' : undefined}
+          >
+            <span aria-hidden="true">
+              <Icon name="more" size={18} />
+            </span>
+          </button>
+        ) : onRules ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -433,7 +492,7 @@ export function Chat({
         ) : null}
       </div>
       )}
-      {!down && (manualPause || (scrolledUp && !(inlineMenu && menuMessage))) ? (
+      {!down && !settingsOpen && (manualPause || (scrolledUp && !(inlineMenu && menuMessage))) ? (
         <p role="status" className="t2f-chat-pausednote" data-row="paused">
           <Icon name="pause" size={14} strokeWidth={2} />
           {t('pausedNote')}
@@ -479,6 +538,10 @@ export function Chat({
           {[0, 1, 2, 3, 4].map((i) => (
             <Skeleton key={i} variant="chat-line" />
           ))}
+        </div>
+      ) : settings && settingsOpen ? (
+        <div ref={settingsBoxRef} className="relative flex min-h-0 flex-1 flex-col">
+          {settings({ titleRef: settingsTitleRef, id: settingsId })}
         </div>
       ) : (
         <div ref={wrapRef} className="relative flex min-h-0 flex-1 flex-col">

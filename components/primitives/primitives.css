@@ -409,6 +409,14 @@ html[data-reduce-motion='true'] .t2f-spin {
   background: var(--color-text);
   color: var(--color-on-highlight);
 }
+/* «⋯» з відкритими налаштуваннями чату — жовта (дошки `O-CHAT-MENU`, v110). */
+.t2f-chat-hbtn[data-active='true'] > span,
+.t2f-chat-hbtn[data-active='true']:hover > span {
+  width: 34px;
+  height: 34px;
+  background: rgba(252, 226, 134, 0.16);
+  color: var(--color-highlight);
+}
 .t2f-chat-hbtn:disabled {
   color: var(--color-text-muted);
 }
@@ -555,6 +563,30 @@ html[data-reduce-motion='true'] .t2f-spin {
 }
 .t2f-msg-text {
   line-height: 1.45;
+}
+/* Перекладене повідомлення (дошка `Desk-Chat-Translate`): «Перекладено з … · Оригінал», 12 px, приглушено. */
+.t2f-msg-tr {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+.t2f-msg-tr-btn {
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.t2f-msg-tr-btn:hover {
+  color: var(--color-text);
 }
 .t2f-msg .t2f-nick {
   font-size: 13px;
@@ -1274,6 +1306,22 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   border-radius: var(--radius-full);
   background: var(--color-highlight);
   color: var(--color-on-highlight);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* «Тобі відповіли» на згорнутому / схованому чаті («Сповіщати про відповіді», пас). */
+.t2f-replied {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  margin-inline-end: 6px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(252, 226, 134, 0.45);
+  background: rgba(252, 226, 134, 0.14);
+  color: var(--color-highlight);
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;

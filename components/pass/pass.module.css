@@ -930,6 +930,73 @@
   padding: 10px;
   gap: 8px;
 }
+/* «Переклад і сповіщення в чаті»: два приклади в ряд (дошка `Desk-Pass-PerksChat`). */
+.miniPair {
+  display: flex;
+  gap: 8px;
+}
+.miniPair > .mini {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 10px;
+  gap: 4px;
+}
+.miniPair .miniNick {
+  font-size: 12px;
+}
+.miniTr {
+  font-size: 13px;
+  color: var(--color-text);
+}
+.miniTrFrom {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.miniReply {
+  border-color: rgba(252, 226, 134, 0.35);
+  gap: 6px;
+}
+.miniReplyHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-highlight);
+}
+.miniBell {
+  position: relative;
+  display: flex;
+  color: var(--color-text);
+}
+.miniBellCount {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  background: var(--color-primary, #f94a51);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.miniReplyText {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+.miniReplyText b {
+  color: var(--color-text);
+}
 .miniMsg {
   display: flex;
   flex-direction: column;

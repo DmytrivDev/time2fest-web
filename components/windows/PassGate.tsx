@@ -9,7 +9,17 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/primitives/Button';
 import { OfferCard } from './OfferCard';
 
-export type PassGateFeature = 'schedule' | 'quiet-mode' | 'second-reminder';
+export type PassGateFeature = 'schedule' | 'quiet-mode' | 'second-reminder' | 'translate' | 'notify-replies' | 'show-route';
+
+/** Ключі заголовка й тексту «Потрібен пас» для функції (`pass.gateTitle…` / `pass.gateText…`). */
+export const GATE_KEYS: Record<PassGateFeature, { title: string; text: string }> = {
+  schedule: { title: 'gateTitleSchedule', text: 'gateTextSchedule' },
+  'quiet-mode': { title: 'gateTitleQuiet', text: 'gateTextQuiet' },
+  'second-reminder': { title: 'gateTitleReminder', text: 'gateTextReminder' },
+  translate: { title: 'gateTitleTranslate', text: 'gateTextTranslate' },
+  'notify-replies': { title: 'gateTitleNotify', text: 'gateTextNotify' },
+  'show-route': { title: 'gateTitleRoute', text: 'gateTextRoute' },
+};
 
 export interface PassGateProps {
   feature?: PassGateFeature;
@@ -21,14 +31,12 @@ export interface PassGateProps {
 
 export function PassGate({ feature = 'schedule', onClose, onWhatPassGives, className }: PassGateProps) {
   const t = useTranslations('pass');
-  const title =
-    feature === 'quiet-mode' ? t('gateTitleQuiet') : feature === 'second-reminder' ? t('gateTitleReminder') : t('gateTitleSchedule');
-  const text =
-    feature === 'quiet-mode' ? t('gateTextQuiet') : feature === 'second-reminder' ? t('gateTextReminder') : t('gateTextSchedule');
+  const title = t(GATE_KEYS[feature].title);
+  const text = t(GATE_KEYS[feature].text);
   return (
     <OfferCard variant="pass-gate" title={title} closeLabel={t('gateDismiss')} onClose={onClose} className={className}>
       <p className="text-body text-text-secondary">{text}</p>
-      {feature !== 'quiet-mode' ? (
+      {feature === 'schedule' || feature === 'second-reminder' ? (
         <p className="text-caption text-text-muted" data-row="free">
           <span className="text-body-strong text-text">{t('gateFree')}</span> {t('gateFreeWhere')}
         </p>

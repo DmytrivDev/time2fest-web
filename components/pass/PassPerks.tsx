@@ -142,6 +142,38 @@ function MiniSeat() {
   );
 }
 
+/** Переклад і «Тобі відповіли» — два приклади в ряд (шостий пункт вітрини, рішення власника 2026-10-30). */
+function MiniChatx() {
+  const t = useTranslations('pass.perks.mini');
+  return (
+    <div aria-hidden="true" className={s.miniPair}>
+      <div className={s.mini}>
+        <span className={s.miniNick}>
+          <MiniFlag bg="linear-gradient(#009C3B, #009C3B)" sm />
+          {t('trNick')}
+        </span>
+        <span className={s.miniTr}>{t('trText')}</span>
+        <span className={s.miniTrFrom}>
+          <AuthIcon name="translate" size={12} />
+          {t('trFrom')}
+        </span>
+      </div>
+      <div className={cn(s.mini, s.miniReply)}>
+        <span className={s.miniReplyHead}>
+          <span className={s.miniBell}>
+            <AuthIcon name="bell" size={18} />
+            <span className={s.miniBellCount}>2</span>
+          </span>
+          {t('replied')}
+        </span>
+        <span className={s.miniReplyText}>
+          <b>{t('replyNick')}</b> {t('replyText')}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'seat'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
   { key: 'chat', icon: 'ticket', Preview: MiniChat },
   { key: 'schedule', icon: 'calendar', Preview: MiniSchedule },
@@ -150,7 +182,13 @@ export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'seat';
   { key: 'seat', icon: 'seat', Preview: MiniSeat },
 ];
 
-type PerkKey = (typeof PASS_PERKS)[number]['key'];
+/** Вітрина на сторінці пасу: п’ять можливостей і шоста — «Переклад і сповіщення в чаті» (лише тут, не в інших списках). */
+const SHOWCASE_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'seat' | 'chatx'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
+  ...PASS_PERKS,
+  { key: 'chatx', icon: 'translate', Preview: MiniChatx },
+];
+
+type PerkKey = (typeof SHOWCASE_PERKS)[number]['key'];
 
 /** Ціна місця в «Першому ряду» без пасу й з пасом (−50%), як у прикладі `MiniSeat`. */
 const SEAT_FULL = 4.99;
@@ -166,7 +204,7 @@ function useCompare() {
 }
 
 /** Вибрана можливість: назва, «без пасу / з пасом», опис і великий приклад. */
-function PerkPanel({ perk, id, inline }: { perk: (typeof PASS_PERKS)[number]; id: string; inline?: boolean }) {
+function PerkPanel({ perk, id, inline }: { perk: (typeof SHOWCASE_PERKS)[number]; id: string; inline?: boolean }) {
   const t = useTranslations('pass.perks');
   const cmp = useCompare()(perk.key);
   const { Preview } = perk;
@@ -208,12 +246,12 @@ export function PassPerksShowcase() {
   const compare = useCompare();
   const uid = useId();
   const [active, setActive] = useState<PerkKey>('chat');
-  const current = PASS_PERKS.find((p) => p.key === active);
+  const current = SHOWCASE_PERKS.find((p) => p.key === active);
   return (
     <section aria-labelledby="pass-perks-title" className={s.perks} data-block="pass-perks">
       <span className={s.eyebrow}>
         <AuthIcon name="spark" size={16} />
-        {t('eyebrow')}
+        {t('eyebrow6')}
       </span>
       <h2 id="pass-perks-title" className={s.perksTitle}>
         {t('title')}
@@ -226,7 +264,7 @@ export function PassPerksShowcase() {
       </p>
       <div className={cn(s.gold, s.showcase)}>
         <ul className={s.perkList}>
-          {PASS_PERKS.map((perk) => {
+          {SHOWCASE_PERKS.map((perk) => {
             const on = perk.key === active;
             const cmp = compare(perk.key);
             return (

@@ -10,7 +10,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import type { RoomId } from '@/lib/data/types';
-import { formatCount, useHiddenCount } from '@/stores/chat';
+import { formatCount, useHiddenCount, useRepliesToMe } from '@/stores/chat';
 
 export interface ChatHiddenButtonProps {
   room: RoomId;
@@ -21,16 +21,26 @@ export interface ChatHiddenButtonProps {
 export function ChatHiddenButton({ room, onShow, className }: ChatHiddenButtonProps) {
   const t = useTranslations('chat');
   const count = useHiddenCount(room);
+  const replies = useRepliesToMe();
+  const label = [count > 0 ? t('showChatUnread', { count }) : t('showChat'), replies > 0 ? t('settings.repliedCount', { count: replies }) : '']
+    .filter(Boolean)
+    .join('. ');
   return (
     <button
       type="button"
       onClick={onShow}
-      aria-label={count > 0 ? t('showChatUnread', { count }) : t('showChat')}
+      aria-label={label}
       data-chat-hidden-button="desktop"
       className={cn('t2f-focus t2f-show-chat', count === 0 && 't2f-show-chat-plain', className)}
     >
       <Icon name="message" size={20} strokeWidth={2} />
       <span>{t('showChat')}</span>
+      {replies > 0 ? (
+        <span aria-hidden="true" className="t2f-replied" data-row="replied">
+          <Icon name="reply" size={14} strokeWidth={2} />
+          {formatCount(replies)}
+        </span>
+      ) : null}
       {count > 0 ? (
         <span aria-hidden="true" className="t2f-show-chat-count">
           {formatCount(count)}

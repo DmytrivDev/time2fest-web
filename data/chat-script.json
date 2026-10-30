@@ -182,6 +182,29 @@
           "planned": true
         }
       ]
+    },
+    {
+      "id": "u_mehmet",
+      "nick": "Mehmet",
+      "flagCode": "TR",
+      "badges": [
+        "pass"
+      ],
+      "pathHidden": true,
+      "path": [
+        {
+          "eventId": "evt_auckland_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_dubai_2027",
+          "planned": false
+        },
+        {
+          "eventId": "evt_cairo_2027",
+          "planned": true
+        }
+      ]
     }
   ],
   "presets": [
@@ -342,6 +365,17 @@
           "reactionsHint": {
             "clap": 4
           }
+        },
+        {
+          "authorId": "u_mehmet",
+          "text": "İstanbul’dan herkese mutlu yıllar! 🎉",
+          "reactionsHint": {
+            "heart": 2
+          }
+        },
+        {
+          "authorId": "u_mehmet",
+          "text": "Tüm dünyaya sevgiler, yolum gizli kalsın 🙂"
         }
       ]
     },

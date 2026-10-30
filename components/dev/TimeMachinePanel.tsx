@@ -13,6 +13,7 @@ import { Button } from '@/components/primitives/Button';
 import { IconButton } from '@/components/primitives/IconButton';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Switch } from '@/components/primitives/Switch';
+import { emitReplyToMe } from '@/lib/chat/testReply';
 import { getData } from '@/lib/data/load';
 import type { PayResult } from '@/lib/data/types';
 import { currentAirEvent } from '@/lib/engine/currentAirEvent';
@@ -317,6 +318,9 @@ function PanelBody({
           checked={emptyCountry}
           onCheckedChange={(v) => useTestControls.getState().setEmptyCountry(v)}
         />
+        <Button variant="secondary" compact onClick={() => emitReplyToMe(timeNow)} className="self-start" data-action="emit-reply">
+          {t('emitReply')}
+        </Button>
         <Switch
           label={t('authUnavailable')}
           checked={authUnavailable}

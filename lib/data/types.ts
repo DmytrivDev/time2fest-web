@@ -383,6 +383,8 @@ export interface ScriptAuthor {
   flagCode: string;
   badges: AuthorBadge[];
   path?: { eventId: string; planned: boolean }[];
+  /** Автор з пасом вимкнув «Показувати мій шлях» — інші бачать «{нік} приховав свій шлях». */
+  pathHidden?: boolean;
 }
 
 export interface AmbientRule {

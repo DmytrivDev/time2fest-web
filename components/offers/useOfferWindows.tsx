@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { STAMP_WINDOW_ID } from '@/components/live/useMomentWindows';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import type { PassGateFeature } from '@/components/windows/PassGate';
+import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
 import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';
 import { useClock } from '@/lib/time/TimeProvider';
@@ -66,7 +66,7 @@ export function useOfferWindows(): PassWindowsApi {
 
   const openPassGate = useCallback(
     (feature: PassGateFeature, triggerEventId = '') => {
-      const title = feature === 'quiet-mode' ? tPass('gateTitleQuiet') : feature === 'second-reminder' ? tPass('gateTitleReminder') : tPass('gateTitleSchedule');
+      const title = tPass(GATE_KEYS[feature].title);
       open(passGateSpec(deps, { feature, trigger: triggerEventId, title, infoTitle }));
       useGuestStore.getState().showOffer('pass-gate', triggerEventId, deps.now());
     },

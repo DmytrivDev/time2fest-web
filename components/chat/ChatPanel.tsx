@@ -13,7 +13,10 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
-import { passInfoSpec } from '@/components/offers/OfferWindows';
+import { passGateSpec, passInfoSpec } from '@/components/offers/OfferWindows';
+import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
+import { isQuietHidden, quietHiddenCount } from '@/lib/chat/quiet';
+import { useChatPref } from '@/stores/chatPrefs';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SegmentedControl, type SegmentOption } from '@/components/primitives/SegmentedControl';
 import { emojiSymbol } from '@/components/live/SeatPill';
@@ -44,6 +47,7 @@ import { useChatUi } from '@/stores/chat';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { Chat } from './Chat';
+import { ChatSettings } from './ChatSettings';
 import { Composer, type ComposerError } from './Composer';
 import { useChatLookup } from './useChatLookup';
 
@@ -144,13 +148,21 @@ export function ChatPanel({
   const rawMessages = useChatMessages(roomId);
   const ownSeat = eventId ? guest.firstRow[eventId]?.seat : undefined;
   // Привітання власного місця гості дає `guestGreetingMessages` («це ти»); сид того самого місця не дублюємо.
-  const messages = useMemo(() => {
+  const roomMessages = useMemo(() => {
     // Перемикач «Порожня кімната «Країна»» (машина часу): лишаються тільки свої повідомлення.
     if (emptyCountry && roomId.startsWith('country:')) return rawMessages.filter((m) => m.author?.isMine);
     return ownSeat === undefined
       ? rawMessages
       : rawMessages.filter((m) => !(m.kind === 'greeting' && m.greeting && !m.greeting.mine && m.greeting.seat === ownSeat && m.greeting.eventId === eventId));
   }, [rawMessages, ownSeat, eventId, emptyCountry, roomId]);
+  // Тихий режим (пас): без банальних привітань і лічильників однакових привітань.
+  const quiet = useChatPref('quiet');
+  const myNick = guest.nick;
+  const messages = useMemo(
+    () => (quiet ? roomMessages.filter((m) => !isQuietHidden(m, myNick)) : roomMessages),
+    [quiet, roomMessages, myNick],
+  );
+  const quietHidden = useMemo(() => (quiet ? quietHiddenCount(roomMessages, myNick) : 0), [quiet, roomMessages, myNick]);
   const append = useChatFeed((s) => s.append);
   const react = useChatFeed((s) => s.react);
 
@@ -377,6 +389,7 @@ export function ChatPanel({
             countryName={lookup.countryName?.(author.flagCode)}
             message={message}
             hasPass={hasPass}
+            routeHidden={!author.isMine && !!CHAT_SCRIPT.authors.find((x) => x.id === author.id)?.pathHidden}
             path={path}
             viewerHasPass={viewerHasPass}
             onReport={onReport}
@@ -409,6 +422,14 @@ export function ChatPanel({
         ),
       }),
     [overlay, t],
+  );
+
+  const openPassGate = useCallback(
+    (feature: PassGateFeature) =>
+      overlay.open(
+        passGateSpec({ now: () => clock.getSnapshot() }, { feature, trigger: '', title: tPass(GATE_KEYS[feature].title), infoTitle: tPass('infoTitle') }),
+      ),
+    [overlay, clock, tPass],
   );
 
   const multi = !!countries && countries.length > 1 && !!country;
@@ -520,6 +541,21 @@ export function ChatPanel({
       collapseMode={collapseMode}
       onToEvents={onToEvents}
       onRules={openRules}
+      settings={({ titleRef, id }) => (
+        <ChatSettings
+          id={id}
+          titleRef={titleRef}
+          hasPass={guest.hasPass}
+          quietHidden={quietHidden}
+          nick={guest.nick ?? null}
+          flagCode={guest.flagCode ?? guest.detectedFlag ?? null}
+          countryName={getData().countries.find((c) => c.flagCode === (guest.flagCode ?? guest.detectedFlag))?.name.uk}
+          onEditNick={() => openNick(null)}
+          onRules={openRules}
+          onGetPass={() => getPass()}
+          onPassGate={openPassGate}
+        />
+      )}
       announceNew
       messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete }}
       composer={

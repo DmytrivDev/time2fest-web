@@ -7,6 +7,8 @@ import { create } from 'zustand';
 import type { Ms, RoomId } from '@/lib/data/types';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import { useTestControls } from '@/stores/testControls';
+import { useChatPref } from './chatPrefs';
+import { useGuestStore } from './guest';
 
 export interface ReplyDraft {
   id: string;
@@ -52,6 +54,24 @@ export function useHiddenCount(room: RoomId): number {
     if (hiddenAt === null || !available) return 0;
     let n = 0;
     for (const m of s.rooms[room] ?? []) if (m.createdAt > hiddenAt && !m.author?.isMine && m.kind !== 'system') n += 1;
+    return n;
+  });
+}
+
+/**
+ * Скільки разів тобі відповіли, відколи чат сховано чи згорнуто («Сповіщати про відповіді», функція пасу).
+ * Рахуємо в усіх кімнатах; відкрили чат — `hiddenAt` скидається, і позначка зникає.
+ */
+export function useRepliesToMe(): number {
+  const hiddenAt = useChatUi((s) => s.hiddenAt);
+  const on = useChatPref('notifyReplies');
+  const nick = useGuestStore((s) => s.nick);
+  return useChatFeed((s) => {
+    if (!on || hiddenAt === null || !nick) return 0;
+    let n = 0;
+    for (const list of Object.values(s.rooms)) {
+      for (const m of list ?? []) if (m.createdAt > hiddenAt && !m.author?.isMine && m.replyTo?.nick === nick) n += 1;
+    }
     return n;
   });
 }

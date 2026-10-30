@@ -7,7 +7,8 @@
  * Зверху вниз: автор (круглий прапор 40 px, нік, країна, «Новорічний пас») ·
  * «Шлях <нік>» + підсумок · мініатюра `PathMap` з легендою · картка «Переглянути шлях» (зустрінуті, далі заплановані;
  * прапори з’єднані пунктиром) · «Поскаржитись» (повідомлення, «Відповісти» і «Згадати» — у меню «⋯») · плашка «Оформи Новорічний пас» (глядач без пасу).
- * Стани автора: пас і зустрічі · пас, але ще нічого · без пасу (картки немає, мапа затемнена з плашкою) · свій нік —
+ * Стани автора: пас і зустрічі · пас, але ще нічого · без пасу (картки немає, мапа затемнена з плашкою) · пас, але шлях
+ * приховано («Показувати мій шлях» вимкнено — та сама плашка з «закритим оком») · свій нік —
  * «Ти» поруч з ніком, мапа й «Переглянути шлях» завжди (зі штампів і «Мого графіка»; нічого — порожня мапа), без «Поскаржитись».
  * Десктоп: картка природної висоти, прокручується вся панель; телефон: відкрита картка 232 px з власною прокруткою.
  */
@@ -33,6 +34,8 @@ export interface AuthorPanelProps {
   message?: ChatMessage;
   /** Автор має пас (показуємо шлях). */
   hasPass: boolean;
+  /** Автор з пасом вимкнув «Показувати мій шлях»: мапа затемнена з плашкою «{нік} приховав свій шлях». */
+  routeHidden?: boolean;
   /** Шлях автора (зустрінуті й заплановані); порожній з пасом — «зустрічей ще нема». */
   path?: readonly PathPoint[];
   /** У глядача є пас: плашку «Оформи пас» не показуємо. */
@@ -68,6 +71,7 @@ export function AuthorPanel({
   countryName,
   message,
   hasPass,
+  routeHidden = false,
   path = [],
   viewerHasPass = false,
   onReport,
@@ -82,7 +86,7 @@ export function AuthorPanel({
   const offers = useTranslations('offers');
   const column = useChatColumn();
   const isMine = !!author.isMine;
-  const showCard = isMine || hasPass;
+  const showCard = isMine || (hasPass && !routeHidden);
   const { met, planned } = pathSummary(path);
   const rows = orderedRows(path);
   const route = routeCities(path);
@@ -149,11 +153,13 @@ export function AuthorPanel({
                   <PathMap points={[]} authorName={author.nick} geometry={geometry} />
                 </div>
                 <div className="t2f-author-lock">
-                  <p className="t2f-author-plate">
+                  <p className="t2f-author-plate" data-row={routeHidden ? 'route-hidden' : 'no-pass'}>
                     <span className="flex text-text-secondary">
-                      <Icon name="lock" size={18} />
+                      <Icon name={routeHidden ? 'eye-off' : 'lock'} size={18} />
                     </span>
-                    <span>{t.rich('noPass', { nick: author.nick, b: (chunks) => <b className="font-semibold">{chunks}</b> })}</span>
+                    <span>
+                      {t.rich(routeHidden ? 'routeHidden' : 'noPass', { nick: author.nick, b: (chunks) => <b className="font-semibold">{chunks}</b> })}
+                    </span>
                   </p>
                 </div>
               </div>

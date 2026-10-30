@@ -37,7 +37,7 @@ import { useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { RoomId } from '@/lib/data/types';
 import { useNow } from '@/lib/time/TimeProvider';
-import { formatCount, useChatUi, useHiddenCount } from '@/stores/chat';
+import { formatCount, useChatUi, useHiddenCount, useRepliesToMe } from '@/stores/chat';
 import { useChatDock } from '@/stores/chatDock';
 
 /** Дані вікна для його вмісту: у альбомі розгорнутий чат дає кнопку «До відео» в шапку. */
@@ -154,6 +154,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const [seatDy, setSeatDy] = useState(0);
   const { expand, collapse } = useChatDockControls();
   const count = useHiddenCount(room);
+  const replies = useRepliesToMe();
 
   const sectionRef = useRef<HTMLElement>(null);
   const collapsedRef = useRef<HTMLButtonElement>(null);
@@ -607,11 +608,12 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
         ref={collapsedRef}
         type="button"
         aria-expanded={false}
-        aria-label={
-          count > 0
-            ? t('dockExpandLabelUnread', { room: roomLabel, count })
-            : t('dockExpandLabel', { room: roomLabel })
-        }
+        aria-label={[
+          count > 0 ? t('dockExpandLabelUnread', { room: roomLabel, count }) : t('dockExpandLabel', { room: roomLabel }),
+          replies > 0 ? t('settings.repliedCount', { count: replies }) : '',
+        ]
+          .filter(Boolean)
+          .join('. ')}
         className="t2f-focus t2f-dock-collapsed"
         inert={open || landHidden}
         onClick={expand}
@@ -622,6 +624,13 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
           <Icon name="chevron-up" size={20} strokeWidth={2} />
           <span>{t('expand')}</span>
           <span className="flex-1" />
+          {replies > 0 ? (
+            <span aria-hidden="true" className="t2f-replied" data-row="replied">
+              <Icon name="reply" size={14} strokeWidth={2} />
+              {t('settings.replied')}
+              {replies > 1 ? ` · ${formatCount(replies)}` : ''}
+            </span>
+          ) : null}
           <span aria-hidden="true" className="t2f-dock-pill" data-dock-pill="" data-zero={count === 0 ? 'true' : undefined}>
             {t('dockNewPill', { count: formatCount(count) })}
           </span>

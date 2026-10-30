@@ -56,7 +56,13 @@ export type IconName =
   | 'flag'
   | 'lock'
   | 'seat'
-  | 'pencil';
+  | 'pencil'
+  | 'filter'
+  | 'translate'
+  | 'bell'
+  | 'route'
+  | 'eye-off'
+  | 'arrow-right';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -291,6 +297,37 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M13.5 6.5l4 4" />
     </>
   ),
+  /** Тихий режим чату (замість місяця, рішення 2026-10-30). */
+  filter: <path d="M4 6h16M7 12h10M10 18h4" />,
+  translate: (
+    <>
+      <path d="M3 5h9M7.5 3v2" />
+      <path d="M10 5c-.8 3.6-3 6.4-6 8" />
+      <path d="M5.5 8.5c1 1.8 2.6 3.3 4.5 4.3" />
+      <path d="M12.5 21l4-9 4 9M13.8 18h5.4" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
+    </>
+  ),
+  route: (
+    <>
+      <circle cx="6" cy="18" r="2.2" />
+      <circle cx="18" cy="6" r="2.2" />
+      <path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8" />
+    </>
+  ),
+  'eye-off': (
+    <>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 8.5 4.2 9.5 6-.5.9-1.5 2.3-2.9 3.6M6.3 7.6C4.5 8.9 3.2 10.7 2.5 12c1 1.8 4.5 6 9.5 6 1.6 0 3-.4 4.3-1" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+    </>
+  ),
+  'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'> {

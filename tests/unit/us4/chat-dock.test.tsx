@@ -128,8 +128,9 @@ describe('ChatDock — вікно чату внизу на телефоні', ()
     const user = userEvent.setup();
     setup();
     await user.click(screen.getByRole('button', { name: /^Розгорнути чат/ }));
-    await user.click(screen.getByRole('button', { name: 'Ще дії чату' }));
-    await user.click(await screen.findByRole('menuitem', { name: 'Правила чату' }));
+    // «⋯» відкриває налаштування чату на місці стрічки; звідти — «Правила чату».
+    await user.click(screen.getByRole('button', { name: 'Налаштування чату' }));
+    await user.click(await screen.findByRole('button', { name: /Правила чату/ }));
     const slot = document.getElementById('chat-dock-slot')!;
     await waitFor(() => expect(slot.querySelector('[data-chat-slot-panel]')).not.toBeNull());
     expect(document.querySelector('[data-sheet]')).toBeNull();

@@ -256,7 +256,7 @@ const PERKS = [
   { icon: 'ticket', key: 'path' },
   { icon: 'spark', key: 'discount' },
   { icon: 'card', key: 'card' },
-  { icon: 'moon', key: 'quiet' },
+  { icon: 'filter', key: 'quiet' },
 ] as const;
 /** Три головні можливості; решта — під «Що ще дає пас». */
 const MAIN_PERKS = 3;

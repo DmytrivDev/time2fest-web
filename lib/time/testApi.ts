@@ -3,6 +3,7 @@
  * Встановлюється лише за `IS_TEST_BUILD` (див. `TimeProvider`).
  */
 import type { ISO, PayResult } from '@/lib/data/types';
+import { emitReplyToMe } from '@/lib/chat/testReply';
 import { useAuthStore, type AuthLetter } from '@/stores/auth';
 import { resetGuest } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
@@ -25,6 +26,8 @@ export interface T2FTestApi {
   setGoogleCancelled(on: boolean): void;
   signOut(): void;
   lastLetter(): AuthLetter | null;
+  /** Хтось відповів на твоє повідомлення (перевірка «Сповіщати про відповіді»). */
+  emitReply(): void;
 }
 
 declare global {
@@ -63,6 +66,9 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     setGoogleCancelled: (on) => useTestControls.getState().setGoogleCancelled(on),
     signOut: () => useAuthStore.getState().signOut(),
     lastLetter: () => useAuthStore.getState().letter,
+    emitReply: () => {
+      emitReplyToMe(machine.get().at);
+    },
   };
 }
 
