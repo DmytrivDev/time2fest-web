@@ -9,7 +9,7 @@
  * Нових смуг між фазами немає: змінюються лише таймер і рядок 3. Назви — лише в називному відмінку.
  */
 import NextLink from 'next/link';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
@@ -18,6 +18,7 @@ import type { CaptionMode, CaptionPhase } from '@/lib/engine/captionPhase';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatAgo, formatClock, formatCountdown, formatShortCountdown } from '@/lib/i18n/time';
 import { Icon } from '@/components/primitives/Icon';
+import { Tooltip } from '@/components/primitives/Tooltip';
 import home from './home.module.css';
 
 export interface CaptionPlace {
@@ -58,6 +59,41 @@ export interface CaptionProps {
   /** Рядок 3 для зчитувача в `bar` (вимкнено, коли блок назви з тим самим рядком стоїть поруч). */
   srRow3?: boolean;
   className?: string;
+}
+
+/** Остання хвилина до півночі, поки йде відео: цифри розмиті (відео відстає — нуль таймера випередив би північ на відео). */
+const BLUR_FROM_MS = 60_000;
+
+/**
+ * Цифри таймера. Коли `veiled` — розмиті, кнопка «Натисни, щоб побачити» з підказкою про затримку відео (правка власника
+ * 2026-10-31: лише коли трансляція справді йде; відлік без відео не розмивається). Натискання показує таймер до кінця події.
+ */
+function TimerDigits({ digits, veiled, className, hint }: { digits: string; veiled: boolean; className?: string; hint: boolean }) {
+  const t = useTranslations('player');
+  const [shown, setShown] = useState(false);
+  if (!veiled || shown) {
+    return (
+      <span aria-hidden="true" className={className}>
+        {digits}
+      </span>
+    );
+  }
+  return (
+    <span className={home.veilWrap}>
+      <Tooltip content={t('timerVeilTip')} side="bottom">
+        <button type="button" aria-label={t('timerReveal')} data-timer-veiled="" onClick={() => setShown(true)} className={cn('t2f-focus', home.veilBtn)}>
+          <span aria-hidden="true" className={cn(className, home.veiled)}>
+            {digits}
+          </span>
+        </button>
+      </Tooltip>
+      {hint ? (
+        <span aria-hidden="true" className={home.veilHint}>
+          {t('timerVeilHint')}
+        </span>
+      ) : null}
+    </span>
+  );
 }
 
 /** «Лондон · Біг-Бен» або просто «Азорські острови». */
@@ -116,6 +152,9 @@ export function Caption({
         }
       : null;
 
+  // Розмиття — лише відлік до півночі, поки грає відео; ключ — північ події (нова подія — знову розмито).
+  const veiled = live && r1.kind === 'countdown' && r1.ms > 0 && r1.ms <= BLUR_FROM_MS;
+  const veilKey = current.midnightMs;
   const ago = r1.kind === 'ago' ? r1.ms : null;
   const tzOpts = timeZone ? { timeZone } : {};
 
@@ -158,11 +197,9 @@ export function Caption({
             {current.city?.name.uk ?? title} <span className={home.barDot}>·</span>
           </h2>
           {timer ? (
-            <span role="timer" aria-live="off" aria-label={`${timer.label}: ${spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimer}>
+            <span role="timer" aria-live="off" aria-label={`${timer.label}: ${veiled ? t('timerVeilSpoken') : spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimer}>
               <span aria-hidden="true">{timer.label}</span>
-              <span aria-hidden="true" className={home.barDigits}>
-                {timer.digits}
-              </span>
+              <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={home.barDigits} hint={false} />
             </span>
           ) : (
             <span aria-hidden="true" className={home.barTimer}>
@@ -237,13 +274,11 @@ export function Caption({
         )}
       </p>
       {timer && !titleOnly ? (
-        <span role="timer" aria-live="off" aria-label={`${timer.label}: ${spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.timer}>
+        <span role="timer" aria-live="off" aria-label={`${timer.label}: ${veiled ? t('timerVeilSpoken') : spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.timer}>
           <span aria-hidden="true" className={home.timerLabel}>
             {timer.label}
           </span>{' '}
-          <span aria-hidden="true" className={home.timerDigits}>
-            {timer.digits}
-          </span>
+          <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={home.timerDigits} hint />
         </span>
       ) : null}
       {ago !== null && !titleOnly ? (
