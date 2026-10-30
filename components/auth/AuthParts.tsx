@@ -294,6 +294,17 @@ export function PassPerks({ from = 0, to = PERKS.length, dense, id }: { from?: n
   );
 }
 
+/** «Дізнатись більше про Новорічний пас →» — сторінка пасу (правка власника 2026-10-30): під кнопками розгорнутої картки. */
+export function PassMoreLink({ className }: { className?: string }) {
+  const t = useTranslations('auth.passHint');
+  return (
+    <NextLink href="/pass/" className={cn('t2f-focus', s.moreLink, className)}>
+      {t('more')}
+      <AuthIcon name="arrow-right" size={16} />
+    </NextLink>
+  );
+}
+
 /** «Що дає пас» ↔ «Згорнути»: розгортає можливості на місці. */
 function ToggleButton({
   open,
@@ -336,8 +347,9 @@ export function PassHint({ className }: { className?: string }) {
           <span className={s.passHintText}>{t('text')}</span>
         </span>
       </div>
-      <Reveal open={open}>
+      <Reveal open={open} className={s.colReveal}>
         <PassPerks id={`${uid}-more`} dense />
+        <span aria-hidden="true" className={s.perksGap} />
       </Reveal>
       <div className={s.priceRow}>
         <span className={s.priceSm}>{formatUsd(PASS_PRICE)}</span>
@@ -355,6 +367,9 @@ export function PassHint({ className }: { className?: string }) {
           className={cn('t2f-focus', s.btn, s.ghost)}
         />
       </div>
+      <Reveal open={open} className={s.colReveal}>
+        <PassMoreLink />
+      </Reveal>
     </section>
   );
 }
@@ -395,6 +410,9 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
         label={t('more')}
         className={cn('t2f-focus self-center', s.linkBtn, s.mt8)}
       />
+      <Reveal open={open} className={s.offerLinkReveal}>
+        <PassMoreLink className="mx-auto" />
+      </Reveal>
       <p className={cn(s.hint, s.center)} style={mtStyle(8)}>
         {t('note')}
       </p>
@@ -418,8 +436,9 @@ export function PassRow({ mt }: { mt?: number }) {
         </span>
         <span>{t.rich('passRow', { price: formatUsd(PASS_PRICE), b: Bold })}</span>
       </span>
-      <Reveal open={open}>
+      <Reveal open={open} className={s.colReveal}>
         <PassPerks id={`${uid}-more`} dense />
+        <span aria-hidden="true" className={s.perksGap} />
       </Reveal>
       <span className={s.pair}>
         <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn)}>
@@ -433,6 +452,9 @@ export function PassRow({ mt }: { mt?: number }) {
           className={cn('t2f-focus', s.btn, s.ghost)}
         />
       </span>
+      <Reveal open={open} className={s.colReveal}>
+        <PassMoreLink />
+      </Reveal>
     </div>
   );
 }

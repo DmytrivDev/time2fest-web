@@ -796,3 +796,50 @@
     display: none;
   }
 }
+
+/* Розгорнута картка пасу (правка власника 2026-10-30): відступ від можливостей до кнопок — подвійний
+   (проміжок картки + цей), під кнопками — «Дізнатись більше про Новорічний пас →». */
+.perksGap {
+  display: block;
+  height: 12px;
+}
+.passRow .perksGap {
+  height: 10px;
+}
+.moreLink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  color: var(--color-highlight);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
+}
+/* Розкривачка в колонці з проміжком: згорнута не додає зайвого проміжку (проміжок переходить усередину). */
+.passHint {
+  --col-gap: 12px;
+}
+.passRow {
+  --col-gap: 10px;
+}
+.colReveal {
+  margin-top: calc(-1 * var(--col-gap));
+}
+.colReveal > * {
+  display: flex;
+  flex-direction: column;
+}
+.colReveal > * > :first-child {
+  margin-top: var(--col-gap);
+}
+.offerLinkReveal > * {
+  display: flex;
+  flex-direction: column;
+}
+.offerLinkReveal > * > :first-child {
+  margin-top: 4px;
+}
