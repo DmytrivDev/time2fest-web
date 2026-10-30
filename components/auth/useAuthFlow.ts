@@ -3,7 +3,8 @@
 /**
  * Кроки входу й реєстрації (S-AUTH) — спільні для сторінки (`/login/`, `/signup/`) і вікна під час трансляції.
  * Пароля немає, тож технічно вхід і реєстрація — один процес; різниця лише в тому, що показуємо (`mode`).
- * Перший вхід з новою адресою створює акаунт → крок «Акаунт створено»; вхід в наявний акаунт — `onSignedIn`.
+ * Без коду з листа (рішення 2026-10-30): нова адреса — акаунт створено й людина увійшла одразу → «Акаунт створено»;
+ * адреса, на яку вже є акаунт, — «Ми надіслали посилання» (вхід — посилання з листа) → `onSignedIn`.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GOOGLE_DELAY_MS, isEmail, type AuthIntent } from '@/lib/auth/sim';
@@ -16,15 +17,13 @@ export type AuthStep =
   | { kind: 'perks' }
   | { kind: 'google' }
   | { kind: 'sent' }
-  | { kind: 'code' }
   | { kind: 'expired'; email?: string }
   | { kind: 'toomany'; until: number }
   | { kind: 'unavailable' }
-  | { kind: 'otherDevice'; email: string; validUntil: number }
+  | { kind: 'otherDevice'; email: string }
   | { kind: 'welcome'; email: string };
 
 export type EmailIssue = 'empty' | 'invalid' | null;
-export type CodeIssue = 'wrong' | 'expired' | 'burned' | 'incomplete' | null;
 
 export interface AuthFlowOptions {
   mode: AuthIntent;
@@ -43,8 +42,6 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
   const [step, setStep] = useState<AuthStep>(initialStep ?? { kind: 'form' });
   const [email, setEmail] = useState(initialEmail);
   const [emailIssue, setEmailIssue] = useState<EmailIssue>(null);
-  const [code, setCode] = useState('');
-  const [codeIssue, setCodeIssue] = useState<CodeIssue>(null);
   const [googleFailed, setGoogleFailed] = useState(false);
   /** Немає мережі: введене лишається, надішлемо, щойно мережа повернеться. */
   const [offlinePending, setOfflinePending] = useState(false);
@@ -70,14 +67,14 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
     const was = hadUser.current;
     hadUser.current = user !== null;
     // Лише поки людина чекає на лист (на інших кроках вхід робить сама ця вкладка, напр. посилання з листа тут).
-    const waiting = step.kind === 'sent' || step.kind === 'code';
+    const waiting = step.kind === 'sent';
     if (!was && user && !signedInSelf.current && waiting) {
       signedInSelf.current = true;
       onSignedIn({ ok: true, isNew: false, email: user.email });
     }
   }, [user, step.kind, onSignedIn]);
 
-  /** Надіслати лист на `to` (форма, «Надіслати нове», «Надіслати ще раз»). */
+  /** Увійти поштою `to` (форма, «Надіслати нове», «Надіслати ще раз»): нова адреса — одразу вхід, інакше — лист з посиланням. */
   const send = useCallback(
     (to: string, opts: { resend?: boolean } = {}) => {
       if (isOffline()) {
@@ -90,18 +87,20 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
         return;
       }
       const now = Date.now();
-      const res = useAuthStore.getState().sendLetter(to, mode, now);
+      const res = useAuthStore.getState().emailSignIn(to, mode, now);
       if (!res.ok) {
         if (res.reason === 'too-many') setStep({ kind: 'toomany', until: res.until });
         // 'wait': кнопка й так неактивна до кінця відліку.
         return;
       }
-      setCode('');
-      setCodeIssue(null);
+      if (!res.sent) {
+        finish(res.result);
+        return;
+      }
       if (opts.resend) setResentAt(now);
       setStep({ kind: 'sent' });
     },
-    [mode],
+    [mode, finish],
   );
 
   const submitEmail = useCallback(() => {
@@ -124,23 +123,6 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
     window.addEventListener('online', retry);
     return () => window.removeEventListener('online', retry);
   }, [offlinePending, offlineSim, submitEmail]);
-
-  const submitCode = useCallback(
-    (value = code) => {
-      if (value.length < 6) {
-        setCodeIssue('incomplete');
-        return;
-      }
-      const res = useAuthStore.getState().verifyCode(value, Date.now());
-      if (res.ok) {
-        setCodeIssue(null);
-        finish(res);
-        return;
-      }
-      setCodeIssue(res.reason === 'none' ? 'expired' : res.reason);
-    },
-    [code, finish],
-  );
 
   // Google: імітований перехід і повернення.
   const googleTimer = useRef<number | null>(null);
@@ -172,7 +154,6 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
 
   const changeEmail = useCallback(() => {
     if (letter && !email) setEmail(letter.email);
-    setCodeIssue(null);
     setStep({ kind: 'form' });
   }, [letter, email]);
 
@@ -186,19 +167,12 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
       if (emailIssue) setEmailIssue(!v.trim() ? 'empty' : isEmail(v) ? null : 'invalid');
     },
     emailIssue,
-    code,
-    setCode: (v: string) => {
-      setCode(v);
-      if (codeIssue === 'incomplete' || codeIssue === 'wrong') setCodeIssue(null);
-    },
-    codeIssue,
     googleFailed,
     offlinePending,
     resentAt,
     letter,
     send,
     submitEmail,
-    submitCode,
     startGoogle,
     cancelGoogle,
     changeEmail,

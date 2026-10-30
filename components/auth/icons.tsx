@@ -11,12 +11,6 @@ const PATHS = {
       <path d="M3.5 6.5L12 13l8.5-6.5" />
     </>
   ),
-  keypad: (
-    <>
-      <rect x="3" y="6" width="18" height="12" rx="2" />
-      <path d="M7.5 12h.01M12 12h.01M16.5 12h.01" strokeWidth="2.6" />
-    </>
-  ),
   refresh: (
     <>
       <path d="M20 11a8 8 0 1 0-2.3 5.7" />
@@ -122,6 +116,7 @@ const PATHS = {
   ),
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
   tick: <path d="M5 12.5l4.5 4.5L19 7.5" />,
+  minus: <path d="M6 12h12" />,
 } satisfies Record<string, ReactNode>;
 
 export type AuthIconName = keyof typeof PATHS;

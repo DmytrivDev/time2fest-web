@@ -1,48 +1,51 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { isEmail, LETTER_TTL_MS, MAX_CODE_TRIES, RESEND_GAP_MS, SEND_WINDOW_MS } from '@/lib/auth/sim';
+import { isEmail, LETTER_TTL_MS, RESEND_GAP_MS, SEND_WINDOW_MS } from '@/lib/auth/sim';
 import { clearReturn, rememberReturn, returnPath } from '@/lib/auth/returnTo';
 import { useAuthStore } from '@/stores/auth';
 
 const T0 = Date.UTC(2026, 11, 31, 22, 0, 0);
 
 function reset() {
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [] });
+  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {} });
 }
 
-describe('вхід (імітація): лист, код, посилання', () => {
+describe('вхід (імітація): без коду — нова адреса одразу, акаунт — посилання з листа', () => {
   beforeEach(reset);
 
-  it('перший вхід з новою адресою створює акаунт, повторний — ні', () => {
-    const st = useAuthStore.getState();
-    expect(st.sendLetter(' Olena@Example.com ', 'signin', T0)).toEqual({ ok: true });
-    const code = useAuthStore.getState().letter!.code;
-    expect(useAuthStore.getState().letter!.email).toBe('olena@example.com');
-    const first = useAuthStore.getState().verifyCode(code, T0 + 1000);
-    expect(first).toEqual({ ok: true, isNew: true, email: 'olena@example.com' });
+  it('нова адреса: акаунт створено й людина увійшла одразу, лист «ти увійшов» з посиланням для інших пристроїв', () => {
+    const res = useAuthStore.getState().emailSignIn(' Olena@Example.com ', 'signin', T0);
+    expect(res).toEqual({ ok: true, sent: false, result: { ok: true, isNew: true, email: 'olena@example.com' } });
     expect(useAuthStore.getState().user?.email).toBe('olena@example.com');
-
-    useAuthStore.getState().signOut();
-    useAuthStore.getState().sendLetter('olena@example.com', 'signin', T0 + 10 * 60_000 + 1);
-    const again = useAuthStore.getState().verifyCode(useAuthStore.getState().letter!.code, T0 + 10 * 60_000 + 2);
-    expect(again).toEqual({ ok: true, isNew: false, email: 'olena@example.com' });
+    expect(useAuthStore.getState().letter).toMatchObject({ email: 'olena@example.com', welcome: true });
+    // Лист «ти увійшов» не рахується в ліміт листів.
+    expect(useAuthStore.getState().sends).toEqual([]);
   });
 
-  it('невірний код — «не підходить», після 5 спроб код згорає', () => {
-    useAuthStore.getState().sendLetter('a@b.co', 'signin', T0);
-    const right = useAuthStore.getState().letter!.code;
-    const wrong = right === '000000' ? '111111' : '000000';
-    for (let i = 1; i < MAX_CODE_TRIES; i++) expect(useAuthStore.getState().verifyCode(wrong, T0)).toEqual({ ok: false, reason: 'wrong' });
-    expect(useAuthStore.getState().verifyCode(wrong, T0)).toEqual({ ok: false, reason: 'burned' });
-    expect(useAuthStore.getState().verifyCode(right, T0)).toEqual({ ok: false, reason: 'burned' });
+  it('адреса з акаунтом: лише посилання з листа — вхід після переходу за ним', () => {
+    useAuthStore.setState({ accounts: ['olena@example.com'] });
+    expect(useAuthStore.getState().emailSignIn('olena@example.com', 'signin', T0)).toEqual({ ok: true, sent: true });
+    expect(useAuthStore.getState().user).toBeNull();
+    const { token } = useAuthStore.getState().letter!;
+    expect(useAuthStore.getState().openLink(token, T0 + 1000)).toEqual({ ok: true, isNew: false, email: 'olena@example.com' });
+    expect(useAuthStore.getState().user?.email).toBe('olena@example.com');
   });
 
-  it('код і посилання діють 15 хвилин і спрацьовують раз', () => {
-    useAuthStore.getState().sendLetter('a@b.co', 'signin', T0);
-    const { code, token } = useAuthStore.getState().letter!;
-    expect(useAuthStore.getState().verifyCode(code, T0 + LETTER_TTL_MS + 1)).toEqual({ ok: false, reason: 'expired' });
-    expect(useAuthStore.getState().openLink(token, T0 + 1000)).toMatchObject({ ok: true, isNew: true });
-    expect(useAuthStore.getState().openLink(token, T0 + 2000)).toEqual({ ok: false, reason: 'expired', email: 'a@b.co' });
+  it('посилання діє 15 хвилин і спрацьовує раз', () => {
+    useAuthStore.setState({ accounts: ['a@b.co'] });
+    useAuthStore.getState().emailSignIn('a@b.co', 'signin', T0);
+    const { token } = useAuthStore.getState().letter!;
+    expect(useAuthStore.getState().openLink(token, T0 + LETTER_TTL_MS + 1)).toEqual({ ok: false, reason: 'expired', email: 'a@b.co' });
+    useAuthStore.getState().sendLetter('a@b.co', 'signin', T0 + RESEND_GAP_MS);
+    const fresh = useAuthStore.getState().letter!.token;
+    expect(useAuthStore.getState().openLink(fresh, T0 + RESEND_GAP_MS + 1)).toMatchObject({ ok: true, isNew: false });
+    expect(useAuthStore.getState().openLink(fresh, T0 + RESEND_GAP_MS + 2)).toEqual({ ok: false, reason: 'expired', email: 'a@b.co' });
     expect(useAuthStore.getState().openLink('nope', T0)).toEqual({ ok: false, reason: 'none' });
+  });
+
+  it('адреса з акаунтом: лист щойно надіслано — «зачекай»', () => {
+    useAuthStore.setState({ accounts: ['a@b.co'] });
+    useAuthStore.getState().emailSignIn('a@b.co', 'signin', T0);
+    expect(useAuthStore.getState().emailSignIn('a@b.co', 'signin', T0 + 1000)).toEqual({ ok: false, reason: 'wait', until: T0 + RESEND_GAP_MS });
   });
 
   it('новий лист — не частіше ніж раз на хвилину; 4-й за 10 хвилин — «забагато спроб»', () => {
@@ -63,8 +66,8 @@ describe('вхід (імітація): лист, код, посилання', ()
     expect(useAuthStore.getState().signInGoogle(T0)).toMatchObject({ ok: true, isNew: true });
     useAuthStore.getState().sendLetter('a@b.co', 'signin', T0);
     useAuthStore.getState().expireLetter();
-    const { code } = useAuthStore.getState().letter!;
-    expect(useAuthStore.getState().verifyCode(code, T0 + 1)).toEqual({ ok: false, reason: 'expired' });
+    const { token } = useAuthStore.getState().letter!;
+    expect(useAuthStore.getState().openLink(token, T0 + 1)).toEqual({ ok: false, reason: 'expired', email: 'a@b.co' });
   });
 });
 

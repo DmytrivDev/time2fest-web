@@ -1,7 +1,8 @@
 /**
  * Акаунт на пристрої (імітація, `lib/auth/sim.ts`) у `localStorage['t2f:auth:v1']`.
- * `accounts` — адреси, для яких «на сервері» вже є акаунт: перший вхід з новою адресою створює акаунт
- * (екран «Акаунт створено»), повторний — просто вхід. Лист (`letter`) один: новий замінює попередній.
+ * `accounts` — адреси, для яких «на сервері» вже є акаунт. Вхід поштою (`emailSignIn`, без коду — рішення 2026-10-30):
+ * нова адреса — акаунт створено й людина вже увійшла (екран «Акаунт створено», лист з посиланням для інших пристроїв);
+ * адреса з акаунтом — лист з посиланням для входу. Лист (`letter`) один: новий замінює попередній.
  * Вкладки синхронізуються через подію `storage` (`useAuthTabSync`): посилання з листа, відкрите в новій вкладці,
  * впускає й ту вкладку, що чекала на лист.
  * `passes` — адреси акаунтів з Новорічним пасом і коли його оформлено (імітація сервера): вхід у такий акаунт
@@ -13,8 +14,6 @@ import { persist } from 'zustand/middleware';
 import {
   GOOGLE_DEMO_EMAIL,
   LETTER_TTL_MS,
-  MAX_CODE_TRIES,
-  newCode,
   newToken,
   normalizeEmail,
   RESEND_GAP_MS,
@@ -36,12 +35,12 @@ export interface AuthUser {
 
 export interface AuthLetter {
   email: string;
-  code: string;
   token: string;
   intent: AuthIntent;
   sentAt: number;
   used: boolean;
-  tries: number;
+  /** `welcome` — «ти увійшов» після створення акаунта (посилання — для інших пристроїв); інакше — посилання для входу. */
+  welcome?: boolean;
 }
 
 export type SendResult =
@@ -53,7 +52,8 @@ export type SendResult =
 
 /** `new` — акаунт створено цим входом. */
 export type SignInResult = { ok: true; isNew: boolean; email: string };
-export type CodeResult = SignInResult | { ok: false; reason: 'wrong' | 'expired' | 'burned' | 'none' };
+/** Вхід поштою: нова адреса — увійшов одразу; адреса з акаунтом — надіслано посилання; або лист поки не можна. */
+export type EmailSignInResult = { ok: true; sent: false; result: SignInResult } | { ok: true; sent: true } | Exclude<SendResult, { ok: true }>;
 export type LinkResult = SignInResult | { ok: false; reason: 'expired' | 'none'; email?: string };
 
 interface AuthData {
@@ -69,7 +69,8 @@ interface AuthActions {
   /** Коли знову можна надіслати лист; `null` — можна зараз. */
   blockedUntil(now: number): SendResult | null;
   sendLetter(email: string, intent: AuthIntent, now: number): SendResult;
-  verifyCode(code: string, now: number): CodeResult;
+  /** Вхід поштою без коду (див. вище). */
+  emailSignIn(email: string, intent: AuthIntent, now: number): EmailSignInResult;
   openLink(token: string, now: number): LinkResult;
   signInGoogle(now: number): SignInResult;
   /** Акаунт створюється разом з оплатою пасу (email з форми) — і людина одразу входить. */
@@ -109,23 +110,21 @@ export const useAuthStore = create<AuthStore>()(
           if (blocked) return blocked;
           const email = normalizeEmail(raw);
           set((s) => ({
-            letter: { email, code: newCode(), token: newToken(), intent, sentAt: now, used: false, tries: 0 },
+            letter: { email, token: newToken(), intent, sentAt: now, used: false },
             sends: [...s.sends.filter((t) => now - t < SEND_WINDOW_MS), now],
           }));
           return { ok: true };
         },
-        verifyCode: (code, now) => {
-          const letter = get().letter;
-          if (!letter) return { ok: false, reason: 'none' };
-          if (letter.used || letter.tries >= MAX_CODE_TRIES) return { ok: false, reason: 'burned' };
-          if (now - letter.sentAt > LETTER_TTL_MS) return { ok: false, reason: 'expired' };
-          if (code !== letter.code) {
-            const tries = letter.tries + 1;
-            set({ letter: { ...letter, tries } });
-            return { ok: false, reason: tries >= MAX_CODE_TRIES ? 'burned' : 'wrong' };
+        emailSignIn: (raw, intent, now) => {
+          const email = normalizeEmail(raw);
+          if (get().accounts.includes(email)) {
+            const res = get().sendLetter(email, intent, now);
+            return res.ok ? { ok: true, sent: true } : res;
           }
-          set({ letter: { ...letter, used: true } });
-          return signIn(letter.email, 'email', now);
+          const result = signIn(email, 'email', now);
+          // Лист «ти увійшов»: посилання з нього — вхід на інших пристроях.
+          set({ letter: { email, token: newToken(), intent, sentAt: now, used: false, welcome: true } });
+          return { ok: true, sent: false, result };
         },
         openLink: (token, now) => {
           const letter = get().letter;

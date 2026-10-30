@@ -207,67 +207,6 @@ export function SwitchRow({
   );
 }
 
-/** Поле коду: одне справжнє поле (вставка, автозаповнення з SMS/пошти) під шістьма клітинками. */
-export function CodeField({
-  value,
-  onChange,
-  onComplete,
-  error,
-  describedBy,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  onComplete: (v: string) => void;
-  error: boolean;
-  describedBy: string;
-}) {
-  const t = useTranslations('auth.code');
-  const uid = useId();
-  const ref = useRef<HTMLInputElement>(null);
-  const [focused, setFocused] = useState(false);
-  useEffect(() => ref.current?.focus({ preventScroll: true }), []);
-  const active = focused && !error ? Math.min(value.length, 5) : -1;
-  return (
-    <>
-      <label htmlFor={`${uid}-otp`} className={cn(s.label, s.mt16)}>
-        {t('label')}
-      </label>
-      <div className={cn(s.otp, error && s.otpError)} data-row="otp">
-        <input
-          ref={ref}
-          id={`${uid}-otp`}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={6}
-          pattern="[0-9]*"
-          value={value}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, '').slice(0, 6);
-            onChange(digits);
-            if (digits.length === 6 && digits !== value) onComplete(digits);
-          }}
-          className={s.otpInput}
-        />
-        <div aria-hidden="true" className={s.otpCells}>
-          {Array.from({ length: 6 }, (_, i) => {
-            const ch = value[i];
-            return (
-              <span key={i} className={cn(s.otpCell, ch && s.otpFilled, i === active && s.otpActive)}>
-                {ch ?? (i === active ? <span className={s.otpCaret} /> : null)}
-              </span>
-            );
-          })}
-        </div>
-      </div>
-    </>
-  );
-}
-
 /** «Надіслати ще раз» з відліком до нового листа; після відліку — звичайна кнопка. */
 export function ResendButton({
   until,

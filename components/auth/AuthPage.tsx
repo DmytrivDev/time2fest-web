@@ -12,7 +12,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { LETTER_TTL_MS, type AuthIntent } from '@/lib/auth/sim';
+import type { AuthIntent } from '@/lib/auth/sim';
 import { returnPath, takeLetterSent } from '@/lib/auth/returnTo';
 import { useAuthStore, useAuthTabSync, type SignInResult } from '@/stores/auth';
 import { AuthSteps } from './AuthSteps';
@@ -40,8 +40,7 @@ function resolveStart(): Start {
   const res = useAuthStore.getState().openLink(token, now);
   if (res.ok) {
     if (res.isNew) return { step: { kind: 'welcome', email: res.email } };
-    const letter = useAuthStore.getState().letter;
-    return { step: { kind: 'otherDevice', email: res.email, validUntil: (letter?.sentAt ?? now) + LETTER_TTL_MS } };
+    return { step: { kind: 'otherDevice', email: res.email } };
   }
   return { step: { kind: 'expired', email: res.email }, email: res.email };
 }

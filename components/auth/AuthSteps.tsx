@@ -1,8 +1,8 @@
 'use client';
 
 /**
- * Вміст кроків S-AUTH за дошками (`Phone-Auth-*`, `Desk-Auth-*`): вхід, реєстрація, Google, лист надіслано, код
- * (і неправильний код), посилання не діє, забагато спроб, вхід недоступний (і «немає мережі» рядком під кнопкою),
+ * Вміст кроків S-AUTH за дошками (`Phone-Auth-*`, `Desk-Auth-*`): вхід, реєстрація, Google, лист з посиланням надіслано
+ * (коду немає — рішення 2026-10-30), посилання не діє, забагато спроб, вхід недоступний (і «немає мережі» рядком під кнопкою),
  * посилання відкрито на іншому пристрої, «Акаунт створено».
  * `variant="stream"` — те саме у вікні під час трансляції: без «До трансляцій», пас — коротким рядком,
  * перемикання «вхід / реєстрація» — без переходу зі сторінки.
@@ -22,7 +22,6 @@ import {
   AgeLine,
   Badge,
   Bold,
-  CodeField,
   EmailField,
   ErrorLine,
   GoogleButton,
@@ -92,8 +91,6 @@ function Step({ flow, stream, onSwitchMode, onExit, exitHref }: Omit<AuthStepsPr
       return <GoogleStep flow={flow} stream={stream} />;
     case 'sent':
       return <SentStep flow={flow} />;
-    case 'code':
-      return <CodeStep flow={flow} />;
     case 'expired':
       return <ExpiredStep flow={flow} email={flow.step.email} />;
     case 'toomany':
@@ -101,7 +98,7 @@ function Step({ flow, stream, onSwitchMode, onExit, exitHref }: Omit<AuthStepsPr
     case 'unavailable':
       return <UnavailableStep flow={flow} onExit={onExit} exitHref={stream ? undefined : exitHref} />;
     case 'otherDevice':
-      return <OtherDeviceStep email={flow.step.email} validUntil={flow.step.validUntil} exitHref={exitHref!} />;
+      return <OtherDeviceStep email={flow.step.email} exitHref={exitHref!} />;
     case 'welcome':
       return <WelcomeStep email={flow.step.email} stream={stream} onExit={onExit} />;
   }
@@ -296,11 +293,7 @@ function SentStep({ flow }: { flow: AuthFlow }) {
       <p className={s.hint} style={{ marginTop: 4 }}>
         {t('spam')}
       </p>
-      <button type="button" onClick={() => flow.setStep({ kind: 'code' })} className={cn('t2f-focus', s.btn, s.second, s.mt20)}>
-        <AuthIcon name="keypad" />
-        {t('enterCode')}
-      </button>
-      <ResendButton until={resendUntil(flow)} onResend={() => flow.send(email, { resend: true })} className={s.mt12} />
+      <ResendButton until={resendUntil(flow)} onResend={() => flow.send(email, { resend: true })} className={s.mt20} />
       <Resent flow={flow} email={email} />
       <Note icon="moon" mt={24}>
         {t('stay')}
@@ -316,70 +309,6 @@ function Resent({ flow, email }: { flow: AuthFlow; email: string }) {
     <p role="status" className="sr-only">
       {flow.resentAt ? t('resent', { email }) : ''}
     </p>
-  );
-}
-
-function CodeStep({ flow }: { flow: AuthFlow }) {
-  const t = useTranslations('auth');
-  const email = flow.letter?.email ?? flow.email;
-  const issue = flow.codeIssue;
-  const failed = issue === 'wrong' || issue === 'expired' || issue === 'burned';
-  const errText = issue ? t(`code.${issue}`) : null;
-  return (
-    <form
-      noValidate
-      onSubmit={(e) => {
-        e.preventDefault();
-        flow.submitCode();
-      }}
-      className="flex flex-col"
-    >
-      <Title>{t('code.title')}</Title>
-      <Lead>{t.rich('code.lead', { email, b: Bold })}</Lead>
-      <button type="button" onClick={flow.changeEmail} className={cn('t2f-focus', s.linkBtn, s.linkStart)}>
-        {t('sent.change')}
-      </button>
-      <CodeField
-        value={flow.code}
-        onChange={flow.setCode}
-        onComplete={(v) => flow.submitCode(v)}
-        error={failed}
-        describedBy={[errText ? 'auth-code-err' : null, 'auth-code-hint'].filter(Boolean).join(' ')}
-      />
-      {errText ? (
-        <ErrorLine id="auth-code-err" mt={10}>
-          {errText}
-        </ErrorLine>
-      ) : null}
-      <p id="auth-code-hint" className={s.hint} style={failed ? undefined : { marginTop: 8 }}>
-        {failed ? t('code.errorHint') : t('code.hint')}
-      </p>
-      <button type="submit" className={cn('t2f-focus', s.btn, s.coral, s.mt20)}>
-        {t('code.submit')}
-      </button>
-      {failed ? (
-        <>
-          <ResendButton
-            until={resendUntil(flow)}
-            onResend={() => flow.send(email, { resend: true })}
-            enabledLabel={t('code.resendNew')}
-            className={s.mt12}
-          />
-          <Separator label={t('code.or')} margin="20px 0 16px" />
-          <GoogleButton label={t('signin.google')} onClick={flow.startGoogle} />
-        </>
-      ) : (
-        <>
-          <p className={s.codeQ}>{t('code.notArrived')}</p>
-          <ResendButton until={resendUntil(flow)} onResend={() => flow.send(email, { resend: true })} />
-          <p className={s.lead} style={{ marginTop: 16, fontSize: 14 }}>
-            {t('code.linkToo')}
-          </p>
-        </>
-      )}
-      <Resent flow={flow} email={email} />
-      <TestMailbox />
-    </form>
   );
 }
 
@@ -483,7 +412,7 @@ function UnavailableStep({ flow, onExit, exitHref }: { flow: AuthFlow; onExit: (
   );
 }
 
-function OtherDeviceStep({ email, validUntil, exitHref }: { email: string; validUntil: number; exitHref: string }) {
+function OtherDeviceStep({ email, exitHref }: { email: string; exitHref: string }) {
   const t = useTranslations('auth.otherDevice');
   return (
     <div className="flex flex-col">
@@ -501,7 +430,7 @@ function OtherDeviceStep({ email, validUntil, exitHref }: { email: string; valid
           <span id="auth-od-q" className={s.boxTitle}>
             {t('q')}
           </span>
-          <span className={s.boxText}>{t('qText', { time: formatClock(validUntil) })}</span>
+          <span className={s.boxText}>{t('qText')}</span>
         </span>
       </section>
       <Note icon="moon">{t('stay')}</Note>
@@ -551,7 +480,7 @@ function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean
   );
 }
 
-/** Тестова збірка: замість справжнього листа — код і посилання просто тут. */
+/** Тестова збірка: замість справжнього листа — посилання просто тут. */
 function TestMailbox() {
   const t = useTranslations('auth.test');
   const letter = useAuthStore((a) => a.letter);
@@ -563,10 +492,7 @@ function TestMailbox() {
     <aside aria-label={t('title')} className={s.mailbox} data-test-mailbox="">
       <span className={s.mailboxTitle}>{t('title')}</span>
       <span>{t('letter', { email: letter.email })}</span>
-      <span>
-        {t('code')}: <span className={s.mailboxCode} data-test-code="">{letter.code}</span>
-        {expired ? ' ·  ✕' : ''}
-      </span>
+      {expired ? <span>✕</span> : null}
       <span className={s.pair}>
         <a href={`/login/?link=${letter.token}`} target="_blank" rel="noopener" className={cn('t2f-focus', s.btn, s.ghost)} data-test-link="">
           {t('open')}
