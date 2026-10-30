@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useId, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
+import { Reveal } from '@/components/primitives/Reveal';
 import { AuthIcon, type AuthIconName } from '@/components/auth/icons';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import s from './pass.module.css';
@@ -247,7 +248,10 @@ export function PassPerksShowcase() {
                     </span>
                   </span>
                 </button>
-                {on ? <PerkPanel perk={perk} id={`${uid}-${perk.key}`} inline /> : null}
+                {/* телефон: розгортається плавно під рядком (на десктопі сховано, панель праворуч) */}
+                <Reveal open={on} className={s.perkReveal}>
+                  <PerkPanel perk={perk} id={`${uid}-${perk.key}`} inline />
+                </Reveal>
               </li>
             );
           })}

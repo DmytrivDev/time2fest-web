@@ -14,6 +14,7 @@ import { EMOJI_SYMBOLS } from '@/components/live/SeatPill';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
+import { Reveal } from '@/components/primitives/Reveal';
 import { Icon } from '@/components/primitives/Icon';
 import { Link } from '@/components/primitives/Link';
 import { formatPrice } from '@/lib/firstrow/format';
@@ -246,9 +247,9 @@ export function FirstRowStrip({
             <Icon name={open ? 'chevron-up' : dockBar ? 'chevron-right' : 'chevron-down'} size={18} className="text-text-secondary" />
           </button>
         </Heading>
-        {/* Телефон-головна: панель лишається в DOM і згорнутою — стіна загоряється опівночі синхронно (як було з forceMount). */}
-        {open || dockBar ? (
-          <div id={panelId} className={fr.panel} hidden={!open}>
+        {/* Панель завжди в DOM і розгортається плавно (правило 2026-10-30); стіна загоряється опівночі синхронно. */}
+        <Reveal open={open} id={panelId}>
+          <div className={fr.panel}>
             {wall}
             {sellable || blockedNow || state === 'mine' || state === 'closed' || state === 'soldout' || restrained ? (
               <div className={cn(fr.details, !wall && 'border-t-0 pt-0')}>
@@ -302,7 +303,7 @@ export function FirstRowStrip({
               </div>
             ) : null}
           </div>
-        ) : null}
+        </Reveal>
       </section>
     );
   }

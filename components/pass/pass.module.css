@@ -10,7 +10,7 @@
   max-width: 1440px;
   margin: 0 auto;
   box-sizing: border-box;
-  padding: 4px 16px 24px;
+  padding: 12px var(--spacing-margin-mobile) 24px;
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
@@ -22,9 +22,9 @@
  */
 @media (min-width: 1024px) {
   .main {
-    padding: 12px 32px 56px;
+    padding: var(--spacing-6) var(--spacing-margin-desktop) 56px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 400px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     column-gap: 24px;
     align-items: start;
   }
@@ -41,6 +41,28 @@
   }
 }
 
+/* «На головну» — плашка, а не текст у повітрі (правка власника 2026-10-30). */
+.backPill {
+  align-self: flex-start;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 0 14px 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.backPill:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
 /* ---------- герой: квиток, назва, ціна ---------- */
 .gold {
   border-radius: 14px;
@@ -51,7 +73,7 @@
 }
 .hero {
   position: relative;
-  margin-top: 4px;
+  margin-top: 12px;
   box-sizing: border-box;
   padding: 20px 16px;
   display: flex;
@@ -115,7 +137,7 @@
 }
 @media (min-width: 1024px) {
   .hero {
-    margin-top: 8px;
+    margin-top: 12px;
     padding: 32px 40px;
     flex-direction: row;
     flex-wrap: wrap;
@@ -182,7 +204,7 @@
     height: calc(100dvh - 104px);
     min-height: 560px;
     max-height: 840px;
-    padding: 24px;
+    padding: 16px;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -799,6 +821,9 @@
 .perkPanelInline {
   margin: 6px 0 8px;
 }
+.perkReveal {
+  min-width: 0;
+}
 .perkPanelSide {
   display: none;
 }
@@ -878,7 +903,7 @@
     grid-template-columns: 330px minmax(0, 1fr);
     gap: 8px;
   }
-  .perkPanelInline {
+  .perkReveal {
     display: none;
   }
   .perkPanelSide {

@@ -166,7 +166,8 @@ export function AuthorPanel({
                   <span className="t2f-author-fine font-semibold text-text-muted">{rows.length}</span>
                   <Icon name="chevron-down" size={18} className="[stroke-width:2] group-aria-expanded:rotate-180" />
                 </Radix.Trigger>
-                <Radix.Content className="t2f-chat-log t2f-author-card-rows" data-row="rows">
+                <Radix.Content className="t2f-acc-content">
+                  <div className="t2f-chat-log t2f-author-card-rows" data-row="rows">
                   {met === 0 ? <p className="t2f-author-empty">{t('noMeetings')}</p> : null}
                   {rows.length ? (
                     <ol className="m-0 list-none p-0">
@@ -190,6 +191,7 @@ export function AuthorPanel({
                       })}
                     </ol>
                   ) : null}
+                  </div>
                 </Radix.Content>
               </Radix.Root>
             ) : null}

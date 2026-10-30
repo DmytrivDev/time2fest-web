@@ -11,9 +11,9 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
-import { authStyles as a } from '@/components/auth/AuthParts';
 import { AuthIcon } from '@/components/auth/icons';
 import { Icon } from '@/components/primitives/Icon';
+import { Reveal } from '@/components/primitives/Reveal';
 import { cn } from '@/components/primitives/cn';
 import { currentPath, rememberLetterSent, rememberReturn } from '@/lib/auth/returnTo';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
@@ -144,9 +144,9 @@ function Faq() {
                   <Icon name="chevron-down" size={18} strokeWidth={2} />
                 </button>
               </h3>
-              <p id={`${uid}-a${n}`} hidden={!expanded} className={s.faqAnswer}>
-                {t(`a${n}`)}
-              </p>
+              <Reveal open={expanded} id={`${uid}-a${n}`}>
+                <p className={s.faqAnswer}>{t(`a${n}`)}</p>
+              </Reveal>
             </div>
           );
         })}
@@ -168,12 +168,12 @@ export function PassPage() {
   };
   return (
     <main id="content" tabIndex={-1} className={cn(s.main, 'focus:outline-none')} data-page="S-PASS" data-view={view}>
-      <NextLink href="/" className={cn('t2f-focus', a.back)}>
+      <NextLink href="/" className={cn('t2f-focus t2f-transition', s.backPill)}>
         <AuthIcon name="chevron-left" size={16} />
         {t('back')}
       </NextLink>
       <Hero active={done} />
-      <section aria-label={t('buyTitle')} className={s.card} data-block="pass-buy">
+      <section aria-label={t('buyTitle')} className={cn('t2f-chat-log t2f-slot-body', s.card)} data-block="pass-buy">
         <PassBuy
           variant="page"
           onSignIn={toLogin}

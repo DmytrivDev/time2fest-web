@@ -38,7 +38,9 @@ export function Accordion(props: AccordionProps) {
           </Radix.Trigger>,
         )}
       </Radix.Header>
-      <Radix.Content className="px-4 pb-4 text-body text-text-secondary">{it.content}</Radix.Content>
+      <Radix.Content className="t2f-acc-content">
+        <div className="px-4 pb-4 text-body text-text-secondary">{it.content}</div>
+      </Radix.Content>
     </Radix.Item>
   ));
   if (props.type === 'multiple') {

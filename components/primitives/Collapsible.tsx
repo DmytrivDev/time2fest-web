@@ -33,7 +33,9 @@ export function Collapsible({ title, meta, open, defaultOpen, onOpenChange, disa
         {meta !== undefined && <span className="text-caption text-text-muted">{meta}</span>}
         <Icon name="chevron-down" size={18} className="group-aria-expanded:rotate-180" />
       </Radix.Trigger>
-      <Radix.Content className="px-4 pb-4 pt-1 text-body text-text-secondary">{children}</Radix.Content>
+      <Radix.Content className="t2f-acc-content">
+        <div className="px-4 pb-4 pt-1 text-body text-text-secondary">{children}</div>
+      </Radix.Content>
     </Radix.Root>
   );
 }

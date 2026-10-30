@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
+import { Reveal } from '@/components/primitives/Reveal';
 import { useGetPass } from '@/components/pass/PassWindow';
 import { formatCountdown } from '@/lib/auth/sim';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
@@ -309,7 +310,7 @@ function ToggleButton({
 }) {
   const t = useTranslations('auth.passHint');
   return (
-    <button type="button" aria-expanded={open} aria-controls={open ? controls : undefined} onClick={onToggle} className={className}>
+    <button type="button" aria-expanded={open} aria-controls={controls} onClick={onToggle} className={className}>
       {open ? t('collapse') : label}
     </button>
   );
@@ -335,7 +336,9 @@ export function PassHint({ className }: { className?: string }) {
           <span className={s.passHintText}>{t('text')}</span>
         </span>
       </div>
-      {open ? <PassPerks id={`${uid}-more`} dense /> : null}
+      <Reveal open={open}>
+        <PassPerks id={`${uid}-more`} dense />
+      </Reveal>
       <div className={s.priceRow}>
         <span className={s.priceSm}>{formatUsd(PASS_PRICE)}</span>
         <span className={s.priceNote}>{o('priceNote')}</span>
@@ -373,11 +376,11 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
         {welcome ? t('titleWelcome') : t('title')}
       </h2>
       <PassPerks to={MAIN_PERKS} />
-      {open ? (
+      <Reveal open={open}>
         <div className={s.perksMore}>
           <PassPerks id={`${uid}-more`} from={MAIN_PERKS} />
         </div>
-      ) : null}
+      </Reveal>
       <div className={s.priceRow} style={mtStyle(18)}>
         <span className={s.priceLg}>{formatUsd(PASS_PRICE)}</span>
         <span className={s.priceLgNote}>{o('priceNote')}</span>
@@ -415,7 +418,9 @@ export function PassRow({ mt }: { mt?: number }) {
         </span>
         <span>{t.rich('passRow', { price: formatUsd(PASS_PRICE), b: Bold })}</span>
       </span>
-      {open ? <PassPerks id={`${uid}-more`} dense /> : null}
+      <Reveal open={open}>
+        <PassPerks id={`${uid}-more`} dense />
+      </Reveal>
       <span className={s.pair}>
         <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn)}>
           {t('passHint.get')}
