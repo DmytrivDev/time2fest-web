@@ -9,6 +9,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Skeleton } from '@/components/primitives/Skeleton';
+import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useNow } from '@/lib/time/TimeProvider';
 import { EventCard, type EventCardData } from './EventCard';
 import { hasStreamNow, isPastStatus, sortForStrip, withStatus } from './eventCards';
@@ -30,8 +31,10 @@ export interface NowNextProps {
    * перемикається, згори — смужка «Мій графік — у Новорічному пасі…» з «Що дає пас», картки притемнені й не натискаються.
    */
   scheduleLocked?: boolean;
-  /** «Що дає пас» у смужці. */
+  /** «Що ще дає пас» у смужці — вікно на місці чату / шторкою. */
   onScheduleLocked?: () => void;
+  /** «Оформити пас · $4,99» у смужці: під час трансляції — вікно оформлення, інакше — сторінка пасу. */
+  onGetPass?: () => void;
   /** Скільки карток на телефоні до «Показати ще». */
   stackLimit?: number;
   /** Скільки минулих подій лишити зліва в каруселі (на телефоні минулих немає). */
@@ -62,6 +65,7 @@ export function NowNext({
   onFilterLiveOnlyChange,
   scheduleLocked = false,
   onScheduleLocked,
+  onGetPass,
   stackLimit = 4,
   pastLimit,
   progress,
@@ -218,9 +222,16 @@ export function NowNext({
         <div role="status" data-row="mine-locked" className={cn(s.lockedBar, stack && s.lockedBarStack)}>
           <Icon name="lock" size={18} className="mt-0.5 shrink-0 text-highlight" />
           <p className={s.lockedText}>{t.rich('mineLockedText', { b: (c) => <b className="font-bold">{c}</b> })}</p>
-          <Button variant="tonal" compact iconLeft="ticket" data-action="pass-info" onClick={onScheduleLocked} className="shrink-0">
-            {t('mineLockedButton')}
-          </Button>
+          <span className={s.lockedActions}>
+            {onGetPass ? (
+              <Button variant="coral" compact iconLeft="ticket" data-action="get-pass" onClick={onGetPass}>
+                {t('mineLockedGet', { price: formatUsd(PASS_PRICE) })}
+              </Button>
+            ) : null}
+            <Button variant="tonal" compact data-action="pass-info" onClick={onScheduleLocked}>
+              {t('mineLockedButton')}
+            </Button>
+          </span>
         </div>
       ) : null}
       {lockedMine ? (

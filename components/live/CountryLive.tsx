@@ -27,6 +27,7 @@ import { NowNext } from '@/components/live/NowNext';
 import { MORE_STREAMS_ID, MoreStreamsSheet, StreamList, ZoneStreamsBlock } from '@/components/live/StreamList';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { CookieInflow } from '@/components/offers/CookieLayer';
+import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
@@ -161,6 +162,7 @@ export function CountryLive({ iso }: { iso: string }) {
   // Пропозиції пасу й чайових (offer:show) і стан введення для рушія пропозицій.
   const passWindows = useOfferWindows();
   const hasPass = useGuestStore((s) => s.hasPass);
+  const getPass = useGetPass();
 
   const countryRows = useMemo(() => (zoneId ? countryStreamRows(data, iso, zoneId, minute) : []), [data, iso, zoneId, minute]);
   const zoneRows = useMemo(() => (zoneId ? zoneStreamRows(data, zoneId, iso, minute) : []), [data, iso, zoneId, minute]);
@@ -293,6 +295,7 @@ export function CountryLive({ iso }: { iso: string }) {
           onToggleSchedule={passWindows.requestSchedule}
       scheduleLocked={!hasPass}
       onScheduleLocked={passWindows.openPassInfoBoard}
+      onGetPass={() => getPass()}
           className={styles.pad}
         />
       ) : null}

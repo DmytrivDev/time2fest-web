@@ -490,6 +490,7 @@
   flex: 1 1 0;
   min-width: 0;
   margin: 0;
+  text-wrap: balance; /* рядки рівної довжини, без одного слова в останньому (правка власника 2026-11-01) */
   font-size: 14px;
   line-height: 1.45;
   color: var(--color-text);
@@ -497,8 +498,19 @@
 .lockedBarStack .lockedText {
   flex-basis: calc(100% - 30px);
 }
-.lockedBarStack > button {
-  margin-left: 28px;
+.lockedActions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+/* Телефон: дві кнопки на всю ширину, одна під одною. */
+.lockedBarStack .lockedActions {
+  flex-direction: column;
+  width: 100%;
+}
+.lockedBarStack .lockedActions > button {
+  width: 100%;
 }
 .lockedCards {
   opacity: 0.4;

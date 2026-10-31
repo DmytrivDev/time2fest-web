@@ -31,6 +31,7 @@ import { NowNext } from '@/components/live/NowNext';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
 import { CookieInflow } from '@/components/offers/CookieLayer';
+import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { cn } from '@/components/primitives/cn';
@@ -119,6 +120,7 @@ export function HomeLive() {
   // Пропозиції пасу й чайових (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();
   const hasPass = useGuestStore((s) => s.hasPass);
+  const getPass = useGetPass();
 
   const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
   const city = current?.city?.name.uk;
@@ -157,6 +159,7 @@ export function HomeLive() {
       onToggleSchedule={passWindows.requestSchedule}
       scheduleLocked={!hasPass}
       onScheduleLocked={passWindows.openPassInfoBoard}
+      onGetPass={() => getPass()}
       airEventId={eventId}
     />
   );

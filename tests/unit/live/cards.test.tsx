@@ -122,9 +122,9 @@ describe('NowNext', () => {
     renderWithApp(<NowNext items={items} zoneLabel="Київ" scheduleLocked onScheduleLocked={onScheduleLocked} />);
     fireEvent.click(screen.getByRole('radio', { name: /Мій графік\. Графік — у Новорічному пасі/ }));
     // Варіант C (2026-11-01): фільтр вмикається, згори смужка, картки притемнені й поза Tab.
-    expect(screen.getByRole('status')).toHaveTextContent('Мій графік — у Новорічному пасі');
+    expect(screen.getByRole('status')).toHaveTextContent('Щоб додавати святкування у свій графік');
     expect(document.querySelector('[data-row="mine-locked-cards"]')).toHaveAttribute('inert');
-    fireEvent.click(screen.getByRole('button', { name: 'Що дає пас' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Що ще дає пас' }));
     expect(onScheduleLocked).toHaveBeenCalled();
     fireEvent.click(screen.getByRole('radio', { name: 'Усі' }));
     expect(document.querySelector('[data-row="mine-locked"]')).toBeNull();
