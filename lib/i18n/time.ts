@@ -12,12 +12,30 @@ const PHRASES: Record<string, { yourTime: string; midnightWas: string }> = {
 };
 const phrase = (locale: Locale) => PHRASES[locale] ?? PHRASES.uk!;
 
-export function viewerTimeZone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-  } catch {
-    return 'UTC';
+/**
+ * Кеш `Intl.DateTimeFormat`: створення форматера дороге (сотні мікросекунд), а час на сторінці форматується
+ * щосекунди в мапі, картках і чаті — без кешу це блокувало головний потік і «пригальмовувало» анімації (2026-10-31).
+ */
+const formatters = new Map<string, Intl.DateTimeFormat>();
+function dtf(locale: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${locale}|${JSON.stringify(options)}`;
+  let f = formatters.get(key);
+  if (!f) {
+    f = new Intl.DateTimeFormat(locale, options);
+    formatters.set(key, f);
   }
+  return f;
+}
+
+let viewerZone: string | null = null;
+export function viewerTimeZone(): string {
+  if (viewerZone) return viewerZone;
+  try {
+    viewerZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  } catch {
+    viewerZone = 'UTC';
+  }
+  return viewerZone;
 }
 
 function toMs(v: ISO | Ms): Ms {
@@ -25,16 +43,16 @@ function toMs(v: ISO | Ms): Ms {
 }
 
 function dayKey(ms: Ms, timeZone: string): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ms);
+  return dtf('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ms);
 }
 
 /** Годину й хвилини у форматі мови: «03:00» (uk, 24 год) або «3:00 AM» (en-US, 12 год). */
 export function formatClock(utc: ISO | Ms, opts: { locale?: Locale; timeZone?: string } = {}): string {
   const locale = opts.locale ?? 'uk';
   const timeZone = opts.timeZone ?? viewerTimeZone();
-  const probe = new Intl.DateTimeFormat(locale, { hour: 'numeric', timeZone }).resolvedOptions();
+  const probe = dtf(locale, { hour: 'numeric', timeZone }).resolvedOptions();
   const h12 = probe.hourCycle === 'h11' || probe.hourCycle === 'h12';
-  return new Intl.DateTimeFormat(locale, {
+  return dtf(locale, {
     hour: h12 ? 'numeric' : '2-digit',
     minute: '2-digit',
     timeZone,
@@ -64,7 +82,7 @@ export function formatTimeForViewer(
   const sameDay = dayKey(ms, timeZone) === dayKey(opts.now, timeZone);
   const date = sameDay
     ? null
-    : new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', timeZone }).format(ms);
+    : dtf(locale, { day: 'numeric', month: 'long', timeZone }).format(ms);
   const p = phrase(locale);
   return {
     time,

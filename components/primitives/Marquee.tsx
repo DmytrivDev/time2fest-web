@@ -72,7 +72,6 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
   const track = useRef<HTMLDivElement>(null);
   const [period, setPeriod] = useState(0); // ширина одного кола (px); 0 — усе влазить, крутити нічого
   const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
-  const pos = useRef(0); // дробова позиція (scrollLeft цілочисельний у частині браузерів)
 
   useLayoutEffect(() => {
     const el = viewport.current;
@@ -92,13 +91,12 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
     return () => ro?.disconnect();
   }, [items.length, bleed]);
 
-  // Перескок на те саме місце в іншій копії — коло без кінця в обидва боки.
+  // Перескок на те саме місце в іншій копії — коло без кінця в обидва боки (ручна прокрутка).
   const wrap = useCallback(() => {
     const el = viewport.current;
     if (!el || period <= 0) return;
     if (el.scrollLeft >= period) el.scrollLeft -= period;
     else if (el.scrollLeft <= 0) el.scrollLeft += period;
-    pos.current = el.scrollLeft;
   }, [period]);
 
   useEffect(() => {
@@ -110,25 +108,27 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
     return () => el.removeEventListener('scroll', wrap);
   }, [period, wrap]);
 
+  // Рух — анімація transform (Web Animations): її веде компоновник браузера, тож стрічка йде рівно, навіть коли
+  // головний потік зайнятий (щосекундні перемальовування чату й мапи «пригальмовували» рух через scrollLeft, 2026-10-31).
+  // Зупинка переносить пройдений шлях у scrollLeft — далі людина гортає з того самого місця.
   useEffect(() => {
     const el = viewport.current;
-    if (!el || period <= 0 || paused || speed <= 0) return;
-    pos.current = el.scrollLeft;
-    let last = performance.now();
-    let raf = requestAnimationFrame(function tick(t) {
-      const dt = Math.min(64, t - last);
-      last = t;
-      pos.current += (speed * dt) / 1000;
-      if (pos.current >= period) pos.current -= period;
-      el.scrollLeft = pos.current;
-      raf = requestAnimationFrame(tick);
-    });
-    return () => cancelAnimationFrame(raf);
+    const tr = track.current;
+    if (!el || !tr || period <= 0 || paused || speed <= 0 || typeof tr.animate !== 'function') return;
+    const duration = (period / speed) * 1000;
+    const anim = tr.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${-period}px)` }], { duration, iterations: Infinity, easing: 'linear' });
+    return () => {
+      const t = typeof anim.currentTime === 'number' ? anim.currentTime : 0;
+      const shift = ((t % duration) / duration) * period;
+      anim.cancel();
+      el.scrollLeft = (el.scrollLeft + shift) % period || 1;
+    };
   }, [period, paused, speed]);
 
   const looping = period !== 0;
-  const copy = (n: 1 | 2) => (
-    <div data-copy={n} aria-hidden={n === 2 || undefined} inert={n === 2 || undefined} className="flex shrink-0" style={{ gap }}>
+  // Три копії: позиція прокрутки (до одного кола) + зсув анімації (до одного кола) + вікно (вужче за коло) — без порожнечі.
+  const copy = (n: 1 | 2 | 3) => (
+    <div data-copy={n} aria-hidden={n > 1 || undefined} inert={n > 1 || undefined} className="flex shrink-0" style={{ gap }}>
       {items}
     </div>
   );
@@ -138,6 +138,7 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
       data-marquee-row=""
       data-looping={looping || undefined}
       // Прокручуваний ряд доступний з клавіатури (axe: scrollable-region-focusable); фокус зупиняє рух.
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- прокручувана область мусить брати фокус (WCAG 2.1.1)
       tabIndex={looping ? 0 : undefined}
       className="t2f-focus t2f-marquee-viewport"
       style={bleed ? { marginInline: -bleed, paddingInline: bleed } : undefined}
@@ -172,6 +173,7 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
       <div ref={track} className="flex w-max" style={{ gap }}>
         {copy(1)}
         {looping ? copy(2) : null}
+        {looping ? copy(3) : null}
       </div>
     </div>
   );

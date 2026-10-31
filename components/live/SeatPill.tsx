@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * SeatPill (C7) — місце учасника на стіні «Першого ряду»: прапор, повне ім’я, емоція 20 px.
+ * SeatPill (C7) — місце учасника на стіні «Першого ряду»: круглий прапор (як усюди на сайті), повне ім’я, емоція 20 px.
  * Стани: `idle` (тонка жовта межа), `lit` (залите жовтим — після півночі), своє — межа `text` і «Ти»
  * (дотик до свого відкриває O-EMOJI).
  * Доступна назва місця — без емодзі: «Місце 4: Олена і друзі, Україна, емоція: келихи» (ІНВ I-33, I-35).
@@ -59,7 +59,7 @@ export function SeatPill({ seat, participant, countryName, state = 'idle', fresh
 
   const body = (
     <>
-      <Flag code={participant.flagCode} size="pill" decorative className="t2f-seat-flag" />
+      <Flag round code={participant.flagCode} size="pill" decorative className="t2f-seat-flag" />
       <span className="whitespace-nowrap">{participant.name}</span>
       <span aria-hidden="true" className="t2f-seat-emoji">
         {emojiSymbol(participant.emojiId)}
