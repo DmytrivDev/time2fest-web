@@ -71,24 +71,28 @@ const BLUR_FROM_MS = 60_000;
 function TimerDigits({ digits, veiled, className, hint }: { digits: string; veiled: boolean; className?: string; hint: boolean }) {
   const t = useTranslations('player');
   const [shown, setShown] = useState(false);
-  if (!veiled || shown) {
-    return (
-      <span aria-hidden="true" className={className}>
-        {digits}
-      </span>
-    );
-  }
+  const plain = (
+    <span aria-hidden="true" className={className}>
+      {digits}
+    </span>
+  );
+  if (!veiled) return plain;
+  // Після натискання підказка гасне, але її рядок лишається — таймер не стрибає (правка власника 2026-10-31).
   return (
     <span className={home.veilWrap}>
-      <Tooltip content={t('timerVeilTip')} side="bottom">
-        <button type="button" aria-label={t('timerReveal')} data-timer-veiled="" onClick={() => setShown(true)} className={cn('t2f-focus', home.veilBtn)}>
-          <span aria-hidden="true" className={cn(className, home.veiled)}>
-            {digits}
-          </span>
-        </button>
-      </Tooltip>
+      {shown ? (
+        plain
+      ) : (
+        <Tooltip content={t('timerVeilTip')} side="bottom">
+          <button type="button" aria-label={t('timerReveal')} data-timer-veiled="" onClick={() => setShown(true)} className={cn('t2f-focus', home.veilBtn)}>
+            <span aria-hidden="true" className={cn(className, home.veiled)}>
+              {digits}
+            </span>
+          </button>
+        </Tooltip>
+      )}
       {hint ? (
-        <span aria-hidden="true" className={home.veilHint}>
+        <span aria-hidden="true" data-veil-hint={shown ? 'gone' : 'on'} className={cn(home.veilHint, shown && home.veilHintGone)}>
           {t('timerVeilHint')}
         </span>
       ) : null}

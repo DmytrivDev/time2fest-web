@@ -28,7 +28,8 @@ describe('таймер під відео: остання хвилина розм
     expect(screen.getByRole('timer')).toHaveAttribute('aria-label', 'до півночі: менше хвилини');
     fireEvent.click(reveal);
     expect(screen.queryByRole('button', { name: /Показати таймер/ })).toBeNull();
-    expect(screen.queryByText('Натисни, щоб побачити')).toBeNull();
+    // підказка гасне, але її рядок лишається, щоб таймер не стрибав
+    expect(screen.getByText('Натисни, щоб побачити')).toHaveAttribute('data-veil-hint', 'gone');
   });
 
   it('лише відлік без відео (live=false): не розмито', () => {
