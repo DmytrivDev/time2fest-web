@@ -20,6 +20,7 @@ import {
 import { reactOptimistic, type MessageActionHandlers } from './MessageActions';
 import { EmojiGrid, arrowTarget } from './EmojiGrid';
 import { QUICK_REACTIONS, REACTION_SYMBOLS } from './reactions';
+import { Emoji } from '@/components/primitives/Emoji';
 import { useTranslateMessage } from '@/lib/chat/translate';
 import { useChatPref } from '@/stores/chatPrefs';
 
@@ -221,7 +222,7 @@ export function MessageMenu({
                 onClose({ restoreFocus: e.detail === 0 });
               }}
             >
-              <span aria-hidden="true">{REACTION_SYMBOLS[id]}</span>
+              <Emoji char={REACTION_SYMBOLS[id]} />
             </button>
           ))}
           <button

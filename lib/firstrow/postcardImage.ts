@@ -2,8 +2,10 @@
  * Листівка «Першого ряду» для «Поділитися листівкою» (дошка `Desk-FR-After-C`, рішення власника 2026-10-31):
  * «ПЕРШИЙ РЯД · ЛОНДОН», «З Новим 2027 роком!», одне привітання з автором і всі імена ряду з круглими прапорами;
  * 9:16 (сторіс) і 1:1. Як і картка штампа (`lib/offers/shareImage.ts`) — SVG: прев’ю миттєве, PNG — через canvas.
- * Прапори вбудовано data-URL (`flags`), щоб canvas малював їх без мережі; без прапора — сіре коло.
+ * Прапори й фірмові емодзі вбудовано data-URL (`flags`, ключ — код прапора або символ емодзі), щоб canvas малював їх
+ * без мережі; без прапора — сіре коло, без значка — системний символ.
  */
+import { brandEmojiSrc } from '@/components/primitives/Emoji';
 import { SHARE_SIZE, type ShareRatio } from '@/lib/offers/shareImage';
 
 export interface PostcardPerson {
@@ -50,6 +52,13 @@ export function wrapWords(text: string, max: number, lines: number): string[] {
 
 function clip(s: string, max: number): string {
   return s.length > max ? `${s.slice(0, max - 1).trimEnd()}…` : s;
+}
+
+/** Фірмовий емодзі картинкою (якщо є в `icons`), інакше — системний символ. */
+function emojiAt(char: string, x: number, y: number, size: number, icons: Record<string, string>): string {
+  const src = icons[char.replace(/️/g, '')];
+  if (src) return `<image href="${src}" x="${x}" y="${y}" width="${size}" height="${size}"/>`;
+  return `<text x="${x + size / 2}" y="${y + size * 0.82}" font-size="${size * 0.85}" text-anchor="middle">${esc(char)}</text>`;
 }
 
 function flagCircle(code: string, cx: number, cy: number, r: number, flags: Record<string, string>, id: string): string {
@@ -116,15 +125,19 @@ export function postcardSvg(ratio: ShareRatio, text: PostcardText, flags: Record
   const rows = Math.ceil(people.length / 2);
   const rowH = story ? 88 : 48;
   const colX = [frame + 90, cx + 30];
-  const fs = story ? 40 : 28;
+  const fs = story ? 38 : 28;
   const r = story ? 24 : 17;
-  const maxChars = story ? 15 : 19;
+  const maxChars = story ? 13 : 19;
+  // Емодзі — окремою колонкою біля правого краю колонки імен (вирівняні, не залежать від ширини імені).
+  const colW = cx - 30 - colX[0]!;
+  const es = story ? 44 : 30;
   people.forEach((p, i) => {
     const x = colX[i % 2]!;
     const cy = y + Math.floor(i / 2) * rowH;
     parts.push(
       flagCircle(p.flagCode, x + r, cy, r, flags, `pf${i}`) +
-        `<text x="${x + r * 2 + 16}" y="${cy + fs * 0.36}" fill="#ECECEF" font-size="${fs}" font-weight="600" text-anchor="start">${esc(clip(p.name, maxChars))} ${esc(p.emoji)}</text>`,
+        `<text x="${x + r * 2 + 16}" y="${cy + fs * 0.36}" fill="#ECECEF" font-size="${fs}" font-weight="600" text-anchor="start">${esc(clip(p.name, maxChars))}</text>` +
+        emojiAt(p.emoji, x + colW - es, cy - es / 2, es, flags),
     );
   });
   const blockBottom = y + Math.max(0, rows - 1) * rowH + r;
@@ -163,6 +176,24 @@ export async function loadRoundFlags(codes: readonly string[]): Promise<Record<s
         out[code] = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
       } catch {
         // без мережі — сіре коло
+      }
+    }),
+  );
+  return out;
+}
+
+/** Фірмові емодзі з `public/emoji` як data-URL (ключ — символ без U+FE0F). */
+export async function loadEmojiIcons(chars: readonly string[]): Promise<Record<string, string>> {
+  const out: Record<string, string> = {};
+  await Promise.all(
+    [...new Set(chars.map((c) => c.replace(/️/g, '')))].map(async (c) => {
+      const src = brandEmojiSrc(c);
+      if (!src) return;
+      try {
+        const res = await fetch(src);
+        if (res.ok) out[c] = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(await res.text())}`;
+      } catch {
+        // без мережі — системний символ
       }
     }),
   );

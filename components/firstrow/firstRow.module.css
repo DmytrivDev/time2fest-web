@@ -134,10 +134,6 @@
   gap: var(--spacing-2);
   font-size: 14px;
 }
-.emoji {
-  font-size: 16px;
-  line-height: 1;
-}
 /* «Ще є місця: Перший ряд · Дублін і ще 3 ›» */
 .moreBtn {
   display: inline-flex;
@@ -381,10 +377,10 @@ button.free:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--spacing-2);
+  gap: 10px var(--spacing-2); /* між рядами — місце для кільця лоадера */
 }
 .postcardCompact .pcPills {
-  gap: 6px;
+  gap: var(--spacing-2) 6px;
 }
 /* Фішка: м’яка з жовтою межею; чиє привітання на екрані — залита жовтим, світиться, смужка внизу. */
 .pcPill {
@@ -425,10 +421,6 @@ button.free:hover {
   background: transparent;
   color: var(--color-text-secondary);
 }
-.pcEmoji {
-  font-size: 17px;
-  line-height: 1;
-}
 .pcYou {
   display: inline-flex;
   align-items: center;
@@ -439,35 +431,36 @@ button.free:hover {
   font-size: 11px;
   font-weight: 700;
 }
-.pcBar {
+.pcRing {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 4px;
-  height: 2px;
-  border-radius: 2px;
-  background: rgba(18, 18, 20, 0.2); /* дошка */
-  overflow: hidden;
+  left: -4px;
+  top: -4px;
+  overflow: visible;
+  pointer-events: none;
 }
-.pcBarFill {
-  display: block;
-  height: 100%;
-  border-radius: 2px;
-  background: var(--color-on-highlight);
-  transform-origin: left center;
-  animation-name: t2f-pc-bar;
+.pcRingTrack {
+  fill: none;
+  stroke: rgba(252, 226, 134, 0.25); /* дошка `Desk-Emoji-Brand`, лоадер B */
+  stroke-width: 2;
+}
+.pcRingLine {
+  fill: none;
+  stroke: #ffffff; /* дошка: біле кільце зі світінням */
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+  animation-name: t2f-pc-ring;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 }
-.pcBarFill[data-paused] {
+.pcRingLine[data-paused] {
   animation-play-state: paused;
 }
-@keyframes t2f-pc-bar {
-  from {
-    transform: scaleX(0);
-  }
+@keyframes t2f-pc-ring {
   to {
-    transform: scaleX(1);
+    stroke-dashoffset: 0;
   }
 }
 .pcQuote {
@@ -520,10 +513,6 @@ button.free:hover {
   font-size: 15px;
   font-weight: 600;
   color: var(--color-text-secondary);
-}
-.pcNoneEmoji {
-  font-size: 30px;
-  line-height: 1.1;
 }
 .pcAuthor {
   display: inline-flex;

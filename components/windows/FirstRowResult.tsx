@@ -7,6 +7,7 @@
  * `Phone-FR-*` (`firstRowWindow.module.css`).
  */
 import NextLink from 'next/link';
+import { Emoji, EmojiText } from '@/components/primitives/Emoji';
 import { useTranslations } from 'next-intl';
 import type {
   FirstRowEditProps,
@@ -123,9 +124,15 @@ function Ticket({ city, cityId, seat, name, flagCode, emojiId, greeting, ticketC
           <p className={s.ticketName}>
             <Flag round code={flagCode} size="pill" decorative />
             <span className={s.ticketNameText}>{name}</span>
-            <span className={s.ticketEmoji}>{EMOJI_SYMBOLS[canonicalEmotion(emojiId)] ?? '✨'}</span>
+            <span className={s.ticketEmoji}>
+              <Emoji char={EMOJI_SYMBOLS[canonicalEmotion(emojiId)] ?? '✨'} />
+            </span>
           </p>
-          {greeting ? <p className={s.ticketGreeting}>«{greeting}»</p> : null}
+          {greeting ? (
+            <p className={s.ticketGreeting}>
+              «<EmojiText text={greeting} />»
+            </p>
+          ) : null}
           <div className={s.ticketDots}>
             {Array.from({ length: 10 }, (_, i) => (
               <span key={i} data-mine={i + 1 === seat ? '' : undefined} />

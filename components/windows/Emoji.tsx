@@ -8,6 +8,7 @@
  * `EmojiPicker` — проста сітка вибору (історії).
  */
 import { RadioGroup as Radix } from 'radix-ui';
+import { Emoji } from '@/components/primitives/Emoji';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { EMOJI_SYMBOLS } from '@/components/live/SeatPill';
@@ -64,9 +65,7 @@ export function EmojiPicker({ value, onSelect, waitSec = 0, seatLabel, onWall, c
       {onWall ? (
         <p className="flex items-center gap-2 text-caption text-text-secondary" data-row="on-wall">
           {c('emotionOnWall')}: <strong className="font-semibold text-text">{onWall.name}</strong>
-          <span role="img" aria-label={names(canonicalEmotion(onWall.emojiId))}>
-            {EMOJI_SYMBOLS[canonicalEmotion(onWall.emojiId)] ?? '✨'}
-          </span>
+          <Emoji char={EMOJI_SYMBOLS[canonicalEmotion(onWall.emojiId)] ?? '✨'} label={names(canonicalEmotion(onWall.emojiId))} />
         </p>
       ) : null}
     </div>
@@ -139,7 +138,7 @@ export function MyEmotionPanel({ eventId, onSaved }: MyEmotionPanelProps) {
             {hasFlag(flagCode) ? <Flag code={flagCode} size="pill" decorative className="t2f-emo-flag" /> : null}
             <span className="truncate">{name}</span>
             <span aria-hidden="true" className="t2f-emo-wall-glyph">
-              {EMOJI_SYMBOLS[emoji] ?? '✨'}
+              <Emoji char={EMOJI_SYMBOLS[emoji] ?? '✨'} />
             </span>
           </span>
         </div>
@@ -189,7 +188,7 @@ export function MyEmotionPanel({ eventId, onSaved }: MyEmotionPanelProps) {
                     't2f-emo-glyph',
                   )}
                 >
-                  {EMOJI_SYMBOLS[id]}
+                  <Emoji char={EMOJI_SYMBOLS[id] ?? '✨'} />
                 </span>
               </Radix.Item>
             ))}
@@ -267,7 +266,7 @@ export function MyEmotionPill({ eventId, onSaved, className }: MyEmotionPillProp
     >
       <span className="t2f-emo-chip">
         <span aria-hidden="true" className="t2f-emo-chip-glyph">
-          {EMOJI_SYMBOLS[current]}
+          <Emoji char={EMOJI_SYMBOLS[current] ?? '✨'} />
         </span>
         {c('myEmotion')}
         <Icon name="chevron-down" size={14} strokeWidth={2.2} className="text-text-secondary" />

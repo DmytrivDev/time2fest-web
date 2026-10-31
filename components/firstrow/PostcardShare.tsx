@@ -13,7 +13,7 @@ import { SHARE_WINDOW_ID, ShareContent } from '@/components/windows/Share';
 import { getData } from '@/lib/data/load';
 import type { FirstRowSeat, Ms, SeatParticipant } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
-import { loadRoundFlags, postcardSvg, type PostcardPerson } from '@/lib/firstrow/postcardImage';
+import { loadEmojiIcons, loadRoundFlags, postcardSvg, type PostcardPerson } from '@/lib/firstrow/postcardImage';
 import type { ShareRatio } from '@/lib/offers/shareImage';
 import { newYearOf, postcardOrder } from './FirstRowPostcard';
 
@@ -32,15 +32,16 @@ export function PostcardShare({ city, countryIso, midnightMs, seats, featured }:
   const people: PostcardPerson[] = order.map((s) => ({ name: s.participant.name, flagCode: s.participant.flagCode, emoji: emojiSymbol(s.participant.emojiId) }));
   const [flags, setFlags] = useState<Record<string, string>>({});
   const codes = people.map((p) => p.flagCode).join(',');
+  const emojis = people.map((p) => p.emoji).join(',');
   useEffect(() => {
     let alive = true;
-    void loadRoundFlags(codes.split(',').filter(Boolean)).then((f) => {
-      if (alive) setFlags(f);
+    void Promise.all([loadRoundFlags(codes.split(',').filter(Boolean)), loadEmojiIcons(emojis.split(','))]).then(([f, e]) => {
+      if (alive) setFlags({ ...f, ...e });
     });
     return () => {
       alive = false;
     };
-  }, [codes]);
+  }, [codes, emojis]);
 
   const year = newYearOf(midnightMs);
   const greeting = featured?.greeting.trim() ?? '';

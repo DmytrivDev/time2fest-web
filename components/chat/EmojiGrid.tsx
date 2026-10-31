@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import type { MouseEvent } from 'react';
 import type { ReactionId } from '@/lib/data/types';
 import { MENU_REACTION_ROWS, REACTION_SYMBOLS } from './reactions';
+import { Emoji } from '@/components/primitives/Emoji';
 
 export interface EmojiGridProps {
   /** Роль клітинки (меню: `menuitemcheckbox`); без значення — звичайна кнопка. */
@@ -47,7 +48,7 @@ export function EmojiGrid({
               onMouseDown={keepFocus ? (e) => e.preventDefault() : undefined}
               onClick={(e) => onPick(id, REACTION_SYMBOLS[id], e)}
             >
-              <span aria-hidden="true">{REACTION_SYMBOLS[id]}</span>
+              <Emoji char={REACTION_SYMBOLS[id]} />
             </button>
           ))}
         </div>

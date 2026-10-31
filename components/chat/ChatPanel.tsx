@@ -10,6 +10,7 @@
  * Недоступність (`useTestControls.chatAvailable`) замінює чат на «Чат тимчасово недоступний…», решта сайту працює.
  */
 import { useTranslations } from 'next-intl';
+import { EmojiText } from '@/components/primitives/Emoji';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
@@ -472,7 +473,7 @@ export function ChatPanel({
         >
           <Icon name="check" size={16} className="mt-0.5 shrink-0 text-highlight" />
           <span>
-            {t('emotionSaved', { emoji: emojiSymbol(saved.emojiId) })}
+            <EmojiText text={t('emotionSaved', { emoji: emojiSymbol(saved.emojiId) })} />
             {saved.greetingChanged ? ` ${t('emotionSavedGreeting')}` : ''}
           </span>
         </p>

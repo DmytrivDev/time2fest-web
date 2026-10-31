@@ -16,6 +16,7 @@
  * Компонент повертає `<li>`; обгортку `<ol>` дає Chat (або історія).
  */
 import { useTranslations } from 'next-intl';
+import { Emoji, EmojiText } from '@/components/primitives/Emoji';
 import type { KeyboardEvent, ReactNode } from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
@@ -97,18 +98,18 @@ function hasFlag(code: string | undefined): code is string {
   return !!code && code.toUpperCase() !== 'UN';
 }
 
-/** «@Аміра» у тексті — виділено (mention). */
+/** «@Аміра» у тексті — виділено (mention); відомі емодзі — фірмові значки (символ лишається для копіювання). */
 export function withMentions(text: string | undefined): ReactNode {
   if (!text) return text;
   const parts = text.split(/(@[\p{L}\d_-]+)/u);
-  if (parts.length === 1) return text;
+  if (parts.length === 1) return <EmojiText text={text} />;
   return parts.map((part, i) =>
     part.startsWith('@') ? (
       <span key={i} data-mention="" className="font-semibold text-highlight">
         {part}
       </span>
     ) : (
-      part
+      <EmojiText key={i} text={part} />
     ),
   );
 }
@@ -344,13 +345,13 @@ export function Message({
               <Flag round code={g.flagCode} size="xs" name={country} decorative={!country} />{' '}
             </>
           ) : null}
-          <span role="img" aria-label={t('emotionLabel', { emotion: emotionName(g.emojiId) })}>
-            {emojiSymbol(g.emojiId)}
-          </span>{' '}
+          <Emoji char={emojiSymbol(g.emojiId)} label={t('emotionLabel', { emotion: emotionName(g.emojiId) })} />{' '}
           {t('greetingSuffix', { city, seat: g.seat })}
         </p>
         {g.text ? (
-          <p className="text-chat text-text-secondary">{t('greetingQuote', { text: g.text })}</p>
+          <p className="text-chat text-text-secondary">
+            <EmojiText text={t('greetingQuote', { text: g.text })} />
+          </p>
         ) : null}
       </li>
     );
@@ -422,13 +423,11 @@ export function Message({
           <>
             <Badge variant="first-row" />
             {a?.firstRowEmojiId ? (
-              <span
-                role="img"
-                aria-label={t('emotionLabel', { emotion: emotionName(a.firstRowEmojiId) })}
-                className="text-label-sm leading-none"
-              >
-                {emojiSymbol(a.firstRowEmojiId)}
-              </span>
+              <Emoji
+                char={emojiSymbol(a.firstRowEmojiId)}
+                size={16}
+                label={t('emotionLabel', { emotion: emotionName(a.firstRowEmojiId) })}
+              />
             ) : null}
           </>
         ) : null}

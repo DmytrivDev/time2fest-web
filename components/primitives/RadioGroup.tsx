@@ -1,6 +1,7 @@
 'use client';
 
 import { RadioGroup as Radix } from 'radix-ui';
+import { Emoji } from './Emoji';
 import { Fragment, useState, type ReactNode } from 'react';
 import { cn } from './cn';
 import { Icon } from './Icon';
@@ -90,7 +91,7 @@ export function RadioGroup({
               aria-label={o.label}
               className="t2f-focus t2f-transition inline-flex size-touch-min items-center justify-center rounded-lg border-2 border-transparent text-headline-sm hover:bg-surface-raised aria-checked:border-text"
             >
-              <span aria-hidden="true">{o.symbol}</span>
+              {o.symbol ? <Emoji char={o.symbol} /> : null}
             </Radix.Item>
           )}
           {variant === 'stars' && (

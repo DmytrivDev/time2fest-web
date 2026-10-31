@@ -72,6 +72,12 @@ describe('«Перший ряд» після півночі — листівка
     expect(onSharePostcard).toHaveBeenCalledWith(expect.objectContaining({ name: 'Jonas', isMine: true }));
   });
 
+  it('телефон, своє місце: під листівкою немає блоку «Твоє місце» з часу до півночі', () => {
+    const { container } = strip({ ...lit({ taken: 6, mine: 2 }), layout: 'compact' });
+    expect(container.querySelector('[data-postcard]')).not.toBeNull();
+    expect(screen.queryByText(/Опівночі місце загориться/)).toBeNull();
+  });
+
   it('телефон: у заголовку «🎆 2027», листівка в панелі', () => {
     strip({ ...lit({ taken: 6 }), layout: 'compact', onSharePostcard: noop });
     expect(screen.getByRole('button', { name: /Перший ряд · Лондон/ })).toHaveTextContent('🎆 2027');

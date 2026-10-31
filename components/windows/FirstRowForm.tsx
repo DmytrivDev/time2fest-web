@@ -7,6 +7,7 @@
  * Логіку (утримання, оплату, стор) тримають інші; тут тільки показ і колбеки (`components/firstrow/types.ts`).
  */
 import { RadioGroup as Radix } from 'radix-ui';
+import { Emoji } from '@/components/primitives/Emoji';
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import type { FirstRowFormProps } from '@/components/firstrow/types';
@@ -145,9 +146,7 @@ export function FirstRowPreview({
         {flagCode ? <Flag round code={flagCode} size="pill" decorative /> : null}
         <span className={s.pillName}>{name.trim() || t('form.name')}</span>
         {known ? (
-          <span role="img" aria-label={names(id)} className={s.pillEmoji}>
-            {EMOJI_SYMBOLS[id] ?? '✨'}
-          </span>
+          <Emoji char={EMOJI_SYMBOLS[id] ?? '✨'} label={names(id)} className={s.pillEmoji} />
         ) : null}
       </p>
       {children}
@@ -185,7 +184,7 @@ export function FirstRowEmojiPick({
         {FIRST_ROW_EMOJI_IDS.map((id) => (
           <Radix.Item key={id} value={id} aria-label={names(id)} className={cn(s.emo, 't2f-focus')}>
             <span aria-hidden="true" className={s.emoDot}>
-              {EMOJI_SYMBOLS[id] ?? '✨'}
+              <Emoji char={EMOJI_SYMBOLS[id] ?? '✨'} />
             </span>
             <span aria-hidden="true" className={s.emoName}>
               {names(id)}

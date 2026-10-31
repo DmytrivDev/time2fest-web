@@ -12,6 +12,7 @@
  * Стани беремо з `view.state`; знижка пасу — окремий вигляд `pass-discount`. Логіку тримають інші модулі.
  */
 import { useTranslations } from 'next-intl';
+import { Emoji } from '@/components/primitives/Emoji';
 import { useState, type ReactNode } from 'react';
 import { FirstRowWall } from '@/components/live/FirstRowWall';
 import { FirstRowPostcard } from './FirstRowPostcard';
@@ -182,9 +183,7 @@ export function FirstRowStrip({
   const emotionBtn = (
     <Button variant="secondary" compact data-action="emotion" onClick={onOpenEmoji} className={fr.mineBtn}>
       {t('myEmotion')}
-      <span aria-hidden="true" className={fr.emoji}>
-        {EMOJI_SYMBOLS[mine?.emojiId ?? ''] ?? '✨'}
-      </span>
+      <Emoji char={EMOJI_SYMBOLS[mine?.emojiId ?? ''] ?? '✨'} size={18} />
     </Button>
   );
   const ticketBtn = (
@@ -330,7 +329,7 @@ export function FirstRowStrip({
                 </div>
               </div>
             ) : null}
-            {state === 'mine' && mine ? (
+            {!postcardOn && state === 'mine' && mine ? (
               <div className={fr.details}>
                 <div className={fr.left}>
                   {t('yourSeat')} <b>{mine.number}</b>

@@ -8,6 +8,7 @@
  * Емодзі візуальне (aria-hidden); назва емоції береться з набору O-EMOJI (`windows.emoji.names.*`).
  */
 import { useTranslations } from 'next-intl';
+import { Emoji } from '@/components/primitives/Emoji';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -64,7 +65,7 @@ export function SeatPill({ seat, participant, countryName, state = 'idle', fresh
       <Flag round code={participant.flagCode} size="pill" decorative className="t2f-seat-flag" />
       <span className="whitespace-nowrap">{participant.name}</span>
       <span aria-hidden="true" className="t2f-seat-emoji">
-        {emojiSymbol(participant.emojiId)}
+        <Emoji char={emojiSymbol(participant.emojiId)} />
       </span>
       {mine ? (
         state === 'lit' ? (

@@ -9,6 +9,7 @@ import { cn } from '@/components/primitives/cn';
 import type { ChatMessage, ReactionId } from '@/lib/data/types';
 import { markReactPending, reactKey, isReactPending, useReactPending } from './reactPending';
 import { REACTION_DISPLAY_ORDER, REACTION_SYMBOLS } from './reactions';
+import { Emoji } from '@/components/primitives/Emoji';
 
 export interface MessageActionHandlers {
   onReact?: (message: ChatMessage, reaction: ReactionId, on: boolean) => void;
@@ -71,7 +72,7 @@ function ReactionChip({
         aria-hidden="true"
         className="t2f-chip-body inline-flex h-6 items-center gap-1 rounded-full border border-border-strong px-2 text-caption text-text"
       >
-        <span>{REACTION_SYMBOLS[id]}</span>
+        <Emoji char={REACTION_SYMBOLS[id]} size={16} />
         <span className="t2f-chip-count">{r.count}</span>
         {busy ? <span className="t2f-chip-spin" /> : null}
       </span>
@@ -101,7 +102,7 @@ export function ReactionsRow({ message, onReact, tabStop = false, className }: R
               aria-label={t('reactionLabelStatic', { name: t(`reactions.${id}`), count: r.count })}
               className="inline-flex h-6 items-center gap-1 rounded-full border border-border-strong px-2 text-caption text-text"
             >
-              <span aria-hidden="true">{REACTION_SYMBOLS[id]}</span>
+              <Emoji char={REACTION_SYMBOLS[id]} size={16} />
               <span aria-hidden="true">{r.count}</span>
             </span>
           );
