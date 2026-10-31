@@ -38,6 +38,22 @@ export function viewerTimeZone(): string {
   return viewerZone;
 }
 
+/** Застарілі назви поясів IANA, які ще повертають деякі системи (напр. `Europe/Kiev`), → сучасні (правка власника 2026-10-31). */
+const ZONE_RENAMES: Record<string, string> = {
+  Kiev: 'Kyiv',
+  Calcutta: 'Kolkata',
+  Saigon: 'Ho Chi Minh',
+  Rangoon: 'Yangon',
+  Katmandu: 'Kathmandu',
+  Godthab: 'Nuuk',
+};
+
+/** Місто поясу гостя для підпису «за вашим часом (Kyiv)»: остання частина назви IANA, сучасне написання. */
+export function viewerZoneLabel(zone: string = viewerTimeZone()): string {
+  const city = zone.split('/').pop()?.replace(/_/g, ' ') ?? '';
+  return ZONE_RENAMES[city] ?? city;
+}
+
 function toMs(v: ISO | Ms): Ms {
   return typeof v === 'number' ? v : Date.parse(v);
 }

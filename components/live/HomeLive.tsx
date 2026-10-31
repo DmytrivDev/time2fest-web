@@ -41,7 +41,7 @@ import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
 import { firstRowEventFor } from '@/lib/firstrow/pick';
-import { formatClock, viewerTimeZone } from '@/lib/i18n/time';
+import { formatClock, viewerTimeZone, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
 import { simulatedViewers } from '@/lib/presence/viewers';
@@ -85,7 +85,7 @@ function useNowNextData(now: Ms) {
   const data = getData();
   const items = useMemo(() => nowNextItems(data, minute, schedule), [data, minute, schedule]);
   const progress = useMemo(() => ({ ...festProgress(data, minute), ...progressEdges(data) }), [data, minute]);
-  const zoneLabel = viewerTimeZone().split('/').pop()?.replace(/_/g, ' ') ?? '';
+  const zoneLabel = viewerZoneLabel();
   return { items, progress, zoneLabel };
 }
 

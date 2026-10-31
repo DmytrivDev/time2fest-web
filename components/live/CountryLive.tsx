@@ -41,7 +41,7 @@ import { STAMP_DELAY } from '@/lib/engine/config';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { eventStatus } from '@/lib/engine/eventStatus';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
-import { formatClock, viewerTimeZone } from '@/lib/i18n/time';
+import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import {
   countryMainEvent,
@@ -249,7 +249,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const schedule = useGuestStore((s) => s.schedule);
   const nowNext = useMemo(() => (recording ? nowNextItems(data, minute, schedule) : []), [recording, data, minute, schedule]);
   const progress = useMemo(() => festProgress(data, minute), [data, minute]);
-  const zoneLabel = viewerTimeZone().split('/').pop()?.replace(/_/g, ' ') ?? '';
+  const zoneLabel = viewerZoneLabel();
 
   const header = mainEvent ? (
     <CountryHeader

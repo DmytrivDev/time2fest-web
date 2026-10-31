@@ -32,7 +32,7 @@ import { Switch } from '@/components/primitives/Switch';
 import { TextField } from '@/components/primitives/TextField';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms } from '@/lib/data/types';
-import { formatAgo, formatClock, formatTimeForViewer, viewerTimeZone } from '@/lib/i18n/time';
+import { formatAgo, formatClock, formatTimeForViewer, viewerZoneLabel } from '@/lib/i18n/time';
 import {
   ALL_STATUSES,
   allStatuses,
@@ -447,7 +447,7 @@ export function CountryList({ geometry, onToggleSchedule, data: dataProp, classN
     onToggleSchedule,
   };
 
-  const zoneLabel = viewerTimeZone().split('/').pop()?.replace(/_/g, ' ') ?? '';
+  const zoneLabel = viewerZoneLabel();
   const subtitle = ready
     ? t('subtitle', {
         zone: zoneLabel,

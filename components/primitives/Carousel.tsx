@@ -8,8 +8,9 @@
  *   в середній копії; обидві стрілки завжди активні; правий край м’яко згасає (`fade`);
  * - без `loop` («Зараз і далі»): гортання лише до країв, на краю відповідна стрілка неактивна;
  * - стрілки: `sides` — ліворуч і праворуч від стрічки (поза нею); `none` — без стрілок (зовнішні через `useCarousel`
- *   і `CarouselArrow`, напр. у рядку заголовка); гортання на сторінку;
- * - мишею — натиснути й тягти; на дотик — свайп (нативно).
+ *   і `CarouselArrow`, напр. у рядку заголовка); стрілка гортає на один слайд (правка власника 2026-10-31);
+ * - мишею — натиснути й тягти будь-де, зокрема над картками-посиланнями (нативне перетягування посилань вимкнено);
+ *   короткий клік лишається кліком; на дотик — свайп (нативно).
  * Копії слайдів — `inert` і `aria-hidden`: зчитувач і Tab бачать кожен елемент один раз.
  */
 import { useTranslations } from 'next-intl';
@@ -54,8 +55,10 @@ export function useCarousel({ loop = false }: { loop?: boolean } = {}): Carousel
     const el = viewportRef.current;
     if (!el) return;
     const reduce = document.documentElement.getAttribute('data-reduce-motion') === 'true';
-    // Сторінка — ширина вікна без «хвоста»; прилипання (snap) доводить до початку елемента.
-    el.scrollBy({ left: dir * Math.max(120, el.clientWidth - 80), behavior: reduce ? 'auto' : 'smooth' });
+    // Крок — один слайд із проміжком; прилипання (snap) доводить до початку елемента.
+    const slides = el.querySelectorAll<HTMLElement>('[aria-roledescription="slide"]');
+    const step = slides.length > 1 ? slides[1]!.offsetLeft - slides[0]!.offsetLeft : slides[0]?.offsetWidth || 120;
+    el.scrollBy({ left: dir * step, behavior: reduce ? 'auto' : 'smooth' });
   }, []);
   const prev = useCallback(() => page(-1), [page]);
   const next = useCallback(() => page(1), [page]);
@@ -216,11 +219,15 @@ export function Carousel({
       el.addEventListener('click', swallow, { capture: true, once: true });
       window.setTimeout(() => el.removeEventListener('click', swallow, { capture: true }), 0);
     };
+    // Посилання й картинки в слайдах браузер тягне сам (drag-and-drop) і перериває перетягування стрічки.
+    const noNativeDrag = (e: DragEvent) => e.preventDefault();
+    el.addEventListener('dragstart', noNativeDrag);
     el.addEventListener('pointerdown', down);
     el.addEventListener('pointermove', move);
     el.addEventListener('pointerup', up);
     el.addEventListener('pointercancel', up);
     return () => {
+      el.removeEventListener('dragstart', noNativeDrag);
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerup', up);
