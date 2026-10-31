@@ -386,7 +386,7 @@
 }
 
 /* Остання хвилина, поки йде відео: цифри розмиті, під ними «Натисни, щоб побачити» (правка власника 2026-10-31). */
-/* Напис під цифрами не займає місця: таймер стоїть так само, як без розмиття, і після кліку не зсувається. */
+/* Пігулка лежить поверх цифр і не займає місця: таймер стоїть так само, як без розмиття, і після кліку не зсувається. */
 .veilWrap {
   position: relative;
   display: inline-block;
@@ -417,13 +417,27 @@
 }
 .veilHint {
   position: absolute;
-  top: calc(100% + 2px);
-  right: 0;
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--color-text-muted);
-  white-space: nowrap;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
   transition: opacity 200ms ease-out;
+}
+/* Пігулка «Показати» поверх розмитих цифр (правка власника 2026-10-31: під таймером напис упирався в кнопки). */
+.veilPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .veilHintGone {
   opacity: 0;

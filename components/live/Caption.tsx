@@ -65,7 +65,7 @@ export interface CaptionProps {
 const BLUR_FROM_MS = 60_000;
 
 /**
- * Цифри таймера. Коли `veiled` — розмиті, кнопка «Натисни, щоб побачити» з підказкою про затримку відео (правка власника
+ * Цифри таймера. Коли `veiled` — розмиті, поверх них пігулка «Показати», і підказка про затримку відео (правка власника
  * 2026-10-31: лише коли трансляція справді йде; відлік без відео не розмивається). Натискання показує таймер до кінця події.
  */
 function TimerDigits({ digits, veiled, className, hint }: { digits: string; veiled: boolean; className?: string; hint: boolean }) {
@@ -99,7 +99,10 @@ function TimerDigits({ digits, veiled, className, hint }: { digits: string; veil
       )}
       {hint ? (
         <span aria-hidden="true" data-veil-hint={shown ? 'gone' : 'on'} className={cn(home.veilHint, shown && home.veilHintGone)}>
-          {t('timerVeilHint')}
+          <span className={home.veilPill}>
+            <Icon name="eye" size={14} />
+            {t('timerVeilHint')}
+          </span>
         </span>
       ) : null}
     </span>

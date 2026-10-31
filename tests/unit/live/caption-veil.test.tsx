@@ -21,15 +21,15 @@ beforeAll(() => {
 });
 
 describe('таймер під відео: остання хвилина розмита, лише коли йде трансляція', () => {
-  it('йде відео, до півночі 30 с: цифри розмиті, «Натисни, щоб побачити»; натискання показує таймер', () => {
+  it('йде відео, до півночі 30 с: цифри розмиті, «Показати»; натискання показує таймер', () => {
     renderWithApp(<Caption phase={phaseAt(-30 * SEC)} current={place} live timeZone="Europe/Kyiv" />);
     const reveal = screen.getByRole('button', { name: 'Показати таймер — до півночі менше хвилини' });
-    expect(screen.getByText('Натисни, щоб побачити')).toBeInTheDocument();
+    expect(screen.getByText('Показати')).toBeInTheDocument();
     expect(screen.getByRole('timer')).toHaveAttribute('aria-label', 'до півночі: менше хвилини');
     fireEvent.click(reveal);
     expect(screen.queryByRole('button', { name: /Показати таймер/ })).toBeNull();
-    // підказка гасне, але її рядок лишається, щоб таймер не стрибав
-    expect(screen.getByText('Натисни, щоб побачити')).toHaveAttribute('data-veil-hint', 'gone');
+    // пігулка «Показати» гасне
+    expect(screen.getByText('Показати').closest('[data-veil-hint]')).toHaveAttribute('data-veil-hint', 'gone');
   });
 
   it('лише відлік без відео (live=false): не розмито', () => {

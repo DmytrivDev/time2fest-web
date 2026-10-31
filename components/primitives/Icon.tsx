@@ -61,6 +61,7 @@ export type IconName =
   | 'translate'
   | 'bell'
   | 'route'
+  | 'eye'
   | 'eye-off'
   | 'arrow-right'
   | 'shield-check'
@@ -322,6 +323,12 @@ const PATHS: Record<IconName, ReactNode> = {
       <circle cx="6" cy="18" r="2.2" />
       <circle cx="18" cy="6" r="2.2" />
       <path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2.5 12C3.5 10.2 7 6 12 6s8.5 4.2 9.5 6c-1 1.8-4.5 6-9.5 6s-8.5-4.2-9.5-6z" />
+      <circle cx="12" cy="12" r="3" />
     </>
   ),
   'eye-off': (
