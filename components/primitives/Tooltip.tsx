@@ -24,6 +24,9 @@ export interface TooltipProps {
   /** Тригер: один елемент, що приймає ref (кнопка, посилання, span із tabIndex=0). */
   children: ReactElement;
   side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'start' | 'center' | 'end';
+  /** false — не перекидати на інший бік (напр. щоб не лягти на відео). */
+  avoidCollisions?: boolean;
   /** Область, поза яку підказка не виходить (під плеєром). */
   collisionBoundary?: Element | null | Array<Element | null>;
   /** Керований стан (для історій). */
@@ -44,6 +47,8 @@ export function Tooltip({
   content,
   children,
   side = 'top',
+  align,
+  avoidCollisions,
   collisionBoundary,
   open,
   defaultOpen,
@@ -59,6 +64,8 @@ export function Tooltip({
         <RadixPopover.Portal>
           <RadixPopover.Content
             side={side}
+            align={align}
+            avoidCollisions={avoidCollisions}
             sideOffset={8}
             collisionPadding={8}
             collisionBoundary={boundary}
@@ -77,6 +84,8 @@ export function Tooltip({
         <RadixTooltip.Portal>
           <RadixTooltip.Content
             side={side}
+            align={align}
+            avoidCollisions={avoidCollisions}
             sideOffset={8}
             collisionPadding={8}
             collisionBoundary={boundary}

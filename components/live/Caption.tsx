@@ -81,9 +81,15 @@ function TimerDigits({ digits, veiled, className, hint }: { digits: string; veil
   return (
     <span className={home.veilWrap}>
       {shown ? (
-        plain
+        // та сама будова, що й у кнопки, — інакше висота рядка міняється на пару пікселів
+        <span className={home.veilBtn}>
+          <span aria-hidden="true" className={cn(className, home.veiled, home.unveiled)}>
+            {digits}
+          </span>
+        </span>
       ) : (
-        <Tooltip content={t('timerVeilTip')} side="bottom">
+        // лише знизу: підказка ніколи не лягає на відео (ІНВ 5.6)
+        <Tooltip content={t('timerVeilTip')} side="bottom" align="end" avoidCollisions={false}>
           <button type="button" aria-label={t('timerReveal')} data-timer-veiled="" onClick={() => setShown(true)} className={cn('t2f-focus', home.veilBtn)}>
             <span aria-hidden="true" className={cn(className, home.veiled)}>
               {digits}
