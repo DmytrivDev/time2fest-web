@@ -77,7 +77,7 @@ function TimerDigits({ digits, veiled, className, hint }: { digits: string; veil
     </span>
   );
   if (!veiled) return plain;
-  // Після натискання підказка гасне, але її рядок лишається — таймер не стрибає (правка власника 2026-10-31).
+  // Після натискання підказка гасне (правка власника 2026-10-31).
   return (
     <span className={home.veilWrap}>
       {shown ? (
@@ -88,8 +88,8 @@ function TimerDigits({ digits, veiled, className, hint }: { digits: string; veil
           </span>
         </span>
       ) : (
-        // лише знизу: підказка ніколи не лягає на відео (ІНВ 5.6)
-        <Tooltip content={t('timerVeilTip')} side="bottom" align="end" avoidCollisions={false}>
+        // ліворуч від таймера: видно без прокрутки й ніколи не лягає на відео (ІНВ 5.6, правила YouTube)
+        <Tooltip content={t('timerVeilTip')} side="left" align="start" avoidCollisions={false}>
           <button type="button" aria-label={t('timerReveal')} data-timer-veiled="" onClick={() => setShown(true)} className={cn('t2f-focus', home.veilBtn)}>
             <span aria-hidden="true" className={cn(className, home.veiled)}>
               {digits}

@@ -386,11 +386,10 @@
 }
 
 /* Остання хвилина, поки йде відео: цифри розмиті, під ними «Натисни, щоб побачити» (правка власника 2026-10-31). */
+/* Напис під цифрами не займає місця: таймер стоїть так само, як без розмиття, і після кліку не зсувається. */
 .veilWrap {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  position: relative;
+  display: inline-block;
 }
 .veilBtn {
   display: inline-block;
@@ -417,6 +416,9 @@
   filter: blur(5px);
 }
 .veilHint {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
   font-size: 12px;
   line-height: 1.2;
   color: var(--color-text-muted);
