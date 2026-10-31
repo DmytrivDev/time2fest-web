@@ -110,7 +110,7 @@ export function ChatSlotPanel({
               <div className="min-w-0 flex-1 pt-2.5">
                 {onBack ? (
                 <div className="flex min-h-11 items-center justify-between" data-back-row="">
-                  <button type="button" onClick={onBack} data-action="back" className="t2f-focus t2f-transition t2f-author-back">
+                  <button type="button" onClick={onBack} data-action="back" className="t2f-focus t2f-transition t2f-author-back t2f-back-flush">
                     <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
                     {backLabel}
                   </button>

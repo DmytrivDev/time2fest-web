@@ -3,8 +3,9 @@
 /**
  * O-STREAM-PICKER «Обрати трансляцію» за дошкою `Desk-ActionRow` (рішення власника 2026-11-01): кнопка під підписом
  * плеєра більше не веде на сторінку країни (туди веде назва над нею), а відкриває на місці чату (телефон — шторкою)
- * список трансляцій цієї півночі, що йдуть зараз: місто, інші камери, сусідні країни поясу. Натиск перемикає відео тут
- * же (`setChain` з `preferredSourceId`), сторінка й чат лишаються; на телефоні шторка після вибору закривається.
+ * трансляції цієї півночі, що йдуть зараз: спершу країна поточної трансляції, нижче — решта поясу. Кожна — у рамці,
+ * велика мініатюра з кнопкою «▶» (поточна — з позначкою «Зараз грає» на мініатюрі), текст — на всю ширину.
+ * Натиск перемикає відео тут же (`setChain` з `preferredSourceId`); на телефоні шторка після вибору закривається.
  */
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -39,11 +40,13 @@ function thumbOf(row: StreamRowData): string | undefined {
 
 export interface StreamPickerProps {
   midnightMs: Ms;
+  /** Країна поточної трансляції — окремою групою згори. */
+  countryIso?: string;
   /** Після вибору (телефон закриває шторку). */
   onPicked?: () => void;
 }
 
-export function StreamPicker({ midnightMs, onPicked }: StreamPickerProps) {
+export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerProps) {
   const t = useTranslations('player.picker');
   const tType = useTranslations('liveCards.eventCard.type');
   const now = useNow({ granularity: 'minute' });
@@ -51,6 +54,8 @@ export function StreamPicker({ midnightMs, onPicked }: StreamPickerProps) {
   const actions = useOptionalPlayerActions();
   const currentId = player?.selection?.kind === 'source' ? player.selection.source.id : null;
   const rows = useMemo(() => liveRowsForMidnight(midnightMs, now, currentId), [midnightMs, now, currentId]);
+  const home = countryIso ? rows.filter((r) => r.countryIso === countryIso) : [];
+  const rest = countryIso ? rows.filter((r) => r.countryIso !== countryIso) : rows;
 
   const pick = (row: StreamRowData) => {
     const sources = getData().chainsByEventId.get(row.eventId)?.sources ?? [];
@@ -58,47 +63,70 @@ export function StreamPicker({ midnightMs, onPicked }: StreamPickerProps) {
     onPicked?.();
   };
 
+  const list = (items: StreamRowData[], label: string) => (
+    <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label={label}>
+      {items.map((row) => {
+        const on = row.id === currentId;
+        const thumb = thumbOf(row);
+        return (
+          <li key={row.id}>
+            <button
+              type="button"
+              aria-current={on ? 'true' : undefined}
+              data-source={row.id}
+              onClick={() => pick(row)}
+              className={cn('t2f-focus t2f-transition', s.row, on && s.rowOn)}
+            >
+              <span aria-hidden="true" className={s.thumb}>
+                {thumb ? (
+                  // Мініатюра YouTube: зовнішня адреса, next/image без оптимізації тут зайвий.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={thumb} alt="" loading="lazy" decoding="async" />
+                ) : null}
+                {on ? (
+                  <span className={s.playingTag}>{t('playing')}</span>
+                ) : (
+                  <span className={s.playBtn}>
+                    <Icon name="play" size={16} />
+                  </span>
+                )}
+              </span>
+              <span className={s.text}>
+                <span className={s.title}>
+                  <Flag code={row.flagCode} size="card" decorative />
+                  <span className={s.titleText}>{row.title}</span>
+                </span>
+                <span className={s.sub}>{t('rowSub', { country: row.countryName, kind: tType(KIND_KEY[row.kind]) })}</span>
+                <span className={s.live}>
+                  <Icon name="broadcast-live" size={14} className="text-primary" />
+                  {t('live')}
+                  {on ? <span className="sr-only">. {t('playing')}</span> : null}
+                </span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
+  const countryName = home[0]?.countryName;
   return (
-    <section data-window={STREAM_PICKER_ID} className="flex flex-col gap-2 px-4 pb-4 pt-3">
-      <p className={s.eyebrow}>{t('eyebrow')}</p>
+    <section data-window={STREAM_PICKER_ID} className="flex flex-col gap-3 px-4 pb-4 pt-1">
+      <p className={s.lead}>{t('eyebrow')}</p>
       {rows.length === 0 ? <p className={s.empty}>{t('empty')}</p> : null}
-      <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label={t('listLabel')}>
-        {rows.map((row) => {
-          const on = row.id === currentId;
-          const thumb = thumbOf(row);
-          return (
-            <li key={row.id}>
-              <button
-                type="button"
-                aria-current={on ? 'true' : undefined}
-                data-source={row.id}
-                onClick={() => pick(row)}
-                className={cn('t2f-focus t2f-transition', s.row, on && s.rowOn)}
-              >
-                <span aria-hidden="true" className={s.thumb}>
-                  {thumb ? (
-                    // Мініатюра YouTube: зовнішня адреса, next/image без оптимізації тут зайвий.
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={thumb} alt="" loading="lazy" decoding="async" />
-                  ) : null}
-                </span>
-                <span className={s.text}>
-                  <span className={s.title}>
-                    <Flag code={row.flagCode} size="card" decorative />
-                    <span className={s.titleText}>{row.title}</span>
-                  </span>
-                  <span className={s.sub}>{t('rowSub', { country: row.countryName, kind: tType(KIND_KEY[row.kind]) })}</span>
-                  <span className={s.live}>
-                    <Icon name="broadcast-live" size={14} className="text-primary" />
-                    {t('live')}
-                  </span>
-                </span>
-                {on ? <span className={s.playing}>{t('playing')}</span> : <Icon name="play" size={18} className="shrink-0 text-text-secondary" />}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {home.length ? (
+        <div className="flex flex-col gap-2" data-group="country">
+          <p className={s.eyebrow}>{countryName}</p>
+          {list(home, countryName ?? '')}
+        </div>
+      ) : null}
+      {rest.length ? (
+        <div className="flex flex-col gap-2" data-group="zone">
+          {home.length ? <p className={s.eyebrow}>{t('restOfZone')}</p> : null}
+          {list(rest, t('restOfZone'))}
+        </div>
+      ) : null}
     </section>
   );
 }

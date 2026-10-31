@@ -88,7 +88,7 @@ export function ActionRow({
       chrome: 'board',
       title: t('chooseStream'),
       description: t('picker.sub'),
-      content: <StreamPicker midnightMs={midnightMs} onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)} />,
+      content: <StreamPicker midnightMs={midnightMs} countryIso={broadcast?.current?.event.countryIso} onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)} />,
     });
   }
   function openReport() {
@@ -100,7 +100,7 @@ export function ActionRow({
       onBack: openMore,
       content: (
         <div className="px-4 pb-4 pt-2">
-          <ReportProblem center onChooseStream={openPicker} onClose={() => overlay.close(REPORT_ID)} />
+          <ReportProblem center onClose={() => overlay.close(REPORT_ID)} />
         </div>
       ),
     });
@@ -112,7 +112,7 @@ export function ActionRow({
       chrome: 'board',
       title: t('moreActions'),
       description: column ? place : undefined,
-      content: column ? <MoreActionsDesk target={target} onChooseStream={openPicker} /> : <MoreActionsList target={target} onReport={openReport} />,
+      content: column ? <MoreActionsDesk target={target} /> : <MoreActionsList target={target} onReport={openReport} />,
     });
   }
   const moreOpen = overlay.current?.id === MORE_ACTIONS_ID || overlay.current?.id === REPORT_ID;

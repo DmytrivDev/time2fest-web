@@ -4,10 +4,10 @@
  * O-MORE-ACTIONS «Ще дії» за дошкою `Desk-ActionRow` (рішення власника 2026-11-01).
  * - Десктоп («⋯» поруч з «Кімната перегляду» й «Режим вечірки») — на місці чату: посилання з «Копіювати»,
  *   «Поділитися…» (системне вікно, без нього — копіює) і WhatsApp; нижче — «Повідомити про проблему»: причина й
- *   «Надіслати», після — «Дякуємо! Ми перевіримо трансляцію» з «Обрати трансляцію ›».
+ *   «Надіслати» («Інше» — ще й поле «Напишіть про вашу проблему»), після — «Дякуємо! Ми перевіримо трансляцію».
  * - Телефон («⋯» праворуч від «Обрати трансляцію») — шторка без затемнення сайту: «Кімната перегляду», «Режим вечірки»,
  *   «Поділитися трансляцією» (одразу системне вікно телефона), «Повідомити про проблему» — наступний екран шторки
- *   (зверху «‹ Назад» і «×», нижче назва, причини й «Надіслати»), далі — «Дякуємо».
+ *   (зверху «‹ Назад» і «×», нижче назва, причини й «Надіслати»), далі — «Дякуємо» і «Закрити».
  * Надсилання поки імітоване (бекенду скарг немає): лише стан «Дякуємо».
  */
 import NextLink from 'next/link';
@@ -16,6 +16,7 @@ import { useId, useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
+import { Textarea } from '@/components/primitives/Textarea';
 import s from './streamPicker.module.css';
 
 export const MORE_ACTIONS_ID = 'O-MORE-ACTIONS';
@@ -95,12 +96,14 @@ function ShareBlock({ target }: { target: ShareTarget }) {
   );
 }
 
-/** «Повідомити про проблему»: причина, «Надіслати», далі — «Дякуємо». `center` — телефон (усе посередині). */
-export function ReportProblem({ onChooseStream, onClose, center = false }: { onChooseStream?: () => void; onClose?: () => void; center?: boolean }) {
+/** «Повідомити про проблему»: причина («Інше» — з текстом), «Надіслати», далі — «Дякуємо». `center` — телефон. */
+export function ReportProblem({ onClose, center = false }: { onClose?: () => void; center?: boolean }) {
   const t = useTranslations('player.more');
   const name = useId();
   const [problem, setProblem] = useState<Problem | null>(null);
+  const [details, setDetails] = useState('');
   const [sent, setSent] = useState(false);
+  const ready = problem !== null && (problem !== 'other' || details.trim().length > 0);
   if (sent) {
     return (
       <div role="status" data-row="report-sent" className={cn(s.sent, center && s.sentCenter)}>
@@ -109,19 +112,11 @@ export function ReportProblem({ onChooseStream, onClose, center = false }: { onC
         </span>
         <p className={s.sentTitle}>{t('sentTitle')}</p>
         <p className={s.sentText}>{t('sentText')}</p>
-        <div className={cn('flex gap-2', center && 'w-full flex-col')}>
-          {onChooseStream ? (
-            <Button variant="tonal" data-action="choose-stream" onClick={onChooseStream} className={center ? 'w-full' : undefined}>
-              {t('chooseStream')}
-              <Icon name="chevron-right" size={16} />
-            </Button>
-          ) : null}
-          {center && onClose ? (
-            <Button variant="secondary" data-action="close" onClick={onClose} className="w-full">
-              {t('close')}
-            </Button>
-          ) : null}
-        </div>
+        {center && onClose ? (
+          <Button variant="secondary" data-action="close" onClick={onClose} className="mt-1 w-full">
+            {t('close')}
+          </Button>
+        ) : null}
       </div>
     );
   }
@@ -131,7 +126,7 @@ export function ReportProblem({ onChooseStream, onClose, center = false }: { onC
       data-row="report"
       onSubmit={(e) => {
         e.preventDefault();
-        if (problem) setSent(true);
+        if (ready) setSent(true);
       }}
     >
       <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
@@ -143,7 +138,19 @@ export function ReportProblem({ onChooseStream, onClose, center = false }: { onC
           </label>
         ))}
       </fieldset>
-      <Button type="submit" variant="secondary" disabled={!problem} data-action="send" className={cn('mt-1', center ? 'w-full' : 'self-start')}>
+      {problem === 'other' ? (
+        <Textarea
+          label={t('detailsLabel')}
+          hideLabel
+          placeholder={t('detailsLabel')}
+          maxRows={4}
+          maxLength={300}
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          data-row="report-details"
+        />
+      ) : null}
+      <Button type="submit" variant="secondary" disabled={!ready} data-action="send" className={cn('mt-1', center ? 'w-full' : 'self-start')}>
         {t('send')}
       </Button>
     </form>
@@ -151,14 +158,14 @@ export function ReportProblem({ onChooseStream, onClose, center = false }: { onC
 }
 
 /** Десктоп: усе в одній панелі на місці чату. */
-export function MoreActionsDesk({ target, onChooseStream }: { target: ShareTarget; onChooseStream?: () => void }) {
+export function MoreActionsDesk({ target }: { target: ShareTarget }) {
   const t = useTranslations('player.more');
   return (
-    <section data-window={MORE_ACTIONS_ID} className="flex flex-col gap-2 px-4 pb-4 pt-3">
+    <section data-window={MORE_ACTIONS_ID} className="flex flex-col gap-2 px-4 pb-4 pt-0">
       <ShareBlock target={target} />
       <div className={s.divider} />
       <p className={s.eyebrow}>{t('reportTitle')}</p>
-      <ReportProblem onChooseStream={onChooseStream} />
+      <ReportProblem />
     </section>
   );
 }

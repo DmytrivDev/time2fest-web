@@ -34,15 +34,20 @@ describe('«Ще дії»', () => {
     expect(onReport).toHaveBeenCalled();
   });
 
-  it('повідомити про проблему: «Надіслати» лише після вибору, далі — «Дякуємо» з «Обрати трансляцію»', () => {
-    const onChooseStream = vi.fn();
-    renderWithApp(<ReportProblem center onChooseStream={onChooseStream} onClose={() => undefined} />);
+  it('повідомити про проблему: «Надіслати» лише після вибору; «Інше» — ще й текст; далі — «Дякуємо» і «Закрити»', () => {
+    const onClose = vi.fn();
+    renderWithApp(<ReportProblem center onClose={onClose} />);
     const send = screen.getByRole('button', { name: 'Надіслати' });
     expect(send).toBeDisabled();
-    fireEvent.click(screen.getByRole('radio', { name: 'Трансляція зупинилась' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Інше' }));
+    const field = screen.getByRole('textbox', { name: 'Напишіть про вашу проблему' });
+    expect(send).toBeDisabled();
+    fireEvent.change(field, { target: { value: 'Звук відстає від відео' } });
+    expect(send).toBeEnabled();
     fireEvent.click(send);
     expect(screen.getByRole('status')).toHaveTextContent('Дякуємо! Ми перевіримо трансляцію');
-    fireEvent.click(screen.getByRole('button', { name: /Обрати трансляцію/ }));
-    expect(onChooseStream).toHaveBeenCalled();
+    expect(screen.queryByRole('button', { name: /Обрати трансляцію/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Закрити' }));
+    expect(onClose).toHaveBeenCalled();
   });
 });

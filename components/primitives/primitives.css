@@ -1813,3 +1813,10 @@ html[data-chat-land-expanded] body {
   height: auto;
   vertical-align: baseline;
 }
+
+/* «‹ Назад» у вікнах другого рівня (шапка board з `onBack`, правка власника 2026-11-01): текстова кнопка без полів —
+   стрілка стоїть по лівому краю, на одній лінії з назвою вікна. */
+.t2f-back-flush {
+  padding-inline: 0;
+  margin-inline-start: -4px; /* оптичне вирівнювання: у стрілки є внутрішній відступ */
+}
