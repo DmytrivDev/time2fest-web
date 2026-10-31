@@ -156,7 +156,7 @@ export function HomeLive() {
       mapHref={layout === 'stack' ? '/countries/' : undefined}
       onToggleSchedule={passWindows.requestSchedule}
       scheduleLocked={!hasPass}
-      onScheduleLocked={passWindows.openScheduleGate}
+      onScheduleLocked={passWindows.openPassInfoBoard}
       airEventId={eventId}
     />
   );

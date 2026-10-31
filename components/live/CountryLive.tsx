@@ -292,7 +292,7 @@ export function CountryLive({ iso }: { iso: string }) {
           progress={progress}
           onToggleSchedule={passWindows.requestSchedule}
       scheduleLocked={!hasPass}
-      onScheduleLocked={passWindows.openScheduleGate}
+      onScheduleLocked={passWindows.openPassInfoBoard}
           className={styles.pad}
         />
       ) : null}

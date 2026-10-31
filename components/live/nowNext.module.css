@@ -470,3 +470,38 @@
   right: 8px;
   transform: translateY(-50%);
 }
+
+/* «Мій графік» без пасу (варіант C, дошка `Desk-NowNext-MineLocked`, 2026-11-01): смужка згори, картки притемнені. */
+.lockedBar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 14px;
+  border: 1px solid rgba(252, 226, 134, 0.35); /* дошка */
+  border-radius: var(--radius-lg);
+  background: rgba(252, 226, 134, 0.08); /* дошка */
+}
+.lockedBarStack {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+}
+.lockedText {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+.lockedBarStack .lockedText {
+  flex-basis: calc(100% - 30px);
+}
+.lockedBarStack > button {
+  margin-left: 28px;
+}
+.lockedCards {
+  opacity: 0.4;
+  pointer-events: none;
+  user-select: none;
+}

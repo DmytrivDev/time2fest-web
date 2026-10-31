@@ -25,8 +25,12 @@ export interface NowNextProps {
   filterLiveOnly?: boolean;
   defaultFilterLiveOnly?: boolean;
   onFilterLiveOnlyChange?: (next: boolean) => void;
-  /** Без пасу «Мій графік» із замком: натиск — вікно «Графік — у Новорічному пасі» (рішення 2026-10-31). */
+  /**
+   * Без пасу «Мій графік» із замком (дошка `Desk-NowNext-MineLocked`, варіант C, рішення 2026-11-01): фільтр
+   * перемикається, згори — смужка «Мій графік — у Новорічному пасі…» з «Що дає пас», картки притемнені й не натискаються.
+   */
   scheduleLocked?: boolean;
+  /** «Що дає пас» у смужці. */
   onScheduleLocked?: () => void;
   /** Скільки карток на телефоні до «Показати ще». */
   stackLimit?: number;
@@ -98,10 +102,6 @@ export function NowNext({
 
   const scheduleCount = useMemo(() => withStatus(now, items).filter((i) => i.inSchedule && !isPastStatus(i.status)).length, [now, items]);
   const setFilter = (next: Filter) => {
-    if (next === 'mine' && scheduleLocked) {
-      onScheduleLocked?.();
-      return;
-    }
     setInnerFilter(next);
     setExpanded(false);
     if (next === 'live' || filter === 'live') onFilterLiveOnlyChange?.(next === 'live');
@@ -167,6 +167,7 @@ export function NowNext({
   }
 
   const lockedHint = scheduleLocked ? t('mineLocked') : undefined;
+  const lockedMine = filter === 'mine' && scheduleLocked;
   const filterControl = (
     <ToggleGroup.Root
       type="single"
@@ -185,7 +186,6 @@ export function NowNext({
         {stack ? null : <Icon name="broadcast" size={14} />}
         {t('filterLive')}
       </ToggleGroup.Item>
-      {/* Без пасу — не перемикає, а відкриває вікно графіка (onValueChange → onScheduleLocked). */}
       <ToggleGroup.Item value="mine" aria-label={lockedHint ? `${t('filterMine')}. ${lockedHint}` : undefined} data-locked={scheduleLocked || undefined} className={cn('t2f-focus', s.seg)}>
         {stack ? null : <Icon name={scheduleLocked ? 'lock' : 'calendar-check'} size={14} />}
         {stack && scheduleLocked ? <Icon name="lock" size={14} /> : null}
@@ -214,7 +214,23 @@ export function NowNext({
         }
       />
       {stack ? filterControl : null}
-      {body}
+      {lockedMine ? (
+        <div role="status" data-row="mine-locked" className={cn(s.lockedBar, stack && s.lockedBarStack)}>
+          <Icon name="lock" size={18} className="mt-0.5 shrink-0 text-highlight" />
+          <p className={s.lockedText}>{t.rich('mineLockedText', { b: (c) => <b className="font-bold">{c}</b> })}</p>
+          <Button variant="tonal" compact iconLeft="ticket" data-action="pass-info" onClick={onScheduleLocked} className="shrink-0">
+            {t('mineLockedButton')}
+          </Button>
+        </div>
+      ) : null}
+      {lockedMine ? (
+        // Чужі картки — лише тло для пояснення: притемнені й поза Tab / зчитувачем.
+        <div inert aria-hidden="true" data-row="mine-locked-cards" className={s.lockedCards}>
+          {body}
+        </div>
+      ) : (
+        body
+      )}
       {progress ? <FestProgress {...progress} /> : null}
     </section>
   );

@@ -20,7 +20,7 @@ import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
-import { OFFER_WINDOW_ID, passGateSpec, passInfoSpec, passOfferSpec, scheduleGateSpec, tipsSpec, type OfferSpecDeps } from './OfferWindows';
+import { OFFER_WINDOW_ID, passGateSpec, passInfoBoardSpec, passInfoSpec, passOfferSpec, scheduleGateSpec, tipsSpec, type OfferSpecDeps } from './OfferWindows';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
 
@@ -30,6 +30,8 @@ export interface PassWindowsApi {
   openPassGate(feature: PassGateFeature, triggerEventId?: string): void;
   /** «Мій графік» без пасу — вікно «Графік — у Новорічному пасі» без конкретного міста. */
   openScheduleGate(): void;
+  /** «Що дає Новорічний пас» на місці чату / шторкою (смужка «Мій графік» без пасу). */
+  openPassInfoBoard(): void;
   openPassInfo(): void;
 }
 
@@ -105,6 +107,8 @@ export function useOfferWindows(): PassWindowsApi {
     useGuestStore.getState().showOffer('pass-gate', '', deps.now());
   }, [open, deps, tPass, infoTitle]);
 
+  const openPassInfoBoard = useCallback(() => open(passInfoBoardSpec(infoTitle)), [open, infoTitle]);
+
   // `offer:show` → картка в потоці.
   useEffect(
     () =>
@@ -122,5 +126,5 @@ export function useOfferWindows(): PassWindowsApi {
     [open, deps, t, infoTitle],
   );
 
-  return { requestSchedule, openPassGate, openPassInfo, openScheduleGate };
+  return { requestSchedule, openPassGate, openPassInfo, openScheduleGate, openPassInfoBoard };
 }

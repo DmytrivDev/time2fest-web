@@ -109,7 +109,7 @@ describe('NowNext', () => {
     expect(screen.getByRole('button', { name: 'Згорнути' })).toBeInTheDocument();
   });
 
-  it('«Мій графік» (рішення 2026-10-31): лише події з графіка й лічильник; без пасу — замок і вікно графіка', () => {
+  it('«Мій графік» (рішення 2026-10-31): лише події з графіка й лічильник; без пасу — смужка й притемнені картки', () => {
     const items = STRIP.map((i) => (i.title === 'Ріо-де-Жанейро' ? { ...i, inSchedule: true } : i));
     const { unmount } = renderWithApp(<NowNext items={items} zoneLabel="Київ" />);
     const mine = screen.getByRole('radio', { name: /Мій графік/ });
@@ -121,8 +121,13 @@ describe('NowNext', () => {
     const onScheduleLocked = vi.fn();
     renderWithApp(<NowNext items={items} zoneLabel="Київ" scheduleLocked onScheduleLocked={onScheduleLocked} />);
     fireEvent.click(screen.getByRole('radio', { name: /Мій графік\. Графік — у Новорічному пасі/ }));
+    // Варіант C (2026-11-01): фільтр вмикається, згори смужка, картки притемнені й поза Tab.
+    expect(screen.getByRole('status')).toHaveTextContent('Мій графік — у Новорічному пасі');
+    expect(document.querySelector('[data-row="mine-locked-cards"]')).toHaveAttribute('inert');
+    fireEvent.click(screen.getByRole('button', { name: 'Що дає пас' }));
     expect(onScheduleLocked).toHaveBeenCalled();
-    expect(screen.getByText('Кабо-Верде')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('radio', { name: 'Усі' }));
+    expect(document.querySelector('[data-row="mine-locked"]')).toBeNull();
   });
 
   it('порожньо після фільтра: підказка й «Показати всі події»', () => {
