@@ -126,7 +126,8 @@ test.describe('US5 · модуль «Перший ряд»', () => {
     await start(page);
     const s = strip(page);
     await expect(s).toHaveAttribute('data-state', 'last3');
-    await expect(s.locator('[data-row="counter"]')).toContainText('лишилось 1 з 10');
+    // Десктоп: «лишилось 1 з 10»; телефон: пігулка «1 з 10».
+    await expect(s.locator('[data-row="counter"]')).toContainText('1 з 10');
     await expect(s).toContainText('$7,99');
     await expect(s.locator('[data-action="take"]')).toHaveText('Зайняти місце');
     await expect(s.locator('[data-action="info"]')).toBeVisible();
@@ -138,20 +139,21 @@ test.describe('US5 · модуль «Перший ряд»', () => {
     // На «/» модуль показує перший ряд події в ефірі; тут перевіряємо лише ціну/лічильник, якщо це Токіо.
     const s = strip(page);
     if ((await s.getAttribute('data-midnight')) === String(Date.parse(tokyo.midnightUtc))) {
-      await expect(s.locator('[data-row="counter"]')).toContainText('лишилось 6 з 10');
+      await expect(s.locator('[data-row="counter"]')).toContainText('6 з 10');
       // Телефон: смуга на головній спочатку згорнута (`Phone-Chat-Dock`).
       if ((await s.getAttribute('data-open')) === 'false') await s.locator('button[aria-expanded]').first().click();
       await expect(s).toContainText('$4,99');
     }
   });
 
-  test('за 15 хв до півночі продаж закрито: closed, без лічильника й кнопки', async ({ page }) => {
-    await start(page, iso(LONDON_MS - 20 * MIN));
+  test('за 5 хв до півночі продаж закрито: closed, без лічильника й кнопки', async ({ page }) => {
+    await start(page, iso(LONDON_MS - 10 * MIN));
     await expect(strip(page)).toHaveAttribute('data-state', 'last3');
     await advance(page, 5 * MIN);
     const s = strip(page);
     await expect(s).toHaveAttribute('data-state', 'closed');
-    await expect(s).toContainText('Продаж закрито перед подією');
+    // Десктоп: позначка «Продаж закрито»; телефон: пігулка «Закрито».
+    await expect(s).toContainText(/[Зз]акрито/);
     await expect(s.locator('[data-row="counter"]')).toHaveCount(0);
     await expect(s.locator('[data-action="take"]')).toHaveCount(0);
   });

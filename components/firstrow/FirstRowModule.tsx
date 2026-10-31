@@ -3,7 +3,8 @@
 /**
  * Зв’язувальний модуль «Перший ряд» (C6 + C7 + C8; T116): однаковий на головній, сторінці країни й у кімнаті.
  * - Місця імітуються (`lib/firstrow/seatsSim`), стан і ціна — `firstRowView`; утримання, оплата — `controller`.
- * - «Зайняти місце» → O-FIRST-ROW (`accent`, coral; звук стає нейтральним), «Що входить» → O-FIRST-ROW-INFO (InFlowSlot).
+ * - «Зайняти місце» → O-FIRST-ROW (`accent`, coral; звук стає нейтральним); «Що входить» → O-FIRST-ROW-INFO і «Ще є місця» →
+ *   O-FIRST-ROW-MORE — на десктопі на місці чату, на телефоні шторкою (рішення 2026-10-31).
  * - Кнопка «Зайняти місце» tonal, поки на сторінці коралова кнопка звуку (ІНВ 5.3).
  * - Ефекти: «час утримання вийшов» при відкритій формі, підтвердження «очікування», привітання гостя-учасника
  *   в чаті на «+15 с» (синхронно зі стіною).
@@ -18,6 +19,7 @@ import { useChatDock } from '@/stores/chatDock';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { useOpenMyEmotion } from '@/components/windows/Emoji';
 import { FirstRowInfo } from '@/components/windows/FirstRowInfo';
+import { FirstRowMore } from '@/components/windows/FirstRowMore';
 import { FirstRowWindow } from '@/components/windows/FirstRowWindow';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { useChatFeed } from '@/lib/chat-sim/store';
@@ -25,9 +27,8 @@ import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { HANDOVER_AFTER, STAMP_DELAY } from '@/lib/engine/config';
 import { PENDING_CONFIRM_MS } from '@/lib/firstrow/pay';
-import { nextOpenSale } from '@/lib/firstrow/pick';
+import { otherOpenRows } from '@/lib/firstrow/pick';
 import { useCoralWindowOpen } from '@/lib/overlay/coral';
-import { countryHref } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -38,6 +39,7 @@ import {
   confirmPayment,
   expireHold,
   FIRST_ROW_INFO_ID,
+  FIRST_ROW_MORE_ID,
   FIRST_ROW_WINDOW_ID,
   guestGreetingMessages,
   openForm,
@@ -46,6 +48,7 @@ import {
   type FirstRowEvent,
 } from './controller';
 import { FirstRowChatRow, FirstRowStrip } from './FirstRowStrip';
+import type { FirstRowMoreRow } from './types';
 
 export interface FirstRowModuleProps {
   event: FirstRowEvent | null;
@@ -121,12 +124,29 @@ function SeatSubline({ event, city }: { event: FirstRowEvent; city: string }) {
   );
 }
 
-function saleLink(now: Ms, excludeId: string): { city: string; midnightMs: Ms; href?: string } | undefined {
+/** «Ще є місця»: інші ряди з відкритим продажем і вільними місцями, у порядку `otherOpenRows`. */
+function otherRows(event: FirstRowEvent, now: Ms): FirstRowMoreRow[] {
   const data = getData();
-  const e = nextOpenSale(data, now, excludeId);
-  if (!e) return undefined;
-  const country = data.countriesByIso.get(e.countryIso);
-  return { city: cityOf(e.cityId), midnightMs: e.midnightMs, ...(country ? { href: countryHref(country) } : {}) };
+  const current = data.eventsById.get(event.id);
+  if (!current) return [];
+  const sellable = (e: FirstRowEvent) => {
+    if (blockingEvent(e, now)) return 0;
+    const { view } = snapshot(e, now);
+    return view.state === 'empty' || view.state === 'open' || view.state === 'last3' ? view.freeCount : 0;
+  };
+  return otherOpenRows(data, now, current, sellable).map(({ event: e, free }) => {
+    const { view } = snapshot(e, now);
+    return {
+      eventId: e.id,
+      city: cityOf(e.cityId),
+      country: data.countriesByIso.get(e.countryIso)?.name.uk ?? '',
+      flagCode: e.countryIso,
+      midnightMs: e.midnightMs,
+      free,
+      price: view.price.current ?? 4.99,
+      main: e.isMainCelebration,
+    };
+  });
 }
 
 /** Ефекти, що мають іти й тоді, коли вікно закрите. */
@@ -181,10 +201,11 @@ function useFirstRowEffects(event: FirstRowEvent, now: Ms) {
   }, [due, event, seat]);
 }
 
-function InfoBody({ event, city, onTake }: { event: FirstRowEvent; city: string; onTake?(): void }) {
+function InfoBody({ event, city, onTake, onBack }: { event: FirstRowEvent; city: string; onTake?(): void; onBack?(): void }) {
   const now = useNow();
   const reduced = useReducedMotion();
   const overlay = useOverlay();
+  const hasPass = useGuestStore((s) => s.hasPass);
   const { view } = snapshot(event, now, { reducedMotion: reduced });
   const sellable = !!onTake && (view.state === 'empty' || view.state === 'open' || view.state === 'last3');
   return (
@@ -192,10 +213,18 @@ function InfoBody({ event, city, onTake }: { event: FirstRowEvent; city: string;
       city={city}
       midnightMs={event.midnightMs}
       view={view}
+      hasPass={hasPass}
       onTake={sellable ? onTake : undefined}
-      onCollapse={() => overlay.close(FIRST_ROW_INFO_ID)}
+      onClose={() => overlay.close(FIRST_ROW_INFO_ID)}
+      onBack={onBack}
     />
   );
+}
+
+function MoreBody({ event, city, onPick }: { event: FirstRowEvent; city: string; onPick(eventId: string): void }) {
+  const now = useNow({ granularity: 'minute' });
+  const overlay = useOverlay();
+  return <FirstRowMore city={city} midnightMs={event.midnightMs} now={now} rows={otherRows(event, now)} onPick={onPick} onClose={() => overlay.close(FIRST_ROW_MORE_ID)} />;
 }
 
 export function FirstRowModule({ event, headingLevel = 2, dockBar = false, className }: FirstRowModuleProps) {
@@ -244,17 +273,18 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
     });
   };
 
-  const openWindow = () => {
-    const res = openForm(event, now);
+  const openWindowFor = (ev: FirstRowEvent) => {
+    const evCity = cityOf(ev.cityId);
+    const res = openForm(ev, now);
     if (res === 'closed' || res === 'blocked') return;
     overlay.open({
       id: FIRST_ROW_WINDOW_ID,
       kind: 'accent',
       coral: true,
       chrome: 'board',
-      title: <SeatTitle event={event} city={city} />,
-      description: <SeatSubline event={event} city={city} />,
-      content: <FirstRowWindow event={event} city={city} />,
+      title: <SeatTitle event={ev} city={evCity} />,
+      description: <SeatSubline event={ev} city={evCity} />,
+      content: <FirstRowWindow event={ev} city={evCity} />,
       onClose: () => {
         const s = useFirstRowStore.getState();
         // «Очікування» триває й після закриття: місце з’явиться на стіні після підтвердження.
@@ -262,26 +292,55 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       },
     });
   };
+  const openWindow = () => openWindowFor(event);
 
-  const infoOpen = overlay.current?.id === FIRST_ROW_INFO_ID;
-  const toggleInfo = () => {
-    if (infoOpen) {
-      overlay.close(FIRST_ROW_INFO_ID);
-      return;
-    }
+  // «Що входить» — на місці чату / шторкою, як решта вікон (рішення 2026-10-31).
+  const openInfoFor = (ev: FirstRowEvent, onBack?: () => void) => {
+    const evCity = cityOf(ev.cityId);
     overlay.open({
       id: FIRST_ROW_INFO_ID,
-      kind: 'inflow',
+      kind: 'accent',
       coral: true,
+      chrome: 'board',
       title: t('infoTitle'),
-      content: <InfoBody event={event} city={city} onTake={blocker ? undefined : openWindow} />,
+      description: t('infoWin.metaShort', { city: evCity, time: formatClock(ev.midnightMs) }),
+      content: (
+        <InfoBody event={ev} city={evCity} onTake={blockingEvent(ev, now) ? undefined : () => openWindowFor(ev)} onBack={onBack} />
+      ),
+    });
+  };
+  const infoOpen = overlay.current?.id === FIRST_ROW_INFO_ID;
+  const toggleInfo = () => {
+    if (infoOpen) overlay.close(FIRST_ROW_INFO_ID);
+    else openInfoFor(event);
+  };
+
+  // «Ще є місця» → список інших рядів; рядок → «Що входить» того ряду з «‹ До списку».
+  const moreOpen = overlay.current?.id === FIRST_ROW_MORE_ID;
+  const openMore = () => {
+    overlay.open({
+      id: FIRST_ROW_MORE_ID,
+      kind: 'accent',
+      chrome: 'board',
+      title: t('more.title'),
+      description: t('more.sub', { city }),
+      content: (
+        <MoreBody
+          event={event}
+          city={city}
+          onPick={(id) => {
+            const ev = getData().eventsById.get(id);
+            if (ev) openInfoFor(ev, openMore);
+          }}
+        />
+      ),
     });
   };
 
   const openEmoji = useOpenMyEmotion(event.id);
 
   const coralSound = !!player && player.muted;
-  const elsewhere = view.state === 'closed' || view.state === 'soldout' ? saleLink(now, event.id) : undefined;
+  const more = view.state === 'soldout' ? otherRows(event, now) : [];
 
   return (
     <FirstRowStrip
@@ -297,8 +356,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       onOpenEmoji={view.state === 'mine' ? openEmoji : undefined}
       onOpenTicket={view.state === 'mine' ? openWindow : undefined}
       restrainedNote={event.restrained?.note.uk}
-      nextSale={view.state === 'closed' ? elsewhere : undefined}
-      soldOutAlt={view.state === 'soldout' && elsewhere ? { city: elsewhere.city, href: elsewhere.href } : undefined}
+      soldOutAlt={more.length ? { city: more[0]!.city, more: more.length - 1, onOpen: moreOpen ? () => overlay.close(FIRST_ROW_MORE_ID) : openMore, open: moreOpen } : undefined}
       countryName={lookup.countryName}
       layout={column ? 'module' : 'compact'}
       headingLevel={headingLevel}

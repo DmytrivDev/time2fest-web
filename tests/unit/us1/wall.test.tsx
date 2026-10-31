@@ -70,8 +70,10 @@ describe('FirstRowWall', () => {
     expect(screen.getByRole('region', { name: 'Перший ряд · Лондон: лишилось 1 з 10, гортай вбік' })).toBeInTheDocument();
   });
 
-  it('idle: 9 імен і одна картка вільних місць; привітання немає', () => {
-    const { container } = renderApp(<FirstRowWall city="Лондон" seats={seats} freeCount={1} phase="idle" countryName={countryName} />);
+  it('idle: 9 імен і одна картка вільних місць (лише поки можна купити); привітання немає', () => {
+    const { container } = renderApp(
+      <FirstRowWall city="Лондон" seats={seats} freeCount={1} phase="idle" countryName={countryName} onTakeFree={() => undefined} />,
+    );
     expect(container.querySelectorAll('[data-seat]')).toHaveLength(9);
     expect(container.querySelectorAll('[data-seat][data-state="lit"]')).toHaveLength(0);
     expect(screen.getByText('1 вільне')).toBeInTheDocument();
@@ -79,8 +81,13 @@ describe('FirstRowWall', () => {
   });
 
   it('усі вільні: «усі місця вільні»', () => {
-    renderApp(<FirstRowWall city="Лондон" seats={[]} freeCount={10} phase="idle" />);
+    renderApp(<FirstRowWall city="Лондон" seats={[]} freeCount={10} phase="idle" onTakeFree={() => undefined} />);
     expect(screen.getByText('усі місця вільні')).toBeInTheDocument();
+  });
+
+  it('продаж не відкритий (без onTakeFree): пунктирної картки вільних немає', () => {
+    const { container } = renderApp(<FirstRowWall city="Лондон" seats={seats} freeCount={1} phase="idle" />);
+    expect(container.querySelector('[data-slot="free"]')).toBeNull();
   });
 
   it('lit: усі зайняті горять, «З Новим роком, перший ряд!»', () => {

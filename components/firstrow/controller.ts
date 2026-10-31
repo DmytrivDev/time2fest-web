@@ -19,6 +19,7 @@ import { seatConflict } from '@/lib/firstrow/rooms';
 
 export const FIRST_ROW_WINDOW_ID = 'O-FIRST-ROW';
 export const FIRST_ROW_INFO_ID = 'O-FIRST-ROW-INFO';
+export const FIRST_ROW_MORE_ID = 'O-FIRST-ROW-MORE';
 
 export type FirstRowEvent = Pick<ScheduledEvent, 'id' | 'cityId' | 'midnightUtc' | 'midnightMs' | 'restrained' | 'firstRow'>;
 

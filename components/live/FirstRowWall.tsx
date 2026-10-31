@@ -9,8 +9,8 @@
  * Дані: `FirstRowSeat[]` (див. `seedToSeats` для `firstRowSeed` з `data/chat-script.json`) і фаза з `firstRowView().wall`.
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Carousel } from '@/components/primitives/Carousel';
+import { useEffect, useMemo, useState } from 'react';
+import { Marquee } from '@/components/primitives/Marquee';
 import { Icon } from '@/components/primitives/Icon';
 import fr from '@/components/firstrow/firstRow.module.css';
 import { cn } from '@/components/primitives/cn';
@@ -21,7 +21,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { emojiSymbol, SeatPill } from './SeatPill';
 
 export type WallPhase = 'idle' | 'lighting' | 'lit';
-/** `row` — один ряд зі стрілками (десктоп, `Main`) · `wrap` — два ряди, гортаються вбік (телефон) · `grid` — 2 колонки (ТВ). */
+/** `row` — один ряд, їде по колу (десктоп) · `wrap` — два ряди, кожен їде по колу (телефон) · `grid` — 2 колонки (ТВ). */
 export type WallLayout = 'row' | 'wrap' | 'grid';
 
 export interface FirstRowWallProps {
@@ -46,6 +46,8 @@ export interface FirstRowWallProps {
   countryName?: (flagCode: string) => string | undefined;
   /** Дотик до свого місця (O-EMOJI). */
   onOpenEmoji?: () => void;
+  /** Стрічка виходить у поля картки на стільки px (краї згасають у полях). */
+  bleed?: number;
   className?: string;
 }
 
@@ -123,6 +125,7 @@ export function FirstRowWall({
   onOpenEmoji,
   onTakeFree,
   ticker = false,
+  bleed = 0,
   className,
 }: FirstRowWallProps) {
   const t = useTranslations('firstRow');
@@ -152,26 +155,20 @@ export function FirstRowWall({
   });
 
   const freeText = taken.length === 0 && freeCount === SEATS ? t('allFree') : t('freeShort', { count: freeCount });
+  // Пунктирна «+ N вільних» — лише поки місце можна купити (дошки 2026-10-31: «продаж закрито» й «розпродано» — без неї).
   const freeCard =
-    freeCount > 0 && effectivePhase === 'idle' ? (
-      onTakeFree ? (
-        <button
-          key="free"
-          type="button"
-          data-slot="free"
-          aria-label={t('freeTakeLabel', { count: freeCount })}
-          onClick={onTakeFree}
-          className={cn('t2f-focus t2f-transition', fr.free)}
-        >
-          <Icon name="plus" size={14} strokeWidth={2.2} />
-          {freeText}
-        </button>
-      ) : (
-        <div key="free" data-slot="free" className={fr.free}>
-          <Icon name="plus" size={14} strokeWidth={2.2} />
-          {freeText}
-        </div>
-      )
+    freeCount > 0 && effectivePhase === 'idle' && onTakeFree ? (
+      <button
+        key="free"
+        type="button"
+        data-slot="free"
+        aria-label={t('freeTakeLabel', { count: freeCount })}
+        onClick={onTakeFree}
+        className={cn('t2f-focus t2f-transition', fr.free)}
+      >
+        <Icon name="plus" size={14} strokeWidth={2.2} />
+        {freeText}
+      </button>
     ) : null;
 
   const wallLabel = effectivePhase === 'idle' ? t('wall', { city, free: freeCount, total: SEATS }) : t('wallLighting', { city });
@@ -192,27 +189,14 @@ export function FirstRowWall({
         </ul>
       </section>
     );
-  } else if (layout === 'wrap') {
-    // Телефон (`Phone-Home-Live`): два ряди — стовпчики по два місця; по колу, гортання свайпом.
-    const columns: ReactNode[][] = [];
-    items.forEach((it, i) => {
-      if (i % 2 === 0) columns.push([it]);
-      else columns[columns.length - 1]!.push(it);
-    });
-    body = (
-      <Carousel label={wallLabel} arrows="none" loop prevLabel={t('prevSeats')} nextLabel={t('nextSeats')}>
-        {columns.map((col, i) => (
-          <div key={i} className="flex flex-col items-start gap-2">
-            {col}
-          </div>
-        ))}
-      </Carousel>
-    );
   } else {
+    // Без стрілок (рішення 2026-10-31): коли місць більше, ніж влазить, вони їдуть по колу; наведення, фокус, прокрутка
+    // чи дотик зупиняють. Телефон — два ряди, кожен їде окремо.
+    const weights = [...taken.map((s) => s.participant.name.length + 8), ...(freeCard ? [10] : [])];
     body = (
-      <Carousel label={wallLabel} arrows="sides" loop fade prevLabel={t('prevSeats')} nextLabel={t('nextSeats')}>
+      <Marquee label={wallLabel} rows={layout === 'wrap' ? 2 : 1} bleed={bleed} weights={weights}>
         {items}
-      </Carousel>
+      </Marquee>
     );
   }
 

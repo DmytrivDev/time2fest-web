@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+﻿import type { Meta, StoryObj } from '@storybook/nextjs';
 import { FirstRowChatRow, FirstRowStrip } from '@/components/firstrow/FirstRowStrip';
 import { Stage } from '../_support/Stage';
 import { countryName, makeView, MIDNIGHT, RESTRAINED_NOTE } from './fixtures';
@@ -31,18 +31,17 @@ type Story = StoryObj<typeof meta>;
 
 const phoneArgs = { layout: 'compact', takeVariant: 'tonal' } as const;
 const phoneGlobals = { surface: 'phone' } as const;
-const nextSale = { city: 'Азорські острови', midnightMs: MIDNIGHT + 3_600_000 };
 
 export const DeskEmpty: Story = { name: 'Desk-FR-States — empty', args: makeView({ taken: 0 }) };
 export const DeskOpen: Story = { name: 'Desk-FR-States — open', args: makeView({ taken: 4 }) };
 export const DeskLast3: Story = { name: 'Desk-FR-States — last3', args: makeView({ taken: 8 }) };
 export const DeskSoldout: Story = {
   name: 'Desk-FR-States — soldout',
-  args: { ...makeView({ taken: 10 }), soldOutAlt: { city: 'Ріо-де-Жанейро', href: '#' } },
+  args: { ...makeView({ taken: 10 }), soldOutAlt: { city: 'Дублін', more: 3, onOpen: () => undefined } },
 };
 export const DeskClosed: Story = {
-  name: 'Desk-FR-States — closed + nextSale',
-  args: { ...makeView({ taken: 8, closed: true }), nextSale: { ...nextSale, href: '#' } },
+  name: 'Desk-FR-States — closed',
+  args: { ...makeView({ taken: 8, closed: true }) },
 };
 export const DeskMine: Story = { name: 'Desk-FR-States — mine', args: makeView({ taken: 8, mine: 3 }) };
 export const DeskRestrained: Story = {
@@ -58,12 +57,12 @@ export const PhoneLast3: Story = { name: 'Phone-FR-States — last3', globals: p
 export const PhoneSoldout: Story = {
   name: 'Phone-FR-States — soldout',
   globals: phoneGlobals,
-  args: { ...phoneArgs, ...makeView({ taken: 10 }), soldOutAlt: { city: 'Ріо-де-Жанейро' } },
+  args: { ...phoneArgs, ...makeView({ taken: 10 }), soldOutAlt: { city: 'Дублін', more: 3, onOpen: () => undefined } },
 };
 export const PhoneClosed: Story = {
-  name: 'Phone-FR-States — closed + nextSale',
+  name: 'Phone-FR-States — closed',
   globals: phoneGlobals,
-  args: { ...phoneArgs, ...makeView({ taken: 8, closed: true }), nextSale },
+  args: { ...phoneArgs, ...makeView({ taken: 8, closed: true }) },
 };
 export const PhoneMine: Story = { name: 'Phone-FR-States — mine', globals: phoneGlobals, args: { ...phoneArgs, ...makeView({ taken: 8, mine: 3 }) } };
 export const PhoneRestrained: Story = {

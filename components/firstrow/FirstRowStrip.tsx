@@ -1,14 +1,18 @@
 'use client';
 
 /**
- * C6. FirstRowStrip — модуль / смуга «Перший ряд» (презентаційна) за макетами `Main`, `Desk-Moment`,
- * `Desk-Home-Handover` (модуль: заголовок · лічильник · рядок ціни, праворуч «Що входить» і «Зайняти місце»; стіна
- * одним рядом зі стрілками; після півночі — бігучий рядок) і `Phone-Home-Live` (смуга згортається: стіна двома рядами,
- * мініатюра, «Лишилось N місця», опис, кнопки). Примітка стриманого режиму.
+ * C6. FirstRowStrip — модуль / смуга «Перший ряд» (презентаційна) за дошками `Desk-FR-States` / `Phone-FR-States`
+ * (рішення власника 2026-10-31):
+ * - десктоп: заголовок · позначка (лічильник чи «Розпродано» / «Продаж закрито») · рядок під ним; праворуч дії
+ *   («Що входить» + «Зайняти місце», «Моя емоція» + «Квиток · місце 9», «Ще є місця: … і ще N ›»); нижче стіна —
+ *   один ряд, без стрілок, їде по колу. Відступи: 12/16, між рядами 12, у тексті 4.
+ * - телефон: картка згортається; заголовок завжди в один рядок — назва (місто з трикрапкою) і коротка пігулка
+ *   («8 з 10», «Розпродано», «Закрито», «Місце 9»); тіло з кроком 12: стіна двома рядами, під рискою — купівля,
+ *   пояснення чи «Твоє місце».
  * Стани беремо з `view.state`; знижка пасу — окремий вигляд `pass-discount`. Логіку тримають інші модулі.
  */
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { FirstRowWall } from '@/components/live/FirstRowWall';
 import { EMOJI_SYMBOLS } from '@/components/live/SeatPill';
 import { Badge } from '@/components/primitives/Badge';
@@ -16,9 +20,10 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Reveal } from '@/components/primitives/Reveal';
 import { Icon } from '@/components/primitives/Icon';
-import { Link } from '@/components/primitives/Link';
+import { FIRSTROW_SALE_CLOSE } from '@/lib/engine/config';
 import { formatPrice } from '@/lib/firstrow/format';
 import { formatClock } from '@/lib/i18n/time';
+import { useNow } from '@/lib/time/TimeProvider';
 import home from '@/components/live/home.module.css';
 import fr from './firstRow.module.css';
 import type { FirstRowChatRowProps, FirstRowStripProps } from './types';
@@ -35,7 +40,6 @@ export function FirstRowStrip({
   onOpenEmoji,
   onOpenTicket,
   restrainedNote,
-  nextSale,
   soldOutAlt,
   countryName,
   layout = 'module',
@@ -47,6 +51,7 @@ export function FirstRowStrip({
   className,
 }: FirstRowStripProps) {
   const t = useTranslations('firstRow');
+  const now = useNow({ granularity: 'minute' });
   const compact = layout === 'compact';
   const [open, setOpen] = useState(defaultOpen);
   const Heading = headingLevel === 2 ? 'h2' : 'h3';
@@ -55,35 +60,57 @@ export function FirstRowStrip({
   const blockedNow = !!blocked && sellable;
   const discounted = sellable && price.discountReason === 'pass' && price.discounted !== undefined;
   const stateName = discounted ? 'pass-discount' : state;
-  const showCounter = state === 'empty' || state === 'open' || state === 'last3' || state === 'mine' || state === 'restrained';
-  const showWall = state !== 'empty';
   const wallPhase = state === 'restrained' ? 'idle' : view.wall.phase;
+  const after = wallPhase !== 'idle';
+  // «Продаж закрито» до півночі: або ще не відкрито (до 1 грудня), або вже закрито за 5 хв до півночі.
+  const closedBefore = state === 'closed' && !after;
+  const notOpenYet = closedBefore && now < view.saleClosesAt;
+  const showWall = state !== 'empty';
   const mine = view.mySeat;
   const mineSeat = mine ? seats.find((s) => s.state === 'taken' && s.number === mine.number) : undefined;
   const mineName = mineSeat && mineSeat.state === 'taken' ? mineSeat.participant.name : '';
   const headingId = `first-row-strip-${view.eventId}`;
   const panelId = `${headingId}-panel`;
+  const closeMin = Math.round(FIRSTROW_SALE_CLOSE / 60_000);
+  const hot = state === 'last3';
 
-  const counter = showCounter ? (
-    <span data-row="counter" className={fr.counter}>
-      {state === 'empty' ? (
-        `· ${t('allFree')}`
-      ) : state === 'mine' && mine ? (
-        <>
-          · <b>{t('yourSeat')} {mine.number}</b>
-        </>
-      ) : (
-        <>
-          <span aria-hidden="true">
-            · {t('leftPrefix')} <b>{t('leftValue', { free: view.freeCount, total: view.total })}</b>
-          </span>
-          <span className="sr-only">{t('leftSpoken', { free: view.freeCount, total: view.total })}</span>
-        </>
-      )}
-    </span>
-  ) : null;
+  const leftSpoken = <span className="sr-only">{t('leftSpoken', { free: view.freeCount, total: view.total })}</span>;
 
-  const priceText =
+  // ── Позначка біля назви (десктоп) ──────────────────────────────────────
+  let meta: ReactNode = null;
+  if (state === 'empty') {
+    meta = (
+      <span data-row="counter" className={fr.meta}>
+        · <b className={fr.strong}>{t('allFreeMeta', { total: view.total })}</b> — {t('allFreeTail')}
+      </span>
+    );
+  } else if (state === 'soldout') {
+    meta = (
+      <span data-row="soldout" className={fr.badge}>
+        {t('soldOut')}
+      </span>
+    );
+  } else if (closedBefore) {
+    meta = (
+      <span data-row="closed" className={fr.badge}>
+        {t('saleClosedBadge')}
+      </span>
+    );
+  } else if (!after && (sellable || state === 'mine' || state === 'restrained')) {
+    meta = (
+      <span data-row="counter" className={fr.meta}>
+        <span aria-hidden="true">
+          {t('leftPrefix')} <b className={cn(fr.strong, hot && fr.hot)}>{t('leftValue', { free: view.freeCount, total: view.total })}</b>
+        </span>
+        {leftSpoken}
+        {hot && view.freeCount === 1 ? <b className={cn(fr.hot, 'ms-2.5')}>{t('lastSeat')}</b> : null}
+      </span>
+    );
+  }
+
+  // ── Рядок ціни ──────────────────────────────────────────────────────────
+  const tierText = state === 'last3' ? t('tierLast3', { price: formatPrice(7.99) }) : t('tierHint', { price: formatPrice(7.99) });
+  const priceNode =
     sellable && !blockedNow && price.current !== null ? (
       discounted && price.discounted !== undefined ? (
         <span>
@@ -104,89 +131,61 @@ export function FirstRowStrip({
       )
     ) : null;
 
-  const tier =
-    sellable && !blockedNow && !discounted ? (
-      <span data-row="tier" className={fr.tier}>
-        {state === 'last3' ? t('tierLast3', { price: formatPrice(7.99) }) : t('tierHint', { price: formatPrice(7.99) })}
-      </span>
-    ) : null;
-
-  const nextSaleText = nextSale ? t('nextSale', { city: nextSale.city, time: formatClock(nextSale.midnightMs) }) : '';
-  const nextSaleNode = nextSale ? (
-    <span data-row="next-sale">
-      {nextSale.href ? (
-        <Link href={nextSale.href} variant="inline">
-          {nextSaleText}
-        </Link>
-      ) : (
-        nextSaleText
-      )}
-    </span>
-  ) : null;
-
-  const soldOutNode =
-    state === 'soldout' ? (
-      <span>
-        {t('soldOutNote')}
-        {soldOutAlt ? (
-          <>
-            {' '}
-            {t('moreSeats')}{' '}
-            {soldOutAlt.href ? (
-              <Link href={soldOutAlt.href} variant="inline">
-                {t('heading', { city: soldOutAlt.city })}
-              </Link>
-            ) : (
-              t('heading', { city: soldOutAlt.city })
-            )}
-          </>
-        ) : null}
-      </span>
-    ) : null;
-
-  const mineText =
+  const mineLine =
     state === 'mine' && mine ? (
-      <>
-        <span className={fr.strong}>
+      <span>
+        <b className={fr.hot}>
           {t('yourSeat')} {mine.number}
-        </span>
-        {mineName ? ` · ${mineName}` : ''}
-        {mine.greeting ? ` · «${mine.greeting}»` : ''} · {t('mySeatNote')}
-      </>
+        </b>{' '}
+        · {t('mySeatShort')}
+      </span>
     ) : null;
 
+  const closedLine = closedBefore ? <span>{notOpenYet ? t('saleNotOpen') : t('saleClosedNote', { min: closeMin })}</span> : null;
+
+  // ── Дії ─────────────────────────────────────────────────────────────────
   const info = (
-    <button type="button" data-action="info" aria-expanded={infoOpen} onClick={onInfo} className={cn('t2f-focus t2f-transition', fr.infoBtn)}>
+    <button type="button" data-action="info" aria-expanded={infoOpen} onClick={onInfo} className={cn('t2f-focus t2f-transition', fr.infoBtn, infoOpen && fr.infoOn)}>
       {t('infoToggle')}
     </button>
   );
   const take = (
-    <Button variant={takeVariant} data-action="take" onClick={onTake} className={fr.takeBtn}>
+    <Button variant={takeVariant} compact data-action="take" onClick={onTake} className={fr.takeBtn}>
       {t('take')}
     </Button>
   );
-  const blockedNote = blockedNow ? (
-    <p data-row="blocked" className={fr.meta}>
-      {t('blocked', { city: blocked!.city })}
-    </p>
-  ) : null;
   const ownSeatBtn = blockedNow ? (
     <Button variant="secondary" compact data-action="own-seat" onClick={blocked!.onOwn}>
       {t('mySeatButton')}
     </Button>
   ) : null;
-  const mineActions =
-    state === 'mine' ? (
-      <>
-        <Button variant="tonal" compact data-action="emotion" onClick={onOpenEmoji}>
-          <span aria-hidden="true">{EMOJI_SYMBOLS[mine?.emojiId ?? ''] ?? '✨'}</span>
-          {t('myEmotion')}
-        </Button>
-        <Button variant="secondary" compact data-action="ticket" iconLeft="ticket" onClick={onOpenTicket}>
-          {t('myTicket')}
-        </Button>
-      </>
-    ) : null;
+  const emotionBtn = (
+    <Button variant="secondary" compact data-action="emotion" onClick={onOpenEmoji} className={fr.mineBtn}>
+      {t('myEmotion')}
+      <span aria-hidden="true" className={fr.emoji}>
+        {EMOJI_SYMBOLS[mine?.emojiId ?? ''] ?? '✨'}
+      </span>
+    </Button>
+  );
+  const ticketBtn = (
+    <Button variant="secondary" compact data-action="ticket" onClick={onOpenTicket} className={fr.mineBtn}>
+      {t('myTicketSeat', { n: mine?.number ?? 0 })}
+    </Button>
+  );
+  const moreLink = soldOutAlt ? (
+    <button
+      type="button"
+      data-action="more"
+      aria-haspopup="dialog"
+      aria-expanded={soldOutAlt.open ?? false}
+      onClick={soldOutAlt.onOpen}
+      className={cn('t2f-focus t2f-transition', fr.moreBtn, soldOutAlt.open && fr.moreOn)}
+    >
+      {t('moreSeats')} <b>{t('heading', { city: soldOutAlt.city })}</b>
+      {soldOutAlt.more > 0 ? ` ${t('moreCount', { count: soldOutAlt.more })}` : ''}
+      <Icon name="chevron-right" size={16} />
+    </button>
+  ) : null;
 
   const wall = showWall ? (
     <FirstRowWall
@@ -198,15 +197,16 @@ export function FirstRowStrip({
       restrained={state === 'restrained'}
       countryName={countryName}
       onOpenEmoji={onOpenEmoji}
-      onTakeFree={sellable ? onTake : undefined}
+      onTakeFree={sellable && !blockedNow ? onTake : undefined}
       layout={compact ? 'wrap' : 'row'}
       ticker={!compact}
+      bleed={compact ? 12 : 16}
     />
   ) : null;
 
   const restrained =
     state === 'restrained' && restrainedNote ? (
-      <p data-row="restrained" className={fr.meta}>
+      <p data-row="restrained" className={fr.sub}>
         {restrainedNote}
       </p>
     ) : null;
@@ -221,6 +221,22 @@ export function FirstRowStrip({
   };
 
   if (compact) {
+    // Пігулка в заголовку — коротка, щоб назва з нею завжди влазила в один рядок (дошки 2026-10-31).
+    let pill: ReactNode = null;
+    if (state === 'empty') pill = <span className={fr.pill}>{t('pillAllFree', { total: view.total })}</span>;
+    else if (state === 'soldout') pill = <span className={fr.pill}>{t('soldOut')}</span>;
+    else if (closedBefore) pill = <span className={fr.pill}>{t('pillClosed')}</span>;
+    else if (state === 'mine' && mine) pill = <span className={cn(fr.pill, fr.pillHot)}>{t('pillSeat', { n: mine.number })}</span>;
+    else if (!after && (sellable || state === 'restrained'))
+      pill = (
+        <span data-row="counter" className={cn(fr.pill, hot && fr.pillHot)}>
+          <span aria-hidden="true">{t('leftValue', { free: view.freeCount, total: view.total })}</span>
+          {leftSpoken}
+        </span>
+      );
+
+    const freeTitle =
+      view.freeCount === 1 ? t.rich('leftLast', { b: (c) => <b>{c}</b> }) : t.rich('leftCount', { count: view.freeCount, b: (c) => <b>{c}</b> });
     return (
       <section {...common} data-open={open} className={cn(fr.strip, fr.compact, dockBar && fr.dockBar, className)}>
         <Heading className="m-0" {...(dockBar ? { 'data-dock-above': '' } : {})}>
@@ -235,118 +251,150 @@ export function FirstRowStrip({
             }}
             className={cn('t2f-focus', fr.toggle)}
           >
-            {dockBar ? <Icon name="ticket" size={16} className="text-highlight" /> : null}
+            {dockBar ? <Icon name="ticket" size={16} className="shrink-0 text-highlight" /> : null}
             <span className={fr.heading}>{t('heading', { city })}</span>
-            {counter}
-            {state === 'soldout' ? (
-              <span data-row="soldout" className={fr.counter}>
-                · {t('soldOut')}
-              </span>
-            ) : null}
+            {pill}
             <span className={fr.spacer} />
-            <Icon name={open ? 'chevron-up' : dockBar ? 'chevron-right' : 'chevron-down'} size={18} className="text-text-secondary" />
+            <Icon name={open ? 'chevron-up' : dockBar ? 'chevron-right' : 'chevron-down'} size={18} className="shrink-0 text-text-secondary" />
           </button>
         </Heading>
         {/* Панель завжди в DOM і розгортається плавно (правило 2026-10-30); стіна загоряється опівночі синхронно. */}
         <Reveal open={open} id={panelId}>
           <div className={fr.panel}>
+            {state === 'empty' && !blockedNow ? (
+              <>
+                <p className={fr.pitch}>{t('emptyPitch')}</p>
+                <p data-row="price" className={fr.sub}>
+                  {priceNode}
+                  {!discounted ? (
+                    <>
+                      <br />
+                      {tierText}
+                    </>
+                  ) : null}
+                </p>
+                <div className={fr.phoneActions}>
+                  {take}
+                  {info}
+                </div>
+              </>
+            ) : null}
             {wall}
-            {sellable || blockedNow || state === 'mine' || state === 'closed' || state === 'soldout' || restrained ? (
-              <div className={cn(fr.details, !wall && 'border-t-0 pt-0')}>
-                {blockedNow ? (
-                  <>
-                    {blockedNote}
-                    <div className={fr.phoneActions}>{ownSeatBtn}</div>
-                  </>
-                ) : null}
-                {sellable && !blockedNow ? (
-                  <>
-                    <div className={fr.thumbRow}>
-                      {/* eslint-disable-next-line @next/next/no-img-element -- статичний експорт, мініатюра 80×80 */}
-                      <img src="/images/first-row-thumb.jpg" alt="" width={40} height={40} className={fr.thumb} />
-                      <div className="min-w-0">
-                        <div className={fr.left}>{t.rich('leftCount', { count: view.freeCount, b: (c) => <b>{c}</b> })}</div>
-                        <div data-row="price" className={fr.meta}>
-                          {priceText}
-                        </div>
-                      </div>
-                    </div>
-                    <p className={fr.pitch}>{state === 'empty' ? t('emptyPitch') : t('pitch')}</p>
-                    {tier ? <div className={cn(fr.meta, '-mt-1')}>{tier}</div> : null}
-                    <div className={fr.phoneActions}>
-                      {take}
-                      {info}
-                    </div>
-                  </>
-                ) : null}
-                {state === 'mine' ? (
-                  <>
-                    <p className={fr.meta}>{mineText}</p>
-                    <div className={cn(fr.phoneActions, 'flex-wrap')}>{mineActions}</div>
-                  </>
-                ) : null}
-                {state === 'closed' ? (
-                  <>
-                    <div className={fr.thumbRow}>
-                      {/* eslint-disable-next-line @next/next/no-img-element -- статичний експорт, мініатюра 80×80 */}
-                      <img src="/images/first-row-thumb.jpg" alt="" width={40} height={40} className={fr.thumb} />
-                      <div data-row="closed" className={fr.left}>
-                        {t('saleClosed')}
-                      </div>
-                    </div>
-                    {nextSaleNode ? <p className={fr.pitch}>{nextSaleNode}</p> : null}
-                    <div className={fr.phoneActions}>{info}</div>
-                  </>
-                ) : null}
-                {soldOutNode ? <p className={fr.meta}>{soldOutNode}</p> : null}
-                {restrained}
+            {blockedNow ? (
+              <div className={fr.details}>
+                <p data-row="blocked" className={fr.sub}>
+                  {t('blocked', { city: blocked!.city })}
+                </p>
+                <div className={fr.phoneActions}>{ownSeatBtn}</div>
               </div>
             ) : null}
+            {sellable && !blockedNow && state !== 'empty' ? (
+              <div className={fr.details}>
+                <div className={fr.left}>{freeTitle}</div>
+                <p data-row="price" className={fr.sub}>
+                  {priceNode}
+                  {!discounted ? (
+                    <>
+                      <br />
+                      {tierText}
+                    </>
+                  ) : null}
+                </p>
+                <div className={fr.phoneActions}>
+                  {take}
+                  {info}
+                </div>
+              </div>
+            ) : null}
+            {state === 'mine' && mine ? (
+              <div className={fr.details}>
+                <div className={fr.left}>
+                  {t('yourSeat')} <b>{mine.number}</b>
+                </div>
+                {mineName || mine.greeting ? (
+                  <p className={fr.sub}>
+                    {mineName}
+                    {mine.greeting ? ` · «${mine.greeting}»` : ''}
+                  </p>
+                ) : null}
+                <p className={fr.pitch}>{t('mySeatNote')}</p>
+                <div className={fr.phoneActions}>
+                  {emotionBtn}
+                  {ticketBtn}
+                </div>
+              </div>
+            ) : null}
+            {closedBefore ? (
+              <div className={fr.details}>
+                <p data-row="closed" className={fr.pitch}>
+                  {notOpenYet ? t('saleNotOpen') : t('saleClosedNotePhone', { min: closeMin })}
+                </p>
+              </div>
+            ) : null}
+            {state === 'soldout' ? (
+              <div className={fr.details}>
+                <p className={fr.pitch}>{t('soldOutNote')}</p>
+                {moreLink}
+              </div>
+            ) : null}
+            {restrained ? <div className={fr.details}>{restrained}</div> : null}
           </div>
         </Reveal>
       </section>
     );
   }
 
+  // ── Десктоп ─────────────────────────────────────────────────────────────
+  let sub: ReactNode = null;
+  if (blockedNow) sub = <span data-row="blocked">{t('blocked', { city: blocked!.city })}</span>;
+  else if (priceNode)
+    sub = (
+      <>
+        {priceNode}
+        {!discounted ? <span data-row="tier">{tierText}</span> : null}
+      </>
+    );
+  else if (mineLine) sub = mineLine;
+  else if (state === 'soldout') sub = <span>{t('soldOutLine')}</span>;
+  else if (closedLine) sub = closedLine;
+
+  let actions: ReactNode = null;
+  if (blockedNow) actions = ownSeatBtn;
+  else if (sellable)
+    actions = (
+      <>
+        {info}
+        {take}
+      </>
+    );
+  else if (state === 'mine')
+    actions = (
+      <>
+        {emotionBtn}
+        {ticketBtn}
+      </>
+    );
+  else if (state === 'soldout') actions = moreLink;
+  else if (state === 'restrained') actions = info;
+  else if (after) actions = <span className={fr.stateNote}>{t('lightingNote')}</span>;
+
   return (
     <section {...common} className={cn(fr.strip, className)}>
-      <div className={fr.head}>
-        <Heading id={headingId} className={fr.heading}>
-          {t('heading', { city })}
-        </Heading>
-        {counter}
-        {state === 'soldout' ? (
-          <span data-row="soldout" className={fr.counter}>
-            · {t('soldOut')}
-          </span>
-        ) : null}
-        {priceText || tier ? (
-          <div data-row="price" className={fr.priceRow}>
-            {priceText}
-            {tier}
+      <div className={fr.top}>
+        <div className={fr.text}>
+          <div className={fr.titleLine}>
+            <Heading id={headingId} className={fr.heading}>
+              {t('heading', { city })}
+            </Heading>
+            {meta}
           </div>
-        ) : null}
-        {state === 'mine' ? <p className={fr.mineNote}>{mineText}</p> : null}
-        {blockedNow ? <p className={fr.mineNote}>{blockedNote?.props.children}</p> : null}
-        {soldOutNode ? <p className={fr.mineNote}>{soldOutNode}</p> : null}
-        {state === 'empty' && !blockedNow ? <p className={fr.mineNote}>{t('emptyPitch')}</p> : null}
-        <span className={fr.spacer} />
-        {wallPhase !== 'idle' ? (
-          <span className={fr.stateNote}>{t('lightingNote')}</span>
-        ) : state === 'closed' ? (
-          <span data-row="closed" className={fr.stateNote}>
-            {t('saleClosed')}
-          </span>
-        ) : null}
-        {blockedNow ? ownSeatBtn : null}
-        {sellable && !blockedNow ? (
-          <>
-            {info}
-            {take}
-          </>
-        ) : null}
-        {state === 'restrained' ? info : null}
-        {mineActions}
+          {sub ? (
+            <div data-row="price" className={fr.subLine}>
+              {sub}
+            </div>
+          ) : null}
+        </div>
+        {actions ? <div className={fr.actions}>{actions}</div> : null}
       </div>
       {wall}
       {restrained}

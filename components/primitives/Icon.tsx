@@ -67,7 +67,10 @@ export type IconName =
   | 'shield-check'
   | 'party'
   | 'text-short'
-  | 'link-off';
+  | 'link-off'
+  | 'sparkles'
+  | 'users'
+  | 'stamp';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -329,6 +332,26 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <path d="M2.5 12C3.5 10.2 7 6 12 6s8.5 4.2 9.5 6c-1 1.8-4.5 6-9.5 6s-8.5-4.2-9.5-6z" />
       <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  sparkles: (
+    <>
+      <path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z" />
+      <path d="M18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="9" r="3.2" />
+      <circle cx="16.5" cy="10" r="2.6" />
+      <path d="M3.5 19c.8-3.2 3-4.8 5.5-4.8s4.7 1.6 5.5 4.8M14.5 15c2.6-.4 5 .9 6 4" />
+    </>
+  ),
+  stamp: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="5.5" strokeDasharray="2 2" />
+      <path d="M12 9.5l.8 1.7 1.8.2-1.3 1.2.4 1.8-1.7-.9-1.7.9.4-1.8-1.3-1.2 1.8-.2z" />
     </>
   ),
   'eye-off': (

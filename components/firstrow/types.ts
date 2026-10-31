@@ -34,10 +34,8 @@ export interface FirstRowStripProps {
   onOpenTicket?(): void;
   /** Примітка стриманого режиму (`event.restrained.note.uk`). */
   restrainedNote?: string;
-  /** `closed`: «Наступний «Перший ряд» — Азорські острови о 03:00». */
-  nextSale?: { city: string; midnightMs: Ms; href?: string };
-  /** `soldout`: «Ще є місця: Перший ряд · Ріо-де-Жанейро». */
-  soldOutAlt?: { city: string; href?: string };
+  /** `soldout`: «Ще є місця: Перший ряд · Дублін і ще 3 ›» — відкриває список на місці чату / шторкою. */
+  soldOutAlt?: { city: string; more: number; onOpen(): void; open?: boolean };
   countryName?(flagCode: string): string | undefined;
   /** `module` — повний модуль (десктоп, сторінка країни); `compact` — смуга під плеєром на телефоні. */
   layout?: 'module' | 'compact';
@@ -62,15 +60,44 @@ export interface FirstRowChatRowProps {
   className?: string;
 }
 
-/** C8. O-FIRST-ROW-INFO «Що дає «Перший ряд»» (InFlowSlot). Корінь: `data-window="O-FIRST-ROW-INFO"`. */
+/** C8. O-FIRST-ROW-INFO «Що дає «Перший ряд»» (на місці чату / шторкою). Корінь: `data-window="O-FIRST-ROW-INFO"`. */
 export interface FirstRowInfoProps {
   city: string;
   midnightMs: Ms;
   view: FirstRowView;
-  /** Кнопка «Зайняти місце» — завжди `coral` (у вікні звук нейтральний). Немає, якщо продаж не відкритий. */
+  /** У гостя вже є (куплений) пас — блок «−50% на кожне місце» замість «пас у подарунок». */
+  hasPass?: boolean;
+  /** «Зайняти місце» — завжди `coral` (у вікні звук нейтральний). Немає, якщо продаж не відкритий. */
   onTake?(): void;
-  /** Десктоп: Collapsible «Згорнути». */
-  onCollapse(): void;
+  /** «Закрити». */
+  onClose(): void;
+  /** «‹ До списку» — вікно відкрите зі «Ще є місця». */
+  onBack?(): void;
+  className?: string;
+}
+
+/** «Ще є місця»: рядок списку інших «Перших рядів». */
+export interface FirstRowMoreRow {
+  eventId: string;
+  city: string;
+  country: string;
+  flagCode: string;
+  midnightMs: Ms;
+  free: number;
+  price: number;
+  main: boolean;
+}
+
+/** «Ще є місця» (на місці чату / шторкою). Корінь: `data-window="O-FIRST-ROW-MORE"`. */
+export interface FirstRowMoreProps {
+  /** Місто розпроданого ряду. */
+  city: string;
+  /** Північ розпроданого ряду — для групи «Та сама північ». */
+  midnightMs: Ms;
+  now: Ms;
+  rows: readonly FirstRowMoreRow[];
+  onPick(eventId: string): void;
+  onClose(): void;
   className?: string;
 }
 

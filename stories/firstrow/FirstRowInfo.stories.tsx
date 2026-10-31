@@ -9,7 +9,7 @@ const meta = {
   title: 'Перший ряд/FirstRowInfo',
   component: FirstRowInfo,
   globals: { surface: 'desktop' },
-  args: { city: 'Лондон', midnightMs: MIDNIGHT, onTake: noop, onCollapse: noop, ...makeView({ taken: 8 }) },
+  args: { city: 'Лондон', midnightMs: MIDNIGHT, onTake: noop, onClose: noop, ...makeView({ taken: 8 }) },
   render: (args) => (
     <Stage>
       <FirstRowInfo {...args} />

@@ -21,8 +21,8 @@ export const OFFER_MIN_BEFORE_NEXT = 10 * MIN;
 export const HANDOVER_AFTER = 15 * MIN;
 /** «Остання хвилина» — з +14 хв. */
 export const LAST_MINUTE_FROM = 14 * MIN;
-/** Продаж «Першого ряду» закривається за 15 хв до півночі. */
-export const FIRSTROW_SALE_CLOSE = 15 * MIN;
+/** Продаж «Першого ряду» закривається за 5 хв до півночі (рішення власника 2026-10-31; було 15). */
+export const FIRSTROW_SALE_CLOSE = 5 * MIN;
 /** Відкриття продажу «Першого ряду». */
 export const FIRSTROW_SALE_OPEN = Date.parse('2026-12-01T00:00:00Z');
 /** Утримання місця — 600 с. */

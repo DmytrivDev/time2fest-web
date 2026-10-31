@@ -276,10 +276,10 @@ describe('ціна через firstRowView на симульованих міс�
     expect(v.priceChanged).toEqual({ from: 4.99, to: 7.99 });
   });
 
-  it('за 15 хв до півночі — closed, ціни немає', () => {
-    const v = view(3, undefined, T0 - 15 * MIN);
+  it('за 5 хв до півночі — closed, ціни немає', () => {
+    const v = view(3, undefined, T0 - 5 * MIN);
     expect(v.state).toBe('closed');
     expect(v.price.current).toBeNull();
-    expect(view(3, undefined, T0 - 15 * MIN - 1).state).toBe('open');
+    expect(view(3, undefined, T0 - 5 * MIN - 1).state).toBe('open');
   });
 });

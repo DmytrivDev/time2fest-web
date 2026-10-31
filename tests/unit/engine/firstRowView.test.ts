@@ -124,11 +124,11 @@ describe('firstRowView: пріоритет станів', () => {
     expect(firstRowView(T0 - 5 * MIN, london, seats(10), guest()).state).toBe('closed');
   });
 
-  it('продаж закрито за 15 хв до півночі', () => {
-    expect(firstRowView(T0 - 15 * MIN - 1, london, seats(0), guest()).state).toBe('empty');
-    const v = firstRowView(T0 - 15 * MIN, london, seats(0), guest());
+  it('продаж закрито за 5 хв до півночі (рішення 2026-10-31)', () => {
+    expect(firstRowView(T0 - 5 * MIN - 1, london, seats(0), guest()).state).toBe('empty');
+    const v = firstRowView(T0 - 5 * MIN, london, seats(0), guest());
     expect(v.state).toBe('closed');
-    expect(v.saleClosesAt).toBe(T0 - 15 * MIN);
+    expect(v.saleClosesAt).toBe(T0 - 5 * MIN);
     expect(v.price.current).toBeNull();
   });
 

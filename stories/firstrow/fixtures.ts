@@ -3,7 +3,7 @@ import { firstRowView, type FirstRowView } from '@/lib/engine/firstRowView';
 
 export const MIDNIGHT: Ms = Date.parse('2027-01-01T00:00:00Z');
 export const NOW_OPEN: Ms = MIDNIGHT - 3_600_000;
-export const NOW_CLOSED: Ms = MIDNIGHT - 600_000;
+export const NOW_CLOSED: Ms = MIDNIGHT - 180_000; // продаж закривається за 5 хв до півночі
 export const RESTRAINED_NOTE = 'Цього вечора ми без анімації та привітань — стіна тиха.';
 const EVENT = { id: 'evt_london_2027', midnightUtc: '2027-01-01T00:00:00Z', firstRow: { saleEnabled: true } };
 const NAMES: [string, string, string][] = [
