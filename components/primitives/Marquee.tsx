@@ -35,7 +35,7 @@ export interface MarqueeProps {
 }
 
 /** Зупинка: `hover`/`focus` — поки курсор чи фокус тут; `held` — після ручної прокрутки, до дії поза стрічкою. */
-function usePause(root: React.RefObject<HTMLElement | null>) {
+export function usePause(root: React.RefObject<HTMLElement | null>) {
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const [held, setHeld] = useState(false);

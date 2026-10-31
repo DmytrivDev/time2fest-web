@@ -49,6 +49,7 @@ import {
 } from './controller';
 import { FirstRowChatRow, FirstRowStrip } from './FirstRowStrip';
 import { useOpenParticipant } from './useOpenParticipant';
+import { useSharePostcard } from './PostcardShare';
 import type { FirstRowMoreRow } from './types';
 
 export interface FirstRowModuleProps {
@@ -340,6 +341,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
 
   const openEmoji = useOpenMyEmotion(event.id);
   const openParticipant = useOpenParticipant();
+  const sharePostcard = useSharePostcard(event, city, seats);
 
   const coralSound = !!player && player.muted;
   const more = view.state === 'soldout' ? otherRows(event, now) : [];
@@ -358,6 +360,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       onOpenEmoji={view.state === 'mine' ? openEmoji : undefined}
       onOpenTicket={view.state === 'mine' ? openWindow : undefined}
       onOpenParticipant={openParticipant}
+      onSharePostcard={sharePostcard}
       restrainedNote={event.restrained?.note.uk}
       soldOutAlt={more.length ? { city: more[0]!.city, more: more.length - 1, onOpen: moreOpen ? () => overlay.close(FIRST_ROW_MORE_ID) : openMore, open: moreOpen } : undefined}
       countryName={lookup.countryName}

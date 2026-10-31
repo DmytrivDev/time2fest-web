@@ -325,3 +325,257 @@ button.free:hover {
 .phoneActions .infoBtn {
   padding: 0 var(--spacing-2);
 }
+
+/* ── Після півночі — листівка (дошка `Desk-FR-After-C`, рішення власника 2026-10-31) ─────────────────────── */
+/* Тло з іскрами замість бігучого рядка; модуль лишається тим самим (рамка, світіння). */
+.strip[data-postcard-on] {
+  padding: 20px var(--spacing-4) 14px; /* дошка */
+  background:
+    radial-gradient(circle at 12% 30%, rgba(252, 226, 134, 0.35) 0 2px, transparent 3px),
+    radial-gradient(circle at 88% 22%, rgba(252, 226, 134, 0.3) 0 2px, transparent 3px),
+    radial-gradient(circle at 72% 78%, rgba(249, 74, 81, 0.35) 0 2px, transparent 3px),
+    radial-gradient(circle at 30% 85%, rgba(252, 226, 134, 0.25) 0 1.5px, transparent 2.5px),
+    radial-gradient(90% 120% at 50% 0%, rgba(252, 226, 134, 0.14), transparent 70%),
+    var(--first-row-module-background); /* дошка */
+}
+.compact[data-postcard-on] {
+  padding: 0 var(--spacing-3);
+}
+.compact[data-postcard-on][data-open='true'] {
+  padding-bottom: var(--spacing-3);
+}
+.postcard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+.postcardCompact {
+  gap: var(--spacing-3);
+}
+.pcTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+.pcKicker {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-highlight);
+}
+.pcBig {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+.postcardCompact .pcBig {
+  font-size: 22px;
+}
+.pcPills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-2);
+}
+.postcardCompact .pcPills {
+  gap: 6px;
+}
+/* Фішка: м’яка з жовтою межею; чиє привітання на екрані — залита жовтим, світиться, смужка внизу. */
+.pcPill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  height: 40px;
+  padding: 0 14px 0 12px;
+  border: 1px solid rgba(252, 226, 134, 0.5); /* дошка */
+  border-radius: var(--radius-full);
+  background: var(--color-highlight-tint);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+.pcPill:hover {
+  border-color: var(--color-highlight);
+}
+.postcardCompact .pcPill {
+  height: 36px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+.pcPillOn,
+.pcPillOn:hover {
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  box-shadow: 0 0 16px rgba(252, 226, 134, 0.45); /* дошка */
+}
+.pcPillMine {
+  border-color: var(--color-text);
+}
+/* Ще не загорілось (перші 5 с опівночі). */
+.pcPillDark {
+  border-color: var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.pcEmoji {
+  font-size: 17px;
+  line-height: 1;
+}
+.pcYou {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+}
+.pcBar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(18, 18, 20, 0.2); /* дошка */
+  overflow: hidden;
+}
+.pcBarFill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--color-on-highlight);
+  transform-origin: left center;
+  animation-name: t2f-pc-bar;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+.pcBarFill[data-paused] {
+  animation-play-state: paused;
+}
+@keyframes t2f-pc-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.pcQuote {
+  min-height: 84px;
+  padding-top: var(--spacing-3);
+  border-top: 1px solid rgba(252, 226, 134, 0.25); /* дошка */
+  display: flex;
+}
+.postcardCompact .pcQuote {
+  min-height: 96px;
+}
+.pcQuoteIn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  animation: t2f-pc-fade 360ms ease-out;
+}
+@keyframes t2f-pc-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pcQuoteIn {
+    animation: none;
+  }
+}
+.pcText {
+  margin: 0;
+  max-width: 620px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.postcardCompact .pcText {
+  font-size: 16px;
+}
+.pcNone {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.pcNoneEmoji {
+  font-size: 30px;
+  line-height: 1.1;
+}
+.pcAuthor {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  max-width: 100%;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.pcAuthorName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(180, 180, 188, 0.45); /* дошка */
+}
+.pcAuthor:hover {
+  color: var(--color-text);
+}
+.pcMine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2) var(--spacing-3);
+}
+.pcWho {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.pcFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+.pcHint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.pillGold {
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}

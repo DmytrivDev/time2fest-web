@@ -40,6 +40,14 @@ export interface ShareContentProps {
   renderPng?: (svg: string, width: number, height: number) => Promise<Blob>;
   /** Збереження PNG; за замовчуванням — завантаження через `<a download>`. */
   onDownload?: (blob: Blob, filename: string) => void;
+  /** Інша картинка замість штампа (листівка «Першого ряду»): SVG для формату. */
+  svgFor?: (ratio: ShareRatio) => string;
+  /** Опис прев’ю для зчитувача (за замовчуванням — штамп). */
+  previewAlt?: string;
+  /** Текст для системного шерингу й WhatsApp (за замовчуванням — штамп). */
+  shareText?: string;
+  /** Початок імені файлу PNG (`time2fest-stamp`). */
+  fileStem?: string;
   className?: string;
 }
 
@@ -55,7 +63,17 @@ function saveBlob(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-export function ShareContent({ data, onNativeShare, renderPng = svgToPngBlob, onDownload = saveBlob, className }: ShareContentProps) {
+export function ShareContent({
+  data,
+  onNativeShare,
+  renderPng = svgToPngBlob,
+  onDownload = saveBlob,
+  svgFor,
+  previewAlt,
+  shareText,
+  fileStem = 'time2fest-stamp',
+  className,
+}: ShareContentProps) {
   const t = useTranslations('share');
   const [ratio, setRatio] = useState<ShareRatio>('story');
   const [loaded, setLoaded] = useState<ShareRatio | null>(null);
@@ -65,14 +83,14 @@ export function ShareContent({ data, onNativeShare, renderPng = svgToPngBlob, on
 
   const caption = t('caption', { place: data.place, time: data.time });
   const svg = useMemo(
-    () => shareCardSvg(ratio, { stampLine: t('stampLine'), place: data.place.toLocaleUpperCase('uk'), caption, brand: 'Time2Fest' }),
-    [ratio, data.place, caption, t],
+    () => (svgFor ? svgFor(ratio) : shareCardSvg(ratio, { stampLine: t('stampLine'), place: data.place.toLocaleUpperCase('uk'), caption, brand: 'Time2Fest' })),
+    [ratio, data.place, caption, t, svgFor],
   );
   const src = useMemo(() => svgDataUrl(svg), [svg]);
   const size = SHARE_SIZE[ratio];
   const generating = loaded !== ratio;
 
-  const text = t('shareText', { place: data.place });
+  const text = shareText ?? t('shareText', { place: data.place });
   const waHref = `https://wa.me/?text=${encodeURIComponent(`${text} ${data.url}`)}`;
 
   const copy = async () => {
@@ -99,7 +117,7 @@ export function ShareContent({ data, onNativeShare, renderPng = svgToPngBlob, on
     setFailed(false);
     try {
       const blob = await renderPng(svg, size.w, size.h);
-      onDownload(blob, `time2fest-stamp-${ratio === 'story' ? '9x16' : '1x1'}.png`);
+      onDownload(blob, `${fileStem}-${ratio === 'story' ? '9x16' : '1x1'}.png`);
     } catch {
       setFailed(true);
     }
@@ -121,7 +139,7 @@ export function ShareContent({ data, onNativeShare, renderPng = svgToPngBlob, on
         {/* eslint-disable-next-line @next/next/no-img-element -- data-URL картка, оптимізація зображень не потрібна */}
         <img
           src={src}
-          alt={t('previewAlt', { caption })}
+          alt={previewAlt ?? t('previewAlt', { caption })}
           width={size.w}
           height={size.h}
           onLoad={() => setLoaded(ratio)}

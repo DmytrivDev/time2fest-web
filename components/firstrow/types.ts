@@ -34,6 +34,8 @@ export interface FirstRowStripProps {
   onOpenTicket?(): void;
   /** Дотик до чужого місця на стіні — картка учасника (O-AUTHOR). */
   onOpenParticipant?(participant: SeatParticipant): void;
+  /** Після півночі: «Поділитися листівкою» (O-SHARE) — з учасником, чиє привітання піде на листівку. */
+  onSharePostcard?(featured: SeatParticipant | undefined): void;
   /** Примітка стриманого режиму (`event.restrained.note.uk`). */
   restrainedNote?: string;
   /** `soldout`: «Ще є місця: Перший ряд · Дублін і ще 3 ›» — відкриває список на місці чату / шторкою. */

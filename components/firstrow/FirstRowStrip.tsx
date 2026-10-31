@@ -14,6 +14,7 @@
 import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 import { FirstRowWall } from '@/components/live/FirstRowWall';
+import { FirstRowPostcard } from './FirstRowPostcard';
 import { EMOJI_SYMBOLS } from '@/components/live/SeatPill';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
@@ -40,6 +41,7 @@ export function FirstRowStrip({
   onOpenEmoji,
   onOpenTicket,
   onOpenParticipant,
+  onSharePostcard,
   restrainedNote,
   soldOutAlt,
   countryName,
@@ -74,6 +76,23 @@ export function FirstRowStrip({
   const panelId = `${headingId}-panel`;
   const closeMin = Math.round(FIRSTROW_SALE_CLOSE / 60_000);
   const hot = state === 'last3';
+  // Після півночі — листівка замість стіни й бігучого рядка (рішення власника 2026-10-31).
+  const postcardOn = after && state !== 'restrained' && seats.some((s) => s.state === 'taken');
+  const postcard = (kicker?: ReactNode) => (
+    <FirstRowPostcard
+      city={city}
+      midnightMs={midnightMs}
+      seats={seats}
+      phase={view.wall.phase}
+      lightingFrom={view.wall.lightingFrom}
+      kicker={kicker}
+      compact={compact}
+      countryName={countryName}
+      onOpenParticipant={onOpenParticipant}
+      onOpenEmoji={onOpenEmoji}
+      onShare={onSharePostcard}
+    />
+  );
 
   const leftSpoken = <span className="sr-only">{t('leftSpoken', { free: view.freeCount, total: view.total })}</span>;
 
@@ -220,12 +239,14 @@ export function FirstRowStrip({
     'data-layout': layout,
     'data-midnight': midnightMs,
     'data-wall-phase': wallPhase,
+    'data-postcard-on': postcardOn || undefined,
   };
 
   if (compact) {
     // Пігулка в заголовку — коротка, щоб назва з нею завжди влазила в один рядок (дошки 2026-10-31).
     let pill: ReactNode = null;
-    if (state === 'empty') pill = <span className={fr.pill}>{t('pillAllFree', { total: view.total })}</span>;
+    if (postcardOn) pill = <span className={cn(fr.pill, fr.pillGold)}>{t('postcard.pill')}</span>;
+    else if (state === 'empty') pill = <span className={fr.pill}>{t('pillAllFree', { total: view.total })}</span>;
     else if (state === 'soldout') pill = <span className={fr.pill}>{t('soldOut')}</span>;
     else if (closedBefore) pill = <span className={fr.pill}>{t('pillClosed')}</span>;
     else if (state === 'mine' && mine) pill = <span className={cn(fr.pill, fr.pillHot)}>{t('pillSeat', { n: mine.number })}</span>;
@@ -263,7 +284,8 @@ export function FirstRowStrip({
         {/* Панель завжди в DOM і розгортається плавно (правило 2026-10-30); стіна загоряється опівночі синхронно. */}
         <Reveal open={open} id={panelId}>
           <div className={fr.panel}>
-            {state === 'empty' && !blockedNow ? (
+            {postcardOn ? postcard() : null}
+            {!postcardOn && state === 'empty' && !blockedNow ? (
               <>
                 <p className={fr.pitch}>{t('emptyPitch')}</p>
                 <p data-row="price" className={fr.sub}>
@@ -281,7 +303,7 @@ export function FirstRowStrip({
                 </div>
               </>
             ) : null}
-            {wall}
+            {postcardOn ? null : wall}
             {blockedNow ? (
               <div className={fr.details}>
                 <p data-row="blocked" className={fr.sub}>
@@ -379,6 +401,17 @@ export function FirstRowStrip({
   else if (state === 'soldout') actions = moreLink;
   else if (state === 'restrained') actions = info;
   else if (after) actions = <span className={fr.stateNote}>{t('lightingNote')}</span>;
+
+  if (postcardOn)
+    return (
+      <section {...common} className={cn(fr.strip, className)}>
+        {postcard(
+          <Heading id={headingId} className={fr.pcKicker}>
+            {t('heading', { city })}
+          </Heading>,
+        )}
+      </section>
+    );
 
   return (
     <section {...common} className={cn(fr.strip, className)}>
