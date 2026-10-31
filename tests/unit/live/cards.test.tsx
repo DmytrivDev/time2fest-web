@@ -86,27 +86,43 @@ describe('EventCard', () => {
 });
 
 describe('NowNext', () => {
-  it('карусель: минуле лишається одне; перемикач «Лише з трансляціями» ховає можливі й «лише відлік»', () => {
+  it('карусель: минуле лишається одне; фільтр «З трансляціями» ховає можливі й «лише відлік»', () => {
     renderWithApp(<NowNext items={STRIP} zoneLabel="Київ" />);
     expect(screen.getByRole('heading', { name: 'Зараз і далі' })).toBeInTheDocument();
     expect(screen.getByText('за вашим часом (Київ)')).toBeInTheDocument();
     expect(screen.getByText('Кабо-Верде')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('switch', { name: /Лише з трансляціями/ }));
+    fireEvent.click(screen.getByRole('radio', { name: /З трансляціями/ }));
     expect(screen.queryByText('Кабо-Верде')).toBeNull();
     expect(screen.queryByText('Ріо-де-Жанейро')).toBeNull();
     expect(screen.getByText('Лондон')).toBeInTheDocument();
   });
 
-  it('телефон: 4 картки, «Показати ще N», розгортання, «Перейти до мапи»', () => {
-    renderWithApp(<NowNext items={STRIP} zoneLabel="Київ" layout="stack" mapHref="#map" />);
+  it('телефон: 4 картки, «Ще N подій», розгортання, «Країни й пояси»', () => {
+    renderWithApp(<NowNext items={STRIP} zoneLabel="Київ" layout="stack" mapHref="/countries/" />);
     // Париж минув — на телефоні минулих немає: лишається 9 з 10.
     expect(screen.getAllByRole('article')).toHaveLength(4);
-    const more = screen.getByRole('button', { name: /Показати ще 5/ });
+    const more = screen.getByRole('button', { name: /Ще 5 подій/ });
     expect(more).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.getByRole('link', { name: /Перейти до мапи/ })).toHaveAttribute('href', '#map');
+    expect(screen.getByRole('link', { name: /Країни й пояси/ })).toHaveAttribute('href', '/countries/');
     fireEvent.click(more);
     expect(screen.getAllByRole('article')).toHaveLength(9);
-    expect(screen.getByRole('button', { name: 'Показати менше' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Згорнути' })).toBeInTheDocument();
+  });
+
+  it('«Мій графік» (рішення 2026-10-31): лише події з графіка й лічильник; без пасу — замок і вікно графіка', () => {
+    const items = STRIP.map((i) => (i.title === 'Ріо-де-Жанейро' ? { ...i, inSchedule: true } : i));
+    const { unmount } = renderWithApp(<NowNext items={items} zoneLabel="Київ" />);
+    const mine = screen.getByRole('radio', { name: /Мій графік/ });
+    expect(mine).toHaveTextContent('1');
+    fireEvent.click(mine);
+    expect(screen.getByText('Ріо-де-Жанейро')).toBeInTheDocument();
+    expect(screen.queryByText('Кабо-Верде')).toBeNull();
+    unmount();
+    const onScheduleLocked = vi.fn();
+    renderWithApp(<NowNext items={items} zoneLabel="Київ" scheduleLocked onScheduleLocked={onScheduleLocked} />);
+    fireEvent.click(screen.getByRole('radio', { name: /Мій графік\. Графік — у Новорічному пасі/ }));
+    expect(onScheduleLocked).toHaveBeenCalled();
+    expect(screen.getByText('Кабо-Верде')).toBeInTheDocument();
   });
 
   it('порожньо після фільтра: підказка й «Показати всі події»', () => {

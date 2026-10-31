@@ -239,22 +239,22 @@ test.describe('US6 · чайові після 3-го Нового року', () 
 });
 
 test.describe('US6 · «Потрібен пас»', () => {
-  test('кнопка графіка без пасу → «Щоб додавати в графік, потрібен Новорічний пас» → «Що дає пас»', async ({
-    page,
-  }) => {
+  test('кнопка графіка без пасу → вікно «Графік — у Новорічному пасі» на місці чату → «Усе про пас»', async ({ page }) => {
     await seedGuest(page, {});
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
     await page
       .getByRole('button', { name: /^Додати в графік: / })
       .first()
       .click();
-    await expect(offerCard(page, 'Щоб додавати в графік, потрібен Новорічний пас')).toBeVisible();
-    await expect(slot(page)).toContainText('Перше нагадування — безплатно.');
-    // У «Потрібен пас» коралової кнопки немає; коралова на екрані лишається одна (звук), не більше.
-    await expect(slot(page).locator('[data-variant="coral"]')).toHaveCount(0);
-    expect(await visibleCoral(page).count()).toBeLessThanOrEqual(1);
-    await page.getByRole('button', { name: 'Що дає пас' }).click();
-    await expect(offerCard(page, 'Що дає Новорічний пас')).toBeVisible();
+    // Рішення 2026-10-31: вікно на місці чату / шторкою, не плашка в потоці; безплатного нагадування немає.
+    const gate = page.locator('[data-window="O-SCHEDULE-GATE"]');
+    await expect(gate).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Графік — у Новорічному пасі' })).toBeVisible();
+    await expect(gate).not.toContainText('безплатно');
+    await expect(gate.getByRole('button', { name: /Оформити пас/ })).toBeVisible();
+    await gate.getByRole('button', { name: /Усе про пас/ }).click();
+    await expect(page.locator('[data-window="O-PASS-INFO-BOARD"]')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Що дає Новорічний пас' })).toBeVisible();
   });
 });
 

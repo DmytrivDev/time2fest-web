@@ -118,6 +118,7 @@ export function HomeLive() {
   useMomentWindows(eventId);
   // Пропозиції пасу й чайових (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();
+  const hasPass = useGuestStore((s) => s.hasPass);
 
   const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
   const city = current?.city?.name.uk;
@@ -152,8 +153,10 @@ export function HomeLive() {
       zoneLabel={zoneLabel}
       layout={layout}
       progress={progress}
-      mapHref={layout === 'stack' ? '#zone-map' : undefined}
+      mapHref={layout === 'stack' ? '/countries/' : undefined}
       onToggleSchedule={passWindows.requestSchedule}
+      scheduleLocked={!hasPass}
+      onScheduleLocked={passWindows.openScheduleGate}
       airEventId={eventId}
     />
   );

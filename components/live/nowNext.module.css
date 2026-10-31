@@ -353,3 +353,120 @@
     display: inline;
   }
 }
+
+/* ── Фільтр «Усі · З трансляціями · Мій графік» (дошка `Desk-NowNext-Schedule`, 2026-10-31) ─────────────── */
+.filter {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+/* Телефон: на всю ширину під заголовком; сегменти — за довжиною напису, не порівну. */
+.filterFull {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: var(--spacing-1);
+}
+.seg {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9px; /* дошка */
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.filterFull .seg {
+  flex: 1 1 auto;
+  height: 38px;
+  padding: 0 10px;
+}
+.seg:hover {
+  color: var(--color-text);
+}
+.seg[data-state='on'] {
+  background: var(--color-border-strong);
+  color: var(--color-text);
+  font-weight: 700;
+}
+.segCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-size: 12px;
+  font-weight: 700;
+}
+.seg[data-state='off'] .segCount {
+  background: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+/* ── Телефон: компактні рядки (дошка): місто й статус ліворуч, час праворуч, календар — по центру справа ── */
+.card[data-layout='stack'] .link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'top mid'
+    'status mid';
+  align-items: center;
+  column-gap: var(--spacing-3);
+  row-gap: 3px;
+  height: auto;
+  min-height: 64px;
+  padding: 10px 60px 10px 14px;
+}
+.card[data-layout='stack'] .onAir {
+  padding-left: 11px;
+}
+.card[data-layout='stack'] .top {
+  grid-area: top;
+  height: auto;
+  padding-right: 0;
+}
+.card[data-layout='stack'] .name {
+  font-size: 15px;
+}
+.card[data-layout='stack'] .mid {
+  grid-area: mid;
+  align-items: flex-end;
+}
+.card[data-layout='stack'] .timeRow {
+  height: auto;
+}
+.card[data-layout='stack'] .timeRow > :not(time) {
+  display: none; /* «Наживо» — у рядку статусу й червоною смугою зліва */
+}
+.card[data-layout='stack'] .time {
+  font-size: 22px;
+  font-weight: 800;
+}
+.card[data-layout='stack'] .yours {
+  font-size: 11px;
+  line-height: 16px;
+}
+.card[data-layout='stack'] .status {
+  grid-area: status;
+  font-size: 12px;
+  font-weight: 600;
+}
+.card[data-layout='stack'] .cal {
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}

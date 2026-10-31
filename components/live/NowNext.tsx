@@ -2,13 +2,13 @@
 
 import { useId, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ToggleGroup } from 'radix-ui';
 import { Button } from '@/components/primitives/Button';
 import { Carousel, CarouselArrow, useCarousel } from '@/components/primitives/Carousel';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Skeleton } from '@/components/primitives/Skeleton';
-import { Switch } from '@/components/primitives/Switch';
 import { useNow } from '@/lib/time/TimeProvider';
 import { EventCard, type EventCardData } from './EventCard';
 import { hasStreamNow, isPastStatus, sortForStrip, withStatus } from './eventCards';
@@ -25,12 +25,15 @@ export interface NowNextProps {
   filterLiveOnly?: boolean;
   defaultFilterLiveOnly?: boolean;
   onFilterLiveOnlyChange?: (next: boolean) => void;
+  /** Без пасу «Мій графік» із замком: натиск — вікно «Графік — у Новорічному пасі» (рішення 2026-10-31). */
+  scheduleLocked?: boolean;
+  onScheduleLocked?: () => void;
   /** Скільки карток на телефоні до «Показати ще». */
   stackLimit?: number;
   /** Скільки минулих подій лишити зліва в каруселі (на телефоні минулих немає). */
   pastLimit?: number;
   progress?: FestProgressProps;
-  /** Посилання «Перейти до мапи» (телефон). */
+  /** «Країни й пояси ›» під списком (телефон) — сторінка країн. */
   mapHref?: string;
   loading?: boolean;
   onToggleSchedule?: (id: string, next: boolean) => void;
@@ -39,7 +42,13 @@ export interface NowNextProps {
   className?: string;
 }
 
-/** C5. «Зараз і далі»: заголовок, перемикач «Лише з трансляціями», стрічка (десктоп) або стопка (телефон), «Прогрес свята». */
+type Filter = 'all' | 'live' | 'mine';
+
+/**
+ * C5. «Зараз і далі»: заголовок, фільтр «Усі · З трансляціями · Мій графік (N)» (сегменти замість перемикача, дошка
+ * `Desk-NowNext-Schedule`, рішення 2026-10-31), стрічка (десктоп) або компактний список (телефон: 4 події,
+ * «Ще N подій» / «Згорнути», «Країни й пояси ›»), «Прогрес свята».
+ */
 export function NowNext({
   items,
   zoneLabel,
@@ -47,6 +56,8 @@ export function NowNext({
   filterLiveOnly,
   defaultFilterLiveOnly = false,
   onFilterLiveOnlyChange,
+  scheduleLocked = false,
+  onScheduleLocked,
   stackLimit = 4,
   pastLimit,
   progress,
@@ -62,9 +73,11 @@ export function NowNext({
   const tCarousel = useTranslations('primitives.carousel');
   const titleId = useId();
   const now = useNow({ granularity: 'minute' });
-  const [innerFilter, setInnerFilter] = useState(defaultFilterLiveOnly);
+  const [innerFilter, setInnerFilter] = useState<Filter>(defaultFilterLiveOnly ? 'live' : 'all');
   const [expanded, setExpanded] = useState(false);
-  const liveOnly = filterLiveOnly ?? innerFilter;
+  const filter: Filter = filterLiveOnly === undefined ? innerFilter : filterLiveOnly ? 'live' : innerFilter === 'mine' ? 'mine' : 'all';
+  const liveOnly = filter === 'live';
+  const mineOnly = filter === 'mine' && !scheduleLocked;
   const stack = layout === 'stack';
   // Стрілки стрічки — у рядку заголовка праворуч (рішення власника): видно з початку, ніколи не над картками.
   const strip = useCarousel();
@@ -73,19 +86,25 @@ export function NowNext({
 
   const visible = useMemo(() => {
     const all = withStatus(now, items);
-    const filtered = liveOnly ? all.filter((i) => hasStreamNow(i)) : all;
+    const filtered = liveOnly ? all.filter((i) => hasStreamNow(i)) : mineOnly ? all.filter((i) => i.inSchedule) : all;
     const sorted = sortForStrip(filtered);
     const past = sorted.filter((i) => isPastStatus(i.status) && i.id !== airEventId);
     const rest = sorted.filter((i) => !isPastStatus(i.status) || i.id === airEventId);
     return [...past.slice(Math.max(0, past.length - keepPast)), ...rest];
-  }, [now, items, liveOnly, keepPast, airEventId]);
+  }, [now, items, liveOnly, mineOnly, keepPast, airEventId]);
 
   const shown = stack && !expanded ? visible.slice(0, stackLimit) : visible;
   const hidden = visible.length - shown.length;
 
-  const setFilter = (next: boolean) => {
-    if (filterLiveOnly === undefined) setInnerFilter(next);
-    onFilterLiveOnlyChange?.(next);
+  const scheduleCount = useMemo(() => withStatus(now, items).filter((i) => i.inSchedule && !isPastStatus(i.status)).length, [now, items]);
+  const setFilter = (next: Filter) => {
+    if (next === 'mine' && scheduleLocked) {
+      onScheduleLocked?.();
+      return;
+    }
+    setInnerFilter(next);
+    setExpanded(false);
+    if (next === 'live' || filter === 'live') onFilterLiveOnlyChange?.(next === 'live');
   };
 
   const card = (item: (typeof visible)[number]) => (
@@ -105,8 +124,8 @@ export function NowNext({
   } else if (visible.length === 0) {
     body = (
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-surface p-4">
-        <p className="text-body text-text-secondary">{t('empty')}</p>
-        <Button variant="secondary" onClick={() => setFilter(false)}>
+        <p className="text-body text-text-secondary">{mineOnly ? t('emptyMine') : t('empty')}</p>
+        <Button variant="secondary" onClick={() => setFilter('all')}>
           {t('showAll')}
         </Button>
       </div>
@@ -132,7 +151,7 @@ export function NowNext({
             {mapHref ? (
               <a href={mapHref} className={cn('t2f-focus rounded-sm', s.toMap)}>
                 {t('toMap')}
-                <Icon name="arrow-down" size={16} strokeWidth={2} />
+                <Icon name="chevron-right" size={16} strokeWidth={2} />
               </a>
             ) : null}
           </div>
@@ -147,6 +166,35 @@ export function NowNext({
     );
   }
 
+  const lockedHint = scheduleLocked ? t('mineLocked') : undefined;
+  const filterControl = (
+    <ToggleGroup.Root
+      type="single"
+      aria-label={t('filterLabel')}
+      value={filter}
+      onValueChange={(v) => {
+        if (v) setFilter(v as Filter);
+      }}
+      data-row="filter"
+      className={cn(s.filter, stack && s.filterFull)}
+    >
+      <ToggleGroup.Item value="all" className={cn('t2f-focus', s.seg)}>
+        {t('filterAll')}
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="live" className={cn('t2f-focus', s.seg)}>
+        {stack ? null : <Icon name="broadcast" size={14} />}
+        {t('filterLive')}
+      </ToggleGroup.Item>
+      {/* Без пасу — не перемикає, а відкриває вікно графіка (onValueChange → onScheduleLocked). */}
+      <ToggleGroup.Item value="mine" aria-label={lockedHint ? `${t('filterMine')}. ${lockedHint}` : undefined} data-locked={scheduleLocked || undefined} className={cn('t2f-focus', s.seg)}>
+        {stack ? null : <Icon name={scheduleLocked ? 'lock' : 'calendar-check'} size={14} />}
+        {stack && scheduleLocked ? <Icon name="lock" size={14} /> : null}
+        {t('filterMine')}
+        {!scheduleLocked && scheduleCount > 0 ? <span className={s.segCount}>{scheduleCount}</span> : null}
+      </ToggleGroup.Item>
+    </ToggleGroup.Root>
+  );
+
   return (
     <section aria-labelledby={titleId} data-now-next="" data-layout={layout} className={cn(s.section, className)}>
       <SectionHeader
@@ -155,7 +203,7 @@ export function NowNext({
         meta={t('meta', { zone: zoneLabel })}
         action={
           <div className="flex items-center gap-4">
-            <Switch label={tNav('onlyWithStreams')} labelSide="end" checked={liveOnly} onCheckedChange={setFilter} />
+            {stack ? null : filterControl}
             {!stack && !loading && visible.length > 0 ? (
               <span className="flex items-center gap-1">
                 <CarouselArrow dir="prev" size="md" label={tCarousel('prevEvents')} disabled={!strip.canPrev} onClick={strip.prev} />
@@ -165,6 +213,7 @@ export function NowNext({
           </div>
         }
       />
+      {stack ? filterControl : null}
       {body}
       {progress ? <FestProgress {...progress} /> : null}
     </section>

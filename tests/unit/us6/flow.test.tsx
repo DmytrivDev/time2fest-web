@@ -204,18 +204,20 @@ describe('вікна пропозицій у потоці', () => {
     expect(document.querySelector('[data-offer]')).toBeNull();
   });
 
-  it('кнопка графіка без пасу → «Потрібен пас»; «Що дає пас» → pass-info; з пасом — перемикає графік', () => {
+  it('кнопка графіка без пасу → вікно «Графік — у Новорічному пасі» на місці чату; «Усе про пас»; з пасом — перемикає графік', () => {
     let api!: PassWindowsApi;
     renderPage(<Host onApi={(a) => {
           api = a;
         }} />);
     act(() => api.requestSchedule(s1.id, true));
-    expect(screen.getByRole('heading', { level: 2, name: 'Щоб додавати в графік, потрібен Новорічний пас' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Графік — у Новорічному пасі' })).toBeInTheDocument();
+    expect(document.querySelector('[data-window="O-SCHEDULE-GATE"]')).not.toBeNull();
+    // Безплатного нагадування у вікні немає (правка власника 2026-10-31).
+    expect(screen.queryByText(/безплатно/)).toBeNull();
     expect(useGuestStore.getState().schedule).toEqual([]);
     expect(useGuestStore.getState().offers.visible).toBe('pass-gate');
-    fireEvent.click(screen.getByRole('button', { name: 'Що дає пас' }));
-    expect(screen.getByRole('heading', { level: 2, name: 'Що дає Новорічний пас' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Закрити «Що дає пас»' }));
+    fireEvent.click(screen.getByRole('button', { name: /Усе про пас/ }));
+    expect(screen.getByRole('heading', { name: 'Що дає Новорічний пас' })).toBeInTheDocument();
     expect(document.querySelector('[data-offer]')).toBeNull();
 
     useGuestStore.getState().setHasPass(true);

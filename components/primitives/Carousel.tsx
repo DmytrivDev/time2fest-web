@@ -10,13 +10,53 @@
  * - стрілки: `sides` — ліворуч і праворуч від стрічки (поза нею); `none` — без стрілок (зовнішні через `useCarousel`
  *   і `CarouselArrow`, напр. у рядку заголовка); стрілка гортає на один слайд (правка власника 2026-10-31);
  * - мишею — натиснути й тягти будь-де, зокрема над картками-посиланнями (нативне перетягування посилань вимкнено);
- *   короткий клік лишається кліком; на дотик — свайп (нативно).
+ *   короткий клік лишається кліком; на дотик — свайп (нативно);
+ * - стрілки й відпускання після перетягування плавно (≈0,45 с, сповільнення наприкінці) доводять стрічку до початку
+ *   картки — ніколи не лишається пів картки зліва (правка власника 2026-10-31); після перетягування — у бік руху.
  * Копії слайдів — `inert` і `aria-hidden`: зчитувач і Tab бачать кожен елемент один раз.
  */
 import { useTranslations } from 'next-intl';
 import { Children, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { cn } from './cn';
 import { Icon } from './Icon';
+
+/** Позиції прокрутки, на яких картка стоїть рівно біля лівого краю (остання — кінець стрічки). */
+function slideStops(el: HTMLElement): number[] {
+  const slides = el.querySelectorAll<HTMLElement>('[aria-roledescription="slide"]');
+  if (!slides.length) return [0];
+  const base = slides[0]!.offsetLeft;
+  const max = Math.max(0, el.scrollWidth - el.clientWidth);
+  return [...new Set([...slides].map((sl) => Math.round(Math.min(max, sl.offsetLeft - base))))].sort((a, b) => a - b);
+}
+
+const glides = new WeakMap<HTMLElement, number>();
+
+/** Плавна прокрутка до `target` (ease-out). Прилипання (snap) на час руху вимкнено — інакше браузер «стрибає». */
+function glideTo(el: HTMLElement, target: number, ms = 450) {
+  const prev = glides.get(el);
+  if (prev) cancelAnimationFrame(prev);
+  const reduce = document.documentElement.getAttribute('data-reduce-motion') === 'true' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const from = el.scrollLeft;
+  if (reduce || Math.abs(target - from) < 1 || typeof requestAnimationFrame !== 'function') {
+    el.scrollLeft = target;
+    delete el.dataset.dragging;
+    return;
+  }
+  el.dataset.dragging = 'true';
+  const start = performance.now();
+  const step = (t: number) => {
+    const k = Math.min(1, (t - start) / ms);
+    const e = 1 - Math.pow(1 - k, 3);
+    el.scrollLeft = from + (target - from) * e;
+    if (k < 1) glides.set(el, requestAnimationFrame(step));
+    else {
+      glides.delete(el);
+      el.scrollLeft = target;
+      delete el.dataset.dragging;
+    }
+  };
+  glides.set(el, requestAnimationFrame(step));
+}
 
 export interface CarouselController {
   viewportRef: RefObject<HTMLDivElement | null>;
@@ -55,10 +95,18 @@ export function useCarousel({ loop = false }: { loop?: boolean } = {}): Carousel
     const el = viewportRef.current;
     if (!el) return;
     const reduce = document.documentElement.getAttribute('data-reduce-motion') === 'true';
-    // Крок — один слайд із проміжком; прилипання (snap) доводить до початку елемента.
-    const slides = el.querySelectorAll<HTMLElement>('[aria-roledescription="slide"]');
-    const step = slides.length > 1 ? slides[1]!.offsetLeft - slides[0]!.offsetLeft : slides[0]?.offsetWidth || 120;
-    el.scrollBy({ left: dir * step, behavior: reduce ? 'auto' : 'smooth' });
+    if (el.closest('[data-loop="true"]')) {
+      // По колу (стіна): крок на слайд, далі — прилипання й тихий перескок між копіями.
+      const slides = el.querySelectorAll<HTMLElement>('[aria-roledescription="slide"]');
+      const step = slides.length > 1 ? slides[1]!.offsetLeft - slides[0]!.offsetLeft : slides[0]?.offsetWidth || 120;
+      el.scrollBy({ left: dir * step, behavior: reduce ? 'auto' : 'smooth' });
+      return;
+    }
+    // На одну картку від тієї, що зараз біля лівого краю, — плавно й рівно на її початок.
+    const stops = slideStops(el);
+    const cur = el.scrollLeft;
+    const target = dir > 0 ? (stops.find((x) => x > cur + 2) ?? stops.at(-1)!) : ([...stops].reverse().find((x) => x < cur - 2) ?? 0);
+    glideTo(el, target);
   }, []);
   const prev = useCallback(() => page(-1), [page]);
   const next = useCallback(() => page(1), [page]);
@@ -190,6 +238,12 @@ export function Carousel({
     let drag: { x: number; left: number; moved: boolean; id: number } | null = null;
     const down = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      const g = glides.get(el);
+      if (g) {
+        cancelAnimationFrame(g);
+        glides.delete(el);
+        delete el.dataset.dragging;
+      }
       drag = { x: e.clientX, left: el.scrollLeft, moved: false, id: e.pointerId };
     };
     const move = (e: PointerEvent) => {
@@ -206,12 +260,23 @@ export function Carousel({
     const up = (e: PointerEvent) => {
       if (!drag || e.pointerId !== drag.id) return;
       const moved = drag.moved;
+      const dx = e.clientX - drag.x;
       drag = null;
       if (!moved) return;
       if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
-      delete el.dataset.dragging;
-      // Прилипання повертається — стрічка доїжджає до початку елемента; останній перескок по колу — після нього.
-      el.dispatchEvent(new Event('scroll'));
+      if (el.closest('[data-loop="true"]')) {
+        delete el.dataset.dragging;
+        // По колу: прилипання повертається; останній перескок між копіями — після нього.
+        el.dispatchEvent(new Event('scroll'));
+      } else {
+        // Плавно до початку картки: потягнули помітно (> 30 px) — у бік руху, ледь-ледь — до найближчої.
+        const stops = slideStops(el);
+        const cur = el.scrollLeft;
+        let target = stops.reduce((a, b) => (Math.abs(b - cur) < Math.abs(a - cur) ? b : a), stops[0]!);
+        if (dx < -30) target = stops.find((x) => x >= cur - 1) ?? stops.at(-1)!;
+        else if (dx > 30) target = [...stops].reverse().find((x) => x <= cur + 1) ?? 0;
+        glideTo(el, target, 380);
+      }
       const swallow = (ev: MouseEvent) => {
         ev.preventDefault();
         ev.stopPropagation();

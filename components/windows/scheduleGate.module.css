@@ -1,0 +1,102 @@
+/* Вікно «Графік — у Новорічному пасі» за дошкою `Desk-NowNext-Schedule` (2026-10-31); значення з дошки — «дошка». */
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+}
+.previewTitle {
+  margin: 0;
+  padding: 0 4px 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}
+.rowOn {
+  border: 1px solid rgba(252, 226, 134, 0.45); /* дошка */
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.rowEmpty {
+  border: 1px dashed var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+.flagStub {
+  width: 18px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--color-border);
+}
+.rowCity {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.rowEmpty .rowCity {
+  font-weight: 400;
+}
+.rowTime {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.previewNote {
+  margin: 0;
+  padding: 2px 4px 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.tile {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface-raised);
+  color: var(--color-highlight);
+}
+.tileHot {
+  background: var(--color-highlight-tint);
+}
+.perkTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.perkText {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.more {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.note {
+  margin: 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}

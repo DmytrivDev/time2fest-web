@@ -9,11 +9,13 @@
  */
 import { useGetPass } from '@/components/pass/PassWindow';
 import { PassGate, type PassGateFeature } from '@/components/windows/PassGate';
-import { PassInfo } from '@/components/windows/PassInfo';
+import { AlsoInPass, MainFeatures, PassActions, PassInfo, usePassFeatures } from '@/components/windows/PassInfo';
+import { ScheduleGate } from '@/components/windows/ScheduleGate';
 import { PassOffer, type PassOfferCountry } from '@/components/windows/PassOffer';
 import { Tips } from '@/components/windows/Tips';
 import { useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
 import { getData } from '@/lib/data/load';
+import { formatClock } from '@/lib/i18n/time';
 import type { Ms, OfferKind } from '@/lib/data/types';
 import { useGuestStore } from '@/stores/guest';
 
@@ -69,6 +71,57 @@ function PassInfoWindow() {
   const { close } = useOverlay();
   const onGetPass = useOfferGetPass();
   return <PassInfo wroteInChat={wroteInChat()} onClose={() => close(PASS_INFO_WINDOW_ID)} onGetPass={onGetPass} />;
+}
+
+export const SCHEDULE_GATE_WINDOW_ID = 'O-SCHEDULE-GATE';
+export const PASS_INFO_BOARD_ID = 'O-PASS-INFO-BOARD';
+
+/** «Усе про пас» з вікна графіка: ті самі переваги й «Оформити пас», але вікном на місці чату (шторкою на телефоні). */
+function PassInfoBoard() {
+  const onGetPass = useOfferGetPass();
+  const { main, also } = usePassFeatures(wroteInChat());
+  return (
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-3.5" data-window="O-PASS-INFO-BOARD">
+      <MainFeatures items={main} />
+      <AlsoInPass items={also} />
+      <PassActions onGetPass={onGetPass} />
+    </div>
+  );
+}
+
+export function passInfoBoardSpec(title: string): OverlaySpec {
+  return { id: PASS_INFO_BOARD_ID, kind: 'accent', chrome: 'board', coral: true, title, content: <PassInfoBoard /> };
+}
+
+function ScheduleGateWindow({ eventId, infoTitle }: { eventId?: string; infoTitle: string }) {
+  const { open, close } = useOverlay();
+  const getPass = useGetPass();
+  const event = eventId ? getData().eventsById.get(eventId) : undefined;
+  const city = event ? getData().citiesById.get(event.cityId)?.name.uk : undefined;
+  return (
+    <ScheduleGate
+      city={city}
+      flagCode={event?.countryIso}
+      time={event ? formatClock(event.midnightMs) : undefined}
+      onGetPass={() => getPass()}
+      onPassInfo={() => open(passInfoBoardSpec(infoTitle))}
+      onClose={() => close(SCHEDULE_GATE_WINDOW_ID)}
+    />
+  );
+}
+
+/** «Графік — у Новорічному пасі» (рішення 2026-10-31): вікно на місці чату / шторкою замість плашки в потоці. */
+export function scheduleGateSpec(deps: OfferSpecDeps, args: { eventId?: string; title: string; description: string; infoTitle: string }): OverlaySpec {
+  return {
+    id: SCHEDULE_GATE_WINDOW_ID,
+    kind: 'accent',
+    chrome: 'board',
+    coral: true,
+    title: args.title,
+    description: args.description,
+    onClose: () => dismissOfferIfVisible('pass-gate', deps.now()),
+    content: <ScheduleGateWindow eventId={args.eventId} infoTitle={args.infoTitle} />,
+  };
 }
 
 export function passInfoSpec(deps: OfferSpecDeps, title: string): OverlaySpec {

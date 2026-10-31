@@ -160,6 +160,7 @@ export function CountryLive({ iso }: { iso: string }) {
   useMomentWindows(mainEvent?.id ?? null);
   // Пропозиції пасу й чайових (offer:show) і стан введення для рушія пропозицій.
   const passWindows = useOfferWindows();
+  const hasPass = useGuestStore((s) => s.hasPass);
 
   const countryRows = useMemo(() => (zoneId ? countryStreamRows(data, iso, zoneId, minute) : []), [data, iso, zoneId, minute]);
   const zoneRows = useMemo(() => (zoneId ? zoneStreamRows(data, zoneId, iso, minute) : []), [data, iso, zoneId, minute]);
@@ -290,6 +291,8 @@ export function CountryLive({ iso }: { iso: string }) {
           layout={chatColumn ? 'carousel' : 'stack'}
           progress={progress}
           onToggleSchedule={passWindows.requestSchedule}
+      scheduleLocked={!hasPass}
+      onScheduleLocked={passWindows.openScheduleGate}
           className={styles.pad}
         />
       ) : null}
