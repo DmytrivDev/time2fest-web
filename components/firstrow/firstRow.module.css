@@ -256,18 +256,10 @@ button.free:hover {
   border-color: rgba(252, 226, 134, 0.5); /* дошка */
   color: var(--color-highlight);
 }
-/* Телефон, головна (`Phone-Chat-Dock`): смуга на всю ширину під липким рядком; згорнута — липне, розгорнута — у потоці. */
+/* Телефон, головна (`Phone-Chat-Dock`): картка з жовтою рамкою навколо всього блоку — заголовка, стіни й кнопок —
+   з полями з боків, щоб «Перший ряд» відділявся від сторінки (правка власника 2026-10-31); згорнута — липне на планшеті. */
 .dockBar {
-  gap: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: var(--color-background);
-  overflow: visible;
-  box-shadow: none;
-}
-.dockBar[data-open='true'] {
-  padding-bottom: 0;
+  margin: var(--spacing-2) var(--spacing-4);
 }
 @media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (min-height: 500px) {
   :global([data-player-bar]) ~ .dockBar[data-open='false'] {
@@ -276,19 +268,8 @@ button.free:hover {
     z-index: 15;
   }
 }
-.dockBar .toggle {
-  box-sizing: border-box;
-  padding: 0 var(--spacing-4);
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-background);
-}
 .dockBar .toggle .heading {
-  font-size: 14px;
-}
-.dockBar .panel {
-  padding: var(--spacing-3) var(--spacing-4) var(--spacing-4);
-  border-bottom: 1px solid var(--color-border);
+  font-size: 15px;
 }
 .panel[hidden] {
   display: none;
