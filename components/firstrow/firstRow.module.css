@@ -433,8 +433,6 @@ button.free:hover {
 }
 .pcRing {
   position: absolute;
-  left: -4px;
-  top: -4px;
   overflow: visible;
   pointer-events: none;
 }
@@ -454,6 +452,16 @@ button.free:hover {
   animation-name: t2f-pc-ring;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
+}
+.postcardCompact .pcRingTrack {
+  stroke-width: 1.5;
+}
+.postcardCompact .pcRingLine {
+  stroke-width: 1.75;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+}
+.postcardCompact .pcPillOn {
+  box-shadow: 0 0 10px rgba(252, 226, 134, 0.35); /* телефон: світіння тихіше */
 }
 .pcRingLine[data-paused] {
   animation-play-state: paused;

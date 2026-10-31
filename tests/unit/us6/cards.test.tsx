@@ -124,17 +124,17 @@ describe('PassGate', () => {
     const onWhat = vi.fn();
     renderPage(<PassGate onWhatPassGives={onWhat} onClose={() => undefined} />);
     expect(screen.getByRole('heading', { level: 2, name: 'Щоб додавати в графік, потрібен Новорічний пас' })).toBeInTheDocument();
-    expect(screen.getByText('Перше нагадування — безплатно.')).toBeInTheDocument();
+    // Безплатного нагадування немає (рішення 2026-11-01).
+    expect(screen.queryByText(/безплатн/)).toBeNull();
     expect(coralButtons()).toHaveLength(0);
     expect(screen.getByTestId('sound')).toHaveTextContent('coral');
     fireEvent.click(screen.getByRole('button', { name: 'Що дає пас' }));
     expect(onWhat).toHaveBeenCalledTimes(1);
   });
 
-  it('тихий режим: інший заголовок, без рядка про безплатне нагадування', () => {
+  it('тихий режим: інший заголовок', () => {
     renderPage(<PassGate feature="quiet-mode" />);
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('тихий режим чату');
-    expect(screen.queryByText('Перше нагадування — безплатно.')).toBeNull();
   });
 });
 

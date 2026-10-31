@@ -65,21 +65,21 @@ export function pillPath(w: number, h: number, inset: number): string {
 }
 
 /** Лоадер B: біле кільце на 4 px навколо фішки, під ним ледь помітна жовта доріжка; замикається за `POSTCARD_STEP_MS`. */
-function PillRing({ paused, onDone }: { paused: boolean; onDone(): void }) {
+function PillRing({ paused, onDone, gap = RING_GAP }: { paused: boolean; onDone(): void; gap?: number }) {
   const ref = useRef<SVGSVGElement>(null);
   const [box, setBox] = useState<{ w: number; h: number } | null>(null);
   useLayoutEffect(() => {
     const pill = ref.current?.parentElement;
     if (!pill) return;
-    const measure = () => setBox({ w: pill.offsetWidth + RING_GAP * 2, h: pill.offsetHeight + RING_GAP * 2 });
+    const measure = () => setBox({ w: pill.offsetWidth + gap * 2, h: pill.offsetHeight + gap * 2 });
     measure();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
     ro?.observe(pill);
     return () => ro?.disconnect();
-  }, []);
-  const d = box ? pillPath(box.w, box.h, 1.5) : '';
+  }, [gap]);
+  const d = box ? pillPath(box.w, box.h, gap < RING_GAP ? 1 : 1.5) : '';
   return (
-    <svg ref={ref} aria-hidden="true" className={fr.pcRing} width={box?.w} height={box?.h} viewBox={box ? `0 0 ${box.w} ${box.h}` : undefined}>
+    <svg ref={ref} aria-hidden="true" className={fr.pcRing} style={{ left: -gap, top: -gap }} width={box?.w} height={box?.h} viewBox={box ? `0 0 ${box.w} ${box.h}` : undefined}>
       {box ? (
         <>
           <path d={d} className={fr.pcRingTrack} />
@@ -97,6 +97,8 @@ function PillRing({ paused, onDone }: { paused: boolean; onDone(): void }) {
   );
 }
 const RING_GAP = 4;
+/** Телефон: кільце ближче й тонше — між фішками мало місця (правка власника 2026-11-01). */
+const RING_GAP_COMPACT = 2;
 
 export interface FirstRowPostcardProps {
   city: string;
@@ -203,7 +205,7 @@ export function FirstRowPostcard({
         <Emoji char={emojiSymbol(p.emojiId)} size={compact ? 18 : 20} />
         {p.isMine ? <span className={fr.pcYou}>{t('you')}</span> : null}
         {on && rotating ? (
-          <PillRing key={s.number} paused={paused} onDone={advance} />
+          <PillRing key={s.number} paused={paused} onDone={advance} gap={compact ? RING_GAP_COMPACT : RING_GAP} />
         ) : null}
       </button>
     );
