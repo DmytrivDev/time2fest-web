@@ -205,10 +205,11 @@ test.describe('US4 · чат свята', () => {
       .getByRole('button', { name: /^Дії з повідомленням/ })
       .first()
       .click();
-    // Меню «⋯» (однакове на десктопі й телефоні) живе в шарі чату: емодзі без підписів, `aria-label` на клітинці.
+    // Меню «⋯» (однакове на десктопі й телефоні) живе в шарі чату: сім швидких емодзі й «ще» (варіант А, a34a784),
+    // без підписів, `aria-label` на клітинці.
     const actions = page.getByRole('menu', { name: 'Дії з повідомленням' });
     await expect(actions).toBeVisible();
-    await expect(actions.getByRole('menuitemcheckbox')).toHaveCount(24);
+    await expect(actions.getByRole('menuitemcheckbox')).toHaveCount(7);
     await actions.getByRole('menuitemcheckbox', { name: 'Реакція Хлопавка' }).click();
     await expect(actions).toBeHidden();
     await expect(

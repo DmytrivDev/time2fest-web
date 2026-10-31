@@ -119,7 +119,8 @@ export function AuthorPanel({
             </div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-text-secondary">
               {countryName ? <span>{countryName}</span> : null}
-              {hasPass ? (
+              {/* Одна позначка (правка власника 2026-10-31): «Перший ряд» уже включає пас у подарунок — тоді пас не дублюємо. */}
+              {hasPass && !author.badges.includes('first-row') ? (
                 <span data-badge="pass" className="t2f-author-pass-badge">
                   <i aria-hidden="true">
                     <Icon name="ticket" size={12} className="[stroke-width:2.4]" />

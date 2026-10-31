@@ -79,6 +79,12 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(document.querySelector('[data-row="rows"]')).toHaveTextContent(/Перший ряд · місце \d+/);
   });
 
+  it('учасник «Першого ряду» — одна позначка «Перший ряд», без дубля пасу (пас у подарунок)', () => {
+    show(OLENA);
+    expect(document.querySelector('[data-badge="first-row"]')).toHaveTextContent('Перший ряд');
+    expect(document.querySelector('[data-badge="pass"]')).toBeNull();
+  });
+
   it('пас, але нічого не зустрів: «Зустрічей ще нема · ще 2 у графіку», у списку порожній рядок і графік', async () => {
     const user = userEvent.setup();
     show(BOHDAN);
