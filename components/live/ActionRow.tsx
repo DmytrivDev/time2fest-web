@@ -2,9 +2,10 @@
 
 /**
  * Рядок дій під підписом плеєра (C1 ActionRow, режим `broadcast`):
- * [SoundToggle] [«Обрати трансляцію ›» / «Лишитися тут ›»] + десктоп — tonal «Кімната перегляду», «Режим вечірки»;
- * телефон і планшет — «⋯» праворуч з аркушем «Ще дії» (через `OverlayManager`, вікно `nonmodal`).
- * Кімната (US3), режим вечірки, «Поділитися трансляцією» (US6) і «Повідомити про проблему» тут ще інертні.
+ * [SoundToggle] [«Обрати трансляцію ›» / «Лишитися тут ›»] + десктоп — tonal «Кімната перегляду», «Режим вечірки», «⋯»;
+ * телефон і планшет — «⋯» праворуч (дошка `Desk-ActionRow`, рішення 2026-11-01):
+ * - «Обрати трансляцію» відкриває на місці чату / шторкою список трансляцій цієї півночі, що йдуть зараз (`StreamPicker`);
+ * - «⋯» — «Ще дії» на місці чату / шторкою без затемнення сайту (`MoreActions`): поділитися й повідомити про проблему.
  * «Лишитися тут ›» — клієнтський перехід у межах `(live)`: макет і плеєр не перемонтовуються (SC-003).
  *
  * Режим `remote` (сторінка країни, пульт): [SoundToggle] [«Ще трансляції» — десктоп прокручує до блоків трансляцій,
@@ -17,12 +18,17 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { SoundToggle, type SoundToggleProps } from '@/components/player/SoundToggle';
-import { useOverlay } from '@/components/shell/OverlayManager';
+import { IconButton } from '@/components/primitives/IconButton';
+import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
+import { SITE_HOST } from '@/lib/config/site';
+import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
+import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
+import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
 import type { CaptionButton } from '@/lib/engine/captionPhase';
 import home from './home.module.css';
 import styles from './live.module.css';
 
-export const MORE_ACTIONS_ID = 'O-MORE-ACTIONS';
+export { MORE_ACTIONS_ID };
 
 export interface ActionRowProps {
   /** `broadcast` — головна (ефір); `remote` — сторінка країни. */
@@ -45,23 +51,6 @@ export interface ActionRowProps {
   className?: string;
 }
 
-function MoreActions() {
-  const t = useTranslations('player');
-  const items = [t('roomOpen'), t('partyMode'), t('shareStream'), t('reportProblem')];
-  return (
-    <ul className="flex flex-col gap-1">
-      {items.map((label) => (
-        <li key={label}>
-          {/* Інертні до US3/US5/US6: дія з’явиться разом із відповідним вікном. */}
-          <Button variant="ghost" disabled className="w-full justify-start">
-            {label}
-          </Button>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 export function ActionRow({
   mode = 'broadcast',
   button,
@@ -81,8 +70,52 @@ export function ActionRow({
   const stay = button === 'stay-here';
   const label = stay ? t('stayHere') : t('chooseStream');
 
-  const openMore = () =>
-    overlay.open({ id: MORE_ACTIONS_ID, kind: 'nonmodal', title: t('moreActions'), content: <MoreActions /> });
+  const column = useChatColumn();
+  const broadcast = useOptionalBroadcast();
+  const midnightMs = broadcast?.current?.event.midnightMs ?? null;
+  const place = broadcast?.current?.city?.name.uk ?? '';
+  const target: ShareTarget = {
+    url: `${typeof window !== 'undefined' ? window.location.origin : `https://${SITE_HOST}`}${href ?? '/'}`,
+    shortUrl: `${SITE_HOST}${href ?? '/'}`,
+    text: t('more.shareText', { place }),
+  };
+
+  function openPicker() {
+    if (midnightMs === null) return;
+    overlay.open({
+      id: STREAM_PICKER_ID,
+      kind: 'accent',
+      chrome: 'board',
+      title: t('chooseStream'),
+      description: t('picker.sub'),
+      content: <StreamPicker midnightMs={midnightMs} onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)} />,
+    });
+  }
+  function openReport() {
+    overlay.open({
+      id: REPORT_ID,
+      kind: 'accent',
+      chrome: 'board',
+      title: t('more.reportTitle'),
+      onBack: openMore,
+      content: (
+        <div className="px-4 pb-4 pt-2">
+          <ReportProblem center onChooseStream={openPicker} onClose={() => overlay.close(REPORT_ID)} />
+        </div>
+      ),
+    });
+  }
+  function openMore() {
+    overlay.open({
+      id: MORE_ACTIONS_ID,
+      kind: 'accent',
+      chrome: 'board',
+      title: t('moreActions'),
+      description: column ? place : undefined,
+      content: column ? <MoreActionsDesk target={target} onChooseStream={openPicker} /> : <MoreActionsList target={target} onReport={openReport} />,
+    });
+  }
+  const moreOpen = overlay.current?.id === MORE_ACTIONS_ID || overlay.current?.id === REPORT_ID;
 
   return (
     <div data-action-row="" className={cn(home.actions, className)}>
@@ -98,12 +131,24 @@ export function ActionRow({
             </Button>
           ) : null}
         </>
-      ) : href ? (
+      ) : stay && href ? (
         <Button asChild variant="secondary" className={cn('min-w-0', home.choose)}>
-          <NextLink href={href} onClick={stay ? onStayHere : undefined} data-action={button}>
+          <NextLink href={href} onClick={onStayHere} data-action={button}>
             {label}
             <Icon name="chevron-right" size={16} strokeWidth={2} />
           </NextLink>
+        </Button>
+      ) : href || midnightMs !== null ? (
+        <Button
+          variant="secondary"
+          aria-haspopup="dialog"
+          aria-expanded={overlay.current?.id === STREAM_PICKER_ID}
+          data-action={button}
+          onClick={openPicker}
+          className={cn('min-w-0', home.choose)}
+        >
+          {label}
+          <Icon name="chevron-right" size={16} strokeWidth={2} />
         </Button>
       ) : null}
       <span className="flex-1" />
@@ -120,13 +165,24 @@ export function ActionRow({
             {t('partyMode')}
           </NextLink>
         </Button>
+        {remote ? null : (
+          <IconButton
+            icon="more"
+            variant="ring"
+            aria-label={t('moreActions')}
+            aria-haspopup="dialog"
+            aria-expanded={moreOpen}
+            data-action="more-actions"
+            onClick={openMore}
+          />
+        )}
       </span>
       <span className={styles.phoneOnly}>
         <button
           type="button"
           aria-label={t('moreActions')}
           aria-haspopup="dialog"
-          aria-expanded={overlay.current?.id === MORE_ACTIONS_ID}
+          aria-expanded={moreOpen}
           onClick={openMore}
           className={cn('t2f-focus t2f-transition', home.more)}
         >

@@ -102,7 +102,7 @@ test.describe('US1 · ефір на головній', () => {
     await expectNothingOverPlayer(page);
 
     await expect(page.getByRole('button', { name: 'Увімкнути звук' })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Обрати трансляцію/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Обрати трансляцію/ })).toBeVisible();
     // Одна коралова кнопка на екрані.
     expect(await page.locator('[data-variant="coral"]:visible').count()).toBeLessThanOrEqual(1);
 
@@ -164,7 +164,7 @@ test.describe('US1 · ефір на головній', () => {
     await expect(timer(page)).toContainText(/далі через\s*0:59/);
     await expect(row3(page)).toHaveText('Далі: Азорські острови');
     await expect(page.getByRole('link', { name: /Лишитися тут/ })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Обрати трансляцію/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Обрати трансляцію/ })).toHaveCount(0);
     await expectAxeClean(page);
   });
 

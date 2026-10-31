@@ -77,6 +77,8 @@ export interface SheetProps {
   backLabel?: string;
   /** Шапка за макетом O-NICK (ручка 36×4, заголовок 18/700 з підзаголовком, × 44 px, тіло без бічних відступів). */
   boardHeader?: boolean;
+  /** З `boardHeader`: рядок «‹ Назад» і «×» над назвою (вікно другого рівня). */
+  onBack?: () => void;
   /** Шапка O-AUTHOR (як на дошці): без ручки, «‹ Назад» і приглушений заголовок; аркуш на всю висоту під плеєром, тіло керує прокруткою саме. */
   authorHeader?: boolean;
   className?: string;
@@ -94,6 +96,7 @@ export function Sheet({
   closeLabel = 'Закрити',
   backLabel = 'Назад',
   boardHeader = false,
+  onBack,
   authorHeader = false,
   className,
 }: SheetProps) {
@@ -161,12 +164,25 @@ export function Sheet({
           ) : boardHeader ? (
             <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="">
               <div className="min-w-0 flex-1 pt-2.5">
+                {onBack ? (
+                <div className="flex min-h-11 items-center justify-between" data-back-row="">
+                  <button type="button" onClick={onBack} data-action="back" className="t2f-focus t2f-transition t2f-author-back">
+                    <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
+                    {backLabel}
+                  </button>
+                  <Dialog.Close asChild>
+                    <IconButton icon="close" aria-label={closeLabel} />
+                  </Dialog.Close>
+                </div>
+              ) : null}
                 <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
                 {description ? <Dialog.Description className="mt-1 text-caption text-text-muted">{description}</Dialog.Description> : null}
               </div>
-              <Dialog.Close asChild>
-                <IconButton icon="close" aria-label={closeLabel} />
-              </Dialog.Close>
+              {onBack ? null : (
+                <Dialog.Close asChild>
+                  <IconButton icon="close" aria-label={closeLabel} />
+                </Dialog.Close>
+              )}
             </div>
           ) : (
             <>

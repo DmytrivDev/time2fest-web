@@ -39,7 +39,7 @@ describe('PlayerBlock (broadcast): фази підпису', () => {
     expect(timer(container)?.textContent).toMatch(/до півночі\s*00:22:15/);
     expect(row3(container)).toBe('Велика Британія · північ о 02:00 за вашим часом');
     expect(screen.getByRole('link', { name: /Лондон · Біг-Бен/ })).toHaveAttribute('href', expect.stringMatching(/^\/country\/velyka-brytaniia\/?$/));
-    expect(screen.getByRole('link', { name: /Обрати трансляцію/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Обрати трансляцію/ })).toHaveAttribute('aria-haspopup', 'dialog');
     expect(screen.getByRole('button', { name: 'Увімкнути звук' })).toBeEnabled();
   });
 
@@ -59,7 +59,7 @@ describe('PlayerBlock (broadcast): фази підпису', () => {
     expect(timer(container)?.textContent).toMatch(/далі через\s*0:59/);
     expect(row3(container)).toBe('Далі: Азорські острови');
     expect(screen.getByRole('link', { name: /Лишитися тут/ })).toHaveAttribute('href', expect.stringMatching(/^\/country\/velyka-brytaniia\/?$/));
-    expect(screen.queryByRole('link', { name: /Обрати трансляцію/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Обрати трансляцію/ })).toBeNull();
   });
 
   it('+15 хв: ефір на Азорських островах, сцена відліку на місці плеєра, звук неактивний', () => {

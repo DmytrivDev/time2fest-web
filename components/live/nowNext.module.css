@@ -394,7 +394,7 @@
   color: var(--color-text);
 }
 .seg[data-state='on'] {
-  background: var(--color-border-strong);
+  background: #3a3a42; /* дошка; на #74747D білий текст не мав контрасту AA */
   color: var(--color-text);
   font-weight: 700;
 }

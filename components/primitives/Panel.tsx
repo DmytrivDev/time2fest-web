@@ -47,6 +47,8 @@ export interface ChatSlotPanelProps {
   boardHeader?: boolean;
   /** Шапка O-AUTHOR: «‹ Назад» ліворуч, приглушений заголовок праворуч; тіло без відступів і прокрутки (її веде вміст). */
   authorHeader?: boolean;
+  /** З `boardHeader`: рядок «‹ Назад» і «×» над назвою (вікно другого рівня). */
+  onBack?: () => void;
   /** Контейнер, куди порталиться панель: колонка чату (за замовчуванням) або вікно чату внизу на телефоні. */
   containerId?: string;
   className?: string;
@@ -69,6 +71,7 @@ export function ChatSlotPanel({
   backLabel = 'Назад',
   boardHeader = false,
   authorHeader = false,
+  onBack,
   containerId = CHAT_SLOT_ID,
   className,
 }: ChatSlotPanelProps) {
@@ -105,12 +108,25 @@ export function ChatSlotPanel({
               data-scrolled={scrolled ? 'true' : undefined}
             >
               <div className="min-w-0 flex-1 pt-2.5">
+                {onBack ? (
+                <div className="flex min-h-11 items-center justify-between" data-back-row="">
+                  <button type="button" onClick={onBack} data-action="back" className="t2f-focus t2f-transition t2f-author-back">
+                    <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
+                    {backLabel}
+                  </button>
+                  <Dialog.Close asChild>
+                    <IconButton icon="close" aria-label={closeLabel} />
+                  </Dialog.Close>
+                </div>
+              ) : null}
                 <Dialog.Title className="t2f-board-title">{title}</Dialog.Title>
                 {description ? <Dialog.Description className="mt-1 text-caption text-text-muted">{description}</Dialog.Description> : null}
               </div>
-              <Dialog.Close asChild>
-                <IconButton icon="close" aria-label={closeLabel} />
-              </Dialog.Close>
+              {onBack ? null : (
+                <Dialog.Close asChild>
+                  <IconButton icon="close" aria-label={closeLabel} />
+                </Dialog.Close>
+              )}
             </div>
           ) : null}
           {authorHeader ? (

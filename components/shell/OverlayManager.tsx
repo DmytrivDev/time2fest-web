@@ -47,6 +47,8 @@ export interface OverlaySpec {
   separate?: boolean;
   /** Викликається, коли вікно закрито (людиною, заміною чи подією). */
   onClose?: () => void;
+  /** Вікно другого рівня (шапка `board`): зверху «‹ Назад» і «×», нижче — назва (рішення 2026-11-01, «Ще дії»). */
+  onBack?: () => void;
 }
 
 /**
@@ -201,7 +203,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
       {children}
       {current && current.coral ? <CoralClaim key={current.id} /> : null}
       {current && placement === 'sheet' ? (
-        <Sheet open onOpenChange={onOpenChange} title={current.title} description={current.description} loading={current.loading} boardHeader={current.chrome === 'board'} authorHeader={current.chrome === 'author'}>
+        <Sheet open onOpenChange={onOpenChange} title={current.title} description={current.description} loading={current.loading} boardHeader={current.chrome === 'board'} onBack={current.onBack} authorHeader={current.chrome === 'author'}>
           {current.content}
         </Sheet>
       ) : null}
@@ -214,6 +216,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           title={current.title}
           description={current.description}
           boardHeader={current.chrome === 'board'}
+          onBack={current.onBack}
           authorHeader={current.chrome === 'author'}
         >
           {current.content}
@@ -228,6 +231,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           title={current.title}
           description={current.description}
           boardHeader={current.chrome === 'board'}
+          onBack={current.onBack}
           authorHeader={current.chrome === 'author'}
           className="t2f-seat-panel"
         >
@@ -242,6 +246,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           title={current.title}
           description={current.description}
           boardHeader={current.chrome === 'board'}
+          onBack={current.onBack}
           authorHeader={current.chrome === 'author'}
         >
           {current.content}
