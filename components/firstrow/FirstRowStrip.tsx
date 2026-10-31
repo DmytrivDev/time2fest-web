@@ -39,6 +39,7 @@ export function FirstRowStrip({
   infoOpen = false,
   onOpenEmoji,
   onOpenTicket,
+  onOpenParticipant,
   restrainedNote,
   soldOutAlt,
   countryName,
@@ -197,6 +198,7 @@ export function FirstRowStrip({
       restrained={state === 'restrained'}
       countryName={countryName}
       onOpenEmoji={onOpenEmoji}
+      onOpenParticipant={onOpenParticipant}
       onTakeFree={sellable && !blockedNow ? onTake : undefined}
       layout={compact ? 'wrap' : 'row'}
       ticker={!compact}

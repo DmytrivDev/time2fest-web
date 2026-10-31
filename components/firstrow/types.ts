@@ -3,7 +3,7 @@
  * тримають `stores/firstRow`, `lib/firstrow/*` і зв’язувальні компоненти `FirstRowModule` / `FirstRowWindow`;
  * компоненти нижче лише показують стан і викликають колбеки.
  */
-import type { FirstRowSeat, Ms } from '@/lib/data/types';
+import type { FirstRowSeat, Ms, SeatParticipant } from '@/lib/data/types';
 import type { FirstRowView } from '@/lib/engine/firstRowView';
 import type { FormErrors } from '@/lib/firstrow/pay';
 
@@ -32,6 +32,8 @@ export interface FirstRowStripProps {
   onOpenEmoji?(): void;
   /** «Твій квиток» (стан `mine`). */
   onOpenTicket?(): void;
+  /** Дотик до чужого місця на стіні — картка учасника (O-AUTHOR). */
+  onOpenParticipant?(participant: SeatParticipant): void;
   /** Примітка стриманого режиму (`event.restrained.note.uk`). */
   restrainedNote?: string;
   /** `soldout`: «Ще є місця: Перший ряд · Дублін і ще 3 ›» — відкриває список на місці чату / шторкою. */

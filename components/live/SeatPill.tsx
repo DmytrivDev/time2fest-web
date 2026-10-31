@@ -35,10 +35,12 @@ export interface SeatPillProps {
   fresh?: boolean;
   /** Тільки для свого місця: відкрити вибір емоції (O-EMOJI). */
   onOpenEmoji?: () => void;
+  /** Чуже місце: відкрити картку учасника (O-AUTHOR, рішення 2026-10-31). */
+  onOpen?: () => void;
   className?: string;
 }
 
-export function SeatPill({ seat, participant, countryName, state = 'idle', fresh = false, onOpenEmoji, className }: SeatPillProps) {
+export function SeatPill({ seat, participant, countryName, state = 'idle', fresh = false, onOpenEmoji, onOpen, className }: SeatPillProps) {
   const t = useTranslations('firstRow');
   const names = useTranslations('windows.emoji.names');
   const mine = participant.isMine === true;
@@ -79,6 +81,13 @@ export function SeatPill({ seat, participant, countryName, state = 'idle', fresh
   if (mine) {
     return (
       <button type="button" aria-label={label} onClick={onOpenEmoji} className={cn('t2f-focus', classes)} {...common}>
+        {body}
+      </button>
+    );
+  }
+  if (onOpen) {
+    return (
+      <button type="button" aria-label={t('seatOpen', { label })} onClick={onOpen} className={cn('t2f-focus hover:border-highlight', classes)} {...common}>
         {body}
       </button>
     );

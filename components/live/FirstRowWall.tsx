@@ -15,7 +15,7 @@ import { Icon } from '@/components/primitives/Icon';
 import fr from '@/components/firstrow/firstRow.module.css';
 import { cn } from '@/components/primitives/cn';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
-import type { FirstRowSeat, FirstRowSeedEntry, Ms } from '@/lib/data/types';
+import type { FirstRowSeat, FirstRowSeedEntry, Ms, SeatParticipant } from '@/lib/data/types';
 import { SEATS, WALL_LIGHTING_MS } from '@/lib/engine/config';
 import { useNow } from '@/lib/time/TimeProvider';
 import { emojiSymbol, SeatPill } from './SeatPill';
@@ -46,6 +46,8 @@ export interface FirstRowWallProps {
   countryName?: (flagCode: string) => string | undefined;
   /** Дотик до свого місця (O-EMOJI). */
   onOpenEmoji?: () => void;
+  /** Дотик до чужого місця — картка учасника (O-AUTHOR). */
+  onOpenParticipant?: (participant: SeatParticipant) => void;
   /** Стрічка виходить у поля картки на стільки px (краї згасають у полях). */
   bleed?: number;
   className?: string;
@@ -123,6 +125,7 @@ export function FirstRowWall({
   layout = 'row',
   countryName,
   onOpenEmoji,
+  onOpenParticipant,
   onTakeFree,
   ticker = false,
   bleed = 0,
@@ -150,6 +153,7 @@ export function FirstRowWall({
         state={isLit ? 'lit' : 'idle'}
         fresh={!calm && effectivePhase === 'lighting' && isLit && i === lit - 1}
         onOpenEmoji={s.participant.isMine ? onOpenEmoji : undefined}
+        onOpen={!s.participant.isMine && onOpenParticipant ? () => onOpenParticipant(s.participant) : undefined}
       />
     );
   });
@@ -194,7 +198,15 @@ export function FirstRowWall({
     // чи дотик зупиняють. Телефон — два ряди, кожен їде окремо.
     const weights = [...taken.map((s) => s.participant.name.length + 8), ...(freeCard ? [10] : [])];
     body = (
-      <Marquee label={wallLabel} rows={layout === 'wrap' ? 2 : 1} bleed={bleed} weights={weights}>
+      // Десктоп — трохи швидше (правка власника 2026-10-31); телефон — фішки доходять до рамки картки й гаснуть біля неї.
+      <Marquee
+        label={wallLabel}
+        rows={layout === 'wrap' ? 2 : 1}
+        bleed={bleed}
+        weights={weights}
+        speed={layout === 'wrap' ? 28 : 38}
+        fade={layout === 'wrap' ? [6, 14] : undefined}
+      >
         {items}
       </Marquee>
     );

@@ -930,8 +930,8 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   cursor: auto;
 }
 .t2f-marquee-viewport[data-looping] {
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 40px), transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--mq-fade-l, 24px), #000 calc(100% - var(--mq-fade-r, 40px)), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 var(--mq-fade-l, 24px), #000 calc(100% - var(--mq-fade-r, 40px)), transparent 100%);
 }
 .t2f-carousel-track {
   display: flex;

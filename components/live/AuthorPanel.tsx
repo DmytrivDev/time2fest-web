@@ -127,6 +127,14 @@ export function AuthorPanel({
                   {t('passLabel')}
                 </span>
               ) : null}
+              {author.badges.includes('first-row') ? (
+                <span data-badge="first-row" className="t2f-author-pass-badge">
+                  <i aria-hidden="true">
+                    <Icon name="seat" size={12} className="[stroke-width:2.4]" />
+                  </i>
+                  {t('firstRowLabel')}
+                </span>
+              ) : null}
             </div>
           </div>
         </header>

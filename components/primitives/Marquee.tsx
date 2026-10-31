@@ -25,6 +25,8 @@ export interface MarqueeProps {
   speed?: number;
   /** Проміжок між елементами, px (такий самий і на стику кола). */
   gap?: number;
+  /** Ширина згасання країв, px [ліворуч, праворуч] (за замовчуванням 24 / 40). */
+  fade?: [number, number];
   /** Вага кожного елемента для поділу на два ряди (напр. довжина імені); без неї — порівну. */
   weights?: number[];
   /** Стрічка виходить у поля батька на стільки px з боків (краї згасають у полях, перший елемент — на краю вмісту). */
@@ -194,7 +196,7 @@ function splitRows(items: ReactNode[], weights: number[]): [ReactNode[], ReactNo
   return [a, b];
 }
 
-export function Marquee({ label, children, rows = 1, speed = 28, gap = 8, bleed = 0, weights, className }: MarqueeProps) {
+export function Marquee({ label, children, rows = 1, speed = 28, gap = 8, bleed = 0, fade, weights, className }: MarqueeProps) {
   const root = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const { paused, hold, handlers } = usePause(root);
@@ -209,7 +211,7 @@ export function Marquee({ label, children, rows = 1, speed = 28, gap = 8, bleed 
       data-marquee=""
       data-paused={paused || undefined}
       className={cn('t2f-marquee flex flex-col', className)}
-      style={{ gap }}
+      style={{ gap, ...(fade ? { '--mq-fade-l': `${fade[0]}px`, '--mq-fade-r': `${fade[1]}px` } : {}) } as React.CSSProperties}
       {...handlers}
     >
       {lines.map((line, i) => (
