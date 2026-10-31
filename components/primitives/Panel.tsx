@@ -86,8 +86,11 @@ export function ChatSlotPanel({
         className,
       )}
       // Дотик до ручки вікна чату на телефоні (згорнути/розгорнути) — не «поза панеллю»: вікно лишається (рішення 2026-10-28).
+      // Так само — дотик до того, що відкриває іншу картку на цьому ж місці (фішки «Першого ряду», `data-opens-author`):
+      // картка не закривається, а змінюється на нову людину (правка власника 2026-10-31).
       onInteractOutside={(e) => {
-        if (isForm || (e.target as HTMLElement | null)?.closest?.('[data-chat-dock]')) e.preventDefault();
+        const target = e.target as HTMLElement | null;
+        if (isForm || target?.closest?.('[data-chat-dock]') || (!isForm && target?.closest?.('[data-opens-author]'))) e.preventDefault();
       }}
       // Фокус, що повертається на тригер після закриття меню (напр. «Правила чату» з «⋯»), не закриває панель.
       onFocusOutside={(e) => e.preventDefault()}

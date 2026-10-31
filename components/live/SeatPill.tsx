@@ -88,7 +88,7 @@ export function SeatPill({ seat, participant, countryName, state = 'idle', fresh
   }
   if (onOpen) {
     return (
-      <button type="button" aria-label={t('seatOpen', { label })} onClick={onOpen} className={cn('t2f-focus hover:border-highlight', classes)} {...common}>
+      <button type="button" data-opens-author="" aria-label={t('seatOpen', { label })} onClick={onOpen} className={cn('t2f-focus hover:border-highlight', classes)} {...common}>
         {body}
       </button>
     );

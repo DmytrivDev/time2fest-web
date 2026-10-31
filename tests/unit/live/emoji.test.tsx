@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { REACTION_SYMBOLS } from '@/components/chat/reactions';
@@ -10,6 +12,14 @@ describe('фірмові емодзі (рішення 2026-10-31)', () => {
     const missing = [...EMOTIONS.map((e) => e.symbol), ...Object.values(REACTION_SYMBOLS)].filter((c) => !brandEmojiSrc(c));
     expect(missing).toEqual([]);
     expect(Object.keys(BRAND_EMOJI)).toHaveLength(31);
+  });
+
+  it('кожен файл значка — коректний SVG (інакше браузер не покаже його як картинку)', () => {
+    const dir = join(process.cwd(), 'public', 'emoji');
+    const bad = readdirSync(dir)
+      .filter((f) => f.endsWith('.svg'))
+      .filter((f) => new DOMParser().parseFromString(readFileSync(join(dir, f), 'utf8'), 'image/svg+xml').querySelector('parsererror'));
+    expect(bad).toEqual([]);
   });
 
   it('значок лежить поверх стандартного символу — текст (і копіювання) лишається 🥂', () => {

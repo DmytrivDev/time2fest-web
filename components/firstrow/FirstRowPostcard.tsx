@@ -9,7 +9,8 @@
  *   (лоадер B, рішення власника 2026-10-31); доти не потрібні. Наступне привітання — по `animationend` кільця, тож
  *   пауза (`animation-play-state`) зупиняє і кільце, і зміну.
  * - Натиск на фішку — її привітання + пауза до дії поза листівкою (на десктопі ще й поки курсор тут);
- *   повторний натиск на активну — картка учасника (своя — вибір емоції). ← → — між людьми.
+ *   повторний натиск на активну — картка учасника (своя — вибір емоції); коли картка вже відкрита — натиск на іншу
+ *   фішку одразу змінює картку на цю людину. ← → — між людьми.
  * - Під привітанням — «прапор Ім’я · Країна ›» (картка учасника) або, для свого, «Моя емоція».
  * - «Зменшити рух» — без автопоказу й смужки.
  */
@@ -23,6 +24,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { usePause } from '@/components/primitives/Marquee';
+import { useOverlay } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { FirstRowSeat, Ms, SeatParticipant } from '@/lib/data/types';
 import { canonicalEmotion } from '@/lib/firstrow/emotions';
@@ -132,6 +134,7 @@ export function FirstRowPostcard({
   const root = useRef<HTMLDivElement>(null);
   const group = useRef<HTMLDivElement>(null);
   const { paused, hold, handlers } = usePause(root);
+  const authorOpen = useOverlay().current?.id === 'O-AUTHOR';
   const order = useMemo(() => postcardOrder(seats), [seats]);
   const lit = useLitCount(phase, order.length, lightingFrom, calm);
   const allLit = lit >= order.length;
@@ -148,6 +151,13 @@ export function FirstRowPostcard({
 
   const advance = () => setPicked(nextWithGreeting(order, activeSeat.number));
   const select = (s: Taken) => {
+    // Картка учасника вже відкрита — натиск на іншу фішку одразу показує її картку (і її привітання).
+    if (authorOpen && s.number !== activeSeat.number) {
+      setPicked(s.number);
+      hold();
+      onOpenParticipant?.(s.participant);
+      return;
+    }
     if (s.number === activeSeat.number) {
       if (s.participant.isMine) onOpenEmoji?.();
       else onOpenParticipant?.(s.participant);
@@ -179,6 +189,7 @@ export function FirstRowPostcard({
         key={s.number}
         type="button"
         data-seat={s.number}
+        data-opens-author=""
         data-mine={p.isMine ? 'true' : undefined}
         data-lit={i < lit || undefined}
         aria-pressed={on}
