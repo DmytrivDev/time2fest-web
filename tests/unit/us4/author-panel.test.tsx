@@ -85,6 +85,14 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(document.querySelector('[data-badge="pass"]')).toBeNull();
   });
 
+  it('довга назва країни — в один рядок з трикрапкою (повна — у підказці), позначка ціла', () => {
+    show(OLENA, { countryName: 'Демократична Республіка Конго' });
+    const country = document.querySelector('[data-row="country"]')!;
+    expect(country).toHaveClass('truncate');
+    expect(country).toHaveAttribute('title', 'Демократична Республіка Конго');
+    expect(document.querySelector('[data-badge="first-row"]')).toHaveClass('shrink-0');
+  });
+
   it('пас, але нічого не зустрів: «Зустрічей ще нема · ще 2 у графіку», у списку порожній рядок і графік', async () => {
     const user = userEvent.setup();
     show(BOHDAN);

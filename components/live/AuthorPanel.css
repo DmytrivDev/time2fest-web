@@ -52,6 +52,7 @@
   color: var(--color-highlight);
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .t2f-author-pass-badge > i {
   display: inline-flex;

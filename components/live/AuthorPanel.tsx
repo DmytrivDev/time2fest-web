@@ -117,11 +117,16 @@ export function AuthorPanel({
               ) : null}
               {isMine ? <Badge variant="you" /> : null}
             </div>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-text-secondary">
-              {countryName ? <span>{countryName}</span> : null}
+            {/* Один рядок: довга назва країни («Демократична Республіка Конго») — з трикрапкою, позначка завжди ціла. */}
+            <div className="flex min-w-0 items-center gap-x-2 text-caption text-text-secondary">
+              {countryName ? (
+                <span className="min-w-0 truncate" title={countryName} data-row="country">
+                  {countryName}
+                </span>
+              ) : null}
               {/* Одна позначка (правка власника 2026-10-31): «Перший ряд» уже включає пас у подарунок — тоді пас не дублюємо. */}
               {hasPass && !author.badges.includes('first-row') ? (
-                <span data-badge="pass" className="t2f-author-pass-badge">
+                <span data-badge="pass" className="t2f-author-pass-badge shrink-0">
                   <i aria-hidden="true">
                     <Icon name="ticket" size={12} className="[stroke-width:2.4]" />
                   </i>
@@ -129,7 +134,7 @@ export function AuthorPanel({
                 </span>
               ) : null}
               {author.badges.includes('first-row') ? (
-                <span data-badge="first-row" className="t2f-author-pass-badge">
+                <span data-badge="first-row" className="t2f-author-pass-badge shrink-0">
                   <i aria-hidden="true">
                     <Icon name="seat" size={12} className="[stroke-width:2.4]" />
                   </i>
