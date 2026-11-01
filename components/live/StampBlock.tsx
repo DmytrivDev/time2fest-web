@@ -10,8 +10,10 @@
  * - «Як тобі шоу?» (`StampRate`) — під кнопками разом зі штампом (рішення 2026-11-01): «×» прибирає й оцінку, оцінити
  *   можна в паспорті;
  * - «Увійди» відкриває вхід на місці чату (трансляція не зупиняється), «Мій паспорт» — сторінка `/passport/`;
+ * - поява: місце плавно відкривається порожнім, потім картка «приземляється» — проявляється, трохи піднімаючись і
+ *   збільшуючись (правка власника 2026-11-01 — не «акордеоном»);
  * - «×» прибирає саме цей штамп (запис у `guest.stampsDismissed`), у паспорті він лишається: картка гасне й трохи
- *   відпливає вгору, потім місце плавно стягується (правка власника 2026-11-01 — не «акордеоном»).
+ *   відпливає вгору, потім порожнє місце стягується.
  */
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -109,18 +111,22 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
   const list = ids.map(stampEntry).filter((e): e is StampEntry => e !== null);
   const visible = list.length > 0;
 
+  // «×»: картка спершу гасне й трохи відпливає вгору (≈ 220 мс), потім порожнє місце плавно стягується. Позначку
+  // «зникає» не знімаємо, поки місце стягується (інакше картка на мить повертається); знімаємо, коли штамп знову видно.
+  const [leaving, setLeaving] = useState<string | null>(null);
   // Поки блок плавно зникає після «×», показуємо той самий штамп.
   const [shown, setShown] = useState<{ key: string; list: StampEntry[]; stamping: boolean } | null>(null);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- запам’ятати останній показаний штамп для анімації зникнення
-    if (visible) setShown({ key, list, stamping: !!moment?.stamping });
+    if (visible) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- запам’ятати останній показаний штамп для анімації зникнення
+      setShown({ key, list, stamping: !!moment?.stamping });
+      setLeaving(null);
+    }
     // `list` похідний від `key`
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, key, moment?.stamping]);
   const current = visible ? { key, list, stamping: !!moment?.stamping } : shown;
 
-  // «×»: картка спершу гасне й трохи відпливає вгору (≈ 220 мс), потім порожнє місце плавно стягується.
-  const [leaving, setLeaving] = useState<string | null>(null);
   const leaveTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(leaveTimer.current), []);
   const dismiss = (entries: StampEntry[], k: string) => {
@@ -129,7 +135,6 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
     setLeaving(k);
     leaveTimer.current = window.setTimeout(() => {
       dismissStamps(ids);
-      setLeaving(null);
     }, LEAVE_MS);
   };
 
@@ -142,7 +147,8 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
   return (
     <Reveal open={visible} className={className}>
       {current ? (
-        <div className="pb-4" data-stamp-block="" data-leaving={leaving === current.key || undefined}>
+        // `key` — новий штамп щоразу «приземляється» заново (анімація появи в StampMotion.css).
+        <div key={current.key} className="pb-4" data-stamp-block="" data-leaving={leaving === current.key || undefined}>
           <Stamp
             key={current.key}
             stamps={current.list}
