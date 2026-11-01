@@ -114,12 +114,13 @@ export function Stamp({
 
   const content: ReactNode = (
     <>
-      {/* Смужка кольорів прапора — плавний градієнт переважних кольорів (`lib/flags/colors`), білий — білий.
-          Текст на неї не лягає, тож контраст однаковий для будь-якого прапора. */}
+      {/* Смужка кольорів прапора — лівий край картки (загинається по заокругленнях кутів), плавний градієнт переважних
+          кольорів (`lib/flags/colors`), білий — білий; за нею ледь помітне сяйво. Текст на неї не лягає. */}
       {strip ? (
-        <span aria-hidden="true" className={st.strip} style={{ '--flag': strip } as CSSProperties}>
-          <span className={st.glow} />
-        </span>
+        <>
+          <span aria-hidden="true" className={st.glow} style={{ '--flag': strip } as CSSProperties} />
+          <span aria-hidden="true" className={st.strip} style={{ '--flag': strip } as CSSProperties} />
+        </>
       ) : null}
       <p className={st.head}>{t('heading')}</p>
       <div className={st.art}>
@@ -207,9 +208,9 @@ export function Stamp({
       data-first-row={frStamp ? 'true' : undefined}
       data-save-state={saveState}
       className={cn(
-        'relative overflow-hidden rounded-lg border border-highlight bg-surface-raised',
-        // Подвійна жовта рамка «Першого ряду»: друга тонка рамка всередині з проміжком.
-        frStamp ? 'p-1' : st.card,
+        // Без золотої рамки (правка власника 2026-11-01): край картки — смужка прапора. «Перший ряд» — подвійна жовта рамка.
+        'relative overflow-hidden rounded-lg bg-surface-raised',
+        frStamp ? 'border border-highlight p-1' : st.card,
         className,
       )}
     >

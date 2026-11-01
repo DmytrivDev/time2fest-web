@@ -10,8 +10,7 @@
  * - «Як тобі шоу?» (`StampRate`) — під кнопками разом зі штампом (рішення 2026-11-01): «×» прибирає й оцінку, оцінити
  *   можна в паспорті;
  * - «Увійди» відкриває вхід на місці чату (трансляція не зупиняється), «Мій паспорт» — сторінка `/passport/`;
- * - поява: місце плавно відкривається порожнім, потім картка «приземляється» — проявляється, трохи піднімаючись і
- *   збільшуючись (правка власника 2026-11-01 — не «акордеоном»);
+ * - поява — одразу, без анімації блока (правка власника 2026-11-01); удар печатки й конфеті — як були;
  * - «×» прибирає саме цей штамп (запис у `guest.stampsDismissed`), у паспорті він лишається: картка гасне й трохи
  *   відпливає вгору, потім порожнє місце стягується.
  */
@@ -20,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useHeaderUser } from '@/components/auth/session';
+import { cn } from '@/components/primitives/cn';
 import { Reveal } from '@/components/primitives/Reveal';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { shareWindowSpec } from '@/components/windows/Share';
@@ -151,9 +151,9 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
   }
 
   return (
-    <Reveal open={visible} className={className}>
+    <Reveal open={visible} className={cn('t2f-reveal-instant', className)}>
       {current ? (
-        // `key` — новий штамп щоразу «приземляється» заново (анімація появи в StampMotion.css).
+        // `key` — новий штамп — новий блок (позначка «зникає» попереднього не переходить на нього).
         <div key={current.key} className="pb-4" data-stamp-block="" data-leaving={leaving === current.key || undefined}>
           <Stamp
             key={current.key}

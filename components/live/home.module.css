@@ -234,6 +234,12 @@
   min-height: 360px;
 }
 
+/* Штамп і пропозиція під плеєром мають власний нижній відступ (16 px), коли видні, тож проміжок колонки після них
+   не потрібен; порожні (закриті) — зовсім не займають місця. Відстань від картки до «Першого ряду» — 16 px. */
+.column > :global(.t2f-reveal),
+.column > [aria-live='polite']:has(> :global(.t2f-reveal)) {
+  margin-bottom: calc(-1 * var(--spacing-4));
+}
 /* Порожній InFlowSlot (жива область лишається в DOM) не додає проміжку колонки. */
 .column > [data-moment-slot]:has(> [data-in-flow-slot='empty']) {
   margin-bottom: calc(-1 * var(--spacing-4));
