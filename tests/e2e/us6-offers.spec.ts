@@ -129,14 +129,21 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
   });
 
-  test('«Оформити пас» не веде на фальшивий чекаут — лише «Оплата буде на наступному етапі»', async ({
+  test('«Оформити пас» записує дію й відкриває вікно «Новорічний пас» на місці чату; трансляція лишається', async ({
     page,
   }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await page.getByRole('button', { name: 'Оформити пас' }).click();
-    await expect(slot(page).getByRole('status')).toHaveText('Оплата буде на наступному етапі');
+    await slot(page).getByRole('button', { name: 'Оформити пас' }).click();
+    await expect(page.getByRole('dialog', { name: 'Новорічний пас' })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe('/');
+    const acted = await page.evaluate(
+      () =>
+        (JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.offers?.history ?? []).find(
+          (h: { kind: string }) => h.kind === 'pass-offer',
+        )?.acted,
+    );
+    expect(acted).toBe('primary');
   });
 
   test('закрита хрестиком не повертається тієї ночі (і після перезавантаження)', async ({
@@ -300,8 +307,10 @@ test.describe('US6 · cookies', () => {
       const vp = page.viewportSize()!;
       expect(box.x).toBe(0);
       expect(Math.round(box.width)).toBe(vp.width);
-      // Телефон: смуга стоїть над згорнутим вікном чату (68 px).
-      expect(Math.round(box.y + box.height)).toBe(vp.height - 68);
+      // Телефон: смуга стоїть рівно над згорнутим вікном чату (його висота може змінюватись).
+      const dock = (await page.locator('[data-chat-dock]').boundingBox())!;
+      expect(Math.round(box.y + box.height)).toBe(Math.round(dock.y));
+      expect(Math.round(dock.y + dock.height)).toBe(vp.height);
     } else {
       await expect(banner).toHaveAttribute('data-cookie-banner', 'corner');
       const box = (await banner.boundingBox())!;
