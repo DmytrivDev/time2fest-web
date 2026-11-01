@@ -202,7 +202,7 @@ export function Menu({
               <Divider />
               <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
                 <NavRow icon="calendar" title={t('schedule')} hint={hasPass ? undefined : t('scheduleHint')} onNavigate={close} />
-                <NavRow icon="passport" title={t('passport')} hint={t('passportHint', { count: stampCount })} onNavigate={close} />
+                <NavRow href="/passport/" icon="passport" title={t('passport')} hint={t('passportHint', { count: stampCount })} onNavigate={close} />
                 <NavRow
                   href="/pass/"
                   icon={hasPass ? 'ticket-check' : 'ticket'}

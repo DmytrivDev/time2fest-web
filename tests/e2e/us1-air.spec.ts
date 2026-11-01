@@ -143,18 +143,20 @@ test.describe('US1 · ефір на головній', () => {
     expect(await guestStampIds(page)).toEqual([{ eventId: 'evt_london_2027', grantedAt: STAMP_AT }]);
   });
 
-  test('сценарій 3: «+2 хв» — штамп лишається окремим блоком, нижче «Як тобі шоу?»', async ({ page, ytStub }) => {
+  test('сценарій 3: «+5 хв» — «Як тобі шоу?» рядком у штампі; оцінка зберігається', async ({ page, ytStub }) => {
     await startAt(page, ytStub, '2027-01-01T02:00:10+02:00', 1);
     await expect.poll(() => guestStampIds(page), { timeout: 20_000 }).toHaveLength(1);
-    // Перемотка до «+2 хв» без перезавантаження.
+    // Перемотка до «+5 хв» без перезавантаження.
     await page.evaluate(() =>
       (window as unknown as { __t2f: { timeMachine: { set(o: { at: string; speed: number }): void } } }).__t2f.timeMachine.set({
-        at: '2027-01-01T02:02:00+02:00',
+        at: '2027-01-01T02:05:00+02:00',
         speed: 1,
       }),
     );
-    await expect(page.locator('[data-stamp-block] [data-stamp]')).toBeVisible();
-    await expect(page.getByText('Як тобі шоу?')).toBeVisible();
+    const block = page.locator('[data-stamp-block]');
+    await expect(block.locator('[data-stamp-rate]')).toContainText('Як тобі шоу?');
+    await block.getByRole('radio', { name: '4 з 5' }).click();
+    await expect(block.locator('[data-stamp-rate]')).toContainText('Твоя оцінка');
     await expectNothingOverPlayer(page);
     await expectAxeClean(page);
   });

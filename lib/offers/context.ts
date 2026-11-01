@@ -46,8 +46,14 @@ export function buildOfferContext(now: Ms): OfferContext | null {
     lastEvent: last,
     nextEvent: next,
     hasPass: guest.hasPass,
-    // Після `rateCloseAt` картка оцінки точно закрита, навіть якщо `closed` не встигло записатись (перезавантаження).
-    rate: now >= momentTimeline(last).rateCloseAt ? 'closed' : rateStateOf(lastSlotEventIds, guest.rate),
+    // Оцінка — рядком у штампі (рішення 2026-11-01), вікна не займає й пропозиції не блокує; окрема картка оцінки
+    // буває лише тоді, коли штамп прибрали «×». Після `rateCloseAt` картка точно закрита, навіть якщо `closed` не
+    // встигло записатись (перезавантаження).
+    rate: !lastSlotEventIds.every((id) => guest.stampsDismissed?.includes(id))
+      ? 'none'
+      : now >= momentTimeline(last).rateCloseAt
+        ? 'closed'
+        : rateStateOf(lastSlotEventIds, guest.rate),
     offers: guest.offers,
     ui: getOfferUi(),
   };

@@ -79,10 +79,10 @@ describe('Stamp', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('смужка кольорів прапора — круглий прапор країни', () => {
-    const { container } = renderApp(<Stamp stamps={[SYDNEY]} />);
+  it('смужка — градієнт кольорів прапора; майже білий стає справжнім білим', () => {
+    const { container } = renderApp(<Stamp stamps={[{ ...SYDNEY, flagCode: 'JP', countryName: 'Японія' }]} />);
     const strip = container.querySelector<HTMLElement>('[aria-hidden="true"][style*="--flag"]');
-    expect(strip?.style.getPropertyValue('--flag')).toBe('url(/flags/round/au.svg)');
+    expect(strip?.style.getPropertyValue('--flag')).toBe('linear-gradient(180deg, #ffffff 25%, #d80027 75%)');
   });
 
   it('stamping: data-stamping=true лише на час «удару» (CSS грає його тільки у lively)', () => {

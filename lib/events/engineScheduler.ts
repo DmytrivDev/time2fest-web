@@ -9,6 +9,7 @@
  */
 import type { Country, Ms, PresenceSource, SlotGroup, StreamChain } from '@/lib/data/types';
 import { airSlots, currentAirEvent, pickSlotEvent } from '@/lib/engine/currentAirEvent';
+import { HANDOVER_AFTER } from '@/lib/engine/config';
 import { momentTimeline } from '@/lib/engine/momentTimeline';
 import { offerEligibility, type OfferContext } from '@/lib/engine/offerEligibility';
 import type { UiEventMap, UiEventType } from './types';
@@ -101,6 +102,23 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
     writeJson(deps.storage, EMITTED_KEY, [...emitted]);
   }
 
+  function forgetAhead(now: Ms) {
+    const suffixes: string[] = [];
+    for (const slot of slots) {
+      if (slot.midnightMs + HANDOVER_AFTER <= now) continue;
+      suffixes.push(`:${slot.midnightUtc}`, ...slot.events.map((e) => `:${e.id}`));
+      pendingRateClose.delete(slot.midnightUtc);
+    }
+    let changed = false;
+    for (const key of [...emitted]) {
+      if (suffixes.some((sfx) => key.endsWith(sfx))) {
+        emitted.delete(key);
+        changed = true;
+      }
+    }
+    if (changed) writeJson(deps.storage, EMITTED_KEY, [...emitted]);
+  }
+
   function tick(now: Ms) {
     const real = realNow();
     if (prev === null) {
@@ -114,7 +132,9 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
       prevReal = real;
     }
     if (now < prev) {
-      // Перемотка назад: нічого не повторюємо (ключі вже в сховищі).
+      // Перемотка назад (машина часу): моменти, що знову попереду, мають спрацювати ще раз — забуваємо їхні
+      // ключі (штамп, оцінка, перехід ефіру, пропозиції) для поясів, чий ефір ще не закінчився о `now`.
+      forgetAhead(now);
       prev = now;
       prevReal = real;
       writeJson(deps.storage, LAST_TICK_KEY, { now });

@@ -281,7 +281,7 @@ export function StampArt({ illustrationId, stampText, stamping = false, thumbnai
   return (
     <div className={`relative rounded-md bg-text p-1.5 ${className ?? ''}`} data-stamp-art="" data-stamping={stamping ? 'true' : 'false'}>
       <PostcardArt illustrationId={illustrationId} label={stampText} className="block w-full rounded-sm" />
-      <StampMark text={stampText} className="absolute right-0.5 top-1 w-36 -rotate-12 text-highlight" hitClassName="t2f-stamp-hit" />
+      <StampMark text={stampText} className="absolute right-0.5 top-1 w-[44%] max-w-36 -rotate-12 text-highlight" hitClassName="t2f-stamp-hit" />
     </div>
   );
 }

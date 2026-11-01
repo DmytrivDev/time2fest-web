@@ -12,10 +12,10 @@ import { TimeProvider } from '@/lib/time/TimeProvider';
 import { PassPaymentWatcher } from './PassPaymentWatcher';
 
 /**
- * Хедер + сторінка + футер для `/pass/`: поза `(live)`, тож без плеєра й чату (як вхід), з машиною часу тестової
+ * Хедер + сторінка + футер для `/pass/` (і `/passport/` — `passCurrent={false}`): поза `(live)`, тож без плеєра й чату (як вхід), з машиною часу тестової
  * збірки (результат оплати) і «сторожем» підтвердження оплати.
  */
-export function PassShell({ children }: { children: ReactNode }) {
+export function PassShell({ children, passCurrent = true }: { children: ReactNode; passCurrent?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = useHeaderUser();
   const hasPass = useHeaderPass();
@@ -26,7 +26,7 @@ export function PassShell({ children }: { children: ReactNode }) {
         <PassPaymentWatcher />
         <div className="flex min-h-dvh flex-col bg-background text-text">
           <SkipLinks targets={['content']} />
-          <Header user={user} hasPass={hasPass} passCurrent onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
+          <Header user={user} hasPass={hasPass} passCurrent={passCurrent} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
           <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
           {children}
           <Footer className="mt-0" />

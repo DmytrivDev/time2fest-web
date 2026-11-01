@@ -112,7 +112,7 @@ describe('EngineScheduler', () => {
     expect(ofType(b.log, 'moment:stamp')).toHaveLength(0);
   });
 
-  it('перемотка назад не повторює вже емітовані ключі', () => {
+  it('перемотка назад (машина часу): момент, що знову попереду, спрацьовує ще раз', () => {
     const { log, s, real } = setup();
     real.t = 1_000;
     s.tick(LONDON_MIDNIGHT + 10 * SEC);
@@ -122,6 +122,19 @@ describe('EngineScheduler', () => {
     s.tick(LONDON_MIDNIGHT); // машина часу: назад
     real.t = 4_000;
     s.tick(LONDON_MIDNIGHT + 16 * SEC);
+    expect(ofType(log, 'moment:stamp')).toHaveLength(2);
+  });
+
+  it('перемотка назад у межах ефіру не повторює моментів, що вже позаду', () => {
+    const { log, s, real } = setup();
+    real.t = 1_000;
+    s.tick(LONDON_MIDNIGHT + 10 * SEC);
+    real.t = 2_000;
+    s.tick(LONDON_MIDNIGHT + 20 * MIN);
+    real.t = 3_000;
+    s.tick(LONDON_MIDNIGHT + 16 * MIN); // ефір Лондона вже закінчився — нічого не забуваємо
+    real.t = 4_000;
+    s.tick(LONDON_MIDNIGHT + 17 * MIN);
     expect(ofType(log, 'moment:stamp')).toHaveLength(1);
   });
 
@@ -144,38 +157,38 @@ describe('EngineScheduler', () => {
     expect(log).toHaveLength(0);
   });
 
-  it('оцінка: rate-open лише зі штампом; rate-close після +5 хв, відкладається при взаємодії', () => {
+  it('оцінка: rate-open о +5 хв лише зі штампом; rate-close після +8 хв, відкладається при взаємодії', () => {
     let interacting = false;
     const { log, run } = setup({
       getStampedEventIds: (ids) => ids.filter((id) => id === 'evt_london_2027'),
       rate: { isInteracting: () => interacting },
     });
-    run(LONDON_MIDNIGHT + 110 * SEC, LONDON_MIDNIGHT + 125 * SEC);
+    run(LONDON_MIDNIGHT + 290 * SEC, LONDON_MIDNIGHT + 305 * SEC);
     expect(ofType(log, 'moment:rate-open')).toEqual([
       {
         eventKey: 'rate-open:2027-01-01T00:00:00Z',
-        at: LONDON_MIDNIGHT + 2 * MIN,
+        at: LONDON_MIDNIGHT + 5 * MIN,
         eventIds: ['evt_london_2027'],
-        closesAt: LONDON_MIDNIGHT + 5 * MIN,
+        closesAt: LONDON_MIDNIGHT + 8 * MIN,
       },
     ]);
     interacting = true;
-    run(LONDON_MIDNIGHT + 5 * MIN - 2 * SEC, LONDON_MIDNIGHT + 5 * MIN + 10 * SEC);
+    run(LONDON_MIDNIGHT + 8 * MIN - 2 * SEC, LONDON_MIDNIGHT + 8 * MIN + 10 * SEC);
     expect(ofType(log, 'moment:rate-close')).toHaveLength(0);
     interacting = false;
-    run(LONDON_MIDNIGHT + 5 * MIN + 11 * SEC, LONDON_MIDNIGHT + 5 * MIN + 11 * SEC);
+    run(LONDON_MIDNIGHT + 8 * MIN + 11 * SEC, LONDON_MIDNIGHT + 8 * MIN + 11 * SEC);
     const close = ofType(log, 'moment:rate-close');
     expect(close).toHaveLength(1);
     expect(close[0]).toMatchObject({
       reason: 'timeout',
-      at: LONDON_MIDNIGHT + 5 * MIN,
+      at: LONDON_MIDNIGHT + 8 * MIN,
       deferredMs: 11 * SEC,
     });
   });
 
   it('без штампа оцінки немає', () => {
     const { log, run } = setup({ getStampedEventIds: () => [] });
-    run(LONDON_MIDNIGHT + 110 * SEC, LONDON_MIDNIGHT + 6 * MIN, 10 * SEC);
+    run(LONDON_MIDNIGHT + 290 * SEC, LONDON_MIDNIGHT + 9 * MIN, 10 * SEC);
     expect(ofType(log, 'moment:rate-open')).toHaveLength(0);
     expect(ofType(log, 'moment:rate-close')).toHaveLength(0);
   });

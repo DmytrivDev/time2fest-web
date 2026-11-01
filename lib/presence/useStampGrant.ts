@@ -110,6 +110,11 @@ export function useStampGrant(surface: StampSurfaceInput | null): void {
       const { pendingPresence, markPresence } = useGuestStore.getState();
       for (const entry of entries) {
         const id = entry.eventIds[0]!;
+        // Машина часу перемотала назад: сторінка була відкрита весь цей час, тож «відкрита» не пізніше за `t`.
+        if (t < entry.openedAt) {
+          entry.openedAt = t;
+          opened.current.set(id, t);
+        }
         if (pendingPresence[id]) continue;
         const event = data.eventsById.get(id);
         if (!event || !presenceOf(entry, t, event)) continue;

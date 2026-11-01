@@ -88,12 +88,6 @@ function roundFile(code: string): string | null {
   return code.toLowerCase();
 }
 
-/** Адреса круглого прапора або `null` для особливих (без файлу). */
-export function roundFlagSrc(code: string): string | null {
-  const file = roundFile(code);
-  return file ? `/flags/round/${file}.svg` : null;
-}
-
 function isSpecial(code: string): code is SpecialFlag {
   return (SPECIAL_FLAGS as readonly string[]).includes(code);
 }

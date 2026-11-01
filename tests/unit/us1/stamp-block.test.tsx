@@ -1,10 +1,13 @@
 import { act, fireEvent, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearStampMoment, showStampMoment, StampBlock } from '@/components/live/StampBlock';
 import { OverlayManager, useOverlay } from '@/components/shell/OverlayManager';
 import { emit } from '@/lib/events/bus';
 import { useGuestStore } from '@/stores/guest';
 import { renderApp } from './render';
+
+const push = vi.fn();
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 
 function OpenSideWindow() {
   const { open } = useOverlay();
@@ -80,5 +83,33 @@ describe('StampBlock — окремий блок під плеєром (ріше
       });
     });
     expect(document.querySelector('.t2f-reveal')).toHaveAttribute('data-open', 'false');
+  });
+
+  it('з +5 хв у штампі — «Як тобі шоу?»; оцінка зберігається й показує «Твоя оцінка»', () => {
+    const london = '2027-01-01T00:05:01Z';
+    renderApp(
+      <OverlayManager>
+        <StampBlock eventId={null} />
+      </OverlayManager>,
+      london,
+    );
+    act(() => showStampMoment(['evt_london_2027'], false));
+    expect(document.querySelector('[data-stamp-rate]')).not.toBeNull();
+    fireEvent.click(screen.getByRole('radio', { name: '4 з 5' }));
+    expect(useGuestStore.getState().rate['evt_london_2027']?.stars).toBe(4);
+    expect(screen.getByText('Твоя оцінка')).toBeInTheDocument();
+  });
+
+  it('до +5 хв рядка оцінки немає; «Мій паспорт» веде на /passport/', () => {
+    renderApp(
+      <OverlayManager>
+        <StampBlock eventId={null} />
+      </OverlayManager>,
+      '2027-01-01T00:04:00Z',
+    );
+    act(() => showStampMoment(['evt_london_2027'], false));
+    expect(document.querySelector('[data-stamp-rate]')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Мій паспорт' }));
+    expect(push).toHaveBeenCalledWith('/passport/');
   });
 });

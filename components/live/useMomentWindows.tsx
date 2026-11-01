@@ -4,8 +4,9 @@
  * Вікна моменту на поверхні ефіру (T081, `contracts/ui-events.md`):
  * - `moment:stamp` (+15 с) — штамп в окремому блоці під рядком дій (`StampBlock`, не вікно — вікна збоку його не
  *   прибирають), одне оголошення «<Місто>: північ. Ачівка готова — під плеєром» (запізніле — без оголошення й без удару);
- * - `moment:rate-open` (+2 хв) — «Як тобі шоу?» на 3 хв у `InFlowSlot`; закривається за `moment:rate-close` або сама
- *   (×, таймаут), поки людина не взаємодіє (WCAG 2.2.1);
+ * - `moment:rate-open` (+5 хв) — «Як тобі шоу?» рядком у штампі (`StampRate` у `StampBlock`); окрема картка на 3 хв
+ *   у `InFlowSlot` — лише якщо штамп прибрали «×»; закривається за `moment:rate-close` або сама (×, таймаут), поки
+ *   людина не взаємодіє (WCAG 2.2.1);
  * - перехід ефіру (`air:handover`) прибирає вікна попередньої події.
  * Нічого не лежить поверх плеєра: усі вікна — `inflow`, під рядком дій.
  */
@@ -80,6 +81,9 @@ export function useMomentWindows(): void {
     () =>
       on('moment:rate-open', (p) => {
         const ids = [...p.eventIds];
+        // Оцінка — рядком у штампі під плеєром (`StampBlock`); окрема картка — лише якщо штамп прибрали «×».
+        const dismissed = useGuestStore.getState().stampsDismissed ?? [];
+        if (!ids.every((id) => dismissed.includes(id))) return;
         open({
           id: RATE_WINDOW_ID,
           kind: 'inflow',

@@ -81,3 +81,17 @@ html[data-reduce-motion='false'] [data-stamping='true'] .t2f-confetti {
   background: var(--tone);
   animation: t2f-confetti-fall 1800ms ease-in var(--delay) both;
 }
+
+/* «×» на штампі під плеєром (`StampBlock`): картка гасне, трохи зменшується й відпливає вгору, а вже потім порожнє
+   місце стягується (правка власника 2026-11-01 — замість згортання «акордеоном»). */
+html[data-reduce-motion='false'] [data-stamp-block] > * {
+  transition:
+    opacity 220ms ease-out,
+    transform 220ms cubic-bezier(0.4, 0, 1, 1),
+    filter 220ms ease-out;
+}
+[data-stamp-block][data-leaving] > * {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.97);
+  filter: blur(2px);
+}

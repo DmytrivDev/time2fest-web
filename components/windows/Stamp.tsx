@@ -15,9 +15,11 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
-import { Flag, roundFlagSrc } from '@/components/primitives/Flag';
+import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
+import { Reveal } from '@/components/primitives/Reveal';
+import { flagGradient } from '@/lib/flags/colors';
 import { useRegisterCoral } from '@/lib/overlay/coral';
 import st from './stamp.module.css';
 import { StampArt } from './StampArt';
@@ -53,6 +55,8 @@ export interface StampProps {
   quiet?: boolean;
   /** «×» — прибрати цей штамп. */
   onClose?: () => void;
+  /** «Як тобі шоу?» рядком під кнопками (з +5 хв): плавно розкривається, коли з’являється. */
+  rate?: ReactNode;
   className?: string;
 }
 
@@ -79,6 +83,7 @@ export function Stamp({
   onSignIn,
   onRetrySave,
   onClose,
+  rate,
   className,
 }: StampProps) {
   const t = useTranslations('windows.achievement');
@@ -105,14 +110,14 @@ export function Stamp({
   const frStamp = stamps.find((s) => s.firstRowSeat !== undefined);
   const multi = stamps.length > 1;
   const failed = saveState === 'failed';
-  const strip = roundFlagSrc(first.flagCode);
+  const strip = flagGradient(first.flagCode);
 
   const content: ReactNode = (
     <>
-      {/* Смужка кольорів прапора: вертикальний зріз круглого прапора по центру (Японія — біло-червоно-біла, Бразилія —
-          зелено-жовто-синя). Текст на неї не лягає, тож контраст однаковий для будь-якого прапора. */}
+      {/* Смужка кольорів прапора — плавний градієнт переважних кольорів (`lib/flags/colors`), білий — білий.
+          Текст на неї не лягає, тож контраст однаковий для будь-якого прапора. */}
       {strip ? (
-        <span aria-hidden="true" className={st.strip} style={{ '--flag': `url(${strip})` } as CSSProperties}>
+        <span aria-hidden="true" className={st.strip} style={{ '--flag': strip } as CSSProperties}>
           <span className={st.glow} />
         </span>
       ) : null}
@@ -189,6 +194,9 @@ export function Stamp({
           </Button>
         </div>
       </div>
+      <Reveal open={!!rate} className={st.rate}>
+        {rate}
+      </Reveal>
     </>
   );
 

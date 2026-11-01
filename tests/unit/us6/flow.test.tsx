@@ -71,11 +71,13 @@ describe('контекст рушія пропозицій', () => {
     expect(at(s2.midnightMs + 6 * MIN).show).toBe('pass-offer');
     expect(at(s3.midnightMs - 9 * MIN).blockedBy).toContain('too-late');
 
-    // Оцінка ще відкрита (до її кінця) → блок; після `rateCloseAt` вважається закритою навіть без запису.
+    // Оцінка рядком у штампі (рішення 2026-11-01) вікна не займає — пропозицію не блокує.
     useGuestStore.getState().setRate(s2.id, { stars: 4 });
-    expect(at(s2.midnightMs + 4 * MIN + 30_000).blockedBy).toContain('rate-open');
-    useGuestStore.getState().setRate(s2.id, { closed: true });
     expect(at(s2.midnightMs + 6 * MIN).show).toBe('pass-offer');
+    // Штамп прибрали «×» → оцінка окремою карткою: поки вона відкрита (до +8 хв) — блок; після `rateCloseAt` — ні.
+    useGuestStore.getState().dismissStamps([s2.id]);
+    expect(at(s2.midnightMs + 6 * MIN).blockedBy).toContain('rate-open');
+    expect(at(s2.midnightMs + 8 * MIN).show).toBe('pass-offer');
   });
 
   it('є пас — пропозицій немає', () => {

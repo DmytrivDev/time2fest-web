@@ -1,0 +1,81 @@
+/* «Як тобі шоу?» у штампі (дошка `Desk-Rate-Placement`, A): телефон — по центру стовпчиком, десктоп — одним рядком. */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+}
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.city {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+.stars {
+  margin-inline: -6px;
+}
+.hint {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.row[data-rated] .hint {
+  color: var(--color-text);
+}
+
+@media (min-width: 768px) {
+  .row {
+    flex-direction: row;
+    gap: 14px;
+    text-align: start;
+  }
+  .stars {
+    margin-inline: -4px;
+  }
+  .hint {
+    font-size: 12px;
+  }
+}
+
+/* Клітинка паспорта: зірки менші, рядок під назвою міста. */
+.compact {
+  padding-top: 6px;
+  border-top: 0;
+}
+.compact .row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  text-align: start;
+}
+.compact .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.compact .stars {
+  gap: 0;
+  margin-inline: -4px;
+}
+/* Ціль 28 × 32 px (≥ 24 px, WCAG 2.5.8) — у вузькій клітинці 44 px не вміщаються. */
+.compact .stars > button {
+  width: 28px;
+  height: 32px;
+}
+.compact .stars svg {
+  width: 20px;
+  height: 20px;
+}
+.compact .hint {
+  display: none;
+}
