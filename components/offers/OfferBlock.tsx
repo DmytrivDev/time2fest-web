@@ -6,7 +6,8 @@
  * штамп прибрали — на тому ж місці, тобто над «Першим рядом».
  * - з’являється за `offer:show` (правила — `offerEligibility`; запис — `useOfferWindows`), лишається й після
  *   перезавантаження, доки не закриють «×» або не оформлять пас;
- * - чайові — «Скажи тост на весь світ»: після «Підтримати» золотий тост гостя з’являється в чаті «Світ»;
+ * - чайові — «Скажи тост на весь світ»: «Підтримати» відкриває вікно оплати (`useOpenTipsWindow`); після оплати тост —
+ *   у чаті «Світ», а блок зникає;
  * - «Оформити пас» — вікно пасу на місці чату (телефон — шторка), навіть без трансляції;
  * - «Детальніше» — те саме вікно, коли трансляція грає; інакше — сторінка /pass/ (`usePassDetails`);
  * - поява й зникнення — як у штампа: місце відкривається порожнім, картка «приземляється»; «×» — картка гасне, потім
@@ -14,9 +15,8 @@
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
-import { buildToast } from '@/lib/chat-sim/toast';
-import { useChatFeed } from '@/lib/chat-sim/store';
 import { usePassDetails } from '@/components/pass/PassWindow';
+import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
 import { Reveal } from '@/components/primitives/Reveal';
 import { PassOffer } from '@/components/windows/PassOffer';
 import { Tips } from '@/components/windows/Tips';
@@ -49,6 +49,7 @@ export function OfferBlock({ className }: { className?: string }) {
   const flagCode = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
   const onGetPass = useOfferGetPass('pass-offer');
   const passDetails = usePassDetails();
+  const openTips = useOpenTipsWindow();
 
 
   // Поки блок плавно зникає після «×», показуємо ту саму картку; позначку «зникає» знімаємо, коли картка знову видна.
@@ -101,13 +102,7 @@ export function OfferBlock({ className }: { className?: string }) {
               nick={nick}
               flagCode={flagCode}
               onClose={dismiss}
-              onSupport={(amount, toast) => {
-                const g = useGuestStore.getState();
-                g.actOffer('primary', 'tips');
-                useChatFeed.getState().append([
-                  buildToast({ text: toast, amount, now: clock.getSnapshot(), guestId: g.id, nick, flagCode, hasPass: g.hasPass }),
-                ]);
-              }}
+              onSupport={(amount, toast) => openTips({ amount, toast })}
             />
           )}
         </div>

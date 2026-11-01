@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
+import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { usePlayer, usePlayerActions } from '@/lib/player/PlayerProvider';
@@ -44,6 +45,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const hasPass = hasPassProp ?? storedPass;
   const openAuthWindow = useOpenAuthWindow();
   const openPassWindow = useOpenPassWindow();
+  const openTips = useOpenTipsWindow();
   const router = useRouter();
 
   const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -133,6 +135,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
         languageOpen={languageOpen}
         onSignInClick={onSignInClick}
         onPassClick={onPassClick}
+        onSupportClick={() => openTips()}
       />
       <Menu
         open={menuOpen}

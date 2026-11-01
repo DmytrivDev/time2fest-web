@@ -94,7 +94,7 @@ describe('Tips — «Скажи тост на весь світ» (рішенн�
     expect(coralButtons()).toHaveLength(1);
   });
 
-  it('«Підтримати» — сума й текст тосту; кнопка стає «Тост у чаті», без чекауту; посилання в тості не пропускаємо', () => {
+  it('«Підтримати» — передає суму й текст тосту (оплата — у вікні); посилання в тості не пропускаємо', () => {
     const onSupport = vi.fn();
     renderPage(<Tips onSupport={onSupport} />);
     expect(screen.getByText('Гість')).toBeInTheDocument();
@@ -104,8 +104,8 @@ describe('Tips — «Скажи тост на весь світ» (рішенн�
     fireEvent.change(field, { target: { value: 'За всіх, хто не спить!' } });
     fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
     expect(onSupport).toHaveBeenCalledWith(5, 'За всіх, хто не спить!');
-    expect(screen.getByRole('button', { name: 'Тост у чаті' })).toBeDisabled();
-    expect(screen.getByRole('status')).toHaveTextContent('Твій тост уже в чаті «Світ»');
+    // Кнопка не змінюється — оплата й «Дякуємо» відбуваються у вікні «Чайові».
+    expect(screen.getByRole('button', { name: 'Підтримати $5' })).toBeEnabled();
   });
 });
 

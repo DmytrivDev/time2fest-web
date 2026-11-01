@@ -10,7 +10,7 @@
  * Часовий пояс браузера — Київ: північ Лондона (00:00 UTC) = 02:00 за вашим часом; наступна основна північ — Азорські (01:00 UTC).
  */
 import type { Page } from '@playwright/test';
-import { gotoAt, setTime } from './fixtures/time';
+import { gotoAt, setPayResult, setTime } from './fixtures/time';
 import { expect, test } from './fixtures/youtube-stub';
 
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
@@ -230,8 +230,11 @@ test.describe('US6 · чайові після 3-го Нового року', () 
       'Входити не треба — email для квитанції попросить сторінка оплати',
     );
     await expect(visibleCoral(page)).toHaveCount(1);
+    await setPayResult(page, 'success');
     await page.getByRole('button', { name: 'Підтримати $5' }).click();
-    await expect(slot(page).getByRole('status')).toContainText('Твій тост уже в чаті «Світ»');
+    // Рішення 2026-11-01: оплата — у вікні «Чайові» (на місці чату / шторкою); тост — у чаті після оплати.
+    await expect(page.locator('[data-tips="success"]')).toContainText('Ти робиш це свято можливим', { timeout: 10_000 });
+    await expect(offerCard(page, 'Скажи тост на весь світ')).toHaveCount(0);
     await expect(page.locator('[data-toast="true"]').first()).toContainText('Піднімаю келих');
   });
 });

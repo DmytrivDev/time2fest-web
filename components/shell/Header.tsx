@@ -34,6 +34,8 @@ export interface HeaderProps {
   onSignInClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
   /** «Пас»: сторінка `/pass/`; `onPassClick` може відкрити оформлення вікном (трансляція грає) — `preventDefault`. */
   onPassClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
+  /** «Підтримати»: вікно «Чайові» (сторінки з плеєром); без обробника — посилання на головну. */
+  onSupportClick?: () => void;
   /** Сторінка пасу відкрита — «Пас» позначено поточною. */
   passCurrent?: boolean;
   className?: string;
@@ -60,6 +62,7 @@ export function Header({
   signInCurrent = false,
   onSignInClick,
   onPassClick,
+  onSupportClick,
   passCurrent = false,
   className,
 }: HeaderProps) {
@@ -99,8 +102,16 @@ export function Header({
           <Icon name="chevron-down" size={14} strokeWidth={2} />
         </button>
 
-        {/* «Підтримати» — інертне посилання: чайові (O-TIPS) з'являться в наступній області. */}
-        <NextLink href="#" className={cn('t2f-focus', styles.btn, styles.deskOnly)}>
+        {/* «Підтримати» — вікно «Чайові» на місці чату (рішення власника 2026-11-01); поза сторінками з плеєром — головна. */}
+        <NextLink
+          href="/"
+          onClick={(e) => {
+            if (!onSupportClick) return;
+            e.preventDefault();
+            onSupportClick();
+          }}
+          className={cn('t2f-focus', styles.btn, styles.deskOnly)}
+        >
           <Icon name="heart" size={18} />
           {t('support')}
         </NextLink>

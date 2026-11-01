@@ -16,6 +16,8 @@ import { resetCookieFlow } from '@/lib/offers/cookieFlow';
 import { getOfferUi, installTypingTracking, resetOfferUi } from '@/lib/offers/uiState';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import { useGuestStore } from '@/stores/guest';
+import { useTestControls } from '@/stores/testControls';
+import { useTipsStore } from '@/stores/tips';
 import { renderPage } from './render';
 
 const MIN = 60_000;
@@ -200,16 +202,55 @@ describe('пропозиції — блок під штампом (рішенн�
     expect(useGuestStore.getState().offers.visible).toBe('tips');
   });
 
-  it('«Підтримати» — золотий тост гостя з’являється в чаті «Світ»; чайові записано', () => {
-    giveStamps(s1, s2, s3);
-    useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
-    useChatFeed.getState().reset();
-    renderPage(<Page />);
-    offerShow('tips', s3.id, 3);
-    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
-    const world = useChatFeed.getState().rooms.world ?? [];
-    expect(world.at(-1)).toMatchObject({ toast: { amount: 5 }, text: '🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!', author: { nick: 'Олена', isMine: true } });
-    expect(useGuestStore.getState().offers.history.at(-1)).toMatchObject({ kind: 'tips', acted: 'primary' });
+  it('«Підтримати» в блоці → вікно «Чайові»: «Відкриваємо оплату…» → «Дякуємо!»; тост — у чаті, блок зникає', () => {
+    vi.useFakeTimers();
+    try {
+      giveStamps(s1, s2, s3);
+      useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
+      useChatFeed.getState().reset();
+      useTipsStore.getState().reset();
+      renderPage(<Page />);
+      offerShow('tips', s3.id, 3);
+      fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
+      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Відкриваємо оплату…');
+      act(() => {
+        vi.advanceTimersByTime(1_000);
+      });
+      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Ти робиш це свято можливим');
+      const world = useChatFeed.getState().rooms.world ?? [];
+      expect(world.at(-1)).toMatchObject({ toast: { amount: 5 }, text: '🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!', author: { nick: 'Олена', isMine: true } });
+      expect(useGuestStore.getState().offers.history.at(-1)).toMatchObject({ kind: 'tips', acted: 'primary' });
+      expect(useGuestStore.getState().offers.history.at(-1)?.dismissedAt).toBeDefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('оплата не пройшла / немає з’єднання — у вікні, «Спробувати ще»; тосту в чаті немає', () => {
+    vi.useFakeTimers();
+    try {
+      giveStamps(s1, s2, s3);
+      useChatFeed.getState().reset();
+      useTipsStore.getState().reset();
+      useTestControls.getState().setPayResult('declined');
+      renderPage(<Page />);
+      offerShow('tips', s3.id, 3);
+      fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
+      act(() => {
+        vi.advanceTimersByTime(1_000);
+      });
+      const win = screen.getByRole('dialog', { name: 'Чайові' });
+      expect(win).toHaveTextContent('Оплата не пройшла');
+      expect(within(win).getByRole('button', { name: 'Спробувати ще — $5' })).toBeInTheDocument();
+      expect(useChatFeed.getState().rooms.world ?? []).toHaveLength(0);
+      useTestControls.getState().setPayResult('success');
+      useTestControls.getState().setOfflineSimulated(true);
+      fireEvent.click(within(win).getByRole('button', { name: 'Спробувати ще — $5' }));
+      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Немає з’єднання');
+    } finally {
+      useTestControls.getState().setOfflineSimulated(false);
+      vi.useRealTimers();
+    }
   });
 
   it('«Оформити пас» — вікно пасу на місці чату навіть без трансляції; картка лишається', () => {

@@ -5,8 +5,8 @@
  * чайові дають щось видиме — золотий тост від імені гостя в чаті «Світ». Тост можна написати самому (поле — у самому
  * «повідомленні»-прев’ю), суми $2 / $5 / $10 — великі сегменти, коралова «Підтримати $N».
  * Десктоп — дві колонки (текст і тост ліворуч, суми й кнопка праворуч), телефон — стовпчик.
- * Оплата — наступний етап: після «Підтримати» тост одразу з’являється в чаті, а рядок пояснює, що оплата через
- * PayPro підключиться пізніше (без фальшивого чекаута).
+ * «Підтримати $N» відкриває вікно «Чайові» на місці чату / шторкою зі станом «Відкриваємо оплату…» (`useOpenTipsWindow`);
+ * усі стани оплати й «Дякуємо» — у вікні, тост з’являється в чаті після оплати (рішення власника 2026-11-01).
  */
 import { useTranslations } from 'next-intl';
 import { useId, useState } from 'react';
@@ -16,7 +16,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Link } from '@/components/primitives/Link';
 import { formatUsd, TIP_AMOUNTS, type TipAmount } from '@/lib/offers/format';
 import { useRegisterCoral } from '@/lib/overlay/coral';
-import { OfferCard, PaymentNotice } from './OfferCard';
+import { OfferCard } from './OfferCard';
 import s from './tips.module.css';
 
 /** Найдовший тост — як підпис у чаті, коротко. */
@@ -40,9 +40,8 @@ export function Tips({ defaultAmount = 5, nick, flagCode, onClose, onSupport, te
   const t = useTranslations('offers');
   const [amount, setAmount] = useState<TipAmount>(defaultAmount);
   const [text, setText] = useState(() => t('toastDefault'));
-  const [sent, setSent] = useState(false);
   const fieldId = useId();
-  useRegisterCoral(!sent);
+  useRegisterCoral();
 
   const clean = text.trim();
   const bad = !clean || LINK.test(clean);
@@ -67,7 +66,6 @@ export function Tips({ defaultAmount = 5, nick, flagCode, onClose, onSupport, te
               value={text}
               maxLength={TOAST_MAX}
               rows={2}
-              disabled={sent}
               onChange={(e) => setText(e.target.value)}
               className={cn('t2f-focus', s.field)}
             />
@@ -82,8 +80,7 @@ export function Tips({ defaultAmount = 5, nick, flagCode, onClose, onSupport, te
                 type="button"
                 role="radio"
                 aria-checked={amount === n}
-                disabled={sent}
-                onClick={() => setAmount(n)}
+                  onClick={() => setAmount(n)}
                 className={cn('t2f-focus t2f-transition', s.amount)}
               >
                 {formatUsd(n)}
@@ -91,18 +88,15 @@ export function Tips({ defaultAmount = 5, nick, flagCode, onClose, onSupport, te
             ))}
           </div>
           <Button
-            variant={sent ? 'secondary' : 'coral'}
+            variant="coral"
             size="lg"
-            iconLeft={sent ? 'check' : undefined}
-            disabled={sent || bad}
+            disabled={bad}
             onClick={() => {
-              setSent(true);
               onSupport?.(amount, clean);
             }}
           >
-            {sent ? t('toastSent') : t('tipsAction', { amount: formatUsd(amount) })}
+            {t('tipsAction', { amount: formatUsd(amount) })}
           </Button>
-          {sent ? <PaymentNotice>{t('toastThanks')}</PaymentNotice> : null}
           <p className={cn('text-caption text-text-muted', s.note)}>
             {t('tipsNote')}{' '}
             <Link href={termsHref} className="-my-3 inline-flex min-h-touch-min items-center font-semibold">
