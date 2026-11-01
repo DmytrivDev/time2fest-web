@@ -298,10 +298,14 @@
   background: var(--color-highlight);
   box-shadow: 0 0 0 3px var(--color-background);
 }
+/* Підказка під повзунком: її край іде за повзунком (left = pct, translateX(-pct)) — на початку ночі вона стоїть
+   праворуч від повзунка, наприкінці — ліворуч, посередині — по центру; за краї блоку не виходить ніколи. Стрілка —
+   окремо, точно під повзунком (правка власника 2026-11-01). */
 .tip {
   position: absolute;
   top: 64px;
   box-sizing: border-box;
+  max-width: 100%;
   padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -311,19 +315,17 @@
   line-height: 1.4;
   color: var(--color-text);
   white-space: nowrap;
-  transform: translateX(-50%);
 }
-.tip::before {
-  content: '';
+.tipArrow {
   position: absolute;
-  top: -6px;
-  left: 50%;
+  top: 59px;
+  z-index: 1;
   width: 10px;
   height: 10px;
   margin-left: -5px;
   border-top: 1px solid var(--color-border);
   border-left: 1px solid var(--color-border);
-  background: var(--color-border);
+  background: var(--color-surface-raised);
   transform: rotate(45deg);
 }
 .tipStrong {
@@ -334,19 +336,9 @@
   display: block;
 }
 @media (min-width: 768px) {
-  /* Десктоп: смужка над краями, підказка в один рядок. */
-  .progressBody {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  .bar {
-    margin-top: var(--spacing-2);
-  }
-  .progressEdges {
-    margin-top: var(--spacing-2);
-  }
-  .tip {
-    top: 44px;
+  /* Десктоп: краї над смужкою, як на телефоні (нічого не перекривається), підказка в один рядок. */
+  .progress {
+    padding-bottom: 52px;
   }
   .tipStrong,
   .tipRest {
