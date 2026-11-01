@@ -10,7 +10,6 @@
  * Часовий пояс браузера — Київ: північ Лондона (00:00 UTC) = 02:00 за вашим часом; наступна основна північ — Азорські (01:00 UTC).
  */
 import type { Page } from '@playwright/test';
-import { runAxe } from './fixtures/axe';
 import { gotoAt, setTime } from './fixtures/time';
 import { expect, test } from './fixtures/youtube-stub';
 
