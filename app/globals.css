@@ -11,6 +11,22 @@ body {
   font-family: var(--font-manrope), var(--font-sans);
 }
 
+/* Кнопки й інші натискні елементи — курсор-рука, як на посиланні (правка власника 2026-11-01; Tailwind 4 ставить
+   кнопкам звичайну стрілку). У `@layer base`, тож класи компонентів (`cursor-grab` тощо) сильніші. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='radio']:not([data-disabled]),
+  [role='tab'],
+  [role='switch'],
+  [role='menuitem'],
+  [role='option'],
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+}
+
 /* Телефонне вікно чату внизу (`ChatDock`): нижній відступ сторінки на висоту згорнутого вікна — 46 px + безпечна зона (≥ 58). */
 html[data-has-chat-dock] {
   --chat-dock-h: calc(46px + max(12px, env(safe-area-inset-bottom)));

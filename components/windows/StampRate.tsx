@@ -2,9 +2,10 @@
 
 /**
  * «Як тобі шоу?» рядком усередині штампа (рішення власника 2026-11-01, дошка `Desk-Rate-Placement`, варіант A):
- * штамп і оцінка — про те саме шоу, тож одна картка. З’являється з +5 хв під кнопками штампа й не зникає сама —
- * оцінити можна будь-коли, зокрема пізніше в паспорті. Після оцінки — «Твоя оцінка ★★★★☆ · Дякуємо!»; зірки лишаються
- * активними, тож оцінку можна змінити. Кілька подій (Сідней · Мельбурн) — рядок на кожне місто.
+ * штамп і оцінка — про те саме шоу, тож одна картка. З’являється разом зі штампом під його кнопками; «×» прибирає
+ * штамп разом з оцінкою — оцінити можна й пізніше в паспорті. Без підписів «слабко / неймовірно» — зірки зрозумілі
+ * й так. Після оцінки — «Твоя оцінка ★★★★☆ · Дякуємо!» (зірки не зсуваються); зірки лишаються активними, тож оцінку
+ * можна змінити. Кілька подій (Сідней · Мельбурн) — рядок на кожне місто.
  */
 import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
@@ -38,12 +39,19 @@ export function StampRate({ rows, values, onRate, layout = 'card', ratingHref = 
     <div className={cn(s.wrap, layout === 'compact' && s.compact, className)} data-stamp-rate="">
       {rows.map((row) => {
         const value = values[row.eventId];
-        const label = value === undefined ? t('title') : t('yours');
+        const rated = value !== undefined;
         return (
-          <div key={row.eventId} className={s.row} data-rated={value !== undefined || undefined}>
+          <div key={row.eventId} className={s.row} data-rated={rated || undefined}>
+            {/* Обидва підписи в одній клітинці (невидимий тримає ширину) — зірки не зсуваються після оцінки. */}
             <span className={s.label}>
-              {label}
-              {multi ? <span className={s.city}> · {row.city}</span> : null}
+              <span className={s.labelText} aria-hidden={rated || undefined}>
+                {t('title')}
+                {multi ? <span className={s.city}> · {row.city}</span> : null}
+              </span>
+              <span className={s.labelText} aria-hidden={!rated || undefined}>
+                {t('yours')}
+                {multi ? <span className={s.city}> · {row.city}</span> : null}
+              </span>
             </span>
             <RadioGroup
               variant="stars"
@@ -53,13 +61,7 @@ export function StampRate({ rows, values, onRate, layout = 'card', ratingHref = 
               onValueChange={(v) => onRate(row.eventId, Number(v) as Stars)}
               className={s.stars}
             />
-            {value === undefined ? (
-              layout === 'card' ? (
-                <span aria-hidden="true" className={s.hint}>
-                  {t('low')} → {t('high')}
-                </span>
-              ) : null
-            ) : (
+            {!rated ? null : (
               <span className={s.hint} role="status">
                 {t('thanks')}!{' '}
                 {layout === 'card' ? (

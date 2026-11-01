@@ -55,9 +55,9 @@ afterEach(() => {
 
 describe('контекст рушія пропозицій', () => {
   it('без штампів — контексту немає; з двома — останній штамп, наступна північ, оцінки ще не було', () => {
-    expect(buildOfferContext(0)).toBeNull();
+    expect(buildOfferContext()).toBeNull();
     giveStamps(s1, s2);
-    const ctx = buildOfferContext(s2.midnightMs + MIN)!;
+    const ctx = buildOfferContext()!;
     expect(ctx.lastEvent?.id).toBe(s2.id);
     expect(ctx.nextEvent?.id).toBe(s3.id);
     expect(ctx.rate).toBe('none');
@@ -66,25 +66,23 @@ describe('контекст рушія пропозицій', () => {
 
   it('правила часу: не раніше +5 хв, не пізніше −10 хв до наступної, після оцінки', () => {
     giveStamps(s1, s2);
-    const at = (t: number) => offerEligibility(t, buildOfferContext(t)!);
+    const at = (t: number) => offerEligibility(t, buildOfferContext()!);
     expect(at(s2.midnightMs + 4 * MIN).blockedBy).toContain('too-early');
     expect(at(s2.midnightMs + 6 * MIN).show).toBe('pass-offer');
     expect(at(s3.midnightMs - 9 * MIN).blockedBy).toContain('too-late');
 
-    // Оцінка рядком у штампі (рішення 2026-11-01) вікна не займає — пропозицію не блокує.
+    // Оцінка — рядок у штампі (рішення 2026-11-01): вікна не займає, пропозицію не блокує — і зі штампом, і без.
     useGuestStore.getState().setRate(s2.id, { stars: 4 });
     expect(at(s2.midnightMs + 6 * MIN).show).toBe('pass-offer');
-    // Штамп прибрали «×» → оцінка окремою карткою: поки вона відкрита (до +8 хв) — блок; після `rateCloseAt` — ні.
     useGuestStore.getState().dismissStamps([s2.id]);
-    expect(at(s2.midnightMs + 6 * MIN).blockedBy).toContain('rate-open');
-    expect(at(s2.midnightMs + 8 * MIN).show).toBe('pass-offer');
+    expect(at(s2.midnightMs + 6 * MIN).show).toBe('pass-offer');
   });
 
   it('є пас — пропозицій немає', () => {
     giveStamps(s1, s2);
     useGuestStore.getState().setHasPass(true);
     const t = s2.midnightMs + 6 * MIN;
-    expect(offerEligibility(t, buildOfferContext(t)!).blockedBy).toContain('pass');
+    expect(offerEligibility(t, buildOfferContext()!).blockedBy).toContain('pass');
   });
 
   it('введення: фокус у полі та ~10 с після натискання блокують пропозицію', () => {
@@ -96,15 +94,15 @@ describe('контекст рушія пропозицій', () => {
     document.body.append(input);
     input.focus();
     expect(getOfferUi().composerFocused).toBe(true);
-    expect(offerEligibility(t, buildOfferContext(t)!).blockedBy).toContain('typing');
+    expect(offerEligibility(t, buildOfferContext()!).blockedBy).toContain('typing');
     input.blur();
     expect(getOfferUi().composerFocused).toBe(false);
-    expect(offerEligibility(t, buildOfferContext(t)!).show).toBe('pass-offer');
+    expect(offerEligibility(t, buildOfferContext()!).show).toBe('pass-offer');
     fireEvent.keyDown(input, { key: 'a' });
     clock.t = t + 3_000;
-    const d = offerEligibility(clock.t, buildOfferContext(clock.t)!);
+    const d = offerEligibility(clock.t, buildOfferContext()!);
     expect(d.blockedBy).toContain('typing');
-    expect(offerEligibility(t + 11_000, buildOfferContext(t + 11_000)!).show).toBe('pass-offer');
+    expect(offerEligibility(t + 11_000, buildOfferContext()!).show).toBe('pass-offer');
     stop();
     input.remove();
   });
@@ -164,7 +162,7 @@ describe('вікна пропозицій у потоці', () => {
     // Пізніше тієї ж ночі (після 3-го штампа) пас не повертається — лише чайові.
     giveStamps(s1, s2, s3);
     const t = s3.midnightMs + 6 * MIN;
-    expect(offerEligibility(t, buildOfferContext(t)!).show).toBe('tips');
+    expect(offerEligibility(t, buildOfferContext()!).show).toBe('tips');
   });
 
   it('Esc закриває картку', () => {

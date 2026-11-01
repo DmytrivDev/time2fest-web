@@ -85,30 +85,32 @@ describe('StampBlock — окремий блок під плеєром (ріше
     expect(document.querySelector('.t2f-reveal')).toHaveAttribute('data-open', 'false');
   });
 
-  it('з +5 хв у штампі — «Як тобі шоу?»; оцінка зберігається й показує «Твоя оцінка»', () => {
-    const london = '2027-01-01T00:05:01Z';
+  it('«Як тобі шоу?» — разом зі штампом; оцінка зберігається, рядок стає «Твоя оцінка» без зсуву зірок', () => {
     renderApp(
       <OverlayManager>
         <StampBlock eventId={null} />
       </OverlayManager>,
-      london,
+      '2027-01-01T00:00:16Z',
     );
     act(() => showStampMoment(['evt_london_2027'], false));
-    expect(document.querySelector('[data-stamp-rate]')).not.toBeNull();
+    const row = () => document.querySelector('[data-stamp-rate] [data-rated], [data-stamp-rate] > div');
+    expect(row()).not.toHaveAttribute('data-rated');
+    expect(screen.queryByText(/слабко|неймовірно/)).toBeNull();
     fireEvent.click(screen.getByRole('radio', { name: '4 з 5' }));
     expect(useGuestStore.getState().rate['evt_london_2027']?.stars).toBe(4);
-    expect(screen.getByText('Твоя оцінка')).toBeInTheDocument();
+    expect(row()).toHaveAttribute('data-rated', 'true');
+    // Обидва підписи лишаються в розмітці (тримають ширину); видимий — «Твоя оцінка».
+    expect(screen.getByText('Твоя оцінка').closest('[aria-hidden]')).toBeNull();
+    expect(screen.getByText('Як тобі шоу?').closest('[aria-hidden]')).not.toBeNull();
   });
 
-  it('до +5 хв рядка оцінки немає; «Мій паспорт» веде на /passport/', () => {
+  it('«Мій паспорт» веде на /passport/', () => {
     renderApp(
       <OverlayManager>
         <StampBlock eventId={null} />
       </OverlayManager>,
-      '2027-01-01T00:04:00Z',
     );
     act(() => showStampMoment(['evt_london_2027'], false));
-    expect(document.querySelector('[data-stamp-rate]')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Мій паспорт' }));
     expect(push).toHaveBeenCalledWith('/passport/');
   });

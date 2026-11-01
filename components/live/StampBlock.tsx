@@ -7,7 +7,8 @@
  * - після перезавантаження — штамп поточної події ефіру, якщо він уже є, без удару;
  * - `air:handover` прибирає штамп попередньої події;
  * - поки під ним інше вікно (оцінка, пропозиція), «Поділитися» вторинна — коралова кнопка на екрані одна;
- * - з +5 хв під кнопками з’являється «Як тобі шоу?» (`StampRate`, рішення 2026-11-01): оцінку видно й у паспорті;
+ * - «Як тобі шоу?» (`StampRate`) — під кнопками разом зі штампом (рішення 2026-11-01): «×» прибирає й оцінку, оцінити
+ *   можна в паспорті;
  * - «Увійди» відкриває вхід на місці чату (трансляція не зупиняється), «Мій паспорт» — сторінка `/passport/`;
  * - «×» прибирає саме цей штамп (запис у `guest.stampsDismissed`), у паспорті він лишається: картка гасне й трохи
  *   відпливає вгору, потім місце плавно стягується (правка власника 2026-11-01 — не «акордеоном»).
@@ -24,9 +25,7 @@ import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { StampRate } from '@/components/windows/StampRate';
 import { getData } from '@/lib/data/load';
 import type { Stars } from '@/lib/data/types';
-import { RATE_OPEN_AFTER } from '@/lib/engine/config';
 import { on } from '@/lib/events/bus';
-import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { create } from 'zustand';
 
@@ -89,7 +88,6 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
   const openAuth = useOpenAuthWindow();
   const router = useRouter();
   const user = useHeaderUser();
-  const now = useNow();
   const moment = useStampMoment((s) => s.moment);
   const hasStamp = useGuestStore((s) => (eventId ? s.stamps.some((x) => x.eventId === eventId) : false));
   const dismissed = useGuestStore((s) => s.stampsDismissed);
@@ -135,9 +133,6 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
     }, LEAVE_MS);
   };
 
-  // «Як тобі шоу?» — з +5 хв після півночі (найпізнішої з подій штампа).
-  const midnights = current ? current.list.map((e) => getData().eventsById.get(e.eventId ?? '')?.midnightMs ?? 0) : [];
-  const rateOpen = midnights.length > 0 && now >= Math.max(...midnights) + RATE_OPEN_AFTER;
   const values: Partial<Record<string, Stars>> = {};
   for (const e of current?.list ?? []) {
     const stars = e.eventId ? ratings[e.eventId]?.stars : undefined;
@@ -159,13 +154,11 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
             onPassport={() => router.push(PASSPORT_HREF)}
             onClose={() => dismiss(current.list, current.key)}
             rate={
-              rateOpen ? (
-                <StampRate
-                  rows={current.list.map((e) => ({ eventId: e.eventId ?? '', city: e.city }))}
-                  values={values}
-                  onRate={(id, stars) => setRate(id, { stars })}
-                />
-              ) : undefined
+              <StampRate
+                rows={current.list.map((e) => ({ eventId: e.eventId ?? '', city: e.city }))}
+                values={values}
+                onRate={(id, stars) => setRate(id, { stars })}
+              />
             }
           />
         </div>
