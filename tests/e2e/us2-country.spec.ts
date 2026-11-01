@@ -124,7 +124,7 @@ test.describe('US2 · сторінка країни', () => {
 
     // Штамп нараховується опівночі (+15 с), хоча трансляції немає.
     await expect.poll(() => guestStampIds(page), { timeout: 40_000 }).toContain('evt_dakar_2027');
-    await expect(page.locator('[data-moment-slot]')).toContainText(/Мій паспорт/, { timeout: 10_000 });
+    await expect(page.locator('[data-stamp-block]')).toContainText(/Мій паспорт/, { timeout: 10_000 });
 
     // Чат є завжди: кімнати «Світ» і «Країна».
     if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();

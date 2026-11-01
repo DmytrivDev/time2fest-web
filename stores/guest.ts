@@ -47,6 +47,7 @@ export function createDefaultGuest(): GuestState {
     chat: { lastRoom: 'world', sentAt: [] },
     room: { windows: [], soundSlot: null },
     stamps: [],
+    stampsDismissed: [],
     pendingPresence: {},
     rate: {},
     offers: { nightId: CURRENT_NIGHT, history: [], visible: null },
@@ -72,6 +73,8 @@ export interface GuestActions {
   setSoundSlot(slot: number | null): void;
   /** `false`, якщо штамп на цю подію вже є (штамп один на подію). */
   addStamp(stamp: Stamp): boolean;
+  /** «×» на штампі під плеєром: більше не показувати штамп цих подій. */
+  dismissStamps(eventIds: readonly string[]): void;
   markPresence(eventId: string, at: number, source: PresenceSource): void;
   setRate(eventId: string, patch: { stars?: Stars; closed?: boolean }): void;
   showOffer(kind: OfferKind, triggerEventId: string, at: number): void;
@@ -116,6 +119,7 @@ export function sanitizeGuest(raw: unknown): GuestState | null {
   if (merged.nightId !== CURRENT_NIGHT) {
     merged.nightId = CURRENT_NIGHT;
     merged.stamps = [];
+    merged.stampsDismissed = [];
     merged.rate = {};
     merged.pendingPresence = {};
     merged.offers = base.offers;
@@ -146,6 +150,8 @@ export const useGuestStore = create<GuestStore>()(
         set((s) => ({ stamps: [...s.stamps, stamp] }));
         return true;
       },
+      dismissStamps: (eventIds) =>
+        set((s) => ({ stampsDismissed: [...new Set([...(s.stampsDismissed ?? []), ...eventIds])] })),
       markPresence: (eventId, at, source) =>
         set((s) => (s.pendingPresence[eventId] ? s : { pendingPresence: { ...s.pendingPresence, [eventId]: { at, source } } })),
       setRate: (eventId, patch) =>

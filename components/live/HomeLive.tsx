@@ -28,6 +28,7 @@ import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
+import { StampBlock } from '@/components/live/StampBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
 import { CookieInflow } from '@/components/offers/CookieLayer';
@@ -116,7 +117,7 @@ export function HomeLive() {
     [airCountry],
   );
   useChatSimulator(chatRooms);
-  useMomentWindows(eventId);
+  useMomentWindows();
   // Пропозиції пасу й чайових (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();
   const hasPass = useGuestStore((s) => s.hasPass);
@@ -166,9 +167,10 @@ export function HomeLive() {
   const showChatButton = chatColumn && vis.hidden ? (
     <ChatHiddenButton room="world" onShow={vis.show} />
   ) : null;
-  // Вікна моменту (штамп, оцінка) і cookies смугою — одразу під рядком дій плеєра.
+  // Штамп (окремий блок), cookies смугою й вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра.
   const inflow = (
     <>
+      <StampBlock eventId={eventId} />
       <CookieInflow />
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />

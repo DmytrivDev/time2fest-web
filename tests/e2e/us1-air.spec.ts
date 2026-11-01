@@ -55,13 +55,13 @@ async function guestStampIds(page: Page): Promise<{ eventId: string; grantedAt: 
 }
 
 /**
- * Чекає першого кадру, де одночасно є штамп у слоті під плеєром, системне повідомлення в чаті
+ * Чекає першого кадру, де одночасно є штамп у блоці під плеєром, системне повідомлення в чаті
  * й стіна «Першого ряду», що загоряється; повертає віртуальний час цього кадру.
  */
 async function waitForMoment(page: Page, timeout = 30_000): Promise<number> {
   const handle = await page.waitForFunction(
     () => {
-      const slot = document.querySelector('[data-moment-slot]');
+      const slot = document.querySelector('[data-stamp-block]');
       const stamp = !!slot && /Поділитися/.test(slot.textContent ?? '') && /Мій паспорт/.test(slot.textContent ?? '');
       const log = [...document.querySelectorAll('[role="log"]')].some((el) => /Велика Британія зустріла Новий рік/.test(el.textContent ?? ''));
       const wall = !!document.querySelector('[data-first-row-wall][data-phase="lighting"], [data-first-row-wall][data-phase="lit"]');
@@ -143,7 +143,7 @@ test.describe('US1 · ефір на головній', () => {
     expect(await guestStampIds(page)).toEqual([{ eventId: 'evt_london_2027', grantedAt: STAMP_AT }]);
   });
 
-  test('сценарій 3: «+2 хв» — рядок «Штамп у паспорті» і «Як тобі шоу?»', async ({ page, ytStub }) => {
+  test('сценарій 3: «+2 хв» — штамп лишається окремим блоком, нижче «Як тобі шоу?»', async ({ page, ytStub }) => {
     await startAt(page, ytStub, '2027-01-01T02:00:10+02:00', 1);
     await expect.poll(() => guestStampIds(page), { timeout: 20_000 }).toHaveLength(1);
     // Перемотка до «+2 хв» без перезавантаження.
@@ -153,7 +153,7 @@ test.describe('US1 · ефір на головній', () => {
         speed: 1,
       }),
     );
-    await expect(page.getByText('Штамп у паспорті').first()).toBeVisible();
+    await expect(page.locator('[data-stamp-block] [data-stamp]')).toBeVisible();
     await expect(page.getByText('Як тобі шоу?')).toBeVisible();
     await expectNothingOverPlayer(page);
     await expectAxeClean(page);

@@ -316,6 +316,8 @@ export interface GuestState {
   chat: { lastRoom: RoomId; sentAt: Ms[] };
   room: { windows: GuestRoomWindow[]; soundSlot: number | null };
   stamps: Stamp[];
+  /** Події, штамп яких гість прибрав «×» під плеєром (у паспорті лишається); скидається з новою ніччю. */
+  stampsDismissed?: string[];
   pendingPresence: Record<string, { at: Ms; source: PresenceSource }>;
   rate: Record<string, { stars?: Stars; closed: boolean }>;
   offers: OfferState;

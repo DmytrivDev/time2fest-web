@@ -15,9 +15,10 @@ function Sound() {
 afterEach(() => vi.useRealTimers());
 
 describe('Stamp', () => {
-  it('розгорнутий: заголовок, alt листівки = текст штампа, рядок для гостя, коралова «Поділитися»', () => {
+  it('заголовок — місто, нижче країна й рік (без відмінків); alt листівки = текст штампа; коралова «Поділитися»', () => {
     renderApp(<Stamp stamps={[SYDNEY]} />);
-    expect(screen.getByRole('heading', { level: 2, name: 'Твій Новий рік 2027 — Сідней, Австралія' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Сідней/ })).toBeInTheDocument();
+    expect(screen.getByText('Австралія · Новий рік 2027')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'НОВИЙ РІК 2027 · СІДНЕЙ' })).toBeInTheDocument();
     expect(screen.getByText('Уже в твоєму паспорті')).toBeInTheDocument();
     expect(screen.getByText(/Збережено на цьому пристрої/)).toBeInTheDocument();
@@ -44,7 +45,8 @@ describe('Stamp', () => {
 
   it('multi: «Сідней · Мельбурн»', () => {
     renderApp(<Stamp stamps={[SYDNEY, MELBOURNE]} />);
-    expect(screen.getByRole('heading', { level: 2, name: 'Твій Новий рік 2027 — Сідней · Мельбурн' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Сідней · Мельбурн/ })).toBeInTheDocument();
+    expect(screen.getByText('Австралія · Новий рік 2027')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'НОВИЙ РІК 2027 · СІДНЕЙ · МЕЛЬБУРН' })).toBeInTheDocument();
   });
 
@@ -64,29 +66,23 @@ describe('Stamp', () => {
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
-  it('«×» згортає в рядок; коралової кнопки у згорнутому стані немає; рядок розгортає', () => {
+  it('завжди розгорнутий: коралова «Поділитися» робить кнопку звуку нейтральною; «×» — «Прибрати штамп»', () => {
+    const onClose = vi.fn();
     renderApp(
       <CoralProvider>
         <Sound />
-        <Stamp stamps={[SYDNEY]} />
+        <Stamp stamps={[SYDNEY]} onClose={onClose} />
       </CoralProvider>,
     );
     expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
-    fireEvent.click(screen.getByRole('button', { name: 'Закрити' }));
-    expect(document.querySelectorAll('[data-variant="coral"]')).toHaveLength(0);
-    expect(screen.getByTestId('sound')).toHaveTextContent('coral');
-    expect(screen.getByRole('button', { name: 'Поділитися' })).toHaveAttribute('data-variant', 'secondary');
-    fireEvent.click(screen.getByRole('button', { name: /Штамп у паспорті/ }));
-    expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
-    expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
+    fireEvent.click(screen.getByRole('button', { name: 'Прибрати штамп' }));
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('«×» з onClose закриває замість згортання', () => {
-    const onClose = vi.fn();
-    renderApp(<Stamp stamps={[SYDNEY]} onClose={onClose} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Закрити' }));
-    expect(onClose).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
+  it('смужка кольорів прапора — круглий прапор країни', () => {
+    const { container } = renderApp(<Stamp stamps={[SYDNEY]} />);
+    const strip = container.querySelector<HTMLElement>('[aria-hidden="true"][style*="--flag"]');
+    expect(strip?.style.getPropertyValue('--flag')).toBe('url(/flags/round/au.svg)');
   });
 
   it('stamping: data-stamping=true лише на час «удару» (CSS грає його тільки у lively)', () => {

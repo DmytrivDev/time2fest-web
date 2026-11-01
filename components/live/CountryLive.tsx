@@ -25,6 +25,7 @@ import { Faq, type FaqItem } from '@/components/live/Faq';
 import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
 import { MORE_STREAMS_ID, MoreStreamsSheet, StreamList, ZoneStreamsBlock } from '@/components/live/StreamList';
+import { StampBlock } from '@/components/live/StampBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { CookieInflow } from '@/components/offers/CookieLayer';
 import { useGetPass } from '@/components/pass/PassWindow';
@@ -158,7 +159,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const presenceIds = useMemo(() => [...new Set([mainEvent?.id, shownEvent?.id].filter((x): x is string => !!x))], [mainEvent, shownEvent]);
   useStampGrant(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
   useChatSimulator(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
-  useMomentWindows(mainEvent?.id ?? null);
+  useMomentWindows();
   // Пропозиції пасу й чайових (offer:show) і стан введення для рушія пропозицій.
   const passWindows = useOfferWindows();
   const hasPass = useGuestStore((s) => s.hasPass);
@@ -354,6 +355,7 @@ export function CountryLive({ iso }: { iso: string }) {
           <ChatHiddenButton room={chatRoom} onShow={vis.show} />
         </div>
       ) : null}
+      <StampBlock eventId={mainEvent?.id ?? null} className={styles.pad} />
       <div className={styles.pad}>
         <CookieInflow />
       </div>

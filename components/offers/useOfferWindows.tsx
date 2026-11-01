@@ -13,7 +13,6 @@
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { STAMP_WINDOW_ID } from '@/components/live/useMomentWindows';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
 import { on } from '@/lib/events/bus';
@@ -49,7 +48,8 @@ export function useOfferWindows(): PassWindowsApi {
   const deps = useMemo<OfferSpecDeps>(() => ({ now: () => clock.getSnapshot() }), [clock]);
 
   // Стан інтерфейсу для рушія.
-  const overlayBusy = current !== null && current.id !== STAMP_WINDOW_ID;
+  // Штамп — окремий блок під плеєром (не вікно), тож будь-яке відкрите вікно — «зайнято».
+  const overlayBusy = current !== null;
   useEffect(() => {
     setOverlayOpen(overlayBusy);
   }, [overlayBusy]);
@@ -114,7 +114,7 @@ export function useOfferWindows(): PassWindowsApi {
     () =>
       on('offer:show', (p) => {
         const cur = currentRef.current;
-        if (cur && cur.id !== STAMP_WINDOW_ID) return; // рушій мав це врахувати; страхуємось від гонки
+        if (cur) return; // рушій мав це врахувати; страхуємось від гонки
         if (useGuestStore.getState().hasPass) return;
         if (p.kind === 'pass-offer') {
           open(passOfferSpec(deps, { count: p.stampCount, title: t('passTitle', { count: p.stampCount }), infoTitle }));

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { InFlowSlot } from '@/components/primitives/Panel';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { CoralProvider } from '@/lib/overlay/coral';
@@ -73,24 +73,13 @@ export const SaveFailed: Story = {
   args: { saveState: 'failed' },
 };
 
-export const Collapsed: Story = {
-  name: 'collapsed — Desk-Rate (рядок з мініатюрою)',
-  args: { defaultMode: 'collapsed' },
-};
-
-export const CollapsedFirstRow: Story = {
-  name: 'collapsed + first-row',
-  args: { defaultMode: 'collapsed', stamps: [{ ...LONDON, firstRowSeat: 4 }] },
-};
-
-export const CollapseAndExpand: Story = {
-  name: '× згортає, дотик до рядка розгортає',
-  play: async ({ canvasElement }) => {
+export const Dismiss: Story = {
+  name: '× прибирає штамп (рішення 2026-11-01: без згортання)',
+  args: { onClose: fn() },
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Закрити' }));
-    await expect(canvas.getByRole('region', { name: 'Штамп у паспорті' })).toBeInTheDocument();
-    await userEvent.click(canvas.getByRole('button', { name: /Штамп у паспорті/ }));
-    await expect(canvas.getByRole('heading', { level: 2 })).toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: 'Прибрати штамп' }));
+    await expect(args.onClose).toHaveBeenCalled();
   },
 };
 

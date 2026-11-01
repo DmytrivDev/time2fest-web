@@ -27,6 +27,7 @@ import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { ZoneStreamsBlock } from '@/components/live/StreamList';
+import { StampBlock } from '@/components/live/StampBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
@@ -245,7 +246,7 @@ export function RoomLive() {
   // ── Присутність, штамп, чат ──
   const eventIds = [...new Set(windows.map((w) => w.eventId))];
   useStampGrant(eventIds.length ? { source: 'room', eventIds } : null);
-  useMomentWindows(soundWindow?.eventId ?? null);
+  useMomentWindows();
   const chatRoomCountry: RoomId | null = country ? `country:${country.iso}` : null;
   const simRooms = windowCountries.map((c) => `country:${c.iso}`).join('|');
   useChatSimulator(
@@ -390,6 +391,7 @@ export function RoomLive() {
         <FirstRowModule event={firstRowEventFor(data, now, soundWindow ? data.eventsById.get(soundWindow.eventId) : null)} />
       </div>
       {chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoomCountry ?? 'world'} onShow={vis.show} /> : null}
+      <StampBlock eventId={soundWindow?.eventId ?? null} />
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={t('heading')} />
       </div>
