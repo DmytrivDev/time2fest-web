@@ -135,7 +135,9 @@ export function ShareContent({
         onValueChange={(v) => setRatio(v as ShareRatio)}
         className="self-start"
       />
-      <div className="relative self-start" data-row="preview" data-ratio={ratio} aria-busy={generating}>
+      {/* Висота прев’ю стала: поки нова картинка декодується, браузер на мить показує замість неї текст `alt` —
+          без фіксованої висоти блок «виростав», і кнопки нижче стрибали (правка власника 2026-11-01). */}
+      <div className="relative h-48 self-start overflow-hidden" data-row="preview" data-ratio={ratio} aria-busy={generating}>
         {/* eslint-disable-next-line @next/next/no-img-element -- data-URL картка, оптимізація зображень не потрібна */}
         <img
           src={src}
