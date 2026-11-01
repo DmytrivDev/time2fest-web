@@ -97,6 +97,12 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
   const ratings = useGuestStore((s) => s.rate);
   const setRate = useGuestStore((s) => s.setRate);
   const guestId = useGuestStore((s) => s.id);
+  // Під штампом — пропозиція пасу чи чайові (`OfferBlock`) зі своєю кораловою дією → «Поділитися» вторинна.
+  const offerShown = useGuestStore((s) => {
+    if (s.hasPass) return false;
+    const last = s.offers.history.findLast((e) => e.kind === 'pass-offer' || e.kind === 'tips');
+    return !!last && last.dismissedAt === undefined;
+  });
 
   useEffect(() => on('air:handover', () => clearStampMoment()), []);
   // «Скинути стан гостя» (машина часу): показаний штамп належав попередньому гостю.
@@ -153,7 +159,7 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
             key={current.key}
             stamps={current.list}
             stamping={current.stamping}
-            quiet={win?.kind === 'inflow'}
+            quiet={win?.kind === 'inflow' || offerShown}
             signedIn={!!user}
             onShare={() => open(shareWindowSpec(current.list, tShare('title')))}
             onSignIn={() => openAuth('signin')}

@@ -3,8 +3,8 @@
 /**
  * Пропозиції й підказки пасу на поверхні з плеєром (T120, FR-063/064, `contracts/ui-events.md` `offer:show`).
  * Сторінка з `OverlayInFlowOutlet` викликає `useOfferWindows()` один раз (поруч із `useMomentWindows`):
- * - слухає `offer:show` від `EngineScheduler` (правила часу, «після оцінки», «одна за раз» — у `offerEligibility`)
- *   і відкриває картку `pass-offer` / `tips` у `InFlowSlot` (`inflow`), записуючи `OfferEntry` у `guest.offers`;
+ * - слухає `offer:show` від `EngineScheduler` (правила часу, «одна за раз» — у `offerEligibility`) і записує `OfferEntry`
+ *   у `guest.offers`; саму картку пасу чи чайових показує `OfferBlock` під штампом (рішення 2026-11-01);
  * - повідомляє рушію про стан інтерфейсу: чи відкрите вікно (рядок «Штамп у паспорті» не рахується) і чи людина
  *   вводить текст (фокус у полі або ~10 с після останнього натискання) — див. `lib/offers/uiState`;
  * - віддає `requestSchedule` (кнопка графіка: з пасом — перемикає, без пасу — вікно «Графік — у Новорічному пасі» на місці
@@ -19,7 +19,8 @@ import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
-import { OFFER_WINDOW_ID, passGateSpec, passInfoBoardSpec, passInfoSpec, passOfferSpec, scheduleGateSpec, tipsSpec, type OfferSpecDeps } from './OfferWindows';
+import { usePassDetails } from '@/components/pass/PassWindow';
+import { OFFER_WINDOW_ID, passGateSpec, passInfoBoardSpec, scheduleGateSpec, type OfferSpecDeps } from './OfferWindows';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
 
@@ -38,7 +39,6 @@ export function useOfferWindows(): PassWindowsApi {
   const overlay = useOverlay();
   const { open, current } = overlay;
   const clock = useClock();
-  const t = useTranslations('offers');
   const tPass = useTranslations('pass');
   const currentRef = useRef(current);
   useEffect(() => {
@@ -56,28 +56,26 @@ export function useOfferWindows(): PassWindowsApi {
   useEffect(() => () => setOverlayOpen(false), []);
   useEffect(() => installTypingTracking(() => clock.getSnapshot()), [clock]);
 
-  // Після перезавантаження `visible` міг лишитись без вікна — інакше пропозиції заблоковано назавжди.
+  // Після перезавантаження `visible` вікна-підказки (pass-gate) міг лишитись без вікна — інакше пропозиції заблоковано
+  // назавжди. Пропозиція пасу й чайові — блок під штампом (`OfferBlock`), вони лишаються видимими й після перезавантаження.
   useEffect(() => {
     const { offers, hideOffer } = useGuestStore.getState();
     const cur = currentRef.current;
-    if (offers.visible !== null && cur?.id !== OFFER_WINDOW_ID[offers.visible]) hideOffer();
+    const isBlock = offers.visible === 'pass-offer' || offers.visible === 'tips';
+    if (offers.visible !== null && !isBlock && cur?.id !== OFFER_WINDOW_ID[offers.visible]) hideOffer();
   }, []);
 
   const infoTitle = tPass('infoTitle');
 
-  const openPassInfo = useCallback(() => {
-    open(passInfoSpec(deps, infoTitle));
-    const last = useGuestStore.getState().stamps.at(-1)?.eventId ?? '';
-    useGuestStore.getState().showOffer('pass-info', last, deps.now());
-  }, [open, deps, infoTitle]);
+  const openPassInfo = usePassDetails();
 
   const openPassGate = useCallback(
     (feature: PassGateFeature, triggerEventId = '') => {
       const title = tPass(GATE_KEYS[feature].title);
-      open(passGateSpec(deps, { feature, trigger: triggerEventId, title, infoTitle }));
+      open(passGateSpec(deps, { feature, trigger: triggerEventId, title }));
       useGuestStore.getState().showOffer('pass-gate', triggerEventId, deps.now());
     },
-    [open, deps, tPass, infoTitle],
+    [open, deps, tPass],
   );
 
   const requestSchedule = useCallback(
@@ -109,21 +107,14 @@ export function useOfferWindows(): PassWindowsApi {
 
   const openPassInfoBoard = useCallback(() => open(passInfoBoardSpec(infoTitle)), [open, infoTitle]);
 
-  // `offer:show` → картка в потоці.
+  // `offer:show` → запис у `guest.offers`; показує картку блок під штампом (`OfferBlock`) — вікна збоку її не прибирають.
   useEffect(
     () =>
       on('offer:show', (p) => {
-        const cur = currentRef.current;
-        if (cur) return; // рушій мав це врахувати; страхуємось від гонки
         if (useGuestStore.getState().hasPass) return;
-        if (p.kind === 'pass-offer') {
-          open(passOfferSpec(deps, { count: p.stampCount, title: t('passTitle', { count: p.stampCount }), infoTitle }));
-        } else {
-          open(tipsSpec(deps, t('tipsTitle')));
-        }
         useGuestStore.getState().showOffer(p.kind, p.triggerEventId, p.at);
       }),
-    [open, deps, t, infoTitle],
+    [],
   );
 
   return { requestSchedule, openPassGate, openPassInfo, openScheduleGate, openPassInfoBoard };

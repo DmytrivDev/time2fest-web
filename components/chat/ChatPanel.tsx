@@ -14,7 +14,7 @@ import { EmojiText } from '@/components/primitives/Emoji';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
-import { passGateSpec, passInfoSpec } from '@/components/offers/OfferWindows';
+import { passGateSpec } from '@/components/offers/OfferWindows';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
 import { isQuietHidden, quietHiddenCount } from '@/lib/chat/quiet';
 import { useChatPref } from '@/stores/chatPrefs';
@@ -32,7 +32,7 @@ import { STAMP_DELAY } from '@/lib/engine/config';
 import { pickSeatRoomEvent } from '@/lib/firstrow/rooms';
 import { MyEmotionPill, type SavedEmotion } from '@/components/windows/Emoji';
 import { Nick } from '@/components/windows/Nick';
-import { useGetPass } from '@/components/pass/PassWindow';
+import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
 import { authorHasPass, buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
 import { slowSecondsAt } from '@/lib/chat-sim/simulator';
 import { sendMessage, slowRemainingSec, type SendContext } from '@/lib/chat-sim/send';
@@ -95,6 +95,7 @@ export function ChatPanel({
   const overlay = useOverlay();
   const openAuthWindow = useOpenAuthWindow();
   const getPass = useGetPass();
+  const passDetails = usePassDetails();
   const column = useChatColumn();
   const source = useTimeSource();
   const now = useNow();
@@ -395,22 +396,19 @@ export function ChatPanel({
             onReport={onReport}
             onEditProfile={author.isMine ? () => openNick(null) : undefined}
             onGetPass={() => getPass()}
-            onPassInfo={() => {
-              overlay.open(passInfoSpec({ now: () => clock.getSnapshot() }, tPass('infoTitle')));
-              useGuestStore.getState().showOffer('pass-info', useGuestStore.getState().stamps.at(-1)?.eventId ?? '', clock.getSnapshot());
-            }}
+            onPassInfo={passDetails}
           />
         ),
       });
     },
-    [overlay, t, tPass, clock, lookup, onReport, openNick, getPass],
+    [overlay, t, clock, lookup, onReport, openNick, getPass, passDetails],
   );
 
 
   const openPassGate = useCallback(
     (feature: PassGateFeature) =>
       overlay.open(
-        passGateSpec({ now: () => clock.getSnapshot() }, { feature, trigger: '', title: tPass(GATE_KEYS[feature].title), infoTitle: tPass('infoTitle') }),
+        passGateSpec({ now: () => clock.getSnapshot() }, { feature, trigger: '', title: tPass(GATE_KEYS[feature].title) }),
       ),
     [overlay, clock, tPass],
   );

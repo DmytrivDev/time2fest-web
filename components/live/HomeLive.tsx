@@ -29,6 +29,7 @@ import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
 import { StampBlock } from '@/components/live/StampBlock';
+import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
 import { CookieInflow } from '@/components/offers/CookieLayer';
@@ -171,6 +172,7 @@ export function HomeLive() {
   const inflow = (
     <>
       <StampBlock eventId={eventId} />
+      <OfferBlock />
       <CookieInflow />
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />

@@ -88,27 +88,37 @@ export function useOpenPassWindow(): () => void {
 }
 
 /**
- * «Оформити пас» звідусіль: трансляція грає — вікно оформлення; інакше — сторінка пасу.
- * Для посилання (`href="/pass/"`) передай подію — без трансляції спрацює звичайний перехід.
+ * «Оформити пас» звідусіль — вікно оформлення на місці чату (телефон — шторка), навіть коли трансляції зараз немає
+ * (рішення власника 2026-11-01). Посилання (`href="/pass/"`, передай подію) без трансляції — звичайний перехід на сторінку.
  */
 export function useGetPass(): (e?: MouseEvent) => void {
+  const player = useOptionalPlayer();
+  const openWindow = useOpenPassWindow();
+  const playing = player?.status === 'playing';
+  return useCallback(
+    (e?: MouseEvent) => {
+      if (e && !playing) return;
+      e?.preventDefault();
+      openWindow();
+    },
+    [playing, openWindow],
+  );
+}
+
+/**
+ * «Детальніше» / «Що в пасі»: трансляція грає — те саме вікно пасу на місці чату; інакше — сторінка «Новорічний пас».
+ * Картки «Що дає Новорічний пас» на самій сторінці більше немає (рішення власника 2026-11-01).
+ */
+export function usePassDetails(): () => void {
   const player = useOptionalPlayer();
   const openWindow = useOpenPassWindow();
   // Роутер Next (поза ним — вікна в історіях і тестах — звичайний перехід).
   const router = useContext(AppRouterContext);
   const playing = player?.status === 'playing';
-  return useCallback(
-    (e?: MouseEvent) => {
-      if (playing) {
-        e?.preventDefault();
-        openWindow();
-        return;
-      }
-      if (e) return;
-      if (router) router.push(PASS_HREF);
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- поза роутером Next
-      else window.location.assign(PASS_HREF);
-    },
-    [playing, openWindow, router],
-  );
+  return useCallback(() => {
+    if (playing) return openWindow();
+    if (router) router.push(PASS_HREF);
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- поза роутером Next
+    else window.location.assign(PASS_HREF);
+  }, [playing, openWindow, router]);
 }

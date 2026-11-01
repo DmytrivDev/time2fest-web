@@ -1,7 +1,9 @@
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { useEffect } from 'react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CookieFooter, CookieInflow, CookieLayer } from '@/components/offers/CookieLayer';
+import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useOfferWindows, type PassWindowsApi } from '@/components/offers/useOfferWindows';
 import { FacebookConsentCard } from '@/components/player/FacebookConsentCard';
 import { getData } from '@/lib/data/load';
@@ -108,12 +110,25 @@ describe('контекст рушія пропозицій', () => {
   });
 });
 
+const push = vi.fn();
+const ROUTER = { push, replace: vi.fn(), prefetch: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn() };
+
 function Host({ onApi }: { onApi: (api: PassWindowsApi) => void }) {
   const api = useOfferWindows();
   useEffect(() => {
     onApi(api);
   }, [api, onApi]);
   return null;
+}
+
+/** Сторінка: хук вікон + блок пропозиції під штампом (рішення 2026-11-01). */
+function Page({ onApi = () => undefined }: { onApi?: (api: PassWindowsApi) => void }) {
+  return (
+    <AppRouterContext.Provider value={ROUTER as never}>
+      <Host onApi={onApi} />
+      <OfferBlock />
+    </AppRouterContext.Provider>
+  );
 }
 
 function offerShow(kind: 'pass-offer' | 'tips', triggerEventId: string, stampCount: number) {
@@ -129,77 +144,85 @@ function offerShow(kind: 'pass-offer' | 'tips', triggerEventId: string, stampCou
   });
 }
 
-describe('вікна пропозицій у потоці', () => {
-  it('offer:show → картка «Уже 2 країни…» у слоті, запис у guest.offers, звук нейтральний, фокус не забрано', () => {
+describe('пропозиції — блок під штампом (рішення 2026-11-01)', () => {
+  const block = () => document.querySelector('[data-offer-block]') as HTMLElement | null;
+
+  it('offer:show → картка «Уже 2 країни…» у блоці з aria-live, запис у guest.offers, звук нейтральний, фокус не забрано', () => {
     giveStamps(s1, s2);
     useGuestStore.setState({ stamps: [stampOf(s1.id, 'UA'), stampOf(s2.id, 'FR')] });
     const before = document.activeElement;
-    renderPage(<Host onApi={() => undefined} />);
-    expect(screen.queryByRole('heading', { name: /паспорті/ })).toBeNull();
+    renderPage(<Page />);
+    expect(block()).toBeNull();
     offerShow('pass-offer', s2.id, 2);
-    const slot = document.querySelector('[data-in-flow-slot="occupied"]') as HTMLElement;
-    expect(slot).not.toBeNull();
-    expect(slot).toHaveAttribute('aria-live', 'polite');
-    expect(slot).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    expect(block()).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    expect(block()!.closest('[aria-live="polite"]')).not.toBeNull();
     expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
     expect(document.activeElement).toBe(before);
     const { offers } = useGuestStore.getState();
     expect(offers.visible).toBe('pass-offer');
     expect(offers.history).toMatchObject([{ kind: 'pass-offer', triggerEventId: s2.id }]);
     expect(document.querySelectorAll('[data-variant="coral"]')).toHaveLength(1);
+    // Прапори країн — круглі.
+    expect(block()!.querySelector('[data-round="true"]')).not.toBeNull();
   });
 
   it('закрита хрестиком не повертається тієї ночі; звук знову коралевий', () => {
     giveStamps(s1, s2);
-    renderPage(<Host onApi={() => undefined} />);
+    renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
     fireEvent.click(screen.getByRole('button', { name: 'Закрити пропозицію' }));
-    expect(document.querySelector('[data-in-flow-slot="occupied"]')).toBeNull();
     expect(screen.getByTestId('sound')).toHaveTextContent('coral');
     const { offers } = useGuestStore.getState();
     expect(offers.visible).toBeNull();
     expect(offers.history[0]?.dismissedAt).toBeDefined();
-    // Пізніше тієї ж ночі (після 3-го штампа) пас не повертається — лише чайові.
     giveStamps(s1, s2, s3);
     const t = s3.midnightMs + 6 * MIN;
     expect(offerEligibility(t, buildOfferContext()!).show).toBe('tips');
   });
 
-  it('Esc закриває картку', () => {
+  it('вікно збоку (вхід, «Обрати трансляцію»…) пропозицію не прибирає', () => {
     giveStamps(s1, s2);
-    renderPage(<Host onApi={() => undefined} />);
+    let api!: PassWindowsApi;
+    renderPage(<Page onApi={(a) => (api = a)} />);
     offerShow('pass-offer', s2.id, 2);
-    fireEvent.keyDown(document.body, { key: 'Escape' });
-    expect(document.querySelector('[data-in-flow-slot="occupied"]')).toBeNull();
-    expect(useGuestStore.getState().offers.history[0]?.dismissedAt).toBeDefined();
+    act(() => api.openScheduleGate());
+    expect(block()).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    expect(useGuestStore.getState().offers.history[0]?.dismissedAt).toBeUndefined();
   });
 
   it('після 3-го — чайові (одна картка за раз)', () => {
     giveStamps(s1, s2, s3);
-    renderPage(<Host onApi={() => undefined} />);
+    renderPage(<Page />);
     offerShow('tips', s3.id, 3);
     expect(screen.getByRole('heading', { level: 2, name: 'Чайові' })).toBeInTheDocument();
     expect(document.querySelectorAll('[data-offer]')).toHaveLength(1);
     expect(useGuestStore.getState().offers.visible).toBe('tips');
   });
 
-  it('«Детальніше» замінює пропозицію карткою «Що дає Новорічний пас»', () => {
+  it('«Оформити пас» — вікно пасу на місці чату навіть без трансляції; картка лишається', () => {
     giveStamps(s1, s2);
-    renderPage(<Host onApi={() => undefined} />);
+    renderPage(<Page />);
+    offerShow('pass-offer', s2.id, 2);
+    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас' }));
+    expect(screen.getByRole('dialog', { name: /Новорічний пас/ })).toBeInTheDocument();
+    expect(useGuestStore.getState().offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'primary' });
+    expect(block()).not.toBeNull();
+  });
+
+  it('«Детальніше» без трансляції — сторінка /pass/; «Що дає пас» на сторінці більше немає', () => {
+    giveStamps(s1, s2);
+    renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
     fireEvent.click(screen.getByRole('button', { name: 'Детальніше' }));
-    expect(screen.getByRole('heading', { level: 2, name: 'Що дає Новорічний пас' })).toBeInTheDocument();
-    expect(document.querySelectorAll('[data-offer]')).toHaveLength(1);
-    const { offers } = useGuestStore.getState();
-    expect(offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'details' });
-    expect(offers.history[0]?.dismissedAt).toBeDefined();
-    expect(offers.visible).toBe('pass-info');
+    expect(push).toHaveBeenCalledWith('/pass/');
+    expect(screen.queryByRole('heading', { level: 2, name: 'Що дає Новорічний пас' })).toBeNull();
+    expect(useGuestStore.getState().offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'details' });
   });
 
   it('є пас — offer:show ігнорується', () => {
     giveStamps(s1, s2);
     useGuestStore.getState().setHasPass(true);
-    renderPage(<Host onApi={() => undefined} />);
+    renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
     expect(document.querySelector('[data-offer]')).toBeNull();
   });
@@ -226,14 +249,19 @@ describe('вікна пропозицій у потоці', () => {
     expect(document.querySelector('[data-offer]')).toBeNull();
   });
 
-  it('залишок visible після перезавантаження скидається, щоб не блокувати пропозиції', () => {
-    useGuestStore.setState({ offers: { nightId: '2026-27', history: [], visible: 'pass-offer' } });
-    renderPage(<Host onApi={() => undefined} />);
-    expect(useGuestStore.getState().offers.visible).toBeNull();
+  it('після перезавантаження пропозиція лишається (доки не закриють або не оформлять пас); з пасом — ні', () => {
+    giveStamps(s1, s2);
+    useGuestStore.setState({ offers: { nightId: '2026-27', history: [{ kind: 'pass-offer', shownAt: 1, triggerEventId: s2.id }], visible: 'pass-offer' } });
+    const { unmount } = renderPage(<Page />);
+    expect(block()).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    unmount();
+    useGuestStore.getState().setHasPass(true);
+    renderPage(<Page />);
+    expect(block()).toBeNull();
   });
 
   it('рядок «Штамп у паспорті» не вважається відкритим вікном для рушія', () => {
-    renderPage(<Host onApi={() => undefined} />);
+    renderPage(<Page />);
     expect(getOfferUi().overlayOpen).toBe(false);
   });
 });

@@ -15,7 +15,7 @@ import {
 } from '@/components/firstrow/controller';
 import type { FirstRowDraftValues, FirstRowFormProps } from '@/components/firstrow/types';
 import { useHydrated } from '@/components/auth/session';
-import { passInfoSpec } from '@/components/offers/OfferWindows';
+import { usePassDetails } from '@/components/pass/PassWindow';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { HOLD_EXTEND_OFFER, HOLD_SEC } from '@/lib/engine/config';
@@ -53,7 +53,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
   const hydrated = useHydrated();
   const signedEmail = hydrated ? accountEmail : null;
   const email = signedEmail ?? typedEmail;
-  const tPass = useTranslations('pass');
+  const passDetails = usePassDetails();
   const setEmail = useFirstRowStore((s) => s.setEmail);
   const patchFlow = useFirstRowStore((s) => s.patchFlow);
   const entry = useGuestStore((s) => s.firstRow[event.id]) ?? {};
@@ -260,7 +260,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
           ? {
               email: signedEmail,
               onNotYou: () => useAuthStore.getState().signOut(),
-              onPassInfo: boughtPass ? undefined : () => overlay.open(passInfoSpec({ now: () => source.now() }, tPass('infoTitle'))),
+              onPassInfo: boughtPass ? undefined : passDetails,
             }
           : undefined
       }

@@ -39,7 +39,7 @@ export function PassOffer({ count, countries, wroteInChat = false, onClose, onDe
         <ul aria-label={t('countriesLabel')} className="flex flex-wrap gap-x-4 gap-y-1" data-row="countries">
           {countries.map((c) => (
             <li key={c.iso} className="flex items-center gap-2 text-label-sm text-text-secondary">
-              <Flag code={c.flagCode} size="sm" decorative />
+              <Flag round code={c.flagCode} size="sm" decorative />
               {c.name}
             </li>
           ))}

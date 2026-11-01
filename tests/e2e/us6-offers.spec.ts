@@ -32,7 +32,8 @@ const LONDON_PLUS_6 = '2027-01-01T02:06:00+02:00';
 const LONDON_PLUS_52 = '2027-01-01T02:52:00+02:00';
 const AZORES_PLUS_6 = '2027-01-01T03:06:00+02:00';
 
-const slot = (page: Page) => page.locator('[data-in-flow-slot="occupied"]');
+/** Блок пропозиції під штампом (рішення 2026-11-01: не вікно — вікна збоку його не прибирають). */
+const slot = (page: Page) => page.locator('[data-offer-block]');
 const offerCard = (page: Page, name: string | RegExp) =>
   page.getByRole('heading', { level: 2, name });
 const visibleCoral = (page: Page) => page.locator('[data-variant="coral"]:visible');
@@ -163,12 +164,14 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
   });
 
-  test('Esc закриває картку; звук знову коралевий', async ({ page }) => {
+  test('вікно збоку («Обрати трансляцію») пропозицію не прибирає', async ({ page }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
     await expect(offerCard(page, /Уже 2 країни/)).toBeVisible({ timeout: 10_000 });
+    await page.getByRole('button', { name: 'Обрати трансляцію' }).click();
+    await expect(offerCard(page, /Уже 2 країни/)).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Уже 2 країни/)).toBeVisible();
   });
 
   test('є пас — пропозиції пасу немає', async ({ page }) => {
@@ -178,21 +181,16 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
   });
 
-  test('«Детальніше» → «Що дає Новорічний пас» (3 головні + «Ще в пасі:»), axe чистий', async ({
+  test('«Детальніше» — вікно пасу (трансляція грає) або сторінка /pass/; «Що дає пас» на сторінці більше немає', async ({
     page,
   }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await page.getByRole('button', { name: 'Детальніше' }).click();
-    await expect(offerCard(page, 'Що дає Новорічний пас')).toBeVisible();
-    await expect(
-      slot(page).getByRole('list', { name: 'Головне в пасі' }).getByRole('listitem'),
-    ).toHaveCount(3);
-    await expect(slot(page).getByText('Ще в пасі:')).toBeVisible();
-    const violations = await runAxe(page);
-    expect(
-      violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`),
-    ).toEqual([]);
+    await slot(page).getByRole('button', { name: 'Детальніше' }).click();
+    await expect(page.getByRole('heading', { level: 2, name: 'Що дає Новорічний пас' })).toHaveCount(0);
+    await expect
+      .poll(async () => (await page.getByRole('dialog', { name: 'Новорічний пас' }).count()) > 0 || new URL(page.url()).pathname === '/pass/')
+      .toBe(true);
   });
 
   test('не під час введення в чаті: фокус у полі блокує картку, після виходу вона з’являється', async ({

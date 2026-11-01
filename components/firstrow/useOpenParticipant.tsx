@@ -8,8 +8,7 @@
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
-import { passInfoSpec } from '@/components/offers/OfferWindows';
-import { useGetPass } from '@/components/pass/PassWindow';
+import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
@@ -41,7 +40,7 @@ export function useOpenParticipant() {
   const clock = useClock();
   const lookup = useChatLookup();
   const getPass = useGetPass();
-  const tPass = useTranslations('pass');
+  const passDetails = usePassDetails();
   const tRow = useTranslations('firstRow');
   return useCallback(
     (p: Pick<SeatParticipant, 'holderId' | 'name' | 'flagCode' | 'emojiId' | 'isMine'>) => {
@@ -67,13 +66,11 @@ export function useOpenParticipant() {
             path={path}
             viewerHasPass={viewerHasPass}
             onGetPass={() => getPass()}
-            onPassInfo={() => {
-              overlay.open(passInfoSpec({ now: () => clock.getSnapshot() }, tPass('infoTitle')));
-            }}
+            onPassInfo={passDetails}
           />
         ),
       });
     },
-    [overlay, clock, lookup, getPass, tRow, tPass],
+    [overlay, clock, lookup, getPass, passDetails, tRow],
   );
 }

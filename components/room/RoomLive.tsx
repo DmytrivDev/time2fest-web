@@ -28,6 +28,7 @@ import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { ZoneStreamsBlock } from '@/components/live/StreamList';
 import { StampBlock } from '@/components/live/StampBlock';
+import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
@@ -392,6 +393,7 @@ export function RoomLive() {
       </div>
       {chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoomCountry ?? 'world'} onShow={vis.show} /> : null}
       <StampBlock eventId={soundWindow?.eventId ?? null} />
+      <OfferBlock />
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={t('heading')} />
       </div>

@@ -26,6 +26,7 @@ import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
 import { MORE_STREAMS_ID, MoreStreamsSheet, StreamList, ZoneStreamsBlock } from '@/components/live/StreamList';
 import { StampBlock } from '@/components/live/StampBlock';
+import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { CookieInflow } from '@/components/offers/CookieLayer';
 import { useGetPass } from '@/components/pass/PassWindow';
@@ -356,6 +357,7 @@ export function CountryLive({ iso }: { iso: string }) {
         </div>
       ) : null}
       <StampBlock eventId={mainEvent?.id ?? null} className={styles.pad} />
+      <OfferBlock className={styles.pad} />
       <div className={styles.pad}>
         <CookieInflow />
       </div>

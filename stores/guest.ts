@@ -78,8 +78,9 @@ export interface GuestActions {
   markPresence(eventId: string, at: number, source: PresenceSource): void;
   setRate(eventId: string, patch: { stars?: Stars; closed?: boolean }): void;
   showOffer(kind: OfferKind, triggerEventId: string, at: number): void;
-  dismissOffer(at: number): void;
-  actOffer(acted: 'primary' | 'details'): void;
+  /** `kind` — закрити саме цю пропозицію (блок під штампом), а не ту, що зараз у `visible`. */
+  dismissOffer(at: number, kind?: OfferKind): void;
+  actOffer(acted: 'primary' | 'details', kind?: OfferKind): void;
   hideOffer(): void;
   toggleSchedule(eventId: string): void;
   setSchedule(eventIds: string[]): void;
@@ -164,26 +165,27 @@ export const useGuestStore = create<GuestStore>()(
           const entry: OfferEntry = { kind, triggerEventId, shownAt: at };
           return { offers: { ...s.offers, history: [...s.offers.history, entry], visible: kind } };
         }),
-      dismissOffer: (at) =>
+      dismissOffer: (at, kind) =>
         set((s) => {
           const visible = s.offers.visible;
-          if (!visible) return s;
+          const target = kind ?? visible;
+          if (!target) return s;
           const history = [...s.offers.history];
           for (let i = history.length - 1; i >= 0; i--) {
-            if (history[i]!.kind === visible) {
+            if (history[i]!.kind === target) {
               history[i] = { ...history[i]!, dismissedAt: at };
               break;
             }
           }
-          return { offers: { ...s.offers, history, visible: null } };
+          return { offers: { ...s.offers, history, visible: visible === target ? null : visible } };
         }),
-      actOffer: (acted) =>
+      actOffer: (acted, kind) =>
         set((s) => {
-          const visible = s.offers.visible;
-          if (!visible) return s;
+          const target = kind ?? s.offers.visible;
+          if (!target) return s;
           const history = [...s.offers.history];
           for (let i = history.length - 1; i >= 0; i--) {
-            if (history[i]!.kind === visible) {
+            if (history[i]!.kind === target) {
               history[i] = { ...history[i]!, acted };
               break;
             }

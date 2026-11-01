@@ -1,18 +1,19 @@
 'use client';
 
 /**
- * Вікна пропозицій (O-PASS-OFFER, O-TIPS, O-PASS-GATE, O-PASS-INFO) для `OverlayManager` (`inflow`):
- * з’єднують чисті картки з `windows/*` зі станом гостя (`guest.offers`, країни штампів) і самим менеджером.
+ * Вікна навколо пасу для `OverlayManager` (O-PASS-GATE, «Графік — у пасі», «Усе про пас»): з’єднують чисті картки
+ * з `windows/*` зі станом гостя (`guest.offers`) і менеджером. Пропозиція пасу й чайові — не вікна, а окремий блок під
+ * штампом (`OfferBlock`, рішення 2026-11-01); «Що дає пас» на сторінці більше немає — «Детальніше» веде у вікно пасу
+ * або на /pass/ (`usePassDetails`).
  * Закриття (×, Esc, заміна іншим вікном) записує `dismissedAt` у `guest.offers` — закрита пропозиція
  * не повертається тієї ночі (`offerEligibility`). «Оформити пас» записує `acted: 'primary'` і відкриває оформлення
  * пасу (`useGetPass`); «Підтримати» поки показує імітоване «Оплата буде на наступному етапі».
  */
-import { useGetPass } from '@/components/pass/PassWindow';
+import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
 import { PassGate, type PassGateFeature } from '@/components/windows/PassGate';
-import { AlsoInPass, MainFeatures, PassActions, PassInfo, usePassFeatures } from '@/components/windows/PassInfo';
+import { AlsoInPass, MainFeatures, PassActions, usePassFeatures } from '@/components/windows/PassInfo';
 import { ScheduleGate } from '@/components/windows/ScheduleGate';
-import { PassOffer, type PassOfferCountry } from '@/components/windows/PassOffer';
-import { Tips } from '@/components/windows/Tips';
+import type { PassOfferCountry } from '@/components/windows/PassOffer';
 import { useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
@@ -51,26 +52,20 @@ export function stampCountries(): PassOfferCountry[] {
   return out;
 }
 
-const wroteInChat = () => useGuestStore.getState().chat.sentAt.length > 0;
+export const wroteInChat = () => useGuestStore.getState().chat.sentAt.length > 0;
 
 export interface OfferSpecDeps {
   /** Поточний час (спільний годинник) для `dismissedAt`. */
   now: () => Ms;
 }
 
-/** «Оформити пас» з пропозиції: записати дію й відкрити оформлення (вікно під трансляцією чи сторінку пасу). */
-function useOfferGetPass(): () => void {
+/** «Оформити пас» з пропозиції: записати дію й відкрити вікно оформлення на місці чату (телефон — шторка). */
+export function useOfferGetPass(kind?: OfferKind): () => void {
   const getPass = useGetPass();
   return () => {
-    useGuestStore.getState().actOffer('primary');
+    useGuestStore.getState().actOffer('primary', kind);
     getPass();
   };
-}
-
-function PassInfoWindow() {
-  const { close } = useOverlay();
-  const onGetPass = useOfferGetPass();
-  return <PassInfo wroteInChat={wroteInChat()} onClose={() => close(PASS_INFO_WINDOW_ID)} onGetPass={onGetPass} />;
 }
 
 export const SCHEDULE_GATE_WINDOW_ID = 'O-SCHEDULE-GATE';
@@ -124,86 +119,21 @@ export function scheduleGateSpec(deps: OfferSpecDeps, args: { eventId?: string; 
   };
 }
 
-export function passInfoSpec(deps: OfferSpecDeps, title: string): OverlaySpec {
-  return {
-    id: PASS_INFO_WINDOW_ID,
-    kind: 'inflow',
-    title,
-    onClose: () => dismissOfferIfVisible('pass-info', deps.now()),
-    content: <PassInfoWindow />,
-  };
-}
-
-function PassOfferWindow({ count, deps, infoTitle }: { count: number; deps: OfferSpecDeps; infoTitle: string }) {
-  const { open, close } = useOverlay();
-  const onGetPass = useOfferGetPass();
-  return (
-    <PassOffer
-      count={count}
-      countries={stampCountries()}
-      wroteInChat={wroteInChat()}
-      onClose={() => close(PASS_OFFER_WINDOW_ID)}
-      onGetPass={onGetPass}
-      onDetails={() => {
-        const guest = useGuestStore.getState();
-        const trigger = guest.offers.history.at(-1)?.triggerEventId ?? '';
-        guest.actOffer('details');
-        // Заміна вікна закриває пропозицію (`dismissedAt`), а «Що дає пас» стає новою відкритою карткою.
-        open(passInfoSpec(deps, infoTitle));
-        useGuestStore.getState().showOffer('pass-info', trigger, deps.now());
-      }}
-    />
-  );
-}
-
-export function passOfferSpec(deps: OfferSpecDeps, args: { count: number; title: string; infoTitle: string }): OverlaySpec {
-  return {
-    id: PASS_OFFER_WINDOW_ID,
-    kind: 'inflow',
-    title: args.title,
-    onClose: () => dismissOfferIfVisible('pass-offer', deps.now()),
-    content: <PassOfferWindow count={args.count} deps={deps} infoTitle={args.infoTitle} />,
-  };
-}
-
-function TipsWindow() {
+function PassGateWindow({ feature }: { feature: PassGateFeature }) {
   const { close } = useOverlay();
-  return <Tips onClose={() => close(TIPS_WINDOW_ID)} onSupport={() => useGuestStore.getState().actOffer('primary')} />;
-}
-
-export function tipsSpec(deps: OfferSpecDeps, title: string): OverlaySpec {
-  return {
-    id: TIPS_WINDOW_ID,
-    kind: 'inflow',
-    title,
-    onClose: () => dismissOfferIfVisible('tips', deps.now()),
-    content: <TipsWindow />,
-  };
-}
-
-function PassGateWindow({ feature, trigger, deps, infoTitle }: { feature: PassGateFeature; trigger: string; deps: OfferSpecDeps; infoTitle: string }) {
-  const { open, close } = useOverlay();
-  return (
-    <PassGate
-      feature={feature}
-      onClose={() => close(PASS_GATE_WINDOW_ID)}
-      onWhatPassGives={() => {
-        open(passInfoSpec(deps, infoTitle));
-        useGuestStore.getState().showOffer('pass-info', trigger, deps.now());
-      }}
-    />
-  );
+  const passDetails = usePassDetails();
+  return <PassGate feature={feature} onClose={() => close(PASS_GATE_WINDOW_ID)} onWhatPassGives={passDetails} />;
 }
 
 export function passGateSpec(
   deps: OfferSpecDeps,
-  args: { feature: PassGateFeature; trigger: string; title: string; infoTitle: string },
+  args: { feature: PassGateFeature; trigger: string; title: string },
 ): OverlaySpec {
   return {
     id: PASS_GATE_WINDOW_ID,
     kind: 'inflow',
     title: args.title,
     onClose: () => dismissOfferIfVisible('pass-gate', deps.now()),
-    content: <PassGateWindow feature={args.feature} trigger={args.trigger} deps={deps} infoTitle={args.infoTitle} />,
+    content: <PassGateWindow feature={args.feature} />,
   };
 }
