@@ -12,14 +12,13 @@ beforeAll(() => {
 const TARGET = { url: 'https://time2fest.com/country/velyka-brytaniia/', shortUrl: 'time2fest.com/country/velyka-brytaniia/', text: 'Лондон — наживо на Time2Fest' };
 
 describe('«Обрати трансляцію» (рішення 2026-11-01)', () => {
-  it('лише трансляції цієї півночі, що йдуть зараз; поточна — першою', () => {
+  it('лише трансляції цієї півночі, що йдуть зараз; порядок сталий (вибір не переставляє рядки)', () => {
     const london = getData().events.find((e) => e.id === 'evt_london_2027')!;
     const now = london.midnightMs + 60_000;
     const rows = liveRowsForMidnight(london.midnightMs, now);
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.every((r) => r.status === 'live' && r.midnightMs === london.midnightMs)).toBe(true);
-    const last = rows.at(-1)!.id;
-    expect(liveRowsForMidnight(london.midnightMs, now, last)[0]!.id).toBe(last);
+    expect(liveRowsForMidnight(london.midnightMs, now).map((r) => r.id)).toEqual(rows.map((r) => r.id));
   });
 });
 

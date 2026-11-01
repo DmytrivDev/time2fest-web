@@ -24,14 +24,16 @@ export const STREAM_PICKER_ID = 'O-STREAM-PICKER';
 
 const KIND_KEY = { main: 'main', webcam: 'webcam', tv: 'tv' } as const;
 
-/** Трансляції, що йдуть зараз, у поясі події (та сама північ); поточна — першою, далі за популярністю подій. */
-export function liveRowsForMidnight(midnightMs: Ms, now: Ms, currentId?: string | null): StreamRowData[] {
+/**
+ * Трансляції, що йдуть зараз, у поясі події (та сама північ), за популярністю подій і порядком джерел. Порядок сталий:
+ * вибір іншої трансляції лише переносить «Зараз грає», рядки місцями не міняються (правка власника 2026-11-01).
+ */
+export function liveRowsForMidnight(midnightMs: Ms, now: Ms): StreamRowData[] {
   const data = getData();
   const events = data.events
     .filter((e) => e.midnightMs === midnightMs)
     .sort((a, b) => b.popularity - a.popularity || (a.id < b.id ? -1 : 1));
-  const rows = streamRows(data, events, now).filter((r) => r.status === 'live');
-  return currentId ? [...rows.filter((r) => r.id === currentId), ...rows.filter((r) => r.id !== currentId)] : rows;
+  return streamRows(data, events, now).filter((r) => r.status === 'live');
 }
 
 function thumbOf(row: StreamRowData): string | undefined {
@@ -54,7 +56,7 @@ export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerP
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const currentId = player?.selection?.kind === 'source' ? player.selection.source.id : null;
-  const rows = useMemo(() => liveRowsForMidnight(midnightMs, now, currentId), [midnightMs, now, currentId]);
+  const rows = useMemo(() => liveRowsForMidnight(midnightMs, now), [midnightMs, now]);
   const home = countryIso ? rows.filter((r) => r.countryIso === countryIso) : [];
   const rest = countryIso ? rows.filter((r) => r.countryIso !== countryIso) : rows;
 
