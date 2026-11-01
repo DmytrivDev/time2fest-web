@@ -6,12 +6,16 @@
  * штамп прибрали — на тому ж місці, тобто над «Першим рядом».
  * - з’являється за `offer:show` (правила — `offerEligibility`; запис — `useOfferWindows`), лишається й після
  *   перезавантаження, доки не закриють «×» або не оформлять пас;
+ * - чайові — «Скажи тост на весь світ»: після «Підтримати» золотий тост гостя з’являється в чаті «Світ»;
  * - «Оформити пас» — вікно пасу на місці чату (телефон — шторка), навіть без трансляції;
  * - «Детальніше» — те саме вікно, коли трансляція грає; інакше — сторінка /pass/ (`usePassDetails`);
  * - поява й зникнення — як у штампа: місце відкривається порожнім, картка «приземляється»; «×» — картка гасне, потім
  *   місце стягується (`StampMotion.css`).
  */
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { buildToast } from '@/lib/chat-sim/toast';
+import { useChatFeed } from '@/lib/chat-sim/store';
 import { usePassDetails } from '@/components/pass/PassWindow';
 import { Reveal } from '@/components/primitives/Reveal';
 import { PassOffer } from '@/components/windows/PassOffer';
@@ -36,6 +40,9 @@ export function OfferBlock({ className }: { className?: string }) {
     return last && last.dismissedAt === undefined ? (last.kind as BlockKind) : null;
   });
   const stampCount = useGuestStore((g) => g.stamps.length);
+  const tOffers = useTranslations('offers');
+  const nick = useGuestStore((g) => g.nick?.trim()) || tOffers('toastGuest');
+  const flagCode = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
   const onGetPass = useOfferGetPass('pass-offer');
   const passDetails = usePassDetails();
 
@@ -85,7 +92,18 @@ export function OfferBlock({ className }: { className?: string }) {
               }}
             />
           ) : (
-            <Tips onClose={dismiss} onSupport={() => useGuestStore.getState().actOffer('primary', 'tips')} />
+            <Tips
+              nick={nick}
+              flagCode={flagCode}
+              onClose={dismiss}
+              onSupport={(amount, toast) => {
+                const g = useGuestStore.getState();
+                g.actOffer('primary', 'tips');
+                useChatFeed.getState().append([
+                  buildToast({ text: toast, amount, now: clock.getSnapshot(), guestId: g.id, nick, flagCode, hasPass: g.hasPass }),
+                ]);
+              }}
+            />
           )}
         </div>
       ) : null}

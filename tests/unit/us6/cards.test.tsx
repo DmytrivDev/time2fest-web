@@ -98,24 +98,33 @@ describe('PassInfo', () => {
   });
 });
 
-describe('Tips', () => {
-  it('$2 / $5 / $10, вибір змінює кнопку «Підтримати $N»; примітка про email', () => {
-    renderPage(<Tips onClose={() => undefined} />);
-    expect(screen.getByRole('heading', { level: 2, name: 'Чайові' })).toBeInTheDocument();
+describe('Tips — «Скажи тост на весь світ» (рішення 2026-11-01)', () => {
+  it('надзаголовок «Чайові», $2 / $5 / $10 (типово $5), прев’ю тосту — поле з ніком; примітка про email', () => {
+    renderPage(<Tips nick="Олена" flagCode="UA" onClose={() => undefined} />);
+    expect(screen.getByRole('heading', { level: 2, name: 'Скажи тост на весь світ' })).toBeInTheDocument();
+    expect(screen.getByText('Чайові')).toBeInTheDocument();
     expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['$2', '$5', '$10']);
-    expect(screen.getByRole('button', { name: 'Підтримати $2' })).toHaveAttribute('data-variant', 'coral');
+    expect(screen.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute('data-variant', 'coral');
     fireEvent.click(screen.getByRole('radio', { name: '$10' }));
     expect(screen.getByRole('button', { name: 'Підтримати $10' })).toBeInTheDocument();
+    expect(screen.getByText('Олена')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Текст твого тосту' })).toHaveValue('🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!');
     expect(screen.getByText(/Входити не треба — email для квитанції попросить сторінка оплати/)).toBeInTheDocument();
     expect(coralButtons()).toHaveLength(1);
   });
 
-  it('«Підтримати» — імітоване повідомлення, без чекауту', () => {
+  it('«Підтримати» — сума й текст тосту; кнопка стає «Тост у чаті», без чекауту; посилання в тості не пропускаємо', () => {
     const onSupport = vi.fn();
     renderPage(<Tips onSupport={onSupport} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $2' }));
-    expect(onSupport).toHaveBeenCalledWith(2);
-    expect(screen.getByRole('status')).toHaveTextContent('Оплата буде на наступному етапі');
+    expect(screen.getByText('Гість')).toBeInTheDocument();
+    const field = screen.getByRole('textbox', { name: 'Текст твого тосту' });
+    fireEvent.change(field, { target: { value: 'дивіться www.spam.com' } });
+    expect(screen.getByRole('button', { name: 'Підтримати $5' })).toBeDisabled();
+    fireEvent.change(field, { target: { value: 'За всіх, хто не спить!' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
+    expect(onSupport).toHaveBeenCalledWith(5, 'За всіх, хто не спить!');
+    expect(screen.getByRole('button', { name: 'Тост у чаті' })).toBeDisabled();
+    expect(screen.getByRole('status')).toHaveTextContent('Твій тост уже в чаті «Світ»');
   });
 });
 

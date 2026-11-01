@@ -14,6 +14,8 @@ export type OfferVariant = 'pass-offer' | 'tips' | 'pass-gate' | 'pass-info';
 
 export interface OfferCardProps {
   variant: OfferVariant;
+  /** Надзаголовок дрібним жовтим над заголовком («Чайові»). */
+  kicker?: ReactNode;
   title: ReactNode;
   /** Доступна назва кнопки «×». */
   closeLabel: string;
@@ -37,7 +39,7 @@ function useEscapeToClose(ref: RefObject<HTMLElement | null>, onClose?: () => vo
   }, [ref, onClose]);
 }
 
-export function OfferCard({ variant, title, closeLabel, onClose, children, className }: OfferCardProps) {
+export function OfferCard({ variant, kicker, title, closeLabel, onClose, children, className }: OfferCardProps) {
   const titleId = useId();
   const ref = useRef<HTMLElement>(null);
   useEscapeToClose(ref, onClose);
@@ -48,6 +50,7 @@ export function OfferCard({ variant, title, closeLabel, onClose, children, class
       data-offer={variant}
       className={cn('relative flex flex-col gap-3 rounded-lg border border-border bg-surface-raised p-4 md:p-5', className)}
     >
+      {kicker ? <p className="-mb-2 text-label-sm font-bold uppercase tracking-wider text-highlight">{kicker}</p> : null}
       <h2 id={titleId} className="pe-10 text-headline-sm text-text">
         {title}
       </h2>

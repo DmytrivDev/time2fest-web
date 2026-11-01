@@ -1,0 +1,85 @@
+/* «Чайові · Скажи тост на весь світ» (дошка `Desk-Offers-Concepts`, C): телефон — стовпчик, десктоп — дві колонки. */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+.bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px dashed rgb(252 226 134 / 0.45);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.nick {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.field {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  resize: none;
+}
+.field:focus {
+  color: var(--color-text);
+}
+.amounts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-2);
+}
+.amount {
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 800;
+}
+.amount:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+}
+.amount[aria-checked='true'] {
+  border: 2px solid var(--color-highlight);
+  background: rgb(252 226 134 / 0.14);
+}
+.amount:disabled {
+  opacity: 0.6;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 28px;
+    align-items: start;
+  }
+}

@@ -9,7 +9,7 @@ const meta = {
   title: 'Вікна/Tips',
   component: Tips,
   globals: { surface: 'phone' },
-  args: { onClose: () => undefined },
+  args: { onClose: () => undefined, nick: 'Олена', flagCode: 'UA' },
   decorators: [
     (Story) => (
       <CoralProvider>
@@ -25,15 +25,15 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Phone: Story = { name: 'чайові — Phone-Tips' };
+export const Phone: Story = { name: 'чайові «Тост у чаті» — телефон' };
 
-export const Desktop: Story = { name: 'Desk-Tips', globals: { surface: 'desktop' } };
+export const Desktop: Story = { name: 'чайові «Тост у чаті» — десктоп', globals: { surface: 'desktop' } };
 
 export const FiveDollars: Story = {
-  name: 'вибрано $5 — «Підтримати $5»',
+  name: 'вибрано $10 — «Підтримати $10»',
   play: async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(c.getByRole('radio', { name: '$5' }));
-    await expect(c.getByRole('button', { name: 'Підтримати $5' })).toBeInTheDocument();
+    await userEvent.click(c.getByRole('radio', { name: '$10' }));
+    await expect(c.getByRole('button', { name: 'Підтримати $10' })).toBeInTheDocument();
   },
 };

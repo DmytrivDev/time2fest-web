@@ -372,6 +372,7 @@ export function Message({
     <li
       data-kind="regular"
       data-own={a?.isMine ? 'true' : undefined}
+      data-toast={message.toast ? 'true' : undefined}
       data-msg-id={message.id}
       data-actions-open={menuOpen ? 'true' : undefined}
       data-menu-always={menuAlways && (more || del) ? 'true' : undefined}
@@ -430,6 +431,11 @@ export function Message({
               />
             ) : null}
           </>
+        ) : null}
+        {message.toast ? (
+          <span data-toast-badge="" className="t2f-toast-badge">
+            {t('toastBadge')}
+          </span>
         ) : null}
         {a?.isMine ? <Badge variant="you" /> : null}
         <time

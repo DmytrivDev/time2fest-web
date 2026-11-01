@@ -14,6 +14,7 @@ import { clearAllHandlers, emit } from '@/lib/events/bus';
 import { buildOfferContext } from '@/lib/offers/context';
 import { resetCookieFlow } from '@/lib/offers/cookieFlow';
 import { getOfferUi, installTypingTracking, resetOfferUi } from '@/lib/offers/uiState';
+import { useChatFeed } from '@/lib/chat-sim/store';
 import { useGuestStore } from '@/stores/guest';
 import { renderPage } from './render';
 
@@ -194,9 +195,21 @@ describe('пропозиції — блок під штампом (рішенн�
     giveStamps(s1, s2, s3);
     renderPage(<Page />);
     offerShow('tips', s3.id, 3);
-    expect(screen.getByRole('heading', { level: 2, name: 'Чайові' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Скажи тост на весь світ' })).toBeInTheDocument();
     expect(document.querySelectorAll('[data-offer]')).toHaveLength(1);
     expect(useGuestStore.getState().offers.visible).toBe('tips');
+  });
+
+  it('«Підтримати» — золотий тост гостя з’являється в чаті «Світ»; чайові записано', () => {
+    giveStamps(s1, s2, s3);
+    useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
+    useChatFeed.getState().reset();
+    renderPage(<Page />);
+    offerShow('tips', s3.id, 3);
+    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
+    const world = useChatFeed.getState().rooms.world ?? [];
+    expect(world.at(-1)).toMatchObject({ toast: { amount: 5 }, text: '🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!', author: { nick: 'Олена', isMine: true } });
+    expect(useGuestStore.getState().offers.history.at(-1)).toMatchObject({ kind: 'tips', acted: 'primary' });
   });
 
   it('«Оформити пас» — вікно пасу на місці чату навіть без трансляції; картка лишається', () => {
