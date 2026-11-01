@@ -67,6 +67,30 @@
       ]
     },
     {
+      "eventId": "evt_dublin_2027",
+      "sources": [
+        {
+          "id": "src_dublin_1",
+          "platform": "youtube",
+          "videoId": "3nyPER2kzqk",
+          "url": "https://www.youtube.com/watch?v=3nyPER2kzqk",
+          "kind": "webcam",
+          "title": {
+            "uk": "Дублін · Темпл-Бар"
+          },
+          "order": 0,
+          "status": "live",
+          "embeddable": true,
+          "isLive": true,
+          "lastChecked": "2026-10-26T10:31:09Z",
+          "verified": false,
+          "test": true,
+          "testNote": "цілодобова вебкамера EarthCam, не джерело справжньої ночі; показує «Інші країни поясу» в «Обрати трансляцію»",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
       "eventId": "evt_paris_2027",
       "sources": [
         {

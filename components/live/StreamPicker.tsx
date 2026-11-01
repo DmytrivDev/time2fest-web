@@ -4,7 +4,8 @@
  * O-STREAM-PICKER «Обрати трансляцію» за дошкою `Desk-ActionRow` (рішення власника 2026-11-01): кнопка під підписом
  * плеєра більше не веде на сторінку країни (туди веде назва над нею), а відкриває на місці чату (телефон — шторкою)
  * трансляції цієї півночі, що йдуть зараз: спершу країна поточної трансляції, нижче — решта поясу. Кожна — у рамці,
- * велика мініатюра з кнопкою «▶» (поточна — з позначкою «Зараз грає» на мініатюрі), текст — на всю ширину.
+ * велика мініатюра з кнопкою «▶» (поточна — «Зараз грає» по центру мініатюри), назва — на всю ширину, нижче круглий
+ * прапор з країною (один рядок) і «Наживо · Вебкамера».
  * Натиск перемикає відео тут же (`setChain` з `preferredSourceId`); на телефоні шторка після вибору закривається.
  */
 import { useTranslations } from 'next-intl';
@@ -92,14 +93,15 @@ export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerP
                 )}
               </span>
               <span className={s.text}>
-                <span className={s.title}>
-                  <Flag code={row.flagCode} size="card" decorative />
-                  <span className={s.titleText}>{row.title}</span>
+                {/* Назва — на всю ширину (до двох рядків); прапор — круглий, у рядку з країною (правка власника 2026-11-01). */}
+                <span className={s.titleText}>{row.title}</span>
+                <span className={s.sub}>
+                  <Flag round code={row.flagCode} size="xs" decorative />
+                  <span className={s.subText}>{row.countryName}</span>
                 </span>
-                <span className={s.sub}>{t('rowSub', { country: row.countryName, kind: tType(KIND_KEY[row.kind]) })}</span>
                 <span className={s.live}>
                   <Icon name="broadcast-live" size={14} className="text-primary" />
-                  {t('live')}
+                  {t('liveKind', { kind: tType(KIND_KEY[row.kind]) })}
                   {on ? <span className="sr-only">. {t('playing')}</span> : null}
                 </span>
               </span>
@@ -122,7 +124,7 @@ export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerP
         </div>
       ) : null}
       {rest.length ? (
-        <div className="flex flex-col gap-2" data-group="zone">
+        <div className={cn('flex flex-col gap-2', home.length > 0 && s.groupGap)} data-group="zone">
           {home.length ? <p className={s.eyebrow}>{t('restOfZone')}</p> : null}
           {list(rest, t('restOfZone'))}
         </div>

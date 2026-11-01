@@ -693,6 +693,71 @@
       ]
     },
     {
+      "eventId": "evt_dublin_2027",
+      "seats": [
+        {
+          "number": 1,
+          "state": "taken",
+          "name": "Олена і друзі",
+          "flagCode": "UA",
+          "greeting": "Зустрічаємо разом!",
+          "emojiId": "glasses",
+          "takenAtOffsetSec": -10800
+        },
+        {
+          "number": 2,
+          "state": "taken",
+          "name": "Karim",
+          "flagCode": "EG",
+          "greeting": "Новий рік - новий шлях",
+          "emojiId": "heart",
+          "takenAtOffsetSec": -14400
+        },
+        {
+          "number": 3,
+          "state": "taken",
+          "name": "Аміра",
+          "flagCode": "CA",
+          "greeting": "Мир і тепло всім!",
+          "emojiId": "hug",
+          "takenAtOffsetSec": -18000
+        },
+        {
+          "number": 4,
+          "state": "taken",
+          "name": "Hiro і сім’я",
+          "flagCode": "JP",
+          "greeting": "Здоров’я й удачі!",
+          "emojiId": "fireworks",
+          "takenAtOffsetSec": -21600
+        },
+        {
+          "number": 5,
+          "state": "free"
+        },
+        {
+          "number": 6,
+          "state": "free"
+        },
+        {
+          "number": 7,
+          "state": "free"
+        },
+        {
+          "number": 8,
+          "state": "free"
+        },
+        {
+          "number": 9,
+          "state": "free"
+        },
+        {
+          "number": 10,
+          "state": "free"
+        }
+      ]
+    },
+    {
       "eventId": "evt_paris_2027",
       "seats": [
         {

@@ -163,7 +163,8 @@ export function Sheet({
             </div>
           ) : boardHeader ? (
             <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="">
-              <div className="min-w-0 flex-1 pt-2.5">
+              {/* З «‹ Назад» рядок із × стоїть на тій самій висоті, що × у звичайних вікнах (правило 2026-11-01). */}
+              <div className={cn('min-w-0 flex-1', onBack ? 'pt-0' : 'pt-2.5')}>
                 {onBack ? (
                 <div className="flex min-h-11 items-center justify-between" data-back-row="">
                   <button type="button" onClick={onBack} data-action="back" className="t2f-focus t2f-transition t2f-author-back t2f-back-flush">
