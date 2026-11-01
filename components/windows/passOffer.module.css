@@ -1,0 +1,276 @@
+/* «Твій шлях цієї ночі · Наступна північ» (дошка `Desk-PassOffer-Next`).
+   Телефон — стовпчик: шлях, наступна північ, текст, кнопка, «разово · без підписки» + «Детальніше».
+   Десктоп — дві колонки: ліворуч надзаголовок, заголовок, шлях, текст; праворуч наступна північ, кнопки, примітка. */
+.card {
+  gap: 14px;
+}
+
+/* ── шлях ── */
+.path {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.node,
+.now {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+/* Прапор у кільці з проміжком 2 px — кільце не налазить на прапор. */
+.ring {
+  display: flex;
+  padding: 2px;
+  border: 2px dashed rgb(255 255 255 / 0.28);
+  border-radius: var(--radius-full);
+  opacity: 0.6;
+}
+.node[data-met] .ring {
+  border: 2px solid var(--color-highlight);
+  opacity: 1;
+}
+.ring > * {
+  width: 24px !important;
+  height: 24px !important;
+}
+.time {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.node[data-met] .time,
+.nowLabel {
+  font-weight: 700;
+}
+.node[data-met] .time {
+  color: var(--color-highlight);
+}
+/* Лінія — на рівні центру прапорів: над підписом (14 + 5) і половиною кільця (32 / 2). */
+.line {
+  flex: 1 1 0;
+  min-width: 12px;
+  margin: 0 6px 35px;
+  border-top: 2px dashed rgb(255 255 255 / 0.28);
+}
+.linePast {
+  border-top: 2px solid var(--color-highlight);
+}
+.dotBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 32px;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 4px rgb(249 74 81 / 0.22);
+}
+.nowLabel {
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--color-primary);
+}
+
+.lead {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* ── наступна північ і дії ── */
+.aside {
+  display: contents;
+}
+.next {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgb(252 226 134 / 0.35);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgb(252 226 134 / 0.1), rgb(252 226 134 / 0.02));
+}
+.nextHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.nextFlag {
+  display: flex;
+  flex: none;
+  padding: 2px;
+  border: 2px solid var(--color-highlight);
+  border-radius: var(--radius-full);
+}
+.nextFlag > * {
+  width: 34px !important;
+  height: 34px !important;
+}
+.nextText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.nextWhen {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-highlight);
+}
+.nextCity {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.remind {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px dashed rgb(252 226 134 / 0.6);
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-highlight);
+}
+.actions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+.getPass {
+  flex: 1 1 auto;
+}
+.detailsDesk {
+  display: none !important;
+}
+.noteRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -4px;
+}
+.note {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.detailsPhone {
+  min-height: 44px;
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Телефон: шлях — по дві країни з кожного боку. Порядок: шлях, наступна північ, текст, дії. */
+.path {
+  order: 1;
+}
+.next {
+  order: 2;
+}
+.lead {
+  order: 3;
+}
+.actions {
+  order: 4;
+}
+.noteRow {
+  order: 5;
+}
+@media (max-width: 767px) {
+  .path > [data-wide] {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'kick aside'
+      'title aside'
+      'path aside'
+      'lead aside';
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 32px;
+    row-gap: 12px;
+    padding: 22px 24px;
+  }
+  .card > p:first-child {
+    grid-area: kick;
+    margin-bottom: 0;
+  }
+  .card > h2 {
+    grid-area: title;
+    font-size: 25px;
+    line-height: 1.15;
+  }
+  .path {
+    grid-area: path;
+    margin-top: 4px;
+  }
+  .ring > * {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .line {
+    margin-bottom: 37px;
+  }
+  .dotBox {
+    height: 36px;
+  }
+  .lead {
+    grid-area: lead;
+  }
+  .aside {
+    grid-area: aside;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: 12px;
+    padding-right: 30px;
+  }
+  .nextCity {
+    font-size: 17px;
+  }
+  .nextFlag > * {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .getPass {
+    flex: none;
+  }
+  .detailsDesk {
+    display: inline-flex !important;
+  }
+  .detailsPhone {
+    display: none;
+  }
+  .noteRow {
+    margin-top: 0;
+  }
+}

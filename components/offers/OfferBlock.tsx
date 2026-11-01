@@ -22,7 +22,9 @@ import { PassOffer } from '@/components/windows/PassOffer';
 import { Tips } from '@/components/windows/Tips';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
-import { stampCountries, useOfferGetPass, wroteInChat } from './OfferWindows';
+import { metPoints, nextPoints } from '@/lib/offers/passPath';
+import { useNow } from '@/lib/time/TimeProvider';
+import { useOfferGetPass } from './OfferWindows';
 
 type BlockKind = 'pass-offer' | 'tips';
 const LEAVE_MS = 220;
@@ -32,6 +34,8 @@ const reducedMotionOn = () => typeof document !== 'undefined' && document.docume
 
 export function OfferBlock({ className }: { className?: string }) {
   const clock = useClock();
+  // Хвилинна точність — «за 54 хв» оновлюється раз на хвилину.
+  const now = useNow({ granularity: 'minute' });
   // Картка блоку — остання незакрита пропозиція пасу чи чайових (з історії, не з `visible`: вікна-підказки на кшталт
   // «Графік — у пасі» теж пишуть `visible`, але картку під штампом не витісняють).
   const kind = useGuestStore((g): BlockKind | null => {
@@ -82,8 +86,9 @@ export function OfferBlock({ className }: { className?: string }) {
           {current === 'pass-offer' ? (
             <PassOffer
               count={stampCount}
-              countries={stampCountries()}
-              wroteInChat={wroteInChat()}
+              met={metPoints(useGuestStore.getState().stamps)}
+              next={nextPoints(now, 3)}
+              now={now}
               onClose={dismiss}
               onGetPass={onGetPass}
               onDetails={() => {

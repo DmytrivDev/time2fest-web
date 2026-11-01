@@ -145,6 +145,16 @@ export function formatCountdown(ms: Ms): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
+/** «54 хв», «2 год 54 хв», «1 год» — скільки лишилось (округлення вгору до хвилини). */
+export function formatDurationShort(ms: Ms, locale: Locale = 'uk'): string {
+  const min = Math.max(1, Math.ceil(ms / 60_000));
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  const [hh, mm] = locale === 'uk' ? ['год', 'хв'] : ['h', 'min'];
+  if (!h) return `${m} ${mm}`;
+  return m ? `${h} ${hh} ${m} ${mm}` : `${h} ${hh}`;
+}
+
 /** Короткий відлік переходу «0:59» / «1:00» (хвилини без нуля попереду). */
 export function formatShortCountdown(ms: Ms): string {
   const s = ceilSec(ms);

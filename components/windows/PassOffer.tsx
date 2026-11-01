@@ -1,16 +1,26 @@
 'use client';
 
 /**
- * C16 `pass-offer` — «Уже 2 країни у твоєму паспорті» (O-PASS-OFFER, FR-063, Phone-/Desk-Pass-Offer).
- * Картка в потоці під відео (`inflow`): країни паспорта (прапор + назва в називному), одна фраза,
- * 3 головні функції, «Ще в пасі:», ціна «разово, на весь сезон · без підписки», коралова «Оформити пас», «Детальніше».
- * Коли показувати — рішення `offerEligibility` (не раніше +5 хв, не пізніше −10 хв до наступної, після оцінки,
- * одна за раз, не під час введення); тут лише вигляд. Оплата — наступний етап: імітоване повідомлення.
+ * C16 `pass-offer` — «Твій шлях цієї ночі · Наступна північ» (дошка `Desk-PassOffer-Next`, рішення власника 2026-11-01).
+ * Заголовок «2 Нових роки вже твої — далі буде ще краще», шлях прапорами (зустрінуті — золоте кільце й час, червона крапка
+ * «зараз», попереду — пунктир і бліді прапори), плашка найближчої півночі «за 54 хв · З пасом — нагадаємо», коралова
+ * «Оформити пас · $4,99» і «Детальніше». Десктоп — дві колонки (шлях ліворуч, наступна північ і кнопки праворуч);
+ * телефон — стовпчик, у шляху по дві країни з кожного боку від «зараз».
+ * Коли показувати — `offerEligibility`; дані шляху — `lib/offers/passPath`; тут лише вигляд.
  */
 import { useTranslations } from 'next-intl';
+import { Fragment } from 'react';
+import { Button } from '@/components/primitives/Button';
+import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
-import { AlsoInPass, MainFeatures, PassActions, usePassFeatures } from './PassInfo';
+import { Icon } from '@/components/primitives/Icon';
+import type { Ms } from '@/lib/data/types';
+import { formatClock, formatDurationShort } from '@/lib/i18n/time';
+import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import type { PathPoint } from '@/lib/offers/passPath';
+import { useRegisterCoral } from '@/lib/overlay/coral';
 import { OfferCard } from './OfferCard';
+import s from './passOffer.module.css';
 
 export interface PassOfferCountry {
   iso: string;
@@ -20,35 +30,110 @@ export interface PassOfferCountry {
 }
 
 export interface PassOfferProps {
-  /** Скільки Нових років зустрінуто (з `offer:show.stampCount`). */
+  /** Скільки Нових років зустрінуто. */
   count: number;
-  countries: PassOfferCountry[];
-  wroteInChat?: boolean;
+  /** Зустрінуті півночі, від ранніх до пізніх (показуємо останні чотири; телефон — дві). */
+  met: PathPoint[];
+  /** Найближчі півночі після «зараз» (до трьох; телефон — дві). Перша — у плашці «Наступна північ». */
+  next: PathPoint[];
+  now: Ms;
   onClose?: () => void;
   onDetails?: () => void;
   onGetPass?: () => void;
   className?: string;
 }
 
-export function PassOffer({ count, countries, wroteInChat = false, onClose, onDetails, onGetPass, className }: PassOfferProps) {
-  const t = useTranslations('offers');
-  const { main, also } = usePassFeatures(wroteInChat);
+const MET_MAX = 4;
+const MET_PHONE = 2;
+const NEXT_PHONE = 2;
+
+function Node({ point, met, label, wide }: { point: PathPoint; met: boolean; label: string; wide?: boolean }) {
   return (
-    <OfferCard variant="pass-offer" title={t('passTitle', { count })} closeLabel={t('dismiss')} onClose={onClose} className={className}>
-      {countries.length ? (
-        <ul aria-label={t('countriesLabel')} className="flex flex-wrap gap-x-4 gap-y-1" data-row="countries">
-          {countries.map((c) => (
-            <li key={c.iso} className="flex items-center gap-2 text-label-sm text-text-secondary">
-              <Flag round code={c.flagCode} size="sm" decorative />
-              {c.name}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-      <p className="text-body text-text-secondary">{t('passLead')}</p>
-      <MainFeatures items={main} compact />
-      <AlsoInPass items={also} />
-      <PassActions onDetails={onDetails} onGetPass={onGetPass} />
+    <li className={s.node} data-met={met || undefined} data-wide={wide || undefined}>
+      <span className={s.ring} aria-hidden="true">
+        <Flag round code={point.flagCode} size="md" decorative />
+      </span>
+      <span className={s.time} aria-hidden="true">
+        {formatClock(point.midnightMs)}
+      </span>
+      <span className="sr-only">{label}</span>
+    </li>
+  );
+}
+
+const Line = ({ past, wide }: { past?: boolean; wide?: boolean }) => (
+  <li aria-hidden="true" className={cn(s.line, past && s.linePast)} data-wide={wide || undefined} />
+);
+
+export function PassOffer({ count, met, next, now, onClose, onDetails, onGetPass, className }: PassOfferProps) {
+  const t = useTranslations('offers');
+  useRegisterCoral();
+  const shownMet = met.slice(-MET_MAX);
+  const upcoming = next[0];
+  const price = formatUsd(PASS_PRICE);
+
+  return (
+    <OfferCard variant="pass-offer" kicker={t('pathKicker')} title={t('pathTitle', { count })} closeLabel={t('dismiss')} onClose={onClose} className={cn(s.card, className)}>
+      <ol className={s.path} aria-label={t('pathLabel')}>
+        {shownMet.map((p, i) => {
+          // Телефон: лише дві останні зустрінуті країни (ранніші — `data-wide`).
+          const wide = i < shownMet.length - MET_PHONE;
+          return (
+            <Fragment key={p.eventId}>
+              <Node point={p} met wide={wide} label={t('pathMet', { city: p.city, time: formatClock(p.midnightMs) })} />
+              <Line past wide={wide} />
+            </Fragment>
+          );
+        })}
+        <li className={s.now}>
+          <span className={s.dotBox} aria-hidden="true">
+            <span className={s.dot} />
+          </span>
+          <span className={s.nowLabel}>{t('pathNow')}</span>
+        </li>
+        {next.map((p, i) => (
+          <Fragment key={p.eventId}>
+            <Line wide={i >= NEXT_PHONE} />
+            <Node point={p} met={false} wide={i >= NEXT_PHONE} label={t('pathNext', { city: p.city, time: formatClock(p.midnightMs) })} />
+          </Fragment>
+        ))}
+      </ol>
+      <p className={s.lead}>{t('pathLead')}</p>
+      <div className={s.aside}>
+        {upcoming ? (
+          <div className={s.next} data-row="next-midnight">
+            <div className={s.nextHead}>
+              <span className={s.nextFlag}>
+                <Flag round code={upcoming.flagCode} size="lg" decorative />
+              </span>
+              <div className={s.nextText}>
+                <span className={s.nextWhen}>{t('nextIn', { time: formatDurationShort(upcoming.midnightMs - now) })}</span>
+                <span className={s.nextCity}>
+                  {upcoming.city} · {formatClock(upcoming.midnightMs)}
+                </span>
+              </div>
+            </div>
+            <span className={s.remind}>
+              <Icon name="bell" size={16} />
+              {t('remind')}
+            </span>
+          </div>
+        ) : null}
+        <div className={s.actions}>
+          <Button variant="coral" size="lg" onClick={onGetPass} className={s.getPass}>
+            {t('getPassPrice', { price })}
+          </Button>
+          <Button variant="secondary" size="lg" onClick={onDetails} className={s.detailsDesk}>
+            {t('details')}
+          </Button>
+        </div>
+        <div className={s.noteRow}>
+          <span className={s.note}>{t('priceNote')}</span>
+          <button type="button" onClick={onDetails} className={cn('t2f-focus', s.detailsPhone)}>
+            {t('details')}
+          </button>
+        </div>
+      </div>
     </OfferCard>
   );
 }

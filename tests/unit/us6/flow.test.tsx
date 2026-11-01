@@ -148,14 +148,14 @@ function offerShow(kind: 'pass-offer' | 'tips', triggerEventId: string, stampCou
 describe('пропозиції — блок під штампом (рішення 2026-11-01)', () => {
   const block = () => document.querySelector('[data-offer-block]') as HTMLElement | null;
 
-  it('offer:show → картка «Уже 2 країни…» у блоці з aria-live, запис у guest.offers, звук нейтральний, фокус не забрано', () => {
+  it('offer:show → картка «2 Нових роки вже твої…» у блоці з aria-live, запис у guest.offers, звук нейтральний, фокус не забрано', () => {
     giveStamps(s1, s2);
     useGuestStore.setState({ stamps: [stampOf(s1.id, 'UA'), stampOf(s2.id, 'FR')] });
     const before = document.activeElement;
     renderPage(<Page />);
     expect(block()).toBeNull();
     offerShow('pass-offer', s2.id, 2);
-    expect(block()).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    expect(block()).toHaveTextContent('2 Нових роки вже твої — далі буде ще краще');
     expect(block()!.closest('[aria-live="polite"]')).not.toBeNull();
     expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
     expect(document.activeElement).toBe(before);
@@ -187,7 +187,7 @@ describe('пропозиції — блок під штампом (рішенн�
     renderPage(<Page onApi={(a) => (api = a)} />);
     offerShow('pass-offer', s2.id, 2);
     act(() => api.openScheduleGate());
-    expect(block()).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    expect(block()).toHaveTextContent('2 Нових роки вже твої — далі буде ще краще');
     expect(useGuestStore.getState().offers.history[0]?.dismissedAt).toBeUndefined();
   });
 
@@ -216,7 +216,7 @@ describe('пропозиції — блок під штампом (рішенн�
     giveStamps(s1, s2);
     renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
-    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас' }));
+    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас · $4,99' }));
     expect(screen.getByRole('dialog', { name: /Новорічний пас/ })).toBeInTheDocument();
     expect(useGuestStore.getState().offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'primary' });
     expect(block()).not.toBeNull();
@@ -226,7 +226,7 @@ describe('пропозиції — блок під штампом (рішенн�
     giveStamps(s1, s2);
     renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
-    fireEvent.click(screen.getByRole('button', { name: 'Детальніше' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Детальніше' })[0]!);
     expect(push).toHaveBeenCalledWith('/pass/');
     expect(screen.queryByRole('heading', { level: 2, name: 'Що дає Новорічний пас' })).toBeNull();
     expect(useGuestStore.getState().offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'details' });
@@ -266,7 +266,7 @@ describe('пропозиції — блок під штампом (рішенн�
     giveStamps(s1, s2);
     useGuestStore.setState({ offers: { nightId: '2026-27', history: [{ kind: 'pass-offer', shownAt: 1, triggerEventId: s2.id }], visible: 'pass-offer' } });
     const { unmount } = renderPage(<Page />);
-    expect(block()).toHaveTextContent('Уже 2 країни у твоєму паспорті');
+    expect(block()).toHaveTextContent('2 Нових роки вже твої — далі буде ще краще');
     unmount();
     useGuestStore.getState().setHasPass(true);
     renderPage(<Page />);

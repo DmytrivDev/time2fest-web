@@ -1,6 +1,6 @@
 /**
  * US6 — «Пропозиції й вікна в потоці» (quickstart; T117, FR-063…FR-065).
- * Гість зі штампами на 2 події → картка «Уже 2 країни у твоєму паспорті» не раніше +5 хв після події, не пізніше −10 хв до
+ * Гість зі штампами на 2 події → картка «2 Нових роки вже твої — далі буде ще краще» («Наступна північ») не раніше +5 хв після події, не пізніше −10 хв до
  * наступної, після оцінки, одна за раз; закрита хрестиком не повертається тієї ночі; після 3-го штампа — чайові;
  * не під час введення в чаті (~10 с); при картці з кораловою кнопкою кнопка звуку нейтральна (на екрані одна коралова);
  * cookies: у кутку (десктоп) / смугою (телефон) / в потоці, якщо чат сховано; Facebook-згода з налаштувань.
@@ -97,19 +97,19 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
   }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_3, 0);
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
 
     await setTime(page, { at: LONDON_PLUS_6 });
-    const card = offerCard(page, 'Уже 2 країни у твоєму паспорті');
+    const card = offerCard(page, '2 Нових роки вже твої — далі буде ще краще');
     await expect(card).toBeVisible({ timeout: 10_000 });
-    await expect(slot(page)).toContainText('Оформити пас');
-    await expect(slot(page)).toContainText('$4,99');
+    await expect(slot(page)).toContainText('Оформити пас · $4,99');
     await expect(slot(page)).toContainText('разово, на весь сезон · без підписки');
-    await expect(slot(page).getByText('Ще в пасі:')).toBeVisible();
+    await expect(slot(page).getByRole('list', { name: 'Твій новорічний шлях' })).toBeVisible();
+    await expect(slot(page)).toContainText('Наступна північ · за');
 
     // Одна коралова кнопка на екрані — «Оформити пас»; кнопка звуку нейтральна.
     await expect(visibleCoral(page)).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Оформити пас' })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Оформити пас · $4,99' })).toHaveAttribute(
       'data-variant',
       'coral',
     );
@@ -126,7 +126,7 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_52, 1);
     await page.waitForTimeout(3_000);
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
   });
 
   test('«Оформити пас» записує дію й відкриває вікно «Новорічний пас» на місці чату; трансляція лишається', async ({
@@ -134,7 +134,7 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
   }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await slot(page).getByRole('button', { name: 'Оформити пас' }).click();
+    await slot(page).getByRole('button', { name: 'Оформити пас · $4,99' }).click();
     await expect(page.getByRole('dialog', { name: 'Новорічний пас' })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe('/');
     const acted = await page.evaluate(
@@ -152,32 +152,32 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
     await page.getByRole('button', { name: 'Закрити пропозицію' }).click();
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
 
     await setTime(page, { at: '2027-01-01T02:20:00+02:00' });
     await page.waitForTimeout(2_500);
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
 
     await page.reload();
     await page.waitForTimeout(2_500);
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
   });
 
   test('вікно збоку («Обрати трансляцію») пропозицію не прибирає', async ({ page }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await expect(offerCard(page, /Уже 2 країни/)).toBeVisible({ timeout: 10_000 });
+    await expect(offerCard(page, /Нових роки вже твої/)).toBeVisible({ timeout: 10_000 });
     await page.getByRole('button', { name: 'Обрати трансляцію' }).click();
-    await expect(offerCard(page, /Уже 2 країни/)).toBeVisible();
+    await expect(offerCard(page, /Нових роки вже твої/)).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(offerCard(page, /Уже 2 країни/)).toBeVisible();
+    await expect(offerCard(page, /Нових роки вже твої/)).toBeVisible();
   });
 
   test('є пас — пропозиції пасу немає', async ({ page }) => {
     await seedGuest(page, { stamps: TWO_STAMPS, hasPass: true });
     await gotoAt(page, LONDON_PLUS_6, 0);
     await page.waitForTimeout(2_500);
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
   });
 
   test('«Детальніше» — вікно пасу (трансляція грає) або сторінка /pass/; «Що дає пас» на сторінці більше немає', async ({
@@ -185,7 +185,7 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
   }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await slot(page).getByRole('button', { name: 'Детальніше' }).click();
+    await slot(page).getByRole('button', { name: 'Детальніше' }).locator('visible=true').click();
     await expect(page.getByRole('heading', { level: 2, name: 'Що дає Новорічний пас' })).toHaveCount(0);
     await expect
       .poll(async () => (await page.getByRole('dialog', { name: 'Новорічний пас' }).count()) > 0 || new URL(page.url()).pathname === '/pass/')
@@ -202,23 +202,16 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await field.focus();
     await setTime(page, { at: LONDON_PLUS_6 });
     await page.waitForTimeout(2_500);
-    await expect(offerCard(page, /Уже 2 країни/)).toHaveCount(0);
+    await expect(offerCard(page, /Нових роки вже твої/)).toHaveCount(0);
     // Не клавішею: час заморожено (speed 0), а натискання в полі — «введення» ще 10 с віртуального часу.
     await field.blur();
-    await expect(offerCard(page, /Уже 2 країни/)).toBeVisible({ timeout: 10_000 });
+    await expect(offerCard(page, /Нових роки вже твої/)).toBeVisible({ timeout: 10_000 });
   });
 
-  test('писав у чаті — серед головних «−50% на «Перший ряд»»', async ({ page }) => {
-    await seedGuest(page, { stamps: TWO_STAMPS, sentMessages: 1 });
-    await gotoAt(page, LONDON_PLUS_6, 0);
-    await expect(slot(page).getByRole('list', { name: 'Головне в пасі' })).toContainText(
-      '−50% на «Перший ряд»',
-    );
-  });
 });
 
 test.describe('US6 · чайові після 3-го Нового року', () => {
-  test('після 3-го штампа (пас уже показували) — «Чайові»: $2 / $5 / $10, «Підтримати $5»', async ({
+  test('після 3-го штампа (пас уже показували) — «Чайові · Скажи тост на весь світ»: $2 / $5 / $10; тост — у чаті', async ({
     page,
   }) => {
     await seedGuest(page, {
@@ -226,7 +219,7 @@ test.describe('US6 · чайові після 3-го Нового року', () 
       offers: [{ kind: 'pass-offer', triggerEventId: 'evt_london_2027' }],
     });
     await gotoAt(page, AZORES_PLUS_6, 0);
-    await expect(offerCard(page, 'Чайові')).toBeVisible({ timeout: 10_000 });
+    await expect(offerCard(page, 'Скажи тост на весь світ')).toBeVisible({ timeout: 10_000 });
     await expect(slot(page).getByRole('radio')).toHaveText(['$2', '$5', '$10']);
     await slot(page).getByRole('radio', { name: '$5' }).click();
     await expect(page.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute(
@@ -238,7 +231,8 @@ test.describe('US6 · чайові після 3-го Нового року', () 
     );
     await expect(visibleCoral(page)).toHaveCount(1);
     await page.getByRole('button', { name: 'Підтримати $5' }).click();
-    await expect(slot(page).getByRole('status')).toHaveText('Оплата буде на наступному етапі');
+    await expect(slot(page).getByRole('status')).toContainText('Твій тост уже в чаті «Світ»');
+    await expect(page.locator('[data-toast="true"]').first()).toContainText('Піднімаю келих');
   });
 });
 

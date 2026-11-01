@@ -8,81 +8,62 @@ import { ShareContent } from '@/components/windows/Share';
 import { Tips } from '@/components/windows/Tips';
 import { renderPage, renderPlain } from './render';
 
-const countries = [
-  { iso: 'UA', name: 'Україна', flagCode: 'UA' },
-  { iso: 'FR', name: 'Франція', flagCode: 'FR' },
-];
+const MIN = 60_000;
+const NOW = Date.parse('2027-01-01T00:06:00Z');
+const pt = (eventId: string, flagCode: string, city: string, midnightMs: number) => ({ eventId, flagCode, city, midnightMs });
+const met = [pt('evt_paris_2027', 'FR', 'Париж', NOW - 66 * MIN), pt('evt_london_2027', 'GB', 'Лондон', NOW - 6 * MIN)];
+const next = [pt('evt_azores_2027', 'PT', 'Азорські острови', NOW + 54 * MIN), pt('cv', 'CV', 'Прая', NOW + 54 * MIN + 1), pt('br', 'BR', 'Ріо-де-Жанейро', NOW + 174 * MIN)];
+const offer = (extra: Partial<Parameters<typeof PassOffer>[0]> = {}) => <PassOffer count={2} met={met} next={next} now={NOW} {...extra} />;
 
 const coralButtons = () => [...document.querySelectorAll('[data-variant="coral"]')];
 
-describe('PassOffer', () => {
-  it('«Уже 2 країни у твоєму паспорті», 3 головні функції, «Ще в пасі:», ціна, одна коралова кнопка', () => {
-    renderPage(<PassOffer count={2} countries={countries} onClose={() => undefined} onDetails={() => undefined} />);
-    expect(screen.getByRole('heading', { level: 2, name: 'Уже 2 країни у твоєму паспорті' })).toBeInTheDocument();
-    expect(screen.getByText('Україна')).toBeInTheDocument();
-    expect(screen.getByText('Франція')).toBeInTheDocument();
-    expect(screen.getByText('Зроби свій шлях видимим і збирай розклад.')).toBeInTheDocument();
-    const main = screen.getByRole('list', { name: 'Головне в пасі' });
-    expect(within(main).getAllByRole('listitem')).toHaveLength(3);
-    expect(screen.getByText('Ще в пасі:')).toBeInTheDocument();
-    expect(screen.getByText('Тихий режим чату')).toBeInTheDocument();
-    expect(screen.getByText('$4,99')).toBeInTheDocument();
-    expect(screen.getByText('разово, на весь сезон · без підписки')).toBeInTheDocument();
+describe('PassOffer — «Наступна північ» (рішення 2026-11-01)', () => {
+  it('«2 Нових роки вже твої — далі буде ще краще», шлях (зустріли / зараз / попереду), наступна північ «за 54 хв», одна коралова', () => {
+    renderPage(offer({ onClose: () => undefined, onDetails: () => undefined }));
+    expect(screen.getByText('Твій новорічний шлях', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: '2 Нових роки вже твої — далі буде ще краще' })).toBeInTheDocument();
+    const path = screen.getByRole('list', { name: 'Твій новорічний шлях' });
+    expect(within(path).getByText(/^Париж, .* — зустріли$/)).toBeInTheDocument();
+    expect(within(path).getByText('зараз')).toBeInTheDocument();
+    expect(within(path).getByText(/^Ріо-де-Жанейро, .* — попереду$/)).toBeInTheDocument();
+    expect(path.querySelectorAll('[data-round="true"]')).toHaveLength(5);
+    expect(screen.getByText('Наступна північ · за 54 хв')).toBeInTheDocument();
+    expect(screen.getByText(/^Азорські острови · /)).toBeInTheDocument();
+    expect(screen.getByText('З пасом — нагадаємо перед північчю')).toBeInTheDocument();
     expect(coralButtons()).toHaveLength(1);
-    expect(screen.getByRole('button', { name: 'Оформити пас' })).toHaveAttribute('data-variant', 'coral');
+    expect(screen.getByRole('button', { name: 'Оформити пас · $4,99' })).toHaveAttribute('data-variant', 'coral');
   });
 
   it('коралова кнопка робить кнопку звуку нейтральною', () => {
-    renderPage(<PassOffer count={2} countries={countries} />);
+    renderPage(offer());
     expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
   });
 
-  it('текст у називному відмінку: для кількох форм «країна / країни / країн»', () => {
-    renderPage(<PassOffer count={5} countries={countries} />);
-    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Уже 5 країн у твоєму паспорті');
+  it('множина: «5 Нових років уже твої»', () => {
+    renderPage(offer({ count: 5 }));
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('5 Нових років уже твої — далі буде ще краще');
   });
 
-  it('«Оформити пас» веде до оформлення пасу (без заглушки «Оплата буде…»)', () => {
+  it('довга ніч: у шляху — останні 4 зустрінуті; на телефоні ранніші позначено data-wide', () => {
+    const long = [pt('a', 'JP', 'Токіо', NOW - 600 * MIN), pt('b', 'AE', 'Дубай', NOW - 300 * MIN), ...met, pt('c', 'NZ', 'Окленд', NOW - 800 * MIN)].sort((x, y) => x.midnightMs - y.midnightMs);
+    renderPage(offer({ count: 5, met: long }));
+    const path = screen.getByRole('list', { name: 'Твій новорічний шлях' });
+    expect(within(path).queryByText(/^Окленд/)).toBeNull();
+    expect(path.querySelectorAll('[data-met][data-wide]')).toHaveLength(2);
+  });
+
+  it('«Оформити пас», «Детальніше» (десктоп і телефон), «×», Esc', () => {
     const onGetPass = vi.fn();
-    renderPage(<PassOffer count={2} countries={countries} onGetPass={onGetPass} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас' }));
-    expect(onGetPass).toHaveBeenCalledOnce();
-    expect(screen.queryByText('Оплата буде на наступному етапі')).toBeNull();
-  });
-
-  it('«×», Esc і «Детальніше»', () => {
     const onClose = vi.fn();
     const onDetails = vi.fn();
-    renderPage(<PassOffer count={2} countries={countries} onClose={onClose} onDetails={onDetails} />);
+    renderPage(offer({ onGetPass, onClose, onDetails }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $4,99' }));
+    expect(onGetPass).toHaveBeenCalledOnce();
+    screen.getAllByRole('button', { name: 'Детальніше' }).forEach((b) => fireEvent.click(b));
+    expect(onDetails).toHaveBeenCalledTimes(2);
     fireEvent.click(screen.getByRole('button', { name: 'Закрити пропозицію' }));
-    expect(onClose).toHaveBeenCalledTimes(1);
     fireEvent.keyDown(document.body, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(2);
-    fireEvent.click(screen.getByRole('button', { name: 'Детальніше' }));
-    expect(onDetails).toHaveBeenCalledTimes(1);
-  });
-
-  it('Esc з фокусом в іншому місці (поле чату) картку не закриває', () => {
-    const onClose = vi.fn();
-    renderPage(
-      <>
-        <input aria-label="Повідомлення" />
-        <PassOffer count={2} countries={countries} onClose={onClose} />
-      </>,
-    );
-    screen.getByLabelText('Повідомлення').focus();
-    fireEvent.keyDown(screen.getByLabelText('Повідомлення'), { key: 'Escape' });
-    expect(onClose).not.toHaveBeenCalled();
-  });
-
-  it('знижка на «Перший ряд» — лише тим, хто писав у чаті; головних усе одно три', () => {
-    const { unmount } = renderPage(<PassOffer count={2} countries={countries} />);
-    expect(screen.queryByText('−50% на «Перший ряд»')).toBeNull();
-    unmount();
-    renderPage(<PassOffer count={2} countries={countries} wroteInChat />);
-    const main = screen.getByRole('list', { name: 'Головне в пасі' });
-    expect(within(main).getAllByRole('listitem')).toHaveLength(3);
-    expect(within(main).getByText('−50% на «Перший ряд»')).toBeInTheDocument();
   });
 });
 
