@@ -103,7 +103,7 @@ export function Tips({ defaultAmount = 5, nick, flagCode, onClose, onSupport, te
             {sent ? t('toastSent') : t('tipsAction', { amount: formatUsd(amount) })}
           </Button>
           {sent ? <PaymentNotice>{t('toastThanks')}</PaymentNotice> : null}
-          <p className="text-caption text-text-muted">
+          <p className={cn('text-caption text-text-muted', s.note)}>
             {t('tipsNote')}{' '}
             <Link href={termsHref} className="-my-3 inline-flex min-h-touch-min items-center font-semibold">
               {t('tipsTerms')}

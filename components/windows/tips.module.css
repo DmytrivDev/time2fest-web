@@ -76,10 +76,17 @@
 }
 
 @media (min-width: 768px) {
+  /* Обидві колонки однакової висоти: тост унизу ліворуч і примітка про email унизу праворуч — на одній нижній лінії. */
   .grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: 28px;
-    align-items: start;
+    align-items: stretch;
+  }
+  .left {
+    justify-content: space-between;
+  }
+  .note {
+    margin-top: auto;
   }
 }
