@@ -98,7 +98,8 @@
 .t2f-zone[data-selected='true'] .t2f-zone-land {
   filter: brightness(1.14);
 }
-.t2f-zone-land[data-hot='true'] {
+/* Країна під курсором — яскравіше за решту свого поясу (специфічність вища за правило наведення на пояс). */
+.t2f-zone .t2f-zone-land[data-hot='true'] {
   filter: brightness(1.38);
 }
 .t2f-zone-sea[data-hot='true'] {
@@ -122,7 +123,7 @@
 .t2f-zone[data-hover='true'] .t2f-zm-area {
   fill-opacity: 0.2;
 }
-.t2f-zm-area[data-hot='true'] {
+.t2f-zone .t2f-zm-area[data-hot='true'] {
   fill-opacity: 0.3;
 }
 @media (prefers-reduced-motion: reduce) {
