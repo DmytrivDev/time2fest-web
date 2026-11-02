@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:test": "cross-env NEXT_PUBLIC_ENV=test next dev",
-    "prebuild": "node scripts/sync_tokens.mjs --check",
+    "prebuild": "node scripts/sync_tokens.mjs --check && node scripts/sync_yt_loader.mjs",
     "build": "next build",
     "build:test": "cross-env NEXT_PUBLIC_ENV=test next build",
     "typecheck": "tsc --noEmit",
@@ -20,7 +20,8 @@
     "build-storybook": "storybook build",
     "data:schedule": "python -X utf8 scripts/build_schedule.py",
     "data:streams:check": "python -X utf8 scripts/check_streams.py",
-    "sync:tokens": "node scripts/sync_tokens.mjs"
+    "sync:tokens": "node scripts/sync_tokens.mjs",
+    "sync:yt": "node scripts/sync_yt_loader.mjs"
   },
   "dependencies": {
     "circle-flags": "2.8.3",

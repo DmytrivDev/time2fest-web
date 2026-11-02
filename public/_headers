@@ -1,3 +1,7 @@
 /*
   X-Robots-Tag: noindex, nofollow
   Referrer-Policy: strict-origin-when-cross-origin
+
+# Копія завантажувача YouTube IFrame API: оновлюється при кожній збірці — кеш короткий.
+/yt/*
+  Cache-Control: public, max-age=3600

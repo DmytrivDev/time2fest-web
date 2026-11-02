@@ -79,7 +79,7 @@ async function measure(page: Page, net: NetProfile): Promise<Measure> {
   let painted = false;
   let playerBeforePaint = false;
   page.on('request', (r) => {
-    if (!painted && r.url().includes('youtube.com/iframe_api')) playerBeforePaint = true;
+    if (!painted && r.url().includes('/yt/iframe_api.js')) playerBeforePaint = true;
   });
   await page.addInitScript(() => {
     const w = window as unknown as { __lcp: number; __fcp: number };

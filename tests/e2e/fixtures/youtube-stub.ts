@@ -1,5 +1,5 @@
 /**
- * Фікстура: підміна `https://www.youtube.com/iframe_api` фейковим `YT.Player`.
+ * Фікстура: підміна завантажувача IFrame API (`/yt/iframe_api.js` — наша копія `youtube.com/iframe_api`) фейковим `YT.Player`.
  * - `onReady`, `onStateChange`, `onError(n)`, `onAutoplayBlocked` керуються з тесту;
  * - лічильники `new YT.Player` і `loadVideoById`;
  * - ідентичність iframe (`data-stub-id` + перевірка, що той самий вузол досі в документі) —
@@ -153,10 +153,10 @@ export async function installYouTubeStub(page: Page, opts: InstallOptions = {}):
       };
     });
   }
-  await page.route('https://www.youtube.com/iframe_api', (route) =>
+  await page.route('**/yt/iframe_api.js', (route) =>
     route.fulfill({ status: 200, contentType: 'text/javascript', body: STUB_SOURCE }),
   );
-  await page.route(/^https:\/\/(www\.)?youtube(-nocookie)?\.com\/(?!iframe_api).*/, (route) => route.abort());
+  await page.route(/^https:\/\/(www\.)?youtube(-nocookie)?\.com\/.*/, (route) => route.abort());
   await page.route(/^https:\/\/i\.ytimg\.com\/.*/, (route) =>
     route.fulfill({ status: 200, contentType: 'image/png', body: PIXEL }),
   );

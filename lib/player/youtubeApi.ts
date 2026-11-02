@@ -9,7 +9,11 @@
  *   запустить відео; згода на cookies сайту для плеєра не потрібна (рішення 2026-11-02).
  */
 
-export const IFRAME_API_SRC = 'https://www.youtube.com/iframe_api';
+/**
+ * Завантажувач API — копія `https://www.youtube.com/iframe_api` з нашого домену (`scripts/sync_yt_loader.mjs`, оновлюється
+ * перед кожною збіркою): оригінал на youtube.com ставить стежувальні cookies YouTube ще до згоди (рішення 2026-11-02).
+ */
+export const IFRAME_API_SRC = '/yt/iframe_api.js';
 /** Домен самого плеєра (iframe): режим підвищеної приватності. */
 export const PLAYER_HOST = 'https://www.youtube-nocookie.com';
 
