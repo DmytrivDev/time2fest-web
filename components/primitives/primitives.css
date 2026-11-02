@@ -285,8 +285,11 @@ html[data-reduce-motion='true'] .t2f-spin {
   }
 }
 
-/* Плашка cookies (дошки `Desk-Cookies-Bar`, `Desk-Cookies-Design`): тінь, виїзд униз, коли лягла б на відео. */
+/* Плашка cookies (дошки `Desk-Cookies-Bar`, `Desk-Cookies-Design`): тінь, виїзд униз, коли лягла б на відео.
+   z-index нижчий за будь-яку шторку (вікно чату 30, шар вікон 35, Sheet 40, меню 50) — вони завжди поверх плашки,
+   і під час розгортання теж; вище за вміст сторінки. */
 .t2f-cookie {
+  z-index: 25;
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
   transition:
     transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),

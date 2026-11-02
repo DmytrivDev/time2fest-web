@@ -120,7 +120,7 @@ export function CookieBanner({
       data-hidden={hidden ? 'true' : 'false'}
       data-compact={compact ? 'true' : undefined}
       style={style}
-      className={cn('t2f-cookie fixed z-40 box-border rounded-lg border border-border-strong bg-surface-raised text-text', className)}
+      className={cn('t2f-cookie fixed box-border rounded-lg border border-border-strong bg-surface-raised text-text', className)}
     >
       {variant === 'bar' ? (
         <div className={cn('flex items-center gap-3 py-2.5 pe-1.5', compact ? 'ps-4' : 'ps-3.5')}>
