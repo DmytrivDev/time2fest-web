@@ -171,16 +171,42 @@ describe('ZoneMap: інше', () => {
     expect(text).not.toMatch(/(^|[^а-яіїєґ])ніч([^а-яіїєґ]|$)/i);
   });
 
-  it('легенда: чотири стани + два види точок', () => {
+  it('легенда: чотири стани + два види точок коротко («Місто», «Трансляція»)', () => {
     const { view } = setup();
     const legend = view.container.querySelector('[data-map-legend]')!;
-    for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду']) expect(legend).toHaveTextContent(label);
+    for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду', 'Місто', 'Трансляція'])
+      expect(legend).toHaveTextContent(label);
     expect(legend.querySelectorAll('li')).toHaveLength(6);
   });
 
-  it('UTC лише в картці поясу: на мапі й у назвах шляхів його немає', () => {
+  it('телефон: «Зараз» під мапою — пояс в ефірі й «Далі»; черги поясів немає', () => {
+    const { view } = setup();
+    expect(view.container.querySelector('[data-map-now="utc+0000"]')).not.toBeNull();
+    expect(view.container.querySelector('[data-map-now-next="utc-0100"]')).toHaveTextContent('Далі · UTC−1');
+    expect(view.container.querySelector('[data-map-queue]')).toBeNull();
+  });
+
+  it('десктоп: колонка — «Північ по черзі»: зараз, далі, ще 4; «Вже зустріли»; рядок вибирає пояс', () => {
+    const { view } = setup({ layout: 'desktop' });
+    const queue = view.container.querySelector('[data-map-queue]')!;
+    const rows = queue.querySelectorAll('[data-queue-zone]');
+    expect(rows).toHaveLength(6);
+    expect(rows[0]).toHaveAttribute('data-queue-zone', 'utc+0000');
+    expect(rows[0]).toHaveTextContent('Зараз');
+    expect(rows[1]).toHaveAttribute('data-queue-zone', 'utc-0100');
+    expect(rows[1]).toHaveTextContent('Далі');
+    expect(queue.querySelector('[data-queue-past]')).toHaveTextContent(/Вже зустріли · \d+ пояс/);
+    expect(queue.querySelector('[data-map-city-key]')).toHaveTextContent('МістоТрансляція');
+    expect(view.container.querySelector('[data-map-legend]')).toBeNull();
+    fireEvent.click(rows[2]!);
+    expect(view.container.querySelector('[data-zone-card="pinned"]')).not.toBeNull();
+    expect(view.container.querySelector('[data-map-queue]')).toBeNull();
+  });
+
+  it('UTC — лише в картці поясу й у «Зараз» під мапою: на самій мапі й у назвах шляхів його немає', () => {
     const { view, path } = setup();
-    expect(view.container.textContent).not.toMatch(/UTC/);
+    expect(view.container.querySelector('[data-zone-map-scroll]')?.textContent).not.toMatch(/UTC/);
+    expect(view.container.querySelector('[data-map-now]')?.textContent).toMatch(/UTC\+0/);
     expect(path('utc+0000').getAttribute('aria-label')).not.toMatch(/UTC/);
     fireEvent.click(path('utc+0000'));
     expect(view.container.querySelector('[data-zone-card="pinned"]')?.textContent).toMatch(/UTC\+0/);

@@ -55,10 +55,15 @@ test.describe('Мапа поясів: дані й стани', () => {
     await expect(zone(page, 'utc+0000')).toHaveClass(/is-ahead/);
   });
 
-  test('стан не лише кольором: легенда з підписами й іконки на мапі («Вже зустріли» — рівна заливка)', async ({ page }) => {
+  test('стан не лише кольором: легенда (телефон) чи черга поясів (десктоп) з підписами й іконки на мапі', async ({ page }, testInfo) => {
     const m = await openMap(page);
-    const legend = m.locator('[data-map-legend]');
-    for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду']) await expect(legend).toContainText(label);
+    if (testInfo.project.name === 'phone') {
+      const legend = m.locator('[data-map-legend]');
+      for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду']) await expect(legend).toContainText(label);
+    } else {
+      const queue = m.locator('[data-map-queue]');
+      for (const label of ['Зараз', 'Далі', 'Вже зустріли']) await expect(queue).toContainText(label);
+    }
     await expect(zone(page, 'utc+0100')).toHaveClass(/is-past/);
     await expect(m.locator('[data-zone-icon="live"]')).toHaveCount(1);
     await expect(m.locator('[data-zone-icon="next"]')).toHaveCount(1);

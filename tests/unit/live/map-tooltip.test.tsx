@@ -17,6 +17,8 @@ const model = buildMapModel(data);
 const geometry = geometryJson as unknown as ZoneMapGeometry;
 const zone = (id: string) => model.zones.find((z) => z.id === id)!;
 const MIN = 60_000;
+// Під повним прогоном jsdom повільний: чекаємо довше за затримку появи (150 мс).
+const WAIT = { timeout: 4000 };
 
 function wrap(ui: ReactElement, at: number) {
   return render(
@@ -134,21 +136,21 @@ describe('ZoneMap: плашка при наведенні (десктоп)', () 
   const setup = () =>
     wrap(<ZoneMap zones={model.zones} cities={model.cities} geometry={geometry} layout="desktop" />, NOW);
 
-  it('смуга поясу → плашка поясу через затримку; країна витісняє пояс; немає курсора — немає плашки', async () => {
+  it('смуга поясу → плашка поясу через затримку; країна витісняє пояс; немає курсора — немає плашки', { timeout: 20_000 }, async () => {
     const { container } = setup();
     const band = container.querySelector('[data-zone-band="utc-0500"]')!;
     fireEvent.pointerOver(band);
     expect(container.querySelector('[data-zone-map-tip]')).toBeNull();
-    await waitFor(() => expect(container.querySelector('[data-zone-map-tip="zone"]')).not.toBeNull());
+    await waitFor(() => expect(container.querySelector('[data-zone-map-tip="zone"]')).not.toBeNull(), WAIT);
     expect(container.querySelector('[data-zone-map-tip]')).toHaveTextContent('UTC−5');
     fireEvent.pointerOut(band);
     const ua = container.querySelector('g[data-zone="utc+0200"] path.t2f-zone-land[data-iso="UA"]')!;
     fireEvent.pointerOver(ua);
-    await waitFor(() => expect(container.querySelector('[data-zone-map-tip="country"]')).not.toBeNull());
+    await waitFor(() => expect(container.querySelector('[data-zone-map-tip="country"]')).not.toBeNull(), WAIT);
     expect(container.querySelectorAll('[data-zone-map-tip]')).toHaveLength(1);
     expect(screen.getByText('Україна')).toBeInTheDocument();
     fireEvent.pointerOut(ua);
-    await waitFor(() => expect(container.querySelector('[data-zone-map-tip]')).toBeNull());
+    await waitFor(() => expect(container.querySelector('[data-zone-map-tip]')).toBeNull(), WAIT);
   });
 
   it('точки міст на десктопі — 20 px (size-5), не 44', () => {

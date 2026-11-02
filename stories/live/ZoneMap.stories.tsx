@@ -163,7 +163,7 @@ export const Parts: Story = {
     return (
       <Stage>
         <StateRow label="MapLegend">
-          <MapLegend layout="phone" />
+          <MapLegend />
         </StateRow>
         <StateRow label="ZoneCard: закріплена (наживо)">
           <ZoneCard zone={zone} state="live" onClose={() => undefined} className="w-full" />

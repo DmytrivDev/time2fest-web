@@ -25,6 +25,7 @@ import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { MapLegend } from './MapLegend';
+import { MapNowCard, MapQueue } from './MapSide';
 import {
   pointToPercent,
   type MapCity,
@@ -194,6 +195,8 @@ export function ZoneMap({
   const [hotCountry, setHotCountry] = useState<string | null>(null);
   // Місто під курсором: його пояс і країна лишаються підсвіченими, плашки немає (поруч підпис міста).
   const [onCity, setOnCity] = useState(false);
+  // Рядок черги під курсором чи фокусом (десктоп): його пояс підсвічується на мапі, без плашки.
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const viewerIso = useGuestStore((g) => g.flagCode);
   const dotRefs = useRef(new Map<string, HTMLElement>());
   const cardRef = useRef<HTMLElement>(null);
@@ -399,7 +402,8 @@ export function ZoneMap({
     </div>
   );
   const hint = (
-    <p id={`${uid}-hint`} className={cn(m.hint, (isPhone || card) && 'sr-only')}>
+    // Підказка лише для читачів екрана: на десктопі колонку займає черга поясів, на телефоні — «Зараз» і легенда.
+    <p id={`${uid}-hint`} className="sr-only">
       {isPhone ? t('hintPhone') : t('hintDesktop')}
     </p>
   );
@@ -439,7 +443,7 @@ export function ZoneMap({
                 <g
                   key={`bg-${g.zoneId}`}
                   className={cn('t2f-zone-bg', FILL_CLASS[stateOf(g.zoneId)])}
-                  data-hover={hoverId === g.zoneId ? 'true' : undefined}
+                  data-hover={hoverId === g.zoneId || previewId === g.zoneId ? 'true' : undefined}
                   data-selected={selectedZoneId === g.zoneId || ringId === g.zoneId ? 'true' : undefined}
                   onClick={() => setSelection({ kind: 'zone', id: g.zoneId })}
                 >
@@ -488,7 +492,7 @@ export function ZoneMap({
                   tabbable={tabStop === g.zoneId}
                   selected={selectedZoneId === g.zoneId}
                   focused={ringId === g.zoneId}
-                  hovered={hoverId === g.zoneId}
+                  hovered={hoverId === g.zoneId || previewId === g.zoneId}
                   hotCountry={hotCountry}
                   onHotCountry={setHotCountry}
                   areas={geometry.areas?.filter((a) => a.zoneId === g.zoneId)}
@@ -748,12 +752,22 @@ export function ZoneMap({
               {hint}
             </div>
             {cardSlot}
+            <MapNowCard zones={ordered} stateOf={stateOf} />
           </>
         ) : (
           <div className={m.canvas} data-zone-map-canvas="">
             <div className={m.mapCol}>{canvas}</div>
             <div className={m.side}>
-              <MapLegend layout={layout} variant="column" />
+              {/* Вибраний пояс — картка на місці черги (закрити — повернутися до черги). */}
+              {card ? null : (
+                <MapQueue
+                  zones={ordered}
+                  stateOf={stateOf}
+                  selectedId={selectedZoneId}
+                  onSelect={(id) => setSelection({ kind: 'zone', id })}
+                  onPreview={setPreviewId}
+                />
+              )}
               {cardSlot}
               {hint}
             </div>
@@ -780,7 +794,7 @@ export function ZoneMap({
       ) : null}
 
       {view === 'list' ? cardSlot : null}
-      {isPhone || view === 'list' ? <MapLegend layout={layout} className={m.legendBelow} /> : null}
+      {isPhone || view === 'list' ? <MapLegend className={m.legendBelow} /> : null}
     </section>
   );
 }
