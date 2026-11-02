@@ -958,9 +958,14 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
 }
 /* P27. Бігуча стрічка: нативна прокрутка без смуги; коли їде по колу — обидва краї м’яко згасають (дошки 2026-10-31). */
+.t2f-marquee-mask {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  margin-block: -4px;
+}
 .t2f-marquee-viewport {
   min-width: 0;
-  margin: -4px 0;
   padding: 4px 0;
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -973,9 +978,25 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 .t2f-marquee-viewport:not([data-looping]) {
   cursor: auto;
 }
-.t2f-marquee-viewport[data-looping] {
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--mq-fade-l, 24px), #000 calc(100% - var(--mq-fade-r, 40px)), transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 var(--mq-fade-l, 24px), #000 calc(100% - var(--mq-fade-r, 40px)), transparent 100%);
+/* Краї — тінь кольору тла поверх стрічки (не маска: маска не діє на прапори й емодзі, вони просвічували б біля краю). */
+.t2f-marquee-mask[data-looping]::before,
+.t2f-marquee-mask[data-looping]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.t2f-marquee-mask[data-looping]::before {
+  left: 0;
+  width: var(--mq-fade-l, 24px);
+  background: linear-gradient(90deg, var(--mq-fade-bg, var(--color-surface)), transparent);
+}
+.t2f-marquee-mask[data-looping]::after {
+  right: 0;
+  width: var(--mq-fade-r, 40px);
+  background: linear-gradient(270deg, var(--mq-fade-bg, var(--color-surface)), transparent);
 }
 .t2f-carousel-track {
   display: flex;

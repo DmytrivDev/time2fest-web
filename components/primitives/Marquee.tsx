@@ -134,48 +134,52 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
       {items}
     </div>
   );
+  // Згасання країв — маска на нерухомій обгортці, а не на прокручуваному ряду: маску на ряду браузер не застосовує
+  // до прапорів і емодзі (окремі шари) — вони світилися б біля самого краю (правка власника 2026-11-02).
   return (
-    <div
-      ref={viewport}
-      data-marquee-row=""
-      data-looping={looping || undefined}
-      // Прокручуваний ряд доступний з клавіатури (axe: scrollable-region-focusable); фокус зупиняє рух.
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- прокручувана область мусить брати фокус (WCAG 2.1.1)
-      tabIndex={looping ? 0 : undefined}
-      className="t2f-focus t2f-marquee-viewport"
-      style={bleed ? { marginInline: -bleed, paddingInline: bleed } : undefined}
-      onWheel={(e) => {
-        if (Math.abs(e.deltaX) > 0 || e.shiftKey) onManual();
-      }}
-      onTouchStart={onManual}
-      onPointerDown={(e) => {
-        if (e.pointerType !== 'mouse' || e.button !== 0 || !viewport.current) return;
-        drag.current = { x: e.clientX, left: viewport.current.scrollLeft, moved: false };
-      }}
-      onPointerMove={(e) => {
-        const d = drag.current;
-        if (!d || !viewport.current) return;
-        const dx = e.clientX - d.x;
-        if (!d.moved && Math.abs(dx) < 5) return;
-        if (!d.moved) {
-          d.moved = true;
-          onManual();
-          viewport.current.setPointerCapture(e.pointerId);
-        }
-        viewport.current.scrollLeft = d.left - dx;
-      }}
-      onPointerUp={() => {
-        drag.current = null;
-      }}
-      onClickCapture={(e) => {
-        // Після перетягування клік по фішці не спрацьовує.
-        if (drag.current?.moved) e.stopPropagation();
-      }}
-    >
-      <div ref={track} className="flex w-max" style={{ gap }}>
-        {copy(1)}
-        {looping ? copy(2) : null}
-        {looping ? copy(3) : null}
+    <div className="t2f-marquee-mask" data-looping={looping || undefined} style={bleed ? { marginInline: -bleed } : undefined}>
+      <div
+        ref={viewport}
+        data-marquee-row=""
+        data-looping={looping || undefined}
+        // Прокручуваний ряд доступний з клавіатури (axe: scrollable-region-focusable); фокус зупиняє рух.
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- прокручувана область мусить брати фокус (WCAG 2.1.1)
+        tabIndex={looping ? 0 : undefined}
+        className="t2f-focus t2f-marquee-viewport"
+        style={bleed ? { paddingInline: bleed } : undefined}
+        onWheel={(e) => {
+          if (Math.abs(e.deltaX) > 0 || e.shiftKey) onManual();
+        }}
+        onTouchStart={onManual}
+        onPointerDown={(e) => {
+          if (e.pointerType !== 'mouse' || e.button !== 0 || !viewport.current) return;
+          drag.current = { x: e.clientX, left: viewport.current.scrollLeft, moved: false };
+        }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          if (!d || !viewport.current) return;
+          const dx = e.clientX - d.x;
+          if (!d.moved && Math.abs(dx) < 5) return;
+          if (!d.moved) {
+            d.moved = true;
+            onManual();
+            viewport.current.setPointerCapture(e.pointerId);
+          }
+          viewport.current.scrollLeft = d.left - dx;
+        }}
+        onPointerUp={() => {
+          drag.current = null;
+        }}
+        onClickCapture={(e) => {
+          // Після перетягування клік по фішці не спрацьовує.
+          if (drag.current?.moved) e.stopPropagation();
+        }}
+      >
+        <div ref={track} className="flex w-max" style={{ gap }}>
+          {copy(1)}
+          {looping ? copy(2) : null}
+          {looping ? copy(3) : null}
+        </div>
       </div>
     </div>
   );
