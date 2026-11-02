@@ -13,7 +13,7 @@
 """
 import json, re, sys
 from pathlib import Path
-from shapely.geometry import Polygon
+from shapely.geometry import Point, Polygon, box as _box
 from shapely.ops import unary_union
 from svgelements import Path as SvgPath, Move, Close, Line
 
@@ -178,6 +178,43 @@ for z in reversed(ordered):
         g = polys(land[o][iso].difference(covered))
         land[o][iso] = g
     covered = unary_union([covered, *land.get(o, {}).values()])
+# Вузькі смуги (до ~2.4 px) одного поясу країни, що тягнуться вздовж іншого поясу тієї ж країни (розбіжність кордону
+# старої мапи й офіційної межі: Альберта під Саскачеваном, Онтаріо біля Верхнього, «ручка» центральної Монголії під
+# західною, Північна територія між Західною й Південною Австралією), — тому поясу країни, вздовж якого вони йдуть.
+# Інакше кожна смуга малює другу лінію поруч із кордоном. Рішення власника 2026-11-02.
+THIN = 1.2
+for iso in sorted({iso for cs in land.values() for iso in cs}):
+    zs_ = [o for o, cs in land.items() if iso in cs and not cs[iso].is_empty]
+    if len(zs_) < 2:
+        continue
+    for o in zs_:
+        g = land[o][iso]
+        moves = []
+        for q in getattr(g, 'geoms', [g]):
+            op = q.buffer(-THIN, join_style=2).buffer(THIN, join_style=2).intersection(q)
+            thin = q if op.area < 0.35 * q.area else q.difference(op)
+            for t in getattr(thin, 'geoms', [thin]):
+                if t.is_empty or t.geom_type != 'Polygon' or t.area < 0.3:
+                    continue
+                cont = [(o2, t.boundary.intersection(land[o2][iso].buffer(0.3)).length) for o2 in zs_ if o2 != o]
+                o2, c = max(cont, key=lambda oc: oc[1])
+                if c > 1.0:
+                    moves.append((o2, t))
+        if moves:
+            land[o][iso] = polys(g.difference(unary_union([t for _, t in moves]).buffer(0.01)))
+            for o2, t in moves:
+                land[o2][iso] = polys(unary_union([land[o2][iso], t.buffer(0.05)]))
+# Кордон Західної Австралії — меридіан 129° с.д.: у старій мапі він місцями «ступенем» заходить на ~0.6 px на схід.
+# Зайве — смужками по 1 px — сусідові (Північна чи Південна Австралія), до якого смужка прилягає.
+if 480 in land and 'AU' in land[480]:
+    _wa_x = land[480]['AU'].intersection(_box(1469.7, 640, 1476, 770))
+    land[480]['AU'] = polys(land[480]['AU'].difference(_box(1469.7, 640, 1476, 770)))
+    for y_ in range(640, 770):
+        t = _wa_x.intersection(_box(1469.7, y_, 1476, y_ + 1))
+        if t.area > 0.001:
+            o2 = max([o for o in (570, 630) if 'AU' in land.get(o, {})],
+                     key=lambda o: t.buffer(0.5).intersection(land[o]['AU']).area)
+            land[o2]['AU'] = polys(unary_union([land[o2]['AU'], t.buffer(0.02)]))
 # Щілини між сусідніми шматками різних країн чи поясів (до ~2.4 px; у старому малюнку крізь них просвічувало тло):
 # кожну віддаємо сусідові з найдовшою спільною межею. Затоки, що виходять до океану, лишаються (щілина торкається
 # лише одного шматка).
@@ -301,14 +338,23 @@ for i, (o1, iso1, g1) in enumerate(items):
         (land_zone if o1 != o2 else land_border).extend(segs)
 
 
+_net = unary_union(land_zone + land_border)
+
+
 def d_lines(ls):
     if not ls:
         return ''
     merged = linemerge(unary_union(ls))
     out = []
     for l in getattr(merged, 'geoms', [merged]):
-        if l.geom_type == 'LineString' and l.length > 0.6:
-            out.append('M' + 'L'.join(f'{x:.2f},{y:.2f}' for x, y in l.coords))
+        if l.geom_type != 'LineString' or l.length <= 0.6:
+            continue
+        if l.length < 2:
+            # Окремий короткий штрих, не з'єднаний з жодною лінією (залишок від крихітного шматка), — геть.
+            rest = _net.difference(l.buffer(0.05))
+            if all(rest.distance(Point(*l.coords[k])) > 0.1 for k in (0, -1)):
+                continue
+        out.append('M' + 'L'.join(f'{x:.2f},{y:.2f}' for x, y in l.coords))
     return ''.join(out)
 
 
