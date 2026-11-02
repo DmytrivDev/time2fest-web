@@ -49,24 +49,28 @@
    дрібних островів. Колір — від стану групи. Наведення на будь-яку частину поясу трохи підсвічує весь пояс; країна під
    курсором (чи її морська область) — сильніше. Вибраний пояс і фокус з клавіатури — так само кольором. Кордони й межі
    не виділяються (лінії мапи лежать поверх і не ловлять курсор). */
-.t2f-zone {
+.t2f-zone,
+.t2f-zone-bg {
   --zm-fill: var(--color-zone-future);
   --zm-band: var(--color-zone-future);
   --zm-area: #c98a62;
   cursor: pointer;
   outline: none;
 }
-.t2f-zone.is-past {
+.t2f-zone.is-past,
+.t2f-zone-bg.is-past {
   --zm-fill: #34343b;
   --zm-band: #3a3a42;
   --zm-area: #9a9aa3;
 }
-.t2f-zone.is-live {
+.t2f-zone.is-live,
+.t2f-zone-bg.is-live {
   --zm-fill: var(--color-zone-live);
   --zm-band: var(--color-zone-live);
   --zm-area: var(--color-zone-live);
 }
-.t2f-zone.is-next {
+.t2f-zone.is-next,
+.t2f-zone-bg.is-next {
   --zm-fill: var(--color-zone-next);
   --zm-band: var(--color-zone-next);
   --zm-area: var(--color-zone-next);
@@ -86,11 +90,11 @@
   opacity: 0;
   transition: opacity 120ms ease;
 }
-.t2f-zone:hover .t2f-zone-band,
-.t2f-zone[data-selected='true'] .t2f-zone-band {
+.t2f-zone-bg[data-hover='true'] .t2f-zone-band,
+.t2f-zone-bg[data-selected='true'] .t2f-zone-band {
   opacity: 0.26;
 }
-.t2f-zone:hover .t2f-zone-land,
+.t2f-zone[data-hover='true'] .t2f-zone-land,
 .t2f-zone[data-selected='true'] .t2f-zone-land {
   filter: brightness(1.14);
 }
@@ -115,7 +119,7 @@
 .t2f-zm-area[data-frame='false'] {
   stroke: none;
 }
-.t2f-zone:hover .t2f-zm-area {
+.t2f-zone[data-hover='true'] .t2f-zm-area {
   fill-opacity: 0.2;
 }
 .t2f-zm-area[data-hot='true'] {

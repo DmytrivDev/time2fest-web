@@ -117,40 +117,220 @@ def svg_abs(d, step=1.5):
 
 bands = {b['offsetMinutes']: b['d'] for b in M['bands']}
 
-# Морські області острівних країн (стара мапа) → пояс за островами тієї ж країни всередині області.
-land_by_iso = {}
-for z in M['zones']:
+
+def d_of(g):
+    """(Multi)Polygon → абсолютний шлях M…L…Z (далі `compact`)."""
+    out = []
+    for poly in getattr(g, 'geoms', [g]):
+        if poly.is_empty or poly.geom_type != 'Polygon':
+            continue
+        for ring in [poly.exterior, *poly.interiors]:
+            c = list(ring.coords)[:-1]
+            if len(c) > 2:
+                out.append('M' + 'L'.join(f'{x:.2f},{y:.2f}' for x, y in c) + 'Z')
+    return ''.join(out)
+
+
+def polys(g):
+    """Лише полігони (після різниць бувають лінії й точки)."""
+    if g.is_empty:
+        return g
+    if g.geom_type in ('Polygon', 'MultiPolygon'):
+        return g
+    return unary_union([q for q in getattr(g, 'geoms', []) if q.geom_type in ('Polygon', 'MultiPolygon')]) if hasattr(g, 'geoms') else Polygon()
+
+
+# 1. Суходіл: шматки однієї країни в одному поясі — разом, щілини до 0.7 px закрито (шви між провінціями в старому
+#    малюнку). Потім — без перекриттів: група поясу, що далі в DOM (менший зсув), лежить зверху й «вирізає» нижчі,
+#    тож під курсором завжди саме той пояс, що видно.
+ordered = sorted(M['zones'], key=lambda z: -z['offsetMinutes'])  # порядок груп у DOM: UTC+14 … UTC−12
+land = {}
+for z in ordered:
     for c in z['countries']:
-        land_by_iso.setdefault(c['iso'], []).append((z['offsetMinutes'], geom(c['d'])))
+        g = geom(c['d'])
+        if not g.is_empty:
+            g = polys(g.buffer(0.35, join_style=2).buffer(-0.35, join_style=2))
+            land.setdefault(z['offsetMinutes'], {}).setdefault(c['iso'], []).append(g)
+land = {o: {iso: unary_union(gs) for iso, gs in cs.items()} for o, cs in land.items()}
+# Тонкі смужки (≤ ~2 px завширшки), що відрізала від країни офіційна межа поясу через кілька пікселів розбіжності
+# з кордоном старої мапи (Монголія біля Китаю, Мексика біля Белізу), — назад до сусідньої частини тієї ж країни.
+for iso in {iso for cs in land.values() for iso in cs}:
+    zs_ = [o for o, cs in land.items() if iso in cs]
+    if len(zs_) < 2:
+        continue
+    for o in zs_:
+        keep_, moved = [], []
+        for q in getattr(land[o][iso], 'geoms', [land[o][iso]]):
+            others = [(o2, land[o2][iso]) for o2 in zs_ if o2 != o and land[o2][iso].distance(q) < 0.6]
+            if others and q.buffer(-1.0).is_empty:
+                o2 = max(others, key=lambda og: q.buffer(0.6).intersection(og[1]).area)[0]
+                moved.append((o2, q))
+            else:
+                keep_.append(q)
+        if moved:
+            land[o][iso] = unary_union(keep_) if keep_ else Polygon()
+            for o2, q in moved:
+                land[o2][iso] = polys(unary_union([land[o2][iso], q.buffer(0.05)]))
+covered = Polygon()
+for z in reversed(ordered):
+    o = z['offsetMinutes']
+    for iso in list(land.get(o, {})):
+        g = polys(land[o][iso].difference(covered))
+        land[o][iso] = g
+    covered = unary_union([covered, *land.get(o, {}).values()])
+# Щілини між сусідніми шматками різних країн чи поясів (до ~2.4 px; у старому малюнку крізь них просвічувало тло):
+# кожну віддаємо сусідові з найдовшою спільною межею. Затоки, що виходять до океану, лишаються (щілина торкається
+# лише одного шматка).
+from shapely import STRtree as _Tree
+_items = [(o, iso) for o, cs in land.items() for iso, g in cs.items() if not g.is_empty]
+_geoms = [land[o][iso] for o, iso in _items]
+_tree = _Tree(_geoms)
+_all = unary_union(_geoms)
+_gaps = polys(_all.buffer(1.2, join_style=2).buffer(-1.2, join_style=2).difference(_all))
+_add = {}
+for q in getattr(_gaps, 'geoms', [_gaps]):
+    if q.is_empty or q.area < 0.05:
+        continue
+    qb = q.buffer(0.3)
+    near = [k for k in _tree.query(qb) if _geoms[k].intersects(qb)]
+    if len({_items[k] for k in near}) < 2:
+        continue
+    k = max(near, key=lambda k: qb.intersection(_geoms[k]).area)
+    _add.setdefault(_items[k], []).append(q)
+for (o, iso), qs in _add.items():
+    land[o][iso] = polys(unary_union([land[o][iso], *qs]).buffer(0))
+land_all = unary_union([g for cs in land.values() for g in cs.values()])
+
+# Архіпелаги, позначені областю (рішення власника 2026-11-02): острови — крапками в рамці, без суцільних плям
+# (межі поясів з офіційних даних захоплюють і територіальні води, а старі шматки Мальдівів — розмиті плями).
+import math
+from shapely.geometry import Point, box as _box
+
+
+def proj(lat, lon):
+    x = ((lon + 168.2) % 360) * 4.947
+    return x, 580 - (4.947 * 180 / math.pi) * 1.25 * math.log(math.tan(math.pi / 4 + 0.4 * math.radians(lat)))
+
+
+def dots(pts, r=1.1):
+    return unary_union([Point(*proj(la, lo)).buffer(r, 8) for la, lo in pts])
+
+
+ARCHIPELAGOS = {
+    # Лакшадвіп (+5:30, Індія): атоли.
+    ('IN', 330, 'lak'): [(11.69, 72.71), (11.60, 72.18), (11.48, 73.00), (11.22, 72.78), (11.12, 72.73), (10.85, 72.19),
+                          (10.81, 73.68), (10.57, 72.64), (10.07, 73.65), (8.28, 73.05)],
+    # Андаманські й Нікобарські острови (+5:30, Індія).
+    ('IN', 330, 'and'): [(13.25, 92.92), (12.70, 92.88), (12.10, 92.95), (11.75, 92.70), (12.00, 93.00), (10.65, 92.53),
+                          (9.17, 92.80), (8.45, 93.03), (8.25, 93.15), (8.00, 93.50), (7.05, 93.80)],
+    # Мальдіви (+5): атоли з півночі на південь.
+    ('MV', 300, 'mv'): [(6.95, 72.95), (6.30, 73.20), (5.65, 73.05), (5.10, 73.10), (4.17, 73.51), (3.85, 72.75),
+                         (3.40, 73.45), (2.95, 73.55), (2.10, 72.95), (1.85, 73.40), (0.65, 73.15), (-0.30, 73.10),
+                         (-0.65, 73.15)],
+}
+area_frames = []
+for (iso, o, key), pts in ARCHIPELAGOS.items():
+    d_ = dots(pts)
+    x0, y0, x1, y1 = d_.bounds
+    frame = _box(x0 - 1.8, y0 - 1.8, x1 + 1.8, y1 + 1.8)
+    if o in land and iso in land[o]:
+        # Старі плями й шматки в межах рамки — геть; натомість крапки.
+        near_ = frame.buffer(5)
+        rest_ = [q for q in getattr(land[o][iso], 'geoms', [land[o][iso]]) if not (q.intersects(near_) and q.area < 400)]
+        land[o][iso] = polys(unary_union([*rest_, d_]))
+    area_frames.append({'zoneId': zone_id(o), 'iso': iso, 'x0': r1(x0 - 1.8), 'y0': r1(y0 - 1.8), 'x1': r1(x1 + 1.8), 'y1': r1(y1 + 1.8), 'frame': True})
+frames_u = unary_union([_box(a['x0'], a['y0'], a['x1'], a['y1']) for a in area_frames])
+land_all = unary_union([g for cs in land.values() for g in cs.values()])
+
+# 2. Смуги поясів і морські області йдуть і під суходолом — на сайті вони лежать окремим шаром ПІД усім суходолом,
+#    тож суходіл їх перекриває і для ока, і для курсора (обрізати їх по береговій лінії — подвоїло б розмір).
+# 3. Морські області острівних країн → пояс за островами тієї ж країни.
 sea_by_zone = {}
 for a in M.get('seaAreas', []):
     g = geom(svg_abs(a['d']) if not a['d'].startswith('M') or 'Z' not in a['d'] else a['d'])
     if g.is_empty:
         continue
-    cand = land_by_iso.get(a['iso'], [])
+    cand = [(o, cs[a['iso']]) for o, cs in land.items() if a['iso'] in cs and not cs[a['iso']].is_empty]
     if not cand:
         continue
     o = max(cand, key=lambda og: (og[1].intersection(g).area, -og[1].distance(g)))[0]
+    if g.intersects(frames_u) and g.intersection(frames_u).area > 0.5 * min(g.area, frames_u.area):
+        continue
     sea_by_zone.setdefault(o, []).append({'iso': a['iso'], 'd': compact(a['d'], 0.3, True)})
 
 zones, markers = [], []
-for z in M['zones']:
+for z in ordered:
     o = z['offsetMinutes']
     zid = zone_id(o)
     if zid not in ZONE_IDS.values():
         sys.exit(f'Пояс {zid} є на мапі, але не в schedule.json')
-    d = ''.join(c['d'] for c in z['countries'])
-    g = geom(d)
+    cs = {iso: g for iso, g in land.get(o, {}).items() if not g.is_empty}
+    g = unary_union(list(cs.values())) if cs else Polygon()
     parts = sorted(getattr(g, 'geoms', [g]), key=lambda p: -p.area)
     pt = parts[0].representative_point() if parts and not parts[0].is_empty else None
     zones.append({'offset': label(o), 'offsetMinutes': o, 'zoneId': zid,
-                  'countries': [{'iso': c['iso'], 'd': compact(c['d'], 0.3, True)} for c in z['countries']],
+                  'countries': [{'iso': iso, 'd': compact(d_of(cg), 0.3, True)} for iso, cg in cs.items()],
                   'sea': sea_by_zone.get(o, []),
-                  'band': compact(svg_abs(bands.get(o, '')), 0.2, True),
+                  # Пояс +5:30 в океані на старій мапі — лише прямокутники навколо островів (дублюють рамки): без смуги.
+                  'band': compact(svg_abs(bands.get(o, '')), 0.2, True) if o != 330 else '',
                   'label': [r1(pt.x), r1(pt.y)] if pt else [0, 0]})
     if (g.area < 60 or (parts and parts[0].area < 30)) and pt is not None:  # пояс з дрібних островів
         markers.append({'zoneId': zid, 'x': r1(pt.x), 'y': r1(pt.y)})
 zones.sort(key=lambda z: -z['offsetMinutes'])
+
+# 4. Лінії на суходолі — просто з заливок (рішення 2026-11-02, дефекти «розірваних» кордонів): де два шматки
+#    торкаються, там лінія; різні пояси — межа поясу, один пояс і різні країни — кордон. Лінії завжди точно на краях
+#    заливок, без розривів і зайвих хвостиків.
+from shapely import STRtree
+from shapely.geometry import LineString, MultiLineString
+from shapely.ops import linemerge
+items = [(o, iso, g) for o, cs in land.items() for iso, g in cs.items() if not g.is_empty]
+tree = STRtree([g for _, _, g in items])
+land_zone, land_border = [], []
+for i, (o1, iso1, g1) in enumerate(items):
+    near = g1.buffer(0.9)
+    for j in tree.query(near):
+        if j <= i:
+            continue
+        o2, iso2, g2 = items[j]
+        if g1.distance(g2) > 0.8:
+            continue
+        shared = g1.boundary.intersection(g2.buffer(0.9))
+        segs = [q for q in getattr(shared, 'geoms', [shared]) if q.geom_type in ('LineString', 'MultiLineString')]
+        segs = [l for q in segs for l in getattr(q, 'geoms', [q]) if l.length > 0.6]
+        (land_zone if o1 != o2 else land_border).extend(segs)
+
+
+def d_lines(ls):
+    if not ls:
+        return ''
+    merged = linemerge(unary_union(ls))
+    out = []
+    for l in getattr(merged, 'geoms', [merged]):
+        if l.geom_type == 'LineString' and l.length > 0.6:
+            out.append('M' + 'L'.join(f'{x:.2f},{y:.2f}' for x, y in l.coords))
+    return ''.join(out)
+
+
+land_zone_d = d_lines(land_zone)
+_sea = []
+for m_ in re.finditer(r'M([^M]+)', M['sea']):
+    pts = [tuple(map(float, q.split(','))) for q in m_.group(1).split('L') if q.strip()]
+    if len(pts) > 1:
+        _sea.append(LineString(pts))
+_sea_cut = unary_union(_sea).difference(frames_u.buffer(8)) if _sea else LineString()
+sea_d = d_lines([l for l in getattr(_sea_cut, 'geoms', [_sea_cut]) if l.geom_type == 'LineString'])
+
+# Лінії поясів в океані (стара мапа): лише поза остаточним суходолом — інакше там, де закрито щілини, вони
+# лишаються зайвою другою лінією вздовж кордону.
+_ocean = []
+for m_ in re.finditer(r'M([^M]+)', M['ocean']):
+    pts = [tuple(map(float, q.split(','))) for q in m_.group(1).split('L') if q.strip()]
+    if len(pts) > 1:
+        _ocean.append(LineString(pts))
+_ocean_cut = unary_union(_ocean).difference(land_all.buffer(0.8)) if _ocean else LineString()
+ocean_d = d_lines([l for l in getattr(_ocean_cut, 'geoms', [_ocean_cut]) if l.geom_type == 'LineString'])
+land_border_d = d_lines(land_border)
 missing = sorted(set(ZONE_IDS.values()) - {z['zoneId'] for z in zones})
 L = M['lines']
 out = {
@@ -162,13 +342,13 @@ out = {
     },
     'zones': zones,
     'markers': markers,
-    'borders': compact(L['country'], 0.3, False),
-    'zoneLines': compact(M['ocean'] + L['zone'] + L['both'], 0.3, False),
-    'sea': compact(M['sea'], 0.3, False),
+    'borders': compact(land_border_d, 0.3, False),
+    'zoneLines': compact(ocean_d + land_zone_d, 0.3, False),
+    'sea': compact(sea_d, 0.3, False),
     'dayline': compact(M['dayline'], 0, False),
     'lakes': ''.join(compact(svg_abs(d), 0.3, True) for d in M['lakes']),
-    'areas': [{'zoneId': zone_id(a['zone']), 'iso': a['iso'], 'x0': a['box'][0], 'y0': a['box'][1], 'x1': a['box'][2], 'y1': a['box'][3], 'frame': not a['zoneBox']}
-              for a in M['areas']],
+    'areas': area_frames + [{'zoneId': zone_id(a['zone']), 'iso': a['iso'], 'x0': a['box'][0], 'y0': a['box'][1], 'x1': a['box'][2], 'y1': a['box'][3], 'frame': not a['zoneBox']}
+              for a in M['areas'] if a['zoneBox']],
 }
 dst = ROOT / 'data' / 'zonemap.json'
 dst.write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), encoding='utf8')

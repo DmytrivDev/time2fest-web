@@ -168,7 +168,8 @@ export function ZoneMap({
   const [selection, setSelection] = useState<Selection>(
     defaultSelectedZoneId ? { kind: 'zone', id: defaultSelectedZoneId } : null,
   );
-  const [, setHoverId] = useState<string | null>(null);
+  // Пояс під курсором (суходіл, смуга в океані чи морська область): підсвічується весь пояс.
+  const [hoverId, setHoverId] = useState<string | null>(null);
   const [, setFocusedId] = useState<string | null>(null);
   const [ringId, setRingId] = useState<string | null>(null);
   const [tabStopId, setTabStopId] = useState<string | null>(null);
@@ -345,7 +346,49 @@ export function ZoneMap({
           className="block size-full"
         >
           <rect width={geometry.meta.width} height={geometry.meta.height} className="t2f-zm-ocean" />
-          {/* Пояс — група: смуга в океані, морські області острівних країн і країни. Наведення й вибір — лише колір. */}
+          {/* Нижній шар: смуги поясів в океані й морські області острівних країн. Вони йдуть і під суходолом, тож лежать
+              під усіма поясами — суходіл перекриває їх і для ока, і для курсора. */}
+          <g aria-hidden="true">
+            {geometry.zones.map((g) =>
+              zoneById.has(g.zoneId) && (g.band || g.sea?.length) ? (
+                <g
+                  key={`bg-${g.zoneId}`}
+                  className={cn('t2f-zone-bg', FILL_CLASS[stateOf(g.zoneId)])}
+                  data-hover={hoverId === g.zoneId ? 'true' : undefined}
+                  data-selected={selectedZoneId === g.zoneId || ringId === g.zoneId ? 'true' : undefined}
+                  onClick={() => setSelection({ kind: 'zone', id: g.zoneId })}
+                >
+                  {g.band ? (
+                    <path
+                      d={g.band}
+                      className="t2f-zone-band"
+                      data-zone-band={g.zoneId}
+                      onPointerEnter={() => setHoverId(g.zoneId)}
+                      onPointerLeave={() => setHoverId(null)}
+                    />
+                  ) : null}
+                  {g.sea?.map((s, i) => (
+                    <path
+                      key={`sea-${s.iso}-${i}`}
+                      d={s.d}
+                      data-iso={s.iso}
+                      data-hot={hotCountry === `${g.zoneId}:${s.iso}` ? 'true' : undefined}
+                      className="t2f-zone-sea"
+                      onPointerEnter={() => {
+                        setHoverId(g.zoneId);
+                        setHotCountry(`${g.zoneId}:${s.iso}`);
+                      }}
+                      onPointerLeave={() => {
+                        setHoverId(null);
+                        setHotCountry(null);
+                      }}
+                    />
+                  ))}
+                </g>
+              ) : null,
+            )}
+          </g>
+          {/* Пояси — групи суходолу (країни й області островів). Наведення й вибір — лише колір. */}
           <g>
             {geometry.zones.map((g) => {
               const zone = zoneById.get(g.zoneId);
@@ -360,6 +403,7 @@ export function ZoneMap({
                   tabbable={tabStop === g.zoneId}
                   selected={selectedZoneId === g.zoneId}
                   focused={ringId === g.zoneId}
+                  hovered={hoverId === g.zoneId}
                   hotCountry={hotCountry}
                   onHotCountry={setHotCountry}
                   areas={geometry.areas?.filter((a) => a.zoneId === g.zoneId)}
@@ -631,6 +675,8 @@ interface ZoneGroupProps {
   selected: boolean;
   /** Фокус з клавіатури: підсвітка кольором, як у вибраного (без обвідки). */
   focused: boolean;
+  /** Пояс під курсором (зокрема через смугу в океані чи морську область). */
+  hovered: boolean;
   hotCountry: string | null;
   onHotCountry: (key: string | null) => void;
   /** Області дрібних островів поясу (рамка) — частина країни, як її морська область. */
@@ -655,6 +701,7 @@ function ZoneGroup({
   tabbable,
   selected,
   focused,
+  hovered,
   hotCountry,
   onHotCountry,
   areas,
@@ -692,28 +739,15 @@ function ZoneGroup({
       data-zone={g.zoneId}
       data-state={state}
       data-selected={selected || focused ? 'true' : undefined}
+      data-hover={hovered ? 'true' : undefined}
       className={cn('t2f-zone', FILL_CLASS[state])}
       onClick={onSelect}
       onKeyDown={(e) => onKeyDown(e, g.zoneId)}
       onFocus={(e) => onFocus(e, g.zoneId)}
       onBlur={onBlur}
-      onPointerEnter={(e) => {
-        if (e.pointerType === 'mouse') onHover(g.zoneId);
-      }}
+      onPointerEnter={() => onHover(g.zoneId)}
       onPointerLeave={() => onHover(null)}
     >
-      {g.band ? <path d={g.band} className="t2f-zone-band" data-zone-band={g.zoneId} /> : null}
-      {g.sea?.map((s, i) => (
-        <path
-          key={`sea-${s.iso}-${i}`}
-          d={s.d}
-          data-iso={s.iso}
-          data-hot={hot(s.iso) ? 'true' : undefined}
-          className="t2f-zone-sea"
-          onPointerEnter={enter(s.iso)}
-          onPointerLeave={leave}
-        />
-      ))}
       {g.countries.map((c, i) => (
         <path
           key={`${c.iso}-${i}`}

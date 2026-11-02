@@ -43,7 +43,7 @@ describe('zonemap.json', () => {
 
   it('лінії: кордони, межі поясів, кордони в морі, лінія зміни дат; області островів у межах полотна', () => {
     for (const k of ['borders', 'zoneLines', 'sea', 'dayline'] as const) expect((geo[k] ?? '').length).toBeGreaterThan(100);
-    expect(geo.areas?.length).toBe(3);
+    expect(geo.areas?.length).toBe(4); // Лакшадвіп, Андамани й Нікобари, Мальдіви, Маркізькі
     for (const a of geo.areas ?? []) {
       expect(a.x0).toBeGreaterThanOrEqual(0);
       expect(a.x1).toBeLessThanOrEqual(geo.meta.width);
