@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   type ReactNode,
   useMemo,
   useRef,
@@ -22,6 +23,7 @@ import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
+import { useGuestStore } from '@/stores/guest';
 import { MapLegend } from './MapLegend';
 import {
   pointToPercent,
@@ -30,6 +32,7 @@ import {
   type MapZone,
   type ZoneMapGeometry,
 } from './MapModel';
+import { CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
 import { MapTapCard, ZoneCard, ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
 import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
 import './ZoneMap.css';
@@ -120,6 +123,18 @@ function useGeometry(initial: ZoneMapGeometry | undefined, root: RefObject<HTMLE
   return { geometry: initial ?? loaded, failed };
 }
 
+/** Плашка за курсором: праворуч-знизу (16 / 18 px), біля правого чи нижнього краю мапи — дзеркально. */
+function placeTipAt(el: HTMLElement | null, box: HTMLElement | null, p: { x: number; y: number } | null) {
+  if (!el || !box || !p) return;
+  const w = el.offsetWidth;
+  const h = el.offsetHeight;
+  let x = p.x + 16;
+  if (x + w > box.clientWidth - 8) x = Math.max(8, p.x - 16 - w);
+  let y = p.y + 18;
+  if (y + h > box.clientHeight - 8) y = Math.max(8, p.y - 10 - h);
+  el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+}
+
 const FILL_CLASS: Record<ZoneState, string> = { past: 'is-past', live: 'is-live', next: 'is-next', future: 'is-ahead' };
 const MARKER_CLASS: Record<ZoneState, string> = {
   past: 'bg-border border-border-strong',
@@ -177,6 +192,9 @@ export function ZoneMap({
   const pathRefs = useRef(new Map<string, SVGGElement>());
   // Країна під курсором (суходіл або її морська область): `zoneId:iso` — підсвічується сильніше за свій пояс.
   const [hotCountry, setHotCountry] = useState<string | null>(null);
+  // Місто під курсором: його пояс і країна лишаються підсвіченими, плашки немає (поруч підпис міста).
+  const [onCity, setOnCity] = useState(false);
+  const viewerIso = useGuestStore((g) => g.flagCode);
   const dotRefs = useRef(new Map<string, HTMLElement>());
   const cardRef = useRef<HTMLElement>(null);
 
@@ -193,6 +211,12 @@ export function ZoneMap({
     return m;
   }, [zones, now]);
   const stateOf = (id: string): ZoneState => states.get(id) ?? 'future';
+  // Скільки поясів у країни (плашка: «UTC+3 · ще 10 поясів»).
+  const zoneCountByIso = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const z of zones) for (const c of z.countries) m.set(c.iso, (m.get(c.iso) ?? 0) + 1);
+    return m;
+  }, [zones]);
 
   const liveZoneId = ordered.find((z) => stateOf(z.id) === 'live')?.id;
   const tabStop = tabStopId && zoneById.has(tabStopId) ? tabStopId : (liveZoneId ?? ordered[0]?.id ?? null);
@@ -287,6 +311,67 @@ export function ZoneMap({
   const showNames = zoom.k >= 2;
 
   const pinnedZone = selectedZoneId ? zoneById.get(selectedZoneId) : undefined;
+
+  // Плашка при наведенні (рішення власника 2026-11-02, дошка `Desk-Map-Tips`): лише десктоп; одна одночасно — країна
+  // важливіша за пояс; з’являється через 150 мс, зникає через 100 мс; між сусідніми цілями — одразу.
+  const hotSep = hotCountry ? hotCountry.lastIndexOf(':') : -1;
+  const pointerTarget: MapTipTarget | null =
+    isPhone || onCity
+      ? null
+      : hotCountry && hotSep > 0
+        ? { kind: 'country', zoneId: hotCountry.slice(0, hotSep), iso: hotCountry.slice(hotSep + 1) }
+        : hoverId
+          ? { kind: 'zone', zoneId: hoverId }
+          : null;
+  // З клавіатури: фокус на поясі (видимий) — плашка біля мітки поясу.
+  const keyTarget: MapTipTarget | null = !isPhone && !pointerTarget && ringId ? { kind: 'zone', zoneId: ringId } : null;
+  const rawTarget = pointerTarget ?? keyTarget;
+  const rawKey = tipKey(rawTarget);
+  const [tip, setTip] = useState<{ target: MapTipTarget; byKey: boolean } | null>(null);
+  const tipShown = tipKey(tip?.target ?? null);
+  useEffect(() => {
+    if (rawKey === tipShown) return;
+    const next = rawTarget ? { target: rawTarget, byKey: !pointerTarget } : null;
+    const delay = !rawTarget ? 100 : tipShown || next?.byKey ? 0 : 150;
+    const id = window.setTimeout(() => setTip(next), delay);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ціль описує її ключ
+  }, [rawKey, tipShown]);
+  const tipRef = useRef<HTMLDivElement>(null);
+  const pointer = useRef<{ x: number; y: number } | null>(null);
+  // Чи плашка з клавіатури (тоді її позиція — біля мітки поясу, не за курсором); оновлюється після рендеру.
+  const tipByKeyRef = useRef(false);
+  const tipZone = tip ? zoneById.get(tip.target.zoneId) : undefined;
+  const tipCountry =
+    tip?.target.kind === 'country' && tipZone
+      ? (tipZone.countries.find((c) => c.iso === (tip.target as { iso: string }).iso) ?? countryByIso.get(tip.target.iso))
+      : undefined;
+  const tipLabel = tip?.byKey && geometry ? geometry.zones.find((g) => g.zoneId === tip.target.zoneId)?.label : undefined;
+  const tipStyle = (() => {
+    if (!tipLabel || !geometry) return undefined;
+    const lp = (tipLabel[0] / geometry.meta.width) * 100;
+    const pos = place(lp, (tipLabel[1] / geometry.meta.height) * 100);
+    // Права третина мапи — плашка ліворуч від мітки.
+    return { left: pos.left, top: pos.top, transform: lp > 66 ? 'translate(calc(-100% - 12px), 12px)' : 'translate(12px, 12px)' };
+  })();
+  useLayoutEffect(() => {
+    tipByKeyRef.current = Boolean(tip?.byKey);
+    if (!tip?.byKey) placeTipAt(tipRef.current, boxRef.current, pointer.current);
+  });
+  useEffect(() => {
+    const bx = boxRef.current;
+    if (!bx) return;
+    const move = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      const r = bx.getBoundingClientRect();
+      pointer.current = { x: e.clientX - r.left, y: e.clientY - r.top };
+      const el = tipRef.current;
+      if (el) el.style.visibility = e.buttons ? 'hidden' : '';
+      if (!tipByKeyRef.current) placeTipAt(el, bx, pointer.current);
+    };
+    bx.addEventListener('pointermove', move);
+    return () => bx.removeEventListener('pointermove', move);
+  }, [geometry]);
 
   const liveZone = ordered.find((z) => stateOf(z.id) === 'live');
   const summary = liveZone ? `${liveZone.countries.slice(0, 3).map((c) => c.name).join(', ')} · ${t('state.live')}` : '';
@@ -483,12 +568,29 @@ export function ZoneMap({
                 )}
               </span>
             );
-            const cls =
-              't2f-focus pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
+            // Невидима зона точки: на десктопі 20 px (не закриває країну), на телефоні — 44 px під палець.
+            const cls = cn(
+              't2f-focus pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full',
+              isPhone ? 'size-11' : 'size-5',
+            );
             const style = place(pos.left, pos.top);
+            const cityHover = {
+              onPointerEnter: (e: { pointerType: string }) => {
+                if (e.pointerType !== 'mouse') return;
+                setOnCity(true);
+                setHoverId(city.zoneId);
+                setHotCountry(`${city.zoneId}:${city.countryIso}`);
+              },
+              onPointerLeave: (e: { pointerType: string }) => {
+                if (e.pointerType !== 'mouse') return;
+                setOnCity(false);
+                setHoverId(null);
+                setHotCountry(null);
+              },
+            };
             if (!isPhone && country) {
               return (
-                <NextLink key={city.id} href={country.href} aria-label={label} tabIndex={-1} data-city={city.id} className={cls} style={style}>
+                <NextLink key={city.id} href={country.href} aria-label={label} tabIndex={-1} data-city={city.id} className={cls} style={style} {...cityHover}>
                   {dot}
                 </NextLink>
               );
@@ -509,6 +611,7 @@ export function ZoneMap({
                 // Цілі сусідніх міст (44 px) перекриваються: вибране місто (його картка вже відкрита) — під іншими.
                 className={cn(cls, selection?.kind === 'city' && selection.id === city.id ? 'z-0' : 'z-10')}
                 style={style}
+                {...cityHover}
                 onClick={() => setSelection({ kind: 'city', id: city.id })}
               >
                 {dot}
@@ -549,6 +652,21 @@ export function ZoneMap({
             : null}
         </div>
       </div>
+      {tipZone ? (
+        <MapTip ref={tipRef} kind={tip!.target.kind} style={tipStyle}>
+          {tip!.target.kind === 'country' && tipCountry ? (
+            <CountryTip
+              zone={tipZone}
+              country={tipCountry}
+              state={stateOf(tipZone.id)}
+              now={now}
+              zoneCount={zoneCountByIso.get(tipCountry.iso) ?? 1}
+            />
+          ) : (
+            <ZoneTip zone={tipZone} state={stateOf(tipZone.id)} now={now} viewerIso={viewerIso} />
+          )}
+        </MapTip>
+      ) : null}
       <div className={cn(m.zoom, isPhone ? m.zoomPhone : m.zoomDesk)} role="group" aria-label={t('zoomGroup')} data-zone-map-zoom="">
         {isPhone ? (
           <>

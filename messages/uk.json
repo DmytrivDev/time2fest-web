@@ -1113,7 +1113,27 @@
     "previewHint": "Клікни, щоб закріпити картку поясу",
     "liveLabel": "{city} · наживо",
     "liveLabelWatch": "— дивитися",
-    "liveLabelWatchPhone": "дивитися"
+    "liveLabelWatchPhone": "дивитися",
+    "tip": {
+      "zoneFuture": "Північ через {dur}",
+      "zoneNext": "Наступний · північ через {dur}",
+      "zoneLiveBefore": "В ефірі · північ через {dur}",
+      "zoneLiveAfter": "Північ щойно настала",
+      "zonePast": "Зустріли {dur} тому",
+      "at": "о {time} за вашим часом",
+      "atDate": "о {time}, {date}, за вашим часом",
+      "yourZone": "ваш пояс",
+      "moreCountries": "+{count}",
+      "streams": "{count, plural, one {# трансляція} few {# трансляції} many {# трансляцій} other {# трансляції}}",
+      "streamsLive": "{count, plural, one {# трансляція} few {# трансляції} many {# трансляцій} other {# трансляції}} в ефірі",
+      "countryZones": "{offset} · ще {count, plural, one {# пояс} few {# пояси} many {# поясів} other {# поясу}}",
+      "countryFuture": "Північ через {dur} · о {time}",
+      "countryLiveBefore": "Північ через {dur}",
+      "countryLiveAfter": "{gender, select, pl {Зустрічають Новий рік} other {Зустрічає Новий рік}}",
+      "countryPast": "{gender, select, m {Зустрів} f {Зустріла} n {Зустріло} pl {Зустріли} other {Зустріли}} {dur} тому",
+      "cityLive": "{city} · наживо",
+      "cityStream": "{city} · трансляція"
+    }
   },
   "timeMachine": {
     "title": "Машина часу",

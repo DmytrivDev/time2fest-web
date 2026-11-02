@@ -1,4 +1,4 @@
-import type { CelebrationType, Dataset, Ms } from '@/lib/data/types';
+import type { CelebrationType, Dataset, Gender, Ms } from '@/lib/data/types';
 
 /** Країна поясу на мапі: посилання, прапор і «Як святкувати» (до трьох традицій). */
 export interface MapCountry {
@@ -8,6 +8,10 @@ export interface MapCountry {
   href: string;
   /** Традиції для `HowToPopover`; порожньо — кнопки «Як святкувати» немає. */
   traditions?: { id: string; title: string; text: string }[];
+  /** Рід назви країни: «Україна зустріла», «США зустріли» (підказка мапи). */
+  gender?: Gender;
+  /** Головне місто країни в цьому поясі, якщо там є трансляція (підказка мапи: «Київ · наживо»). */
+  mainCity?: string;
 }
 
 /** Пояс: `id` збігається з `data-zone` шляху в `zonemap.json` (`utc+0545`). */
@@ -17,6 +21,8 @@ export interface MapZone {
   midnightMs: Ms;
   /** За спаданням популярності: перша — «головна» країна поясу. */
   countries: MapCountry[];
+  /** Скільки міст поясу мають трансляцію (підказка мапи: «3 трансляції»). */
+  streamCount?: number;
 }
 
 /** Основне місто на мапі: тиха точка, коралова — коли є трансляція (C18). */
@@ -56,7 +62,14 @@ export function buildMapModel(data: Dataset): MapModel {
   const cities: MapCity[] = [];
   for (const z of data.zones) {
     const isoSet = new Set<string>();
-    for (const c of data.cities) if (c.zoneId === z.id) isoSet.add(c.countryIso);
+    const zoneCities = data.cities.filter((c) => c.zoneId === z.id);
+    for (const c of zoneCities) isoSet.add(c.countryIso);
+    const streamCities = zoneCities.filter((c) => c.celebrationType !== 'countdown-only');
+    // Головне місто країни в поясі з трансляцією: спершу «головне» країни, далі — перше з трансляцією.
+    const mainCityOf = (iso: string) => {
+      const own = streamCities.filter((c) => c.countryIso === iso);
+      return (own.find((c) => c.isCountryMain) ?? own[0])?.name.uk;
+    };
     const countries = [...isoSet]
       .map((iso) => data.countriesByIso.get(iso))
       .filter((c): c is NonNullable<typeof c> => Boolean(c))
@@ -67,8 +80,10 @@ export function buildMapModel(data: Dataset): MapModel {
         flagCode: c.flagCode,
         href: countryPath(c.slug),
         traditions: c.howTo.traditions.slice(0, 3).map((t) => ({ id: t.id, title: t.title, text: t.text })),
+        gender: c.gender,
+        ...(mainCityOf(c.iso) ? { mainCity: mainCityOf(c.iso) } : {}),
       }));
-    zones.push({ id: z.id, offsetMinutes: z.offsetMinutes, midnightMs: z.midnightMs, countries });
+    zones.push({ id: z.id, offsetMinutes: z.offsetMinutes, midnightMs: z.midnightMs, countries, streamCount: streamCities.length });
   }
   for (const id of MAP_CITY_IDS) {
     const city = data.citiesById.get(id);

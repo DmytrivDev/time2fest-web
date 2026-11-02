@@ -73,8 +73,10 @@ export interface FlagProps {
   name?: string;
   /** Поруч є текст з назвою — прапор лише прикраса (aria-hidden). */
   decorative?: boolean;
-  /** Круглий прапор (пакет `circle-flags`, файли в `public/flags/round`) — зараз лише в чаті. */
+  /** Круглий прапор (пакет `circle-flags`, файли в `public/flags/round`): чат, підказки мапи. */
   round?: boolean;
+  /** Діаметр круглого прапора в px замість розміру за `size` (підказка мапи: 22 і 24). */
+  diameter?: number;
   className?: string;
 }
 
@@ -93,7 +95,7 @@ function isSpecial(code: string): code is SpecialFlag {
 }
 
 /** P23. Прапор — SVG, не емодзі; тонка темна обводка однакова для всіх розмірів. */
-export function Flag({ code, size = 'sm', name, decorative, round, className }: FlagProps) {
+export function Flag({ code, size = 'sm', name, decorative, round, diameter, className }: FlagProps) {
   const t = useTranslations('primitives.flag');
   const { w, h } = DIMENSIONS[size];
   const style: CSSProperties = { width: w, height: h };
@@ -106,7 +108,7 @@ export function Flag({ code, size = 'sm', name, decorative, round, className }: 
   };
 
   if (round) {
-    const d = ROUND_DIAMETER[size];
+    const d = diameter ?? ROUND_DIAMETER[size];
     const file = roundFile(code);
     return (
       <span
