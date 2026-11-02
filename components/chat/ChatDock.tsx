@@ -33,7 +33,7 @@ import {
 } from 'react';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_DOCK_SLOT_ID, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
-import { useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
+import { CLOSE_MS, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { RoomId } from '@/lib/data/types';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -87,7 +87,8 @@ function measureTop(): number {
     if (fallback) bottom = fallback.getBoundingClientRect().bottom;
   }
   // Положення на початку сторінки (не за прокруткою): нічого не липне, чат займає місце під смугою при scrollTop = 0.
-  return Math.max(0, Math.min(Math.round(bottom + window.scrollY), Math.max(0, stableViewportH() - 240)));
+  // +2 px: нижня рамка смуги «Перший ряд» лишається видно над шторкою (правка власника 2026-11-02).
+  return Math.max(0, Math.min(Math.round(bottom + window.scrollY) + 2, Math.max(0, stableViewportH() - 240)));
 }
 
 /**
@@ -150,6 +151,8 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const overlay = useOverlay();
   // Відкрите вікно покупки «Першого ряду» — окремий шар; вікно чату під ним не змінюється.
   const seat = overlay.current?.kind === 'accent' || !!overlay.current?.separate;
+  // Шар закривається: ще видимий і їде вниз (OverlayManager тримає вміст `CLOSE_MS`).
+  const seatClosing = !seat && (overlay.closing?.kind === 'accent' || !!overlay.closing?.separate);
   const open = expanded;
   const [seatDy, setSeatDy] = useState(0);
   const { expand, collapse } = useChatDockControls();
@@ -430,7 +433,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       if (!drag || drag.id !== e.pointerId) return;
       const d = drag;
       drag = null;
-      setSeatDy(0);
+      const closing = d.moved && e.type !== 'pointercancel' && (d.lastY - d.startY > SEAT_CLOSE_PX || d.v > FLICK_PX_PER_MS);
+      // Закриваємо — шар їде вниз від того місця, де його відпустили (без повернення вгору).
+      if (!closing) setSeatDy(0);
       if (!d.moved || e.type === 'pointercancel') return;
       // Після жесту клік (напр. по «×» чи ручці) не потрібен.
       const swallow = (ev: Event) => {
@@ -439,7 +444,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       };
       window.addEventListener('click', swallow, { capture: true, once: true });
       window.setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
-      if (d.lastY - d.startY > SEAT_CLOSE_PX || d.v > FLICK_PX_PER_MS) closeSeat();
+      if (closing) closeSeat();
     };
     layer.addEventListener('pointerdown', onDown);
     window.addEventListener('pointermove', onMove);
@@ -560,6 +565,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     seatGeo = { height: free >= MIN_DOCK ? free : vv.h, bottom: inset };
   } else seatGeo = { height: `calc(100svh - ${top}px)` };
   if (seatDy) seatGeo = { ...seatGeo, transform: `translateY(${seatDy}px)`, transition: 'none' };
+  if (seatClosing) seatGeo = { ...seatGeo, transform: 'translateY(100%)', transition: `transform ${CLOSE_MS}ms ease-out` };
   const onSeatFocus = (e: FocusEvent<HTMLElement>, on: boolean) => {
     if (!(e.target as HTMLElement).matches('input, textarea')) return;
     typingRef.current = on;
@@ -653,7 +659,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       data-seat-layer=""
       data-land={land ? 'true' : undefined}
       className="t2f-seat-layer"
-      hidden={!seat}
+      hidden={!seat && !seatClosing}
+      inert={seatClosing || undefined}
+      data-closing={seatClosing ? 'true' : undefined}
       style={seatGeo}
       onFocus={(e) => onSeatFocus(e, true)}
       onBlur={(e) => onSeatFocus(e, false)}

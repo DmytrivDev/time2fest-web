@@ -11,6 +11,8 @@
  * доки панель відкрита (ChatPanel / CSS сторінки ховають колонку лише без цього атрибута).
  * Вікно з власною кораловою кнопкою (`coral`) реєструється в `lib/overlay/coral` — кнопка звуку стає нейтральною.
  * `closeOn` — події шини (`lib/events/bus`), після яких вікно закривається саме (напр. оцінка — після `moment:rate-close`).
+ * Шторки на телефоні (`seat`, `sheet`) закриваються плавно (рішення 2026-11-02): закрите вікно ще `CLOSE_MS` лишається
+ * в `closing` і їде вниз; нове вікно чи зменшений рух прибирають його одразу.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
@@ -65,6 +67,8 @@ export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = fa
 
 export interface OverlayApi {
   current: OverlaySpec | null;
+  /** Шторка, що саме закривається (їде вниз); `null` — нічого не закривається. */
+  closing?: OverlaySpec | null;
   open(spec: OverlaySpec): void;
   /** Без `id` закриває будь-яке відкрите вікно; з `id` — лише якщо відкрите саме воно. */
   close(id?: string): void;
@@ -76,7 +80,16 @@ function dockSlotExists(id = CHAT_DOCK_SLOT_ID): boolean {
 
 const OverlayContext = createContext<OverlayApi | null>(null);
 
-const NOOP_API: OverlayApi = { current: null, open: () => undefined, close: () => undefined };
+const NOOP_API: OverlayApi = { current: null, closing: null, open: () => undefined, close: () => undefined };
+
+/** Тривалість виїзду шторки вниз (як згортання вікна чату). */
+export const CLOSE_MS = 200;
+
+function motionReduced(): boolean {
+  if (typeof document === 'undefined') return true;
+  if (document.documentElement.getAttribute('data-reduce-motion') === 'true') return true;
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 /** Поза OverlayManager (історії, тести) — тиха заглушка. */
 export function useOverlay(): OverlayApi {
@@ -128,6 +141,10 @@ export interface OverlayManagerProps {
 
 export function OverlayManager({ children }: OverlayManagerProps) {
   const [current, setCurrent] = useState<OverlaySpec | null>(null);
+  // Шторка, що закривається: спека й її розміщення на момент закриття.
+  const [closing, setClosing] = useState<{ spec: OverlaySpec; placement: OverlayPlacement } | null>(null);
+  const placementRef = useRef<OverlayPlacement | null>(null);
+  const closingTimer = useRef<number | undefined>(undefined);
   const chatColumn = useChatColumn();
   const chatHidden = useGuestStore((s) => s.chatHidden);
 
@@ -146,6 +163,12 @@ export function OverlayManager({ children }: OverlayManagerProps) {
         !!spec.inChat && spec.kind !== 'inflow' && !chatColumn && dockSlotExists() && !useChatDock.getState().expanded;
       // Те саме вікно оновлюється на місці (напр. вхід ↔ реєстрація): шар не змінюємо.
       const keep = prev && prev.id === spec.id ? prev.separate : undefined;
+      // Нова шторка займає місце тієї, що закривається; вікно в потоці сторінки (рушій пропозицій відкриває його
+      // одразу після закриття) виїзду не заважає.
+      if (spec.kind !== 'inflow') {
+        window.clearTimeout(closingTimer.current);
+        setClosing(null);
+      }
       set({ ...spec, separate: keep ?? separate });
       if (prev && prev.id !== spec.id) prev.onClose?.();
     },
@@ -156,6 +179,12 @@ export function OverlayManager({ children }: OverlayManagerProps) {
     (id?: string) => {
       const prev = ref.current;
       if (!prev || (id !== undefined && prev.id !== id)) return;
+      const was = placementRef.current;
+      if ((was === 'seat' || was === 'sheet') && !motionReduced()) {
+        window.clearTimeout(closingTimer.current);
+        setClosing({ spec: prev, placement: was });
+        closingTimer.current = window.setTimeout(() => setClosing(null), CLOSE_MS + 40);
+      }
       set(null);
       prev.onClose?.();
     },
@@ -190,7 +219,16 @@ export function OverlayManager({ children }: OverlayManagerProps) {
     return () => aside?.removeAttribute('data-chat-forced');
   }, [forceColumn]);
 
-  const api = useMemo<OverlayApi>(() => ({ current, open, close }), [current, open, close]);
+  useEffect(() => {
+    placementRef.current = placement;
+  }, [placement]);
+  useEffect(() => () => window.clearTimeout(closingTimer.current), []);
+
+  const api = useMemo<OverlayApi>(() => ({ current, closing: closing?.spec ?? null, open, close }), [current, closing, open, close]);
+  // Що малювати в шторках: відкрите вікно або те, що саме закривається.
+  const sheetSpec = current && placement === 'sheet' ? current : closing?.placement === 'sheet' ? closing.spec : null;
+  const seatSpec = current && placement === 'seat' ? current : closing?.placement === 'seat' ? closing.spec : null;
+  const sheetClosing = !!sheetSpec && sheetSpec !== current;
   const onOpenChange = useCallback(
     (next: boolean) => {
       if (!next) close(currentId);
@@ -202,9 +240,19 @@ export function OverlayManager({ children }: OverlayManagerProps) {
     <OverlayContext.Provider value={api}>
       {children}
       {current && current.coral ? <CoralClaim key={current.id} /> : null}
-      {current && placement === 'sheet' ? (
-        <Sheet open onOpenChange={onOpenChange} title={current.title} description={current.description} loading={current.loading} boardHeader={current.chrome === 'board'} onBack={current.onBack} authorHeader={current.chrome === 'author'}>
-          {current.content}
+      {sheetSpec ? (
+        <Sheet
+          open
+          closing={sheetClosing}
+          onOpenChange={sheetClosing ? () => undefined : onOpenChange}
+          title={sheetSpec.title}
+          description={sheetSpec.description}
+          loading={sheetSpec.loading}
+          boardHeader={sheetSpec.chrome === 'board'}
+          onBack={sheetSpec.onBack}
+          authorHeader={sheetSpec.chrome === 'author'}
+        >
+          {sheetSpec.content}
         </Sheet>
       ) : null}
       {current && placement === 'dock' ? (
@@ -222,20 +270,20 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           {current.content}
         </ChatSlotPanel>
       ) : null}
-      {current && placement === 'seat' ? (
+      {seatSpec ? (
         <ChatSlotPanel
           open
-          onOpenChange={onOpenChange}
+          onOpenChange={seatSpec === current ? onOpenChange : () => undefined}
           containerId={SEAT_DOCK_SLOT_ID}
-          variant={current.kind === 'accent' ? 'accent' : current.kind === 'nonmodal' ? 'nonmodal' : 'form'}
-          title={current.title}
-          description={current.description}
-          boardHeader={current.chrome === 'board'}
-          onBack={current.onBack}
-          authorHeader={current.chrome === 'author'}
+          variant={seatSpec.kind === 'accent' ? 'accent' : seatSpec.kind === 'nonmodal' ? 'nonmodal' : 'form'}
+          title={seatSpec.title}
+          description={seatSpec.description}
+          boardHeader={seatSpec.chrome === 'board'}
+          onBack={seatSpec.onBack}
+          authorHeader={seatSpec.chrome === 'author'}
           className="t2f-seat-panel"
         >
-          {current.content}
+          {seatSpec.content}
         </ChatSlotPanel>
       ) : null}
       {current && placement === 'panel' ? (

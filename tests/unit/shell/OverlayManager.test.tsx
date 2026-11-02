@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { OverlayInFlowOutlet, OverlayManager, placementFor, useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
+import { CLOSE_MS, OverlayInFlowOutlet, OverlayManager, placementFor, useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
 import { clearAllHandlers, emit } from '@/lib/events/bus';
 import { CoralProvider, useCoralWindowOpen } from '@/lib/overlay/coral';
 import { useGuestStore } from '@/stores/guest';
@@ -121,9 +121,18 @@ describe('OverlayManager', () => {
     act(() => api.open(spec({ id: 'A' })));
     act(() => api.close('B'));
     expect(api.current?.id).toBe('A');
-    act(() => api.close());
-    expect(api.current).toBeNull();
-    expect(document.querySelector('[data-sheet]')).toBeNull();
+    vi.useFakeTimers();
+    try {
+      act(() => api.close());
+      expect(api.current).toBeNull();
+      // Шторка ще їде вниз (рішення 2026-11-02), потім зникає.
+      expect(document.querySelector('[data-sheet]')).toHaveAttribute('data-closing', 'true');
+      expect(api.closing?.id).toBe('A');
+      act(() => vi.advanceTimersByTime(CLOSE_MS + 50));
+      expect(document.querySelector('[data-sheet]')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('чат сховано на десктопі: колонка тимчасово відкривається і закривається разом з панеллю', () => {

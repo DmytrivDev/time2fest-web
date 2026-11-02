@@ -226,7 +226,7 @@ export function Stamp({
         variant="plain"
         iconSize={18}
         aria-label={t('dismiss')}
-        className="absolute right-0.5 top-0.5 text-text-muted md:right-1.5 md:top-1.5"
+        className="absolute right-0.5 top-0 text-text-muted md:right-1.5 md:top-2"
         onClick={onClose}
       />
     </section>

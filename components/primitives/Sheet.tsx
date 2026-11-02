@@ -81,6 +81,8 @@ export interface SheetProps {
   onBack?: () => void;
   /** Шапка O-AUTHOR (як на дошці): без ручки, «‹ Назад» і приглушений заголовок; аркуш на всю висоту під плеєром, тіло керує прокруткою саме. */
   authorHeader?: boolean;
+  /** Аркуш закривається: їде вниз, затемнення гасне (OverlayManager прибере його за `CLOSE_MS`). */
+  closing?: boolean;
   className?: string;
 }
 
@@ -98,6 +100,7 @@ export function Sheet({
   boardHeader = false,
   onBack,
   authorHeader = false,
+  closing = false,
   className,
 }: SheetProps) {
   const top = usePlayerBottom(open);
@@ -127,15 +130,16 @@ export function Sheet({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay asChild>
-          <Scrim top={top} />
+          <Scrim top={top} data-closing={closing ? 'true' : undefined} className="t2f-sheet-scrim" />
         </Dialog.Overlay>
         <Dialog.Content
           data-sheet=""
+          data-closing={closing ? 'true' : undefined}
           className={cn(
-            'fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg bg-surface text-text shadow-overlay',
+            't2f-sheet fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg bg-surface text-text shadow-overlay',
             className,
           )}
-          style={{ maxHeight: `calc(100dvh - ${top}px)`, height: authorHeader ? `calc(100dvh - ${top}px)` : undefined, transform: dragY ? `translateY(${dragY}px)` : undefined }}
+          style={{ maxHeight: `calc(100dvh - ${top}px)`, height: authorHeader ? `calc(100dvh - ${top}px)` : undefined, transform: closing ? 'translateY(100%)' : dragY ? `translateY(${dragY}px)` : undefined, transition: dragY && !closing ? 'none' : undefined }}
           {...(description ? {} : { 'aria-describedby': undefined })}
         >
           {authorHeader ? null : (

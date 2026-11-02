@@ -205,7 +205,8 @@ export function FirstRowWall({
         bleed={bleed}
         weights={weights}
         speed={layout === 'wrap' ? 28 : 38}
-        fade={layout === 'wrap' ? [6, 14] : undefined}
+        // Телефон: помітне згасання з обох боків — фішки не виглядають обрізаними (правка власника 2026-11-02).
+        fade={layout === 'wrap' ? [28, 28] : undefined}
       >
         {items}
       </Marquee>

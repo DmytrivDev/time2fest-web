@@ -199,7 +199,8 @@ export function CookieSettings({ value, onSave, saveFailed = false, onRetry, cla
     { key: 'facebookVideo', label: t('facebook'), text: t('facebookText') },
   ];
   return (
-    <div data-window="O-COOKIES" className={cn('flex flex-col gap-4', className)}>
+    // Відступ знизу — як у інших вікон: текст «Змінити вибір…» не впирається в край шторки.
+    <div data-window="O-COOKIES" className={cn('flex flex-col gap-4', className)} style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
       <ul aria-label={t('categoriesLabel')} className="flex flex-col divide-y divide-border">
         <li className="flex flex-col py-1" data-category="necessary">
           <Switch label={t('necessary')} checked disabled className="w-full justify-between" />

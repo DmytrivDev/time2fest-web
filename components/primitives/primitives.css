@@ -1536,6 +1536,35 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+/* Аркуш (Sheet) на телефоні: з’являється знизу й так само плавно їде вниз, коли закривається (рішення 2026-11-02). */
+.t2f-sheet {
+  animation: t2f-seat-in 200ms ease-out;
+  transition: transform 200ms ease-out;
+}
+.t2f-sheet-scrim {
+  animation: t2f-scrim-in 200ms ease-out;
+  transition: opacity 200ms ease-out;
+}
+.t2f-sheet-scrim[data-closing='true'] {
+  opacity: 0;
+}
+@keyframes t2f-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t2f-sheet,
+  .t2f-sheet-scrim {
+    animation: none;
+    transition: none;
+  }
+}
+:root[data-reduce-motion='true'] :is(.t2f-sheet, .t2f-sheet-scrim) {
+  animation: none;
+  transition: none;
+}
+
 /* Шар вікна покупки «Першого ряду» поверх чату (макети `Phone-FR-*`, рішення 2026-10-29): жовта межа зверху, своя ручка. */
 /* Шар вікна покупки «Першого ряду» (телефон): окремо від вікна чату, та сама рамка й тінь; з’являється знизу. */
 .t2f-seat-layer {
