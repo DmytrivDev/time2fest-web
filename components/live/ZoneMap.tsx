@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 import {
   useEffect,
   useId,
-  type CSSProperties,
   type ReactNode,
   useMemo,
   useRef,
@@ -174,7 +173,9 @@ export function ZoneMap({
   const [ringId, setRingId] = useState<string | null>(null);
   const [tabStopId, setTabStopId] = useState<string | null>(null);
 
-  const pathRefs = useRef(new Map<string, SVGPathElement>());
+  const pathRefs = useRef(new Map<string, SVGGElement>());
+  // Країна під курсором (суходіл або її морська область): `zoneId:iso` — підсвічується сильніше за свій пояс.
+  const [hotCountry, setHotCountry] = useState<string | null>(null);
   const dotRefs = useRef(new Map<string, HTMLElement>());
   const cardRef = useRef<HTMLElement>(null);
 
@@ -203,7 +204,7 @@ export function ZoneMap({
     pathRefs.current.get(id)?.focus();
   }
 
-  function onZoneKeyDown(e: KeyboardEvent<SVGPathElement>, id: string) {
+  function onZoneKeyDown(e: KeyboardEvent<SVGGElement>, id: string) {
     const i = ordered.findIndex((z) => z.id === id);
     let target: number | null = null;
     switch (e.key) {
@@ -237,7 +238,7 @@ export function ZoneMap({
     focusZone(next.id);
   }
 
-  function onZoneFocus(e: FocusEvent<SVGPathElement>, id: string) {
+  function onZoneFocus(e: FocusEvent<SVGGElement>, id: string) {
     setTabStopId(id);
     setFocusedId(id);
     let visible = true;
@@ -269,8 +270,18 @@ export function ZoneMap({
 
   const aspect = geometry ? geometry.meta.width / geometry.meta.height : 1781 / 911;
   const boxRef = useRef<HTMLDivElement>(null);
-  const { view: zoom, zoomIn, zoomOut, reset } = useMapZoom(boxRef, Boolean(geometry));
+  const { view: zoom, box, zoomIn, zoomOut, reset } = useMapZoom(boxRef, Boolean(geometry));
   const zoomed = zoom.k > MIN_K + 0.01;
+  // Видима частина мапи (координати мапи): масштаб — через viewBox, тож усе лишається векторним і чітким.
+  const mw = geometry?.meta.width ?? 1781;
+  const mh = geometry?.meta.height ?? 911;
+  const pxToMap = box.w > 0 ? mw / box.w : 0;
+  const vb = { x: -zoom.x * pxToMap / zoom.k, y: -zoom.y * pxToMap / zoom.k, w: mw / zoom.k, h: mh / zoom.k };
+  /** Точка мапи (відсотки повної мапи) → відсотки рамки з урахуванням масштабу й зсуву. */
+  const place = (leftPct: number, topPct: number) => ({
+    left: `${leftPct * zoom.k + (box.w > 0 ? (zoom.x / box.w) * 100 : 0)}%`,
+    top: `${topPct * zoom.k + (box.h > 0 ? (zoom.y / box.h) * 100 : 0)}%`,
+  });
   // Назви міст біля точок — від наближення ×2.
   const showNames = zoom.k >= 2;
 
@@ -324,13 +335,9 @@ export function ZoneMap({
       data-zoomed={zoomed ? 'true' : 'false'}
       style={{ aspectRatio: aspect }}
     >
-      <div
-        className={m.stage}
-        data-zone-map-stage=""
-        style={{ transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.k})`, '--zm-k': zoom.k } as CSSProperties}
-      >
+      <div className={m.stage} data-zone-map-stage="">
         <svg
-          viewBox={`0 0 ${geometry.meta.width} ${geometry.meta.height}`}
+          viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
           role="group"
           aria-label={summary ? `${t('mapGroup')}. ${summary}` : t('mapGroup')}
           aria-describedby={`${uid}-hint`}
@@ -338,33 +345,24 @@ export function ZoneMap({
           className="block size-full"
         >
           <rect width={geometry.meta.width} height={geometry.meta.height} className="t2f-zm-ocean" />
-          {/* Смуги поясів в океані: колір стану ледь-ледь; клік по смузі — як по поясу (дрібні острови легко влучити). */}
-          <g aria-hidden="true">
-            {geometry.zones.map((g) =>
-              g.band && zoneById.has(g.zoneId) ? (
-                <path
-                  key={`band-${g.zoneId}`}
-                  d={g.band}
-                  data-zone-band={g.zoneId}
-                  className={cn('t2f-zone-band', FILL_CLASS[stateOf(g.zoneId)])}
-                  onClick={() => setSelection({ kind: 'zone', id: g.zoneId })}
-                />
-              ) : null,
-            )}
-          </g>
+          {/* Пояс — група: смуга в океані, морські області острівних країн і країни. Наведення й вибір — лише колір. */}
           <g>
             {geometry.zones.map((g) => {
               const zone = zoneById.get(g.zoneId);
-              if (!zone || !g.d) return null;
+              if (!zone || g.countries.length === 0) return null;
               const state = stateOf(g.zoneId);
               return (
-                <ZonePath
+                <ZoneGroup
                   key={g.zoneId}
                   g={g}
                   zone={zone}
                   state={state}
                   tabbable={tabStop === g.zoneId}
                   selected={selectedZoneId === g.zoneId}
+                  focused={ringId === g.zoneId}
+                  hotCountry={hotCountry}
+                  onHotCountry={setHotCountry}
+                  areas={geometry.areas?.filter((a) => a.zoneId === g.zoneId)}
                   pathRefs={pathRefs}
                   onKeyDown={onZoneKeyDown}
                   onFocus={onZoneFocus}
@@ -383,45 +381,19 @@ export function ZoneMap({
           {geometry.borders ? <path d={geometry.borders} className="t2f-zm-borders" /> : null}
           {geometry.zoneLines ? <path d={geometry.zoneLines} className="t2f-zm-zlines" /> : null}
           {geometry.dayline ? <path d={geometry.dayline} className="t2f-zm-dayline" /> : null}
-          {geometry.areas?.map((a) => (
-            <rect
-              key={`area-${a.zoneId}-${a.x0}`}
-              x={a.x0}
-              y={a.y0}
-              width={a.x1 - a.x0}
-              height={a.y1 - a.y0}
-              rx={a.frame ? 3 : 0}
-              aria-hidden="true"
-              data-zone-area={a.zoneId}
-              data-frame={a.frame ? 'true' : 'false'}
-              className={cn('t2f-zm-area', FILL_CLASS[stateOf(a.zoneId)])}
-              onClick={() => setSelection({ kind: 'zone', id: a.zoneId })}
-            />
-          ))}
-          {geometry.zones.map((g) =>
-            ringId === g.zoneId ? (
-              <g key={`ring-${g.zoneId}`}>
-                <path d={g.d} data-ring="focus-outer" className="t2f-zone-ring" />
-                <path d={g.d} data-ring="focus" className="t2f-zone-ring" />
-              </g>
-            ) : null,
-          )}
-          {geometry.zones.map((g) =>
-            selectedZoneId === g.zoneId ? <path key={`sel-${g.zoneId}`} d={g.d} data-ring="selected" className="t2f-zone-ring" /> : null,
-          )}
+
         </svg>
 
         <div className="pointer-events-none absolute inset-0" data-zone-map-overlay="">
           {geometry.markers.map((mk) => {
-            const left = (mk.x / geometry.meta.width) * 100;
-            const top = (mk.y / geometry.meta.height) * 100;
+            const pos = place((mk.x / geometry.meta.width) * 100, (mk.y / geometry.meta.height) * 100);
             return (
               <span
                 key={mk.zoneId}
                 aria-hidden="true"
                 data-zone-marker={mk.zoneId}
-                className={cn('t2f-zm-pin absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border', MARKER_CLASS[stateOf(mk.zoneId)])}
-                style={{ left: `${left}%`, top: `${top}%` }}
+                className={cn('absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border', MARKER_CLASS[stateOf(mk.zoneId)])}
+                style={pos}
               />
             );
           })}
@@ -433,8 +405,8 @@ export function ZoneMap({
                 key={`icon-${g.zoneId}`}
                 aria-hidden="true"
                 data-zone-icon={st}
-                className="t2f-zm-pin absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
-                style={{ left: `${(g.label[0] / geometry.meta.width) * 100}%`, top: `${(g.label[1] / geometry.meta.height) * 100}%` }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
+                style={place((g.label[0] / geometry.meta.width) * 100, (g.label[1] / geometry.meta.height) * 100)}
               >
                 {st === 'live' ? (
                   <span className="block size-1.5 rounded-full bg-background" />
@@ -468,8 +440,8 @@ export function ZoneMap({
               </span>
             );
             const cls =
-              't2f-focus t2f-zm-pin pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
-            const style = { left: `${pos.left}%`, top: `${pos.top}%` };
+              't2f-focus pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
+            const style = place(pos.left, pos.top);
             if (!isPhone && country) {
               return (
                 <NextLink key={city.id} href={country.href} aria-label={label} tabIndex={-1} data-city={city.id} className={cls} style={style}>
@@ -503,12 +475,11 @@ export function ZoneMap({
             <span
               aria-hidden="true"
               data-zone-map-live-label=""
-              className={cn('t2f-zm-pin', m.liveLabel, isPhone ? m.liveLabelPhone : m.liveLabelDesk)}
-              style={
-                isPhone
-                  ? { left: `${pointToPercent(labelCity, geometry.meta).left}%`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
-                  : { right: `${100 - pointToPercent(labelCity, geometry.meta).left}%`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
-              }
+              className={cn(m.liveLabel, isPhone ? m.liveLabelPhone : m.liveLabelDesk)}
+              style={(() => {
+                const p = place(pointToPercent(labelCity, geometry.meta).left, pointToPercent(labelCity, geometry.meta).top);
+                return isPhone ? p : { right: `calc(100% - ${p.left})`, top: p.top };
+              })()}
             >
               {t('liveLabel', { city: labelCity.name })}
               <span className={m.liveLabelWatch}>{isPhone ? t('liveLabelWatchPhone') : t('liveLabelWatch')}</span>
@@ -524,8 +495,8 @@ export function ZoneMap({
                       key={`name-${c.id}`}
                       aria-hidden="true"
                       data-city-name={c.id}
-                      className={cn('t2f-zm-pin', m.cityName)}
-                      style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+                      className={m.cityName}
+                      style={place(pos.left, pos.top)}
                     >
                       {c.name}
                     </span>
@@ -652,22 +623,48 @@ export function ZoneMap({
   );
 }
 
-interface ZonePathProps {
+interface ZoneGroupProps {
   g: ZoneMapGeometry['zones'][number];
   zone: MapZone;
   state: ZoneState;
   tabbable: boolean;
   selected: boolean;
-  pathRefs: RefObject<Map<string, SVGPathElement>>;
-  onKeyDown: (e: KeyboardEvent<SVGPathElement>, id: string) => void;
-  onFocus: (e: FocusEvent<SVGPathElement>, id: string) => void;
+  /** Фокус з клавіатури: підсвітка кольором, як у вибраного (без обвідки). */
+  focused: boolean;
+  hotCountry: string | null;
+  onHotCountry: (key: string | null) => void;
+  /** Області дрібних островів поясу (рамка) — частина країни, як її морська область. */
+  areas?: NonNullable<ZoneMapGeometry['areas']>;
+  pathRefs: RefObject<Map<string, SVGGElement>>;
+  onKeyDown: (e: KeyboardEvent<SVGGElement>, id: string) => void;
+  onFocus: (e: FocusEvent<SVGGElement>, id: string) => void;
   onBlur: () => void;
   onSelect: () => void;
   onHover: (id: string | null) => void;
 }
 
-/** Один пояс: `path[data-offset]` з класом стану; доступна назва — країни, час і стан (без UTC). */
-function ZonePath({ g, zone, state, tabbable, selected, pathRefs, onKeyDown, onFocus, onBlur, onSelect, onHover }: ZonePathProps) {
+/**
+ * Один пояс — група: смуга в океані, морські області острівних країн і країни (окремі шляхи). Наведення на будь-яку
+ * частину підсвічує весь пояс кольором; країна під курсором (чи її морська область) — ще сильніше. Кордони не
+ * виділяються. Доступна назва — країни, час і стан (без UTC).
+ */
+function ZoneGroup({
+  g,
+  zone,
+  state,
+  tabbable,
+  selected,
+  focused,
+  hotCountry,
+  onHotCountry,
+  areas,
+  pathRefs,
+  onKeyDown,
+  onFocus,
+  onBlur,
+  onSelect,
+  onHover,
+}: ZoneGroupProps) {
   const t = useTranslations('liveMap');
   const when = useMidnightPhrase(zone.midnightMs);
   const label = t('zoneAria', {
@@ -678,13 +675,15 @@ function ZonePath({ g, zone, state, tabbable, selected, pathRefs, onKeyDown, onF
       .join(', '),
     state: t(`state.${state}`),
   });
+  const hot = (iso: string) => hotCountry === `${g.zoneId}:${iso}`;
+  const enter = (iso: string) => () => onHotCountry(`${g.zoneId}:${iso}`);
+  const leave = () => onHotCountry(null);
   return (
-    <path
+    <g
       ref={(el) => {
         if (el) pathRefs.current.set(g.zoneId, el);
         else pathRefs.current.delete(g.zoneId);
       }}
-      d={g.d}
       role="button"
       tabIndex={tabbable ? 0 : -1}
       aria-label={label}
@@ -692,6 +691,7 @@ function ZonePath({ g, zone, state, tabbable, selected, pathRefs, onKeyDown, onF
       data-offset={g.offset}
       data-zone={g.zoneId}
       data-state={state}
+      data-selected={selected || focused ? 'true' : undefined}
       className={cn('t2f-zone', FILL_CLASS[state])}
       onClick={onSelect}
       onKeyDown={(e) => onKeyDown(e, g.zoneId)}
@@ -701,7 +701,49 @@ function ZonePath({ g, zone, state, tabbable, selected, pathRefs, onKeyDown, onF
         if (e.pointerType === 'mouse') onHover(g.zoneId);
       }}
       onPointerLeave={() => onHover(null)}
-    />
+    >
+      {g.band ? <path d={g.band} className="t2f-zone-band" data-zone-band={g.zoneId} /> : null}
+      {g.sea?.map((s, i) => (
+        <path
+          key={`sea-${s.iso}-${i}`}
+          d={s.d}
+          data-iso={s.iso}
+          data-hot={hot(s.iso) ? 'true' : undefined}
+          className="t2f-zone-sea"
+          onPointerEnter={enter(s.iso)}
+          onPointerLeave={leave}
+        />
+      ))}
+      {g.countries.map((c, i) => (
+        <path
+          key={`${c.iso}-${i}`}
+          d={c.d}
+          data-iso={c.iso}
+          data-hot={hot(c.iso) ? 'true' : undefined}
+          className="t2f-zone-land"
+          fillRule="evenodd"
+          onPointerEnter={enter(c.iso)}
+          onPointerLeave={leave}
+        />
+      ))}
+      {areas?.map((a) => (
+        <rect
+          key={`area-${a.x0}`}
+          x={a.x0}
+          y={a.y0}
+          width={a.x1 - a.x0}
+          height={a.y1 - a.y0}
+          rx={a.frame ? 3 : 0}
+          data-zone-area={a.zoneId}
+          data-iso={a.iso}
+          data-frame={a.frame ? 'true' : 'false'}
+          data-hot={hot(a.iso) ? 'true' : undefined}
+          className="t2f-zm-area"
+          onPointerEnter={enter(a.iso)}
+          onPointerLeave={leave}
+        />
+      ))}
+    </g>
   );
 }
 

@@ -27,16 +27,16 @@ function setup(props: Partial<ZoneMapProps> = {}, at = NOW) {
     </NextIntlClientProvider>
   );
   const view = render(ui(props));
-  const path = (zoneId: string) => view.container.querySelector<SVGPathElement>(`path[data-zone="${zoneId}"]`)!;
+  const path = (zoneId: string) => view.container.querySelector<SVGGElement>(`g[data-zone="${zoneId}"]`)!;
   return { machine, view, path };
 }
 
 describe('ZoneMap: стани поясів', () => {
   it('38 шляхів з data-offset і рівно одним Tab-стопом', () => {
     const { view } = setup();
-    const paths = view.container.querySelectorAll('path[data-offset]');
+    const paths = view.container.querySelectorAll('g[data-offset]');
     expect(paths).toHaveLength(38);
-    expect(view.container.querySelectorAll('path[data-offset][tabindex="0"]')).toHaveLength(1);
+    expect(view.container.querySelectorAll('g[data-offset][tabindex="0"]')).toHaveLength(1);
   });
 
   it('класи is-past | is-live | is-next | is-ahead від zoneState', () => {

@@ -40,12 +40,10 @@
 .mapBox:active {
   cursor: grabbing;
 }
-/* Сцена мапи: масштабується й зсувається від лівого верхнього кута. */
+/* Сцена мапи: SVG з viewBox (масштаб — векторний) і шар точок поверх. */
 .stage {
   position: absolute;
   inset: 0;
-  transform-origin: 0 0;
-  will-change: transform;
 }
 /* Назва міста біля точки (від ×2). */
 .cityName {

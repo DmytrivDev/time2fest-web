@@ -45,76 +45,89 @@
   fill: #16161a;
   pointer-events: none;
 }
-/* Смуга поясу в океані: колір стану ледь-ледь. */
-.t2f-zone-band {
-  opacity: 0.16;
-  cursor: pointer;
-}
-.t2f-zone-band.is-past {
-  fill: #3a3a42;
-}
-.t2f-zone-band.is-live {
-  fill: var(--color-zone-live);
-}
-.t2f-zone-band.is-next {
-  fill: var(--color-zone-next);
-}
-.t2f-zone-band.is-ahead {
-  fill: var(--color-zone-future);
-}
-/* Область дрібних островів: легка заливка кольору стану; пунктирна рамка, якщо пояс не обведений своєю лінією. */
-.t2f-zm-area {
-  fill-opacity: 0.14;
-  stroke-width: 1;
-  stroke-dasharray: 3 2;
-  stroke-opacity: 0.7;
-  vector-effect: non-scaling-stroke;
-  cursor: pointer;
-}
-.t2f-zm-area[data-frame='false'] {
-  stroke: none;
-}
-.t2f-zm-area.is-past {
-  fill: #9a9aa3;
-  stroke: #9a9aa3;
-}
-.t2f-zm-area.is-live {
-  fill: var(--color-zone-live);
-  stroke: var(--color-zone-live);
-}
-.t2f-zm-area.is-next {
-  fill: var(--color-zone-next);
-  stroke: var(--color-zone-next);
-}
-.t2f-zm-area.is-ahead {
-  fill: #c98a62;
-  stroke: #c98a62;
-}
-/* Точки, значки й підписи на мапі тримають розмір при наближенні (сцена масштабується, вони — навпаки). */
-.t2f-zm-pin {
-  scale: calc(1 / var(--zm-k, 1));
-}
+/* Пояс — група (рішення власника 2026-11-02): смуга в океані, морські області острівних країн, країни, області
+   дрібних островів. Колір — від стану групи. Наведення на будь-яку частину поясу трохи підсвічує весь пояс; країна під
+   курсором (чи її морська область) — сильніше. Вибраний пояс і фокус з клавіатури — так само кольором. Кордони й межі
+   не виділяються (лінії мапи лежать поверх і не ловлять курсор). */
 .t2f-zone {
-  stroke: none;
+  --zm-fill: var(--color-zone-future);
+  --zm-band: var(--color-zone-future);
+  --zm-area: #c98a62;
   cursor: pointer;
   outline: none;
 }
 .t2f-zone.is-past {
-  fill: #34343b;
+  --zm-fill: #34343b;
+  --zm-band: #3a3a42;
+  --zm-area: #9a9aa3;
 }
 .t2f-zone.is-live {
-  fill: var(--color-zone-live);
+  --zm-fill: var(--color-zone-live);
+  --zm-band: var(--color-zone-live);
+  --zm-area: var(--color-zone-live);
 }
 .t2f-zone.is-next {
-  fill: var(--color-zone-next);
+  --zm-fill: var(--color-zone-next);
+  --zm-band: var(--color-zone-next);
+  --zm-area: var(--color-zone-next);
 }
-.t2f-zone.is-ahead {
-  fill: var(--color-zone-future);
+.t2f-zone-land {
+  fill: var(--zm-fill);
+  transition: filter 120ms ease;
 }
-.t2f-zone:hover {
-  stroke: var(--color-text-secondary);
-  stroke-width: 1.5;
+.t2f-zone-band {
+  fill: var(--zm-band);
+  opacity: 0.16;
+  transition: opacity 120ms ease;
+}
+/* Морська область острівної країни: невидима, доки її країна не під курсором. */
+.t2f-zone-sea {
+  fill: var(--zm-band);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.t2f-zone:hover .t2f-zone-band,
+.t2f-zone[data-selected='true'] .t2f-zone-band {
+  opacity: 0.26;
+}
+.t2f-zone:hover .t2f-zone-land,
+.t2f-zone[data-selected='true'] .t2f-zone-land {
+  filter: brightness(1.14);
+}
+.t2f-zone-land[data-hot='true'] {
+  filter: brightness(1.38);
+}
+.t2f-zone-sea[data-hot='true'] {
+  opacity: 0.22;
+}
+/* Область дрібних островів: легка заливка кольору стану; тонка пунктирна рамка довшими штрихами, якщо пояс не обведений
+   своєю лінією. */
+.t2f-zm-area {
+  fill: var(--zm-area);
+  fill-opacity: 0.12;
+  stroke: var(--zm-area);
+  stroke-width: 0.6;
+  stroke-dasharray: 6 4;
+  stroke-opacity: 0.6;
   vector-effect: non-scaling-stroke;
+  transition: fill-opacity 120ms ease;
+}
+.t2f-zm-area[data-frame='false'] {
+  stroke: none;
+}
+.t2f-zone:hover .t2f-zm-area {
+  fill-opacity: 0.2;
+}
+.t2f-zm-area[data-hot='true'] {
+  fill-opacity: 0.3;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t2f-zone-land,
+  .t2f-zone-band,
+  .t2f-zone-sea,
+  .t2f-zm-area {
+    transition: none;
+  }
 }
 
 /* Точки міст (макет): тиха — 8 px text 70 % з кільцем фону; у ефірі — 10 px коралова, біле кільце, тінь. */
@@ -127,24 +140,6 @@
     0 0 0 2px var(--color-on-primary),
     0 1px 4px 2px rgba(0, 0, 0, 0.45);
 }
-.t2f-zone-ring {
-  fill: none;
-  pointer-events: none;
-  vector-effect: non-scaling-stroke;
-}
-.t2f-zone-ring[data-ring='selected'] {
-  stroke: var(--color-text);
-  stroke-width: 2;
-}
-.t2f-zone-ring[data-ring='focus-outer'] {
-  stroke: var(--color-focus-ring-outer);
-  stroke-width: 6;
-}
-.t2f-zone-ring[data-ring='focus'] {
-  stroke: var(--color-focus-ring);
-  stroke-width: 3;
-}
-
 /* Легенда: зразки станів. */
 .t2f-zm-sw {
   position: relative;

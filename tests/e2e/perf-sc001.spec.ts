@@ -115,7 +115,7 @@ async function measure(page: Page, net: NetProfile): Promise<Measure> {
     return {
       lcp: w.__lcp,
       fcp: w.__fcp,
-      mapPathsAtLoad: document.querySelectorAll('[data-zone-map] path[data-offset]').length,
+      mapPathsAtLoad: document.querySelectorAll('[data-zone-map] g[data-offset]').length,
     };
   });
   const r: Measure = { ...m, firstFrame, playerBeforePaint };

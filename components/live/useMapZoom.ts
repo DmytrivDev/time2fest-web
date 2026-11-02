@@ -2,8 +2,9 @@
 
 /**
  * Масштаб і переміщення мапи поясів (рішення власника 2026-11-02, дошка `Desk-Map-Base`): колесо миші, перетягування,
- * щипок двома пальцями, кнопки «−» / «+» / «Скинути»; масштаб 1–8×. Сцена (`stageRef`) масштабується CSS-трансформом
- * від лівого верхнього кута й не виходить за рамку (`boxRef`).
+ * щипок двома пальцями, кнопки «−» / «+» / «Скинути»; масштаб 1–8×. `view` — масштаб `k` і зсув (x, y) у пікселях
+ * рамки (`boxRef`); мапа з нього міняє `viewBox` SVG (векторно, без втрати якості), а точки — свої координати.
+ * Мапа не виходить за рамку.
  * - Колесо на масштабі 100 % униз прокручує сторінку, а не мапу (щоб мапа не «ловила» прокрутку).
  * - На дотик одним пальцем при 100 % сторінка прокручується як звичайно; від наближення палець тягне мапу.
  * - Після перетягування клік (по поясу, місту) не спрацьовує.
@@ -34,6 +35,7 @@ function clampView(v: MapView, w: number, h: number): MapView {
 /** `ready` — рамка вже в DOM (геометрія завантажена): тоді й чіпляємо слухачі. */
 export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) {
   const [view, setViewState] = useState<MapView>(START);
+  const [box, setBox] = useState({ w: 0, h: 0 });
   const viewRef = useRef(view);
   const setView = useCallback((v: MapView) => {
     viewRef.current = v;
@@ -173,6 +175,7 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
     if (!el || typeof ResizeObserver !== 'function') return;
     const ro = new ResizeObserver(() => {
       const { w, h } = size();
+      setBox((b) => (b.w === w && b.h === h ? b : { w, h }));
       setView(clampView(viewRef.current, w, h));
     });
     ro.observe(el);
@@ -180,5 +183,5 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boxRef, ready]);
 
-  return { view, zoomIn, zoomOut, reset };
+  return { view, box, zoomIn, zoomOut, reset };
 }

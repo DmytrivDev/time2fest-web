@@ -94,8 +94,19 @@ export function buildMapModel(data: Dataset): MapModel {
  */
 export interface ZoneMapGeometry {
   meta: { width: number; height: number; lon0: number; pxPerDeg: number; equatorY: number };
-  /** Пояс: суходіл `d`, смуга в океані `band` (варіант «смуги поясів»), точка значка `label`. */
-  zones: { offset: string; offsetMinutes: number; zoneId: string; d: string; band?: string; label: [number, number] }[];
+  /**
+   * Пояс: країни (окремі шляхи — для підсвітки країни), морські області острівних країн `sea`, смуга в океані `band`
+   * (варіант «смуги поясів»), точка значка `label`.
+   */
+  zones: {
+    offset: string;
+    offsetMinutes: number;
+    zoneId: string;
+    countries: { iso: string; d: string }[];
+    sea?: { iso: string; d: string }[];
+    band?: string;
+    label: [number, number];
+  }[];
   /** Пояси, суходолу яких майже не видно (Кірітіматі, Чатем), — точка. */
   markers: { zoneId: string; x: number; y: number }[];
   /** Кордони країн на суходолі, один шлях. */
@@ -109,7 +120,7 @@ export interface ZoneMapGeometry {
   /** Великі озера (колір океану). */
   lakes?: string;
   /** Області дрібних островів (Андамани, Лакшадвіп, Маркізькі): `frame` — пунктирна рамка, інакше лише заливка. */
-  areas?: { zoneId: string; x0: number; y0: number; x1: number; y1: number; frame: boolean }[];
+  areas?: { zoneId: string; iso: string; x0: number; y0: number; x1: number; y1: number; frame: boolean }[];
 }
 
 /** lon/lat → пікселі мапи (та сама проекція Міллера, що й у скрипті збирання). */

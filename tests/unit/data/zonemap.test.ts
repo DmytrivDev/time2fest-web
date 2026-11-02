@@ -34,7 +34,7 @@ describe('zonemap.json', () => {
 
   it('кожен пояс має суходіл; цілогодинні — ще й смугу в океані; дрібні пояси — маркер (Кірітіматі, Чатем)', () => {
     for (const z of geo.zones) {
-      expect(z.d.length).toBeGreaterThan(20);
+      expect(z.countries.map((c) => c.d).join('').length).toBeGreaterThan(20);
       // Пояси з хвилинами (Іран, Індія, Непал, М’янма, центр Австралії, Чатем…) — лише суходіл.
       if (z.offsetMinutes % 60 === 0) expect((z.band ?? '').length).toBeGreaterThan(20);
     }

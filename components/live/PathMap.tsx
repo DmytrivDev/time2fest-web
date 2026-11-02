@@ -91,7 +91,7 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
     <div className={cn('relative w-full overflow-hidden rounded-md bg-surface', className)} style={{ aspectRatio: meta.width / meta.height }}>
       <svg viewBox={`0 0 ${meta.width} ${meta.height}`} aria-hidden="true" className="absolute inset-0 block size-full">
         {geometry.zones.map((g) => (
-          <path key={g.zoneId} d={g.d} className="t2f-pathmap-zone" />
+          <path key={g.zoneId} d={g.countries.map((c) => c.d).join('')} className="t2f-pathmap-zone" />
         ))}
         {placed.slice(1).map((cur, i) => {
           const prev = placed[i]!;

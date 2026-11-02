@@ -4,7 +4,8 @@
   python -X utf8 scripts/zonemap-v2/to_site.py <тека з map_data.json>
 
 Вихід (`ZoneMapGeometry`, components/live/MapModel.ts):
-  zones   — пояс: суходіл `d`, смуга в океані `band`, точка значка `label`;
+  zones   — пояс: країни `countries` ({iso, d}), морські області острівних країн `sea` ({iso, d}), смуга в океані
+            `band`, точка значка `label` (окремі шляхи країн — для підсвітки країни при наведенні);
   markers — пояси, суходолу яких майже не видно (дрібні острови): точка на мапі;
   borders — кордони країн на суходолі; zoneLines — межі поясів (океан + суходіл, разом із кордонами-межами);
   sea — умовні кордони в морі між острівними країнами; dayline — лінія зміни дат; lakes — великі озера;
@@ -115,6 +116,23 @@ def svg_abs(d, step=1.5):
 
 
 bands = {b['offsetMinutes']: b['d'] for b in M['bands']}
+
+# Морські області острівних країн (стара мапа) → пояс за островами тієї ж країни всередині області.
+land_by_iso = {}
+for z in M['zones']:
+    for c in z['countries']:
+        land_by_iso.setdefault(c['iso'], []).append((z['offsetMinutes'], geom(c['d'])))
+sea_by_zone = {}
+for a in M.get('seaAreas', []):
+    g = geom(svg_abs(a['d']) if not a['d'].startswith('M') or 'Z' not in a['d'] else a['d'])
+    if g.is_empty:
+        continue
+    cand = land_by_iso.get(a['iso'], [])
+    if not cand:
+        continue
+    o = max(cand, key=lambda og: (og[1].intersection(g).area, -og[1].distance(g)))[0]
+    sea_by_zone.setdefault(o, []).append({'iso': a['iso'], 'd': compact(a['d'], 0.3, True)})
+
 zones, markers = [], []
 for z in M['zones']:
     o = z['offsetMinutes']
@@ -125,7 +143,10 @@ for z in M['zones']:
     g = geom(d)
     parts = sorted(getattr(g, 'geoms', [g]), key=lambda p: -p.area)
     pt = parts[0].representative_point() if parts and not parts[0].is_empty else None
-    zones.append({'offset': label(o), 'offsetMinutes': o, 'zoneId': zid, 'd': compact(d, 0.3, True), 'band': compact(svg_abs(bands.get(o, '')), 0.2, True),
+    zones.append({'offset': label(o), 'offsetMinutes': o, 'zoneId': zid,
+                  'countries': [{'iso': c['iso'], 'd': compact(c['d'], 0.3, True)} for c in z['countries']],
+                  'sea': sea_by_zone.get(o, []),
+                  'band': compact(svg_abs(bands.get(o, '')), 0.2, True),
                   'label': [r1(pt.x), r1(pt.y)] if pt else [0, 0]})
     if (g.area < 60 or (parts and parts[0].area < 30)) and pt is not None:  # пояс з дрібних островів
         markers.append({'zoneId': zid, 'x': r1(pt.x), 'y': r1(pt.y)})
@@ -146,7 +167,7 @@ out = {
     'sea': compact(M['sea'], 0.3, False),
     'dayline': compact(M['dayline'], 0, False),
     'lakes': ''.join(compact(svg_abs(d), 0.3, True) for d in M['lakes']),
-    'areas': [{'zoneId': zone_id(a['zone']), 'x0': a['box'][0], 'y0': a['box'][1], 'x1': a['box'][2], 'y1': a['box'][3], 'frame': not a['zoneBox']}
+    'areas': [{'zoneId': zone_id(a['zone']), 'iso': a['iso'], 'x0': a['box'][0], 'y0': a['box'][1], 'x1': a['box'][2], 'y1': a['box'][3], 'frame': not a['zoneBox']}
               for a in M['areas']],
 }
 dst = ROOT / 'data' / 'zonemap.json'

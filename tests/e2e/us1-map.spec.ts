@@ -20,7 +20,7 @@ const SCENE = '2026-12-31T23:50:00Z'; // Лондон у ефірі, Азорс�
 
 const isPhone = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
 const map = (page: Page) => page.locator('[data-zone-map]');
-const zone = (page: Page, id: string) => map(page).locator(`path[data-zone="${id}"]`);
+const zone = (page: Page, id: string) => map(page).locator(`g[data-zone="${id}"]`);
 
 async function openMap(page: Page, at = SCENE) {
   await gotoAt(page, at, 0);
@@ -29,15 +29,15 @@ async function openMap(page: Page, at = SCENE) {
   if (await necessary.isVisible().catch(() => false)) await necessary.click();
   const m = map(page);
   await m.scrollIntoViewIfNeeded();
-  await expect(m.locator('path[data-offset]').first()).toBeVisible();
+  await expect(m.locator('g[data-offset]').first()).toBeVisible();
   return m;
 }
 
 test.describe('Мапа поясів: дані й стани', () => {
   test('38 шляхів data-offset, один Tab-стоп, стани від часу', async ({ page }) => {
     const m = await openMap(page);
-    await expect(m.locator('path[data-offset]')).toHaveCount(38);
-    await expect(m.locator('path[data-offset][tabindex="0"]')).toHaveCount(1);
+    await expect(m.locator('g[data-offset]')).toHaveCount(38);
+    await expect(m.locator('g[data-offset][tabindex="0"]')).toHaveCount(1);
     await expect(zone(page, 'utc+0000')).toHaveClass(/is-live/);
     await expect(zone(page, 'utc-0100')).toHaveClass(/is-next/);
     await expect(zone(page, 'utc+0100')).toHaveClass(/is-past/);
@@ -143,10 +143,10 @@ test.describe('Мапа поясів: клавіатура', () => {
     const m = await openMap(page);
     await m.getByRole('button', { name: 'Мапа', exact: true }).focus();
     await page.keyboard.press('Tab');
-    const onPath = await page.evaluate(() => document.activeElement?.matches('path[data-offset]') ?? false);
+    const onPath = await page.evaluate(() => document.activeElement?.matches('g[data-offset]') ?? false);
     expect(onPath).toBe(true);
     await page.keyboard.press('Tab');
-    const stillOnPath = await page.evaluate(() => document.activeElement?.matches('path[data-offset]') ?? false);
+    const stillOnPath = await page.evaluate(() => document.activeElement?.matches('g[data-offset]') ?? false);
     expect(stillOnPath).toBe(false);
   });
 
