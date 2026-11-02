@@ -129,29 +129,41 @@ describe('PassGate', () => {
 });
 
 describe('CookieBanner', () => {
-  it('три рівноцінні secondary-кнопки, коралової немає', () => {
+  it('bar: «Налаштувати», «Лише необхідні», «Прийняти» — рівноцінні, коралової немає; × окремо', () => {
     const onAccept = vi.fn();
     const onNecessary = vi.fn();
     const onCustomize = vi.fn();
-    renderPlain(<CookieBanner variant="corner" onAccept={onAccept} onNecessaryOnly={onNecessary} onCustomize={onCustomize} />);
+    const onClose = vi.fn();
+    renderPlain(
+      <CookieBanner variant="bar" onAccept={onAccept} onNecessaryOnly={onNecessary} onCustomize={onCustomize} onClose={onClose} />,
+    );
     const region = screen.getByRole('region', { name: 'Cookies на Time2Fest' });
     const buttons = within(region).getAllByRole('button');
-    expect(buttons.map((b) => b.textContent)).toEqual(['Прийняти', 'Лише необхідні', 'Налаштувати']);
-    for (const b of buttons) expect(b).toHaveAttribute('data-variant', 'secondary');
-    fireEvent.click(buttons[0]!);
-    fireEvent.click(buttons[1]!);
-    fireEvent.click(buttons[2]!);
-    expect([onAccept, onNecessary, onCustomize].map((f) => f.mock.calls.length)).toEqual([1, 1, 1]);
-    expect(region).toHaveAttribute('data-cookie-banner', 'corner');
+    expect(buttons.map((b) => b.textContent || b.getAttribute('aria-label'))).toEqual([
+      'Налаштувати',
+      'Лише необхідні',
+      'Прийняти',
+      'Закрити — лише необхідні',
+    ]);
+    for (const b of buttons) expect(b).not.toHaveAttribute('data-variant', 'coral');
+    for (const b of buttons) fireEvent.click(b);
+    expect([onCustomize, onNecessary, onAccept, onClose].map((f) => f.mock.calls.length)).toEqual([1, 1, 1, 1]);
+    expect(region).toHaveAttribute('data-cookie-banner', 'bar');
+    expect(region).toHaveTextContent('Необхідні — завжди');
   });
 
-  it('варіанти strip / inflow і стан «не збережено»', () => {
+  it('card і compact-текст; схована плашка недоступна; стан «не збережено»', () => {
     const onRetry = vi.fn();
-    const { unmount } = renderPlain(<CookieBanner variant="strip" />);
-    expect(screen.getByRole('region', { name: 'Згода на cookies' })).toHaveAttribute('data-cookie-banner', 'strip');
+    const { unmount } = renderPlain(<CookieBanner variant="card" />);
+    expect(screen.getByRole('region', { name: 'Cookies на Time2Fest' })).toHaveAttribute('data-cookie-banner', 'card');
     unmount();
-    renderPlain(<CookieBanner variant="inflow" saveFailed onRetry={onRetry} />);
-    expect(document.querySelector('[data-cookie-banner="inflow"]')).not.toBeNull();
+    const r2 = renderPlain(<CookieBanner variant="bar" compact hidden />);
+    const hidden = document.querySelector('[data-cookie-banner="bar"]')!;
+    expect(hidden).toHaveTextContent('Аналітика й відео з Facebook — лише з твоєї згоди.');
+    expect(hidden).toHaveAttribute('data-hidden', 'true');
+    expect(hidden).toHaveAttribute('aria-hidden', 'true');
+    r2.unmount();
+    renderPlain(<CookieBanner variant="bar" saveFailed onRetry={onRetry} />);
     expect(screen.getByRole('alert')).toHaveTextContent('Не вдалося зберегти вибір');
     fireEvent.click(screen.getByRole('button', { name: 'Спробувати ще' }));
     expect(onRetry).toHaveBeenCalledTimes(1);

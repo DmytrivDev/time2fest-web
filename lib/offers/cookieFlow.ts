@@ -2,7 +2,6 @@
  * Згода на cookies (B-COOKIES, FR-065): запис вибору в `guest.consent` + перевірка, що він справді збережений.
  * Якщо сховище недоступне (приватний режим), вибір діє, поки сторінка відкрита, а банер показує
  * тихий рядок «Не вдалося зберегти вибір» і «Спробувати ще» (стан «вибір не збережено»).
- * Також тут — реєстр «хостів у потоці»: сторінка з місцем під плеєром повідомляє, що може показати смугу сама.
  */
 import { useSyncExternalStore } from 'react';
 import type { GuestConsent } from '@/lib/data/types';
@@ -36,7 +35,6 @@ function createValueStore<T>(initial: T) {
 }
 
 const failedStore = createValueStore<ConsentPatch | null>(null);
-const hostsStore = createValueStore<number>(0);
 
 /** Читає збережений стан гостя з `localStorage` і порівнює з тим, що мало записатися. */
 export function isConsentPersisted(patch: ConsentPatch): boolean {
@@ -71,15 +69,9 @@ export function useConsentSaveFailed(): boolean {
 /** Для тестів. */
 export function resetCookieFlow(): void {
   failedStore.set(null);
-  hostsStore.set(0);
 }
 
-/** Сторінка з `InFlowSlot` реєструється: якщо вільного кута немає, смугу покаже вона (на місці штампа). */
-export function registerInflowHost(): () => void {
-  hostsStore.set(hostsStore.get() + 1);
-  return () => hostsStore.set(Math.max(0, hostsStore.get() - 1));
-}
-
-export function useHasInflowHost(): boolean {
-  return useSyncExternalStore(hostsStore.subscribe, () => hostsStore.get() > 0, () => false);
+/** × на плашці після збою збереження: вибір діє в цьому сеансі, плашку ховаємо. */
+export function dismissSaveFailed(): void {
+  failedStore.set(null);
 }

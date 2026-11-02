@@ -1,23 +1,23 @@
 'use client';
 
 /**
- * C17. CookieBanner (B-COOKIES) і CookieSettings (FR-065, Phone-/Desk-Cookies, Desk-Cookies-Wide, Phone-Cookies-Settings).
- * Банер — не вікно: нічого не блокує, без затемнення. Три рівноцінні secondary-кнопки: «Прийняти», «Лише необхідні»,
- * «Налаштувати» (коралової немає). Варіанти:
- * - `corner` (десктоп) — лівий нижній кут, ≤ 360 px, не на плеєрі й не на чаті;
- * - `strip` (телефон) — невисока смуга внизу на всю ширину;
- * - `inflow` — смуга в потоці сторінки під кнопками плеєра, коли вільного кута немає (чат сховано, відео на всю ширину).
+ * C17. CookieBanner (B-COOKIES) і CookieSettings (FR-065; дошки `Desk-Cookies-Bar`, `Desk-Cookies-Design`, рішення 2026-11-02).
+ * Плашка — не вікно: нічого не блокує, без затемнення, ніколи не лягає на відео (правило YouTube; див. CookieLayer).
+ * Дії рівноцінні (коралової немає): «Налаштувати», «Лише необхідні», «Прийняти»; × — те саме, що «Лише необхідні».
+ * Варіанти:
+ * - `bar` — один рядок: десктоп (завширшки з колонку відео) і телефон горизонтально (`compact`: без значка, коротший текст);
+ * - `card` — телефон вертикально: невелика картка над «Розгорнути чат», «Налаштувати» — посиланням у тексті.
  * `CookieSettings` — вміст Sheet / ChatSlotPanel: чотири категорії (Switch), коралова «Зберегти вибір».
  */
 import { useTranslations } from 'next-intl';
-import { useId, useState, type Ref } from 'react';
+import { useId, useState, type CSSProperties, type Ref } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Switch } from '@/components/primitives/Switch';
 import { useRegisterCoral } from '@/lib/overlay/coral';
 
-export type CookieVariant = 'corner' | 'strip' | 'inflow';
+export type CookieVariant = 'bar' | 'card';
 
 export interface CookieChoices {
   analytics: boolean;
@@ -27,79 +27,154 @@ export interface CookieChoices {
 
 export interface CookieBannerProps {
   variant: CookieVariant;
+  /** Телефон горизонтально: без значка, коротший текст. */
+  compact?: boolean;
+  /** Плашка схована, бо лягла б на відео: виїжджає вниз, недоступна для фокуса. */
+  hidden?: boolean;
   onAccept?: () => void;
   onNecessaryOnly?: () => void;
   onCustomize?: () => void;
+  /** × — те саме, що «Лише необхідні» (а при збої збереження — просто ховає плашку). */
+  onClose?: () => void;
   /** Вибір не вдалося зберегти: тихий рядок + «Спробувати ще». */
   saveFailed?: boolean;
   onRetry?: () => void;
+  style?: CSSProperties;
   ref?: Ref<HTMLElement>;
   className?: string;
 }
 
-/* Макети: кут — 360 px, 16 px від низу й 32 px від лівого краю, тінь 0 12 32; смуга — тінь угору; у потоці — рядок.
-   z-index вище за хост плеєра, але банер ніколи не стоїть на відео (див. useCookiePlacement). */
-const SHELL: Record<CookieVariant, string> = {
-  corner: 't2f-cookie-corner fixed bottom-4 left-8 z-40 w-full gap-3 rounded-lg border border-border bg-surface-raised p-4',
-  strip: 't2f-cookie-strip fixed inset-x-0 bottom-0 z-40 gap-2.5 border-t border-border bg-surface-raised px-3 pb-4 pt-3',
-  inflow: 'gap-3 rounded-lg border border-border bg-surface-raised p-4 md:flex-row md:flex-wrap md:items-center md:gap-x-8 md:ps-5',
-};
+/** Значок печива в золотому колі (дошка `Desk-Cookies-Design`). */
+function Badge() {
+  return (
+    <span aria-hidden="true" className="flex size-9 flex-none items-center justify-center rounded-full bg-highlight-tint text-highlight">
+      <Icon name="cookie" size={20} />
+    </span>
+  );
+}
 
-export function CookieBanner({ variant, onAccept, onNecessaryOnly, onCustomize, saveFailed = false, onRetry, ref, className }: CookieBannerProps) {
+export function CookieBanner({
+  variant,
+  compact = false,
+  hidden = false,
+  onAccept,
+  onNecessaryOnly,
+  onCustomize,
+  onClose,
+  saveFailed = false,
+  onRetry,
+  style,
+  ref,
+  className,
+}: CookieBannerProps) {
   const t = useTranslations('cookies');
   const titleId = useId();
-  const labelled = variant !== 'strip';
-  const buttons = (
-    <div
-      className={cn(
-        variant === 'strip' ? 'flex gap-1.5 *:min-w-0 *:flex-1 *:px-2' : 'grid gap-2 *:px-3',
-        variant === 'inflow' ? 't2f-cookie-actions md:grid-cols-3' : variant === 'corner' ? 'grid-cols-2' : '',
-      )}
+  const close = (
+    <button
+      type="button"
+      aria-label={saveFailed ? t('closeShort') : t('close')}
+      onClick={onClose}
+      className="t2f-focus flex size-9 flex-none items-center justify-center rounded-md text-text-secondary hover:bg-border hover:text-text"
     >
-      <Button variant="secondary" compact={variant === 'strip'} onClick={onAccept}>
-        {t('accept')}
-      </Button>
-      <Button variant="secondary" compact={variant === 'strip'} onClick={onNecessaryOnly}>
+      <Icon name="close" size={18} />
+    </button>
+  );
+  const customize = (
+    <button
+      type="button"
+      onClick={onCustomize}
+      className="t2f-focus rounded-sm font-semibold text-text underline underline-offset-2 hover:text-text-secondary"
+    >
+      {t('customize')}
+    </button>
+  );
+  const failed = (
+    <p role="alert" data-row="save-failed" className="flex min-w-0 flex-1 items-start gap-2 text-text">
+      <Icon name="alert" size={18} className="mt-0.5 flex-none text-primary" />
+      <span>{t('saveFailed')}</span>
+    </p>
+  );
+  const retry = (
+    <Button variant="secondary" className="t2f-cookie-btn" onClick={onRetry}>
+      {t('retry')}
+    </Button>
+  );
+  const choices = (
+    <>
+      <Button variant="secondary" className="t2f-cookie-btn" onClick={onNecessaryOnly}>
         {t('necessaryOnly')}
       </Button>
-      <Button
-        variant="secondary"
-        compact={variant === 'strip'}
-        onClick={onCustomize}
-        className={cn(variant === 'corner' && 'col-span-2')}
-      >
-        {t('customize')}
+      <Button variant="secondary" className="t2f-cookie-btn" onClick={onAccept}>
+        {t('accept')}
       </Button>
-    </div>
+    </>
   );
+
   return (
     <section
       ref={ref}
-      {...(labelled ? { 'aria-labelledby': titleId } : { 'aria-label': t('regionLabel') })}
+      aria-labelledby={titleId}
+      aria-hidden={hidden || undefined}
+      inert={hidden || undefined}
       data-cookie-banner={variant}
-      style={variant === 'corner' ? { maxWidth: 'var(--cookie-banner-max-width)' } : undefined}
-      className={cn('flex flex-col', SHELL[variant], className)}
+      data-hidden={hidden ? 'true' : 'false'}
+      data-compact={compact ? 'true' : undefined}
+      style={style}
+      className={cn('t2f-cookie fixed z-40 box-border rounded-lg border border-border-strong bg-surface-raised text-text', className)}
     >
-      {labelled ? (
-        <div className={cn('flex flex-col', variant === 'inflow' ? 't2f-cookie-copy gap-0.5' : 'gap-0')}>
-          <h2 id={titleId} className="text-body font-bold leading-tight text-text">
-            {t('title')}
-          </h2>
-          <p className={cn('t2f-cookie-text text-text-secondary', variant === 'corner' && 'mt-2')}>{t('text')}</p>
+      {variant === 'bar' ? (
+        <div className={cn('flex items-center gap-3 py-2.5 pe-1.5', compact ? 'ps-4' : 'ps-3.5')}>
+          {compact || saveFailed ? null : <Badge />}
+          {saveFailed ? (
+            <>
+              <h2 id={titleId} className="sr-only">
+                {t('title')}
+              </h2>
+              {failed}
+              {retry}
+            </>
+          ) : (
+            <>
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <h2 id={titleId} className="t2f-cookie-title font-bold leading-tight">
+                  {t('title')}
+                </h2>
+                <p className="t2f-cookie-text leading-snug text-text-secondary">
+                  {compact ? t('textShort') : t('text')}
+                </p>
+              </div>
+              <div className="flex flex-none items-center gap-2">
+                <span className="t2f-cookie-link px-1.5">{customize}</span>
+                {choices}
+              </div>
+            </>
+          )}
+          {close}
         </div>
       ) : (
-        <p className="t2f-cookie-text px-1 text-text">{t('text')}</p>
-      )}
-      {buttons}
-      {saveFailed ? (
-        <div role="alert" className="flex flex-wrap items-center gap-x-3 text-caption text-text" data-row="save-failed">
-          <Icon name="alert" size={16} className="text-primary" />
-          <span className="flex-1">{t('saveFailed')}</span>
-          <Button variant="ghost" compact onClick={onRetry}>
-            {t('retry')}
-          </Button>
+        <div className="flex flex-col gap-2.5 pb-3.5 pe-1.5 ps-3.5 pt-3">
+          <div className="flex items-center gap-2.5">
+            <Badge />
+            <h2 id={titleId} className="t2f-cookie-title flex-1 font-bold leading-tight">
+              {t('title')}
+            </h2>
+            {close}
+          </div>
+          {saveFailed ? (
+            <div className="flex flex-col gap-2.5 pe-2">
+              {failed}
+              {retry}
+            </div>
+          ) : (
+            <>
+              <p className="t2f-cookie-text pe-2 leading-snug text-text-secondary">
+                {t('text')} {customize}
+              </p>
+              <div className="grid grid-cols-2 gap-2 pe-2 *:min-w-0 *:px-2">{choices}</div>
+            </>
+          )}
         </div>
-      ) : null}
+      )}
     </section>
   );
 }

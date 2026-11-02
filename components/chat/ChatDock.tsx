@@ -260,7 +260,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     };
   }, [land, open]);
 
-  // Розгорнутий чат: смуга cookies тимчасово ховається (inline-стиль не потрібен — правило в primitives.css).
+  // Розгорнутий чат: плашка cookies тимчасово ховається (inline-стиль не потрібен — правило в primitives.css).
   useEffect(() => {
     if (!open && !seat) return;
     document.documentElement.setAttribute('data-chat-dock-expanded', '');

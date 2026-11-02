@@ -244,8 +244,7 @@
 .column > [data-moment-slot]:has(> [data-in-flow-slot='empty']) {
   margin-bottom: calc(-1 * var(--spacing-4));
 }
-.phoneInflow:has([data-in-flow-slot='occupied']),
-.phoneInflow:has([data-cookie-banner]) {
+.phoneInflow:has([data-in-flow-slot='occupied']) {
   padding-bottom: var(--spacing-4);
 }
 

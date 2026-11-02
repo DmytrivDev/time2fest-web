@@ -281,38 +281,35 @@ test.describe('US6 · «Поділитися» штампом', () => {
 });
 
 test.describe('US6 · cookies', () => {
-  test('перший візит: банер із трьома рівноцінними кнопками; «Прийняти» зберігає вибір і ховає банер', async ({
+  test('перший візит: плашка внизу, дії рівноцінні; «Прийняти» зберігає вибір і ховає плашку', async ({
     page,
   }) => {
     await seedGuest(page, { consentAnswered: false });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
     const banner = page.locator('[data-cookie-banner]');
     await expect(banner).toBeVisible();
-    await expect(banner.getByRole('button')).toHaveText([
-      'Прийняти',
-      'Лише необхідні',
-      'Налаштувати',
-    ]);
+    // Рішення 2026-11-02 (дошка `Desk-Cookies-Design`): «Налаштувати», «Лише необхідні», «Прийняти», × — без коралової.
+    await expect(banner.getByRole('button').filter({ hasText: /\S/ })).toHaveText(['Налаштувати', 'Лише необхідні', 'Прийняти']);
+    await expect(banner.getByRole('button', { name: 'Закрити — лише необхідні' })).toBeVisible();
     await expect(banner.locator('[data-variant="coral"]')).toHaveCount(0);
+    expect(await banner.evaluate((el) => getComputedStyle(el).position)).toBe('fixed');
 
+    const box = (await banner.boundingBox())!;
+    const vp = page.viewportSize()!;
     if (isPhone(page)) {
-      await expect(banner).toHaveAttribute('data-cookie-banner', 'strip');
-      const box = (await banner.boundingBox())!;
-      const vp = page.viewportSize()!;
-      expect(box.x).toBe(0);
-      expect(Math.round(box.width)).toBe(vp.width);
-      // Телефон: смуга стоїть рівно над згорнутим вікном чату (його висота може змінюватись).
+      // Телефон вертикально: картка над згорнутим вікном чату, з відступами 12 px.
+      await expect(banner).toHaveAttribute('data-cookie-banner', 'card');
+      expect(Math.round(box.x)).toBe(12);
+      expect(Math.round(box.width)).toBe(vp.width - 24);
       const dock = (await page.locator('[data-chat-dock]').boundingBox())!;
-      expect(Math.round(box.y + box.height)).toBe(Math.round(dock.y));
-      expect(Math.round(dock.y + dock.height)).toBe(vp.height);
+      expect(Math.round(box.y + box.height)).toBe(Math.round(dock.y) - 12);
     } else {
-      await expect(banner).toHaveAttribute('data-cookie-banner', 'corner');
-      const box = (await banner.boundingBox())!;
-      expect(box.width).toBeLessThanOrEqual(360);
-      expect(box.x).toBeLessThan(64);
-      // Не на плеєрі: нічого поверх відео.
+      // Десктоп: один рядок завширшки з колонку відео, 16 px від низу; чат праворуч не закриває.
+      await expect(banner).toHaveAttribute('data-cookie-banner', 'bar');
       const player = (await page.locator('[data-player-slot="main"]').boundingBox())!;
-      expect(box.y).toBeGreaterThanOrEqual(player.y + player.height - 1);
+      expect(Math.abs(box.x - player.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(box.width - player.width)).toBeLessThanOrEqual(1);
+      expect(Math.round(vp.height - box.y - box.height)).toBe(16);
     }
 
     // DOM рано: одразу після посилань-пропусків, до хедера.
@@ -337,19 +334,33 @@ test.describe('US6 · cookies', () => {
     });
   });
 
-  test('чат сховано (десктоп): банер — смуга в потоці під кнопками плеєра, на місці штампа, не на відео', async ({
-    page,
-  }) => {
-    test.skip(isPhone(page), 'на телефоні завжди смуга внизу');
-    await seedGuest(page, { consentAnswered: false, chatHidden: true });
+  test('не лягає на відео: низький екран — схована, прокрутили — виїхала, назад — знову схована', async ({ page }) => {
+    test.skip(isPhone(page), 'телефон вертикально: відео вгорі, картка внизу — не перетинаються');
+    await page.setViewportSize({ width: 1280, height: 640 });
+    await seedGuest(page, { consentAnswered: false });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
     const banner = page.locator('[data-cookie-banner]');
-    await expect(banner).toHaveAttribute('data-cookie-banner', 'inflow');
-    const player = (await page.locator('[data-player-slot="main"]').boundingBox())!;
+    await expect(banner).toHaveAttribute('data-hidden', 'true');
+    await expect(banner).toHaveAttribute('aria-hidden', 'true');
+    await page.evaluate(() => window.scrollTo(0, 300));
+    await expect(banner).toHaveAttribute('data-hidden', 'false');
+    const player = (await page.locator('[data-player-host]').boundingBox())!;
     const box = (await banner.boundingBox())!;
-    expect(box.y).toBeGreaterThanOrEqual(player.y + player.height - 1);
-    // У потоці, не fixed.
-    expect(await banner.evaluate((el) => getComputedStyle(el).position)).not.toBe('fixed');
+    expect(box.y).toBeGreaterThanOrEqual(player.y + player.height);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(banner).toHaveAttribute('data-hidden', 'true');
+  });
+
+  test('× — те саме, що «Лише необхідні»: плашка зникає, вибір збережено', async ({ page }) => {
+    await seedGuest(page, { consentAnswered: false });
+    await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
+    const banner = page.locator('[data-cookie-banner]');
+    await banner.getByRole('button', { name: 'Закрити — лише необхідні' }).click();
+    await expect(banner).toHaveCount(0);
+    const consent = await page.evaluate(
+      () => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.consent,
+    );
+    expect(consent).toMatchObject({ answered: true, analytics: false, marketing: false, facebookVideo: false });
   });
 
   test('«Налаштувати» — 4 категорії; «Відео з Facebook» пишеться в guest.consent', async ({
@@ -360,6 +371,8 @@ test.describe('US6 · cookies', () => {
     await page.locator('[data-cookie-banner]').getByRole('button', { name: 'Налаштувати' }).click();
     const dialog = page.getByRole('dialog', { name: 'Налаштування cookies' });
     await expect(dialog).toBeVisible();
+    // Поки відкриті налаштування, плашки немає.
+    await expect(page.locator('[data-cookie-banner]')).toHaveCount(0);
     await expect(dialog.getByRole('switch')).toHaveCount(4);
     await expect(dialog.getByRole('switch', { name: 'Необхідні' })).toBeDisabled();
     await expect(dialog.getByText('Завжди увімкнені')).toBeVisible();

@@ -45,6 +45,7 @@ export type IconName =
   | 'passport'
   | 'heart'
   | 'glass'
+  | 'cookie'
   | 'help'
   | 'motion'
   | 'grid4'
@@ -243,6 +244,12 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <path d="M8 3h8l-1 7a3 3 0 0 1-6 0z" />
       <path d="M12 13v7M8.5 21h7" />
+    </>
+  ),
+  cookie: (
+    <>
+      <path d="M12 3a9 9 0 1 0 9 9 3 3 0 0 1-3-3 3 3 0 0 1-3-3 3 3 0 0 1-3-3z" />
+      <path d="M8.5 11h.01M12 15.5h.01M15.5 13h.01M9 7.5h.01" />
     </>
   ),
   help: (

@@ -285,26 +285,52 @@ html[data-reduce-motion='true'] .t2f-spin {
   }
 }
 
-/* Банер cookies (макети `Desk-Cookies`, `Phone-Cookies`). */
-.t2f-cookie-corner {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+/* Плашка cookies (дошки `Desk-Cookies-Bar`, `Desk-Cookies-Design`): тінь, виїзд униз, коли лягла б на відео. */
+.t2f-cookie {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 200ms ease;
 }
-.t2f-cookie-strip {
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+.t2f-cookie[data-hidden='true'] {
+  transform: translateY(calc(100% + 32px));
+  opacity: 0;
+  pointer-events: none;
+}
+html[data-reduce-motion='true'] .t2f-cookie {
+  transition: none;
+}
+.t2f-cookie-phone {
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+}
+html[data-has-chat-dock] .t2f-cookie-phone {
+  bottom: calc(var(--chat-dock-h, 0px) + 12px);
+}
+.t2f-cookie .t2f-cookie-btn {
+  min-height: 40px;
+  padding-inline: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.t2f-cookie-title {
+  font-size: 15px;
 }
 .t2f-cookie-text {
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 13.5px;
 }
-@media (min-width: 768px) {
-  .t2f-cookie-copy {
-    flex: 1 1 420px;
-    min-width: 0;
-  }
-  .t2f-cookie-actions {
-    flex: 0 1 600px;
-    min-width: 0;
-  }
+.t2f-cookie-link {
+  font-size: 14px;
+}
+.t2f-cookie[data-compact='true'] .t2f-cookie-title {
+  font-size: 14px;
+}
+.t2f-cookie[data-compact='true'] .t2f-cookie-text {
+  font-size: 12.5px;
+}
+.t2f-cookie[data-compact='true'] .t2f-cookie-btn {
+  font-size: 13.5px;
 }
 
 /* Чат за макетом `Main`: пігулка поля, іконки шапки text-secondary, дії повідомлення — при наведенні чи фокусі
@@ -1572,11 +1598,8 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   opacity: 0;
 }
 
-/* Смуга cookies на телефоні стоїть над згорнутим вікном чату; розгорнутий чат її тимчасово ховає. */
-html[data-has-chat-dock] .t2f-cookie-strip {
-  bottom: var(--chat-dock-h, 0px);
-}
-html[data-chat-dock-expanded] .t2f-cookie-strip {
+/* Картка cookies на телефоні стоїть над згорнутим вікном чату; розгорнутий чат її тимчасово ховає. */
+html[data-chat-dock-expanded] .t2f-cookie {
   display: none;
 }
 

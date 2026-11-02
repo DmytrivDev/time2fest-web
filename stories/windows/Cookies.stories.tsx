@@ -8,7 +8,7 @@ const meta = {
   title: 'Вікна/Cookies',
   component: CookieBanner,
   globals: { surface: 'phone' },
-  args: { variant: 'strip' },
+  args: { variant: 'card', className: 'bottom-3 inset-x-3' },
   decorators: [
     (Story) => (
       <CoralProvider>
@@ -22,23 +22,23 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Strip: Story = { name: 'strip — Phone-Cookies (смуга внизу)' };
+export const Card: Story = { name: 'card — телефон вертикально (над «Розгорнути чат»)' };
 
-export const Corner: Story = {
-  name: 'corner — Desk-Cookies (лівий нижній кут, ≤ 360 px)',
+export const Bar: Story = {
+  name: 'bar — десктоп (завширшки з колонку відео)',
   globals: { surface: 'desktop' },
-  args: { variant: 'corner' },
+  args: { variant: 'bar', className: 'bottom-4 inset-x-8' },
 };
 
-export const Inflow: Story = {
-  name: 'inflow — Desk-Cookies-Wide (чат сховано: смуга на місці штампа)',
-  globals: { surface: 'desktop' },
-  args: { variant: 'inflow' },
+export const BarCompact: Story = {
+  name: 'bar compact — телефон горизонтально',
+  args: { variant: 'bar', compact: true, className: 'bottom-3 inset-x-3' },
 };
 
 export const SaveFailed: Story = {
   name: 'вибір не збережено — тихий рядок і «Спробувати ще»',
-  args: { variant: 'inflow', saveFailed: true },
+  globals: { surface: 'desktop' },
+  args: { variant: 'bar', saveFailed: true, className: 'bottom-4 inset-x-8' },
 };
 
 export const Settings: Story = {

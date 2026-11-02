@@ -2,7 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react';
 import { useEffect } from 'react';
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CookieFooter, CookieInflow, CookieLayer } from '@/components/offers/CookieLayer';
+import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useOfferWindows, type PassWindowsApi } from '@/components/offers/useOfferWindows';
 import { FacebookConsentCard } from '@/components/player/FacebookConsentCard';
@@ -323,14 +323,14 @@ describe('пропозиції — блок під штампом (рішенн�
 describe('cookies', () => {
   const consent = () => useGuestStore.getState().consent;
 
-  it('телефон: смуга внизу, нижній відступ сторінки; «Прийняти» вмикає все й ховає банер', () => {
+  it('телефон: картка внизу, нижній відступ сторінки; «Прийняти» вмикає все й ховає плашку', () => {
     renderPage(<CookieLayer />);
-    const banner = screen.getByRole('region', { name: 'Згода на cookies' });
-    expect(banner).toHaveAttribute('data-cookie-banner', 'strip');
+    const banner = screen.getByRole('region', { name: 'Cookies на Time2Fest' });
+    expect(banner).toHaveAttribute('data-cookie-banner', 'card');
     expect(document.body.style.paddingBottom).not.toBe('');
     fireEvent.click(screen.getByRole('button', { name: 'Прийняти' }));
     expect(consent()).toMatchObject({ answered: true, necessary: true, analytics: true, marketing: true, facebookVideo: true });
-    expect(screen.queryByRole('region', { name: 'Згода на cookies' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Cookies на Time2Fest' })).toBeNull();
     expect(document.body.style.paddingBottom).toBe('');
   });
 
@@ -340,29 +340,17 @@ describe('cookies', () => {
     expect(consent()).toMatchObject({ answered: true, necessary: true, analytics: false, marketing: false, facebookVideo: false });
   });
 
-  it('десктоп із чатом: куток; чат сховано і є місце в потоці — смуга на місці штампа, кута немає', () => {
-    mockColumn(true);
-    const { unmount } = renderPage(<CookieLayer />);
-    expect(document.querySelector('[data-cookie-banner="corner"]')).not.toBeNull();
-    unmount();
-
-    useGuestStore.setState({ chatHidden: true });
-    renderPage(
-      <>
-        <CookieLayer />
-        <CookieInflow />
-      </>,
-    );
-    expect(document.querySelectorAll('[data-cookie-banner]')).toHaveLength(1);
-    expect(document.querySelector('[data-cookie-banner="inflow"]')).not.toBeNull();
-    expect(document.body.style.paddingBottom).toBe('');
+  it('× — те саме, що «Лише необхідні»: вибір збережено, плашки більше немає', () => {
+    renderPage(<CookieLayer />);
+    fireEvent.click(screen.getByRole('button', { name: 'Закрити — лише необхідні' }));
+    expect(consent()).toMatchObject({ answered: true, analytics: false, marketing: false, facebookVideo: false });
+    expect(screen.queryByRole('region', { name: 'Cookies на Time2Fest' })).toBeNull();
   });
 
-  it('чат сховано, але місця в потоці немає (сторінка без плеєра) — банер лишається в куті', () => {
+  it('десктоп і телефон горизонтально — один рядок (bar)', () => {
     mockColumn(true);
-    useGuestStore.setState({ chatHidden: true });
     renderPage(<CookieLayer />);
-    expect(document.querySelector('[data-cookie-banner="corner"]')).not.toBeNull();
+    expect(document.querySelector('[data-cookie-banner="bar"]')).not.toBeNull();
   });
 
   it('«Налаштувати» → 4 категорії; Facebook-згода з налаштувань повертає плеєр (FacebookConsentCard)', () => {
@@ -375,13 +363,15 @@ describe('cookies', () => {
     expect(document.querySelector('[data-consent="needed"]')).not.toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Налаштувати' }));
     expect(screen.getByRole('dialog', { name: 'Налаштування cookies' })).toBeInTheDocument();
+    // Плашка зникає, поки відкриті налаштування.
+    expect(screen.queryByRole('region', { name: 'Cookies на Time2Fest' })).toBeNull();
     expect(screen.getAllByRole('switch')).toHaveLength(4);
     expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
     fireEvent.click(screen.getByRole('switch', { name: 'Відео з Facebook' }));
     fireEvent.click(screen.getByRole('button', { name: 'Зберегти вибір' }));
     expect(consent()).toMatchObject({ answered: true, analytics: false, marketing: false, facebookVideo: true });
     expect(document.querySelector('[data-consent="allowed"]')).not.toBeNull();
-    expect(screen.queryByRole('region', { name: 'Згода на cookies' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Cookies на Time2Fest' })).toBeNull();
   });
 
   it('футер: «Налаштування cookies» відкриває налаштування і після відповіді', () => {
@@ -406,6 +396,6 @@ describe('cookies', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Не вдалося зберегти вибір');
     fireEvent.click(screen.getByRole('button', { name: 'Спробувати ще' }));
     expect(screen.queryByRole('alert')).toBeNull();
-    expect(screen.queryByRole('region', { name: 'Згода на cookies' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Cookies на Time2Fest' })).toBeNull();
   });
 });

@@ -24,7 +24,7 @@ const zone = (page: Page, id: string) => map(page).locator(`path[data-zone="${id
 
 async function openMap(page: Page, at = SCENE) {
   await gotoAt(page, at, 0);
-  // Смуга cookies (телефон) — фіксована внизу за макетом: прибираємо, щоб не лежала на мапі під час кліків.
+  // Плашка cookies — фіксована внизу за макетом: прибираємо, щоб не лежала на мапі під час кліків.
   const necessary = page.getByRole('button', { name: 'Лише необхідні' });
   if (await necessary.isVisible().catch(() => false)) await necessary.click();
   const m = map(page);

@@ -28,7 +28,6 @@ import { MORE_STREAMS_ID, MoreStreamsSheet, StreamList, ZoneStreamsBlock } from 
 import { StampBlock } from '@/components/live/StampBlock';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
-import { CookieInflow } from '@/components/offers/CookieLayer';
 import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
@@ -359,7 +358,6 @@ export function CountryLive({ iso }: { iso: string }) {
       <StampBlock eventId={mainEvent?.id ?? null} className={styles.pad} />
       <OfferBlock className={styles.pad} />
       <div className={styles.pad}>
-        <CookieInflow />
       </div>
       <div data-moment-slot="" className={styles.pad}>
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />

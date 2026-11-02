@@ -2,11 +2,10 @@
 
 /**
  * Головна, ефір (S-HOME-LIVE, ІНВ 4.3; T081) — за макетами `Main`, `Desk-Home-Handover`, `Desk-Moment`, `Desk-Rate`,
- * `Desk-Cookies(-Wide)` і телефонними `Phone-Home-Live`, `Phone-Home-Handover`, `Phone-Moment`,
+ * `Desk-Cookies-Design` і телефонними `Phone-Home-Live`, `Phone-Home-Handover`, `Phone-Moment`,
  * `Phone-Rate`, `Phone-Cookies`, `Phone-Chat`, `Phone-Map-Card`.
  *
- * Десктоп: основна колонка — PlayerBlock (плеєр, підпис, рядок дій) · InFlowSlot (штамп, оцінка; cookies смугою,
- * коли вільного кута немає) · «Перший ряд» · «Зараз і далі» + «Прогрес свята»; права колонка макета — чат «Світ»
+ * Десктоп: основна колонка — PlayerBlock (плеєр, підпис, рядок дій) · InFlowSlot (штамп, оцінка) · «Перший ряд» · «Зараз і далі» + «Прогрес свята»; права колонка макета — чат «Світ»
  * (sticky); мапа поясів — на всю ширину під обома колонками (портал у `#page-wide`). Під відео при прокрутці нічого не плаває.
  * Телефон (зверху вниз): PlayerBlock (плеєр закріплений угорі) · InFlowSlot · вміст сторінки, що прокручується:
  * «Дивляться люди з N країн», «Перший ряд» (згортається), «Зараз і далі» + прогрес, мапа поясів. Чат «Світ» — вікно
@@ -32,7 +31,6 @@ import { StampBlock } from '@/components/live/StampBlock';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
-import { CookieInflow } from '@/components/offers/CookieLayer';
 import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
@@ -168,12 +166,11 @@ export function HomeLive() {
   const showChatButton = chatColumn && vis.hidden ? (
     <ChatHiddenButton room="world" onShow={vis.show} />
   ) : null;
-  // Штамп (окремий блок), cookies смугою й вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра.
+  // Штамп (окремий блок) і вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра.
   const inflow = (
     <>
       <StampBlock eventId={eventId} />
       <OfferBlock />
-      <CookieInflow />
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
       </div>
