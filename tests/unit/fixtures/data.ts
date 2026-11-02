@@ -99,7 +99,7 @@ export function miniSchedule(): { schedule: ScheduleFile; countries: CountriesFi
     version: 1,
     season: '2026-27',
     generatedAt: '2026-10-26T09:00:00Z',
-    tzdbVersion: '2026e',
+    tzdbVersion: '2026f',
     zones: [
       // навмисно не за порядком — buildDataset сортує
       {

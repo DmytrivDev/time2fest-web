@@ -41,7 +41,16 @@ export interface MapModel {
 
 export const countryPath = (slug: string): string => `/country/${slug}/`;
 
-/** Дані мапи з набору даних області: по одному основному місту на пояс (його `representativeCityId`). */
+/**
+ * Міста на мапі (рішення власника 2026-11-02): лише ці 20, у такому порядку; решта з’явиться пізніше.
+ * Якщо міста немає в наборі даних, його просто немає на мапі.
+ */
+export const MAP_CITY_IDS = [
+  'auckland', 'sydney', 'tokyo', 'seoul', 'new-delhi', 'dubai', 'kyiv', 'johannesburg', 'cairo', 'rome',
+  'berlin', 'paris', 'london', 'reykjavik', 'dakar', 'rio-de-janeiro', 'new-york', 'toronto', 'las-vegas', 'los-angeles',
+] as const;
+
+/** Дані мапи з набору даних області: пояси з країнами й міста з `MAP_CITY_IDS`. */
 export function buildMapModel(data: Dataset): MapModel {
   const zones: MapZone[] = [];
   const cities: MapCity[] = [];
@@ -60,33 +69,47 @@ export function buildMapModel(data: Dataset): MapModel {
         traditions: c.howTo.traditions.slice(0, 3).map((t) => ({ id: t.id, title: t.title, text: t.text })),
       }));
     zones.push({ id: z.id, offsetMinutes: z.offsetMinutes, midnightMs: z.midnightMs, countries });
-    const city = data.citiesById.get(z.representativeCityId);
-    if (city) {
-      cities.push({
-        id: city.id,
-        name: city.name.uk,
-        ...(city.landmark ? { landmark: city.landmark.uk } : {}),
-        zoneId: z.id,
-        countryIso: city.countryIso,
-        x: city.mapPoint.x,
-        y: city.mapPoint.y,
-        celebrationType: city.celebrationType,
-        stream: city.celebrationType === 'countdown-only' ? 'none' : 'live',
-      });
-    }
+  }
+  for (const id of MAP_CITY_IDS) {
+    const city = data.citiesById.get(id);
+    if (!city) continue;
+    cities.push({
+      id: city.id,
+      name: city.name.uk,
+      ...(city.landmark ? { landmark: city.landmark.uk } : {}),
+      zoneId: city.zoneId,
+      countryIso: city.countryIso,
+      x: city.mapPoint.x,
+      y: city.mapPoint.y,
+      celebrationType: city.celebrationType,
+      stream: city.celebrationType === 'countdown-only' ? 'none' : 'live',
+    });
   }
   return { zones, cities };
 }
 
-/** Геометрія з `data/zonemap.json` (T079): проекція Міллера в кадрі макета (`scripts/build_zonemap.mjs`). */
+/**
+ * Геометрія з `data/zonemap.json` (`scripts/zonemap-v2`, рішення власника 2026-11-02): стара мапа Time2Fest (Figma,
+ * перевірена вручну) з поясами на ніч 31.12.2026 за tzdata 2026f; проекція Міллера в кадрі 1781×911.
+ */
 export interface ZoneMapGeometry {
   meta: { width: number; height: number; lon0: number; pxPerDeg: number; equatorY: number };
-  zones: { offset: string; offsetMinutes: number; zoneId: string; d: string; label: [number, number] }[];
+  /** Пояс: суходіл `d`, смуга в океані `band` (варіант «смуги поясів»), точка значка `label`. */
+  zones: { offset: string; offsetMinutes: number; zoneId: string; d: string; band?: string; label: [number, number] }[];
+  /** Пояси, суходолу яких майже не видно (Кірітіматі, Чатем), — точка. */
   markers: { zoneId: string; x: number; y: number }[];
-  /** Межі між tzid на суходолі (≈ кордони країн), один шлях. */
+  /** Кордони країн на суходолі, один шлях. */
   borders?: string;
-  /** Лінії поясів в океані, один шлях. */
-  grid?: string;
+  /** Межі поясів в океані й на суходолі (разом із кордонами, що є межами поясів), один шлях. */
+  zoneLines?: string;
+  /** Умовні кордони в морі між острівними країнами (Океанія), один шлях. */
+  sea?: string;
+  /** Лінія зміни дат. */
+  dayline?: string;
+  /** Великі озера (колір океану). */
+  lakes?: string;
+  /** Області дрібних островів (Андамани, Лакшадвіп, Маркізькі): `frame` — пунктирна рамка, інакше лише заливка. */
+  areas?: { zoneId: string; x0: number; y0: number; x1: number; y1: number; frame: boolean }[];
 }
 
 /** lon/lat → пікселі мапи (та сама проекція Міллера, що й у скрипті збирання). */

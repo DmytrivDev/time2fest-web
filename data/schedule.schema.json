@@ -26,7 +26,7 @@
       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
     },
     "tzdbVersion": {
-      "const": "2026e"
+      "const": "2026f"
     },
     "zones": {
       "type": "array",

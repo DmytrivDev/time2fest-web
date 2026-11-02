@@ -55,11 +55,11 @@ test.describe('Мапа поясів: дані й стани', () => {
     await expect(zone(page, 'utc+0000')).toHaveClass(/is-ahead/);
   });
 
-  test('стан не лише кольором: легенда з підписами, штрихування й іконки на мапі', async ({ page }) => {
+  test('стан не лише кольором: легенда з підписами й іконки на мапі («Вже зустріли» — рівна заливка)', async ({ page }) => {
     const m = await openMap(page);
     const legend = m.locator('[data-map-legend]');
     for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду']) await expect(legend).toContainText(label);
-    await expect(zone(page, 'utc+0100')).toHaveAttribute('style', /url\(/);
+    await expect(zone(page, 'utc+0100')).toHaveClass(/is-past/);
     await expect(m.locator('[data-zone-icon="live"]')).toHaveCount(1);
     await expect(m.locator('[data-zone-icon="next"]')).toHaveCount(1);
   });
@@ -154,7 +154,9 @@ test.describe('Мапа поясів: клавіатура', () => {
     test.skip(isPhone(page), 'десктоп');
     const m = await openMap(page);
     await expect(m.locator('a[data-city="london"]')).toHaveAttribute('href', /\/country\//);
-    await zone(page, 'utc+0000').click();
+    // Центр рамки поясу UTC+0 — в океані (смуга поясу); картку відкриваємо з клавіатури.
+    await zone(page, 'utc+0000').focus();
+    await page.keyboard.press('Enter');
     const card = m.locator('[data-zone-card="pinned"]');
     await card.getByRole('button', { name: 'Як святкувати' }).click();
     await expect(page.locator('[data-how-to-popover]')).toBeVisible();

@@ -1,5 +1,6 @@
-/* Мапа поясів (C18). Стани поясу — клас на шляху `is-past | is-live | is-next | is-ahead`;
-   колір завжди дублюється штрихуванням, іконкою й підписом (легенда, картка, aria-label).
+/* Мапа поясів (C18), вигляд «смуги поясів» (рішення власника 2026-11-02, дошка `Desk-Map-Styles`, варіант C).
+   Стани поясу — клас на шляху `is-past | is-live | is-next | is-ahead`; колір дублюється іконкою й підписом
+   (легенда, картка, aria-label). «Вже зустріли» — рівна заливка, без штрихування.
    Лише токени: --color-zone-*, --color-background, --color-border, --color-text. */
 /* Макет `Main` (assets/map.svg): океан #16161A, лінії поясів в океані #3C3C44 1 px, межі на суходолі — колір фону
    0.5 px, «Вже зустріли» — штрихування #26262B / #3A3A41. Цих відтінків немає серед токенів (вони між surface і
@@ -7,24 +8,99 @@
 .t2f-zm-ocean {
   fill: #16161a;
 }
-.t2f-zm-grid {
+/* Лінії мапи не товщають при наближенні (non-scaling-stroke) і не ловлять кліки. */
+.t2f-zm-borders,
+.t2f-zm-zlines,
+.t2f-zm-sea,
+.t2f-zm-dayline {
   fill: none;
-  stroke: #3c3c44;
-  stroke-width: 1;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
+/* Кордони країн — тонкий розрив кольору тла. */
 .t2f-zm-borders {
-  fill: none;
-  stroke: var(--color-background);
-  stroke-width: 0.5;
-  stroke-linejoin: round;
+  stroke: #141417;
+  stroke-width: 0.7;
+}
+/* Межі поясів — тонкі темні лінії між смугами (в океані й на суходолі однаково). */
+.t2f-zm-zlines {
+  stroke: rgba(10, 10, 12, 0.85);
+  stroke-width: 1;
+}
+/* Умовні кордони в морі між острівними країнами — крапки. */
+.t2f-zm-sea {
+  stroke: rgba(236, 236, 239, 0.22);
+  stroke-width: 1;
+  stroke-dasharray: 1 3;
+  stroke-linecap: round;
+}
+.t2f-zm-dayline {
+  stroke: var(--color-zone-live);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  opacity: 0.65;
+}
+.t2f-zm-lakes {
+  fill: #16161a;
   pointer-events: none;
+}
+/* Смуга поясу в океані: колір стану ледь-ледь. */
+.t2f-zone-band {
+  opacity: 0.16;
+  cursor: pointer;
+}
+.t2f-zone-band.is-past {
+  fill: #3a3a42;
+}
+.t2f-zone-band.is-live {
+  fill: var(--color-zone-live);
+}
+.t2f-zone-band.is-next {
+  fill: var(--color-zone-next);
+}
+.t2f-zone-band.is-ahead {
+  fill: var(--color-zone-future);
+}
+/* Область дрібних островів: легка заливка кольору стану; пунктирна рамка, якщо пояс не обведений своєю лінією. */
+.t2f-zm-area {
+  fill-opacity: 0.14;
+  stroke-width: 1;
+  stroke-dasharray: 3 2;
+  stroke-opacity: 0.7;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+.t2f-zm-area[data-frame='false'] {
+  stroke: none;
+}
+.t2f-zm-area.is-past {
+  fill: #9a9aa3;
+  stroke: #9a9aa3;
+}
+.t2f-zm-area.is-live {
+  fill: var(--color-zone-live);
+  stroke: var(--color-zone-live);
+}
+.t2f-zm-area.is-next {
+  fill: var(--color-zone-next);
+  stroke: var(--color-zone-next);
+}
+.t2f-zm-area.is-ahead {
+  fill: #c98a62;
+  stroke: #c98a62;
+}
+/* Точки, значки й підписи на мапі тримають розмір при наближенні (сцена масштабується, вони — навпаки). */
+.t2f-zm-pin {
+  scale: calc(1 / var(--zm-k, 1));
 }
 .t2f-zone {
   stroke: none;
   cursor: pointer;
   outline: none;
+}
+.t2f-zone.is-past {
+  fill: #34343b;
 }
 .t2f-zone.is-live {
   fill: var(--color-zone-live);
@@ -34,14 +110,6 @@
 }
 .t2f-zone.is-ahead {
   fill: var(--color-zone-future);
-}
-/* «Вже зустріли»: штрихування задає інлайн-fill на pattern з унікальним id (див. ZoneMap). */
-.t2f-zone-hatch-bg {
-  fill: #26262b;
-}
-.t2f-zone-hatch-line {
-  stroke: #3a3a41;
-  stroke-width: 2;
 }
 .t2f-zone:hover {
   stroke: var(--color-text-secondary);
@@ -97,7 +165,7 @@
 }
 .t2f-zm-sw[data-sw='past'] {
   border: 1px solid var(--color-border-strong);
-  background: repeating-linear-gradient(45deg, var(--color-zone-past) 0 3px, var(--color-border) 3px 5px);
+  background: #34343b;
 }
 .t2f-zm-sw[data-sw='live'] {
   background: var(--color-zone-live);

@@ -2,8 +2,8 @@
   "$schema": "schedule.schema.json",
   "version": 1,
   "season": "2026-27",
-  "generatedAt": "2026-10-26T10:29:21Z",
-  "tzdbVersion": "2026e",
+  "generatedAt": "2026-11-02T16:12:35Z",
+  "tzdbVersion": "2026f",
   "zones": [
     {
       "id": "utc+1400",
@@ -6343,6 +6343,32 @@
           ]
         },
         {
+          "iso": "CU",
+          "cities": [
+            {
+              "id": "havana",
+              "name": {
+                "uk": "Гавана"
+              },
+              "celebrationType": "countdown-only",
+              "isCountryMain": true,
+              "mapPoint": {
+                "x": 0.2712,
+                "y": 0.3715
+              },
+              "events": [
+                {
+                  "id": "evt_havana_2027",
+                  "midnightUtc": "2027-01-01T04:00:00Z",
+                  "isMainCelebration": true,
+                  "type": "countdown-only",
+                  "popularity": 40
+                }
+              ]
+            }
+          ]
+        },
+        {
           "iso": "DO",
           "cities": [
             {
@@ -7242,32 +7268,6 @@
           ]
         },
         {
-          "iso": "CU",
-          "cities": [
-            {
-              "id": "havana",
-              "name": {
-                "uk": "Гавана"
-              },
-              "celebrationType": "countdown-only",
-              "isCountryMain": true,
-              "mapPoint": {
-                "x": 0.2712,
-                "y": 0.3715
-              },
-              "events": [
-                {
-                  "id": "evt_havana_2027",
-                  "midnightUtc": "2027-01-01T05:00:00Z",
-                  "isMainCelebration": true,
-                  "type": "countdown-only",
-                  "popularity": 40
-                }
-              ]
-            }
-          ]
-        },
-        {
           "iso": "EC",
           "cities": [
             {
@@ -7841,6 +7841,27 @@
                   "isMainCelebration": true,
                   "type": "countdown-only",
                   "popularity": 98
+                }
+              ]
+            },
+            {
+              "id": "las-vegas",
+              "name": {
+                "uk": "Лас-Вегас"
+              },
+              "celebrationType": "countdown-only",
+              "isCountryMain": false,
+              "mapPoint": {
+                "x": 0.1802,
+                "y": 0.2991
+              },
+              "events": [
+                {
+                  "id": "evt_las-vegas_2027",
+                  "midnightUtc": "2027-01-01T08:00:00Z",
+                  "isMainCelebration": false,
+                  "type": "countdown-only",
+                  "popularity": 83
                 }
               ]
             }

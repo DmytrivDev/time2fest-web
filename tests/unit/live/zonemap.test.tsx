@@ -48,9 +48,9 @@ describe('ZoneMap: стани поясів', () => {
     expect(path('utc-0500')).toHaveClass('is-ahead');
   });
 
-  it('стан не лише кольором: у «минулого» штрихування, у «наживо» й «найближчого» іконки, у кожного — підпис', () => {
+  it('стан не лише кольором: у «наживо» й «найближчого» іконки, у кожного — підпис («Вже зустріли» — рівна заливка)', () => {
     const { view, path } = setup();
-    expect(path('utc+0100').getAttribute('style')).toMatch(/url\(.?#/);
+    expect(path('utc+0100')).toHaveClass('is-past');
     expect(view.container.querySelector('[data-zone-icon="live"]')).not.toBeNull();
     expect(view.container.querySelector('[data-zone-icon="next"]')).not.toBeNull();
     expect(path('utc-0100').getAttribute('aria-label')).toMatch(/найближча північ/);

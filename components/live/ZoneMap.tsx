@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import {
   useEffect,
   useId,
+  type CSSProperties,
+  type ReactNode,
   useMemo,
   useRef,
   useState,
@@ -30,6 +32,7 @@ import {
   type ZoneMapGeometry,
 } from './MapModel';
 import { MapTapCard, ZoneCard, ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
+import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
 import './ZoneMap.css';
 import m from './zoneMap.module.css';
 
@@ -127,7 +130,10 @@ const MARKER_CLASS: Record<ZoneState, string> = {
 };
 
 /**
- * C18. Мапа поясів: пояси (колір + штрихування + іконка + підпис), точки основних міст, масштаб, легенда,
+ * C18. Мапа поясів (вигляд «смуги поясів», рішення власника 2026-11-02): пояс — суцільна смуга від полюса до полюса
+ * (океан у смузі ледь тонований кольором стану, суходіл — повним кольором), тонкі темні межі поясів, кордони країн —
+ * розриви, у морі між острівними країнами — крапки. Масштаб і переміщення — `useMapZoom` (колесо, перетягування, щипок,
+ * кнопки). Пояси (колір + іконка + підпис), точки 20 міст, легенда,
  * `ZoneCard` (Enter на поясі) і `MapTapCard` (дотик до міста на телефоні). Стани поясів — від `zoneState`
  * та `useNow`. Один Tab-стоп на всю мапу, стрілки — між поясами, Esc закриває картку й повертає фокус.
  */
@@ -262,7 +268,11 @@ export function ZoneMap({
   }
 
   const aspect = geometry ? geometry.meta.width / geometry.meta.height : 1781 / 911;
-  const hatchId = `${uid}-hatch`;
+  const boxRef = useRef<HTMLDivElement>(null);
+  const { view: zoom, zoomIn, zoomOut, reset } = useMapZoom(boxRef, Boolean(geometry));
+  const zoomed = zoom.k > MIN_K + 0.01;
+  // Назви міст біля точок — від наближення ×2.
+  const showNames = zoom.k >= 2;
 
   const pinnedZone = selectedZoneId ? zoneById.get(selectedZoneId) : undefined;
 
@@ -307,8 +317,18 @@ export function ZoneMap({
       </div>
     )
   ) : (
-    <div className={m.mapBox} data-zone-map-scroll="">
-      <div className="relative" style={{ aspectRatio: aspect }}>
+    <div
+      ref={boxRef}
+      className={m.mapBox}
+      data-zone-map-scroll=""
+      data-zoomed={zoomed ? 'true' : 'false'}
+      style={{ aspectRatio: aspect }}
+    >
+      <div
+        className={m.stage}
+        data-zone-map-stage=""
+        style={{ transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.k})`, '--zm-k': zoom.k } as CSSProperties}
+      >
         <svg
           viewBox={`0 0 ${geometry.meta.width} ${geometry.meta.height}`}
           role="group"
@@ -317,14 +337,21 @@ export function ZoneMap({
           data-zone-map-svg=""
           className="block size-full"
         >
-          <defs>
-            <pattern id={hatchId} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <rect width="6" height="6" className="t2f-zone-hatch-bg" />
-              <line x1="0" y1="0" x2="0" y2="6" className="t2f-zone-hatch-line" />
-            </pattern>
-          </defs>
           <rect width={geometry.meta.width} height={geometry.meta.height} className="t2f-zm-ocean" />
-          {geometry.grid ? <path d={geometry.grid} className="t2f-zm-grid" /> : null}
+          {/* Смуги поясів в океані: колір стану ледь-ледь; клік по смузі — як по поясу (дрібні острови легко влучити). */}
+          <g aria-hidden="true">
+            {geometry.zones.map((g) =>
+              g.band && zoneById.has(g.zoneId) ? (
+                <path
+                  key={`band-${g.zoneId}`}
+                  d={g.band}
+                  data-zone-band={g.zoneId}
+                  className={cn('t2f-zone-band', FILL_CLASS[stateOf(g.zoneId)])}
+                  onClick={() => setSelection({ kind: 'zone', id: g.zoneId })}
+                />
+              ) : null,
+            )}
+          </g>
           <g>
             {geometry.zones.map((g) => {
               const zone = zoneById.get(g.zoneId);
@@ -336,7 +363,6 @@ export function ZoneMap({
                   g={g}
                   zone={zone}
                   state={state}
-                  hatchId={hatchId}
                   tabbable={tabStop === g.zoneId}
                   selected={selectedZoneId === g.zoneId}
                   pathRefs={pathRefs}
@@ -352,7 +378,26 @@ export function ZoneMap({
               );
             })}
           </g>
+          {geometry.lakes ? <path d={geometry.lakes} className="t2f-zm-lakes" /> : null}
+          {geometry.sea ? <path d={geometry.sea} className="t2f-zm-sea" /> : null}
           {geometry.borders ? <path d={geometry.borders} className="t2f-zm-borders" /> : null}
+          {geometry.zoneLines ? <path d={geometry.zoneLines} className="t2f-zm-zlines" /> : null}
+          {geometry.dayline ? <path d={geometry.dayline} className="t2f-zm-dayline" /> : null}
+          {geometry.areas?.map((a) => (
+            <rect
+              key={`area-${a.zoneId}-${a.x0}`}
+              x={a.x0}
+              y={a.y0}
+              width={a.x1 - a.x0}
+              height={a.y1 - a.y0}
+              rx={a.frame ? 3 : 0}
+              aria-hidden="true"
+              data-zone-area={a.zoneId}
+              data-frame={a.frame ? 'true' : 'false'}
+              className={cn('t2f-zm-area', FILL_CLASS[stateOf(a.zoneId)])}
+              onClick={() => setSelection({ kind: 'zone', id: a.zoneId })}
+            />
+          ))}
           {geometry.zones.map((g) =>
             ringId === g.zoneId ? (
               <g key={`ring-${g.zoneId}`}>
@@ -375,7 +420,7 @@ export function ZoneMap({
                 key={mk.zoneId}
                 aria-hidden="true"
                 data-zone-marker={mk.zoneId}
-                className={cn('absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border', MARKER_CLASS[stateOf(mk.zoneId)])}
+                className={cn('t2f-zm-pin absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border', MARKER_CLASS[stateOf(mk.zoneId)])}
                 style={{ left: `${left}%`, top: `${top}%` }}
               />
             );
@@ -388,7 +433,7 @@ export function ZoneMap({
                 key={`icon-${g.zoneId}`}
                 aria-hidden="true"
                 data-zone-icon={st}
-                className="absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
+                className="t2f-zm-pin absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
                 style={{ left: `${(g.label[0] / geometry.meta.width) * 100}%`, top: `${(g.label[1] / geometry.meta.height) * 100}%` }}
               >
                 {st === 'live' ? (
@@ -423,7 +468,7 @@ export function ZoneMap({
               </span>
             );
             const cls =
-              't2f-focus pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
+              't2f-focus t2f-zm-pin pointer-events-auto absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full';
             const style = { left: `${pos.left}%`, top: `${pos.top}%` };
             if (!isPhone && country) {
               return (
@@ -458,18 +503,68 @@ export function ZoneMap({
             <span
               aria-hidden="true"
               data-zone-map-live-label=""
-              className={cn(m.liveLabel, isPhone ? m.liveLabelPhone : m.liveLabelDesk)}
+              className={cn('t2f-zm-pin', m.liveLabel, isPhone ? m.liveLabelPhone : m.liveLabelDesk)}
               style={
                 isPhone
-                  ? { left: `calc(${pointToPercent(labelCity, geometry.meta).left}% + 14px)`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
-                  : { right: `calc(${100 - pointToPercent(labelCity, geometry.meta).left}% + 18px)`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
+                  ? { left: `${pointToPercent(labelCity, geometry.meta).left}%`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
+                  : { right: `${100 - pointToPercent(labelCity, geometry.meta).left}%`, top: `${pointToPercent(labelCity, geometry.meta).top}%` }
               }
             >
               {t('liveLabel', { city: labelCity.name })}
               <span className={m.liveLabelWatch}>{isPhone ? t('liveLabelWatchPhone') : t('liveLabelWatch')}</span>
             </span>
           ) : null}
+          {showNames
+            ? cities
+                .filter((c) => c.id !== labelCity?.id)
+                .map((c) => {
+                  const pos = pointToPercent(c, geometry.meta);
+                  return (
+                    <span
+                      key={`name-${c.id}`}
+                      aria-hidden="true"
+                      data-city-name={c.id}
+                      className={cn('t2f-zm-pin', m.cityName)}
+                      style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+                    >
+                      {c.name}
+                    </span>
+                  );
+                })
+            : null}
         </div>
+      </div>
+      <div className={cn(m.zoom, isPhone ? m.zoomPhone : m.zoomDesk)} role="group" aria-label={t('zoomGroup')} data-zone-map-zoom="">
+        {isPhone ? (
+          <>
+            <ZoomButton label={t('zoomIn')} disabled={zoom.k >= MAX_K - 0.01} onClick={zoomIn}>
+              +
+            </ZoomButton>
+            <ZoomButton label={t('zoomOut')} disabled={!zoomed} onClick={zoomOut}>
+              −
+            </ZoomButton>
+            <ZoomButton label={t('zoomReset')} disabled={!zoomed} onClick={reset}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <path d="M4 12a8 8 0 1 0 2.3-5.6" />
+                <path d="M4 4v4h4" />
+              </svg>
+            </ZoomButton>
+          </>
+        ) : (
+          <>
+            <ZoomButton label={t('zoomOut')} disabled={!zoomed} onClick={zoomOut}>
+              −
+            </ZoomButton>
+            <span className={m.zoomValue}>{Math.round(zoom.k * 100)}%</span>
+            <ZoomButton label={t('zoomIn')} disabled={zoom.k >= MAX_K - 0.01} onClick={zoomIn}>
+              +
+            </ZoomButton>
+            <span aria-hidden="true" className={m.zoomSep} />
+            <button type="button" disabled={!zoomed} onClick={reset} className={cn('t2f-focus', m.zoomReset)}>
+              {t('zoomReset')}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -561,7 +656,6 @@ interface ZonePathProps {
   g: ZoneMapGeometry['zones'][number];
   zone: MapZone;
   state: ZoneState;
-  hatchId: string;
   tabbable: boolean;
   selected: boolean;
   pathRefs: RefObject<Map<string, SVGPathElement>>;
@@ -573,7 +667,7 @@ interface ZonePathProps {
 }
 
 /** Один пояс: `path[data-offset]` з класом стану; доступна назва — країни, час і стан (без UTC). */
-function ZonePath({ g, zone, state, hatchId, tabbable, selected, pathRefs, onKeyDown, onFocus, onBlur, onSelect, onHover }: ZonePathProps) {
+function ZonePath({ g, zone, state, tabbable, selected, pathRefs, onKeyDown, onFocus, onBlur, onSelect, onHover }: ZonePathProps) {
   const t = useTranslations('liveMap');
   const when = useMidnightPhrase(zone.midnightMs);
   const label = t('zoneAria', {
@@ -599,7 +693,6 @@ function ZonePath({ g, zone, state, hatchId, tabbable, selected, pathRefs, onKey
       data-zone={g.zoneId}
       data-state={state}
       className={cn('t2f-zone', FILL_CLASS[state])}
-      style={state === 'past' ? { fill: `url(#${hatchId})` } : undefined}
       onClick={onSelect}
       onKeyDown={(e) => onKeyDown(e, g.zoneId)}
       onFocus={(e) => onFocus(e, g.zoneId)}
@@ -609,6 +702,15 @@ function ZonePath({ g, zone, state, hatchId, tabbable, selected, pathRefs, onKey
       }}
       onPointerLeave={() => onHover(null)}
     />
+  );
+}
+
+/** Кнопка масштабу мапи (квадрат 32 px; `aria-label` — дія). */
+function ZoomButton({ label, disabled, onClick, children }: { label: string; disabled?: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button type="button" aria-label={label} title={label} disabled={disabled} onClick={onClick} className={cn('t2f-focus', m.zoomBtn)}>
+      {children}
+    </button>
   );
 }
 

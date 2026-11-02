@@ -14,10 +14,10 @@ const countryByIso = new Map(countries.map((c) => [c.iso, c]));
 const allCities = zones.flatMap((z) => z.countries.flatMap((cn) => cn.cities.map((city) => ({ z, cn, city }))));
 
 describe('schedule.json: інваріанти контракту', () => {
-  it('заголовок файлу: версія, сезон, tzdb 2026e', () => {
+  it('заголовок файлу: версія, сезон, tzdb 2026f', () => {
     expect(schedule.version).toBe(1);
     expect(schedule.season).toBe('2026-27');
-    expect(schedule.tzdbVersion).toBe('2026e');
+    expect(schedule.tzdbVersion).toBe('2026f');
     expect(schedule.generatedAt).toMatch(/Z$/);
   });
 

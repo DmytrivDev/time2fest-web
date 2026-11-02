@@ -2,13 +2,13 @@
 
   python -X utf8 scripts/build_schedule.py        # pnpm data:schedule
 
-Вхід:  scripts/seed/countries.seed.json, scripts/seed/howto.seed.json, пакет tzdata 2026.5 (IANA 2026e)
+Вхід:  scripts/seed/countries.seed.json, scripts/seed/howto.seed.json, пакет tzdata 2026.6 (IANA 2026f: Куба −4 до листопада 2027)
 Вихід: data/schedule.json, data/countries.json, data/schedule.schema.json (форма - specs/001-live-viewing/contracts/schedule.md)
 
 Для кожного міста зі seed рахується зсув від UTC на момент 2027-01-01 00:00 за місцевим часом (з tzdb, а не
 номінальний: Сідней +11, Окленд +13, Чатем +13:45). Міста групуються за зсувом у 37 поясів; 38-й, UTC-12
 (Бейкер/Гауленд, безлюдні), задається вручну полем manualOffsetMinutes у seed. Скрипт падає, якщо версія tzdb не
-2026e або порушено інваріанти 1-9 контракту.
+2026f або порушено інваріанти 1-9 контракту.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from zoneinfo import ZoneInfo
 
 import tzdata
 
-EXPECTED_TZDB = "2026e"
+EXPECTED_TZDB = "2026f"
 EXPECTED_ZONES = 38
 NY_LOCAL = dt.datetime(2027, 1, 1, 0, 0)
 
@@ -125,7 +125,7 @@ def schema() -> dict:
 
 def main() -> None:
     if tzdata.IANA_VERSION != EXPECTED_TZDB:
-        fail(f"tzdata.IANA_VERSION = {tzdata.IANA_VERSION!r}, очікується {EXPECTED_TZDB!r} (pip install tzdata==2026.5)")
+        fail(f"tzdata.IANA_VERSION = {tzdata.IANA_VERSION!r}, очікується {EXPECTED_TZDB!r} (pip install tzdata==2026.6)")
 
     seed = json.loads((SEED / "countries.seed.json").read_text(encoding="utf-8"))
     howto = json.loads((SEED / "howto.seed.json").read_text(encoding="utf-8"))

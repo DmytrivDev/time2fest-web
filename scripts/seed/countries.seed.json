@@ -6457,6 +6457,19 @@
      "main": true
     },
     {
+     "id": "las-vegas",
+     "name": {
+      "uk": "Лас-Вегас"
+     },
+     "tz": "America/Los_Angeles",
+     "mapPoint": {
+      "x": 0.1802,
+      "y": 0.2991
+     },
+     "celebrationType": "countdown-only",
+     "main": false
+    },
+    {
      "id": "anchorage",
      "name": {
       "uk": "Анкоридж"
