@@ -4,10 +4,14 @@
  * - зміна джерела — `loadVideoById`, не перестворення; той самий `videoId` — нічого не робить;
  * - автозапуск лише без звуку (`autoplay: 1, mute: 1, playsinline: 1`);
  * - `onAutoplayBlocked` → кнопка «Грати» (рішає UI);
- * - `unMute()` викликати лише всередині жесту користувача.
+ * - `unMute()` викликати лише всередині жесту користувача;
+ * - плеєр — з `youtube-nocookie.com` (режим підвищеної приватності): YouTube не ставить cookies, доки людина не
+ *   запустить відео; згода на cookies сайту для плеєра не потрібна (рішення 2026-11-02).
  */
 
 export const IFRAME_API_SRC = 'https://www.youtube.com/iframe_api';
+/** Домен самого плеєра (iframe): режим підвищеної приватності. */
+export const PLAYER_HOST = 'https://www.youtube-nocookie.com';
 
 /** Стани `onStateChange`. */
 export const YTState = {
@@ -136,6 +140,7 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
   const player = new YT.Player(mount, {
     width: '100%',
     height: '100%',
+    host: PLAYER_HOST,
     ...(opts.videoId ? { videoId: opts.videoId } : {}),
     playerVars: {
       autoplay: opts.autoplay === false ? 0 : 1,
