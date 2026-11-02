@@ -281,7 +281,7 @@ export function FirstRowStrip({
           </button>
         </Heading>
         {/* Панель завжди в DOM і розгортається плавно (правило 2026-10-30); стіна загоряється опівночі синхронно. */}
-        <Reveal open={open} id={panelId}>
+        <Reveal open={open} id={panelId} className={fr.revealFull}>
           <div className={fr.panel}>
             {postcardOn ? postcard() : null}
             {!postcardOn && state === 'empty' && !blockedNow ? (

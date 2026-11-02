@@ -215,6 +215,14 @@ button.free:hover {
 .compact[data-open='true'] {
   padding-bottom: var(--spacing-3);
 }
+/* Панель на всю ширину картки (до золотої рамки): Reveal обрізає все поза собою, тож поля — всередині панелі,
+   а бігуча стрічка фішок виходить у них і доходить до рамки (правка власника 2026-11-02). */
+.compact .revealFull {
+  margin-inline: calc(-1 * var(--spacing-3));
+}
+.compact .revealFull .panel {
+  padding-inline: var(--spacing-3);
+}
 .toggle {
   display: flex;
   align-items: center;
