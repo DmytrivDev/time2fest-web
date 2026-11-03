@@ -227,14 +227,14 @@ export function Slider({ phone, label, children }: { phone: boolean; label: stri
 }
 
 /**
- * Знак «▶» на кнопці картки трансляції (варіант A, рішення власника 2026-11-03): залитий трикутник у колі 20 px, по
- * центру з текстом. Наживо — коралова кнопка й біле коло; повтор — коралове коло; ще попереду — сіре.
+ * Знак «▶» на кнопці картки трансляції (рішення власника 2026-11-03): залитий трикутник (18 px) кольору тексту кнопки,
+ * без кола, по центру з текстом.
  */
 export function PlayMark({ tone }: { tone: 'live' | 'replay' | 'upcoming' }) {
   return (
-    <span aria-hidden="true" className={cn(m.playMark, m[`playMark_${tone}`])}>
-      <svg viewBox="0 0 24 24" width="10" height="10">
-        <path d="M8 5l11 7-11 7z" fill="currentColor" />
+    <span aria-hidden="true" className={m.playMark} data-play-mark={tone}>
+      <svg viewBox="0 0 24 24" width="18" height="18">
+        <path d="M7 4.5l13 7.5-13 7.5z" fill="currentColor" />
       </svg>
     </span>
   );

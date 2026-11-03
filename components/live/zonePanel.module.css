@@ -398,26 +398,10 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+  color: currentColor;
 }
-/* Трикутник оптично по центру кола: його центр ваги — правіше середини. */
 .playMark svg {
   display: block;
-  margin-left: 1px;
-}
-.playMark_live {
-  background: var(--color-on-primary);
-  color: #d93a41;
-}
-.playMark_replay {
-  background: #d93a41;
-  color: var(--color-on-primary);
-}
-.playMark_upcoming {
-  background: #3a3a42;
-  color: var(--color-text);
 }
 .cardBtnLive:hover {
   background: #c8333a;
