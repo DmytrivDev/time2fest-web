@@ -1,25 +1,24 @@
-// Підказка жестів на телефоні (рішення власника 2026-11-03, дошка `Phone-Map-Legend`, варіант 1): один раз, коли мапа
-// видна; «масштаб» → «рух» → згасає; дотик ховає; повторно не показується.
+// Підказка жестів на телефоні (рішення власника 2026-11-03, варіант 1): один раз — коли мапа повністю видна (не під
+// смугою чату чи плашкою cookies) і простояла так мить; затемнення й два пальці, без тексту; два кола й згасає;
+// дотик ховає; позначка — cookie `t2f_map_hint`, повторно не показується.
 import { act, fireEvent, render } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { useRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MapGestureHint } from '@/components/live/MapGestureHint';
+import { MapGestureHint, mapHintSeen } from '@/components/live/MapGestureHint';
 import uk from '@/messages/uk.json';
 
-let trigger: (() => void) | null = null;
-class FakeIO {
-  constructor(private cb: IntersectionObserverCallback) {
-    trigger = () => this.cb([{ isIntersecting: true, intersectionRatio: 0.8 } as IntersectionObserverEntry], this as never);
-  }
-  observe() {}
-  disconnect() {}
-}
+let rect = { top: 900, bottom: 1073, height: 173 };
 
 function Host() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   return (
-    <div ref={ref}>
+    <div
+      ref={(el) => {
+        ref.current = el;
+        if (el) el.getBoundingClientRect = () => ({ ...rect, left: 0, right: 338, width: 338, x: 0, y: rect.top, toJSON: () => ({}) });
+      }}
+    >
       <MapGestureHint boxRef={ref} />
     </div>
   );
@@ -30,41 +29,67 @@ const mount = () =>
       <Host />
     </NextIntlClientProvider>,
   );
+const scrollTo = (top: number) => {
+  rect = { top, bottom: top + 173, height: 173 };
+  act(() => {
+    window.dispatchEvent(new Event('scroll'));
+    vi.advanceTimersByTime(20);
+  });
+};
+const clearCookie = () => {
+  document.cookie = 't2f_map_hint=; Max-Age=0; Path=/';
+};
 
 describe('MapGestureHint', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.stubGlobal('IntersectionObserver', FakeIO);
-    window.localStorage.removeItem('t2f:mapGestureHint:v1');
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => window.setTimeout(() => cb(0), 16));
+    vi.stubGlobal('cancelAnimationFrame', (id: number) => window.clearTimeout(id));
+    clearCookie();
+    rect = { top: 900, bottom: 1073, height: 173 };
   });
   afterEach(() => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
-    trigger = null;
+    clearCookie();
   });
 
-  it('з’являється, коли мапа видна: масштаб → рух → зникає; вдруге — ні', () => {
+  it('мапа частково за екраном — немає; повністю видна й простояла — два кола анімації без тексту, згасає; вдруге — ні', () => {
     const a = mount();
+    scrollTo(700); // низ мапи за краєм екрана (jsdom: 768 px)
+    act(() => vi.advanceTimersByTime(500));
     expect(a.container.querySelector('[data-map-gesture]')).toBeNull();
-    act(() => trigger!());
-    expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'pinch');
-    expect(a.container).toHaveTextContent('Зведи чи розведи два пальці — масштаб');
-    act(() => vi.advanceTimersByTime(2400));
-    expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'pan');
-    act(() => vi.advanceTimersByTime(2400));
+    scrollTo(300);
+    act(() => vi.advanceTimersByTime(300));
+    const hint = a.container.querySelector('[data-map-gesture]')!;
+    expect(hint).toHaveAttribute('data-map-gesture', 'play');
+    expect(hint.querySelectorAll('[data-f]')).toHaveLength(2);
+    expect(hint.querySelector('[role="status"]')).toHaveClass('sr-only');
+    expect(mapHintSeen()).toBe(true);
+    act(() => vi.advanceTimersByTime(5200));
     expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-leaving', 'true');
     act(() => vi.advanceTimersByTime(300));
     expect(a.container.querySelector('[data-map-gesture]')).toBeNull();
     a.unmount();
-    trigger = null;
     const b = mount();
-    expect(trigger).toBeNull();
+    scrollTo(300);
+    act(() => vi.advanceTimersByTime(500));
     expect(b.container.querySelector('[data-map-gesture]')).toBeNull();
+  });
+
+  it('швидке гортання повз мапу не рахується', () => {
+    const { container } = mount();
+    scrollTo(300);
+    scrollTo(-200); // уже проскролили далі, не зупинившись
+    act(() => vi.advanceTimersByTime(500));
+    expect(container.querySelector('[data-map-gesture]')).toBeNull();
+    expect(mapHintSeen()).toBe(false);
   });
 
   it('дотик ховає підказку одразу', () => {
     const { container } = mount();
-    act(() => trigger!());
+    scrollTo(300);
+    act(() => vi.advanceTimersByTime(300));
     fireEvent.click(container.querySelector('[data-map-gesture]')!);
     act(() => vi.advanceTimersByTime(300));
     expect(container.querySelector('[data-map-gesture]')).toBeNull();

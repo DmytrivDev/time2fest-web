@@ -24,7 +24,7 @@ const zone = (page: Page, id: string) => map(page).locator(`g[data-zone="${id}"]
 
 async function openMap(page: Page, at = SCENE, opts: { gestureHint?: boolean } = {}) {
   // Підказку жестів (телефон, один раз) у звичайних перевірках вважаємо вже побаченою — щоб не лягала на мапу під час дотиків.
-  if (!opts.gestureHint) await page.addInitScript(() => window.localStorage.setItem('t2f:mapGestureHint:v1', '1'));
+  if (!opts.gestureHint) await page.addInitScript(() => (document.cookie = 't2f_map_hint=1; Path=/'));
   await gotoAt(page, at, 0);
   // Плашка cookies — фіксована внизу за макетом: прибираємо, щоб не лежала на мапі під час кліків.
   const necessary = page.getByRole('button', { name: 'Лише необхідні' });
@@ -112,15 +112,18 @@ test.describe('Мапа поясів: телефон', () => {
 
   test('підказка жестів: один раз, коли мапа видна; кнопок масштабу немає; легенда — у рамці мапи', async ({ page }) => {
     const m = await openMap(page, SCENE, { gestureHint: true });
+    // Підказка — лише коли вся мапа на екрані (над смугою чату): ставимо її посередині.
+    await m.locator('[data-zone-map-scroll]').evaluate((el) => el.scrollIntoView({ block: 'center' }));
     await expect(m.locator('[data-zone-map-zoom]')).toHaveCount(0);
     await expect(m.locator('[data-zone-map-canvas] [data-map-legend="inMap"]')).toBeVisible();
     const hint = m.locator('[data-map-gesture]');
-    await expect(hint).toHaveAttribute('data-map-gesture', 'pinch');
-    await expect(hint).toHaveAttribute('data-map-gesture', 'pan', { timeout: 4000 });
+    await expect(hint).toHaveAttribute('data-map-gesture', 'play');
+    await expect(hint.locator('[data-f]')).toHaveCount(2);
     await hint.click();
     await expect(hint).toHaveCount(0);
+    expect((await page.context().cookies()).some((c) => c.name === 't2f_map_hint' && c.value === '1')).toBe(true);
     await page.reload();
-    await map(page).scrollIntoViewIfNeeded();
+    await map(page).locator('[data-zone-map-scroll]').evaluate((el) => el.scrollIntoView({ block: 'center' }));
     await page.waitForTimeout(800);
     await expect(map(page).locator('[data-map-gesture]')).toHaveCount(0);
   });
