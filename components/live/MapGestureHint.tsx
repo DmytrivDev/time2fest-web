@@ -2,34 +2,19 @@
 
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, type RefObject } from 'react';
+import { mapHintSeen, markMapHintSeen } from '@/lib/storage/mapHint';
+import { useGuestStore } from '@/stores/guest';
 import m from './zoneMap.module.css';
 
-/** Позначка «підказку вже показано» — cookie на рік (рішення власника 2026-11-03: показати один раз). */
-const SEEN_COOKIE = 't2f_map_hint';
 /** Одне коло анімації: пальці розходяться й сходяться, потім разом вправо-вліво (як у погодженому прикладі). */
 const LOOP_MS = 2600;
-const LOOPS = 2;
+/** Спершу мапа затемнюється, потім стартують пальці; після кола затемнення згасає (правка власника 2026-11-03). */
+const LEAD_MS = 300;
 const FADE_MS = 250;
 /** Скільки мапа має простояти повністю видимою, щоб швидке гортання повз неї не рахувалося. */
 const SETTLE_MS = 250;
 /** Що закриває низ екрана на телефоні: смуга чату й плашка cookies. */
 const BOTTOM_OVERLAYS = '[data-chat-dock], [data-cookie-banner]';
-
-export function mapHintSeen(): boolean {
-  try {
-    return document.cookie.split('; ').some((c) => c === `${SEEN_COOKIE}=1`);
-  } catch {
-    return true;
-  }
-}
-
-function markMapHintSeen() {
-  try {
-    document.cookie = `${SEEN_COOKIE}=1; Max-Age=31536000; Path=/; SameSite=Lax`;
-  } catch {
-    /* без cookie — покажемо й наступного разу */
-  }
-}
 
 /** Нижня межа видимої частини екрана: верх смуги чату чи плашки cookies, якщо вони внизу й видимі. */
 function visibleBottom(): number {
@@ -47,12 +32,15 @@ function visibleBottom(): number {
 /**
  * Телефон: підказка жестів поверх мапи (рішення власника 2026-11-03, варіант 1 «м’яке затемнення»): без тексту — легке
  * затемнення мапи й два пальці: масштаб, потім рух. Один раз — коли мапа вперше повністю видна (не під смугою чату чи
- * плашкою cookies) і простояла так мить; два кола й згасає. Дотик будь-де — сховати.
+ * плашкою cookies) і простояла так мить: мапа одразу темнішає, пальці роблять одне коло, затемнення згасає й мапа
+ * доступна. Дотик будь-де — сховати. Після «Скинути стан гостя» (машина часу) — чекає мапу знову.
  */
 export function MapGestureHint({ boxRef }: { boxRef: RefObject<HTMLElement | null> }) {
   const t = useTranslations('liveMap.gesture');
   // 0 — немає, 1 — анімація, 2 — згасає.
   const [step, setStep] = useState<0 | 1 | 2>(0);
+  // Новий гість (скидання в машині часу стирає позначку) — підказка знову чекає мапу.
+  const guestId = useGuestStore((s) => s.id);
 
   useEffect(() => {
     const el = boxRef.current;
@@ -87,11 +75,11 @@ export function MapGestureHint({ boxRef }: { boxRef: RefObject<HTMLElement | nul
     window.addEventListener('resize', onScroll, { passive: true });
     onScroll();
     return stop;
-  }, [boxRef]);
+  }, [boxRef, guestId]);
 
   useEffect(() => {
     if (!step) return;
-    const id = window.setTimeout(() => setStep((s) => (s === 1 ? 2 : 0)), step === 1 ? LOOP_MS * LOOPS : FADE_MS);
+    const id = window.setTimeout(() => setStep((s) => (s === 1 ? 2 : 0)), step === 1 ? LEAD_MS + LOOP_MS : FADE_MS);
     return () => window.clearTimeout(id);
   }, [step]);
 

@@ -19,6 +19,7 @@ import type {
   Stars,
 } from '@/lib/data/types';
 import { safeJsonStorage } from '@/lib/storage/safe';
+import { clearMapHintSeen } from '@/lib/storage/mapHint';
 
 export const GUEST_STORAGE_KEY = 't2f:guest:v1';
 export const GUEST_VERSION = 1 as const;
@@ -222,5 +223,7 @@ export const useGuestStore = create<GuestStore>()(
 );
 
 export function resetGuest(): void {
+  // Новий гість бачить мапу вперше — підказка жестів покажеться знову.
+  clearMapHintSeen();
   useGuestStore.getState().resetGuest();
 }

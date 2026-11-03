@@ -1,11 +1,13 @@
 // Підказка жестів на телефоні (рішення власника 2026-11-03, варіант 1): один раз — коли мапа повністю видна (не під
-// смугою чату чи плашкою cookies) і простояла так мить; затемнення й два пальці, без тексту; два кола й згасає;
-// дотик ховає; позначка — cookie `t2f_map_hint`, повторно не показується.
+// смугою чату чи плашкою cookies) і простояла так мить; одразу затемнення, потім одне коло пальців, без тексту, далі
+// згасає; дотик ховає; позначка — cookie `t2f_map_hint`, повторно не показується; «Скинути стан гостя» — знову.
 import { act, fireEvent, render } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { useRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MapGestureHint, mapHintSeen } from '@/components/live/MapGestureHint';
+import { MapGestureHint } from '@/components/live/MapGestureHint';
+import { mapHintSeen } from '@/lib/storage/mapHint';
+import { resetGuest } from '@/stores/guest';
 import uk from '@/messages/uk.json';
 
 let rect = { top: 900, bottom: 1073, height: 173 };
@@ -54,7 +56,7 @@ describe('MapGestureHint', () => {
     clearCookie();
   });
 
-  it('мапа частково за екраном — немає; повністю видна й простояла — два кола анімації без тексту, згасає; вдруге — ні', () => {
+  it('мапа частково за екраном — немає; повністю видна й простояла — одне коло анімації без тексту, згасає; вдруге — ні', () => {
     const a = mount();
     scrollTo(700); // низ мапи за краєм екрана (jsdom: 768 px)
     act(() => vi.advanceTimersByTime(500));
@@ -66,7 +68,9 @@ describe('MapGestureHint', () => {
     expect(hint.querySelectorAll('[data-f]')).toHaveLength(2);
     expect(hint.querySelector('[role="status"]')).toHaveClass('sr-only');
     expect(mapHintSeen()).toBe(true);
-    act(() => vi.advanceTimersByTime(5200));
+    act(() => vi.advanceTimersByTime(2800));
+    expect(a.container.querySelector('[data-map-gesture]')).not.toHaveAttribute('data-leaving');
+    act(() => vi.advanceTimersByTime(100)); // 0,3 с затемнення + 2,6 с коло
     expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-leaving', 'true');
     act(() => vi.advanceTimersByTime(300));
     expect(a.container.querySelector('[data-map-gesture]')).toBeNull();
@@ -75,6 +79,21 @@ describe('MapGestureHint', () => {
     scrollTo(300);
     act(() => vi.advanceTimersByTime(500));
     expect(b.container.querySelector('[data-map-gesture]')).toBeNull();
+  });
+
+  it('«Скинути стан гостя» стирає позначку — підказка знову чекає мапу (без перезавантаження)', () => {
+    const { container } = mount();
+    scrollTo(300);
+    act(() => vi.advanceTimersByTime(300)); // показалась
+    act(() => vi.advanceTimersByTime(2900)); // затемнення + коло
+    act(() => vi.advanceTimersByTime(300)); // згасла
+    expect(container.querySelector('[data-map-gesture]')).toBeNull();
+    expect(mapHintSeen()).toBe(true);
+    act(() => resetGuest());
+    expect(mapHintSeen()).toBe(false);
+    scrollTo(310);
+    act(() => vi.advanceTimersByTime(300));
+    expect(container.querySelector('[data-map-gesture]')).not.toBeNull();
   });
 
   it('швидке гортання повз мапу не рахується', () => {

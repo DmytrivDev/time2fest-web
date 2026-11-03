@@ -548,6 +548,8 @@
   background: transparent;
   cursor: pointer;
   --gesture-loop: 2.6s;
+  --gesture-lead: 300ms;
+  animation: t2f-gesture-in 150ms ease both;
 }
 .gesture[data-leaving='true'] {
   animation: t2f-gesture-out 250ms ease both;
@@ -557,7 +559,6 @@
   inset: 0;
   border-radius: inherit;
   background: rgba(18, 18, 20, 0.5);
-  animation: t2f-gesture-fade var(--gesture-loop) linear 2;
 }
 .finger {
   position: absolute;
@@ -571,7 +572,9 @@
   box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.2);
   opacity: 0;
   animation-duration: var(--gesture-loop);
-  animation-iteration-count: 2;
+  animation-delay: var(--gesture-lead);
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
 }
 .finger[data-f='a'] {
@@ -588,16 +591,12 @@
     opacity: 0;
   }
 }
-@keyframes t2f-gesture-fade {
-  0% {
+@keyframes t2f-gesture-in {
+  from {
     opacity: 0;
   }
-  8%,
-  90% {
+  to {
     opacity: 1;
-  }
-  100% {
-    opacity: 0;
   }
 }
 @keyframes t2f-finger-a {
@@ -662,7 +661,7 @@
 }
 /* «Зменшити рух» (система чи перемикач сайту): пальці стоять на місці, без анімації. */
 @media (prefers-reduced-motion: reduce) {
-  .gestureScrim,
+  .gesture,
   .finger,
   .gesture[data-leaving='true'] {
     animation: none;
@@ -677,7 +676,7 @@
     transform: translate(14px, 9px);
   }
 }
-:global(html[data-reduce-motion='true']) .gestureScrim,
+:global(html[data-reduce-motion='true']) .gesture,
 :global(html[data-reduce-motion='true']) .finger,
 :global(html[data-reduce-motion='true']) .gesture[data-leaving='true'] {
   animation: none;
