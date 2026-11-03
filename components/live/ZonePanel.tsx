@@ -226,6 +226,20 @@ export function Slider({ phone, label, children }: { phone: boolean; label: stri
   );
 }
 
+/**
+ * Знак «▶» на кнопці картки трансляції (варіант A, рішення власника 2026-11-03): залитий трикутник у колі 20 px, по
+ * центру з текстом. Наживо — коралова кнопка й біле коло; повтор — коралове коло; ще попереду — сіре.
+ */
+export function PlayMark({ tone }: { tone: 'live' | 'replay' | 'upcoming' }) {
+  return (
+    <span aria-hidden="true" className={cn(m.playMark, m[`playMark_${tone}`])}>
+      <svg viewBox="0 0 24 24" width="10" height="10">
+        <path d="M8 5l11 7-11 7z" fill="currentColor" />
+      </svg>
+    </span>
+  );
+}
+
 function StreamCard({ stream, mode, midnightMs }: { stream: MapStream; mode: 'live' | 'upcoming' | 'replay'; midnightMs: number }) {
   const live = mode === 'live';
   const t = useTranslations('liveMap.panel');
@@ -259,7 +273,7 @@ function StreamCard({ stream, mode, midnightMs }: { stream: MapStream; mode: 'li
         </div>
       ) : null}
       <NextLink href={stream.href} className={cn('t2f-focus', m.cardBtn, live && m.cardBtnLive)}>
-        {mode === 'upcoming' ? null : <Icon name="play" size={12} />}
+        {mode === 'upcoming' ? null : <PlayMark tone={live ? 'live' : 'replay'} />}
         {live ? t('watch') : mode === 'replay' ? t('watchReplay') : t('countryPage')}
       </NextLink>
     </li>

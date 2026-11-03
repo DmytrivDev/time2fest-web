@@ -16,11 +16,16 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from './MapModel';
-import { Slider, StateBadge } from './ZonePanel';
+import { PlayMark, Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
 
-const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
+const TYPE_KEY = {
+  main: 'main',
+  webcam: 'webcam',
+  tv: 'tv',
+  'countdown-only': 'countdownOnly',
+} as const;
 /** Іконки традицій (`howTo.traditions[].iconId`) — з набору сайту; невідома — зірка. */
 const TRADITION_ICON: Record<string, IconName> = {
   countdown: 'clock',
@@ -65,7 +70,18 @@ export interface CountryPanelProps {
  * плиткою, кімната однією карткою) з традиціями списком без описів. Клік по суші країни — це вікно; по океану чи в
  * черзі — вікно поясу; обидва стоять на одному місці під мапою.
  */
-export function CountryPanel({ zone, country, state, zones, nextZone, phone, onSelectZone, onSelectCountryZone, onClose, ref }: CountryPanelProps) {
+export function CountryPanel({
+  zone,
+  country,
+  state,
+  zones,
+  nextZone,
+  phone,
+  onSelectZone,
+  onSelectCountryZone,
+  onClose,
+  ref,
+}: CountryPanelProps) {
   const t = useTranslations('liveMap.country');
   const viewerIso = useGuestStore((g) => g.flagCode);
   const now = useNow();
@@ -94,14 +110,22 @@ export function CountryPanel({ zone, country, state, zones, nextZone, phone, onS
     </span>
   );
   const zoneBtn = (
-    <button type="button" className={cn('t2f-focus', zp.navBtn, m.zoneBtn)} aria-label={t('openZoneAria', { offset })} onClick={() => onSelectZone(zone.id)}>
+    <button
+      type="button"
+      className={cn('t2f-focus', zp.navBtn, m.zoneBtn)}
+      aria-label={t('openZoneAria', { offset })}
+      onClick={() => onSelectZone(zone.id)}
+    >
       <StateSwatch state={state} className={m.zoneSw} />
       <b>{offset}</b>
       <span className={zp.navWord}>· {t('openZone')}</span>
       <Icon name="chevron-right" size={16} />
     </button>
   );
-  const chips = zones.length > 1 ? <ZoneChips zones={zones} current={zone.id} phone={phone} onSelect={onSelectCountryZone} /> : null;
+  const chips =
+    zones.length > 1 ? (
+      <ZoneChips zones={zones} current={zone.id} phone={phone} onSelect={onSelectCountryZone} />
+    ) : null;
   const time = <CountryTime zone={zone} state={state} phone={phone} />;
   const watch = (
     <div className={m.watch}>
@@ -115,15 +139,28 @@ export function CountryPanel({ zone, country, state, zones, nextZone, phone, onS
           </ul>
         )
       ) : (
-        <Slider key={`${zone.id}:${country.iso}`} phone={phone} label={after ? t('replayTitle') : t('watchTitle')}>
+        <Slider
+          key={`${zone.id}:${country.iso}`}
+          phone={phone}
+          label={after ? t('replayTitle') : t('watchTitle')}
+        >
           {streams.map((s) => (
-            <StreamCard key={s.cityId} stream={s} href={country.href} mode={after ? 'replay' : state === 'live' ? 'live' : 'upcoming'} midnightMs={zone.midnightMs} />
+            <StreamCard
+              key={s.cityId}
+              stream={s}
+              href={country.href}
+              mode={after ? 'replay' : state === 'live' ? 'live' : 'upcoming'}
+              midnightMs={zone.midnightMs}
+            />
           ))}
         </Slider>
       )}
     </div>
   );
-  const room = <Room country={country} after={after} phone={phone} nextZone={nextZone} onSelectZone={onSelectZone} />;
+  const room = <Room country={country} after={after} phone={phone} />;
+  // «Наступна північ» — під трансляціями, над кімнатою країни (правка власника 2026-11-03).
+  const next =
+    after && nextZone ? <NextMidnight zone={nextZone} onSelectZone={onSelectZone} /> : null;
   const how = country.traditions?.length ? (
     <div className={m.how}>
       <h4 className={zp.h4}>{t('howTitle')}</h4>
@@ -143,7 +180,14 @@ export function CountryPanel({ zone, country, state, zones, nextZone, phone, onS
       </ul>
     </div>
   ) : null;
-  const close = <IconButton icon="close" aria-label={t('close')} onClick={onClose} className={cn(zp.close, m.close)} />;
+  const close = (
+    <IconButton
+      icon="close"
+      aria-label={t('close')}
+      onClick={onClose}
+      className={cn(zp.close, m.close)}
+    />
+  );
   return (
     <section
       ref={ref}
@@ -163,6 +207,7 @@ export function CountryPanel({ zone, country, state, zones, nextZone, phone, onS
             <div className={m.timeZone}>{zoneBtn}</div>
           </div>
           {watch}
+          {next}
           {room}
           {how}
         </>
@@ -179,6 +224,7 @@ export function CountryPanel({ zone, country, state, zones, nextZone, phone, onS
           </div>
           <div className={m.right}>
             {watch}
+            {next}
             {how}
           </div>
         </div>
@@ -187,7 +233,17 @@ export function CountryPanel({ zone, country, state, zones, nextZone, phone, onS
   );
 }
 
-function ZoneChips({ zones, current, phone, onSelect }: { zones: readonly CountryZoneChip[]; current: string; phone: boolean; onSelect: (id: string) => void }) {
+function ZoneChips({
+  zones,
+  current,
+  phone,
+  onSelect,
+}: {
+  zones: readonly CountryZoneChip[];
+  current: string;
+  phone: boolean;
+  onSelect: (id: string) => void;
+}) {
   const t = useTranslations('liveMap.country');
   const tState = useTranslations('liveMap.panel.state');
   return (
@@ -200,7 +256,10 @@ function ZoneChips({ zones, current, phone, onSelect }: { zones: readonly Countr
               type="button"
               className={cn('t2f-focus', m.chip)}
               aria-pressed={z.id === current}
-              aria-label={t('zoneChip', { offset: utcLabel(z.offsetMinutes), state: tState(z.state) })}
+              aria-label={t('zoneChip', {
+                offset: utcLabel(z.offsetMinutes),
+                state: tState(z.state),
+              })}
               data-country-zone={z.id}
               onClick={() => onSelect(z.id)}
             >
@@ -225,8 +284,12 @@ function CountryTime({ zone, state, phone }: { zone: MapZone; state: ZoneState; 
     return (
       <div data-country-time="past">
         <div className={zp.smallCap}>{tz('pastLabel')}</div>
-        <div className={cn(zp.ago, m.ago)}>{tz('pastAgo', { dur: formatDurationShort(now - zone.midnightMs, locale) })}</div>
-        <div className={m.when}>{tz('pastAt', { time: formatClock(zone.midnightMs, { locale }) })}</div>
+        <div className={cn(zp.ago, m.ago)}>
+          {tz('pastAgo', { dur: formatDurationShort(now - zone.midnightMs, locale) })}
+        </div>
+        <div className={m.when}>
+          {tz('pastAt', { time: formatClock(zone.midnightMs, { locale }) })}
+        </div>
       </div>
     );
   }
@@ -248,7 +311,17 @@ function CountryTime({ zone, state, phone }: { zone: MapZone; state: ZoneState; 
   );
 }
 
-function StreamCard({ stream, href, mode, midnightMs }: { stream: MapCountryStream; href: string; mode: 'live' | 'upcoming' | 'replay'; midnightMs: number }) {
+function StreamCard({
+  stream,
+  href,
+  mode,
+  midnightMs,
+}: {
+  stream: MapCountryStream;
+  href: string;
+  mode: 'live' | 'upcoming' | 'replay';
+  midnightMs: number;
+}) {
   const t = useTranslations('liveMap.panel');
   const tc = useTranslations('liveMap.country');
   const tType = useTranslations('liveCards.eventCard.type');
@@ -278,7 +351,7 @@ function StreamCard({ stream, href, mode, midnightMs }: { stream: MapCountryStre
       <div className={cn(zp.cardCity, m.cardPlace)}>{stream.place}</div>
       <div className={m.cardSub}>{stream.city}</div>
       <NextLink href={href} className={cn('t2f-focus', zp.cardBtn, live && zp.cardBtnLive)}>
-        {mode === 'upcoming' ? null : <Icon name="play" size={12} />}
+        <PlayMark tone={mode} />
         {live ? t('watch') : mode === 'replay' ? t('watchReplay') : tc('openStream')}
       </NextLink>
     </li>
@@ -310,21 +383,8 @@ function useSeats(eventId: string | undefined, now: number) {
   return snapshot(event, now).view;
 }
 
-function Room({
-  country,
-  after,
-  phone,
-  nextZone,
-  onSelectZone,
-}: {
-  country: MapCountry;
-  after: boolean;
-  phone: boolean;
-  nextZone?: MapZone;
-  onSelectZone: (id: string) => void;
-}) {
+function Room({ country, after, phone }: { country: MapCountry; after: boolean; phone: boolean }) {
   const t = useTranslations('liveMap.country');
-  const locale = useLocale();
   const now = useNow();
   const stamps = useGuestStore((g) => g.stamps);
   const got = stamps.some((s) => country.eventIds?.includes(s.eventId));
@@ -367,7 +427,10 @@ function Room({
           <span className={m.roomStrong}>{text}</span>
           {seats.state === 'mine' || seats.state === 'soldout' ? null : (
             <span className={m.seatBar} aria-hidden="true">
-              <span className={m.seatFill} style={{ width: `${Math.round((taken / seats.total) * 100)}%` }} />
+              <span
+                className={m.seatFill}
+                style={{ width: `${Math.round((taken / seats.total) * 100)}%` }}
+              />
             </span>
           )}
           {phone || seats.state === 'mine' || seats.state === 'soldout' ? null : (
@@ -377,39 +440,57 @@ function Room({
       </div>
     );
   })();
-  const next =
-    after && nextZone ? (
-      <button type="button" className={cn('t2f-focus', m.next)} data-next-zone={nextZone.id} onClick={() => onSelectZone(nextZone.id)}>
-        <StateSwatch state="live" className={m.zoneSw} />
-        <span className={m.nextBody}>
-          <span className={m.roomStrong}>{t('nextTitle', { offset: utcLabel(nextZone.offsetMinutes) })}</span>
-          <span className={m.roomSub}>
-            {t('nextIn', { dur: formatDurationShort(Math.max(0, nextZone.midnightMs - now), locale) })} ·{' '}
-            {nextZone.countries.length > NEXT_NAMES
-              ? t('nextMore', {
-                  names: nextZone.countries
-                    .filter((c) => !NOT_FIRST.has(c.iso))
-                    .slice(0, NEXT_NAMES)
-                    .map((c) => c.name)
-                    .join(', '),
-                  count: nextZone.countries.length - NEXT_NAMES,
-                })
-              : nextZone.countries.map((c) => c.name).join(', ')}
-          </span>
-        </span>
-        <Icon name="chevron-right" size={16} />
-      </button>
-    ) : null;
   return (
     <div className={cn(m.room, phone && m.roomPhone)} data-country-room="">
       {phone ? <div className={zp.smallCap}>{t('roomTitle')}</div> : null}
       {stamp}
       {seatLine}
-      {next}
       <NextLink href={country.href} className={cn('t2f-focus', m.cta)} data-country-room-link="">
         {t('room')}
         <Icon name="arrow-right" size={18} />
       </NextLink>
     </div>
+  );
+}
+
+/** Після півночі: наступна північ — відкриває той пояс у тому самому вікні. */
+function NextMidnight({
+  zone,
+  onSelectZone,
+}: {
+  zone: MapZone;
+  onSelectZone: (id: string) => void;
+}) {
+  const t = useTranslations('liveMap.country');
+  const locale = useLocale();
+  const now = useNow();
+  return (
+    <button
+      type="button"
+      className={cn('t2f-focus', m.next)}
+      data-next-zone={zone.id}
+      onClick={() => onSelectZone(zone.id)}
+    >
+      <StateSwatch state="live" className={m.zoneSw} />
+      <span className={m.nextBody}>
+        <span className={m.roomStrong}>
+          {t('nextTitle', { offset: utcLabel(zone.offsetMinutes) })}
+        </span>
+        <span className={m.roomSub}>
+          {t('nextIn', { dur: formatDurationShort(Math.max(0, zone.midnightMs - now), locale) })} ·{' '}
+          {zone.countries.length > NEXT_NAMES
+            ? t('nextMore', {
+                names: zone.countries
+                  .filter((c) => !NOT_FIRST.has(c.iso))
+                  .slice(0, NEXT_NAMES)
+                  .map((c) => c.name)
+                  .join(', '),
+                count: zone.countries.length - NEXT_NAMES,
+              })
+            : zone.countries.map((c) => c.name).join(', ')}
+        </span>
+      </span>
+      <Icon name="chevron-right" size={16} />
+    </button>
   );
 }

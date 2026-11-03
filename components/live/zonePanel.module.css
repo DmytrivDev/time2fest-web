@@ -373,24 +373,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 40px;
   margin-top: 12px;
-  border: 1px solid var(--color-border);
   border-radius: 10px;
+  background: rgba(255, 255, 255, 0.09);
   color: var(--color-text);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1;
   text-decoration: none;
   transition: background-color 120ms ease;
 }
+/* Варіант A (рішення власника 2026-11-03): світла заливка без рамки замість сірого контуру. */
 .cardBtn:hover {
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.14);
 }
 .cardBtnLive {
-  border-color: transparent;
   background: #d93a41;
   color: var(--color-on-primary);
+}
+.playMark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+/* Трикутник оптично по центру кола: його центр ваги — правіше середини. */
+.playMark svg {
+  display: block;
+  margin-left: 1px;
+}
+.playMark_live {
+  background: var(--color-on-primary);
+  color: #d93a41;
+}
+.playMark_replay {
+  background: #d93a41;
+  color: var(--color-on-primary);
+}
+.playMark_upcoming {
+  background: #3a3a42;
+  color: var(--color-text);
 }
 .cardBtnLive:hover {
   background: #c8333a;
