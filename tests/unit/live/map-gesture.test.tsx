@@ -1,6 +1,6 @@
 // Підказка жестів на телефоні (рішення власника 2026-11-03, варіант 1): один раз — коли мапа повністю видна (не під
-// смугою чату чи плашкою cookies) і простояла так мить; одразу затемнення, потім одне коло пальців, без тексту, далі
-// згасає; дотик ховає; позначка — cookie `t2f_map_hint`, повторно не показується; «Скинути стан гостя» — знову.
+// смугою чату чи плашкою cookies) і простояла так мить; до того мапа вже затемнена, потім одне коло пальців без тексту,
+// затемнення згасає; дотик знімає одразу; позначка — cookie `t2f_map_hint`; «Скинути стан гостя» — знову затемнена.
 import { act, fireEvent, render } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { useRef } from 'react';
@@ -56,11 +56,15 @@ describe('MapGestureHint', () => {
     clearCookie();
   });
 
-  it('мапа частково за екраном — немає; повністю видна й простояла — одне коло анімації без тексту, згасає; вдруге — ні', () => {
+  it('мапа затемнена одразу; повністю видна й простояла — одне коло пальців без тексту, затемнення згасає; вдруге — ні', () => {
     const a = mount();
+    // Ще до гортання — затемнення без пальців.
+    expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'armed');
+    expect(a.container.querySelectorAll('[data-f]')).toHaveLength(0);
     scrollTo(700); // низ мапи за краєм екрана (jsdom: 768 px)
     act(() => vi.advanceTimersByTime(500));
-    expect(a.container.querySelector('[data-map-gesture]')).toBeNull();
+    expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'armed');
+    expect(mapHintSeen()).toBe(false);
     scrollTo(300);
     act(() => vi.advanceTimersByTime(300));
     const hint = a.container.querySelector('[data-map-gesture]')!;
@@ -68,9 +72,9 @@ describe('MapGestureHint', () => {
     expect(hint.querySelectorAll('[data-f]')).toHaveLength(2);
     expect(hint.querySelector('[role="status"]')).toHaveClass('sr-only');
     expect(mapHintSeen()).toBe(true);
-    act(() => vi.advanceTimersByTime(2800));
+    act(() => vi.advanceTimersByTime(2700));
     expect(a.container.querySelector('[data-map-gesture]')).not.toHaveAttribute('data-leaving');
-    act(() => vi.advanceTimersByTime(100)); // 0,3 с затемнення + 2,6 с коло
+    act(() => vi.advanceTimersByTime(100)); // 0,15 с паузи + 2,6 с коло
     expect(a.container.querySelector('[data-map-gesture]')).toHaveAttribute('data-leaving', 'true');
     act(() => vi.advanceTimersByTime(300));
     expect(a.container.querySelector('[data-map-gesture]')).toBeNull();
@@ -84,16 +88,17 @@ describe('MapGestureHint', () => {
   it('«Скинути стан гостя» стирає позначку — підказка знову чекає мапу (без перезавантаження)', () => {
     const { container } = mount();
     scrollTo(300);
-    act(() => vi.advanceTimersByTime(300)); // показалась
-    act(() => vi.advanceTimersByTime(2900)); // затемнення + коло
+    act(() => vi.advanceTimersByTime(300)); // старт
+    act(() => vi.advanceTimersByTime(2800)); // пауза + коло
     act(() => vi.advanceTimersByTime(300)); // згасла
     expect(container.querySelector('[data-map-gesture]')).toBeNull();
     expect(mapHintSeen()).toBe(true);
     act(() => resetGuest());
     expect(mapHintSeen()).toBe(false);
+    expect(container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'armed');
     scrollTo(310);
     act(() => vi.advanceTimersByTime(300));
-    expect(container.querySelector('[data-map-gesture]')).not.toBeNull();
+    expect(container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'play');
   });
 
   it('швидке гортання повз мапу не рахується', () => {
@@ -101,7 +106,8 @@ describe('MapGestureHint', () => {
     scrollTo(300);
     scrollTo(-200); // уже проскролили далі, не зупинившись
     act(() => vi.advanceTimersByTime(500));
-    expect(container.querySelector('[data-map-gesture]')).toBeNull();
+    // Мапа лишається затемненою й чекає.
+    expect(container.querySelector('[data-map-gesture]')).toHaveAttribute('data-map-gesture', 'armed');
     expect(mapHintSeen()).toBe(false);
   });
 

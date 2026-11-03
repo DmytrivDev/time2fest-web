@@ -8,8 +8,8 @@ import m from './zoneMap.module.css';
 
 /** Одне коло анімації: пальці розходяться й сходяться, потім разом вправо-вліво (як у погодженому прикладі). */
 const LOOP_MS = 2600;
-/** Спершу мапа затемнюється, потім стартують пальці; після кола затемнення згасає (правка власника 2026-11-03). */
-const LEAD_MS = 300;
+/** Пауза між моментом, коли мапу повністю видно, і стартом пальців. */
+const LEAD_MS = 150;
 const FADE_MS = 250;
 /** Скільки мапа має простояти повністю видимою, щоб швидке гортання повз неї не рахувалося. */
 const SETTLE_MS = 250;
@@ -31,20 +31,27 @@ function visibleBottom(): number {
 
 /**
  * Телефон: підказка жестів поверх мапи (рішення власника 2026-11-03, варіант 1 «м’яке затемнення»): без тексту — легке
- * затемнення мапи й два пальці: масштаб, потім рух. Один раз — коли мапа вперше повністю видна (не під смугою чату чи
- * плашкою cookies) і простояла так мить: мапа одразу темнішає, пальці роблять одне коло, затемнення згасає й мапа
- * доступна. Дотик будь-де — сховати. Після «Скинути стан гостя» (машина часу) — чекає мапу знову.
+ * затемнення мапи й два пальці: масштаб, потім рух. Поки підказку не показано, мапа затемнена від самого початку (і під
+ * час гортання); коли вона вперше повністю видна (не під смугою чату чи плашкою cookies) і простояла так мить — пальці
+ * роблять одне коло, затемнення згасає й мапа доступна (правка власника 2026-11-03). Дотик — одразу зняти затемнення.
+ * Після «Скинути стан гостя» (машина часу) — мапа знову затемнена й чекає.
  */
 export function MapGestureHint({ boxRef }: { boxRef: RefObject<HTMLElement | null> }) {
   const t = useTranslations('liveMap.gesture');
-  // 0 — немає, 1 — анімація, 2 — згасає.
-  const [step, setStep] = useState<0 | 1 | 2>(0);
-  // Новий гість (скидання в машині часу стирає позначку) — підказка знову чекає мапу.
+  // 0 — немає; 1 — мапа затемнена й чекає, поки її повністю видно; 2 — анімація пальців; 3 — затемнення згасає.
+  // Підказка живе лише на клієнті (мапа з'являється після завантаження геометрії), тож cookie читаємо одразу.
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(() => (mapHintSeen() ? 0 : 1));
+  // Новий гість (скидання в машині часу стирає позначку) — мапа знову затемнена й чекає.
   const guestId = useGuestStore((s) => s.id);
+  const [armedFor, setArmedFor] = useState(guestId);
+  if (guestId !== armedFor) {
+    setArmedFor(guestId);
+    if (step === 0 && !mapHintSeen()) setStep(1);
+  }
 
   useEffect(() => {
     const el = boxRef.current;
-    if (!el || mapHintSeen()) return;
+    if (!el || step !== 1) return;
     let frame = 0;
     let settle = 0;
     const fully = () => {
@@ -62,10 +69,10 @@ export function MapGestureHint({ boxRef }: { boxRef: RefObject<HTMLElement | nul
       window.clearTimeout(settle);
       if (!fully()) return;
       settle = window.setTimeout(() => {
-        if (!fully() || mapHintSeen()) return;
+        if (!fully()) return;
         stop();
         markMapHintSeen();
-        setStep(1);
+        setStep(2);
       }, SETTLE_MS);
     };
     function onScroll() {
@@ -75,11 +82,11 @@ export function MapGestureHint({ boxRef }: { boxRef: RefObject<HTMLElement | nul
     window.addEventListener('resize', onScroll, { passive: true });
     onScroll();
     return stop;
-  }, [boxRef, guestId]);
+  }, [boxRef, step]);
 
   useEffect(() => {
-    if (!step) return;
-    const id = window.setTimeout(() => setStep((s) => (s === 1 ? 2 : 0)), step === 1 ? LEAD_MS + LOOP_MS : FADE_MS);
+    if (step < 2) return;
+    const id = window.setTimeout(() => setStep((s) => (s === 2 ? 3 : 0)), step === 2 ? LEAD_MS + LOOP_MS : FADE_MS);
     return () => window.clearTimeout(id);
   }, [step]);
 
@@ -88,17 +95,24 @@ export function MapGestureHint({ boxRef }: { boxRef: RefObject<HTMLElement | nul
     <button
       type="button"
       className={m.gesture}
-      data-map-gesture="play"
-      data-leaving={step === 2 ? 'true' : undefined}
+      data-map-gesture={step === 1 ? 'armed' : 'play'}
+      data-leaving={step === 3 ? 'true' : undefined}
       aria-label={t('close')}
-      onClick={() => setStep(2)}
+      onClick={() => {
+        markMapHintSeen();
+        setStep(3);
+      }}
     >
       <span aria-hidden="true" className={m.gestureScrim} />
-      <span aria-hidden="true" className={m.finger} data-f="a" />
-      <span aria-hidden="true" className={m.finger} data-f="b" />
-      <span className="sr-only" role="status">
-        {t('hint')}
-      </span>
+      {step >= 2 ? (
+        <>
+          <span aria-hidden="true" className={m.finger} data-f="a" />
+          <span aria-hidden="true" className={m.finger} data-f="b" />
+          <span className="sr-only" role="status">
+            {t('hint')}
+          </span>
+        </>
+      ) : null}
     </button>
   );
 }
