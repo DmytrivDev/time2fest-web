@@ -485,13 +485,13 @@
 /* Телефон, під мапою — «Зараз» (дошка `Desk-Map-Legend`, телефон A). */
 .now {
   margin-top: 0;
-  padding: 12px 14px;
+  padding: 12px 10px 8px;
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
 }
-.now .stackFlag {
-  box-shadow: 0 0 0 2px var(--color-surface-raised);
+.now .queueHead {
+  padding: 0 4px;
 }
 .nowHead {
   display: flex;

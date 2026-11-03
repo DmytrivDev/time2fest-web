@@ -346,6 +346,9 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
   const coralSound = !!player && player.muted;
   const more = view.state === 'soldout' ? otherRows(event, now) : [];
 
+  // Після півночі порожній «Перший ряд» не показуємо: вітати нікого (рішення власника 2026-11-03).
+  if (now >= event.midnightMs && !seats.some((st) => st.state === 'taken')) return null;
+
   return (
     <FirstRowStrip
       city={city}

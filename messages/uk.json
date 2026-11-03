@@ -1143,6 +1143,8 @@
       "watchReplay": "Дивитися повтор",
       "prevWord": "Попередній",
       "nextWord": "Наступний",
+      "prevShort": "Раніше",
+      "nextShort": "Далі",
       "live": "Наживо",
       "startsAt": "о {time}",
       "watch": "Дивитися",

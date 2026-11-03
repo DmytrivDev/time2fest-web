@@ -118,6 +118,13 @@
 .navRow .nav {
   margin-left: 0;
 }
+/* Телефон: дві кнопки порівну на всю ширину. */
+.navRow .navBtn {
+  flex: 1 1 0;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 8px;
+}
 .navBtn {
   display: inline-flex;
   align-items: center;
@@ -254,6 +261,15 @@
 .trackPhone > li {
   flex-basis: 240px;
   min-width: 240px;
+}
+/* Телефон: стрічки доходять до країв вікна; проміжок між картками = відступ вікна (16 px), тож після гортання зліва
+   не видно шматка попередньої картки (правка власника 2026-11-03). */
+.track.trackPhone,
+.shelf.shelfPhone {
+  gap: 16px;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  scroll-padding-inline: 16px;
 }
 .arrow {
   position: absolute;

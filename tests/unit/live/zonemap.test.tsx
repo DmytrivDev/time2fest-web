@@ -181,11 +181,19 @@ describe('ZoneMap: інше', () => {
     expect(legend.querySelectorAll('li')).toHaveLength(6);
   });
 
-  it('телефон: «Зараз» під мапою — пояс в ефірі й «Далі»; черги поясів немає', () => {
+  it('телефон: «Зараз» під мапою — два рядки (в ефірі й «Далі»); дотик відкриває вікно поясу, картка ховається', () => {
     const { view } = setup();
-    expect(view.container.querySelector('[data-map-now="utc+0000"]')).not.toBeNull();
-    expect(view.container.querySelector('[data-map-now-next="utc-0100"]')).toHaveTextContent('Далі · UTC−1');
-    expect(view.container.querySelector('[data-map-queue]')).toBeNull();
+    const now = view.container.querySelector('[data-map-now]')!;
+    const rows = now.querySelectorAll('[data-queue-zone]');
+    expect([...rows].map((r) => r.getAttribute('data-queue-zone'))).toEqual(['utc+0000', 'utc-0100']);
+    expect(rows[0]).toHaveTextContent('Зараз');
+    expect(rows[1]).toHaveTextContent('Далі');
+    // Без «Вже зустріли» й точок міст — вони в легенді нижче.
+    expect(now.querySelector('[data-queue-past]')).toBeNull();
+    expect(now.querySelector('[data-map-city-key]')).toBeNull();
+    fireEvent.click(rows[1]!);
+    expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc-0100');
+    expect(view.container.querySelector('[data-map-now]')).toBeNull();
   });
 
   it('десктоп: колонка — «Північ по черзі»: зараз, далі, ще 4; «Вже зустріли»; рядок вибирає пояс', () => {

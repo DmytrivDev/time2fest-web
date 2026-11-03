@@ -54,19 +54,21 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, r
       {own ? <span className={m.own}>{t('yourZone')}</span> : null}
     </span>
   );
+  // Новий рік іде мапою справа наліво: наступний пояс — ліворуч (стрілка вліво), попередній — праворуч (правка
+  // власника 2026-11-03). На телефоні — короткі слова, щоб обидві кнопки вмістилися в рядок.
   const nav = (
     <span className={m.nav}>
-      {prev ? (
-        <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('prevZone', { offset: utcLabel(prev.offsetMinutes) })} onClick={() => onSelect(prev.id)}>
-          <Icon name="chevron-left" size={16} />
-          <span className={m.navWord}>{t('prevWord')}</span>
-          {utcLabel(prev.offsetMinutes)}
-        </button>
-      ) : null}
       {next ? (
         <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('nextZone', { offset: utcLabel(next.offsetMinutes) })} onClick={() => onSelect(next.id)}>
-          <span className={m.navWord}>{t('nextWord')}</span>
+          <Icon name="chevron-left" size={16} />
+          <span className={m.navWord}>{phone ? t('nextShort') : t('nextWord')}</span>
           {utcLabel(next.offsetMinutes)}
+        </button>
+      ) : null}
+      {prev ? (
+        <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('prevZone', { offset: utcLabel(prev.offsetMinutes) })} onClick={() => onSelect(prev.id)}>
+          <span className={m.navWord}>{phone ? t('prevShort') : t('prevWord')}</span>
+          {utcLabel(prev.offsetMinutes)}
           <Icon name="chevron-right" size={16} />
         </button>
       ) : null}

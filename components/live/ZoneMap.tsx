@@ -778,7 +778,8 @@ export function ZoneMap({
               {hint}
             </div>
             {cardSlot}
-            <MapNowCard zones={ordered} stateOf={stateOf} />
+            {/* Вибрано пояс — картки «Зараз» немає: вікно поясу стоїть одразу під мапою (правка власника 2026-11-03). */}
+            {selectedZoneId ? null : <MapNowCard zones={ordered} stateOf={stateOf} onSelect={(id) => setSelection({ kind: 'zone', id })} />}
           </>
         ) : (
           <div className={m.canvas} data-zone-map-canvas="">

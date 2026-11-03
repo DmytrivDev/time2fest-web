@@ -7,7 +7,6 @@ import { Icon } from '@/components/primitives/Icon';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock } from '@/lib/i18n/time';
 import { utcLabel, type MapCountry, type MapZone } from './MapModel';
-import { useMidnightPhrase } from './ZoneMapCards';
 import m from './zoneMap.module.css';
 
 const SW: Record<ZoneState, 'past' | 'live' | 'next' | 'ahead'> = { past: 'past', live: 'live', next: 'next', future: 'ahead' };
@@ -51,6 +50,10 @@ export interface MapQueueProps {
   onSelect: (id: string) => void;
   /** Наведення на рядок підсвічує пояс на мапі. */
   onPreview: (id: string | null) => void;
+  /** Скільки рядків черги (десктоп — 6, телефонна картка «Зараз» — 2). */
+  limit?: number;
+  /** Без «Вже зустріли» й точок міст (телефон: вони — у легенді нижче). */
+  bare?: boolean;
 }
 
 /**
@@ -58,12 +61,12 @@ export interface MapQueueProps {
  * пояс в ефірі («Зараз»), наступний («Далі») і ще кілька — з прапорами й північчю за вашим часом; рядки самі пояснюють
  * кольори мапи, тож окремої легенди поясів немає. Рядок вибирає пояс. Унизу — «Вже зустріли» і точки міст.
  */
-export function MapQueue({ zones, stateOf, selectedId, onSelect, onPreview }: MapQueueProps) {
+export function MapQueue({ zones, stateOf, selectedId, onSelect, onPreview, limit = QUEUE_ROWS, bare = false }: MapQueueProps) {
   const t = useTranslations('liveMap.queue');
   const tLegend = useTranslations('liveMap.legend');
   const locale = useLocale();
   const upcoming = upcomingZones(zones, stateOf);
-  const rows = upcoming.slice(0, QUEUE_ROWS);
+  const rows = upcoming.slice(0, limit);
   const pastCount = zones.length - upcoming.length;
   return (
     <div className={m.queue} data-map-queue="">
@@ -109,13 +112,13 @@ export function MapQueue({ zones, stateOf, selectedId, onSelect, onPreview }: Ma
           );
         })}
       </ul>
-      {pastCount ? (
+      {pastCount && !bare ? (
         <div className={m.qPast} data-queue-past={pastCount}>
           <StateSwatch state="past" />
           {t('past', { count: pastCount })}
         </div>
       ) : null}
-      <MapCityKey className={m.qCities} label={tLegend('cities')} />
+      {bare ? null : <MapCityKey className={m.qCities} label={tLegend('cities')} />}
     </div>
   );
 }
@@ -143,35 +146,22 @@ export function MapCityKey({ className, label }: { className?: string; label: st
 }
 
 /**
- * Телефон, під мапою — «Зараз» (рішення власника 2026-11-03, дошка `Desk-Map-Legend`, телефон A): пояс в ефірі з
- * прапорами й північчю за вашим часом, рядок «Далі». Без відліку — він на сторінці один.
+ * Телефон, під мапою — «Зараз» (рішення власника 2026-11-03: варіант A, редизайн у стилі черги десктопа): два рядки —
+ * пояс в ефірі й наступний, з прапорами й північчю за вашим часом; дотик відкриває вікно поясу. Без відліку.
  */
-export function MapNowCard({ zones, stateOf }: { zones: readonly MapZone[]; stateOf: (id: string) => ZoneState }) {
-  const t = useTranslations('liveMap.queue');
-  const locale = useLocale();
-  const upcoming = upcomingZones(zones, stateOf);
-  const live = upcoming.find((z) => stateOf(z.id) === 'live');
-  const next = upcoming.find((z) => stateOf(z.id) === 'next');
-  const when = useMidnightPhrase(live?.midnightMs ?? 0);
-  if (!live) return null;
+export function MapNowCard({
+  zones,
+  stateOf,
+  onSelect,
+}: {
+  zones: readonly MapZone[];
+  stateOf: (id: string) => ZoneState;
+  onSelect: (id: string) => void;
+}) {
+  if (!zones.some((z) => stateOf(z.id) === 'live')) return null;
   return (
-    <div className={m.now} data-map-now={live.id}>
-      <div className={m.nowHead}>
-        <span className={m.smallCap}>{t('now')}</span>
-        <span aria-hidden="true" className={m.nowDot} />
-        <span className={m.nowName}>{utcLabel(live.offsetMinutes)}</span>
-        <span className={m.nowFlags}>
-          <FlagStack countries={live.countries} max={4} size={18} />
-        </span>
-      </div>
-      <div className={m.nowWhen}>{when}</div>
-      {next ? (
-        <div className={m.nowNext} data-map-now-next={next.id}>
-          <StateSwatch state="next" />
-          {t('nextLine', { offset: utcLabel(next.offsetMinutes) })}
-          <span className={m.nowNextTime}>{t('at', { time: formatClock(next.midnightMs, { locale }) })}</span>
-        </div>
-      ) : null}
+    <div className={m.now} data-map-now="">
+      <MapQueue zones={zones} stateOf={stateOf} onSelect={onSelect} onPreview={() => undefined} limit={2} bare />
     </div>
   );
 }
