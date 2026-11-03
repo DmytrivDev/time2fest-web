@@ -75,8 +75,10 @@ describe('ZoneMap: стани поясів', () => {
   });
 });
 
-describe('ZoneMap: телефон — дотик відкриває картку під мапою без переходу', () => {
-  it('тап по місту: картка з «Відкрити країну», посилання веде на країну, сторінка не змінюється', () => {
+const OPEN_PANEL = '[data-zone-map-card-slot] .t2f-reveal[data-open="true"] [data-zone-panel]';
+
+describe('ZoneMap: телефон — дотик відкриває вікно поясу під мапою без переходу', () => {
+  it('тап по місту: вікно поясу цього міста під мапою, країни — посилання, сторінка не змінюється', () => {
     const { view } = setup();
     const before = window.location.href;
     const dot = view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!;
@@ -84,24 +86,23 @@ describe('ZoneMap: телефон — дотик відкриває картку
     expect(dot.tagName).toBe('BUTTON');
     expect(view.container.querySelector('a[data-city]')).toBeNull();
     fireEvent.click(dot);
-    const card = view.container.querySelector<HTMLElement>('[data-map-tap-card]')!;
-    expect(card).not.toBeNull();
-    const open = within(card).getByRole('link', { name: /Відкрити країну/ });
-    expect(open).toHaveAttribute('href', expect.stringMatching(/^\/country\/[^/]+/));
+    const panel = view.container.querySelector<HTMLElement>(OPEN_PANEL)!;
+    expect(panel).toHaveAttribute('data-zone-panel', 'utc+0000');
+    const gb = panel.querySelector('[data-country-card="GB"]')!;
+    expect(gb).toHaveAttribute('href', expect.stringMatching(/^\/country\/[^/]+/));
     expect(window.location.href).toBe(before);
     expect(dot).toHaveAttribute('aria-expanded', 'true');
-    // Картка стоїть після мапи (під нею), а не навколо.
+    // Вікно стоїть після мапи (під нею), а не навколо.
     const svg = view.container.querySelector('svg[data-zone-map-svg]')!;
-    expect(svg.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(svg.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it('× закриває картку й повертає фокус на точку', () => {
-    const { view } = setup();
-    const dot = view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!;
-    fireEvent.click(dot);
-    fireEvent.click(screen.getByRole('button', { name: 'Закрити картку' }));
-    expect(view.container.querySelector('[data-map-tap-card]')).toBeNull();
-    expect(dot).toHaveFocus();
+  it('× закриває вікно й повертає фокус на пояс', () => {
+    const { view, path } = setup();
+    fireEvent.click(view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!);
+    fireEvent.click(screen.getByRole('button', { name: 'Закрити' }));
+    expect(view.container.querySelector(OPEN_PANEL)).toBeNull();
+    expect(path('utc+0000')).toHaveFocus();
   });
 
   it('на десктопі точка міста — посилання на країну', () => {
@@ -120,7 +121,7 @@ describe('ZoneMap: телефон — дотик відкриває картку
 });
 
 describe('ZoneMap: клавіатура', () => {
-  it('стрілки рухають фокус між поясами; Enter відкриває ZoneCard; Esc закриває й повертає фокус', () => {
+  it('стрілки рухають фокус між поясами; Enter відкриває вікно поясу; Esc закриває й повертає фокус', () => {
     const { view, path } = setup();
     const live = path('utc+0000');
     live.focus();
@@ -132,13 +133,13 @@ describe('ZoneMap: клавіатура', () => {
     expect(path('utc+0000')).toHaveFocus();
 
     fireEvent.keyDown(path('utc+0000'), { key: 'Enter' });
-    const card = view.container.querySelector<HTMLElement>('[data-zone-card="pinned"]')!;
+    const card = view.container.querySelector<HTMLElement>(OPEN_PANEL)!;
     expect(card).not.toBeNull();
-    expect(within(card).getByRole('heading', { name: /Пояс UTC\+0/ })).toBeInTheDocument();
+    expect(within(card).getByRole('heading', { name: 'UTC+0' })).toBeInTheDocument();
     expect(within(card).getAllByRole('link').length).toBeGreaterThan(0);
 
     fireEvent.keyDown(card, { key: 'Escape' });
-    expect(view.container.querySelector('[data-zone-card]')).toBeNull();
+    expect(view.container.querySelector(OPEN_PANEL)).toBeNull();
     expect(path('utc+0000')).toHaveFocus();
   });
 
@@ -199,8 +200,10 @@ describe('ZoneMap: інше', () => {
     expect(queue.querySelector('[data-map-city-key]')).toHaveTextContent('МістоТрансляція');
     expect(view.container.querySelector('[data-map-legend]')).toBeNull();
     fireEvent.click(rows[2]!);
-    expect(view.container.querySelector('[data-zone-card="pinned"]')).not.toBeNull();
-    expect(view.container.querySelector('[data-map-queue]')).toBeNull();
+    // Вікно поясу — під мапою; черга лишається на місці.
+    expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc-0200');
+    expect(view.container.querySelector('[data-map-queue]')).not.toBeNull();
+    expect(rows[2]).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('UTC — лише в картці поясу й у «Зараз» під мапою: на самій мапі й у назвах шляхів його немає', () => {
@@ -209,6 +212,6 @@ describe('ZoneMap: інше', () => {
     expect(view.container.querySelector('[data-map-now]')?.textContent).toMatch(/UTC\+0/);
     expect(path('utc+0000').getAttribute('aria-label')).not.toMatch(/UTC/);
     fireEvent.click(path('utc+0000'));
-    expect(view.container.querySelector('[data-zone-card="pinned"]')?.textContent).toMatch(/UTC\+0/);
+    expect(view.container.querySelector(OPEN_PANEL)?.textContent).toMatch(/UTC\+0/);
   });
 });

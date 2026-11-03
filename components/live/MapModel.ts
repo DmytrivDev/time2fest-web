@@ -12,6 +12,19 @@ export interface MapCountry {
   gender?: Gender;
   /** Головне місто країни в цьому поясі, якщо там є трансляція (підказка мапи: «Київ · наживо»). */
   mainCity?: string;
+  /** Головне місто країни в цьому поясі — завжди (картки країн у вікні поясу). */
+  city?: string;
+}
+
+/** Трансляція в поясі (вікно поясу, «Де дивитися»): місто з подією, що має відео. */
+export interface MapStream {
+  cityId: string;
+  city: string;
+  iso: string;
+  country: string;
+  flagCode: string;
+  href: string;
+  type: CelebrationType;
 }
 
 /** Пояс: `id` збігається з `data-zone` шляху в `zonemap.json` (`utc+0545`). */
@@ -23,6 +36,10 @@ export interface MapZone {
   countries: MapCountry[];
   /** Скільки міст поясу мають трансляцію (підказка мапи: «3 трансляції»). */
   streamCount?: number;
+  /** Міста з трансляцією — за популярністю країни (вікно поясу, «Де дивитися»). */
+  streams?: MapStream[];
+  /** Скільки міст у поясі (вікно поясу: «31 місто»). */
+  cityCount?: number;
 }
 
 /** Основне місто на мапі: тиха точка, коралова — коли є трансляція (C18). */
@@ -70,6 +87,10 @@ export function buildMapModel(data: Dataset): MapModel {
       const own = streamCities.filter((c) => c.countryIso === iso);
       return (own.find((c) => c.isCountryMain) ?? own[0])?.name.uk;
     };
+    const cityOf = (iso: string) => {
+      const own = zoneCities.filter((c) => c.countryIso === iso);
+      return (own.find((c) => c.isCountryMain) ?? own[0])?.name.uk;
+    };
     const countries = [...isoSet]
       .map((iso) => data.countriesByIso.get(iso))
       .filter((c): c is NonNullable<typeof c> => Boolean(c))
@@ -82,8 +103,27 @@ export function buildMapModel(data: Dataset): MapModel {
         traditions: c.howTo.traditions.slice(0, 3).map((t) => ({ id: t.id, title: t.title, text: t.text })),
         gender: c.gender,
         ...(mainCityOf(c.iso) ? { mainCity: mainCityOf(c.iso) } : {}),
+        ...(cityOf(c.iso) ? { city: cityOf(c.iso) } : {}),
       }));
-    zones.push({ id: z.id, offsetMinutes: z.offsetMinutes, midnightMs: z.midnightMs, countries, streamCount: streamCities.length });
+    const rank = new Map(countries.map((c, i) => [c.iso, i]));
+    const streams = streamCities
+      .map<MapStream | null>((c) => {
+        const country = countries.find((k) => k.iso === c.countryIso);
+        return country
+          ? { cityId: c.id, city: c.name.uk, iso: country.iso, country: country.name, flagCode: country.flagCode, href: country.href, type: c.celebrationType }
+          : null;
+      })
+      .filter((v): v is MapStream => v !== null)
+      .sort((a, b) => (rank.get(a.iso) ?? 0) - (rank.get(b.iso) ?? 0));
+    zones.push({
+      id: z.id,
+      offsetMinutes: z.offsetMinutes,
+      midnightMs: z.midnightMs,
+      countries,
+      streamCount: streamCities.length,
+      streams,
+      cityCount: zoneCities.length,
+    });
   }
   for (const id of MAP_CITY_IDS) {
     const city = data.citiesById.get(id);

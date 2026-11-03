@@ -2,7 +2,7 @@
  * US1 — мапа поясів (T067, C18). Головна з «машиною часу» (заморожений час):
  * 38 шляхів `data-offset`, класи станів `is-past|is-live|is-next|is-ahead` від `TimeSource`,
  * на телефоні дотик до міста відкриває картку під мапою з «Відкрити країну» (без переходу),
- * Enter на поясі відкриває `ZoneCard`, стрілки гортають пояси, Esc повертає фокус; axe на мапі.
+ * Enter на поясі відкриває вікно поясу під мапою, стрілки гортають пояси, Esc повертає фокус; axe на мапі.
  */
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
@@ -32,6 +32,9 @@ async function openMap(page: Page, at = SCENE) {
   await expect(m.locator('g[data-offset]').first()).toBeVisible();
   return m;
 }
+
+/** Відкрите вікно поясу (згорнуте лишається в DOM у `Reveal`). */
+const OPEN_PANEL = '[data-zone-map-card-slot] .t2f-reveal[data-open="true"] [data-zone-panel]';
 
 test.describe('Мапа поясів: дані й стани', () => {
   test('38 шляхів data-offset, один Tab-стоп, стани від часу', async ({ page }) => {
@@ -82,28 +85,27 @@ test.describe('Мапа поясів: телефон', () => {
     test.skip(testInfo.project.name !== 'phone', 'лише телефон');
   });
 
-  test('дотик до міста відкриває картку під мапою; сторінка не змінюється', async ({ page }) => {
+  test('дотик до міста відкриває вікно поясу під мапою; сторінка не змінюється', async ({ page }) => {
     const m = await openMap(page);
     const url = page.url();
     const svg = m.locator('svg[data-zone-map-svg]');
     await m.locator('button[data-city="london"]').click();
-    const card = m.locator('[data-map-tap-card]');
-    await expect(card).toBeVisible();
+    const panel = m.locator(OPEN_PANEL);
+    await expect(panel).toBeVisible();
+    await expect(panel).toHaveAttribute('data-zone-panel', 'utc+0000');
     expect(page.url()).toBe(url);
-    const open = card.getByRole('link', { name: /Відкрити країну/ });
-    await expect(open).toBeVisible();
-    await expect(open).toHaveAttribute('href', /\/country\//);
-    // Картка — під мапою, а не поверх неї.
+    await expect(panel.locator('[data-country-card="GB"]')).toHaveAttribute('href', /\/country\//);
+    // Вікно — під мапою, а не поверх неї.
     const svgBox = (await svg.boundingBox())!;
-    const cardBox = (await card.boundingBox())!;
-    expect(cardBox.y).toBeGreaterThanOrEqual(svgBox.y + svgBox.height - 1);
-    // Друге місто міняє вміст картки, а не відкриває другу.
-    await m.locator('button[data-city="paris"]').click();
-    await expect(m.locator('[data-map-tap-card]')).toHaveCount(1);
-    await expect(m.locator('[data-map-tap-card]')).toContainText('Франція');
-    // Закрити × — картки немає.
-    await card.getByRole('button', { name: 'Закрити картку' }).click();
-    await expect(m.locator('[data-map-tap-card]')).toHaveCount(0);
+    const box = (await panel.boundingBox())!;
+    expect(box.y).toBeGreaterThanOrEqual(svgBox.y + svgBox.height - 1);
+    // Стрілка — сусідній пояс у тому самому вікні.
+    await panel.getByRole('button', { name: /^Наступний пояс/ }).click();
+    await expect(m.locator(OPEN_PANEL)).toHaveCount(1);
+    await expect(m.locator(OPEN_PANEL)).not.toHaveAttribute('data-zone-panel', 'utc+0000');
+    // Закрити × — вікна немає.
+    await m.locator(OPEN_PANEL).getByRole('button', { name: 'Закрити' }).click();
+    await expect(m.locator(OPEN_PANEL)).toHaveCount(0);
   });
 
   test('ціль дотику точки міста щонайменше 44 px', async ({ page }) => {
@@ -122,7 +124,7 @@ test.describe('Мапа поясів: телефон', () => {
 });
 
 test.describe('Мапа поясів: клавіатура', () => {
-  test('стрілки між поясами, Enter — ZoneCard з країнами-посиланнями, Esc повертає фокус', async ({ page }) => {
+  test('стрілки між поясами, Enter — вікно поясу з країнами-посиланнями, Esc повертає фокус', async ({ page }) => {
     test.skip(isPhone(page), 'клавіатура: десктоп');
     const m = await openMap(page);
     const live = zone(page, 'utc+0000');
@@ -133,13 +135,13 @@ test.describe('Мапа поясів: клавіатура', () => {
     await expect(live).toBeFocused();
 
     await page.keyboard.press('Enter');
-    const card = m.locator('[data-zone-card="pinned"]');
+    const card = m.locator(OPEN_PANEL);
     await expect(card).toBeVisible();
-    await expect(card.getByRole('heading', { name: /Пояс UTC\+0/ })).toBeVisible();
+    await expect(card.getByRole('heading', { name: 'UTC+0' })).toBeVisible();
     await expect(card.getByRole('link').first()).toHaveAttribute('href', /\/country\//);
 
     await page.keyboard.press('Escape');
-    await expect(m.locator('[data-zone-card]')).toHaveCount(0);
+    await expect(m.locator(OPEN_PANEL)).toHaveCount(0);
     await expect(live).toBeFocused();
   });
 
@@ -155,29 +157,27 @@ test.describe('Мапа поясів: клавіатура', () => {
     expect(stillOnPath).toBe(false);
   });
 
-  test('на десктопі точка міста — посилання на країну; «Як святкувати» відкриває спливну панель', async ({ page }) => {
+  test('на десктопі точка міста — посилання на країну; клік у черзі відкриває вікно поясу під мапою з прокруткою', async ({ page }) => {
     test.skip(isPhone(page), 'десктоп');
     const m = await openMap(page);
     await expect(m.locator('a[data-city="london"]')).toHaveAttribute('href', /\/country\//);
-    // Центр рамки поясу UTC+0 — в океані (смуга поясу); картку відкриваємо з клавіатури.
-    await zone(page, 'utc+0000').focus();
-    await page.keyboard.press('Enter');
-    const card = m.locator('[data-zone-card="pinned"]');
-    await card.getByRole('button', { name: 'Як святкувати' }).click();
-    await expect(page.locator('[data-how-to-popover]')).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(page.locator('[data-how-to-popover]')).toHaveCount(0);
-    await expect(card).toBeVisible(); // Esc закрив лише панель
+    await m.locator('[data-queue-zone="utc-0100"]').click();
+    const panel = m.locator(OPEN_PANEL);
+    await expect(panel).toHaveAttribute('data-zone-panel', 'utc-0100');
+    await expect(m.locator('[data-queue-zone="utc-0100"]')).toHaveAttribute('aria-pressed', 'true');
+    // Верх вікна — у видимій частині сторінки (прокрутка до вікна).
+    await expect(panel).toBeInViewport();
+    await expect(panel.locator('[data-country-tile], [data-country-card]').first()).toHaveAttribute('href', /\/country\//);
   });
 });
 
 test.describe('Мапа поясів: доступність', () => {
-  test('axe: мапа, легенда й відкрита картка без порушень (WCAG 2.1 AA)', async ({ page }) => {
+  test('axe: мапа, легенда й відкрите вікно поясу без порушень (WCAG 2.1 AA)', async ({ page }) => {
     const m = await openMap(page);
-    // Центр рамки поясу UTC+0 на вузькій мапі припадає на ціль міста (Азорські острови) — відкриваємо картку з клавіатури.
+    // Центр рамки поясу UTC+0 на вузькій мапі припадає на ціль міста (Азорські острови) — відкриваємо вікно з клавіатури.
     await zone(page, 'utc+0000').focus();
     await page.keyboard.press('Enter');
-    await expect(m.locator('[data-zone-card]')).toBeVisible();
+    await expect(m.locator(OPEN_PANEL)).toBeVisible();
     const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).include('[data-zone-map]').analyze();
     expect(violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
   });

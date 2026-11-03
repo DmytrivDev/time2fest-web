@@ -34,7 +34,7 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
       data-map-legend={variant}
       className={cn(
         'text-text',
-        column ? 'flex flex-col gap-3 text-body font-medium leading-snug' : 'grid grid-cols-2 gap-x-3 gap-y-2.5 text-[14px] font-medium leading-snug',
+        column ? 'flex flex-col gap-3 text-body font-medium leading-snug' : 'grid grid-cols-2 gap-x-3 gap-y-2.5 text-label-sm font-medium leading-snug',
         className,
       )}
     >

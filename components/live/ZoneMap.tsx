@@ -34,7 +34,9 @@ import {
   type ZoneMapGeometry,
 } from './MapModel';
 import { CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
-import { MapTapCard, ZoneCard, ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
+import { ZonePanel } from './ZonePanel';
+import { ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
+import { Reveal } from '@/components/primitives/Reveal';
 import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
 import './ZoneMap.css';
 import m from './zoneMap.module.css';
@@ -71,7 +73,6 @@ export interface ZoneMapProps {
 
 type Selection = { kind: 'zone'; id: string } | { kind: 'city'; id: string } | null;
 
-const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
 const PHONE_QUERY = '(max-width: 767.98px)';
 
 function subscribePhone(cb: () => void): () => void {
@@ -166,7 +167,6 @@ export function ZoneMap({
 }: ZoneMapProps) {
   const t = useTranslations('liveMap');
   const tNav = useTranslations('nav');
-  const tType = useTranslations('liveCards.eventCard.type');
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const headId = `${uid}-head`;
   const cardId = `${uid}-card`;
@@ -225,7 +225,6 @@ export function ZoneMap({
   const tabStop = tabStopId && zoneById.has(tabStopId) ? tabStopId : (liveZoneId ?? ordered[0]?.id ?? null);
 
   const selectedZoneId = selection?.kind === 'zone' ? selection.id : selection?.kind === 'city' ? cities.find((c) => c.id === selection.id)?.zoneId : undefined;
-  const selectedCity = selection?.kind === 'city' ? cities.find((c) => c.id === selection.id) : undefined;
 
   function focusZone(id: string) {
     setTabStopId(id);
@@ -313,7 +312,6 @@ export function ZoneMap({
   // Назви міст біля точок — від наближення ×2.
   const showNames = zoom.k >= 2;
 
-  const pinnedZone = selectedZoneId ? zoneById.get(selectedZoneId) : undefined;
 
   // Плашка при наведенні (рішення власника 2026-11-02, дошка `Desk-Map-Tips`): лише десктоп; одна одночасно — країна
   // важливіша за пояс; з’являється через 150 мс, зникає через 100 мс; між сусідніми цілями — одразу.
@@ -381,26 +379,55 @@ export function ZoneMap({
   // Підпис біля точки трансляції в ефірі (макет: «Лондон · наживо — дивитися»).
   const labelCity = cities.find((c) => c.stream === 'live' && stateOf(c.zoneId) === 'live' && (!airCityId || c.id === airCityId));
 
-  const card =
-    selectedCity && pinnedZone && isPhone ? (
-      <MapTapCard
+  // Вікно поясу під мапою (рішення власника 2026-11-03, дошка `Desk-Map-ZonePanel`): відкривається й закривається плавно
+  // (`Reveal`), тож під час закриття показує останній вибраний пояс.
+  const [panelZoneId, setPanelZoneId] = useState<string | null>(selectedZoneId ?? null);
+  if (selectedZoneId && selectedZoneId !== panelZoneId) setPanelZoneId(selectedZoneId);
+  const panelZone = panelZoneId ? zoneById.get(panelZoneId) : undefined;
+  // Сусідні пояси за часом опівночі: попередній — на годину раніше (більший зсув), наступний — пізніше.
+  const panelIdx = panelZone ? ordered.indexOf(panelZone) : -1;
+  const card = panelZone ? (
+    <Reveal open={Boolean(selectedZoneId)}>
+      <ZonePanel
         ref={cardRef}
-        city={selectedCity}
-        country={countryByIso.get(selectedCity.countryIso) ?? pinnedZone.countries[0]!}
-        zone={pinnedZone}
-        state={stateOf(pinnedZone.id)}
-        typeLabel={tType(TYPE_KEY[selectedCity.celebrationType])}
+        zone={panelZone}
+        state={stateOf(panelZone.id)}
+        prev={ordered[panelIdx + 1]}
+        next={panelIdx > 0 ? ordered[panelIdx - 1] : undefined}
+        phone={isPhone}
+        onSelect={(id) => setSelection({ kind: 'zone', id })}
         onClose={closeSelection}
       />
-    ) : pinnedZone ? (
-      // Наведення нічого не показує (рішення власника); картка — лише після вибору поясу (клік, Enter).
-      <ZoneCard ref={cardRef} zone={pinnedZone} state={stateOf(pinnedZone.id)} onClose={closeSelection} />
-    ) : null;
+    </Reveal>
+  ) : null;
+  const slotRef = useRef<HTMLDivElement>(null);
   const cardSlot = (
-    <div id={cardId} data-zone-map-card-slot="" className={cn(!isPhone && 'mt-auto')}>
+    <div ref={slotRef} id={cardId} data-zone-map-card-slot="">
       {card}
     </div>
   );
+  // Відкриття вікна (не перемикання поясу): сторінка прокручується так, щоб верх вікна став під низ мапи.
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    const open = Boolean(selectedZoneId);
+    if (open && !wasOpen.current) {
+      const el = slotRef.current;
+      if (el && typeof window !== 'undefined') {
+        const r = el.getBoundingClientRect();
+        if (r.top > window.innerHeight * 0.55) {
+          let reduce = document.documentElement.dataset.reduceMotion === 'true';
+          try {
+            reduce ||= window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          } catch {
+            /* без matchMedia — з анімацією */
+          }
+          const top = window.scrollY + r.top - Math.min(window.innerHeight * 0.35, 280);
+          window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+        }
+      }
+    }
+    wasOpen.current = open;
+  }, [selectedZoneId]);
   const hint = (
     // Підказка лише для читачів екрана: на десктопі колонку займає черга поясів, на телефоні — «Зараз» і легенда.
     <p id={`${uid}-hint`} className="sr-only">
@@ -608,15 +635,14 @@ export function ZoneMap({
                   else dotRefs.current.delete(city.id);
                 }}
                 aria-label={label}
-                aria-expanded={selection?.kind === 'city' && selection.id === city.id}
+                aria-expanded={selectedZoneId === city.zoneId}
                 aria-controls={cardId}
                 tabIndex={-1}
                 data-city={city.id}
-                // Цілі сусідніх міст (44 px) перекриваються: вибране місто (його картка вже відкрита) — під іншими.
-                className={cn(cls, selection?.kind === 'city' && selection.id === city.id ? 'z-0' : 'z-10')}
+                className={cn(cls, 'z-10')}
                 style={style}
                 {...cityHover}
-                onClick={() => setSelection({ kind: 'city', id: city.id })}
+                onClick={() => setSelection({ kind: 'zone', id: city.zoneId })}
               >
                 {dot}
               </button>
@@ -758,17 +784,13 @@ export function ZoneMap({
           <div className={m.canvas} data-zone-map-canvas="">
             <div className={m.mapCol}>{canvas}</div>
             <div className={m.side}>
-              {/* Вибраний пояс — картка на місці черги (закрити — повернутися до черги). */}
-              {card ? null : (
-                <MapQueue
-                  zones={ordered}
-                  stateOf={stateOf}
-                  selectedId={selectedZoneId}
-                  onSelect={(id) => setSelection({ kind: 'zone', id })}
-                  onPreview={setPreviewId}
-                />
-              )}
-              {cardSlot}
+              <MapQueue
+                zones={ordered}
+                stateOf={stateOf}
+                selectedId={selectedZoneId}
+                onSelect={(id) => setSelection({ kind: 'zone', id })}
+                onPreview={setPreviewId}
+              />
               {hint}
             </div>
           </div>
@@ -793,7 +815,7 @@ export function ZoneMap({
         </details>
       ) : null}
 
-      {view === 'list' ? cardSlot : null}
+      {view === 'list' || !isPhone ? cardSlot : null}
       {isPhone || view === 'list' ? <MapLegend className={m.legendBelow} /> : null}
     </section>
   );
