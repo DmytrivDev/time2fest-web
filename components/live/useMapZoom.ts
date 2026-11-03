@@ -6,7 +6,8 @@
  * рамки (`boxRef`); мапа з нього міняє `viewBox` SVG (векторно, без втрати якості), а точки — свої координати.
  * Мапа не виходить за рамку.
  * - Колесо на масштабі 100 % униз прокручує сторінку, а не мапу (щоб мапа не «ловила» прокрутку).
- * - На дотик одним пальцем при 100 % сторінка прокручується як звичайно; від наближення палець тягне мапу.
+ * - Дотик: один палець завжди прокручує сторінку; два пальці — масштаб і рух мапою разом (рішення власника 2026-11-03:
+ *   на телефоні кнопок масштабу немає, мапа не «ловить» прокрутку). Миша на десктопі тягне мапу як раніше.
  * - Після перетягування клік (по поясу, місту) не спрацьовує.
  */
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
@@ -94,7 +95,8 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
     if (!el) return;
     const pts = new Map<number, { x: number; y: number }>();
     let drag: { x: number; y: number; vx: number; vy: number; moved: boolean } | null = null;
-    let pinch: { d: number; k: number } | null = null;
+    // Два пальці: початкова відстань, середня точка й вигляд — масштаб навколо неї й рух за нею.
+    let pinch: { d: number; mx: number; my: number; v: MapView } | null = null;
     let suppress = false;
     const local = (e: PointerEvent) => {
       const { left, top } = size();
@@ -105,12 +107,12 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
       pts.set(e.pointerId, local(e));
       if (pts.size === 2) {
         const [a, b] = [...pts.values()];
-        pinch = { d: Math.hypot(a!.x - b!.x, a!.y - b!.y) || 1, k: viewRef.current.k };
+        pinch = { d: Math.hypot(a!.x - b!.x, a!.y - b!.y) || 1, mx: (a!.x + b!.x) / 2, my: (a!.y + b!.y) / 2, v: viewRef.current };
         drag = null;
         return;
       }
-      // Один палець при 100 % — прокрутка сторінки (touch-action: pan-y), мапу не тягнемо.
-      if (e.pointerType === 'touch' && viewRef.current.k <= MIN_K) return;
+      // Один палець — прокрутка сторінки, мапу не тягнемо.
+      if (e.pointerType === 'touch') return;
       const p = local(e);
       drag = { x: p.x, y: p.y, vx: viewRef.current.x, vy: viewRef.current.y, moved: false };
     };
@@ -120,8 +122,14 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
       if (pinch && pts.size >= 2) {
         const [a, b] = [...pts.values()];
         const d = Math.hypot(a!.x - b!.x, a!.y - b!.y);
+        const mx = (a!.x + b!.x) / 2;
+        const my = (a!.y + b!.y) / 2;
         suppress = true;
-        zoomAt(pinch.k * (d / pinch.d), (a!.x + b!.x) / 2, (a!.y + b!.y) / 2);
+        const { w, h } = size();
+        const v0 = pinch.v;
+        const k = Math.min(MAX_K, Math.max(MIN_K, v0.k * (d / pinch.d)));
+        // Точка мапи під початковою серединою пальців лишається під поточною серединою.
+        setView(clampView({ k, x: mx - ((pinch.mx - v0.x) / v0.k) * k, y: my - ((pinch.my - v0.y) / v0.k) * k }, w, h));
         return;
       }
       if (!drag) return;
@@ -152,6 +160,12 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
     const onDownReset = () => {
       suppress = false;
     };
+    // Два пальці — жест мапи, не сторінки: браузер їх не прокручує й не масштабує (один палець — як звичайно).
+    const onTouch = (e: TouchEvent) => {
+      if (e.touches.length >= 2 && e.cancelable) e.preventDefault();
+    };
+    el.addEventListener('touchstart', onTouch, { passive: false });
+    el.addEventListener('touchmove', onTouch, { passive: false });
     el.addEventListener('pointerdown', onDownReset, true);
     el.addEventListener('pointerdown', onDown);
     el.addEventListener('pointermove', onMove);
@@ -159,6 +173,8 @@ export function useMapZoom(boxRef: RefObject<HTMLElement | null>, ready = true) 
     el.addEventListener('pointercancel', onUp);
     el.addEventListener('click', onClick, true);
     return () => {
+      el.removeEventListener('touchstart', onTouch);
+      el.removeEventListener('touchmove', onTouch);
       el.removeEventListener('pointerdown', onDownReset, true);
       el.removeEventListener('pointerdown', onDown);
       el.removeEventListener('pointermove', onMove);

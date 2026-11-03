@@ -25,6 +25,7 @@ import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { MapLegend } from './MapLegend';
+import { MapGestureHint } from './MapGestureHint';
 import { MapNowCard, MapQueue } from './MapSide';
 import {
   pointToPercent,
@@ -697,38 +698,24 @@ export function ZoneMap({
           )}
         </MapTip>
       ) : null}
-      <div className={cn(m.zoom, isPhone ? m.zoomPhone : m.zoomDesk)} role="group" aria-label={t('zoomGroup')} data-zone-map-zoom="">
-        {isPhone ? (
-          <>
-            <ZoomButton label={t('zoomIn')} disabled={zoom.k >= MAX_K - 0.01} onClick={zoomIn}>
-              +
-            </ZoomButton>
-            <ZoomButton label={t('zoomOut')} disabled={!zoomed} onClick={zoomOut}>
-              −
-            </ZoomButton>
-            <ZoomButton label={t('zoomReset')} disabled={!zoomed} onClick={reset}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                <path d="M4 12a8 8 0 1 0 2.3-5.6" />
-                <path d="M4 4v4h4" />
-              </svg>
-            </ZoomButton>
-          </>
-        ) : (
-          <>
-            <ZoomButton label={t('zoomOut')} disabled={!zoomed} onClick={zoomOut}>
-              −
-            </ZoomButton>
-            <span className={m.zoomValue}>{Math.round(zoom.k * 100)}%</span>
-            <ZoomButton label={t('zoomIn')} disabled={zoom.k >= MAX_K - 0.01} onClick={zoomIn}>
-              +
-            </ZoomButton>
-            <span aria-hidden="true" className={m.zoomSep} />
-            <button type="button" disabled={!zoomed} onClick={reset} className={cn('t2f-focus', m.zoomReset)}>
-              {t('zoomReset')}
-            </button>
-          </>
-        )}
-      </div>
+      {/* Телефон: кнопок масштабу немає — два пальці (рішення власника 2026-11-03); один раз — підказка жестів. */}
+      {isPhone ? (
+        <MapGestureHint boxRef={boxRef} />
+      ) : (
+        <div className={cn(m.zoom, m.zoomDesk)} role="group" aria-label={t('zoomGroup')} data-zone-map-zoom="">
+          <ZoomButton label={t('zoomOut')} disabled={!zoomed} onClick={zoomOut}>
+            −
+          </ZoomButton>
+          <span className={m.zoomValue}>{Math.round(zoom.k * 100)}%</span>
+          <ZoomButton label={t('zoomIn')} disabled={zoom.k >= MAX_K - 0.01} onClick={zoomIn}>
+            +
+          </ZoomButton>
+          <span aria-hidden="true" className={m.zoomSep} />
+          <button type="button" disabled={!zoomed} onClick={reset} className={cn('t2f-focus', m.zoomReset)}>
+            {t('zoomReset')}
+          </button>
+        </div>
+      )}
     </div>
   );
 
@@ -775,6 +762,8 @@ export function ZoneMap({
           <>
             <div className={m.canvas} data-zone-map-canvas="">
               {canvas}
+              {/* Легенда — у тій самій рамці, одразу під мапою (дошка `Phone-Map-Legend`, варіант A). */}
+              <MapLegend variant="inMap" className={m.legendInMap} />
               {hint}
             </div>
             {cardSlot}
@@ -817,7 +806,7 @@ export function ZoneMap({
       ) : null}
 
       {view === 'list' || !isPhone ? cardSlot : null}
-      {isPhone || view === 'list' ? <MapLegend className={m.legendBelow} /> : null}
+      {view === 'list' ? <MapLegend className={m.legendBelow} /> : null}
     </section>
   );
 }

@@ -7,8 +7,11 @@ import type { ZoneState } from '@/lib/engine/zoneState';
 import './ZoneMap.css';
 
 export interface MapLegendProps {
-  /** `grid` — 2 колонки під мапою (телефон) · `column` — колонка праворуч від мапи (десктоп, макет `Main`). */
-  variant?: 'grid' | 'column';
+  /**
+   * `grid` — 2 колонки (список поясів) · `column` — колонка праворуч від мапи · `inMap` — телефон, у рамці мапи під нею:
+   * 3 колонки, 12 px, короткі підписи (дошка `Phone-Map-Legend`, варіант A).
+   */
+  variant?: 'grid' | 'column' | 'inMap';
   className?: string;
 }
 
@@ -26,6 +29,7 @@ const STATES: readonly { state: ZoneState; sw: 'past' | 'live' | 'next' | 'ahead
  */
 export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
   const column = variant === 'column';
+  const inMap = variant === 'inMap';
   const t = useTranslations('liveMap.legend');
   const tNav = useTranslations('nav');
   return (
@@ -34,7 +38,11 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
       data-map-legend={variant}
       className={cn(
         'text-text',
-        column ? 'flex flex-col gap-3 text-body font-medium leading-snug' : 'grid grid-cols-2 gap-x-3 gap-y-2.5 text-label-sm font-medium leading-snug',
+        column
+          ? 'flex flex-col gap-3 text-body font-medium leading-snug'
+          : inMap
+            ? 'grid grid-cols-3 gap-x-2 gap-y-2 text-caption font-medium text-text-secondary'
+            : 'grid grid-cols-2 gap-x-3 gap-y-2.5 text-label-sm font-medium leading-snug',
         className,
       )}
     >
@@ -44,7 +52,7 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
             {state === 'live' ? <span className={cn('rounded-full bg-background', column ? 'size-1.5' : 'size-1.25')} /> : null}
             {state === 'next' ? <Icon name="clock" size={12} strokeWidth={2.6} className={column ? undefined : 'size-2.5'} /> : null}
           </span>
-          {t(state)}
+          {inMap ? t(`short.${state}`) : t(state)}
         </li>
       ))}
       <li className={cn('flex items-center', column ? 'gap-2.5' : 'gap-2')}>

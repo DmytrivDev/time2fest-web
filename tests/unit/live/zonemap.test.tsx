@@ -173,12 +173,13 @@ describe('ZoneMap: інше', () => {
     expect(text).not.toMatch(/(^|[^а-яіїєґ])ніч([^а-яіїєґ]|$)/i);
   });
 
-  it('легенда: чотири стани + два види точок коротко («Місто», «Трансляція»)', () => {
+  it('телефон: легенда в рамці мапи — чотири стани + два види точок, коротко; кнопок масштабу немає', () => {
     const { view } = setup();
-    const legend = view.container.querySelector('[data-map-legend]')!;
-    for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду', 'Місто', 'Трансляція'])
-      expect(legend).toHaveTextContent(label);
+    const legend = view.container.querySelector('[data-zone-map-canvas] [data-map-legend="inMap"]')!;
+    for (const label of ['Наживо', 'Найближча', 'Попереду', 'Зустріли', 'Місто', 'Трансляція']) expect(legend).toHaveTextContent(label);
     expect(legend.querySelectorAll('li')).toHaveLength(6);
+    expect(view.container.querySelectorAll('[data-map-legend]')).toHaveLength(1);
+    expect(view.container.querySelector('[data-zone-map-zoom]')).toBeNull();
   });
 
   it('телефон: «Зараз» під мапою — два рядки (в ефірі й «Далі»); дотик відкриває вікно поясу, картка ховається', () => {

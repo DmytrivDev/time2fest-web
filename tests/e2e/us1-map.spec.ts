@@ -22,7 +22,9 @@ const isPhone = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
 const map = (page: Page) => page.locator('[data-zone-map]');
 const zone = (page: Page, id: string) => map(page).locator(`g[data-zone="${id}"]`);
 
-async function openMap(page: Page, at = SCENE) {
+async function openMap(page: Page, at = SCENE, opts: { gestureHint?: boolean } = {}) {
+  // Підказку жестів (телефон, один раз) у звичайних перевірках вважаємо вже побаченою — щоб не лягала на мапу під час дотиків.
+  if (!opts.gestureHint) await page.addInitScript(() => window.localStorage.setItem('t2f:mapGestureHint:v1', '1'));
   await gotoAt(page, at, 0);
   // Плашка cookies — фіксована внизу за макетом: прибираємо, щоб не лежала на мапі під час кліків.
   const necessary = page.getByRole('button', { name: 'Лише необхідні' });
@@ -61,8 +63,8 @@ test.describe('Мапа поясів: дані й стани', () => {
   test('стан не лише кольором: легенда (телефон) чи черга поясів (десктоп) з підписами й іконки на мапі', async ({ page }, testInfo) => {
     const m = await openMap(page);
     if (testInfo.project.name === 'phone') {
-      const legend = m.locator('[data-map-legend]');
-      for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду']) await expect(legend).toContainText(label);
+      const legend = m.locator('[data-zone-map-canvas] [data-map-legend="inMap"]');
+      for (const label of ['Зустріли', 'Наживо', 'Найближча', 'Попереду']) await expect(legend).toContainText(label);
     } else {
       const queue = m.locator('[data-map-queue]');
       for (const label of ['Зараз', 'Далі', 'Вже зустріли']) await expect(queue).toContainText(label);
@@ -106,6 +108,21 @@ test.describe('Мапа поясів: телефон', () => {
     // Закрити × — вікна немає.
     await m.locator(OPEN_PANEL).getByRole('button', { name: 'Закрити' }).click();
     await expect(m.locator(OPEN_PANEL)).toHaveCount(0);
+  });
+
+  test('підказка жестів: один раз, коли мапа видна; кнопок масштабу немає; легенда — у рамці мапи', async ({ page }) => {
+    const m = await openMap(page, SCENE, { gestureHint: true });
+    await expect(m.locator('[data-zone-map-zoom]')).toHaveCount(0);
+    await expect(m.locator('[data-zone-map-canvas] [data-map-legend="inMap"]')).toBeVisible();
+    const hint = m.locator('[data-map-gesture]');
+    await expect(hint).toHaveAttribute('data-map-gesture', 'pinch');
+    await expect(hint).toHaveAttribute('data-map-gesture', 'pan', { timeout: 4000 });
+    await hint.click();
+    await expect(hint).toHaveCount(0);
+    await page.reload();
+    await map(page).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    await expect(map(page).locator('[data-map-gesture]')).toHaveCount(0);
   });
 
   test('ціль дотику точки міста щонайменше 44 px', async ({ page }) => {
