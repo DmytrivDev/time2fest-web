@@ -137,6 +137,10 @@
 .navBtn:hover {
   background: var(--color-surface-raised);
 }
+.navWord {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
 .close {
   flex: none;
   color: var(--color-text-secondary);
@@ -175,11 +179,13 @@
 .phone .timer {
   font-size: 40px;
 }
+/* «Зустріли 2 год 4 хв тому» — в один рядок (правка власника 2026-11-03). */
 .ago {
-  margin-top: 6px;
-  font-size: 32px;
+  margin-top: 8px;
+  font-size: 24px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .when {
   margin-top: 8px;
@@ -265,6 +271,15 @@
   transform: translateY(-50%);
   cursor: pointer;
 }
+/* Напівпрозорі, щоб не закривати картки; під курсором — повністю (правка власника 2026-11-03). */
+.arrow {
+  opacity: 0.55;
+  transition: opacity 120ms ease;
+}
+.arrow:hover,
+.arrow:focus-visible {
+  opacity: 1;
+}
 .arrow:disabled {
   opacity: 0;
   pointer-events: none;
@@ -292,6 +307,14 @@
 .cardType {
   color: var(--color-text-muted);
   font-size: 12px;
+  font-weight: 600;
+}
+.cardReplay {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
   font-weight: 600;
 }
 .cardLive {
@@ -485,10 +508,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Є трансляція — коралове коло з білим «▶» (правка власника 2026-11-03: помітніше за саму стрілку). */
 .tilePlay {
   display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   margin-left: auto;
-  color: var(--color-zone-live);
+  padding-left: 1px;
+  border-radius: 50%;
+  background: #d93a41;
+  color: var(--color-on-primary);
 }
 .moreBtn {
   display: flex;

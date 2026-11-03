@@ -1,5 +1,5 @@
 // T067 (юніт, компонент): стани поясів від TimeSource, картка під мапою на телефоні, клавіатура.
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
@@ -100,7 +100,8 @@ describe('ZoneMap: телефон — дотик відкриває вікно �
   it('× закриває вікно й повертає фокус на пояс', () => {
     const { view, path } = setup();
     fireEvent.click(view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!);
-    fireEvent.click(screen.getByRole('button', { name: 'Закрити' }));
+    // Пошук за роллю по всій мапі повільний — кнопку беремо з вікна напряму.
+    fireEvent.click(view.container.querySelector<HTMLButtonElement>(`${OPEN_PANEL} button[aria-label="Закрити"]`)!);
     expect(view.container.querySelector(OPEN_PANEL)).toBeNull();
     expect(path('utc+0000')).toHaveFocus();
   });
@@ -135,8 +136,8 @@ describe('ZoneMap: клавіатура', () => {
     fireEvent.keyDown(path('utc+0000'), { key: 'Enter' });
     const card = view.container.querySelector<HTMLElement>(OPEN_PANEL)!;
     expect(card).not.toBeNull();
-    expect(within(card).getByRole('heading', { name: 'UTC+0' })).toBeInTheDocument();
-    expect(within(card).getAllByRole('link').length).toBeGreaterThan(0);
+    expect(card.querySelector('h3')).toHaveTextContent('UTC+0');
+    expect(card.querySelectorAll('a[href^="/country/"]').length).toBeGreaterThan(0);
 
     fireEvent.keyDown(card, { key: 'Escape' });
     expect(view.container.querySelector(OPEN_PANEL)).toBeNull();

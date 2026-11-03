@@ -49,12 +49,16 @@ describe('ZonePanel', () => {
     const cards = container.querySelectorAll('[data-stream-card]');
     expect(cards.length).toBe(z.streams!.length);
     expect(cards[0]).toHaveTextContent('Дивитися');
-    expect(container.querySelectorAll('[data-country-card]')).toHaveLength(5);
+    // Найпопулярніші — 5 карток, без Росії й Білорусі.
+    const cardsIso = [...container.querySelectorAll('[data-country-card]')].map((c) => c.getAttribute('data-country-card'));
+    expect(cardsIso).toHaveLength(5);
+    expect(cardsIso).not.toContain('RU');
+    expect(cardsIso).not.toContain('BY');
     const regions = [...container.querySelectorAll('[data-region]')].map((r) => r.getAttribute('data-region'));
     expect(regions).toEqual(['europe', 'middleEast', 'africa']);
-    // Усі країни поясу — рівно по одному разу (картки + плитки).
-    const all = container.querySelectorAll('[data-country-card], [data-country-tile]');
-    expect(all).toHaveLength(z.countries.length);
+    // У регіонах — усі країни поясу, зокрема найпопулярніші.
+    expect(container.querySelectorAll('[data-country-tile]')).toHaveLength(z.countries.length);
+    expect(container.querySelector('[data-region="europe"] [data-country-tile="UA"]')).not.toBeNull();
   });
 
   it('стрілки ведуть до сусідніх поясів; × закриває', () => {
@@ -71,6 +75,7 @@ describe('ZonePanel', () => {
     expect(onSelect).toHaveBeenCalledWith('utc+0300');
     fireEvent.click(getByRole('button', { name: 'Закрити' }));
     expect(onClose).toHaveBeenCalled();
+    expect(getByRole('button', { name: 'Наступний пояс: UTC+1' })).toHaveTextContent('НаступнийUTC+1');
   });
 
   it('попереду: трансляції з часом початку й «Сторінка країни»', () => {
@@ -81,13 +86,17 @@ describe('ZonePanel', () => {
     expect(card.querySelector('a')).toHaveAttribute('href', expect.stringMatching(/^\/country\//));
   });
 
-  it('вже зустріли: замість таймера — скільки тому; трансляції завершились', () => {
-    const z = zone('utc+0900');
-    const { container } = panel(z, 'past', z.midnightMs + 7 * 60 * MIN);
+  it('вже зустріли: замість таймера — «Новий рік зустріли · 7 год тому»; трансляції — у повторі', () => {
+    const z = model.zones.find((k) => (k.streams?.length ?? 0) > 0 && k.id !== 'utc+0200')!;
+    const { container, getByRole } = panel(z, 'past', z.midnightMs + 7 * 60 * MIN);
     expect(container.querySelector('[role="timer"]')).toBeNull();
-    expect(container.querySelector('[data-zone-time="past"]')).toHaveTextContent('Зустріли 7 год тому');
-    expect(container).toHaveTextContent('Трансляції в поясі завершились.');
-    expect(container.querySelector('[data-stream-card]')).toBeNull();
+    const time = container.querySelector('[data-zone-time="past"]')!;
+    expect(time).toHaveTextContent('Новий рік зустріли');
+    expect(time).toHaveTextContent('7 год тому');
+    expect(getByRole('heading', { name: 'Переглянути в повторі' })).toBeInTheDocument();
+    const card = container.querySelector('[data-stream-card]')!;
+    expect(card).toHaveTextContent('Повтор');
+    expect(card).toHaveTextContent('Дивитися повтор');
   });
 
   it('без трансляцій — один рядок замість карток', () => {

@@ -21,6 +21,7 @@ import m from './zonePanel.module.css';
 
 const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
 const TOP = 5;
+const NOT_TOP = new Set(['RU', 'BY']);
 /** На телефоні одразу видно дві групи регіонів, решта — кнопкою «Ще …». */
 const PHONE_GROUPS = 2;
 
@@ -58,11 +59,13 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, r
       {prev ? (
         <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('prevZone', { offset: utcLabel(prev.offsetMinutes) })} onClick={() => onSelect(prev.id)}>
           <Icon name="chevron-left" size={16} />
+          <span className={m.navWord}>{t('prevWord')}</span>
           {utcLabel(prev.offsetMinutes)}
         </button>
       ) : null}
       {next ? (
         <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('nextZone', { offset: utcLabel(next.offsetMinutes) })} onClick={() => onSelect(next.id)}>
+          <span className={m.navWord}>{t('nextWord')}</span>
           {utcLabel(next.offsetMinutes)}
           <Icon name="chevron-right" size={16} />
         </button>
@@ -97,15 +100,19 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, r
           </dl>
         </div>
         <div className={m.watchCol}>
-          <h4 className={m.h4}>{t('watchTitle')}</h4>
-          {state === 'past' ? (
-            <p className={m.empty}>{t('streamsDone')}</p>
-          ) : streams.length === 0 ? (
-            <p className={m.empty}>{t('noStreams')}</p>
+          <h4 className={m.h4}>{state === 'past' ? t('replayTitle') : t('watchTitle')}</h4>
+          {streams.length === 0 ? (
+            <p className={m.empty}>{state === 'past' ? t('noReplays') : t('noStreams')}</p>
           ) : (
-            <Slider phone={phone} label={t('watchTitle')}>
+            // Новий пояс — нова стрічка: стрілки рахуються від її карток, прокрутка — з початку.
+            <Slider key={zone.id} phone={phone} label={state === 'past' ? t('replayTitle') : t('watchTitle')}>
               {streams.map((s) => (
-                <StreamCard key={s.cityId} stream={s} live={state === 'live'} midnightMs={zone.midnightMs} />
+                <StreamCard
+                  key={s.cityId}
+                  stream={s}
+                  mode={state === 'past' ? 'replay' : state === 'live' ? 'live' : 'upcoming'}
+                  midnightMs={zone.midnightMs}
+                />
               ))}
             </Slider>
           )}
@@ -217,7 +224,8 @@ function Slider({ phone, label, children }: { phone: boolean; label: string; chi
   );
 }
 
-function StreamCard({ stream, live, midnightMs }: { stream: MapStream; live: boolean; midnightMs: number }) {
+function StreamCard({ stream, mode, midnightMs }: { stream: MapStream; mode: 'live' | 'upcoming' | 'replay'; midnightMs: number }) {
+  const live = mode === 'live';
   const t = useTranslations('liveMap.panel');
   const tType = useTranslations('liveCards.eventCard.type');
   const locale = useLocale();
@@ -230,6 +238,11 @@ function StreamCard({ stream, live, midnightMs }: { stream: MapStream; live: boo
             <span aria-hidden="true" className={m.dotLive} />
             {t('live')}
           </span>
+        ) : mode === 'replay' ? (
+          <span className={m.cardReplay}>
+            <Icon name="play" size={12} />
+            {t('replay')}
+          </span>
         ) : null}
       </div>
       <div className={m.cardCity}>{stream.city}</div>
@@ -237,15 +250,15 @@ function StreamCard({ stream, live, midnightMs }: { stream: MapStream; live: boo
         <Flag code={stream.flagCode} round diameter={18} decorative />
         {stream.country}
       </div>
-      {live ? null : (
+      {mode === 'upcoming' ? (
         <div className={m.cardWhen}>
           <Icon name="clock" size={14} />
           {t('startsAt', { time: formatClock(midnightMs, { locale }) })}
         </div>
-      )}
+      ) : null}
       <NextLink href={stream.href} className={cn('t2f-focus', m.cardBtn, live && m.cardBtnLive)}>
-        {live ? <Icon name="play" size={12} /> : null}
-        {live ? t('watch') : t('countryPage')}
+        {mode === 'upcoming' ? null : <Icon name="play" size={12} />}
+        {live ? t('watch') : mode === 'replay' ? t('watchReplay') : t('countryPage')}
       </NextLink>
     </li>
   );
@@ -256,8 +269,9 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
   const t = useTranslations('liveMap.panel');
   const tR = useTranslations('liveMap.regions');
   const [more, setMore] = useState(false);
-  const top = zone.countries.slice(0, TOP);
-  const rest = zone.countries.slice(TOP);
+  // Росія й Білорусь — не серед найпопулярніших (рішення власника 2026-11-03); у регіонах — усі країни поясу.
+  const top = zone.countries.filter((c) => !NOT_TOP.has(c.iso)).slice(0, TOP);
+  const rest = zone.countries;
   const groups = new Map<RegionKey | 'other', MapCountry[]>();
   for (const c of rest) {
     const r = regionOf(c.iso, zone.offsetMinutes) ?? 'other';
@@ -280,7 +294,7 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
               <Flag code={c.flagCode} round diameter={22} decorative />
               <span className={m.tileName}>{c.name}</span>
               {streamIsos.has(c.iso) ? (
-                <span className={m.tilePlay} aria-label={t('hasStream')}>
+                <span className={m.tilePlay} role="img" aria-label={t('hasStream')}>
                   <Icon name="play" size={12} />
                 </span>
               ) : null}
@@ -315,7 +329,7 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
           </li>
         ))}
       </ul>
-      {ordered.length ? <div className={cn(m.smallCap, m.restTitle)}>{t('restTitle')}</div> : null}
+      {ordered.length ? <div className={cn(m.smallCap, m.restTitle)}>{t('regionsTitle')}</div> : null}
       {shown.map(group)}
       {hidden.length ? (
         <>
