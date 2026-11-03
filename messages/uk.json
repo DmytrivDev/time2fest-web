@@ -1117,9 +1117,6 @@
     "showMoreCountries": "Ще {count}",
     "showFewerCountries": "Згорнути",
     "previewHint": "Клікни, щоб закріпити картку поясу",
-    "liveLabel": "{city} · наживо",
-    "liveLabelWatch": "— дивитися",
-    "liveLabelWatchPhone": "дивитися",
     "gesture": {
       "hint": "Мапа керується двома пальцями: зведи чи розведи — масштаб, веди вбік — рух.",
       "close": "Зрозуміло, сховати підказку"
@@ -1246,7 +1243,14 @@
       "countryLiveAfter": "{gender, select, pl {Зустрічають Новий рік} other {Зустрічає Новий рік}}",
       "countryPast": "{gender, select, m {Зустрів} f {Зустріла} n {Зустріло} pl {Зустріли} other {Зустріли}} {dur} тому",
       "cityLive": "{city} · наживо",
-      "cityStream": "{city} · трансляція"
+      "cityStream": "{city} · трансляція",
+      "cityLiveBefore": "Наживо · північ через {dur}",
+      "cityLiveAfter": "Наживо · північ щойно настала",
+      "cityAhead": "Трансляція о {time} · через {dur}",
+      "cityPast": "Зустріли {dur} тому",
+      "cityReplay": "Є повтор",
+      "cityQuiet": "Лише відлік · північ через {dur}",
+      "cityQuietAfter": "Лише відлік · північ щойно настала"
     }
   },
   "timeMachine": {

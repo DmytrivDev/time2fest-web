@@ -34,7 +34,7 @@ import {
   type MapZone,
   type ZoneMapGeometry,
 } from './MapModel';
-import { CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
+import { CityTip, CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
 import { CountryPanel } from './CountryPanel';
 import { ZonePanel } from './ZonePanel';
 import { ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
@@ -66,8 +66,6 @@ export interface ZoneMapProps {
   defaultLayer?: 'zones' | 'viewers';
   /** Вибраний пояс на старті (картка поясу вже відкрита). */
   defaultSelectedZoneId?: string;
-  /** Місто ефіру: біля його точки — підпис «Лондон · наживо — дивитися» (макет). */
-  airCityId?: string;
   /** Геометрія (`data/zonemap.json`); без неї підвантажується окремим шматком, поки показано скелетон. */
   geometry?: ZoneMapGeometry;
   className?: string;
@@ -163,7 +161,6 @@ export function ZoneMap({
   defaultView = 'map',
   defaultLayer = 'zones',
   defaultSelectedZoneId,
-  airCityId,
   geometry: geometryProp,
   className,
 }: ZoneMapProps) {
@@ -195,8 +192,8 @@ export function ZoneMap({
   const pathRefs = useRef(new Map<string, SVGGElement>());
   // Країна під курсором (суходіл або її морська область): `zoneId:iso` — підсвічується сильніше за свій пояс.
   const [hotCountry, setHotCountry] = useState<string | null>(null);
-  // Місто під курсором: його пояс і країна лишаються підсвіченими, плашки немає (поруч підпис міста).
-  const [onCity, setOnCity] = useState(false);
+  // Місто під курсором: його пояс і країна лишаються підсвіченими, плашка — міста (дошка `Desk-Map-CityTips`).
+  const [onCity, setOnCity] = useState<string | null>(null);
   // Рядок черги під курсором чи фокусом (десктоп): його пояс підсвічується на мапі, без плашки.
   const [previewId, setPreviewId] = useState<string | null>(null);
   const viewerIso = useGuestStore((g) => g.flagCode);
@@ -330,9 +327,11 @@ export function ZoneMap({
   // важливіша за пояс; з’являється через 150 мс, зникає через 100 мс; між сусідніми цілями — одразу.
   const hotSep = hotCountry ? hotCountry.lastIndexOf(':') : -1;
   const pointerTarget: MapTipTarget | null =
-    isPhone || onCity
+    isPhone
       ? null
-      : hotCountry && hotSep > 0
+      : onCity
+        ? { kind: 'city', zoneId: cities.find((c) => c.id === onCity)?.zoneId ?? '', cityId: onCity }
+        : hotCountry && hotSep > 0
         ? { kind: 'country', zoneId: hotCountry.slice(0, hotSep), iso: hotCountry.slice(hotSep + 1) }
         : hoverId
           ? { kind: 'zone', zoneId: hoverId }
@@ -360,6 +359,7 @@ export function ZoneMap({
     tip?.target.kind === 'country' && tipZone
       ? (tipZone.countries.find((c) => c.iso === (tip.target as { iso: string }).iso) ?? countryByIso.get(tip.target.iso))
       : undefined;
+  const tipCity = tip?.target.kind === 'city' ? cities.find((c) => c.id === (tip.target as { cityId: string }).cityId) : undefined;
   const tipLabel = tip?.byKey && geometry ? geometry.zones.find((g) => g.zoneId === tip.target.zoneId)?.label : undefined;
   const tipStyle = (() => {
     if (!tipLabel || !geometry) return undefined;
@@ -389,8 +389,6 @@ export function ZoneMap({
 
   const liveZone = ordered.find((z) => stateOf(z.id) === 'live');
   const summary = liveZone ? `${liveZone.countries.slice(0, 3).map((c) => c.name).join(', ')} · ${t('state.live')}` : '';
-  // Підпис біля точки трансляції в ефірі (макет: «Лондон · наживо — дивитися»).
-  const labelCity = cities.find((c) => c.stream === 'live' && stateOf(c.zoneId) === 'live' && (!airCityId || c.id === airCityId));
 
   // Вікно під мапою — поясу (дошка `Desk-Map-ZonePanel`) чи країни (`Desk-Map-CountryVariants`), рішення власника
   // 2026-11-03: відкривається й закривається плавно (`Reveal`), тож під час закриття показує останній вибір.
@@ -652,18 +650,20 @@ export function ZoneMap({
             const cityHover = {
               onPointerEnter: (e: { pointerType: string }) => {
                 if (e.pointerType !== 'mouse') return;
-                setOnCity(true);
+                setOnCity(city.id);
                 setHoverId(city.zoneId);
                 setHotCountry(`${city.zoneId}:${city.countryIso}`);
               },
               onPointerLeave: (e: { pointerType: string }) => {
                 if (e.pointerType !== 'mouse') return;
-                setOnCity(false);
+                setOnCity(null);
                 setHoverId(null);
                 setHotCountry(null);
               },
             };
-            if (!isPhone && country) {
+            // Десктоп: де трансляція йде чи є повтор — одразу на сторінку країни; де ще буде чи лише відлік — вікно країни
+            // під мапою (рішення власника 2026-11-03). Телефон — завжди вікно країни.
+            if (!isPhone && country && city.stream === 'live' && (st === 'live' || st === 'past')) {
               return (
                 <NextLink key={city.id} href={country.href} aria-label={label} tabIndex={-1} data-city={city.id} className={cls} style={style} {...cityHover}>
                   {dot}
@@ -692,23 +692,8 @@ export function ZoneMap({
               </button>
             );
           })}
-          {labelCity ? (
-            <span
-              aria-hidden="true"
-              data-zone-map-live-label=""
-              className={cn(m.liveLabel, isPhone ? m.liveLabelPhone : m.liveLabelDesk)}
-              style={(() => {
-                const p = place(pointToPercent(labelCity, geometry.meta).left, pointToPercent(labelCity, geometry.meta).top);
-                return isPhone ? p : { right: `calc(100% - ${p.left})`, top: p.top };
-              })()}
-            >
-              {t('liveLabel', { city: labelCity.name })}
-              <span className={m.liveLabelWatch}>{isPhone ? t('liveLabelWatchPhone') : t('liveLabelWatch')}</span>
-            </span>
-          ) : null}
           {showNames
             ? cities
-                .filter((c) => c.id !== labelCity?.id)
                 .map((c) => {
                   const pos = pointToPercent(c, geometry.meta);
                   return (
@@ -728,7 +713,9 @@ export function ZoneMap({
       </div>
       {tipZone ? (
         <MapTip ref={tipRef} kind={tip!.target.kind} style={tipStyle}>
-          {tip!.target.kind === 'country' && tipCountry ? (
+          {tip!.target.kind === 'city' && tipCity ? (
+            <CityTip city={tipCity} zone={tipZone} country={countryByIso.get(tipCity.countryIso)} state={stateOf(tipZone.id)} now={now} />
+          ) : tip!.target.kind === 'country' && tipCountry ? (
             <CountryTip
               zone={tipZone}
               country={tipCountry}

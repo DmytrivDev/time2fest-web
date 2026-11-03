@@ -7,14 +7,17 @@ import { Flag } from '@/components/primitives/Flag';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatDurationShort, formatTimeForViewer, viewerTimeZone } from '@/lib/i18n/time';
-import { utcLabel, type MapCountry, type MapZone } from './MapModel';
+import { utcLabel, type MapCity, type MapCountry, type MapZone } from './MapModel';
 import m from './zoneMap.module.css';
 
-/** Що під курсором: пояс (смуга в океані) або країна (суходіл чи морська область острівної країни). */
-export type MapTipTarget = { kind: 'zone'; zoneId: string } | { kind: 'country'; zoneId: string; iso: string };
+/** Що під курсором: пояс (смуга в океані), країна (суходіл чи морська область острівної країни) або точка міста. */
+export type MapTipTarget =
+  | { kind: 'zone'; zoneId: string }
+  | { kind: 'country'; zoneId: string; iso: string }
+  | { kind: 'city'; zoneId: string; cityId: string };
 
 export const tipKey = (t: MapTipTarget | null): string | null =>
-  t ? (t.kind === 'zone' ? `z:${t.zoneId}` : `c:${t.zoneId}:${t.iso}`) : null;
+  t ? (t.kind === 'zone' ? `z:${t.zoneId}` : t.kind === 'country' ? `c:${t.zoneId}:${t.iso}` : `m:${t.cityId}`) : null;
 
 /** Фаза поясу для тексту плашки: «в ефірі» до півночі й 15 хв після неї (`zoneState`) — два різні тексти. */
 export type TipPhase = 'future' | 'next' | 'liveBefore' | 'liveAfter' | 'past';
@@ -186,6 +189,58 @@ export function CountryTip({
           <span>{t(live ? 'cityLive' : 'cityStream', { city })}</span>
         </div>
       ) : null}
+    </>
+  );
+}
+
+const CITY_TYPE = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
+
+/**
+ * Плашка міста (рішення власника 2026-11-03, дошка `Desk-Map-CityTips`, варіант A — без кадру ефіру): місто, пам’ятка й
+ * країна, стан трансляції, тип. Рядка «що буде після кліку» немає — над містом курсор-«рука».
+ */
+export function CityTip({ city, zone, country, state, now }: { city: MapCity; zone: MapZone; country?: MapCountry; state: ZoneState; now: number }) {
+  const t = useTranslations('liveMap.tip');
+  const tType = useTranslations('liveCards.eventCard.type');
+  const locale = useLocale();
+  const phase = tipPhase(state, zone.midnightMs, now);
+  const when = useWhen(zone.midnightMs, now);
+  const dur = formatDurationShort(Math.abs(zone.midnightMs - now), locale);
+  const stream = city.stream === 'live';
+  const line = stream
+    ? phase === 'liveBefore'
+      ? t('cityLiveBefore', { dur })
+      : phase === 'liveAfter'
+        ? t('cityLiveAfter')
+        : phase === 'past'
+          ? t('cityPast', { dur })
+          : t('cityAhead', { time: when.time, dur })
+    : phase === 'past'
+      ? t('cityPast', { dur })
+      : phase === 'liveAfter'
+        ? t('cityQuietAfter')
+        : t('cityQuiet', { dur });
+  const where = [city.landmark, country?.name].filter(Boolean).join(' · ');
+  return (
+    <>
+      <div className={m.tipHead}>
+        {country ? <Flag code={country.flagCode} round diameter={20} decorative /> : null}
+        <span className={m.tipTitle}>{city.name}</span>
+      </div>
+      {where ? <div className={m.tipSub}>{where}</div> : null}
+      <div className={cn(m.tipRow, (phase === 'past' || !stream) && m.tipRowPast)} data-tip-phase={phase}>
+        {stream ? <StateMark phase={phase} /> : <span aria-hidden="true" className={cn(m.tipSquare, m.tipSquarePast)} />}
+        <span>{line}</span>
+      </div>
+      {stream && phase === 'past' ? (
+        <div className={cn(m.tipRow, m.tipRowQuiet)} data-tip-replay="">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" className={m.tipPlay}>
+            <path d="M7 5v14l12-7z" fill="currentColor" />
+          </svg>
+          <span>{t('cityReplay')}</span>
+        </div>
+      ) : null}
+      {stream ? <div className={m.tipSub}>{tType(CITY_TYPE[city.celebrationType])}</div> : null}
     </>
   );
 }

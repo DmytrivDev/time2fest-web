@@ -108,11 +108,20 @@ describe('ZoneMap: телефон — дотик відкриває вікно �
     expect(path('utc+0000')).toHaveFocus();
   });
 
-  it('на десктопі точка міста — посилання на країну', () => {
+  it('на десктопі: трансляція йде чи є повтор — посилання на країну; ще буде чи лише відлік — вікно країни', () => {
     const { view } = setup({ layout: 'desktop' });
     const dot = view.container.querySelector('[data-city="london"]')!;
     expect(dot.tagName).toBe('A');
     expect(dot.getAttribute('href')).toMatch(/^\/country\//);
+    // Париж (UTC+1) уже зустрів — повтор, теж посилання.
+    expect(view.container.querySelector('[data-city="paris"]')!.tagName).toBe('A');
+    // Нью-Йорк ще попереду — кнопка, відкриває вікно країни.
+    const ny = view.container.querySelector<HTMLButtonElement>('[data-city="new-york"]')!;
+    expect(ny.tagName).toBe('BUTTON');
+    fireEvent.click(ny);
+    expect(view.container.querySelector(OPEN_COUNTRY)).toHaveAttribute('data-country-panel', 'US');
+    // Постійного підпису «Лондон · наживо — дивитися» на мапі немає (правка власника 2026-11-03).
+    expect(view.container.querySelector('[data-zone-map-live-label]')).toBeNull();
   });
 
   it('коралова точка з трансляцією лише в поясі «наживо»; решта тихі', () => {
