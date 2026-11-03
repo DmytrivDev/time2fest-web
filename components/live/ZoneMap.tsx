@@ -35,6 +35,7 @@ import {
   type ZoneMapGeometry,
 } from './MapModel';
 import { CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
+import { CountryPanel } from './CountryPanel';
 import { ZonePanel } from './ZonePanel';
 import { ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
 import { Reveal } from '@/components/primitives/Reveal';
@@ -72,7 +73,7 @@ export interface ZoneMapProps {
   className?: string;
 }
 
-type Selection = { kind: 'zone'; id: string } | { kind: 'city'; id: string } | null;
+type Selection = { kind: 'zone'; id: string } | { kind: 'city'; id: string } | { kind: 'country'; zoneId: string; iso: string } | null;
 
 const PHONE_QUERY = '(max-width: 767.98px)';
 
@@ -225,7 +226,18 @@ export function ZoneMap({
   const liveZoneId = ordered.find((z) => stateOf(z.id) === 'live')?.id;
   const tabStop = tabStopId && zoneById.has(tabStopId) ? tabStopId : (liveZoneId ?? ordered[0]?.id ?? null);
 
-  const selectedZoneId = selection?.kind === 'zone' ? selection.id : selection?.kind === 'city' ? cities.find((c) => c.id === selection.id)?.zoneId : undefined;
+  const selectedZoneId =
+    selection?.kind === 'zone'
+      ? selection.id
+      : selection?.kind === 'country'
+        ? selection.zoneId
+        : selection?.kind === 'city'
+          ? cities.find((c) => c.id === selection.id)?.zoneId
+          : undefined;
+  // Вибрана країна (`zoneId:iso`): підсвічується, як під курсором, поки відкрите її вікно.
+  const pickedCountry = selection?.kind === 'country' ? `${selection.zoneId}:${selection.iso}` : null;
+  // Клік по суші країни — вікно країни (рішення власника 2026-11-03); по океану чи в черзі — вікно поясу.
+  const selectCountry = (zoneId: string, iso: string) => setSelection({ kind: 'country', zoneId, iso });
 
   function focusZone(id: string) {
     setTabStopId(id);
@@ -281,8 +293,8 @@ export function ZoneMap({
   function closeSelection() {
     const prev = selection;
     setSelection(null);
-    if (prev?.kind === 'zone') {
-      focusZone(prev.id);
+    if (prev?.kind === 'zone' || prev?.kind === 'country') {
+      focusZone(prev.kind === 'zone' ? prev.id : prev.zoneId);
       // Esc закриває картку зовсім: фокус повертається на пояс без картки-прев’ю (вона з’явиться з наступним рухом фокуса).
       setFocusedId(null);
     }
@@ -380,25 +392,50 @@ export function ZoneMap({
   // Підпис біля точки трансляції в ефірі (макет: «Лондон · наживо — дивитися»).
   const labelCity = cities.find((c) => c.stream === 'live' && stateOf(c.zoneId) === 'live' && (!airCityId || c.id === airCityId));
 
-  // Вікно поясу під мапою (рішення власника 2026-11-03, дошка `Desk-Map-ZonePanel`): відкривається й закривається плавно
-  // (`Reveal`), тож під час закриття показує останній вибраний пояс.
-  const [panelZoneId, setPanelZoneId] = useState<string | null>(selectedZoneId ?? null);
-  if (selectedZoneId && selectedZoneId !== panelZoneId) setPanelZoneId(selectedZoneId);
-  const panelZone = panelZoneId ? zoneById.get(panelZoneId) : undefined;
+  // Вікно під мапою — поясу (дошка `Desk-Map-ZonePanel`) чи країни (`Desk-Map-CountryVariants`), рішення власника
+  // 2026-11-03: відкривається й закривається плавно (`Reveal`), тож під час закриття показує останній вибір.
+  const current = selectedZoneId
+    ? selection?.kind === 'country'
+      ? { zoneId: selection.zoneId, iso: selection.iso }
+      : { zoneId: selectedZoneId, iso: null }
+    : null;
+  const [panelSel, setPanelSel] = useState<{ zoneId: string; iso: string | null } | null>(current);
+  if (current && (current.zoneId !== panelSel?.zoneId || current.iso !== panelSel?.iso)) setPanelSel(current);
+  const panelZone = panelSel ? zoneById.get(panelSel.zoneId) : undefined;
+  const panelCountry = panelSel?.iso && panelZone ? panelZone.countries.find((c) => c.iso === panelSel.iso) : undefined;
   // Сусідні пояси за часом опівночі: попередній — на годину раніше (більший зсув), наступний — пізніше.
   const panelIdx = panelZone ? ordered.indexOf(panelZone) : -1;
   const card = panelZone ? (
     <Reveal open={Boolean(selectedZoneId)}>
-      <ZonePanel
-        ref={cardRef}
-        zone={panelZone}
-        state={stateOf(panelZone.id)}
-        prev={ordered[panelIdx + 1]}
-        next={panelIdx > 0 ? ordered[panelIdx - 1] : undefined}
-        phone={isPhone}
-        onSelect={(id) => setSelection({ kind: 'zone', id })}
-        onClose={closeSelection}
-      />
+      {panelCountry ? (
+        <CountryPanel
+          ref={cardRef}
+          zone={panelZone}
+          country={panelCountry}
+          state={stateOf(panelZone.id)}
+          // Пояси країни — у порядку опівночі (схід → захід).
+          zones={ordered
+            .filter((z) => z.countries.some((c) => c.iso === panelCountry.iso))
+            .reverse()
+            .map((z) => ({ id: z.id, offsetMinutes: z.offsetMinutes, state: stateOf(z.id) }))}
+          nextZone={ordered.reduce<MapZone | undefined>((best, z) => (z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best), undefined)}
+          phone={isPhone}
+          onSelectZone={(id) => setSelection({ kind: 'zone', id })}
+          onSelectCountryZone={(zoneId) => selectCountry(zoneId, panelCountry.iso)}
+          onClose={closeSelection}
+        />
+      ) : (
+        <ZonePanel
+          ref={cardRef}
+          zone={panelZone}
+          state={stateOf(panelZone.id)}
+          prev={ordered[panelIdx + 1]}
+          next={panelIdx > 0 ? ordered[panelIdx - 1] : undefined}
+          phone={isPhone}
+          onSelect={(id) => setSelection({ kind: 'zone', id })}
+          onClose={closeSelection}
+        />
+      )}
     </Reveal>
   ) : null;
   const slotRef = useRef<HTMLDivElement>(null);
@@ -489,8 +526,12 @@ export function ZoneMap({
                       key={`sea-${s.iso}-${i}`}
                       d={s.d}
                       data-iso={s.iso}
-                      data-hot={hotCountry === `${g.zoneId}:${s.iso}` ? 'true' : undefined}
+                      data-hot={hotCountry === `${g.zoneId}:${s.iso}` || pickedCountry === `${g.zoneId}:${s.iso}` ? 'true' : undefined}
                       className="t2f-zone-sea"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        selectCountry(g.zoneId, s.iso);
+                      }}
                       onPointerEnter={() => {
                         setHoverId(g.zoneId);
                         setHotCountry(`${g.zoneId}:${s.iso}`);
@@ -522,7 +563,9 @@ export function ZoneMap({
                   focused={ringId === g.zoneId}
                   hovered={hoverId === g.zoneId || previewId === g.zoneId}
                   hotCountry={hotCountry}
+                  pickedCountry={pickedCountry}
                   onHotCountry={setHotCountry}
+                  onSelectCountry={(iso) => selectCountry(g.zoneId, iso)}
                   areas={geometry.areas?.filter((a) => a.zoneId === g.zoneId)}
                   pathRefs={pathRefs}
                   onKeyDown={onZoneKeyDown}
@@ -636,14 +679,14 @@ export function ZoneMap({
                   else dotRefs.current.delete(city.id);
                 }}
                 aria-label={label}
-                aria-expanded={selectedZoneId === city.zoneId}
+                aria-expanded={pickedCountry === `${city.zoneId}:${city.countryIso}`}
                 aria-controls={cardId}
                 tabIndex={-1}
                 data-city={city.id}
                 className={cn(cls, 'z-10')}
                 style={style}
                 {...cityHover}
-                onClick={() => setSelection({ kind: 'zone', id: city.zoneId })}
+                onClick={() => selectCountry(city.zoneId, city.countryIso)}
               >
                 {dot}
               </button>
@@ -822,7 +865,11 @@ interface ZoneGroupProps {
   /** Пояс під курсором (зокрема через смугу в океані чи морську область). */
   hovered: boolean;
   hotCountry: string | null;
+  /** Країна, чиє вікно відкрите (`zoneId:iso`). */
+  pickedCountry: string | null;
   onHotCountry: (key: string | null) => void;
+  /** Клік по суші країни (чи області її островів) — вікно країни. */
+  onSelectCountry: (iso: string) => void;
   /** Області дрібних островів поясу (рамка) — частина країни, як її морська область. */
   areas?: NonNullable<ZoneMapGeometry['areas']>;
   pathRefs: RefObject<Map<string, SVGGElement>>;
@@ -847,7 +894,9 @@ function ZoneGroup({
   focused,
   hovered,
   hotCountry,
+  pickedCountry,
   onHotCountry,
+  onSelectCountry,
   areas,
   pathRefs,
   onKeyDown,
@@ -866,7 +915,11 @@ function ZoneGroup({
       .join(', '),
     state: t(`state.${state}`),
   });
-  const hot = (iso: string) => hotCountry === `${g.zoneId}:${iso}`;
+  const hot = (iso: string) => hotCountry === `${g.zoneId}:${iso}` || pickedCountry === `${g.zoneId}:${iso}`;
+  const pick = (iso: string) => (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    onSelectCountry(iso);
+  };
   const enter = (iso: string) => () => onHotCountry(`${g.zoneId}:${iso}`);
   const leave = () => onHotCountry(null);
   return (
@@ -900,6 +953,7 @@ function ZoneGroup({
           data-hot={hot(c.iso) ? 'true' : undefined}
           className="t2f-zone-land"
           fillRule="evenodd"
+          onClick={pick(c.iso)}
           onPointerEnter={enter(c.iso)}
           onPointerLeave={leave}
         />
@@ -917,6 +971,7 @@ function ZoneGroup({
           data-frame={a.frame ? 'true' : 'false'}
           data-hot={hot(a.iso) ? 'true' : undefined}
           className="t2f-zm-area"
+          onClick={pick(a.iso)}
           onPointerEnter={enter(a.iso)}
           onPointerLeave={leave}
         />

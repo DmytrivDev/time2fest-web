@@ -6,14 +6,31 @@ export interface MapCountry {
   name: string;
   flagCode: string;
   href: string;
-  /** Традиції для `HowToPopover`; порожньо — кнопки «Як святкувати» немає. */
-  traditions?: { id: string; title: string; text: string }[];
+  /** Традиції для `HowToPopover` і вікна країни; порожньо — кнопки «Як святкувати» немає. */
+  traditions?: { id: string; title: string; text: string; iconId?: string }[];
   /** Рід назви країни: «Україна зустріла», «США зустріли» (підказка мапи). */
   gender?: Gender;
   /** Головне місто країни в цьому поясі, якщо там є трансляція (підказка мапи: «Київ · наживо»). */
   mainCity?: string;
   /** Головне місто країни в цьому поясі — завжди (картки країн у вікні поясу). */
   city?: string;
+  /** Трансляції країни в цьому поясі (вікно країни, «Де дивитися»): місце, місто, тип. */
+  streams?: MapCountryStream[];
+  /** Події країни в цьому поясі — штамп за присутність опівночі (`guest.stamps`). */
+  eventIds?: string[];
+  /** Тиха зустріч (`event.restrained`): коротка примітка в шапці вікна країни. */
+  quiet?: string;
+  /** Подія з «Першим рядом» у цьому поясі (вікно країни: «лишилось N місць»). */
+  firstRowEventId?: string;
+}
+
+/** Трансляція країни у вікні країни: місто з подією, що має відео. */
+export interface MapCountryStream {
+  cityId: string;
+  /** Що за трансляція: пам’ятка (`landmark`), інакше — місто. */
+  place: string;
+  city: string;
+  type: CelebrationType;
 }
 
 /** Трансляція в поясі (вікно поясу, «Де дивитися»): місто з подією, що має відео. */
@@ -91,6 +108,22 @@ export function buildMapModel(data: Dataset): MapModel {
       const own = zoneCities.filter((c) => c.countryIso === iso);
       return (own.find((c) => c.isCountryMain) ?? own[0])?.name.uk;
     };
+    const zoneEvents = data.events.filter((e) => e.zoneId === z.id);
+    // Вікно країни: трансляції (головне місто — першим), події для штампа, тиха зустріч, «Перший ряд».
+    const countryExtras = (iso: string): Partial<MapCountry> => {
+      const own = streamCities
+        .filter((c) => c.countryIso === iso)
+        .sort((a, b) => Number(b.isCountryMain) - Number(a.isCountryMain));
+      const events = zoneEvents.filter((e) => e.countryIso === iso);
+      const quiet = events.find((e) => e.restrained)?.restrained?.note.uk;
+      const firstRow = events.find((e) => e.firstRow?.saleEnabled);
+      return {
+        streams: own.map((c) => ({ cityId: c.id, place: c.landmark?.uk ?? c.name.uk, city: c.name.uk, type: c.celebrationType })),
+        eventIds: events.map((e) => e.id),
+        ...(quiet ? { quiet } : {}),
+        ...(firstRow ? { firstRowEventId: firstRow.id } : {}),
+      };
+    };
     const countries = [...isoSet]
       .map((iso) => data.countriesByIso.get(iso))
       .filter((c): c is NonNullable<typeof c> => Boolean(c))
@@ -100,10 +133,11 @@ export function buildMapModel(data: Dataset): MapModel {
         name: c.name.uk,
         flagCode: c.flagCode,
         href: countryPath(c.slug),
-        traditions: c.howTo.traditions.slice(0, 3).map((t) => ({ id: t.id, title: t.title, text: t.text })),
+        traditions: c.howTo.traditions.slice(0, 3).map((t) => ({ id: t.id, title: t.title, text: t.text, iconId: t.iconId })),
         gender: c.gender,
         ...(mainCityOf(c.iso) ? { mainCity: mainCityOf(c.iso) } : {}),
         ...(cityOf(c.iso) ? { city: cityOf(c.iso) } : {}),
+        ...countryExtras(c.iso),
       }));
     const rank = new Map(countries.map((c, i) => [c.iso, i]));
     const streams = streamCities

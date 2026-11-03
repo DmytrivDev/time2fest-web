@@ -76,9 +76,10 @@ describe('ZoneMap: стани поясів', () => {
 });
 
 const OPEN_PANEL = '[data-zone-map-card-slot] .t2f-reveal[data-open="true"] [data-zone-panel]';
+const OPEN_COUNTRY = '[data-zone-map-card-slot] .t2f-reveal[data-open="true"] [data-country-panel]';
 
-describe('ZoneMap: телефон — дотик відкриває вікно поясу під мапою без переходу', () => {
-  it('тап по місту: вікно поясу цього міста під мапою, країни — посилання, сторінка не змінюється', () => {
+describe('ZoneMap: телефон — дотик відкриває вікно під мапою без переходу', () => {
+  it('тап по місту: вікно країни цього міста під мапою, кімната — посилання, сторінка не змінюється', () => {
     const { view } = setup();
     const before = window.location.href;
     const dot = view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!;
@@ -86,10 +87,11 @@ describe('ZoneMap: телефон — дотик відкриває вікно �
     expect(dot.tagName).toBe('BUTTON');
     expect(view.container.querySelector('a[data-city]')).toBeNull();
     fireEvent.click(dot);
-    const panel = view.container.querySelector<HTMLElement>(OPEN_PANEL)!;
-    expect(panel).toHaveAttribute('data-zone-panel', 'utc+0000');
-    const gb = panel.querySelector('[data-country-card="GB"]')!;
-    expect(gb).toHaveAttribute('href', expect.stringMatching(/^\/country\/[^/]+/));
+    const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
+    expect(panel).toHaveAttribute('data-country-panel', 'GB');
+    expect(panel).toHaveAttribute('data-zone-id', 'utc+0000');
+    const room = panel.querySelector('[data-country-room-link]')!;
+    expect(room).toHaveAttribute('href', expect.stringMatching(/^\/country\/[^/]+/));
     expect(window.location.href).toBe(before);
     expect(dot).toHaveAttribute('aria-expanded', 'true');
     // Вікно стоїть після мапи (під нею), а не навколо.
@@ -101,8 +103,8 @@ describe('ZoneMap: телефон — дотик відкриває вікно �
     const { view, path } = setup();
     fireEvent.click(view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!);
     // Пошук за роллю по всій мапі повільний — кнопку беремо з вікна напряму.
-    fireEvent.click(view.container.querySelector<HTMLButtonElement>(`${OPEN_PANEL} button[aria-label="Закрити"]`)!);
-    expect(view.container.querySelector(OPEN_PANEL)).toBeNull();
+    fireEvent.click(view.container.querySelector<HTMLButtonElement>(`${OPEN_COUNTRY} button[aria-label="Закрити"]`)!);
+    expect(view.container.querySelector(OPEN_COUNTRY)).toBeNull();
     expect(path('utc+0000')).toHaveFocus();
   });
 
@@ -118,6 +120,69 @@ describe('ZoneMap: телефон — дотик відкриває вікно �
     expect(view.container.querySelector('[data-city="london"] [data-city-dot="live"]')).not.toBeNull();
     expect(view.container.querySelector('[data-city="paris"] [data-city-dot="live"]')).toBeNull();
     expect(view.container.querySelector('[data-city="paris"] [data-city-dot="quiet"]')).not.toBeNull();
+  });
+});
+
+describe('ZoneMap: вікно країни (рішення власника 2026-11-03)', () => {
+  const land = (view: ReturnType<typeof setup>['view'], zoneId: string, iso: string) =>
+    view.container.querySelector<SVGPathElement>(`g[data-zone="${zoneId}"] path[data-iso="${iso}"]`)!;
+
+  it('клік по суші — вікно країни, по океану — вікно поясу; «Відкрити пояс» міняє вікно на пояс', () => {
+    const { view } = setup({ layout: 'desktop' });
+    fireEvent.click(land(view, 'utc+0000', 'GB'));
+    const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
+    expect(panel).toHaveAttribute('data-country-panel', 'GB');
+    expect(panel.querySelector('h3')).toHaveTextContent('Велика Британія');
+    // Країна підсвічена, поки відкрите її вікно.
+    expect(land(view, 'utc+0000', 'GB')).toHaveAttribute('data-hot', 'true');
+    expect(panel.querySelector('[data-stream-card]')).not.toBeNull();
+    fireEvent.click(panel.querySelector<HTMLButtonElement>('button[aria-label="Відкрити пояс UTC+0"]')!);
+    expect(view.container.querySelector(OPEN_COUNTRY)).toBeNull();
+    expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc+0000');
+    const band = view.container.querySelector<SVGPathElement>('[data-zone-band="utc-0500"]');
+    if (band) {
+      fireEvent.click(band);
+      expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc-0500');
+    }
+  });
+
+  it('країна в кількох поясах: вікно — для поясу кліку, кнопки поясів перемикають', () => {
+    const { view } = setup({ layout: 'desktop' });
+    fireEvent.click(land(view, 'utc-0500', 'US'));
+    const panel = () => view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
+    expect(panel()).toHaveAttribute('data-zone-id', 'utc-0500');
+    const chips = panel().querySelectorAll('[data-country-zone]');
+    expect(chips.length).toBeGreaterThan(3);
+    expect(panel().querySelector('[data-country-zone="utc-0500"]')).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(panel().querySelector('[data-country-zone="utc-0800"]')!);
+    expect(panel()).toHaveAttribute('data-zone-id', 'utc-0800');
+    // У Лос-Анджелесі трансляції немає — картка «Лише відлік» того ж розміру.
+    expect(panel().querySelector('[data-countdown-card]')).not.toBeNull();
+  });
+
+  it('вже зустріли: повтор, штамп «уже не отримати», наступна північ відкриває пояс', () => {
+    const { view } = setup({ layout: 'desktop' }, Date.parse('2027-01-01T00:30:00Z'));
+    fireEvent.click(land(view, 'utc+0000', 'GB'));
+    const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
+    expect(panel.querySelector('[data-country-time="past"]')).not.toBeNull();
+    expect(panel.querySelector('h4')).toHaveTextContent('Переглянути в повторі');
+    expect(panel.querySelector('[data-room-stamp="missed"]')).not.toBeNull();
+    expect(panel.querySelector('[data-room-seats]')).toBeNull();
+    const next = panel.querySelector<HTMLButtonElement>('[data-next-zone]')!;
+    expect(next).toHaveAttribute('data-next-zone', 'utc-0100');
+    fireEvent.click(next);
+    expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc-0100');
+  });
+
+  it('до півночі: відлік із секундами, штамп і кнопка кімнати; телефон — традиції без описів', () => {
+    const { view } = setup({}, Date.parse('2026-12-31T23:20:00Z'));
+    fireEvent.click(view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!);
+    const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
+    expect(panel.querySelector('[role="timer"]')).toHaveTextContent('00:40:00');
+    expect(panel.querySelector('[data-room-stamp="ahead"]')).toHaveTextContent('Штамп «Велика Британія · 2027»');
+    expect(panel.querySelector('[data-country-room-link]')).toHaveTextContent('Перейти до кімнати країни');
+    expect(panel.querySelectorAll('li').length).toBeGreaterThan(0);
+    expect(panel.textContent).not.toContain('Більше');
   });
 });
 

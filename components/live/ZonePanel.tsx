@@ -125,7 +125,7 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, r
   );
 }
 
-function StateBadge({ state }: { state: ZoneState }) {
+export function StateBadge({ state }: { state: ZoneState }) {
   const t = useTranslations('liveMap.panel.state');
   return (
     <span className={cn(m.badge, m[`badge_${state}`])} data-badge={state}>
@@ -185,7 +185,7 @@ function Stat({ n, label }: { n: number; label: string }) {
 }
 
 /** Стрічка, що гортається вбік; на десктопі — стрілки, коли карток більше, ніж уміщається. */
-function Slider({ phone, label, children }: { phone: boolean; label: string; children: ReactNode }) {
+export function Slider({ phone, label, children }: { phone: boolean; label: string; children: ReactNode }) {
   const t = useTranslations('liveMap.panel');
   const ref = useRef<HTMLUListElement>(null);
   const [edge, setEdge] = useState({ start: true, end: true });

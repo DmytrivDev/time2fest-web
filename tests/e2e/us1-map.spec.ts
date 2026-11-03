@@ -37,6 +37,7 @@ async function openMap(page: Page, at = SCENE, opts: { gestureHint?: boolean } =
 
 /** Відкрите вікно поясу (згорнуте лишається в DOM у `Reveal`). */
 const OPEN_PANEL = '[data-zone-map-card-slot] .t2f-reveal[data-open="true"] [data-zone-panel]';
+const OPEN_COUNTRY = '[data-zone-map-card-slot] .t2f-reveal[data-open="true"] [data-country-panel]';
 
 test.describe('Мапа поясів: дані й стани', () => {
   test('38 шляхів data-offset, один Tab-стоп, стани від часу', async ({ page }) => {
@@ -87,20 +88,25 @@ test.describe('Мапа поясів: телефон', () => {
     test.skip(testInfo.project.name !== 'phone', 'лише телефон');
   });
 
-  test('дотик до міста відкриває вікно поясу під мапою; сторінка не змінюється', async ({ page }) => {
+  test('дотик до міста відкриває вікно його країни під мапою; «Відкрити пояс» — вікно поясу; сторінка не змінюється', async ({ page }) => {
     const m = await openMap(page);
     const url = page.url();
     const svg = m.locator('svg[data-zone-map-svg]');
     await m.locator('button[data-city="london"]').click();
-    const panel = m.locator(OPEN_PANEL);
-    await expect(panel).toBeVisible();
-    await expect(panel).toHaveAttribute('data-zone-panel', 'utc+0000');
+    const country = m.locator(OPEN_COUNTRY);
+    await expect(country).toBeVisible();
+    await expect(country).toHaveAttribute('data-country-panel', 'GB');
     expect(page.url()).toBe(url);
-    await expect(panel.locator('[data-country-card="GB"]')).toHaveAttribute('href', /\/country\//);
+    await expect(country.locator('[data-country-room-link]')).toHaveAttribute('href', /\/country\//);
     // Вікно — під мапою, а не поверх неї.
     const svgBox = (await svg.boundingBox())!;
-    const box = (await panel.boundingBox())!;
+    const box = (await country.boundingBox())!;
     expect(box.y).toBeGreaterThanOrEqual(svgBox.y + svgBox.height - 1);
+    // «Відкрити пояс» — вікно поясу на тому самому місці.
+    await country.getByRole('button', { name: 'Відкрити пояс UTC+0' }).click();
+    const panel = m.locator(OPEN_PANEL);
+    await expect(panel).toHaveAttribute('data-zone-panel', 'utc+0000');
+    await expect(panel.locator('[data-country-card="GB"]')).toHaveAttribute('href', /\/country\//);
     // Стрілка — сусідній пояс у тому самому вікні.
     await panel.getByRole('button', { name: /^Наступний пояс/ }).click();
     await expect(m.locator(OPEN_PANEL)).toHaveCount(1);
@@ -140,6 +146,27 @@ test.describe('Мапа поясів: телефон', () => {
     const view = m.getByRole('group', { name: 'Вигляд' });
     await expect(view.getByRole('button', { name: 'Мапа' })).toHaveAttribute('aria-pressed', 'true');
     await expect(view.getByRole('button', { name: 'Список' })).toHaveCount(0);
+  });
+});
+
+test.describe('Мапа поясів: вікно країни (десктоп)', () => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    void page;
+    test.skip(testInfo.project.name === 'phone', 'лише десктоп');
+  });
+
+  test('клік по суші — вікно країни під мапою, кнопка поясу країни перемикає пояс', async ({ page }) => {
+    const m = await openMap(page);
+    // Клік у центр шляху країни: США в UTC−5 (схід країни).
+    await m.locator('g[data-zone="utc-0500"] path[data-iso="US"]').first().dispatchEvent('click');
+    const country = m.locator(OPEN_COUNTRY);
+    await expect(country).toHaveAttribute('data-country-panel', 'US');
+    await expect(country).toHaveAttribute('data-zone-id', 'utc-0500');
+    await expect(country.locator('[data-country-zone="utc-0500"]')).toHaveAttribute('aria-pressed', 'true');
+    await country.locator('[data-country-zone="utc-0800"]').click();
+    await expect(m.locator(OPEN_COUNTRY)).toHaveAttribute('data-zone-id', 'utc-0800');
+    await m.locator(OPEN_COUNTRY).getByRole('button', { name: 'Закрити' }).click();
+    await expect(m.locator(OPEN_COUNTRY)).toHaveCount(0);
   });
 });
 

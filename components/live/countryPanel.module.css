@@ -1,0 +1,364 @@
+/* Вікно країни під мапою (дошка `Desk-Map-CountryVariants`): десктоп — варіант A, телефон — варіант B. Спільне з вікном
+   поясу (шапка, бейдж, таймер, картки, стрічка) — у `zonePanel.module.css`. */
+.panel {
+  position: relative;
+}
+.close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+.phone .close {
+  top: 8px;
+  right: 6px;
+  margin: 0;
+}
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+}
+/* Телефон: «×» стоїть у куті над шапкою — назва не заходить під нього. */
+.phone .title {
+  padding-right: 36px;
+}
+.headPhone {
+  min-width: 0;
+}
+.badgeNow {
+  background: rgba(249, 74, 81, 0.15);
+  color: var(--color-zone-live);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* Тиха зустріч — позначка в шапці (рішення власника 2026-11-03). */
+.quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.zoneRow {
+  margin-top: 12px;
+}
+.zoneBtn b {
+  font-weight: 700;
+}
+.zoneSw {
+  width: 20px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+/* Пояси країни. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.chipsPhone {
+  flex-wrap: nowrap;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chipsPhone::-webkit-scrollbar {
+  display: none;
+}
+.chipsLabel {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.chipList {
+  display: flex;
+  flex-wrap: inherit;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.chip:hover {
+  background: var(--color-surface-raised);
+}
+.chip[aria-pressed='true'] {
+  border-color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+.chipSw {
+  width: 18px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+/* Десктоп: дві колонки. */
+.cols {
+  display: flex;
+  gap: 32px;
+}
+.left {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 20px;
+  width: 420px;
+  padding-right: 32px;
+  border-right: 1px solid var(--color-border);
+}
+.right {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.ago {
+  margin-top: 6px;
+  font-size: 32px;
+  line-height: 1.1;
+}
+.phone .ago {
+  font-size: 28px;
+}
+.when {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.timerPhone {
+  font-size: 40px;
+}
+
+/* «Де дивитися»: три картки на ширину колонки (як ряд у вікні поясу — до краю). */
+.watch :global(ul) > li,
+.track > li {
+  flex-basis: calc((100% - 24px) / 3);
+}
+.phone .watch :global(ul) > li {
+  flex-basis: 240px;
+}
+.track {
+  margin-top: 12px;
+}
+.cardWhen {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+.cardPlace {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cardSub {
+  margin-top: 2px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.countdownCard {
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  background: transparent;
+}
+.countdownText {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.muted {
+  color: var(--color-text-muted);
+}
+.yellow {
+  color: var(--color-highlight);
+}
+
+/* Кімната країни: штамп, «Перший ряд», наступна північ, перехід. */
+.room {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.roomPhone {
+  gap: 14px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.roomLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.roomStrong {
+  display: block;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.roomSub {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.seatBody {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.seatBar {
+  display: block;
+  max-width: 240px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.seatFill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-highlight);
+}
+.next {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.next:hover {
+  background: var(--color-surface-raised);
+}
+.nextBody {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: filter 120ms ease;
+}
+.cta:hover {
+  filter: brightness(1.06);
+}
+.phone .cta {
+  min-height: 44px;
+}
+
+/* Телефон: відлік і пояс — плиткою вгорі. */
+.timeTile {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+}
+.timeZone {
+  margin-top: 12px;
+}
+.phone .watch {
+  margin-top: 18px;
+}
+
+/* Як святкують: десктоп — список з описами, телефон — лише назви. */
+.how {
+  min-width: 0;
+}
+.phone .how {
+  margin-top: 18px;
+}
+.howList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.phone .howList {
+  gap: 12px;
+  margin-top: 10px;
+}
+.howItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.phone .howItem {
+  align-items: center;
+}
+.howIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(252, 226, 134, 0.1);
+  color: var(--color-highlight);
+}
+.howText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.howTitle {
+  font-weight: 700;
+  line-height: 1.35;
+}
+.howDesc {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.45;
+}
