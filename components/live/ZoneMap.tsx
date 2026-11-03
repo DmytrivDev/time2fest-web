@@ -16,12 +16,10 @@ import {
   type RefObject,
 } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { Flag } from '@/components/primitives/Flag';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
-import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { MapLegend } from './MapLegend';
@@ -36,8 +34,9 @@ import {
 } from './MapModel';
 import { CityTip, CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
 import { CountryPanel } from './CountryPanel';
+import { ZoneListView } from './ZoneListView';
 import { ZonePanel } from './ZonePanel';
-import { ZoneStateLabel, useMidnightPhrase } from './ZoneMapCards';
+import { useMidnightPhrase } from './ZoneMapCards';
 import { Reveal } from '@/components/primitives/Reveal';
 import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
 import './ZoneMap.css';
@@ -46,24 +45,15 @@ import m from './zoneMap.module.css';
 export { MapLegend } from './MapLegend';
 export { HowToPopover, MapTapCard, ZoneCard } from './ZoneMapCards';
 
-export interface MapViewer {
-  iso: string;
-  name: string;
-  flagCode: string;
-}
-
 export interface ZoneMapProps {
   zones: readonly MapZone[];
   cities: readonly MapCity[];
-  /** Країни, звідки дивляться; без них шару «Звідки дивляться» немає. */
-  viewers?: readonly MapViewer[];
   /**
    * `phone` — дотик до міста відкриває картку під мапою (переходу немає) ·
    * `desktop` — точка міста веде на сторінку країни. За замовчуванням — за шириною вікна.
    */
   layout?: 'phone' | 'desktop';
   defaultView?: 'map' | 'list';
-  defaultLayer?: 'zones' | 'viewers';
   /** Вибраний пояс на старті (картка поясу вже відкрита). */
   defaultSelectedZoneId?: string;
   /** Геометрія (`data/zonemap.json`); без неї підвантажується окремим шматком, поки показано скелетон. */
@@ -156,10 +146,8 @@ const MARKER_CLASS: Record<ZoneState, string> = {
 export function ZoneMap({
   zones,
   cities,
-  viewers,
   layout: layoutProp,
   defaultView = 'map',
-  defaultLayer = 'zones',
   defaultSelectedZoneId,
   geometry: geometryProp,
   className,
@@ -179,7 +167,6 @@ export function ZoneMap({
   const { geometry, failed } = useGeometry(geometryProp, rootRef);
 
   const [view, setView] = useState<'map' | 'list'>(defaultView);
-  const [layer, setLayer] = useState<'zones' | 'viewers'>(defaultLayer);
   const [selection, setSelection] = useState<Selection>(
     defaultSelectedZoneId ? { kind: 'zone', id: defaultSelectedZoneId } : null,
   );
@@ -765,24 +752,16 @@ export function ZoneMap({
           {tNav('map')}
         </h2>
         <div className={m.controls}>
-          <SegmentedControl
-            semantics="pressed"
-            label={t('layerLabel')}
-            value={viewers && viewers.length > 0 ? layer : 'zones'}
-            onValueChange={(v) => setLayer(v as 'zones' | 'viewers')}
-            options={[
-              { value: 'zones', label: tNav('zones') },
-              { value: 'viewers', label: tNav('viewersFrom'), disabled: !viewers || viewers.length === 0 },
-            ]}
-          />
+          {/* «Пояси · Звідки дивляться» прибрано (рішення власника 2026-11-03): лишається «Мапа | Список». */}
           <SegmentedControl
             semantics="pressed"
             label={t('viewLabel')}
             value={view}
             onValueChange={(v) => setView(v as 'map' | 'list')}
-            // «Список» поки сховано (рішення власника): у макетах головної його вигляду немає; повернеться у вигляді
-            // списку з макета Desk-Countries / Phone-Countries. Компонент ZoneList лишається.
-            options={[{ value: 'map', label: tNav('mapShort') }]}
+            options={[
+              { value: 'map', label: tNav('mapShort') },
+              { value: 'list', label: tNav('list') },
+            ]}
           />
         </div>
       </div>
@@ -816,27 +795,11 @@ export function ZoneMap({
           </div>
         )
       ) : (
-        <ZoneList zones={ordered} stateOf={stateOf} selectedId={selectedZoneId} onSelect={(id) => setSelection({ kind: 'zone', id })} />
+        <ZoneListView zones={ordered} stateOf={stateOf} phone={isPhone} />
       )}
 
-      {layer === 'viewers' && viewers && viewers.length > 0 ? (
-        <details className="rounded-lg border border-border bg-surface p-3" open data-viewers="">
-          <summary className="t2f-focus min-h-touch-min cursor-pointer rounded-sm py-2 text-body-strong text-text">
-            {tNav('viewersList', { count: viewers.length })}
-          </summary>
-          <ul className="flex flex-wrap gap-2">
-            {viewers.map((v) => (
-              <li key={v.iso} className="inline-flex items-center gap-2 text-body text-text-secondary">
-                <Flag code={v.flagCode} size="xs" decorative />
-                {v.name}
-              </li>
-            ))}
-          </ul>
-        </details>
-      ) : null}
-
-      {view === 'list' || !isPhone ? cardSlot : null}
-      {view === 'list' ? <MapLegend className={m.legendBelow} /> : null}
+      {/* Вікно поясу чи країни з мапи — лише у вигляді «Мапа»; у «Списку» пояс розгортається у своєму рядку. */}
+      {view === 'map' && !isPhone ? cardSlot : null}
     </section>
   );
 }
@@ -973,44 +936,5 @@ function ZoomButton({ label, disabled, onClick, children }: { label: string; dis
     <button type="button" aria-label={label} title={label} disabled={disabled} onClick={onClick} className={cn('t2f-focus', m.zoomBtn)}>
       {children}
     </button>
-  );
-}
-
-interface ZoneListProps {
-  zones: readonly MapZone[];
-  stateOf: (id: string) => ZoneState;
-  selectedId: string | undefined;
-  onSelect: (id: string) => void;
-}
-
-/** «Список» — текстова альтернатива мапі: кожен пояс — кнопка з країнами, часом і станом. */
-function ZoneList({ zones, stateOf, selectedId, onSelect }: ZoneListProps) {
-  const tNav = useTranslations('nav');
-  // Від найближчої півночі: спершу ті, що в ефірі й далі, потім минулі.
-  const sorted = useMemo(() => [...zones].sort((a, b) => a.midnightMs - b.midnightMs), [zones]);
-  return (
-    <ul aria-label={tNav('map')} data-zone-list="" className="flex flex-col gap-1 rounded-lg bg-surface p-2">
-      {sorted.map((z) => (
-        <li key={z.id}>
-          <button
-            type="button"
-            aria-pressed={selectedId === z.id}
-            data-zone={z.id}
-            data-state={stateOf(z.id)}
-            onClick={() => onSelect(z.id)}
-            className="t2f-focus t2f-transition flex min-h-touch-min w-full items-center gap-3 rounded-md border border-transparent px-3 py-2 text-start hover:bg-surface-raised aria-pressed:border-text aria-pressed:bg-surface-raised"
-          >
-            <span className="w-14 shrink-0 text-body-strong tabular-nums text-text">{formatClock(z.midnightMs)}</span>
-            <span className="min-w-0 flex-1 truncate text-body text-text">
-              {z.countries
-                .slice(0, 3)
-                .map((c) => c.name)
-                .join(', ')}
-            </span>
-            <ZoneStateLabel state={stateOf(z.id)} />
-          </button>
-        </li>
-      ))}
-    </ul>
   );
 }

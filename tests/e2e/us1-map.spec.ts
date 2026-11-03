@@ -141,11 +141,21 @@ test.describe('Мапа поясів: телефон', () => {
     expect(box.height).toBeGreaterThanOrEqual(44);
   });
 
-  test('«Список» поки сховано: у перемикачі вигляду лише «Мапа»', async ({ page }) => {
+  test('«Мапа | Список»: список — пояс наживо розгорнутий, клік по рядку розгортає інший', async ({ page }) => {
     const m = await openMap(page);
     const view = m.getByRole('group', { name: 'Вигляд' });
     await expect(view.getByRole('button', { name: 'Мапа' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(view.getByRole('button', { name: 'Список' })).toHaveCount(0);
+    await expect(m.getByRole('button', { name: 'Звідки дивляться' })).toHaveCount(0);
+    await view.getByRole('button', { name: 'Список' }).click();
+    const rows = m.locator('[data-zone-list] > ul > [data-zone-row]');
+    await expect(rows).toHaveCount(6);
+    const first = rows.first();
+    await expect(first.locator('> button')).toHaveAttribute('aria-expanded', 'true');
+    await expect(first.locator('[data-zone-panel]')).toBeVisible();
+    await rows.nth(1).locator('> button').click();
+    await expect(rows.nth(1).locator('> button')).toHaveAttribute('aria-expanded', 'true');
+    await expect(first.locator('> button')).toHaveAttribute('aria-expanded', 'false');
+    await expect(m.locator('[data-zone-list-all]')).toHaveAttribute('href', /\/countries/);
   });
 });
 
@@ -195,7 +205,8 @@ test.describe('Мапа поясів: клавіатура', () => {
   test('Tab проходить мапу одним стопом і виходить далі', async ({ page }) => {
     test.skip(isPhone(page), 'клавіатура: десктоп');
     const m = await openMap(page);
-    await m.getByRole('button', { name: 'Мапа', exact: true }).focus();
+    // Після перемикача «Мапа | Список» (останній — «Список») наступний Tab — на мапу.
+    await m.getByRole('button', { name: 'Список', exact: true }).focus();
     await page.keyboard.press('Tab');
     const onPath = await page.evaluate(() => document.activeElement?.matches('g[data-offset]') ?? false);
     expect(onPath).toBe(true);

@@ -229,16 +229,34 @@ describe('ZoneMap: клавіатура', () => {
 });
 
 describe('ZoneMap: інше', () => {
-  it('перемикач вигляду: «Список» поки сховано, лише «Мапа» (рішення власника)', () => {
+  it('перемикач вигляду: «Мапа | Список»; «Пояси · Звідки дивляться» прибрано (рішення власника 2026-11-03)', () => {
     const { view } = setup();
     expect(screen.getByRole('button', { name: 'Мапа' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.queryByRole('button', { name: 'Список' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Список' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.queryByRole('button', { name: 'Звідки дивляться' })).toBeNull();
     expect(view.container.querySelector('svg[data-zone-map-svg]')).not.toBeNull();
   });
 
-  it('defaultView="list": текстовий список з 38 кнопками-поясами лишається доступним', () => {
+  it('«Список»: пояс наживо й 5 найближчих, наживо розгорнутий; клік розгортає інший; «Вже зустріли» згорнуто', () => {
     const { view } = setup({ defaultView: 'list' });
-    expect(view.container.querySelectorAll('[data-zone-list] button')).toHaveLength(38);
+    const rows = [...view.container.querySelectorAll<HTMLElement>('[data-zone-list] > ul > [data-zone-row]')];
+    expect(rows.map((r) => r.dataset.zoneRow)).toEqual(['utc+0000', 'utc-0100', 'utc-0200', 'utc-0300', 'utc-0330', 'utc-0400']);
+    const btn = (id: string) => view.container.querySelector<HTMLButtonElement>(`[data-zone-row="${id}"] > button`)!;
+    expect(btn('utc+0000')).toHaveAttribute('aria-expanded', 'true');
+    expect(view.container.querySelector('[data-zone-row="utc+0000"] [data-zone-panel]')).not.toBeNull();
+    // Без стрілок до сусідів і «×».
+    expect(view.container.querySelector('[data-zone-row="utc+0000"] button[aria-label="Закрити"]')).toBeNull();
+    fireEvent.click(btn('utc-0100'));
+    expect(btn('utc-0100')).toHaveAttribute('aria-expanded', 'true');
+    expect(btn('utc+0000')).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(btn('utc-0100'));
+    expect(btn('utc-0100')).toHaveAttribute('aria-expanded', 'false');
+    const past = view.container.querySelector<HTMLButtonElement>('[data-zone-list-past]')!;
+    expect(past).toHaveAttribute('aria-expanded', 'false');
+    expect(past).toHaveTextContent(/Вже зустріли · \d+ пояс/);
+    expect(view.container.querySelector('[data-zone-list-all]')).toHaveAttribute('href', expect.stringMatching(/^\/countries\/?$/));
+    // На карті — ні мапи, ні вікна поясу з мапи.
+    expect(view.container.querySelector('svg[data-zone-map-svg]')).toBeNull();
   });
 
   it('у видимих рядках немає слова «ніч» окремо і назв без відмінка', () => {

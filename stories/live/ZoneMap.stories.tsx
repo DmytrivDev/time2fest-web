@@ -21,11 +21,6 @@ const withMapMessages: Decorator = (Story) => (
 
 const geometry = geometryJson as unknown as ZoneMapGeometry;
 const model = buildMapModel(data);
-const viewers = [
-  { iso: 'UA', name: 'Україна', flagCode: 'UA' },
-  { iso: 'PL', name: 'Польща', flagCode: 'PL' },
-  { iso: 'DE', name: 'Німеччина', flagCode: 'DE' },
-];
 const zoneOf = (id: string) => model.zones.find((z) => z.id === id)!;
 
 const meta = {
@@ -33,7 +28,7 @@ const meta = {
   component: ZoneMap,
   decorators: [withMapMessages],
   parameters: { time: sceneTime },
-  args: { zones: model.zones, cities: model.cities, geometry, viewers, layout: 'desktop' },
+  args: { zones: model.zones, cities: model.cities, geometry, layout: 'desktop' },
 } satisfies Meta<typeof ZoneMap>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -104,10 +99,9 @@ export const List: Story = {
   ),
 };
 
-export const ViewersLayer: Story = {
-  name: 'Шар «Звідки дивляться»',
-  globals: { surface: 'phone' },
-  args: { layout: 'phone', defaultLayer: 'viewers' },
+export const ListView: Story = {
+  name: 'Вкладка «Список»',
+  args: { defaultView: 'list' },
   render: (args) => (
     <Stage>
       <ZoneMap {...args} />

@@ -12,6 +12,23 @@
   margin-top: 0;
   padding: 16px;
 }
+/* Вкладка «Список»: вікно — усередині рядка поясу, без своєї рамки. */
+.embedded {
+  margin-top: 0;
+  padding: 16px 18px 20px;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+}
+.embedded.phone {
+  padding: 14px 16px 16px;
+}
+.embeddedHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .smallCap {
   margin: 0;
   color: var(--color-text-muted);

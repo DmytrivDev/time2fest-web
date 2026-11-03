@@ -146,7 +146,7 @@ export function HomeLive() {
   const map = (
     // `id` — ціль «Перейти до мапи» і посилання-пропуску.
     <div id="zone-map">
-      <ZoneMap {...mapModel} viewers={viewers} />
+      <ZoneMap {...mapModel} />
     </div>
   );
   const nowNext = (layout: 'carousel' | 'stack') => (

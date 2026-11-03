@@ -136,9 +136,6 @@
   line-height: 1.5;
   color: var(--color-text-muted);
 }
-.legendBelow {
-  margin-top: var(--spacing-1);
-}
 
 @media (min-width: 768px) {
   .section {

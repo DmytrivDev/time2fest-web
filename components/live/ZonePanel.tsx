@@ -33,6 +33,8 @@ export interface ZonePanelProps {
   phone: boolean;
   onSelect: (id: string) => void;
   onClose: () => void;
+  /** Усередині рядка вкладки «Список»: шапки з назвою, стрілками й «×» немає — лише стан і «ваш пояс». */
+  embedded?: boolean;
   ref?: Ref<HTMLElement>;
 }
 
@@ -41,7 +43,7 @@ export interface ZonePanelProps {
  * поясів, таймер до півночі з секундами (виняток із «одного відліку»: головний — угорі сторінки), коротко про пояс,
  * «Де дивитися» — стрічка трансляцій, країни двома полицями: найпопулярніші картками, решта — за регіонами.
  */
-export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, ref }: ZonePanelProps) {
+export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, embedded = false, ref }: ZonePanelProps) {
   const t = useTranslations('liveMap.panel');
   const offset = utcLabel(zone.offsetMinutes);
   const own = viewerOffsetAt(zone.midnightMs) === zone.offsetMinutes;
@@ -76,8 +78,19 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, r
   );
   const close = <IconButton icon="close" aria-label={t('close')} onClick={onClose} className={m.close} />;
   return (
-    <section ref={ref} className={cn(m.panel, phone && m.phone)} data-zone-panel={zone.id} data-state={state} aria-label={t('aria', { offset })}>
-      {phone ? (
+    <section
+      ref={ref}
+      className={cn(m.panel, phone && m.phone, embedded && m.embedded)}
+      data-zone-panel={zone.id}
+      data-state={state}
+      aria-label={t('aria', { offset })}
+    >
+      {embedded ? (
+        <div className={m.embeddedHead}>
+          <StateBadge state={state} />
+          {own ? <span className={m.own}>{t('yourZone')}</span> : null}
+        </div>
+      ) : phone ? (
         <>
           <div className={m.headRow}>
             {head}
