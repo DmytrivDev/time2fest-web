@@ -120,7 +120,11 @@ function CountryCard({ c, state, zone, hit }: { c: MapCountry; state: ZoneState;
           ) : kind === 'soon' ? (
             <span className={styles.soon}>
               <PlayMark tone="upcoming" size={12} />
-              {t('streamAt', { time: formatClock(zone.midnightMs, { locale }) })}
+              {/* Телефон: коротко «▶ о 05:00» — в один рядок. */}
+              <span className={styles.long}>{t('streamAt', { time: formatClock(zone.midnightMs, { locale }) })}</span>
+              <span className={styles.short}>
+                {t('streamAtShort', { time: formatClock(zone.midnightMs, { locale }) })}
+              </span>
             </span>
           ) : kind === 'replay' ? (
             <span className={styles.replay}>
@@ -314,10 +318,13 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       aria-label={t('filterLabel')}
       value={filter}
       onValueChange={(v) => {
-        if (v) setFilter(v as Filter);
+        if (!v) return;
+        setFilter(v as Filter);
+        // Фільтр звужує список — з «Мапи» одразу на «Список», де видно результат.
+        if (v !== 'all') setView('list');
       }}
       data-row="filter"
-      className={cn(nn.filter, styles.filter)}
+      className={cn(nn.filter, styles.filter, phone && styles.filterPhone)}
     >
       <ToggleGroup.Item value="all" className={cn('t2f-focus', nn.seg)}>
         {tNN('filterAll')}
@@ -337,12 +344,29 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
     </ToggleGroup.Root>
   );
 
+  const viewControl = (
+    <SegmentedControl
+      label={t('viewLabel')}
+      semantics="pressed"
+      value={view}
+      onValueChange={(v) => setView(v === 'map' ? 'map' : 'list')}
+      options={[
+        { value: 'map', label: tNav('mapShort') },
+        { value: 'list', label: tNav('list') },
+      ]}
+    />
+  );
+
   return (
     <MapScheduleContext.Provider value={passWindows.requestSchedule}>
       <div data-countries-page="" className={cn(styles.page, className)}>
         <header className={styles.head}>
-          <div className="min-w-0">
-            <h1 className="text-headline-md text-text">{t('title')}</h1>
+          <div className="min-w-0 flex-1">
+            {/* Телефон: «Мапа | Список» — у рядку заголовка, фільтр — на всю ширину (без «драбинки»). */}
+            <div className={styles.titleRow}>
+              <h1 className="text-headline-md text-text">{t('title')}</h1>
+              {phone ? viewControl : null}
+            </div>
             <p className="m-0 text-body text-text-secondary">{subtitle}</p>
           </div>
           {chatColumn && vis.hidden ? <ChatHiddenButton room="world" onShow={vis.show} /> : null}
@@ -355,7 +379,11 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
               aria-label={t('searchLabel')}
               type="search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                // Пошук показує знайдене в списку: з «Мапи» — одразу на «Список» (правка власника 2026-11-04).
+                if (e.target.value.trim()) setView('list');
+              }}
               placeholder={t('searchLabel')}
               autoComplete="off"
               enterKeyHint="search"
@@ -368,18 +396,9 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
               </button>
             ) : null}
           </div>
-          <div className={styles.controls}>
+          <div className={cn(styles.controls, phone && styles.controlsPhone)}>
             {filterControl}
-            <SegmentedControl
-              label={t('viewLabel')}
-              semantics="pressed"
-              value={view}
-              onValueChange={(v) => setView(v === 'map' ? 'map' : 'list')}
-              options={[
-                { value: 'map', label: tNav('mapShort') },
-                { value: 'list', label: tNav('list') },
-              ]}
-            />
+            {phone ? null : viewControl}
           </div>
         </div>
 

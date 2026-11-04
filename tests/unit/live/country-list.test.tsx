@@ -127,5 +127,9 @@ describe('CountryList: довідник країн за поясами', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Мапа' }));
     expect(container.querySelector('[data-zone-map]')).not.toBeNull();
     expect(container.querySelector('[data-zone-list]')).toBeNull();
+    // Пошук з «Мапи» — одразу «Список» зі знайденим (правка власника 2026-11-04).
+    fireEvent.change(search(), { target: { value: 'Бразил' } });
+    expect(container.querySelector('[data-zone-list]')).not.toBeNull();
+    expect(container.querySelector('[data-zone-map]')).toBeNull();
   });
 });

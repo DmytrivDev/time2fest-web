@@ -1398,6 +1398,7 @@
     "clear": "Очистити",
     "card": {
       "streamAt": "трансляція о {time}",
+        "streamAtShort": "о {time}",
       "replay": "повтор",
       "cityHit": "місто {city}"
     },

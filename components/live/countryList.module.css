@@ -20,6 +20,13 @@
   gap: var(--spacing-4);
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 /* Пошук, фільтр, «Мапа | Список» — одним рядком; на телефоні — пошук на всю ширину, далі кнопки. */
 .toolbar {
   display: flex;
@@ -35,6 +42,20 @@
 }
 .filter {
   flex: none;
+}
+/* Телефон: фільтр — на всю ширину, сегменти порівну. */
+.controlsPhone {
+  width: 100%;
+}
+.filterPhone {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+.filterPhone > * {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: 6px;
 }
 .search {
   position: relative;
@@ -219,10 +240,23 @@
 }
 .soon {
   color: var(--color-text);
+  white-space: nowrap;
 }
-/* Під календарик праворуч. */
-.card:has(.cal) .cardFoot {
-  padding-right: 44px;
+.short {
+  display: none;
+}
+@media (max-width: 767.98px) {
+  .long {
+    display: none;
+  }
+  .short {
+    display: inline;
+  }
+}
+/* Календарик — угорі праворуч, на рівні прапора: низ картки (кнопка «Трансляція») вільний на всю ширину. */
+.card:has(.cal) .cardName,
+.card:has(.cal) .cardCity {
+  padding-right: 8px;
 }
 .replay {
   color: var(--color-text-secondary);
@@ -234,11 +268,11 @@
   color: var(--color-text-muted);
   font-size: 13px;
 }
-/* Календарик «Додати в графік» — поза посиланням, у правому нижньому куті картки. */
+/* Календарик «Додати в графік» — поза посиланням, угорі праворуч (верх кола — на рівні верху прапора). */
 .cal {
   position: absolute;
+  top: 10px;
   right: 10px;
-  bottom: 10px;
 }
 @media (prefers-reduced-motion: reduce) {
   .cardLink {
