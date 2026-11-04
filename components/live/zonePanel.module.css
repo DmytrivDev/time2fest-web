@@ -637,3 +637,39 @@
 .topCard:hover .topBtn {
   background: #e6e6e8;
 }
+
+/* Календарик «Додати в графік» на картках і плитках «Країн поясу» (рішення 2026-11-04) — поза посиланням, у кутку. */
+.shelfItem {
+  position: relative;
+}
+.topCal {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+.shelfItem:has(.topCal) .topStream,
+.shelfItem:has(.topCal) .topNoStream {
+  padding-right: 44px;
+  min-height: 40px;
+}
+.tileItem {
+  position: relative;
+  min-width: 0;
+}
+.tileWithCal .tile {
+  padding-right: 40px;
+}
+.tileCal {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+}
+.cal.calSm {
+  width: 32px;
+  height: 32px;
+}
+.calSm > span {
+  width: 26px;
+  height: 26px;
+}

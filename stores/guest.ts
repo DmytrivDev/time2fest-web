@@ -20,6 +20,7 @@ import type {
 } from '@/lib/data/types';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { clearMapHintSeen } from '@/lib/storage/mapHint';
+import { toggleCountryZone } from '@/lib/schedule/countryZone';
 
 export const GUEST_STORAGE_KEY = 't2f:guest:v1';
 export const GUEST_VERSION = 1 as const;
@@ -194,10 +195,8 @@ export const useGuestStore = create<GuestStore>()(
           return { offers: { ...s.offers, history } };
         }),
       hideOffer: () => set((s) => ({ offers: { ...s.offers, visible: null } })),
-      toggleSchedule: (eventId) =>
-        set((s) => ({
-          schedule: s.schedule.includes(eventId) ? s.schedule.filter((x) => x !== eventId) : [...s.schedule, eventId],
-        })),
+      // Графік — це країни: подія тягне за собою інші події тієї самої країни в тому самому поясі (рішення 2026-11-04).
+      toggleSchedule: (eventId) => set((s) => ({ schedule: toggleCountryZone(s.schedule, eventId) })),
       setSchedule: (schedule) => set({ schedule: [...new Set(schedule)] }),
       setHasPass: (hasPass) => set({ hasPass }),
       updateFirstRow: (eventId, patch) =>

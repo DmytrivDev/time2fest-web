@@ -218,13 +218,18 @@ describe('ZoneMap: вікно країни (рішення власника 2026
   });
 
   it('до півночі: відлік із секундами, штамп і кнопка кімнати; телефон — традиції без описів', () => {
-    const { view } = setup({}, Date.parse('2026-12-31T23:20:00Z'));
+    const { view } = setup({ onToggleSchedule: () => undefined }, Date.parse('2026-12-31T23:20:00Z'));
     fireEvent.click(view.container.querySelector<HTMLButtonElement>('button[data-city="london"]')!);
     const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
     expect(panel.querySelector('[role="timer"]')).toHaveTextContent('00:40:00');
     expect(panel.querySelector('[data-room-stamp="ahead"]')).toHaveTextContent('Штамп «Велика Британія · 2027»');
     expect(panel.querySelector('[data-country-room-link]')).toHaveTextContent('Перейти до кімнати країни');
     expect(panel.querySelectorAll('li').length).toBeGreaterThan(0);
+    // Графік — це країни: «Додати в графік» під кнопкою кімнати, той самий запис, що календарик на картці трансляції.
+    const wide = panel.querySelector<HTMLButtonElement>('[data-schedule-wide]')!;
+    expect(wide).toHaveTextContent('Додати в графік');
+    const card = panel.querySelector<HTMLButtonElement>('[data-stream-card] [data-schedule-toggle]');
+    if (card) expect(card.dataset.scheduleToggle).toBe(wide.dataset.scheduleToggle);
     expect(panel.textContent).not.toContain('Більше');
   });
 });

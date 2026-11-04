@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, type Ref } from 'react';
+import { useContext, useEffect, useRef, type Ref } from 'react';
 import { snapshot } from '@/components/firstrow/controller';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -16,7 +16,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from './MapModel';
-import { PlayMark, ScheduleButton, Slider, StateBadge } from './ZonePanel';
+import { MapScheduleContext, PlayMark, ScheduleButton, Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
 
@@ -112,6 +112,7 @@ export function CountryPanel({
   const now = useNow();
   const streams = country.streams ?? [];
   const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
+  const before = !after && now < zone.midnightMs;
   const offset = utcLabel(zone.offsetMinutes);
   const title = (
     <span className={m.title}>
@@ -172,7 +173,10 @@ export function CountryPanel({
             // Та сама ширина, що в картки трансляції: контейнер стрічки (`cqw`) і та сама стрічка.
             <div className={zp.slider}>
               <ul className={cn(zp.track, m.track, phone && zp.trackPhone)}>
-                <CountdownCard city={country.city ?? country.name} />
+                <CountdownCard
+                  city={country.city ?? country.name}
+                  eventId={before ? country.eventIds?.[0] : undefined}
+                />
               </ul>
             </div>
           )}
@@ -197,7 +201,7 @@ export function CountryPanel({
       )}
     </div>
   );
-  const room = <Room country={country} after={after} phone={phone} />;
+  const room = <Room country={country} after={after} before={before} phone={phone} />;
   // «Наступна північ» — під трансляціями, над кімнатою країни (правка власника 2026-11-03).
   const next =
     after && nextZone ? <NextMidnight zone={nextZone} onSelectZone={onSelectZone} /> : null;
@@ -413,7 +417,7 @@ function StreamCard({
 }
 
 /** «Лише відлік» — картка того ж розміру, що й трансляція, щоб ряд не пустів. */
-function CountdownCard({ city }: { city: string }) {
+function CountdownCard({ city, eventId }: { city: string; eventId?: string | undefined }) {
   const t = useTranslations('liveMap.country');
   return (
     <li className={cn(zp.card, m.countdownCard)} data-countdown-card="">
@@ -422,8 +426,34 @@ function CountdownCard({ city }: { city: string }) {
         <Icon name="clock" size={12} className={m.muted} />
       </div>
       <div className={cn(zp.cardCity, m.cardPlace)}>{city}</div>
-      <p className={m.countdownText}>{t('countdownText')}</p>
+      {/* Календарик і тут (графік — це країни, рішення 2026-11-04): той самий запис, що кнопка в кімнаті країни. */}
+      <div className={m.countdownFoot}>
+        <p className={m.countdownText}>{t('countdownText')}</p>
+        <ScheduleButton eventId={eventId} city={city} />
+      </div>
     </li>
+  );
+}
+
+/** «Додати в графік» під кнопкою кімнати (рішення 2026-11-04): додали — «У графіку · нагадаємо за 10 хв». */
+function ScheduleWide({ eventId, city }: { eventId?: string | undefined; city: string }) {
+  const onToggle = useContext(MapScheduleContext);
+  const inSchedule = useGuestStore((g) => (eventId ? g.schedule.includes(eventId) : false));
+  const t = useTranslations('liveMap.country');
+  if (!eventId || !onToggle) return null;
+  return (
+    <button
+      type="button"
+      aria-pressed={inSchedule}
+      data-schedule-toggle={eventId}
+      data-schedule-wide=""
+      aria-label={inSchedule ? t('scheduleOnAria', { city }) : t('scheduleAddAria', { city })}
+      className={cn('t2f-focus', m.sched)}
+      onClick={() => onToggle(eventId, !inSchedule)}
+    >
+      <Icon name={inSchedule ? 'calendar-check' : 'calendar-add'} size={18} strokeWidth={inSchedule ? 2.2 : 2} />
+      {inSchedule ? t('scheduleOn') : t('scheduleAdd')}
+    </button>
   );
 }
 
@@ -437,7 +467,18 @@ function useSeats(eventId: string | undefined, now: number) {
   return snapshot(event, now).view;
 }
 
-function Room({ country, after, phone }: { country: MapCountry; after: boolean; phone: boolean }) {
+function Room({
+  country,
+  after,
+  before,
+  phone,
+}: {
+  country: MapCountry;
+  after: boolean;
+  /** До півночі — можна додати в графік. */
+  before: boolean;
+  phone: boolean;
+}) {
   const t = useTranslations('liveMap.country');
   const now = useNow();
   const stamps = useGuestStore((g) => g.stamps);
@@ -503,6 +544,12 @@ function Room({ country, after, phone }: { country: MapCountry; after: boolean; 
         {t('room')}
         <Icon name="arrow-right" size={18} />
       </NextLink>
+      {before ? (
+        <ScheduleWide
+          eventId={country.streams?.[0]?.eventId ?? country.eventIds?.[0]}
+          city={country.city ?? country.name}
+        />
+      ) : null}
     </div>
   );
 }

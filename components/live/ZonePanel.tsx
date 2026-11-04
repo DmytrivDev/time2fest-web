@@ -432,7 +432,16 @@ function keepInPlace(el: HTMLElement | null) {
 }
 
 /** Кнопка календаря на картці трансляції, що ще попереду (вигляд — як на картках «Зараз і далі»). */
-export function ScheduleButton({ eventId, city }: { eventId?: string; city: string }) {
+export function ScheduleButton({
+  eventId,
+  city,
+  size = 'md',
+}: {
+  eventId?: string;
+  city: string;
+  /** `sm` — коло 26 px у плитці «за регіонами». */
+  size?: 'md' | 'sm';
+}) {
   const onToggle = useContext(MapScheduleContext);
   const inSchedule = useGuestStore((g) => (eventId ? g.schedule.includes(eventId) : false));
   const t = useTranslations('liveCards.eventCard');
@@ -445,7 +454,7 @@ export function ScheduleButton({ eventId, city }: { eventId?: string; city: stri
       aria-label={label}
       aria-pressed={inSchedule}
       data-schedule-toggle={eventId}
-      className={cn('t2f-focus t2f-press rounded-full', nn.cal, m.cal)}
+      className={cn('t2f-focus t2f-press rounded-full', nn.cal, m.cal, size === 'sm' && m.calSm)}
       onClick={(e: MouseEvent<HTMLButtonElement>) => {
         keepInPlace(e.currentTarget.closest('li'));
         onToggle(eventId, !inSchedule);
@@ -454,7 +463,7 @@ export function ScheduleButton({ eventId, city }: { eventId?: string; city: stri
       <span aria-hidden="true" className={nn.calCircle}>
         <Icon
           name={inSchedule ? 'calendar-check' : 'calendar-add'}
-          size={16}
+          size={size === 'sm' ? 14 : 16}
           strokeWidth={inSchedule ? 2.2 : 2}
         />
       </span>
@@ -572,6 +581,9 @@ function Countries({
   const hidden = phone ? ordered.slice(PHONE_GROUPS) : [];
   const hiddenCount = hidden.reduce((n, g) => n + g.list.length, 0);
   const streamIsos = new Set((zone.streams ?? []).map((s) => s.iso));
+  // Графік — це країни: календарик на кожній країні поясу, що ще попереду, і там, де лише відлік (рішення 2026-11-04).
+  const ahead = state === 'next' || state === 'future';
+  const eventOf = (c: MapCountry) => c.streams?.[0]?.eventId ?? c.eventIds?.[0];
   const group = (g: { key: RegionKey | 'other'; list: MapCountry[] }) => (
     <div key={g.key} className={m.region} data-region={g.key}>
       <h5 className={m.smallCap}>
@@ -579,7 +591,7 @@ function Countries({
       </h5>
       <ul className={cn(m.tiles, phone && m.tilesPhone)}>
         {g.list.map((c) => (
-          <li key={c.iso}>
+          <li key={c.iso} className={cn(m.tileItem, ahead && eventOf(c) && m.tileWithCal)}>
             <NextLink
               href={c.href}
               className={cn('t2f-focus', m.tile)}
@@ -594,6 +606,11 @@ function Countries({
                 </span>
               ) : null}
             </NextLink>
+            {ahead && eventOf(c) ? (
+              <span className={m.tileCal}>
+                <ScheduleButton eventId={eventOf(c)} city={c.city ?? c.name} size="sm" />
+              </span>
+            ) : null}
           </li>
         ))}
       </ul>
@@ -634,6 +651,11 @@ function Countries({
                 <span className={m.topNoStream}>{t('streamNo')}</span>
               )}
             </NextLink>
+            {ahead && eventOf(c) ? (
+              <span className={m.topCal}>
+                <ScheduleButton eventId={eventOf(c)} city={c.city ?? c.name} />
+              </span>
+            ) : null}
           </li>
         ))}
       </ul>

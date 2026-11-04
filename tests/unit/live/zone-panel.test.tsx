@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { buildMapModel, type MapZone } from '@/components/live/MapModel';
-import { ZonePanel } from '@/components/live/ZonePanel';
+import { MapScheduleContext, ZonePanel } from '@/components/live/ZonePanel';
 import { REGION_ORDER, regionOf } from '@/components/live/regions';
 import uk from '@/messages/uk.json';
 import { data } from '@/lib/data/load';
@@ -117,6 +117,34 @@ describe('ZonePanel', () => {
     const slider = container.querySelector('[data-slider-arrows]')!;
     expect(slider).toContainElement(getByRole('heading', { name: 'Переглянути в повторі' }));
     expect(slider.querySelector('ul')).toHaveAttribute('aria-label', 'Переглянути в повторі');
+  });
+
+  it('«Країни поясу» попереду: календарик на картках і плитках, і там, де лише відлік (графік — це країни)', () => {
+    const z = zone('utc-0300');
+    const calls: string[] = [];
+    const { container } = wrap(
+      <MapScheduleContext.Provider value={(id) => calls.push(id)}>
+        <ZonePanel zone={z} state="future" phone={false} onSelect={() => undefined} onClose={() => undefined} />
+      </MapScheduleContext.Provider>,
+      z.midnightMs - 60 * MIN,
+    );
+    const cl = container.querySelector('li:has(> [data-country-card="CL"]) [data-schedule-toggle]')!;
+    expect(cl).not.toBeNull();
+    expect(cl.closest('a')).toBeNull();
+    expect(container.querySelector('li:has(> [data-country-tile="CL"]) [data-schedule-toggle]')).not.toBeNull();
+    fireEvent.click(cl);
+    expect(calls).toHaveLength(1);
+  });
+
+  it('пояс у минулому — календариків на країнах немає', () => {
+    const z = zone('utc+0100');
+    const { container } = wrap(
+      <MapScheduleContext.Provider value={() => undefined}>
+        <ZonePanel zone={z} state="past" phone={false} onSelect={() => undefined} onClose={() => undefined} />
+      </MapScheduleContext.Provider>,
+      z.midnightMs + 60 * MIN,
+    );
+    expect(container.querySelector('[data-country-card] ~ * [data-schedule-toggle], li:has(> [data-country-tile]) [data-schedule-toggle]')).toBeNull();
   });
 
   it('без трансляцій — один рядок замість карток', () => {
