@@ -82,6 +82,9 @@ describe('CountryList: довідник країн за поясами', () => {
     expect(card).toHaveTextContent(/трансляція о \d{2}:\d{2}/);
     const cal = card.querySelector('[data-schedule-toggle]')!;
     expect(cal.closest('a')).toBeNull();
+    // Календарик — і там, де лише відлік (правка власника 2026-11-04).
+    const quiet = container.querySelector<HTMLElement>('[data-zone-directory="utc-0300"] [data-country-card][data-status="none"]')!;
+    expect(quiet.querySelector('[data-schedule-toggle]')).not.toBeNull();
   });
 
   it('пошук «Бразил»: лише пояси з Бразилією, розгорнуті; нісенітниця — порожній стан; «Очистити» повертає все згорнутим', () => {

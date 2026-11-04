@@ -176,7 +176,7 @@
   flex-basis: var(--card-w, max(248px, calc((100cqw - 24px) / 3)));
 }
 .watch .track > li {
-  flex-basis: calc((100% - 24px) / 3);
+  flex-basis: max(248px, calc((100cqw - 24px) / 3));
 }
 .phone .watch :global(ul) > li {
   flex-basis: 240px;

@@ -169,9 +169,12 @@ export function CountryPanel({
           {after ? (
             <p className={zp.empty}>{t('noReplay')}</p>
           ) : (
-            <ul className={cn(zp.track, m.track, phone && zp.trackPhone)}>
-              <CountdownCard city={country.city ?? country.name} />
-            </ul>
+            // Та сама ширина, що в картки трансляції: контейнер стрічки (`cqw`) і та сама стрічка.
+            <div className={zp.slider}>
+              <ul className={cn(zp.track, m.track, phone && zp.trackPhone)}>
+                <CountdownCard city={country.city ?? country.name} />
+              </ul>
+            </div>
           )}
         </>
       ) : (

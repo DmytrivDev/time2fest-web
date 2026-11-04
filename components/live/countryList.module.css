@@ -87,6 +87,9 @@
 .list {
   min-width: 0;
 }
+.faq {
+  margin-top: var(--spacing-4);
+}
 
 /* Розгорнутий пояс: один рядок про пояс і картки країн за регіонами. */
 .dir {
@@ -215,8 +218,11 @@
   font-weight: 600;
 }
 .soon {
-  padding-right: 40px;
   color: var(--color-text);
+}
+/* Під календарик праворуч. */
+.card:has(.cal) .cardFoot {
+  padding-right: 44px;
 }
 .replay {
   color: var(--color-text-secondary);

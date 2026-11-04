@@ -101,7 +101,9 @@ function CountryCard({ c, state, zone, hit }: { c: MapCountry; state: ZoneState;
   const stream = c.streams?.[0];
   const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
   const kind = !stream ? 'none' : state === 'live' && !after ? 'live' : after ? 'replay' : 'soon';
+  // Подія країни в цьому поясі (головна — та, що з трансляцією; інакше перша — лише відлік).
   const eventId = stream?.eventId ?? c.eventIds?.[0];
+  const upcoming = !after && now < zone.midnightMs;
   return (
     <li className={styles.card} data-country-card={c.iso} data-status={kind}>
       <NextLink href={c.href} className={cn('t2f-focus', styles.cardLink)}>
@@ -130,7 +132,7 @@ function CountryCard({ c, state, zone, hit }: { c: MapCountry; state: ZoneState;
           )}
         </span>
       </NextLink>
-      {kind === 'soon' ? (
+      {upcoming && eventId ? (
         <span className={styles.cal}>
           <ScheduleButton eventId={eventId} city={stream?.city ?? c.name} />
         </span>
@@ -428,7 +430,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
           </div>
         )}
 
-        <Faq items={faqItems} columns={phone ? 1 : 2} />
+        <Faq items={faqItems} columns={phone ? 1 : 2} className={styles.faq} />
 
         {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
         {!chatColumn ? (
