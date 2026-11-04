@@ -22,6 +22,8 @@ export interface EventFilterProps {
   scheduleCount?: number;
   /** Телефон: без іконок (окрім замка). */
   stack?: boolean;
+  /** Те саме, але за шириною екрана через CSS (вигляд правильний ще до завантаження скриптів). */
+  responsive?: boolean;
   /** Назва групи для зчитувача (за замовчуванням — як у «Зараз і далі»). */
   label?: string;
   className?: string;
@@ -33,6 +35,7 @@ export function EventFilter({
   scheduleLocked = false,
   scheduleCount = 0,
   stack = false,
+  responsive = false,
   label,
   className,
 }: EventFilterProps) {
@@ -47,13 +50,13 @@ export function EventFilter({
         if (v) onValueChange(v as EventFilterValue);
       }}
       data-row="filter"
-      className={cn(s.filter, className)}
+      className={cn(s.filter, responsive && s.filterResponsive, className)}
     >
       <ToggleGroup.Item value="all" className={cn('t2f-focus', s.seg)}>
         {t('filterAll')}
       </ToggleGroup.Item>
       <ToggleGroup.Item value="live" className={cn('t2f-focus', s.seg)}>
-        {stack ? null : <Icon name="broadcast" size={14} />}
+        {stack ? null : <Icon name="broadcast" size={14} className={s.segIcon} />}
         {t('filterLive')}
       </ToggleGroup.Item>
       <ToggleGroup.Item
@@ -62,7 +65,9 @@ export function EventFilter({
         data-locked={scheduleLocked || undefined}
         className={cn('t2f-focus', s.seg)}
       >
-        {stack ? null : <Icon name={scheduleLocked ? 'lock' : 'calendar-check'} size={14} />}
+        {stack ? null : (
+          <Icon name={scheduleLocked ? 'lock' : 'calendar-check'} size={14} className={scheduleLocked ? undefined : s.segIcon} />
+        )}
         {stack && scheduleLocked ? <Icon name="lock" size={14} /> : null}
         {t('filterMine')}
         {!scheduleLocked && scheduleCount > 0 ? <span className={s.segCount}>{scheduleCount}</span> : null}

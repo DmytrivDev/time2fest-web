@@ -29,7 +29,6 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
@@ -41,7 +40,7 @@ import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { EventFilter } from './EventFilter';
-import { ZoneRowsSkeleton } from './CountriesSkeleton';
+import { SubtitleSkeleton, ZoneRowsSkeleton } from './CountriesSkeleton';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { MapScheduleContext, PlayMark, ScheduleButton, StateBadge } from './ZonePanel';
 import { ZoneListView } from './ZoneListView';
@@ -328,26 +327,33 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       }}
       scheduleLocked={!hasPass}
       scheduleCount={scheduleCount}
-      stack={phone}
+      responsive
       label={t('filterLabel')}
-      className={cn(styles.filter, phone && styles.filterPhone, phone && styles.filterByText)}
+      className={cn(styles.filter, styles.filterResp)}
     />
   );
 
+  // «Мапа | Список» — тим самим виглядом, що фільтр. Телефон: над пошуком на всю ширину (правка власника 2026-11-04);
+  // місце й ширину задає CSS, а не скрипт, — вигляд правильний із першого кадру (правка 2026-11-05).
   const viewControl = (
-    <SegmentedControl
-      label={t('viewLabel')}
-      semantics="pressed"
-      value={view}
-      onValueChange={(v) => {
-        setView(v === 'map' ? 'map' : 'list');
-        if (v === 'map') setFilter('all');
-      }}
-      options={[
-        { value: 'map', label: tNav('mapShort') },
-        { value: 'list', label: tNav('list') },
-      ]}
-    />
+    <div role="group" aria-label={t('viewLabel')} className={cn(nn.filter, styles.viewCtl)} data-row="view">
+      {(['map', 'list'] as const).map((v) => (
+        <button
+          key={v}
+          type="button"
+          aria-pressed={view === v}
+          data-state={view === v ? 'on' : 'off'}
+          className={cn('t2f-focus', nn.seg)}
+          onClick={() => {
+            setView(v);
+            // На «Мапі» фільтр не діє — повертаємо «Усі» (правка власника 2026-11-04).
+            if (v === 'map') setFilter('all');
+          }}
+        >
+          {v === 'map' ? tNav('mapShort') : tNav('list')}
+        </button>
+      ))}
+    </div>
   );
 
   return (
@@ -356,33 +362,15 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
         <header className={styles.head}>
           <div className="min-w-0 flex-1">
             <h1 className="text-headline-md text-text">{t('title')}</h1>
-            <p className={cn('m-0 text-body text-text-secondary', styles.subtitle)}>{subtitle}</p>
+            {ready ? (
+              <p className={cn('m-0 text-body text-text-secondary', styles.subtitle)}>{subtitle}</p>
+            ) : (
+              <SubtitleSkeleton />
+            )}
           </div>
           {chatColumn && vis.hidden ? <ChatHiddenButton room="world" onShow={vis.show} /> : null}
         </header>
 
-        {/* Телефон: «Мапа | Список» — над пошуком на всю ширину, фільтр — теж на всю ширину (правка власника 2026-11-04). */}
-        {phone ? (
-          // Той самий вигляд, що фільтр під пошуком: дві рівні половини на всю ширину.
-          <div role="group" aria-label={t('viewLabel')} className={cn(nn.filter, styles.filterPhone)} data-row="view">
-            {(['map', 'list'] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                aria-pressed={view === v}
-                data-state={view === v ? 'on' : 'off'}
-                className={cn('t2f-focus', nn.seg)}
-                onClick={() => {
-                  setView(v);
-                  // На «Мапі» фільтр не діє — повертаємо «Усі» (правка власника 2026-11-04).
-                  if (v === 'map') setFilter('all');
-                }}
-              >
-                {v === 'map' ? tNav('mapShort') : tNav('list')}
-              </button>
-            ))}
-          </div>
-        ) : null}
         <div className={styles.toolbar}>
           <div className={styles.search}>
             <Icon name="search" size={18} className={styles.searchIcon} />
@@ -407,9 +395,9 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
               </button>
             ) : null}
           </div>
-          <div className={cn(styles.controls, phone && styles.controlsPhone)}>
+          <div className={styles.controls}>
             {filterControl}
-            {phone ? null : viewControl}
+            {viewControl}
           </div>
         </div>
 

@@ -320,3 +320,72 @@
     min-height: 48px;
   }
 }
+
+/* Телефон (правка 2026-11-05): розкладку верху задає CSS — правильна з першого кадру, ще до скриптів.
+   «Мапа | Список» — над пошуком на всю ширину порівну; фільтр — на всю ширину, частини за шириною напису. */
+@media (max-width: 767.98px) {
+  .toolbar,
+  .controls {
+    display: contents;
+  }
+  .page > * {
+    order: 1;
+  }
+  .page > .head {
+    order: -2;
+  }
+  .viewCtl {
+    order: -1;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .viewCtl > * {
+    flex: 1 1 0;
+  }
+  .search {
+    order: 0;
+    flex: none;
+  }
+  .filterResp {
+    order: 0;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .filterResp > * {
+    flex: 1 1 auto;
+    padding-inline: 10px;
+  }
+}
+
+/* Підзаголовок-скелетон: висота — як у справжнього тексту (24 px десктоп, 48 px телефон), смужки — з відступом від
+   заголовка; друга — лише на телефоні (там текст у два рядки). */
+.skSub {
+  box-sizing: border-box;
+  height: 24px;
+  padding-top: 8px;
+}
+.skSubLine {
+  width: 420px;
+  max-width: 70%;
+  height: 12px;
+  margin: 0;
+}
+.skSubLine2 {
+  display: none;
+}
+@media (max-width: 767.98px) {
+  .skSub {
+    height: 48px;
+  }
+  .skSubLine {
+    width: 92%;
+    max-width: none;
+  }
+  .skSubLine2 {
+    display: block;
+    width: 60%;
+    margin-top: 10px;
+  }
+}
