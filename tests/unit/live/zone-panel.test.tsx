@@ -99,6 +99,26 @@ describe('ZonePanel', () => {
     expect(card).toHaveTextContent('Дивитися повтор');
   });
 
+  it('«Країни поясу»: у поясі в ефірі — біла кнопка «Трансляція», в інших станах — тихий підпис (правка 2026-11-04)', () => {
+    const z = zone('utc+0200');
+    const iso = z.streams![0]!.iso;
+    const live = panel(z, 'live', z.midnightMs - MIN);
+    const card = live.container.querySelector(`[data-country-card="${iso}"]`)!;
+    expect(card.querySelector('[data-country-stream="live"]')).toHaveTextContent('Трансляція');
+    live.unmount();
+    const past = panel(z, 'past', z.midnightMs + 60 * MIN);
+    expect(past.container.querySelector('[data-country-stream="live"]')).toBeNull();
+    expect(past.container.querySelector(`[data-country-card="${iso}"]`)).toHaveTextContent('трансляція');
+  });
+
+  it('стрічка: заголовок — у рядку зі стрілками (стрілок немає, коли все вміщається)', () => {
+    const z = zone('utc+0100');
+    const { container, getByRole } = panel(z, 'past', z.midnightMs + 60 * MIN);
+    const slider = container.querySelector('[data-slider-arrows]')!;
+    expect(slider).toContainElement(getByRole('heading', { name: 'Переглянути в повторі' }));
+    expect(slider.querySelector('ul')).toHaveAttribute('aria-label', 'Переглянути в повторі');
+  });
+
   it('без трансляцій — один рядок замість карток', () => {
     const z = model.zones.find((k) => (k.streams?.length ?? 0) === 0)!;
     const { container } = panel(z, 'future', z.midnightMs - 5 * 60 * MIN);

@@ -141,6 +141,15 @@
   .section {
     gap: var(--spacing-3);
   }
+  /* Слот вікна під мапою не додає проміжку, поки вікно закрите: низ секції = низ рамки мапи, і колонка чату
+     закінчується врівень із нею (правка власника 2026-11-04). Відступ відкритого вікна від мапи — його власний. */
+  .cardSlot {
+    margin-top: calc(-1 * var(--spacing-3));
+  }
+  .cardSlot :global([data-zone-panel]),
+  .cardSlot :global([data-country-panel]) {
+    margin-top: 28px;
+  }
   .head {
     flex-direction: row;
     flex-wrap: wrap;

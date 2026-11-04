@@ -1205,6 +1205,7 @@
       "countriesTitle": "Країни поясу",
       "countriesNote": "{count} · клік — сторінка країни",
       "streamYes": "трансляція",
+      "streamLiveBtn": "Трансляція",
       "streamNo": "лише відлік",
       "hasStream": "є трансляція",
       "regionsTitle": "Усі країни — за регіонами",

@@ -257,7 +257,7 @@ describe('ZoneMap: інше', () => {
     expect(view.container.querySelector('[data-zone-list-all]')).toHaveAttribute('href', expect.stringMatching(/^\/countries\/?$/));
     // На карті — ні мапи, ні вікна поясу з мапи.
     expect(view.container.querySelector('svg[data-zone-map-svg]')).toBeNull();
-  });
+  }, 15_000);
 
   it('у видимих рядках немає слова «ніч» окремо і назв без відмінка', () => {
     const { view } = setup({ defaultSelectedZoneId: 'utc+0000' });

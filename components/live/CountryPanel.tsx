@@ -129,20 +129,23 @@ export function CountryPanel({
   const time = <CountryTime zone={zone} state={state} phone={phone} />;
   const watch = (
     <div className={m.watch}>
-      <h4 className={zp.h4}>{after ? t('replayTitle') : t('watchTitle')}</h4>
       {streams.length === 0 ? (
-        after ? (
-          <p className={zp.empty}>{t('noReplay')}</p>
-        ) : (
-          <ul className={cn(zp.track, m.track, phone && zp.trackPhone)}>
-            <CountdownCard city={country.city ?? country.name} />
-          </ul>
-        )
+        <>
+          <h4 className={zp.h4}>{after ? t('replayTitle') : t('watchTitle')}</h4>
+          {after ? (
+            <p className={zp.empty}>{t('noReplay')}</p>
+          ) : (
+            <ul className={cn(zp.track, m.track, phone && zp.trackPhone)}>
+              <CountdownCard city={country.city ?? country.name} />
+            </ul>
+          )}
+        </>
       ) : (
         <Slider
           key={`${zone.id}:${country.iso}`}
           phone={phone}
           label={after ? t('replayTitle') : t('watchTitle')}
+          title={after ? t('replayTitle') : t('watchTitle')}
         >
           {streams.map((s) => (
             <StreamCard
@@ -338,7 +341,7 @@ function StreamCard({
           </span>
         ) : mode === 'replay' ? (
           <span className={zp.cardReplay}>
-            <Icon name="play" size={12} />
+            <PlayMark tone="replay" size={12} />
             {t('replay')}
           </span>
         ) : (

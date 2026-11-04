@@ -20,9 +20,11 @@ import { Children, useCallback, useEffect, useLayoutEffect, useRef, useState, ty
 import { cn } from './cn';
 import { Icon } from './Icon';
 
+const SLIDE = '[aria-roledescription="slide"]';
+
 /** Позиції прокрутки, на яких картка стоїть рівно біля лівого краю (остання — кінець стрічки). */
-function slideStops(el: HTMLElement): number[] {
-  const slides = el.querySelectorAll<HTMLElement>('[aria-roledescription="slide"]');
+export function slideStops(el: HTMLElement, selector = SLIDE): number[] {
+  const slides = el.querySelectorAll<HTMLElement>(selector);
   if (!slides.length) return [0];
   const base = slides[0]!.offsetLeft;
   const max = Math.max(0, el.scrollWidth - el.clientWidth);
@@ -32,7 +34,7 @@ function slideStops(el: HTMLElement): number[] {
 const glides = new WeakMap<HTMLElement, number>();
 
 /** Плавна прокрутка до `target` (ease-out). Прилипання (snap) на час руху вимкнено — інакше браузер «стрибає». */
-function glideTo(el: HTMLElement, target: number, ms = 450) {
+export function glideTo(el: HTMLElement, target: number, ms = 450) {
   const prev = glides.get(el);
   if (prev) cancelAnimationFrame(prev);
   const reduce = document.documentElement.getAttribute('data-reduce-motion') === 'true' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -231,74 +233,7 @@ export function Carousel({
     };
   }, [looping, viewportRef, slides.length]);
 
-  // Мишею: натиснути й тягти (без прилипання під час руху); клік після перетягування не спрацьовує.
-  useEffect(() => {
-    const el = viewportRef.current;
-    if (!el) return;
-    let drag: { x: number; left: number; moved: boolean; id: number } | null = null;
-    const down = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      const g = glides.get(el);
-      if (g) {
-        cancelAnimationFrame(g);
-        glides.delete(el);
-        delete el.dataset.dragging;
-      }
-      drag = { x: e.clientX, left: el.scrollLeft, moved: false, id: e.pointerId };
-    };
-    const move = (e: PointerEvent) => {
-      if (!drag || e.pointerId !== drag.id) return;
-      const dx = e.clientX - drag.x;
-      if (!drag.moved && Math.abs(dx) < 5) return;
-      if (!drag.moved) {
-        drag.moved = true;
-        el.setPointerCapture(e.pointerId);
-        el.dataset.dragging = 'true';
-      }
-      el.scrollLeft = drag.left - dx;
-    };
-    const up = (e: PointerEvent) => {
-      if (!drag || e.pointerId !== drag.id) return;
-      const moved = drag.moved;
-      const dx = e.clientX - drag.x;
-      drag = null;
-      if (!moved) return;
-      if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
-      if (el.closest('[data-loop="true"]')) {
-        delete el.dataset.dragging;
-        // По колу: прилипання повертається; останній перескок між копіями — після нього.
-        el.dispatchEvent(new Event('scroll'));
-      } else {
-        // Плавно до початку картки: потягнули помітно (> 30 px) — у бік руху, ледь-ледь — до найближчої.
-        const stops = slideStops(el);
-        const cur = el.scrollLeft;
-        let target = stops.reduce((a, b) => (Math.abs(b - cur) < Math.abs(a - cur) ? b : a), stops[0]!);
-        if (dx < -30) target = stops.find((x) => x >= cur - 1) ?? stops.at(-1)!;
-        else if (dx > 30) target = [...stops].reverse().find((x) => x <= cur + 1) ?? 0;
-        glideTo(el, target, 380);
-      }
-      const swallow = (ev: MouseEvent) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-      };
-      el.addEventListener('click', swallow, { capture: true, once: true });
-      window.setTimeout(() => el.removeEventListener('click', swallow, { capture: true }), 0);
-    };
-    // Посилання й картинки в слайдах браузер тягне сам (drag-and-drop) і перериває перетягування стрічки.
-    const noNativeDrag = (e: DragEvent) => e.preventDefault();
-    el.addEventListener('dragstart', noNativeDrag);
-    el.addEventListener('pointerdown', down);
-    el.addEventListener('pointermove', move);
-    el.addEventListener('pointerup', up);
-    el.addEventListener('pointercancel', up);
-    return () => {
-      el.removeEventListener('dragstart', noNativeDrag);
-      el.removeEventListener('pointerdown', down);
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerup', up);
-      el.removeEventListener('pointercancel', up);
-    };
-  }, [viewportRef]);
+  useDragScroll(viewportRef);
 
   useEffect(() => {
     update();
@@ -343,4 +278,78 @@ export function Carousel({
       {arrows === 'sides' ? <CarouselArrow dir="next" label={nextLabel ?? t('next')} disabled={!ctl.canNext} onClick={ctl.next} /> : null}
     </section>
   );
+}
+
+/**
+ * Мишею: натиснути й тягти (без прилипання під час руху); клік після перетягування не спрацьовує. Відпустили — плавно
+ * до початку картки (`selector` — слайди). Спільне для каруселей і стрічок мапи («Де дивитися»).
+ */
+export function useDragScroll(viewportRef: RefObject<HTMLElement | null>, selector = SLIDE) {
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    let drag: { x: number; left: number; moved: boolean; id: number } | null = null;
+    const down = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      const g = glides.get(el);
+      if (g) {
+        cancelAnimationFrame(g);
+        glides.delete(el);
+        delete el.dataset.dragging;
+      }
+      drag = { x: e.clientX, left: el.scrollLeft, moved: false, id: e.pointerId };
+    };
+    const move = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) < 5) return;
+      if (!drag.moved) {
+        drag.moved = true;
+        el.setPointerCapture(e.pointerId);
+        el.dataset.dragging = 'true';
+      }
+      el.scrollLeft = drag.left - dx;
+    };
+    const up = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const moved = drag.moved;
+      const dx = e.clientX - drag.x;
+      drag = null;
+      if (!moved) return;
+      if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+      if (el.closest('[data-loop="true"]')) {
+        delete el.dataset.dragging;
+        // По колу: прилипання повертається; останній перескок між копіями — після нього.
+        el.dispatchEvent(new Event('scroll'));
+      } else {
+        // Плавно до початку картки: потягнули помітно (> 30 px) — у бік руху, ледь-ледь — до найближчої.
+        const stops = slideStops(el, selector);
+        const cur = el.scrollLeft;
+        let target = stops.reduce((a, b) => (Math.abs(b - cur) < Math.abs(a - cur) ? b : a), stops[0]!);
+        if (dx < -30) target = stops.find((x) => x >= cur - 1) ?? stops.at(-1)!;
+        else if (dx > 30) target = [...stops].reverse().find((x) => x <= cur + 1) ?? 0;
+        glideTo(el, target, 380);
+      }
+      const swallow = (ev: MouseEvent) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+      };
+      el.addEventListener('click', swallow, { capture: true, once: true });
+      window.setTimeout(() => el.removeEventListener('click', swallow, { capture: true }), 0);
+    };
+    // Посилання й картинки в слайдах браузер тягне сам (drag-and-drop) і перериває перетягування стрічки.
+    const noNativeDrag = (e: DragEvent) => e.preventDefault();
+    el.addEventListener('dragstart', noNativeDrag);
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', up);
+    return () => {
+      el.removeEventListener('dragstart', noNativeDrag);
+      el.removeEventListener('pointerdown', down);
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', up);
+      el.removeEventListener('pointercancel', up);
+    };
+  }, [viewportRef, selector]);
 }

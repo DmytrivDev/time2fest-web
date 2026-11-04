@@ -11,8 +11,15 @@ import {
   type MouseEvent,
   type ReactNode,
   type Ref,
+  type RefObject,
 } from 'react';
 import { cn } from '@/components/primitives/cn';
+import {
+  CarouselArrow,
+  glideTo,
+  slideStops,
+  useDragScroll,
+} from '@/components/primitives/Carousel';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
@@ -159,15 +166,18 @@ export function ZonePanel({
           </dl>
         </div>
         <div className={m.watchCol}>
-          <h4 className={m.h4}>{state === 'past' ? t('replayTitle') : t('watchTitle')}</h4>
           {streams.length === 0 ? (
-            <p className={m.empty}>{state === 'past' ? t('noReplays') : t('noStreams')}</p>
+            <>
+              <h4 className={m.h4}>{state === 'past' ? t('replayTitle') : t('watchTitle')}</h4>
+              <p className={m.empty}>{state === 'past' ? t('noReplays') : t('noStreams')}</p>
+            </>
           ) : (
             // Новий пояс — нова стрічка: стрілки рахуються від її карток, прокрутка — з початку.
             <Slider
               key={zone.id}
               phone={phone}
               label={state === 'past' ? t('replayTitle') : t('watchTitle')}
+              title={state === 'past' ? t('replayTitle') : t('watchTitle')}
             >
               {streams.map((s) => (
                 <StreamCard
@@ -181,7 +191,7 @@ export function ZonePanel({
           )}
         </div>
       </div>
-      <Countries zone={zone} phone={phone} />
+      <Countries zone={zone} state={state} phone={phone} />
     </section>
   );
 }
@@ -249,19 +259,36 @@ function Stat({ n, label }: { n: number; label: string }) {
   );
 }
 
-/** Стрічка, що гортається вбік; на десктопі — стрілки, коли карток більше, ніж уміщається. */
+const CARD = ':scope > li';
+/** Найвужча картка, на якій підписи («Головне святкування · Повтор») стоять в один рядок. */
+const CARD_MIN = 248;
+const CARD_GAP = 12;
+/** Яка частка наступної картки визирає з-під правого краю, коли всі не вміщаються. */
+const PEEK = 0.45;
+
+/**
+ * Стрічка «Де дивитися» / «Переглянути в повторі» з заголовком (правка власника 2026-11-04):
+ * - стрілки — у рядку заголовка, кожна гортає на одну картку; мишею — натиснути й тягти, на дотик — свайп;
+ * - праворуч стрічка доходить до краю вікна (картка, що не вміщається, обрізана рамкою вікна), ліворуч — по краю
+ *   колонки; після гортання ліворуч завжди видно картку повністю;
+ * - не вміщаються всі — ширину картки підібрано так, щоб видно було кілька повних і чималий шматок наступної (не вужче
+ *   248 px); наприкінці праворуч лишається простір: хвіст стрічки підібрано так, що остання позиція — початок картки.
+ */
 export function Slider({
   phone,
   label,
+  title,
   children,
 }: {
   phone: boolean;
   label: string;
+  title: ReactNode;
   children: ReactNode;
 }) {
   const t = useTranslations('liveMap.panel');
   const ref = useRef<HTMLUListElement>(null);
   const [edge, setEdge] = useState({ start: true, end: true });
+  useDragScroll(ref as RefObject<HTMLElement | null>, CARD);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -270,47 +297,80 @@ export function Slider({
         start: el.scrollLeft <= 2,
         end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2,
       });
-    upd();
+    const fit = () => {
+      const cards = [...el.querySelectorAll<HTMLElement>(CARD)];
+      if (!cards.length) return;
+      if (!phone) {
+        const col = el.parentElement?.clientWidth ?? el.clientWidth;
+        const fits = cards.length * CARD_MIN + (cards.length - 1) * CARD_GAP <= col;
+        let k = Math.max(1, Math.floor((el.clientWidth + CARD_GAP) / (CARD_MIN + CARD_GAP)));
+        while (k > 1 && (el.clientWidth - k * CARD_GAP) / (k + PEEK) < CARD_MIN) k--;
+        const w = Math.floor((el.clientWidth - k * CARD_GAP) / (k + PEEK));
+        if (fits) el.style.removeProperty('--card-w');
+        else el.style.setProperty('--card-w', `${w}px`);
+      }
+      const origin = el.getBoundingClientRect().left - el.scrollLeft;
+      const lefts = cards.map((c) => c.getBoundingClientRect().left - origin);
+      const padL = lefts[0]!;
+      const last = cards.at(-1)!;
+      const right = last.getBoundingClientRect().right - origin;
+      const view = el.clientWidth;
+      // Скільки останніх карток уміщаються повністю, коли перша з них — біля лівого краю.
+      let k = 1;
+      while (k < cards.length && right - lefts[cards.length - k - 1]! <= view - padL) k++;
+      const first = lefts[cards.length - k]! - padL;
+      const tail = right <= view ? 0 : Math.max(0, Math.round(first + view - right));
+      if (tail) el.style.paddingRight = `${tail}px`;
+      else el.style.removeProperty('padding-right');
+      upd();
+    };
+    fit();
     el.addEventListener('scroll', upd, { passive: true });
-    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(upd) : null;
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : null;
     ro?.observe(el);
     return () => {
       el.removeEventListener('scroll', upd);
       ro?.disconnect();
     };
-  }, []);
+  }, [phone]);
   const go = (dir: 1 | -1) => {
     const el = ref.current;
-    if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+    if (!el) return;
+    const stops = slideStops(el, CARD);
+    const cur = el.scrollLeft;
+    const target =
+      dir > 0
+        ? (stops.find((x) => x > cur + 2) ?? stops.at(-1)!)
+        : ([...stops].reverse().find((x) => x < cur - 2) ?? 0);
+    glideTo(el, target);
   };
   const arrows = !phone && !(edge.start && edge.end);
   return (
     <div className={m.slider} data-slider-arrows={arrows ? 'true' : 'false'}>
+      <div className={m.sliderHead}>
+        <h4 className={m.h4}>{title}</h4>
+        {arrows ? (
+          <span className={m.arrows}>
+            <CarouselArrow
+              dir="prev"
+              size="md"
+              label={t('slidePrev')}
+              disabled={edge.start}
+              onClick={() => go(-1)}
+            />
+            <CarouselArrow
+              dir="next"
+              size="md"
+              label={t('slideNext')}
+              disabled={edge.end}
+              onClick={() => go(1)}
+            />
+          </span>
+        ) : null}
+      </div>
       <ul ref={ref} className={cn(m.track, phone && m.trackPhone)} aria-label={label}>
         {children}
       </ul>
-      {arrows ? (
-        <>
-          <button
-            type="button"
-            className={cn('t2f-focus', m.arrow, m.arrowPrev)}
-            aria-label={t('slidePrev')}
-            disabled={edge.start}
-            onClick={() => go(-1)}
-          >
-            <Icon name="chevron-left" size={18} />
-          </button>
-          <button
-            type="button"
-            className={cn('t2f-focus', m.arrow, m.arrowNext)}
-            aria-label={t('slideNext')}
-            disabled={edge.end}
-            onClick={() => go(1)}
-          >
-            <Icon name="chevron-right" size={18} />
-          </button>
-        </>
-      ) : null}
     </div>
   );
 }
@@ -400,10 +460,16 @@ export function ScheduleButton({ eventId, city }: { eventId?: string; city: stri
  * Знак «▶» на кнопці картки трансляції (рішення власника 2026-11-03): залитий трикутник (18 px) кольору тексту кнопки,
  * без кола, по центру з текстом.
  */
-export function PlayMark({ tone }: { tone: 'live' | 'replay' | 'upcoming' }) {
+export function PlayMark({
+  tone,
+  size = 18,
+}: {
+  tone: 'live' | 'replay' | 'upcoming';
+  size?: 12 | 14 | 18;
+}) {
   return (
     <span aria-hidden="true" className={m.playMark} data-play-mark={tone}>
-      <svg viewBox="0 0 24 24" width="18" height="18">
+      <svg viewBox="0 0 24 24" width={size} height={size}>
         <path d="M7 4.5l13 7.5-13 7.5z" fill="currentColor" />
       </svg>
     </span>
@@ -434,7 +500,7 @@ function StreamCard({
           </span>
         ) : mode === 'replay' ? (
           <span className={m.cardReplay}>
-            <Icon name="play" size={12} />
+            <PlayMark tone="replay" size={12} />
             {t('replay')}
           </span>
         ) : null}
@@ -464,7 +530,7 @@ function StreamCard({
 }
 
 /** Країни поясу: найпопулярніші — картками, усі інші — плитками за регіонами. Клік — сторінка країни. */
-function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
+function Countries({ zone, state, phone }: { zone: MapZone; state: ZoneState; phone: boolean }) {
   const t = useTranslations('liveMap.panel');
   const tR = useTranslations('liveMap.regions');
   const [more, setMore] = useState(false);
@@ -524,9 +590,15 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
               <Flag code={c.flagCode} round diameter={40} decorative />
               <span className={m.topName}>{c.name}</span>
               {c.city ? <span className={m.topCity}>{c.city}</span> : null}
-              {streamIsos.has(c.iso) ? (
+              {streamIsos.has(c.iso) && state === 'live' ? (
+                // Трансляція йде — біла залита кнопка (правка власника 2026-11-04); веде, як і вся картка, на сторінку країни.
+                <span className={m.topBtn} data-country-stream="live">
+                  <PlayMark tone="live" size={14} />
+                  {t('streamLiveBtn')}
+                </span>
+              ) : streamIsos.has(c.iso) ? (
                 <span className={m.topStream}>
-                  <Icon name="play" size={12} />
+                  <PlayMark tone="upcoming" size={12} />
                   {t('streamYes')}
                 </span>
               ) : (

@@ -482,7 +482,7 @@ export function ZoneMap({
   ) : null;
   const slotRef = useRef<HTMLDivElement>(null);
   const cardSlot = (
-    <div ref={slotRef} id={cardId} data-zone-map-card-slot="">
+    <div ref={slotRef} id={cardId} data-zone-map-card-slot="" className={m.cardSlot}>
       {card}
     </div>
   );
