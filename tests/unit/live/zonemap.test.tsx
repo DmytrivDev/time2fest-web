@@ -142,6 +142,9 @@ describe('ZoneMap: вікно країни (рішення власника 2026
     const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
     expect(panel).toHaveAttribute('data-country-panel', 'GB');
     expect(panel.querySelector('h3')).toHaveTextContent('Велика Британія');
+    // Прапор і назва — посилання на сторінку країни.
+    expect(panel.querySelector('[data-country-page-link]')).toHaveAttribute('href', expect.stringMatching(/^\/country\//));
+    expect(panel.querySelector('[data-country-page-link] h3')).not.toBeNull();
     // Країна підсвічена, поки відкрите її вікно.
     expect(land(view, 'utc+0000', 'GB')).toHaveAttribute('data-hot', 'true');
     expect(panel.querySelector('[data-stream-card]')).not.toBeNull();

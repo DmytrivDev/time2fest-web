@@ -116,8 +116,11 @@ export function CountryPanel({
   const offset = utcLabel(zone.offsetMinutes);
   const title = (
     <span className={m.title}>
-      <Flag code={country.flagCode} round diameter={phone ? 32 : 40} decorative />
-      <h3 className={zp.name}>{country.name}</h3>
+      {/* Прапор і назва — посилання на сторінку країни (правка власника 2026-11-04). */}
+      <NextLink href={country.href} className={cn('t2f-focus', m.nameLink)} data-country-page-link="">
+        <Flag code={country.flagCode} round diameter={phone ? 32 : 40} decorative />
+        <h3 className={zp.name}>{country.name}</h3>
+      </NextLink>
       {state === 'live' && streams.length === 0 ? (
         <span className={cn(zp.badge, m.badgeNow)} data-badge="now">
           {t('nowBadge')}
