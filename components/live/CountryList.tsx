@@ -13,7 +13,6 @@
  */
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { ToggleGroup } from 'radix-ui';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
@@ -31,7 +30,6 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
-import { Skeleton } from '@/components/primitives/Skeleton';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
@@ -42,6 +40,8 @@ import { formatClock, formatCountdown, formatDurationShort, formatTimeForViewer,
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
+import { EventFilter } from './EventFilter';
+import { ZoneRowsSkeleton } from './CountriesSkeleton';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { MapScheduleContext, PlayMark, ScheduleButton, StateBadge } from './ZonePanel';
 import { ZoneListView } from './ZoneListView';
@@ -275,6 +275,11 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   }, [mapModel, now]);
   const stateOf = (id: string): ZoneState => states.get(id) ?? 'future';
 
+  // Скільки країн у графіку (для лічильника біля «Мій графік», як у «Зараз і далі»).
+  const scheduleCount = useMemo(
+    () => mapModel.zones.reduce((n, z) => n + z.countries.filter((c) => (c.eventIds ?? []).some((id) => schedule.includes(id))).length, 0),
+    [mapModel, schedule],
+  );
   const q = norm(query);
   const searching = q !== '';
   const locked = filter === 'mine' && !hasPass;
@@ -312,36 +317,21 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
     <ChatPanel startInWorld onHide={chatColumn ? vis.hide : collapse} collapseMode={!chatColumn} onToEvents={chatColumn ? undefined : collapse} className={cls} />
   );
 
+  // Той самий фільтр, що в «Зараз і далі» на головній (`EventFilter`, правка власника 2026-11-04).
   const filterControl = (
-    <ToggleGroup.Root
-      type="single"
-      aria-label={t('filterLabel')}
+    <EventFilter
       value={filter}
       onValueChange={(v) => {
-        if (!v) return;
-        setFilter(v as Filter);
+        setFilter(v);
         // Фільтр звужує список — з «Мапи» одразу на «Список», де видно результат.
         if (v !== 'all') setView('list');
       }}
-      data-row="filter"
-      className={cn(nn.filter, styles.filter, phone && styles.filterPhone, phone && styles.filterByText)}
-    >
-      <ToggleGroup.Item value="all" className={cn('t2f-focus', nn.seg)}>
-        {tNN('filterAll')}
-      </ToggleGroup.Item>
-      <ToggleGroup.Item value="live" className={cn('t2f-focus', nn.seg)}>
-        {tNN('filterLive')}
-      </ToggleGroup.Item>
-      <ToggleGroup.Item
-        value="mine"
-        aria-label={hasPass ? undefined : `${tNN('filterMine')}. ${tNN('mineLocked')}`}
-        data-locked={!hasPass || undefined}
-        className={cn('t2f-focus', nn.seg)}
-      >
-        {hasPass ? null : <Icon name="lock" size={14} />}
-        {tNN('filterMine')}
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
+      scheduleLocked={!hasPass}
+      scheduleCount={scheduleCount}
+      stack={phone}
+      label={t('filterLabel')}
+      className={cn(styles.filter, phone && styles.filterPhone, phone && styles.filterByText)}
+    />
   );
 
   const viewControl = (
@@ -366,7 +356,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
         <header className={styles.head}>
           <div className="min-w-0 flex-1">
             <h1 className="text-headline-md text-text">{t('title')}</h1>
-            <p className="m-0 text-body text-text-secondary">{subtitle}</p>
+            <p className={cn('m-0 text-body text-text-secondary', styles.subtitle)}>{subtitle}</p>
           </div>
           {chatColumn && vis.hidden ? <ChatHiddenButton room="world" onShow={vis.show} /> : null}
         </header>
@@ -443,12 +433,10 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
         ) : (
           <div role="region" aria-label={t('listLabel')} aria-busy={!ready || undefined} className={styles.list}>
             {!ready ? (
-              <div className="flex flex-col gap-3">
+              <>
                 <span className="sr-only">{tCommon('loading')}</span>
-                <Skeleton variant="block" className="h-16" />
-                <Skeleton variant="block" className="h-16" />
-                <Skeleton variant="block" className="h-16" />
-              </div>
+                <ZoneRowsSkeleton />
+              </>
             ) : empty ? (
               <p role="status" className="m-0 rounded-md bg-surface p-4 text-body text-text-secondary">
                 {searching ? t('empty') : t('emptyFilters')}

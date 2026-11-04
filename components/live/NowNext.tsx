@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { ToggleGroup } from 'radix-ui';
+import { EventFilter } from './EventFilter';
 import { Button } from '@/components/primitives/Button';
 import { Carousel, CarouselArrow, useCarousel } from '@/components/primitives/Carousel';
 import { cn } from '@/components/primitives/cn';
@@ -170,33 +170,17 @@ export function NowNext({
     );
   }
 
-  const lockedHint = scheduleLocked ? t('mineLocked') : undefined;
   const lockedMine = filter === 'mine' && scheduleLocked;
+  // Той самий фільтр, що на сторінці «Країни й міста» (`EventFilter`).
   const filterControl = (
-    <ToggleGroup.Root
-      type="single"
-      aria-label={t('filterLabel')}
+    <EventFilter
       value={filter}
-      onValueChange={(v) => {
-        if (v) setFilter(v as Filter);
-      }}
-      data-row="filter"
-      className={cn(s.filter, stack && s.filterFull)}
-    >
-      <ToggleGroup.Item value="all" className={cn('t2f-focus', s.seg)}>
-        {t('filterAll')}
-      </ToggleGroup.Item>
-      <ToggleGroup.Item value="live" className={cn('t2f-focus', s.seg)}>
-        {stack ? null : <Icon name="broadcast" size={14} />}
-        {t('filterLive')}
-      </ToggleGroup.Item>
-      <ToggleGroup.Item value="mine" aria-label={lockedHint ? `${t('filterMine')}. ${lockedHint}` : undefined} data-locked={scheduleLocked || undefined} className={cn('t2f-focus', s.seg)}>
-        {stack ? null : <Icon name={scheduleLocked ? 'lock' : 'calendar-check'} size={14} />}
-        {stack && scheduleLocked ? <Icon name="lock" size={14} /> : null}
-        {t('filterMine')}
-        {!scheduleLocked && scheduleCount > 0 ? <span className={s.segCount}>{scheduleCount}</span> : null}
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
+      onValueChange={setFilter}
+      scheduleLocked={scheduleLocked}
+      scheduleCount={scheduleCount}
+      stack={stack}
+      className={cn(stack && s.filterFull)}
+    />
   );
 
   return (
