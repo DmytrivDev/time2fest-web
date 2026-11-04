@@ -138,7 +138,7 @@ export function useCookieSettings(): () => void {
   const title = t('settingsTitle');
   return useCallback(
     // Як вікна пасу й чайових: на місці чату, на телефоні — той самий шар без затемнення і тієї ж висоти.
-    () => open({ id: COOKIES_WINDOW_ID, inChat: true, kind: 'form', title, content: <SettingsWindow /> }),
+    () => open({ id: COOKIES_WINDOW_ID, kind: 'form', title, content: <SettingsWindow /> }),
     [open, title],
   );
 }

@@ -292,7 +292,6 @@ export function useOpenTipsWindow(): (block?: { amount: (typeof TIP_AMOUNTS)[num
       const close = () => overlay.close(TIPS_WINDOW_ID);
       overlay.open({
         id: TIPS_WINDOW_ID,
-        inChat: true,
         kind: 'form',
         chrome: 'board',
         coral: true,

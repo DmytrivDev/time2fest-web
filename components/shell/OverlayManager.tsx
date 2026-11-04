@@ -54,15 +54,22 @@ export interface OverlaySpec {
 }
 
 /**
- * Розміщення за типом і наявністю колонки чату. Телефон з вікном чату внизу: вікна чату — усередині нього (`dock`),
- * вікно покупки «Першого ряду» (`accent`) і вікна, відкриті при згорнутому чаті (`separate`), — окремим шаром поверх
- * чату (`seat`, рішення 2026-10-29): чат не розгортається й лишається таким, яким був.
+ * Розміщення за типом і наявністю колонки чату. Телефон з вікном чату внизу (рішення власника 2026-11-04 — два види
+ * шторок, обидва без затемнення): вікна чату — усередині розгорнутого чату (`dock`) або, коли він згорнутий, окремим
+ * шаром тієї самої висоти — до смуги «Перший ряд» (`seat`); усі інші вікна (пас, графік, «Перший ряд», «Поділитися»,
+ * вхід, мова…) — окремим шаром вищим, до самого відео (`seat`, `ChatDock` міряє висоту за `inChat`).
+ * Без вікна чату на сторінці — `Sheet`.
  */
-export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, seatDock = false, separate = false): OverlayPlacement {
+export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, seatDock = false): OverlayPlacement {
   if (kind === 'inflow') return 'inflow';
   if (chatColumn) return 'panel';
-  if ((kind === 'accent' || separate) && seatDock) return 'seat';
-  return inDock ? 'dock' : 'sheet';
+  if (inDock) return 'dock';
+  return seatDock ? 'seat' : 'sheet';
+}
+
+/** Вікно на телефоні — окремим шаром (`seat`), а не всередині розгорнутого чату. */
+export function isSeatSpec(spec: OverlaySpec | null | undefined): boolean {
+  return !!spec && spec.kind !== 'inflow' && (!spec.inChat || !!spec.separate);
 }
 
 export interface OverlayApi {
@@ -206,7 +213,6 @@ export function OverlayManager({ children }: OverlayManagerProps) {
         chatColumn,
         !!current.inChat && !current.separate && dockSlotExists(),
         dockSlotExists(SEAT_DOCK_SLOT_ID),
-        !!current.separate,
       )
     : null;
 

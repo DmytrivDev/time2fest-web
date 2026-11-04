@@ -9,9 +9,10 @@
  * відпустили далі середини або швидким рухом — доїжджає (200 мс, без анімації за «зменшити рух»). Дотик до шапки поза
  * кнопками перемикає стан; Esc і шеврон «Згорнути чат» згортають, фокус іде на шапку.
  * Вікна чату (O-NICK, O-AUTHOR, правила, «Моя емоція») відкриваються всередині вікна — у `#chat-dock-slot`.
- * Вікно покупки «Першого ряду» (O-FIRST-ROW / O-PAY) — окремий шар поверх сторінки (`#seat-dock-slot`, рішення 2026-10-29),
- * не пов’язаний із вікном чату: чат під ним лишається таким, яким був (згорнутим чи розгорнутим), і не рухається. Портрет —
- * те саме місце, що в розгорнутого чату (під смугою «Перший ряд»); альбом — на весь екран; з клавіатурою — видима область
+ * Усі інші вікна (пас, графік, «Перший ряд», «Поділитися», вхід…) — окремий шар поверх сторінки (`#seat-dock-slot`,
+ * рішення 2026-10-29 і 2026-11-04), не пов’язаний із вікном чату: чат під ним лишається таким, яким був, і не рухається.
+ * Два види шторок, обидва без затемнення: вікна чату, відкриті при згорнутому чаті, — до смуги «Перший ряд» (як сам чат);
+ * решта — вищі, до самого відео (накривають рядок часу й смугу). Альбом — на весь екран; з клавіатурою — видима область
  * над нею. З шару в чат не перейти — лише закрити: свайп униз з ручки чи шапки, дотик до ручки, «×», Esc. Розгорнути шар
  * не можна — він відкривається лише кнопкою «Зайняти місце».
  */
@@ -33,7 +34,7 @@ import {
 } from 'react';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_DOCK_SLOT_ID, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
-import { CLOSE_MS, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
+import { CLOSE_MS, isSeatSpec, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { RoomId } from '@/lib/data/types';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -75,12 +76,19 @@ function stableViewportH(): number {
   return h;
 }
 
-/** Нижній край того, що лишається видимим над вікном: відео, рядок часу, смуга «Перший ряд». */
-function measureTop(): number {
+/**
+ * Нижній край того, що лишається видимим над вікном: відео, рядок часу, смуга «Перший ряд». `video` — лише відео
+ * (висока шторка: пас, графік, «Поділитися»… накривають рядок часу й смугу).
+ */
+function measureTop(video = false): number {
   let bottom = 0;
-  document.querySelectorAll<HTMLElement>('[data-dock-above]').forEach((el) => {
-    bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
-  });
+  if (video) {
+    const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
+    if (slot) bottom = slot.getBoundingClientRect().bottom;
+  } else
+    document.querySelectorAll<HTMLElement>('[data-dock-above]').forEach((el) => {
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    });
   if (!bottom) {
     const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
     const fallback = slot ?? document.querySelector<HTMLElement>('header');
@@ -150,9 +158,11 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const expanded = useChatDock((s) => s.expanded);
   const overlay = useOverlay();
   // Відкрите вікно покупки «Першого ряду» — окремий шар; вікно чату під ним не змінюється.
-  const seat = overlay.current?.kind === 'accent' || !!overlay.current?.separate;
+  const seat = isSeatSpec(overlay.current);
   // Шар закривається: ще видимий і їде вниз (OverlayManager тримає вміст `CLOSE_MS`).
-  const seatClosing = !seat && (overlay.closing?.kind === 'accent' || !!overlay.closing?.separate);
+  const seatClosing = !seat && isSeatSpec(overlay.closing);
+  // Два види шторок (рішення власника 2026-11-04): вікна чату — до смуги «Перший ряд», як сам чат; решта — до відео.
+  const seatTall = !(seat ? overlay.current : overlay.closing)?.inChat;
   const open = expanded;
   const [seatDy, setSeatDy] = useState(0);
   const { expand, collapse } = useChatDockControls();
@@ -164,6 +174,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const dragRef = useRef<DragState | null>(null);
   const suppressClick = useRef(false);
   const [top, setTop] = useState(0);
+  const [videoTop, setVideoTop] = useState(0);
   const [dragH, setDragH] = useState<number | null>(null);
   // Телефон-альбом: згорнуте вікно з’являється внизу лише коли сторінку прокручено нижче смуги «Перший ряд».
   // Поки в полі введення фокус, режим не міняємо: клавіатура може стиснути макет і «перевернути» орієнтацію за медіазапитом.
@@ -295,7 +306,10 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     if ((!open && !seat) || land) return;
     // Сторінка не блокується й нічого не липне: чат фіксований унизу, його висота — місце під смугою при scrollTop = 0
     // (міряємо при розгортанні й зміні розміру, за прокруткою не слідуємо).
-    const measure = () => setTop(measureTop());
+    const measure = () => {
+      setTop(measureTop());
+      setVideoTop(measureTop(true));
+    };
     measure();
     const frame = requestAnimationFrame(measure);
     // Лише зміна ширини (поворот, інше вікно): зміна самої висоти — це адресна стрічка, на неї висота чату не реагує.
@@ -561,9 +575,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   let seatGeo: CSSProperties;
   if (land) seatGeo = seatKb ? { top: vv.off, bottom: 'auto', height: vv.h } : { top: 0, height: '100svh', borderRadius: 0 };
   else if (seatKb) {
-    const free = vv.h - top;
+    const free = vv.h - (seatTall ? videoTop : top);
     seatGeo = { height: free >= MIN_DOCK ? free : vv.h, bottom: inset };
-  } else seatGeo = { height: `calc(100svh - ${top}px)` };
+  } else seatGeo = { height: `calc(100svh - ${seatTall ? videoTop : top}px)` };
   if (seatDy) seatGeo = { ...seatGeo, transform: `translateY(${seatDy}px)`, transition: 'none' };
   if (seatClosing) seatGeo = { ...seatGeo, transform: 'translateY(100%)', transition: `transform ${CLOSE_MS}ms ease-out` };
   const onSeatFocus = (e: FocusEvent<HTMLElement>, on: boolean) => {

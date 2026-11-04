@@ -65,7 +65,6 @@ export function useOpenAuthWindow(): (mode?: AuthIntent, opts?: AuthWindowOption
       const close = () => overlay.close(AUTH_WINDOW_ID);
       overlay.open({
         id: AUTH_WINDOW_ID,
-        inChat: true,
         kind: 'form',
         chrome: 'board',
         coral: true,

@@ -65,7 +65,6 @@ export function useOpenPassWindow(): () => void {
       const close = () => overlay.close(PASS_WINDOW_ID);
       overlay.open({
         id: PASS_WINDOW_ID,
-        inChat: true,
         kind: 'form',
         chrome: 'board',
         coral: true,
