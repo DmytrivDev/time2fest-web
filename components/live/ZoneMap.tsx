@@ -61,6 +61,8 @@ export interface ZoneMapProps {
   geometry?: ZoneMapGeometry;
   /** «Додати в графік» на картках трансляцій, що ще попереду (як на картках «Зараз і далі»); без неї календарика немає. */
   onToggleSchedule?: (eventId: string, next: boolean) => void;
+  /** Без своєї шапки («Мапа поясів» і «Мапа | Список»): лише мапа (сторінка «Країни й міста» має перемикач угорі). */
+  headless?: boolean;
   className?: string;
 }
 
@@ -172,6 +174,7 @@ export function ZoneMap({
   defaultSelectedZoneId,
   geometry: geometryProp,
   onToggleSchedule,
+  headless = false,
   className,
 }: ZoneMapProps) {
   const t = useTranslations('liveMap');
@@ -870,11 +873,11 @@ export function ZoneMap({
         onKeyDown={onRootKeyDown}
         className={cn(m.section, className)}
       >
-        <div className={m.head}>
+        <div className={headless ? 'sr-only' : m.head}>
           <h2 id={headId} className={cn('t2f-h2', m.title)}>
             {tNav('map')}
           </h2>
-          <div className={m.controls}>
+          <div className={headless ? 'hidden' : m.controls}>
             {/* «Пояси · Звідки дивляться» прибрано (рішення власника 2026-11-03): лишається «Мапа | Список». */}
             <SegmentedControl
               semantics="pressed"

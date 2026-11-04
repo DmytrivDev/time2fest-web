@@ -31,6 +31,16 @@ export interface ZoneListViewProps {
   zones: readonly MapZone[];
   stateOf: (id: string) => ZoneState;
   phone: boolean;
+  /** Скільки поясів після першого, що ще попереду (`Infinity` — усі; сторінка «Країни й міста»). */
+  ahead?: number;
+  /** Десктоп: у рядку п’ять прапорців і «ще N» замість назв (як на телефоні; сторінка «Країни й міста»). */
+  flagsOnly?: boolean;
+  /** Пошук: усі передані пояси одним списком по черзі, кожен розгорнутий (згорнути можна); без блоку «Вже зустріли». */
+  allOpen?: boolean;
+  /** Свій уміст розгорнутого рядка (за замовчуванням — вікно поясу, а з кліком по країні — вікно країни). */
+  renderBody?: (zone: MapZone, state: ZoneState) => ReactNode;
+  /** Посилання «Усі пояси й країни» внизу (на самій сторінці «Країни й міста» — ні). */
+  allLink?: boolean;
 }
 
 /**
@@ -39,14 +49,28 @@ export interface ZoneListViewProps {
  * (без стрілок і «×»). Відкритий один пояс; на старті — той, що наживо, і він іде за північчю. Далі — згорнуті «Вже
  * зустріли» й посилання на сторінку з усіма поясами.
  */
-export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
+export function ZoneListView({
+  zones,
+  stateOf,
+  phone,
+  ahead = AHEAD,
+  flagsOnly = false,
+  allOpen = false,
+  renderBody,
+  allLink = true,
+}: ZoneListViewProps) {
   const t = useTranslations('liveMap.list');
   const uid = useId();
   // За часом опівночі: спершу ті, що попереду (найближчий — першим), потім минулі.
   const byMidnight = [...zones].sort((a, b) => a.midnightMs - b.midnightMs);
   const startIdx = byMidnight.findIndex((z) => stateOf(z.id) !== 'past');
-  const shown = startIdx < 0 ? [] : byMidnight.slice(startIdx, startIdx + 1 + AHEAD);
-  const past = (startIdx < 0 ? byMidnight : byMidnight.slice(0, startIdx)).reverse();
+  const upcoming = startIdx < 0 ? [] : byMidnight.slice(startIdx, startIdx + 1 + ahead);
+  const before = (startIdx < 0 ? byMidnight : byMidnight.slice(0, startIdx)).reverse();
+  // Пошук: усе одним списком (спершу ті, що попереду), без «Вже зустріли».
+  const shown = allOpen ? [...upcoming, ...before] : upcoming;
+  const past = allOpen ? [] : before;
+  // Пошук: розгорнуті всі; згорнуті вручну — тут.
+  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   // Спершу всі рядки згорнуті (правка власника 2026-11-04); клік розгортає один, повторний — згортає.
   const [openId, setOpenId] = useState<string | null>(null);
   // Клік по країні в розгорнутому рядку — вікно країни в тому самому рядку; «‹ До поясу» повертає пояс.
@@ -69,7 +93,28 @@ export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
     undefined,
   );
   const row = (z: MapZone) => {
-    const open = openId === z.id;
+    const open = allOpen ? !closed.has(z.id) : openId === z.id;
+    if (renderBody)
+      return (
+        <ZoneRow
+          key={z.id}
+          zone={z}
+          state={stateOf(z.id)}
+          phone={phone}
+          flagsOnly={flagsOnly}
+          open={open}
+          onToggle={() => {
+            if (!allOpen) return toggle(z.id);
+            const next = new Set(closed);
+            if (next.has(z.id)) next.delete(z.id);
+            else next.add(z.id);
+            setClosed(next);
+          }}
+          panelId={`${uid}-${z.id}`}
+        >
+          {renderBody(z, stateOf(z.id))}
+        </ZoneRow>
+      );
     const country = open && countryIso ? z.countries.find((c) => c.iso === countryIso) : undefined;
     return (
       <ZoneRow
@@ -146,18 +191,21 @@ export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
           </Reveal>
         </div>
       ) : null}
-      <NextLink href={COUNTRIES_HREF} className={cn('t2f-focus', m.all)} data-zone-list-all="">
-        {t('all')}
-        <Icon name="arrow-right" size={16} />
-      </NextLink>
+      {allLink ? (
+        <NextLink href={COUNTRIES_HREF} className={cn('t2f-focus', m.all)} data-zone-list-all="">
+          {t('all')}
+          <Icon name="arrow-right" size={16} />
+        </NextLink>
+      ) : null}
     </div>
   );
 }
 
-function ZoneRow({
+export function ZoneRow({
   zone,
   state,
   phone,
+  flagsOnly = false,
   open,
   onToggle,
   panelId,
@@ -166,6 +214,7 @@ function ZoneRow({
   zone: MapZone;
   state: ZoneState;
   phone: boolean;
+  flagsOnly?: boolean;
   open: boolean;
   onToggle: () => void;
   panelId: string;
@@ -182,7 +231,7 @@ function ZoneRow({
   ];
   const names = first.slice(0, DESK_NAMES).map((c) => c.name);
   const moreNames = zone.countries.length - names.length;
-  const flags = first.slice(0, phone ? PHONE_FLAGS : DESK_NAMES);
+  const flags = first.slice(0, phone || flagsOnly ? PHONE_FLAGS : DESK_NAMES);
   const moreFlags = zone.countries.length - flags.length;
   const tag = state === 'live' ? t('now') : state === 'next' ? t('next') : null;
   const flagStack = (
@@ -236,10 +285,16 @@ function ZoneRow({
               {tag ? <span className={cn(m.tag, m[`tag_${state}`])}>{tag}</span> : null}
             </span>
             {flagStack}
-            <span className={m.names}>
-              {names.join(' · ')}
-              {moreNames > 0 ? ` · ${t('more', { count: moreNames })}` : ''}
-            </span>
+            {flagsOnly ? (
+              <span className={m.names}>
+                {moreFlags > 0 ? <span className={m.more}>{t('more', { count: moreFlags })}</span> : null}
+              </span>
+            ) : (
+              <span className={m.names}>
+                {names.join(' · ')}
+                {moreNames > 0 ? ` · ${t('more', { count: moreNames })}` : ''}
+              </span>
+            )}
             <span className={m.meta}>{t('countries', { count: zone.countries.length })}</span>
             <span className={cn(m.meta, m.utc)}>{offset}</span>
             <Icon name={open ? 'chevron-up' : 'chevron-down'} size={16} className={m.chev} />

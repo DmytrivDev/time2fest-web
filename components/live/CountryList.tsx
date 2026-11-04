@@ -1,365 +1,214 @@
 'use client';
 
 /**
- * C19. «Країни й міста» (S-COUNTRIES / S-LIST, T093).
+ * C19. «Країни й міста» (S-COUNTRIES / S-LIST) — довідник країн за поясами (рішення власника 2026-11-04, дошка
+ * `Desk-Countries-Next`, вайрфрейм v2). Що зараз і що далі дивитися — на головній; тут — знайти країну, побачити, коли там
+ * північ і чи є трансляція, і перейти на її сторінку.
  *
- * Зверху вниз: `h1` і підзаголовок з датою й часом за часом гостя · рядок «Мапа / Список · Фільтри» (перемикач — лише
- * на телефоні; на десктопі мапа завжди праворуч від списку) · пошук · «Лише з трансляціями» і «У моєму графіку» ·
- * групи поясів (`ZoneGroup`): «Зараз наживо», «Далі» — розгорнуті; «Ще попереду», «Уже зустріли» — згорнуті пояси ·
- * «Питання й відповіді». Фільтри статусів — `FiltersSheet` (аркуш; змінюються одразу, кнопка «Показати N країн» лише закриває).
- *
- * Відліків у рядках немає — лише час за часом гостя. Назви країн — у називному відмінку.
- * Поки час невідомий (`useTimeReady()`), замість груп — скелетони; групи залежать від «зараз» з точністю до хвилини.
+ * Зверху вниз: `h1` і підзаголовок з датою й часом гостя · пошук, фільтр «Усі · З трансляціями · Мій графік» (як у «Зараз і
+ * далі»), «Мапа | Список» · список: рядки поясів — ті самі, що у «Списку» на головній (п’ять прапорців і «ще N»), усі 38 по
+ * черзі, «Вже зустріли» — згорнуто внизу; на старті всі згорнуті. Розгорнутий пояс — один рядок про пояс і повний список
+ * країн за регіонами великими картками зі статусом; клік по картці — сторінка країни. Пошук і фільтри звужують рядки й
+ * картки: лишаються пояси зі збігами, розгорнуті. «Мапа» — компонент головної. Колонка чату — як на головній.
  */
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useId, useMemo, useState } from 'react';
+import { ToggleGroup } from 'radix-ui';
+import { useMemo, useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
+import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
+import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { Faq, type FaqItem } from '@/components/live/Faq';
-import { buildMapModel, type ZoneMapGeometry } from '@/components/live/MapModel';
+import { buildMapModel, type MapCountry, type MapZone, type ZoneMapGeometry } from '@/components/live/MapModel';
 import { ZoneMap } from '@/components/live/ZoneMap';
-import { Badge } from '@/components/primitives/Badge';
+import { useOfferWindows } from '@/components/offers/useOfferWindows';
+import { useGetPass } from '@/components/pass/PassWindow';
 import { Button } from '@/components/primitives/Button';
-import { Checkbox } from '@/components/primitives/Checkbox';
-import { Chip } from '@/components/primitives/Chip';
 import { cn } from '@/components/primitives/cn';
-import { Collapsible } from '@/components/primitives/Collapsible';
 import { Flag } from '@/components/primitives/Flag';
-import { IconButton } from '@/components/primitives/IconButton';
+import { Icon } from '@/components/primitives/Icon';
+import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
-import { Sheet } from '@/components/primitives/Sheet';
 import { Skeleton } from '@/components/primitives/Skeleton';
-import { Switch } from '@/components/primitives/Switch';
-import { TextField } from '@/components/primitives/TextField';
+import { useChatColumn } from '@/components/shell/OverlayManager';
+import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms } from '@/lib/data/types';
-import { formatAgo, formatClock, formatTimeForViewer, viewerZoneLabel } from '@/lib/i18n/time';
-import {
-  ALL_STATUSES,
-  allStatuses,
-  buildZones,
-  countShown,
-  filterZones,
-  filtersBadge,
-  isQuickSet,
-  minutesUntil,
-  quickStatuses,
-  rowInSchedule,
-  splitZones,
-  statusCounts,
-  type CountryRowData,
-  type RowStatus,
-  type ZoneData,
-} from '@/lib/live/countriesData';
-import { useRegisterCoral } from '@/lib/overlay/coral';
+import { HANDOVER_AFTER } from '@/lib/engine/config';
+import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
+import { formatClock, formatCountdown, formatDurationShort, formatTimeForViewer, viewerZoneLabel } from '@/lib/i18n/time';
+import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
+import { useMidnightPhrase } from './ZoneMapCards';
+import { MapScheduleContext, PlayMark, ScheduleButton, StateBadge } from './ZonePanel';
+import { ZoneListView } from './ZoneListView';
+import { REGION_ORDER, regionOf, type RegionKey } from './regions';
+import nn from './nowNext.module.css';
 import styles from './countryList.module.css';
 
-/** Скільки рядків країн показує розгорнутий пояс до «Ще N країн поясу». */
-const ROW_LIMIT = 6;
-/** Скільки назв країн у згорнутому поясі до «ще N». */
-const NAMES_IN_SUMMARY = 3;
-
-const STATUS_KEY = { live: 'live', expected: 'expected', possible: 'possible', 'countdown-only': 'countdownOnly' } as const;
-const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
-
-type Translate = ReturnType<typeof useTranslations>;
+type Filter = 'all' | 'live' | 'mine';
+const NOT_FIRST = new Set(['RU', 'BY']);
 
 export interface CountryListProps {
   /** Геометрія мапи (`data/zonemap.json`); без неї підвантажується окремим шматком. */
   geometry?: ZoneMapGeometry;
-  /** Кнопка графіка в рядку країни; без обробника кнопки немає (графік — US5). */
-  onToggleSchedule?: (eventId: string, next: boolean) => void;
   /** Набір даних (за замовчуванням — `getData()`); для історій і тестів. */
   data?: Dataset;
   className?: string;
 }
 
-// ── Рядок країни ───────────────────────────────────────────────────────────
+const PHONE_QUERY = '(max-width: 767.98px)';
+function subscribePhone(cb: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
+  const mq = window.matchMedia(PHONE_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+const getPhone = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_QUERY).matches : false);
 
-interface CountryRowProps {
-  row: CountryRowData;
-  /** Пояс уже зустрів Новий рік: статус трансляції не показуємо (атрибут лишається). */
-  past: boolean;
-  inSchedule: boolean;
-  onToggleSchedule?: ((eventId: string, next: boolean) => void) | undefined;
+/** Пошук без регістру й апострофів: «Кот-д’Івуар» = «кот-д'івуар». */
+const norm = (s: string) => s.toLocaleLowerCase('uk').replace(/[’ʼ']/g, "'").trim();
+
+interface Hit {
+  /** Місто, через яке знайшлася країна (назва країни не збіглася). */
+  city?: string;
 }
 
-/** C19 `CountryRow`: прапор, країна, «Лондон · Головне святкування», статус (іконка + текст); рядок веде на сторінку країни. */
-function CountryRow({ row, past, inSchedule, onToggleSchedule }: CountryRowProps) {
-  const tType = useTranslations('liveCards.eventCard.type');
-  const tNav = useTranslations('nav');
-  const line =
-    row.celebrationType === 'countdown-only' || !row.city
-      ? row.city
-      : `${row.city} · ${tType(TYPE_KEY[row.celebrationType])}`;
-  const eventId = row.eventIds[0];
+/** Країна підходить під пошук: за назвою, головним містом чи містом трансляції. */
+function matchCountry(c: MapCountry, q: string): Hit | null {
+  if (!q) return {};
+  if (norm(c.name).includes(q)) return {};
+  const cities = [c.city, ...(c.streams ?? []).map((s) => s.city)].filter((x): x is string => !!x);
+  const city = cities.find((x) => norm(x).includes(q));
+  return city ? { city } : null;
+}
+
+// ── Картка країни ──────────────────────────────────────────────────────────
+
+/**
+ * Картка країни в розгорнутому поясі: прапор, назва, місто, статус — «▶ Трансляція» (йде; біла залита кнопка, як у «Країнах
+ * поясу» на головній), «▶ трансляція о 02:00» з календариком (ще буде), «▶ повтор» (минула), «лише відлік». Клік — сторінка
+ * країни. Календарик — поза посиланням (кнопка в посиланні неприпустима), у правому нижньому куті.
+ */
+function CountryCard({ c, state, zone, hit }: { c: MapCountry; state: ZoneState; zone: MapZone; hit: Hit }) {
+  const t = useTranslations('countries.card');
+  const tp = useTranslations('liveMap.panel');
+  const locale = useLocale();
+  const now = useNow({ granularity: 'minute' });
+  const stream = c.streams?.[0];
+  const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
+  const kind = !stream ? 'none' : state === 'live' && !after ? 'live' : after ? 'replay' : 'soon';
+  const eventId = stream?.eventId ?? c.eventIds?.[0];
   return (
-    <li data-country-row={row.iso} data-status={row.status} className="relative">
-      <NextLink
-        href={row.href}
-        className={cn(
-          't2f-focus t2f-transition flex min-h-touch-min items-center gap-3 rounded-md py-2 ps-2 text-text no-underline hover:bg-surface-raised',
-          onToggleSchedule && eventId && !past ? 'pe-14' : 'pe-2',
-        )}
-      >
-        <Flag code={row.flagCode} size="sm" decorative />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-body-strong">{row.name}</span>
-          {line ? <span className="truncate text-caption text-text-muted">{line}</span> : null}
+    <li className={styles.card} data-country-card={c.iso} data-status={kind}>
+      <NextLink href={c.href} className={cn('t2f-focus', styles.cardLink)}>
+        <Flag code={c.flagCode} round diameter={36} decorative />
+        <span className={styles.cardName}>{c.name}</span>
+        {c.city ? <span className={styles.cardCity}>{c.city}</span> : null}
+        {hit.city && hit.city !== c.city ? <span className={styles.hit}>{t('cityHit', { city: hit.city })}</span> : null}
+        <span className={styles.cardFoot}>
+          {kind === 'live' ? (
+            <span className={styles.liveBtn}>
+              <PlayMark tone="live" size={14} />
+              {tp('streamLiveBtn')}
+            </span>
+          ) : kind === 'soon' ? (
+            <span className={styles.soon}>
+              <PlayMark tone="upcoming" size={12} />
+              {t('streamAt', { time: formatClock(zone.midnightMs, { locale }) })}
+            </span>
+          ) : kind === 'replay' ? (
+            <span className={styles.replay}>
+              <PlayMark tone="replay" size={12} />
+              {t('replay')}
+            </span>
+          ) : (
+            <span className={styles.none}>{tp('streamNo')}</span>
+          )}
         </span>
-        {inSchedule ? <Badge variant="in-schedule" className="shrink-0" /> : null}
-        {past ? null : <Badge variant="stream-status" status={row.status} className="shrink-0" />}
       </NextLink>
-      {onToggleSchedule && eventId && !past ? (
-        <ScheduleToggle label={tNav(inSchedule ? 'addedToSchedule' : 'addToSchedule', { city: row.city || row.name })} pressed={inSchedule} onChange={(next) => onToggleSchedule(eventId, next)} />
+      {kind === 'soon' ? (
+        <span className={styles.cal}>
+          <ScheduleButton eventId={eventId} city={stream?.city ?? c.name} />
+        </span>
       ) : null}
     </li>
   );
 }
 
-function ScheduleToggle({ label, pressed, onChange }: { label: string; pressed: boolean; onChange: (next: boolean) => void }) {
+// ── Розгорнутий пояс ───────────────────────────────────────────────────────
+
+/** Один рядок про пояс: стан, відлік (чи скільки тому), о котрій за вашим часом, скільки країн і трансляцій. */
+function ZoneSummary({ zone, state, total }: { zone: MapZone; state: ZoneState; total: MapZone }) {
+  const t = useTranslations('countries.zone');
+  const tp = useTranslations('liveMap.panel');
+  const locale = useLocale();
+  const now = useNow();
+  const when = useMidnightPhrase(zone.midnightMs);
+  const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
+  const streams = total.countries.filter((c) => (c.streams?.length ?? 0) > 0).length;
   return (
-    <IconButton
-      variant="toggle"
-      compact
-      icon={pressed ? 'calendar-check' : 'calendar-add'}
-      aria-label={label}
-      pressed={pressed}
-      onPressedChange={onChange}
-      className="absolute end-1 top-0"
-    />
-  );
-}
-
-// ── Рядки поясу ────────────────────────────────────────────────────────────
-
-interface ZoneRowsProps {
-  zone: ZoneData;
-  past: boolean;
-  schedule: readonly string[];
-  /** Показати всі рядки (активний пошук). */
-  showAll: boolean;
-  expanded: boolean;
-  onToggleExpanded: () => void;
-  onToggleSchedule?: ((eventId: string, next: boolean) => void) | undefined;
-}
-
-function ZoneRows({ zone, past, schedule, showAll, expanded, onToggleExpanded, onToggleSchedule }: ZoneRowsProps) {
-  const t = useTranslations('countries');
-  const tCommon = useTranslations('common');
-  const open = showAll || expanded;
-  const shown = open ? zone.rows : zone.rows.slice(0, ROW_LIMIT);
-  const hidden = zone.rows.length - ROW_LIMIT;
-  return (
-    <div className="flex flex-col gap-2">
-      <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
-        {shown.map((row) => (
-          <CountryRow key={row.iso} row={row} past={past} inSchedule={rowInSchedule(row, schedule)} onToggleSchedule={onToggleSchedule} />
-        ))}
-      </ul>
-      {!showAll && hidden > 0 ? (
-        <div>
-          <Chip variant="more" expanded={expanded} onClick={onToggleExpanded}>
-            {expanded ? tCommon('collapse') : t('moreInZone', { count: hidden })}
-          </Chip>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-// ── Підписи часу ───────────────────────────────────────────────────────────
-
-/** «02:00» або «1 січня, 02:00», якщо день півночі відрізняється від сьогоднішнього для гостя. */
-function whenParts(ms: Ms, now: Ms): { time: string; date: string | null } {
-  const v = formatTimeForViewer(ms, { now });
-  return { time: v.time, date: v.date };
-}
-
-function midnightLabel(t: Translate, ms: Ms, now: Ms): string {
-  const { time, date } = whenParts(ms, now);
-  return date ? t('midnightAtDate', { date, time }) : t('midnightAt', { time });
-}
-
-function namesLine(t: Translate, rows: readonly CountryRowData[]): string {
-  const names = rows.slice(0, NAMES_IN_SUMMARY).map((r) => r.name);
-  const rest = rows.length - names.length;
-  return rest > 0 ? `${names.join(' · ')} · ${t('alsoNames', { count: rest })}` : names.join(' · ');
-}
-
-// ── Група поясів ───────────────────────────────────────────────────────────
-
-interface GroupShared {
-  now: Ms;
-  schedule: readonly string[];
-  query: string;
-  expandedRows: ReadonlySet<string>;
-  openZones: ReadonlySet<string>;
-  toggleRows: (zoneId: string) => void;
-  toggleOpen: (zoneId: string) => void;
-  onToggleSchedule?: ((eventId: string, next: boolean) => void) | undefined;
-}
-
-/** Розгорнутий пояс «Зараз наживо» / «Далі»: заголовок `h2`, UTC, рядки країн. */
-function CurrentGroup({ kind, zone, shared }: { kind: 'live' | 'next'; zone: ZoneData; shared: GroupShared }) {
-  const t = useTranslations('countries');
-  const tNav = useTranslations('nav');
-  const headingId = useId();
-  const { now } = shared;
-  let ahead: string | null = null;
-  if (kind === 'next') {
-    const total = minutesUntil(zone.midnightMs, now);
-    const hours = Math.floor(total / 60);
-    ahead = hours > 0 ? t('inHoursMinutes', { hours, minutes: total % 60 }) : tNav('inMinutes', { minutes: total });
-  }
-  return (
-    <section data-zone-group={kind} aria-labelledby={headingId} className="flex flex-col gap-2">
-      <h2 id={headingId} className="text-headline-sm text-text">
-        {t(`group.${kind}`)}
-        <span className="text-body text-text-secondary">
-          {' · '}
-          {midnightLabel(t, zone.midnightMs, now)}
-          {' · '}
-          {tNav('countriesCount', { count: zone.rows.length })}
+    <p className={styles.summary} data-zone-summary="">
+      <StateBadge state={state} />
+      {after ? (
+        <span>{t('ago', { dur: formatDurationShort(Math.max(0, now - zone.midnightMs), locale) })}</span>
+      ) : now < zone.midnightMs ? (
+        <span>
+          {t('until')} <b className={styles.timer}>{formatCountdown(zone.midnightMs - now)}</b>
         </span>
-      </h2>
-      <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
-        <p className="m-0 flex items-center justify-between gap-3 text-caption text-text-muted">
-          <span>{zone.utc}</span>
-          {ahead ? <span>{ahead}</span> : null}
-        </p>
-        <ZoneRows
-          zone={zone}
-          past={false}
-          schedule={shared.schedule}
-          showAll={shared.query !== ''}
-          expanded={shared.expandedRows.has(zone.id)}
-          onToggleExpanded={() => shared.toggleRows(zone.id)}
-          onToggleSchedule={shared.onToggleSchedule}
-        />
-      </div>
-    </section>
+      ) : null}
+      <span className={styles.muted}>{when}</span>
+      <span className={styles.muted}>
+        {total.countries.length} {tp('countriesWord', { count: total.countries.length })} · {streams}{' '}
+        {tp('streamsWord', { count: streams })}
+      </span>
+    </p>
   );
 }
 
-/** «Ще попереду» / «Уже зустріли»: список згорнутих поясів (Collapsible), що розкриваються кнопкою. */
-function CollapsedGroup({ kind, zones, shared }: { kind: 'later' | 'met'; zones: readonly ZoneData[]; shared: GroupShared }) {
-  const t = useTranslations('countries');
-  const tNav = useTranslations('nav');
-  const headingId = useId();
-  const { now } = shared;
-  const first = zones[0];
-  const last = zones[zones.length - 1];
-  const searching = shared.query !== '';
-  const caption =
-    kind === 'later'
-      ? `${t('zonesCount', { count: zones.length })} · ${t('range', { from: first?.utc ?? '', to: last?.utc ?? '' })}`
-      : t('range', { from: first?.utc ?? '', to: last?.utc ?? '' });
+/** Повний список країн поясу за регіонами (картки); у пошуку — лише збіги, без заголовків регіонів, якщо їх мало. */
+function ZoneDirectory({
+  zone,
+  state,
+  total,
+  hits,
+  searching,
+}: {
+  zone: MapZone;
+  state: ZoneState;
+  total: MapZone;
+  hits: ReadonlyMap<string, Hit>;
+  searching: boolean;
+}) {
+  const tR = useTranslations('liveMap.regions');
+  const groups = new Map<RegionKey | 'other', MapCountry[]>();
+  // Росія й Білорусь — не серед перших (рішення власника 2026-11-03): у кінці свого регіону.
+  const list = [...zone.countries.filter((c) => !NOT_FIRST.has(c.iso)), ...zone.countries.filter((c) => NOT_FIRST.has(c.iso))];
+  for (const c of list) {
+    const r = regionOf(c.iso, zone.offsetMinutes) ?? 'other';
+    groups.set(r, [...(groups.get(r) ?? []), c]);
+  }
+  const ordered = [...REGION_ORDER, 'other' as const].filter((r) => groups.has(r));
+  const card = (c: MapCountry) => <CountryCard key={c.iso} c={c} state={state} zone={zone} hit={hits.get(`${zone.id}:${c.iso}`) ?? {}} />;
   return (
-    <section data-zone-group={kind} aria-labelledby={headingId} className="flex flex-col gap-2">
-      <div className="flex flex-col">
-        <h2 id={headingId} className="text-headline-sm text-text">
-          {kind === 'met' ? t('group.met', { count: zones.length }) : t('group.later')}
-        </h2>
-        <p className="m-0 text-caption text-text-muted">{caption}</p>
-      </div>
-      <ul className="m-0 flex list-none flex-col gap-2 p-0">
-        {zones.map((zone) => {
-          const { time, date } = whenParts(zone.midnightMs, now);
-          const clock = kind === 'later' ? (date ? `${date}, ${t('zoneAt', { time })}` : t('zoneAt', { time })) : date ? `${date}, ${time}` : time;
-          const detail =
-            kind === 'later'
-              ? tNav('countriesCount', { count: zone.rows.length })
-              : formatAgo(Math.max(0, now - zone.midnightMs));
-          return (
-            <li key={zone.id} data-zone={zone.id}>
-              <Collapsible
-                open={searching || shared.openZones.has(zone.id)}
-                onOpenChange={() => shared.toggleOpen(zone.id)}
-                title={
-                  <span className="flex flex-col py-1.5">
-                    <span>{clock}</span>
-                    <span className="text-caption font-normal text-text-secondary">{namesLine(t, zone.rows)}</span>
-                  </span>
-                }
-                meta={t('zoneMeta', { detail, utc: zone.utc })}
-              >
-                <ZoneRows
-                  zone={zone}
-                  past={kind === 'met'}
-                  schedule={shared.schedule}
-                  showAll={searching}
-                  expanded={shared.expandedRows.has(zone.id)}
-                  onToggleExpanded={() => shared.toggleRows(zone.id)}
-                  onToggleSchedule={shared.onToggleSchedule}
-                />
-              </Collapsible>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  );
-}
-
-// ── Фільтри ────────────────────────────────────────────────────────────────
-
-interface FiltersSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  statuses: ReadonlySet<RowStatus>;
-  onStatusesChange: (next: Set<RowStatus>) => void;
-  counts: Record<RowStatus, number>;
-  shown: number;
-}
-
-/** Тіло аркуша: окремий компонент, щоб коралова кнопка реєструвалась, лише поки аркуш відкритий. */
-function FiltersBody({ onOpenChange, statuses, onStatusesChange, counts, shown }: Omit<FiltersSheetProps, 'open'>) {
-  const t = useTranslations('countries');
-  const tBadge = useTranslations('primitives.badge');
-  useRegisterCoral();
-  const none = statuses.size === 0;
-  const toggle = (s: RowStatus, on: boolean) => {
-    const next = new Set(statuses);
-    if (on) next.add(s);
-    else next.delete(s);
-    onStatusesChange(next);
-  };
-  return (
-    <div className="flex flex-col gap-4">
-      <fieldset className="m-0 flex min-w-0 flex-col gap-1 border-0 p-0">
-        <legend className="mb-1 p-0 text-label-sm text-text-secondary">{t('statusHeading')}</legend>
-        {ALL_STATUSES.map((s) => (
-          <Checkbox
-            key={s}
-            label={tBadge(`status.${STATUS_KEY[s]}`)}
-            count={counts[s]}
-            checked={statuses.has(s)}
-            onCheckedChange={(v) => toggle(s, v === true)}
-          />
-        ))}
-      </fieldset>
-      {none ? <p className="m-0 text-caption text-text-muted">{t('pickStatus')}</p> : null}
-      <div className="flex flex-col gap-2">
-        <Button variant="coral" size="lg" disabled={none} onClick={() => onOpenChange(false)}>
-          {t('show', { count: shown })}
-        </Button>
-        <Button variant="ghost" onClick={() => onStatusesChange(allStatuses())}>
-          {t('reset')}
-        </Button>
-      </div>
+    <div className={styles.dir} data-zone-directory={zone.id}>
+      <ZoneSummary zone={zone} state={state} total={total} />
+      {searching && zone.countries.length <= 4 ? (
+        <ul className={styles.grid}>{list.map(card)}</ul>
+      ) : (
+        ordered.map((r) => (
+          <section key={r} className={styles.region} data-region={r}>
+            <h4 className={styles.regionTitle}>
+              {tR(r)} · {groups.get(r)!.length}
+            </h4>
+            <ul className={styles.grid}>{groups.get(r)!.map(card)}</ul>
+          </section>
+        ))
+      )}
     </div>
-  );
-}
-
-/** C19 `FiltersSheet`: прапорці статусів із лічильниками, «Показати N країн», «Скинути». */
-export function FiltersSheet({ open, onOpenChange, ...body }: FiltersSheetProps) {
-  const t = useTranslations('countries');
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={t('filtersTitle')} className="md:mx-auto md:max-w-xl">
-      <FiltersBody onOpenChange={onOpenChange} {...body} />
-    </Sheet>
   );
 }
 
@@ -375,9 +224,7 @@ function useFaqItems(data: Dataset, now: Ms, ready: boolean): FaqItem[] {
     const londonZone = data.zonesById.get(data.citiesById.get('london')?.zoneId ?? '') ?? zones.find((z) => z.offsetMinutes === 0);
     const at = (ms: Ms) => formatTimeForViewer(ms, { now }).text;
     const first =
-      ready && firstZone && lastZone
-        ? t('firstAnswerTimed', { first: at(firstZone.midnightMs), last: at(lastZone.midnightMs) })
-        : t('firstAnswer');
+      ready && firstZone && lastZone ? t('firstAnswerTimed', { first: at(firstZone.midnightMs), last: at(lastZone.midnightMs) }) : t('firstAnswer');
     const london = ready && londonZone ? t('londonAnswerTimed', { time: at(londonZone.midnightMs) }) : t('londonAnswer');
     return [
       { id: 'first-country', question: tNav('faqFirstCountry'), answer: first },
@@ -389,90 +236,138 @@ function useFaqItems(data: Dataset, now: Ms, ready: boolean): FaqItem[] {
 
 // ── Сторінка ───────────────────────────────────────────────────────────────
 
-/** Сторінка «Країни й міста»: заголовок, керування, групи поясів, мапа поясів, «Питання й відповіді». */
-export function CountryList({ geometry, onToggleSchedule, data: dataProp, className }: CountryListProps) {
+export function CountryList({ geometry, data: dataProp, className }: CountryListProps) {
   const t = useTranslations('countries');
   const tNav = useTranslations('nav');
+  const tNN = useTranslations('liveCards.nowNext');
   const tCommon = useTranslations('common');
+  const tChat = useTranslations('chat');
   const locale = useLocale();
   const ready = useTimeReady();
   const now = useNow({ granularity: 'minute' });
   const hasPass = useGuestStore((s) => s.hasPass);
   const schedule = useGuestStore((s) => s.schedule);
   const data = dataProp ?? getData();
+  const phone = useSyncExternalStore(subscribePhone, getPhone, () => false);
+  const chatColumn = useChatColumn();
+  const vis = useChatVisibility();
+  const { collapse } = useChatDockControls();
+  const passWindows = useOfferWindows();
+  const getPass = useGetPass();
+  useChatSimulator(useMemo(() => ['world' as const], []));
 
   const [query, setQuery] = useState('');
-  const [statuses, setStatuses] = useState<Set<RowStatus>>(allStatuses);
-  const [inScheduleOnly, setInScheduleOnly] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filter, setFilter] = useState<Filter>('all');
   const [view, setView] = useState<'list' | 'map'>('list');
-  const [expandedRows, setExpandedRows] = useState<ReadonlySet<string>>(new Set());
-  const [openZones, setOpenZones] = useState<ReadonlySet<string>>(new Set());
-
-  const flip = (set: ReadonlySet<string>, id: string): Set<string> => {
-    const next = new Set(set);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    return next;
-  };
 
   const mapModel = useMemo(() => buildMapModel(data), [data]);
-  const zones = useMemo(() => (ready ? buildZones(data, now) : []), [data, now, ready]);
-  const counts = useMemo(() => statusCounts(zones), [zones]);
-  const showSchedule = hasPass && schedule.length > 0;
-  const inSchedule = showSchedule && inScheduleOnly;
-  const shownCount = useMemo(() => countShown(zones, statuses, inSchedule, schedule), [zones, statuses, inSchedule, schedule]);
-  const groups = useMemo(() => {
-    const filtered = filterZones(zones, { statuses, inSchedule, query }, schedule);
-    // Часові групи — за всіма поясами (не за відфільтрованими), щоб «Зараз наживо» не стрибало від пошуку.
-    const split = splitZones(zones, now);
-    const keep = new Map(filtered.map((z) => [z.id, z]));
-    const pick = (z: ZoneData | null) => (z ? (keep.get(z.id) ?? null) : null);
-    const pickAll = (list: readonly ZoneData[]) => list.map((z) => keep.get(z.id)).filter((z): z is ZoneData => z !== undefined);
-    return { live: pick(split.live), next: pick(split.next), later: pickAll(split.later), met: pickAll(split.met), total: filtered.length };
-  }, [zones, now, statuses, inSchedule, query, schedule]);
+  const byId = useMemo(() => new Map(mapModel.zones.map((z) => [z.id, z])), [mapModel]);
+  const states = useMemo(() => {
+    const m = new Map<string, ZoneState>();
+    for (const z of mapModel.zones) m.set(z.id, now > 0 ? zoneState(now, z, mapModel.zones) : 'future');
+    return m;
+  }, [mapModel, now]);
+  const stateOf = (id: string): ZoneState => states.get(id) ?? 'future';
 
-  const badge = filtersBadge(statuses);
-  const quick = isQuickSet(statuses);
-  const searching = query.trim() !== '';
+  const q = norm(query);
+  const searching = q !== '';
+  const locked = filter === 'mine' && !hasPass;
+  const narrowing = searching || filter !== 'all';
+  // Пояси з картками, що лишаються після пошуку й фільтра; збіги за містом — для позначки на картці.
+  const { zones, hits } = useMemo(() => {
+    const hitMap = new Map<string, Hit>();
+    const out: MapZone[] = [];
+    for (const z of mapModel.zones) {
+      const countries = z.countries.filter((c) => {
+        if (filter === 'live' && !(c.streams?.length ?? 0)) return false;
+        if (filter === 'mine' && hasPass && !(c.eventIds ?? []).some((id) => schedule.includes(id))) return false;
+        const hit = matchCountry(c, q);
+        if (!hit) return false;
+        hitMap.set(`${z.id}:${c.iso}`, hit);
+        return true;
+      });
+      if (countries.length || !narrowing) out.push({ ...z, countries });
+    }
+    return { zones: out, hits: hitMap };
+  }, [mapModel, filter, hasPass, schedule, q, narrowing]);
 
-  const shared: GroupShared = {
-    now,
-    schedule,
-    query: query.trim(),
-    expandedRows,
-    openZones,
-    toggleRows: (id) => setExpandedRows((s) => flip(s, id)),
-    toggleOpen: (id) => setOpenZones((s) => flip(s, id)),
-    onToggleSchedule,
-  };
-
-  const zoneLabel = viewerZoneLabel();
   const subtitle = ready
     ? t('subtitle', {
-        zone: zoneLabel,
+        zone: viewerZoneLabel(),
         date: new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(now),
         time: formatClock(now, { locale }),
       })
     : t('subtitleStatic');
-
   const faqItems = useFaqItems(data, now, ready);
+  const empty = ready && narrowing && !locked && zones.length === 0;
 
-  let emptyText: string | null = null;
-  if (ready && groups.total === 0) {
-    emptyText = searching ? t('empty') : statuses.size === 0 ? t('emptyStatuses') : t('emptyFilters');
-  }
+  const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
+  const panel = (cls?: string) => (
+    <ChatPanel startInWorld onHide={chatColumn ? vis.hide : collapse} collapseMode={!chatColumn} onToEvents={chatColumn ? undefined : collapse} className={cls} />
+  );
+
+  const filterControl = (
+    <ToggleGroup.Root
+      type="single"
+      aria-label={t('filterLabel')}
+      value={filter}
+      onValueChange={(v) => {
+        if (v) setFilter(v as Filter);
+      }}
+      data-row="filter"
+      className={cn(nn.filter, styles.filter)}
+    >
+      <ToggleGroup.Item value="all" className={cn('t2f-focus', nn.seg)}>
+        {tNN('filterAll')}
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="live" className={cn('t2f-focus', nn.seg)}>
+        {tNN('filterLive')}
+      </ToggleGroup.Item>
+      <ToggleGroup.Item
+        value="mine"
+        aria-label={hasPass ? undefined : `${tNN('filterMine')}. ${tNN('mineLocked')}`}
+        data-locked={!hasPass || undefined}
+        className={cn('t2f-focus', nn.seg)}
+      >
+        {hasPass ? null : <Icon name="lock" size={14} />}
+        {tNN('filterMine')}
+      </ToggleGroup.Item>
+    </ToggleGroup.Root>
+  );
 
   return (
-    <div data-countries-page="" className={cn(styles.page, 'flex flex-col gap-6 pb-8 pt-4', className)}>
-      <header className="flex flex-col gap-1">
-        <h1 className="text-headline-md text-text">{t('title')}</h1>
-        <p className="m-0 text-body text-text-secondary">{subtitle}</p>
-      </header>
+    <MapScheduleContext.Provider value={passWindows.requestSchedule}>
+      <div data-countries-page="" className={cn(styles.page, className)}>
+        <header className={styles.head}>
+          <div className="min-w-0">
+            <h1 className="text-headline-md text-text">{t('title')}</h1>
+            <p className="m-0 text-body text-text-secondary">{subtitle}</p>
+          </div>
+          {chatColumn && vis.hidden ? <ChatHiddenButton room="world" onShow={vis.show} /> : null}
+        </header>
 
-      <div className={styles.cols} data-view={view}>
-        <div className={styles.listCol}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className={styles.toolbar}>
+          <div className={styles.search}>
+            <Icon name="search" size={18} className={styles.searchIcon} />
+            <input
+              aria-label={t('searchLabel')}
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('searchLabel')}
+              autoComplete="off"
+              enterKeyHint="search"
+              className={cn('t2f-focus', styles.searchInput)}
+              data-countries-search=""
+            />
+            {query ? (
+              <button type="button" className={cn('t2f-focus', styles.clear)} onClick={() => setQuery('')}>
+                {t('clear')}
+              </button>
+            ) : null}
+          </div>
+          <div className={styles.controls}>
+            {filterControl}
             <SegmentedControl
               label={t('viewLabel')}
               semantics="pressed"
@@ -482,72 +377,66 @@ export function CountryList({ geometry, onToggleSchedule, data: dataProp, classN
                 { value: 'map', label: tNav('mapShort') },
                 { value: 'list', label: tNav('list') },
               ]}
-              className={styles.phoneOnly}
             />
-            <Button variant="secondary" aria-haspopup="dialog" onClick={() => setFiltersOpen(true)}>
-              {badge === null ? t('filters') : t('filtersCount', { count: badge })}
-            </Button>
           </div>
+        </div>
 
-          <div className={styles.listBody}>
-            <TextField
-              type="search"
-              label={t('searchLabel')}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              autoComplete="off"
-              enterKeyHint="search"
-            />
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-              <Switch
-                label={tNav('onlyWithStreams')}
-                checked={quick}
-                onCheckedChange={(on) => setStatuses(on ? quickStatuses() : allStatuses())}
+        {locked ? (
+          <div role="status" data-row="mine-locked" className={cn(nn.lockedBar, phone && nn.lockedBarStack)}>
+            <Icon name="lock" size={18} className="mt-0.5 shrink-0 text-highlight" />
+            <p className={nn.lockedText}>{tNN.rich('mineLockedText', { b: (c) => <b className="font-bold">{c}</b> })}</p>
+            <span className={nn.lockedActions}>
+              <Button variant="coral" compact iconLeft="ticket" data-action="get-pass" onClick={() => getPass()}>
+                {tNN('mineLockedGet', { price: formatUsd(PASS_PRICE) })}
+              </Button>
+              <Button variant="tonal" compact data-action="pass-info" onClick={passWindows.openPassInfoBoard}>
+                {tNN('mineLockedButton')}
+              </Button>
+            </span>
+          </div>
+        ) : null}
+
+        {view === 'map' ? (
+          <ZoneMap {...mapModel} {...(geometry ? { geometry } : {})} headless onToggleSchedule={passWindows.requestSchedule} />
+        ) : (
+          <div role="region" aria-label={t('listLabel')} aria-busy={!ready || undefined} className={styles.list}>
+            {!ready ? (
+              <div className="flex flex-col gap-3">
+                <span className="sr-only">{tCommon('loading')}</span>
+                <Skeleton variant="block" className="h-16" />
+                <Skeleton variant="block" className="h-16" />
+                <Skeleton variant="block" className="h-16" />
+              </div>
+            ) : empty ? (
+              <p role="status" className="m-0 rounded-md bg-surface p-4 text-body text-text-secondary">
+                {searching ? t('empty') : t('emptyFilters')}
+              </p>
+            ) : locked ? null : (
+              <ZoneListView
+                // Новий пошук чи фільтр — свіжий список (розгорнуті збіги, нічого не згорнуто вручну).
+                key={narrowing ? `n:${q}:${filter}` : 'all'}
+                zones={zones}
+                stateOf={stateOf}
+                phone={phone}
+                ahead={Infinity}
+                flagsOnly
+                allOpen={narrowing}
+                allLink={false}
+                renderBody={(z, st) => <ZoneDirectory zone={z} state={st} total={byId.get(z.id) ?? z} hits={hits} searching={narrowing} />}
               />
-              {showSchedule ? (
-                <Chip variant="filter" selected={inScheduleOnly} onSelectedChange={setInScheduleOnly}>
-                  {tNav('mySchedule')}
-                </Chip>
-              ) : null}
-            </div>
-
-            <div className="flex flex-col gap-6" aria-label={t('listLabel')} role="region" aria-busy={!ready || undefined}>
-              {!ready ? (
-                <div className="flex flex-col gap-3">
-                  <span className="sr-only">{tCommon('loading')}</span>
-                  <Skeleton variant="block" className="h-48" />
-                  <Skeleton variant="block" className="h-24" />
-                  <Skeleton variant="block" className="h-16" />
-                </div>
-              ) : null}
-              {emptyText ? (
-                <p role="status" className="m-0 rounded-md bg-surface p-4 text-body text-text-secondary">
-                  {emptyText}
-                </p>
-              ) : null}
-              {groups.live ? <CurrentGroup kind="live" zone={groups.live} shared={shared} /> : null}
-              {groups.next ? <CurrentGroup kind="next" zone={groups.next} shared={shared} /> : null}
-              {groups.later.length ? <CollapsedGroup kind="later" zones={groups.later} shared={shared} /> : null}
-              {groups.met.length ? <CollapsedGroup kind="met" zones={groups.met} shared={shared} /> : null}
-            </div>
+            )}
           </div>
-        </div>
+        )}
 
-        <div className={styles.mapPane}>
-          <ZoneMap {...mapModel} {...(geometry ? { geometry } : {})} />
-        </div>
+        <Faq items={faqItems} columns={phone ? 1 : 2} />
+
+        {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
+        {!chatColumn ? (
+          <ChatDock room="world" roomLabel={tChat('roomWorld')}>
+            {panel('min-h-0 flex-1')}
+          </ChatDock>
+        ) : null}
       </div>
-
-      <Faq items={faqItems} columns={2} />
-
-      <FiltersSheet
-        open={filtersOpen}
-        onOpenChange={setFiltersOpen}
-        statuses={statuses}
-        onStatusesChange={setStatuses}
-        counts={counts}
-        shown={shownCount}
-      />
-    </div>
+    </MapScheduleContext.Provider>
   );
 }

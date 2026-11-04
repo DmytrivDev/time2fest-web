@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Пояси по черзі: країни, міста й трансляції Нового року за вашим часом.',
 };
 
-/** Країни й міста (S-COUNTRIES / S-LIST, ІНВ C19): склад сторінки — `components/live/CountryList.tsx`. Плеєра й чату тут немає. */
+/** Країни й міста (S-COUNTRIES / S-LIST, ІНВ C19): довідник країн за поясами — `components/live/CountryList.tsx`. Плеєра немає; чат — як на головній. */
 export default function CountriesPage() {
   return <CountryList />;
 }

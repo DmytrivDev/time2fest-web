@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { screen, userEvent, within } from 'storybook/test';
+import { userEvent, within } from 'storybook/test';
 import { CountryList } from '@/components/live/CountryList';
 import type { ZoneMapGeometry } from '@/components/live/MapModel';
 import geometryJson from '@/data/zonemap.json';
@@ -18,8 +18,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Phone: Story = {
-  name: 'Телефон: список — «Зараз наживо», «Далі», згорнуті «Ще попереду» й «Уже зустріли»',
+  name: 'Телефон: усі пояси згорнуті',
   globals: { surface: 'phone' },
+};
+
+export const PhoneOpenZone: Story = {
+  name: 'Телефон: розгорнуто пояс наживо — картки країн за регіонами',
+  globals: { surface: 'phone' },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector<HTMLButtonElement>('[data-zone-row] > button');
+    if (row) await userEvent.click(row);
+  },
 };
 
 export const PhoneMap: Story = {
@@ -30,32 +39,24 @@ export const PhoneMap: Story = {
   },
 };
 
-export const PhoneFilters: Story = {
-  name: 'Телефон: фільтри відкриті («Показати N країн», «Скинути»)',
-  globals: { surface: 'phone' },
-  play: async ({ canvasElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Фільтри' }));
-  },
-};
-
-export const PhoneQuickSet: Story = {
-  name: 'Телефон: швидкий набір — перемикач «Лише з трансляціями» ввімкнено',
-  globals: { surface: 'phone' },
-  play: async ({ canvasElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('switch', { name: 'Лише з трансляціями' }));
-  },
-};
-
 export const Desktop: Story = {
-  name: 'Десктоп: список ліворуч, мапа поясів праворуч, «Питання й відповіді» у дві колонки',
+  name: 'Десктоп: рядки поясів, «Питання й відповіді» у дві колонки',
   globals: { surface: 'desktop' },
 };
 
+export const StreamsOnly: Story = {
+  name: '«З трансляціями»: лише пояси й країни з трансляціями',
+  globals: { surface: 'desktop' },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('radio', { name: 'З трансляціями' }));
+  },
+};
+
 export const SearchFound: Story = {
-  name: 'Пошук «Бра»: Бразилія в UTC−3 (група розкрита)',
+  name: 'Пошук «Бразил»: пояси з Бразилією, розгорнуті',
   globals: { surface: 'phone' },
   play: async ({ canvasElement }) => {
-    await userEvent.type(within(canvasElement).getByRole('searchbox', { name: 'Знайти країну чи місто' }), 'Бра');
+    await userEvent.type(within(canvasElement).getByRole('searchbox', { name: 'Знайти країну чи місто' }), 'Бразил');
   },
 };
 
@@ -64,17 +65,5 @@ export const SearchEmpty: Story = {
   globals: { surface: 'phone' },
   play: async ({ canvasElement }) => {
     await userEvent.type(within(canvasElement).getByRole('searchbox', { name: 'Знайти країну чи місто' }), 'Атлантида');
-  },
-};
-
-export const NoStatuses: Story = {
-  name: '0 статусів: «Показати 0 країн» неактивна + «Обери хоча б один статус»',
-  globals: { surface: 'phone' },
-  play: async ({ canvasElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Фільтри' }));
-    const dialog = await screen.findByRole('dialog', { name: 'Фільтри' });
-    for (const name of [/^Наживо/, /^Трансляція очікується/, /^Трансляція можлива/, /^Лише відлік/]) {
-      await userEvent.click(within(dialog).getByRole('checkbox', { name }));
-    }
   },
 };
