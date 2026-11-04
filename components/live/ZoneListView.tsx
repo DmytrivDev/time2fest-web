@@ -11,6 +11,7 @@ import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { CountryPanel } from './CountryPanel';
+import { PanelSwap } from './PanelSwap';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapZone } from './MapModel';
 import { ZonePanel } from './ZonePanel';
@@ -80,34 +81,36 @@ export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
         onToggle={() => toggle(z.id)}
         panelId={`${uid}-${z.id}`}
       >
-        {country ? (
-          <CountryPanel
-            embedded
-            takeFocus
-            zone={z}
-            country={country}
-            state={stateOf(z.id)}
-            zones={zones
-              .filter((k) => k.countries.some((c) => c.iso === country.iso))
-              .map((k) => ({ id: k.id, offsetMinutes: k.offsetMinutes, state: stateOf(k.id) }))}
-            nextZone={nextZone}
-            phone={phone}
-            onSelectZone={(id) => openZone(id)}
-            onSelectCountryZone={(id) => openZone(id, country.iso)}
-            canSelectZone={(id) => listed.has(id)}
-            onClose={() => setCountryIso(null)}
-          />
-        ) : (
-          <ZonePanel
-            zone={z}
-            state={stateOf(z.id)}
-            phone={phone}
-            embedded
-            onSelect={() => undefined}
-            onSelectCountry={(iso) => setCountryIso(iso)}
-            onClose={() => toggle(z.id)}
-          />
-        )}
+        <PanelSwap swapKey={country ? `c:${z.id}:${country.iso}` : `z:${z.id}`}>
+          {country ? (
+            <CountryPanel
+              embedded
+              takeFocus
+              zone={z}
+              country={country}
+              state={stateOf(z.id)}
+              zones={zones
+                .filter((k) => k.countries.some((c) => c.iso === country.iso))
+                .map((k) => ({ id: k.id, offsetMinutes: k.offsetMinutes, state: stateOf(k.id) }))}
+              nextZone={nextZone}
+              phone={phone}
+              onSelectZone={(id) => openZone(id)}
+              onSelectCountryZone={(id) => openZone(id, country.iso)}
+              canSelectZone={(id) => listed.has(id)}
+              onClose={() => setCountryIso(null)}
+            />
+          ) : (
+            <ZonePanel
+              zone={z}
+              state={stateOf(z.id)}
+              phone={phone}
+              embedded
+              onSelect={() => undefined}
+              onSelectCountry={(iso) => setCountryIso(iso)}
+              onClose={() => toggle(z.id)}
+            />
+          )}
+        </PanelSwap>
       </ZoneRow>
     );
   };

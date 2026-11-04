@@ -34,6 +34,7 @@ import {
 } from './MapModel';
 import { CityTip, CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
 import { CountryPanel } from './CountryPanel';
+import { PanelSwap } from './PanelSwap';
 import { ZoneListView } from './ZoneListView';
 import { MapScheduleContext, ZonePanel } from './ZonePanel';
 import { useMidnightPhrase } from './ZoneMapCards';
@@ -446,43 +447,48 @@ export function ZoneMap({
   const panelIdx = panelZone ? ordered.indexOf(panelZone) : -1;
   const card = panelZone ? (
     <Reveal open={Boolean(selectedZoneId)}>
-      {panelCountry ? (
-        <CountryPanel
-          ref={cardRef}
-          zone={panelZone}
-          country={panelCountry}
-          state={stateOf(panelZone.id)}
-          // Пояси країни — у порядку опівночі (схід → захід).
-          zones={ordered
-            .filter((z) => z.countries.some((c) => c.iso === panelCountry.iso))
-            .reverse()
-            .map((z) => ({ id: z.id, offsetMinutes: z.offsetMinutes, state: stateOf(z.id) }))}
-          nextZone={ordered.reduce<MapZone | undefined>(
-            (best, z) =>
-              z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best,
-            undefined,
-          )}
-          phone={isPhone}
-          onSelectZone={(id) => setSelection({ kind: 'zone', id })}
-          onSelectCountryZone={(zoneId) => selectCountry(zoneId, panelCountry.iso)}
-          onClose={closeSelection}
-          takeFocus={selection?.kind === 'country' && !!selection.fromZone}
-        />
-      ) : (
-        <ZonePanel
-          ref={cardRef}
-          zone={panelZone}
-          state={stateOf(panelZone.id)}
-          prev={ordered[panelIdx + 1]}
-          next={panelIdx > 0 ? ordered[panelIdx - 1] : undefined}
-          phone={isPhone}
-          onSelect={(id) => setSelection({ kind: 'zone', id })}
-          onSelectCountry={(iso) =>
-            setSelection({ kind: 'country', zoneId: panelZone.id, iso, fromZone: true })
-          }
-          onClose={closeSelection}
-        />
-      )}
+      {/* Пояс ↔ країна — плавний зсув і висота (рішення 2026-11-04; відкотити — `PANEL_SWAP` у PanelSwap.tsx). */}
+      <PanelSwap
+        swapKey={panelCountry ? `c:${panelZone.id}:${panelCountry.iso}` : `z:${panelZone.id}`}
+      >
+        {panelCountry ? (
+          <CountryPanel
+            ref={cardRef}
+            zone={panelZone}
+            country={panelCountry}
+            state={stateOf(panelZone.id)}
+            // Пояси країни — у порядку опівночі (схід → захід).
+            zones={ordered
+              .filter((z) => z.countries.some((c) => c.iso === panelCountry.iso))
+              .reverse()
+              .map((z) => ({ id: z.id, offsetMinutes: z.offsetMinutes, state: stateOf(z.id) }))}
+            nextZone={ordered.reduce<MapZone | undefined>(
+              (best, z) =>
+                z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best,
+              undefined,
+            )}
+            phone={isPhone}
+            onSelectZone={(id) => setSelection({ kind: 'zone', id })}
+            onSelectCountryZone={(zoneId) => selectCountry(zoneId, panelCountry.iso)}
+            onClose={closeSelection}
+            takeFocus={selection?.kind === 'country' && !!selection.fromZone}
+          />
+        ) : (
+          <ZonePanel
+            ref={cardRef}
+            zone={panelZone}
+            state={stateOf(panelZone.id)}
+            prev={ordered[panelIdx + 1]}
+            next={panelIdx > 0 ? ordered[panelIdx - 1] : undefined}
+            phone={isPhone}
+            onSelect={(id) => setSelection({ kind: 'zone', id })}
+            onSelectCountry={(iso) =>
+              setSelection({ kind: 'country', zoneId: panelZone.id, iso, fromZone: true })
+            }
+            onClose={closeSelection}
+          />
+        )}
+      </PanelSwap>
     </Reveal>
   ) : null;
   const slotRef = useRef<HTMLDivElement>(null);
