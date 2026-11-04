@@ -38,8 +38,10 @@
   flex: none;
 }
 /* Телефон: фільтр — на всю ширину, сегменти порівну. */
-.controlsPhone {
-  width: 100%;
+@media (max-width: 767.98px) {
+  .controlsPhone {
+    width: 100%;
+  }
 }
 .filterPhone {
   display: flex;
@@ -280,30 +282,16 @@
 }
 
 /* Скелетон (`CountriesSkeleton`): ті самі висоти, що після завантаження. */
-.skSubtitle {
-  width: 70%;
-  height: 24px;
-  margin-top: 0;
-}
-.skView {
-  height: 42px;
-  border-radius: var(--radius-lg);
-}
-.skSearch {
-  flex: 1 1 320px;
-  height: 44px;
-  border-radius: 12px;
-}
-.skFilter {
-  width: 380px;
-  max-width: 100%;
-  height: 42px;
-  border-radius: var(--radius-lg);
-}
-.skSeg {
-  width: 150px;
-  height: 38px;
-  border-radius: 999px;
+@media (max-width: 767.98px) {
+  .skFilterReal {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .skFilterReal > * {
+    flex: 1 1 auto;
+    padding-inline: 10px;
+  }
 }
 .skRows {
   display: flex;
@@ -318,18 +306,11 @@
   display: none;
 }
 @media (max-width: 767.98px) {
-  .skSubtitle {
-    width: 100%;
-    height: 48px;
-  }
-  .skFilter {
-    width: 100%;
-  }
   .skRow {
     height: 76px;
   }
   .phoneOnly {
-    display: block;
+    display: flex;
   }
   .deskOnly {
     display: none;
