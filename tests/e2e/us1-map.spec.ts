@@ -61,14 +61,15 @@ test.describe('Мапа поясів: дані й стани', () => {
     await expect(zone(page, 'utc+0000')).toHaveClass(/is-ahead/);
   });
 
-  test('стан не лише кольором: легенда (телефон) чи черга поясів (десктоп) з підписами й іконки на мапі', async ({ page }, testInfo) => {
+  test('стан не лише кольором: легенда під мапою з підписами (телефон — коротко, десктоп — рядком) й іконки на мапі', async ({ page }, testInfo) => {
     const m = await openMap(page);
     if (testInfo.project.name === 'phone') {
       const legend = m.locator('[data-zone-map-canvas] [data-map-legend="inMap"]');
       for (const label of ['Зустріли', 'Наживо', 'Найближча', 'Попереду']) await expect(legend).toContainText(label);
     } else {
-      const queue = m.locator('[data-map-queue]');
-      for (const label of ['Зараз', 'Далі', 'Вже зустріли']) await expect(queue).toContainText(label);
+      const legend = m.locator('[data-zone-map-canvas] [data-map-legend="row"]');
+      for (const label of ['Вже зустріли', 'Наживо зараз', 'Найближча північ', 'Ще попереду']) await expect(legend).toContainText(label);
+      await expect(m.locator('[data-map-queue]')).toHaveCount(0);
     }
     await expect(zone(page, 'utc+0100')).toHaveClass(/is-past/);
     await expect(m.locator('[data-zone-icon="live"]')).toHaveCount(1);
@@ -215,14 +216,15 @@ test.describe('Мапа поясів: клавіатура', () => {
     expect(stillOnPath).toBe(false);
   });
 
-  test('на десктопі точка міста — посилання на країну; клік у черзі відкриває вікно поясу під мапою з прокруткою', async ({ page }) => {
+  test('на десктопі точка міста — посилання на країну; клік по поясу відкриває вікно під мапою з прокруткою; поруч — колонка чату', async ({ page }) => {
     test.skip(isPhone(page), 'десктоп');
     const m = await openMap(page);
     await expect(m.locator('a[data-city="london"]')).toHaveAttribute('href', /\/country\//);
-    await m.locator('[data-queue-zone="utc-0100"]').click();
+    await m.locator('[data-zone-band="utc-0100"]').dispatchEvent('click');
     const panel = m.locator(OPEN_PANEL);
     await expect(panel).toHaveAttribute('data-zone-panel', 'utc-0100');
-    await expect(m.locator('[data-queue-zone="utc-0100"]')).toHaveAttribute('aria-pressed', 'true');
+    // Колонка чату — вздовж усієї сторінки: поруч і з вікном під мапою (рішення 2026-11-04).
+    await expect(page.locator('#chat')).toBeInViewport();
     // Верх вікна — у видимій частині сторінки (прокрутка до вікна).
     await expect(panel).toBeInViewport();
     await expect(panel.locator('[data-country-tile], [data-country-card]').first()).toHaveAttribute('href', /\/country\//);

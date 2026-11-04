@@ -2,7 +2,16 @@
 
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+} from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -12,14 +21,21 @@ import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
+import { useGuestStore } from '@/stores/guest';
 import { StateSwatch } from './MapSide';
 import { viewerOffsetAt } from './MapTooltip';
 import { utcLabel, type MapCountry, type MapStream, type MapZone } from './MapModel';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { REGION_ORDER, regionOf, type RegionKey } from './regions';
+import nn from './nowNext.module.css';
 import m from './zonePanel.module.css';
 
-const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
+const TYPE_KEY = {
+  main: 'main',
+  webcam: 'webcam',
+  tv: 'tv',
+  'countdown-only': 'countdownOnly',
+} as const;
 const TOP = 5;
 const NOT_TOP = new Set(['RU', 'BY']);
 /** На телефоні одразу видно дві групи регіонів, решта — кнопкою «Ще …». */
@@ -43,7 +59,17 @@ export interface ZonePanelProps {
  * поясів, таймер до півночі з секундами (виняток із «одного відліку»: головний — угорі сторінки), коротко про пояс,
  * «Де дивитися» — стрічка трансляцій, країни двома полицями: найпопулярніші картками, решта — за регіонами.
  */
-export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, embedded = false, ref }: ZonePanelProps) {
+export function ZonePanel({
+  zone,
+  state,
+  prev,
+  next,
+  phone,
+  onSelect,
+  onClose,
+  embedded = false,
+  ref,
+}: ZonePanelProps) {
   const t = useTranslations('liveMap.panel');
   const offset = utcLabel(zone.offsetMinutes);
   const own = viewerOffsetAt(zone.midnightMs) === zone.offsetMinutes;
@@ -61,14 +87,24 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, e
   const nav = (
     <span className={m.nav}>
       {next ? (
-        <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('nextZone', { offset: utcLabel(next.offsetMinutes) })} onClick={() => onSelect(next.id)}>
+        <button
+          type="button"
+          className={cn('t2f-focus', m.navBtn)}
+          aria-label={t('nextZone', { offset: utcLabel(next.offsetMinutes) })}
+          onClick={() => onSelect(next.id)}
+        >
           <Icon name="chevron-left" size={16} />
           <span className={m.navWord}>{phone ? t('nextShort') : t('nextWord')}</span>
           {utcLabel(next.offsetMinutes)}
         </button>
       ) : null}
       {prev ? (
-        <button type="button" className={cn('t2f-focus', m.navBtn)} aria-label={t('prevZone', { offset: utcLabel(prev.offsetMinutes) })} onClick={() => onSelect(prev.id)}>
+        <button
+          type="button"
+          className={cn('t2f-focus', m.navBtn)}
+          aria-label={t('prevZone', { offset: utcLabel(prev.offsetMinutes) })}
+          onClick={() => onSelect(prev.id)}
+        >
           <span className={m.navWord}>{phone ? t('prevShort') : t('prevWord')}</span>
           {utcLabel(prev.offsetMinutes)}
           <Icon name="chevron-right" size={16} />
@@ -76,7 +112,9 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, e
       ) : null}
     </span>
   );
-  const close = <IconButton icon="close" aria-label={t('close')} onClick={onClose} className={m.close} />;
+  const close = (
+    <IconButton icon="close" aria-label={t('close')} onClick={onClose} className={m.close} />
+  );
   return (
     <section
       ref={ref}
@@ -109,8 +147,14 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, e
         <div className={m.timeCol}>
           <ZoneTime zone={zone} state={state} />
           <dl className={m.stats}>
-            <Stat n={zone.countries.length} label={t('countriesWord', { count: zone.countries.length })} />
-            <Stat n={zone.streamCount ?? streams.length} label={t('streamsWord', { count: zone.streamCount ?? streams.length })} />
+            <Stat
+              n={zone.countries.length}
+              label={t('countriesWord', { count: zone.countries.length })}
+            />
+            <Stat
+              n={zone.streamCount ?? streams.length}
+              label={t('streamsWord', { count: zone.streamCount ?? streams.length })}
+            />
             <Stat n={zone.cityCount ?? 0} label={t('citiesWord', { count: zone.cityCount ?? 0 })} />
           </dl>
         </div>
@@ -120,7 +164,11 @@ export function ZonePanel({ zone, state, prev, next, phone, onSelect, onClose, e
             <p className={m.empty}>{state === 'past' ? t('noReplays') : t('noStreams')}</p>
           ) : (
             // Новий пояс — нова стрічка: стрілки рахуються від її карток, прокрутка — з початку.
-            <Slider key={zone.id} phone={phone} label={state === 'past' ? t('replayTitle') : t('watchTitle')}>
+            <Slider
+              key={zone.id}
+              phone={phone}
+              label={state === 'past' ? t('replayTitle') : t('watchTitle')}
+            >
               {streams.map((s) => (
                 <StreamCard
                   key={s.cityId}
@@ -160,8 +208,12 @@ function ZoneTime({ zone, state }: { zone: MapZone; state: ZoneState }) {
     return (
       <div data-zone-time="past">
         <div className={m.smallCap}>{t('pastLabel')}</div>
-        <div className={m.ago}>{t('pastAgo', { dur: formatDurationShort(now - zone.midnightMs, locale) })}</div>
-        <div className={m.when}>{t('pastAt', { time: formatClock(zone.midnightMs, { locale }) })}</div>
+        <div className={m.ago}>
+          {t('pastAgo', { dur: formatDurationShort(now - zone.midnightMs, locale) })}
+        </div>
+        <div className={m.when}>
+          {t('pastAt', { time: formatClock(zone.midnightMs, { locale }) })}
+        </div>
       </div>
     );
   }
@@ -198,14 +250,26 @@ function Stat({ n, label }: { n: number; label: string }) {
 }
 
 /** Стрічка, що гортається вбік; на десктопі — стрілки, коли карток більше, ніж уміщається. */
-export function Slider({ phone, label, children }: { phone: boolean; label: string; children: ReactNode }) {
+export function Slider({
+  phone,
+  label,
+  children,
+}: {
+  phone: boolean;
+  label: string;
+  children: ReactNode;
+}) {
   const t = useTranslations('liveMap.panel');
   const ref = useRef<HTMLUListElement>(null);
   const [edge, setEdge] = useState({ start: true, end: true });
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const upd = () => setEdge({ start: el.scrollLeft <= 2, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2 });
+    const upd = () =>
+      setEdge({
+        start: el.scrollLeft <= 2,
+        end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2,
+      });
     upd();
     el.addEventListener('scroll', upd, { passive: true });
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(upd) : null;
@@ -227,15 +291,108 @@ export function Slider({ phone, label, children }: { phone: boolean; label: stri
       </ul>
       {arrows ? (
         <>
-          <button type="button" className={cn('t2f-focus', m.arrow, m.arrowPrev)} aria-label={t('slidePrev')} disabled={edge.start} onClick={() => go(-1)}>
+          <button
+            type="button"
+            className={cn('t2f-focus', m.arrow, m.arrowPrev)}
+            aria-label={t('slidePrev')}
+            disabled={edge.start}
+            onClick={() => go(-1)}
+          >
             <Icon name="chevron-left" size={18} />
           </button>
-          <button type="button" className={cn('t2f-focus', m.arrow, m.arrowNext)} aria-label={t('slideNext')} disabled={edge.end} onClick={() => go(1)}>
+          <button
+            type="button"
+            className={cn('t2f-focus', m.arrow, m.arrowNext)}
+            aria-label={t('slideNext')}
+            disabled={edge.end}
+            onClick={() => go(1)}
+          >
             <Icon name="chevron-right" size={18} />
           </button>
         </>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * «Додати в графік» з мапи (рішення власника 2026-11-04): та сама дія, що на картках «Зараз і далі» — з пасом перемикає,
+ * без пасу відкриває вікно «Графік — у Новорічному пасі» в колонці чату. Мапа отримує її від сторінки.
+ */
+export const MapScheduleContext = createContext<((eventId: string, next: boolean) => void) | null>(
+  null,
+);
+
+/**
+ * Утримати натиснуту картку на тій самій висоті екрана: якщо колонка чату була схована й відкривається під вікно, мапа й
+ * усе під нею звужуються — сторінка підкручується, щоб картка не «втекла» з-під курсора (дошка `Desk-Home-ChatColumn`).
+ */
+function keepInPlace(el: HTMLElement | null) {
+  if (!el || typeof window === 'undefined') return;
+  const hold = () => {
+    const top = el.getBoundingClientRect().top;
+    let frames = 0;
+    const tick = () => {
+      const d = el.getBoundingClientRect().top - top;
+      if (Math.abs(d) > 1) window.scrollBy(0, d);
+      if (++frames < 12) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+  hold();
+  // Колонку повернуло вікно (`data-chat-forced`) — коли вікно закриють і колонка знову сховається, картка теж лишається на
+  // місці: позицію «до» оновлюємо при кожній прокрутці, а після зміни атрибута повертаємо картку на неї.
+  const aside = document.getElementById('chat');
+  if (!aside || typeof MutationObserver === 'undefined') return;
+  let last = el.getBoundingClientRect().top;
+  const onScroll = () => {
+    last = el.getBoundingClientRect().top;
+  };
+  const stop = () => {
+    mo.disconnect();
+    window.removeEventListener('scroll', onScroll);
+  };
+  const mo = new MutationObserver(() => {
+    const d = el.getBoundingClientRect().top - last;
+    if (Math.abs(d) > 1) window.scrollBy(0, d);
+    if (!aside.hasAttribute('data-chat-forced')) stop();
+  });
+  window.setTimeout(() => {
+    if (!aside.hasAttribute('data-chat-forced')) return; // колонка й так була відкрита — стежити нічого
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    mo.observe(aside, { attributes: true, attributeFilter: ['data-chat-forced'] });
+  }, 400);
+}
+
+/** Кнопка календаря на картці трансляції, що ще попереду (вигляд — як на картках «Зараз і далі»). */
+export function ScheduleButton({ eventId, city }: { eventId?: string; city: string }) {
+  const onToggle = useContext(MapScheduleContext);
+  const inSchedule = useGuestStore((g) => (eventId ? g.schedule.includes(eventId) : false));
+  const t = useTranslations('liveCards.eventCard');
+  const tNav = useTranslations('nav');
+  if (!eventId || !onToggle) return null;
+  const label = inSchedule ? t('scheduleRemove', { city }) : tNav('addToSchedule', { city });
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={inSchedule}
+      data-schedule-toggle={eventId}
+      className={cn('t2f-focus t2f-press rounded-full', nn.cal, m.cal)}
+      onClick={(e: MouseEvent<HTMLButtonElement>) => {
+        keepInPlace(e.currentTarget.closest('li'));
+        onToggle(eventId, !inSchedule);
+      }}
+    >
+      <span aria-hidden="true" className={nn.calCircle}>
+        <Icon
+          name={inSchedule ? 'calendar-check' : 'calendar-add'}
+          size={16}
+          strokeWidth={inSchedule ? 2.2 : 2}
+        />
+      </span>
+    </button>
   );
 }
 
@@ -253,7 +410,15 @@ export function PlayMark({ tone }: { tone: 'live' | 'replay' | 'upcoming' }) {
   );
 }
 
-function StreamCard({ stream, mode, midnightMs }: { stream: MapStream; mode: 'live' | 'upcoming' | 'replay'; midnightMs: number }) {
+function StreamCard({
+  stream,
+  mode,
+  midnightMs,
+}: {
+  stream: MapStream;
+  mode: 'live' | 'upcoming' | 'replay';
+  midnightMs: number;
+}) {
   const live = mode === 'live';
   const t = useTranslations('liveMap.panel');
   const tType = useTranslations('liveCards.eventCard.type');
@@ -285,10 +450,15 @@ function StreamCard({ stream, mode, midnightMs }: { stream: MapStream; mode: 'li
           {t('startsAt', { time: formatClock(midnightMs, { locale }) })}
         </div>
       ) : null}
-      <NextLink href={stream.href} className={cn('t2f-focus', m.cardBtn, live && m.cardBtnLive)}>
-        {mode === 'upcoming' ? null : <PlayMark tone={live ? 'live' : 'replay'} />}
-        {live ? t('watch') : mode === 'replay' ? t('watchReplay') : t('countryPage')}
-      </NextLink>
+      <div className={m.cardActions}>
+        <NextLink href={stream.href} className={cn('t2f-focus', m.cardBtn, live && m.cardBtnLive)}>
+          {mode === 'upcoming' ? null : <PlayMark tone={live ? 'live' : 'replay'} />}
+          {live ? t('watch') : mode === 'replay' ? t('watchReplay') : t('countryPage')}
+        </NextLink>
+        {mode === 'upcoming' ? (
+          <ScheduleButton eventId={stream.eventId} city={stream.city} />
+        ) : null}
+      </div>
     </li>
   );
 }
@@ -306,7 +476,9 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
     const r = regionOf(c.iso, zone.offsetMinutes) ?? 'other';
     groups.set(r, [...(groups.get(r) ?? []), c]);
   }
-  const ordered = [...REGION_ORDER, 'other' as const].filter((r) => groups.has(r)).map((r) => ({ key: r, list: groups.get(r)! }));
+  const ordered = [...REGION_ORDER, 'other' as const]
+    .filter((r) => groups.has(r))
+    .map((r) => ({ key: r, list: groups.get(r)! }));
   const shown = phone ? ordered.slice(0, PHONE_GROUPS) : ordered;
   const hidden = phone ? ordered.slice(PHONE_GROUPS) : [];
   const hiddenCount = hidden.reduce((n, g) => n + g.list.length, 0);
@@ -337,12 +509,18 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
     <div className={m.countries}>
       <div className={m.countriesHead}>
         <h4 className={m.h4}>{t('countriesTitle')}</h4>
-        <span className={m.countriesNote}>{t('countriesNote', { count: zone.countries.length })}</span>
+        <span className={m.countriesNote}>
+          {t('countriesNote', { count: zone.countries.length })}
+        </span>
       </div>
       <ul className={cn(m.shelf, phone && m.shelfPhone)}>
         {top.map((c) => (
           <li key={c.iso} className={m.shelfItem}>
-            <NextLink href={c.href} className={cn('t2f-focus', m.topCard)} data-country-card={c.iso}>
+            <NextLink
+              href={c.href}
+              className={cn('t2f-focus', m.topCard)}
+              data-country-card={c.iso}
+            >
               <Flag code={c.flagCode} round diameter={40} decorative />
               <span className={m.topName}>{c.name}</span>
               {c.city ? <span className={m.topCity}>{c.city}</span> : null}
@@ -358,12 +536,19 @@ function Countries({ zone, phone }: { zone: MapZone; phone: boolean }) {
           </li>
         ))}
       </ul>
-      {ordered.length ? <div className={cn(m.smallCap, m.restTitle)}>{t('regionsTitle')}</div> : null}
+      {ordered.length ? (
+        <div className={cn(m.smallCap, m.restTitle)}>{t('regionsTitle')}</div>
+      ) : null}
       {shown.map(group)}
       {hidden.length ? (
         <>
           <Reveal open={more}>{hidden.map(group)}</Reveal>
-          <button type="button" className={cn('t2f-focus', m.moreBtn)} aria-expanded={more} onClick={() => setMore((v) => !v)}>
+          <button
+            type="button"
+            className={cn('t2f-focus', m.moreBtn)}
+            aria-expanded={more}
+            onClick={() => setMore((v) => !v)}
+          >
             {more
               ? t('less')
               : hidden.length === 1

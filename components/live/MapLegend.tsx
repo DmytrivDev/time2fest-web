@@ -9,9 +9,10 @@ import './ZoneMap.css';
 export interface MapLegendProps {
   /**
    * `grid` — 2 колонки (список поясів) · `column` — колонка праворуч від мапи · `inMap` — телефон, у рамці мапи під нею:
-   * 3 колонки, 12 px, короткі підписи (дошка `Phone-Map-Legend`, варіант A).
+   * 3 колонки, 12 px, короткі підписи (дошка `Phone-Map-Legend`, варіант A) · `row` — десктоп, рядком під мапою в її
+   * рамці (дошка `Desk-Home-MapWidths`).
    */
-  variant?: 'grid' | 'column' | 'inMap';
+  variant?: 'grid' | 'column' | 'inMap' | 'row';
   className?: string;
 }
 
@@ -25,11 +26,12 @@ const STATES: readonly { state: ZoneState; sw: 'past' | 'live' | 'next' | 'ahead
 
 /**
  * C18 `MapLegend`: чотири стани поясу (зразок + підпис) і два види точок міст — коротко, спершу «Місто», потім
- * «Трансляція» (правка власника 2026-11-03). На десктопі замість неї — черга поясів `MapQueue`.
+ * «Трансляція» (правка власника 2026-11-03). На десктопі — рядком під мапою (рішення власника 2026-11-04).
  */
 export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
   const column = variant === 'column';
   const inMap = variant === 'inMap';
+  const row = variant === 'row';
   const t = useTranslations('liveMap.legend');
   const tNav = useTranslations('nav');
   return (
@@ -42,6 +44,8 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
           ? 'flex flex-col gap-3 text-body font-medium leading-snug'
           : inMap
             ? 'grid grid-cols-3 gap-x-2 gap-y-2 text-caption font-medium text-text-secondary'
+            : row
+              ? 'flex flex-wrap items-center gap-x-5 gap-y-2 text-label-sm font-medium text-text-secondary'
             : 'grid grid-cols-2 gap-x-3 gap-y-2.5 text-label-sm font-medium leading-snug',
         className,
       )}
@@ -55,6 +59,7 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
           {inMap ? t(`short.${state}`) : t(state)}
         </li>
       ))}
+      {row ? <li aria-hidden="true" className="h-4 w-px bg-border" /> : null}
       <li className={cn('flex items-center', column ? 'gap-2.5' : 'gap-2')}>
         <span aria-hidden="true" className={cn('inline-flex flex-none items-center justify-center', column ? 'h-4.5 w-7' : 'h-3.5 w-5.5')}>
           <span className="t2f-zm-dot-quiet t2f-zm-dot-legend size-2 rounded-full" />

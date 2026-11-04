@@ -146,7 +146,7 @@ export function HomeLive() {
   const map = (
     // `id` — ціль «Перейти до мапи» і посилання-пропуску.
     <div id="zone-map">
-      <ZoneMap {...mapModel} />
+      <ZoneMap {...mapModel} onToggleSchedule={passWindows.requestSchedule} />
     </div>
   );
   const nowNext = (layout: 'carousel' | 'stack') => (

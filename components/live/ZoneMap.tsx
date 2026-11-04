@@ -24,7 +24,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { MapLegend } from './MapLegend';
 import { MapGestureHint } from './MapGestureHint';
-import { MapNowCard, MapQueue } from './MapSide';
+import { MapNowCard } from './MapSide';
 import {
   pointToPercent,
   type MapCity,
@@ -35,7 +35,7 @@ import {
 import { CityTip, CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from './MapTooltip';
 import { CountryPanel } from './CountryPanel';
 import { ZoneListView } from './ZoneListView';
-import { ZonePanel } from './ZonePanel';
+import { MapScheduleContext, ZonePanel } from './ZonePanel';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { Reveal } from '@/components/primitives/Reveal';
 import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
@@ -58,20 +58,30 @@ export interface ZoneMapProps {
   defaultSelectedZoneId?: string;
   /** Геометрія (`data/zonemap.json`); без неї підвантажується окремим шматком, поки показано скелетон. */
   geometry?: ZoneMapGeometry;
+  /** «Додати в графік» на картках трансляцій, що ще попереду (як на картках «Зараз і далі»); без неї календарика немає. */
+  onToggleSchedule?: (eventId: string, next: boolean) => void;
   className?: string;
 }
 
-type Selection = { kind: 'zone'; id: string } | { kind: 'city'; id: string } | { kind: 'country'; zoneId: string; iso: string } | null;
+type Selection =
+  | { kind: 'zone'; id: string }
+  | { kind: 'city'; id: string }
+  | { kind: 'country'; zoneId: string; iso: string }
+  | null;
 
 const PHONE_QUERY = '(max-width: 767.98px)';
 
 function subscribePhone(cb: () => void): () => void {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function')
+    return () => undefined;
   const mq = window.matchMedia(PHONE_QUERY);
   mq.addEventListener('change', cb);
   return () => mq.removeEventListener('change', cb);
 }
-const getPhone = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_QUERY).matches : false);
+const getPhone = () =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia(PHONE_QUERY).matches
+    : false;
 
 /**
  * Геометрія мапи (~75 КБ) вантажиться, коли мапа наближається до екрана (SC-001): на першому екрані її немає,
@@ -116,7 +126,11 @@ function useGeometry(initial: ZoneMapGeometry | undefined, root: RefObject<HTMLE
 }
 
 /** Плашка за курсором: праворуч-знизу (16 / 18 px), біля правого чи нижнього краю мапи — дзеркально. */
-function placeTipAt(el: HTMLElement | null, box: HTMLElement | null, p: { x: number; y: number } | null) {
+function placeTipAt(
+  el: HTMLElement | null,
+  box: HTMLElement | null,
+  p: { x: number; y: number } | null,
+) {
   if (!el || !box || !p) return;
   const w = el.offsetWidth;
   const h = el.offsetHeight;
@@ -127,7 +141,12 @@ function placeTipAt(el: HTMLElement | null, box: HTMLElement | null, p: { x: num
   el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
 }
 
-const FILL_CLASS: Record<ZoneState, string> = { past: 'is-past', live: 'is-live', next: 'is-next', future: 'is-ahead' };
+const FILL_CLASS: Record<ZoneState, string> = {
+  past: 'is-past',
+  live: 'is-live',
+  next: 'is-next',
+  future: 'is-ahead',
+};
 const MARKER_CLASS: Record<ZoneState, string> = {
   past: 'bg-border border-border-strong',
   live: 'bg-zone-live border-background',
@@ -150,6 +169,7 @@ export function ZoneMap({
   defaultView = 'map',
   defaultSelectedZoneId,
   geometry: geometryProp,
+  onToggleSchedule,
   className,
 }: ZoneMapProps) {
   const t = useTranslations('liveMap');
@@ -181,13 +201,16 @@ export function ZoneMap({
   const [hotCountry, setHotCountry] = useState<string | null>(null);
   // Місто під курсором: його пояс і країна лишаються підсвіченими, плашка — міста (дошка `Desk-Map-CityTips`).
   const [onCity, setOnCity] = useState<string | null>(null);
-  // Рядок черги під курсором чи фокусом (десктоп): його пояс підсвічується на мапі, без плашки.
-  const [previewId, setPreviewId] = useState<string | null>(null);
+  // Підсвітка поясу з рядка черги — черги біля мапи більше немає (рішення 2026-11-04).
+  const previewId: string | null = null;
   const viewerIso = useGuestStore((g) => g.flagCode);
   const dotRefs = useRef(new Map<string, HTMLElement>());
   const cardRef = useRef<HTMLElement>(null);
 
-  const ordered = useMemo(() => [...zones].sort((a, b) => a.offsetMinutes - b.offsetMinutes), [zones]);
+  const ordered = useMemo(
+    () => [...zones].sort((a, b) => a.offsetMinutes - b.offsetMinutes),
+    [zones],
+  );
   const zoneById = useMemo(() => new Map(zones.map((z) => [z.id, z])), [zones]);
   const countryByIso = useMemo(() => {
     const m = new Map<string, MapCountry>();
@@ -208,7 +231,8 @@ export function ZoneMap({
   }, [zones]);
 
   const liveZoneId = ordered.find((z) => stateOf(z.id) === 'live')?.id;
-  const tabStop = tabStopId && zoneById.has(tabStopId) ? tabStopId : (liveZoneId ?? ordered[0]?.id ?? null);
+  const tabStop =
+    tabStopId && zoneById.has(tabStopId) ? tabStopId : (liveZoneId ?? ordered[0]?.id ?? null);
 
   const selectedZoneId =
     selection?.kind === 'zone'
@@ -219,9 +243,11 @@ export function ZoneMap({
           ? cities.find((c) => c.id === selection.id)?.zoneId
           : undefined;
   // Вибрана країна (`zoneId:iso`): підсвічується, як під курсором, поки відкрите її вікно.
-  const pickedCountry = selection?.kind === 'country' ? `${selection.zoneId}:${selection.iso}` : null;
+  const pickedCountry =
+    selection?.kind === 'country' ? `${selection.zoneId}:${selection.iso}` : null;
   // Клік по суші країни — вікно країни (рішення власника 2026-11-03); по океану чи в черзі — вікно поясу.
-  const selectCountry = (zoneId: string, iso: string) => setSelection({ kind: 'country', zoneId, iso });
+  const selectCountry = (zoneId: string, iso: string) =>
+    setSelection({ kind: 'country', zoneId, iso });
 
   function focusZone(id: string) {
     setTabStopId(id);
@@ -281,8 +307,7 @@ export function ZoneMap({
       focusZone(prev.kind === 'zone' ? prev.id : prev.zoneId);
       // Esc закриває картку зовсім: фокус повертається на пояс без картки-прев’ю (вона з’явиться з наступним рухом фокуса).
       setFocusedId(null);
-    }
-    else if (prev?.kind === 'city') dotRefs.current.get(prev.id)?.focus();
+    } else if (prev?.kind === 'city') dotRefs.current.get(prev.id)?.focus();
   }
 
   function onRootKeyDown(e: KeyboardEvent<HTMLElement>) {
@@ -300,7 +325,12 @@ export function ZoneMap({
   const mw = geometry?.meta.width ?? 1781;
   const mh = geometry?.meta.height ?? 911;
   const pxToMap = box.w > 0 ? mw / box.w : 0;
-  const vb = { x: -zoom.x * pxToMap / zoom.k, y: -zoom.y * pxToMap / zoom.k, w: mw / zoom.k, h: mh / zoom.k };
+  const vb = {
+    x: (-zoom.x * pxToMap) / zoom.k,
+    y: (-zoom.y * pxToMap) / zoom.k,
+    w: mw / zoom.k,
+    h: mh / zoom.k,
+  };
   /** Точка мапи (відсотки повної мапи) → відсотки рамки з урахуванням масштабу й зсуву. */
   const place = (leftPct: number, topPct: number) => ({
     left: `${leftPct * zoom.k + (box.w > 0 ? (zoom.x / box.w) * 100 : 0)}%`,
@@ -309,22 +339,25 @@ export function ZoneMap({
   // Назви міст біля точок — від наближення ×2.
   const showNames = zoom.k >= 2;
 
-
   // Плашка при наведенні (рішення власника 2026-11-02, дошка `Desk-Map-Tips`): лише десктоп; одна одночасно — країна
   // важливіша за пояс; з’являється через 150 мс, зникає через 100 мс; між сусідніми цілями — одразу.
   const hotSep = hotCountry ? hotCountry.lastIndexOf(':') : -1;
-  const pointerTarget: MapTipTarget | null =
-    isPhone
-      ? null
-      : onCity
-        ? { kind: 'city', zoneId: cities.find((c) => c.id === onCity)?.zoneId ?? '', cityId: onCity }
-        : hotCountry && hotSep > 0
-        ? { kind: 'country', zoneId: hotCountry.slice(0, hotSep), iso: hotCountry.slice(hotSep + 1) }
+  const pointerTarget: MapTipTarget | null = isPhone
+    ? null
+    : onCity
+      ? { kind: 'city', zoneId: cities.find((c) => c.id === onCity)?.zoneId ?? '', cityId: onCity }
+      : hotCountry && hotSep > 0
+        ? {
+            kind: 'country',
+            zoneId: hotCountry.slice(0, hotSep),
+            iso: hotCountry.slice(hotSep + 1),
+          }
         : hoverId
           ? { kind: 'zone', zoneId: hoverId }
           : null;
   // З клавіатури: фокус на поясі (видимий) — плашка біля мітки поясу.
-  const keyTarget: MapTipTarget | null = !isPhone && !pointerTarget && ringId ? { kind: 'zone', zoneId: ringId } : null;
+  const keyTarget: MapTipTarget | null =
+    !isPhone && !pointerTarget && ringId ? { kind: 'zone', zoneId: ringId } : null;
   const rawTarget = pointerTarget ?? keyTarget;
   const rawKey = tipKey(rawTarget);
   const [tip, setTip] = useState<{ target: MapTipTarget; byKey: boolean } | null>(null);
@@ -344,16 +377,27 @@ export function ZoneMap({
   const tipZone = tip ? zoneById.get(tip.target.zoneId) : undefined;
   const tipCountry =
     tip?.target.kind === 'country' && tipZone
-      ? (tipZone.countries.find((c) => c.iso === (tip.target as { iso: string }).iso) ?? countryByIso.get(tip.target.iso))
+      ? (tipZone.countries.find((c) => c.iso === (tip.target as { iso: string }).iso) ??
+        countryByIso.get(tip.target.iso))
       : undefined;
-  const tipCity = tip?.target.kind === 'city' ? cities.find((c) => c.id === (tip.target as { cityId: string }).cityId) : undefined;
-  const tipLabel = tip?.byKey && geometry ? geometry.zones.find((g) => g.zoneId === tip.target.zoneId)?.label : undefined;
+  const tipCity =
+    tip?.target.kind === 'city'
+      ? cities.find((c) => c.id === (tip.target as { cityId: string }).cityId)
+      : undefined;
+  const tipLabel =
+    tip?.byKey && geometry
+      ? geometry.zones.find((g) => g.zoneId === tip.target.zoneId)?.label
+      : undefined;
   const tipStyle = (() => {
     if (!tipLabel || !geometry) return undefined;
     const lp = (tipLabel[0] / geometry.meta.width) * 100;
     const pos = place(lp, (tipLabel[1] / geometry.meta.height) * 100);
     // Права третина мапи — плашка ліворуч від мітки.
-    return { left: pos.left, top: pos.top, transform: lp > 66 ? 'translate(calc(-100% - 12px), 12px)' : 'translate(12px, 12px)' };
+    return {
+      left: pos.left,
+      top: pos.top,
+      transform: lp > 66 ? 'translate(calc(-100% - 12px), 12px)' : 'translate(12px, 12px)',
+    };
   })();
   useLayoutEffect(() => {
     tipByKeyRef.current = Boolean(tip?.byKey);
@@ -375,7 +419,12 @@ export function ZoneMap({
   }, [geometry]);
 
   const liveZone = ordered.find((z) => stateOf(z.id) === 'live');
-  const summary = liveZone ? `${liveZone.countries.slice(0, 3).map((c) => c.name).join(', ')} · ${t('state.live')}` : '';
+  const summary = liveZone
+    ? `${liveZone.countries
+        .slice(0, 3)
+        .map((c) => c.name)
+        .join(', ')} · ${t('state.live')}`
+    : '';
 
   // Вікно під мапою — поясу (дошка `Desk-Map-ZonePanel`) чи країни (`Desk-Map-CountryVariants`), рішення власника
   // 2026-11-03: відкривається й закривається плавно (`Reveal`), тож під час закриття показує останній вибір.
@@ -385,9 +434,13 @@ export function ZoneMap({
       : { zoneId: selectedZoneId, iso: null }
     : null;
   const [panelSel, setPanelSel] = useState<{ zoneId: string; iso: string | null } | null>(current);
-  if (current && (current.zoneId !== panelSel?.zoneId || current.iso !== panelSel?.iso)) setPanelSel(current);
+  if (current && (current.zoneId !== panelSel?.zoneId || current.iso !== panelSel?.iso))
+    setPanelSel(current);
   const panelZone = panelSel ? zoneById.get(panelSel.zoneId) : undefined;
-  const panelCountry = panelSel?.iso && panelZone ? panelZone.countries.find((c) => c.iso === panelSel.iso) : undefined;
+  const panelCountry =
+    panelSel?.iso && panelZone
+      ? panelZone.countries.find((c) => c.iso === panelSel.iso)
+      : undefined;
   // Сусідні пояси за часом опівночі: попередній — на годину раніше (більший зсув), наступний — пізніше.
   const panelIdx = panelZone ? ordered.indexOf(panelZone) : -1;
   const card = panelZone ? (
@@ -403,7 +456,11 @@ export function ZoneMap({
             .filter((z) => z.countries.some((c) => c.iso === panelCountry.iso))
             .reverse()
             .map((z) => ({ id: z.id, offsetMinutes: z.offsetMinutes, state: stateOf(z.id) }))}
-          nextZone={ordered.reduce<MapZone | undefined>((best, z) => (z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best), undefined)}
+          nextZone={ordered.reduce<MapZone | undefined>(
+            (best, z) =>
+              z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best,
+            undefined,
+          )}
           phone={isPhone}
           onSelectZone={(id) => setSelection({ kind: 'zone', id })}
           onSelectCountryZone={(zoneId) => selectCountry(zoneId, panelCountry.iso)}
@@ -484,7 +541,11 @@ export function ZoneMap({
           data-zone-map-svg=""
           className="block size-full"
         >
-          <rect width={geometry.meta.width} height={geometry.meta.height} className="t2f-zm-ocean" />
+          <rect
+            width={geometry.meta.width}
+            height={geometry.meta.height}
+            className="t2f-zm-ocean"
+          />
           {/* Нижній шар: смуги поясів в океані й морські області острівних країн. Вони йдуть і під суходолом, тож лежать
               під усіма поясами — суходіл перекриває їх і для ока, і для курсора. */}
           <g aria-hidden="true">
@@ -494,7 +555,9 @@ export function ZoneMap({
                   key={`bg-${g.zoneId}`}
                   className={cn('t2f-zone-bg', FILL_CLASS[stateOf(g.zoneId)])}
                   data-hover={hoverId === g.zoneId || previewId === g.zoneId ? 'true' : undefined}
-                  data-selected={selectedZoneId === g.zoneId || ringId === g.zoneId ? 'true' : undefined}
+                  data-selected={
+                    selectedZoneId === g.zoneId || ringId === g.zoneId ? 'true' : undefined
+                  }
                   onClick={() => setSelection({ kind: 'zone', id: g.zoneId })}
                 >
                   {g.band ? (
@@ -511,7 +574,12 @@ export function ZoneMap({
                       key={`sea-${s.iso}-${i}`}
                       d={s.d}
                       data-iso={s.iso}
-                      data-hot={hotCountry === `${g.zoneId}:${s.iso}` || pickedCountry === `${g.zoneId}:${s.iso}` ? 'true' : undefined}
+                      data-hot={
+                        hotCountry === `${g.zoneId}:${s.iso}` ||
+                        pickedCountry === `${g.zoneId}:${s.iso}`
+                          ? 'true'
+                          : undefined
+                      }
                       className="t2f-zone-sea"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -570,18 +638,23 @@ export function ZoneMap({
           {geometry.borders ? <path d={geometry.borders} className="t2f-zm-borders" /> : null}
           {geometry.zoneLines ? <path d={geometry.zoneLines} className="t2f-zm-zlines" /> : null}
           {geometry.dayline ? <path d={geometry.dayline} className="t2f-zm-dayline" /> : null}
-
         </svg>
 
         <div className="pointer-events-none absolute inset-0" data-zone-map-overlay="">
           {geometry.markers.map((mk) => {
-            const pos = place((mk.x / geometry.meta.width) * 100, (mk.y / geometry.meta.height) * 100);
+            const pos = place(
+              (mk.x / geometry.meta.width) * 100,
+              (mk.y / geometry.meta.height) * 100,
+            );
             return (
               <span
                 key={mk.zoneId}
                 aria-hidden="true"
                 data-zone-marker={mk.zoneId}
-                className={cn('absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border', MARKER_CLASS[stateOf(mk.zoneId)])}
+                className={cn(
+                  'absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border',
+                  MARKER_CLASS[stateOf(mk.zoneId)],
+                )}
                 style={pos}
               />
             );
@@ -595,12 +668,23 @@ export function ZoneMap({
                 aria-hidden="true"
                 data-zone-icon={st}
                 className="absolute -translate-x-1/2 -translate-y-1/2 text-on-highlight"
-                style={place((g.label[0] / geometry.meta.width) * 100, (g.label[1] / geometry.meta.height) * 100)}
+                style={place(
+                  (g.label[0] / geometry.meta.width) * 100,
+                  (g.label[1] / geometry.meta.height) * 100,
+                )}
               >
                 {st === 'live' ? (
                   <span className="block size-1.5 rounded-full bg-background" />
                 ) : (
-                  <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="10"
+                    height="10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  >
                     <circle cx="12" cy="12" r="9" />
                     <path d="M12 7v5l3 2" />
                   </svg>
@@ -621,7 +705,10 @@ export function ZoneMap({
                 {onAir ? (
                   <>
                     <span className="t2f-zm-halo size-2.5" />
-                    <span className="t2f-zm-dot-live relative size-2.5 rounded-full bg-zone-live" data-city-dot="live" />
+                    <span
+                      className="t2f-zm-dot-live relative size-2.5 rounded-full bg-zone-live"
+                      data-city-dot="live"
+                    />
                   </>
                 ) : (
                   <span className="t2f-zm-dot-quiet size-2 rounded-full" data-city-dot="quiet" />
@@ -652,7 +739,16 @@ export function ZoneMap({
             // під мапою (рішення власника 2026-11-03). Телефон — завжди вікно країни.
             if (!isPhone && country && city.stream === 'live' && (st === 'live' || st === 'past')) {
               return (
-                <NextLink key={city.id} href={country.href} aria-label={label} tabIndex={-1} data-city={city.id} className={cls} style={style} {...cityHover}>
+                <NextLink
+                  key={city.id}
+                  href={country.href}
+                  aria-label={label}
+                  tabIndex={-1}
+                  data-city={city.id}
+                  className={cls}
+                  style={style}
+                  {...cityHover}
+                >
                   {dot}
                 </NextLink>
               );
@@ -680,28 +776,33 @@ export function ZoneMap({
             );
           })}
           {showNames
-            ? cities
-                .map((c) => {
-                  const pos = pointToPercent(c, geometry.meta);
-                  return (
-                    <span
-                      key={`name-${c.id}`}
-                      aria-hidden="true"
-                      data-city-name={c.id}
-                      className={m.cityName}
-                      style={place(pos.left, pos.top)}
-                    >
-                      {c.name}
-                    </span>
-                  );
-                })
+            ? cities.map((c) => {
+                const pos = pointToPercent(c, geometry.meta);
+                return (
+                  <span
+                    key={`name-${c.id}`}
+                    aria-hidden="true"
+                    data-city-name={c.id}
+                    className={m.cityName}
+                    style={place(pos.left, pos.top)}
+                  >
+                    {c.name}
+                  </span>
+                );
+              })
             : null}
         </div>
       </div>
       {tipZone ? (
         <MapTip ref={tipRef} kind={tip!.target.kind} style={tipStyle}>
           {tip!.target.kind === 'city' && tipCity ? (
-            <CityTip city={tipCity} zone={tipZone} country={countryByIso.get(tipCity.countryIso)} state={stateOf(tipZone.id)} now={now} />
+            <CityTip
+              city={tipCity}
+              zone={tipZone}
+              country={countryByIso.get(tipCity.countryIso)}
+              state={stateOf(tipZone.id)}
+              now={now}
+            />
           ) : tip!.target.kind === 'country' && tipCountry ? (
             <CountryTip
               zone={tipZone}
@@ -719,7 +820,12 @@ export function ZoneMap({
       {isPhone ? (
         <MapGestureHint boxRef={boxRef} />
       ) : (
-        <div className={cn(m.zoom, m.zoomDesk)} role="group" aria-label={t('zoomGroup')} data-zone-map-zoom="">
+        <div
+          className={cn(m.zoom, m.zoomDesk)}
+          role="group"
+          aria-label={t('zoomGroup')}
+          data-zone-map-zoom=""
+        >
           <ZoomButton label={t('zoomOut')} disabled={!zoomed} onClick={zoomOut}>
             −
           </ZoomButton>
@@ -728,7 +834,12 @@ export function ZoneMap({
             +
           </ZoomButton>
           <span aria-hidden="true" className={m.zoomSep} />
-          <button type="button" disabled={!zoomed} onClick={reset} className={cn('t2f-focus', m.zoomReset)}>
+          <button
+            type="button"
+            disabled={!zoomed}
+            onClick={reset}
+            className={cn('t2f-focus', m.zoomReset)}
+          >
             {t('zoomReset')}
           </button>
         </div>
@@ -737,70 +848,71 @@ export function ZoneMap({
   );
 
   return (
-    // Esc із будь-якого місця мапи й картки закриває картку (клавіатурний прийом, не окрема дія).
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-    <section
-      ref={rootRef}
-      aria-labelledby={headId}
-      data-zone-map=""
-      data-layout={layout}
-      onKeyDown={onRootKeyDown}
-      className={cn(m.section, className)}
-    >
-      <div className={m.head}>
-        <h2 id={headId} className={cn('t2f-h2', m.title)}>
-          {tNav('map')}
-        </h2>
-        <div className={m.controls}>
-          {/* «Пояси · Звідки дивляться» прибрано (рішення власника 2026-11-03): лишається «Мапа | Список». */}
-          <SegmentedControl
-            semantics="pressed"
-            label={t('viewLabel')}
-            value={view}
-            onValueChange={(v) => setView(v as 'map' | 'list')}
-            options={[
-              { value: 'map', label: tNav('mapShort') },
-              { value: 'list', label: tNav('list') },
-            ]}
-          />
+    <MapScheduleContext.Provider value={onToggleSchedule ?? null}>
+      {/* Esc із будь-якого місця мапи й картки закриває картку (клавіатурний прийом, не окрема дія). */}
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+      <section
+        ref={rootRef}
+        aria-labelledby={headId}
+        data-zone-map=""
+        data-layout={layout}
+        onKeyDown={onRootKeyDown}
+        className={cn(m.section, className)}
+      >
+        <div className={m.head}>
+          <h2 id={headId} className={cn('t2f-h2', m.title)}>
+            {tNav('map')}
+          </h2>
+          <div className={m.controls}>
+            {/* «Пояси · Звідки дивляться» прибрано (рішення власника 2026-11-03): лишається «Мапа | Список». */}
+            <SegmentedControl
+              semantics="pressed"
+              label={t('viewLabel')}
+              value={view}
+              onValueChange={(v) => setView(v as 'map' | 'list')}
+              options={[
+                { value: 'map', label: tNav('mapShort') },
+                { value: 'list', label: tNav('list') },
+              ]}
+            />
+          </div>
         </div>
-      </div>
 
-      {view === 'map' ? (
-        isPhone ? (
-          <>
+        {view === 'map' ? (
+          isPhone ? (
+            <>
+              <div className={m.canvas} data-zone-map-canvas="">
+                {canvas}
+                {/* Легенда — у тій самій рамці, одразу під мапою (дошка `Phone-Map-Legend`, варіант A). */}
+                <MapLegend variant="inMap" className={m.legendInMap} />
+                {hint}
+              </div>
+              {cardSlot}
+              {/* Вибрано пояс — картки «Зараз» немає: вікно поясу стоїть одразу під мапою (правка власника 2026-11-03). */}
+              {selectedZoneId ? null : (
+                <MapNowCard
+                  zones={ordered}
+                  stateOf={stateOf}
+                  onSelect={(id) => setSelection({ kind: 'zone', id })}
+                />
+              )}
+            </>
+          ) : (
+            // Десктоп: мапа на всю ширину блоку, легенда — рядком під нею (рішення власника 2026-11-04); черга — у «Списку».
             <div className={m.canvas} data-zone-map-canvas="">
               {canvas}
-              {/* Легенда — у тій самій рамці, одразу під мапою (дошка `Phone-Map-Legend`, варіант A). */}
-              <MapLegend variant="inMap" className={m.legendInMap} />
+              <MapLegend variant="row" className={m.legendRow} />
               {hint}
             </div>
-            {cardSlot}
-            {/* Вибрано пояс — картки «Зараз» немає: вікно поясу стоїть одразу під мапою (правка власника 2026-11-03). */}
-            {selectedZoneId ? null : <MapNowCard zones={ordered} stateOf={stateOf} onSelect={(id) => setSelection({ kind: 'zone', id })} />}
-          </>
+          )
         ) : (
-          <div className={m.canvas} data-zone-map-canvas="">
-            <div className={m.mapCol}>{canvas}</div>
-            <div className={m.side}>
-              <MapQueue
-                zones={ordered}
-                stateOf={stateOf}
-                selectedId={selectedZoneId}
-                onSelect={(id) => setSelection({ kind: 'zone', id })}
-                onPreview={setPreviewId}
-              />
-              {hint}
-            </div>
-          </div>
-        )
-      ) : (
-        <ZoneListView zones={ordered} stateOf={stateOf} phone={isPhone} />
-      )}
+          <ZoneListView zones={ordered} stateOf={stateOf} phone={isPhone} />
+        )}
 
-      {/* Вікно поясу чи країни з мапи — лише у вигляді «Мапа»; у «Списку» пояс розгортається у своєму рядку. */}
-      {view === 'map' && !isPhone ? cardSlot : null}
-    </section>
+        {/* Вікно поясу чи країни з мапи — лише у вигляді «Мапа»; у «Списку» пояс розгортається у своєму рядку. */}
+        {view === 'map' && !isPhone ? cardSlot : null}
+      </section>
+    </MapScheduleContext.Provider>
   );
 }
 
@@ -865,7 +977,8 @@ function ZoneGroup({
       .join(', '),
     state: t(`state.${state}`),
   });
-  const hot = (iso: string) => hotCountry === `${g.zoneId}:${iso}` || pickedCountry === `${g.zoneId}:${iso}`;
+  const hot = (iso: string) =>
+    hotCountry === `${g.zoneId}:${iso}` || pickedCountry === `${g.zoneId}:${iso}`;
   const pick = (iso: string) => (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     onSelectCountry(iso);
@@ -931,9 +1044,26 @@ function ZoneGroup({
 }
 
 /** Кнопка масштабу мапи (квадрат 32 px; `aria-label` — дія). */
-function ZoomButton({ label, disabled, onClick, children }: { label: string; disabled?: boolean; onClick: () => void; children: ReactNode }) {
+function ZoomButton({
+  label,
+  disabled,
+  onClick,
+  children,
+}: {
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
   return (
-    <button type="button" aria-label={label} title={label} disabled={disabled} onClick={onClick} className={cn('t2f-focus', m.zoomBtn)}>
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      disabled={disabled}
+      onClick={onClick}
+      className={cn('t2f-focus', m.zoomBtn)}
+    >
       {children}
     </button>
   );

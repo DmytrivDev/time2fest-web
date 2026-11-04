@@ -151,27 +151,11 @@
     gap: var(--spacing-3);
   }
   .canvas {
-    display: flex;
-    align-items: stretch;
-    gap: var(--spacing-6);
     margin-top: 0;
     padding: var(--spacing-4);
   }
-  .mapCol {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
   .mapBox {
     border-radius: var(--radius-md);
-  }
-  .side {
-    display: flex;
-    flex: 0 0 260px; /* макет */
-    flex-direction: column;
-    gap: 14px; /* макет */
-  }
-  .hint {
-    margin-top: auto;
   }
 }
 
@@ -492,6 +476,10 @@
 /* Телефон: легенда в рамці мапи, одразу під нею (дошка `Phone-Map-Legend`, варіант A). */
 .legendInMap {
   margin: 10px 2px 2px;
+}
+/* Десктоп: легенда — рядком під мапою (дошка `Desk-Home-MapWidths`). */
+.legendRow {
+  margin: 12px 4px 0;
 }
 
 /* Підказка жестів (телефон, один раз; варіант 1 «м’яке затемнення»): легке затемнення мапи й два пальці — розходяться

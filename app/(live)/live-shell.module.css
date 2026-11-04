@@ -49,10 +49,10 @@
   .shell {
     padding: var(--spacing-6) var(--spacing-margin-mobile) 0;
   }
-  .top {
+  .shell {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
-    gap: var(--spacing-4);
+    column-gap: var(--spacing-4);
     align-items: start;
   }
   .chat {
@@ -69,10 +69,10 @@
   .shell {
     padding: var(--spacing-6) var(--spacing-margin-desktop) 0;
   }
-  .top {
+  .shell {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 340px;
-    gap: var(--spacing-6);
+    column-gap: var(--spacing-6);
     align-items: start;
   }
   .chat {
@@ -104,13 +104,38 @@
   height: 100%;
 }
 
-/* Чат сховано (FR-053): колонки немає, відео й усе під ним — на всю ширину. Вікно з полем введення (O-NICK тощо)
-   тимчасово повертає колонку: OverlayManager ставить `data-chat-forced`. */
+/* Колонка чату — вздовж усієї сторінки, разом із мапою під плеєром (рішення власника 2026-11-04, дошка
+   `Desk-Home-ChatColumn`): `.top` розчиняється в сітці `.shell`; основна колонка й широкий слот — ліворуч одна під одною,
+   чат — праворуч на обидва ряди й «липне» до верху екрана. Вікна (графік, пас, «Перший ряд») відкриваються в ній —
+   завжди поруч із кнопкою, хоч би де вона була. */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))),
+  (min-width: 1200px) {
+  .top {
+    display: contents;
+  }
+  .main,
+  .wide {
+    grid-column: 1;
+  }
+  .main {
+    grid-row: 1;
+  }
+  .wide {
+    grid-row: 2;
+  }
+  .chat {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+/* Чат сховано (FR-053): колонки немає, відео й усе під ним — на всю ширину. Вікно з полем введення (O-NICK тощо) чи
+   вікно пасу / графіка тимчасово повертає колонку: OverlayManager ставить `data-chat-forced`. */
 .chat[data-chat-hidden='true']:not([data-chat-forced='true']) {
   display: none;
 }
 @media (min-width: 768px) {
-  .top:has(> .chat[data-chat-hidden='true']:not([data-chat-forced='true'])) {
+  .shell:has(.chat[data-chat-hidden='true']:not([data-chat-forced='true'])) {
     grid-template-columns: minmax(0, 1fr);
   }
 }

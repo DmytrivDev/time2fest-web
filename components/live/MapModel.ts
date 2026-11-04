@@ -27,6 +27,8 @@ export interface MapCountry {
 /** Трансляція країни у вікні країни: місто з подією, що має відео. */
 export interface MapCountryStream {
   cityId: string;
+  /** Подія міста в цьому поясі — для «Додати в графік». */
+  eventId?: string;
   /** Що за трансляція: пам’ятка (`landmark`), інакше — місто. */
   place: string;
   city: string;
@@ -36,6 +38,8 @@ export interface MapCountryStream {
 /** Трансляція в поясі (вікно поясу, «Де дивитися»): місто з подією, що має відео. */
 export interface MapStream {
   cityId: string;
+  /** Подія міста в цьому поясі — для «Додати в графік». */
+  eventId?: string;
   city: string;
   iso: string;
   country: string;
@@ -118,7 +122,13 @@ export function buildMapModel(data: Dataset): MapModel {
       const quiet = events.find((e) => e.restrained)?.restrained?.note.uk;
       const firstRow = events.find((e) => e.firstRow?.saleEnabled);
       return {
-        streams: own.map((c) => ({ cityId: c.id, place: c.landmark?.uk ?? c.name.uk, city: c.name.uk, type: c.celebrationType })),
+        streams: own.map((c) => ({
+          cityId: c.id,
+          eventId: zoneEvents.find((e) => e.cityId === c.id)?.id,
+          place: c.landmark?.uk ?? c.name.uk,
+          city: c.name.uk,
+          type: c.celebrationType,
+        })),
         eventIds: events.map((e) => e.id),
         ...(quiet ? { quiet } : {}),
         ...(firstRow ? { firstRowEventId: firstRow.id } : {}),
@@ -144,7 +154,16 @@ export function buildMapModel(data: Dataset): MapModel {
       .map<MapStream | null>((c) => {
         const country = countries.find((k) => k.iso === c.countryIso);
         return country
-          ? { cityId: c.id, city: c.name.uk, iso: country.iso, country: country.name, flagCode: country.flagCode, href: country.href, type: c.celebrationType }
+          ? {
+              cityId: c.id,
+              eventId: zoneEvents.find((e) => e.cityId === c.id)?.id,
+              city: c.name.uk,
+              iso: country.iso,
+              country: country.name,
+              flagCode: country.flagCode,
+              href: country.href,
+              type: c.celebrationType,
+            }
           : null;
       })
       .filter((v): v is MapStream => v !== null)

@@ -88,7 +88,10 @@ test.describe('Клавіатура', () => {
         if (el.tagName === 'IFRAME') return { key: 'iframe', visible: true, outlined: true };
         const r = el.getBoundingClientRect();
         const cs = getComputedStyle(el);
+        // Пояс на мапі показує фокус кольором (як вибраний, без обвідки — рішення власника): `data-selected` на групі.
+        const zoneRing = el.matches('g[data-offset]') && el.getAttribute('data-selected') === 'true';
         const outlined =
+          zoneRing ||
           (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) ||
           cs.boxShadow !== 'none';
         const key = `${el.tagName}:${el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 30) ?? ''}`;

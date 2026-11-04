@@ -289,23 +289,25 @@ describe('ZoneMap: інше', () => {
     expect(view.container.querySelector('[data-map-now]')).toBeNull();
   });
 
-  it('десктоп: колонка — «Північ по черзі»: зараз, далі, ще 4; «Вже зустріли»; рядок вибирає пояс', () => {
+  it('десктоп: мапа на всю ширину, легенда рядком під нею; колонки «Північ по черзі» немає (рішення 2026-11-04)', () => {
     const { view } = setup({ layout: 'desktop' });
-    const queue = view.container.querySelector('[data-map-queue]')!;
-    const rows = queue.querySelectorAll('[data-queue-zone]');
-    expect(rows).toHaveLength(6);
-    expect(rows[0]).toHaveAttribute('data-queue-zone', 'utc+0000');
-    expect(rows[0]).toHaveTextContent('Зараз');
-    expect(rows[1]).toHaveAttribute('data-queue-zone', 'utc-0100');
-    expect(rows[1]).toHaveTextContent('Далі');
-    expect(queue.querySelector('[data-queue-past]')).toHaveTextContent(/Вже зустріли · \d+ пояс/);
-    expect(queue.querySelector('[data-map-city-key]')).toHaveTextContent('МістоТрансляція');
-    expect(view.container.querySelector('[data-map-legend]')).toBeNull();
-    fireEvent.click(rows[2]!);
-    // Вікно поясу — під мапою; черга лишається на місці.
-    expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc-0200');
-    expect(view.container.querySelector('[data-map-queue]')).not.toBeNull();
-    expect(rows[2]).toHaveAttribute('aria-pressed', 'true');
+    expect(view.container.querySelector('[data-map-queue]')).toBeNull();
+    const legend = view.container.querySelector('[data-zone-map-canvas] [data-map-legend="row"]')!;
+    for (const label of ['Наживо зараз', 'Найближча північ', 'Ще попереду', 'Вже зустріли', 'Місто', 'Трансляція']) expect(legend).toHaveTextContent(label);
+  });
+
+  it('картка трансляції, що ще попереду, — календарик «Додати в графік» (та сама дія, що в «Зараз і далі»)', () => {
+    const calls: [string, boolean][] = [];
+    const { view } = setup({ layout: 'desktop', onToggleSchedule: (id, next) => calls.push([id, next]) });
+    fireEvent.click(view.container.querySelector<SVGGElement>('g[data-zone="utc-0500"]')!);
+    const cal = view.container.querySelector<HTMLButtonElement>(`${OPEN_PANEL} [data-schedule-toggle]`)!;
+    expect(cal).toHaveAttribute('aria-pressed', 'false');
+    expect(cal.getAttribute('aria-label')).toMatch(/Додати в графік: Нью-Йорк/);
+    fireEvent.click(cal);
+    expect(calls).toEqual([[cal.dataset.scheduleToggle, true]]);
+    // У поясі, що вже в ефірі, календарика немає.
+    fireEvent.click(view.container.querySelector<SVGGElement>('g[data-zone="utc+0000"]')!);
+    expect(view.container.querySelector(`${OPEN_PANEL} [data-schedule-toggle]`)).toBeNull();
   });
 
   it('UTC — лише в картці поясу й у «Зараз» під мапою: на самій мапі й у назвах шляхів його немає', () => {

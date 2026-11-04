@@ -16,7 +16,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from './MapModel';
-import { PlayMark, Slider, StateBadge } from './ZonePanel';
+import { PlayMark, ScheduleButton, Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
 
@@ -350,10 +350,15 @@ function StreamCard({
       </div>
       <div className={cn(zp.cardCity, m.cardPlace)}>{stream.place}</div>
       <div className={m.cardSub}>{stream.city}</div>
-      <NextLink href={href} className={cn('t2f-focus', zp.cardBtn, live && zp.cardBtnLive)}>
-        <PlayMark tone={mode} />
-        {live ? t('watch') : mode === 'replay' ? t('watchReplay') : tc('openStream')}
-      </NextLink>
+      <div className={zp.cardActions}>
+        <NextLink href={href} className={cn('t2f-focus', zp.cardBtn, live && zp.cardBtnLive)}>
+          <PlayMark tone={mode} />
+          {live ? t('watch') : mode === 'replay' ? t('watchReplay') : tc('openStream')}
+        </NextLink>
+        {mode === 'upcoming' ? (
+          <ScheduleButton eventId={stream.eventId} city={stream.city} />
+        ) : null}
+      </div>
     </li>
   );
 }
