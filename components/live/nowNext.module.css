@@ -509,10 +509,3 @@
   pointer-events: none;
   user-select: none;
 }
-
-/* `EventFilter responsive`: на телефоні — без іконок, окрім замка (CSS, щоб вигляд був правильний із першого кадру). */
-@media (max-width: 767.98px) {
-  .filterResponsive .segIcon {
-    display: none;
-  }
-}

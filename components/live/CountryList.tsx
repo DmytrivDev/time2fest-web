@@ -327,7 +327,6 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       }}
       scheduleLocked={!hasPass}
       scheduleCount={scheduleCount}
-      responsive
       label={t('filterLabel')}
       className={cn(styles.filter, styles.filterResp)}
     />

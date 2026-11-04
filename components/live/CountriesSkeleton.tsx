@@ -67,7 +67,7 @@ export function CountriesSkeleton() {
           <input readOnly tabIndex={-1} placeholder={t('searchLabel')} className={styles.searchInput} />
         </div>
         <div className={styles.controls}>
-          <EventFilter value="all" onValueChange={noop} scheduleLocked={!hasPass} responsive className={cn(styles.filter, styles.filterResp)} />
+          <EventFilter value="all" onValueChange={noop} scheduleLocked={!hasPass} className={cn(styles.filter, styles.filterResp)} />
           <div className={cn(nn.filter, styles.viewCtl)}>
             <span className={nn.seg} data-state="off">
               {tNav('mapShort')}

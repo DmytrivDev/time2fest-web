@@ -178,7 +178,6 @@ export function NowNext({
       onValueChange={setFilter}
       scheduleLocked={scheduleLocked}
       scheduleCount={scheduleCount}
-      stack={stack}
       className={cn(stack && s.filterFull)}
     />
   );
