@@ -91,8 +91,14 @@ function measureTop(video = false): number {
     });
   if (!bottom) {
     const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
-    const fallback = slot ?? document.querySelector<HTMLElement>('header');
-    if (fallback) bottom = fallback.getBoundingClientRect().bottom;
+    if (slot) bottom = slot.getBoundingClientRect().bottom;
+    else {
+      // Сторінка без плеєра («Країни й міста»): шторки й чат — на тому рівні, де було б відео 16:9 під шапкою (правка
+      // власника 2026-11-04), а не одразу під шапкою: над шторкою лишається видно сторінку, її зручно гортати.
+      const header = document.querySelector<HTMLElement>('header');
+      const top = header ? header.getBoundingClientRect().bottom : 0;
+      bottom = top + Math.round((window.innerWidth * 9) / 16);
+    }
   }
   // Положення на початку сторінки (не за прокруткою): нічого не липне, чат займає місце під смугою при scrollTop = 0.
   // +2 px: нижня рамка смуги «Перший ряд» лишається видно над шторкою (правка власника 2026-11-02).

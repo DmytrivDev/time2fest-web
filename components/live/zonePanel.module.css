@@ -668,3 +668,14 @@
   width: 26px;
   height: 26px;
 }
+/* Телефон: ховера немає — плитки без зайвих бокових відступів, влазить більше назви (правка власника 2026-11-04). */
+.tilesPhone .tile {
+  gap: 8px;
+  padding-inline: 2px;
+}
+.tilesPhone .tileWithCal .tile {
+  padding-right: 34px;
+}
+.tilesPhone .tileCal {
+  right: -4px;
+}

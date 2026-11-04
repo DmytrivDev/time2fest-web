@@ -324,7 +324,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
         if (v !== 'all') setView('list');
       }}
       data-row="filter"
-      className={cn(nn.filter, styles.filter, phone && styles.filterPhone)}
+      className={cn(nn.filter, styles.filter, phone && styles.filterPhone, phone && styles.filterByText)}
     >
       <ToggleGroup.Item value="all" className={cn('t2f-focus', nn.seg)}>
         {tNN('filterAll')}
@@ -349,7 +349,10 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       label={t('viewLabel')}
       semantics="pressed"
       value={view}
-      onValueChange={(v) => setView(v === 'map' ? 'map' : 'list')}
+      onValueChange={(v) => {
+        setView(v === 'map' ? 'map' : 'list');
+        if (v === 'map') setFilter('all');
+      }}
       options={[
         { value: 'map', label: tNav('mapShort') },
         { value: 'list', label: tNav('list') },
@@ -362,16 +365,34 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       <div data-countries-page="" className={cn(styles.page, className)}>
         <header className={styles.head}>
           <div className="min-w-0 flex-1">
-            {/* Телефон: «Мапа | Список» — у рядку заголовка, фільтр — на всю ширину (без «драбинки»). */}
-            <div className={styles.titleRow}>
-              <h1 className="text-headline-md text-text">{t('title')}</h1>
-              {phone ? viewControl : null}
-            </div>
+            <h1 className="text-headline-md text-text">{t('title')}</h1>
             <p className="m-0 text-body text-text-secondary">{subtitle}</p>
           </div>
           {chatColumn && vis.hidden ? <ChatHiddenButton room="world" onShow={vis.show} /> : null}
         </header>
 
+        {/* Телефон: «Мапа | Список» — над пошуком на всю ширину, фільтр — теж на всю ширину (правка власника 2026-11-04). */}
+        {phone ? (
+          // Той самий вигляд, що фільтр під пошуком: дві рівні половини на всю ширину.
+          <div role="group" aria-label={t('viewLabel')} className={cn(nn.filter, styles.filterPhone)} data-row="view">
+            {(['map', 'list'] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                aria-pressed={view === v}
+                data-state={view === v ? 'on' : 'off'}
+                className={cn('t2f-focus', nn.seg)}
+                onClick={() => {
+                  setView(v);
+                  // На «Мапі» фільтр не діє — повертаємо «Усі» (правка власника 2026-11-04).
+                  if (v === 'map') setFilter('all');
+                }}
+              >
+                {v === 'map' ? tNav('mapShort') : tNav('list')}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div className={styles.toolbar}>
           <div className={styles.search}>
             <Icon name="search" size={18} className={styles.searchIcon} />

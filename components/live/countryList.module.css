@@ -20,12 +20,6 @@
   gap: var(--spacing-4);
 }
 
-.titleRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
 
 /* Пошук, фільтр, «Мапа | Список» — одним рядком; на телефоні — пошук на всю ширину, далі кнопки. */
 .toolbar {
@@ -56,6 +50,11 @@
   flex: 1 1 0;
   min-width: 0;
   padding-inline: 6px;
+}
+/* Фільтр під пошуком: частини за шириною напису, разом — на всю ширину (правка власника 2026-11-04). */
+.filterByText > * {
+  flex: 1 1 auto;
+  padding-inline: 10px;
 }
 .search {
   position: relative;
