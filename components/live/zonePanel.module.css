@@ -297,6 +297,18 @@
 .trackPhone > li {
   flex: 0 0 240px;
 }
+/* Обрізана картка не впирається в рамку вікна й не «перериває» її лінію: біля самих країв стрічки (у межах відступу
+   вікна) картки м’яко згасають (правка власника 2026-11-04). */
+.track,
+.shelfPhone {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+/* Десктоп: ліворуч стрічка — по краю колонки, згасає лише правий край. */
+.track:not(.trackPhone) {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 12px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 12px), transparent);
+}
 /* Телефон: стрічки доходять до країв вікна; проміжок між картками = відступ вікна (16 px), тож після гортання зліва
    не видно шматка попередньої картки (правка власника 2026-11-03). */
 .track.trackPhone,

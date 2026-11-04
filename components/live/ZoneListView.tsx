@@ -44,12 +44,10 @@ export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
   const startIdx = byMidnight.findIndex((z) => stateOf(z.id) !== 'past');
   const shown = startIdx < 0 ? [] : byMidnight.slice(startIdx, startIdx + 1 + AHEAD);
   const past = (startIdx < 0 ? byMidnight : byMidnight.slice(0, startIdx)).reverse();
-  const leadId = shown[0]?.id ?? null;
-  // `auto` — відкритий пояс, що зараз перший (наживо); клік фіксує вибір, повторний — згортає.
-  const [picked, setPicked] = useState<string | null | 'auto'>('auto');
-  const openId = picked === 'auto' ? leadId : picked;
+  // Спершу всі рядки згорнуті (правка власника 2026-11-04); клік розгортає один, повторний — згортає.
+  const [openId, setOpenId] = useState<string | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
-  const toggle = (id: string) => setPicked(openId === id ? null : id);
+  const toggle = (id: string) => setOpenId(openId === id ? null : id);
   const row = (z: MapZone) => (
     <ZoneRow key={z.id} zone={z} state={stateOf(z.id)} phone={phone} open={openId === z.id} onToggle={() => toggle(z.id)} panelId={`${uid}-${z.id}`} />
   );

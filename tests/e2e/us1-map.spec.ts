@@ -142,7 +142,7 @@ test.describe('Мапа поясів: телефон', () => {
     expect(box.height).toBeGreaterThanOrEqual(44);
   });
 
-  test('«Мапа | Список»: список — пояс наживо розгорнутий, клік по рядку розгортає інший', async ({ page }) => {
+  test('«Мапа | Список»: список — спершу всі рядки згорнуті, клік розгортає один, інший — замість нього', async ({ page }) => {
     const m = await openMap(page);
     const view = m.getByRole('group', { name: 'Вигляд' });
     await expect(view.getByRole('button', { name: 'Мапа' })).toHaveAttribute('aria-pressed', 'true');
@@ -151,6 +151,8 @@ test.describe('Мапа поясів: телефон', () => {
     const rows = m.locator('[data-zone-list] > ul > [data-zone-row]');
     await expect(rows).toHaveCount(6);
     const first = rows.first();
+    await expect(first.locator('> button')).toHaveAttribute('aria-expanded', 'false');
+    await first.locator('> button').click();
     await expect(first.locator('> button')).toHaveAttribute('aria-expanded', 'true');
     await expect(first.locator('[data-zone-panel]')).toBeVisible();
     await rows.nth(1).locator('> button').click();

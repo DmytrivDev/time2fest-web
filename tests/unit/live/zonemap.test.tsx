@@ -237,11 +237,13 @@ describe('ZoneMap: інше', () => {
     expect(view.container.querySelector('svg[data-zone-map-svg]')).not.toBeNull();
   });
 
-  it('«Список»: пояс наживо й 5 найближчих, наживо розгорнутий; клік розгортає інший; «Вже зустріли» згорнуто', () => {
+  it('«Список»: пояс наживо й 5 найближчих, спершу всі згорнуті; клік розгортає один; «Вже зустріли» згорнуто', () => {
     const { view } = setup({ defaultView: 'list' });
     const rows = [...view.container.querySelectorAll<HTMLElement>('[data-zone-list] > ul > [data-zone-row]')];
     expect(rows.map((r) => r.dataset.zoneRow)).toEqual(['utc+0000', 'utc-0100', 'utc-0200', 'utc-0300', 'utc-0330', 'utc-0400']);
     const btn = (id: string) => view.container.querySelector<HTMLButtonElement>(`[data-zone-row="${id}"] > button`)!;
+    for (const r of rows) expect(r.querySelector(':scope > button')).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(btn('utc+0000'));
     expect(btn('utc+0000')).toHaveAttribute('aria-expanded', 'true');
     expect(view.container.querySelector('[data-zone-row="utc+0000"] [data-zone-panel]')).not.toBeNull();
     // Без стрілок до сусідів і «×».
