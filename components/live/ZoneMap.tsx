@@ -66,7 +66,8 @@ export interface ZoneMapProps {
 type Selection =
   | { kind: 'zone'; id: string }
   | { kind: 'city'; id: string }
-  | { kind: 'country'; zoneId: string; iso: string }
+  /** `fromZone` — відкрито кліком по країні у вікні поясу (вікно змінилось на місці). */
+  | { kind: 'country'; zoneId: string; iso: string; fromZone?: boolean }
   | null;
 
 const PHONE_QUERY = '(max-width: 767.98px)';
@@ -465,6 +466,7 @@ export function ZoneMap({
           onSelectZone={(id) => setSelection({ kind: 'zone', id })}
           onSelectCountryZone={(zoneId) => selectCountry(zoneId, panelCountry.iso)}
           onClose={closeSelection}
+          takeFocus={selection?.kind === 'country' && !!selection.fromZone}
         />
       ) : (
         <ZonePanel
@@ -475,6 +477,9 @@ export function ZoneMap({
           next={panelIdx > 0 ? ordered[panelIdx - 1] : undefined}
           phone={isPhone}
           onSelect={(id) => setSelection({ kind: 'zone', id })}
+          onSelectCountry={(iso) =>
+            setSelection({ kind: 'country', zoneId: panelZone.id, iso, fromZone: true })
+          }
           onClose={closeSelection}
         />
       )}

@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import type { Ref } from 'react';
+import { useEffect, useRef, type Ref } from 'react';
 import { snapshot } from '@/components/firstrow/controller';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -56,12 +56,33 @@ export interface CountryPanelProps {
   /** Наступна північ після цієї (для «вже зустріли»). */
   nextZone?: MapZone;
   phone: boolean;
-  /** «Відкрити пояс», «Наступна північ» — вікно поясу на тому ж місці. */
+  /** «‹ До поясу», «Наступна північ» — вікно поясу на тому ж місці. */
   onSelectZone: (id: string) => void;
   /** Кнопка іншого поясу країни. */
   onSelectCountryZone: (zoneId: string) => void;
   onClose: () => void;
+  /** Усередині рядка вкладки «Список»: без своєї рамки й «×» — назад до поясу веде кнопка «‹ До поясу». */
+  embedded?: boolean;
+  /** Чи можна перейти до іншого поясу країни (у «Списку» — лише до поясів, що є рядками). */
+  canSelectZone?: (zoneId: string) => boolean;
+  /** Вікно відкрили з вікна поясу (клік по країні): фокус — на «‹ До поясу», верх вікна — у полі зору. */
+  takeFocus?: boolean;
   ref?: Ref<HTMLElement>;
+}
+
+/** Утримати верх вікна в полі зору й поставити фокус на кнопку (вікно змінилось на місці — фокус не губиться). */
+export function useTakeFocus(active: boolean, key: string) {
+  const btn = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!active) return;
+    const el = btn.current;
+    if (!el) return;
+    const box = el.closest('section');
+    const top = box?.getBoundingClientRect().top ?? 0;
+    if (top < 0) window.scrollBy({ top: top - 16 });
+    el.focus({ preventScroll: true });
+  }, [active, key]);
+  return btn;
 }
 
 /**
@@ -80,8 +101,12 @@ export function CountryPanel({
   onSelectZone,
   onSelectCountryZone,
   onClose,
+  embedded = false,
+  canSelectZone,
+  takeFocus = false,
   ref,
 }: CountryPanelProps) {
+  const zoneBtnRef = useTakeFocus(takeFocus, `${zone.id}:${country.iso}`);
   const t = useTranslations('liveMap.country');
   const viewerIso = useGuestStore((g) => g.flagCode);
   const now = useNow();
@@ -109,22 +134,31 @@ export function CountryPanel({
       ) : null}
     </span>
   );
+  // «‹ До поясу UTC+1» — назад до вікна поясу на тому самому місці (правка власника 2026-11-04).
   const zoneBtn = (
     <button
+      ref={zoneBtnRef}
       type="button"
       className={cn('t2f-focus', zp.navBtn, m.zoneBtn)}
-      aria-label={t('openZoneAria', { offset })}
+      aria-label={t('toZoneAria', { offset })}
       onClick={() => onSelectZone(zone.id)}
+      data-to-zone={zone.id}
     >
+      <Icon name="chevron-left" size={16} />
+      <span className={zp.navWord}>{t('toZone')}</span>
       <StateSwatch state={state} className={m.zoneSw} />
       <b>{offset}</b>
-      <span className={zp.navWord}>· {t('openZone')}</span>
-      <Icon name="chevron-right" size={16} />
     </button>
   );
   const chips =
     zones.length > 1 ? (
-      <ZoneChips zones={zones} current={zone.id} phone={phone} onSelect={onSelectCountryZone} />
+      <ZoneChips
+        zones={zones}
+        current={zone.id}
+        phone={phone}
+        onSelect={onSelectCountryZone}
+        canSelect={canSelectZone}
+      />
     ) : null;
   const time = <CountryTime zone={zone} state={state} phone={phone} />;
   const watch = (
@@ -194,21 +228,27 @@ export function CountryPanel({
   return (
     <section
       ref={ref}
-      className={cn(zp.panel, m.panel, phone && zp.phone, phone && m.phone)}
+      className={cn(
+        zp.panel,
+        m.panel,
+        phone && zp.phone,
+        phone && m.phone,
+        embedded && zp.embedded,
+        embedded && m.embedded,
+      )}
       data-country-panel={country.iso}
       data-zone-id={zone.id}
       data-state={state}
       aria-label={t('aria', { country: country.name })}
     >
-      {close}
+      {embedded ? null : close}
       {phone ? (
         <>
+          {/* «‹ До поясу» — угорі, як «назад» (правка власника 2026-11-04); «×» — у тому самому рядку праворуч. */}
+          <div className={m.backRow}>{zoneBtn}</div>
           <div className={m.headPhone}>{title}</div>
           {chips}
-          <div className={m.timeTile}>
-            {time}
-            <div className={m.timeZone}>{zoneBtn}</div>
-          </div>
+          <div className={m.timeTile}>{time}</div>
           {watch}
           {next}
           {room}
@@ -241,11 +281,13 @@ function ZoneChips({
   current,
   phone,
   onSelect,
+  canSelect,
 }: {
   zones: readonly CountryZoneChip[];
   current: string;
   phone: boolean;
   onSelect: (id: string) => void;
+  canSelect?: (id: string) => boolean;
 }) {
   const t = useTranslations('liveMap.country');
   const tState = useTranslations('liveMap.panel.state');
@@ -264,6 +306,7 @@ function ZoneChips({
                 state: tState(z.state),
               })}
               data-country-zone={z.id}
+              disabled={z.id !== current && canSelect ? !canSelect(z.id) : undefined}
               onClick={() => onSelect(z.id)}
             >
               <StateSwatch state={z.state} className={m.chipSw} />

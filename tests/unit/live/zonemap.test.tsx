@@ -136,7 +136,7 @@ describe('ZoneMap: вікно країни (рішення власника 2026
   const land = (view: ReturnType<typeof setup>['view'], zoneId: string, iso: string) =>
     view.container.querySelector<SVGPathElement>(`g[data-zone="${zoneId}"] path[data-iso="${iso}"]`)!;
 
-  it('клік по суші — вікно країни, по океану — вікно поясу; «Відкрити пояс» міняє вікно на пояс', () => {
+  it('клік по суші — вікно країни, по океану — вікно поясу; «‹ До поясу» міняє вікно на пояс', () => {
     const { view } = setup({ layout: 'desktop' });
     fireEvent.click(land(view, 'utc+0000', 'GB'));
     const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
@@ -145,7 +145,7 @@ describe('ZoneMap: вікно країни (рішення власника 2026
     // Країна підсвічена, поки відкрите її вікно.
     expect(land(view, 'utc+0000', 'GB')).toHaveAttribute('data-hot', 'true');
     expect(panel.querySelector('[data-stream-card]')).not.toBeNull();
-    fireEvent.click(panel.querySelector<HTMLButtonElement>('button[aria-label="Відкрити пояс UTC+0"]')!);
+    fireEvent.click(panel.querySelector<HTMLButtonElement>('button[aria-label="До поясу UTC+0"]')!);
     expect(view.container.querySelector(OPEN_COUNTRY)).toBeNull();
     expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc+0000');
     const band = view.container.querySelector<SVGPathElement>('[data-zone-band="utc-0500"]');
@@ -154,6 +154,40 @@ describe('ZoneMap: вікно країни (рішення власника 2026
       expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc-0500');
     }
   });
+
+  it('вікно поясу: клік по країні — вікно країни на місці (посилання лишається); «‹ До поясу» повертає пояс', () => {
+    const { view } = setup({ layout: 'desktop' });
+    fireEvent.click(view.container.querySelector<SVGGElement>('g[data-zone="utc+0000"]')!);
+    const card = view.container.querySelector<HTMLAnchorElement>(`${OPEN_PANEL} [data-country-card="GB"]`)!;
+    expect(card).toHaveAttribute('href', expect.stringMatching(/^\/country\//));
+    // Клік із Ctrl — нативний (нова вкладка): вікно не змінюється.
+    fireEvent.click(card, { ctrlKey: true });
+    expect(view.container.querySelector(OPEN_COUNTRY)).toBeNull();
+    fireEvent.click(card);
+    const panel = view.container.querySelector<HTMLElement>(OPEN_COUNTRY)!;
+    expect(panel).toHaveAttribute('data-country-panel', 'GB');
+    const back = panel.querySelector<HTMLButtonElement>('[data-to-zone="utc+0000"]')!;
+    expect(back).toHaveTextContent('До поясуUTC+0');
+    expect(back).toHaveFocus();
+    fireEvent.click(back);
+    expect(view.container.querySelector(OPEN_PANEL)).toHaveAttribute('data-zone-panel', 'utc+0000');
+    // Плитка «за регіонами» — так само.
+    fireEvent.click(view.container.querySelector<HTMLAnchorElement>(`${OPEN_PANEL} [data-country-tile="PT"]`)!);
+    expect(view.container.querySelector(OPEN_COUNTRY)).toHaveAttribute('data-country-panel', 'PT');
+  });
+
+  it('«Список»: клік по країні в рядку — вікно країни в тому самому рядку, без «×»; «‹ До поясу» повертає пояс', () => {
+    const { view } = setup({ defaultView: 'list' });
+    const row = () => view.container.querySelector<HTMLElement>('[data-zone-row="utc+0000"]')!;
+    fireEvent.click(row().querySelector<HTMLButtonElement>(':scope > button')!);
+    fireEvent.click(row().querySelector<HTMLAnchorElement>('[data-country-card="GB"]')!);
+    const panel = row().querySelector<HTMLElement>('[data-country-panel="GB"]')!;
+    expect(panel).not.toBeNull();
+    expect(panel.querySelector('button[aria-label="Закрити"]')).toBeNull();
+    fireEvent.click(panel.querySelector<HTMLButtonElement>('[data-to-zone="utc+0000"]')!);
+    expect(row().querySelector('[data-country-panel]')).toBeNull();
+    expect(row().querySelector('[data-zone-panel="utc+0000"]')).not.toBeNull();
+  }, 15_000);
 
   it('країна в кількох поясах: вікно — для поясу кліку, кнопки поясів перемикають', () => {
     const { view } = setup({ layout: 'desktop' });

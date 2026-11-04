@@ -2,13 +2,15 @@
 
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock } from '@/lib/i18n/time';
+import { useNow } from '@/lib/time/TimeProvider';
+import { CountryPanel } from './CountryPanel';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapZone } from './MapModel';
 import { ZonePanel } from './ZonePanel';
@@ -46,11 +48,69 @@ export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
   const past = (startIdx < 0 ? byMidnight : byMidnight.slice(0, startIdx)).reverse();
   // Спершу всі рядки згорнуті (правка власника 2026-11-04); клік розгортає один, повторний — згортає.
   const [openId, setOpenId] = useState<string | null>(null);
+  // Клік по країні в розгорнутому рядку — вікно країни в тому самому рядку; «‹ До поясу» повертає пояс.
+  const [countryIso, setCountryIso] = useState<string | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
-  const toggle = (id: string) => setOpenId(openId === id ? null : id);
-  const row = (z: MapZone) => (
-    <ZoneRow key={z.id} zone={z} state={stateOf(z.id)} phone={phone} open={openId === z.id} onToggle={() => toggle(z.id)} panelId={`${uid}-${z.id}`} />
+  const now = useNow();
+  const listed = new Set([...shown, ...past].map((z) => z.id));
+  const toggle = (id: string) => {
+    setOpenId(openId === id ? null : id);
+    setCountryIso(null);
+  };
+  const openZone = (id: string, iso: string | null = null) => {
+    if (!listed.has(id)) return;
+    if (past.some((z) => z.id === id)) setPastOpen(true);
+    setOpenId(id);
+    setCountryIso(iso);
+  };
+  const nextZone = zones.reduce<MapZone | undefined>(
+    (best, z) => (z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best),
+    undefined,
   );
+  const row = (z: MapZone) => {
+    const open = openId === z.id;
+    const country = open && countryIso ? z.countries.find((c) => c.iso === countryIso) : undefined;
+    return (
+      <ZoneRow
+        key={z.id}
+        zone={z}
+        state={stateOf(z.id)}
+        phone={phone}
+        open={open}
+        onToggle={() => toggle(z.id)}
+        panelId={`${uid}-${z.id}`}
+      >
+        {country ? (
+          <CountryPanel
+            embedded
+            takeFocus
+            zone={z}
+            country={country}
+            state={stateOf(z.id)}
+            zones={zones
+              .filter((k) => k.countries.some((c) => c.iso === country.iso))
+              .map((k) => ({ id: k.id, offsetMinutes: k.offsetMinutes, state: stateOf(k.id) }))}
+            nextZone={nextZone}
+            phone={phone}
+            onSelectZone={(id) => openZone(id)}
+            onSelectCountryZone={(id) => openZone(id, country.iso)}
+            canSelectZone={(id) => listed.has(id)}
+            onClose={() => setCountryIso(null)}
+          />
+        ) : (
+          <ZonePanel
+            zone={z}
+            state={stateOf(z.id)}
+            phone={phone}
+            embedded
+            onSelect={() => undefined}
+            onSelectCountry={(iso) => setCountryIso(iso)}
+            onClose={() => toggle(z.id)}
+          />
+        )}
+      </ZoneRow>
+    );
+  };
   return (
     <div className={cn(m.list, phone && m.phone)} data-zone-list="">
       <ul className={m.rows} aria-label={t('aria')}>
@@ -70,7 +130,8 @@ export function ZoneListView({ zones, stateOf, phone }: ZoneListViewProps) {
             <span className={m.pastLabel}>{t('past', { count: past.length })}</span>
             {phone ? null : (
               <span className={m.meta}>
-                {utcLabel(past[0]!.offsetMinutes)} … {utcLabel(past[past.length - 1]!.offsetMinutes)}
+                {utcLabel(past[0]!.offsetMinutes)} …{' '}
+                {utcLabel(past[past.length - 1]!.offsetMinutes)}
               </span>
             )}
             <Icon name={pastOpen ? 'chevron-up' : 'chevron-down'} size={16} className={m.chev} />
@@ -97,6 +158,7 @@ function ZoneRow({
   open,
   onToggle,
   panelId,
+  children,
 }: {
   zone: MapZone;
   state: ZoneState;
@@ -104,12 +166,17 @@ function ZoneRow({
   open: boolean;
   onToggle: () => void;
   panelId: string;
+  /** Уміст розгорнутого рядка: вікно поясу або (після кліку по країні) вікно країни. */
+  children: ReactNode;
 }) {
   const t = useTranslations('liveMap.list');
   const locale = useLocale();
   const offset = utcLabel(zone.offsetMinutes);
   const time = formatClock(zone.midnightMs, { locale });
-  const first = [...zone.countries.filter((c) => !NOT_FIRST.has(c.iso)), ...zone.countries.filter((c) => NOT_FIRST.has(c.iso))];
+  const first = [
+    ...zone.countries.filter((c) => !NOT_FIRST.has(c.iso)),
+    ...zone.countries.filter((c) => NOT_FIRST.has(c.iso)),
+  ];
   const names = first.slice(0, DESK_NAMES).map((c) => c.name);
   const moreNames = zone.countries.length - names.length;
   const flags = first.slice(0, phone ? PHONE_FLAGS : DESK_NAMES);
@@ -137,7 +204,13 @@ function ZoneRow({
   );
   return (
     <li className={cn(m.item, open && m.itemOpen)} data-zone-row={zone.id} data-state={state}>
-      <button type="button" className={cn('t2f-focus', m.head)} aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
+      <button
+        type="button"
+        className={cn('t2f-focus', m.head)}
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={onToggle}
+      >
         <StateSwatch state={state} className={m.sw} />
         {phone ? (
           <>
@@ -148,13 +221,17 @@ function ZoneRow({
             <Icon name={open ? 'chevron-up' : 'chevron-down'} size={16} className={m.chev} />
             <span className={m.line2}>
               {flagStack}
-              {moreFlags > 0 ? <span className={m.more}>{t('more', { count: moreFlags })}</span> : null}
+              {moreFlags > 0 ? (
+                <span className={m.more}>{t('more', { count: moreFlags })}</span>
+              ) : null}
             </span>
           </>
         ) : (
           <>
             {when}
-            <span className={m.tagSlot}>{tag ? <span className={cn(m.tag, m[`tag_${state}`])}>{tag}</span> : null}</span>
+            <span className={m.tagSlot}>
+              {tag ? <span className={cn(m.tag, m[`tag_${state}`])}>{tag}</span> : null}
+            </span>
             {flagStack}
             <span className={m.names}>
               {names.join(' · ')}
@@ -167,10 +244,8 @@ function ZoneRow({
         )}
       </button>
       <Reveal open={open}>
-        <div id={panelId}>
-          {/* Уміст вікна поясу з мапи — той самий компонент, без шапки (сусіди — рядки поруч, згорнути — клік по рядку). */}
-          <ZonePanel zone={zone} state={state} phone={phone} embedded onSelect={() => undefined} onClose={onToggle} />
-        </div>
+        {/* Уміст вікна поясу чи країни з мапи — ті самі компоненти, без рамки (згорнути — клік по рядку). */}
+        <div id={panelId}>{children}</div>
       </Reveal>
     </li>
   );

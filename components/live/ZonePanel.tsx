@@ -56,6 +56,11 @@ export interface ZonePanelProps {
   phone: boolean;
   onSelect: (id: string) => void;
   onClose: () => void;
+  /**
+   * Клік по країні (картка чи плитка) — вікно країни на тому самому місці (рішення власника 2026-11-04). Посилання на
+   * сторінку країни лишаються: клік із Ctrl / Cmd / Shift чи середньою кнопкою відкриває сторінку.
+   */
+  onSelectCountry?: (iso: string) => void;
   /** Усередині рядка вкладки «Список»: шапки з назвою, стрілками й «×» немає — лише стан і «ваш пояс». */
   embedded?: boolean;
   ref?: Ref<HTMLElement>;
@@ -74,6 +79,7 @@ export function ZonePanel({
   phone,
   onSelect,
   onClose,
+  onSelectCountry,
   embedded = false,
   ref,
 }: ZonePanelProps) {
@@ -191,7 +197,7 @@ export function ZonePanel({
           )}
         </div>
       </div>
-      <Countries zone={zone} state={state} phone={phone} />
+      <Countries zone={zone} state={state} phone={phone} onSelectCountry={onSelectCountry} />
     </section>
   );
 }
@@ -530,7 +536,24 @@ function StreamCard({
 }
 
 /** Країни поясу: найпопулярніші — картками, усі інші — плитками за регіонами. Клік — сторінка країни. */
-function Countries({ zone, state, phone }: { zone: MapZone; state: ZoneState; phone: boolean }) {
+/** Звичайний клік лівою кнопкою без модифікаторів — у вікні; решта — нативно (нова вкладка, сторінка країни). */
+function inPlace(e: MouseEvent<HTMLAnchorElement>, iso: string, onSelect?: (iso: string) => void) {
+  if (!onSelect || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  onSelect(iso);
+}
+
+function Countries({
+  zone,
+  state,
+  phone,
+  onSelectCountry,
+}: {
+  zone: MapZone;
+  state: ZoneState;
+  phone: boolean;
+  onSelectCountry?: (iso: string) => void;
+}) {
   const t = useTranslations('liveMap.panel');
   const tR = useTranslations('liveMap.regions');
   const [more, setMore] = useState(false);
@@ -557,7 +580,12 @@ function Countries({ zone, state, phone }: { zone: MapZone; state: ZoneState; ph
       <ul className={cn(m.tiles, phone && m.tilesPhone)}>
         {g.list.map((c) => (
           <li key={c.iso}>
-            <NextLink href={c.href} className={cn('t2f-focus', m.tile)} data-country-tile={c.iso}>
+            <NextLink
+              href={c.href}
+              className={cn('t2f-focus', m.tile)}
+              data-country-tile={c.iso}
+              onClick={(e) => inPlace(e, c.iso, onSelectCountry)}
+            >
               <Flag code={c.flagCode} round diameter={22} decorative />
               <span className={m.tileName}>{c.name}</span>
               {streamIsos.has(c.iso) ? (
@@ -586,6 +614,7 @@ function Countries({ zone, state, phone }: { zone: MapZone; state: ZoneState; ph
               href={c.href}
               className={cn('t2f-focus', m.topCard)}
               data-country-card={c.iso}
+              onClick={(e) => inPlace(e, c.iso, onSelectCountry)}
             >
               <Flag code={c.flagCode} round diameter={40} decorative />
               <span className={m.topName}>{c.name}</span>

@@ -89,7 +89,7 @@ test.describe('Мапа поясів: телефон', () => {
     test.skip(testInfo.project.name !== 'phone', 'лише телефон');
   });
 
-  test('дотик до міста відкриває вікно його країни під мапою; «Відкрити пояс» — вікно поясу; сторінка не змінюється', async ({ page }) => {
+  test('дотик до міста відкриває вікно його країни під мапою; «‹ До поясу» — вікно поясу; сторінка не змінюється', async ({ page }) => {
     const m = await openMap(page);
     const url = page.url();
     const svg = m.locator('svg[data-zone-map-svg]');
@@ -103,8 +103,8 @@ test.describe('Мапа поясів: телефон', () => {
     const svgBox = (await svg.boundingBox())!;
     const box = (await country.boundingBox())!;
     expect(box.y).toBeGreaterThanOrEqual(svgBox.y + svgBox.height - 1);
-    // «Відкрити пояс» — вікно поясу на тому самому місці.
-    await country.getByRole('button', { name: 'Відкрити пояс UTC+0' }).click();
+    // «‹ До поясу» — вікно поясу на тому самому місці.
+    await country.getByRole('button', { name: 'До поясу UTC+0' }).click();
     const panel = m.locator(OPEN_PANEL);
     await expect(panel).toHaveAttribute('data-zone-panel', 'utc+0000');
     await expect(panel.locator('[data-country-card="GB"]')).toHaveAttribute('href', /\/country\//);
