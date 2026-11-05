@@ -5,7 +5,8 @@
  * Окремий блок під рядком дій плеєра (`StampBlock`), не вікно `OverlayManager`: вікна збоку його не прибирають.
  * Завжди розгорнутий, без згортання: зліва тонка смужка кольорів прапора, текст і кнопки; справа — листівка міста
  * з печаткою (`StampArt`, «старий» вигляд). На телефоні листівка на всю ширину згори, назва й країна — по центру.
- * «×» прибирає саме цей штамп (він лишається в «Мій паспорт»).
+ * «×» прибирає саме цей штамп (він лишається в «Мій паспорт»); без `onClose` хрестика немає (сторінка країни — штамп
+ * висить постійно, рішення 2026-11-05). Країна з кількома поясами — штамп за кожен пояс: пояс у підзаголовку й на печатці.
  *
  * Стани: `stamping` (удар штемпеля ≈ 0,6 с + конфеті — лише у `lively`), `multi` («Сідней · Мельбурн»),
  * `first-row` (подвійна жовта рамка), `save-failed`. Коралова «Поділитися» реєструється в `lib/overlay/coral`
@@ -35,6 +36,8 @@ export interface StampEntry {
   illustrationId: string;
   /** Номер місця в «Першому ряді», якщо гість там сидів. */
   firstRowSeat?: number;
+  /** Пояс («UTC−5») — лише для країн з кількома поясами. */
+  zone?: string;
 }
 
 export type StampSaveState = 'saved' | 'pending' | 'failed';
@@ -105,8 +108,9 @@ export function Stamp({
 
   const cities = stamps.map((s) => s.city);
   const placesShort = cities.length === 2 ? t('multi', { first: cities[0]!, second: cities[1]! }) : cities.join(' · ');
-  const countries = [...new Set(stamps.map((s) => s.countryName))].join(' · ');
-  const stampText = t('stamped', { city: placesShort.toLocaleUpperCase('uk') });
+  const zone = stamps.length === 1 ? first.zone : undefined;
+  const countries = [...new Set(stamps.map((s) => s.countryName))].join(' · ') + (zone ? ` · ${zone}` : '');
+  const stampText = t('stamped', { city: (zone ? `${placesShort} · ${zone}` : placesShort).toLocaleUpperCase('uk') });
   const frStamp = stamps.find((s) => s.firstRowSeat !== undefined);
   const multi = stamps.length > 1;
   const failed = saveState === 'failed';
@@ -221,14 +225,16 @@ export function Stamp({
       ) : (
         content
       )}
-      <IconButton
-        icon="close"
-        variant="plain"
-        iconSize={18}
-        aria-label={t('dismiss')}
-        className="absolute right-0.5 top-0 text-text-muted md:right-1.5 md:top-2"
-        onClick={onClose}
-      />
+      {onClose ? (
+        <IconButton
+          icon="close"
+          variant="plain"
+          iconSize={18}
+          aria-label={t('dismiss')}
+          className="absolute right-0.5 top-0 text-text-muted md:right-1.5 md:top-2"
+          onClick={onClose}
+        />
+      ) : null}
     </section>
   );
 }

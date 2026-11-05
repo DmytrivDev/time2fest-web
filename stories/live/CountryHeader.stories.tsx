@@ -7,9 +7,9 @@ const FRANCE = { iso: 'FR', name: { uk: 'Франція' }, flagCode: 'FR', gend
 const MIDNIGHT = Date.UTC(2026, 11, 31, 23, 0, 0);
 const TZ = 'Europe/Kyiv';
 const RUSSIA_ZONES = [
-  { id: 'z1', label: 'UTC+2 · Калінінград' },
-  { id: 'z2', label: 'UTC+3 · Москва' },
-  { id: 'z3', label: 'UTC+5 · Єкатеринбург' },
+  { id: 'z1', utc: 'UTC+2', city: 'Калінінград', midnightMs: Date.parse('2026-12-31T22:00:00Z'), note: 'лише відлік' },
+  { id: 'z2', utc: 'UTC+3', city: 'Москва', midnightMs: Date.parse('2026-12-31T21:00:00Z'), note: '1 трансляція' },
+  { id: 'z3', utc: 'UTC+5', city: 'Єкатеринбург', midnightMs: Date.parse('2026-12-31T19:00:00Z'), note: 'лише відлік' },
 ];
 
 const meta = {
@@ -56,7 +56,7 @@ export const Phone: Story = {
 };
 
 export const MultiZone: Story = {
-  name: 'Кілька поясів: чипи',
+  name: 'Кілька поясів: вибір поясу',
   globals: { surface: 'desktop' },
   args: { country: { iso: 'RU', name: { uk: 'Росія' }, flagCode: 'RU', gender: 'f' }, zones: RUSSIA_ZONES, selectedZoneId: 'z2' },
   render: (args) => (

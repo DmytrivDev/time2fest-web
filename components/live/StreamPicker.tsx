@@ -36,7 +36,8 @@ export function liveRowsForMidnight(midnightMs: Ms, now: Ms): StreamRowData[] {
   return streamRows(data, events, now).filter((r) => r.status === 'live');
 }
 
-function thumbOf(row: StreamRowData): string | undefined {
+/** Мініатюра YouTube джерела (mqdefault, 320 × 180). */
+export function thumbOf(row: StreamRowData): string | undefined {
   const src = getData().chainsByEventId.get(row.eventId)?.sources.find((x) => x.id === row.id);
   return src?.platform === 'youtube' && src.videoId ? `https://i.ytimg.com/vi/${src.videoId}/mqdefault.jpg` : undefined;
 }

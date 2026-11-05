@@ -4,7 +4,8 @@
  * C20. CountdownScene — сцена відліку на місці відео (EXPERIENCE «Плеєр», стани `countdown-scene` і `expected`).
  * Стоїть У СЛОТІ плеєра (`<PlayerSlot fallback={<CountdownScene … />} />`), ніколи поверх відео.
  * Ілюстрація-листівка країни, назва, «Північ о 04:00 за вашим часом», місцевий час, 3 традиції (від ширини ≥ 32rem).
- * Варіант `expected`: «Трансляція почнеться сама, щойно з’явиться». Відлік, статус і дії — у підписі плеєра (PlayerBlock),
+ * Варіант `expected`: «Трансляція почнеться сама, щойно з’явиться». Варіант `mode` — людина сама обрала режим «Відлік» на
+ * сторінці країни (точна північ без затримки відео; рішення 2026-11-05). Відлік, статус і дії — у підписі плеєра (PlayerBlock),
  * тут не дублюються (один відлік на сторінку).
  */
 import { useTranslations } from 'next-intl';
@@ -16,7 +17,7 @@ import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 
-export type CountdownSceneVariant = 'no-stream' | 'expected';
+export type CountdownSceneVariant = 'no-stream' | 'expected' | 'mode';
 
 export interface CountdownSceneProps {
   country: Pick<Country, 'name' | 'flagCode' | 'illustrationId' | 'howTo'>;
@@ -26,7 +27,7 @@ export interface CountdownSceneProps {
   midnightMs: Ms;
   /** Зсув пояса країни від UTC, хв — для «місцевого часу». */
   offsetMinutes: number;
-  /** `no-stream` — трансляції немає зовсім · `expected` — очікується, почнеться сама. */
+  /** `no-stream` — трансляції немає зовсім · `expected` — очікується, почнеться сама · `mode` — обрано режим «Відлік». */
   variant?: CountdownSceneVariant;
   className?: string;
 }
@@ -48,7 +49,7 @@ export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, v
     >
       <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" />
       <div className="absolute inset-0 flex flex-col gap-2 bg-linear-to-t from-background/95 via-background/50 to-transparent p-4 @lg:bg-linear-to-r @lg:from-background/80 @lg:via-background/30 @lg:to-transparent @lg:p-8">
-        <p className="hidden text-label-sm text-text-secondary @lg:block">{t('caption')}</p>
+        <p className="hidden text-label-sm text-text-secondary @lg:block">{variant === 'mode' ? t('modeCaption') : t('caption')}</p>
         <span className="flex-1" />
         <div className="flex items-center gap-3 @lg:gap-5">
           <span className="@lg:hidden">
@@ -80,7 +81,7 @@ export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, v
             ) : (
               <>
                 <p className="hidden text-caption text-text-secondary @lg:block">{t('localTime', { time: local })}</p>
-                <p className="text-caption text-text-secondary @lg:hidden">{t('noStreamNote')}</p>
+                <p className="text-caption text-text-secondary @lg:hidden">{variant === 'mode' ? t('modeNote') : t('noStreamNote')}</p>
               </>
             )}
           </div>

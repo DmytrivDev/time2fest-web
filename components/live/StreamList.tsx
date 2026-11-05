@@ -33,7 +33,7 @@ function subscribePhone(cb: () => void): () => void {
   return () => mq.removeEventListener('change', cb);
 }
 const getPhone = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_QUERY).matches : false);
-function usePhone(): boolean {
+export function usePhone(): boolean {
   return useSyncExternalStore(subscribePhone, getPhone, () => false);
 }
 
@@ -92,7 +92,7 @@ function PlusMenu({ row, otherCountry, onSelect, onAddToRoom }: Pick<StreamRowPr
   );
 }
 
-function PlusConfirm({
+export function PlusConfirm({
   id,
   row,
   currentTitle,

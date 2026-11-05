@@ -3,6 +3,11 @@
 /**
  * Сторінка країни, пульт (S-COUNTRY, ІНВ 4.3; T092).
  *
+ * Повний дизайн — дошки `Desk-Country-Full`, `Phone-Country-Full` (погоджено 2026-11-05):
+ * рядок країни (CountryHeader; кілька поясів — вибір поясу) · відео й рядок дій («Обрати трансляцію ›», «Відео | Відлік»,
+ * кімната, вечірка, «⋯») · «Перший ряд» · штамп (тут — постійно, без «×») · пропозиція пасу й чайові · «Трансляції ·
+ * <Країна>» картками з мініатюрами й «+» · до півночі «Ще о … · інші країни поясу» (після — «Зараз і далі») ·
+ * «Як святкувати» · «Як <Країна> зустрічає Новий рік» · «Питання й відповіді».
  * Каркас — як на головній (рішення 2026-11-05, `as-built-home-countries-2026-11-05.md`):
  * Телефон (зверху вниз): відео · липкий рядок «місто · відлік» зі звуком · смуга «Перший ряд» (`dockBar`) · назва й рядок дій
  * («Обрати трансляцію ›», «⋯») · штамп, пропозиції, вікна моменту · CountryHeader (крихти, графік) · «Дивляться люди з N
@@ -22,11 +27,11 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
-import { CountryHeader } from '@/components/live/CountryHeader';
+import { CountryHeader, type CountryZoneOption } from '@/components/live/CountryHeader';
 import { Faq, type FaqItem } from '@/components/live/Faq';
 import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
-import { StreamList, ZoneStreamsBlock } from '@/components/live/StreamList';
+import { StreamCards } from '@/components/live/StreamCards';
 import { StampBlock } from '@/components/live/StampBlock';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
@@ -35,6 +40,7 @@ import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { cn } from '@/components/primitives/cn';
+import { Link } from '@/components/primitives/Link';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
@@ -70,6 +76,7 @@ import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { eventTitle } from './Caption';
 import home from './home.module.css';
+import { utcLabel } from './MapModel';
 import styles from './live.module.css';
 import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
 import { firstRowEventForCountry } from '@/lib/firstrow/pick';
@@ -101,29 +108,29 @@ function nextAfter(data: Dataset, event: ScheduledEvent, now: Ms): ScheduledEven
     : null;
 }
 
-/** «UTC+3», «UTC−3:30». */
-function utcLabel(offsetMinutes: number): string {
-  const sign = offsetMinutes < 0 ? '−' : '+';
-  const abs = Math.abs(offsetMinutes);
-  const h = Math.floor(abs / 60);
-  const m = abs % 60;
-  return offsetMinutes === 0
-    ? 'UTC+0'
-    : `UTC${sign}${h}${m ? `:${String(m).padStart(2, '0')}` : ''}`;
-}
-
-function zoneChip(data: Dataset, iso: string, zone: LoadedZone): { id: string; label: string } {
+/** Пояс країни для вибору в шапці: місто головної події, «UTC−5», північ і скільки трансляцій. */
+function zoneOption(
+  data: Dataset,
+  iso: string,
+  zone: LoadedZone,
+  now: Ms,
+  streamsNote: (n: number) => string,
+): CountryZoneOption {
   const city = data.citiesById.get(countryMainEvent(data, iso, zone.id)?.cityId ?? '');
+  const n = countryStreamRows(data, iso, zone.id, now).length;
   return {
     id: zone.id,
-    label: city
-      ? `${utcLabel(zone.offsetMinutes)} · ${city.name.uk}`
-      : utcLabel(zone.offsetMinutes),
+    utc: utcLabel(zone.offsetMinutes),
+    city: city?.name.uk ?? '',
+    midnightMs: zone.midnightMs,
+    note: streamsNote(n),
   };
 }
 
 export function CountryLive({ iso }: { iso: string }) {
   const tc = useTranslations('country');
+  const tStreams = useTranslations('country.streams');
+  const tHead = useTranslations('country.header');
   const tChat = useTranslations('chat');
   const tPlayer = useTranslations('player');
   const data = getData();
@@ -149,14 +156,24 @@ export function CountryLive({ iso }: { iso: string }) {
   const playing = player?.eventId ? data.eventsById.get(player.eventId) : undefined;
   const playingOurs = !!playing && (playing.countryIso === iso || playing.id === pickedEventId);
 
-  // Один раз після того, як час відомий: задати ланцюжок, якщо плеєр не грає подію цієї країни. Далі — лише дії людини.
+  // Один раз після того, як час відомий: пояс за замовчуванням (кілька поясів — найближча північ попереду, усі минули —
+  // остання; рішення 2026-11-05) і ланцюжок, якщо плеєр не грає подію цієї країни. Далі — лише дії людини.
   const initRef = useRef(false);
   useEffect(() => {
     if (!known || !actions || initRef.current) return;
     initRef.current = true;
     if (playing && playing.countryIso === iso && player?.selection) return;
-    if (mainEvent) actions.setChain(chainInput(data, mainEvent.id));
-  }, [known, actions, playing, iso, player, mainEvent, data]);
+    const zone = defaultZoneId(data, country, now) ?? zoneId;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- пояс за замовчуванням залежить від часу, відомого лише після синхронізації
+    if (zone !== zoneId) setZoneId(zone);
+    const ev = zone ? countryMainEvent(data, iso, zone) : undefined;
+    if (ev) actions.setChain(chainInput(data, ev.id));
+    // Лише перший раз, коли час відомий.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [known, actions]);
+
+  // Режим «Відлік» (рішення 2026-11-05): сцена Time2Fest на місці відео — точна північ без затримки.
+  const [countdown, setCountdown] = useState(false);
 
   const shownEvent: ScheduledEvent | undefined = playingOurs ? playing : mainEvent;
   const current = placeOf(data, shownEvent);
@@ -215,6 +232,7 @@ export function CountryLive({ iso }: { iso: string }) {
 
   const select = useCallback(
     (row: StreamRowData) => {
+      setCountdown(false);
       setPickedEventId(row.eventId);
       actions?.setChain(chainInput(data, row.eventId, row.id));
     },
@@ -222,11 +240,24 @@ export function CountryLive({ iso }: { iso: string }) {
   );
   const changeZone = useCallback(
     (id: string) => {
+      setCountdown(false);
+      setPickedEventId(null);
       setZoneId(id);
       const ev = countryMainEvent(data, iso, id);
       if (ev) actions?.setChain(chainInput(data, ev.id));
     },
     [actions, data, iso],
+  );
+  // «Відео | Відлік»: «Відлік» — ланцюжок без джерел (плеєр показує сцену); «Відео» — знову головна подія поясу.
+  const setMode = useCallback(
+    (on: boolean) => {
+      setCountdown(on);
+      if (!mainEvent) return;
+      actions?.setChain(
+        on ? { eventId: mainEvent.id, sources: [] } : chainInput(data, mainEvent.id),
+      );
+    },
+    [actions, data, mainEvent],
   );
   const addRoom = useAddToRoom();
   // «+»: трансляція йде в кімнату (`stores/room`), головне вікно — те, що грає зараз; далі відкривається кімната (US3).
@@ -297,37 +328,79 @@ export function CountryLive({ iso }: { iso: string }) {
   const progress = useMemo(() => festProgress(data, minute), [data, minute]);
   const zoneLabel = viewerZoneLabel();
 
+  const zoneOptions = useMemo(
+    () =>
+      zones.length > 1
+        ? zones.map((z) =>
+            zoneOption(data, iso, z, minute, (n) =>
+              n ? tHead('streamsCount', { count: n }) : tHead('countdownOnly'),
+            ),
+          )
+        : undefined,
+    [zones, data, iso, minute, tHead],
+  );
+  const zone = zoneId ? data.zonesById.get(zoneId) : undefined;
   const header = mainEvent ? (
     <CountryHeader
       country={country}
       midnightMs={mainEvent.midnightMs}
       after={after}
-      zones={zones.length > 1 ? zones.map((z) => zoneChip(data, iso, z)) : undefined}
+      zones={zoneOptions}
       selectedZoneId={zoneId ?? undefined}
       onZoneChange={changeZone}
       inSchedule={inSchedule}
       onToggleSchedule={toggleSchedule}
-      className={cn(styles.pad, chatColumn ? 'pb-4' : 'pt-2')}
+      className={styles.pad}
     />
   ) : null;
+  const title = currentSource?.title.uk ?? (current ? eventTitle(current.city) : '');
+  const noStreams = countryRows.length === 0;
+  const countdownMode = noStreams ? undefined : { countdown, onChange: setMode };
+  const time = mainEvent ? formatClock(mainEvent.midnightMs) : '';
+  const zoneCountries = useMemo(
+    () => (zoneId ? data.countries.filter((c) => c.zoneIds.includes(zoneId)).length : 0),
+    [data, zoneId],
+  );
 
   const events = (
     <div className="flex flex-col gap-8 pb-8">
-      <div id={STREAMS_ID} className={cn(styles.pad, 'flex scroll-mt-4 flex-col gap-6')}>
-        <StreamList
-          countryName={country.name.uk}
-          streams={countryRows}
-          currentStreamId={currentStreamId}
+      <div className={cn(styles.pad, 'flex flex-col gap-9')}>
+        <StreamCards
+          id={STREAMS_ID}
+          heading={
+            zoneOptions && zone
+              ? tStreams('cardsHeadingZone', {
+                  country: country.name.uk,
+                  zone: utcLabel(zone.offsetMinutes),
+                })
+              : tStreams('cardsHeading', { country: country.name.uk })
+          }
+          sub={recording ? tStreams('cardsSubAfter', { time }) : tStreams('cardsSub', { time })}
+          rows={countryRows}
+          currentStreamId={countdown ? null : currentStreamId}
+          currentTitle={title}
           onSelect={select}
           onAddToRoom={addToRoom}
         />
         {recording ? null : (
-          <ZoneStreamsBlock
-            streams={zoneRows}
-            currentStreamId={currentStreamId}
-            midnightMs={mainEvent?.midnightMs ?? 0}
+          <StreamCards
+            heading={tStreams('othersHeading', { time })}
+            sub={tStreams('othersSub')}
+            rows={zoneRows}
+            currentStreamId={countdown ? null : currentStreamId}
+            currentTitle={title}
             onSelect={select}
             onAddToRoom={addToRoom}
+            showCountry
+            footer={
+              <Link
+                variant="chevron"
+                href={`/countries/?zone=${encodeURIComponent(zoneId ?? '')}`}
+                className="self-start"
+              >
+                {tStreams('othersAll', { count: zoneCountries })}
+              </Link>
+            }
           />
         )}
       </div>
@@ -352,7 +425,7 @@ export function CountryLive({ iso }: { iso: string }) {
         variant="full"
         className={styles.pad}
       />
-      <Faq items={faqItems} className={styles.pad} />
+      <Faq items={faqItems} columns={2} className={styles.pad} />
     </div>
   );
 
@@ -372,7 +445,6 @@ export function CountryLive({ iso }: { iso: string }) {
       className={className}
     />
   );
-  const title = currentSource?.title.uk ?? (current ? eventTitle(current.city) : '');
   const firstRowEvent = firstRowEventForCountry(data, iso);
   // Слот «Першого ряду» сторінки країни (US5): телефон — смуга під липким рядком (`dockBar`), як на головній.
   const firstRow = (dockBar: boolean) =>
@@ -384,7 +456,7 @@ export function CountryLive({ iso }: { iso: string }) {
   // Штамп (окремий блок) і вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра, як на головній.
   const inflow = (
     <>
-      <StampBlock eventId={mainEvent?.id ?? null} />
+      <StampBlock eventId={mainEvent?.id ?? null} permanent />
       <OfferBlock />
       <div data-moment-slot="">
         <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
@@ -395,7 +467,7 @@ export function CountryLive({ iso }: { iso: string }) {
   return (
     <>
       <h1 className="sr-only">{tc('pageHeading', { country: country.name.uk })}</h1>
-      {chatColumn ? header : null}
+      {header}
       <PlayerBlock
         mode="remote"
         ready={known && (!playing || playingOurs)}
@@ -405,6 +477,7 @@ export function CountryLive({ iso }: { iso: string }) {
         airView={expected ? 'expected-scene' : 'countdown-scene'}
         title={title}
         streams={streams}
+        countdownMode={countdownMode}
         onWatchAgain={watchAgain}
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}
@@ -417,9 +490,10 @@ export function CountryLive({ iso }: { iso: string }) {
 
       {chatColumn ? (
         <>
+          {/* «Перший ряд», під ним штамп і пропозиції (дошка `Desk-Country-Full`). */}
           <div className={cn(home.column, 'pt-4')}>
-            {inflow}
             {firstRow(false)}
+            {inflow}
           </div>
           <div className="pt-6">{events}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
@@ -427,11 +501,18 @@ export function CountryLive({ iso }: { iso: string }) {
       ) : (
         <>
           <div className={cn('px-4', home.phoneInflow)}>{inflow}</div>
-          {header}
-          <p className={cn(styles.pad, home.watchers, 'pt-3')}>
-            <Icon name="globe" size={14} strokeWidth={2} />
-            {tPlayer('watchersShort', { count: viewers.length })}
-          </p>
+          <div className={cn(styles.pad, 'flex flex-col gap-1.5')}>
+            {after ? null : (
+              <p className={home.watchers}>
+                <Icon name="passport" size={14} strokeWidth={2} />
+                {tHead('stamp')}
+              </p>
+            )}
+            <p className={home.watchers}>
+              <Icon name="globe" size={14} strokeWidth={2} />
+              {tPlayer('watchersShort', { count: viewers.length })}
+            </p>
+          </div>
           <div className="pt-6">{events}</div>
           <ChatDock
             room={`country:${iso}`}

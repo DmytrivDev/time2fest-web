@@ -181,6 +181,18 @@
 .tonal {
   padding: 0 var(--spacing-4) 0 14px;
 }
+/* Сторінка країни: у рядку ще «Відео | Відлік» — щільніше, щоб усе стояло одним рядком на 1440 (дошка `Desk-Country-Full`). */
+@media (min-width: 1200px) {
+  .actionsRemote {
+    gap: 6px;
+  }
+  .actionsRemote .tonal {
+    padding: 0 12px 0 10px;
+  }
+  .actionsRemote [data-row='mode'] > button {
+    padding: 0 10px;
+  }
+}
 /* Іконки кімнати й вечірки — приглушений жовтий (макет: #E9D48A; токена немає, highlight надто яскравий). */
 .accentIcon {
   color: #e9d48a; /* макет */

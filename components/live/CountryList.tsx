@@ -13,7 +13,7 @@
  */
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
@@ -248,6 +248,12 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   const tCommon = useTranslations('common');
   const tChat = useTranslations('chat');
   const locale = useLocale();
+  // «Усі країни поясу ›» зі сторінки країни: `?zone=utc+0100` — пояс розгорнуто й прокручено до нього.
+  const [focusZone, setFocusZone] = useState<string | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- адреса відома лише в браузері (статична сторінка)
+    setFocusZone(new URLSearchParams(window.location.search).get('zone'));
+  }, []);
   const ready = useTimeReady();
   const now = useNow({ granularity: 'minute' });
   const hasPass = useGuestStore((s) => s.hasPass);
@@ -439,6 +445,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
                 flagsOnly
                 allOpen={narrowing}
                 allLink={false}
+                focusZoneId={focusZone}
                 renderBody={(z, st) => <ZoneDirectory zone={z} state={st} total={byId.get(z.id) ?? z} hits={hits} searching={narrowing} />}
               />
             )}

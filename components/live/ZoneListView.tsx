@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useState, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -41,6 +41,8 @@ export interface ZoneListViewProps {
   renderBody?: (zone: MapZone, state: ZoneState) => ReactNode;
   /** Посилання «Усі пояси й країни» внизу (на самій сторінці «Країни й міста» — ні). */
   allLink?: boolean;
+  /** Розгорнути цей пояс і прокрутити до нього (посилання «Усі країни поясу ›» зі сторінки країни). */
+  focusZoneId?: string | null;
 }
 
 /**
@@ -58,6 +60,7 @@ export function ZoneListView({
   allOpen = false,
   renderBody,
   allLink = true,
+  focusZoneId = null,
 }: ZoneListViewProps) {
   const t = useTranslations('liveMap.list');
   const uid = useId();
@@ -88,6 +91,18 @@ export function ZoneListView({
     setOpenId(id);
     setCountryIso(iso);
   };
+  // Перехід зі сторінки країни («Усі країни поясу ›»): пояс розгорнуто, рядок — угорі екрана.
+  useEffect(() => {
+    if (!focusZoneId || allOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- пояс з адреси відомий лише після монтування
+    openZone(focusZoneId);
+    const id = window.requestAnimationFrame(() =>
+      document.getElementById(`${uid}-${focusZoneId}`)?.parentElement?.scrollIntoView({ block: 'start' }),
+    );
+    return () => window.cancelAnimationFrame(id);
+    // Лише коли змінюється сам пояс з посилання.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusZoneId]);
   const nextZone = zones.reduce<MapZone | undefined>(
     (best, z) => (z.midnightMs > now && (!best || z.midnightMs < best.midnightMs) ? z : best),
     undefined,

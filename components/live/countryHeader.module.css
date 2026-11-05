@@ -1,0 +1,221 @@
+/* Рядок країни (S-COUNTRY, дошки `Desk-Country-Full`, `Phone-Country-Full`, 2026-11-05). */
+
+/* ── Телефон: рядок 60 px над відео ─────────────────────────────────────────────────────────────────────────── */
+.rowWrap {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.25s ease;
+}
+/* Розгорнуто чат чи відкрито шторку: рядок складається, відео під’їжджає під шапку (сторінка не прокручується). */
+:global(html[data-chat-dock-expanded]) .rowWrap {
+  grid-template-rows: 0fr;
+}
+.rowClip {
+  min-height: 0;
+  overflow: hidden;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  height: 60px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.rowText {
+  flex: 1;
+  min-width: 0;
+}
+.rowName {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.rowTime {
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.zoneBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Шторка «Пояси …» ───────────────────────────────────────────────────────────────────────────────────────── */
+.sheetList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sheetRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.sheetRow:hover,
+.sheetRowOn {
+  background: var(--color-surface-raised);
+}
+.radio {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+}
+.radioOn {
+  border: 0;
+  background: var(--color-highlight);
+  color: #121214;
+}
+.sheetText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.sheetCity {
+  font-size: 16px;
+  font-weight: 700;
+}
+.sheetNote {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.sheetTime {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.sheetTime b {
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+/* ── Десктоп ─────────────────────────────────────────────────────────────────────────────────────────────────── */
+.desk {
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 16px;
+}
+.crumbs ol {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 20px;
+}
+.crumbLink {
+  color: var(--color-text-secondary);
+}
+.crumbSep {
+  display: flex;
+  color: var(--color-text-muted);
+}
+.crumbHere {
+  color: var(--color-text);
+  font-weight: 700;
+}
+.deskRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 44px;
+}
+.deskName {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.deskTime {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent);
+}
+.chips::-webkit-scrollbar {
+  display: none;
+}
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chip:hover {
+  background: var(--color-surface-raised);
+}
+.chipOn,
+.chipOn:hover {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: #121214;
+}
+.chipTime {
+  font-weight: 500;
+  opacity: 0.75;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rowWrap {
+    transition: none;
+  }
+}

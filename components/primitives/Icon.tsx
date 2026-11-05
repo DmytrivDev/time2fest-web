@@ -73,7 +73,9 @@ export type IconName =
   | 'link'
   | 'sparkles'
   | 'users'
-  | 'stamp';
+  | 'stamp'
+  | 'utensils'
+  | 'mistletoe';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -400,6 +402,22 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" />
       <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
+    </>
+  ),
+  // Традиції країни («Як святкувати»): вечеря й омела.
+  utensils: (
+    <>
+      <path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10" />
+      <path d="M17 3c-2 2-2 6 0 8v10" />
+    </>
+  ),
+  mistletoe: (
+    <>
+      <path d="M12 3v7" />
+      <path d="M12 10c-4-1-6-4-6-6 3 0 5 2 6 6zM12 10c4-1 6-4 6-6-3 0-5 2-6 6z" />
+      <circle cx="10" cy="15" r="2" />
+      <circle cx="14" cy="15" r="2" />
+      <circle cx="12" cy="19" r="2" />
     </>
   ),
   'link-off': (

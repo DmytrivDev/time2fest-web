@@ -20,7 +20,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useId, type ReactNode } from 'react';
-import { ActionRow, type RemoteStreams } from '@/components/live/ActionRow';
+import { ActionRow, type CountdownModeControl, type RemoteStreams } from '@/components/live/ActionRow';
 import { Caption, eventTitle } from '@/components/live/Caption';
 import home from '@/components/live/home.module.css';
 import { cn } from '@/components/primitives/cn';
@@ -70,6 +70,8 @@ export interface PlayerBlockProps {
   title?: string;
   /** Пульт: трансляції країни й поясу для «Обрати трансляцію». */
   streams?: RemoteStreams;
+  /** Пульт: перемикач «Відео | Відлік» (без нього перемикача немає — країна без трансляцій). */
+  countdownMode?: CountdownModeControl;
   /** Пульт: «Подивитися північ ще раз». */
   onWatchAgain?: () => void;
   /** «Зараз дивляться люди з N країн» у рядку 1 підпису (від 768 px). */
@@ -102,7 +104,7 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
   return { kind: props.airView === 'expected-scene' ? 'expected-scene' : 'countdown-scene', muted: true, switched: false };
 }
 
-function VideoFallback({ kind, current }: { kind: VideoAreaKind; current: AirPlace | null }) {
+function VideoFallback({ kind, current, countdownMode = false }: { kind: VideoAreaKind; current: AirPlace | null; countdownMode?: boolean }) {
   const setConsent = useGuestStore((s) => s.setConsent);
   if (kind === 'video') return null;
   if (kind === 'loading' || !current?.country) {
@@ -127,7 +129,7 @@ function VideoFallback({ kind, current }: { kind: VideoAreaKind; current: AirPla
         cityName={eventTitle(current.city)}
         midnightMs={current.event.midnightMs}
         offsetMinutes={zone?.offsetMinutes ?? 0}
-        variant={kind === 'expected-scene' ? 'expected' : 'no-stream'}
+        variant={countdownMode ? 'mode' : kind === 'expected-scene' ? 'expected' : 'no-stream'}
       />
     </div>
   );
@@ -171,6 +173,7 @@ export function PlayerBlock({
   titleId: titleIdProp,
   title,
   streams,
+  countdownMode,
   onWatchAgain,
   watchers,
   captionAside,
@@ -199,7 +202,7 @@ export function PlayerBlock({
 
   return (
     <>
-      <PlayerSlot id="main" fallback={<VideoFallback kind={area.kind} current={current} />} />
+      <PlayerSlot id="main" fallback={<VideoFallback kind={area.kind} current={current} countdownMode={!!countdownMode?.countdown} />} />
       {dock ? (
         <section aria-label={t('barLabel')} data-player-bar="" data-dock-above="" className={home.stickyBar}>
           {place && phase ? (
@@ -262,6 +265,7 @@ export function PlayerBlock({
               mode={mode}
               button={phase.button}
               streams={streams}
+              countdownMode={countdownMode}
               sharePlace={title}
               onWatchAgain={onWatchAgain}
               href={current.href}

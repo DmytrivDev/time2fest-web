@@ -97,14 +97,14 @@ async function expectAxeClean(page: Page) {
   ).toEqual([]);
 }
 
-/** Країна → «+» біля рядка → нове вікно → `/room/` (десктоп: меню; телефон: підтвердження). */
+/** Країна → «+» на картці → «Відкрити кімнату» → `/room/`. */
 async function addFromCountryPage(page: Page, sourceId: string) {
   const plus = streamRow(page, sourceId).getByRole('button', {
     name: /^Додати в кімнату перегляду:/,
   });
   await plus.click();
-  if (isPhone(page)) await page.getByRole('button', { name: 'Відкрити кімнату' }).click();
-  else await page.getByRole('button', { name: /Додати нове вікно трансляції/ }).click();
+  // Сторінка країни (картки, 2026-11-05): «+» → підтвердження «Відкрити кімнату» і на телефоні, і на десктопі.
+  await page.getByRole('button', { name: 'Відкрити кімнату' }).click();
   await expect(page).toHaveURL(/\/room\/?(\?.*)?$/);
 }
 

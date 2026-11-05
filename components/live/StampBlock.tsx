@@ -29,6 +29,7 @@ import { getData } from '@/lib/data/load';
 import type { Stars } from '@/lib/data/types';
 import { on } from '@/lib/events/bus';
 import { useGuestStore } from '@/stores/guest';
+import { utcLabel } from './MapModel';
 import { create } from 'zustand';
 
 interface StampMoment {
@@ -75,16 +76,21 @@ export function stampEntry(eventId: string): StampEntry | null {
     illustrationId: country?.illustrationId ?? 'generic',
   };
   if (seat !== undefined) entry.firstRowSeat = seat;
+  // Країна з кількома поясами: штамп — за кожен пояс, пояс видно в штампі (рішення 2026-11-05).
+  const zone = data.zonesById.get(event.zoneId);
+  if (country && country.zoneIds.length > 1 && zone) entry.zone = utcLabel(zone.offsetMinutes);
   return entry;
 }
 
 export interface StampBlockProps {
   /** Подія, яку зараз показує плеєр сторінки. */
   eventId: string | null;
+  /** Сторінка країни: штамп, отриманий тут, висить постійно — без «×» і попри прибраний на головній. */
+  permanent?: boolean;
   className?: string;
 }
 
-export function StampBlock({ eventId, className }: StampBlockProps) {
+export function StampBlock({ eventId, permanent = false, className }: StampBlockProps) {
   const tShare = useTranslations('share');
   const { open, current: win } = useOverlay();
   const openAuth = useOpenAuthWindow();
@@ -112,7 +118,7 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
     lastGuest.current = guestId;
   }, [guestId]);
 
-  const ids = (moment?.eventIds ?? (eventId && hasStamp ? [eventId] : [])).filter((id) => !dismissed?.includes(id));
+  const ids = (moment?.eventIds ?? (eventId && hasStamp ? [eventId] : [])).filter((id) => permanent || !dismissed?.includes(id));
   const key = ids.join('|');
   const list = ids.map(stampEntry).filter((e): e is StampEntry => e !== null);
   const visible = list.length > 0;
@@ -164,7 +170,7 @@ export function StampBlock({ eventId, className }: StampBlockProps) {
             onShare={() => open(shareWindowSpec(current.list, tShare('title')))}
             onSignIn={() => openAuth('signin')}
             onPassport={() => router.push(PASSPORT_HREF)}
-            onClose={() => dismiss(current.list, current.key)}
+            onClose={permanent ? undefined : () => dismiss(current.list, current.key)}
             rate={
               <StampRate
                 rows={current.list.map((e) => ({ eventId: e.eventId ?? '', city: e.city }))}

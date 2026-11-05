@@ -7,6 +7,7 @@
  * - після `RECORDING_AFTER` статус рядка — `recording` («Запис»).
  */
 import type { CelebrationType, Country, Dataset, LoadedZone, Ms, ScheduledEvent, StreamSource } from '@/lib/data/types';
+import { RECORDING_AFTER } from '@/lib/engine/config';
 import { eventStatus } from '@/lib/engine/eventStatus';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { countryHref } from '@/lib/player/BroadcastController';
@@ -43,8 +44,15 @@ export function countryZones(data: Dataset, country: Pick<Country, 'iso' | 'zone
     .sort((a, b) => a.midnightMs - b.midnightMs);
 }
 
-/** Пояс за замовчуванням: пояс столиці, інакше перший пояс країни. */
-export function defaultZoneId(data: Dataset, country: Pick<Country, 'iso' | 'zoneIds'>): string | null {
+/**
+ * Пояс за замовчуванням. Коли «зараз» відоме (рішення власника 2026-11-05): найближча північ, що ще попереду; усі минули —
+ * остання. Поки час невідомий — пояс столиці, інакше перший пояс країни.
+ */
+export function defaultZoneId(data: Dataset, country: Pick<Country, 'iso' | 'zoneIds'>, now?: Ms): string | null {
+  const zones = countryZones(data, country);
+  if (now !== undefined && now > 0 && zones.length > 1) {
+    return (zones.find((z) => z.midnightMs + RECORDING_AFTER > now) ?? zones.at(-1))?.id ?? null;
+  }
   const capital = CAPITAL_CITY[country.iso];
   const capitalZone = capital ? data.citiesById.get(capital)?.zoneId : undefined;
   if (capitalZone && country.zoneIds.includes(capitalZone)) return capitalZone;

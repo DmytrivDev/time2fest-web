@@ -11,9 +11,13 @@
  * Режим `remote` (сторінка країни, пульт) — як на головній (рішення 2026-11-05): «Обрати трансляцію ›» відкриває той самий
  * список (`StreamPicker`), але з трансляціями країни й поясу в будь-якому стані, вибір — через сторінку (`streams.onPick`);
  * «Подивитися північ ще раз» — лише коли джерело дає повтор; «Кімната перегляду», «Режим вечірки», «⋯» — ті самі.
+ * Перемикач «Відео | Відлік» (рішення 2026-11-05, дошка `Desk-Country-Full`): режим «Відлік» — сцена Time2Fest на місці
+ * відео (точна північ без затримки), «Обрати трансляцію» тоді неактивна; телефон — двома іконками. Без трансляцій
+ * сторінка перемикача не передає (режим «Відлік» сам).
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
+import { ToggleGroup } from 'radix-ui';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
@@ -27,6 +31,7 @@ import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
 import type { CaptionButton } from '@/lib/engine/captionPhase';
 import type { StreamRowData } from '@/lib/live/countryData';
 import home from './home.module.css';
+import nn from './nowNext.module.css';
 import styles from './live.module.css';
 
 export { MORE_ACTIONS_ID };
@@ -45,11 +50,45 @@ export interface ActionRowProps {
   onStayHere?: () => void;
   /** Пульт: трансляції країни й поясу для «Обрати трансляцію» і що робити з вибраною. */
   streams?: RemoteStreams;
+  /** Пульт: «Відео | Відлік». */
+  countdownMode?: CountdownModeControl;
   /** Пульт: місце для тексту «Поділитися» («Париж · Ейфелева вежа»). */
   sharePlace?: string;
   /** Пульт: «Подивитися північ ще раз» (повтор із `source.replay`). */
   onWatchAgain?: () => void;
   className?: string;
+}
+
+export interface CountdownModeControl {
+  /** Увімкнено режим «Відлік». */
+  countdown: boolean;
+  onChange(countdown: boolean): void;
+}
+
+/** «Відео | Відлік» — той самий вигляд, що фільтр «Зараз і далі»; на телефоні — лише іконки (підпис — для зчитувача). */
+function ModeToggle({ mode }: { mode: CountdownModeControl }) {
+  const t = useTranslations('country.mode');
+  return (
+    <ToggleGroup.Root
+      type="single"
+      aria-label={t('label')}
+      value={mode.countdown ? 'countdown' : 'video'}
+      onValueChange={(v) => {
+        if (v) mode.onChange(v === 'countdown');
+      }}
+      data-row="mode"
+      className={cn(nn.filter, 'shrink-0')}
+    >
+      <ToggleGroup.Item value="video" aria-label={t('video')} className={cn('t2f-focus', nn.seg)}>
+        <Icon name="tv" size={16} />
+        <span className={styles.deskOnly}>{t('video')}</span>
+      </ToggleGroup.Item>
+      <ToggleGroup.Item value="countdown" aria-label={t('countdown')} className={cn('t2f-focus', nn.seg)}>
+        <Icon name="clock" size={16} />
+        <span className={styles.deskOnly}>{t('countdown')}</span>
+      </ToggleGroup.Item>
+    </ToggleGroup.Root>
+  );
 }
 
 export interface RemoteStreams {
@@ -66,6 +105,7 @@ export function ActionRow({
   sound,
   onStayHere,
   streams,
+  countdownMode,
   sharePlace,
   onWatchAgain,
   hideSound = false,
@@ -136,7 +176,7 @@ export function ActionRow({
   const moreOpen = overlay.current?.id === MORE_ACTIONS_ID || overlay.current?.id === REPORT_ID;
 
   return (
-    <div data-action-row="" className={cn(home.actions, className)}>
+    <div data-action-row="" className={cn(home.actions, remote && home.actionsRemote, className)}>
       {hideSound ? null : <SoundToggle {...sound} />}
       {remote ? (
         <>
@@ -146,6 +186,7 @@ export function ActionRow({
               aria-haspopup="dialog"
               aria-expanded={overlay.current?.id === STREAM_PICKER_ID}
               data-action="choose-stream"
+              disabled={!!countdownMode?.countdown}
               onClick={openPicker}
               className={cn('min-w-0', home.choose)}
             >
@@ -153,6 +194,7 @@ export function ActionRow({
               <Icon name="chevron-right" size={16} strokeWidth={2} />
             </Button>
           ) : null}
+          {countdownMode ? <ModeToggle mode={countdownMode} /> : null}
           {button === 'watch-again' ? (
             <Button variant="secondary" iconLeft="play" data-action="watch-again" onClick={onWatchAgain}>
               {t('watchMidnightAgain')}
