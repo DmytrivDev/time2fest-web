@@ -70,6 +70,8 @@ export interface PlayerBlockProps {
   title?: string;
   /** Пульт: трансляції країни й поясу для «Обрати трансляцію». */
   streams?: RemoteStreams;
+  /** Календарик у «Обрати трансляцію» — «Додати в графік». */
+  onToggleSchedule?: (eventId: string) => void;
   /** Пульт: перемикач «Відео | Відлік» (без нього перемикача немає — країна без трансляцій). */
   countdownMode?: CountdownModeControl;
   /** Пульт: «Подивитися північ ще раз». */
@@ -174,6 +176,7 @@ export function PlayerBlock({
   title,
   streams,
   countdownMode,
+  onToggleSchedule,
   onWatchAgain,
   watchers,
   captionAside,
@@ -266,6 +269,7 @@ export function PlayerBlock({
               button={phase.button}
               streams={streams}
               countdownMode={countdownMode}
+              onToggleSchedule={onToggleSchedule}
               sharePlace={title}
               onWatchAgain={onWatchAgain}
               href={current.href}

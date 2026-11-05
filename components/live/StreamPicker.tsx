@@ -10,7 +10,6 @@
  */
 import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
-import { IconButton } from '@/components/primitives/IconButton';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -23,7 +22,11 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { thumbOf } from '@/lib/live/thumb';
 import { canAddToRoom, useRoomToggle } from '@/components/room/useRoomToggle';
 import { RoomAddConfirm } from './RoomAddConfirm';
+import { CalendarButton, scheduleClosed } from './CalendarButton';
+import { countryZoneEvents } from '@/lib/schedule/countryZone';
+import { useGuestStore } from '@/stores/guest';
 import { usePhone } from './StreamList';
+import nn from './nowNext.module.css';
 import s from './streamPicker.module.css';
 
 export const STREAM_PICKER_ID = 'O-STREAM-PICKER';
@@ -58,9 +61,19 @@ export interface StreamPickerProps {
   onPick?: (row: StreamRowData) => void;
   /** «+» — у кімнату перегляду (правка власника 2026-11-05); без нього — поточна трансляція плеєра + обрана. */
   onAddToRoom?: (row: StreamRowData) => void;
+  /** Календарик у рядку — «Додати в графік» (запис «країна + пояс»; без пасу — вікно пасу). */
+  onToggleSchedule?: (eventId: string) => void;
 }
 
-export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows, onPick, onAddToRoom }: StreamPickerProps) {
+export function StreamPicker({
+  midnightMs,
+  countryIso,
+  onPicked,
+  rows: givenRows,
+  onPick,
+  onAddToRoom,
+  onToggleSchedule,
+}: StreamPickerProps) {
   const t = useTranslations('player.picker');
   const tType = useTranslations('liveCards.eventCard.type');
   const tStatus = useTranslations('country.streams.status');
@@ -68,7 +81,10 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const currentId = player?.selection?.kind === 'source' ? player.selection.source.id : null;
-  const liveRows = useMemo(() => (givenRows ? [] : liveRowsForMidnight(midnightMs, now)), [givenRows, midnightMs, now]);
+  const liveRows = useMemo(
+    () => (givenRows ? [] : liveRowsForMidnight(midnightMs, now)),
+    [givenRows, midnightMs, now],
+  );
   const rows = givenRows ?? liveRows;
   const home = countryIso ? rows.filter((r) => r.countryIso === countryIso) : [];
   const rest = countryIso ? rows.filter((r) => r.countryIso !== countryIso) : rows;
@@ -80,9 +96,17 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
   const room = useRoomToggle();
   const addRoom = useAddToRoom();
   const currentRow = currentId ? (rows.find((r) => r.id === currentId) ?? null) : null;
+  const schedule = useGuestStore((g) => g.schedule);
+  const nowSec = useNow();
+  const inSched = (eventId: string) =>
+    countryZoneEvents(eventId).some((id) => schedule.includes(id));
   const add = (row: StreamRowData) => {
     if (onAddToRoom) onAddToRoom(row);
-    else addRoom({ sourceId: row.id, eventId: row.eventId }, currentId && player?.eventId ? { sourceId: currentId, eventId: player.eventId } : null);
+    else
+      addRoom(
+        { sourceId: row.id, eventId: row.eventId },
+        currentId && player?.eventId ? { sourceId: currentId, eventId: player.eventId } : null,
+      );
     onPicked?.();
   };
 
@@ -101,13 +125,18 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
         const on = row.id === currentId;
         const thumb = thumbOf(row);
         return (
-          <li key={row.id} className={s.pickItem}>
+          <li
+            key={row.id}
+            className={cn(s.pickCard, on && s.pickCardOn, confirming === row.id && s.pickCardOpen)}
+          >
+            {/* Варіант A (дошка `Desk-Picker-Row`, рішення власника 2026-11-05): мініатюра й назва на всю ширину; знизу —
+                рядок статусу й кнопки «+» і календарик, вирівняні по центру. */}
             <button
               type="button"
               aria-current={on ? 'true' : undefined}
               data-source={row.id}
               onClick={() => pick(row)}
-              className={cn('t2f-focus t2f-transition', s.row, !on && s.rowWithPlus, on && s.rowOn)}
+              className={cn('t2f-focus t2f-transition', s.pickMain)}
             >
               <span aria-hidden="true" className={s.thumb}>
                 {thumb ? (
@@ -130,48 +159,69 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
                   <Flag round code={row.flagCode} size="xs" decorative />
                   <span className={s.subText}>{row.countryName}</span>
                 </span>
-                <span className={s.live}>
-                  {row.status === 'live' ? (
-                    <>
-                      <Icon name="broadcast-live" size={14} className="text-primary" />
-                      {t('liveKind', { kind: tType(KIND_KEY[row.kind]) })}
-                    </>
-                  ) : (
-                    <>
-                      <Icon name={row.status === 'recording' ? 'play' : 'broadcast'} size={14} />
-                      {`${tStatus(row.status)} · ${tType(KIND_KEY[row.kind])}`}
-                    </>
-                  )}
-                  {on ? <span className="sr-only">. {t('playing')}</span> : null}
-                </span>
               </span>
             </button>
-            {on || !canAddToRoom(row.status) ? null : phone ? (
-              <IconButton
-                icon="plus"
-                variant="ring"
-                compact
-                iconSize={16}
-                aria-label={tStreams('add', { title: row.title })}
-                aria-expanded={confirming === row.id}
-                aria-controls={confirming === row.id ? `${uid}-${row.id}` : undefined}
-                onClick={() => setConfirming(confirming === row.id ? null : row.id)}
-                className={s.plus}
-              />
-            ) : (
-              // Десктоп (варіант C): «+» додає у вікна кімнати, ✓ — уже там; зібране — у панелі кімнати.
-              <IconButton
-                icon={room.has(row.id) ? 'check' : 'plus'}
-                variant="ring"
-                compact
-                iconSize={16}
-                aria-pressed={room.has(row.id)}
-                aria-label={room.has(row.id) ? tStreams('inRoom', { title: row.title }) : tStreams('add', { title: row.title })}
-                disabled={!room.has(row.id) && room.full}
-                onClick={() => room.toggle({ sourceId: row.id, eventId: row.eventId })}
-                className={cn(s.plus, room.has(row.id) && s.plusOn)}
-              />
-            )}
+            <div className={s.pickFoot}>
+              <span className={s.live}>
+                {row.status === 'live' ? (
+                  <>
+                    <Icon name="broadcast-live" size={16} className="text-primary" />
+                    {t('liveKind', { kind: tType(KIND_KEY[row.kind]) })}
+                  </>
+                ) : (
+                  <>
+                    <Icon name={row.status === 'recording' ? 'play' : 'broadcast'} size={16} />
+                    {`${tStatus(row.status)} · ${tType(KIND_KEY[row.kind])}`}
+                  </>
+                )}
+                {on ? <span className="sr-only">. {t('playing')}</span> : null}
+              </span>
+              <span className={s.pickBtns}>
+                {on || !canAddToRoom(row.status) ? null : (
+                  // Той самий кружок, що й календарик. Телефон — підтвердження під рядком; десктоп — одразу в кімнату (✓).
+                  <button
+                    type="button"
+                    aria-label={
+                      !phone && room.has(row.id)
+                        ? tStreams('inRoom', { title: row.title })
+                        : tStreams('add', { title: row.title })
+                    }
+                    aria-pressed={phone ? undefined : room.has(row.id)}
+                    aria-expanded={phone ? confirming === row.id : undefined}
+                    aria-controls={phone && confirming === row.id ? `${uid}-${row.id}` : undefined}
+                    disabled={!phone && !room.has(row.id) && room.full}
+                    onClick={() =>
+                      phone
+                        ? setConfirming(confirming === row.id ? null : row.id)
+                        : room.toggle({ sourceId: row.id, eventId: row.eventId })
+                    }
+                    className={cn('t2f-focus t2f-press rounded-full', nn.cal, s.pickCal)}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        nn.calCircle,
+                        !phone && room.has(row.id) && nn.plusOn,
+                        phone && confirming === row.id && nn.plusOpen,
+                      )}
+                    >
+                      <Icon
+                        name={!phone && room.has(row.id) ? 'check' : 'plus'}
+                        size={16}
+                        strokeWidth={2.4}
+                      />
+                    </span>
+                  </button>
+                )}
+                <CalendarButton
+                  city={row.title.split(' · ')[0] ?? row.title}
+                  inSchedule={inSched(row.eventId)}
+                  closed={scheduleClosed(row.midnightMs, nowSec)}
+                  onToggle={onToggleSchedule ? () => onToggleSchedule(row.eventId) : undefined}
+                  className={s.pickCal}
+                />
+              </span>
+            </div>
             {phone && confirming === row.id ? (
               <RoomAddConfirm
                 id={`${uid}-${row.id}`}

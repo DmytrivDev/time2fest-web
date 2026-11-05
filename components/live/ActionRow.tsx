@@ -50,6 +50,8 @@ export interface ActionRowProps {
   onStayHere?: () => void;
   /** Пульт: трансляції країни й поясу для «Обрати трансляцію» і що робити з вибраною. */
   streams?: RemoteStreams;
+  /** Календарик у «Обрати трансляцію» — «Додати в графік». */
+  onToggleSchedule?: (eventId: string) => void;
   /** Пульт: «Відео | Відлік». */
   countdownMode?: CountdownModeControl;
   /** Пульт: місце для тексту «Поділитися» («Париж · Ейфелева вежа»). */
@@ -107,6 +109,7 @@ export function ActionRow({
   sound,
   onStayHere,
   streams,
+  onToggleSchedule,
   countdownMode,
   sharePlace,
   onWatchAgain,
@@ -145,10 +148,16 @@ export function ActionRow({
             rows={streams.rows}
             onPick={streams.onPick}
             onAddToRoom={streams.onAddToRoom}
+            onToggleSchedule={onToggleSchedule}
             onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
           />
         ) : (
-          <StreamPicker midnightMs={midnightMs} countryIso={broadcast?.current?.event.countryIso} onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)} />
+          <StreamPicker
+          midnightMs={midnightMs}
+          countryIso={broadcast?.current?.event.countryIso}
+          onToggleSchedule={onToggleSchedule}
+          onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
+        />
         ),
     });
   }

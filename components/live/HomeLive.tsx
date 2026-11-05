@@ -189,6 +189,7 @@ export function HomeLive() {
         next={next}
         airView={air?.view}
         onStayHere={stayHere}
+        onToggleSchedule={passWindows.requestSchedule}
         scheduleHint={hint}
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}

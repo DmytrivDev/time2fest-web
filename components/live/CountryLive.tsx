@@ -538,6 +538,7 @@ export function CountryLive({ iso }: { iso: string }) {
         title={title}
         streams={streams}
         countdownMode={countdownMode}
+        onToggleSchedule={passWindows.requestSchedule}
         onWatchAgain={watchAgain}
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}

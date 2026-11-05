@@ -280,3 +280,80 @@
   background: var(--color-highlight);
   color: #121214;
 }
+
+/* Варіант A (2026-11-05): рамка — на картці; згори мініатюра й назва (кнопка «дивитися»), знизу — статус і «+» з
+   календариком; статус і кнопки — по центру одного рядка. */
+.pickCard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: border-color 0.15s, background 0.15s;
+}
+.pickCard:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-raised);
+}
+.pickCardOn,
+.pickCardOn:hover {
+  border-color: rgba(252, 226, 134, 0.6); /* дошка */
+  background: var(--color-surface-raised);
+}
+.pickCardOpen,
+.pickCardOpen:hover {
+  border-color: var(--color-highlight);
+  background: var(--color-surface-raised);
+}
+.pickMain {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  width: 100%;
+  padding: 8px 8px 4px;
+  border: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: transparent;
+  color: var(--color-text);
+  text-align: start;
+  cursor: pointer;
+}
+.pickFoot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 4px 4px 10px;
+}
+.pickFoot .live {
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  line-height: 1;
+}
+.pickBtns {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0;
+}
+.pickBtns .pickCal {
+  position: static;
+  transform: none;
+}
+.pickBtns .pickCal + .pickCal {
+  margin-left: -8px;
+}
+.plusOpen {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: #121214;
+}
+.pickCard .confirm {
+  margin: 4px 8px 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pickCard {
+    transition: none;
+  }
+}
