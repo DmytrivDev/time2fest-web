@@ -57,12 +57,21 @@ const win = (page: Page) => page.locator('[data-window="O-FIRST-ROW"]');
 const payWin = (page: Page) => page.locator('[data-window="O-PAY"]');
 const payBtn = (page: Page) => page.locator('[data-action="pay"]');
 
+/** Телефон: на сторінці країни, як на головній, «Перший ряд» — згорнута смуга під рядком часу; розгорнути. */
+async function openStrip(page: Page) {
+  if (!isPhone(page)) return;
+  const toggle = strip(page).locator('button[aria-expanded]').first();
+  if ((await toggle.getAttribute('aria-expanded')) === 'false') await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+}
+
 async function start(page: Page, at = OPEN_AT, path = LONDON_PAGE) {
   await gotoAt(page, at, 1, path);
   await page.evaluate((k) => localStorage.removeItem(k), LS_KEY);
   await page.reload();
   await waitForTimeApi(page);
   await expect(strip(page)).toBeVisible();
+  await openStrip(page);
 }
 
 async function presetGuest(
@@ -93,6 +102,7 @@ async function presetGuest(
   await page.reload();
   await waitForTimeApi(page);
   await expect(strip(page)).toBeVisible();
+  await openStrip(page);
 }
 
 async function openForm(page: Page) {

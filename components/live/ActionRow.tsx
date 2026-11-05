@@ -8,9 +8,9 @@
  * - «⋯» — «Ще дії» на місці чату / шторкою без затемнення сайту (`MoreActions`): поділитися й повідомити про проблему.
  * «Лишитися тут ›» — клієнтський перехід у межах `(live)`: макет і плеєр не перемонтовуються (SC-003).
  *
- * Режим `remote` (сторінка країни, пульт): [SoundToggle] [«Ще трансляції» — десктоп прокручує до блоків трансляцій,
- * телефон відкриває аркуш; після півночі — «Записи»] [«Подивитися північ ще раз», лише коли джерело дає повтор]
- * + ті самі інертні дії кімнати й вечірки. Переходу на іншу сторінку тут немає: пульт сам нікуди не веде.
+ * Режим `remote` (сторінка країни, пульт) — як на головній (рішення 2026-11-05): «Обрати трансляцію ›» відкриває той самий
+ * список (`StreamPicker`), але з трансляціями країни й поясу в будь-якому стані, вибір — через сторінку (`streams.onPick`);
+ * «Подивитися північ ще раз» — лише коли джерело дає повтор; «Кімната перегляду», «Режим вечірки», «⋯» — ті самі.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -25,6 +25,7 @@ import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
 import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
 import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
 import type { CaptionButton } from '@/lib/engine/captionPhase';
+import type { StreamRowData } from '@/lib/live/countryData';
 import home from './home.module.css';
 import styles from './live.module.css';
 
@@ -42,13 +43,20 @@ export interface ActionRowProps {
   hideSound?: boolean;
   /** «Лишитися тут ›»: запам’ятати подію перед переходом (BroadcastController.stayHere). */
   onStayHere?: () => void;
-  /** Пульт: «Ще трансляції» / «Записи». */
-  onMoreStreams?: () => void;
-  /** Пульт: після півночі кнопка називається «Записи». */
-  recordings?: boolean;
+  /** Пульт: трансляції країни й поясу для «Обрати трансляцію» і що робити з вибраною. */
+  streams?: RemoteStreams;
+  /** Пульт: місце для тексту «Поділитися» («Париж · Ейфелева вежа»). */
+  sharePlace?: string;
   /** Пульт: «Подивитися північ ще раз» (повтор із `source.replay`). */
   onWatchAgain?: () => void;
   className?: string;
+}
+
+export interface RemoteStreams {
+  rows: readonly StreamRowData[];
+  countryIso: string;
+  midnightMs: number;
+  onPick(row: StreamRowData): void;
 }
 
 export function ActionRow({
@@ -57,14 +65,13 @@ export function ActionRow({
   href,
   sound,
   onStayHere,
-  onMoreStreams,
-  recordings = false,
+  streams,
+  sharePlace,
   onWatchAgain,
   hideSound = false,
   className,
 }: ActionRowProps) {
   const t = useTranslations('player');
-  const tc = useTranslations('country.actions');
   const overlay = useOverlay();
   const remote = mode === 'remote';
   const stay = button === 'stay-here';
@@ -72,8 +79,8 @@ export function ActionRow({
 
   const column = useChatColumn();
   const broadcast = useOptionalBroadcast();
-  const midnightMs = broadcast?.current?.event.midnightMs ?? null;
-  const place = broadcast?.current?.city?.name.uk ?? '';
+  const midnightMs = remote ? (streams?.midnightMs ?? null) : (broadcast?.current?.event.midnightMs ?? null);
+  const place = remote ? (sharePlace ?? '') : (broadcast?.current?.city?.name.uk ?? '');
   const target: ShareTarget = {
     url: `${typeof window !== 'undefined' ? window.location.origin : `https://${SITE_HOST}`}${href ?? '/'}`,
     shortUrl: `${SITE_HOST}${href ?? '/'}`,
@@ -88,7 +95,18 @@ export function ActionRow({
       chrome: 'board',
       title: t('chooseStream'),
       description: t('picker.sub'),
-      content: <StreamPicker midnightMs={midnightMs} countryIso={broadcast?.current?.event.countryIso} onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)} />,
+      content:
+        remote && streams ? (
+          <StreamPicker
+            midnightMs={midnightMs}
+            countryIso={streams.countryIso}
+            rows={streams.rows}
+            onPick={streams.onPick}
+            onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
+          />
+        ) : (
+          <StreamPicker midnightMs={midnightMs} countryIso={broadcast?.current?.event.countryIso} onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)} />
+        ),
     });
   }
   function openReport() {
@@ -122,9 +140,19 @@ export function ActionRow({
       {hideSound ? null : <SoundToggle {...sound} />}
       {remote ? (
         <>
-          <Button variant="secondary" data-action="more-streams" onClick={onMoreStreams} className="min-w-0">
-            {recordings ? tc('recordings') : tc('moreStreams')}
-          </Button>
+          {streams && streams.rows.length > 0 ? (
+            <Button
+              variant="secondary"
+              aria-haspopup="dialog"
+              aria-expanded={overlay.current?.id === STREAM_PICKER_ID}
+              data-action="choose-stream"
+              onClick={openPicker}
+              className={cn('min-w-0', home.choose)}
+            >
+              {t('chooseStream')}
+              <Icon name="chevron-right" size={16} strokeWidth={2} />
+            </Button>
+          ) : null}
           {button === 'watch-again' ? (
             <Button variant="secondary" iconLeft="play" data-action="watch-again" onClick={onWatchAgain}>
               {t('watchMidnightAgain')}
@@ -165,17 +193,15 @@ export function ActionRow({
             {t('partyMode')}
           </NextLink>
         </Button>
-        {remote ? null : (
-          <IconButton
-            icon="more"
-            variant="ring"
-            aria-label={t('moreActions')}
-            aria-haspopup="dialog"
-            aria-expanded={moreOpen}
-            data-action="more-actions"
-            onClick={openMore}
-          />
-        )}
+        <IconButton
+          icon="more"
+          variant="ring"
+          aria-label={t('moreActions')}
+          aria-haspopup="dialog"
+          aria-expanded={moreOpen}
+          data-action="more-actions"
+          onClick={openMore}
+        />
       </span>
       <span className={styles.phoneOnly}>
         <button

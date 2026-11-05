@@ -6,11 +6,12 @@
  * Десктоп (від 1200 px): прапор `lg`, назва, «північ о 01:00 за вашим часом», рядок про штамп, «Додати в графік».
  * Після півночі: «північ була о …» і «Франція зустріла Новий рік» (`metPhrase`, рід країни).
  * `h1` — на сторінці (sr-only), тут назва — звичайний абзац. Обидва варіанти в DOM, прихований — `display:none`.
- * «Додати в графік» поки неактивна (графік — окрема функція). Назви — лише в називному відмінку.
+ * «Додати в графік» — той самий запис «країна + пояс», що й календарики головної (рішення 2026-11-05): додали — «У графіку ·
+ * нагадаємо за 10 хв» (телефон — жовтий календарик з галочкою); без пасу — вікно пасу (вирішує сторінка). Після півночі
+ * кнопки немає. Назви — лише в називному відмінку.
  */
 import type { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/primitives/Button';
 import { Chip, ChipGroup } from '@/components/primitives/Chip';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -20,6 +21,7 @@ import { Link } from '@/components/primitives/Link';
 import type { Country } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock } from '@/lib/i18n/time';
+import m from './countryPanel.module.css';
 import styles from './live.module.css';
 
 export interface CountryHeaderProps {
@@ -32,6 +34,9 @@ export interface CountryHeaderProps {
   zones?: readonly { id: string; label: string }[];
   selectedZoneId?: string;
   onZoneChange?(zoneId: string): void;
+  /** Графік: стан і перемикач (без нього кнопок немає). */
+  inSchedule?: boolean;
+  onToggleSchedule?(): void;
   /** Часовий пояс глядача (тести, історії); типово — пояс браузера. */
   timeZone?: string;
   className?: string;
@@ -44,12 +49,17 @@ export function CountryHeader({
   zones,
   selectedZoneId,
   onZoneChange,
+  inSchedule = false,
+  onToggleSchedule,
   timeZone,
   className,
 }: CountryHeaderProps) {
   const t = useTranslations('country.header');
   const tNav = useTranslations('header');
   const tMet = useTranslations('met');
+  const tSched = useTranslations('liveMap.country');
+  const schedule = !after && onToggleSchedule;
+  const schedAria = inSchedule ? tSched('scheduleOnAria', { city: country.name.uk }) : tSched('scheduleAddAria', { city: country.name.uk });
 
   const name = country.name.uk;
   const time = formatClock(midnightMs, timeZone ? { timeZone } : {});
@@ -94,13 +104,17 @@ export function CountryHeader({
             </li>
           </ol>
         </nav>
-        <IconButton
-          icon="calendar-add"
-          variant="ring"
-          disabled
-          aria-label={t('addToSchedule')}
-          className={cn(styles.phoneOnly, 'shrink-0')}
-        />
+        {schedule ? (
+          <IconButton
+            icon={inSchedule ? 'calendar-check' : 'calendar-add'}
+            variant="ring"
+            aria-pressed={inSchedule}
+            aria-label={schedAria}
+            data-schedule-header=""
+            onClick={onToggleSchedule}
+            className={cn(styles.phoneOnly, 'shrink-0', inSchedule && 'text-highlight')}
+          />
+        ) : null}
       </div>
 
       <div className={styles.phoneOnly}>{note}</div>
@@ -112,9 +126,19 @@ export function CountryHeader({
           <p className="text-body text-text-muted">{timeLine}</p>
           <div className="mt-1">{note}</div>
         </div>
-        <Button variant="secondary" iconLeft="calendar-add" disabled>
-          {t('addToSchedule')}
-        </Button>
+        {schedule ? (
+          <button
+            type="button"
+            aria-pressed={inSchedule}
+            aria-label={schedAria}
+            data-schedule-header=""
+            onClick={onToggleSchedule}
+            className={cn('t2f-focus', m.sched)}
+          >
+            <Icon name={inSchedule ? 'calendar-check' : 'calendar-add'} size={18} strokeWidth={inSchedule ? 2.2 : 2} />
+            {inSchedule ? tSched('scheduleOn') : t('addToSchedule')}
+          </button>
+        ) : null}
       </div>
 
       {zones && zones.length >= 2 ? (

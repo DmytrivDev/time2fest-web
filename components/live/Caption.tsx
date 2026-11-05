@@ -244,7 +244,8 @@ export function Caption({
             {tBadge('live')}
           </Badge>
         ) : null}
-        {ago !== null ? (
+        {/* «Запис» — лише коли відео є; без трансляції після півночі позначки немає (сцена відліку — не запис). */}
+        {ago !== null && live ? (
           <span data-caption-recording="" className="inline-flex">
             <Badge variant="recording">{tc('recording')}</Badge>
           </span>

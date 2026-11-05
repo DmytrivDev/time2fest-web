@@ -5,7 +5,7 @@
  *
  * `remote`: сторінка сама не переходить за ефіром (FR-024) — плеєр показує те, що обрала людина (ланцюжок задає сторінка);
  * після півночі відео лишається, у підписі «Запис» і «північ була 40 хв тому», рядок 3 — `met-and-next`;
- * «Подивитися північ ще раз» — лише коли джерело дає повтор (`source.replay`); у рядку дій «Ще трансляції».
+ * «Подивитися північ ще раз» — лише коли джерело дає повтор (`source.replay`); у рядку дій «Обрати трансляцію» (як на головній).
  *
  * Частини: `VideoArea` (= `PlayerSlot`: хост плеєра з макета сідає над ним; на місці відео — сцена відліку,
  * картка Facebook чи скелетон, ніколи не поверх) · `Caption` (3 рядки за фазою `captionPhase`) · `ActionRow` ·
@@ -20,7 +20,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useId, type ReactNode } from 'react';
-import { ActionRow } from '@/components/live/ActionRow';
+import { ActionRow, type RemoteStreams } from '@/components/live/ActionRow';
 import { Caption, eventTitle } from '@/components/live/Caption';
 import home from '@/components/live/home.module.css';
 import { cn } from '@/components/primitives/cn';
@@ -68,8 +68,8 @@ export interface PlayerBlockProps {
   titleId?: string;
   /** Пульт: назва вибраної трансляції в рядку 2 («Париж · Ейфелева вежа»). */
   title?: string;
-  /** Пульт: «Ще трансляції» / «Записи». */
-  onMoreStreams?: () => void;
+  /** Пульт: трансляції країни й поясу для «Обрати трансляцію». */
+  streams?: RemoteStreams;
   /** Пульт: «Подивитися північ ще раз». */
   onWatchAgain?: () => void;
   /** «Зараз дивляться люди з N країн» у рядку 1 підпису (від 768 px). */
@@ -170,7 +170,7 @@ export function PlayerBlock({
   timeZone,
   titleId: titleIdProp,
   title,
-  onMoreStreams,
+  streams,
   onWatchAgain,
   watchers,
   captionAside,
@@ -261,9 +261,9 @@ export function PlayerBlock({
               hideSound={dock}
               mode={mode}
               button={phase.button}
-              onMoreStreams={onMoreStreams}
+              streams={streams}
+              sharePlace={title}
               onWatchAgain={onWatchAgain}
-              recordings={phase.row1Right.kind === 'ago'}
               href={current.href}
               onStayHere={onStayHere}
               sound={{

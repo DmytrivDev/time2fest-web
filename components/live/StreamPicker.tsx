@@ -47,26 +47,37 @@ export interface StreamPickerProps {
   countryIso?: string;
   /** Після вибору (телефон закриває шторку). */
   onPicked?: () => void;
+  /**
+   * Сторінка країни (рішення 2026-11-05): готові рядки — трансляції країни й поясу в будь-якому стані (очікується, запис),
+   * і вибір через сторінку (`onPick`), бо пульт сам знає, яку подію показує.
+   */
+  rows?: readonly StreamRowData[];
+  onPick?: (row: StreamRowData) => void;
 }
 
-export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerProps) {
+export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows, onPick }: StreamPickerProps) {
   const t = useTranslations('player.picker');
   const tType = useTranslations('liveCards.eventCard.type');
+  const tStatus = useTranslations('country.streams.status');
   const now = useNow({ granularity: 'minute' });
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const currentId = player?.selection?.kind === 'source' ? player.selection.source.id : null;
-  const rows = useMemo(() => liveRowsForMidnight(midnightMs, now), [midnightMs, now]);
+  const liveRows = useMemo(() => (givenRows ? [] : liveRowsForMidnight(midnightMs, now)), [givenRows, midnightMs, now]);
+  const rows = givenRows ?? liveRows;
   const home = countryIso ? rows.filter((r) => r.countryIso === countryIso) : [];
   const rest = countryIso ? rows.filter((r) => r.countryIso !== countryIso) : rows;
 
   const pick = (row: StreamRowData) => {
-    const sources = getData().chainsByEventId.get(row.eventId)?.sources ?? [];
-    actions?.setChain({ eventId: row.eventId, sources, preferredSourceId: row.id });
+    if (onPick) onPick(row);
+    else {
+      const sources = getData().chainsByEventId.get(row.eventId)?.sources ?? [];
+      actions?.setChain({ eventId: row.eventId, sources, preferredSourceId: row.id });
+    }
     onPicked?.();
   };
 
-  const list = (items: StreamRowData[], label: string) => (
+  const list = (items: readonly StreamRowData[], label: string) => (
     <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label={label}>
       {items.map((row) => {
         const on = row.id === currentId;
@@ -102,8 +113,17 @@ export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerP
                   <span className={s.subText}>{row.countryName}</span>
                 </span>
                 <span className={s.live}>
-                  <Icon name="broadcast-live" size={14} className="text-primary" />
-                  {t('liveKind', { kind: tType(KIND_KEY[row.kind]) })}
+                  {row.status === 'live' ? (
+                    <>
+                      <Icon name="broadcast-live" size={14} className="text-primary" />
+                      {t('liveKind', { kind: tType(KIND_KEY[row.kind]) })}
+                    </>
+                  ) : (
+                    <>
+                      <Icon name={row.status === 'recording' ? 'play' : 'broadcast'} size={14} />
+                      {`${tStatus(row.status)} · ${tType(KIND_KEY[row.kind])}`}
+                    </>
+                  )}
                   {on ? <span className="sr-only">. {t('playing')}</span> : null}
                 </span>
               </span>
@@ -117,7 +137,7 @@ export function StreamPicker({ midnightMs, countryIso, onPicked }: StreamPickerP
   const countryName = home[0]?.countryName;
   return (
     <section data-window={STREAM_PICKER_ID} className="flex flex-col gap-3 px-4 pb-4 pt-1">
-      <p className={s.lead}>{t('eyebrow')}</p>
+      <p className={s.lead}>{givenRows ? t('eyebrowCountry') : t('eyebrow')}</p>
       {rows.length === 0 ? <p className={s.empty}>{t('empty')}</p> : null}
       {home.length ? (
         <div className="flex flex-col gap-2" data-group="country">

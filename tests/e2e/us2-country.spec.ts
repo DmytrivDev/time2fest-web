@@ -35,6 +35,7 @@ const PARIS_1 = 'QI-PPEW2Bgc';
 const PARIS_2 = '-xzg3wujOVM';
 
 const block = (page: Page) => page.locator('[data-player-block="remote"]');
+// Телефон, як на головній: два підписи — липкий рядок (місто, відлік) і назва трансляції під «Першим рядом».
 const caption = (page: Page) => page.locator('[data-caption]');
 const row3 = (page: Page) => page.locator('[data-caption-row3]');
 const streamRow = (page: Page, id: string) => page.locator(`[data-stream-row="${id}"]`);
@@ -83,7 +84,7 @@ test.describe('US2 · сторінка країни', () => {
     expect((await ytStub.players())[0]!.muted).toBe(false);
     await expect(page.getByRole('button', { name: 'Звук увімкнено' })).toBeVisible();
     await expect(streamRow(page, 'src_london_2').locator('button[aria-pressed="true"]')).toHaveCount(1);
-    await expect(caption(page)).toContainText('Лондон · Темза й Лондонський міст');
+    await expect(caption(page).last()).toContainText('Лондон · Темза й Лондонський міст');
     await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?(\?.*)?$/);
 
     await expectPlayerMinSize(page);
@@ -104,7 +105,7 @@ test.describe('US2 · сторінка країни', () => {
     await ytStub.fireError(150);
     await expect(page.locator('[data-video-area="expected-scene"]')).toBeVisible();
     await expect(page.locator('[data-caption-timer="countdown"]')).toBeVisible();
-    await expect(caption(page)).toContainText('до півночі');
+    await expect(caption(page).first()).toContainText('до півночі');
 
     // Настає startsAt — без перезавантаження, у тому самому iframe.
     await setTime(page, { at: '2026-12-31T22:50:05Z', speed: 1 });
@@ -139,12 +140,15 @@ test.describe('US2 · сторінка країни', () => {
   test('acc.4: через 40 хв після півночі — запис, «північ була 40 хв тому», «Зараз і далі»', async ({ page, ytStub }) => {
     await gotoAt(page, '2027-01-01T01:40:00+02:00', 0, FR);
     await ytStub.waitForPlayer();
-    await expect(page.locator('[data-caption-recording]')).toHaveText('Запис');
-    await expect(page.locator('[data-caption-ago]')).toHaveText('північ була 40 хв тому');
+    // Телефон, як на головній: липкий рядок і назва без позначок; «Запис» видно в рядках трансляцій.
+    if (!isPhone(page)) {
+      await expect(page.locator('[data-caption-recording]')).toHaveText('Запис');
+      await expect(page.locator('[data-caption-ago]')).toHaveText('північ була 40 хв тому');
+    }
     await expect(row3(page)).toHaveText('Франція зустріла Новий рік · далі: Велика Британія о 02:00');
     // У даних немає повторів — кнопки «Подивитися північ ще раз» немає.
     await expect(page.getByRole('button', { name: 'Подивитися північ ще раз' })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Записи' })).toBeVisible();
+    await expect(page.locator('[data-action="choose-stream"]:visible')).toHaveText(/Обрати трансляцію/);
     await expect(streamRow(page, 'src_paris_2')).toContainText('Запис');
     await expect(page.getByText('Трансляції в цьому поясі')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Зараз і далі' }).first()).toBeVisible();
@@ -159,7 +163,7 @@ test.describe('US2 · сторінка країни', () => {
 
     await setTime(page, { at: '2027-01-01T02:15:30+02:00', speed: 1 });
     await expect.poll(() => nowMs(page)).toBeGreaterThan(Date.parse('2027-01-01T00:15:00Z'));
-    await expect(caption(page)).toContainText('Лондон');
+    await expect(caption(page).first()).toContainText('Лондон');
     await expect(row3(page)).toHaveText('Велика Британія зустріла Новий рік');
     const after = await ytStub.counters();
     expect(after.loadVideoById).toBe(before.loadVideoById);
@@ -180,7 +184,7 @@ test.describe('US2 · сторінка країни', () => {
 
     await setTime(page, { at: '2027-01-01T02:15:10+02:00', speed: 1 });
     await expect.poll(() => nowMs(page)).toBeGreaterThan(Date.parse('2027-01-01T00:15:00Z'));
-    await expect(caption(page)).toContainText('Лондон');
+    await expect(caption(page).first()).toContainText('Лондон');
     const after = await ytStub.counters();
     expect(after.created).toBe(1);
     expect(after.loadVideoById).toBe(before.loadVideoById);

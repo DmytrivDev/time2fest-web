@@ -218,6 +218,7 @@
     "picker": {
       "sub": "Перемикає відео тут — сторінка й чат лишаються",
       "eyebrow": "Йдуть зараз · ця північ",
+      "eyebrowCountry": "Трансляції країни й поясу · ця північ",
       "listLabel": "Трансляції цієї півночі",
       "live": "Наживо",
       "playing": "Зараз грає",
@@ -1317,10 +1318,6 @@
       "recording": "Запис",
       "ago": "північ була {ago}",
       "metAndNext": "{met} · далі: {place} о {time}"
-    },
-    "actions": {
-      "moreStreams": "Ще трансляції",
-      "recordings": "Записи"
     },
     "header": {
       "breadcrumbs": "Ви тут",
