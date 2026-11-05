@@ -588,3 +588,91 @@
   pointer-events: none;
   user-select: none;
 }
+
+/* «+» у кімнату й календарик (дошка `Desk-Room-Plus-2`, 2026-11-05): десктоп — поруч на мініатюрі, «+» ліворуч;
+   телефон — один під одним праворуч, два постійні місця (порожнє місце лишається, щоб кнопки стояли в одну лінію). */
+.btns {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: flex;
+  gap: 0;
+}
+.btns .cal {
+  position: static;
+  transform: none;
+}
+/* Десктоп: «+» і календарик ближче (цілі 44 px перекриваються, видимі кола — поруч). */
+.btns > * + * {
+  margin-left: -8px;
+}
+.card[data-layout='stack'] .btns > * + * {
+  margin-left: 0;
+}
+/* Північ минула чи до неї менше 2 хв: календарик неактивний; був у графіку — жовтий, але тьмяний. */
+.calWrap {
+  display: inline-flex;
+  border-radius: 999px;
+}
+.calClosed {
+  cursor: default;
+  color: var(--color-border-strong);
+}
+.cal.calClosed .calCircle,
+.cal.calClosed:hover .calCircle {
+  border-color: var(--color-border);
+  background: transparent;
+}
+.cal.calClosed .calCircle.calWasOn,
+.cal.calClosed:hover .calCircle.calWasOn {
+  border-color: transparent;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  opacity: 0.45;
+}
+.slotEmpty {
+  display: none;
+}
+.cal .calCircle.plusOn {
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+.cal .calCircle.plusOpen {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: #121214;
+}
+.card[data-layout='stack'] .btns {
+  top: 8px;
+  right: 6px;
+  flex-direction: column;
+}
+.card[data-layout='stack'] .btns .cal {
+  position: static;
+  width: 38px;
+  height: 38px;
+  transform: none;
+}
+.card[data-layout='stack'] .slotEmpty {
+  display: block;
+  width: 38px;
+  height: 38px;
+}
+.card[data-layout='stack'] .link {
+  min-height: 92px;
+}
+/* Телефон: рядок і підтвердження «+» — одна картка в жовтій рамці. */
+.cardOpen {
+  border: 1px solid var(--color-highlight);
+  border-radius: var(--timeline-item-radius);
+  background: var(--color-surface-raised);
+}
+.cardOpen .link {
+  border-color: transparent;
+}
+.confirm {
+  margin: 0 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-border-strong);
+}

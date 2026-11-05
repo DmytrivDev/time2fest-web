@@ -7,7 +7,7 @@ import type { EventCardData, EventCardStream } from '@/components/live/EventCard
 import type { FestProgressProps } from '@/components/live/Progress';
 import type { Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
-import { chainStatus } from '@/lib/engine/sourceStatus';
+import { chainStatus, sourceStatus } from '@/lib/engine/sourceStatus';
 import { countryHref } from '@/lib/player/BroadcastController';
 
 const HOUR = 3_600_000;
@@ -36,6 +36,8 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
   const city = data.citiesById.get(event.cityId);
   const stream = streamOf(data, event, now);
   const thumb = stream === 'countdown-only' ? undefined : thumbOfEvent(data, event);
+  // «+» у кімнату — лише трансляції, що йдуть наживо: перше джерело в стані «наживо».
+  const liveSource = stream === 'live' ? data.chainsByEventId.get(event.id)?.sources.find((x) => sourceStatus(x, now) === 'live') : undefined;
   return {
     id: event.id,
     title: city?.name.uk ?? event.id,
@@ -45,6 +47,7 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
     celebrationType: event.type,
     stream,
     ...(thumb ? { thumb } : {}),
+    ...(liveSource ? { liveSourceId: liveSource.id, liveTitle: liveSource.title.uk } : {}),
     illustrationId: country?.illustrationId ?? 'generic',
     href: country ? countryHref(country) : '/',
     inSchedule: schedule.includes(event.id),

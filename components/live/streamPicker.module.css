@@ -273,3 +273,10 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
 }
+
+.plusOn,
+.plusOn:hover {
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
+  color: #121214;
+}

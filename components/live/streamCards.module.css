@@ -354,3 +354,24 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Десктоп: трансляція вже в кімнаті — жовта ✓ (2026-11-05). */
+.plusOn,
+.plusOn:hover {
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
+  color: #121214;
+}
+.plus:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* Телефон: рядок і підтвердження «+» — одна картка в жовтій рамці. */
+.rowOpen {
+  border-color: var(--color-highlight);
+  background: var(--color-surface-raised);
+}
+.rowOpen .rowConfirm {
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-strong);
+}

@@ -34,6 +34,7 @@ import { ZoneMap } from '@/components/live/ZoneMap';
 import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
+import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
@@ -203,6 +204,7 @@ export function HomeLive() {
           <div className="mt-2">{nowNext('carousel')}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
           {wideSlot ? createPortal(map, wideSlot) : null}
+          <RoomTray />
         </div>
       ) : (
         <>

@@ -26,11 +26,12 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/primitives/Popover';
 import { formatClock } from '@/lib/i18n/time';
 import { PostcardArt } from '@/components/windows/StampArt';
 import { EventFilter, type EventFilterValue } from './EventFilter';
 import type { StreamRowData } from '@/lib/live/countryData';
+import { canAddToRoom, useRoomToggle } from '@/components/room/useRoomToggle';
+import type { RoomTarget } from '@/stores/room';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { usePhone } from './StreamList';
 import { thumbOf } from '@/lib/live/thumb';
@@ -127,48 +128,30 @@ function Thumb({ row, current }: { row: StreamRowData; current: boolean }) {
   );
 }
 
-/** «+» на десктопі: під кнопкою — підтвердження кімнати перегляду. */
-function PlusPopover({
-  row,
-  currentRow,
-  onAddToRoom,
-}: {
-  row: StreamRowData;
-  currentRow?: Pick<StreamRowData, 'id' | 'eventId' | 'title'> | null;
-  onAddToRoom?(row: StreamRowData): void;
-}) {
+/**
+ * «+» на десктопі (варіант C, рішення 2026-11-05): додає трансляцію у вікна кімнати без переходу — на картці ✓, повторний
+ * натиск прибирає; зібране — у панелі кімнати знизу колонки (`RoomTray`). Кімната повна — «+» неактивний.
+ */
+function PlusToggle({ row, main }: { row: StreamRowData; main: RoomTarget | null }) {
   const t = useTranslations('country.streams');
-  const [open, setOpen] = useState(false);
-  const id = useId();
+  const room = useRoomToggle(main);
+  const on = room.has(row.id);
+  const disabled = !on && room.full;
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={t('add', { title: row.title })}
-          aria-haspopup="dialog"
-          className={cn('t2f-focus', s.plus)}
-        >
-          <Icon name="plus" size={18} strokeWidth={2.2} />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent side="bottom" align="end" className="w-80 p-4">
-        <RoomAddConfirm
-          id={id}
-          row={row}
-          current={currentRow}
-          onCancel={() => setOpen(false)}
-          onConfirm={() => {
-            setOpen(false);
-            onAddToRoom?.(row);
-          }}
-        />
-      </PopoverContent>
-    </Popover>
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label={on ? t('inRoom', { title: row.title }) : disabled ? t('roomFull') : t('add', { title: row.title })}
+      disabled={disabled}
+      onClick={() => room.toggle({ sourceId: row.id, eventId: row.eventId })}
+      className={cn('t2f-focus', s.plus, on && s.plusOn)}
+    >
+      <Icon name={on ? 'check' : 'plus'} size={18} strokeWidth={on ? 2.6 : 2.2} />
+    </button>
   );
 }
 
-function DeskCard({ row, current, currentRow, showCountry, onSelect, onAddToRoom }: CardProps) {
+function DeskCard({ row, current, currentRow, showCountry, onSelect }: CardProps) {
   const tType = useTranslations('liveCards.eventCard.type');
   const kind = tType(KIND_KEY[row.kind]);
   return (
@@ -204,9 +187,9 @@ function DeskCard({ row, current, currentRow, showCountry, onSelect, onAddToRoom
           )}
         </span>
       </button>
-      {current ? null : (
+      {current || !canAddToRoom(row.status) ? null : (
         <span className={s.plusSlot}>
-          <PlusPopover row={row} currentRow={currentRow} onAddToRoom={onAddToRoom} />
+          <PlusToggle row={row} main={currentRow ? { sourceId: currentRow.id, eventId: currentRow.eventId } : null} />
         </span>
       )}
     </li>
@@ -233,7 +216,7 @@ function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom
       data-stream-card={row.id}
       data-stream-row={row.id}
       data-current={current ? '' : undefined}
-      className={cn(s.row, current && s.cardOn)}
+      className={cn(s.row, current && s.cardOn, confirming && s.rowOpen)}
     >
       <div className={s.rowMain}>
         <button
@@ -262,7 +245,7 @@ function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom
             )}
           </span>
         </button>
-        {current ? null : (
+        {current || !canAddToRoom(row.status) ? null : (
           <IconButton
             icon="plus"
             variant="ring"

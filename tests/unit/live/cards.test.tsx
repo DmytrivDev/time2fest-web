@@ -47,8 +47,9 @@ describe('EventCard', () => {
   it('минула: «північ була … тому», кнопка графіка неактивна з причиною в назві', () => {
     renderWithApp(<EventCard {...PARIS} status="recording" onToggleSchedule={() => undefined} />);
     expect(screen.getByText(/північ була 50 хв тому/)).toBeInTheDocument();
+    // Неактивний календарик — `aria-disabled` (щоб показувалась підказка «Північ уже минула», правка 2026-11-05).
     const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-disabled', 'true');
     expect(button).toHaveAccessibleName(/північ уже минула/);
     expect(screen.queryByText('В ефірі')).toBeNull();
   });

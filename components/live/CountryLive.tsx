@@ -40,6 +40,7 @@ import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { PlayerBlock } from '@/components/player/PlayerBlock';
+import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Link } from '@/components/primitives/Link';
 import { Icon } from '@/components/primitives/Icon';
@@ -407,6 +408,9 @@ export function CountryLive({ iso }: { iso: string }) {
   ) : null;
   const title = currentSource?.title.uk ?? (current ? eventTitle(current.city) : '');
   const noStreams = countryRows.length === 0;
+  // Що під «Трансляціями» (концепція, дошка `Desk-Room-Plus`, погоджено 2026-11-05): у країни зараз іде трансляція наживо —
+  // сусіди по поясу (та сама північ); ні (лише відлік, ще не почалась чи вже закінчилась) — «Зараз і далі».
+  const liveNow = !recording && countryRows.some((r) => r.status === 'live');
   const currentRow = countdown ? null : (pickerRows.find((r) => r.id === currentStreamId) ?? null);
   const countdownMode = noStreams ? undefined : { countdown, onChange: setMode };
   const time = mainEvent ? formatClock(mainEvent.midnightMs) : '';
@@ -435,7 +439,7 @@ export function CountryLive({ iso }: { iso: string }) {
           onSelect={select}
           onAddToRoom={addToRoom}
         />
-        {recording ? null : (
+        {liveNow ? (
           <StreamCards
             heading={tStreams('othersHeading', { time })}
             sub={tStreams('othersSub')}
@@ -458,9 +462,9 @@ export function CountryLive({ iso }: { iso: string }) {
               </Link>
             }
           />
-        )}
+        ) : null}
       </div>
-      {nowNext.length ? (
+      {!liveNow && nowNext.length ? (
         <NowNext
           items={nowNext}
           zoneLabel={zoneLabel}
@@ -553,6 +557,7 @@ export function CountryLive({ iso }: { iso: string }) {
           </div>
           <div className="pt-6">{events}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
+          <RoomTray />
         </>
       ) : (
         <>

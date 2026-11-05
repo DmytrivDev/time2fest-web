@@ -69,7 +69,7 @@ function columnBox(): { left: number; width: number } | null {
  * Де стоїть плашка і чи вона схована, бо лягла б на відео. Перевірка — на прокрутку, зміну розмірів і зміну самої
  * плашки; позиція «вдома» рахується без зсуву анімації (`bottom` і висота з розмітки).
  */
-function useBarGeometry(el: HTMLElement | null, column: boolean, active: boolean) {
+export function useBarGeometry(el: HTMLElement | null, column: boolean, active: boolean) {
   const [box, setBox] = useState<{ left: number; width: number } | null>(null);
   const [overVideo, setOverVideo] = useState(false);
   useEffect(() => {

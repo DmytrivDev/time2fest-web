@@ -21,7 +21,9 @@ import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
 import { thumbOf } from '@/lib/live/thumb';
+import { canAddToRoom, useRoomToggle } from '@/components/room/useRoomToggle';
 import { RoomAddConfirm } from './RoomAddConfirm';
+import { usePhone } from './StreamList';
 import s from './streamPicker.module.css';
 
 export const STREAM_PICKER_ID = 'O-STREAM-PICKER';
@@ -74,6 +76,8 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
   const tStreams = useTranslations('country.streams');
   const uid = useId();
   const [confirming, setConfirming] = useState<string | null>(null);
+  const phone = usePhone();
+  const room = useRoomToggle();
   const addRoom = useAddToRoom();
   const currentRow = currentId ? (rows.find((r) => r.id === currentId) ?? null) : null;
   const add = (row: StreamRowData) => {
@@ -142,7 +146,7 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
                 </span>
               </span>
             </button>
-            {on ? null : (
+            {on || !canAddToRoom(row.status) ? null : phone ? (
               <IconButton
                 icon="plus"
                 variant="ring"
@@ -154,8 +158,21 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
                 onClick={() => setConfirming(confirming === row.id ? null : row.id)}
                 className={s.plus}
               />
+            ) : (
+              // Десктоп (варіант C): «+» додає у вікна кімнати, ✓ — уже там; зібране — у панелі кімнати.
+              <IconButton
+                icon={room.has(row.id) ? 'check' : 'plus'}
+                variant="ring"
+                compact
+                iconSize={16}
+                aria-pressed={room.has(row.id)}
+                aria-label={room.has(row.id) ? tStreams('inRoom', { title: row.title }) : tStreams('add', { title: row.title })}
+                disabled={!room.has(row.id) && room.full}
+                onClick={() => room.toggle({ sourceId: row.id, eventId: row.eventId })}
+                className={cn(s.plus, room.has(row.id) && s.plusOn)}
+              />
             )}
-            {confirming === row.id ? (
+            {phone && confirming === row.id ? (
               <RoomAddConfirm
                 id={`${uid}-${row.id}`}
                 row={row}
