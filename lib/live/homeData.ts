@@ -25,9 +25,17 @@ function isOwnMidnight(data: Dataset, event: ScheduledEvent): boolean {
   return -new Date(event.midnightMs).getTimezoneOffset() === zone.offsetMinutes;
 }
 
+/** Мініатюра першого джерела YouTube події (картки «Зараз і далі»). */
+function thumbOfEvent(data: Dataset, event: ScheduledEvent): string | undefined {
+  const src = data.chainsByEventId.get(event.id)?.sources.find((x) => x.platform === 'youtube' && x.videoId);
+  return src?.videoId ? `https://i.ytimg.com/vi/${src.videoId}/mqdefault.jpg` : undefined;
+}
+
 export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedule: readonly string[]): EventCardData {
   const country = data.countriesByIso.get(event.countryIso);
   const city = data.citiesById.get(event.cityId);
+  const stream = streamOf(data, event, now);
+  const thumb = stream === 'countdown-only' ? undefined : thumbOfEvent(data, event);
   return {
     id: event.id,
     title: city?.name.uk ?? event.id,
@@ -35,7 +43,9 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
     flagCode: country?.flagCode ?? event.countryIso,
     midnightMs: event.midnightMs,
     celebrationType: event.type,
-    stream: streamOf(data, event, now),
+    stream,
+    ...(thumb ? { thumb } : {}),
+    illustrationId: country?.illustrationId ?? 'generic',
     href: country ? countryHref(country) : '/',
     inSchedule: schedule.includes(event.id),
     isOwnMidnight: isOwnMidnight(data, event),

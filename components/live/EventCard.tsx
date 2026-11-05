@@ -9,6 +9,7 @@ import { Icon, type IconName } from '@/components/primitives/Icon';
 import type { CelebrationType, EventStatus, Ms } from '@/lib/data/types';
 import { formatClock, formatMidnightAgo } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
+import { PostcardArt } from '@/components/windows/StampArt';
 import s from './nowNext.module.css';
 
 /** Стан трансляції події для рядка статусу картки (чотири статуси — `Badge stream-status`). */
@@ -31,6 +32,10 @@ export interface EventCardData {
   inSchedule?: boolean;
   /** Це північ глядача («ваша північ»). */
   isOwnMidnight?: boolean;
+  /** Мініатюра трансляції (YouTube); немає — обкладинка країни з «Відлік» (правка власника 2026-11-05). */
+  thumb?: string;
+  /** Обкладинка країни (`PostcardArt`). */
+  illustrationId?: string;
 }
 
 export interface EventCardProps extends EventCardData {
@@ -80,6 +85,8 @@ export function EventCard({
   href,
   inSchedule = false,
   isOwnMidnight = false,
+  thumb,
+  illustrationId,
   status,
   onToggleSchedule,
   layout = 'carousel',
@@ -113,13 +120,30 @@ export function EventCard({
         aria-current={isOnAir ? 'true' : undefined}
         className={cn('t2f-focus t2f-transition', s.link, isOnAir && s.onAir, isPast && s.past)}
       >
+        {/* Мініатюра трансляції або обкладинка країни з «Відлік» — як картки трансляцій на сторінці країни. */}
+        <span aria-hidden="true" className={cn(s.media, isPast && s.mediaPast)}>
+          {thumb ? (
+            // Мініатюра YouTube: зовнішня адреса, next/image без оптимізації тут зайвий.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={thumb} alt="" loading="lazy" decoding="async" />
+          ) : (
+            <>
+              <PostcardArt illustrationId={illustrationId ?? 'generic'} fill className={s.cover} />
+              <span className={s.mediaTag}>
+                <Icon name="clock" size={14} />
+                {t('countdownTag')}
+              </span>
+            </>
+          )}
+        </span>
         <span className={s.top}>
-          <Flag code={flagCode} size="card" decorative className={isPast ? 'opacity-60' : undefined} />
+          <Flag round code={flagCode} size="card" decorative className={isPast ? 'opacity-60' : undefined} />
           <span className={s.name}>
             {title}
             {countryName ? <span className="sr-only">{t('countryHint', { country: countryName })}</span> : null}
           </span>
-          {isOnAir ? <span className={s.onAirLabel}>{tBadge('onAir')}</span> : null}
+          {/* «В ефірі» прибрано (правка власника 2026-11-05): є «Наживо» й червона смуга; для зчитувача — лишається. */}
+          {isOnAir ? <span className="sr-only">{tBadge('onAir')}</span> : null}
         </span>
 
         <span className={s.mid}>

@@ -93,7 +93,8 @@ test.describe('US1 · крайні випадки ефіру', () => {
   test('без графіка рядка немає', async ({ page, ytStub }) => {
     await gotoAt(page, '2027-01-01T01:58:00+02:00', 0);
     await ytStub.waitForPlayer();
-    await expect(page.locator('[data-caption]')).toBeVisible();
+    // Телефон: два підписи — липкий рядок часу й назва під «Першим рядом».
+    await expect(page.locator('[data-caption]').first()).toBeVisible();
     await expect(page.locator('[data-schedule-hint]')).toHaveCount(0);
   });
 
@@ -119,14 +120,17 @@ test.describe('US1 · крайні випадки ефіру', () => {
     expect((await ytStub.counters()).created).toBe(1);
   });
 
-  test('телефон: плеєр закріплений угорі й не менший за 200 px', async ({ page, ytStub }) => {
+  // Телефон: відео не закріплене (рішення власника, `as-built-home-countries-2026-11-05.md` §2) — гортається разом зі
+  // сторінкою; не менше за 200 px і нічого поверх.
+  test('телефон: плеєр не менший за 200 px і прокручується разом зі сторінкою', async ({ page, ytStub }) => {
     test.skip(!isPhone(page), 'лише телефон');
     await gotoAt(page, '2027-01-01T01:50:00+02:00', 1);
     await ytStub.waitForPlayer();
-    await page.mouse.wheel(0, 900);
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
     const box = await expectPlayerMinSize(page);
-    expect(Math.abs(box.y)).toBeLessThanOrEqual(1);
     await expectNothingOverPlayer(page);
+    await page.mouse.wheel(0, 300);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
+    const after = await page.locator('[data-player-slot="main"]').boundingBox();
+    expect(after!.y).toBeLessThan(box.y - 100);
   });
 });

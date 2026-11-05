@@ -9,7 +9,9 @@
  * Натиск перемикає відео тут же (`setChain` з `preferredSourceId`); на телефоні шторка після вибору закривається.
  */
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useId, useMemo, useState } from 'react';
+import { IconButton } from '@/components/primitives/IconButton';
+import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -18,6 +20,8 @@ import type { Ms } from '@/lib/data/types';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
+import { thumbOf } from '@/lib/live/thumb';
+import { RoomAddConfirm } from './RoomAddConfirm';
 import s from './streamPicker.module.css';
 
 export const STREAM_PICKER_ID = 'O-STREAM-PICKER';
@@ -36,11 +40,7 @@ export function liveRowsForMidnight(midnightMs: Ms, now: Ms): StreamRowData[] {
   return streamRows(data, events, now).filter((r) => r.status === 'live');
 }
 
-/** Мініатюра YouTube джерела (mqdefault, 320 × 180). */
-export function thumbOf(row: StreamRowData): string | undefined {
-  const src = getData().chainsByEventId.get(row.eventId)?.sources.find((x) => x.id === row.id);
-  return src?.platform === 'youtube' && src.videoId ? `https://i.ytimg.com/vi/${src.videoId}/mqdefault.jpg` : undefined;
-}
+export { thumbOf };
 
 export interface StreamPickerProps {
   midnightMs: Ms;
@@ -54,9 +54,11 @@ export interface StreamPickerProps {
    */
   rows?: readonly StreamRowData[];
   onPick?: (row: StreamRowData) => void;
+  /** «+» — у кімнату перегляду (правка власника 2026-11-05); без нього — поточна трансляція плеєра + обрана. */
+  onAddToRoom?: (row: StreamRowData) => void;
 }
 
-export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows, onPick }: StreamPickerProps) {
+export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows, onPick, onAddToRoom }: StreamPickerProps) {
   const t = useTranslations('player.picker');
   const tType = useTranslations('liveCards.eventCard.type');
   const tStatus = useTranslations('country.streams.status');
@@ -68,6 +70,17 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
   const rows = givenRows ?? liveRows;
   const home = countryIso ? rows.filter((r) => r.countryIso === countryIso) : [];
   const rest = countryIso ? rows.filter((r) => r.countryIso !== countryIso) : rows;
+
+  const tStreams = useTranslations('country.streams');
+  const uid = useId();
+  const [confirming, setConfirming] = useState<string | null>(null);
+  const addRoom = useAddToRoom();
+  const currentRow = currentId ? (rows.find((r) => r.id === currentId) ?? null) : null;
+  const add = (row: StreamRowData) => {
+    if (onAddToRoom) onAddToRoom(row);
+    else addRoom({ sourceId: row.id, eventId: row.eventId }, currentId && player?.eventId ? { sourceId: currentId, eventId: player.eventId } : null);
+    onPicked?.();
+  };
 
   const pick = (row: StreamRowData) => {
     if (onPick) onPick(row);
@@ -84,13 +97,13 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
         const on = row.id === currentId;
         const thumb = thumbOf(row);
         return (
-          <li key={row.id}>
+          <li key={row.id} className={s.pickItem}>
             <button
               type="button"
               aria-current={on ? 'true' : undefined}
               data-source={row.id}
               onClick={() => pick(row)}
-              className={cn('t2f-focus t2f-transition', s.row, on && s.rowOn)}
+              className={cn('t2f-focus t2f-transition', s.row, !on && s.rowWithPlus, on && s.rowOn)}
             >
               <span aria-hidden="true" className={s.thumb}>
                 {thumb ? (
@@ -129,6 +142,32 @@ export function StreamPicker({ midnightMs, countryIso, onPicked, rows: givenRows
                 </span>
               </span>
             </button>
+            {on ? null : (
+              <IconButton
+                icon="plus"
+                variant="ring"
+                compact
+                iconSize={16}
+                aria-label={tStreams('add', { title: row.title })}
+                aria-expanded={confirming === row.id}
+                aria-controls={confirming === row.id ? `${uid}-${row.id}` : undefined}
+                onClick={() => setConfirming(confirming === row.id ? null : row.id)}
+                className={s.plus}
+              />
+            )}
+            {confirming === row.id ? (
+              <RoomAddConfirm
+                id={`${uid}-${row.id}`}
+                row={row}
+                current={currentRow}
+                onCancel={() => setConfirming(null)}
+                onConfirm={() => {
+                  setConfirming(null);
+                  add(row);
+                }}
+                className={s.confirm}
+              />
+            ) : null}
           </li>
         );
       })}

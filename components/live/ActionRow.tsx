@@ -96,6 +96,8 @@ export interface RemoteStreams {
   countryIso: string;
   midnightMs: number;
   onPick(row: StreamRowData): void;
+  /** «+» у списку — у кімнату перегляду. */
+  onAddToRoom?(row: StreamRowData): void;
 }
 
 export function ActionRow({
@@ -142,6 +144,7 @@ export function ActionRow({
             countryIso={streams.countryIso}
             rows={streams.rows}
             onPick={streams.onPick}
+            onAddToRoom={streams.onAddToRoom}
             onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
           />
         ) : (
@@ -174,6 +177,8 @@ export function ActionRow({
     });
   }
   const moreOpen = overlay.current?.id === MORE_ACTIONS_ID || overlay.current?.id === REPORT_ID;
+  // Повторний натиск «⋯» закриває «Ще дії» (правка власника 2026-11-05).
+  const toggleMore = () => (moreOpen ? overlay.close(overlay.current!.id) : openMore());
 
   return (
     <div data-action-row="" className={cn(home.actions, remote && home.actionsRemote, className)}>
@@ -242,7 +247,7 @@ export function ActionRow({
           aria-haspopup="dialog"
           aria-expanded={moreOpen}
           data-action="more-actions"
-          onClick={openMore}
+          onClick={toggleMore}
         />
       </span>
       <span className={styles.phoneOnly}>
@@ -251,7 +256,7 @@ export function ActionRow({
           aria-label={t('moreActions')}
           aria-haspopup="dialog"
           aria-expanded={moreOpen}
-          onClick={openMore}
+          onClick={toggleMore}
           className={cn('t2f-focus t2f-transition', home.more)}
         >
           <Icon name="more" size={20} />

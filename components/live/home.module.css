@@ -284,6 +284,17 @@
   font-weight: 600;
   text-overflow: ellipsis;
 }
+/* Прапор перед назвою (заголовок і липкий рядок): у рядку тексту, висоту рядка не збільшує. */
+.titleFlag {
+  display: inline-flex;
+  margin-inline-end: 8px;
+  vertical-align: -0.2em;
+  line-height: 0;
+}
+.barTitle .titleFlag {
+  margin-inline-end: 6px;
+  vertical-align: -0.3em;
+}
 .barDot {
   font-weight: 500;
   color: var(--color-text-muted);

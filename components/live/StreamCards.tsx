@@ -8,8 +8,11 @@
  *   Скасувати» (десктоп — під «+», телефон — під рядком). На картці «Зараз грає» «+» немає: вона й так грає.
  * - Десктоп: три картки в ряд; більше — стрічка зі стрілками праворуч у рядку заголовка (по одній картці), тягнути мишею
  *   й гортати свайпом. Телефон: рядки (мініатюра ліворуч, «+» угорі праворуч).
- * - `showCountry` — сусіди по поясу: прапор і назва країни на картці.
+ * - `showCountry` — сусіди по поясу: прапор і назва країни на картці; `countdown` — країни поясу без трансляції
+ *   обкладинкою з «Відлік» (натиск — сторінка країни); `filter` — «Усі · З трансляціями · Мій графік» у заголовку
+ *   (правка власника 2026-11-05); `phoneLimit` — на телефоні стільки рядків і «Ще N країн».
  */
+import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { Badge } from '@/components/primitives/Badge';
@@ -25,13 +28,35 @@ import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/primitives/Popover';
 import { formatClock } from '@/lib/i18n/time';
+import { PostcardArt } from '@/components/windows/StampArt';
+import { EventFilter, type EventFilterValue } from './EventFilter';
 import type { StreamRowData } from '@/lib/live/countryData';
-import { PlusConfirm, usePhone } from './StreamList';
-import { thumbOf } from './StreamPicker';
+import { RoomAddConfirm } from './RoomAddConfirm';
+import { usePhone } from './StreamList';
+import { thumbOf } from '@/lib/live/thumb';
 import s from './streamCards.module.css';
 
 const KIND_KEY = { main: 'main', webcam: 'webcam', tv: 'tv' } as const;
 const SLIDE = ':scope > li';
+
+/** Країна поясу без трансляції: обкладинка з «Відлік», посилання на сторінку країни. */
+export interface CountdownCountry {
+  iso: string;
+  name: string;
+  flagCode: string;
+  illustrationId: string;
+  /** Місто головної події («Мадрид»). */
+  city: string;
+  href: string;
+  midnightMs: number;
+}
+
+export interface StreamCardsFilter {
+  value: EventFilterValue;
+  onChange(next: EventFilterValue): void;
+  scheduleLocked?: boolean;
+  scheduleCount?: number;
+}
 
 export interface StreamCardsProps {
   /** id секції (ціль прокрутки). */
@@ -41,13 +66,17 @@ export interface StreamCardsProps {
   sub?: ReactNode;
   rows: readonly StreamRowData[];
   currentStreamId: string | null;
-  /** Назва поточної трансляції — для «Відкриється кімната… Сакре-Кер і Сена й Нотр-Дам». */
-  currentTitle?: string;
+  /** Що грає зараз — друга мініатюра у вікні «Відкриється кімната перегляду». */
+  currentRow?: Pick<StreamRowData, 'id' | 'eventId' | 'title'> | null;
   onSelect(row: StreamRowData): void;
   onAddToRoom?(row: StreamRowData): void;
   showCountry?: boolean;
   /** Під картками (посилання «Усі країни поясу ›»). */
   footer?: ReactNode;
+  countdown?: readonly CountdownCountry[];
+  filter?: StreamCardsFilter;
+  /** Телефон: скільки рядків до «Ще N країн». */
+  phoneLimit?: number;
   className?: string;
 }
 
@@ -101,11 +130,11 @@ function Thumb({ row, current }: { row: StreamRowData; current: boolean }) {
 /** «+» на десктопі: під кнопкою — підтвердження кімнати перегляду. */
 function PlusPopover({
   row,
-  currentTitle,
+  currentRow,
   onAddToRoom,
 }: {
   row: StreamRowData;
-  currentTitle?: string;
+  currentRow?: Pick<StreamRowData, 'id' | 'eventId' | 'title'> | null;
   onAddToRoom?(row: StreamRowData): void;
 }) {
   const t = useTranslations('country.streams');
@@ -124,10 +153,10 @@ function PlusPopover({
         </button>
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-80 p-4">
-        <PlusConfirm
+        <RoomAddConfirm
           id={id}
           row={row}
-          currentTitle={currentTitle}
+          current={currentRow}
           onCancel={() => setOpen(false)}
           onConfirm={() => {
             setOpen(false);
@@ -139,7 +168,7 @@ function PlusPopover({
   );
 }
 
-function DeskCard({ row, current, currentTitle, showCountry, onSelect, onAddToRoom }: CardProps) {
+function DeskCard({ row, current, currentRow, showCountry, onSelect, onAddToRoom }: CardProps) {
   const tType = useTranslations('liveCards.eventCard.type');
   const kind = tType(KIND_KEY[row.kind]);
   return (
@@ -177,7 +206,7 @@ function DeskCard({ row, current, currentTitle, showCountry, onSelect, onAddToRo
       </button>
       {current ? null : (
         <span className={s.plusSlot}>
-          <PlusPopover row={row} currentTitle={currentTitle} onAddToRoom={onAddToRoom} />
+          <PlusPopover row={row} currentRow={currentRow} onAddToRoom={onAddToRoom} />
         </span>
       )}
     </li>
@@ -187,13 +216,13 @@ function DeskCard({ row, current, currentTitle, showCountry, onSelect, onAddToRo
 interface CardProps {
   row: StreamRowData;
   current: boolean;
-  currentTitle?: string;
+  currentRow?: Pick<StreamRowData, 'id' | 'eventId' | 'title'> | null;
   showCountry: boolean;
   onSelect(row: StreamRowData): void;
   onAddToRoom?(row: StreamRowData): void;
 }
 
-function PhoneRow({ row, current, currentTitle, showCountry, onSelect, onAddToRoom }: CardProps) {
+function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom }: CardProps) {
   const t = useTranslations('country.streams');
   const tType = useTranslations('liveCards.eventCard.type');
   const [confirming, setConfirming] = useState(false);
@@ -249,10 +278,10 @@ function PhoneRow({ row, current, currentTitle, showCountry, onSelect, onAddToRo
       </div>
       {confirming && !current ? (
         <div className={s.rowConfirm}>
-          <PlusConfirm
+          <RoomAddConfirm
             id={confirmId}
             row={row}
-            currentTitle={currentTitle}
+            current={currentRow}
             onCancel={() => setConfirming(false)}
             onConfirm={() => {
               setConfirming(false);
@@ -265,20 +294,71 @@ function PhoneRow({ row, current, currentTitle, showCountry, onSelect, onAddToRo
   );
 }
 
+/** Країна без трансляції: обкладинка країни з «Відлік»; натиск — сторінка країни. */
+function CoverCard({ c, phone }: { c: CountdownCountry; phone: boolean }) {
+  const t = useTranslations('liveCards.eventCard');
+  const cover = (
+    <span className={s.thumb} aria-hidden="true">
+      <PostcardArt illustrationId={c.illustrationId} fill className={s.coverArt} />
+      <span className={s.coverTag}>
+        <Icon name="clock" size={14} />
+        {t('countdownTag')}
+      </span>
+    </span>
+  );
+  const country = (
+    <span className={s.country}>
+      <Flag round code={c.flagCode} size="xs" decorative />
+      {c.name}
+    </span>
+  );
+  if (phone)
+    return (
+      <li data-countdown-card={c.iso} className={s.row}>
+        <NextLink href={c.href} className={cn('t2f-focus', s.rowMain, s.coverLink)}>
+          <span className={s.rowThumb}>{cover}</span>
+          <span className={s.rowText}>
+            <span className={s.title}>{c.city}</span>
+            {country}
+            <span className={s.meta}>
+              {t('type.countdownOnly')} · {formatClock(c.midnightMs)}
+            </span>
+          </span>
+        </NextLink>
+      </li>
+    );
+  return (
+    <li data-countdown-card={c.iso} className={s.card}>
+      <NextLink href={c.href} className={cn('t2f-focus', s.cardBtn, s.coverLink)}>
+        <span className={s.thumbWrap}>{cover}</span>
+        <span className={s.text}>
+          <span className={s.title}>{c.city}</span>
+          {country}
+        </span>
+      </NextLink>
+    </li>
+  );
+}
+
 export function StreamCards({
   id,
   heading,
   sub,
   rows,
   currentStreamId,
-  currentTitle,
+  currentRow,
   onSelect,
   onAddToRoom,
   showCountry = false,
   footer,
+  countdown = [],
+  filter,
+  phoneLimit,
   className,
 }: StreamCardsProps) {
   const t = useTranslations('liveMap.panel');
+  const tc = useTranslations('country.streams');
+  const [expanded, setExpanded] = useState(false);
   const phone = usePhone();
   const headingId = useId();
   const ref = useRef<HTMLUListElement>(null);
@@ -300,8 +380,8 @@ export function StreamCards({
       el.removeEventListener('scroll', upd);
       ro?.disconnect();
     };
-  }, [phone, rows.length]);
-  if (rows.length === 0) return null;
+  }, [phone, rows.length, countdown.length]);
+  if (rows.length === 0 && countdown.length === 0 && !filter) return null;
 
   const go = (dir: 1 | -1) => {
     const el = ref.current;
@@ -316,6 +396,11 @@ export function StreamCards({
   };
   const arrows = !phone && !(edge.start && edge.end);
   const Card = phone ? PhoneRow : DeskCard;
+  const total = rows.length + countdown.length;
+  const limit = phone && phoneLimit && !expanded ? phoneLimit : Infinity;
+  const shownRows = rows.slice(0, limit);
+  const shownCountdown = countdown.slice(0, Math.max(0, limit - shownRows.length));
+  const hidden = total - shownRows.length - shownCountdown.length;
 
   return (
     <section
@@ -325,12 +410,24 @@ export function StreamCards({
       className={cn(s.section, className)}
     >
       <div className={s.head}>
-        <h2 id={headingId} className={s.h2}>
-          {heading}
-        </h2>
-        {sub ? <span className={s.sub}>{sub}</span> : null}
+        {/* З фільтром у рядку — підзаголовок під назвою (інакше фільтр і стрілки не вміщаються). */}
+        <div className={cn(s.titleBlock, filter && s.titleStack)}>
+          <h2 id={headingId} className={s.h2}>
+            {heading}
+          </h2>
+          {sub ? <span className={s.sub}>{sub}</span> : null}
+        </div>
+        {filter && !phone ? (
+          <EventFilter
+            value={filter.value}
+            onValueChange={filter.onChange}
+            scheduleLocked={filter.scheduleLocked}
+            scheduleCount={filter.scheduleCount}
+            className={s.filter}
+          />
+        ) : null}
         {arrows ? (
-          <span className={s.arrows}>
+          <span className={cn(s.arrows, filter && s.arrowsNext)}>
             <CarouselArrow
               dir="prev"
               size="md"
@@ -348,19 +445,43 @@ export function StreamCards({
           </span>
         ) : null}
       </div>
+      {filter && phone ? (
+        <EventFilter
+          value={filter.value}
+          onValueChange={filter.onChange}
+          scheduleLocked={filter.scheduleLocked}
+          scheduleCount={filter.scheduleCount}
+          className={s.filterPhone}
+        />
+      ) : null}
+      {total === 0 ? <p className={s.empty}>{tc('othersEmpty')}</p> : null}
       <ul ref={ref} className={phone ? s.list : s.track}>
-        {rows.map((row) => (
+        {shownRows.map((row) => (
           <Card
             key={row.id}
             row={row}
             current={row.id === currentStreamId}
-            currentTitle={currentTitle}
+            currentRow={currentRow}
             showCountry={showCountry}
             onSelect={onSelect}
             onAddToRoom={onAddToRoom}
           />
         ))}
+        {shownCountdown.map((c) => (
+          <CoverCard key={c.iso} c={c} phone={phone} />
+        ))}
       </ul>
+      {hidden > 0 || (expanded && phoneLimit && total > phoneLimit) ? (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((v) => !v)}
+          className={cn('t2f-focus t2f-press t2f-transition', s.moreBtn)}
+        >
+          {expanded ? tc('othersLess') : tc('othersMore', { count: hidden })}
+          <Icon name={expanded ? 'chevron-up' : 'chevron-down'} size={18} strokeWidth={2} />
+        </button>
+      ) : null}
       {footer}
     </section>
   );

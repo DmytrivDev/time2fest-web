@@ -13,6 +13,7 @@ import { useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
+import { Flag } from '@/components/primitives/Flag';
 import type { City, Country, Ms } from '@/lib/data/types';
 import type { CaptionMode, CaptionPhase } from '@/lib/engine/captionPhase';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
@@ -25,7 +26,7 @@ export interface CaptionPlace {
   /** Північ події, мс epoch UTC. */
   midnightMs: Ms;
   city: Pick<City, 'name' | 'landmark'> | undefined;
-  country: Pick<Country, 'name' | 'gender'> | undefined;
+  country: Pick<Country, 'name' | 'gender'> & Partial<Pick<Country, 'flagCode'>> | undefined;
   /** Сторінка країни. */
   href: string | null;
 }
@@ -197,6 +198,12 @@ export function Caption({
   }
 
   const title = titleProp ?? eventTitle(current.city);
+  // Прапор країни перед назвою трансляції (правка власника 2026-11-05): видно, де саме йде трансляція; висоту рядка не змінює.
+  const flag = current.country?.flagCode ? (
+    <span className={home.titleFlag}>
+      <Flag round code={current.country.flagCode} size="md" decorative />
+    </span>
+  ) : null;
   // Пульт: ми вже на сторінці країни — назва не посилання.
   const href = mode === 'remote' ? null : current.href;
 
@@ -207,6 +214,11 @@ export function Caption({
         {lead}
         <div className={home.barText}>
           <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, 'focus:outline-none')}>
+            {current.country?.flagCode ? (
+              <span className={home.titleFlag}>
+                <Flag round code={current.country.flagCode} size="sm" decorative />
+              </span>
+            ) : null}
             {current.city?.name.uk ?? title} <span className={home.barDot}>·</span>
           </h2>
           {timer ? (
@@ -267,13 +279,17 @@ export function Caption({
       <h2 id={titleId} tabIndex={-1} className={cn(home.title, 'focus:outline-none')}>
         {href ? (
           <NextLink href={href} className="t2f-focus t2f-transition rounded-sm">
+            {flag}
             {title}
             <span aria-hidden="true" className="text-text-secondary">
               {' ›'}
             </span>
           </NextLink>
         ) : (
-          title
+          <>
+            {flag}
+            {title}
+          </>
         )}
       </h2>
       <p data-caption-row3={phase.row3.kind} role={phase.row3.kind === 'next' ? 'status' : undefined}

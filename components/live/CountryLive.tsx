@@ -31,7 +31,8 @@ import { CountryHeader, type CountryZoneOption } from '@/components/live/Country
 import { Faq, type FaqItem } from '@/components/live/Faq';
 import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
-import { StreamCards } from '@/components/live/StreamCards';
+import { StreamCards, type CountdownCountry } from '@/components/live/StreamCards';
+import type { EventFilterValue } from '@/components/live/EventFilter';
 import { StampBlock } from '@/components/live/StampBlock';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
@@ -299,8 +300,9 @@ export function CountryLive({ iso }: { iso: string }) {
       countryIso: iso,
       midnightMs: mainEvent?.midnightMs ?? 0,
       onPick: select,
+      onAddToRoom: addToRoom,
     }),
-    [pickerRows, iso, mainEvent, select],
+    [pickerRows, iso, mainEvent, select, addToRoom],
   );
 
   // Графік: запис «країна + пояс» (той самий, що в календариків головної); без пасу — вікно пасу.
@@ -321,9 +323,59 @@ export function CountryLive({ iso }: { iso: string }) {
   }));
 
   const schedule = useGuestStore((s) => s.schedule);
-  const nowNext = useMemo(
-    () => (recording ? nowNextItems(data, minute, schedule) : []),
-    [recording, data, minute, schedule],
+  // «Зараз і далі» — і до півночі, і після (правка власника 2026-11-05: на Азорських островах його не було).
+  const nowNext = useMemo(() => nowNextItems(data, minute, schedule), [data, minute, schedule]);
+
+  // «Ще о … · інші країни поясу»: трансляції сусідів і країни без трансляції (обкладинка з «Відлік»), фільтр як у
+  // «Зараз і далі» (правка власника 2026-11-05).
+  const [nbFilter, setNbFilter] = useState<EventFilterValue>('all');
+  const zoneCountdown = useMemo<CountdownCountry[]>(() => {
+    if (!zoneId) return [];
+    return data.countries
+      .filter((c) => c.iso !== iso && c.zoneIds.includes(zoneId) && countryStreamRows(data, c.iso, zoneId, minute).length === 0)
+      .sort((a, b) => b.popularity - a.popularity)
+      .map((c) => {
+        const ev = countryMainEvent(data, c.iso, zoneId);
+        const city = data.citiesById.get(ev?.cityId ?? '');
+        return {
+          iso: c.iso,
+          name: c.name.uk,
+          flagCode: c.flagCode,
+          illustrationId: c.illustrationId ?? 'generic',
+          city: city?.name.uk ?? c.name.uk,
+          href: countryHref(c),
+          midnightMs: ev?.midnightMs ?? 0,
+        };
+      });
+  }, [data, iso, zoneId, minute]);
+  const inSched = useCallback(
+    (eventId: string | undefined) => !!eventId && countryZoneEvents(eventId).some((id) => schedule.includes(id)),
+    [schedule],
+  );
+  const nbRows = useMemo(
+    () => (nbFilter === 'mine' ? zoneRows.filter((r) => inSched(r.eventId)) : zoneRows),
+    [nbFilter, zoneRows, inSched],
+  );
+  const nbCountdown = useMemo(
+    () =>
+      nbFilter === 'live'
+        ? []
+        : nbFilter === 'mine'
+          ? zoneCountdown.filter((c) => inSched(zoneId ? countryMainEvent(data, c.iso, zoneId)?.id : undefined))
+          : zoneCountdown,
+    [nbFilter, zoneCountdown, inSched, data, zoneId],
+  );
+  const nbScheduleCount = useMemo(
+    () => zoneRows.filter((r) => inSched(r.eventId)).length + zoneCountdown.filter((c) => inSched(zoneId ? countryMainEvent(data, c.iso, zoneId)?.id : undefined)).length,
+    [zoneRows, zoneCountdown, inSched, data, zoneId],
+  );
+  const changeNbFilter = useCallback(
+    (next: EventFilterValue) => {
+      // Без пасу «Мій графік» — вікно «Що дає пас», фільтр лишається.
+      if (next === 'mine' && !hasPass) return passWindows.openPassInfoBoard();
+      setNbFilter(next);
+    },
+    [hasPass, passWindows],
   );
   const progress = useMemo(() => festProgress(data, minute), [data, minute]);
   const zoneLabel = viewerZoneLabel();
@@ -355,6 +407,7 @@ export function CountryLive({ iso }: { iso: string }) {
   ) : null;
   const title = currentSource?.title.uk ?? (current ? eventTitle(current.city) : '');
   const noStreams = countryRows.length === 0;
+  const currentRow = countdown ? null : (pickerRows.find((r) => r.id === currentStreamId) ?? null);
   const countdownMode = noStreams ? undefined : { countdown, onChange: setMode };
   const time = mainEvent ? formatClock(mainEvent.midnightMs) : '';
   const zoneCountries = useMemo(
@@ -378,7 +431,7 @@ export function CountryLive({ iso }: { iso: string }) {
           sub={recording ? tStreams('cardsSubAfter', { time }) : tStreams('cardsSub', { time })}
           rows={countryRows}
           currentStreamId={countdown ? null : currentStreamId}
-          currentTitle={title}
+          currentRow={currentRow}
           onSelect={select}
           onAddToRoom={addToRoom}
         />
@@ -386,9 +439,12 @@ export function CountryLive({ iso }: { iso: string }) {
           <StreamCards
             heading={tStreams('othersHeading', { time })}
             sub={tStreams('othersSub')}
-            rows={zoneRows}
+            rows={nbRows}
+            countdown={nbCountdown}
+            filter={{ value: nbFilter, onChange: changeNbFilter, scheduleLocked: !hasPass, scheduleCount: nbScheduleCount }}
+            phoneLimit={5}
             currentStreamId={countdown ? null : currentStreamId}
-            currentTitle={title}
+            currentRow={currentRow}
             onSelect={select}
             onAddToRoom={addToRoom}
             showCountry
@@ -404,7 +460,7 @@ export function CountryLive({ iso }: { iso: string }) {
           />
         )}
       </div>
-      {recording ? (
+      {nowNext.length ? (
         <NowNext
           items={nowNext}
           zoneLabel={zoneLabel}
