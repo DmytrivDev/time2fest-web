@@ -75,7 +75,9 @@ export type IconName =
   | 'users'
   | 'stamp'
   | 'utensils'
-  | 'mistletoe';
+  | 'mistletoe'
+  | 'swap'
+  | 'undo';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -380,6 +382,14 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
+  // Кімната перегляду: заміна вікна й «Повернути» (2026-11-05).
+  swap: <path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5" />,
+  undo: (
+    <>
+      <path d="M9 14L4 9l5-5" />
+      <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+    </>
+  ),
   'shield-check': (
     <>
       <path d="M12 3l7 3v6c0 4.4-3 7.9-7 9-4-1.1-7-4.6-7-9V6z" />

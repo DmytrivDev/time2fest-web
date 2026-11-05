@@ -46,6 +46,13 @@ export interface NowNextProps {
   onToggleSchedule?: (id: string, next: boolean) => void;
   /** Подія в плеєрі ефіру: її картка — «В ефірі» (і лишається в стрічці після півночі). */
   airEventId?: string | null;
+  /**
+   * Кімната перегляду (власник 2026-11-05): «Поточні трансляції» — лише події з трансляцією зараз, без відліку й
+   * «Прогресу свята»; фільтр «Усі · Мій графік».
+   */
+  currentOnly?: boolean;
+  /** Заголовок замість «Зараз і далі». */
+  title?: string;
   className?: string;
 }
 
@@ -73,6 +80,8 @@ export function NowNext({
   loading = false,
   onToggleSchedule,
   airEventId,
+  currentOnly = false,
+  title,
   className,
 }: NowNextProps) {
   const t = useTranslations('liveCards.nowNext');
@@ -93,13 +102,14 @@ export function NowNext({
   const keepPast = pastLimit ?? 0;
 
   const visible = useMemo(() => {
-    const all = withStatus(now, items);
+    const every = withStatus(now, items);
+    const all = currentOnly ? every.filter((i) => hasStreamNow(i)) : every;
     const filtered = liveOnly ? all.filter((i) => hasStreamNow(i)) : mineOnly ? all.filter((i) => i.inSchedule) : all;
     const sorted = sortForStrip(filtered);
     const past = sorted.filter((i) => isPastStatus(i.status) && i.id !== airEventId);
     const rest = sorted.filter((i) => !isPastStatus(i.status) || i.id === airEventId);
     return [...past.slice(Math.max(0, past.length - keepPast)), ...rest];
-  }, [now, items, liveOnly, mineOnly, keepPast, airEventId]);
+  }, [now, items, liveOnly, mineOnly, keepPast, airEventId, currentOnly]);
 
   const shown = stack && !expanded ? visible.slice(0, stackLimit) : visible;
   const hidden = visible.length - shown.length;
@@ -178,6 +188,7 @@ export function NowNext({
       onValueChange={setFilter}
       scheduleLocked={scheduleLocked}
       scheduleCount={scheduleCount}
+      hideLive={currentOnly}
       className={cn(stack && s.filterFull)}
     />
   );
@@ -186,8 +197,8 @@ export function NowNext({
     <section aria-labelledby={titleId} data-now-next="" data-layout={layout} className={cn(s.section, className)}>
       <SectionHeader
         id={titleId}
-        title={tNav('nowAndNext')}
-        meta={t('meta', { zone: zoneLabel })}
+        title={title ?? tNav('nowAndNext')}
+        meta={currentOnly ? undefined : t('meta', { zone: zoneLabel })}
         action={
           <div className="flex items-center gap-4">
             {stack ? null : filterControl}

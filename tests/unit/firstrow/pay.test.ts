@@ -257,10 +257,10 @@ describe('ціна через firstRowView на симульованих міс�
     return firstRowView(now, london, seats, fg({ ...entry, ...g }));
   };
 
-  it('≥4 вільних → $4,99; ≤3 → $7,99', () => {
+  it('ціна одна — $4,99 і при ≥4, і при ≤3 вільних', () => {
     expect(view(6, undefined).price.current).toBe(4.99);
     expect(view(6, undefined).freeCount).toBe(4);
-    expect(view(7, undefined).price.current).toBe(7.99);
+    expect(view(7, undefined).price.current).toBe(4.99);
   });
 
   it('власне утримання: ціна від free + 1', () => {
@@ -270,10 +270,11 @@ describe('ціна через firstRowView на симульованих міс�
     expect(v.price.current).toBe(4.99);
   });
 
-  it('priceLocked 4.99 при поточній 7.99 → priceChanged', () => {
-    const v = view(8, undefined, NOW, { priceLocked: 4.99 });
-    expect(v.price.current).toBe(7.99);
-    expect(v.priceChanged).toEqual({ from: 4.99, to: 7.99 });
+  it('priceLocked відрізняється від поточної → priceChanged; та сама — ні', () => {
+    expect(view(8, undefined, NOW, { priceLocked: 4.99 }).priceChanged).toBeUndefined();
+    const v = view(8, undefined, NOW, { priceLocked: 3.99 });
+    expect(v.price.current).toBe(4.99);
+    expect(v.priceChanged).toEqual({ from: 3.99, to: 4.99 });
   });
 
   it('за 5 хв до півночі — closed, ціни немає', () => {

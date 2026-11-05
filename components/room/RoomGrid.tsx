@@ -371,7 +371,8 @@ export interface ResumeCardProps {
 export function ResumeCard({ title, videoId, onActivate, className }: ResumeCardProps) {
   const t = useTranslations('room.resume');
   return (
-    <div data-resume-card="" className={cn('flex flex-col gap-2', className)}>
+    // Підпис — на самій заглушці (наше зображення, не плеєр): вікно лишається точно 16:9 (кімната, 2026-11-05).
+    <div data-resume-card="" className={cn('relative', className)}>
       {videoId ? (
         <Facade videoId={videoId} title={title} onActivate={onActivate} />
       ) : (
@@ -386,7 +387,9 @@ export function ResumeCard({ title, videoId, onActivate, className }: ResumeCard
           </span>
         </button>
       )}
-      <p className="text-caption text-text-secondary">{t('activate')}</p>
+      <p className="pointer-events-none absolute bottom-2 left-3 m-0 rounded-sm bg-scrim px-2 py-0.5 text-caption text-text">
+        {t('activate')}
+      </p>
     </div>
   );
 }

@@ -13,6 +13,8 @@ import { QRCode } from '@/components/primitives/QRCode';
 import { StampArt } from '@/components/windows/StampArt';
 import { shareShortUrl, shareUrl } from '@/lib/config/site';
 import styles from './tv.module.css';
+import { getData } from '@/lib/data/load';
+import { zoneRowLabelOf } from '@/lib/firstrow/zone';
 
 export interface TvStampCardProps {
   eventId: string;
@@ -44,7 +46,7 @@ export function TvStampCard({ eventId, city, countryName, illustrationId, firstR
       {firstRowSeat !== undefined ? (
         <p className="flex items-center gap-2 text-tv-text text-highlight" data-row="first-row">
           <Icon name="ticket" size={22} />
-          {t('firstRow', { city })}
+          {t('firstRow', { city: zoneRowLabelOf(getData(), eventId) || city })}
         </p>
       ) : null}
     </>

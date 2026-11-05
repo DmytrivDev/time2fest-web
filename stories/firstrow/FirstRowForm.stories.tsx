@@ -77,12 +77,13 @@ export const DeskForm: Story = { name: 'Desk-FR-Form', globals: { surface: 'desk
 export const PhoneDeclined: Story = { name: 'Phone-FR-Declined', args: { notice: { kind: 'declined' } } };
 export const DeskDeclined: Story = { name: 'Desk-FR-Declined', globals: { surface: 'desktop' }, args: { notice: { kind: 'declined' } }, render: desk };
 
-const EXPIRED = { kind: 'expired', free: 3, price: 7.99, holdUntil: NOW + 10 * 60_000, priceChanged: true } as const;
+// Нова ціна після утримання — лише якщо власник змінив ціну вручну (автоматичного $7,99 немає з 2026-11-05).
+const EXPIRED = { kind: 'expired', free: 3, price: 5.99, holdUntil: NOW + 10 * 60_000, priceChanged: true } as const;
 const EXPIRED_ARGS = {
   notice: EXPIRED,
   freeCount: 3,
-  view: view({ freeCount: 3, price: { ...view().price, current: 7.99, tier: 'last3' } }),
-  payPrice: 7.99,
+  view: view({ freeCount: 3, price: { ...view().price, current: 5.99 } }),
+  payPrice: 5.99,
 } satisfies Partial<FirstRowFormProps>;
 export const PhoneExpired: Story = { name: 'Phone-FR-Expired', args: EXPIRED_ARGS };
 export const DeskExpired: Story = { name: 'Desk-FR-Expired', globals: { surface: 'desktop' }, args: EXPIRED_ARGS, render: desk };
@@ -109,13 +110,13 @@ export const PriceChanged: Story = {
   name: 'price-changed',
   args: {
     freeCount: 3,
-    view: view({ freeCount: 3, price: { ...view().price, current: 7.99, tier: 'last3' }, priceChanged: { from: 4.99, to: 7.99 } }),
-    payPrice: 7.99,
+    view: view({ freeCount: 3, price: { ...view().price, current: 5.99 }, priceChanged: { from: 4.99, to: 5.99 } }),
+    payPrice: 5.99,
   },
 };
 export const Last3: Story = {
   name: 'last3 — без підказки про ціну',
-  args: { freeCount: 3, view: view({ freeCount: 3, state: 'last3', price: { ...view().price, current: 7.99, tier: 'last3' } }), payPrice: 7.99 },
+  args: { freeCount: 3, view: view({ freeCount: 3, state: 'last3' }), payPrice: 4.99 },
 };
 export const PassDiscount: Story = {
   name: 'pass-discount — −50% з пасом',

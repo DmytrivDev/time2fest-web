@@ -130,7 +130,7 @@ const worldRoom = (page: Page) =>
     .first();
 
 test.describe('US5 · модуль «Перший ряд»', () => {
-  test('сторінка країни Лондона: відкрито, лічильник «лишилось 1 з 10», $7,99, кнопки', async ({
+  test('сторінка країни Лондона: відкрито, лічильник «лишилось 1 з 10», ціна та сама $4,99, кнопки', async ({
     page,
   }) => {
     await start(page);
@@ -138,7 +138,9 @@ test.describe('US5 · модуль «Перший ряд»', () => {
     await expect(s).toHaveAttribute('data-state', 'last3');
     // Десктоп: «лишилось 1 з 10»; телефон: пігулка «1 з 10».
     await expect(s.locator('[data-row="counter"]')).toContainText('1 з 10');
-    await expect(s).toContainText('$7,99');
+    // Ціна одна (рішення 2026-11-05): без «$7,99» за останні місця.
+    await expect(s).toContainText('$4,99');
+    await expect(s).not.toContainText('$7,99');
     await expect(s.locator('[data-action="take"]')).toHaveText('Зайняти місце');
     await expect(s.locator('[data-action="info"]')).toBeVisible();
   });
@@ -169,6 +171,21 @@ test.describe('US5 · модуль «Перший ряд»', () => {
   });
 });
 
+test.describe('US5 · ряд один на пояс', () => {
+  test('сторінка країни іншого поясу (Бразилія) показує той самий ряд поточного поясу UTC+0', async ({ page }) => {
+    const br = countryList.find((c) => c.iso === 'BR')?.slug ?? 'braziliia';
+    await start(page, OPEN_AT, `/country/${br}/`);
+    const s = strip(page);
+    await expect(s).toHaveAttribute('data-event-id', LONDON.id);
+    await expect(s).toContainText('UTC+0 · Лондон');
+  });
+
+  test('головна в той самий момент — той самий ряд', async ({ page }) => {
+    await start(page, OPEN_AT, '/');
+    await expect(strip(page)).toHaveAttribute('data-event-id', LONDON.id);
+  });
+});
+
 test.describe('US5 · форма й утримання', () => {
   test('«Зайняти місце» відкриває вікно: поля, емоція, «Місце тримаємо до», коралова «Оплатити»', async ({
     page,
@@ -181,7 +198,7 @@ test.describe('US5 · форма й утримання', () => {
     await expect(w.getByLabel('Привітання')).toBeVisible();
     await expect(w.getByRole('radio').first()).toBeVisible();
     await expect(w.locator('[data-row="hold-until"]')).toContainText('Місце тримаємо до');
-    await expect(payBtn(page)).toContainText('Оплатити $7,99');
+    await expect(payBtn(page)).toContainText('Оплатити $4,99');
     expect(await variantOf(payBtn(page))).toBe('coral');
     if (isPhone(page)) await expect(page.getByRole('dialog').first()).toBeVisible();
   });
@@ -253,19 +270,19 @@ test.describe('US5 · форма й утримання', () => {
     await expect(win(page).locator('[data-row="hold-until"]')).toContainText('Місце тримаємо до');
   });
 
-  test('зміна ціни: зафіксовано $4,99, зараз $7,99 → «Ціна змінилася»', async ({ page }) => {
+  test('зміна ціни власником: зафіксовано $3,99, зараз $4,99 → «Ціна змінилася»', async ({ page }) => {
     await start(page);
     await presetGuest(page, {
       [LONDON.id]: {
         hold: { seat: 10, until: Date.parse(OPEN_AT) + 30 * MIN, extended: false },
-        priceLocked: 4.99,
+        priceLocked: 3.99,
       },
     });
     await openForm(page);
     await expect(win(page).locator('[data-row="price-changed"]')).toContainText(
-      'Ціна змінилася: $7,99 замість $4,99',
+      'Ціна змінилася: $4,99 замість $3,99',
     );
-    await expect(payBtn(page)).toContainText('Оплатити $7,99');
+    await expect(payBtn(page)).toContainText('Оплатити $4,99');
   });
 });
 

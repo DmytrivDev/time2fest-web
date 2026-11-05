@@ -30,6 +30,7 @@ import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { guestGreetingMessages } from '@/components/firstrow/controller';
 import { STAMP_DELAY } from '@/lib/engine/config';
 import { pickSeatRoomEvent } from '@/lib/firstrow/rooms';
+import { zoneRowLabel, zoneRows } from '@/lib/firstrow/zone';
 import { MyEmotionPill, type SavedEmotion } from '@/components/windows/Emoji';
 import { Nick } from '@/components/windows/Nick';
 import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
@@ -120,9 +121,9 @@ export function ChatPanel({
 
   // Кімната «Перший ряд» — події, на яку є місце й кімната відкрита зараз (на будь-якій сторінці з чатом).
   const seatFirstRow = guest.firstRow;
-  const seatEvent = useMemo(() => pickSeatRoomEvent(getData().events, seatFirstRow, now), [seatFirstRow, now]);
+  const seatEvent = useMemo(() => pickSeatRoomEvent(zoneRows(getData()), seatFirstRow, now), [seatFirstRow, now]);
   const eventId = seatEvent?.id ?? null;
-  const cityName = seatEvent ? getData().citiesById.get(seatEvent.cityId)?.name.uk : undefined;
+  const cityName = seatEvent ? zoneRowLabel(getData(), seatEvent) : undefined;
   const participant = !!seatEvent;
   const [roomKey, setRoomKey] = useState<RoomKey>(country && !startInWorld ? 'country' : 'world');
   const activeKey: RoomKey =
@@ -173,7 +174,7 @@ export function ChatPanel({
     if (!participant || !eventId) return [];
     const ev = getData().eventsById.get(eventId);
     const moment =
-      chatMoments().find((m) => m.eventId === eventId) ??
+      chatMoments().find((m) => (m.firstRowEventId ?? m.eventId) === eventId) ??
       (ev
         ? {
             t0: ev.midnightMs,

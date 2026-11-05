@@ -299,7 +299,8 @@ export interface GuestFirstRowEntry {
   seat?: number;
   hold?: { seat: number; until: Ms; extended: boolean };
   draft?: { name: string; greeting: string; emojiId?: string };
-  priceLocked?: 4.99 | 7.99;
+  /** Ціна, зафіксована при утриманні (USD). */
+  priceLocked?: number;
 }
 
 export type Stars = 1 | 2 | 3 | 4 | 5;

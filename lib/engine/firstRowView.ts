@@ -5,15 +5,15 @@ import {
   HOLD_EXTEND_OFFER,
   HOLD_WARN_1,
   HOLD_WARN_5,
-  LAST3_THRESHOLD,
-  PRICE_BASE,
-  PRICE_LAST3,
+  FEW_SEATS_THRESHOLD,
+  FIRSTROW_PRICE,
   SEATS,
   STAMP_DELAY,
   WALL_LIGHTING_MS,
 } from './config';
 import { midnightOf } from './eventStatus';
 
+/** `last3` — у продажу, вільних ≤ 3 (лише вигляд: лічильник виділено; ціна та сама). */
 export type FirstRowViewState = 'empty' | 'open' | 'last3' | 'soldout' | 'closed' | 'mine' | 'restrained';
 
 export interface FirstRowView {
@@ -23,15 +23,15 @@ export interface FirstRowView {
   freeCount: number;
   total: 10;
   price: {
-    current: 4.99 | 7.99 | null;
-    full: 4.99;
-    tier: 'base' | 'last3';
+    /** Ціна місця зараз (`FIRSTROW_PRICE`); `null` — не продається. */
+    current: number | null;
+    full: number;
     discountReason?: 'pass';
     /** Ціна зі знижкою пасу −50% (округлення вниз до цента: $2,49). */
     discounted?: number;
   };
-  /** Ціна, зафіксована при відкритті форми, відрізняється від поточної. */
-  priceChanged?: { from: 4.99 | 7.99; to: 4.99 | 7.99 };
+  /** Ціна, зафіксована при відкритті форми, відрізняється від поточної (власник змінив ціну під час утримання). */
+  priceChanged?: { from: number; to: number };
   saleClosesAt: Ms;
   mySeat?: { number: number; emojiId: string; greeting: string };
   hold?: {
@@ -61,9 +61,6 @@ export interface FirstRowOptions {
 }
 
 type EventLike = Pick<Event, 'id' | 'midnightUtc' | 'restrained' | 'firstRow'> & { midnightMs?: Ms };
-
-const tierOf = (free: number): 'base' | 'last3' => (free <= LAST3_THRESHOLD ? 'last3' : 'base');
-const priceOf = (tier: 'base' | 'last3'): 4.99 | 7.99 => (tier === 'last3' ? PRICE_LAST3 : PRICE_BASE) as 4.99 | 7.99;
 
 /** `data-model.md` 3.5. */
 export function firstRowView(
@@ -96,21 +93,19 @@ export function firstRowView(
   else if (mine) state = 'mine';
   else if (!saleOpen) state = 'closed';
   else if (free === 0 && !activeHold) state = 'soldout';
-  else if (free <= LAST3_THRESHOLD) state = 'last3'; // free = 0 лише з власним утриманням гостя
+  else if (free <= FEW_SEATS_THRESHOLD) state = 'last3'; // free = 0 лише з власним утриманням гостя
   else if (free === SEATS) state = 'empty';
   else state = 'open';
 
-  const priceFree = activeHold ? free + 1 : free;
-  const tier = tierOf(priceFree);
   const sellable = state === 'empty' || state === 'open' || state === 'last3';
-  const current = sellable ? priceOf(tier) : null;
+  const current = sellable ? FIRSTROW_PRICE : null;
 
   const view: FirstRowView = {
     eventId: event.id,
     state,
     freeCount: free,
     total: SEATS,
-    price: { current, full: PRICE_BASE as 4.99, tier },
+    price: { current, full: FIRSTROW_PRICE },
     saleClosesAt,
     wall: wallOf(now, t0, opts.reducedMotion ?? false),
   };

@@ -15,11 +15,14 @@
  *   відпливає вгору, потім порожнє місце стягується.
  */
 import { useTranslations } from 'next-intl';
+import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useHeaderUser } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
+import { Flag } from '@/components/primitives/Flag';
+import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { shareWindowSpec } from '@/components/windows/Share';
@@ -30,6 +33,7 @@ import type { Stars } from '@/lib/data/types';
 import { on } from '@/lib/events/bus';
 import { useGuestStore } from '@/stores/guest';
 import { utcLabel } from './MapModel';
+import { zoneRowLabel, zoneSeatOf } from '@/lib/firstrow/zone';
 import { create } from 'zustand';
 
 interface StampMoment {
@@ -67,7 +71,8 @@ export function stampEntry(eventId: string): StampEntry | null {
   if (!event) return null;
   const country = data.countriesByIso.get(event.countryIso);
   const city = data.citiesById.get(event.cityId);
-  const seat = useGuestStore.getState().firstRow[eventId]?.seat;
+  // «Перший ряд» — один на пояс: місце в ряду поясу дає рядок «Перший ряд» штампу будь-якої події цього поясу.
+  const seat = zoneSeatOf(data, useGuestStore.getState().firstRow, event);
   const entry: StampEntry = {
     eventId,
     city: city?.name.uk ?? '',
@@ -75,7 +80,10 @@ export function stampEntry(eventId: string): StampEntry | null {
     flagCode: country?.flagCode ?? event.countryIso,
     illustrationId: country?.illustrationId ?? 'generic',
   };
-  if (seat !== undefined) entry.firstRowSeat = seat;
+  if (seat !== undefined) {
+    entry.firstRowSeat = seat;
+    entry.firstRowLabel = zoneRowLabel(data, event);
+  }
   // Країна з кількома поясами: штамп — за кожен пояс, пояс видно в штампі (рішення 2026-11-05).
   const zone = data.zonesById.get(event.zoneId);
   if (country && country.zoneIds.length > 1 && zone) entry.zone = utcLabel(zone.offsetMinutes);
@@ -87,10 +95,17 @@ export interface StampBlockProps {
   eventId: string | null;
   /** Сторінка країни: штамп, отриманий тут, висить постійно — без «×» і попри прибраний на головній. */
   permanent?: boolean;
+  /**
+   * Кімната перегляду: події всіх вікон. Показуємо штамп головного вікна (або найсвіжіший із вікон), а решту отриманих —
+   * рядком «Ще в кімнаті: прапори ✓ · Усі в паспорті ›» (власник 2026-11-05).
+   */
+  roomEventIds?: readonly string[];
   className?: string;
 }
 
-export function StampBlock({ eventId, permanent = false, className }: StampBlockProps) {
+export function StampBlock({ eventId, permanent = false, roomEventIds, className }: StampBlockProps) {
+  const tRoom = useTranslations('room.stamp');
+  const ownStamps = useGuestStore((s) => s.stamps);
   const tShare = useTranslations('share');
   const { open, current: win } = useOverlay();
   const openAuth = useOpenAuthWindow();
@@ -118,7 +133,33 @@ export function StampBlock({ eventId, permanent = false, className }: StampBlock
     lastGuest.current = guestId;
   }, [guestId]);
 
-  const ids = (moment?.eventIds ?? (eventId && hasStamp ? [eventId] : [])).filter((id) => permanent || !dismissed?.includes(id));
+  const roomGot = roomEventIds ? roomEventIds.filter((id) => ownStamps.some((x) => x.eventId === id)) : [];
+  const roomPrimary = roomEventIds ? (eventId && roomGot.includes(eventId) ? eventId : roomGot[roomGot.length - 1]) : undefined;
+  const ids = (moment?.eventIds ?? (roomEventIds ? (roomPrimary ? [roomPrimary] : []) : eventId && hasStamp ? [eventId] : [])).filter(
+    (id) => permanent || !dismissed?.includes(id),
+  );
+  const roomOthers = roomGot.filter((id) => !ids.includes(id)).map(stampEntry).filter((e): e is StampEntry => e !== null);
+  const more = roomEventIds
+    ? {
+        count: roomOthers.length,
+        line: roomOthers.length ? (
+          <>
+            <span className="text-text-muted">{tRoom('more')}</span>
+            {roomOthers.map((e) => (
+              <span key={e.eventId} className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface-raised pl-1 pr-2.5 text-label-sm text-text">
+                <Flag round code={e.flagCode} size="xs" decorative />
+                {e.city}
+                <Icon name="check" size={14} className="text-highlight" />
+              </span>
+            ))}
+            <NextLink href={PASSPORT_HREF} className="t2f-focus inline-flex items-center gap-0.5 rounded-sm text-label-sm text-text underline underline-offset-2">
+              {tRoom('all')}
+              <Icon name="chevron-right" size={14} />
+            </NextLink>
+          </>
+        ) : null,
+      }
+    : undefined;
   const key = ids.join('|');
   const list = ids.map(stampEntry).filter((e): e is StampEntry => e !== null);
   const visible = list.length > 0;
@@ -171,6 +212,7 @@ export function StampBlock({ eventId, permanent = false, className }: StampBlock
             onSignIn={() => openAuth('signin')}
             onPassport={() => router.push(PASSPORT_HREF)}
             onClose={permanent ? undefined : () => dismiss(current.list, current.key)}
+            more={more && more.count > 0 ? more : undefined}
             rate={
               <StampRate
                 rows={current.list.map((e) => ({ eventId: e.eventId ?? '', city: e.city }))}

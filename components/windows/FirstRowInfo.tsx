@@ -84,7 +84,6 @@ export function FirstRowInfo({ city, view, hasPass = false, onTake, onClose, onB
                   discounted: formatPrice(Math.floor(current * 50) / 100),
                 })}
               </span>
-              <span>{view.state === 'last3' ? t('tierLast3', { price: formatPrice(7.99) }) : t('tierHint', { price: formatPrice(7.99) })}</span>
             </div>
           </>
         ) : (

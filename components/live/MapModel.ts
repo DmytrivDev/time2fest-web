@@ -1,4 +1,5 @@
 import type { CelebrationType, Dataset, Gender, Ms } from '@/lib/data/types';
+import { zoneRowOf } from '@/lib/firstrow/zone';
 
 /** Країна поясу на мапі: посилання, прапор і «Як святкувати» (до трьох традицій). */
 export interface MapCountry {
@@ -120,7 +121,8 @@ export function buildMapModel(data: Dataset): MapModel {
         .sort((a, b) => Number(b.isCountryMain) - Number(a.isCountryMain));
       const events = zoneEvents.filter((e) => e.countryIso === iso);
       const quiet = events.find((e) => e.restrained)?.restrained?.note.uk;
-      const firstRow = events.find((e) => e.firstRow?.saleEnabled);
+      // «Перший ряд» — один на пояс (2026-11-05): усі країни поясу показують місця того самого ряду.
+      const firstRow = zoneRowOf(data, z.id);
       return {
         streams: own.map((c) => ({
           cityId: c.id,
@@ -245,11 +247,5 @@ export function pointToPercent(p: { x: number; y: number }, meta: ZoneMapGeometr
   return { left: (x / meta.width) * 100, top: (y / meta.height) * 100 };
 }
 
-/** «UTC+5:45» для підпису в картці поясу (UTC лише там). */
-export function utcLabel(offsetMinutes: number): string {
-  const a = Math.abs(offsetMinutes);
-  const h = Math.floor(a / 60);
-  const m = a % 60;
-  const sign = offsetMinutes < 0 ? '−' : '+';
-  return `UTC${sign}${h}${m ? `:${String(m).padStart(2, '0')}` : ''}`;
-}
+/** «UTC+5:45» для підпису в картці поясу (UTC лише там і в назві «Першого ряду» поясу). */
+export { utcLabel } from '@/lib/i18n/time';

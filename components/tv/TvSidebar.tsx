@@ -170,8 +170,7 @@ export function TvSidebar({ online: onlineProp, fullscreen, className }: TvSideb
   const events = useMemo(() => tvEvents(data, minute, schedule), [data, minute, schedule]);
   const midnightMs = current?.event.midnightMs ?? 0;
   const untilMs = midnightMs - now;
-  const firstRow = useTvFirstRow(current, now);
-  const eventId = current?.event.id ?? null;
+  const firstRow = useTvFirstRow(now);
 
   const queue = useMemo(() => (current ? queueAfter(events, midnightMs, { onlyStreams: mode === 'scene' }) : []), [events, current, midnightMs, mode]);
 
@@ -285,7 +284,7 @@ export function TvSidebar({ online: onlineProp, fullscreen, className }: TvSideb
               )}
             </TabsContent>
             <TabsContent value="fr" className={cn(styles.scroll, styles.panel)} data-tv-panel="fr" data-tv-scroll="" tabIndex={0}>
-              <TvFirstRowTab data={firstRow} eventId={eventId} />
+              <TvFirstRowTab data={firstRow} />
             </TabsContent>
           </Tabs>
         )}

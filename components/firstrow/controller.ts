@@ -9,19 +9,22 @@ import { messageId } from '@/lib/chat-sim/simulator';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import { STAMP_DELAY } from '@/lib/engine/config';
 import { firstRowView, type FirstRowView } from '@/lib/engine/firstRowView';
-import { confirmPending, releaseHold, settle, startHold, type Price } from '@/lib/firstrow/pay';
+import { confirmPending, releaseHold, settle, startHold } from '@/lib/firstrow/pay';
 import { firstFreeSeat, simulateSeats } from '@/lib/firstrow/seatsSim';
 import { applyOutcome, emptyFlow, readEntry, useFirstRowStore, writeEntry } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { getData } from '@/lib/data/load';
 import { seatConflict } from '@/lib/firstrow/rooms';
+import { zoneRows } from '@/lib/firstrow/zone';
+import { FIRSTROW_PRICE } from '@/lib/engine/config';
 
 export const FIRST_ROW_WINDOW_ID = 'O-FIRST-ROW';
 export const FIRST_ROW_INFO_ID = 'O-FIRST-ROW-INFO';
 export const FIRST_ROW_MORE_ID = 'O-FIRST-ROW-MORE';
 
-export type FirstRowEvent = Pick<ScheduledEvent, 'id' | 'cityId' | 'midnightUtc' | 'midnightMs' | 'restrained' | 'firstRow'>;
+/** Ряд поясу — подія-носій (`lib/firstrow/zone`). */
+export type FirstRowEvent = Pick<ScheduledEvent, 'id' | 'cityId' | 'zoneId' | 'midnightUtc' | 'midnightMs' | 'restrained' | 'firstRow'>;
 
 export interface FirstRowSnapshot {
   seats: FirstRowSeat[];
@@ -55,7 +58,7 @@ export function blockingEvent(event: Pick<FirstRowEvent, 'id'>, now: Ms) {
   const data = getData();
   const target = data.eventsById.get(event.id);
   if (!target) return null;
-  return seatConflict(data.events, useGuestStore.getState().firstRow, target, now);
+  return seatConflict(zoneRows(data), useGuestStore.getState().firstRow, target, now);
 }
 
 /** «Зайняти місце»: нове утримання (або повернення до наявного), фіксація ціни. */
@@ -76,7 +79,7 @@ export function openForm(event: FirstRowEvent, now: Ms): OpenResult {
   const { seats, view } = snapshot(event, now, { ignoreHold: true });
   if (view.state === 'closed' || view.state === 'restrained') return 'closed';
   const price = view.price.current;
-  const res = startHold(releaseHold(entry), firstFreeSeat(seats, now), now, (price ?? 4.99) as Price);
+  const res = startHold(releaseHold(entry), firstFreeSeat(seats, now), now, price ?? FIRSTROW_PRICE);
   if (!res.ok || price === null) {
     store.setFlow(emptyFlow(event.id, 'soldout'));
     return 'soldout';
@@ -93,7 +96,7 @@ export function expireHold(event: FirstRowEvent, now: Ms): void {
   const { seats, view } = snapshot(event, now, { ignoreHold: true });
   const seat = firstFreeSeat(seats, now);
   const price = view.price.current;
-  const res = startHold(releaseHold(prev), seat, now, (price ?? 4.99) as Price);
+  const res = startHold(releaseHold(prev), seat, now, price ?? FIRSTROW_PRICE);
   if (!res.ok || price === null) {
     applyOutcome(event.id, { phase: 'soldout', entry: releaseHold(prev) }, now);
     return;

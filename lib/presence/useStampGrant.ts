@@ -18,6 +18,7 @@ import { on } from '@/lib/events/bus';
 import type { MomentStamp } from '@/lib/events/types';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
+import { zoneSeatOf } from '@/lib/firstrow/zone';
 
 export interface StampSurfaceInput {
   source: PresenceSource;
@@ -64,7 +65,8 @@ export function grantStamps(payload: MomentStamp): string[] {
   for (const id of payload.presentEventIds) {
     const event = data.eventsById.get(id);
     if (!event) continue;
-    const seat = guest.firstRow[id]?.seat;
+    // Ряд один на пояс: місце в ряду поясу — штамп «Перший ряд» за будь-яку подію цього поясу.
+    const seat = zoneSeatOf(data, guest.firstRow, event);
     const stamp = buildStamp({
       event,
       country: data.countriesByIso.get(event.countryIso),

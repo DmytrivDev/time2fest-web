@@ -22,7 +22,6 @@ import { EMOJI_PICKER_IDS } from '@/components/windows/Emoji';
 import { FlagField } from '@/components/windows/FlagField';
 import s from '@/components/windows/firstRowWindow.module.css';
 import { canonicalEmotion } from '@/lib/firstrow/emotions';
-import { PRICE_LAST3 } from '@/lib/engine/config';
 import { formatHoldLeft, formatPrice } from '@/lib/firstrow/format';
 import { GREETING_MAX, NAME_MAX } from '@/lib/firstrow/pay';
 import { getData } from '@/lib/data/load';
@@ -423,9 +422,6 @@ export function FirstRowForm({
               </span>
             </p>
           ) : null}
-          <p className={s.infoMuted} data-row="tier-hint">
-            {view.price.tier === 'base' ? t('tierHint', { price: formatPrice(PRICE_LAST3) }) : t('tierLast3', { price: formatPrice(PRICE_LAST3) })}
-          </p>
         </div>
 
         <Button type="submit" variant="coral" size="lg" className="w-full" data-action="pay" loading={submitting}>

@@ -24,6 +24,8 @@ export interface EventFilterProps {
   /** Назва групи для зчитувача (за замовчуванням — як у «Зараз і далі»). */
   label?: string;
   className?: string;
+  /** Без «З трансляціями» (кімната перегляду: там і так лише поточні трансляції). */
+  hideLive?: boolean;
 }
 
 export function EventFilter({
@@ -32,6 +34,7 @@ export function EventFilter({
   scheduleLocked = false,
   scheduleCount = 0,
   label,
+  hideLive = false,
   className,
 }: EventFilterProps) {
   const t = useTranslations('liveCards.nowNext');
@@ -50,10 +53,12 @@ export function EventFilter({
       <ToggleGroup.Item value="all" className={cn('t2f-focus', s.seg)}>
         {t('filterAll')}
       </ToggleGroup.Item>
-      <ToggleGroup.Item value="live" className={cn('t2f-focus', s.seg)}>
-        <Icon name="broadcast" size={14} />
-        {t('filterLive')}
-      </ToggleGroup.Item>
+      {hideLive ? null : (
+        <ToggleGroup.Item value="live" className={cn('t2f-focus', s.seg)}>
+          <Icon name="broadcast" size={14} />
+          {t('filterLive')}
+        </ToggleGroup.Item>
+      )}
       <ToggleGroup.Item
         value="mine"
         aria-label={lockedHint ? `${t('filterMine')}. ${lockedHint}` : undefined}

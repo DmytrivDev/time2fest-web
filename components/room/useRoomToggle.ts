@@ -7,17 +7,25 @@
  * Телефон: «+» відкриває підтвердження під рядком (`RoomAddConfirm`), «Відкрити кімнату» — додати й перейти.
  * «+» — лише на трансляціях наживо (кімната показує тільки відео), і не на тій, що вже грає.
  */
-import { useCallback } from 'react';
+import { createContext, useCallback } from 'react';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { useGuestStore } from '@/stores/guest';
 import { ROOM_LIMIT, useRoomStore, type RoomTarget } from '@/stores/room';
 import { openRoomTray } from './RoomTray';
 
+/**
+ * Сторінка кімнати перегляду: «+» на картках («Поточні трансляції») додає вікно одразу — і на телефоні (без
+ * підтвердження під карткою), а коли кімната повна, кімната відкриває «Що замінити?». ✓ — уже у вікні.
+ */
+export const RoomPageContext = createContext<{ toggle(target: RoomTarget): void } | null>(null);
+
 /** Що зараз грає головний плеєр сторінки (перше вікно порожньої кімнати). */
 export function usePlayingTarget(): RoomTarget | null {
   const player = useOptionalPlayer();
   const sel = player?.selection;
-  return player?.eventId && sel?.kind === 'source' ? { sourceId: sel.source.id, eventId: player.eventId } : null;
+  return player?.eventId && sel?.kind === 'source'
+    ? { sourceId: sel.source.id, eventId: player.eventId }
+    : null;
 }
 
 export interface RoomToggle {
@@ -34,7 +42,10 @@ export function useRoomToggle(main?: RoomTarget | null): RoomToggle {
   const remove = useRoomStore((s) => s.remove);
   const playing = usePlayingTarget();
   const seed = main === undefined ? playing : main;
-  const has = useCallback((sourceId: string) => windows.some((w) => w.sourceId === sourceId), [windows]);
+  const has = useCallback(
+    (sourceId: string) => windows.some((w) => w.sourceId === sourceId),
+    [windows],
+  );
   const toggle = useCallback(
     (target: RoomTarget) => {
       const w = windows.find((x) => x.sourceId === target.sourceId);

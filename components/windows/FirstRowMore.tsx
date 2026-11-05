@@ -31,7 +31,7 @@ function Row({ row, now, same, onPick }: { row: FirstRowMoreRow; now: number; sa
       <button
         type="button"
         data-row-event={row.eventId}
-        aria-label={t('more.rowLabel', { city: row.city, country: row.country, free: row.free, total: 10, price: formatPrice(row.price) })}
+        aria-label={t('more.rowLabel', { city: row.city, free: row.free, total: 10, price: formatPrice(row.price) })}
         onClick={() => onPick(row.eventId)}
         className="t2f-focus t2f-transition flex min-h-16 w-full items-center gap-3 rounded-lg border border-border bg-surface-raised py-2.5 pe-2 ps-3 text-start hover:border-border-strong"
       >

@@ -10,6 +10,7 @@
 import type { Country, Ms, PresenceSource, SlotGroup, StreamChain } from '@/lib/data/types';
 import { airSlots, currentAirEvent, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
+import { zoneRows } from '@/lib/firstrow/zone';
 import { momentTimeline } from '@/lib/engine/momentTimeline';
 import { offerEligibility, type OfferContext } from '@/lib/engine/offerEligibility';
 import type { UiEventMap, UiEventType } from './types';
@@ -174,7 +175,9 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
               countries: isos.map((iso) => ({ iso, gender: deps.data.countriesByIso.get(iso)?.gender ?? null })),
               announce: { cityId: air?.event.cityId ?? '', text: 'midnight-stamp-ready' },
             };
-            if (air?.event.firstRow?.saleEnabled) payload.firstRowEventId = air.event.id;
+            // «Перший ряд» — один на пояс: ряд поясу цієї півночі (`lib/firstrow/zone`).
+            const row = zoneRows({ events: slot.events })[0] ?? null;
+            if (row) payload.firstRowEventId = row.id;
             if (isLate) payload.late = true;
             once('moment:stamp', payload);
           },

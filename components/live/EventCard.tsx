@@ -10,10 +10,10 @@ import type { CelebrationType, EventStatus, Ms } from '@/lib/data/types';
 import { formatClock, formatMidnightAgo } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { PostcardArt } from '@/components/windows/StampArt';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { getData } from '@/lib/data/load';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
-import { usePlayingTarget, useRoomToggle } from '@/components/room/useRoomToggle';
+import { RoomPageContext, usePlayingTarget, useRoomToggle } from '@/components/room/useRoomToggle';
 import type { RoomTarget } from '@/stores/room';
 import { Tooltip } from '@/components/primitives/Tooltip';
 import { RoomAddConfirm } from './RoomAddConfirm';
@@ -172,11 +172,14 @@ export function EventCard({
   // «+» у кімнату (дошка `Desk-Room-Plus-2`): лише трансляція наживо й не та, що вже в ефірі. Десктоп — одразу в кімнату
   // (✓, панель кімнати), телефон — підтвердження під рядком.
   const room = useRoomToggle();
+  const roomPage = useContext(RoomPageContext);
   const playing = usePlayingTarget();
   const [confirming, setConfirming] = useState(false);
   const canPlus = !!liveSourceId && !isOnAir && !isPast;
   const inRoom = !!liveSourceId && room.has(liveSourceId);
   const stack = layout === 'stack';
+  // На сторінці кімнати «+» додає одразу й на телефоні (без підтвердження).
+  const confirmFirst = stack && !roomPage;
   const plusLabel = inRoom ? t('roomIn', { city: title }) : t('roomAdd', { city: title });
   const playingTitle = playing
     ? (getData()
@@ -258,22 +261,24 @@ export function EventCard({
         {canPlus ? (
           <button
             type="button"
-            aria-label={stack ? t('roomAdd', { city: title }) : plusLabel}
-            aria-pressed={stack ? undefined : inRoom}
-            aria-expanded={stack ? confirming : undefined}
-            disabled={!stack && !inRoom && room.full}
+            aria-label={confirmFirst ? t('roomAdd', { city: title }) : plusLabel}
+            aria-pressed={confirmFirst ? undefined : inRoom}
+            aria-expanded={confirmFirst ? confirming : undefined}
+            disabled={!roomPage && !stack && !inRoom && room.full}
             onClick={() =>
-              stack
-                ? setConfirming((v) => !v)
-                : room.toggle({ sourceId: liveSourceId!, eventId: id })
+              roomPage
+                ? roomPage.toggle({ sourceId: liveSourceId!, eventId: id })
+                : stack
+                  ? setConfirming((v) => !v)
+                  : room.toggle({ sourceId: liveSourceId!, eventId: id })
             }
             className={cn('t2f-focus t2f-press rounded-full', s.cal, s.plusBtn)}
           >
             <span
               aria-hidden="true"
-              className={cn(s.calCircle, inRoom && !stack && s.plusOn, confirming && s.plusOpen)}
+              className={cn(s.calCircle, inRoom && !confirmFirst && s.plusOn, confirming && s.plusOpen)}
             >
-              <Icon name={inRoom && !stack ? 'check' : 'plus'} size={16} strokeWidth={2.4} />
+              <Icon name={inRoom && !confirmFirst ? 'check' : 'plus'} size={16} strokeWidth={2.4} />
             </span>
           </button>
         ) : (

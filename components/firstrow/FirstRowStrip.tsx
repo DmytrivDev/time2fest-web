@@ -129,8 +129,7 @@ export function FirstRowStrip({
     );
   }
 
-  // ── Рядок ціни ──────────────────────────────────────────────────────────
-  const tierText = state === 'last3' ? t('tierLast3', { price: formatPrice(7.99) }) : t('tierHint', { price: formatPrice(7.99) });
+  // ── Рядок ціни (ціна одна для всіх місць, рішення 2026-11-05: без «Коли лишиться 3 місця — $7,99») ─────
   const priceNode =
     sellable && !blockedNow && price.current !== null ? (
       discounted && price.discounted !== undefined ? (
@@ -237,6 +236,7 @@ export function FirstRowStrip({
     'data-state': stateName,
     'data-layout': layout,
     'data-midnight': midnightMs,
+    'data-event-id': view.eventId,
     'data-wall-phase': wallPhase,
     'data-postcard-on': postcardOn || undefined,
   };
@@ -289,12 +289,6 @@ export function FirstRowStrip({
                 <p className={fr.pitch}>{t('emptyPitch')}</p>
                 <p data-row="price" className={fr.sub}>
                   {priceNode}
-                  {!discounted ? (
-                    <>
-                      <br />
-                      {tierText}
-                    </>
-                  ) : null}
                 </p>
                 <div className={fr.phoneActions}>
                   {take}
@@ -316,12 +310,6 @@ export function FirstRowStrip({
                 <div className={fr.left}>{freeTitle}</div>
                 <p data-row="price" className={fr.sub}>
                   {priceNode}
-                  {!discounted ? (
-                    <>
-                      <br />
-                      {tierText}
-                    </>
-                  ) : null}
                 </p>
                 <div className={fr.phoneActions}>
                   {take}
@@ -370,13 +358,7 @@ export function FirstRowStrip({
   // ── Десктоп ─────────────────────────────────────────────────────────────
   let sub: ReactNode = null;
   if (blockedNow) sub = <span data-row="blocked">{t('blocked', { city: blocked!.city })}</span>;
-  else if (priceNode)
-    sub = (
-      <>
-        {priceNode}
-        {!discounted ? <span data-row="tier">{tierText}</span> : null}
-      </>
-    );
+  else if (priceNode) sub = priceNode;
   else if (mineLine) sub = mineLine;
   else if (state === 'soldout') sub = <span>{t('soldOutLine')}</span>;
   else if (closedLine) sub = closedLine;

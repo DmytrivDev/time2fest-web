@@ -52,8 +52,12 @@ export function nextSlot(windows: readonly GuestRoomWindow[]): number {
 
 /** `soundSlot` завжди вказує на наявне вікно або `null`; порожня кімната — без звуку. */
 export function normalizeRoom(state: RoomState): RoomState {
-  const windows = state.windows.filter((w, i, all) => all.findIndex((x) => x.slot === w.slot) === i);
-  const sound = windows.some((w) => w.slot === state.soundSlot) ? state.soundSlot : (windows[0]?.slot ?? null);
+  const windows = state.windows.filter(
+    (w, i, all) => all.findIndex((x) => x.slot === w.slot) === i,
+  );
+  const sound = windows.some((w) => w.slot === state.soundSlot)
+    ? state.soundSlot
+    : (windows[0]?.slot ?? null);
   return { windows, soundSlot: sound };
 }
 
@@ -79,13 +83,44 @@ export function removeWindow(state: RoomState, slot: number): RoomState {
 export function replaceWindow(state: RoomState, slot: number, target: RoomTarget): RoomState {
   const dup = state.windows.find((w) => w.sourceId === target.sourceId);
   if (dup && dup.slot !== slot) return state;
-  const windows = state.windows.map((w) => (w.slot === slot ? { slot, sourceId: target.sourceId, eventId: target.eventId } : w));
+  const windows = state.windows.map((w) =>
+    w.slot === slot ? { slot, sourceId: target.sourceId, eventId: target.eventId } : w,
+  );
   return normalizeRoom({ windows, soundSlot: state.soundSlot });
 }
 
 export function setSound(state: RoomState, slot: number): RoomState {
   if (!state.windows.some((w) => w.slot === slot)) return state;
   return { ...state, soundSlot: slot };
+}
+
+/**
+ * Поміняти місцями два вікна (перетягування за смугу, власник 2026-11-05). Порядок у `windows` — це порядок показу;
+ * плеєри не перезапускаються: DOM вікон не переставляється, позицію задає CSS `order`.
+ */
+export function swapWindows(state: RoomState, a: number, b: number): RoomState {
+  const ia = state.windows.findIndex((w) => w.slot === a);
+  const ib = state.windows.findIndex((w) => w.slot === b);
+  if (ia < 0 || ib < 0 || ia === ib) return state;
+  const windows = [...state.windows];
+  [windows[ia], windows[ib]] = [windows[ib]!, windows[ia]!];
+  return { ...state, windows };
+}
+
+/** Повернути прибране вікно на його місце (сповіщення «Повернути»). */
+export function restoreWindow(
+  state: RoomState,
+  win: GuestRoomWindow,
+  index: number,
+  limit: number,
+  sound: boolean,
+): RoomState {
+  if (state.windows.length >= limit || state.windows.some((w) => w.sourceId === win.sourceId))
+    return state;
+  const slot = state.windows.some((w) => w.slot === win.slot) ? nextSlot(state.windows) : win.slot;
+  const windows = [...state.windows];
+  windows.splice(Math.min(index, windows.length), 0, { ...win, slot });
+  return normalizeRoom({ windows, soundSlot: sound ? slot : state.soundSlot });
 }
 
 /** Перенести вікно на перше місце (головне вікно — те, що вже грає в `PlayerHost`). */
@@ -104,7 +139,10 @@ export function adoptMain(state: RoomState, main: RoomTarget, limit: number): Ro
   const found = state.windows.find((w) => w.sourceId === main.sourceId);
   if (found) return moveToFront(state, found.slot);
   const slot = nextSlot(state.windows);
-  const windows = [{ slot, sourceId: main.sourceId, eventId: main.eventId }, ...state.windows].slice(0, Math.max(1, limit));
+  const windows = [
+    { slot, sourceId: main.sourceId, eventId: main.eventId },
+    ...state.windows,
+  ].slice(0, Math.max(1, limit));
   return normalizeRoom({ windows, soundSlot: state.soundSlot ?? slot });
 }
 
@@ -114,6 +152,11 @@ export interface RoomSessionState {
   pickTarget: RoomTarget | null;
   /** Вікна 2–4, запущені людиною в цьому сеансі. */
   started: number[];
+  /**
+   * Вікно, у якому сидить спільний `PlayerHost` макета (головний плеєр). Не обов’язково перше в сітці: після
+   * перетягування позиції змінюються, а плеєри — ні. `null` — перше вікно.
+   */
+  hostSlot: number | null;
 }
 
 export interface RoomActions {
@@ -126,6 +169,11 @@ export interface RoomActions {
   /** Замінити вікно трансляцією з `pickTarget` (або `target`). */
   replace(slot: number, target?: RoomTarget): void;
   setSound(slot: number): void;
+  /** Поміняти місцями два вікна (див. `swapWindows`). */
+  swap(a: number, b: number): void;
+  /** Повернути прибране вікно (див. `restoreWindow`). */
+  restore(win: GuestRoomWindow, index: number, viewport: RoomViewport, sound: boolean): void;
+  setHostSlot(slot: number | null): void;
   cancelPick(): void;
   markStarted(slot: number): void;
   /** Див. `adoptMain`. */
@@ -151,6 +199,7 @@ function writeRoom(next: RoomState): void {
 export const useRoomStore = create<RoomStore>()((set, get) => ({
   pickTarget: null,
   started: [],
+  hostSlot: null,
 
   add(target, viewport, main) {
     let state = readRoom();
@@ -167,7 +216,8 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
     }
     writeRoom(res.state);
     // «+» — дія людини: нове вікно (не головне) стартує одразу, без звуку.
-    if (res.kind === 'added' && res.state.windows[0]?.slot !== res.slot) get().markStarted(res.slot);
+    if (res.kind === 'added' && res.state.windows[0]?.slot !== res.slot)
+      get().markStarted(res.slot);
     set({ pickTarget: null });
     return res.kind;
   },
@@ -207,6 +257,25 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
     writeRoom(setSound(readRoom(), slot));
   },
 
+  swap(a, b) {
+    const before = readRoom();
+    const next = swapWindows(before, a, b);
+    if (next !== before) writeRoom(next);
+  },
+
+  restore(win, index, viewport, sound) {
+    const before = readRoom();
+    const next = restoreWindow(before, win, index, roomLimit(viewport), sound);
+    if (next === before) return;
+    writeRoom(next);
+    const slot = next.windows[Math.min(index, next.windows.length - 1)]?.slot;
+    if (slot !== undefined) get().markStarted(slot);
+  },
+
+  setHostSlot(slot) {
+    set({ hostSlot: slot });
+  },
+
   cancelPick() {
     set({ pickTarget: null });
   },
@@ -222,7 +291,7 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
   },
 
   resetSession() {
-    set({ pickTarget: null, started: [] });
+    set({ pickTarget: null, started: [], hostSlot: null });
   },
 }));
 

@@ -3,6 +3,7 @@
  * Жодних відмінкових форм: міста й країни — у називному. Автор без пасу шляху не показує.
  */
 import type { Author, ChatScriptFile, Dataset, Ms, Stamp } from '@/lib/data/types';
+import { zoneRowOf } from '@/lib/firstrow/zone';
 
 export interface PathPoint {
   /** `eventId` події. */
@@ -37,7 +38,9 @@ export function buildAuthorPath(author: Pick<Author, 'id' | 'nick' | 'badges'>, 
     const city = event ? data.citiesById.get(event.cityId) : undefined;
     const country = event ? data.countriesByIso.get(event.countryIso) : undefined;
     if (!event || !city || !country) continue;
-    const seed = script.firstRowSeed.find((s) => s.eventId === step.eventId);
+    // «Перший ряд» — один на пояс: місце автора — у ряду поясу цієї події.
+    const rowId = zoneRowOf(data, event)?.id ?? step.eventId;
+    const seed = script.firstRowSeed.find((s) => s.eventId === rowId);
     const seat = firstRow && !step.planned ? seed?.seats.find((s) => s.state === 'taken' && s.name?.startsWith(author.nick)) : undefined;
     points.push({
       id: event.id,

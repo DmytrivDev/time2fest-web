@@ -45,7 +45,7 @@ import type { Dataset, Ms, RoomId } from '@/lib/data/types';
 import { firstRowEventFor } from '@/lib/firstrow/pick';
 import { formatClock, viewerTimeZone, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
-import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
+import { useBroadcast } from '@/lib/player/BroadcastController';
 import { simulatedViewers } from '@/lib/presence/viewers';
 import { useStampGrant } from '@/lib/presence/useStampGrant';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -58,8 +58,9 @@ const PLAYER_TITLE_ID = 'player-title';
 export { useChatLookup };
 
 /** Модуль «Перший ряд» (C6/C7/C8, US5): подія ефіру з «Першим рядом» або найближча з відкритим продажем. */
-function FirstRowSection({ place, now, className, dockBar }: { place: AirPlace; now: Ms; className?: string; dockBar?: boolean }) {
-  return <FirstRowModule event={firstRowEventFor(getData(), now, place.event)} className={className} dockBar={dockBar} />;
+function FirstRowSection({ now, className, dockBar }: { now: Ms; className?: string; dockBar?: boolean }) {
+  // Ряд поточного поясу — той самий, що на сторінках країн, у кімнаті й на ТВ (ряд один на пояс, 2026-11-05).
+  return <FirstRowModule event={firstRowEventFor(getData(), now)} className={className} dockBar={dockBar} />;
 }
 
 /** Краї «Прогресу свята»: «12:00 · Кірибаті» і «14:00 · 1 січня» за часом глядача. */
@@ -195,13 +196,13 @@ export function HomeLive() {
         watchers={viewers.length}
         captionAside={showChatButton}
         dock={!chatColumn}
-        belowBar={current && ready ? <FirstRowSection place={current} now={now} dockBar /> : null}
+        belowBar={current && ready ? <FirstRowSection now={now} dockBar /> : null}
       />
 
       {chatColumn ? (
         <div className={cn(home.column, 'pt-4')}>
           {inflow}
-          {current && ready ? <FirstRowSection place={current} now={now} /> : null}
+          {current && ready ? <FirstRowSection now={now} /> : null}
           <div className="mt-2">{nowNext('carousel')}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
           {wideSlot ? createPortal(map, wideSlot) : null}

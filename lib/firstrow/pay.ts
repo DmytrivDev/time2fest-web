@@ -13,7 +13,8 @@ import { HOLD_EXTENSION, HOLD_MS } from '@/lib/engine/config';
 /** Що показує вікно «Першого ряду». `declined` і `expired` — та сама форма з рядком причини. */
 export type PayPhase = 'form' | 'pending' | 'success' | 'declined' | 'soldout' | 'expired' | 'edit';
 
-export type Price = 4.99 | 7.99;
+/** Ціна місця, USD (`FIRSTROW_PRICE`). */
+export type Price = number;
 
 /** Зміна емоції — не частіше ніж раз на 10 с (O-EMOJI). */
 export const EMOJI_COOLDOWN_MS = 10_000;

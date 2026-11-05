@@ -38,7 +38,7 @@ function seats(taken: number, opts: { heldBy?: string; heldUntil?: number; mine?
 describe('firstRowView: лічильник і ціна', () => {
   it('усі 10 вільні → empty, $4,99', () => {
     const v = firstRowView(NOW, london, seats(0), guest());
-    expect(v).toMatchObject({ state: 'empty', freeCount: 10, total: 10, price: { current: 4.99, full: 4.99, tier: 'base' } });
+    expect(v).toMatchObject({ state: 'empty', freeCount: 10, total: 10, price: { current: 4.99, full: 4.99 } });
   });
 
   it('лічильник — вільні місця; утримані — не вільні', () => {
@@ -47,27 +47,27 @@ describe('firstRowView: лічильник і ціна', () => {
     expect(v.state).toBe('open');
   });
 
-  it('$7,99 коли вільних ≤ 3 (last3)', () => {
-    expect(firstRowView(NOW, london, seats(6), guest()).price).toMatchObject({ current: 4.99, tier: 'base' });
+  it('вільних ≤ 3 → стан last3, але ціна та сама (одна ціна, рішення 2026-11-05)', () => {
+    expect(firstRowView(NOW, london, seats(6), guest()).price).toEqual({ current: 4.99, full: 4.99 });
     const v = firstRowView(NOW, london, seats(7), guest());
     expect(v.state).toBe('last3');
     expect(v.freeCount).toBe(3);
-    expect(v.price).toMatchObject({ current: 7.99, tier: 'last3' });
+    expect(v.price).toEqual({ current: 4.99, full: 4.99 });
+    expect(firstRowView(NOW, london, seats(9), guest()).price.current).toBe(4.99);
   });
 
-  it('ціна гостя з утриманням рахується від free + 1', () => {
-    // 6 зайнято + утримання гостя → вільних 3, але для гостя — 4 → $4,99
+  it('ціна гостя з утриманням — та сама, що й для інших', () => {
     const s = seats(6, { heldBy: 'me', heldUntil: NOW + 8 * MIN });
     const v = firstRowView(NOW, london, s, guest({ hold: { seat: 7, until: NOW + 8 * MIN, extended: false } }));
     expect(v.freeCount).toBe(3);
-    expect(v.price).toMatchObject({ current: 4.99, tier: 'base' });
-    // для інших — $7,99
-    expect(firstRowView(NOW, london, s, guest({ id: 'x' })).price.current).toBe(7.99);
+    expect(v.price.current).toBe(4.99);
+    expect(firstRowView(NOW, london, s, guest({ id: 'x' })).price.current).toBe(4.99);
   });
 
-  it('ціна змінилася з часу відкриття форми', () => {
-    const v = firstRowView(NOW, london, seats(7), guest({ priceLocked: 4.99 }));
-    expect(v.priceChanged).toEqual({ from: 4.99, to: 7.99 });
+  it('ціна змінилася з часу відкриття форми (власник змінив ціну під час утримання)', () => {
+    expect(firstRowView(NOW, london, seats(7), guest({ priceLocked: 4.99 })).priceChanged).toBeUndefined();
+    const v = firstRowView(NOW, london, seats(7), guest({ priceLocked: 3.99 }));
+    expect(v.priceChanged).toEqual({ from: 3.99, to: 4.99 });
   });
 
   it('знижка пасу −50%', () => {

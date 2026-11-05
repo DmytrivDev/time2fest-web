@@ -65,30 +65,30 @@ describe('«Перший ряд» до півночі: стани смуги (д
   });
 });
 
-describe('«Ще є місця»: порядок рядів', () => {
+describe('«Ще є місця»: порядок рядів (ряд один на пояс)', () => {
   const T = Date.parse('2026-12-31T23:30:00Z');
-  const ev = (id: string, midnight: string, main = true, popularity = 50): ScheduledEvent =>
-    ({ id, cityId: id, countryIso: 'XX', midnightUtc: midnight, midnightMs: Date.parse(midnight), isMainCelebration: main, popularity, firstRow: { saleEnabled: true } }) as unknown as ScheduledEvent;
-  const london = ev('london', '2027-01-01T00:00:00Z', true, 95);
+  const ev = (id: string, zoneId: string, midnight: string, main = true, popularity = 50): ScheduledEvent =>
+    ({ id, cityId: id, zoneId, countryIso: 'XX', midnightUtc: midnight, midnightMs: Date.parse(midnight), isMainCelebration: main, popularity, firstRow: { saleEnabled: true } }) as unknown as ScheduledEvent;
+  const london = ev('london', 'utc+0000', '2027-01-01T00:00:00Z', true, 95);
   const data = {
     events: [
       london,
-      ev('rio', '2027-01-01T03:00:00Z', true, 90),
-      ev('lisbon', '2027-01-01T00:00:00Z', true, 55),
-      ev('dublin', '2027-01-01T00:00:00Z', true, 80),
-      ev('ny', '2027-01-01T05:00:00Z', true, 98),
-      ev('paris', '2026-12-31T23:00:00Z', true, 90), // продаж уже закрито
-      ev('porto', '2027-01-01T00:00:00Z', false, 99), // не головне
+      ev('rio', 'utc-0300', '2027-01-01T03:00:00Z', true, 90),
+      ev('lisbon', 'utc+0000', '2027-01-01T00:00:00Z', true, 55), // той самий пояс — окремого ряду немає
+      ev('dublin', 'utc+0000', '2027-01-01T00:00:00Z', true, 80),
+      ev('ny', 'utc-0500', '2027-01-01T05:00:00Z', true, 98),
+      ev('mexico', 'utc-0600', '2027-01-01T06:00:00Z', true, 70),
+      ev('paris', 'utc+0100', '2026-12-31T23:00:00Z', true, 90), // продаж уже закрито
     ],
   } as Pick<Dataset, 'events'>;
 
-  it('та сама північ → наступна; серед однакових — головне, потім популярніше; розпроданих і закритих немає', () => {
+  it('лише ряди інших поясів, від найближчої півночі; розпроданих і закритих немає', () => {
     const rows = otherOpenRows(data, T, london, (e) => (e.id === 'ny' ? 0 : 5));
-    expect(rows.map((r) => r.event.id)).toEqual(['dublin', 'lisbon', 'porto', 'rio']);
+    expect(rows.map((r) => r.event.id)).toEqual(['rio', 'mexico']);
   });
 
   it('ряд з 1–2 місцями першим не ставимо, якщо є інший', () => {
-    const rows = otherOpenRows(data, T, london, (e) => (e.id === 'dublin' ? 2 : e.id === 'ny' ? 0 : 5));
-    expect(rows.map((r) => r.event.id)).toEqual(['lisbon', 'dublin', 'porto', 'rio']);
+    const rows = otherOpenRows(data, T, london, (e) => (e.id === 'rio' ? 2 : 5));
+    expect(rows.map((r) => r.event.id)).toEqual(['ny', 'rio', 'mexico']);
   });
 });

@@ -38,6 +38,8 @@ export interface MessageLookup {
   country?: (iso: string) => Pick<Country, 'name' | 'gender'> | undefined;
   /** Назва міста за `cityId` («Лондон»). */
   cityName?: (cityId: string) => string | undefined;
+  /** Назва «Першого ряду» поясу за id події ряду («UTC+0 · Лондон, Лісабон»). */
+  firstRowLabel?: (eventId: string) => string | undefined;
 }
 
 export interface MessageProps extends Pick<MessageActionHandlers, 'onReact'> {
@@ -235,8 +237,8 @@ export function Message({
               : met('fallback', p.params);
       }
     } else if (s?.kind === 'firstrow-joined') {
-      const city = lookup?.cityName?.(s.cityId) ?? s.cityId;
-      // Макет `Main`: «Олена і друзі 🇺🇦 тепер у першому ряду · Лондон» — один рядок, без жирного, з трьома крапками.
+      const city = lookup?.firstRowLabel?.(s.eventId) || lookup?.cityName?.(s.cityId) || s.cityId;
+      // Макет `Main`: «Олена і друзі 🇺🇦 тепер у першому ряду · UTC+0 · Лондон, Лісабон» — один рядок, без жирного, з трьома крапками.
       body = (
         <>
           {s.participantName}{' '}
@@ -311,7 +313,7 @@ export function Message({
 
   if (message.kind === 'greeting' && message.greeting) {
     const g = message.greeting;
-    const city = lookup?.cityName?.(g.cityId) ?? g.cityId;
+    const city = lookup?.firstRowLabel?.(g.eventId) || lookup?.cityName?.(g.cityId) || g.cityId;
     const country = lookup?.countryName?.(g.flagCode);
     return (
       <li

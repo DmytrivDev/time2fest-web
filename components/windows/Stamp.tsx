@@ -36,6 +36,8 @@ export interface StampEntry {
   illustrationId: string;
   /** Номер місця в «Першому ряді», якщо гість там сидів. */
   firstRowSeat?: number;
+  /** Назва ряду поясу для рядка «Перший ряд · UTC+0 · Лондон, Лісабон» (ряд один на пояс); немає — місто. */
+  firstRowLabel?: string;
   /** Пояс («UTC−5») — лише для країн з кількома поясами. */
   zone?: string;
 }
@@ -60,6 +62,11 @@ export interface StampProps {
   onClose?: () => void;
   /** «Як тобі шоу?» рядком під кнопками (з +5 хв): плавно розкривається, коли з’являється. */
   rate?: ReactNode;
+  /**
+   * Кімната перегляду (власник 2026-11-05): «Ще в кімнаті: прапори ✓ · Усі в паспорті ›» — на місці рядка «Збережено на
+   * цьому пристрої», і «· +N ще» поруч із «Новий штамп у паспорті».
+   */
+  more?: { line: ReactNode; count: number };
   className?: string;
 }
 
@@ -87,6 +94,7 @@ export function Stamp({
   onRetrySave,
   onClose,
   rate,
+  more,
   className,
 }: StampProps) {
   const t = useTranslations('windows.achievement');
@@ -126,7 +134,10 @@ export function Stamp({
           <span aria-hidden="true" className={st.strip} style={{ '--flag': strip } as CSSProperties} />
         </>
       ) : null}
-      <p className={st.head}>{t('heading')}</p>
+      <p className={st.head}>
+        {t('heading')}
+        {more && more.count > 0 ? <span className="font-semibold text-text-secondary"> · {t('moreCount', { count: more.count })}</span> : null}
+      </p>
       <div className={st.art}>
         <div data-stamping={playing ? 'true' : 'false'} className="relative overflow-hidden rounded-md">
           <StampArt illustrationId={first.illustrationId} stampText={stampText} stamping={playing} />
@@ -157,7 +168,7 @@ export function Stamp({
         {frStamp ? (
           <p className={cn('flex items-center gap-2 text-label-sm text-highlight', st.line)} data-row="first-row">
             <Icon name="ticket" size={16} />
-            {t('firstRow', { city: frStamp.city })}
+            {t('firstRow', { city: frStamp.firstRowLabel ?? frStamp.city })}
           </p>
         ) : null}
         {failed ? (
@@ -173,7 +184,11 @@ export function Stamp({
               <Icon name="check" size={16} />
               {t('inPassport')}
             </p>
-            {!signedIn ? (
+            {more ? (
+              <div className={cn('flex flex-wrap items-center gap-2', st.saved)} data-row="room-more">
+                {more.line}
+              </div>
+            ) : !signedIn ? (
               <p className={st.saved} data-row="saved-local">
                 {t.rich('savedLocal', {
                   signIn: (chunks) => (

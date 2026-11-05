@@ -1,7 +1,8 @@
 /**
  * US3 — кімната перегляду (T094; FR-030…FR-032, FR-040…FR-042, quickstart 8).
- * Сторінка `/room/`: розкладки 1 / 2 / 3 (2×2 з вільною клітинкою) / 4 на десктопі, до 2 вікон на телефоні,
- * звук лише в одному вікні, автозапуск лише в головному, «← <країна>» веде до країни вікна зі звуком.
+ * Сторінка `/room/` (новий дизайн, власник 2026-11-05): розкладки 1 / 2 (+2 вільні місця) / 3 (+1) / 4 на десктопі,
+ * до 2 вікон на телефоні; звук лише в одному вікні (кнопки й клавіші 1–4); автозапуск лише в головному; прибране
+ * вікно — «Повернути» 6 с; кімната повна — «Що замінити?» на місці чату / у шторці; перетягування за смугу.
  *
  * Час: «зараз» 01:50 за Києвом = 23:50Z, за 10 хв до півночі Лондона (швидкість 0 — годинник стоїть).
  * Вікна: london_1 (слот 0, головне), london_2, london_3 — Лондон, паризька трансляція paris_2 (Франція) — усі «наживо».
@@ -108,16 +109,23 @@ async function addFromCountryPage(page: Page, sourceId: string) {
   await expect(page).toHaveURL(/\/room\/?(\?.*)?$/);
 }
 
-/** Відкрити панель «Додати трансляцію» у шапці кімнати. */
-async function openAddPanel(page: Page) {
-  await page.getByRole('button', { name: 'Додати трансляцію' }).first().click();
-  const panel = page.locator('[data-add-stream-panel]');
-  await expect(panel).toBeVisible();
-  return panel;
+/** Список трансляцій (на місці чату / у шторці). */
+/** «Додати / Замінити трансляцію» під вікнами → список трансляцій. */
+async function openPicker(page: Page) {
+  await page.locator('[data-action="room-add"], [data-action="room-replace"]').first().click();
+  await expect(page.locator('[data-source]').first()).toBeVisible();
+}
+
+/** «+» рядка трансляції у списку. */
+function pickerPlus(page: Page, sourceId: string) {
+  return page
+    .locator('li')
+    .filter({ has: page.locator(`[data-source="${sourceId}"]`) })
+    .getByRole('button', { name: /^Додати в кімнату перегляду:|^У кімнаті/ });
 }
 
 test.describe('US3 · кімната перегляду', () => {
-  test('acc.1: розкладки 1 / 2 поруч / 3 = 2×2 з вільною клітинкою / 4 = 2×2 (десктоп)', async ({
+  test('acc.1: розкладки 1 / 2 + 2 місця / 3 + 1 місце / 4 = 2×2 (десктоп), місце — розміром із вікно', async ({
     page: first,
     browser,
   }) => {
@@ -136,62 +144,49 @@ test.describe('US3 · кімната перегляду', () => {
       await gotoAt(page, NOW, 0, ROOM);
       await expect(grid(page)).toHaveAttribute('data-room-layout', String(n));
       await expect(page.locator('[data-room-window]')).toHaveCount(n);
+      const slots = page.locator('[data-room-slot]');
+      await expect(slots).toHaveCount({ 1: 0, 2: 2, 3: 1, 4: 0 }[n]!);
 
       const boxes = [];
       for (let i = 0; i < n; i++) boxes.push(await box(win(page, i)));
-      if (n === 1) {
-        await expect(page.locator('[data-empty-cell]')).toHaveCount(0);
-      }
       if (n === 2) {
         expect(Math.abs(boxes[0]!.y - boxes[1]!.y)).toBeLessThan(2);
         expect(boxes[1]!.x).toBeGreaterThan(boxes[0]!.x + boxes[0]!.width - 2);
-        await expect(page.locator('[data-empty-cell]')).toHaveCount(0);
+        const s0 = await box(slots.first());
+        expect(s0.y).toBeGreaterThan(boxes[0]!.y + boxes[0]!.height - 2);
+        expect(Math.abs(s0.height - boxes[0]!.height)).toBeLessThan(4);
       }
       if (n === 3) {
-        expect(Math.abs(boxes[0]!.y - boxes[1]!.y)).toBeLessThan(2);
-        expect(boxes[2]!.y).toBeGreaterThan(boxes[0]!.y + boxes[0]!.height - 2);
-        const empty = page.locator('[data-empty-cell]');
-        await expect(empty).toHaveCount(1);
-        await expect(empty.getByRole('button', { name: 'Додати трансляцію' })).toBeVisible();
-        // вільна клітинка — праворуч від третього вікна, у тому самому ряду
-        const e = await box(empty);
+        const e = await box(slots.first());
         expect(Math.abs(e.y - boxes[2]!.y)).toBeLessThan(2);
         expect(e.x).toBeGreaterThan(boxes[2]!.x + boxes[2]!.width - 2);
+        expect(Math.abs(e.height - boxes[2]!.height)).toBeLessThan(4);
       }
       if (n === 4) {
-        expect(Math.abs(boxes[0]!.y - boxes[1]!.y)).toBeLessThan(2);
         expect(Math.abs(boxes[2]!.y - boxes[3]!.y)).toBeLessThan(2);
         expect(boxes[2]!.y).toBeGreaterThan(boxes[0]!.y + boxes[0]!.height - 2);
-        await expect(page.locator('[data-empty-cell]')).toHaveCount(0);
       }
+      // Згори нічого: немає посилання «← країна», заголовок кімнати — під вікнами.
+      await expect(page.getByRole('link', { name: /^←|^Назад:/ })).toHaveCount(0);
+      const title = await box(page.getByRole('heading', { level: 1, name: 'Кімната перегляду' }));
+      expect(title.y).toBeGreaterThan(boxes[0]!.y + boxes[0]!.height - 2);
       await ctx.close();
     }
   });
 
-  test('клітинка «Додати трансляцію» (3 вікна) відкриває панель вибору', async ({ page }) => {
-    test.skip(isPhone(page), 'вільна клітинка — лише десктоп');
-    // Панель показує трансляції країни й поясу вікна зі звуком (Лондон, пояс 02:00): Париж (пояс 01:00) туди не входить.
+  test('вільне місце відкриває список трансляцій; ✓ — те, що вже в кімнаті', async ({ page }) => {
+    test.skip(isPhone(page), 'вільні місця при 3 вікнах — десктоп');
     await seedRoom(page, [L1, L2, { ...P2, slot: 2 }], 0);
     await gotoAt(page, NOW, 0, ROOM);
-    await page
-      .locator('[data-empty-cell]')
-      .getByRole('button', { name: 'Додати трансляцію' })
-      .click();
-    const panel = page.locator('[data-add-stream-panel]');
-    await expect(panel).toBeVisible();
-    await expect(panel.locator('[data-add-row="src_london_3"]')).toBeVisible();
-    await expect(panel.locator('[data-add-row="src_london_3"]')).not.toHaveAttribute(
-      'data-in-room',
-      /.*/,
-    );
-    // вікна, що вже є в кімнаті, не додаються вдруге
-    await expect(panel.locator('[data-add-row="src_london_1"]')).toHaveAttribute(
-      'data-in-room',
-      /.*/,
-    );
+    await page.locator('[data-room-slot]').first().click();
+    await expect(page.locator('[data-source="src_london_3"]')).toBeVisible();
+    await expect(pickerPlus(page, 'src_london_2')).toHaveAttribute('aria-pressed', 'true');
+    await pickerPlus(page, 'src_london_3').click();
+    await expect(grid(page)).toHaveAttribute('data-room-layout', '4');
+    expect((await savedRoom(page)).windows.map((w) => w.sourceId)).toContain('src_london_3');
   });
 
-  test('acc.2: на телефоні третя трансляція — пояснення «до 2 вікон», нове вікно замість прибраного', async ({
+  test('acc.2: на телефоні третя трансляція — «Що замінити?» у шторці, нове вікно на місці вибраного', async ({
     page,
     ytStub,
   }) => {
@@ -202,28 +197,23 @@ test.describe('US3 · кімната перегляду', () => {
 
     await addFromCountryPage(page, 'src_london_3');
     await expect(grid(page)).toHaveAttribute('data-room-layout', '2');
-    await expect(
-      page
-        .getByRole('status')
-        .filter({ hasText: 'На телефоні в кімнаті до 2 вікон — прибери одне, щоб додати інше' }),
-    ).toBeVisible();
+    const replace = page.locator('[data-room-replace]');
+    await expect(replace).toBeVisible();
+    await expect(replace).toContainText('На телефоні до 2 вікон');
     expect((await savedRoom(page)).windows.map((w) => w.sourceId)).toEqual([
       'src_london_1',
       'src_london_2',
     ]);
 
-    // Прибираємо вікно 2 — на його місце стає очікувана трансляція.
-    await win(page, 1)
-      .getByRole('button', { name: /^Прибрати вікно:/ })
-      .click();
-    await expect(page.getByText('На телефоні в кімнаті до 2 вікон', { exact: false })).toHaveCount(
-      0,
-    );
+    await replace.locator('[data-replace-slot="1"]').click();
+    await expect(replace).toHaveCount(0);
     await expect(grid(page)).toHaveAttribute('data-room-layout', '2');
     expect((await savedRoom(page)).windows.map((w) => w.sourceId)).toEqual([
       'src_london_1',
       'src_london_3',
     ]);
+    // Підсумок — у смузі заміненого вікна, з «Повернути».
+    await expect(win(page, 1).getByRole('button', { name: 'Повернути' })).toBeVisible();
   });
 
   test('додавання з країни: нове вікно стартує, головний iframe не перестворюється (FR-040/042)', async ({
@@ -251,29 +241,11 @@ test.describe('US3 · кімната перегляду', () => {
     expect(Math.abs(host.y - slotBox.y)).toBeLessThan(3);
     await expect(slotOf(page, 1).locator('iframe')).toHaveCount(1);
     await expect(facade(slotOf(page, 1))).toHaveCount(0);
-
     expect(await ytStub.iframeId()).toBe(mainId);
-    // У кімнаті два iframe, тож `sameIframe()` (рівно один у документі) тут не підходить: перевіряємо, що перший вузол живий.
-    expect(
-      await page.evaluate(() =>
-        Boolean(
-          (window as unknown as { __ytStub?: { firstIframe?: HTMLIFrameElement | null } }).__ytStub
-            ?.firstIframe?.isConnected,
-        ),
-      ),
-    ).toBe(true);
-    const created = (await ytStub.counters()).created;
-    expect(created).toBe(2);
-
-    // Назад у країну (вікно зі звуком — головне, Лондон): головне відео не перезапускалось.
-    await page.getByRole('link', { name: /^←|^Назад:/ }).click();
-    await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?(\?.*)?$/);
-    expect(await ytStub.iframeId()).toBe(mainId);
-    expect(await ytStub.sameIframe()).toBe(true);
-    expect((await ytStub.counters()).loadVideoById).toBe(0);
+    expect((await ytStub.counters()).created).toBe(2);
   });
 
-  test('acc.3: звук лише в одному вікні, вибране виділене, оголошення «Звук перенесено у вікно «…»»', async ({
+  test('acc.3: звук лише в одному вікні — кнопкою й клавішею; підпис «звук — у вікні «…»»', async ({
     page,
   }) => {
     test.skip(isPhone(page), 'четверте вікно — лише десктоп');
@@ -291,42 +263,27 @@ test.describe('US3 · кімната перегляду', () => {
       'false',
     );
 
-    const outline = (loc: Locator) =>
-      loc.evaluate((el) => {
-        const cs = getComputedStyle(el);
-        return `${cs.borderTopColor}|${cs.boxShadow}|${cs.outlineColor}|${cs.outlineStyle}`;
-      });
-    const plainBefore = await outline(win(page, 3));
-
     await win(page, 3)
       .getByRole('button', { name: /^Звук сюди/ })
       .click();
     await expect(page.locator('[data-room-window][data-sound]')).toHaveCount(1);
     await expect(win(page, 3)).toHaveAttribute('data-sound', /.*/);
-    await expect(win(page, 0)).not.toHaveAttribute('data-sound', /.*/);
-    await expect(page.getByRole('button', { name: /^Звук тут/ })).toHaveCount(1);
     await expect(win(page, 3).getByRole('button', { name: /^Звук тут/ })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    await expect(win(page, 0).getByRole('button', { name: /^Звук сюди/ })).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    );
-
-    // Вибране вікно візуально відрізняється від решти.
-    expect(await outline(win(page, 3))).not.toBe(plainBefore);
-    expect(await outline(win(page, 3))).not.toBe(await outline(win(page, 1)));
-
-    // Оголошення для зчитувача й підпис під сіткою.
     await expect(
       page.locator('[aria-live]').filter({ hasText: 'Звук перенесено у вікно «Париж»' }).first(),
     ).toBeAttached();
-    await expect(page.getByText('Звук у вікні «Париж»')).toBeVisible();
+    await expect(page.getByText(/звук — у вікні «Париж/)).toBeVisible();
     expect((await savedRoom(page)).soundSlot).toBe(3);
-
-    // «Звук сюди» запускає відновлене вікно; у ній немає двох плеєрів із увімкненим звуком.
     await expect(slotOf(page, 3).locator('iframe')).toHaveCount(1);
+
+    // Клавіша 2 — звук у вікно на другому місці.
+    await page.locator('h1').click();
+    await page.keyboard.press('2');
+    await expect(win(page, 1)).toHaveAttribute('data-sound', /.*/);
+    expect((await savedRoom(page)).soundSlot).toBe(1);
   });
 
   test('усі вікна: відеообласть ≥ 200×200, поверх плеєра нічого (FR-040)', async ({
@@ -379,50 +336,50 @@ test.describe('US3 · кімната перегляду', () => {
     await expect.poll(async () => (await ytStub.counters()).created).toBe(2);
   });
 
-  test('acc.4: «← <країна>» веде до країни вікна зі звуком', async ({ page }) => {
-    test.skip(isPhone(page), 'два вікна з різних країн; звук переносимо на десктопі');
-    await seedRoom(
-      page,
-      [L1, P2].map((w, i) => ({ ...w, slot: i })),
-      0,
-    );
+  test('перетягування за смугу міняє вікна місцями без перезапуску плеєрів', async ({
+    page,
+    ytStub,
+  }) => {
+    test.skip(isPhone(page), 'перетягування — десктоп');
+    await seedRoom(page, [L1, L2], 0);
     await gotoAt(page, NOW, 0, ROOM);
-    const back = page.getByRole('link', { name: /^←|^Назад:/ });
-    await expect(back).toHaveAttribute('href', new RegExp(`${GB}$`));
-
-    await win(page, 1)
-      .getByRole('button', { name: /^Звук сюди/ })
-      .click();
-    await expect(back).toHaveAttribute('href', new RegExp(`${FR}$`));
-    await expect(back).toHaveAccessibleName(/Франція|Франции|Франц/);
-    await back.click();
-    await expect(page).toHaveURL(/\/country\/frantsiia\/?(\?.*)?$/);
+    await ytStub.waitForPlayer();
+    const created = (await ytStub.counters()).created;
+    const from = await box(win(page, 0).locator('h2'));
+    const to = await box(win(page, 1));
+    await page.mouse.move(from.x + 30, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 60, from.y + 20, { steps: 4 });
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+    await expect(win(page, 1).getByText('Відпусти — поміняти місцями')).toBeVisible();
+    await page.mouse.up();
+    expect((await savedRoom(page)).windows.map((w) => w.sourceId)).toEqual([
+      'src_london_2',
+      'src_london_1',
+    ]);
+    // DOM не переставляється (CSS order) — плеєри ті самі.
+    const order0 = await win(page, 0).evaluate((el) => getComputedStyle(el).order);
+    expect(order0).toBe('1');
+    expect((await ytStub.counters()).created).toBe(created);
   });
 
-  test('телефон: «← <країна>» веде до країни головного вікна', async ({ page }) => {
-    test.skip(!isPhone(page), 'телефон');
-    await seedRoom(page, [L1, { ...P2, slot: 1 }], 0);
-    await gotoAt(page, NOW, 0, ROOM);
-    const back = page.getByRole('link', { name: /^←|^Назад:/ });
-    await expect(back).toHaveAttribute('href', new RegExp(`${GB}$`));
-    await back.click();
-    await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?(\?.*)?$/);
-  });
-
-  test('десктоп: кімната повна — режим «Замінити це вікно» і «Скасувати»', async ({ page }) => {
-    test.skip(isPhone(page), 'режим вибору вікна — лише десктоп');
-    // Панель показує трансляції країни й поясу вікна зі звуком (Лондон): вільна лишається `src_london_3`.
+  test('десктоп: кімната повна — «Що замінити?» на місці чату, «Скасувати», заміна з «Повернути»', async ({
+    page,
+  }) => {
+    test.skip(isPhone(page), 'схема 2×2 — десктоп');
     const P1: SeedWindow = { slot: 2, sourceId: 'src_paris_1', eventId: 'evt_paris_2027' };
     await seedRoom(page, [L1, L2, P1, P2], 0);
     await gotoAt(page, NOW, 0, ROOM);
-    const banner = page.getByRole('status').filter({ hasText: 'Кімната повна. Обери вікно для' });
+    const replace = page.locator('[data-room-replace]');
 
     // Скасування: кімната не змінюється.
-    let panel = await openAddPanel(page);
-    await panel.locator('[data-add-row="src_london_3"]').getByRole('button').first().click();
-    await expect(banner).toBeVisible();
-    await page.getByRole('button', { name: 'Скасувати' }).click();
-    await expect(banner).toHaveCount(0);
+    await openPicker(page);
+    await pickerPlus(page, 'src_london_3').click();
+    await expect(replace).toBeVisible();
+    await expect(replace.locator('[data-replace-slot]')).toHaveCount(4);
+    await expect(page.getByRole('button', { name: /^Замінити це вікно/ })).toHaveCount(0);
+    await replace.getByRole('button', { name: 'Скасувати' }).click();
+    await expect(replace).toHaveCount(0);
     expect((await savedRoom(page)).windows.map((w) => w.sourceId)).toEqual([
       'src_london_1',
       'src_london_2',
@@ -430,16 +387,11 @@ test.describe('US3 · кімната перегляду', () => {
       'src_paris_2',
     ]);
 
-    // Заміна: вікно 3 отримує нову трансляцію на тому самому місці.
-    panel = await openAddPanel(page);
-    await panel.locator('[data-add-row="src_london_3"]').getByRole('button').first().click();
-    await expect(banner).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Замінити це вікно/ })).toHaveCount(4);
-    await win(page, 2)
-      .getByRole('button', { name: /^Замінити це вікно/ })
-      .click();
-    await expect(banner).toHaveCount(0);
-    await expect(grid(page)).toHaveAttribute('data-room-layout', '4');
+    // Заміна: вікно 3 отримує нову трансляцію на тому самому місці; у смузі — «Замінено … · Повернути».
+    await openPicker(page);
+    await pickerPlus(page, 'src_london_3').click();
+    await replace.locator('[data-replace-slot="2"]').click();
+    await expect(replace).toHaveCount(0);
     const saved = await savedRoom(page);
     expect(saved.windows.map((w) => `${w.slot}:${w.sourceId}`)).toEqual([
       '0:src_london_1',
@@ -447,15 +399,16 @@ test.describe('US3 · кімната перегляду', () => {
       '2:src_london_3',
       '3:src_paris_2',
     ]);
-    // замінене вікно стартує одразу (людина його вибрала)
     await expect(slotOf(page, 2).locator('iframe')).toHaveCount(1);
-    await expect(page.getByRole('button', { name: /^Замінити це вікно/ })).toHaveCount(0);
+    await expect(win(page, 2)).toContainText('Замінено:');
+    await win(page, 2).getByRole('button', { name: 'Повернути' }).click();
+    expect((await savedRoom(page)).windows[2]!.sourceId).toBe('src_paris_1');
   });
 
-  test('останнє вікно не прибирається; «×» прибирає зайве і звук переходить на перше', async ({
+  test('прибрати вікно: «Повернути» на його місці 6 с; останнє не прибирається', async ({
     page,
   }) => {
-    test.skip(isPhone(page), 'звук між вікнами переносимо на десктопі');
+    test.skip(isPhone(page), 'плитка «Повернути» — десктоп');
     await seedRoom(page, [L1, L2, L3], 1);
     await gotoAt(page, NOW, 0, ROOM);
     await expect(win(page, 1)).toHaveAttribute('data-sound', /.*/);
@@ -463,10 +416,21 @@ test.describe('US3 · кімната перегляду', () => {
     await win(page, 1)
       .getByRole('button', { name: /^Прибрати вікно:/ })
       .click();
-    await expect(grid(page)).toHaveAttribute('data-room-layout', '2');
+    const undo = page.locator('[data-room-undo]');
+    await expect(undo).toBeVisible();
     await expect(page.locator('[data-room-window][data-sound]')).toHaveCount(1);
     await expect(win(page, 0)).toHaveAttribute('data-sound', /.*/);
+    await undo.getByRole('button', { name: 'Повернути' }).click();
+    await expect(page.locator('[data-room-window]')).toHaveCount(3);
+    expect((await savedRoom(page)).windows.map((w) => w.sourceId)).toEqual([
+      'src_london_1',
+      'src_london_2',
+      'src_london_3',
+    ]);
 
+    await win(page, 1)
+      .getByRole('button', { name: /^Прибрати вікно:/ })
+      .click();
     await win(page, 2)
       .getByRole('button', { name: /^Прибрати вікно:/ })
       .click();
@@ -474,8 +438,21 @@ test.describe('US3 · кімната перегляду', () => {
     const last = win(page, 0).getByRole('button', { name: /^Прибрати вікно:/ });
     await expect(last).toHaveAttribute('aria-disabled', 'true');
     await last.click({ force: true });
-    await expect(grid(page)).toHaveAttribute('data-room-layout', '1');
     expect((await savedRoom(page)).windows).toHaveLength(1);
+    // Через 6 с плитка зникає, лишається одне вікно на всю ширину.
+    await expect(undo).toHaveCount(0, { timeout: 9_000 });
+  });
+
+  test('телефон: розгорнутий чат згортає вікно без звуку', async ({ page }) => {
+    test.skip(!isPhone(page), 'телефон');
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await page
+      .getByRole('button', { name: /Розгорнути чат/ })
+      .first()
+      .click();
+    await expect(win(page, 1)).toHaveAttribute('data-folded', '');
+    await expect(win(page, 0)).not.toHaveAttribute('data-folded', /.*/);
   });
 
   test('доступність: кімната з вікнами без порушень axe', async ({ page, ytStub }) => {

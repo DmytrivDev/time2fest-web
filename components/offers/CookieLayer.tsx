@@ -46,6 +46,12 @@ const GAP = 8;
 
 /** Видимий прямокутник відео (хост плеєра) або `null`, коли відео немає чи воно сховане. */
 function videoRect(): DOMRect | null {
+  // Кімната перегляду: «відео» — уся сітка вікон (плашка не лягає на жодне вікно й має ширину сітки).
+  const grid = document.querySelector<HTMLElement>('[data-video-column]');
+  if (grid) {
+    const g = grid.getBoundingClientRect();
+    if (g.width > 0 && g.height > 0) return g;
+  }
   const host = document.querySelector<HTMLElement>('[data-player-host]');
   if (!host || getComputedStyle(host).visibility === 'hidden') return null;
   const r = host.getBoundingClientRect();

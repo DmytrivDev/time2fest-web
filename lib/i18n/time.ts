@@ -160,3 +160,12 @@ export function formatShortCountdown(ms: Ms): string {
   const s = ceilSec(ms);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
+
+/** «UTC+5:45» — зсув поясу для підпису в картці поясу й назви «Першого ряду» поясу. */
+export function utcLabel(offsetMinutes: number): string {
+  const a = Math.abs(offsetMinutes);
+  const h = Math.floor(a / 60);
+  const m = a % 60;
+  const sign = offsetMinutes < 0 ? '−' : '+';
+  return `UTC${sign}${h}${m ? `:${String(m).padStart(2, '0')}` : ''}`;
+}

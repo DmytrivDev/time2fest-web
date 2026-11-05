@@ -5,10 +5,10 @@
  * Таблетки учасників (`FirstRowWall`, сітка 2 колонки — той самий компонент і ті самі фази загоряння, що на головній),
  * головне — QR «Скануй телефоном, щоб зайняти місце» з видимою адресою. Кнопки «Зайняти місце» на ТВ немає:
  * форма й оплата відкриваються лише на телефоні (QR).
- * Порожній стан — «усі місця вільні»; продаж закрито чи події без «Першого ряду» — коротке пояснення.
+ * Порожній стан — «усі місця вільні»; продаж закрито чи рядів більше немає — коротке пояснення.
+ * Ряд — поточного поясу (той самий, що на головній і сторінках країн; ряд один на пояс, рішення 2026-11-05).
  */
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { FirstRowWall, seedToSeats } from '@/components/live/FirstRowWall';
 import { QRCode } from '@/components/primitives/QRCode';
@@ -18,28 +18,45 @@ import { firstRowShortUrl, firstRowUrl } from '@/lib/config/site';
 import type { FirstRowSeat, Ms } from '@/lib/data/types';
 import { SEATS } from '@/lib/engine/config';
 import { firstRowView, type FirstRowView } from '@/lib/engine/firstRowView';
-import type { AirPlace } from '@/lib/player/BroadcastController';
+import { getData } from '@/lib/data/load';
+import { firstRowEventFor } from '@/lib/firstrow/pick';
+import { zoneRowLabel } from '@/lib/firstrow/zone';
 import { useGuestStore } from '@/stores/guest';
 import styles from './tv.module.css';
 
 export interface TvFirstRowData {
+  /** Подія-носій ряду поясу (адреса форми для QR). */
+  eventId: string;
+  /** Назва ряду: «UTC+0 · Лондон, Лісабон». */
   city: string;
   seats: FirstRowSeat[];
   view: FirstRowView;
 }
 
-/** Місця й стан «Першого ряду» поточної події; `null` — для події «Першого ряду» немає. */
-export function useTvFirstRow(place: AirPlace | null, now: Ms): TvFirstRowData | null {
+/** Місця ряду з сиду (стабільний масив на ряд — стіна не перемальовується щосекунди). */
+const seatsCache = new Map<string, FirstRowSeat[]>();
+function seatsOf(rowId: string, midnightMs: Ms): FirstRowSeat[] {
+  const key = `${rowId}:${midnightMs}`;
+  let seats = seatsCache.get(key);
+  if (!seats) {
+    const seed = CHAT_SCRIPT.firstRowSeed.find((s) => s.eventId === rowId);
+    seats = seed ? seedToSeats(seed, midnightMs) : [];
+    seatsCache.set(key, seats);
+  }
+  return seats;
+}
+
+/** Місця й стан «Першого ряду» поточного поясу; `null` — рядів цієї ночі більше немає. Без сиду — усі місця вільні. */
+export function useTvFirstRow(now: Ms): TvFirstRowData | null {
   const reduced = useReducedMotion();
   const guestId = useGuestStore((s) => s.id);
   const hasPass = useGuestStore((s) => s.hasPass);
-  const entry = useGuestStore((s) => (place ? s.firstRow[place.event.id] : undefined));
-  const seed = place ? CHAT_SCRIPT.firstRowSeed.find((s) => s.eventId === place.event.id) : undefined;
-  const midnightMs = place?.event.midnightMs;
-  const seats = useMemo(() => (seed && midnightMs !== undefined ? seedToSeats(seed, midnightMs) : []), [seed, midnightMs]);
-  if (!place || !seed || !place.event.firstRow?.saleEnabled) return null;
-  const view = firstRowView(now, place.event, seats, { ...(entry ?? {}), id: guestId, hasPass }, { reducedMotion: reduced });
-  return { city: place.city?.name.uk ?? '', seats, view };
+  const row = firstRowEventFor(getData(), now);
+  const entry = useGuestStore((s) => (row ? s.firstRow[row.id] : undefined));
+  if (!row) return null;
+  const seats = seatsOf(row.id, row.midnightMs);
+  const view = firstRowView(now, row, seats, { ...(entry ?? {}), id: guestId, hasPass }, { reducedMotion: reduced });
+  return { eventId: row.id, city: zoneRowLabel(getData(), row), seats, view };
 }
 
 const usd = (n: number) => `$${n.toFixed(2).replace('.', ',')}`;
@@ -66,19 +83,18 @@ export function TvFirstRowWall({ data }: { data: TvFirstRowData }) {
 
 export interface TvFirstRowTabProps {
   data: TvFirstRowData | null;
-  eventId: string | null;
 }
 
-export function TvFirstRowTab({ data, eventId }: TvFirstRowTabProps) {
+export function TvFirstRowTab({ data }: TvFirstRowTabProps) {
   const t = useTranslations('tv');
-  if (!data || !eventId) {
+  if (!data) {
     return (
       <p data-tv-first-row="none" className="text-tv-text text-text-secondary">
         {t('firstRowNone')}
       </p>
     );
   }
-  const { view, city } = data;
+  const { view, city, eventId } = data;
   const sellable = view.price.current !== null;
   return (
     <div data-tv-first-row="" className="flex flex-col gap-4">

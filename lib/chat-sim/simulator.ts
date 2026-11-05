@@ -23,6 +23,7 @@ import type {
   SystemPayload,
 } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
+import { zoneRows } from '@/lib/firstrow/zone';
 
 /** Що відбувається опівночі одного слота ефіру: подія, для якої настала північ, і її країни. */
 export interface MomentContext {
@@ -34,6 +35,8 @@ export interface MomentContext {
   /** Для `country-midnight` (без відмінювання назв: рядок збирає i18n за родом). */
   countries: { iso: string; gender: Gender }[];
   eventIds: string[];
+  /** Ряд «Першого ряду» поясу цієї півночі (подія-носій, `lib/firstrow/zone`); немає — `eventId`. */
+  firstRowEventId?: string;
 }
 
 export interface SimulatorOptions {
@@ -109,12 +112,14 @@ export function buildMomentContexts(data: MomentData): MomentContext[] {
   return airSlots(data).map((slot) => {
     const pick = pickSlotEvent(slot.midnightMs + 15_000, slot.events, data.countriesByIso, data.chainsByEventId);
     const event: Pick<Event, 'id' | 'cityId' | 'countryIso'> = pick?.event ?? slot.events[0]!;
+    const row = zoneRows({ events: slot.events })[0] ?? null;
     return {
       t0: slot.midnightMs,
       eventId: event.id,
       cityId: event.cityId,
       countries: [{ iso: event.countryIso, gender: data.countriesByIso.get(event.countryIso)?.gender ?? null }],
       eventIds: [event.id],
+      ...(row ? { firstRowEventId: row.id } : {}),
     };
   });
 }
@@ -149,7 +154,9 @@ function fillSystem(system: SystemPayload, moment: MomentContext): SystemPayload
 /** Усі повідомлення одного моменту для однієї кімнати, у порядку `(createdAt, id)`. */
 export function momentMessages(script: ChatScriptFile, moment: MomentContext, room: RoomId): ChatMessage[] {
   const out: ChatMessage[] = [];
-  const seed = script.firstRowSeed.find((s) => s.eventId === moment.eventId);
+  // «Перший ряд» — один на пояс: місця й привітання — ряду поясу цієї півночі.
+  const rowId = moment.firstRowEventId ?? moment.eventId;
+  const seed = script.firstRowSeed.find((s) => s.eventId === rowId);
   const seatsTaken = (seed?.seats ?? [])
     .filter((s) => s.state === 'taken' && s.name)
     .sort((a, b) => a.number - b.number);
@@ -162,7 +169,7 @@ export function momentMessages(script: ChatScriptFile, moment: MomentContext, ro
       const msg = offset.message;
       const isGreeting = msg.kind === 'greeting';
       const seat = isGreeting ? seatsTaken[greetingIndex++] : undefined;
-      const mirrored = isGreeting && room === `firstrow:${moment.eventId}`; // привітання йдуть і в кімнату «Перший ряд»
+      const mirrored = isGreeting && room === `firstrow:${rowId}`; // привітання йдуть і в кімнату «Перший ряд»
       if (!roomsOf(offset.room, moment).includes(room) && !mirrored) return;
       const base = { room, moderation: 'ok' as const };
 
@@ -178,7 +185,7 @@ export function momentMessages(script: ChatScriptFile, moment: MomentContext, ro
             kind: 'greeting',
             createdAt,
             greeting: {
-              eventId: moment.eventId,
+              eventId: rowId,
               seat: seat.number,
               participantName: seat.name!,
               flagCode: seat.flagCode ?? 'earth',

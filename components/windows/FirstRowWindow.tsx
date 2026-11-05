@@ -211,7 +211,7 @@ export function FirstRowWindow({ event, city }: FirstRowWindowProps) {
     }
     // Ім’я й прапор з квитка — і для чату.
     setNick(values.name.trim(), flagCode);
-    // Людина підтверджує нову ціну натисканням «Оплатити $7,99».
+    // Ціну змінили під час утримання (власник підняв ціну): людина підтверджує нову натисканням «Оплатити …».
     if (view.priceChanged) writeEntry(event.id, { ...readEntry(event.id), priceLocked: view.priceChanged.to });
     patchFlow({ errors: {}, submitting: true });
     // Перед переходом на PayPro плеєр стає на паузу (O-PAY).

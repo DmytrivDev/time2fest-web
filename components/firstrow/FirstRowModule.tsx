@@ -28,6 +28,7 @@ import type { Ms } from '@/lib/data/types';
 import { HANDOVER_AFTER, STAMP_DELAY } from '@/lib/engine/config';
 import { PENDING_CONFIRM_MS } from '@/lib/firstrow/pay';
 import { otherOpenRows } from '@/lib/firstrow/pick';
+import { zoneRowLabel } from '@/lib/firstrow/zone';
 import { useCoralWindowOpen } from '@/lib/overlay/coral';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { formatClock } from '@/lib/i18n/time';
@@ -61,8 +62,9 @@ export interface FirstRowModuleProps {
   className?: string;
 }
 
-function cityOf(cityId: string): string {
-  return getData().citiesById.get(cityId)?.name.uk ?? '';
+/** Назва ряду поясу на місці колишнього міста: «UTC+0 · Лондон, Лісабон» (ряд один на пояс, 2026-11-05). */
+function labelOf(event: Pick<FirstRowEvent, 'zoneId' | 'cityId'>): string {
+  return zoneRowLabel(getData(), event);
 }
 
 /** Стан вікна покупки для шапки — так само, як його визначає `FirstRowWindow`. */
@@ -140,12 +142,13 @@ function otherRows(event: FirstRowEvent, now: Ms): FirstRowMoreRow[] {
     const { view } = snapshot(e, now);
     return {
       eventId: e.id,
-      city: cityOf(e.cityId),
-      country: data.countriesByIso.get(e.countryIso)?.name.uk ?? '',
+      city: labelOf(e),
+      // Ряд — на весь пояс, тож країну носія не називаємо.
+      country: '',
       flagCode: e.countryIso,
       midnightMs: e.midnightMs,
       free,
-      price: view.price.current ?? 4.99,
+      price: view.price.current ?? view.price.full,
       main: e.isMainCelebration,
     };
   });
@@ -255,7 +258,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
   useFirstRowStore((s) => s.passGifted);
   useFirstRowEffects(event, now);
 
-  const city = cityOf(event.cityId);
+  const city = labelOf(event);
   const { seats, view } = snapshot(event, now, { reducedMotion: reduced });
 
   const blocker = blockingEvent(event, now);
@@ -268,15 +271,15 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       kind: 'accent',
       coral: true,
       chrome: 'board',
-      title: <SeatTitle event={blocker} city={cityOf(blocker.cityId)} />,
-      description: <SeatSubline event={blocker} city={cityOf(blocker.cityId)} />,
-      content: <FirstRowWindow event={blocker} city={cityOf(blocker.cityId)} />,
+      title: <SeatTitle event={blocker} city={labelOf(blocker)} />,
+      description: <SeatSubline event={blocker} city={labelOf(blocker)} />,
+      content: <FirstRowWindow event={blocker} city={labelOf(blocker)} />,
       onClose: () => useFirstRowStore.getState().setFlow(null),
     });
   };
 
   const openWindowFor = (ev: FirstRowEvent) => {
-    const evCity = cityOf(ev.cityId);
+    const evCity = labelOf(ev);
     const res = openForm(ev, now);
     if (res === 'closed' || res === 'blocked') return;
     overlay.open({
@@ -298,7 +301,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
 
   // «Що входить» — на місці чату / шторкою, як решта вікон (рішення 2026-10-31).
   const openInfoFor = (ev: FirstRowEvent, onBack?: () => void) => {
-    const evCity = cityOf(ev.cityId);
+    const evCity = labelOf(ev);
     overlay.open({
       id: FIRST_ROW_INFO_ID,
       kind: 'accent',
@@ -357,7 +360,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       seats={seats}
       takeVariant={coralSound || coralWindow ? 'tonal' : 'coral'}
       onTake={openWindow}
-      blocked={blocker ? { city: cityOf(blocker.cityId), onOwn: openOwn } : undefined}
+      blocked={blocker ? { city: labelOf(blocker), onOwn: openOwn } : undefined}
       onInfo={toggleInfo}
       infoOpen={infoOpen}
       onOpenEmoji={view.state === 'mine' ? openEmoji : undefined}
@@ -383,5 +386,5 @@ export function FirstRowChatRowConnected({ event, onClick, className }: { event:
   useGuestStore((s) => (event ? s.firstRow[event.id] : undefined));
   if (!event?.firstRow?.saleEnabled) return null;
   const { view } = snapshot(event, now);
-  return <FirstRowChatRow city={cityOf(event.cityId)} freeCount={view.freeCount} onClick={onClick} className={className} />;
+  return <FirstRowChatRow city={labelOf(event)} freeCount={view.freeCount} onClick={onClick} className={className} />;
 }

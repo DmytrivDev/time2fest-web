@@ -9,7 +9,7 @@
  * Натиск перемикає відео тут же (`setChain` з `preferredSourceId`); на телефоні шторка після вибору закривається.
  */
 import { useTranslations } from 'next-intl';
-import { useId, useMemo, useState } from 'react';
+import { useContext, useId, useMemo, useState } from 'react';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -20,7 +20,7 @@ import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
 import { thumbOf } from '@/lib/live/thumb';
-import { canAddToRoom, useRoomToggle } from '@/components/room/useRoomToggle';
+import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { CalendarButton, scheduleClosed } from './CalendarButton';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
@@ -94,6 +94,9 @@ export function StreamPicker({
   const [confirming, setConfirming] = useState<string | null>(null);
   const phone = usePhone();
   const room = useRoomToggle();
+  // Сторінка кімнати: «+» додає одразу (і на телефоні), повна кімната відкриває «Що замінити?».
+  const roomPage = useContext(RoomPageContext);
+  const confirm = phone && !roomPage;
   const addRoom = useAddToRoom();
   const currentRow = currentId ? (rows.find((r) => r.id === currentId) ?? null) : null;
   const schedule = useGuestStore((g) => g.schedule);
@@ -182,18 +185,18 @@ export function StreamPicker({
                   <button
                     type="button"
                     aria-label={
-                      !phone && room.has(row.id)
+                      !confirm && room.has(row.id)
                         ? tStreams('inRoom', { title: row.title })
                         : tStreams('add', { title: row.title })
                     }
-                    aria-pressed={phone ? undefined : room.has(row.id)}
-                    aria-expanded={phone ? confirming === row.id : undefined}
-                    aria-controls={phone && confirming === row.id ? `${uid}-${row.id}` : undefined}
-                    disabled={!phone && !room.has(row.id) && room.full}
+                    aria-pressed={confirm ? undefined : room.has(row.id)}
+                    aria-expanded={confirm ? confirming === row.id : undefined}
+                    aria-controls={confirm && confirming === row.id ? `${uid}-${row.id}` : undefined}
+                    disabled={!roomPage && !phone && !room.has(row.id) && room.full}
                     onClick={() =>
-                      phone
+                      confirm
                         ? setConfirming(confirming === row.id ? null : row.id)
-                        : room.toggle({ sourceId: row.id, eventId: row.eventId })
+                        : (roomPage ?? room).toggle({ sourceId: row.id, eventId: row.eventId })
                     }
                     className={cn('t2f-focus t2f-press rounded-full', nn.cal, s.pickCal)}
                   >
@@ -201,12 +204,12 @@ export function StreamPicker({
                       aria-hidden="true"
                       className={cn(
                         nn.calCircle,
-                        !phone && room.has(row.id) && nn.plusOn,
-                        phone && confirming === row.id && nn.plusOpen,
+                        !confirm && room.has(row.id) && nn.plusOn,
+                        confirm && confirming === row.id && nn.plusOpen,
                       )}
                     >
                       <Icon
-                        name={!phone && room.has(row.id) ? 'check' : 'plus'}
+                        name={!confirm && room.has(row.id) ? 'check' : 'plus'}
                         size={16}
                         strokeWidth={2.4}
                       />
