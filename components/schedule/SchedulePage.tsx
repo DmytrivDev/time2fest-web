@@ -7,7 +7,7 @@
  * - «Твій шлях»: мапа поясів, зустрінуті — золото, у графіку — біло-сірі, «Зараз» — червоне кільце; лінія через вузли
  *   поясів, інші країни поясу — промені (варіант B). Свій шлях видно й без пасу (рішення 2026-10-27) — лише зі штампами;
  * - «Попереду»: усі пояси від найближчої півночі; пояс — акордеон: згорнутий — стан, час, UTC, кружки слотів (прапор —
- *   країна, пунктир — вільне місце), «N з K»; поточний пояс відкритий завжди. Слотів стільки, скільки країн у поясі, але
+ *   країна, пунктир — вільне місце), «N з K»; поточний пояс на старті розгорнутий (згорнути можна). Слотів стільки, скільки країн у поясі, але
  *   не більше 4. Розгорнутий — слоти в ряд (телефон 2 × 2): країна (прапор, назва, місто, стан) або «+ Додати країну»;
  *   «+» відкриває країни поясу на місці чату (телефон — шторкою), без пасу — вікно пасу;
  * - «Уже зустріли»: пояси з країнами графіка чи штампами — зі станом штампа; решта згорнута в один рядок.
@@ -181,8 +181,9 @@ export function SchedulePage() {
 
   const zoneRow = (z: ZoneItem, opts: { past?: boolean; plain?: boolean } = {}) => {
     const past = !!opts.past;
-    const always = z.state === 'live';
-    const isOpen = !opts.plain && (always || open.has(z.id));
+    // Поточний пояс на старті розгорнутий, але його можна згорнути (правка власника 2026-11-07): `open` для нього — «перемкнуто».
+    const startOpen = z.state === 'live';
+    const isOpen = !opts.plain && (startOpen !== open.has(z.id));
     const time = formatClock(z.midnightMs, { locale });
     const utc = utcLabel(z.offsetMinutes);
     const tag = z.state === 'live' ? t('now') : z.state === 'next' ? t('next') : null;
@@ -219,12 +220,12 @@ export function SchedulePage() {
             {t('slots', { count: z.items.length, limit: z.slots })}
           </span>
         ) : null}
-        {opts.plain || always ? null : <Icon name={isOpen ? 'chevron-up' : 'chevron-down'} size={18} className={s.chev} />}
+        {opts.plain ? null : <Icon name={isOpen ? 'chevron-up' : 'chevron-down'} size={18} className={s.chev} />}
       </>
     );
     return (
       <li key={z.id} className={cn(s.zone, isOpen && s.zoneOpen, past && !isOpen && s.zonePast)} data-zone={z.id} data-state={past ? 'past' : z.state} data-open={isOpen ? 'true' : undefined}>
-        {opts.plain || always ? (
+        {opts.plain ? (
           <div className={s.head}>{head}</div>
         ) : (
           <button type="button" aria-expanded={isOpen} aria-controls={panelId} onClick={() => toggleOpen(z.id)} className={cn('t2f-focus', s.head, s.headBtn)}>

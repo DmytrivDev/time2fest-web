@@ -62,6 +62,11 @@ test('поточний пояс відкритий, слоти; «+» — кра
   await expect(now.locator('[data-slot="PT"]')).toBeVisible();
   await toast.getByRole('button', { name: 'Повернути' }).click();
   await expect(now.locator('[data-slot="PT"]')).toHaveCount(0);
+  // Поточний пояс можна згорнути й розгорнути знову (правка власника 2026-11-07).
+  await now.getByRole('button', { expanded: true }).click();
+  await expect(now).not.toHaveAttribute('data-open', 'true');
+  await now.getByRole('button', { expanded: false }).click();
+  await expect(now).toHaveAttribute('data-open', 'true');
 });
 
 test('пояс повний — «Замінити в графіку?», нова країна на місці старої', async ({ page }) => {
