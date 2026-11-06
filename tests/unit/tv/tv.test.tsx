@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { TvKeyHints } from '@/components/tv/TvKeyHints';
 import { TvTimelineCard } from '@/components/tv/TvTimelineCard';
-import { tvScale } from '@/components/tv/TvScreen';
+import { tvRoomy, tvScale } from '@/components/tv/TvScreen';
 import { sidebarMode } from '@/components/tv/TvSidebar';
 import { TvStampCard } from '@/components/tv/TvStampCard';
 import { firstRowShortUrl, firstRowUrl, placeholderShortCode, shareShortUrl, shareUrl } from '@/lib/config/site';
@@ -107,6 +107,20 @@ describe('tvScale (пропорційний масштаб макета 1920 × 
     const tall = tvScale(1280, 1024);
     expect(tall.width).toBeCloseTo(1920, 6);
     expect(tall.height).toBeGreaterThan(1080);
+  });
+});
+
+describe('tvRoomy (компактний таймлайн)', () => {
+  it('16:9 — відео й повний таймлайн влазять, нічого не змінюється', () => {
+    expect(tvRoomy(1920, 1080)).toBe(false);
+  });
+  it('ширше вікно (1920 × 912 → макет 2274 × 1080) — таймлайн компактний', () => {
+    const { width, height } = tvScale(1920, 912);
+    expect(tvRoomy(width, height)).toBe(true);
+  });
+  it('вище вікно (4:3) — ні', () => {
+    const { width, height } = tvScale(1280, 1024);
+    expect(tvRoomy(width, height)).toBe(false);
   });
 });
 

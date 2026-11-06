@@ -24,7 +24,8 @@ test.describe.configure({ timeout: 90_000 });
 
 const LONDON_MIDNIGHT = Date.parse('2027-01-01T00:00:00Z');
 const STAMP_AT = LONDON_MIDNIGHT + 15_000;
-const SAFE_X = 24;
+/** Поля екрана (32 px) мінус поле смуги під контур фокуса (16 px): картки, що гортаються, доходять до нього. */
+const SAFE_X = 16;
 const SAFE_Y = 24;
 const MIN_FONT_PX = 12;
 const MIN_FOCUS_PX = 4;
@@ -438,6 +439,83 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect(Math.round(g.root.height)).toBe(768);
     expect(g.side.left / 1366).toBeCloseTo(0.65, 2);
     expect(Math.abs(g.slot.left - g.host.left) + Math.abs(g.slot.width - g.host.width)).toBeLessThanOrEqual(1);
+  });
+
+  test('широке вікно (1920 × 912): таймлайн компактний, відео більше; перехід до таймлайну — повні картки, відео в рамці по центру', async ({
+    page,
+    ytStub,
+  }) => {
+    await page.setViewportSize({ width: 1920, height: 912 });
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    const root = page.locator('[data-tv-root]');
+    await expect(root).toHaveAttribute('data-roomy', '');
+    await expect(root).not.toHaveAttribute('data-tl-active', '');
+    const geo = () =>
+      page.evaluate(() => {
+        const r = (sel: string) => document.querySelector(sel)!.getBoundingClientRect();
+        const area = document.querySelector('[data-player-slot]')!.parentElement!.getBoundingClientRect().width;
+        return { frame: r('[data-player-slot]').width, area, card: r('[data-tv-card]').height };
+      });
+    await expect.poll(async () => (await geo()).card).toBeLessThan(70);
+    const compact = await geo();
+    expect(compact.frame / compact.area).toBeGreaterThan(0.9);
+
+    // Пульт: → — людина перейшла до таймлайну.
+    await page.keyboard.press('ArrowRight');
+    await expect(root).toHaveAttribute('data-tl-active', '');
+    await expect.poll(async () => (await geo()).card).toBeGreaterThan(120);
+    const open = await geo();
+    expect(open.frame).toBeLessThan(compact.frame - 50);
+    // Відео над слотом і далі (хост іде за слотом).
+    const box = await playerBox(page);
+    const slot = await page.locator('[data-player-slot]').boundingBox();
+    expect(Math.abs(box!.x - slot!.x) + Math.abs(box!.width - slot!.width)).toBeLessThanOrEqual(2);
+
+    // Фокус у колонці праворуч — таймлайн знову компактний.
+    await sidebar(page).getByRole('tab', { name: 'Як святкувати' }).focus();
+    await expect(root).not.toHaveAttribute('data-tl-active', '');
+  });
+
+  test('смуга: ← → гортають по одній картці, контур крайньої картки не обрізаний; мишею — перетягування без кліку', async ({
+    page,
+    ytStub,
+  }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    const strip = page.locator('[data-tv-strip]');
+    const visibleCards = () =>
+      strip.evaluate((el) => {
+        const s = el.getBoundingClientRect();
+        return [...el.querySelectorAll<HTMLElement>('[data-tv-card]')].filter((c) => {
+          const r = c.getBoundingClientRect();
+          return r.left >= s.left && r.right <= s.right;
+        }).length;
+      });
+    const n = await visibleCards();
+    for (let i = 0; i < n + 1; i++) await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(600);
+    // Картка у фокусі видима разом із контуром (≥ 6 px до краю смуги).
+    const edge = await page.evaluate(() => {
+      const a = document.activeElement!.getBoundingClientRect();
+      const s = document.querySelector('[data-tv-strip]')!.getBoundingClientRect();
+      return { left: a.left - s.left, right: s.right - a.right };
+    });
+    expect(edge.right).toBeGreaterThanOrEqual(6);
+    const before = await strip.evaluate((el) => el.scrollLeft);
+    await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(600);
+    const step = (await strip.evaluate((el) => el.scrollLeft)) - before;
+    expect(step).toBeGreaterThan(200);
+    expect(step).toBeLessThan(260); // одна картка (236 + 12)
+
+    // Мишею: перетягування гортає смугу, і клік по картці після нього не спрацьовує.
+    const box = (await strip.boundingBox())!;
+    const left0 = await strip.evaluate((el) => el.scrollLeft);
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 - 300, box.y + box.height / 2, { steps: 8 });
+    await page.mouse.up();
+    expect(await strip.evaluate((el) => el.scrollLeft)).toBeGreaterThan(left0 + 250);
+    await expect(sidebar(page).locator('[data-tv-nopass]')).toHaveCount(0);
   });
 
   test('«Мій графік» без пасу: картка з QR на сторінку пасу; ефір далі «Усе свято»', async ({ page, ytStub }) => {

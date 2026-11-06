@@ -111,6 +111,7 @@ export function TvTimelineCard({ item, onAir = false, dim = false, initial = fal
           </span>
         )}
       </span>
+      <span className={styles.cardMore}>
       <span className="flex items-baseline gap-2">
         <time dateTime={new Date(item.midnightMs).toISOString()} className={styles.cardTime}>
           {formatClock(item.midnightMs, { locale })}
@@ -118,6 +119,7 @@ export function TvTimelineCard({ item, onAir = false, dim = false, initial = fal
         <span className={styles.cardUtc}>{item.utc}</span>
       </span>
       <span className={styles.cardStatus}>{status}</span>
+      </span>
       {action !== 'none' ? <span className="sr-only">. {t(ACTION_KEY[action])}</span> : null}
     </button>
   );

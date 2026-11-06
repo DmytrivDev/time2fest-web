@@ -15,6 +15,11 @@
  * під будь-яке вікно (`useTvScale`): менший ноутбук чи 4K-телевізор бачать те саме. Зайве місце ширшого екрана дістається
  * правій колонці, вищого — таймлайну (без чорних смуг).
  *
+ * Компактний таймлайн (власник 2026-11-06): коли вікно ширше за 16:9 і відео на всю ширину колонки не влазить по висоті
+ * (`data-roomy`), картки таймлайну — лише місто й календарик, а відео більше. Людина перейшла до таймлайну (`data-tl-active`) —
+ * картки повні, відео нижче й вужче, стоїть по центру місця для відео (сіра рамка на всю ширину). Сцена відліку не звужується,
+ * лише стає нижчою. На екрані 16:9 відео й повний таймлайн влазять і так — нічого не змінюється.
+ *
  * «На весь екран» (власник 2026-11-06): лише відео чи сцена відліку на весь екран — без колонки й таймлайну; повноекранний
  * режим браузера вмикаємо разом (якщо браузер дозволив). «Назад» / Esc — назад до звичайного вигляду.
  */
@@ -63,6 +68,15 @@ function useIsPhone(): boolean | null {
 export const TV_DESIGN_W = 1920;
 export const TV_DESIGN_H = 1080;
 
+/** Висота повного таймлайну з полями лівої колонки в пікселях макета (tv.module.css: .left, .timeline, .strip, .hintRow). */
+const TIMELINE_FULL_H = 350 + 60;
+
+/** Чи відео на всю ширину лівої колонки (65 %, поля 32) не влазить по висоті поруч із повним таймлайном. */
+export function tvRoomy(width: number, height: number): boolean {
+  const inner = width * 0.65 - 64;
+  return (inner * 9) / 16 > height - TIMELINE_FULL_H;
+}
+
 /** Масштаб і розмір макета для вікна: макет цілий уміщується, зайве місце — ширині чи висоті макета. */
 export function tvScale(viewW: number, viewH: number): { scale: number; width: number; height: number } {
   const scale = Math.min(viewW / TV_DESIGN_W, viewH / TV_DESIGN_H);
@@ -82,6 +96,7 @@ function useTvScale(ref: RefObject<HTMLDivElement | null>) {
       el.style.setProperty('--tv-s', String(scale));
       el.style.setProperty('--tv-w', `${width}px`);
       el.style.setProperty('--tv-h', `${height}px`);
+      el.toggleAttribute('data-roomy', tvRoomy(width, height));
     };
     apply();
     window.addEventListener('resize', apply);
@@ -140,6 +155,7 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   const [panel, setPanel] = useState<TvPanel>('tabs');
   const [askPass, setAskPass] = useState(false);
   const [full, setFull] = useState(fullProp);
+  const [timelineActive, setTimelineActive] = useState(false);
 
   const enterFull = useCallback(() => {
     setFull(true);
@@ -230,7 +246,7 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
 
   return (
     <div className={styles.stage}>
-      <div ref={rootRef} data-surface="tv" data-full={full ? '' : undefined} className={cn(styles.root)} data-tv-root="">
+      <div ref={rootRef} data-surface="tv" data-full={full ? '' : undefined} data-tl-active={timelineActive ? '' : undefined} data-video={stream ? '' : undefined} className={cn(styles.root)} data-tv-root="">
         <main id="main" tabIndex={-1} className={cn(styles.left, 'outline-none')}>
           <h1 className="sr-only">{heading}</h1>
           <div className={styles.playerArea}>
@@ -245,6 +261,7 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
             actionFor={actionFor}
             onActivate={onActivate}
             hints={<TvKeyHints />}
+            onActiveChange={setTimelineActive}
           />
         </main>
         <TvSidebar online={online} onFullscreen={enterFull} panel={panel} onPanelChange={setPanel} askPass={askPass} changeRef={changeRef} />

@@ -4,10 +4,12 @@
  * TvTimeline (C22, дошка `TV-Party-New`, рішення 2026-11-06): таймлайн свята під плеєром — завжди відкритий.
  * «Свято по поясах · програма й твій графік», фільтр «Усі · З трансляціями · Мій графік», «Прогрес свята»,
  * смуга карток (`TvTimelineCard`): програма автопілота й події графіка; минулі — ліворуч за краєм (перша видима — поточна).
- * Гортається фокусом пульта (← →); нічого не лежить поверх відео.
+ * Гортається фокусом пульта (← →, по одній картці) і перетягуванням мишею; нічого не лежить поверх відео.
+ * Компактний вигляд (власник 2026-11-06, `TvScreen`): поки людина не перейшла до таймлайну, картки — лише місто й календарик,
+ * а відео більше; таймлайн «активний» (`onActiveChange`), коли в ньому фокус після дії людини або над ним миша.
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { filterTimeline, type TvTimelineFilter, type TvTimelineItem } from '@/lib/tv/tvData';
@@ -28,8 +30,29 @@ export interface TvTimelineProps {
   onActivate: (item: TvTimelineItem) => void;
   /** Підказка клавіш під таймлайном (`TvKeyHints`). */
   hints?: ReactNode;
+  /** Людина перейшла до таймлайну (фокус після натискання чи кліку, миша над ним) — показати картки повністю. */
+  onActiveChange?: (active: boolean) => void;
   className?: string;
 }
+
+/** Людина вже щось натиснула (клавішу, мишу): програмний початковий фокус на картці ще не «перехід до таймлайну». */
+function useInteracted(): boolean {
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    if (done) return;
+    const on = () => setDone(true);
+    window.addEventListener('keydown', on, true);
+    window.addEventListener('pointerdown', on, true);
+    return () => {
+      window.removeEventListener('keydown', on, true);
+      window.removeEventListener('pointerdown', on, true);
+    };
+  }, [done]);
+  return done;
+}
+
+/** Зсув мишею, після якого це вже перетягування, а не клік. */
+const DRAG_PX = 6;
 
 const FILTERS: readonly { key: TvTimelineFilter; label: 'filterAll' | 'filterLive' | 'filterMine'; icon?: IconName }[] = [
   { key: 'all', label: 'filterAll' },
@@ -37,11 +60,60 @@ const FILTERS: readonly { key: TvTimelineFilter; label: 'filterAll' | 'filterLiv
   { key: 'mine', label: 'filterMine', icon: 'calendar-check' },
 ];
 
-export function TvTimeline({ items, onAirId, dimOutside = false, zonesDone, zonesTotal, actionFor, onActivate, hints, className }: TvTimelineProps) {
+export function TvTimeline({ items, onAirId, dimOutside = false, zonesDone, zonesTotal, actionFor, onActivate, hints, onActiveChange, className }: TvTimelineProps) {
   const t = useTranslations('tv');
   const [filter, setFilter] = useState<TvTimelineFilter>('all');
   const visible = useMemo(() => filterTimeline(items, filter, onAirId), [items, filter, onAirId]);
   const stripRef = useRef<HTMLOListElement>(null);
+  const interacted = useInteracted();
+  const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const active = (focused && interacted) || hovered;
+  useEffect(() => {
+    onActiveChange?.(active);
+  }, [active, onActiveChange]);
+  // Миша пішла — згортаємо не одразу: картки не «стрибають» під курсором, що проходить повз.
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hover = (on: boolean) => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    if (on) setHovered(true);
+    else leaveTimer.current = setTimeout(() => setHovered(false), 500);
+  };
+  useEffect(() => () => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+  }, []);
+
+  // Перетягування мишею (ноутбук): гортає смугу; після перетягування клік по картці не спрацьовує.
+  const drag = useRef<{ x: number; left: number; scale: number; moved: boolean } | null>(null);
+  const dragged = useRef(false);
+  const onPointerDown = (e: ReactPointerEvent<HTMLOListElement>) => {
+    const el = stripRef.current;
+    if (!el || e.pointerType !== 'mouse' || e.button !== 0) return;
+    // Смуга в макеті, що масштабується (`TvScreen`): зсув миші — в пікселях екрана, прокрутка — в пікселях макета.
+    const scale = el.getBoundingClientRect().width / el.offsetWidth || 1;
+    drag.current = { x: e.clientX, left: el.scrollLeft, scale, moved: false };
+    dragged.current = false;
+  };
+  const onPointerMove = (e: ReactPointerEvent<HTMLOListElement>) => {
+    const d = drag.current;
+    const el = stripRef.current;
+    if (!d || !el) return;
+    const dx = e.clientX - d.x;
+    if (!d.moved && Math.abs(dx) < DRAG_PX) return;
+    if (!d.moved) {
+      d.moved = true;
+      el.setPointerCapture(e.pointerId);
+    }
+    el.scrollLeft = d.left - dx / d.scale;
+  };
+  const endDrag = (e: ReactPointerEvent<HTMLOListElement>) => {
+    const d = drag.current;
+    drag.current = null;
+    if (d?.moved) {
+      dragged.current = true;
+      stripRef.current?.releasePointerCapture(e.pointerId);
+    }
+  };
 
   const pct = zonesTotal > 0 ? Math.round((zonesDone / zonesTotal) * 100) : 0;
   const progressText = t('progress', { zones: zonesDone, total: zonesTotal });
@@ -51,11 +123,22 @@ export function TvTimeline({ items, onAirId, dimOutside = false, zonesDone, zone
     const el = stripRef.current;
     if (!el) return;
     const current = el.querySelector<HTMLElement>('[aria-current="true"]');
-    el.scrollLeft = current ? Math.max(0, current.offsetLeft - el.offsetLeft - 12) : 0;
+    el.scrollLeft = current ? Math.max(0, current.offsetLeft - el.offsetLeft - 16) : 0;
   }, [onAirId, filter, visible.length]);
 
   return (
-    <section aria-labelledby="tv-timeline-title" data-tv-timeline="" className={cn(styles.timeline, className)}>
+    <section
+      aria-labelledby="tv-timeline-title"
+      data-tv-timeline=""
+      data-active={active ? '' : undefined}
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+      }}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && hover(true)}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && hover(false)}
+      className={cn(styles.timeline, className)}
+    >
       <div className="flex items-center gap-4">
         <h2 id="tv-timeline-title" className={styles.timelineTitle}>
           {t('timelineTitle')}
@@ -96,7 +179,23 @@ export function TvTimeline({ items, onAirId, dimOutside = false, zonesDone, zone
         </span>
       </div>
 
-      <ol ref={stripRef} aria-label={t('timelineList')} className={styles.strip}>
+      <ol
+        ref={stripRef}
+        aria-label={t('timelineList')}
+        data-tv-strip=""
+        className={styles.strip}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onClickCapture={(e) => {
+          if (!dragged.current) return;
+          dragged.current = false;
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDragStart={(e) => e.preventDefault()}
+      >
         {visible.map((it) => (
           <li key={it.id} className="contents">
             <TvTimelineCard
