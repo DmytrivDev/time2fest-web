@@ -1232,3 +1232,272 @@
 :global([data-reduce-motion='true']) .cardMore {
   transition: none;
 }
+
+/* ── /tv-info/: спільні блоки телефона (Phone-TV-Info) і десктопа (Desk-TV-Info) ──
+   Телефон: порядок як на дошці — текст, мініатюра, що вміє, кроки, кнопки, «Телефон — твій пульт» (героїчний блок розкладено
+   через display: contents, кнопки переставлено `order`). Десктоп (≥ 768 px): героїчний блок «текст | мініатюра», 4 картки,
+   3 кроки в ряд, банер з «Скласти графік»; «Увімкнути режим вечірки» лише тут. */
+.phone {
+  display: flex;
+  flex-direction: column;
+}
+.infoHero,
+.infoHeroText {
+  display: contents;
+}
+.phoneKicker {
+  order: 1;
+  align-self: flex-start;
+}
+.phoneTitle,
+.infoLead {
+  order: 1;
+}
+.infoLead {
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+}
+.phoneMock {
+  order: 2;
+}
+.infoFeatures {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.infoFeatures li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.infoFeatureIcon {
+  display: inline-flex;
+  flex: none;
+  color: var(--color-highlight);
+}
+.infoH2 {
+  order: 4;
+  margin-top: 24px;
+  font-size: var(--text-headline-sm);
+}
+.infoSteps {
+  order: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.infoStepText {
+  color: var(--color-text-secondary);
+  font-size: var(--text-label-sm);
+  line-height: 1.5;
+}
+.infoActions {
+  order: 6;
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.infoCopy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.infoOpen,
+.infoOpenNote,
+.infoOpenHere,
+.infoRemoteIcon {
+  display: none;
+}
+.infoRemote {
+  order: 7;
+}
+
+@media (min-width: 768px) {
+  .phone {
+    padding: 24px 0 56px;
+  }
+  .infoHero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 36px;
+    padding: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-highlight) 7%, transparent), var(--color-surface) 55%);
+  }
+  .infoHeroText {
+    display: block;
+    min-width: 0;
+  }
+  .phoneTitle {
+    margin-top: 10px;
+    font-size: 40px;
+    line-height: 1.15;
+  }
+  .infoLead {
+    margin-top: 12px;
+    font-size: var(--text-body-lg);
+    line-height: 1.55;
+  }
+  .infoActions {
+    align-items: center;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .infoOpen {
+    display: inline-flex;
+    flex: none;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  .infoCopy {
+    flex: none;
+  }
+  .infoOpenNote {
+    display: block;
+    margin-top: 10px;
+    color: var(--color-text-muted);
+    font-size: var(--text-label-sm);
+  }
+  .phoneMock {
+    width: 400px;
+    height: 225px;
+    margin: 0;
+    border-radius: 18px;
+    box-shadow: 0 30px 60px rgb(0 0 0 / 0.45);
+  }
+  .phoneMockSide {
+    padding: 14px;
+    font-size: 11px;
+  }
+  .phoneMockSide b {
+    font-size: 22px;
+    white-space: nowrap;
+  }
+  .phoneMockCard {
+    height: 70px;
+  }
+  .infoFeatures {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .infoFeatures li {
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-surface);
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .infoFeatureIcon {
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-highlight-tint);
+  }
+  .infoH2 {
+    margin-top: 40px;
+    font-size: var(--text-headline-md);
+    font-weight: 800;
+  }
+  .infoSteps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .infoSteps .phoneStep {
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .infoSteps .phoneStepIcon {
+    width: 44px;
+    height: 44px;
+  }
+  .infoSteps b {
+    font-size: 19px;
+  }
+  .infoStepText {
+    margin-top: 8px;
+    font-size: 15px;
+  }
+  .infoOpenHere {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    color: var(--color-highlight);
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .infoRemote {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 28px;
+    padding: 22px 24px;
+    border: 1px solid color-mix(in srgb, var(--color-highlight) 35%, transparent);
+    border-radius: 16px;
+    background: var(--color-highlight-tint);
+  }
+  .infoRemoteIcon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-highlight-tint);
+    color: var(--color-highlight);
+  }
+  .infoRemote .phoneNote {
+    flex: 1 1 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: var(--text-body);
+  }
+  .infoRemote .phoneCta {
+    flex: none;
+    margin: 0;
+    padding: 0 18px;
+  }
+}
+
+/* «Про режим» у шапці правої колонки: веде на /tv-info/. */
+.infoChip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #4a4a52;
+  border-radius: 10px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-body);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.infoChip:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}

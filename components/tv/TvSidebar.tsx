@@ -14,6 +14,7 @@
  * - `moment` (з «+15 с» до передачі ефіру): «<Країна> зустріла Новий рік», штамп з QR сам і привітання Першого ряду по черзі.
  * Чату немає. На відео нічого немає.
  */
+import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState, type Ref } from 'react';
 import { HowToCard } from '@/components/live/HowToCard';
@@ -66,8 +67,14 @@ function Header({ now }: { now: Ms }) {
   const locale = useLocale();
   const clock = useNow({ granularity: 'minute' });
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center gap-3">
       <Logo variant="tv" label={th('logoLabel')} />
+      <span className="flex-1" />
+      {/* «Про режим» (власник 2026-11-06): що це й як увімкнути — сторінка сайту `/tv-info/`. */}
+      <NextLink href="/tv-info/" aria-label={t('infoLinkLabel')} data-action="tv-info" className={cn('t2f-focus t2f-transition', styles.infoChip)}>
+        <Icon name="info" size={16} />
+        {t('infoLink')}
+      </NextLink>
       <span className={styles.clock} data-tv-clock="">
         {clock > 0 || now > 0 ? t('clock', { time: formatClock(clock || now, { locale }) }) : null}
       </span>

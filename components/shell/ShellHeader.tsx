@@ -32,7 +32,9 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const t = useTranslations('menu');
   // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
   const pathname = usePathname();
-  const current = pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : currentProp;
+  // Сторінки поза навігацією «Головна / Країни» (`/tv-info/`, `/schedule/`) — без підсвіченого пункту.
+  const outside = pathname?.startsWith('/tv-info') || pathname?.startsWith('/schedule');
+  const current = pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : outside ? undefined : currentProp;
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState('uk');
   const overlay = useOverlay();

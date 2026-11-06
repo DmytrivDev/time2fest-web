@@ -623,6 +623,25 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expectAxeClean(page);
   });
 
+  test('«Про режим» на екрані вечірки веде на /tv-info/; десктопна /tv-info/ — «Увімкнути режим вечірки» і «Відкрити тут ›» ведуть на /tv', async ({ page, ytStub }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    await expect(sidebar(page).getByRole('link', { name: /Про режим вечірки/ })).toHaveAttribute('href', /\/tv-info\/?$/);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await gotoAt(page, '2027-01-01T01:38:00+02:00', 0, '/tv-info/');
+    const info = page.locator('[data-tv-phone]');
+    await expect(info.getByRole('link', { name: 'Увімкнути режим вечірки' })).toHaveAttribute('href', /\/tv\/?$/);
+    await expect(info.getByRole('link', { name: /Відкрити тут/ })).toBeVisible();
+    await expect(info.getByRole('button', { name: 'Скопіювати посилання' })).toBeVisible();
+    await expect(info.getByRole('link', { name: 'Скласти графік' })).toHaveAttribute('href', /\/schedule\//);
+    await expectAxeClean(page);
+  });
+
+  test('телефон: «Увімкнути режим вечірки» сховано (на телефоні режиму немає)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await gotoAt(page, '2027-01-01T01:38:00+02:00', 0, '/tv-info/');
+    await expect(page.locator('[data-tv-phone]').getByRole('link', { name: 'Увімкнути режим вечірки' })).toBeHidden();
+  });
+
   test('axe до півночі: без порушень', async ({ page, ytStub }) => {
     await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
     await expect(page.locator('[data-tv-card]').first()).toBeVisible();
