@@ -1,8 +1,10 @@
 /**
  * US7 — «Режим вечірки на телевізорі» (`/tv`, quickstart 11; T123). Проєкт `tv`, 1920×1080.
  * Той самий ефір, що на головній: «+15 с» — «<Країна> зустріла Новий рік», штамп з QR і видимою короткою адресою,
- * стіна загоряється; чату й хедера немає; текст ≥ 22 px; усе в безпечній зоні 96/54; контур фокуса ≥ 4 px;
- * початковий фокус — перша картка черги; стрілки / Enter / Esc (Esc → головна); плеєр ≥ 70% ширини.
+ * привітання Першого ряду по черзі; чату й хедера немає; контур фокуса ≥ 4 px; початковий фокус — картка в ефірі;
+ * стрілки / Enter / Esc (Esc → головна); відео ≈ 65% ширини (дошка `TV-Party-New`, рішення 2026-11-06).
+ * Розміри з дошки, затвердженої власником: поля 32 / 28 px і текст від 12 px (позначка «Програма») замість
+ * колишніх 96/54 і 22 px.
  *
  * Часовий пояс браузера — Київ: «північ о 02:00 за вашим часом» для Лондона.
  * За рішенням власника (2026-10-27) цей файл написано, але e2e не запускається в межах US7.
@@ -22,15 +24,27 @@ test.describe.configure({ timeout: 90_000 });
 
 const LONDON_MIDNIGHT = Date.parse('2027-01-01T00:00:00Z');
 const STAMP_AT = LONDON_MIDNIGHT + 15_000;
-const SAFE_X = 96;
-const SAFE_Y = 54;
-const MIN_FONT_PX = 22;
+const SAFE_X = 24;
+const SAFE_Y = 24;
+const MIN_FONT_PX = 12;
 const MIN_FOCUS_PX = 4;
 
 const sidebar = (page: Page) => page.locator('[data-tv-sidebar]');
 const met = (page: Page) => page.locator('[data-tv-met]');
 
-async function openTv(page: Page, ytStub: YouTubeStub, iso: string, speed = 1) {
+/** Пояснення режиму вже бачили (перший захід перевіряє окремий тест). */
+async function skipWelcome(page: Page) {
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('t2f:tv', JSON.stringify({ state: { show: 'all', welcomed: true }, version: 1 }));
+    } catch {
+      /* без сховища — пояснення покажеться */
+    }
+  });
+}
+
+async function openTv(page: Page, ytStub: YouTubeStub, iso: string, speed = 1, welcomed = true) {
+  if (welcomed) await skipWelcome(page);
   await gotoAt(page, iso, speed, '/tv/');
   await ytStub.waitForPlayer();
 }
@@ -65,13 +79,13 @@ async function smallestFont(page: Page): Promise<{ min: number; offenders: strin
       if (r.width <= 1 || r.height <= 1) continue;
       const size = parseFloat(cs.fontSize);
       if (size < min) min = size;
-      if (size < 22) offenders.push(`${el.tagName.toLowerCase()} ${size}px «${text.slice(0, 40)}»`);
+      if (size < 12) offenders.push(`${el.tagName.toLowerCase()} ${size}px «${text.slice(0, 40)}»`);
     }
     return { min, offenders };
   });
 }
 
-/** Видимі (з урахуванням обрізання прокруткою) елементи поза безпечною зоною: плеєр і його слот можуть іти до краю. */
+/** Видимі (з урахуванням обрізання прокруткою) елементи поза полями екрана: плеєр і його слот можуть іти до краю. */
 async function outsideSafeZone(page: Page): Promise<string[]> {
   return page.evaluate(
     ({ x, y }) => {
@@ -120,15 +134,13 @@ async function outsideSafeZone(page: Page): Promise<string[]> {
   );
 }
 
-/** Чекає першого кадру з «<Країна> зустріла Новий рік», штампом з QR і стіною, що загоряється; повертає віртуальний час. */
+/** Чекає першого кадру з «<Країна> зустріла Новий рік», штампом з QR і привітанням Першого ряду; повертає віртуальний час. */
 async function waitForTvMoment(page: Page, timeout = 30_000): Promise<number> {
   const handle = await page.waitForFunction(
     () => {
       const met = document.querySelector('[data-tv-met]');
       const stamp = document.querySelector('[data-stamp="tv"]');
-      const wall = document.querySelector(
-        '[data-first-row-wall][data-phase="lighting"], [data-first-row-wall][data-phase="lit"]',
-      );
+      const wall = document.querySelector('[data-tv-greetings]');
       const ok =
         !!met &&
         /Велика Британія зустріла Новий рік/.test(met.textContent ?? '') &&
@@ -146,14 +158,14 @@ async function waitForTvMoment(page: Page, timeout = 30_000): Promise<number> {
 }
 
 test.describe('US7 · режим вечірки на ТВ', () => {
-  test('розкладка: плеєр ≥ 70% ширини, чату й хедера немає, один плеєр, нічого поверх відео', async ({
+  test('розкладка: відео ≈ 65% ширини, чату й хедера немає, один плеєр, нічого поверх відео', async ({
     page,
     ytStub,
   }) => {
     await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
 
     const box = await expectPlayerMinSize(page);
-    expect(box.width / 1920, 'плеєр ≥ 70% ширини').toBeGreaterThanOrEqual(0.7);
+    expect(box.width / 1920, 'відео ≥ 60% ширини').toBeGreaterThanOrEqual(0.6);
     await expectNothingOverPlayer(page);
     await expect(page.locator('[data-player-host] iframe')).toHaveCount(1);
     const players = await ytStub.players();
@@ -169,54 +181,57 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page.locator('main')).toHaveCount(1);
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
 
-    // Колонка: логотип, один відлік, «Зараз», вкладки, смуга керування, попередження про спалахи.
+    // Колонка: логотип, один відлік, «Зараз», вкладки, «Що показувати», керування, попередження про спалахи.
     await expect(sidebar(page).getByRole('link', { name: /Time2Fest/ })).toBeVisible();
     await expect(page.getByRole('timer')).toHaveCount(1);
     await expect(sidebar(page)).toContainText('Зараз: Лондон');
-    await expect(sidebar(page).getByRole('tab')).toHaveText([
-      'Далі',
-      'Як святкувати',
-      'Перший ряд',
-    ]);
-    for (const name of ['Пауза', 'Звук', 'Вийти'])
-      await expect(
-        sidebar(page)
-          .getByRole('button', { name: new RegExp(name) })
-          .or(sidebar(page).getByRole('link', { name })),
-      ).toBeVisible();
+    await expect(sidebar(page).getByRole('tab')).toHaveText(['Як святкувати', 'Перший ряд']);
+    await expect(sidebar(page).getByRole('button', { name: 'Усе свято' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(sidebar(page).getByRole('button', { name: /Звук/ })).toBeVisible();
+    await expect(sidebar(page).getByRole('button', { name: 'На весь екран' })).toBeVisible();
+    await expect(sidebar(page).getByRole('link', { name: 'Вийти' })).toBeVisible();
+    await expect(sidebar(page).getByRole('button', { name: /Пауза/ })).toHaveCount(0);
     await expect(sidebar(page)).toContainText('Трансляції феєрверків можуть містити спалахи');
     // Підказка клавіш під таймлайном.
     await expect(page.locator('[data-tv-hints]')).toContainText('вийти з режиму вечірки');
   });
 
-  test('текст ≥ 22 px і безпечна зона 96/54 — до півночі і опівночі', async ({ page, ytStub }) => {
+  test('перший захід: пояснення режиму замість вкладок; «Зрозуміло · OK» — більше не показуємо', async ({
+    page,
+    ytStub,
+  }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0, false);
+    const welcome = sidebar(page).locator('[data-tv-welcome]');
+    await expect(welcome).toContainText('Екран працює сам');
+    await expect(welcome.getByRole('img', { name: /QR-код/ })).toBeVisible();
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(0);
+    await welcome.getByRole('button', { name: 'Зрозуміло · OK' }).click();
+    await expect(welcome).toHaveCount(0);
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(2);
+    await page.reload();
+    await waitForTimeApi(page);
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(2);
+    await expect(sidebar(page).locator('[data-tv-welcome]')).toHaveCount(0);
+  });
+
+  test('розміри з дошки й поля екрана — до півночі і опівночі', async ({ page, ytStub }) => {
     await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
     await expect(page.locator('[data-tv-card]').first()).toBeVisible();
 
     let fonts = await smallestFont(page);
-    expect(fonts.offenders, 'текст менший за 22 px').toEqual([]);
+    expect(fonts.offenders, 'текст менший за 12 px').toEqual([]);
     expect(fonts.min).toBeGreaterThanOrEqual(MIN_FONT_PX);
-    expect(await outsideSafeZone(page), 'елементи поза безпечною зоною 96/54').toEqual([]);
+    expect(await outsideSafeZone(page), 'елементи поза полями екрана').toEqual([]);
 
     // Вкладки «Як святкувати» і «Перший ряд».
-    await sidebar(page).getByRole('tab', { name: 'Як святкувати' }).click();
     await expect(sidebar(page).getByRole('heading', { name: /Як святкувати · / })).toBeVisible();
-    fonts = await smallestFont(page);
-    expect(fonts.offenders).toEqual([]);
     await sidebar(page).getByRole('tab', { name: 'Перший ряд' }).click();
-    await expect(sidebar(page).getByText('Скануй телефоном, щоб зайняти місце')).toBeVisible();
+    await expect(sidebar(page).locator('[data-tv-buy]')).toContainText('Скануй телефоном');
     fonts = await smallestFont(page);
     expect(fonts.offenders).toEqual([]);
     expect(await outsideSafeZone(page)).toEqual([]);
 
-    // Таймлайн відкрито.
-    await page.getByRole('button', { name: 'Показати все свято: таймлайн подій' }).click();
-    await expect(page.getByRole('button', { name: 'Сховати таймлайн' })).toBeVisible();
-    fonts = await smallestFont(page);
-    expect(fonts.offenders).toEqual([]);
-    expect(await outsideSafeZone(page)).toEqual([]);
-
-    // Опівночі: штамп, QR, стіна.
+    // Опівночі: штамп, QR, привітання.
     await page.evaluate(() =>
       (
         window as unknown as {
@@ -230,7 +245,7 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect(await outsideSafeZone(page)).toEqual([]);
   });
 
-  test('«+15 с»: «<Країна> зустріла Новий рік», штамп з QR і видимою адресою, стіна загоряється — у межах 1 с', async ({
+  test('«+15 с»: «<Країна> зустріла Новий рік», штамп з QR і видимою адресою, привітання Першого ряду — у межах 1 с', async ({
     page,
     ytStub,
   }) => {
@@ -253,17 +268,26 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     const stamp = page.locator('[data-stamp="tv"]');
     await expect(stamp).toBeVisible();
     await expect(stamp.getByRole('img', { name: /QR-код/ })).toBeVisible();
-    const url = await stamp.locator('figcaption').innerText();
-    expect(url.replace(/\s+/g, '')).toMatch(/^time2fest\.com\/s\/\S+$/);
+    await expect(stamp).toContainText(/time2fest\.com\/s\/\S{4}/);
     await expect(stamp.getByText('Скануй, щоб поділитися')).toBeVisible();
     // Кнопок «Поділитися» в штампа на ТВ немає: лише QR.
     await expect(stamp.getByRole('button')).toHaveCount(0);
-
-    // Стіна «Першого ряду» загоряється і дозагоряється до кінця.
-    await expect(page.locator('[data-first-row-wall]')).toBeVisible();
-    await expect(page.locator('[data-first-row-wall][data-phase="lit"]')).toBeVisible({
-      timeout: 15_000,
+    // Низ QR «поділитися» — на рівні низу листівки (± 2 px).
+    const bottoms = await stamp.evaluate((el) => {
+      const art = el.querySelector('[data-stamp-art]')!.getBoundingClientRect();
+      const qr = el.querySelector('figure')!.getBoundingClientRect();
+      return [art.bottom, qr.bottom];
     });
+    expect(Math.abs(bottoms[0]! - bottoms[1]!)).toBeLessThanOrEqual(2);
+
+    // Привітання Першого ряду: одне, змінюється кожні 15 с; списку учасників немає.
+    const greet = page.locator('[data-tv-greetings]');
+    await expect(greet.locator('[data-tv-greeting]')).toHaveCount(1);
+    const first = await greet.locator('[data-tv-greeting]').getAttribute('data-tv-greeting');
+    await expect
+      .poll(async () => greet.locator('[data-tv-greeting]').getAttribute('data-tv-greeting'), { timeout: 20_000 })
+      .not.toBe(first);
+    await expect(page.locator('[data-first-row-wall]')).toHaveCount(0);
 
     // Штамп справді записаний у паспорті гостя (джерело присутності — `tv`).
     const stamps = await page.evaluate(() => {
@@ -283,14 +307,14 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expectAxeClean(page);
   });
 
-  test('початковий фокус — перша картка черги; стрілки, Enter, контур ≥ 4 px', async ({
+  test('початковий фокус — картка в ефірі; стрілки, Enter, контур ≥ 4 px', async ({
     page,
     ytStub,
   }) => {
     await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
-    const first = page.locator('[data-tv-card]').first();
-    await expect(first).toBeFocused();
-    await expect(first).toHaveAttribute('data-tv-initial', '');
+    const onAir = page.locator('[data-tv-card][aria-current="true"]');
+    await expect(onAir).toBeFocused();
+    await expect(onAir).toContainText('Лондон');
 
     const ring = async () =>
       page.evaluate(() => {
@@ -302,27 +326,22 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect(r.style).not.toBe('none');
     expect(r.width).toBeGreaterThanOrEqual(MIN_FOCUS_PX);
 
-    // ↓ — наступна картка черги; ↑ — назад; ↑ ще раз — угору до вкладок; на відео фокус не потрапляє.
-    await page.keyboard.press('ArrowDown');
-    await expect(page.locator('[data-tv-card]').nth(1)).toBeFocused();
+    // → — наступна картка таймлайну; ← — назад; на відео фокус не потрапляє.
+    await page.keyboard.press('ArrowRight');
+    await expect(onAir).not.toBeFocused();
+    expect(await page.evaluate(() => document.activeElement?.hasAttribute('data-tv-card'))).toBe(true);
+    await page.keyboard.press('ArrowLeft');
+    await expect(onAir).toBeFocused();
     await page.keyboard.press('ArrowUp');
-    await expect(first).toBeFocused();
-    await page.keyboard.press('ArrowUp');
-    await expect(page.getByRole('tab', { name: 'Далі' })).toBeFocused();
+    expect(await page.evaluate(() => !!document.activeElement?.closest('[data-player-host]'))).toBe(false);
     r = await ring();
     expect(r.width).toBeGreaterThanOrEqual(MIN_FOCUS_PX);
-    expect(await page.evaluate(() => !!document.activeElement?.closest('[data-player-host]'))).toBe(
-      false,
-    );
 
-    // → між вкладками, Enter відкриває вкладку «Перший ряд».
-    await page.keyboard.press('ArrowRight');
+    // Вкладки: → перемикає на «Перший ряд».
+    await page.getByRole('tab', { name: 'Як святкувати' }).focus();
     await page.keyboard.press('ArrowRight');
     await expect(page.getByRole('tab', { name: 'Перший ряд' })).toBeFocused();
-    await expect(page.getByRole('tab', { name: 'Перший ряд' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    await expect(page.getByRole('tab', { name: 'Перший ряд' })).toHaveAttribute('aria-selected', 'true');
 
     // Enter на «Звук» вмикає звук у тому самому плеєрі.
     await page.getByRole('button', { name: /Звук/ }).focus();
@@ -331,33 +350,22 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect((await ytStub.counters()).created).toBe(1);
   });
 
-  test('таймлайн схований за замовчуванням; Enter відкриває; «Назад» спершу закриває його, а Esc потім веде на головну', async ({
+  test('таймлайн завжди відкритий: програма й графік, фільтр «Усі · З трансляціями · Мій графік»; Esc веде на головну', async ({
     page,
     ytStub,
   }) => {
     await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
     const timeline = page.locator('[data-tv-timeline]');
-    await expect(timeline).toHaveAttribute('data-tv-timeline', 'closed');
-    await expect(
-      timeline.getByRole('heading', { name: 'Свято по поясах · за вашим часом' }),
-    ).toBeVisible();
+    await expect(timeline.getByRole('heading', { name: 'Свято по поясах' })).toBeVisible();
     await expect(timeline.getByRole('progressbar', { name: 'Прогрес свята' })).toBeVisible();
-    await expect(timeline).toContainText('Показати все свято');
-    await expect(timeline.getByRole('button', { name: 'Лише з трансляціями' })).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    );
-    await expect(timeline.getByRole('button', { name: 'У моєму графіку' })).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    );
-
-    await timeline.getByRole('button', { name: 'Показати все свято: таймлайн подій' }).focus();
-    await page.keyboard.press('Enter');
-    await expect(timeline).toHaveAttribute('data-tv-timeline', 'open');
-    // Минулі події ліворуч за краєм, перша видима — поточна (Лондон, «В ефірі»).
+    await expect(timeline.getByRole('button', { name: 'Усі' })).toHaveAttribute('aria-pressed', 'true');
+    // Картки: час з поясом, позначка «Програма».
     const list = timeline.getByRole('list', { name: /Таймлайн свята/ });
-    await expect(list.locator('[aria-current="true"]')).toContainText('Лондон');
+    const current = list.locator('[aria-current="true"]');
+    await expect(current).toContainText('Лондон');
+    await expect(current).toContainText('UTC+0');
+    await expect(current).toContainText('Програма');
+    // Минулі події ліворуч за краєм, перша видима — поточна.
     const firstVisible = await list.evaluate((el) => {
       const left = el.getBoundingClientRect().left;
       const cards = [...el.querySelectorAll<HTMLElement>('[data-tv-card]')];
@@ -365,21 +373,83 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     });
     expect(firstVisible).toContain('Лондон');
 
-    // Фільтр «Лише з трансляціями» не ховає поточну подію.
-    await timeline.getByRole('button', { name: 'Лише з трансляціями' }).click();
-    await expect(timeline.getByRole('button', { name: 'Лише з трансляціями' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    await expect(list.locator('[aria-current="true"]')).toContainText('Лондон');
-
-    await page.keyboard.press('Escape');
-    await expect(timeline).toHaveAttribute('data-tv-timeline', 'closed');
-    await expect(page).toHaveURL(/\/tv\/?(\?|$)/);
+    // «З трансляціями» не ховає поточну подію; «Мій графік» без подій графіка — лише вона.
+    await timeline.getByRole('button', { name: 'З трансляціями' }).click();
+    await expect(timeline.getByRole('button', { name: 'З трансляціями' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(current).toContainText('Лондон');
+    await timeline.getByRole('button', { name: 'Мій графік' }).click();
+    await expect(list.locator('[data-tv-card]')).toHaveCount(1);
 
     await page.keyboard.press('Escape');
     await expect(page).toHaveURL(/\/(\?|$)/);
     await expect(page).not.toHaveURL(/\/tv/);
+  });
+
+  test('«Змінити трансляцію»: трансляції поясу; OK — дивитися до наступної півночі; «Назад» спершу закриває список', async ({
+    page,
+    ytStub,
+  }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    await sidebar(page).getByRole('button', { name: 'Змінити трансляцію' }).click();
+    const panel = sidebar(page).locator('[data-tv-panel="streams"]');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('[aria-current="true"]')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(panel).toHaveCount(0);
+    await expect(page).toHaveURL(/\/tv\/?(\?|$)/);
+    await expect(sidebar(page).getByRole('button', { name: 'Змінити трансляцію' })).toBeFocused();
+
+    await sidebar(page).getByRole('button', { name: 'Змінити трансляцію' }).click();
+    const other = panel.locator('[data-tv-stream]:not([aria-current="true"])').first();
+    const title = (await other.locator('b').innerText()).trim();
+    await other.click();
+    await expect(panel).toHaveCount(0);
+    await expect(sidebar(page).locator('[data-tv-now]')).toContainText(title);
+    // Той самий плеєр: відео міняється без нового iframe.
+    expect((await ytStub.counters()).created).toBe(1);
+  });
+
+  test('«На весь екран»: лише відео на все вікно, без колонки й таймлайну; Esc — назад, фокус на кнопці', async ({ page, ytStub }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    await sidebar(page).getByRole('button', { name: 'На весь екран' }).click();
+    await expect(page.locator('[data-tv-root][data-full]')).toHaveCount(1);
+    await expect(sidebar(page)).toBeHidden();
+    await expect(page.locator('[data-tv-timeline]')).toBeHidden();
+    const box = await playerBox(page);
+    const view = page.viewportSize()!;
+    expect(box && Math.round(box.width)).toBe(view.width);
+    expect(box && Math.round(box.height)).toBe(view.height);
+    await expectNothingOverPlayer(page);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-tv-root][data-full]')).toHaveCount(0);
+    await expect(page).toHaveURL(/\/tv\/?(\?|$)/);
+    await expect(sidebar(page).getByRole('button', { name: 'На весь екран' })).toBeFocused();
+  });
+
+  test('менше вікно (1366 × 768): макет масштабується цілим, відео над слотом, колонки 65 / 35', async ({ page, ytStub }) => {
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    await expect(page.locator('[data-tv-card]').first()).toBeVisible();
+    const g = await page.evaluate(() => {
+      const r = (sel: string) => document.querySelector(sel)!.getBoundingClientRect();
+      return { root: r('[data-tv-root]'), side: r('[data-tv-sidebar]'), slot: r('[data-player-slot]'), host: r('[data-player-host]') };
+    });
+    expect(Math.round(g.root.width)).toBe(1366);
+    expect(Math.round(g.root.height)).toBe(768);
+    expect(g.side.left / 1366).toBeCloseTo(0.65, 2);
+    expect(Math.abs(g.slot.left - g.host.left) + Math.abs(g.slot.width - g.host.width)).toBeLessThanOrEqual(1);
+  });
+
+  test('«Мій графік» без пасу: картка з QR на сторінку пасу; ефір далі «Усе свято»', async ({ page, ytStub }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
+    await sidebar(page).getByRole('button', { name: 'Мій графік' }).click();
+    const card = sidebar(page).locator('[data-tv-nopass]');
+    await expect(card).toContainText('Дивись лише ті півночі, які обрав');
+    await expect(card).toContainText('time2fest.com/pass');
+    await expect(card.getByRole('img', { name: /QR-код/ })).toBeVisible();
+    await expect(sidebar(page)).toContainText('Зараз: Лондон');
+    await sidebar(page).getByRole('button', { name: 'Усе свято' }).click();
+    await expect(card).toHaveCount(0);
   });
 
   test('«Вийти» веде на головну; на головній «Режим вечірки» веде на /tv', async ({
@@ -396,24 +466,24 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page.locator('[data-tv-root]')).toBeVisible();
   });
 
-  test('без трансляції: на місці плеєра сцена відліку, у колонці «Найближчі трансляції», хост плеєра схований', async ({
+  test('без трансляції: на місці плеєра сцена відліку, у колонці найближча трансляція з «Перемкнути», хост плеєра схований', async ({
     page,
   }) => {
     // 00:20 UTC: ефір уже в наступному слоті (Азорські острови, трансляції немає).
+    await skipWelcome(page);
     await gotoAt(page, '2027-01-01T00:20:00Z', 0, '/tv/');
     await expect(page.locator('[data-tv-scene]')).toBeVisible();
     await expect(sidebar(page)).toHaveAttribute('data-tv-mode', 'scene');
-    await expect(
-      sidebar(page).getByRole('heading', { name: 'Найближчі трансляції' }),
-    ).toBeVisible();
+    await expect(sidebar(page).locator('[data-tv-status="countdown-only"]')).toBeVisible();
+    await expect(sidebar(page).locator('[data-tv-nearest]').getByRole('button', { name: 'Перемкнути' })).toBeVisible();
     // Один відлік на сторінку — у сцені; у колонці великого відліку немає.
     await expect(page.getByRole('timer')).toHaveCount(1);
     await expect(sidebar(page).getByRole('timer')).toHaveCount(0);
     expect(await playerBox(page)).toBeNull();
     expect((await smallestFont(page)).offenders).toEqual([]);
     expect(await outsideSafeZone(page)).toEqual([]);
-    // Кнопки керування відео неактивні, поки відео немає.
-    await expect(sidebar(page).getByRole('button', { name: /Пауза/ })).toBeDisabled();
+    // Звук неактивний, поки відео немає.
+    await expect(sidebar(page).getByRole('button', { name: /Звук/ })).toBeDisabled();
   });
 
   test('до події менше 5 хв — великого відліку в колонці немає; остання хвилина — «далі через»', async ({
@@ -445,13 +515,27 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(sidebar(page).locator('[data-tv-offline]')).toHaveCount(0);
   });
 
-  test('зменшити рух: стіна опівночі без загоряння по черзі', async ({ page, ytStub }) => {
+  test('зменшити рух: привітання опівночі змінюються без перегортання', async ({ page, ytStub }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await openTv(page, ytStub, '2027-01-01T01:59:58+02:00', 1);
     await waitForTvMoment(page);
-    await expect(page.locator('[data-first-row-wall][data-phase="lit"]')).toBeVisible();
-    // Жодного «щойно загорілось» місця: руху немає.
-    await expect(page.locator('[data-seat][data-fresh="true"]')).toHaveCount(0);
+    const anim = await page
+      .locator('[data-tv-greeting]')
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(anim).toBe('none');
+  });
+
+  test('телефон: інформаційна сторінка замість режиму вечірки, без плеєра', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await gotoAt(page, '2027-01-01T01:38:00+02:00', 0, '/tv/');
+    const info = page.locator('[data-tv-phone]');
+    await expect(info.getByRole('heading', { level: 1 })).toHaveText('Новий рік на великому екрані — для всієї компанії');
+    await expect(info).toContainText('time2fest.com/tv');
+    await expect(info.getByRole('button', { name: 'Скопіювати посилання' })).toBeVisible();
+    await expect(info.getByRole('link', { name: 'Скласти графік' })).toBeVisible();
+    await expect(page.locator('[data-tv-root]')).toHaveCount(0);
+    await expect(page.locator('[data-player-host] iframe')).toHaveCount(0);
+    await expectAxeClean(page);
   });
 
   test('axe до півночі: без порушень', async ({ page, ytStub }) => {

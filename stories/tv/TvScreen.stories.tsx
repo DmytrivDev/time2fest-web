@@ -3,15 +3,15 @@ import { useLayoutEffect, useMemo, type ReactNode } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { TvControlBar } from '@/components/tv/TvControlBar';
 import { TvFullscreenHint, TvKeyHints } from '@/components/tv/TvKeyHints';
-import { TvQueueCard } from '@/components/tv/TvQueueCard';
 import { TvReplayButton } from '@/components/tv/TvSidebar';
 import { TvScene } from '@/components/tv/TvScene';
 import { TvScreen, type TvScreenProps } from '@/components/tv/TvScreen';
 import { TvStampCard } from '@/components/tv/TvStampCard';
+import { TvTimelineCard } from '@/components/tv/TvTimelineCard';
 import { getData } from '@/lib/data/load';
 import { buildStamp } from '@/lib/engine/presence';
 import { BroadcastContext, computeBroadcast, type BroadcastState } from '@/lib/player/BroadcastController';
-import { tvEvents } from '@/lib/tv/tvData';
+import { tvTimeline } from '@/lib/tv/tvData';
 import { useGuestStore } from '@/stores/guest';
 
 /**
@@ -26,7 +26,7 @@ const iso = (offsetMs: number) => new Date(LONDON + offsetMs).toISOString();
 
 /** Ефір на момент `now` без `BroadcastController` (він потребує `PlayerProvider`). */
 function broadcastAt(now: number): BroadcastState {
-  return { ready: true, now, ...computeBroadcast(now), controlling: true, stayHere: () => undefined };
+  return { ready: true, now, ...computeBroadcast(now), controlling: true, stayHere: () => undefined, watching: null, watch: () => undefined, setPrefer: () => undefined, suspend: () => undefined };
 }
 
 function Stage({ at, stamped = false, children }: { at: number; stamped?: boolean; children: ReactNode }) {
@@ -168,21 +168,12 @@ export const ReducedMotion: Story = {
   parameters: at(15_000),
 };
 
-export const FullscreenDenied: Story = {
-  name: 'fullscreen-denied — «Натисни F11 для повного екрана»',
-  args: { offsetMs: -22 * MIN, fullscreen: false },
-  parameters: at(-22 * MIN),
-  play: async ({ canvasElement }) => {
-    await expect(await within(canvasElement).findByText('Натисни F11 для повного екрана')).toBeVisible();
-  },
-};
-
 export const Fullscreen: Story = {
-  name: 'повний екран — підказки F11 немає',
-  args: { offsetMs: -22 * MIN, fullscreen: true },
+  name: '«На весь екран» — лише відео чи відлік, без колонки й таймлайну',
+  args: { offsetMs: -22 * MIN, full: true },
   parameters: at(-22 * MIN),
   play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).queryByText('Натисни F11 для повного екрана')).toBeNull();
+    await expect(canvasElement.querySelector('[data-tv-root][data-full]')).not.toBeNull();
   },
 };
 
@@ -203,12 +194,12 @@ export const FestivalOver: Story = {
 
 /** Частини окремо: що саме складає колонку й сцену. */
 export const Parts: StoryObj = {
-  name: 'частини: TvQueueCard (статуси), TvStampCard, TvScene, TvControlBar, «Подивитися північ ще раз», підказки',
+  name: 'частини: TvTimelineCard (статуси), TvStampCard, TvScene, TvControlBar, «Подивитися північ ще раз», підказки',
   globals: { surface: 'tv', viewport: { value: 'tv', isRotated: false } },
   parameters: at(-22 * MIN),
   render: () => {
     const data = getData();
-    const items = tvEvents(data, LONDON - 22 * MIN, []);
+    const items = tvTimeline(data, LONDON - 22 * MIN, []);
     const sample = [
       items.find((i) => i.stream === 'live' && i.midnightMs > LONDON),
       items.find((i) => i.stream === 'expected' && i.midnightMs > LONDON),
@@ -219,30 +210,30 @@ export const Parts: StoryObj = {
     return (
       <Stage at={LONDON - 22 * MIN}>
         <div className="flex flex-col gap-8 p-12">
-          <ul className="m-0 flex w-112 list-none flex-col gap-3 p-0">
+          <ul className="m-0 flex list-none gap-3 p-0 pt-4">
             {sample.map((item) => (
               <li key={item.id}>
-                <TvQueueCard item={item} />
+                <TvTimelineCard item={item} action="schedule-add" />
               </li>
             ))}
           </ul>
           <div className="w-112">
-            <TvStampCard eventId="evt_london_2027" city="Лондон" countryName={london.name.uk} illustrationId={london.illustrationId} />
+            <TvStampCard eventId="evt_london_2027" city="Лондон" countryName={london.name.uk} flagCode={london.flagCode} illustrationId={london.illustrationId} />
           </div>
           <div className="w-112">
-            <TvStampCard eventId="evt_london_2027" city="Лондон" countryName={london.name.uk} illustrationId={london.illustrationId} firstRowSeat={4} />
+            <TvStampCard eventId="evt_london_2027" city="Лондон" countryName={london.name.uk} flagCode={london.flagCode} illustrationId={london.illustrationId} firstRowSeat={4} />
           </div>
           <div className="relative h-176 w-336 overflow-hidden">
             <TvScene country={london} cityName="Лондон · Біг-Бен" midnightMs={LONDON} />
           </div>
           <div className="w-112">
-            <TvControlBar paused={false} muted={false} available />
+            <TvControlBar muted={false} available />
           </div>
           <div className="w-112">
-            <TvControlBar paused muted available />
+            <TvControlBar muted available />
           </div>
           <div className="w-112">
-            <TvControlBar paused={false} muted available={false} />
+            <TvControlBar muted available={false} />
           </div>
           <TvReplayButton />
           <TvKeyHints />

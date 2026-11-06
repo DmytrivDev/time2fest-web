@@ -10,14 +10,17 @@
  *   або ховає хост, якщо в наступної події трансляції немає (сцена відліку на місці плеєра);
  * - «Лишитися тут ›» (`stayHere`) запам’ятовує подію й веде на сторінку країни клієнтським переходом: макет не
  *   перемонтовується, а поза поверхнею ефіру контролер ланцюжок не чіпає — відео не перезапускається (SC-003);
- * - монтує `EngineScheduler` (перепади → події шини) з присутністю зі сторінок (`surfacePresence`).
+ * - монтує `EngineScheduler` (перепади → події шини) з присутністю зі сторінок (`surfacePresence`);
+ * - режим вечірки (ТВ, рішення 2026-11-06): «Мій графік» (`setPrefer`) — у слоті ефіру подія з графіка гостя, якщо є;
+ *   «Змінити трансляцію» / «Перемкнути» (`watch`) — обрана трансляція грає до наступної передачі ефіру, далі знову автопілот.
  */
 import { usePathname } from 'next/navigation';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { City, Country, Ms, ScheduledEvent, StreamChain } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
 import { captionPhase, type CaptionPhase } from '@/lib/engine/captionPhase';
-import { currentAirEvent, type AirState } from '@/lib/engine/currentAirEvent';
+import { currentAirEvent, pickSlotEvent, type AirState } from '@/lib/engine/currentAirEvent';
+import { toRuntime } from '@/lib/engine/eventStatus';
 import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
 import { isRateInteracting } from '@/lib/live/rateInteraction';
 import { buildOfferContext } from '@/lib/offers/context';
@@ -62,6 +65,24 @@ export interface BroadcastState {
   controlling: boolean;
   /** «Лишитися тут ›»: запам’ятати подію перед переходом на сторінку країни. */
   stayHere(): void;
+  /** Обрана гостем трансляція (ТВ, «Змінити трансляцію»), поки вона діє; `null` — грає ефір. */
+  watching: WatchingPlace | null;
+  /** Дивитися іншу трансляцію до наступної передачі ефіру; `null` — повернутися до ефіру. */
+  watch(pick: WatchPick | null): void;
+  /** «Мій графік» (ТВ): id подій графіка, з яких ефір бере подію слота; `null` — «Усе свято». */
+  setPrefer(ids: readonly string[] | null): void;
+  /** Не вести плеєр (`/tv` на телефоні — інформаційна сторінка без відео). */
+  suspend(on: boolean): void;
+}
+
+export interface WatchPick {
+  eventId: string;
+  /** Джерело, з якого почати (решта ланцюжка — запасні). */
+  sourceId?: string;
+}
+
+export interface WatchingPlace extends AirPlace {
+  sourceId: string | null;
 }
 
 const BroadcastContext = createContext<BroadcastState | null>(null);
@@ -81,10 +102,29 @@ function placeOf(event: ScheduledEvent | null | undefined): AirPlace | null {
   };
 }
 
-/** Чистий розрахунок стану ефіру для `now` (без React): подія, наступна, фаза підпису, ланцюжок. */
-export function computeBroadcast(now: Ms): Pick<BroadcastState, 'air' | 'phase' | 'current' | 'next' | 'chain'> {
+/** «Мій графік»: подія слота ефіру з графіка гостя (той самий вибір, що й в ефірі); поза графіком — ефір як є. */
+export function preferAir(now: Ms, air: AirState, ids: readonly string[]): AirState {
+  if (!air.event || !ids.length) return air;
   const data = getData();
-  const air = currentAirEvent(now, data, data.chainsByEventId);
+  const slot = data.eventsBySlot.find((s) => s.midnightMs === air.event!.midnightMs);
+  const mine = slot?.events.filter((e) => ids.includes(e.id)) ?? [];
+  const pick = mine.length ? pickSlotEvent(now, mine, data.countriesByIso, data.chainsByEventId) : null;
+  if (!pick) return air;
+  return { ...air, event: toRuntime(now, pick.event), source: pick.source, view: pick.view };
+}
+
+/** Ланцюжок обраної трансляції: обране джерело — бажане (`preferredSourceId`), решта — запасні. */
+export function watchChain(pick: WatchPick): (StreamChain & { preferredSourceId?: string }) | null {
+  const chain = getData().chainsByEventId.get(pick.eventId);
+  if (!chain?.sources.length) return null;
+  return { eventId: pick.eventId, sources: chain.sources, ...(pick.sourceId ? { preferredSourceId: pick.sourceId } : {}) };
+}
+
+/** Чистий розрахунок стану ефіру для `now` (без React): подія, наступна, фаза підпису, ланцюжок. */
+export function computeBroadcast(now: Ms, prefer?: readonly string[] | null): Pick<BroadcastState, 'air' | 'phase' | 'current' | 'next' | 'chain'> {
+  const data = getData();
+  const base = currentAirEvent(now, data, data.chainsByEventId);
+  const air = prefer?.length ? preferAir(now, base, prefer) : base;
   const phase = air.event ? captionPhase(now, air.event, 'broadcast', air.nextEvent) : null;
   return {
     air,
@@ -104,10 +144,34 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   const { setChain, setFacebookConsent } = usePlayerActions();
   const facebookConsent = useGuestStore((s) => s.consent.facebookVideo);
 
+  // `/tv` починає «на паузі»: сторінка сама знімає її, коли знає, що це не телефон (інакше iframe встиг би створитися).
+  const [suspended, suspend] = useState(() => pathname?.replace(/\/+$/, '') === '/tv');
+  const [prefer, setPreferState] = useState<readonly string[] | null>(null);
+  const setPrefer = useCallback((ids: readonly string[] | null) => {
+    setPreferState((cur) => (ids === cur || (ids && cur && ids.length === cur.length && ids.every((x, i) => x === cur[i])) ? cur : ids));
+  }, []);
+
   // Ефір змінюється раз на слот, а не щосекунди: розрахунок дешевий, але ланцюжок порівнюємо за id події.
-  const computed = useMemo(() => (known ? computeBroadcast(now) : null), [known, now]);
+  const computed = useMemo(() => (known ? computeBroadcast(now, prefer) : null), [known, now, prefer]);
   const eventId = computed?.air?.event?.id ?? null;
   const chain = computed?.chain ?? null;
+
+  // Обрана трансляція діє до передачі ефіру, під час якої її обрали.
+  const [pick, setPick] = useState<(WatchPick & { until: Ms }) | null>(null);
+  const handoverAt = computed?.air?.handoverAt ?? null;
+  const watch = useCallback(
+    (p: WatchPick | null) => setPick(p && handoverAt !== null ? { ...p, until: handoverAt } : null),
+    [handoverAt],
+  );
+  const active = pick && known && now < pick.until ? pick : null;
+  const watchKey = active ? `${active.eventId}|${active.sourceId ?? ''}` : null;
+  const watching = useMemo<WatchingPlace | null>(() => {
+    if (!watchKey) return null;
+    const [ev, src] = watchKey.split('|');
+    const event = getData().eventsById.get(ev!);
+    const place = event ? placeOf(event) : null;
+    return place ? { ...place, sourceId: src || null } : null;
+  }, [watchKey]);
 
   useEffect(() => {
     setFacebookConsent(facebookConsent);
@@ -116,12 +180,24 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   // Поверхня ефіру: ланцюжок поточної події. Поза нею (сторінка країни, кімната) — не чіпаємо.
   useEffect(() => {
     if (!controlling || !known) return;
+    if (suspended) {
+      setChain(null);
+      return;
+    }
+    if (watchKey) {
+      const [ev, src] = watchKey.split('|');
+      const picked = watchChain({ eventId: ev!, sourceId: src || undefined });
+      if (picked) {
+        setChain(picked);
+        return;
+      }
+    }
     if (!eventId || !chain) {
       setChain(null);
       return;
     }
     setChain({ eventId, sources: chain.sources });
-  }, [controlling, known, eventId, chain, setChain]);
+  }, [controlling, known, suspended, eventId, chain, watchKey, setChain]);
 
   const stayed = useRef<string | null>(null);
   const controllingRef = useRef(controlling);
@@ -149,8 +225,12 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
       chain,
       controlling,
       stayHere,
+      watching,
+      watch,
+      setPrefer,
+      suspend,
     }),
-    [known, now, computed, chain, controlling, stayHere],
+    [known, now, computed, chain, controlling, stayHere, watching, watch, setPrefer],
   );
 
   return (

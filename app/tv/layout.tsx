@@ -3,7 +3,8 @@
  * (дозволено): без хедера, футера й чату. ТІ САМІ `TimeProvider`, `PlayerProvider` і `BroadcastController`
  * (він же монтує `EngineScheduler`), що в `app/(live)/layout.tsx`: ТВ показує той самий ефір, що головна.
  * ОДИН `PlayerHost` на макет: сторінка ставить `PlayerSlot`, хост сідає над ним (`position: fixed`).
- * `data-surface="tv"` вмикає контур фокуса 4 px (primitives.css).
+ * `data-surface="tv"` (контур фокуса 4 px, primitives.css) ставить сам екран вечірки (`TvScreen`): на телефоні `/tv` —
+ * звичайна інформаційна сторінка сайту.
  */
 import type { ReactNode } from 'react';
 import { PlayerHost } from '@/components/player/PlayerHost';
@@ -21,7 +22,7 @@ function TvShell({ children }: { children: ReactNode }) {
     <TimeProvider>
       <PlayerProvider>
         <BroadcastController>
-          <div data-surface="tv" className="bg-background text-tv-text text-text">
+          <div className="bg-background text-text">
             <PlayerHost />
             {children}
           </div>

@@ -44,3 +44,11 @@ export function firstRowShortUrl(eventId: string): string {
 export function firstRowUrl(eventId: string): string {
   return `https://${firstRowShortUrl(eventId)}`;
 }
+
+/** Сторінка Новорічного пасу (вхід — там само): QR «Мій графік» і першого заходу на ТВ. */
+export const PASS_SHORT_URL = `${SITE_HOST}/pass`;
+export const PASS_URL = `https://${PASS_SHORT_URL}/`;
+
+/** Режим вечірки: адреса для телевізора (інформаційна сторінка на телефоні). */
+export const TV_SHORT_URL = `${SITE_HOST}/tv`;
+export const TV_URL = `https://${TV_SHORT_URL}/`;

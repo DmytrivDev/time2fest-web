@@ -8,15 +8,17 @@ export interface QRCodeProps {
   shortUrl: string;
   /** `alt`: куди веде код («QR-код: оцінити шоу Лондона на телефоні»). */
   alt: string;
-  /** Розмір коду в px; на ТВ більший. */
-  size?: 128 | 160 | 192 | 256;
+  /** Розмір коду в px; на ТВ більший. Малі (64–120) — для карток ТВ, де адреса стоїть у тексті поруч. */
+  size?: 64 | 104 | 120 | 128 | 160 | 192 | 256;
   /** ТВ: більший підпис. */
   tv?: boolean;
+  /** Адресу показано текстом поруч із кодом (картки ТВ) — під кодом не дублюємо. */
+  urlBeside?: boolean;
   className?: string;
 }
 
 /** P30. QR-код (SVG) із видимою короткою адресою під ним. Світлий фон потрібен для зчитування камерою. */
-export function QRCode({ value, shortUrl, alt, size = 160, tv = false, className }: QRCodeProps) {
+export function QRCode({ value, shortUrl, alt, size = 160, tv = false, urlBeside = false, className }: QRCodeProps) {
   return (
     <figure className={cn('inline-flex flex-col items-center gap-2', className)}>
       <span className="rounded-md bg-text p-2">
@@ -30,7 +32,9 @@ export function QRCode({ value, shortUrl, alt, size = 160, tv = false, className
           aria-label={alt}
         />
       </span>
-      <figcaption className={cn('break-all text-center text-text-secondary', tv ? 'text-tv-text' : 'text-caption')}>{shortUrl}</figcaption>
+      {urlBeside ? null : (
+        <figcaption className={cn('break-all text-center text-text-secondary', tv ? 'text-tv-text' : 'text-caption')}>{shortUrl}</figcaption>
+      )}
     </figure>
   );
 }
