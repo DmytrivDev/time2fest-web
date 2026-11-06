@@ -41,7 +41,10 @@ export function scheduleCountry(data: Dataset, iso: string, zoneId: string, now:
   const live = rows.find((r) => r.status === 'live');
   const mainRow = rows.find((r) => r.kind === 'main');
   const row = live ?? mainRow ?? rows[0] ?? null;
-  const group: CountryGroup = live ? 'live' : mainRow ? 'main' : rows.length ? 'webcam' : 'countdown';
+  // Трансляції ще немає в даних, але подія — головне святкування чи телетрансляція: «Очікується» (правка власника
+  // 2026-11-06: Аргентина не «Лише відлік»); подія-вебкамера — «Вебкамера»; лише відлік — тільки для `countdown-only`.
+  const byType: CountryGroup = main.type === 'main' || main.type === 'tv' ? 'main' : main.type === 'webcam' ? 'webcam' : 'countdown';
+  const group: CountryGroup = live ? 'live' : mainRow ? 'main' : rows.length ? 'webcam' : byType;
   const city = data.citiesById.get((row ? data.eventsById.get(row.eventId) : main)?.cityId ?? main.cityId);
   return {
     iso,

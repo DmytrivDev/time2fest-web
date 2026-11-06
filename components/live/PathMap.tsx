@@ -26,6 +26,8 @@ export interface PathMapProps {
   summary?: string;
   /** Готова геометрія (історії, тести); без неї підвантажується. */
   geometry?: ZoneMapGeometry;
+  /** Стан поясів (`utc+0200` → `past`…): пояси підсвічуються приглушено, як на мапі головної («Мій графік», 2026-11-06). */
+  zoneStates?: Readonly<Record<string, 'past' | 'live' | 'next' | 'future'>>;
   className?: string;
 }
 
@@ -72,7 +74,7 @@ export function PathLegend({ className }: { className?: string }) {
   );
 }
 
-export function PathMap({ points, authorName, summary, geometry: geometryProp, className }: PathMapProps) {
+export function PathMap({ points, authorName, summary, geometry: geometryProp, zoneStates, className }: PathMapProps) {
   const t = useTranslations('windows.author');
   const c = useTranslations('chat.author');
   const geometry = useGeometry(geometryProp);
@@ -95,7 +97,7 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
     <div className={cn('relative w-full overflow-hidden rounded-md bg-surface', className)} style={{ aspectRatio: meta.width / meta.height }}>
       <svg viewBox={`0 0 ${meta.width} ${meta.height}`} aria-hidden="true" className="absolute inset-0 block size-full">
         {geometry.zones.map((g) => (
-          <path key={g.zoneId} d={g.countries.map((c) => c.d).join('')} className="t2f-pathmap-zone" />
+          <path key={g.zoneId} d={g.countries.map((c) => c.d).join('')} className="t2f-pathmap-zone" data-state={zoneStates?.[g.zoneId]} />
         ))}
         {rays.map((cur) => {
           const hub = byId.get(cur.p.hubOf!)!;

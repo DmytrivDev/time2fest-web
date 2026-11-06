@@ -164,13 +164,11 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   const now = useNow();
   const schedule = useGuestStore((s) => s.schedule);
   const hasPass = useGuestStore((s) => s.hasPass);
-  const toggleSchedule = useGuestStore((s) => s.toggleSchedule);
   const show = useTvPrefs((s) => s.show);
   const rootRef = useRef<HTMLDivElement>(null);
   useTvScale(rootRef);
   const changeRef = useRef<HTMLButtonElement>(null);
   const [panel, setPanel] = useState<TvPanel>('tabs');
-  const [askPass, setAskPass] = useState(false);
   const [full, setFull] = useState(fullProp);
   const [timelineActive, setTimelineActive] = useState(false);
 
@@ -197,12 +195,6 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   useEffect(() => {
     setPrefer(show === 'mine' && mineReady ? schedule : null);
   }, [show, mineReady, schedule, setPrefer]);
-  // Картка пасу після календарика — підказка, а не стан: ховається сама за 30 с (або «Назад»).
-  useEffect(() => {
-    if (!askPass) return;
-    const id = setTimeout(() => setAskPass(false), 30_000);
-    return () => clearTimeout(id);
-  }, [askPass]);
 
   // Присутність для штампа: ТВ показує подію поточного слота ефіру.
   const eventId = current?.event.id ?? null;
@@ -219,12 +211,8 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
       requestAnimationFrame(() => changeRef.current?.focus());
       return true;
     }
-    if (askPass) {
-      setAskPass(false);
-      return true;
-    }
     return false;
-  }, [full, leaveFull, panel, askPass]);
+  }, [full, leaveFull, panel]);
   useRemoteKeys({ rootRef, onExit: exit, onBack: back, ready });
 
   const data = getData();
@@ -233,28 +221,18 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   const fest = useMemo(() => festProgress(data, minute), [data, minute]);
   const onAirId = watching?.event.id ?? eventId;
 
+  // Графік у режимі вечірки лише показується: додають і прибирають на телефоні чи комп’ютері (рішення власника
+  // 2026-11-06). OK на картці наживо — дивитися; на решті — нічого.
   const actionFor = useCallback(
-    (it: TvTimelineItem): TvCardAction => {
-      if (it.stream === 'live' && it.id !== onAirId) return 'watch';
-      if (isPastStatus(it.status) || it.id === onAirId) return 'none';
-      return it.inSchedule ? 'schedule-remove' : 'schedule-add';
-    },
+    (it: TvTimelineItem): TvCardAction => (it.stream === 'live' && it.id !== onAirId && !isPastStatus(it.status) ? 'watch' : 'none'),
     [onAirId],
   );
   const onActivate = useCallback(
     (it: TvTimelineItem) => {
-      const action = actionFor(it);
-      if (action === 'watch') {
-        watch(it.id === eventId ? null : { eventId: it.id, sourceId: it.liveSourceId });
-        return;
-      }
-      if (!hasPass) {
-        setAskPass(true);
-        return;
-      }
-      toggleSchedule(it.id);
+      if (actionFor(it) !== 'watch') return;
+      watch(it.id === eventId ? null : { eventId: it.id, sourceId: it.liveSourceId });
     },
-    [actionFor, watch, eventId, hasPass, toggleSchedule],
+    [actionFor, watch, eventId],
   );
 
   const city = (watching ?? current)?.city?.name.uk;
@@ -281,7 +259,7 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
             onActiveChange={setTimelineActive}
           />
         </main>
-        <TvSidebar online={online} onFullscreen={enterFull} panel={panel} onPanelChange={setPanel} askPass={askPass} changeRef={changeRef} />
+        <TvSidebar online={online} onFullscreen={enterFull} panel={panel} onPanelChange={setPanel} changeRef={changeRef} />
       </div>
     </div>
   );

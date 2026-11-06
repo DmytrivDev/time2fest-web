@@ -6,6 +6,19 @@
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
+/* «Мій графік»: пояси за станом — ті самі кольори, що на мапі головної, приглушені, щоб шлях лишався головним. */
+.t2f-pathmap-zone[data-state='past'] {
+  fill: #2a2a2f;
+}
+.t2f-pathmap-zone[data-state='live'] {
+  fill: color-mix(in srgb, var(--color-zone-live) 55%, var(--color-surface));
+}
+.t2f-pathmap-zone[data-state='next'] {
+  fill: color-mix(in srgb, var(--color-zone-next) 40%, var(--color-surface));
+}
+.t2f-pathmap-zone[data-state='future'] {
+  fill: color-mix(in srgb, var(--color-zone-future) 50%, var(--color-surface));
+}
 .t2f-pathmap-line {
   fill: none;
   stroke-width: 2;

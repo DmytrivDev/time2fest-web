@@ -84,8 +84,43 @@
   font-weight: 700;
   text-decoration: none;
 }
-.map {
+.mapFrame {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
+  background: var(--color-background);
+}
+.map {
+  border-radius: 0;
+  background: var(--color-background);
+}
+.mapFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.legendZones {
+  gap: 4px 14px;
+}
+.zoneSw {
+  width: 18px;
+  height: 12px;
+  border-radius: 3px;
+}
+.zoneSw[data-state='past'] {
+  background: #2a2a2f; /* як пояс, що зустрів, на мапі шляху */
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+.zoneSw[data-state='live'] {
+  background: color-mix(in srgb, var(--color-zone-live) 55%, var(--color-surface));
+}
+.zoneSw[data-state='future'] {
+  background: color-mix(in srgb, var(--color-zone-future) 50%, var(--color-surface));
 }
 .legend {
   display: flex;
@@ -129,7 +164,7 @@
 }
 .tease {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: 10px 12px;
   border: 1px solid rgb(252 226 134 / 0.3);
@@ -138,7 +173,6 @@
 }
 .teaseIcon {
   flex: none;
-  margin-top: 1px;
   color: var(--color-highlight);
 }
 .teaseText {
@@ -170,8 +204,13 @@
   .route {
     flex-direction: column;
   }
+  /* Телефон: текст переноситься, кнопка — під ним; іконка — на рівні першого рядка (правка власника 2026-11-06). */
   .tease {
     flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .teaseIcon {
+    margin-top: 1px;
   }
   .teaseBtn {
     margin-left: 30px;
@@ -214,7 +253,27 @@
 }
 .zoneOpen {
   border-left: 3px solid var(--color-zone-future);
-  padding-bottom: 14px;
+}
+/* Тіло поясу: висота 0 → авто плавно (grid-template-rows 0fr → 1fr). */
+.body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+.body[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+.bodyInner {
+  min-height: 0;
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .body {
+    transition: none;
+  }
+}
+:global(:root[data-reduce-motion='true']) .body {
+  transition: none;
 }
 .zoneOpen[data-state='live'] {
   border-left-color: var(--color-zone-live);
@@ -336,7 +395,7 @@
   grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
   gap: 10px;
   margin: 0;
-  padding: 2px 16px 0 15px;
+  padding: 2px 16px 14px 15px;
   list-style: none;
 }
 .slot,
@@ -509,9 +568,6 @@
   .zoneOpen .head {
     padding-left: 11px;
   }
-  .zoneOpen {
-    padding-bottom: 12px;
-  }
   /* Телефон: час і «ЗАРАЗ» — перший рядок, UTC — під ним (правка власника 2026-11-06), кружки й шеврон — праворуч. */
   .when {
     flex-direction: column;
@@ -546,7 +602,7 @@
   .slots {
     grid-template-columns: repeat(min(var(--cols, 4), 2), minmax(0, 1fr));
     gap: 8px;
-    padding: 0 12px 0 11px;
+    padding: 0 12px 12px 11px;
   }
   .slotX {
     display: none;

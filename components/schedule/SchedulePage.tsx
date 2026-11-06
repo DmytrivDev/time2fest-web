@@ -125,6 +125,7 @@ export function SchedulePage() {
   const zoneCount = zones.filter((z) => z.state !== 'past' && z.items.length > 0).length;
 
   const path = useMemo(() => buildSchedulePath(stamps, schedule, data, now), [stamps, schedule, data, now]);
+  const zoneStates = useMemo(() => Object.fromEntries(zones.map((z) => [z.id, z.state])), [zones]);
   const met = path.filter((p) => !p.planned);
   const planned = path.filter((p) => p.planned);
   const route = routeCities(met.filter((p) => !p.hubOf), 3).met.join(' → ');
@@ -230,7 +231,10 @@ export function SchedulePage() {
             {head}
           </button>
         )}
-        {isOpen ? (
+        {opts.plain ? null : (
+          // Плавне розгортання (правило сайту: акордеони відкриваються плавно; «Зменшити рух» — без анімації).
+          <div className={s.body} data-open={isOpen ? 'true' : undefined}>
+            <div className={s.bodyInner} inert={!isOpen}>
           <ul id={panelId} className={s.slots} style={{ '--cols': cols } as CSSProperties}>
             {z.items.map((it) => (
               <li key={it.c.iso} className={cn(s.slot, (it.state === 'stamp' || it.state === 'firstRow') && s.slotGold, it.state === 'missed' && s.slotMissed)} data-slot={it.c.iso}>
@@ -279,7 +283,9 @@ export function SchedulePage() {
               </li>
             ))}
           </ul>
-        ) : null}
+            </div>
+          </div>
+        )}
       </li>
     );
   };
@@ -320,7 +326,10 @@ export function SchedulePage() {
             <Icon name="chevron-right" size={14} />
           </NextLink>
         </div>
-        <PathMap points={path} authorName="" summary={route || t('path.empty')} className={s.map} />
+        {/* Мапа в рамці, легенда — під рискою в тій самій рамці (правка власника 2026-11-06). */}
+        <div className={s.mapFrame}>
+          <PathMap points={path} authorName="" summary={route || t('path.empty')} zoneStates={zoneStates} className={s.map} />
+          <div className={s.mapFoot}>
         <ul className={s.legend} aria-hidden="true">
           <li>
             <span className={s.legDot} />
@@ -341,6 +350,22 @@ export function SchedulePage() {
             {tA('legendFirstRow')}
           </li>
         </ul>
+        <ul className={cn(s.legend, s.legendZones)} aria-hidden="true">
+          <li>
+            <span className={s.zoneSw} data-state="past" />
+            {t('path.zonePast')}
+          </li>
+          <li>
+            <span className={s.zoneSw} data-state="live" />
+            {t('path.zoneNow')}
+          </li>
+          <li>
+            <span className={s.zoneSw} data-state="future" />
+            {t('path.zoneAhead')}
+          </li>
+        </ul>
+          </div>
+        </div>
         {route || nextHub ? (
           <div className={s.route}>
             {route ? <b>{route}</b> : null}

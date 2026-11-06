@@ -162,16 +162,16 @@ describe('pickNext (стрілки пульта)', () => {
 });
 
 describe('компоненти ТВ', () => {
-  it('TvTimelineCard: кнопка з часом і поясом, стан текстом, «Програма», дія для зчитувача', () => {
+  it('TvTimelineCard: кнопка з часом і поясом, стан текстом, «Програма»; додати в графік з ТВ не можна', () => {
     const item = tvTimeline(data, LONDON - 22 * 60_000, []).find((i) => i.stream === 'countdown-only' && i.midnightMs > LONDON)!;
-    renderWithApp(<TvTimelineCard item={item} initial action="schedule-add" />, '2026-12-31T23:38:00Z');
+    renderWithApp(<TvTimelineCard item={item} initial action="none" />, '2026-12-31T23:38:00Z');
     const btn = screen.getByRole('button');
     expect(btn).toHaveAttribute('data-tv-initial');
     expect(btn).toHaveAttribute('data-program');
     expect(within(btn).getByText('Лише відлік')).toBeInTheDocument();
     expect(within(btn).getByText('Програма')).toBeInTheDocument();
     expect(within(btn).getByText(item.utc)).toBeInTheDocument();
-    expect(btn).toHaveAccessibleName(/OK — додати в графік/);
+    expect(btn).not.toHaveAccessibleName(/OK — (додати|прибрати)/);
   });
 
   it('TvStampCard: QR з видимою короткою адресою, без кнопок', () => {
@@ -192,6 +192,6 @@ describe('компоненти ТВ', () => {
   it('TvKeyHints: підказка клавіш', () => {
     renderWithApp(<TvKeyHints />);
     expect(screen.getByText('вийти з режиму вечірки')).toBeInTheDocument();
-    expect(screen.getByText('відкрити · у графік')).toBeInTheDocument();
+    expect(screen.getByText('дивитися трансляцію')).toBeInTheDocument();
   });
 });
