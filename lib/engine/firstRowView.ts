@@ -6,7 +6,7 @@ import {
   HOLD_WARN_1,
   HOLD_WARN_5,
   FEW_SEATS_THRESHOLD,
-  FIRSTROW_PRICE,
+  firstRowPrice,
   SEATS,
   STAMP_DELAY,
   WALL_LIGHTING_MS,
@@ -60,7 +60,7 @@ export interface FirstRowOptions {
   nextSale?: { eventId: string; midnightUtc: ISO };
 }
 
-type EventLike = Pick<Event, 'id' | 'midnightUtc' | 'restrained' | 'firstRow'> & { midnightMs?: Ms };
+type EventLike = Pick<Event, 'id' | 'midnightUtc' | 'restrained' | 'firstRow'> & { midnightMs?: Ms; zoneId?: string };
 
 /** `data-model.md` 3.5. */
 export function firstRowView(
@@ -98,14 +98,15 @@ export function firstRowView(
   else state = 'open';
 
   const sellable = state === 'empty' || state === 'open' || state === 'last3';
-  const current = sellable ? FIRSTROW_PRICE : null;
+  const price = firstRowPrice(event.zoneId);
+  const current = sellable ? price : null;
 
   const view: FirstRowView = {
     eventId: event.id,
     state,
     freeCount: free,
     total: SEATS,
-    price: { current, full: FIRSTROW_PRICE },
+    price: { current, full: price },
     saleClosesAt,
     wall: wallOf(now, t0, opts.reducedMotion ?? false),
   };

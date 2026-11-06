@@ -17,7 +17,6 @@ import { useTestControls } from '@/stores/testControls';
 import { getData } from '@/lib/data/load';
 import { seatConflict } from '@/lib/firstrow/rooms';
 import { zoneRows } from '@/lib/firstrow/zone';
-import { FIRSTROW_PRICE } from '@/lib/engine/config';
 
 export const FIRST_ROW_WINDOW_ID = 'O-FIRST-ROW';
 export const FIRST_ROW_INFO_ID = 'O-FIRST-ROW-INFO';
@@ -79,7 +78,7 @@ export function openForm(event: FirstRowEvent, now: Ms): OpenResult {
   const { seats, view } = snapshot(event, now, { ignoreHold: true });
   if (view.state === 'closed' || view.state === 'restrained') return 'closed';
   const price = view.price.current;
-  const res = startHold(releaseHold(entry), firstFreeSeat(seats, now), now, price ?? FIRSTROW_PRICE);
+  const res = startHold(releaseHold(entry), firstFreeSeat(seats, now), now, price ?? view.price.full);
   if (!res.ok || price === null) {
     store.setFlow(emptyFlow(event.id, 'soldout'));
     return 'soldout';
@@ -96,7 +95,7 @@ export function expireHold(event: FirstRowEvent, now: Ms): void {
   const { seats, view } = snapshot(event, now, { ignoreHold: true });
   const seat = firstFreeSeat(seats, now);
   const price = view.price.current;
-  const res = startHold(releaseHold(prev), seat, now, price ?? FIRSTROW_PRICE);
+  const res = startHold(releaseHold(prev), seat, now, price ?? view.price.full);
   if (!res.ok || price === null) {
     applyOutcome(event.id, { phase: 'soldout', entry: releaseHold(prev) }, now);
     return;

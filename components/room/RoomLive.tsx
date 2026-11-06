@@ -38,7 +38,8 @@ import {
   ReportProblem,
   type ShareTarget,
 } from '@/components/live/MoreActions';
-import { NowNext } from '@/components/live/NowNext';
+import { StreamCards } from '@/components/live/StreamCards';
+import type { EventFilterValue } from '@/components/live/EventFilter';
 import { StampBlock } from '@/components/live/StampBlock';
 import { StreamPicker } from '@/components/live/StreamPicker';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
@@ -59,7 +60,8 @@ import { getData } from '@/lib/data/load';
 import type { Dataset, GuestRoomWindow, RoomId } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
-import { nowNextItems } from '@/lib/live/homeData';
+import { countryZoneEvents } from '@/lib/schedule/countryZone';
+import { utcLabel } from '@/lib/i18n/time';
 import { thumbOf } from '@/lib/live/thumb';
 import {
   useOptionalPlayer,
@@ -314,7 +316,7 @@ export function RoomLive() {
   // ── Сповіщення там, де сталася дія ──
   const [undo, setUndo] = useState<{
     win: GuestRoomWindow;
-    index: number;
+    pos: number;
     sound: boolean;
     title: string;
     until: number;
@@ -345,13 +347,14 @@ export function RoomLive() {
       const index = windows.findIndex((w) => w.slot === slot);
       const removed = windows[index];
       if (!removed) return;
+      const pos = removed.pos ?? index;
       const hadSound = soundSlot === slot;
       useRoomStore.getState().remove(slot);
       const after = useGuestStore.getState().room;
       if (hadSound && after.soundSlot !== null)
         applySound(after.windows.slice(0, limit), after.soundSlot);
       const title = titleOf(removed);
-      setUndo({ win: removed, index, sound: hadSound, title, until: Date.now() + NOTICE_MS });
+      setUndo({ win: removed, pos, sound: hadSound, title, until: Date.now() + NOTICE_MS });
       announce(t('removed', { city: cityOf(title) }));
     },
     [windows, soundSlot, applySound, limit, announce, t, titleOf],
@@ -359,7 +362,7 @@ export function RoomLive() {
 
   const doUndo = useCallback(() => {
     if (!undo) return;
-    useRoomStore.getState().restore(undo.win, undo.index, viewport, undo.sound);
+    useRoomStore.getState().restore(undo.win, undo.pos, viewport, undo.sound);
     setUndo(null);
   }, [undo, viewport]);
 
@@ -388,27 +391,34 @@ export function RoomLive() {
     setBarNotice(null);
   }, [barNotice]);
 
-  const swap = useCallback(
-    (a: number, b: number) => {
+  // Перетягування: на інше вікно — міняються місцями, на вільне місце — вікно переходить туди.
+  const moveTo = useCallback(
+    (slot: number, pos: number) => {
       // Господар PlayerHost не змінюється: позиція — лише порядок показу.
       if (useRoomStore.getState().hostSlot === null && main)
         useRoomStore.getState().setHostSlot(main.slot);
-      useRoomStore.getState().swap(a, b);
+      useRoomStore.getState().move(slot, pos);
       // PlayerHost стежить за слотом через ResizeObserver; перестановка без зміни розміру — перемір вручну.
       requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     },
     [main],
   );
-  const drag = useRoomDrag(swap);
+  const drag = useRoomDrag(moveTo);
 
   const start = useCallback((slot: number) => useRoomStore.getState().markStarted(slot), []);
 
   // ── Трансляції наживо (для «Додати», вільних місць) ──
+  // Пояс кімнати — пояс головного вікна (порожня кімната — поточний пояс). У списку «Додати» й у «Поточних
+  // трансляціях» — усі трансляції цього поясу, що йдуть зараз (власник 2026-11-06).
+  const roomZoneId =
+    (main ? data.eventsById.get(main.eventId)?.zoneId : undefined) ??
+    (known ? firstRowEventFor(data, now)?.zoneId : undefined) ??
+    null;
   const liveRows = useMemo(() => {
-    if (!known) return [] as StreamRowData[];
-    const evs = data.events.filter((e) => Math.abs(e.midnightMs - minute) < 6 * 3_600_000);
+    if (!known || !roomZoneId) return [] as StreamRowData[];
+    const evs = data.events.filter((e) => e.zoneId === roomZoneId);
     return streamRows(data, evs, minute).filter((r) => r.status === 'live');
-  }, [data, known, minute]);
+  }, [data, known, minute, roomZoneId]);
   const inRoomIds = useMemo(() => new Set(room.windows.map((w) => w.sourceId)), [room.windows]);
   const freeLive = liveRows.filter((r) => !inRoomIds.has(r.id));
 
@@ -667,17 +677,20 @@ export function RoomLive() {
 
   // ── Вікна ──
   const chatExpanded = useChatExpanded();
-  const [unfolded, setUnfolded] = useState(false);
-  // Чат згорнули — наступного разу вікно знову згортається.
-  useEffect(
-    () => useChatDock.subscribe((st) => (st.expanded ? undefined : setUnfolded(false))),
-    [],
-  );
-  // Телефон, 2 вікна, розгорнутий чат: вікно без звуку згортається й стає на паузу.
+  const vis = useChatVisibility();
+  const { collapse, collapse: collapseChat } = useChatDockControls();
+  // Телефон, 2 вікна: розгорнутий чат або будь-яка шторка — вікно без звуку згортається в мініатюру й стає на паузу,
+  // сторінка — нагору, шторка починається під мініатюрою (не накриває жодного вікна). Чат і шторки працюють лише так.
+  const sheetOpen = phone && overlay.current !== null && overlay.current.kind !== 'inflow';
   const foldSlot =
-    phone && chatExpanded && !unfolded && windows.length === 2
+    phone && (chatExpanded || sheetOpen) && windows.length === 2
       ? (windows.find((w) => w.slot !== soundSlot)?.slot ?? null)
       : null;
+  // «Розгорнути» на мініатюрі — чат і шторка повністю закриваються, обидва вікна знову грають.
+  const unfold = () => {
+    collapseChat();
+    if (overlay.current) overlay.close(overlay.current.id);
+  };
   const prevFold = useRef<number | null>(null);
   useEffect(() => {
     const prev = prevFold.current;
@@ -685,6 +698,7 @@ export function RoomLive() {
     const handle = (slot: number) =>
       windows.find((w) => w.slot === slot && isHost(w)) ? null : roomPlayers.get(slot);
     if (foldSlot !== null && prev !== foldSlot) {
+      window.scrollTo({ top: 0 });
       const h = handle(foldSlot);
       if (h) h.pause();
       else actions?.pause();
@@ -697,7 +711,9 @@ export function RoomLive() {
   }, [foldSlot, windows, actions, isHost]);
 
   const views: (RoomWindowCardView & { w: GuestRoomWindow; order: number })[] = windows.map(
-    (w, order) => {
+    (w, index) => {
+      // Десктоп — стале місце в сітці (прибране вікно лишає порожнє місце); телефон — одне під одним.
+      const order = phone ? index : (w.pos ?? index);
       const ev = data.eventsById.get(w.eventId);
       const row =
         ev && known ? streamRows(data, [ev], minute).find((r) => r.id === w.sourceId) : undefined;
@@ -741,17 +757,18 @@ export function RoomLive() {
 
   // Плитка «Повернути» займає місце прибраного вікна (десктоп), тож сітка не перебудовується 6 с.
   const showUndoTile = !!undo && !phone;
-  const cellCount = windows.length + (showUndoTile ? 1 : 0);
-  const slotsCount = phone
+  const single = !phone && windows.length === 1 && !showUndoTile;
+  const taken = new Set([
+    ...views.map((v) => v.order),
+    ...(showUndoTile && undo ? [undo.pos] : []),
+  ]);
+  const slotPositions = phone
     ? windows.length === 0
-      ? 1
-      : 0
-    : windows.length === 0
-      ? 4
-      : cellCount === 1
-        ? 0
-        : Math.max(0, 4 - cellCount);
-  const single = !phone && cellCount === 1;
+      ? [0]
+      : []
+    : single
+      ? []
+      : [0, 1, 2, 3].filter((p) => !taken.has(p));
   const full = windows.length >= limit;
 
   const grid = (
@@ -767,32 +784,35 @@ export function RoomLive() {
           key={v.slot}
           id={`room-w${v.slot}`}
           view={v}
-          order={showUndoTile && undo && v.order >= undo.index ? v.order + 1 : v.order}
+          order={single ? 0 : v.order}
+          pos={v.order}
           phone={phone}
           only={windows.length <= 1}
           media={media(v.w)}
           draggable={!phone && windows.length > 1}
-          drag={drag.dragSlot === v.slot ? 'src' : drag.overSlot === v.slot ? 'dst' : null}
+          drag={drag.dragSlot === v.slot ? 'src' : drag.overPos === v.order ? 'dst' : null}
           notice={
             barNotice?.slot === v.slot
               ? { text: barNotice.text, undo: tUndo('undo'), onUndo: undoReplace }
               : null
           }
           folded={foldSlot === v.slot}
-          onUnfold={() => setUnfolded(true)}
+          onUnfold={unfold}
           onBarPointerDown={drag.onBarPointerDown}
           onRemove={remove}
           onSound={(slot) => moveSound(slot, { apply: true })}
         />
       ))}
       {showUndoTile && undo ? (
-        <UndoTile title={undo.title} order={undo.index} onUndo={doUndo} />
+        <UndoTile title={undo.title} order={undo.pos} onUndo={doUndo} />
       ) : null}
-      {Array.from({ length: slotsCount }, (_, i) => (
+      {slotPositions.map((p) => (
         <SlotTile
-          key={`slot-${i}`}
+          key={`slot-${p}`}
           state={slotState}
-          order={10 + i}
+          order={p}
+          pos={p}
+          dropTarget={drag.dragSlot !== null && drag.overPos === p}
           phone={phone}
           onAdd={openPicker}
           onSchedule={() =>
@@ -833,28 +853,31 @@ export function RoomLive() {
         </span>
         {nextMidnight ? <b>{timerText}</b> : null}
       </div>
-      <Button
-        variant="secondary"
-        compact
-        iconLeft={full ? 'swap' : 'plus'}
-        onClick={openPicker}
-        data-action={full ? 'room-replace' : 'room-add'}
-      >
-        {full ? t('replaceShort') : t('addShort')}
-      </Button>
-      <IconButton icon="share" variant="ring" aria-label={tShare('button')} onClick={openShare} />
-      <IconButton
-        icon="monitor"
-        variant="ring"
-        aria-label={tPlayer('partyMode')}
-        onClick={() => router.push('/tv/')}
-      />
-      <IconButton
-        icon="more"
-        variant="plain"
-        aria-label={tPlayer('moreActions')}
-        onClick={toggleMore}
-      />
+      <div className={s.phoneRow}>
+        <Button
+          variant="secondary"
+          compact
+          iconLeft={full ? 'swap' : 'plus'}
+          onClick={openPicker}
+          data-action={full ? 'room-replace' : 'room-add'}
+        >
+          {full ? t('replaceShort') : t('addShort')}
+        </Button>
+        <span className={s.spacer} />
+        <IconButton icon="share" variant="ring" aria-label={tShare('button')} onClick={openShare} />
+        <IconButton
+          icon="monitor"
+          variant="ring"
+          aria-label={tPlayer('partyMode')}
+          onClick={() => router.push('/tv/')}
+        />
+        <IconButton
+          icon="more"
+          variant="plain"
+          aria-label={tPlayer('moreActions')}
+          onClick={toggleMore}
+        />
+      </div>
     </div>
   ) : (
     <>
@@ -863,6 +886,10 @@ export function RoomLive() {
           <h1 className={s.infoTitle}>{t('heading')}</h1>
           <p className={s.infoSub}>{sub}</p>
         </div>
+        {/* Чат сховано — «Показати чат» поруч із таймером, як на головній. */}
+        {chatColumn && vis.hidden ? (
+          <ChatHiddenButton room={chatRoomCountry ?? 'world'} onShow={vis.show} />
+        ) : null}
         {nextMidnight ? (
           <div className={s.timer} data-room-timer="">
             <span>{t('untilMidnight', { cities: nextCities.join(' і ') })}</span>
@@ -900,8 +927,6 @@ export function RoomLive() {
   // ── Чат ──
   const chatSlot =
     chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
-  const vis = useChatVisibility();
-  const { collapse } = useChatDockControls();
   const panel = (className?: string) => (
     <ChatPanel
       country={country ? { iso: country.iso, name: country.name.uk } : undefined}
@@ -917,10 +942,13 @@ export function RoomLive() {
   );
 
   // «Поточні трансляції» — картки подій із трансляцією зараз; «+» — одразу у вікно.
-  const items = useMemo(
-    () => (known ? nowNextItems(data, minute, schedule) : []),
-    [data, known, minute, schedule],
-  );
+  const [currentFilter, setCurrentFilter] = useState<EventFilterValue>('all');
+  const inSchedule = (eventId: string) =>
+    countryZoneEvents(eventId).some((id) => schedule.includes(id));
+  const currentRows =
+    currentFilter === 'mine' ? liveRows.filter((r) => inSchedule(r.eventId)) : liveRows;
+  const zone = roomZoneId ? data.zonesById.get(roomZoneId) : undefined;
+  const zoneMidnight = liveRows[0]?.midnightMs ?? mainEvent?.midnightMs;
   const roomCtx = useMemo(() => ({ toggle: toggleFromCard }), [toggleFromCard]);
 
   return (
@@ -945,27 +973,41 @@ export function RoomLive() {
           </p>
         ) : null}
         <div className="mt-8 flex flex-col gap-4">
-          <StampBlock eventId={main?.eventId ?? null} permanent roomEventIds={eventIds} />
+          {/* Штамп у кімнаті закривається «×» (постійний — лише на сторінці країни, власник 2026-11-06). */}
+          <StampBlock eventId={main?.eventId ?? null} roomEventIds={eventIds} />
           <div data-first-row-slot="">
             <FirstRowModule event={firstRowEventFor(data, now)} />
           </div>
-          {chatColumn && vis.hidden ? (
-            <ChatHiddenButton room={chatRoomCountry ?? 'world'} onShow={vis.show} />
-          ) : null}
+
           <OfferBlock />
           <div data-moment-slot="">
             <OverlayInFlowOutlet label={t('heading')} />
           </div>
         </div>
-        <NowNext
-          items={items}
-          zoneLabel=""
-          layout={phone ? 'stack' : 'carousel'}
-          currentOnly
-          title={t('currentTitle')}
-          onToggleSchedule={passWindows.requestSchedule}
-          scheduleLocked={!hasPass}
-          onScheduleLocked={passWindows.openPassInfoBoard}
+        <StreamCards
+          heading={t('currentTitle')}
+          sub={
+            zone && zoneMidnight
+              ? t('currentSub', {
+                  zone: utcLabel(zone.offsetMinutes),
+                  time: formatClock(zoneMidnight),
+                })
+              : undefined
+          }
+          rows={currentRows}
+          currentStreamId={null}
+          onSelect={(row) => toggleFromCard({ sourceId: row.id, eventId: row.eventId })}
+          onAddToRoom={(row) => add({ sourceId: row.id, eventId: row.eventId })}
+          showCountry
+          phoneLimit={5}
+          filter={{
+            value: currentFilter,
+            onChange: (v) =>
+              v === 'mine' && !hasPass ? passWindows.openPassInfoBoard() : setCurrentFilter(v),
+            scheduleLocked: !hasPass,
+            scheduleCount: liveRows.filter((r) => inSchedule(r.eventId)).length,
+            hideLive: true,
+          }}
           className="mt-10"
         />
         <RoomHowTo className="mt-10" />

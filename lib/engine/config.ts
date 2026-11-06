@@ -35,6 +35,16 @@ export const SEATS = 10;
  * за попитом власник може вручну, лише тут). Автоматичного «≤3 місця → $7,99» більше немає.
  */
 export const FIRSTROW_PRICE = 4.99;
+/**
+ * Ціна ряду за поясом, USD (власник 2026-11-06: ціни можуть різнитися між поясами й мають задаватися в адмінці).
+ * Поки адмінки немає — тут; пояс без запису — `FIRSTROW_PRICE`. Ключ — `zoneId` поясу.
+ */
+export const FIRSTROW_PRICES: Readonly<Partial<Record<string, number>>> = {};
+
+/** Ціна місця в ряду поясу `zoneId`. */
+export function firstRowPrice(zoneId: string | undefined): number {
+  return (zoneId ? FIRSTROW_PRICES[zoneId] : undefined) ?? FIRSTROW_PRICE;
+}
 /** «Мало місць» (стан `last3`): лічильник виділено, «останнє місце». На ціну не впливає. */
 export const FEW_SEATS_THRESHOLD = 3;
 /** «Запис» після півночі. **Припущення** (data-model 1.4). */

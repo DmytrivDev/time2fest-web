@@ -33,6 +33,8 @@ export interface RoomWindowCardProps {
   id: string;
   /** Позиція в сітці (CSS `order`): DOM не переставляємо, щоб плеєри не перезапускались. */
   order: number;
+  /** Місце в сітці (ціль перетягування). */
+  pos?: number;
   phone: boolean;
   /** Єдине вікно: без «Звук сюди», × неактивний. */
   only: boolean;
@@ -51,6 +53,7 @@ export function RoomWindowCard({
   view,
   id,
   order,
+  pos,
   phone,
   only,
   media,
@@ -184,6 +187,7 @@ export function RoomWindowCard({
       id={id}
       aria-labelledby={headingId}
       data-room-window={view.slot}
+      data-room-pos={pos}
       data-sound={view.hasSound ? '' : undefined}
       data-folded={folded ? '' : undefined}
       style={style}

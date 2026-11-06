@@ -14,7 +14,15 @@
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from 'react';
+import {
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import {
   CarouselArrow,
@@ -30,7 +38,7 @@ import { formatClock } from '@/lib/i18n/time';
 import { PostcardArt } from '@/components/windows/StampArt';
 import { EventFilter, type EventFilterValue } from './EventFilter';
 import type { StreamRowData } from '@/lib/live/countryData';
-import { canAddToRoom, useRoomToggle } from '@/components/room/useRoomToggle';
+import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
 import type { RoomTarget } from '@/stores/room';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { usePhone } from './StreamList';
@@ -57,6 +65,8 @@ export interface StreamCardsFilter {
   onChange(next: EventFilterValue): void;
   scheduleLocked?: boolean;
   scheduleCount?: number;
+  /** Без «З трансляціями» (кімната: тут і так лише те, що наживо). */
+  hideLive?: boolean;
 }
 
 export interface StreamCardsProps {
@@ -135,15 +145,23 @@ function Thumb({ row, current }: { row: StreamRowData; current: boolean }) {
 function PlusToggle({ row, main }: { row: StreamRowData; main: RoomTarget | null }) {
   const t = useTranslations('country.streams');
   const room = useRoomToggle(main);
+  // Сторінка кімнати: «+» не буває неактивним — повна кімната відкриває «Що замінити?».
+  const roomPage = useContext(RoomPageContext);
   const on = room.has(row.id);
-  const disabled = !on && room.full;
+  const disabled = !roomPage && !on && room.full;
   return (
     <button
       type="button"
       aria-pressed={on}
-      aria-label={on ? t('inRoom', { title: row.title }) : disabled ? t('roomFull') : t('add', { title: row.title })}
+      aria-label={
+        on
+          ? t('inRoom', { title: row.title })
+          : disabled
+            ? t('roomFull')
+            : t('add', { title: row.title })
+      }
       disabled={disabled}
-      onClick={() => room.toggle({ sourceId: row.id, eventId: row.eventId })}
+      onClick={() => (roomPage ?? room).toggle({ sourceId: row.id, eventId: row.eventId })}
       className={cn('t2f-focus', s.plus, on && s.plusOn)}
     >
       <Icon name={on ? 'check' : 'plus'} size={18} strokeWidth={on ? 2.6 : 2.2} />
@@ -189,7 +207,10 @@ function DeskCard({ row, current, currentRow, showCountry, onSelect }: CardProps
       </button>
       {current || !canAddToRoom(row.status) ? null : (
         <span className={s.plusSlot}>
-          <PlusToggle row={row} main={currentRow ? { sourceId: currentRow.id, eventId: currentRow.eventId } : null} />
+          <PlusToggle
+            row={row}
+            main={currentRow ? { sourceId: currentRow.id, eventId: currentRow.eventId } : null}
+          />
         </span>
       )}
     </li>
@@ -206,6 +227,7 @@ interface CardProps {
 }
 
 function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom }: CardProps) {
+  const roomPage = useContext(RoomPageContext);
   const t = useTranslations('country.streams');
   const tType = useTranslations('liveCards.eventCard.type');
   const [confirming, setConfirming] = useState(false);
@@ -245,7 +267,9 @@ function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom
             )}
           </span>
         </button>
-        {current || !canAddToRoom(row.status) ? null : (
+        {current || !canAddToRoom(row.status) ? null : roomPage ? (
+          <PlusToggle row={row} main={null} />
+        ) : (
           <IconButton
             icon="plus"
             variant="ring"
@@ -406,6 +430,7 @@ export function StreamCards({
             onValueChange={filter.onChange}
             scheduleLocked={filter.scheduleLocked}
             scheduleCount={filter.scheduleCount}
+            hideLive={filter.hideLive}
             className={s.filter}
           />
         ) : null}
@@ -434,6 +459,7 @@ export function StreamCards({
           onValueChange={filter.onChange}
           scheduleLocked={filter.scheduleLocked}
           scheduleCount={filter.scheduleCount}
+          hideLive={filter.hideLive}
           className={s.filterPhone}
         />
       ) : null}

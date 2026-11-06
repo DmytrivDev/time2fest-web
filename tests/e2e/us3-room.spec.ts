@@ -443,6 +443,56 @@ test.describe('US3 · кімната перегляду', () => {
     await expect(undo).toHaveCount(0, { timeout: 9_000 });
   });
 
+  test('прибране вікно лишає порожнє місце: інші вікна не зсуваються', async ({ page }) => {
+    test.skip(isPhone(page), 'сітка 2×2 — десктоп');
+    await seedRoom(page, ALL, 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    const before = await box(win(page, 3));
+    await win(page, 2)
+      .getByRole('button', { name: /^Прибрати вікно:/ })
+      .click();
+    await expect(page.locator('[data-room-undo]')).toBeVisible();
+    // Через 6 с на місці прибраного — вільне місце, четверте вікно там, де й було.
+    await expect(page.locator('[data-room-undo]')).toHaveCount(0, { timeout: 9_000 });
+    const after = await box(win(page, 3));
+    expect(Math.abs(after.x - before.x)).toBeLessThan(2);
+    expect(Math.abs(after.y - before.y)).toBeLessThan(2);
+    await expect(page.locator('[data-room-slot][data-room-pos="2"]')).toHaveCount(1);
+  });
+
+  test('перетягування на вільне місце: вікно переходить туди', async ({ page, ytStub }) => {
+    test.skip(isPhone(page), 'перетягування — десктоп');
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await ytStub.waitForPlayer();
+    const from = await box(win(page, 1).locator('h2'));
+    const target = page.locator('[data-room-slot][data-room-pos="3"]');
+    const to = await box(target);
+    await page.mouse.move(from.x + 30, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 60, from.y + 20, { steps: 4 });
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+    await expect(target).toHaveAttribute('data-drop', /.*/);
+    await page.mouse.up();
+    await expect(win(page, 1)).toHaveAttribute('data-room-pos', '3');
+    await expect(page.locator('[data-room-slot][data-room-pos="1"]')).toHaveCount(1);
+  });
+
+  test('телефон: відкрита шторка теж згортає вікно без звуку й не накриває вікон', async ({
+    page,
+  }) => {
+    test.skip(!isPhone(page), 'телефон');
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await page.locator('[data-action="room-replace"]').click();
+    await expect(win(page, 1)).toHaveAttribute('data-folded', '');
+    // «Розгорнути» на мініатюрі — шторка закривається, обидва вікна знову повні.
+    await win(page, 1)
+      .getByRole('button', { name: /^Розгорнути вікно:/ })
+      .click();
+    await expect(win(page, 1)).not.toHaveAttribute('data-folded', /.*/);
+  });
+
   test('телефон: розгорнутий чат згортає вікно без звуку', async ({ page }) => {
     test.skip(!isPhone(page), 'телефон');
     await seedRoom(page, [L1, L2], 0);

@@ -50,11 +50,33 @@ export function nextSlot(windows: readonly GuestRoomWindow[]): number {
   return n;
 }
 
-/** `soundSlot` завжди вказує на наявне вікно або `null`; порожня кімната — без звуку. */
+/** Місце вікна в сітці (0 — верхнє ліве … 3 — нижнє праве); старі збереження без `pos` — за порядком. */
+export function posOf(w: GuestRoomWindow, index: number): number {
+  return w.pos ?? index;
+}
+
+/** Найменше вільне місце в сітці. */
+export function freePos(windows: readonly GuestRoomWindow[]): number {
+  const used = new Set(windows.map((w, i) => posOf(w, i)));
+  let n = 0;
+  while (used.has(n)) n++;
+  return n;
+}
+
+/**
+ * `windows` — завжди за місцями в сітці (перше — головне), у кожного вікна є `pos`; `soundSlot` вказує на наявне
+ * вікно або `null`. Місця сталі (власник 2026-11-06): прибране вікно лишає порожнє місце, решта не зсуваються.
+ */
 export function normalizeRoom(state: RoomState): RoomState {
-  const windows = state.windows.filter(
-    (w, i, all) => all.findIndex((x) => x.slot === w.slot) === i,
-  );
+  const uniq = state.windows.filter((w, i, all) => all.findIndex((x) => x.slot === w.slot) === i);
+  const used = new Set<number>();
+  const placed = uniq.map((w, i) => {
+    let pos = posOf(w, i);
+    while (used.has(pos)) pos++;
+    used.add(pos);
+    return w.pos === pos ? w : { ...w, pos };
+  });
+  const windows = [...placed].sort((a, b) => a.pos! - b.pos!);
   const sound = windows.some((w) => w.slot === state.soundSlot)
     ? state.soundSlot
     : (windows[0]?.slot ?? null);
@@ -66,15 +88,20 @@ export function addWindow(state: RoomState, target: RoomTarget, limit: number): 
   if (existing) return { kind: 'duplicate', state, slot: existing.slot };
   if (state.windows.length >= limit) return { kind: 'full', state };
   const slot = nextSlot(state.windows);
-  const windows = [...state.windows, { slot, sourceId: target.sourceId, eventId: target.eventId }];
+  const pos = freePos(state.windows);
+  const windows = [
+    ...state.windows,
+    { slot, pos, sourceId: target.sourceId, eventId: target.eventId },
+  ];
   return { kind: 'added', slot, state: normalizeRoom({ windows, soundSlot: state.soundSlot }) };
 }
 
-/** Останнє вікно не прибирається (× неактивний). Звук прибраного вікна переходить на перше вікно. */
+/** Останнє вікно не прибирається (× неактивний). Місце прибраного лишається порожнім; звук — на перше вікно. */
 export function removeWindow(state: RoomState, slot: number): RoomState {
   if (state.windows.length <= 1) return state;
-  const windows = state.windows.filter((w) => w.slot !== slot);
-  if (windows.length === state.windows.length) return state;
+  const fixed = normalizeRoom(state).windows;
+  const windows = fixed.filter((w) => w.slot !== slot);
+  if (windows.length === fixed.length) return state;
   const soundSlot = state.soundSlot === slot ? (windows[0]?.slot ?? null) : state.soundSlot;
   return normalizeRoom({ windows, soundSlot });
 }
@@ -83,8 +110,8 @@ export function removeWindow(state: RoomState, slot: number): RoomState {
 export function replaceWindow(state: RoomState, slot: number, target: RoomTarget): RoomState {
   const dup = state.windows.find((w) => w.sourceId === target.sourceId);
   if (dup && dup.slot !== slot) return state;
-  const windows = state.windows.map((w) =>
-    w.slot === slot ? { slot, sourceId: target.sourceId, eventId: target.eventId } : w,
+  const windows = normalizeRoom(state).windows.map((w) =>
+    w.slot === slot ? { slot, pos: w.pos, sourceId: target.sourceId, eventId: target.eventId } : w,
   );
   return normalizeRoom({ windows, soundSlot: state.soundSlot });
 }
@@ -95,54 +122,72 @@ export function setSound(state: RoomState, slot: number): RoomState {
 }
 
 /**
- * Поміняти місцями два вікна (перетягування за смугу, власник 2026-11-05). Порядок у `windows` — це порядок показу;
- * плеєри не перезапускаються: DOM вікон не переставляється, позицію задає CSS `order`.
+ * Перенести вікно `slot` на місце `pos` (перетягування за смугу, власник 2026-11-05/06): місце зайняте — вікна
+ * міняються місцями, вільне — вікно просто переходить туди. Плеєри не перезапускаються: DOM вікон не переставляється,
+ * позицію задає CSS `order`.
  */
-export function swapWindows(state: RoomState, a: number, b: number): RoomState {
-  const ia = state.windows.findIndex((w) => w.slot === a);
-  const ib = state.windows.findIndex((w) => w.slot === b);
-  if (ia < 0 || ib < 0 || ia === ib) return state;
-  const windows = [...state.windows];
-  [windows[ia], windows[ib]] = [windows[ib]!, windows[ia]!];
-  return { ...state, windows };
+export function moveWindow(state: RoomState, slot: number, pos: number): RoomState {
+  const fixed = normalizeRoom(state).windows;
+  const w = fixed.find((x) => x.slot === slot);
+  if (!w || w.pos === pos) return state;
+  const other = fixed.find((x) => x.pos === pos);
+  const windows = fixed.map((x) =>
+    x.slot === slot ? { ...x, pos } : other && x.slot === other.slot ? { ...x, pos: w.pos } : x,
+  );
+  return normalizeRoom({ windows, soundSlot: state.soundSlot });
 }
 
-/** Повернути прибране вікно на його місце (сповіщення «Повернути»). */
+/** Поміняти місцями два вікна. */
+export function swapWindows(state: RoomState, a: number, b: number): RoomState {
+  const fixed = normalizeRoom(state).windows;
+  const wb = fixed.find((w) => w.slot === b);
+  if (!wb || a === b) return state;
+  return moveWindow(state, a, wb.pos!);
+}
+
+/** Повернути прибране вікно на його місце (сповіщення «Повернути»); місце зайняте — на найближче вільне. */
 export function restoreWindow(
   state: RoomState,
   win: GuestRoomWindow,
-  index: number,
+  pos: number,
   limit: number,
   sound: boolean,
 ): RoomState {
   if (state.windows.length >= limit || state.windows.some((w) => w.sourceId === win.sourceId))
     return state;
-  const slot = state.windows.some((w) => w.slot === win.slot) ? nextSlot(state.windows) : win.slot;
-  const windows = [...state.windows];
-  windows.splice(Math.min(index, windows.length), 0, { ...win, slot });
+  const fixed = normalizeRoom(state).windows;
+  const slot = fixed.some((w) => w.slot === win.slot) ? nextSlot(fixed) : win.slot;
+  const at = fixed.some((w) => w.pos === pos) ? freePos(fixed) : pos;
+  const windows = [...fixed, { ...win, slot, pos: at }];
   return normalizeRoom({ windows, soundSlot: sound ? slot : state.soundSlot });
 }
 
 /** Перенести вікно на перше місце (головне вікно — те, що вже грає в `PlayerHost`). */
 export function moveToFront(state: RoomState, slot: number): RoomState {
-  const idx = state.windows.findIndex((w) => w.slot === slot);
-  if (idx <= 0) return state;
-  const w = state.windows[idx]!;
-  return { ...state, windows: [w, ...state.windows.filter((x) => x.slot !== slot)] };
+  const fixed = normalizeRoom(state).windows;
+  const first = fixed[0];
+  if (!first || first.slot === slot) return state;
+  return moveWindow(state, slot, Math.min(first.pos!, 0));
 }
 
 /**
  * Головне вікно = те, що грає в `PlayerHost` (перехід «країна → кімната» не перезапускає відео, FR-042).
- * Уже є в кімнаті → на перше місце; немає → стає першим вікном, а зайве за лімітом прибирається з кінця.
+ * Уже є в кімнаті → на перше місце; немає → стає першим вікном (хто був на першому — на вільне місце), а зайве за
+ * лімітом прибирається з останнього місця.
  */
 export function adoptMain(state: RoomState, main: RoomTarget, limit: number): RoomState {
   const found = state.windows.find((w) => w.sourceId === main.sourceId);
   if (found) return moveToFront(state, found.slot);
-  const slot = nextSlot(state.windows);
-  const windows = [
-    { slot, sourceId: main.sourceId, eventId: main.eventId },
-    ...state.windows,
-  ].slice(0, Math.max(1, limit));
+  let fixed = normalizeRoom(state).windows;
+  // Номер — вільний серед усіх вікон, навіть тих, що зараз обріжемо (слот плеєра прибраного вікна не перевикористовуємо).
+  const slot = nextSlot(fixed);
+  const max = Math.max(1, limit);
+  if (fixed.length >= max) fixed = fixed.slice(0, max - 1);
+  const occupant = fixed.find((w) => w.pos === 0);
+  const moved = occupant
+    ? fixed.map((w) => (w.slot === occupant.slot ? { ...w, pos: freePos(fixed) } : w))
+    : fixed;
+  const windows = [{ slot, pos: 0, sourceId: main.sourceId, eventId: main.eventId }, ...moved];
   return normalizeRoom({ windows, soundSlot: state.soundSlot ?? slot });
 }
 
@@ -171,8 +216,10 @@ export interface RoomActions {
   setSound(slot: number): void;
   /** Поміняти місцями два вікна (див. `swapWindows`). */
   swap(a: number, b: number): void;
+  /** Перенести вікно на місце сітки (див. `moveWindow`). */
+  move(slot: number, pos: number): void;
   /** Повернути прибране вікно (див. `restoreWindow`). */
-  restore(win: GuestRoomWindow, index: number, viewport: RoomViewport, sound: boolean): void;
+  restore(win: GuestRoomWindow, pos: number, viewport: RoomViewport, sound: boolean): void;
   setHostSlot(slot: number | null): void;
   cancelPick(): void;
   markStarted(slot: number): void;
@@ -263,13 +310,19 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
     if (next !== before) writeRoom(next);
   },
 
-  restore(win, index, viewport, sound) {
+  move(slot, pos) {
     const before = readRoom();
-    const next = restoreWindow(before, win, index, roomLimit(viewport), sound);
+    const next = moveWindow(before, slot, pos);
+    if (next !== before) writeRoom(next);
+  },
+
+  restore(win, pos, viewport, sound) {
+    const before = readRoom();
+    const next = restoreWindow(before, win, pos, roomLimit(viewport), sound);
     if (next === before) return;
     writeRoom(next);
-    const slot = next.windows[Math.min(index, next.windows.length - 1)]?.slot;
-    if (slot !== undefined) get().markStarted(slot);
+    const back = next.windows.find((w) => w.sourceId === win.sourceId);
+    if (back) get().markStarted(back.slot);
   },
 
   setHostSlot(slot) {

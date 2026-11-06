@@ -82,6 +82,7 @@ import { utcLabel } from './MapModel';
 import styles from './live.module.css';
 import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
 import { firstRowEventFor } from '@/lib/firstrow/pick';
+import { zoneRowOf } from '@/lib/firstrow/zone';
 
 const PLAYER_TITLE_ID = 'player-title';
 const STREAMS_ID = 'country-streams';
@@ -505,9 +506,9 @@ export function CountryLive({ iso }: { iso: string }) {
       className={className}
     />
   );
-  // Ряд поточного поясу — той самий на всіх сторінках (ряд один на пояс, рішення 2026-11-05), навіть якщо країна
-  // зустрічає Новий рік в іншому поясі (ряди інших поясів — через «Ще є місця», коли поточний розпродано).
-  const firstRowEvent = firstRowEventFor(data, now);
+  // Сторінка країни — ряд власного (вибраного) поясу країни (власник 2026-11-06); у поясі без ряду — ряд поточного
+  // поясу, як на головній і в кімнаті.
+  const firstRowEvent = (zoneId ? zoneRowOf(data, zoneId) : null) ?? firstRowEventFor(data, now);
   // Слот «Першого ряду» сторінки країни (US5): телефон — смуга під липким рядком (`dockBar`), як на головній.
   const firstRow = (dockBar: boolean) =>
     firstRowEvent ? (

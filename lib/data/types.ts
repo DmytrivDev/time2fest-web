@@ -291,6 +291,8 @@ export interface GuestConsent {
 
 export interface GuestRoomWindow {
   slot: number;
+  /** Місце в сітці кімнати (0 — верхнє ліве … 3 — нижнє праве); стале — прибране вікно лишає порожнє місце. */
+  pos?: number;
   sourceId: string;
   eventId: string;
 }

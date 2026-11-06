@@ -82,7 +82,10 @@ function stableViewportH(): number {
  */
 function measureTop(video = false): number {
   let bottom = 0;
-  if (video) {
+  // Кімната перегляду: над чатом і шторками завжди лишається вся сітка вікон (з мініатюрою згорнутого вікна).
+  const column = document.querySelector<HTMLElement>('[data-video-column]');
+  if (column) bottom = column.getBoundingClientRect().bottom;
+  else if (video) {
     const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
     if (slot) bottom = slot.getBoundingClientRect().bottom;
   } else

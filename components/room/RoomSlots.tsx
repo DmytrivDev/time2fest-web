@@ -26,12 +26,24 @@ export type SlotState =
 export interface SlotTileProps {
   state: SlotState;
   order: number;
+  /** Місце в сітці (сюди можна перетягнути вікно). */
+  pos?: number;
+  /** Над місцем тягнуть вікно. */
+  dropTarget?: boolean;
   phone: boolean;
   onAdd(): void;
   onSchedule?(): void;
 }
 
-export function SlotTile({ state, order, phone, onAdd, onSchedule }: SlotTileProps) {
+export function SlotTile({
+  state,
+  order,
+  pos,
+  dropTarget = false,
+  phone,
+  onAdd,
+  onSchedule,
+}: SlotTileProps) {
   const t = useTranslations('room.slot');
   const style: CSSProperties = { order };
   const off = state.kind === 'all-in' || state.kind === 'none';
@@ -87,6 +99,8 @@ export function SlotTile({ state, order, phone, onAdd, onSchedule }: SlotTilePro
     return (
       <div
         data-room-slot=""
+        data-room-pos={pos}
+        data-drop={dropTarget || undefined}
         data-slot-state={state.kind}
         style={style}
         className={cn(s.slot, s.slotOff, phone && s.slotPhone)}
@@ -105,6 +119,8 @@ export function SlotTile({ state, order, phone, onAdd, onSchedule }: SlotTilePro
     <button
       type="button"
       data-room-slot=""
+      data-room-pos={pos}
+      data-drop={dropTarget || undefined}
       data-slot-state={state.kind}
       style={style}
       className={cn('t2f-focus', s.slot, phone && s.slotPhone)}

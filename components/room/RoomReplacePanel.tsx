@@ -87,7 +87,7 @@ export function RoomReplacePanel({
                 <span>{w.title}</span>
               </span>
               <span className={s.tileBtn} aria-hidden="true">
-                <Icon name="swap" size={14} />
+                <Icon name="swap" size={12} />
                 {t('replace')}
               </span>
             </button>

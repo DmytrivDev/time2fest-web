@@ -90,7 +90,7 @@ describe('room · чисті функції', () => {
   it('replaceWindow: той самий слот і місце; дубль в іншому вікні ігнорується; звук лишається за вікном', () => {
     const s = room([win(0), win(1), win(2)], 1);
     const next = replaceWindow(s, 1, t('new'));
-    expect(next.windows[1]).toEqual({ slot: 1, sourceId: 'src_new', eventId: 'evt_new' });
+    expect(next.windows[1]).toMatchObject({ slot: 1, sourceId: 'src_new', eventId: 'evt_new' });
     expect(slots(next)).toEqual([0, 1, 2]);
     expect(next.soundSlot).toBe(1);
     expect(replaceWindow(s, 1, t(2))).toBe(s);
@@ -107,7 +107,8 @@ describe('room · чисті функції', () => {
     it('існуюче вікно переходить на перше місце', () => {
       const s = room([win(0), win(1), win(2)], 2);
       const next = adoptMain(s, t(2), 4);
-      expect(next.windows.map((w) => w.sourceId)).toEqual(['src_2', 'src_0', 'src_1']);
+      // Сталі місця (2026-11-06): головне й те, що було першим, міняються місцями.
+      expect(next.windows.map((w) => w.sourceId)).toEqual(['src_2', 'src_1', 'src_0']);
       expect(next.soundSlot).toBe(2);
     });
 
@@ -118,7 +119,7 @@ describe('room · чисті функції', () => {
 
     it('порожня кімната: головне — перше вікно зі звуком', () => {
       const next = adoptMain(room([]), t('m'), 4);
-      expect(next.windows).toEqual([{ slot: 0, sourceId: 'src_m', eventId: 'evt_m' }]);
+      expect(next.windows).toMatchObject([{ slot: 0, sourceId: 'src_m', eventId: 'evt_m' }]);
       expect(next.soundSlot).toBe(0);
     });
 
@@ -171,7 +172,7 @@ describe('room · сховище (T095)', () => {
 
   it('порожня кімната + main: main стає вікном 1, потім додається ціль', () => {
     expect(store().add(t('target'), 'desktop', t('main'))).toBe('added');
-    expect(guestRoom().windows).toEqual([
+    expect(guestRoom().windows).toMatchObject([
       { slot: 0, sourceId: 'src_main', eventId: 'evt_main' },
       { slot: 1, sourceId: 'src_target', eventId: 'evt_target' },
     ]);
@@ -180,7 +181,7 @@ describe('room · сховище (T095)', () => {
 
   it('порожня кімната без main: ціль — перше вікно, не в started', () => {
     expect(store().add(t('target'), 'desktop')).toBe('added');
-    expect(guestRoom().windows).toEqual([{ slot: 0, sourceId: 'src_target', eventId: 'evt_target' }]);
+    expect(guestRoom().windows).toMatchObject([{ slot: 0, sourceId: 'src_target', eventId: 'evt_target' }]);
     expect(store().started).toEqual([]);
   });
 
@@ -314,14 +315,14 @@ describe('room · сховище (T095)', () => {
       store().resetSession();
       store().replace(1, t('new'));
       expect(guestRoom().windows.map((w) => w.slot)).toEqual([0, 1, 2, 3]);
-      expect(guestRoom().windows[1]).toEqual({ slot: 1, sourceId: 'src_new', eventId: 'evt_new' });
+      expect(guestRoom().windows[1]).toMatchObject({ slot: 1, sourceId: 'src_new', eventId: 'evt_new' });
       expect(store().started).toContain(1);
     });
 
     it('replace(slot) без target бере pickTarget і чистить його', () => {
       expect(store().pickTarget).toEqual(t('new'));
       store().replace(2);
-      expect(guestRoom().windows[2]).toEqual({ slot: 2, sourceId: 'src_new', eventId: 'evt_new' });
+      expect(guestRoom().windows[2]).toMatchObject({ slot: 2, sourceId: 'src_new', eventId: 'evt_new' });
       expect(store().pickTarget).toBeNull();
       expect(store().started).toContain(2);
     });
