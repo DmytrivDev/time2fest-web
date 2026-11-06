@@ -28,6 +28,42 @@ const FEATURES: readonly { icon: IconName; key: 'featAuto' | 'featCountdown' | '
   { icon: 'calendar-check', key: 'featMine' },
 ];
 
+/**
+ * Мініатюра екрана вечірки (як на дошках): ліворуч відео й смуга карток таймлайну, праворуч колонка — «до півночі 00:22:15»,
+ * «Зараз: Лондон · Вебкамера», вкладки, область вмісту, кнопки керування. Картинка, не живий екран (`aria-hidden`).
+ */
+function TvMock() {
+  const t = useTranslations('tv.phone');
+  return (
+    <div aria-hidden="true" className={styles.phoneMock}>
+      <span className={styles.mockVideo}>
+        <PostcardArt illustrationId="gb-postcard" fill className="block size-full" />
+      </span>
+      <span className={styles.mockStrip}>
+        <span data-on="" />
+        <span />
+        <span />
+        <span />
+      </span>
+      <span className={styles.phoneMockSide}>
+        <span className="text-text-muted">{t('mockUntil')}</span>
+        <b className="text-highlight">{t('mockTime')}</b>
+        <span className={styles.mockNow}>{t('mockNow')}</span>
+        <span className={styles.phoneMockTabs}>
+          <span />
+          <span />
+        </span>
+        <span className={styles.phoneMockCard} />
+        <span className={styles.mockControls}>
+          <span />
+          <span />
+          <span />
+        </span>
+      </span>
+    </div>
+  );
+}
+
 const STEPS: readonly { icon: IconName; key: 'stepTv' | 'stepHdmi' | 'stepCast' }[] = [
   { icon: 'tv', key: 'stepTv' },
   { icon: 'monitor', key: 'stepHdmi' },
@@ -70,10 +106,13 @@ export function TvPhoneInfo() {
                   {t('open')}
                 </NextLink>
               </Button>
-              <Button variant="secondary" iconLeft={copied ? 'check' : 'link'} onClick={copy} className={styles.infoCopy} data-action="copy-link">
-                {copied ? t('copied') : t('copy')}
-              </Button>
-              {canShare ? <IconButton icon="share" variant="ring" aria-label={t('share')} onClick={share} data-action="share-link" /> : null}
+              {/* «Скопіювати» й «Поділитися» — одна група: на вузькій колонці переносяться разом на другий рядок. */}
+              <span className={styles.infoShareGroup}>
+                <Button variant="secondary" iconLeft={copied ? 'check' : 'link'} onClick={copy} className={styles.infoCopy} data-action="copy-link">
+                  {copied ? t('copied') : t('copy')}
+                </Button>
+                {canShare ? <IconButton icon="share" variant="ring" aria-label={t('share')} onClick={share} data-action="share-link" /> : null}
+              </span>
             </div>
             <p className={styles.infoOpenNote}>{t('openNote')}</p>
             <p role="status" className="sr-only">
@@ -81,18 +120,7 @@ export function TvPhoneInfo() {
             </p>
           </div>
 
-          <div aria-hidden="true" className={styles.phoneMock}>
-            <PostcardArt illustrationId="gb-postcard" fill className={styles.phoneMockArt} />
-            <span className={styles.phoneMockSide}>
-              <span className="text-text-muted">{t('mockUntil')}</span>
-              <b className="text-highlight">{t('mockTime')}</b>
-              <span className={styles.phoneMockTabs}>
-                <span />
-                <span />
-              </span>
-              <span className={styles.phoneMockCard} />
-            </span>
-          </div>
+          <TvMock />
         </section>
 
         <ul className={styles.infoFeatures}>
