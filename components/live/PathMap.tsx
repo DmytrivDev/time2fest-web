@@ -85,7 +85,11 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
     const pos = pointToPercent(p, meta);
     return { p, pos, px: { x: (pos.left / 100) * meta.width, y: (pos.top / 100) * meta.height } };
   });
-  const lastMet = placed.reduce((acc, cur, i) => (!cur.p.planned ? i : acc), -1);
+  const lastMet = placed.reduce((acc, cur, i) => (!cur.p.planned && !cur.p.hubOf ? i : acc), -1);
+  // Варіант B «вузол і промені»: маршрут — через вузли (точки без `hubOf`), промені — від вузла до інших країн поясу.
+  const route = placed.filter((x) => !x.p.hubOf);
+  const byId = new Map(placed.map((x) => [x.p.id, x]));
+  const rays = placed.filter((x) => x.p.hubOf && byId.has(x.p.hubOf));
 
   return (
     <div className={cn('relative w-full overflow-hidden rounded-md bg-surface', className)} style={{ aspectRatio: meta.width / meta.height }}>
@@ -93,8 +97,23 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
         {geometry.zones.map((g) => (
           <path key={g.zoneId} d={g.countries.map((c) => c.d).join('')} className="t2f-pathmap-zone" />
         ))}
-        {placed.slice(1).map((cur, i) => {
-          const prev = placed[i]!;
+        {rays.map((cur) => {
+          const hub = byId.get(cur.p.hubOf!)!;
+          return (
+            <line
+              key={`ray-${cur.p.id}`}
+              x1={hub.px.x}
+              y1={hub.px.y}
+              x2={cur.px.x}
+              y2={cur.px.y}
+              className="t2f-pathmap-line"
+              data-kind={cur.p.planned ? 'planned' : 'met'}
+              data-ray=""
+            />
+          );
+        })}
+        {route.slice(1).map((cur, i) => {
+          const prev = route[i]!;
           const kind = cur.p.planned ? 'planned' : 'met';
           return (
             <line
@@ -112,7 +131,13 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
       <div role="group" aria-label={summary ? c('mapLabel', { name: authorName, route: summary }) : t('pathOf', { name: authorName })} className="absolute inset-0">
         {placed.map(({ p, pos }, i) => {
           const time = formatClock(p.midnightMs);
-          const dot = p.planned
+          const dot = p.current
+            ? 't2f-pathmap-dot t2f-pathmap-dot-now size-2.5'
+            : p.hubOf
+              ? p.planned
+                ? 't2f-pathmap-dot size-2 border-2 border-text-secondary'
+                : 't2f-pathmap-dot size-1.5 bg-highlight'
+              : p.planned
             ? 't2f-pathmap-dot size-2.5 border-2 border-text-secondary'
             : i === lastMet
               ? 't2f-pathmap-dot t2f-pathmap-dot-last size-2.5 bg-highlight'
@@ -139,7 +164,8 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, c
                 <button
                   type="button"
                   aria-label={`${p.city}, ${p.country} · ${p.planned ? t('legendSchedule') : t('legendMet')} · ${time}`}
-                  data-point={p.planned ? 'planned' : 'met'}
+                  data-point={p.current ? 'now' : p.planned ? 'planned' : 'met'}
+                  data-ray={p.hubOf ? '' : undefined}
                   data-current={i === lastMet ? '' : undefined}
                   className="t2f-focus flex size-touch-min items-center justify-center rounded-full"
                 >

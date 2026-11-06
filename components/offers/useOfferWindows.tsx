@@ -8,7 +8,8 @@
  * - повідомляє рушію про стан інтерфейсу: чи відкрите вікно (рядок «Штамп у паспорті» не рахується) і чи людина
  *   вводить текст (фокус у полі або ~10 с після останнього натискання) — див. `lib/offers/uiState`;
  * - віддає `requestSchedule` (кнопка графіка: з пасом — перемикає, без пасу — вікно «Графік — у Новорічному пасі» на місці
- *   чату, рішення 2026-10-31), `openPassGate`, `openPassInfo`.
+ *   чату, рішення 2026-10-31), `openPassGate`, `openPassInfo`. З пасом після дії — тостер «Додано в графік · Повернути»;
+ *   пояс повний (усі слоти, до 4 країн — рішення 2026-11-06) — вікно «Замінити в графіку?» на місці чату.
  * Поява анонсується ввічливо самим `InFlowSlot` (`aria-live="polite"`); фокус сторінка не переносить.
  */
 import { useTranslations } from 'next-intl';
@@ -23,23 +24,33 @@ import { usePassDetails } from '@/components/pass/PassWindow';
 import { OFFER_WINDOW_ID, passGateSpec, passInfoBoardSpec, scheduleGateSpec, type OfferSpecDeps } from './OfferWindows';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
+import { scheduledCountries, scheduleToggleResult } from '@/lib/schedule/countryZone';
+import { showScheduleToast } from '@/components/schedule/toastStore';
+import { SCHEDULE_REPLACE_ID, useScheduleReplace } from '@/components/schedule/scheduleReplace';
+import { ScheduleReplaceContent } from '@/components/schedule/ScheduleWindows';
 
 export interface PassWindowsApi {
   /** Кнопка графіка події: з пасом — додати/прибрати, без пасу — «Потрібен пас». */
-  requestSchedule(eventId: string, next?: boolean): void;
+  /** `back` — «‹ Назад» / «Скасувати» у вікні заміни (повернутись до списку країн поясу). */
+  requestSchedule(eventId: string, next?: boolean, back?: () => void): void;
   openPassGate(feature: PassGateFeature, triggerEventId?: string): void;
   /** «Мій графік» без пасу — вікно «Графік — у Новорічному пасі» без конкретного міста. */
   openScheduleGate(): void;
   /** «Що дає Новорічний пас» на місці чату / шторкою (смужка «Мій графік» без пасу). */
   openPassInfoBoard(): void;
   openPassInfo(): void;
+  /** «Замінити» на слоті поясу, поки відкрите вікно «Замінити в графіку?». */
+  replaceInSchedule(outIso: string): void;
 }
+
+const countryName = (iso: string) => getData().countriesByIso.get(iso)?.name.uk ?? iso;
 
 export function useOfferWindows(): PassWindowsApi {
   const overlay = useOverlay();
   const { open, current } = overlay;
   const clock = useClock();
   const tPass = useTranslations('pass');
+  const tS = useTranslations('schedulePage');
   const currentRef = useRef(current);
   useEffect(() => {
     currentRef.current = current;
@@ -78,11 +89,54 @@ export function useOfferWindows(): PassWindowsApi {
     [open, deps, tPass],
   );
 
+  const replaceInSchedule = useCallback(
+    (outIso: string) => {
+      const eventId = useScheduleReplace.getState().eventId;
+      const event = eventId ? getData().eventsById.get(eventId) : undefined;
+      if (!eventId || !event) return;
+      const guest = useGuestStore.getState();
+      const prev = guest.schedule;
+      guest.replaceSchedule(outIso, eventId);
+      showScheduleToast(tS('toast.replaced', { from: countryName(outIso), to: countryName(event.countryIso) }), prev);
+      overlay.close(SCHEDULE_REPLACE_ID);
+    },
+    [overlay, tS],
+  );
+
+  const openScheduleReplace = useCallback(
+    (eventId: string, back?: () => void) => {
+      const event = getData().eventsById.get(eventId);
+      if (!event) return;
+      useScheduleReplace.setState({ eventId });
+      open({
+        id: SCHEDULE_REPLACE_ID,
+        kind: 'accent',
+        chrome: 'board',
+        title: tS('replaceWin.title'),
+        description: tS('replaceWin.sub', { count: scheduledCountries(useGuestStore.getState().schedule, event.zoneId).length }),
+        onClose: () => useScheduleReplace.setState({ eventId: null }),
+        ...(back ? { onBack: back } : {}),
+        content: (
+          <ScheduleReplaceContent eventId={eventId} onReplace={replaceInSchedule} onCancel={back ?? (() => overlay.close(SCHEDULE_REPLACE_ID))} />
+        ),
+      });
+    },
+    [open, overlay, tS, replaceInSchedule],
+  );
+
   const requestSchedule = useCallback(
-    (eventId: string) => {
+    (eventId: string, _next?: boolean, back?: () => void) => {
       const guest = useGuestStore.getState();
       if (guest.hasPass) {
+        const prev = guest.schedule;
+        const result = scheduleToggleResult(prev, eventId);
+        if (result === 'full') {
+          openScheduleReplace(eventId, back);
+          return;
+        }
         guest.toggleSchedule(eventId);
+        const iso = getData().eventsById.get(eventId)?.countryIso ?? '';
+        showScheduleToast(tS(result === 'added' ? 'toast.added' : 'toast.removed', { country: countryName(iso) }), prev);
         return;
       }
       const event = getData().eventsById.get(eventId);
@@ -97,7 +151,7 @@ export function useOfferWindows(): PassWindowsApi {
       );
       guest.showOffer('pass-gate', eventId, deps.now());
     },
-    [open, deps, tPass, infoTitle],
+    [open, deps, tPass, infoTitle, tS, openScheduleReplace],
   );
 
   const openScheduleGate = useCallback(() => {
@@ -117,5 +171,5 @@ export function useOfferWindows(): PassWindowsApi {
     [],
   );
 
-  return { requestSchedule, openPassGate, openPassInfo, openScheduleGate, openPassInfoBoard };
+  return { requestSchedule, openPassGate, openPassInfo, openScheduleGate, openPassInfoBoard, replaceInSchedule };
 }

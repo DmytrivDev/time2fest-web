@@ -20,7 +20,7 @@ import type {
 } from '@/lib/data/types';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { clearMapHintSeen } from '@/lib/storage/mapHint';
-import { toggleCountryZone } from '@/lib/schedule/countryZone';
+import { replaceCountryZone, toggleCountryZone } from '@/lib/schedule/countryZone';
 
 export const GUEST_STORAGE_KEY = 't2f:guest:v1';
 export const GUEST_VERSION = 1 as const;
@@ -84,7 +84,10 @@ export interface GuestActions {
   dismissOffer(at: number, kind?: OfferKind): void;
   actOffer(acted: 'primary' | 'details', kind?: OfferKind): void;
   hideOffer(): void;
+  /** Календарик: додати країну в поясі чи прибрати; повний пояс (усі слоти зайняті) — без змін. */
   toggleSchedule(eventId: string): void;
+  /** «Замінити в графіку?»: країна `outIso` поясу події поступається місцем країні цієї події. */
+  replaceSchedule(outIso: string, eventId: string): void;
   setSchedule(eventIds: string[]): void;
   setHasPass(v: boolean): void;
   updateFirstRow(eventId: string, patch: Partial<GuestFirstRowEntry> | ((prev: GuestFirstRowEntry) => GuestFirstRowEntry)): void;
@@ -197,6 +200,7 @@ export const useGuestStore = create<GuestStore>()(
       hideOffer: () => set((s) => ({ offers: { ...s.offers, visible: null } })),
       // Графік — це країни: подія тягне за собою інші події тієї самої країни в тому самому поясі (рішення 2026-11-04).
       toggleSchedule: (eventId) => set((s) => ({ schedule: toggleCountryZone(s.schedule, eventId) })),
+      replaceSchedule: (outIso, eventId) => set((s) => ({ schedule: replaceCountryZone(s.schedule, outIso, eventId) })),
       setSchedule: (schedule) => set({ schedule: [...new Set(schedule)] }),
       setHasPass: (hasPass) => set({ hasPass }),
       updateFirstRow: (eventId, patch) =>

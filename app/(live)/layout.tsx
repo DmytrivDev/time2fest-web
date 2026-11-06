@@ -12,6 +12,7 @@ import { LiveAnnouncer } from '@/components/primitives/a11y/LiveAnnouncer';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
 import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
 import { PassPaymentWatcher } from '@/components/pass/PassPaymentWatcher';
+import { ScheduleToast } from '@/components/schedule/ScheduleToast';
 import { TipsPaymentWatcher } from '@/components/tips/TipsPaymentWatcher';
 import { OfflineNotice } from '@/components/shell/Offline';
 import { OverlayManager } from '@/components/shell/OverlayManager';
@@ -43,6 +44,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               <TipsPaymentWatcher />
               {/* Згода на cookies: у DOM одразу після посилань-пропусків (кут/смуга; у потоці — на сторінці з плеєром). */}
               <CookieLayer />
+              {/* «Додано в графік · Повернути» — знизу колонки, ховається над відео (рішення власника 2026-11-06). */}
+              <ScheduleToast />
               {/* TODO: current — з маршруту, коли з’являться сторінки країн. */}
               <ShellHeader current="home" />
               {/* Немає мережі: одна смуга в потоці (не поверх відео); відлік іде далі, зникає сама. */}

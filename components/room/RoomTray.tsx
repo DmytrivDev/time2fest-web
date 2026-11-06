@@ -37,8 +37,8 @@ export function openRoomTray(): void {
 /** Відступ від рядка кнопок під відео (панель ховається раніше, ніж підійде впритул). */
 const GAP = 16;
 
-/** Чи панель лягла б на рядок дій плеєра (видимий `[data-action-row]`). */
-function useOverActions(el: HTMLElement | null, active: boolean): boolean {
+/** Чи панель лягла б на рядок дій плеєра (видимий `[data-action-row]`). Тим самим ховається тостер графіка. */
+export function useOverActions(el: HTMLElement | null, active: boolean): boolean {
   const [over, setOver] = useState(false);
   useEffect(() => {
     if (!active || !el) return;

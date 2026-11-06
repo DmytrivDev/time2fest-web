@@ -33,6 +33,23 @@
   background: var(--color-highlight);
   box-shadow: 0 0 0 1.5px var(--color-background), 0 0 0 3px var(--color-highlight), 0 0 0 4.5px var(--color-background), 0 0 0 6px var(--color-highlight);
 }
+/* Промінь до інших країн поясу (варіант B «вузол і промені», «Мій графік»): тонший і дрібніший пунктир. */
+.t2f-pathmap-line[data-ray] {
+  stroke-width: 1.5;
+  stroke-dasharray: 2 4;
+}
+/* Пояс зараз в ефірі: червоне кільце з ореолом. */
+.t2f-pathmap-dot-now {
+  border: 2.5px solid var(--color-primary);
+  background: var(--color-background);
+  box-shadow: 0 0 0 3px var(--color-background), 0 0 0 4.5px rgb(229 72 77 / 0.55);
+}
+.t2f-pathmap-legend-now {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-primary);
+}
 .t2f-pathmap-legend-ring {
   border-radius: 9999px;
   width: 4px;

@@ -1,0 +1,792 @@
+/* «Мій графік» за дошками `Desk-Schedule-New` / `Phone-Schedule-New` v4 (рішення власника 2026-11-06). */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0 40px;
+}
+@media (max-width: 767.98px) {
+  .page {
+    gap: 20px;
+    padding: 16px 16px 24px;
+  }
+}
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.subtitle {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+.inlineLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (max-width: 767.98px) {
+  .h1 {
+    font-size: 26px;
+  }
+  .subtitle {
+    font-size: 14px;
+  }
+}
+
+/* ── Твій шлях ───────────────────────────────────────────────────────── */
+.pathCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.pathHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+.pathTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.pathCounts {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.passportLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.map {
+  border-radius: 12px;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+}
+.legRing {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-text-secondary);
+  border-radius: var(--radius-full);
+}
+.legGold {
+  color: var(--color-highlight);
+  font-weight: 600;
+}
+.route {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  font-size: 14px;
+}
+.routeNext {
+  color: var(--color-text-muted);
+}
+.tease {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgb(252 226 134 / 0.3);
+  border-radius: 12px;
+  background: var(--color-highlight-tint);
+}
+.teaseIcon {
+  flex: none;
+  margin-top: 1px;
+  color: var(--color-highlight);
+}
+.teaseText {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.teaseBtn {
+  flex: none;
+  align-self: center;
+}
+@media (max-width: 767.98px) {
+  .pathCard {
+    padding: 14px;
+  }
+  .pathTitle {
+    font-size: 18px;
+  }
+  /* Телефон: «Твій шлях» і «Паспорт ›» — один рядок, лічильники — нижче (правка власника 2026-11-06). */
+  .pathCounts {
+    order: 3;
+    width: 100%;
+    font-size: 13px;
+  }
+  .legend {
+    gap: 4px 12px;
+  }
+  .route {
+    flex-direction: column;
+  }
+  .tease {
+    flex-wrap: wrap;
+  }
+  .teaseBtn {
+    margin-left: 30px;
+    align-self: flex-start;
+  }
+}
+
+/* ── Пояси ───────────────────────────────────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.sectionSub {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.zones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.zone {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zoneOpen {
+  border-left: 3px solid var(--color-zone-future);
+  padding-bottom: 14px;
+}
+.zoneOpen[data-state='live'] {
+  border-left-color: var(--color-zone-live);
+}
+.zoneOpen[data-state='next'] {
+  border-left-color: var(--color-zone-next);
+}
+.zoneOpen[data-state='past'] {
+  border-left-color: var(--color-border-strong);
+}
+.zonePast {
+  opacity: 0.72;
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 16px 10px 18px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+}
+.headBtn {
+  cursor: pointer;
+}
+.headBtn:hover {
+  background: var(--color-surface-raised);
+}
+.zoneOpen .head {
+  padding-left: 15px;
+}
+.sw {
+  width: 28px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+}
+.when {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  gap: 14px;
+}
+.timeLine {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 150px;
+}
+.time {
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tag {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tagLive {
+  color: var(--color-zone-live);
+}
+.tagNext {
+  color: var(--color-zone-next);
+}
+.utc {
+  width: 72px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.rings {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+.ring {
+  display: inline-flex;
+  border-radius: var(--radius-full);
+}
+.ring[data-state='stamp'],
+.ring[data-state='firstRow'] {
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 3.5px var(--color-highlight);
+}
+.ring[data-state='missed'] {
+  opacity: 0.45;
+}
+.ringFree {
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 1.5px dashed #5a5a64; /* дошка: порожній слот */
+  border-radius: var(--radius-full);
+}
+.headSpacer {
+  flex: 1;
+}
+.count {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.chev {
+  flex: none;
+  color: var(--color-text-secondary);
+}
+
+/* Розгорнутий пояс: слоти в ряд, однакової висоти. */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 2px 16px 0 15px;
+  list-style: none;
+}
+.slot,
+.slotFreeItem {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+.slot {
+  flex-direction: column;
+  border: 1px solid #3a3a42; /* дошка */
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+}
+.slot:hover {
+  border-color: rgb(252 226 134 / 0.5);
+}
+.slotGold {
+  border-color: rgb(252 226 134 / 0.5);
+}
+.slotMissed {
+  opacity: 0.6;
+}
+.slotLink {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.slotName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding-right: 22px;
+}
+.slotName b {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.slotCity {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.slotState {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.slotStateLive {
+  color: var(--color-primary);
+}
+.slotStateGold {
+  color: var(--color-highlight);
+}
+.ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* «×» — лише при наведенні чи фокусі; на телефоні немає (правка власника 2026-11-06). */
+.slotX {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: #3a3a42; /* дошка */
+  color: var(--color-text);
+  opacity: 0;
+  cursor: pointer;
+}
+.slot:hover .slotX,
+.slotX:focus-visible {
+  opacity: 1;
+}
+.slotReplace {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 32px;
+  margin: 0 12px 10px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.slotFree {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 12px;
+  border: 1px dashed #4a4a52; /* дошка: вільне місце */
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.slotFree:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.slotFree:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.addShort {
+  display: none;
+}
+.rest {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media (max-width: 767.98px) {
+  .h2 {
+    font-size: 18px;
+  }
+  .head {
+    gap: 8px;
+    min-height: 52px;
+    padding: 6px 12px 6px 14px;
+  }
+  .zoneOpen .head {
+    padding-left: 11px;
+  }
+  .zoneOpen {
+    padding-bottom: 12px;
+  }
+  /* Телефон: час і «ЗАРАЗ» — перший рядок, UTC — під ним (правка власника 2026-11-06), кружки й шеврон — праворуч. */
+  .when {
+    flex-direction: column;
+    gap: 0;
+    line-height: 1.15;
+  }
+  .timeLine {
+    gap: 6px;
+    width: auto;
+  }
+  .time {
+    font-size: 16px;
+  }
+  .tag {
+    font-size: 11px;
+  }
+  .utc {
+    width: auto;
+    font-size: 11px;
+  }
+  .rings {
+    order: 4;
+    gap: 6px;
+  }
+  .count {
+    display: none;
+  }
+  .chev {
+    order: 5;
+  }
+  /* 2 × 2 слоти. */
+  .slots {
+    grid-template-columns: repeat(min(var(--cols, 4), 2), minmax(0, 1fr));
+    gap: 8px;
+    padding: 0 12px 0 11px;
+  }
+  .slotX {
+    display: none;
+  }
+  .slotName {
+    padding-right: 0;
+  }
+  .addLong {
+    display: none;
+  }
+  .addShort {
+    display: inline;
+  }
+}
+
+/* ── Вікна на місці чату ─────────────────────────────────────────────── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #4a4a52; /* дошка */
+  border-radius: 12px;
+}
+.search:focus-within {
+  border-color: var(--color-text-muted);
+}
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+}
+.panelNote {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.groupTitle {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cardLink {
+  text-decoration: none;
+}
+.thumbIcon {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: #8e9ab8; /* дошка: значок на заглушці мініатюри */
+}
+.panelLabel {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.replaceList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.replaceRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.replaceRow:hover {
+  border-color: rgb(252 226 134 / 0.5);
+}
+.replaceText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.replaceText b {
+  font-size: 14px;
+  line-height: 1.25;
+}
+.replaceState {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+.replaceBtn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.replaceRow:hover .replaceBtn {
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+
+/* ── Тостер ──────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 16px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 0 8px 0 16px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.55);
+  color: var(--color-text);
+  font-size: 15px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.toastPhone {
+  right: 12px;
+  left: 12px;
+}
+html[data-has-chat-dock] .toastPhone {
+  bottom: calc(var(--chat-dock-h, 0px) + 12px);
+}
+.toast[data-hidden='true'] {
+  opacity: 0;
+  transform: translateY(calc(100% + 24px));
+  pointer-events: none;
+}
+.toastIcon {
+  display: inline-flex;
+  flex: none;
+  color: var(--color-highlight);
+}
+.toastText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toastUndo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.toastUndo:hover {
+  background: var(--color-surface);
+}
+.toastBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--color-text-muted);
+  transform-origin: left;
+  animation: t2f-schedule-toast 6s linear forwards;
+}
+@keyframes t2f-schedule-toast {
+  to {
+    transform: scaleX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: opacity 0.2s ease;
+  }
+  .toast[data-hidden='true'] {
+    transform: none;
+  }
+  .toastBar {
+    animation: none;
+  }
+}
+:global(:root[data-reduce-motion='true']) .toast {
+  transition: opacity 0.2s ease;
+}
+:global(:root[data-reduce-motion='true']) .toast[data-hidden='true'] {
+  transform: none;
+}
+:global(:root[data-reduce-motion='true']) .toastBar {
+  animation: none;
+}
