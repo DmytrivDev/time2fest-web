@@ -123,7 +123,8 @@ export function TvTimeline({ items, onAirId, dimOutside = false, zonesDone, zone
     const el = stripRef.current;
     if (!el) return;
     const current = el.querySelector<HTMLElement>('[aria-current="true"]');
-    el.scrollLeft = current ? Math.max(0, current.offsetLeft - el.offsetLeft - 16) : 0;
+    const pad = parseFloat(getComputedStyle(el).scrollPaddingInlineStart) || 0;
+    el.scrollLeft = current ? Math.max(0, current.offsetLeft - el.offsetLeft - pad) : 0;
   }, [onAirId, filter, visible.length]);
 
   return (

@@ -16,7 +16,8 @@
  * правій колонці, вищого — таймлайну (без чорних смуг).
  *
  * Компактний таймлайн (власник 2026-11-06): коли вікно ширше за 16:9 і відео на всю ширину колонки не влазить по висоті
- * (`data-roomy`), картки таймлайну — лише місто й календарик, а відео більше. Людина перейшла до таймлайну (`data-tl-active`) —
+ * (`data-roomy`), картки таймлайну — лише місто й календарик, а відео більше; ліва колонка тоді рівно такої ширини, як
+ * відео (`tvLeftWidth`), — відео на рівні із заголовком і фільтром таймлайну, решту ширини бере права колонка. Людина перейшла до таймлайну (`data-tl-active`) —
  * картки повні, відео нижче й вужче, стоїть по центру місця для відео (сіра рамка на всю ширину). Сцена відліку не звужується,
  * лише стає нижчою. На екрані 16:9 відео й повний таймлайн влазять і так — нічого не змінюється.
  *
@@ -68,13 +69,24 @@ function useIsPhone(): boolean | null {
 export const TV_DESIGN_W = 1920;
 export const TV_DESIGN_H = 1080;
 
-/** Висота повного таймлайну з полями лівої колонки в пікселях макета (tv.module.css: .left, .timeline, .strip, .hintRow). */
-const TIMELINE_FULL_H = 350 + 60;
+/** Поля лівої колонки по вертикалі й по горизонталі (tv.module.css: .left). */
+const LEFT_PAD_V = 60;
+const LEFT_PAD_H = 64;
+/** Висота таймлайну з відступом зверху: повного й компактного (картки 156 і 66 px; .timeline, .strip, .hintRow). */
+const TIMELINE_FULL_H = 353;
+const TIMELINE_COMPACT_H = 263;
+/** Кілька пікселів нестачі не роблять вікно «просторим»: на 16:9 відео лише трохи вужче, розкладка — як на дошці. */
+const ROOMY_TOLERANCE = 16;
 
-/** Чи відео на всю ширину лівої колонки (65 %, поля 32) не влазить по висоті поруч із повним таймлайном. */
+/** Чи відео на всю ширину лівої колонки (65 %) не влазить по висоті поруч із повним таймлайном. */
 export function tvRoomy(width: number, height: number): boolean {
-  const inner = width * 0.65 - 64;
-  return (inner * 9) / 16 > height - TIMELINE_FULL_H;
+  const inner = width * 0.65 - LEFT_PAD_H;
+  return (inner * 9) / 16 > height - LEFT_PAD_V - TIMELINE_FULL_H + ROOMY_TOLERANCE;
+}
+
+/** Ширина лівої колонки на просторому вікні: відео над компактним таймлайном займає її всю. */
+export function tvLeftWidth(height: number): number {
+  return ((height - LEFT_PAD_V - TIMELINE_COMPACT_H) * 16) / 9 + LEFT_PAD_H;
 }
 
 /** Масштаб і розмір макета для вікна: макет цілий уміщується, зайве місце — ширині чи висоті макета. */
@@ -96,7 +108,9 @@ function useTvScale(ref: RefObject<HTMLDivElement | null>) {
       el.style.setProperty('--tv-s', String(scale));
       el.style.setProperty('--tv-w', `${width}px`);
       el.style.setProperty('--tv-h', `${height}px`);
-      el.toggleAttribute('data-roomy', tvRoomy(width, height));
+      const roomy = tvRoomy(width, height);
+      el.toggleAttribute('data-roomy', roomy);
+      el.style.setProperty('--tv-cols', roomy ? `${tvLeftWidth(height)}px minmax(0, 1fr)` : '65fr 35fr');
     };
     apply();
     window.addEventListener('resize', apply);

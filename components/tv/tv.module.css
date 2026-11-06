@@ -12,10 +12,11 @@
   overflow: clip;
   background: var(--color-background);
 }
-/* Колонки 65 / 35, як на дошці (1248 + 672 при 1920). Ширший екран ділить зайве так само. */
+/* Колонки 65 / 35, як на дошці (1248 + 672 при 1920). Просторе вікно (ширше за 16:9): ліва колонка — рівно ширина відео
+   над компактним таймлайном, решта — правій (`--tv-cols` ставить `useTvScale`). */
 .root {
   display: grid;
-  grid-template-columns: 65fr 35fr;
+  grid-template-columns: var(--tv-cols, 65fr 35fr);
   width: var(--tv-w, 1920px);
   height: var(--tv-h, 1080px);
   overflow: hidden;
@@ -188,19 +189,21 @@
   box-shadow: 0 0 0 4px var(--color-background);
 }
 
-/* Смуга карток: гортається фокусом пульта (по одній) і мишею; поле зверху — для позначки «Програма», з усіх боків —
-   для контуру фокуса (4 + 2 px і тінь ще 2 px), щоб крайня картка не обрізала жовту рамку. */
+/* Смуга карток: гортається фокусом пульта (по одній) і мишею. Іде до країв лівої колонки (ліворуч — до краю екрана,
+   праворуч — до правої колонки): картки за межами видно, вони затемнюються до країв, а не обрізаються. Поле зверху —
+   для позначки «Програма», знизу й з боків — для контуру фокуса; картка у фокусі завжди поза затемненням (`scroll-padding`). */
 .strip {
   display: flex;
   flex: none;
   gap: 12px;
   min-width: 0;
-  margin: 10px -16px 0;
-  padding: 14px 16px 16px;
+  margin: 10px -32px 0;
+  padding: 14px 32px 12px;
   list-style: none;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-padding-inline: 16px;
+  scroll-padding-inline: 32px;
+  mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent);
   scrollbar-width: none;
   cursor: grab;
   user-select: none;
@@ -364,13 +367,15 @@
   color: var(--color-text-secondary);
   font-size: var(--text-countdown-inline);
 }
+/* Поля 12 px (з від’ємним відступом) — місце для контуру фокуса: кнопки біля краю не обрізаються. */
 .sidebarBody {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   gap: 14px;
   min-height: 0;
-  margin: 18px 0 14px;
+  margin: 6px -12px 2px;
+  padding: 12px;
   overflow: hidden;
 }
 .content {
@@ -378,7 +383,8 @@
   flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
-  margin-top: 6px;
+  margin: -6px -12px -12px;
+  padding: 12px;
   overflow: hidden;
 }
 
@@ -666,21 +672,37 @@
   font-weight: 800;
 }
 
-/* «Змінити трансляцію»: список трансляцій поясу; фокус пульта веде, список їде за ним. */
+/* «Змінити трансляцію»: список трансляцій поясу; фокус пульта веде, список їде за ним; мишею — колесо й тонка смуга
+   прокрутки, як у чаті. Поля — для контуру фокуса. */
 .streamList {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  margin: 10px -6px 8px;
-  padding: 4px 6px;
+  margin: 0 -12px 4px;
+  padding: 12px;
   list-style: none;
   overflow-y: auto;
-  scrollbar-width: none;
+  scroll-padding-block: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+@supports selector(::-webkit-scrollbar) {
+  .streamList {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
 }
 .streamList::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+}
+.streamList::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+}
+.streamList::-webkit-scrollbar-track {
+  background: transparent;
 }
 .streamRow {
   display: flex;

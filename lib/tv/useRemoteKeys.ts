@@ -85,8 +85,6 @@ function scrollStep(el: HTMLElement, dir: TvDirection): boolean {
 
 const reducedMotion = () => document.documentElement.dataset.reduceMotion === 'true';
 
-/** Поле від краю смуги до картки у фокусі: контур фокуса (4 + 2 px) і тінь не обрізаються. */
-const STRIP_PAD = 14;
 
 /**
  * Горизонтальна смуга (`data-tv-strip`): гортаємо рівно на стільки, щоб картка стала видимою з полем, — по одній картці
@@ -97,11 +95,13 @@ export function revealInStrip(el: HTMLElement, strip: HTMLElement, smooth: boole
   const s = strip.getBoundingClientRect();
   const r = el.getBoundingClientRect();
   const scale = s.width / strip.offsetWidth || 1;
+  // Поле — `scroll-padding` смуги: картка у фокусі не заходить у затемнені краї.
+  const pad = parseFloat(getComputedStyle(strip).scrollPaddingInlineStart) || 0;
   const left = (r.left - s.left) / scale;
   const right = (r.right - s.left) / scale;
   let delta = 0;
-  if (left < STRIP_PAD) delta = left - STRIP_PAD;
-  else if (right > strip.clientWidth - STRIP_PAD) delta = right - (strip.clientWidth - STRIP_PAD);
+  if (left < pad) delta = left - pad;
+  else if (right > strip.clientWidth - pad) delta = right - (strip.clientWidth - pad);
   if (delta) strip.scrollTo({ left: strip.scrollLeft + delta, behavior: smooth ? 'smooth' : 'auto' });
 }
 
@@ -177,7 +177,11 @@ export function useRemoteKeys({ rootRef, onExit, onBack, ready = true }: RemoteK
         first?.focus();
         return;
       }
-      const next = pickNext(active.getBoundingClientRect(), candidatesIn(root, active), dir);
+      // ← → у смузі таймлайну — спершу наступна картка смуги (а не кнопка правої колонки, що ближча за картку за краєм).
+      const strip = dir === 'left' || dir === 'right' ? active.closest<HTMLElement>('[data-tv-strip]') : null;
+      const next =
+        (strip ? pickNext(active.getBoundingClientRect(), candidatesIn(strip, active), dir) : null) ??
+        pickNext(active.getBoundingClientRect(), candidatesIn(root, active), dir);
       if (next) {
         // Без прокрутки браузера (`focus()` ставить елемент по центру — смуга стрибала на 3 картки): гортаємо самі
         // рівно настільки, щоб картка стала видимою, — по одній на натискання (поле — `scroll-padding` смуги).

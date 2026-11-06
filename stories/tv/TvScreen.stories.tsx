@@ -6,12 +6,13 @@ import { TvFullscreenHint, TvKeyHints } from '@/components/tv/TvKeyHints';
 import { TvReplayButton } from '@/components/tv/TvSidebar';
 import { TvScene } from '@/components/tv/TvScene';
 import { TvScreen, type TvScreenProps } from '@/components/tv/TvScreen';
+import { TvStreamsNow } from '@/components/tv/TvPanels';
 import { TvStampCard } from '@/components/tv/TvStampCard';
 import { TvTimelineCard } from '@/components/tv/TvTimelineCard';
 import { getData } from '@/lib/data/load';
 import { buildStamp } from '@/lib/engine/presence';
 import { BroadcastContext, computeBroadcast, type BroadcastState } from '@/lib/player/BroadcastController';
-import { tvTimeline } from '@/lib/tv/tvData';
+import { tvTimeline, zoneLiveRows } from '@/lib/tv/tvData';
 import { useGuestStore } from '@/stores/guest';
 
 /**
@@ -193,6 +194,25 @@ export const FestivalOver: Story = {
 };
 
 /** Частини окремо: що саме складає колонку й сцену. */
+/** «Змінити трансляцію», коли трансляцій поясу більше, ніж влазить: список гортається (пульт ↓, колесо миші, смуга). */
+export const ManyStreams: StoryObj = {
+  name: '«Змінити трансляцію» — 8 трансляцій поясу, список гортається',
+  globals: { surface: 'tv', viewport: { value: 'tv', isRotated: false } },
+  parameters: at(-22 * MIN),
+  render: () => {
+    const data = getData();
+    const rows = zoneLiveRows(data, data.eventsById.get('evt_london_2027')!.zoneId, LONDON - 22 * MIN);
+    const many = [...rows, ...rows.map((r) => ({ ...r, id: `${r.id}-2` }))];
+    return (
+      <Stage at={LONDON - 22 * MIN}>
+        <div data-surface="tv" className="flex h-180 w-168 flex-col bg-background p-10">
+          <TvStreamsNow rows={many} playingId={rows[0]?.id ?? null} onWatch={() => undefined} onClose={() => undefined} />
+        </div>
+      </Stage>
+    );
+  },
+};
+
 export const Parts: StoryObj = {
   name: 'частини: TvTimelineCard (статуси), TvStampCard, TvScene, TvControlBar, «Подивитися північ ще раз», підказки',
   globals: { surface: 'tv', viewport: { value: 'tv', isRotated: false } },

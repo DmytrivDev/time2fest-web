@@ -24,8 +24,7 @@ test.describe.configure({ timeout: 90_000 });
 
 const LONDON_MIDNIGHT = Date.parse('2027-01-01T00:00:00Z');
 const STAMP_AT = LONDON_MIDNIGHT + 15_000;
-/** Поля екрана (32 px) мінус поле смуги під контур фокуса (16 px): картки, що гортаються, доходять до нього. */
-const SAFE_X = 16;
+const SAFE_X = 24;
 const SAFE_Y = 24;
 const MIN_FONT_PX = 12;
 const MIN_FOCUS_PX = 4;
@@ -111,7 +110,8 @@ async function outsideSafeZone(page: Page): Promise<string[]> {
       const selector =
         'a, button, h1, h2, h3, p, li, time, figure, [role="progressbar"], [role="timer"], [role="status"], [data-tv-card], [data-stamp]';
       for (const el of document.querySelectorAll(`[data-tv-root] ${selector}`)) {
-        if (el.closest('[data-player-host], [data-player-slot], [data-tv-scene]')) continue;
+        // Смуга таймлайну свідомо йде до краю екрана: картки за межами затемнюються, а не обрізаються.
+        if (el.closest('[data-player-host], [data-player-slot], [data-tv-scene], [data-tv-strip]')) continue;
         const cs = getComputedStyle(el);
         if (cs.visibility === 'hidden') continue;
         const r = el.getBoundingClientRect();
@@ -370,7 +370,8 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     const firstVisible = await list.evaluate((el) => {
       const left = el.getBoundingClientRect().left;
       const cards = [...el.querySelectorAll<HTMLElement>('[data-tv-card]')];
-      return cards.find((c) => c.getBoundingClientRect().right > left + 4)?.textContent ?? '';
+      // Поза затемненим краєм смуги (32 px).
+      return cards.find((c) => c.getBoundingClientRect().left > left + 20)?.textContent ?? '';
     });
     expect(firstVisible).toContain('Лондон');
 
