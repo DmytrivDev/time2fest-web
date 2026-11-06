@@ -172,12 +172,13 @@ test.describe('US5 · модуль «Перший ряд»', () => {
 });
 
 test.describe('US5 · ряд один на пояс', () => {
-  test('сторінка країни іншого поясу (Бразилія) показує той самий ряд поточного поясу UTC+0', async ({ page }) => {
+  test('сторінка країни показує ряд власного поясу (Бразилія — не UTC+0)', async ({ page }) => {
+    // Власник 2026-11-06: сторінка країни — ряд поясу країни; головна й кімната — ряд поточного поясу.
     const br = countryList.find((c) => c.iso === 'BR')?.slug ?? 'braziliia';
     await start(page, OPEN_AT, `/country/${br}/`);
     const s = strip(page);
-    await expect(s).toHaveAttribute('data-event-id', LONDON.id);
-    await expect(s).toContainText('UTC+0 · Лондон');
+    await expect(s).not.toHaveAttribute('data-event-id', LONDON.id);
+    await expect(s).toContainText(/UTC−\d/);
   });
 
   test('головна в той самий момент — той самий ряд', async ({ page }) => {

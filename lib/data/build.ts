@@ -69,6 +69,23 @@ export function buildDataset(
 
   zones.sort((a, b) => a.midnightMs - b.midnightMs);
 
+  // «Перший ряд» — у кожному поясі (власник 2026-11-06): пояс, де в розкладі немає жодної події з «Першим рядом»
+  // (здебільшого — без трансляцій), отримує ряд на головному святкуванні поясу (далі — найпопулярнішому). Чужих місць
+  // для нього в імітації немає — ряд порожній, і це пропозиція стати першим.
+  const withRow = new Set(events.filter((e) => e.firstRow?.saleEnabled).map((e) => e.zoneId));
+  const carrier = new Map<string, (typeof events)[number]>();
+  for (const e of events) {
+    if (withRow.has(e.zoneId)) continue;
+    const cur = carrier.get(e.zoneId);
+    const better =
+      !cur ||
+      (e.isMainCelebration !== cur.isMainCelebration
+        ? e.isMainCelebration
+        : (e.popularity ?? 0) > (cur.popularity ?? 0));
+    if (better) carrier.set(e.zoneId, e);
+  }
+  for (const e of carrier.values()) e.firstRow = { saleEnabled: true };
+
   const bySlot = new Map<number, SlotGroup>();
   for (const e of events) {
     let g = bySlot.get(e.midnightMs);
