@@ -73,7 +73,7 @@ import { roomShareSvg } from '@/lib/room/shareRoomImage';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useChatDock } from '@/stores/chatDock';
 import { useGuestStore } from '@/stores/guest';
-import { roomLimit, useRoom, useRoomStore, type RoomTarget } from '@/stores/room';
+import { posOf, roomLimit, useRoom, useRoomStore, type RoomTarget } from '@/stores/room';
 import { RoomHowTo } from './RoomHowTo';
 import { RoomReplacePanel } from './RoomReplacePanel';
 import { SlotTile, UndoTile, type SlotState } from './RoomSlots';
@@ -112,10 +112,33 @@ function flagOf(data: Dataset, eventId: string): string {
   return c?.flagCode ?? ev?.countryIso.toLowerCase() ?? '';
 }
 
-/** Посилання «Поділитися кімнатою»: `?w=` — джерела вікон у порядку сітки. */
-function roomShareUrl(windows: readonly GuestRoomWindow[]): string {
-  const origin = typeof window !== 'undefined' ? window.location.origin : `https://${SITE_HOST}`;
-  return `${origin}/room/?w=${windows.map((w) => encodeURIComponent(w.sourceId)).join(',')}`;
+/**
+ * Посилання «Поділитися кімнатою»: `?w=` — джерела за місцями сітки (0 — верхнє ліве … 3 — нижнє праве), порожнє місце —
+ * порожній елемент: `?w=a,,,b` — вікна на місцях 1 і 4. Друг бачить трансляції на тих самих місцях.
+ */
+export function roomShareUrl(windows: readonly GuestRoomWindow[], origin = typeof window !== 'undefined' ? window.location.origin : `https://${SITE_HOST}`): string {
+  const byPos: string[] = [];
+  windows.forEach((w, i) => {
+    byPos[posOf(w, i)] = encodeURIComponent(w.sourceId);
+  });
+  return `${origin}/room/?w=${Array.from(byPos, (x) => x ?? '').join(',')}`;
+}
+
+/** `?w=` → вікна з місцями сітки; невідомі джерела й повтори пропускаємо, місця інших вікон не зсуваються. */
+export function parseRoomShare(raw: string, data: Pick<Dataset, 'chainsByEventId'>): GuestRoomWindow[] {
+  const list: GuestRoomWindow[] = [];
+  raw.split(',').forEach((part, pos) => {
+    if (!part || pos > 3) return;
+    const id = decodeURIComponent(part);
+    if (list.some((w) => w.sourceId === id)) return;
+    for (const [eventId, chain] of data.chainsByEventId) {
+      if (chain.sources.some((x) => x.id === id)) {
+        list.push({ slot: list.length, sourceId: id, eventId, pos });
+        return;
+      }
+    }
+  });
+  return list;
 }
 
 /** Чат розгорнуто (телефон) — для згортання вікна без звуку. */
@@ -169,15 +192,7 @@ export function RoomLive() {
     const raw = searchParams?.get('w');
     if (!raw) return;
     sharedRef.current = true;
-    const list: GuestRoomWindow[] = [];
-    for (const id of raw.split(',').map(decodeURIComponent)) {
-      for (const [eventId, chain] of data.chainsByEventId) {
-        if (chain.sources.some((x) => x.id === id) && !list.some((w) => w.sourceId === id)) {
-          list.push({ slot: list.length, sourceId: id, eventId });
-          break;
-        }
-      }
-    }
+    const list = parseRoomShare(raw, data);
     if (!list.length) return;
     useGuestStore.getState().setRoomWindows(list);
     useGuestStore.getState().setSoundSlot(0);
@@ -295,7 +310,7 @@ export function RoomLive() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Клавіші 1–4 — звук у вікно на цьому місці (не в полях введення).
+  // Клавіші 1–4 — звук у вікно на цьому місці сітки (1 — верхнє ліве … 4 — нижнє праве; порожнє місце — нічого), не в полях введення.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
@@ -305,7 +320,7 @@ export function RoomLive() {
       const n = Number(e.key);
       if (!Number.isInteger(n) || n < 1 || n > 4) return;
       const { windows: list, soundSlot: cur, moveSound: move } = live.current;
-      const w = list[n - 1];
+      const w = list.find((x, i) => posOf(x, i) === n - 1);
       if (!w || list.length < 2 || w.slot === cur) return;
       move(w.slot, { apply: true });
     };
@@ -518,7 +533,7 @@ export function RoomLive() {
           }}
           windows={windows.map((w, i) => ({
             slot: w.slot,
-            position: i + 1,
+            position: posOf(w, i) + 1,
             title: titleOf(w),
             flagCode: flagOf(data, w.eventId),
             thumb: thumbOf({ id: w.sourceId, eventId: w.eventId }),

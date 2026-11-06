@@ -3,7 +3,8 @@
 /**
  * TvScreen (S-TV, C22, дошка `TV-Party-New`): склад сторінки `/tv` — ліворуч відео 16:9, «Прогрес свята» і таймлайн
  * (завжди відкритий), праворуч `TvSidebar`. Хедера, футера й чату немає; на відео нічого немає.
- * На телефоні режиму вечірки немає — інформаційна сторінка (`TvPhoneInfo`, рішення 2026-11-06).
+ * На телефоні режиму вечірки немає — перехід на інформаційну сторінку сайту `/tv-info/` (`TvPhoneInfo`, рішення 2026-11-06):
+ * там шапка, чат і решта сайту, а відео не вантажиться.
  *
  * Дані ефіру — з `useBroadcast()` (один `BroadcastController` у макеті `app/tv/layout.tsx`): «Усе свято» — той самий ефір,
  * що головна; «Мій графік» — ефір бере події графіка (`setPrefer`); обрана з таймлайну чи «Змінити трансляцію» трансляція
@@ -44,7 +45,6 @@ import { useRemoteKeys } from '@/lib/tv/useRemoteKeys';
 import { useGuestStore } from '@/stores/guest';
 import { useTvPrefs } from '@/stores/tv';
 import { TvKeyHints } from './TvKeyHints';
-import { TvPhoneInfo } from './TvPhoneInfo';
 import { TvScene } from './TvScene';
 import { TvSidebar, type TvPanel } from './TvSidebar';
 import { TvTimeline } from './TvTimeline';
@@ -146,12 +146,15 @@ export interface TvScreenProps {
 export function TvScreen(props: TvScreenProps = {}) {
   const phone = useIsPhone();
   const { suspend } = useBroadcast();
+  const router = useRouter();
   // Плеєр на `/tv` стоїть на паузі, поки не відомо, що це не телефон (`BroadcastController`).
   useEffect(() => {
     if (phone !== null) suspend(phone);
-  }, [phone, suspend]);
-  if (phone === null) return null;
-  return phone ? <TvPhoneInfo /> : <TvParty {...props} />;
+    // Машина часу (`?t=`) переходить разом зі сторінкою.
+    if (phone) router.replace(`/tv-info/${window.location.search}`);
+  }, [phone, suspend, router]);
+  if (phone !== false) return null;
+  return <TvParty {...props} />;
 }
 
 function TvParty({ online, full: fullProp = false }: TvScreenProps) {

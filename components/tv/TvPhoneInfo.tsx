@@ -1,20 +1,20 @@
 'use client';
 
 /**
- * `/tv` на телефоні (дошка `Phone-TV-Info`, рішення 2026-11-06): режиму вечірки на телефоні немає — інформаційна сторінка.
- * Що це за режим, як увімкнути (браузер телевізора, ноутбук + HDMI, трансляція екрана), «Скопіювати посилання» /
- * «Поділитися», «Телефон — твій пульт» і «Скласти графік». Хедер і футер — як на сторінці пасу; плеєра немає.
+ * `/tv-info/` — інформаційна сторінка режиму вечірки (дошка `Phone-TV-Info`, рішення 2026-11-06): `/tv` на телефоні веде сюди.
+ * Що це за режим, як увімкнути (браузер телевізора, ноутбук + HDMI, трансляція екрана), «Скопіювати посилання» і
+ * «Поділитися» (іконка поруч — обидві влазять у 390 px), «Телефон — твій пульт» і «Скласти графік» (→ сторінка
+ * «Мій графік», `/schedule/`). Сторінка в макеті `(live)`: шапка сайту й чат, як на «Країнах і містах» (на телефоні — плашка
+ * згорнутого чату внизу, на десктопі — колонка); плеєра немає.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
+import { PageChat } from '@/components/chat/PageChat';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
-import { Footer } from '@/components/shell/Footer';
-import { Header } from '@/components/shell/Header';
-import { Menu } from '@/components/shell/Menu';
+import { IconButton } from '@/components/primitives/IconButton';
 import { PostcardArt } from '@/components/windows/StampArt';
 import { TV_SHORT_URL, TV_URL } from '@/lib/config/site';
 import styles from './tv.module.css';
@@ -34,10 +34,7 @@ const STEPS: readonly { icon: IconName; key: 'stepTv' | 'stepHdmi' | 'stepCast' 
 
 export function TvPhoneInfo() {
   const t = useTranslations('tv.phone');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const user = useHeaderUser();
-  const hasPass = useHeaderPass();
   const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
   const copy = () => {
@@ -51,10 +48,8 @@ export function TvPhoneInfo() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-body text-text" data-tv-phone="">
-      <Header user={user} hasPass={hasPass} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
-      <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
-      <main id="main" tabIndex={-1} className={cn(styles.phone, 'outline-none')}>
+    <div className="flex flex-col bg-background text-body text-text" data-tv-phone="">
+      <div className={styles.phone}>
         <p className={styles.phoneKicker}>
           <Icon name="tv" size={16} />
           {t('kicker')}
@@ -102,14 +97,10 @@ export function TvPhoneInfo() {
         </ol>
 
         <div className="mt-4 flex gap-2">
-          <Button variant="secondary" iconLeft={copied ? 'check' : 'link'} onClick={copy} className="flex-1" data-action="copy-link">
+          <Button variant="secondary" iconLeft={copied ? 'check' : 'link'} onClick={copy} className="min-w-0 flex-1" data-action="copy-link">
             {copied ? t('copied') : t('copy')}
           </Button>
-          {canShare ? (
-            <Button variant="secondary" iconLeft="share" onClick={share} data-action="share-link">
-              {t('share')}
-            </Button>
-          ) : null}
+          {canShare ? <IconButton icon="share" variant="ring" aria-label={t('share')} onClick={share} data-action="share-link" /> : null}
         </div>
         <p role="status" className="sr-only">
           {copied ? t('copied') : ''}
@@ -117,12 +108,12 @@ export function TvPhoneInfo() {
 
         <p className={styles.phoneNote}>{t.rich('remote', { b: (c) => <b className="text-text">{c}</b> })}</p>
 
-        <NextLink href="/" className={cn('t2f-focus t2f-transition', styles.phoneCta)} data-action="build-schedule">
+        <NextLink href="/schedule/" className={cn('t2f-focus t2f-transition', styles.phoneCta)} data-action="build-schedule">
           <Icon name="calendar" size={18} />
           {t('schedule')}
         </NextLink>
-      </main>
-      <Footer className="mt-0" />
+      </div>
+      <PageChat />
     </div>
   );
 }

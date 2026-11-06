@@ -607,11 +607,17 @@ test.describe('US7 · режим вечірки на ТВ', () => {
   test('телефон: інформаційна сторінка замість режиму вечірки, без плеєра', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0, '/tv/');
+    // `/tv` на телефоні веде на сторінку сайту `/tv-info/` (шапка, чат); машина часу переходить разом.
+    await expect(page).toHaveURL(/\/tv-info\/\?t=/);
     const info = page.locator('[data-tv-phone]');
     await expect(info.getByRole('heading', { level: 1 })).toHaveText('Новий рік на великому екрані — для всієї компанії');
     await expect(info).toContainText('time2fest.com/tv');
     await expect(info.getByRole('button', { name: 'Скопіювати посилання' })).toBeVisible();
-    await expect(info.getByRole('link', { name: 'Скласти графік' })).toBeVisible();
+    await expect(info.getByRole('link', { name: 'Скласти графік' })).toHaveAttribute('href', /\/schedule\//);
+    // Чат доступний — згорнутий внизу; кнопки не виходять за екран.
+    await expect(page.getByRole('button', { name: /Розгорнути чат/ })).toBeVisible();
+    const overflow = await page.evaluate(() => [...document.querySelectorAll('[data-tv-phone] button, [data-tv-phone] a')].some((b) => b.getBoundingClientRect().right > window.innerWidth + 0.5));
+    expect(overflow).toBe(false);
     await expect(page.locator('[data-tv-root]')).toHaveCount(0);
     await expect(page.locator('[data-player-host] iframe')).toHaveCount(0);
     await expectAxeClean(page);

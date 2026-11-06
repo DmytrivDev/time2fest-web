@@ -37,6 +37,8 @@ interface SeedWindow {
   slot: number;
   sourceId: string;
   eventId: string;
+  /** Місце в сітці 0–3 (без нього — за порядком). */
+  pos?: number;
 }
 const L1: SeedWindow = { slot: 0, sourceId: 'src_london_1', eventId: 'evt_london_2027' };
 const L2: SeedWindow = { slot: 1, sourceId: 'src_london_2', eventId: 'evt_london_2027' };
@@ -458,6 +460,28 @@ test.describe('US3 · кімната перегляду', () => {
     expect(Math.abs(after.x - before.x)).toBeLessThan(2);
     expect(Math.abs(after.y - before.y)).toBeLessThan(2);
     await expect(page.locator('[data-room-slot][data-room-pos="2"]')).toHaveCount(1);
+  });
+
+  test('місця сітки: клавіша N — звук у вікно на місці N, порожнє місце — нічого; «Поділитися» зберігає місця', async ({ page, ytStub }) => {
+    test.skip(isPhone(page), 'сітка 2×2 — десктоп');
+    await seedRoom(page, [{ ...L1, pos: 0 }, { ...L2, pos: 3 }], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await ytStub.waitForPlayer();
+    await expect(win(page, 1)).toHaveAttribute('data-room-pos', '3');
+    await page.locator('body').click({ position: { x: 5, y: 5 } });
+    await page.keyboard.press('2');
+    await expect(win(page, 0)).toHaveAttribute('data-sound', '');
+    await page.keyboard.press('4');
+    await expect(win(page, 1)).toHaveAttribute('data-sound', '');
+    await expect(win(page, 0)).not.toHaveAttribute('data-sound', '');
+
+    // Посилання друга: вікна на тих самих місцях (1 і 4), між ними — вільні.
+    const shared = await page.evaluate(() => new URL('/room/?w=src_london_1,,,src_london_2', location.origin).href);
+    const friend = await page.context().newPage();
+    await friend.goto(`${shared}&t=2027-01-01T01%3A50%3A00%2B02%3A00&speed=0`);
+    await expect(friend.locator('[data-room-window][data-room-pos="3"]')).toHaveCount(1);
+    await expect(friend.locator('[data-room-slot][data-room-pos="1"]')).toHaveCount(1);
+    await friend.close();
   });
 
   test('перетягування на вільне місце: вікно переходить туди', async ({ page, ytStub }) => {

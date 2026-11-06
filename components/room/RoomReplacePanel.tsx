@@ -60,7 +60,8 @@ export function RoomReplacePanel({
       <p className={s.hint}>{phone ? t('hintPhone') : t('hint')}</p>
       <ul className={cn('m-0 list-none p-0', s.tiles)}>
         {windows.map((w) => (
-          <li key={w.slot} className="flex min-w-0">
+          // Плитка стоїть на тому самому місці, що вікно в сітці: номер = місце, а не порядок.
+          <li key={w.slot} className="flex min-w-0" style={{ order: w.position }}>
             <button
               type="button"
               data-replace-slot={w.slot}
