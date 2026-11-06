@@ -39,18 +39,16 @@ describe('pickSeatRoomEvent', () => {
 
 describe('seatConflict', () => {
   const now = T0;
-  it('той самий пояс (північ), інша країна й місто', () => {
+  it('той самий пояс (північ), інша подія — блокує', () => {
     expect(seatConflict(events, { b: { seat: 3 } }, events[2]!, now)?.id).toBe('b');
   });
-  it('та сама країна, інший пояс', () => {
+  it('та сама країна чи місто, інший пояс — можна (2026-11-06)', () => {
     const e = [ev('x1', 0, 'x1', 'XX'), ev('x2', 5, 'x2', 'XX')];
-    expect(seatConflict(e, { x1: { seat: 1 } }, e[1]!, now)?.id).toBe('x1');
+    expect(seatConflict(e, { x1: { seat: 1 } }, e[1]!, now)).toBeNull();
+    const y = [ev('y1', 0, 'cityY', 'Y1'), ev('y2', 6, 'cityY', 'Y2')];
+    expect(seatConflict(y, { y1: { seat: 1 } }, y[1]!, now)).toBeNull();
   });
-  it('те саме місто', () => {
-    const e = [ev('y1', 0, 'cityY', 'Y1'), ev('y2', 6, 'cityY', 'Y2')];
-    expect(seatConflict(e, { y1: { seat: 1 } }, e[1]!, now)?.id).toBe('y1');
-  });
-  it('діюче утримання блокує, прострочене — ні; інший пояс, країна й місто — можна', () => {
+  it('діюче утримання того ж ряду блокує, прострочене — ні; інший пояс — можна', () => {
     expect(seatConflict(events, { b: { hold: { seat: 1, until: now + 1000, extended: false } } }, events[2]!, now)?.id).toBe('b');
     expect(seatConflict(events, { b: { hold: { seat: 1, until: now - 1, extended: false } } }, events[2]!, now)).toBeNull();
     expect(seatConflict(events, { a: { seat: 1 } }, events[3]!, now)).toBeNull();

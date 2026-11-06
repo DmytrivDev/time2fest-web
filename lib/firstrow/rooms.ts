@@ -1,7 +1,7 @@
 /**
  * Кімната «Перший ряд» ряду E (рішення 2026-10-28): відкривається через 15 хв після ПОПЕРЕДНЬОЇ півночі (найпізніша
  * різна північ серед переданих подій, раніша за північ E) і лишається відкритою до кінця ночі. Для першої — з відкриття
- * продажу. Тут же правило «одне місце на пояс, місто й країну».
+ * продажу. Тут же правило купівлі: одне місце на ряд (пояс).
  *
  * З 2026-11-05 ряд один на пояс: сюди передаємо ряди поясів (`zoneRows`), тож кімната відкривається тоді ж, коли ряд
  * стає поточним на сайті (через 15 хв після півночі попереднього ряду).
@@ -48,8 +48,9 @@ export function pickSeatRoomEvent<E extends EventLite>(
 }
 
 /**
- * Одне місце на людину в одному поясі (та сама північ), одному місті й одній країні. Повертає подію, де вже є місце
- * (або діюче утримання) і яка блокує купівлю на `target`; `null` — можна.
+ * Рішення 2026-11-06: місце можна купити в «Першому ряду» будь-якого поясу, зокрема кількох поясів однієї країни чи
+ * міста. Єдине обмеження — одне місце на ряд (пояс, та сама північ). Повертає іншу подію того ж ряду, де вже є місце
+ * (або діюче утримання); `null` — можна. Серед `zoneRows` ряд один на пояс, тож на практиці завжди `null`.
  */
 export function seatConflict<E extends EventLite>(
   events: readonly E[],
@@ -63,7 +64,7 @@ export function seatConflict<E extends EventLite>(
     const entry = firstRow[e.id];
     const holds = entry?.seat !== undefined || (!!entry?.hold && entry.hold.until > now);
     if (!holds) continue;
-    if (e.midnightMs === target.midnightMs || e.cityId === target.cityId || e.countryIso === target.countryIso) {
+    if (e.midnightMs === target.midnightMs) {
       if (!found || (entry?.seat !== undefined && firstRow[found.id]?.seat === undefined)) found = e;
     }
   }

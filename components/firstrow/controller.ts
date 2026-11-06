@@ -52,7 +52,7 @@ export function snapshot(event: FirstRowEvent, now: Ms, opts: { reducedMotion?: 
 
 export type OpenResult = 'success' | 'form' | 'returned' | 'pending' | 'soldout' | 'closed' | 'blocked';
 
-/** Подія, де в гостя вже є місце (або утримання) в тому ж поясі, місті чи країні — купівля на `event` заблокована. */
+/** Подія того ж ряду (пояса), де в гостя вже є місце (або утримання) — купівля на `event` заблокована. Інші пояси, зокрема тієї ж країни, не блокують (2026-11-06). */
 export function blockingEvent(event: Pick<FirstRowEvent, 'id'>, now: Ms) {
   const data = getData();
   const target = data.eventsById.get(event.id);
