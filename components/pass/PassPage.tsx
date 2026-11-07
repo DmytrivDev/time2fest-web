@@ -2,16 +2,14 @@
 
 /**
  * S-PASS — сторінка Новорічного пасу `/pass/` за дошками `S-PASS · …` (розділ «Купівля Новорічного пасу», v100):
- * «На головну» (сторінка пасу — не трансляція, правка власника 2026-10-30), герой з квитком і ціною, картка оформлення
+ * Герой з квитком і ціною — першим, на рівні з карткою оформлення («На головну» прибрано, власник 2026-11-07), картка оформлення
  * (усі стани — `PassBuy`), «Що вмикається одразу після оплати» (плитки), «Питання й відповіді».
  * Телефон — одна колонка; десктоп (≥ 1024, дошки v102) — ліва колонка (герой, плитки, питання) і оформлення
  * в закріпленому сайдбарі праворуч, як чат на головній.
  */
 import { useTranslations } from 'next-intl';
-import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
-import { AuthIcon } from '@/components/auth/icons';
 import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { cn } from '@/components/primitives/cn';
@@ -168,10 +166,6 @@ export function PassPage() {
   };
   return (
     <main id="content" tabIndex={-1} className={cn(s.main, 'focus:outline-none')} data-page="S-PASS" data-view={view}>
-      <NextLink href="/" className={cn('t2f-focus t2f-transition', s.backPill)}>
-        <AuthIcon name="chevron-left" size={16} />
-        {t('back')}
-      </NextLink>
       <Hero active={done} />
       <section aria-label={t('buyTitle')} className={cn('t2f-chat-log t2f-slot-body', s.card)} data-block="pass-buy">
         <PassBuy

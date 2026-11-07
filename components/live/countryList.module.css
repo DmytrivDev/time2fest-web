@@ -10,6 +10,7 @@
 @media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
   .page {
     padding-inline: 0;
+    padding-top: 0; /* верх — на рівні з чатом (власник 2026-11-07) */
   }
 }
 

@@ -6,21 +6,6 @@
   gap: 24px;
   padding: 0 0 40px;
 }
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  color: var(--color-text);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
 /* Героїчний блок — як у сторінки пасу. */
 .hero {
   display: flex;
@@ -277,9 +262,6 @@
   .page {
     gap: 16px;
     padding: 16px 16px 24px;
-  }
-  .back {
-    display: none;
   }
   .hero {
     flex-direction: column-reverse;

@@ -32,35 +32,10 @@
     grid-column: 1;
     min-width: 0;
   }
-  .main > a:first-child {
-    justify-self: start;
-  }
   .main > .card {
     grid-column: 2;
     grid-row: 1 / span 4;
   }
-}
-
-/* «На головну» — плашка, а не текст у повітрі (правка власника 2026-10-30). */
-.backPill {
-  align-self: flex-start;
-  min-height: 40px;
-  box-sizing: border-box;
-  padding: 0 14px 0 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 600;
-}
-.backPill:hover {
-  background: var(--color-surface-raised);
-  color: var(--color-text);
 }
 
 /* ---------- герой: квиток, назва, ціна ---------- */
@@ -73,7 +48,7 @@
 }
 .hero {
   position: relative;
-  margin-top: 12px;
+  margin-top: 0; /* «На головну» прибрано (власник 2026-11-07): герой — першим, на рівні з карткою оформлення */
   box-sizing: border-box;
   padding: 20px 16px;
   display: flex;
@@ -137,7 +112,7 @@
 }
 @media (min-width: 1024px) {
   .hero {
-    margin-top: 12px;
+    margin-top: 0;
     padding: 32px 40px;
     flex-direction: row;
     flex-wrap: wrap;

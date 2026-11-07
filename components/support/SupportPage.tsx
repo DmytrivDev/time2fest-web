@@ -124,11 +124,6 @@ export function SupportPage() {
   const faq = (['subscription', 'pass', 'refund', 'noToast'] as const).map((k) => ({ id: k, question: t(`faq.${k}Q`), answer: t(`faq.${k}A`) }));
   return (
     <div id="content" tabIndex={-1} className={cn(s.page, 'focus:outline-none')} data-page="S-SUPPORT">
-      <NextLink href="/" className={cn('t2f-focus', s.back)}>
-        <Icon name="chevron-left" size={14} />
-        {t('back')}
-      </NextLink>
-
       <header className={s.hero}>
         <div aria-hidden="true" className={s.art}>
           <span className={cn(s.artBubble, s.artBack)}>
