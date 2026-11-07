@@ -881,21 +881,46 @@
   .shareRow {
     flex-direction: column;
   }
-  /* Мапа низька — картка пасу під нею, у рамці. */
+  /* Мапа низька — компактна картка пасу внизу, наполовину на мапі: мапу видно, рамка не витягується (власник 2026-11-07).
+     Іконка й заголовок в одному рядку, текст під ними, дві кнопки поруч. */
   .lock {
     position: relative;
     top: auto;
     left: auto;
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 10px;
     width: auto;
-    margin: -40px 12px 12px;
-    padding: 16px;
+    margin: -48px 10px 10px;
+    padding: 12px 14px;
+    text-align: start;
     transform: none;
   }
+  .lockIcon {
+    width: 32px;
+    height: 32px;
+  }
   .lockTitle {
-    font-size: 16px;
+    margin: 0;
+    font-size: 15px;
   }
   .lockText {
+    grid-column: 1 / -1;
+    margin: 0;
     font-size: 13px;
+    line-height: 1.4;
+  }
+  .lockBtns {
+    grid-column: 1 / -1;
+    flex-wrap: nowrap;
+    margin-top: 4px;
+  }
+  .lockBtns > * {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-inline: 12px;
+    white-space: nowrap;
   }
   .grid {
     grid-template-columns: minmax(0, 1fr);

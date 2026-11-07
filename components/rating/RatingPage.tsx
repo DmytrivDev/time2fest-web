@@ -39,7 +39,9 @@ export function RatingPage() {
   const locale = useLocale();
   const ready = useTimeReady();
   const now = useNow();
-  const minute = Math.floor(now / 60_000) * 60_000;
+  // Щосекунди, а не щохвилини: святкування з’являється в рейтингу й «Оціни, де ти був» разом зі штампом, без запізнення
+  // (власник 2026-11-07). Розрахунок легкий — кілька десятків святкувань.
+  const minute = Math.floor(now / 1000) * 1000;
   const stamps = useGuestStore((g) => g.stamps);
   const rate = useGuestStore((g) => g.rate);
   const setRate = useGuestStore((g) => g.setRate);
