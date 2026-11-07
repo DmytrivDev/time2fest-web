@@ -13,7 +13,6 @@
  * - поява й зникнення — як у штампа: місце відкривається порожнім, картка «приземляється»; «×» — картка гасне, потім
  *   місце стягується (`StampMotion.css`).
  */
-import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { usePassDetails } from '@/components/pass/PassWindow';
 import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
@@ -44,9 +43,6 @@ export function OfferBlock({ className }: { className?: string }) {
     return last && last.dismissedAt === undefined ? (last.kind as BlockKind) : null;
   });
   const stampCount = useGuestStore((g) => g.stamps.length);
-  const tOffers = useTranslations('offers');
-  const nick = useGuestStore((g) => g.nick?.trim()) || tOffers('toastGuest');
-  const flagCode = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
   const onGetPass = useOfferGetPass('pass-offer');
   const passDetails = usePassDetails();
   const openTips = useOpenTipsWindow();
@@ -99,10 +95,8 @@ export function OfferBlock({ className }: { className?: string }) {
             />
           ) : (
             <Tips
-              nick={nick}
-              flagCode={flagCode}
               onClose={dismiss}
-              onSupport={(amount, toast) => openTips({ amount, toast })}
+              onSupport={(amount) => openTips({ amount })}
             />
           )}
         </div>

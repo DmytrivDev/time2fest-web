@@ -79,33 +79,29 @@ describe('PassInfo', () => {
   });
 });
 
-describe('Tips — «Скажи тост на весь світ» (рішення 2026-11-01)', () => {
-  it('надзаголовок «Чайові», $2 / $5 / $10 (типово $5), прев’ю тосту — поле з ніком; примітка про email', () => {
-    renderPage(<Tips nick="Олена" flagCode="UA" onClose={() => undefined} />);
+describe('Tips — «Скажи тост на весь світ», спрощений блок (дошка `Desk-Tips-Toast`, 2026-11-07)', () => {
+  it('надзаголовок «Чайові», $2 келих / $5 пляшка ігристого / $10 феєрверк (типово $5), приклад тосту без поля', () => {
+    renderPage(<Tips onClose={() => undefined} />);
     expect(screen.getByRole('heading', { level: 2, name: 'Скажи тост на весь світ' })).toBeInTheDocument();
     expect(screen.getByText('Чайові')).toBeInTheDocument();
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['$2', '$5', '$10']);
+    expect(screen.getAllByRole('radio').map((r) => r.getAttribute('aria-label'))).toEqual(['$2 · келих', '$5 · пляшка ігристого', '$10 · феєрверк']);
+    expect(screen.getByRole('radio', { name: /^\$5/ })).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute('data-variant', 'coral');
-    fireEvent.click(screen.getByRole('radio', { name: '$10' }));
+    fireEvent.click(screen.getByRole('radio', { name: /^\$10/ }));
     expect(screen.getByRole('button', { name: 'Підтримати $10' })).toBeInTheDocument();
-    expect(screen.getByText('Олена')).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Текст твого тосту' })).toHaveValue('🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!');
-    expect(screen.getByText(/Входити не треба — email для квитанції попросить сторінка оплати/)).toBeInTheDocument();
+    // Поля тосту немає — приклад, а тост пишуть у вікні під час оплати.
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.getByText('приклад')).toBeInTheDocument();
+    expect(screen.getByText(/Тост напишеш, поки оплачуєш/)).toBeInTheDocument();
     expect(coralButtons()).toHaveLength(1);
   });
 
-  it('«Підтримати» — передає суму й текст тосту (оплата — у вікні); посилання в тості не пропускаємо', () => {
+  it('«Підтримати» передає суму (тост — у вікні оплати)', () => {
     const onSupport = vi.fn();
     renderPage(<Tips onSupport={onSupport} />);
-    expect(screen.getByText('Гість')).toBeInTheDocument();
-    const field = screen.getByRole('textbox', { name: 'Текст твого тосту' });
-    fireEvent.change(field, { target: { value: 'дивіться www.spam.com' } });
-    expect(screen.getByRole('button', { name: 'Підтримати $5' })).toBeDisabled();
-    fireEvent.change(field, { target: { value: 'За всіх, хто не спить!' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
-    expect(onSupport).toHaveBeenCalledWith(5, 'За всіх, хто не спить!');
-    // Кнопка не змінюється — оплата й «Дякуємо» відбуваються у вікні «Чайові».
-    expect(screen.getByRole('button', { name: 'Підтримати $5' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('radio', { name: /^\$2/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $2' }));
+    expect(onSupport).toHaveBeenCalledWith(2);
   });
 });
 

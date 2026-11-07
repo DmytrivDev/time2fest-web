@@ -9,7 +9,7 @@ const meta = {
   title: 'Вікна/Tips',
   component: Tips,
   globals: { surface: 'phone' },
-  args: { onClose: () => undefined, nick: 'Олена', flagCode: 'UA' },
+  args: { onClose: () => undefined },
   decorators: [
     (Story) => (
       <CoralProvider>
@@ -33,7 +33,7 @@ export const FiveDollars: Story = {
   name: 'вибрано $10 — «Підтримати $10»',
   play: async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(c.getByRole('radio', { name: '$10' }));
+    await userEvent.click(c.getByRole('radio', { name: /^\$10/ }));
     await expect(c.getByRole('button', { name: 'Підтримати $10' })).toBeInTheDocument();
   },
 };

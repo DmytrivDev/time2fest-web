@@ -25,6 +25,7 @@ import type {
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { getData } from '@/lib/data/load';
 import { ratingState } from '@/lib/rating/rating';
+import { worldToasts } from '@/lib/tips/worldToasts';
 import { zoneRows } from '@/lib/firstrow/zone';
 
 /** Що відбувається опівночі одного слота ефіру: подія, для якої настала північ, і її країни. */
@@ -445,6 +446,12 @@ export function ratingLeaderMessages(rooms: readonly RoomId[], from: Ms, to: Ms)
   return out;
 }
 
+/** Золоті тости інших глядачів у «Світі» (сторінка «Підтримати» · «Тости світу», рішення власника 2026-11-07). */
+export function worldToastMessages(script: ChatScriptFile, rooms: readonly RoomId[], from: Ms, to: Ms): ChatMessage[] {
+  if (!rooms.includes('world') || to <= from) return [];
+  return worldToasts(script, getData(), to).filter((m) => m.createdAt > from);
+}
+
 /** Повідомлення кімнат `rooms` із `createdAt ∈ (from, to]`. */
 export function messagesBetween(
   script: ChatScriptFile,
@@ -486,6 +493,7 @@ export function createChatSimulator(opts: SimulatorOptions): ChatSimulator {
           ...ambientBetween(opts.script, opts.moments, opts.rooms, ambientFrom, now, opts.getSpeed?.() ?? 1),
           ...slowModeMessages(opts.script, opts.rooms, from, now),
           ...ratingLeaderMessages(opts.rooms, from, now),
+          ...worldToastMessages(opts.script, opts.rooms, from, now),
         );
         batch.sort(compareMessages);
       }

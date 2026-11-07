@@ -1,0 +1,294 @@
+/* «Підтримати» за дошкою `Desk-Support-New`, варіант A (рішення власника 2026-11-07). */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0 40px;
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Героїчний блок — як у сторінки пасу. */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgb(252 226 134 / 0.1), transparent 55%),
+    linear-gradient(160deg, #25211a, #18181b 60%); /* дошка */
+}
+.art {
+  position: relative;
+  flex: none;
+  width: 300px;
+  height: 200px;
+}
+.artBubble {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid rgb(252 226 134 / 0.45);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3a3423, #23211c); /* дошка */
+  font-size: 14px;
+  line-height: 1.4;
+}
+.artBack {
+  top: 46px;
+  left: 0;
+  width: 250px;
+  opacity: 0.55;
+  transform: rotate(-6deg);
+}
+.artFront {
+  top: 100px;
+  left: 40px;
+  width: 260px;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.55);
+  transform: rotate(3deg);
+}
+.artGlass {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+}
+.heroText {
+  min-width: 0;
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-highlight);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.h1 {
+  margin: 8px 0 0;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.lead {
+  max-width: 520px;
+  margin: 10px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.tips {
+  margin: 0;
+}
+
+/* «Тости світу». */
+.box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.boxHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.spacer {
+  flex: 1;
+}
+.flags {
+  display: inline-flex;
+  gap: 4px;
+}
+.meta,
+.sub {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+}
+.bubbleFresh {
+  border-color: rgb(252 226 134 / 0.45);
+  background: linear-gradient(135deg, rgb(252 226 134 / 0.16), rgb(252 226 134 / 0.05));
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 14px;
+}
+.nick {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ago {
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.text {
+  font-size: 14px;
+  line-height: 1.4;
+}
+.empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: flex-start;
+  margin-top: 4px;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Новорічний пас. */
+.passCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.passIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+}
+.passText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 14px;
+}
+.passText > span {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.passLink {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 767.98px) {
+  .page {
+    gap: 16px;
+    padding: 16px 16px 24px;
+  }
+  .back {
+    display: none;
+  }
+  .hero {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 18px;
+  }
+  .art {
+    width: 250px;
+    height: 170px;
+  }
+  .artBack {
+    top: 40px;
+    width: 220px;
+  }
+  .artFront {
+    top: 86px;
+    left: 26px;
+    width: 230px;
+  }
+  .h1 {
+    font-size: 28px;
+  }
+  .lead {
+    font-size: 14px;
+  }
+  .box {
+    padding: 16px;
+  }
+  .passCard {
+    flex-wrap: wrap;
+  }
+  .passText {
+    flex-basis: calc(100% - 48px);
+  }
+  .passLink {
+    margin-inline-start: 48px;
+  }
+}

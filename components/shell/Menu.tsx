@@ -216,7 +216,7 @@ export function Menu({
                     } else close();
                   }}
                 />
-                <NavRow icon="heart" title={t('support')} hint={t('supportHint')} onNavigate={close} />
+                <NavRow href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} onNavigate={close} />
               </ul>
               <Divider />
               <ul className="m-0 flex list-none flex-col gap-0.5 p-0">

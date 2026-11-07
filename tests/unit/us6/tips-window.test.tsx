@@ -28,40 +28,51 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('вікно «Чайові» з хедера (рішення 2026-11-01)', () => {
-  it('форма: тост із «Змінити», суми, email для квитанції; без email — помилка, оплату не починаємо', () => {
+describe('вікно «Чайові»: тост під час оплати (варіант B, дошка `Desk-Tips-Toast`, 2026-11-07)', () => {
+  it('з хедера — лише суми й «Підтримати $N»; поля email і тосту немає', () => {
     renderPage(<HeaderSupport />);
     fireEvent.click(screen.getByRole('button', { name: 'Підтримати (хедер)' }));
     const win = screen.getByRole('dialog', { name: 'Чайові' });
-    expect(win).toHaveTextContent('Твій тост у чаті «Світ»');
-    expect(within(win).getAllByRole('radio').map((r) => r.textContent)).toEqual(['$2', '$5', '$10']);
-    expect(within(win).getByRole('textbox', { name: 'Email для квитанції' })).toBeInTheDocument();
-    expect(within(win).queryByText(/Google/)).toBeNull();
-    fireEvent.click(within(win).getByRole('button', { name: 'Змінити' }));
-    fireEvent.change(within(win).getByRole('textbox', { name: 'Текст твого тосту' }), { target: { value: 'За нас!' } });
-    fireEvent.click(within(win).getByRole('radio', { name: '$10' }));
-    fireEvent.click(within(win).getByRole('button', { name: 'Підтримати $10' }));
-    expect(win).toHaveTextContent('Введи email — сюди прийде квитанція.');
-    expect(useTipsStore.getState().phase).toBe('form');
+    expect(within(win).getAllByRole('radio').map((r) => r.getAttribute('aria-label'))).toEqual(['$2 · келих', '$5 · пляшка ігристого', '$10 · феєрверк']);
+    expect(within(win).queryByRole('textbox')).toBeNull();
+    expect(win).toHaveTextContent('Тост напишеш, поки оплачуєш');
   });
 
-  it('«Чекаємо підтвердження» → підтверджено: «Дякуємо!» і тост у чаті з введеним текстом', () => {
+  it('«Підтримати» → «Поки оплачуєш — напиши тост» → підтверджено → «Опублікувати тост» → тост у чаті', () => {
     useTestControls.getState().setPayResult('pending');
     renderPage(<HeaderSupport />);
     fireEvent.click(screen.getByRole('button', { name: 'Підтримати (хедер)' }));
     const win = screen.getByRole('dialog', { name: 'Чайові' });
-    fireEvent.click(within(win).getByRole('button', { name: 'Змінити' }));
-    fireEvent.change(within(win).getByRole('textbox', { name: 'Текст твого тосту' }), { target: { value: 'За нас!' } });
-    fireEvent.change(within(win).getByRole('textbox', { name: 'Email для квитанції' }), { target: { value: 'olena@example.com' } });
-    fireEvent.click(within(win).getByRole('button', { name: 'Підтримати $5' }));
-    expect(win).toHaveTextContent('Відкриваємо оплату…');
+    fireEvent.click(within(win).getByRole('radio', { name: /^\$10/ }));
+    fireEvent.click(within(win).getByRole('button', { name: 'Підтримати $10' }));
+    expect(win).toHaveTextContent('Чекаємо оплату на PayPro Global');
+    expect(win).toHaveTextContent('Поки оплачуєш — напиши тост');
+    const field = within(win).getByRole('textbox', { name: 'Текст твого тосту' });
+    expect(field).toHaveValue('🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!');
+    fireEvent.click(within(win).getByRole('button', { name: '🎆 Привіт усьому світу!' }));
+    expect(field).toHaveValue('🎆 Привіт усьому світу!');
+    fireEvent.change(field, { target: { value: 'За нас!' } });
     act(() => {
-      vi.advanceTimersByTime(1_000);
+      vi.advanceTimersByTime(7_000);
     });
-    expect(win).toHaveTextContent('Чекаємо підтвердження оплати');
     act(() => useTipsStore.getState().confirm());
+    const paid = screen.getByRole('dialog', { name: 'Чайові' });
+    expect(paid).toHaveTextContent('Оплату підтверджено · $10');
+    expect(within(paid).getByRole('textbox', { name: 'Текст твого тосту' })).toHaveValue('За нас!');
+    fireEvent.click(within(paid).getByRole('button', { name: /Опублікувати тост/ }));
     expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Ти робиш це свято можливим');
-    expect(within(screen.getByRole('dialog', { name: 'Чайові' })).getAllByRole('button', { name: 'Закрити' }).length).toBeGreaterThan(0);
-    expect((useChatFeed.getState().rooms.world ?? []).at(-1)).toMatchObject({ toast: { amount: 5 }, text: 'За нас!' });
+    expect((useChatFeed.getState().rooms.world ?? []).at(-1)).toMatchObject({ toast: { amount: 10 }, text: 'За нас!' });
+  });
+
+  it('посилання в тості не пропускаємо: «Опублікувати» недоступна', () => {
+    renderPage(<HeaderSupport />);
+    fireEvent.click(screen.getByRole('button', { name: 'Підтримати (хедер)' }));
+    fireEvent.click(within(screen.getByRole('dialog', { name: 'Чайові' })).getByRole('button', { name: 'Підтримати $5' }));
+    act(() => {
+      vi.advanceTimersByTime(7_000);
+    });
+    const win = screen.getByRole('dialog', { name: 'Чайові' });
+    fireEvent.change(within(win).getByRole('textbox', { name: 'Текст твого тосту' }), { target: { value: 'дивіться www.spam.com' } });
+    expect(within(win).getByRole('button', { name: /Опублікувати тост/ })).toBeDisabled();
   });
 });

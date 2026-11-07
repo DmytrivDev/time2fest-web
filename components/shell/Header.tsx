@@ -102,9 +102,10 @@ export function Header({
           <Icon name="chevron-down" size={14} strokeWidth={2} />
         </button>
 
-        {/* «Підтримати» — вікно «Чайові» на місці чату (рішення власника 2026-11-01); поза сторінками з плеєром — головна. */}
+        {/* «Підтримати» — сторінка `/support/` (2026-11-07); на сторінках із плеєром — вікно «Чайові» на місці чату, щоб
+            трансляція не переривалась (2026-11-01). */}
         <NextLink
-          href="/"
+          href="/support/"
           onClick={(e) => {
             if (!onSupportClick) return;
             e.preventDefault();

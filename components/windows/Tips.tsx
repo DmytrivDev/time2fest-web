@@ -1,104 +1,64 @@
 'use client';
 
 /**
- * C16 `tips` — «Чайові · Скажи тост на весь світ» (дошка `Desk-Offers-Concepts`, варіант C, рішення власника 2026-11-01):
- * чайові дають щось видиме — золотий тост від імені гостя в чаті «Світ». Тост можна написати самому (поле — у самому
- * «повідомленні»-прев’ю), суми $2 / $5 / $10 — великі сегменти, коралова «Підтримати $N».
- * Десктоп — дві колонки (текст і тост ліворуч, суми й кнопка праворуч), телефон — стовпчик.
- * «Підтримати $N» відкриває вікно «Чайові» на місці чату / шторкою зі станом «Відкриваємо оплату…» (`useOpenTipsWindow`);
- * усі стани оплати й «Дякуємо» — у вікні, тост з’являється в чаті після оплати (рішення власника 2026-11-01).
+ * C16 `tips` — «Чайові · Скажи тост на весь світ». Спрощений блок (дошка `Desk-Tips-Toast`, рішення власника 2026-11-07):
+ * поля тосту в блоці немає — приклад золотого тосту, суми $2 🥂 / $5 🍾 / $10 🎆 з підписами, коралова «Підтримати $N»
+ * і «Тост напишеш, поки оплачуєш». Тост пишуть у вікні «Чайові» на місці чату / шторкою, поки оплачують (варіант B).
+ * Той самий блок — під штампом на головній (з «×») і на сторінці «Підтримати» (без «×»).
+ * Десктоп — дві колонки (текст і приклад ліворуч, суми й кнопка праворуч), телефон — стовпчик.
  */
 import { useTranslations } from 'next-intl';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Link } from '@/components/primitives/Link';
-import { formatUsd, TIP_AMOUNTS, type TipAmount } from '@/lib/offers/format';
+import { TipAmounts } from '@/components/tips/TipAmounts';
+import { formatUsd, type TipAmount } from '@/lib/offers/format';
 import { useRegisterCoral } from '@/lib/overlay/coral';
 import { OfferCard } from './OfferCard';
 import s from './tips.module.css';
 
-/** Найдовший тост — як підпис у чаті, коротко. */
-export const TOAST_MAX = 120;
-const LINK = /(https?:\/\/|www\.)/i;
-
 export interface TipsProps {
   defaultAmount?: TipAmount;
-  /** Хто піднімає тост (нік і прапор гостя) — для прев’ю; без ніка — «Гість». */
-  nick?: string;
-  flagCode?: string;
+  /** «×» — лише в блоці під штампом; на сторінці «Підтримати» блок не закривається. */
   onClose?: () => void;
-  /** «Підтримати $N»: сума й текст тосту. */
-  onSupport?: (amount: TipAmount, toast: string) => void;
+  /** «Підтримати $N» — відкриває вікно оплати, де пишуть тост. */
+  onSupport?: (amount: TipAmount) => void;
   /** Куди веде «Умови й повернення». */
   termsHref?: string;
+  /** Рівень заголовка (на сторінці «Підтримати» — після `h1`). */
   className?: string;
 }
 
-export function Tips({ defaultAmount = 5, nick, flagCode, onClose, onSupport, termsHref = '#', className }: TipsProps) {
+export function Tips({ defaultAmount = 5, onClose, onSupport, termsHref = '#', className }: TipsProps) {
   const t = useTranslations('offers');
   const [amount, setAmount] = useState<TipAmount>(defaultAmount);
-  const [text, setText] = useState(() => t('toastDefault'));
-  const fieldId = useId();
   useRegisterCoral();
-
-  const clean = text.trim();
-  const bad = !clean || LINK.test(clean);
 
   return (
     <OfferCard variant="tips" kicker={t('tipsTitle')} title={t('toastTitle')} closeLabel={t('dismiss')} onClose={onClose} className={className}>
       <div className={s.grid}>
         <div className={s.left}>
           <p className="text-body text-text-secondary">{t('toastLead')}</p>
-          {/* Прев’ю тосту — це й є поле: що написано, те й з’явиться в чаті. */}
+          {/* Приклад — як виглядатиме тост у чаті «Світ». */}
           <div className={s.bubble} data-toast-preview="">
             <span className={s.who}>
-              {flagCode ? <Flag round code={flagCode} size="xs" decorative /> : null}
-              <span className={s.nick}>{nick || t('toastGuest')}</span>
+              <Flag round code="JP" size="xs" decorative />
+              <span className={s.nick}>Hiro</span>
               <span className="t2f-toast-badge">{t('toastBadge')}</span>
+              <span className={s.example}>{t('toastExample')}</span>
             </span>
-            <label htmlFor={fieldId} className="sr-only">
-              {t('toastField')}
-            </label>
-            <textarea
-              id={fieldId}
-              value={text}
-              maxLength={TOAST_MAX}
-              rows={2}
-              onChange={(e) => setText(e.target.value)}
-              className={cn('t2f-focus', s.field)}
-            />
+            <span className={s.text}>{t('toastExampleText')}</span>
           </div>
-          {LINK.test(clean) ? <p className="text-caption text-primary">{t('toastNoLinks')}</p> : null}
         </div>
         <div className={s.right}>
-          <div role="radiogroup" aria-label={t('tipsAmount')} className={s.amounts}>
-            {TIP_AMOUNTS.map((n) => (
-              <button
-                key={n}
-                type="button"
-                role="radio"
-                aria-checked={amount === n}
-                  onClick={() => setAmount(n)}
-                className={cn('t2f-focus t2f-transition', s.amount)}
-              >
-                {formatUsd(n)}
-              </button>
-            ))}
-          </div>
-          <Button
-            variant="coral"
-            size="lg"
-            disabled={bad}
-            onClick={() => {
-              onSupport?.(amount, clean);
-            }}
-          >
+          <TipAmounts value={amount} onChange={setAmount} />
+          <Button variant="coral" size="lg" onClick={() => onSupport?.(amount)}>
             {t('tipsAction', { amount: formatUsd(amount) })}
           </Button>
           <p className={cn('text-caption text-text-muted', s.note)}>
-            {t('tipsNote')}{' '}
+            {t('tipsNoteToast')}{' '}
             <Link href={termsHref} className="-my-3 inline-flex min-h-touch-min items-center font-semibold">
               {t('tipsTerms')}
             </Link>

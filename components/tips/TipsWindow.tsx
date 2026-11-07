@@ -1,29 +1,32 @@
 'use client';
 
 /**
- * Вікно «Чайові» (дошки `Desk-Tips-Pay`, `Desk-Tips-Thanks`, рішення власника 2026-11-01): на місці чату, на телефоні —
- * шторка (як вікно пасу). Стани — `stores/tips`:
- * - форма (з «Підтримати» в хедері): тост у чаті «Світ» із «Змінити», сума $2 / $5 / $10, email для квитанції (акаунт
- *   не потрібен), «Підтримати $N»;
- * - «Відкриваємо оплату…» → «Чекаємо підтвердження оплати» / «Оплата не пройшла» / «Немає з’єднання» → «Дякуємо!».
- * Стани — по центру вікна; тексти — як в оплати пасу. Після «Дякуємо» лише «Закрити».
+ * Вікно «Чайові» на місці чату, на телефоні — шторка. Варіант B «Тост під час оплати» (дошка `Desk-Tips-Toast`, рішення
+ * власника 2026-11-07). Стани — `stores/tips`:
+ * - суми (з «Підтримати» в хедері): $2 🥂 / $5 🍾 / $10 🎆, «Підтримати $N»;
+ * - оплата відкрита: «Чекаємо оплату на PayPro Global» і «Поки оплачуєш — напиши тост» (поле-повідомлення, ідеї),
+ *   «Оплатити» (знову відкрити оплату) · «Скасувати»;
+ * - оплачено: «Перевір тост — і в чат», «Опублікувати тост · 0:24» (сам — за 30 с);
+ * - «Оплата не пройшла» / «Немає з’єднання» → «Дякуємо! Твій тост уже в чаті».
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useId, useState, type ReactNode } from 'react';
+import { useCallback, useId, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Link } from '@/components/primitives/Link';
-import { TextField } from '@/components/primitives/TextField';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import { TOAST_MAX } from '@/components/windows/Tips';
 import { formatUsd, TIP_AMOUNTS } from '@/lib/offers/format';
+import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
-import { useTipsStore, type TipsPhase } from '@/stores/tips';
+import { TOAST_AUTO_MS, useTipsStore, type TipsPhase } from '@/stores/tips';
+import { TipAmounts } from './TipAmounts';
 import s from './tipsWindow.module.css';
 
 export const TIPS_WINDOW_ID = 'O-TIPS-PAY';
+/** Найдовший тост — як підпис у чаті, коротко. */
+export const TOAST_MAX = 120;
 const LINK = /(https?:\/\/|www\.)/i;
 
 function useWho() {
@@ -33,58 +36,29 @@ function useWho() {
   return { nick, flagCode };
 }
 
-/** Золотий тост — як у чаті (`solid`) або прев’ю з «Змінити». */
-function ToastBubble({ text, solid, onEdit }: { text: string; solid?: boolean; onEdit?: () => void }) {
+/** Золотий тост — як у чаті. */
+function ToastBubble({ text }: { text: string }) {
   const t = useTranslations('offers');
   const { nick, flagCode } = useWho();
   return (
-    <div className={cn(s.bubble, solid && s.bubbleSolid)}>
+    <div className={cn(s.bubble, s.bubbleSolid)}>
       <span className={s.who}>
         {flagCode ? <Flag round code={flagCode} size="xs" decorative /> : null}
         <span className={s.nick}>{nick}</span>
         <span className="t2f-toast-badge">{t('toastBadge')}</span>
-        {onEdit ? (
-          <button type="button" onClick={onEdit} className={cn('t2f-focus', s.edit)}>
-            <Icon name="pencil" size={14} />
-            {t('toastEdit')}
-          </button>
-        ) : null}
       </span>
       <span className={s.text}>{text}</span>
     </div>
   );
 }
 
-function Amounts({ disabled }: { disabled?: boolean }) {
-  const t = useTranslations('offers');
-  const amount = useTipsStore((x) => x.amount);
-  const setAmount = useTipsStore((x) => x.setAmount);
-  return (
-    <div role="radiogroup" aria-label={t('tipsAmount')} className={s.amounts}>
-      {TIP_AMOUNTS.map((n) => (
-        <button
-          key={n}
-          type="button"
-          role="radio"
-          aria-checked={amount === n}
-          disabled={disabled}
-          onClick={() => setAmount(n)}
-          className={cn('t2f-focus t2f-transition', s.amount)}
-        >
-          {formatUsd(n)}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function PayNote() {
+function PayNote({ text }: { text?: string }) {
   const t = useTranslations('tips');
   return (
     <p className={s.note}>
       <Icon name="lock" size={14} />
       <span>
-        {t('payNote')}{' '}
+        {text ?? t('payNote')}{' '}
         <Link href="#" className="font-semibold">
           {t('terms')}
         </Link>
@@ -93,70 +67,140 @@ function PayNote() {
   );
 }
 
+/** «Підтримати» з хедера: лише сума — тост пишуть, поки оплачують. */
 function Form() {
   const t = useTranslations('tips');
   const tOffers = useTranslations('offers');
-  const toast = useTipsStore((x) => x.toast) || tOffers('toastDefault');
-  const setToast = useTipsStore((x) => x.setToast);
   const amount = useTipsStore((x) => x.amount);
-  const email = useTipsStore((x) => x.email);
-  const issue = useTipsStore((x) => x.emailIssue);
-  const setEmail = useTipsStore((x) => x.setEmail);
-  const submit = useTipsStore((x) => x.submit);
-  const [editing, setEditing] = useState(false);
-  const fieldId = useId();
-  const bad = !toast.trim() || LINK.test(toast);
+  const setAmount = useTipsStore((x) => x.setAmount);
+  const pay = useTipsStore((x) => x.pay);
   return (
-    <form
-      noValidate
-      className={s.form}
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (bad) return;
-        setToast(toast.trim());
-        submit();
-      }}
-    >
-      <div className={s.toastCard}>
-        <span className={s.kicker}>{t('toastKicker')}</span>
-        {editing ? (
-          <>
-            <label htmlFor={fieldId} className="sr-only">
-              {tOffers('toastField')}
-            </label>
-            <textarea
-              id={fieldId}
-              value={toast}
-              maxLength={TOAST_MAX}
-              rows={3}
-              onChange={(e) => setToast(e.target.value)}
-              className={cn('t2f-focus', s.field)}
-            />
-            {LINK.test(toast) ? <span className="text-caption text-primary">{tOffers('toastNoLinks')}</span> : null}
-          </>
-        ) : (
-          <ToastBubble text={toast} onEdit={() => setEditing(true)} />
-        )}
-      </div>
+    <div className={s.form}>
+      <p className={s.formLead}>{tOffers('toastLead')}</p>
       <div className={s.group}>
         <span className={s.label}>{t('amount')}</span>
-        <Amounts />
+        <TipAmounts value={amount} onChange={setAmount} compact />
       </div>
-      <TextField
-        label={t('email')}
-        type="email"
-        autoComplete="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="name@example.com"
-        hint={issue ? undefined : t('emailHint')}
-        error={issue === 'empty' ? t('emailEmpty') : issue === 'invalid' ? t('emailInvalid') : undefined}
-      />
-      <Button type="submit" variant="coral" size="lg" disabled={bad}>
+      <Button variant="coral" size="lg" onClick={pay}>
         {tOffers('tipsAction', { amount: formatUsd(amount) })}
       </Button>
-      <PayNote />
-    </form>
+      <PayNote text={t('payNoteToast')} />
+    </div>
+  );
+}
+
+/** Поле тосту у вигляді золотого повідомлення: нік, прапор, «тост», лічильник; ідеї — у поле одним дотиком. */
+function ToastEditor() {
+  const t = useTranslations('tips');
+  const tOffers = useTranslations('offers');
+  const { nick, flagCode } = useWho();
+  const toast = useTipsStore((x) => x.toast);
+  const setToast = useTipsStore((x) => x.setToast);
+  const id = useId();
+  return (
+    <div className={s.editor}>
+      <div className={cn(s.bubble, s.editBubble)}>
+        <span className={s.who}>
+          {flagCode ? <Flag round code={flagCode} size="xs" decorative /> : null}
+          <span className={s.nick}>{nick}</span>
+          <span className="t2f-toast-badge">{tOffers('toastBadge')}</span>
+          <span className={s.counter} aria-hidden="true">
+            {toast.length} / {TOAST_MAX}
+          </span>
+        </span>
+        <label htmlFor={id} className="sr-only">
+          {tOffers('toastField')}
+        </label>
+        <textarea
+          id={id}
+          value={toast}
+          maxLength={TOAST_MAX}
+          rows={2}
+          onChange={(e) => setToast(e.target.value)}
+          data-toast-field=""
+          className={cn('t2f-focus', s.editField)}
+        />
+      </div>
+      {LINK.test(toast) ? <span className="text-caption text-primary">{tOffers('toastNoLinks')}</span> : null}
+      <div className={s.ideas} role="group" aria-label={t('ideas')}>
+        {(['one', 'two', 'three'] as const).map((k) => (
+          <button key={k} type="button" onClick={() => setToast(t(`idea.${k}`))} className={cn('t2f-focus', s.idea)}>
+            {t(`idea.${k}`)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Row({ badge, title, text }: { badge: ReactNode; title: string; text: string }) {
+  return (
+    <div className={s.row} role="status">
+      {badge}
+      <span className={s.rowText}>
+        <b>{title}</b>
+        <span>{text}</span>
+      </span>
+    </div>
+  );
+}
+
+/** Оплата відкрита: «Чекаємо оплату на PayPro Global» і «Поки оплачуєш — напиши тост». */
+function Paying({ onCancel }: { onCancel: () => void }) {
+  const t = useTranslations('tips');
+  const pay = useTipsStore((x) => x.pay);
+  return (
+    <div className={s.flow} data-tips="paying">
+      <div className={s.flowBody}>
+        <Row badge={<span className={s.spinnerSm} aria-hidden="true" />} title={t('payingTitle')} text={t('payingText')} />
+        <h3 className={s.h}>{t('writeTitle')}</h3>
+        <ToastEditor />
+        <p className={s.small}>{t('writeNote')}</p>
+      </div>
+      <div className={s.flowFoot}>
+        <Button variant="secondary" size="lg" onClick={pay} iconLeft="link">
+          {t('payAgain')}
+        </Button>
+        <Button variant="secondary" size="lg" onClick={onCancel}>
+          {t('cancel')}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** Оплачено: «Перевір тост — і в чат» і «Опублікувати тост · 0:24» (сам — за 30 с). */
+function Paid() {
+  const t = useTranslations('tips');
+  const amount = useTipsStore((x) => x.amount);
+  const paidAt = useTipsStore((x) => x.paidAt) ?? 0;
+  const toast = useTipsStore((x) => x.toast);
+  const publish = useTipsStore((x) => x.publish);
+  const now = useNow();
+  const left = Math.min(TOAST_AUTO_MS / 1000, Math.max(0, Math.ceil((paidAt + TOAST_AUTO_MS - now) / 1000)));
+  const bad = !toast.trim() || LINK.test(toast);
+  return (
+    <div className={s.flow} data-tips="paid">
+      <div className={s.flowBody}>
+        <Row
+          badge={
+            <span className={s.okBadge} aria-hidden="true">
+              <Icon name="check" size={16} strokeWidth={2.6} />
+            </span>
+          }
+          title={t('paidTitle', { price: formatUsd(amount) })}
+          text={t('paidText')}
+        />
+        <h3 className={s.h}>{t('checkTitle')}</h3>
+        <ToastEditor />
+        <p className={s.small}>{t('autoNote')}</p>
+      </div>
+      <div className={s.flowFoot}>
+        <Button variant="coral" size="lg" onClick={publish} disabled={bad} className={s.wide} data-action="publish-toast">
+          {t('publish', { time: `0:${String(left).padStart(2, '0')}` })}
+        </Button>
+      </div>
+    </div>
   );
 }
 
@@ -195,31 +239,16 @@ function Help() {
 
 export function TipsWindowContent({ onClose }: { onClose: () => void }) {
   const t = useTranslations('tips');
-  const tOffers = useTranslations('offers');
   const phase: TipsPhase = useTipsStore((x) => x.phase);
   const amount = useTipsStore((x) => x.amount);
-  const toast = useTipsStore((x) => x.toast) || tOffers('toastDefault');
+  const toast = useTipsStore((x) => x.toast);
   const { pay, toForm } = useTipsStore.getState();
   const fromBlock = useTipsStore((x) => x.fromBlock);
   const price = formatUsd(amount);
 
   if (phase === 'form') return <Form />;
-  if (phase === 'opening')
-    return (
-      <Status badge={<Badge tone="gold" spin />} title={t('openingTitle')} text={t('openingText')}>
-        <Button variant="secondary" size="lg" onClick={fromBlock ? onClose : toForm}>
-          {t('cancel')}
-        </Button>
-      </Status>
-    );
-  if (phase === 'pending')
-    return (
-      <Status badge={<Badge tone="gold" icon="clock" />} title={t('pendingTitle')} text={t('pendingText')} extra={<Help />}>
-        <Button variant="secondary" size="lg" onClick={onClose}>
-          {t('close')}
-        </Button>
-      </Status>
-    );
+  if (phase === 'paying') return <Paying onCancel={fromBlock ? onClose : toForm} />;
+  if (phase === 'paid') return <Paid />;
   if (phase === 'failed')
     return (
       <Status badge={<Badge tone="red" icon="alert" />} title={t('failedTitle')} text={t('failedText')} extra={<Help />}>
@@ -262,7 +291,7 @@ export function TipsWindowContent({ onClose }: { onClose: () => void }) {
       <h3 className={s.title}>{t('doneTitle')}</h3>
       <p className={s.lead}>{t('doneText')}</p>
       <div className={s.bubbleWrap}>
-        <ToastBubble text={toast} solid />
+        <ToastBubble text={toast} />
       </div>
       <div className={s.actions}>
         <Button variant="secondary" size="lg" onClick={onClose}>
@@ -275,19 +304,23 @@ export function TipsWindowContent({ onClose }: { onClose: () => void }) {
 }
 
 /**
- * Відкрити вікно «Чайові». `block` — з блока під штампом: одразу оплата (стан «Відкриваємо оплату…»);
- * без аргументів — форма (кнопка «Підтримати» в хедері).
+ * Відкрити вікно «Чайові». `block` — з блока (під штампом, сторінка «Підтримати»): одразу оплата й «Поки оплачуєш —
+ * напиши тост»; без аргументів — суми (кнопка «Підтримати» в хедері).
  */
-export function useOpenTipsWindow(): (block?: { amount: (typeof TIP_AMOUNTS)[number]; toast: string }) => void {
+export function useOpenTipsWindow(): (block?: { amount: (typeof TIP_AMOUNTS)[number] }) => void {
   const overlay = useOverlay();
   const t = useTranslations('tips');
+  const defaultToast = useTranslations('offers')('toastDefault');
   return useCallback(
     (block) => {
       const store = useTipsStore.getState();
-      // Підтвердження ще чекаємо — показуємо його, а не починаємо нову оплату.
-      if (store.phase !== 'pending') {
-        if (block) store.payFromBlock(block.amount, block.toast);
-        else store.toForm();
+      // Оплата вже йде чи оплачено (тост ще не в чаті) — показуємо її, а не починаємо нову.
+      if (store.phase !== 'paying' && store.phase !== 'paid') {
+        if (block) store.payFromBlock(block.amount, defaultToast);
+        else {
+          store.toForm();
+          if (!store.toast) store.setToast(defaultToast);
+        }
       }
       const close = () => overlay.close(TIPS_WINDOW_ID);
       overlay.open({
@@ -301,13 +334,14 @@ export function useOpenTipsWindow(): (block?: { amount: (typeof TIP_AMOUNTS)[num
             {t('title')}
           </span>
         ),
-        // «Чекаємо підтвердження» лишаємо — оплату підтвердять і при закритому вікні; решту — з нуля.
+        // Оплата йде чи оплачено — лишаємо: підтвердять і тост опублікуємо й при закритому вікні; решту — з нуля.
         onClose: () => {
-          if (useTipsStore.getState().phase !== 'pending') useTipsStore.getState().reset();
+          const phase = useTipsStore.getState().phase;
+          if (phase !== 'paying' && phase !== 'paid') useTipsStore.getState().reset();
         },
         content: <TipsWindowContent onClose={close} />,
       });
     },
-    [overlay, t],
+    [overlay, t, defaultToast],
   );
 }

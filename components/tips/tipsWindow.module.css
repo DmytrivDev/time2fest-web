@@ -258,3 +258,145 @@ html[data-reduce-motion='false'] .spinner {
   font-size: 12px;
   color: var(--color-text-muted);
 }
+
+/* ── варіант B «Тост під час оплати» (дошка `Desk-Tips-Toast`, 2026-11-07) ── */
+.formLead {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.flow {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.flowBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 2px 16px 16px;
+}
+.flowFoot {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--color-border);
+}
+.flowFoot > * {
+  flex: 1;
+}
+.wide {
+  width: 100%;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+}
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  font-size: 14px;
+}
+.rowText > span {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+.spinnerSm {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 6px;
+  border: 2px solid rgb(255 255 255 / 0.25);
+  border-top-color: var(--color-highlight);
+  border-radius: var(--radius-full);
+  animation: tips-spin 0.9s linear infinite;
+}
+@keyframes tips-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinnerSm {
+    animation: none;
+  }
+}
+.okBadge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+.h {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+.small {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.editBubble {
+  border: 2px solid var(--color-highlight);
+  background: rgb(252 226 134 / 0.05);
+}
+.editBubble:focus-within {
+  box-shadow: 0 0 0 3px rgb(252 226 134 / 0.18);
+}
+.counter {
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.editField {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  resize: none;
+  outline: none;
+}
+.ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.idea {
+  padding: 6px 10px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.idea:hover {
+  background: var(--color-border);
+}

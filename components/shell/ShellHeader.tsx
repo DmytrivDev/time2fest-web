@@ -34,6 +34,8 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const pathname = usePathname();
   // Сторінки поза навігацією «Головна / Країни» (`/tv-info/`, `/schedule/`) — без підсвіченого пункту.
   const outside = pathname?.startsWith('/tv-info') || pathname?.startsWith('/schedule');
+  // Сторінки з плеєром (головна, країна, кімната): «Підтримати» — вікно, щоб трансляція не переривалась; решта — `/support/`.
+  const playerPage = pathname === '/' || !!pathname?.startsWith('/country/') || !!pathname?.startsWith('/room');
   const current = pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : outside ? undefined : currentProp;
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState('uk');
@@ -137,7 +139,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
         languageOpen={languageOpen}
         onSignInClick={onSignInClick}
         onPassClick={onPassClick}
-        onSupportClick={() => openTips()}
+        onSupportClick={playerPage ? () => openTips() : undefined}
       />
       <Menu
         open={menuOpen}

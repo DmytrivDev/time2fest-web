@@ -220,19 +220,19 @@ test.describe('US6 · чайові після 3-го Нового року', () 
     });
     await gotoAt(page, AZORES_PLUS_6, 0);
     await expect(offerCard(page, 'Скажи тост на весь світ')).toBeVisible({ timeout: 10_000 });
-    await expect(slot(page).getByRole('radio')).toHaveText(['$2', '$5', '$10']);
-    await slot(page).getByRole('radio', { name: '$5' }).click();
+    await expect(slot(page).getByRole('radio')).toHaveCount(3);
+    await slot(page).getByRole('radio', { name: /^\$5/ }).click();
     await expect(page.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute(
       'data-variant',
       'coral',
     );
-    await expect(slot(page)).toContainText(
-      'Входити не треба — email для квитанції попросить сторінка оплати',
-    );
+    await expect(slot(page)).toContainText('Тост напишеш, поки оплачуєш');
     await expect(visibleCoral(page)).toHaveCount(1);
     await setPayResult(page, 'success');
     await page.getByRole('button', { name: 'Підтримати $5' }).click();
-    // Рішення 2026-11-01: оплата — у вікні «Чайові» (на місці чату / шторкою); тост — у чаті після оплати.
+    // Варіант B (2026-11-07): оплата відкрита — пишемо тост у вікні; оплачено — «Опублікувати тост».
+    await expect(page.locator('[data-tips="paid"]')).toContainText('Перевір тост', { timeout: 10_000 });
+    await page.locator('[data-action="publish-toast"]').click();
     await expect(page.locator('[data-tips="success"]')).toContainText('Ти робиш це свято можливим', { timeout: 10_000 });
     await expect(offerCard(page, 'Скажи тост на весь світ')).toHaveCount(0);
     await expect(page.locator('[data-toast="true"]').first()).toContainText('Піднімаю келих');
