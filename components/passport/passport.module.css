@@ -1,14 +1,10 @@
-/* «Мій паспорт Нових років» за дошками `Desk-Passport` / `Phone-Passport` (перша версія: профіль і сторінка штампів). */
-.main {
-  width: 100%;
-  max-width: 1056px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  padding: 16px var(--spacing-margin-mobile) 32px;
+/* «Мій паспорт Нових років» за дошками `Desk-Passport-New` / `Phone-Passport-New` v1 (рішення власника 2026-11-07). */
+
+.pageWrap {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  flex: 1 0 auto;
+  gap: 24px;
+  padding: 24px 0 40px;
 }
 .head {
   display: flex;
@@ -17,217 +13,810 @@
 }
 .h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 800;
   line-height: 1.15;
-  letter-spacing: -0.01em;
 }
-.season {
+.sub {
   margin: 0;
-  font-size: 13px;
   color: var(--color-text-secondary);
+  font-size: 15px;
 }
-
-.profile {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px 16px;
-  align-items: center;
-  padding: 16px;
+.h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   background: var(--color-surface);
 }
-.avatar {
+
+/* ── Профіль ── */
+.who {
   display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.avatar {
+  display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 56px;
   height: 56px;
   border: 2px solid var(--color-highlight);
   border-radius: var(--radius-full);
-  font-size: 24px;
-  font-weight: 800;
   color: var(--color-highlight);
+  font-size: 22px;
+  font-weight: 800;
 }
-.who {
+.whoText {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 .name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+.passBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--color-highlight);
+  border-radius: var(--radius-full);
+  color: var(--color-highlight);
+  font-size: 12px;
+  font-weight: 700;
 }
 .from {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin: 0;
-  font-size: 14px;
   color: var(--color-text-secondary);
+  font-size: 13px;
 }
 .saved {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
   color: var(--color-text-secondary);
+  font-size: 13px;
 }
-.stats {
-  grid-column: 1 / -1;
+.tiles {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 4px 0 0;
 }
-.stat {
+.tile {
   display: flex;
-  flex-direction: column-reverse;
-  gap: 2px;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  background: var(--color-surface-raised);
+  flex-direction: column;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #202024; /* дошка: плитка інфографіки */
 }
-.stat dd {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--color-highlight);
-}
-.stat dt {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-}
-
-.page {
-  padding: 16px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background:
-    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.015) 0 2px, transparent 2px 9px),
-    var(--color-surface);
-}
-.pageHead {
+.tileNum {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.pageTitle,
-.pageYear {
+  gap: 6px;
   margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.tileOf {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+.tileLabel {
+  margin-top: 2px;
   color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.tileBar {
+  display: block;
+  height: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #2c2c32; /* дошка */
+}
+.tileBar span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--color-highlight);
+}
+.tileBarDone span {
+  background: var(--color-highlight);
+}
+
+/* ── Мапа ── */
+.mapHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+.mapCounts {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.mapFrame {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-background);
+}
+.mapWrap {
+  position: relative;
+}
+.map {
+  border-radius: 0;
+  background: var(--color-background);
+}
+.mapFoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+}
+.legRing {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-text-secondary);
+  border-radius: var(--radius-full);
+}
+.legGold {
+  color: var(--color-highlight);
+  font-weight: 600;
+}
+.sw {
+  width: 18px;
+  height: 12px;
+  border-radius: 3px;
+}
+.sw[data-sw='visited'] {
+  background: #e9c766; /* як відвідана країна на мапі */
+}
+.sw[data-sw='past'] {
+  background: #2a2a2f;
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+.sw[data-sw='live'] {
+  background: color-mix(in srgb, var(--color-zone-live) 55%, var(--color-surface));
+}
+.sw[data-sw='future'] {
+  background: color-mix(in srgb, var(--color-zone-future) 50%, var(--color-surface));
+}
+.route {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin: 0;
+  font-size: 14px;
+}
+.route span {
+  color: var(--color-text-muted);
+}
+.shareRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.btnCoral,
+.btnSecondary,
+.smallBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btnCoral {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  background: var(--color-primary-fill);
+  color: #fff;
+  font-size: 15px;
+}
+.btnSecondary {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 15px;
+}
+.btnCoral:disabled,
+.btnSecondary:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.smallBtn {
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+/* Картка пасу поверх затемненої мапи. */
+.lock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  box-sizing: border-box;
+  width: min(420px, calc(100% - 32px));
+  padding: 20px;
+  border: 1px solid rgb(252 226 134 / 0.35);
+  border-radius: 14px;
+  background: rgb(26 26 29 / 0.92);
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.6);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+.lockIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+}
+.lockTitle {
+  margin: 8px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+.lockText {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.lockBtns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ── Штампи ── */
+.stamps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.stampsHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.count {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.headSpacer {
+  flex: 1;
+}
+.seg {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+}
+.segBtn {
+  min-height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.segBtn[aria-pressed='true'] {
+  background: var(--color-text);
+  color: var(--color-background);
 }
 .empty {
-  margin: 0 0 14px;
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 0;
   color: var(--color-text-secondary);
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.cell {
+.card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.cardGold {
+  border: 2px solid var(--color-highlight);
+}
+.strip {
+  display: block;
+  height: 5px;
+}
+.cardArt {
+  position: relative;
+}
+.cardOpen {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+.cardShare {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: var(--radius-full);
+  background: rgb(18 18 20 / 0.78);
+  color: #fff;
+  cursor: pointer;
+}
+.cardBody {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 0;
+  padding: 10px 12px 12px;
 }
-.card {
-  margin-bottom: 8px;
-  border-radius: var(--radius-md);
+.cardCity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
 }
-.cardGold {
-  padding: 3px;
-  border: 2px solid var(--color-highlight);
+.cardMeta {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
 }
-.city {
+.cardMetaGold {
+  color: var(--color-highlight);
+  font-weight: 700;
+}
+.cardRate {
+  margin-top: 6px;
+}
+
+/* Наступний штамп. */
+.next {
+  border-style: dashed;
+  border-color: #5a5a64; /* дошка */
+}
+.nextZone {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+}
+.nextArt {
+  position: relative;
+  filter: grayscale(0.85) brightness(0.5);
+}
+.nextChip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: rgb(18 18 20 / 0.85);
+  color: var(--color-highlight);
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+}
+.nextArt:has(.nextChip) {
+  filter: none;
+}
+.nextArt :global([data-stamp-art]) {
+  filter: grayscale(0.85) brightness(0.45);
+}
+.nextKicker {
+  margin: 0;
+  color: var(--color-highlight);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.nextTitle {
   margin: 0;
   font-size: 15px;
   font-weight: 700;
+  line-height: 1.35;
+}
+.nextHint {
+  margin: 6px 0 8px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.nextList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nextRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.nextName {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.meta {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.4;
+.nextState {
   color: var(--color-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
 }
-.metaGold {
-  font-weight: 600;
-  color: var(--color-highlight);
+.nextStateLive {
+  color: var(--color-primary);
 }
-.nextBox {
+.nextMore {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.nextBtns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* За континентами. */
+.contGroup {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+.contTitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.missing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.missingItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px dashed #5a5a64; /* дошка */
+  border-radius: 12px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.missingItem b {
+  color: var(--color-text-secondary);
+}
+
+/* ── Серії ── */
+.seriesRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.seriesHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+}
+.seriesProgress {
+  color: var(--color-highlight);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.seals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.seal {
+  display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  aspect-ratio: 3 / 2;
-  margin-bottom: 8px;
-  padding: 8px;
-  border: 1.5px dashed var(--color-border);
-  border-radius: var(--radius-md);
+  width: 64px;
+  height: 64px;
+  padding: 4px;
+  box-sizing: border-box;
+  border: 1.5px dashed #5a5a64; /* дошка */
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.1;
   text-align: center;
+  text-transform: uppercase;
 }
-.nextCity {
+.sealDone {
+  border: 2px solid var(--color-highlight);
+  box-shadow: inset 0 0 0 4px var(--color-surface), inset 0 0 0 5px var(--color-highlight);
+  color: var(--color-highlight);
+}
+.sealSmall {
+  width: 48px;
+  height: 48px;
+  font-size: 8px;
+}
+.seriesLine {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+.seriesMain {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 15px;
+}
+.seriesMain .tileBar span {
+  background: var(--color-text-secondary);
+}
+.seriesMain .tileBarDone span {
+  background: var(--color-highlight);
+}
+
+/* ── Велика листівка (на місці чату / шторкою) ── */
+.big {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px 16px;
+}
+.bigNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bigArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #3a3a42; /* дошка */
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.bigArrow:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.bigPos {
   font-size: 15px;
   font-weight: 700;
 }
-.nextIn {
-  font-size: 13px;
+.bigArt {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.bigArtGold {
+  border: 2px solid var(--color-highlight);
+}
+.bigCity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.bigMeta {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.bigRate {
+  padding: 12px;
+  border-radius: 12px;
+  background: #202024; /* дошка */
+}
+.bigRateHint {
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.bigShare,
+.bigLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 15px;
   font-weight: 700;
-  color: var(--color-highlight);
+  text-decoration: none;
+  cursor: pointer;
+}
+.bigShare {
+  border: 0;
+  background: var(--color-primary-fill);
+  color: #fff;
+}
+.bigLink {
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+}
+.bigKeys {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: center;
 }
 
-@media (min-width: 768px) {
-  .main {
-    padding: var(--spacing-6) var(--spacing-margin-desktop) 56px;
-    gap: 20px;
+/* ── Телефон ── */
+@media (max-width: 767.98px) {
+  .pageWrap {
+    gap: 16px;
+    padding: 16px 16px 24px;
   }
   .h1 {
-    font-size: 32px;
-  }
-  .profile {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    padding: 20px 24px;
-  }
-  .avatar {
-    width: 72px;
-    height: 72px;
-    font-size: 32px;
-  }
-  .name {
     font-size: 24px;
   }
-  .stats {
-    grid-column: auto;
-    grid-template-columns: repeat(2, 200px);
+  .sub {
+    font-size: 13px;
   }
-  .page {
-    padding: 20px 24px 24px;
+  .h2 {
+    font-size: 18px;
+  }
+  .box {
+    padding: 14px;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+  .name {
+    font-size: 19px;
+  }
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .mapCounts {
+    width: 100%;
+    font-size: 13px;
+  }
+  .route {
+    flex-direction: column;
+  }
+  .shareRow {
+    flex-direction: column;
+  }
+  /* Мапа низька — картка пасу під нею, у рамці. */
+  .lock {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    margin: -40px 12px 12px;
+    padding: 16px;
+    transform: none;
+  }
+  .lockTitle {
+    font-size: 16px;
+  }
+  .lockText {
+    font-size: 13px;
   }
   .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px 28px;
+    grid-template-columns: minmax(0, 1fr);
   }
-  .city {
-    font-size: 16px;
+  .seal {
+    width: 52px;
+    height: 52px;
+    font-size: 9px;
   }
 }

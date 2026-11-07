@@ -28,6 +28,10 @@ export interface PathMapProps {
   geometry?: ZoneMapGeometry;
   /** Стан поясів (`utc+0200` → `past`…): пояси підсвічуються приглушено, як на мапі головної («Мій графік», 2026-11-06). */
   zoneStates?: Readonly<Record<string, 'past' | 'live' | 'next' | 'future'>>;
+  /** Відвідані країни (пояс + країна) — заливаються золотом поверх поясів (паспорт і графік, рішення 2026-11-07). */
+  visited?: readonly { zoneId: string; iso: string }[];
+  /** Мапа шляху без пасу: затемнена й розмита, без точок і ліній (рішення власника 2026-11-07). */
+  locked?: boolean;
   className?: string;
 }
 
@@ -74,7 +78,8 @@ export function PathLegend({ className }: { className?: string }) {
   );
 }
 
-export function PathMap({ points, authorName, summary, geometry: geometryProp, zoneStates, className }: PathMapProps) {
+export function PathMap({ points: pointsProp, authorName, summary, geometry: geometryProp, zoneStates, visited, locked = false, className }: PathMapProps) {
+  const points = locked ? [] : pointsProp;
   const t = useTranslations('windows.author');
   const c = useTranslations('chat.author');
   const geometry = useGeometry(geometryProp);
@@ -94,11 +99,18 @@ export function PathMap({ points, authorName, summary, geometry: geometryProp, z
   const rays = placed.filter((x) => x.p.hubOf && byId.has(x.p.hubOf));
 
   return (
-    <div className={cn('relative w-full overflow-hidden rounded-md bg-surface', className)} style={{ aspectRatio: meta.width / meta.height }}>
-      <svg viewBox={`0 0 ${meta.width} ${meta.height}`} aria-hidden="true" className="absolute inset-0 block size-full">
+    <div className={cn('relative w-full overflow-hidden rounded-md bg-surface', className)} style={{ aspectRatio: meta.width / meta.height }} data-locked={locked || undefined}>
+      <svg viewBox={`0 0 ${meta.width} ${meta.height}`} aria-hidden="true" className={cn('absolute inset-0 block size-full', locked && 't2f-pathmap-locked')}>
         {geometry.zones.map((g) => (
           <path key={g.zoneId} d={g.countries.map((c) => c.d).join('')} className="t2f-pathmap-zone" data-state={zoneStates?.[g.zoneId]} />
         ))}
+        {!locked && visited?.length
+          ? geometry.zones.flatMap((g) =>
+              g.countries
+                .filter((c) => visited.some((v) => v.zoneId === g.zoneId && v.iso === c.iso))
+                .map((c) => <path key={`v-${g.zoneId}-${c.iso}`} d={c.d} className="t2f-pathmap-visited" data-visited={c.iso} />),
+            )
+          : null}
         {rays.map((cur) => {
           const hub = byId.get(cur.p.hubOf!)!;
           return (

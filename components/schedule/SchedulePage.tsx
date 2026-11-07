@@ -20,9 +20,9 @@ import { PageChat } from '@/components/chat/PageChat';
 import { scheduleClosed } from '@/components/live/CalendarButton';
 import { StateSwatch } from '@/components/live/MapSide';
 import { PathMap } from '@/components/live/PathMap';
+import { PathLock } from '@/components/passport/PathLock';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useGetPass } from '@/components/pass/PassWindow';
-import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -327,9 +327,22 @@ export function SchedulePage() {
             <Icon name="chevron-right" size={14} />
           </NextLink>
         </div>
-        {/* Мапа в рамці, легенда — під рискою в тій самій рамці (правка власника 2026-11-06). */}
+        {/* Мапа в рамці, легенда — під рискою в тій самій рамці (правка власника 2026-11-06). Мапа шляху — у пасі
+            (рішення власника 2026-11-07): без пасу затемнена, без точок, з карткою пасу; з пасом — і відвідані країни. */}
         <div className={s.mapFrame}>
-          <PathMap points={path} authorName="" summary={route || t('path.empty')} zoneStates={zoneStates} className={s.map} />
+          <div className={s.mapWrap}>
+            <PathMap
+              points={path}
+              authorName=""
+              summary={route || t('path.empty')}
+              zoneStates={zoneStates}
+              visited={stamps.map((st) => ({ zoneId: data.eventsById.get(st.eventId)?.zoneId ?? '', iso: st.countryIso }))}
+              locked={!hasPass}
+              className={s.map}
+            />
+            {!hasPass ? <PathLock variant="schedule" /> : null}
+          </div>
+          {hasPass ? (
           <div className={s.mapFoot}>
         <ul className={s.legend} aria-hidden="true">
           <li>
@@ -353,6 +366,10 @@ export function SchedulePage() {
         </ul>
         <ul className={cn(s.legend, s.legendZones)} aria-hidden="true">
           <li>
+            <span className={s.zoneSw} data-state="visited" />
+            {t('path.zoneVisited')}
+          </li>
+          <li>
             <span className={s.zoneSw} data-state="past" />
             {t('path.zonePast')}
           </li>
@@ -366,8 +383,9 @@ export function SchedulePage() {
           </li>
         </ul>
           </div>
+          ) : null}
         </div>
-        {route || nextHub ? (
+        {hasPass && (route || nextHub) ? (
           <div className={s.route}>
             {route ? <b>{route}</b> : null}
             {nextHub ? (
@@ -376,15 +394,6 @@ export function SchedulePage() {
                 {planned.length > 1 ? ` · ${t('path.more', { count: planned.length - 1 })}` : ''}
               </span>
             ) : null}
-          </div>
-        ) : null}
-        {!hasPass ? (
-          <div className={s.tease}>
-            <Icon name="ticket" size={18} className={s.teaseIcon} />
-            <p className={s.teaseText}>{t('path.tease')}</p>
-            <Button variant="coral" compact onClick={() => getPass()} className={s.teaseBtn}>
-              {t('getPass', { price: formatUsd(PASS_PRICE) })}
-            </Button>
           </div>
         ) : null}
       </section>

@@ -19,6 +19,18 @@
 .t2f-pathmap-zone[data-state='future'] {
   fill: color-mix(in srgb, var(--color-zone-future) 50%, var(--color-surface));
 }
+/* Відвідані країни — золотом (паспорт і графік): видно поверх поясів, але не сперечаються з точками шляху. */
+.t2f-pathmap-visited {
+  fill: #e9c766;
+  stroke: var(--color-highlight);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+/* Без пасу: мапа розмита й темна, без точок і ліній; зверху — картка пасу. */
+.t2f-pathmap-locked {
+  filter: blur(3px) brightness(0.55);
+  transform: scale(1.02);
+}
 .t2f-pathmap-line {
   fill: none;
   stroke-width: 2;
