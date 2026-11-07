@@ -968,7 +968,8 @@ export function RoomLive() {
 
   return (
     <RoomPageContext.Provider value={roomCtx}>
-      <div data-room-page="" className="flex flex-col px-4 py-4 md:px-6">
+      {/* Десктоп: вікна на рівні з верхом чату, без бічних відступів (власник 2026-11-07); телефон — як було. */}
+      <div data-room-page="" className={cn('flex flex-col', s.page)}>
         {grid}
         {info}
         {phone && undo ? (

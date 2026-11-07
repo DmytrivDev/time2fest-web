@@ -412,7 +412,6 @@ export function CountryLive({ iso }: { iso: string }) {
       inSchedule={inSchedule}
       onToggleSchedule={toggleSchedule}
       rating={ratingRow ? { score: ratingRow.score, place: ratingRow.place } : undefined}
-      className={styles.pad}
     />
   ) : null;
   const title = currentSource?.title.uk ?? (current ? eventTitle(current.city) : '');

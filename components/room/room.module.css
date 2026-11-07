@@ -720,3 +720,18 @@ button.slot:hover .slotCircle {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+/* Сторінка кімнати: телефон — відступи 16 px, планшет — 24 px; десктоп — нуль, вікна на рівні з верхом чату. */
+.page {
+  padding: 16px;
+}
+@media (min-width: 768px) {
+  .page {
+    padding-inline: 24px;
+  }
+}
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .page {
+    padding: 0 0 16px;
+  }
+}

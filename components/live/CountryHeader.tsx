@@ -3,7 +3,7 @@
 /**
  * C20 · CountryHeader — рядок країни (S-COUNTRY) за дошками `Desk-Country-Full`, `Phone-Country-Full` (рішення власника
  * 2026-11-05): невеликий, без фото.
- * Десктоп: хлібні крихти одним рядком, круглий прапор, назва, «північ о 01:00 за вашим часом» і «Додати в графік»
+ * Десктоп (без хлібних крихт — власник 2026-11-07; назва на рівні з верхом чату): круглий прапор, назва, «північ о 01:00 за вашим часом» і «Додати в графік»
  * (лише поки північ не минула). Країна з кількома поясами — під назвою стрічка поясів «UTC−5 · Нью-Йорк 07:00 …».
  * Телефон: рядок 60 px над відео — прапор, назва, «північ о …» (кілька поясів — кнопка «Нью-Йорк · UTC−5 · 07:00 ▾»,
  * шторка «Пояси …») і календарик. Поки розгорнуто чат чи відкрито шторку (`html[data-chat-dock-expanded]`), рядок плавно
@@ -17,7 +17,6 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { Link } from '@/components/primitives/Link';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import type { Country } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
@@ -138,7 +137,6 @@ export function CountryHeader({
   className,
 }: CountryHeaderProps) {
   const t = useTranslations('country.header');
-  const tNav = useTranslations('header');
   const tSched = useTranslations('liveMap.country');
   const overlay = useOverlay();
 
@@ -225,21 +223,6 @@ export function CountryHeader({
 
       {/* Десктоп. */}
       <div className={cn(styles.deskOnly, h.desk)}>
-        <nav aria-label={t('breadcrumbs')} className={h.crumbs}>
-          <ol>
-            <li>
-              <Link href="/countries/" variant="inline" className={h.crumbLink}>
-                {tNav('countries')}
-              </Link>
-            </li>
-            <li aria-hidden="true" className={h.crumbSep}>
-              <Icon name="chevron-right" size={14} />
-            </li>
-            <li aria-current="page" className={h.crumbHere}>
-              {name}
-            </li>
-          </ol>
-        </nav>
         <div className={h.deskRow}>
           <Flag round code={country.flagCode} size="xl" decorative />
           <p className={h.deskName}>{name}</p>
