@@ -843,6 +843,159 @@
 }
 
 /* ── Телефон ── */
+/* «Як збирати штампи» — інфоблок унизу (варіант A дошки `Desk-Passport-Info`). */
+.how {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.howSteps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.howStep {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.howNumRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.howNum {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+  font-size: 14px;
+  font-weight: 800;
+}
+.howLine {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-highlight), var(--color-border));
+}
+.howBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.howMini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 72px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+.howMini[data-mini='midnight'] {
+  background: linear-gradient(160deg, #2b2350, #151520); /* дошка */
+  color: var(--color-highlight);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.howMini[data-mini='auto'] {
+  background: #1d3b40; /* дошка */
+}
+.howMini[data-mini='path'] {
+  background: linear-gradient(160deg, #1f2a3a, #151520); /* дошка */
+}
+.howMini[data-mini='path'] {
+  position: relative;
+}
+.howMini[data-mini='path'] svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.howDot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  transform: translate(-50%, -50%);
+}
+.howMini polyline {
+  fill: none;
+  stroke: var(--color-highlight);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 2;
+  vector-effect: non-scaling-stroke;
+}
+.howSeal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border: 2px dashed var(--color-highlight);
+  border-radius: var(--radius-full);
+  color: var(--color-highlight);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  transform: rotate(-12deg);
+}
+.howShare {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+}
+.howTitle {
+  font-size: 15px;
+}
+.howText {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.howFoot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgb(252 226 134 / 0.07);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.howFoot > svg {
+  flex: none;
+  color: var(--color-highlight);
+}
+
 @media (max-width: 767.98px) {
   .pageWrap {
     gap: 16px;
@@ -937,6 +1090,40 @@
   }
   .nextBlockHead .nextBtns {
     flex-basis: 100%;
+  }
+  /* «Як збирати штампи» — стовпчиком: номер і лінія ліворуч, мініатюра під текстом. */
+  .how {
+    padding: 16px;
+  }
+  .howSteps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .howStep {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .howNumRow {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .howNum {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+  .howLine {
+    width: 2px;
+    height: auto;
+    background: var(--color-border);
+  }
+  .howBody {
+    padding-bottom: 14px;
+  }
+  .howBody .howMini {
+    order: 3;
+    width: 150px;
+    margin: 8px 0 0;
   }
   .seal {
     width: 52px;

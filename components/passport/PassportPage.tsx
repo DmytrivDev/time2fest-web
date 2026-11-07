@@ -44,6 +44,7 @@ import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { BIG_POSTCARD_ID, BigPostcard } from './BigPostcard';
 import { FlagStrip } from './FlagStrip';
+import { PassportHowTo } from './PassportHowTo';
 import { PathLock } from './PathLock';
 import { usePassportShare } from './PassportShare';
 import s from './passport.module.css';
@@ -478,6 +479,7 @@ export function PassportPage() {
           </div>
         ))}
       </section>
+      <PassportHowTo signedIn={!!user} />
       <PageChat />
     </div>
   );

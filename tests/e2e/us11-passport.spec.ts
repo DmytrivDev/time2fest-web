@@ -82,6 +82,11 @@ test('без пасу: мапа затемнена з карткою пасу; �
   // «Наступний штамп» — плитка в ряду штампів; без пасу ще й блок після штампів (дошка `Desk-Passport-Next`).
   await expect(page.locator('[data-next="zone"]')).toContainText('Наступний штамп');
   await expect(page.locator('[data-next-block]')).toContainText('Усі країни поясу');
+  // Унизу — «Як збирати штампи» (варіант A дошки `Desk-Passport-Info`): 4 кроки, гостю — «Увійди».
+  const howTo = page.locator('[data-passport-howto]');
+  await expect(howTo.getByRole('listitem')).toHaveCount(4);
+  await expect(howTo).toContainText('Штамп — автоматично');
+  await expect(howTo.getByRole('link', { name: 'Увійди' })).toBeVisible();
   await gotoAt(page, AT, 1, '/schedule/');
   await expect(page.locator('[data-path-lock="schedule"]')).toBeVisible();
 });
