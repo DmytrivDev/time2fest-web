@@ -156,7 +156,10 @@ test.describe('US1 · ефір на головній', () => {
     const block = page.locator('[data-stamp-block]');
     await expect(block.locator('[data-stamp-rate]')).toContainText('Як тобі шоу?');
     await block.getByRole('radio', { name: '4 з 5' }).click();
+    await expect(block.locator('[data-stamp-rate]')).toContainText('Ти поставив 4 з 5');
+    await block.getByRole('button', { name: 'Підтвердити' }).click();
     await expect(block.locator('[data-stamp-rate]')).toContainText('Твоя оцінка');
+    await expect(block.getByRole('link', { name: /Рейтинг святкувань/ })).toHaveAttribute('href', /^\/rating\/?$/);
     await expectNothingOverPlayer(page);
     await expectAxeClean(page);
   });

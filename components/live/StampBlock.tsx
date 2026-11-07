@@ -29,6 +29,7 @@ import { shareWindowSpec } from '@/components/windows/Share';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { StampRate } from '@/components/windows/StampRate';
 import { getData } from '@/lib/data/load';
+import { isRateable } from '@/lib/passport/passport';
 import type { Stars } from '@/lib/data/types';
 import { on } from '@/lib/events/bus';
 import { useGuestStore } from '@/stores/guest';
@@ -196,6 +197,10 @@ export function StampBlock({ eventId, permanent = false, roomEventIds, className
     const stars = e.eventId ? ratings[e.eventId]?.stars : undefined;
     if (stars !== undefined) values[e.eventId!] = stars;
   }
+  // «Як тобі шоу?» — лише святкування з трансляцією (`isRateable`), як у паспорті й «Рейтингу святкувань».
+  const rateRows = (current?.list ?? [])
+    .filter((e) => !!e.eventId && isRateable(getData(), e.eventId))
+    .map((e) => ({ eventId: e.eventId!, city: e.city }));
 
   return (
     <Reveal open={visible} className={cn('t2f-reveal-instant', className)}>
@@ -214,11 +219,7 @@ export function StampBlock({ eventId, permanent = false, roomEventIds, className
             onClose={permanent ? undefined : () => dismiss(current.list, current.key)}
             more={more && more.count > 0 ? more : undefined}
             rate={
-              <StampRate
-                rows={current.list.map((e) => ({ eventId: e.eventId ?? '', city: e.city }))}
-                values={values}
-                onRate={(id, stars) => setRate(id, { stars })}
-              />
+              rateRows.length ? <StampRate rows={rateRows} values={values} onRate={(id, stars) => setRate(id, { stars })} /> : undefined
             }
           />
         </div>

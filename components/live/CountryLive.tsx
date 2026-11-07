@@ -56,6 +56,7 @@ import { eventStatus } from '@/lib/engine/eventStatus';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
+import { ratingState } from '@/lib/rating/rating';
 import { simulatedViewers } from '@/lib/presence/viewers';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import {
@@ -394,6 +395,12 @@ export function CountryLive({ iso }: { iso: string }) {
     [zones, data, iso, minute, tHead],
   );
   const zone = zoneId ? data.zonesById.get(zoneId) : undefined;
+  // Чіп рейтингу біля назви — після півночі, якщо головне святкування вже в «Рейтингу святкувань».
+  const rate = useGuestStore((g) => g.rate);
+  const ratingRow = useMemo(
+    () => (after && mainEvent ? ratingState(data, minute, rate).rows.find((r) => r.eventId === mainEvent.id) : undefined),
+    [after, mainEvent, data, minute, rate],
+  );
   const header = mainEvent ? (
     <CountryHeader
       country={country}
@@ -404,6 +411,7 @@ export function CountryLive({ iso }: { iso: string }) {
       onZoneChange={changeZone}
       inSchedule={inSchedule}
       onToggleSchedule={toggleSchedule}
+      rating={ratingRow ? { score: ratingRow.score, place: ratingRow.place } : undefined}
       className={styles.pad}
     />
   ) : null;

@@ -23,6 +23,8 @@ import type {
   SystemPayload,
 } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
+import { getData } from '@/lib/data/load';
+import { ratingState } from '@/lib/rating/rating';
 import { zoneRows } from '@/lib/firstrow/zone';
 
 /** Що відбувається опівночі одного слота ефіру: подія, для якої настала північ, і її країни. */
@@ -416,6 +418,33 @@ export function slowModeMessages(script: ChatScriptFile, rooms: readonly RoomId[
   ];
 }
 
+/**
+ * «Новий лідер рейтингу святкувань» у «Світі» (рішення власника 2026-11-07): щогодини (на початку години UTC) імітатор
+ * дивиться, хто перший у рейтингу, і пише, лише коли лідер змінився — не частіше разу на годину.
+ */
+export function ratingLeaderMessages(rooms: readonly RoomId[], from: Ms, to: Ms): ChatMessage[] {
+  if (!rooms.includes('world') || to <= from) return [];
+  const HOUR = 3_600_000;
+  const data = getData();
+  const leader = (at: Ms) => ratingState(data, at, {}).rows[0];
+  const out: ChatMessage[] = [];
+  for (let at = Math.ceil(from / HOUR) * HOUR; at <= to; at += HOUR) {
+    if (at <= from) continue;
+    const cur = leader(at);
+    const prev = leader(at - HOUR);
+    if (!cur || cur.eventId === prev?.eventId) continue;
+    out.push({
+      id: messageId(at, 3_000, 0, 'world'),
+      room: 'world',
+      kind: 'system',
+      createdAt: at,
+      system: { kind: 'rating-leader', eventId: cur.eventId, city: cur.city, flagCode: cur.flagCode, score: Math.round(cur.score * 10) / 10 },
+      moderation: 'ok',
+    });
+  }
+  return out;
+}
+
 /** Повідомлення кімнат `rooms` із `createdAt ∈ (from, to]`. */
 export function messagesBetween(
   script: ChatScriptFile,
@@ -456,6 +485,7 @@ export function createChatSimulator(opts: SimulatorOptions): ChatSimulator {
         batch.push(
           ...ambientBetween(opts.script, opts.moments, opts.rooms, ambientFrom, now, opts.getSpeed?.() ?? 1),
           ...slowModeMessages(opts.script, opts.rooms, from, now),
+          ...ratingLeaderMessages(opts.rooms, from, now),
         );
         batch.sort(compareMessages);
       }

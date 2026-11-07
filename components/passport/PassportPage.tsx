@@ -151,7 +151,9 @@ export function PassportPage() {
               onRate={(id, v) => setRate(id, { stars: v })}
               className={s.cardRate}
             />
-          ) : null}
+          ) : (
+            <p className={s.cardNoRate}>{t('noRate')}</p>
+          )}
         </div>
       </li>
     );

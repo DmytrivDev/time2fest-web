@@ -219,3 +219,34 @@
     transition: none;
   }
 }
+
+/* Чіп «★ 4,5 · 6-те місце ›» — після півночі, веде в «Рейтинг святкувань» (дошка `Desk-Rating-New`, 2026-11-07). */
+.ratingChip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid rgb(252 226 134 / 0.4);
+  border-radius: 999px;
+  background: rgb(252 226 134 / 0.08);
+  color: var(--color-highlight);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ratingChip:hover {
+  background: rgb(252 226 134 / 0.16);
+}
+.ratingStar {
+  fill: currentColor;
+}
+/* Телефон: чіп праворуч у рядку назви — компактніший, щоб «північ була о …» вміщувалась. */
+.row .ratingChip {
+  gap: 4px;
+  height: 30px;
+  padding: 0 8px 0 10px;
+  font-size: 12px;
+}

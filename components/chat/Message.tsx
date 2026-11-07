@@ -279,6 +279,16 @@ export function Message({
       body = t('systemSlowMode', { seconds: s.seconds });
     } else if (s?.kind === 'poll-open') {
       body = t('systemPoll');
+    } else if (s?.kind === 'rating-leader') {
+      // «Новий лідер рейтингу святкувань — Варшава · ★ 4,8 · Рейтинг ›» (рішення власника 2026-11-07).
+      body = (
+        <>
+          {t('systemRatingLeader', { city: s.city, score: s.score.toFixed(1).replace('.', ',') })}{' '}
+          <a href="/rating/" className="t2f-focus font-semibold underline underline-offset-2">
+            {t('systemRatingLink')}
+          </a>
+        </>
+      );
     }
     if (counter) {
       return (

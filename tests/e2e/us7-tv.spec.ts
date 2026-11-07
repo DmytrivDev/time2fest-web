@@ -186,7 +186,7 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(sidebar(page).getByRole('link', { name: /Time2Fest/ })).toBeVisible();
     await expect(page.getByRole('timer')).toHaveCount(1);
     await expect(sidebar(page)).toContainText('Зараз: Лондон');
-    await expect(sidebar(page).getByRole('tab')).toHaveText(['Як святкувати', 'Перший ряд']);
+    await expect(sidebar(page).getByRole('tab')).toHaveText(['Як святкувати', 'Перший ряд', 'Рейтинг']);
     await expect(sidebar(page).getByRole('button', { name: 'Усе свято' })).toHaveAttribute('aria-pressed', 'true');
     await expect(sidebar(page).getByRole('button', { name: /Звук/ })).toBeVisible();
     await expect(sidebar(page).getByRole('button', { name: 'На весь екран' })).toBeVisible();
@@ -208,10 +208,10 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(sidebar(page).getByRole('tab')).toHaveCount(0);
     await welcome.getByRole('button', { name: 'Зрозуміло · OK' }).click();
     await expect(welcome).toHaveCount(0);
-    await expect(sidebar(page).getByRole('tab')).toHaveCount(2);
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(3);
     await page.reload();
     await waitForTimeApi(page);
-    await expect(sidebar(page).getByRole('tab')).toHaveCount(2);
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(3);
     await expect(sidebar(page).locator('[data-tv-welcome]')).toHaveCount(0);
   });
 

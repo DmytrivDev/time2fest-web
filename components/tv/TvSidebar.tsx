@@ -4,7 +4,7 @@
  * TvSidebar (C22, дошка `TV-Party-New`, рішення 2026-11-06): права колонка режиму вечірки. Дані ефіру лише читає з `useBroadcast()`.
  *
  * Закріплені частини (без прокрутки — на ТВ її не видно й незручно): логотип і годинник · відлік «до півночі» (поки до події
- * > 5 хв) · «Зараз: Лондон · Вебкамера ● Наживо» і «Змінити трансляцію» · вкладки «Як святкувати · Перший ряд» · одна область
+ * > 5 хв) · «Зараз: Лондон · Вебкамера ● Наживо» і «Змінити трансляцію» · вкладки «Як святкувати · Перший ряд · Рейтинг» · одна область
  * вмісту · «Що показувати» (Усе свято / Мій графік) · «Звук · На весь екран · Вийти».
  *
  * Стани колонки:
@@ -41,6 +41,7 @@ import { useTvPrefs } from '@/stores/tv';
 import { TvControlBar } from './TvControlBar';
 import { TvFirstRowTab, useTvFirstRow } from './TvFirstRowTab';
 import { TvGreetings } from './TvGreetings';
+import { TvRatingTab } from './TvRatingTab';
 import { TvNearest, TvNoPass, TvNow, TvShowSwitch, TvStreamsNow, TvWelcome } from './TvPanels';
 import { TvStampCard } from './TvStampCard';
 import styles from './tv.module.css';
@@ -200,6 +201,10 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
           <Icon name="ticket" size={22} />
           {t('firstRow')}
         </TabsTrigger>
+        <TabsTrigger value="rating">
+          <Icon name="star" size={22} />
+          {t('rating')}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="how" className={styles.panel} data-tv-panel="how">
         {current?.country && current.country.howTo.traditions.length ? (
@@ -210,6 +215,9 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
       </TabsContent>
       <TabsContent value="fr" className={styles.panel} data-tv-panel="fr">
         <TvFirstRowTab data={firstRow} />
+      </TabsContent>
+      <TabsContent value="rating" className={styles.panel} data-tv-panel="rating">
+        <TvRatingTab now={now} />
       </TabsContent>
     </Tabs>
   );

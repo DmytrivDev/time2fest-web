@@ -10,6 +10,7 @@
  * складається: відео під’їжджає під шапку, висоти чату й шторок — як на головній; сторінка нікуди не прокручується.
  * `h1` — на сторінці (sr-only), тут назва — звичайний абзац. Назви — лише в називному відмінку.
  */
+import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
@@ -20,6 +21,7 @@ import { Link } from '@/components/primitives/Link';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import type { Country } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
+import { ukOrdinal } from '@/lib/rating/rating';
 import h from './countryHeader.module.css';
 import m from './countryPanel.module.css';
 import styles from './live.module.css';
@@ -53,7 +55,27 @@ export interface CountryHeaderProps {
   onToggleSchedule?(): void;
   /** Часовий пояс глядача (тести, історії); типово — пояс браузера. */
   timeZone?: string;
+  /** Після півночі головне святкування в «Рейтингу святкувань» — чіп «★ 4,5 · 6-те місце ›» (рішення власника 2026-11-07). */
+  rating?: { score: number; place: number };
   className?: string;
+}
+
+function RatingChip({ rating }: { rating: { score: number; place: number } }) {
+  const t = useTranslations('country.header');
+  const score = rating.score.toFixed(1).replace('.', ',');
+  const place = ukOrdinal(rating.place);
+  return (
+    <NextLink
+      href="/rating/"
+      data-rating-chip=""
+      aria-label={t('ratingAria', { score, place })}
+      className={cn('t2f-focus', h.ratingChip)}
+    >
+      <Icon name="star" size={14} className={h.ratingStar} />
+      {t('ratingChip', { score, place })}
+      <Icon name="chevron-right" size={12} />
+    </NextLink>
+  );
 }
 
 function ZonesList({
@@ -112,6 +134,7 @@ export function CountryHeader({
   inSchedule = false,
   onToggleSchedule,
   timeZone,
+  rating,
   className,
 }: CountryHeaderProps) {
   const t = useTranslations('country.header');
@@ -183,6 +206,7 @@ export function CountryHeader({
                   <p className={h.rowTime}>{timeLine}</p>
                 )}
               </div>
+              {rating ? <RatingChip rating={rating} /> : null}
               {schedule ? (
                 <IconButton
                   icon={inSchedule ? 'calendar-check' : 'calendar-add'}
@@ -220,6 +244,7 @@ export function CountryHeader({
           <Flag round code={country.flagCode} size="xl" decorative />
           <p className={h.deskName}>{name}</p>
           {multi ? null : <p className={h.deskTime}>{timeLine}</p>}
+          {rating ? <RatingChip rating={rating} /> : null}
           <span className="flex-1" />
           {schedule ? (
             <button

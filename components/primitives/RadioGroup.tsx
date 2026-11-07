@@ -55,6 +55,9 @@ export function RadioGroup({
     onValueChange?.(v);
   };
   const selectedIndex = options.findIndex((o) => o.value === current);
+  // `stars`: під курсором миші світяться зірки до наведеної включно — видно, яку оцінку поставиш (власник 2026-11-07).
+  const [hoverIndex, setHoverIndex] = useState(-1);
+  const litIndex = variant === 'stars' && hoverIndex >= 0 ? hoverIndex : selectedIndex;
 
   return (
     <Radix.Root
@@ -63,6 +66,8 @@ export function RadioGroup({
       onValueChange={change}
       disabled={disabled}
       orientation={variant === 'list' ? 'vertical' : 'horizontal'}
+      onPointerLeave={variant === 'stars' ? () => setHoverIndex(-1) : undefined}
+      data-hover={variant === 'stars' && hoverIndex >= 0 ? hoverIndex + 1 : undefined}
       className={cn(
         variant === 'list' && 'flex flex-col',
         variant === 'grid' && 'grid grid-cols-4 gap-1',
@@ -99,13 +104,17 @@ export function RadioGroup({
               value={o.value}
               disabled={o.disabled}
               aria-label={o.label}
+              data-lit={i <= litIndex || undefined}
+              onPointerEnter={(e) => {
+                if (e.pointerType === 'mouse') setHoverIndex(i);
+              }}
               className={cn(
                 't2f-focus t2f-transition inline-flex size-touch-min items-center justify-center rounded-md hover:bg-surface-raised',
-                i <= selectedIndex ? 'text-highlight' : 'text-text-muted',
+                i <= litIndex ? 'text-highlight' : 'text-text-muted',
               )}
             >
               {/* Макет `Desk-Rate`: зірка 32 px, штрих 1.6. */}
-              <Icon name="star" size={32} strokeWidth={1.6} fill={i <= selectedIndex ? 'currentColor' : 'none'} />
+              <Icon name="star" size={32} strokeWidth={1.6} fill={i <= litIndex ? 'currentColor' : 'none'} />
             </Radix.Item>
           )}
         </Fragment>

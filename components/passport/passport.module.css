@@ -380,19 +380,23 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background: var(--color-surface);
 }
+/* Золота рамка «Першого ряду» — без зміни розміру картки (усі картки однакові). */
 .cardGold {
-  border: 2px solid var(--color-highlight);
+  border-color: var(--color-highlight);
+  box-shadow: inset 0 0 0 1px var(--color-highlight);
 }
 .strip {
   display: block;
@@ -426,6 +430,7 @@
 }
 .cardBody {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 2px;
   padding: 10px 12px 12px;
@@ -449,6 +454,15 @@
 }
 .cardRate {
   margin-top: 6px;
+}
+.cardNoRate {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 70px; /* як рядок оцінки: відступ 6 + верх 6 + рядок 52 + 6 */
+  padding-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 13px;
 }
 
 /* Наступний штамп. */

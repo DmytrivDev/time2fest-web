@@ -23,10 +23,10 @@ describe('паспорт', () => {
     expect(continentOf('AQ', 0)).toBeNull();
   });
 
-  it('оцінка — лише головні святкування; вебкамера й «лише відлік» — ні', () => {
+  it('оцінка — головні святкування з трансляцією (і вебкамерою); «лише відлік» — ні', () => {
     expect(isRateable(data, ev('kyiv').id)).toBe(true);
     expect(isRateable(data, ev('dubai').id)).toBe(true);
-    expect(isRateable(data, ev('london').id)).toBe(false); // вебкамера
+    expect(isRateable(data, ev('london').id)).toBe(true); // у прототипі поки лише вебкамера
     expect(isRateable(data, ev('santiago').id)).toBe(false); // лише відлік
   });
 

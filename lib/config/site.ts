@@ -49,6 +49,10 @@ export function firstRowUrl(eventId: string): string {
 export const PASS_SHORT_URL = `${SITE_HOST}/pass`;
 export const PASS_URL = `https://${PASS_SHORT_URL}/`;
 
+/** «Рейтинг святкувань»: QR «Оціни з телефона» в режимі вечірки. */
+export const RATING_SHORT_URL = `${SITE_HOST}/rating`;
+export const RATING_URL = `https://${RATING_SHORT_URL}/`;
+
 /** Режим вечірки: адреса для телевізора (інформаційна сторінка на телефоні). */
 export const TV_SHORT_URL = `${SITE_HOST}/tv`;
 export const TV_URL = `https://${TV_SHORT_URL}/`;

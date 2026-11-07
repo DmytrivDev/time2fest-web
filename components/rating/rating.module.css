@@ -1,0 +1,527 @@
+/* «Рейтинг святкувань» за дошками `Desk-Rating-New` / `Phone-Rating-New` v2 (рішення власника 2026-11-07). */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0 40px;
+}
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.sub {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+.h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+.sectionSub {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.spacer {
+  flex: 1;
+}
+
+/* Відлік. */
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border: 1px solid rgb(252 226 134 / 0.35);
+  border-radius: 16px;
+  background: rgb(252 226 134 / 0.06);
+}
+.cdIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+}
+.cdText {
+  flex: 1;
+  min-width: 0;
+}
+.cdTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.cdMeta {
+  margin: 2px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.cdTimer {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.cdLabel {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.cdValue {
+  color: var(--color-highlight);
+  font-size: 30px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* «Оціни, де ти був». */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px 12px;
+}
+.cardCity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.cardMeta {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.cardRate {
+  margin-top: 6px;
+  min-height: 64px;
+}
+
+/* Оцінка на місці чату. */
+.panel {
+  padding: 4px 16px 16px;
+}
+
+/* Фільтр. */
+.seg {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+}
+.segBtn {
+  min-height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.segBtn[aria-pressed='true'] {
+  background: var(--color-text);
+  color: var(--color-background);
+}
+.note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Список: місце · назва · смужка · рейтинг | твоя оцінка. */
+.colHead,
+.row {
+  display: grid;
+  grid-template-columns: 32px 180px minmax(0, 1fr) 52px 1px 96px;
+  align-items: center;
+  column-gap: 16px;
+}
+.colHead {
+  padding: 0 16px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.colScore {
+  text-align: right;
+}
+.colMine {
+  text-align: center;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.row {
+  min-height: 64px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.row[data-place='1'] {
+  border-color: rgb(252 226 134 / 0.45);
+}
+.row[data-place='2'] {
+  border-color: rgb(201 206 214 / 0.4);
+}
+.row[data-place='3'] {
+  border-color: rgb(208 138 85 / 0.45);
+}
+.medal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+.medal[data-place] {
+  color: #121214; /* на медалі — темний, як на дошці */
+  font-weight: 800;
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.18);
+}
+.medal[data-place='1'] {
+  background: #fce286; /* золото */
+}
+.medal[data-place='2'] {
+  background: #c9ced6; /* срібло */
+}
+.medal[data-place='3'] {
+  background: #d08a55; /* бронза */
+}
+.name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.nameText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.barCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.bar {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #2c2c32; /* дошка */
+}
+.bar span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-text-muted);
+}
+.row[data-place='1'] .bar span {
+  background: #fce286;
+}
+.row[data-place='2'] .bar span {
+  background: #c9ced6;
+}
+.row[data-place='3'] .bar span {
+  background: #d08a55;
+}
+.rowSub {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.score {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.divider {
+  align-self: stretch;
+  width: 1px;
+  background: var(--color-border);
+}
+.mine {
+  display: flex;
+  justify-content: center;
+}
+.minePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgb(252 226 134 / 0.35);
+  border-radius: var(--radius-full);
+  background: rgb(252 226 134 / 0.1);
+  color: var(--color-highlight);
+  font-size: 13px;
+  font-weight: 700;
+}
+.rateBtn {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dash {
+  color: var(--color-text-muted);
+}
+
+/* Ще попереду. */
+.ahead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.aheadItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px dashed #5a5a64; /* дошка */
+  border-radius: 12px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.aheadItem b {
+  color: var(--color-text-secondary);
+}
+
+/* «Рейтинг у чотирьох числах» (варіант D). */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.infoTile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+}
+.infoNum {
+  color: var(--color-highlight);
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.infoText {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.infoStars {
+  display: flex;
+  gap: 2px;
+  margin-top: auto;
+  color: #45454d; /* дошка */
+}
+.infoStarOn {
+  color: var(--color-highlight);
+  fill: currentColor;
+}
+.infoBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+  margin-top: auto;
+}
+.infoBars span {
+  flex: 1;
+  max-width: 4px;
+  border-radius: 1px;
+  background: #45454d; /* дошка */
+}
+.infoBars span[data-on] {
+  background: var(--color-highlight);
+}
+.infoRing {
+  margin-top: auto;
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.infoRing circle:first-child {
+  stroke: #2c2c32; /* дошка */
+}
+.infoRing circle:last-child {
+  stroke: var(--color-highlight);
+}
+
+@media (max-width: 767.98px) {
+  .page {
+    gap: 18px;
+    padding: 16px 16px 24px;
+  }
+  .h1 {
+    font-size: 24px;
+  }
+  .sub {
+    font-size: 13px;
+  }
+  .h2 {
+    font-size: 18px;
+  }
+  .countdown {
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+  .cdTimer {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .cdValue {
+    font-size: 26px;
+  }
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .colHead {
+    display: none;
+  }
+  /* Телефон: місце · назва й рейтинг у рядку, смужка під ними, «твоя оцінка» — нижче. */
+  .row {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'medal name score'
+      'medal bar bar'
+      'medal mine mine';
+    row-gap: 6px;
+    column-gap: 10px;
+    padding: 10px 12px;
+  }
+  .medal {
+    grid-area: medal;
+    align-self: start;
+  }
+  .name {
+    grid-area: name;
+    font-size: 15px;
+  }
+  .score {
+    grid-area: score;
+    font-size: 18px;
+  }
+  .barCell {
+    grid-area: bar;
+  }
+  .divider {
+    display: none;
+  }
+  .mine {
+    grid-area: mine;
+    justify-content: flex-start;
+  }
+  .mine:has(.dash) {
+    display: none;
+  }
+  .infoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .infoNum {
+    font-size: 30px;
+  }
+  .info {
+    padding: 14px;
+  }
+}
+.minePill svg {
+  fill: currentColor;
+}

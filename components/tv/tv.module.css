@@ -1551,3 +1551,96 @@
   background: var(--color-surface-raised);
   color: var(--color-text);
 }
+
+/* ── Рейтинг: топ-5 і QR «Оціни з телефона» (дошка `Desk-Rating-New` v2, 2026-11-07) ── */
+
+.rtClose {
+  margin-inline-start: 12px;
+  color: var(--color-text-muted);
+  font-size: 17px;
+  font-weight: 600;
+}
+.rtList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rtRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.rtMedal {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-size: 19px;
+  font-weight: 700;
+}
+.rtRow[data-place] .rtMedal {
+  color: #121214; /* на медалі — темний, як на сторінці рейтингу */
+  font-weight: 800;
+}
+.rtRow[data-place='1'] .rtMedal,
+.rtRow[data-place='1'] .rtBar span {
+  background: #fce286; /* золото */
+}
+.rtRow[data-place='2'] .rtMedal,
+.rtRow[data-place='2'] .rtBar span {
+  background: #c9ced6; /* срібло */
+}
+.rtRow[data-place='3'] .rtMedal,
+.rtRow[data-place='3'] .rtBar span {
+  background: #d08a55; /* бронза */
+}
+.rtCity {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.rtName {
+  overflow: hidden;
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.rtBar {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #2c2c32;
+}
+.rtBar span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-text-muted);
+}
+.rtScore {
+  flex: none;
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.rtQr {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}

@@ -62,8 +62,8 @@ test('з пасом: інфографіка, мапа з шляхом і «По�
   await expect(profile).toContainText('3');
   await expect(profile).toContainText('з 6');
   await expect(page.locator('[data-passport-map="pass"] [data-visited="UA"]')).toHaveCount(1);
-  // Окленд — вебкамера: оцінки немає; Київ — головне святкування: «Твоя оцінка».
-  await expect(page.locator('[data-stamp-card="evt_auckland_2027"] [data-stamp-rate]')).toHaveCount(0);
+  // Окленд — головне святкування (поки з вебкамерою): «Як тобі шоу?»; Київ — уже оцінений: «Твоя оцінка».
+  await expect(page.locator('[data-stamp-card="evt_auckland_2027"] [data-stamp-rate]')).toContainText('Як тобі шоу?');
   await expect(page.locator('[data-stamp-card="evt_kyiv_2027"] [data-stamp-rate]')).toBeVisible();
   await page.locator('[data-action="share-route"]').click();
   await expect(page.getByRole('dialog').or(page.locator('[data-overlay]')).first()).toContainText('Поділитися шляхом');

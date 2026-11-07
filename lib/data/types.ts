@@ -199,7 +199,9 @@ export type SystemPayload =
   | { kind: 'firstrow-joined'; participantName: string; flagCode: string; eventId: string; cityId: string }
   | { kind: 'greetings-counter'; count: number; flagCodes: string[]; eventId: string }
   | { kind: 'slow-mode'; seconds: number }
-  | { kind: 'poll-open'; pollId: string };
+  | { kind: 'poll-open'; pollId: string }
+  /** Новий лідер «Рейтингу святкувань» (рішення власника 2026-11-07): не частіше разу на годину, лише в «Світі». */
+  | { kind: 'rating-leader'; eventId: string; city: string; flagCode: string; score: number };
 
 export interface GreetingPayload {
   eventId: string;
