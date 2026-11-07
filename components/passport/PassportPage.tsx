@@ -54,8 +54,6 @@ export function PassportPage() {
   const tMap = useTranslations('passport.map');
   const tStamp = useTranslations('windows.achievement');
   const tShare = useTranslations('share');
-  const tType = useTranslations('liveCards.eventCard.type');
-  const tZone = useTranslations('schedulePage.zone');
   const locale = useLocale();
   const timeReady = useTimeReady();
   const now = useNow({ granularity: 'minute' });
@@ -159,70 +157,90 @@ export function PassportPage() {
     );
   };
 
+  // «Наступний штамп» (дошка `Desk-Passport-Next`, власник 2026-11-07): плитка такого самого розміру, як листівки, у ряду
+  // штампів — завжди; без пасу ще й невеликий блок після штампів (країни поясу, «Усі країни поясу», «Мій графік»).
+  const nextChip = next ? `${formatClock(next.midnightMs, { locale })} · ${t('nextIn', { time: formatDurationShort(next.midnightMs - now) })}` : '';
   const nextCell = (() => {
     if (!next) return null;
-    const inTime = formatDurationShort(next.midnightMs - now);
-    if (next.kind === 'schedule') {
-      const c = next.country;
-      const ill = data.countriesByIso.get(c.iso)?.illustrationId ?? 'generic';
-      return (
-        <li className={cn(s.card, s.next)} data-next="schedule">
-          <div className={s.nextArt}>
-            <StampArt illustrationId={ill} stampText={tStamp('stamped', { city: c.place.split(' · ')[0]!.toLocaleUpperCase('uk') })} />
-            <span className={s.nextChip}>
-              <Icon name="clock" size={16} />
-              {t('nextIn', { time: inTime })}
+    const sched = next.kind === 'schedule';
+    const flags = sched ? [next.country] : next.countries.slice(0, 3);
+    return (
+      <li className={cn(s.card, s.next)} data-next={next.kind}>
+        <span aria-hidden="true" className={s.nextStrip} />
+        <div className={s.nextArt}>
+          {next.kind === 'schedule' ? (
+            <StampArt illustrationId={data.countriesByIso.get(next.country.iso)?.illustrationId ?? 'generic'} stampText={tStamp('stamped', { city: next.country.place.split(' · ')[0]!.toLocaleUpperCase('uk') })} />
+          ) : (
+            <span aria-hidden="true" className={s.nextBlank}>
+              <span className={s.nextBlankIn}>
+                <span className={s.nextRing} />
+              </span>
             </span>
-          </div>
-          <div className={s.cardBody}>
-            <p className={s.nextKicker}>{t('next.scheduleKicker')}</p>
-            <p className={s.cardCity}>
-              <Flag round code={c.flagCode} diameter={20} decorative />
-              {c.place.split(' · ')[0]}
-            </p>
-            <p className={s.cardMeta}>
-              {c.name} · {formatClock(next.midnightMs, { locale })}
-            </p>
-            <p className={s.nextHint}>{t('next.scheduleHint')}</p>
-            <NextLink href={c.href} className={cn('t2f-focus t2f-press', s.smallBtn)}>
-              {t('next.countryPage')}
+          )}
+          <span className={s.nextChip}>
+            <Icon name="clock" size={16} />
+            {nextChip}
+          </span>
+        </div>
+        <div className={s.cardBody}>
+          <p className={s.nextKicker}>{t('next.tileKicker')}</p>
+          <p className={s.cardCity}>
+            {flags.map((c) => (
+              <Flag key={c.iso} round code={c.flagCode} diameter={20} decorative />
+            ))}
+            {sched ? next.country.place.split(' · ')[0] : t('next.tileZoneName', { utc: utcLabel(next.offsetMinutes) })}
+          </p>
+          <div className={s.nextSlot}>
+            <span>{sched ? t('next.tileSchedule', { country: next.country.name }) : t('next.tileZone', { count: next.total })}</span>
+            <NextLink
+              href={sched ? next.country.href : `/countries/?zone=${encodeURIComponent(next.zoneId)}`}
+              className={cn('t2f-focus', s.nextLink)}
+            >
+              {sched ? t('next.countryPage') : t('next.allCountries')}
+              <Icon name="chevron-right" size={14} />
             </NextLink>
           </div>
-        </li>
-      );
-    }
-    const top = next.countries.slice(0, 5);
-    return (
-      <li className={cn(s.card, s.next, s.nextZone)} data-next="zone">
-        <p className={s.nextKicker}>{t('next.zoneKicker', { time: formatClock(next.midnightMs, { locale }), in: t('nextIn', { time: inTime }) })}</p>
-        <p className={s.nextTitle}>{t('next.zoneTitle', { count: next.total, utc: utcLabel(next.offsetMinutes) })}</p>
-        <p className={s.nextHint}>{t('next.zoneHint')}</p>
-        <ul className={s.nextList}>
-          {top.map((c) => (
-            <li key={c.iso}>
-              <NextLink href={c.href} className={cn('t2f-focus', s.nextRow)}>
-                <Flag round code={c.flagCode} diameter={18} decorative />
-                <span className={s.nextName}>{c.name}</span>
-                <span className={cn(s.nextState, c.group === 'live' && s.nextStateLive)}>
-                  {c.group === 'live' ? tZone('live') : c.group === 'main' ? tType('main') : c.group === 'webcam' ? tType('webcam') : tType('countdownOnly')}
-                </span>
-              </NextLink>
-            </li>
-          ))}
-        </ul>
-        {next.total > top.length ? <p className={s.nextMore}>{t('next.more', { count: next.total - top.length })}</p> : null}
-        <div className={s.nextBtns}>
-          <NextLink href={`/countries/?zone=${encodeURIComponent(next.zoneId)}`} className={cn('t2f-focus t2f-press', s.smallBtn)}>
-            {t('next.allCountries')}
-          </NextLink>
-          <NextLink href="/schedule/" className={cn('t2f-focus t2f-press', s.smallBtn)}>
-            <Icon name="calendar" size={14} />
-            {t('next.toSchedule')}
-          </NextLink>
         </div>
       </li>
     );
   })();
+  const nextBlock =
+    next && next.kind === 'zone' && !hasPass ? (
+      <div className={s.nextBlock} data-next-block="">
+        <div className={s.nextBlockHead}>
+          <span aria-hidden="true" className={s.nextBlockIcon}>
+            <Icon name="clock" size={18} />
+          </span>
+          <div className={s.nextBlockText}>
+            <p className={s.nextBlockTitle}>
+              {t('next.blockTitle', { in: t('nextIn', { time: formatDurationShort(next.midnightMs - now) }), time: formatClock(next.midnightMs, { locale }) })}
+            </p>
+            <p className={s.nextBlockSub}>{t('next.blockSub', { count: next.total, utc: utcLabel(next.offsetMinutes) })}</p>
+          </div>
+          <div className={s.nextBtns}>
+            <NextLink href={`/countries/?zone=${encodeURIComponent(next.zoneId)}`} className={cn('t2f-focus t2f-press', s.smallBtn)}>
+              {t('next.allCountries')}
+            </NextLink>
+            <NextLink href="/schedule/" className={cn('t2f-focus t2f-press', s.smallBtn)}>
+              <Icon name="calendar" size={14} />
+              {t('next.toSchedule')}
+              <span className={s.passTag}>{t('next.passTag')}</span>
+            </NextLink>
+          </div>
+        </div>
+        <ul className={s.nextChips}>
+          {next.countries.slice(0, 5).map((c) => (
+            <li key={c.iso}>
+              <NextLink href={c.href} className={cn('t2f-focus', s.nextChipLink)}>
+                <Flag round code={c.flagCode} diameter={16} decorative />
+                {c.name}
+              </NextLink>
+            </li>
+          ))}
+          {next.total > 5 ? <li className={s.nextMore}>{t('next.more', { count: next.total - 5 })}</li> : null}
+        </ul>
+      </div>
+    ) : null;
 
   const contName = (c: Continent) => t(`continent.${c}`);
   const missing = CONTINENTS.filter((c) => !stats.continents.has(c));
@@ -417,6 +435,7 @@ export function PassportPage() {
             ) : null}
           </>
         )}
+        {nextBlock}
       </section>
 
       <section className={s.box} aria-labelledby="passport-series" data-passport-series="">

@@ -459,7 +459,7 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  min-height: 70px; /* як рядок оцінки: відступ 6 + верх 6 + рядок 52 + 6 */
+  height: 64px; /* як рядок оцінки: відступ 6 + верх 6 + рядок 52 */
   padding-top: 6px;
   color: var(--color-text-muted);
   font-size: 13px;
@@ -469,12 +469,6 @@
 .next {
   border-style: dashed;
   border-color: #5a5a64; /* дошка */
-}
-.nextZone {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px;
 }
 .nextArt {
   position: relative;
@@ -504,57 +498,136 @@
 }
 .nextKicker {
   margin: 0;
+  line-height: 19.5px; /* як рядок «Країна · 02:00» листівки — висота однакова */
   color: var(--color-highlight);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.nextTitle {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.35;
+/* Плитка: місце як у листівки — «Тут з’явиться …» ліворуч, посилання праворуч, висота рядка оцінки. */
+.nextStrip {
+  display: block;
+  height: 5px;
+  background: #2c2c32; /* дошка */
 }
-.nextHint {
-  margin: 6px 0 8px;
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  line-height: 1.4;
+/* Розмір як у листівки (`StampArt`): рамка 6 px і картинка 3 : 2. */
+.nextBlank {
+  display: block;
+  padding: 6px;
 }
-.nextList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.nextBlankIn {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 4px;
+  background: linear-gradient(160deg, #25253a, #17171c); /* дошка */
 }
-.nextRow {
+.nextRing {
+  position: absolute;
+  top: 14%;
+  right: 8%;
+  width: 38%;
+  aspect-ratio: 1;
+  border: 3px dashed rgb(252 226 134 / 0.35);
+  border-radius: 50%;
+  transform: rotate(-14deg);
+}
+.nextSlot {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 36px;
-  border-top: 1px solid var(--color-border);
+  justify-content: space-between;
+  gap: 10px;
+  box-sizing: border-box;
+  min-height: 64px; /* як рядок оцінки листівки */
+  margin-top: auto;
+  padding-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.nextLink {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
   color: var(--color-text);
-  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Блок без пасу — після штампів. */
+.nextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgb(252 226 134 / 0.3);
+  border-radius: 14px;
+  background: rgb(252 226 134 / 0.05);
+}
+.nextBlockHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+}
+.nextBlockIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+}
+.nextBlockText {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.nextBlockTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+.nextBlockSub {
+  margin: 2px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.nextChips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0 0 0 48px;
+  list-style: none;
+}
+.nextChipLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
   text-decoration: none;
 }
-.nextName {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.nextState {
-  color: var(--color-text-secondary);
-  font-size: 12px;
-  white-space: nowrap;
-}
-.nextStateLive {
-  color: var(--color-primary);
+.passTag {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+  font-size: 11px;
 }
 .nextMore {
-  margin: 4px 0 0;
+  margin: 0;
   color: var(--color-text-muted);
   font-size: 13px;
 }
@@ -562,7 +635,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
 }
 
 /* За континентами. */
@@ -827,6 +899,19 @@
   }
   .grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .stampsHead .seg {
+    flex-basis: 100%;
+  }
+  .stampsHead .segBtn {
+    flex: 1;
+    white-space: nowrap;
+  }
+  .nextChips {
+    padding-left: 0;
+  }
+  .nextBlockHead .nextBtns {
+    flex-basis: 100%;
   }
   .seal {
     width: 52px;

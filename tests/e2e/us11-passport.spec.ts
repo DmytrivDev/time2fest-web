@@ -65,6 +65,10 @@ test('з пасом: інфографіка, мапа з шляхом і «По�
   // Окленд — головне святкування (поки з вебкамерою): «Як тобі шоу?»; Київ — уже оцінений: «Твоя оцінка».
   await expect(page.locator('[data-stamp-card="evt_auckland_2027"] [data-stamp-rate]')).toContainText('Як тобі шоу?');
   await expect(page.locator('[data-stamp-card="evt_kyiv_2027"] [data-stamp-rate]')).toBeVisible();
+  // З пасом блоку «Наступний штамп» немає — лише плитка; усі картки однакової висоти.
+  await expect(page.locator('[data-next-block]')).toHaveCount(0);
+  const heights = await page.locator('[data-stamp-card], [data-next]').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+  expect(new Set(heights).size).toBe(1);
   await page.locator('[data-action="share-route"]').click();
   await expect(page.getByRole('dialog').or(page.locator('[data-overlay]')).first()).toContainText('Поділитися шляхом');
 });
@@ -75,6 +79,9 @@ test('без пасу: мапа затемнена з карткою пасу; �
   await expect(page.locator('[data-passport-map="locked"] [data-path-lock="passport"]')).toBeVisible();
   await expect(page.locator('[data-action="share-route"]')).toHaveCount(0);
   await expect(page.locator('[data-point]')).toHaveCount(0);
+  // «Наступний штамп» — плитка в ряду штампів; без пасу ще й блок після штампів (дошка `Desk-Passport-Next`).
+  await expect(page.locator('[data-next="zone"]')).toContainText('Наступний штамп');
+  await expect(page.locator('[data-next-block]')).toContainText('Усі країни поясу');
   await gotoAt(page, AT, 1, '/schedule/');
   await expect(page.locator('[data-path-lock="schedule"]')).toBeVisible();
 });

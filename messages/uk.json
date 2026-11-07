@@ -2187,15 +2187,17 @@
     "rateDone": "Твоя оцінка",
     "open": "Відкрити листівку: {city}",
     "next": {
-      "scheduleKicker": "Наступний штамп · з твого графіка",
-      "scheduleHint": "Будь на сторінці країни чи на головній опівночі — штамп прийде сам.",
       "countryPage": "Сторінка країни",
-      "zoneKicker": "Наступний штамп · {time} · {in}",
-      "zoneTitle": "Штамп — у будь-якій з {count, plural, one {# країни} few {# країн} other {# країн}} поясу {utc}",
-      "zoneHint": "Будь опівночі на сторінці країни чи на головній — штамп прийде сам. Головні святкування з трансляцією — першими:",
       "more": "ще {count, plural, one {# країна} few {# країни} other {# країн}}",
       "allCountries": "Усі країни поясу",
-      "toSchedule": "Мій графік"
+      "toSchedule": "Мій графік",
+      "tileKicker": "Наступний штамп",
+      "tileZoneName": "Пояс {utc}",
+      "tileSchedule": "{country} · з твого графіка",
+      "tileZone": "будь-яка з {count, plural, one {# країни} few {# країн} other {# країн}} поясу",
+      "blockTitle": "Наступний штамп — {in}, о {time}",
+      "blockSub": "у будь-якій з {count, plural, one {# країни} few {# країн} other {# країн}} поясу {utc} · будь опівночі на сторінці країни чи на головній",
+      "passTag": "пас"
     },
     "series": {
       "title": "Серії",
