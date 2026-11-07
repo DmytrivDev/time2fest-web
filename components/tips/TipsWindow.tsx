@@ -1,16 +1,18 @@
 'use client';
 
 /**
- * Вікно «Чайові» на місці чату, на телефоні — шторка. Варіант B «Тост під час оплати» (дошка `Desk-Tips-Toast`, рішення
- * власника 2026-11-07). Стани — `stores/tips`:
- * - суми (з «Підтримати» в хедері): $2 🥂 / $5 🍾 / $10 🎆, «Підтримати $N»;
- * - оплата відкрита: «Чекаємо оплату на PayPro Global» і «Поки оплачуєш — напиши тост» (поле-повідомлення, ідеї),
- *   «Оплатити» (знову відкрити оплату) · «Скасувати»;
+ * Вікно «Чайові» на місці чату, на телефоні — шторка (дошка `Desk-Tips-Toast`, рішення власника 2026-11-07, друге коло:
+ * спершу тост, оплата — лише по «Оплатити»). Стани — `stores/tips`:
+ * - сума $2 🥂 / $5 🍾 / $10 🎆 і «Твій тост» (поле-повідомлення, ідеї), коралова «Оплатити $N» · «Скасувати»;
+ * - оплата відкрита: «Чекаємо оплату на PayPro Global», тост ще можна правити, «Скасувати»;
  * - оплачено: «Перевір тост — і в чат», «Опублікувати тост · 0:24» (сам — за 30 с);
  * - «Оплата не пройшла» / «Немає з’єднання» → «Дякуємо! Твій тост уже в чаті».
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useId, type ReactNode } from 'react';
+import { useCallback, useId, useState, type ReactNode } from 'react';
+import { EmojiPicker } from '@/components/chat/EmojiPicker';
+import { EmojiText } from '@/components/primitives/Emoji';
+import { IconButton } from '@/components/primitives/IconButton';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -47,7 +49,9 @@ function ToastBubble({ text }: { text: string }) {
         <span className={s.nick}>{nick}</span>
         <span className="t2f-toast-badge">{t('toastBadge')}</span>
       </span>
-      <span className={s.text}>{text}</span>
+      <span className={s.text}>
+        <EmojiText text={text} />
+      </span>
     </div>
   );
 }
@@ -67,38 +71,81 @@ function PayNote({ text }: { text?: string }) {
   );
 }
 
-/** «Підтримати» з хедера: лише сума — тост пишуть, поки оплачують. */
-function Form() {
+/** Сума й тост; оплата починається лише по «Оплатити $N». */
+function Form({ onCancel }: { onCancel: () => void }) {
   const t = useTranslations('tips');
-  const tOffers = useTranslations('offers');
   const amount = useTipsStore((x) => x.amount);
   const setAmount = useTipsStore((x) => x.setAmount);
+  const toast = useTipsStore((x) => x.toast);
   const pay = useTipsStore((x) => x.pay);
+  const bad = !toast.trim() || LINK.test(toast);
   return (
-    <div className={s.form}>
-      <p className={s.formLead}>{tOffers('toastLead')}</p>
-      <div className={s.group}>
-        <span className={s.label}>{t('amount')}</span>
-        <TipAmounts value={amount} onChange={setAmount} compact />
+    <div className={s.flow} data-tips="form">
+      <div className={s.flowBody}>
+        <div className={s.group}>
+          <span className={s.label}>{t('amount')}</span>
+          <TipAmounts value={amount} onChange={setAmount} compact />
+        </div>
+        <h3 className={s.h}>{t('composeTitle')}</h3>
+        <ToastEditor />
+        <PayNote text={t('payNoteCompose')} />
       </div>
-      <Button variant="coral" size="lg" onClick={pay}>
-        {tOffers('tipsAction', { amount: formatUsd(amount) })}
-      </Button>
-      <PayNote text={t('payNoteToast')} />
+      <div className={s.flowFoot}>
+        <Button variant="coral" size="lg" onClick={pay} disabled={bad} data-action="tips-pay">
+          {t('payAction', { price: formatUsd(amount) })}
+        </Button>
+        <Button variant="secondary" size="lg" onClick={onCancel}>
+          {t('cancel')}
+        </Button>
+      </div>
     </div>
   );
 }
 
-/** Поле тосту у вигляді золотого повідомлення: нік, прапор, «тост», лічильник; ідеї — у поле одним дотиком. */
+/**
+ * Поле тосту у вигляді золотого повідомлення: нік, прапор, «тост», лічильник, кнопка-емодзі (власні емодзі сайту, як у
+ * чаті — вставка в позицію курсора, власник 2026-11-07); ідеї — у поле одним дотиком.
+ */
 function ToastEditor() {
   const t = useTranslations('tips');
   const tOffers = useTranslations('offers');
+  const tChat = useTranslations('chat');
   const { nick, flagCode } = useWho();
   const toast = useTipsStore((x) => x.toast);
   const setToast = useTipsStore((x) => x.setToast);
   const id = useId();
+  const pickerId = useId();
+  const emojiBtnId = useId();
+  const [picker, setPicker] = useState<{ kb: boolean } | null>(null);
+  const closePicker = useCallback(
+    (opts?: { restoreFocus?: boolean }) => {
+      setPicker(null);
+      if (opts?.restoreFocus) requestAnimationFrame(() => document.getElementById(emojiBtnId)?.focus());
+    },
+    [emojiBtnId],
+  );
+  const insertEmoji = (symbol: string) => {
+    const el = document.getElementById(id) as HTMLTextAreaElement | null;
+    const start = el?.selectionStart ?? toast.length;
+    const end = el?.selectionEnd ?? start;
+    const next = toast.slice(0, start) + symbol + toast.slice(end);
+    if (next.length > TOAST_MAX) return;
+    setToast(next);
+    const caret = start + symbol.length;
+    requestAnimationFrame(() => (document.getElementById(id) as HTMLTextAreaElement | null)?.setSelectionRange(caret, caret));
+  };
   return (
-    <div className={s.editor}>
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- Esc закриває вибір емодзі
+    <div
+      className={s.editor}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && picker) {
+          e.preventDefault();
+          e.stopPropagation();
+          closePicker({ restoreFocus: true });
+        }
+      }}
+    >
       <div className={cn(s.bubble, s.editBubble)}>
         <span className={s.who}>
           {flagCode ? <Flag round code={flagCode} size="xs" decorative /> : null}
@@ -107,6 +154,18 @@ function ToastEditor() {
           <span className={s.counter} aria-hidden="true">
             {toast.length} / {TOAST_MAX}
           </span>
+          <IconButton
+            id={emojiBtnId}
+            icon="smile"
+            compact
+            aria-label={tChat('emojiButton')}
+            aria-haspopup="dialog"
+            aria-expanded={picker !== null}
+            aria-controls={picker ? pickerId : undefined}
+            data-emoji-trigger=""
+            onClick={(e) => setPicker((p) => (p ? null : { kb: e.detail === 0 }))}
+            className={s.emojiBtn}
+          />
         </span>
         <label htmlFor={id} className="sr-only">
           {tOffers('toastField')}
@@ -121,6 +180,11 @@ function ToastEditor() {
           className={cn('t2f-focus', s.editField)}
         />
       </div>
+      {picker ? (
+        <div className={s.picker}>
+          <EmojiPicker id={pickerId} onInsert={insertEmoji} onClose={closePicker} focusFirst={picker.kb} />
+        </div>
+      ) : null}
       {LINK.test(toast) ? <span className="text-caption text-primary">{tOffers('toastNoLinks')}</span> : null}
       <div className={s.ideas} role="group" aria-label={t('ideas')}>
         {(['one', 'two', 'three'] as const).map((k) => (
@@ -145,22 +209,18 @@ function Row({ badge, title, text }: { badge: ReactNode; title: string; text: st
   );
 }
 
-/** Оплата відкрита: «Чекаємо оплату на PayPro Global» і «Поки оплачуєш — напиши тост». */
+/** Оплата відкрита: «Чекаємо оплату на PayPro Global»; тост ще можна правити. */
 function Paying({ onCancel }: { onCancel: () => void }) {
   const t = useTranslations('tips');
-  const pay = useTipsStore((x) => x.pay);
   return (
     <div className={s.flow} data-tips="paying">
       <div className={s.flowBody}>
         <Row badge={<span className={s.spinnerSm} aria-hidden="true" />} title={t('payingTitle')} text={t('payingText')} />
-        <h3 className={s.h}>{t('writeTitle')}</h3>
+        <h3 className={s.h}>{t('composeTitle')}</h3>
         <ToastEditor />
         <p className={s.small}>{t('writeNote')}</p>
       </div>
       <div className={s.flowFoot}>
-        <Button variant="secondary" size="lg" onClick={pay} iconLeft="link">
-          {t('payAgain')}
-        </Button>
         <Button variant="secondary" size="lg" onClick={onCancel}>
           {t('cancel')}
         </Button>
@@ -246,7 +306,7 @@ export function TipsWindowContent({ onClose }: { onClose: () => void }) {
   const fromBlock = useTipsStore((x) => x.fromBlock);
   const price = formatUsd(amount);
 
-  if (phase === 'form') return <Form />;
+  if (phase === 'form') return <Form onCancel={onClose} />;
   if (phase === 'paying') return <Paying onCancel={fromBlock ? onClose : toForm} />;
   if (phase === 'paid') return <Paid />;
   if (phase === 'failed')
@@ -304,8 +364,8 @@ export function TipsWindowContent({ onClose }: { onClose: () => void }) {
 }
 
 /**
- * Відкрити вікно «Чайові». `block` — з блока (під штампом, сторінка «Підтримати»): одразу оплата й «Поки оплачуєш —
- * напиши тост»; без аргументів — суми (кнопка «Підтримати» в хедері).
+ * Відкрити вікно «Чайові»: сума й тост, «Оплатити $N». `block` — з блока (під штампом, сторінка «Підтримати») з його
+ * сумою; без аргументів — кнопка «Підтримати» в хедері.
  */
 export function useOpenTipsWindow(): (block?: { amount: (typeof TIP_AMOUNTS)[number] }) => void {
   const overlay = useOverlay();
@@ -316,7 +376,7 @@ export function useOpenTipsWindow(): (block?: { amount: (typeof TIP_AMOUNTS)[num
       const store = useTipsStore.getState();
       // Оплата вже йде чи оплачено (тост ще не в чаті) — показуємо її, а не починаємо нову.
       if (store.phase !== 'paying' && store.phase !== 'paid') {
-        if (block) store.payFromBlock(block.amount, defaultToast);
+        if (block) store.openFromBlock(block.amount, defaultToast);
         else {
           store.toForm();
           if (!store.toast) store.setToast(defaultToast);

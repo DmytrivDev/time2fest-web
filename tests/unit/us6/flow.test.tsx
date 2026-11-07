@@ -202,7 +202,7 @@ describe('пропозиції — блок під штампом (рішенн�
     expect(useGuestStore.getState().offers.visible).toBe('tips');
   });
 
-  it('«Підтримати» в блоці → вікно «Чайові»: «Поки оплачуєш — напиши тост» → оплачено → «Опублікувати» → тост у чаті, блок зникає', () => {
+  it('«Підтримати» в блоці → вікно «Чайові»: тост → «Оплатити $5» → оплачено → «Опублікувати» → тост у чаті, блок зникає', () => {
     vi.useFakeTimers();
     try {
       giveStamps(s1, s2, s3);
@@ -212,7 +212,8 @@ describe('пропозиції — блок під штампом (рішенн�
       renderPage(<Page />);
       offerShow('tips', s3.id, 3);
       fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
-      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Поки оплачуєш — напиши тост');
+      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Твій тост у чаті «Світ»');
+      fireEvent.click(screen.getByRole('button', { name: 'Оплатити $5' }));
       act(() => {
         vi.advanceTimersByTime(7_000);
       });
@@ -237,6 +238,7 @@ describe('пропозиції — блок під штампом (рішенн�
       renderPage(<Page />);
       offerShow('tips', s3.id, 3);
       fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Оплатити $5' }));
       act(() => {
         vi.advanceTimersByTime(7_000);
       });

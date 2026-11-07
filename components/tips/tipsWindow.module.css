@@ -352,9 +352,22 @@ html[data-reduce-motion='false'] .spinner {
   line-height: 1.45;
 }
 .editor {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.emojiBtn {
+  margin: -6px -6px -6px 0;
+}
+/* Вибір емодзі — під полем тосту (у вікні над полем мало місця), на всю ширину поля. */
+.picker {
+  position: relative;
+  z-index: 5;
+}
+.picker :global(.t2f-ep) {
+  top: 4px;
+  bottom: auto;
 }
 .editBubble {
   border: 2px solid var(--color-highlight);

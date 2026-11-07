@@ -1,9 +1,10 @@
 /**
- * Оплата чайових «Скажи тост на весь світ» — варіант B «Тост під час оплати» (дошка `Desk-Tips-Toast`, рішення власника
- * 2026-11-07; раніше — `Desk-Tips-Pay`, `Desk-Tips-Thanks`, 2026-11-01).
- * «Підтримати $N» одразу відкриває оплату PayPro Global (імітація) — вікно «Чайові» показує «Чекаємо оплату» і поле
- * тосту: «Поки оплачуєш — напиши тост». Оплату підтвердили — «Перевір тост — і в чат», «Опублікувати тост»; не
- * натиснули — публікуємо самі за `TOAST_AUTO_MS`. Email для квитанції просить сторінка PayPro (акаунт не потрібен).
+ * Оплата чайових «Скажи тост на весь світ» (дошка `Desk-Tips-Toast`, рішення власника 2026-11-07; раніше —
+ * `Desk-Tips-Pay`, `Desk-Tips-Thanks`, 2026-11-01).
+ * «Підтримати $N» відкриває вікно «Чайові»: сума й тост, нічого не відбувається, поки гість не натисне «Оплатити $N»
+ * (друге коло власника). Тоді — оплата PayPro Global (імітація), «Чекаємо оплату», тост ще можна правити. Оплату
+ * підтвердили — «Перевір тост — і в чат», «Опублікувати тост · 0:30»; не натиснули — публікуємо самі за
+ * `TOAST_AUTO_MS`. Email для квитанції просить сторінка PayPro (акаунт не потрібен).
  * Результат оплати — перемикач тестової збірки (`testControls.payResult`): `pending` — підтвердження через
  * `TIPS_CONFIRM_MS` часу сайту, `declined` — «Оплата не пройшла», решта — підтверджено одразу. Немає мережі — «Немає
  * з’єднання», оплату не починаємо. Після публікації золотий тост гостя — у чаті «Світ», пропозиція чайових зникає.
@@ -17,7 +18,7 @@ import type { TipAmount } from '@/lib/offers/format';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
-/** `form` — суми (з «Підтримати» в хедері); `paying` — оплата відкрита, пишемо тост; `paid` — оплачено, тост ще не в чаті. */
+/** `form` — сума й тост, «Оплатити $N»; `paying` — оплата відкрита (тост ще можна правити); `paid` — оплачено, тост ще не в чаті. */
 export type TipsPhase = 'form' | 'paying' | 'paid' | 'failed' | 'offline' | 'success';
 
 export const TIPS_CONFIRM_MS = PENDING_CONFIRM_MS;
@@ -38,9 +39,9 @@ export interface TipsFlowState {
   paidAt?: Ms;
   setAmount(v: TipAmount): void;
   setToast(v: string): void;
-  /** Блок: одразу оплата з його сумою; `toast` — типовий текст, якщо гість ще нічого не писав. */
-  payFromBlock(amount: TipAmount, toast: string): void;
-  /** «Підтримати $N» / «Спробувати ще» / «Оплатити» — (знову) відкрити оплату. */
+  /** Блок: вікно з його сумою; `toast` — типовий текст, якщо гість ще нічого не писав. Оплату не починаємо. */
+  openFromBlock(amount: TipAmount, toast: string): void;
+  /** «Оплатити $N» / «Спробувати ще» — відкрити оплату. */
   pay(): void;
   /** «Скасувати» й «Змінити» після помилки — назад до сум. */
   toForm(): void;
@@ -73,9 +74,8 @@ export const useTipsStore = create<TipsFlowState>()((set, get) => {
     ...INITIAL,
     setAmount: (amount) => set({ amount }),
     setToast: (toast) => set({ toast }),
-    payFromBlock: (amount, toast) => {
-      set({ amount, fromBlock: true, toast: get().toast || toast });
-      get().pay();
+    openFromBlock: (amount, toast) => {
+      set({ phase: 'form', amount, fromBlock: true, toast: get().toast || toast, pendingSince: undefined, paidAt: undefined });
     },
     pay: () => {
       if (isOffline()) {

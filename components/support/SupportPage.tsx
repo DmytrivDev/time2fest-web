@@ -10,11 +10,11 @@
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { PageChat } from '@/components/chat/PageChat';
 import { Faq } from '@/components/live/Faq';
 import { cn } from '@/components/primitives/cn';
-import { Emoji } from '@/components/primitives/Emoji';
+import { Emoji, EmojiText } from '@/components/primitives/Emoji';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
@@ -40,7 +40,9 @@ function Bubble({ m, ago, fresh }: { m: ChatMessage; ago?: string; fresh?: boole
         <span className="t2f-toast-badge">{t('toastBadge')}</span>
         {ago ? <span className={s.ago}>{ago}</span> : null}
       </span>
-      <span className={s.text}>{m.text}</span>
+      <span className={s.text}>
+        <EmojiText text={m.text ?? ''} />
+      </span>
     </div>
   );
 }
@@ -58,6 +60,9 @@ function WorldToasts() {
     return [...worldToasts(chatScript as ChatScriptFile, getData(), minute), ...mine].sort((a, b) => b.createdAt - a.createdAt);
   }, [own, minute, ready]);
   const countries = new Set(all.map((m) => m.author?.flagCode).filter(Boolean));
+  const [open, setOpen] = useState(false);
+  const restId = useId();
+  const ago = (m: ChatMessage) => t('ago', { time: formatDurationShort(Math.max(60_000, now - m.createdAt)) });
   const flags = [...countries].slice(0, 8) as string[];
   return (
     <section aria-labelledby="support-toasts" className={s.box} data-world-toasts="">
@@ -79,20 +84,36 @@ function WorldToasts() {
       </div>
       <p className={s.sub}>{t('toastsSub')}</p>
       {all.length ? (
-        <ul className={s.feed}>
-          {all.slice(0, FEED).map((m, i) => (
-            <li key={m.id}>
-              <Bubble m={m} fresh={i === 0} ago={t('ago', { time: formatDurationShort(Math.max(60_000, now - m.createdAt)) })} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className={s.feed}>
+            {all.slice(0, FEED).map((m, i) => (
+              <li key={m.id}>
+                <Bubble m={m} fresh={i === 0} ago={ago(m)} />
+              </li>
+            ))}
+          </ul>
+          {/* «Переглянути всі» — решта тостів плавно розгортається (власник 2026-11-07: замість «Усі тости — у чаті»). */}
+          {all.length > FEED ? (
+            <>
+              <div id={restId} className={s.rest} data-open={open || undefined} inert={!open}>
+                <ul className={s.feed}>
+                  {all.slice(FEED).map((m) => (
+                    <li key={m.id}>
+                      <Bubble m={m} ago={ago(m)} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <button type="button" aria-expanded={open} aria-controls={restId} onClick={() => setOpen((v) => !v)} className={cn('t2f-focus', s.more)} data-action="toasts-all">
+                {open ? t('toastsLess') : t('toastsAll', { count: all.length })}
+                <Icon name={open ? 'chevron-up' : 'chevron-down'} size={14} />
+              </button>
+            </>
+          ) : null}
+        </>
       ) : (
         <p className={s.empty}>{t('toastsEmpty')}</p>
       )}
-      <NextLink href="/" className={cn('t2f-focus', s.more)}>
-        {t('toastsAll')}
-        <Icon name="chevron-right" size={14} />
-      </NextLink>
     </section>
   );
 }

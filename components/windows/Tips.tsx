@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
+import { EmojiText } from '@/components/primitives/Emoji';
 import { Flag } from '@/components/primitives/Flag';
 import { Link } from '@/components/primitives/Link';
 import { TipAmounts } from '@/components/tips/TipAmounts';
@@ -49,7 +50,9 @@ export function Tips({ defaultAmount = 5, onClose, onSupport, termsHref = '#', c
               <span className="t2f-toast-badge">{t('toastBadge')}</span>
               <span className={s.example}>{t('toastExample')}</span>
             </span>
-            <span className={s.text}>{t('toastExampleText')}</span>
+            <span className={s.text}>
+              <EmojiText text={t('toastExampleText')} />
+            </span>
           </div>
         </div>
         <div className={s.right}>

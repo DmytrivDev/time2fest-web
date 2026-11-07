@@ -21,17 +21,24 @@ test('сторінка: героїчний блок, чайові, «Тости 
   await expect(page.locator('[data-offer="tips"]').getByRole('radio')).toHaveCount(3);
   const toasts = page.locator('[data-world-toasts]');
   await expect(toasts).toContainText(/\d+ тост/);
-  await expect(toasts.getByRole('listitem')).toHaveCount(5);
+  await expect(toasts.locator('ul').first().getByRole('listitem')).toHaveCount(5);
+  // «Переглянути всі» — решта тостів розгортається.
+  await toasts.locator('[data-action="toasts-all"]').click();
+  await expect(toasts.locator('[data-action="toasts-all"]')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.getByRole('link', { name: /Хочеш більше від свята/ })).toHaveAttribute('href', /\/pass\/?$/);
   await expect(page.getByRole('heading', { name: 'Питання й відповіді' })).toBeVisible();
 });
 
-test('тост під час оплати: «Поки оплачуєш — напиши тост» → «Опублікувати тост» → у чаті', async ({ page }) => {
+test('тост → «Оплатити $5» → «Чекаємо оплату» → «Опублікувати тост» → у чаті', async ({ page }) => {
   await gotoAt(page, AT, 1, '/support/');
   await page.getByRole('button', { name: 'Підтримати $5' }).click();
-  const paying = page.locator('[data-tips="paying"]');
-  await expect(paying).toContainText('Поки оплачуєш — напиши тост');
-  await paying.getByRole('textbox', { name: 'Текст твого тосту' }).fill('За всіх із Time2Fest!');
+  const form = page.locator('[data-tips="form"]');
+  await form.getByRole('textbox', { name: 'Текст твого тосту' }).fill('За всіх із Time2Fest!');
+  // Свої емодзі сайту — як у чаті.
+  await form.getByRole('button', { name: 'Емодзі' }).click();
+  await page.locator('[data-emoji-picker] [data-menu-item]').first().click();
+  await form.locator('[data-action="tips-pay"]').click();
+  await expect(page.locator('[data-tips="paying"]')).toContainText('Чекаємо оплату на PayPro Global');
   const paid = page.locator('[data-tips="paid"]');
   await expect(paid).toContainText('Оплату підтверджено', { timeout: 15_000 });
   await paid.locator('[data-action="publish-toast"]').click();

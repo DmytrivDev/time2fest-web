@@ -226,11 +226,12 @@ test.describe('US6 · чайові після 3-го Нового року', () 
       'data-variant',
       'coral',
     );
-    await expect(slot(page)).toContainText('Тост напишеш, поки оплачуєш');
+    await expect(slot(page)).toContainText('Спершу напишеш тост, потім — оплата');
     await expect(visibleCoral(page)).toHaveCount(1);
     await setPayResult(page, 'success');
     await page.getByRole('button', { name: 'Підтримати $5' }).click();
-    // Варіант B (2026-11-07): оплата відкрита — пишемо тост у вікні; оплачено — «Опублікувати тост».
+    // 2026-11-07: у вікні — тост і «Оплатити $5»; оплачено — «Опублікувати тост».
+    await page.locator('[data-action="tips-pay"]').click();
     await expect(page.locator('[data-tips="paid"]')).toContainText('Перевір тост', { timeout: 10_000 });
     await page.locator('[data-action="publish-toast"]').click();
     await expect(page.locator('[data-tips="success"]')).toContainText('Ти робиш це свято можливим', { timeout: 10_000 });

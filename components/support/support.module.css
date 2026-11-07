@@ -183,12 +183,39 @@
   margin: 0;
   color: var(--color-text-secondary);
 }
+/* Решта тостів — плавно (правило сайту: акордеони відкриваються плавно). */
+.rest {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.3s ease,
+    opacity 0.3s ease;
+}
+.rest > ul {
+  min-height: 0;
+  overflow: hidden;
+}
+.rest[data-open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rest {
+    transition: none;
+  }
+}
 .more {
   display: inline-flex;
   align-items: center;
   gap: 2px;
   align-self: flex-start;
   margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
   color: var(--color-text);
   font-size: 13px;
   font-weight: 700;

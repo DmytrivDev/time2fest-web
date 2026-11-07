@@ -92,7 +92,7 @@ describe('Tips — «Скажи тост на весь світ», спроще�
     // Поля тосту немає — приклад, а тост пишуть у вікні під час оплати.
     expect(screen.queryByRole('textbox')).toBeNull();
     expect(screen.getByText('приклад')).toBeInTheDocument();
-    expect(screen.getByText(/Тост напишеш, поки оплачуєш/)).toBeInTheDocument();
+    expect(screen.getByText(/Спершу напишеш тост, потім — оплата/)).toBeInTheDocument();
     expect(coralButtons()).toHaveLength(1);
   });
 
