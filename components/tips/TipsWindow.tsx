@@ -188,8 +188,8 @@ function ToastEditor() {
       {LINK.test(toast) ? <span className="text-caption text-primary">{tOffers('toastNoLinks')}</span> : null}
       <div className={s.ideas} role="group" aria-label={t('ideas')}>
         {(['one', 'two', 'three'] as const).map((k) => (
-          <button key={k} type="button" onClick={() => setToast(t(`idea.${k}`))} className={cn('t2f-focus', s.idea)}>
-            {t(`idea.${k}`)}
+          <button key={k} type="button" aria-label={t(`idea.${k}`)} onClick={() => setToast(t(`idea.${k}`))} className={cn('t2f-focus', s.idea)}>
+            <EmojiText text={t(`idea.${k}`)} />
           </button>
         ))}
       </div>

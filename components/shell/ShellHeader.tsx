@@ -33,7 +33,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
   const pathname = usePathname();
   // Сторінки поза навігацією «Головна / Країни» (`/tv-info/`, `/schedule/`) — без підсвіченого пункту.
-  const outside = pathname?.startsWith('/tv-info') || pathname?.startsWith('/schedule');
+  const outside = ['/tv-info', '/schedule', '/support', '/rating', '/passport'].some((p) => pathname?.startsWith(p));
   // Сторінки з плеєром (головна, країна, кімната): «Підтримати» — вікно, щоб трансляція не переривалась; решта — `/support/`.
   const playerPage = pathname === '/' || !!pathname?.startsWith('/country/') || !!pathname?.startsWith('/room');
   const current = pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : outside ? undefined : currentProp;
