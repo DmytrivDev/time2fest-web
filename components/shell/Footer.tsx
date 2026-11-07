@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import NextLink from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Switch } from '@/components/primitives/Switch';
 import { useGuestStore } from '@/stores/guest';
 
@@ -16,26 +17,30 @@ export interface FooterProps {
 }
 
 const LINKS = ['help', 'privacy', 'terms', 'payments'] as const;
+/** Куди ведуть посилання футера (службові сторінки S-LEGAL, 2026-11-07); «Допомога» — пізніше. */
+const HREF: Record<(typeof LINKS)[number] | 'cookies', string> = { help: '#', privacy: '/privacy/', terms: '/terms/', payments: '/payments/', cookies: '/cookies/' };
 
 /**
  * Футер (ІНВ C23): «Допомога», «Політика конфіденційності», «Умови», «Оплата й повернення», «Налаштування cookies»,
  * попередження про спалахи й перемикач «Зменшити рух». Телефон: посилання — рядки ≥ 44 px; ширше — один рядок.
- * Сторінки юридичних текстів і допомоги — наступна область, тому посилання поки інертні.
+ * Посилання ведуть на службові сторінки (S-LEGAL), поточна підсвічена; «Допомога» — пізніше.
  */
 export function Footer({ reducedMotion, onReducedMotionChange, onCookiesClick, className }: FooterProps) {
   const t = useTranslations('footer');
   const stored = useGuestStore((s) => s.reducedMotion);
   const setStored = useGuestStore((s) => s.setReducedMotion);
   const checked = reducedMotion ?? stored;
+  const pathname = usePathname();
+  const here = (href: string) => (href !== '#' && pathname?.startsWith(href.replace(/\/$/, '')) ? 'page' : undefined);
 
-  const link = 't2f-focus t2f-transition inline-flex min-h-touch-min items-center rounded-sm text-body text-text-muted underline underline-offset-2 hover:text-text';
+  const link = 't2f-focus t2f-transition inline-flex min-h-touch-min items-center rounded-sm text-body text-text-muted underline underline-offset-2 hover:text-text aria-[current=page]:text-text';
   return (
     <footer className={cn('mt-8 border-t border-border bg-background', className)}>
       {/* Макети: телефон — посилання в рядки з проміжком 20 (поля 8/16/16); ширше — один рядок 32 px від краю. */}
       <div className="mx-auto flex max-w-content-max flex-wrap items-center gap-x-5 px-4 pb-4 pt-2 md:gap-y-1 md:px-8 md:py-1.5">
         <nav aria-label={t('navLabel')} className="contents">
           {LINKS.map((key) => (
-            <NextLink key={key} href="#" className={link}>
+            <NextLink key={key} href={HREF[key]} aria-current={here(HREF[key])} className={link}>
               {key === 'privacy' ? (
                 <>
                   <span className="md:hidden">{t('privacyShort')}</span>
@@ -51,7 +56,7 @@ export function Footer({ reducedMotion, onReducedMotionChange, onCookiesClick, c
               {t('cookies')}
             </button>
           ) : (
-            <NextLink href="#" className={link}>
+            <NextLink href={HREF.cookies} aria-current={here(HREF.cookies)} className={link}>
               {t('cookies')}
             </NextLink>
           )}

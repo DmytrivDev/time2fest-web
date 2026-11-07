@@ -1,0 +1,356 @@
+/* Службові сторінки (S-LEGAL) за дошкою `Desk-Legal-New`, варіант B — на всю ширину вмісту (2026-11-07). */
+
+.main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+@media (min-width: 768px) {
+  .main {
+    padding: 24px 32px 64px;
+  }
+}
+
+/* Перемикач документів — підкреслення поточного жовтим; на телефоні гортається вбік. */
+.tabs {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-border);
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab {
+  flex: none;
+  padding: 10px 0;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tab:hover {
+  color: var(--color-text);
+}
+.tab[aria-current='page'] {
+  border-bottom-color: var(--color-highlight);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.h1 {
+  margin: 32px 0 0;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.updated {
+  margin: 8px 0 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.short {
+  margin: 20px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgb(252 226 134 / 0.3);
+  border-radius: 14px;
+  background: rgb(252 226 134 / 0.05);
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.short b {
+  color: var(--color-text);
+}
+
+/* «Зміст»: десктоп — дві колонки завжди відкриті, телефон — згорнутий акордеон. */
+.tocBox {
+  margin-top: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.tocDesk {
+  padding: 14px 18px;
+}
+.tocPhone {
+  display: none;
+}
+.tocTitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.toc {
+  columns: 2; /* читаємо стовпцями: 1–4 ліворуч, 5–7 праворуч */
+  column-gap: 24px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.toc li {
+  break-inside: avoid;
+}
+.tocLink {
+  display: flex;
+  gap: 8px;
+  padding: 5px 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+.tocLink b {
+  width: 20px;
+  color: var(--color-highlight);
+}
+.tocLink span {
+  text-decoration: underline;
+  text-decoration-color: #4a4a52; /* дошка */
+  text-underline-offset: 3px;
+}
+.tocLink:hover span {
+  color: var(--color-text);
+}
+
+/* Розділи. */
+.section {
+  margin-top: 32px;
+  scroll-margin-top: 80px;
+}
+.hRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+/* Значок посилання на розділ — при наведенні на рядок заголовка чи фокусі. */
+.anchor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-muted);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.hRow:hover .anchor,
+.anchor:focus-visible {
+  opacity: 1;
+}
+.anchor:hover {
+  color: var(--color-text);
+}
+.p {
+  margin: 0 0 12px;
+  color: #d6d6dc; /* дошка */
+  font-size: 16px;
+  line-height: 1.65;
+}
+.p b,
+.list b {
+  color: var(--color-text);
+}
+.link {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.list {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  color: #d6d6dc; /* дошка */
+  font-size: 16px;
+  line-height: 1.6;
+}
+.list li {
+  position: relative;
+  margin-bottom: 8px;
+  padding-inline-start: 28px;
+}
+.ul li::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-highlight);
+}
+.ol {
+  counter-reset: legal;
+}
+.ol li::before {
+  content: counter(legal) '.';
+  counter-increment: legal;
+  position: absolute;
+  left: 4px;
+  color: var(--color-highlight);
+  font-weight: 700;
+}
+.tableWrap {
+  margin: 4px 0 14px;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  background: var(--color-surface);
+}
+.table th {
+  padding: 10px 12px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: start;
+  text-transform: uppercase;
+}
+.table td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--color-border);
+  color: #d6d6dc; /* дошка */
+  font-size: 14px;
+}
+
+/* Інші документи. */
+.other {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+.otherTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.card:hover {
+  border-color: var(--color-border-strong);
+}
+.card > svg {
+  margin-top: 2px;
+}
+.card > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.card b {
+  color: var(--color-text);
+  font-size: 14px;
+}
+.card span span {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.ask {
+  margin: 14px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* «Нагору» — після першого екрана прокрутки, праворуч унизу. */
+.toTop {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 767.98px) {
+  .h1 {
+    margin-top: 24px;
+    font-size: 30px;
+  }
+  .tab {
+    font-size: 14px;
+  }
+  .tabs {
+    gap: 18px;
+  }
+  .tocBox {
+    border: 0;
+    background: transparent;
+  }
+  .tocDesk {
+    display: none;
+  }
+  .tocPhone {
+    display: block;
+  }
+  .toc {
+    columns: 1;
+  }
+  .h2 {
+    font-size: 20px;
+  }
+  .p,
+  .list {
+    font-size: 15px;
+  }
+  .anchor {
+    opacity: 1;
+  }
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .toTop {
+    right: 16px;
+    bottom: 16px;
+  }
+}
