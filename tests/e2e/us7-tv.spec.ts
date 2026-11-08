@@ -540,7 +540,8 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page).not.toHaveURL(/\/tv/);
     await waitForTimeApi(page);
 
-    await page.getByRole('link', { name: 'Режим вечірки' }).click();
+    // Кнопка під плеєром; у футері теж є «Режим вечірки» (футер B, 2026-11-08) — тому в межах <main>.
+    await page.getByRole('main').getByRole('link', { name: 'Режим вечірки' }).click();
     await expect(page).toHaveURL(/\/tv\/?(\?|$)/);
     await expect(page.locator('[data-tv-root]')).toBeVisible();
   });

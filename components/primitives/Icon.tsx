@@ -77,7 +77,11 @@ export type IconName =
   | 'utensils'
   | 'mistletoe'
   | 'swap'
-  | 'undo';
+  | 'undo'
+  | 'mail'
+  | 'telegram'
+  | 'instagram'
+  | 'zap';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -436,7 +440,26 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M15 17l-1 1a4 4 0 0 1-5.7-5.7l1-1" />
       <path d="M4 4l16 16" />
     </>
+  ),  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 7l9 6 9-6" />
+    </>
   ),
+  telegram: (
+    <>
+      <path d="M21 4L3 11l6 2 2 6 3-4 5 4z" />
+      <path d="M9 13l12-9" />
+    </>
+  ),
+  instagram: (
+    <>
+      <rect x="4" y="4" width="16" height="16" rx="5" />
+      <circle cx="12" cy="12" r="3.5" />
+      <path d="M17 7h.01" />
+    </>
+  ),
+  zap: <path d="M13 3L5 14h6l-1 7 8-11h-6z" />,
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'> {

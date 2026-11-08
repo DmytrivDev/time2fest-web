@@ -1,0 +1,300 @@
+/* Футер за дошкою `Desk-Footer-New`, варіант B (2026-11-08): бренд + три низькі колонки, нижній рядок.
+   Десктоп ≥ 1024 — чотири колонки в ряд; планшет — бренд зверху, три колонки під ним; телефон — колонки акордеонами. */
+
+.footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-background);
+}
+.inner {
+  box-sizing: border-box;
+  max-width: var(--spacing-content-max);
+  margin: 0 auto;
+  padding: 24px var(--spacing-margin-mobile) 20px;
+}
+
+/* Бренд. */
+.brand {
+  min-width: 0;
+}
+.about {
+  max-width: 300px;
+  margin: 8px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+.mail:hover {
+  color: var(--color-text);
+}
+.social {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.socialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+}
+.socialBtn:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+/* Колонки. */
+.cols {
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+.group {
+  border-bottom: 1px solid var(--color-border);
+}
+.title {
+  display: none;
+  margin: 0 0 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+}
+.chev {
+  color: var(--color-text-muted);
+  transition: transform 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+.trigger[aria-expanded='true'] .chev {
+  transform: rotate(180deg);
+}
+/* Плавне розгортання (правило власника 2026-10-30): сітка 0fr → 1fr; закрите — приховане й для читачів екрана. */
+.reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 240ms cubic-bezier(0.2, 0, 0, 1),
+    visibility 0s linear 240ms;
+}
+.reveal[data-open='true'] {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+.list {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+}
+.reveal[data-open='true'] .list {
+  padding-bottom: 8px;
+}
+.link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 15px;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+.link:hover,
+.link[aria-current='page'] {
+  color: var(--color-text);
+}
+
+/* Нижній рядок. */
+.bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 16px;
+}
+/* Телефон: «Зменшити рух» · спалахи · документи · © (дошка). */
+.motion {
+  order: -3;
+}
+.flash {
+  order: -2;
+}
+.legal {
+  order: -1;
+}
+.spacer {
+  display: none;
+}
+.flash {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legalLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+.legalLink:hover,
+.legalLink[aria-current='page'] {
+  color: var(--color-text);
+}
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+/* Прапор України — круглий (власник 2026-11-08). */
+.ua {
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(#0057b7 50%, #ffd700 50%);
+}
+
+/* Планшет і ширше: колонки завжди відкриті — заголовок замість кнопки. */
+@media (min-width: 768px) {
+  .inner {
+    padding: 36px var(--spacing-margin-desktop) 0;
+  }
+  .top {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px 32px;
+  }
+  .brand {
+    grid-column: 1 / -1;
+  }
+  .cols {
+    display: contents;
+  }
+  .group {
+    border: 0;
+  }
+  .title {
+    display: block;
+  }
+  .trigger {
+    display: none;
+  }
+  .reveal,
+  .reveal[data-open='true'] {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: none;
+  }
+  .reveal[data-open='true'] .list {
+    padding-bottom: 0;
+  }
+  .link {
+    min-height: 30px;
+  }
+  .bottom {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    margin-top: 28px;
+    padding: 14px 0 16px;
+    border-top: 1px solid var(--color-border);
+  }
+  .motion,
+  .flash,
+  .legal {
+    order: 0;
+  }
+  .spacer {
+    display: block;
+    flex: 1;
+  }
+  .flash,
+  .copy {
+    font-size: 13px;
+  }
+}
+@media (min-width: 1024px) {
+  .top {
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+  }
+  .brand {
+    grid-column: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal[data-open='true'],
+  .chev {
+    transition: none;
+  }
+}
+:global(html[data-reduce-motion='true']) .reveal,
+:global(html[data-reduce-motion='true']) .reveal[data-open='true'],
+:global(html[data-reduce-motion='true']) .chev {
+  transition: none;
+}

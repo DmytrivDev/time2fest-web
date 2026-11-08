@@ -397,7 +397,10 @@ test.describe('US6 · cookies', () => {
   test('футер: «Налаштування cookies» відкриває налаштування будь-коли', async ({ page }) => {
     await seedGuest(page, {});
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
-    await page.getByRole('button', { name: 'Налаштування cookies' }).click();
+    // Футер B (2026-11-08): на телефоні колонка «Довідка» — акордеон, спершу розгорнути.
+    const footer = page.getByRole('contentinfo');
+    if (test.info().project.name === 'phone') await footer.getByRole('button', { name: 'Довідка' }).click();
+    await footer.getByRole('button', { name: 'Налаштування cookies' }).click();
     await expect(page.getByRole('dialog', { name: 'Налаштування cookies' })).toBeVisible();
     await expect(page.getByText(/Змінити вибір можна будь-коли/)).toBeVisible();
   });

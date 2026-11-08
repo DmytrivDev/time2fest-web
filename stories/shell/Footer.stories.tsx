@@ -7,11 +7,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Phone: Story = {
-  name: 'Телефон 390 (посилання — рядки ≥ 44 px)',
+  name: 'Телефон 390 (колонки — акордеони)',
   globals: { surface: 'phone' },
 };
 
-export const Desktop: Story = { name: 'Десктоп 1440 (один рядок)', globals: { surface: 'desktop' } };
+export const Desktop: Story = { name: 'Десктоп 1440 (бренд і три колонки)', globals: { surface: 'desktop' } };
 
 export const ReducedMotionOn: Story = {
   name: '«Зменшити рух» увімкнено',
