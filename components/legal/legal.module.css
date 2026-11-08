@@ -1,50 +1,108 @@
-/* Службові сторінки (S-LEGAL) за дошкою `Desk-Legal-New`, варіант B — на всю ширину вмісту (2026-11-07). */
+/* Службові сторінки (S-LEGAL) за дошкою `Desk-Legal-New2`, варіант B — документи й зміст у закріпленому сайдбарі (2026-11-08). */
 
 .main {
   box-sizing: border-box;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 16px 16px 48px;
+  padding: 0 16px 48px;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .main {
-    padding: 24px 32px 64px;
+    padding: 32px 32px 64px;
   }
 }
 
-/* Перемикач документів — підкреслення поточного жовтим; на телефоні гортається вбік. */
-.tabs {
+/* Сайдбар ліворуч (десктоп) — закріплений; праворуч текст на решту ширини. */
+.layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.aside {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.body {
+  min-width: 0;
+}
+.side {
+  padding-top: 6px;
+}
+.sideTitle {
+  margin: 0 0 10px 14px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.docs,
+.secs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.doc {
   display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--color-border);
-  scrollbar-width: none;
-}
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-.tab {
-  flex: none;
-  padding: 10px 0;
-  border-bottom: 2px solid transparent;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
   color: var(--color-text-secondary);
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
-  white-space: nowrap;
 }
-.tab:hover {
+.doc:hover {
   color: var(--color-text);
 }
-.tab[aria-current='page'] {
-  border-bottom-color: var(--color-highlight);
+.doc[aria-current='page'] {
+  background: var(--color-surface-raised);
   color: var(--color-text);
   font-weight: 700;
 }
+.secs {
+  margin: 4px 0 8px;
+}
+.sec {
+  display: flex;
+  gap: 8px;
+  padding: 7px 12px 7px 28px;
+  border-left: 2px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+.sec b {
+  flex: none;
+  width: 18px;
+  color: var(--color-text-muted);
+}
+.sec:hover {
+  color: var(--color-text);
+}
+.sec[aria-current='location'] {
+  border-left-color: var(--color-highlight);
+  background: rgb(252 226 134 / 0.06);
+  color: var(--color-text);
+  font-weight: 700;
+}
+.sec[aria-current='location'] b {
+  color: var(--color-highlight);
+}
+/* Смуга «Зміст» — лише телефон. */
+.bar {
+  display: none;
+}
 
 .h1 {
-  margin: 32px 0 0;
+  margin: 0;
   font-size: 40px;
   font-weight: 800;
   line-height: 1.1;
@@ -65,58 +123,6 @@
   line-height: 1.6;
 }
 .short b {
-  color: var(--color-text);
-}
-
-/* «Зміст»: десктоп — дві колонки завжди відкриті, телефон — згорнутий акордеон. */
-.tocBox {
-  margin-top: 20px;
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  background: var(--color-surface);
-}
-.tocDesk {
-  padding: 14px 18px;
-}
-.tocPhone {
-  display: none;
-}
-.tocTitle {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.toc {
-  columns: 2; /* читаємо стовпцями: 1–4 ліворуч, 5–7 праворуч */
-  column-gap: 24px;
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.toc li {
-  break-inside: avoid;
-}
-.tocLink {
-  display: flex;
-  gap: 8px;
-  padding: 5px 0;
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  text-decoration: none;
-}
-.tocLink b {
-  width: 20px;
-  color: var(--color-highlight);
-}
-.tocLink span {
-  text-decoration: underline;
-  text-decoration-color: #4a4a52; /* дошка */
-  text-underline-offset: 3px;
-}
-.tocLink:hover span {
   color: var(--color-text);
 }
 
@@ -248,7 +254,7 @@
 }
 .cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin: 12px 0 0;
   padding: 0;
@@ -312,29 +318,59 @@
   cursor: pointer;
 }
 
-@media (max-width: 767.98px) {
-  .h1 {
-    margin-top: 24px;
-    font-size: 30px;
-  }
-  .tab {
-    font-size: 14px;
-  }
-  .tabs {
-    gap: 18px;
-  }
-  .tocBox {
-    border: 0;
-    background: transparent;
-  }
-  .tocDesk {
-    display: none;
-  }
-  .tocPhone {
+@media (max-width: 1023.98px) {
+  .layout {
     display: block;
   }
-  .toc {
-    columns: 1;
+  .aside {
+    display: none;
+  }
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: calc(100% + 32px);
+    height: 48px;
+    margin: 0 -16px 20px;
+    padding: 0 16px;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .barLabel {
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .barNum {
+    color: var(--color-highlight);
+    font-size: 14px;
+  }
+  .barTitle {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .section {
+    scroll-margin-top: 64px;
+  }
+}
+@media (max-width: 767.98px) {
+  .h1 {
+    font-size: 30px;
   }
   .h2 {
     font-size: 20px;

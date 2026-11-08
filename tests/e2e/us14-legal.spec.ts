@@ -1,7 +1,6 @@
 /**
- * Службові сторінки (S-LEGAL, дошка `Desk-Legal-New` варіант B, рішення власника 2026-11-07): футер веде на документи,
- * перемикач документів, «Оновлено …», «Коротко», «Зміст» (на телефоні — згорнутий), розділи з номерами, таблиця,
- * «Інші документи»; без чату.
+ * Службові сторінки (S-LEGAL, дошка `Desk-Legal-New2` варіант B, рішення власника 2026-11-08): футер веде на документи,
+ * сайдбар «Документи» з розділами (телефон — смуга «Зміст» і шторка), «Оновлено …», розділи, таблиця, «Інші документи»; без чату.
  */
 import { expect, test } from './fixtures/youtube-stub';
 
@@ -16,7 +15,14 @@ test('футер → «Політика конфіденційності»: до
   await page.getByRole('contentinfo').getByRole('link', { name: /Конфіденційність|Політика конфіденційності/ }).click();
   await expect(page).toHaveURL(/\/privacy\/?$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Політика конфіденційності' })).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Документи' }).getByRole('link', { name: 'Політика конфіденційності' })).toHaveAttribute('aria-current', 'page');
+  // Десктоп — закріплений сайдбар «Документи» з розділами; телефон — смуга «Зміст» і шторка (дошка `Desk-Legal-New2`, B).
+  if (test.info().project.name === 'phone') {
+    await page.locator('[data-legal-bar]').click();
+  }
+  const nav = page.getByRole('navigation', { name: 'Документи' }).filter({ visible: true });
+  await expect(nav.getByRole('link', { name: 'Політика конфіденційності' })).toHaveAttribute('aria-current', 'page');
+  await expect(nav.getByRole('link', { name: /Які дані ми збираємо/ })).toBeVisible();
+  if (test.info().project.name === 'phone') await page.keyboard.press('Escape');
   await expect(page.getByText('Оновлено 1 грудня 2026')).toBeVisible();
   await expect(page.getByRole('heading', { level: 2, name: '2. Які дані ми збираємо' })).toBeVisible();
   await expect(page.locator('#chat-slot')).toHaveCount(0);

@@ -1,19 +1,20 @@
 'use client';
 
 /**
- * Службові сторінки (S-LEGAL) за дошкою `Desk-Legal-New`, варіант B — на всю ширину вмісту (рішення власника
- * 2026-11-07, концепція `legal-concept-2026-11-07.md`). Без чату й лівої колонки: шапка, документ, футер.
- * Перемикач документів · заголовок і «Оновлено …» · «Коротко» · «Зміст» (десктоп — дві колонки, телефон — згорнутий) ·
- * розділи з номерами (абзаци, посилання, списки, таблиці; значок посилання на розділ) · «Інші документи» · «Нагору».
+ * Службові сторінки (S-LEGAL) за дошкою `Desk-Legal-New2`, варіант B (рішення власника 2026-11-08): без чату; ліворуч
+ * закріплений сайдбар «Документи» — під поточним документом його розділи (поточний розділ — жовта риска за прокруткою),
+ * праворуч текст на решту ширини: заголовок і «Оновлено …» · «Коротко» · розділи з номерами (абзаци, посилання, списки,
+ * таблиці; значок посилання на розділ) · «Інші документи» · «Нагору». Телефон: сайдбару немає — під шапкою закріплена
+ * смуга «Зміст · 3. Навіщо ▾», дотик відкриває шторку з тим самим списком.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
-import { Accordion } from '@/components/primitives/Accordion';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
+import { Sheet } from '@/components/primitives/Sheet';
 import { Footer } from '@/components/shell/Footer';
 import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
@@ -82,18 +83,39 @@ function Block({ b }: { b: LegalBlock }) {
   );
 }
 
-function Toc({ sections }: { sections: { id: string; title: string }[] }) {
+/** Документи; під поточним — його розділи (поточний розділ підсвічений). */
+function SideNav({ id, active, onPick }: { id: LegalDocId; active: string; onPick?: () => void }) {
+  const t = useTranslations('legal');
+  const doc = legalDoc(id);
   return (
-    <ol className={s.toc}>
-      {sections.map((x, i) => (
-        <li key={x.id}>
-          <a href={`#${x.id}`} className={cn('t2f-focus', s.tocLink)}>
-            <b>{i + 1}.</b>
-            <span>{x.title}</span>
-          </a>
-        </li>
-      ))}
-    </ol>
+    <nav aria-label={t('docsLabel')} className={s.side}>
+      <p className={s.sideTitle}>{t('docsLabel')}</p>
+      <ul className={s.docs}>
+        {LEGAL_DOCS.map((d) => {
+          const here = d.id === id;
+          return (
+            <li key={d.id}>
+              <NextLink href={d.href} aria-current={here ? 'page' : undefined} onClick={onPick} className={cn('t2f-focus', s.doc)}>
+                <Icon name="text-short" size={16} />
+                {d.tab}
+              </NextLink>
+              {here ? (
+                <ol aria-label={t('toc')} className={s.secs}>
+                  {doc.sections.map((x, i) => (
+                    <li key={x.id}>
+                      <a href={`#${x.id}`} aria-current={active === x.id ? 'location' : undefined} onClick={onPick} className={cn('t2f-focus', s.sec)}>
+                        <b>{i + 1}.</b>
+                        <span>{x.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }
 
@@ -103,12 +125,24 @@ export function LegalPage({ id }: { id: LegalDocId }) {
   const doc = legalDoc(id);
   const [menuOpen, setMenuOpen] = useState(false);
   const [toTop, setToTop] = useState(false);
+  const [active, setActive] = useState(doc.sections[0]?.id ?? '');
+  const [sheet, setSheet] = useState(false);
   useEffect(() => {
-    const on = () => setToTop(window.scrollY > window.innerHeight);
+    // Поточний розділ — останній, чий заголовок уже дійшов до верхньої третини екрана.
+    const on = () => {
+      setToTop(window.scrollY > window.innerHeight);
+      let cur = doc.sections[0]?.id ?? '';
+      for (const x of doc.sections) {
+        const el = document.getElementById(x.id);
+        if (el && el.getBoundingClientRect().top <= window.innerHeight / 3) cur = x.id;
+      }
+      setActive(cur);
+    };
     on();
     window.addEventListener('scroll', on, { passive: true });
     return () => window.removeEventListener('scroll', on);
-  }, []);
+  }, [doc]);
+  const activeIndex = Math.max(0, doc.sections.findIndex((x) => x.id === active));
 
   const copyLink = (sectionId: string) => {
     const url = `${window.location.origin}${window.location.pathname}#${sectionId}`;
@@ -122,30 +156,30 @@ export function LegalPage({ id }: { id: LegalDocId }) {
       <Header onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
       <Menu open={menuOpen} onOpenChange={setMenuOpen} />
       <main id="content" tabIndex={-1} className={cn(s.main, 'focus:outline-none')} data-page="S-LEGAL" data-legal={id}>
-        <nav aria-label={t('docsLabel')} className={s.tabs}>
-          {LEGAL_DOCS.map((d) => (
-            <NextLink key={d.id} href={d.href} aria-current={d.id === id ? 'page' : undefined} className={cn('t2f-focus', s.tab)}>
-              {d.tab}
-            </NextLink>
-          ))}
-        </nav>
+        {/* Телефон: закріплена смуга «Зміст · 3. Навіщо ▾» → шторка з документами й розділами. */}
+        <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className={cn('t2f-focus', s.bar)} data-legal-bar="">
+          <span className={s.barLabel}>{t('toc')}</span>
+          <b className={s.barNum}>{activeIndex + 1}.</b>
+          <span className={s.barTitle}>{doc.sections[activeIndex]?.title}</span>
+          <Icon name="chevron-down" size={16} />
+        </button>
+        <Sheet open={sheet} onOpenChange={setSheet} title={t('toc')} boardHeader>
+          <div className="px-2 pb-4">
+            <SideNav id={id} active={active} onPick={() => setSheet(false)} />
+          </div>
+        </Sheet>
 
+        <div className={s.layout}>
+          <aside className={s.aside}>
+            <SideNav id={id} active={active} />
+          </aside>
+          <div className={s.body}>
         <h1 className={s.h1}>{doc.title}</h1>
         <p className={s.updated}>{t('updated', { date: doc.updated })}</p>
 
         <p className={s.short}>
           <b>{t('short')}</b> {doc.short}
         </p>
-
-        <nav aria-label={t('toc')} className={s.tocBox}>
-          <div className={s.tocDesk}>
-            <p className={s.tocTitle}>{t('toc')}</p>
-            <Toc sections={doc.sections} />
-          </div>
-          <div className={s.tocPhone}>
-            <Accordion items={[{ value: 'toc', title: <span className={s.tocTitle}>{t('toc')}</span>, content: <Toc sections={doc.sections} /> }]} />
-          </div>
-        </nav>
 
         {doc.sections.map((sec, i) => (
           <section key={sec.id} id={sec.id} aria-labelledby={`${sec.id}-h`} className={s.section}>
@@ -190,6 +224,8 @@ export function LegalPage({ id }: { id: LegalDocId }) {
             })}
           </p>
         </section>
+          </div>
+        </div>
       </main>
       <Footer className="mt-0" />
       {toTop ? (
