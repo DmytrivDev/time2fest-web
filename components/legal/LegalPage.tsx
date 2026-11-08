@@ -16,6 +16,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Sheet } from '@/components/primitives/Sheet';
 import { Footer } from '@/components/shell/Footer';
+import { CLOSE_MS } from '@/components/shell/OverlayManager';
 import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
@@ -145,6 +146,16 @@ export function LegalPage({ id }: { id: LegalDocId }) {
   const [toTop, setToTop] = useState(false);
   const [active, setActive] = useState(doc.sections[0]?.id ?? '');
   const [sheet, setSheet] = useState(false);
+  // Шторка закривається плавно, як і відкривається (власник 2026-11-08): спершу їде вниз `CLOSE_MS`, потім зникає.
+  const [closing, setClosing] = useState(false);
+  const closeSheet = () => {
+    if (!sheet || closing) return;
+    setClosing(true);
+    window.setTimeout(() => {
+      setSheet(false);
+      setClosing(false);
+    }, CLOSE_MS);
+  };
   useEffect(() => {
     // Поточний розділ — останній, чий заголовок уже дійшов до верхньої третини екрана.
     const on = () => {
@@ -181,9 +192,9 @@ export function LegalPage({ id }: { id: LegalDocId }) {
           <span className={s.barTitle}>{doc.sections[activeIndex]?.title}</span>
           <Icon name="chevron-down" size={16} />
         </button>
-        <Sheet open={sheet} onOpenChange={setSheet} title={t('toc')} boardHeader>
+        <Sheet open={sheet} onOpenChange={(v) => (v ? setSheet(true) : closeSheet())} closing={closing} title={t('toc')} boardHeader>
           <div className="px-2 pb-4">
-            <SideNav id={id} active={active} onPick={() => setSheet(false)} />
+            <SideNav id={id} active={active} onPick={closeSheet} />
           </div>
         </Sheet>
 
