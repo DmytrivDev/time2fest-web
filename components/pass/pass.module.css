@@ -352,6 +352,9 @@
 }
 .notYou {
   flex: 0 0 auto;
+  /* На рівні з поштою (нижній рядок), а не посередині картки (власник 2026-11-08); ціль 44 px заходить у поле картки. */
+  align-self: flex-end;
+  margin-bottom: -12px;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
