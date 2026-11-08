@@ -23,14 +23,9 @@ export interface HeaderProps {
   user?: HeaderUser | null;
   /** Поточна сторінка навігації. */
   current?: 'home' | 'countries';
-  /** Код мови для кнопки («УКР») і її назва мовою інтерфейсу. */
-  language?: { code: string; name: string };
   /** Відкрити меню (усі розміри). */
   onMenuClick?: () => void;
   menuOpen?: boolean;
-  /** Відкрити панель мови (десктоп) — панель на місці чату, не на відео. */
-  onLanguageClick?: () => void;
-  languageOpen?: boolean;
   /** «Увійти»: сторінка входу; `onSignInClick` може відкрити вхід вікном (трансляція грає) — `preventDefault`. */
   signInHref?: string;
   /** Сторінка входу відкрита — «Увійти» позначено поточною. */
@@ -61,20 +56,17 @@ export function HeaderAvatar({ user, pass, label }: { user: HeaderUser; pass: bo
 
 /**
  * Шапка за дошкою `Desk-Header-New2`, варіант C «Капсула „моє“» (рішення власника 2026-11-08).
- * Десктоп ≥ 1200, 64 px: лого · «Головна · Країни · Про нас» — текстом; мова й «Підтримати» — текстом; «Новорічний пас» —
+ * Десктоп ≥ 1200, 64 px: лого · «Головна · Країни · Про нас» — текстом; «Підтримати» — текстом (мова — лише в меню, 2026-11-08); «Новорічний пас» —
  * єдина яскрава кнопка (золота; з пасом її немає); капсула «моє»: 🔔 з лічильником | «Увійти» / аватар | «☰ Меню».
- * Планшет 768–1199: навігація, мова й «Підтримати» — у меню; лишаються лого, «Пас», капсула.
+ * Планшет 768–1199: навігація й «Підтримати» — у меню; лишаються лого, «Пас», капсула.
  * Телефон 56 px: лого · «Пас» · кабінет · 🔔 · ☰ (без напису). Поверхня змінюється лише CSS — розмітка однакова.
  */
 export function Header({
   hasPass = false,
   user = null,
   current,
-  language = { code: 'УКР', name: 'Українська' },
   onMenuClick,
   menuOpen = false,
-  onLanguageClick,
-  languageOpen = false,
   signInHref = '/login/',
   signInCurrent = false,
   onSignInClick,
@@ -113,18 +105,6 @@ export function Header({
         </nav>
 
         <span className={styles.spacer} />
-
-        <button
-          type="button"
-          className={cn('t2f-focus', styles.text, styles.deskOnly)}
-          aria-label={t('language', { language: language.name })}
-          aria-expanded={languageOpen}
-          onClick={onLanguageClick}
-        >
-          <Icon name="globe" size={18} />
-          {language.code}
-          <Icon name="chevron-down" size={14} strokeWidth={2} />
-        </button>
 
         {/* «Підтримати» — сторінка `/support/`; на сторінках із плеєром — вікно «Чайові» на місці чату. */}
         <NextLink

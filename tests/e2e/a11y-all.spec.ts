@@ -113,15 +113,11 @@ test.describe('Клавіатура', () => {
     void ytStub;
     test.skip(testInfo.project.name === 'tv', 'на ТВ немає хедера');
     await gotoAt(page, '2027-01-01T01:50:00+02:00', 0, '/');
-    const phone = (page.viewportSize()?.width ?? 0) < 768;
-    const trigger = phone
-      ? page.getByRole('banner').getByRole('button', { name: 'Меню' })
-      : page.getByRole('banner').getByRole('button', { name: /Мова/ });
+    // Мова — лише в меню (2026-11-08): перевіряємо меню на всіх розмірах.
+    const trigger = page.getByRole('banner').getByRole('button', { name: 'Меню' });
     await trigger.focus();
     await page.keyboard.press('Enter');
-    const dialog = phone
-      ? page.getByRole('dialog').first()
-      : page.getByRole('radiogroup', { name: 'Мова сайту' });
+    const dialog = page.getByRole('dialog').first();
     await expect(dialog).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();

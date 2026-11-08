@@ -20,11 +20,12 @@ export interface MenuLanguage {
   name: string;
 }
 
+/** Порядок — англійська, іспанська, французька, українська (рішення власника 2026-11-08). */
 export const MENU_LANGUAGES: MenuLanguage[] = [
-  { code: 'uk', name: 'Українська' },
   { code: 'en', name: 'English' },
   { code: 'es', name: 'Español' },
   { code: 'fr', name: 'Français' },
+  { code: 'uk', name: 'Українська' },
 ];
 
 export interface MenuProps {

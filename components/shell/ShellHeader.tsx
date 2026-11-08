@@ -1,24 +1,20 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
-import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { usePlayer, usePlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
 import { Header, type HeaderProps } from './Header';
-import { Menu, MENU_LANGUAGES } from './Menu';
+import { Menu } from './Menu';
 import { useOverlay } from './OverlayManager';
 
-const LANGUAGE_WINDOW = 'O-LANGUAGE';
-const SHORT: Record<string, string> = { uk: 'УКР', en: 'ENG', es: 'ESP', fr: 'FRA' };
 
 export interface ShellHeaderProps extends Pick<HeaderProps, 'current' | 'hasPass' | 'user'> {
   /** Назва місця для рядка «трансляція на паузі» в меню. TODO(T063): з BroadcastController. */
@@ -26,14 +22,13 @@ export interface ShellHeaderProps extends Pick<HeaderProps, 'current' | 'hasPass
 }
 
 /**
- * Хедер макета `(live)` з підключеним повноекранним меню (телефон, планшет) і панеллю мови (планшет-альбом, десктоп).
+ * Хедер макета `(live)` з підключеним меню (мова — лише в меню, рішення власника 2026-11-08).
  * Відкриття меню ставить плеєр на паузу й закриває будь-яке відкрите вікно; закриття — продовжує, якщо відео грало.
  * «Підтримати», «Новорічний пас», «Увійти»: поки йде свято (від 2 год до першої півночі до останньої, рішення власника
  * 2026-11-08) — вікно на місці чату (телефон — шторка), щоб не йти з трансляцій; до й після свята — свої сторінки
  * (`/support/`, `/pass/`, `/login/` з поверненням сюди ж).
  */
 export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: userProp, pausedPlace }: ShellHeaderProps) {
-  const t = useTranslations('menu');
   // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
   const pathname = usePathname();
   // Сторінки поза навігацією «Головна / Країни» (`/tv-info/`, `/schedule/`) — без підсвіченого пункту.
@@ -108,40 +103,14 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
     play();
   }, [menuOpen, play]);
 
-  const lang = MENU_LANGUAGES.find((l) => l.code === language) ?? MENU_LANGUAGES[0]!;
-  const languageOpen = overlay.current?.id === LANGUAGE_WINDOW;
-
-  const openLanguage = () => {
-    if (languageOpen) {
-      overlay.close(LANGUAGE_WINDOW);
-      return;
-    }
-    overlay.open({
-      id: LANGUAGE_WINDOW,
-      kind: 'nonmodal',
-      title: t('languageList'),
-      content: (
-        <RadioGroup
-          label={t('languageList')}
-          defaultValue={language}
-          onValueChange={setLanguage}
-          options={MENU_LANGUAGES.map((l) => ({ value: l.code, label: l.name, lang: l.code }))}
-        />
-      ),
-    });
-  };
-
   return (
     <>
       <Header
         current={current}
         hasPass={hasPass}
         user={user}
-        language={{ code: SHORT[lang.code] ?? lang.code.toUpperCase(), name: lang.name }}
         onMenuClick={() => onMenuChange(true)}
         menuOpen={menuOpen}
-        onLanguageClick={openLanguage}
-        languageOpen={languageOpen}
         onSignInClick={onSignInClick}
         onPassClick={onPassClick}
         onSupportClick={celebrating ? () => openTips() : undefined}
