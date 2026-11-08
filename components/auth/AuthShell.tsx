@@ -25,7 +25,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <Header user={user} hasPass={hasPass} signInCurrent onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
         <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
         {children}
-        <Footer className="mt-0" />
+        <Footer />
       </div>
     </TimeProvider>
   );

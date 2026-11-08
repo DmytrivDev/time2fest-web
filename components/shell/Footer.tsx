@@ -88,7 +88,7 @@ export function Footer({ reducedMotion, onReducedMotionChange, onCookiesClick, c
       <div className={s.inner}>
         <div className={s.top}>
           <div className={s.brand}>
-            <Logo label={t('logoLabel')} />
+            <Logo variant="footer" label={t('logoLabel')} />
             <p className={s.about}>{t('about')}</p>
             <div className={s.contact}>
               <a href={`mailto:${EMAIL}`} aria-label={`${t('emailLabel')}: ${EMAIL}`} className={cn('t2f-focus', s.mail)}>

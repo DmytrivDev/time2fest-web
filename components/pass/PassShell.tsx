@@ -29,7 +29,7 @@ export function PassShell({ children, passCurrent = true }: { children: ReactNod
           <Header user={user} hasPass={hasPass} passCurrent={passCurrent} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
           <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
           {children}
-          <Footer className="mt-0" />
+          <Footer />
         </div>
       </LiveAnnouncer>
     </TimeProvider>

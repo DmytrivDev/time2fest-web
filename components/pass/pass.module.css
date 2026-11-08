@@ -10,7 +10,7 @@
   max-width: 1440px;
   margin: 0 auto;
   box-sizing: border-box;
-  padding: 12px var(--spacing-margin-mobile) 24px;
+  padding: 12px var(--spacing-margin-mobile) 0; /* знизу — відступ футера */
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
@@ -22,7 +22,7 @@
  */
 @media (min-width: 1024px) {
   .main {
-    padding: var(--spacing-6) var(--spacing-margin-desktop) 56px;
+    padding: var(--spacing-6) var(--spacing-margin-desktop) 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 340px;
     column-gap: 24px;

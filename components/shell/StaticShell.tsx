@@ -24,7 +24,7 @@ export function StaticShell({ children }: { children: ReactNode }) {
       >
         {children}
       </main>
-      <Footer className="mt-0" />
+      <Footer />
     </div>
   );
 }

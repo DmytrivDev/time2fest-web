@@ -5,11 +5,11 @@
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 16px 48px;
+  padding: 0 16px; /* знизу — відступ самого футера (48 / 64) */
 }
 @media (min-width: 1024px) {
   .main {
-    padding: 32px 32px 64px;
+    padding: 32px 32px 0;
   }
 }
 

@@ -256,7 +256,7 @@ export function LegalPage({ id }: { id: LegalDocId }) {
           </div>
         </div>
       </main>
-      <Footer className="mt-0" />
+      <Footer />
       {toTop ? (
         <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={cn('t2f-focus t2f-press', s.toTop)} data-action="to-top">
           <Icon name="chevron-up" size={16} />
