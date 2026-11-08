@@ -5,7 +5,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Menu } from '@/components/shell/Menu';
+import { Menu, MenuBody } from '@/components/shell/Menu';
 import messages from '@/messages/uk.json';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -56,6 +56,19 @@ describe('Меню v2', () => {
     expect(screen.getByRole('link', { name: /Мій графік/ }).textContent).not.toContain('Пас');
     fireEvent.click(screen.getByRole('button', { name: 'Вийти' }));
     expect(useAuthStore.getState().user).toBeNull();
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('вікно O-MENU (keepOpenOnNavigate): перехід не закриває меню; Radix-варіант — закриває; «Допомога» веде на /help/', () => {
+    const onClose = vi.fn();
+    const { unmount } = wrap(<MenuBody onClose={onClose} keepOpenOnNavigate />);
+    expect(screen.getByRole('link', { name: 'Допомога' }).getAttribute('href')?.replace(/\/$/, '')).toBe('/help');
+    fireEvent.click(screen.getByRole('link', { name: /Рейтинг святкувань/ }));
+    expect(onClose).not.toHaveBeenCalled();
+    unmount();
+    const onOpenChange = vi.fn();
+    wrap(<Menu open onOpenChange={onOpenChange} />);
+    fireEvent.click(screen.getByRole('link', { name: /Рейтинг святкувань/ }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

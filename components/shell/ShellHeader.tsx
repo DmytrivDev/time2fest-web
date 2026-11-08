@@ -84,6 +84,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
             onSignIn={celebrating ? () => openAuthWindow() : undefined}
             onPass={celebrating ? () => openPassWindow() : undefined}
             onClose={close}
+            keepOpenOnNavigate
           />
         </div>
       ),

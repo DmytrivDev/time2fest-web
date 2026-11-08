@@ -88,9 +88,12 @@
   min-width: 0;
   font-weight: 600;
   font-size: 15px;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .notYou {
+  flex: none;
   display: inline-flex;
   align-items: center;
   min-height: 44px;

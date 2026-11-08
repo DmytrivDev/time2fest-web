@@ -295,7 +295,9 @@ export function FirstRowForm({
             <span aria-hidden="true" className={s.accountAvatar}>
               {(values.name.trim() || account.email).charAt(0).toUpperCase()}
             </span>
-            <span className={s.accountEmail}>{account.email}</span>
+            <span className={s.accountEmail} title={account.email}>
+              {account.email}
+            </span>
             <button type="button" onClick={account.onNotYou} className={cn(s.notYou, 't2f-focus')}>
               {t('form.notYou')}
             </button>

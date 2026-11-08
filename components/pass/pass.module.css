@@ -345,7 +345,10 @@
 .accountEmail {
   font-weight: 700;
   font-size: 15px;
-  overflow-wrap: anywhere;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .notYou {
   flex: 0 0 auto;

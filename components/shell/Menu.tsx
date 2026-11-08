@@ -118,6 +118,11 @@ function Section({ title, className, children }: { title: string; className?: st
 export interface MenuBodyProps extends Omit<MenuProps, 'open' | 'onOpenChange'> {
   /** Закрити меню (після переходу чи виходу). */
   onClose: () => void;
+  /**
+   * Не закривати меню при переході на сторінку (вікно `O-MENU` на `(live)`, власник 2026-11-08): лейаут `(live)` живе між
+   * сторінками, тож змінюється лише вміст, а меню на новій сторінці вже відкрите. Radix-варіант (`Menu`) закривається.
+   */
+  keepOpenOnNavigate?: boolean;
 }
 
 /**
@@ -143,6 +148,7 @@ export function MenuBody({
   reducedMotion,
   onReducedMotionChange,
   onClose,
+  keepOpenOnNavigate = false,
 }: MenuBodyProps) {
   const t = useTranslations('menu');
   const th = useTranslations('header');
@@ -161,8 +167,13 @@ export function MenuBody({
   const language = languageProp ?? storedLocale ?? 'uk';
   const pathname = usePathname();
   const here = (href: string) => href !== '#' && !!pathname?.startsWith(href.replace(/\/$/, ''));
+  // Поточна сторінка — з адреси (меню лишається відкритим між сторінками); `current` — для історій і тестів без роутера.
+  const page =
+    pathname === '/' ? 'home' : pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : pathname ? undefined : current;
   const count = stampCount ?? stamps;
   const close = onClose;
+  // Перехід на сторінку: у вікні `O-MENU` меню лишається відкритим, у Radix-варіанті — закривається.
+  const navigate = keepOpenOnNavigate ? () => undefined : close;
 
   return (
     <div className={ms.content} data-menu-body="">
@@ -237,11 +248,11 @@ export function MenuBody({
 
       <nav aria-label={t('navLabel')}>
         <Section title={t('sectionSite')} className={ms.notDesk}>
-          <Row href="/" icon="home" title={t('home')} current={current === 'home'} onNavigate={close} />
-          <Row href="/countries" icon="map" title={t('countries')} current={current === 'countries'} onNavigate={close} />
+          <Row href="/" icon="home" title={t('home')} current={page === 'home'} onNavigate={navigate} />
+          <Row href="/countries" icon="map" title={t('countries')} current={page === 'countries'} onNavigate={navigate} />
           {/* TODO(про нас): сторінки ще немає. */}
-          <Row icon="info" title={t('about')} onNavigate={close} />
-          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} onNavigate={close} />
+          <Row icon="info" title={t('about')} onNavigate={navigate} />
+          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} onNavigate={navigate} />
         </Section>
         <Section title={t('sectionMine')}>
           <Row
@@ -250,7 +261,7 @@ export function MenuBody({
             title={t('passport')}
             hint={signedIn ? t('passportHintAccount', { count }) : t('passportHint', { count })}
             current={here('/passport/')}
-            onNavigate={close}
+            onNavigate={navigate}
           />
           <Row
             href="/schedule/"
@@ -271,18 +282,18 @@ export function MenuBody({
               if (!hasPass && onPass) {
                 e.preventDefault();
                 onPass();
-              } else close();
+              } else navigate();
             }}
           />
         </Section>
         <Section title={t('sectionWatch')}>
-          <Row href="/room/" icon="grid4" title={t('room')} hint={t('roomHint')} current={here('/room/')} onNavigate={close} />
-          <Row href="/tv/" icon="tv" title={t('partyMode')} hint={t('partyHint')} onNavigate={close} />
-          <Row href="/rating/" icon="star" title={t('rating')} current={here('/rating/')} onNavigate={close} />
+          <Row href="/room/" icon="grid4" title={t('room')} hint={t('roomHint')} current={here('/room/')} onNavigate={navigate} />
+          <Row href="/tv/" icon="tv" title={t('partyMode')} hint={t('partyHint')} onNavigate={navigate} />
+          <Row href="/rating/" icon="star" title={t('rating')} current={here('/rating/')} onNavigate={navigate} />
         </Section>
         <Section title={t('sectionMore')}>
-          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} className={ms.deskOnly} onNavigate={close} />
-          <Row icon="help" title={t('help')} onNavigate={close} />
+          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} className={ms.deskOnly} onNavigate={navigate} />
+          <Row href="/help/" icon="help" title={t('help')} current={here('/help/')} onNavigate={navigate} />
           <li>
             <Switch
               label={

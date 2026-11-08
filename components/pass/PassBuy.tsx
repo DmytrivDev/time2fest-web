@@ -136,7 +136,9 @@ function AccountRow({ email, note, mt = 16, notYou }: { email: string; note: str
         </span>
         <span className={s.accountText}>
           <span className={s.accountLabel}>{t('accountFor')}</span>
-          <span className={s.accountEmail}>{email}</span>
+          <span className={s.accountEmail} title={email}>
+            {email}
+          </span>
         </span>
         {notYou ? (
           <button type="button" className={cn('t2f-focus', s.notYou)} onClick={notYou}>

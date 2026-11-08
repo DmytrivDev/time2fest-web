@@ -51,7 +51,7 @@ const GROUPS: { key: 'groupFest' | 'groupYou' | 'groupHelp'; items: Item[] }[] =
   {
     key: 'groupHelp',
     items: [
-      { key: 'help', href: '#' },
+      { key: 'help', href: '/help/' },
       { key: 'rules', href: '/rules/' },
       { key: 'payments', href: '/payments/' },
       { key: 'cookies', href: null },
