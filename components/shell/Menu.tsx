@@ -2,16 +2,20 @@
 
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Dialog, RadioGroup, VisuallyHidden } from 'radix-ui';
-import { useRef, type MouseEvent, type ReactNode } from 'react';
-import { Button } from '@/components/primitives/Button';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
+import { useHeaderUser } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Logo } from '@/components/primitives/Logo';
+import { usePlayerBottom } from '@/components/primitives/Sheet';
 import { Switch } from '@/components/primitives/Switch';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
+import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
+import { HeaderAvatar } from './Header';
 import ms from './menu.module.css';
 
 export interface MenuLanguage {
@@ -44,90 +48,288 @@ export interface MenuProps {
   onSignIn?: () => void;
   /** «Новорічний пас»: сторінка `/pass/` або (`onPass`) вікно оформлення під трансляцією. */
   onPass?: () => void;
-  /** Штампів на цьому пристрої (підпис «Мій паспорт»). */
+  /** Штампів (підпис «Мій паспорт»); без значення — зі стору гостя. */
   stampCount?: number;
   /** Керований «Зменшити рух» (історії, тести); без нього — стор гостя. */
   reducedMotion?: boolean;
   onReducedMotionChange?: (value: boolean) => void;
 }
 
-const TILE = 'inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface-raised';
-const ROW =
-  't2f-focus t2f-transition flex min-h-13 w-full items-center gap-3.5 rounded-lg px-3 py-2 text-start text-text hover:bg-surface-raised';
-
-function RowBody({ icon, title, hint, highlight }: { icon: IconName; title: ReactNode; hint?: ReactNode; highlight?: boolean }) {
-  return (
-    <>
-      <span aria-hidden="true" className={cn(TILE, highlight && 'text-highlight')}>
-        <Icon name={icon} size={18} />
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-body-strong">{title}</span>
-        {hint ? <span className="text-caption text-text-muted">{hint}</span> : null}
-      </span>
-    </>
-  );
+/** Верх шторки на телефоні: низ плеєра, а без плеєра — шапка + 16:9 (стандарт шторок, 2026-11-04). */
+function usePhoneSheetTop(open: boolean): number | undefined {
+  const playerBottom = usePlayerBottom(open);
+  const [fallback, setFallback] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    if (!open) return;
+    const update = () => setFallback(56 + Math.round((window.innerWidth * 9) / 16));
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [open]);
+  return playerBottom > 0 ? playerBottom : fallback;
 }
 
-function NavRow({
+function Row({
   href = '#',
   icon,
   title,
   hint,
-  current,
+  tag,
   highlight,
+  current,
+  className,
   onNavigate,
 }: {
   href?: string;
   icon: IconName;
   title: ReactNode;
   hint?: ReactNode;
-  current?: boolean;
+  tag?: ReactNode;
   highlight?: boolean;
+  current?: boolean;
+  className?: string;
   onNavigate: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
   return (
-    <li>
-      <a href={href} aria-current={current ? 'page' : undefined} onClick={onNavigate} className={cn(ROW, current && 'bg-surface-raised')}>
-        <RowBody icon={icon} title={title} hint={hint} highlight={highlight} />
-        <Icon name="chevron-right" size={16} className="text-text-muted" />
-      </a>
+    <li className={className}>
+      <NextLink href={href} aria-current={current ? 'page' : undefined} onClick={onNavigate} className={cn('t2f-focus t2f-transition', ms.row)}>
+        <span aria-hidden="true" className={cn(ms.tile, highlight && ms.tileGold)}>
+          <Icon name={icon} size={18} />
+        </span>
+        <span className={ms.rowText}>
+          <span className={ms.rowTitle}>{title}</span>
+          {hint ? <span className={ms.rowHint}>{hint}</span> : null}
+        </span>
+        {tag ?? <Icon name="chevron-right" size={16} className={ms.chev} />}
+      </NextLink>
     </li>
   );
 }
 
-function Divider() {
-  return <div aria-hidden="true" className="mx-3 my-1.5 h-px bg-border" />;
+function Section({ title, className, children }: { title: string; className?: string; children: ReactNode }) {
+  return (
+    <section className={cn(ms.section, className)}>
+      <h3 className={ms.sectionTitle}>{title}</h3>
+      <ul className={ms.list}>{children}</ul>
+    </section>
+  );
+}
+
+export interface MenuBodyProps extends Omit<MenuProps, 'open' | 'onOpenChange'> {
+  /** Закрити меню (після переходу чи виходу). */
+  onClose: () => void;
 }
 
 /**
- * Меню телефона (ІНВ C23 PhoneMenu; Phone-Menu.dc.html): окремий повноекранний екран (Radix Dialog) з власним
- * хедером. Мова — першою (RadioGroup з `lang`), далі пункти з іконками й «Увійти» для гостя.
- * Відео на паузі: рядок-пояснення з назвою місця; саму паузу й відновлення робить `ShellHeader`.
- * Коралової кнопки в меню немає.
+ * Вміст меню за дошкою `Desk-Menu-New` v2 (рішення власника 2026-11-08): мова — угорі одним рядом (EN · ES · FR · УКР, ширина
+ * за вмістом); картка людини (гість — «Увійти»; увійшла — аватар, ім’я · кабінет, пошта або «Новорічний пас активний»);
+ * «Сайт» (телефон і планшет — на десктопі це в шапці); «Моє свято» (паспорт, графік — без пасу з ярликом «Пас»);
+ * «Дивитися» (кімната перегляду, режим вечірки, рейтинг); «Ще» («Підтримати» — десктоп, допомога, «Зменшити рух»);
+ * «Вийти» — у кінці списку (до нього гортають; власник 2026-11-08).
+ * На сторінках `(live)` вміст відкривається вікном `O-MENU` через `OverlayManager` (десктоп — на місці чату, телефон — шторка
+ * до відео), поза ними — `Menu` (Radix Dialog).
  */
-export function Menu({
-  open,
-  onOpenChange,
+export function MenuBody({
   current,
-  language = 'uk',
+  language: languageProp,
   languages = MENU_LANGUAGES,
   onLanguageChange,
   pausedPlace,
-  hasPass = false,
-  signedIn = false,
+  hasPass: hasPassProp,
+  signedIn: signedInProp,
   onSignIn,
   onPass,
-  stampCount = 0,
+  stampCount,
   reducedMotion,
   onReducedMotionChange,
-}: MenuProps) {
+  onClose,
+}: MenuBodyProps) {
   const t = useTranslations('menu');
   const th = useTranslations('header');
   const stored = useGuestStore((s) => s.reducedMotion);
   const setStored = useGuestStore((s) => s.setReducedMotion);
+  const storedPass = useGuestStore((s) => s.hasPass);
+  const stamps = useGuestStore((s) => s.stamps.length);
+  // Мова — у сторі гостя (запам’ятовується); перекладів ще немає.
+  const storedLocale = useGuestStore((s) => s.locale);
+  const email = useAuthStore((s) => s.user?.email ?? null);
+  const signOut = useAuthStore((s) => s.signOut);
+  const user = useHeaderUser();
+  const signedIn = signedInProp ?? Boolean(user);
+  const hasPass = hasPassProp ?? (Boolean(user) && storedPass);
   const motion = reducedMotion ?? stored;
-  const close = () => onOpenChange(false);
+  const language = languageProp ?? storedLocale ?? 'uk';
+  const pathname = usePathname();
+  const here = (href: string) => href !== '#' && !!pathname?.startsWith(href.replace(/\/$/, ''));
+  const count = stampCount ?? stamps;
+  const close = onClose;
+
+  return (
+    <div className={ms.content} data-menu-body="">
+      {pausedPlace ? (
+        <div role="status" className={ms.paused}>
+          <Icon name="pause" size={16} />
+          <span>{t('playerPaused', { place: pausedPlace })}</span>
+        </div>
+      ) : null}
+
+      {/* Мова — угорі, одним рядом; окремої кнопки мови в шапці немає. */}
+      <RadioGroup.Root
+        aria-label={t('language')}
+        value={language}
+        onValueChange={(v) => {
+          useGuestStore.setState({ locale: v as typeof storedLocale });
+          onLanguageChange?.(v);
+        }}
+        orientation="horizontal"
+        className={ms.langs}
+      >
+        {languages.map((l) => (
+          <RadioGroup.Item key={l.code} value={l.code} lang={l.code} className={cn('t2f-focus t2f-transition', ms.lang)}>
+            {l.name}
+          </RadioGroup.Item>
+        ))}
+      </RadioGroup.Root>
+
+      {user ? (
+        // TODO(кабінет): сторінки ще немає.
+        <NextLink href="#" onClick={close} className={cn('t2f-focus t2f-transition', ms.card)} data-block="menu-account">
+          <span className={ms.avatar}>
+            <HeaderAvatar user={user} pass={hasPass} label={th('passLabel')} />
+          </span>
+          <span className={ms.cardText}>
+            <span className={ms.cardName}>
+              {user.name} <span className={ms.cardCabinet}>· {t('cabinet')}</span>
+            </span>
+            {hasPass ? (
+              <span className={ms.passChip}>
+                <Icon name="ticket" size={14} />
+                {t('passActive')}
+              </span>
+            ) : (
+              <span className={ms.cardEmail}>{email}</span>
+            )}
+          </span>
+          <Icon name="chevron-right" size={16} className={ms.chev} />
+        </NextLink>
+      ) : (
+        <div className={ms.guest} data-block="menu-guest">
+          <p className={ms.guestTitle}>{t('guestTitle')}</p>
+          <p className={ms.guestText}>{t('guestText')}</p>
+          <NextLink
+            href="/login/"
+            onClick={(e) => {
+              if (onSignIn) {
+                e.preventDefault();
+                onSignIn();
+              } else {
+                rememberReturn(currentPath());
+                close();
+              }
+            }}
+            className={cn('t2f-focus t2f-transition', ms.signIn)}
+          >
+            <Icon name="user" size={18} />
+            {t('signIn')}
+          </NextLink>
+        </div>
+      )}
+
+      <nav aria-label={t('navLabel')}>
+        <Section title={t('sectionSite')} className={ms.notDesk}>
+          <Row href="/" icon="home" title={t('home')} current={current === 'home'} onNavigate={close} />
+          <Row href="/countries" icon="map" title={t('countries')} current={current === 'countries'} onNavigate={close} />
+          {/* TODO(про нас): сторінки ще немає. */}
+          <Row icon="info" title={t('about')} onNavigate={close} />
+          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} onNavigate={close} />
+        </Section>
+        <Section title={t('sectionMine')}>
+          <Row
+            href="/passport/"
+            icon="passport"
+            title={t('passport')}
+            hint={signedIn ? t('passportHintAccount', { count }) : t('passportHint', { count })}
+            current={here('/passport/')}
+            onNavigate={close}
+          />
+          <Row
+            href="/schedule/"
+            icon="calendar"
+            title={t('schedule')}
+            hint={t('scheduleHint')}
+            current={here('/schedule/')}
+            tag={
+              hasPass ? undefined : (
+                <span className={ms.passTag}>
+                  <Icon name="ticket" size={12} />
+                  {t('passTag')}
+                </span>
+              )
+            }
+            onNavigate={(e) => {
+              // Без пасу «Мій графік» показує, що дає пас: оформлення вікном (свято йде) чи сторінка графіка.
+              if (!hasPass && onPass) {
+                e.preventDefault();
+                onPass();
+              } else close();
+            }}
+          />
+        </Section>
+        <Section title={t('sectionWatch')}>
+          <Row href="/room/" icon="grid4" title={t('room')} hint={t('roomHint')} current={here('/room/')} onNavigate={close} />
+          <Row href="/tv/" icon="tv" title={t('partyMode')} hint={t('partyHint')} onNavigate={close} />
+          <Row href="/rating/" icon="star" title={t('rating')} current={here('/rating/')} onNavigate={close} />
+        </Section>
+        <Section title={t('sectionMore')}>
+          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} className={ms.deskOnly} onNavigate={close} />
+          <Row icon="help" title={t('help')} onNavigate={close} />
+          <li>
+            <Switch
+              label={
+                <span className={ms.switchLabel}>
+                  <span aria-hidden="true" className={ms.tile}>
+                    <Icon name="motion" size={18} />
+                  </span>
+                  <span className={ms.rowTitle}>{t('reduceMotion')}</span>
+                </span>
+              }
+              checked={motion}
+              onCheckedChange={(v) => {
+                setStored(v);
+                onReducedMotionChange?.(v);
+              }}
+              className={ms.switchRow}
+            />
+          </li>
+        </Section>
+      </nav>
+
+      {/* «Вийти» — у кінці списку, до нього гортають (не закріплене; власник 2026-11-08). */}
+      {signedIn ? (
+        <button
+          type="button"
+          onClick={() => {
+            signOut();
+            close();
+          }}
+          className={cn('t2f-focus t2f-transition', ms.signOut)}
+        >
+          <Icon name="sign-out" size={18} />
+          {t('signOut')}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * Меню поза `(live)` (службові сторінки, пас, вхід, 404) — Radix Dialog: десктоп — панель праворуч під шапкою,
+ * телефон — шторка до низу відео / шапки + 16:9 без затемнення, планшет — на весь екран.
+ */
+export function Menu({ open, onOpenChange, ...rest }: MenuProps) {
+  const t = useTranslations('menu');
+  const th = useTranslations('header');
+  const top = usePhoneSheetTop(open);
   // Меню відкривається без Dialog.Trigger (кнопка — у хедері), тож Radix не знає, куди повернути фокус:
   // запам’ятовуємо елемент з фокусом до відкриття й повертаємо на нього після закриття (WCAG 2.4.3).
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -147,10 +349,11 @@ export function Menu({
             e.preventDefault();
             returnFocus.current.focus();
           }}
-          // Десктоп (≥ 1200): панель праворуч на місці чату під шапкою (`menu.module.css`); телефон і планшет — на весь екран.
-          className={cn('fixed inset-0 z-50 flex flex-col overflow-hidden bg-background text-text', ms.panel)}
+          className={cn('text-text', ms.panel)}
+          style={top !== undefined ? ({ '--menu-top': `${top}px` } as CSSProperties) : undefined}
         >
-          <header className="flex h-14 shrink-0 items-center gap-0.5 border-b border-border ps-4 pe-1">
+          <span aria-hidden="true" className={ms.handle} />
+          <header className={ms.head}>
             <Logo label={th('logoLabel')} className={cn('me-auto', ms.logo)} />
             <span aria-hidden="true" className={ms.title}>
               {t('title')}
@@ -159,120 +362,11 @@ export function Menu({
               <Dialog.Title>{t('title')}</Dialog.Title>
             </VisuallyHidden.Root>
             <Dialog.Close asChild>
-              <IconButton icon="close" iconSize={20} aria-label={t('close')} className="rounded-full border border-text bg-border" />
+              <IconButton icon="close" iconSize={20} aria-label={t('close')} className={ms.close} />
             </Dialog.Close>
           </header>
-
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 pb-4">
-            {pausedPlace ? (
-              <div role="status" className="mx-2 mb-1 mt-3 flex items-center gap-2 rounded-lg bg-surface px-3 py-2 text-caption text-text-secondary">
-                <Icon name="pause" size={16} className="text-text-muted" />
-                <span>{t('playerPaused', { place: pausedPlace })}</span>
-              </div>
-            ) : null}
-
-            <section aria-labelledby="menu-language" className="px-3 pb-2 pt-3">
-              <h3 id="menu-language" className="mb-2 flex items-center gap-2 text-label-sm text-text-secondary">
-                <Icon name="globe" size={16} />
-                {t('language')}
-              </h3>
-              <RadioGroup.Root
-                aria-labelledby="menu-language"
-                value={language}
-                onValueChange={onLanguageChange}
-                className="grid grid-cols-2 gap-2"
-              >
-                {languages.map((l) => (
-                  <RadioGroup.Item
-                    key={l.code}
-                    value={l.code}
-                    lang={l.code}
-                    className="t2f-focus t2f-transition flex min-h-touch-min items-center justify-center gap-1.5 rounded-md border border-border-strong px-3 text-body text-text aria-checked:border-2 aria-checked:border-highlight aria-checked:bg-surface-raised aria-checked:text-body-strong"
-                  >
-                    <RadioGroup.Indicator asChild>
-                      <Icon name="check" size={16} className="text-highlight" />
-                    </RadioGroup.Indicator>
-                    {l.name}
-                  </RadioGroup.Item>
-                ))}
-              </RadioGroup.Root>
-            </section>
-
-            <Divider />
-
-            <nav aria-label={t('navLabel')}>
-              <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
-                <NavRow href="/" icon="home" title={t('home')} current={current === 'home'} onNavigate={close} />
-                <NavRow href="/countries" icon="map" title={t('countries')} current={current === 'countries'} onNavigate={close} />
-                {/* TODO(про нас): сторінки ще немає. */}
-                <NavRow icon="info" title={t('about')} onNavigate={close} />
-              </ul>
-              <Divider />
-              <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
-                <NavRow href="/schedule/" icon="calendar" title={t('schedule')} hint={hasPass ? undefined : t('scheduleHint')} onNavigate={close} />
-                <NavRow href="/passport/" icon="passport" title={t('passport')} hint={t('passportHint', { count: stampCount })} onNavigate={close} />
-                <NavRow
-                  href="/pass/"
-                  icon={hasPass ? 'ticket-check' : 'ticket'}
-                  title={t('pass')}
-                  hint={t('passHint')}
-                  highlight
-                  onNavigate={(e) => {
-                    if (onPass) {
-                      e.preventDefault();
-                      onPass();
-                    } else close();
-                  }}
-                />
-                <NavRow href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} onNavigate={close} />
-              </ul>
-              <Divider />
-              <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
-                <NavRow href="/tv/" icon="tv" title={t('partyMode')} onNavigate={close} />
-                <NavRow icon="help" title={t('help')} onNavigate={close} />
-                <li>
-                  <Switch
-                    label={
-                      <span className="flex items-center gap-3.5">
-                        <span aria-hidden="true" className={TILE}>
-                          <Icon name="motion" size={18} />
-                        </span>
-                        <span className="text-body-strong text-text">{t('reduceMotion')}</span>
-                      </span>
-                    }
-                    checked={motion}
-                    onCheckedChange={(v) => {
-                      setStored(v);
-                      onReducedMotionChange?.(v);
-                    }}
-                    className="min-h-13 w-full justify-between px-3 py-2 hover:bg-surface-raised"
-                  />
-                </li>
-              </ul>
-            </nav>
-
-            {signedIn ? null : (
-              <div className="mx-1 mt-3 flex flex-col gap-2.5 rounded-lg bg-surface p-3">
-                <p className="text-caption text-text-secondary">{t('signInHint')}</p>
-                <Button variant="secondary" size="lg" asChild>
-                  <NextLink
-                    href="/login/"
-                    onClick={(e) => {
-                      if (onSignIn) {
-                        e.preventDefault();
-                        onSignIn();
-                      } else {
-                        rememberReturn(currentPath());
-                        close();
-                      }
-                    }}
-                  >
-                    <Icon name="user" size={20} />
-                    {t('signIn')}
-                  </NextLink>
-                </Button>
-              </div>
-            )}
+          <div className={ms.body}>
+            <MenuBody {...rest} onClose={() => onOpenChange(false)} />
           </div>
         </Dialog.Content>
       </Dialog.Portal>

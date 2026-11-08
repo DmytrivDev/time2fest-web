@@ -15,6 +15,7 @@ import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Sheet } from '@/components/primitives/Sheet';
+import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { Footer } from '@/components/shell/Footer';
 import { CLOSE_MS } from '@/components/shell/OverlayManager';
 import { Header } from '@/components/shell/Header';
@@ -143,6 +144,8 @@ export function LegalPage({ id }: { id: LegalDocId }) {
   const announce = useAnnounce();
   const doc = legalDoc(id);
   const [menuOpen, setMenuOpen] = useState(false);
+  const user = useHeaderUser();
+  const hasPass = useHeaderPass();
   const [toTop, setToTop] = useState(false);
   const [active, setActive] = useState(doc.sections[0]?.id ?? '');
   const [sheet, setSheet] = useState(false);
@@ -182,7 +185,7 @@ export function LegalPage({ id }: { id: LegalDocId }) {
   return (
     <div className="flex min-h-dvh flex-col bg-background text-text">
       <SkipLinks targets={['content']} />
-      <Header onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
+      <Header user={user} hasPass={hasPass} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
       <Menu open={menuOpen} onOpenChange={setMenuOpen} />
       <main id="content" tabIndex={-1} className={cn(s.main, 'focus:outline-none')} data-page="S-LEGAL" data-legal={id}>
         {/* Телефон: закріплена смуга «Зміст · 3. Навіщо ▾» → шторка з документами й розділами. */}

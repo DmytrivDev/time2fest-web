@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { SkipLinks } from '@/components/primitives/a11y/SkipLinks';
+import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { Menu } from './Menu';
@@ -12,10 +13,12 @@ import { Menu } from './Menu';
  */
 export function StaticShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const user = useHeaderUser();
+  const hasPass = useHeaderPass();
   return (
     <div className="flex min-h-dvh flex-col bg-background text-text">
       <SkipLinks targets={['content']} />
-      <Header onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
+      <Header user={user} hasPass={hasPass} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
       <Menu open={menuOpen} onOpenChange={setMenuOpen} />
       <main
         id="main"

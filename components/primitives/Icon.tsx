@@ -81,7 +81,8 @@ export type IconName =
   | 'mail'
   | 'telegram'
   | 'instagram'
-  | 'zap';
+  | 'zap'
+  | 'sign-out';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -460,6 +461,12 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   zap: <path d="M13 3L5 14h6l-1 7 8-11h-6z" />,
+  'sign-out': (
+    <>
+      <path d="M15 4h4v16h-4" />
+      <path d="M10 8l-4 4 4 4M6 12h10" />
+    </>
+  ),
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'> {
