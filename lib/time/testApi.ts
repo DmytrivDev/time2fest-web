@@ -24,6 +24,7 @@ export interface T2FTestApi {
   /** Вхід (імітація): сервіс недоступний, Google скасовано, вийти, останній лист (код і посилання). */
   setAuthUnavailable(on: boolean): void;
   setGoogleCancelled(on: boolean): void;
+  setNotifications(n: number): void;
   signOut(): void;
   lastLetter(): AuthLetter | null;
   /** Хтось відповів на твоє повідомлення (перевірка «Сповіщати про відповіді»). */
@@ -64,6 +65,7 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     setChatEmpty: (on) => useTestControls.getState().setEmptyCountry(on),
     setAuthUnavailable: (on) => useTestControls.getState().setAuthUnavailable(on),
     setGoogleCancelled: (on) => useTestControls.getState().setGoogleCancelled(on),
+    setNotifications: (n) => useTestControls.getState().setNotifications(n),
     signOut: () => useAuthStore.getState().signOut(),
     lastLetter: () => useAuthStore.getState().letter,
     emitReply: () => {

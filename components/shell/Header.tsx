@@ -4,16 +4,20 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import type { MouseEvent } from 'react';
 import { cn } from '@/components/primitives/cn';
+import { roundFlagSrc } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
+import { useTestControls } from '@/stores/testControls';
 import styles from './header.module.css';
 
 export interface HeaderUser {
   /** Нік; з нього береться літера аватара й назва кнопки. */
   name: string;
+  /** Прапор, обраний при реєстрації (ISO); фон аватара. */
+  flag?: string;
 }
 
 export interface HeaderProps {
-  /** Є активний Новорічний пас: «Пас ✓» / «Новорічний пас ✓». */
+  /** Є активний Новорічний пас: кнопки «Новорічний пас» немає, на аватарі — золоте кільце й ярлик «ПАС». */
   hasPass?: boolean;
   /** Увійшла людина: аватар замість входу. */
   user?: HeaderUser | null;
@@ -21,10 +25,10 @@ export interface HeaderProps {
   current?: 'home' | 'countries';
   /** Код мови для кнопки («УКР») і її назва мовою інтерфейсу. */
   language?: { code: string; name: string };
-  /** Відкрити повноекранне меню (телефон, планшет). */
+  /** Відкрити меню (усі розміри). */
   onMenuClick?: () => void;
   menuOpen?: boolean;
-  /** Відкрити панель мови (планшет, десктоп) — панель на місці чату, не на відео. */
+  /** Відкрити панель мови (десктоп) — панель на місці чату, не на відео. */
   onLanguageClick?: () => void;
   languageOpen?: boolean;
   /** «Увійти»: сторінка входу; `onSignInClick` може відкрити вхід вікном (трансляція грає) — `preventDefault`. */
@@ -34,20 +38,33 @@ export interface HeaderProps {
   onSignInClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
   /** «Пас»: сторінка `/pass/`; `onPassClick` може відкрити оформлення вікном (трансляція грає) — `preventDefault`. */
   onPassClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
-  /** «Підтримати»: вікно «Чайові» (сторінки з плеєром); без обробника — посилання на головну. */
+  /** «Підтримати»: вікно «Чайові» (сторінки з плеєром); без обробника — сторінка `/support/`. */
   onSupportClick?: () => void;
   /** Сторінка пасу відкрита — «Пас» позначено поточною. */
   passCurrent?: boolean;
+  /** Нових сповіщень; без значення — з тестових перемикачів (сповіщень ще немає). */
+  notifications?: number;
+  onNotificationsClick?: () => void;
   className?: string;
 }
 
-const PASS_ICON_ACTIVE = 'ticket-check' as const;
+/** Аватар: круглий прапор під темною вуаллю й перша літера; з пасом — золоте кільце й ярлик «ПАС». */
+export function HeaderAvatar({ user, pass, label }: { user: HeaderUser; pass: boolean; label: string }) {
+  const src = user.flag ? roundFlagSrc(user.flag) : null;
+  return (
+    <span aria-hidden="true" className={cn(styles.avatar, pass && styles.avatarPass)} style={src ? { backgroundImage: `linear-gradient(rgb(0 0 0 / 0.55), rgb(0 0 0 / 0.55)), url(${src})` } : undefined}>
+      {user.name.trim().charAt(0).toUpperCase()}
+      {pass ? <span className={styles.passTag}>{label}</span> : null}
+    </span>
+  );
+}
 
 /**
- * Хедер (ІНВ C23) за макетами `Main` / `Phone-Home-Live`. Телефон 56 px: знак, «Пас», вхід / аватар, «Меню».
- * Планшет: + «Головна», «Країни», мова. Десктоп 64 px: знак, «Головна», «Країни» (підкреслення поточної),
- * мова «УКР ⌄», «Підтримати», «Новорічний пас» (рамка), «Увійти»; меню немає.
- * Поверхня змінюється лише CSS (`header.module.css`), тож на сервері й клієнті розмітка однакова.
+ * Шапка за дошкою `Desk-Header-New2`, варіант C «Капсула „моє“» (рішення власника 2026-11-08).
+ * Десктоп ≥ 1200, 64 px: лого · «Головна · Країни · Про нас» — текстом; мова й «Підтримати» — текстом; «Новорічний пас» —
+ * єдина яскрава кнопка (золота; з пасом її немає); капсула «моє»: 🔔 з лічильником | «Увійти» / аватар | «☰ Меню».
+ * Планшет 768–1199: навігація, мова й «Підтримати» — у меню; лишаються лого, «Пас», капсула.
+ * Телефон 56 px: лого · «Пас» · кабінет · 🔔 · ☰ (без напису). Поверхня змінюється лише CSS — розмітка однакова.
  */
 export function Header({
   hasPass = false,
@@ -64,9 +81,14 @@ export function Header({
   onPassClick,
   onSupportClick,
   passCurrent = false,
+  notifications,
+  onNotificationsClick,
   className,
 }: HeaderProps) {
   const t = useTranslations('header');
+  // TODO(сповіщення): справжнє джерело; поки — тестовий перемикач «Сповіщення (лічильник)».
+  const testCount = useTestControls((s) => s.notifications);
+  const count = notifications ?? testCount;
 
   return (
     <header className={cn(styles.header, className)}>
@@ -81,18 +103,20 @@ export function Header({
           <NextLink href="/" aria-current={current === 'home' ? 'page' : undefined} className={cn('t2f-focus', styles.navLink)}>
             {t('home')}
           </NextLink>
-          <NextLink
-            href="/countries"
-            aria-current={current === 'countries' ? 'page' : undefined}
-            className={cn('t2f-focus', styles.navLink)}
-          >
+          <NextLink href="/countries" aria-current={current === 'countries' ? 'page' : undefined} className={cn('t2f-focus', styles.navLink)}>
             {t('countries')}
+          </NextLink>
+          {/* TODO(про нас): сторінки ще немає. */}
+          <NextLink href="#" className={cn('t2f-focus', styles.navLink)}>
+            {t('about')}
           </NextLink>
         </nav>
 
+        <span className={styles.spacer} />
+
         <button
           type="button"
-          className={cn('t2f-focus', styles.btn, styles.lang, styles.tabletUp)}
+          className={cn('t2f-focus', styles.text, styles.deskOnly)}
           aria-label={t('language', { language: language.name })}
           aria-expanded={languageOpen}
           onClick={onLanguageClick}
@@ -102,8 +126,7 @@ export function Header({
           <Icon name="chevron-down" size={14} strokeWidth={2} />
         </button>
 
-        {/* «Підтримати» — сторінка `/support/` (2026-11-07); на сторінках із плеєром — вікно «Чайові» на місці чату, щоб
-            трансляція не переривалась (2026-11-01). */}
+        {/* «Підтримати» — сторінка `/support/`; на сторінках із плеєром — вікно «Чайові» на місці чату. */}
         <NextLink
           href="/support/"
           onClick={(e) => {
@@ -111,64 +134,77 @@ export function Header({
             e.preventDefault();
             onSupportClick();
           }}
-          className={cn('t2f-focus', styles.btn, styles.deskOnly)}
+          className={cn('t2f-focus', styles.text, styles.deskOnly)}
         >
           <Icon name="heart" size={18} />
           {t('support')}
         </NextLink>
 
-        {/* «Пас» — сторінка пасу (або вікно оформлення під трансляцією). Телефон і планшет: коротко. */}
-        <NextLink
-          href="/pass/"
-          onClick={onPassClick}
-          aria-current={passCurrent ? 'page' : undefined}
-          aria-label={hasPass ? t('passActiveA11y') : t('passA11y')}
-          className={cn('t2f-focus', styles.btn, styles.pass, styles.phoneTablet)}
-        >
-          <Icon name={hasPass ? PASS_ICON_ACTIVE : 'ticket'} size={18} />
-          {hasPass ? t('passShortActive') : t('passShort')}
-        </NextLink>
-        {/* Десктоп: повна назва. */}
-        <NextLink
-          href="/pass/"
-          onClick={onPassClick}
-          aria-current={passCurrent ? 'page' : undefined}
-          aria-label={hasPass ? t('passFullActiveA11y') : undefined}
-          className={cn('t2f-focus', styles.btn, styles.pass, styles.deskOnly)}
-        >
-          <Icon name={hasPass ? PASS_ICON_ACTIVE : 'ticket'} size={18} />
-          {hasPass ? t('passFullActive') : t('passFull')}
-        </NextLink>
-
-        {/* Вхід — сторінка `/login/` (або вікно під час трансляції); профіль — наступна ітерація (меню профілю). */}
-        {user ? (
-          <NextLink href="#" aria-label={t('profile', { name: user.name })} className={cn('t2f-focus', styles.iconBtn)}>
-            <span aria-hidden="true" className={styles.avatar}>
-              {user.name.trim().charAt(0).toUpperCase()}
-            </span>
+        {/* «Новорічний пас» — єдина яскрава кнопка (покупка); з пасом її немає — статус на аватарі. */}
+        {hasPass ? null : (
+          <NextLink
+            href="/pass/"
+            onClick={onPassClick}
+            aria-current={passCurrent ? 'page' : undefined}
+            aria-label={t('passFull')}
+            className={cn('t2f-focus', styles.pass)}
+          >
+            <Icon name="ticket" size={18} />
+            <span className={styles.passShort}>{t('passShort')}</span>
+            <span className={styles.passFull}>{t('passFull')}</span>
           </NextLink>
-        ) : (
-          <>
-            <NextLink href={signInHref} onClick={onSignInClick} aria-current={signInCurrent ? 'page' : undefined} aria-label={t('signIn')} className={cn('t2f-focus', styles.iconBtn, styles.phoneTablet)}>
-              <Icon name="user" size={22} />
-            </NextLink>
-            <NextLink href={signInHref} onClick={onSignInClick} aria-current={signInCurrent ? 'page' : undefined} className={cn('t2f-focus', styles.btn, styles.signIn, styles.deskOnly)}>
-              <Icon name="user" size={18} />
-              {t('signIn')}
-            </NextLink>
-          </>
         )}
 
-        <button
-          type="button"
-          aria-label={t('menu')}
-          aria-expanded={menuOpen}
-          aria-haspopup="dialog"
-          onClick={onMenuClick}
-          className={cn('t2f-focus', styles.iconBtn, styles.phoneTablet)}
-        >
-          <Icon name="menu" size={22} />
-        </button>
+        {/* Капсула «моє»: сповіщення | кабінет | меню. На телефоні — окремі значки без рамки. */}
+        <div className={styles.mine}>
+          <button
+            type="button"
+            onClick={onNotificationsClick}
+            aria-label={t('notifications', { count })}
+            className={cn('t2f-focus', styles.icon, styles.bell, count > 0 && styles.bellOn)}
+          >
+            <Icon name="bell" size={20} />
+            {count > 0 ? (
+              <span aria-hidden="true" className={styles.badge}>
+                {count > 99 ? '99+' : count}
+              </span>
+            ) : null}
+          </button>
+          <span aria-hidden="true" className={styles.sep} />
+          {user ? (
+            // TODO(кабінет): сторінки ще немає.
+            <NextLink
+              href="#"
+              aria-label={hasPass ? t('profilePass', { name: user.name }) : t('profile', { name: user.name })}
+              className={cn('t2f-focus', styles.icon, styles.account)}
+            >
+              <HeaderAvatar user={user} pass={hasPass} label={t('passLabel')} />
+            </NextLink>
+          ) : (
+            <NextLink
+              href={signInHref}
+              onClick={onSignInClick}
+              aria-current={signInCurrent ? 'page' : undefined}
+              aria-label={t('signIn')}
+              className={cn('t2f-focus', styles.text, styles.account, styles.signIn)}
+            >
+              <Icon name="user" size={20} />
+              <span className={styles.label}>{t('signIn')}</span>
+            </NextLink>
+          )}
+          <span aria-hidden="true" className={styles.sep} />
+          <button
+            type="button"
+            aria-label={t('menu')}
+            aria-expanded={menuOpen}
+            aria-haspopup="dialog"
+            onClick={onMenuClick}
+            className={cn('t2f-focus', styles.text, styles.menu)}
+          >
+            <Icon name={menuOpen ? 'close' : 'menu'} size={20} />
+            <span className={styles.label}>{t('menu')}</span>
+          </button>
+        </div>
       </div>
     </header>
   );

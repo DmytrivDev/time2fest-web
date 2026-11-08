@@ -12,11 +12,9 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useEffect, useRef } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { Flag } from '@/components/primitives/Flag';
 import { IS_TEST_BUILD } from '@/lib/env';
-import { formatClock, LETTER_TTL_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
+import { formatClock, GOOGLE_DEMO_NAME, LETTER_TTL_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
 import { useAuthStore } from '@/stores/auth';
-import { useGuestStore } from '@/stores/guest';
 import {
   AccountPerks,
   AgeLine,
@@ -39,6 +37,7 @@ import {
 } from './AuthParts';
 import type { AuthFlow } from './useAuthFlow';
 import { AuthIcon } from './icons';
+import { ProfileForm } from './ProfileForm';
 import s from './auth.module.css';
 
 export interface AuthStepsProps {
@@ -440,42 +439,15 @@ function OtherDeviceStep({ email, exitHref }: { email: string; exitHref: string 
 
 function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean; onExit: () => void }) {
   const t = useTranslations('auth.welcome');
-  const stamps = useGuestStore((g) => g.stamps.length);
-  const nick = useGuestStore((g) => g.nick);
-  const flag = useGuestStore((g) => g.flagCode ?? g.detectedFlag ?? 'earth');
+  const google = useAuthStore((a) => a.user?.via === 'google');
+  // Крок «Як тебе показувати» (дошка `Desk-Profile-Step`, 2026-11-08): нік і прапор одразу; «Готово» / «Пізніше» — далі як було.
   return (
     <div className="flex flex-col">
       <Badge icon="check-circle" className={s.pageTop} />
       <Title afterBadge>{t('title')}</Title>
-      <Lead>{t.rich('lead', { email, b: Bold })}</Lead>
-      <ul className={s.facts}>
-        <li className={s.fact}>
-          <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeSm)}>
-            <AuthIcon name="stamp" size={18} />
-          </span>
-          <span>{t('stamps', { count: stamps })}</span>
-        </li>
-        <li className={s.fact}>
-          <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeSm)}>
-            <AuthIcon name="chat" size={18} />
-          </span>
-          {nick ? (
-            <span>
-              {t('nick')}{' '}
-              <span className={s.nickPill}>
-                <Flag round code={flag} size="xs" decorative />
-                {nick}
-              </span>
-            </span>
-          ) : (
-            <span>{t('noNick')}</span>
-          )}
-        </li>
-      </ul>
-      <button type="button" onClick={onExit} className={cn('t2f-focus', s.btn, s.coral, s.mt24)}>
-        {t('back')}
-      </button>
-      {stream ? <PassRow mt={16} /> : <PassOfferCard welcome className="mt-6" />}
+      <Lead>{t.rich(google ? 'leadGoogle' : 'lead', { email, b: Bold })}</Lead>
+      <ProfileForm email={email} googleName={google ? GOOGLE_DEMO_NAME : undefined} stream={stream} onDone={onExit} />
+      {stream ? null : <PassOfferCard welcome className="mt-6" />}
     </div>
   );
 }

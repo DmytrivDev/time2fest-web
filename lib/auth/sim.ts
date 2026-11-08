@@ -12,6 +12,8 @@ export const SEND_LIMIT = 3;
 export const SEND_WINDOW_MS = 10 * 60_000;
 /** Адреса імітованого акаунта Google. */
 export const GOOGLE_DEMO_EMAIL = 'you@gmail.com';
+/** Ім’я, яке віддає імітований Google (у крок «Як тебе показувати» йде лише перше слово). */
+export const GOOGLE_DEMO_NAME = 'Олена Коваленко';
 /** Скільки триває імітований перехід до Google. */
 export const GOOGLE_DELAY_MS = 1_500;
 

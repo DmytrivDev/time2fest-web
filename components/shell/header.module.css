@@ -1,5 +1,5 @@
-/* Хедер за макетами `Main` (десктоп 64 px) і `Phone-Home-Live` (телефон 56 px). Значення — з макетів;
-   кольори й радіуси — токени. Планшет (768–1199): навігація й мова як на десктопі, «Пас» і меню як на телефоні. */
+/* Шапка за дошкою `Desk-Header-New2`, варіант C «Капсула „моє“» (2026-11-08). Телефон 56 px, планшет і десктоп 64 px.
+   Планшет (768–1199): навігація, мова й «Підтримати» — у меню; лишаються лого, «Пас», капсула. */
 
 .header {
   border-bottom: 1px solid var(--color-border);
@@ -33,89 +33,179 @@
   display: none;
 }
 
-/* Кнопки хедера: 44 px, радіус md, 14 px; без розрядки. */
-.btn {
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Текстові дії («УКР», «Підтримати», «Увійти», «Меню»): 44 px, без рамки. */
+.text {
   display: inline-flex;
   flex: none;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: 6px;
   min-height: var(--spacing-touch-min);
-  padding: 0 var(--spacing-3);
+  padding: 0 10px;
   border: 0;
   border-radius: var(--radius-md);
   background: transparent;
-  color: var(--color-text-muted);
-  font-size: 14px;
-  font-weight: 500;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
+  cursor: pointer;
   transition:
     background-color 120ms ease-out,
     color 120ms ease-out;
 }
-.btn:hover {
-  background: var(--color-surface-raised);
+.text:hover,
+.text[aria-expanded='true'] {
   color: var(--color-text);
 }
-.lang {
-  gap: 6px;
-}
-.lang[aria-expanded='true'] {
-  color: var(--color-text);
-}
-/* «Новорічний пас» / «Пас» — secondary: рамка border-strong, текст 600. */
+
+/* «Новорічний пас» — єдина яскрава кнопка: телефон — золота рамка «Пас», ширше — заповнена золота пігулка. */
 .pass {
-  border: 1px solid var(--color-border-strong);
-  color: var(--color-text);
-  font-weight: 600;
-  gap: 6px;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  margin-right: 4px;
+  padding: 0 12px;
+  border: 1px solid var(--color-highlight);
+  border-radius: var(--radius-md);
+  color: var(--color-highlight);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
 }
-.signIn {
-  color: var(--color-text);
-  font-weight: 600;
+.passFull {
+  display: none;
 }
-/* Сторінка входу (`Desk-Auth`): кнопка «Увійти» — поточна, з піднятим тлом. */
-.signIn[aria-current='page'],
-.iconBtn[aria-current='page'] {
-  background: var(--color-surface-raised);
+
+/* «Моє»: на телефоні — окремі значки (кабінет перед дзвіночком), ширше — капсула з рисками. */
+.mine {
+  display: flex;
+  flex: none;
+  align-items: center;
 }
-.iconBtn {
+.sep {
+  display: none;
+}
+.icon {
+  position: relative;
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
   width: var(--spacing-touch-min);
   height: var(--spacing-touch-min);
+  padding: 0;
+  border: 0;
   border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.icon:hover {
   color: var(--color-text);
 }
-.iconBtn:hover {
+.account {
+  order: -1;
+}
+.signIn {
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  padding: 0;
+  color: var(--color-text);
+}
+.signIn[aria-current='page'] {
   background: var(--color-surface-raised);
 }
+.label {
+  display: none;
+}
+.menu {
+  justify-content: center;
+  width: var(--spacing-touch-min);
+  padding: 0;
+  color: var(--color-text);
+}
+/* Лічильник виступає праворуч — після дзвіночка з лічильником +10 px до наступного. */
+.bellOn {
+  margin-right: 6px;
+}
+.badge {
+  position: absolute;
+  top: 4px;
+  left: 22px;
+  box-sizing: border-box;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #d92d20; /* білі цифри 11 px — контраст ≥ 4,5 : 1 */
+  box-shadow: 0 0 0 2px var(--header-background);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Аватар: круглий прапор під вуаллю 55 % і біла літера з тінню; без прапора — підняте тло. */
 .avatar {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: var(--color-surface-raised);
-  color: var(--color-text);
+  background: var(--color-surface-raised) center / cover no-repeat;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  color: #fff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+.avatarPass {
+  box-shadow:
+    0 0 0 2px var(--header-background),
+    0 0 0 4px var(--color-highlight);
+}
+.passTag {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  height: 13px;
+  padding: 0 4px;
+  border-radius: 7px;
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 2px var(--header-background);
+  color: var(--color-background);
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 13px;
+  text-shadow: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
-.deskOnly,
-.tabletUp {
+.deskOnly {
   display: none !important;
 }
 
 @media (min-width: 768px) {
   .bar {
-    gap: var(--spacing-1);
+    gap: 2px;
     height: var(--header-height-desktop);
-    padding: 0 var(--spacing-8);
+    padding: 0 var(--spacing-6) 0 var(--spacing-8);
   }
   .logo {
     flex: none;
@@ -124,18 +214,78 @@
   .logo img {
     width: 150px;
   }
+  .pass {
+    height: 40px;
+    margin-right: 14px;
+    padding: 0 16px;
+    border-radius: var(--radius-full);
+    background: var(--color-highlight);
+    color: var(--color-background);
+    font-size: 15px;
+  }
+  .passShort {
+    display: none;
+  }
+  .passFull {
+    display: inline;
+  }
+  .mine {
+    height: 48px;
+    padding: 0 4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: #17171a;
+  }
+  .sep {
+    display: block;
+    width: 1px;
+    height: 22px;
+    background: var(--color-border);
+  }
+  .account {
+    order: 0;
+  }
+  .bell {
+    height: 40px;
+  }
+  .bellOn {
+    margin-right: 8px;
+  }
+  .signIn {
+    width: auto;
+    padding: 0 12px;
+  }
+  .account.icon {
+    width: auto;
+    padding: 0 8px;
+  }
+  .menu {
+    width: auto;
+    padding: 0 14px 0 12px;
+    gap: 8px;
+  }
+  .label {
+    display: inline;
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (min-width: 1200px) {
   .nav {
     display: flex;
-    flex: 1 1 auto;
-    gap: var(--spacing-1);
     align-self: stretch;
+    gap: var(--spacing-1);
   }
   .navLink {
     display: flex;
     align-items: center;
-    padding: 0 var(--spacing-3);
-    color: var(--color-text-muted);
-    font-weight: 500;
+    padding: 0 12px;
+    color: var(--color-text-secondary);
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
     transition: color 120ms ease-out;
   }
@@ -144,29 +294,9 @@
   }
   .navLink[aria-current='page'] {
     color: var(--color-text);
-    font-weight: 600;
     box-shadow: inset 0 -2px 0 var(--color-text);
   }
-  .tabletUp {
-    display: inline-flex !important;
-  }
-  .pass {
-    padding: 0 var(--spacing-4);
-  }
-}
-
-@media (min-width: 1200px) {
   .deskOnly {
     display: inline-flex !important;
-  }
-  .phoneTablet {
-    display: none !important;
-  }
-  .pass,
-  .signIn {
-    margin-left: var(--spacing-1);
-  }
-  .pass {
-    gap: var(--spacing-2);
   }
 }

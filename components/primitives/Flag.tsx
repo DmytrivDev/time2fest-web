@@ -83,6 +83,12 @@ export interface FlagProps {
 /** Діаметр круглого прапора: `xs` — 16 px, як ширина прямокутного на макетах чату. */
 const ROUND_DIAMETER: Record<FlagSize, number> = { xs: 16, card: 16, pill: 18, sm: 20, md: 26, lg: 48, xl: 40 };
 
+/** Шлях до круглого прапора (`public/flags/round`) або `null` для особливих без файлу — для фону аватара в шапці. */
+export function roundFlagSrc(code: string): string | null {
+  const f = roundFile(code);
+  return f ? `/flags/round/${f}.svg` : null;
+}
+
 /** Файл у `public/flags/round`: ISO — малими, `GB-ENG` → `gb-eng`, `EU` → `eu`, `un` — ООН; решта особливих — власні SVG. */
 function roundFile(code: string): string | null {
   if (code === 'un') return 'un';

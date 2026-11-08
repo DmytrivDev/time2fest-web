@@ -1,0 +1,25 @@
+/* Меню на десктопі (≥ 1200, дошка `Desk-Header-New`): панель праворуч на місці чату під шапкою, відео не перекривається.
+   Телефон і планшет — на весь екран. */
+.title {
+  display: none;
+}
+@media (min-width: 1200px) {
+  .panel {
+    inset: 80px 32px 16px auto;
+    width: 340px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-surface);
+    box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
+  }
+  .logo {
+    display: none !important;
+  }
+  .title {
+    display: block;
+    margin-inline-end: auto;
+    color: var(--color-text);
+    font-size: 17px;
+    font-weight: 700;
+  }
+}

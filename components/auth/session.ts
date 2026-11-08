@@ -27,6 +27,8 @@ export function useHeaderUser(): HeaderUser | null {
   const hydrated = useHydrated();
   const email = useAuthStore((s) => s.user?.email ?? null);
   const nick = useGuestStore((s) => s.nick);
+  // Прапор аватара — обраний у чаті/при реєстрації, інакше визначений за країною.
+  const flag = useGuestStore((s) => s.flagCode ?? s.detectedFlag);
   if (!hydrated || !email) return null;
-  return { name: nick?.trim() || email.split('@')[0] || email };
+  return { name: nick?.trim() || email.split('@')[0] || email, flag };
 }

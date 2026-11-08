@@ -76,7 +76,10 @@ test.describe('S-AUTH · сторінка', () => {
     await submit.click();
     await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
     await expect(page.locator('input[autocomplete="one-time-code"]')).toHaveCount(0);
-    await expect(page.getByRole('link', { name: /Профіль/ })).toBeVisible();
+    // «Як тебе показувати» (2026-11-08): нік з пошти — перше слово до «@», прапор — за розташуванням.
+    const profile = page.locator('[data-block="profile"]');
+    await expect(profile.getByLabel('Нік')).toHaveValue('Olena');
+    await expect(page.getByRole('link', { name: /Кабінет/ })).toBeVisible();
     await expectAxeClean(page);
   });
 
@@ -159,9 +162,11 @@ test.describe('S-AUTH · під час трансляції', () => {
     await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Увійти' }).click();
     await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Продовжити з Google' }).click();
     await expect(page.locator('[data-window="O-AUTH"]').getByRole('heading', { name: 'Акаунт створено' })).toBeVisible({ timeout: 5_000 });
-    await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Повернутися до трансляції' }).click();
+    // Google — лише ім’я; «Готово» зберігає нік і закриває вікно, аватар у шапці — з новим ніком.
+    await expect(page.locator('[data-window="O-AUTH"] [data-block="profile"]').getByLabel('Нік')).toHaveValue('Олена');
+    await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Готово' }).click();
     await expect(page.locator('[data-window="O-AUTH"]')).toHaveCount(0);
-    await expect(page.getByRole('link', { name: /Профіль/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Кабінет: Олена/ })).toBeVisible();
   });
 
   test('свій нік у панелі автора — олівець відкриває «Нік і прапор»', async ({ page }) => {

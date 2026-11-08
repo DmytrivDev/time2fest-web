@@ -12,6 +12,7 @@ import { Logo } from '@/components/primitives/Logo';
 import { Switch } from '@/components/primitives/Switch';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useGuestStore } from '@/stores/guest';
+import ms from './menu.module.css';
 
 export interface MenuLanguage {
   code: string;
@@ -145,10 +146,14 @@ export function Menu({
             e.preventDefault();
             returnFocus.current.focus();
           }}
-          className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-background text-text"
+          // Десктоп (≥ 1200): панель праворуч на місці чату під шапкою (`menu.module.css`); телефон і планшет — на весь екран.
+          className={cn('fixed inset-0 z-50 flex flex-col overflow-hidden bg-background text-text', ms.panel)}
         >
           <header className="flex h-14 shrink-0 items-center gap-0.5 border-b border-border ps-4 pe-1">
-            <Logo label={th('logoLabel')} className="me-auto" />
+            <Logo label={th('logoLabel')} className={cn('me-auto', ms.logo)} />
+            <span aria-hidden="true" className={ms.title}>
+              {t('title')}
+            </span>
             <VisuallyHidden.Root asChild>
               <Dialog.Title>{t('title')}</Dialog.Title>
             </VisuallyHidden.Root>
@@ -198,6 +203,8 @@ export function Menu({
               <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
                 <NavRow href="/" icon="home" title={t('home')} current={current === 'home'} onNavigate={close} />
                 <NavRow href="/countries" icon="map" title={t('countries')} current={current === 'countries'} onNavigate={close} />
+                {/* TODO(про нас): сторінки ще немає. */}
+                <NavRow icon="info" title={t('about')} onNavigate={close} />
               </ul>
               <Divider />
               <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
@@ -220,7 +227,7 @@ export function Menu({
               </ul>
               <Divider />
               <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
-                <NavRow icon="tv" title={t('partyMode')} onNavigate={close} />
+                <NavRow href="/tv/" icon="tv" title={t('partyMode')} onNavigate={close} />
                 <NavRow icon="help" title={t('help')} onNavigate={close} />
                 <li>
                   <Switch

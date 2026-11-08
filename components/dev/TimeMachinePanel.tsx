@@ -139,6 +139,7 @@ function PanelBody({
   const emptyCountry = useTestControls((s) => s.emptyCountry);
   const authUnavailable = useTestControls((s) => s.authUnavailable);
   const googleCancelled = useTestControls((s) => s.googleCancelled);
+  const notifications = useTestControls((s) => s.notifications);
   const signedIn = useAuthStore((s) => s.user !== null);
 
   useEffect(() => {
@@ -331,6 +332,21 @@ function PanelBody({
           checked={googleCancelled}
           onCheckedChange={(v) => useTestControls.getState().setGoogleCancelled(v)}
         />
+        <label className="flex items-center justify-between gap-3 text-body">
+          {t('notifications')}
+          <select
+            value={notifications}
+            onChange={(e) => useTestControls.getState().setNotifications(Number(e.target.value))}
+            className="rounded-md border border-border-strong bg-surface px-2 py-1 text-body"
+            data-control="notifications"
+          >
+            {[0, 3, 12, 140].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </label>
         {signedIn ? (
           <Button variant="secondary" compact onClick={() => useAuthStore.getState().signOut()} className="self-start">
             {t('signOut')}

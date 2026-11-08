@@ -8,8 +8,11 @@ import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
+import { getData } from '@/lib/data/load';
+import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { usePlayer, usePlayerActions } from '@/lib/player/PlayerProvider';
+import { useNow } from '@/lib/time/TimeProvider';
 import { Header, type HeaderProps } from './Header';
 import { Menu, MENU_LANGUAGES } from './Menu';
 import { useOverlay } from './OverlayManager';
@@ -25,8 +28,9 @@ export interface ShellHeaderProps extends Pick<HeaderProps, 'current' | 'hasPass
 /**
  * Хедер макета `(live)` з підключеним повноекранним меню (телефон, планшет) і панеллю мови (планшет-альбом, десктоп).
  * Відкриття меню ставить плеєр на паузу й закриває будь-яке відкрите вікно; закриття — продовжує, якщо відео грало.
- * «Увійти»: трансляція грає — вікно входу (панель на місці чату / аркуш під плеєром, відео не зупиняється);
- * інакше — сторінка `/login/` з поверненням сюди ж.
+ * «Підтримати», «Новорічний пас», «Увійти»: поки йде свято (від 2 год до першої півночі до останньої, рішення власника
+ * 2026-11-08) — вікно на місці чату (телефон — шторка), щоб не йти з трансляцій; до й після свята — свої сторінки
+ * (`/support/`, `/pass/`, `/login/` з поверненням сюди ж).
  */
 export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: userProp, pausedPlace }: ShellHeaderProps) {
   const t = useTranslations('menu');
@@ -34,8 +38,6 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const pathname = usePathname();
   // Сторінки поза навігацією «Головна / Країни» (`/tv-info/`, `/schedule/`) — без підсвіченого пункту.
   const outside = ['/tv-info', '/schedule', '/support', '/rating', '/passport'].some((p) => pathname?.startsWith(p));
-  // Сторінки з плеєром (головна, країна, кімната): «Підтримати» — вікно, щоб трансляція не переривалась; решта — `/support/`.
-  const playerPage = pathname === '/' || !!pathname?.startsWith('/country/') || !!pathname?.startsWith('/room');
   const current = pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : outside ? undefined : currentProp;
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState('uk');
@@ -51,18 +53,19 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const openPassWindow = useOpenPassWindow();
   const openTips = useOpenTipsWindow();
   const router = useRouter();
+  const celebrating = isCelebrating(useNow({ granularity: 'minute' }), getData());
 
   const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (status === 'playing') {
+    if (celebrating) {
       e.preventDefault();
       openAuthWindow();
       return;
     }
     rememberReturn(currentPath());
   };
-  // «Пас»: трансляція грає — оформлення вікном; інакше — сторінка пасу.
+  // «Пас»: свято йде — оформлення вікном; інакше — сторінка пасу.
   const onPassClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (status === 'playing') {
+    if (celebrating) {
       e.preventDefault();
       openPassWindow();
     }
@@ -91,7 +94,9 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const onMenuChange = (open: boolean) => {
     if (open) {
       overlay.close();
-      resumeOnClose.current = status === 'playing';
+      // Десктоп: меню — панель на місці чату, відео видно й грає далі; телефон і планшет — на весь екран, відео на паузі.
+      const desktop = typeof window !== 'undefined' && window.matchMedia?.('(min-width: 1200px)').matches;
+      resumeOnClose.current = status === 'playing' && !desktop;
       if (resumeOnClose.current) pause();
     }
     setMenuOpen(open);
@@ -139,7 +144,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
         languageOpen={languageOpen}
         onSignInClick={onSignInClick}
         onPassClick={onPassClick}
-        onSupportClick={playerPage ? () => openTips() : undefined}
+        onSupportClick={celebrating ? () => openTips() : undefined}
       />
       <Menu
         open={menuOpen}
