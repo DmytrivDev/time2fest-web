@@ -18,6 +18,7 @@ import { Sheet } from '@/components/primitives/Sheet';
 import { Footer } from '@/components/shell/Footer';
 import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
+import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { LEGAL_DOCS, legalDoc, type LegalBlock, type LegalDocId } from '@/lib/legal/docs';
 import s from './legal.module.css';
 
@@ -87,6 +88,7 @@ function Block({ b }: { b: LegalBlock }) {
 function SideNav({ id, active, onPick }: { id: LegalDocId; active: string; onPick?: () => void }) {
   const t = useTranslations('legal');
   const doc = legalDoc(id);
+  const reduced = useReducedMotion();
   return (
     <nav aria-label={t('docsLabel')} className={s.side}>
       <p className={s.sideTitle}>{t('docsLabel')}</p>
@@ -103,7 +105,23 @@ function SideNav({ id, active, onPick }: { id: LegalDocId; active: string; onPic
                 <ol aria-label={t('toc')} className={s.secs}>
                   {doc.sections.map((x, i) => (
                     <li key={x.id}>
-                      <a href={`#${x.id}`} aria-current={active === x.id ? 'location' : undefined} onClick={onPick} className={cn('t2f-focus', s.sec)}>
+                      <a
+                        href={`#${x.id}`}
+                        aria-current={active === x.id ? 'location' : undefined}
+                        onClick={(e) => {
+                          // Плавна прокрутка до розділу (власник 2026-11-08); «Зменшити рух» — без анімації.
+                          e.preventDefault();
+                          onPick?.();
+                          const go = () => {
+                            document.getElementById(x.id)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+                            history.replaceState(null, '', `#${x.id}`);
+                          };
+                          // Зі шторки — після того, як вона закриється.
+                          if (onPick) setTimeout(go, 220);
+                          else go();
+                        }}
+                        className={cn('t2f-focus', s.sec)}
+                      >
                         <b>{i + 1}.</b>
                         <span>{x.title}</span>
                       </a>

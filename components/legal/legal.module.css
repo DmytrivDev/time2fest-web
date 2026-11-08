@@ -64,8 +64,7 @@
 }
 .doc[aria-current='page'] {
   background: var(--color-surface-raised);
-  color: var(--color-text);
-  font-weight: 700;
+  color: var(--color-text); /* лише білий, без жирного — рядок не переноситься (власник 2026-11-08) */
 }
 .secs {
   margin: 4px 0 8px;
@@ -90,8 +89,7 @@
 .sec[aria-current='location'] {
   border-left-color: var(--color-highlight);
   background: rgb(252 226 134 / 0.06);
-  color: var(--color-text);
-  font-weight: 700;
+  color: var(--color-text); /* лише білий, без жирного — рядок не переноситься (власник 2026-11-08) */
 }
 .sec[aria-current='location'] b {
   color: var(--color-highlight);
