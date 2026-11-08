@@ -136,15 +136,18 @@ function AccountRow({ email, note, mt = 16, notYou }: { email: string; note: str
         </span>
         <span className={s.accountText}>
           <span className={s.accountLabel}>{t('accountFor')}</span>
-          <span className={s.accountEmail} title={email}>
-            {email}
+          <span className={s.emailLine}>
+            <span className={s.accountEmail} title={email}>
+              {email}
+            </span>
+            {/* «Не ти?» — у рядку з поштою, по центру з нею (власник 2026-11-08). */}
+            {notYou ? (
+              <button type="button" className={cn('t2f-focus', s.notYou)} onClick={notYou}>
+                {t('notYou')}
+              </button>
+            ) : null}
           </span>
         </span>
-        {notYou ? (
-          <button type="button" className={cn('t2f-focus', s.notYou)} onClick={notYou}>
-            {t('notYou')}
-          </button>
-        ) : null}
       </div>
       <p className={a.hint}>{note}</p>
     </>

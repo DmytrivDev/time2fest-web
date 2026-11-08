@@ -342,7 +342,14 @@
   font-size: 12px;
   color: var(--color-text-muted);
 }
+.emailLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
 .accountEmail {
+  flex: 1;
   font-weight: 700;
   font-size: 15px;
   min-width: 0;
@@ -352,9 +359,8 @@
 }
 .notYou {
   flex: 0 0 auto;
-  /* На рівні з поштою (нижній рядок), а не посередині картки (власник 2026-11-08); ціль 44 px заходить у поле картки. */
-  align-self: flex-end;
-  margin-bottom: -12px;
+  /* У рядку з поштою, по центру з нею (власник 2026-11-08): ціль 44 px, але рядок не розтягує. */
+  margin-block: -12px;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
