@@ -37,6 +37,7 @@ export const PAGES = [
 
 export const WIDTHS = [
   [1920, 1080],
+  [1520, 900],
   [1440, 900],
   [1280, 800],
   [1024, 768],
