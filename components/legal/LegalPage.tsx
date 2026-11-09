@@ -7,6 +7,7 @@
  * таблиці; значок посилання на розділ) · «Інші документи» · «Нагору». Телефон: сайдбару немає — під шапкою закріплена
  * смуга «Зміст · 3. Навіщо ▾», дотик відкриває шторку з тим самим списком.
  */
+import { NotifDialog } from '@/components/notifications/NotifDialog';
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
@@ -144,6 +145,7 @@ export function LegalPage({ id }: { id: LegalDocId }) {
   const announce = useAnnounce();
   const doc = legalDoc(id);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const user = useHeaderUser();
   const hasPass = useHeaderPass();
   const [toTop, setToTop] = useState(false);
@@ -185,8 +187,9 @@ export function LegalPage({ id }: { id: LegalDocId }) {
   return (
     <div className="flex min-h-dvh flex-col bg-background text-text">
       <SkipLinks targets={['content']} />
-      <Header user={user} hasPass={hasPass} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} />
+      <Header user={user} hasPass={hasPass} onMenuClick={() => setMenuOpen(true)} menuOpen={menuOpen} onNotificationsClick={() => setNotifOpen((v) => !v)} />
       <Menu open={menuOpen} onOpenChange={setMenuOpen} />
+      <NotifDialog open={notifOpen} onOpenChange={setNotifOpen} />
       <main id="content" tabIndex={-1} className={cn(s.main, 'focus:outline-none')} data-page="S-LEGAL" data-legal={id}>
         {/* Телефон: закріплена смуга «Зміст · 3. Навіщо ▾» → шторка з документами й розділами. */}
         <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className={cn('t2f-focus', s.bar)} data-legal-bar="">

@@ -1374,3 +1374,50 @@
 :global(html[data-reduce-motion='true']) .perkChevPhone {
   transition: none;
 }
+
+/* Меню й сповіщення на місці картки оформлення (десктоп, 2026-11-09). */
+.side {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  margin: -16px; /* на всю картку, без її полів — як вікно на місці чату */
+}
+.sideHead {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  height: 56px;
+  padding: 0 4px 0 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.sideTitle {
+  flex: 1;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 700;
+}
+.sideBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  margin-left: -8px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.sideBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: thin;
+}

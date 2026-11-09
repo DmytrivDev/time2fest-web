@@ -333,14 +333,30 @@ export function MenuBody({
 }
 
 /**
- * Меню поза `(live)` (службові сторінки, пас, вхід, 404) — Radix Dialog: десктоп — панель праворуч під шапкою,
- * телефон — шторка до низу відео / шапки + 16:9 без затемнення, планшет — на весь екран.
+ * Бічне вікно поза `(live)` (службові сторінки, пас, вхід, 404) — Radix Dialog: десктоп — панель праворуч під шапкою,
+ * телефон — шторка до низу відео / шапки + 16:9 без затемнення, планшет — на весь екран. Спільне для меню й сповіщень.
  */
-export function Menu({ open, onOpenChange, ...rest }: MenuProps) {
+export function SideDialog({
+  open,
+  onOpenChange,
+  title,
+  onBack,
+  logo = false,
+  children,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  /** Другий рівень («‹ Назад»). */
+  onBack?: () => void;
+  /** Лого замість назви на планшеті (меню). */
+  logo?: boolean;
+  children: ReactNode;
+}) {
   const t = useTranslations('menu');
   const th = useTranslations('header');
   const top = usePhoneSheetTop(open);
-  // Меню відкривається без Dialog.Trigger (кнопка — у хедері), тож Radix не знає, куди повернути фокус:
+  // Вікно відкривається без Dialog.Trigger (кнопка — у хедері), тож Radix не знає, куди повернути фокус:
   // запам’ятовуємо елемент з фокусом до відкриття й повертаємо на нього після закриття (WCAG 2.4.3).
   const returnFocus = useRef<HTMLElement | null>(null);
 
@@ -364,22 +380,36 @@ export function Menu({ open, onOpenChange, ...rest }: MenuProps) {
         >
           <span aria-hidden="true" className={ms.handle} />
           <header className={ms.head}>
-            <Logo label={th('logoLabel')} className={cn('me-auto', ms.logo)} />
-            <span aria-hidden="true" className={ms.title}>
-              {t('title')}
+            {onBack ? (
+              <button type="button" onClick={onBack} className={cn('t2f-focus', ms.back)}>
+                <Icon name="chevron-left" size={18} />
+                {t('back')}
+              </button>
+            ) : null}
+            {logo && !onBack ? <Logo label={th('logoLabel')} className={cn('me-auto', ms.logo)} /> : null}
+            <span aria-hidden="true" className={cn(ms.title, !logo && ms.titleAlways)}>
+              {title}
             </span>
             <VisuallyHidden.Root asChild>
-              <Dialog.Title>{t('title')}</Dialog.Title>
+              <Dialog.Title>{title}</Dialog.Title>
             </VisuallyHidden.Root>
             <Dialog.Close asChild>
-              <IconButton icon="close" iconSize={20} aria-label={t('close')} className={ms.close} />
+              <IconButton icon="close" iconSize={20} aria-label={t('closeWindow')} className={ms.close} />
             </Dialog.Close>
           </header>
-          <div className={ms.body}>
-            <MenuBody {...rest} onClose={() => onOpenChange(false)} />
-          </div>
+          <div className={ms.body}>{children}</div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+/** Меню поза `(live)` — у бічному вікні (`SideDialog`). */
+export function Menu({ open, onOpenChange, ...rest }: MenuProps) {
+  const t = useTranslations('menu');
+  return (
+    <SideDialog open={open} onOpenChange={onOpenChange} title={t('title')} logo>
+      <MenuBody {...rest} onClose={() => onOpenChange(false)} />
+    </SideDialog>
   );
 }
