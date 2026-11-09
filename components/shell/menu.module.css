@@ -332,7 +332,7 @@
 /* Телефон: шторка від низу відео до низу екрана, без затемнення; відкривається й закривається плавно. */
 @media (max-width: 767.98px) {
   .panel {
-    top: var(--menu-top, 275px);
+    top: var(--menu-top, 17.1875rem);
     border-top: 1px solid #3c3c44;
     border-radius: 22px 22px 0 0;
     background: var(--color-surface);

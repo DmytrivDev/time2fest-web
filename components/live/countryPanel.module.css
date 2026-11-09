@@ -187,7 +187,7 @@
 
 /* «Де дивитися»: три картки на ширину колонки (не менше 248 px — підписи в один рядок). */
 .watch :global(ul) > li {
-  flex-basis: var(--card-w, max(248px, calc((100cqw - 24px) / 3)));
+  flex-basis: var(--card-w, max(15.5rem, calc((100cqw - 1.5rem) / 3)));
 }
 .watch .track > li {
   flex-basis: max(248px, calc((100cqw - 24px) / 3));

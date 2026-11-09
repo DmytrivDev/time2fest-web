@@ -992,12 +992,12 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 }
 .t2f-marquee-mask[data-looping]::before {
   left: 0;
-  width: var(--mq-fade-l, 24px);
+  width: var(--mq-fade-l, 1.5rem);
   background: linear-gradient(90deg, var(--mq-fade-bg, var(--color-surface)), transparent);
 }
 .t2f-marquee-mask[data-looping]::after {
   right: 0;
-  width: var(--mq-fade-r, 40px);
+  width: var(--mq-fade-r, 2.5rem);
   background: linear-gradient(270deg, var(--mq-fade-bg, var(--color-surface)), transparent);
 }
 .t2f-carousel-track {

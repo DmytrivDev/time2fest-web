@@ -83,7 +83,8 @@ async function shoot(dir, base) {
           content: 'iframe, video { visibility: hidden !important; } *, *::before, *::after { animation: none !important; transition: none !important; caret-color: transparent !important; }',
         });
         await page.waitForTimeout(300);
-        await page.screenshot({ path: file, fullPage: true });
+        // Лічильник «N нових» на згорнутому чаті росте з імітатором — маска, щоб знімки були стабільні.
+        await page.screenshot({ path: file, fullPage: true, mask: [page.getByText(/^\d+\+? нових$/)] });
         log.push({ name, w, ok: true });
       } catch (e) {
         log.push({ name, w, ok: false, error: String(e).slice(0, 200) });
@@ -128,10 +129,20 @@ async function diff(before, after) {
         g.drawImage(i2, 0, 0);
         const d2 = g.getImageData(0, 0, c.width, c.height).data;
         let n = 0;
+        let x0 = Infinity, y0 = Infinity, x1 = -1, y1 = -1;
         for (let k = 0; k < d1.length; k += 4) {
-          if (Math.abs(d1[k] - d2[k]) + Math.abs(d1[k + 1] - d2[k + 1]) + Math.abs(d1[k + 2] - d2[k + 2]) > 30) n++;
+          if (Math.abs(d1[k] - d2[k]) + Math.abs(d1[k + 1] - d2[k + 1]) + Math.abs(d1[k + 2] - d2[k + 2]) > 30) {
+            n++;
+            const p = k / 4;
+            const x = p % c.width;
+            const y = Math.floor(p / c.width);
+            if (x < x0) x0 = x;
+            if (y < y0) y0 = y;
+            if (x > x1) x1 = x;
+            if (y > y1) y1 = y;
+          }
         }
-        return { changed: n, total: c.width * c.height };
+        return { changed: n, total: c.width * c.height, box: n ? [x0, y0, x1, y1] : null };
       },
       [`data:image/png;base64,${fs.readFileSync(b).toString('base64')}`, `data:image/png;base64,${fs.readFileSync(a).toString('base64')}`],
     );
@@ -141,7 +152,7 @@ async function diff(before, after) {
   fs.writeFileSync(path.join(after, 'diff.json'), JSON.stringify(result, null, 2));
   const bad = result.filter((r) => r.status === 'missing' || r.size || (r.changed ?? 0) > 0);
   console.log(`файлів: ${result.length}, з різницею: ${bad.length}`);
-  for (const r of bad) console.log(' ', r.file, r.size ? `розмір ${r.size.join('×')}` : r.status ?? `${r.changed} px`);
+  for (const r of bad) console.log(' ', r.file, r.size ? `розмір ${r.size.join('×')}` : r.status ?? `${r.changed} px у ${JSON.stringify(r.box)}`);
 }
 
 const [cmd, a1, a2] = process.argv.slice(2);

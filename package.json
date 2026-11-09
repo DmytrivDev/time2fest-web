@@ -61,6 +61,7 @@
     "jsdom": "28.1.0",
     "mapshaper": "0.7.83",
     "postcss": "8.5.31",
+    "postcss-pxtorem": "6.1.0",
     "prettier": "3.9.10",
     "storybook": "10.6.1",
     "tailwindcss": "4.3.3",

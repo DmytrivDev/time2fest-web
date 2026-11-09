@@ -270,7 +270,7 @@
 .track {
   display: flex;
   gap: 12px;
-  margin: 12px calc(-1 * var(--bleed, 24px)) 0 0;
+  margin: 12px calc(-1 * var(--bleed, 1.5rem)) 0 0;
   padding: 0;
   overflow-x: auto;
   list-style: none;
@@ -291,7 +291,7 @@
 }
 .track > li {
   box-sizing: border-box;
-  flex: 0 0 var(--card-w, max(248px, calc((100cqw - 36px) / 4)));
+  flex: 0 0 var(--card-w, max(15.5rem, calc((100cqw - 2.25rem) / 4)));
   scroll-snap-align: start;
 }
 .trackPhone > li {
