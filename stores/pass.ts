@@ -7,12 +7,17 @@
  * Email, на який пас уже оформлено, оплату не починає: «На цю адресу пас уже оформлено» + посилання для входу.
  * Результат оплати — перемикач тестової збірки (`stores/testControls.payResult`): `pending` → «Чекаємо підтвердження»
  * (підтверджується через `PASS_CONFIRM_MS` часу сайту), `declined` → «Оплата не пройшла», решта → «Пас активний».
- * Email — лише в пам’яті вкладки (особистих даних не зберігаємо).
+ * Email — у пам’яті вкладки; поки оплата йде («opening», «pending»), стан разом з email зберігається в `localStorage`
+ * (`t2f:pass-flow:v1`), щоб після перезавантаження оплата довелась до кінця, а не почалась удруге (перевірка сайту
+ * 2026-11-09, A-1). Після підтвердження, відмови чи скасування email зі сховища зникає. Відновлює
+ * `PassPaymentWatcher` після монтування (`resumePassFlow`), щоб розмітка гідратації була однакова.
  */
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { GOOGLE_DELAY_MS, isEmail, normalizeEmail } from '@/lib/auth/sim';
 import type { Ms } from '@/lib/data/types';
 import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/firstrow/pay';
+import { safeJsonStorage } from '@/lib/storage/safe';
 import { useAuthStore } from '@/stores/auth';
 import { useTestControls } from '@/stores/testControls';
 
@@ -21,6 +26,15 @@ export type PassEmailIssue = 'empty' | 'invalid' | null;
 
 /** «Чекаємо підтвердження» → підтверджено (час сайту), як у «Першому ряду». */
 export const PASS_CONFIRM_MS = PENDING_CONFIRM_MS;
+
+export const PASS_FLOW_STORAGE_KEY = 't2f:pass-flow:v1';
+
+/** Що зберігаємо: лише незавершену оплату. */
+interface PassPersisted {
+  phase: PassPhase;
+  email: string;
+  pendingSince?: Ms;
+}
 
 export interface PassFlowState {
   phase: PassPhase;
@@ -43,6 +57,8 @@ export interface PassFlowState {
   confirm(): void;
   /** Нове оформлення (вихід з акаунта, «Не ти?», закриття успіху). */
   reset(): void;
+  /** Після відновлення зі сховища: перерваний перехід на оплату — довести до результату; перерваний Google — до форми. */
+  resume(): void;
 }
 
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -62,7 +78,8 @@ export function setPassClock(now: () => Ms): void {
 
 const INITIAL = { phase: 'form' as PassPhase, email: '', emailIssue: null, paidEmail: false, linkSent: false, googleFailed: false, pendingSince: undefined };
 
-export const usePassStore = create<PassFlowState>()((set, get) => {
+export const usePassStore = create<PassFlowState>()(
+  persist((set, get) => {
   /** Оплату підтверджено: гість входить в акаунт, створений з оплатою; пас — на акаунт і на пристрій. */
   const complete = () => {
     const auth = useAuthStore.getState();
@@ -135,5 +152,31 @@ export const usePassStore = create<PassFlowState>()((set, get) => {
       timer = null;
       set({ ...INITIAL });
     },
+    resume: () => {
+      const phase = get().phase;
+      if (phase === 'opening' && !timer) later(settle, PAY_ROUNDTRIP_MS);
+      else if (phase === 'google') set({ phase: 'form' });
+    },
   };
-});
+  }, {
+    name: PASS_FLOW_STORAGE_KEY,
+    version: 1,
+    storage: safeJsonStorage<PassPersisted>('local'),
+    skipHydration: true,
+    partialize: (s): PassPersisted =>
+      s.phase === 'opening' || s.phase === 'pending' ? { phase: s.phase, email: s.email, pendingSince: s.pendingSince } : { phase: 'form', email: '' },
+    merge: (persisted, current) => {
+      const p = (persisted ?? {}) as Partial<PassPersisted>;
+      if (p.phase !== 'opening' && p.phase !== 'pending') return current;
+      // Оплата вже йде в іншій вкладці чи до перезавантаження цієї — не перебиваємо поточне оформлення.
+      if (current.phase !== 'form') return current;
+      return { ...current, phase: p.phase, email: typeof p.email === 'string' ? p.email : '', pendingSince: typeof p.pendingSince === 'number' ? p.pendingSince : undefined };
+    },
+  }),
+);
+
+/** Відновити незавершену оплату пасу зі сховища (раз після монтування, `PassPaymentWatcher`). */
+export async function resumePassFlow(): Promise<void> {
+  await usePassStore.persist.rehydrate();
+  usePassStore.getState().resume();
+}

@@ -87,9 +87,8 @@ function LockLine({ stream, consent }: { stream: boolean; consent?: boolean }) {
                 {c}
               </a>
             ),
-            // Сторінки політики ще немає — як у футері, інертне посилання.
             privacy: (c) => (
-              <NextLink href="#" className="t2f-focus">
+              <NextLink href="/privacy/" className="t2f-focus">
                 {c}
               </NextLink>
             ),
@@ -197,12 +196,12 @@ function FirstRowGift({ mt = 12 }: { mt?: number }) {
   );
 }
 
-function LinkRow({ items, mt = 8 }: { items: string[]; mt?: number }) {
+/** Рядок службових посилань: «Допомога» — `/help/`, умови й повернення — `/payments/` (сторінки є з 2026-11-07). */
+function LinkRow({ items, mt = 8 }: { items: { label: string; href: string }[]; mt?: number }) {
   return (
     <div className={s.linkRow} style={{ marginTop: mt }}>
-      {items.map((label) => (
-        // Сторінок допомоги й умов ще немає — як у футері, інертні посилання.
-        <NextLink key={label} href="#" className="t2f-focus">
+      {items.map(({ label, href }) => (
+        <NextLink key={label} href={href} className="t2f-focus">
           {label}
         </NextLink>
       ))}
@@ -329,7 +328,7 @@ function Pending({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
         <span>{t.rich('pendingNote', { email, b: Bold })}</span>
       </p>
       <DoneButton variant={variant} onDone={onDone} ghost mt={16} />
-      <LinkRow items={[t('payHelp')]} mt={4} />
+      <LinkRow items={[{ label: t('payHelp'), href: '/help/' }]} mt={4} />
     </div>
   );
 }
@@ -358,7 +357,7 @@ function Failed() {
       <p className={s.text}>{t('failedText')}</p>
       <AccountRow email={email} note={t('failedAccount')} />
       <PayButton busy={false} label={t('retry', { price: PRICE })} />
-      <LinkRow items={[t('payHelp'), t('refunds')]} mt={4} />
+      <LinkRow items={[{ label: t('payHelp'), href: '/help/' }, { label: t('refunds'), href: '/payments/' }]} mt={4} />
     </form>
   );
 }
@@ -458,7 +457,7 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
         <AuthIcon name="user" size={18} />
         <span>{t.rich('signedAs', { email, b: Bold })}</span>
       </p>
-      <LinkRow items={[t('terms')]} mt={2} />
+      <LinkRow items={[{ label: t('terms'), href: '/payments/' }]} mt={2} />
     </div>
   );
 }
@@ -486,7 +485,7 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
       <p className={s.text}>{user && date ? t.rich('activeText', { date, email: user.email, b: Bold }) : t('activeTextDevice')}</p>
       <DoneButton variant={variant} onDone={onDone} mt={20} homeLabel={t('toHome')} />
       {variant === 'page' ? (
-        <NextLink href="#" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: 8 }}>
+        <NextLink href="/passport/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: 8 }}>
           {t('passport')}
         </NextLink>
       ) : (
@@ -498,7 +497,7 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
           <span>{t.rich('activeDiscount', { price: formatUsd(2.49), b: Bold })}</span>
         </p>
       ) : null}
-      <LinkRow items={[t('refunds'), t('help')]} mt={4} />
+      <LinkRow items={[{ label: t('refunds'), href: '/payments/' }, { label: t('help'), href: '/help/' }]} mt={4} />
     </div>
   );
 }

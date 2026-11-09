@@ -167,9 +167,8 @@ export function AgeLine({ mode, mt }: { mode: 'signin' | 'signup'; mt?: number }
             {c}
           </a>
         ),
-        // Сторінки політики ще немає — як у футері, інертне посилання.
         privacy: (c) => (
-          <NextLink href="#" className="t2f-focus">
+          <NextLink href="/privacy/" className="t2f-focus">
             {c}
           </NextLink>
         ),

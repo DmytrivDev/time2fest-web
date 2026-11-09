@@ -4,7 +4,9 @@
  * - Місце, утримання, чернетка й `priceLocked` живуть у `guest.firstRow[eventId]` (localStorage, `stores/guest`);
  *   тут лише запис туди через чисті переходи з `lib/firstrow/pay`.
  * - `simStart` — «зараз» для зміщень `firstRowSeed` (пам’ять вкладки).
- * - `flow` — що показує вікно O-FIRST-ROW (пам’ять вкладки).
+ * - `flow` — що показує вікно O-FIRST-ROW. Незавершена оплата (перехід на PayPro, «Чекаємо підтвердження») зберігається
+ *   в `t2f:firstrow:v1`: після перезавантаження оплата доводиться до результату, а не починається вдруге
+ *   (перевірка сайту 2026-11-09, A-1). Перерваний перехід відновлюється з позначкою `interrupted` (`useFirstRowEffects`).
  * - `email` — лише в пам’яті вкладки (особистих даних не зберігаємо, data-model 2).
  * - `passGifted` — пас подаровано першою покупкою (`t2f:firstrow:v1`): знижки −50% він не дає (FR-92).
  */
@@ -29,10 +31,19 @@ export interface FirstRowFlow {
   /** Утримання вийшло й поновлене: нова ціна й лічильник для рядка «Час утримання вийшов». */
   expired?: { free: number; price: number; until: Ms; priceChanged: boolean };
   errors: FormErrors;
+  /** Перехід на оплату перервано перезавантаженням: результат ще не отримано — `useFirstRowEffects` доводить його. */
+  interrupted?: boolean;
 }
 
 interface FirstRowPersisted {
   passGifted: boolean;
+  /** Лише незавершена оплата: перехід на PayPro чи «Чекаємо підтвердження». */
+  flow?: FirstRowFlow | null;
+}
+
+/** Чи оплата вже пішла й результату ще немає. */
+function inFlight(flow: FirstRowFlow | null | undefined): flow is FirstRowFlow {
+  return !!flow && (flow.phase === 'pending' || flow.submitting || flow.interrupted === true);
 }
 
 export interface FirstRowState extends FirstRowPersisted {
@@ -73,8 +84,17 @@ export const useFirstRowStore = create<FirstRowState>()(
       name: FIRSTROW_STORAGE_KEY,
       version: 1,
       storage: safeJsonStorage<FirstRowPersisted>('local'),
-      partialize: (s) => ({ passGifted: s.passGifted }),
+      partialize: (s) => ({ passGifted: s.passGifted, flow: inFlight(s.flow) ? { ...s.flow, errors: {} } : null }),
       migrate: () => ({ passGifted: false }),
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<FirstRowPersisted>;
+        const flow = p.flow && typeof p.flow.eventId === 'string' && inFlight(p.flow) ? p.flow : null;
+        return {
+          ...current,
+          passGifted: p.passGifted === true,
+          flow: flow ? { ...flow, errors: {}, submitting: false, interrupted: flow.phase !== 'pending' } : current.flow,
+        };
+      },
     },
   ),
 );

@@ -90,6 +90,8 @@ test.describe('S-AUTH · сторінка', () => {
       sessionStorage.setItem('t2f:session:authReturn', '/countries/');
     });
     await page.reload();
+    // Дочекатися гідратації: інакше введене поле очищається, а акаунт зі сховища ще не прочитано (гонка, 2026-11-09).
+    await waitForTimeApi(page);
     await page.getByLabel('Email').fill('anna@example.com');
     await signInBtn(page).click();
     await expect(page.getByRole('heading', { name: 'Ми надіслали посилання' })).toBeFocused();
@@ -112,6 +114,8 @@ test.describe('S-AUTH · сторінка', () => {
     await expect(page.getByRole('button', { name: 'Спробувати ще' })).toBeVisible();
     await page.evaluate(() => window.__t2f?.setAuthUnavailable(false));
     await page.goto('/login/');
+    // Перемикач діє лише після появи тестового API (раніше `?.` мовчки нічого не робив — гонка, 2026-11-09).
+    await waitForTimeApi(page);
     await page.evaluate(() => window.__t2f?.setGoogleCancelled(true));
     await page.getByRole('button', { name: 'Продовжити з Google' }).click();
     await expect(page.getByRole('heading', { name: 'Переходимо до Google…' })).toBeVisible();

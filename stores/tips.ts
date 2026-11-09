@@ -8,13 +8,18 @@
  * Результат оплати — перемикач тестової збірки (`testControls.payResult`): `pending` — підтвердження через
  * `TIPS_CONFIRM_MS` часу сайту, `declined` — «Оплата не пройшла», решта — підтверджено одразу. Немає мережі — «Немає
  * з’єднання», оплату не починаємо. Після публікації золотий тост гостя — у чаті «Світ», пропозиція чайових зникає.
+ * Незавершена оплата («paying», «paid» — тост ще не в чаті) зберігається в `localStorage` (`t2f:tips-flow:v1`):
+ * після перезавантаження оплата доходить до результату, оплачений тост публікується (перевірка сайту 2026-11-09, A-1).
+ * Відновлює `TipsPaymentWatcher` після монтування (`resumeTipsFlow`).
  */
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { buildToast } from '@/lib/chat-sim/toast';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { Ms } from '@/lib/data/types';
 import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/firstrow/pay';
 import type { TipAmount } from '@/lib/offers/format';
+import { safeJsonStorage } from '@/lib/storage/safe';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
@@ -26,6 +31,18 @@ export const TIPS_CONFIRM_MS = PENDING_CONFIRM_MS;
 export const TIPS_PAY_MS = 6_000;
 /** Оплату підтверджено, а «Опублікувати тост» не натиснули — публікуємо самі. */
 export const TOAST_AUTO_MS = 30_000;
+
+export const TIPS_FLOW_STORAGE_KEY = 't2f:tips-flow:v1';
+
+/** Що зберігаємо: лише незавершену оплату (сума, тост, моменти). */
+interface TipsPersisted {
+  phase: TipsPhase;
+  amount: TipAmount;
+  toast: string;
+  fromBlock: boolean;
+  pendingSince?: Ms;
+  paidAt?: Ms;
+}
 
 export interface TipsFlowState {
   phase: TipsPhase;
@@ -50,6 +67,8 @@ export interface TipsFlowState {
   /** «Опублікувати тост» (чи сам за `TOAST_AUTO_MS`). */
   publish(): void;
   reset(): void;
+  /** Після відновлення зі сховища: перерваний перехід на оплату («paying» без `pendingSince`) — довести до результату. */
+  resume(): void;
 }
 
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -63,7 +82,8 @@ const isOffline = () =>
 
 const INITIAL = { phase: 'form' as TipsPhase, amount: 5 as TipAmount, toast: '', fromBlock: false, pendingSince: undefined, paidAt: undefined };
 
-export const useTipsStore = create<TipsFlowState>()((set, get) => {
+export const useTipsStore = create<TipsFlowState>()(
+  persist((set, get) => {
   const settle = () => {
     const result = useTestControls.getState().payResult;
     if (result === 'pending') set({ pendingSince: siteNow() });
@@ -113,5 +133,43 @@ export const useTipsStore = create<TipsFlowState>()((set, get) => {
       timer = null;
       set({ ...INITIAL });
     },
+    resume: () => {
+      if (get().phase === 'paying' && get().pendingSince === undefined && !timer) {
+        timer = setTimeout(() => {
+          timer = null;
+          if (get().phase === 'paying' && get().pendingSince === undefined) settle();
+        }, PAY_ROUNDTRIP_MS);
+      }
+    },
   };
-});
+  }, {
+    name: TIPS_FLOW_STORAGE_KEY,
+    version: 1,
+    storage: safeJsonStorage<TipsPersisted>('local'),
+    skipHydration: true,
+    partialize: (s): TipsPersisted =>
+      s.phase === 'paying' || s.phase === 'paid'
+        ? { phase: s.phase, amount: s.amount, toast: s.toast, fromBlock: s.fromBlock, pendingSince: s.pendingSince, paidAt: s.paidAt }
+        : { phase: 'form', amount: INITIAL.amount, toast: '', fromBlock: false },
+    merge: (persisted, current) => {
+      const p = (persisted ?? {}) as Partial<TipsPersisted>;
+      if (p.phase !== 'paying' && p.phase !== 'paid') return current;
+      if (current.phase !== 'form') return current;
+      return {
+        ...current,
+        phase: p.phase,
+        amount: (p.amount ?? current.amount) as TipAmount,
+        toast: typeof p.toast === 'string' ? p.toast : '',
+        fromBlock: p.fromBlock === true,
+        pendingSince: typeof p.pendingSince === 'number' ? p.pendingSince : undefined,
+        paidAt: typeof p.paidAt === 'number' ? p.paidAt : undefined,
+      };
+    },
+  }),
+);
+
+/** Відновити незавершену оплату чайових зі сховища (раз після монтування, `TipsPaymentWatcher`). */
+export async function resumeTipsFlow(): Promise<void> {
+  await useTipsStore.persist.rehydrate();
+  useTipsStore.getState().resume();
+}

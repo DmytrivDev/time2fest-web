@@ -63,7 +63,7 @@ function PayNote({ text }: { text?: string }) {
       <Icon name="lock" size={14} />
       <span>
         {text ?? t('payNote')}{' '}
-        <Link href="#" className="font-semibold">
+        <Link href="/payments/" className="font-semibold">
           {t('terms')}
         </Link>
       </span>
@@ -290,7 +290,7 @@ function Help() {
     <p className={s.help}>
       <Icon name="help" size={16} />
       {t('helpQ')}{' '}
-      <Link href="#" className="font-semibold">
+      <Link href="/help/" className="font-semibold">
         {t('help')}
       </Link>
     </p>

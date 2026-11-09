@@ -47,6 +47,7 @@ import {
   guestGreetingMessages,
   openForm,
   seatJoinedMessages,
+  settlePayment,
   snapshot,
   type FirstRowEvent,
 } from './controller';
@@ -173,6 +174,14 @@ function useFirstRowEffects(event: FirstRowEvent, now: Ms) {
   useEffect(() => {
     if (formOpen && holdUntil !== undefined && now > 0 && holdUntil <= now) expireHold(event, now);
   }, [formOpen, holdUntil, now, event]);
+
+  // Перехід на оплату перервано перезавантаженням (стан зі сховища): доводимо оплату до результату, а не просимо платити вдруге.
+  const interrupted = flow?.interrupted === true;
+  useEffect(() => {
+    if (!interrupted || now <= 0) return;
+    useFirstRowStore.getState().patchFlow({ interrupted: false });
+    settlePayment(event, now);
+  }, [interrupted, now, event]);
 
   // «Чекаємо підтвердження оплати» → підтверджено.
   const pendingSince = flow?.phase === 'pending' ? flow.pendingSince : undefined;
