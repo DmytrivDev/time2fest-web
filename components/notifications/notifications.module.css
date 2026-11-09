@@ -1,0 +1,252 @@
+/* Сповіщення (дошка `Desk-Notif-New`, 2026-11-09). */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 10px 16px;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px 8px;
+}
+.configure {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.configure:hover {
+  color: var(--color-text);
+}
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px 6px;
+}
+.groupTitle {
+  flex: 1;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.groupGap {
+  padding: 16px 4px 8px;
+}
+.markAll {
+  white-space: nowrap;
+  min-height: 32px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.markAll:hover {
+  color: var(--color-text);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.unread {
+  background: #202024;
+}
+.unread:hover {
+  background: var(--color-surface-raised);
+}
+.read {
+  opacity: 0.55;
+}
+.read:hover {
+  opacity: 0.8;
+}
+.tile {
+  position: relative;
+  display: flex;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+.tileSm {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+.tileFlag {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  display: flex;
+}
+.live {
+  background: rgb(229 72 77 / 0.14);
+  color: #e5484d;
+}
+.stamp {
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+}
+.reply {
+  background: rgb(91 155 240 / 0.14);
+  color: #5b9bf0;
+}
+.goal {
+  background: rgb(181 140 240 / 0.14);
+  color: #b58cf0;
+}
+.seat {
+  background: rgb(252 226 134 / 0.14);
+  color: var(--color-highlight);
+}
+.streak {
+  background: rgb(91 211 122 / 0.14);
+  color: #5bd37a;
+}
+.itemText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+.itemHead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.itemTitle {
+  flex: 1;
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+.ago {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.itemBody {
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.action {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #d92d20;
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px 8px;
+  text-align: center;
+}
+.emptyIcon {
+  display: flex;
+  width: 64px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+}
+.emptyTitle {
+  margin-top: 14px;
+  color: var(--color-text);
+  font-size: 17px;
+}
+.emptyText {
+  margin: 6px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* Налаштування. */
+.settings {
+  padding: 4px 12px 16px;
+}
+.settingsCompact {
+  padding: 0;
+}
+.master {
+  padding: 4px 0 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.setRow {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.setText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+.setTitle {
+  color: var(--color-text);
+  font-size: 14.5px;
+  font-weight: 700;
+}
+.setHint {
+  margin: -6px 52px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.switch {
+  width: 100%;
+  justify-content: space-between;
+}

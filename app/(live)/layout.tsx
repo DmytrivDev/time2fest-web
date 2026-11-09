@@ -14,6 +14,7 @@ import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
 import { PassPaymentWatcher } from '@/components/pass/PassPaymentWatcher';
 import { ScheduleToast } from '@/components/schedule/ScheduleToast';
 import { TipsPaymentWatcher } from '@/components/tips/TipsPaymentWatcher';
+import { NotificationsWatcher } from '@/components/notifications/NotificationsWatcher';
 import { OfflineNotice } from '@/components/shell/Offline';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
@@ -42,6 +43,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               <PassPaymentWatcher />
               {/* Чайові «чекають підтвердження» — так само. */}
               <TipsPaymentWatcher />
+              {/* Сповіщення: штампи, графік, «Перший ряд», відповіді в чаті (2026-11-09). */}
+              <NotificationsWatcher />
               {/* Згода на cookies: у DOM одразу після посилань-пропусків (кут/смуга; у потоці — на сторінці з плеєром). */}
               <CookieLayer />
               {/* «Додано в графік · Повернути» — знизу колонки, ховається над відео (рішення власника 2026-11-06). */}

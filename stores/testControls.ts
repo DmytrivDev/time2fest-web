@@ -5,6 +5,7 @@
  */
 import { create } from 'zustand';
 import type { PayResult } from '@/lib/data/types';
+import { seedDemoNotifications } from '@/lib/notifications/demo';
 
 export interface TestControlsState {
   payResult: PayResult;
@@ -18,7 +19,7 @@ export interface TestControlsState {
   authUnavailable: boolean;
   /** Імітований Google повертає «скасовано». */
   googleCancelled: boolean;
-  /** Нових сповіщень — лічильник на дзвіночку шапки (поки сповіщень немає, задається тут). */
+  /** Тест: скільки сповіщень підкласти (усіх типів, нові) — `seedDemoNotifications`. */
   notifications: number;
   setPayResult(r: PayResult): void;
   setChatAvailable(ok: boolean): void;
@@ -46,5 +47,8 @@ export const useTestControls = create<TestControlsState>()((set) => ({
   setEmptyCountry: (emptyCountry) => set({ emptyCountry }),
   setAuthUnavailable: (authUnavailable) => set({ authUnavailable }),
   setGoogleCancelled: (googleCancelled) => set({ googleCancelled }),
-  setNotifications: (notifications) => set({ notifications }),
+  setNotifications: (notifications) => {
+    set({ notifications });
+    seedDemoNotifications(notifications);
+  },
 }));

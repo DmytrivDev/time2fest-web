@@ -12,12 +12,15 @@ import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useNow } from '@/lib/time/TimeProvider';
 import { Header, type HeaderProps } from './Header';
+import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
 import { MenuBody } from './Menu';
 import ms from './menu.module.css';
 import { useOverlay } from './OverlayManager';
 
 /** Вікно меню (`OverlayManager`). */
 export const MENU_WINDOW_ID = 'O-MENU';
+/** Вікно сповіщень. */
+export const NOTIF_WINDOW_ID = 'O-NOTIF';
 
 export type ShellHeaderProps = Pick<HeaderProps, 'current' | 'hasPass' | 'user'>;
 
@@ -45,6 +48,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const openTips = useOpenTipsWindow();
   const celebrating = isCelebrating(useNow({ granularity: 'minute' }), getData());
   const menuOpen = overlay.current?.id === MENU_WINDOW_ID;
+  const tn = useTranslations('notif');
 
   const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (celebrating) {
@@ -91,12 +95,40 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
     });
   };
 
+  // Сповіщення — вікно O-NOTIF (рішення власника 2026-11-09): десктоп — на місці чату, телефон — шторка до відео;
+  // «Налаштувати» — другий рівень того ж вікна з «‹ Назад».
+  const openNotifList = () => {
+    const close = () => overlay.close(NOTIF_WINDOW_ID);
+    overlay.open({
+      id: NOTIF_WINDOW_ID,
+      kind: 'form',
+      chrome: 'board',
+      title: tn('title'),
+      content: <NotificationsBody onSettings={openNotifSettings} onGo={close} />,
+    });
+  };
+  const openNotifSettings = () => {
+    overlay.open({
+      id: NOTIF_WINDOW_ID,
+      kind: 'form',
+      chrome: 'board',
+      title: tn('settingsTitle'),
+      onBack: openNotifList,
+      content: <NotifSettings />,
+    });
+  };
+  const toggleNotif = () => {
+    if (overlay.current?.id === NOTIF_WINDOW_ID) overlay.close(NOTIF_WINDOW_ID);
+    else openNotifList();
+  };
+
   return (
     <Header
       current={current}
       hasPass={hasPass}
       user={user}
       onMenuClick={toggleMenu}
+      onNotificationsClick={toggleNotif}
       menuOpen={menuOpen}
       onSignInClick={onSignInClick}
       onPassClick={onPassClick}

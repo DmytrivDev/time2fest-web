@@ -23,6 +23,7 @@ import { Switch } from '@/components/primitives/Switch';
 import { HeaderAvatar } from '@/components/shell/Header';
 import { MENU_LANGUAGES } from '@/components/shell/Menu';
 import { CLOSE_MS, useChatColumn, useOverlayOpen } from '@/components/shell/OverlayManager';
+import { NotifSettings } from '@/components/notifications/NotificationsBody';
 import { FlagField } from '@/components/windows/FlagField';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
@@ -601,13 +602,8 @@ function NotificationsSection() {
         {t('title')}
       </h2>
       <p className={s.lead}>{t('lead')}</p>
-      <div className={cn(s.rows, s.muted)} aria-hidden="true">
-        {(['beforeMidnight', 'stamp', 'reply'] as const).map((k) => (
-          <div key={k} className={s.row}>
-            <div className={s.rowTitle}>{t(k)}</div>
-            <span className={s.fakeSwitch} />
-          </div>
-        ))}
+      <div className={s.rows}>
+        <NotifSettings compact />
       </div>
     </section>
   );

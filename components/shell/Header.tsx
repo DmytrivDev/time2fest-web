@@ -6,7 +6,7 @@ import type { MouseEvent } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { roundFlagSrc } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { useTestControls } from '@/stores/testControls';
+import { useUnreadCount } from '@/stores/notifications';
 import styles from './header.module.css';
 
 export interface HeaderUser {
@@ -37,7 +37,7 @@ export interface HeaderProps {
   onSupportClick?: () => void;
   /** Сторінка пасу відкрита — «Пас» позначено поточною. */
   passCurrent?: boolean;
-  /** Нових сповіщень; без значення — з тестових перемикачів (сповіщень ще немає). */
+  /** Нових сповіщень; без значення — непрочитані зі стору сповіщень. */
   notifications?: number;
   onNotificationsClick?: () => void;
   className?: string;
@@ -78,9 +78,8 @@ export function Header({
   className,
 }: HeaderProps) {
   const t = useTranslations('header');
-  // TODO(сповіщення): справжнє джерело; поки — тестовий перемикач «Сповіщення (лічильник)».
-  const testCount = useTestControls((s) => s.notifications);
-  const count = notifications ?? testCount;
+  const unread = useUnreadCount();
+  const count = notifications ?? unread;
 
   return (
     <header className={cn(styles.header, className)}>
