@@ -130,7 +130,7 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
   const looping = period !== 0;
   // Три копії: позиція прокрутки (до одного кола) + зсув анімації (до одного кола) + вікно (вужче за коло) — без порожнечі.
   const copy = (n: 1 | 2 | 3) => (
-    <div data-copy={n} aria-hidden={n > 1 || undefined} inert={n > 1 || undefined} className="flex shrink-0" style={{ gap }}>
+    <div data-copy={n} aria-hidden={n > 1 || undefined} inert={n > 1 || undefined} className="flex shrink-0" style={{ gap: `${gap / 16}rem` }}>
       {items}
     </div>
   );
@@ -175,7 +175,7 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
           if (drag.current?.moved) e.stopPropagation();
         }}
       >
-        <div ref={track} className="flex w-max" style={{ gap }}>
+        <div ref={track} className="flex w-max" style={{ gap: `${gap / 16}rem` }}>
           {copy(1)}
           {looping ? copy(2) : null}
           {looping ? copy(3) : null}
@@ -215,7 +215,7 @@ export function Marquee({ label, children, rows = 1, speed = 28, gap = 8, bleed 
       data-marquee=""
       data-paused={paused || undefined}
       className={cn('t2f-marquee flex flex-col', className)}
-      style={{ gap, ...(fade ? { '--mq-fade-l': `${fade[0]}px`, '--mq-fade-r': `${fade[1]}px` } : {}) } as React.CSSProperties}
+      style={{ gap: `${gap / 16}rem`, ...(fade ? { '--mq-fade-l': `${fade[0] / 16}rem`, '--mq-fade-r': `${fade[1] / 16}rem` } : {}) } as React.CSSProperties}
       {...handlers}
     >
       {lines.map((line, i) => (

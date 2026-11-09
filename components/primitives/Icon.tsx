@@ -474,11 +474,14 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'size'
   size?: IconSize;
 }
 
+/** Розмір у rem (`size` / 16): іконка масштабується разом із кеглем кореня (пропорційний макет, 2026-11-09). */
+export const remOf = (px: number) => `${px / 16}rem`;
+
 export function Icon({ name, size = 18, className, ...rest }: IconProps) {
   return (
     <svg
-      width={size}
-      height={size}
+      width={remOf(size)}
+      height={remOf(size)}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

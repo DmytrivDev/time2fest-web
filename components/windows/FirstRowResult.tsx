@@ -68,7 +68,7 @@ export function FirstRowPending({ city, flagCode, preview, holdUntil, email, onC
       className={cn(s.body, s.pendingBody, className)}
     >
       <div role="status" aria-live="polite" className={s.status} data-row="pending-status">
-        <svg className={s.spinner} width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <svg className={s.spinner} width="3rem" height="3rem" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <circle cx="24" cy="24" r="20" stroke="var(--color-border)" strokeWidth="4" />
           <path d="M24 4a20 20 0 0 1 20 20" stroke="var(--color-highlight)" strokeWidth="4" strokeLinecap="round" />
         </svg>
@@ -227,7 +227,7 @@ export function FirstRowSuccess({
 
       <p className={s.callout}>
         <span role="img" aria-label="Time2Fest" className={s.calloutMark}>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <svg width="0.6875rem" height="0.6875rem" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z" />
           </svg>
         </span>

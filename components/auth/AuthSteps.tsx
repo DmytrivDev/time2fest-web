@@ -111,7 +111,7 @@ function useEmailError(flow: AuthFlow): string | null {
 function OfflineLine({ flow }: { flow: AuthFlow }) {
   const t = useTranslations('auth.unavailable');
   return flow.offlinePending ? (
-    <p role="status" className={s.note} style={{ marginTop: 12 }}>
+    <p role="status" className={s.note} style={{ marginTop: '0.75rem' }}>
       <AuthIcon name="cloud-off" size={18} />
       <span>{t('offline')}</span>
     </p>
@@ -265,7 +265,7 @@ function GoogleStep({ flow, stream }: { flow: AuthFlow; stream: boolean }) {
 
 function GoogleIconLg() {
   return (
-    <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+    <svg width="1.625rem" height="1.625rem" viewBox="0 0 24 24" aria-hidden="true">
       <path
         fill="currentColor"
         d="M21.4 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.3a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 2.9-4.3 2.9-7.3zM12 21.8c2.7 0 4.9-.9 6.5-2.4l-3.2-2.5c-.9.6-2 1-3.3 1-2.6 0-4.7-1.7-5.5-4H3.2v2.6A9.8 9.8 0 0 0 12 21.8zM6.5 13.9a5.9 5.9 0 0 1 0-3.8V7.5H3.2a9.8 9.8 0 0 0 0 8.9zM12 6.1c1.5 0 2.8.5 3.8 1.5l2.8-2.8A9.5 9.5 0 0 0 12 2.2a9.8 9.8 0 0 0-8.8 5.3l3.3 2.6c.8-2.3 2.9-4 5.5-4z"
@@ -289,7 +289,7 @@ function SentStep({ flow }: { flow: AuthFlow }) {
       <button type="button" onClick={flow.changeEmail} className={cn('t2f-focus', s.linkBtn, s.linkStart)}>
         {t('change')}
       </button>
-      <p className={s.hint} style={{ marginTop: 4 }}>
+      <p className={s.hint} style={{ marginTop: '0.25rem' }}>
         {t('spam')}
       </p>
       <ResendButton until={resendUntil(flow)} onResend={() => flow.send(email, { resend: true })} className={s.mt20} />

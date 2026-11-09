@@ -487,7 +487,7 @@ function ZonePicker({ onDone }: { onDone(): void }) {
       )}
       {zones.length > 1 ? (
         <>
-          <div className={s.label} style={{ marginTop: 14 }}>
+          <div className={s.label} style={{ marginTop: '0.875rem' }}>
             {t('zonePick', { count: zones.length })}
           </div>
           <div role="radiogroup" aria-label={t('zone')} className={s.zones}>

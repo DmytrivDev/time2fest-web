@@ -269,14 +269,14 @@ export function RatingPage() {
             <span className={s.infoText}>{t('info.count', { count: total })}</span>
             <span aria-hidden="true" className={s.infoBars}>
               {Array.from({ length: total }, (_, i) => (
-                <span key={i} data-on={i < state.rows.length || undefined} style={{ height: `${5 + ((i * 7) % 12)}px` }} />
+                <span key={i} data-on={i < state.rows.length || undefined} style={{ height: `${(5 + ((i * 7) % 12)) / 16}rem` }} />
               ))}
             </span>
           </li>
           <li className={s.infoTile}>
             <b className={s.infoNum}>{t('info.hours')}</b>
             <span className={s.infoText}>{t('info.close', { date: closeDate, time: closeTime })}</span>
-            <svg aria-hidden="true" width="34" height="34" viewBox="0 0 36 36" className={s.infoRing}>
+            <svg aria-hidden="true" width="2.125rem" height="2.125rem" viewBox="0 0 36 36" className={s.infoRing}>
               <circle cx="18" cy="18" r="15" />
               <circle cx="18" cy="18" r="15" strokeDasharray="94.25" strokeDashoffset={94.25 * (1 - closeProgress)} transform="rotate(-90 18 18)" />
             </svg>

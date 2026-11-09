@@ -32,11 +32,12 @@ export interface EmojiProps {
 
 export function Emoji({ char, size, label, className }: EmojiProps) {
   const src = brandEmojiSrc(char);
-  const dim = size ? `${size}px` : '1.25em';
+  // У rem — масштабується разом із кеглем кореня (пропорційний макет, 2026-11-09).
+  const dim = size ? `${size / 16}rem` : '1.25em';
   const a11y = label ? { role: 'img' as const, 'aria-label': label } : { 'aria-hidden': true as const };
   if (!src) {
     return (
-      <span className={cn('t2f-emoji t2f-emoji-native', className)} data-emoji={char} style={size ? { fontSize: size * 0.85 } : undefined} {...a11y}>
+      <span className={cn('t2f-emoji t2f-emoji-native', className)} data-emoji={char} style={size ? { fontSize: `${(size * 0.85) / 16}rem` } : undefined} {...a11y}>
         {char}
       </span>
     );

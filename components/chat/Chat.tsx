@@ -519,7 +519,7 @@ export function Chat({
             aria-hidden="true"
             className="flex size-14 items-center justify-center rounded-full border border-border bg-surface text-text-secondary"
           >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+            <svg width="1.625rem" height="1.625rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
               <path d="M4 5h16v11H9l-5 4z" />
               <path d="M12 8v3.5M12 13.6v.01" strokeWidth="2.2" strokeLinecap="round" />
             </svg>

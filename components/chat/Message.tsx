@@ -73,7 +73,7 @@ function Mark({ label = true }: { label?: boolean }) {
       className="t2f-sys-mark flex size-4 shrink-0 items-center justify-center bg-highlight text-on-highlight"
     >
       {/* Макет `Main`: чотирипроменева зірка 10 px на жовтому квадраті 16 px (радіус 4). */}
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <svg width="0.625rem" height="0.625rem" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z" />
       </svg>
     </span>
@@ -181,7 +181,7 @@ export function Message({
     const own = !!message.author?.isMine;
     return (
       <li data-kind="deleted" data-own={own ? 'true' : undefined} data-msg-id={message.id} className={cn('t2f-msg-deleted', className)}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg width="0.875rem" height="0.875rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M4 6h16M9 6V3.5h6V6M6 6l1 14h10l1-14" />
         </svg>
         {own || !message.author ? (

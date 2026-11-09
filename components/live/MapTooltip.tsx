@@ -57,7 +57,7 @@ function StateMark({ phase }: { phase: TipPhase }) {
   if (phase === 'liveBefore' || phase === 'liveAfter') return <span aria-hidden="true" className={m.tipDotLive} />;
   if (phase === 'next')
     return (
-      <svg aria-hidden="true" className={m.tipClock} viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+      <svg aria-hidden="true" className={m.tipClock} viewBox="0 0 24 24" width="0.75rem" height="0.75rem" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
         <circle cx="12" cy="12" r="9" />
         <path d="M12 7v5l3 2" />
       </svg>
@@ -72,7 +72,7 @@ function StreamsRow({ count, live }: { count: number; live: boolean }) {
       {live ? (
         <span aria-hidden="true" className={m.tipDotLive} />
       ) : (
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" className={m.tipPlay}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="0.75rem" height="0.75rem" className={m.tipPlay}>
           <path d="M7 5v14l12-7z" fill="currentColor" />
         </svg>
       )}
@@ -182,7 +182,7 @@ export function CountryTip({
           {live ? (
             <span aria-hidden="true" className={m.tipDotLive} />
           ) : (
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" className={m.tipPlay}>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="0.75rem" height="0.75rem" className={m.tipPlay}>
               <path d="M7 5v14l12-7z" fill="currentColor" />
             </svg>
           )}
@@ -234,7 +234,7 @@ export function CityTip({ city, zone, country, state, now }: { city: MapCity; zo
       </div>
       {stream && phase === 'past' ? (
         <div className={cn(m.tipRow, m.tipRowQuiet)} data-tip-replay="">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" className={m.tipPlay}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="0.75rem" height="0.75rem" className={m.tipPlay}>
             <path d="M7 5v14l12-7z" fill="currentColor" />
           </svg>
           <span>{t('cityReplay')}</span>

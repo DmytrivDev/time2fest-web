@@ -111,7 +111,7 @@ function Alternatives({ children }: { children: ReactNode }) {
 
 function Spinner({ size = 20, big }: { size?: number; big?: boolean }) {
   return big ? (
-    <svg className={s.spinner} width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <svg className={s.spinner} width="3rem" height="3rem" viewBox="0 0 48 48" fill="none" aria-hidden="true">
       <circle cx="24" cy="24" r="20" stroke="var(--color-border)" strokeWidth="4" />
       <path d="M24 4a20 20 0 0 1 20 20" stroke="var(--color-highlight)" strokeWidth="4" strokeLinecap="round" />
     </svg>
@@ -129,7 +129,7 @@ function AccountRow({ email, note, mt = 16, notYou }: { email: string; note: str
   const nick = useGuestStore((st) => st.nick);
   return (
     <>
-      <div className={s.account} style={{ marginTop: mt }} data-row="account">
+      <div className={s.account} style={{ marginTop: `${mt / 16}rem` }} data-row="account">
         <span aria-hidden="true" className={s.avatar}>
           {(nick?.trim() || email).charAt(0).toUpperCase()}
         </span>
@@ -157,7 +157,7 @@ function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled
   const t = useTranslations('pass.buy');
   if (disabled) {
     return (
-      <button type="button" aria-disabled="true" className={cn('t2f-focus', a.btn, a.disabled)} style={{ marginTop: mt }} onClick={(e) => e.preventDefault()}>
+      <button type="button" aria-disabled="true" className={cn('t2f-focus', a.btn, a.disabled)} style={{ marginTop: `${mt / 16}rem` }} onClick={(e) => e.preventDefault()}>
         {label ?? t('pay', { price: PRICE })}
       </button>
     );
@@ -168,7 +168,7 @@ function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled
       aria-busy={busy || undefined}
       aria-disabled={busy || undefined}
       className={cn('t2f-focus', a.btn, a.coral)}
-      style={{ marginTop: mt, ...(busy ? { background: '#A8333A', color: 'rgba(255,255,255,0.85)' } : null) }}
+      style={{ marginTop: `${mt / 16}rem`, ...(busy ? { background: '#A8333A', color: 'rgba(255,255,255,0.85)' } : null) }}
       data-action="pay"
     >
       {busy ? <Spinner /> : null}
@@ -181,7 +181,7 @@ function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled
 function FirstRowGift({ mt = 12 }: { mt?: number }) {
   const t = useTranslations('pass.buy');
   return (
-    <NextLink href="/" className={cn('t2f-focus', s.gift)} style={{ marginTop: mt }} data-row="first-row">
+    <NextLink href="/" className={cn('t2f-focus', s.gift)} style={{ marginTop: `${mt / 16}rem` }} data-row="first-row">
       <span aria-hidden="true" className={cn(s.dot, s.dot36)}>
         <AuthIcon name="seat" size={18} />
       </span>
@@ -199,7 +199,7 @@ function FirstRowGift({ mt = 12 }: { mt?: number }) {
 /** Рядок службових посилань: «Допомога» — `/help/`, умови й повернення — `/payments/` (сторінки є з 2026-11-07). */
 function LinkRow({ items, mt = 8 }: { items: { label: string; href: string }[]; mt?: number }) {
   return (
-    <div className={s.linkRow} style={{ marginTop: mt }}>
+    <div className={s.linkRow} style={{ marginTop: `${mt / 16}rem` }}>
       {items.map(({ label, href }) => (
         <NextLink key={label} href={href} className="t2f-focus">
           {label}
@@ -258,7 +258,7 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
       <PayButton busy={busy} disabled={flow.paidEmail} mt={flow.paidEmail ? 12 : stream ? 12 : 16} />
       <LockLine stream={stream} consent />
       <Alternatives>
-        <p className={a.switchRow} style={{ marginTop: 4 }}>
+        <p className={a.switchRow} style={{ marginTop: '0.25rem' }}>
           {t('haveAccount')}
           <button type="button" onClick={onSignIn} className="t2f-focus">
             {t('signIn')}
@@ -298,7 +298,7 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
       />
       <PayButton busy={busy} mt={stream ? 14 : 16} />
       {busy ? (
-        <p role="status" className={cn(a.hint, a.center)} style={{ marginTop: 8 }}>
+        <p role="status" className={cn(a.hint, a.center)} style={{ marginTop: '0.5rem' }}>
           {t('openingNote')}
         </p>
       ) : (
@@ -368,13 +368,13 @@ function DoneButton({ variant, onDone, ghost, mt, homeLabel }: { variant: PassBu
   const cls = cn('t2f-focus', a.btn, ghost ? a.ghost : a.coral);
   if (variant === 'stream') {
     return (
-      <button type="button" className={cls} style={{ marginTop: mt }} onClick={onDone} data-action="done">
+      <button type="button" className={cls} style={{ marginTop: `${mt / 16}rem` }} onClick={onDone} data-action="done">
         {t('watch')}
       </button>
     );
   }
   return (
-    <NextLink href="/" className={cls} style={{ marginTop: mt }} data-action="done">
+    <NextLink href="/" className={cls} style={{ marginTop: `${mt / 16}rem` }} data-action="done">
       {homeLabel ?? t('home')}
     </NextLink>
   );
@@ -384,7 +384,7 @@ function DoneButton({ variant, onDone, ghost, mt, homeLabel }: { variant: PassBu
 function MoreButton({ onDone }: { onDone?: () => void }) {
   const t = useTranslations('pass.buy');
   return (
-    <NextLink href="/pass/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: 8 }} onClick={() => onDone?.()} data-action="more">
+    <NextLink href="/pass/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: '0.5rem' }} onClick={() => onDone?.()} data-action="more">
       {t('more')}
     </NextLink>
   );
@@ -453,7 +453,7 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
       </ul>
       <DoneButton variant={variant} onDone={onDone} mt={18} />
       {variant === 'stream' ? <MoreButton onDone={onDone} /> : null}
-      <p className={cn(s.note, s.noteSm)} style={{ marginTop: 14 }}>
+      <p className={cn(s.note, s.noteSm)} style={{ marginTop: '0.875rem' }}>
         <AuthIcon name="user" size={18} />
         <span>{t.rich('signedAs', { email, b: Bold })}</span>
       </p>
@@ -479,13 +479,13 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
           {p('active')}
         </span>
       </div>
-      <h3 className={s.failTitle} style={{ marginTop: 14 }}>
+      <h3 className={s.failTitle} style={{ marginTop: '0.875rem' }}>
         {t('activeTitle')}
       </h3>
       <p className={s.text}>{user && date ? t.rich('activeText', { date, email: user.email, b: Bold }) : t('activeTextDevice')}</p>
       <DoneButton variant={variant} onDone={onDone} mt={20} homeLabel={t('toHome')} />
       {variant === 'page' ? (
-        <NextLink href="/passport/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: 8 }}>
+        <NextLink href="/passport/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: '0.5rem' }}>
           {t('passport')}
         </NextLink>
       ) : (

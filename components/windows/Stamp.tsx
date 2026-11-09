@@ -73,7 +73,7 @@ export interface StampProps {
 const CONFETTI_TONES = ['var(--color-highlight)', 'var(--color-primary)', 'var(--color-text)'] as const;
 const CONFETTI = Array.from({ length: 16 }, (_, i) => ({
   left: `${(i * 37 + 6) % 94}%`,
-  drift: `${((i * 13) % 5 - 2) * 14}px`,
+  drift: `${(((i * 13) % 5 - 2) * 14) / 16}rem`,
   spin: `${240 + i * 31}deg`,
   delay: `${(i % 6) * 110}ms`,
   tone: CONFETTI_TONES[i % CONFETTI_TONES.length],

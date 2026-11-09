@@ -166,7 +166,7 @@ export function AuthorPanel({
             <div>
               <h3 id="author-path-title" className="m-0 flex items-center gap-1.5 whitespace-nowrap t2f-author-h3">
                 <span className="flex text-highlight">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                     <rect x="4" y="4" width="16" height="16" rx="2" strokeDasharray="2.2 1.8" />
                     <circle cx="12" cy="12" r="4" />
                   </svg>

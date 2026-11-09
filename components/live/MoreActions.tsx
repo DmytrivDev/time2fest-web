@@ -28,7 +28,7 @@ type Problem = (typeof PROBLEMS)[number];
 /** Логотип WhatsApp (зелене коло з трубкою) — впізнавана кнопка. */
 function WhatsAppMark() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0">
+    <svg width="1.125rem" height="1.125rem" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0">
       <path fill="#25D366" d="M12 2.2A9.8 9.8 0 0 0 3.6 17l-1.3 4.8 4.9-1.3A9.8 9.8 0 1 0 12 2.2Z" />
       <path
         fill="#fff"
