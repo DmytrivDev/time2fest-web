@@ -337,7 +337,8 @@ test.describe('US6 · cookies', () => {
 
   test('не лягає на відео: низький екран — схована, прокрутили — виїхала, назад — знову схована', async ({ page }) => {
     test.skip(isPhone(page), 'телефон вертикально: відео вгорі, картка внизу — не перетинаються');
-    await page.setViewportSize({ width: 1280, height: 640 });
+    // Пропорційний макет (2026-11-09): на 1280 усе ×0,84 — «низький екран» тепер 540 px (було 640 при 16 px).
+    await page.setViewportSize({ width: 1280, height: 540 });
     await seedGuest(page, { consentAnswered: false });
     await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
     const banner = page.locator('[data-cookie-banner]');

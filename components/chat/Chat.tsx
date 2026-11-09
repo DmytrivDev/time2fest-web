@@ -207,20 +207,27 @@ export function Chat({
   // Скільки повідомлень прийшло відтоді, як стрічку зупинено (поки не на паузі — відлік іде за кінцем списку).
   // Побачене (верх повідомлення у вікні стрічки) стає прочитаним: лічильник зменшується, а коли непрочитаних нижче
   // не лишилось — капсула зникає (рішення власника: не лише в самому низу).
-  const [baseline, setBaseline] = useState(visible.length);
-  if (!paused && baseline !== visible.length) setBaseline(visible.length);
+  // Межа «побаченого» — id останнього побаченого повідомлення, а не номер у списку: стрічка тримає щонайбільше
+  // 200 повідомлень і зрізає старі з початку, тож номер «з’їжджав» і лічильник застигав на 0 (перевірка 2026-11-09).
+  const lastVisibleId = visible.length ? visible[visible.length - 1]!.id : null;
+  const [seenId, setSeenId] = useState<string | null>(lastVisibleId);
+  if (!paused && seenId !== lastVisibleId) setSeenId(lastVisibleId);
+  const seenIndex = seenId === null ? -1 : visible.findIndex((m) => m.id === seenId);
+  // Побачене повідомлення вже зрізане з початку — усе, що лишилось у стрічці, новіше за нього.
+  const baseline = seenId === null ? 0 : seenIndex + 1;
   const markSeen = useCallback(() => {
     const el = logRef.current;
     if (!el) return;
     const bottom = el.getBoundingClientRect().bottom - 4;
-    setBaseline((base) => {
-      let next = base;
-      for (let i = base; i < visible.length; i += 1) {
+    setSeenId((id) => {
+      const from = id === null ? 0 : visible.findIndex((m) => m.id === id) + 1;
+      let next = from;
+      for (let i = from; i < visible.length; i += 1) {
         const node = el.querySelector<HTMLElement>(`[data-msg-id="${CSS.escape(visible[i]!.id)}"]`);
         if (!node || node.getBoundingClientRect().top > bottom) break;
         next = i + 1;
       }
-      return next;
+      return next > from ? visible[next - 1]!.id : id;
     });
   }, [visible]);
   useLayoutEffect(() => {
