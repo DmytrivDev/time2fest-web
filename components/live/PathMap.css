@@ -1,12 +1,19 @@
 /* Мінікарта шляху автора (C13). Лише токени. Пояси приглушені; зустрінуті точки жовті з пунктирною лінією,
-   заплановані — порожні із сірим пунктиром. Колір не єдиний носій змісту: заповнення/порожнеча + підказка + текст. */
+   заплановані — порожні із сірим пунктиром. Колір не єдиний носій змісту: заповнення/порожнеча + підказка + текст.
+   Масштаб (правка власника 2026-11-09): `--pm-k` (0.6…1) ставить PathMap від ширини мапи; базові розміри — для мапи
+   «Мій графік» / паспорт на десктопі. Межі, лінії, пунктир, точки й кільця множаться на `--pm-k`, тож мала мапа (картка
+   автора, телефон) виглядає як велика, лише зменшена. Межі кілець не тонші за 1.5 px — щоб порожня точка лишалась видимою. */
+.t2f-pathmap {
+  --pm-k: 1;
+}
 .t2f-pathmap-zone {
   fill: var(--color-surface-raised);
   stroke: var(--color-background);
-  stroke-width: 1;
+  stroke-width: calc(1px * var(--pm-k));
   vector-effect: non-scaling-stroke;
 }
-/* «Мій графік»: пояси за станом — ті самі кольори, що на мапі головної, приглушені, щоб шлях лишався головним. */
+/* Пояси за станом — ті самі кольори, що на мапі головної, приглушені, щоб шлях лишався головним (графік, паспорт,
+   картка автора). */
 .t2f-pathmap-zone[data-state='past'] {
   fill: #2a2a2f;
 }
@@ -19,22 +26,22 @@
 .t2f-pathmap-zone[data-state='future'] {
   fill: color-mix(in srgb, var(--color-zone-future) 50%, var(--color-surface));
 }
-/* Відвідані країни — золотом (паспорт і графік): видно поверх поясів, але не сперечаються з точками шляху. */
+/* Відвідані країни — золотом (паспорт, графік, картка автора): видно поверх поясів, але не сперечаються з точками. */
 .t2f-pathmap-visited {
   fill: #e9c766;
   stroke: var(--color-highlight);
-  stroke-width: 1.4;
+  stroke-width: calc(1.4px * var(--pm-k));
   vector-effect: non-scaling-stroke;
 }
 /* Без пасу: мапа розмита й темна, без точок і ліній; зверху — картка пасу. */
 .t2f-pathmap-locked {
-  filter: blur(3px) brightness(0.55);
+  filter: blur(calc(3px * var(--pm-k))) brightness(0.55);
   transform: scale(1.02);
 }
 .t2f-pathmap-line {
   fill: none;
-  stroke-width: 2;
-  stroke-dasharray: 6 5;
+  stroke-width: calc(2px * var(--pm-k));
+  stroke-dasharray: calc(6px * var(--pm-k)) calc(5px * var(--pm-k));
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
@@ -45,29 +52,57 @@
 .t2f-pathmap-line[data-kind='planned'] {
   stroke: var(--color-text-muted);
 }
-/* Точки за дошками `Phone-Author`: зустрінута 8 px, остання 10 px з кільцем, «Перший ряд» — подвійне кільце, у графіку — порожня. */
-.t2f-pathmap-dot {
-  box-shadow: 0 0 0 1.5px var(--color-background);
-}
-.t2f-pathmap-dot-last {
-  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-highlight);
-}
-.t2f-pathmap-dot.t2f-pathmap-dot-first {
-  width: 6px;
-  height: 6px;
-  background: var(--color-highlight);
-  box-shadow: 0 0 0 1.5px var(--color-background), 0 0 0 3px var(--color-highlight), 0 0 0 4.5px var(--color-background), 0 0 0 6px var(--color-highlight);
-}
-/* Промінь до інших країн поясу (варіант B «вузол і промені», «Мій графік»): тонший і дрібніший пунктир. */
+/* Промінь до інших країн поясу (варіант B «вузол і промені»): тонший і дрібніший пунктир. */
 .t2f-pathmap-line[data-ray] {
-  stroke-width: 1.5;
-  stroke-dasharray: 2 4;
+  stroke-width: calc(1.5px * var(--pm-k));
+  stroke-dasharray: calc(2px * var(--pm-k)) calc(4px * var(--pm-k));
+}
+/* Точки за дошками `Phone-Author`: зустрінута 8 px, остання 10 px з кільцем, «Перший ряд» — подвійне кільце, у графіку —
+   порожня; промені поясу — дрібніші (зустрінута 6 px, у графіку 8 px). Усе — на базовій ширині, далі × `--pm-k`. */
+.t2f-pathmap-dot {
+  --pm-d: 8px;
+  display: block;
+  width: calc(var(--pm-d) * var(--pm-k));
+  height: calc(var(--pm-d) * var(--pm-k));
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 calc(1.5px * var(--pm-k)) var(--color-background);
+}
+.t2f-pathmap-dot[data-dot='last'] {
+  --pm-d: 10px;
+  box-shadow:
+    0 0 0 calc(2px * var(--pm-k)) var(--color-background),
+    0 0 0 calc(4px * var(--pm-k)) var(--color-highlight);
+}
+.t2f-pathmap-dot[data-dot='ray-met'] {
+  --pm-d: 6px;
+}
+.t2f-pathmap-dot[data-dot='planned'],
+.t2f-pathmap-dot[data-dot='ray-planned'] {
+  --pm-d: 10px;
+  background: transparent;
+  border: max(1.5px, calc(2px * var(--pm-k))) solid var(--color-text-secondary);
+}
+.t2f-pathmap-dot[data-dot='ray-planned'] {
+  --pm-d: 8px;
 }
 /* Пояс зараз в ефірі: червоне кільце з ореолом. */
-.t2f-pathmap-dot-now {
-  border: 2.5px solid var(--color-primary);
+.t2f-pathmap-dot[data-dot='now'] {
+  --pm-d: 10px;
+  border: max(1.5px, calc(2.5px * var(--pm-k))) solid var(--color-primary);
   background: var(--color-background);
-  box-shadow: 0 0 0 3px var(--color-background), 0 0 0 4.5px rgb(229 72 77 / 0.55);
+  box-shadow:
+    0 0 0 calc(3px * var(--pm-k)) var(--color-background),
+    0 0 0 calc(4.5px * var(--pm-k)) rgb(229 72 77 / 0.55);
+}
+.t2f-pathmap-dot.t2f-pathmap-dot-first {
+  --pm-d: 6px;
+  border: 0;
+  background: var(--color-highlight);
+  box-shadow:
+    0 0 0 calc(1.5px * var(--pm-k)) var(--color-background),
+    0 0 0 calc(3px * var(--pm-k)) var(--color-highlight),
+    0 0 0 calc(4.5px * var(--pm-k)) var(--color-background),
+    0 0 0 calc(6px * var(--pm-k)) var(--color-highlight);
 }
 .t2f-pathmap-legend-now {
   width: 10px;

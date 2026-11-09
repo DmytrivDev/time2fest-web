@@ -6,9 +6,12 @@
  * подвійне кільце; майбутні з графіка — порожні точки й сірий пунктир. Кожна точка — кнопка з Tooltip:
  * «Дубай · північ о 22:00 за вашим часом» (+ «Перший ряд · місце 7»). На дотик Tooltip стає Popover.
  * Геометрія підвантажується окремим шматком; поки її немає — скелетон.
+ * Масштаб (правка власника 2026-11-09, картка автора): товщини ліній, пунктир і розміри точок рахуються від ширини
+ * мапи (`--pm-k`): на мапі графіка й паспорта на десктопі (≈970 px) — як були, у картці автора й на телефоні (≈300–360 px)
+ * — тонші й дрібніші, щоб мапа виглядала як велика, лише зменшена. Кілька точок одного поясу — вузол і промені (`hubOf`).
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type CSSProperties } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Skeleton } from '@/components/primitives/Skeleton';
@@ -52,6 +55,30 @@ function useGeometry(initial: ZoneMapGeometry | undefined): ZoneMapGeometry | nu
   return initial ?? loaded;
 }
 
+/** Ширина мапи, на якій точки й лінії мають базовий розмір (мапа «Мій графік» / паспорт на десктопі). */
+export const PATHMAP_BASE_WIDTH = 968;
+
+/** Коефіцієнт масштабу точок і ліній від ширини мапи: корінь відношення (дрібна мапа — не пропорційно дрібніші точки), 0.6…1. */
+export function pathMapScale(width: number): number {
+  if (!(width > 0)) return 1;
+  return Math.round(Math.min(1, Math.max(0.6, Math.sqrt(width / PATHMAP_BASE_WIDTH))) * 100) / 100;
+}
+
+/** Стежить за шириною мапи й повертає `--pm-k` (до виміру — 1). */
+function useMapScale(): [(el: HTMLDivElement | null) => void, number] {
+  const [k, setK] = useState(1);
+  const ref = useCallback((el: HTMLDivElement | null) => {
+    if (!el) return;
+    const apply = () => setK(pathMapScale(el.getBoundingClientRect().width));
+    apply();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, k];
+}
+
 export function PathLegend({ className }: { className?: string }) {
   const t = useTranslations('windows.author');
   return (
@@ -83,6 +110,7 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
   const t = useTranslations('windows.author');
   const c = useTranslations('chat.author');
   const geometry = useGeometry(geometryProp);
+  const [measure, k] = useMapScale();
 
   if (!geometry) {
     return <Skeleton variant="block" className={cn('aspect-video w-full', className)} />;
@@ -99,7 +127,12 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
   const rays = placed.filter((x) => x.p.hubOf && byId.has(x.p.hubOf));
 
   return (
-    <div className={cn('relative w-full overflow-hidden rounded-md bg-surface', className)} style={{ aspectRatio: meta.width / meta.height }} data-locked={locked || undefined}>
+    <div
+      ref={measure}
+      className={cn('t2f-pathmap relative w-full overflow-hidden rounded-md bg-surface', className)}
+      style={{ aspectRatio: meta.width / meta.height, '--pm-k': k } as CSSProperties}
+      data-locked={locked || undefined}
+    >
       <svg viewBox={`0 0 ${meta.width} ${meta.height}`} aria-hidden="true" className={cn('absolute inset-0 block size-full', locked && 't2f-pathmap-locked')}>
         {geometry.zones.map((g) => (
           <path key={g.zoneId} d={g.countries.map((c) => c.d).join('')} className="t2f-pathmap-zone" data-state={zoneStates?.[g.zoneId]} />
@@ -145,17 +178,18 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
       <div role="group" aria-label={summary ? c('mapLabel', { name: authorName, route: summary }) : t('pathOf', { name: authorName })} className="absolute inset-0">
         {placed.map(({ p, pos }, i) => {
           const time = formatClock(p.midnightMs);
+          // Вид точки — у `data-dot`; розміри й кільця — у PathMap.css (масштабуються від `--pm-k`).
           const dot = p.current
-            ? 't2f-pathmap-dot t2f-pathmap-dot-now size-2.5'
+            ? 'now'
             : p.hubOf
               ? p.planned
-                ? 't2f-pathmap-dot size-2 border-2 border-text-secondary'
-                : 't2f-pathmap-dot size-1.5 bg-highlight'
+                ? 'ray-planned'
+                : 'ray-met'
               : p.planned
-            ? 't2f-pathmap-dot size-2.5 border-2 border-text-secondary'
-            : i === lastMet
-              ? 't2f-pathmap-dot t2f-pathmap-dot-last size-2.5 bg-highlight'
-              : 't2f-pathmap-dot size-2 bg-highlight';
+                ? 'planned'
+                : i === lastMet
+                  ? 'last'
+                  : 'met';
           return (
             <div
               key={p.id}
@@ -185,13 +219,8 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
                 >
                   <span
                     aria-hidden="true"
-                    className={cn(
-                      'rounded-full',
-                      dot,
-                      p.firstRowSeat
-                        ? 't2f-pathmap-dot-first'
-                        : undefined,
-                    )}
+                    data-dot={dot}
+                    className={cn('t2f-pathmap-dot rounded-full', p.firstRowSeat ? 't2f-pathmap-dot-first' : undefined)}
                   />
                 </button>
               </Tooltip>

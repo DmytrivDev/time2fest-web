@@ -26,6 +26,30 @@ export interface PathPoint {
   hubOf?: string;
   /** Пояс зараз в ефірі, штампа ще немає: червоне кільце «Зараз». */
   current?: boolean;
+  /** Пояс події (`utc+0200`): вузол поясу на мапі шляху. */
+  zoneId?: string;
+  /** ISO країни події: зустрінута країна заливається золотом, як у паспорті й графіку. */
+  countryIso?: string;
+}
+
+/**
+ * Вузли поясів (варіант B «вузол і промені», як на «Моєму графіку» й у паспорті; картка автора — правка власника
+ * 2026-11-09): кілька точок одного поясу — один вузол, решта — промені від нього (`hubOf`), лінія маршруту йде лише
+ * через вузли. Вузол — перша зустрінута точка поясу в порядку вхідного масиву, а якщо зустрінутих немає — перша
+ * запланована. Точки без `zoneId` лишаються окремими. Результат — у порядку північ, вузол перед своїми променями.
+ */
+export function assignZoneHubs(points: readonly PathPoint[]): PathPoint[] {
+  const hubByZone = new Map<string, string>();
+  for (const p of points) if (p.zoneId && !p.planned && !hubByZone.has(p.zoneId)) hubByZone.set(p.zoneId, p.id);
+  for (const p of points) if (p.zoneId && !hubByZone.has(p.zoneId)) hubByZone.set(p.zoneId, p.id);
+  return points
+    .map((p): PathPoint => {
+      const hub = p.zoneId ? hubByZone.get(p.zoneId) : undefined;
+      const rest = { ...p };
+      delete rest.hubOf;
+      return hub && hub !== p.id ? { ...rest, hubOf: hub } : rest;
+    })
+    .sort((a, b) => a.midnightMs - b.midnightMs || Number(!!a.hubOf) - Number(!!b.hubOf));
 }
 
 /** Є пас: бейдж `pass`/`vip` або місце в «Першому ряду» (воно дарує пас). */
@@ -58,10 +82,12 @@ export function buildAuthorPath(author: Pick<Author, 'id' | 'nick' | 'badges'>, 
       y: city.mapPoint.y,
       midnightMs: event.midnightMs,
       planned: step.planned,
+      zoneId: event.zoneId,
+      countryIso: country.iso,
       ...(seat ? { firstRowSeat: seat.number } : {}),
     });
   }
-  return points.sort((a, b) => a.midnightMs - b.midnightMs);
+  return assignZoneHubs(points);
 }
 
 /**
@@ -71,7 +97,10 @@ export function buildAuthorPath(author: Pick<Author, 'id' | 'nick' | 'badges'>, 
 export function buildOwnPath(stamps: readonly Stamp[], schedule: readonly string[], data: Dataset, now: Ms): PathPoint[] {
   const stamped = new Set(stamps.map((s) => s.eventId));
   const steps = [
-    ...stamps.map((s) => ({ eventId: s.eventId, planned: false, seat: s.firstRowSeat })),
+    // Вузол поясу — основна трансляція (штамп не з кімнати), як на «Моєму графіку».
+    ...[...stamps]
+      .sort((a, b) => Number(a.presenceSource === 'room') - Number(b.presenceSource === 'room') || a.grantedAt - b.grantedAt)
+      .map((s) => ({ eventId: s.eventId, planned: false, seat: s.firstRowSeat })),
     ...schedule.filter((id) => !stamped.has(id)).map((eventId) => ({ eventId, planned: true, seat: undefined })),
   ];
   const points: PathPoint[] = [];
@@ -90,10 +119,12 @@ export function buildOwnPath(stamps: readonly Stamp[], schedule: readonly string
       y: city.mapPoint.y,
       midnightMs: event.midnightMs,
       planned: step.planned,
+      zoneId: event.zoneId,
+      countryIso: country.iso,
       ...(step.seat ? { firstRowSeat: step.seat } : {}),
     });
   }
-  return points.sort((a, b) => a.midnightMs - b.midnightMs);
+  return assignZoneHubs(points);
 }
 
 /** Скільки різних країн серед зустрінутих і скільки точок ще попереду. */

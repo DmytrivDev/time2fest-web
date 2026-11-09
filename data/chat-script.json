@@ -84,11 +84,23 @@
           "planned": false
         },
         {
+          "eventId": "evt_melbourne_2027",
+          "planned": false
+        },
+        {
           "eventId": "evt_tokyo_2027",
           "planned": false
         },
         {
+          "eventId": "evt_seoul_2027",
+          "planned": false
+        },
+        {
           "eventId": "evt_paris_2027",
+          "planned": true
+        },
+        {
+          "eventId": "evt_berlin_2027",
           "planned": true
         }
       ]

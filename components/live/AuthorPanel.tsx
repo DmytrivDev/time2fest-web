@@ -11,9 +11,12 @@
  * приховано («Показувати мій шлях» вимкнено — та сама плашка з «закритим оком») · свій нік —
  * «Ти» поруч з ніком, мапа й «Переглянути шлях» завжди (зі штампів і «Мого графіка»; нічого — порожня мапа), без «Поскаржитись».
  * Десктоп: картка природної висоти, прокручується вся панель; телефон: відкрита картка 232 px з власною прокруткою.
+ * Мапа — як мапа шляху графіка й паспорта, лише зменшена (правка власника 2026-11-09): пояси підсвічені за станом від
+ * поточного часу (як на головній), зустрінуті країни — золотом, кілька точок одного поясу — вузол і промені.
  */
 import { Collapsible as Radix } from 'radix-ui';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -21,7 +24,10 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { pathSummary, routeCities, type PathPoint } from '@/lib/chat-sim/authorPath';
+import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage } from '@/lib/data/types';
+import { zoneState } from '@/lib/engine/zoneState';
+import { useNow } from '@/lib/time/TimeProvider';
 import { PathLegend, PathMap } from './PathMap';
 import type { ZoneMapGeometry } from './MapModel';
 import './AuthorPanel.css';
@@ -93,6 +99,16 @@ export function AuthorPanel({
   const routeText = [route.met.join(' → '), route.planned.length ? t('routeNext', { cities: route.planned.join(', ') }) : ''].filter(Boolean).join(' · ');
   const plannedPart = planned ? t('summaryPlanned', { count: planned }) : '';
   const summary = [met ? t('summaryMet', { count: met }) : t('summaryNone'), plannedPart].filter(Boolean).join(' · ');
+  // Стан поясів — як на мапі головної й «Моєму графіку»: від поточного часу (до гідрації — усі «попереду»).
+  const now = useNow({ granularity: 'minute' });
+  const zoneStates = useMemo(() => {
+    const zones = getData().zones;
+    return Object.fromEntries(zones.map((z) => [z.id, now > 0 ? zoneState(now, z, zones) : 'future'] as const));
+  }, [now]);
+  const visited = useMemo(
+    () => path.filter((p) => !p.planned && p.zoneId && p.countryIso).map((p) => ({ zoneId: p.zoneId!, iso: p.countryIso! })),
+    [path],
+  );
 
   return (
     <div data-window="O-AUTHOR" data-pass={hasPass ? 'yes' : 'no'} data-author-compact={column ? 'false' : 'true'} className={cn('flex min-h-0 min-w-0 flex-1 flex-col', className)}>
@@ -160,11 +176,18 @@ export function AuthorPanel({
               {showCard ? <p className="text-caption text-text-secondary">{summary}</p> : null}
             </div>
             {showCard ? (
-              <PathMap points={path} authorName={author.nick} summary={routeText} geometry={geometry} />
+              <PathMap
+                points={path}
+                authorName={author.nick}
+                summary={routeText}
+                geometry={geometry}
+                zoneStates={zoneStates}
+                visited={visited}
+              />
             ) : (
               <div className="relative" data-row="locked">
                 <div inert>
-                  <PathMap points={[]} authorName={author.nick} geometry={geometry} />
+                  <PathMap points={[]} authorName={author.nick} geometry={geometry} zoneStates={zoneStates} />
                 </div>
                 <div className="t2f-author-lock">
                   <p className="t2f-author-plate" data-row={routeHidden ? 'route-hidden' : 'no-pass'}>
