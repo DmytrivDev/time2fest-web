@@ -1,0 +1,771 @@
+/* Кабінет `/account/` за дошками `Desk-Cabinet-New2` / `New3` (2026-11-08). */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 40px; /* верх — на рівні з колонкою праворуч (як інші сторінки з чатом) */
+}
+.h1 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.pageLead {
+  margin: 6px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 24px;
+}
+.card {
+  scroll-margin-top: 24px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--color-surface);
+}
+.h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 800;
+}
+.h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 800;
+}
+.lead {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Профіль: хто. */
+.who {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 20px;
+}
+.bigAvatar {
+  display: flex;
+  flex: none;
+  width: 88px;
+  height: 88px;
+  align-items: center;
+  justify-content: center;
+}
+.bigAvatar > span {
+  width: 72px;
+  height: 72px;
+  font-size: 30px;
+}
+.whoText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.whoName {
+  color: var(--color-text);
+  font-size: 26px;
+  font-weight: 800;
+}
+.whoEmail {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chip {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  margin-top: 4px;
+  padding: 0 10px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.chipOn {
+  background: rgb(252 226 134 / 0.12);
+  color: var(--color-highlight);
+}
+.chipOff {
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* Нік і прапор. */
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+  margin-top: 18px;
+}
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.fieldHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.label {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+.count {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.hint {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.err {
+  margin: 4px 0 0;
+  color: var(--color-primary);
+  font-size: 12.5px;
+}
+.formFoot {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 14px;
+}
+.saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #5bd37a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Кнопки й посилання. */
+.btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.coral {
+  background: var(--color-primary-fill);
+  color: var(--color-on-primary);
+}
+.line {
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+}
+.gold {
+  border-radius: var(--radius-full);
+  background: var(--color-highlight);
+  color: var(--color-background);
+}
+.dangerBtn {
+  background: #d92d20;
+  color: #fff;
+}
+.link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.link:hover {
+  color: var(--color-text);
+}
+.under {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.danger {
+  color: #ff6b6b;
+}
+.ok {
+  color: #5bd37a;
+  font-size: 14px;
+  font-weight: 700;
+}
+.acts {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Плашка пасу. */
+.plaque {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 22px;
+  padding: 16px 18px;
+  border-radius: 16px;
+}
+.plaqueOn {
+  border: 1px solid rgb(252 226 134 / 0.35);
+  background: linear-gradient(100deg, rgb(252 226 134 / 0.1), rgb(252 226 134 / 0.02));
+}
+.plaqueOff {
+  border: 1px solid var(--color-border);
+  background: #17171a;
+}
+.plaqueIcon {
+  display: flex;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+}
+.plaqueOn .plaqueIcon {
+  background: var(--color-highlight);
+  color: var(--color-background);
+}
+.plaqueOff .plaqueIcon {
+  border: 1px dashed rgb(252 226 134 / 0.5);
+  color: var(--color-highlight);
+}
+.plaqueText {
+  flex: 1;
+  min-width: 0;
+}
+.plaqueTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 800;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.statusOn {
+  background: rgb(63 185 80 / 0.15);
+  color: #5bd37a;
+}
+.statusOff {
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+.plaqueHint {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+.plaqueHint b {
+  color: var(--color-text);
+}
+.plaqueActs {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 14px;
+}
+
+/* «Як ти входиш» і рядки налаштувань. */
+.login {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+}
+.rows {
+  margin-top: 10px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+}
+.rowText {
+  flex: 1;
+  min-width: 0;
+}
+.rowTitle {
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+.rowHint {
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.toggleRow {
+  padding: 8px 0 12px;
+  border-top: 1px solid var(--color-border);
+}
+.toggleRow .rowHint {
+  margin-top: -6px;
+  padding-right: 56px;
+}
+.switch {
+  width: 100%;
+  justify-content: space-between;
+}
+.seg {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: #17171a;
+}
+.segItem {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.segItem[aria-checked='true'] {
+  background: var(--color-text);
+  color: var(--color-background);
+  font-weight: 800;
+}
+.inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0 14px;
+}
+.inlineActs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.notice {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 14px;
+  border: 1px solid rgb(252 226 134 / 0.3);
+  border-radius: 12px;
+  background: rgb(252 226 134 / 0.06);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.notice > svg {
+  flex: none;
+  color: var(--color-highlight);
+}
+.notice b {
+  color: var(--color-text);
+}
+.noticeActs {
+  display: flex;
+  gap: 12px;
+}
+.spin {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: acc-spin 0.8s linear infinite;
+}
+@keyframes acc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.muted {
+  opacity: 0.5;
+}
+.fakeSwitch {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--color-border-strong);
+}
+.confirm {
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid rgb(217 45 32 / 0.45);
+  border-radius: 12px;
+  background: rgb(217 45 32 / 0.08);
+  color: var(--color-text);
+  font-size: 14px;
+}
+.confirm p {
+  margin: 0;
+}
+
+/* Країна й пояс. */
+.picker {
+  padding: 4px 0 14px;
+}
+.countryBtn {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: #0f0f11;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  text-align: start;
+  cursor: pointer;
+}
+.countryName {
+  flex: 1;
+}
+.search {
+  margin-top: 6px;
+}
+.options {
+  margin: 6px 0 0;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  list-style: none;
+}
+.option {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  text-align: start;
+  cursor: pointer;
+}
+.option:hover {
+  background: var(--color-surface-raised);
+}
+.zones {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.zone {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 14px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.zone:hover,
+.zone[aria-checked='true'] {
+  background: var(--color-surface-raised);
+}
+.zoneUtc {
+  width: 84px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.zoneCity {
+  flex: 1;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+.zoneCheck {
+  color: var(--color-highlight);
+}
+.chev {
+  flex: none;
+  color: var(--color-text-muted);
+}
+
+/* Меню кабінету (на місці чату / у шторці). */
+.navPanel {
+  height: 100%;
+  overflow-y: auto;
+  padding: 12px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+.nav {
+  display: flex;
+  flex-direction: column;
+}
+.navWho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 12px;
+}
+.navAvatar {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+}
+.navAvatar > span {
+  width: 40px;
+  height: 40px;
+  font-size: 17px;
+}
+.navName {
+  display: block;
+  color: var(--color-text);
+  font-size: 16px;
+}
+.navSub {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+}
+.navTitle {
+  margin: 0;
+  padding: 14px 12px 4px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.navList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.navItem {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.navItem:hover,
+.navItem[aria-current='location'] {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.navTile {
+  display: flex;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--color-surface-raised);
+}
+.navText {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.navHint {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.soon {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.signOut {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 4px 4px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.signOut:hover {
+  color: var(--color-text);
+}
+
+/* Телефон і планшет: кнопка розділів закріплена внизу. */
+.bar {
+  position: fixed;
+  right: 12px;
+  bottom: 14px;
+  left: 12px;
+  z-index: 30;
+  display: flex;
+  height: 52px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 16px;
+  background: var(--color-surface-raised);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.barLabel {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.barTitle {
+  flex: 1;
+  font-size: 15px;
+}
+
+@media (max-width: 1023.98px) {
+  .page {
+    padding-bottom: 96px; /* під кнопкою розділів */
+  }
+}
+@media (max-width: 767.98px) {
+  .page {
+    padding: 16px 16px 96px;
+  }
+  .h1 {
+    font-size: 30px;
+  }
+  .card {
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+  .form {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .who {
+    gap: 14px;
+  }
+  .bigAvatar {
+    width: 72px;
+    height: 72px;
+  }
+  .bigAvatar > span {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  .whoName {
+    font-size: 21px;
+  }
+  .plaque {
+    flex-wrap: wrap;
+  }
+  .plaqueActs {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .row {
+    flex-wrap: wrap;
+  }
+  .seg {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}

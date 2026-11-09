@@ -32,6 +32,7 @@ import { getData } from '@/lib/data/load';
 import { isRateable } from '@/lib/passport/passport';
 import type { Stars } from '@/lib/data/types';
 import { on } from '@/lib/events/bus';
+import { useAccountStore } from '@/stores/account';
 import { useGuestStore } from '@/stores/guest';
 import { utcLabel } from './MapModel';
 import { zoneRowLabel, zoneSeatOf } from '@/lib/firstrow/zone';
@@ -104,7 +105,13 @@ export interface StampBlockProps {
   className?: string;
 }
 
-export function StampBlock({ eventId, permanent = false, roomEventIds, className }: StampBlockProps) {
+/** Кабінет → «Підказки паспорта на сторінках» вимкнено — блоку під плеєром немає (штамп однаково записується). */
+export function StampBlock(props: StampBlockProps) {
+  const hints = useAccountStore((st) => st.passportHints);
+  return hints ? <StampBlockView {...props} /> : null;
+}
+
+function StampBlockView({ eventId, permanent = false, roomEventIds, className }: StampBlockProps) {
   const tRoom = useTranslations('room.stamp');
   const ownStamps = useGuestStore((s) => s.stamps);
   const tShare = useTranslations('share');

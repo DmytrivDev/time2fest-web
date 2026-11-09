@@ -152,9 +152,8 @@ export function Header({
           </button>
           <span aria-hidden="true" className={styles.sep} />
           {user ? (
-            // TODO(кабінет): сторінки ще немає.
             <NextLink
-              href="#"
+              href="/account/"
               aria-label={hasPass ? t('profilePass', { name: user.name }) : t('profile', { name: user.name })}
               className={cn('t2f-focus', styles.icon, styles.account)}
             >

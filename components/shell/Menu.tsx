@@ -203,8 +203,7 @@ export function MenuBody({
       </RadioGroup.Root>
 
       {user ? (
-        // TODO(кабінет): сторінки ще немає.
-        <NextLink href="#" onClick={close} className={cn('t2f-focus t2f-transition', ms.card)} data-block="menu-account">
+        <NextLink href="/account/" onClick={close} className={cn('t2f-focus t2f-transition', ms.card)} data-block="menu-account">
           <span className={ms.avatar}>
             <HeaderAvatar user={user} pass={hasPass} label={th('passLabel')} />
           </span>

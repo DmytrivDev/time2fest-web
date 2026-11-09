@@ -9,6 +9,8 @@
  * - Ефекти: «час утримання вийшов» при відкритій формі, підтвердження «очікування», привітання гостя-учасника
  *   в чаті на «+15 с» (синхронно зі стіною).
  */
+import { useHeaderPass } from '@/components/auth/session';
+import { useAccountStore } from '@/stores/account';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 import { cn } from '@/components/primitives/cn';
@@ -232,7 +234,18 @@ function MoreBody({ event, city, onPick }: { event: FirstRowEvent; city: string;
   return <FirstRowMore city={city} midnightMs={event.midnightMs} now={now} rows={otherRows(event, now)} onPick={onPick} onClose={() => overlay.close(FIRST_ROW_MORE_ID)} />;
 }
 
-export function FirstRowModule({ event, headingLevel = 2, dockBar = false, className }: FirstRowModuleProps) {
+/** Кабінет → «“Перший ряд”» вимкнено (лише з пасом, власник 2026-11-08) — ні смужки, ні пропозицій. */
+export function useFirstRowHidden(): boolean {
+  const hidden = useAccountStore((st) => st.firstRowHidden);
+  const hasPass = useHeaderPass();
+  return hidden && hasPass;
+}
+
+export function FirstRowModule(props: FirstRowModuleProps) {
+  return useFirstRowHidden() ? null : <FirstRowModuleView {...props} />;
+}
+
+function FirstRowModuleView({ event, headingLevel = 2, dockBar = false, className }: FirstRowModuleProps) {
   if (!event?.firstRow?.saleEnabled) return null;
   return <ConnectedModule event={event} headingLevel={headingLevel} dockBar={dockBar} className={className} />;
 }
@@ -381,7 +394,11 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
 }
 
 /** Рядок у вкладці «Чат» на телефоні: «Перший ряд · Лондон · 8 ›». */
-export function FirstRowChatRowConnected({ event, onClick, className }: { event: FirstRowEvent | null; onClick(): void; className?: string }) {
+export function FirstRowChatRowConnected(props: { event: FirstRowEvent | null; onClick(): void; className?: string }) {
+  return useFirstRowHidden() ? null : <FirstRowChatRowView {...props} />;
+}
+
+function FirstRowChatRowView({ event, onClick, className }: { event: FirstRowEvent | null; onClick(): void; className?: string }) {
   const now = useNow();
   useGuestStore((s) => (event ? s.firstRow[event.id] : undefined));
   if (!event?.firstRow?.saleEnabled) return null;
