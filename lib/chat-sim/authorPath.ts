@@ -57,8 +57,17 @@ export function authorHasPass(author: Pick<Author, 'badges'>): boolean {
   return author.badges.some((b) => b === 'pass' || b === 'vip' || b === 'first-row');
 }
 
-/** Точки шляху в порядку часу (за `midnightMs`); без пасу чи без шляху — порожньо. */
-export function buildAuthorPath(author: Pick<Author, 'id' | 'nick' | 'badges'>, script: ChatScriptFile, data: Dataset): PathPoint[] {
+/**
+ * Точки шляху в порядку часу (за `midnightMs`); без пасу чи без шляху — порожньо. Якщо передано `now`, заплановані
+ * точки, чия північ уже минула, відсіюються (як у `buildOwnPath`, рішення власника 2026-11-09); вузли поясів
+ * перераховуються вже після відсіювання.
+ */
+export function buildAuthorPath(
+  author: Pick<Author, 'id' | 'nick' | 'badges'>,
+  script: ChatScriptFile,
+  data: Dataset,
+  now?: Ms,
+): PathPoint[] {
   if (!authorHasPass(author)) return [];
   const scripted = script.authors.find((a) => a.id === author.id);
   if (!scripted?.path?.length) return [];
@@ -69,6 +78,7 @@ export function buildAuthorPath(author: Pick<Author, 'id' | 'nick' | 'badges'>, 
     const city = event ? data.citiesById.get(event.cityId) : undefined;
     const country = event ? data.countriesByIso.get(event.countryIso) : undefined;
     if (!event || !city || !country) continue;
+    if (now !== undefined && step.planned && event.midnightMs <= now) continue;
     // «Перший ряд» — один на пояс: місце автора — у ряду поясу цієї події.
     const rowId = zoneRowOf(data, event)?.id ?? step.eventId;
     const seed = script.firstRowSeed.find((s) => s.eventId === rowId);

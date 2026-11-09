@@ -9,7 +9,7 @@ import { AuthorPanel, type AuthorPanelProps } from '@/components/live/AuthorPane
 import { pathMapScale } from '@/components/live/PathMap';
 import chatScript from '@/data/chat-script.json';
 import zonemap from '@/data/zonemap.json';
-import { assignZoneHubs, buildAuthorPath, buildOwnPath, type PathPoint } from '@/lib/chat-sim/authorPath';
+import { assignZoneHubs, buildAuthorPath, buildOwnPath, pathSummary, type PathPoint } from '@/lib/chat-sim/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatScriptFile, Stamp } from '@/lib/data/types';
 import { renderApp, stubBrowserApis } from '../us1/render';
@@ -71,6 +71,35 @@ describe('шлях автора й власний шлях — з вузлами
     expect(path.filter((p) => !p.hubOf).map((p) => p.id)).toEqual(['evt_sydney_2027', 'evt_tokyo_2027', 'evt_paris_2027']);
     expect(byId.evt_tokyo_2027!.zoneId).toBe('utc+0900');
     expect(byId.evt_tokyo_2027!.countryIso).toBe('JP');
+  });
+
+  it('шлях автора: минулі заплановані точки відсіюються, вузол перераховується; без now — усе як є', () => {
+    const script2 = {
+      ...script,
+      authors: [
+        ...script.authors,
+        {
+          id: 'u_test_plan',
+          nick: 'Planner',
+          flagCode: 'UA',
+          badges: ['pass'],
+          path: [
+            { eventId: 'evt_cairo_2027', planned: true },
+            { eventId: 'evt_kyiv_2027', planned: true },
+          ],
+        },
+      ],
+    } as unknown as ChatScriptFile;
+    const planner: Author = { id: 'u_test_plan', nick: 'Planner', flagCode: 'UA', badges: ['pass'] };
+    const cairo = data.eventsById.get('evt_cairo_2027')!;
+    const kyiv = data.eventsById.get('evt_kyiv_2027')!;
+    expect(buildAuthorPath(planner, script2, data).length).toBe(2);
+    // Каїр і Київ — один пояс (utc+0200): пояс минув → обидві точки зникають.
+    expect(cairo.zoneId).toBe(kyiv.zoneId);
+    expect(buildAuthorPath(planner, script2, data, Math.max(cairo.midnightMs, kyiv.midnightMs) + 1)).toEqual([]);
+    const before = buildAuthorPath(planner, script2, data, cairo.midnightMs - 60_000);
+    expect(before.map((p) => p.planned)).toEqual([true, true]);
+    expect(pathSummary(before)).toEqual({ met: 0, planned: 2 });
   });
 
   it('власний шлях: вузол поясу — штамп не з кімнати, як на «Моєму графіку»', () => {

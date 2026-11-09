@@ -1,0 +1,46 @@
+/* Сторінка «Про нас» (2026-11-09): вузька колонка тексту в оболонці службових сторінок. */
+
+.main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+@media (min-width: 1024px) {
+  .main {
+    padding: 32px 32px 64px;
+  }
+}
+.h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+@media (min-width: 1024px) {
+  .h1 {
+    font-size: 40px;
+  }
+}
+.lead {
+  margin: 20px 0 0;
+  color: var(--color-text);
+  font-size: 18px;
+  line-height: 1.6;
+}
+.soon {
+  margin: 12px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -22,7 +22,7 @@ export interface HeaderProps {
   /** Увійшла людина: аватар замість входу. */
   user?: HeaderUser | null;
   /** Поточна сторінка навігації. */
-  current?: 'home' | 'countries';
+  current?: 'home' | 'countries' | 'about';
   /** Відкрити меню (усі розміри). */
   onMenuClick?: () => void;
   menuOpen?: boolean;
@@ -97,8 +97,8 @@ export function Header({
           <NextLink href="/countries" aria-current={current === 'countries' ? 'page' : undefined} className={cn('t2f-focus', styles.navLink)}>
             {t('countries')}
           </NextLink>
-          {/* TODO(про нас): сторінки ще немає. */}
-          <NextLink href="#" className={cn('t2f-focus', styles.navLink)}>
+          {/* «Про нас» — сторінка `/about/` (2026-11-09). */}
+          <NextLink href="/about/" aria-current={current === 'about' ? 'page' : undefined} className={cn('t2f-focus', styles.navLink)}>
             {t('about')}
           </NextLink>
         </nav>

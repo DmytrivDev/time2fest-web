@@ -21,7 +21,9 @@ export interface FooterProps {
   className?: string;
 }
 
-const EMAIL = 'support@time2fest.com';
+/** Пошта підтримки (футер, сторінка «Про нас»). */
+export const SUPPORT_EMAIL = 'support@time2fest.com';
+const EMAIL = SUPPORT_EMAIL;
 /** Соцмережі — адреси з’являться, коли заведемо акаунти; доти посилання інертні (як «Допомога»). */
 const SOCIAL: { name: string; icon: IconName; href: string }[] = [
   { name: 'Telegram', icon: 'telegram', href: '#' },

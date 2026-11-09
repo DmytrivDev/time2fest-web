@@ -376,7 +376,7 @@ export function ChatPanel({
       const guest = useGuestStore.getState();
       const path = author.isMine
         ? buildOwnPath(guest.stamps, guest.schedule, getData(), clock.getSnapshot())
-        : buildAuthorPath(author, CHAT_SCRIPT, getData());
+        : buildAuthorPath(author, CHAT_SCRIPT, getData(), clock.getSnapshot());
       const viewerHasPass = useGuestStore.getState().hasPass;
       overlay.open({
         id: AUTHOR_WINDOW_ID,

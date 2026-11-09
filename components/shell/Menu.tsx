@@ -36,7 +36,7 @@ export interface MenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** Поточна сторінка. */
-  current?: 'home' | 'countries';
+  current?: 'home' | 'countries' | 'about';
   language?: string;
   languages?: MenuLanguage[];
   onLanguageChange?: (code: string) => void;
@@ -169,7 +169,7 @@ export function MenuBody({
   const here = (href: string) => href !== '#' && !!pathname?.startsWith(href.replace(/\/$/, ''));
   // Поточна сторінка — з адреси (меню лишається відкритим між сторінками); `current` — для історій і тестів без роутера.
   const page =
-    pathname === '/' ? 'home' : pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : pathname ? undefined : current;
+    pathname === '/' ? 'home' : pathname?.startsWith('/countries') || pathname?.startsWith('/country/') ? 'countries' : pathname?.startsWith('/about') ? 'about' : pathname ? undefined : current;
   const count = stampCount ?? stamps;
   const close = onClose;
   // Перехід на сторінку: у вікні `O-MENU` меню лишається відкритим, у Radix-варіанті — закривається.
@@ -249,8 +249,7 @@ export function MenuBody({
         <Section title={t('sectionSite')} className={ms.notDesk}>
           <Row href="/" icon="home" title={t('home')} current={page === 'home'} onNavigate={navigate} />
           <Row href="/countries" icon="map" title={t('countries')} current={page === 'countries'} onNavigate={navigate} />
-          {/* TODO(про нас): сторінки ще немає. */}
-          <Row icon="info" title={t('about')} onNavigate={navigate} />
+          <Row href="/about/" icon="info" title={t('about')} current={page === 'about'} onNavigate={navigate} />
           <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} onNavigate={navigate} />
         </Section>
         <Section title={t('sectionMine')}>
