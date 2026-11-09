@@ -403,8 +403,28 @@
   grid-area: title;
 }
 /* Смуга «Перший ряд» на телефоні: заголовок-рядок 44 px липне під рядком; розгорнута — звичайний потік. */
+/* Рядок під відео (2026-11-09, B01): цифри таймера не стискаються; бракує місця — спершу скорочується підпис
+   «до півночі» (вага стискання 1000), потім назва міста з трикрапкою. */
 .barTitle {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.barLabel {
+  flex: 0 1000 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.barTimerWrap {
+  display: contents;
+}
+.barClock {
+  display: inline-flex;
   flex: none;
+  align-items: baseline;
 }
 .barText .barTimer {
   min-width: 0;

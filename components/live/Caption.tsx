@@ -222,9 +222,16 @@ export function Caption({
             {current.city?.name.uk ?? title} <span className={home.barDot}>·</span>
           </h2>
           {timer ? (
-            <span role="timer" aria-live="off" aria-label={`${timer.label}: ${veiled ? t('timerVeilSpoken') : spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimer}>
-              <span aria-hidden="true">{timer.label}</span>
-              <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={home.barDigits} hint={false} />
+            // Цифри не стискаються ніколи: на вузькому рядку першим скорочується підпис «до півночі», потім назва
+            // міста (перевірка сайту 2026-11-09, B01). Обгортка `display: contents` — підпис і цифри лишаються одним
+            // таймером для тестів і зчитувача, а в рядку стоять окремими елементами.
+            <span role="timer" aria-live="off" aria-label={`${timer.label}: ${veiled ? t('timerVeilSpoken') : spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimerWrap}>
+              <span aria-hidden="true" className={home.barLabel}>
+                {timer.label}
+              </span>
+              <span className={home.barClock}>
+                <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={home.barDigits} hint={false} />
+              </span>
             </span>
           ) : (
             <span aria-hidden="true" className={home.barTimer}>

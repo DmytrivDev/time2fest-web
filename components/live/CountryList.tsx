@@ -37,6 +37,7 @@ import { HANDOVER_AFTER } from '@/lib/engine/config';
 import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort, formatTimeForViewer, viewerZoneLabel } from '@/lib/i18n/time';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { fold, getSearchIndex, matchesCityName, matchesCountryName, type SearchIndex } from '@/lib/search/countrySearch';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { EventFilter } from './EventFilter';
@@ -68,20 +69,20 @@ function subscribePhone(cb: () => void): () => void {
 }
 const getPhone = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_QUERY).matches : false);
 
-/** Пошук без регістру й апострофів: «Кот-д’Івуар» = «кот-д'івуар». */
-const norm = (s: string) => s.toLocaleLowerCase('uk').replace(/[’ʼ']/g, "'").trim();
+// Пошук усіма мовами сайту (uk/en/es/fr), без регістру, діакритики, дефісів і апострофів — `lib/search/countrySearch.ts`
+// (рішення власника 2026-11-09): «nepal», «India», «new york», «Kyiv», «Britain», «sao paulo» знаходять потрібне.
 
 interface Hit {
   /** Місто, через яке знайшлася країна (назва країни не збіглася). */
   city?: string;
 }
 
-/** Країна підходить під пошук: за назвою, головним містом чи містом трансляції. */
-function matchCountry(c: MapCountry, q: string): Hit | null {
+/** Країна підходить під пошук: за назвою (будь-якою мовою сайту), головним містом чи містом трансляції. */
+export function matchCountry(c: MapCountry, q: string, index: SearchIndex): Hit | null {
   if (!q) return {};
-  if (norm(c.name).includes(q)) return {};
+  if (matchesCountryName(c.iso, c.name, q)) return {};
   const cities = [c.city, ...(c.streams ?? []).map((s) => s.city)].filter((x): x is string => !!x);
-  const city = cities.find((x) => norm(x).includes(q));
+  const city = cities.find((x) => matchesCityName(index, x, q));
   return city ? { city } : null;
 }
 
@@ -285,7 +286,8 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
     () => mapModel.zones.reduce((n, z) => n + z.countries.filter((c) => (c.eventIds ?? []).some((id) => schedule.includes(id))).length, 0),
     [mapModel, schedule],
   );
-  const q = norm(query);
+  const q = fold(query);
+  const searchIndex = useMemo(() => getSearchIndex(data), [data]);
   const searching = q !== '';
   const locked = filter === 'mine' && !hasPass;
   const narrowing = searching || filter !== 'all';
@@ -297,7 +299,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       const countries = z.countries.filter((c) => {
         if (filter === 'live' && !(c.streams?.length ?? 0)) return false;
         if (filter === 'mine' && hasPass && !(c.eventIds ?? []).some((id) => schedule.includes(id))) return false;
-        const hit = matchCountry(c, q);
+        const hit = matchCountry(c, q, searchIndex);
         if (!hit) return false;
         hitMap.set(`${z.id}:${c.iso}`, hit);
         return true;
@@ -305,7 +307,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
       if (countries.length || !narrowing) out.push({ ...z, countries });
     }
     return { zones: out, hits: hitMap };
-  }, [mapModel, filter, hasPass, schedule, q, narrowing]);
+  }, [mapModel, filter, hasPass, schedule, q, narrowing, searchIndex]);
 
   const subtitle = ready
     ? t('subtitle', {

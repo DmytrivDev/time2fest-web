@@ -151,7 +151,8 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const broadcast = useBroadcast();
   const { ready, phase, current, next, air, watching, watch } = broadcast;
   const now = useNow();
-  const stamp = useGuestStore((s) => (current ? s.stamps.find((x) => x.eventId === current.event.id) : undefined));
+  const stampId = (watching ?? current)?.event.id;
+  const stamp = useGuestStore((s) => (stampId ? s.stamps.find((x) => x.eventId === stampId) : undefined));
   const hasPass = useGuestStore((s) => s.hasPass);
   const scheduleCount = useGuestStore((s) => s.schedule.length);
   const show = useTvPrefs((s) => s.show);
@@ -164,10 +165,16 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const online = onlineProp ?? detectedOnline;
   const [tab, setTab] = useState('how');
 
-  const mode = sidebarMode({ ready, current, momentFired: phase?.flags.momentFired ?? false, view: watching ? 'stream' : air?.view });
+  // Обрана вручну трансляція: момент «… зустріла Новий рік» — за її північчю, а не за північчю ефіру.
+  const watchedSince = watching ? now - watching.event.midnightMs : null;
+  const momentFired = watchedSince !== null ? watchedSince >= 0 && watchedSince < HANDOVER_AFTER : (phase?.flags.momentFired ?? false);
+  const mode = sidebarMode({ ready, current, momentFired, view: watching ? 'stream' : air?.view });
   const data = getData();
   const minute = Math.floor(now / 60_000) * 60_000;
-  const midnightMs = current?.event.midnightMs ?? 0;
+  // Одне джерело для колонки: обрана вручну трансляція, інакше подія ефіру. Відлік, місто, «Як святкувати» й підпис
+  // «північ о …» — того місця, яке зараз на екрані (перевірка сайту 2026-11-09, B14 / A-19).
+  const focus = watching ?? current;
+  const midnightMs = focus?.event.midnightMs ?? 0;
   const untilMs = midnightMs - now;
   const firstRow = useTvFirstRow(now);
 
@@ -180,7 +187,7 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const muted = player?.muted ?? true;
   const sinceMidnight = now - midnightMs;
   const lastMinute = mode === 'moment' && sinceMidnight >= LAST_MINUTE_FROM && sinceMidnight < HANDOVER_AFTER;
-  const city = current?.city?.name.uk ?? current?.country?.name.uk ?? '';
+  const city = focus?.city?.name.uk ?? focus?.country?.name.uk ?? '';
   const mineReady = hasPass && scheduleCount > 0;
 
   const watchRow = (row: StreamRowData) => {
@@ -207,8 +214,8 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
         </TabsTrigger>
       </TabsList>
       <TabsContent value="how" className={styles.panel} data-tv-panel="how">
-        {current?.country && current.country.howTo.traditions.length ? (
-          <HowToCard country={current.country.name.uk} traditions={current.country.howTo.traditions.slice(0, 3)} variant="tv" headingLevel="h2" className={styles.how} />
+        {focus?.country && focus.country.howTo.traditions.length ? (
+          <HowToCard country={focus.country.name.uk} traditions={focus.country.howTo.traditions.slice(0, 3)} variant="tv" headingLevel="h2" className={styles.how} />
         ) : (
           <p className="text-text-secondary">{t('howToEmpty')}</p>
         )}
@@ -237,28 +244,28 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   } else if (mode === 'moment') {
     body = (
       <>
-        <MetPhrase place={current} />
+        <MetPhrase place={focus ?? current} />
         {lastMinute && next ? (
           <p className="text-text-secondary" data-tv-next-in="">
             {t('nextIn', { time: formatShortCountdown(HANDOVER_AFTER - sinceMidnight) })} · {t('nextUp', { place: next.city?.name.uk ?? '' })}
           </p>
         ) : null}
-        {stamp && current.country ? (
+        {stamp && (focus ?? current).country ? (
           <TvStampCard
             eventId={stamp.eventId}
             city={stamp.cityName || city}
-            countryName={current.country.name.uk}
-            flagCode={current.country.flagCode}
+            countryName={(focus ?? current).country!.name.uk}
+            flagCode={(focus ?? current).country!.flagCode}
             illustrationId={stamp.illustrationId}
             firstRowSeat={stamp.firstRowSeat}
           />
         ) : null}
         {firstRow ? <TvGreetings seats={firstRow.seats} row={firstRow.city} now={now} /> : null}
-        <ReplayButton place={current} />
+        <ReplayButton place={focus ?? current} />
       </>
     );
   } else {
-    const place = watching ?? current;
+    const place = focus ?? current;
     const watchingTitle = watching?.sourceId ? data.chainsByEventId.get(watching.event.id)?.sources.find((s) => s.id === watching.sourceId)?.title.uk : undefined;
     const showCountdown = untilMs > COUNTDOWN_UNTIL_MS && mode === 'live';
     const showLine = !showCountdown && mode === 'live';
@@ -273,7 +280,7 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
           </div>
         ) : showLine ? (
           <p className="text-text-secondary" data-tv-midnight-at="">
-            {tp('lineBefore', { country: current.country?.name.uk ?? city, time: formatClock(midnightMs, { locale }) })}
+            {tp('lineBefore', { country: place.country?.name.uk ?? city, time: formatClock(midnightMs, { locale }) })}
           </p>
         ) : null}
         <TvNow

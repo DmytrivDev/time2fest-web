@@ -1,7 +1,7 @@
 /**
- * Прапор за розташуванням для O-NICK (US4, FR-051). У цій області — лише локальна оцінка за мовою браузера й
- * часовим поясом (`Intl`): жодних запитів і жодної IP-адреси (принцип VI). Невідомо → `undefined`
- * (вікно покаже «Прапор не визначено — обери свій» і «Земля — Без країни»).
+ * Прапор за розташуванням для O-NICK (US4, FR-051). `detectFlagFrom` — локальна оцінка за мовою браузера й часовим
+ * поясом (`Intl`): жодних запитів і жодної IP-адреси (принцип VI). `detectFlag()` поки віддає 'UA' (рішення 2026-11-09).
+ * Невідомо → `undefined` (вікно покаже «Прапор не визначено — обери свій» і «Земля — Без країни»).
  */
 
 const TZ_REGION: Record<string, string> = {
@@ -64,13 +64,10 @@ export function detectFlagFrom({ languages = [], timeZone }: DetectInput): strin
   return undefined;
 }
 
+/**
+ * Прапор гостя за замовчуванням — Україна: імітація визначення за IP до появи бекенду (рішення власника 2026-11-09).
+ * Раніше брався регіон з мови браузера (en-US → «США»); `detectFlagFrom` лишається для майбутнього справжнього визначення.
+ */
 export function detectFlag(): string | undefined {
-  if (typeof navigator === 'undefined') return undefined;
-  let timeZone: string | undefined;
-  try {
-    timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  } catch {
-    timeZone = undefined;
-  }
-  return detectFlagFrom({ languages: navigator.languages?.length ? navigator.languages : [navigator.language], timeZone });
+  return 'UA';
 }

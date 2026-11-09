@@ -648,4 +648,16 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page.locator('[data-tv-card]').first()).toBeVisible();
     await expectAxeClean(page);
   });
+
+  test('обрана вручну трансляція: відлік, «Зараз» і момент — її північ, а не ефіру (перевірка 2026-11-09, B14)', async ({ page, ytStub }) => {
+    // 00:50 за Києвом: ефір — Париж (північ за 10 хв), Лондон — за 1 год 10 хв.
+    await openTv(page, ytStub, '2027-01-01T00:50:00+02:00', 0);
+    const side = page.locator('[data-tv-sidebar]');
+    await expect(side.locator('[data-tv-countdown]')).toContainText('00:10:00');
+    await page.locator('[data-tv-card][aria-current="true"]').focus();
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    await expect(side).toContainText('Зараз: Лондон');
+    await expect(side.locator('[data-tv-countdown]')).toContainText('01:10:00');
+  });
 });

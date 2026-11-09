@@ -16,6 +16,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
+import { fold, getSearchIndex, matchesCityName, matchesCountryName } from '@/lib/search/countrySearch';
 import { scheduledCountries, zoneCountryIsos, zoneSlotCount } from '@/lib/schedule/countryZone';
 import { GROUP_ORDER, scheduleCountry, type CountryGroup, type ScheduleCountry } from '@/lib/schedule/scheduleCountry';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -25,7 +26,6 @@ import s from './schedule.module.css';
 
 /** З якої кількості країн у поясі показуємо пошук. */
 const SEARCH_FROM = 6;
-const norm = (x: string) => x.toLocaleLowerCase('uk').replace(/[’ʼ']/g, "'").trim();
 
 /** Країни поясу зі станом (`now` — хвилинний). */
 export function useZoneCountries(zoneId: string): ScheduleCountry[] {
@@ -61,8 +61,11 @@ export function ZoneCountriesPanel({ zoneId, onToggle }: { zoneId: string; onTog
   const countries = useZoneCountries(zoneId);
   const [query, setQuery] = useState('');
   const searchId = useId();
-  const q = norm(query);
-  const shown = q ? countries.filter((c) => norm(c.name).includes(q) || norm(c.place).includes(q)) : countries;
+  // Пошук усіма мовами сайту (рішення 2026-11-09): назва країни uk/en/es/fr, місто чи пам’ятка — і латиницею.
+  const q = fold(query);
+  const shown = q
+    ? countries.filter((c) => matchesCountryName(c.iso, c.name, q) || matchesCityName(getSearchIndex(getData()), c.place, q))
+    : countries;
   const groups = GROUP_ORDER.map((g) => ({
     g,
     items: shown.filter((c) => c.group === g).sort((a, b) => a.name.localeCompare(b.name, 'uk')),

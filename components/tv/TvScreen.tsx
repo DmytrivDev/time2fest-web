@@ -196,9 +196,11 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
     setPrefer(show === 'mine' && mineReady ? schedule : null);
   }, [show, mineReady, schedule, setPrefer]);
 
-  // Присутність для штампа: ТВ показує подію поточного слота ефіру.
+  // Присутність для штампа: подія того, що на екрані — обраної вручну трансляції, інакше слота ефіру
+  // (2026-11-09: опівночі Парижа з обраним Лондоном штамп Парижа не нараховується).
   const eventId = current?.event.id ?? null;
-  useStampGrant(eventId ? { source: 'tv', eventIds: [eventId] } : null);
+  const shownId = watching?.event.id ?? eventId;
+  useStampGrant(shownId ? { source: 'tv', eventIds: [shownId] } : null);
 
   const exit = useCallback(() => router.push('/'), [router]);
   const back = useCallback(() => {

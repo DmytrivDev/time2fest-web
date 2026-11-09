@@ -13,6 +13,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
+import { fold, matchesCountryName } from '@/lib/search/countrySearch';
 
 export interface FlagOption {
   code: string;
@@ -95,8 +96,10 @@ export function FlagField({
 
   // Групи списку з урахуванням пошуку.
   const groups = useMemo<Group[]>(() => {
-    const q = query.trim().toLowerCase();
-    const match = (name: string, sub?: string) => !q || name.toLowerCase().includes(q) || (sub?.toLowerCase().includes(q) ?? false);
+    // Пошук прапора усіма мовами сайту (рішення 2026-11-09): uk/en/es/fr + код країни.
+    const q = fold(query);
+    const match = (name: string, sub?: string, code?: string) =>
+      !q || fold(name).includes(q) || (sub ? fold(sub).includes(q) : false) || (!!code && matchesCountryName(code, name, q));
     const make = (key: Group['key'], code: string): Item => ({
       id: `${listId}-${key}-${code}`,
       code,
@@ -105,15 +108,15 @@ export function FlagField({
     });
     const out: Group[] = [];
     if (detectedFlag) {
-      const items = [make('detected', detectedFlag)].filter((i) => match(i.name, i.sub));
+      const items = [make('detected', detectedFlag)].filter((i) => match(i.name, i.sub, i.code));
       if (items.length) out.push({ key: 'detected', label: c('groupDetected'), items });
     }
-    const spec = SPECIAL_ALL.map((code) => make('special', code)).filter((i) => match(i.name, i.sub));
+    const spec = SPECIAL_ALL.map((code) => make('special', code)).filter((i) => match(i.name, i.sub, i.code));
     if (spec.length) out.push({ key: 'special', label: c('groupSpecial'), items: spec });
     const all = [...flags]
       .sort((a, b) => a.name.localeCompare(b.name, 'uk'))
       .map((f) => make('all', f.code))
-      .filter((i) => match(i.name, i.sub));
+      .filter((i) => match(i.name, i.sub, i.code));
     if (all.length) out.push({ key: 'all', label: c('groupAll'), items: all });
     return out;
   }, [query, flags, detectedFlag, listId, c, nameOf]);

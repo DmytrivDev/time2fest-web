@@ -250,7 +250,7 @@ test.describe('US4 · чат свята', () => {
     test.setTimeout(180_000);
     await startChat(page, '2027-01-01T02:03:00+02:00', 5);
     const log = page.getByRole('log').first();
-    // Автори з пасом у сценарії: Karim має шлях (Окленд → Дубай → Каїр).
+    // Автори з пасом у сценарії: Karim має шлях (Окленд → Дубай → у графіку Ріо-де-Жанейро).
     await expect
       .poll(async () => await log.getByRole('button', { name: /^Karim, / }).count(), {
         timeout: 60_000,

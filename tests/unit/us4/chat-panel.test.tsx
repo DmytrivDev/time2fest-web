@@ -367,8 +367,8 @@ describe('ChatPanel — пауза, реакції, відповідь, авто
     const dialog = await screen.findByRole('dialog', { name: 'Автор повідомлення' });
     expect(within(dialog).getByRole('heading', { name: 'Шлях Karim' })).toBeInTheDocument();
     await waitFor(() => expect(within(dialog).getAllByRole('button', { name: /· Зустріли ·/ }).length).toBeGreaterThan(0));
-    // Каїр у шляху Karim «запланований», але пояс уже минув (час тесту 00:20 UTC) — точка не показується (2026-11-09).
-    expect(within(dialog).queryAllByRole('button', { name: /· У графіку ·/ })).toHaveLength(0);
+    // У графіку Karim — Ріо-де-Жанейро (північ ще попереду о 00:20 UTC); минулі заплановані точки не показуються (2026-11-09).
+    expect(within(dialog).getAllByRole('button', { name: /· У графіку ·/ }).length).toBeGreaterThan(0);
     expect(within(dialog).getByRole('button', { name: 'Поскаржитись' })).toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: /Переглянути шлях/ })).toBeInTheDocument();
     await user.keyboard('{Escape}');
