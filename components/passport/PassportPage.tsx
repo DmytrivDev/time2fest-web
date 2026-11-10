@@ -243,6 +243,8 @@ export function PassportPage() {
       </div>
     ) : null;
 
+  const nextPair = rows.length === 0 && !!nextCell && !!nextBlock;
+
   const contName = (c: Continent) => t(`continent.${c}`);
   const missing = CONTINENTS.filter((c) => !stats.continents.has(c));
 
@@ -406,7 +408,14 @@ export function PassportPage() {
           </div>
         </div>
         {ready && rows.length === 0 ? <p className={s.empty}>{t('empty')}</p> : null}
-        {view === 'chrono' ? (
+        {view === 'chrono' && nextPair ? (
+          // Ще без штампів: плитка наступного штампа й «що робити» — парою (на планшеті поруч, 1/3 і 2/3; дошки
+          // `Tab-P-New` / `Tab-L-New`, 2026-11-10); на телефоні й десктопі обгортка не впливає на розкладку.
+          <div className={s.nextPair}>
+            <ul className={s.grid}>{nextCell}</ul>
+            {nextBlock}
+          </div>
+        ) : view === 'chrono' ? (
           <ul className={s.grid}>
             {rows.map((r, i) => card(r, i))}
             {nextCell}
@@ -436,7 +445,7 @@ export function PassportPage() {
             ) : null}
           </>
         )}
-        {nextBlock}
+        {nextPair && view === 'chrono' ? null : nextBlock}
       </section>
 
       <section className={s.box} aria-labelledby="passport-series" data-passport-series="">

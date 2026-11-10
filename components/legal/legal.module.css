@@ -388,3 +388,10 @@
     bottom: 16px;
   }
 }
+
+/* Планшет-портрет (`Tab-P-New`, 2026-11-10): поля 32 px, як на решті сторінок. */
+@media (min-width: 768px) and (max-width: 1023.98px) and (orientation: portrait) {
+  .main {
+    padding-inline: 32px;
+  }
+}

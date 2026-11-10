@@ -498,3 +498,78 @@
     transition: none;
   }
 }
+
+/* «Дивляться люди з 140 країн» у рядку часу — лише в планшеті-портреті (на телефоні — над «Зараз і далі»). */
+.barWatchers {
+  display: none;
+}
+/* ── Планшет-портрет (`Tab-P-New`, 2026-11-10): структура телефона, поля 32 px ─────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .bar {
+    gap: var(--spacing-3);
+    height: 60px;
+    padding: 0 var(--spacing-8);
+  }
+  .barTitle {
+    font-size: 16px;
+  }
+  .barLabel {
+    font-size: 13px;
+  }
+  .barDigits {
+    font-size: 22px;
+  }
+  .barSound {
+    margin: 0;
+  }
+  .barSoundInner {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  .barWatchers {
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  .block {
+    padding: 22px var(--spacing-8) var(--spacing-4);
+  }
+  .phoneInflow.phoneInflow {
+    padding-inline: var(--spacing-8);
+  }
+  .events {
+    gap: 28px;
+    padding: var(--spacing-5) var(--spacing-8) var(--spacing-8);
+  }
+  .events > .watchers {
+    display: none;
+  }
+  .title {
+    font-size: 28px;
+  }
+  .sub {
+    font-size: 14px;
+  }
+}
+
+/* Сторінка країни: «Дивляться люди з …» під назвою — лише на телефоні (у планшеті-портреті — у рядку часу). */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .watchersPhone {
+    display: none;
+  }
+}
+
+/* Сцена відліку: назва міста переноситься лише цілою (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait),
+  (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .sceneCity {
+    white-space: nowrap;
+  }
+}

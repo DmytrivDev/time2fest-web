@@ -11,6 +11,8 @@
 import { useTranslations } from 'next-intl';
 import { useId } from 'react';
 import { cn } from '@/components/primitives/cn';
+import home from '@/components/live/home.module.css';
+import { useTabletLandscape, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { Flag } from '@/components/primitives/Flag';
 import { PostcardArt } from '@/components/windows/StampArt';
 import type { Country, Ms } from '@/lib/data/types';
@@ -35,10 +37,15 @@ export interface CountdownSceneProps {
 export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
+  // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
+  // один текстовий вузол, як і досі (телефон і десктоп піксель у піксель).
+  const tabletPortrait = useTabletPortrait();
+  const tabletLandscape = useTabletLandscape();
+  const tablet = tabletPortrait || tabletLandscape;
+  const title = `${country.name.uk} · ${cityName}`;
   const now = useNow({ granularity: 'minute' });
   // До гідратації «зараз» невідоме (0): місцевий час не показуємо як справжній.
   const local = now > 0 ? formatClock(now + offsetMinutes * 60_000, { timeZone: 'UTC' }) : '––:––';
-  const title = `${country.name.uk} · ${cityName}`;
   const traditions = country.howTo.traditions.slice(0, 3);
 
   return (
@@ -60,7 +67,13 @@ export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, v
           </span>
           <div className="min-w-0">
             <h2 id={titleId} className="text-headline-sm text-text @lg:text-headline-lg">
-              {title}
+              {tablet ? (
+                <>
+                  {country.name.uk} · <span className={home.sceneCity}>{cityName}</span>
+                </>
+              ) : (
+                title
+              )}
             </h2>
             {variant === 'expected' ? (
               <p className="text-caption text-text @lg:text-body">{t('expected')}</p>

@@ -18,7 +18,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatDockControls } from '@/components/chat/ChatDock';
 import { useChatDock } from '@/stores/chatDock';
-import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
+import { useChatColumn, useOverlay, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useOpenMyEmotion } from '@/components/windows/Emoji';
 import { FirstRowInfo } from '@/components/windows/FirstRowInfo';
 import { FirstRowMore } from '@/components/windows/FirstRowMore';
@@ -265,6 +265,8 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
   const reduced = useReducedMotion();
   const overlay = useOverlay();
   const column = useChatColumn();
+  // Планшет-портрет (`Tab-P-New`, кадр 6): смуга під відео відкриває шторку «Що дає „Перший ряд“», а не розгортається.
+  const tabletPortrait = useTabletPortrait();
   // Розгортання смуги «Перший ряд» на телефоні згортає чат (рішення 2026-10-27).
   const dockExpanded = useChatDock((st) => st.expanded);
   const { collapse } = useChatDockControls();
@@ -396,6 +398,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       headingLevel={headingLevel}
       onToggle={column ? undefined : collapseChat}
       dockBar={dockBar && !column}
+      onBarOpen={dockBar && !column && tabletPortrait && !blocker && (view.state === 'empty' || view.state === 'open' || view.state === 'last3') ? () => openInfoFor(event) : undefined}
       defaultOpen={!(dockBar && !column)}
       className={className}
     />

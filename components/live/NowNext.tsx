@@ -20,8 +20,11 @@ export interface NowNextProps {
   items: readonly EventCardData[];
   /** Пояс глядача для підпису: «Київ». */
   zoneLabel: string;
-  /** `carousel` — десктоп · `stack` — телефон: 4 картки і «Показати ще N». */
-  layout?: 'carousel' | 'stack';
+  /**
+   * `carousel` — десктоп · `stack` — телефон: 4 картки і «Показати ще N» · `grid` — планшет-портрет (дошка `Tab-P-New`,
+   * 2026-11-10): картки десктопа сіткою по 3, 6 карток і «Ще N подій», фільтр у рядку заголовка.
+   */
+  layout?: 'carousel' | 'stack' | 'grid';
   /** Фільтр «Лише з трансляціями»: керований або з початковим значенням. */
   filterLiveOnly?: boolean;
   defaultFilterLiveOnly?: boolean;
@@ -95,7 +98,10 @@ export function NowNext({
   const filter: Filter = filterLiveOnly === undefined ? innerFilter : filterLiveOnly ? 'live' : innerFilter === 'mine' ? 'mine' : 'all';
   const liveOnly = filter === 'live';
   const mineOnly = filter === 'mine' && !scheduleLocked;
-  const stack = layout === 'stack';
+  const grid = layout === 'grid';
+  // Сітка планшета поводиться як стопка телефона (ліміт, «Ще N подій», «Країни й пояси ›»), лише картки — десктопні.
+  const stack = layout === 'stack' || grid;
+  const limit = grid ? Math.max(stackLimit, 6) : stackLimit;
   // Стрілки стрічки — у рядку заголовка праворуч (рішення власника): видно з початку, ніколи не над картками.
   const strip = useCarousel();
   // Макет `Main`: стрічка починається з події в ефірі (минулі — лише в «Список» мапи й на сторінках країн).
@@ -111,7 +117,7 @@ export function NowNext({
     return [...past.slice(Math.max(0, past.length - keepPast)), ...rest];
   }, [now, items, liveOnly, mineOnly, keepPast, airEventId, currentOnly]);
 
-  const shown = stack && !expanded ? visible.slice(0, stackLimit) : visible;
+  const shown = stack && !expanded ? visible.slice(0, limit) : visible;
   const hidden = visible.length - shown.length;
 
   const scheduleCount = useMemo(() => withStatus(now, items).filter((i) => i.inSchedule && !isPastStatus(i.status)).length, [now, items]);
@@ -122,7 +128,7 @@ export function NowNext({
   };
 
   const card = (item: (typeof visible)[number]) => (
-    <EventCard key={item.id} {...item} layout={stack ? 'stack' : 'carousel'} onAir={item.id === airEventId} onToggleSchedule={onToggleSchedule} />
+    <EventCard key={item.id} {...item} layout={stack && !grid ? 'stack' : 'carousel'} onAir={item.id === airEventId} onToggleSchedule={onToggleSchedule} />
   );
 
   let body;
@@ -147,7 +153,7 @@ export function NowNext({
   } else if (stack) {
     body = (
       <>
-        <ol aria-label={t('listLabel')} className={s.stack}>
+        <ol aria-label={t('listLabel')} className={grid ? s.grid : s.stack}>
           {shown.map((item) => (
             <li key={item.id}>{card(item)}</li>
           ))}
@@ -189,7 +195,7 @@ export function NowNext({
       scheduleLocked={scheduleLocked}
       scheduleCount={scheduleCount}
       hideLive={currentOnly}
-      className={cn(stack && s.filterFull)}
+      className={cn(stack && !grid && s.filterFull)}
     />
   );
 
@@ -197,11 +203,13 @@ export function NowNext({
     <section aria-labelledby={titleId} data-now-next="" data-layout={layout} className={cn(s.section, className)}>
       <SectionHeader
         id={titleId}
+        className={s.head}
         title={title ?? tNav('nowAndNext')}
         meta={currentOnly ? undefined : t('meta', { zone: zoneLabel })}
         action={
           <div className="flex items-center gap-4">
-            {stack ? null : filterControl}
+            {/* Обгортка без власного блока (`display: contents`); у планшеті-альбомі — окремий рядок під заголовком (T2). */}
+            {stack && !grid ? null : <span className={s.filterSlot}>{filterControl}</span>}
             {!stack && !loading && visible.length > 0 ? (
               <span className="flex items-center gap-1">
                 <CarouselArrow dir="prev" size="md" label={tCarousel('prevEvents')} disabled={!strip.canPrev} onClick={strip.prev} />
@@ -211,7 +219,7 @@ export function NowNext({
           </div>
         }
       />
-      {stack ? filterControl : null}
+      {stack && !grid ? filterControl : null}
       {lockedMine ? (
         <div role="status" data-row="mine-locked" className={cn(s.lockedBar, stack && s.lockedBarStack)}>
           <Icon name="lock" size={18} className="mt-0.5 shrink-0 text-highlight" />

@@ -137,6 +137,38 @@ export function useChatColumn(): boolean {
   return useSyncExternalStore(subscribeColumn, getColumn, () => false);
 }
 
+/**
+ * Планшет у портреті (768–1199, рішення власника 2026-11-10, дошка `Tab-P-New`): власний одноколонковий макет —
+ * структура телефона (чат — шторка знизу), але поля 32 px і картки сіткою. Той самий запит, що в CSS-модулях.
+ */
+export const TABLET_PORTRAIT_QUERY = '(min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait)';
+function subscribeTabletPortrait(cb: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
+  const mq = window.matchMedia(TABLET_PORTRAIT_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+const getTabletPortrait = () =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(TABLET_PORTRAIT_QUERY).matches : false;
+export function useTabletPortrait(): boolean {
+  return useSyncExternalStore(subscribeTabletPortrait, getTabletPortrait, () => false);
+}
+
+/** Планшет в альбомі (768–1199, крім телефона в альбомі; дошка `Tab-L-New`, 2026-11-10). */
+export const TABLET_LANDSCAPE_QUERY =
+  '(min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse)))';
+function subscribeTabletLandscape(cb: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
+  const mq = window.matchMedia(TABLET_LANDSCAPE_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+const getTabletLandscape = () =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(TABLET_LANDSCAPE_QUERY).matches : false;
+export function useTabletLandscape(): boolean {
+  return useSyncExternalStore(subscribeTabletLandscape, getTabletLandscape, () => false);
+}
+
 function CoralClaim() {
   useRegisterCoral();
   return null;

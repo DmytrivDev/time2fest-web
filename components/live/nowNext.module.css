@@ -676,3 +676,60 @@
   padding: 12px 0;
   border-top: 1px solid var(--color-border-strong);
 }
+
+/* ── Планшет (рішення власника 2026-11-10, `tablet-concept-2026-11-10.md`) ──────────────────────────────────────────── */
+.filterSlot {
+  display: contents;
+}
+/* Портрет (`Tab-P-New`): картки десктопа сіткою по 3, фільтр у рядку заголовка; під сіткою «Ще N подій» і «Країни й пояси ›». */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  margin: var(--spacing-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.grid > li {
+  display: flex;
+  min-width: 0;
+}
+.grid .card[data-layout='carousel'] {
+  flex: 1;
+  width: auto;
+}
+.grid .card[data-layout='carousel'] .link {
+  height: 100%;
+}
+.grid + .stackFoot {
+  margin-top: var(--spacing-2);
+}
+/* Альбом (`Tab-L-New`, T2): перемикач «Усі · З трансляціями · Мій графік» — другим рядком під «Зараз і далі за вашим
+   часом», стрілки ‹ › праворуч від заголовка; у стрічці видно рівно три картки. */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .section[data-layout='carousel'] .head {
+    flex-wrap: wrap;
+    row-gap: var(--spacing-1);
+  }
+  .section[data-layout='carousel'] .head > div:last-child,
+  .section[data-layout='carousel'] .head > div:last-child > div {
+    display: contents;
+  }
+  .section[data-layout='carousel'] .head > div:first-child {
+    flex: 1;
+  }
+  .section[data-layout='carousel'] .filterSlot {
+    display: flex;
+    flex-basis: 100%;
+    order: 3;
+  }
+  .section[data-layout='carousel'] :global(.t2f-carousel-viewport) {
+    container-type: inline-size;
+  }
+  .section[data-layout='carousel'] :global(.t2f-carousel-track) {
+    gap: var(--spacing-4);
+  }
+  .section[data-layout='carousel'] .card[data-layout='carousel'] {
+    width: calc((100cqw - 2 * var(--spacing-4)) / 3);
+  }
+}

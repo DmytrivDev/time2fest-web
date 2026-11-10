@@ -9,6 +9,7 @@ import { useId } from 'react';
 import { useTranslations } from 'next-intl';
 import { Accordion } from '@/components/primitives/Accordion';
 import { cn } from '@/components/primitives/cn';
+import live from './live.module.css';
 
 export interface FaqItem {
   id: string;
@@ -35,7 +36,7 @@ export function Faq({ items, columns = 1, className }: FaqProps) {
         {tNav('faq')}
       </h2>
       {columns === 2 ? (
-        <div className="grid gap-3 lg:grid-cols-2 lg:items-start">
+        <div className={cn('grid gap-3 lg:grid-cols-2 lg:items-start', live.faqGrid)}>
           <Accordion items={toData(items.slice(0, half))} />
           {items.length > half ? <Accordion items={toData(items.slice(half))} /> : null}
         </div>

@@ -45,7 +45,7 @@ import { cn } from '@/components/primitives/cn';
 import { Link } from '@/components/primitives/Link';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
+import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
@@ -142,6 +142,8 @@ export function CountryLive({ iso }: { iso: string }) {
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const chatColumn = useChatColumn();
+  // Планшет-портрет (`Tab-P-New`, 2026-11-10): «Зараз і далі» — сіткою карток, як на головній.
+  const tabletPortrait = useTabletPortrait();
   const ready = useTimeReady();
   const now = useNow();
   const known = ready && now > 0;
@@ -476,8 +478,9 @@ export function CountryLive({ iso }: { iso: string }) {
         <NowNext
           items={nowNext}
           zoneLabel={zoneLabel}
-          layout={chatColumn ? 'carousel' : 'stack'}
+          layout={chatColumn ? 'carousel' : tabletPortrait ? 'grid' : 'stack'}
           progress={progress}
+          mapHref={tabletPortrait ? '/countries/' : undefined}
           onToggleSchedule={passWindows.requestSchedule}
           scheduleLocked={!hasPass}
           onScheduleLocked={passWindows.openPassInfoBoard}
@@ -580,7 +583,7 @@ export function CountryLive({ iso }: { iso: string }) {
                 {tHead('stamp')}
               </p>
             )}
-            <p className={home.watchers}>
+            <p className={cn(home.watchers, home.watchersPhone)}>
               <Icon name="globe" size={14} strokeWidth={2} />
               {tPlayer('watchersShort', { count: viewers.length })}
             </p>

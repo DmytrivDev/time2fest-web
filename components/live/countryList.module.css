@@ -13,6 +13,13 @@
     padding-top: 0; /* верх — на рівні з чатом (власник 2026-11-07) */
   }
 }
+/* Планшет-портрет: поля 32 px дає LiveShell (сторінка без плеєра). */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .page {
+    padding-inline: 0;
+    padding-top: 0;
+  }
+}
 
 .head {
   display: flex;

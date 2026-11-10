@@ -26,6 +26,7 @@ import { FIRSTROW_SALE_CLOSE } from '@/lib/engine/config';
 import { formatPrice } from '@/lib/firstrow/format';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
+import { useTabletLandscape } from '@/components/shell/OverlayManager';
 import home from '@/components/live/home.module.css';
 import fr from './firstRow.module.css';
 import type { FirstRowChatRowProps, FirstRowStripProps } from './types';
@@ -52,10 +53,13 @@ export function FirstRowStrip({
   blocked,
   defaultOpen = true,
   dockBar = false,
+  onBarOpen,
   className,
 }: FirstRowStripProps) {
   const t = useTranslations('firstRow');
   const now = useNow({ granularity: 'minute' });
+  // Планшет-альбом (`Tab-L-New`, T3): модуль компактно. Поза ним розмітка не змінюється (телефон і десктоп — як і досі).
+  const tl = useTabletLandscape() && layout === 'module';
   const compact = layout === 'compact';
   const [open, setOpen] = useState(defaultOpen);
   const Heading = headingLevel === 2 ? 'h2' : 'h3';
@@ -95,12 +99,31 @@ export function FirstRowStrip({
     />
   );
 
+  // Планшет-альбом (`Tab-L-New`, T3, 2026-11-10): у назві лише пояс («Перший ряд · UTC+0»), міста — рядком нижче
+  // перед ціною. На інших ширинах ті самі частини стоять поруч — текст як і досі «Перший ряд · UTC+0 · Лондон, Лісабон».
+  const citySep = tl ? city.indexOf(' · ') : -1;
+  const zonePart = citySep > 0 ? city.slice(0, citySep) : city;
+  const citiesPart = citySep > 0 ? city.slice(citySep + 3) : '';
+  // Міста — у прихованій для очей частині назви (для зчитувача назва повна).
+  const moduleHeading = citiesPart ? (
+    <>
+      {t('heading', { city: zonePart })}
+      <span className="sr-only"> · {citiesPart}</span>
+    </>
+  ) : (
+    t('heading', { city })
+  );
+
   const leftSpoken = <span className="sr-only">{t('leftSpoken', { free: view.freeCount, total: view.total })}</span>;
 
   // ── Позначка біля назви (десктоп) ──────────────────────────────────────
   let meta: ReactNode = null;
   if (state === 'empty') {
-    meta = (
+    meta = tl ? (
+      <span data-row="counter" className={fr.meta}>
+        <b className={cn(fr.strong, fr.tlPill)}>{t('allFreeMeta', { total: view.total })}</b>
+      </span>
+    ) : (
       <span data-row="counter" className={fr.meta}>
         · <b className={fr.strong}>{t('allFreeMeta', { total: view.total })}</b> — {t('allFreeTail')}
       </span>
@@ -120,11 +143,17 @@ export function FirstRowStrip({
   } else if (!after && (sellable || state === 'mine' || state === 'restrained')) {
     meta = (
       <span data-row="counter" className={fr.meta}>
-        <span aria-hidden="true">
-          {t('leftPrefix')} <b className={cn(fr.strong, hot && fr.hot)}>{t('leftValue', { free: view.freeCount, total: view.total })}</b>
-        </span>
+        {tl ? (
+          <span aria-hidden="true">
+            <b className={cn(fr.strong, hot && fr.hot, fr.tlPill)}>{t('leftValue', { free: view.freeCount, total: view.total })}</b>
+          </span>
+        ) : (
+          <span aria-hidden="true">
+            {t('leftPrefix')} <b className={cn(fr.strong, hot && fr.hot)}>{t('leftValue', { free: view.freeCount, total: view.total })}</b>
+          </span>
+        )}
         {leftSpoken}
-        {hot && view.freeCount === 1 ? <b className={cn(fr.hot, 'ms-2.5')}>{t('lastSeat')}</b> : null}
+        {hot && view.freeCount === 1 && !tl ? <b className={cn(fr.hot, 'ms-2.5')}>{t('lastSeat')}</b> : null}
       </span>
     );
   }
@@ -267,7 +296,12 @@ export function FirstRowStrip({
             id={headingId}
             aria-expanded={open}
             aria-controls={panelId}
+            {...(onBarOpen ? { 'aria-haspopup': 'dialog' as const } : {})}
             onClick={() => {
+              if (onBarOpen) {
+                onBarOpen();
+                return;
+              }
               setOpen((v) => !v);
               onToggle?.();
             }}
@@ -276,7 +310,13 @@ export function FirstRowStrip({
             {dockBar ? <Icon name="ticket" size={16} className="shrink-0 text-highlight" /> : null}
             <span className={fr.heading}>{t('heading', { city })}</span>
             {pill}
+            {onBarOpen && sellable && !blockedNow && view.freeCount === 1 ? <span className={fr.barLast}>{t('lastSeat')}</span> : null}
             <span className={fr.spacer} />
+            {onBarOpen && sellable && !blockedNow && price.current !== null ? (
+              <span data-row="bar-price" className={fr.barPrice}>
+                {t('price', { price: formatPrice(discounted && price.discounted !== undefined ? price.discounted : price.current) })}
+              </span>
+            ) : null}
             <Icon name={open ? 'chevron-up' : dockBar ? 'chevron-right' : 'chevron-down'} size={18} className="shrink-0 text-text-secondary" />
           </button>
         </Heading>
@@ -358,7 +398,24 @@ export function FirstRowStrip({
   // ── Десктоп ─────────────────────────────────────────────────────────────
   let sub: ReactNode = null;
   if (blockedNow) sub = <span data-row="blocked">{t('blocked', { city: blocked!.city })}</span>;
-  else if (priceNode) sub = priceNode;
+  else if (priceNode)
+    sub = citiesPart ? (
+      <>
+        <span aria-hidden="true" className={fr.tlOnly}>
+          {citiesPart} ·{' '}
+          {view.freeCount === 1 ? (
+            <>
+              <b className={fr.hot}>{t('lastSeat')}</b> ·{' '}
+            </>
+          ) : state === 'empty' ? (
+            <>{t('allFreeTail')} · </>
+          ) : null}
+        </span>
+        {priceNode}
+      </>
+    ) : (
+      priceNode
+    );
   else if (mineLine) sub = mineLine;
   else if (state === 'soldout') sub = <span>{t('soldOutLine')}</span>;
   else if (closedLine) sub = closedLine;
@@ -400,7 +457,7 @@ export function FirstRowStrip({
         <div className={fr.text}>
           <div className={fr.titleLine}>
             <Heading id={headingId} className={fr.heading}>
-              {t('heading', { city })}
+              {moduleHeading}
             </Heading>
             {meta}
           </div>

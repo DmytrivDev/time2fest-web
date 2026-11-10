@@ -584,3 +584,86 @@ button.free:hover {
   background: var(--color-highlight);
   color: var(--color-on-highlight);
 }
+
+/* Планшет-портрет (`Tab-P-New`, 2026-11-10): смуга під рядком часу з полями 32 px, одним рядком — назва, лічильник,
+   «останнє місце», праворуч ціна й ›. */
+.barLast,
+.barPrice {
+  flex: none;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.barLast {
+  font-weight: 700;
+  color: var(--color-highlight);
+}
+.barPrice {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .dockBar {
+    margin: var(--spacing-1) var(--spacing-8) 0;
+    padding-inline: var(--spacing-4);
+  }
+  .dockBar .toggle {
+    min-height: 50px;
+    gap: 10px;
+  }
+  .dockBar .revealFull {
+    margin-inline: calc(-1 * var(--spacing-4));
+  }
+  .dockBar .revealFull .panel {
+    padding-inline: var(--spacing-4);
+  }
+}
+
+/* Планшет-альбом (`Tab-L-New`, T3, 2026-11-10): модуль компактно — рядок 1: «Перший ряд · UTC+0», лічильник-пігулка,
+   праворуч «Що входить» і «Зайняти місце»; рядок 2: міста ряду, останнє місце, ціна, пас, продаж до … (один рядок);
+   рядок 3: чіпи учасників. Розмітку для альбому дає `FirstRowStrip` (`useTabletLandscape`), поза ним — як і досі. */
+.tlOnly {
+  display: none;
+}
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .tlOnly {
+    display: inline;
+  }
+  .tlPill {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 9px;
+    border: 1px solid rgba(252, 226, 134, 0.5); /* дошка */
+    border-radius: var(--radius-full);
+    color: var(--color-highlight);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .top {
+    flex-wrap: nowrap;
+  }
+  .text {
+    flex: 1 1 0;
+  }
+  .titleLine {
+    flex-wrap: nowrap;
+  }
+  .heading {
+    white-space: nowrap;
+  }
+  .subLine {
+    display: block;
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .subLine > span {
+    display: inline;
+  }
+  .subLine > .tlOnly {
+    display: inline;
+  }
+}

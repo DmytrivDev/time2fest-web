@@ -218,6 +218,7 @@ export function PlayerBlock({
               mode={mode}
               variant="bar"
               lead={barSound}
+              watchers={watchers}
               srRow3={false}
             />
           ) : (

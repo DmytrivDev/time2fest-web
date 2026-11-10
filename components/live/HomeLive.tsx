@@ -38,7 +38,7 @@ import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
-import { OverlayInFlowOutlet, useChatColumn } from '@/components/shell/OverlayManager';
+import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
@@ -106,6 +106,8 @@ export function HomeLive() {
   const { ready, phase, current, next, air, stayHere } = broadcast;
   const now = useNow();
   const chatColumn = useChatColumn();
+  // Планшет-портрет (`Tab-P-New`, 2026-11-10): структура телефона, «Зараз і далі» — сіткою карток.
+  const tabletPortrait = useTabletPortrait();
   const schedule = useGuestStore((s) => s.schedule);
   const eventId = current?.event.id ?? null;
 
@@ -151,13 +153,13 @@ export function HomeLive() {
       <ZoneMap {...mapModel} onToggleSchedule={passWindows.requestSchedule} />
     </div>
   );
-  const nowNext = (layout: 'carousel' | 'stack') => (
+  const nowNext = (layout: 'carousel' | 'stack' | 'grid') => (
     <NowNext
       items={items}
       zoneLabel={zoneLabel}
       layout={layout}
       progress={progress}
-      mapHref={layout === 'stack' ? '/countries/' : undefined}
+      mapHref={layout === 'carousel' ? undefined : '/countries/'}
       onToggleSchedule={passWindows.requestSchedule}
       scheduleLocked={!hasPass}
       onScheduleLocked={passWindows.openPassInfoBoard}
@@ -216,7 +218,7 @@ export function HomeLive() {
               <Icon name="globe" size={14} strokeWidth={2} />
               {tPlayer('watchersShort', { count: viewers.length })}
             </p>
-            {nowNext('stack')}
+            {nowNext(tabletPortrait ? 'grid' : 'stack')}
             {map}
           </div>
           <ChatDock room="world" roomLabel={tChat('roomWorld')}>

@@ -1131,3 +1131,45 @@
     font-size: 9px;
   }
 }
+
+/* ── Планшет (рішення власника 2026-11-10, дошки `Tab-P-New` / `Tab-L-New`) ─────────────────────────────────────────── */
+.nextPair {
+  display: contents;
+}
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait),
+  (min-width: 768px) and (max-width: 1199.98px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  /* Наступний штамп: листівка (1/3) і поруч «що робити» (2/3) — замість вузької листівки й окремої смуги під нею. */
+  .nextPair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 16px;
+    align-items: stretch;
+  }
+  .nextPair > .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nextPair .nextBlock {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    align-content: start;
+    gap: 12px;
+    padding: 18px;
+  }
+  .nextPair .nextBlockHead {
+    display: contents;
+  }
+  .nextPair .nextBlockTitle {
+    font-size: 17px;
+  }
+  .nextPair .nextBlockSub {
+    font-size: 14px;
+  }
+  .nextPair .nextChips {
+    grid-column: 2;
+    padding-left: 0;
+  }
+  .nextPair .nextBtns {
+    grid-column: 2;
+    order: 3;
+  }
+}

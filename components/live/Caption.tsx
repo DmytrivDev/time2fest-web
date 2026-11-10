@@ -245,6 +245,13 @@ export function Caption({
             {row3}
           </p>
         ) : null}
+        {/* Планшет-портрет (`Tab-P-New`): «Дивляться люди з 140 країн» праворуч у рядку; на телефоні сховано CSS. */}
+        {watchers ? (
+          <span aria-hidden="true" data-bar-watchers="" className={home.barWatchers}>
+            <Icon name="globe" size={14} strokeWidth={2} />
+            {t('watchersShort', { count: watchers })}
+          </span>
+        ) : null}
         {live && ago === null ? (
           <Badge variant="live" still>
             {tBadge('live')}

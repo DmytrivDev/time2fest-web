@@ -1913,3 +1913,16 @@ html[data-chat-land-expanded] body {
   padding-inline: 0;
   margin-inline-start: -4px; /* оптичне вирівнювання: у стрілки є внутрішній відступ */
 }
+
+/* Планшет-портрет (`Tab-P-New`, кадр 1, 2026-11-10): згорнутий чат-шторка — з полями 32 px, як сторінка. */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .t2f-dock-collapsed {
+    padding: 0 32px;
+  }
+  /* Розгорнутий чат і шторки — теж поля 32 px (16 своїх + 16 тут), як на дошці (кадри 5, 6). */
+  .t2f-dock-body,
+  .t2f-sheet,
+  .t2f-seat-layer .t2f-seat-panel {
+    padding-inline: 16px;
+  }
+}
