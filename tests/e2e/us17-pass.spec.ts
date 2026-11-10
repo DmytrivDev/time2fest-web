@@ -49,6 +49,18 @@ test('оплата поштою: «Чекаємо підтвердження» �
   await expect(active.getByRole('link', { name: 'Допомога' })).toHaveAttribute('href', '/help/');
 });
 
+test('оформлення пасу поштою: прапор за IP одразу в аватарі шапки, без перезавантаження (правка 2026-11-10)', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/pass/');
+  await page.getByRole('textbox', { name: 'Email' }).fill('flag@example.com');
+  await page.getByRole('button', { name: 'Оформити пас — $4,99' }).click();
+  await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
+  // Аватар — круглий прапор під вуаллю (не просто літера на темному тлі).
+  const avatar = page.getByRole('banner').locator('span[style*="background-image"]');
+  await expect(avatar.first()).toHaveAttribute('style', /ua/i);
+  const flag = await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.flagCode);
+  expect(flag).toBe('UA');
+});
+
 /** Старий стан пристрою: пас гостя без входу (до правки 2026-11-10 так лишалось після виходу й скидання). */
 const STALE_GUEST = {
   v: 1,

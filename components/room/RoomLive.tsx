@@ -52,7 +52,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { OverlayInFlowOutlet, useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
+import { OverlayInFlowOutlet, useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
 import { ShareContent } from '@/components/windows/Share';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { SITE_HOST } from '@/lib/config/site';
@@ -158,6 +158,8 @@ export function RoomLive() {
   const data = getData();
   const announce = useAnnounce();
   const overlay = useOverlay();
+  // «Режим вечірки»: телефон і планшет-портрет — `/tv-info/` (2026-11-10).
+  const partyHref = usePartyHref();
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const viewport = useRoomViewport();
@@ -909,7 +911,7 @@ export function RoomLive() {
           icon="monitor"
           variant="ring"
           aria-label={tPlayer('partyMode')}
-          onClick={() => router.push('/tv/')}
+          onClick={() => router.push(partyHref)}
         />
         <IconButton
           icon="more"
@@ -948,7 +950,7 @@ export function RoomLive() {
         </Button>
         <span className={s.spacer} />
         <Button asChild variant="tonal">
-          <NextLink href="/tv/" data-action="party-mode">
+          <NextLink href={partyHref} data-action="party-mode">
             <Icon name="monitor" size={18} />
             {tPlayer('partyMode')}
           </NextLink>

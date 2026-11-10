@@ -23,7 +23,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { SoundToggle, type SoundToggleProps } from '@/components/player/SoundToggle';
 import { IconButton } from '@/components/primitives/IconButton';
-import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
+import { useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
 import { SITE_HOST } from '@/lib/config/site';
 import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
 import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
@@ -118,6 +118,8 @@ export function ActionRow({
 }: ActionRowProps) {
   const t = useTranslations('player');
   const overlay = useOverlay();
+  // «Режим вечірки»: телефон і планшет-портрет — `/tv-info/` (2026-11-10).
+  const partyHref = usePartyHref();
   const remote = mode === 'remote';
   const stay = button === 'stay-here';
   const label = stay ? t('stayHere') : t('chooseStream');
@@ -244,7 +246,7 @@ export function ActionRow({
           </NextLink>
         </Button>
         <Button asChild variant="tonal" className={home.tonal}>
-          <NextLink href="/tv/" data-action="party-mode">
+          <NextLink href={partyHref} data-action="party-mode">
             <Icon name="monitor" size={18} className={home.accentIcon} />
             {t('partyMode')}
           </NextLink>

@@ -1,7 +1,7 @@
 /**
  * Планшет (рішення власника 2026-11-10, `tablet-concept-2026-11-10.md`, дошки `Tab-P-New` / `Tab-L-New`):
  * - портрет 834 × 1194 (опорна): власний одноколонковий макет — поля 32 px, «Зараз і далі» сіткою по 3, «Дивляться люди»
- *   у рядку часу, смуга «Перший ряд» відкриває шторку; кегль кореня 16 px;
+ *   у рядку часу, смуга «Перший ряд» розгортається з учасниками (2026-11-10); кегль кореня 16 px;
  * - альбом 1024 × 768 (опорна): двоколонковий; перемикач «Зараз і далі» — другим рядком і не накриває підпис (T2);
  *   наступний штамп — листівка й «що робити» поруч.
  * Вікно задає сам файл, тож він іде лише в проєкті `desktop`.
@@ -51,7 +51,7 @@ const noHScroll = (page: Page) => page.evaluate(() => document.documentElement.s
 test.describe('портрет 834 × 1194', () => {
   test.use({ viewport: { width: 834, height: 1194 }, hasTouch: true });
 
-  test('головна: кегль 16 px, «Зараз і далі» сіткою по 3, «Дивляться люди» в рядку часу, «Перший ряд» — шторка', async ({ page }) => {
+  test('головна: кегль 16 px, «Зараз і далі» сіткою по 3, «Дивляться люди» в рядку часу, «Перший ряд» розгортається', async ({ page }) => {
     await seed(page);
     await gotoAt(page, AT, 1, '/');
     expect(await rootPx(page)).toBe(16);
@@ -71,11 +71,15 @@ test.describe('портрет 834 × 1194', () => {
     expect(Math.abs(seg!.y + seg!.height / 2 - (head!.y + head!.height / 2))).toBeLessThan(12);
     await expect(page.locator('[data-bar-watchers]')).toBeVisible();
     expect(await noHScroll(page)).toBe(true);
-    // Смуга «Перший ряд» одним рядком з ціною; натиск — вікно «Що дає „Перший ряд“» (шторка до низу відео).
-    const bar = page.locator('[data-first-row-strip] button[aria-haspopup="dialog"]').first();
+    // Смуга «Перший ряд» одним рядком з ціною; натиск розгортає її з учасниками, як на телефоні (правка власника
+    // 2026-11-10: раніше — вікно «Що дає „Перший ряд“»).
+    const bar = page.locator('[data-first-row-strip] button[aria-expanded]').first();
     await expect(bar).toContainText('Місце $');
+    await expect(bar).not.toHaveAttribute('aria-haspopup', 'dialog');
     await bar.click();
-    await expect(page.getByText('Що дає «Перший ряд»').first()).toBeVisible();
+    await expect(bar).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('[data-first-row-strip][data-open="true"]')).toBeVisible();
+    await expect(page.locator('[data-seat-layer]:not([hidden])')).toHaveCount(0);
   });
 
   test('паспорт: поля 32 px (вада T1), наступний штамп і «що робити» поруч', async ({ page }) => {

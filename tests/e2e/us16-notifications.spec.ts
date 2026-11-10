@@ -24,7 +24,8 @@ test('дзвіночок → список: нові, «Прочитати все
   await expect(list.getByRole('heading', { name: 'Нові · 3' })).toBeVisible();
   if (test.info().project.name !== 'phone') await expect(page.locator('#chat-slot [data-block="notif-list"]')).toBeVisible();
   await list.getByRole('button', { name: 'Прочитати все' }).click();
-  await expect(list.getByRole('heading', { name: 'Раніше' })).toBeVisible();
+  // Поки вікно відкрите — група лишається («Нові» без числа), без стрибка (правка 2026-11-10).
+  await expect(list.getByRole('heading', { name: 'Нові', exact: true })).toBeVisible();
   await expect(bell(page)).toHaveAttribute('aria-label', 'Сповіщення');
   await list.getByRole('button', { name: 'Налаштувати' }).click();
   const settings = page.locator('[data-block="notif-settings"]');
@@ -74,4 +75,36 @@ test('клік по сповіщенню: вікно відкрите, доки 
   await expect(list).toHaveCount(0);
   const closedAt = await page.evaluate(() => (window as unknown as { __notifClosedAt?: string }).__notifClosedAt);
   expect(closedAt).toMatch(/^\/passport/);
+});
+
+test('«Прочитати все» — без стрибка: перший рядок і заголовок групи на тому самому місці (правка 2026-11-10)', async ({ page, ytStub }) => {
+  void ytStub;
+  await gotoAt(page, '2027-01-01T01:38:00+02:00', 0);
+  await page.evaluate(() => localStorage.removeItem('t2f:notif:v1'));
+  await page.evaluate(() => (window as unknown as { __t2f: { setNotifications(n: number): void } }).__t2f.setNotifications(4));
+  await page.evaluate(() => {
+    // Одне вже прочитане — є й група «Раніше» (саме вона раніше перестрибувала вгору).
+    const raw = JSON.parse(localStorage.getItem('t2f:notif:v1')!);
+    raw.state.items[3].read = true;
+    localStorage.setItem('t2f:notif:v1', JSON.stringify(raw));
+  });
+  await page.reload();
+  await waitForTimeApi(page);
+  await bell(page).click();
+  const list = page.locator('[data-block="notif-list"]');
+  await expect(list.getByRole('heading', { name: 'Нові · 3' })).toBeVisible();
+  // Дочекатися кінця анімації відкриття шторки чи панелі.
+  await page.waitForTimeout(800);
+  const boxes = () =>
+    list.evaluate((el) =>
+      [...el.querySelectorAll('[data-notif], h3')].map((n) => {
+        const r = n.getBoundingClientRect();
+        return [Math.round(r.top), Math.round(r.height)];
+      }),
+    );
+  const before = await boxes();
+  await list.getByRole('button', { name: 'Прочитати все' }).click();
+  await expect(bell(page)).toHaveAttribute('aria-label', 'Сповіщення');
+  await page.waitForTimeout(400);
+  expect(await boxes()).toEqual(before);
 });

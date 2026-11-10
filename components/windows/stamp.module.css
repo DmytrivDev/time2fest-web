@@ -181,3 +181,40 @@
     flex: none;
   }
 }
+
+/* Планшет-портрет (правка власника 2026-11-10): з листівкою 340 px текстова колонка була вузька — назва рвалась
+   «Фернанду-ді- / Норонья», кнопки тиснулись. Тут колонки ~ навпіл (текст трохи ширший), «Новий штамп у паспорті» —
+   над обома, кнопки одна під одною на всю ширину колонки; назва переноситься лише цілими словами (`.word`). */
+.word {
+  white-space: normal;
+}
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .card {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      'head head'
+      'body art'
+      'rate rate';
+    column-gap: 24px;
+    padding: 20px 24px 22px 30px;
+  }
+  .head {
+    padding-right: 40px;
+  }
+  .body {
+    align-self: center;
+  }
+  .title {
+    font-size: 26px;
+  }
+  .word {
+    white-space: nowrap;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .actions > * {
+    width: 100%;
+  }
+}

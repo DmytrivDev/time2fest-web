@@ -5,11 +5,14 @@
  * відео. Список: «Нові · N» і «Прочитати все», нижче «Раніше» (приглушені). Кожне — значок свого кольору (з
  * прапором), назва, коротко, час, одна дія; клік — туди й «прочитано». «Налаштувати» — другий рівень того ж вікна
  * (`NotifSettings`, вона ж у кабінеті): «Усі сповіщення» і кожен тип. Порожньо — «Поки тихо».
+ * Без стрибків (правка власника 2026-11-10): поки вікно відкрите, групи не перебудовуються — те, що було новим при
+ * відкритті, лишається в групі «Нові» (після «Прочитати все» заголовок — просто «Нові»), а позначка «нове» (крапка)
+ * лише гасне, не звільняючи місця. Розкладка не змінюється — змінюється тільки колір рядків (плавно, `t2f-transition`).
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
@@ -73,7 +76,8 @@ function Item({ n, onGo }: { n: Notif; onGo?: (href: string) => void }) {
           <span className={s.itemBody}>{t(`${k}.text`, n.params)}</span>
           <span className={s.action}>{t(`${k}.action`, n.params)}</span>
         </span>
-        {n.read ? null : <span className={s.dot} aria-label={t('unread')} />}
+        {/* Крапка лишається на місці й гасне — ширина тексту, а з нею й висота рядка, не змінюються. */}
+        <span className={cn(s.dot, n.read && s.dotOff)} aria-label={n.read ? undefined : t('unread')} aria-hidden={n.read ? true : undefined} />
       </NextLink>
     </li>
   );
@@ -83,8 +87,12 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
   const t = useTranslations('notif');
   const items = useNotifStore((st) => st.items);
   const markAllRead = useNotifStore((st) => st.markAllRead);
-  const fresh = items.filter((x) => !x.read);
-  const earlier = items.filter((x) => x.read);
+  // Нові на момент відкриття вікна — лишаються в групі «Нові», навіть прочитані (див. шапку).
+  const [openedFresh] = useState(() => new Set(useNotifStore.getState().items.filter((x) => !x.read).map((x) => x.id)));
+  const fresh = items.filter((x) => !x.read || openedFresh.has(x.id));
+  const earlier = items.filter((x) => x.read && !openedFresh.has(x.id));
+  const unread = fresh.filter((x) => !x.read).length;
+  const configureRef = useRef<HTMLButtonElement>(null);
 
   // Клік по сповіщенню (власник 2026-11-10): вікно лишається відкритим, доки не відкриється нова сторінка, — без
   // проблиску чату між закриттям і переходом. Посилання на цю ж сторінку — закриваємо одразу.
@@ -115,12 +123,20 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
     <div className={s.body} data-block="notif-list">
       {/* Верхній рядок: «Налаштувати» ліворуч, «Прочитати все» праворуч (коли є нові). */}
       <div className={s.top}>
-        <button type="button" onClick={onSettings} className={cn('t2f-focus t2f-transition', s.configure)}>
+        <button ref={configureRef} type="button" onClick={onSettings} className={cn('t2f-focus t2f-transition', s.configure)}>
           <Icon name="filter" size={16} />
           {t('configure')}
         </button>
-        {fresh.length ? (
-          <button type="button" onClick={markAllRead} className={cn('t2f-focus', s.markAll)}>
+        {unread ? (
+          <button
+            type="button"
+            onClick={() => {
+              markAllRead();
+              // Кнопка зникає — фокус не губиться, а переходить на сусідню.
+              configureRef.current?.focus();
+            }}
+            className={cn('t2f-focus', s.markAll)}
+          >
             {t('markAll')}
           </button>
         ) : null}
@@ -139,7 +155,7 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
             <section aria-labelledby="notif-new">
               <div className={s.groupHead}>
                 <h3 id="notif-new" className={s.groupTitle}>
-                  {t('fresh', { count: fresh.length })}
+                  {t('fresh', { count: unread })}
                 </h3>
               </div>
               <ul className={s.list}>

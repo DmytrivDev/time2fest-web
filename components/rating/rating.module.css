@@ -525,3 +525,17 @@
 .minePill svg {
   fill: currentColor;
 }
+
+/* Планшет-портрет (правка власника 2026-11-10): «Рейтинг у чотирьох числах» у ряд був тісний — сітка 2×2. */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .infoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .infoTile {
+    min-height: 150px;
+    padding: 16px 18px;
+  }
+  .infoText {
+    font-size: 14px;
+  }
+}

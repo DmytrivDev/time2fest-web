@@ -11,8 +11,9 @@
  * Вікна чату (O-NICK, O-AUTHOR, правила, «Моя емоція») відкриваються всередині вікна — у `#chat-dock-slot`.
  * Усі інші вікна (пас, графік, «Перший ряд», «Поділитися», вхід…) — окремий шар поверх сторінки (`#seat-dock-slot`,
  * рішення 2026-10-29 і 2026-11-04), не пов’язаний із вікном чату: чат під ним лишається таким, яким був, і не рухається.
- * Два види шторок, обидва без затемнення: вікна чату, відкриті при згорнутому чаті, — до смуги «Перший ряд» (як сам чат);
- * решта — вищі, до самого відео (накривають рядок часу й смугу). Альбом — на весь екран; з клавіатурою — видима область
+ * Два види шторок, обидва без затемнення (верх — `lib/overlay/sheetTop.ts`, одне правило сайту, 2026-11-10): вікна чату,
+ * відкриті при згорнутому чаті, — до смуги «Перший ряд» (як сам чат); решта — вищі, до самого відео (накривають рядок часу
+ * й смугу). Альбом — на весь екран; з клавіатурою — видима область
  * над нею. З шару в чат не перейти — лише закрити: свайп униз з ручки чи шапки, дотик до ручки, «×», Esc. Розгорнути шар
  * не можна — він відкривається лише кнопкою «Зайняти місце».
  */
@@ -34,8 +35,9 @@ import {
 } from 'react';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_DOCK_SLOT_ID, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
-import { CLOSE_MS, isSeatSpec, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
+import { CLOSE_MS, isSeatSpec, notifyOverlaySlots, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
+import { measureSheetTop, SHEET_TOP_SOURCES, stableViewportH } from '@/lib/overlay/sheetTop';
 import type { RoomId } from '@/lib/data/types';
 import { useNow } from '@/lib/time/TimeProvider';
 import { formatCount, useChatUi, useHiddenCount, useRepliesToMe } from '@/stores/chat';
@@ -61,52 +63,6 @@ const ZONE = '[data-dock-grip], .t2f-dock-grip-handle';
 const SEAT_ZONE = '.t2f-seat-grip, [data-seat-layer] [data-board-header]';
 /** Скільки протягнути шар униз (px), щоб він закрився, якщо відпустили повільно. */
 const SEAT_CLOSE_PX = 80;
-
-/**
- * Стабільна висота екрана — `100svh` (найменша: з видимою адресною стрічкою). Висота вікна на телефоні змінюється,
- * коли під час прокрутки ховається адресна стрічка; від неї висота чату стрибала б (рішення 2026-10-28).
- */
-function stableViewportH(): number {
-  if (typeof document === 'undefined') return 0;
-  const probe = document.createElement('div');
-  probe.style.cssText = 'position:fixed;top:0;height:100svh;width:0;visibility:hidden;pointer-events:none';
-  document.body.appendChild(probe);
-  const h = probe.getBoundingClientRect().height || window.innerHeight;
-  probe.remove();
-  return h;
-}
-
-/**
- * Нижній край того, що лишається видимим над вікном: відео, рядок часу, смуга «Перший ряд». `video` — лише відео
- * (висока шторка: пас, графік, «Поділитися»… накривають рядок часу й смугу).
- */
-function measureTop(video = false): number {
-  let bottom = 0;
-  // Кімната перегляду: над чатом і шторками завжди лишається вся сітка вікон (з мініатюрою згорнутого вікна).
-  const column = document.querySelector<HTMLElement>('[data-video-column]');
-  if (column) bottom = column.getBoundingClientRect().bottom;
-  else if (video) {
-    const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
-    if (slot) bottom = slot.getBoundingClientRect().bottom;
-  } else
-    document.querySelectorAll<HTMLElement>('[data-dock-above]').forEach((el) => {
-      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
-    });
-  if (!bottom) {
-    const slot = document.querySelector<HTMLElement>('[data-player-slot="main"]');
-    if (slot) bottom = slot.getBoundingClientRect().bottom;
-    else {
-      // Сторінка без плеєра («Країни й міста»): шторки й чат — на тому рівні, де було б відео 16:9 під шапкою (правка
-      // власника 2026-11-04), а не одразу під шапкою: над шторкою лишається видно сторінку, її зручно гортати.
-      const header = document.querySelector<HTMLElement>('header');
-      const top = header ? header.getBoundingClientRect().bottom : 0;
-      bottom = top + Math.round((window.innerWidth * 9) / 16);
-    }
-  }
-  // Положення на початку сторінки (не за прокруткою): нічого не липне, чат займає місце під смугою при scrollTop = 0.
-  // +2 px: нижня рамка смуги «Перший ряд» лишається видно над шторкою (правка власника 2026-11-02).
-  return Math.max(0, Math.min(Math.round(bottom + window.scrollY) + 2, Math.max(0, stableViewportH() - 240)));
-}
 
 /**
  * Телефон-альбом: усе, що лишається над чатом (відео, рядок часу, смуга «Перший ряд»), — прямі діти `<main>`; беремо
@@ -224,6 +180,12 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const kbOpen = open && kbUp;
   const landFlow = land && open;
 
+  // Контейнери вікон (`#chat-dock-slot`, `#seat-dock-slot`) з’явились чи зникли — OverlayManager перемальовує портали.
+  useLayoutEffect(() => {
+    notifyOverlaySlots();
+    return notifyOverlaySlots;
+  }, []);
+
   // Згорнутий з першого показу: нові рахуємо від завантаження сторінки.
   const hiddenAt = useChatUi((s) => s.hiddenAt);
   const markHidden = useChatUi((s) => s.markHidden);
@@ -316,8 +278,8 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     // Сторінка не блокується й нічого не липне: чат фіксований унизу, його висота — місце під смугою при scrollTop = 0
     // (міряємо при розгортанні й зміні розміру, за прокруткою не слідуємо).
     const measure = () => {
-      setTop(measureTop());
-      setVideoTop(measureTop(true));
+      setTop(measureSheetTop('chat'));
+      setVideoTop(measureSheetTop('video'));
     };
     measure();
     const frame = requestAnimationFrame(measure);
@@ -330,7 +292,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     };
     window.addEventListener('resize', onResize);
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
-    document.querySelectorAll('[data-dock-above], [data-player-slot="main"]').forEach((el) => ro?.observe(el));
+    document.querySelectorAll(SHEET_TOP_SOURCES).forEach((el) => ro?.observe(el));
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', onResize);
@@ -490,7 +452,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     const inCollapsedRow = !!target.closest('.t2f-dock-collapsed');
     if (!inCollapsedRow && !target.closest(ZONE)) return;
     const collapsedH = !expanded && el.offsetHeight ? el.offsetHeight : COLLAPSED_ROW + 12;
-    const expandedH = Math.max(collapsedH + 1, stableViewportH() - (expanded ? top : measureTop()));
+    const expandedH = Math.max(collapsedH + 1, stableViewportH() - (expanded ? top : measureSheetTop('chat')));
     dragRef.current = {
       id: e.pointerId,
       startY: e.clientY,
@@ -516,7 +478,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     if (!d.moved) {
       if (Math.abs(dy) < MOVE_THRESHOLD) return;
       d.moved = true;
-      if (d.startH <= d.collapsedH + 1) setTop(measureTop());
+      if (d.startH <= d.collapsedH + 1) setTop(measureSheetTop('chat'));
       e.currentTarget.setPointerCapture(e.pointerId);
     }
     const dt = e.timeStamp - d.lastT;

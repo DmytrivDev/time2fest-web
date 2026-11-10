@@ -185,6 +185,14 @@
   margin-top: 6px;
   border-radius: 50%;
   background: #d92d20;
+  transition: opacity 0.2s ease;
+}
+/* Прочитане: крапка гасне, місце лишається (без стрибка розкладки). */
+.dotOff {
+  opacity: 0;
+}
+[data-reduce-motion='true'] .dot {
+  transition: none;
 }
 .empty {
   display: flex;

@@ -17,6 +17,7 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Textarea } from '@/components/primitives/Textarea';
+import { usePartyHref } from '@/components/shell/OverlayManager';
 import s from './streamPicker.module.css';
 
 export const MORE_ACTIONS_ID = 'O-MORE-ACTIONS';
@@ -201,13 +202,15 @@ function Item({ icon, title, sub, muted, ...rest }: { icon: IconName; title: str
 export function MoreActionsList({ target, onReport }: { target: ShareTarget; onReport(): void }) {
   const t = useTranslations('player.more');
   const tp = useTranslations('player');
+  // Телефон і планшет-портрет — `/tv-info/` (2026-11-10).
+  const partyHref = usePartyHref();
   return (
     <ul data-window={MORE_ACTIONS_ID} className="m-0 flex list-none flex-col px-3 pb-4 pt-1">
       <li>
         <Item href="/room/" icon="grid4" title={tp('roomOpen')} sub={t('roomSub')} />
       </li>
       <li>
-        <Item href="/tv/" icon="monitor" title={tp('partyMode')} sub={t('partySub')} />
+        <Item href={partyHref} icon="monitor" title={tp('partyMode')} sub={t('partySub')} />
       </li>
       <li aria-hidden="true" className={s.divider} />
       <li>

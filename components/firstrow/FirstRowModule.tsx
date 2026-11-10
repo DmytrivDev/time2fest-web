@@ -265,7 +265,8 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
   const reduced = useReducedMotion();
   const overlay = useOverlay();
   const column = useChatColumn();
-  // Планшет-портрет (`Tab-P-New`, кадр 6): смуга під відео відкриває шторку «Що дає „Перший ряд“», а не розгортається.
+  // Планшет-портрет (`Tab-P-New`, кадр 1): у згорнутій смузі — ціна; натиск розгортає смугу з учасниками, як на телефоні
+  // (правка власника 2026-11-10: раніше відкривалось вікно «Що дає „Перший ряд“»).
   const tabletPortrait = useTabletPortrait();
   // Розгортання смуги «Перший ряд» на телефоні згортає чат (рішення 2026-10-27).
   const dockExpanded = useChatDock((st) => st.expanded);
@@ -398,7 +399,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
       headingLevel={headingLevel}
       onToggle={column ? undefined : collapseChat}
       dockBar={dockBar && !column}
-      onBarOpen={dockBar && !column && tabletPortrait && !blocker && (view.state === 'empty' || view.state === 'open' || view.state === 'last3') ? () => openInfoFor(event) : undefined}
+      barSummary={dockBar && !column && tabletPortrait}
       defaultOpen={!(dockBar && !column)}
       className={className}
     />

@@ -4,15 +4,16 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dialog, RadioGroup, VisuallyHidden } from 'radix-ui';
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
+import { useRef, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
 import { useHeaderUser } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Logo } from '@/components/primitives/Logo';
-import { usePlayerBottom } from '@/components/primitives/Sheet';
 import { Switch } from '@/components/primitives/Switch';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
+import { useSheetTop } from '@/lib/overlay/sheetTop';
+import { usePartyHref } from './OverlayManager';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { HeaderAvatar } from './Header';
@@ -53,20 +54,6 @@ export interface MenuProps {
   /** Керований «Зменшити рух» (історії, тести); без нього — стор гостя. */
   reducedMotion?: boolean;
   onReducedMotionChange?: (value: boolean) => void;
-}
-
-/** Верх шторки на телефоні: низ плеєра, а без плеєра — шапка + 16:9 (стандарт шторок, 2026-11-04). */
-function usePhoneSheetTop(open: boolean): number | undefined {
-  const playerBottom = usePlayerBottom(open);
-  const [fallback, setFallback] = useState<number | undefined>(undefined);
-  useEffect(() => {
-    if (!open) return;
-    const update = () => setFallback(56 + Math.round((window.innerWidth * 9) / 16));
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [open]);
-  return playerBottom > 0 ? playerBottom : fallback;
 }
 
 function Row({
@@ -174,6 +161,8 @@ export function MenuBody({
   const close = onClose;
   // Перехід на сторінку: у вікні `O-MENU` меню лишається відкритим, у Radix-варіанті — закривається.
   const navigate = keepOpenOnNavigate ? () => undefined : close;
+  // «Режим вечірки»: телефон і планшет-портрет — інформаційна сторінка `/tv-info/` (2026-11-10).
+  const partyHref = usePartyHref();
 
   return (
     <div className={ms.content} data-menu-body="">
@@ -286,7 +275,7 @@ export function MenuBody({
         </Section>
         <Section title={t('sectionWatch')}>
           <Row href="/room/" icon="grid4" title={t('room')} hint={t('roomHint')} current={here('/room/')} onNavigate={navigate} />
-          <Row href="/tv/" icon="tv" title={t('partyMode')} hint={t('partyHint')} onNavigate={navigate} />
+          <Row href={partyHref} icon="tv" title={t('partyMode')} hint={t('partyHint')} current={here('/tv-info/')} onNavigate={navigate} />
           <Row href="/rating/" icon="star" title={t('rating')} current={here('/rating/')} onNavigate={navigate} />
         </Section>
         <Section title={t('sectionMore')}>
@@ -333,7 +322,7 @@ export function MenuBody({
 
 /**
  * Бічне вікно поза `(live)` (службові сторінки, пас, вхід, 404) — Radix Dialog: десктоп — панель праворуч під шапкою,
- * телефон — шторка до низу відео / шапки + 16:9 без затемнення, планшет — на весь екран. Спільне для меню й сповіщень.
+ * телефон і планшет-портрет — шторка до низу відео / шапки + 16:9 без затемнення (2026-11-10), планшет-альбом — на весь екран. Спільне для меню й сповіщень.
  */
 export function SideDialog({
   open,
@@ -354,7 +343,8 @@ export function SideDialog({
 }) {
   const t = useTranslations('menu');
   const th = useTranslations('header');
-  const top = usePhoneSheetTop(open);
+  // Телефон і планшет-портрет — шторка; верх — за правилом сайту (під відео / шапка + 16:9, 2026-11-10).
+  const top = useSheetTop('video', open);
   // Вікно відкривається без Dialog.Trigger (кнопка — у хедері), тож Radix не знає, куди повернути фокус:
   // запам’ятовуємо елемент з фокусом до відкриття й повертаємо на нього після закриття (WCAG 2.4.3).
   const returnFocus = useRef<HTMLElement | null>(null);

@@ -7,7 +7,7 @@ import { useGuestStore } from '@/stores/guest';
 import { renderApp } from './render';
 
 const push = vi.fn();
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push }), usePathname: () => '/' }));
 
 function OpenSideWindow() {
   const { open } = useOverlay();

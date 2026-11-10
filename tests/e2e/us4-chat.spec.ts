@@ -113,7 +113,14 @@ test.describe('US4 · чат свята', () => {
     await startChat(page, QUIET, 10);
     await setNick(page, 'Мирон');
     const log = page.getByRole('log').first();
-    await log.evaluate((el) => (el.scrollTop = 0));
+    // Шторка чату на телефоні ще розкривається (висота за правилом шторок) — стрічка «липне» до кінця, доки висота
+    // не встановилась; прокручуємо вгору, доки не з’явиться пауза.
+    await expect
+      .poll(async () => {
+        await log.evaluate((el) => (el.scrollTop = 0));
+        return page.locator('[data-row="paused"]').count();
+      })
+      .toBe(1);
     // Примітка про паузу — лише для зчитувача (на макеті видно тільки капсулу «Нові повідомлення N ↓»).
     await expect(page.locator('[data-row="paused"]')).toHaveText('Стрічку зупинено — читай у своєму темпі');
     await advance(page, 5 * 60_000);

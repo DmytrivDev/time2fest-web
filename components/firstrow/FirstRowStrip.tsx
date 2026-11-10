@@ -53,7 +53,7 @@ export function FirstRowStrip({
   blocked,
   defaultOpen = true,
   dockBar = false,
-  onBarOpen,
+  barSummary = false,
   className,
 }: FirstRowStripProps) {
   const t = useTranslations('firstRow');
@@ -296,12 +296,7 @@ export function FirstRowStrip({
             id={headingId}
             aria-expanded={open}
             aria-controls={panelId}
-            {...(onBarOpen ? { 'aria-haspopup': 'dialog' as const } : {})}
             onClick={() => {
-              if (onBarOpen) {
-                onBarOpen();
-                return;
-              }
               setOpen((v) => !v);
               onToggle?.();
             }}
@@ -310,9 +305,10 @@ export function FirstRowStrip({
             {dockBar ? <Icon name="ticket" size={16} className="shrink-0 text-highlight" /> : null}
             <span className={fr.heading}>{t('heading', { city })}</span>
             {pill}
-            {onBarOpen && sellable && !blockedNow && view.freeCount === 1 ? <span className={fr.barLast}>{t('lastSeat')}</span> : null}
+            {/* Планшет-портрет: «останнє місце» й ціна — у згорнутій смузі; розгорнута показує їх у тілі. */}
+            {barSummary && !open && sellable && !blockedNow && view.freeCount === 1 ? <span className={fr.barLast}>{t('lastSeat')}</span> : null}
             <span className={fr.spacer} />
-            {onBarOpen && sellable && !blockedNow && price.current !== null ? (
+            {barSummary && !open && sellable && !blockedNow && price.current !== null ? (
               <span data-row="bar-price" className={fr.barPrice}>
                 {t('price', { price: formatPrice(discounted && price.discounted !== undefined ? price.discounted : price.current) })}
               </span>

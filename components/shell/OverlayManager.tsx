@@ -13,7 +13,12 @@
  * `closeOn` — події шини (`lib/events/bus`), після яких вікно закривається саме (напр. оцінка — після `moment:rate-close`).
  * Шторки на телефоні (`seat`, `sheet`) закриваються плавно (рішення 2026-11-02): закрите вікно ще `CLOSE_MS` лишається
  * в `closing` і їде вниз; нове вікно чи зменшений рух прибирають його одразу.
+ * Перехід на іншу сторінку без колонки чату (телефон, планшет-портрет) закриває шторку одразу (правка власника 2026-11-10):
+ * вікно чату й шар шторок належать сторінці, тож на новій сторінці відкрита шторка була б порожньою.
+ * Верх шторок — одне правило сайту за видом (`lib/overlay/sheetTop.ts`): вікна чату (`inChat`) — під смугою «Перший ряд»,
+ * решта — під відео.
  */
+import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
 import { Sheet } from '@/components/primitives/Sheet';
@@ -51,6 +56,8 @@ export interface OverlaySpec {
   onClose?: () => void;
   /** Вікно другого рівня (шапка `board`): зверху «‹ Назад» і «×», нижче — назва (рішення 2026-11-01, «Ще дії»). */
   onBack?: () => void;
+  /** Сторінка, на якій вікно відкрито (`location.pathname`); ставить сам менеджер у `open`. */
+  openedAt?: string;
 }
 
 /**
@@ -79,6 +86,12 @@ export interface OverlayApi {
   open(spec: OverlaySpec): void;
   /** Без `id` закриває будь-яке відкрите вікно; з `id` — лише якщо відкрите саме воно. */
   close(id?: string): void;
+}
+
+/** Подія: на сторінці з’явились чи зникли контейнери шторок (`ChatDock`) — менеджер перемальовує розміщення. */
+const SLOTS_EVENT = 't2f:overlay-slots';
+export function notifyOverlaySlots(): void {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(SLOTS_EVENT));
 }
 
 function dockSlotExists(id = CHAT_DOCK_SLOT_ID): boolean {
@@ -169,6 +182,24 @@ export function useTabletLandscape(): boolean {
   return useSyncExternalStore(subscribeTabletLandscape, getTabletLandscape, () => false);
 }
 
+/** Телефон (портрет чи альбом) або планшет-портрет: режиму вечірки тут немає — посилання ведуть на `/tv-info/`. */
+const PARTY_INFO_QUERY = `(max-width: 767.98px), ${TABLET_PORTRAIT_QUERY}, ${PHONE_LANDSCAPE_QUERY}`;
+function subscribePartyInfo(cb: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
+  const mq = window.matchMedia(PARTY_INFO_QUERY);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+const getPartyInfo = () =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PARTY_INFO_QUERY).matches : false;
+/**
+ * Куди веде «Режим вечірки» (меню, «⋯», футер, рядок дій, кімната; правка власника 2026-11-10): телефон і планшет-портрет —
+ * інформаційна сторінка `/tv-info/`, десктоп і планшет-альбом — сам режим `/tv/`.
+ */
+export function usePartyHref(): '/tv/' | '/tv-info/' {
+  return useSyncExternalStore(subscribePartyInfo, getPartyInfo, () => false) ? '/tv-info/' : '/tv/';
+}
+
 function CoralClaim() {
   useRegisterCoral();
   return null;
@@ -208,7 +239,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
         window.clearTimeout(closingTimer.current);
         setClosing(null);
       }
-      set({ ...spec, separate: keep ?? separate });
+      set({ ...spec, separate: keep ?? separate, openedAt: window.location.pathname });
       if (prev && prev.id !== spec.id) prev.onClose?.();
     },
     [set, chatColumn],
@@ -229,6 +260,26 @@ export function OverlayManager({ children }: OverlayManagerProps) {
     },
     [set],
   );
+
+  // Перехід на іншу сторінку (телефон, планшет-портрет): шторку закриваємо одразу, без виїзду. Вікно, яке нова сторінка
+  // відкрила сама (уже на новій адресі), лишається.
+  const pathname = usePathname();
+  useEffect(() => {
+    const cur = ref.current;
+    if (chatColumn || !cur || cur.kind === 'inflow' || cur.openedAt === window.location.pathname) return;
+    window.clearTimeout(closingTimer.current);
+    setClosing(null);
+    set(null);
+    cur.onClose?.();
+  }, [pathname, chatColumn, set]);
+
+  // Контейнери шторок (`ChatDock`) змонтувались заново (нова сторінка): розміщення й портал — у нові контейнери.
+  const [, bumpSlots] = useState(0);
+  useEffect(() => {
+    const onSlots = () => bumpSlots((n) => n + 1);
+    window.addEventListener(SLOTS_EVENT, onSlots);
+    return () => window.removeEventListener(SLOTS_EVENT, onSlots);
+  }, []);
 
   // Події шини, що закривають поточне вікно.
   const closeOnKey = current?.closeOn?.join('|') ?? '';
@@ -289,6 +340,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           boardHeader={sheetSpec.chrome === 'board'}
           onBack={sheetSpec.onBack}
           authorHeader={sheetSpec.chrome === 'author'}
+          kind={sheetSpec.inChat ? 'chat' : 'video'}
         >
           {sheetSpec.content}
         </Sheet>

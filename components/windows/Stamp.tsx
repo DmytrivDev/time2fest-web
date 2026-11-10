@@ -13,7 +13,7 @@
  * (кнопка звуку стає нейтральною); alt листівки = текст штампа.
  */
 import { useTranslations } from 'next-intl';
-import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -161,7 +161,15 @@ export function Stamp({
                 <Flag key={s.flagCode + (s.eventId ?? s.city)} round code={s.flagCode} size="md" decorative />
               ))}
             </span>
-            <span>{placesShort}</span>
+            {/* Слова — окремо: на планшеті назва переноситься лише цілими словами, не на дефісі (2026-11-10). */}
+            <span>
+              {placesShort.split(' ').map((w, i) => (
+                <Fragment key={i}>
+                  {i > 0 ? ' ' : null}
+                  <span className={st.word}>{w}</span>
+                </Fragment>
+              ))}
+            </span>
           </h2>
           <p className={st.sub}>{t('subline', { country: countries })}</p>
         </div>

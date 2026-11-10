@@ -21,6 +21,7 @@ import type {
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { clearMapHintSeen } from '@/lib/storage/mapHint';
 import { replaceCountryZone, toggleCountryZone } from '@/lib/schedule/countryZone';
+import { detectFlag } from '@/lib/geo/detectFlag';
 
 export const GUEST_STORAGE_KEY = 't2f:guest:v1';
 export const GUEST_VERSION = 1 as const;
@@ -65,6 +66,11 @@ export interface GuestActions {
   setNick(nick: string, flagCode?: string): void;
   setFlag(flagCode: string): void;
   setDetectedFlag(flagCode: string | undefined): void;
+  /**
+   * Прапор профілю заданий одразу (правка власника 2026-11-10): немає обраного — береться визначений за IP (`detectFlag`).
+   * Викликається при кожному вході й створенні акаунта (`stores/auth.ts`), щоб шапка, кабінет і чат показували прапор без затримки.
+   */
+  ensureProfileFlag(): void;
   setConsent(patch: Partial<Omit<GuestConsent, 'necessary' | 'answered'>>): void;
   setReducedMotion(v: boolean): void;
   setChatHidden(v: boolean): void;
@@ -143,6 +149,15 @@ export const useGuestStore = create<GuestStore>()(
       setNick: (nick, flagCode) => set(flagCode ? { nick, flagCode } : { nick }),
       setFlag: (flagCode) => set({ flagCode }),
       setDetectedFlag: (detectedFlag) => set({ detectedFlag }),
+      ensureProfileFlag: () => {
+        const s = get();
+        const detected = s.detectedFlag ?? detectFlag();
+        if (!detected) return;
+        const patch: Partial<GuestState> = {};
+        if (!s.detectedFlag) patch.detectedFlag = detected;
+        if (!s.flagCode) patch.flagCode = detected;
+        if (Object.keys(patch).length > 0) set(patch);
+      },
       setConsent: (patch) => set((s) => ({ consent: { ...s.consent, ...patch, necessary: true, answered: true } })),
       setReducedMotion: (reducedMotion) => set({ reducedMotion }),
       setChatHidden: (chatHidden) => set({ chatHidden }),

@@ -10,6 +10,9 @@
  * Пас на пристрої — лише пас акаунта, що увійшов (правка власника 2026-11-10): без входу паса немає, вихід його
  * знімає, вхід в акаунт без пасу його не дає. `syncDevicePass` тримає `guest.hasPass` = «увійшов і акаунт з пасом»
  * після відновлення зі сховища, входу, виходу й оформлення пасу.
+ * Прапор профілю (правка власника 2026-11-10): кожен вхід і створення акаунта (пас на `/pass/`, Google, пошта, посилання з
+ * листа, «Перший ряд» з подарунковим пасом — усе через `signIn`) одразу задає прапор за IP, якщо людина ще не обрала свій
+ * (`guest.ensureProfileFlag`); так само після відновлення входу зі сховища. Інакше аватар у шапці був літерою без прапора.
  */
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -106,6 +109,8 @@ export const useAuthStore = create<AuthStore>()(
     (set, get) => {
       const signIn = (email: string, via: AuthUser['via'], now: number): SignInResult => {
         const isNew = !get().accounts.includes(email);
+        // Прапор — до входу: шапка, що підпишеться на `user`, одразу має прапор.
+        useGuestStore.getState().ensureProfileFlag();
         set((s) => ({ user: { email, via, signedInAt: now }, accounts: isNew ? [...s.accounts, email] : s.accounts }));
         // Пас на пристрої — пас цього акаунта: є — вмикається, немає — вимикається.
         syncDevicePass(get());
@@ -173,7 +178,9 @@ export const useAuthStore = create<AuthStore>()(
       merge: (persisted, current) => ({ ...current, ...(persisted as Partial<AuthData>), passes: (persisted as Partial<AuthData> | undefined)?.passes ?? {} }),
       // Після відновлення (і синхронізації вкладок): пас гостя без входу, що лишився від старого стану, знімається.
       onRehydrateStorage: () => (state) => {
-        if (state) syncDevicePass(state);
+        if (!state) return;
+        syncDevicePass(state);
+        if (state.user) useGuestStore.getState().ensureProfileFlag();
       },
     },
   ),
