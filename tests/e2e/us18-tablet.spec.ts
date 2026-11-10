@@ -101,6 +101,30 @@ test.describe('портрет 768 × 1024', () => {
     expect(await rootPx(page)).toBe(14.75);
     expect(await noHScroll(page)).toBe(true);
   });
+
+  test('кімната з 4 вікнами: кожен плеєр не менший за 200×200 px (кегль кореня менший — мінімум сталий)', async ({ page }) => {
+    await page.addInitScript(() => {
+      const w = (slot: number, sourceId: string, eventId: string) => ({ slot, sourceId, eventId });
+      const room = {
+        windows: [
+          w(0, 'src_london_1', 'evt_london_2027'),
+          w(1, 'src_london_2', 'evt_london_2027'),
+          w(2, 'src_london_3', 'evt_london_2027'),
+          w(3, 'src_paris_2', 'evt_paris_2027'),
+        ],
+        soundSlot: 0,
+      };
+      const state = { v: 1, id: 'g-e2e-tablet-room', nightId: '2026-27', room };
+      if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));
+    });
+    await gotoAt(page, '2027-01-01T01:50:00+02:00', 0, '/room/');
+    const slots = page.locator('[data-player-slot^="room:"]');
+    await expect(slots).toHaveCount(3);
+    for (const b of await slots.evaluateAll((els) => els.map((e) => e.getBoundingClientRect().toJSON()))) {
+      expect(b.width).toBeGreaterThanOrEqual(200);
+      expect(b.height).toBeGreaterThanOrEqual(200);
+    }
+  });
 });
 
 test.describe('альбом 1024 × 768', () => {

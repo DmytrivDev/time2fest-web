@@ -45,7 +45,8 @@
   --spacing-touch-min: 44px;
   --spacing-tv-safe-x: 96px;
   --spacing-tv-safe-y: 54px;
-  --spacing-player-min-height: 200px;
+  /* Політика YouTube: плеєр не менше 200×200 справжніх px — `PX` великими, щоб pxtorem не перевів у rem і мінімум не зменшувався разом із кеглем кореня. */
+  --spacing-player-min-height: 200PX;
   --spacing-bp-tablet: 768px;
   --spacing-bp-desktop: 1200px;
   --font-sans: 'Manrope', system-ui, sans-serif;
