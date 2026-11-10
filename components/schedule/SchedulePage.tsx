@@ -293,7 +293,8 @@ export function SchedulePage() {
 
   const zoneLabel = ready ? viewerZoneLabel() : '';
   return (
-    <div className={s.page} data-schedule-page="">
+    // `data-skeleton` — поки час не відомий (статичний HTML до гідратації): той самий маркер, що в `loading.tsx` (2026-11-10).
+    <div className={s.page} data-schedule-page="" data-skeleton={ready ? undefined : 'schedule'}>
       <header className={s.top}>
         <h1 className={s.h1}>{t('title')}</h1>
         {hasPass ? (

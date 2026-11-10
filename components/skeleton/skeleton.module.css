@@ -1,0 +1,292 @@
+/* Скелетони сторінок (2026-11-10): спільні бруски, плеєр і згорнутий чат. Розміри брусків — з JS у rem (змінні `--h`,
+   `--w`, `--mt` для телефона; `…t` — планшет-портрет; `…w` — альбом і десктоп, де чат праворуч). Межі — як у макеті:
+   телефон < 768; планшет-портрет 768–1199 portrait; альбом 768–1199 і десктоп ≥ 1200 (колонка чату). */
+
+.root {
+  display: block;
+  min-width: 0;
+}
+
+/* Сторінка без плеєра: поля телефона (планшет-портрет і ширше — поля дає макет `(live)`). */
+.pad {
+  padding: 16px 16px 0;
+}
+@media (min-width: 768px) {
+  .pad {
+    padding: 0;
+  }
+}
+
+/* Брусок: заливка з відблиском; висота, ширина й відступ згори — змінні. */
+.box {
+  display: block;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  max-width: 100%;
+  height: var(--h, 16px);
+  width: var(--w, 100%);
+  margin-top: var(--mt, 0);
+  border-radius: var(--radius-sm);
+}
+.line {
+  border-radius: var(--radius-sm);
+}
+.btn {
+  border-radius: var(--radius-md);
+}
+.card {
+  border-radius: var(--radius-lg);
+}
+.pill {
+  border-radius: 999px;
+}
+/* Брусок усередині картки — світліший, щоб читався на поверхні картки. */
+.raised {
+  background-color: var(--color-surface-raised);
+}
+
+/* Картка з брусками всередині: поверхня + рамка, внутрішні поля. */
+.frame {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+  height: var(--h, auto);
+  margin-top: var(--mt, 0);
+  padding: var(--p, 16px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+/* Ряд: бруски в рядок по центру, проміжок 8. */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--g, 8px);
+  min-width: 0;
+  box-sizing: border-box;
+  height: var(--h, auto);
+  margin-top: var(--mt, 0);
+}
+/* Ряд з полями сторінки з плеєром: телефон 16, планшет-портрет 32, ширше — без полів (їх дає макет). */
+.inset {
+  padding-inline: 16px;
+}
+/* Кімната: на планшеті-портреті сторінка має ще власні поля 16/32 (усередині полів макета). */
+.roomPad {
+  padding: 0;
+}
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .roomPad {
+    padding: 16px 32px 0;
+  }
+}
+/* Липкий рядок під відео (кнопка звуку з краю): телефон 8, планшет-портрет 32. */
+.insetBar {
+  padding-inline: 8px 12px;
+}
+@media (min-width: 768px) {
+  .inset,
+  .insetBar {
+    padding-inline: 32px;
+  }
+}
+.grow {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.wrapGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr));
+  gap: var(--g, 12px);
+  margin-top: var(--mt, 0);
+}
+
+/* Плеєр 16:9 — як справжній (≥ 200 px); на телефоні й планшеті-портреті на всю ширину без заокруглень. */
+.player {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: var(--spacing-player-min-height);
+  border-radius: 0;
+}
+
+/* Згорнутий чат унизу (телефон і планшет-портрет) — на місці `ChatDock` (58 px, ручка, «Розгорнути чат», лічильник). */
+.dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 30;
+  height: calc(46px + max(12px, env(safe-area-inset-bottom)));
+  box-sizing: border-box;
+  padding: 7px 16px 0;
+  border-top: 1px solid #3c3c44; /* як у `.t2f-dock` */
+  border-radius: 16px 16px 0 0;
+  background: var(--color-surface);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+}
+.dockHandle {
+  display: block;
+  width: 36px;
+  height: 4px;
+  margin: 0 auto 4px;
+  border-radius: 2px;
+  background: var(--color-border-strong);
+}
+@media (min-width: 768px) {
+  .dock {
+    padding-inline: 32px;
+  }
+}
+
+/* Знизу кабінету на телефоні й планшеті-портреті — плаваюча смуга розділів. */
+.floatBar {
+  position: fixed;
+  inset-inline: 12px;
+  bottom: 14px;
+  z-index: 30;
+  height: 52px;
+  border-radius: var(--radius-lg);
+}
+
+/* --- Видимість за макетом: обгортки з `display: contents` (бруски всередині розкладаються як без обгортки). --- */
+.onlyPhone,
+.notTp,
+.notWide {
+  display: contents;
+}
+.onlyTp,
+.onlyWide,
+.notPhone {
+  display: none;
+}
+
+/* Планшет-портрет. */
+@media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .box {
+    height: var(--ht, var(--hw, var(--h, 16px)));
+    width: var(--wt, var(--ww, var(--w, 100%)));
+    margin-top: var(--mtt, var(--mtw, var(--mt, 0)));
+  }
+  .frame {
+    height: var(--ht, var(--hw, var(--h, auto)));
+    margin-top: var(--mtt, var(--mtw, var(--mt, 0)));
+    padding: var(--pt, var(--pw, var(--p, 16px)));
+  }
+  .row {
+    height: var(--ht, var(--hw, var(--h, auto)));
+    margin-top: var(--mtt, var(--mtw, var(--mt, 0)));
+  }
+  .wrapGrid {
+    grid-template-columns: repeat(var(--colst, var(--colsw, var(--cols, 1))), minmax(0, 1fr));
+    margin-top: var(--mtt, var(--mtw, var(--mt, 0)));
+  }
+  .onlyPhone,
+  .onlyWide,
+  .notTp {
+    display: none !important;
+  }
+  .onlyTp,
+  .notPhone {
+    display: contents;
+  }
+}
+
+/* Альбом і десктоп: колонка чату праворуч (той самий запит, що `CHAT_COLUMN_QUERY`). */
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .box {
+    height: var(--hw, var(--h, 16px));
+    width: var(--ww, var(--w, 100%));
+    margin-top: var(--mtw, var(--mt, 0));
+  }
+  .frame {
+    height: var(--hw, var(--h, auto));
+    margin-top: var(--mtw, var(--mt, 0));
+    padding: var(--pw, var(--p, 16px));
+  }
+  .row {
+    height: var(--hw, var(--h, auto));
+    margin-top: var(--mtw, var(--mt, 0));
+  }
+  .inset,
+  .insetBar {
+    padding-inline: 0;
+  }
+  .wrapGrid {
+    grid-template-columns: repeat(var(--colsw, var(--cols, 1)), minmax(0, 1fr));
+    margin-top: var(--mtw, var(--mt, 0));
+  }
+  .player {
+    border-radius: var(--player-block-radius-desktop);
+  }
+  .onlyPhone,
+  .onlyTp,
+  .notWide {
+    display: none !important;
+  }
+  .onlyWide,
+  .notPhone {
+    display: contents;
+  }
+  .dock,
+  .floatBar {
+    display: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .notPhone {
+    display: none !important;
+  }
+}
+
+/* Лише десктоп (≥ 1200): кнопки, яких немає в альбомі планшета. */
+.onlyDesk {
+  display: none;
+}
+@media (min-width: 1200px) {
+  .onlyDesk {
+    display: contents;
+  }
+}
+
+/* --- Службові сторінки (поза `(live)`) --- */
+.fill {
+  flex: 1 1 auto;
+  width: 100%;
+}
+/* Герой пасу: телефон — квиток над текстом по центру (362 px); від 1024 — квиток ліворуч, текст праворуч (257 px). */
+.passHero {
+  height: 362px;
+}
+.passHeroIn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.passHeroText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .passHero {
+    height: 257px;
+  }
+  .passHeroIn {
+    flex-direction: row;
+    gap: 36px;
+    height: 100%;
+  }
+  .passHeroText {
+    align-items: flex-start;
+  }
+}
+/* Шапка-скелетон: капсула «моє» — брусок на її місці. */
+.headerMine {
+  margin-inline: 4px;
+}

@@ -122,17 +122,22 @@ for (const vp of [
       // Меню → «Країни й міста».
       await menuButton(page).click();
       await openSheet(page).first().getByRole('link', { name: /Країни/ }).first().click();
-      await expect(page).toHaveURL(/\/countries\/?/);
+      // Сервер розробки компілює `loading.tsx` сегмента на першому переході (скелетони, 2026-11-11): під навантаженням довше 5 с.
+      await expect(page).toHaveURL(/\/countries\/?/, { timeout: 20_000 });
       await page.waitForTimeout(600);
       await expect(openSheet(page)).toHaveCount(0);
       // Відкрите меню й перехід посиланням зі сторінки (картка країни).
+      // Сторінка вже не скелетон: картки країн на місці (під навантаженням — не одразу).
+      await expect
+        .poll(() => page.evaluate(() => [...document.querySelectorAll('main a[href^="/country/"]')].some((x) => x.getBoundingClientRect().height > 0)))
+        .toBe(true);
       await menuButton(page).click();
       await expect(openSheet(page).first()).toBeVisible();
       await page.evaluate(() => {
         const a = [...document.querySelectorAll<HTMLAnchorElement>('main a[href^="/country/"]')].find((x) => x.getBoundingClientRect().height > 0);
         a?.click();
       });
-      await expect(page).toHaveURL(/\/country\//);
+      await expect(page).toHaveURL(/\/country\//, { timeout: 20_000 });
       await page.waitForTimeout(600);
       await expect(openSheet(page)).toHaveCount(0);
       // Назад — теж без шторки.

@@ -69,7 +69,14 @@ export function AuthPage({ mode }: { mode: AuthIntent }) {
   const onExit = useCallback(() => router.push(returnPath()), [router]);
 
   return (
-    <main id="main" tabIndex={-1} className={cn(s.main, 'focus:outline-none')} data-page={mode === 'signup' ? 'S-AUTH-signup' : 'S-AUTH'}>
+    <main
+      id="main"
+      tabIndex={-1}
+      className={cn(s.main, 'focus:outline-none')}
+      data-page={mode === 'signup' ? 'S-AUTH-signup' : 'S-AUTH'}
+      // Поки не розібрано `?link=` (статичний HTML до гідратації) — той самий маркер, що в `loading.tsx` (2026-11-10).
+      data-skeleton={start ? undefined : mode === 'signup' ? 'signup' : 'login'}
+    >
       <BackLink href={exitHref} />
       {/* Поки не розібрано `?link=`, показуємо форму (той самий вигляд, що в статичному HTML). */}
       <Flow key={start ? 'ready' : 'boot'} mode={mode} start={start ?? {}} onSignedIn={onSignedIn} onExit={onExit} exitHref={exitHref} />

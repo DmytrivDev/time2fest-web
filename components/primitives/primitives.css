@@ -1403,6 +1403,14 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 :root[data-reduce-motion='true'] .t2f-dock {
   transition: none;
 }
+/* До гідратації сервер малює телефонну розкладку (колонки чату ще «немає»): на макетах із колонкою чату праворуч
+   (той самий запит, що `CHAT_COLUMN_QUERY`) згорнутий чат унизу не показуємо — після гідратації його там і так немає
+   (2026-11-10, скелетони). */
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .t2f-dock {
+    display: none;
+  }
+}
 .t2f-dock-collapsed {
   position: absolute;
   inset-inline: 0;

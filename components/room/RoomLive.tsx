@@ -19,6 +19,7 @@
  * дій), заміна — 6 с у смузі вікна. Кімната повна → «Що замінити?» у колонці чату / шторці (лише там).
  * Телефон: розгорнутий чат при 2 вікнах згортає вікно без звуку (пауза); горизонтально — два вікна поруч (CSS).
  */
+import { RoomSkeleton } from '@/components/skeleton/LiveSkeletons';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NextLink from 'next/link';
@@ -992,6 +993,10 @@ export function RoomLive() {
   const zone = roomZoneId ? data.zonesById.get(roomZoneId) : undefined;
   const zoneMidnight = liveRows[0]?.midnightMs ?? mainEvent?.midnightMs;
   const roomCtx = useMemo(() => ({ toggle: toggleFromCard }), [toggleFromCard]);
+
+  // До готовності часу (статичний HTML до гідратації) сервер не знає ні розміру екрана, ні вікон кімнати — показував
+  // 2×2 порожніх вікон і на телефоні. Тепер — той самий скелетон, що при переході (`room/loading.tsx`, 2026-11-10).
+  if (!known) return <RoomSkeleton />;
 
   return (
     <RoomPageContext.Provider value={roomCtx}>

@@ -1,0 +1,273 @@
+/* Сітка скелетонів службових сторінок (2026-11-10): копія розмірів із модулів сторінок (`header`, `auth`, `pass`, `legal`,
+   `about`). Модулі сторінок сюди не імпортуємо: ті самі правила в другому CSS-чанку міняють порядок каскаду на справжній
+   сторінці (так на `/pass/` розкривалась панель «телефонного» акордеона на десктопі). Змінили сітку сторінки — змініть і тут. */
+
+/* --- Шапка (`header.module.css`): телефон 56, ширше 64 px; навігація — від 1200. --- */
+.header {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--header-background);
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  max-width: var(--spacing-content-max);
+  height: var(--header-height-mobile);
+  margin: 0 auto;
+  padding: 0 4px 0 var(--spacing-4);
+}
+.logo {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-height: var(--spacing-touch-min);
+}
+.logo img {
+  display: block;
+  width: 112px;
+  height: auto;
+}
+.nav,
+.deskOnly {
+  display: none;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.text {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: var(--spacing-touch-min);
+  padding: 0 10px;
+}
+.mine {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+.pass {
+  margin-right: 4px;
+}
+@media (min-width: 768px) {
+  .bar {
+    height: var(--header-height-desktop);
+    padding: 0 var(--spacing-6) 0 var(--spacing-8);
+  }
+  .logo {
+    flex: none;
+    margin-right: 28px;
+  }
+  .logo img {
+    width: 150px;
+  }
+  .pass {
+    margin-right: 14px;
+  }
+  .mine {
+    height: 48px;
+    padding: 0 4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: #17171a;
+  }
+}
+@media (min-width: 1200px) {
+  .nav {
+    display: flex;
+    align-self: stretch;
+    gap: var(--spacing-1);
+  }
+  .navLink {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    color: var(--color-text-secondary);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .navLink[aria-current='page'] {
+    color: var(--color-text);
+    box-shadow: inset 0 -2px 0 var(--color-text);
+  }
+  .deskOnly {
+    display: inline-flex;
+  }
+}
+
+/* --- Вхід і реєстрація (`auth.module.css`). --- */
+.authMain {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 4px 16px 0;
+}
+.authBack {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  min-height: 44px;
+  margin-left: -6px;
+  padding: 0 6px;
+}
+.authLayout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.authSide {
+  display: none;
+}
+.authCard {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1024px) {
+  .authMain {
+    padding: 12px 32px 0;
+  }
+  .authLayout {
+    flex-direction: row;
+    gap: 48px;
+    align-items: stretch;
+    max-width: 1040px;
+    margin: 32px auto 0;
+  }
+  .authSide {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .authCard {
+    flex: 0 0 440px;
+    box-sizing: border-box;
+    padding: 32px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-surface);
+  }
+}
+
+/* --- Пас (`pass.module.css`): від 1024 — сітка «вміст | оформлення 340». --- */
+.passMain {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px var(--spacing-margin-mobile) 0;
+}
+.passCard {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.passPerks {
+  display: flex;
+  flex-direction: column;
+  margin-top: 28px;
+}
+@media (min-width: 768px) and (max-width: 1023.98px) and (orientation: portrait) {
+  .passMain {
+    padding: var(--spacing-6) var(--spacing-8) 0;
+  }
+}
+@media (min-width: 1024px) {
+  .passMain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    column-gap: 24px;
+    align-items: start;
+    padding: var(--spacing-6) var(--spacing-margin-desktop) 0;
+  }
+  .passMain > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+  .passMain > .passCard {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    margin-top: 0;
+    height: calc(100dvh - 104px);
+    min-height: 560px;
+    max-height: 840px;
+  }
+}
+
+/* --- Службові сторінки (`legal.module.css`): до 1024 — смуга «Зміст», від 1024 — сайдбар 280 ліворуч. --- */
+.legalMain {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.legalLayout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.legalBody {
+  min-width: 0;
+}
+.legalBar {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .legalMain {
+    padding: 32px 32px 0;
+  }
+}
+@media (max-width: 1023.98px) {
+  .legalLayout {
+    display: block;
+  }
+  .legalAside {
+    display: none;
+  }
+  .legalBar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: calc(100% + 32px);
+    height: 48px;
+    margin: 0 -16px 20px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+}
+@media (min-width: 768px) and (max-width: 1023.98px) and (orientation: portrait) {
+  .legalMain {
+    padding-inline: 32px;
+  }
+}
+
+/* --- «Про нас» (`about.module.css`). --- */
+.aboutMain {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+@media (min-width: 1024px) {
+  .aboutMain {
+    padding: 32px 32px 64px;
+  }
+}

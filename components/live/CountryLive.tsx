@@ -616,7 +616,10 @@ export function CountryLive({ iso }: { iso: string }) {
       <Suspense fallback={null}>
         <FocusFromUrl onFocus={onUrlFocus} />
       </Suspense>
-      <h1 className="sr-only">{tc('pageHeading', { country: country.name.uk })}</h1>
+      {/* `data-skeleton` — поки час не відомий (статичний HTML до гідратації): той самий маркер, що в `loading.tsx` (2026-11-10). */}
+      <h1 className="sr-only" data-skeleton={known ? undefined : 'country'}>
+        {tc('pageHeading', { country: country.name.uk })}
+      </h1>
       {header}
       <PlayerBlock
         mode="remote"

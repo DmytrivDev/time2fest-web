@@ -7,6 +7,7 @@
  * (розділи, «Моє свято», «Вийти»); «☰ Меню» в шапці відкриває звичайне меню на тому ж місці. Телефон: чату немає, кнопка
  * розділів закріплена внизу — шторка. Гість — на вхід (з поверненням сюди).
  */
+import { AccountSkeleton } from '@/components/skeleton/LiveSkeletons';
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -805,7 +806,13 @@ export function AccountPage() {
     return () => window.removeEventListener('scroll', on);
   }, [user]);
 
-  if (!hydrated || !user) return <div id="content" tabIndex={-1} className={s.page} data-page="S-ACCOUNT" />;
+  // До гідратації (і поки гостя переводимо на вхід) — скелетон кабінету, той самий, що в `account/loading.tsx` (2026-11-10).
+  if (!hydrated || !user)
+    return (
+      <div id="content" tabIndex={-1} className="focus:outline-none" data-page="S-ACCOUNT">
+        <AccountSkeleton />
+      </div>
+    );
 
   const closeSheet = () => {
     setClosing(true);
