@@ -51,13 +51,16 @@ async function shoot(dir, base) {
   fs.mkdirSync(dir, { recursive: true });
   const browser = await chromium.launch();
   const log = [];
-  for (const [w, h] of WIDTHS) {
+  // SIZES=1024x768,834x1194 — інші розміри (напр. планшет); PAGES_ONLY=home,room — лише ці сторінки.
+  const sizes = process.env.SIZES ? process.env.SIZES.split(',').map((x) => x.split('x').map(Number)) : WIDTHS;
+  const only = process.env.PAGES_ONLY ? new Set(process.env.PAGES_ONLY.split(',')) : null;
+  for (const [w, h] of sizes) {
     const context = await browser.newContext({
       viewport: { width: w, height: h },
       locale: 'uk-UA',
       timezoneId: 'Europe/Kyiv',
       reducedMotion: 'reduce',
-      ...(w < 768 ? { isMobile: true, hasTouch: true, deviceScaleFactor: 1 } : {}),
+      ...(w < 768 || process.env.TOUCH ? { isMobile: true, hasTouch: true, deviceScaleFactor: 1 } : {}),
     });
     // Згода на cookies відповіла «лише необхідні» — смуга не перекриває сторінку.
     await context.addInitScript(() => {
@@ -73,7 +76,8 @@ async function shoot(dir, base) {
     const page = await context.newPage();
     for (const [name, url] of PAGES) {
       if (name === 'tv' && w < 1024) continue;
-      const file = path.join(dir, `${name}-${w}.png`);
+      if (only && !only.has(name)) continue;
+      const file = path.join(dir, process.env.SIZES ? `${name}-${w}x${h}.png` : `${name}-${w}.png`);
       try {
         await page.goto(`${base}${url}?t=${AT}&speed=0`, { waitUntil: 'load', timeout: 60_000 });
         await page.waitForFunction(() => Boolean(window.__t2f?.timeMachine), undefined, { timeout: 20_000 }).catch(() => {});
