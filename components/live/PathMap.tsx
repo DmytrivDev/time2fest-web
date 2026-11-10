@@ -9,6 +9,9 @@
  * Масштаб (правка власника 2026-11-09, картка автора): товщини ліній, пунктир і розміри точок рахуються від ширини
  * мапи (`--pm-k`): на мапі графіка й паспорта на десктопі (≈970 px) — як були, у картці автора й на телефоні (≈300–360 px)
  * — тонші й дрібніші, щоб мапа виглядала як велика, лише зменшена. Кілька точок одного поясу — вузол і промені (`hubOf`).
+ * Сусідні точки (Сеул і Токіо, Мельбурн і Сідней) — кожна зі своєю підказкою (правка власника 2026-11-10): мишка —
+ * підказка найближчої до курсора точки (до 22 px від неї, `nearestPoint`); дотик і клік — зона точки до 44 px, але не
+ * більша за відстань до сусідньої точки (`hitSizes`), тож зони не перекриваються.
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState, type CSSProperties } from 'react';
@@ -54,6 +57,9 @@ function useGeometry(initial: ZoneMapGeometry | undefined): ZoneMapGeometry | nu
   }, [initial]);
   return initial ?? loaded;
 }
+
+/** Мишка ближче за стільки px до точки — її підказка. */
+const HOVER_RADIUS = 22;
 
 /** Ширина мапи, на якій точки й лінії мають базовий розмір (мапа «Мій графік» / паспорт на десктопі). */
 export const PATHMAP_BASE_WIDTH = 968;
@@ -105,12 +111,46 @@ export function PathLegend({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Діаметр зони кожної точки у відсотках ширини мапи: відстань до найближчої іншої точки (кола сусідів лише
+ * торкаються); точка сама — `Infinity` (зона 44 px). `pos` — відсотки ширини (`left`) і висоти (`top`), `aspect` — висота/ширина.
+ */
+export function hitSizes(pos: readonly { left: number; top: number }[], aspect: number): number[] {
+  return pos.map((a, i) => {
+    let best = Infinity;
+    pos.forEach((b, j) => {
+      if (i === j) return;
+      const d = Math.hypot(a.left - b.left, (a.top - b.top) * aspect);
+      if (d < best) best = d;
+    });
+    // Та сама точка двічі (дві події одного міста) — зона не зникає зовсім.
+    return Math.max(best, 1);
+  });
+}
+
+/** Індекс точки, найближчої до курсора (`x`, `y` — px від лівого верхнього кута мапи), не далі `radius`; інакше -1. */
+export function nearestPoint(pos: readonly { left: number; top: number }[], width: number, height: number, x: number, y: number, radius: number): number {
+  let best = -1;
+  let bestD = radius;
+  pos.forEach((p, i) => {
+    const d = Math.hypot((p.left / 100) * width - x, (p.top / 100) * height - y);
+    if (d <= bestD) {
+      bestD = d;
+      best = i;
+    }
+  });
+  return best;
+}
+
 export function PathMap({ points: pointsProp, authorName, summary, geometry: geometryProp, zoneStates, visited, locked = false, className }: PathMapProps) {
   const points = locked ? [] : pointsProp;
   const t = useTranslations('windows.author');
   const c = useTranslations('chat.author');
   const geometry = useGeometry(geometryProp);
   const [measure, k] = useMapScale();
+  // Підказка: `hover` — найближча до мишки точка (поки мишка над мапою, головна); `tip` — з Radix (фокус, дотик, Esc).
+  const [hover, setHover] = useState<string | null>(null);
+  const [tip, setTip] = useState<string | null>(null);
 
   if (!geometry) {
     return <Skeleton variant="block" className={cn('aspect-video w-full', className)} />;
@@ -120,6 +160,10 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
     const pos = pointToPercent(p, meta);
     return { p, pos, px: { x: (pos.left / 100) * meta.width, y: (pos.top / 100) * meta.height } };
   });
+  const hits = hitSizes(
+    placed.map((x) => x.pos),
+    meta.height / meta.width,
+  );
   const lastMet = placed.reduce((acc, cur, i) => (!cur.p.planned && !cur.p.hubOf ? i : acc), -1);
   // Варіант B «вузол і промені»: маршрут — через вузли (точки без `hubOf`), промені — від вузла до інших країн поясу.
   const route = placed.filter((x) => !x.p.hubOf);
@@ -175,7 +219,26 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
           );
         })}
       </svg>
-      <div role="group" aria-label={summary ? c('mapLabel', { name: authorName, route: summary }) : t('pathOf', { name: authorName })} className="absolute inset-0">
+      <div
+        role="group"
+        aria-label={summary ? c('mapLabel', { name: authorName, route: summary }) : t('pathOf', { name: authorName })}
+        className="absolute inset-0"
+        onPointerMove={(e) => {
+          if (e.pointerType !== 'mouse') return;
+          const r = e.currentTarget.getBoundingClientRect();
+          const i = nearestPoint(
+            placed.map((x) => x.pos),
+            r.width,
+            r.height,
+            e.clientX - r.left,
+            e.clientY - r.top,
+            HOVER_RADIUS,
+          );
+          const id = i >= 0 ? placed[i]!.p.id : null;
+          if (id !== hover) setHover(id);
+        }}
+        onPointerLeave={() => setHover(null)}
+      >
         {placed.map(({ p, pos }, i) => {
           const time = formatClock(p.midnightMs);
           // Вид точки — у `data-dot`; розміри й кільця — у PathMap.css (масштабуються від `--pm-k`).
@@ -193,10 +256,12 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
           return (
             <div
               key={p.id}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+              className="t2f-pathmap-hit absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${pos.left}%`, top: `${pos.top}%`, ...(Number.isFinite(hits[i]) ? { '--pm-hit': `${hits[i]}%` } : {}) } as CSSProperties}
             >
               <Tooltip
+                open={hover !== null ? hover === p.id : tip === p.id}
+                onOpenChange={(next) => setTip((cur) => (next ? p.id : cur === p.id ? null : cur))}
                 content={
                   <span className="flex flex-col gap-0.5">
                     <span className="flex items-center gap-1.5 font-semibold">
@@ -215,7 +280,7 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
                   data-point={p.current ? 'now' : p.planned ? 'planned' : 'met'}
                   data-ray={p.hubOf ? '' : undefined}
                   data-current={i === lastMet ? '' : undefined}
-                  className="t2f-focus flex size-touch-min items-center justify-center rounded-full"
+                  className="t2f-focus flex size-full items-center justify-center rounded-full"
                 >
                   <span
                     aria-hidden="true"

@@ -22,6 +22,7 @@ import { captionPhase, type CaptionPhase } from '@/lib/engine/captionPhase';
 import { currentAirEvent, pickSlotEvent, type AirState } from '@/lib/engine/currentAirEvent';
 import { toRuntime } from '@/lib/engine/eventStatus';
 import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
+import { countryHref } from '@/lib/live/countryHref';
 import { isRateInteracting } from '@/lib/live/rateInteraction';
 import { buildOfferContext } from '@/lib/offers/context';
 import { surfacePresence } from '@/lib/presence/useStampGrant';
@@ -38,10 +39,7 @@ export function isBroadcastPath(pathname: string | null | undefined): boolean {
   return BROADCAST_PATHS.includes(p);
 }
 
-/** Сторінка країни (зі скісною рискою в кінці — `trailingSlash: true`). */
-export function countryHref(country: Pick<Country, 'slug'>): string {
-  return `/country/${country.slug}/`;
-}
+export { countryHref };
 
 export interface AirPlace {
   event: ScheduledEvent;
@@ -98,7 +96,7 @@ function placeOf(event: ScheduledEvent | null | undefined): AirPlace | null {
     event: data.eventsById.get(event.id) ?? event,
     city: data.citiesById.get(event.cityId),
     country,
-    href: country ? countryHref(country) : null,
+    href: country ? countryHref(country, { eventId: event.id }) : null,
   };
 }
 

@@ -69,9 +69,9 @@ test.describe('Країни й міста', () => {
     await openList(page);
     await search(page).fill('Франція');
     const link = card(page, 'FR').getByRole('link', { name: /Франція/ });
-    await expect(link).toHaveAttribute('href', /\/country\/frantsiia\/?$/);
+    await expect(link).toHaveAttribute('href', /\/country\/frantsiia\/?(\?zone=[^&]+)?$/);
     await link.click();
-    await expect(page).toHaveURL(/\/country\/frantsiia\/?$/);
+    await expect(page).toHaveURL(/\/country\/frantsiia\/?(\?zone=[^&]+)?$/);
   });
 
   test('«Мапа» — мапа поясів замість списку; десктоп — колонка чату поруч', async ({ page }, testInfo) => {

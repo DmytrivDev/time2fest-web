@@ -50,6 +50,9 @@
   padding: 16px 4px 8px;
 }
 .markAll {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   min-height: 32px;
   padding: 0 4px;

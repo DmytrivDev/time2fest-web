@@ -178,7 +178,7 @@ test.describe('US2 · сторінка країни', () => {
     const iframeId = await ytStub.iframeId();
     const before = await ytStub.counters();
     await page.getByRole('link', { name: /Лишитися тут/ }).click();
-    await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?$/);
+    await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?(\?e=[^&]+)?$/);
     await expect(block(page)).toBeVisible();
     await expect(streamRow(page, 'src_london_1')).toHaveAttribute('data-current', /.*/);
 
@@ -207,5 +207,48 @@ test.describe('US2 · сторінка країни', () => {
     expect(res.status()).toBe(404);
     const ok = await page.goto(SN);
     expect(ok?.status()).toBe(200);
+  });
+});
+
+// ── Пояс і подія з посилання (власник 2026-11-10: «щоб перекидало на те, на що клікнув») ──
+test.describe('сторінка країни відкриває пояс і місто, на які клікнули', () => {
+  /** Вибраний пояс у шапці: десктоп — чип, телефон — кнопка «місто · UTC» над відео. */
+  const selectedZone = (page: Page) =>
+    test.info().project.name === 'phone'
+      ? page.locator('[data-country-row] button[aria-haspopup="dialog"]')
+      : page.locator('[data-country-header] [data-zone-option][aria-checked="true"]');
+
+  test('«Зараз і далі» на головній: Ріо-де-Жанейро → Бразилія, UTC−3 (а не перший пояс, що вже грає)', async ({ page }) => {
+    await gotoAt(page, '2027-01-01T03:55:00+02:00', 0, '/');
+    const rio = page.locator('a[href*="/country/brazyliia/"]').filter({ hasText: 'Ріо-де-Жанейро' }).first();
+    await expect(rio).toHaveAttribute('href', /\?e=evt_rio-de-janeiro_2027/);
+    await rio.scrollIntoViewIfNeeded();
+    await rio.click();
+    // дев-сервер віддає RSC сторінки не одразу
+    await expect(page).toHaveURL(/\/country\/brazyliia\/\?e=evt_rio-de-janeiro_2027/, { timeout: 30_000 });
+    await expect(selectedZone(page)).toContainText('UTC−3');
+    await expect(selectedZone(page)).toContainText('Ріо-де-Жанейро');
+    await expect(page.locator('#player-title')).toContainText('Ріо');
+  });
+
+  test('пряма адреса: Австралія ?e=Перт → UTC+8; США ?zone=UTC−8 → Лос-Анджелес; без параметрів — як було', async ({ page }) => {
+    await gotoAt(page, '2026-12-31T12:00:00+02:00', 0, '/country/avstraliia/?e=evt_perth_2027');
+    await expect(selectedZone(page)).toContainText('UTC+8');
+    await gotoAt(page, '2026-12-31T12:00:00+02:00', 0, `/country/ssha/?zone=${encodeURIComponent('utc-0800')}`);
+    await expect(selectedZone(page)).toContainText('UTC−8');
+    // Подія з іншої країни чи невідомий пояс — ігноруються (пояс за замовчуванням).
+    await gotoAt(page, '2026-12-31T12:00:00+02:00', 0, '/country/ssha/?e=evt_perth_2027');
+    await expect(selectedZone(page)).toContainText('UTC−5');
+  });
+
+  test('та сама сторінка, інше місто в «Зараз і далі» — пояс перемикається', async ({ page }) => {
+    // Після півночі Ріо (+45 хв) на сторінці — «Зараз і далі» з Манаусом (UTC−4).
+    await gotoAt(page, '2027-01-01T05:45:00+02:00', 0, '/country/brazyliia/?e=evt_rio-de-janeiro_2027');
+    await expect(selectedZone(page)).toContainText('UTC−3');
+    const manaus = page.locator('a[href*="?e=evt_manaus_2027"]').first();
+    await manaus.scrollIntoViewIfNeeded();
+    await manaus.click();
+    await expect(page).toHaveURL(/\?e=evt_manaus_2027/, { timeout: 30_000 });
+    await expect(selectedZone(page)).toContainText('UTC−4');
   });
 });

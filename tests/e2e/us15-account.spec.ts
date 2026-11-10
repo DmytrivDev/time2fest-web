@@ -16,7 +16,7 @@ async function signedIn(page: Page, pass = false) {
   await page.evaluate((hasPass) => {
     localStorage.setItem(
       't2f:auth:v1',
-      JSON.stringify({ state: { user: { email: 'olena@example.com', via: 'email', signedInAt: Date.now() }, accounts: ['olena@example.com'], letter: null, sends: [], passes: {} }, version: 1 }),
+      JSON.stringify({ state: { user: { email: 'olena@example.com', via: 'email', signedInAt: Date.now() }, accounts: ['olena@example.com'], letter: null, sends: [], passes: hasPass ? { 'olena@example.com': 1 } : {} }, version: 1 }),
     );
     const g = JSON.parse(localStorage.getItem('t2f:guest:v1') || 'null');
     if (g) {

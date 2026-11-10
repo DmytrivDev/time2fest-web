@@ -12,6 +12,7 @@
  */
 import type { Dataset, Ms, Stars } from '@/lib/data/types';
 import { isRateable } from '@/lib/passport/passport';
+import { countryHref } from '@/lib/live/countryHref';
 
 /** «Довіра» m у формулі (адмінка). */
 export const RATING_TRUST = 200;
@@ -104,7 +105,7 @@ export function ratingState(data: Dataset, now: Ms, mine: Readonly<Record<string
       city: data.citiesById.get(e.cityId)?.name.uk ?? e.id,
       countryIso: e.countryIso,
       flagCode: country?.flagCode ?? e.countryIso,
-      href: country ? `/country/${country.slug}/` : '/',
+      href: country ? countryHref(country, { eventId: e.id }) : '/',
       mean,
       votes,
       ...(own ? { mine: own } : {}),

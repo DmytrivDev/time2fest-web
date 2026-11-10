@@ -51,6 +51,7 @@ import { useTestControls } from '@/stores/testControls';
 import { Chat } from './Chat';
 import { ChatSettings } from './ChatSettings';
 import { Composer, type ComposerError } from './Composer';
+import { TRANSLATE_GATE_WINDOW_ID, TranslateGate } from './TranslateGate';
 import { useChatLookup } from './useChatLookup';
 
 export const NICK_WINDOW_ID = 'O-NICK';
@@ -394,7 +395,8 @@ export function ChatPanel({
             routeHidden={!author.isMine && !!CHAT_SCRIPT.authors.find((x) => x.id === author.id)?.pathHidden}
             path={path}
             viewerHasPass={viewerHasPass}
-            onReport={onReport}
+            // Підтвердження панель показує сама; у чаті після закриття картки ще кілька секунд — та сама плашка.
+            onReport={() => setReported(true)}
             onEditProfile={author.isMine ? () => openNick(null) : undefined}
             onGetPass={() => getPass()}
             onPassInfo={passDetails}
@@ -402,7 +404,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, clock, lookup, onReport, openNick, getPass, passDetails],
+    [overlay, t, clock, lookup, openNick, getPass, passDetails],
   );
 
 
@@ -412,6 +414,27 @@ export function ChatPanel({
         passGateSpec({ now: () => clock.getSnapshot() }, { feature, trigger: '', title: tPass(GATE_KEYS[feature].title) }),
       ),
     [overlay, clock, tPass],
+  );
+
+  // «Перекласти» без пасу — вікно «Переклад повідомлень» на місці чату (правка власника 2026-11-10; було — плашка
+  // «Потрібен пас» унизу сторінки).
+  const openTranslateGate = useCallback(
+    (message: ChatMessage) =>
+      overlay.open({
+        id: TRANSLATE_GATE_WINDOW_ID,
+        inChat: true,
+        kind: 'form',
+        chrome: 'board',
+        coral: true,
+        title: (
+          <span className="inline-flex items-center gap-2">
+            <Icon name="translate" size={20} className="text-highlight" />
+            {t('translateGate.title')}
+          </span>
+        ),
+        content: <TranslateGate message={message} onGetPass={() => getPass()} onPassInfo={passDetails} />,
+      }),
+    [overlay, t, getPass, passDetails],
   );
 
   const multi = !!countries && countries.length > 1 && !!country;
@@ -538,7 +561,7 @@ export function ChatPanel({
         />
       )}
       announceNew
-      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete, onTranslateLocked: guest.hasPass ? undefined : () => openPassGate('translate') }}
+      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete, onTranslateLocked: guest.hasPass ? undefined : openTranslateGate }}
       composer={
         <Composer
           room={{ id: roomId, label: roomLabel }}

@@ -134,7 +134,7 @@ describe('мапа в картці автора', () => {
   beforeAll(stubBrowserApis);
   afterEach(cleanup);
 
-  it('пояси за станом від поточного часу, зустрінуті країни золотом, промені поясу', () => {
+  it('пояси за станом від поточного часу, без золотої заливки зустрінутих країн (2026-11-10), промені поясу', () => {
     // 1 січня 2027, 00:03 UTC: Лондон щойно зустрів, пояси Азії минули, Америка попереду.
     renderApp(
       <AuthorPanel author={HIRO} countryName="Японія" hasPass path={buildAuthorPath(HIRO, script, data)} geometry={geometry} />,
@@ -143,8 +143,7 @@ describe('мапа в картці автора', () => {
     expect(document.querySelector('.t2f-pathmap-zone[data-state="past"]')).not.toBeNull();
     expect(document.querySelector('.t2f-pathmap-zone[data-state="live"]')).not.toBeNull();
     expect(document.querySelector('.t2f-pathmap-zone[data-state="future"]')).not.toBeNull();
-    const visited = Array.from(document.querySelectorAll('[data-visited]')).map((el) => el.getAttribute('data-visited'));
-    expect(new Set(visited)).toEqual(new Set(['AU', 'JP', 'KR']));
+    expect(document.querySelector('[data-visited]')).toBeNull();
     expect(document.querySelectorAll('line[data-ray]')).toHaveLength(3);
     expect(document.querySelectorAll('button[data-ray]')).toHaveLength(3);
     expect(document.querySelector('[data-dot="last"]')).not.toBeNull();

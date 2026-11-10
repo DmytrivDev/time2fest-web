@@ -9,7 +9,9 @@
  * - Колесо, тачпад, перетягування, дотик зупиняють рух «до дії поза стрічкою» (клік чи клавіша деінде).
  * - «Зменшити рух» — рух вимкнено, лишається ручна прокрутка.
  * - `rows={2}` (телефон): два ряди, кожен їде окремо; зупинка — спільна.
- * Копія — `inert` і `aria-hidden`: зчитувач і Tab бачать кожен елемент один раз.
+ * Копія — `aria-hidden`, а кнопки в ній — `tabindex="-1"`: зчитувач і Tab бачать кожен елемент один раз, але мишкою
+ * чи дотиком копія натискається так само, як оригінал (правка власника 2026-11-10: копії були `inert` — клік по
+ * учаснику в копії нічого не відкривав і закривав уже відкриту картку).
  */
 import { Children, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
@@ -127,10 +129,17 @@ function MarqueeRow({ items, gap, bleed, speed, paused, onManual }: { items: Rea
     };
   }, [period, paused, speed]);
 
+  // Кнопки копій — поза Tab (axe: aria-hidden-focus), але клікабельні.
+  useLayoutEffect(() => {
+    track.current
+      ?.querySelectorAll<HTMLElement>('[data-copy="2"] :is(button, a[href], [tabindex]), [data-copy="3"] :is(button, a[href], [tabindex])')
+      .forEach((el) => el.setAttribute('tabindex', '-1'));
+  });
+
   const looping = period !== 0;
   // Три копії: позиція прокрутки (до одного кола) + зсув анімації (до одного кола) + вікно (вужче за коло) — без порожнечі.
   const copy = (n: 1 | 2 | 3) => (
-    <div data-copy={n} aria-hidden={n > 1 || undefined} inert={n > 1 || undefined} className="flex shrink-0" style={{ gap: `${gap / 16}rem` }}>
+    <div data-copy={n} aria-hidden={n > 1 || undefined} className="flex shrink-0" style={{ gap: `${gap / 16}rem` }}>
       {items}
     </div>
   );

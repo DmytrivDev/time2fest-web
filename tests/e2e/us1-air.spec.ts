@@ -180,7 +180,7 @@ test.describe('US1 · ефір на головній', () => {
     const iframeId = await ytStub.iframeId();
 
     await page.getByRole('link', { name: /Лишитися тут/ }).click();
-    await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?$/);
+    await expect(page).toHaveURL(/\/country\/velyka-brytaniia\/?(\?e=[^&]+)?$/);
 
     // Перехід ефіру настає вже на сторінці країни: відео лишається тим самим.
     await page.evaluate(() =>

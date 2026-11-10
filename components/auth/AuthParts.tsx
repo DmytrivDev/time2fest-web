@@ -12,7 +12,7 @@ import NextLink from 'next/link';
 import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Reveal } from '@/components/primitives/Reveal';
-import { useGetPass } from '@/components/pass/PassWindow';
+import { PASS_HREF, useGetPass } from '@/components/pass/PassWindow';
 import { formatCountdown } from '@/lib/auth/sim';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { AuthIcon, GoogleMark, type AuthIconName } from './icons';
@@ -326,13 +326,33 @@ function ToggleButton({
   );
 }
 
-/** Вхід і реєстрація: «Ще немає Новорічного пасу?» — коротко, ціна, «Оформити пас», «Що дає пас». */
-export function PassHint({ className }: { className?: string }) {
+/**
+ * «Оформити пас» у картках пасу. Сторінки `/login/` і `/signup/` — поза макетом трансляцій, вікна там немає, тож
+ * кнопка нічого не робила (правка власника 2026-11-10): тут це перехід на сторінку «Новорічний пас» `/pass/` — там
+ * можливості пасу й оформлення з входом (Google чи email: акаунт створюється з оплатою). У вікні входу під
+ * трансляцією — вікно оформлення на місці (`useGetPass`).
+ */
+function GetPassButton({ toPage, className, children }: { toPage?: boolean; className: string; children: ReactNode }) {
+  const getPass = useGetPass();
+  if (toPage)
+    return (
+      <NextLink href={PASS_HREF} className={className} data-action="get-pass">
+        {children}
+      </NextLink>
+    );
+  return (
+    <button type="button" onClick={() => getPass()} className={className} data-action="get-pass">
+      {children}
+    </button>
+  );
+}
+
+/** Вхід і реєстрація: «Ще немає Новорічного пасу?» — коротко, ціна, «Оформити пас», «Що дає пас». `toPage` — див. `GetPassButton`. */
+export function PassHint({ className, toPage }: { className?: string; toPage?: boolean }) {
   const t = useTranslations('auth.passHint');
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
-  const getPass = useGetPass();
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.passHint, className)} data-block="pass-hint">
       <div className={s.passHintHead}>
@@ -355,9 +375,9 @@ export function PassHint({ className }: { className?: string }) {
         <span className={s.priceNote}>{o('priceNote')}</span>
       </div>
       <div className={s.pair}>
-        <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn)}>
+        <GetPassButton toPage={toPage} className={cn('t2f-focus', s.btn, s.passBtn)}>
           {t('get')}
-        </button>
+        </GetPassButton>
         <ToggleButton
           open={open}
           onToggle={() => setOpen((v) => !v)}
@@ -373,13 +393,12 @@ export function PassHint({ className }: { className?: string }) {
   );
 }
 
-/** «Акаунт створено»: розгорнута пропозиція пасу. */
-export function PassOfferCard({ welcome, className }: { welcome?: boolean; className?: string }) {
+/** «Акаунт створено»: розгорнута пропозиція пасу. `toPage` — див. `GetPassButton`. */
+export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolean; className?: string; toPage?: boolean }) {
   const t = useTranslations('auth.passOffer');
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
-  const getPass = useGetPass();
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.offer, className)} data-block="pass-offer">
       <span className={s.eyebrow}>
@@ -399,9 +418,9 @@ export function PassOfferCard({ welcome, className }: { welcome?: boolean; class
         <span className={s.priceLg}>{formatUsd(PASS_PRICE)}</span>
         <span className={s.priceLgNote}>{o('priceNote')}</span>
       </div>
-      <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.btn, s.passBtn, s.mt16)}>
+      <GetPassButton toPage={toPage} className={cn('t2f-focus', s.btn, s.passBtn, s.mt16)}>
         {t('get', { price: formatUsd(PASS_PRICE) })}
-      </button>
+      </GetPassButton>
       <ToggleButton
         open={open}
         onToggle={() => setOpen((v) => !v)}

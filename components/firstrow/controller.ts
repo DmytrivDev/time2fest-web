@@ -11,6 +11,8 @@ import { STAMP_DELAY } from '@/lib/engine/config';
 import { firstRowView, type FirstRowView } from '@/lib/engine/firstRowView';
 import { confirmPending, releaseHold, settle, startHold } from '@/lib/firstrow/pay';
 import { firstFreeSeat, simulateSeats } from '@/lib/firstrow/seatsSim';
+import { isEmail } from '@/lib/auth/sim';
+import { useAuthStore } from '@/stores/auth';
 import { applyOutcome, emptyFlow, readEntry, useFirstRowStore, writeEntry } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
@@ -138,12 +140,22 @@ function participantOf(eventId: string) {
   };
 }
 
-/** Після підтвердження: пас у подарунок, системне повідомлення в чаті «Світ» і в кімнаті «Перший ряд». */
+/**
+ * Після підтвердження: пас у подарунок, системне повідомлення в чаті «Світ» і в кімнаті «Перший ряд».
+ * Пас — лише на акаунт (правка власника 2026-11-10): гість входить в акаунт, створений з оплатою (email з форми),
+ * як при оформленні пасу; без адреси (вкладку перезавантажили посеред оплати) — місце без подарунка.
+ */
 export function afterSuccess(event: FirstRowEvent, now: Ms): void {
   const g = useGuestStore.getState();
   if (!g.hasPass) {
-    useFirstRowStore.getState().markPassGifted();
-    g.setHasPass(true);
+    const auth = useAuthStore.getState();
+    const typed = useFirstRowStore.getState().email.trim();
+    if (!auth.user && isEmail(typed)) auth.signInWithPurchase(typed, Date.now());
+    const user = useAuthStore.getState().user;
+    if (user && !useGuestStore.getState().hasPass) {
+      useFirstRowStore.getState().markPassGifted();
+      useAuthStore.getState().grantPass(user.email, Date.now());
+    }
   }
   const p = participantOf(event.id);
   if (p.seat === undefined) return;

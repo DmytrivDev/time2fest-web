@@ -41,7 +41,7 @@ describe('вікно сповіщень', () => {
     expect(screen.getByText('Поки тихо')).toBeTruthy();
   });
 
-  it('нові зверху з лічильником, «Позначити все прочитаним» переносить у «Раніше»; «Налаштувати» викликає другий рівень', () => {
+  it('нові зверху з лічильником, «Прочитати все» переносить у «Раніше»; «Налаштувати» викликає другий рівень', () => {
     const st = useNotifStore.getState();
     st.push({ id: 'stamp:e1', kind: 'stamp', params: { country: 'Японія', city: 'Токіо' }, href: '/passport/', flag: 'JP' });
     st.push({ id: 'goal:countries:5', kind: 'goal', params: { count: 5, what: 'countries' }, href: '/passport/' });
@@ -50,7 +50,7 @@ describe('вікно сповіщень', () => {
     expect(screen.getByRole('heading', { name: 'Нові · 2' })).toBeTruthy();
     expect(screen.getByText('5 країн за свято!')).toBeTruthy();
     expect(screen.getByText('Штамп «Японія» у паспорті')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Позначити все прочитаним' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Прочитати все' }));
     expect(screen.getByRole('heading', { name: 'Раніше' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: /Нові/ })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Налаштувати' }));

@@ -86,6 +86,8 @@ async function seedGuest(page: Page, seed: Seed = {}) {
       nightId: '2026-27',
     };
     localStorage.setItem(key, JSON.stringify({ state, version: 1 }));
+    // Пас — лише в того, хто увійшов в акаунт з пасом (правка власника 2026-11-10).
+    if (s.hasPass) localStorage.setItem('t2f:auth:v1', JSON.stringify({ state: { user: { email: 'pass@example.com', via: 'email', signedInAt: 1 }, accounts: ['pass@example.com'], letter: null, sends: [], passes: { 'pass@example.com': 1 } }, version: 1 }));
   }, seed);
 }
 

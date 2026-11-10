@@ -1,5 +1,6 @@
 import type { CelebrationType, Dataset, Gender, Ms } from '@/lib/data/types';
 import { zoneRowOf } from '@/lib/firstrow/zone';
+import { countryHref } from '@/lib/live/countryHref';
 
 /** Країна поясу на мапі: посилання, прапор і «Як святкувати» (до трьох традицій). */
 export interface MapCountry {
@@ -144,7 +145,8 @@ export function buildMapModel(data: Dataset): MapModel {
         iso: c.iso,
         name: c.name.uk,
         flagCode: c.flagCode,
-        href: countryPath(c.slug),
+        // Пояс, з якого відкрили країну, — його й показує сторінка країни (власник 2026-11-10).
+        href: countryHref(c, { zoneId: z.id }),
         traditions: c.howTo.traditions.slice(0, 3).map((t) => ({ id: t.id, title: t.title, text: t.text, iconId: t.iconId })),
         gender: c.gender,
         ...(mainCityOf(c.iso) ? { mainCity: mainCityOf(c.iso) } : {}),
@@ -155,15 +157,18 @@ export function buildMapModel(data: Dataset): MapModel {
     const streams = streamCities
       .map<MapStream | null>((c) => {
         const country = countries.find((k) => k.iso === c.countryIso);
+        const eventId = zoneEvents.find((e) => e.cityId === c.id)?.id;
+        const k = data.countriesByIso.get(c.countryIso);
         return country
           ? {
               cityId: c.id,
-              eventId: zoneEvents.find((e) => e.cityId === c.id)?.id,
+              eventId,
               city: c.name.uk,
               iso: country.iso,
               country: country.name,
               flagCode: country.flagCode,
-              href: country.href,
+              // Картка міста — саме це місто (подія) на сторінці країни.
+              href: k && eventId ? countryHref(k, { eventId }) : country.href,
               type: c.celebrationType,
             }
           : null;

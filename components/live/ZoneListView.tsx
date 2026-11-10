@@ -43,6 +43,44 @@ export interface ZoneListViewProps {
   allLink?: boolean;
   /** Розгорнути цей пояс і прокрутити до нього (посилання «Усі країни поясу ›» зі сторінки країни). */
   focusZoneId?: string | null;
+  /**
+   * Після розгортання поясу — плавна прокрутка сторінки до його заголовка під липкою шапкою (сторінка «Країни й міста»,
+   * власник 2026-11-10: інакше, коли згортається великий пояс вище, сторінку «кидає незрозуміло куди»).
+   */
+  scrollOnOpen?: boolean;
+}
+
+/** Нижній край липких / фіксованих елементів угорі вікна (шапка тощо). */
+function stickyTopOffset(): number {
+  let bottom = 0;
+  if (typeof document.elementsFromPoint !== 'function') return 0;
+  const x = Math.round(window.innerWidth / 2);
+  for (const el of document.elementsFromPoint(x, 1) ?? []) {
+    for (let n: Element | null = el; n && n !== document.body; n = n.parentElement) {
+      const pos = getComputedStyle(n).position;
+      if (pos === 'sticky' || pos === 'fixed') {
+        const r = n.getBoundingClientRect();
+        if (r.top <= 1 && r.bottom > bottom && r.height < window.innerHeight / 2) bottom = r.bottom;
+        break;
+      }
+    }
+  }
+  return bottom;
+}
+
+/**
+ * Прокрутити до рядка поясу `li` так, щоб заголовок став під шапкою. `collapsing` — рядок, що зараз згортається: якщо він
+ * вище, його висота зникне під час анімації, тож ціль рахуємо наперед (кінцеве положення), і прокрутка йде разом зі згортанням.
+ */
+function scrollToRow(li: HTMLElement, collapsing: HTMLElement | null) {
+  let top = li.getBoundingClientRect().top + window.scrollY;
+  if (collapsing && collapsing !== li && collapsing.compareDocumentPosition(li) & Node.DOCUMENT_POSITION_FOLLOWING) {
+    const reveal = collapsing.querySelector<HTMLElement>(':scope > .t2f-reveal');
+    top -= reveal?.getBoundingClientRect().height ?? 0;
+  }
+  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  if (typeof window.scrollTo !== 'function') return;
+  window.scrollTo({ top: Math.max(0, top - stickyTopOffset() - 8), behavior: reduce ? 'auto' : 'smooth' });
 }
 
 /**
@@ -61,6 +99,7 @@ export function ZoneListView({
   renderBody,
   allLink = true,
   focusZoneId = null,
+  scrollOnOpen = false,
 }: ZoneListViewProps) {
   const t = useTranslations('liveMap.list');
   const uid = useId();
@@ -81,8 +120,14 @@ export function ZoneListView({
   const [pastOpen, setPastOpen] = useState(false);
   const now = useNow();
   const listed = new Set([...shown, ...past].map((z) => z.id));
+  const rowOf = (id: string) => document.getElementById(`${uid}-${id}`)?.closest('li') ?? null;
   const toggle = (id: string) => {
-    setOpenId(openId === id ? null : id);
+    const opening = openId !== id;
+    if (opening && scrollOnOpen) {
+      const li = rowOf(id);
+      if (li) scrollToRow(li, openId ? rowOf(openId) : null);
+    }
+    setOpenId(opening ? id : null);
     setCountryIso(null);
   };
   const openZone = (id: string, iso: string | null = null) => {

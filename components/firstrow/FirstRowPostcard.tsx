@@ -8,9 +8,9 @@
  * - Показник — самі фішки: чиє привітання на екрані, та залита жовтим, а навколо неї за 6 с замикається біле кільце
  *   (лоадер B, рішення власника 2026-10-31); доти не потрібні. Наступне привітання — по `animationend` кільця, тож
  *   пауза (`animation-play-state`) зупиняє і кільце, і зміну.
- * - Натиск на фішку — її привітання + пауза до дії поза листівкою (на десктопі ще й поки курсор тут);
- *   повторний натиск на активну — картка учасника (своя — вибір емоції); коли картка вже відкрита — натиск на іншу
- *   фішку одразу змінює картку на цю людину. ← → — між людьми.
+ * - Натиск на фішку — її привітання + пауза до дії поза листівкою (на десктопі ще й поки курсор тут) і одразу картка
+ *   учасника (правка власника 2026-11-10; раніше — лише повторним натиском). Своя фішка: перший натиск — привітання,
+ *   повторний — вибір емоції. ← → — між людьми (без картки).
  * - Під привітанням — «прапор Ім’я · Країна ›» (картка учасника) або, для свого, «Моя емоція».
  * - «Зменшити рух» — без автопоказу й смужки.
  */
@@ -24,7 +24,6 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { usePause } from '@/components/primitives/Marquee';
-import { useOverlay } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { FirstRowSeat, Ms, SeatParticipant } from '@/lib/data/types';
 import { canonicalEmotion } from '@/lib/firstrow/emotions';
@@ -136,7 +135,6 @@ export function FirstRowPostcard({
   const root = useRef<HTMLDivElement>(null);
   const group = useRef<HTMLDivElement>(null);
   const { paused, hold, handlers } = usePause(root);
-  const authorOpen = useOverlay().current?.id === 'O-AUTHOR';
   const order = useMemo(() => postcardOrder(seats), [seats]);
   const lit = useLitCount(phase, order.length, lightingFrom, calm);
   const allLit = lit >= order.length;
@@ -152,22 +150,25 @@ export function FirstRowPostcard({
   const rotating = allLit && !calm && order.filter((s) => s.participant.greeting.trim()).length > 1;
 
   const advance = () => setPicked(nextWithGreeting(order, activeSeat.number));
+  // Кожен натиск на фішку іншого учасника показує його привітання й відкриває (чи перемикає) його картку — хоч би
+  // картка була закрита, відкрита на іншого чи щойно закрита (правка власника 2026-11-10: раніше після закриття
+  // картки перший натиск лише перемикав привітання). Своя фішка: перший натиск — привітання, повторний — «Моя емоція».
   const select = (s: Taken) => {
-    // Картка учасника вже відкрита — натиск на іншу фішку одразу показує її картку (і її привітання).
-    if (authorOpen && s.number !== activeSeat.number) {
+    if (s.participant.isMine) {
+      if (s.number === activeSeat.number) onOpenEmoji?.();
+      else {
+        setPicked(s.number);
+        setChosen(true);
+        hold();
+      }
+      return;
+    }
+    if (s.number !== activeSeat.number) {
       setPicked(s.number);
+      setChosen(true);
       hold();
-      onOpenParticipant?.(s.participant);
-      return;
     }
-    if (s.number === activeSeat.number) {
-      if (s.participant.isMine) onOpenEmoji?.();
-      else onOpenParticipant?.(s.participant);
-      return;
-    }
-    setPicked(s.number);
-    setChosen(true);
-    hold();
+    onOpenParticipant?.(s.participant);
   };
   const onKey = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -227,6 +228,8 @@ export function FirstRowPostcard({
     <button
       type="button"
       data-action="author"
+      // Натиск на автора під привітанням — не «поза карткою»: відкрита картка не закривається, а лишається/оновлюється.
+      data-opens-author=""
       onClick={() => onOpenParticipant?.(active)}
       aria-label={tp('authorOpen', { name: active.name, country: country ?? '' })}
       className={cn('t2f-focus t2f-transition', fr.pcAuthor)}

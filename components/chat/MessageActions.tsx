@@ -16,8 +16,11 @@ export interface MessageActionHandlers {
   onReply?: (message: ChatMessage) => void;
   onMention?: (message: ChatMessage) => void;
   onReport?: (message: ChatMessage) => void;
-  /** «Перекласти» без пасу: відкрити «Потрібен Новорічний пас» (переклад — функція пасу). Без обробника — перекладає одразу. */
-  onTranslateLocked?: () => void;
+  /**
+   * «Перекласти» без пасу: відкрити вікно «Переклад — у Новорічному пасі» на місці чату (переклад — функція пасу;
+   * правка власника 2026-11-10 замість плашки внизу сторінки). Без обробника — перекладає одразу.
+   */
+  onTranslateLocked?: (message: ChatMessage) => void;
   /** Своє повідомлення: видалити назавжди. */
   onDelete?: (message: ChatMessage) => void;
 }

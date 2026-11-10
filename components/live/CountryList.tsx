@@ -448,6 +448,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
                 allOpen={narrowing}
                 allLink={false}
                 focusZoneId={focusZone}
+                scrollOnOpen
                 renderBody={(z, st) => <ZoneDirectory zone={z} state={st} total={byId.get(z.id) ?? z} hits={hits} searching={narrowing} />}
               />
             )}

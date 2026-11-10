@@ -12,6 +12,7 @@ export interface YTStubPlayerInfo {
   stubId: string;
   videoId: string | null;
   muted: boolean;
+  volume: number;
   state: number;
   playerVars: Record<string, unknown>;
   destroyed: boolean;
@@ -57,6 +58,7 @@ const STUB_SOURCE = String.raw`
       stubId: iframe.dataset.stubId,
       videoId: opts.videoId || null,
       muted: vars.mute === 1,
+      volume: 100,
       state: -1,
       playerVars: vars,
       destroyed: false,
@@ -102,6 +104,8 @@ const STUB_SOURCE = String.raw`
   Player.prototype.mute = function () { this._info.muted = true; };
   Player.prototype.unMute = function () { stub.counters.unMute += 1; this._info.muted = false; };
   Player.prototype.isMuted = function () { return this._info.muted; };
+  Player.prototype.getVolume = function () { return this._info.volume; };
+  Player.prototype.setVolume = function (v) { this._info.volume = v; };
   Player.prototype.getPlayerState = function () { return this._info.state; };
   Player.prototype.getIframe = function () { return this._iframe; };
   Player.prototype.getVideoData = function () { return { video_id: this._info.videoId }; };

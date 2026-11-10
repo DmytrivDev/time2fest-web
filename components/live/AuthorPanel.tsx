@@ -12,11 +12,15 @@
  * «Ти» поруч з ніком, мапа й «Переглянути шлях» завжди (зі штампів і «Мого графіка»; нічого — порожня мапа), без «Поскаржитись».
  * Десктоп: картка природної висоти, прокручується вся панель; телефон: відкрита картка 232 px з власною прокруткою.
  * Мапа — як мапа шляху графіка й паспорта, лише зменшена (правка власника 2026-11-09): пояси підсвічені за станом від
- * поточного часу (як на головній), зустрінуті країни — золотом, кілька точок одного поясу — вузол і промені.
+ * поточного часу (як на головній), кілька точок одного поясу — вузол і промені. Зустрінуті країни золотом НЕ заливаємо
+ * (правка власника 2026-11-10: жовтий шлях зливався з заливкою; на графіку й у паспорті заливка лишається).
+ * «Поскаржитись» (правка власника 2026-11-10): і з чату, і з «Першого ряду» — на місці кнопки підтвердження
+ * «Дякуємо, скаргу передано» (той самий текст, що з меню повідомлення; `role="status"` — зчитувач озвучує).
  */
 import { Collapsible as Radix } from 'radix-ui';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { Badge } from '@/components/primitives/Badge';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -36,7 +40,7 @@ export interface AuthorPanelProps {
   author: Author;
   /** Назва країни прапора автора («Єгипет»). */
   countryName?: string;
-  /** Повідомлення, яке відкрили (для «Поскаржитись»). */
+  /** Повідомлення, яке відкрили (для «Поскаржитись»); з «Першого ряду» його немає — скарга на учасника. */
   message?: ChatMessage;
   /** Автор має пас (показуємо шлях). */
   hasPass: boolean;
@@ -46,7 +50,8 @@ export interface AuthorPanelProps {
   path?: readonly PathPoint[];
   /** У глядача є пас: плашку «Оформи пас» не показуємо. */
   viewerHasPass?: boolean;
-  onReport?: (message: ChatMessage) => void;
+  /** «Поскаржитись»: підтвердження панель показує сама; обробник — передати скаргу (повідомлення, якщо є). */
+  onReport?: (message: ChatMessage | undefined) => void;
   /** «Що ще дає пас?» — відкрити опис пасу. */
   onPassInfo?: () => void;
   /** «Оформити пас» — оформлення (вікно під трансляцією чи сторінка пасу). */
@@ -88,6 +93,7 @@ export function AuthorPanel({
   className,
 }: AuthorPanelProps) {
   const t = useTranslations('chat.author');
+  const chatT = useTranslations('chat');
   const w = useTranslations('windows.author');
   const offers = useTranslations('offers');
   const column = useChatColumn();
@@ -105,10 +111,14 @@ export function AuthorPanel({
     const zones = getData().zones;
     return Object.fromEntries(zones.map((z) => [z.id, now > 0 ? zoneState(now, z, zones) : 'future'] as const));
   }, [now]);
-  const visited = useMemo(
-    () => path.filter((p) => !p.planned && p.zoneId && p.countryIso).map((p) => ({ zoneId: p.zoneId!, iso: p.countryIso! })),
-    [path],
-  );
+  // Скарга — на цього автора й це повідомлення: панель, перевідкрита на іншу людину, знову показує кнопку.
+  const reportKey = `${author.id}|${author.nick}|${message?.id ?? ''}`;
+  const [reportedKey, setReportedKey] = useState<string | null>(null);
+  const reported = reportedKey === reportKey;
+  const report = () => {
+    setReportedKey(reportKey);
+    onReport?.(message);
+  };
 
   return (
     <div data-window="O-AUTHOR" data-pass={hasPass ? 'yes' : 'no'} data-author-compact={column ? 'false' : 'true'} className={cn('flex min-h-0 min-w-0 flex-1 flex-col', className)}>
@@ -182,7 +192,6 @@ export function AuthorPanel({
                 summary={routeText}
                 geometry={geometry}
                 zoneStates={zoneStates}
-                visited={visited}
               />
             ) : (
               <div className="relative" data-row="locked">
@@ -240,9 +249,15 @@ export function AuthorPanel({
             ) : null}
           </section>
 
-        {!isMine && message && onReport ? (
+        {!isMine ? (
           <div className="flex" data-row="actions">
-            <ActionButton icon="flag" label={t('report')} muted onClick={() => onReport(message)} />
+            {reported ? (
+              <div className="w-full" data-row="reported">
+                <StatusMessage kind="success">{chatT('reportedVisible')}</StatusMessage>
+              </div>
+            ) : (
+              <ActionButton icon="flag" label={t('report')} muted onClick={report} />
+            )}
           </div>
         ) : null}
       </div>

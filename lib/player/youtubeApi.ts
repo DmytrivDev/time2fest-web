@@ -42,6 +42,7 @@ export interface YTPlayer {
   mute(): void;
   unMute(): void;
   isMuted(): boolean;
+  getVolume?(): number;
   getPlayerState(): number;
   getIframe(): HTMLIFrameElement;
   destroy(): void;
@@ -116,6 +117,8 @@ export interface YouTubePlayerHandle {
   /** Лише в обробнику жесту користувача (клік, клавіша). */
   unMute(): void;
   isMuted(): boolean;
+  /** Чи справді чути: плеєр готовий, без mute і гучність > 0 (кнопки самого YouTube теж це змінюють). */
+  isAudible(): boolean;
   getIframe(): HTMLIFrameElement | null;
   destroy(): void;
 }
@@ -193,6 +196,16 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
     mute: () => safe(() => player.mute()),
     unMute: () => safe(() => player.unMute()),
     isMuted: () => (ready && !destroyed ? player.isMuted() : true),
+    isAudible: () => {
+      if (!ready || destroyed) return false;
+      try {
+        if (player.isMuted()) return false;
+        const vol = typeof player.getVolume === 'function' ? player.getVolume() : 100;
+        return !(typeof vol === 'number' && vol <= 0);
+      } catch {
+        return false;
+      }
+    },
     getIframe: () => (ready && !destroyed ? player.getIframe() : null),
     destroy() {
       if (destroyed) return;

@@ -81,11 +81,12 @@ function ShareBlock({ target }: { target: ShareTarget }) {
           {copied ? t('copied') : t('copy')}
         </Button>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <Button variant="tonal" compact iconLeft="share" data-action="share" onClick={() => void nativeShare(target).then((c) => c && setCopied(true))}>
+      {/* Дві рівні колонки на всю ширину вмісту вікна (власник 2026-11-10). */}
+      <div className="grid grid-cols-2 gap-2" data-row="share-buttons">
+        <Button variant="tonal" compact iconLeft="share" data-action="share" className="w-full min-w-0" onClick={() => void nativeShare(target).then((c) => c && setCopied(true))}>
           {t('shareSystem')}
         </Button>
-        <Button variant="tonal" compact asChild>
+        <Button variant="tonal" compact asChild className="w-full min-w-0">
           <a href={`https://wa.me/?text=${encodeURIComponent(`${target.text} ${target.url}`)}`} target="_blank" rel="noopener noreferrer" data-action="whatsapp">
             <WhatsAppMark />
             WhatsApp

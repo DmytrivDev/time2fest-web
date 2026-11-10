@@ -48,3 +48,81 @@ test('оплата поштою: «Чекаємо підтвердження» �
   await expect(active.getByRole('link', { name: 'Мій паспорт Нових років' })).toHaveAttribute('href', '/passport/');
   await expect(active.getByRole('link', { name: 'Допомога' })).toHaveAttribute('href', '/help/');
 });
+
+/** Старий стан пристрою: пас гостя без входу (до правки 2026-11-10 так лишалось після виходу й скидання). */
+const STALE_GUEST = {
+  v: 1,
+  id: 'g-old',
+  locale: 'uk',
+  consent: { answered: true, necessary: true, analytics: false, marketing: false, facebookVideo: false },
+  reducedMotion: false,
+  chatHidden: false,
+  zoneStreamsCollapsed: false,
+  chat: { lastRoom: 'world', sentAt: [] },
+  room: { windows: [], soundSlot: null },
+  stamps: [],
+  pendingPresence: {},
+  rate: {},
+  offers: { nightId: '2026-27', history: [], visible: null },
+  schedule: ['evt_lisbon_2027', 'evt_madrid_2027'],
+  hasPass: true,
+  firstRow: {},
+  nightId: '2026-27',
+};
+
+type Api = { __t2f: { signOut(): void; resetGuest(): void } };
+
+test('без входу паса немає: старий «пас на пристрої» знімається, сторінка пасу — оформлення (правка 2026-11-10)', async ({ page }) => {
+  await page.addInitScript((state) => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', '1');
+    localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));
+  }, STALE_GUEST);
+  await gotoAt(page, AT, 1, '/pass/');
+  await expect(page.getByRole('button', { name: 'Оформити з Google' })).toBeVisible();
+  await expect(page.locator('[data-phase="active"]')).toHaveCount(0);
+  await expect(page.locator('main')).not.toContainText('Твій пас уже діє');
+  const hasPass = await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.hasPass);
+  expect(hasPass).toBe(false);
+});
+
+test('вхід Google без оплати пасу не дає; оплата дає; вихід знімає; «Скинути стан гостя» стирає все', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/login/');
+  await page.getByRole('button', { name: /Google/ }).first().click();
+  await page.getByRole('button', { name: 'Готово' }).click();
+  await page.waitForURL((u) => !u.pathname.startsWith('/login'));
+  await gotoAt(page, AT, 1, '/pass/');
+  // Увійшов, але паса немає — форма оформлення для того, хто увійшов.
+  await expect(page.locator('[data-phase="active"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Оформити пас/ }).first()).toBeVisible();
+  await page.getByRole('button', { name: /Оформити пас/ }).first().click();
+  await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 30_000 });
+
+  // Вихід — без входу паса на пристрої немає.
+  await page.evaluate(() => (window as unknown as Api).__t2f.signOut());
+  await page.reload();
+  await waitForTimeApi(page);
+  await expect(page.getByRole('button', { name: 'Оформити з Google' })).toBeVisible();
+  await expect(page.locator('[data-phase="active"]')).toHaveCount(0);
+
+  // «Скинути стан гостя» — жодного ключа сайту в localStorage, після перезавантаження — як новий гість.
+  await page.evaluate(() => (window as unknown as Api).__t2f.resetGuest());
+  const keys = await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('t2f:')));
+  expect(keys).toEqual([]);
+  await page.reload();
+  await waitForTimeApi(page);
+  // Знову Google — акаунт новий, паса немає.
+  await gotoAt(page, AT, 1, '/login/');
+  await page.getByRole('button', { name: /Google/ }).first().click();
+  await page.getByRole('button', { name: 'Готово' }).click();
+  await page.waitForURL((u) => !u.pathname.startsWith('/login'));
+  await gotoAt(page, AT, 1, '/pass/');
+  await expect(page.locator('[data-phase="active"]')).toHaveCount(0);
+});
+
+test('сторінка входу: «Оформити пас» веде на сторінку «Новорічний пас»', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/login/');
+  await page.locator('[data-block="pass-hint"] [data-action="get-pass"]').click();
+  await page.waitForURL(/\/pass\//);
+  await expect(page.getByRole('heading', { level: 1, name: 'Новорічний пас' })).toBeVisible();
+});

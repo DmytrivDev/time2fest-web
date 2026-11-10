@@ -255,6 +255,12 @@ test.describe('US3 · кімната перегляду', () => {
     await gotoAt(page, NOW, 0, ROOM);
     await expect(win(page, 0)).toHaveAttribute('data-sound', /.*/);
     await expect(page.locator('[data-room-window][data-sound]')).toHaveCount(1);
+    // Головне вікно стартує без звуку (автозапуск) — «Звук тут» немає ніде, доки людина не ввімкне звук.
+    await expect(page.getByRole('button', { name: /^Звук тут/ })).toHaveCount(0);
+    await expect(page.getByText(/звук вимкнено/)).toBeVisible();
+    await win(page, 0)
+      .getByRole('button', { name: /^Звук сюди/ })
+      .click();
     await expect(page.getByRole('button', { name: /^Звук тут/ })).toHaveCount(1);
     await expect(win(page, 0).getByRole('button', { name: /^Звук тут/ })).toHaveAttribute(
       'aria-pressed',
@@ -276,7 +282,8 @@ test.describe('US3 · кімната перегляду', () => {
     );
     await expect(
       page.locator('[aria-live]').filter({ hasText: 'Звук перенесено у вікно «Париж»' }).first(),
-    ).toBeAttached();
+      // live-область оголошує не частіше ніж раз на 7 с (перед цим — «Звук перенесено у вікно «Лондон»»)
+    ).toBeAttached({ timeout: 10_000 });
     await expect(page.getByText(/звук — у вікні «Париж/)).toBeVisible();
     expect((await savedRoom(page)).soundSlot).toBe(3);
     await expect(slotOf(page, 3).locator('iframe')).toHaveCount(1);
@@ -286,6 +293,59 @@ test.describe('US3 · кімната перегляду', () => {
     await page.keyboard.press('2');
     await expect(win(page, 1)).toHaveAttribute('data-sound', /.*/);
     expect((await savedRoom(page)).soundSlot).toBe(1);
+  });
+
+  test('«Звук тут» відповідає фактичному звуку плеєра; після перетягування звук лишається у своєму вікні', async ({
+    page,
+    ytStub,
+  }) => {
+    test.skip(isPhone(page), 'перетягування — десктоп');
+    await seedRoom(page, [L1, L2], 1);
+    await gotoAt(page, NOW, 0, ROOM);
+    await ytStub.waitForPlayer();
+    // Вікно 2 збережене як «зі звуком», але ще не запущене (заглушка) — звуку немає, плашки «Звук тут» теж.
+    await expect(win(page, 1)).toHaveAttribute('data-sound', '');
+    await expect(page.getByRole('button', { name: /^Звук тут/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Звук сюди/ })).toHaveCount(2);
+
+    // «Звук сюди» у вікні 2 — плеєр створюється й отримує звук.
+    await win(page, 1)
+      .getByRole('button', { name: /^Звук сюди/ })
+      .click();
+    await expect(win(page, 1).getByRole('button', { name: /^Звук тут/ })).toBeVisible();
+    const mutedOf = (slot: string) =>
+      page.evaluate((sel) => {
+        type P = { _iframe: HTMLIFrameElement; _info: { muted: boolean; destroyed: boolean } };
+        const st = (window as unknown as { __ytStub: { players: P[] } }).__ytStub;
+        const p = st.players.find((x) => !x._info.destroyed && x._iframe.closest(sel));
+        return p ? p._info.muted : null;
+      }, slot);
+    await expect.poll(() => mutedOf('[data-player-slot="room:1"]')).toBe(false);
+
+    // Перетягування вікна зі звуком на місце 1: плеєр той самий і досі зі звуком, плашка — там само.
+    const created = (await ytStub.counters()).created;
+    const from = await box(win(page, 1).locator('h2'));
+    const to = await box(win(page, 0).locator('h2'));
+    await page.mouse.move(from.x + 30, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 60, from.y + 20, { steps: 4 });
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+    await page.mouse.up();
+    await expect(win(page, 1)).toHaveAttribute('data-room-pos', '0');
+    await page.waitForTimeout(2_500);
+    expect((await ytStub.counters()).created).toBe(created);
+    expect(await mutedOf('[data-player-slot="room:1"]')).toBe(false);
+    await expect(win(page, 1).getByRole('button', { name: /^Звук тут/ })).toBeVisible();
+
+    // Звук вимкнули кнопкою самого YouTube — плашка «Звук тут» зникає, скрізь «Звук сюди».
+    await page.evaluate(() => {
+      type P = { _iframe: HTMLIFrameElement; _info: { destroyed: boolean }; mute(): void };
+      const st = (window as unknown as { __ytStub: { players: P[] } }).__ytStub;
+      st.players.find((x) => !x._info.destroyed && x._iframe.closest('[data-player-slot="room:1"]'))?.mute();
+    });
+    await expect(page.getByRole('button', { name: /^Звук тут/ })).toHaveCount(0, { timeout: 4_000 });
+    await expect(page.getByRole('button', { name: /^Звук сюди/ })).toHaveCount(2);
+    await expect(page.getByText(/звук вимкнено/)).toBeVisible();
   });
 
   test('усі вікна: відеообласть ≥ 200×200, поверх плеєра нічого (FR-040)', async ({

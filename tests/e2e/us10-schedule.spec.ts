@@ -40,6 +40,8 @@ async function seed(page: Page, pass: boolean, schedule: string[]) {
         nightId: '2026-27',
       };
       if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));
+      // Пас — лише в того, хто увійшов в акаунт з пасом (правка власника 2026-11-10).
+      if (pass && !localStorage.getItem('t2f:auth:v1')) localStorage.setItem('t2f:auth:v1', JSON.stringify({ state: { user: { email: 'pass@example.com', via: 'email', signedInAt: 1 }, accounts: ['pass@example.com'], letter: null, sends: [], passes: { 'pass@example.com': 1 } }, version: 1 }));
     },
     { pass, schedule },
   );
@@ -92,4 +94,33 @@ test('без пасу — «+» відкриває «Графік — у Нов�
   await expect(page.locator('[data-schedule-page]')).toContainText('Графік — у Новорічному пасі');
   await page.locator('[data-zone="utc+0000"]').getByRole('button', { name: /Додати країну/ }).first().click();
   await expect(page.locator('[data-window="O-SCHEDULE-GATE"]')).toBeVisible();
+});
+
+test('старий стан: «пас на пристрої» без входу й графік з Португалією й Іспанією — пасу немає, графік не видно (правка 2026-11-10)', async ({ page }) => {
+  // До правки пас жив на пристрої окремо від входу: лишався після виходу, а графік, складений з ним, показувався гостю.
+  await seed(page, true, ['evt_lisbon_2027', 'evt_madrid_2027']);
+  await page.addInitScript(() => localStorage.removeItem('t2f:auth:v1'));
+  await gotoAt(page, AT, 1, '/schedule/');
+  const root = page.locator('[data-schedule-page]');
+  await expect(root).toContainText('Графік — у Новорічному пасі');
+  await expect(root.locator('[data-slot="PT"], [data-slot="ES"]')).toHaveCount(0);
+  await page.locator('[data-zone="utc+0000"]').getByRole('button', { name: /Додати країну/ }).first().click();
+  await expect(page.locator('[data-window="O-SCHEDULE-GATE"]')).toBeVisible();
+  await expect(page.locator('[data-schedule-zone]')).toHaveCount(0);
+});
+
+test('відео головної не грає на сторінці без плеєра: графік — пауза, назад на головну — грає далі (правка 2026-11-10)', async ({ page, ytStub }) => {
+  await seed(page, false, []);
+  await gotoAt(page, AT, 1, '/');
+  await ytStub.waitForPlayer();
+  await expect.poll(async () => (await ytStub.players())[0]?.state).toBe(1);
+  // Перехід усередині сайту (той самий макет і той самий плеєр).
+  // Посилання футера (на телефоні — у згорнутому акордеоні, тож клік скриптом).
+  await page.locator('footer a[href="/schedule/"]').first().evaluate((a: HTMLAnchorElement) => a.click());
+  await page.waitForURL(/\/schedule\//);
+  await expect.poll(async () => (await ytStub.players())[0]?.state).toBe(2);
+  await page.goBack();
+  await page.waitForURL((u) => u.pathname === '/');
+  await expect.poll(async () => (await ytStub.players())[0]?.state).toBe(1);
+  expect((await ytStub.counters()).created).toBe(1);
 });

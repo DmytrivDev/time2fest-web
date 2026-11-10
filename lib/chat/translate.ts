@@ -58,6 +58,11 @@ export async function translate(text: string, from: string, to: string, key?: st
   return out;
 }
 
+/** Готовий переклад тексту без запиту (приклад у вікні «Переклад повідомлень» без пасу); немає — `undefined`. */
+export function cannedTranslation(text: string): string | undefined {
+  return CANNED[text];
+}
+
 /** Синхронно з кешу (щоб перекладене не блимало оригіналом після першого перекладу). */
 export function cachedTranslation(id: string, to = SITE_LANG): string | undefined {
   return cache.get(`${id}|${to}`);

@@ -163,7 +163,8 @@ export function ChatSettings({
         <Icon name="chevron-right" size={18} className="text-text-muted" />
       </button>
       {hasPass ? null : (
-        // Один рядок (правка власника 2026-10-30): ліворуч значок і «Функції Новорічного пасу», праворуч «Дізнатись більше →».
+        // Ліворуч значок і «Функції Новорічного пасу», праворуч «Дізнатись більше →» (правка власника 2026-10-30);
+        // у вузькій колонці посилання переходить другим рядком (2026-11-10).
         <p id={cardId} className={s.legend} data-row="pass-legend">
           <span className={s.legendText}>
             <PassBadge label={t('passBadge')} />

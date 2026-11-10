@@ -7,6 +7,9 @@
  * впускає й ту вкладку, що чекала на лист.
  * `passes` — адреси акаунтів з Новорічним пасом і коли його оформлено (імітація сервера): вхід у такий акаунт
  * вмикає пас і на цьому пристрої (`guest.hasPass`).
+ * Пас на пристрої — лише пас акаунта, що увійшов (правка власника 2026-11-10): без входу паса немає, вихід його
+ * знімає, вхід в акаунт без пасу його не дає. `syncDevicePass` тримає `guest.hasPass` = «увійшов і акаунт з пасом»
+ * після відновлення зі сховища, входу, виходу й оформлення пасу.
  */
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -86,14 +89,26 @@ export type AuthStore = AuthData & AuthActions;
 
 const EMPTY: AuthData = { user: null, accounts: [], letter: null, sends: [], passes: {} };
 
+/** Чи є пас у того, хто увійшов. */
+export function accountHasPass(a: Pick<AuthData, 'user' | 'passes'>): boolean {
+  return a.user !== null && a.passes[a.user.email] !== undefined;
+}
+
+/** `guest.hasPass` — пас акаунта, що увійшов (див. шапку). `a` — стан акаунта, коли стор ще створюється. */
+export function syncDevicePass(a?: Pick<AuthData, 'user' | 'passes'>): void {
+  const want = accountHasPass(a ?? useAuthStore.getState());
+  const guest = useGuestStore.getState();
+  if (guest.hasPass !== want) guest.setHasPass(want);
+}
+
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => {
       const signIn = (email: string, via: AuthUser['via'], now: number): SignInResult => {
         const isNew = !get().accounts.includes(email);
         set((s) => ({ user: { email, via, signedInAt: now }, accounts: isNew ? [...s.accounts, email] : s.accounts }));
-        // Пас на акаунті — вмикається й тут.
-        if (get().passes[email] !== undefined) useGuestStore.getState().setHasPass(true);
+        // Пас на пристрої — пас цього акаунта: є — вмикається, немає — вимикається.
+        syncDevicePass(get());
         return { ok: true, isNew, email };
       };
       return {
@@ -138,9 +153,12 @@ export const useAuthStore = create<AuthStore>()(
         grantPass: (raw, now) => {
           const email = normalizeEmail(raw);
           set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? now } }));
-          useGuestStore.getState().setHasPass(true);
+          syncDevicePass(get());
         },
-        signOut: () => set({ user: null }),
+        signOut: () => {
+          set({ user: null });
+          syncDevicePass(get());
+        },
         expireLetter: () =>
           set((s) => (s.letter ? { letter: { ...s.letter, sentAt: s.letter.sentAt - LETTER_TTL_MS - 1 } } : s)),
       };
@@ -153,6 +171,10 @@ export const useAuthStore = create<AuthStore>()(
       migrate: (persisted, version) => (version === AUTH_VERSION ? (persisted as AuthData) : EMPTY),
       // Збережене до появи `passes` — без нього.
       merge: (persisted, current) => ({ ...current, ...(persisted as Partial<AuthData>), passes: (persisted as Partial<AuthData> | undefined)?.passes ?? {} }),
+      // Після відновлення (і синхронізації вкладок): пас гостя без входу, що лишився від старого стану, знімається.
+      onRehydrateStorage: () => (state) => {
+        if (state) syncDevicePass(state);
+      },
     },
   ),
 );

@@ -21,7 +21,8 @@
  * людини (дотик до рядка трансляції, чип поясу, «Подивитися північ ще раз»). Час ланцюжок не змінює.
  */
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
@@ -131,6 +132,39 @@ function zoneOption(
   };
 }
 
+/** Що відкрити на сторінці країни з адреси (`?e=` подія / `?zone=` пояс, `countryHref`): пояс і, можливо, подія. */
+export interface CountryFocus {
+  zoneId: string;
+  eventId: string | null;
+}
+
+export function countryFocusFrom(
+  data: Dataset,
+  iso: string,
+  zoneIds: readonly string[],
+  e: string | null,
+  zone: string | null,
+): CountryFocus | null {
+  const ev = e ? data.eventsById.get(e) : undefined;
+  if (ev && ev.countryIso === iso && zoneIds.includes(ev.zoneId)) return { zoneId: ev.zoneId, eventId: ev.id };
+  if (zone && zoneIds.includes(zone)) return { zoneId: zone, eventId: null };
+  return null;
+}
+
+/**
+ * Читає `?e=` / `?zone=` (окремо, у своєму `Suspense`: сторінка країни лишається статичною) і повідомляє про зміну —
+ * перехід із «Зараз і далі» на ту саму сторінку з іншим містом теж перемикає пояс.
+ */
+function FocusFromUrl({ onFocus }: { onFocus: (e: string | null, zone: string | null) => void }) {
+  const sp = useSearchParams();
+  const e = sp?.get('e') ?? null;
+  const zone = sp?.get('zone') ?? null;
+  useEffect(() => {
+    onFocus(e, zone);
+  }, [e, zone, onFocus]);
+  return null;
+}
+
 export function CountryLive({ iso }: { iso: string }) {
   const tc = useTranslations('country');
   const tStreams = useTranslations('country.streams');
@@ -162,12 +196,29 @@ export function CountryLive({ iso }: { iso: string }) {
   const playing = player?.eventId ? data.eventsById.get(player.eventId) : undefined;
   const playingOurs = !!playing && (playing.countryIso === iso || playing.id === pickedEventId);
 
+  // Пояс і подія з адреси (`?e=` / `?zone=`, власник 2026-11-10: «щоб перекидало на те, на що клікнув») — важливіші
+  // за пояс за замовчуванням і за подію, яку вже грає плеєр.
+  const zoneIdList = useMemo(() => zones.map((z) => z.id), [zones]);
+  const readFocus = useCallback(
+    (e: string | null, zone: string | null) => countryFocusFrom(data, iso, zoneIdList, e, zone),
+    [data, iso, zoneIdList],
+  );
+  const [urlFocus, setUrlFocus] = useState<CountryFocus | null>(null);
+  const onUrlFocus = useCallback(
+    (e: string | null, zone: string | null) => setUrlFocus(readFocus(e, zone)),
+    [readFocus],
+  );
+  const appliedFocus = useRef<string | null>(null);
+
   // Один раз після того, як час відомий: пояс за замовчуванням (кілька поясів — найближча північ попереду, усі минули —
   // остання; рішення 2026-11-05) і ланцюжок, якщо плеєр не грає подію цієї країни. Далі — лише дії людини.
+  // Є пояс / подія в адресі — їх відкриває ефект нижче (адресу читаємо й тут: `FocusFromUrl` може змонтуватися пізніше).
   const initRef = useRef(false);
   useEffect(() => {
     if (!known || !actions || initRef.current) return;
     initRef.current = true;
+    const sp = new URLSearchParams(window.location.search);
+    if (readFocus(sp.get('e'), sp.get('zone'))) return;
     if (playing && playing.countryIso === iso && player?.selection) return;
     const zone = defaultZoneId(data, country, now) ?? zoneId;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- пояс за замовчуванням залежить від часу, відомого лише після синхронізації
@@ -180,6 +231,29 @@ export function CountryLive({ iso }: { iso: string }) {
 
   // Режим «Відлік» (рішення 2026-11-05): сцена Time2Fest на місці відео — точна північ без затримки.
   const [countdown, setCountdown] = useState(false);
+
+  // Адреса з поясом / подією: відкрити саме їх (і при першому показі, і коли адреса змінилася на цій же сторінці).
+  useEffect(() => {
+    if (!known || !actions) return;
+    let focus = urlFocus;
+    if (!focus && appliedFocus.current === null) {
+      const sp = new URLSearchParams(window.location.search);
+      focus = readFocus(sp.get('e'), sp.get('zone'));
+    }
+    if (!focus) return;
+    const key = `${focus.zoneId}|${focus.eventId ?? ''}`;
+    if (appliedFocus.current === key) return;
+    appliedFocus.current = key;
+    const main = countryMainEvent(data, iso, focus.zoneId);
+    const target = focus.eventId ?? main?.id ?? null;
+    // Пояс і подія з адреси відомі лише після монтування.
+    setCountdown(false);
+    setZoneId(focus.zoneId);
+    setPickedEventId(focus.eventId && focus.eventId !== main?.id ? focus.eventId : null);
+    if (target && player?.eventId !== target) actions.setChain(chainInput(data, target));
+    // Лише на зміну адреси (і перший раз, коли час відомий).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlFocus, known, actions]);
 
   const shownEvent: ScheduledEvent | undefined = playingOurs ? playing : mainEvent;
   const current = placeOf(data, shownEvent);
@@ -348,7 +422,7 @@ export function CountryLive({ iso }: { iso: string }) {
           flagCode: c.flagCode,
           illustrationId: c.illustrationId ?? 'generic',
           city: city?.name.uk ?? c.name.uk,
-          href: countryHref(c),
+          href: countryHref(c, { zoneId }),
           midnightMs: ev?.midnightMs ?? 0,
         };
       });
@@ -539,6 +613,9 @@ export function CountryLive({ iso }: { iso: string }) {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <FocusFromUrl onFocus={onUrlFocus} />
+      </Suspense>
       <h1 className="sr-only">{tc('pageHeading', { country: country.name.uk })}</h1>
       {header}
       <PlayerBlock

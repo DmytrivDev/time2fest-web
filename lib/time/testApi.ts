@@ -5,7 +5,7 @@
 import type { ISO, PayResult } from '@/lib/data/types';
 import { emitReplyToMe } from '@/lib/chat/testReply';
 import { useAuthStore, type AuthLetter } from '@/stores/auth';
-import { resetGuest } from '@/stores/guest';
+import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import { parseIsoWithOffset } from './params';
 import type { TimeMachine } from './timeMachine';
@@ -58,7 +58,8 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
       },
       advance: (ms) => machine.advance(ms),
     },
-    resetGuest: () => resetGuest(),
+    // Увесь стан на пристрої: гість, вхід, паси акаунтів, незавершені оплати (правка власника 2026-11-10).
+    resetGuest: () => resetDeviceState(),
     setPayResult: (r) => useTestControls.getState().setPayResult(r),
     setChatAvailable: (ok) => useTestControls.getState().setChatAvailable(ok),
     setChatSlow: (seconds) => useTestControls.getState().setSlowForcedSec(seconds),

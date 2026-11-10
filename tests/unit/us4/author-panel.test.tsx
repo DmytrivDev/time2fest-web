@@ -133,6 +133,17 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(within(actions).getAllByRole('button')).toHaveLength(1);
     await user.click(within(actions).getByRole('button', { name: 'Поскаржитись' }));
     expect(props.onReport).toHaveBeenCalledOnce();
+    // Підтвердження — на місці кнопки, як у меню повідомлення (2026-11-10).
+    expect(within(actions).getByRole('status')).toHaveTextContent('Дякуємо, скаргу передано');
+    expect(within(actions).queryByRole('button', { name: 'Поскаржитись' })).toBeNull();
+  });
+
+  it('«Поскаржитись» з «Першого ряду» (без повідомлення й обробника) теж дає підтвердження', async () => {
+    const user = userEvent.setup();
+    show(OLENA, { message: undefined, onReport: undefined });
+    const actions = document.querySelector('[data-row="actions"]') as HTMLElement;
+    await user.click(within(actions).getByRole('button', { name: 'Поскаржитись' }));
+    expect(document.querySelector('[data-row="reported"]')).toHaveTextContent('Дякуємо, скаргу передано');
   });
 
   it('плашка пасу для глядача без пасу: «Оформити пас» і «Що ще дає пас?»; з пасом — плашки немає', async () => {

@@ -1,0 +1,139 @@
+/* O-TRANSLATE-GATE — «Переклад повідомлень» без пасу (правка власника 2026-11-10). Вміст прокручується, кнопки дій
+   унизу закріплені (як плашка пасу в картці автора). Приклад — золота картка, як картки пасу на сайті. */
+.root {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+  padding: 4px calc(16px - var(--t2f-gutter)) 16px 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.badge {
+  margin: 0;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(252, 226, 134, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(252, 226, 134, 0.25);
+  color: var(--color-highlight);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+.lead {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.card {
+  margin: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(252, 226, 134, 0.22);
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(252, 226, 134, 0.14), transparent 60%),
+    linear-gradient(160deg, #23211b 0%, var(--color-surface) 60%);
+}
+.caption {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.msg {
+  position: relative;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--color-surface-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.msg[data-kind='original'] {
+  opacity: 0.72;
+}
+.msg[data-kind='translated'] {
+  box-shadow: inset 0 0 0 1px rgba(252, 226, 134, 0.3);
+}
+.tag {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+.who {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 64px;
+}
+.nick {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.original {
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.arrow {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--color-highlight);
+}
+.auto {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+/* Кнопки закріплені внизу: і коли вікно — гнучка колонка, і коли прокручується вся шторка (липкий низ). */
+.actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: auto;
+  background: var(--color-surface);
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+}
+.btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-inline: 12px;
+}

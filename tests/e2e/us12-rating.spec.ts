@@ -48,6 +48,8 @@ async function seed(page: Page) {
       nightId: '2026-27',
     };
     if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));
+    // Пас — лише в того, хто увійшов в акаунт з пасом (правка власника 2026-11-10).
+    if (!localStorage.getItem('t2f:auth:v1')) localStorage.setItem('t2f:auth:v1', JSON.stringify({ state: { user: { email: 'pass@example.com', via: 'email', signedInAt: 1 }, accounts: ['pass@example.com'], letter: null, sends: [], passes: { 'pass@example.com': 1 } }, version: 1 }));
     localStorage.setItem('t2f:tv', JSON.stringify({ state: { welcomed: true, show: 'all' }, version: 1 }));
   });
 }

@@ -10,7 +10,7 @@
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useId, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { useHeaderPass, useHeaderUser, useHydrated } from '@/components/auth/session';
@@ -773,6 +773,15 @@ export function AccountPage() {
   const [active, setActive] = useState<SectionId>('profile');
   const [sheet, setSheet] = useState(false);
   const [closing, setClosing] = useState(false);
+  // Місце чату макета (`#chat-slot`) для меню кабінету. Шукаємо після вставлення в DOM, до відмальовування
+  // (`useLayoutEffect`): під час рендера після переходу з `/login/` макета ще немає в документі, і меню з’являлося
+  // лише з наступним рендером — секунди потому (правка власника 2026-11-10).
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const signedIn = hydrated && user !== null;
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- вузол макета видно лише після вставлення в DOM
+    setSlot(chatColumn && signedIn ? document.getElementById(CHAT_SLOT_ID) : null);
+  }, [chatColumn, signedIn]);
 
   // Гість — на вхід, з поверненням сюди.
   useEffect(() => {
@@ -805,7 +814,6 @@ export function AccountPage() {
       setClosing(false);
     }, CLOSE_MS);
   };
-  const slot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
   const activeLabel = t(`nav.${active}`);
 
   return (

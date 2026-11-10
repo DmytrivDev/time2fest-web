@@ -119,7 +119,7 @@ export function streamRows(data: Dataset, events: readonly ScheduledEvent[], now
         celebrationType: event.type,
         status: recording ? 'recording' : st,
         midnightMs: event.midnightMs,
-        href: country ? countryHref(country) : '/',
+        href: country ? countryHref(country, { eventId: event.id }) : '/',
         hasReplay: !!src.replay,
       });
     }

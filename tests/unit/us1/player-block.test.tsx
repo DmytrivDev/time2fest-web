@@ -38,7 +38,7 @@ describe('PlayerBlock (broadcast): фази підпису', () => {
     const { container } = renderAt(-(22 * MIN + 15_000));
     expect(timer(container)?.textContent).toMatch(/до півночі\s*00:22:15/);
     expect(row3(container)).toBe('Велика Британія · північ о 02:00 за вашим часом');
-    expect(screen.getByRole('link', { name: /Лондон · Біг-Бен/ })).toHaveAttribute('href', expect.stringMatching(/^\/country\/velyka-brytaniia\/?$/));
+    expect(screen.getByRole('link', { name: /Лондон · Біг-Бен/ })).toHaveAttribute('href', expect.stringMatching(/^\/country\/velyka-brytaniia\/?\?e=evt_london_2027$/));
     expect(screen.getByRole('button', { name: /Обрати трансляцію/ })).toHaveAttribute('aria-haspopup', 'dialog');
     expect(screen.getByRole('button', { name: 'Увімкнути звук' })).toBeEnabled();
   });
@@ -58,7 +58,7 @@ describe('PlayerBlock (broadcast): фази підпису', () => {
     const { container } = renderAt(14 * MIN + 1_000);
     expect(timer(container)?.textContent).toMatch(/далі через\s*0:59/);
     expect(row3(container)).toBe('Далі: Азорські острови');
-    expect(screen.getByRole('link', { name: /Лишитися тут/ })).toHaveAttribute('href', expect.stringMatching(/^\/country\/velyka-brytaniia\/?$/));
+    expect(screen.getByRole('link', { name: /Лишитися тут/ })).toHaveAttribute('href', expect.stringMatching(/^\/country\/velyka-brytaniia\/?\?e=evt_london_2027$/));
     expect(screen.queryByRole('button', { name: /Обрати трансляцію/ })).toBeNull();
   });
 
@@ -80,7 +80,7 @@ describe('scheduleNow (FR-014)', () => {
   const london = data.eventsById.get('evt_london_2027')!;
 
   it('подія з графіка в тому самому слоті, що й ефір — «Канарські острови»', () => {
-    expect(scheduleNow(data, ['evt_canary_2027'], london)).toEqual({ place: 'Канарські острови', href: '/country/ispaniia/' });
+    expect(scheduleNow(data, ['evt_canary_2027'], london)).toEqual({ place: 'Канарські острови', href: '/country/ispaniia/?e=evt_canary_2027' });
   });
 
   it('порожній графік, сама подія ефіру або інший слот — нічого', () => {

@@ -21,7 +21,7 @@ import { computeJumps, JUMP_IDS, type JumpId } from '@/lib/time/jumps';
 import { parseIsoWithOffset, parseMachineParams } from '@/lib/time/params';
 import { useNow, useTimeMachine, useTimeSource } from '@/lib/time/TimeProvider';
 import { useAuthStore } from '@/stores/auth';
-import { resetGuest } from '@/stores/guest';
+import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import styles from './time-machine-panel.module.css';
 
@@ -279,7 +279,7 @@ function PanelBody({
 
       <div className="flex flex-col gap-2" role="group" aria-label={t('extras')}>
         <h3 className="text-label-sm text-text-secondary">{t('extras')}</h3>
-        <Button variant="secondary" compact onClick={() => (api ? api.resetGuest() : resetGuest())} className="self-start">
+        <Button variant="secondary" compact onClick={() => (api ? api.resetGuest() : resetDeviceState())} className="self-start">
           {t('resetGuest')}
         </Button>
         <label className="flex flex-col gap-1 text-caption text-text-secondary">

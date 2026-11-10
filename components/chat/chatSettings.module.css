@@ -321,27 +321,31 @@
   transition: none;
 }
 
-/* Без пасу: внизу один рядок — ліворуч значок і «Функції Новорічного пасу», праворуч «Дізнатись більше →». */
+/* Без пасу: внизу ліворуч значок і «Функції Новорічного пасу», праворуч «Дізнатись більше →». Не влазить в один
+   рядок (вузька колонка чату) — посилання переходить другим рядком праворуч, текст не налазить на нього
+   (правка власника 2026-11-10: було «пасуДізнатись більше»). */
 .legend {
   margin: 12px 0 0;
   padding: 0 4px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 4px 16px;
   font-size: 13px;
   line-height: 1.45;
   color: var(--color-text-muted);
-  white-space: nowrap;
 }
 .legendText {
-  min-width: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 .legendLink {
   flex: 0 0 auto;
+  margin-inline-start: auto;
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 4px;

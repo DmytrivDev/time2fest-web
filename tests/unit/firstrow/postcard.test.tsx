@@ -37,7 +37,7 @@ describe('«Перший ряд» після півночі — листівка
     expect(container.querySelector('[data-seat="1"]')).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('натиск на фішку показує її привітання; повторний — картка учасника', () => {
+  it('натиск на фішку — її привітання й одразу картка учасника; кожен наступний натиск теж відкриває (2026-11-10)', () => {
     const onOpenParticipant = vi.fn();
     const { container } = strip({ ...lit({ taken: 6 }), onOpenParticipant });
     const tom = container.querySelector<HTMLElement>('[data-postcard] [data-seat="3"]')!;
@@ -45,9 +45,18 @@ describe('«Перший ряд» після півночі — листівка
     expect(tom).toHaveAttribute('aria-pressed', 'true');
     // У Tom немає привітання — емоція й «Зустрічає північ тут».
     expect(container.querySelector('[data-row="greeting"]')).toHaveTextContent('Зустрічає північ тут');
-    expect(onOpenParticipant).not.toHaveBeenCalled();
+    expect(onOpenParticipant).toHaveBeenLastCalledWith(expect.objectContaining({ name: 'Tom' }));
     fireEvent.click(tom);
-    expect(onOpenParticipant).toHaveBeenCalledWith(expect.objectContaining({ name: 'Tom' }));
+    expect(onOpenParticipant).toHaveBeenCalledTimes(2);
+    const other = container.querySelector<HTMLElement>('[data-postcard] [data-seat="2"]')!;
+    fireEvent.click(other);
+    expect(onOpenParticipant).toHaveBeenCalledTimes(3);
+    expect(other).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('автор під привітанням не «поза карткою»: кнопка має data-opens-author', () => {
+    strip({ ...lit({ taken: 6 }), onOpenParticipant: vi.fn() });
+    expect(screen.getByRole('button', { name: /Олена і друзі.*відкрити картку учасника/ })).toHaveAttribute('data-opens-author');
   });
 
   it('під привітанням — кнопка автора (картка учасника); своє місце — першим і з «Моя емоція»', () => {

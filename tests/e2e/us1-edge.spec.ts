@@ -41,6 +41,8 @@ async function seedSchedule(page: Page, eventIds: string[]) {
       nightId: '2026-27',
     };
     if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));
+    // Пас — лише в того, хто увійшов в акаунт з пасом (правка власника 2026-11-10).
+    if (!localStorage.getItem('t2f:auth:v1')) localStorage.setItem('t2f:auth:v1', JSON.stringify({ state: { user: { email: 'pass@example.com', via: 'email', signedInAt: 1 }, accounts: ['pass@example.com'], letter: null, sends: [], passes: { 'pass@example.com': 1 } }, version: 1 }));
   }, eventIds);
 }
 
@@ -87,7 +89,7 @@ test.describe('US1 · крайні випадки ефіру', () => {
     const hint = page.locator('[data-schedule-hint]');
     await expect(hint).toContainText('За вашим графіком зараз — Канарські острови');
     const link = hint.getByRole('link', { name: /Перейти/ });
-    await expect(link).toHaveAttribute('href', /\/country\/[a-z-]+\/?$/);
+    await expect(link).toHaveAttribute('href', /\/country\/[a-z-]+\/?\?e=evt_canary_2027$/);
   });
 
   test('без графіка рядка немає', async ({ page, ytStub }) => {

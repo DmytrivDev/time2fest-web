@@ -49,7 +49,7 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
     ...(thumb ? { thumb } : {}),
     ...(liveSource ? { liveSourceId: liveSource.id, liveTitle: liveSource.title.uk } : {}),
     illustrationId: country?.illustrationId ?? 'generic',
-    href: country ? countryHref(country) : '/',
+    href: country ? countryHref(country, { eventId: event.id }) : '/',
     inSchedule: schedule.includes(event.id),
     isOwnMidnight: isOwnMidnight(data, event),
   };
@@ -114,7 +114,7 @@ export function scheduleNow(
     const country = data.countriesByIso.get(event.countryIso);
     const city = data.citiesById.get(event.cityId);
     if (!country || !city) continue;
-    return { place: city.name.uk, href: countryHref(country) };
+    return { place: city.name.uk, href: countryHref(country, { eventId: event.id }) };
   }
   return null;
 }

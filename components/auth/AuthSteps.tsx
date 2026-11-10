@@ -163,7 +163,7 @@ function SigninForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
         onClick={onSwitchMode}
         mt={stream ? 8 : undefined}
       />
-      {stream ? <PassRow /> : <PassHint />}
+      {stream ? <PassRow /> : <PassHint toPage />}
       <AgeLine mode="signin" mt={stream ? 8 : undefined} />
     </form>
   );
@@ -197,7 +197,7 @@ function SignupForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
         onClick={onSwitchMode}
         mt={12}
       />
-      {stream ? <PassRow /> : <PassHint />}
+      {stream ? <PassRow /> : <PassHint toPage />}
       <AgeLine mode="signup" mt={stream ? 8 : undefined} />
     </form>
   );
@@ -447,7 +447,7 @@ function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean
       <Title afterBadge>{t('title')}</Title>
       <Lead>{t.rich(google ? 'leadGoogle' : 'lead', { email, b: Bold })}</Lead>
       <ProfileForm email={email} googleName={google ? GOOGLE_DEMO_NAME : undefined} stream={stream} onDone={onExit} />
-      {stream ? null : <PassOfferCard welcome className="mt-6" />}
+      {stream ? null : <PassOfferCard welcome toPage className="mt-6" />}
     </div>
   );
 }

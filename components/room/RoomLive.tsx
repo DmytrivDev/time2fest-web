@@ -85,6 +85,8 @@ import { useRoomViewport } from './useRoomViewport';
 import s from './room.module.css';
 
 const SOUND_POLL_MS = 1_000;
+/** Після «Звук сюди» YouTube віддає новий стан звуку не миттєво — стільки довіряємо дії людини. */
+const SOUND_GRACE_MS = 1_500;
 const NOTICE_MS = 6_000;
 const PICKER_ID = 'O-ROOM-ADD';
 const REPLACE_ID = 'O-ROOM-REPLACE';
@@ -263,10 +265,17 @@ export function RoomLive() {
     [data],
   );
 
+  // Плашка «Звук тут» — лише коли у вікні зі звуком справді чути (власник 2026-11-10): автозапуск без звуку,
+  // кнопка звуку чи гучність самого YouTube, вікно ще не запущене — скрізь «Звук сюди».
+  const [soundLive, setSoundLive] = useState(false);
+  const soundGrace = useRef(0);
+
   const moveSound = useCallback(
     (slot: number, opts: { apply: boolean }) => {
       const w = windows.find((x) => x.slot === slot);
       if (!w) return;
+      soundGrace.current = Date.now() + SOUND_GRACE_MS;
+      setSoundLive(true);
       useRoomStore.getState().setSound(slot);
       if (!useRoomStore.getState().started.includes(slot) && !isHost(w))
         useRoomStore.getState().markStarted(slot);
@@ -306,6 +315,14 @@ export function RoomLive() {
           return;
         }
       }
+      if (Date.now() < soundGrace.current) return;
+      const sw = list.find((w) => w.slot === cur);
+      const audible = !sw
+        ? false
+        : sw === h
+          ? act?.isAudible() === true
+          : roomPlayers.get(sw.slot)?.isAudible() === true;
+      setSoundLive(audible);
     }, SOUND_POLL_MS);
     return () => window.clearInterval(id);
   }, []);
@@ -413,10 +430,15 @@ export function RoomLive() {
       if (useRoomStore.getState().hostSlot === null && main)
         useRoomStore.getState().setHostSlot(main.slot);
       useRoomStore.getState().move(slot, pos);
+      // Перестановка не змінює, у якому вікні звук: підтверджуємо його у вікні зі звуком (і тиша в решті).
+      if (soundLive && soundSlot !== null) {
+        const after = useGuestStore.getState().room.windows.slice(0, limit);
+        applySound(after, soundSlot);
+      }
       // PlayerHost стежить за слотом через ResizeObserver; перестановка без зміни розміру — перемір вручну.
       requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     },
-    [main],
+    [main, soundLive, soundSlot, limit, applySound],
   );
   const drag = useRoomDrag(moveTo);
 
@@ -537,7 +559,7 @@ export function RoomLive() {
             title: titleOf(w),
             flagCode: flagOf(data, w.eventId),
             thumb: thumbOf({ id: w.sourceId, eventId: w.eventId }),
-            hasSound: w.slot === soundSlot,
+            hasSound: w.slot === soundSlot && soundLive,
           }))}
           onPick={replaceInto}
           onCancel={() => useRoomStore.getState().cancelPick()}
@@ -546,7 +568,7 @@ export function RoomLive() {
     });
     // вміст оновлюємо, коли змінюється, що замінюємо й чим
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickTarget, windows, soundSlot, phone]);
+  }, [pickTarget, windows, soundSlot, soundLive, phone]);
   // Закрили вікно «Що замінити?» (×, інше вікно) — заміну скасовано.
   const overlayId = overlay.current?.id ?? null;
   const prevOverlayId = useRef<string | null>(null);
@@ -745,6 +767,7 @@ export function RoomLive() {
         flagCode: flagOf(data, w.eventId),
         status: row?.status === 'recording' ? 'recording' : 'live',
         hasSound: windows.length > 1 && w.slot === soundSlot,
+        audible: soundLive,
         inSchedule: schedule.includes(w.eventId),
         stamp: stamps.some((st) => st.eventId === w.eventId) ? 'got' : 'todo',
       };
@@ -846,7 +869,9 @@ export function RoomLive() {
     windows.length === 0
       ? t('subEmpty', { limit })
       : windows.length > 1
-        ? t('sub', { count: windows.length, limit, title: soundTitle })
+        ? soundLive
+          ? t('sub', { count: windows.length, limit, title: soundTitle })
+          : t('subMuted', { count: windows.length, limit })
         : t('subOne', { count: windows.length, limit });
   const addBtn = full ? (
     <Button variant="secondary" iconLeft="swap" onClick={openPicker} data-action="room-replace">

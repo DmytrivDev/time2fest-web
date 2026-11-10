@@ -22,7 +22,13 @@ export interface RoomWindowCardView {
   title: string;
   flagCode: string;
   status: 'live' | 'expected' | 'possible' | 'recording';
+  /** Вікно, за яким закріплено звук (стан кімнати). */
   hasSound: boolean;
+  /**
+   * У вікні зі звуком справді чути (фактичний стан плеєра: mute / гучність). `false` — плашки «Звук тут» немає ніде,
+   * у всіх вікнах «Звук сюди» (власник 2026-11-10: плашка має відповідати дійсності).
+   */
+  audible?: boolean;
   inSchedule: boolean;
   /** Штамп події: `todo` — опівночі тут буде штамп, `got` — уже в паспорті. */
   stamp: 'todo' | 'got';
@@ -69,6 +75,7 @@ export function RoomWindowCard({
   const t = useTranslations('room.window');
   const headingId = `${id}-h`;
   const style: CSSProperties = { order };
+  const soundHere = view.hasSound && view.audible !== false;
 
   const bar = (() => {
     if (drag === 'src') {
@@ -146,7 +153,7 @@ export function RoomWindowCard({
             <span className="sr-only">{t('inSchedule')}</span>
           </span>
         ) : null}
-        {only ? null : view.hasSound ? (
+        {only ? null : soundHere ? (
           <button
             type="button"
             className={cn('t2f-focus', s.pill, s.pillOn, phone && s.pillIcon)}
@@ -189,6 +196,7 @@ export function RoomWindowCard({
       data-room-window={view.slot}
       data-room-pos={pos}
       data-sound={view.hasSound ? '' : undefined}
+      data-audible={soundHere ? '' : undefined}
       data-folded={folded ? '' : undefined}
       style={style}
       className={cn(

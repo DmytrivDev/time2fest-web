@@ -2,12 +2,14 @@
 
 /**
  * Вікно сповіщень O-NOTIF (дошка `Desk-Notif-New`, рішення власника 2026-11-09): десктоп — на місці чату, телефон — шторка до
- * відео. Список: «Нові · N» і «Позначити все прочитаним», нижче «Раніше» (приглушені). Кожне — значок свого кольору (з
+ * відео. Список: «Нові · N» і «Прочитати все», нижче «Раніше» (приглушені). Кожне — значок свого кольору (з
  * прапором), назва, коротко, час, одна дія; клік — туди й «прочитано». «Налаштувати» — другий рівень того ж вікна
  * (`NotifSettings`, вона ж у кабінеті): «Усі сповіщення» і кожен тип. Порожньо — «Поки тихо».
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
@@ -37,7 +39,9 @@ function useAgo() {
   };
 }
 
-function Item({ n, onGo }: { n: Notif; onGo?: () => void }) {
+const normPath = (p: string) => p.replace(/\/+$/, '') || '/';
+
+function Item({ n, onGo }: { n: Notif; onGo?: (href: string) => void }) {
   const t = useTranslations('notif.items');
   const ago = useAgo();
   const markRead = useNotifStore((st) => st.markRead);
@@ -48,7 +52,7 @@ function Item({ n, onGo }: { n: Notif; onGo?: () => void }) {
         href={n.href}
         onClick={() => {
           markRead(n.id);
-          onGo?.();
+          onGo?.(n.href);
         }}
         className={cn('t2f-focus t2f-transition', s.item, n.read ? s.read : s.unread)}
         data-notif={n.kind}
@@ -82,9 +86,34 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
   const fresh = items.filter((x) => !x.read);
   const earlier = items.filter((x) => x.read);
 
+  // Клік по сповіщенню (власник 2026-11-10): вікно лишається відкритим, доки не відкриється нова сторінка, — без
+  // проблиску чату між закриттям і переходом. Посилання на цю ж сторінку — закриваємо одразу.
+  const pathname = usePathname();
+  const leaving = useRef<string | null>(null);
+  const onGoRef = useRef(onGo);
+  useEffect(() => {
+    onGoRef.current = onGo;
+  });
+  useEffect(() => {
+    if (leaving.current === null || pathname === leaving.current) return;
+    leaving.current = null;
+    onGoRef.current?.();
+  }, [pathname]);
+  const go = (href: string) => {
+    if (!onGo) return;
+    let target = href;
+    try {
+      target = new URL(href, window.location.href).pathname;
+    } catch {
+      // відносне посилання без бази — як є
+    }
+    if (normPath(target) === normPath(pathname ?? '')) onGo();
+    else leaving.current = pathname;
+  };
+
   return (
     <div className={s.body} data-block="notif-list">
-      {/* Верхній рядок: «Налаштувати» ліворуч, «Позначити все прочитаним» праворуч (коли є нові). */}
+      {/* Верхній рядок: «Налаштувати» ліворуч, «Прочитати все» праворуч (коли є нові). */}
       <div className={s.top}>
         <button type="button" onClick={onSettings} className={cn('t2f-focus t2f-transition', s.configure)}>
           <Icon name="filter" size={16} />
@@ -115,7 +144,7 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
               </div>
               <ul className={s.list}>
                 {fresh.map((n) => (
-                  <Item key={n.id} n={n} onGo={onGo} />
+                  <Item key={n.id} n={n} onGo={go} />
                 ))}
               </ul>
             </section>
@@ -127,7 +156,7 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
               </h3>
               <ul className={s.list}>
                 {earlier.map((n) => (
-                  <Item key={n.id} n={n} onGo={onGo} />
+                  <Item key={n.id} n={n} onGo={go} />
                 ))}
               </ul>
             </section>

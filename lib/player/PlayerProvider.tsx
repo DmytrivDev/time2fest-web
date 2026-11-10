@@ -51,6 +51,8 @@ export interface PlayerActions {
   pause(): void;
   /** Фактичний стан звуку плеєра (кнопка звуку YouTube теж його змінює); кімната стежить, щоб звук був в одному вікні. */
   isMuted(): boolean;
+  /** Фактично чути (не mute, гучність > 0, плеєр готовий) — для плашки «Звук тут» у кімнаті. */
+  isAudible(): boolean;
 }
 
 interface PlayerInternals {
@@ -116,6 +118,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const creatingRef = useRef(false);
   const destroyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const slotsRef = useRef(new Map<PlayerSlotId, HTMLElement>());
+  /** Плеєр поставлено на паузу, бо на сторінці немає слоту (див. ефект нижче). */
+  const pausedForNoSlot = useRef(false);
 
   const chainRef = useRef<PlayerChainInput | null>(null);
 
@@ -215,6 +219,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           }
         },
         onStateChange: (state) => {
+          // Заграло там, де плеєра немає (нове відео ефіру, перший запуск на сторінці без слоту) — одразу пауза.
+          if (state === YTState.PLAYING && !slotsRef.current.has('main')) {
+            handleRef.current?.pause();
+            pausedForNoSlot.current = true;
+            return;
+          }
           if (state === YTState.PLAYING) setStatus('playing');
           else if (state === YTState.PAUSED) setStatus('paused');
           else if (state === YTState.ENDED) handleBreak({ type: 'ended' });
@@ -247,6 +257,27 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         creatingRef.current = false;
       });
   }, [hostElement, videoId, handleBreak]);
+
+  // Сторінка без плеєра (графік, паспорт, рейтинг, кабінет, «Підтримати», «Країни й міста»): слоту `main` немає, хост
+  // схований — але iframe жив і грав зі звуком (правка власника 2026-11-10). Без слоту — пауза; слот повернувся
+  // (перехід на сторінку з плеєром) — відтворення далі, лише якщо паузу поставили саме ми. Відкладено на кадр:
+  // при переході зі сторінки на сторінку з плеєром старий слот іде, новий приходить у тому самому оновленні.
+  useEffect(() => {
+    const h = handleRef.current;
+    if (slotElement) {
+      if (pausedForNoSlot.current && h && videoId) h.play();
+      pausedForNoSlot.current = false;
+      return;
+    }
+    if (!h) return;
+    const timer = setTimeout(() => {
+      const cur = handleRef.current;
+      if (!cur) return;
+      cur.pause();
+      pausedForNoSlot.current = true;
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [slotElement, videoId]);
 
   // Розмонтування всього макета — єдине місце, де плеєр знищується.
   useEffect(
@@ -306,6 +337,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       },
       isMuted() {
         return handleRef.current?.isMuted() ?? true;
+      },
+      isAudible() {
+        return handleRef.current?.isAudible() ?? false;
       },
     }),
     [],

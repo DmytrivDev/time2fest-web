@@ -3,7 +3,9 @@
 /**
  * Дотик до фішки учасника на стіні «Першого ряду» відкриває його картку — ту саму, що з ніка в чаті (O-AUTHOR):
  * прапор, ім’я, позначки й шлях по поясах (рішення власника 2026-10-31; до півночі, опівночі й після).
- * Учасник зі сценарію чату (ім’я на стіні починається з його ніка) — зі своїм шляхом; решта — без шляху.
+ * Учасник зі сценарію чату (ім’я на стіні починається з його ніка) — зі своїм шляхом; шляху немає — згенерований від
+ * ряду, де він сидить (правка власника 2026-11-10: кожен учасник відкриває свою картку зі шляхом).
+ * «Поскаржитись» — як із чату: підтвердження на місці кнопки (2026-11-10).
  */
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
@@ -14,7 +16,7 @@ import { useChatLookup } from '@/components/chat/useChatLookup';
 import { buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
 import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
-import type { Author, SeatParticipant } from '@/lib/data/types';
+import type { Author, FirstRowSeat, SeatParticipant } from '@/lib/data/types';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 
@@ -35,7 +37,8 @@ export function participantAuthor(p: Pick<SeatParticipant, 'holderId' | 'name' |
   };
 }
 
-export function useOpenParticipant() {
+/** `eventId` — подія-носій ряду, `seats` — місця ряду (номер місця учасника для шляху). */
+export function useOpenParticipant(eventId?: string, seats?: readonly FirstRowSeat[]) {
   const overlay = useOverlay();
   const clock = useClock();
   const lookup = useChatLookup();
@@ -46,9 +49,10 @@ export function useOpenParticipant() {
     (p: Pick<SeatParticipant, 'holderId' | 'name' | 'flagCode' | 'emojiId' | 'isMine'>) => {
       const author = participantAuthor(p);
       const guest = useGuestStore.getState();
+      const seat = seats?.find((st) => st.state === 'taken' && st.participant.holderId === p.holderId)?.number;
       const path = author.isMine
         ? buildOwnPath(guest.stamps, guest.schedule, getData(), clock.getSnapshot())
-        : buildAuthorPath(author, CHAT_SCRIPT, getData(), clock.getSnapshot());
+        : buildAuthorPath(author, CHAT_SCRIPT, getData(), clock.getSnapshot(), eventId ? { eventId, seat } : undefined);
       const viewerHasPass = guest.hasPass;
       overlay.open({
         id: AUTHOR_WINDOW_ID,
@@ -71,6 +75,6 @@ export function useOpenParticipant() {
         ),
       });
     },
-    [overlay, clock, lookup, getPass, passDetails, tRow],
+    [overlay, clock, lookup, getPass, passDetails, tRow, eventId, seats],
   );
 }

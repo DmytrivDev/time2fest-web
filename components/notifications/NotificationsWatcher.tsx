@@ -12,6 +12,7 @@
  */
 import { useEffect, useRef } from 'react';
 import { useChatFeed } from '@/lib/chat-sim/store';
+import { countryHref as countryPageHref } from '@/lib/live/countryHref';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
 import { HOWTO_BEFORE } from '@/lib/engine/config';
@@ -25,9 +26,10 @@ const ZONE_GOALS = [3, 5, 10];
 const STREAK_GOALS = [3, 5];
 const SEAT_BEFORE = 15 * 60 * 1000;
 
-function countryHref(iso: string): string {
+/** Сторінка країни саме з цією подією (місто й пояс), `lib/live/countryHref`. */
+function countryHref(iso: string, eventId: string): string {
   const c = getData().countriesByIso.get(iso);
-  return c ? `/country/${c.slug}/` : '/countries/';
+  return c ? countryPageHref(c, { eventId }) : '/countries/';
 }
 
 /** Найдовша серія поясів підряд (за порядком поясу), що закінчується останнім штампом. */
@@ -83,7 +85,7 @@ export function NotificationsWatcher() {
       if (now >= e.midnightMs - HOWTO_BEFORE && now < e.midnightMs + HOWTO_BEFORE) {
         const city = data.citiesById.get(e.cityId)?.name.uk ?? '';
         const country = data.countriesByIso.get(e.countryIso)?.name.uk ?? '';
-        push({ id: `live:${id}`, kind: 'live', params: { city, country, time: formatClock(e.midnightMs) }, href: countryHref(e.countryIso), flag: e.countryIso, createdAt: now });
+        push({ id: `live:${id}`, kind: 'live', params: { city, country, time: formatClock(e.midnightMs) }, href: countryHref(e.countryIso, e.id), flag: e.countryIso, createdAt: now });
       }
     }
     for (const [id, entry] of Object.entries(firstRow)) {
@@ -92,7 +94,7 @@ export function NotificationsWatcher() {
       if (!e) continue;
       if (now >= e.midnightMs - SEAT_BEFORE && now < e.midnightMs) {
         const city = data.citiesById.get(e.cityId)?.name.uk ?? '';
-        push({ id: `seat:${id}`, kind: 'seat', params: { city, seat: entry.seat }, href: countryHref(e.countryIso), flag: e.countryIso, createdAt: now });
+        push({ id: `seat:${id}`, kind: 'seat', params: { city, seat: entry.seat }, href: countryHref(e.countryIso, e.id), flag: e.countryIso, createdAt: now });
       }
     }
   }, [now, schedule, firstRow, push]);

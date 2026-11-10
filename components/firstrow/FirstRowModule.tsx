@@ -367,7 +367,7 @@ function ConnectedModule({ event, headingLevel, dockBar, className }: { event: F
   };
 
   const openEmoji = useOpenMyEmotion(event.id);
-  const openParticipant = useOpenParticipant();
+  const openParticipant = useOpenParticipant(event.id, seats);
   const sharePostcard = useSharePostcard(event, city, seats);
 
   const coralSound = !!player && player.muted;

@@ -50,7 +50,7 @@ export function scheduleCountry(data: Dataset, iso: string, zoneId: string, now:
     iso,
     name: country.name.uk,
     flagCode: country.flagCode,
-    href: countryHref(country),
+    href: countryHref(country, { eventId: row?.eventId ?? main.id }),
     eventId: row?.eventId ?? main.id,
     place: row?.title ?? city?.name.uk ?? '',
     group,

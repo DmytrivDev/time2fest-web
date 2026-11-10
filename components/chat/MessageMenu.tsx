@@ -283,7 +283,7 @@ export function MessageMenu({
             data-menu-item=""
             data-action="translate"
             className="t2f-mm-item t2f-mm-col"
-            onClick={(e) => done(() => (onTranslateLocked ? onTranslateLocked() : tr.showing ? tr.toggle() : tr.translateNow()), e.detail === 0)}
+            onClick={(e) => done(() => (onTranslateLocked ? onTranslateLocked(message) : tr.showing ? tr.toggle() : tr.translateNow()), e.detail === 0)}
           >
             <span className="t2f-mm-colicon">
               <Svg>

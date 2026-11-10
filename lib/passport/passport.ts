@@ -11,6 +11,7 @@
  */
 import { regionOf, type RegionKey } from '@/components/live/regions';
 import type { Dataset, Ms, Stamp } from '@/lib/data/types';
+import { countryHref } from '@/lib/live/countryHref';
 import { scheduledCountries, zoneCountryIsos } from '@/lib/schedule/countryZone';
 import { GROUP_ORDER, scheduleCountry, type ScheduleCountry } from '@/lib/schedule/scheduleCountry';
 
@@ -83,7 +84,7 @@ export function passportStamps(stamps: readonly Stamp[], data: Dataset): Passpor
         continent: continentOf(st.countryIso, zone.offsetMinutes),
         ...(st.firstRowSeat ? { seat: st.firstRowSeat } : {}),
         rateable: isRateable(data, st.eventId),
-        href: country ? `/country/${country.slug}/` : '/',
+        href: country ? countryHref(country, { eventId: e.id }) : '/',
       } satisfies PassportStamp;
     })
     .filter((x): x is PassportStamp => x !== null)
