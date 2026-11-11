@@ -455,7 +455,13 @@
       "waitingBadge": "Трансляція очікується",
       "waitingLead": "Очікуйте трансляцію",
       "waitingStarts": "Почнеться о <time>{value}</time> за вашим часом",
-      "waitingNote": "Відео ввімкнеться саме, щойно трансляція почнеться"
+      "waitingNote": "Відео ввімкнеться саме, щойно трансляція почнеться",
+      "countdownLabel": "До півночі",
+      "finalLead": "Новий рік за",
+      "happyNewYear": "З Новим роком!",
+      "celebrateLine": "{place} зустрічає {year}",
+      "fullscreen": "Сцена на весь екран",
+      "exitFullscreen": "Вийти з повного екрана"
     },
     "timerUntil": "до півночі",
     "timerNext": "далі через",

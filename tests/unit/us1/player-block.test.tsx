@@ -62,11 +62,11 @@ describe('PlayerBlock (broadcast): фази підпису', () => {
     expect(screen.queryByRole('button', { name: /Обрати трансляцію/ })).toBeNull();
   });
 
-  it('+15 хв: ефір на Азорських островах, сцена відліку на місці плеєра, звук неактивний', () => {
+  it('+15 хв: ефір на Азорських островах, сцена відліку на місці плеєра; звук — для курантів і салюту сцени (2026-11-11)', () => {
     const { container } = renderAt(15 * MIN + 5_000);
     expect(row3(container)).toBe('Португалія · північ о 03:00 за вашим часом');
     expect(container.querySelector('[data-video-area="countdown-scene"]')).not.toBeNull();
-    expect(screen.getByRole('button', { name: /Увімкнути звук/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Увімкнути звук/ })).toBeEnabled();
   });
 
   it('перемикання джерела: «Перемкнули на іншу трансляцію з цього місця»', () => {

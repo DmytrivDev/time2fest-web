@@ -49,9 +49,10 @@ describe('CountdownScene', () => {
     expect(screen.queryByText(/Північ о/)).toBeNull();
   });
 
-  it('не містить кнопок: відлік і дії — у підписі плеєра, сцена не лежить поверх нічого інтерактивного', () => {
+  it('власник 2026-11-11: великий відлік на сцені й єдина кнопка — «Сцена на весь екран»; фази півночі — у scene-midnight.test', () => {
     renderApp(<CountdownScene country={GREENLAND} cityName="Нуук" midnightMs={MIDNIGHT} offsetMinutes={-120} />, NOW);
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
+    expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Сцена на весь екран']);
+    expect(document.querySelector('[data-scene-countdown]')).not.toBeNull();
     expect(document.querySelector('[role="timer"]')).toBeNull();
   });
 });

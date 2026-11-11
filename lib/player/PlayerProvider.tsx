@@ -67,7 +67,8 @@ const StateContext = createContext<PlayerState | null>(null);
 const ActionsContext = createContext<PlayerActions | null>(null);
 const InternalsContext = createContext<PlayerInternals | null>(null);
 
-function readSoundFlag(): boolean {
+/** Людина вмикала звук у цьому сеансі (sessionStorage); спільне з звуком сцени відліку. */
+export function readSoundFlag(): boolean {
   try {
     return sessionStorage.getItem(SOUND_KEY) === '1';
   } catch {
@@ -77,7 +78,7 @@ function readSoundFlag(): boolean {
 
 const noopSubscribe = () => () => {};
 
-function writeSoundFlag(): void {
+export function writeSoundFlag(): void {
   try {
     sessionStorage.setItem(SOUND_KEY, '1');
   } catch {

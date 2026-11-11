@@ -35,6 +35,7 @@ import type { AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useGuestStore } from '@/stores/guest';
 import { useCoralWindowOpen } from '@/lib/overlay/coral';
+import { disableSceneSound, enableSceneSound, useSceneSound } from '@/lib/scene/sceneAudio';
 import { CountdownScene } from './CountdownScene';
 import { FacebookConsentCard } from './FacebookConsentCard';
 import { PlayerSlot } from './PlayerSlot';
@@ -221,9 +222,13 @@ export function PlayerBlock({
     ? { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }
     : null;
   const nextPlace = next ? { midnightMs: next.event.midnightMs, city: next.city, country: next.country, href: next.href } : null;
-  const barSound = (
-    <BarSound muted={area.muted} available={area.kind === 'video'} onUnmute={() => actions?.unmute()} onMute={() => actions?.mute()} />
-  );
+  // Без відео (сцена відліку) кнопка звуку керує звуком сцени: куранти й салют опівночі (власник 2026-11-11).
+  const sceneSoundOn = useSceneSound();
+  const scene = area.kind === 'countdown-scene' || area.kind === 'expected-scene';
+  const sound = scene
+    ? { muted: !sceneSoundOn, available: true, onUnmute: enableSceneSound, onMute: disableSceneSound }
+    : { muted: area.muted, available: area.kind === 'video', onUnmute: () => actions?.unmute(), onMute: () => actions?.mute() };
+  const barSound = <BarSound {...sound} />;
 
   return (
     <>
@@ -274,14 +279,7 @@ export function PlayerBlock({
               aside={captionAside}
               variant={dock ? 'title' : bar ? 'bar' : 'full'}
               lead={
-                bar ? (
-                  <BarSound
-                    muted={area.muted}
-                    available={area.kind === 'video'}
-                    onUnmute={() => actions?.unmute()}
-                    onMute={() => actions?.mute()}
-                  />
-                ) : null
+                bar ? <BarSound {...sound} /> : null
               }
               {...(title !== undefined ? { title } : {})}
             />
@@ -297,12 +295,7 @@ export function PlayerBlock({
               onWatchAgain={onWatchAgain}
               href={current.href}
               onStayHere={onStayHere}
-              sound={{
-                muted: area.muted,
-                available: area.kind === 'video',
-                onUnmute: () => actions?.unmute(),
-                onMute: () => actions?.mute(),
-              }}
+              sound={sound}
             />
             )}
           </>
