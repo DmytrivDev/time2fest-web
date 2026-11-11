@@ -84,12 +84,6 @@
 .jump:hover:not(:disabled) {
   background: var(--color-surface);
 }
-.jump:disabled {
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
-  opacity: 0.6;
-  cursor: default;
-}
 .actions {
   display: flex;
   flex-direction: column;

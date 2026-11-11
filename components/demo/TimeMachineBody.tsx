@@ -2,8 +2,9 @@
 
 /**
  * «Машина часу» для тих, хто тестує демо (рішення власника 2026-11-11, уточнення того ж дня): годинник у шапці праворуч.
- * Відкривається на місці чату (десктоп) або шторкою (телефон). Показує віртуальний час і дві найближчі півночі:
- * найближчу — за 10 хв · 5 хв · 30 с, наступну за нею — за 15 хв · 5 хв · 1 хв. «На старт» — за 20 хв до півночі
+ * Відкривається на місці чату (десктоп) або шторкою (телефон). Показує віртуальний час і дві півночі:
+ * поточну — за 10 хв · 5 хв · 30 с, наступну за нею — за 15 хв · 5 хв · 1 хв. Поточна лишається поточною ще 5 хв після
+ * півночі, щоб її можна було відмотати назад; потім поточною стає наступна. «На старт» — за 20 хв до півночі
  * Парижа (лише час); «Почати спочатку» — ще й новий гість.
  */
 import { useTranslations } from 'next-intl';
@@ -30,11 +31,14 @@ export interface DemoMidnight {
   country?: string;
 }
 
-/** Найближчі `count` північ після `now` (слоти поясів) — місто представника поясу. */
+/** Скільки після півночі вона ще «поточна» в машині часу (власник 2026-11-11). */
+export const DEMO_CURRENT_HOLD_MS = 5 * 60_000;
+
+/** `count` північ, починаючи з поточної (ще не настала або минуло < 5 хв), — місто представника поясу. */
 export function upcomingMidnights(now: number, count = 2): DemoMidnight[] {
   const data = getData();
   return data.eventsBySlot
-    .filter((g) => g.midnightMs > now)
+    .filter((g) => g.midnightMs > now - DEMO_CURRENT_HOLD_MS)
     .slice(0, count)
     .map((slot) => {
       const zone = data.zonesById.get(slot.zoneId);
@@ -86,7 +90,8 @@ export function TimeMachineBody() {
         <span className={s.zone}> · {m.zoneLabel}</span>
       </span>
       <span className={s.when}>
-        {formatTimeForViewer(m.midnightMs, { now }).text} · {t('left', { time: left(m.midnightMs - now) })}
+        {formatTimeForViewer(m.midnightMs, { now }).text} ·{' '}
+        {m.midnightMs > now ? t('left', { time: left(m.midnightMs - now) }) : t('ago', { time: left(now - m.midnightMs) })}
       </span>
       <ul className={s.jumps} aria-label={t('jumpsLabel', { place: m.city ?? m.zoneLabel })}>
         {jumps.map((sec) => {
@@ -95,7 +100,6 @@ export function TimeMachineBody() {
             <li key={sec}>
               <button
                 type="button"
-                disabled={at <= now}
                 onClick={() => go(at)}
                 className={cn('t2f-focus t2f-transition', s.jump)}
                 data-demo-jump={`${key}:${sec}`}
