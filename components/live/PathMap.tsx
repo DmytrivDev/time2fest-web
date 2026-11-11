@@ -142,6 +142,21 @@ export function nearestPoint(pos: readonly { left: number; top: number }[], widt
   return best;
 }
 
+/**
+ * Відрізок маршруту на мапі з розрізом: якщо точки ближчі через край мапи (Гаваї → Самоа, Аляска → Кірибаті), лінія
+ * виходить за край і продовжується з протилежного боку — дві частини, кожну обрізає полотно (власник 2026-11-11:
+ * лінія через усю мапу плутала).
+ */
+export function wrapSegment(a: { x: number; y: number }, b: { x: number; y: number }, span: number): [number, number, number, number][] {
+  const dx = b.x - a.x;
+  if (Math.abs(dx) <= span / 2) return [[a.x, a.y, b.x, b.y]];
+  const shift = dx > 0 ? -span : span;
+  return [
+    [a.x, a.y, b.x + shift, b.y],
+    [a.x - shift, a.y, b.x, b.y],
+  ];
+}
+
 export function PathMap({ points: pointsProp, authorName, summary, geometry: geometryProp, zoneStates, visited, locked = false, className }: PathMapProps) {
   const points = locked ? [] : pointsProp;
   const t = useTranslations('windows.author');
@@ -156,6 +171,8 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
     return <Skeleton variant="block" className={cn('aspect-video w-full', className)} />;
   }
   const { meta } = geometry;
+  // Ширина всього світу в пікселях мапи (360°) — для ліній через край.
+  const span = 360 * meta.pxPerDeg;
   const placed = points.map((p) => {
     const pos = pointToPercent(p, meta);
     return { p, pos, px: { x: (pos.left / 100) * meta.width, y: (pos.top / 100) * meta.height } };
@@ -190,33 +207,34 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
           : null}
         {rays.map((cur) => {
           const hub = byId.get(cur.p.hubOf!)!;
-          return (
+          return wrapSegment(hub.px, cur.px, span).map(([x1, y1, x2, y2], j) => (
             <line
-              key={`ray-${cur.p.id}`}
-              x1={hub.px.x}
-              y1={hub.px.y}
-              x2={cur.px.x}
-              y2={cur.px.y}
+              key={`ray-${cur.p.id}-${j}`}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
               className="t2f-pathmap-line"
               data-kind={cur.p.planned ? 'planned' : 'met'}
               data-ray=""
             />
-          );
+          ));
         })}
         {route.slice(1).map((cur, i) => {
           const prev = route[i]!;
           const kind = cur.p.planned ? 'planned' : 'met';
-          return (
+          return wrapSegment(prev.px, cur.px, span).map(([x1, y1, x2, y2], j) => (
             <line
-              key={`${prev.p.id}-${cur.p.id}`}
-              x1={prev.px.x}
-              y1={prev.px.y}
-              x2={cur.px.x}
-              y2={cur.px.y}
+              key={`${prev.p.id}-${cur.p.id}-${j}`}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
               className="t2f-pathmap-line"
               data-kind={kind}
+              {...(j > 0 ? { 'data-wrap': '' } : {})}
             />
-          );
+          ));
         })}
       </svg>
       <div
