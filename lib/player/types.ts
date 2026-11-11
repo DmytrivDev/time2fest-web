@@ -56,4 +56,9 @@ export interface PlayerFacebookConsentRequired {
 export type ChainSelection =
   | { kind: 'source'; source: PlayerSource; index: number }
   | { kind: 'facebook-consent'; source: PlayerSource; index: number }
+  /**
+   * Людина обрала трансляцію, що ще не почалась (`startsAt` попереду; правка власника 2026-11-11): на місці відео —
+   * заглушка «Очікуйте трансляцію …», о `startsAt` вибір перераховується й відео стартує саме.
+   */
+  | { kind: 'waiting'; source: PlayerSource; index: number }
   | { kind: 'countdown-scene' };

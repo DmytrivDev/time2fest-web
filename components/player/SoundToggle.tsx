@@ -26,7 +26,6 @@ export function SoundToggle({ muted, available, onUnmute, onMute, className }: S
   const t = useTranslations('player');
   const on = available && !muted;
   const label = !available ? t('soundUnavailable') : on ? t('soundIsOn') : t('soundOn');
-  const text = on ? t('soundIsOn') : t('soundOn');
 
   return (
     <Button
@@ -41,8 +40,11 @@ export function SoundToggle({ muted, available, onUnmute, onMute, className }: S
       {/* Макети: телефон — 44×44 з іконкою 20 (вимкнено — перекреслений динамік); ширше — динамік із хвилями 18 + підпис. */}
       <Icon name={on ? 'speaker' : 'speaker-off'} size={20} strokeWidth={2} className="md:hidden" />
       <Icon name="speaker" size={18} strokeWidth={2} className="max-md:hidden" />
-      <span aria-hidden="true" className="max-md:hidden">
-        {text}
+      {/* Підпис — дія, як «Увімкнути звук»: увімкнено — «Вимкнути звук» (правка власника 2026-11-11: «Звук увімкнено» довше
+          й переносило рядок дій). Ширина — за довшим із двох (обидва в одній клітинці, інший невидимий): кнопка не стрибає. */}
+      <span aria-hidden="true" className="inline-grid max-md:hidden">
+        <span className={cn('col-start-1 row-start-1', on && 'invisible')}>{t('soundOn')}</span>
+        <span className={cn('col-start-1 row-start-1', !on && 'invisible')}>{t('soundOff')}</span>
       </span>
     </Button>
   );

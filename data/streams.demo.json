@@ -1,7 +1,7 @@
 {
   "version": 1,
   "season": "2026-27",
-  "generatedAt": "2026-11-11T13:28:31Z",
+  "generatedAt": "2026-11-11T15:20:21Z",
   "lastCheckedAt": "2026-11-11T00:00:00Z",
   "chains": [
     {
@@ -12,7 +12,7 @@
           "platform": "youtube",
           "videoId": "uBoCoMsaSQU",
           "url": "https://www.youtube.com/watch?v=uBoCoMsaSQU",
-          "kind": "webcam",
+          "kind": "main",
           "title": {
             "uk": "Сідней · Гарбор-Бридж"
           },
@@ -117,7 +117,7 @@
           "platform": "youtube",
           "videoId": "5vNRYA6j6UA",
           "url": "https://www.youtube.com/watch?v=5vNRYA6j6UA",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Токіо · Японія"
           },
@@ -272,7 +272,7 @@
           "platform": "youtube",
           "videoId": "TFf9wvEebs4",
           "url": "https://www.youtube.com/watch?v=TFf9wvEebs4",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Дубай · Бурдж-Халіфа"
           },
@@ -377,7 +377,7 @@
           "platform": "youtube",
           "videoId": "abhsF9Kfh14",
           "url": "https://www.youtube.com/watch?v=abhsF9Kfh14",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Київ · Майдан Незалежності"
           },
@@ -617,7 +617,7 @@
           "platform": "youtube",
           "videoId": "gGa3IfSalAI",
           "url": "https://www.youtube.com/watch?v=gGa3IfSalAI",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Лондон · Лондонське око"
           },
@@ -822,7 +822,7 @@
           "platform": "youtube",
           "videoId": "4Dc1nx1POqo",
           "url": "https://www.youtube.com/watch?v=4Dc1nx1POqo",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Ріо · Копакабана"
           },
@@ -977,7 +977,7 @@
           "platform": "youtube",
           "videoId": "Ns7DfOAa7dQ",
           "url": "https://www.youtube.com/watch?v=Ns7DfOAa7dQ",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Буенос-Айрес · Пуерто-Мадеро"
           },
@@ -1087,7 +1087,7 @@
           "platform": "youtube",
           "videoId": "2gnXxRZ4fVA",
           "url": "https://www.youtube.com/watch?v=2gnXxRZ4fVA",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Нью-Йорк · Таймс-сквер"
           },
@@ -1217,7 +1217,7 @@
           "platform": "youtube",
           "videoId": "J_1hFlGTL8I",
           "url": "https://www.youtube.com/watch?v=J_1hFlGTL8I",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Мехіко · Сокало"
           },
@@ -1332,7 +1332,7 @@
           "platform": "youtube",
           "videoId": "J84RBnOK2bo",
           "url": "https://www.youtube.com/watch?v=J84RBnOK2bo",
-          "kind": "tv",
+          "kind": "main",
           "title": {
             "uk": "Париж · салют над Ейфелевою вежею"
           },

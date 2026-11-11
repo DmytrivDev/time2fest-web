@@ -60,7 +60,10 @@ export function useRoomToggle(main?: RoomTarget | null): RoomToggle {
   return { has, full: windows.length >= ROOM_LIMIT.desktop, toggle };
 }
 
-/** Чи рядок можна додати в кімнату: лише наживо. */
+/**
+ * Чи рядок можна додати в кімнату: наживо або очікується (правка власника 2026-11-11: у вікні — заглушка
+ * «Трансляція очікується», відео стартує саме).
+ */
 export function canAddToRoom(status: string | undefined): boolean {
-  return status === 'live';
+  return status === 'live' || status === 'expected';
 }

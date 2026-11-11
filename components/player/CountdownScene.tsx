@@ -5,7 +5,8 @@
  * Стоїть У СЛОТІ плеєра (`<PlayerSlot fallback={<CountdownScene … />} />`), ніколи поверх відео.
  * Ілюстрація-листівка країни, назва, «Північ о 04:00 за вашим часом», місцевий час, 3 традиції (від ширини ≥ 32rem).
  * Варіант `expected`: «Трансляція почнеться сама, щойно з’явиться». Варіант `mode` — людина сама обрала режим «Відлік» на
- * сторінці країни (точна північ без затримки відео; рішення 2026-11-05). Відлік, статус і дії — у підписі плеєра (PlayerBlock),
+ * сторінці країни (точна північ без затримки відео; рішення 2026-11-05). Варіант `waiting` — людина обрала трансляцію, що ще не
+ * почалась (2026-11-11): «Очікуйте трансляцію» з її назвою й відліком до початку; відео стартує саме. Відлік, статус і дії — у підписі плеєра (PlayerBlock),
  * тут не дублюються (один відлік на сторінку).
  */
 import { useTranslations } from 'next-intl';
@@ -14,12 +15,13 @@ import { cn } from '@/components/primitives/cn';
 import home from '@/components/live/home.module.css';
 import { useTabletLandscape, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { Flag } from '@/components/primitives/Flag';
+import { Icon } from '@/components/primitives/Icon';
 import { PostcardArt } from '@/components/windows/StampArt';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 
-export type CountdownSceneVariant = 'no-stream' | 'expected' | 'mode';
+export type CountdownSceneVariant = 'no-stream' | 'expected' | 'mode' | 'waiting';
 
 export interface CountdownSceneProps {
   country: Pick<Country, 'name' | 'flagCode' | 'illustrationId' | 'howTo'>;
@@ -31,10 +33,75 @@ export interface CountdownSceneProps {
   offsetMinutes: number;
   /** `no-stream` — трансляції немає зовсім · `expected` — очікується, почнеться сама · `mode` — обрано режим «Відлік». */
   variant?: CountdownSceneVariant;
+  /** `waiting`: назва трансляції («Париж · салют над Ейфелевою вежею») і її початок, мс. */
+  waitingFor?: { title: string; startsAt: Ms };
   className?: string;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, className }: CountdownSceneProps) {
+  if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} className={className} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} />;
+}
+
+/** «Очікуйте трансляцію»: листівка країни, мітка «Очікується», назва трансляції, початок і відлік до нього. */
+export function WaitingScene({
+  country,
+  waitingFor,
+  compact = false,
+  className,
+}: {
+  country: Pick<Country, 'name' | 'flagCode' | 'illustrationId'>;
+  waitingFor: { title: string; startsAt: Ms };
+  /** Мале вікно кімнати: без підзаголовка, дрібніший кегль. */
+  compact?: boolean;
+  className?: string;
+}) {
+  const t = useTranslations('player.scene');
+  const titleId = useId();
+  const now = useNow();
+  const left = Math.max(0, Math.ceil((waitingFor.startsAt - now) / 1_000));
+  const mm = Math.floor(left / 60);
+  const ss = String(left % 60).padStart(2, '0');
+  return (
+    <section
+      aria-labelledby={titleId}
+      data-scene="waiting"
+      className={cn('@container relative size-full min-h-player-min-height overflow-hidden bg-surface-raised', className)}
+    >
+      <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" />
+      {/* Вузький кадр (телефон, вікно кімнати) — лише мітка, назва, початок і відлік; підзаголовок і примітка — від @lg. */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/70 p-3 text-center @lg:gap-3 @lg:p-8">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-highlight/60 bg-background/70 px-3 py-1 text-label-badge text-highlight">
+          <Icon name="clock" size={14} />
+          {t('waitingBadge')}
+        </span>
+        {compact ? null : <p className="hidden text-body text-text-secondary @lg:block">{t('waitingLead')}</p>}
+        <h2 id={titleId} className={cn('flex items-center gap-2 text-text', compact ? 'text-body-strong' : 'text-body-strong @lg:text-headline-lg')}>
+          <span className="shrink-0">
+            <Flag code={country.flagCode} size="sm" decorative />
+          </span>
+          <span className="line-clamp-2">{waitingFor.title}</span>
+        </h2>
+        <p className="text-caption text-text @lg:text-body">
+          {t.rich('waitingStarts', {
+            time: (chunks) => (
+              <time dateTime={new Date(waitingFor.startsAt).toISOString()} className="font-bold tabular-nums text-highlight">
+                {chunks}
+              </time>
+            ),
+            value: formatClock(waitingFor.startsAt),
+          })}
+        </p>
+        <p className="text-body-strong tabular-nums text-text @lg:text-headline-lg" aria-hidden="true" data-waiting-left="">
+          {now > 0 ? `${mm}:${ss}` : '–:––'}
+        </p>
+        {compact ? null : <p className="hidden text-caption text-text-secondary @lg:block">{t('waitingNote')}</p>}
+      </div>
+    </section>
+  );
+}
+
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —

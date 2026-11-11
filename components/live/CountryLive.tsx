@@ -21,7 +21,7 @@
  * людини (дотик до рядка трансляції, чип поясу, «Подивитися північ ще раз»). Час ланцюжок не змінює.
  */
 import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
@@ -100,9 +100,20 @@ function placeOf(data: Dataset, event: ScheduledEvent | undefined | null): AirPl
   };
 }
 
-function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
+/**
+ * Ланцюжок події для плеєра. Без обраної людиною трансляції — головне святкування (`kind: 'main'`), якщо воно є: ще не
+ * почалось — на місці відео заглушка «Очікуйте трансляцію» (правка власника 2026-11-11), а не перша-ліпша вебкамера.
+ */
+export function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
   const sources = data.chainsByEventId.get(eventId)?.sources ?? [];
-  return preferredSourceId ? { eventId, sources, preferredSourceId } : { eventId, sources };
+  const preferred = preferredSourceId ?? sources.find((s) => s.kind === 'main')?.id;
+  return preferred ? { eventId, sources, preferredSourceId: preferred } : { eventId, sources };
+}
+
+/** Угору до плеєра (вибір трансляції в списку під ним). */
+function scrollToPlayer() {
+  const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
 }
 
 /** Наступна подія розкладу після півночі `event` (для «· далі: …» у пульті): подія наступного слота ефіру. */
@@ -136,6 +147,8 @@ function zoneOption(
 export interface CountryFocus {
   zoneId: string;
   eventId: string | null;
+  /** Обрана трансляція події (`?s=`). */
+  sourceId?: string | null;
 }
 
 export function countryFocusFrom(
@@ -144,9 +157,13 @@ export function countryFocusFrom(
   zoneIds: readonly string[],
   e: string | null,
   zone: string | null,
+  s: string | null = null,
 ): CountryFocus | null {
   const ev = e ? data.eventsById.get(e) : undefined;
-  if (ev && ev.countryIso === iso && zoneIds.includes(ev.zoneId)) return { zoneId: ev.zoneId, eventId: ev.id };
+  if (ev && ev.countryIso === iso && zoneIds.includes(ev.zoneId)) {
+    const src = s ? data.chainsByEventId.get(ev.id)?.sources.find((x) => x.id === s) : undefined;
+    return { zoneId: ev.zoneId, eventId: ev.id, ...(src ? { sourceId: src.id } : {}) };
+  }
   if (zone && zoneIds.includes(zone)) return { zoneId: zone, eventId: null };
   return null;
 }
@@ -155,13 +172,14 @@ export function countryFocusFrom(
  * Читає `?e=` / `?zone=` (окремо, у своєму `Suspense`: сторінка країни лишається статичною) і повідомляє про зміну —
  * перехід із «Зараз і далі» на ту саму сторінку з іншим містом теж перемикає пояс.
  */
-function FocusFromUrl({ onFocus }: { onFocus: (e: string | null, zone: string | null) => void }) {
+function FocusFromUrl({ onFocus }: { onFocus: (e: string | null, zone: string | null, s: string | null) => void }) {
   const sp = useSearchParams();
   const e = sp?.get('e') ?? null;
   const zone = sp?.get('zone') ?? null;
+  const s = sp?.get('s') ?? null;
   useEffect(() => {
-    onFocus(e, zone);
-  }, [e, zone, onFocus]);
+    onFocus(e, zone, s);
+  }, [e, zone, s, onFocus]);
   return null;
 }
 
@@ -200,12 +218,12 @@ export function CountryLive({ iso }: { iso: string }) {
   // за пояс за замовчуванням і за подію, яку вже грає плеєр.
   const zoneIdList = useMemo(() => zones.map((z) => z.id), [zones]);
   const readFocus = useCallback(
-    (e: string | null, zone: string | null) => countryFocusFrom(data, iso, zoneIdList, e, zone),
+    (e: string | null, zone: string | null, s: string | null = null) => countryFocusFrom(data, iso, zoneIdList, e, zone, s),
     [data, iso, zoneIdList],
   );
   const [urlFocus, setUrlFocus] = useState<CountryFocus | null>(null);
   const onUrlFocus = useCallback(
-    (e: string | null, zone: string | null) => setUrlFocus(readFocus(e, zone)),
+    (e: string | null, zone: string | null, s: string | null) => setUrlFocus(readFocus(e, zone, s)),
     [readFocus],
   );
   const appliedFocus = useRef<string | null>(null);
@@ -238,10 +256,10 @@ export function CountryLive({ iso }: { iso: string }) {
     let focus = urlFocus;
     if (!focus && appliedFocus.current === null) {
       const sp = new URLSearchParams(window.location.search);
-      focus = readFocus(sp.get('e'), sp.get('zone'));
+      focus = readFocus(sp.get('e'), sp.get('zone'), sp.get('s'));
     }
     if (!focus) return;
-    const key = `${focus.zoneId}|${focus.eventId ?? ''}`;
+    const key = `${focus.zoneId}|${focus.eventId ?? ''}|${focus.sourceId ?? ''}`;
     if (appliedFocus.current === key) return;
     appliedFocus.current = key;
     const main = countryMainEvent(data, iso, focus.zoneId);
@@ -250,7 +268,7 @@ export function CountryLive({ iso }: { iso: string }) {
     setCountdown(false);
     setZoneId(focus.zoneId);
     setPickedEventId(focus.eventId && focus.eventId !== main?.id ? focus.eventId : null);
-    if (target && player?.eventId !== target) actions.setChain(chainInput(data, target));
+    if (target && (player?.eventId !== target || focus.sourceId)) actions.setChain(chainInput(data, target, focus.sourceId ?? undefined));
     // Лише на зміну адреси (і перший раз, коли час відомий).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlFocus, known, actions]);
@@ -310,13 +328,22 @@ export function CountryLive({ iso }: { iso: string }) {
   const recording = !!shownEvent && known && eventStatus(now, shownEvent) === 'recording';
   const after = !!mainEvent && known && now >= mainEvent.midnightMs + STAMP_DELAY;
 
+  // Дотик до трансляції (правка власника 2026-11-11): своя країна — вмикається тут і сторінка йде вгору до плеєра (ще не
+  // почалась — заглушка «Очікуйте трансляцію»); інша країна поясу — перехід на її сторінку з цією трансляцією.
+  const router = useRouter();
   const select = useCallback(
     (row: StreamRowData) => {
+      if (row.countryIso !== iso) {
+        const other = data.countriesByIso.get(row.countryIso);
+        if (other) router.push(countryHref(other, { eventId: row.eventId, sourceId: row.id }));
+        return;
+      }
       setCountdown(false);
       setPickedEventId(row.eventId);
       actions?.setChain(chainInput(data, row.eventId, row.id));
+      scrollToPlayer();
     },
-    [actions, data],
+    [actions, data, iso, router],
   );
   const changeZone = useCallback(
     (id: string) => {
@@ -403,7 +430,7 @@ export function CountryLive({ iso }: { iso: string }) {
 
   const schedule = useGuestStore((s) => s.schedule);
   // «Зараз і далі» — і до півночі, і після (правка власника 2026-11-05: на Азорських островах його не було).
-  const nowNext = useMemo(() => nowNextItems(data, minute, schedule), [data, minute, schedule]);
+  const nowNext = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true }), [data, minute, schedule]);
 
   // «Ще о … · інші країни поясу»: трансляції сусідів і країни без трансляції (обкладинка з «Відлік»), фільтр як у
   // «Зараз і далі» (правка власника 2026-11-05).

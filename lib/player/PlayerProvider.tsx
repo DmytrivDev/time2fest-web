@@ -144,6 +144,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (preferred && !failed.includes(preferred.id)) {
       const picked = selectSource({ ...ctx, sources: [preferred] });
       if (picked.kind !== 'countdown-scene') return picked;
+      // Обрана трансляція ще не почалась — чекаємо саме на неї (заглушка), а не підміняємо іншою.
+      if (preferred.startsAt !== undefined && Date.parse(preferred.startsAt) > ctx.now) {
+        return { kind: 'waiting', source: preferred, index: preferred.order };
+      }
     }
     return selectSource(ctx);
   }, [chain, failed, facebookConsent, time, startedKey]);

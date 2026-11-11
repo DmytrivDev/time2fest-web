@@ -297,6 +297,8 @@ test.describe('US6 · cookies', () => {
     await expect(banner.locator('[data-variant="coral"]')).toHaveCount(0);
     expect(await banner.evaluate((el) => getComputedStyle(el).position)).toBe('fixed');
 
+    // Плашка в’їжджає знизу (transform, 260 мс) — міряємо після анімації.
+    await expect.poll(() => banner.evaluate((el) => getComputedStyle(el).transform)).toBe('none');
     const box = (await banner.boundingBox())!;
     const vp = page.viewportSize()!;
     if (isPhone(page)) {

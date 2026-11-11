@@ -55,12 +55,22 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
   };
 }
 
-/** «Зараз і далі»: подія кожного слота ефіру (та сама, що бере ефір). */
-export function nowNextItems(data: Dataset, now: Ms, schedule: readonly string[]): EventCardData[] {
+/**
+ * «Зараз і далі»: подія кожного слота ефіру (та сама, що бере ефір); у слоті, де трансляції вже йдуть, — ще й решта
+ * подій поясу з трансляцією наживо (правка власника 2026-11-11: «зараз» — не лише Париж, а й Берлін, Мадрид, Рим…),
+ * за популярністю (`liveOthers`; програма режиму вечірки — по одній події на слот).
+ */
+export function nowNextItems(data: Dataset, now: Ms, schedule: readonly string[], opts: { liveOthers?: boolean } = {}): EventCardData[] {
   const out: EventCardData[] = [];
   for (const slot of airSlots(data)) {
     const pick = pickSlotEvent(now, slot.events, data.countriesByIso, data.chainsByEventId);
-    if (pick) out.push(eventCard(data, pick.event, now, schedule));
+    if (!pick) continue;
+    out.push(eventCard(data, pick.event, now, schedule));
+    if (!opts.liveOthers) continue;
+    const liveOthers = slot.events
+      .filter((e) => e.id !== pick.event.id && chainStatus(data.chainsByEventId.get(e.id), now) === 'live')
+      .sort((a, b) => b.popularity - a.popularity || (data.countriesByIso.get(b.countryIso)?.popularity ?? 0) - (data.countriesByIso.get(a.countryIso)?.popularity ?? 0));
+    for (const e of liveOthers) out.push(eventCard(data, e, now, schedule));
   }
   return out;
 }

@@ -12,7 +12,7 @@ import { getData } from '@/lib/data/load';
 import { DEMO_SEED_KEY } from '@/lib/demo/seed';
 import { formatTimeForViewer, utcLabel } from '@/lib/i18n/time';
 import { useNow, useTimeMachine } from '@/lib/time/TimeProvider';
-import { MACHINE_STORAGE_KEY } from '@/lib/time/timeMachine';
+import { DEMO_START_MS } from '@/lib/time/timeMachine';
 import { resetDeviceState } from '@/stores/resetDevice';
 import ms from '@/components/shell/menu.module.css';
 import s from './time-machine.module.css';
@@ -45,9 +45,10 @@ export function TimeMachineBody({ onJump }: { onJump?: () => void }) {
     onJump?.();
   };
   const restart = () => {
+    // Годинник — на старт демо: при переході сторінка зберігає поточний віртуальний час (`pagehide`).
+    machine.set({ at: DEMO_START_MS, speed: 1 });
     resetDeviceState();
     try {
-      localStorage.removeItem(MACHINE_STORAGE_KEY);
       localStorage.removeItem(DEMO_SEED_KEY);
     } catch {
       /* сховище недоступне */

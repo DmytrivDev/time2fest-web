@@ -11,6 +11,8 @@
  * - Ланцюжок запасних джерел — `lib/player/chain.ts`: помилка → наступне джерело, `player:source-switched`
  *   для слота `room:N`. Вибране людиною джерело йде першим, як у головного плеєра.
  * - iframe живе у вузлі, яким не керує React (API замінює його); поверх відео нічого немає.
+ * - Додана трансляція ще не почалась (`startsAt` попереду; 2026-11-11) — у вікні заглушка «Трансляція очікується» з
+ *   відліком (без iframe — отже й без «на весь екран»); о `startsAt` вікно запускається саме.
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -18,7 +20,9 @@ import { emit } from '@/lib/events/bus';
 import { advanceChain, selectSource, type ChainCause } from '@/lib/player/chain';
 import type { ChainSelection, PlayerSlotId, PlayerSource } from '@/lib/player/types';
 import { createYouTubePlayer, YTState, type YouTubePlayerHandle } from '@/lib/player/youtubeApi';
-import { useTimeSource } from '@/lib/time/TimeProvider';
+import { useNow, useTimeSource } from '@/lib/time/TimeProvider';
+import { getData } from '@/lib/data/load';
+import { WaitingScene } from '@/components/player/CountdownScene';
 import { useGuestStore } from '@/stores/guest';
 import { ResumeCard } from './RoomGrid';
 
@@ -77,7 +81,13 @@ export function RoomWindowPlayer({
     setFailed([]);
   }
 
+  // Очікувана трансляція: заглушка до `startsAt`, далі вибір перераховується (ключ змінюється раз — о початку).
+  const now = useNow();
+  const preferredSrc = sources.find((s) => s.id === preferredSourceId);
+  const startsAt = preferredSrc?.startsAt ? Date.parse(preferredSrc.startsAt) : NaN;
+  const waiting = Number.isFinite(startsAt) && startsAt > now;
   const selection = useMemo<ChainSelection>(() => {
+    void waiting;
     const ctx = { slot: slotId, eventId, sources, failed, facebookConsent, now: time.now() };
     const preferred = sources.find((s) => s.id === preferredSourceId);
     if (preferred && !failed.includes(preferred.id)) {
@@ -85,7 +95,14 @@ export function RoomWindowPlayer({
       if (picked.kind === 'source') return picked;
     }
     return selectSource(ctx);
-  }, [slotId, eventId, sources, failed, facebookConsent, time, preferredSourceId]);
+  }, [slotId, eventId, sources, failed, facebookConsent, time, preferredSourceId, waiting]);
+
+  // Чекали — почалась: вікно стартує саме (людина вже обрала цю трансляцію).
+  const wasWaiting = useRef(waiting);
+  useEffect(() => {
+    if (wasWaiting.current && !waiting && !started) onStart(slot);
+    wasWaiting.current = waiting;
+  }, [waiting, started, onStart, slot]);
 
   const videoId = selection.kind === 'source' && selection.source.platform === 'youtube' ? (selection.source.videoId ?? null) : null;
 
@@ -113,7 +130,7 @@ export function RoomWindowPlayer({
   const handleRef = useRef<YouTubePlayerHandle | null>(null);
   const creating = useRef(false);
   const unmounted = useRef(false);
-  const run = started && videoId !== null;
+  const run = started && videoId !== null && !waiting;
 
   // Створення плеєра (один раз на вікно) і зміна відео через loadVideoById.
   useEffect(() => {
@@ -182,7 +199,14 @@ export function RoomWindowPlayer({
   }, [slot]);
 
   let fallback = null;
-  if (!started) {
+  const country = getData().countriesByIso.get(getData().eventsById.get(eventId)?.countryIso ?? '');
+  if (waiting && country) {
+    fallback = (
+      <div className={FRAME}>
+        <WaitingScene compact country={country} waitingFor={{ title, startsAt }} className="absolute inset-0" />
+      </div>
+    );
+  } else if (!started) {
     const thumb = selection.kind === 'source' ? selection.source.videoId : undefined;
     fallback = <ResumeCard title={title} videoId={thumb} onActivate={() => onStart(slot)} />;
   } else if (!videoId) {

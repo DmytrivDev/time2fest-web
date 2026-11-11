@@ -39,7 +39,7 @@ import { CountdownScene } from './CountdownScene';
 import { FacebookConsentCard } from './FacebookConsentCard';
 import { PlayerSlot } from './PlayerSlot';
 
-export type VideoAreaKind = 'video' | 'loading' | 'countdown-scene' | 'expected-scene' | 'facebook-consent';
+export type VideoAreaKind = 'video' | 'loading' | 'countdown-scene' | 'expected-scene' | 'facebook-consent' | 'waiting';
 
 export interface ScheduleHintData {
   /** Місто з графіка гостя (називний відмінок). */
@@ -95,6 +95,8 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
   kind: VideoAreaKind;
   muted: boolean;
   switched: boolean;
+  /** `waiting`: трансляція, на яку чекаємо (назва й початок). */
+  waiting?: { title: string; startsAt: number };
 } {
   const player = useOptionalPlayer();
   if (props.videoArea) return { kind: props.videoArea, muted: player?.muted ?? true, switched: false };
@@ -103,10 +105,29 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
   const switched = !!player.lastSwitch && player.lastSwitch.eventId === player.eventId && !player.lastSwitch.exhausted;
   if (sel.kind === 'source' && player.videoId) return { kind: 'video', muted: player.muted, switched };
   if (sel.kind === 'facebook-consent') return { kind: 'facebook-consent', muted: true, switched };
+  if (sel.kind === 'waiting') {
+    const src = getData().chainsByEventId.get(player.eventId ?? '')?.sources.find((s) => s.id === sel.source.id);
+    return {
+      kind: 'waiting',
+      muted: true,
+      switched: false,
+      waiting: { title: src?.title.uk ?? '', startsAt: Date.parse(sel.source.startsAt ?? '') || 0 },
+    };
+  }
   return { kind: props.airView === 'expected-scene' ? 'expected-scene' : 'countdown-scene', muted: true, switched: false };
 }
 
-function VideoFallback({ kind, current, countdownMode = false }: { kind: VideoAreaKind; current: AirPlace | null; countdownMode?: boolean }) {
+function VideoFallback({
+  kind,
+  current,
+  countdownMode = false,
+  waiting,
+}: {
+  kind: VideoAreaKind;
+  current: AirPlace | null;
+  countdownMode?: boolean;
+  waiting?: { title: string; startsAt: number };
+}) {
   const setConsent = useGuestStore((s) => s.setConsent);
   if (kind === 'video') return null;
   if (kind === 'loading' || !current?.country) {
@@ -131,7 +152,8 @@ function VideoFallback({ kind, current, countdownMode = false }: { kind: VideoAr
         cityName={eventTitle(current.city)}
         midnightMs={current.event.midnightMs}
         offsetMinutes={zone?.offsetMinutes ?? 0}
-        variant={countdownMode ? 'mode' : kind === 'expected-scene' ? 'expected' : 'no-stream'}
+        variant={kind === 'waiting' ? 'waiting' : countdownMode ? 'mode' : kind === 'expected-scene' ? 'expected' : 'no-stream'}
+        {...(kind === 'waiting' && waiting ? { waitingFor: waiting } : {})}
       />
     </div>
   );
@@ -205,7 +227,7 @@ export function PlayerBlock({
 
   return (
     <>
-      <PlayerSlot id="main" fallback={<VideoFallback kind={area.kind} current={current} countdownMode={!!countdownMode?.countdown} />} />
+      <PlayerSlot id="main" fallback={<VideoFallback kind={area.kind} current={current} countdownMode={!!countdownMode?.countdown} waiting={area.waiting} />} />
       {dock ? (
         <section aria-label={t('barLabel')} data-player-bar="" data-dock-above="" className={home.stickyBar}>
           {place && phase ? (

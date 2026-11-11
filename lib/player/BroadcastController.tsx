@@ -194,7 +194,9 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
       setChain(null);
       return;
     }
-    setChain({ eventId, sources: chain.sources });
+    // Головне святкування (`kind: 'main'`), якщо є: ще не почалось — заглушка «Очікуйте трансляцію» (2026-11-11).
+    const main = chain.sources.find((x) => x.kind === 'main');
+    setChain(main ? { eventId, sources: chain.sources, preferredSourceId: main.id } : { eventId, sources: chain.sources });
   }, [controlling, known, suspended, eventId, chain, watchKey, setChain]);
 
   const stayed = useRef<string | null>(null);

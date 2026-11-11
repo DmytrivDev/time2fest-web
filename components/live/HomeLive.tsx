@@ -86,7 +86,7 @@ function useNowNextData(now: Ms) {
   const schedule = useGuestStore((s) => s.schedule);
   const minute = Math.floor(now / 60_000) * 60_000;
   const data = getData();
-  const items = useMemo(() => nowNextItems(data, minute, schedule), [data, minute, schedule]);
+  const items = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true }), [data, minute, schedule]);
   const progress = useMemo(() => ({ ...festProgress(data, minute), ...progressEdges(data) }), [data, minute]);
   const zoneLabel = viewerZoneLabel();
   return { items, progress, zoneLabel };

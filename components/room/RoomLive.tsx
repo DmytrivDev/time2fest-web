@@ -46,6 +46,7 @@ import { StreamPicker } from '@/components/live/StreamPicker';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { OfferBlock } from '@/components/offers/OfferBlock';
+import { WaitingScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { Button } from '@/components/primitives/Button';
@@ -92,6 +93,18 @@ const NOTICE_MS = 6_000;
 const PICKER_ID = 'O-ROOM-ADD';
 const REPLACE_ID = 'O-ROOM-REPLACE';
 const SHARE_ID = 'O-ROOM-SHARE';
+
+/** Головне вікно кімнати: обрана трансляція ще не почалась — заглушка «Трансляція очікується» (2026-11-11). */
+function MainWaiting() {
+  const player = useOptionalPlayer();
+  const sel = player?.selection;
+  if (!sel || sel.kind !== 'waiting' || !player.eventId) return null;
+  const data = getData();
+  const country = data.countriesByIso.get(data.eventsById.get(player.eventId)?.countryIso ?? '');
+  const src = data.chainsByEventId.get(player.eventId)?.sources.find((s) => s.id === sel.source.id);
+  if (!country || !src?.startsAt) return null;
+  return <WaitingScene compact country={country} waitingFor={{ title: src.title.uk, startsAt: Date.parse(src.startsAt) }} className="aspect-video" />;
+}
 
 function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
   const sources = data.chainsByEventId.get(eventId)?.sources ?? [];
@@ -781,7 +794,7 @@ export function RoomLive() {
 
   const media = (w: GuestRoomWindow) =>
     isHost(w) ? (
-      <PlayerSlot id="main" />
+      <PlayerSlot id="main" fallback={<MainWaiting />} />
     ) : (
       <RoomWindowPlayer
         slot={w.slot}
