@@ -6,6 +6,8 @@ import type { MouseEvent } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { roundFlagSrc } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
+import { DemoClock } from '@/components/demo/DemoClock';
+import { IS_DEMO_BUILD } from '@/lib/env';
 import { useUnreadCount } from '@/stores/notifications';
 import styles from './header.module.css';
 
@@ -40,6 +42,9 @@ export interface HeaderProps {
   /** Нових сповіщень; без значення — непрочитані зі стору сповіщень. */
   notifications?: number;
   onNotificationsClick?: () => void;
+  /** Демо: годинник «Машини часу»; без обробника відкриває своє бічне вікно. */
+  onTimeMachineClick?: () => void;
+  timeMachineOpen?: boolean;
   className?: string;
 }
 
@@ -75,6 +80,8 @@ export function Header({
   passCurrent = false,
   notifications,
   onNotificationsClick,
+  onTimeMachineClick,
+  timeMachineOpen,
   className,
 }: HeaderProps) {
   const t = useTranslations('header');
@@ -104,6 +111,11 @@ export function Header({
         </nav>
 
         <span className={styles.spacer} />
+
+        {/* Демо: «Машина часу» — перша дія праворуч (власник 2026-11-11). */}
+        {IS_DEMO_BUILD ? (
+          <DemoClock onClick={onTimeMachineClick} open={timeMachineOpen} className={cn('t2f-focus', styles.icon, styles.clock)} />
+        ) : null}
 
         {/* «Підтримати» — сторінка `/support/`; на сторінках із плеєром — вікно «Чайові» на місці чату. */}
         <NextLink

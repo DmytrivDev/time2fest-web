@@ -237,15 +237,6 @@
   color: var(--color-text);
   text-decoration: none;
 }
-/* Демо: «Машина часу» — кнопка з виглядом рядка меню. */
-.rowButton {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  text-align: start;
-  cursor: pointer;
-}
 .row:hover,
 .row[aria-current='page'] {
   background: var(--color-surface-raised);

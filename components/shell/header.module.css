@@ -300,3 +300,13 @@
     display: inline-flex !important;
   }
 }
+
+/* Демо: годинник «Машини часу» — золотий значок, щоб тестувальник його помітив (2026-11-11). */
+.clock {
+  color: var(--color-highlight);
+}
+.clock:hover,
+.clock[aria-expanded='true'] {
+  color: var(--color-highlight);
+  background: var(--color-surface-raised);
+}

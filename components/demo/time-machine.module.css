@@ -1,27 +1,20 @@
-/* «Машина часу» демо (2026-11-11): у вікні меню, ті самі поля й плитки, що в меню. */
+/* «Машина часу» демо (2026-11-11): у вікні на місці чату / шторці, ті самі поверхні й радіуси, що в меню. */
 .root {
-  gap: 14px;
+  gap: 12px;
   padding: 8px 12px 4px;
 }
-.note,
-.hint {
+.note {
   margin: 0;
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  line-height: 1.45;
-}
-.hint {
   color: var(--color-text-muted);
   font-size: 13px;
+  line-height: 1.45;
 }
-.clock,
-.next {
+.clock {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--color-surface-raised);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 0;
 }
 .label {
   color: var(--color-text-muted);
@@ -35,47 +28,102 @@
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface-raised);
+}
+.cardNear {
+  border-color: color-mix(in srgb, var(--color-highlight) 55%, transparent);
+}
 .place {
   font-size: 17px;
   font-weight: 800;
 }
+.zone {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
 .when {
   color: var(--color-text-secondary);
   font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }
 .jumps {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin: 0;
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
 }
-.jump,
-.restart {
+.jump {
   display: flex;
   width: 100%;
-  height: 48px;
+  height: 44px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   border: 1px solid var(--color-border-strong);
-  border-radius: 12px;
-  background: transparent;
+  border-radius: 10px;
+  background: var(--color-background);
   color: var(--color-text);
   font: inherit;
   font-size: 15px;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
 }
-.jump:hover,
-.restart:hover {
-  background: var(--color-surface-raised);
+.cardNear .jump {
+  border-color: var(--color-highlight);
+  color: var(--color-highlight);
+}
+.jump:hover:not(:disabled) {
+  background: var(--color-surface);
 }
 .jump:disabled {
-  opacity: 0.5;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  opacity: 0.6;
   cursor: default;
 }
-.restart {
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.action {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: transparent;
   color: var(--color-text-secondary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.action:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.actionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.actionTitle {
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+.actionHint {
+  font-size: 13px;
+  line-height: 1.35;
 }

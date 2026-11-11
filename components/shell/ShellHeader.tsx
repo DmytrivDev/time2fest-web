@@ -21,6 +21,8 @@ import { useOverlay } from './OverlayManager';
 
 /** Вікно меню (`OverlayManager`). */
 export const MENU_WINDOW_ID = 'O-MENU';
+/** Демо: вікно «Машини часу». */
+export const TIME_WINDOW_ID = 'O-TIME';
 /** Вікно сповіщень. */
 export const NOTIF_WINDOW_ID = 'O-NOTIF';
 
@@ -95,22 +97,16 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
             onPass={celebrating ? () => openPassWindow() : undefined}
             onClose={close}
             keepOpenOnNavigate
-            onTimeMachine={IS_DEMO_BUILD ? openTimeMachine : undefined}
           />
         </div>
       ),
     });
   };
-  // Демо: «Машина часу» — на місці меню, «‹ Назад» повертає меню.
-  const openTimeMachine = () => {
-    overlay.open({
-      id: MENU_WINDOW_ID,
-      kind: 'form',
-      chrome: 'board',
-      title: td('title'),
-      onBack: openMenu,
-      content: <TimeMachineBody />,
-    });
+  // Демо: «Машина часу» — годинник у шапці; вікно на місці чату (телефон — шторка), як меню.
+  const timeOpen = overlay.current?.id === TIME_WINDOW_ID;
+  const toggleTimeMachine = () => {
+    if (timeOpen) overlay.close(TIME_WINDOW_ID);
+    else overlay.open({ id: TIME_WINDOW_ID, kind: 'form', chrome: 'board', title: td('title'), content: <TimeMachineBody /> });
   };
 
   // Сповіщення — вікно O-NOTIF (рішення власника 2026-11-09): десктоп — на місці чату, телефон — шторка до відео;
@@ -151,6 +147,8 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
       onSignInClick={onSignInClick}
       onPassClick={onPassClick}
       onSupportClick={celebrating ? () => openTips() : undefined}
+      onTimeMachineClick={IS_DEMO_BUILD ? toggleTimeMachine : undefined}
+      timeMachineOpen={timeOpen}
     />
   );
 }

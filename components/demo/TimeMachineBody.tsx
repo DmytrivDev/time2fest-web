@@ -1,9 +1,10 @@
 'use client';
 
 /**
- * «Машина часу» для тих, хто тестує демо (рішення власника 2026-11-11): тимчасовий пункт меню. Показує віртуальний час і
- * наступну північ; кнопки переносять за 15 хв · 5 хв · 1 хв · 30 с до неї. «Почати спочатку» — новий гість і старт ночі.
- * Відкривається на місці меню (десктоп — колонка чату, телефон — шторка), «‹ Назад» — до меню.
+ * «Машина часу» для тих, хто тестує демо (рішення власника 2026-11-11, уточнення того ж дня): годинник у шапці праворуч.
+ * Відкривається на місці чату (десктоп) або шторкою (телефон). Показує віртуальний час і дві найближчі півночі:
+ * найближчу — за 10 хв · 5 хв · 30 с, наступну за нею — за 15 хв · 5 хв · 1 хв. «На старт» — за 20 хв до півночі
+ * Парижа (лише час); «Почати спочатку» — ще й новий гість.
  */
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/primitives/Icon';
@@ -17,33 +18,53 @@ import { resetDeviceState } from '@/stores/resetDevice';
 import ms from '@/components/shell/menu.module.css';
 import s from './time-machine.module.css';
 
-/** До наступної півночі, с (порядок — як у меню: від далекого до близького). */
-export const DEMO_JUMPS = [15 * 60, 5 * 60, 60, 30] as const;
+/** До найближчої півночі, с (від далекого до близького). */
+export const DEMO_JUMPS_NEAR = [10 * 60, 5 * 60, 30] as const;
+/** До наступної за нею півночі, с. */
+export const DEMO_JUMPS_AFTER = [15 * 60, 5 * 60, 60] as const;
 
-/** Перша північ після `now` (слот поясу) — місто представника поясу й інші міста слота. */
-export function nextMidnight(now: number) {
-  const data = getData();
-  const slot = data.eventsBySlot.find((g) => g.midnightMs > now);
-  if (!slot) return null;
-  const zone = data.zonesById.get(slot.zoneId);
-  const main = slot.events.find((e) => e.cityId === zone?.representativeCityId) ?? slot.events[0];
-  const city = main ? data.citiesById.get(main.cityId)?.name.uk : undefined;
-  const country = main ? data.countriesByIso.get(main.countryIso)?.name.uk : undefined;
-  return { midnightMs: slot.midnightMs, zoneLabel: utcLabel(zone?.offsetMinutes ?? 0), city, country };
+export interface DemoMidnight {
+  midnightMs: number;
+  zoneLabel: string;
+  city?: string;
+  country?: string;
 }
 
-export function TimeMachineBody({ onJump }: { onJump?: () => void }) {
+/** Найближчі `count` північ після `now` (слоти поясів) — місто представника поясу. */
+export function upcomingMidnights(now: number, count = 2): DemoMidnight[] {
+  const data = getData();
+  return data.eventsBySlot
+    .filter((g) => g.midnightMs > now)
+    .slice(0, count)
+    .map((slot) => {
+      const zone = data.zonesById.get(slot.zoneId);
+      const main = slot.events.find((e) => e.cityId === zone?.representativeCityId) ?? slot.events[0];
+      return {
+        midnightMs: slot.midnightMs,
+        zoneLabel: utcLabel(zone?.offsetMinutes ?? 0),
+        city: main ? data.citiesById.get(main.cityId)?.name.uk : undefined,
+        country: main ? data.countriesByIso.get(main.countryIso)?.name.uk : undefined,
+      };
+    });
+}
+
+/** «7:42» / «1:07:42» — скільки лишилось до півночі. */
+function left(ms: number): string {
+  const total = Math.max(0, Math.ceil(ms / 1_000));
+  const h = Math.floor(total / 3_600);
+  const m = Math.floor((total % 3_600) / 60);
+  const sec = String(total % 60).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
+}
+
+export function TimeMachineBody() {
   const t = useTranslations('demoTime');
   const machine = useTimeMachine();
   const now = useNow({ granularity: 'second' });
-  const next = nextMidnight(now);
   if (!machine) return null;
+  const [near, after] = upcomingMidnights(now, 2);
 
-  const jump = (sec: number) => {
-    if (!next) return;
-    machine.set({ at: next.midnightMs - sec * 1_000 });
-    onJump?.();
-  };
+  const go = (at: number) => machine.set({ at });
   const restart = () => {
     // Годинник — на старт демо: при переході сторінка зберігає поточний віртуальний час (`pagehide`).
     machine.set({ at: DEMO_START_MS, speed: 1 });
@@ -55,46 +76,66 @@ export function TimeMachineBody({ onJump }: { onJump?: () => void }) {
     }
     window.location.assign('/');
   };
-  const leftMin = next ? Math.max(0, Math.ceil((next.midnightMs - now) / 60_000)) : 0;
+
+  const card = (m: DemoMidnight, label: string, jumps: readonly number[], key: string) => (
+    <section className={cn(s.card, key === 'near' && s.cardNear)} data-demo-midnight={key}>
+      <span className={s.label}>{label}</span>
+      <span className={s.place}>
+        {m.city}
+        {m.country && m.country !== m.city ? `, ${m.country}` : ''}
+        <span className={s.zone}> · {m.zoneLabel}</span>
+      </span>
+      <span className={s.when}>
+        {formatTimeForViewer(m.midnightMs, { now }).text} · {t('left', { time: left(m.midnightMs - now) })}
+      </span>
+      <ul className={s.jumps} aria-label={t('jumpsLabel', { place: m.city ?? m.zoneLabel })}>
+        {jumps.map((sec) => {
+          const at = m.midnightMs - sec * 1_000;
+          return (
+            <li key={sec}>
+              <button
+                type="button"
+                disabled={at <= now}
+                onClick={() => go(at)}
+                className={cn('t2f-focus t2f-transition', s.jump)}
+                data-demo-jump={`${key}:${sec}`}
+              >
+                {sec >= 60 ? t('beforeMin', { count: sec / 60 }) : t('beforeSec', { count: sec })}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
 
   return (
     <div className={cn(ms.content, s.root)} data-demo-time="">
-      <p className={s.note}>{t('note')}</p>
       <div className={s.clock}>
         <span className={s.label}>{t('now')}</span>
         <span className={s.time} data-demo-now="">
           {new Date(now).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </span>
       </div>
-      {next ? (
-        <div className={s.next}>
-          <span className={s.label}>{t('next')}</span>
-          <span className={s.place}>
-            {next.city}
-            {next.country && next.country !== next.city ? `, ${next.country}` : ''} · {next.zoneLabel}
+      {near ? card(near, t('near'), DEMO_JUMPS_NEAR, 'near') : <p className={s.note}>{t('over')}</p>}
+      {after ? card(after, t('after'), DEMO_JUMPS_AFTER, 'after') : null}
+      <div className={s.actions}>
+        <button type="button" onClick={() => go(DEMO_START_MS)} className={cn('t2f-focus t2f-transition', s.action)} data-demo-start="">
+          <Icon name="clock" size={16} />
+          <span className={s.actionText}>
+            <span className={s.actionTitle}>{t('start')}</span>
+            <span className={s.actionHint}>{t('startHint')}</span>
           </span>
-          <span className={s.when}>
-            {formatTimeForViewer(next.midnightMs, { now }).text} · {t('inMinutes', { count: leftMin })}
+        </button>
+        <button type="button" onClick={restart} className={cn('t2f-focus t2f-transition', s.action)} data-demo-restart="">
+          <Icon name="undo" size={16} />
+          <span className={s.actionText}>
+            <span className={s.actionTitle}>{t('restart')}</span>
+            <span className={s.actionHint}>{t('restartHint')}</span>
           </span>
-        </div>
-      ) : (
-        <p className={s.note}>{t('over')}</p>
-      )}
-      <ul className={s.jumps} aria-label={t('jumpsLabel')}>
-        {DEMO_JUMPS.map((sec) => (
-          <li key={sec}>
-            <button type="button" disabled={!next} onClick={() => jump(sec)} className={cn('t2f-focus t2f-transition', s.jump)} data-demo-jump={sec}>
-              <Icon name="clock" size={16} />
-              {sec >= 60 ? t('beforeMin', { count: sec / 60 }) : t('beforeSec', { count: sec })}
-            </button>
-          </li>
-        ))}
-      </ul>
-      <button type="button" onClick={restart} className={cn('t2f-focus t2f-transition', s.restart)} data-demo-restart="">
-        <Icon name="undo" size={16} />
-        {t('restart')}
-      </button>
-      <p className={s.hint}>{t('restartHint')}</p>
+        </button>
+      </div>
+      <p className={s.note}>{t('note')}</p>
     </div>
   );
 }
