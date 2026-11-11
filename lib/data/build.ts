@@ -1,3 +1,4 @@
+import { registerRecording } from '@/lib/player/recordingSync';
 import type {
   City,
   CountriesFile,
@@ -104,6 +105,11 @@ export function buildDataset(
       eventId: chain.eventId,
       sources: [...chain.sources].sort((a, b) => a.order - b.order),
     });
+    // Записи свят (демо): плеєри грають їх синхронно з північчю події.
+    const midnightMs = events.find((e) => e.id === chain.eventId)?.midnightMs;
+    for (const src of chain.sources) {
+      if (src.sync && src.videoId && midnightMs !== undefined) registerRecording(src.videoId, { midnightMs, ...src.sync });
+    }
   }
 
   return {

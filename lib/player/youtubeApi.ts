@@ -7,7 +7,9 @@
  * - `unMute()` викликати лише всередині жесту користувача;
  * - плеєр — з `youtube-nocookie.com` (режим підвищеної приватності): YouTube не ставить cookies, доки людина не
  *   запустить відео; згода на cookies сайту для плеєра не потрібна (рішення 2026-11-02).
+ * - запис торішнього свята (демо) грає з позиції `recordingPosition` і перемотується за годинником (`recordingSync`).
  */
+import { DRIFT_SEC, onRecordingResync, recordingPosition } from './recordingSync';
 
 /**
  * Завантажувач API — копія `https://www.youtube.com/iframe_api` з нашого домену (`scripts/sync_yt_loader.mjs`, оновлюється
@@ -35,7 +37,9 @@ interface YTEvent<T = unknown> {
 }
 
 export interface YTPlayer {
-  loadVideoById(videoId: string): void;
+  loadVideoById(videoId: string | { videoId: string; startSeconds?: number }): void;
+  seekTo?(seconds: number, allowSeekAhead: boolean): void;
+  getCurrentTime?(): number;
   cueVideoById(videoId: string): void;
   playVideo(): void;
   pauseVideo(): void;
@@ -144,6 +148,21 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
   let pending: string | null = null;
   let destroyed = false;
 
+  /** Запис — завантажити з позиції годинника; звичайне відео — як є. */
+  const loadAt = (videoId: string) => {
+    const pos = recordingPosition(videoId);
+    player.loadVideoById(pos ? { videoId, startSeconds: Math.floor(pos.seconds) } : videoId);
+  };
+  /** Перемотати запис до годинника, якщо розійшлися (стрибок часу, пауза, буферизація). */
+  const resync = (force: boolean) => {
+    if (destroyed || !ready || !currentId) return;
+    const pos = recordingPosition(currentId);
+    if (!pos || typeof player.seekTo !== 'function') return;
+    if (pos.mode === 'replay' && !force) return;
+    const cur = typeof player.getCurrentTime === 'function' ? player.getCurrentTime() : NaN;
+    if (force || !Number.isFinite(cur) || Math.abs(cur - pos.seconds) > DRIFT_SEC) player.seekTo(pos.seconds, true);
+  };
+
   const player = new YT.Player(mount, {
     width: '100%',
     height: '100%',
@@ -161,16 +180,21 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
         ready = true;
         if (pending && pending !== currentId) {
           currentId = pending;
-          player.loadVideoById(pending);
-        }
+          loadAt(pending);
+        } else resync(false);
         pending = null;
         handlers.onReady?.();
       },
-      onStateChange: (e) => handlers.onStateChange?.(e.data),
+      onStateChange: (e) => {
+        if (e.data === YTState.PLAYING) resync(false);
+        handlers.onStateChange?.(e.data);
+      },
       onError: (e) => handlers.onError?.(e.data),
       onAutoplayBlocked: () => handlers.onAutoplayBlocked?.(),
     },
   });
+
+  const offResync = onRecordingResync(() => resync(true));
 
   const safe = (fn: () => void) => {
     if (destroyed || !ready) return;
@@ -189,7 +213,7 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
       }
       if (videoId === currentId) return;
       currentId = videoId;
-      player.loadVideoById(videoId);
+      loadAt(videoId);
     },
     play: () => safe(() => player.playVideo()),
     pause: () => safe(() => player.pauseVideo()),
@@ -210,6 +234,7 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      offResync();
       player.destroy();
     },
   };

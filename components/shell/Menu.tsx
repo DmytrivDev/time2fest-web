@@ -4,14 +4,16 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dialog, RadioGroup, VisuallyHidden } from 'radix-ui';
-import { useRef, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
+import { useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
 import { useHeaderUser } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Logo } from '@/components/primitives/Logo';
 import { Switch } from '@/components/primitives/Switch';
+import { TimeMachineBody } from '@/components/demo/TimeMachineBody';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
+import { IS_DEMO_BUILD } from '@/lib/env';
 import { useSheetTop } from '@/lib/overlay/sheetTop';
 import { usePartyHref } from './OverlayManager';
 import { useAuthStore } from '@/stores/auth';
@@ -110,6 +112,8 @@ export interface MenuBodyProps extends Omit<MenuProps, 'open' | 'onOpenChange'> 
    * сторінками, тож змінюється лише вміст, а меню на новій сторінці вже відкрите. Radix-варіант (`Menu`) закривається.
    */
   keepOpenOnNavigate?: boolean;
+  /** Демо: пункт «Машина часу» (тимчасовий, лише в демо-збірці) — відкриває її на місці меню. */
+  onTimeMachine?: () => void;
 }
 
 /**
@@ -136,8 +140,10 @@ export function MenuBody({
   onReducedMotionChange,
   onClose,
   keepOpenOnNavigate = false,
+  onTimeMachine,
 }: MenuBodyProps) {
   const t = useTranslations('menu');
+  const td = useTranslations('demoTime');
   const th = useTranslations('header');
   const stored = useGuestStore((s) => s.reducedMotion);
   const setStored = useGuestStore((s) => s.setReducedMotion);
@@ -235,6 +241,22 @@ export function MenuBody({
       )}
 
       <nav aria-label={t('navLabel')}>
+        {IS_DEMO_BUILD && onTimeMachine ? (
+          <Section title={td('section')}>
+            <li>
+              <button type="button" onClick={onTimeMachine} className={cn('t2f-focus t2f-transition', ms.row, ms.rowButton)} data-menu-time-machine="">
+                <span aria-hidden="true" className={cn(ms.tile, ms.tileGold)}>
+                  <Icon name="clock" size={18} />
+                </span>
+                <span className={ms.rowText}>
+                  <span className={ms.rowTitle}>{td('menuItem')}</span>
+                  <span className={ms.rowHint}>{td('menuHint')}</span>
+                </span>
+                <Icon name="chevron-right" size={16} className={ms.chev} />
+              </button>
+            </li>
+          </Section>
+        ) : null}
         <Section title={t('sectionSite')} className={ms.notDesk}>
           <Row href="/" icon="home" title={t('home')} current={page === 'home'} onNavigate={navigate} />
           <Row href="/countries" icon="map" title={t('countries')} current={page === 'countries'} onNavigate={navigate} />
@@ -396,9 +418,26 @@ export function SideDialog({
 /** Меню поза `(live)` — у бічному вікні (`SideDialog`). */
 export function Menu({ open, onOpenChange, ...rest }: MenuProps) {
   const t = useTranslations('menu');
+  const td = useTranslations('demoTime');
+  // Демо: «Машина часу» — другий рівень того ж вікна з «‹ Назад».
+  const [view, setView] = useState<'menu' | 'time'>('menu');
+  const change = (v: boolean) => {
+    if (!v) setView('menu');
+    onOpenChange(v);
+  };
   return (
-    <SideDialog open={open} onOpenChange={onOpenChange} title={t('title')} logo>
-      <MenuBody {...rest} onClose={() => onOpenChange(false)} />
+    <SideDialog
+      open={open}
+      onOpenChange={change}
+      title={view === 'time' ? td('title') : t('title')}
+      logo={view === 'menu'}
+      onBack={view === 'time' ? () => setView('menu') : undefined}
+    >
+      {view === 'time' ? (
+        <TimeMachineBody />
+      ) : (
+        <MenuBody {...rest} onClose={() => change(false)} onTimeMachine={IS_DEMO_BUILD ? () => setView('time') : undefined} />
+      )}
     </SideDialog>
   );
 }

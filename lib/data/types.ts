@@ -109,6 +109,8 @@ export interface StreamSource {
   /** TestStreamExtra (1.6). */
   testNote?: string;
   alwaysOn?: boolean;
+  /** Запис торішнього свята (демо, 2026-11-11): секунда півночі в записі й тривалість — грає синхронно з північчю події. */
+  sync?: { midnightSec: number; durationSec?: number };
 }
 
 export interface TestStreamExtra {

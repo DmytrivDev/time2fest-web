@@ -8,6 +8,9 @@ import type { TimeSourceLike } from './types';
 /** Старт без параметрів (Clarifications 2026-10-26): до півночі Лондона 22 хв. */
 export const DEFAULT_START_ISO = '2027-01-01T01:38:00+02:00';
 export const DEFAULT_START_MS = Date.parse(DEFAULT_START_ISO);
+/** Демо (рішення власника 2026-11-11): за 20 хв до півночі Парижа (UTC+1) — трансляції поясу щойно відкрились. */
+export const DEMO_START_ISO = '2026-12-31T22:40:00Z';
+export const DEMO_START_MS = Date.parse(DEMO_START_ISO);
 export const MACHINE_STORAGE_KEY = 't2f:session:timeMachine';
 export const MAX_SPEED = 600;
 

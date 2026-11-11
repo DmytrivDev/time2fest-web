@@ -12,3 +12,6 @@ data/streams.candidates.json
 next-env.d.ts
 .cache
 AGENTS.md
+out-demo
+out-prod
+.next-demo

@@ -3,8 +3,8 @@
  * У робочій збірці `t`, `speed`, `panel` ігноруються: `createAppTimeSource` відсікає гілку
  * машини константою `IS_TEST_BUILD`.
  */
-import { IS_TEST_BUILD } from '@/lib/env';
-import { DEFAULT_START_MS, MACHINE_STORAGE_KEY, sanitizeSpeed, TimeMachine } from './timeMachine';
+import { IS_DEMO_BUILD, IS_TEST_BUILD } from '@/lib/env';
+import { DEFAULT_START_MS, DEMO_START_MS, MACHINE_STORAGE_KEY, sanitizeSpeed, TimeMachine } from './timeMachine';
 import { TimeSource } from './TimeSource';
 import type { TimeSourceLike } from './types';
 
@@ -88,6 +88,8 @@ export function resolveMachineStart(opts: {
   isTest: boolean;
   storage?: Storage | null;
   dateNow?: () => number;
+  /** Старт без `t` і без збереженого (демо — `DEMO_START_MS`). */
+  defaultAt?: number;
 }): MachineStart | null {
   if (!opts.isTest) return null;
   const p = parseMachineParams(opts.search);
@@ -98,7 +100,7 @@ export function resolveMachineStart(opts: {
     const elapsed = Math.max(0, (opts.dateNow ?? Date.now)() - saved.savedAtMs);
     return { ...base, at: saved.at + elapsed * saved.speed, speed: p.speed ?? saved.speed, origin: 'saved' };
   }
-  return { ...base, at: DEFAULT_START_MS, speed: p.speed ?? 1, origin: 'default' };
+  return { ...base, at: opts.defaultAt ?? DEFAULT_START_MS, speed: p.speed ?? 1, origin: 'default' };
 }
 
 /** Записує `t` і `speed` у адресу без перезавантаження (`history.replaceState`). */
@@ -121,7 +123,7 @@ export function writeMachineToUrl(state: { at: number; speed: number }, win: Win
  */
 export function attachMachinePersistence(
   machine: TimeMachine,
-  opts: { storage?: Storage | null; win?: Window | null; dateNow?: () => number } = {},
+  opts: { storage?: Storage | null; win?: Window | null; dateNow?: () => number; writeUrl?: boolean } = {},
 ): () => void {
   const win = opts.win === undefined ? (typeof window !== 'undefined' ? window : null) : opts.win;
   const storage = opts.storage === undefined ? safeSessionStorage() : opts.storage;
@@ -129,7 +131,7 @@ export function attachMachinePersistence(
   const persist = (writeUrl: boolean) => {
     const s = machine.get();
     saveMachine(storage, { at: s.at, speed: s.speed, savedAtMs: dateNow() });
-    if (writeUrl && win) writeMachineToUrl(s, win);
+    if (writeUrl && win && opts.writeUrl !== false) writeMachineToUrl(s, win);
   };
   persist(false);
   const unsub = machine.subscribe(() => persist(true));
@@ -139,6 +141,14 @@ export function attachMachinePersistence(
     unsub();
     win?.removeEventListener('pagehide', onHide);
   };
+}
+
+export function safeLocalStorage(): Storage | null {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage : null;
+  } catch {
+    return null;
+  }
 }
 
 export function safeSessionStorage(): Storage | null {
@@ -160,10 +170,13 @@ export interface AppTimeSource {
 /** Джерело часу для сайту: у тестовій збірці — машина часу, інакше — серверний `TimeSource`. */
 export function createAppTimeSource(): AppTimeSource {
   if (IS_TEST_BUILD && typeof window !== 'undefined') {
+    // Демо: час спільний для вкладок і переживає закриття (localStorage, «Скинути стан гостя» його стирає), адреса — без `t`.
+    const storage = IS_DEMO_BUILD ? safeLocalStorage() : safeSessionStorage();
     const start = resolveMachineStart({
       search: window.location.search,
       isTest: true,
-      storage: safeSessionStorage(),
+      storage,
+      ...(IS_DEMO_BUILD ? { defaultAt: DEMO_START_MS } : {}),
     });
     if (start) {
       for (const w of start.warnings) console.warn(`[time-machine] ${w}`);
@@ -172,7 +185,7 @@ export function createAppTimeSource(): AppTimeSource {
         source: machine,
         machine,
         start,
-        activate: () => attachMachinePersistence(machine),
+        activate: () => attachMachinePersistence(machine, { storage, writeUrl: !IS_DEMO_BUILD }),
       };
     }
   }

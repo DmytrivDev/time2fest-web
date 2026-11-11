@@ -1,0 +1,1903 @@
+{
+  "version": 1,
+  "season": "2026-27",
+  "generatedAt": "2026-11-11T13:28:31Z",
+  "lastCheckedAt": "2026-11-11T00:00:00Z",
+  "chains": [
+    {
+      "eventId": "evt_sydney_2027",
+      "sources": [
+        {
+          "id": "src_demo_uBoCoMsaSQU",
+          "platform": "youtube",
+          "videoId": "uBoCoMsaSQU",
+          "url": "https://www.youtube.com/watch?v=uBoCoMsaSQU",
+          "kind": "webcam",
+          "title": {
+            "uk": "Сідней · Гарбор-Бридж"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T12:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Sydney Live Camera",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 18079,
+            "durationSec": 25656
+          }
+        },
+        {
+          "id": "src_demo_htOOIJ1z_Ek",
+          "platform": "youtube",
+          "videoId": "htOOIJ1z_Ek",
+          "url": "https://www.youtube.com/watch?v=htOOIJ1z_Ek",
+          "kind": "tv",
+          "title": {
+            "uk": "Сідней · міст і Опера"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T12:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Watch Centre LIVE",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 14352,
+            "durationSec": 28790
+          }
+        },
+        {
+          "id": "src_demo_Jb3CcauR59k",
+          "platform": "youtube",
+          "videoId": "Jb3CcauR59k",
+          "url": "https://www.youtube.com/watch?v=Jb3CcauR59k",
+          "kind": "tv",
+          "title": {
+            "uk": "Сідней · гавань"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T12:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Firstpost",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 10153,
+            "durationSec": 13450
+          }
+        },
+        {
+          "id": "src_demo_eiD9tbEbf7w",
+          "platform": "youtube",
+          "videoId": "eiD9tbEbf7w",
+          "url": "https://www.youtube.com/watch?v=eiD9tbEbf7w",
+          "kind": "webcam",
+          "title": {
+            "uk": "Сідней · гавань"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2026-12-31T12:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Surveillance Map Foundation",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 3794,
+            "durationSec": 7412
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_tokyo_2027",
+      "sources": [
+        {
+          "id": "src_demo_5vNRYA6j6UA",
+          "platform": "youtube",
+          "videoId": "5vNRYA6j6UA",
+          "url": "https://www.youtube.com/watch?v=5vNRYA6j6UA",
+          "kind": "tv",
+          "title": {
+            "uk": "Токіо · Японія"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T14:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Nippon Television News Japan",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7168,
+            "durationSec": 25291
+          }
+        },
+        {
+          "id": "src_demo_6qoyA09OYms",
+          "platform": "youtube",
+          "videoId": "6qoyA09OYms",
+          "url": "https://www.youtube.com/watch?v=6qoyA09OYms",
+          "kind": "tv",
+          "title": {
+            "uk": "Токіо · Сенсо-дзі, Асакуса"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T14:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · 日テレNEWS",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7183,
+            "durationSec": 25271
+          }
+        },
+        {
+          "id": "src_demo_NV_Yo0mNENY",
+          "platform": "youtube",
+          "videoId": "NV_Yo0mNENY",
+          "url": "https://www.youtube.com/watch?v=NV_Yo0mNENY",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · Сібуя"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T14:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Sora The Troll",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 12522,
+            "durationSec": 16057
+          }
+        },
+        {
+          "id": "src_demo_vOXlnf7y8VA",
+          "platform": "youtube",
+          "videoId": "vOXlnf7y8VA",
+          "url": "https://www.youtube.com/watch?v=vOXlnf7y8VA",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · Сіндзюку"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2026-12-31T14:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Rambalac Live",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 5410,
+            "durationSec": 6509
+          }
+        },
+        {
+          "id": "src_demo_rGEs9XDjCAo",
+          "platform": "youtube",
+          "videoId": "rGEs9XDjCAo",
+          "url": "https://www.youtube.com/watch?v=rGEs9XDjCAo",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · вулиці"
+          },
+          "order": 4,
+          "status": "expected",
+          "startsAt": "2026-12-31T14:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Mr Nippon",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 5384,
+            "durationSec": 8801
+          }
+        },
+        {
+          "id": "src_demo_OHJIIx6MgvM",
+          "platform": "youtube",
+          "videoId": "OHJIIx6MgvM",
+          "url": "https://www.youtube.com/watch?v=OHJIIx6MgvM",
+          "kind": "webcam",
+          "title": {
+            "uk": "Токіо · Сібуя"
+          },
+          "order": 5,
+          "status": "expected",
+          "startsAt": "2026-12-31T14:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Rion Ishida",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 9423,
+            "durationSec": 11714
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_dubai_2027",
+      "sources": [
+        {
+          "id": "src_demo_TFf9wvEebs4",
+          "platform": "youtube",
+          "videoId": "TFf9wvEebs4",
+          "url": "https://www.youtube.com/watch?v=TFf9wvEebs4",
+          "kind": "tv",
+          "title": {
+            "uk": "Дубай · Бурдж-Халіфа"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T19:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Watch Centre LIVE",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 12419,
+            "durationSec": 28791
+          }
+        },
+        {
+          "id": "src_demo_j12qMORh5dk",
+          "platform": "youtube",
+          "videoId": "j12qMORh5dk",
+          "url": "https://www.youtube.com/watch?v=j12qMORh5dk",
+          "kind": "tv",
+          "title": {
+            "uk": "Дубай · Бурдж-Халіфа"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T19:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Firstpost",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1277,
+            "durationSec": 31246
+          }
+        },
+        {
+          "id": "src_demo_-XDR7Xbc-7c",
+          "platform": "youtube",
+          "videoId": "-XDR7Xbc-7c",
+          "url": "https://www.youtube.com/watch?v=-XDR7Xbc-7c",
+          "kind": "tv",
+          "title": {
+            "uk": "Дубай · Бурдж-Халіфа"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T19:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · The Mirror",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1269,
+            "durationSec": 2210
+          }
+        },
+        {
+          "id": "src_demo_wAeCA54Hf4E",
+          "platform": "youtube",
+          "videoId": "wAeCA54Hf4E",
+          "url": "https://www.youtube.com/watch?v=wAeCA54Hf4E",
+          "kind": "tv",
+          "title": {
+            "uk": "Дубай · Бурдж-Халіфа"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2026-12-31T19:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · CNBC-TV18",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 6743,
+            "durationSec": 18485
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_kyiv_2027",
+      "sources": [
+        {
+          "id": "src_demo_abhsF9Kfh14",
+          "platform": "youtube",
+          "videoId": "abhsF9Kfh14",
+          "url": "https://www.youtube.com/watch?v=abhsF9Kfh14",
+          "kind": "tv",
+          "title": {
+            "uk": "Київ · Майдан Незалежності"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T21:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · APT",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 5124,
+            "durationSec": 6384
+          }
+        },
+        {
+          "id": "src_demo_ubM5DeUZVE8",
+          "platform": "youtube",
+          "videoId": "ubM5DeUZVE8",
+          "url": "https://www.youtube.com/watch?v=ubM5DeUZVE8",
+          "kind": "tv",
+          "title": {
+            "uk": "Київ · Майдан Незалежності"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T21:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Liberty UA",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 4770,
+            "durationSec": 5862
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_berlin_2027",
+      "sources": [
+        {
+          "id": "src_demo_Kp3U26LoMbE",
+          "platform": "youtube",
+          "videoId": "Kp3U26LoMbE",
+          "url": "https://www.youtube.com/watch?v=Kp3U26LoMbE",
+          "kind": "webcam",
+          "title": {
+            "uk": "Гамбург · порт"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Hamburg Hafen Live",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 5003,
+            "durationSec": 9197
+          }
+        },
+        {
+          "id": "src_demo_JRMHWMV29uk",
+          "platform": "youtube",
+          "videoId": "JRMHWMV29uk",
+          "url": "https://www.youtube.com/watch?v=JRMHWMV29uk",
+          "kind": "tv",
+          "title": {
+            "uk": "Мюнхен"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · BR24",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 28528,
+            "durationSec": 42896
+          }
+        },
+        {
+          "id": "src_demo_1baiCGEmePo",
+          "platform": "youtube",
+          "videoId": "1baiCGEmePo",
+          "url": "https://www.youtube.com/watch?v=1baiCGEmePo",
+          "kind": "webcam",
+          "title": {
+            "uk": "Берлін"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Weichreite TV",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 19634,
+            "durationSec": 26936
+          }
+        },
+        {
+          "id": "src_demo_CYicyC--Q0Y",
+          "platform": "youtube",
+          "videoId": "CYicyC--Q0Y",
+          "url": "https://www.youtube.com/watch?v=CYicyC--Q0Y",
+          "kind": "webcam",
+          "title": {
+            "uk": "Берлін · Бранденбурзькі ворота"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · VERTEX",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2332,
+            "durationSec": 3544
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_madrid_2027",
+      "sources": [
+        {
+          "id": "src_demo_6a9qCtTQPQ8",
+          "platform": "youtube",
+          "videoId": "6a9qCtTQPQ8",
+          "url": "https://www.youtube.com/watch?v=6a9qCtTQPQ8",
+          "kind": "tv",
+          "title": {
+            "uk": "Кордова · площа Тендільяс"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · PTV Andalucía",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1709,
+            "durationSec": 5431
+          }
+        },
+        {
+          "id": "src_demo_GBdM_5lfdx4",
+          "platform": "youtube",
+          "videoId": "GBdM_5lfdx4",
+          "url": "https://www.youtube.com/watch?v=GBdM_5lfdx4",
+          "kind": "webcam",
+          "title": {
+            "uk": "Мадрид · Пуерта-дель-Соль"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · SusiTrips",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 19865,
+            "durationSec": 34243
+          }
+        },
+        {
+          "id": "src_demo_9Mz7BRpaZIg",
+          "platform": "youtube",
+          "videoId": "9Mz7BRpaZIg",
+          "url": "https://www.youtube.com/watch?v=9Mz7BRpaZIg",
+          "kind": "webcam",
+          "title": {
+            "uk": "Мадрид · Пуерта-дель-Соль"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Viajes MarKastle (Canal #3)",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2700,
+            "durationSec": 11876
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_london_2027",
+      "sources": [
+        {
+          "id": "src_demo_gGa3IfSalAI",
+          "platform": "youtube",
+          "videoId": "gGa3IfSalAI",
+          "url": "https://www.youtube.com/watch?v=gGa3IfSalAI",
+          "kind": "tv",
+          "title": {
+            "uk": "Лондон · Лондонське око"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Watch Centre LIVE",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 6446,
+            "durationSec": 28750
+          }
+        },
+        {
+          "id": "src_demo__AQ9scW8nfA",
+          "platform": "youtube",
+          "videoId": "_AQ9scW8nfA",
+          "url": "https://www.youtube.com/watch?v=_AQ9scW8nfA",
+          "kind": "tv",
+          "title": {
+            "uk": "Лондон · Темза"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · GBNews",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2468,
+            "durationSec": 3831
+          }
+        },
+        {
+          "id": "src_demo_hqLRVC5dR94",
+          "platform": "youtube",
+          "videoId": "hqLRVC5dR94",
+          "url": "https://www.youtube.com/watch?v=hqLRVC5dR94",
+          "kind": "webcam",
+          "title": {
+            "uk": "Лондон · Темза"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · kidney beans global",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 4395,
+            "durationSec": 5372
+          }
+        },
+        {
+          "id": "src_demo_ETpiQRvPBnI",
+          "platform": "youtube",
+          "videoId": "ETpiQRvPBnI",
+          "url": "https://www.youtube.com/watch?v=ETpiQRvPBnI",
+          "kind": "tv",
+          "title": {
+            "uk": "Единбург · Гогманай"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Daily Record",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2219,
+            "durationSec": 5924
+          }
+        },
+        {
+          "id": "src_demo_O9F2TQ36xEE",
+          "platform": "youtube",
+          "videoId": "O9F2TQ36xEE",
+          "url": "https://www.youtube.com/watch?v=O9F2TQ36xEE",
+          "kind": "webcam",
+          "title": {
+            "uk": "Единбург · Гогманай"
+          },
+          "order": 4,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Edinburgh & Beyond ",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1737,
+            "durationSec": 4422
+          }
+        },
+        {
+          "id": "src_demo_7EjFiYFHeyo",
+          "platform": "youtube",
+          "videoId": "7EjFiYFHeyo",
+          "url": "https://www.youtube.com/watch?v=7EjFiYFHeyo",
+          "kind": "tv",
+          "title": {
+            "uk": "Лондон · Темза"
+          },
+          "order": 5,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · The Mirror",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1933,
+            "durationSec": 2938
+          }
+        },
+        {
+          "id": "src_demo_bnp6E5xLd18",
+          "platform": "youtube",
+          "videoId": "bnp6E5xLd18",
+          "url": "https://www.youtube.com/watch?v=bnp6E5xLd18",
+          "kind": "webcam",
+          "title": {
+            "uk": "Лондон · Гітроу"
+          },
+          "order": 6,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · BIG JET TV",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7144,
+            "durationSec": 8965
+          }
+        },
+        {
+          "id": "src_demo_l6mljF9k4H0",
+          "platform": "youtube",
+          "videoId": "l6mljF9k4H0",
+          "url": "https://www.youtube.com/watch?v=l6mljF9k4H0",
+          "kind": "tv",
+          "title": {
+            "uk": "Лондон · набережна"
+          },
+          "order": 7,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Daily Record",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2160,
+            "durationSec": 3127
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_rio-de-janeiro_2027",
+      "sources": [
+        {
+          "id": "src_demo_4Dc1nx1POqo",
+          "platform": "youtube",
+          "videoId": "4Dc1nx1POqo",
+          "url": "https://www.youtube.com/watch?v=4Dc1nx1POqo",
+          "kind": "tv",
+          "title": {
+            "uk": "Ріо · Копакабана"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Watch Centre LIVE",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 6774,
+            "durationSec": 28691
+          }
+        },
+        {
+          "id": "src_demo_e3CLDwlzmbk",
+          "platform": "youtube",
+          "videoId": "e3CLDwlzmbk",
+          "url": "https://www.youtube.com/watch?v=e3CLDwlzmbk",
+          "kind": "tv",
+          "title": {
+            "uk": "Ріо · Копакабана"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · APT",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 5479,
+            "durationSec": 6889
+          }
+        },
+        {
+          "id": "src_demo_dBKfYI3LXCw",
+          "platform": "youtube",
+          "videoId": "dBKfYI3LXCw",
+          "url": "https://www.youtube.com/watch?v=dBKfYI3LXCw",
+          "kind": "tv",
+          "title": {
+            "uk": "Ріо · Копакабана"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Manchester Evening News",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2438,
+            "durationSec": 21816
+          }
+        },
+        {
+          "id": "src_demo_aY0JXrxolss",
+          "platform": "youtube",
+          "videoId": "aY0JXrxolss",
+          "url": "https://www.youtube.com/watch?v=aY0JXrxolss",
+          "kind": "webcam",
+          "title": {
+            "uk": "Ріо · Копакабана"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Thiago Silva",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 11741,
+            "durationSec": 18967
+          }
+        },
+        {
+          "id": "src_demo_ysAxxVCxoWc",
+          "platform": "youtube",
+          "videoId": "ysAxxVCxoWc",
+          "url": "https://www.youtube.com/watch?v=ysAxxVCxoWc",
+          "kind": "webcam",
+          "title": {
+            "uk": "Форталеза · Бейра-Мар"
+          },
+          "order": 4,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Léozão Azevedo ",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 9252,
+            "durationSec": 16733
+          }
+        },
+        {
+          "id": "src_demo_4-qVZS86J-M",
+          "platform": "youtube",
+          "videoId": "4-qVZS86J-M",
+          "url": "https://www.youtube.com/watch?v=4-qVZS86J-M",
+          "kind": "webcam",
+          "title": {
+            "uk": "Сан-Паулу · Авеніда Пауліста"
+          },
+          "order": 5,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Sem LIMITES night",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7471,
+            "durationSec": 20994
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_buenos-aires_2027",
+      "sources": [
+        {
+          "id": "src_demo_Ns7DfOAa7dQ",
+          "platform": "youtube",
+          "videoId": "Ns7DfOAa7dQ",
+          "url": "https://www.youtube.com/watch?v=Ns7DfOAa7dQ",
+          "kind": "tv",
+          "title": {
+            "uk": "Буенос-Айрес · Пуерто-Мадеро"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Canal 26",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 4156,
+            "durationSec": 7186
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_santiago_2027",
+      "sources": [
+        {
+          "id": "src_demo_UxqMs_PXhmM",
+          "platform": "youtube",
+          "videoId": "UxqMs_PXhmM",
+          "url": "https://www.youtube.com/watch?v=UxqMs_PXhmM",
+          "kind": "tv",
+          "title": {
+            "uk": "Чилі · Вальпараїсо й Сантьяго"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · MEGA Oficial",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7758,
+            "durationSec": 13936
+          }
+        },
+        {
+          "id": "src_demo_Fr5_KMnO3EQ",
+          "platform": "youtube",
+          "videoId": "Fr5_KMnO3EQ",
+          "url": "https://www.youtube.com/watch?v=Fr5_KMnO3EQ",
+          "kind": "tv",
+          "title": {
+            "uk": "Вальпараїсо"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Muni Valparaíso",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 12919,
+            "durationSec": 19018
+          }
+        },
+        {
+          "id": "src_demo_IPoBZ7pG7ZU",
+          "platform": "youtube",
+          "videoId": "IPoBZ7pG7ZU",
+          "url": "https://www.youtube.com/watch?v=IPoBZ7pG7ZU",
+          "kind": "tv",
+          "title": {
+            "uk": "Сантьяго · вежа Ентел"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2027-01-01T02:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · El 13",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 13574,
+            "durationSec": 15927
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_new-york_2027",
+      "sources": [
+        {
+          "id": "src_demo_2gnXxRZ4fVA",
+          "platform": "youtube",
+          "videoId": "2gnXxRZ4fVA",
+          "url": "https://www.youtube.com/watch?v=2gnXxRZ4fVA",
+          "kind": "tv",
+          "title": {
+            "uk": "Нью-Йорк · Таймс-сквер"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · CBS New York",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 10739,
+            "durationSec": 13471
+          }
+        },
+        {
+          "id": "src_demo_ylunYvIIizI",
+          "platform": "youtube",
+          "videoId": "ylunYvIIizI",
+          "url": "https://www.youtube.com/watch?v=ylunYvIIizI",
+          "kind": "tv",
+          "title": {
+            "uk": "Нью-Йорк · Таймс-сквер"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · USA TODAY",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7259,
+            "durationSec": 8187
+          }
+        },
+        {
+          "id": "src_demo_6gNvactXSzE",
+          "platform": "youtube",
+          "videoId": "6gNvactXSzE",
+          "url": "https://www.youtube.com/watch?v=6gNvactXSzE",
+          "kind": "tv",
+          "title": {
+            "uk": "Вашингтон · монумент"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · ABC 7 News - WJLA",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 18227,
+            "durationSec": 20132
+          }
+        },
+        {
+          "id": "src_demo_A8t3Dhf78yU",
+          "platform": "youtube",
+          "videoId": "A8t3Dhf78yU",
+          "url": "https://www.youtube.com/watch?v=A8t3Dhf78yU",
+          "kind": "tv",
+          "title": {
+            "uk": "Нью-Йорк · Таймс-сквер"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · New York Post",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 5692,
+            "durationSec": 10853
+          }
+        },
+        {
+          "id": "src_demo_qkbb6OkU8pQ",
+          "platform": "youtube",
+          "videoId": "qkbb6OkU8pQ",
+          "url": "https://www.youtube.com/watch?v=qkbb6OkU8pQ",
+          "kind": "webcam",
+          "title": {
+            "uk": "Форт-Лодердейл"
+          },
+          "order": 4,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Elbo Room (Home of ElboTV)",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 18118,
+            "durationSec": 19980
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_mexico-city_2027",
+      "sources": [
+        {
+          "id": "src_demo_J_1hFlGTL8I",
+          "platform": "youtube",
+          "videoId": "J_1hFlGTL8I",
+          "url": "https://www.youtube.com/watch?v=J_1hFlGTL8I",
+          "kind": "tv",
+          "title": {
+            "uk": "Мехіко · Сокало"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T05:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Associated Press",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2743,
+            "durationSec": 8196
+          }
+        },
+        {
+          "id": "src_demo_wEXQLSAA5w4",
+          "platform": "youtube",
+          "videoId": "wEXQLSAA5w4",
+          "url": "https://www.youtube.com/watch?v=wEXQLSAA5w4",
+          "kind": "tv",
+          "title": {
+            "uk": "Мексика · відлік N+"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2027-01-01T05:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · NMás",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7254,
+            "durationSec": 8336
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_chicago_2027",
+      "sources": [
+        {
+          "id": "src_demo_TCbqlcBVxVc",
+          "platform": "youtube",
+          "videoId": "TCbqlcBVxVc",
+          "url": "https://www.youtube.com/watch?v=TCbqlcBVxVc",
+          "kind": "tv",
+          "title": {
+            "uk": "Форт-Ворт, Техас"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T05:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · FOX 4 Dallas-Fort Worth",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2778,
+            "durationSec": 3965
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_amsterdam_2027",
+      "sources": [
+        {
+          "id": "src_demo_feNosmgEAyc",
+          "platform": "youtube",
+          "videoId": "feNosmgEAyc",
+          "url": "https://www.youtube.com/watch?v=feNosmgEAyc",
+          "kind": "tv",
+          "title": {
+            "uk": "Ейндговен · Ратушна площа"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Omroep Brabant",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7159,
+            "durationSec": 11015
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_paris_2027",
+      "sources": [
+        {
+          "id": "src_demo_J84RBnOK2bo",
+          "platform": "youtube",
+          "videoId": "J84RBnOK2bo",
+          "url": "https://www.youtube.com/watch?v=J84RBnOK2bo",
+          "kind": "tv",
+          "title": {
+            "uk": "Париж · салют над Ейфелевою вежею"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:51:40Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Associated Press",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 508,
+            "durationSec": 1151
+          }
+        },
+        {
+          "id": "src_demo_QI-PPEW2Bgc",
+          "platform": "youtube",
+          "videoId": "QI-PPEW2Bgc",
+          "url": "https://www.youtube.com/watch?v=QI-PPEW2Bgc",
+          "kind": "webcam",
+          "title": {
+            "uk": "Париж · Ейфелева вежа"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": true,
+          "test": true,
+          "testNote": "демо: цілодобова вебкамера · Paris75Webcam",
+          "alwaysOn": true
+        },
+        {
+          "id": "src_demo_-xzg3wujOVM",
+          "platform": "youtube",
+          "videoId": "-xzg3wujOVM",
+          "url": "https://www.youtube.com/watch?v=-xzg3wujOVM",
+          "kind": "webcam",
+          "title": {
+            "uk": "Париж · Сакре-Кер"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": true,
+          "test": true,
+          "testNote": "демо: цілодобова вебкамера · PARIS TV",
+          "alwaysOn": true
+        }
+      ]
+    },
+    {
+      "eventId": "evt_new-delhi_2027",
+      "sources": [
+        {
+          "id": "src_demo_WqHeed5HKFw",
+          "platform": "youtube",
+          "videoId": "WqHeed5HKFw",
+          "url": "https://www.youtube.com/watch?v=WqHeed5HKFw",
+          "kind": "tv",
+          "title": {
+            "uk": "Мумбаї й Делі"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T18:10:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · CNBC-TV18",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2691,
+            "durationSec": 23191
+          }
+        },
+        {
+          "id": "src_demo_yxFg3VrpeDE",
+          "platform": "youtube",
+          "videoId": "yxFg3VrpeDE",
+          "url": "https://www.youtube.com/watch?v=yxFg3VrpeDE",
+          "kind": "tv",
+          "title": {
+            "uk": "Індія · міста"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T18:10:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · CNN-News18",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2007,
+            "durationSec": 21100
+          }
+        },
+        {
+          "id": "src_demo_Z3Xp-tZEBtI",
+          "platform": "youtube",
+          "videoId": "Z3Xp-tZEBtI",
+          "url": "https://www.youtube.com/watch?v=Z3Xp-tZEBtI",
+          "kind": "tv",
+          "title": {
+            "uk": "Бенгалуру · Бригейд-роуд"
+          },
+          "order": 2,
+          "status": "expected",
+          "startsAt": "2026-12-31T18:10:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · News18 Kannada",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 14094,
+            "durationSec": 15043
+          }
+        },
+        {
+          "id": "src_demo_Hmnns2Efrcw",
+          "platform": "youtube",
+          "videoId": "Hmnns2Efrcw",
+          "url": "https://www.youtube.com/watch?v=Hmnns2Efrcw",
+          "kind": "tv",
+          "title": {
+            "uk": "Делі"
+          },
+          "order": 3,
+          "status": "expected",
+          "startsAt": "2026-12-31T18:10:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · News18 UP Uttarakhand",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 3193,
+            "durationSec": 17019
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_rome_2027",
+      "sources": [
+        {
+          "id": "src_demo_E06ya1JB-c4",
+          "platform": "youtube",
+          "videoId": "E06ya1JB-c4",
+          "url": "https://www.youtube.com/watch?v=E06ya1JB-c4",
+          "kind": "tv",
+          "title": {
+            "uk": "Рим"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Firstpost",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1727,
+            "durationSec": 23456
+          }
+        },
+        {
+          "id": "src_demo_T4z_DHicI8o",
+          "platform": "youtube",
+          "videoId": "T4z_DHicI8o",
+          "url": "https://www.youtube.com/watch?v=T4z_DHicI8o",
+          "kind": "webcam",
+          "title": {
+            "uk": "Мілан · передмістя"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · computermuseo",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 11385,
+            "durationSec": 15076
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_sarajevo_2027",
+      "sources": [
+        {
+          "id": "src_demo_RK9xEfj8pRc",
+          "platform": "youtube",
+          "videoId": "RK9xEfj8pRc",
+          "url": "https://www.youtube.com/watch?v=RK9xEfj8pRc",
+          "kind": "webcam",
+          "title": {
+            "uk": "Лівно · площа короля Томислава"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · LiVideo - Livno",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 4047,
+            "durationSec": 8045
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_dublin_2027",
+      "sources": [
+        {
+          "id": "src_demo_eT3jpQawAHs",
+          "platform": "youtube",
+          "videoId": "eT3jpQawAHs",
+          "url": "https://www.youtube.com/watch?v=eT3jpQawAHs",
+          "kind": "webcam",
+          "title": {
+            "uk": "Дублін · центр"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Ndewalks Tour",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 1284,
+            "durationSec": 4509
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_lisbon_2027",
+      "sources": [
+        {
+          "id": "src_demo_qKmnVFecTcQ",
+          "platform": "youtube",
+          "videoId": "qKmnVFecTcQ",
+          "url": "https://www.youtube.com/watch?v=qKmnVFecTcQ",
+          "kind": "webcam",
+          "title": {
+            "uk": "Фуншал · Мадейра"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T23:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Untoz",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 2024,
+            "durationSec": 3600
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_toronto_2027",
+      "sources": [
+        {
+          "id": "src_demo_YfuBRxhMmYM",
+          "platform": "youtube",
+          "videoId": "YfuBRxhMmYM",
+          "url": "https://www.youtube.com/watch?v=YfuBRxhMmYM",
+          "kind": "webcam",
+          "title": {
+            "uk": "Торонто"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Johnny Strides",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7890,
+            "durationSec": 9087
+          }
+        },
+        {
+          "id": "src_demo_PbDr_IXrJ9M",
+          "platform": "youtube",
+          "videoId": "PbDr_IXrJ9M",
+          "url": "https://www.youtube.com/watch?v=PbDr_IXrJ9M",
+          "kind": "webcam",
+          "title": {
+            "uk": "Торонто"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Sepand TTC Explorer",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 6678,
+            "durationSec": 11531
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_lima_2027",
+      "sources": [
+        {
+          "id": "src_demo_9sKamFUIoGw",
+          "platform": "youtube",
+          "videoId": "9sKamFUIoGw",
+          "url": "https://www.youtube.com/watch?v=9sKamFUIoGw",
+          "kind": "webcam",
+          "title": {
+            "uk": "Ліма"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Sin Límite de Viajes",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 3493,
+            "durationSec": 4600
+          }
+        },
+        {
+          "id": "src_demo_RodV46CLsQk",
+          "platform": "youtube",
+          "videoId": "RodV46CLsQk",
+          "url": "https://www.youtube.com/watch?v=RodV46CLsQk",
+          "kind": "tv",
+          "title": {
+            "uk": "Ліма"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Infiltrados Tv Noticias",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 3014,
+            "durationSec": 4301
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_warsaw_2027",
+      "sources": [
+        {
+          "id": "src_demo_LXaE5JSl8ic",
+          "platform": "youtube",
+          "videoId": "LXaE5JSl8ic",
+          "url": "https://www.youtube.com/watch?v=LXaE5JSl8ic",
+          "kind": "webcam",
+          "title": {
+            "uk": "Ломжа"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · www.mylomza.pl",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 11851,
+            "durationSec": 14706
+          }
+        },
+        {
+          "id": "src_demo_quOYLWduvvw",
+          "platform": "youtube",
+          "videoId": "quOYLWduvvw",
+          "url": "https://www.youtube.com/watch?v=quOYLWduvvw",
+          "kind": "webcam",
+          "title": {
+            "uk": "Люблін"
+          },
+          "order": 1,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · SF Jednym Krokiem™",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 32699,
+            "durationSec": 42900
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_bogota_2027",
+      "sources": [
+        {
+          "id": "src_demo_WSpfQi0dChM",
+          "platform": "youtube",
+          "videoId": "WSpfQi0dChM",
+          "url": "https://www.youtube.com/watch?v=WSpfQi0dChM",
+          "kind": "tv",
+          "title": {
+            "uk": "Колумбія"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2027-01-01T04:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Olímpica Stereo FM",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 7681,
+            "durationSec": 11246
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_vienna_2027",
+      "sources": [
+        {
+          "id": "src_demo_pYELoCAOFmU",
+          "platform": "youtube",
+          "videoId": "pYELoCAOFmU",
+          "url": "https://www.youtube.com/watch?v=pYELoCAOFmU",
+          "kind": "webcam",
+          "title": {
+            "uk": "Відень"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Thomas Bella",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 32323,
+            "durationSec": 36395
+          }
+        }
+      ]
+    },
+    {
+      "eventId": "evt_belgrade_2027",
+      "sources": [
+        {
+          "id": "src_demo_fZzfTPNFFVE",
+          "platform": "youtube",
+          "videoId": "fZzfTPNFFVE",
+          "url": "https://www.youtube.com/watch?v=fZzfTPNFFVE",
+          "kind": "webcam",
+          "title": {
+            "uk": "Златибор · Королівська площа"
+          },
+          "order": 0,
+          "status": "expected",
+          "startsAt": "2026-12-31T22:40:00Z",
+          "embeddable": true,
+          "lastChecked": "2026-11-11T00:00:00Z",
+          "verified": false,
+          "isLive": false,
+          "test": true,
+          "testNote": "демо: запис 2025/26 · Zlatiborrs",
+          "alwaysOn": false,
+          "isRecording": true,
+          "sync": {
+            "midnightSec": 15942,
+            "durationSec": 17615
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -12,7 +12,9 @@ import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useNow } from '@/lib/time/TimeProvider';
 import { Header, type HeaderProps } from './Header';
+import { TimeMachineBody } from '@/components/demo/TimeMachineBody';
 import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
+import { IS_DEMO_BUILD } from '@/lib/env';
 import { MenuBody } from './Menu';
 import ms from './menu.module.css';
 import { useOverlay } from './OverlayManager';
@@ -49,6 +51,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const celebrating = isCelebrating(useNow({ granularity: 'minute' }), getData());
   const menuOpen = overlay.current?.id === MENU_WINDOW_ID;
   const tn = useTranslations('notif');
+  const td = useTranslations('demoTime');
 
   const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (celebrating) {
@@ -73,6 +76,9 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
       overlay.close(MENU_WINDOW_ID);
       return;
     }
+    openMenu();
+  };
+  const openMenu = () => {
     const close = () => overlay.close(MENU_WINDOW_ID);
     overlay.open({
       id: MENU_WINDOW_ID,
@@ -89,9 +95,21 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
             onPass={celebrating ? () => openPassWindow() : undefined}
             onClose={close}
             keepOpenOnNavigate
+            onTimeMachine={IS_DEMO_BUILD ? openTimeMachine : undefined}
           />
         </div>
       ),
+    });
+  };
+  // Демо: «Машина часу» — на місці меню, «‹ Назад» повертає меню.
+  const openTimeMachine = () => {
+    overlay.open({
+      id: MENU_WINDOW_ID,
+      kind: 'form',
+      chrome: 'board',
+      title: td('title'),
+      onBack: openMenu,
+      content: <TimeMachineBody />,
     });
   };
 

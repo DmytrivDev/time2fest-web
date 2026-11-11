@@ -153,7 +153,7 @@ describe('createAppTimeSource', () => {
   });
 
   it('робоча збірка: серверний TimeSource, параметри не діють', async () => {
-    vi.doMock('@/lib/env', () => ({ IS_TEST_BUILD: false }));
+    vi.doMock('@/lib/env', () => ({ IS_TEST_BUILD: false, IS_DEMO_BUILD: false }));
     window.history.replaceState(null, '', '/?t=2026-12-31T23:59:30Z&speed=10');
     const { createAppTimeSource } = await import('@/lib/time/params');
     const app = createAppTimeSource();
@@ -163,7 +163,7 @@ describe('createAppTimeSource', () => {
   });
 
   it('тестова збірка: машина часу з параметра t', async () => {
-    vi.doMock('@/lib/env', () => ({ IS_TEST_BUILD: true }));
+    vi.doMock('@/lib/env', () => ({ IS_TEST_BUILD: true, IS_DEMO_BUILD: false }));
     window.history.replaceState(null, '', '/?t=2026-12-31T23:59:30Z&speed=0');
     const { createAppTimeSource } = await import('@/lib/time/params');
     const app = createAppTimeSource();

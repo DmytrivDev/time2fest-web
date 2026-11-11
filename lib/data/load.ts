@@ -4,7 +4,9 @@
  */
 import countriesJson from '@/data/countries.json';
 import scheduleJson from '@/data/schedule.json';
+import streamsDemoJson from '@/data/streams.demo.json';
 import streamsJson from '@/data/streams.json';
+import { IS_DEMO_BUILD } from '@/lib/env';
 import { buildDataset } from './build';
 import type { CountriesFile, Dataset, ScheduleFile, StreamsFile } from './types';
 
@@ -13,7 +15,8 @@ export { buildDataset } from './build';
 export const data: Dataset = buildDataset(
   scheduleJson as unknown as ScheduleFile,
   countriesJson as unknown as CountriesFile,
-  streamsJson as unknown as StreamsFile,
+  // Демо (2026-11-11): торішні записи свят, синхронізовані з північчю (`research_data/scripts/demo_streams_json.py`).
+  (IS_DEMO_BUILD ? streamsDemoJson : streamsJson) as unknown as StreamsFile,
 );
 
 export function getData(): Dataset {

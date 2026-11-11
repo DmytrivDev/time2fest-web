@@ -6,7 +6,9 @@
  */
 import { createContext, useCallback, useContext, useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import type { ISO } from '@/lib/data/types';
-import { IS_TEST_BUILD } from '@/lib/env';
+import { seedDemoOnce } from '@/lib/demo/seed';
+import { notifyRecordingResync, setRecordingClock } from '@/lib/player/recordingSync';
+import { IS_DEMO_BUILD, IS_TEST_BUILD } from '@/lib/env';
 import { createClock, type Clock } from './clock';
 import { createAppTimeSource } from './params';
 import { installTestApi } from './testApi';
@@ -62,6 +64,8 @@ function setup(props: Pick<TimeProviderProps, 'override' | 'source'>): Setup {
     });
     return { source: machine, machine, activate: () => () => undefined };
   }
+  // Демо: стартовий стан гостя (5 зустрінутих міст) — до першого ефекту, щоб стежач сповіщень побачив штампи як давні.
+  if (IS_DEMO_BUILD && typeof window !== 'undefined') seedDemoOnce();
   return createAppTimeSource();
 }
 
@@ -72,9 +76,13 @@ export function TimeProvider({ children, override, source }: TimeProviderProps) 
   });
 
   useEffect(() => {
+    // Записи свят (демо) грають за цим годинником; стрибок машини часу перемотує їх.
+    setRecordingClock(() => state.source.now());
+    const offJump = state.machine?.subscribe(notifyRecordingResync);
     const deactivate = state.activate();
     const uninstall = IS_TEST_BUILD && state.machine ? installTestApi(state.machine) : undefined;
     return () => {
+      offJump?.();
       deactivate();
       uninstall?.();
     };
