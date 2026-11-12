@@ -70,6 +70,18 @@ export function hasLink(text: string): boolean {
   return LINK_RE.test(text);
 }
 
+/**
+ * Перше посилання в тексті — `[start, end)` до найближчого пробілу (вікно тосту підкреслює «t.me/olena_ny» цілим,
+ * дошка `Desk-Toast-New`, 2026-11-12). Межу слова перед доменом, яку захоплює вираз, не рахуємо.
+ */
+export function findLink(text: string): { start: number; end: number } | null {
+  const m = LINK_RE.exec(text);
+  if (!m) return null;
+  const start = m.index + (/^[^\p{L}\d]/u.test(m[0]) ? 1 : 0);
+  const rest = text.slice(m.index + m[0].length).search(/\s/);
+  return { start, end: rest < 0 ? text.length : m.index + m[0].length + rest };
+}
+
 /** Скільки секунд лишилось до наступного відправлення (0 — можна). */
 export function slowRemainingSec(sentAt: readonly Ms[], now: Ms, seconds: number): number {
   if (seconds <= 0 || sentAt.length === 0) return 0;

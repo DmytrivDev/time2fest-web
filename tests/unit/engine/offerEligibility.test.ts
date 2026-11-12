@@ -37,15 +37,16 @@ describe('offerEligibility', () => {
     expect(one.blockedBy).toContain('stamps');
   });
 
-  it('чайові після 3-го штампа, якщо пас уже показували', () => {
+  it('чайових після 3-го штампа більше немає (рішення 2026-11-12: тост — у смузі й кнопках, завжди): пас показали — нічого', () => {
     const offers: OfferState = {
       nightId: '2026-27',
       history: [{ kind: 'pass-offer', triggerEventId: 'evt_paris_2027', shownAt: 0 }],
       visible: null,
     };
     const three = [stamp('evt_tokyo_2027'), stamp('evt_paris_2027'), stamp('evt_london_2027')];
-    expect(offerEligibility(OK_NOW, ctx({ stamps: three, offers })).show).toBe('tips');
-    // з двома штампами чайових немає
+    const d = offerEligibility(OK_NOW, ctx({ stamps: three, offers }));
+    expect(d.show).toBeNull();
+    expect(d.blockedBy).toContain('already-shown');
     expect(offerEligibility(OK_NOW, ctx({ offers })).show).toBeNull();
   });
 

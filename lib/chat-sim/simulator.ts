@@ -25,7 +25,10 @@ import type {
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { getData } from '@/lib/data/load';
 import { ratingState } from '@/lib/rating/rating';
-import { worldToasts } from '@/lib/tips/worldToasts';
+import type { ToastRecord } from '@/lib/toast/feed';
+import { toastGreetingMessages } from '@/lib/toast/greeting';
+import { simulatedToasts } from '@/lib/toast/worldToasts';
+import { toastMessage } from './toast';
 
 /** Що відбувається опівночі одного слота ефіру: подія, для якої настала північ, і її країни. */
 export interface MomentContext {
@@ -52,6 +55,8 @@ export interface SimulatorOptions {
   ambient?: boolean;
   /** Поточна швидкість часу («машина часу»); потік не перевищує 40 повідомлень/с реального часу на кімнату. */
   getSpeed?: () => number;
+  /** Свої тости гостя (`stores/toast`): у чаті «Світ» після перезавантаження й у привітанні опівночі. */
+  ownToasts?: () => readonly ToastRecord[];
 }
 
 export interface ChatSimulator {
@@ -407,10 +412,23 @@ export function ratingLeaderMessages(rooms: readonly RoomId[], from: Ms, to: Ms)
   return out;
 }
 
-/** Золоті тости інших глядачів у «Світі» (сторінка «Підтримати» · «Тости світу», рішення власника 2026-11-07). */
-export function worldToastMessages(script: ChatScriptFile, rooms: readonly RoomId[], from: Ms, to: Ms): ChatMessage[] {
-  if (!rooms.includes('world') || to <= from) return [];
-  return worldToasts(script, getData(), to).filter((m) => m.createdAt > from);
+/**
+ * Тости в чаті (рішення власника 2026-11-12): золоті тости в «Світі» — імітовані інших глядачів (лише тестова й
+ * демо-збірка, `simulatedToasts`) і свої (`own`), — та привітання опівночі поясу з ніками тих, хто сказав тост на $10.
+ */
+export function worldToastMessages(
+  script: ChatScriptFile,
+  rooms: readonly RoomId[],
+  from: Ms,
+  to: Ms,
+  own: readonly ToastRecord[] = [],
+): ChatMessage[] {
+  if (to <= from) return [];
+  const data = getData();
+  const all = [...simulatedToasts(script, data, to), ...own];
+  const out = toastGreetingMessages(data, rooms, from, to, all);
+  if (rooms.includes('world')) for (const t of all) if (t.createdAt > from && t.createdAt <= to) out.push(toastMessage(t));
+  return out;
 }
 
 /** Повідомлення кімнат `rooms` із `createdAt ∈ (from, to]`. */
@@ -454,7 +472,7 @@ export function createChatSimulator(opts: SimulatorOptions): ChatSimulator {
           ...ambientBetween(opts.script, opts.moments, opts.rooms, ambientFrom, now, opts.getSpeed?.() ?? 1),
           ...slowModeMessages(opts.script, opts.rooms, from, now),
           ...ratingLeaderMessages(opts.rooms, from, now),
-          ...worldToastMessages(opts.script, opts.rooms, from, now),
+          ...worldToastMessages(opts.script, opts.rooms, from, now, opts.ownToasts?.() ?? []),
         );
         batch.sort(compareMessages);
       }

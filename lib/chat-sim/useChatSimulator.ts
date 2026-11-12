@@ -11,6 +11,7 @@ import chatScript from '@/data/chat-script.json';
 import type { ChatScriptFile, RoomId } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
 import { useClock, useTimeSource } from '@/lib/time/TimeProvider';
+import { useToastStore } from '@/stores/toast';
 import { buildMomentContexts, createChatSimulator, type MomentContext } from './simulator';
 import { useChatFeed } from './store';
 
@@ -34,6 +35,8 @@ export function useChatSimulator(rooms: readonly RoomId[]): void {
       rooms: key.split('|') as RoomId[],
       ambient: true,
       getSpeed: () => source.speed,
+      // Свої тости: у «Світі» після перезавантаження й у привітанні опівночі (рішення 2026-11-12).
+      ownToasts: () => useToastStore.getState().said,
     });
     const run = () => {
       const now = clock.getSnapshot();

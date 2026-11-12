@@ -10,6 +10,8 @@
  * Пас на пристрої — лише пас акаунта, що увійшов (правка власника 2026-11-10): без входу паса немає, вихід його
  * знімає, вхід в акаунт без пасу його не дає. `syncDevicePass` тримає `guest.hasPass` = «увійшов і акаунт з пасом»
  * після відновлення зі сховища, входу, виходу й оформлення пасу.
+ * Пас у подарунок до тосту за $10 (рішення власника 2026-11-12): той, хто увійшов, отримує його на акаунт одразу;
+ * гість — коли вперше увійде чи створить акаунт на цьому пристрої (`pendingPassGift`, `giftPass`).
  * Прапор профілю (правка власника 2026-11-10): кожен вхід і створення акаунта (пас на `/pass/`, Google, пошта, посилання з
  * листа — усе через `signIn`) одразу задає прапор за IP, якщо людина ще не обрала свій
  * (`guest.ensureProfileFlag`); так само після відновлення входу зі сховища. Інакше аватар у шапці був літерою без прапора.
@@ -69,6 +71,12 @@ interface AuthData {
   sends: number[];
   /** email → коли оформлено пас (мс). */
   passes: Record<string, number>;
+  /**
+   * Пас у подарунок до тосту за $10, який сказав гість без входу (рішення власника 2026-11-12): пас належить акаунту, а
+   * не пристрою (2026-11-10), тож чекає тут — коли тост сказано (мс) — до першого входу чи створення акаунта на цьому
+   * пристрої; тоді переходить на акаунт і зникає звідси. У робочій збірці пас прив’язуватимуть до пошти з оплати.
+   */
+  pendingPassGift?: number | null;
 }
 
 interface AuthActions {
@@ -83,6 +91,11 @@ interface AuthActions {
   signInWithPurchase(email: string, now: number): SignInResult;
   /** Пас оформлено на акаунт `email`. */
   grantPass(email: string, now: number): void;
+  /**
+   * Пас у подарунок до тосту за $10: той, хто увійшов, — одразу на акаунт (`active`); гість — чекає входу на цьому
+   * пристрої (`pending`, див. `pendingPassGift`).
+   */
+  giftPass(now: number): 'active' | 'pending';
   signOut(): void;
   /** Тестова пошта: зробити лист простроченим. */
   expireLetter(): void;
@@ -90,7 +103,7 @@ interface AuthActions {
 
 export type AuthStore = AuthData & AuthActions;
 
-const EMPTY: AuthData = { user: null, accounts: [], letter: null, sends: [], passes: {} };
+const EMPTY: AuthData = { user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null };
 
 /** Чи є пас у того, хто увійшов. */
 export function accountHasPass(a: Pick<AuthData, 'user' | 'passes'>): boolean {
@@ -112,6 +125,9 @@ export const useAuthStore = create<AuthStore>()(
         // Прапор — до входу: шапка, що підпишеться на `user`, одразу має прапор.
         useGuestStore.getState().ensureProfileFlag();
         set((s) => ({ user: { email, via, signedInAt: now }, accounts: isNew ? [...s.accounts, email] : s.accounts }));
+        // Подарунок до тосту за $10, що чекав входу на цьому пристрої, — тепер пас цього акаунта.
+        const gift = get().pendingPassGift;
+        if (gift != null) set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? gift }, pendingPassGift: null }));
         // Пас на пристрої — пас цього акаунта: є — вмикається, немає — вимикається.
         syncDevicePass(get());
         return { ok: true, isNew, email };
@@ -160,6 +176,15 @@ export const useAuthStore = create<AuthStore>()(
           set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? now } }));
           syncDevicePass(get());
         },
+        giftPass: (now) => {
+          const user = get().user;
+          if (user) {
+            get().grantPass(user.email, now);
+            return 'active';
+          }
+          set((s) => ({ pendingPassGift: s.pendingPassGift ?? now }));
+          return 'pending';
+        },
         signOut: () => {
           set({ user: null });
           syncDevicePass(get());
@@ -172,7 +197,7 @@ export const useAuthStore = create<AuthStore>()(
       name: AUTH_STORAGE_KEY,
       version: AUTH_VERSION,
       storage: safeJsonStorage<AuthData>('local'),
-      partialize: (s) => ({ user: s.user, accounts: s.accounts, letter: s.letter, sends: s.sends, passes: s.passes }),
+      partialize: (s) => ({ user: s.user, accounts: s.accounts, letter: s.letter, sends: s.sends, passes: s.passes, pendingPassGift: s.pendingPassGift ?? null }),
       migrate: (persisted, version) => (version === AUTH_VERSION ? (persisted as AuthData) : EMPTY),
       // Збережене до появи `passes` — без нього.
       merge: (persisted, current) => ({ ...current, ...(persisted as Partial<AuthData>), passes: (persisted as Partial<AuthData> | undefined)?.passes ?? {} }),

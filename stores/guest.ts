@@ -4,7 +4,8 @@
  * Зміна `v` → міграція або скидання; інша ніч (`nightId`) → скидання штампів, оцінок і пропозицій.
  * «Перший ряд» прибрано (рішення власника 2026-11-12): у старому стані гостя лишаються поле `firstRow` і номер місця
  * на штампах (`firstRowSeat`) — `sanitizeGuest` їх відкидає; окремий ключ ряду `t2f:firstrow:v1` видаляється при
- * завантаженні (`dropLegacyKeys`).
+ * завантаженні (`dropLegacyKeys`). Пропозицію «Чайові» прибрано того ж дня (тост доступний усім і завжди): старі записи
+ * `tips` в історії пропозицій відкидаються, ключ `t2f:tips-flow:v1` видаляється.
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -114,8 +115,8 @@ function pickData(s: GuestStore): GuestState {
   return out as unknown as GuestState;
 }
 
-/** Ключі сайту, яких більше немає: «Перший ряд» (прибрано 2026-11-12). */
-export const LEGACY_STORAGE_KEYS = ['t2f:firstrow:v1'] as const;
+/** Ключі сайту, яких більше немає: «Перший ряд» і оплата «Чайових» (обидва прибрано 2026-11-12; чайові стали тостом). */
+export const LEGACY_STORAGE_KEYS = ['t2f:firstrow:v1', 't2f:tips-flow:v1'] as const;
 
 /** Прибрати зі сховища ключі прибраних функцій (демо-тестувальники мали їх у браузері). */
 export function dropLegacyKeys(): void {
@@ -143,6 +144,10 @@ export function sanitizeGuest(raw: unknown): GuestState | null {
     room: { ...base.room, ...(p.room ?? {}) },
     offers: { ...base.offers, ...(p.offers ?? {}) },
   } as GuestState;
+  // Пропозиція «Чайові» під штампом прибрана (рішення власника 2026-11-12: тост — у смузі й кнопках, не пропозиція).
+  const offerKinds: readonly string[] = ['pass-offer', 'pass-gate', 'pass-info'];
+  if (Array.isArray(merged.offers.history)) merged.offers.history = merged.offers.history.filter((e) => offerKinds.includes(e?.kind));
+  if (merged.offers.visible !== null && !offerKinds.includes(merged.offers.visible)) merged.offers.visible = null;
   if (merged.nightId !== CURRENT_NIGHT) {
     merged.nightId = CURRENT_NIGHT;
     merged.stamps = [];

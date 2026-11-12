@@ -68,7 +68,7 @@ describe('шина подій', () => {
     emit('offer:show', {
       eventKey: 'k',
       at: 0,
-      kind: 'tips',
+      kind: 'pass-offer',
       triggerEventId: 'e',
       stampCount: 3,
       neutralizeSound: true,

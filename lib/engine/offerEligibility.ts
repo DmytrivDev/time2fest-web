@@ -1,4 +1,4 @@
-import type { Event, Ms, OfferKind, OfferState, Stamp } from '@/lib/data/types';
+import type { Event, Ms, OfferState, Stamp } from '@/lib/data/types';
 import { OFFER_MIN_AFTER, OFFER_MIN_BEFORE_NEXT, TYPING_QUIET } from './config';
 import { midnightOf } from './eventStatus';
 
@@ -27,48 +27,32 @@ export type OfferBlock =
   | 'one-per-event';
 
 export interface OfferDecision {
-  show: 'pass-offer' | 'tips' | null;
+  show: 'pass-offer' | null;
   blockedBy?: OfferBlock[];
   recheckAt?: Ms;
 }
 
-const ENGINE_KINDS: OfferKind[] = ['pass-offer', 'tips'];
-const MIN_STAMPS: Record<'pass-offer' | 'tips', number> = { 'pass-offer': 2, tips: 3 };
+/** Пропозиція пасу — з другого штампа. */
+const MIN_STAMPS = 2;
 
-/** Правила пропозицій пасу й чайових (`data-model.md` 3.4, FR-063). */
+/**
+ * Правила пропозиції пасу (`data-model.md` 3.4, FR-063). Пропозиції «Чайові» після третього штампа більше немає
+ * (рішення власника 2026-11-12): тост — головний платний продукт, доступний усім і завжди через смугу тостів під
+ * плеєром, келих у полі чату й «Підтримати».
+ */
 export function offerEligibility(now: Ms, ctx: OfferContext): OfferDecision {
   const blocked: OfferBlock[] = [];
   const recheck: Ms[] = [];
 
   if (!ctx.lastEvent) return { show: null, blockedBy: ['stamps'] };
   const last = ctx.lastEvent;
-  const count = ctx.stamps.length;
 
   if (ctx.hasPass) blocked.push('pass');
 
-  // Який вид: пас, якщо ще не показувався цієї ночі; інакше чайові.
-  const history = ctx.offers.history.filter((h) => ENGINE_KINDS.includes(h.kind));
-  const dismissedKinds = new Set(history.filter((h) => h.dismissedAt !== undefined).map((h) => h.kind));
-  const shownKinds = new Set(history.map((h) => h.kind));
-  let kind: 'pass-offer' | 'tips' | null = null;
-  const reasons = new Set<OfferBlock>();
-  for (const k of ['pass-offer', 'tips'] as const) {
-    if (count < MIN_STAMPS[k]) {
-      reasons.add('stamps');
-      continue;
-    }
-    if (dismissedKinds.has(k)) {
-      reasons.add('dismissed');
-      continue;
-    }
-    if (shownKinds.has(k)) {
-      reasons.add('already-shown');
-      continue;
-    }
-    kind = k;
-    break;
-  }
-  if (!kind) blocked.push(...reasons);
+  const history = ctx.offers.history.filter((h) => h.kind === 'pass-offer');
+  if (ctx.stamps.length < MIN_STAMPS) blocked.push('stamps');
+  else if (history.some((h) => h.dismissedAt !== undefined)) blocked.push('dismissed');
+  else if (history.length) blocked.push('already-shown');
 
   if (history.some((h) => h.triggerEventId === last.id)) blocked.push('one-per-event');
 
@@ -90,7 +74,7 @@ export function offerEligibility(now: Ms, ctx: OfferContext): OfferDecision {
   }
 
   const unique = [...new Set(blocked)];
-  const decision: OfferDecision = { show: unique.length === 0 ? kind : null };
+  const decision: OfferDecision = { show: unique.length === 0 ? 'pass-offer' : null };
   if (unique.length) decision.blockedBy = unique;
   if (decision.show === null && recheck.length) decision.recheckAt = Math.min(...recheck);
   return decision;

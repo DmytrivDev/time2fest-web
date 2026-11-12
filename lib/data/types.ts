@@ -185,7 +185,12 @@ export type SystemPayload =
   | { kind: 'slow-mode'; seconds: number }
   | { kind: 'poll-open'; pollId: string }
   /** Новий лідер «Рейтингу святкувань» (рішення власника 2026-11-07): не частіше разу на годину, лише в «Світі». */
-  | { kind: 'rating-leader'; eventId: string; city: string; flagCode: string; score: number };
+  | { kind: 'rating-leader'; eventId: string; city: string; flagCode: string; score: number }
+  /**
+   * Привітання опівночі поясу від Time2Fest (рішення власника 2026-11-12, дошки `Desk-Toast-New`, `Phone-Toast-New`):
+   * у «Світі» й чатах країн поясу; `toasters` — хто сказав тост на $10 до цієї півночі (порожньо — без рядка тостів).
+   */
+  | { kind: 'toast-midnight'; zoneId: string; offsetMinutes: number; countryIsos: string[]; toasters: { nick: string; flagCode: string }[] };
 
 export interface ChatMessage {
   id: string;
@@ -200,7 +205,7 @@ export interface ChatMessage {
   moderation: 'ok' | 'hidden';
   /** Автор видалив повідомлення назавжди: у стрічці — тонкий рядок «видалено» (рішення власника 2026-10-29). */
   deleted?: boolean;
-  /** Золотий «тост» за чайові (рішення власника 2026-11-01): виділене повідомлення з позначкою «тост». */
+  /** Тост (рішення власника 2026-11-12): золоте повідомлення з позначкою «тост»; `amount` — рівень $2 / $5 / $10. */
   toast?: { amount: number };
   /** Імітатор: коли автор видалить це повідомлення (інші люди теж видаляють свої). */
   deleteAt?: Ms;
@@ -235,7 +240,8 @@ export interface Path {
 
 // ── 2. Стан гостя й пропозицій ─────────────────────────────────────────────
 
-export type OfferKind = 'pass-offer' | 'tips' | 'pass-gate' | 'pass-info';
+/** Пропозиція «Чайові» прибрана 2026-11-12 (тост — у смузі під плеєром і кнопках, доступний усім і завжди). */
+export type OfferKind = 'pass-offer' | 'pass-gate' | 'pass-info';
 export type NightId = '2026-27';
 
 export interface OfferEntry {

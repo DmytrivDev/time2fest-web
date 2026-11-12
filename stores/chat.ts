@@ -25,6 +25,9 @@ export interface ChatUiState {
   hiddenAt: Ms | null;
   setReplyTo(reply: ReplyDraft | null): void;
   markHidden(at: Ms | null): void;
+  /** Лічильник запитів «покажи чат «Світ»» (смуга тостів: «Усі тости в чаті «Світ»», клік на тост, 2026-11-12). */
+  worldRequest: number;
+  requestWorld(): void;
   reset(): void;
 }
 
@@ -33,8 +36,10 @@ export const useChatUi = create<ChatUiState>()((set) => ({
   setDraft: (value) => set((s) => ({ draft: typeof value === 'function' ? value(s.draft) : value })),
   replyTo: null,
   hiddenAt: null,
+  worldRequest: 0,
   setReplyTo: (replyTo) => set({ replyTo }),
   markHidden: (hiddenAt) => set({ hiddenAt }),
+  requestWorld: () => set((s) => ({ worldRequest: s.worldRequest + 1 })),
   reset: () => set({ draft: '', replyTo: null, hiddenAt: null }),
 }));
 

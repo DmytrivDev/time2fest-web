@@ -58,7 +58,7 @@ export interface AirHandover {
 export interface OfferShow {
   eventKey: string;
   at: Ms;
-  kind: 'pass-offer' | 'tips';
+  kind: 'pass-offer';
   triggerEventId: string;
   stampCount: number;
   neutralizeSound: true;
