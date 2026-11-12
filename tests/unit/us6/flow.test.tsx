@@ -260,7 +260,7 @@ describe('пропозиції — блок під штампом (рішенн�
     giveStamps(s1, s2);
     renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
-    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас · $4,99' }));
+    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас · $5' }));
     expect(screen.getByRole('dialog', { name: /Новорічний пас/ })).toBeInTheDocument();
     expect(useGuestStore.getState().offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'primary' });
     expect(block()).not.toBeNull();

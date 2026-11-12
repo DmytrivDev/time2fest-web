@@ -211,17 +211,6 @@
                                   }
                                 }
                               }
-                            },
-                            "firstRow": {
-                              "type": "object",
-                              "required": [
-                                "saleEnabled"
-                              ],
-                              "properties": {
-                                "saleEnabled": {
-                                  "type": "boolean"
-                                }
-                              }
                             }
                           }
                         }

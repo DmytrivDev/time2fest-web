@@ -1,12 +1,11 @@
 'use client';
 
 /**
- * Створює сповіщення (рішення власника 2026-11-09), поки сайт відкритий: дивиться на штампи, графік, «Перший ряд» і чат.
+ * Створює сповіщення (рішення власника 2026-11-09), поки сайт відкритий: дивиться на штампи, графік і чат.
  * - штамп у паспорті → «Штамп «Японія» в паспорті»;
  * - досягнення паспорта → 3 / 5 / 10 країн, 3 / 5 / 10 поясів (континентів у даних ще немає);
  * - серія за свято → 3 / 5 півночей поспіль (поясів підряд зі штампом);
  * - трансляція з графіка почалась → за 15 хв до півночі події з графіка («наживо»);
- * - «Перший ряд» → за 15 хв до півночі, де в людини місце;
  * - відповідь у чаті → нове повідомлення з `replyTo` на мій нік.
  * Вимкнені в налаштуваннях типи `push` пропускає сам.
  */
@@ -24,7 +23,6 @@ import { useNotifStore } from '@/stores/notifications';
 const COUNTRY_GOALS = [3, 5, 10];
 const ZONE_GOALS = [3, 5, 10];
 const STREAK_GOALS = [3, 5];
-const SEAT_BEFORE = 15 * 60 * 1000;
 
 /** Сторінка країни саме з цією подією (місто й пояс), `lib/live/countryHref`. */
 function countryHref(iso: string, eventId: string): string {
@@ -50,7 +48,6 @@ export function NotificationsWatcher() {
   const now = useNow({ granularity: 'minute' });
   const push = useNotifStore((s) => s.push);
   const schedule = useGuestStore((s) => s.schedule);
-  const firstRow = useGuestStore((s) => s.firstRow);
   const mountedAt = useRef(0);
 
   // Штампи, досягнення, серія.
@@ -75,7 +72,7 @@ export function NotificationsWatcher() {
     });
   }, [clock, push]);
 
-  // Трансляції з графіка й «Перший ряд» — за часом (машина часу теж рахується).
+  // Трансляції з графіка — за часом (машина часу теж рахується).
   useEffect(() => {
     if (!now) return;
     const data = getData();
@@ -88,16 +85,7 @@ export function NotificationsWatcher() {
         push({ id: `live:${id}`, kind: 'live', params: { city, country, time: formatClock(e.midnightMs) }, href: countryHref(e.countryIso, e.id), flag: e.countryIso, createdAt: now });
       }
     }
-    for (const [id, entry] of Object.entries(firstRow)) {
-      if (!entry?.seat) continue;
-      const e = data.eventsById.get(id);
-      if (!e) continue;
-      if (now >= e.midnightMs - SEAT_BEFORE && now < e.midnightMs) {
-        const city = data.citiesById.get(e.cityId)?.name.uk ?? '';
-        push({ id: `seat:${id}`, kind: 'seat', params: { city, seat: entry.seat }, href: countryHref(e.countryIso, e.id), flag: e.countryIso, createdAt: now });
-      }
-    }
-  }, [now, schedule, firstRow, push]);
+  }, [now, schedule, push]);
 
   // Відповіді в чаті — лише нові (після відкриття сайту).
   useEffect(() => {

@@ -54,7 +54,7 @@ async function open(page: Page, c: Case) {
   if (c.at) await gotoAt(page, c.at, c.speed ?? 0, c.path);
   else await page.goto(c.path);
   await expect(page.locator('main').first()).toBeVisible();
-  // Дати клієнтським станам (підпис, штамп, сітка) осісти. На «+15 с» стіна загоряється по черзі з CSS-переходами:
+  // Дати клієнтським станам (підпис, штамп, сітка) осісти. На «+15 с» блоки з’являються з CSS-переходами:
   // axe на проміжних кольорах переходу дає хибний контраст, тож чекаємо, поки всі місця догорять.
   await page.waitForTimeout(c.name.includes('+15 с') ? 8_000 : 2_500);
 }

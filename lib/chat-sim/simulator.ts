@@ -2,9 +2,9 @@
  * Ядро імітатора чату (T074, FR-056, `contracts/chat.md`). Чисті функції: «зараз» приходить аргументом
  * від `TimeSource` (через спільний годинник), годинник пристрою не читається.
  *
- * У US1 — лише `moments` сценарію `data/chat-script.json`: системне `country-midnight` і привітання
- * «Першого ряду» на «+15 с» (тієї самої миті, що й `moment:stamp`), `greetings-counter`, репліки й сплески навколо
- * півночі. Фоновий потік (`ambient`), повільний режим і відправлення — у US4.
+ * У US1 — лише `moments` сценарію `data/chat-script.json`: системне `country-midnight` на «+15 с» (тієї самої миті,
+ * що й `moment:stamp`), `greetings-counter`, репліки й сплески навколо півночі. Фоновий потік (`ambient`), повільний
+ * режим і відправлення — у US4. Привітання місць «Першого ряду» прибрано разом із рядом (рішення 2026-11-12).
  *
  * Формат повідомлень — `ChatMessage` (`data-model.md` 1.9), той самий, що прийде з Centrifugo.
  * `id` — ULID-подібний (26 символів Crockford base32): час + послідовність, тож порядок `(createdAt, id)` сталий.
@@ -26,20 +26,17 @@ import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { getData } from '@/lib/data/load';
 import { ratingState } from '@/lib/rating/rating';
 import { worldToasts } from '@/lib/tips/worldToasts';
-import { zoneRows } from '@/lib/firstrow/zone';
 
 /** Що відбувається опівночі одного слота ефіру: подія, для якої настала північ, і її країни. */
 export interface MomentContext {
   /** Північ слота (мс). */
   t0: Ms;
-  /** Подія, за якою заповнюються порожні поля сценарію (привітання, лічильник). */
+  /** Подія, за якою заповнюються порожні поля сценарію (лічильник). */
   eventId: string;
   cityId: string;
   /** Для `country-midnight` (без відмінювання назв: рядок збирає i18n за родом). */
   countries: { iso: string; gender: Gender }[];
   eventIds: string[];
-  /** Ряд «Першого ряду» поясу цієї півночі (подія-носій, `lib/firstrow/zone`); немає — `eventId`. */
-  firstRowEventId?: string;
 }
 
 export interface SimulatorOptions {
@@ -115,14 +112,12 @@ export function buildMomentContexts(data: MomentData): MomentContext[] {
   return airSlots(data).map((slot) => {
     const pick = pickSlotEvent(slot.midnightMs + 15_000, slot.events, data.countriesByIso, data.chainsByEventId);
     const event: Pick<Event, 'id' | 'cityId' | 'countryIso'> = pick?.event ?? slot.events[0]!;
-    const row = zoneRows({ events: slot.events })[0] ?? null;
     return {
       t0: slot.midnightMs,
       eventId: event.id,
       cityId: event.cityId,
       countries: [{ iso: event.countryIso, gender: data.countriesByIso.get(event.countryIso)?.gender ?? null }],
       eventIds: [event.id],
-      ...(row ? { firstRowEventId: row.id } : {}),
     };
   });
 }
@@ -157,46 +152,18 @@ function fillSystem(system: SystemPayload, moment: MomentContext): SystemPayload
 /** Усі повідомлення одного моменту для однієї кімнати, у порядку `(createdAt, id)`. */
 export function momentMessages(script: ChatScriptFile, moment: MomentContext, room: RoomId): ChatMessage[] {
   const out: ChatMessage[] = [];
-  // «Перший ряд» — один на пояс: місця й привітання — ряду поясу цієї півночі.
-  const rowId = moment.firstRowEventId ?? moment.eventId;
-  const seed = script.firstRowSeed.find((s) => s.eventId === rowId);
-  const seatsTaken = (seed?.seats ?? [])
-    .filter((s) => s.state === 'taken' && s.name)
-    .sort((a, b) => a.number - b.number);
 
   for (const script_ of script.moments) {
     if (script_.eventId !== '*' && script_.eventId !== moment.eventId) continue;
-    let greetingIndex = 0;
     script_.offsets.forEach((offset, offsetIndex) => {
       const createdAt = moment.t0 + offset.atSec * 1_000;
       const msg = offset.message;
-      const isGreeting = msg.kind === 'greeting';
-      const seat = isGreeting ? seatsTaken[greetingIndex++] : undefined;
-      const mirrored = isGreeting && room === `firstrow:${rowId}`; // привітання йдуть і в кімнату «Перший ряд»
-      if (!roomsOf(offset.room, moment).includes(room) && !mirrored) return;
+      if (!roomsOf(offset.room, moment).includes(room)) return;
       const base = { room, moderation: 'ok' as const };
 
       switch (msg.kind) {
         case 'system':
           out.push({ ...base, id: messageId(createdAt, offsetIndex, 0, room), kind: 'system', createdAt, system: fillSystem(msg.system, moment) });
-          break;
-        case 'greeting':
-          if (!seat) return; // вільне місце — привітання немає
-          out.push({
-            ...base,
-            id: messageId(createdAt, offsetIndex, seat.number, room),
-            kind: 'greeting',
-            createdAt,
-            greeting: {
-              eventId: rowId,
-              seat: seat.number,
-              participantName: seat.name!,
-              flagCode: seat.flagCode ?? 'earth',
-              emojiId: seat.emojiId ?? 'glasses',
-              cityId: moment.cityId,
-              text: seat.greeting ?? '',
-            },
-          });
           break;
         case 'regular': {
           const author = authorOf(script, msg.authorId);
@@ -301,7 +268,6 @@ function ordinalFor(key: string, countAt: (sec: number) => number): (sec: number
 /**
  * Фоновий потік кімнати за `ambient`-правилами: час ділиться на секундні відра, у кожному кількість повідомлень і вибір
  * з `pool` визначає хеш (кімната, секунда) — перемотка повертає ті самі повідомлення з тими самими `id`.
- * Кімнати `firstrow:*` беруть репліки авторів із позначкою «Перший ряд» зі «світового» пулу.
  */
 export function ambientBetween(
   script: ChatScriptFile,
@@ -315,14 +281,9 @@ export function ambientBetween(
   const out: ChatMessage[] = [];
   const cap = MAX_AMBIENT_PER_SEC / Math.max(1, speed);
   for (const room of rooms) {
-    const rule = ruleFor(script, room) ?? (room.startsWith('firstrow:') ? script.ambient.find((r) => r.room === 'country:*') : undefined);
+    const rule = ruleFor(script, room);
     if (!rule) continue;
-    let pool = rule.pool;
-    if (room.startsWith('firstrow:')) {
-      const worldPool = script.ambient.find((r) => r.room === 'world')?.pool ?? [];
-      const firstRowIds = new Set(script.authors.filter((a) => a.badges.includes('first-row')).map((a) => a.id));
-      pool = [...worldPool, ...rule.pool].filter((p) => firstRowIds.has(p.authorId));
-    }
+    const pool = rule.pool;
     if (!pool.length) continue;
     // Скільки повідомлень у секундному відрі — чиста функція (id стабільні при перемотці).
     const countAt = (sec: number): number => {

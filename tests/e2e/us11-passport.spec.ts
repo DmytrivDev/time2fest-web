@@ -40,7 +40,7 @@ async function seed(page: Page, pass: boolean) {
       room: { windows: [], soundSlot: null },
       stamps: [
         st('evt_auckland_2027', 'NZ', 'Окленд', '2026-12-31T11:00:30Z'),
-        st('evt_dubai_2027', 'AE', 'Дубай', '2026-12-31T20:00:30Z', { firstRowSeat: 4 }),
+        st('evt_dubai_2027', 'AE', 'Дубай', '2026-12-31T20:00:30Z'),
         st('evt_kyiv_2027', 'UA', 'Київ', '2026-12-31T22:00:30Z'),
       ],
       pendingPresence: {},
@@ -48,7 +48,6 @@ async function seed(page: Page, pass: boolean) {
       offers: { nightId: '2026-27', history: [], visible: null },
       schedule: [],
       hasPass: pass,
-      firstRow: {},
       nightId: '2026-27',
     };
     if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));

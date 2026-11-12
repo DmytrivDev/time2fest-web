@@ -86,12 +86,12 @@ describe('шлях автора (C13)', () => {
     expect(path.map((p) => p.midnightMs)).toEqual([...path.map((p) => p.midnightMs)].sort((a, b) => a - b));
     expect(path.every((p) => p.city && p.country && p.flagCode)).toBe(true);
     expect(buildAuthorPath({ id: 'u_taras', nick: 'Тарас', badges: [] }, script, data)).toEqual([]);
-    expect(authorHasPass({ badges: ['first-row'] })).toBe(true);
+    expect(authorHasPass({ badges: ['vip'] })).toBe(true);
     expect(authorHasPass({ badges: [] })).toBe(false);
   });
 
-  it('місце «Першого ряду» знаходиться за ім’ям; підсумок і маршрут', () => {
-    const olena = { id: 'u_olena', nick: 'Олена', badges: ['pass' as const, 'first-row' as const] };
+  it('шлях Олени зі сценарію: підсумок і маршрут', () => {
+    const olena = { id: 'u_olena', nick: 'Олена', badges: ['pass' as const] };
     const path = buildAuthorPath(olena, script, data);
     expect(path.length).toBeGreaterThan(1);
     const summary = pathSummary(path);

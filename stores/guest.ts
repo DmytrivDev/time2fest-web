@@ -2,12 +2,14 @@
  * Стан гостя (`data-model.md`, розділ 2) у `localStorage['t2f:guest:v1']`.
  * Кожне читання й запис — у `try/catch` (`safeJsonStorage`); при збої сайт працює без збереження.
  * Зміна `v` → міграція або скидання; інша ніч (`nightId`) → скидання штампів, оцінок і пропозицій.
+ * «Перший ряд» прибрано (рішення власника 2026-11-12): у старому стані гостя лишаються поле `firstRow` і номер місця
+ * на штампах (`firstRowSeat`) — `sanitizeGuest` їх відкидає; окремий ключ ряду `t2f:firstrow:v1` видаляється при
+ * завантаженні (`dropLegacyKeys`).
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type {
   GuestConsent,
-  GuestFirstRowEntry,
   GuestRoomWindow,
   GuestState,
   NightId,
@@ -56,7 +58,6 @@ export function createDefaultGuest(): GuestState {
     offers: { nightId: CURRENT_NIGHT, history: [], visible: null },
     schedule: [],
     hasPass: false,
-    firstRow: {},
     nightId: CURRENT_NIGHT,
   };
 }
@@ -96,7 +97,6 @@ export interface GuestActions {
   replaceSchedule(outIso: string, eventId: string): void;
   setSchedule(eventIds: string[]): void;
   setHasPass(v: boolean): void;
-  updateFirstRow(eventId: string, patch: Partial<GuestFirstRowEntry> | ((prev: GuestFirstRowEntry) => GuestFirstRowEntry)): void;
 }
 
 export type GuestStore = GuestState & GuestActions;
@@ -114,10 +114,25 @@ function pickData(s: GuestStore): GuestState {
   return out as unknown as GuestState;
 }
 
+/** Ключі сайту, яких більше немає: «Перший ряд» (прибрано 2026-11-12). */
+export const LEGACY_STORAGE_KEYS = ['t2f:firstrow:v1'] as const;
+
+/** Прибрати зі сховища ключі прибраних функцій (демо-тестувальники мали їх у браузері). */
+export function dropLegacyKeys(): void {
+  try {
+    if (typeof window === 'undefined') return;
+    for (const key of LEGACY_STORAGE_KEYS) window.localStorage.removeItem(key);
+  } catch {
+    // сховище недоступне — нічого прибирати
+  }
+}
+
 /** Приводить збережене до поточної форми; несумісне → `null` (скидання). */
 export function sanitizeGuest(raw: unknown): GuestState | null {
   if (!raw || typeof raw !== 'object') return null;
-  const p = raw as Partial<GuestState>;
+  // `firstRow` — поле прибраного «Першого ряду»: відкидаємо, щоб не повернулось у сховище.
+  const p = { ...(raw as Partial<GuestState> & { firstRow?: unknown }) };
+  delete p.firstRow;
   if (p.v !== GUEST_VERSION || typeof p.id !== 'string') return null;
   const base = createDefaultGuest();
   const merged: GuestState = {
@@ -137,6 +152,13 @@ export function sanitizeGuest(raw: unknown): GuestState | null {
     merged.offers = base.offers;
   }
   if (!Array.isArray(merged.stamps)) merged.stamps = [];
+  // Номер місця «Першого ряду» на старих штампах — відкидаємо.
+  merged.stamps = merged.stamps.map((st) => {
+    if (!st || typeof st !== 'object' || !('firstRowSeat' in st)) return st;
+    const rest = { ...(st as Stamp & { firstRowSeat?: unknown }) };
+    delete rest.firstRowSeat;
+    return rest;
+  });
   return merged;
 }
 
@@ -218,12 +240,6 @@ export const useGuestStore = create<GuestStore>()(
       replaceSchedule: (outIso, eventId) => set((s) => ({ schedule: replaceCountryZone(s.schedule, outIso, eventId) })),
       setSchedule: (schedule) => set({ schedule: [...new Set(schedule)] }),
       setHasPass: (hasPass) => set({ hasPass }),
-      updateFirstRow: (eventId, patch) =>
-        set((s) => {
-          const prev = s.firstRow[eventId] ?? {};
-          const next = typeof patch === 'function' ? patch(prev) : { ...prev, ...patch };
-          return { firstRow: { ...s.firstRow, [eventId]: next } };
-        }),
     }),
     {
       name: GUEST_STORAGE_KEY,
@@ -239,6 +255,8 @@ export const useGuestStore = create<GuestStore>()(
     },
   ),
 );
+
+dropLegacyKeys();
 
 export function resetGuest(): void {
   // Новий гість бачить мапу вперше — підказка жестів покажеться знову.

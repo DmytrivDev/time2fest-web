@@ -89,11 +89,9 @@ describe('schedule.json: інваріанти контракту', () => {
     expect(new Set(countries.map((c) => c.slug)).size).toBe(countries.length);
   });
 
-  it('7. firstRow лише в основних подіях', () => {
+  it('7. «Перший ряд» прибрано (2026-11-12): у подіях розкладу немає поля firstRow', () => {
     for (const { city } of allCities) {
-      for (const ev of city.events) {
-        if (ev.firstRow) expect(ev.isMainCelebration, ev.id).toBe(true);
-      }
+      for (const ev of city.events) expect('firstRow' in ev, ev.id).toBe(false);
     }
   });
 

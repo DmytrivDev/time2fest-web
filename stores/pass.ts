@@ -1,5 +1,5 @@
 /**
- * Оформлення Новорічного пасу (імітація оплати, рішення власника 2026-10-30: як у «Першому ряду»).
+ * Оформлення Новорічного пасу (імітація оплати, рішення власника 2026-10-30).
  * Одне оформлення на вкладку: сторінка `/pass/` і вікно під трансляцією показують той самий стан, тож людина, що
  * закрила вікно на «Чекаємо підтвердження», побачить пас, щойно оплату підтвердять (`PassPaymentWatcher`).
  *
@@ -16,7 +16,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { GOOGLE_DELAY_MS, isEmail, normalizeEmail } from '@/lib/auth/sim';
 import type { Ms } from '@/lib/data/types';
-import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/firstrow/pay';
+import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { useAuthStore } from '@/stores/auth';
 import { useTestControls } from '@/stores/testControls';
@@ -24,7 +24,7 @@ import { useTestControls } from '@/stores/testControls';
 export type PassPhase = 'form' | 'google' | 'opening' | 'pending' | 'failed' | 'success';
 export type PassEmailIssue = 'empty' | 'invalid' | null;
 
-/** «Чекаємо підтвердження» → підтверджено (час сайту), як у «Першому ряду». */
+/** «Чекаємо підтвердження» → підтверджено (час сайту). */
 export const PASS_CONFIRM_MS = PENDING_CONFIRM_MS;
 
 export const PASS_FLOW_STORAGE_KEY = 't2f:pass-flow:v1';

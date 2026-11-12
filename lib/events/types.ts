@@ -13,7 +13,6 @@ export interface MomentStamp {
   presentEventIds: string[];
   presenceSources: Record<string, PresenceSource>;
   countries: { iso: string; gender: Gender }[];
-  firstRowEventId?: string;
   announce: { cityId: string; text: 'midnight-stamp-ready' };
 }
 

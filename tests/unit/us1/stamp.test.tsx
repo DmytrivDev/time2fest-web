@@ -6,7 +6,7 @@ import { renderApp } from './render';
 
 const SYDNEY: StampEntry = { city: 'Сідней', countryName: 'Австралія', flagCode: 'AU', illustrationId: 'au-postcard' };
 const MELBOURNE: StampEntry = { city: 'Мельбурн', countryName: 'Австралія', flagCode: 'AU', illustrationId: 'au-postcard' };
-const LONDON: StampEntry = { city: 'Лондон', countryName: 'Велика Британія', flagCode: 'GB', illustrationId: 'gb-postcard', firstRowSeat: 4 };
+const LONDON: StampEntry = { city: 'Лондон', countryName: 'Велика Британія', flagCode: 'GB', illustrationId: 'gb-postcard' };
 
 function Sound() {
   return <span data-testid="sound">{useCoralWindowOpen() ? 'neutral' : 'coral'}</span>;
@@ -50,11 +50,11 @@ describe('Stamp', () => {
     expect(screen.getByRole('img', { name: 'НОВИЙ РІК 2027 · СІДНЕЙ · МЕЛЬБУРН' })).toBeInTheDocument();
   });
 
-  it('first-row: подвійна рамка й рядок «Перший ряд · Лондон»', () => {
+  it('без рамки й рядка «Перший ряд» (ряд прибрано 2026-11-12)', () => {
     const { container } = renderApp(<Stamp stamps={[LONDON]} />);
-    expect(container.querySelector('[data-first-row="true"]')).not.toBeNull();
-    expect(container.querySelector('[data-frame="inner"]')).not.toBeNull();
-    expect(screen.getByText('Перший ряд · Лондон')).toBeInTheDocument();
+    expect(container.querySelector('[data-first-row]')).toBeNull();
+    expect(container.querySelector('[data-frame="inner"]')).toBeNull();
+    expect(screen.queryByText(/Перший ряд/)).toBeNull();
   });
 
   it('save-failed: повідомлення й тиха «Спробувати ще»', () => {

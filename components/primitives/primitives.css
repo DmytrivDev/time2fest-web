@@ -1064,14 +1064,6 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 .t2f-sys-mark {
   border-radius: 4px;
 }
-.t2f-sys-flag {
-  width: 14px !important;
-  height: 10px !important;
-  vertical-align: -1px;
-}
-.t2f-sys-flag[data-round='true'] {
-  height: 14px !important;
-}
 
 /* O-NICK (макети `Desk-Nick`, `Phone-Nick`): шапка вікна, поля, список прапорів, прев’ю. */
 .t2f-board-title {
@@ -1569,7 +1561,7 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 }
 /* Аркуш (Sheet) на телефоні: з’являється знизу й так само плавно їде вниз, коли закривається (рішення 2026-11-02). */
 .t2f-sheet {
-  animation: t2f-seat-in 200ms ease-out;
+  animation: t2f-layer-in 200ms ease-out;
   transition: transform 200ms ease-out;
 }
 .t2f-sheet-scrim {
@@ -1596,9 +1588,9 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   transition: none;
 }
 
-/* Шар вікна покупки «Першого ряду» поверх чату (макети `Phone-FR-*`, рішення 2026-10-29): жовта межа зверху, своя ручка. */
-/* Шар вікна покупки «Першого ряду» (телефон): окремо від вікна чату, та сама рамка й тінь; з’являється знизу. */
-.t2f-seat-layer {
+/* Шар вікон поза чатом (телефон, рішення 2026-10-29): окремо від вікна чату, та сама рамка й тінь, своя ручка;
+   з’являється знизу. Раніше — `.t2f-seat-layer` (вікно покупки «Першого ряду», прибрано 2026-11-12). */
+.t2f-layer {
   position: fixed;
   inset-inline: 0;
   bottom: 0;
@@ -1612,27 +1604,27 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   background: var(--color-surface);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
   transition: transform 200ms ease-out;
-  animation: t2f-seat-in 200ms ease-out;
+  animation: t2f-layer-in 200ms ease-out;
 }
-@keyframes t2f-seat-in {
+@keyframes t2f-layer-in {
   from {
     transform: translateY(100%);
   }
 }
-.t2f-seat-layer[hidden] {
+.t2f-layer[hidden] {
   display: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .t2f-seat-layer {
+  .t2f-layer {
     transition: none;
     animation: none;
   }
 }
-:root[data-reduce-motion='true'] .t2f-seat-layer {
+:root[data-reduce-motion='true'] .t2f-layer {
   transition: none;
   animation: none;
 }
-.t2f-seat-grip {
+.t2f-layer-grip {
   display: flex;
   flex: none;
   align-items: flex-end;
@@ -1642,18 +1634,18 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
   box-sizing: border-box;
   touch-action: none;
 }
-.t2f-seat-slot {
+.t2f-layer-slot {
   position: relative;
   flex: 1;
   min-height: 0;
 }
-.t2f-seat-panel[data-chat-slot-panel] {
+.t2f-layer-panel[data-chat-slot-panel] {
   border: 0;
 }
-.t2f-seat-layer [data-board-header] {
+.t2f-layer [data-board-header] {
   touch-action: none;
 }
-.t2f-seat-panel .t2f-chat-log {
+.t2f-layer-panel .t2f-chat-log {
   overscroll-behavior: contain;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -1676,8 +1668,8 @@ html[data-chat-dock-expanded] .t2f-cookie {
   width: auto;
 }
 
-/* Телефон-альбом (низький екран, дотик): згорнуте вікно — внизу, але лише нижче смуги «Перший ряд»; розгорнутий чат —
-   блок у потоці одразу після смуги (висота вікна), сторінка не блокується. Режим визначає JS (`data-land`). */
+/* Телефон-альбом (низький екран, дотик): згорнуте вікно — внизу, але лише нижче рядка часу; розгорнутий чат —
+   блок у потоці одразу після рядка (висота вікна), сторінка не блокується. Режим визначає JS (`data-land`). */
 .t2f-dock[data-land='true'] {
   transition: none;
 }
@@ -1720,142 +1712,7 @@ html[data-chat-land-expanded] body {
   display: none;
 }
 
-/* «Моя емоція» (макет `Phone-Chat-FirstRow`, кадр в): заголовок біля «Назад», «· Моя емоція» 17/700. */
-.t2f-author-header:has(.t2f-emo-title) > .flex-1 {
-  display: none;
-}
-.t2f-emo-title {
-  margin-inline-start: 4px;
-  color: var(--color-text);
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-.t2f-emo-title::before {
-  content: '·';
-  margin-inline-end: 8px;
-  color: var(--color-border-strong);
-  font-weight: 400;
-}
-
-.t2f-emo-preview {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 10px 8px 12px;
-  border-radius: 10px;
-  background: var(--color-background);
-}
-.t2f-emo-hint {
-  flex: 1 1 8rem;
-  color: var(--color-text-muted);
-  font-size: 12px;
-  line-height: 1.3;
-}
-.t2f-emo-wall {
-  display: inline-flex;
-  min-width: 0;
-  max-width: 100%;
-  flex: 0 1 auto;
-  height: 36px;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px 0 10px;
-  border: 1px solid rgba(252, 226, 134, 0.4);
-  border-radius: 9999px;
-  background: rgba(252, 226, 134, 0.09);
-  color: var(--color-text);
-  font-size: 14px;
-  font-weight: 600;
-}
-.t2f-emo-flag {
-  flex: none;
-  border-radius: 2px;
-}
-.t2f-emo-wall-glyph {
-  flex: none;
-  font-size: 17px;
-  line-height: 1;
-}
-.t2f-emo-label {
-  font-size: 14px;
-  font-weight: 600;
-}
-.t2f-emo-count {
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-.t2f-emo-input {
-  height: 44px;
-  padding: 0 14px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 10px;
-  background: var(--color-background);
-  color: var(--color-text);
-  font-size: 16px;
-}
-.t2f-emo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
-}
-.t2f-emo-glyph {
-  display: flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  background: var(--color-surface-raised);
-  font-size: 22px;
-  line-height: 1;
-}
-[aria-checked='true'] > .t2f-emo-glyph {
-  border: 2px solid var(--color-highlight);
-  background: rgba(252, 226, 134, 0.14);
-}
-.t2f-emo-rate {
-  margin: 0;
-  color: var(--color-highlight);
-  font-size: 12px;
-  line-height: 1.4;
-}
-.t2f-emo-btn {
-  height: 44px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-}
-.t2f-emo-cancel {
-  flex: none;
-  padding: 0 18px;
-  border: 1px solid var(--color-border-strong);
-  background: transparent;
-  color: var(--color-text);
-}
-.t2f-emo-chip {
-  display: flex;
-  height: 32px;
-  align-items: center;
-  gap: 6px;
-  padding: 0 10px 0 9px;
-  border: 1px solid rgba(252, 226, 134, 0.4);
-  border-radius: 9999px;
-  background: var(--color-highlight-tint);
-  color: var(--color-text);
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.t2f-emo-chip-glyph {
-  font-size: 16px;
-  line-height: 1;
-}
-
-/* Перемикач кімнат у шапці чату на телефоні: «Світ · GB ⌄ · 1-й ряд» + кнопки вміщаються в 375 px усіма мовами старту. */
+/* Перемикач кімнат у шапці чату на телефоні: «Світ · GB ⌄» + кнопки вміщаються в 375 px усіма мовами старту. */
 @media (max-width: 767.98px) {
   .t2f-chat-head .t2f-seg-pill {
     gap: 5px;
@@ -1863,8 +1720,8 @@ html[data-chat-land-expanded] body {
   }
 }
 
-/* Колонка чату на десктопі (340 px): розміри підібрано під найдовші підписи запланованих мов («Mundo» + прапор + шеврон +
-   «1er rang»): відступи шапки зліва/справа однакові для ока (12 px до краю чипа / кружечка «⋯»), проміжки між чипами 4 px
+/* Колонка чату на десктопі (340 px): розміри підібрано під найдовші підписи запланованих мов («Mundo» + прапор + шеврон;
+   колись і «1er rang» кімнати «Перший ряд», прибраної 2026-11-12): відступи шапки зліва/справа однакові для ока (12 px до краю чипа / кружечка «⋯»), проміжки між чипами 4 px
    у чипі й ≥ 11 px до кнопок, між кружечками кнопок 6 px; зона дотику кнопок лишається 44 px (сусідні перекриваються). */
 @media (min-width: 768px) {
   .t2f-chat-head {
@@ -1930,7 +1787,7 @@ html[data-chat-land-expanded] body {
   /* Розгорнутий чат і шторки — теж поля 32 px (16 своїх + 16 тут), як на дошці (кадри 5, 6). */
   .t2f-dock-body,
   .t2f-sheet,
-  .t2f-seat-layer .t2f-seat-panel {
+  .t2f-layer .t2f-layer-panel {
     padding-inline: 16px;
   }
 }

@@ -46,7 +46,7 @@ test.describe('S-AUTH · сторінка', () => {
     await expect(page.getByRole('button', { name: 'Продовжити з Google' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Створити акаунт' })).toHaveAttribute('href', '/signup/');
     await expect(page.getByText('Ще немає Новорічного пасу?')).toBeVisible();
-    await expect(page.locator('[data-block="pass-hint"]').getByText('$4,99')).toBeVisible();
+    await expect(page.locator('[data-block="pass-hint"]').getByText('$5')).toBeVisible();
     // «Що дає пас» розгортає можливості на місці.
     await page.getByRole('button', { name: 'Що дає пас' }).click();
     // Розгорнуто — кнопка стає «Згорнути».

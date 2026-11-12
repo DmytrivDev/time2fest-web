@@ -20,7 +20,7 @@ test('гість: ціна, оформлення з Google чи поштою, п
   await gotoAt(page, AT, 1, '/pass/');
   await expect(page.getByRole('heading', { level: 1, name: 'Новорічний пас' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Оформити з Google' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Оформити пас — $4,99' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Оформити пас — $5' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Політикою конфіденційності' })).toHaveAttribute('href', '/privacy/');
   // Жодного «мертвого» посилання на `#` у вмісті сторінки.
   await expect(page.locator('main a[href="#"]')).toHaveCount(0);
@@ -31,14 +31,14 @@ test('оплата поштою: «Чекаємо підтвердження» �
   await gotoAt(page, AT, 1, '/pass/');
   await page.evaluate(() => (window as unknown as { __t2f: { setPayResult(r: string): void } }).__t2f.setPayResult('pending'));
   await page.getByRole('textbox', { name: 'Email' }).fill('olena@example.com');
-  await page.getByRole('button', { name: 'Оформити пас — $4,99' }).click();
+  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
   await expect(page.locator('[data-phase="pending"]')).toContainText('Чекаємо підтвердження оплати');
 
   await page.reload();
   await waitForTimeApi(page);
   // Після перезавантаження — те саме очікування, а не нова форма оплати.
   await expect(page.locator('[data-phase="pending"]')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Оформити пас — $4,99' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Оформити пас — $5' })).toHaveCount(0);
 
   await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
 
@@ -52,7 +52,7 @@ test('оплата поштою: «Чекаємо підтвердження» �
 test('оформлення пасу поштою: прапор за IP одразу в аватарі шапки, без перезавантаження (правка 2026-11-10)', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   await page.getByRole('textbox', { name: 'Email' }).fill('flag@example.com');
-  await page.getByRole('button', { name: 'Оформити пас — $4,99' }).click();
+  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
   await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
   // Аватар — круглий прапор під вуаллю (не просто літера на темному тлі).
   const avatar = page.getByRole('banner').locator('span[style*="background-image"]');
@@ -78,7 +78,6 @@ const STALE_GUEST = {
   offers: { nightId: '2026-27', history: [], visible: null },
   schedule: ['evt_lisbon_2027', 'evt_madrid_2027'],
   hasPass: true,
-  firstRow: {},
   nightId: '2026-27',
 };
 

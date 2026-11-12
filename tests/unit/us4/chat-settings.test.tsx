@@ -117,7 +117,7 @@ describe('«⋯» — налаштування чату на місці стрі
     expect(within(quiet).getByRole('img', { name: 'Потрібен Новорічний пас' })).toBeInTheDocument();
     expect(screen.queryByRole('switch')).not.toBeInTheDocument();
     // Купують у плашці під рядком; унизу — лише тихий рядок із поясненням значка.
-    expect(screen.queryAllByRole('button', { name: 'Оформити пас — $4,99' })).toHaveLength(0);
+    expect(screen.queryAllByRole('button', { name: 'Оформити пас — $5' })).toHaveLength(0);
     const legend = document.querySelector('[data-row="pass-legend"]')!;
     expect(legend).toHaveTextContent('Функції Новорічного пасу');
     expect(within(legend as HTMLElement).getByRole('link', { name: /Дізнатись більше/ })).toHaveAttribute('href', expect.stringMatching(/^\/pass\/?$/));
@@ -127,7 +127,7 @@ describe('«⋯» — налаштування чату на місці стрі
     const panel = document.getElementById(quiet.getAttribute('aria-controls')!)!;
     expect(panel).toHaveAttribute('data-open', 'true');
     expect(within(panel).getByText('Щоб увімкнути тихий режим, потрібен Новорічний пас.')).toBeInTheDocument();
-    expect(within(panel).getByRole('button', { name: 'Оформити пас — $4,99' })).toBeInTheDocument();
+    expect(within(panel).getByRole('button', { name: 'Оформити пас — $5' })).toBeInTheDocument();
     // Інший рядок — його плашка, попередня згортається; повторний дотик згортає.
     const route = screen.getByRole('button', { name: /Показувати мій шлях/ });
     fireEvent.click(route);

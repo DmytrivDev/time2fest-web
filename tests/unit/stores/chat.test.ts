@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { ChatMessage } from '@/lib/data/types';
-import { emotionWaitSec, EMOTION_COOLDOWN_MS, formatCount, useChatUi, useHiddenCount } from '@/stores/chat';
+import { formatCount, useChatUi, useHiddenCount } from '@/stores/chat';
 
 const T = Date.parse('2027-01-01T00:10:00Z');
 const msg = (id: string, at: number, over: Partial<ChatMessage> = {}): ChatMessage => ({
@@ -39,13 +39,6 @@ describe('stores/chat — лічильник сховано, відповідь,
     expect(formatCount(7)).toBe('7');
     expect(formatCount(99)).toBe('99');
     expect(formatCount(100)).toBe('99+');
-  });
-
-  it('емоцію можна міняти раз на 10 с', () => {
-    expect(emotionWaitSec(null, T)).toBe(0);
-    expect(emotionWaitSec(T - 3_000, T)).toBe(7);
-    expect(emotionWaitSec(T - EMOTION_COOLDOWN_MS, T)).toBe(0);
-    expect(emotionWaitSec(T + 3_600_000, T)).toBe(0);
   });
 
   it('чернетка приймає і значення, і функцію; відповідь скидається', () => {

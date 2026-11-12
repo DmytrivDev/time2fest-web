@@ -73,13 +73,11 @@ export interface StampContext {
   country: Pick<Country, 'illustrationId'> | undefined;
   city: Pick<City, 'name'> | undefined;
   presenceSource: PresenceSource;
-  /** Місце гостя в «Першому ряду» цієї події, якщо є. */
-  firstRowSeat?: number;
 }
 
 /** Штамп за подію: `grantedAt` — північ + 15 с серверного часу. */
 export function buildStamp(ctx: StampContext): Stamp {
-  const stamp: Stamp = {
+  return {
     eventId: ctx.event.id,
     grantedAt: midnightOf(ctx.event) + STAMP_DELAY,
     presenceSource: ctx.presenceSource,
@@ -87,6 +85,4 @@ export function buildStamp(ctx: StampContext): Stamp {
     cityName: ctx.city?.name.uk ?? '',
     countryIso: ctx.event.countryIso,
   };
-  if (ctx.firstRowSeat !== undefined) stamp.firstRowSeat = ctx.firstRowSeat;
-  return stamp;
 }

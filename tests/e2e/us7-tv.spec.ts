@@ -1,7 +1,7 @@
 /**
  * US7 — «Режим вечірки на телевізорі» (`/tv`, quickstart 11; T123). Проєкт `tv`, 1920×1080.
  * Той самий ефір, що на головній: «+15 с» — «<Країна> зустріла Новий рік», штамп з QR і видимою короткою адресою,
- * привітання Першого ряду по черзі; чату й хедера немає; контур фокуса ≥ 4 px; початковий фокус — картка в ефірі;
+ * (привітання й вкладку «Першого ряду» прибрано 2026-11-12); чату й хедера немає; контур фокуса ≥ 4 px; початковий фокус — картка в ефірі;
  * стрілки / Enter / Esc (Esc → головна); відео ≈ 65% ширини (дошка `TV-Party-New`, рішення 2026-11-06).
  * Розміри з дошки, затвердженої власником: поля 32 / 28 px і текст від 12 px (позначка «Програма») замість
  * колишніх 96/54 і 22 px.
@@ -135,18 +135,13 @@ async function outsideSafeZone(page: Page): Promise<string[]> {
   );
 }
 
-/** Чекає першого кадру з «<Країна> зустріла Новий рік», штампом з QR і привітанням Першого ряду; повертає віртуальний час. */
+/** Чекає першого кадру з «<Країна> зустріла Новий рік» і штампом з QR; повертає віртуальний час. */
 async function waitForTvMoment(page: Page, timeout = 30_000): Promise<number> {
   const handle = await page.waitForFunction(
     () => {
       const met = document.querySelector('[data-tv-met]');
       const stamp = document.querySelector('[data-stamp="tv"]');
-      const wall = document.querySelector('[data-tv-greetings]');
-      const ok =
-        !!met &&
-        /Велика Британія зустріла Новий рік/.test(met.textContent ?? '') &&
-        !!stamp &&
-        !!wall;
+      const ok = !!met && /Велика Британія зустріла Новий рік/.test(met.textContent ?? '') && !!stamp;
       if (!ok) return null;
       const api = (window as unknown as { __t2f?: { timeMachine: { get(): { at: string } } } })
         .__t2f;
@@ -186,7 +181,7 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(sidebar(page).getByRole('link', { name: /Time2Fest/ })).toBeVisible();
     await expect(page.getByRole('timer')).toHaveCount(1);
     await expect(sidebar(page)).toContainText('Зараз: Лондон');
-    await expect(sidebar(page).getByRole('tab')).toHaveText(['Як святкувати', 'Перший ряд', 'Рейтинг']);
+    await expect(sidebar(page).getByRole('tab')).toHaveText(['Як святкувати', 'Рейтинг']);
     await expect(sidebar(page).getByRole('button', { name: 'Усе свято' })).toHaveAttribute('aria-pressed', 'true');
     await expect(sidebar(page).getByRole('button', { name: /Звук/ })).toBeVisible();
     await expect(sidebar(page).getByRole('button', { name: 'На весь екран' })).toBeVisible();
@@ -208,10 +203,10 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(sidebar(page).getByRole('tab')).toHaveCount(0);
     await welcome.getByRole('button', { name: 'Зрозуміло · OK' }).click();
     await expect(welcome).toHaveCount(0);
-    await expect(sidebar(page).getByRole('tab')).toHaveCount(3);
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(2);
     await page.reload();
     await waitForTimeApi(page);
-    await expect(sidebar(page).getByRole('tab')).toHaveCount(3);
+    await expect(sidebar(page).getByRole('tab')).toHaveCount(2);
     await expect(sidebar(page).locator('[data-tv-welcome]')).toHaveCount(0);
   });
 
@@ -224,15 +219,15 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect(fonts.min).toBeGreaterThanOrEqual(MIN_FONT_PX);
     expect(await outsideSafeZone(page), 'елементи поза полями екрана').toEqual([]);
 
-    // Вкладки «Як святкувати» і «Перший ряд».
+    // Вкладки «Як святкувати» і «Рейтинг».
     await expect(sidebar(page).getByRole('heading', { name: /Як святкувати · / })).toBeVisible();
-    await sidebar(page).getByRole('tab', { name: 'Перший ряд' }).click();
-    await expect(sidebar(page).locator('[data-tv-buy]')).toContainText('Скануй телефоном');
+    await sidebar(page).getByRole('tab', { name: 'Рейтинг' }).click();
+    await expect(sidebar(page).locator('[data-tv-panel="rating"]')).toBeVisible();
     fonts = await smallestFont(page);
     expect(fonts.offenders).toEqual([]);
     expect(await outsideSafeZone(page)).toEqual([]);
 
-    // Опівночі: штамп, QR, привітання.
+    // Опівночі: штамп і QR.
     await page.evaluate(() =>
       (
         window as unknown as {
@@ -246,7 +241,7 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect(await outsideSafeZone(page)).toEqual([]);
   });
 
-  test('«+15 с»: «<Країна> зустріла Новий рік», штамп з QR і видимою адресою, привітання Першого ряду — у межах 1 с', async ({
+  test('«+15 с»: «<Країна> зустріла Новий рік», штамп з QR і видимою адресою — у межах 1 с; «Першого ряду» немає', async ({
     page,
     ytStub,
   }) => {
@@ -281,14 +276,8 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     });
     expect(Math.abs(bottoms[0]! - bottoms[1]!)).toBeLessThanOrEqual(2);
 
-    // Привітання Першого ряду: одне, змінюється кожні 15 с; списку учасників немає.
-    const greet = page.locator('[data-tv-greetings]');
-    await expect(greet.locator('[data-tv-greeting]')).toHaveCount(1);
-    const first = await greet.locator('[data-tv-greeting]').getAttribute('data-tv-greeting');
-    await expect
-      .poll(async () => greet.locator('[data-tv-greeting]').getAttribute('data-tv-greeting'), { timeout: 20_000 })
-      .not.toBe(first);
-    await expect(page.locator('[data-first-row-wall]')).toHaveCount(0);
+    // «Перший ряд» прибрано (рішення 2026-11-12): ні привітань місць, ні стіни.
+    await expect(page.locator('[data-tv-greetings], [data-first-row-wall]')).toHaveCount(0);
 
     // Штамп справді записаний у паспорті гостя (джерело присутності — `tv`).
     const stamps = await page.evaluate(() => {
@@ -338,11 +327,11 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     r = await ring();
     expect(r.width).toBeGreaterThanOrEqual(MIN_FOCUS_PX);
 
-    // Вкладки: → перемикає на «Перший ряд».
+    // Вкладки: → перемикає на «Рейтинг».
     await page.getByRole('tab', { name: 'Як святкувати' }).focus();
     await page.keyboard.press('ArrowRight');
-    await expect(page.getByRole('tab', { name: 'Перший ряд' })).toBeFocused();
-    await expect(page.getByRole('tab', { name: 'Перший ряд' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: 'Рейтинг' })).toBeFocused();
+    await expect(page.getByRole('tab', { name: 'Рейтинг' })).toHaveAttribute('aria-selected', 'true');
 
     // Enter на «Звук» вмикає звук у тому самому плеєрі.
     await page.getByRole('button', { name: /Звук/ }).focus();
@@ -593,16 +582,6 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page.getByRole('timer')).toBeVisible();
     await context.setOffline(false);
     await expect(sidebar(page).locator('[data-tv-offline]')).toHaveCount(0);
-  });
-
-  test('зменшити рух: привітання опівночі змінюються без перегортання', async ({ page, ytStub }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await openTv(page, ytStub, '2027-01-01T01:59:58+02:00', 1);
-    await waitForTvMoment(page);
-    const anim = await page
-      .locator('[data-tv-greeting]')
-      .evaluate((el) => getComputedStyle(el).animationName);
-    expect(anim).toBe('none');
   });
 
   test('телефон: інформаційна сторінка замість режиму вечірки, без плеєра', async ({ page }) => {

@@ -253,7 +253,6 @@ export function ResendButton({
 const PERKS = [
   { icon: 'calendar', key: 'schedule' },
   { icon: 'ticket', key: 'path' },
-  { icon: 'spark', key: 'discount' },
   { icon: 'card', key: 'card' },
   { icon: 'filter', key: 'quiet' },
 ] as const;
@@ -438,7 +437,7 @@ export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolea
   );
 }
 
-/** Вікно під час трансляції: «Ще немає пасу? $4,99 разово, на весь сезон» і дві кнопки. */
+/** Вікно під час трансляції: «Ще немає пасу? $5 разово, на весь сезон» і дві кнопки. */
 export function PassRow({ mt }: { mt?: number }) {
   const t = useTranslations('auth');
   const uid = useId();

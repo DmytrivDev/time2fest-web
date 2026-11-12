@@ -26,7 +26,6 @@ export const KIND_ICON: Record<NotifKind, IconName> = {
   stamp: 'passport',
   reply: 'message',
   goal: 'star',
-  seat: 'seat',
   streak: 'sparkles',
 };
 

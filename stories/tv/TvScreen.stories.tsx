@@ -19,7 +19,7 @@ import { useGuestStore } from '@/stores/guest';
  * S-TV, C22 «Режим вечірки» — склад сторінки `/tv` у ширині 1920 (фокус 4 px). Ефір рахується тим самим `computeBroadcast`,
  * що й у застосунку; у Storybook немає `PlayerProvider` і хоста плеєра — на місці відео порожній слот чи сцена відліку.
  * Час глядача — Київ: «північ о 02:00 за вашим часом» для Лондона. Півночі Лондона — 2027-01-01T00:00:00Z.
- * Артборди: TV-Live, TV-Live-HowTo, TV-Live-FirstRow, TV-Live-Timeline, TV-Countdown, TV-Moment (опівночі).
+ * Артборди: TV-Live, TV-Live-HowTo, TV-Live-Timeline, TV-Countdown, TV-Moment (опівночі).
  */
 const LONDON = Date.parse('2027-01-01T00:00:00Z');
 const MIN = 60_000;
@@ -36,7 +36,7 @@ function Stage({ at, stamped = false, children }: { at: number; stamped?: boolea
   useLayoutEffect(() => {
     const event = value.current?.event;
     if (!stamped || !event) {
-      useGuestStore.setState({ stamps: [], firstRow: {}, schedule: [] });
+      useGuestStore.setState({ stamps: [], schedule: [] });
       return;
     }
     const data = getData();
@@ -92,17 +92,6 @@ export const HowTo: Story = {
   },
 };
 
-export const FirstRow: Story = {
-  name: 'live — TV-Live-FirstRow: вкладка «Перший ряд», QR «Скануй телефоном, щоб зайняти місце»',
-  args: { offsetMs: -22 * MIN },
-  parameters: at(-22 * MIN),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('tab', { name: 'Перший ряд' }));
-    await expect(await canvas.findByText('Скануй телефоном, щоб зайняти місце')).toBeVisible();
-  },
-};
-
 export const Timeline: Story = {
   name: 'timeline відкрито — TV-Live-Timeline: минулі зліва за краєм, поточна перша',
   args: { offsetMs: -22 * MIN },
@@ -139,19 +128,19 @@ export const FiveMinutes: Story = {
 };
 
 export const Midnight: Story = {
-  name: 'midnight — ТВ опівночі (+15 с): «Велика Британія зустріла Новий рік», штамп з QR, стіна загоряється',
+  name: 'midnight — ТВ опівночі (+15 с): «Велика Британія зустріла Новий рік», штамп з QR',
   args: { offsetMs: 15_000, stamped: true },
   parameters: at(15_000),
 };
 
 export const MidnightLit: Story = {
-  name: 'midnight — +1 хв: стіна «Першого ряду» вся горить, штамп у колонці',
+  name: 'midnight — +1 хв: штамп у колонці',
   args: { offsetMs: MIN, stamped: true },
   parameters: at(MIN),
 };
 
 export const MidnightNoStamp: Story = {
-  name: 'midnight — гість не був присутній: лише «зустріла Новий рік» і стіна, штампа немає',
+  name: 'midnight — гість не був присутній: лише «зустріла Новий рік», штампа немає',
   args: { offsetMs: MIN, stamped: false },
   parameters: at(MIN),
 };
@@ -239,9 +228,6 @@ export const Parts: StoryObj = {
           </ul>
           <div className="w-112">
             <TvStampCard eventId="evt_london_2027" city="Лондон" countryName={london.name.uk} flagCode={london.flagCode} illustrationId={london.illustrationId} />
-          </div>
-          <div className="w-112">
-            <TvStampCard eventId="evt_london_2027" city="Лондон" countryName={london.name.uk} flagCode={london.flagCode} illustrationId={london.illustrationId} firstRowSeat={4} />
           </div>
           <div className="relative h-176 w-336 overflow-hidden">
             <TvScene country={london} cityName="Лондон · Біг-Бен" midnightMs={LONDON} />

@@ -26,4 +26,3 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = { name: 'Що дає пас — Phone-Pass-Info' };
 
-export const WroteInChat: Story = { name: 'писав у чаті — знижка на «Перший ряд»', args: { wroteInChat: true } };

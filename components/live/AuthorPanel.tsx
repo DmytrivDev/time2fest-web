@@ -14,7 +14,7 @@
  * Мапа — як мапа шляху графіка й паспорта, лише зменшена (правка власника 2026-11-09): пояси підсвічені за станом від
  * поточного часу (як на головній), кілька точок одного поясу — вузол і промені. Зустрінуті країни золотом НЕ заливаємо
  * (правка власника 2026-11-10: жовтий шлях зливався з заливкою; на графіку й у паспорті заливка лишається).
- * «Поскаржитись» (правка власника 2026-11-10): і з чату, і з «Першого ряду» — на місці кнопки підтвердження
+ * «Поскаржитись» (правка власника 2026-11-10): на місці кнопки підтвердження
  * «Дякуємо, скаргу передано» (той самий текст, що з меню повідомлення; `role="status"` — зчитувач озвучує).
  */
 import { Collapsible as Radix } from 'radix-ui';
@@ -40,7 +40,7 @@ export interface AuthorPanelProps {
   author: Author;
   /** Назва країни прапора автора («Єгипет»). */
   countryName?: string;
-  /** Повідомлення, яке відкрили (для «Поскаржитись»); з «Першого ряду» його немає — скарга на учасника. */
+  /** Повідомлення, яке відкрили (для «Поскаржитись»); немає — скарга на автора. */
   message?: ChatMessage;
   /** Автор має пас (показуємо шлях). */
   hasPass: boolean;
@@ -150,21 +150,12 @@ export function AuthorPanel({
                   {countryName}
                 </span>
               ) : null}
-              {/* Одна позначка (правка власника 2026-10-31): «Перший ряд» уже включає пас у подарунок — тоді пас не дублюємо. */}
-              {hasPass && !author.badges.includes('first-row') ? (
+              {hasPass ? (
                 <span data-badge="pass" className="t2f-author-pass-badge shrink-0">
                   <i aria-hidden="true">
                     <Icon name="ticket" size={12} className="[stroke-width:2.4]" />
                   </i>
                   {t('passLabel')}
-                </span>
-              ) : null}
-              {author.badges.includes('first-row') ? (
-                <span data-badge="first-row" className="t2f-author-pass-badge shrink-0">
-                  <i aria-hidden="true">
-                    <Icon name="seat" size={12} className="[stroke-width:2.4]" />
-                  </i>
-                  {t('firstRowLabel')}
                 </span>
               ) : null}
             </div>
@@ -235,7 +226,6 @@ export function AuthorPanel({
                             <div className="min-w-0 flex-1 [overflow-wrap:anywhere]">
                               <span className={cn('font-semibold', p.planned ? 'text-text-muted' : 'text-text')}>{p.city}</span>
                               <span className="text-text-muted"> · {p.country}</span>
-                              {p.firstRowSeat ? <div className="t2f-author-fine font-semibold text-highlight">{t('pointSeat', { seat: p.firstRowSeat })}</div> : null}
                               {p.planned ? <div className="t2f-author-fine font-semibold text-text-muted">{w('legendSchedule')}</div> : null}
                             </div>
                           </li>

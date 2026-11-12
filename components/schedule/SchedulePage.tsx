@@ -44,7 +44,7 @@ import { ZoneCountriesPanel, ZoneCountriesSub } from './ScheduleWindows';
 import '@/components/live/ZoneMap.css';
 import s from './schedule.module.css';
 
-type SlotState = 'live' | 'main' | 'webcam' | 'countdown' | 'stamp' | 'firstRow' | 'missed';
+type SlotState = 'live' | 'main' | 'webcam' | 'countdown' | 'stamp' | 'missed';
 interface SlotItem {
   c: ScheduleCountry;
   state: SlotState;
@@ -64,7 +64,6 @@ const SLOT_ICON: Record<SlotState, 'broadcast-live' | 'broadcast' | 'clock' | 's
   webcam: 'broadcast',
   countdown: 'clock',
   stamp: 'stamp',
-  firstRow: 'stamp',
   missed: 'clock',
 };
 
@@ -107,7 +106,7 @@ export function SchedulePage() {
           let st: SlotState = c.group;
           if (past) {
             const stamp = stampOf(stamps, z.id, iso);
-            st = stamp ? (stamp.firstRowSeat ? 'firstRow' : 'stamp') : 'missed';
+            st = stamp ? 'stamp' : 'missed';
           }
           return { c, state: st };
         })
@@ -173,9 +172,7 @@ export function SchedulePage() {
             ? tType('countdownOnly')
             : it.state === 'stamp'
               ? t('stamp')
-              : it.state === 'firstRow'
-                ? t('firstRow')
-                : t('missed');
+              : t('missed');
 
   const replacingZone = replacing ? data.eventsById.get(replacing)?.zoneId : undefined;
 
@@ -238,14 +235,14 @@ export function SchedulePage() {
             <div className={s.bodyInner} inert={!isOpen}>
           <ul id={panelId} className={s.slots} style={{ '--cols': cols } as CSSProperties}>
             {z.items.map((it) => (
-              <li key={it.c.iso} className={cn(s.slot, (it.state === 'stamp' || it.state === 'firstRow') && s.slotGold, it.state === 'missed' && s.slotMissed)} data-slot={it.c.iso}>
+              <li key={it.c.iso} className={cn(s.slot, it.state === 'stamp' && s.slotGold, it.state === 'missed' && s.slotMissed)} data-slot={it.c.iso}>
                 <NextLink href={it.c.href} className={cn('t2f-focus', s.slotLink)}>
                   <span className={s.slotName}>
                     <Flag round code={it.c.flagCode} diameter={22} decorative />
                     <b>{it.c.name}</b>
                   </span>
                   <span className={s.slotCity}>{it.c.place.split(' · ')[0]}</span>
-                  <span className={cn(s.slotState, it.state === 'live' && s.slotStateLive, (it.state === 'stamp' || it.state === 'firstRow') && s.slotStateGold)}>
+                  <span className={cn(s.slotState, it.state === 'live' && s.slotStateLive, it.state === 'stamp' && s.slotStateGold)}>
                     <Icon name={SLOT_ICON[it.state]} size={14} />
                     <span className={s.ellipsis}>{slotLabel(it)}</span>
                   </span>
@@ -359,10 +356,6 @@ export function SchedulePage() {
           <li>
             <span className="t2f-pathmap-legend-now" />
             {t('path.legendNow')}
-          </li>
-          <li className={s.legGold}>
-            <span className="t2f-pathmap-legend-ring" />
-            {tA('legendFirstRow')}
           </li>
         </ul>
         <ul className={cn(s.legend, s.legendZones)} aria-hidden="true">

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Stamp } from '@/lib/data/types';
-import { createDefaultGuest, GUEST_STORAGE_KEY, sanitizeGuest, useGuestStore } from '@/stores/guest';
+import { createDefaultGuest, dropLegacyKeys, GUEST_STORAGE_KEY, sanitizeGuest, useGuestStore } from '@/stores/guest';
 import { SOUND_KEY } from '@/stores/session';
 
 const stamp = (eventId: string): Stamp => ({
@@ -58,7 +58,7 @@ describe('guest store', () => {
     expect(useGuestStore.getState().stamps).toHaveLength(1);
   });
 
-  it('згоди, «зменшити рух», чат, мапа, кімната, «Перший ряд»', () => {
+  it('згоди, «зменшити рух», чат, мапа, кімната', () => {
     const st = useGuestStore.getState();
     st.setConsent({ facebookVideo: true });
     st.setReducedMotion(true);
@@ -66,13 +66,10 @@ describe('guest store', () => {
     st.setZoneStreamsCollapsed(true);
     st.setRoomWindows([{ slot: 0, sourceId: 's', eventId: 'e' }]);
     st.setSoundSlot(0);
-    st.updateFirstRow('evt_london_2027', { hold: { seat: 3, until: 10, extended: false }, priceLocked: 4.99 });
-    st.updateFirstRow('evt_london_2027', { seat: 3 });
     const g = useGuestStore.getState();
     expect(g.consent).toMatchObject({ answered: true, necessary: true, facebookVideo: true });
     expect(g.reducedMotion && g.chatHidden && g.zoneStreamsCollapsed).toBe(true);
     expect(g.room).toEqual({ windows: [{ slot: 0, sourceId: 's', eventId: 'e' }], soundSlot: 0 });
-    expect(g.firstRow.evt_london_2027).toEqual({ hold: { seat: 3, until: 10, extended: false }, priceLocked: 4.99, seat: 3 });
   });
 
   it('пропозиції: показ, закриття хрестиком, дія', () => {
@@ -145,6 +142,32 @@ describe('guest store', () => {
     expect(clean.stamps).toEqual([]);
     expect(clean.rate).toEqual({});
     expect(clean.nightId).toBe('2026-27');
+  });
+
+  it('старий стан з «Першим рядом» (прибрано 2026-11-12): поле `firstRow` і місце на штампі відкидаються, сайт не падає', async () => {
+    const old = {
+      ...createDefaultGuest(),
+      nick: 'Оля',
+      firstRow: { evt_london_2027: { seat: 3, draft: { name: 'Оля', greeting: '', emojiId: 'glasses' } } },
+      stamps: [{ ...stamp('evt_london_2027'), firstRowSeat: 3 }],
+    };
+    const clean = sanitizeGuest(old)!;
+    expect(clean.nick).toBe('Оля');
+    expect('firstRow' in clean).toBe(false);
+    expect(clean.stamps).toEqual([stamp('evt_london_2027')]);
+
+    localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify({ state: old, version: 1 }));
+    await useGuestStore.persist.rehydrate();
+    expect(useGuestStore.getState().nick).toBe('Оля');
+    expect('firstRow' in useGuestStore.getState()).toBe(false);
+    useGuestStore.getState().setNick('Оля');
+    expect(saved()!.state.firstRow).toBeUndefined();
+  });
+
+  it('старий ключ «Першого ряду» `t2f:firstrow:v1` прибирається', () => {
+    localStorage.setItem('t2f:firstrow:v1', JSON.stringify({ state: { passGifted: true }, version: 1 }));
+    dropLegacyKeys();
+    expect(localStorage.getItem('t2f:firstrow:v1')).toBeNull();
   });
 });
 

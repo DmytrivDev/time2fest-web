@@ -5,12 +5,11 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { Composer } from '@/components/chat/Composer';
 import { ReactionsRow } from '@/components/chat/MessageActions';
 import { Message } from '@/components/chat/Message';
-import { MyEmotionPill } from '@/components/windows/Emoji';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { ChatMessage } from '@/lib/data/types';
 import { useChatUi } from '@/stores/chat';
 import { Stage, StateRow } from '../_support/Stage';
-import { AMIRA, CHAT_SAMPLE, GREETING, JAMES, LIAM, LOOKUP, ME, regular } from '../us1/fixtures';
+import { AMIRA, CHAT_SAMPLE, JAMES, LIAM, LOOKUP, ME, regular } from '../us1/fixtures';
 
 const withReactions: ChatMessage = {
   ...regular(AMIRA, 'Привіт з Торонто! Тут ще 18:38 🙂', 3),
@@ -78,16 +77,6 @@ export const Slow: Story = {
 export const Offline: Story = {
   name: 'offline — «Немає з’єднання», поле неактивне',
   args: { banner: <p className="border-b border-border px-3.5 py-2 text-caption text-text-secondary">Немає з’єднання — чат повернеться, щойно воно з’явиться</p>, composer: composer({ offline: true }) },
-};
-
-export const FirstRow: Story = {
-  name: 'Phone-Chat-FirstRow — «Моя емоція», привітання Time2Fest',
-  args: {
-    room: { id: 'firstrow:evt_london_2027', label: 'Перший ряд' },
-    messages: [GREETING, regular(JAMES, 'Lucía, feliz año! 🎆', 1)],
-    banner: <MyEmotionPill eventId="evt_london_2027" />,
-    composer: composer({ room: { id: 'firstrow:evt_london_2027', label: 'Перший ряд' } }),
-  },
 };
 
 export const EmptyWithGreetings: Story = {

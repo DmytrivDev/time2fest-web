@@ -210,7 +210,7 @@
   background: var(--color-surface-raised);
 }
 
-/* ── Основна колонка десктопа: плеєр, підпис, дії, «Перший ряд», «Зараз і далі» з проміжком 16 px ── */
+/* ── Основна колонка десктопа: плеєр, підпис, дії, штамп і пропозиції, «Зараз і далі» з проміжком 16 px ── */
 .column {
   display: flex;
   flex-direction: column;
@@ -235,9 +235,6 @@
   font-size: 13px;
   color: var(--color-text-muted);
 }
-.events > [data-first-row-strip] {
-  margin-top: calc(-1 * var(--spacing-2));
-}
 
 /* Вкладка «Чат» на телефоні: стрічка на решту екрана під закріпленим плеєром. */
 .phoneChat {
@@ -247,7 +244,7 @@
 }
 
 /* Штамп і пропозиція під плеєром мають власний нижній відступ (16 px), коли видні, тож проміжок колонки після них
-   не потрібен; порожні (закриті) — зовсім не займають місця. Відстань від картки до «Першого ряду» — 16 px. */
+   не потрібен; порожні (закриті) — зовсім не займають місця. */
 .column > :global(.t2f-reveal),
 .column > [aria-live='polite']:has(> :global(.t2f-reveal)) {
   margin-bottom: calc(-1 * var(--spacing-4));
@@ -349,34 +346,6 @@
   color: var(--color-text-muted);
 }
 
-/* «Перший ряд» над вкладками у стані «Чат» (`Phone-Chat`): рядок 44 px з межею зверху. */
-.frRow {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  width: 100%;
-  height: var(--spacing-touch-min);
-  padding: 0 var(--spacing-4);
-  border: 0;
-  border-top: 1px solid var(--color-border-strong);
-  background: transparent;
-  color: var(--color-text);
-  text-align: start;
-  font-size: 13px;
-}
-.frRowTitle {
-  font-weight: 600;
-  color: var(--color-highlight);
-  white-space: nowrap;
-}
-.frRowCount {
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-.frRowCount b {
-  font-weight: 600;
-  color: var(--color-text);
-}
 .events[data-state='inactive'] {
   display: none;
 }
@@ -392,7 +361,7 @@
     z-index: 15;
   }
 }
-/* Блок назви під смугою «Перший ряд»: без таймера й позначки (вони в липкому рядку). */
+/* Блок назви під липким рядком часу: без таймера й позначки (вони в липкому рядку). */
 .captionTitleOnly {
   row-gap: 6px;
 }
@@ -402,7 +371,6 @@
 .captionTitleOnly .title {
   grid-area: title;
 }
-/* Смуга «Перший ряд» на телефоні: заголовок-рядок 44 px липне під рядком; розгорнута — звичайний потік. */
 /* Рядок під відео (2026-11-09, B01): цифри таймера не стискаються; бракує місця — спершу скорочується підпис
    «до півночі» (вага стискання 1000), потім назва міста з трикрапкою. */
 .barTitle {

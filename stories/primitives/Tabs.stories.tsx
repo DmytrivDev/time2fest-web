@@ -48,7 +48,7 @@ export const Tv: Story = {
         <TabsList aria-label="Бічна колонка">
           <TabsTrigger value="next">Далі</TabsTrigger>
           <TabsTrigger value="howto">Як святкувати</TabsTrigger>
-          <TabsTrigger value="first-row">Перший ряд</TabsTrigger>
+          <TabsTrigger value="rating">Рейтинг</TabsTrigger>
         </TabsList>
       </Tabs>
     </Stage>

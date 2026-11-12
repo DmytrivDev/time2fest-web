@@ -3,7 +3,7 @@
 /**
  * C16 `pass-info` — «Що дає Новорічний пас» (O-PASS-INFO) і спільні блоки пасу для `pass-offer`:
  * три головні функції, «Ще в пасі:» (теги), ціна, «Оформити пас», «Детальніше».
- * «−50% на «Перший ряд»» серед головних — лише тим, хто писав у чаті (тоді він стоїть першим, а «Картка» йде в теги).
+ * Знижку −50% на «Перший ряд» (головна функція тим, хто писав у чаті) прибрано разом із рядом (рішення 2026-11-12).
  * Оплата поза цією областю: «Оформити пас» показує імітоване повідомлення (без фальшивої оплати).
  */
 import { useTranslations } from 'next-intl';
@@ -14,24 +14,20 @@ import { useRegisterCoral } from '@/lib/overlay/coral';
 import { OfferCard, PaymentNotice } from './OfferCard';
 
 export interface PassFeature {
-  key: 'discount' | 'schedule' | 'path' | 'card';
+  key: 'schedule' | 'path' | 'card';
   title: string;
   text: string;
 }
 
-/** Три головні функції й теги «Ще в пасі:»; знижка — лише тим, хто писав у чаті. */
-export function usePassFeatures(wroteInChat: boolean): { main: PassFeature[]; also: string[] } {
+/** Три головні функції й теги «Ще в пасі:». */
+export function usePassFeatures(): { main: PassFeature[]; also: string[] } {
   const t = useTranslations('pass');
-  const all: PassFeature[] = [
+  const main: PassFeature[] = [
     { key: 'schedule', title: t('schedule'), text: t('scheduleText') },
     { key: 'path', title: t('path'), text: t('pathText') },
     { key: 'card', title: t('card'), text: t('cardText') },
   ];
-  const discount: PassFeature = { key: 'discount', title: t('discount'), text: t('discountText') };
-  const main = wroteInChat ? [discount, ...all.slice(0, 2)] : all;
-  const also = [t('quiet'), t('alwaysVisible')];
-  if (wroteInChat) also.unshift(t('card'));
-  return { main, also };
+  return { main, also: [t('quiet'), t('alwaysVisible')] };
 }
 
 export function AlsoInPass({ items }: { items: string[] }) {
@@ -108,17 +104,15 @@ export function MainFeatures({ items, compact = false }: { items: PassFeature[];
 }
 
 export interface PassInfoProps {
-  /** Гість писав у чаті → серед головних «−50% на «Перший ряд»». */
-  wroteInChat?: boolean;
   onClose?: () => void;
   /** «Оформити пас»: вікно оформлення (трансляція грає) чи сторінка пасу. */
   onGetPass?: () => void;
   className?: string;
 }
 
-export function PassInfo({ wroteInChat = false, onClose, onGetPass, className }: PassInfoProps) {
+export function PassInfo({ onClose, onGetPass, className }: PassInfoProps) {
   const t = useTranslations('pass');
-  const { main, also } = usePassFeatures(wroteInChat);
+  const { main, also } = usePassFeatures();
   return (
     <OfferCard variant="pass-info" title={t('infoTitle')} closeLabel={t('infoDismiss')} onClose={onClose} className={className}>
       <MainFeatures items={main} />

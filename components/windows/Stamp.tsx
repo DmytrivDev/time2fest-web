@@ -9,7 +9,7 @@
  * висить постійно, рішення 2026-11-05). Країна з кількома поясами — штамп за кожен пояс: пояс у підзаголовку й на печатці.
  *
  * Стани: `stamping` (удар штемпеля ≈ 0,6 с + конфеті — лише у `lively`), `multi` («Сідней · Мельбурн»),
- * `first-row` (подвійна жовта рамка), `save-failed`. Коралова «Поділитися» реєструється в `lib/overlay/coral`
+ * `save-failed` (рамку «Першого ряду» прибрано разом із рядом, 2026-11-12). Коралова «Поділитися» реєструється в `lib/overlay/coral`
  * (кнопка звуку стає нейтральною); alt листівки = текст штампа.
  */
 import { useTranslations } from 'next-intl';
@@ -34,10 +34,6 @@ export interface StampEntry {
   countryName: string;
   flagCode: string;
   illustrationId: string;
-  /** Номер місця в «Першому ряді», якщо гість там сидів. */
-  firstRowSeat?: number;
-  /** Назва ряду поясу для рядка «Перший ряд · UTC+0 · Лондон, Лісабон» (ряд один на пояс); немає — місто. */
-  firstRowLabel?: string;
   /** Пояс («UTC−5») — лише для країн з кількома поясами. */
   zone?: string;
 }
@@ -119,7 +115,6 @@ export function Stamp({
   const zone = stamps.length === 1 ? first.zone : undefined;
   const countries = [...new Set(stamps.map((s) => s.countryName))].join(' · ') + (zone ? ` · ${zone}` : '');
   const stampText = t('stamped', { city: (zone ? `${placesShort} · ${zone}` : placesShort).toLocaleUpperCase('uk') });
-  const frStamp = stamps.find((s) => s.firstRowSeat !== undefined);
   const multi = stamps.length > 1;
   const failed = saveState === 'failed';
   const strip = flagGradient(first.flagCode);
@@ -173,12 +168,6 @@ export function Stamp({
           </h2>
           <p className={st.sub}>{t('subline', { country: countries })}</p>
         </div>
-        {frStamp ? (
-          <p className={cn('flex items-center gap-2 text-label-sm text-highlight', st.line)} data-row="first-row">
-            <Icon name="ticket" size={16} />
-            {t('firstRow', { city: frStamp.firstRowLabel ?? frStamp.city })}
-          </p>
-        ) : null}
         {failed ? (
           <div className={cn('flex flex-wrap items-center gap-x-3 text-caption text-text-secondary', st.line)} data-row="save-failed">
             <span>{t('saveFailed')}</span>
@@ -232,22 +221,15 @@ export function Stamp({
     <section
       aria-labelledby={titleId}
       data-stamp={multi ? 'multi' : 'expanded'}
-      data-first-row={frStamp ? 'true' : undefined}
       data-save-state={saveState}
       className={cn(
-        // Без золотої рамки (правка власника 2026-11-01): край картки — смужка прапора. «Перший ряд» — подвійна жовта рамка.
+        // Без золотої рамки (правка власника 2026-11-01): край картки — смужка прапора.
         'relative overflow-hidden rounded-lg bg-surface-raised',
-        frStamp ? 'border border-highlight p-1' : st.card,
+        st.card,
         className,
       )}
     >
-      {frStamp ? (
-        <div className={cn('relative overflow-hidden rounded-md border border-highlight', st.card)} data-frame="inner">
-          {content}
-        </div>
-      ) : (
-        content
-      )}
+      {content}
       {onClose ? (
         <IconButton
           icon="close"

@@ -18,7 +18,6 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useAuthStore } from '@/stores/auth';
-import { useBoughtPass } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import { usePassStore } from '@/stores/pass';
 import s from './pass.module.css';
@@ -99,7 +98,7 @@ function LockLine({ stream, consent }: { stream: boolean; consent?: boolean }) {
   );
 }
 
-/** Інші шляхи (увійти, «Перший ряд») — окремою групою під лінією; у сайдбарі десктопа притиснуті донизу. */
+/** Інші шляхи («Вже маєш акаунт? Увійти») — окремою групою під лінією; у сайдбарі десктопа притиснуті донизу. */
 function Alternatives({ children }: { children: ReactNode }) {
   return (
     <div className={s.alt} data-row="alternatives">
@@ -177,25 +176,6 @@ function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled
   );
 }
 
-/** «Перший ряд» — інший шлях до пасу: картка-посилання, щоб не скидатися на дрібний текст (v102). */
-function FirstRowGift({ mt = 12 }: { mt?: number }) {
-  const t = useTranslations('pass.buy');
-  return (
-    <NextLink href="/" className={cn('t2f-focus', s.gift)} style={{ marginTop: `${mt / 16}rem` }} data-row="first-row">
-      <span aria-hidden="true" className={cn(s.dot, s.dot36)}>
-        <AuthIcon name="seat" size={18} />
-      </span>
-      <span className={s.giftText}>
-        <span className={s.giftTitle}>{t.rich('firstRowTitle', { nb: (c) => <span className="whitespace-nowrap">{c}</span> })}</span>
-        <span className={s.giftSub}>{t('firstRowText')}</span>
-      </span>
-      <span aria-hidden="true" className={s.giftArrow}>
-        <AuthIcon name="arrow-right" size={18} />
-      </span>
-    </NextLink>
-  );
-}
-
 /** Рядок службових посилань: «Допомога» — `/help/`, умови й повернення — `/payments/` (сторінки є з 2026-11-07). */
 function LinkRow({ items, mt = 8 }: { items: { label: string; href: string }[]; mt?: number }) {
   return (
@@ -264,7 +244,6 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
             {t('signIn')}
           </button>
         </p>
-        {!stream ? <FirstRowGift mt={4} /> : null}
       </Alternatives>
     </form>
   );
@@ -304,11 +283,6 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
       ) : (
         <LockLine stream={stream} />
       )}
-      {!stream ? (
-        <Alternatives>
-          <FirstRowGift mt={16} />
-        </Alternatives>
-      ) : null}
     </form>
   );
 }
@@ -408,11 +382,10 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
   const name = nick?.trim() || email.split('@')[0] || '';
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => ref.current?.focus({ preventScroll: true }), []);
-  const works: { icon: 'ticket' | 'calendar' | 'filter' | 'seat'; key: string }[] = [
+  const works: { icon: 'ticket' | 'calendar' | 'filter'; key: string }[] = [
     { icon: 'ticket', key: 'worksBadge' },
     { icon: 'calendar', key: 'worksSchedule' },
     { icon: 'filter', key: 'worksQuiet' },
-    { icon: 'seat', key: 'worksDiscount' },
   ];
   return (
     <div className={col(variant)} data-phase="success">
@@ -467,7 +440,6 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
   const p = useTranslations('pass.page');
   const user = useAuthStore((st) => st.user);
   const since = useAuthStore((st) => (st.user ? st.passes[st.user.email] : undefined));
-  const bought = useBoughtPass();
   const date = since !== undefined ? new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long' }).format(since) : null;
   return (
     <div className={col(variant)} data-phase="active">
@@ -491,12 +463,6 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
       ) : (
         <MoreButton onDone={onDone} />
       )}
-      {bought ? (
-        <p className={s.discountRow}>
-          <AuthIcon name="seat" size={18} />
-          <span>{t.rich('activeDiscount', { price: formatUsd(2.49), b: Bold })}</span>
-        </p>
-      ) : null}
       <LinkRow items={[{ label: t('refunds'), href: '/payments/' }, { label: t('help'), href: '/help/' }]} mt={4} />
     </div>
   );

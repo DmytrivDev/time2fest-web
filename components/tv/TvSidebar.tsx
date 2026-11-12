@@ -4,15 +4,15 @@
  * TvSidebar (C22, дошка `TV-Party-New`, рішення 2026-11-06): права колонка режиму вечірки. Дані ефіру лише читає з `useBroadcast()`.
  *
  * Закріплені частини (без прокрутки — на ТВ її не видно й незручно): логотип і годинник · відлік «до півночі» (поки до події
- * > 5 хв) · «Зараз: Лондон · Вебкамера ● Наживо» і «Змінити трансляцію» · вкладки «Як святкувати · Перший ряд · Рейтинг» · одна область
+ * > 5 хв) · «Зараз: Лондон · Вебкамера ● Наживо» і «Змінити трансляцію» · вкладки «Як святкувати · Рейтинг» · одна область
  * вмісту · «Що показувати» (Усе свято / Мій графік) · «Звук · На весь екран · Вийти».
  *
  * Стани колонки:
  * - `live`: як вище; перший захід — замість вкладок пояснення режиму (`TvWelcome`), «Змінити трансляцію» — список трансляцій поясу;
  * - `scene` (на місці плеєра сцена відліку): великого відліку тут немає, «Зараз: Кабо-Верде · Лише відлік» і одна підказка —
  *   найближча трансляція наживо з «Перемкнути»;
- * - `moment` (з «+15 с» до передачі ефіру): «<Країна> зустріла Новий рік», штамп з QR сам і привітання Першого ряду по черзі.
- * Чату немає. На відео нічого немає.
+ * - `moment` (з «+15 с» до передачі ефіру): «<Країна> зустріла Новий рік» і штамп з QR сам.
+ * Чату немає. На відео нічого немає. Вкладку й привітання «Першого ряду» прибрано разом із рядом (рішення 2026-11-12).
  */
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
@@ -39,8 +39,6 @@ import { useOnline } from '@/lib/tv/useTvEnv';
 import { useGuestStore } from '@/stores/guest';
 import { useTvPrefs } from '@/stores/tv';
 import { TvControlBar } from './TvControlBar';
-import { TvFirstRowTab, useTvFirstRow } from './TvFirstRowTab';
-import { TvGreetings } from './TvGreetings';
 import { TvRatingTab } from './TvRatingTab';
 import { TvNearest, TvNoPass, TvNow, TvShowSwitch, TvStreamsNow, TvWelcome } from './TvPanels';
 import { TvStampCard } from './TvStampCard';
@@ -176,7 +174,6 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const focus = watching ?? current;
   const midnightMs = focus?.event.midnightMs ?? 0;
   const untilMs = midnightMs - now;
-  const firstRow = useTvFirstRow(now);
 
   const zoneId = current?.event.zoneId ?? null;
   const liveRows = useMemo(() => (zoneId && ready ? zoneLiveRows(data, zoneId, minute) : []), [data, zoneId, minute, ready]);
@@ -204,10 +201,6 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
           <Icon name="party" size={22} />
           {t('howTo')}
         </TabsTrigger>
-        <TabsTrigger value="fr">
-          <Icon name="ticket" size={22} />
-          {t('firstRow')}
-        </TabsTrigger>
         <TabsTrigger value="rating">
           <Icon name="star" size={22} />
           {t('rating')}
@@ -219,9 +212,6 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
         ) : (
           <p className="text-text-secondary">{t('howToEmpty')}</p>
         )}
-      </TabsContent>
-      <TabsContent value="fr" className={styles.panel} data-tv-panel="fr">
-        <TvFirstRowTab data={firstRow} />
       </TabsContent>
       <TabsContent value="rating" className={styles.panel} data-tv-panel="rating">
         <TvRatingTab now={now} />
@@ -257,10 +247,8 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
             countryName={(focus ?? current).country!.name.uk}
             flagCode={(focus ?? current).country!.flagCode}
             illustrationId={stamp.illustrationId}
-            firstRowSeat={stamp.firstRowSeat}
           />
         ) : null}
-        {firstRow ? <TvGreetings seats={firstRow.seats} row={firstRow.city} now={now} /> : null}
         <ReplayButton place={focus ?? current} />
       </>
     );

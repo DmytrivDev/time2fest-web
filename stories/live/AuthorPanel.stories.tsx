@@ -9,7 +9,6 @@ import { Stage } from '../_support/Stage';
 
 const script = chatScript as unknown as ChatScriptFile;
 const KARIM: Author = { id: 'u_karim', nick: 'Karim', flagCode: 'EG', badges: ['pass'] };
-const OLENA: Author = { id: 'u_olena', nick: 'Олена', flagCode: 'UA', badges: ['pass', 'first-row'] };
 const BOHDAN: Author = { id: 'u_bohdan', nick: 'Богдан', flagCode: 'UA', badges: ['pass'] };
 const AMIRA: Author = { id: 'u_amira', nick: 'Аміра', flagCode: 'CA', badges: ['pass'] };
 const TARAS: Author = { id: 'u_taras', nick: 'Тарас', flagCode: 'UA', badges: [] };
@@ -54,11 +53,6 @@ type Story = StoryObj<typeof meta>;
 export const PhoneAuthor: Story = { name: 'Phone-Author — шлях Karim: зустрінуті жовті, заплановані порожні' };
 
 export const DeskAuthor: Story = { name: 'Desk-Author', globals: { surface: 'desktop' } };
-
-export const FirstRowAuthor: Story = {
-  name: 'місто «Першого ряду» — подвійне кільце, «місце N»',
-  args: { author: OLENA, message: message(OLENA, 'Зустрічаємо разом!'), path: buildAuthorPath(OLENA, script, getData()), countryName: 'Україна' },
-};
 
 export const PassNothingMetScheduled: Story = {
   name: 'Phone-Author-States — пас, зустрічей ще нема, є графік',

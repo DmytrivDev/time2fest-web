@@ -205,10 +205,6 @@
   border: 2px solid var(--color-text-secondary);
   border-radius: var(--radius-full);
 }
-.legGold {
-  color: var(--color-highlight);
-  font-weight: 600;
-}
 .sw {
   width: 18px;
   height: 12px;
@@ -393,11 +389,6 @@
   border-radius: 12px;
   background: var(--color-surface);
 }
-/* Золота рамка «Першого ряду» — без зміни розміру картки (усі картки однакові). */
-.cardGold {
-  border-color: var(--color-highlight);
-  box-shadow: inset 0 0 0 1px var(--color-highlight);
-}
 .strip {
   display: block;
   height: 5px;
@@ -447,10 +438,6 @@
   margin: 0;
   color: var(--color-text-secondary);
   font-size: 13px;
-}
-.cardMetaGold {
-  color: var(--color-highlight);
-  font-weight: 700;
 }
 .cardRate {
   margin-top: 6px;
@@ -784,9 +771,6 @@
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 12px;
-}
-.bigArtGold {
-  border: 2px solid var(--color-highlight);
 }
 .bigCity {
   display: flex;

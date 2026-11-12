@@ -52,8 +52,6 @@ export function stampCountries(): PassOfferCountry[] {
   return out;
 }
 
-export const wroteInChat = () => useGuestStore.getState().chat.sentAt.length > 0;
-
 export interface OfferSpecDeps {
   /** Поточний час (спільний годинник) для `dismissedAt`. */
   now: () => Ms;
@@ -74,7 +72,7 @@ export const PASS_INFO_BOARD_ID = 'O-PASS-INFO-BOARD';
 /** «Усе про пас» з вікна графіка: ті самі переваги й «Оформити пас», але вікном на місці чату (шторкою на телефоні). */
 function PassInfoBoard() {
   const onGetPass = useOfferGetPass();
-  const { main, also } = usePassFeatures(wroteInChat());
+  const { main, also } = usePassFeatures();
   return (
     <div className="flex flex-col gap-4 px-4 pb-4 pt-3.5" data-window="O-PASS-INFO-BOARD">
       <MainFeatures items={main} />

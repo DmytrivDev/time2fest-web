@@ -51,23 +51,8 @@ describe('momentMessages', () => {
     expect(sys!.moderation).toBe('ok');
   });
 
-  it('«+15 с»: привітання «Першого ряду» по одному на зайняте місце, у порядку місць', () => {
-    const greetings = world.filter((m) => m.kind === 'greeting');
-    expect(greetings).toHaveLength(9); // місце 10 вільне
-    expect(greetings.every((g) => g.createdAt === T0 + 15 * SEC)).toBe(true);
-    expect(greetings.map((g) => g.greeting!.seat)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(greetings[0]!.greeting).toEqual({
-      eventId: 'evt_london_2027',
-      seat: 1,
-      participantName: 'Олена і друзі',
-      flagCode: 'UA',
-      emojiId: 'glasses',
-      cityId: 'london',
-      text: 'Зустрічаємо разом!',
-    });
-  });
-
-  it('системне повідомлення стоїть перед привітаннями того самого моменту', () => {
+  it('«+15 с»: привітань місць «Першого ряду» немає (ряд прибрано 2026-11-12) — лише системне й репліки', () => {
+    expect(world.every((m) => m.kind === 'system' || m.kind === 'regular')).toBe(true);
     const at15 = world.filter((m) => m.createdAt === T0 + 15 * SEC);
     expect(at15[0]!.kind).toBe('system');
   });
@@ -102,9 +87,10 @@ describe('momentMessages', () => {
     expect(messageId(T0, 1, 2, 'world')).not.toBe(messageId(T0, 1, 2, 'country:GB'));
   });
 
-  it('подія без сіду «Першого ряду» — без привітань', () => {
-    const azores = { ...london, t0: T0 + 3_600_000, eventId: 'evt_azores_2027', cityId: 'azores' };
-    expect(momentMessages(script, azores, 'world').some((m) => m.kind === 'greeting')).toBe(false);
+  it('інша подія — той самий сценарій із її країною', () => {
+    const azores = { ...london, t0: T0 + 3_600_000, eventId: 'evt_azores_2027', cityId: 'azores', countries: [{ iso: 'PT', gender: 'f' as const }], eventIds: ['evt_azores_2027'] };
+    const sys = momentMessages(script, azores, 'world').find((m) => m.system?.kind === 'country-midnight');
+    expect(sys?.system).toEqual({ kind: 'country-midnight', countries: [{ iso: 'PT', gender: 'f' }], eventIds: ['evt_azores_2027'] });
   });
 });
 
@@ -118,7 +104,6 @@ describe('createChatSimulator', () => {
     expect(before.some((m) => m.kind === 'system')).toBe(false);
     const at = sim.advance(T0 + 15 * SEC);
     expect(at.some((m) => m.system?.kind === 'country-midnight')).toBe(true);
-    expect(at.filter((m) => m.kind === 'greeting')).toHaveLength(9);
   });
 
   it('перший виклик показує недавні повідомлення (backfill)', () => {

@@ -16,7 +16,7 @@ const ROOMS: SegmentOption[] = [
   { value: 'world', label: 'Світ' },
   { value: 'country', label: 'Країна' },
 ];
-const ROOMS_FR: SegmentOption[] = [...ROOMS, { value: 'first-row', label: 'Перший ряд', dot: true }];
+const ROOMS_DOT: SegmentOption[] = [...ROOMS, { value: 'other', label: 'Ще', dot: true }];
 const TIPS: SegmentOption[] = [
   { value: '2', label: '$2' },
   { value: '5', label: '$5' },
@@ -29,14 +29,14 @@ function Demo({ label, options, initial, semantics }: { label: string; options: 
 }
 
 export const Rooms: Story = {
-  name: 'Кімнати чату «Світ / Країна / Перший ряд» (третій — з жовтою точкою)',
+  name: 'Кімнати чату «Світ / Країна» (і варіант із жовтою точкою)',
   render: () => (
     <Stage>
       <StateRow label="d · s (вибраний — surface-raised + межа text)">
         <Demo label="Кімнати чату" options={ROOMS} initial="world" />
       </StateRow>
-      <StateRow label="з кімнатою «Перший ряд» (лише учасникам)">
-        <Demo label="Кімнати чату" options={ROOMS_FR} initial="first-row" />
+      <StateRow label="з жовтою точкою (`dot`)">
+        <Demo label="Кімнати чату" options={ROOMS_DOT} initial="other" />
       </StateRow>
     </Stage>
   ),

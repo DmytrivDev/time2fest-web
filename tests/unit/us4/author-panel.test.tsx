@@ -17,7 +17,7 @@ const KARIM: Author = { id: 'u_karim', nick: 'Karim', flagCode: 'EG', badges: ['
 const BOHDAN: Author = { id: 'u_bohdan', nick: 'Богдан', flagCode: 'UA', badges: ['pass'] };
 const AMIRA: Author = { id: 'u_amira', nick: 'Аміра', flagCode: 'CA', badges: ['pass'] };
 const TARAS: Author = { id: 'u_taras', nick: 'Тарас', flagCode: 'UA', badges: [] };
-const OLENA: Author = { id: 'u_olena', nick: 'Олена', flagCode: 'UA', badges: ['pass', 'first-row'] };
+const OLENA: Author = { id: 'u_olena', nick: 'Олена', flagCode: 'UA', badges: ['pass'] };
 
 const msg = (author: Author): ChatMessage => ({
   id: 'm1',
@@ -72,17 +72,13 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(screen.queryByText('Ще ніде не зустрів Новий рік')).not.toBeInTheDocument();
   });
 
-  it('місце «Першого ряду» — примітка в рядку списку', async () => {
+  it('«Першого ряду» немає (прибрано 2026-11-12): ні позначки, ні «місце N» у списку — лише позначка пасу', async () => {
     const user = userEvent.setup();
     show(OLENA);
+    expect(document.querySelector('[data-badge="first-row"]')).toBeNull();
+    expect(document.querySelector('[data-badge="pass"]')).not.toBeNull();
     await user.click(screen.getByRole('button', { name: /Переглянути шлях/ }));
-    expect(document.querySelector('[data-row="rows"]')).toHaveTextContent(/Перший ряд · місце \d+/);
-  });
-
-  it('учасник «Першого ряду» — одна позначка «Перший ряд», без дубля пасу (пас у подарунок)', () => {
-    show(OLENA);
-    expect(document.querySelector('[data-badge="first-row"]')).toHaveTextContent('Перший ряд');
-    expect(document.querySelector('[data-badge="pass"]')).toBeNull();
+    expect(document.querySelector('[data-row="rows"]')).not.toHaveTextContent(/Перший ряд|місце/);
   });
 
   it('довга назва країни — в один рядок з трикрапкою (повна — у підказці), позначка ціла', () => {
@@ -90,7 +86,7 @@ describe('панель автора O-AUTHOR (C13)', () => {
     const country = document.querySelector('[data-row="country"]')!;
     expect(country).toHaveClass('truncate');
     expect(country).toHaveAttribute('title', 'Демократична Республіка Конго');
-    expect(document.querySelector('[data-badge="first-row"]')).toHaveClass('shrink-0');
+    expect(document.querySelector('[data-badge="pass"]')).toHaveClass('shrink-0');
   });
 
   it('пас, але нічого не зустрів: «Зустрічей ще нема · ще 2 у графіку», у списку порожній рядок і графік', async () => {
@@ -138,7 +134,7 @@ describe('панель автора O-AUTHOR (C13)', () => {
     expect(within(actions).queryByRole('button', { name: 'Поскаржитись' })).toBeNull();
   });
 
-  it('«Поскаржитись» з «Першого ряду» (без повідомлення й обробника) теж дає підтвердження', async () => {
+  it('«Поскаржитись» без повідомлення й обробника теж дає підтвердження', async () => {
     const user = userEvent.setup();
     show(OLENA, { message: undefined, onReport: undefined });
     const actions = document.querySelector('[data-row="actions"]') as HTMLElement;

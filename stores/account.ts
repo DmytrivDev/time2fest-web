@@ -1,6 +1,6 @@
 /**
  * Налаштування кабінету (`/account/`, дошки `Desk-Cabinet-New2` / `New3`, рішення власника 2026-11-08). Окремо від стору
- * гостя, щоб не міняти його схему: формат часу, країна й пояс, видимість, підказки паспорта, «Перший ряд», тихий режим,
+ * гостя, щоб не міняти його схему: формат часу, країна й пояс, видимість, підказки паспорта, тихий режим,
  * підключений Google і зміна пошти, що чекає підтвердження. Пароля немає (вхід посиланням з листа або Google).
  */
 import { create } from 'zustand';
@@ -21,8 +21,6 @@ export interface AccountSettings {
   showPath: boolean;
   /** Блоки про штампи під плеєром (головна, країни, кімната). */
   passportHints: boolean;
-  /** Прибрати «Перший ряд» зі сторінок (лише з пасом). */
-  firstRowHidden: boolean;
   /** Тихий режим чату за замовчуванням (з пасом). */
   quietDefault: boolean;
   /** Google підключено до акаунта з поштою (імітація). */
@@ -43,7 +41,6 @@ export const DEFAULT_ACCOUNT: AccountSettings = {
   showPassport: true,
   showPath: true,
   passportHints: true,
-  firstRowHidden: false,
   quietDefault: false,
   googleLinked: false,
   pendingEmail: null,
@@ -64,6 +61,13 @@ export const useAccountStore = create<AccountSettings & AccountActions>()(
         const out = {} as Record<string, unknown>;
         for (const k of Object.keys(DEFAULT_ACCOUNT)) out[k] = s[k as keyof AccountSettings];
         return out as unknown as AccountSettings;
+      },
+      // Лише відомі налаштування: старе `firstRowHidden` («Перший ряд» прибрано 2026-11-12) не потрапляє в стан.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Record<string, unknown>;
+        const known: Record<string, unknown> = {};
+        for (const k of Object.keys(DEFAULT_ACCOUNT)) if (k in p) known[k] = p[k];
+        return { ...current, ...(known as Partial<AccountSettings>) };
       },
     },
   ),

@@ -19,7 +19,7 @@ function flatten(tree: Tree, prefix = ''): Record<string, string> {
 const SENTINEL = 'ЗНАЧ';
 const NUMERIC = new Set([
   'count', 'days', 'hours', 'minutes', 'seconds', 'n', 'index', 'total', 'free', 'taken',
-  'seat', 'countries', 'continents', 'zones', 'zonesTotal',
+  'countries', 'continents', 'zones', 'zonesTotal',
 ]);
 
 /** Імена аргументів, що трапляються в повідомленні (включно з вкладеними в select / plural). */
@@ -55,7 +55,7 @@ describe('словник uk.json', () => {
     expect(PREPOSITION_BEFORE_ARG.test(`Вечірка в ${SENTINEL}`)).toBe(true);
     expect(PREPOSITION_BEFORE_ARG.test(`Вечірка на «${SENTINEL}»`)).toBe(true);
     expect(PREPOSITION_BEFORE_ARG.test(`Країна: ${SENTINEL}`)).toBe(false);
-    expect(PREPOSITION_BEFORE_ARG.test(`Перший ряд · ${SENTINEL}`)).toBe(false);
+    expect(PREPOSITION_BEFORE_ARG.test(`Рейтинг · ${SENTINEL}`)).toBe(false);
   });
 
   it.each(Object.entries(flat))('«%s»: усі повідомлення розбираються й без відмінювання', (key, raw) => {

@@ -9,7 +9,6 @@ const SAMPLES: Omit<Notif, 'id' | 'read' | 'createdAt'>[] = [
   { kind: 'reply', params: { nick: 'Hiro', text: 'Happy New Year from Tokyo! And to you!' }, href: '/', flag: 'JP' },
   { kind: 'stamp', params: { country: 'Японія', city: 'Токіо' }, href: '/passport/', flag: 'JP' },
   { kind: 'goal', params: { count: 5, what: 'countries' }, href: '/passport/' },
-  { kind: 'seat', params: { city: 'Лондон', seat: 3 }, href: '/', flag: 'GB' },
   { kind: 'streak', params: { count: 3 }, href: '/passport/' },
 ];
 

@@ -1,6 +1,7 @@
 /**
  * Шторки на телефоні й планшеті-портреті (правки власника 2026-11-10, `lib/overlay/sheetTop.ts`):
- * - одне правило висоти: вікна чату (і сам чат) — під смугою «Перший ряд»; усе решта (меню, сповіщення, «Ще дії») — під
+ * - одне правило висоти: вікна чату (і сам чат) — під рядком часу (смугу «Перший ряд» прибрано 2026-11-12); усе решта
+ *   (меню, сповіщення, «Ще дії») — під
  *   відео; на сторінці без відео — обидва види на рівні шапка + 16:9 від ширини;
  * - перехід між сторінками не лишає відкритої (і тим паче порожньої) шторки;
  * - «Режим вечірки» на телефоні й планшеті-портреті веде на `/tv-info/`.
@@ -38,7 +39,6 @@ async function seed(page: Page) {
       offers: { nightId: '2026-27', history: [], visible: null },
       schedule: [],
       hasPass: false,
-      firstRow: {},
       nightId: '2026-27',
     };
     if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));
@@ -48,7 +48,7 @@ async function seed(page: Page) {
 const menuButton = (page: Page) => page.locator('header button[aria-haspopup="dialog"]').filter({ hasText: 'Меню' }).first();
 
 /** Видима шторка (шар вікон `(live)`, `Sheet` чи бічне вікно поза `(live)`). */
-const openSheet = (page: Page): Locator => page.locator('[data-seat-layer]:not([hidden]), [data-sheet], [data-menu]');
+const openSheet = (page: Page): Locator => page.locator('[data-window-layer]:not([hidden]), [data-sheet], [data-menu]');
 
 /** Геометрія сторінки на початку (scrollTop = 0). */
 function geometry(page: Page) {
@@ -57,9 +57,11 @@ function geometry(page: Page) {
     let above = 0;
     document.querySelectorAll('[data-dock-above]').forEach((e) => (above = Math.max(above, e.getBoundingClientRect().bottom)));
     const header = document.querySelector('header')!.getBoundingClientRect().height;
+    const bar = document.querySelector('[data-player-bar]');
     return {
       video: slot ? slot.getBoundingClientRect().bottom : 0,
       above,
+      bar: bar ? bar.getBoundingClientRect().bottom : 0,
       noVideo: header + Math.round((document.documentElement.clientWidth * 9) / 16),
     };
   });
@@ -78,12 +80,14 @@ for (const vp of [
   test.describe(vp.name, () => {
     test.use({ viewport: { width: vp.width, height: vp.height }, hasTouch: true });
 
-    test('сторінка з відео: меню й «Ще дії» — під відео, чат — під смугою «Перший ряд»', async ({ page }) => {
+    test('сторінка з відео: меню й «Ще дії» — під відео, чат — під рядком часу', async ({ page }) => {
       await seed(page);
       await gotoAt(page, AT, 0, '/');
       const g = await geometry(page);
       expect(g.video).toBeGreaterThan(0);
       expect(g.above).toBeGreaterThan(g.video);
+      // Без смуги «Перший ряд» найнижче з `data-dock-above` на головній — сам рядок часу.
+      expect(Math.abs(g.above - g.bar)).toBeLessThanOrEqual(1);
 
       await menuButton(page).click();
       expect(Math.abs((await topOf(openSheet(page))) - g.video)).toBeLessThanOrEqual(3);
@@ -95,7 +99,7 @@ for (const vp of [
       await page.keyboard.press('Escape');
       await expect(openSheet(page)).toHaveCount(0);
 
-      // Сам чат (і вікна чату) — нижче: під рядком часу й смугою «Перший ряд».
+      // Сам чат (і вікна чату) — нижче: під рядком часу.
       await page.locator('[data-dock-expand]').click();
       const dock = page.locator('[data-chat-dock][data-state="expanded"]');
       await expect(dock).toBeVisible();

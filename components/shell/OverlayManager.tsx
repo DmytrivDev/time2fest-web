@@ -3,7 +3,7 @@
 /**
  * OverlayManager (ІНВ 5.3 / 4, EXPERIENCE «Вікна» і «Уточнення 2026-10-25»).
  * ОДНЕ вікно за раз: нове `open()` замінює відкрите. Розміщення залежить від типу вікна й в’юпорта:
- * - `form` / `accent` (з полем введення: O-NICK, O-FIRST-ROW, O-REMIND, O-SHARE) і `nonmodal` (O-AUTHOR, мова, профіль):
+ * - `form` / `accent` (з полем введення: O-NICK, O-REMIND, O-SHARE) і `nonmodal` (O-AUTHOR, мова, профіль):
  *   телефон і планшет-портрет — `Sheet` під плеєром; є колонка чату (десктоп, планшет-альбом) — `ChatSlotPanel` на її місці;
  * - `inflow` (короткі вікна без введення: штамп, оцінка, пропозиції, «Що дає», cookies) — `InFlowSlot` під плеєром на будь-якій ширині;
  *   слот ставить сторінка через `<OverlayInFlowOutlet />` під рядком дій плеєра.
@@ -11,16 +11,16 @@
  * доки панель відкрита (ChatPanel / CSS сторінки ховають колонку лише без цього атрибута).
  * Вікно з власною кораловою кнопкою (`coral`) реєструється в `lib/overlay/coral` — кнопка звуку стає нейтральною.
  * `closeOn` — події шини (`lib/events/bus`), після яких вікно закривається саме (напр. оцінка — після `moment:rate-close`).
- * Шторки на телефоні (`seat`, `sheet`) закриваються плавно (рішення 2026-11-02): закрите вікно ще `CLOSE_MS` лишається
+ * Шторки на телефоні (`layer`, `sheet`) закриваються плавно (рішення 2026-11-02): закрите вікно ще `CLOSE_MS` лишається
  * в `closing` і їде вниз; нове вікно чи зменшений рух прибирають його одразу.
  * Перехід на іншу сторінку без колонки чату (телефон, планшет-портрет) закриває шторку одразу (правка власника 2026-11-10):
  * вікно чату й шар шторок належать сторінці, тож на новій сторінці відкрита шторка була б порожньою.
- * Верх шторок — одне правило сайту за видом (`lib/overlay/sheetTop.ts`): вікна чату (`inChat`) — під смугою «Перший ряд»,
- * решта — під відео.
+ * Верх шторок — одне правило сайту за видом (`lib/overlay/sheetTop.ts`): вікна чату (`inChat`) — під рядком часу (і смугою
+ * під ним, якщо вона позначена `data-dock-above`), решта — під відео.
  */
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
+import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot, LAYER_DOCK_SLOT_ID } from '@/components/primitives/Panel';
 import { Sheet } from '@/components/primitives/Sheet';
 import { on, type UiEventType } from '@/lib/events/bus';
 import { useRegisterCoral } from '@/lib/overlay/coral';
@@ -28,7 +28,7 @@ import { useChatDock } from '@/stores/chatDock';
 import { useGuestStore } from '@/stores/guest';
 
 export type OverlayKind = 'form' | 'accent' | 'nonmodal' | 'inflow';
-export type OverlayPlacement = 'sheet' | 'panel' | 'inflow' | 'dock' | 'seat';
+export type OverlayPlacement = 'sheet' | 'panel' | 'inflow' | 'dock' | 'layer';
 
 export interface OverlaySpec {
   /** Ідентифікатор вікна (O-NICK тощо); повторне `open` з тим самим id оновлює вміст. */
@@ -46,11 +46,11 @@ export interface OverlaySpec {
   /** Події шини, після яких вікно закривається саме. */
   closeOn?: UiEventType[];
   /**
-   * Вікно чату (O-NICK, O-AUTHOR, правила, «Моя емоція», вхід O-AUTH): на телефоні — усередині вікна чату, якщо воно вже
+   * Вікно чату (O-NICK, O-AUTHOR, правила, вхід O-AUTH): на телефоні — усередині вікна чату, якщо воно вже
    * розгорнуте; якщо згорнуте — окремим шаром поверх сторінки (`separate`), сам чат не розгортається (правка 2026-10-29).
    */
   inChat?: boolean;
-  /** Окремий шар на телефоні (як вікно покупки «Першого ряду»); ставить сам менеджер у `open`. */
+  /** Окремий шар на телефоні (`layer`); ставить сам менеджер у `open`. */
   separate?: boolean;
   /** Викликається, коли вікно закрито (людиною, заміною чи подією). */
   onClose?: () => void;
@@ -63,19 +63,19 @@ export interface OverlaySpec {
 /**
  * Розміщення за типом і наявністю колонки чату. Телефон з вікном чату внизу (рішення власника 2026-11-04 — два види
  * шторок, обидва без затемнення): вікна чату — усередині розгорнутого чату (`dock`) або, коли він згорнутий, окремим
- * шаром тієї самої висоти — до смуги «Перший ряд» (`seat`); усі інші вікна (пас, графік, «Перший ряд», «Поділитися»,
- * вхід, мова…) — окремим шаром вищим, до самого відео (`seat`, `ChatDock` міряє висоту за `inChat`).
+ * шаром тієї самої висоти — до низу рядка часу (`layer`); усі інші вікна (пас, графік, чайові, «Поділитися»,
+ * вхід, мова…) — окремим шаром вищим, до самого відео (`layer`, `ChatDock` міряє висоту за `inChat`).
  * Без вікна чату на сторінці — `Sheet`.
  */
-export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, seatDock = false): OverlayPlacement {
+export function placementFor(kind: OverlayKind, chatColumn: boolean, inDock = false, layerDock = false): OverlayPlacement {
   if (kind === 'inflow') return 'inflow';
   if (chatColumn) return 'panel';
   if (inDock) return 'dock';
-  return seatDock ? 'seat' : 'sheet';
+  return layerDock ? 'layer' : 'sheet';
 }
 
-/** Вікно на телефоні — окремим шаром (`seat`), а не всередині розгорнутого чату. */
-export function isSeatSpec(spec: OverlaySpec | null | undefined): boolean {
+/** Вікно на телефоні — окремим шаром (`layer`), а не всередині розгорнутого чату. */
+export function isLayerSpec(spec: OverlaySpec | null | undefined): boolean {
   return !!spec && spec.kind !== 'inflow' && (!spec.inChat || !!spec.separate);
 }
 
@@ -250,7 +250,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
       const prev = ref.current;
       if (!prev || (id !== undefined && prev.id !== id)) return;
       const was = placementRef.current;
-      if ((was === 'seat' || was === 'sheet') && !motionReduced()) {
+      if ((was === 'layer' || was === 'sheet') && !motionReduced()) {
         window.clearTimeout(closingTimer.current);
         setClosing({ spec: prev, placement: was });
         closingTimer.current = window.setTimeout(() => setClosing(null), CLOSE_MS + 40);
@@ -295,7 +295,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
         current.kind,
         chatColumn,
         !!current.inChat && !current.separate && dockSlotExists(),
-        dockSlotExists(SEAT_DOCK_SLOT_ID),
+        dockSlotExists(LAYER_DOCK_SLOT_ID),
       )
     : null;
 
@@ -316,7 +316,7 @@ export function OverlayManager({ children }: OverlayManagerProps) {
   const api = useMemo<OverlayApi>(() => ({ current, closing: closing?.spec ?? null, open, close }), [current, closing, open, close]);
   // Що малювати в шторках: відкрите вікно або те, що саме закривається.
   const sheetSpec = current && placement === 'sheet' ? current : closing?.placement === 'sheet' ? closing.spec : null;
-  const seatSpec = current && placement === 'seat' ? current : closing?.placement === 'seat' ? closing.spec : null;
+  const layerSpec = current && placement === 'layer' ? current : closing?.placement === 'layer' ? closing.spec : null;
   const sheetClosing = !!sheetSpec && sheetSpec !== current;
   const onOpenChange = useCallback(
     (next: boolean) => {
@@ -360,20 +360,20 @@ export function OverlayManager({ children }: OverlayManagerProps) {
           {current.content}
         </ChatSlotPanel>
       ) : null}
-      {seatSpec ? (
+      {layerSpec ? (
         <ChatSlotPanel
           open
-          onOpenChange={seatSpec === current ? onOpenChange : () => undefined}
-          containerId={SEAT_DOCK_SLOT_ID}
-          variant={seatSpec.kind === 'accent' ? 'accent' : seatSpec.kind === 'nonmodal' ? 'nonmodal' : 'form'}
-          title={seatSpec.title}
-          description={seatSpec.description}
-          boardHeader={seatSpec.chrome === 'board'}
-          onBack={seatSpec.onBack}
-          authorHeader={seatSpec.chrome === 'author'}
-          className="t2f-seat-panel"
+          onOpenChange={layerSpec === current ? onOpenChange : () => undefined}
+          containerId={LAYER_DOCK_SLOT_ID}
+          variant={layerSpec.kind === 'accent' ? 'accent' : layerSpec.kind === 'nonmodal' ? 'nonmodal' : 'form'}
+          title={layerSpec.title}
+          description={layerSpec.description}
+          boardHeader={layerSpec.chrome === 'board'}
+          onBack={layerSpec.onBack}
+          authorHeader={layerSpec.chrome === 'author'}
+          className="t2f-layer-panel"
         >
-          {seatSpec.content}
+          {layerSpec.content}
         </ChatSlotPanel>
       ) : null}
       {current && placement === 'panel' ? (

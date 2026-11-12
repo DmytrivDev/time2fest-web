@@ -70,7 +70,6 @@ export interface Event {
   type: CelebrationType;
   popularity: number;
   restrained?: { note: { uk: string } };
-  firstRow?: { saleEnabled: boolean };
 }
 
 /** Подія після завантаження: `midnightUtc` розібрано один раз (`Date.parse`). */
@@ -124,41 +123,26 @@ export interface StreamChain {
   sources: StreamSource[];
 }
 
-// ── 1.7 FirstRowSeat ───────────────────────────────────────────────────────
+// ── 1.7 Оплата (імітація) ──────────────────────────────────────────────────
 
-export interface SeatParticipant {
-  holderId: string;
-  name: string;
-  flagCode: string;
-  greeting: string;
-  emojiId: string;
-  isMine?: boolean;
-}
-
-export type SeatState =
-  | { state: 'free' }
-  | { state: 'held'; until: Ms; holderId: string }
-  | { state: 'taken'; takenAt: Ms; participant: SeatParticipant };
-
-export type FirstRowSeat = { eventId: string; number: number } & SeatState;
-
-export type PayResult = 'success' | 'pending' | 'declined' | 'soldout' | 'expired';
+/** Результат імітованої оплати (тестова панель); `soldout` / `expired` були лише в «Першому ряду» (прибрано 2026-11-12). */
+export type PayResult = 'success' | 'pending' | 'declined';
 
 // ── 1.8–1.9 Chat ───────────────────────────────────────────────────────────
 
-export type RoomId = 'world' | `country:${string}` | `firstrow:${string}`;
+export type RoomId = 'world' | `country:${string}`;
 
 export interface ChatRoom {
   id: RoomId;
-  kind: 'world' | 'country' | 'first-row';
+  kind: 'world' | 'country';
   label: string;
   flagCode?: string;
   slowModeSec?: number;
   connection: 'ok' | 'slow' | 'unavailable' | 'offline';
-  memberRule: 'public' | 'first-row-participants';
+  memberRule: 'public';
 }
 
-export type MessageKind = 'regular' | 'system' | 'greeting';
+export type MessageKind = 'regular' | 'system';
 export type ReactionId =
   | 'clap'
   | 'heart'
@@ -185,37 +169,23 @@ export type ReactionId =
   | 'star'
   | 'earth'
   | 'yellowheart';
-export type AuthorBadge = 'pass' | 'first-row' | 'vip';
+export type AuthorBadge = 'pass' | 'vip';
 
 export interface Author {
   id: string;
   nick: string;
   flagCode: string;
   badges: AuthorBadge[];
-  firstRowEmojiId?: string;
   isMine?: boolean;
 }
 
 export type SystemPayload =
   | { kind: 'country-midnight'; countries: { iso: string; gender: Gender }[]; eventIds: string[] }
-  | { kind: 'firstrow-joined'; participantName: string; flagCode: string; eventId: string; cityId: string }
   | { kind: 'greetings-counter'; count: number; flagCodes: string[]; eventId: string }
   | { kind: 'slow-mode'; seconds: number }
   | { kind: 'poll-open'; pollId: string }
   /** Новий лідер «Рейтингу святкувань» (рішення власника 2026-11-07): не частіше разу на годину, лише в «Світі». */
   | { kind: 'rating-leader'; eventId: string; city: string; flagCode: string; score: number };
-
-export interface GreetingPayload {
-  eventId: string;
-  seat: number;
-  participantName: string;
-  flagCode: string;
-  emojiId: string;
-  cityId: string;
-  text: string;
-  /** Привітання власного місця гостя («це ти»). */
-  mine?: boolean;
-}
 
 export interface ChatMessage {
   id: string;
@@ -227,7 +197,6 @@ export interface ChatMessage {
   replyTo?: { id: string; nick: string; excerpt: string };
   reactions?: Partial<Record<ReactionId, { count: number; mine: boolean }>>;
   system?: SystemPayload;
-  greeting?: GreetingPayload;
   moderation: 'ok' | 'hidden';
   /** Автор видалив повідомлення назавжди: у стрічці — тонкий рядок «видалено» (рішення власника 2026-10-29). */
   deleted?: boolean;
@@ -245,7 +214,6 @@ export interface Stamp {
   eventId: string;
   grantedAt: Ms;
   presenceSource: PresenceSource;
-  firstRowSeat?: number;
   illustrationId: string;
   cityName: string;
   countryIso: string;
@@ -257,7 +225,6 @@ export interface PathPoint {
   countryIso: string;
   midnightUtc: ISO;
   planned: boolean;
-  firstRowSeat?: number;
 }
 
 export interface Path {
@@ -301,14 +268,6 @@ export interface GuestRoomWindow {
   eventId: string;
 }
 
-export interface GuestFirstRowEntry {
-  seat?: number;
-  hold?: { seat: number; until: Ms; extended: boolean };
-  draft?: { name: string; greeting: string; emojiId?: string };
-  /** Ціна, зафіксована при утриманні (USD). */
-  priceLocked?: number;
-}
-
 export type Stars = 1 | 2 | 3 | 4 | 5;
 
 export interface GuestState {
@@ -332,7 +291,6 @@ export interface GuestState {
   offers: OfferState;
   schedule: string[];
   hasPass: boolean;
-  firstRow: Record<string, GuestFirstRowEntry>;
   nightId: NightId;
 }
 
@@ -345,7 +303,6 @@ export interface EventNode {
   type: CelebrationType;
   popularity: number;
   restrained?: { note: { uk: string } };
-  firstRow?: { saleEnabled: boolean };
 }
 
 export interface CityNode {
@@ -416,25 +373,9 @@ export interface MomentScript {
     room: RoomId | 'world+country';
     message:
       | { kind: 'system'; system: SystemPayload }
-      | { kind: 'greeting'; seatFrom: 'seed' }
       | { kind: 'regular'; authorId: string; text: string }
       | { kind: 'burst'; count: number; spreadSec: number; pool: string };
   }[];
-}
-
-export interface FirstRowSeedEntry {
-  eventId: string;
-  seats: {
-    number: number;
-    state: 'free' | 'taken' | 'held';
-    name?: string;
-    flagCode?: string;
-    greeting?: string;
-    emojiId?: string;
-    takenAtOffsetSec?: number;
-    heldUntilOffsetSec?: number;
-  }[];
-  takeOverTime?: { number: number; atOffsetFromNowSec: number }[];
 }
 
 export interface ChatScriptFile {
@@ -444,7 +385,6 @@ export interface ChatScriptFile {
   presets: { lang: 'uk' | 'en' | 'es' | 'fr'; flagCode: string; text: string }[];
   ambient: AmbientRule[];
   moments: MomentScript[];
-  firstRowSeed: FirstRowSeedEntry[];
   slowMode?: { room: RoomId; seconds: number; from?: ISO; to?: ISO };
 }
 

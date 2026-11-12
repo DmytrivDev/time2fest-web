@@ -42,7 +42,7 @@ export interface SendContext {
   nick?: string;
   flagCode?: string;
   hasPass: boolean;
-  /** Кімнати, до яких людина має доступ (`firstrow:*` — лише учасникам). */
+  /** Кімнати, до яких людина має доступ. */
   canWrite: (room: RoomId) => boolean;
   /** Повільний режим кімнати зараз, с (0 — вимкнено). */
   slowSeconds: number;
@@ -52,8 +52,6 @@ export interface SendContext {
   banned?: boolean;
   /** Цитата для `replyTo`. */
   replyTo?: { id: string; nick: string; excerpt: string };
-  /** Емоція учасника «Першого ряду» (для кімнати `firstrow:*`). */
-  firstRowEmojiId?: string;
 }
 
 export type SendResult =
@@ -93,17 +91,15 @@ function hashString(s: string): number {
   return h;
 }
 
-export function ownAuthor(ctx: Pick<SendContext, 'guestId' | 'nick' | 'flagCode' | 'hasPass' | 'firstRowEmojiId'>, room: RoomId): Author {
+export function ownAuthor(ctx: Pick<SendContext, 'guestId' | 'nick' | 'flagCode' | 'hasPass'>): Author {
   const badges: AuthorBadge[] = [];
   if (ctx.hasPass) badges.push('pass');
-  if (room.startsWith('firstrow:')) badges.push('first-row');
   return {
     id: ctx.guestId,
     nick: ctx.nick ?? '',
     flagCode: ctx.flagCode ?? 'earth',
     badges,
     isMine: true,
-    ...(room.startsWith('firstrow:') && ctx.firstRowEmojiId ? { firstRowEmojiId: ctx.firstRowEmojiId } : {}),
   };
 }
 
@@ -132,7 +128,7 @@ export function sendMessage(req: SendMessageRequest, ctx: SendContext): SendResu
     room: req.room,
     kind: 'regular',
     createdAt: ctx.now,
-    author: ownAuthor(ctx, req.room),
+    author: ownAuthor(ctx),
     text,
     moderation: 'ok',
     ...(ctx.replyTo ? { replyTo: { ...ctx.replyTo, excerpt: excerptOf(ctx.replyTo.excerpt) } } : {}),

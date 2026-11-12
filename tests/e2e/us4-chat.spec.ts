@@ -341,20 +341,17 @@ test.describe('US4 · чат свята', () => {
   });
 });
 
-test.describe('US4 · правки власника 2026-11-10: переклад, картки учасників «Першого ряду», скарга, мапа', () => {
-  /** За 22 хв до півночі Лондона: стіна «Першого ряду» з бігучим рядком, у чаті вже є повідомлення іншими мовами. */
+test.describe('US4 · правки власника 2026-11-10: переклад', () => {
+  // Картки учасників «Першого ряду» (бігучий рядок, листівка) прибрано разом із рядом (рішення 2026-11-12).
+  /** За 22 хв до півночі Лондона: у чаті вже є повідомлення іншими мовами. */
   const WALL = '2027-01-01T01:38:00+02:00';
-  /** П’ята хвилина після півночі Лондона: листівка «Першого ряду». */
-  const POSTCARD = '2027-01-01T02:05:00+02:00';
-  const author = (page: Page) => page.locator('[data-window="O-AUTHOR"]');
-  const authorNick = (page: Page) => author(page).getByRole('heading', { level: 2 });
 
   async function dismissCookies(page: Page) {
     const only = page.getByRole('button', { name: 'Лише необхідні' });
     if (await only.count()) await only.first().click();
   }
 
-  test('«Перекласти» без пасу — вікно «Переклад повідомлень» на місці чату з прикладом і «Оформити пас · $4,99»', async ({ page }) => {
+  test('«Перекласти» без пасу — вікно «Переклад повідомлень» на місці чату з прикладом і «Оформити пас · $5»', async ({ page }) => {
     await startChat(page, WALL, 0);
     await dismissCookies(page);
     const log = page.getByRole('log').first();
@@ -371,66 +368,7 @@ test.describe('US4 · правки власника 2026-11-10: переклад
       const box = await gate.boundingBox();
       expect(box!.x).toBeGreaterThanOrEqual(col!.x - 1);
     }
-    await gate.getByRole('button', { name: 'Оформити пас · $4,99' }).click();
+    await gate.getByRole('button', { name: 'Оформити пас · $5' }).click();
     await expect(page.locator('[data-window="O-PASS-BUY"]')).toBeVisible();
-  });
-
-  test('бігучий рядок: кожен учасник відкриває свою картку зі шляхом; «Поскаржитись» — підтвердження; підказки Сеула й Токіо', async ({
-    page,
-  }) => {
-    test.skip(isPhone(page), 'телефон: картка — шторка поверх рядка, перемикання — десктоп');
-    test.setTimeout(120_000);
-    await gotoAt(page, WALL, 0);
-    await dismissCookies(page);
-    const marquee = page.locator('[data-marquee]').first();
-    await marquee.scrollIntoViewIfNeeded();
-    await marquee.hover({ position: { x: 4, y: 10 } });
-    const pills = marquee.locator('[data-copy="1"] button[data-opens-author]');
-    const n = await pills.count();
-    expect(n).toBeGreaterThan(5);
-    for (let i = 0; i < n; i++) {
-      const name = ((await pills.nth(i).getAttribute('aria-label')) ?? '').replace(/^Місце \d+: /, '').split(',')[0]!;
-      await pills.nth(i).click();
-      await expect(authorNick(page)).toHaveText(name);
-      await expect(author(page).locator('[data-point]').first()).toBeVisible();
-    }
-    // Копія стрічки теж відкриває картку (раніше копії були inert).
-    const copy = marquee.locator('[data-copy="2"] button[data-opens-author]').first();
-    if (await copy.count()) {
-      await copy.dispatchEvent('click');
-      await expect(authorNick(page)).toHaveText('Олена і друзі');
-    }
-    await author(page).getByRole('button', { name: 'Поскаржитись' }).click();
-    await expect(author(page).locator('[data-row="reported"]')).toHaveText(/Дякуємо, скаргу передано/);
-
-    await marquee.hover({ position: { x: 4, y: 10 } });
-    await pills.filter({ hasText: 'Hiro' }).first().click();
-    await expect(authorNick(page)).toHaveText('Hiro і сім’я');
-    await expect(author(page).locator('[data-visited]')).toHaveCount(0);
-    for (const city of ['Сеул', 'Токіо']) {
-      await author(page).locator(`[data-point][aria-label^="${city},"]`).hover();
-      await expect(page.locator('[data-radix-popper-content-wrapper]').filter({ hasText: `${city} ·` })).toBeVisible();
-    }
-  });
-
-  test('після півночі: повторний натиск на автора під привітанням не ламає перемикання карток', async ({ page }) => {
-    test.skip(isPhone(page), 'телефон: картка — шторка поверх листівки');
-    await gotoAt(page, POSTCARD, 0);
-    await dismissCookies(page);
-    const card = page.locator('[data-postcard]').first();
-    await card.scrollIntoViewIfNeeded();
-    await card.locator('[data-action="author"]').click();
-    const first = await authorNick(page).innerText();
-    await card.locator('[data-action="author"]').click();
-    await expect(authorNick(page)).toHaveText(first);
-    await page.locator('[data-chat-slot-panel]').getByRole('button', { name: /Назад/ }).first().click();
-    await expect(author(page)).toHaveCount(0);
-    // Після закриття кожен натиск на іншу фішку знову відкриває картку цієї людини.
-    for (const seat of ['4', '6', '2']) {
-      const pill = card.locator(`button[data-seat="${seat}"]`);
-      const name = (await pill.innerText()).split('\n')[0]!.trim();
-      await pill.click();
-      await expect(authorNick(page)).toHaveText(name);
-    }
   });
 });

@@ -3,7 +3,6 @@
  */
 import { beforeEach, describe, expect, it } from 'vitest';
 import { syncDevicePass, useAuthStore } from '@/stores/auth';
-import { useFirstRowStore } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import { usePassStore } from '@/stores/pass';
 import { resetDeviceState } from '@/stores/resetDevice';
@@ -49,7 +48,6 @@ describe('«Скинути стан гостя» — увесь стан на п
     useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
     useAuthStore.getState().grantPass('olena@example.com', T0);
     useGuestStore.getState().setSchedule(['evt_lisbon_2027']);
-    useFirstRowStore.getState().markPassGifted();
     usePassStore.setState({ phase: 'pending', email: 'olena@example.com', pendingSince: T0 });
     localStorage.setItem('t2f:pass-flow:v1', JSON.stringify({ state: { phase: 'pending', email: 'x@y.zz' }, version: 1 }));
     localStorage.setItem('t2f:tips-flow:v1', '{}');
@@ -59,7 +57,6 @@ describe('«Скинути стан гостя» — увесь стан на п
     expect(useAuthStore.getState()).toMatchObject({ user: null, accounts: [], passes: {}, letter: null });
     expect(hasPass()).toBe(false);
     expect(useGuestStore.getState().schedule).toEqual([]);
-    expect(useFirstRowStore.getState().passGifted).toBe(false);
     expect(usePassStore.getState().phase).toBe('form');
     expect(Object.keys(localStorage).filter((k) => k.startsWith('t2f:'))).toEqual([]);
   });

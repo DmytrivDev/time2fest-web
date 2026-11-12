@@ -30,7 +30,7 @@ const SPEEDS = [
   { value: '10', label: '×10' },
   { value: '60', label: '×60' },
 ] as const;
-const PAY_RESULTS: PayResult[] = ['success', 'pending', 'declined', 'soldout', 'expired'];
+const PAY_RESULTS: PayResult[] = ['success', 'pending', 'declined'];
 const OFFSETS = Array.from({ length: 27 }, (_, i) => i - 12).map((h) => {
   const sign = h < 0 ? '-' : '+';
   return `${sign}${String(Math.abs(h)).padStart(2, '0')}:00`;

@@ -62,7 +62,6 @@ describe('buildStamp', () => {
       country: { illustrationId: 'gb-postcard' },
       city: { name: { uk: 'Лондон' } },
       presenceSource: 'air',
-      firstRowSeat: 4,
     });
     expect(s).toEqual({
       eventId: london.id,
@@ -71,7 +70,6 @@ describe('buildStamp', () => {
       illustrationId: 'gb-postcard',
       cityName: 'Лондон',
       countryIso: 'GB',
-      firstRowSeat: 4,
     });
   });
 });

@@ -39,10 +39,10 @@ export const LongNight: Story = {
 };
 
 export const GetPass: Story = {
-  name: '«Оформити пас · $4,99»',
+  name: '«Оформити пас · $5»',
   play: async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await expect(c.getByRole('button', { name: 'Оформити пас · $4,99' })).toBeInTheDocument();
-    await userEvent.click(c.getByRole('button', { name: 'Оформити пас · $4,99' }));
+    await expect(c.getByRole('button', { name: 'Оформити пас · $5' })).toBeInTheDocument();
+    await userEvent.click(c.getByRole('button', { name: 'Оформити пас · $5' }));
   },
 };

@@ -3,11 +3,11 @@
 /**
  * C10. Message — рядок чату. Варіанти за `ChatMessage.kind`:
  * - `regular`: прапор xs + нік (одна ціль дотику на висоту рядка, назва «Аміра, Канада») · час праворуч · текст 15/400;
- *   + позначка пасу (не клікабельна), «Перший ряд» з емоцією, «це ти», цитата відповіді;
+ *   + позначка пасу (не клікабельна), «тост», «це ти», цитата відповіді;
  * - `system`: знак Time2Fest + текст («Франція, Німеччина й Італія зустріли Новий рік» — через `metPhrase`),
- *   «<ім’я> тепер у першому ряду · <місто>», лічильник «+1 240 людей привітали», повільний режим, голосування;
- * - `greeting`: картка з жовтою межею ліворуч, «Перший ряд», привітання від Time2Fest.
- * Позначки не клікабельні. Емодзі в доступних назвах — назвами з набору O-EMOJI. Назви країн — лише в називному.
+ *   лічильник «+1 240 людей привітали», повільний режим, голосування, лідер рейтингу.
+ * «Перший ряд» (позначка, емоція біля ніка, «тепер у першому ряду», привітання місць) прибрано разом із рядом
+ * (рішення власника 2026-11-12). Позначки не клікабельні. Назви країн — лише в називному.
  * Реакції під текстом і кнопка «⋯» (C12): при наведенні чи фокусі вона стає на місце часу (час ховається на місці);
  * на телефоні (`menuAlways`) завжди видно, час лівіше. Меню відкриває Chat (`onOpenMenu`); без `onOpenMenu` дій немає.
  * Клік по рядку (крім «⋯» і чипів) відкриває панель автора. Кнопка «⋯» і реакції потрапляють у Tab лише в повідомленні
@@ -16,14 +16,12 @@
  * Компонент повертає `<li>`; обгортку `<ol>` дає Chat (або історія).
  */
 import { useTranslations } from 'next-intl';
-import { Emoji, EmojiText } from '@/components/primitives/Emoji';
+import { EmojiText } from '@/components/primitives/Emoji';
 import type { KeyboardEvent, ReactNode } from 'react';
 import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { emojiSymbol } from '@/components/live/SeatPill';
-import { canonicalEmotion } from '@/lib/firstrow/emotions';
 import type { Author, ChatMessage, Country, Gender } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock } from '@/lib/i18n/time';
@@ -38,8 +36,6 @@ export interface MessageLookup {
   country?: (iso: string) => Pick<Country, 'name' | 'gender'> | undefined;
   /** Назва міста за `cityId` («Лондон»). */
   cityName?: (cityId: string) => string | undefined;
-  /** Назва «Першого ряду» поясу за id події ряду («UTC+0 · Лондон, Лісабон»). */
-  firstRowLabel?: (eventId: string) => string | undefined;
 }
 
 export interface MessageProps extends Pick<MessageActionHandlers, 'onReact'> {
@@ -94,11 +90,6 @@ function PassMark({ label }: { label: string }) {
 }
 
 const ROW = 'flex h-4.5 items-center gap-1.5';
-
-/** Прапор показуємо лише для відомого коду: гість без прапора — без значка (не порожнє коло). */
-function hasFlag(code: string | undefined): code is string {
-  return !!code && code.toUpperCase() !== 'UN';
-}
 
 /** «@Аміра» у тексті — виділено (mention); відомі емодзі — фірмові значки (символ лишається для копіювання). */
 export function withMentions(text: string | undefined): ReactNode {
@@ -172,7 +163,6 @@ export function Message({
 }: MessageProps) {
   const t = useTranslations('chat');
   const met = useTranslations('met');
-  const names = useTranslations('windows.emoji.names');
   const badges = useTranslations('primitives.badge');
   const time = formatClock(message.createdAt);
 
@@ -213,8 +203,6 @@ export function Message({
     );
   }
 
-  const emotionName = (id: string) => names(canonicalEmotion(id));
-
   if (message.kind === 'system') {
     const s = message.system;
     let body: ReactNode = message.text ?? null;
@@ -236,26 +224,6 @@ export function Message({
               ? met('multi', { names: joinNamesUk(p.params.names) })
               : met('fallback', p.params);
       }
-    } else if (s?.kind === 'firstrow-joined') {
-      const city = lookup?.firstRowLabel?.(s.eventId) || lookup?.cityName?.(s.cityId) || s.cityId;
-      // Макет `Main`: «Олена і друзі 🇺🇦 тепер у першому ряду · UTC+0 · Лондон, Лісабон» — один рядок, без жирного, з трьома крапками.
-      body = (
-        <>
-          {s.participantName}{' '}
-          {hasFlag(s.flagCode) ? (
-            <>
-              <Flag
-                code={s.flagCode}
-                size="xs"
-                name={lookup?.countryName?.(s.flagCode)}
-                decorative={!lookup?.countryName?.(s.flagCode)}
-                className="t2f-sys-flag"
-              />{' '}
-            </>
-          ) : null}
-          {t('systemFirstRowTail', { city })}
-        </>
-      );
     } else if (s?.kind === 'greetings-counter') {
       counter = true;
       body = (
@@ -316,55 +284,7 @@ export function Message({
         )}
       >
         <Mark />
-        <span className={cn('min-w-0', s?.kind === 'firstrow-joined' && 'truncate')}>{body}</span>
-      </li>
-    );
-  }
-
-  if (message.kind === 'greeting' && message.greeting) {
-    const g = message.greeting;
-    const city = lookup?.firstRowLabel?.(g.eventId) || lookup?.cityName?.(g.cityId) || g.cityId;
-    const country = lookup?.countryName?.(g.flagCode);
-    return (
-      <li
-        data-kind="greeting"
-        data-msg-id={message.id}
-        className={cn(
-          'mx-2 my-1.5 flex flex-col gap-1 rounded-sm border-s-3 border-highlight bg-highlight-tint py-2 pe-2.5 ps-3',
-          className,
-        )}
-      >
-        <div className={ROW}>
-          <Mark label={false} />
-          <span className="text-label-badge-chat font-bold text-highlight">Time2Fest</span>
-          <Badge variant="first-row" />
-          {g.mine ? (
-            <span className="text-label-badge-chat font-semibold text-highlight" data-mine="">
-              {t('greetingMine')}
-            </span>
-          ) : null}
-          <time
-            dateTime={new Date(message.createdAt).toISOString()}
-            className="ms-auto text-label-badge-chat text-text-muted"
-          >
-            {time}
-          </time>
-        </div>
-        <p className="text-chat text-text">
-          {t('greetingPrefix')} <strong className="font-bold">{g.participantName}</strong>{' '}
-          {hasFlag(g.flagCode) ? (
-            <>
-              <Flag round code={g.flagCode} size="xs" name={country} decorative={!country} />{' '}
-            </>
-          ) : null}
-          <Emoji char={emojiSymbol(g.emojiId)} label={t('emotionLabel', { emotion: emotionName(g.emojiId) })} />{' '}
-          {t('greetingSuffix', { city, seat: g.seat })}
-        </p>
-        {g.text ? (
-          <p className="text-chat text-text-secondary">
-            <EmojiText text={t('greetingQuote', { text: g.text })} />
-          </p>
-        ) : null}
+        <span className="min-w-0">{body}</span>
       </li>
     );
   }
@@ -373,7 +293,6 @@ export function Message({
   const a = message.author;
   const country = a ? lookup?.countryName?.(a.flagCode) : undefined;
   const authorLabel = a ? (country ? t('authorLabel', { name: a.nick, country }) : a.nick) : '';
-  const firstRow = a?.badges.includes('first-row') ?? false;
   const pass = a?.badges.includes('pass') || a?.badges.includes('vip');
   const del = a?.isMine ? onDelete : undefined;
   const more = del ? undefined : onOpenMenu;
@@ -432,18 +351,6 @@ export function Message({
           </button>
         ) : null}
         {pass ? <PassMark label={badges('vip')} /> : null}
-        {firstRow ? (
-          <>
-            <Badge variant="first-row" />
-            {a?.firstRowEmojiId ? (
-              <Emoji
-                char={emojiSymbol(a.firstRowEmojiId)}
-                size={16}
-                label={t('emotionLabel', { emotion: emotionName(a.firstRowEmojiId) })}
-              />
-            ) : null}
-          </>
-        ) : null}
         {message.toast ? (
           <span data-toast-badge="" className="t2f-toast-badge">
             {t('toastBadge')}

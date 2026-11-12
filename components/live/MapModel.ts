@@ -1,5 +1,4 @@
 import type { CelebrationType, Dataset, Gender, Ms } from '@/lib/data/types';
-import { zoneRowOf } from '@/lib/firstrow/zone';
 import { countryHref } from '@/lib/live/countryHref';
 
 /** Країна поясу на мапі: посилання, прапор і «Як святкувати» (до трьох традицій). */
@@ -22,8 +21,6 @@ export interface MapCountry {
   eventIds?: string[];
   /** Тиха зустріч (`event.restrained`): коротка примітка в шапці вікна країни. */
   quiet?: string;
-  /** Подія з «Першим рядом» у цьому поясі (вікно країни: «лишилось N місць»). */
-  firstRowEventId?: string;
 }
 
 /** Трансляція країни у вікні країни: місто з подією, що має відео. */
@@ -115,15 +112,13 @@ export function buildMapModel(data: Dataset): MapModel {
       return (own.find((c) => c.isCountryMain) ?? own[0])?.name.uk;
     };
     const zoneEvents = data.events.filter((e) => e.zoneId === z.id);
-    // Вікно країни: трансляції (головне місто — першим), події для штампа, тиха зустріч, «Перший ряд».
+    // Вікно країни: трансляції (головне місто — першим), події для штампа, тиха зустріч.
     const countryExtras = (iso: string): Partial<MapCountry> => {
       const own = streamCities
         .filter((c) => c.countryIso === iso)
         .sort((a, b) => Number(b.isCountryMain) - Number(a.isCountryMain));
       const events = zoneEvents.filter((e) => e.countryIso === iso);
       const quiet = events.find((e) => e.restrained)?.restrained?.note.uk;
-      // «Перший ряд» — один на пояс (2026-11-05): усі країни поясу показують місця того самого ряду.
-      const firstRow = zoneRowOf(data, z.id);
       return {
         streams: own.map((c) => ({
           cityId: c.id,
@@ -134,7 +129,6 @@ export function buildMapModel(data: Dataset): MapModel {
         })),
         eventIds: events.map((e) => e.id),
         ...(quiet ? { quiet } : {}),
-        ...(firstRow ? { firstRowEventId: firstRow.id } : {}),
       };
     };
     const countries = [...isoSet]
@@ -252,5 +246,5 @@ export function pointToPercent(p: { x: number; y: number }, meta: ZoneMapGeometr
   return { left: (x / meta.width) * 100, top: (y / meta.height) * 100 };
 }
 
-/** «UTC+5:45» для підпису в картці поясу (UTC лише там і в назві «Першого ряду» поясу). */
+/** «UTC+5:45» для підпису в картці поясу. */
 export { utcLabel } from '@/lib/i18n/time';

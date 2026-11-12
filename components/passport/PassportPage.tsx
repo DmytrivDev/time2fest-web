@@ -116,7 +116,7 @@ export function PassportPage() {
     const entry = stampEntry(r.eventId);
     const stars = ratings[r.eventId]?.stars;
     return (
-      <li key={r.eventId} className={cn(s.card, r.seat !== undefined && s.cardGold)} data-stamp-card={r.eventId} data-rateable={r.rateable || undefined}>
+      <li key={r.eventId} className={s.card} data-stamp-card={r.eventId} data-rateable={r.rateable || undefined}>
         <FlagStrip code={r.flagCode} />
         <div className={s.cardArt}>
           <button type="button" aria-label={t('open', { city: r.city })} onClick={() => openBig(index)} className={cn('t2f-focus', s.cardOpen)}>
@@ -138,8 +138,8 @@ export function PassportPage() {
             <Flag round code={r.flagCode} diameter={20} decorative />
             {r.city}
           </p>
-          <p className={cn(s.cardMeta, r.seat !== undefined && s.cardMetaGold)}>
-            {r.seat !== undefined ? t('firstRowSeat', { seat: r.seat }) : `${r.country} · ${formatClock(r.midnightMs, { locale })}`}
+          <p className={s.cardMeta}>
+            {`${r.country} · ${formatClock(r.midnightMs, { locale })}`}
           </p>
           {/* Оцінка — лише головні святкування з трансляцією (рішення власника 2026-11-07); оцінити можна будь-коли. */}
           {r.rateable ? (
@@ -338,10 +338,6 @@ export function PassportPage() {
                 <li>
                   <span className={s.legDot} />
                   {tMap('legendMet')}
-                </li>
-                <li className={s.legGold}>
-                  <span className="t2f-pathmap-legend-ring" />
-                  {tMap('legendFirstRow')}
                 </li>
                 <li>
                   <span className={s.legRing} />

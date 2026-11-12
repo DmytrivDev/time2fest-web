@@ -2,7 +2,7 @@
 
 /**
  * «Поділитися шляхом» і «Поділитися паспортом» (функції пасу, рішення власника 2026-11-07): те саме вікно O-SHARE, що й
- * «Поділитися штампом» чи листівкою «Першого ряду» (9:16 / 1:1, «Поділитися…», WhatsApp, посилання, зображення), але з
+ * «Поділитися штампом» (9:16 / 1:1, «Поділитися…», WhatsApp, посилання, зображення), але з
  * картинкою «Мої Нові роки» (`summarySvg`) чи паспорта (`passportSvg`). Геометрію мапи й круглі прапори вантажимо, коли
  * вікно відкрите.
  */
@@ -12,7 +12,7 @@ import type { ZoneMapGeometry } from '@/components/live/MapModel';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { SHARE_WINDOW_ID, ShareContent } from '@/components/windows/Share';
 import type { PathPoint } from '@/lib/chat-sim/authorPath';
-import { loadRoundFlags } from '@/lib/firstrow/postcardImage';
+import { loadRoundFlags } from '@/lib/flags/roundFlags';
 import type { ShareRatio } from '@/lib/offers/shareImage';
 import { passportSvg, summarySvg, type SummaryText } from '@/lib/passport/summaryImage';
 import type { PassportStamp } from '@/lib/passport/passport';
@@ -84,7 +84,7 @@ function PassportCardShare({ data }: { data: ShareSummary }) {
   const codes = [...new Set(data.rows.map((r) => r.flagCode))];
   const flags = useFlags(codes);
   const text: SummaryText = { kicker: t('passportKicker'), name: data.name, stats: data.stats, route: data.route, brand: 'Time2Fest · time2fest.com' };
-  const stamps = data.rows.map((r) => ({ city: r.city, country: r.country, flagCode: r.flagCode, ...(r.seat ? { seat: r.seat } : {}) }));
+  const stamps = data.rows.map((r) => ({ city: r.city, country: r.country, flagCode: r.flagCode }));
   const svgFor = (ratio: ShareRatio) => passportSvg(ratio, text, stamps, flags);
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   return (

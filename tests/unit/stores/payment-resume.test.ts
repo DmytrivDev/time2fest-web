@@ -1,12 +1,11 @@
 /**
- * Незавершена оплата переживає перезавантаження (перевірка сайту 2026-11-09, A-1): пас, чайові, «Перший ряд».
+ * Незавершена оплата переживає перезавантаження (перевірка сайту 2026-11-09, A-1): пас і чайові.
  * «Перезавантаження» тут — стан у пам’яті скинуто, а в `localStorage` лишився запис до скидання; далі відновлення.
  */
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PAY_ROUNDTRIP_MS } from '@/lib/firstrow/pay';
+import { PAY_ROUNDTRIP_MS } from '@/lib/offers/paySim';
 import { useAuthStore } from '@/stores/auth';
-import { emptyFlow, FIRSTROW_STORAGE_KEY, useFirstRowStore } from '@/stores/firstRow';
 import { useGuestStore } from '@/stores/guest';
 import { PASS_FLOW_STORAGE_KEY, resumePassFlow, usePassStore } from '@/stores/pass';
 import { resumeTipsFlow, TIPS_FLOW_STORAGE_KEY, useTipsStore } from '@/stores/tips';
@@ -35,7 +34,6 @@ describe('незавершена оплата переживає перезав�
     useGuestStore.getState().setHasPass(false);
     usePassStore.getState().reset();
     useTipsStore.getState().reset();
-    useFirstRowStore.getState().reset();
     useTestControls.getState().setPayResult('success');
   });
   afterEach(() => vi.useRealTimers());
@@ -107,24 +105,5 @@ describe('незавершена оплата переживає перезав�
     expect(useTipsStore.getState().phase).toBe('paying');
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
     expect(useTipsStore.getState().phase).toBe('paid');
-  });
-
-  it('«Перший ряд»: перерваний перехід на оплату позначається `interrupted`, «Чекаємо підтвердження» — лишається', async () => {
-    const reloadFirstRow = async () => {
-      reload(FIRSTROW_STORAGE_KEY, () => useFirstRowStore.getState().setFlow(null));
-      await useFirstRowStore.persist.rehydrate();
-    };
-
-    useFirstRowStore.getState().setFlow({ ...emptyFlow('ev-1', 'form'), submitting: true });
-    await reloadFirstRow();
-    expect(useFirstRowStore.getState().flow).toMatchObject({ eventId: 'ev-1', phase: 'form', submitting: false, interrupted: true });
-
-    useFirstRowStore.getState().setFlow({ ...emptyFlow('ev-1', 'pending'), pendingSince: T0 });
-    await reloadFirstRow();
-    expect(useFirstRowStore.getState().flow).toMatchObject({ eventId: 'ev-1', phase: 'pending', pendingSince: T0, interrupted: false });
-
-    // Відкрита форма без оплати — не зберігається.
-    useFirstRowStore.getState().setFlow(emptyFlow('ev-1', 'form'));
-    expect(stored(FIRSTROW_STORAGE_KEY).flow).toBeNull();
   });
 });

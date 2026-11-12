@@ -23,7 +23,7 @@ const lookup: MessageLookup = {
 const T = Date.parse('2027-01-01T01:36:00Z');
 const LIAM: Author = { id: 'u1', nick: 'Liam', flagCode: 'AU', badges: [] };
 const AMIRA: Author = { id: 'u2', nick: 'Аміра', flagCode: 'CA', badges: ['pass'] };
-const JAMES: Author = { id: 'u3', nick: 'James', flagCode: 'GB', badges: ['first-row'], firstRowEmojiId: 'confetti' };
+const JAMES: Author = { id: 'u3', nick: 'James', flagCode: 'GB', badges: ['pass'] };
 const ME: Author = { id: 'me', nick: 'Мирон', flagCode: 'UA', badges: [], isMine: true };
 
 let seq = 0;
@@ -53,8 +53,9 @@ describe('Message', () => {
   it('позначки не клікабельні: єдина кнопка в рядку — нік', () => {
     inList(<Message message={regular(JAMES, 'The Thames is packed!')} lookup={lookup} />);
     expect(screen.getAllByRole('button')).toHaveLength(1);
-    expect(screen.getByText('Перший ряд')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'емоція: Хлопавка' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Новорічний пас' })).toBeInTheDocument();
+    // «Перший ряд» (позначка й емоція біля ніка) прибрано 2026-11-12.
+    expect(screen.queryByText('Перший ряд')).toBeNull();
   });
 
   it('own: «це ти»; відповідь: цитата', () => {
@@ -105,36 +106,9 @@ describe('Message', () => {
     expect(screen.getByText('Країна · Новий рік настав')).toBeInTheDocument();
   });
 
-  it('system firstrow-joined і лічильник привітань', () => {
-    inList(
-      <>
-        <Message
-          message={msg({ kind: 'system', system: { kind: 'firstrow-joined', participantName: 'Олена і друзі', flagCode: 'UA', eventId: 'e', cityId: 'london' } })}
-          lookup={lookup}
-        />
-        <Message message={msg({ kind: 'system', system: { kind: 'greetings-counter', count: 1240, flagCodes: ['GB', 'FR'], eventId: 'e' } })} lookup={lookup} />
-      </>,
-    );
-    expect(screen.getByText(/тепер у першому ряду · Лондон/)).toBeInTheDocument();
+  it('лічильник привітань', () => {
+    inList(<Message message={msg({ kind: 'system', system: { kind: 'greetings-counter', count: 1240, flagCodes: ['GB', 'FR'], eventId: 'e' } })} lookup={lookup} />);
     expect(screen.getByText(/\+1\s240 людей привітали/)).toBeInTheDocument();
-  });
-
-  it('greeting: «Time2Fest вітає з Новим роком: James … — Перший ряд · Лондон, місце 2» і привітання в лапках', () => {
-    const { container } = inList(
-      <Message
-        message={msg({
-          kind: 'greeting',
-          greeting: { eventId: 'e', seat: 2, participantName: 'James', flagCode: 'GB', emojiId: 'confetti', cityId: 'london', text: 'Happy New Year!' },
-        })}
-        lookup={lookup}
-      />,
-    );
-    const card = container.querySelector('[data-kind="greeting"]')!;
-    expect(card).toHaveTextContent('Time2Fest вітає з Новим роком: James');
-    expect(card).toHaveTextContent('Перший ряд · Лондон, місце 2');
-    expect(card).toHaveTextContent('«Happy New Year!»');
-    expect(card.className).toMatch(/border-highlight/);
-    expect(within(card as HTMLElement).getByRole('img', { name: 'емоція: Хлопавка' })).toBeInTheDocument();
   });
 
   it('приховане модерацією бачить лише автор', () => {
@@ -197,12 +171,9 @@ describe('Chat', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Завантажуємо');
   });
 
-  it('порожня кімната країни й «Перший ряд»', () => {
-    const a = renderApp(<Chat room={{ id: 'country:FR', label: 'Франція' }} messages={[]} />);
+  it('порожня кімната країни', () => {
+    renderApp(<Chat room={{ id: 'country:FR', label: 'Франція' }} messages={[]} />);
     expect(screen.getByText('Тут поки тихо — привітай першим')).toBeInTheDocument();
-    a.unmount();
-    renderApp(<Chat room={{ id: 'firstrow:e1', label: 'Перший ряд' }} messages={[]} />);
-    expect(screen.getByText('Ти перший у першому ряду — привітай тих, хто прийде')).toBeInTheDocument();
   });
 
   it('недоступний: заголовок, друга лінія, без шапки з чипами; «Згорнути чат» на телефоні', () => {

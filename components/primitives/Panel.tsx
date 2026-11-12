@@ -5,10 +5,10 @@
  *
  * ChatSlotPanel — панель на місці колонки чату, та сама геометрія (sticky, висота вікна):
  * рендериться в контейнер `#chat-slot` з LiveShell (якщо його немає — на місці).
- * - `form` (O-NICK, O-FIRST-ROW, O-REMIND, O-SHARE): фокус усередині (FocusScope trapped),
+ * - `form` (O-NICK, O-REMIND, O-SHARE): фокус усередині (FocusScope trapped),
  *   дотик поза панеллю не закриває (не губимо введене);
  * - `nonmodal` (O-AUTHOR, мова, профіль): «Назад» / Esc повертає фокус на тригер;
- * - `accent`: як `form` («Перший ряд»); рамка — як у чату (жовту межу прибрано, рішення 2026-10-29).
+ * - `accent`: як `form`; рамка — як у чату (жовту межу прибрано, рішення 2026-10-29).
  * Основа — Radix Dialog `modal={false}` + FocusScope.
  *
  * InFlowSlot — зарезервоване місце одразу під рядком дій плеєра для вікон без введення
@@ -26,8 +26,8 @@ import { IconButton } from './IconButton';
 export const CHAT_SLOT_ID = 'chat-slot';
 /** Контейнер усередині розгорнутого вікна чату на телефоні (`ChatDock`). */
 export const CHAT_DOCK_SLOT_ID = 'chat-dock-slot';
-/** Шар вікна покупки «Першого ряду» поверх вікна чату на телефоні (`ChatDock`, рішення 2026-10-29). */
-export const SEAT_DOCK_SLOT_ID = 'seat-dock-slot';
+/** Шар вікон поза чатом поверх вікна чату на телефоні (`ChatDock`, рішення 2026-10-29; раніше `seat-dock-slot`). */
+export const LAYER_DOCK_SLOT_ID = 'layer-dock-slot';
 /** Слот секцій на всю ширину під сіткою «колонка | чат» (LiveShell). */
 export const WIDE_SLOT_ID = 'page-wide';
 
@@ -89,7 +89,7 @@ export function ChatSlotPanel({
         className,
       )}
       // Дотик до ручки вікна чату на телефоні (згорнути/розгорнути) — не «поза панеллю»: вікно лишається (рішення 2026-10-28).
-      // Так само — дотик до того, що відкриває іншу картку на цьому ж місці (фішки «Першого ряду», `data-opens-author`):
+      // Так само — дотик до того, що відкриває іншу картку на цьому ж місці (фішки з `data-opens-author`):
       // картка не закривається, а змінюється на нову людину (правка власника 2026-10-31).
       onInteractOutside={(e) => {
         const target = e.target as HTMLElement | null;

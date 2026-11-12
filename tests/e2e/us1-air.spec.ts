@@ -1,6 +1,6 @@
 /**
  * US1 — «Зустріти північ в ефірі, нічого не обираючи» (quickstart, сценарії 1–6; T065).
- * Головна з «машиною часу»: підпис за фазами, штамп + системне повідомлення + стіна на «+15 с»
+ * Головна з «машиною часу»: підпис за фазами, штамп + системне повідомлення на «+15 с» (стіну «Першого ряду» прибрано 2026-11-12)
  * (у межах 1 с, також при зсуві годинника пристрою — SC-002), оцінка на «+2 хв», остання хвилина,
  * «Лишитися тут ›» без перезапуску відео (SC-003), перехід ефіру на «+15 хв». axe на кожній фазі.
  *
@@ -55,8 +55,8 @@ async function guestStampIds(page: Page): Promise<{ eventId: string; grantedAt: 
 }
 
 /**
- * Чекає першого кадру, де одночасно є штамп у блоці під плеєром, системне повідомлення в чаті
- * й стіна «Першого ряду», що загоряється; повертає віртуальний час цього кадру.
+ * Чекає першого кадру, де одночасно є штамп у блоці під плеєром і системне повідомлення в чаті;
+ * повертає віртуальний час цього кадру.
  */
 async function waitForMoment(page: Page, timeout = 30_000): Promise<number> {
   const handle = await page.waitForFunction(
@@ -64,8 +64,7 @@ async function waitForMoment(page: Page, timeout = 30_000): Promise<number> {
       const slot = document.querySelector('[data-stamp-block]');
       const stamp = !!slot && /Поділитися/.test(slot.textContent ?? '') && /Мій паспорт/.test(slot.textContent ?? '');
       const log = [...document.querySelectorAll('[role="log"]')].some((el) => /Велика Британія зустріла Новий рік/.test(el.textContent ?? ''));
-      const wall = !!document.querySelector('[data-first-row-wall][data-phase="lighting"], [data-first-row-wall][data-phase="lit"]');
-      if (!(stamp && log && wall)) return null;
+      if (!(stamp && log)) return null;
       const api = (window as unknown as { __t2f?: { timeMachine: { get(): { at: string } } } }).__t2f;
       return api ? Date.parse(api.timeMachine.get().at) : null;
     },
@@ -117,7 +116,7 @@ test.describe('US1 · ефір на головній', () => {
     await expect(page.getByRole('button', { name: 'Звук увімкнено' })).toBeVisible();
   });
 
-  test('сценарій 2: «+15 с» — штамп, системне повідомлення й стіна разом, у межах 1 с', async ({ page, ytStub }) => {
+  test('сценарій 2: «+15 с» — штамп і системне повідомлення разом, у межах 1 с', async ({ page, ytStub }) => {
     await startAt(page, ytStub, '2027-01-01T01:59:58+02:00', 1);
     await openChat(page);
     await expect(row3(page)).toHaveText('Велика Британія · північ о 02:00 за вашим часом');

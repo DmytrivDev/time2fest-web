@@ -1,6 +1,6 @@
 /**
  * Картки «Поділитися шляхом» і «Поділитися паспортом» (функції пасу; рішення власника 2026-11-07, дошка
- * `Desk-Passport-New`, кадр 4): SVG для вікна O-SHARE (9:16 і 1:1), як картка штампа й листівка «Першого ряду».
+ * `Desk-Passport-New`, кадр 4): SVG для вікна O-SHARE (9:16 і 1:1), як картка штампа.
  * «Мої Нові роки» — мапа з поясами й відвіданими країнами золотом, шлях через вузли, чотири числа, маршрут і прапори.
  * Паспорт — числа й список штампів (прапор, місто, країна). Кольори — художні (зображення, не інтерфейс).
  */
@@ -139,7 +139,6 @@ export interface PassportCardStamp {
   city: string;
   country: string;
   flagCode: string;
-  seat?: number;
 }
 
 /** «Поділитися паспортом»: числа й список штампів. */
@@ -165,7 +164,7 @@ export function passportSvg(ratio: ShareRatio, text: SummaryText, stamps: readon
     const src = flags[s.flagCode];
     body += src ? `<image href="${src}" x="${x}" y="${ry}" width="52" height="52"/>` : `<circle cx="${x + 26}" cy="${ry + 26}" r="26" fill="#4A4A52"/>`;
     body += `<text x="${x + 72}" y="${ry + 26}" fill="#FFFFFF" font-size="34" font-weight="800">${esc(s.city)}</text>`;
-    body += `<text x="${x + 72}" y="${ry + 60}" fill="${s.seat ? '#FCE286' : '#B4B4BC'}" font-size="26" font-weight="600">${esc(s.country)}</text>`;
+    body += `<text x="${x + 72}" y="${ry + 60}" fill="#B4B4BC" font-size="26" font-weight="600">${esc(s.country)}</text>`;
   });
   body += `<text x="${pad}" y="${h - pad}" fill="#B4B4BC" font-size="34" font-weight="700">${esc(text.brand)}</text>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">

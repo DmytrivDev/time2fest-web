@@ -118,7 +118,8 @@ function Hero({ active }: { active: boolean }) {
   );
 }
 
-const FAQ = [1, 2, 3, 4] as const;
+// Питання 2 («А якщо я займу місце в «Першому ряду»?») прибрано разом із рядом (рішення 2026-11-12).
+const FAQ = [1, 3, 4] as const;
 
 function Faq() {
   const t = useTranslations('pass.faq');

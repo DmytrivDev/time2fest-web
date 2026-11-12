@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * C9. Chat — шапка, стрічка й місце під поле введення (`composer`). Кімната «Світ» (або «Країна», «Перший ряд»).
+ * C9. Chat — шапка, стрічка й місце під поле введення (`composer`). Кімната «Світ» (або «Країна»).
  * Стани: `live` (нові внизу, автопрокрутка), `paused` (стрічку зупинено: прокрутка вгору, «Пауза чату» або фокус у списку;
  * капсула «Нові повідомлення N ↓»), `l` (скелетони), `empty`, `unavailable`.
  * Доступність: обгортка `role="log"` з `aria-live="polite"`, сам `<ol>` — список; один Tab-стоп із рухомим фокусом
@@ -47,7 +47,7 @@ const SCROLL_PAD = 8;
 export type ChatState = 'live' | 'l' | 'empty' | 'unavailable';
 
 export interface ChatProps {
-  /** Кімната: `world` («Світ»), `country:FR`, `firstrow:<eventId>`. */
+  /** Кімната: `world` («Світ») або `country:FR`. */
   room: { id: RoomId; label: string };
   messages: readonly ChatMessage[];
   /** `live` за замовчуванням; `l` — скелетони; `empty` — нічого немає; `unavailable` — чат недоступний. */
@@ -65,7 +65,7 @@ export interface ChatProps {
   defaultPaused?: boolean;
   /** Перемикач кімнат («Світ» / «Країна», сторінка країни) замість назви кімнати в шапці. */
   roomSwitcher?: ReactNode;
-  /** Кнопки шапки між перемикачем і «Паузою» (напр. «Моя емоція» кімнати «Перший ряд»). */
+  /** Кнопки шапки між перемикачем і «Паузою». */
   headerExtra?: ReactNode;
   /** Поле введення під стрічкою (C11). */
   composer?: ReactNode;
@@ -396,7 +396,7 @@ export function Chat({
     target.focus();
   };
 
-  const emptyText = room.id.startsWith('firstrow:') ? t('emptyFirstRow') : t('emptyCountry');
+  const emptyText = t('emptyCountry');
 
   const down = state === 'unavailable';
 

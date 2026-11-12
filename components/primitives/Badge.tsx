@@ -17,9 +17,7 @@ export type BadgeVariant =
   | 'stream-status'
   | 'in-schedule'
   | 'vip'
-  | 'first-row'
   | 'count'
-  | 'discount'
   | 'your-midnight'
   | 'you';
 
@@ -27,7 +25,7 @@ export type StreamStatus = 'live' | 'expected' | 'possible' | 'countdown-only';
 
 export interface BadgeProps {
   variant: BadgeVariant;
-  /** Свій текст замість типового (напр. «за 5 хв» для `soon`, «−50%» для `discount`, «це ти» для `you`). */
+  /** Свій текст замість типового (напр. «за 5 хв» для `soon`, «це ти» для `you`). */
   children?: ReactNode;
   /** `stream-status`: який із чотирьох статусів. */
   status?: StreamStatus;
@@ -188,15 +186,6 @@ export function Badge({ variant, children, status = 'live', value = 0, season = 
         </Tooltip>
       );
     }
-    case 'first-row':
-      return (
-        <span
-          data-variant="first-row"
-          className={cn(BOX, 'h-5 rounded-full bg-highlight px-2 text-label-badge-chat text-on-highlight', className)}
-        >
-          {children ?? t('firstRow')}
-        </span>
-      );
     case 'count':
       return (
         <span
@@ -208,15 +197,6 @@ export function Badge({ variant, children, status = 'live', value = 0, season = 
           )}
         >
           {children ?? (value > 99 ? t('countMax') : String(value))}
-        </span>
-      );
-    case 'discount':
-      return (
-        <span
-          data-variant="discount"
-          className={cn(BOX, 'h-5.5 rounded-sm bg-surface-raised px-2 text-label-badge text-highlight', className)}
-        >
-          {children ?? t('discount')}
         </span>
       );
     case 'your-midnight':

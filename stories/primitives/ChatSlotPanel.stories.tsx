@@ -43,7 +43,7 @@ export const Nonmodal: Story = {
 };
 
 export const Accent: Story = {
-  name: 'accent — «Перший ряд» (жовта межа)',
+  name: 'accent — вікно з кораловою кнопкою («Усе про пас»)',
   args: base,
-  render: () => <Column variant="accent" title="Перший ряд" withField />,
+  render: () => <Column variant="accent" title="Новорічний пас" withField />,
 };

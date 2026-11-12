@@ -7,7 +7,8 @@
  * Згори нічого: одразу вікна (1 — на всю ширину, 2–4 — сітка 2×2, вільні місця — плашки розміром із вікно; порожня
  * кімната — 4 місця, телефон — одне). Під вікнами — «Кімната перегляду · N з 4», відлік до найближчої півночі у вікнах і
  * рядок дій: «Додати / Замінити трансляцію», «Поділитися», «Режим вечірки», «⋯». Далі — обіцянка штампа, штамп
- * (головного вікна + «Ще в кімнаті»), Перший ряд (поточного поясу), пас, «Поточні трансляції», «Як працює кімната».
+ * (головного вікна + «Ще в кімнаті»), пас, «Поточні трансляції», «Як працює кімната». «Перший ряд» прибрано
+ * (рішення власника 2026-11-12); місце смуги тостів позначено `TOAST-STRIP-SLOT`.
  *
  * Вікна:
  * - позиція в сітці = порядок `guest.room.windows`; перше — головне (штамп, чат країни). DOM вікон не переставляємо
@@ -29,8 +30,7 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
-import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
-import { firstRowEventFor } from '@/lib/firstrow/pick';
+import { HANDOVER_AFTER } from '@/lib/engine/config';
 import {
   MORE_ACTIONS_ID,
   MoreActionsDesk,
@@ -461,11 +461,12 @@ export function RoomLive() {
   const start = useCallback((slot: number) => useRoomStore.getState().markStarted(slot), []);
 
   // ── Трансляції наживо (для «Додати», вільних місць) ──
-  // Пояс кімнати — пояс головного вікна (порожня кімната — поточний пояс). У списку «Додати» й у «Поточних
-  // трансляціях» — усі трансляції цього поясу, що йдуть зараз (власник 2026-11-06).
+  // Пояс кімнати — пояс головного вікна (порожня кімната — поточний пояс: найближча північ, що минула не більш як на
+  // `HANDOVER_AFTER`). У списку «Додати» й у «Поточних трансляціях» — усі трансляції цього поясу, що йдуть зараз
+  // (власник 2026-11-06).
   const roomZoneId =
     (main ? data.eventsById.get(main.eventId)?.zoneId : undefined) ??
-    (known ? firstRowEventFor(data, now)?.zoneId : undefined) ??
+    (known ? data.zones.find((z) => now < z.midnightMs + HANDOVER_AFTER)?.id : undefined) ??
     null;
   const liveRows = useMemo(() => {
     if (!known || !roomZoneId) return [] as StreamRowData[];
@@ -988,8 +989,6 @@ export function RoomLive() {
       country={country ? { iso: country.iso, name: country.name.uk } : undefined}
       countries={windowCountries}
       onCountryChange={setPickedIso}
-      eventId={main?.eventId ?? null}
-      cityName={mainEvent ? data.citiesById.get(mainEvent.cityId)?.name.uk : undefined}
       onHide={chatColumn ? vis.hide : collapse}
       collapseMode={!chatColumn}
       onToEvents={chatColumn ? undefined : collapse}
@@ -1036,10 +1035,7 @@ export function RoomLive() {
         <div className="mt-8 flex flex-col gap-4">
           {/* Штамп у кімнаті закривається «×» (постійний — лише на сторінці країни, власник 2026-11-06). */}
           <StampBlock eventId={main?.eventId ?? null} roomEventIds={eventIds} />
-          <div data-first-row-slot="">
-            <FirstRowModule event={firstRowEventFor(data, now)} />
-          </div>
-
+          {/* TOAST-STRIP-SLOT (кімната): смуга тостів — тут, під штампом (де був «Перший ряд»). */}
           <OfferBlock />
           <div data-moment-slot="">
             <OverlayInFlowOutlet label={t('heading')} />

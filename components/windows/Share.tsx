@@ -40,7 +40,7 @@ export interface ShareContentProps {
   renderPng?: (svg: string, width: number, height: number) => Promise<Blob>;
   /** Збереження PNG; за замовчуванням — завантаження через `<a download>`. */
   onDownload?: (blob: Blob, filename: string) => void;
-  /** Інша картинка замість штампа (листівка «Першого ряду»): SVG для формату. */
+  /** Інша картинка замість штампа (картка шляху чи паспорта): SVG для формату. */
   svgFor?: (ratio: ShareRatio) => string;
   /** Опис прев’ю для зчитувача (за замовчуванням — штамп). */
   previewAlt?: string;

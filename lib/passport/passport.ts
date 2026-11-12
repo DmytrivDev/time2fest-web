@@ -59,7 +59,6 @@ export interface PassportStamp {
   offsetMinutes: number;
   midnightMs: Ms;
   continent: Continent | null;
-  seat?: number;
   rateable: boolean;
   href: string;
 }
@@ -82,7 +81,6 @@ export function passportStamps(stamps: readonly Stamp[], data: Dataset): Passpor
         offsetMinutes: zone.offsetMinutes,
         midnightMs: e.midnightMs,
         continent: continentOf(st.countryIso, zone.offsetMinutes),
-        ...(st.firstRowSeat ? { seat: st.firstRowSeat } : {}),
         rateable: isRateable(data, st.eventId),
         href: country ? countryHref(country, { eventId: e.id }) : '/',
       } satisfies PassportStamp;

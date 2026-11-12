@@ -95,7 +95,6 @@ describe('EngineScheduler', () => {
       slotMidnightUtc: '2027-01-01T00:00:00Z',
       presentEventIds: ['evt_london_2027'],
       presenceSources: { evt_london_2027: 'air' },
-      firstRowEventId: 'evt_london_2027',
       announce: { cityId: 'london', text: 'midnight-stamp-ready' },
     });
     expect(st.late).toBeUndefined();

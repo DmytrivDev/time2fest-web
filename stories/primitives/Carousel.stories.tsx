@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { Badge } from '@/components/primitives/Badge';
 import { Carousel } from '@/components/primitives/Carousel';
 import { Flag } from '@/components/primitives/Flag';
 import { Stage } from '../_support/Stage';
@@ -43,16 +42,15 @@ export const Manual: Story = {
   ),
 };
 
-export const Wall: Story = {
-  name: 'Стіна «Першого ряду»: автогортання по колу, пауза на наведенні й фокусі',
+export const Loop: Story = {
+  name: 'Автогортання по колу, пауза на наведенні й фокусі',
   render: () => (
     <Stage>
-      <Carousel label="Перший ряд · Лондон">
+      <Carousel label="Міста">
         {CITIES.map((c) => (
           <div key={c.city} className="flex h-16 w-48 items-center gap-3 rounded-md bg-surface-raised px-3">
             <Flag code={c.flag} size="sm" decorative />
             <span className="text-body-strong text-text">{c.city}</span>
-            <Badge variant="first-row" />
           </div>
         ))}
       </Carousel>
@@ -60,12 +58,12 @@ export const Wall: Story = {
   ),
 };
 
-export const WallReducedMotion: Story = {
-  name: 'Стіна під «зменшити рух»: не гортається сама, кнопки «Пауза» немає',
+export const LoopReducedMotion: Story = {
+  name: 'Під «зменшити рух»: не гортається сама, кнопки «Пауза» немає',
   globals: { reduceMotion: 'on' },
   render: () => (
     <Stage>
-      <Carousel label="Перший ряд · Лондон" arrows="none">
+      <Carousel label="Міста" arrows="none">
         {CITIES.map((c) => (
           <div key={c.city} className="flex h-16 w-48 items-center gap-3 rounded-md bg-surface-raised px-3">
             <Flag code={c.flag} size="sm" decorative />

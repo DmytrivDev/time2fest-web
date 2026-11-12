@@ -105,10 +105,7 @@
                   "midnightUtc": "2026-12-31T11:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 88,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 88
                 }
               ]
             }
@@ -493,10 +490,7 @@
                   "midnightUtc": "2026-12-31T13:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 95,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 95
                 }
               ]
             },
@@ -946,10 +940,7 @@
                   "midnightUtc": "2026-12-31T15:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 90,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 90
                 }
               ]
             }
@@ -975,10 +966,7 @@
                   "midnightUtc": "2026-12-31T15:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 70,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 70
                 }
               ]
             }
@@ -1233,10 +1221,7 @@
                   "midnightUtc": "2026-12-31T16:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 70,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 70
                 }
               ]
             }
@@ -1265,10 +1250,7 @@
                   "midnightUtc": "2026-12-31T16:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 70,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 70
                 }
               ]
             }
@@ -2305,10 +2287,7 @@
                   "midnightUtc": "2026-12-31T20:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 85,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 85
                 }
               ]
             }
@@ -2589,10 +2568,7 @@
                   "midnightUtc": "2026-12-31T21:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 65,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 65
                 }
               ]
             }
@@ -3150,10 +3126,7 @@
                   "midnightUtc": "2026-12-31T22:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 90,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 90
                 }
               ]
             }
@@ -3260,10 +3233,7 @@
                   "midnightUtc": "2026-12-31T22:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 50,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 50
                 }
               ]
             }
@@ -3977,10 +3947,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 90,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 90
                 }
               ]
             }
@@ -4009,10 +3976,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 80,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 80
                 }
               ]
             }
@@ -4041,10 +4005,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 75,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 75
                 }
               ]
             }
@@ -4073,10 +4034,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 75,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 75
                 }
               ]
             }
@@ -4105,10 +4063,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 60,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 60
                 }
               ]
             }
@@ -4137,10 +4092,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 55,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 55
                 }
               ]
             }
@@ -4169,10 +4121,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 50,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 50
                 }
               ]
             }
@@ -4227,10 +4176,7 @@
                   "midnightUtc": "2026-12-31T23:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 45,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 45
                 }
               ]
             }
@@ -5178,10 +5124,7 @@
                   "midnightUtc": "2027-01-01T00:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 95,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 95
                 }
               ]
             }
@@ -5236,10 +5179,7 @@
                   "midnightUtc": "2027-01-01T00:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 55,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 55
                 }
               ]
             }
@@ -6023,10 +5963,7 @@
                   "midnightUtc": "2027-01-01T03:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 90,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 90
                 }
               ]
             }
@@ -6055,10 +5992,7 @@
                   "midnightUtc": "2027-01-01T03:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 65,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 65
                 }
               ]
             }
@@ -7102,10 +7036,7 @@
                   "midnightUtc": "2027-01-01T05:00:00Z",
                   "isMainCelebration": true,
                   "type": "webcam",
-                  "popularity": 98,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 98
                 }
               ]
             }
@@ -7533,10 +7464,7 @@
                   "midnightUtc": "2027-01-01T06:00:00Z",
                   "isMainCelebration": true,
                   "type": "main",
-                  "popularity": 70,
-                  "firstRow": {
-                    "saleEnabled": true
-                  }
+                  "popularity": 70
                 }
               ]
             }

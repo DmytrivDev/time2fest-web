@@ -5,16 +5,17 @@
  *
  * Повний дизайн — дошки `Desk-Country-Full`, `Phone-Country-Full` (погоджено 2026-11-05):
  * рядок країни (CountryHeader; кілька поясів — вибір поясу) · відео й рядок дій («Обрати трансляцію ›», «Відео | Відлік»,
- * кімната, вечірка, «⋯») · «Перший ряд» · штамп (тут — постійно, без «×») · пропозиція пасу й чайові · «Трансляції ·
+ * кімната, вечірка, «⋯») · штамп (тут — постійно, без «×») · пропозиція пасу й чайові · «Трансляції ·
  * <Країна>» картками з мініатюрами й «+» · до півночі «Ще о … · інші країни поясу» (після — «Зараз і далі») ·
  * «Як святкувати» · «Як <Країна> зустрічає Новий рік» · «Питання й відповіді».
  * Каркас — як на головній (рішення 2026-11-05, `as-built-home-countries-2026-11-05.md`):
- * Телефон (зверху вниз): відео · липкий рядок «місто · відлік» зі звуком · смуга «Перший ряд» (`dockBar`) · назва й рядок дій
+ * Телефон (зверху вниз): відео · липкий рядок «місто · відлік» зі звуком · назва й рядок дій
  * («Обрати трансляцію ›», «⋯») · штамп, пропозиції, вікна моменту · CountryHeader (крихти, графік) · «Дивляться люди з N
  * країн» · «Міста й трансляції», «Трансляції в цьому поясі» (після півночі — «Зараз і далі»), «Як святкувати», «Питання й
  * відповіді». Чат «Країна» / «Світ» — закріплене вікно внизу (`ChatDock`).
  * Десктоп: CountryHeader · PlayerBlock (рядок дій: «Обрати трансляцію ›», кімната, вечірка, «⋯») · штамп, пропозиції,
- * вікна моменту · «Перший ряд» · ті самі блоки; права колонка макета — чат (sticky); сховано — «Показати чат» біля таймера.
+ * вікна моменту · ті самі блоки; права колонка макета — чат (sticky); сховано — «Показати чат» біля таймера.
+ * «Перший ряд» прибрано (рішення власника 2026-11-12); місце смуги тостів позначено `TOAST-STRIP-SLOT`.
  *
  * Плеєр: сторінка сама НЕ переходить за ефіром (FR-024). Ланцюжок задається лише двічі: один раз після відкриття
  * (якщо вже грає подія цієї країни — після «Лишитися тут ›» — нічого не чіпаємо, відео не перезапускається) і на дію
@@ -82,9 +83,6 @@ import { eventTitle } from './Caption';
 import home from './home.module.css';
 import { utcLabel } from './MapModel';
 import styles from './live.module.css';
-import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
-import { firstRowEventFor } from '@/lib/firstrow/pick';
-import { zoneRowOf } from '@/lib/firstrow/zone';
 
 const PLAYER_TITLE_ID = 'player-title';
 const STREAMS_ID = 'country-streams';
@@ -609,24 +607,12 @@ export function CountryLive({ iso }: { iso: string }) {
   const panel = (className?: string) => (
     <ChatPanel
       country={{ iso, name: country.name.uk }}
-      eventId={mainEvent?.id ?? null}
-      cityName={current?.city?.name.uk}
       onHide={chatColumn ? vis.hide : collapse}
       collapseMode={!chatColumn}
       onToEvents={chatColumn ? undefined : collapse}
       className={className}
     />
   );
-  // Сторінка країни — ряд власного (вибраного) поясу країни (власник 2026-11-06); у поясі без ряду — ряд поточного
-  // поясу, як на головній і в кімнаті.
-  const firstRowEvent = (zoneId ? zoneRowOf(data, zoneId) : null) ?? firstRowEventFor(data, now);
-  // Слот «Першого ряду» сторінки країни (US5): телефон — смуга під липким рядком (`dockBar`), як на головній.
-  const firstRow = (dockBar: boolean) =>
-    firstRowEvent ? (
-      <div data-first-row-slot="">
-        <FirstRowModule event={firstRowEvent} dockBar={dockBar} />
-      </div>
-    ) : null;
   // Штамп (окремий блок) і вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра, як на головній.
   const inflow = (
     <>
@@ -666,14 +652,14 @@ export function CountryLive({ iso }: { iso: string }) {
           chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoom} onShow={vis.show} /> : null
         }
         dock={!chatColumn}
-        belowBar={known ? firstRow(true) : null}
+        // TOAST-STRIP-SLOT (телефон): смуга тостів — під липким рядком часу (`belowBar`). Поки нічого.
       />
 
       {chatColumn ? (
         <>
-          {/* «Перший ряд», під ним штамп і пропозиції (дошка `Desk-Country-Full`). */}
+          {/* Штамп і пропозиції (дошка `Desk-Country-Full`). TOAST-STRIP-SLOT (десктоп): смуга тостів — тут, над штампом
+              (де був «Перший ряд»). */}
           <div className={cn(home.column, 'pt-4')}>
-            {firstRow(false)}
             {inflow}
           </div>
           <div className="pt-6">{events}</div>

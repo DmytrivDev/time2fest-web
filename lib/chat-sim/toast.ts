@@ -23,7 +23,7 @@ export function buildToast({ text, amount, now, guestId, nick, flagCode, hasPass
     room: 'world',
     kind: 'regular',
     createdAt: now,
-    author: ownAuthor({ guestId, nick, flagCode, hasPass }, 'world'),
+    author: ownAuthor({ guestId, nick, flagCode, hasPass }),
     text: text.trim(),
     moderation: 'ok',
     toast: { amount },

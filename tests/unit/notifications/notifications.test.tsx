@@ -17,7 +17,7 @@ function wrap(ui: React.ReactNode) {
 }
 
 beforeEach(() => {
-  useNotifStore.setState({ items: [], enabled: true, kinds: { live: true, stamp: true, reply: true, goal: true, seat: true, streak: true } });
+  useNotifStore.setState({ items: [], enabled: true, kinds: { live: true, stamp: true, reply: true, goal: true, streak: true } });
 });
 
 describe('стор сповіщень', () => {

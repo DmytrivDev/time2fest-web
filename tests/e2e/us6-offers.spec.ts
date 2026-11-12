@@ -82,7 +82,6 @@ async function seedGuest(page: Page, seed: Seed = {}) {
       offers: { nightId: '2026-27', history, visible: null },
       schedule: [],
       hasPass: s.hasPass ?? false,
-      firstRow: {},
       nightId: '2026-27',
     };
     localStorage.setItem(key, JSON.stringify({ state, version: 1 }));
@@ -104,14 +103,14 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
     await setTime(page, { at: LONDON_PLUS_6 });
     const card = offerCard(page, '2 Нових роки вже твої — далі буде ще краще');
     await expect(card).toBeVisible({ timeout: 10_000 });
-    await expect(slot(page)).toContainText('Оформити пас · $4,99');
+    await expect(slot(page)).toContainText('Оформити пас · $5');
     await expect(slot(page)).toContainText('разово, на весь сезон · без підписки');
     await expect(slot(page).getByRole('list', { name: 'Твій новорічний шлях' })).toBeVisible();
     await expect(slot(page)).toContainText('Наступна північ · за');
 
     // Одна коралова кнопка на екрані — «Оформити пас»; кнопка звуку нейтральна.
     await expect(visibleCoral(page)).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Оформити пас · $4,99' })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Оформити пас · $5' })).toHaveAttribute(
       'data-variant',
       'coral',
     );
@@ -136,7 +135,7 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
   }) => {
     await seedGuest(page, { stamps: TWO_STAMPS });
     await gotoAt(page, LONDON_PLUS_6, 0);
-    await slot(page).getByRole('button', { name: 'Оформити пас · $4,99' }).click();
+    await slot(page).getByRole('button', { name: 'Оформити пас · $5' }).click();
     await expect(page.getByRole('dialog', { name: 'Новорічний пас' })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe('/');
     const acted = await page.evaluate(

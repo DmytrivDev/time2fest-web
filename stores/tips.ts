@@ -17,7 +17,7 @@ import { persist } from 'zustand/middleware';
 import { buildToast } from '@/lib/chat-sim/toast';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { Ms } from '@/lib/data/types';
-import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/firstrow/pay';
+import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
 import type { TipAmount } from '@/lib/offers/format';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { useGuestStore } from '@/stores/guest';

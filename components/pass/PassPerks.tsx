@@ -127,23 +127,7 @@ function MiniCard() {
   );
 }
 
-function MiniSeat() {
-  const t = useTranslations('pass.perks.mini');
-  return (
-    <div aria-hidden="true" className={s.miniSeat}>
-      <AuthIcon name="seat" size={22} />
-      <span className={s.miniSeatText}>
-        <span className={s.miniSeatLabel}>{t('seat')}</span>
-        <span className={s.miniSeatPrice}>
-          <s>{formatUsd(PASS_PRICE)}</s>
-          <b>{formatUsd(2.49)}</b>
-        </span>
-      </span>
-    </div>
-  );
-}
-
-/** Переклад і «Тобі відповіли» — два приклади в ряд (шостий пункт вітрини, рішення власника 2026-10-30). */
+/** Переклад і «Тобі відповіли» — два приклади в ряд (останній пункт вітрини, рішення власника 2026-10-30). */
 function MiniChatx() {
   const t = useTranslations('pass.perks.mini');
   return (
@@ -175,33 +159,28 @@ function MiniChatx() {
   );
 }
 
-export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'seat'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
+export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
   { key: 'chat', icon: 'ticket', Preview: MiniChat },
   { key: 'schedule', icon: 'calendar', Preview: MiniSchedule },
   { key: 'quiet', icon: 'filter', Preview: MiniQuiet },
   { key: 'card', icon: 'card', Preview: MiniCard },
-  { key: 'seat', icon: 'seat', Preview: MiniSeat },
 ];
 
-/** Вітрина на сторінці пасу: п’ять можливостей і шоста — «Переклад і сповіщення в чаті» (лише тут, не в інших списках). */
-const SHOWCASE_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'seat' | 'chatx'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
+/**
+ * Вітрина на сторінці пасу: чотири можливості й п’ята — «Переклад і сповіщення в чаті» (лише тут, не в інших списках).
+ * Знижку −50% на «Перший ряд» прибрано разом із рядом (рішення власника 2026-11-12).
+ */
+const SHOWCASE_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'chatx'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
   ...PASS_PERKS,
   { key: 'chatx', icon: 'translate', Preview: MiniChatx },
 ];
 
 type PerkKey = (typeof SHOWCASE_PERKS)[number]['key'];
 
-/** Ціна місця в «Першому ряду» без пасу й з пасом (−50%), як у прикладі `MiniSeat`. */
-const SEAT_FULL = 4.99;
-const SEAT_HALF = 2.49;
-
 /** «Без пасу → з пасом» для рядка списку й плашок вибраної можливості. */
 function useCompare() {
   const t = useTranslations('pass.perks');
-  return (key: PerkKey) =>
-    key === 'seat'
-      ? { without: t('seatWithout', { full: formatUsd(SEAT_FULL) }), with: t('seatWith', { half: formatUsd(SEAT_HALF) }) }
-      : { without: t(`${key}Without`), with: t(`${key}With`) };
+  return (key: PerkKey) => ({ without: t(`${key}Without`), with: t(`${key}With`) });
 }
 
 /** Вибрана можливість: назва, «без пасу / з пасом», опис і великий приклад. */
@@ -252,7 +231,7 @@ export function PassPerksShowcase() {
     <section aria-labelledby="pass-perks-title" className={s.perks} data-block="pass-perks">
       <span className={s.eyebrow}>
         <AuthIcon name="spark" size={16} />
-        {t('eyebrow6')}
+        {t('eyebrow')}
       </span>
       <h2 id="pass-perks-title" className={s.perksTitle}>
         {t('title')}

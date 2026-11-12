@@ -45,10 +45,7 @@ export function buildSchedulePath(stamps: readonly Stamp[], schedule: readonly s
     const hub = sorted.find((s) => s.presenceSource !== 'room') ?? sorted[0]!;
     hubByZone.set(zoneId, hub.eventId);
     for (const st of sorted) {
-      const p = point(data, st.eventId, false, {
-        ...(st.firstRowSeat ? { firstRowSeat: st.firstRowSeat } : {}),
-        ...(st.eventId !== hub.eventId ? { hubOf: hub.eventId } : {}),
-      });
+      const p = point(data, st.eventId, false, st.eventId !== hub.eventId ? { hubOf: hub.eventId } : {});
       if (p) out.push(p);
     }
   }

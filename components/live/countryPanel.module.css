@@ -230,7 +230,7 @@
   color: var(--color-highlight);
 }
 
-/* Кімната країни: штамп, «Перший ряд», наступна північ, перехід. */
+/* Кімната країни: штамп, наступна північ, перехід. */
 .room {
   display: flex;
   flex-direction: column;
@@ -258,27 +258,6 @@
   color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 1.4;
-}
-.seatBody {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-.seatBar {
-  display: block;
-  max-width: 240px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--color-border);
-  overflow: hidden;
-}
-.seatFill {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: var(--color-highlight);
 }
 .next {
   display: flex;

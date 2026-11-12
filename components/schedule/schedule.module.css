@@ -155,10 +155,6 @@
   border: 2px solid var(--color-text-secondary);
   border-radius: var(--radius-full);
 }
-.legGold {
-  color: var(--color-highlight);
-  font-weight: 600;
-}
 .route {
   display: flex;
   flex-wrap: wrap;
@@ -368,8 +364,7 @@
   display: inline-flex;
   border-radius: var(--radius-full);
 }
-.ring[data-state='stamp'],
-.ring[data-state='firstRow'] {
+.ring[data-state='stamp'] {
   box-shadow: 0 0 0 2px var(--color-background), 0 0 0 3.5px var(--color-highlight);
 }
 .ring[data-state='missed'] {

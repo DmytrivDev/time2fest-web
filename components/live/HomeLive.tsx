@@ -5,11 +5,12 @@
  * `Desk-Cookies-Design` і телефонними `Phone-Home-Live`, `Phone-Home-Handover`, `Phone-Moment`,
  * `Phone-Rate`, `Phone-Cookies`, `Phone-Chat`, `Phone-Map-Card`.
  *
- * Десктоп: основна колонка — PlayerBlock (плеєр, підпис, рядок дій) · InFlowSlot (штамп, оцінка) · «Перший ряд» · «Зараз і далі» + «Прогрес свята»; права колонка макета — чат «Світ»
+ * Десктоп: основна колонка — PlayerBlock (плеєр, підпис, рядок дій) · InFlowSlot (штамп, оцінка) · «Зараз і далі» + «Прогрес свята»; права колонка макета — чат «Світ»
  * (sticky); мапа поясів — на всю ширину під обома колонками (портал у `#page-wide`). Під відео при прокрутці нічого не плаває.
  * Телефон (зверху вниз): PlayerBlock (плеєр закріплений угорі) · InFlowSlot · вміст сторінки, що прокручується:
- * «Дивляться люди з N країн», «Перший ряд» (згортається), «Зараз і далі» + прогрес, мапа поясів. Чат «Світ» — вікно
- * внизу (`ChatDock`): згорнуте «Розгорнути чат N нових» або розгорнуте під рядком часу й смугою «Перший ряд».
+ * «Дивляться люди з N країн», «Зараз і далі» + прогрес, мапа поясів. Чат «Світ» — вікно
+ * внизу (`ChatDock`): згорнуте «Розгорнути чат N нових» або розгорнуте під рядком часу.
+ * «Перший ряд» прибрано (рішення власника 2026-11-12); на його місці буде смуга тостів — місця позначено `TOAST-STRIP-SLOT`.
  *
  * Дані ефіру лише читаються з `useBroadcast()` (один `BroadcastController` на макет). Сторінка реєструє присутність
  * для штампа (`useStampGrant`), запускає імітатор чату й відкриває вікна моменту (`useMomentWindows`).
@@ -24,7 +25,6 @@ import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatLookup } from '@/components/chat/useChatLookup';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
-import { FirstRowModule } from '@/components/firstrow/FirstRowModule';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
 import { StampBlock } from '@/components/live/StampBlock';
@@ -42,7 +42,6 @@ import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/compone
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
-import { firstRowEventFor } from '@/lib/firstrow/pick';
 import { formatClock, viewerTimeZone, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
 import { useBroadcast } from '@/lib/player/BroadcastController';
@@ -56,12 +55,6 @@ const CHAT_ROOMS = ['world'] as const;
 const PLAYER_TITLE_ID = 'player-title';
 
 export { useChatLookup };
-
-/** Модуль «Перший ряд» (C6/C7/C8, US5): подія ефіру з «Першим рядом» або найближча з відкритим продажем. */
-function FirstRowSection({ now, className, dockBar }: { now: Ms; className?: string; dockBar?: boolean }) {
-  // Ряд поточного поясу — той самий, що на сторінках країн, у кімнаті й на ТВ (ряд один на пояс, 2026-11-05).
-  return <FirstRowModule event={firstRowEventFor(getData(), now)} className={className} dockBar={dockBar} />;
-}
 
 /** Краї «Прогресу свята»: «12:00 · Кірибаті» і «14:00 · 1 січня» за часом глядача. */
 function progressEdges(data: Dataset): { startLabel?: string; endLabel?: string } {
@@ -139,8 +132,6 @@ export function HomeLive() {
     <ChatPanel
       country={airCountry ? { iso: airCountry.iso, name: airCountry.name.uk } : undefined}
       startInWorld
-      eventId={eventId}
-      cityName={city}
       onHide={chatColumn ? vis.hide : collapse}
       collapseMode={!chatColumn}
       onToEvents={chatColumn ? undefined : collapse}
@@ -198,13 +189,13 @@ export function HomeLive() {
         watchers={viewers.length}
         captionAside={showChatButton}
         dock={!chatColumn}
-        belowBar={current && ready ? <FirstRowSection now={now} dockBar /> : null}
+        // TOAST-STRIP-SLOT (телефон): смуга тостів — під липким рядком часу (`belowBar`). Поки нічого.
       />
 
       {chatColumn ? (
         <div className={cn(home.column, 'pt-4')}>
           {inflow}
-          {current && ready ? <FirstRowSection now={now} /> : null}
+          {/* TOAST-STRIP-SLOT (десктоп): смуга тостів — тут, під штампом і пропозиціями, над «Зараз і далі». */}
           <div className="mt-2">{nowNext('carousel')}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
           {wideSlot ? createPortal(map, wideSlot) : null}

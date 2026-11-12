@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { CLOSE_MS, OverlayInFlowOutlet, OverlayManager, isSeatSpec, placementFor, useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
+import { CLOSE_MS, OverlayInFlowOutlet, OverlayManager, isLayerSpec, placementFor, useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
 import { clearAllHandlers, emit } from '@/lib/events/bus';
 import { CoralProvider, useCoralWindowOpen } from '@/lib/overlay/coral';
 import { useGuestStore } from '@/stores/guest';
@@ -72,21 +72,21 @@ describe('placementFor', () => {
     expect(placementFor('inflow', false)).toBe('inflow');
     expect(placementFor('inflow', true)).toBe('inflow');
     // Телефон з вікном чату: покупка «Першого ряду» — шаром поверх чату, вікна чату — у ньому.
-    expect(placementFor('accent', false, false, true)).toBe('seat');
+    expect(placementFor('accent', false, false, true)).toBe('layer');
     expect(placementFor('form', false, true, true)).toBe('dock');
     expect(placementFor('accent', true, false, true)).toBe('panel');
     // Рішення 2026-11-04: на телефоні з вікном чату будь-яке вікно поза чатом — окремим шаром (без затемнення).
-    expect(placementFor('form', false, false, true)).toBe('seat');
-    expect(placementFor('nonmodal', false, false, true)).toBe('seat');
+    expect(placementFor('form', false, false, true)).toBe('layer');
+    expect(placementFor('nonmodal', false, false, true)).toBe('layer');
   });
 
-  it('isSeatSpec: вікна чату — у розгорнутому чаті, при згорнутому — шаром; решта — завжди шаром', () => {
+  it('isLayerSpec: вікна чату — у розгорнутому чаті, при згорнутому — шаром; решта — завжди шаром', () => {
     const base = { title: 't', content: null };
-    expect(isSeatSpec({ ...base, id: 'a', kind: 'form' })).toBe(true);
-    expect(isSeatSpec({ ...base, id: 'b', kind: 'nonmodal', inChat: true })).toBe(false);
-    expect(isSeatSpec({ ...base, id: 'c', kind: 'nonmodal', inChat: true, separate: true })).toBe(true);
-    expect(isSeatSpec({ ...base, id: 'd', kind: 'inflow' })).toBe(false);
-    expect(isSeatSpec(null)).toBe(false);
+    expect(isLayerSpec({ ...base, id: 'a', kind: 'form' })).toBe(true);
+    expect(isLayerSpec({ ...base, id: 'b', kind: 'nonmodal', inChat: true })).toBe(false);
+    expect(isLayerSpec({ ...base, id: 'c', kind: 'nonmodal', inChat: true, separate: true })).toBe(true);
+    expect(isLayerSpec({ ...base, id: 'd', kind: 'inflow' })).toBe(false);
+    expect(isLayerSpec(null)).toBe(false);
   });
 });
 

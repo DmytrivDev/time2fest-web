@@ -28,9 +28,6 @@ ROOT = Path(__file__).resolve().parent.parent
 SEED = ROOT / "scripts" / "seed"
 OUT = ROOT / "data"
 
-FIRST_ROW_TYPES = {"main", "webcam"}  # події, для яких відкривається продаж «Першого ряду»
-
-
 def fail(msg: str) -> None:
     print(f"ПОМИЛКА: {msg}", file=sys.stderr)
     sys.exit(1)
@@ -68,7 +65,6 @@ def schema() -> dict:
             "type": ctype,
             "popularity": {"type": "integer", "minimum": 0, "maximum": 100},
             "restrained": {"type": "object", "required": ["note"], "properties": {"note": uk}},
-            "firstRow": {"type": "object", "required": ["saleEnabled"], "properties": {"saleEnabled": {"type": "boolean"}}},
         },
     }
     city = {
@@ -156,8 +152,6 @@ def main() -> None:
                     "type": city["celebrationType"],
                     "popularity": ev_pop,
                 }
-                if is_main and city["celebrationType"] in FIRST_ROW_TYPES:
-                    event["firstRow"] = {"saleEnabled": True}
                 node = {"id": city["id"], "name": city["name"]}
                 if "landmark" in city:
                     node["landmark"] = city["landmark"]
@@ -282,8 +276,6 @@ def check_invariants(schedule: dict, countries_file: dict) -> None:
                         fail(f"інваріант 6: eventId {ev['id']}")
                     if ev["midnightUtc"] != z["midnightUtc"]:
                         fail(f"інваріант 3: {ev['id']}")
-                    if "firstRow" in ev and not ev["isMainCelebration"]:
-                        fail(f"інваріант 7: {ev['id']}")
         if z["representativeCityId"] not in ids:
             fail(f"representativeCityId {z['representativeCityId']} невідомий")
     for iso, c in countries.items():

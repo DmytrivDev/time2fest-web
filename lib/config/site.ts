@@ -31,20 +31,6 @@ export function shareUrl(eventId: string): string {
   return `https://${shareShortUrl(eventId)}`;
 }
 
-/** `evt_london_2027` → `london` (тимчасовий слаг міста для адреси форми «Першого ряду»). */
-function eventSlug(eventId: string): string {
-  return eventId.replace(/^evt_/, '').replace(/_\d{4}$/, '');
-}
-
-/** Видима коротка адреса форми «Першого ряду» події: `time2fest.com/first-row/london`. */
-export function firstRowShortUrl(eventId: string): string {
-  return `${SITE_HOST}/first-row/${eventSlug(eventId)}`;
-}
-
-export function firstRowUrl(eventId: string): string {
-  return `https://${firstRowShortUrl(eventId)}`;
-}
-
 /** Сторінка Новорічного пасу (вхід — там само): QR «Мій графік» і першого заходу на ТВ. */
 export const PASS_SHORT_URL = `${SITE_HOST}/pass`;
 export const PASS_URL = `https://${PASS_SHORT_URL}/`;

@@ -4,18 +4,19 @@
  * ChatDock — закріплене вікно чату внизу на телефоні (рішення 2026-10-27, макети `Phone-Chat-Dock`, `Phone-Chat-Expanded`).
  * Замінює вкладки «Події | Чат»: чат завжди на екрані. Згорнутий — ручка 36×4 і рядок «Розгорнути чат» зі жовтою
  * пілюлею «N нових» (нові з моменту згортання, власні не рахуємо), 46 px + безпечна зона (≥ 58 px). Розгорнутий — накриває
- * все під смугою «Перший ряд» (відео, рядок часу й смуга лишаються), сторінка не прокручується.
+ * все під рядком часу (відео й рядок часу лишаються; смуга під ним, позначена `data-dock-above`, — теж), сторінка не прокручується.
  * Жести лише на шапці (ручка + рядок інструментів): свайп угору розгортає, униз згортає; вікно йде за пальцем,
  * відпустили далі середини або швидким рухом — доїжджає (200 мс, без анімації за «зменшити рух»). Дотик до шапки поза
  * кнопками перемикає стан; Esc і шеврон «Згорнути чат» згортають, фокус іде на шапку.
- * Вікна чату (O-NICK, O-AUTHOR, правила, «Моя емоція») відкриваються всередині вікна — у `#chat-dock-slot`.
- * Усі інші вікна (пас, графік, «Перший ряд», «Поділитися», вхід…) — окремий шар поверх сторінки (`#seat-dock-slot`,
+ * Вікна чату (O-NICK, O-AUTHOR, правила) відкриваються всередині вікна — у `#chat-dock-slot`.
+ * Усі інші вікна (пас, графік, чайові, «Поділитися», вхід…) — окремий шар поверх сторінки (`#layer-dock-slot`,
  * рішення 2026-10-29 і 2026-11-04), не пов’язаний із вікном чату: чат під ним лишається таким, яким був, і не рухається.
  * Два види шторок, обидва без затемнення (верх — `lib/overlay/sheetTop.ts`, одне правило сайту, 2026-11-10): вікна чату,
- * відкриті при згорнутому чаті, — до смуги «Перший ряд» (як сам чат); решта — вищі, до самого відео (накривають рядок часу
- * й смугу). Альбом — на весь екран; з клавіатурою — видима область
+ * відкриті при згорнутому чаті, — до низу рядка часу (як сам чат); решта — вищі, до самого відео (накривають рядок часу
+ * й смугу під ним). Альбом — на весь екран; з клавіатурою — видима область
  * над нею. З шару в чат не перейти — лише закрити: свайп униз з ручки чи шапки, дотик до ручки, «×», Esc. Розгорнути шар
- * не можна — він відкривається лише кнопкою «Зайняти місце».
+ * не можна — він відкривається лише кнопкою, що відкриває вікно.
+ * Шар назвався `seat` (від вікна покупки «Першого ряду»); ряд прибрано 2026-11-12 — тепер `layer`, `#layer-dock-slot`.
  */
 import { useTranslations } from 'next-intl';
 import {
@@ -34,8 +35,8 @@ import {
   type ReactNode,
 } from 'react';
 import { Icon } from '@/components/primitives/Icon';
-import { CHAT_DOCK_SLOT_ID, SEAT_DOCK_SLOT_ID } from '@/components/primitives/Panel';
-import { CLOSE_MS, isSeatSpec, notifyOverlaySlots, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
+import { CHAT_DOCK_SLOT_ID, LAYER_DOCK_SLOT_ID } from '@/components/primitives/Panel';
+import { CLOSE_MS, isLayerSpec, notifyOverlaySlots, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { measureSheetTop, SHEET_TOP_SOURCES, stableViewportH } from '@/lib/overlay/sheetTop';
 import type { RoomId } from '@/lib/data/types';
@@ -59,13 +60,13 @@ const FLICK_PX_PER_MS = 0.5;
 /** Усе, що в шапці працює саме по собі (дотик не перемикає вікно). */
 const INTERACTIVE = 'button, a, input, textarea, select, [role="radiogroup"], [role="group"], [role="menu"]';
 const ZONE = '[data-dock-grip], .t2f-dock-grip-handle';
-/** Зона жестів шару «Першого ряду»: ручка й шапка вікна. */
-const SEAT_ZONE = '.t2f-seat-grip, [data-seat-layer] [data-board-header]';
+/** Зона жестів шару вікон: ручка й шапка вікна. */
+const LAYER_ZONE = '.t2f-layer-grip, [data-window-layer] [data-board-header]';
 /** Скільки протягнути шар униз (px), щоб він закрився, якщо відпустили повільно. */
-const SEAT_CLOSE_PX = 80;
+const LAYER_CLOSE_PX = 80;
 
 /**
- * Телефон-альбом: усе, що лишається над чатом (відео, рядок часу, смуга «Перший ряд»), — прямі діти `<main>`; беремо
+ * Телефон-альбом: усе, що лишається над чатом (відео, рядок часу й позначене `data-dock-above`), — прямі діти `<main>`; беремо
  * останнього з них (за порядком у DOM). Чат у потоці стає одразу після нього.
  */
 function findAnchor(main: HTMLElement | null): HTMLElement | null {
@@ -93,7 +94,7 @@ interface DragState {
   h: number;
 }
 
-/** Керування вікном з будь-якого місця сторінки (смуга «Перший ряд», вікна). */
+/** Керування вікном з будь-якого місця сторінки (смуга під плеєром, вікна). */
 export function useChatDockControls() {
   const now = useNow();
   const setExpanded = useChatDock((s) => s.setExpanded);
@@ -122,14 +123,14 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const t = useTranslations('chat');
   const expanded = useChatDock((s) => s.expanded);
   const overlay = useOverlay();
-  // Відкрите вікно покупки «Першого ряду» — окремий шар; вікно чату під ним не змінюється.
-  const seat = isSeatSpec(overlay.current);
+  // Відкрите вікно поза чатом — окремий шар; вікно чату під ним не змінюється.
+  const layerOpen = isLayerSpec(overlay.current);
   // Шар закривається: ще видимий і їде вниз (OverlayManager тримає вміст `CLOSE_MS`).
-  const seatClosing = !seat && isSeatSpec(overlay.closing);
-  // Два види шторок (рішення власника 2026-11-04): вікна чату — до смуги «Перший ряд», як сам чат; решта — до відео.
-  const seatTall = !(seat ? overlay.current : overlay.closing)?.inChat;
+  const layerClosing = !layerOpen && isLayerSpec(overlay.closing);
+  // Два види шторок (рішення власника 2026-11-04): вікна чату — до низу рядка часу, як сам чат; решта — до відео.
+  const layerTall = !(layerOpen ? overlay.current : overlay.closing)?.inChat;
   const open = expanded;
-  const [seatDy, setSeatDy] = useState(0);
+  const [layerDy, setLayerDy] = useState(0);
   const { expand, collapse } = useChatDockControls();
   const count = useHiddenCount(room);
   const replies = useRepliesToMe();
@@ -141,7 +142,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const [top, setTop] = useState(0);
   const [videoTop, setVideoTop] = useState(0);
   const [dragH, setDragH] = useState<number | null>(null);
-  // Телефон-альбом: згорнуте вікно з’являється внизу лише коли сторінку прокручено нижче смуги «Перший ряд».
+  // Телефон-альбом: згорнуте вікно з’являється внизу лише коли сторінку прокручено нижче рядка часу.
   // Поки в полі введення фокус, режим не міняємо: клавіатура може стиснути макет і «перевернути» орієнтацію за медіазапитом.
   const landRaw = usePhoneLandscape();
   const [frozenLand, setFrozenLand] = useState<boolean | null>(null);
@@ -180,7 +181,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const kbOpen = open && kbUp;
   const landFlow = land && open;
 
-  // Контейнери вікон (`#chat-dock-slot`, `#seat-dock-slot`) з’явились чи зникли — OverlayManager перемальовує портали.
+  // Контейнери вікон (`#chat-dock-slot`, `#layer-dock-slot`) з’явились чи зникли — OverlayManager перемальовує портали.
   useLayoutEffect(() => {
     notifyOverlaySlots();
     return notifyOverlaySlots;
@@ -207,7 +208,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   // сторінки — знову вся плашка (рішення 2026-10-28).
   const [slim, setSlim] = useState(false);
   useEffect(() => {
-    // Лише портрет: в альбомі згорнутий чат завжди повний (з'являється нижче смуги «Перший ряд»).
+    // Лише портрет: в альбомі згорнутий чат завжди повний (з'являється нижче рядка часу).
     if (open || land) return;
     let lastY = window.scrollY;
     const onScroll = () => {
@@ -247,10 +248,10 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
 
   // Розгорнутий чат: плашка cookies тимчасово ховається (inline-стиль не потрібен — правило в primitives.css).
   useEffect(() => {
-    if (!open && !seat) return;
+    if (!open && !layerOpen) return;
     document.documentElement.setAttribute('data-chat-dock-expanded', '');
     return () => document.documentElement.removeAttribute('data-chat-dock-expanded');
-  }, [open, seat]);
+  }, [open, layerOpen]);
 
   // Телефон-альбом, розгорнутий: чат — блок у потоці одразу після смуги (висота вікна), сторінка прокручується як завжди;
   // при розгортанні прокручуємо так, щоб чат заповнив екран.
@@ -272,9 +273,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [landFlow]);
 
-  // Розгорнутий: вікно починається під смугою «Перший ряд»; сторінка нагорі й не прокручується.
+  // Розгорнутий: вікно починається під рядком часу (`measureSheetTop('chat')`); сторінка нагорі й не прокручується.
   useLayoutEffect(() => {
-    if ((!open && !seat) || land) return;
+    if ((!open && !layerOpen) || land) return;
     // Сторінка не блокується й нічого не липне: чат фіксований унизу, його висота — місце під смугою при scrollTop = 0
     // (міряємо при розгортанні й зміні розміру, за прокруткою не слідуємо).
     const measure = () => {
@@ -298,7 +299,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       window.removeEventListener('resize', onResize);
       ro?.disconnect();
     };
-  }, [open, seat, land]);
+  }, [open, layerOpen, land]);
 
   // Розгорнутий (портрет): запас унизу сторінки = висота чату, щоб усе можна було прокрутити над ним. Після згортання
   // запас лишається, доки вікно не доїде вниз (без стрибка під час анімації), потім знімається.
@@ -387,17 +388,17 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     return () => document.removeEventListener('keydown', onKey);
   }, [expanded, overlay, collapse]);
 
-  // Шар «Першого ряду»: свайп униз з ручки чи шапки закриває вікно покупки. Нативні події: шапка вікна — у порталі
+  // Шар вікон: свайп униз з ручки чи шапки закриває вікно. Нативні події: шапка вікна — у порталі
   // (у дереві React вона не всередині вікна чату), а миша, на відміну від пальця, не «прилипає» до елемента під нею.
   const layerRef = useRef<HTMLDivElement>(null);
-  const closeSeat = overlay.close;
+  const closeLayer = overlay.close;
   useEffect(() => {
     const layer = layerRef.current;
-    if (!seat || !layer) return;
+    if (!layerOpen || !layer) return;
     let drag: { id: number; startY: number; lastY: number; lastT: number; v: number; moved: boolean } | null = null;
     const onDown = (e: globalThis.PointerEvent) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
-      if (!(e.target as HTMLElement).closest(SEAT_ZONE)) return;
+      if (!(e.target as HTMLElement).closest(LAYER_ZONE)) return;
       drag = { id: e.pointerId, startY: e.clientY, lastY: e.clientY, lastT: e.timeStamp, v: 0, moved: false };
     };
     const onMove = (e: globalThis.PointerEvent) => {
@@ -412,15 +413,15 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       drag.lastY = e.clientY;
       drag.lastT = e.timeStamp;
       // Шар їде за пальцем лише вниз (угору розгортати нікуди).
-      setSeatDy(Math.max(0, dy));
+      setLayerDy(Math.max(0, dy));
     };
     const onEnd = (e: globalThis.PointerEvent) => {
       if (!drag || drag.id !== e.pointerId) return;
       const d = drag;
       drag = null;
-      const closing = d.moved && e.type !== 'pointercancel' && (d.lastY - d.startY > SEAT_CLOSE_PX || d.v > FLICK_PX_PER_MS);
+      const closing = d.moved && e.type !== 'pointercancel' && (d.lastY - d.startY > LAYER_CLOSE_PX || d.v > FLICK_PX_PER_MS);
       // Закриваємо — шар їде вниз від того місця, де його відпустили (без повернення вгору).
-      if (!closing) setSeatDy(0);
+      if (!closing) setLayerDy(0);
       if (!d.moved || e.type === 'pointercancel') return;
       // Після жесту клік (напр. по «×» чи ручці) не потрібен.
       const swallow = (ev: Event) => {
@@ -429,7 +430,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       };
       window.addEventListener('click', swallow, { capture: true, once: true });
       window.setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
-      if (closing) closeSeat();
+      if (closing) closeLayer();
     };
     layer.addEventListener('pointerdown', onDown);
     window.addEventListener('pointermove', onMove);
@@ -440,9 +441,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onEnd);
       window.removeEventListener('pointercancel', onEnd);
-      setSeatDy(0);
+      setLayerDy(0);
     };
-  }, [seat, land, closeSeat]);
+  }, [layerOpen, land, closeLayer]);
 
   const onPointerDown = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -527,7 +528,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   };
 
   // Портрет, розгорнутий, відкрита клавіатура: чат у видимій області над нею; замало місця під смугою — на всю видиму
-  // область. Без клавіатури висота завжди одна — під смугою «Перший ряд» (рішення 2026-10-28).
+  // область. Без клавіатури висота завжди одна — під рядком часу (рішення 2026-10-28).
   let geo: CSSProperties | null = null;
   if (open && !land && vv.h > 0 && inset > 0) {
     const free = vv.h - top;
@@ -541,17 +542,18 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     ...(dragH !== null ? { height: dragH } : null),
   };
 
-  // Шар «Першого ряду»: портрет — під смугою (як розгорнутий чат), альбом — весь екран; клавіатура — видима область.
-  const seatKb = seat && kbUp;
-  let seatGeo: CSSProperties;
-  if (land) seatGeo = seatKb ? { top: vv.off, bottom: 'auto', height: vv.h } : { top: 0, height: '100svh', borderRadius: 0 };
-  else if (seatKb) {
-    const free = vv.h - (seatTall ? videoTop : top);
-    seatGeo = { height: free >= MIN_DOCK ? free : vv.h, bottom: inset };
-  } else seatGeo = { height: `calc(100svh - ${seatTall ? videoTop : top}px)` };
-  if (seatDy) seatGeo = { ...seatGeo, transform: `translateY(${seatDy}px)`, transition: 'none' };
-  if (seatClosing) seatGeo = { ...seatGeo, transform: 'translateY(100%)', transition: `transform ${CLOSE_MS}ms ease-out` };
-  const onSeatFocus = (e: FocusEvent<HTMLElement>, on: boolean) => {
+  // Шар вікон: портрет — вікна чату під рядком часу (як розгорнутий чат), решта — під відео; альбом — весь екран;
+  // клавіатура — видима область.
+  const layerKb = layerOpen && kbUp;
+  let layerGeo: CSSProperties;
+  if (land) layerGeo = layerKb ? { top: vv.off, bottom: 'auto', height: vv.h } : { top: 0, height: '100svh', borderRadius: 0 };
+  else if (layerKb) {
+    const free = vv.h - (layerTall ? videoTop : top);
+    layerGeo = { height: free >= MIN_DOCK ? free : vv.h, bottom: inset };
+  } else layerGeo = { height: `calc(100svh - ${layerTall ? videoTop : top}px)` };
+  if (layerDy) layerGeo = { ...layerGeo, transform: `translateY(${layerDy}px)`, transition: 'none' };
+  if (layerClosing) layerGeo = { ...layerGeo, transform: 'translateY(100%)', transition: `transform ${CLOSE_MS}ms ease-out` };
+  const onLayerFocus = (e: FocusEvent<HTMLElement>, on: boolean) => {
     if (!(e.target as HTMLElement).matches('input, textarea')) return;
     typingRef.current = on;
     setTyping(on);
@@ -566,7 +568,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       aria-label={t('dockLabel', { room: roomLabel })}
       data-chat-dock=""
       data-state={open ? 'expanded' : 'collapsed'}
-      inert={seat}
+      inert={layerOpen}
       data-dragging={dragH !== null ? 'true' : 'false'}
       data-land={land ? 'true' : undefined}
       data-land-hidden={landHidden ? 'true' : undefined}
@@ -637,27 +639,27 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
         <div id={CHAT_DOCK_SLOT_ID} className="t2f-dock-slot pointer-events-none z-20 [&>*]:pointer-events-auto" />
       </div>
     </section>
-    {/* Шар вікна покупки «Першого ряду»: контейнер є завжди (портал вікна шукає його в DOM), видно лише з вікном. */}
+    {/* Шар вікон поза чатом: контейнер є завжди (портал вікна шукає його в DOM), видно лише з вікном. */}
     {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
     <div
       ref={layerRef}
-      data-seat-layer=""
+      data-window-layer=""
       data-land={land ? 'true' : undefined}
-      className="t2f-seat-layer"
-      hidden={!seat && !seatClosing}
-      inert={seatClosing || undefined}
-      data-closing={seatClosing ? 'true' : undefined}
-      style={seatGeo}
-      onFocus={(e) => onSeatFocus(e, true)}
-      onBlur={(e) => onSeatFocus(e, false)}
+      className="t2f-layer"
+      hidden={!layerOpen && !layerClosing}
+      inert={layerClosing || undefined}
+      data-closing={layerClosing ? 'true' : undefined}
+      style={layerGeo}
+      onFocus={(e) => onLayerFocus(e, true)}
+      onBlur={(e) => onLayerFocus(e, false)}
       onClick={(e) => {
-        if ((e.target as HTMLElement).closest('.t2f-seat-grip')) overlay.close();
+        if ((e.target as HTMLElement).closest('.t2f-layer-grip')) overlay.close();
       }}
     >
-      <div aria-hidden="true" className="t2f-seat-grip">
+      <div aria-hidden="true" className="t2f-layer-grip">
         <span className="t2f-dock-handle" />
       </div>
-      <div id={SEAT_DOCK_SLOT_ID} className="t2f-seat-slot" />
+      <div id={LAYER_DOCK_SLOT_ID} className="t2f-layer-slot" />
     </div>
     </>
   );

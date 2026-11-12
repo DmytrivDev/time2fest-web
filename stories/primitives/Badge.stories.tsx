@@ -51,12 +51,11 @@ export const People: Story = {
   name: 'Позначки людей (чат)',
   render: () => (
     <Stage>
-      <StateRow label="vip — квиток у жовтому колі 16 px + підказка · first-row (жовта заливка)">
+      <StateRow label="vip — квиток у жовтому колі 16 px + підказка">
         <span className="inline-flex items-center gap-2 text-body-strong text-text">
           <Flag code="EG" size="xs" decorative />
           Аміра
           <Badge variant="vip" />
-          <Badge variant="first-row" />
         </span>
       </StateRow>
     </Stage>
@@ -66,11 +65,10 @@ export const People: Story = {
 export const Counts: Story = {
   render: () => (
     <Stage>
-      <StateRow label="count: 3 · 42 · 99+ · discount">
+      <StateRow label="count: 3 · 42 · 99+">
         <Badge variant="count" value={3} />
         <Badge variant="count" value={42} />
         <Badge variant="count" value={120} />
-        <Badge variant="discount" />
       </StateRow>
     </Stage>
   ),

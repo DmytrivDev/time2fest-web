@@ -5,7 +5,7 @@ import { TvTimelineCard } from '@/components/tv/TvTimelineCard';
 import { tvRoomy, tvScale } from '@/components/tv/TvScreen';
 import { sidebarMode } from '@/components/tv/TvSidebar';
 import { TvStampCard } from '@/components/tv/TvStampCard';
-import { firstRowShortUrl, firstRowUrl, placeholderShortCode, shareShortUrl, shareUrl } from '@/lib/config/site';
+import { placeholderShortCode, shareShortUrl, shareUrl } from '@/lib/config/site';
 import { getData } from '@/lib/data/load';
 import { filterTimeline, nearestLive, remainingFest, tvTimeline, zoneLiveRows } from '@/lib/tv/tvData';
 import { pickNext } from '@/lib/tv/useRemoteKeys';
@@ -33,8 +33,6 @@ describe('lib/config/site — плейсхолдер короткої адрес
   });
   it('QR кодує повну адресу з протоколом', () => {
     expect(shareUrl('evt_london_2027')).toBe(`https://${shareShortUrl('evt_london_2027')}`);
-    expect(firstRowShortUrl('evt_london_2027')).toBe('time2fest.com/first-row/london');
-    expect(firstRowUrl('evt_london_2027')).toBe('https://time2fest.com/first-row/london');
   });
 });
 
@@ -182,11 +180,10 @@ describe('компоненти ТВ', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
 
-  it('TvStampCard: «Перший ряд» — подвійна рамка', () => {
-    renderWithApp(
-      <TvStampCard eventId="evt_london_2027" city="Лондон" countryName="Велика Британія" flagCode="GB" illustrationId="gb-postcard" firstRowSeat={3} />,
-    );
-    expect(document.querySelector('[data-stamp="tv"][data-first-row="true"] [data-row="first-row"]')).not.toBeNull();
+  it('TvStampCard: без рамки й рядка «Першого ряду» (ряд прибрано 2026-11-12)', () => {
+    renderWithApp(<TvStampCard eventId="evt_london_2027" city="Лондон" countryName="Велика Британія" flagCode="GB" illustrationId="gb-postcard" />);
+    expect(document.querySelector('[data-stamp="tv"]')).not.toBeNull();
+    expect(document.querySelector('[data-first-row], [data-row="first-row"]')).toBeNull();
   });
 
   it('TvKeyHints: підказка клавіш', () => {

@@ -3,12 +3,10 @@
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useContext, useEffect, useRef, type Ref } from 'react';
-import { snapshot } from '@/components/firstrow/controller';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { getData } from '@/lib/data/load';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
@@ -460,16 +458,6 @@ function ScheduleWide({ eventId, city }: { eventId?: string | undefined; city: s
   );
 }
 
-/** Місця «Першого ряду» події на зараз (лише до півночі, поки продаж не закрито). */
-function useSeats(eventId: string | undefined, now: number) {
-  // Підписка на місця гостя: купівля чи утримання одразу міняють рядок.
-  useGuestStore((g) => (eventId ? g.firstRow[eventId] : undefined));
-  if (!eventId) return null;
-  const event = getData().eventsById.get(eventId);
-  if (!event) return null;
-  return snapshot(event, now).view;
-}
-
 function Room({
   country,
   after,
@@ -483,10 +471,8 @@ function Room({
   phone: boolean;
 }) {
   const t = useTranslations('liveMap.country');
-  const now = useNow();
   const stamps = useGuestStore((g) => g.stamps);
   const got = stamps.some((s) => country.eventIds?.includes(s.eventId));
-  const seats = useSeats(after ? undefined : country.firstRowEventId, now);
   const stamp = got ? (
     <div className={m.roomLine} data-room-stamp="got">
       <Icon name="stamp" size={22} className={m.yellow} />
@@ -509,40 +495,10 @@ function Room({
       </span>
     </div>
   );
-  const seatLine = (() => {
-    if (!seats || seats.state === 'closed' || seats.state === 'restrained') return null;
-    const text =
-      seats.state === 'mine' && seats.mySeat
-        ? t('seatsMine', { n: seats.mySeat.number })
-        : seats.state === 'soldout'
-          ? t('seatsSoldout')
-          : t('seatsLeft', { count: seats.freeCount });
-    const taken = seats.total - seats.freeCount;
-    return (
-      <div className={m.roomLine} data-room-seats={seats.state}>
-        <Icon name="seat" size={22} className={m.yellow} />
-        <span className={m.seatBody}>
-          <span className={m.roomStrong}>{text}</span>
-          {seats.state === 'mine' || seats.state === 'soldout' ? null : (
-            <span className={m.seatBar} aria-hidden="true">
-              <span
-                className={m.seatFill}
-                style={{ width: `${Math.round((taken / seats.total) * 100)}%` }}
-              />
-            </span>
-          )}
-          {phone || seats.state === 'mine' || seats.state === 'soldout' ? null : (
-            <span className={m.roomSub}>{t('seatsTaken', { taken, total: seats.total })}</span>
-          )}
-        </span>
-      </div>
-    );
-  })();
   return (
     <div className={cn(m.room, phone && m.roomPhone)} data-country-room="">
       {phone ? <div className={zp.smallCap}>{t('roomTitle')}</div> : null}
       {stamp}
-      {seatLine}
       <NextLink href={country.href} className={cn('t2f-focus', m.cta)} data-country-room-link="">
         {t('room')}
         <Icon name="arrow-right" size={18} />

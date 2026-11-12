@@ -2,9 +2,9 @@
 
 /**
  * C13 PathMap — мінікарта шляху автора («Шлях <нік>»). Та сама геометрія, що й мапа поясів (`data/zonemap.json`),
- * приглушена; точки в порядку часу: зустрінуті — жовті з пунктирною лінією, остання більша, місто «Першого ряду» —
- * подвійне кільце; майбутні з графіка — порожні точки й сірий пунктир. Кожна точка — кнопка з Tooltip:
- * «Дубай · північ о 22:00 за вашим часом» (+ «Перший ряд · місце 7»). На дотик Tooltip стає Popover.
+ * приглушена; точки в порядку часу: зустрінуті — жовті з пунктирною лінією, остання більша; майбутні з графіка —
+ * порожні точки й сірий пунктир. Кожна точка — кнопка з Tooltip: «Дубай · північ о 22:00 за вашим часом».
+ * На дотик Tooltip стає Popover.
  * Геометрія підвантажується окремим шматком; поки її немає — скелетон.
  * Масштаб (правка власника 2026-11-09, картка автора): товщини ліній, пунктир і розміри точок рахуються від ширини
  * мапи (`--pm-k`): на мапі графіка й паспорта на десктопі (≈970 px) — як були, у картці автора й на телефоні (≈300–360 px)
@@ -100,12 +100,6 @@ export function PathLegend({ className }: { className?: string }) {
           <span className="size-2.5 rounded-full border-2 border-text-secondary" />
         </span>
         {t('legendSchedule')}
-      </li>
-      <li className="flex min-h-5 items-center gap-1.5">
-        <span aria-hidden="true" className="flex size-3.5 items-center justify-center">
-          <span className="t2f-pathmap-legend-ring" />
-        </span>
-        <span className="font-semibold text-highlight">{t('legendFirstRow')}</span>
       </li>
     </ul>
   );
@@ -287,7 +281,6 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
                       {p.city} · {p.country}
                     </span>
                     <span>{t('pointTooltip', { place: p.city, time })}</span>
-                    {p.firstRowSeat ? <span>{c('pointSeat', { seat: p.firstRowSeat })}</span> : null}
                     {p.planned ? <span className="text-text-muted">{t('legendSchedule')}</span> : null}
                   </span>
                 }
@@ -303,7 +296,7 @@ export function PathMap({ points: pointsProp, authorName, summary, geometry: geo
                   <span
                     aria-hidden="true"
                     data-dot={dot}
-                    className={cn('t2f-pathmap-dot rounded-full', p.firstRowSeat ? 't2f-pathmap-dot-first' : undefined)}
+                    className="t2f-pathmap-dot rounded-full"
                   />
                 </button>
               </Tooltip>

@@ -82,22 +82,14 @@ function NowNext({ mt }: { mt: readonly [number, number?, number?] }) {
   );
 }
 
-/** Головна (ефір): плеєр, рядок під відео, «Перший ряд», підпис і дії, «Зараз і далі». */
+/** Головна (ефір): плеєр, рядок під відео, підпис і дії, «Зараз і далі» («Перший ряд» прибрано 2026-11-12). */
 export function HomeSkeleton() {
   const t = useTranslations('states');
   return (
     <SkeletonRoot kind="home" label={t('loadingStream')} dock>
       <PlayerBar />
       <StickyBar />
-      <Only on="not-wide">
-        <Inset>
-          <Bar shape="btn" h={[50, 52]} mt={[8, 4]} />
-        </Inset>
-      </Only>
       <Caption timer />
-      <Only on="wide">
-        <Bar shape="card" h={128} mt={32} />
-      </Only>
       <Only on="phone">
         <Inset>
           <Bar w={180} h={16} mt={18} />
@@ -145,7 +137,7 @@ export function CountrySkeleton() {
   );
 }
 
-/** Кімната перегляду: вікна (телефон — одне, ширше — 2×2), підпис, дії, «Перший ряд», поточні трансляції. */
+/** Кімната перегляду: вікна (телефон — одне, ширше — 2×2), підпис, дії, поточні трансляції («Перший ряд» прибрано 2026-11-12). */
 export function RoomSkeleton() {
   const t = useTranslations('states');
   return (
@@ -161,8 +153,7 @@ export function RoomSkeleton() {
             <Bar shape="pill" w={44} h={44} />
             <Bar shape="pill" w={44} h={44} />
           </Row>
-          <Bar shape="card" h={308} mt={48} />
-          <Bar w={190} h={22} mt={39} />
+          <Bar w={190} h={22} mt={72} />
         </Inset>
       </Only>
       <Only on="not-phone">
@@ -182,8 +173,7 @@ export function RoomSkeleton() {
             <Bar shape="btn" w={183} h={44} />
             <Bar shape="pill" w={44} h={44} />
           </Row>
-          <Bar shape="card" h={[308, 288, 128]} mt={48} />
-          <Bar w={190} h={22} mt={[40, 72, 72]} />
+          <Bar w={190} h={22} mt={[72, 104, 104]} />
         </div>
       </Only>
     </SkeletonRoot>

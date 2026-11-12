@@ -64,7 +64,7 @@ describe('validateSend / sendMessage (contracts/chat.md)', () => {
   it('недоступний чат, бан, закрита кімната', () => {
     expect(validateSend(req('Привіт'), ctx({ available: false }))).toEqual({ error: 'unavailable' });
     expect(validateSend(req('Привіт'), ctx({ banned: true }))).toEqual({ error: 'banned' });
-    expect(validateSend({ ...req('Привіт'), room: 'firstrow:evt_london_2027' as never }, ctx({ canWrite: () => false }))).toEqual({
+    expect(validateSend({ ...req('Привіт'), room: 'country:GB' }, ctx({ canWrite: () => false }))).toEqual({
       error: 'room-forbidden',
     });
   });
@@ -88,9 +88,9 @@ describe('validateSend / sendMessage (contracts/chat.md)', () => {
     expect(r.message.id).toMatch(/^[0-9A-HJKMNP-TV-Z]{26}$/);
   });
 
-  it('кімната «Перший ряд»: позначка first-row і емоція автора', () => {
-    const r = sendMessage({ ...req('Привіт'), room: 'firstrow:evt_london_2027' as never }, ctx({ firstRowEmojiId: 'glasses' }));
-    expect(r.ok && r.message.author).toMatchObject({ badges: ['first-row'], firstRowEmojiId: 'glasses' });
+  it('власний автор: лише позначка пасу, без позначки й емоції «Першого ряду» (прибрано 2026-11-12)', () => {
+    const r = sendMessage({ ...req('Привіт'), room: 'country:GB' }, ctx({ hasPass: false }));
+    expect(r.ok && r.message.author).toEqual({ id: 'g1', nick: 'Мирон', flagCode: 'UA', badges: [], isMine: true });
   });
 });
 
@@ -175,11 +175,9 @@ describe('фоновий потік (ambient)', () => {
     expect(fast).toBeLessThanOrEqual(slow);
   });
 
-  it('країна — з правил country:*, «Перший ряд» — лише автори з позначкою', () => {
+  it('країна — з правил country:*', () => {
     const country = ambientBetween(script, [london], ['country:GB'], idle, idle + 900 * SEC);
     expect(country.length).toBeGreaterThan(0);
-    const first = ambientBetween(script, [london], ['firstrow:evt_london_2027'], idle, idle + 3_600 * SEC);
-    expect(first.every((m) => m.author?.badges.includes('first-row'))).toBe(true);
   });
 
   it('simulator з ambient: world отримує потік, без ambient — лише моменти', () => {

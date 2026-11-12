@@ -132,10 +132,6 @@
   background: rgb(181 140 240 / 0.14);
   color: #b58cf0;
 }
-.seat {
-  background: rgb(252 226 134 / 0.14);
-  color: var(--color-highlight);
-}
 .streak {
   background: rgb(91 211 122 / 0.14);
   color: #5bd37a;

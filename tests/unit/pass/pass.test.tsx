@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PassBuy } from '@/components/pass/PassBuy';
 import { PassPerksShowcase } from '@/components/pass/PassPerks';
 import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
-import { PAY_ROUNDTRIP_MS } from '@/lib/firstrow/pay';
+import { PAY_ROUNDTRIP_MS } from '@/lib/offers/paySim';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { usePassStore } from '@/stores/pass';
@@ -99,35 +99,36 @@ describe('PassBuy — картка оформлення', () => {
 
   const props = { onSignIn: vi.fn(), onLetterSent: vi.fn(), onDone: vi.fn() };
 
-  it('гість: Google, email, «Оформити пас — $4,99», «Вже маєш акаунт? Увійти»', () => {
+  it('гість: Google, email, «Оформити пас — $5», «Вже маєш акаунт? Увійти»', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     expect(screen.getByRole('heading', { name: 'Оформити за хвилину' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Оформити з Google' })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Email' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Оформити пас — $4,99' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Оформити пас — $5' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Увійти' }));
     expect(props.onSignIn).toHaveBeenCalled();
   });
 
-  it('дрібний текст під кнопкою: оплата й згода разом; інші шляхи — окремою групою з карткою «Першого ряду»', () => {
+  it('дрібний текст під кнопкою: оплата й згода разом; інші шляхи — окремою групою, без «Першого ряду»', () => {
     const { unmount } = renderWithApp(<PassBuy variant="page" {...props} />);
     const fine = document.querySelector('[data-row="fine-print"]');
     expect(fine).toHaveTextContent('Оплата на сторінці PayPro Global.');
     expect(fine).toHaveTextContent('Акаунт — з 13 років');
     const alt = document.querySelector('[data-row="alternatives"]') as HTMLElement;
     expect(within(alt).getByRole('button', { name: 'Увійти' })).toBeInTheDocument();
-    expect(within(alt).getByRole('link', { name: /Місце в «Першому ряду».*Новорічний пас у подарунок/ })).toBeInTheDocument();
+    // «Перший ряд» прибрано (рішення 2026-11-12): картки «Місце в «Першому ряду» · пас у подарунок» більше немає.
+    expect(within(alt).queryAllByRole('link')).toHaveLength(0);
+    expect(document.body).not.toHaveTextContent('Перш');
     unmount();
-    // У вікні — без «Першого ряду», рядок оплати про трансляцію.
+    // У вікні — рядок оплати про трансляцію.
     renderWithApp(<PassBuy variant="stream" {...props} />);
     expect(document.querySelector('[data-row="fine-print"]')).toHaveTextContent('трансляція грає далі.');
-    expect(document.querySelector('[data-row="first-row"]')).toBeNull();
   });
 
   it('помилка email: рядок під полем, поле позначене', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $4,99' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $5' }));
     expect(screen.getByRole('alert')).toHaveTextContent('після «@» бракує домену');
     expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute('aria-invalid', 'true');
   });
@@ -136,11 +137,11 @@ describe('PassBuy — картка оформлення', () => {
     useAuthStore.setState({ accounts: ['olena@example.com'], passes: { 'olena@example.com': 1 } });
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example.com' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $4,99' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $5' }));
     const box = screen.getByRole('alert');
     expect(box).toHaveTextContent('На цю адресу пас уже оформлено');
     expect(box).toHaveTextContent('Посилання для входу надішлемо на цю пошту.');
-    expect(screen.getByRole('button', { name: 'Оформити пас — $4,99' })).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('button', { name: 'Оформити пас — $5' })).toHaveAttribute('aria-disabled', 'true');
     fireEvent.click(within(box).getByRole('button', { name: 'Надіслати посилання' }));
     expect(useAuthStore.getState().letter?.email).toBe('olena@example.com');
     expect(props.onLetterSent).toHaveBeenCalled();
@@ -190,9 +191,11 @@ describe('PassBuy — картка оформлення', () => {
 });
 
 describe('«Що вмикається одразу після оплати» — вітрина з порівнянням', () => {
-  it('шість можливостей «без → з»; відкрита одна — з порівнянням, описом і прикладом (схованим від читачів екрана)', () => {
+  it('п’ять можливостей «без → з»; відкрита одна — з порівнянням, описом і прикладом (схованим від читачів екрана)', () => {
     renderWithApp(<PassPerksShowcase />);
-    expect(document.querySelectorAll('[data-perk]')).toHaveLength(6);
+    // Знижку −50% на «Перший ряд» прибрано разом із рядом (рішення 2026-11-12).
+    expect(document.querySelectorAll('[data-perk]')).toHaveLength(5);
+    expect(document.querySelector('[data-perk="seat"]')).toBeNull();
     expect(screen.getByRole('heading', { level: 2, name: 'Що вмикається одразу після оплати' })).toBeInTheDocument();
     expect(screen.getByText('Усі трансляції й чат — безплатно для всіх. Пас додає ось що:')).toBeInTheDocument();
     const chat = screen.getByRole('button', { name: /Позначка в чаті й видимий шлях/ });
@@ -204,15 +207,15 @@ describe('«Що вмикається одразу після оплати» —
 
   it('клік по іншій можливості відкриває її, попередня закривається', () => {
     renderWithApp(<PassPerksShowcase />);
-    const seat = screen.getByRole('button', { name: /−50% на «Перший ряд»/ });
-    fireEvent.click(seat);
-    expect(seat).toHaveAttribute('aria-expanded', 'true');
+    const schedule = screen.getByRole('button', { name: /Свій графік і нагадування/ });
+    fireEvent.click(schedule);
+    expect(schedule).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('button', { name: /Позначка в чаті/ })).toHaveAttribute('aria-expanded', 'false');
-    expect(document.querySelector('[data-panel="seat"]')).toHaveTextContent('$2,49 (−50%)');
+    expect(document.querySelector('[data-panel="schedule"]')).toHaveTextContent('Свої події й нагадування');
   });
-  it('шостий пункт «Переклад і сповіщення в чаті»: порівняння й два приклади в ряд', () => {
+  it('останній пункт «Переклад і сповіщення в чаті»: порівняння й два приклади в ряд', () => {
     renderWithApp(<PassPerksShowcase />);
-    expect(screen.getByText('У пасі — 6 можливостей')).toBeInTheDocument();
+    expect(screen.getByText('У пасі — 5 можливостей')).toBeInTheDocument();
     const item = screen.getByRole('button', { name: /Переклад і сповіщення в чаті/ });
     fireEvent.click(item);
     expect(item).toHaveAttribute('aria-expanded', 'true');

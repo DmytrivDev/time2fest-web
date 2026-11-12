@@ -8,13 +8,11 @@ import { Stage, StateRow } from '../_support/Stage';
 import {
   AMIRA,
   CHAT_SAMPLE,
-  GREETING,
   JAMES,
   LIAM,
   LOOKUP,
   ME,
   SYSTEM_COUNTER,
-  SYSTEM_FIRSTROW,
   SYSTEM_MIDNIGHT,
   SYSTEM_POLL,
   SYSTEM_SINGLE,
@@ -49,11 +47,6 @@ export const Loading: Story = { name: 'l — скелетони', args: { state:
 export const EmptyCountry: Story = {
   name: 'empty — «Тут поки тихо — привітай першим»',
   args: { room: { id: 'country:FR', label: 'Франція' }, messages: [] },
-};
-
-export const EmptyFirstRow: Story = {
-  name: 'empty-first-row',
-  args: { room: { id: 'firstrow:evt_london_2027', label: 'Перший ряд' }, messages: [] },
 };
 
 export const Unavailable: Story = {
@@ -134,15 +127,9 @@ export const Messages: Story = {
         <ol className="flex w-full flex-col gap-2">
           <Message message={SYSTEM_SINGLE} lookup={LOOKUP} />
           <Message message={SYSTEM_MIDNIGHT} lookup={LOOKUP} />
-          <Message message={SYSTEM_FIRSTROW} lookup={LOOKUP} />
           <Message message={SYSTEM_COUNTER} lookup={LOOKUP} />
           <Message message={SYSTEM_SLOW} lookup={LOOKUP} />
           <Message message={SYSTEM_POLL} lookup={LOOKUP} />
-        </ol>
-      </StateRow>
-      <StateRow label="greeting — картка з жовтою межею ліворуч">
-        <ol className="flex w-full flex-col gap-2">
-          <Message message={GREETING} lookup={LOOKUP} />
         </ol>
       </StateRow>
       <StateRow label="moderated — лише автору">

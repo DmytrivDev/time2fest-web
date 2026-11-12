@@ -9,7 +9,7 @@ import { Icon } from './Icon';
 export interface SegmentOption {
   value: string;
   label: string;
-  /** Маленька жовта позначка біля назви («Перший ряд» — лише учасникам). */
+  /** Маленька жовта позначка біля назви. */
   dot?: boolean;
   disabled?: boolean;
   /** Круглий прапор перед підписом (чип «Країна»). */

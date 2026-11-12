@@ -36,7 +36,6 @@ async function seed(page: Page, pass: boolean, schedule: string[]) {
         offers: { nightId: '2026-27', history: [], visible: null },
         schedule,
         hasPass: pass,
-        firstRow: {},
         nightId: '2026-27',
       };
       if (!localStorage.getItem('t2f:guest:v1')) localStorage.setItem('t2f:guest:v1', JSON.stringify({ state, version: 1 }));

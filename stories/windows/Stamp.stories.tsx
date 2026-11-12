@@ -7,7 +7,6 @@ import { Stage } from '../_support/Stage';
 
 const SYDNEY: StampEntry = { eventId: 'evt_sydney_2027', city: 'Сідней', countryName: 'Австралія', flagCode: 'AU', illustrationId: 'au-postcard' };
 const MELBOURNE: StampEntry = { eventId: 'evt_melbourne_2027', city: 'Мельбурн', countryName: 'Австралія', flagCode: 'AU', illustrationId: 'au-postcard' };
-const LONDON: StampEntry = { eventId: 'evt_london_2027', city: 'Лондон', countryName: 'Велика Британія', flagCode: 'GB', illustrationId: 'gb-postcard' };
 const NUUK: StampEntry = { eventId: 'evt_nuuk_2027', city: 'Нуук', countryName: 'Гренландія', flagCode: 'GL', illustrationId: 'postcard-template' };
 
 const meta = {
@@ -56,11 +55,6 @@ export const SignedIn: Story = {
 export const Multi: Story = {
   name: 'multi — «Сідней · Мельбурн»',
   args: { stamps: [SYDNEY, MELBOURNE] },
-};
-
-export const FirstRow: Story = {
-  name: 'first-row — подвійна жовта рамка',
-  args: { stamps: [{ ...LONDON, firstRowSeat: 4 }] },
 };
 
 export const Template: Story = {

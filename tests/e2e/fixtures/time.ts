@@ -19,7 +19,7 @@ interface T2FTestApi {
     advance(ms: number): void;
   };
   resetGuest(): void;
-  setPayResult(r: 'success' | 'pending' | 'declined' | 'soldout' | 'expired'): void;
+  setPayResult(r: 'success' | 'pending' | 'declined'): void;
   setChatAvailable(ok: boolean): void;
 }
 
@@ -75,7 +75,7 @@ export async function resetGuest(page: Page): Promise<void> {
 
 export async function setPayResult(
   page: Page,
-  r: 'success' | 'pending' | 'declined' | 'soldout' | 'expired',
+  r: 'success' | 'pending' | 'declined',
 ): Promise<void> {
   await waitForTimeApi(page);
   await page.evaluate((v) => (window as unknown as WithApi).__t2f!.setPayResult(v), r);

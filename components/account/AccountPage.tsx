@@ -587,7 +587,6 @@ function SettingsSection({ hasPass }: { hasPass: boolean }) {
         <Toggle label={t('showPassport')} hint={t('showPassportHint')} checked={acc.showPassport} onChange={(v) => acc.set('showPassport', v)} />
         <Toggle label={t('showPath')} hint={t('showPathHint')} checked={hasPass && acc.showPath} disabled={!hasPass} onChange={(v) => acc.set('showPath', v)} />
         <Toggle label={t('hints')} hint={t('hintsHint')} checked={acc.passportHints} onChange={(v) => acc.set('passportHints', v)} />
-        <Toggle label={t('firstRow')} hint={t('firstRowHint')} checked={!hasPass || !acc.firstRowHidden} disabled={!hasPass} onChange={(v) => acc.set('firstRowHidden', !v)} />
         <Toggle label={t('quiet')} hint={t('quietHint')} checked={hasPass && acc.quietDefault} disabled={!hasPass} onChange={(v) => acc.set('quietDefault', v)} />
         <Toggle label={t('motion')} hint={t('motionHint')} checked={motion} onChange={setMotion} />
       </div>

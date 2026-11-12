@@ -38,7 +38,7 @@ export const Tv: Story = {
         size={256}
         value="https://time2fest.com/r/dubai"
         shortUrl="time2fest.com/r/dubai"
-        alt="QR-код: зайняти місце в першому ряду на телефоні"
+        alt="QR-код: поділитися штампом на телефоні"
       />
     </Stage>
   ),

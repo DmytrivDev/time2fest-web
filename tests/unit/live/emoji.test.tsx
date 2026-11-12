@@ -5,11 +5,10 @@ import { describe, expect, it } from 'vitest';
 import { REACTION_SYMBOLS } from '@/components/chat/reactions';
 import { brandEmojiSrc, Emoji, EmojiText } from '@/components/primitives/Emoji';
 import { BRAND_EMOJI } from '@/lib/emoji/brand';
-import { EMOTIONS } from '@/lib/firstrow/emotions';
 
 describe('фірмові емодзі (рішення 2026-10-31)', () => {
-  it('усі емоції «Першого ряду» й реакції чату мають фірмовий значок', () => {
-    const missing = [...EMOTIONS.map((e) => e.symbol), ...Object.values(REACTION_SYMBOLS)].filter((c) => !brandEmojiSrc(c));
+  it('усі реакції чату мають фірмовий значок', () => {
+    const missing = Object.values(REACTION_SYMBOLS).filter((c) => !brandEmojiSrc(c));
     expect(missing).toEqual([]);
     expect(Object.keys(BRAND_EMOJI)).toHaveLength(31);
   });

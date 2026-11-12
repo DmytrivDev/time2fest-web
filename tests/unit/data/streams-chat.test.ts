@@ -89,29 +89,16 @@ describe('chat-script.json', () => {
     }
   });
 
-  it('moments: +15 с country-midnight, десять привітань, лічильник', () => {
+  it('moments: +15 с country-midnight, лічильник; привітань місць «Першого ряду» немає', () => {
     const m = chat.moments.find((x) => x.eventId === '*')!;
     const at15 = m.offsets.filter((o) => o.atSec === 15);
     expect(at15.some((o) => o.message.kind === 'system' && o.message.system.kind === 'country-midnight')).toBe(true);
-    expect(at15.filter((o) => o.message.kind === 'greeting')).toHaveLength(10);
     expect(m.offsets.some((o) => o.message.kind === 'system' && o.message.system.kind === 'greetings-counter')).toBe(true);
+    expect(m.offsets.every((o) => ['system', 'regular', 'burst'].includes(o.message.kind))).toBe(true);
   });
 
-  it('firstRowSeed: 10 місць для кожної події з трансляцією; є сценарій «останнє місце»', () => {
-    const streamEvents = new Set(streams.chains.map((c) => c.eventId));
-    const seeded = new Set(chat.firstRowSeed.map((f) => f.eventId));
-    for (const id of streamEvents) expect(seeded.has(id), id).toBe(true);
-    for (const f of chat.firstRowSeed) {
-      expect(f.seats.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-      for (const s of f.seats) {
-        if (s.state === 'taken') {
-          expect(s.name!.length).toBeGreaterThan(0);
-          expect(s.name!.length).toBeLessThanOrEqual(30);
-          expect((s.greeting ?? '').length).toBeLessThanOrEqual(80);
-        }
-      }
-    }
-    const last = chat.firstRowSeed.find((f) => f.takeOverTime?.length && f.seats.filter((s) => s.state === 'free').length === 1);
-    expect(last).toBeDefined();
+  it('«Перший ряд» прибрано (2026-11-12): у сценарії немає firstRowSeed і позначки first-row', () => {
+    expect('firstRowSeed' in chat).toBe(false);
+    for (const a of chat.authors) expect(a.badges as string[], a.id).not.toContain('first-row');
   });
 });

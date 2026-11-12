@@ -58,7 +58,7 @@ export function BigPostcard({ rows, start }: { rows: readonly PassportStamp[]; s
           <Icon name="chevron-right" size={18} />
         </button>
       </div>
-      <div className={cn(s.bigArt, r.seat !== undefined && s.bigArtGold)}>
+      <div className={s.bigArt}>
         <FlagStrip code={r.flagCode} />
         <StampArt illustrationId={r.illustrationId} stampText={tStamp('stamped', { city: r.city.toLocaleUpperCase('uk') })} />
       </div>

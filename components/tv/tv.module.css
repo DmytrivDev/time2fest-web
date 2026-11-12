@@ -770,47 +770,7 @@
   background: var(--color-surface);
 }
 
-/* ── Перший ряд ──────────────────────────────────────────────────────── */
-
-.frTitle {
-  color: var(--color-highlight);
-  font-size: 22px;
-  font-weight: 800;
-}
-.frSub {
-  margin-top: 2px;
-  color: var(--color-text-secondary);
-  font-size: var(--text-headline-sm);
-}
-.frNext {
-  margin-top: 22px;
-  padding: 18px;
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: 19px;
-  line-height: 1.45;
-}
-[data-tv-first-row] .promoCard {
-  margin-top: 22px;
-}
-
-/* Імена ряду — рядок, що пливе (FirstRowWall `row`), у розмірах дошки: фішки 48 px, текст 19 px. */
-.wall {
-  margin-top: 16px;
-  --first-row-wall-emoji-size: var(--text-countdown-inline);
-}
-.wall [data-seat],
-.wall [data-seat] * {
-  font-size: 19px;
-}
-.wall [data-seat] {
-  min-height: 48px;
-  font-weight: 700;
-}
-
-/* ── північ: штамп і привітання ──────────────────────────────────────── */
+/* ── північ: штамп ──────────────────────────────────────────────────── */
 
 .met {
   color: var(--color-highlight);
@@ -825,12 +785,6 @@
   overflow: hidden;
   border-radius: 16px;
   background: var(--color-surface);
-}
-.stampFirstRow {
-  border: 1px solid var(--color-highlight);
-  box-shadow:
-    inset 0 0 0 4px var(--color-surface),
-    inset 0 0 0 5px var(--color-highlight);
 }
 .stampHead {
   position: relative;
@@ -874,14 +828,6 @@
   color: var(--color-text-secondary);
   font-size: 17px;
 }
-.stampRowNote {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  color: var(--color-highlight);
-  font-size: 17px;
-}
 .stampShare {
   display: flex;
   align-items: flex-end;
@@ -900,94 +846,6 @@
   color: var(--color-text);
   font-size: 15px;
   font-weight: 700;
-}
-
-.greet {
-  position: relative;
-  margin-top: 18px;
-}
-.greetBack2,
-.greetBack1 {
-  position: absolute;
-  height: 40px;
-  border-radius: 18px;
-}
-.greetBack2 {
-  top: -14px;
-  right: 16px;
-  left: 16px;
-  border: 1px solid color-mix(in srgb, var(--color-highlight) 25%, transparent);
-  background: color-mix(in srgb, var(--color-highlight) 10%, transparent);
-}
-.greetBack1 {
-  top: -7px;
-  right: 8px;
-  left: 8px;
-  border: 1px solid color-mix(in srgb, var(--color-highlight) 32%, transparent);
-  background: color-mix(in srgb, var(--color-highlight) 14%, transparent);
-}
-.greetCard {
-  position: relative;
-  padding: 26px 24px 22px;
-  border: 1px solid color-mix(in srgb, var(--color-highlight) 55%, transparent);
-  border-radius: 18px;
-  background: linear-gradient(160deg, #2b2614, #1d1c17 70%);
-  box-shadow: 0 0 40px color-mix(in srgb, var(--color-highlight) 12%, transparent);
-  text-align: center;
-  animation: greetIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-  transform-origin: 50% 100%;
-}
-/* Перегортається вгору: нова картка виходить знизу. */
-@keyframes greetIn {
-  from {
-    opacity: 0;
-    transform: perspective(800px) translateY(24px) rotateX(-35deg);
-  }
-}
-:global([data-reduce-motion='true']) .greetCard {
-  animation: none;
-}
-.greetKicker {
-  color: var(--color-highlight);
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.greetText {
-  margin-top: 12px;
-  font-size: 40px;
-  font-weight: 800;
-  line-height: 1.2;
-}
-.greetWho {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 14px;
-  font-size: 21px;
-  font-weight: 700;
-}
-.greetDots {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 16px;
-}
-.greetDots > span {
-  width: 8px;
-  height: 8px;
-  border-radius: 4px;
-  background: #4a4a52;
-}
-.greetDots > span[data-on] {
-  width: 20px;
-  background: var(--color-highlight);
-}
-.greetCount {
-  margin-top: 6px;
-  color: var(--color-text-muted);
-  font-size: 14px;
 }
 
 /* ── сцена відліку на місці плеєра ───────────────────────────────────── */

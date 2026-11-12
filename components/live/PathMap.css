@@ -63,7 +63,7 @@
   stroke-width: calc(1.5px * var(--pm-k));
   stroke-dasharray: calc(2px * var(--pm-k)) calc(4px * var(--pm-k));
 }
-/* Точки за дошками `Phone-Author`: зустрінута 8 px, остання 10 px з кільцем, «Перший ряд» — подвійне кільце, у графіку —
+/* Точки за дошками `Phone-Author`: зустрінута 8 px, остання 10 px з кільцем, у графіку —
    порожня; промені поясу — дрібніші (зустрінута 6 px, у графіку 8 px). Усе — на базовій ширині, далі × `--pm-k`. */
 .t2f-pathmap-dot {
   --pm-d: 8px;
@@ -100,26 +100,9 @@
     0 0 0 calc(3px * var(--pm-k)) var(--color-background),
     0 0 0 calc(4.5px * var(--pm-k)) rgb(229 72 77 / 0.55);
 }
-.t2f-pathmap-dot.t2f-pathmap-dot-first {
-  --pm-d: 6px;
-  border: 0;
-  background: var(--color-highlight);
-  box-shadow:
-    0 0 0 calc(1.5px * var(--pm-k)) var(--color-background),
-    0 0 0 calc(3px * var(--pm-k)) var(--color-highlight),
-    0 0 0 calc(4.5px * var(--pm-k)) var(--color-background),
-    0 0 0 calc(6px * var(--pm-k)) var(--color-highlight);
-}
 .t2f-pathmap-legend-now {
   width: 10px;
   height: 10px;
   border-radius: 9999px;
   border: 2px solid var(--color-primary);
-}
-.t2f-pathmap-legend-ring {
-  border-radius: 9999px;
-  width: 4px;
-  height: 4px;
-  background: var(--color-highlight);
-  box-shadow: 0 0 0 1px var(--color-surface), 0 0 0 2px var(--color-highlight), 0 0 0 3px var(--color-surface), 0 0 0 4px var(--color-highlight);
 }

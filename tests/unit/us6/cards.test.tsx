@@ -31,7 +31,7 @@ describe('PassOffer — «Наступна північ» (рішення 2026-1
     expect(screen.getByText(/^Азорські острови · /)).toBeInTheDocument();
     expect(screen.getByText('З пасом — нагадаємо перед північчю')).toBeInTheDocument();
     expect(coralButtons()).toHaveLength(1);
-    expect(screen.getByRole('button', { name: 'Оформити пас · $4,99' })).toHaveAttribute('data-variant', 'coral');
+    expect(screen.getByRole('button', { name: 'Оформити пас · $5' })).toHaveAttribute('data-variant', 'coral');
   });
 
   it('коралова кнопка робить кнопку звуку нейтральною', () => {
@@ -57,7 +57,7 @@ describe('PassOffer — «Наступна північ» (рішення 2026-1
     const onClose = vi.fn();
     const onDetails = vi.fn();
     renderPage(offer({ onGetPass, onClose, onDetails }));
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $4,99' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $5' }));
     expect(onGetPass).toHaveBeenCalledOnce();
     screen.getAllByRole('button', { name: 'Детальніше' }).forEach((b) => fireEvent.click(b));
     expect(onDetails).toHaveBeenCalledTimes(2);

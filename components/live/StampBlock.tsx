@@ -35,7 +35,6 @@ import { on } from '@/lib/events/bus';
 import { useAccountStore } from '@/stores/account';
 import { useGuestStore } from '@/stores/guest';
 import { utcLabel } from './MapModel';
-import { zoneRowLabel, zoneSeatOf } from '@/lib/firstrow/zone';
 import { create } from 'zustand';
 
 interface StampMoment {
@@ -73,8 +72,6 @@ export function stampEntry(eventId: string): StampEntry | null {
   if (!event) return null;
   const country = data.countriesByIso.get(event.countryIso);
   const city = data.citiesById.get(event.cityId);
-  // «Перший ряд» — один на пояс: місце в ряду поясу дає рядок «Перший ряд» штампу будь-якої події цього поясу.
-  const seat = zoneSeatOf(data, useGuestStore.getState().firstRow, event);
   const entry: StampEntry = {
     eventId,
     city: city?.name.uk ?? '',
@@ -82,10 +79,6 @@ export function stampEntry(eventId: string): StampEntry | null {
     flagCode: country?.flagCode ?? event.countryIso,
     illustrationId: country?.illustrationId ?? 'generic',
   };
-  if (seat !== undefined) {
-    entry.firstRowSeat = seat;
-    entry.firstRowLabel = zoneRowLabel(data, event);
-  }
   // Країна з кількома поясами: штамп — за кожен пояс, пояс видно в штампі (рішення 2026-11-05).
   const zone = data.zonesById.get(event.zoneId);
   if (country && country.zoneIds.length > 1 && zone) entry.zone = utcLabel(zone.offsetMinutes);
