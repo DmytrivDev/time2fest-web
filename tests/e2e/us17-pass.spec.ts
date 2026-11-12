@@ -26,6 +26,33 @@ test('гість: ціна, оформлення з Google чи поштою, п
   await expect(page.locator('main a[href="#"]')).toHaveCount(0);
 });
 
+test('«Скажи тост за $10 · …і Новорічний пас у подарунок» (дошка `Pass-5-New`): сторінка — «Підтримати» з вікном на $10', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/pass/');
+  const row = page.locator('main [data-row="toast-gift"]');
+  await expect(row).toContainText('Скажи тост за $10');
+  await expect(row).toContainText('…і Новорічний пас у подарунок');
+  await row.click();
+  await expect(page).toHaveURL(/\/support\//, { timeout: 20_000 });
+  const win = page.locator('[data-window="O-TOAST"]');
+  await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).toHaveAttribute('aria-checked', 'true', { timeout: 20_000 });
+});
+
+test('вікно пасу під час свята: рядок «Скажи тост за $10» → вікно тосту з $10; гість після $10 входить — пас на акаунті', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/');
+  await page.locator('header').getByRole('link', { name: /Пас|Новорічний пас/ }).first().click();
+  const gift = page.locator('[data-window="O-PASS-BUY"] [data-row="toast-gift"]');
+  await expect(gift).toContainText('Скажи тост за $10');
+  await gift.click();
+  const win = page.locator('[data-window="O-TOAST"]');
+  await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).toHaveAttribute('aria-checked', 'true');
+  await win.getByRole('textbox', { name: 'Нік для тосту' }).fill('Зоряна');
+  await win.locator('[data-action="toast-pay"]').click();
+  await expect(win.locator('[data-toast-gift="pending"]')).toContainText('Новорічний пас — подарунок до тосту', { timeout: 15_000 });
+  await win.getByRole('button', { name: 'Увійти й активувати пас' }).click();
+  await page.getByRole('button', { name: /Увійти з Google|Google/ }).first().click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.hasPass), { timeout: 15_000 }).toBe(true);
+});
+
 test('оплата поштою: «Чекаємо підтвердження» переживає перезавантаження → «Пас активний» → «Твій пас уже діє»', async ({ page }) => {
   // Швидкість 1: 30 с «Чекаємо підтвердження» не мають минути, поки сторінка перезавантажується.
   await gotoAt(page, AT, 1, '/pass/');

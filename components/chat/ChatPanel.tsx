@@ -12,6 +12,7 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
+import { useOpenToastWindow } from '@/components/toast/ToastWindow';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
 import { passGateSpec } from '@/components/offers/OfferWindows';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
@@ -82,6 +83,7 @@ export function ChatPanel({
   const announce = useAnnounce();
   const overlay = useOverlay();
   const openAuthWindow = useOpenAuthWindow();
+  const openToast = useOpenToastWindow();
   const getPass = useGetPass();
   const passDetails = usePassDetails();
   const column = useChatColumn();
@@ -112,6 +114,12 @@ export function ChatPanel({
   const roomLabel = activeKey === 'country' && country ? t('roomCountryPicker', { country: country.name }) : t('roomWorld');
 
   useEffect(() => setLastRoom(roomId), [roomId, setLastRoom]);
+  // Смуга тостів: «Усі тости в чаті «Світ»» чи клік на тост — кімната «Світ» (рішення власника 2026-11-12).
+  const worldRequest = useChatUi((s) => s.worldRequest);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- запит ззовні: перемкнути кімнату на «Світ»
+    if (worldRequest) setRoomKey('world');
+  }, [worldRequest]);
 
   const rawMessages = useChatMessages(roomId);
   const roomMessages = useMemo(() => {
@@ -470,6 +478,7 @@ export function ChatPanel({
           }
           onCancelReply={() => setReplyTo(null)}
           textareaRef={textareaRef}
+          onToast={() => openToast()}
         />
       }
       className={className}

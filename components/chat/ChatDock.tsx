@@ -9,7 +9,7 @@
  * відпустили далі середини або швидким рухом — доїжджає (200 мс, без анімації за «зменшити рух»). Дотик до шапки поза
  * кнопками перемикає стан; Esc і шеврон «Згорнути чат» згортають, фокус іде на шапку.
  * Вікна чату (O-NICK, O-AUTHOR, правила) відкриваються всередині вікна — у `#chat-dock-slot`.
- * Усі інші вікна (пас, графік, чайові, «Поділитися», вхід…) — окремий шар поверх сторінки (`#layer-dock-slot`,
+ * Усі інші вікна (пас, графік, тост, «Поділитися», вхід…) — окремий шар поверх сторінки (`#layer-dock-slot`,
  * рішення 2026-10-29 і 2026-11-04), не пов’язаний із вікном чату: чат під ним лишається таким, яким був, і не рухається.
  * Два види шторок, обидва без затемнення (верх — `lib/overlay/sheetTop.ts`, одне правило сайту, 2026-11-10): вікна чату,
  * відкриті при згорнутому чаті, — до низу рядка часу (як сам чат); решта — вищі, до самого відео (накривають рядок часу
@@ -17,6 +17,8 @@
  * над нею. З шару в чат не перейти — лише закрити: свайп униз з ручки чи шапки, дотик до ручки, «×», Esc. Розгорнути шар
  * не можна — він відкривається лише кнопкою, що відкриває вікно.
  * Шар назвався `seat` (від вікна покупки «Першого ряду»); ряд прибрано 2026-11-12 — тепер `layer`, `#layer-dock-slot`.
+ * Новий тост (рішення власника 2026-11-12, дошка `Phone-Toast-New`): згорнутий рядок ≈10 с показує його (прапор, нік,
+ * текст) замість «Розгорнути чат» — потім як завжди (`useArrivingToast`).
  */
 import { useTranslations } from 'next-intl';
 import {
@@ -34,8 +36,11 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
+import { EmojiText } from '@/components/primitives/Emoji';
+import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_DOCK_SLOT_ID, LAYER_DOCK_SLOT_ID } from '@/components/primitives/Panel';
+import { useArrivingToast, useWorldToasts } from '@/components/toast/useWorldToasts';
 import { CLOSE_MS, isLayerSpec, notifyOverlaySlots, useOverlay, usePhoneLandscape } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { measureSheetTop, SHEET_TOP_SOURCES, stableViewportH } from '@/lib/overlay/sheetTop';
@@ -43,6 +48,7 @@ import type { RoomId } from '@/lib/data/types';
 import { useNow } from '@/lib/time/TimeProvider';
 import { formatCount, useChatUi, useHiddenCount, useRepliesToMe } from '@/stores/chat';
 import { useChatDock } from '@/stores/chatDock';
+import tm from './toastMessage.module.css';
 
 /** Дані вікна для його вмісту: у альбомі розгорнутий чат дає кнопку «До відео» в шапку. */
 export const ChatDockContext = createContext<{ toVideo: (() => void) | null }>({ toVideo: null });
@@ -134,6 +140,8 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const { expand, collapse } = useChatDockControls();
   const count = useHiddenCount(room);
   const replies = useRepliesToMe();
+  const world = useWorldToasts();
+  const arriving = useArrivingToast(world.toasts, world.ready, world.now);
 
   const sectionRef = useRef<HTMLElement>(null);
   const collapsedRef = useRef<HTMLButtonElement>(null);
@@ -615,8 +623,22 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
         <span aria-hidden="true" className="t2f-dock-handle" />
         <span className="t2f-dock-row">
           <Icon name="chevron-up" size={20} strokeWidth={2} />
-          <span>{t('expand')}</span>
-          <span className="flex-1" />
+          {arriving ? (
+            // Новий тост ≈10 с замість «Розгорнути чат» (дошка `Phone-Toast-New` · «Згорнутий чат · новий тост»).
+            <span key={arriving.id} className={tm.dockToast} data-dock-toast={arriving.id}>
+              <Flag round code={arriving.flagCode} diameter={22} decorative />
+              <span className={tm.dockNick}>{arriving.nick}</span>
+              <span className={tm.dockText}>
+                <EmojiText text={arriving.text} />
+              </span>
+              <span className="sr-only">{t('expand')}</span>
+            </span>
+          ) : (
+            <>
+              <span>{t('expand')}</span>
+              <span className="flex-1" />
+            </>
+          )}
           {replies > 0 ? (
             <span aria-hidden="true" className="t2f-replied" data-row="replied">
               <Icon name="reply" size={14} strokeWidth={2} />

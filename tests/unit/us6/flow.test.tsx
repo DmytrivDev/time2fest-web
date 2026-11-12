@@ -7,7 +7,7 @@ import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useOfferWindows, type PassWindowsApi } from '@/components/offers/useOfferWindows';
 import { FacebookConsentCard } from '@/components/player/FacebookConsentCard';
 import { getData } from '@/lib/data/load';
-import type { Stamp } from '@/lib/data/types';
+import type { OfferEntry, Stamp } from '@/lib/data/types';
 import { airSlots } from '@/lib/engine/currentAirEvent';
 import { offerEligibility } from '@/lib/engine/offerEligibility';
 import { clearAllHandlers, emit } from '@/lib/events/bus';
@@ -15,9 +15,7 @@ import { buildOfferContext } from '@/lib/offers/context';
 import { resetCookieFlow } from '@/lib/offers/cookieFlow';
 import { getOfferUi, installTypingTracking, resetOfferUi } from '@/lib/offers/uiState';
 import { useChatFeed } from '@/lib/chat-sim/store';
-import { useGuestStore } from '@/stores/guest';
-import { useTestControls } from '@/stores/testControls';
-import { useTipsStore } from '@/stores/tips';
+import { sanitizeGuest, useGuestStore } from '@/stores/guest';
 import { renderPage } from './render';
 
 const MIN = 60_000;
@@ -134,7 +132,7 @@ function Page({ onApi = () => undefined }: { onApi?: (api: PassWindowsApi) => vo
   );
 }
 
-function offerShow(kind: 'pass-offer' | 'tips', triggerEventId: string, stampCount: number) {
+function offerShow(kind: 'pass-offer', triggerEventId: string, stampCount: number) {
   act(() => {
     emit('offer:show', {
       eventKey: `offer:${kind}:${triggerEventId}`,
@@ -180,7 +178,8 @@ describe('пропозиції — блок під штампом (рішенн�
     expect(offers.history[0]?.dismissedAt).toBeDefined();
     giveStamps(s1, s2, s3);
     const t = s3.midnightMs + 6 * MIN;
-    expect(offerEligibility(t, buildOfferContext()!).show).toBe('tips');
+    // Чайових після 3-го штампа більше немає (рішення 2026-11-12) — закрита пропозиція пасу не змінюється нічим.
+    expect(offerEligibility(t, buildOfferContext()!).show).toBeNull();
   });
 
   it('вікно збоку (вхід, «Обрати трансляцію»…) пропозицію не прибирає', () => {
@@ -193,67 +192,28 @@ describe('пропозиції — блок під штампом (рішенн�
     expect(useGuestStore.getState().offers.history[0]?.dismissedAt).toBeUndefined();
   });
 
-  it('після 3-го — чайові (одна картка за раз)', () => {
+  it('після 3-го штампа картки «Чайові» під штампом немає (2026-11-12): тост — у смузі й кнопках, доступний завжди', () => {
     giveStamps(s1, s2, s3);
     renderPage(<Page />);
-    offerShow('tips', s3.id, 3);
-    expect(screen.getByRole('heading', { level: 2, name: 'Скажи тост на весь світ' })).toBeInTheDocument();
+    offerShow('pass-offer', s3.id, 3);
     expect(document.querySelectorAll('[data-offer]')).toHaveLength(1);
-    expect(useGuestStore.getState().offers.visible).toBe('tips');
+    expect(block()).toHaveAttribute('data-offer-block', 'pass-offer');
+    expect(screen.queryByText('Скажи тост на весь світ')).toBeNull();
+    // Пас уже показували — другої пропозиції після 3-го штампа немає.
+    expect(offerEligibility(s3.midnightMs + 6 * MIN, buildOfferContext()!).show).toBeNull();
   });
 
-  it('«Підтримати» в блоці → вікно «Чайові»: тост → «Оплатити $5» → оплачено → «Опублікувати» → тост у чаті, блок зникає', () => {
-    vi.useFakeTimers();
-    try {
-      giveStamps(s1, s2, s3);
-      useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
-      useChatFeed.getState().reset();
-      useTipsStore.getState().reset();
-      renderPage(<Page />);
-      offerShow('tips', s3.id, 3);
-      fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
-      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Твій тост у чаті «Світ»');
-      fireEvent.click(screen.getByRole('button', { name: 'Оплатити $5' }));
-      act(() => {
-        vi.advanceTimersByTime(7_000);
-      });
-      fireEvent.click(screen.getByRole('button', { name: /Опублікувати тост/ }));
-      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Ти робиш це свято можливим');
-      const world = useChatFeed.getState().rooms.world ?? [];
-      expect(world.at(-1)).toMatchObject({ toast: { amount: 5 }, text: '🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!', author: { nick: 'Олена', isMine: true } });
-      expect(useGuestStore.getState().offers.history.at(-1)).toMatchObject({ kind: 'tips', acted: 'primary' });
-      expect(useGuestStore.getState().offers.history.at(-1)?.dismissedAt).toBeDefined();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it('оплата не пройшла / немає з’єднання — у вікні, «Спробувати ще»; тосту в чаті немає', () => {
-    vi.useFakeTimers();
-    try {
-      giveStamps(s1, s2, s3);
-      useChatFeed.getState().reset();
-      useTipsStore.getState().reset();
-      useTestControls.getState().setPayResult('declined');
-      renderPage(<Page />);
-      offerShow('tips', s3.id, 3);
-      fireEvent.click(screen.getByRole('button', { name: 'Підтримати $5' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Оплатити $5' }));
-      act(() => {
-        vi.advanceTimersByTime(7_000);
-      });
-      const win = screen.getByRole('dialog', { name: 'Чайові' });
-      expect(win).toHaveTextContent('Оплата не пройшла');
-      expect(within(win).getByRole('button', { name: 'Спробувати ще — $5' })).toBeInTheDocument();
-      expect(useChatFeed.getState().rooms.world ?? []).toHaveLength(0);
-      useTestControls.getState().setPayResult('success');
-      useTestControls.getState().setOfflineSimulated(true);
-      fireEvent.click(within(win).getByRole('button', { name: 'Спробувати ще — $5' }));
-      expect(screen.getByRole('dialog', { name: 'Чайові' })).toHaveTextContent('Немає з’єднання');
-    } finally {
-      useTestControls.getState().setOfflineSimulated(false);
-      vi.useRealTimers();
-    }
+  it('старий запис «чайові» у сховищі гостя (до 2026-11-12) відкидається й нічого не показує', () => {
+    giveStamps(s1, s2);
+    const legacy = { kind: 'tips', triggerEventId: s2.id, shownAt: 0 } as unknown as OfferEntry;
+    const clean = sanitizeGuest({ ...useGuestStore.getState(), offers: { nightId: '2026-27', history: [legacy], visible: 'tips' } })!;
+    expect(clean.offers.history).toEqual([]);
+    expect(clean.offers.visible).toBeNull();
+    useGuestStore.setState({ offers: clean.offers });
+    renderPage(<Page />);
+    expect(block()).toBeNull();
+    expect(useChatFeed.getState().rooms.world ?? []).toHaveLength(0);
+    expect(offerEligibility(s2.midnightMs + 6 * MIN, buildOfferContext()!).show).toBe('pass-offer');
   });
 
   it('«Оформити пас» — вікно пасу на місці чату навіть без трансляції; картка лишається', () => {

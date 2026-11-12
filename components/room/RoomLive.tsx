@@ -8,7 +8,7 @@
  * кімната — 4 місця, телефон — одне). Під вікнами — «Кімната перегляду · N з 4», відлік до найближчої півночі у вікнах і
  * рядок дій: «Додати / Замінити трансляцію», «Поділитися», «Режим вечірки», «⋯». Далі — обіцянка штампа, штамп
  * (головного вікна + «Ще в кімнаті»), пас, «Поточні трансляції», «Як працює кімната». «Перший ряд» прибрано
- * (рішення власника 2026-11-12); місце смуги тостів позначено `TOAST-STRIP-SLOT`.
+ * (рішення власника 2026-11-12); на його місці — смуга тостів (`ToastStrip`) одразу під рядком дій кімнати.
  *
  * Вікна:
  * - позиція в сітці = порядок `guest.room.windows`; перше — головне (штамп, чат країни). DOM вікон не переставляємо
@@ -46,6 +46,7 @@ import { StreamPicker } from '@/components/live/StreamPicker';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { OfferBlock } from '@/components/offers/OfferBlock';
+import { ToastStrip } from '@/components/toast/ToastStrip';
 import { WaitingScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
@@ -1016,6 +1017,9 @@ export function RoomLive() {
       <div data-room-page="" className={cn('flex flex-col', s.page)}>
         {grid}
         {info}
+        {/* Смуга тостів — під вікнами й рядком дій кімнати, та сама, що на головній (дошки `Desk-Toast-New`,
+            `Phone-Toast-New`, 2026-11-12). */}
+        <ToastStrip variant={chatColumn ? 'desk' : 'phone'} bare className={s.toastStrip} />
         {phone && undo ? (
           <div className={s.notice} role="status" data-room-notice="">
             <Icon name="check" size={18} />
@@ -1035,7 +1039,6 @@ export function RoomLive() {
         <div className="mt-8 flex flex-col gap-4">
           {/* Штамп у кімнаті закривається «×» (постійний — лише на сторінці країни, власник 2026-11-06). */}
           <StampBlock eventId={main?.eventId ?? null} roomEventIds={eventIds} />
-          {/* TOAST-STRIP-SLOT (кімната): смуга тостів — тут, під штампом (де був «Перший ряд»). */}
           <OfferBlock />
           <div data-moment-slot="">
             <OverlayInFlowOutlet label={t('heading')} />

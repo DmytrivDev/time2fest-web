@@ -109,20 +109,25 @@ describe('PassBuy — картка оформлення', () => {
     expect(props.onSignIn).toHaveBeenCalled();
   });
 
-  it('дрібний текст під кнопкою: оплата й згода разом; інші шляхи — окремою групою, без «Першого ряду»', () => {
+  it('дрібний текст під кнопкою: оплата й згода разом; інші шляхи — окремою групою: «Увійти» й тост за $10, без «Першого ряду»', () => {
     const { unmount } = renderWithApp(<PassBuy variant="page" {...props} />);
     const fine = document.querySelector('[data-row="fine-print"]');
     expect(fine).toHaveTextContent('Оплата на сторінці PayPro Global.');
     expect(fine).toHaveTextContent('Акаунт — з 13 років');
     const alt = document.querySelector('[data-row="alternatives"]') as HTMLElement;
     expect(within(alt).getByRole('button', { name: 'Увійти' })).toBeInTheDocument();
-    // «Перший ряд» прибрано (рішення 2026-11-12): картки «Місце в «Першому ряду» · пас у подарунок» більше немає.
-    expect(within(alt).queryAllByRole('link')).toHaveLength(0);
+    // «Перший ряд» прибрано (рішення 2026-11-12); замість нього — тост за $10 з пасом у подарунок (дошка `Pass-5-New`):
+    // на сторінці пасу вікон немає — посилання на «Підтримати» з вікном тосту на $10.
+    const links = within(alt).getAllByRole('link');
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveTextContent('Скажи тост за $10…і Новорічний пас у подарунок');
+    expect(links[0]!.getAttribute('href')).toMatch(/^\/support\/?\?toast=10$/);
     expect(document.body).not.toHaveTextContent('Перш');
     unmount();
-    // У вікні — рядок оплати про трансляцію.
+    // У вікні — рядок оплати про трансляцію; рядок тосту — у самому вікні пасу (над оформленням), не в картці.
     renderWithApp(<PassBuy variant="stream" {...props} />);
     expect(document.querySelector('[data-row="fine-print"]')).toHaveTextContent('трансляція грає далі.');
+    expect(document.querySelector('[data-row="toast-gift"]')).toBeNull();
   });
 
   it('помилка email: рядок під полем, поле позначене', () => {

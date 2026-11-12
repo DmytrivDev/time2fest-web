@@ -5,7 +5,7 @@
  *
  * Повний дизайн — дошки `Desk-Country-Full`, `Phone-Country-Full` (погоджено 2026-11-05):
  * рядок країни (CountryHeader; кілька поясів — вибір поясу) · відео й рядок дій («Обрати трансляцію ›», «Відео | Відлік»,
- * кімната, вечірка, «⋯») · штамп (тут — постійно, без «×») · пропозиція пасу й чайові · «Трансляції ·
+ * кімната, вечірка, «⋯») · штамп (тут — постійно, без «×») · пропозиція пасу · «Трансляції ·
  * <Країна>» картками з мініатюрами й «+» · до півночі «Ще о … · інші країни поясу» (після — «Зараз і далі») ·
  * «Як святкувати» · «Як <Країна> зустрічає Новий рік» · «Питання й відповіді».
  * Каркас — як на головній (рішення 2026-11-05, `as-built-home-countries-2026-11-05.md`):
@@ -15,7 +15,8 @@
  * відповіді». Чат «Країна» / «Світ» — закріплене вікно внизу (`ChatDock`).
  * Десктоп: CountryHeader · PlayerBlock (рядок дій: «Обрати трансляцію ›», кімната, вечірка, «⋯») · штамп, пропозиції,
  * вікна моменту · ті самі блоки; права колонка макета — чат (sticky); сховано — «Показати чат» біля таймера.
- * «Перший ряд» прибрано (рішення власника 2026-11-12); місце смуги тостів позначено `TOAST-STRIP-SLOT`.
+ * «Перший ряд» прибрано (рішення власника 2026-11-12); на його місці — смуга тостів (`ToastStrip`): телефон — під
+ * липким рядком часу, десктоп — під рядком дій плеєра, над штампом.
  *
  * Плеєр: сторінка сама НЕ переходить за ефіром (FR-024). Ланцюжок задається лише двічі: один раз після відкриття
  * (якщо вже грає подія цієї країни — після «Лишитися тут ›» — нічого не чіпаємо, відео не перезапускається) і на дію
@@ -36,6 +37,7 @@ import { NowNext } from '@/components/live/NowNext';
 import { StreamCards, type CountdownCountry } from '@/components/live/StreamCards';
 import type { EventFilterValue } from '@/components/live/EventFilter';
 import { StampBlock } from '@/components/live/StampBlock';
+import { ToastStrip } from '@/components/toast/ToastStrip';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { useGetPass } from '@/components/pass/PassWindow';
@@ -310,7 +312,7 @@ export function CountryLive({ iso }: { iso: string }) {
   useStampGrant(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
   useChatSimulator(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
   useMomentWindows();
-  // Пропозиції пасу й чайових (offer:show) і стан введення для рушія пропозицій.
+  // Пропозиція пасу (offer:show) і стан введення для рушія пропозицій.
   const passWindows = useOfferWindows();
   const hasPass = useGuestStore((s) => s.hasPass);
   const getPass = useGetPass();
@@ -652,14 +654,15 @@ export function CountryLive({ iso }: { iso: string }) {
           chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoom} onShow={vis.show} /> : null
         }
         dock={!chatColumn}
-        // TOAST-STRIP-SLOT (телефон): смуга тостів — під липким рядком часу (`belowBar`). Поки нічого.
+        // Смуга тостів (телефон) — під липким рядком часу, та сама, що на головній (дошка `Phone-Toast-New`, 2026-11-12).
+        belowBar={<ToastStrip variant="phone" />}
       />
 
       {chatColumn ? (
         <>
-          {/* Штамп і пропозиції (дошка `Desk-Country-Full`). TOAST-STRIP-SLOT (десктоп): смуга тостів — тут, над штампом
-              (де був «Перший ряд»). */}
+          {/* Смуга тостів над штампом і пропозиціями (дошки `Desk-Toast-New`, `Desk-Country-Full`). */}
           <div className={cn(home.column, 'pt-4')}>
+            <ToastStrip variant="desk" />
             {inflow}
           </div>
           <div className="pt-6">{events}</div>

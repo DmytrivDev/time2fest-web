@@ -1,7 +1,8 @@
 /**
  * US6 — «Пропозиції й вікна в потоці» (quickstart; T117, FR-063…FR-065).
  * Гість зі штампами на 2 події → картка «2 Нових роки вже твої — далі буде ще краще» («Наступна північ») не раніше +5 хв після події, не пізніше −10 хв до
- * наступної, після оцінки, одна за раз; закрита хрестиком не повертається тієї ночі; після 3-го штампа — чайові;
+ * наступної, після оцінки, одна за раз; закрита хрестиком не повертається тієї ночі; чайових після 3-го штампа немає
+ * (2026-11-12) — тост доступний завжди (смуга тостів);
  * не під час введення в чаті (~10 с); при картці з кораловою кнопкою кнопка звуку нейтральна (на екрані одна коралова);
  * cookies: у кутку (десктоп) / смугою (телефон) / в потоці, якщо чат сховано; Facebook-згода з налаштувань.
  * Оплата поза областю: «Оформити пас» і «Підтримати» показують лише «Оплата буде на наступному етапі».
@@ -42,7 +43,7 @@ interface Seed {
   hasPass?: boolean;
   chatHidden?: boolean;
   consentAnswered?: boolean;
-  offers?: { kind: 'pass-offer' | 'tips'; triggerEventId: string }[];
+  offers?: { kind: 'pass-offer'; triggerEventId: string }[];
   sentMessages?: number;
 }
 
@@ -211,8 +212,10 @@ test.describe('US6 · пропозиція пасу після 2-го Новог
 
 });
 
-test.describe('US6 · чайові після 3-го Нового року', () => {
-  test('після 3-го штампа (пас уже показували) — «Чайові · Скажи тост на весь світ»: $2 / $5 / $10; тост — у чаті', async ({
+// Рішення власника 2026-11-12: чайових-пропозиції під штампом більше немає — тост доступний усім і завжди
+// (смуга тостів під плеєром, келих у полі чату, «Підтримати»), зокрема власникам пасу.
+test.describe('US6 · тост замість чайових', () => {
+  test('після 3-го штампа (пас уже показували) — картки чайових немає; смуга тостів → вікно → тост у чаті', async ({
     page,
   }) => {
     await seedGuest(page, {
@@ -220,24 +223,28 @@ test.describe('US6 · чайові після 3-го Нового року', () 
       offers: [{ kind: 'pass-offer', triggerEventId: 'evt_london_2027' }],
     });
     await gotoAt(page, AZORES_PLUS_6, 0);
-    await expect(offerCard(page, 'Скажи тост на весь світ')).toBeVisible({ timeout: 10_000 });
-    await expect(slot(page).getByRole('radio')).toHaveCount(3);
-    await slot(page).getByRole('radio', { name: /^\$5/ }).click();
-    await expect(page.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute(
-      'data-variant',
-      'coral',
-    );
-    await expect(slot(page)).toContainText('Спершу напишеш тост, потім — оплата');
-    await expect(visibleCoral(page)).toHaveCount(1);
-    await setPayResult(page, 'success');
-    await page.getByRole('button', { name: 'Підтримати $5' }).click();
-    // 2026-11-07: у вікні — тост і «Оплатити $5»; оплачено — «Опублікувати тост».
-    await page.locator('[data-action="tips-pay"]').click();
-    await expect(page.locator('[data-tips="paid"]')).toContainText('Перевір тост', { timeout: 10_000 });
-    await page.locator('[data-action="publish-toast"]').click();
-    await expect(page.locator('[data-tips="success"]')).toContainText('Ти робиш це свято можливим', { timeout: 10_000 });
+    const strip = page.locator('[data-toast-strip]');
+    await expect(strip).toBeVisible({ timeout: 10_000 });
     await expect(offerCard(page, 'Скажи тост на весь світ')).toHaveCount(0);
-    await expect(page.locator('[data-toast="true"]').first()).toContainText('Піднімаю келих');
+    await expect(slot(page)).toHaveCount(0);
+    await setPayResult(page, 'success');
+    await strip.locator('[data-action="toast-open"]').first().click();
+    const win = page.locator('[data-window="O-TOAST"]');
+    await expect(win.getByRole('radio', { name: '$5 · пляшка ігристого' })).toHaveAttribute('aria-checked', 'true');
+    await win.getByRole('textbox', { name: 'Нік для тосту' }).fill('Зоряна');
+    await win.getByRole('textbox', { name: 'Текст твого тосту' }).fill('Піднімаю келих за всіх!');
+    await win.locator('[data-action="toast-pay"]').click();
+    await expect(win).toContainText('Тост опубліковано', { timeout: 10_000 });
+    await expect(page.locator('[data-toast="true"]').filter({ hasText: 'Піднімаю келих за всіх!' }).first()).toBeAttached();
+  });
+
+  test('власник пасу теж може сказати тост; у вікні — «Новорічний пас у тебе вже є»', async ({ page }) => {
+    await seedGuest(page, { stamps: TWO_STAMPS, hasPass: true });
+    await gotoAt(page, LONDON_PLUS_6, 0);
+    await page.locator('[data-toast-strip] [data-action="toast-open"]').first().click();
+    const win = page.locator('[data-window="O-TOAST"]');
+    await expect(win).toContainText('Новорічний пас у тебе вже є');
+    await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).not.toContainText('найвигідніше');
   });
 });
 

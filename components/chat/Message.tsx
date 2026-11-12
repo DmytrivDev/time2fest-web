@@ -3,7 +3,9 @@
 /**
  * C10. Message — рядок чату. Варіанти за `ChatMessage.kind`:
  * - `regular`: прапор xs + нік (одна ціль дотику на висоту рядка, назва «Аміра, Канада») · час праворуч · текст 15/400;
- *   + позначка пасу (не клікабельна), «тост», «це ти», цитата відповіді;
+ *   + позначка пасу (не клікабельна), «тост», «це ти», цитата відповіді; тост — рамка й фон за рівнем ($2 / $5 / $10) і
+ *   рядок «закріплено під трансляцією» / «закріплено · у привітанні опівночі» (дошка `Desk-Toast-New`, 2026-11-12);
+ * - `toast-midnight`: привітання опівночі з ніками тих, хто сказав тост на $10 (`ToastGreeting`);
  * - `system`: знак Time2Fest + текст («Франція, Німеччина й Італія зустріли Новий рік» — через `metPhrase`),
  *   лічильник «+1 240 людей привітали», повільний режим, голосування, лідер рейтингу.
  * «Перший ряд» (позначка, емоція біля ніка, «тепер у першому ряду», привітання місць) прибрано разом із рядом
@@ -22,12 +24,15 @@ import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import type { Author, ChatMessage, Country, Gender } from '@/lib/data/types';
+import { TierMeta } from '@/components/toast/ToastBubble';
+import type { Author, ChatMessage, Country, Gender, SystemPayload } from '@/lib/data/types';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
-import { formatClock } from '@/lib/i18n/time';
+import { formatClock, utcLabel } from '@/lib/i18n/time';
 import { useTranslateMessage } from '@/lib/chat/translate';
+import { greetingParts } from '@/lib/toast/feed';
 import { useChatPref } from '@/stores/chatPrefs';
 import { ReactionsRow, type MessageActionHandlers } from './MessageActions';
+import tm from './toastMessage.module.css';
 
 export interface MessageLookup {
   /** Назва країни за кодом прапора («Австралія»). */
@@ -146,6 +151,65 @@ function MessageText({ message }: { message: ChatMessage }) {
   );
 }
 
+/**
+ * Привітання опівночі від Time2Fest (рішення власника 2026-11-12, дошки `Desk-Toast-New` · «Північ · привітання»,
+ * `Phone-Toast-New`): «Північ · UTC+1 — з Новим роком!», країни поясу (перші три й «й ще N»), «Тост цієї півночі
+ * піднімають:» і до 8 чипів «прапор + нік», далі «і ще N». Нікого — без рядка тостів.
+ */
+function ToastGreeting({
+  message,
+  payload,
+  lookup,
+  className,
+}: {
+  message: ChatMessage;
+  payload: Extract<SystemPayload, { kind: 'toast-midnight' }>;
+  lookup?: MessageLookup;
+  className?: string;
+}) {
+  const t = useTranslations('toast.greeting');
+  const names = payload.countryIsos.map((iso) => lookup?.country?.(iso)?.name.uk ?? iso);
+  const parts = greetingParts(names, payload.toasters);
+  const countries = parts.moreCountries
+    ? t('countriesMore', { names: parts.countries.join(', '), countries: parts.moreCountries })
+    : joinNamesUk(parts.countries);
+  return (
+    <li data-kind="system" data-system="toast-midnight" data-msg-id={message.id} className={cn(tm.greet, className)}>
+      <div className={tm.greetHead}>
+        <span className={tm.greetMark} aria-hidden="true">
+          <Icon name="spark" size={14} strokeWidth={2.4} />
+        </span>
+        <span className={tm.greetFrom}>Time2Fest</span>
+        <time dateTime={new Date(message.createdAt).toISOString()} className={tm.greetTime}>
+          {formatClock(message.createdAt)}
+        </time>
+      </div>
+      <p className={tm.greetTitle}>
+        <EmojiText text={t('title', { zone: utcLabel(payload.offsetMinutes) })} />
+      </p>
+      {countries ? <p className={tm.greetCountries}>{countries}</p> : null}
+      {parts.chips.length ? (
+        <>
+          <p className={tm.greetLead}>{t('toasters')}</p>
+          <ul className={tm.chips} data-row="toasters">
+            {parts.chips.map((c, i) => (
+              <li key={`${c.nick}-${i}`} className={tm.chip}>
+                <Flag round code={c.flagCode} diameter={18} decorative />
+                {c.nick}
+              </li>
+            ))}
+            {parts.moreToasters ? (
+              <li className={tm.more} data-row="toasters-more">
+                {t('more', { count: parts.moreToasters })}
+              </li>
+            ) : null}
+          </ul>
+        </>
+      ) : null}
+    </li>
+  );
+}
+
 export function Message({
   message,
   lookup,
@@ -201,6 +265,10 @@ export function Message({
         {t('removed')}
       </li>
     );
+  }
+
+  if (message.kind === 'system' && message.system?.kind === 'toast-midnight') {
+    return <ToastGreeting message={message} payload={message.system} lookup={lookup} className={className} />;
   }
 
   if (message.kind === 'system') {
@@ -304,6 +372,7 @@ export function Message({
       data-kind="regular"
       data-own={a?.isMine ? 'true' : undefined}
       data-toast={message.toast ? 'true' : undefined}
+      data-toast-tier={message.toast ? message.toast.amount : undefined}
       data-msg-id={message.id}
       data-actions-open={menuOpen ? 'true' : undefined}
       data-menu-always={menuAlways && (more || del) ? 'true' : undefined}
@@ -326,6 +395,7 @@ export function Message({
       }}
       className={cn(
         't2f-msg t2f-focus relative flex flex-col gap-0.5 my-px px-2.5 py-2',
+        message.toast && tm.toast,
         a && onAuthorOpen && 'cursor-pointer',
         className,
       )}
@@ -405,6 +475,7 @@ export function Message({
         </p>
       ) : null}
       <MessageText message={message} />
+      {message.toast ? <TierMeta tier={message.toast.amount} /> : null}
       <ReactionsRow
         message={message}
         tabStop={tabStop}

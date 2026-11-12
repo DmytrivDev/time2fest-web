@@ -3,7 +3,8 @@
 /**
  * O-PASS-BUY — оформлення пасу під час трансляції (дошки `O-PASS-BUY · Під час трансляції: …`, v100):
  * десктоп — панель на місці чату, телефон — вікно під плеєром (як вхід O-AUTH); трансляція грає далі.
- * Угорі — ціна й можливості пасу з «Усе про пас», нижче — те саме оформлення, що на сторінці (`PassBuy variant="stream"`).
+ * Угорі — ціна й можливості пасу з «Усе про пас», «Скажи тост за $10 · …і Новорічний пас у подарунок» (дошка
+ * `Pass-5-New`, 2026-11-12 — вікно тосту з $10), нижче — те саме оформлення, що на сторінці (`PassBuy variant="stream"`).
  * «Дивитися далі» закриває вікно: права колонка стає такою, як була (чат чи нічого).
  *
  * `useGetPass` — одна дія для «Пас» у хедері, «Новорічний пас» у меню й усіх «Оформити пас» на сайті
@@ -15,6 +16,7 @@ import { useCallback, useContext, useLayoutEffect, useRef, type MouseEvent } fro
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { AuthIcon } from '@/components/auth/icons';
 import { useOverlay } from '@/components/shell/OverlayManager';
+import { ToastGift } from '@/components/toast/ToastGift';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { useAuthStore } from '@/stores/auth';
 import { usePassStore } from '@/stores/pass';
@@ -42,6 +44,8 @@ function PassWindowContent({ onClose, onSignIn }: { onClose: () => void; onSignI
   return (
     <div ref={ref} data-window={PASS_WINDOW_ID} data-view={view} className={s.window}>
       {form ? <PassPerksCompact /> : null}
+      {/* Інший шлях до пасу — тост за $10 (дошка `Pass-5-New`, 2026-11-12). */}
+      {form ? <ToastGift variant="window" className={s.toastGift} /> : null}
       <PassBuy
         variant="stream"
         onSignIn={onSignIn}

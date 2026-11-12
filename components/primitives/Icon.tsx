@@ -81,7 +81,10 @@ export type IconName =
   | 'telegram'
   | 'instagram'
   | 'zap'
-  | 'sign-out';
+  | 'sign-out'
+  | 'pin'
+  | 'spark'
+  | 'external';
 
 export type IconSize = 12 | 14 | 16 | 18 | 20 | 22 | 32;
 
@@ -247,7 +250,7 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   heart: <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />,
-  // Келих (чайові, «тост»).
+  // Келих — тост (смуга тостів, вікно «Сказати тост», келих у полі чату).
   glass: (
     <>
       <path d="M8 3h8l-1 7a3 3 0 0 1-6 0z" />
@@ -456,6 +459,22 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <path d="M15 4h4v16h-4" />
       <path d="M10 8l-4 4 4 4M6 12h10" />
+    </>
+  ),
+  // Тост закріплено під трансляцією (дошки `Desk-Toast-New`, `Phone-Toast-New`, 2026-11-12).
+  pin: (
+    <>
+      <path d="M12 17v5" />
+      <path d="M5 17h14v-1.8a2 2 0 0 0-1.1-1.8l-1.8-.9A2 2 0 0 1 15 10.8V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.8a2 2 0 0 1-1.1 1.8l-1.8.9A2 2 0 0 0 5 15.2z" />
+    </>
+  ),
+  // Нік у привітанні опівночі; знак Time2Fest у привітанні (ті самі дошки).
+  spark: <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6" />,
+  // «Відкрити оплату» — сторінка PayPro у новій вкладці.
+  external: (
+    <>
+      <path d="M14 4h6v6M20 4l-9 9" />
+      <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
     </>
   ),
 };

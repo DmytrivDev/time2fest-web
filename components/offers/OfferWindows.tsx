@@ -2,12 +2,12 @@
 
 /**
  * Вікна навколо пасу для `OverlayManager` (O-PASS-GATE, «Графік — у пасі», «Усе про пас»): з’єднують чисті картки
- * з `windows/*` зі станом гостя (`guest.offers`) і менеджером. Пропозиція пасу й чайові — не вікна, а окремий блок під
+ * з `windows/*` зі станом гостя (`guest.offers`) і менеджером. Пропозиція пасу — не вікно, а окремий блок під
  * штампом (`OfferBlock`, рішення 2026-11-01); «Що дає пас» на сторінці більше немає — «Детальніше» веде у вікно пасу
- * або на /pass/ (`usePassDetails`).
+ * або на /pass/ (`usePassDetails`). Пропозиції «Чайові» більше немає (2026-11-12): тост — `components/toast`.
  * Закриття (×, Esc, заміна іншим вікном) записує `dismissedAt` у `guest.offers` — закрита пропозиція
  * не повертається тієї ночі (`offerEligibility`). «Оформити пас» записує `acted: 'primary'` і відкриває оформлення
- * пасу (`useGetPass`); «Підтримати» поки показує імітоване «Оплата буде на наступному етапі».
+ * пасу (`useGetPass`).
  */
 import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
 import { PassGate, type PassGateFeature } from '@/components/windows/PassGate';
@@ -21,13 +21,11 @@ import type { Ms, OfferKind } from '@/lib/data/types';
 import { useGuestStore } from '@/stores/guest';
 
 export const PASS_OFFER_WINDOW_ID = 'O-PASS-OFFER';
-export const TIPS_WINDOW_ID = 'O-TIPS';
 export const PASS_GATE_WINDOW_ID = 'O-PASS-GATE';
 export const PASS_INFO_WINDOW_ID = 'O-PASS-INFO';
 
 export const OFFER_WINDOW_ID: Record<OfferKind, string> = {
   'pass-offer': PASS_OFFER_WINDOW_ID,
-  tips: TIPS_WINDOW_ID,
   'pass-gate': PASS_GATE_WINDOW_ID,
   'pass-info': PASS_INFO_WINDOW_ID,
 };

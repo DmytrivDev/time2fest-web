@@ -575,23 +575,19 @@ html[data-has-chat-dock] .t2f-cookie-phone {
   border-radius: var(--radius-md) var(--radius-lg) var(--radius-md) var(--radius-md);
   transition: background-color 120ms ease-out;
 }
-/* Золотий тост за чайові (рішення 2026-11-01): жовта смужка зліва й легкий жовтий фон, позначка «тост». */
-.t2f-msg[data-toast='true'] {
-  margin-inline: var(--spacing-2);
-  border-inline-start: 3px solid var(--color-highlight);
-  background: var(--color-highlight-tint);
-}
+/* Тост у чаті — рамка й фон за рівнем (`components/chat/toastMessage.module.css`, рішення 2026-11-12); позначка «тост». */
 .t2f-toast-badge {
-  padding: 0 6px;
+  flex: none;
+  padding: 1px 7px;
   border-radius: var(--radius-full);
   background: var(--color-highlight);
   color: var(--color-background);
   font-size: 11px;
-  font-weight: 700;
-  line-height: 16px;
+  font-weight: 800;
+  line-height: 15px;
 }
-.t2f-msg:hover,
-.t2f-msg[data-actions-open='true'] {
+.t2f-msg:not([data-toast]):hover,
+.t2f-msg:not([data-toast])[data-actions-open='true'] {
   background: var(--color-surface-raised);
 }
 .t2f-msg:hover time,

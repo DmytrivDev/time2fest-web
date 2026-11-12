@@ -2,68 +2,55 @@
 
 /**
  * «Підтримати» (`/support/`) за дошкою `Desk-Support-New`, варіант A (рішення власника 2026-11-07, концепція
- * `support-concept-2026-11-07.md`). Сторінка з чатом «Світ» праворуч, вигляд — як оформлення пасу:
+ * `support-concept-2026-11-07.md`); з 2026-11-12 підтримка — це тост (головний платний продукт, дошки `Desk-Toast-New`,
+ * `Phone-Toast-New`). Сторінка з чатом «Світ» праворуч:
  * - героїчний блок: два золоті тости й 🥂 ліворуч, «Скажи тост на весь світ» праворуч;
- * - блок чайових (як під штампом, без «×»): «Підтримати $N» відкриває вікно «Чайові» — тост пишуть, поки оплачують;
- * - «Тости світу» — останні золоті тости з чату «Світ» (свої теж), «N тостів за свято · M країн» — соціальний доказ;
+ * - «Обери тост»: рівні $2 / $5 / $10 і що дає обраний (як у вікні); «Сказати тост · $N» відкриває вікно тосту з цим
+ *   рівнем — текст пишуть до оплати;
+ * - «Тости світу» — ті самі тости, що в смузі під плеєром (свої; у тестовій і демо-збірці — ще й імітовані), за рівнями;
+ *   «N тостів за свято · M країн»;
  * - «Хочеш більше від свята?» — Новорічний пас; «Питання й відповіді».
+ * `/support/?toast=10` («Скажи тост за $10» на сторінці пасу) — вікно тосту відкривається одразу з $10.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { PageChat } from '@/components/chat/PageChat';
 import { Faq } from '@/components/live/Faq';
+import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Emoji, EmojiText } from '@/components/primitives/Emoji';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
-import { Tips } from '@/components/windows/Tips';
-import chatScript from '@/data/chat-script.json';
-import { useChatFeed } from '@/lib/chat-sim/store';
-import { getData } from '@/lib/data/load';
-import type { ChatMessage, ChatScriptFile } from '@/lib/data/types';
-import { formatDurationShort } from '@/lib/i18n/time';
-import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { worldToasts } from '@/lib/tips/worldToasts';
+import { ToastBubble } from '@/components/toast/ToastBubble';
+import { useAgo } from '@/components/toast/ToastStrip';
+import { ToastBenefits, ToastTiers, useOpenToastWindow } from '@/components/toast/ToastWindow';
+import { useWorldToasts } from '@/components/toast/useWorldToasts';
+import { formatUsd } from '@/lib/offers/format';
+import { pinnedUntil } from '@/lib/toast/feed';
+import { DEFAULT_TIER, isToastTier, type ToastTier } from '@/lib/toast/tiers';
+import { useGuestStore } from '@/stores/guest';
 import s from './support.module.css';
 
 const FEED = 5;
 
-function Bubble({ m, ago, fresh }: { m: ChatMessage; ago?: string; fresh?: boolean }) {
-  const t = useTranslations('offers');
-  return (
-    <div className={cn(s.bubble, fresh && s.bubbleFresh)}>
-      <span className={s.who}>
-        {m.author?.flagCode ? <Flag round code={m.author.flagCode} size="xs" decorative /> : null}
-        <b className={s.nick}>{m.author?.nick}</b>
-        <span className="t2f-toast-badge">{t('toastBadge')}</span>
-        {ago ? <span className={s.ago}>{ago}</span> : null}
-      </span>
-      <span className={s.text}>
-        <EmojiText text={m.text ?? ''} />
-      </span>
-    </div>
-  );
-}
-
 function WorldToasts() {
   const t = useTranslations('supportPage');
-  const ready = useTimeReady();
-  const now = useNow();
-  const minute = Math.floor(now / 1000) * 1000;
-  const own = useChatFeed((f) => f.rooms.world);
-  // До готовності часу (сервер, перший кадр) — порожньо, щоб розмітка збігалась.
-  const all = useMemo(() => {
-    if (!ready) return [];
-    const mine = (own ?? []).filter((m) => m.toast && m.author?.isMine && m.createdAt <= minute);
-    return [...worldToasts(chatScript as ChatScriptFile, getData(), minute), ...mine].sort((a, b) => b.createdAt - a.createdAt);
-  }, [own, minute, ready]);
-  const countries = new Set(all.map((m) => m.author?.flagCode).filter(Boolean));
+  const { ready, toasts, now, midnights, view } = useWorldToasts();
+  const ago = useAgo();
+  // Найновіші першими.
+  const all = ready ? [...toasts].reverse() : [];
   const [open, setOpen] = useState(false);
   const restId = useId();
-  const ago = (m: ChatMessage) => t('ago', { time: formatDurationShort(Math.max(60_000, now - m.createdAt)) });
-  const flags = [...countries].slice(0, 8) as string[];
+  const flags = [...new Set(all.map((m) => m.flagCode))].slice(0, 8);
+  const item = (m: (typeof all)[number]) => {
+    const until = pinnedUntil(m, midnights);
+    return (
+      <li key={m.id}>
+        <ToastBubble nick={m.nick} flagCode={m.flagCode} text={m.text} tier={m.tier} pass={!!m.pass} meta={until !== null && now < until} aside={ago(now, m.createdAt)} />
+      </li>
+    );
+  };
   return (
     <section aria-labelledby="support-toasts" className={s.box} data-world-toasts="">
       <div className={s.boxHead}>
@@ -78,31 +65,19 @@ function WorldToasts() {
                 <Flag key={f} round code={f} diameter={18} decorative />
               ))}
             </span>
-            <span className={s.meta}>{t('toastsMeta', { count: all.length, countries: countries.size })}</span>
+            <span className={s.meta}>{t('toastsMeta', { count: view.total, countries: view.countries })}</span>
           </>
         ) : null}
       </div>
       <p className={s.sub}>{t('toastsSub')}</p>
       {all.length ? (
         <>
-          <ul className={s.feed}>
-            {all.slice(0, FEED).map((m, i) => (
-              <li key={m.id}>
-                <Bubble m={m} fresh={i === 0} ago={ago(m)} />
-              </li>
-            ))}
-          </ul>
-          {/* «Переглянути всі» — решта тостів плавно розгортається (власник 2026-11-07: замість «Усі тости — у чаті»). */}
+          <ul className={s.feed}>{all.slice(0, FEED).map(item)}</ul>
+          {/* «Переглянути всі» — решта тостів плавно розгортається (власник 2026-11-07). */}
           {all.length > FEED ? (
             <>
               <div id={restId} className={s.rest} data-open={open || undefined} inert={!open}>
-                <ul className={s.feed}>
-                  {all.slice(FEED).map((m) => (
-                    <li key={m.id}>
-                      <Bubble m={m} ago={ago(m)} />
-                    </li>
-                  ))}
-                </ul>
+                <ul className={s.feed}>{all.slice(FEED).map(item)}</ul>
               </div>
               <button type="button" aria-expanded={open} aria-controls={restId} onClick={() => setOpen((v) => !v)} className={cn('t2f-focus', s.more)} data-action="toasts-all">
                 {open ? t('toastsLess') : t('toastsAll', { count: all.length })}
@@ -118,10 +93,46 @@ function WorldToasts() {
   );
 }
 
+/** «Обери тост» на сторінці: рівні й що вони дають, «Сказати тост · $N» — вікно тосту з цим рівнем. */
+function ToastOffer({ onOpen }: { onOpen: (tier: ToastTier) => void }) {
+  const t = useTranslations('toast');
+  const hasPass = useGuestStore((g) => g.hasPass);
+  const [tier, setTier] = useState<ToastTier>(DEFAULT_TIER);
+  return (
+    <section aria-labelledby="support-offer" className={cn(s.box, s.offer)} data-offer="toast">
+      <p className={s.offerKicker}>
+        <Icon name="glass" size={14} />
+        {t('supportCard.kicker')}
+      </p>
+      <h2 id="support-offer" className={s.h2}>
+        {t('chooseTitle')}
+      </h2>
+      <p className={s.sub}>{t('supportCard.lead')}</p>
+      <div className={s.offerGrid}>
+        <ToastTiers value={tier} onChange={setTier} hasPass={hasPass} />
+        <ToastBenefits tier={tier} hasPass={hasPass} />
+      </div>
+      <Button variant="coral" size="lg" yieldToCoralWindow onClick={() => onOpen(tier)} className={s.offerBtn} data-action="support-toast">
+        {t('supportCard.action', { price: formatUsd(tier) })}
+      </Button>
+    </section>
+  );
+}
+
 export function SupportPage() {
   const t = useTranslations('supportPage');
-  const openTips = useOpenTipsWindow();
-  const faq = (['subscription', 'pass', 'refund', 'noToast'] as const).map((k) => ({ id: k, question: t(`faq.${k}Q`), answer: t(`faq.${k}A`) }));
+  const openToast = useOpenToastWindow();
+  const faq = (['subscription', 'pass', 'refund', 'check'] as const).map((k) => ({ id: k, question: t(`faq.${k}Q`), answer: t(`faq.${k}A`) }));
+  // «Скажи тост за $10» зі сторінки пасу: вікно з $10 одразу, адресу — чисту.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tier = Number(params.get('toast'));
+    if (!params.has('toast')) return;
+    params.delete('toast');
+    const rest = params.toString();
+    window.history.replaceState(window.history.state, '', `${window.location.pathname}${rest ? `?${rest}` : ''}`);
+    openToast({ tier: isToastTier(tier) ? tier : undefined });
+  }, [openToast]);
   return (
     <div id="content" tabIndex={-1} className={cn(s.page, 'focus:outline-none')} data-page="S-SUPPORT">
       <header className={s.hero}>
@@ -140,7 +151,9 @@ export function SupportPage() {
               <b>Олена</b>
               <span className="t2f-toast-badge">тост</span>
             </span>
-            🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!
+            <span>
+              <EmojiText text="🥂 Піднімаю келих за всіх, хто зустрічає Новий рік разом!" />
+            </span>
           </span>
           <span className={s.artGlass}>
             <Emoji char="🥂" size={48} />
@@ -156,7 +169,7 @@ export function SupportPage() {
         </div>
       </header>
 
-      <Tips onSupport={(amount) => openTips({ amount })} className={s.tips} />
+      <ToastOffer onOpen={(tier) => openToast({ tier })} />
 
       <WorldToasts />
 

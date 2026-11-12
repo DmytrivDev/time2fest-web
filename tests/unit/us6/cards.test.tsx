@@ -5,7 +5,9 @@ import { PassGate } from '@/components/windows/PassGate';
 import { PassInfo } from '@/components/windows/PassInfo';
 import { PassOffer } from '@/components/windows/PassOffer';
 import { ShareContent } from '@/components/windows/Share';
-import { Tips } from '@/components/windows/Tips';
+import { ToastBenefits, ToastTiers } from '@/components/toast/ToastWindow';
+import type { ToastTier } from '@/lib/toast/tiers';
+import { useState } from 'react';
 import { renderPage, renderPlain } from './render';
 
 const MIN = 60_000;
@@ -79,29 +81,47 @@ describe('PassInfo', () => {
   });
 });
 
-describe('Tips — «Скажи тост на весь світ», спрощений блок (дошка `Desk-Tips-Toast`, 2026-11-07)', () => {
-  it('надзаголовок «Чайові», $2 келих / $5 пляшка ігристого / $10 феєрверк (типово $5), приклад тосту без поля', () => {
-    renderPage(<Tips onClose={() => undefined} />);
-    expect(screen.getByRole('heading', { level: 2, name: 'Скажи тост на весь світ' })).toBeInTheDocument();
-    expect(screen.getByText('Чайові')).toBeInTheDocument();
+// Картка «Чайові» прибрана 2026-11-12: тепер рівні тосту — плитки й перелік того, що дає рівень (вікно тосту, «Підтримати»).
+describe('рівні тосту — плитки й «що дає» (дошка `Desk-Toast-New`, 2026-11-12)', () => {
+  function Tiers({ hasPass = false, onPick = () => undefined }: { hasPass?: boolean; onPick?: (v: number) => void }) {
+    const [tier, setTier] = useState<ToastTier>(5);
+    return (
+      <>
+        <ToastTiers
+          value={tier}
+          hasPass={hasPass}
+          onChange={(v) => {
+            setTier(v);
+            onPick(v);
+          }}
+        />
+        <ToastBenefits tier={tier} hasPass={hasPass} />
+      </>
+    );
+  }
+
+  it('$2 келих / $5 пляшка ігристого / $10 феєрверк (типово $5), «найвигідніше» на $10; галочки за рівнем', () => {
+    renderPage(<Tiers />);
     expect(screen.getAllByRole('radio').map((r) => r.getAttribute('aria-label'))).toEqual(['$2 · келих', '$5 · пляшка ігристого', '$10 · феєрверк']);
     expect(screen.getByRole('radio', { name: /^\$5/ })).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByRole('button', { name: 'Підтримати $5' })).toHaveAttribute('data-variant', 'coral');
+    expect(screen.getByRole('radio', { name: /^\$10/ })).toHaveTextContent('найвигідніше');
+    const list = screen.getByRole('list', { name: 'Що дає тост' });
+    expect(list.querySelectorAll('[data-on]')).toHaveLength(2);
+    expect(within(list).getByText('Твій нік у привітанні опівночі').closest('li')).toHaveTextContent('з $10');
     fireEvent.click(screen.getByRole('radio', { name: /^\$10/ }));
-    expect(screen.getByRole('button', { name: 'Підтримати $10' })).toBeInTheDocument();
-    // Поля тосту немає — приклад, а тост пишуть у вікні під час оплати.
-    expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.getByText('приклад')).toBeInTheDocument();
-    expect(screen.getByText(/Спершу напишеш тост, потім — оплата/)).toBeInTheDocument();
-    expect(coralButtons()).toHaveLength(1);
+    expect(list.querySelectorAll('[data-on]')).toHaveLength(4);
+    expect(within(list).getByText(/Новорічний пас у подарунок/).closest('li')).toHaveTextContent('· окремо $5');
+    expect(coralButtons()).toHaveLength(0);
   });
 
-  it('«Підтримати» передає суму (тост — у вікні оплати)', () => {
-    const onSupport = vi.fn();
-    renderPage(<Tips onSupport={onSupport} />);
-    fireEvent.click(screen.getByRole('radio', { name: /^\$2/ }));
-    fireEvent.click(screen.getByRole('button', { name: 'Підтримати $2' }));
-    expect(onSupport).toHaveBeenCalledWith(2);
+  it('з пасом: без «найвигідніше», замість подарунка — «Новорічний пас у тебе вже є»', () => {
+    const onPick = vi.fn();
+    renderPage(<Tiers hasPass onPick={onPick} />);
+    expect(screen.getByRole('radio', { name: /^\$10/ })).not.toHaveTextContent('найвигідніше');
+    fireEvent.click(screen.getByRole('radio', { name: /^\$10/ }));
+    expect(onPick).toHaveBeenCalledWith(10);
+    expect(screen.getByText('Новорічний пас у тебе вже є')).toBeInTheDocument();
+    expect(screen.queryByText('Новорічний пас у подарунок')).toBeNull();
   });
 });
 

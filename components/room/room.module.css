@@ -402,6 +402,15 @@ button.slot:hover .slotCircle {
   color: var(--color-text-secondary);
   font-size: 14px;
 }
+/* Смуга тостів під рядком дій кімнати (дошки `Desk-Toast-New`, `Phone-Toast-New`, 2026-11-12). */
+.toastStrip {
+  margin-top: 8px;
+}
+@media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
+  .toastStrip {
+    margin-top: 16px;
+  }
+}
 .phoneActions {
   display: flex;
   flex-direction: column;

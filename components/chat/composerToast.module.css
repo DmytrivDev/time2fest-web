@@ -1,0 +1,63 @@
+/* Келих у полі повідомлення — «Сказати тост» (дошки `Desk-Toast-New` · «2 · Чат», `Phone-Toast-New`, 2026-11-12):
+   коло 30 px, золотий келих; наведення — яскравіше й підказка над кнопкою (лише там, де є наведення). */
+.wrap {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 1px;
+  padding: 0;
+  border: 1px solid rgb(252 226 134 / 0.3);
+  border-radius: 50%;
+  background: rgb(252 226 134 / 0.1);
+  color: var(--color-highlight);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out;
+}
+/* Ціль дотику 44 px — невидима, навколо кола. */
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+}
+.btn:hover,
+.btn:focus-visible {
+  border-color: rgb(252 226 134 / 0.7);
+  background: rgb(252 226 134 / 0.22);
+}
+.tip {
+  position: absolute;
+  right: -6px;
+  bottom: calc(100% + 14px);
+  z-index: 5;
+  padding: 6px 10px;
+  border: 1px solid #3a3a42;
+  border-radius: 8px;
+  background: #2a2a30;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.5);
+  color: var(--color-text);
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease-out;
+}
+@media (hover: hover) {
+  .wrap:hover .tip,
+  .btn:focus-visible + .tip {
+    opacity: 1;
+  }
+}
+:global(html[data-reduce-motion='true']) .btn,
+:global(html[data-reduce-motion='true']) .tip {
+  transition: none;
+}

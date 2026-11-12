@@ -4,6 +4,7 @@
  * C11. Composer — поле введення чату (FR-050…052).
  * Частини: цитата відповіді («Скасувати відповідь») · Textarea (приховану мітку «Повідомлення в чат «Світ»» задає `inputLabel`) ·
  * кнопка-емодзі (вибір емодзі над рядком поля, `EmojiPicker`: вставка в позицію курсора, ліміт 200 діє) · «Надіслати» · підказка · лічильник.
+ * Перед емодзі — келих «Сказати тост» (`onToast`; дошки `Desk-Toast-New`, `Phone-Toast-New`, рішення 2026-11-12): завжди в полі.
  * Стани: гість (перше «Надіслати» відкриває O-NICK — це справа батька через `onSubmit`), лічильник від 180 з 200
  * (за 5 до межі — `text`, на 200 — кораловий «Досить», оголошення на 180/195/200), `link-error`
  * («Посилання в чаті не надсилаються — прибери його, текст лишиться»), `slow` (кнопка неактивна з причиною:
@@ -20,6 +21,7 @@ import { Textarea } from '@/components/primitives/Textarea';
 import type { RoomId } from '@/lib/data/types';
 import { ANNOUNCE_AT, COUNTER_FROM, MAX_TEXT } from '@/lib/chat-sim/send';
 import { EmojiPicker } from './EmojiPicker';
+import ts from './composerToast.module.css';
 
 export type ComposerError = 'link' | 'too-long' | null;
 
@@ -40,6 +42,8 @@ export interface ComposerProps {
   reply?: { nick: string; excerpt: string } | null;
   onCancelReply?: () => void;
   textareaRef?: Ref<HTMLTextAreaElement>;
+  /** Келих «Сказати тост» у полі, поруч з емодзі — завжди (рішення власника 2026-11-12); відкриває вікно тосту. */
+  onToast?: () => void;
   className?: string;
 }
 
@@ -56,6 +60,7 @@ export function Composer({
   reply = null,
   onCancelReply,
   textareaRef,
+  onToast,
   className,
 }: ComposerProps) {
   const t = useTranslations('chat');
@@ -188,6 +193,16 @@ export function Composer({
         onKeyDown={onKeyDown}
         endSlot={
           <>
+            {onToast ? (
+              <span className={ts.wrap}>
+                <button type="button" aria-label={t('toastButton')} onClick={onToast} className={cn('t2f-focus', ts.btn)} data-action="chat-toast">
+                  <Icon name="glass" size={16} />
+                </button>
+                <span aria-hidden="true" className={ts.tip}>
+                  {t('toastButton')}
+                </span>
+              </span>
+            ) : null}
             <IconButton
               id={emojiBtnId}
               icon="smile"

@@ -1,0 +1,400 @@
+/* Смуга тостів під плеєром (дошки `Desk-Toast-New` · «1 · Смуга тостів під плеєром», `Phone-Toast-New` · «1 · Смуга
+   тостів під відео», v2 2026-11-12). Нейтральна картка: золото — лише в самих тостах. Розміри — з дошки. */
+
+/* ── спільне ── */
+.card {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-highlight);
+  white-space: nowrap;
+}
+.metaText {
+  overflow: hidden;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.spacer {
+  flex: 1;
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.round {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #3a3a42;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.round:hover {
+  color: #fff;
+  border-color: #4a4a52;
+}
+.round[data-size='36'] {
+  width: 36px;
+  height: 36px;
+}
+.round[aria-expanded='true'] {
+  color: #fff;
+}
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.pos {
+  min-width: 36px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.divider {
+  flex: none;
+  width: 1px;
+  height: 24px;
+  margin: 0 2px;
+  background: #3a3a42;
+}
+.label {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.allLink {
+  display: block;
+  margin: 4px auto 0;
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.emptyIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px dashed rgb(252 226 134 / 0.5);
+  border-radius: 50%;
+  background: rgb(252 226 134 / 0.12);
+  color: var(--color-highlight);
+}
+.emptyTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+.emptyText {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Тост з’являється плавно (без руху при «Зменшити рух»). */
+.fade {
+  animation: t2f-toast-in 260ms ease-out;
+}
+@keyframes t2f-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+:global(html[data-reduce-motion='true']) .fade {
+  animation: none;
+}
+
+/* Годинник ротації: смужка-прогрес (десктоп — видима внизу картки; телефон — невидима). Пауза — наведення, фокус,
+   розгорнутий список; «Зменшити рух» — анімації немає, отже й автозміни. */
+.track {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #26262b;
+}
+.progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--color-highlight);
+  opacity: 0.75;
+  transform-origin: left center;
+  animation: t2f-toast-progress 6s linear forwards;
+}
+.progress[data-hidden] {
+  opacity: 0;
+}
+.card[data-paused] .progress {
+  animation-play-state: paused;
+}
+@keyframes t2f-toast-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+:global(html[data-reduce-motion='true']) .progress,
+:global(html[data-reduce-motion='true']) .track {
+  display: none;
+}
+
+/* ── десктоп ── */
+.desk {
+  padding: 14px 16px 16px;
+}
+.deskCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 14px 12px;
+  border: 1px solid #34343a;
+  border-radius: 14px;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.deskCard[data-pinned] {
+  border-color: rgb(252 226 134 / 0.55);
+  background: linear-gradient(135deg, rgb(252 226 134 / 0.18), rgb(252 226 134 / 0.05));
+}
+.deskFlag {
+  display: flex;
+  margin-top: 1px;
+}
+.deskBody {
+  flex: 1;
+  min-width: 0;
+}
+.deskWho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.deskNick {
+  font-size: 15px;
+  font-weight: 700;
+}
+.pinMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-highlight);
+}
+.ago {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.ago[data-fresh] {
+  color: var(--color-highlight);
+}
+.deskText {
+  margin: 2px 0 0;
+  font-size: 16.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 14px;
+}
+.grid[data-single] {
+  grid-template-columns: minmax(0, 1fr);
+}
+.deskEmpty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.emptyBody {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── телефон ── */
+/* Слот під рядком часу: відступи як на дошці (`padding: 2px 16px 4px`). */
+.slot {
+  padding: 2px 16px 4px;
+}
+.phone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 6px 0 10px;
+  border-radius: 12px;
+}
+.line {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  height: 38px;
+  padding: 0 8px 0 4px;
+  border: 1px solid #34343a;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.line[data-pinned] {
+  border-color: rgb(252 226 134 / 0.5);
+  background: linear-gradient(135deg, rgb(252 226 134 / 0.18), rgb(252 226 134 / 0.06));
+}
+.lineNick {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.lineText {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #ececef;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.lineIcon {
+  display: inline-flex;
+  flex: none;
+  color: var(--color-text-secondary);
+}
+.lineIcon[data-gold] {
+  color: var(--color-highlight);
+}
+.phoneBtn {
+  height: 38px;
+  padding: 0 11px;
+  font-size: 13px;
+}
+.phoneEmpty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 12px 0 10px;
+  color: var(--color-text);
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.phoneEmpty .emptyIcon {
+  width: 32px;
+  height: 32px;
+}
+.phoneEmptyTitle {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.phoneOpen {
+  padding: 12px 12px 14px;
+}
+.phoneOpen .title {
+  font-size: 15.5px;
+}
+.phoneOpen .metaText {
+  font-size: 13px;
+}
+.phoneOpen .head {
+  gap: 8px;
+}
+.phoneOpen .label {
+  margin: 14px 0 8px;
+}
+.up {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: -6px -6px -6px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.fullBtn {
+  width: 100%;
+  height: 46px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+.phoneOpen .allLink {
+  margin-top: 10px;
+  font-size: 13px;
+}

@@ -119,10 +119,10 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   const ratings = useGuestStore((s) => s.rate);
   const setRate = useGuestStore((s) => s.setRate);
   const guestId = useGuestStore((s) => s.id);
-  // Під штампом — пропозиція пасу чи чайові (`OfferBlock`) зі своєю кораловою дією → «Поділитися» вторинна.
+  // Під штампом — пропозиція пасу (`OfferBlock`) зі своєю кораловою дією → «Поділитися» вторинна.
   const offerShown = useGuestStore((s) => {
     if (s.hasPass) return false;
-    const last = s.offers.history.findLast((e) => e.kind === 'pass-offer' || e.kind === 'tips');
+    const last = s.offers.history.findLast((e) => e.kind === 'pass-offer');
     return !!last && last.dismissedAt === undefined;
   });
 

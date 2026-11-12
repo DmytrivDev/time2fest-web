@@ -372,3 +372,23 @@ test.describe('US4 · правки власника 2026-11-10: переклад
     await expect(page.locator('[data-window="O-PASS-BUY"]')).toBeVisible();
   });
 });
+
+// Тост у чаті (рішення власника 2026-11-12, дошки `Desk-Toast-New`, `Phone-Toast-New`): келих у полі завжди,
+// тости за рівнями, привітання опівночі від Time2Fest.
+test.describe('US4 · тост у чаті', () => {
+  test('келих «Сказати тост» у полі повідомлення відкриває вікно тосту', async ({ page }) => {
+    await startChat(page);
+    const glass = page.getByRole('button', { name: 'Сказати тост' }).and(page.locator('[data-action="chat-toast"]'));
+    await expect(glass).toBeVisible();
+    await glass.click();
+    await expect(page.locator('[data-window="O-TOAST"]').getByRole('radio', { name: '$5 · пляшка ігристого' })).toHaveAttribute('aria-checked', 'true');
+  });
+
+  test('опівночі Лондона — привітання «Північ · UTC+0 — з Новим роком!» у чаті «Світ»', async ({ page }) => {
+    await startChat(page, '2027-01-01T01:59:56+02:00', 1);
+    const greet = page.locator('[data-system="toast-midnight"]').first();
+    await expect(greet).toBeAttached({ timeout: 20_000 });
+    await expect(greet).toContainText('Північ · UTC+0 — з Новим роком!');
+    await expect(greet).toContainText('Time2Fest');
+  });
+});

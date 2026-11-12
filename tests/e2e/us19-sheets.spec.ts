@@ -1,7 +1,7 @@
 /**
  * Шторки на телефоні й планшеті-портреті (правки власника 2026-11-10, `lib/overlay/sheetTop.ts`):
- * - одне правило висоти: вікна чату (і сам чат) — під рядком часу (смугу «Перший ряд» прибрано 2026-11-12); усе решта
- *   (меню, сповіщення, «Ще дії») — під
+ * - одне правило висоти: вікна чату (і сам чат) — під рядком часу й смугою тостів під ним (смуга тостів замість «Першого
+ *   ряду», 2026-11-12); усе решта (меню, сповіщення, «Ще дії», «Сказати тост») — під
  *   відео; на сторінці без відео — обидва види на рівні шапка + 16:9 від ширини;
  * - перехід між сторінками не лишає відкритої (і тим паче порожньої) шторки;
  * - «Режим вечірки» на телефоні й планшеті-портреті веде на `/tv-info/`.
@@ -58,10 +58,12 @@ function geometry(page: Page) {
     document.querySelectorAll('[data-dock-above]').forEach((e) => (above = Math.max(above, e.getBoundingClientRect().bottom)));
     const header = document.querySelector('header')!.getBoundingClientRect().height;
     const bar = document.querySelector('[data-player-bar]');
+    const strip = document.querySelector('[data-toast-strip]')?.closest('[data-dock-above]');
     return {
       video: slot ? slot.getBoundingClientRect().bottom : 0,
       above,
       bar: bar ? bar.getBoundingClientRect().bottom : 0,
+      strip: strip ? strip.getBoundingClientRect().bottom : 0,
       noVideo: header + Math.round((document.documentElement.clientWidth * 9) / 16),
     };
   });
@@ -80,17 +82,27 @@ for (const vp of [
   test.describe(vp.name, () => {
     test.use({ viewport: { width: vp.width, height: vp.height }, hasTouch: true });
 
-    test('сторінка з відео: меню й «Ще дії» — під відео, чат — під рядком часу', async ({ page }) => {
+    test('сторінка з відео: меню, «Ще дії» й «Сказати тост» — під відео, чат — під смугою тостів', async ({ page }) => {
       await seed(page);
       await gotoAt(page, AT, 0, '/');
       const g = await geometry(page);
       expect(g.video).toBeGreaterThan(0);
       expect(g.above).toBeGreaterThan(g.video);
-      // Без смуги «Перший ряд» найнижче з `data-dock-above` на головній — сам рядок часу.
-      expect(Math.abs(g.above - g.bar)).toBeLessThanOrEqual(1);
+      // Смуга тостів (2026-11-12) — під рядком часу й позначена `data-dock-above`: найнижча над чатом.
+      expect(g.strip).toBeGreaterThan(g.bar);
+      expect(Math.abs(g.above - g.strip)).toBeLessThanOrEqual(1);
 
       await menuButton(page).click();
       expect(Math.abs((await topOf(openSheet(page))) - g.video)).toBeLessThanOrEqual(3);
+      await page.keyboard.press('Escape');
+      await expect(openSheet(page)).toHaveCount(0);
+
+      // Вікно тосту — «усе решта»: до низу відео, накриває рядок часу й смугу; кнопки дій унизу.
+      await page.locator('[data-toast-strip] [data-action="toast-open"]').first().click();
+      expect(Math.abs((await topOf(openSheet(page))) - g.video)).toBeLessThanOrEqual(3);
+      const pay = page.locator('[data-action="toast-pay"]');
+      await expect(pay).toBeVisible();
+      expect((await pay.boundingBox())!.y + 48).toBeLessThanOrEqual(vp.height + 1);
       await page.keyboard.press('Escape');
       await expect(openSheet(page)).toHaveCount(0);
 

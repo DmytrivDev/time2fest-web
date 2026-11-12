@@ -6,7 +6,7 @@ import type { MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
-import { useOpenTipsWindow } from '@/components/tips/TipsWindow';
+import { useOpenToastWindow } from '@/components/toast/ToastWindow';
 import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
@@ -49,7 +49,8 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const hasPass = hasPassProp ?? storedPass;
   const openAuthWindow = useOpenAuthWindow();
   const openPassWindow = useOpenPassWindow();
-  const openTips = useOpenTipsWindow();
+  // «Підтримати» під час свята — вікно «Сказати тост» (тост — головний платний продукт, рішення 2026-11-12).
+  const openToast = useOpenToastWindow();
   const celebrating = isCelebrating(useNow({ granularity: 'minute' }), getData());
   const menuOpen = overlay.current?.id === MENU_WINDOW_ID;
   const tn = useTranslations('notif');
@@ -71,7 +72,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
     }
   };
 
-  // Меню — вікно O-MENU, як «Чайові» чи вхід (власник 2026-11-08): десктоп — на місці чату, телефон — шторка до відео.
+  // Меню — вікно O-MENU, як «Сказати тост» чи вхід (власник 2026-11-08): десктоп — на місці чату, телефон — шторка до відео.
   // Відео не перекривається, тож пауза не потрібна. «Увійти» й «Мій графік» без пасу під час свята — вікном на тому ж місці.
   const toggleMenu = () => {
     if (menuOpen) {
@@ -146,7 +147,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
       menuOpen={menuOpen}
       onSignInClick={onSignInClick}
       onPassClick={onPassClick}
-      onSupportClick={celebrating ? () => openTips() : undefined}
+      onSupportClick={celebrating ? () => openToast() : undefined}
       onTimeMachineClick={IS_DEMO_BUILD ? toggleTimeMachine : undefined}
       timeMachineOpen={timeOpen}
     />

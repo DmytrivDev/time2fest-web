@@ -1215,6 +1215,13 @@
   display: flex;
   flex-direction: column;
 }
+/* «Скажи тост за $10» між можливостями й оформленням (дошка `Pass-5-New`, 2026-11-12); на сторінці — під лінією. */
+.toastGift {
+  margin-top: 10px;
+}
+.toastGiftPage {
+  margin-top: 12px;
+}
 .windowTitle {
   display: inline-flex;
   align-items: center;

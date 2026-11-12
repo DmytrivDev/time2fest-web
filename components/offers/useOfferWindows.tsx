@@ -4,7 +4,7 @@
  * Пропозиції й підказки пасу на поверхні з плеєром (T120, FR-063/064, `contracts/ui-events.md` `offer:show`).
  * Сторінка з `OverlayInFlowOutlet` викликає `useOfferWindows()` один раз (поруч із `useMomentWindows`):
  * - слухає `offer:show` від `EngineScheduler` (правила часу, «одна за раз» — у `offerEligibility`) і записує `OfferEntry`
- *   у `guest.offers`; саму картку пасу чи чайових показує `OfferBlock` під штампом (рішення 2026-11-01);
+ *   у `guest.offers`; саму картку пасу показує `OfferBlock` під штампом (рішення 2026-11-01);
  * - повідомляє рушію про стан інтерфейсу: чи відкрите вікно (рядок «Штамп у паспорті» не рахується) і чи людина
  *   вводить текст (фокус у полі або ~10 с після останнього натискання) — див. `lib/offers/uiState`;
  * - віддає `requestSchedule` (кнопка графіка: з пасом — перемикає, без пасу — вікно «Графік — у Новорічному пасі» на місці
@@ -68,11 +68,11 @@ export function useOfferWindows(): PassWindowsApi {
   useEffect(() => installTypingTracking(() => clock.getSnapshot()), [clock]);
 
   // Після перезавантаження `visible` вікна-підказки (pass-gate) міг лишитись без вікна — інакше пропозиції заблоковано
-  // назавжди. Пропозиція пасу й чайові — блок під штампом (`OfferBlock`), вони лишаються видимими й після перезавантаження.
+  // назавжди. Пропозиція пасу — блок під штампом (`OfferBlock`), вона лишається видимою й після перезавантаження.
   useEffect(() => {
     const { offers, hideOffer } = useGuestStore.getState();
     const cur = currentRef.current;
-    const isBlock = offers.visible === 'pass-offer' || offers.visible === 'tips';
+    const isBlock = offers.visible === 'pass-offer';
     if (offers.visible !== null && !isBlock && cur?.id !== OFFER_WINDOW_ID[offers.visible]) hideOffer();
   }, []);
 

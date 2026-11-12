@@ -16,6 +16,7 @@ import { AuthIcon } from '@/components/auth/icons';
 import { useHydrated } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
+import { ToastGift } from '@/components/toast/ToastGift';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -98,7 +99,10 @@ function LockLine({ stream, consent }: { stream: boolean; consent?: boolean }) {
   );
 }
 
-/** Інші шляхи («Вже маєш акаунт? Увійти») — окремою групою під лінією; у сайдбарі десктопа притиснуті донизу. */
+/**
+ * Інші шляхи («Вже маєш акаунт? Увійти», «Скажи тост за $10 · …і Новорічний пас у подарунок» — дошка `Pass-5-New`,
+ * 2026-11-12) — окремою групою під лінією; у сайдбарі десктопа притиснуті донизу.
+ */
 function Alternatives({ children }: { children: ReactNode }) {
   return (
     <div className={s.alt} data-row="alternatives">
@@ -244,6 +248,7 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
             {t('signIn')}
           </button>
         </p>
+        {!stream ? <ToastGift variant="page" className={s.toastGiftPage} /> : null}
       </Alternatives>
     </form>
   );
@@ -283,6 +288,11 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
       ) : (
         <LockLine stream={stream} />
       )}
+      {!stream ? (
+        <Alternatives>
+          <ToastGift variant="page" className={s.toastGiftPage} />
+        </Alternatives>
+      ) : null}
     </form>
   );
 }

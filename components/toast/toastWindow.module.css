@@ -1,0 +1,764 @@
+/* Вікно «Сказати тост» (дошки `Desk-Toast-New` · «3 · Вікно тосту», `Phone-Toast-New` · «3 · Вікно тосту (шторка)»,
+   v2 2026-11-12): десктоп — 340 px на місці чату, телефон — шторка до низу відео; вміст прокручується, кнопки дій
+   закріплені внизу. Розміри — з дошки (px → rem робить postcss). */
+.windowTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.windowTitle > svg {
+  color: var(--color-highlight);
+}
+
+.flow {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  padding: 2px 16px 16px;
+}
+.body[data-gap='12'] {
+  gap: 12px;
+}
+.foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.footRow {
+  display: flex;
+  gap: 10px;
+}
+
+/* Кнопки внизу — як на дошці: коралова 48 px (неактивна — та сама, бліда), контурна поруч. */
+.coral,
+.line {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.coral {
+  border: 0;
+  background: var(--color-primary-fill);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+}
+.coral:hover:not(:disabled) {
+  background: var(--color-primary-fill-hover);
+}
+.coral:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.line {
+  border: 1px solid #4a4a52;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+.line:hover {
+  background: var(--color-surface-raised);
+}
+.lineNarrow {
+  flex: none;
+  width: 118px;
+}
+.receipt {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+/* ── Крок 1: рівні ── */
+.secTitle {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.tiers {
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+}
+.tier {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  height: 90px;
+  padding: 0 4px;
+  border: 1px solid #34343a;
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.tiers[data-phone] .tier {
+  height: 92px;
+}
+.tier:hover {
+  border-color: #4a4a52;
+}
+.tier[aria-checked='true'] {
+  border: 2px solid var(--color-highlight);
+  background: rgb(252 226 134 / 0.12);
+}
+.tierPrice {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.tierName {
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+}
+.best {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--color-highlight);
+  box-shadow: 0 0 0 3px var(--color-surface);
+  color: var(--color-on-highlight);
+  font-size: 10.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: var(--color-surface-raised);
+  list-style: none;
+}
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+.benefit[data-on] {
+  color: #ececef;
+}
+.benefit[data-owned] {
+  color: var(--color-text-secondary);
+}
+.benefitText {
+  flex: 1;
+}
+.apart {
+  color: var(--color-text-muted);
+}
+.mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border: 1px solid #4a4a52;
+  border-radius: 50%;
+}
+.benefit[data-on] .mark {
+  border: 0;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+.ownedIcon {
+  display: inline-flex;
+  flex: none;
+  margin-top: 2px;
+}
+.from {
+  flex: none;
+  margin-top: 1px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+/* ── Поле тосту: як повідомлення в чаті ── */
+.field {
+  padding: 11px 12px 12px;
+  border: 1px solid #3a3a42;
+  border-radius: 12px;
+  background: #202024;
+}
+.field:focus-within {
+  border: 2px solid var(--color-highlight);
+  padding: 10px 11px 11px;
+}
+.field[data-error] {
+  border: 2px solid var(--color-primary-fill);
+  padding: 10px 11px 11px;
+}
+.field[data-locked] {
+  border: 1px solid var(--color-border);
+  padding: 11px 12px 12px;
+  background: #1f1f23;
+}
+.fieldHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.fieldNick {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.fieldNick[data-empty] {
+  color: var(--color-text-muted);
+}
+.noFlag {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px dashed #6a6a72;
+  border-radius: 50%;
+}
+.counter {
+  flex: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.field[data-error] .counter {
+  color: var(--color-primary-fill);
+}
+.emojiBtn {
+  margin: -8px -8px -8px -2px;
+}
+/* Поле й «дзеркало» під ним — однаковий набір: дзеркало малює хвилясте підкреслення під проблемним місцем. */
+.area {
+  position: relative;
+  margin-top: 6px;
+}
+.textarea,
+.mirror {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: normal;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.textarea {
+  position: relative;
+  min-height: 21px;
+  background: transparent;
+  color: var(--color-text);
+  resize: none;
+  outline: none;
+  field-sizing: content;
+}
+.textarea::placeholder {
+  color: var(--color-text-muted);
+}
+.mirror {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  pointer-events: none;
+}
+.bad {
+  text-decoration: underline wavy var(--color-primary-fill);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+.lockedText {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.picker :global(.t2f-ep) {
+  position: static;
+  width: auto;
+  box-shadow: none;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  padding: 6px 11px;
+  border: 1px solid #34343a;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: #4a4a52;
+}
+.chip[aria-pressed='true'] {
+  border-color: var(--color-highlight);
+}
+.rule {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* Фільтр не пропустив. */
+.reject {
+  display: flex;
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid rgb(217 58 65 / 0.45);
+  border-radius: 12px;
+  background: rgb(217 58 65 / 0.12);
+}
+.reject > svg {
+  flex: none;
+  margin-top: 1px;
+  color: #ff8a8f;
+}
+.rejectTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.rejectText {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+/* Підпис. */
+.sig {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.sigText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.sigLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.sigNick {
+  overflow: hidden;
+  font-size: 14.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.textLink {
+  flex: none;
+  min-height: 32px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Гість без ніку: «Як підписати тост?». */
+.guest {
+  padding: 12px;
+  border: 1px solid rgb(252 226 134 / 0.45);
+  border-radius: 12px;
+  background: rgb(252 226 134 / 0.04);
+}
+.guestTitle {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 700;
+}
+.guestSub {
+  margin: 1px 0 0;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.guestRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.flagBtn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+  padding: 0 8px;
+  border: 1px solid #4a4a52;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.flagBtn[aria-expanded='true'] {
+  border-color: var(--color-highlight);
+}
+.nickBox {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid #3a3a42;
+  border-radius: 12px;
+  background: #202024;
+}
+.nickBox:focus-within {
+  border: 2px solid var(--color-highlight);
+  padding: 0 11px;
+}
+.nickBox[data-error] {
+  border: 2px solid var(--color-primary-fill);
+  padding: 0 11px;
+}
+.nickInput {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+}
+.guestHint {
+  margin: 7px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.guestErr {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: #ff8a8f;
+}
+.flagPick {
+  margin-top: 10px;
+}
+
+.payNote {
+  display: flex;
+  gap: 7px;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.payNote > svg {
+  flex: none;
+  margin-top: 2px;
+}
+.payNote a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ── Оплата й результат ── */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--color-surface-raised);
+}
+.spin {
+  flex: none;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  margin: 4px;
+  border: 2.5px solid rgb(255 255 255 / 0.18);
+  border-top-color: var(--color-highlight);
+  border-right-color: var(--color-highlight);
+  border-radius: 50%;
+}
+:global(html[data-reduce-motion='false']) .spin {
+  animation: t2f-toast-spin 0.9s linear infinite;
+}
+@keyframes t2f-toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.statusTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+.statusText {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.summaryTitle {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+.summaryText {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.note {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+.failBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgb(217 58 65 / 0.4);
+  border-radius: 14px;
+  background: rgb(217 58 65 / 0.1);
+}
+.failIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgb(217 58 65 / 0.2);
+  color: #ff8a8f;
+}
+.failTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.failText {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.saved {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.saved > svg {
+  color: var(--color-highlight);
+}
+.help {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.help a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Успіх: сяйво, конфеті й келих; $10 на телефоні — компактно (менше конфеті, щоб усе вмістилось). */
+.confetti {
+  position: relative;
+  height: 150px;
+  margin: 0 -16px;
+  background: radial-gradient(60% 90% at 50% 40%, rgb(252 226 134 / 0.16), transparent 70%);
+}
+.confetti[data-tier='10'] {
+  height: 132px;
+}
+.confetti > i {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.confetti > i:nth-child(1) { left: 14%; top: 30px; background: #c9a640; transform: rotate(42deg); }
+.confetti > i:nth-child(2) { left: 30%; top: 70px; background: #d93a41; transform: rotate(90deg); }
+.confetti > i:nth-child(3) { left: 20%; top: 110px; background: #7b6bb5; transform: rotate(60deg); }
+.confetti > i:nth-child(4) { left: 80%; top: 26px; background: #c9a640; transform: rotate(240deg); }
+.confetti > i:nth-child(5) { left: 88%; top: 64px; background: #d93a41; transform: rotate(264deg); }
+.confetti > i:nth-child(6) { left: 70%; top: 104px; background: #7b6bb5; transform: rotate(210deg); }
+.confetti > i:nth-child(7) { left: 45%; top: 18px; background: #5ba89a; transform: rotate(135deg); }
+.glassBig {
+  position: absolute;
+  top: calc(50% - 40px);
+  left: calc(50% - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border: 1.5px solid rgb(252 226 134 / 0.6);
+  border-radius: 50%;
+  background: rgb(252 226 134 / 0.18);
+  color: var(--color-highlight);
+}
+.glassBig > svg {
+  width: 36px;
+  height: 36px;
+}
+.glassSmall {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+.glassSmall > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 1.5px solid rgb(252 226 134 / 0.6);
+  border-radius: 50%;
+  background: rgb(252 226 134 / 0.18);
+  color: var(--color-highlight);
+}
+.doneHead {
+  margin-top: -4px;
+  text-align: center;
+}
+.kicker {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-highlight);
+}
+.doneTitle {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+.doneText {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.passCard {
+  padding: 12px;
+  border: 1px solid rgb(252 226 134 / 0.55);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgb(252 226 134 / 0.14), rgb(252 226 134 / 0.03));
+}
+.passHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.passIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-highlight);
+  color: var(--color-on-highlight);
+}
+.passTitle {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 700;
+}
+.passSub {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.passText {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.passLink {
+  margin-top: 8px;
+}
+.passAction {
+  width: 100%;
+  margin-top: 10px;
+}

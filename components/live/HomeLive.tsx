@@ -10,7 +10,8 @@
  * Телефон (зверху вниз): PlayerBlock (плеєр закріплений угорі) · InFlowSlot · вміст сторінки, що прокручується:
  * «Дивляться люди з N країн», «Зараз і далі» + прогрес, мапа поясів. Чат «Світ» — вікно
  * внизу (`ChatDock`): згорнуте «Розгорнути чат N нових» або розгорнуте під рядком часу.
- * «Перший ряд» прибрано (рішення власника 2026-11-12); на його місці буде смуга тостів — місця позначено `TOAST-STRIP-SLOT`.
+ * «Перший ряд» прибрано (рішення власника 2026-11-12); на його місці — смуга тостів (`ToastStrip`): телефон — під липким
+ * рядком часу, десктоп — під рядком дій плеєра, над штампом.
  *
  * Дані ефіру лише читаються з `useBroadcast()` (один `BroadcastController` на макет). Сторінка реєструє присутність
  * для штампа (`useStampGrant`), запускає імітатор чату й відкриває вікна моменту (`useMomentWindows`).
@@ -28,6 +29,7 @@ import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
 import { StampBlock } from '@/components/live/StampBlock';
+import { ToastStrip } from '@/components/toast/ToastStrip';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
@@ -114,7 +116,7 @@ export function HomeLive() {
   );
   useChatSimulator(chatRooms);
   useMomentWindows();
-  // Пропозиції пасу й чайових (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
+  // Пропозиція пасу (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();
   const hasPass = useGuestStore((s) => s.hasPass);
   const getPass = useGetPass();
@@ -189,13 +191,15 @@ export function HomeLive() {
         watchers={viewers.length}
         captionAside={showChatButton}
         dock={!chatColumn}
-        // TOAST-STRIP-SLOT (телефон): смуга тостів — під липким рядком часу (`belowBar`). Поки нічого.
+        // Смуга тостів (телефон) — під липким рядком часу (дошка `Phone-Toast-New`, 2026-11-12).
+        belowBar={<ToastStrip variant="phone" />}
       />
 
       {chatColumn ? (
         <div className={cn(home.column, 'pt-4')}>
+          {/* Смуга тостів — одразу під рядком дій плеєра, над штампом і пропозиціями (дошка `Desk-Toast-New`). */}
+          <ToastStrip variant="desk" />
           {inflow}
-          {/* TOAST-STRIP-SLOT (десктоп): смуга тостів — тут, під штампом і пропозиціями, над «Зараз і далі». */}
           <div className="mt-2">{nowNext('carousel')}</div>
           {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
           {wideSlot ? createPortal(map, wideSlot) : null}
