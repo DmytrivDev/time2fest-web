@@ -132,6 +132,9 @@ test.describe('S-AUTH · сторінка', () => {
       );
     });
     await page.reload();
+    // Вхід без коду (2026-11-10): адреса з акаунтом — лист із посиланням, і саме листи обмежено (3 за 10 хв).
+    // Дочекатися гідратації: інакше введене поле очищається, а акаунт зі сховища ще не прочитано (та сама гонка, що вище).
+    await waitForTimeApi(page);
     await page.getByLabel('Email').fill('a@example.com');
     await signInBtn(page).click();
     await expect(page.getByRole('alert').filter({ hasText: 'Забагато спроб' })).toBeVisible();

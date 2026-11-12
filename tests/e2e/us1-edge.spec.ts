@@ -54,8 +54,13 @@ test.describe('US1 · крайні випадки ефіру', () => {
     await expect(slot.locator('[data-video-area="countdown-scene"]')).toBeVisible();
     expect(await playerBox(page)).toBeNull();
     expect((await ytStub.counters()).created).toBe(0);
-    // Звук вмикати нічого — кнопка неактивна з причиною в назві.
-    await expect(page.getByRole('button', { name: /Увімкнути звук/ })).toBeDisabled();
+    // Кнопка звуку керує звуком сцени — куранти й салют опівночі (коміт 9eb9c0f, власник 2026-11-11): активна,
+    // вмикає звук сцени; YouTube-плеєр при цьому не створюється.
+    const sound = page.getByRole('button', { name: 'Увімкнути звук' });
+    await expect(sound).toBeEnabled();
+    await sound.click();
+    await expect(page.getByRole('button', { name: 'Звук увімкнено' })).toBeVisible();
+    expect((await ytStub.counters()).created).toBe(0);
   });
 
   test.fixme('єдине джерело — Facebook без згоди: картка на місці плеєра, звук неактивний (FR-044)', async ({ page }) => {
