@@ -61,7 +61,7 @@ import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
 import { ratingState } from '@/lib/rating/rating';
-import { simulatedViewers } from '@/lib/presence/viewers';
+import { currentViewers } from '@/lib/presence/viewers';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import {
   countryMainEvent,
@@ -420,7 +420,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const toggleSchedule = useCallback(() => {
     if (mainEvent) passWindows.requestSchedule(mainEvent.id);
   }, [mainEvent, passWindows]);
-  const viewers = useMemo(() => simulatedViewers(data), [data]);
+  const viewers = useMemo(() => currentViewers(data), [data]);
 
   const faqItems: FaqItem[] = (['when', 'stamp', 'switch', 'room'] as const).map((id) => ({
     id,
@@ -650,6 +650,7 @@ export function CountryLive({ iso }: { iso: string }) {
         onWatchAgain={watchAgain}
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}
+        stampHint
         captionAside={
           chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoom} onShow={vis.show} /> : null
         }
@@ -679,10 +680,13 @@ export function CountryLive({ iso }: { iso: string }) {
                 {tHead('stamp')}
               </p>
             )}
-            <p className={cn(home.watchers, home.watchersPhone)}>
-              <Icon name="globe" size={14} strokeWidth={2} />
-              {tPlayer('watchersShort', { count: viewers.length })}
-            </p>
+            {/* Чесне число (2026-11-12): без даних присутності (робоча збірка) рядка немає. */}
+            {viewers.length ? (
+              <p className={cn(home.watchers, home.watchersPhone)}>
+                <Icon name="globe" size={14} strokeWidth={2} />
+                {tPlayer('watchersShort', { count: viewers.length })}
+              </p>
+            ) : null}
           </div>
           <div className="pt-6">{events}</div>
           <ChatDock

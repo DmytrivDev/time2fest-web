@@ -10,6 +10,8 @@
  * - «Як тобі шоу?» (`StampRate`) — під кнопками разом зі штампом (рішення 2026-11-01): «×» прибирає й оцінку, оцінити
  *   можна в паспорті;
  * - «Увійди» відкриває вхід на місці чату (трансляція не зупиняється), «Мій паспорт» — сторінка `/passport/`;
+ * - «Сказати тост» (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2, 2026-11-12) — вікно тосту (`useOpenToastWindow`);
+ * - «Подивитися штамп» у святі шапки прокручує сюди й ставить фокус на картку (`[data-stamp-card]`);
  * - поява — одразу, без анімації блока (правка власника 2026-11-01); удар печатки й конфеті — як були;
  * - «×» прибирає саме цей штамп (запис у `guest.stampsDismissed`), у паспорті він лишається: картка гасне й трохи
  *   відпливає вгору, потім порожнє місце стягується.
@@ -25,6 +27,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { useOverlay } from '@/components/shell/OverlayManager';
+import { useOpenToastWindow } from '@/components/toast/ToastWindow';
 import { shareWindowSpec } from '@/components/windows/Share';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { StampRate } from '@/components/windows/StampRate';
@@ -110,6 +113,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   const tShare = useTranslations('share');
   const { open, current: win } = useOverlay();
   const openAuth = useOpenAuthWindow();
+  const openToast = useOpenToastWindow();
   const router = useRouter();
   const user = useHeaderUser();
   const moment = useStampMoment((s) => s.moment);
@@ -216,6 +220,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
             onShare={() => open(shareWindowSpec(current.list, tShare('title')))}
             onSignIn={() => openAuth('signin')}
             onPassport={() => router.push(PASSPORT_HREF)}
+            onToast={() => openToast()}
             onClose={permanent ? undefined : () => dismiss(current.list, current.key)}
             more={more && more.count > 0 ? more : undefined}
             rate={

@@ -47,7 +47,7 @@ import type { Dataset, Ms, RoomId } from '@/lib/data/types';
 import { formatClock, viewerTimeZone, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
 import { useBroadcast } from '@/lib/player/BroadcastController';
-import { simulatedViewers } from '@/lib/presence/viewers';
+import { currentViewers } from '@/lib/presence/viewers';
 import { useStampGrant } from '@/lib/presence/useStampGrant';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
@@ -90,7 +90,7 @@ function useNowNextData(now: Ms) {
 function useMapData() {
   const data = getData();
   const mapModel = useMemo(() => buildMapModel(data), [data]);
-  const viewers = useMemo(() => simulatedViewers(data), [data]);
+  const viewers = useMemo(() => currentViewers(data), [data]);
   return { mapModel, viewers };
 }
 
@@ -189,6 +189,7 @@ export function HomeLive() {
         scheduleHint={hint}
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}
+        stampHint
         captionAside={showChatButton}
         dock={!chatColumn}
         // Смуга тостів (телефон) — під липким рядком часу (дошка `Phone-Toast-New`, 2026-11-12).
@@ -209,10 +210,13 @@ export function HomeLive() {
         <>
           <div className={cn("px-4", home.phoneInflow)}>{inflow}</div>
           <div className={home.events}>
-            <p className={home.watchers}>
-              <Icon name="globe" size={14} strokeWidth={2} />
-              {tPlayer('watchersShort', { count: viewers.length })}
-            </p>
+            {/* Чесне число (2026-11-12): без даних присутності (робоча збірка) рядка немає. */}
+            {viewers.length ? (
+              <p className={home.watchers}>
+                <Icon name="globe" size={14} strokeWidth={2} />
+                {tPlayer('watchersShort', { count: viewers.length })}
+              </p>
+            ) : null}
             {nowNext(tabletPortrait ? 'grid' : 'stack')}
             {map}
           </div>

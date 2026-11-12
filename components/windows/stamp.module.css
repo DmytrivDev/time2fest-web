@@ -1,5 +1,6 @@
 /* Штамп під рядком дій за дошкою `Desk-Stamp-Open` (рішення власника 2026-11-01).
-   Телефон — стовпчик: «Новий штамп у паспорті», листівка на всю ширину, назва й країна по центру, кнопки.
+   Телефон — дошка `Phone-Stamp-Header` v2, кадр 4 (2026-11-12, власник: «більше повітря»): мітка, місто й країна ліворуч,
+   листівка на всю ширину, «Поділитися» на всю ширину, під нею «Сказати тост» і «Мій паспорт» поруч, оцінка рядком за рискою.
    Десктоп — текст і кнопки ліворуч, листівка 340 px праворуч. Зліва — тонка смужка кольорів прапора.
    Рамка листівки — кремова (макет: #EFE7D6). */
 .card {
@@ -7,11 +8,14 @@
   display: grid;
   grid-template-areas:
     'head'
-    'art'
     'body'
+    'art'
+    'actions'
     'rate';
-  gap: 12px;
-  padding: 14px 14px 14px 19px;
+  margin-top: 8px; /* 24 px від «Обрати трансляцію» (дошка `Phone-Stamp-Header` v2, кадр 4) */
+  padding: 16px 16px 0 20px;
+  border-radius: 18px;
+  scroll-margin: 16px;
 }
 
 /* Смужка: градієнт кольорів прапора (як на дошці `Desk-Stamp-Open`); за нею — ледь помітне сяйво тих самих кольорів. */
@@ -41,9 +45,12 @@
 .head {
   grid-area: head;
   position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
   margin: 0;
   padding-right: 36px;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-highlight);
@@ -51,6 +58,7 @@
 .art {
   grid-area: art;
   position: relative;
+  margin-top: 16px;
   padding: 6px;
   border-radius: var(--radius-md);
   background: #efe7d6; /* макет */
@@ -64,23 +72,24 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   min-width: 0;
+  margin-top: 10px;
 }
 .titleBlock {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-align: center;
+  align-items: flex-start;
+  gap: 6px;
+  text-align: start;
 }
 .title {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -95,14 +104,14 @@
 }
 .sub {
   margin: 0;
-  font-size: 15px;
+  font-size: 13.5px;
   color: var(--color-text-secondary);
 }
 .line {
-  justify-content: center;
+  justify-content: flex-start;
 }
 .inPassport {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #e3d3a0; /* макет: приглушений жовтий */
 }
@@ -110,39 +119,94 @@
   margin: 0;
   font-size: 13px;
   line-height: 1.45;
-  text-align: center;
+  text-align: start;
   color: var(--color-text-secondary);
 }
 .rate {
   grid-area: rate;
   position: relative;
-  /* Порожній (закритий) рядок не додає проміжку сітки. */
-  margin-top: -12px;
 }
 .rate[data-open='true'] {
-  margin-top: 0;
+  margin-top: 16px;
+}
+/* Без оцінки картка закінчується кнопками — нижнє поле як на дошці. */
+.rate:not([data-open='true']) {
+  padding-bottom: 16px;
 }
 .actions {
+  grid-area: actions;
+  position: relative;
   display: flex;
-  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
 }
 .actions > * {
   flex: 1 1 0;
   min-width: 0;
 }
+/* Телефон: «Поділитися» — головна, на всю ширину (48 px); «Сказати тост» і «Мій паспорт» — поруч під нею (44 px). */
+.actionsToast > .share {
+  flex: 1 0 100%;
+}
+.actionsToast > .toast,
+.actionsToast > .passport {
+  min-height: 44px;
+  padding-inline: 8px;
+  font-size: 14px;
+}
+/* «Сказати тост» — золота рамка й келих (дошка: btn_gold). */
+.toast {
+  border-color: var(--color-highlight);
+  color: var(--color-highlight);
+}
+.toast:hover {
+  background: rgb(252 226 134 / 0.08);
+}
 
 @media (min-width: 768px) {
   .card {
     grid-template-columns: minmax(0, 1fr) 340px;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
       'head art'
       'body art'
+      'actions art'
       'rate rate';
     align-items: center;
     column-gap: 28px;
     row-gap: var(--spacing-3);
+    margin-top: 0;
     padding: 22px 60px 22px 30px;
+    border-radius: var(--radius-lg);
+  }
+  .body {
+    margin-top: 0;
+    gap: 10px;
+  }
+  .art {
+    margin-top: 0;
+  }
+  .actions {
+    align-self: start;
+    margin-top: var(--spacing-1);
+  }
+  .actionsToast > .share {
+    flex: none;
+  }
+  .actionsToast > .toast,
+  .actionsToast > .passport {
+    min-height: 48px;
+    padding-inline: 24px;
+    font-size: inherit;
+  }
+  .rate[data-open='true'] {
+    margin-top: 0;
+  }
+  /* Порожній (закритий) рядок оцінки не додає проміжку сітки. */
+  .rate:not([data-open='true']) {
+    margin-top: calc(-1 * var(--spacing-3));
+    padding-bottom: 0;
   }
   .strip {
     border-left-width: 6px;
@@ -157,25 +221,17 @@
   .body {
     align-self: start;
   }
-  .titleBlock {
-    align-items: flex-start;
-    text-align: start;
-  }
   .title {
-    justify-content: flex-start;
     font-size: 30px;
+  }
+  .sub {
+    font-size: 15px;
+  }
+  .inPassport {
+    font-size: 14px;
   }
   .title .flags {
     margin-top: 3px;
-  }
-  .line {
-    justify-content: flex-start;
-  }
-  .saved {
-    text-align: start;
-  }
-  .actions {
-    margin-top: var(--spacing-1);
   }
   .actions > * {
     flex: none;
@@ -191,10 +247,11 @@
 @media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
   .card {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
       'head head'
       'body art'
+      'actions art'
       'rate rate';
     column-gap: 24px;
     padding: 20px 24px 22px 30px;

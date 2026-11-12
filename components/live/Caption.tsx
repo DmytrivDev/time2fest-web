@@ -7,6 +7,9 @@
  * 3) «Велика Британія · північ о 02:00 за вашим часом» → «Велика Британія зустріла Новий рік» (`metPhrase`, рід країни)
  *    → «Далі: Азорські острови».
  * Нових смуг між фазами немає: змінюються лише таймер і рядок 3. Назви — лише в називному відмінку.
+ * Остання хвилина до півночі зі штампом (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12): десктоп — у рядку 1
+ * замість «Зараз дивляться…» золота підказка «Будь тут опівночі — отримаєш штамп: Франція»; телефон — у рядку під відео
+ * два рядки «Будь тут опівночі —» / «отримаєш штамп: Франція» і відлік праворуч. Опівночі підказка зникає.
  */
 import NextLink from 'next/link';
 import { useState, type ReactNode } from 'react';
@@ -52,6 +55,8 @@ export interface CaptionProps {
   title?: string;
   /** «Зараз дивляться люди з N країн» (рядок 1, від 768 px). */
   watchers?: number;
+  /** Остання хвилина до півночі зі штампом: країна для підказки «Будь тут опівночі — отримаєш штамп: …». */
+  stampHint?: string | null;
   /** Від 768 px праворуч від таймера (`Desk-Cookies-Wide`: «Показати чат», коли чат сховано). */
   aside?: ReactNode;
   /** `bar` — один рядок над вкладкою «Чат» на телефоні (`Phone-Chat`); `lead` — що стоїть ліворуч (кнопка звуку). */
@@ -144,6 +149,7 @@ export function Caption({
   mode = 'broadcast',
   title: titleProp,
   watchers,
+  stampHint = null,
   aside,
   variant = 'full',
   lead,
@@ -212,8 +218,15 @@ export function Caption({
     return (
       <div data-caption="" data-phase={phase.id} data-caption-variant="bar" className={cn(home.bar, className)}>
         {lead}
-        <div className={home.barText}>
-          <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, 'focus:outline-none')}>
+        {stampHint ? (
+          // Підказка двома рядками на місці «Париж · до півночі»; назва лишається для зчитувача.
+          <p data-stamp-hint="" className={home.barHint}>
+            <span className={home.barHintLead}>{t('stampHintLead')}</span>{' '}
+            <span className={home.barHintTail}>{t('stampHintTail', { country: stampHint })}</span>
+          </p>
+        ) : null}
+        <div className={cn(home.barText, stampHint && home.barTextHint)}>
+          <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, stampHint && 'sr-only', 'focus:outline-none')}>
             {current.country?.flagCode ? (
               <span className={home.titleFlag}>
                 <Flag round code={current.country.flagCode} size="sm" decorative />
@@ -226,11 +239,11 @@ export function Caption({
             // міста (перевірка сайту 2026-11-09, B01). Обгортка `display: contents` — підпис і цифри лишаються одним
             // таймером для тестів і зчитувача, а в рядку стоять окремими елементами.
             <span role="timer" aria-live="off" aria-label={`${timer.label}: ${veiled ? t('timerVeilSpoken') : spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimerWrap}>
-              <span aria-hidden="true" className={home.barLabel}>
+              <span aria-hidden="true" className={cn(home.barLabel, stampHint && 'sr-only')}>
                 {timer.label}
               </span>
               <span className={home.barClock}>
-                <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={home.barDigits} hint={false} />
+                <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={cn(home.barDigits, stampHint && home.barDigitsHint)} hint={false} />
               </span>
             </span>
           ) : (
@@ -246,13 +259,14 @@ export function Caption({
           </p>
         ) : null}
         {/* Планшет-портрет (`Tab-P-New`): «Дивляться люди з 140 країн» праворуч у рядку; на телефоні сховано CSS. */}
-        {watchers ? (
+        {watchers && !stampHint ? (
           <span aria-hidden="true" data-bar-watchers="" className={home.barWatchers}>
             <Icon name="globe" size={14} strokeWidth={2} />
             {t('watchersShort', { count: watchers })}
           </span>
         ) : null}
-        {live && ago === null ? (
+        {/* Підказка займає місце позначки «Наживо» (дошка `Phone-Stamp-Header`, кадр 1). */}
+        {live && ago === null && !stampHint ? (
           <Badge variant="live" still>
             {tBadge('live')}
           </Badge>
@@ -282,7 +296,12 @@ export function Caption({
             {tBadge('verifiedShort')}
           </span>
         ) : null}
-        {watchers ? (
+        {stampHint ? (
+          <span data-stamp-hint="" className={cn(home.badgeItem, home.deskItem, home.stampHint)}>
+            <Icon name="stamp" size={16} strokeWidth={2} />
+            {t('stampHint', { country: stampHint })}
+          </span>
+        ) : watchers ? (
           <span className={cn(home.badgeItem, home.deskItem)}>
             <Icon name="globe" size={14} strokeWidth={2} />
             {t('watchersFrom', { count: watchers })}

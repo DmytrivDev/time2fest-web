@@ -8,6 +8,11 @@
  * «×» прибирає саме цей штамп (він лишається в «Мій паспорт»); без `onClose` хрестика немає (сторінка країни — штамп
  * висить постійно, рішення 2026-11-05). Країна з кількома поясами — штамп за кожен пояс: пояс у підзаголовку й на печатці.
  *
+ * Дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2 (рішення власника 2026-11-12): дія «Сказати тост» (золота рамка, келих)
+ * між «Поділитися» і «Мій паспорт»; на телефоні картка окремим блоком із повітрям — мітка, місто й країна ліворуч,
+ * листівка, «Поділитися» на всю ширину, під нею «Сказати тост» і «Мій паспорт» поруч, оцінка рядком за рискою.
+ * Картка — ціль «Подивитися штамп» зі свята в шапці (`data-stamp-card`, фокус програмно).
+ *
  * Стани: `stamping` (удар штемпеля ≈ 0,6 с + конфеті — лише у `lively`), `multi` («Сідней · Мельбурн»),
  * `save-failed` (рамку «Першого ряду» прибрано разом із рядом, 2026-11-12). Коралова «Поділитися» реєструється в `lib/overlay/coral`
  * (кнопка звуку стає нейтральною); alt листівки = текст штампа.
@@ -50,6 +55,8 @@ export interface StampProps {
   saveState?: StampSaveState;
   onShare?: () => void;
   onPassport?: () => void;
+  /** «Сказати тост» — вікно тосту (`useOpenToastWindow`); без обробника кнопки немає. */
+  onToast?: () => void;
   onSignIn?: () => void;
   onRetrySave?: () => void;
   /** Під штампом інше вікно з власною кораловою дією (пропозиція, оцінка) → «Поділитися» стає вторинною: коралова — одна. */
@@ -86,6 +93,7 @@ export function Stamp({
   saveState = 'saved',
   onShare,
   onPassport,
+  onToast,
   onSignIn,
   onRetrySave,
   onClose,
@@ -202,14 +210,19 @@ export function Stamp({
             ) : null}
           </>
         )}
-        <div className={st.actions}>
-          <Button variant={quiet ? 'secondary' : 'coral'} size="lg" iconLeft="share" onClick={onShare}>
-            {t('share')}
+      </div>
+      <div className={cn(st.actions, onToast && st.actionsToast)}>
+        <Button variant={quiet ? 'secondary' : 'coral'} size="lg" iconLeft="share" onClick={onShare} className={st.share}>
+          {t('share')}
+        </Button>
+        {onToast ? (
+          <Button variant="secondary" size="lg" iconLeft="glass" onClick={onToast} className={st.toast} data-action="stamp-toast">
+            {t('toast')}
           </Button>
-          <Button variant="secondary" size="lg" iconLeft="passport" onClick={onPassport}>
-            {t('passport')}
-          </Button>
-        </div>
+        ) : null}
+        <Button variant="secondary" size="lg" iconLeft="passport" onClick={onPassport} className={st.passport}>
+          {t('passport')}
+        </Button>
       </div>
       <Reveal open={!!rate} className={st.rate}>
         {rate}
@@ -220,11 +233,13 @@ export function Stamp({
   return (
     <section
       aria-labelledby={titleId}
+      tabIndex={-1}
+      data-stamp-card=""
       data-stamp={multi ? 'multi' : 'expanded'}
       data-save-state={saveState}
       className={cn(
         // Без золотої рамки (правка власника 2026-11-01): край картки — смужка прапора.
-        'relative overflow-hidden rounded-lg bg-surface-raised',
+        't2f-focus relative overflow-hidden rounded-lg bg-surface-raised',
         st.card,
         className,
       )}

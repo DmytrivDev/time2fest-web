@@ -33,6 +33,7 @@ import type { CaptionPhase } from '@/lib/engine/captionPhase';
 import type { AirView } from '@/lib/engine/currentAirEvent';
 import type { AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
+import { stampHintActive } from '@/lib/stamp/stampCelebration';
 import { useGuestStore } from '@/stores/guest';
 import { useCoralWindowOpen } from '@/lib/overlay/coral';
 import { disableSceneSound, enableSceneSound, useSceneSound } from '@/lib/scene/sceneAudio';
@@ -79,6 +80,11 @@ export interface PlayerBlockProps {
   onWatchAgain?: () => void;
   /** «Зараз дивляться люди з N країн» у рядку 1 підпису (від 768 px). */
   watchers?: number;
+  /**
+   * Сторінка нараховує штамп за подію плеєра (ефір, сторінка країни): останні 60 с до півночі — підказка «Будь тут
+   * опівночі — отримаєш штамп: …» (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12), якщо штампа ще немає.
+   */
+  stampHint?: boolean;
   /** Праворуч від таймера (від 768 px): «Показати чат», коли чат сховано (`Desk-Cookies-Wide`). */
   captionAside?: ReactNode;
   /** Телефон, вкладка «Чат» (`Phone-Chat`): підпис одним рядком зі звуком, без рядка дій. */
@@ -206,6 +212,7 @@ export function PlayerBlock({
   onToggleSchedule,
   onWatchAgain,
   watchers,
+  stampHint = false,
   captionAside,
   bar = false,
   dock = false,
@@ -233,6 +240,11 @@ export function PlayerBlock({
     ? { muted: !sceneSoundOn, available: true, onUnmute: enableSceneSound, onMute: disableSceneSound }
     : { muted: area.muted, available: area.kind === 'video', onUnmute: () => actions?.unmute(), onMute: () => actions?.mute() };
   const barSound = <BarSound {...sound} />;
+  // Підказка про штамп — остання хвилина відліку до півночі події плеєра, поки штампа за неї немає.
+  const stamped = useGuestStore((s) => (current ? s.stamps.some((x) => x.eventId === current.event.id) : false));
+  const r1 = phase?.row1Right;
+  const hintCountry =
+    stampHint && current?.country && r1?.kind === 'countdown' && stampHintActive(r1.ms, stamped) ? current.country.name.uk : null;
 
   return (
     <>
@@ -250,6 +262,7 @@ export function PlayerBlock({
               variant="bar"
               lead={barSound}
               watchers={watchers}
+              stampHint={hintCountry}
               srRow3={false}
             />
           ) : (
@@ -280,6 +293,7 @@ export function PlayerBlock({
               titleId={titleId}
               mode={mode}
               watchers={watchers}
+              stampHint={hintCountry}
               aside={captionAside}
               variant={dock ? 'title' : bar ? 'bar' : 'full'}
               lead={

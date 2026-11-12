@@ -310,3 +310,115 @@
   color: var(--color-highlight);
   background: var(--color-surface-raised);
 }
+
+/* ── Свято штампа (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2, 2026-11-12) ─────────────────────────────
+   Строго в межах шапки: висота та сама, нижче нічого не опускається (overflow: hidden лише на час свята).
+   fill · show · fly — лого, навігація, годинник, «Підтримати», «Пас» (телефон — і меню) гаснуть; settle — повертаються. */
+.header {
+  position: relative;
+}
+.bar {
+  position: relative;
+  z-index: 1;
+}
+.header[data-celebration] {
+  overflow: hidden;
+  border-bottom-color: #d9ae3f;
+}
+.header[data-celebration='settle'] {
+  border-bottom-color: var(--color-border);
+  transition: border-color 800ms ease-in-out;
+}
+.header[data-celebration] .bar > :not(.mine):not([data-celebration-content]) {
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 300ms ease-out,
+    visibility 0s linear 300ms;
+}
+.header[data-celebration='settle'] .bar > :not(.mine):not([data-celebration-content]) {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 700ms ease-in 100ms;
+}
+.header[data-celebration='settle'] [data-celebration-backdrop] {
+  opacity: 0;
+}
+/* Капсула над золотом — темна, рамка чорнильна (дошка: cap(on_gold)). */
+.header[data-celebration] .mine {
+  position: relative;
+  z-index: 2;
+}
+.header[data-celebration]:not([data-celebration='settle']) .mine {
+  border-color: #121214;
+}
+/* Телефон: меню гасне, кабінет і дзвіночок зсуваються на його місце; значки — чорнильні на золоті. */
+@media (max-width: 767.98px) {
+  .header[data-celebration] .mine {
+    transform: translateX(var(--spacing-touch-min));
+    transition: transform 400ms cubic-bezier(0.3, 0.6, 0.4, 1);
+  }
+  .header[data-celebration='settle'] .mine {
+    transform: none;
+    transition: transform 700ms ease-in-out;
+  }
+  .header[data-celebration] .menu {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 300ms ease-out,
+      visibility 0s linear 300ms;
+  }
+  .header[data-celebration='settle'] .menu {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 700ms ease-in 100ms;
+  }
+  .header[data-celebration]:not([data-celebration='settle']) .icon,
+  .header[data-celebration]:not([data-celebration='settle']) .signIn {
+    color: #121214;
+  }
+  .header[data-celebration]:not([data-celebration='settle']) .badge {
+    box-shadow: 0 0 0 2px #fce286;
+  }
+}
+/* Після свята аватар (гостю — значок кабінету) один раз світиться золотом ≈ 1,5 с. */
+.account[data-glow] .avatar {
+  animation: avatarGlow 1500ms ease-in-out both;
+}
+.account[data-glow]:not(:has(.avatar)) {
+  animation: accountGlow 1500ms ease-in-out both;
+}
+@keyframes avatarGlow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.22),
+      0 0 0 0 rgb(252 226 134 / 0);
+  }
+  35% {
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.22),
+      0 0 0 3px rgb(252 226 134 / 0.55),
+      0 0 18px 4px rgb(252 226 134 / 0.45);
+  }
+}
+@keyframes accountGlow {
+  0%,
+  100% {
+    color: inherit;
+  }
+  35% {
+    color: var(--color-highlight);
+  }
+}
+/* «Зменшити рух»: золото одразу, без переходів; аватар не світиться (лічильник просто +1). */
+:global([data-reduce-motion='true']) .header[data-celebration] .bar > *,
+:global([data-reduce-motion='true']) .header[data-celebration] .mine,
+:global([data-reduce-motion='true']) .header[data-celebration] .menu {
+  transition: none;
+}
+:global([data-reduce-motion='true']) .account[data-glow] .avatar,
+:global([data-reduce-motion='true']) .account[data-glow] {
+  animation: none;
+}

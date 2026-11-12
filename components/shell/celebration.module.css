@@ -1,0 +1,375 @@
+/* Свято штампа в шапці (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2, рішення власника 2026-11-12).
+   Усе — у межах шапки (overflow: hidden у `header.module.css`): золото, іскри, печатка, політ. Фаза — атрибут шапки
+   `data-celebration` = fill · show · fly · settle; «Зменшити рух» — `[data-reduce-motion='true']`: без руху взагалі. */
+
+/* ── Золото на всю ширину шапки ─────────────────────────────────────────────────────────── */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 800ms ease-in-out;
+}
+.gold {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #edb843 0%, #fce286 30%, #fff1bf 52%, #fce286 74%, #edb843 100%);
+  /* Заливка зліва направо за 0,4 с. */
+  animation: fill 400ms cubic-bezier(0.3, 0.6, 0.4, 1) both;
+}
+/* Темно-золотий край, що біжить попереду заливки. */
+.edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  background: linear-gradient(90deg, #fce286, rgb(237 184 67 / 0));
+  animation: edge 400ms cubic-bezier(0.3, 0.6, 0.4, 1) both;
+}
+@keyframes fill {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes edge {
+  from {
+    left: 0;
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Іскри: повільне мерехтіння (період 1,6–2,6 с — кожна гасне й світиться рідше за раз на секунду). */
+.sparks {
+  position: absolute;
+  inset: 0;
+  animation: sparksIn 600ms ease-out 250ms both;
+}
+@keyframes sparksIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.dot,
+.star {
+  position: absolute;
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  color: var(--tone);
+  animation: twinkle var(--twinkle) ease-in-out var(--delay) infinite;
+}
+.dot {
+  border-radius: 50%;
+  background: var(--tone);
+}
+.pale {
+  --peak: 0.4;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: var(--peak, 0.85);
+  }
+}
+:global([data-celebration-paused]) .dot,
+:global([data-celebration-paused]) .star,
+:global([data-celebration-paused]) .seal {
+  animation-play-state: paused;
+}
+
+/* ── Вміст: одна кнопка в межах `.bar`, ліворуч від капсули «моє» ─────────────────────────── */
+.content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: var(--celebration-right, 0);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+  padding: 0 2px 0 var(--spacing-3);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #121214;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.content:focus-visible {
+  outline-offset: -4px;
+}
+
+/* Печатка: подвійне кільце й круглий прапор; кілька — віялом. */
+.seals {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+.seal {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--seal);
+  height: var(--seal);
+  border: 2px solid #121214;
+  border-radius: 50%;
+  background: #fce286;
+  transform: rotate(var(--rot));
+  /* Печатка влітає зліва й «тисне»: масштаб 1,12 → 1, тінь. */
+  animation: sealIn 900ms cubic-bezier(0.25, 0.8, 0.3, 1) calc(var(--i) * 90ms) both;
+}
+.seal + .seal {
+  margin-left: -14px;
+}
+.sealRing {
+  position: absolute;
+  inset: 3px;
+  border: 1.5px dashed #121214;
+  border-radius: 50%;
+  opacity: 0.75;
+}
+.sealFlag {
+  display: block;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+}
+.desk .seals {
+  --seal: 40px;
+}
+.phone .seals {
+  --seal: 36px;
+}
+.phoneMulti {
+  --seal: 34px;
+}
+@keyframes sealIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-180px) rotate(-40deg) scale(1);
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(0) rotate(var(--rot)) scale(1.12);
+    box-shadow: 0 4px 10px rgb(80 50 0 / 0.35);
+  }
+  100% {
+    transform: rotate(var(--rot)) scale(1);
+    box-shadow: 0 0 0 rgb(80 50 0 / 0);
+  }
+}
+
+/* Політ 8–9,2 с: печатка зменшується й летить до аватара; потім гасне в ньому. */
+.flyer {
+  display: inline-flex;
+  flex: none;
+  transition:
+    transform 1200ms cubic-bezier(0.55, 0, 0.3, 1),
+    opacity 300ms ease-in;
+}
+:global([data-celebration='fly']) .flyer,
+:global([data-celebration='settle']) .flyer {
+  transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.6);
+}
+:global([data-celebration='settle']) .flyer {
+  opacity: 0;
+}
+
+/* Десктоп і планшет (≥ 768): один рядок по центру. */
+.desk {
+  display: none;
+}
+.phone {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.lines {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.line1,
+.line2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.line1 {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #121214;
+}
+.line2 {
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgb(18 18 20 / 0.74);
+}
+
+.text {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  white-space: nowrap;
+}
+.lead {
+  flex: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: rgb(18 18 20 / 0.72);
+}
+.main {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 22px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+}
+.mainCatch {
+  font-size: 20px;
+}
+.dotSep {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #121214;
+  opacity: 0.45;
+}
+.tail {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.tailText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* «Подивитися штамп ↓» — темна пігулка з золотим текстом. */
+.see {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  margin-left: 8px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #121214;
+  color: #fce286;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.content:hover .see {
+  background: #2a2a2e;
+}
+
+/* Текст з’являється після заливки й гасне на 8-й секунді. */
+.text,
+.see,
+.lines {
+  transition: opacity 400ms ease-out;
+}
+:global([data-celebration='fill']) .text,
+:global([data-celebration='fill']) .see,
+:global([data-celebration='fill']) .lines {
+  opacity: 0;
+}
+:global([data-celebration='fly']) .text,
+:global([data-celebration='fly']) .lines {
+  opacity: 0.3;
+}
+:global([data-celebration='fly']) .see,
+:global([data-celebration='settle']) .text,
+:global([data-celebration='settle']) .see,
+:global([data-celebration='settle']) .lines {
+  opacity: 0;
+}
+
+@media (min-width: 768px) {
+  .content {
+    justify-content: center;
+    padding: 0 8px 0 var(--spacing-8);
+  }
+  .desk {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .phone {
+    display: none;
+  }
+}
+/* Планшет: місця менше — без «· Штамп у паспорті», пігулка лише зі стрілкою. */
+@media (min-width: 768px) and (max-width: 1099.98px) {
+  .dotSep,
+  .tail {
+    display: none;
+  }
+  .main {
+    font-size: 19px;
+  }
+  .seeLabel {
+    display: none;
+  }
+  .see {
+    width: 34px;
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+/* «Зменшити рух»: одразу золота, без заливки, іскор і польоту; печатка нерухома. */
+:global([data-reduce-motion='true']) .gold,
+:global([data-reduce-motion='true']) .seal {
+  animation: none;
+}
+:global([data-reduce-motion='true']) .seal {
+  transform: none;
+}
+:global([data-reduce-motion='true']) .flyer,
+:global([data-reduce-motion='true']) .text,
+:global([data-reduce-motion='true']) .see,
+:global([data-reduce-motion='true']) .lines,
+:global([data-reduce-motion='true']) .backdrop {
+  transition: none;
+}

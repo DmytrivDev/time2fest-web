@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
@@ -15,7 +15,10 @@ import { Header, type HeaderProps } from './Header';
 import { TimeMachineBody } from '@/components/demo/TimeMachineBody';
 import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
 import { IS_DEMO_BUILD } from '@/lib/env';
+import { useNotifStore } from '@/stores/notifications';
 import { MenuBody } from './Menu';
+import { PASSPORT_HREF } from '@/components/live/StampBlock';
+import { scrollToStampCard, useStampCelebration } from './useStampCelebration';
 import ms from './menu.module.css';
 import { useOverlay } from './OverlayManager';
 
@@ -34,6 +37,9 @@ export type ShellHeaderProps = Pick<HeaderProps, 'current' | 'hasPass' | 'user'>
  * «Підтримати», «Новорічний пас», «Увійти»: поки йде свято (від 2 год до першої півночі до останньої, рішення власника
  * 2026-11-08) — вікно на місці чату (телефон — шторка), щоб не йти з трансляцій; до й після свята — свої сторінки
  * (`/support/`, `/pass/`, `/login/` з поверненням сюди ж).
+ * Свято штампа (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12): `useStampCelebration` — черга, відкладення
+ * на час повного екрана й прихованої вкладки; клік по золотій шапці — до картки штампу під плеєром (немає картки — паспорт).
+ * Поки свято попереду чи грає, дзвіночок не показує нових сповіщень — +1 наприкінці.
  */
 export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: userProp }: ShellHeaderProps) {
   // Поточний пункт навігації — з маршруту: «Країни» для списку й сторінок країн, інакше переданий.
@@ -55,6 +61,17 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const menuOpen = overlay.current?.id === MENU_WINDOW_ID;
   const tn = useTranslations('notif');
   const td = useTranslations('demoTime');
+  const router = useRouter();
+
+  const cel = useStampCelebration({ guest: !user });
+  const heldCount = useNotifStore((st) =>
+    cel.holdFrom === null ? null : st.items.reduce((n, x) => n + (!x.read && x.createdAt < cel.holdFrom! ? 1 : 0), 0),
+  );
+  const onActivateCelebration = () => {
+    // Шапка відпливає вгору з-під миші — наведення більше не тримає паузу (pointerleave при прокрутці не приходить).
+    cel.setHold('hover', false);
+    if (!scrollToStampCard(cel.reduced)) router.push(PASSPORT_HREF);
+  };
 
   const onSignInClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (celebrating) {
@@ -150,6 +167,14 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
       onSupportClick={celebrating ? () => openToast() : undefined}
       onTimeMachineClick={IS_DEMO_BUILD ? toggleTimeMachine : undefined}
       timeMachineOpen={timeOpen}
+      notifications={heldCount ?? undefined}
+      celebration={
+        cel.celebration
+          ? { celebration: cel.celebration, phase: cel.phase, reduced: cel.reduced, paused: cel.paused, guest: !user, onActivate: onActivateCelebration }
+          : null
+      }
+      onCelebrationHold={cel.setHold}
+      avatarGlow={cel.glow}
     />
   );
 }

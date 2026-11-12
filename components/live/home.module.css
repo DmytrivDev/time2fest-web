@@ -541,3 +541,43 @@
     white-space: nowrap;
   }
 }
+
+/* ── Остання хвилина до півночі зі штампом (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12) ── */
+/* Десктоп: золота підказка в рядку 1 на місці «Зараз дивляться…». */
+.stampHint {
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-highlight);
+}
+/* Телефон: два рядки на місці «Париж · до півночі»; відлік праворуч — золотий і більший. */
+.barHint {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.barHintLead {
+  overflow: hidden;
+  font-weight: 700;
+  color: var(--color-text);
+  text-overflow: ellipsis;
+}
+.barHintTail {
+  overflow: hidden;
+  font-weight: 800;
+  color: var(--color-highlight);
+  text-overflow: ellipsis;
+}
+.barText.barTextHint {
+  flex: none;
+}
+.barDigits.barDigitsHint {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--color-highlight);
+}

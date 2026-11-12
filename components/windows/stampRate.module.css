@@ -165,3 +165,30 @@
   align-items: center;
   font-size: 13px;
 }
+
+/* Штамп під плеєром на телефоні (дошка `Phone-Stamp-Header` v2, кадр 4, 2026-11-12): «Як тобі шоу?» ліворуч, зірки праворуч
+   одним рядком за рискою; підтвердження й підказка — переносяться нижче. */
+@media (max-width: 767.98px) {
+  .wrap:not(.compact) {
+    padding: 14px 0 16px;
+  }
+  .wrap:not(.compact) .row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 10px;
+    text-align: start;
+  }
+  .wrap:not(.compact) .label {
+    font-size: 14px;
+  }
+  /* Ширина мітки — лише поточного тексту, інакше зірки не вміщаються поруч (зірки притиснуті праворуч і не зсуваються). */
+  .wrap:not(.compact) .labelText[aria-hidden='true'] {
+    display: none;
+  }
+  /* Цілі зірок 44 px стоять впритул (як 26-px зірки з проміжком 10 на дошці). */
+  .wrap:not(.compact) .stars {
+    gap: 0;
+  }
+}

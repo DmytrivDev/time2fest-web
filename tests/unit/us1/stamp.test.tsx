@@ -43,6 +43,30 @@ describe('Stamp', () => {
     expect(onPassport).toHaveBeenCalledTimes(1);
   });
 
+  it('«Сказати тост» (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2): між «Поділитися» і «Мій паспорт», не коралова; без обробника — немає', () => {
+    const onToast = vi.fn();
+    const { unmount } = renderApp(<Stamp stamps={[SYDNEY]} onToast={onToast} onShare={() => {}} onPassport={() => {}} />);
+    const buttons = screen.getAllByRole('button').map((b) => b.textContent);
+    expect(buttons.indexOf('Поділитися')).toBeLessThan(buttons.indexOf('Сказати тост'));
+    expect(buttons.indexOf('Сказати тост')).toBeLessThan(buttons.indexOf('Мій паспорт'));
+    const toast = screen.getByRole('button', { name: 'Сказати тост' });
+    expect(toast).toHaveAttribute('data-variant', 'secondary');
+    expect(document.querySelectorAll('[data-variant="coral"]')).toHaveLength(1);
+    fireEvent.click(toast);
+    expect(onToast).toHaveBeenCalledTimes(1);
+    unmount();
+    renderApp(<Stamp stamps={[SYDNEY]} />);
+    expect(screen.queryByRole('button', { name: 'Сказати тост' })).toBeNull();
+  });
+
+  it('картка — ціль «Подивитися штамп» зі свята в шапці: `data-stamp-card`, фокус програмно', () => {
+    const { container } = renderApp(<Stamp stamps={[SYDNEY]} />);
+    const card = container.querySelector<HTMLElement>('[data-stamp-card]');
+    expect(card).not.toBeNull();
+    card!.focus();
+    expect(document.activeElement).toBe(card);
+  });
+
   it('multi: «Сідней · Мельбурн»', () => {
     renderApp(<Stamp stamps={[SYDNEY, MELBOURNE]} />);
     expect(screen.getByRole('heading', { level: 2, name: /Сідней · Мельбурн/ })).toBeInTheDocument();

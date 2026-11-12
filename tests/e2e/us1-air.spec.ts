@@ -3,6 +3,8 @@
  * Головна з «машиною часу»: підпис за фазами, штамп + системне повідомлення на «+15 с» (стіну «Першого ряду» прибрано 2026-11-12)
  * (у межах 1 с, також при зсуві годинника пристрою — SC-002), оцінка на «+2 хв», остання хвилина,
  * «Лишитися тут ›» без перезапуску відео (SC-003), перехід ефіру на «+15 хв». axe на кожній фазі.
+ * Свято штампа в шапці (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12): підказка за хвилину до півночі,
+ * на «+15 с» шапка ≈ 10 с золота строго у своїй висоті, «Подивитися штамп» — до картки під плеєром з фокусом, дзвіночок +1.
  *
  * Часовий пояс браузера — Київ: «північ о 02:00 за вашим часом» для Лондона.
  */
@@ -130,6 +132,53 @@ test.describe('US1 · ефір на головній', () => {
     expect(await guestStampIds(page)).toEqual([{ eventId: 'evt_london_2027', grantedAt: STAMP_AT }]);
     await expectNothingOverPlayer(page);
     await expectAxeClean(page);
+  });
+
+  test('остання хвилина: «Будь тут опівночі — отримаєш штамп: Велика Британія»; опівночі підказка зникає', async ({ page, ytStub }) => {
+    await startAt(page, ytStub, '2027-01-01T01:59:52+02:00', 1);
+    const hint = page.locator('[data-stamp-hint]:visible');
+    await expect(hint).toHaveCount(1);
+    if (isPhone(page)) {
+      await expect(hint).toHaveText('Будь тут опівночі — отримаєш штамп: Велика Британія');
+    } else {
+      await expect(hint).toHaveText('Будь тут опівночі — отримаєш штамп: Велика Британія');
+      // На місці «Зараз дивляться люди з … країн».
+      await expect(caption(page).getByText(/Зараз дивляться люди/)).toHaveCount(0);
+    }
+    await expect(hint).toHaveCount(0, { timeout: 15_000 });
+  });
+
+  test('«+15 с»: шапка святкує в межах своєї висоти; «Подивитися штамп» — до картки з фокусом; дзвіночок +1 наприкінці', async ({ page, ytStub }) => {
+    await startAt(page, ytStub, '2027-01-01T01:59:58+02:00', 1);
+    const header = page.locator('header').first();
+    const before = await header.boundingBox();
+    const bell = header.getByRole('button', { name: /^Сповіщення/ });
+    const bellBefore = await bell.getAttribute('aria-label');
+    await expect(header).toHaveAttribute('data-celebration', /fill|show/, { timeout: 30_000 });
+    const content = header.locator('[data-celebration-content]');
+    await expect(content).toContainText(isPhone(page) ? 'З Новим роком!' : 'З Новим роком, Велика Британія!');
+    await expect(content).toContainText(isPhone(page) ? 'Велика Британія · штамп на цьому пристрої' : 'Штамп на цьому пристрої');
+    // Висота шапки та сама, нічого не опускається нижче неї й не лягає на плеєр.
+    const during = await header.boundingBox();
+    expect(during!.height).toBeCloseTo(before!.height, 1);
+    const below = await page.evaluate(() => {
+      const hd = document.querySelector('header')!;
+      const bottom = hd.getBoundingClientRect().bottom;
+      const clipped = getComputedStyle(hd).overflow === 'hidden';
+      return [...hd.querySelectorAll('*')].filter((el) => !clipped && el.getBoundingClientRect().bottom > bottom + 0.5).length;
+    });
+    expect(below).toBe(0);
+    await expectNothingOverPlayer(page);
+    expect(await bell.getAttribute('aria-label')).toBe(bellBefore);
+
+    await content.click();
+    const card = page.locator('[data-stamp-card]');
+    await expect(card).toBeFocused();
+    await expect(card).toBeInViewport();
+    await page.mouse.move(5, (page.viewportSize()?.height ?? 800) - 5);
+
+    await expect(header).not.toHaveAttribute('data-celebration', /.+/, { timeout: 15_000 });
+    await expect(bell).not.toHaveAttribute('aria-label', bellBefore ?? '');
   });
 
   test('сценарій 2 (SC-002): годинник пристрою зсунуто на +10 хв — момент однаково на «+15 с»', async ({ page, ytStub }) => {
