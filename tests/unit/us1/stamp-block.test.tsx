@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearStampMoment, showStampMoment, StampBlock } from '@/components/live/StampBlock';
 import { OverlayManager, useOverlay } from '@/components/shell/OverlayManager';
@@ -85,7 +85,7 @@ describe('StampBlock — окремий блок під плеєром (ріше
     expect(document.querySelector('.t2f-reveal')).toHaveAttribute('data-open', 'false');
   });
 
-  it('«Як тобі шоу?» — разом зі штампом; зірки → «Ти поставив 4 з 5 · Підтвердити · Змінити» → «Твоя оцінка», без зсуву зірок', () => {
+  it('«Як тобі шоу?» — разом зі штампом; зірки → «Ти поставив 4 з 5 · Підтвердити · Змінити» → «Твоя оцінка», без зсуву зірок', async () => {
     renderApp(
       <OverlayManager>
         <StampBlock eventId={null} />
@@ -104,8 +104,9 @@ describe('StampBlock — окремий блок під плеєром (ріше
     expect(row()).toHaveAttribute('data-state', 'ask');
     fireEvent.click(screen.getByRole('radio', { name: '4 з 5' }));
     fireEvent.click(screen.getByRole('button', { name: 'Підтвердити' }));
+    // Оцінка йде через сервіс рейтингу (асинхронно): стор і картка оновлюються після відповіді.
+    await waitFor(() => expect(row()).toHaveAttribute('data-rated', 'true'));
     expect(useGuestStore.getState().rate['evt_london_2027']?.stars).toBe(4);
-    expect(row()).toHaveAttribute('data-rated', 'true');
     expect(screen.getByRole('link', { name: /Рейтинг святкувань/ })).toHaveAttribute('href', expect.stringMatching(/^\/rating\/?$/));
     // Обидва підписи лишаються в розмітці (тримають ширину); видимий — «Твоя оцінка».
     expect(screen.getByText('Твоя оцінка').closest('[aria-hidden]')).toBeNull();

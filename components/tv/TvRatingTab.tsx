@@ -5,15 +5,12 @@
  * (медаль, прапор, місто, смужка, оцінка) і QR «Оціни з телефона». Оцінювати на ТВ не можна — лише з телефона.
  */
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
 import { Flag } from '@/components/primitives/Flag';
 import { QRCode } from '@/components/primitives/QRCode';
 import { RATING_SHORT_URL, RATING_URL } from '@/lib/config/site';
-import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { formatDurationShort } from '@/lib/i18n/time';
-import { ratingState } from '@/lib/rating/rating';
-import { useGuestStore } from '@/stores/guest';
+import { useRatingBoard } from '@/lib/api/hooks/rating';
 import styles from './tv.module.css';
 
 const TOP = 5;
@@ -21,9 +18,8 @@ const dec = (n: number) => n.toFixed(1).replace('.', ',');
 
 export function TvRatingTab({ now }: { now: Ms }) {
   const t = useTranslations('tv');
-  const rate = useGuestStore((g) => g.rate);
   const minute = Math.floor(now / 60_000) * 60_000;
-  const state = useMemo(() => ratingState(getData(), minute, rate), [minute, rate]);
+  const { state } = useRatingBoard(minute);
   const top = state.rows.slice(0, TOP);
   return (
     <div data-tv-rating="" className="flex flex-col">

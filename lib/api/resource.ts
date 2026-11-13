@@ -74,7 +74,9 @@ export function createResource<T, E = never>(source: () => ResourceSource<T, E>)
     closeRealtime =
       src.subscribe?.((event) => {
         if (state.data === undefined || !src.reduce) return;
-        set({ ...state, data: src.reduce(state.data, event) });
+        const next = src.reduce(state.data, event);
+        // `reduce` повернув те саме — нічого не змінилось, споживачів не чіпаємо (знімки раз на секунду).
+        if (next !== state.data) set({ ...state, data: next });
       }) ?? null;
     void refresh();
   };

@@ -18,7 +18,7 @@ import { StampArt } from '@/components/windows/StampArt';
 import { StampRate } from '@/components/windows/StampRate';
 import { formatClock } from '@/lib/i18n/time';
 import type { PassportStamp } from '@/lib/passport/passport';
-import { useGuestStore } from '@/stores/guest';
+import { ratingActions, useMyVotes } from '@/lib/api/hooks/rating';
 import { FlagStrip } from './FlagStrip';
 import s from './passport.module.css';
 
@@ -29,8 +29,7 @@ export function BigPostcard({ rows, start }: { rows: readonly PassportStamp[]; s
   const tStamp = useTranslations('windows.achievement');
   const tShare = useTranslations('share');
   const overlay = useOverlay();
-  const ratings = useGuestStore((g) => g.rate);
-  const setRate = useGuestStore((g) => g.setRate);
+  const myVotes = useMyVotes();
   const [index, setIndex] = useState(start);
   const total = rows.length;
   const r = rows[Math.min(index, total - 1)];
@@ -72,8 +71,8 @@ export function BigPostcard({ rows, start }: { rows: readonly PassportStamp[]; s
           <StampRate
             layout="compact"
             rows={[{ eventId: r.eventId, city: r.city }]}
-            values={ratings[r.eventId]?.stars !== undefined ? { [r.eventId]: ratings[r.eventId]!.stars } : {}}
-            onRate={(id, stars) => setRate(id, { stars })}
+            values={myVotes[r.eventId] !== undefined ? { [r.eventId]: myVotes[r.eventId] } : {}}
+            onRate={(id, stars) => void ratingActions.vote(id, stars)}
           />
           <p className={s.bigRateHint}>{t('rateHint')}</p>
         </div>

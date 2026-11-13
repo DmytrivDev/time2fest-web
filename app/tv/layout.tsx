@@ -8,6 +8,7 @@
  */
 import type { ReactNode } from 'react';
 import { PlayerHost } from '@/components/player/PlayerHost';
+import { ApiRuntime } from '@/lib/api/ApiRuntime';
 import { BroadcastController } from '@/lib/player/BroadcastController';
 import { PlayerProvider } from '@/lib/player/PlayerProvider';
 import { TimeProvider } from '@/lib/time/TimeProvider';
@@ -23,6 +24,8 @@ function TvShell({ children }: { children: ReactNode }) {
       <PlayerProvider>
         <BroadcastController>
           <div className="bg-background text-text">
+            {/* Шов з бекендом (`sim`): «сервер» рейтингу — вкладці «Рейтинг» потрібні свіжі агрегати. */}
+            <ApiRuntime only={['rating']} />
             <PlayerHost />
             {children}
           </div>

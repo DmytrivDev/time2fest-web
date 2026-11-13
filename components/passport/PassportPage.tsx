@@ -41,6 +41,7 @@ import {
 } from '@/lib/passport/passport';
 import { buildSchedulePath } from '@/lib/schedule/schedulePath';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
+import { ratingActions, useMyVotes } from '@/lib/api/hooks/rating';
 import { useGuestStore } from '@/stores/guest';
 import { BIG_POSTCARD_ID, BigPostcard } from './BigPostcard';
 import { FlagStrip } from './FlagStrip';
@@ -64,8 +65,7 @@ export function PassportPage() {
   const scheduleRaw = useGuestStore((g) => g.schedule);
   const nick = useGuestStore((g) => g.nick);
   const flagCode = useGuestStore((g) => g.flagCode);
-  const ratings = useGuestStore((g) => g.rate);
-  const setRate = useGuestStore((g) => g.setRate);
+  const myVotes = useMyVotes();
   const overlay = useOverlay();
   const share = usePassportShare();
   const [view, setView] = useState<'chrono' | 'continents'>('chrono');
@@ -114,7 +114,7 @@ export function PassportPage() {
 
   const card = (r: PassportStamp, index: number) => {
     const entry = stampEntry(r.eventId);
-    const stars = ratings[r.eventId]?.stars;
+    const stars = myVotes[r.eventId];
     return (
       <li key={r.eventId} className={s.card} data-stamp-card={r.eventId} data-rateable={r.rateable || undefined}>
         <FlagStrip code={r.flagCode} />
@@ -147,7 +147,7 @@ export function PassportPage() {
               layout="compact"
               rows={[{ eventId: r.eventId, city: r.city }]}
               values={stars !== undefined ? { [r.eventId]: stars } : {}}
-              onRate={(id, v) => setRate(id, { stars: v })}
+              onRate={(id, v) => void ratingActions.vote(id, v)}
               className={s.cardRate}
             />
           ) : (

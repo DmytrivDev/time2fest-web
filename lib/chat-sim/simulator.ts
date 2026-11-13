@@ -24,7 +24,7 @@ import type {
 } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { getData } from '@/lib/data/load';
-import { ratingState } from '@/lib/rating/rating';
+import { ratingState } from '@/lib/api/sim/rating';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { toastGreetingMessages } from '@/lib/toast/greeting';
 import { simulatedToasts } from '@/lib/toast/worldToasts';

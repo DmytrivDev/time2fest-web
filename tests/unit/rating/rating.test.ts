@@ -3,7 +3,8 @@
 import { describe, expect, it } from 'vitest';
 import { getData } from '@/lib/data/load';
 import { isRateable } from '@/lib/passport/passport';
-import { RATING_CLOSE_AFTER, RATING_OPEN_AFTER, ratingCloseAt, ratingState, ukOrdinal, weighted, worldVotes } from '@/lib/rating/rating';
+import { ratingState, worldVotes } from '@/lib/api/sim/rating';
+import { RATING_CLOSE_AFTER, RATING_OPEN_AFTER, buildRatingState, ratingCloseAt, ukOrdinal, weighted } from '@/lib/rating/rating';
 
 const data = getData();
 const ev = (cityId: string) => data.events.find((e) => e.cityId === cityId)!;
@@ -64,6 +65,25 @@ describe('рейтинг святкувань', () => {
     expect(a.votes).toBeLessThan(b.votes);
     expect(worldVotes(e.id, e.popularity, e.midnightMs, e.midnightMs + 5 * 60 * 60_000)).toEqual(b);
     expect(a.mean).toBe(b.mean);
+  });
+
+  it('buildRatingState: ряди з агрегатів сервера (порядок за місцем, «твоя» з mine), чужі й невідомі події не падають', () => {
+    const kyiv = ev('kyiv');
+    const london = ev('london');
+    const agg = {
+      rows: [
+        { eventId: kyiv.id, mean: 4.2, votes: 5, score: 4.1, place: 2 },
+        { eventId: london.id, mean: 4.8, votes: 9, score: 4.6, place: 1 },
+      ],
+      totalVotes: 14,
+      mine: { [kyiv.id]: 3 as const },
+    };
+    const st = buildRatingState(data, AFTER_ALL, agg);
+    expect(st.rows.map((r) => [r.eventId, r.place, r.mine])).toEqual([[london.id, 1, undefined], [kyiv.id, 2, 3]]);
+    expect(st.totalVotes).toBe(14);
+    expect(st.closed).toBe(false);
+    expect(st.ahead).toHaveLength(0);
+    expect(buildRatingState(data, 0, { rows: [], totalVotes: 0, mine: {} }).ahead.length).toBeGreaterThan(0);
   });
 
   it('«6-те місце»: порядкові числівники', () => {

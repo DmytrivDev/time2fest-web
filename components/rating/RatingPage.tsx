@@ -25,7 +25,8 @@ import { StampArt } from '@/components/windows/StampArt';
 import { StampRate } from '@/components/windows/StampRate';
 import { getData } from '@/lib/data/load';
 import { formatClock, formatCountdown, viewerTimeZone } from '@/lib/i18n/time';
-import { ratingState, RATING_OPEN_AFTER } from '@/lib/rating/rating';
+import { ratingActions, useMyVotes, useRatingBoard } from '@/lib/api/hooks/rating';
+import { RATING_OPEN_AFTER } from '@/lib/rating/rating';
 import { isRateable } from '@/lib/passport/passport';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
@@ -43,10 +44,9 @@ export function RatingPage() {
   // (власник 2026-11-07). Розрахунок легкий — кілька десятків святкувань.
   const minute = Math.floor(now / 1000) * 1000;
   const stamps = useGuestStore((g) => g.stamps);
-  const rate = useGuestStore((g) => g.rate);
-  const setRate = useGuestStore((g) => g.setRate);
   const overlay = useOverlay();
   const [filter, setFilter] = useState<'all' | 'mine'>('all');
+  const myVotes = useMyVotes();
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- позначка «клієнт змонтовано» (дані гостя з localStorage)
   useEffect(() => setMounted(true), []);
@@ -54,18 +54,19 @@ export function RatingPage() {
   const [ratedHere, setRatedHere] = useState<readonly string[]>([]);
 
   const data = getData();
-  const state = useMemo(() => ratingState(data, minute, mounted ? rate : {}), [data, minute, rate, mounted]);
+  const { status, state } = useRatingBoard(minute);
   const stampedIds = useMemo(() => new Set(mounted ? stamps.map((st) => st.eventId) : []), [stamps, mounted]);
-  const toRate = mounted
+  // Оцінки людини приходять із сервісу: поки дошка не завантажена, «Оціни, де ти був» не показуємо (щоб не блимали вже оцінені).
+  const toRate = mounted && status === 'ready'
     ? stamps
         .map((st) => st.eventId)
         .filter((id, i, arr) => arr.indexOf(id) === i)
         .filter((id) => {
           const e = data.eventsById.get(id);
-          return !!e && isRateable(data, id) && minute >= e.midnightMs + RATING_OPEN_AFTER && (rate[id]?.stars === undefined || ratedHere.includes(id));
+          return !!e && isRateable(data, id) && minute >= e.midnightMs + RATING_OPEN_AFTER && (myVotes[id] === undefined || ratedHere.includes(id));
         })
     : [];
-  const waiting = toRate.filter((id) => rate[id]?.stars === undefined).length;
+  const waiting = toRate.filter((id) => myVotes[id] === undefined).length;
   const rows = filter === 'mine' ? state.rows.filter((r) => stampedIds.has(r.eventId)) : state.rows;
   const tz = viewerTimeZone();
   const closeDate = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', timeZone: tz }).format(state.closeAt);
@@ -124,7 +125,7 @@ export function RatingPage() {
               const e = data.eventsById.get(id)!;
               const country = data.countriesByIso.get(e.countryIso);
               const city = data.citiesById.get(e.cityId)?.name.uk ?? '';
-              const stars = rate[id]?.stars;
+              const stars = myVotes[id];
               return (
                 <li key={id} className={s.card} data-rate-card={id}>
                   <FlagStrip code={country?.flagCode ?? e.countryIso} />
@@ -142,7 +143,7 @@ export function RatingPage() {
                       values={stars !== undefined ? { [id]: stars } : {}}
                       onRate={(eventId, v) => {
                         setRatedHere((cur) => (cur.includes(eventId) ? cur : [...cur, eventId]));
-                        setRate(eventId, { stars: v });
+                        void ratingActions.vote(eventId, v);
                       }}
                       className={s.cardRate}
                     />
@@ -220,9 +221,9 @@ export function RatingPage() {
               })}
             </ol>
           </>
-        ) : (
+        ) : status === 'ready' ? (
           <p className={s.empty}>{filter === 'mine' ? t('noneMine') : t('none')}</p>
-        )}
+        ) : null}
       </section>
 
       {state.ahead.length && !state.closed ? (

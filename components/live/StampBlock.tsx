@@ -36,6 +36,7 @@ import { getData } from '@/lib/data/load';
 import { isRateable } from '@/lib/passport/passport';
 import type { Stars } from '@/lib/data/types';
 import { on } from '@/lib/events/bus';
+import { ratingActions, useMyVotes } from '@/lib/api/hooks/rating';
 import { useAccountStore } from '@/stores/account';
 import { useGuestStore } from '@/stores/guest';
 import { utcLabel } from './MapModel';
@@ -123,8 +124,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   const hasStamp = useGuestStore((s) => (eventId ? s.stamps.some((x) => x.eventId === eventId) : false));
   const dismissed = useGuestStore((s) => s.stampsDismissed);
   const dismissStamps = useGuestStore((s) => s.dismissStamps);
-  const ratings = useGuestStore((s) => s.rate);
-  const setRate = useGuestStore((s) => s.setRate);
+  const myVotes = useMyVotes();
   const guestId = useGuestStore((s) => s.id);
   // Під штампом — пропозиція пасу (`OfferBlock`) зі своєю кораловою дією → «Поділитися» вторинна.
   const offerShown = useGuestStore((s) => {
@@ -201,7 +201,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
 
   const values: Partial<Record<string, Stars>> = {};
   for (const e of current?.list ?? []) {
-    const stars = e.eventId ? ratings[e.eventId]?.stars : undefined;
+    const stars = e.eventId ? myVotes[e.eventId] : undefined;
     if (stars !== undefined) values[e.eventId!] = stars;
   }
   // «Як тобі шоу?» — лише святкування з трансляцією (`isRateable`), як у паспорті й «Рейтингу святкувань».
@@ -227,7 +227,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
             onClose={permanent ? undefined : () => dismiss(current.list, current.key)}
             more={more && more.count > 0 ? more : undefined}
             rate={
-              rateRows.length ? <StampRate rows={rateRows} values={values} onRate={(id, stars) => setRate(id, { stars })} /> : undefined
+              rateRows.length ? <StampRate rows={rateRows} values={values} onRate={(id, stars) => void ratingActions.vote(id, stars)} /> : undefined
             }
           />
         </div>

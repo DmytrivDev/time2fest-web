@@ -30,8 +30,11 @@ export interface RatingBoard {
 export interface RatingService {
   /** `GET /api/rating` (CDN `s-maxage=15`, без `mine`) + `GET /api/me/rating-votes`. */
   board(): Promise<ApiResult<RatingBoard>>;
-  /** Realtime: `rating` — новий знімок рядів раз на 30–60 с (не на кожен голос). */
-  subscribe(onRows: (rows: readonly RatingAggregate[], totalVotes: number) => void): Unsubscribe;
+  /**
+   * Realtime: `rating` — новий знімок рядів раз на 30–60 с (не на кожен голос). `mine` — лише в `sim` (оцінки людини
+   * змінюються на пристрої поза адаптером); у `http` не передається — свої оцінки веде кеш хука.
+   */
+  subscribe(onRows: (rows: readonly RatingAggregate[], totalVotes: number, mine?: Readonly<Record<string, Stars>>) => void): Unsubscribe;
   /** `PUT /api/me/rating-votes/:eventId` `{ stars }` — повторна оцінка замінює попередню. */
   vote(eventId: string, stars: Stars): Promise<ApiResult<{ eventId: string; stars: Stars }>>;
 }

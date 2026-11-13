@@ -70,7 +70,7 @@ import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
-import { ratingState } from '@/lib/rating/rating';
+import { useRatingBoard } from '@/lib/api/hooks/rating';
 import { currentViewers } from '@/lib/presence/viewers';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import {
@@ -518,10 +518,10 @@ export function CountryLive({ iso }: { iso: string }) {
   );
   const zone = zoneId ? data.zonesById.get(zoneId) : undefined;
   // Чіп рейтингу біля назви — після півночі, якщо головне святкування вже в «Рейтингу святкувань».
-  const rate = useGuestStore((g) => g.rate);
+  const { state: ratingBoardState } = useRatingBoard(minute);
   const ratingRow = useMemo(
-    () => (after && mainEvent ? ratingState(data, minute, rate).rows.find((r) => r.eventId === mainEvent.id) : undefined),
-    [after, mainEvent, data, minute, rate],
+    () => (after && mainEvent ? ratingBoardState.rows.find((r) => r.eventId === mainEvent.id) : undefined),
+    [after, mainEvent, ratingBoardState],
   );
   const header = mainEvent ? (
     <CountryHeader

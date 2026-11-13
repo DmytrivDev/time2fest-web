@@ -4,7 +4,9 @@
  */
 import type { ServiceFactories } from '../services';
 import { createSimNotifications } from './notifications';
+import { createSimRating } from './rating';
 
 export const simFactories: ServiceFactories = {
   notifications: createSimNotifications,
+  rating: createSimRating,
 };

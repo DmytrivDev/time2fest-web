@@ -36,6 +36,15 @@ export default tseslint.config(
           ],
         },
       ],
+      // Рейтинг перенесено на шов: оцінку пишемо лише через `ratingActions.vote` (@/lib/api/hooks/rating). `lib/rating/rating`
+      // тепер чиста (формула, ряди з агрегатів) — її імпорт дозволений.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "MemberExpression[property.name='setRate']",
+          message: 'Оцінки пише сервіс рейтингу: ratingActions.vote з @/lib/api/hooks/rating (не guest.setRate).',
+        },
+      ],
     },
   },
   {
