@@ -7,6 +7,7 @@ import { cn } from '@/components/primitives/cn';
 import { roundFlagSrc } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { DemoClock } from '@/components/demo/DemoClock';
+import { WhenCanToast } from '@/components/toast/useToastSeason';
 import { IS_DEMO_BUILD } from '@/lib/env';
 import { useUnreadCount } from '@/stores/notifications';
 import { CelebrationBackdrop, CelebrationContent, type HeaderCelebrationProps } from './HeaderCelebration';
@@ -36,8 +37,13 @@ export interface HeaderProps {
   onSignInClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
   /** «Пас»: сторінка `/pass/`; `onPassClick` може відкрити оформлення вікном (трансляція грає) — `preventDefault`. */
   onPassClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
-  /** «Підтримати»: вікно «Чайові» (сторінки з плеєром); без обробника — сторінка `/support/`. */
-  onSupportClick?: () => void;
+  /**
+   * «Сказати тост» — лише поки свято йде (рішення власника 2026-11-13): без значення шапка сама дивиться на годинник
+   * (`WhenCanToast`); `true` / `false` — примусово (історії, тести). До й після свята кнопки немає — лише «Новорічний пас».
+   */
+  toast?: boolean;
+  /** «Сказати тост»: вікно тосту (є `OverlayManager`); без обробника — сторінка «Тости світу» (`/support/`). */
+  onToastClick?: () => void;
   /** Сторінка пасу відкрита — «Пас» позначено поточною. */
   passCurrent?: boolean;
   /** Нових сповіщень; без значення — непрочитані зі стору сповіщень. */
@@ -48,7 +54,7 @@ export interface HeaderProps {
   timeMachineOpen?: boolean;
   /**
    * Свято штампа (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12): шапка ≈ 10 с золота в межах своєї висоти;
-   * лого, навігація, годинник, «Підтримати», «Пас» і (телефон) меню гаснуть, капсула «моє» лишається — туди летить штамп.
+   * лого, навігація, годинник, «Сказати тост», «Пас» і (телефон) меню гаснуть, капсула «моє» лишається — туди летить штамп.
    */
   celebration?: HeaderCelebrationProps | null;
   /** Наведення мишею / фокус у шапці — свято на паузі (WCAG 2.2.1). */
@@ -71,12 +77,13 @@ export function HeaderAvatar({ user, pass, label }: { user: HeaderUser; pass: bo
 
 /**
  * Шапка за дошкою `Desk-Header-New2`, варіант C «Капсула „моє“» (рішення власника 2026-11-08).
- * Десктоп ≥ 1200, 64 px: лого · «Головна · Країни · Про нас» — текстом; «Підтримати» — текстом (мова — лише в меню, 2026-11-08); «Новорічний пас» —
+ * Десктоп ≥ 1200, 64 px: лого · «Головна · Країни · Про нас» — текстом; «Сказати тост» — текстом, лише поки свято йде
+ * (2026-11-13; мова — лише в меню, 2026-11-08); «Новорічний пас» —
  * єдина яскрава кнопка (золота; з пасом її немає); капсула «моє»: 🔔 з лічильником | «Увійти» / аватар | «☰ Меню».
- * Планшет 768–1199: навігація й «Підтримати» — у меню; лишаються лого, «Пас», капсула.
+ * Планшет 768–1199: навігація й «Тости» — у меню; лишаються лого, «Пас», капсула.
  * Телефон 56 px: лого · «Пас» · кабінет · 🔔 · ☰ (без напису). Поверхня змінюється лише CSS — розмітка однакова.
  * Свято штампа (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2, 2026-11-12): `celebration` — шапка ≈ 10 с золота строго
- * у своїй висоті (`HeaderCelebration`); гаснуть лого, навігація, годинник демо, «Підтримати», «Пас», на телефоні — меню;
+ * у своїй висоті (`HeaderCelebration`); гаснуть лого, навігація, годинник демо, «Сказати тост», «Пас», на телефоні — меню;
  * лишається капсула «моє» (телефон — кабінет і дзвіночок, зсунуті на місце меню). Після свята аватар світиться (`avatarGlow`).
  */
 export function Header({
@@ -89,7 +96,8 @@ export function Header({
   signInCurrent = false,
   onSignInClick,
   onPassClick,
-  onSupportClick,
+  toast,
+  onToastClick,
   passCurrent = false,
   notifications,
   onNotificationsClick,
@@ -103,6 +111,21 @@ export function Header({
   const t = useTranslations('header');
   const unread = useUnreadCount();
   const count = notifications ?? unread;
+  const toastLink = (
+    <NextLink
+      href="/support/"
+      onClick={(e) => {
+        if (!onToastClick) return;
+        e.preventDefault();
+        onToastClick();
+      }}
+      className={cn('t2f-focus', styles.text, styles.deskOnly)}
+      data-action="header-toast"
+    >
+      <Icon name="glass" size={18} />
+      {t('toast')}
+    </NextLink>
+  );
 
   // Свято: вміст займає місце від лівого поля до капсули «моє» (на телефоні капсула зсувається на місце меню).
   const bar = useRef<HTMLDivElement>(null);
@@ -167,19 +190,8 @@ export function Header({
           <DemoClock onClick={onTimeMachineClick} open={timeMachineOpen} className={cn('t2f-focus', styles.icon, styles.clock)} />
         ) : null}
 
-        {/* «Підтримати» — сторінка `/support/`; на сторінках із плеєром — вікно «Чайові» на місці чату. */}
-        <NextLink
-          href="/support/"
-          onClick={(e) => {
-            if (!onSupportClick) return;
-            e.preventDefault();
-            onSupportClick();
-          }}
-          className={cn('t2f-focus', styles.text, styles.deskOnly)}
-        >
-          <Icon name="heart" size={18} />
-          {t('support')}
-        </NextLink>
+        {/* «Сказати тост» — лише поки свято йде (2026-11-13): вікно тосту на місці чату; без вікон — «Тости світу». */}
+        {toast === undefined ? <WhenCanToast>{toastLink}</WhenCanToast> : toast ? toastLink : null}
 
         {/* «Новорічний пас» — єдина яскрава кнопка (покупка); з пасом її немає — статус на аватарі. */}
         {hasPass ? null : (

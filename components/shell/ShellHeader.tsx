@@ -34,9 +34,10 @@ export type ShellHeaderProps = Pick<HeaderProps, 'current' | 'hasPass' | 'user'>
 /**
  * Хедер макета `(live)`; меню — вікно O-MENU через `OverlayManager` (на місці чату / шторка), мова — лише в меню (2026-11-08).
  * Меню відео не перекриває, тож на паузу його не ставить.
- * «Підтримати», «Новорічний пас», «Увійти»: поки йде свято (від 2 год до першої півночі до останньої, рішення власника
- * 2026-11-08) — вікно на місці чату (телефон — шторка), щоб не йти з трансляцій; до й після свята — свої сторінки
- * (`/support/`, `/pass/`, `/login/` з поверненням сюди ж).
+ * «Новорічний пас», «Увійти»: поки йде свято (від 2 год до першої півночі до останньої, рішення власника 2026-11-08) —
+ * вікно на місці чату (телефон — шторка), щоб не йти з трансляцій; до й після свята — свої сторінки (`/pass/`, `/login/`
+ * з поверненням сюди ж). «Сказати тост» — лише поки свято йде (рішення власника 2026-11-13, `useCanToast`): вікно тосту;
+ * до й після свята кнопки немає.
  * Свято штампа (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12): `useStampCelebration` — черга, відкладення
  * на час повного екрана й прихованої вкладки; клік по золотій шапці — до картки штампу під плеєром (немає картки — паспорт).
  * Поки свято попереду чи грає, дзвіночок не показує нових сповіщень — +1 наприкінці.
@@ -55,7 +56,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const hasPass = hasPassProp ?? storedPass;
   const openAuthWindow = useOpenAuthWindow();
   const openPassWindow = useOpenPassWindow();
-  // «Підтримати» під час свята — вікно «Сказати тост» (тост — головний платний продукт, рішення 2026-11-12).
+  // «Сказати тост» — лише під час свята, вікном (тост — головний платний продукт, рішення 2026-11-12 і 2026-11-13).
   const openToast = useOpenToastWindow();
   const celebrating = isCelebrating(useNow({ granularity: 'minute' }), getData());
   const menuOpen = overlay.current?.id === MENU_WINDOW_ID;
@@ -164,7 +165,7 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
       menuOpen={menuOpen}
       onSignInClick={onSignInClick}
       onPassClick={onPassClick}
-      onSupportClick={celebrating ? () => openToast() : undefined}
+      onToastClick={() => openToast()}
       onTimeMachineClick={IS_DEMO_BUILD ? toggleTimeMachine : undefined}
       timeMachineOpen={timeOpen}
       notifications={heldCount ?? undefined}

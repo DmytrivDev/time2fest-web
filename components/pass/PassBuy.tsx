@@ -17,6 +17,7 @@ import { useHydrated } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { ToastGift } from '@/components/toast/ToastGift';
+import { useCanToast } from '@/components/toast/useToastSeason';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -260,6 +261,7 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
   const stream = variant === 'stream';
   const email = useAuthStore((st) => st.user?.email ?? '');
   const flow = usePassStore();
+  const canToast = useCanToast();
   const busy = flow.phase === 'opening';
   return (
     <form
@@ -288,7 +290,8 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
       ) : (
         <LockLine stream={stream} />
       )}
-      {!stream ? (
+      {/* Інших шляхів, крім тосту за $10, тут немає: до й після свята (тосту немає) — і блоку немає. */}
+      {!stream && canToast ? (
         <Alternatives>
           <ToastGift variant="page" className={s.toastGiftPage} />
         </Alternatives>

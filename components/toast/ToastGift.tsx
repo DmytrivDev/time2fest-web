@@ -3,8 +3,9 @@
 /**
  * «Скажи тост за $10 · …і Новорічний пас у подарунок» (дошка `Pass-5-New`, рішення власника 2026-11-12): рядок у вікні
  * пасу (між можливостями й оформленням) і на сторінці пасу — інший шлях до пасу. Вікно (є `OverlayManager`) — вікно
- * тосту з обраними $10; сторінка `/pass/` (поза макетом трансляцій, вікон там немає) — перехід на «Підтримати»
+ * тосту з обраними $10; сторінка `/pass/` (поза макетом трансляцій, вікон там немає) — перехід на «Тости світу»
  * (`/support/?toast=10`), де вікно тосту відкривається одразу з $10.
+ * Лише поки свято йде (рішення власника 2026-11-13, `useCanToast`): до й після свята рядка немає — пас працює без нього.
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
@@ -13,9 +14,10 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { formatUsd } from '@/lib/offers/format';
 import { useOpenToastWindow } from './ToastWindow';
+import { useCanToast } from './useToastSeason';
 import s from './toast.module.css';
 
-/** Адреса «Підтримати» з відкритим вікном тосту на $10. */
+/** Адреса «Тостів світу» з відкритим вікном тосту на $10. */
 export const SUPPORT_TOAST_10_HREF = '/support/?toast=10';
 
 function Body() {
@@ -46,6 +48,8 @@ function WindowRow({ className }: { className?: string }) {
 }
 
 export function ToastGift({ variant, className }: { variant: 'window' | 'page'; className?: string }): ReactNode {
+  const canToast = useCanToast();
+  if (!canToast) return null;
   if (variant === 'window') return <WindowRow className={className} />;
   return (
     <NextLink href={SUPPORT_TOAST_10_HREF} className={cn('t2f-focus', s.gift, className)} data-row="toast-gift">

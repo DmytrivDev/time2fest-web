@@ -135,6 +135,11 @@ export function useTimeMachine(): TimeMachine | null {
   return useTimeContext().machine;
 }
 
+/** Чи є `<TimeProvider>` вище (службові сторінки й сторінки помилок живуть без годинника сайту). */
+export function useHasTime(): boolean {
+  return useContext(TimeContext) !== null;
+}
+
 /** `true`, коли час відомий: після гідратації й першої синхронізації (або резерву). */
 export function useTimeReady(): boolean {
   const { source } = useTimeContext();

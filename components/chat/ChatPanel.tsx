@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useOpenToastWindow } from '@/components/toast/ToastWindow';
+import { useCanToast } from '@/components/toast/useToastSeason';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
 import { passGateSpec } from '@/components/offers/OfferWindows';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
@@ -84,6 +85,8 @@ export function ChatPanel({
   const overlay = useOverlay();
   const openAuthWindow = useOpenAuthWindow();
   const openToast = useOpenToastWindow();
+  // Келих у полі — лише поки свято йде (рішення власника 2026-11-13).
+  const canToast = useCanToast();
   const getPass = useGetPass();
   const passDetails = usePassDetails();
   const column = useChatColumn();
@@ -478,7 +481,7 @@ export function ChatPanel({
           }
           onCancelReply={() => setReplyTo(null)}
           textareaRef={textareaRef}
-          onToast={() => openToast()}
+          onToast={canToast ? () => openToast() : undefined}
         />
       }
       className={className}

@@ -43,7 +43,7 @@ describe('Футер (варіант B)', () => {
     expect(href('Режим вечірки')).toBe('/tv');
     expect(href('Паспорт')).toBe('/passport');
     expect(href('Новорічний пас')).toBe('/pass');
-    expect(href('Підтримати')).toBe('/support');
+    expect(href('Тости')).toBe('/support');
     expect(href('Увійти')).toBe('/login');
     expect(href('Правила чату')).toBe('/rules');
     expect(href('Оплата й повернення')).toBe('/payments');

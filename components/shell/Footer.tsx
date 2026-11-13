@@ -47,7 +47,7 @@ const GROUPS: { key: 'groupFest' | 'groupYou' | 'groupHelp'; items: Item[] }[] =
     items: [
       { key: 'passport', href: '/passport/' },
       { key: 'pass', href: '/pass/' },
-      { key: 'support', href: '/support/' },
+      { key: 'toasts', href: '/support/' },
       { key: 'signIn', href: '/login/' },
     ],
   },

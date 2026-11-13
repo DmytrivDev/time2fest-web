@@ -28,6 +28,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { useOpenToastWindow } from '@/components/toast/ToastWindow';
+import { useCanToast } from '@/components/toast/useToastSeason';
 import { shareWindowSpec } from '@/components/windows/Share';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { StampRate } from '@/components/windows/StampRate';
@@ -114,6 +115,8 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   const { open, current: win } = useOverlay();
   const openAuth = useOpenAuthWindow();
   const openToast = useOpenToastWindow();
+  // «Сказати тост» на картці — лише поки свято йде (рішення власника 2026-11-13).
+  const canToast = useCanToast();
   const router = useRouter();
   const user = useHeaderUser();
   const moment = useStampMoment((s) => s.moment);
@@ -220,7 +223,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
             onShare={() => open(shareWindowSpec(current.list, tShare('title')))}
             onSignIn={() => openAuth('signin')}
             onPassport={() => router.push(PASSPORT_HREF)}
-            onToast={() => openToast()}
+            onToast={canToast ? () => openToast() : undefined}
             onClose={permanent ? undefined : () => dismiss(current.list, current.key)}
             more={more && more.count > 0 ? more : undefined}
             rate={

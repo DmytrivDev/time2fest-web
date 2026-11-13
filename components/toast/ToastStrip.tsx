@@ -13,6 +13,7 @@
  *   чат «Світ».
  * «Зменшити рух»: без автозміни (телефон — тост змінюється після дотику, десктоп — лише стрілки), без смужки. Поки
  * список розгорнуто — ротація стоїть. Нічого не лягає на плеєр: смуга — у потоці під ним.
+ * Смуга є лише поки свято йде (рішення власника 2026-11-13, `useCanToast`): до й після свята її немає зовсім.
  * Телефон: обгортка позначена `data-dock-above` — розгорнутий чат починається під смугою (дошка «Чат розгорнуто»);
  * розгорнули чат — список смуги згортається, щоб чат не опускався.
  */
@@ -34,6 +35,7 @@ import { useChatDock } from '@/stores/chatDock';
 import { useGuestStore } from '@/stores/guest';
 import { ToastBubble } from './ToastBubble';
 import { useOpenToastWindow } from './ToastWindow';
+import { useCanToast } from './useToastSeason';
 import { useWorldToasts } from './useWorldToasts';
 import t2 from './toast.module.css';
 import s from './toastStrip.module.css';
@@ -145,7 +147,8 @@ export interface ToastStripProps {
 
 export function ToastStrip({ variant, className, bare }: ToastStripProps) {
   const { ready, view, now } = useWorldToasts();
-  if (!ready) return null;
+  const canToast = useCanToast();
+  if (!ready || !canToast) return null;
   return variant === 'desk' ? <DeskStrip view={view} now={now} className={className} /> : <PhoneStrip view={view} now={now} className={className} bare={bare} />;
 }
 

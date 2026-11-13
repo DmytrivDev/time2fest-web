@@ -116,7 +116,8 @@ export interface MenuBodyProps extends Omit<MenuProps, 'open' | 'onOpenChange'> 
  * Вміст меню за дошкою `Desk-Menu-New` v2 (рішення власника 2026-11-08): мова — угорі одним рядом (EN · ES · FR · УКР, ширина
  * за вмістом); картка людини (гість — «Увійти»; увійшла — аватар, ім’я · кабінет, пошта або «Новорічний пас активний»);
  * «Сайт» (телефон і планшет — на десктопі це в шапці); «Моє свято» (паспорт, графік — без пасу з ярликом «Пас»);
- * «Дивитися» (кімната перегляду, режим вечірки, рейтинг); «Ще» («Підтримати» — десктоп, допомога, «Зменшити рух»);
+ * «Дивитися» (кімната перегляду, режим вечірки, рейтинг); «Ще» («Тости» — десктоп, допомога, «Зменшити рух»);
+ * «Тости» (було «Підтримати», рішення власника 2026-11-13) — сторінка «Тости світу» `/support/` у всі періоди свята;
  * «Вийти» — у кінці списку (до нього гортають; власник 2026-11-08).
  * На сторінках `(live)` вміст відкривається вікном `O-MENU` через `OverlayManager` (десктоп — на місці чату, телефон — шторка
  * до відео), поза ними — `Menu` (Radix Dialog).
@@ -239,7 +240,7 @@ export function MenuBody({
           <Row href="/" icon="home" title={t('home')} current={page === 'home'} onNavigate={navigate} />
           <Row href="/countries" icon="map" title={t('countries')} current={page === 'countries'} onNavigate={navigate} />
           <Row href="/about/" icon="info" title={t('about')} current={page === 'about'} onNavigate={navigate} />
-          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} onNavigate={navigate} />
+          <Row href="/support/" icon="glass" title={t('toasts')} hint={t('toastsHint')} highlight current={here('/support/')} onNavigate={navigate} />
         </Section>
         <Section title={t('sectionMine')}>
           <Row
@@ -279,7 +280,7 @@ export function MenuBody({
           <Row href="/rating/" icon="star" title={t('rating')} current={here('/rating/')} onNavigate={navigate} />
         </Section>
         <Section title={t('sectionMore')}>
-          <Row href="/support/" icon="heart" title={t('support')} hint={t('supportHint')} highlight current={here('/support/')} className={ms.deskOnly} onNavigate={navigate} />
+          <Row href="/support/" icon="glass" title={t('toasts')} hint={t('toastsHint')} highlight current={here('/support/')} className={ms.deskOnly} onNavigate={navigate} />
           <Row href="/help/" icon="help" title={t('help')} current={here('/help/')} onNavigate={navigate} />
           <li>
             <Switch

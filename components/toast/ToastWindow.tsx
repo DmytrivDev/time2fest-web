@@ -16,7 +16,8 @@
  * - «Оплата не пройшла» · «Спробувати ще — $N · Скасувати»; «Немає з’єднання»;
  * - «Тост опубліковано» за рівнем; $10 — «Пас активний» (увійшов) або «Новорічний пас — подарунок до тосту» з
  *   «Увійти й активувати пас» (гість: пас належить акаунту, рішення 2026-11-10).
- * Відкрити — `useOpenToastWindow()` (смуга тостів, келих у чаті, «Підтримати», «Скажи тост за $10» у пасі).
+ * Відкрити — `useOpenToastWindow()` (смуга тостів, келих у чаті, «Сказати тост» у шапці, «Скажи тост за $10» у пасі) —
+ * лише поки свято йде (рішення власника 2026-11-13).
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
@@ -37,6 +38,8 @@ import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { canSayToast } from '@/lib/toast/season';
+import { useTimeSource } from '@/lib/time/TimeProvider';
 import { tierBenefits, TOAST_MAX, TOAST_TIERS, type ToastTier } from '@/lib/toast/tiers';
 import { useGuestStore } from '@/stores/guest';
 import { signatureReady, useToastStore } from '@/stores/toast';
@@ -694,15 +697,19 @@ export function ToastWindowContent({ onClose }: { onClose: () => void }) {
 export type OpenToastWindow = (opts?: { tier?: ToastTier }) => void;
 
 /**
- * Відкрити «Сказати тост» — одна дія для всіх входів: смуга тостів, келих у полі чату, «Підтримати» в шапці й на
- * `/support/`, «Скажи тост за $10» у пасі, картка штампа. Оплата вже йде — вікно покаже її, а не почне нову.
+ * Відкрити «Сказати тост» — одна дія для всіх входів: смуга тостів, келих у полі чату, «Сказати тост» у шапці й на
+ * «Тостах світу» (`/support/`), «Скажи тост за $10» у пасі, картка штампа. Оплата вже йде — вікно покаже її, а не почне нову.
+ * Лише поки свято йде (`canSayToast`, рішення власника 2026-11-13): до й після свята — нічого не робить, щоб застаріле
+ * посилання (`/support/?toast=10`) чи кнопка, що не встигла зникнути, не відкрили оплату. Час — у мить дотику.
  */
 export function useOpenToastWindow(): OpenToastWindow {
   const overlay = useOverlay();
+  const time = useTimeSource();
   const t = useTranslations('toast');
   const defaultText = t('phrases.one');
   return useCallback(
     (opts) => {
+      if (!canSayToast(time.now(), getData())) return;
       useToastStore.getState().prepare(opts?.tier, defaultText);
       const close = () => overlay.close(TOAST_WINDOW_ID);
       overlay.open({
@@ -720,6 +727,6 @@ export function useOpenToastWindow(): OpenToastWindow {
         content: <ToastWindowContent onClose={close} />,
       });
     },
-    [overlay, t, defaultText],
+    [overlay, time, t, defaultText],
   );
 }
