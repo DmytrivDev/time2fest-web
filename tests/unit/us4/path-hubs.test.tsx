@@ -9,7 +9,7 @@ import { AuthorPanel, type AuthorPanelProps } from '@/components/live/AuthorPane
 import { pathMapScale } from '@/components/live/PathMap';
 import chatScript from '@/data/chat-script.json';
 import zonemap from '@/data/zonemap.json';
-import { assignZoneHubs, buildAuthorPath, buildOwnPath, pathSummary, type PathPoint } from '@/lib/chat-sim/authorPath';
+import { assignZoneHubs, buildAuthorPath, buildOwnPath, pathSummary, type PathPoint } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatScriptFile, Stamp } from '@/lib/data/types';
 import { renderApp, stubBrowserApis } from '../us1/render';

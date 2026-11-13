@@ -1,32 +1,27 @@
 'use client';
 
 /**
- * Підключення імітатора до спільного годинника: на кожному такті нові повідомлення кімнат
- * потрапляють у `useChatFeed`. Ставиться один раз на сторінку (головна — `['world']`).
- * Разом із моментами тече фоновий потік `ambient` і повільний режим (US4).
+ * «Сервер» чату імітації (`docs/backend/frontend-seam.md`, E5a; раніше — хук `useChatSimulator` на кожній сторінці):
+ * на кожному такті спільного годинника нові повідомлення кімнат, які зараз дивляться (`subscribeRoom`), потрапляють у
+ * стрічки `lib/chat-sim/store`. Разом із моментами тече фоновий потік, повільний режим, тости й «новий лідер рейтингу».
  * Системне повідомлення й привітання «+15 с» з’являються в тому самому такті, що й `moment:stamp`.
  */
-import { useEffect } from 'react';
-import chatScript from '@/data/chat-script.json';
-import type { ChatScriptFile, RoomId } from '@/lib/data/types';
-import { getData } from '@/lib/data/load';
+import { useEffect, useSyncExternalStore } from 'react';
+import { createChatSimulator } from '@/lib/chat-sim/simulator';
+import { CHAT_SCRIPT, chatMoments } from '@/lib/chat-sim/script';
+import { useChatFeed } from '@/lib/chat-sim/store';
+import type { RoomId } from '@/lib/data/types';
 import { useClock, useTimeSource } from '@/lib/time/TimeProvider';
 import { useToastStore } from '@/stores/toast';
-import { buildMomentContexts, createChatSimulator, type MomentContext } from './simulator';
-import { useChatFeed } from './store';
+import { setChatClock, simChatRooms } from './chat';
 
-export const CHAT_SCRIPT = chatScript as unknown as ChatScriptFile;
+const serverKey = () => '';
 
-let momentsCache: MomentContext[] | null = null;
-export function chatMoments(): MomentContext[] {
-  if (!momentsCache) momentsCache = buildMomentContexts(getData());
-  return momentsCache;
-}
-
-export function useChatSimulator(rooms: readonly RoomId[]): void {
+export function ChatSimRuntime() {
   const clock = useClock();
   const source = useTimeSource();
-  const key = rooms.join('|');
+  const key = useSyncExternalStore(simChatRooms.subscribe, simChatRooms.key, serverKey);
+  useEffect(() => setChatClock(() => source.now()), [source]);
   useEffect(() => {
     if (!key) return;
     const sim = createChatSimulator({
@@ -48,4 +43,5 @@ export function useChatSimulator(rooms: readonly RoomId[]): void {
     run();
     return clock.subscribe(run);
   }, [clock, source, key]);
+  return null;
 }

@@ -2,12 +2,12 @@
 
 /**
  * C9 ChatPanel — повний чат на сторінці (US4, FR-050…056): склеює `Chat` (шапка, стрічка), `Composer`, вікна O-NICK,
- * O-AUTHOR, дії над повідомленням і стан «сховано». Дані — імітатор на пристрої (`lib/chat-sim`):
- * потік `useChatFeed`, власні повідомлення додаються тут і лишаються видимими лише цьому пристрою.
+ * O-AUTHOR, дії над повідомленням і стан «сховано». Дані — сервіс чату через хуки (`lib/api/hooks/chat`, шов E5a):
+ * стрічка кімнати, стан з’єднання, повільний режим; поле перевіряє текст саме (`lib/chat/send`), сервіс — ще раз.
  *
  * Кімнати: головна — «Світ»; сторінка країни — «Країна» (за замовчуванням) і «Світ» (кімнату «Перший ряд» прибрано
  * разом із рядом, рішення власника 2026-11-12). Перше власне повідомлення без ніка відкриває O-NICK; текст лишається в полі й надсилається після «Готово».
- * Недоступність (`useTestControls.chatAvailable`) замінює чат на «Чат тимчасово недоступний…», решта сайту працює.
+ * Недоступність (стан з’єднання кімнати) замінює чат на «Чат тимчасово недоступний…», решта сайту працює.
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -26,17 +26,15 @@ import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { Nick } from '@/components/windows/Nick';
 import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
-import { authorHasPass, buildAuthorPath, buildOwnPath } from '@/lib/chat-sim/authorPath';
-import { slowSecondsAt } from '@/lib/chat-sim/simulator';
-import { sendMessage, slowRemainingSec, type SendContext } from '@/lib/chat-sim/send';
-import { useChatFeed, useChatMessages } from '@/lib/chat-sim/store';
-import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
+import { chatActions, chatDev, useChatConnection, useRoomMessages, useSlowModeSeconds } from '@/lib/api/hooks/chat';
+import { authorHasPass, buildOwnPath } from '@/lib/chat/authorPath';
+import { slowRemainingSec, validateSend, type SendContext, type SendError } from '@/lib/chat/send';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage, ReactionId, RoomId } from '@/lib/data/types';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { Flag } from '@/components/primitives/Flag';
 import { useClock, useNow, useTimeSource } from '@/lib/time/TimeProvider';
-import { excerptOf } from '@/lib/chat-sim/send';
+import { excerptOf } from '@/lib/chat/send';
 import { useChatUi } from '@/stores/chat';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
@@ -96,18 +94,9 @@ export function ChatPanel({
 
   const guest = useGuestStore();
   const { setNick, setDetectedFlag, recordSent, setLastRoom } = guest;
-  const available = useTestControls((s) => s.chatAvailable);
+  // «Немає з’єднання» — стан мережі пристрою (тестова панель імітує його для всього сайту, не лише чату).
   const offline = useTestControls((s) => s.offlineSimulated);
   const slowForced = useTestControls((s) => s.slowForcedSec);
-  const emptyCountry = useTestControls((s) => s.emptyCountry);
-  // Чат повернувся: лічильник «нових» у згорнутому/схованому чаті рахуємо відтоді (рішення 2026-10-28).
-  const wasAvailable = useRef(available);
-  useEffect(() => {
-    if (available && !wasAvailable.current && useChatUi.getState().hiddenAt !== null) {
-      useChatUi.getState().markHidden(source.now());
-    }
-    wasAvailable.current = available;
-  }, [available, source]);
   const replyTo = useChatUi((s) => s.replyTo);
   const setReplyTo = useChatUi((s) => s.setReplyTo);
 
@@ -117,12 +106,17 @@ export function ChatPanel({
   const roomLabel = activeKey === 'country' && country ? t('roomCountryPicker', { country: country.name }) : t('roomWorld');
 
   useEffect(() => setLastRoom(roomId), [roomId, setLastRoom]);
-  const rawMessages = useChatMessages(roomId);
-  const roomMessages = useMemo(() => {
-    // Перемикач «Порожня кімната «Країна»» (машина часу): лишаються тільки свої повідомлення.
-    if (emptyCountry && roomId.startsWith('country:')) return rawMessages.filter((m) => m.author?.isMine);
-    return rawMessages;
-  }, [rawMessages, emptyCountry, roomId]);
+  const available = useChatConnection(roomId) !== 'unavailable';
+  // Чат повернувся: лічильник «нових» у згорнутому/схованому чаті рахуємо відтоді (рішення 2026-10-28).
+  const wasAvailable = useRef(available);
+  useEffect(() => {
+    if (available && !wasAvailable.current && useChatUi.getState().hiddenAt !== null) {
+      useChatUi.getState().markHidden(source.now());
+    }
+    wasAvailable.current = available;
+  }, [available, source]);
+  // Стрічка кімнати — сервіс чату (перемикач «Порожня кімната «Країна»» враховує адаптер `sim`).
+  const roomMessages = useRoomMessages(roomId);
   // Тихий режим (пас): без банальних привітань і лічильників однакових привітань.
   const quiet = useChatPref('quiet');
   const myNick = guest.nick;
@@ -131,8 +125,6 @@ export function ChatPanel({
     [quiet, roomMessages, myNick],
   );
   const quietHidden = useMemo(() => (quiet ? quietHiddenCount(roomMessages, myNick) : 0), [quiet, roomMessages, myNick]);
-  const append = useChatFeed((s) => s.append);
-  const react = useChatFeed((s) => s.react);
 
   const draft = useChatUi((s) => s.draft);
   const setDraft = useChatUi((s) => s.setDraft);
@@ -147,19 +139,12 @@ export function ChatPanel({
     return () => clearTimeout(id);
   }, [reported]);
 
-  const slowAt = useCallback(
-    (at: number) => slowForced || slowSecondsAt(CHAT_SCRIPT, roomId, at),
-    [slowForced, roomId],
-  );
-  const slowTotal = slowAt(now);
+  const slowTotal = useSlowModeSeconds(roomId, now);
   // Увімкнули повільний режим перемикачем — у кімнаті з’являється системне повідомлення, як на початку вікна сценарію.
   useEffect(() => {
     if (!slowForced) return;
-    const at = source.now();
-    append([
-      { id: `slow-forced:${roomId}:${at}`, room: roomId, kind: 'system', createdAt: at, system: { kind: 'slow-mode', seconds: slowForced }, moderation: 'ok' },
-    ]);
-  }, [slowForced, roomId, source, append]);
+    chatDev.forcedSlowNotice(roomId, source.now());
+  }, [slowForced, roomId, source]);
   const slowRemaining = slowRemainingSec(guest.chat.sentAt, now, slowTotal);
 
   const focusField = useCallback(() => {
@@ -167,11 +152,16 @@ export function ChatPanel({
     requestAnimationFrame(() => textareaRef.current?.focus());
   }, []);
 
-  /** Відправлення; `override` — свіжі нік і прапор одразу після O-NICK (стан гостя ще не оновився). */
+  /**
+   * Відправлення; `override` — свіжі нік і прапор одразу після O-NICK (стан гостя ще не оновився). Поле перевіряє текст
+   * саме (та сама `validateSend`, що в сервісі) — відповідь «нік потрібен» відкриває O-NICK без очікування сервера;
+   * сервіс перевіряє ще раз (відмова — текст повертається в поле з тією ж причиною).
+   */
   const trySend = useCallback(
     (text: string, override?: { nick: string; flagCode: string }): 'sent' | 'nick' | 'error' => {
       const nowMs = source.now();
       const store = useGuestStore.getState();
+      const reply = replyTo && replyTo.room === roomId ? replyTo : null;
       const ctx: SendContext = {
         now: nowMs,
         guestId: store.id,
@@ -179,40 +169,43 @@ export function ChatPanel({
         flagCode: override?.flagCode ?? store.flagCode ?? store.detectedFlag,
         hasPass: store.hasPass,
         canWrite: () => true,
-        slowSeconds: slowAt(nowMs),
+        slowSeconds: chatActions.slowSeconds(roomId, nowMs),
         sentAt: store.chat.sentAt,
-        available:
-          useTestControls.getState().chatAvailable && !useTestControls.getState().offlineSimulated,
-        ...(replyTo && replyTo.room === roomId
-          ? { replyTo: { id: replyTo.id, nick: replyTo.nick, excerpt: replyTo.excerpt } }
-          : {}),
+        available: chatActions.connection(roomId) !== 'unavailable' && !useTestControls.getState().offlineSimulated,
+        ...(reply ? { replyTo: { id: reply.id, nick: reply.nick, excerpt: reply.excerpt } } : {}),
       };
       seq.current += 1;
-      const res = sendMessage(
-        { clientId: `${store.id}:${nowMs}:${seq.current}`, room: roomId, text },
-        ctx,
-      );
-      if (res.ok) {
-        append([res.message]);
-        recordSent(nowMs);
-        setDraft('');
-        setError(null);
-        setReplyTo(null);
-        return 'sent';
+      const req = { clientId: `${store.id}:${nowMs}:${seq.current}`, room: roomId, text };
+      const showError = (error: SendError | string | undefined) => {
+        if (error === 'link-forbidden') setError('link');
+        else if (error === 'too-long') setError('too-long');
+        else setError(null);
+      };
+      const bad = validateSend(req, ctx);
+      if (bad) {
+        showError(bad.error);
+        return bad.error === 'nick-required' ? 'nick' : 'error';
       }
-      if (res.error === 'link-forbidden') setError('link');
-      else if (res.error === 'too-long') setError('too-long');
-      else setError(null);
-      return res.error === 'nick-required' ? 'nick' : 'error';
+      // У `sim` повідомлення з’являється в стрічці ще до повернення з виклику (як раніше — одразу).
+      void chatActions.send({ ...req, ...(reply ? { replyToId: reply.id } : {}) }).then((res) => {
+        if (res.ok) return;
+        setDraft(text);
+        showError(res.error.reason);
+      });
+      recordSent(nowMs);
+      setDraft('');
+      setError(null);
+      setReplyTo(null);
+      return 'sent';
     },
-    [source, roomId, slowAt, replyTo, append, recordSent, setReplyTo, setDraft, setError],
+    [source, roomId, replyTo, recordSent, setReplyTo, setDraft, setError],
   );
 
   const flagOptions = useMemo(
     () => getData().countries.map((c) => ({ code: c.flagCode, name: c.name.uk })),
     [],
   );
-  const takenNicks = useMemo(() => CHAT_SCRIPT.authors.map((a) => a.nick), []);
+  const takenNicks = useMemo(() => chatActions.takenNicks(), []);
 
   const openNick = useCallback(
     (pendingText: string | null) => {
@@ -257,10 +250,7 @@ export function ChatPanel({
     [trySend, openNick],
   );
 
-  const onReact = useCallback(
-    (m: ChatMessage, reaction: ReactionId, on: boolean) => react(m.room, m.id, reaction, on),
-    [react],
-  );
+  const onReact = useCallback((m: ChatMessage, reaction: ReactionId, on: boolean) => void chatActions.react(m.room, m.id, reaction, on), []);
   const onReply = useCallback(
     (m: ChatMessage) => {
       if (!m.author) return;
@@ -271,19 +261,22 @@ export function ChatPanel({
     [setReplyTo, overlay, focusField],
   );
   // Своє повідомлення: видалити назавжди (у стрічці лишається рядок «Твоє повідомлення видалено»), фокус — у поле.
-  const remove = useChatFeed((s) => s.remove);
   const onDelete = useCallback(
     (m: ChatMessage) => {
-      remove(m.room, m.id);
+      void chatActions.remove(m.room, m.id);
       announce(t('deletedOwn'));
       focusField();
     },
-    [remove, announce, t, focusField],
+    [announce, t, focusField],
   );
-  const onReport = useCallback(() => {
-    setReported(true);
-    announce(t('reported'));
-  }, [announce, t]);
+  const onReport = useCallback(
+    (m?: ChatMessage) => {
+      if (m) void chatActions.report(m.room, m.id);
+      setReported(true);
+      announce(t('reported'));
+    },
+    [announce, t],
+  );
 
   const onMention = useCallback(
     (m: ChatMessage) => {
@@ -302,7 +295,7 @@ export function ChatPanel({
       const guest = useGuestStore.getState();
       const path = author.isMine
         ? buildOwnPath(guest.stamps, guest.schedule, getData(), clock.getSnapshot())
-        : buildAuthorPath(author, CHAT_SCRIPT, getData(), clock.getSnapshot());
+        : (chatActions.authorPath(author, clock.getSnapshot())?.points ?? []);
       const viewerHasPass = useGuestStore.getState().hasPass;
       overlay.open({
         id: AUTHOR_WINDOW_ID,
@@ -317,11 +310,14 @@ export function ChatPanel({
             countryName={lookup.countryName?.(author.flagCode)}
             message={message}
             hasPass={hasPass}
-            routeHidden={!author.isMine && !!CHAT_SCRIPT.authors.find((x) => x.id === author.id)?.pathHidden}
+            routeHidden={!author.isMine && !!chatActions.authorPath(author, clock.getSnapshot())?.hidden}
             path={path}
             viewerHasPass={viewerHasPass}
             // Підтвердження панель показує сама; у чаті після закриття картки ще кілька секунд — та сама плашка.
-            onReport={() => setReported(true)}
+            onReport={(m) => {
+              if (m) void chatActions.report(m.room, m.id);
+              setReported(true);
+            }}
             onEditProfile={author.isMine ? () => openNick(null) : undefined}
             onGetPass={() => getPass()}
             onPassInfo={passDetails}

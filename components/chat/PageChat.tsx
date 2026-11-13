@@ -12,14 +12,14 @@ import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
+import { useChatRooms } from '@/lib/api/hooks/chat';
 
 export function PageChat() {
   const tChat = useTranslations('chat');
   const chatColumn = useChatColumn();
   const vis = useChatVisibility();
   const { collapse } = useChatDockControls();
-  useChatSimulator(useMemo(() => ['world' as const], []));
+  useChatRooms(useMemo(() => ['world' as const], []));
   const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
   const panel = (cls?: string) => (
     <ChatPanel startInWorld onHide={chatColumn ? vis.hide : collapse} collapseMode={!chatColumn} onToEvents={chatColumn ? undefined : collapse} className={cls} />

@@ -22,8 +22,8 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { FlagField, useFlagName, type FlagOption } from '@/components/windows/FlagField';
-import { validateNick, type NickIssue } from '@/lib/chat-sim/nick';
-import { NICK_MAX } from '@/lib/chat-sim/send';
+import { validateNick, type NickIssue } from '@/lib/chat/nick';
+import { NICK_MAX } from '@/lib/chat/send';
 
 export type { FlagOption } from '@/components/windows/FlagField';
 export { SPECIAL_ALL } from '@/components/windows/FlagField';

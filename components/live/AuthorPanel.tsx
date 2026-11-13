@@ -27,7 +27,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { pathSummary, routeCities, type PathPoint } from '@/lib/chat-sim/authorPath';
+import { pathSummary, routeCities, type PathPoint } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage } from '@/lib/data/types';
 import { zoneState } from '@/lib/engine/zoneState';

@@ -1,15 +1,17 @@
 /**
+ * Шов (`docs/backend/frontend-seam.md`, E5a): це «сервер» чату імітації — інтерфейс бачить стрічки лише через
+ * `lib/api/hooks/chat` → `lib/api/sim/chat` (компонентам імпортувати `lib/chat-sim/*` заборонено eslint).
  * Стрічки кімнат імітатора (пам’ять вкладки, не зберігається). Імітатор і власні повідомлення гостя (US4)
  * дописують сюди; `Chat` читає `useChatMessages(room)`. Повідомлення не мутуються, крім `reactions`, `moderation`
  * і видалення автором (`remove`, `applyDeletions`).
  */
 import { create } from 'zustand';
 import type { ChatMessage, ReactionId, RoomId } from '@/lib/data/types';
-import { toggleReaction } from './send';
-import { compareMessages } from './simulator';
+import { ROOM_HISTORY } from '@/lib/api/contracts/chat';
+import { compareMessages, deletedCopy } from '@/lib/chat/message';
+import { toggleReaction } from '@/lib/chat/send';
 
-/** Скільки повідомлень тримати в кімнаті. */
-export const ROOM_HISTORY = 200;
+export { ROOM_HISTORY };
 
 export interface ChatFeedState {
   rooms: Partial<Record<RoomId, ChatMessage[]>>;
@@ -76,10 +78,6 @@ export const useChatFeed = create<ChatFeedState>()((set) => ({
   reset: () => set({ rooms: {} }),
 }));
 
-/** Видалене повідомлення: лишаються автор і час (для рядка «видалено»), вміст — ні. */
-function deletedCopy(m: ChatMessage): ChatMessage {
-  return { id: m.id, room: m.room, kind: m.kind, createdAt: m.createdAt, author: m.author, moderation: m.moderation, deleted: true };
-}
 
 const EMPTY: ChatMessage[] = [];
 

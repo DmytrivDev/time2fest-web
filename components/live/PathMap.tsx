@@ -19,7 +19,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { Tooltip } from '@/components/primitives/Tooltip';
-import type { PathPoint } from '@/lib/chat-sim/authorPath';
+import type { PathPoint } from '@/lib/chat/authorPath';
 import { formatClock } from '@/lib/i18n/time';
 import { pointToPercent, type ZoneMapGeometry } from './MapModel';
 import './PathMap.css';

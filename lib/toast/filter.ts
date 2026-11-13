@@ -4,7 +4,7 @@
  * (`lib/chat-sim/send.ts`: `findLink`), плюс контакти (пошта, телефон, @нік) і слова, які ми не показуємо.
  * Повертає вид і місце першої проблеми — його вікно підкреслює хвилястою лінією.
  */
-import { findLink } from '@/lib/chat-sim/send';
+import { findLink } from '@/lib/chat/send';
 
 export type ToastIssueKind = 'link' | 'contact' | 'word';
 

@@ -1,12 +1,13 @@
 'use client';
 
 /**
- * Переклад повідомлень чату (функція пасу, рішення власника 2026-10-30). Поки без бекенду: імітатор з готовими
- * перекладами повідомлень сценарію; невідомий текст — з позначкою «[переклад]». У продакшні — запит до дешевої
+ * Переклад повідомлень чату (функція пасу, рішення власника 2026-10-30). Переклад дає сервіс чату (`translate`); у `sim` —
+ * готові переклади повідомлень сценарію (`cannedTranslation`), невідомий текст — з позначкою «[переклад]». У продакшні — запит до дешевої
  * моделі (Claude Haiku / OpenRouter) з кешем «повідомлення + мова» (той самий інтерфейс `translate`).
  * Мову повідомлення визначаємо за полем `lang`, якщо воно є, інакше — за прапором автора; кирилицю не перекладаємо.
  */
 import { useCallback, useEffect, useState } from 'react';
+import { getService } from '@/lib/api/services';
 import type { ChatMessage } from '@/lib/data/types';
 
 /** Мова сайту (поки одна). */
@@ -47,15 +48,18 @@ export function messageLang(m: Pick<ChatMessage, 'text' | 'author'> & { lang?: s
 
 const cache = new Map<string, string>();
 
-/** Переклад тексту (імітатор). Кеш — на ключ «id повідомлення + мова». */
-export async function translate(text: string, from: string, to: string, key?: string): Promise<string> {
+/**
+ * Переклад тексту через сервіс чату (шов E5a; у `sim` — готові переклади сценарію, решта з позначкою «[переклад]»).
+ * Кеш на клієнті — на ключ «id повідомлення + мова». Сервіс не відповів — `undefined` (показуємо оригінал).
+ */
+export async function translate(text: string, from: string, to: string, key?: string): Promise<string | undefined> {
   const k = `${key ?? text}|${to}`;
   const hit = cache.get(k);
   if (hit !== undefined) return hit;
-  void from;
-  const out = CANNED[text] ?? `[переклад] ${text}`;
-  cache.set(k, out);
-  return out;
+  const res = await getService('chat').translate(key ?? text, text, from, to);
+  if (!res.ok) return undefined;
+  cache.set(k, res.value);
+  return res.value;
 }
 
 /** Готовий переклад тексту без запиту (приклад у вікні «Переклад повідомлень» без пасу); немає — `undefined`. */

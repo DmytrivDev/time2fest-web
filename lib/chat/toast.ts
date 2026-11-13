@@ -5,7 +5,7 @@
  */
 import type { AuthorBadge, ChatMessage } from '@/lib/data/types';
 import type { ToastRecord } from '@/lib/toast/feed';
-import { messageId } from './simulator';
+import { messageId } from './message';
 
 function hashString(s: string): number {
   let h = 0;

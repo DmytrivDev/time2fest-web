@@ -139,7 +139,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   const [layerDy, setLayerDy] = useState(0);
   const { expand, collapse } = useChatDockControls();
   const count = useHiddenCount(room);
-  const replies = useRepliesToMe();
+  const replies = useRepliesToMe(room);
   const world = useWorldToasts();
   const arriving = useArrivingToast(world.toasts, world.ready, world.now);
 

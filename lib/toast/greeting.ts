@@ -5,7 +5,7 @@
  * тост на $10 до цієї півночі (`greetingToasters`). Ніхто не сказав — повідомлення без рядка тостів.
  */
 import type { ChatMessage, Dataset, Ms, RoomId } from '@/lib/data/types';
-import { messageId } from '@/lib/chat-sim/simulator';
+import { messageId } from '@/lib/chat/message';
 import { greetingToasters, type ToastRecord } from './feed';
 
 /** Країни поясу — найпопулярніші першими (у рядку привітання — перші три й «й ще N»). */

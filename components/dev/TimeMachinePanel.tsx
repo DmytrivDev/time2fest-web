@@ -14,7 +14,7 @@ import { IconButton } from '@/components/primitives/IconButton';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Switch } from '@/components/primitives/Switch';
 import { useStreamChains } from '@/lib/api/hooks/live';
-import { emitReplyToMe } from '@/lib/chat/testReply';
+import { chatDev } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
 import type { PayResult } from '@/lib/data/types';
 import { currentAirEvent } from '@/lib/engine/currentAirEvent';
@@ -318,7 +318,7 @@ function PanelBody({
           checked={emptyCountry}
           onCheckedChange={(v) => useTestControls.getState().setEmptyCountry(v)}
         />
-        <Button variant="secondary" compact onClick={() => emitReplyToMe(timeNow)} className="self-start" data-action="emit-reply">
+        <Button variant="secondary" compact onClick={() => chatDev.emitReply(timeNow)} className="self-start" data-action="emit-reply">
           {t('emitReply')}
         </Button>
         <Switch

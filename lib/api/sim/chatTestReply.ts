@@ -1,8 +1,9 @@
 /**
+ * Шов E5a: інструмент імітації (`chat.dev.emitReplyToMe`), раніше — `lib/chat/testReply`.
  * Тестова збірка: «Хтось відповів мені» — щоб перевірити «Сповіщати про відповіді» без живих людей.
  * Аміра відповідає на останнє своє повідомлення гостя (або просто згадує ніком у «Світі», якщо своїх ще немає).
  */
-import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
+import { CHAT_SCRIPT } from '@/lib/chat-sim/script';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { ChatMessage, Ms, RoomId } from '@/lib/data/types';
 import { useGuestStore } from '@/stores/guest';

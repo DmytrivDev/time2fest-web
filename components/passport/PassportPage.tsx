@@ -26,7 +26,7 @@ import { shareWindowSpec } from '@/components/windows/Share';
 import { StampArt } from '@/components/windows/StampArt';
 import { StampRate } from '@/components/windows/StampRate';
 import { stampEntry } from '@/components/live/StampBlock';
-import { routeCities } from '@/lib/chat-sim/authorPath';
+import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import { zoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatDurationShort, utcLabel, viewerZoneLabel } from '@/lib/i18n/time';

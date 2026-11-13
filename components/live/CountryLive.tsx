@@ -56,7 +56,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useLiveData, useViewers } from '@/lib/api/hooks/live';
-import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
+import { useChatRooms } from '@/lib/api/hooks/chat';
 import type { Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
 import { captionPhase } from '@/lib/engine/captionPhase';
 import { HANDOVER_AFTER, STAMP_DELAY } from '@/lib/engine/config';
@@ -325,7 +325,7 @@ export function CountryLive({ iso }: { iso: string }) {
     [mainEvent, shownEvent],
   );
   useStampGrant(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
-  useChatSimulator(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
+  useChatRooms(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
   useMomentWindows();
   // Пропозиція пасу (offer:show) і стан введення для рушія пропозицій.
   const passWindows = useOfferWindows();

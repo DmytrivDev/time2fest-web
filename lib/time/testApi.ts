@@ -3,7 +3,7 @@
  * Встановлюється лише за `IS_TEST_BUILD` (див. `TimeProvider`).
  */
 import type { ISO, PayResult } from '@/lib/data/types';
-import { emitReplyToMe } from '@/lib/chat/testReply';
+import { getService } from '@/lib/api/services';
 import { useAuthStore, type AuthLetter } from '@/stores/auth';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
@@ -70,7 +70,8 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     signOut: () => useAuthStore.getState().signOut(),
     lastLetter: () => useAuthStore.getState().letter,
     emitReply: () => {
-      emitReplyToMe(machine.get().at);
+      // Шов E5a: інструмент імітації чату (`chat.dev`).
+      getService('chat').dev?.emitReplyToMe(machine.get().at);
     },
   };
 }

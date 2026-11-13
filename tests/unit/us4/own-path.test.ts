@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildOwnPath } from '@/lib/chat-sim/authorPath';
+import { buildOwnPath } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
 

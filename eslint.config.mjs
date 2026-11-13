@@ -38,6 +38,10 @@ export default tseslint.config(
               message: 'Вхід перенесено на шов (E3): сесія й дії — @/lib/api/hooks/auth (useSession, authActions, profileActions); пошта — @/lib/auth/email.',
             },
             {
+              group: ['@/lib/chat-sim', '@/lib/chat-sim/*', '**/lib/chat-sim', '**/lib/chat-sim/*'],
+              message: 'Чат перенесено на шов (E5a): стрічки й дії — @/lib/api/hooks/chat; чисті перевірки — @/lib/chat/*.',
+            },
+            {
               group: ['@/lib/toast/worldToasts', '**/lib/toast/worldToasts', '@/lib/offers/paySim', '**/lib/offers/paySim'],
               message: 'Тости й оплата перенесено на шов (E4): стрічка — @/lib/api/hooks/toasts, події замовлень — @/lib/api/hooks/checkout.',
             },

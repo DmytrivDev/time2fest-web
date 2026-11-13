@@ -8,7 +8,7 @@
  */
 import { ok } from '../result';
 import type { ToastEvent, ToastsService } from '../contracts/toasts';
-import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
+import { CHAT_SCRIPT } from '@/lib/chat-sim/script';
 import { getData } from '@/lib/data/load';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { checkToastText } from '@/lib/toast/filter';

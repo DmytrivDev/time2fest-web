@@ -7,7 +7,7 @@
  * Лінія маршруту йде через вузли в порядку півночей.
  */
 import type { Dataset, Ms, Stamp } from '@/lib/data/types';
-import type { PathPoint } from '@/lib/chat-sim/authorPath';
+import type { PathPoint } from '@/lib/chat/authorPath';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import { zoneState } from '@/lib/engine/zoneState';
 import { scheduledCountries } from './countryZone';

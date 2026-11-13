@@ -6,7 +6,7 @@
  */
 import type { ZoneMapGeometry } from '@/components/live/MapModel';
 import { pointToPercent } from '@/components/live/MapModel';
-import type { PathPoint } from '@/lib/chat-sim/authorPath';
+import type { PathPoint } from '@/lib/chat/authorPath';
 import { SHARE_SIZE, type ShareRatio } from '@/lib/offers/shareImage';
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

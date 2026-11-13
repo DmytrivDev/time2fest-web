@@ -9,7 +9,7 @@ import { TranslateGate, translateExample } from '@/components/chat/TranslateGate
 import { hitSizes, nearestPoint } from '@/components/live/PathMap';
 import { Marquee } from '@/components/primitives/Marquee';
 import chatScript from '@/data/chat-script.json';
-import { buildAuthorPath } from '@/lib/chat-sim/authorPath';
+import { buildAuthorPath } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage, ChatScriptFile } from '@/lib/data/types';
 import { renderApp, stubBrowserApis } from '../us1/render';

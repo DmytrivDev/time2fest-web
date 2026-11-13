@@ -30,7 +30,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
+import { useChatRooms } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms } from '@/lib/data/types';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
@@ -258,7 +258,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   const { collapse } = useChatDockControls();
   const passWindows = useOfferWindows();
   const getPass = useGetPass();
-  useChatSimulator(useMemo(() => ['world' as const], []));
+  useChatRooms(useMemo(() => ['world' as const], []));
 
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('all');

@@ -28,7 +28,10 @@ import { ratingState } from '@/lib/api/sim/rating';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { toastGreetingMessages } from '@/lib/toast/greeting';
 import { simulatedToasts } from '@/lib/toast/worldToasts';
-import { toastMessage } from './toast';
+import { toastMessage } from '@/lib/chat/toast';
+import { compareMessages, messageId } from '@/lib/chat/message';
+// Чисті id й порядок повідомлень — у `lib/chat/message` (реекспорт для імітатора й тестів).
+export { compareMessages, messageId };
 
 /** Що відбувається опівночі одного слота ефіру: подія, для якої настала північ, і її країни. */
 export interface MomentContext {
@@ -74,32 +77,6 @@ export const MAX_AMBIENT_PER_SEC = 40;
 export const DELETE_ONE_IN = 12;
 
 // ── ULID-подібні ідентифікатори ────────────────────────────────────────────
-
-const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-
-function encodeBase32(value: number, length: number): string {
-  let out = '';
-  let v = Math.max(0, Math.floor(value));
-  for (let i = 0; i < length; i++) {
-    out = CROCKFORD[v % 32] + out;
-    v = Math.floor(v / 32);
-  }
-  return out;
-}
-
-function hashRoom(room: string): number {
-  let h = 0;
-  for (let i = 0; i < room.length; i++) h = (h * 31 + room.charCodeAt(i)) % 1_048_576; // 32^4
-  return h;
-}
-
-/**
- * Детермінований ULID-подібний id: 10 символів часу + 16 символів послідовності
- * (номер репліки в моменті, номер у сплеску/привітаннях, кімната). Той самий момент → той самий id.
- */
-export function messageId(createdAt: Ms, offsetIndex: number, sub: number, room: string): string {
-  return encodeBase32(createdAt, 10) + encodeBase32(offsetIndex, 4) + encodeBase32(sub, 4) + encodeBase32(0, 4) + encodeBase32(hashRoom(room), 4);
-}
 
 // ── Моменти з розкладу ─────────────────────────────────────────────────────
 
@@ -194,9 +171,6 @@ export function momentMessages(script: ChatScriptFile, moment: MomentContext, ro
   return out.sort(compareMessages);
 }
 
-export function compareMessages(a: ChatMessage, b: ChatMessage): number {
-  return a.createdAt - b.createdAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
-}
 
 /** Межі моменту відносно `t0` (мс), щоб не розгортати далекі моменти. */
 function momentSpan(script: ChatScriptFile): { from: number; to: number } {

@@ -12,7 +12,7 @@ import { fail, ok } from '../result';
 import { isFinalOrder, type CheckoutService, type Order, type Product } from '../contracts/checkout';
 import { simSignInAfterPurchase } from './auth';
 import { useChatFeed } from '@/lib/chat-sim/store';
-import { toastMessage } from '@/lib/chat-sim/toast';
+import { toastMessage } from '@/lib/chat/toast';
 import type { Ms } from '@/lib/data/types';
 import { normalizeEmail } from '@/lib/auth/email';
 import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';

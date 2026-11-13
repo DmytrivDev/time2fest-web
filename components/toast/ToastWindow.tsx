@@ -32,9 +32,9 @@ import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { FlagField } from '@/components/windows/FlagField';
-import { validateNick, type NickIssue } from '@/lib/chat-sim/nick';
-import { NICK_MAX } from '@/lib/chat-sim/send';
-import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
+import { validateNick, type NickIssue } from '@/lib/chat/nick';
+import { NICK_MAX } from '@/lib/chat/send';
+import { chatActions } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
@@ -422,7 +422,8 @@ function Foot({ children }: { children: ReactNode }) {
   return <div className={s.foot}>{children}</div>;
 }
 
-const takenNicks = () => CHAT_SCRIPT.authors.map((a) => a.nick);
+/** Ніки-підказки «зайнято» (сервіс чату; у `sim` — автори сценарію). */
+const takenNicks = () => chatActions.takenNicks();
 
 /** Крок 1: рівень, тост, підпис, «Оплатити $N · Скасувати». */
 function Compose({ onCancel, phone }: { onCancel: () => void; phone: boolean }) {

@@ -49,7 +49,7 @@ import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
 import { useStreamPicker } from '@/components/live/ActionRow';
 import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useLiveData, useViewers } from '@/lib/api/hooks/live';
-import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
+import { useChatRooms } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
 import { formatClock, viewerTimeZone, viewerZoneLabel } from '@/lib/i18n/time';
@@ -125,7 +125,7 @@ export function HomeLive() {
     () => (airCountry ? ['world', `country:${airCountry.iso}`] : [...CHAT_ROOMS]),
     [airCountry],
   );
-  useChatSimulator(chatRooms);
+  useChatRooms(chatRooms);
   useMomentWindows();
   // Пропозиція пасу (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();

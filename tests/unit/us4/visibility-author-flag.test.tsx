@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
 import { OverlayManager, useOverlay } from '@/components/shell/OverlayManager';
 import chatScript from '@/data/chat-script.json';
-import { authorHasPass, buildAuthorPath, pathSummary, routeCities } from '@/lib/chat-sim/authorPath';
+import { authorHasPass, buildAuthorPath, pathSummary, routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { ChatScriptFile } from '@/lib/data/types';
 import { detectFlagFrom } from '@/lib/geo/detectFlag';

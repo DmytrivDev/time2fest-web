@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
 import { PathLegend, PathMap } from '@/components/live/PathMap';
 import chatScript from '@/data/chat-script.json';
-import { buildAuthorPath } from '@/lib/chat-sim/authorPath';
+import { buildAuthorPath } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage, ChatScriptFile } from '@/lib/data/types';
 import { Stage } from '../_support/Stage';

@@ -27,8 +27,8 @@ import { CLOSE_MS, useChatColumn, useOverlayOpen } from '@/components/shell/Over
 import { NotifSettings } from '@/components/notifications/NotificationsBody';
 import { FlagField } from '@/components/windows/FlagField';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
-import { validateNick, type NickIssue } from '@/lib/chat-sim/nick';
-import { NICK_MAX } from '@/lib/chat-sim/send';
+import { validateNick, type NickIssue } from '@/lib/chat/nick';
+import { NICK_MAX } from '@/lib/chat/send';
 import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
 import { IS_TEST_BUILD } from '@/lib/env';

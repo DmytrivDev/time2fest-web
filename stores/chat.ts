@@ -5,8 +5,8 @@
  */
 import { create } from 'zustand';
 import type { Ms, RoomId } from '@/lib/data/types';
-import { useChatFeed } from '@/lib/chat-sim/store';
-import { useTestControls } from '@/stores/testControls';
+import { useMemo } from 'react';
+import { useChatConnection, usePageRoomsMessages, useRoomMessages } from '@/lib/api/hooks/chat';
 import { useChatPref } from './chatPrefs';
 import { useGuestStore } from './guest';
 
@@ -41,32 +41,36 @@ export const useChatUi = create<ChatUiState>()((set) => ({
 /** Скільки повідомлень кімнати прийшло, відколи чат сховано (власні не рахуємо). */
 export function useHiddenCount(room: RoomId): number {
   const hiddenAt = useChatUi((s) => s.hiddenAt);
-  // Поки чат недоступний, лічильника немає (повідомлень не видно).
-  const available = useTestControls((s) => s.chatAvailable);
-  return useChatFeed((s) => {
+  // Поки чат недоступний, лічильника немає (повідомлень не видно). Стрічка й стан — через шов чату (E5a).
+  const available = useChatConnection(room) !== 'unavailable';
+  const list = useRoomMessages(room);
+  return useMemo(() => {
     if (hiddenAt === null || !available) return 0;
     let n = 0;
-    for (const m of s.rooms[room] ?? []) if (m.createdAt > hiddenAt && !m.author?.isMine && m.kind !== 'system') n += 1;
+    for (const m of list) if (m.createdAt > hiddenAt && !m.author?.isMine && m.kind !== 'system') n += 1;
     return n;
-  });
+  }, [hiddenAt, available, list]);
 }
 
 /**
  * Скільки разів тобі відповіли, відколи чат сховано чи згорнуто («Сповіщати про відповіді», функція пасу).
- * Рахуємо в усіх кімнатах; відкрили чат — `hiddenAt` скидається, і позначка зникає.
+ * Рахуємо в усіх кімнатах сторінки; відкрили чат — `hiddenAt` скидається, і позначка зникає.
  */
-export function useRepliesToMe(): number {
+export function useRepliesToMe(room: RoomId): number {
   const hiddenAt = useChatUi((s) => s.hiddenAt);
   const on = useChatPref('notifyReplies');
   const nick = useGuestStore((s) => s.nick);
-  return useChatFeed((s) => {
+  const pageLists = usePageRoomsMessages();
+  const own = useRoomMessages(room);
+  return useMemo(() => {
     if (!on || hiddenAt === null || !nick) return 0;
     let n = 0;
-    for (const list of Object.values(s.rooms)) {
-      for (const m of list ?? []) if (m.createdAt > hiddenAt && !m.author?.isMine && m.replyTo?.nick === nick) n += 1;
+    // Кімнати сторінки й кімната цього чату (без повторів).
+    for (const list of pageLists.includes(own) ? pageLists : [...pageLists, own]) {
+      for (const m of list) if (m.createdAt > hiddenAt && !m.author?.isMine && m.replyTo?.nick === nick) n += 1;
     }
     return n;
-  });
+  }, [on, hiddenAt, nick, pageLists, own]);
 }
 
 /** «99+» для лічильника на кнопці. */

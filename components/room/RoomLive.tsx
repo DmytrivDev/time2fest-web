@@ -58,7 +58,7 @@ import { IconButton } from '@/components/primitives/IconButton';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { OverlayInFlowOutlet, useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
 import { ShareContent } from '@/components/windows/Share';
-import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
+import { useChatRooms } from '@/lib/api/hooks/chat';
 import { SITE_HOST } from '@/lib/config/site';
 import { cityOf } from '@/lib/live/cityOf';
 import type { Dataset, GuestRoomWindow, RoomId } from '@/lib/data/types';
@@ -684,7 +684,7 @@ export function RoomLive() {
       : undefined) ?? mainCountry;
   const chatRoomCountry: RoomId | null = country ? `country:${country.iso}` : null;
   const simRooms = windowCountries.map((c) => `country:${c.iso}`).join('|');
-  useChatSimulator(
+  useChatRooms(
     useMemo(
       () =>
         [

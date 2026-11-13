@@ -5,12 +5,13 @@
  * (`docs/backend/frontend-seam.md`). Домени додають сюди свої генератори під час перенесення: штампи за присутність,
  * підтвердження оплати PayPro, імітовані оцінки й тости світу.
  */
+import { ChatSimRuntime } from './ChatSimRuntime';
 import { CheckoutSettler } from './CheckoutSettler';
 import { NotificationsGenerator } from './NotificationsGenerator';
 import { RatingTicker } from './RatingTicker';
 
 /** Домени «сервера» імітації; `ApiRuntime` без списку монтує всі (макет `(live)`), `/tv` — лише потрібні йому. */
-export type SimDomain = 'notifications' | 'rating' | 'checkout';
+export type SimDomain = 'notifications' | 'rating' | 'checkout' | 'chat';
 
 export function SimRuntime({ only }: { only?: readonly SimDomain[] }) {
   const on = (d: SimDomain) => !only || only.includes(d);
@@ -19,6 +20,7 @@ export function SimRuntime({ only }: { only?: readonly SimDomain[] }) {
       {on('notifications') ? <NotificationsGenerator /> : null}
       {on('rating') ? <RatingTicker /> : null}
       {on('checkout') ? <CheckoutSettler /> : null}
+      {on('chat') ? <ChatSimRuntime /> : null}
     </>
   );
 }

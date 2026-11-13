@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ZoneMapGeometry } from '@/components/live/MapModel';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { SHARE_WINDOW_ID, ShareContent } from '@/components/windows/Share';
-import type { PathPoint } from '@/lib/chat-sim/authorPath';
+import type { PathPoint } from '@/lib/chat/authorPath';
 import { loadRoundFlags } from '@/lib/flags/roundFlags';
 import type { ShareRatio } from '@/lib/offers/shareImage';
 import { passportSvg, summarySvg, type SummaryText } from '@/lib/passport/summaryImage';

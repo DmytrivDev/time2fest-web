@@ -14,7 +14,7 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { validateNick } from '@/lib/chat-sim/nick';
+import { validateNick } from '@/lib/chat/nick';
 import type { Ms } from '@/lib/data/types';
 import { getService } from '@/lib/api/services';
 import { setCheckoutClock, simConfirmOrder } from '@/lib/api/sim/checkout';

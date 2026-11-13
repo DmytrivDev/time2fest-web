@@ -27,7 +27,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import { routeCities } from '@/lib/chat-sim/authorPath';
+import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
 import { zoneState, type ZoneState } from '@/lib/engine/zoneState';

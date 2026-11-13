@@ -5,7 +5,7 @@
  * Власне повідомлення створюється одразу (оптимістично, `author.isMine`) і лишається видимим лише на цьому пристрої.
  */
 import type { Author, AuthorBadge, ChatMessage, Ms, ReactionId, RoomId } from '@/lib/data/types';
-import { messageId } from './simulator';
+import { messageId } from './message';
 
 export const MAX_TEXT = 200;
 /** З якого символу показуємо лічильник; оголошення на 180, 195, 200. */

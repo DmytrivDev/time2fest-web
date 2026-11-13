@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import chatScript from '@/data/chat-script.json';
 import type { ChatScriptFile } from '@/lib/data/types';
-import { validateNick } from '@/lib/chat-sim/nick';
+import { validateNick } from '@/lib/chat/nick';
 import {
   excerptOf,
   hasLink,
@@ -11,7 +11,7 @@ import {
   toggleReaction,
   validateSend,
   type SendContext,
-} from '@/lib/chat-sim/send';
+} from '@/lib/chat/send';
 import { ambientBetween, createChatSimulator, slowModeMessages, slowSecondsAt, type MomentContext } from '@/lib/chat-sim/simulator';
 
 const script = chatScript as unknown as ChatScriptFile;

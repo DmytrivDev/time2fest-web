@@ -4,7 +4,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AuthorPanel, type AuthorPanelProps } from '@/components/live/AuthorPanel';
 import chatScript from '@/data/chat-script.json';
 import zonemap from '@/data/zonemap.json';
-import { buildAuthorPath } from '@/lib/chat-sim/authorPath';
+import { buildAuthorPath } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage, ChatScriptFile } from '@/lib/data/types';
 import { renderApp, stubBrowserApis } from '../us1/render';

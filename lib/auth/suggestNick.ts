@@ -4,8 +4,8 @@
  * лише літери, щонайменше 2, з великої, до 20 символів) → `null` (тоді — «Гість NNNN»).
  * Усю частину пошти до «@» не показуємо ніколи: прізвище й рік лишаються приватними.
  */
-import { validateNick } from '@/lib/chat-sim/nick';
-import { NICK_MAX } from '@/lib/chat-sim/send';
+import { validateNick } from '@/lib/chat/nick';
+import { NICK_MAX } from '@/lib/chat/send';
 
 const cap = (w: string) => w.charAt(0).toLocaleUpperCase() + w.slice(1);
 

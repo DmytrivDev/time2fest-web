@@ -21,7 +21,7 @@ export interface ChatHiddenButtonProps {
 export function ChatHiddenButton({ room, onShow, className }: ChatHiddenButtonProps) {
   const t = useTranslations('chat');
   const count = useHiddenCount(room);
-  const replies = useRepliesToMe();
+  const replies = useRepliesToMe(room);
   const label = [count > 0 ? t('showChatUnread', { count }) : t('showChat'), replies > 0 ? t('settings.repliedCount', { count: replies }) : '']
     .filter(Boolean)
     .join('. ');
