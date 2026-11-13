@@ -445,12 +445,6 @@
 .muted {
   opacity: 0.5;
 }
-.fakeSwitch {
-  width: 36px;
-  height: 20px;
-  border-radius: 10px;
-  background: var(--color-border-strong);
-}
 .confirm {
   margin-bottom: 12px;
   padding: 14px;

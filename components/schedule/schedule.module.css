@@ -164,29 +164,6 @@
 .routeNext {
   color: var(--color-text-muted);
 }
-.tease {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid rgb(252 226 134 / 0.3);
-  border-radius: 12px;
-  background: var(--color-highlight-tint);
-}
-.teaseIcon {
-  flex: none;
-  color: var(--color-highlight);
-}
-.teaseText {
-  flex: 1;
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.35;
-}
-.teaseBtn {
-  flex: none;
-  align-self: center;
-}
 @media (max-width: 767.98px) {
   .pathCard {
     padding: 14px;
@@ -207,17 +184,6 @@
     flex-direction: column;
   }
   /* Телефон: текст переноситься, кнопка — під ним; іконка — на рівні першого рядка (правка власника 2026-11-06). */
-  .tease {
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-  .teaseIcon {
-    margin-top: 1px;
-  }
-  .teaseBtn {
-    margin-left: 30px;
-    align-self: flex-start;
-  }
 }
 
 /* ── Пояси ───────────────────────────────────────────────────────────── */

@@ -36,11 +36,6 @@
   border-color: var(--color-border-strong);
   background: var(--color-surface-raised);
 }
-.rowOn,
-.rowOn:hover {
-  border-color: rgba(252, 226, 134, 0.6); /* дошка */
-  background: var(--color-surface-raised);
-}
 .thumb {
   position: relative;
   flex: none;
@@ -255,12 +250,6 @@
 }
 
 /* «+» у кімнату перегляду (правка власника 2026-11-05): угорі праворуч рядка, назва до нього не доходить. */
-.pickItem {
-  position: relative;
-}
-.rowWithPlus {
-  padding-right: 56px;
-}
 .plus {
   position: absolute;
   top: 8px;
@@ -272,13 +261,6 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-}
-
-.plusOn,
-.plusOn:hover {
-  border-color: var(--color-highlight);
-  background: var(--color-highlight);
-  color: #121214;
 }
 
 /* Варіант A (2026-11-05): рамка — на картці; згори мініатюра й назва (кнопка «дивитися»), знизу — статус і «+» з
@@ -343,11 +325,6 @@
 }
 .pickBtns .pickCal + .pickCal {
   margin-left: -8px;
-}
-.plusOpen {
-  border-color: var(--color-text);
-  background: var(--color-text);
-  color: #121214;
 }
 .pickCard .confirm {
   margin: 4px 8px 8px;

@@ -69,13 +69,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.onAirLabel {
-  flex: none;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-}
 .mid {
   display: flex;
   flex-direction: column;
@@ -518,9 +511,6 @@
   gap: 6px;
 }
 /* Телефон з мініатюрою: «В ефірі» — червона смуга зліва (підпис не вміщається поруч з назвою). */
-.card[data-layout='stack'] .onAirLabel {
-  display: none;
-}
 .card[data-layout='stack'] .timeRow {
   height: auto;
 }
@@ -614,10 +604,6 @@
   margin-left: 0;
 }
 /* Північ минула чи до неї менше 2 хв: календарик неактивний; був у графіку — жовтий, але тьмяний. */
-.calWrap {
-  display: inline-flex;
-  border-radius: 999px;
-}
 .calClosed {
   cursor: default;
   color: var(--color-border-strong);

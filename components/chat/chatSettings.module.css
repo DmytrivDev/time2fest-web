@@ -223,17 +223,6 @@
 .cardText b {
   color: var(--color-text);
 }
-.cardBadge {
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--color-highlight);
-  color: var(--color-on-highlight);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 .cardBtn {
   min-height: 44px;
   box-sizing: border-box;

@@ -71,12 +71,6 @@
   left: 12px;
   top: 12px;
 }
-.zoomPhone {
-  right: 8px;
-  bottom: 8px;
-  flex-direction: column;
-  padding: 3px;
-}
 .zoomBtn {
   display: flex;
   align-items: center;
@@ -90,11 +84,6 @@
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-}
-.zoomPhone .zoomBtn {
-  width: 30px;
-  height: 30px;
-  font-size: 17px;
 }
 .zoomBtn:hover:not(:disabled),
 .zoomReset:hover:not(:disabled) {
@@ -441,45 +430,6 @@
 }
 .now .queueHead {
   padding: 0 4px;
-}
-.nowHead {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.nowDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-zone-live);
-  box-shadow: 0 0 0 3px rgba(249, 74, 81, 0.25);
-}
-.nowName {
-  font-size: 16px;
-  font-weight: 700;
-}
-.nowFlags {
-  margin-left: auto;
-}
-.nowWhen {
-  margin-top: 6px;
-  color: var(--color-text-secondary);
-  font-size: 13px;
-}
-.nowNext {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border);
-  font-size: 14px;
-  font-weight: 600;
-}
-.nowNextTime {
-  margin-left: auto;
-  color: var(--color-text-secondary);
-  font-weight: 500;
 }
 
 /* Телефон: легенда в рамці мапи, одразу під нею (дошка `Phone-Map-Legend`, варіант A). */

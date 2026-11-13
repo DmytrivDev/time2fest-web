@@ -46,26 +46,7 @@
   flex: none;
 }
 /* Телефон: фільтр — на всю ширину, сегменти порівну. */
-@media (max-width: 767.98px) {
-  .controlsPhone {
-    width: 100%;
-  }
-}
-.filterPhone {
-  display: flex;
-  width: 100%;
-  box-sizing: border-box;
-}
-.filterPhone > * {
-  flex: 1 1 0;
-  min-width: 0;
-  padding-inline: 6px;
-}
 /* Фільтр під пошуком: частини за шириною напису, разом — на всю ширину (правка власника 2026-11-04). */
-.filterByText > * {
-  flex: 1 1 auto;
-  padding-inline: 10px;
-}
 .search {
   position: relative;
   display: flex;
@@ -290,17 +271,6 @@
 }
 
 /* Скелетон (`CountriesSkeleton`): ті самі висоти, що після завантаження. */
-@media (max-width: 767.98px) {
-  .skFilterReal {
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .skFilterReal > * {
-    flex: 1 1 auto;
-    padding-inline: 10px;
-  }
-}
 .skRows {
   display: flex;
   flex-direction: column;
@@ -310,18 +280,9 @@
   height: 58px;
   border-radius: 12px;
 }
-.phoneOnly {
-  display: none;
-}
 @media (max-width: 767.98px) {
   .skRow {
     height: 76px;
-  }
-  .phoneOnly {
-    display: flex;
-  }
-  .deskOnly {
-    display: none;
   }
   /* Підзаголовок до завантаження часу — той самий рядок і висота (два рядки на телефоні). */
   .subtitle {

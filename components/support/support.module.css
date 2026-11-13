@@ -187,9 +187,6 @@
   font-size: 20px;
   font-weight: 800;
 }
-.spacer {
-  flex: 1;
-}
 .flags {
   display: inline-flex;
   gap: 4px;

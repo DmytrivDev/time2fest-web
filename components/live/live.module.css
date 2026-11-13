@@ -27,11 +27,6 @@
 }
 
 /* Вкладка «Чат» на телефоні: стрічка на решту екрана під закріпленим плеєром. */
-.phoneChat {
-  height: 70vh;
-  height: 70dvh;
-  min-height: 360px;
-}
 
 /* Планшет-портрет (`Tab-P-New`, 2026-11-10): поля 32 px; «Питання й відповіді» — у дві колонки. */
 @media (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
