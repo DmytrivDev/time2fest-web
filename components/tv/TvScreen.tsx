@@ -39,7 +39,7 @@ import { isPastStatus } from '@/components/live/eventCards';
 import { festProgress } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
-import { useStampGrant } from '@/lib/presence/useStampGrant';
+import { usePresence } from '@/lib/api/hooks/passport';
 import { useNow } from '@/lib/time/TimeProvider';
 import { tvTimeline, type TvTimelineItem } from '@/lib/tv/tvData';
 import { useRemoteKeys } from '@/lib/tv/useRemoteKeys';
@@ -192,7 +192,7 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   // (2026-11-09: опівночі Парижа з обраним Лондоном штамп Парижа не нараховується).
   const eventId = current?.event.id ?? null;
   const shownId = watching?.event.id ?? eventId;
-  useStampGrant(shownId ? { source: 'tv', eventIds: [shownId] } : null);
+  usePresence(shownId ? { source: 'tv', eventIds: [shownId] } : null);
 
   const exit = useCallback(() => router.push('/'), [router]);
   const back = useCallback(() => {

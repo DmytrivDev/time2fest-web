@@ -11,6 +11,7 @@ import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Logo } from '@/components/primitives/Logo';
 import { Switch } from '@/components/primitives/Switch';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useSheetTop } from '@/lib/overlay/sheetTop';
 import { usePartyHref } from './OverlayManager';
@@ -143,7 +144,7 @@ export function MenuBody({
   const stored = useGuestStore((s) => s.reducedMotion);
   const setStored = useGuestStore((s) => s.setReducedMotion);
   const storedPass = useGuestStore((s) => s.hasPass);
-  const stamps = useGuestStore((s) => s.stamps.length);
+  const stamps = useStamps().length;
   // Мова — у сторі гостя (запам’ятовується); перекладів ще немає.
   const storedLocale = useGuestStore((s) => s.locale);
   const email = useSession().session?.user?.email ?? null;

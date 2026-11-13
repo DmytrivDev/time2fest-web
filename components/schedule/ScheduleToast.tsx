@@ -13,7 +13,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverActions } from '@/components/room/RoomTray';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { useGuestStore } from '@/stores/guest';
+import { profileActions } from '@/lib/api/hooks/auth';
 import { hideScheduleToast, SCHEDULE_TOAST_MS, useScheduleToast } from './toastStore';
 import s from './schedule.module.css';
 
@@ -53,7 +53,7 @@ export function ScheduleToast() {
         type="button"
         data-action="schedule-undo"
         onClick={() => {
-          useGuestStore.getState().setSchedule(toast.prev);
+          void profileActions.setSchedule(toast.prev);
           hideScheduleToast();
         }}
         className={cn('t2f-focus t2f-press', s.toastUndo)}

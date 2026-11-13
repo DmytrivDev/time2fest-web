@@ -17,6 +17,7 @@ import { useCanToast } from '@/components/toast/useToastSeason';
 import { AuthorPanel } from '@/components/live/AuthorPanel';
 import { passGateSpec } from '@/components/offers/OfferWindows';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
+import { currentStamps } from '@/lib/api/hooks/passport';
 import { isQuietHidden, quietHiddenCount } from '@/lib/chat/quiet';
 import { useChatPref } from '@/stores/chatPrefs';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
@@ -294,7 +295,7 @@ export function ChatPanel({
       const hasPass = authorHasPass(author);
       const guest = useGuestStore.getState();
       const path = author.isMine
-        ? buildOwnPath(guest.stamps, guest.schedule, getData(), clock.getSnapshot())
+        ? buildOwnPath(currentStamps(), guest.schedule, getData(), clock.getSnapshot())
         : (chatActions.authorPath(author, clock.getSnapshot())?.points ?? []);
       const viewerHasPass = useGuestStore.getState().hasPass;
       overlay.open({

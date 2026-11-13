@@ -24,6 +24,7 @@ import { Countdown } from '@/components/primitives/Countdown';
 import { Icon } from '@/components/primitives/Icon';
 import { Logo } from '@/components/primitives/Logo';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
+import { useStampOf } from '@/lib/api/hooks/passport';
 import { useLiveData, useStreamChains } from '@/lib/api/hooks/live';
 import type { PlayerSource } from '@/lib/player/types';
 import type { Ms } from '@/lib/data/types';
@@ -151,7 +152,7 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const { ready, phase, current, next, air, watching, watch } = broadcast;
   const now = useNow();
   const stampId = (watching ?? current)?.event.id;
-  const stamp = useGuestStore((s) => (stampId ? s.stamps.find((x) => x.eventId === stampId) : undefined));
+  const stamp = useStampOf(stampId);
   const hasPass = useGuestStore((s) => s.hasPass);
   const scheduleCount = useGuestStore((s) => s.schedule.length);
   const show = useTvPrefs((s) => s.show);

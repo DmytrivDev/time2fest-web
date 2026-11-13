@@ -7,6 +7,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
@@ -471,7 +472,7 @@ function Room({
   phone: boolean;
 }) {
   const t = useTranslations('liveMap.country');
-  const stamps = useGuestStore((g) => g.stamps);
+  const stamps = useStamps();
   const got = stamps.some((s) => country.eventIds?.includes(s.eventId));
   const stamp = got ? (
     <div className={m.roomLine} data-room-stamp="got">

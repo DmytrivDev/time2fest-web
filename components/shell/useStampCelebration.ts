@@ -44,9 +44,9 @@ import {
   type CelebrationQueue,
   type CelebrationStamp,
 } from '@/lib/stamp/stampCelebration';
+import { currentStamps, onStampGranted } from '@/lib/api/hooks/passport';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useChatDock } from '@/stores/chatDock';
-import { useGuestStore } from '@/stores/guest';
 
 interface CelebrationStore {
   q: CelebrationQueue;
@@ -129,7 +129,7 @@ export function useStampCelebration({ guest }: { guest: boolean }): StampCelebra
   const lastVisibleAt = useRef(-Infinity);
   useEffect(() => on('moment:stamp', (p) => p.presentEventIds.forEach((id) => expected.current.add(id))), []);
   useEffect(() => {
-    const seen = new Set(useGuestStore.getState().stamps.map((s) => s.eventId));
+    const seen = new Set(currentStamps().map((s) => s.eventId));
     let batch: { eventId: string; grantedAt: number }[] = [];
     let timer: ReturnType<typeof setTimeout> | undefined;
     const flush = () => {
@@ -145,15 +145,13 @@ export function useStampCelebration({ guest }: { guest: boolean }): StampCelebra
       // Сповіщення про цей штамп створено в той самий такт — тримаємо з запасом у секунду.
       useCelebrationStore.setState({ q: next, holdFrom: hold ?? now - 1_000 });
     };
-    return useGuestStore.subscribe((state, prev) => {
-      if (state.stamps === prev.stamps) return;
-      for (const s of state.stamps) {
-        if (seen.has(s.eventId)) continue;
-        seen.add(s.eventId);
-        batch.push({ eventId: s.eventId, grantedAt: s.grantedAt });
-      }
-      // Усі штампи одного `moment:stamp` додаються синхронно — збираємо їх в одне свято.
-      if (batch.length && timer === undefined) timer = setTimeout(flush, 0);
+    // Шов E5b: штамп видає сервіс паспорта — свято від його події `granted`.
+    return onStampGranted((s) => {
+      if (seen.has(s.eventId)) return;
+      seen.add(s.eventId);
+      batch.push({ eventId: s.eventId, grantedAt: s.grantedAt });
+      // Усі штампи одного `moment:stamp` видаються синхронно — збираємо їх в одне свято.
+      if (timer === undefined) timer = setTimeout(flush, 0);
     });
   }, [virtualNow]);
 

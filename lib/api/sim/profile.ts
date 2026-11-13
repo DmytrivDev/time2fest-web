@@ -44,6 +44,14 @@ export function createSimProfile(): ProfileService {
       useGuestStore.getState().setSchedule([...eventIds]);
       return ok(useGuestStore.getState().schedule);
     },
+    async toggleSchedule(eventId) {
+      useGuestStore.getState().toggleSchedule(eventId);
+      return ok(useGuestStore.getState().schedule);
+    },
+    async replaceSchedule(outIso, eventId) {
+      useGuestStore.getState().replaceSchedule(outIso, eventId);
+      return ok(useGuestStore.getState().schedule);
+    },
     async changeEmail(email) {
       useAccountStore.getState().set('pendingEmail', { email, sentAt: Date.now() });
       return ok(profileNow());

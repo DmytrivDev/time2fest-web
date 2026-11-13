@@ -26,6 +26,7 @@ import { shareWindowSpec } from '@/components/windows/Share';
 import { StampArt } from '@/components/windows/StampArt';
 import { StampRate } from '@/components/windows/StampRate';
 import { stampEntry } from '@/components/live/StampBlock';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import { zoneState } from '@/lib/engine/zoneState';
@@ -61,7 +62,7 @@ export function PassportPage() {
   const now = useNow({ granularity: 'minute' });
   const user = useHeaderUser();
   const hasPass = useGuestStore((g) => g.hasPass);
-  const stamps = useGuestStore((g) => g.stamps);
+  const stamps = useStamps();
   const scheduleRaw = useGuestStore((g) => g.schedule);
   const nick = useGuestStore((g) => g.nick);
   const flagCode = useGuestStore((g) => g.flagCode);

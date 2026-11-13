@@ -87,7 +87,7 @@ import {
   type PlayerChainInput,
 } from '@/lib/player/PlayerProvider';
 import type { PlayerSource } from '@/lib/player/types';
-import { useStampGrant } from '@/lib/presence/useStampGrant';
+import { usePresence } from '@/lib/api/hooks/passport';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { eventTitle } from './Caption';
@@ -324,7 +324,7 @@ export function CountryLive({ iso }: { iso: string }) {
     () => [...new Set([mainEvent?.id, shownEvent?.id].filter((x): x is string => !!x))],
     [mainEvent, shownEvent],
   );
-  useStampGrant(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
+  usePresence(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
   useChatRooms(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
   useMomentWindows();
   // Пропозиція пасу (offer:show) і стан введення для рушія пропозицій.

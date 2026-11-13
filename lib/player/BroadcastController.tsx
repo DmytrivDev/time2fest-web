@@ -26,7 +26,7 @@ import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
 import { countryHref } from '@/lib/live/countryHref';
 import { isRateInteracting } from '@/lib/live/rateInteraction';
 import { buildOfferContext } from '@/lib/offers/context';
-import { surfacePresence } from '@/lib/presence/useStampGrant';
+import { surfacePresence } from '@/lib/presence/surfaces';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { usePlayerActions } from './PlayerProvider';

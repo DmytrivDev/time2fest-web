@@ -26,6 +26,7 @@ import { MENU_LANGUAGES } from '@/components/shell/Menu';
 import { CLOSE_MS, useChatColumn, useOverlayOpen } from '@/components/shell/OverlayManager';
 import { NotifSettings } from '@/components/notifications/NotificationsBody';
 import { FlagField } from '@/components/windows/FlagField';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { validateNick, type NickIssue } from '@/lib/chat/nick';
 import { NICK_MAX } from '@/lib/chat/send';
@@ -655,7 +656,7 @@ function CabinetNav({ active, hasPass, onPick }: { active: SectionId; hasPass: b
   const t = useTranslations('account');
   const th = useTranslations('header');
   const user = useHeaderUser();
-  const stamps = useGuestStore((g) => g.stamps.length);
+  const stamps = useStamps().length;
   const router = useRouter();
   if (!user) return null;
   const go = (id: SectionId) => {

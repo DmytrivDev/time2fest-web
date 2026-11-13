@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { MomentStamp } from '@/lib/events/types';
 import { buildStamp, presenceMoment, presenceOf, presentEvents, type PresenceSurface } from '@/lib/engine/presence';
-import { clearPresenceRegistry, grantStamps, registerSurface, surfacePresence } from '@/lib/presence/useStampGrant';
+import { grantStamps } from '@/lib/api/sim/passport';
+import { clearPresenceRegistry, registerSurface, surfacePresence } from '@/lib/presence/surfaces';
 import { useGuestStore } from '@/stores/guest';
 import { LONDON_MIDNIGHT, MIN, SEC } from '../fixtures/data';
 

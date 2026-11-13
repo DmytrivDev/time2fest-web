@@ -32,6 +32,7 @@ import { useCanToast } from '@/components/toast/useToastSeason';
 import { shareWindowSpec } from '@/components/windows/Share';
 import { Stamp, type StampEntry } from '@/components/windows/Stamp';
 import { StampRate } from '@/components/windows/StampRate';
+import { useHasStamp, useStamps } from '@/lib/api/hooks/passport';
 import { getData } from '@/lib/data/load';
 import { isRateable } from '@/lib/passport/passport';
 import type { Stars } from '@/lib/data/types';
@@ -111,7 +112,7 @@ export function StampBlock(props: StampBlockProps) {
 
 function StampBlockView({ eventId, permanent = false, roomEventIds, className }: StampBlockProps) {
   const tRoom = useTranslations('room.stamp');
-  const ownStamps = useGuestStore((s) => s.stamps);
+  const ownStamps = useStamps();
   const tShare = useTranslations('share');
   const { open, current: win } = useOverlay();
   const openAuth = useOpenAuthWindow();
@@ -121,7 +122,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   const router = useRouter();
   const user = useHeaderUser();
   const moment = useStampMoment((s) => s.moment);
-  const hasStamp = useGuestStore((s) => (eventId ? s.stamps.some((x) => x.eventId === eventId) : false));
+  const hasStamp = useHasStamp(eventId);
   const dismissed = useGuestStore((s) => s.stampsDismissed);
   const dismissStamps = useGuestStore((s) => s.dismissStamps);
   const myVotes = useMyVotes();

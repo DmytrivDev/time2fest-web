@@ -60,6 +60,10 @@ export function useDevMailbox(): { letter: DevLetter | null; expire: () => void 
 
 export const profileActions = {
   update: (patch: ProfilePatch) => getService('profile').update(patch),
+  /** «Мій графік» (профіль, шов E5b): у `sim` зміна синхронна в сторі гостя — наступний рядок уже бачить новий графік. */
+  setSchedule: (eventIds: readonly string[]) => getService('profile').setSchedule(eventIds),
+  toggleSchedule: (eventId: string) => getService('profile').toggleSchedule(eventId),
+  replaceSchedule: (outIso: string, eventId: string) => getService('profile').replaceSchedule(outIso, eventId),
   changeEmail: (email: string) => getService('profile').changeEmail(email),
   cancelEmailChange: () => getService('profile').cancelEmailChange(),
   linkGoogle: () => getService('profile').linkGoogle(),

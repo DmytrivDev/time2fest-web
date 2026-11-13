@@ -15,6 +15,7 @@ import { AlsoInPass, MainFeatures, PassActions, usePassFeatures } from '@/compon
 import { ScheduleGate } from '@/components/windows/ScheduleGate';
 import type { PassOfferCountry } from '@/components/windows/PassOffer';
 import { useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
+import { currentStamps } from '@/lib/api/hooks/passport';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
 import type { Ms, OfferKind } from '@/lib/data/types';
@@ -41,7 +42,7 @@ export function stampCountries(): PassOfferCountry[] {
   const data = getData();
   const seen = new Set<string>();
   const out: PassOfferCountry[] = [];
-  for (const stamp of useGuestStore.getState().stamps) {
+  for (const stamp of currentStamps()) {
     if (seen.has(stamp.countryIso)) continue;
     seen.add(stamp.countryIso);
     const country = data.countriesByIso.get(stamp.countryIso);

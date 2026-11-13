@@ -27,6 +27,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
@@ -81,7 +82,7 @@ export function SchedulePage() {
   const now = useNow({ granularity: 'minute' });
   const hasPass = useGuestStore((g) => g.hasPass);
   const scheduleRaw = useGuestStore((g) => g.schedule);
-  const stamps = useGuestStore((g) => g.stamps);
+  const stamps = useStamps();
   const schedule = useMemo(() => (hasPass ? scheduleRaw : []), [hasPass, scheduleRaw]);
   const replacing = useScheduleReplace((r) => r.eventId);
   const passWindows = useOfferWindows();

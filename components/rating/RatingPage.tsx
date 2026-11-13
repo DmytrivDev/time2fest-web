@@ -23,13 +23,13 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { StampArt } from '@/components/windows/StampArt';
 import { StampRate } from '@/components/windows/StampRate';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { getData } from '@/lib/data/load';
 import { formatClock, formatCountdown, viewerTimeZone } from '@/lib/i18n/time';
 import { ratingActions, useMyVotes, useRatingBoard } from '@/lib/api/hooks/rating';
 import { RATING_OPEN_AFTER } from '@/lib/rating/rating';
 import { isRateable } from '@/lib/passport/passport';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import s from './rating.module.css';
 
 const dec = (n: number) => n.toFixed(1).replace('.', ',');
@@ -43,7 +43,7 @@ export function RatingPage() {
   // Щосекунди, а не щохвилини: святкування з’являється в рейтингу й «Оціни, де ти був» разом зі штампом, без запізнення
   // (власник 2026-11-07). Розрахунок легкий — кілька десятків святкувань.
   const minute = Math.floor(now / 1000) * 1000;
-  const stamps = useGuestStore((g) => g.stamps);
+  const stamps = useStamps();
   const overlay = useOverlay();
   const [filter, setFilter] = useState<'all' | 'mine'>('all');
   const myVotes = useMyVotes();

@@ -129,6 +129,6 @@ describe('реєстр', () => {
   });
 
   it('неперенесений домен — зрозуміла помилка', () => {
-    expect(() => getService('passport')).toThrow(/ще не перенесено/);
+    expect(() => getService('catalog')).toThrow(/ще не перенесено/);
   });
 });

@@ -1,9 +1,9 @@
 /**
- * Контракт домену «Паспорт» (`docs/backend/frontend-seam.md`): штампи видає СЕРВЕР за підтвердженою присутністю, а не
- * клієнт (`lib/presence/useStampGrant.ts` зараз пише штамп у `guest.stamps` сам). Клієнт лише повідомляє, які події
- * показує сторінка (пульс присутності), і отримує видані штампи.
- * Правило «присутній опівночі» (`lib/engine/presence`) лишається чистою логікою: на клієнті — для підказок, на сервері —
- * для рішення (та сама функція в спільному пакеті або перенесена копія з тими самими тестами).
+ * Контракт домену «Паспорт» (`docs/backend/frontend-seam.md`, E5b): штампи видає СЕРВІС за підтвердженою присутністю, а не
+ * сторінка. Сторінка лише повідомляє, які події показує (`trackPresence`), і отримує видані штампи (`granted`).
+ * Правило «присутній опівночі» (`lib/engine/presence`) — чиста функція: у `sim` за ним вирішує адаптер, на сервері — бекенд
+ * (та сама функція в спільному пакеті або перенесена копія з тими самими тестами).
+ * Реєстр відкритих поверхонь для локального планувальника моментів (`lib/presence/surfaces`) — клієнтський, лишається.
  */
 import type { ApiResult, Unsubscribe } from '../result';
 import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
@@ -16,20 +16,55 @@ export interface PresenceBeat {
   openedAt: Ms;
 }
 
+/** Поверхня сторінки для `trackPresence`. `openedAt` — коли сторінка почала показувати кожну подію (хук тримає між рендерами). */
+export interface PresenceSurfaceInput {
+  source: PresenceSource;
+  eventIds: readonly string[];
+  /** id події → відколи показується; адаптер може зсунути назад (машина часу перемотала). */
+  openedAt: Map<string, Ms>;
+}
+
+/** Годинник сайту (серверний час / машина часу), за яким рахується присутність. */
+export interface PresenceClock {
+  /** Час останнього такту (0 — годинник ще не тикнув). */
+  now(): Ms;
+  /** Відколи рахувати нову поверхню, якщо такту ще не було (серверний час без машини часу). */
+  fallbackNow(): Ms;
+  subscribe(onTick: () => void): Unsubscribe;
+}
+
 export type PassportEvent =
-  /** Сервер видав штамп (опівночі +15 с, якщо пульс покрив північ). */
+  /** Видано штамп (опівночі +15 с, якщо присутність покрила північ). */
   | { type: 'granted'; stamp: Stamp }
-  /** Вхід в акаунт: штампи гостя об’єднано з акаунтом. */
+  /** Увесь список (скидання гостя; у `http` — після відновлення з’єднання чи об’єднання з акаунтом). */
   | { type: 'snapshot'; stamps: readonly Stamp[] };
 
 export interface PassportService {
   /** Свої штампи. `GET /api/me/stamps`. */
   stamps(): Promise<ApiResult<readonly Stamp[]>>;
+  /** Останній відомий список без запиту (кеш на пристрої) — перший кадр після гідратації без «порожнього паспорта». */
+  peek?(): readonly Stamp[] | undefined;
   /** Realtime: особистий канал `user:#<userId>` (тип `stamp`). */
   subscribe(onEvent: (event: PassportEvent) => void): Unsubscribe;
   /**
-   * Пульс присутності: поки сторінка показує подію поблизу її півночі — раз на `nextBeatMs`. `POST /api/presence`.
-   * Сервер відповідає, коли надіслати наступний (далеко від півночі — рідко або ніколи).
+   * Сторінка відкрита й показує події (або `null` — сторінка ефіру без події: штампи за подію, від якої щойно пішли,
+   * однаково видаються). У `http` — пульс `beat` поблизу півночі; у `sim` — реєстр поверхонь і рішення про штамп.
+   */
+  trackPresence(surface: PresenceSurfaceInput | null, clock: PresenceClock): Unsubscribe;
+  /**
+   * Пульс присутності (примітив `http`): поки сторінка показує подію поблизу її півночі — раз на `nextBeatMs`.
+   * `POST /api/presence`. Сервер відповідає, коли надіслати наступний (далеко від півночі — рідко або ніколи).
    */
   beat(beat: PresenceBeat): Promise<ApiResult<{ nextBeatMs: number | null }>>;
+  /**
+   * Штампи гостя → акаунт після входу (`POST /api/me/stamps/merge`, відповідь — подія `snapshot`). Тексти інтерфейсу це
+   * обіцяють, але НЕ реалізовано ні в `sim`, ні на сервері (відкрите питання, документ шва). Тому метод необов’язковий.
+   */
+  mergeGuest?(): Promise<ApiResult<{ merged: number }>>;
+}
+
+/** Застосувати подію до списку штампів (один штамп на подію). */
+export function applyPassportEvent(stamps: readonly Stamp[], event: PassportEvent): readonly Stamp[] {
+  if (event.type === 'snapshot') return event.stamps;
+  return stamps.some((s) => s.eventId === event.stamp.eventId) ? stamps : [...stamps, event.stamp];
 }

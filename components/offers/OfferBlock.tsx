@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePassDetails } from '@/components/pass/PassWindow';
 import { Reveal } from '@/components/primitives/Reveal';
 import { PassOffer } from '@/components/windows/PassOffer';
+import { currentStamps, useStamps } from '@/lib/api/hooks/passport';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { metPoints, nextPoints } from '@/lib/offers/passPath';
@@ -39,7 +40,7 @@ export function OfferBlock({ className }: { className?: string }) {
     const last = g.offers.history.findLast((e) => e.kind === 'pass-offer');
     return !!last && last.dismissedAt === undefined;
   });
-  const stampCount = useGuestStore((g) => g.stamps.length);
+  const stampCount = useStamps().length;
   const onGetPass = useOfferGetPass('pass-offer');
   const passDetails = usePassDetails();
 
@@ -72,7 +73,7 @@ export function OfferBlock({ className }: { className?: string }) {
           <div className="pb-4" data-offer-block="pass-offer" data-leaving={leaving || undefined}>
             <PassOffer
               count={stampCount}
-              met={metPoints(useGuestStore.getState().stamps)}
+              met={metPoints(currentStamps())}
               next={nextPoints(now, 3)}
               now={now}
               onClose={dismiss}

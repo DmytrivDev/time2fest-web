@@ -8,11 +8,13 @@ import { createSimChat } from './chat';
 import { createSimCheckout } from './checkout';
 import { createSimLive } from './live';
 import { createSimNotifications } from './notifications';
+import { createSimPassport } from './passport';
 import { createSimProfile } from './profile';
 import { createSimToasts } from './toasts';
 import { createSimRating } from './rating';
 
 export const simFactories: ServiceFactories = {
+  passport: createSimPassport,
   notifications: createSimNotifications,
   rating: createSimRating,
   live: createSimLive,

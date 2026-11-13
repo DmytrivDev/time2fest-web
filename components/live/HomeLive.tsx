@@ -58,7 +58,7 @@ import { mainLiveLine, mainSourceOf, zoneHasLive } from '@/lib/engine/mainCelebr
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { useBroadcast } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
-import { useStampGrant } from '@/lib/presence/useStampGrant';
+import { usePresence } from '@/lib/api/hooks/passport';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import home from './home.module.css';
@@ -118,7 +118,7 @@ export function HomeLive() {
   const eventId = current?.event.id ?? null;
 
   // Присутність для штампа: ефір показує подію поточного слота.
-  useStampGrant(eventId ? { source: 'air', eventIds: [eventId] } : null);
+  usePresence(eventId ? { source: 'air', eventIds: [eventId] } : null);
   // Кімната «Країна» на головній — країна ефіру, що йде зараз (змінюється разом зі зміною ефіру).
   const airCountry = current?.event.countryIso ? getData().countriesByIso.get(current.event.countryIso) : undefined;
   const chatRooms = useMemo<RoomId[]>(

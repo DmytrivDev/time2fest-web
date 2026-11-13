@@ -46,6 +46,10 @@ export default tseslint.config(
               message: 'Тости й оплата перенесено на шов (E4): стрічка — @/lib/api/hooks/toasts, події замовлень — @/lib/api/hooks/checkout.',
             },
             {
+              group: ['@/lib/presence/useStampGrant', '**/lib/presence/useStampGrant', '@/lib/presence/surfaces', '**/lib/presence/surfaces'],
+              message: 'Паспорт перенесено на шов (E5b): присутність — usePresence, штампи — useStamps з @/lib/api/hooks/passport.',
+            },
+            {
               group: ['@/lib/presence/viewers', '**/lib/presence/viewers'],
               message: 'Глядачі перенесено на шов «Ефір»: useViewers з @/lib/api/hooks/live (імітація — lib/api/sim/live).',
             },
@@ -56,6 +60,14 @@ export default tseslint.config(
       // тепер чиста (формула, ряди з агрегатів) — її імпорт дозволений.
       'no-restricted-syntax': [
         'error',
+        {
+          selector: "MemberExpression[property.name=/^(addStamp|markPresence)$/]",
+          message: 'Штамп видає сервіс паспорта (E5b): сторінка лише повідомляє присутність — usePresence з @/lib/api/hooks/passport.',
+        },
+        {
+          selector: "MemberExpression[property.name=/^(toggleSchedule|replaceSchedule|setSchedule)$/][object.name!='profileActions']",
+          message: '«Мій графік» — профіль (E5b): profileActions.toggleSchedule / replaceSchedule / setSchedule з @/lib/api/hooks/auth.',
+        },
         {
           selector: "MemberExpression[property.name='setHasPass']",
           message: 'Пас — лише з сесії (useSession().session.hasPass / useHeaderPass); guest.hasPass пише тільки «сервер» імітації.',

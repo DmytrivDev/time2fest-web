@@ -46,6 +46,13 @@ export interface ProfileService {
   update(patch: ProfilePatch): Promise<ApiResult<Profile>>;
   /** `PUT /api/me/schedule` — увесь список (простіше за дельти, список малий). */
   setSchedule(eventIds: readonly string[]): Promise<ApiResult<readonly string[]>>;
+  /**
+   * Календарик: додати країну в поясі чи прибрати (подія тягне інші події тієї ж країни в поясі; повний пояс — без змін).
+   * Правило — чисте (`lib/schedule/countryZone`), сервер застосовує те саме. `POST /api/me/schedule/toggle`.
+   */
+  toggleSchedule(eventId: string): Promise<ApiResult<readonly string[]>>;
+  /** «Замінити в графіку?»: країна `outIso` поясу події поступається місцем. `POST /api/me/schedule/replace`. */
+  replaceSchedule(outIso: string, eventId: string): Promise<ApiResult<readonly string[]>>;
   /** Зміна пошти: лист на нову адресу. `POST /api/me/email`; скасувати — `DELETE /api/me/email`. */
   changeEmail(email: string): Promise<ApiResult<Profile>>;
   cancelEmailChange(): Promise<ApiResult<Profile>>;

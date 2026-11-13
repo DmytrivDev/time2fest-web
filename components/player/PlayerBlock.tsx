@@ -34,6 +34,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { Link } from '@/components/primitives/Link';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
+import { useHasStamp } from '@/lib/api/hooks/passport';
 import { useStreamChain, useStreamChains } from '@/lib/api/hooks/live';
 import { getData } from '@/lib/data/load';
 import type { ScheduledEvent, StreamSource } from '@/lib/data/types';
@@ -288,7 +289,7 @@ export function PlayerBlock({
     : { muted: area.muted, available: area.kind === 'video', onUnmute: () => actions?.unmute(), onMute: () => actions?.mute() };
   const barSound = <BarSound {...sound} />;
   // Підказка про штамп — остання хвилина відліку до півночі події плеєра, поки штампа за неї немає.
-  const stamped = useGuestStore((s) => (current ? s.stamps.some((x) => x.eventId === current.event.id) : false));
+  const stamped = useHasStamp(current?.event.id);
   const r1 = phase?.row1Right;
   const hintCountry =
     stampHint && current?.country && r1?.kind === 'countdown' && stampHintActive(r1.ms, stamped) ? current.country.name.uk : null;

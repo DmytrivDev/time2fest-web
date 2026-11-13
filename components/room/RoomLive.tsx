@@ -30,6 +30,7 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useStamps } from '@/lib/api/hooks/passport';
 import { useLiveData } from '@/lib/api/hooks/live';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import {
@@ -72,7 +73,7 @@ import {
   useOptionalPlayerActions,
   type PlayerChainInput,
 } from '@/lib/player/PlayerProvider';
-import { useStampGrant } from '@/lib/presence/useStampGrant';
+import { usePresence } from '@/lib/api/hooks/passport';
 import { roomShareSvg } from '@/lib/room/shareRoomImage';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { useChatDock } from '@/stores/chatDock';
@@ -190,7 +191,7 @@ export function RoomLive() {
   const room = useRoom();
   const { pickTarget, started, hostSlot } = useRoomStore();
   const schedule = useGuestStore((st) => st.schedule);
-  const stamps = useGuestStore((st) => st.stamps);
+  const stamps = useStamps();
   const hasPass = useGuestStore((st) => st.hasPass);
 
   // На телефоні видно до 2 вікон (збережені з десктопа 3–4 лишаються в `guest.room`).
@@ -664,7 +665,7 @@ export function RoomLive() {
 
   // ── Присутність, штамп, чат ──
   const eventIds = [...new Set(windows.map((w) => w.eventId))];
-  useStampGrant(eventIds.length ? { source: 'room', eventIds } : null);
+  usePresence(eventIds.length ? { source: 'room', eventIds } : null);
   useMomentWindows();
   const mainEvent = main ? data.eventsById.get(main.eventId) : undefined;
   const windowCountries = (() => {

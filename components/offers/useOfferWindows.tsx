@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
+import { profileActions } from '@/lib/api/hooks/auth';
 import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';
 import { useClock } from '@/lib/time/TimeProvider';
@@ -96,7 +97,7 @@ export function useOfferWindows(): PassWindowsApi {
       if (!eventId || !event) return;
       const guest = useGuestStore.getState();
       const prev = guest.schedule;
-      guest.replaceSchedule(outIso, eventId);
+      void profileActions.replaceSchedule(outIso, eventId);
       showScheduleToast(tS('toast.replaced', { from: countryName(outIso), to: countryName(event.countryIso) }), prev);
       overlay.close(SCHEDULE_REPLACE_ID);
     },
@@ -134,7 +135,7 @@ export function useOfferWindows(): PassWindowsApi {
           openScheduleReplace(eventId, back);
           return;
         }
-        guest.toggleSchedule(eventId);
+        void profileActions.toggleSchedule(eventId);
         const iso = getData().eventsById.get(eventId)?.countryIso ?? '';
         showScheduleToast(tS(result === 'added' ? 'toast.added' : 'toast.removed', { country: countryName(iso) }), prev);
         return;
