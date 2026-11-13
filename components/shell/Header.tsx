@@ -8,8 +8,8 @@ import { roundFlagSrc } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { DemoClock } from '@/components/demo/DemoClock';
 import { WhenCanToast } from '@/components/toast/useToastSeason';
+import { useUnreadNotifCount } from '@/lib/api/hooks/notifications';
 import { IS_DEMO_BUILD } from '@/lib/env';
-import { useUnreadCount } from '@/stores/notifications';
 import { CelebrationBackdrop, CelebrationContent, type HeaderCelebrationProps } from './HeaderCelebration';
 import styles from './header.module.css';
 
@@ -109,7 +109,7 @@ export function Header({
   className,
 }: HeaderProps) {
   const t = useTranslations('header');
-  const unread = useUnreadCount();
+  const unread = useUnreadNotifCount();
   const count = notifications ?? unread;
   const toastLink = (
     <NextLink

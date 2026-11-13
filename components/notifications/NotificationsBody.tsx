@@ -17,8 +17,9 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Switch } from '@/components/primitives/Switch';
+import { NOTIF_KINDS, type Notif, type NotifKind } from '@/lib/api/contracts/notifications';
+import { notifActions, useNotifications, useNotifSettings } from '@/lib/api/hooks/notifications';
 import { useNow } from '@/lib/time/TimeProvider';
-import { NOTIF_KINDS, useNotifStore, type Notif, type NotifKind } from '@/stores/notifications';
 import s from './notifications.module.css';
 
 export const KIND_ICON: Record<NotifKind, IconName> = {
@@ -42,18 +43,18 @@ function useAgo() {
 }
 
 const normPath = (p: string) => p.replace(/\/+$/, '') || '/';
+const unreadIds = (items: readonly Notif[]): ReadonlySet<string> => new Set(items.filter((x) => !x.read).map((x) => x.id));
 
 function Item({ n, onGo }: { n: Notif; onGo?: (href: string) => void }) {
   const t = useTranslations('notif.items');
   const ago = useAgo();
-  const markRead = useNotifStore((st) => st.markRead);
   const k = n.kind === 'goal' ? `goal.${n.params.what === 'zones' ? 'zones' : 'countries'}` : n.kind;
   return (
     <li>
       <NextLink
         href={n.href}
         onClick={() => {
-          markRead(n.id);
+          void notifActions.markRead(n.id);
           onGo?.(n.href);
         }}
         className={cn('t2f-focus t2f-transition', s.item, n.read ? s.read : s.unread)}
@@ -84,12 +85,13 @@ function Item({ n, onGo }: { n: Notif; onGo?: (href: string) => void }) {
 
 export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void; onGo?: () => void }) {
   const t = useTranslations('notif');
-  const items = useNotifStore((st) => st.items);
-  const markAllRead = useNotifStore((st) => st.markAllRead);
-  // Нові на момент відкриття вікна — лишаються в групі «Нові», навіть прочитані (див. шапку).
-  const [openedFresh] = useState(() => new Set(useNotifStore.getState().items.filter((x) => !x.read).map((x) => x.id)));
-  const fresh = items.filter((x) => !x.read || openedFresh.has(x.id));
-  const earlier = items.filter((x) => x.read && !openedFresh.has(x.id));
+  const { status, items } = useNotifications();
+  // Нові на момент відкриття вікна — лишаються в групі «Нові», навіть прочитані (див. шапку). Кеш зазвичай уже
+  // завантажено (дзвіночок у шапці); якщо ні — знімок робимо, щойно список прийде.
+  const [openedFresh, setOpenedFresh] = useState<ReadonlySet<string> | null>(() => (status === 'ready' ? unreadIds(items) : null));
+  if (openedFresh === null && status === 'ready') setOpenedFresh(unreadIds(items));
+  const fresh = items.filter((x) => !x.read || openedFresh?.has(x.id));
+  const earlier = items.filter((x) => x.read && !openedFresh?.has(x.id));
   const unread = fresh.filter((x) => !x.read).length;
   const configureRef = useRef<HTMLButtonElement>(null);
 
@@ -130,7 +132,7 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
           <button
             type="button"
             onClick={() => {
-              markAllRead();
+              void notifActions.markAllRead();
               // Кнопка зникає — фокус не губиться, а переходить на сусідню.
               configureRef.current?.focus();
             }}
@@ -140,7 +142,8 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
           </button>
         ) : null}
       </div>
-      {items.length === 0 ? (
+      {/* До першого завантаження — лише верхній рядок (у `sim` це мить; вигляд завантаження для `http` — питання до дизайну). */}
+      {status !== 'ready' ? null : items.length === 0 ? (
         <div className={s.empty}>
           <span className={s.emptyIcon}>
             <Icon name="bell" size={32} />
@@ -185,14 +188,14 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
 /** Налаштування сповіщень — у вікні O-NOTIF і в кабінеті. */
 export function NotifSettings({ compact = false }: { compact?: boolean }) {
   const t = useTranslations('notif.settings');
-  const enabled = useNotifStore((st) => st.enabled);
-  const kinds = useNotifStore((st) => st.kinds);
-  const setEnabled = useNotifStore((st) => st.setEnabled);
-  const setKind = useNotifStore((st) => st.setKind);
+  const {
+    settings: { enabled, kinds },
+  } = useNotifSettings();
+  const { setEnabled, setKind } = notifActions;
   return (
     <div className={cn(s.settings, compact && s.settingsCompact)} data-block="notif-settings">
       <div className={s.master}>
-        <Switch label={<span className={s.setTitle}>{t('all')}</span>} checked={enabled} onCheckedChange={setEnabled} className={s.switch} />
+        <Switch label={<span className={s.setTitle}>{t('all')}</span>} checked={enabled} onCheckedChange={(v) => void setEnabled(v)} className={s.switch} />
         <p className={s.setHint}>{t('allHint')}</p>
       </div>
       <ul className={s.list}>
@@ -202,7 +205,7 @@ export function NotifSettings({ compact = false }: { compact?: boolean }) {
               <Icon name={KIND_ICON[k]} size={18} />
             </span>
             <span className={s.setText}>
-              <Switch label={<span className={s.setTitle}>{t(`${k}.title`)}</span>} checked={enabled && kinds[k]} disabled={!enabled} onCheckedChange={(v) => setKind(k, v)} className={s.switch} />
+              <Switch label={<span className={s.setTitle}>{t(`${k}.title`)}</span>} checked={enabled && kinds[k]} disabled={!enabled} onCheckedChange={(v) => void setKind(k, v)} className={s.switch} />
               <span className={s.setHint}>{t(`${k}.hint`)}</span>
             </span>
           </li>

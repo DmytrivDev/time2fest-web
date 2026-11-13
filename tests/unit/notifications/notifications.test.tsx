@@ -1,5 +1,9 @@
-/** Сповіщення (рішення власника 2026-11-09): стор (одне на подію, вимкнені типи, «прочитати все») і вікно (нові / раніше, порожньо). */
-import { fireEvent, render, screen } from '@testing-library/react';
+/**
+ * Сповіщення (рішення власника 2026-11-09): стор (одне на подію, вимкнені типи, «прочитати все») і вікно (нові / раніше, порожньо).
+ * Вікно читає стор через шов (хук → сервіс → адаптер `sim`, `docs/backend/frontend-seam.md`), тож список приходить
+ * асинхронно — чекаємо його `findBy…`.
+ */
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
@@ -36,18 +40,18 @@ describe('стор сповіщень', () => {
 });
 
 describe('вікно сповіщень', () => {
-  it('порожньо — «Поки тихо»', () => {
+  it('порожньо — «Поки тихо»', async () => {
     wrap(<NotificationsBody onSettings={() => undefined} />);
-    expect(screen.getByText('Поки тихо')).toBeTruthy();
+    expect(await screen.findByText('Поки тихо')).toBeTruthy();
   });
 
-  it('нові зверху з лічильником; «Прочитати все» не перебудовує список (без стрибка); «Налаштувати» — другий рівень', () => {
+  it('нові зверху з лічильником; «Прочитати все» не перебудовує список (без стрибка); «Налаштувати» — другий рівень', async () => {
     const st = useNotifStore.getState();
     st.push({ id: 'stamp:e1', kind: 'stamp', params: { country: 'Японія', city: 'Токіо' }, href: '/passport/', flag: 'JP' });
     st.push({ id: 'goal:countries:5', kind: 'goal', params: { count: 5, what: 'countries' }, href: '/passport/' });
     const onSettings = vi.fn();
     wrap(<NotificationsBody onSettings={onSettings} />);
-    expect(screen.getByRole('heading', { name: 'Нові · 2' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Нові · 2' })).toBeTruthy();
     expect(screen.getByText('5 країн за свято!')).toBeTruthy();
     expect(screen.getByText('Штамп «Японія» у паспорті')).toBeTruthy();
     const before = [...document.querySelectorAll('[data-notif]')].map((el) => el.getAttribute('data-notif'));
@@ -62,17 +66,18 @@ describe('вікно сповіщень', () => {
     expect(onSettings).toHaveBeenCalled();
   });
 
-  it('відкрите знову після «Прочитати все» — прочитані в «Раніше»', () => {
+  it('відкрите знову після «Прочитати все» — прочитані в «Раніше»', async () => {
     const st = useNotifStore.getState();
     st.push({ id: 'stamp:e1', kind: 'stamp', params: { country: 'Японія', city: 'Токіо' }, href: '/passport/', flag: 'JP' });
     st.markAllRead();
     wrap(<NotificationsBody onSettings={() => undefined} />);
-    expect(screen.getByRole('heading', { name: 'Раніше' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Раніше' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: /Нові/ })).toBeNull();
   });
 
-  it('налаштування: «Усі сповіщення» вимикає й блокує типи', () => {
+  it('налаштування: «Усі сповіщення» вимикає й блокує типи', async () => {
     wrap(<NotifSettings />);
+    await act(async () => undefined);
     fireEvent.click(screen.getByRole('switch', { name: 'Відповіді в чаті' }));
     expect(useNotifStore.getState().kinds.reply).toBe(false);
     fireEvent.click(screen.getByRole('switch', { name: 'Усі сповіщення' }));

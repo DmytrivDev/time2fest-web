@@ -1,6 +1,8 @@
 'use client';
 
 /**
+ * Імітація сервера сповіщень (шов, `docs/backend/frontend-seam.md`): у `http` ці сповіщення створює бекенд, тому
+ * генератор монтує лише `SimRuntime` у режимі `sim`. Раніше — `components/notifications/NotificationsWatcher` (без змін).
  * Створює сповіщення (рішення власника 2026-11-09), поки сайт відкритий: дивиться на штампи, графік і чат.
  * - штамп у паспорті → «Штамп «Японія» в паспорті»;
  * - досягнення паспорта → 3 / 5 / 10 країн, 3 / 5 / 10 поясів (континентів у даних ще немає);
@@ -43,7 +45,7 @@ function streakOf(stamps: readonly Stamp[]): number {
   return run;
 }
 
-export function NotificationsWatcher() {
+export function NotificationsGenerator() {
   const clock = useClock();
   const now = useNow({ granularity: 'minute' });
   const push = useNotifStore((s) => s.push);

@@ -14,10 +14,10 @@ import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
 import { PassPaymentWatcher } from '@/components/pass/PassPaymentWatcher';
 import { ScheduleToast } from '@/components/schedule/ScheduleToast';
 import { ToastPaymentWatcher } from '@/components/toast/ToastPaymentWatcher';
-import { NotificationsWatcher } from '@/components/notifications/NotificationsWatcher';
 import { OfflineNotice } from '@/components/shell/Offline';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
+import { ApiRuntime } from '@/lib/api/ApiRuntime';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { BroadcastController } from '@/lib/player/BroadcastController';
 import { PlayerProvider } from '@/lib/player/PlayerProvider';
@@ -43,8 +43,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               <PassPaymentWatcher />
               {/* Тост «чекає оплату» — так само; тут же відновлюються свої тости (смуга, чат). */}
               <ToastPaymentWatcher />
-              {/* Сповіщення: штампи, графік, відповіді в чаті (2026-11-09). */}
-              <NotificationsWatcher />
+              {/* Шов з бекендом: у режимі `sim` — «сервер» імітації (сповіщення: штампи, графік, відповіді в чаті). */}
+              <ApiRuntime />
               {/* Згода на cookies: у DOM одразу після посилань-пропусків (кут/смуга; у потоці — на сторінці з плеєром). */}
               <CookieLayer />
               {/* «Додано в графік · Повернути» — знизу колонки, ховається над відео (рішення власника 2026-11-06). */}

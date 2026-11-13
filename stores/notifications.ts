@@ -2,30 +2,19 @@
  * Сповіщення (дошка `Desk-Notif-New`, рішення власника 2026-11-09). Типи: трансляція з графіка почалась, штамп у паспорті,
  * відповідь у чаті, досягнення паспорта (країни, пояси), серія за свято. Тип `seat` («Перший ряд») прибрано разом із
  * рядом (рішення 2026-11-12): старі такі сповіщення й перемикач зі сховища відкидаються (`merge`).
- * Список на пристрої (нові зверху, прочитані — нижче); налаштування — «усі» і кожен тип окремо. Створює їх
- * `NotificationsWatcher`; показує вікно O-NOTIF (`NotificationsBody`).
+ * Список на пристрої (нові зверху, прочитані — нижче); налаштування — «усі» і кожен тип окремо.
+ * Шов (`docs/backend/frontend-seam.md`): цей стор — «сервер» імітації. Створює сповіщення
+ * `lib/api/sim/NotificationsGenerator`; інтерфейс читає його лише через `lib/api/hooks/notifications` →
+ * `lib/api/sim/notifications` (компонентам імпортувати стор заборонено правилом eslint).
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { NOTIF_KINDS, type Notif, type NotifKind } from '@/lib/api/contracts/notifications';
 import { safeJsonStorage } from '@/lib/storage/safe';
 
 export const NOTIF_STORAGE_KEY = 't2f:notif:v1';
-export const NOTIF_KINDS = ['live', 'stamp', 'reply', 'goal', 'streak'] as const;
-export type NotifKind = (typeof NOTIF_KINDS)[number];
-
-export interface Notif {
-  /** Стабільний ключ (`stamp:<eventId>` тощо) — одне сповіщення на подію. */
-  id: string;
-  kind: NotifKind;
-  createdAt: number;
-  read: boolean;
-  /** Параметри тексту (`notif.items.<kind>`). */
-  params: Record<string, string | number>;
-  /** Куди веде дія. */
-  href: string;
-  /** Прапор на значку (ISO). */
-  flag?: string;
-}
+// Типи — з контракту шва; реекспорт для імітації (тестова панель, демо, скидання пристрою).
+export { NOTIF_KINDS, type Notif, type NotifKind };
 
 interface NotifState {
   items: Notif[];
@@ -76,7 +65,3 @@ export const useNotifStore = create<NotifState>()(
     },
   ),
 );
-
-export function useUnreadCount(): number {
-  return useNotifStore((s) => s.items.reduce((n, x) => n + (x.read ? 0 : 1), 0));
-}

@@ -7,6 +7,7 @@ import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useHeaderPass, useHeaderUser } from '@/components/auth/session';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { useOpenToastWindow } from '@/components/toast/ToastWindow';
+import { useNotifications } from '@/lib/api/hooks/notifications';
 import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
@@ -15,7 +16,6 @@ import { Header, type HeaderProps } from './Header';
 import { TimeMachineBody } from '@/components/demo/TimeMachineBody';
 import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
 import { IS_DEMO_BUILD } from '@/lib/env';
-import { useNotifStore } from '@/stores/notifications';
 import { MenuBody } from './Menu';
 import { PASSPORT_HREF } from '@/components/live/StampBlock';
 import { scrollToStampCard, useStampCelebration } from './useStampCelebration';
@@ -65,9 +65,8 @@ export function ShellHeader({ current: currentProp, hasPass: hasPassProp, user: 
   const router = useRouter();
 
   const cel = useStampCelebration({ guest: !user });
-  const heldCount = useNotifStore((st) =>
-    cel.holdFrom === null ? null : st.items.reduce((n, x) => n + (!x.read && x.createdAt < cel.holdFrom! ? 1 : 0), 0),
-  );
+  const { items: notifItems } = useNotifications();
+  const heldCount = cel.holdFrom === null ? null : notifItems.reduce((n, x) => n + (!x.read && x.createdAt < cel.holdFrom! ? 1 : 0), 0);
   const onActivateCelebration = () => {
     // Шапка відпливає вгору з-під миші — наведення більше не тримає паузу (pointerleave при прокрутці не приходить).
     cel.setHold('hover', false);

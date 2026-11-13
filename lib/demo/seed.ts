@@ -11,7 +11,7 @@ import { useNotifStore, type Notif } from '@/stores/notifications';
 export const DEMO_SEED_KEY = 't2f:demo:v1';
 /** Міста, де гість уже зустрів Новий рік до старту демо (схід → захід). */
 export const DEMO_MET_EVENTS = ['evt_sydney_2027', 'evt_tokyo_2027', 'evt_new-delhi_2027', 'evt_dubai_2027', 'evt_kyiv_2027'] as const;
-/** Цілі паспорта, досягнуті цими п’ятьма (як у `NotificationsWatcher`: 3 і 5 країн, 3 і 5 поясів). */
+/** Цілі паспорта, досягнуті цими п’ятьма (як у `lib/api/sim/NotificationsGenerator`: 3 і 5 країн, 3 і 5 поясів). */
 const GOALS = [3, 5] as const;
 
 export function seedDemoOnce(storage: Storage | null = typeof localStorage !== 'undefined' ? localStorage : null): boolean {
