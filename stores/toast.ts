@@ -15,15 +15,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { validateNick } from '@/lib/chat-sim/nick';
-import { useChatFeed } from '@/lib/chat-sim/store';
-import { toastMessage } from '@/lib/chat-sim/toast';
 import type { Ms } from '@/lib/data/types';
-import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
+import { getService } from '@/lib/api/services';
+import { setCheckoutClock, simConfirmOrder } from '@/lib/api/sim/checkout';
+import { PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { checkToastText, type ToastIssue } from '@/lib/toast/filter';
-import { DEFAULT_TIER, isToastTier, tierGiftsPass, TOAST_MAX, type ToastTier } from '@/lib/toast/tiers';
-import { useAuthStore } from '@/stores/auth';
+import { DEFAULT_TIER, isToastTier, TOAST_MAX, type ToastTier } from '@/lib/toast/tiers';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
@@ -33,14 +32,14 @@ export type ToastPhase = 'form' | 'paying' | 'failed' | 'offline' | 'success';
 export type ToastGift = 'active' | 'pending' | null;
 
 export const TOAST_CONFIRM_MS = PENDING_CONFIRM_MS;
-/** Імітація: скільки триває оплата на PayPro (до результату). */
-export const TOAST_PAY_MS = 3_000;
+/** Імітація: скільки триває оплата на PayPro (до результату) — спільні таймінги імітації. */
+export { TOAST_PAY_MS };
 export const TOAST_STORAGE_KEY = 't2f:toast:v1';
 
 interface ToastPersisted {
   said: ToastRecord[];
   /** Лише незавершена оплата. */
-  flow: { phase: 'paying'; tier: ToastTier; text: string; pendingSince?: Ms } | null;
+  flow: { phase: 'paying'; tier: ToastTier; text: string; pendingSince?: Ms; clientId?: string } | null;
 }
 
 export interface ToastFlowState {
@@ -54,7 +53,9 @@ export interface ToastFlowState {
   /** Щойно опублікований тост (екран успіху). */
   last?: ToastRecord;
   gift: ToastGift;
-  /** Свої сказані тости на цьому пристрої. */
+  /** Замовлення цього вікна в спільному процесі оплати (`checkout`, шов E4). */
+  clientId?: string;
+  /** Свої сказані тости на цьому пристрої (їх пише «сервер» імітації після оплати, `lib/api/sim/checkout`). */
   said: ToastRecord[];
   /** Вікно відкрито: рівень (з кнопки «Скажи тост за $10» — $10) і типовий текст, якщо поле порожнє. Оплату не чіпає. */
   prepare(tier: ToastTier | undefined, defaultText: string): void;
@@ -73,10 +74,28 @@ export interface ToastFlowState {
   resume(): void;
 }
 
-let timer: ReturnType<typeof setTimeout> | null = null;
-let siteNow: () => Ms = () => Date.now();
+/** Годинник сайту (машина часу) для «чекаємо підтвердження» й часу тосту — тепер у спільному процесі оплати. */
 export function setToastClock(now: () => Ms): void {
-  siteNow = now;
+  setCheckoutClock(now);
+}
+
+const newClientId = () => `toast-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+/**
+ * Підписка вікна на свої замовлення (один раз на вкладку). Результат оплати (тост у чаті й серед своїх, пас у подарунок)
+ * видає «сервер» (`lib/api/sim/checkout`); вікно лише показує його.
+ */
+let listening: (() => void) | null = null;
+function listen(): void {
+  if (listening) return;
+  listening = getService('checkout').subscribe((o) => {
+    const st = useToastStore.getState();
+    if (o.clientId !== st.clientId || o.product.kind !== 'toast') return;
+    if (o.status === 'pending') useToastStore.setState({ pendingSince: o.pendingSince });
+    else if (o.status === 'paid') useToastStore.setState({ phase: 'success', last: o.toast, gift: o.gift?.pass ?? null, pendingSince: undefined, clientId: undefined });
+    else if (o.status === 'declined') useToastStore.setState({ phase: 'failed', pendingSince: undefined, clientId: undefined });
+    else if (o.status === 'cancelled' || o.status === 'expired') useToastStore.setState({ phase: 'form', pendingSince: undefined, clientId: undefined });
+  });
 }
 
 const isOffline = () =>
@@ -87,44 +106,11 @@ export function signatureReady(nick: string | undefined): boolean {
   return !!nick && validateNick(nick) === null;
 }
 
-const FORM = { phase: 'form' as ToastPhase, tier: DEFAULT_TIER, text: '', issue: null, pendingSince: undefined, last: undefined, gift: null as ToastGift };
+const FORM = { phase: 'form' as ToastPhase, tier: DEFAULT_TIER, text: '', issue: null, pendingSince: undefined, last: undefined, gift: null as ToastGift, clientId: undefined };
 
 export const useToastStore = create<ToastFlowState>()(
   persist(
     (set, get) => {
-      const complete = () => {
-        const g = useGuestStore.getState();
-        const now = siteNow();
-        const { tier, text } = get();
-        let gift: ToastGift = null;
-        if (tierGiftsPass(tier) && !g.hasPass) gift = useAuthStore.getState().giftPass(now);
-        const record: ToastRecord = {
-          id: `own-${g.id}-${now}`,
-          authorId: g.id,
-          nick: (g.nick ?? '').trim(),
-          flagCode: g.flagCode ?? g.detectedFlag ?? 'earth',
-          text: text.trim(),
-          tier,
-          createdAt: now,
-          mine: true,
-          pass: useGuestStore.getState().hasPass || tierGiftsPass(tier),
-        };
-        useChatFeed.getState().append([toastMessage(record, g.id)]);
-        set((s) => ({ phase: 'success', said: [...s.said, record], last: record, gift, pendingSince: undefined }));
-      };
-      const settle = () => {
-        const result = useTestControls.getState().payResult;
-        if (result === 'pending') set({ pendingSince: siteNow() });
-        else if (result === 'declined') set({ phase: 'failed', pendingSince: undefined });
-        else complete();
-      };
-      const startTimer = (ms: number) => {
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
-          timer = null;
-          if (get().phase === 'paying' && get().pendingSince === undefined) settle();
-        }, ms);
-      };
       return {
         ...FORM,
         said: [],
@@ -152,17 +138,24 @@ export const useToastStore = create<ToastFlowState>()(
             set({ phase: 'offline' });
             return false;
           }
-          set({ phase: 'paying', issue: null, pendingSince: undefined });
-          startTimer(PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
+          const clientId = newClientId();
+          set({ phase: 'paying', issue: null, pendingSince: undefined, clientId });
+          listen();
+          void getService('checkout')
+            .start({ product: { kind: 'toast', tier: s.tier, text: s.text }, returnPath: '/', clientId })
+            .then((res) => {
+              if (!res.ok && get().clientId === clientId) set({ phase: 'failed', pendingSince: undefined, clientId: undefined });
+            });
           return true;
         },
         toForm: () => {
-          if (timer) clearTimeout(timer);
-          timer = null;
-          set({ phase: 'form', pendingSince: undefined });
+          const { clientId } = get();
+          if (clientId) void getService('checkout').cancel(`ord-${clientId}`);
+          set({ phase: 'form', pendingSince: undefined, clientId: undefined });
         },
         confirm: () => {
-          if (get().phase === 'paying') complete();
+          const { phase, clientId } = get();
+          if (phase === 'paying' && clientId) simConfirmOrder(clientId);
         },
         closed: () => {
           const phase = get().phase;
@@ -171,12 +164,18 @@ export const useToastStore = create<ToastFlowState>()(
           else set({ phase: 'form', issue: null, tier: DEFAULT_TIER });
         },
         reset: () => {
-          if (timer) clearTimeout(timer);
-          timer = null;
           set({ ...FORM });
         },
         resume: () => {
-          if (get().phase === 'paying' && get().pendingSince === undefined && !timer) startTimer(PAY_ROUNDTRIP_MS);
+          const { phase, clientId } = get();
+          if (phase !== 'paying' || !clientId) return;
+          listen();
+          // Замовлення немає (сховище оплат стерто) — до форми з тим самим текстом.
+          void getService('checkout')
+            .open()
+            .then((res) => {
+              if (res.ok && !res.value.some((o) => o.clientId === clientId) && get().clientId === clientId) set({ phase: 'form', pendingSince: undefined, clientId: undefined });
+            });
         },
       };
     },
@@ -187,7 +186,7 @@ export const useToastStore = create<ToastFlowState>()(
       skipHydration: true,
       partialize: (s): ToastPersisted => ({
         said: s.said,
-        flow: s.phase === 'paying' ? { phase: 'paying', tier: s.tier, text: s.text, pendingSince: s.pendingSince } : null,
+        flow: s.phase === 'paying' ? { phase: 'paying', tier: s.tier, text: s.text, pendingSince: s.pendingSince, clientId: s.clientId } : null,
       }),
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<ToastPersisted>;
@@ -203,6 +202,7 @@ export const useToastStore = create<ToastFlowState>()(
           tier: f.tier,
           text: typeof f.text === 'string' ? f.text : '',
           pendingSince: typeof f.pendingSince === 'number' ? f.pendingSince : undefined,
+          clientId: typeof f.clientId === 'string' ? f.clientId : undefined,
         };
       },
     },

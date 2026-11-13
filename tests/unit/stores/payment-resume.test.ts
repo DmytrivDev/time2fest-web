@@ -4,6 +4,7 @@
  */
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { reloadSimCheckoutForTest, resumeOpenOrders } from '@/lib/api/sim/checkout';
 import { PAY_ROUNDTRIP_MS } from '@/lib/offers/paySim';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -113,8 +114,13 @@ describe('незавершена оплата переживає перезав�
     useToastStore.getState().setText('За всіх!');
     useToastStore.getState().pay();
     expect(useToastStore.getState().phase).toBe('paying');
-    reload(TOAST_STORAGE_KEY, () => useToastStore.getState().reset());
+    // Перезавантаження вкладки: і вікно, і процес оплати (шов E4) — з нуля; «сервер» імітації продовжує перерваний перехід.
+    reload(TOAST_STORAGE_KEY, () => {
+      useToastStore.getState().reset();
+      reloadSimCheckoutForTest();
+    });
     await resumeToastFlow();
+    resumeOpenOrders();
     expect(useToastStore.getState().phase).toBe('paying');
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
     expect(useToastStore.getState().phase).toBe('success');

@@ -14,11 +14,13 @@ import { NOTIF_KINDS, useNotifStore } from '@/stores/notifications';
 import { usePassStore } from '@/stores/pass';
 import { useToastStore } from '@/stores/toast';
 import { useTvPrefs } from '@/stores/tv';
+import { resetSimCheckout } from '@/lib/api/sim/checkout';
 
 /** Префікс ключів сайту в `localStorage`. */
 const PREFIX = 't2f:';
 
 export function resetDeviceState(): void {
+  resetSimCheckout();
   usePassStore.getState().reset();
   useToastStore.getState().reset();
   useToastStore.setState({ said: [] });

@@ -40,9 +40,12 @@ export type OrderStatus =
 
 export interface Order {
   id: string;
-  product: Product['kind'];
-  tier?: ToastTier;
+  /** `clientId` із `start` — вікно впізнає своє замовлення в особистому каналі. */
+  clientId: string;
+  product: Product;
   status: OrderStatus;
+  /** Відколи «чекаємо підтвердження» (`pending`). */
+  pendingSince?: Ms;
   createdAt: Ms;
   updatedAt: Ms;
   /** Пошта, на яку оформлено (гість). */
@@ -68,8 +71,8 @@ export interface CheckoutService {
   start(req: CheckoutStartRequest): Promise<ApiResult<CheckoutSession>>;
   /** `GET /api/orders/:id` — опитування після повернення з PayPro. */
   status(orderId: string): Promise<ApiResult<Order>>;
-  /** Realtime: особистий канал `orders:user#<userId>` (події з вебхука PayPro). */
-  subscribe(orderId: string, onUpdate: (order: Order) => void): Unsubscribe;
+  /** Realtime: особистий канал `orders:user#<userId>` — зміни ВСІХ своїх замовлень (події з вебхука PayPro). */
+  subscribe(onUpdate: (order: Order) => void): Unsubscribe;
   /** «Скасувати» до оплати. `POST /api/orders/:id/cancel`. */
   cancel(orderId: string): Promise<ApiResult<Order>>;
   /** Незавершені замовлення цього гостя чи акаунта — довести до кінця після перезавантаження. `GET /api/me/orders?open=1`. */

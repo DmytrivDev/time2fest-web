@@ -1,26 +1,16 @@
 'use client';
 
 /**
- * Тости світу для смуги, згорнутого чату й «Підтримати» (рішення власника 2026-11-12): свої сказані тости
- * (`stores/toast`, цей пристрій) і — лише в тестовій та демо-збірці — імітовані тости інших глядачів
- * (`simulatedToasts`). У робочій збірці без своїх тостів список порожній — смуга показує «Тостів ще немає».
+ * Тости світу для смуги, згорнутого чату й «Підтримати» (рішення власника 2026-11-12): стрічка сервісу `toasts`
+ * (`lib/api/hooks/toasts`): свої сказані тости і — лише в тестовій та демо-збірці — імітовані тости інших глядачів. У робочій збірці без своїх тостів список порожній — смуга показує «Тостів ще немає».
  * До готовності часу (сервер, гідратація) — порожньо, щоб розмітка збігалась.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CHAT_SCRIPT } from '@/lib/chat-sim/useChatSimulator';
+import { useToastFeed } from '@/lib/api/hooks/toasts';
 import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { DOCK_TOAST_MS, stripView, type StripView, type ToastRecord } from '@/lib/toast/feed';
-import { simulatedToasts } from '@/lib/toast/worldToasts';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { useToastStore } from '@/stores/toast';
-
-let simCache: ToastRecord[] | null = null;
-/** Усі імітовані тости свята (рахуємо раз; далі — фільтр за часом). */
-function allSimulated(): ToastRecord[] {
-  if (!simCache) simCache = simulatedToasts(CHAT_SCRIPT, getData());
-  return simCache;
-}
 
 let midnightsCache: Ms[] | null = null;
 /** Північ кожного поясу за зростанням. */
@@ -41,13 +31,10 @@ export interface WorldToasts {
 export function useWorldToasts(): WorldToasts {
   const ready = useTimeReady();
   const now = useNow();
-  const said = useToastStore((s) => s.said);
+  // Шов E4: стрічка — із сервісу `toasts` (свої + імітовані лише в тестовій/демо-збірці); «вже сказані» — за часом сайту.
+  const feed = useToastFeed();
   const second = Math.floor(now / 1000) * 1000;
-  const toasts = useMemo(() => {
-    if (!ready) return [];
-    const sim = allSimulated().filter((t) => t.createdAt <= second);
-    return [...sim, ...said.filter((t) => t.createdAt <= second)].sort((a, b) => a.createdAt - b.createdAt);
-  }, [ready, said, second]);
+  const toasts = useMemo(() => (ready ? feed.filter((t) => t.createdAt <= second) : []), [ready, feed, second]);
   const midnights = zoneMidnights();
   const view = useMemo(() => stripView(toasts, second, midnights), [toasts, second, midnights]);
   return { ready, now: second, toasts, view, midnights };

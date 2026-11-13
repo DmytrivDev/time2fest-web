@@ -26,4 +26,13 @@ export interface ToastsService {
    * Відмова — `validation` з `reason` = `ToastIssue.kind`; деталі (де саме) — у `issue`.
    */
   check(text: string): Promise<ApiResult<{ issue: ToastIssue | null }>>;
+  /** Останній відомий список без запиту (кеш на пристрої) — смуга не блимає «Тостів ще немає» до відповіді. */
+  peek?(): readonly ToastRecord[] | undefined;
+}
+
+/** Застосувати подію до стрічки (за часом, без дублів) — сервер і клієнт однаково. */
+export function applyToastEvent(list: readonly ToastRecord[], event: ToastEvent): readonly ToastRecord[] {
+  if (event.type === 'removed') return list.some((t) => t.id === event.id) ? list.filter((t) => t.id !== event.id) : list;
+  if (list.some((t) => t.id === event.toast.id)) return list;
+  return [...list, event.toast].sort((a, b) => a.createdAt - b.createdAt);
 }

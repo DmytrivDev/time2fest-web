@@ -7,3 +7,5 @@
 export const PENDING_CONFIRM_MS = 30_000;
 /** Імітований перехід на PayPro і назад (реальний час, мс). */
 export const PAY_ROUNDTRIP_MS = 900;
+/** Імітація: скільки триває оплата тосту на PayPro (до результату), понад перехід. */
+export const TOAST_PAY_MS = 3_000;

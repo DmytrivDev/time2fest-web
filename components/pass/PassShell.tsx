@@ -10,7 +10,8 @@ import { Footer } from '@/components/shell/Footer';
 import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
 import { TimeProvider } from '@/lib/time/TimeProvider';
-import { PassPaymentWatcher } from './PassPaymentWatcher';
+import { PaymentWatcher } from '@/components/offers/PaymentWatcher';
+import { ApiRuntime } from '@/lib/api/ApiRuntime';
 
 /**
  * Хедер + сторінка + футер для `/pass/` (і `/passport/` — `passCurrent={false}`): поза `(live)`, тож без плеєра й чату (як вхід), з машиною часу тестової
@@ -34,7 +35,9 @@ export function PassShell({ children, passCurrent = true }: { children: ReactNod
     <TimeProvider>
       <TimeMachineMount />
       <LiveAnnouncer>
-        <PassPaymentWatcher />
+        {/* Оплата пасу (шов E4): «сервер» оплат імітації й стеження вікна — як у макеті `(live)`. */}
+        <ApiRuntime only={['checkout']} />
+        <PaymentWatcher />
         <div className="flex min-h-dvh flex-col bg-background text-text">
           <SkipLinks targets={['content']} />
           <Header user={user} hasPass={hasPass} passCurrent={passCurrent} onMenuClick={onMenu} menuOpen={menuOpen || panel === 'menu'} onNotificationsClick={onNotif} />

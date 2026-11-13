@@ -14,10 +14,11 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { simSignInAfterPurchase } from '@/lib/api/sim/auth';
+import { getService } from '@/lib/api/services';
+import { setCheckoutClock, simConfirmOrder } from '@/lib/api/sim/checkout';
 import { GOOGLE_DELAY_MS, isEmail, normalizeEmail } from '@/lib/auth/sim';
 import type { Ms } from '@/lib/data/types';
-import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
+import { PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { useAuthStore } from '@/stores/auth';
 import { useTestControls } from '@/stores/testControls';
@@ -30,11 +31,12 @@ export const PASS_CONFIRM_MS = PENDING_CONFIRM_MS;
 
 export const PASS_FLOW_STORAGE_KEY = 't2f:pass-flow:v1';
 
-/** Що зберігаємо: лише незавершену оплату. */
+/** Що зберігаємо: лише незавершену оплату (і `clientId` її замовлення). */
 interface PassPersisted {
   phase: PassPhase;
   email: string;
   pendingSince?: Ms;
+  clientId?: string;
 }
 
 export interface PassFlowState {
@@ -47,6 +49,8 @@ export interface PassFlowState {
   linkSent: boolean;
   googleFailed: boolean;
   pendingSince?: Ms;
+  /** Замовлення цього вікна в спільному процесі оплати (`checkout`, шов E4). */
+  clientId?: string;
   setEmail(v: string): void;
   /** «Оформити пас» гостя з email; `false` — оплату не почато (помилка чи адреса з пасом). */
   submitEmail(): boolean;
@@ -54,7 +58,7 @@ export interface PassFlowState {
   startGoogle(): void;
   /** «Оформити пас» того, хто увійшов, і «Спробувати ще». */
   pay(): void;
-  /** «Чекаємо підтвердження» → підтверджено (`PassPaymentWatcher`). */
+  /** Тестова кнопка «підтвердити» (у `http` — вебхук; у `sim` — `CheckoutSettler` за часом сайту). */
   confirm(): void;
   /** Нове оформлення (вихід з акаунта, «Не ти?», закриття успіху). */
   reset(): void;
@@ -71,33 +75,33 @@ function later(fn: () => void, ms: number) {
   }, ms);
 }
 
-/** Годинник сайту для `pendingSince` (машина часу тестової збірки); без нього — справжній час. */
-let siteNow: () => Ms = () => Date.now();
+/** Годинник сайту для `pendingSince` (машина часу тестової збірки) — тепер у спільному процесі оплати. */
 export function setPassClock(now: () => Ms): void {
-  siteNow = now;
+  setCheckoutClock(now);
 }
 
-const INITIAL = { phase: 'form' as PassPhase, email: '', emailIssue: null, paidEmail: false, linkSent: false, googleFailed: false, pendingSince: undefined };
+const INITIAL = { phase: 'form' as PassPhase, email: '', emailIssue: null, paidEmail: false, linkSent: false, googleFailed: false, pendingSince: undefined, clientId: undefined };
+
+const newClientId = () => `pass-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+/** Підписка вікна на свої замовлення (один раз на вкладку). */
+let listening: (() => void) | null = null;
+function listen(): void {
+  if (listening) return;
+  listening = getService('checkout').subscribe((o) => {
+    const st = usePassStore.getState();
+    if (o.clientId !== st.clientId || o.product.kind !== 'pass') return;
+    if (o.status === 'pending') usePassStore.setState({ phase: 'pending', pendingSince: o.pendingSince });
+    else if (o.status === 'paid') usePassStore.setState({ phase: 'success', pendingSince: undefined, clientId: undefined });
+    else if (o.status === 'declined') usePassStore.setState({ phase: 'failed', pendingSince: undefined, clientId: undefined });
+    else if (o.status === 'cancelled' || o.status === 'expired') usePassStore.setState({ phase: 'form', pendingSince: undefined, clientId: undefined });
+  });
+}
 
 export const usePassStore = create<PassFlowState>()(
   persist((set, get) => {
-  /** Оплату підтверджено: гість входить в акаунт, створений з оплатою; пас — на акаунт і на пристрій. */
-  const complete = () => {
-    const auth = useAuthStore.getState();
-    const now = Date.now();
-    const email = auth.user?.email ?? normalizeEmail(get().email);
-    // Правило пошти імітації — в одному місці (`lib/api/sim/auth`): гість входить у пошту з оплати.
-    if (!auth.user) simSignInAfterPurchase(email, now);
-    useAuthStore.getState().grantPass(email, now);
-    set({ phase: 'success', pendingSince: undefined });
-  };
-
-  const settle = () => {
-    const result = useTestControls.getState().payResult;
-    if (result === 'pending') set({ phase: 'pending', pendingSince: siteNow() });
-    else if (result === 'declined') set({ phase: 'failed' });
-    else complete();
-  };
+  // Оплата — один процес для пасу й тосту (`checkout`): старт тут, результат (пас на акаунт, вхід гостя в пошту з оплати)
+  // видає «сервер» (`lib/api/sim/checkout`), вікно лише стежить за своїм замовленням (`listen`).
 
   return {
     ...INITIAL,
@@ -143,11 +147,22 @@ export const usePassStore = create<PassFlowState>()(
     },
     pay: () => {
       if (get().phase === 'opening') return;
-      set({ phase: 'opening' });
-      later(settle, PAY_ROUNDTRIP_MS);
+      const clientId = newClientId();
+      set({ phase: 'opening', clientId });
+      listen();
+      const signedIn = useAuthStore.getState().user !== null;
+      void getService('checkout')
+        .start({ product: { kind: 'pass' }, ...(signedIn ? {} : { email: get().email }), returnPath: '/pass/', clientId })
+        .then((res) => {
+          if (res.ok || get().clientId !== clientId) return;
+          // На цю адресу пас уже оформлено — як перевірка форми; інакше — «Оплата не пройшла».
+          if (res.error.reason === 'pass-owned') set({ phase: 'form', paidEmail: true, clientId: undefined });
+          else set({ phase: 'failed', clientId: undefined });
+        });
     },
     confirm: () => {
-      if (get().phase === 'pending') complete();
+      const { phase, clientId } = get();
+      if (phase === 'pending' && clientId) simConfirmOrder(clientId);
     },
     reset: () => {
       if (timer) clearTimeout(timer);
@@ -155,9 +170,16 @@ export const usePassStore = create<PassFlowState>()(
       set({ ...INITIAL });
     },
     resume: () => {
-      const phase = get().phase;
-      if (phase === 'opening' && !timer) later(settle, PAY_ROUNDTRIP_MS);
-      else if (phase === 'google') set({ phase: 'form' });
+      const { phase, clientId } = get();
+      if (phase === 'google') set({ phase: 'form' });
+      if ((phase !== 'opening' && phase !== 'pending') || !clientId) return;
+      listen();
+      // Замовлення немає (сховище оплат стерто) — до форми, а не вічне «переходимо на оплату».
+      void getService('checkout')
+        .open()
+        .then((res) => {
+          if (res.ok && !res.value.some((o) => o.clientId === clientId) && get().clientId === clientId) set({ phase: 'form', pendingSince: undefined, clientId: undefined });
+        });
     },
   };
   }, {
@@ -166,13 +188,19 @@ export const usePassStore = create<PassFlowState>()(
     storage: safeJsonStorage<PassPersisted>('local'),
     skipHydration: true,
     partialize: (s): PassPersisted =>
-      s.phase === 'opening' || s.phase === 'pending' ? { phase: s.phase, email: s.email, pendingSince: s.pendingSince } : { phase: 'form', email: '' },
+      s.phase === 'opening' || s.phase === 'pending' ? { phase: s.phase, email: s.email, pendingSince: s.pendingSince, clientId: s.clientId } : { phase: 'form', email: '' },
     merge: (persisted, current) => {
       const p = (persisted ?? {}) as Partial<PassPersisted>;
       if (p.phase !== 'opening' && p.phase !== 'pending') return current;
       // Оплата вже йде в іншій вкладці чи до перезавантаження цієї — не перебиваємо поточне оформлення.
       if (current.phase !== 'form') return current;
-      return { ...current, phase: p.phase, email: typeof p.email === 'string' ? p.email : '', pendingSince: typeof p.pendingSince === 'number' ? p.pendingSince : undefined };
+      return {
+        ...current,
+        phase: p.phase,
+        email: typeof p.email === 'string' ? p.email : '',
+        pendingSince: typeof p.pendingSince === 'number' ? p.pendingSince : undefined,
+        clientId: typeof p.clientId === 'string' ? p.clientId : undefined,
+      };
     },
   }),
 );

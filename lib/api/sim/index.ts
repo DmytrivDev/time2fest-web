@@ -4,9 +4,11 @@
  */
 import type { ServiceFactories } from '../services';
 import { createSimAuth } from './auth';
+import { createSimCheckout } from './checkout';
 import { createSimLive } from './live';
 import { createSimNotifications } from './notifications';
 import { createSimProfile } from './profile';
+import { createSimToasts } from './toasts';
 import { createSimRating } from './rating';
 
 export const simFactories: ServiceFactories = {
@@ -15,4 +17,6 @@ export const simFactories: ServiceFactories = {
   live: createSimLive,
   auth: createSimAuth,
   profile: createSimProfile,
+  checkout: createSimCheckout,
+  toasts: createSimToasts,
 };
