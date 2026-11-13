@@ -5,12 +5,14 @@
  * жила смуга «Першого ряду» (рішення власника 2026-11-12; дошки `Desk-Toast-New`, `Phone-Toast-New` v2).
  * - Телефон (`variant="phone"`): рядок під рядком часу — прапор, нік, тост у рядок, шпилька для закріплених, шеврон;
  *   коротка «Тост». Тост у рядку змінюється кожні ≈6 с (спершу закріплені, потім найновіші). Дотик до рядка — список у
- *   потоці (плавно): «Закріплені до наступної півночі», «Щойно», «Сказати тост», «Усі тости в чаті «Світ»». Порожньо —
+ *   потоці (плавно): «Закріплені до наступної півночі», «Щойно», «Сказати тост», «Усі тости». Порожньо —
  *   уся смуга одна кнопка «Тостів ще немає — скажи перший».
  * - Десктоп (`variant="desk"`): нейтральна картка під рядком дій плеєра — келих, «Тости світу», лічильники, ‹ N / M ›,
  *   шеврон, «Сказати тост»; нижче — ОДИН тост цілим текстом (прапор, нік, «закріплено до HH:MM»), змінюється кожні
  *   ≈6 с з тонкою золотою смужкою; наведення чи фокус — пауза; шеврон розгортає список у дві колонки. Клік на тост —
  *   чат «Світ».
+ * «Усі тости» в розгорнутому списку (рішення власника 2026-11-13) — тиха вторинна кнопка з шевроном, веде на «Тости
+ * світу» (`/support/`); замінила посилання «Усі тости в чаті «Світ»», що лише перемикало чат і на десктопі здавалось мертвим.
  * «Зменшити рух»: без автозміни (телефон — тост змінюється після дотику, десктоп — лише стрілки), без смужки. Поки
  * список розгорнуто — ротація стоїть. Нічого не лягає на плеєр: смуга — у потоці під ним.
  * Смуга є лише поки свято йде (рішення власника 2026-11-13, `useCanToast`): до й після свята її немає зовсім.
@@ -18,6 +20,7 @@
  * розгорнули чат — список смуги згортається, щоб чат не опускався.
  */
 import { useTranslations } from 'next-intl';
+import NextLink from 'next/link';
 import { useEffect, useId, useState } from 'react';
 import { useChatDockControls } from '@/components/chat/ChatDock';
 import { cn } from '@/components/primitives/cn';
@@ -56,7 +59,7 @@ function ToastButton({ label, onClick, className }: { label: string; onClick: ()
   );
 }
 
-/** «Усі тости в чаті «Світ»» і клік на тост: чат «Світ» — розгорнутий (телефон) чи показаний у колонці (десктоп). */
+/** Клік на тост (десктоп): чат «Світ» — показаний у колонці (на телефоні — розгорнутий). */
 function useOpenWorldChat() {
   const overlay = useOverlay();
   const column = useChatColumn();
@@ -125,6 +128,17 @@ function Lists({ view, now, variant }: { view: StripView; now: Ms; variant: 'pho
       {view.pinned.length ? pinned : null}
       {view.latest.length ? latest : null}
     </>
+  );
+}
+
+/** «Усі тости» — на сторінку «Тости світу»: та сама родина, що «Сказати тост», тихіша (без заливки, шеврон). */
+function AllToastsButton({ className }: { className?: string }) {
+  const ts = useTranslations('toast.strip');
+  return (
+    <NextLink href="/support/" className={cn('t2f-focus t2f-press', t2.allBtn, className)} data-action="toast-all">
+      {ts('all')}
+      <Icon name="chevron-right" size={16} />
+    </NextLink>
   );
 }
 
@@ -258,9 +272,7 @@ function DeskStrip({ view, now, className }: { view: StripView; now: Ms; classNa
       ) : null}
       <Reveal open={open} id={listId}>
         <Lists view={view} now={now} variant="desk" />
-        <button type="button" className={cn('t2f-focus', s.allLink)} onClick={openWorld} data-action="toast-all">
-          {ts('allInChat')}
-        </button>
+        <AllToastsButton className={s.allDesk} />
       </Reveal>
       {!open && item && !reduce && rot.total > 1 ? <Progress itemKey={`${item.toast.id}:${rot.index}`} onDone={() => rot.step(1)} visible /> : null}
     </section>
@@ -289,7 +301,6 @@ function PhoneStrip({ view, now, className, bare }: { view: StripView; now: Ms; 
   const t = useTranslations('toast');
   const ts = useTranslations('toast.strip');
   const openToast = useOpenToastWindow();
-  const openWorld = useOpenWorldChat();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const rot = useRotation(view);
@@ -372,9 +383,7 @@ function PhoneStrip({ view, now, className, bare }: { view: StripView; now: Ms; 
         <Reveal open={open} id={listId}>
           <Lists view={view} now={now} variant="phone" />
           <ToastButton label={t('action')} onClick={() => openToast()} className={s.fullBtn} />
-          <button type="button" className={cn('t2f-focus', s.allLink)} onClick={openWorld} data-action="toast-all">
-            {ts('allInChat')}
-          </button>
+          <AllToastsButton className={s.allPhone} />
         </Reveal>
         {!open && item && !reduce && rot.total > 1 ? <Progress itemKey={`${item.toast.id}:${rot.index}`} onDone={() => rot.step(1)} visible={false} /> : null}
       </section>

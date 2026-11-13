@@ -18,8 +18,9 @@
  * Чат сховано (FR-053): десктоп — колонки немає, пілюля «Показати чат N» в рядку назви поруч із таймером; на телефоні
  * «сховати» = згорнути вікно.
  *
- * Головне святкування (рішення власника 2026-11-13): поки воно не почалось — заглушка з кнопкою «Дивитися, що вже йде ↓»
- * (до «Зараз і далі»), якщо в поясі щось іде наживо; у «Зараз і далі» його картка перша («Очікується»), дотик до неї
+ * Головне святкування (рішення власника 2026-11-13): поки воно не почалось — заглушка з кнопкою «Дивитися, що вже йде»,
+ * якщо в поясі щось іде наживо: відкриває той самий список, що «Обрати трансляцію» (`useStreamPicker`; десктоп — на місці
+ * чату, телефон — шторкою), вибір — ручний; у «Зараз і далі» його картка перша («Очікується»), дотик до неї
  * повертає плеєр до ефіру. Людина сама обрала іншу трансляцію поясу, а головне почалось — «Головне святкування почалось ·
  * Перемкнути» в рядку під відео (без автоматичного перемикання).
  */
@@ -45,7 +46,7 @@ import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
-import { scrollToBlock } from '@/components/live/scrollToBlock';
+import { useStreamPicker } from '@/components/live/ActionRow';
 import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
@@ -64,7 +65,7 @@ import home from './home.module.css';
 
 const CHAT_ROOMS = ['world'] as const;
 const PLAYER_TITLE_ID = 'player-title';
-/** «Зараз і далі» — ціль кнопки «Дивитися, що вже йде ↓» на заглушці. */
+/** «Зараз і далі» (ціль посилань-пропусків). */
 const NOW_NEXT_ID = 'now-next';
 
 export { useChatLookup };
@@ -141,7 +142,9 @@ export function HomeLive() {
   const minute = Math.floor(now / 60_000) * 60_000;
   const airMidnight = current?.event.midnightMs ?? null;
   const liveInZone = useMemo(() => (airMidnight !== null && minute > 0 ? zoneHasLive(data, airMidnight, minute) : false), [data, airMidnight, minute]);
-  const watchLive = useCallback(() => scrollToBlock(NOW_NEXT_ID, reduced), [reduced]);
+  // «Дивитися, що вже йде» — список трансляцій цієї півночі, як «Обрати трансляцію» (рішення власника 2026-11-13).
+  const picker = useStreamPicker({ onToggleSchedule: passWindows.requestSchedule });
+  const watchLive = picker.open;
   const mainSource = eventId ? mainSourceOf(data.chainsByEventId.get(eventId)) : null;
   const sel = player?.selection;
   const playingEvent = player?.eventId ? data.eventsById.get(player.eventId) : undefined;

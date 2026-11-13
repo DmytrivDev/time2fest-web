@@ -245,6 +245,32 @@ test.describe('US6 · тост замість чайових', () => {
     const win = page.locator('[data-window="O-TOAST"]');
     await expect(win).toContainText('Новорічний пас у тебе вже є');
   });
+
+  // Рішення 2026-11-13: у розгорнутій смузі — кнопка «Усі тости» на сторінку «Тости світу» (замість посилання на чат).
+  test('розгорнута смуга: «Усі тости» — кнопка на сторінку «Тости світу»', async ({ page }) => {
+    await seedGuest(page, { stamps: TWO_STAMPS });
+    await gotoAt(page, AZORES_PLUS_6, 0);
+    const strip = page.locator('[data-toast-strip]');
+    await expect(strip).toBeVisible({ timeout: 10_000 });
+    await strip.locator('[data-action="toast-expand"]').first().click();
+    const all = strip.locator('[data-action="toast-all"]');
+    await expect(all).toBeVisible();
+    await expect(all).toHaveText('Усі тости');
+    await expect(all).toHaveAttribute('href', /^\/support\/?$/);
+    await all.click();
+    await expect(page).toHaveURL(/\/support\//, { timeout: 20_000 });
+    await expect(page.getByRole('heading', { level: 1, name: 'Тости світу' })).toBeVisible();
+  });
+
+  test('до свята смуги тостів і келиха в полі чату немає', async ({ page }) => {
+    await seedGuest(page, {});
+    await gotoAt(page, '2026-12-28T14:00:00+02:00', 0);
+    await expect(page.locator('#player-title')).toBeVisible({ timeout: 15_000 });
+    if (isPhone(page)) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
+    await expect(page.getByRole('textbox', { name: /Повідомлення/ }).first()).toBeVisible();
+    await expect(page.locator('[data-toast-strip]')).toHaveCount(0);
+    await expect(page.locator('[data-action="chat-toast"]')).toHaveCount(0);
+  });
 });
 
 test.describe('US6 · «Потрібен пас»', () => {

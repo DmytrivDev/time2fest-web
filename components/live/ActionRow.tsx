@@ -14,10 +14,12 @@
  * Перемикач «Відео | Відлік» (рішення 2026-11-05, дошка `Desk-Country-Full`): режим «Відлік» — сцена Time2Fest на місці
  * відео (точна північ без затримки), «Обрати трансляцію» тоді неактивна; телефон — двома іконками. Без трансляцій
  * сторінка перемикача не передає (режим «Відлік» сам).
+ * Відкриття списку — `useStreamPicker` (рішення власника 2026-11-13): ним же кнопка «Дивитися, що вже йде» на заглушці
+ * головного святкування відкриває той самий список (головна — ефір, сторінка країни — пульт); вибір там — ручний, як тут.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { ToggleGroup } from 'radix-ui';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -104,6 +106,70 @@ export interface RemoteStreams {
   onAddToRoom?(row: StreamRowData): void;
 }
 
+export interface StreamPickerOptions {
+  /** `broadcast` — головна (ефір); `remote` — сторінка країни. */
+  mode?: 'broadcast' | 'remote';
+  streams?: RemoteStreams;
+  onToggleSchedule?: (eventId: string) => void;
+}
+
+/**
+ * «Обрати трансляцію»: список трансляцій цієї півночі (`StreamPicker`) на місці чату (десктоп) чи шторкою (телефон).
+ * Ефір: обрана в списку трансляція — вибір людини до наступної передачі ефіру (як на ТВ), щоб сторінка знала, що людина
+ * дивиться не головне святкування («Головне святкування почалось · Перемкнути»). Пульт: вибір — через `streams.onPick`.
+ */
+export function useStreamPicker({ mode = 'broadcast', streams, onToggleSchedule }: StreamPickerOptions): { open: () => void; isOpen: boolean } {
+  const t = useTranslations('player');
+  const overlay = useOverlay();
+  const column = useChatColumn();
+  const broadcast = useOptionalBroadcast();
+  const remote = mode === 'remote';
+  const midnightMs = remote ? (streams?.midnightMs ?? null) : (broadcast?.current?.event.midnightMs ?? null);
+  // Список живе у вікні поза контекстом ефіру — беремо найсвіжіший стан ефіру з посилання.
+  const broadcastRef = useRef(broadcast);
+  useEffect(() => {
+    broadcastRef.current = broadcast;
+  });
+  const pickOnAir = useCallback((row: StreamRowData) => {
+    const b = broadcastRef.current;
+    if (!b) return;
+    const air = b.current?.event.id;
+    const main = air ? getData().chainsByEventId.get(air)?.sources.find((x) => x.kind === 'main') : undefined;
+    b.watch(row.eventId === air && row.id === main?.id ? null : { eventId: row.eventId, sourceId: row.id });
+  }, []);
+  const open = () => {
+    if (midnightMs === null) return;
+    overlay.open({
+      id: STREAM_PICKER_ID,
+      kind: 'accent',
+      chrome: 'board',
+      title: t('chooseStream'),
+      description: t('picker.sub'),
+      content:
+        remote && streams ? (
+          <StreamPicker
+            midnightMs={midnightMs}
+            countryIso={streams.countryIso}
+            rows={streams.rows}
+            onPick={streams.onPick}
+            onAddToRoom={streams.onAddToRoom}
+            onToggleSchedule={onToggleSchedule}
+            onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
+          />
+        ) : (
+          <StreamPicker
+            midnightMs={midnightMs}
+            countryIso={broadcast?.current?.event.countryIso}
+            onPick={broadcast?.controlling ? pickOnAir : undefined}
+            onToggleSchedule={onToggleSchedule}
+            onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
+          />
+        ),
+    });
+  };
+  return { open, isOpen: overlay.current?.id === STREAM_PICKER_ID };
+}
+
 export function ActionRow({
   mode = 'broadcast',
   button,
@@ -129,6 +195,7 @@ export function ActionRow({
   const column = useChatColumn();
   const broadcast = useOptionalBroadcast();
   const midnightMs = remote ? (streams?.midnightMs ?? null) : (broadcast?.current?.event.midnightMs ?? null);
+  const picker = useStreamPicker({ mode, streams, onToggleSchedule });
   const place = remote ? (sharePlace ?? '') : (broadcast?.current?.city?.name.uk ?? '');
   const target: ShareTarget = {
     url: `${typeof window !== 'undefined' ? window.location.origin : `https://${SITE_HOST}`}${href ?? '/'}`,
@@ -136,51 +203,7 @@ export function ActionRow({
     text: t('more.shareText', { place }),
   };
 
-  // Головна (2026-11-13): обрана в списку трансляція — вибір людини до наступної передачі ефіру (як на ТВ), щоб сторінка
-  // знала, що людина дивиться не головне святкування («Головне святкування почалось · Перемкнути»). Список живе у вікні
-  // поза контекстом ефіру — беремо найсвіжіший стан ефіру з посилання.
-  const broadcastRef = useRef(broadcast);
-  useEffect(() => {
-    broadcastRef.current = broadcast;
-  });
-  const pickOnAir = (row: StreamRowData) => {
-    const b = broadcastRef.current;
-    if (!b) return;
-    const air = b.current?.event.id;
-    const main = air ? getData().chainsByEventId.get(air)?.sources.find((x) => x.kind === 'main') : undefined;
-    b.watch(row.eventId === air && row.id === main?.id ? null : { eventId: row.eventId, sourceId: row.id });
-  };
-
-  function openPicker() {
-    if (midnightMs === null) return;
-    overlay.open({
-      id: STREAM_PICKER_ID,
-      kind: 'accent',
-      chrome: 'board',
-      title: t('chooseStream'),
-      description: t('picker.sub'),
-      content:
-        remote && streams ? (
-          <StreamPicker
-            midnightMs={midnightMs}
-            countryIso={streams.countryIso}
-            rows={streams.rows}
-            onPick={streams.onPick}
-            onAddToRoom={streams.onAddToRoom}
-            onToggleSchedule={onToggleSchedule}
-            onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
-          />
-        ) : (
-          <StreamPicker
-          midnightMs={midnightMs}
-          countryIso={broadcast?.current?.event.countryIso}
-          onPick={broadcast?.controlling ? pickOnAir : undefined}
-          onToggleSchedule={onToggleSchedule}
-          onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
-        />
-        ),
-    });
-  }
+  const openPicker = picker.open;
   function openReport() {
     overlay.open({
       id: REPORT_ID,

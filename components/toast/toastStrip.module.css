@@ -95,19 +95,13 @@
   padding: 0;
   list-style: none;
 }
-.allLink {
-  display: block;
-  margin: 4px auto 0;
-  padding: 4px 6px;
-  border: 0;
-  background: none;
-  color: var(--color-text);
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
+/* «Усі тости» (2026-11-13): десктоп — по центру під колонками, телефон — на всю ширину під «Сказати тост». */
+.allDesk {
+  margin: 12px auto 0;
+}
+.allPhone {
+  width: 100%;
+  margin-top: 8px;
 }
 .emptyIcon {
   display: inline-flex;
@@ -394,7 +388,4 @@
   margin-top: 12px;
   font-size: 15px;
 }
-.phoneOpen .allLink {
-  margin-top: 10px;
-  font-size: 13px;
-}
+

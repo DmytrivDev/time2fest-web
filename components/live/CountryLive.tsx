@@ -23,8 +23,8 @@
  * людини (дотик до рядка трансляції, чип поясу, «Подивитися північ ще раз»). Час ланцюжок не змінює.
  *
  * Головне святкування (рішення власника 2026-11-13): поки не почалось — заглушка (час і відлік лише з відомим початком) з
- * кнопкою «Дивитися, що вже йде ↓», якщо в поясі щось іде наживо: до «Трансляцій · Країна» (у країни йде трансляція) чи до
- * «Зараз і далі». Людина сама обрала іншу трансляцію поясу, а головне почалось — «Головне святкування почалось ·
+ * кнопкою «Дивитися, що вже йде», якщо в поясі щось іде наживо: відкриває той самий список, що «Обрати трансляцію ›»
+ * сторінки (трансляції країни й поясу, `useStreamPicker`), вибір — ручний. Людина сама обрала іншу трансляцію поясу, а головне почалось — «Головне святкування почалось ·
  * Перемкнути» в рядку під відео, без автоматичного перемикання.
  */
 import { useTranslations } from 'next-intl';
@@ -63,6 +63,7 @@ import { HANDOVER_AFTER, STAMP_DELAY } from '@/lib/engine/config';
 import { mainLiveLine, mainSourceOf, zoneHasLive } from '@/lib/engine/mainCelebration';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { scrollToBlock } from './scrollToBlock';
+import { useStreamPicker } from './ActionRow';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { eventStatus } from '@/lib/engine/eventStatus';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
@@ -550,7 +551,11 @@ export function CountryLive({ iso }: { iso: string }) {
     () => (mainEvent && minute > 0 ? zoneHasLive(data, mainEvent.midnightMs, minute) : false),
     [data, mainEvent, minute],
   );
-  const watchLive = useCallback(() => scrollToBlock(liveNow ? STREAMS_ID : NOW_NEXT_ID, reduced), [liveNow, reduced]);
+  // «Дивитися, що вже йде» — той самий список, що «Обрати трансляцію ›» сторінки (трансляції країни й поясу; вибір — ручний,
+  // рішення власника 2026-11-13); списку немає — до трансляцій країни чи «Зараз і далі», як раніше.
+  const picker = useStreamPicker({ mode: 'remote', streams, onToggleSchedule: passWindows.requestSchedule });
+  const scrollToLive = useCallback(() => scrollToBlock(liveNow ? STREAMS_ID : NOW_NEXT_ID, reduced), [liveNow, reduced]);
+  const watchLive = streams.rows.length > 0 ? picker.open : scrollToLive;
   const mainSource = mainEvent ? mainSourceOf(data.chainsByEventId.get(mainEvent.id)) : null;
   const playingSel = player?.selection;
   const mainLive =

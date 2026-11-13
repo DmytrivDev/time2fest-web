@@ -42,7 +42,7 @@ export interface CountdownSceneProps {
   variant?: CountdownSceneVariant;
   /** `waiting`: назва трансляції («Париж · салют над Ейфелевою вежею») і її початок, мс (`null` — невідомий). */
   waitingFor?: { title: string; startsAt: Ms | null };
-  /** `waiting`: «Дивитися, що вже йде ↓» — у поясі зараз щось іде наживо (2026-11-13). */
+  /** `waiting`: «Дивитися, що вже йде ›» — у поясі зараз щось іде наживо; відкриває список трансляцій (2026-11-13). */
   onWatchLive?: () => void;
   className?: string;
 }
@@ -55,8 +55,9 @@ export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, v
 /**
  * «Трансляція очікується»: листівка країни, мітка, назва трансляції. Початок відомий і ще попереду — «Почнеться о 00:51 за
  * твоїм часом» і відлік з підписом «до початку 08:24»; невідомий чи вже минув — ні часу, ні числа, лише «Відео ввімкнеться
- * саме, щойно трансляція почнеться» (рішення власника 2026-11-13). `onWatchLive` — кнопка «Дивитися, що вже йде ↓», коли
- * в поясі зараз щось іде наживо: веде до «Зараз і далі» (на заглушці нічого більше — ні карток, ні списку).
+ * саме, щойно трансляція почнеться» (рішення власника 2026-11-13). `onWatchLive` — кнопка «Дивитися, що вже йде ›», коли
+ * в поясі зараз щось іде наживо: відкриває список трансляцій, як «Обрати трансляцію» (на місці чату / шторкою; рішення
+ * власника 2026-11-13) — на самій заглушці нічого більше, ні карток, ні списку.
  */
 export function WaitingScene({
   country,
@@ -132,7 +133,7 @@ export function WaitingScene({
           </p>
         )}
         {onWatchLive && !compact ? (
-          <Button variant="secondary" compact iconRight="arrow-down" data-action="watch-live" onClick={onWatchLive} className="mt-1 @lg:mt-2">
+          <Button variant="secondary" compact iconRight="chevron-right" aria-haspopup="dialog" data-action="watch-live" onClick={onWatchLive} className="mt-1 @lg:mt-2">
             {t('watchLive')}
           </Button>
         ) : null}

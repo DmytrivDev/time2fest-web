@@ -220,17 +220,22 @@ test.describe('US2 · головне святкування країни', () =>
   const TOKYO_MAIN = 'dfVK7ld38Ys';
   const SHINJUKU = 'GLQhbRGv5qU';
 
-  test('за замовчуванням — заглушка з відліком «до початку»; кнопка веде до «Трансляцій · Японія»', async ({ page }) => {
+  test('за замовчуванням — заглушка з відліком «до початку»; кнопка відкриває список трансляцій сторінки', async ({ page, ytStub }) => {
     await gotoAt(page, '2026-12-31T16:46:00+02:00', 1, JP);
     const scene = page.locator('[data-scene="waiting"]');
     await expect(scene).toBeVisible();
     await expect(scene).toContainText('Почнеться о 16:51 за твоїм часом');
     await expect(scene.locator('[data-waiting-left]')).toHaveText(/^до початку 0?5:\d\d$/);
     await expect(page.locator('#player-title')).toContainText('Токіо · відлік на Сібуї');
+    // Той самий список, що «Обрати трансляцію ›» сторінки (рішення 2026-11-13); вибір — ручний.
     await scene.getByRole('button', { name: 'Дивитися, що вже йде' }).click();
-    await expect(page.locator('#country-streams')).toBeFocused();
-    await expect(page.locator('#country-streams')).toBeInViewport();
+    const picker = page.locator('[data-window="O-STREAM-PICKER"]');
+    await expect(picker).toBeVisible();
     await expectAxeClean(page);
+    await picker.locator('button[data-source="src_tokyo_3"]').first().click();
+    await ytStub.waitForPlayer();
+    await expect.poll(() => videoId(ytStub)).toBe(SHINJUKU);
+    await expect(page.locator('#player-title')).toContainText('Токіо · Сіндзюку');
   });
 
   test('обрана вебкамера: головне почалось — «Перемкнути» в рядку під відео; явний вибір головного до початку — «Трансляція очікується»', async ({ page, ytStub }) => {

@@ -277,7 +277,7 @@ test.describe('US1 · головне святкування ефіру', () => {
   const TOKYO_MAIN = 'dfVK7ld38Ys';
   const SHINJUKU = 'GLQhbRGv5qU';
 
-  test('заглушка з часом і відліком «до початку», кнопка «Дивитися, що вже йде» веде до «Зараз і далі»', async ({ page }) => {
+  test('заглушка з часом і відліком «до початку»; «Дивитися, що вже йде» відкриває список трансляцій; «Зараз і далі» — головне першим', async ({ page, ytStub }) => {
     await gotoAt(page, '2026-12-31T16:46:00+02:00', 1);
     const scene = page.locator('[data-scene="waiting"]');
     await expect(scene).toBeVisible();
@@ -289,9 +289,22 @@ test.describe('US1 · головне святкування ефіру', () => {
     await expect(page.locator('#player-title')).toContainText('Токіо · відлік на Сібуї');
     await expect(page.locator('[data-player-host] iframe')).toHaveCount(0);
 
+    // Кнопка відкриває той самий список, що «Обрати трансляцію» (рішення 2026-11-13): десктоп — на місці чату, телефон — шторка.
     await scene.getByRole('button', { name: 'Дивитися, що вже йде' }).click();
-    await expect(page.locator('#now-next')).toBeFocused();
-    await expect(page.locator('#now-next')).toBeInViewport();
+    const picker = page.locator('[data-window="O-STREAM-PICKER"]');
+    await expect(picker).toBeVisible();
+    await expect(picker.locator('button[data-source="src_tokyo_3"]')).toBeVisible();
+    // Десктоп — у колонці чату праворуч від плеєра.
+    if (!isPhone(page)) expect((await picker.boundingBox())!.x).toBeGreaterThan((await page.locator('[data-player-host]').first().boundingBox())!.x + 600);
+    // Вибір — ручний, як з «Обрати трансляцію»: плеєр грає обрану трансляцію.
+    await picker.locator('button[data-source="src_tokyo_3"]').click();
+    await ytStub.waitForPlayer();
+    await expect.poll(async () => (await ytStub.players())[0]?.videoId).toBe(SHINJUKU);
+    await expect(page.locator('#player-title')).toContainText('Токіо · Сіндзюку');
+    // Страховка працює і для вибору зі списку з заглушки: головне почалось — «почалось · Перемкнути».
+    await setTime(page, { at: '2026-12-31T16:51:45+02:00', speed: 1 });
+    await expect(page.locator('[data-main-live]').filter({ visible: true })).toContainText(/Головне святкування\s*почалось/);
+    await page.locator('#now-next').scrollIntoViewIfNeeded();
     // Перша картка — головне святкування ефіру: «В ефірі · очікується» (без «Наживо»); лишається й під «З трансляціями».
     const first = page.locator('#now-next [data-event-card]').first();
     await expect(first).toContainText('Токіо');
