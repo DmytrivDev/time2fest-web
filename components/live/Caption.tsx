@@ -10,6 +10,9 @@
  * Остання хвилина до півночі зі штампом (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header`, 2026-11-12): десктоп — у рядку 1
  * замість «Зараз дивляться…» золота підказка «Будь тут опівночі — отримаєш штамп: Франція»; телефон — у рядку під відео
  * два рядки «Будь тут опівночі —» / «отримаєш штамп: Франція» і відлік праворуч. Опівночі підказка зникає.
+ * Той самий рядок (рішення власника 2026-11-13): людина сама обрала іншу трансляцію поясу, а головне святкування почалось —
+ * «Головне святкування почалось · Перемкнути» (`notice`). Десктоп — у рядку 1 на місці «Зараз дивляться…»; телефон — два
+ * рядки «Головне святкування» / «почалось · Перемкнути» в рядку часу тієї самої висоти, увесь блок — одна кнопка.
  */
 import NextLink from 'next/link';
 import { useState, type ReactNode } from 'react';
@@ -57,6 +60,8 @@ export interface CaptionProps {
   watchers?: number;
   /** Остання хвилина до півночі зі штампом: країна для підказки «Будь тут опівночі — отримаєш штамп: …». */
   stampHint?: string | null;
+  /** «Головне святкування почалось · Перемкнути» (2026-11-13); підказка про штамп старша — сторінка не передає обидва. */
+  notice?: { place: string; onSwitch(): void } | null;
   /** Від 768 px праворуч від таймера (`Desk-Cookies-Wide`: «Показати чат», коли чат сховано). */
   aside?: ReactNode;
   /** `bar` — один рядок над вкладкою «Чат» на телефоні (`Phone-Chat`); `lead` — що стоїть ліворуч (кнопка звуку). */
@@ -150,6 +155,7 @@ export function Caption({
   title: titleProp,
   watchers,
   stampHint = null,
+  notice = null,
   aside,
   variant = 'full',
   lead,
@@ -215,6 +221,8 @@ export function Caption({
 
   // Телефон, вкладка «Чат» (`Phone-Chat`): один рядок 48 px — звук · «Лондон · до півночі 00:22:15» · «Наживо».
   if (variant === 'bar') {
+    // Підказка про штамп чи «Головне святкування почалось» займає місце назви: висота рядка та сама.
+    const hinted = !!stampHint || !!notice;
     return (
       <div data-caption="" data-phase={phase.id} data-caption-variant="bar" className={cn(home.bar, className)}>
         {lead}
@@ -224,22 +232,31 @@ export function Caption({
             <span className={home.barHintLead}>{t('stampHintLead')}</span>{' '}
             <span className={home.barHintTail}>{t('stampHintTail', { country: stampHint })}</span>
           </p>
+        ) : notice ? (
+          // Увесь блок двох рядків — одна кнопка на всю висоту рядка (ціль ≥ 44 px), назва лишається для зчитувача.
+          <button type="button" data-main-live="" onClick={notice.onSwitch} className={cn('t2f-focus t2f-press', home.barHint, home.barNotice)}>
+            <span className={home.barHintLead}>{t('mainLiveLead')}</span>
+            <span className={home.barHintTail}>
+              {t('mainLiveTail')} <span aria-hidden="true">›</span>
+            </span>
+          </button>
         ) : null}
-        <div className={cn(home.barText, stampHint && home.barTextHint)}>
-          <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, stampHint && 'sr-only', 'focus:outline-none')}>
+        <div className={cn(home.barText, hinted && home.barTextHint)}>
+          <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, hinted && 'sr-only', 'focus:outline-none')}>
             {current.country?.flagCode ? (
               <span className={home.titleFlag}>
                 <Flag round code={current.country.flagCode} size="sm" decorative />
               </span>
             ) : null}
-            {current.city?.name.uk ?? title} <span className={home.barDot}>·</span>
+            {/* Місто тієї трансляції, що грає («Гамбург · порт» → «Гамбург»), інакше місто події. */}
+            {(titleProp ? titleProp.split(' · ')[0] : undefined) || current.city?.name.uk || title} <span className={home.barDot}>·</span>
           </h2>
           {timer ? (
             // Цифри не стискаються ніколи: на вузькому рядку першим скорочується підпис «до півночі», потім назва
             // міста (перевірка сайту 2026-11-09, B01). Обгортка `display: contents` — підпис і цифри лишаються одним
             // таймером для тестів і зчитувача, а в рядку стоять окремими елементами.
             <span role="timer" aria-live="off" aria-label={`${timer.label}: ${veiled ? t('timerVeilSpoken') : spoken(timer.ms)}`} data-caption-timer={r1.kind} className={home.barTimerWrap}>
-              <span aria-hidden="true" className={cn(home.barLabel, stampHint && 'sr-only')}>
+              <span aria-hidden="true" className={cn(home.barLabel, hinted && 'sr-only')}>
                 {timer.label}
               </span>
               <span className={home.barClock}>
@@ -259,14 +276,14 @@ export function Caption({
           </p>
         ) : null}
         {/* Планшет-портрет (`Tab-P-New`): «Дивляться люди з 140 країн» праворуч у рядку; на телефоні сховано CSS. */}
-        {watchers && !stampHint ? (
+        {watchers && !hinted ? (
           <span aria-hidden="true" data-bar-watchers="" className={home.barWatchers}>
             <Icon name="globe" size={14} strokeWidth={2} />
             {t('watchersShort', { count: watchers })}
           </span>
         ) : null}
         {/* Підказка займає місце позначки «Наживо» (дошка `Phone-Stamp-Header`, кадр 1). */}
-        {live && ago === null && !stampHint ? (
+        {live && ago === null && !hinted ? (
           <Badge variant="live" still>
             {tBadge('live')}
           </Badge>
@@ -300,6 +317,15 @@ export function Caption({
           <span data-stamp-hint="" className={cn(home.badgeItem, home.deskItem, home.stampHint)}>
             <Icon name="stamp" size={16} strokeWidth={2} />
             {t('stampHint', { country: stampHint })}
+          </span>
+        ) : notice ? (
+          <span data-main-live="" className={cn(home.badgeItem, home.deskItem, home.stampHint)}>
+            <Icon name="broadcast-live" size={16} strokeWidth={2} />
+            {t('mainLive')}
+            <span aria-hidden="true">·</span>
+            <button type="button" onClick={notice.onSwitch} className={cn('t2f-focus t2f-press', home.noticeBtn)}>
+              {t('mainLiveSwitch')}
+            </button>
           </span>
         ) : watchers ? (
           <span className={cn(home.badgeItem, home.deskItem)}>

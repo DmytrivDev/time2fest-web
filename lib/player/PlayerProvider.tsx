@@ -24,6 +24,11 @@ export interface PlayerChainInput {
    * й не позначене недоступним; інакше — звичайний порядок ланцюжка.
    */
   preferredSourceId?: string;
+  /**
+   * Головне святкування за замовчуванням (головна, сторінка країни; 2026-11-13): поки бажане джерело не почалось — і коли
+   * час початку невідомий чи вже минув, — на місці відео заглушка «Трансляція очікується», а не інша трансляція.
+   */
+  waitForPreferred?: boolean;
 }
 
 export interface PlayerState {
@@ -146,7 +151,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       const picked = selectSource({ ...ctx, sources: [preferred] });
       if (picked.kind !== 'countdown-scene') return picked;
       // Обрана трансляція ще не почалась — чекаємо саме на неї (заглушка), а не підміняємо іншою.
-      if (preferred.startsAt !== undefined && Date.parse(preferred.startsAt) > ctx.now) {
+      if (chain.waitForPreferred || (preferred.startsAt !== undefined && Date.parse(preferred.startsAt) > ctx.now)) {
         return { kind: 'waiting', source: preferred, index: preferred.order };
       }
     }
@@ -305,7 +310,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           }
           return;
         }
-        if (prev && prev.eventId === input.eventId && prev.preferredSourceId === input.preferredSourceId && sameSources(prev.sources, input.sources)) return;
+        if (
+          prev &&
+          prev.eventId === input.eventId &&
+          prev.preferredSourceId === input.preferredSourceId &&
+          !!prev.waitForPreferred === !!input.waitForPreferred &&
+          sameSources(prev.sources, input.sources)
+        )
+          return;
         if (!prev || prev.eventId !== input.eventId) {
           setFailed([]);
           setLastSwitch(null);

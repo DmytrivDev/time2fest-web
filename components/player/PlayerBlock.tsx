@@ -17,9 +17,15 @@
  *
  * Дані ефіру — з `useBroadcast()` (`BroadcastController` у макеті); стан відео — з `PlayerProvider`.
  * Без провайдерів (історії) область відео задається пропом `videoArea`.
+ *
+ * Головне святкування (рішення власника 2026-11-13): поки не почалось — заглушка «Трансляція очікується» (час і відлік —
+ * лише коли початок відомий) з кнопкою «Дивитися, що вже йде ↓» (`onWatchLive`), якщо в поясі щось іде наживо. Назва під
+ * плеєром — завжди тієї трансляції, що грає (чи на яку чекає заглушка), з її прапором. Людина сама обрала іншу трансляцію
+ * поясу, а головне почалось — у тому самому рядку, що й підказка про штамп, «Головне святкування почалось · Перемкнути»
+ * (`mainLive`): без нового рядка, висота рядка та сама.
  */
 import { useTranslations } from 'next-intl';
-import { useId, type ReactNode } from 'react';
+import { useEffect, useId, type ReactNode } from 'react';
 import { ActionRow, type CountdownModeControl, type RemoteStreams } from '@/components/live/ActionRow';
 import { Caption, eventTitle } from '@/components/live/Caption';
 import home from '@/components/live/home.module.css';
@@ -29,13 +35,16 @@ import { Link } from '@/components/primitives/Link';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { getData } from '@/lib/data/load';
+import type { ScheduledEvent, StreamSource } from '@/lib/data/types';
 import type { CaptionPhase } from '@/lib/engine/captionPhase';
 import type { AirView } from '@/lib/engine/currentAirEvent';
+import { countryHref } from '@/lib/live/countryHref';
 import type { AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { stampHintActive } from '@/lib/stamp/stampCelebration';
 import { useGuestStore } from '@/stores/guest';
 import { useCoralWindowOpen } from '@/lib/overlay/coral';
+import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { disableSceneSound, enableSceneSound, useSceneSound } from '@/lib/scene/sceneAudio';
 import { CountdownScene } from './CountdownScene';
 import { FacebookConsentCard } from './FacebookConsentCard';
@@ -99,6 +108,10 @@ export interface PlayerBlockProps {
    * стане смуга тостів (`TOAST-STRIP-SLOT`). Поки сторінки нічого не передають.
    */
   belowBar?: ReactNode;
+  /** Заглушка головного святкування: «Дивитися, що вже йде ↓» — у поясі зараз щось іде наживо (2026-11-13). */
+  onWatchLive?: () => void;
+  /** «Головне святкування почалось · Перемкнути» (2026-11-13): місто головного святкування й перемикання на нього. */
+  mainLive?: { place: string; onSwitch(): void } | null;
   className?: string;
 }
 
@@ -106,8 +119,8 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
   kind: VideoAreaKind;
   muted: boolean;
   switched: boolean;
-  /** `waiting`: трансляція, на яку чекаємо (назва й початок). */
-  waiting?: { title: string; startsAt: number };
+  /** `waiting`: трансляція, на яку чекаємо (назва й початок; `null` — початок невідомий). */
+  waiting?: { title: string; startsAt: number | null };
 } {
   const player = useOptionalPlayer();
   if (props.videoArea) return { kind: props.videoArea, muted: player?.muted ?? true, switched: false };
@@ -122,7 +135,7 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
       kind: 'waiting',
       muted: true,
       switched: false,
-      waiting: { title: src?.title.uk ?? '', startsAt: Date.parse(sel.source.startsAt ?? '') || 0 },
+      waiting: { title: src?.title.uk ?? '', startsAt: Date.parse(sel.source.startsAt ?? '') || null },
     };
   }
   return { kind: props.airView === 'expected-scene' ? 'expected-scene' : 'countdown-scene', muted: true, switched: false };
@@ -133,11 +146,13 @@ function VideoFallback({
   current,
   countdownMode = false,
   waiting,
+  onWatchLive,
 }: {
   kind: VideoAreaKind;
   current: AirPlace | null;
   countdownMode?: boolean;
-  waiting?: { title: string; startsAt: number };
+  waiting?: { title: string; startsAt: number | null };
+  onWatchLive?: () => void;
 }) {
   const setConsent = useGuestStore((s) => s.setConsent);
   if (kind === 'video') return null;
@@ -164,10 +179,24 @@ function VideoFallback({
         midnightMs={current.event.midnightMs}
         offsetMinutes={zone?.offsetMinutes ?? 0}
         variant={kind === 'waiting' ? 'waiting' : countdownMode ? 'mode' : kind === 'expected-scene' ? 'expected' : 'no-stream'}
-        {...(kind === 'waiting' && waiting ? { waitingFor: waiting } : {})}
+        {...(kind === 'waiting' && waiting ? { waitingFor: waiting, onWatchLive } : {})}
       />
     </div>
   );
+}
+
+/**
+ * Що справді грає в плеєрі (чи на що чекає заглушка): подія й джерело. Підпис під плеєром описує саме це (2026-11-13:
+ * після вибору іншої трансляції поясу назва лишалась «Париж · Ейфелева вежа»).
+ */
+function usePlaying(): { event: ScheduledEvent; source: StreamSource } | null {
+  const player = useOptionalPlayer();
+  const sel = player?.selection;
+  if (!player?.eventId || !sel || sel.kind === 'countdown-scene') return null;
+  const data = getData();
+  const event = data.eventsById.get(player.eventId);
+  const source = data.chainsByEventId.get(player.eventId)?.sources.find((s) => s.id === sel.source.id);
+  return event && source ? { event, source } : null;
 }
 
 /** Звук у рядку `Phone-Chat`: ціль 44, видимий квадрат 36, коралова, поки звук вимкнено. */
@@ -217,6 +246,8 @@ export function PlayerBlock({
   bar = false,
   dock = false,
   belowBar,
+  onWatchLive,
+  mainLive,
   className,
 }: PlayerBlockProps) {
   const t = useTranslations('player');
@@ -229,9 +260,22 @@ export function PlayerBlock({
   const chain = current ? getData().chainsByEventId.get(current.event.id) : undefined;
   const verified = area.kind === 'video' && !!chain?.sources.some((s) => s.verified);
 
+  // Ефір (головна): підпис — тієї трансляції, що грає (її місто, прапор і назва), якщо вона тієї самої півночі.
+  const playing = usePlaying();
+  const playingHere = mode === 'broadcast' && !!playing && !!current && playing.event.midnightMs === current.event.midnightMs;
+  const shown = playingHere && playing.event.id !== current?.event.id ? playing.event : null;
+  const shownCountry = shown ? getData().countriesByIso.get(shown.countryIso) : undefined;
   const place = current
-    ? { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }
+    ? shown
+      ? {
+          midnightMs: shown.midnightMs,
+          city: getData().citiesById.get(shown.cityId),
+          country: shownCountry,
+          href: shownCountry ? countryHref(shownCountry, { eventId: shown.id }) : null,
+        }
+      : { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }
     : null;
+  const captionTitle = title ?? (playingHere ? playing.source.title.uk : undefined);
   const nextPlace = next ? { midnightMs: next.event.midnightMs, city: next.city, country: next.country, href: next.href } : null;
   // Без відео (сцена відліку) кнопка звуку керує звуком сцени: куранти й салют опівночі (власник 2026-11-11).
   const sceneSoundOn = useSceneSound();
@@ -245,10 +289,20 @@ export function PlayerBlock({
   const r1 = phase?.row1Right;
   const hintCountry =
     stampHint && current?.country && r1?.kind === 'countdown' && stampHintActive(r1.ms, stamped) ? current.country.name.uk : null;
+  // «Головне святкування почалось · Перемкнути»: в останні 60 с до півночі рядок належить підказці про штамп.
+  const notice = mainLive && !hintCountry ? mainLive : null;
+  const announce = useAnnounce();
+  const noticePlace = notice ? notice.place : null;
+  useEffect(() => {
+    if (noticePlace !== null) announce(t('mainLiveAnnounce', { place: noticePlace }));
+  }, [noticePlace, announce, t]);
 
   return (
     <>
-      <PlayerSlot id="main" fallback={<VideoFallback kind={area.kind} current={current} countdownMode={!!countdownMode?.countdown} waiting={area.waiting} />} />
+      <PlayerSlot
+        id="main"
+        fallback={<VideoFallback kind={area.kind} current={current} countdownMode={!!countdownMode?.countdown} waiting={area.waiting} onWatchLive={onWatchLive} />}
+      />
       {dock ? (
         <section aria-label={t('barLabel')} data-player-bar="" data-dock-above="" className={home.stickyBar}>
           {place && phase ? (
@@ -263,7 +317,9 @@ export function PlayerBlock({
               lead={barSound}
               watchers={watchers}
               stampHint={hintCountry}
+              notice={notice}
               srRow3={false}
+              {...(captionTitle !== undefined ? { title: captionTitle } : {})}
             />
           ) : (
             <div className={home.bar} aria-hidden="true">
@@ -285,7 +341,7 @@ export function PlayerBlock({
           <>
             <Caption
               phase={phase}
-              current={{ midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }}
+              current={place ?? { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }}
               next={next ? { midnightMs: next.event.midnightMs, city: next.city, country: next.country, href: next.href } : null}
               live={area.kind === 'video'}
               verified={verified}
@@ -294,12 +350,13 @@ export function PlayerBlock({
               mode={mode}
               watchers={watchers}
               stampHint={hintCountry}
+              notice={notice}
               aside={captionAside}
               variant={dock ? 'title' : bar ? 'bar' : 'full'}
               lead={
                 bar ? <BarSound {...sound} /> : null
               }
-              {...(title !== undefined ? { title } : {})}
+              {...(captionTitle !== undefined ? { title: captionTitle } : {})}
             />
             {bar ? null : (
             <ActionRow

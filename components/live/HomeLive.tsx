@@ -17,9 +17,14 @@
  * для штампа (`useStampGrant`), запускає імітатор чату й відкриває вікна моменту (`useMomentWindows`).
  * Чат сховано (FR-053): десктоп — колонки немає, пілюля «Показати чат N» в рядку назви поруч із таймером; на телефоні
  * «сховати» = згорнути вікно.
+ *
+ * Головне святкування (рішення власника 2026-11-13): поки воно не почалось — заглушка з кнопкою «Дивитися, що вже йде ↓»
+ * (до «Зараз і далі»), якщо в поясі щось іде наживо; у «Зараз і далі» його картка перша («Очікується»), дотик до неї
+ * повертає плеєр до ефіру. Людина сама обрала іншу трансляцію поясу, а головне почалось — «Головне святкування почалось ·
+ * Перемкнути» в рядку під відео (без автоматичного перемикання).
  */
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
@@ -40,13 +45,17 @@ import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
+import { scrollToBlock } from '@/components/live/scrollToBlock';
 import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
 import { formatClock, viewerTimeZone, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems, scheduleNow } from '@/lib/live/homeData';
+import { mainLiveLine, mainSourceOf, zoneHasLive } from '@/lib/engine/mainCelebration';
+import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { useBroadcast } from '@/lib/player/BroadcastController';
+import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { currentViewers } from '@/lib/presence/viewers';
 import { useStampGrant } from '@/lib/presence/useStampGrant';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -55,6 +64,8 @@ import home from './home.module.css';
 
 const CHAT_ROOMS = ['world'] as const;
 const PLAYER_TITLE_ID = 'player-title';
+/** «Зараз і далі» — ціль кнопки «Дивитися, що вже йде ↓» на заглушці. */
+const NOW_NEXT_ID = 'now-next';
 
 export { useChatLookup };
 
@@ -81,7 +92,7 @@ function useNowNextData(now: Ms) {
   const schedule = useGuestStore((s) => s.schedule);
   const minute = Math.floor(now / 60_000) * 60_000;
   const data = getData();
-  const items = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true }), [data, minute, schedule]);
+  const items = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true, mainCards: true }), [data, minute, schedule]);
   const progress = useMemo(() => ({ ...festProgress(data, minute), ...progressEdges(data) }), [data, minute]);
   const zoneLabel = viewerZoneLabel();
   return { items, progress, zoneLabel };
@@ -98,7 +109,7 @@ export function HomeLive() {
   const t = useTranslations('a11y');
   const tPlayer = useTranslations('player');
   const broadcast = useBroadcast();
-  const { ready, phase, current, next, air, stayHere } = broadcast;
+  const { ready, phase, current, next, air, stayHere, watching, watch } = broadcast;
   const now = useNow();
   const chatColumn = useChatColumn();
   // Планшет-портрет (`Tab-P-New`, 2026-11-10): структура телефона, «Зараз і далі» — сіткою карток.
@@ -122,6 +133,31 @@ export function HomeLive() {
   const getPass = useGetPass();
 
   const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
+
+  // Головне святкування ефіру (2026-11-13): кнопка на заглушці й рядок «почалось · Перемкнути».
+  const player = useOptionalPlayer();
+  const reduced = useReducedMotion();
+  const data = getData();
+  const minute = Math.floor(now / 60_000) * 60_000;
+  const airMidnight = current?.event.midnightMs ?? null;
+  const liveInZone = useMemo(() => (airMidnight !== null && minute > 0 ? zoneHasLive(data, airMidnight, minute) : false), [data, airMidnight, minute]);
+  const watchLive = useCallback(() => scrollToBlock(NOW_NEXT_ID, reduced), [reduced]);
+  const mainSource = eventId ? mainSourceOf(data.chainsByEventId.get(eventId)) : null;
+  const sel = player?.selection;
+  const playingEvent = player?.eventId ? data.eventsById.get(player.eventId) : undefined;
+  const mainLive =
+    current && mainSource && air?.handoverAt != null
+      ? mainLiveLine({
+          now,
+          main: { eventId: current.event.id, source: mainSource },
+          midnightMs: current.event.midnightMs,
+          playing: playingEvent && sel && sel.kind !== 'countdown-scene' ? { eventId: playingEvent.id, sourceId: sel.source.id, midnightMs: playingEvent.midnightMs } : null,
+          manual: !!watching,
+          stampHint: false, // рядок підказки про штамп віддає `PlayerBlock` (останні 60 с до півночі)
+          handoverAt: air.handoverAt,
+        })
+      : false;
+  const backToAir = useCallback(() => watch(null), [watch]);
   const city = current?.city?.name.uk;
   const { items, progress, zoneLabel } = useNowNextData(now);
   const { mapModel, viewers } = useMapData();
@@ -158,6 +194,12 @@ export function HomeLive() {
       onScheduleLocked={passWindows.openPassInfoBoard}
       onGetPass={() => getPass()}
       airEventId={eventId}
+      id={NOW_NEXT_ID}
+      onSelectAir={() => {
+        // Картка головного святкування: плеєр — знову ефір (заглушка чи відео), сторінка — вгору до плеєра.
+        watch(null);
+        window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+      }}
     />
   );
   const showChatButton = chatColumn && vis.hidden ? (
@@ -194,6 +236,8 @@ export function HomeLive() {
         dock={!chatColumn}
         // Смуга тостів (телефон) — під липким рядком часу (дошка `Phone-Toast-New`, 2026-11-12).
         belowBar={<ToastStrip variant="phone" />}
+        onWatchLive={liveInZone ? watchLive : undefined}
+        mainLive={mainLive && city ? { place: city, onSwitch: backToAir } : null}
       />
 
       {chatColumn ? (

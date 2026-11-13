@@ -16,7 +16,14 @@ export const isPastStatus = (s: EventStatus) => s === 'ended' || s === 'recordin
 /** Фільтр «Лише з трансляціями» = «Наживо» + «Трансляція очікується» (одна логіка скрізь). */
 export const hasStreamNow = (item: Pick<EventCardData, 'stream'>) => item.stream === 'live' || item.stream === 'expected';
 
-/** За часом півночі; події з графіка — першими серед подій того самого часу. */
-export function sortForStrip<T extends Pick<EventCardData, 'midnightMs' | 'inSchedule'>>(items: readonly T[]): T[] {
-  return [...items].sort((a, b) => a.midnightMs - b.midnightMs || Number(!!b.inSchedule) - Number(!!a.inSchedule));
+/**
+ * За часом півночі; серед подій того самого часу першою — подія ефіру (головне святкування, 2026-11-13), далі події з графіка.
+ */
+export function sortForStrip<T extends Pick<EventCardData, 'id' | 'midnightMs' | 'inSchedule'>>(items: readonly T[], firstId?: string | null): T[] {
+  return [...items].sort(
+    (a, b) =>
+      a.midnightMs - b.midnightMs ||
+      Number(!!firstId && b.id === firstId) - Number(!!firstId && a.id === firstId) ||
+      Number(!!b.inSchedule) - Number(!!a.inSchedule),
+  );
 }

@@ -194,9 +194,10 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
       setChain(null);
       return;
     }
-    // Головне святкування (`kind: 'main'`), якщо є: ще не почалось — заглушка «Очікуйте трансляцію» (2026-11-11).
+    // Головне святкування (`kind: 'main'`), якщо є: ще не почалось — заглушка «Очікуйте трансляцію» (2026-11-11), і коли
+    // час початку невідомий чи вже минув (2026-11-13), а не інша трансляція.
     const main = chain.sources.find((x) => x.kind === 'main');
-    setChain(main ? { eventId, sources: chain.sources, preferredSourceId: main.id } : { eventId, sources: chain.sources });
+    setChain(main ? { eventId, sources: chain.sources, preferredSourceId: main.id, waitForPreferred: true } : { eventId, sources: chain.sources });
   }, [controlling, known, suspended, eventId, chain, watchKey, setChain]);
 
   const stayed = useRef<string | null>(null);

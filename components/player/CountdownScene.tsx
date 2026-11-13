@@ -6,7 +6,8 @@
  * Ілюстрація-листівка країни, назва, «Північ о 04:00 за вашим часом», місцевий час, 3 традиції (від ширини ≥ 32rem).
  * Варіант `expected`: «Трансляція почнеться сама, щойно з’явиться». Варіант `mode` — людина сама обрала режим «Відлік» на
  * сторінці країни (точна північ без затримки відео; рішення 2026-11-05). Варіант `waiting` — людина обрала трансляцію, що ще не
- * почалась (2026-11-11): «Очікуйте трансляцію» з її назвою й відліком до початку; відео стартує саме.
+ * почалась (2026-11-11), і головне святкування за замовчуванням, поки воно не почалось (2026-11-13): «Очікуйте трансляцію» з її
+ * назвою; час і відлік «до початку» — лише коли початок відомий; відео стартує саме.
  * Власник 2026-11-11: без трансляції відлік до півночі — і на самій сцені (великий), останні 12 с — куранти, опівночі — салют,
  * конфеті й «З Новим роком!»; сцену можна розгорнути на весь екран (`SceneMidnight`).
  */
@@ -16,6 +17,7 @@ import { createPortal } from 'react-dom';
 import { cn } from '@/components/primitives/cn';
 import home from '@/components/live/home.module.css';
 import { useTabletLandscape, useTabletPortrait } from '@/components/shell/OverlayManager';
+import { Button } from '@/components/primitives/Button';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { PostcardArt } from '@/components/windows/StampArt';
@@ -38,39 +40,51 @@ export interface CountdownSceneProps {
   offsetMinutes: number;
   /** `no-stream` — трансляції немає зовсім · `expected` — очікується, почнеться сама · `mode` — обрано режим «Відлік». */
   variant?: CountdownSceneVariant;
-  /** `waiting`: назва трансляції («Париж · салют над Ейфелевою вежею») і її початок, мс. */
-  waitingFor?: { title: string; startsAt: Ms };
+  /** `waiting`: назва трансляції («Париж · салют над Ейфелевою вежею») і її початок, мс (`null` — невідомий). */
+  waitingFor?: { title: string; startsAt: Ms | null };
+  /** `waiting`: «Дивитися, що вже йде ↓» — у поясі зараз щось іде наживо (2026-11-13). */
+  onWatchLive?: () => void;
   className?: string;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, className }: CountdownSceneProps) {
-  if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} className={className} />;
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className }: CountdownSceneProps) {
+  if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
   return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} />;
 }
 
-/** «Очікуйте трансляцію»: листівка країни, мітка «Очікується», назва трансляції, початок і відлік до нього. */
+/**
+ * «Трансляція очікується»: листівка країни, мітка, назва трансляції. Початок відомий і ще попереду — «Почнеться о 00:51 за
+ * твоїм часом» і відлік з підписом «до початку 08:24»; невідомий чи вже минув — ні часу, ні числа, лише «Відео ввімкнеться
+ * саме, щойно трансляція почнеться» (рішення власника 2026-11-13). `onWatchLive` — кнопка «Дивитися, що вже йде ↓», коли
+ * в поясі зараз щось іде наживо: веде до «Зараз і далі» (на заглушці нічого більше — ні карток, ні списку).
+ */
 export function WaitingScene({
   country,
   waitingFor,
   compact = false,
+  onWatchLive,
   className,
 }: {
   country: Pick<Country, 'name' | 'flagCode' | 'illustrationId'>;
-  waitingFor: { title: string; startsAt: Ms };
+  /** `startsAt`: мс epoch UTC; `null` чи 0 — початок невідомий. */
+  waitingFor: { title: string; startsAt: Ms | null };
   /** Мале вікно кімнати: без підзаголовка, дрібніший кегль. */
   compact?: boolean;
+  onWatchLive?: () => void;
   className?: string;
 }) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   const now = useNow();
-  const left = Math.max(0, Math.ceil((waitingFor.startsAt - now) / 1_000));
-  const mm = Math.floor(left / 60);
-  const ss = String(left % 60).padStart(2, '0');
+  // До гідратації «зараз» невідоме (0): відомий початок показуємо, відлік — «–:––».
+  const startsAt = waitingFor.startsAt && (now === 0 || waitingFor.startsAt > now) ? waitingFor.startsAt : null;
+  const left = startsAt ? Math.max(0, Math.ceil((startsAt - now) / 1_000)) : 0;
+  const leftText = now > 0 ? `${String(Math.floor(left / 60)).padStart(2, '0')}:${String(left % 60).padStart(2, '0')}` : '–:––';
   return (
     <section
       aria-labelledby={titleId}
       data-scene="waiting"
+      data-starts={startsAt ? 'known' : 'unknown'}
       className={cn('@container relative size-full min-h-player-min-height overflow-hidden bg-surface-raised', className)}
     >
       <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" />
@@ -87,20 +101,41 @@ export function WaitingScene({
           </span>
           <span className="line-clamp-2">{waitingFor.title}</span>
         </h2>
-        <p className="text-caption text-text @lg:text-body">
-          {t.rich('waitingStarts', {
-            time: (chunks) => (
-              <time dateTime={new Date(waitingFor.startsAt).toISOString()} className="font-bold tabular-nums text-highlight">
-                {chunks}
-              </time>
-            ),
-            value: formatClock(waitingFor.startsAt),
-          })}
-        </p>
-        <p className="text-body-strong tabular-nums text-text @lg:text-headline-lg" aria-hidden="true" data-waiting-left="">
-          {now > 0 ? `${mm}:${ss}` : '–:––'}
-        </p>
-        {compact ? null : <p className="hidden text-caption text-text-secondary @lg:block">{t('waitingNote')}</p>}
+        {startsAt ? (
+          <>
+            {compact ? null : (
+              <p className="text-caption text-text @lg:text-body">
+                {t.rich('waitingStarts', {
+                  time: (chunks) => (
+                    <time dateTime={new Date(startsAt).toISOString()} className="font-bold tabular-nums text-highlight">
+                      {chunks}
+                    </time>
+                  ),
+                  value: formatClock(startsAt),
+                })}
+              </p>
+            )}
+            {/* Відлік — завжди з підписом «до початку» (2026-11-13: голого числа без підпису немає). */}
+            <p className={cn('text-caption text-text-secondary', !compact && '@lg:text-body')} data-waiting-left="">
+              {t.rich('waitingLeft', {
+                left: leftText,
+                b: (chunks) => (
+                  <b className={cn('font-bold tabular-nums text-text', compact ? 'text-body-strong' : 'text-body-strong @lg:text-headline-sm')}>{chunks}</b>
+                ),
+              })}
+            </p>
+            {compact ? null : <p className="hidden text-caption text-text-secondary @lg:block">{t('waitingNote')}</p>}
+          </>
+        ) : (
+          <p className="text-caption text-text @lg:text-body" data-waiting-unknown="">
+            {compact ? t('waitingAutoShort') : t('waitingNote')}
+          </p>
+        )}
+        {onWatchLive && !compact ? (
+          <Button variant="secondary" compact iconRight="arrow-down" data-action="watch-live" onClick={onWatchLive} className="mt-1 @lg:mt-2">
+            {t('watchLive')}
+          </Button>
+        ) : null}
       </div>
     </section>
   );

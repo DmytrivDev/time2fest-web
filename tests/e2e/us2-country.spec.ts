@@ -211,6 +211,54 @@ test.describe('US2 · сторінка країни', () => {
 });
 
 // ── Пояс і подія з посилання (власник 2026-11-10: «щоб перекидало на те, на що клікнув») ──
+/**
+ * Головне святкування (рішення власника 2026-11-13). Тестові дані: Японія, «Токіо · відлік на Сібуї» очікується з 16:51:40
+ * за Києвом (північ 17:00), вебкамери Токіо вже йдуть.
+ */
+test.describe('US2 · головне святкування країни', () => {
+  const JP = '/country/yaponiia/';
+  const TOKYO_MAIN = 'dfVK7ld38Ys';
+  const SHINJUKU = 'GLQhbRGv5qU';
+
+  test('за замовчуванням — заглушка з відліком «до початку»; кнопка веде до «Трансляцій · Японія»', async ({ page }) => {
+    await gotoAt(page, '2026-12-31T16:46:00+02:00', 1, JP);
+    const scene = page.locator('[data-scene="waiting"]');
+    await expect(scene).toBeVisible();
+    await expect(scene).toContainText('Почнеться о 16:51 за твоїм часом');
+    await expect(scene.locator('[data-waiting-left]')).toHaveText(/^до початку 0?5:\d\d$/);
+    await expect(page.locator('#player-title')).toContainText('Токіо · відлік на Сібуї');
+    await scene.getByRole('button', { name: 'Дивитися, що вже йде' }).click();
+    await expect(page.locator('#country-streams')).toBeFocused();
+    await expect(page.locator('#country-streams')).toBeInViewport();
+    await expectAxeClean(page);
+  });
+
+  test('обрана вебкамера: головне почалось — «Перемкнути» в рядку під відео; явний вибір головного до початку — «Трансляція очікується»', async ({ page, ytStub }) => {
+    await gotoAt(page, '2026-12-31T16:51:00+02:00', 1, JP);
+    await expect(page.locator('[data-scene="waiting"]')).toBeVisible();
+    await streamRow(page, 'src_tokyo_3').getByRole('button', { name: /Сіндзюку/ }).first().click();
+    await ytStub.waitForPlayer();
+    await expect.poll(() => videoId(ytStub)).toBe(SHINJUKU);
+    await expect(page.locator('#player-title')).toContainText('Токіо · Сіндзюку');
+
+    // Явно обране головне, що ще не почалось, — та сама заглушка «Трансляція очікується».
+    await streamRow(page, 'src_tokyo_1').getByRole('button', { name: /відлік на Сібуї/ }).first().click();
+    await expect(page.locator('[data-scene="waiting"]')).toBeVisible();
+    await streamRow(page, 'src_tokyo_3').getByRole('button', { name: /Сіндзюку/ }).first().click();
+    await expect.poll(() => videoId(ytStub)).toBe(SHINJUKU);
+
+    await setTime(page, { at: '2026-12-31T16:51:45+02:00', speed: 1 });
+    const line = page.locator('[data-main-live]').filter({ visible: true });
+    await expect(line).toHaveCount(1);
+    expect(await videoId(ytStub)).toBe(SHINJUKU);
+    await (isPhone(page) ? line : line.getByRole('button', { name: 'Перемкнути' })).click();
+    await expect.poll(() => videoId(ytStub)).toBe(TOKYO_MAIN);
+    await expect(page.locator('[data-main-live]')).toHaveCount(0);
+    await expect(page.locator('#player-title')).toContainText('Токіо · відлік на Сібуї');
+    expect((await ytStub.counters()).created).toBe(1);
+  });
+});
+
 test.describe('сторінка країни відкриває пояс і місто, на які клікнули', () => {
   /** Вибраний пояс у шапці: десктоп — чип, телефон — кнопка «місто · UTC» над відео. */
   const selectedZone = (page: Page) =>

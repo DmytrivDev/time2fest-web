@@ -576,6 +576,34 @@
 .barText.barTextHint {
   flex: none;
 }
+/* «Головне святкування / почалось · Перемкнути» (2026-11-13): ті самі два рядки, увесь блок — кнопка на всю висоту рядка. */
+.barNotice {
+  align-self: stretch;
+  justify-content: center;
+  min-height: var(--spacing-touch-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  text-align: start;
+  cursor: pointer;
+}
+/* Десктоп: «Перемкнути» в рядку 1 — ціль 44 px за рахунок від’ємних полів, висота рядка та сама. */
+.noticeBtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--spacing-touch-min);
+  margin: -12px 0;
+  padding: 0 var(--spacing-1);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
 .barDigits.barDigitsHint {
   font-size: 21px;
   font-weight: 800;

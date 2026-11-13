@@ -97,6 +97,7 @@ export interface StreamSource {
   title: { uk: string };
   order: number;
   status: StreamStatus;
+  /** Початок, якщо відомий. Немає — початок невідомий (2026-11-13): `expected` чекає, доки дані не скажуть `live`. */
   startsAt?: ISO;
   embeddable: boolean;
   lastChecked: ISO;

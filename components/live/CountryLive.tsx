@@ -21,6 +21,11 @@
  * Плеєр: сторінка сама НЕ переходить за ефіром (FR-024). Ланцюжок задається лише двічі: один раз після відкриття
  * (якщо вже грає подія цієї країни — після «Лишитися тут ›» — нічого не чіпаємо, відео не перезапускається) і на дію
  * людини (дотик до рядка трансляції, чип поясу, «Подивитися північ ще раз»). Час ланцюжок не змінює.
+ *
+ * Головне святкування (рішення власника 2026-11-13): поки не почалось — заглушка (час і відлік лише з відомим початком) з
+ * кнопкою «Дивитися, що вже йде ↓», якщо в поясі щось іде наживо: до «Трансляцій · Країна» (у країни йде трансляція) чи до
+ * «Зараз і далі». Людина сама обрала іншу трансляцію поясу, а головне почалось — «Головне святкування почалось ·
+ * Перемкнути» в рядку під відео, без автоматичного перемикання.
  */
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -54,7 +59,10 @@ import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
 import { captionPhase } from '@/lib/engine/captionPhase';
-import { STAMP_DELAY } from '@/lib/engine/config';
+import { HANDOVER_AFTER, STAMP_DELAY } from '@/lib/engine/config';
+import { mainLiveLine, mainSourceOf, zoneHasLive } from '@/lib/engine/mainCelebration';
+import { useReducedMotion } from '@/lib/a11y/reducedMotion';
+import { scrollToBlock } from './scrollToBlock';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { eventStatus } from '@/lib/engine/eventStatus';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
@@ -88,6 +96,7 @@ import styles from './live.module.css';
 
 const PLAYER_TITLE_ID = 'player-title';
 const STREAMS_ID = 'country-streams';
+const NOW_NEXT_ID = 'now-next';
 
 function placeOf(data: Dataset, event: ScheduledEvent | undefined | null): AirPlace | null {
   if (!event) return null;
@@ -102,12 +111,15 @@ function placeOf(data: Dataset, event: ScheduledEvent | undefined | null): AirPl
 
 /**
  * Ланцюжок події для плеєра. Без обраної людиною трансляції — головне святкування (`kind: 'main'`), якщо воно є: ще не
- * почалось — на місці відео заглушка «Очікуйте трансляцію» (правка власника 2026-11-11), а не перша-ліпша вебкамера.
+ * почалось — на місці відео заглушка «Очікуйте трансляцію» (правка власника 2026-11-11), а не перша-ліпша вебкамера; і коли
+ * час початку невідомий чи вже минув (2026-11-13). Обрана людиною трансляція, що «очікується» без часу початку, — теж заглушка.
  */
 export function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
   const sources = data.chainsByEventId.get(eventId)?.sources ?? [];
   const preferred = preferredSourceId ?? sources.find((s) => s.kind === 'main')?.id;
-  return preferred ? { eventId, sources, preferredSourceId: preferred } : { eventId, sources };
+  if (!preferred) return { eventId, sources };
+  const wait = !preferredSourceId || sources.find((s) => s.id === preferred)?.status === 'expected';
+  return wait ? { eventId, sources, preferredSourceId: preferred, waitForPreferred: true } : { eventId, sources, preferredSourceId: preferred };
 }
 
 /** Угору до плеєра (вибір трансляції в списку під ним). */
@@ -211,6 +223,8 @@ export function CountryLive({ iso }: { iso: string }) {
 
   // Подія, яку людина сама обрала в «Трансляціях у цьому поясі» (інша країна з тією самою північчю).
   const [pickedEventId, setPickedEventId] = useState<string | null>(null);
+  // Людина сама обрала трансляцію (дотик до трансляції, `?s=` в адресі) — для «Головне святкування почалось · Перемкнути».
+  const [manual, setManual] = useState(false);
   const playing = player?.eventId ? data.eventsById.get(player.eventId) : undefined;
   const playingOurs = !!playing && (playing.countryIso === iso || playing.id === pickedEventId);
 
@@ -268,6 +282,7 @@ export function CountryLive({ iso }: { iso: string }) {
     setCountdown(false);
     setZoneId(focus.zoneId);
     setPickedEventId(focus.eventId && focus.eventId !== main?.id ? focus.eventId : null);
+    setManual(!!focus.sourceId);
     if (target && (player?.eventId !== target || focus.sourceId)) actions.setChain(chainInput(data, target, focus.sourceId ?? undefined));
     // Лише на зміну адреси (і перший раз, коли час відомий).
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -340,6 +355,7 @@ export function CountryLive({ iso }: { iso: string }) {
       }
       setCountdown(false);
       setPickedEventId(row.eventId);
+      setManual(true);
       actions?.setChain(chainInput(data, row.eventId, row.id));
       scrollToPlayer();
     },
@@ -349,6 +365,7 @@ export function CountryLive({ iso }: { iso: string }) {
     (id: string) => {
       setCountdown(false);
       setPickedEventId(null);
+      setManual(false);
       setZoneId(id);
       const ev = countryMainEvent(data, iso, id);
       if (ev) actions?.setChain(chainInput(data, ev.id));
@@ -359,6 +376,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const setMode = useCallback(
     (on: boolean) => {
       setCountdown(on);
+      setManual(false);
       if (!mainEvent) return;
       actions?.setChain(
         on ? { eventId: mainEvent.id, sources: [] } : chainInput(data, mainEvent.id),
@@ -430,7 +448,7 @@ export function CountryLive({ iso }: { iso: string }) {
 
   const schedule = useGuestStore((s) => s.schedule);
   // «Зараз і далі» — і до півночі, і після (правка власника 2026-11-05: на Азорських островах його не було).
-  const nowNext = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true }), [data, minute, schedule]);
+  const nowNext = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true, mainCards: true }), [data, minute, schedule]);
 
   // «Ще о … · інші країни поясу»: трансляції сусідів і країни без трансляції (обкладинка з «Відлік»), фільтр як у
   // «Зараз і далі» (правка власника 2026-11-05).
@@ -525,6 +543,35 @@ export function CountryLive({ iso }: { iso: string }) {
   const currentRow = countdown ? null : (pickerRows.find((r) => r.id === currentStreamId) ?? null);
   const countdownMode = noStreams ? undefined : { countdown, onChange: setMode };
   const time = mainEvent ? formatClock(mainEvent.midnightMs) : '';
+
+  // Головне святкування поясу (2026-11-13): кнопка «Дивитися, що вже йде ↓» на заглушці й рядок «почалось · Перемкнути».
+  const reduced = useReducedMotion();
+  const liveInZone = useMemo(
+    () => (mainEvent && minute > 0 ? zoneHasLive(data, mainEvent.midnightMs, minute) : false),
+    [data, mainEvent, minute],
+  );
+  const watchLive = useCallback(() => scrollToBlock(liveNow ? STREAMS_ID : NOW_NEXT_ID, reduced), [liveNow, reduced]);
+  const mainSource = mainEvent ? mainSourceOf(data.chainsByEventId.get(mainEvent.id)) : null;
+  const playingSel = player?.selection;
+  const mainLive =
+    known && mainEvent && mainSource && playing && playingSel && playingSel.kind !== 'countdown-scene'
+      ? mainLiveLine({
+          now,
+          main: { eventId: mainEvent.id, source: mainSource },
+          midnightMs: mainEvent.midnightMs,
+          playing: { eventId: playing.id, sourceId: playingSel.source.id, midnightMs: playing.midnightMs },
+          manual: manual && !countdown,
+          stampHint: false, // рядок підказки про штамп віддає `PlayerBlock` (останні 60 с до півночі)
+          handoverAt: mainEvent.midnightMs + HANDOVER_AFTER,
+        })
+      : false;
+  const switchToMain = useCallback(() => {
+    if (!mainEvent) return;
+    setManual(false);
+    setPickedEventId(null);
+    actions?.setChain(chainInput(data, mainEvent.id));
+  }, [actions, data, mainEvent]);
+  const mainCity = mainEvent ? (data.citiesById.get(mainEvent.cityId)?.name.uk ?? country.name.uk) : '';
   const zoneCountries = useMemo(
     () => (zoneId ? data.countries.filter((c) => c.zoneIds.includes(zoneId)).length : 0),
     [data, zoneId],
@@ -586,6 +633,7 @@ export function CountryLive({ iso }: { iso: string }) {
           scheduleLocked={!hasPass}
           onScheduleLocked={passWindows.openPassInfoBoard}
           onGetPass={() => getPass()}
+          id={NOW_NEXT_ID}
           className={styles.pad}
         />
       ) : null}
@@ -657,6 +705,8 @@ export function CountryLive({ iso }: { iso: string }) {
         dock={!chatColumn}
         // Смуга тостів (телефон) — під липким рядком часу, та сама, що на головній (дошка `Phone-Toast-New`, 2026-11-12).
         belowBar={<ToastStrip variant="phone" />}
+        onWatchLive={liveInZone ? watchLive : undefined}
+        mainLive={mainLive ? { place: mainCity, onSwitch: switchToMain } : null}
       />
 
       {chatColumn ? (

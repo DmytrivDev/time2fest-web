@@ -247,18 +247,19 @@
           "platform": "youtube",
           "videoId": "dfVK7ld38Ys",
           "url": "https://www.youtube.com/watch?v=dfVK7ld38Ys",
-          "kind": "webcam",
+          "kind": "main",
           "title": {
-            "uk": "Токіо · Перехрестя Сібуя"
+            "uk": "Токіо · відлік на Сібуї"
           },
           "order": 0,
-          "status": "live",
+          "status": "expected",
+          "startsAt": "2026-12-31T14:51:40Z",
           "embeddable": true,
-          "isLive": true,
+          "isLive": false,
           "lastChecked": "2026-10-26T10:31:09Z",
           "verified": false,
           "test": true,
-          "testNote": "цілодобова вебкамера, не джерело справжньої ночі",
+          "testNote": "головне святкування для e2e (2026-11-13): очікується з 14:51:40Z, до того в поясі йдуть запасні вебкамери",
           "alwaysOn": true
         },
         {

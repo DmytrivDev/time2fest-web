@@ -436,6 +436,11 @@
     "stampHintTail": "отримаєш штамп: {country}",
     "watchMidnightAgain": "Подивитися північ ще раз",
     "switchedSource": "Перемкнули на іншу трансляцію з цього місця",
+    "mainLive": "Головне святкування почалось",
+    "mainLiveLead": "Головне святкування",
+    "mainLiveTail": "почалось · Перемкнути",
+    "mainLiveSwitch": "Перемкнути",
+    "mainLiveAnnounce": "{place}: головне святкування почалось. Перемкнути можна в рядку під відео",
     "sourceUpdated": "Трансляцію оновлено",
     "autoSwitchPrompt": "{place}: північ за 5 хв — перемкнути?",
     "switchNow": "Перемкнути",
@@ -467,7 +472,10 @@
       "howTo": "Як святкують",
       "waitingBadge": "Трансляція очікується",
       "waitingLead": "Очікуйте трансляцію",
-      "waitingStarts": "Почнеться о <time>{value}</time> за вашим часом",
+      "waitingStarts": "Почнеться о <time>{value}</time> за твоїм часом",
+      "waitingLeft": "до початку <b>{left}</b>",
+      "waitingAutoShort": "Відео ввімкнеться саме",
+      "watchLive": "Дивитися, що вже йде",
       "waitingNote": "Відео ввімкнеться саме, щойно трансляція почнеться",
       "countdownLabel": "До півночі",
       "finalLead": "Новий рік за",
@@ -1071,6 +1079,7 @@
   "liveCards": {
     "eventCard": {
       "midnight": "Північ",
+      "mainExpected": "Очікується",
       "countryHint": ", {country}",
       "type": {
         "main": "Головне святкування",

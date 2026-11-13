@@ -17,6 +17,7 @@
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useEffect, useRef } from 'react';
 import { ToggleGroup } from 'radix-ui';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -25,6 +26,7 @@ import { SoundToggle, type SoundToggleProps } from '@/components/player/SoundTog
 import { IconButton } from '@/components/primitives/IconButton';
 import { useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
 import { SITE_HOST } from '@/lib/config/site';
+import { getData } from '@/lib/data/load';
 import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
 import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
 import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
@@ -134,6 +136,21 @@ export function ActionRow({
     text: t('more.shareText', { place }),
   };
 
+  // Головна (2026-11-13): обрана в списку трансляція — вибір людини до наступної передачі ефіру (як на ТВ), щоб сторінка
+  // знала, що людина дивиться не головне святкування («Головне святкування почалось · Перемкнути»). Список живе у вікні
+  // поза контекстом ефіру — беремо найсвіжіший стан ефіру з посилання.
+  const broadcastRef = useRef(broadcast);
+  useEffect(() => {
+    broadcastRef.current = broadcast;
+  });
+  const pickOnAir = (row: StreamRowData) => {
+    const b = broadcastRef.current;
+    if (!b) return;
+    const air = b.current?.event.id;
+    const main = air ? getData().chainsByEventId.get(air)?.sources.find((x) => x.kind === 'main') : undefined;
+    b.watch(row.eventId === air && row.id === main?.id ? null : { eventId: row.eventId, sourceId: row.id });
+  };
+
   function openPicker() {
     if (midnightMs === null) return;
     overlay.open({
@@ -157,6 +174,7 @@ export function ActionRow({
           <StreamPicker
           midnightMs={midnightMs}
           countryIso={broadcast?.current?.event.countryIso}
+          onPick={broadcast?.controlling ? pickOnAir : undefined}
           onToggleSchedule={onToggleSchedule}
           onPicked={column ? undefined : () => overlay.close(STREAM_PICKER_ID)}
         />

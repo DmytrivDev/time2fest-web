@@ -7,6 +7,7 @@ import type { EventCardData, EventCardStream } from '@/components/live/EventCard
 import type { FestProgressProps } from '@/components/live/Progress';
 import type { Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
+import { mainCardStream, mainSourceOf } from '@/lib/engine/mainCelebration';
 import { chainStatus, sourceStatus } from '@/lib/engine/sourceStatus';
 import { countryHref } from '@/lib/player/BroadcastController';
 
@@ -31,11 +32,16 @@ function thumbOfEvent(data: Dataset, event: ScheduledEvent): string | undefined 
   return src?.videoId ? `https://i.ytimg.com/vi/${src.videoId}/mqdefault.jpg` : undefined;
 }
 
-export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedule: readonly string[]): EventCardData {
+/**
+ * Картка події. `main` (головна й сторінка країни, 2026-11-13): подія слота ефіру з головним святкуванням (`kind: 'main'`) —
+ * картка «Головне святкування» зі статусом самого головного джерела («Очікується», поки не почалось) і його мініатюрою.
+ */
+export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedule: readonly string[], opts: { main?: boolean } = {}): EventCardData {
   const country = data.countriesByIso.get(event.countryIso);
   const city = data.citiesById.get(event.cityId);
-  const stream = streamOf(data, event, now);
-  const thumb = stream === 'countdown-only' ? undefined : thumbOfEvent(data, event);
+  const main = opts.main ? mainSourceOf(data.chainsByEventId.get(event.id)) : null;
+  const stream = main ? mainCardStream(main, now) : streamOf(data, event, now);
+  const thumb = main?.videoId ? `https://i.ytimg.com/vi/${main.videoId}/mqdefault.jpg` : stream === 'countdown-only' ? undefined : thumbOfEvent(data, event);
   // «+» у кімнату — лише трансляції, що йдуть наживо: перше джерело в стані «наживо».
   const liveSource = stream === 'live' ? data.chainsByEventId.get(event.id)?.sources.find((x) => sourceStatus(x, now) === 'live') : undefined;
   return {
@@ -44,8 +50,9 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
     countryName: country?.name.uk,
     flagCode: country?.flagCode ?? event.countryIso,
     midnightMs: event.midnightMs,
-    celebrationType: event.type,
+    celebrationType: main ? 'main' : event.type,
     stream,
+    ...(main ? { main: true } : {}),
     ...(thumb ? { thumb } : {}),
     ...(liveSource ? { liveSourceId: liveSource.id, liveTitle: liveSource.title.uk } : {}),
     illustrationId: country?.illustrationId ?? 'generic',
@@ -58,14 +65,20 @@ export function eventCard(data: Dataset, event: ScheduledEvent, now: Ms, schedul
 /**
  * «Зараз і далі»: подія кожного слота ефіру (та сама, що бере ефір); у слоті, де трансляції вже йдуть, — ще й решта
  * подій поясу з трансляцією наживо (правка власника 2026-11-11: «зараз» — не лише Париж, а й Берлін, Мадрид, Рим…),
- * за популярністю (`liveOthers`; програма режиму вечірки — по одній події на слот).
+ * за популярністю (`liveOthers`; програма режиму вечірки — по одній події на слот). `mainCards` (головна й сторінка
+ * країни, 2026-11-13): подія слота — картка головного святкування, навіть коли воно ще не почалось («Очікується»).
  */
-export function nowNextItems(data: Dataset, now: Ms, schedule: readonly string[], opts: { liveOthers?: boolean } = {}): EventCardData[] {
+export function nowNextItems(
+  data: Dataset,
+  now: Ms,
+  schedule: readonly string[],
+  opts: { liveOthers?: boolean; mainCards?: boolean } = {},
+): EventCardData[] {
   const out: EventCardData[] = [];
   for (const slot of airSlots(data)) {
     const pick = pickSlotEvent(now, slot.events, data.countriesByIso, data.chainsByEventId);
     if (!pick) continue;
-    out.push(eventCard(data, pick.event, now, schedule));
+    out.push(eventCard(data, pick.event, now, schedule, { main: !!opts.mainCards }));
     if (!opts.liveOthers) continue;
     const liveOthers = slot.events
       .filter((e) => e.id !== pick.event.id && chainStatus(data.chainsByEventId.get(e.id), now) === 'live')

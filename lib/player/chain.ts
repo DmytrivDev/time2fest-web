@@ -58,6 +58,9 @@ export function isPlayable(source: PlayerSource, now: Ms): boolean {
   if (source.startsAt !== undefined) {
     const startsAt = Date.parse(source.startsAt);
     if (Number.isFinite(startsAt) && startsAt > now) return false;
+  } else if (source.status === 'expected') {
+    // Час початку невідомий (2026-11-13): трансляція ще не почалась, доки дані не скажуть `live` (як `sourceStatus`).
+    return false;
   }
   // `expected` після startsAt стає живою сама; `live`, що перестала бути live, пропускається.
   if (source.status === 'live' && !source.isLive && !source.alwaysOn) return false;

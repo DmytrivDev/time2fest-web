@@ -47,8 +47,12 @@ export interface NowNextProps {
   mapHref?: string;
   loading?: boolean;
   onToggleSchedule?: (id: string, next: boolean) => void;
-  /** Подія в плеєрі ефіру: її картка — «В ефірі» (і лишається в стрічці після півночі). */
+  /** Подія в плеєрі ефіру: її картка — «В ефірі» (і лишається в стрічці після півночі), перша серед подій тієї самої півночі. */
   airEventId?: string | null;
+  /** Головна: дотик до картки ефіру повертає плеєр до ефіру (заглушка чи відео головного святкування), 2026-11-13. */
+  onSelectAir?: () => void;
+  /** id секції — ціль кнопки «Дивитися, що вже йде» на заглушці плеєра. */
+  id?: string;
   /**
    * Кімната перегляду (власник 2026-11-05): «Поточні трансляції» — лише події з трансляцією зараз, без відліку й
    * «Прогресу свята»; фільтр «Усі · Мій графік».
@@ -83,6 +87,8 @@ export function NowNext({
   loading = false,
   onToggleSchedule,
   airEventId,
+  onSelectAir,
+  id,
   currentOnly = false,
   title,
   className,
@@ -111,7 +117,7 @@ export function NowNext({
     const every = withStatus(now, items);
     const all = currentOnly ? every.filter((i) => hasStreamNow(i)) : every;
     const filtered = liveOnly ? all.filter((i) => hasStreamNow(i)) : mineOnly ? all.filter((i) => i.inSchedule) : all;
-    const sorted = sortForStrip(filtered);
+    const sorted = sortForStrip(filtered, airEventId);
     const past = sorted.filter((i) => isPastStatus(i.status) && i.id !== airEventId);
     const rest = sorted.filter((i) => !isPastStatus(i.status) || i.id === airEventId);
     return [...past.slice(Math.max(0, past.length - keepPast)), ...rest];
@@ -128,7 +134,14 @@ export function NowNext({
   };
 
   const card = (item: (typeof visible)[number]) => (
-    <EventCard key={item.id} {...item} layout={stack && !grid ? 'stack' : 'carousel'} onAir={item.id === airEventId} onToggleSchedule={onToggleSchedule} />
+    <EventCard
+      key={item.id}
+      {...item}
+      layout={stack && !grid ? 'stack' : 'carousel'}
+      onAir={item.id === airEventId}
+      onSelect={item.id === airEventId ? onSelectAir : undefined}
+      onToggleSchedule={onToggleSchedule}
+    />
   );
 
   let body;
@@ -200,7 +213,8 @@ export function NowNext({
   );
 
   return (
-    <section aria-labelledby={titleId} data-now-next="" data-layout={layout} className={cn(s.section, className)}>
+    // `tabIndex={-1}` — сюди веде фокус кнопка «Дивитися, що вже йде» на заглушці плеєра.
+    <section id={id} tabIndex={id ? -1 : undefined} aria-labelledby={titleId} data-now-next="" data-layout={layout} className={cn(s.section, 'focus:outline-none', className)}>
       <SectionHeader
         id={titleId}
         className={s.head}

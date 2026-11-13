@@ -49,6 +49,11 @@ export interface EventCardData {
   /** Джерело, що йде наживо, — «+» у кімнату перегляду (лише наживо). */
   liveSourceId?: string;
   liveTitle?: string;
+  /**
+   * Головне святкування північі (2026-11-13): перша картка «Зараз і далі», навіть коли трансляція ще не почалась —
+   * статус «Очікується» з позначкою «Головне святкування» замість «Наживо».
+   */
+  main?: boolean;
 }
 
 export interface EventCardProps extends EventCardData {
@@ -63,6 +68,8 @@ export interface EventCardProps extends EventCardData {
   layout?: 'carousel' | 'stack';
   /** Подія зараз у плеєрі ефіру (макет: «В ефірі» й «Наживо» ще до півночі). */
   onAir?: boolean;
+  /** Замість переходу на сторінку країни (головна: картка ефіру повертає плеєр до ефіру, 2026-11-13). */
+  onSelect?: () => void;
   className?: string;
 }
 
@@ -133,10 +140,12 @@ export function EventCard({
   illustrationId,
   liveSourceId,
   liveTitle,
+  main = false,
   status,
   onToggleSchedule,
   layout = 'carousel',
   onAir = false,
+  onSelect,
   className,
 }: EventCardProps) {
   const t = useTranslations('liveCards.eventCard');
@@ -149,7 +158,9 @@ export function EventCard({
   const isPast = (status === 'ended' || status === 'recording') && !onAir;
   const isOnAir = status === 'live' || onAir;
   const typeLabel = t(`type.${TYPE_KEY[celebrationType]}`);
-  const statusLabel = stream === 'live' ? typeLabel : tBadge(`status.${STATUS_KEY[stream]}`);
+  // Головне святкування, що ще не почалось: «Очікується» й позначка «Головне святкування» (без «Наживо»).
+  const mainWaiting = main && stream !== 'live';
+  const statusLabel = stream === 'live' ? typeLabel : mainWaiting ? t('mainExpected') : tBadge(`status.${STATUS_KEY[stream]}`);
   const scheduleLabel = isPast
     ? t('schedulePast', { city: title })
     : inSchedule
@@ -198,6 +209,14 @@ export function EventCard({
     >
       <NextLink
         href={href}
+        onClick={
+          onSelect
+            ? (e) => {
+                e.preventDefault();
+                onSelect();
+              }
+            : undefined
+        }
         aria-current={isOnAir ? 'true' : undefined}
         className={cn('t2f-focus t2f-transition', s.link, isOnAir && s.onAir, isPast && s.past)}
       >
@@ -241,7 +260,7 @@ export function EventCard({
             <time dateTime={new Date(midnightMs).toISOString()} className={s.time}>
               {formatClock(midnightMs, { locale })}
             </time>
-            {isOnAir ? <Badge variant="live" /> : null}
+            {isOnAir && !mainWaiting ? <Badge variant="live" /> : null}
           </span>
           <span className={s.yours}>
             {isPast ? formatMidnightAgo(Math.max(0, now - midnightMs), locale) : tTime('yourTime')}
@@ -251,8 +270,10 @@ export function EventCard({
         </span>
 
         <span className={cn(s.status, stream === 'live' && !isPast && s.statusLive)}>
-          <Icon name={icon} size={16} strokeWidth={2.2} className={iconClass} />
-          <span>{statusLabel}</span>
+          {/* Головне святкування, що ще не почалось: без значка — «Очікується» й позначка вміщаються в рядок картки. */}
+          {mainWaiting ? null : <Icon name={icon} size={16} strokeWidth={2.2} className={iconClass} />}
+          <span className={mainWaiting ? s.mainWaiting : undefined}>{statusLabel}</span>
+          {mainWaiting ? <span className={s.mainChip}>{typeLabel}</span> : null}
         </span>
       </NextLink>
 

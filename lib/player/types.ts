@@ -18,7 +18,10 @@ export interface PlayerSource {
   /** Позиція в ланцюжку запасних: 0 — основне. */
   order: number;
   status: 'live' | 'expected' | 'possible';
-  /** Для `expected`: з цього моменту джерело стає `live` без перезавантаження. */
+  /**
+   * Для `expected`: з цього моменту джерело стає `live` без перезавантаження. Необов’язковий: часто початок невідомий
+   * (2026-11-13) — тоді `expected` без `startsAt` чекає, доки дані не скажуть `live`, а заглушка не показує ні часу, ні відліку.
+   */
   startsAt?: string;
   embeddable: boolean;
   isLive: boolean;

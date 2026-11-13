@@ -11,7 +11,7 @@
 import type { Page } from '@playwright/test';
 import { runAxe } from './fixtures/axe';
 import { expectNothingOverPlayer, expectPlayerMinSize } from './fixtures/geometry';
-import { gotoAt, nowMs, shiftDeviceClock, waitForTimeApi } from './fixtures/time';
+import { gotoAt, nowMs, setTime, shiftDeviceClock, waitForTimeApi } from './fixtures/time';
 import { expect, test, type YouTubeStub } from './fixtures/youtube-stub';
 
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
@@ -266,5 +266,77 @@ test.describe('US1 · ефір на головній', () => {
     expect(c.created).toBe(1);
     expect(c.destroyed).toBe(0);
     expect(await ytStub.sameIframe()).toBe(true);
+  });
+});
+
+/**
+ * Головне святкування (рішення власника 2026-11-13). Тестові дані: Токіо (північ 17:00 за Києвом) — головне святкування
+ * «Токіо · відлік на Сібуї» очікується з 16:51:40, а вебкамери Токіо вже йдуть.
+ */
+test.describe('US1 · головне святкування ефіру', () => {
+  const TOKYO_MAIN = 'dfVK7ld38Ys';
+  const SHINJUKU = 'GLQhbRGv5qU';
+
+  test('заглушка з часом і відліком «до початку», кнопка «Дивитися, що вже йде» веде до «Зараз і далі»', async ({ page }) => {
+    await gotoAt(page, '2026-12-31T16:46:00+02:00', 1);
+    const scene = page.locator('[data-scene="waiting"]');
+    await expect(scene).toBeVisible();
+    await expect(scene).toHaveAttribute('data-starts', 'known');
+    await expect(scene.getByRole('heading')).toHaveText(/Токіо · відлік на Сібуї/);
+    await expect(scene).toContainText('Почнеться о 16:51 за твоїм часом');
+    await expect(scene.locator('[data-waiting-left]')).toHaveText(/^до початку 0?5:\d\d$/);
+    // Назва під плеєром — те, на що чекає заглушка.
+    await expect(page.locator('#player-title')).toContainText('Токіо · відлік на Сібуї');
+    await expect(page.locator('[data-player-host] iframe')).toHaveCount(0);
+
+    await scene.getByRole('button', { name: 'Дивитися, що вже йде' }).click();
+    await expect(page.locator('#now-next')).toBeFocused();
+    await expect(page.locator('#now-next')).toBeInViewport();
+    // Перша картка — головне святкування: «Очікується» й «Головне святкування»; лишається й під «З трансляціями».
+    const first = page.locator('#now-next [data-event-card]').first();
+    await expect(first).toContainText('Токіо');
+    await expect(first).toContainText('Очікується');
+    await expect(first).toContainText('Головне святкування');
+    await page.locator('#now-next').getByText('З трансляціями', { exact: true }).click();
+    await expect(page.locator('#now-next [data-event-card]').first()).toContainText('Очікується');
+    await expectAxeClean(page);
+  });
+
+  test('обрав іншу трансляцію поясу — назва її; головне почалось — «Головне святкування почалось · Перемкнути»', async ({ page, ytStub }) => {
+    await gotoAt(page, '2026-12-31T16:51:00+02:00', 1);
+    await expect(page.locator('[data-scene="waiting"]')).toBeVisible();
+    await page.getByRole('button', { name: /Обрати трансляцію/ }).first().click();
+    await page.locator('[data-window="O-STREAM-PICKER"] button[data-source="src_tokyo_3"]').click();
+    await ytStub.waitForPlayer();
+    await expect.poll(async () => (await ytStub.players())[0]?.videoId).toBe(SHINJUKU);
+    await expect(page.locator('#player-title')).toContainText('Токіо · Сіндзюку');
+    await expect(page.locator('[data-main-live]:visible')).toHaveCount(0);
+
+    // Головне святкування почалось — без автоматичного перемикання, лише рядок у тому самому слоті.
+    const bar = page.locator('[data-player-bar]');
+    const barBefore = isPhone(page) ? await bar.boundingBox() : null;
+    await setTime(page, { at: '2026-12-31T16:51:45+02:00', speed: 1 });
+    const line = page.locator('[data-main-live]').filter({ visible: true });
+    await expect(line).toHaveCount(1);
+    await expect(line).toContainText(/Головне святкування\s*почалось/);
+    await expect(page.locator('[data-live-announcer]')).toHaveText(/Токіо: головне святкування почалось/, { timeout: 10_000 });
+    expect((await ytStub.players())[0]?.videoId).toBe(SHINJUKU);
+    if (barBefore) expect((await bar.boundingBox())?.height).toBe(barBefore.height);
+
+    await (isPhone(page) ? line : line.getByRole('button', { name: 'Перемкнути' })).click();
+    await expect.poll(async () => (await ytStub.players())[0]?.videoId).toBe(TOKYO_MAIN);
+    await expect(page.locator('[data-main-live]')).toHaveCount(0);
+    await expect(page.locator('#player-title')).toContainText('Токіо · відлік на Сібуї');
+    expect((await ytStub.counters()).created).toBe(1);
+  });
+
+  test('без вибору людини головне вмикається саме, коли настає його початок', async ({ page, ytStub }) => {
+    // Кадр заморожено до перевірки заглушки, далі — за 2 с до початку звичайним ходом.
+    await gotoAt(page, '2026-12-31T16:51:00+02:00', 0);
+    await expect(page.locator('[data-scene="waiting"]')).toBeVisible();
+    await setTime(page, { at: '2026-12-31T16:51:38+02:00', speed: 1 });
+    await ytStub.waitForPlayer(1, 20_000);
+    await expect.poll(async () => (await ytStub.players())[0]?.videoId).toBe(TOKYO_MAIN);
+    await expect(page.locator('[data-main-live]')).toHaveCount(0);
   });
 });
