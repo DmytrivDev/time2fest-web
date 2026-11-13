@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Caption, type CaptionPlace } from '@/components/live/Caption';
+import { EventCard } from '@/components/live/EventCard';
 import { WaitingScene } from '@/components/player/CountdownScene';
 import { captionPhase } from '@/lib/engine/captionPhase';
 import { event, MIN, PARIS_MIDNIGHT, SEC } from '../fixtures/data';
@@ -101,5 +102,41 @@ describe('рядок «Головне святкування почалось ·
   it('назва — тієї трансляції, що грає (заголовок і рядок часу)', () => {
     renderWithApp(<Caption variant="bar" phase={phaseAt(-5 * MIN)} current={place} title="Гамбург · порт" live timeZone="Europe/Kyiv" />, PARIS_MIDNIGHT - 5 * MIN);
     expect(screen.getByRole('heading')).toHaveTextContent('Гамбург');
+  });
+});
+
+describe('«Зараз і далі»: картка головного святкування, що ще не почалось', () => {
+  const card = {
+    id: 'evt_paris_2027',
+    title: 'Париж',
+    flagCode: 'FR',
+    midnightMs: PARIS_MIDNIGHT,
+    celebrationType: 'main' as const,
+    stream: 'expected' as const,
+    href: '/country/frantsiia/',
+    main: true,
+  };
+
+  it('картка ефіру на головній: «В ефірі · очікується», без «Наживо» і без підпису сусідів «Головне святкування»', () => {
+    renderWithApp(<EventCard {...card} status="soon" onAir />, PARIS_MIDNIGHT - 10 * MIN);
+    const article = screen.getByRole('article');
+    expect(article).toHaveTextContent('В ефірі · очікується');
+    expect(article.querySelector('[data-variant="live"]')).toBeNull();
+    expect(screen.queryByText('Головне святкування')).toBeNull();
+    // «В ефірі» — один раз (окремого прихованого для зчитувача немає).
+    expect(article.textContent?.match(/В ефірі/g)).toHaveLength(1);
+  });
+
+  it('поза ефіром (сторінка країни): просто «Очікується»', () => {
+    renderWithApp(<EventCard {...card} status="soon" />, PARIS_MIDNIGHT - 10 * MIN);
+    expect(screen.getByRole('article')).toHaveTextContent('Очікується');
+    expect(screen.queryByText(/В ефірі/)).toBeNull();
+  });
+
+  it('почалось — як звичайна картка наживо: «Головне святкування» й «Наживо»', () => {
+    renderWithApp(<EventCard {...card} stream="live" status="soon" onAir />, PARIS_MIDNIGHT - 5 * MIN);
+    const article = screen.getByRole('article');
+    expect(article).toHaveTextContent('Головне святкування');
+    expect(article.querySelector('[data-variant="live"]')).not.toBeNull();
   });
 });

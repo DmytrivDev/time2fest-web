@@ -126,28 +126,9 @@
 .statusLive {
   color: var(--color-text);
 }
-/* «Очікується» й позначка «Головне святкування» (картка головного святкування, 2026-11-13): обидва цілі, без значка. */
+/* Головне святкування, що ще не почалось (2026-11-13): «В ефірі · очікується» / «Очікується» — помітніше за сусідів. */
 .status > .mainWaiting {
-  flex: none;
-  overflow: visible;
   color: var(--color-text);
-}
-/* Телефон: якщо «Очікується» й позначка не вміщаються в рядок (360 px), позначка переходить нижче — обидві цілі. */
-.card[data-layout='stack'] .status:has(> .mainChip) {
-  flex-wrap: wrap;
-  row-gap: 3px;
-  height: auto;
-  min-height: 20px;
-}
-.status > .mainChip {
-  flex: 0 1 auto;
-  padding: 0 6px;
-  border: 1px solid var(--color-highlight);
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 600;
-  line-height: 16px;
-  color: var(--color-highlight);
 }
 .iconLive {
   color: var(--color-primary);

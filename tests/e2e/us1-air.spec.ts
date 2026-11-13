@@ -292,13 +292,13 @@ test.describe('US1 · головне святкування ефіру', () => {
     await scene.getByRole('button', { name: 'Дивитися, що вже йде' }).click();
     await expect(page.locator('#now-next')).toBeFocused();
     await expect(page.locator('#now-next')).toBeInViewport();
-    // Перша картка — головне святкування: «Очікується» й «Головне святкування»; лишається й під «З трансляціями».
+    // Перша картка — головне святкування ефіру: «В ефірі · очікується» (без «Наживо»); лишається й під «З трансляціями».
     const first = page.locator('#now-next [data-event-card]').first();
     await expect(first).toContainText('Токіо');
-    await expect(first).toContainText('Очікується');
-    await expect(first).toContainText('Головне святкування');
+    await expect(first).toContainText('В ефірі · очікується');
+    await expect(first.locator('[data-variant="live"]')).toHaveCount(0);
     await page.locator('#now-next').getByText('З трансляціями', { exact: true }).click();
-    await expect(page.locator('#now-next [data-event-card]').first()).toContainText('Очікується');
+    await expect(page.locator('#now-next [data-event-card]').first()).toContainText('В ефірі · очікується');
     await expectAxeClean(page);
   });
 

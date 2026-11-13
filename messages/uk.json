@@ -1080,6 +1080,7 @@
     "eventCard": {
       "midnight": "Північ",
       "mainExpected": "Очікується",
+      "mainExpectedOnAir": "{onAir} · очікується",
       "countryHint": ", {country}",
       "type": {
         "main": "Головне святкування",

@@ -51,7 +51,7 @@ export interface EventCardData {
   liveTitle?: string;
   /**
    * Головне святкування північі (2026-11-13): перша картка «Зараз і далі», навіть коли трансляція ще не почалась —
-   * статус «Очікується» з позначкою «Головне святкування» замість «Наживо».
+   * статус «Очікується» замість «Наживо»; на головній (картка ефіру) — «В ефірі · очікується».
    */
   main?: boolean;
 }
@@ -158,9 +158,17 @@ export function EventCard({
   const isPast = (status === 'ended' || status === 'recording') && !onAir;
   const isOnAir = status === 'live' || onAir;
   const typeLabel = t(`type.${TYPE_KEY[celebrationType]}`);
-  // Головне святкування, що ще не почалось: «Очікується» й позначка «Головне святкування» (без «Наживо»).
+  // Головне святкування, що ще не почалось (2026-11-13): без «Наживо» — «Очікується», а картка ефіру на головній —
+  // «В ефірі · очікується» (та сама позначка «В ефірі», що й у зчитувача; підпис сусідів «Головне святкування» не повторюємо).
   const mainWaiting = main && stream !== 'live';
-  const statusLabel = stream === 'live' ? typeLabel : mainWaiting ? t('mainExpected') : tBadge(`status.${STATUS_KEY[stream]}`);
+  const statusLabel =
+    stream === 'live'
+      ? typeLabel
+      : mainWaiting
+        ? isOnAir
+          ? t('mainExpectedOnAir', { onAir: tBadge('onAir') })
+          : t('mainExpected')
+        : tBadge(`status.${STATUS_KEY[stream]}`);
   const scheduleLabel = isPast
     ? t('schedulePast', { city: title })
     : inSchedule
@@ -251,7 +259,7 @@ export function EventCard({
             ) : null}
           </span>
           {/* «В ефірі» прибрано (правка власника 2026-11-05): є «Наживо» й червона смуга; для зчитувача — лишається. */}
-          {isOnAir ? <span className="sr-only">{tBadge('onAir')}</span> : null}
+          {isOnAir && !mainWaiting ? <span className="sr-only">{tBadge('onAir')}</span> : null}
         </span>
 
         <span className={s.mid}>
@@ -270,10 +278,8 @@ export function EventCard({
         </span>
 
         <span className={cn(s.status, stream === 'live' && !isPast && s.statusLive)}>
-          {/* Головне святкування, що ще не почалось: без значка — «Очікується» й позначка вміщаються в рядок картки. */}
-          {mainWaiting ? null : <Icon name={icon} size={16} strokeWidth={2.2} className={iconClass} />}
+          <Icon name={icon} size={16} strokeWidth={2.2} className={iconClass} />
           <span className={mainWaiting ? s.mainWaiting : undefined}>{statusLabel}</span>
-          {mainWaiting ? <span className={s.mainChip}>{typeLabel}</span> : null}
         </span>
       </NextLink>
 
