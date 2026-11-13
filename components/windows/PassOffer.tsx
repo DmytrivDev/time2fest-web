@@ -51,7 +51,7 @@ function Node({ point, met, label, wide }: { point: PathPoint; met: boolean; lab
   return (
     <li className={s.node} data-met={met || undefined} data-wide={wide || undefined}>
       <span className={s.ring} aria-hidden="true">
-        <Flag round code={point.flagCode} size="md" decorative />
+        <Flag code={point.flagCode} size="md" decorative />
       </span>
       <span className={s.time} aria-hidden="true">
         {formatClock(point.midnightMs)}
@@ -104,7 +104,7 @@ export function PassOffer({ count, met, next, now, onClose, onDetails, onGetPass
           <div className={s.next} data-row="next-midnight">
             <div className={s.nextHead}>
               <span className={s.nextFlag}>
-                <Flag round code={upcoming.flagCode} size="lg" decorative />
+                <Flag code={upcoming.flagCode} size="lg" decorative />
               </span>
               <div className={s.nextText}>
                 <span className={s.nextWhen}>{t('nextIn', { time: formatDurationShort(upcoming.midnightMs - now) })}</span>

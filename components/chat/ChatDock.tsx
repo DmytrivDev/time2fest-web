@@ -626,7 +626,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
           {arriving ? (
             // Новий тост ≈10 с замість «Розгорнути чат» (дошка `Phone-Toast-New` · «Згорнутий чат · новий тост»).
             <span key={arriving.id} className={tm.dockToast} data-dock-toast={arriving.id}>
-              <Flag round code={arriving.flagCode} diameter={22} decorative />
+              <Flag code={arriving.flagCode} diameter={22} decorative />
               <span className={tm.dockNick}>{arriving.nick}</span>
               <span className={tm.dockText}>
                 <EmojiText text={arriving.text} />

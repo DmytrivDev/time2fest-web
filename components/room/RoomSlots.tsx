@@ -54,7 +54,7 @@ export function SlotTile({
           <>
             <span className={s.flags} aria-hidden="true">
               {state.flags.slice(0, 5).map((f) => (
-                <Flag key={f} round code={f} size="xs" decorative />
+                <Flag key={f} code={f} size="xs" decorative />
               ))}
             </span>
             <span>{t.rich('liveCount', { count: state.count, b: (c) => <b>{c}</b> })}</span>

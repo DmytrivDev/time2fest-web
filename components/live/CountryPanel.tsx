@@ -116,7 +116,7 @@ export function CountryPanel({
     <span className={m.title}>
       {/* Прапор і назва — посилання на сторінку країни (правка власника 2026-11-04). */}
       <NextLink href={country.href} className={cn('t2f-focus', m.nameLink)} data-country-page-link="">
-        <Flag code={country.flagCode} round diameter={phone ? 32 : 40} decorative />
+        <Flag code={country.flagCode} diameter={phone ? 32 : 40} decorative />
         <h3 className={zp.name}>{country.name}</h3>
       </NextLink>
       {state === 'live' && streams.length === 0 ? (

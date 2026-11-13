@@ -195,7 +195,7 @@ function DeskCard({ row, current, currentRow, showCountry, onSelect }: CardProps
           <span className={s.title}>{row.title}</span>
           {showCountry ? (
             <span className={s.country}>
-              <Flag round code={row.flagCode} size="xs" decorative />
+              <Flag code={row.flagCode} size="xs" decorative />
               {row.countryName}
             </span>
           ) : (
@@ -257,7 +257,7 @@ function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom
             </span>
             {showCountry ? (
               <span className={s.country}>
-                <Flag round code={row.flagCode} size="xs" decorative />
+                <Flag code={row.flagCode} size="xs" decorative />
                 {row.countryName}
               </span>
             ) : (
@@ -315,7 +315,7 @@ function CoverCard({ c, phone }: { c: CountdownCountry; phone: boolean }) {
   );
   const country = (
     <span className={s.country}>
-      <Flag round code={c.flagCode} size="xs" decorative />
+      <Flag code={c.flagCode} size="xs" decorative />
       {c.name}
     </span>
   );

@@ -166,7 +166,7 @@ function Who({ nick, flagCode }: { nick?: string; flagCode?: string }) {
   const t = useTranslations('toast');
   return nick ? (
     <>
-      {flagCode ? <Flag round code={flagCode} size="xs" decorative /> : null}
+      {flagCode ? <Flag code={flagCode} size="xs" decorative /> : null}
       <b className={s.fieldNick}>{nick}</b>
     </>
   ) : (
@@ -314,7 +314,7 @@ function Signature({
   if (!editing) {
     return (
       <div className={s.sig} data-toast-signature="">
-        <Flag round code={draftFlag} diameter={28} decorative />
+        <Flag code={draftFlag} diameter={28} decorative />
         <span className={s.sigText}>
           <span className={s.sigLabel}>{t('signature')}</span>
           <b className={s.sigNick}>{draftNick}</b>
@@ -351,7 +351,7 @@ function Signature({
           onClick={() => setFlagOpen((v) => !v)}
           className={cn('t2f-focus', s.flagBtn)}
         >
-          <Flag round code={draftFlag} diameter={24} decorative />
+          <Flag code={draftFlag} diameter={24} decorative />
           <Icon name="chevron-down" size={14} />
         </button>
         <span className={s.nickBox} data-error={err ? '' : undefined}>

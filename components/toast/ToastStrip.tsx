@@ -257,7 +257,7 @@ function DeskStrip({ view, now, className }: { view: StripView; now: Ms; classNa
       {!open && item ? (
         <button type="button" key={item.toast.id} className={cn('t2f-focus', s.deskCard, s.fade)} data-pinned={item.until ? '' : undefined} onClick={openWorld} data-toast-id={item.toast.id}>
           <span className={s.deskFlag}>
-            <Flag round code={item.toast.flagCode} diameter={30} decorative />
+            <Flag code={item.toast.flagCode} diameter={30} decorative />
           </span>
           <span className={s.deskBody}>
             <span className={s.deskWho}>
@@ -363,7 +363,7 @@ function PhoneStrip({ view, now, className, bare }: { view: StripView; now: Ms; 
               data-toast-id={item.toast.id}
               data-action="toast-expand"
             >
-              <Flag round code={item.toast.flagCode} diameter={22} decorative />
+              <Flag code={item.toast.flagCode} diameter={22} decorative />
               <b className={s.lineNick}>{item.toast.nick}</b>
               <span className={s.lineText}>
                 <EmojiText text={item.toast.text} />

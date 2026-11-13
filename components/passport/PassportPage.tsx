@@ -135,7 +135,7 @@ export function PassportPage() {
         </div>
         <div className={s.cardBody}>
           <p className={s.cardCity}>
-            <Flag round code={r.flagCode} diameter={20} decorative />
+            <Flag code={r.flagCode} diameter={20} decorative />
             {r.city}
           </p>
           <p className={s.cardMeta}>
@@ -187,7 +187,7 @@ export function PassportPage() {
           <p className={s.nextKicker}>{t('next.tileKicker')}</p>
           <p className={s.cardCity}>
             {flags.map((c) => (
-              <Flag key={c.iso} round code={c.flagCode} diameter={20} decorative />
+              <Flag key={c.iso} code={c.flagCode} diameter={20} decorative />
             ))}
             {sched ? next.country.place.split(' · ')[0] : t('next.tileZoneName', { utc: utcLabel(next.offsetMinutes) })}
           </p>
@@ -233,7 +233,7 @@ export function PassportPage() {
           {next.countries.slice(0, 5).map((c) => (
             <li key={c.iso}>
               <NextLink href={c.href} className={cn('t2f-focus', s.nextChipLink)}>
-                <Flag round code={c.flagCode} diameter={16} decorative />
+                <Flag code={c.flagCode} diameter={16} decorative />
                 {c.name}
               </NextLink>
             </li>
@@ -271,7 +271,7 @@ export function PassportPage() {
               ) : null}
             </p>
             <p className={s.from}>
-              {flagCode ? <Flag round code={flagCode} diameter={16} decorative /> : null}
+              {flagCode ? <Flag code={flagCode} diameter={16} decorative /> : null}
               {flagCode ? t('seasonLine', { country: data.countriesByIso.get(flagCode)?.name.uk ?? flagCode }) : t('seasonLineNoFlag')}
             </p>
             {!user ? (

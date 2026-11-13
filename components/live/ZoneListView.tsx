@@ -298,7 +298,7 @@ export function ZoneRow({
     <span className={m.flags} aria-hidden="true">
       {flags.map((c) => (
         <span key={c.iso} className={m.flag}>
-          <Flag code={c.flagCode} round diameter={20} decorative />
+          <Flag code={c.flagCode} diameter={20} decorative />
         </span>
       ))}
     </span>

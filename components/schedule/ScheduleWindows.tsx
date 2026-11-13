@@ -155,7 +155,7 @@ export function ScheduleReplaceContent({
       <ul className={s.replaceList}>
         {inZone.map((c) => (
           <li key={c.iso} className={s.replaceRow} data-replace-country={c.iso}>
-            <Flag round code={c.flagCode} diameter={22} decorative />
+            <Flag code={c.flagCode} diameter={22} decorative />
             <span className={s.replaceText}>
               <b>{c.name}</b>
               <span className={s.replaceState}>

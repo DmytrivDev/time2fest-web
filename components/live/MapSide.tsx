@@ -28,7 +28,7 @@ function FlagStack({ countries, max, size }: { countries: readonly MapCountry[];
     <span className={m.stack}>
       {countries.slice(0, max).map((c, i) => (
         <span key={c.iso} className={m.stackFlag} style={{ zIndex: max - i }}>
-          <Flag code={c.flagCode} round diameter={size} decorative />
+          <Flag code={c.flagCode} diameter={size} decorative />
         </span>
       ))}
       {more ? <span className={m.stackMore}>+{more}</span> : null}

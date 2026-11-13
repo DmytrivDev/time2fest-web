@@ -37,10 +37,12 @@
   border: 1px dashed var(--color-border-strong);
   color: var(--color-text-muted);
 }
+/* Місце прапора — коло, як і самі прапори (усі прапори на сайті круглі, 2026-11-13). */
 .flagStub {
-  width: 18px;
-  height: 12px;
-  border-radius: 2px;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
   background: var(--color-border);
 }
 .rowCity {

@@ -48,7 +48,7 @@ export function TvScene({ country, cityName, midnightMs, variant = 'no-stream', 
           {variant === 'expected' ? t('expected') : tTv('sceneChip')}
         </span>
         <div className="flex items-center gap-3.5">
-          <Flag code={country.flagCode} size="lg" round decorative />
+          <Flag code={country.flagCode} size="lg" decorative />
           <h2 id={titleId} className={styles.sceneTitle}>
             {title}
           </h2>

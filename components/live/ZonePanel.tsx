@@ -522,7 +522,7 @@ function StreamCard({
       </div>
       <div className={m.cardCity}>{stream.city}</div>
       <div className={m.cardCountry}>
-        <Flag code={stream.flagCode} round diameter={18} decorative />
+        <Flag code={stream.flagCode} diameter={18} decorative />
         {stream.country}
       </div>
       {mode === 'upcoming' ? (
@@ -598,7 +598,7 @@ function Countries({
               data-country-tile={c.iso}
               onClick={(e) => inPlace(e, c.iso, onSelectCountry)}
             >
-              <Flag code={c.flagCode} round diameter={22} decorative />
+              <Flag code={c.flagCode} diameter={22} decorative />
               <span className={m.tileName}>{c.name}</span>
               {streamIsos.has(c.iso) ? (
                 <span className={m.tilePlay} role="img" aria-label={t('hasStream')}>
@@ -633,7 +633,7 @@ function Countries({
               data-country-card={c.iso}
               onClick={(e) => inPlace(e, c.iso, onSelectCountry)}
             >
-              <Flag code={c.flagCode} round diameter={40} decorative />
+              <Flag code={c.flagCode} diameter={40} decorative />
               <span className={m.topName}>{c.name}</span>
               {c.city ? <span className={m.topCity}>{c.city}</span> : null}
               {streamIsos.has(c.iso) && state === 'live' ? (

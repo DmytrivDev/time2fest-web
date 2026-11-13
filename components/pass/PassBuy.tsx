@@ -417,7 +417,7 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
           <span className={s.ticketBrand}>{t('ticketBrand')}</span>
           <span className={s.ticketName}>{t('ticketName')}</span>
           <span className={s.ticketWho}>
-            <Flag code={flagCode} size="xs" round decorative />
+            <Flag code={flagCode} size="xs" decorative />
             <span>{name}</span>
           </span>
         </div>

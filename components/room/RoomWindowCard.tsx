@@ -136,7 +136,7 @@ export function RoomWindowCard({
             <span className="sr-only">{t('live')}</span>
           </span>
         )}
-        <Flag round code={view.flagCode} size="xs" decorative />
+        <Flag code={view.flagCode} size="xs" decorative />
         <h2 id={headingId} className={s.title} title={view.title}>
           {view.title}
         </h2>
@@ -210,7 +210,7 @@ export function RoomWindowCard({
       {folded ? (
         <div className={s.folded}>
           <Icon name="pause" size={16} className="text-text-secondary" />
-          <Flag round code={view.flagCode} size="xs" decorative />
+          <Flag code={view.flagCode} size="xs" decorative />
           <div className={s.foldedText}>
             <h2 id={headingId} className={s.title}>
               {view.title}

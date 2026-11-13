@@ -125,7 +125,7 @@ export function TvStreamsNow({ rows, playingId, onWatch, onClose }: TvStreamsNow
                 <span className="min-w-0">
                   <b className={styles.streamTitle}>{row.title}</b>
                   <span className={styles.streamMeta}>
-                    <Flag code={row.flagCode} size="sm" round decorative />
+                    <Flag code={row.flagCode} size="sm" decorative />
                     <Icon name="broadcast" size={16} className="text-primary" />
                     {tBadge('live')} · {tType(TYPE_KEY[row.kind])}
                   </span>
@@ -148,7 +148,7 @@ export function TvNearest({ row, onWatch }: { row: StreamRowData; onWatch: (row:
   const city = getData().citiesById.get(getData().eventsById.get(row.eventId)?.cityId ?? '')?.name.uk ?? row.countryName;
   return (
     <div className={styles.nearest} data-tv-nearest="">
-      <Flag code={row.flagCode} size="md" round decorative />
+      <Flag code={row.flagCode} size="md" decorative />
       <div className="min-w-0 flex-1">
         <b className={styles.streamTitle}>
           {city} · {formatClock(row.midnightMs, { locale })}

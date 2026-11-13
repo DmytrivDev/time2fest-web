@@ -471,7 +471,7 @@ function ZonePicker({ onDone }: { onDone(): void }) {
                     }}
                     className={cn('t2f-focus t2f-transition', s.option)}
                   >
-                    <Flag round code={x.flagCode} size="sm" decorative />
+                    <Flag code={x.flagCode} size="sm" decorative />
                     {x.name.uk}
                   </button>
                 </li>
@@ -481,7 +481,7 @@ function ZonePicker({ onDone }: { onDone(): void }) {
         </div>
       ) : (
         <button type="button" onClick={() => setPicking(true)} className={cn('t2f-focus t2f-transition', s.countryBtn)}>
-          {country ? <Flag round code={country.flagCode} size="sm" decorative /> : null}
+          {country ? <Flag code={country.flagCode} size="sm" decorative /> : null}
           <span className={s.countryName}>{country?.name.uk ?? iso}</span>
           <Icon name="chevron-down" size={16} className={s.chev} />
         </button>

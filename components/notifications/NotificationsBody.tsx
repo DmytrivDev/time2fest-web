@@ -63,7 +63,7 @@ function Item({ n, onGo }: { n: Notif; onGo?: (href: string) => void }) {
           <Icon name={KIND_ICON[n.kind]} size={20} />
           {n.flag ? (
             <span className={s.tileFlag}>
-              <Flag round code={n.flag} size="xs" decorative />
+              <Flag code={n.flag} size="xs" decorative />
             </span>
           ) : null}
         </span>

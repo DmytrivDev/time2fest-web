@@ -186,7 +186,7 @@ export function CountryHeader({
         <div data-dock-above="" className={h.rowWrap}>
           <div className={h.rowClip}>
             <div data-country-row="" className={h.row}>
-              <Flag round code={country.flagCode} size="md" decorative />
+              <Flag code={country.flagCode} size="md" decorative />
               <div className={h.rowText}>
                 <p className={h.rowName}>{name}</p>
                 {multi && selected ? (
@@ -224,7 +224,7 @@ export function CountryHeader({
       {/* Десктоп. */}
       <div className={cn(styles.deskOnly, h.desk)}>
         <div className={h.deskRow}>
-          <Flag round code={country.flagCode} size="xl" decorative />
+          <Flag code={country.flagCode} size="xl" decorative />
           <p className={h.deskName}>{name}</p>
           {multi ? null : <p className={h.deskTime}>{timeLine}</p>}
           {rating ? <RatingChip rating={rating} /> : null}

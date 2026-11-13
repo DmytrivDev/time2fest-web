@@ -107,7 +107,7 @@ function CountryCard({ c, state, zone, hit }: { c: MapCountry; state: ZoneState;
   return (
     <li className={styles.card} data-country-card={c.iso} data-status={kind}>
       <NextLink href={c.href} className={cn('t2f-focus', styles.cardLink)}>
-        <Flag code={c.flagCode} round diameter={36} decorative />
+        <Flag code={c.flagCode} diameter={36} decorative />
         <span className={styles.cardName}>{c.name}</span>
         {c.city ? <span className={styles.cardCity}>{c.city}</span> : null}
         {hit.city && hit.city !== c.city ? <span className={styles.hit}>{t('cityHit', { city: hit.city })}</span> : null}

@@ -246,7 +246,6 @@ export function EventCard({
         </span>
         <span className={s.top}>
           <Flag
-            round
             code={flagCode}
             size="card"
             decorative

@@ -131,7 +131,7 @@ export function RatingPage() {
                   <StampArt illustrationId={country?.illustrationId ?? 'generic'} stampText={tStamp('stamped', { city: city.toLocaleUpperCase('uk') })} />
                   <div className={s.cardBody}>
                     <p className={s.cardCity}>
-                      <Flag round code={country?.flagCode ?? e.countryIso} diameter={20} decorative />
+                      <Flag code={country?.flagCode ?? e.countryIso} diameter={20} decorative />
                       {city}
                     </p>
                     <p className={s.cardMeta}>{t('mainCelebration', { country: country?.name.uk ?? '' })}</p>
@@ -190,7 +190,7 @@ export function RatingPage() {
                       {r.place}
                     </span>
                     <NextLink href={r.href} className={cn('t2f-focus', s.name)}>
-                      <Flag round code={r.flagCode} diameter={22} decorative />
+                      <Flag code={r.flagCode} diameter={22} decorative />
                       <span className={s.nameText}>{r.city}</span>
                     </NextLink>
                     <span className={s.barCell}>
@@ -236,7 +236,7 @@ export function RatingPage() {
           <ul className={s.ahead}>
             {state.ahead.map((a) => (
               <li key={a.eventId} className={s.aheadItem}>
-                <Flag round code={a.flagCode} diameter={18} decorative />
+                <Flag code={a.flagCode} diameter={18} decorative />
                 <b>{a.city}</b>
                 {t('aheadAt', { time: formatClock(a.midnightMs, { locale }) })}
               </li>

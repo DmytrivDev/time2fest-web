@@ -18,17 +18,18 @@ describe('круглі прапори чату', () => {
     }
   });
 
-  it('round: коло 16 px з локальним <img>; особливі прапори без файла малюються власним SVG; без round — прямокутний', () => {
+  it('коло 16 px з локальним <img>; особливі прапори без файла малюються власним SVG; прямокутного варіанта немає (2026-11-13)', () => {
     const { container } = renderApp(
       <>
-        <Flag round code="UA" size="xs" decorative />
-        <Flag round code="GB-ENG" size="xs" decorative />
-        <Flag round code="un" size="xs" decorative />
-        <Flag round code="pride" size="xs" decorative />
         <Flag code="UA" size="xs" decorative />
+        <Flag code="GB-ENG" size="xs" decorative />
+        <Flag code="un" size="xs" decorative />
+        <Flag code="pride" size="xs" decorative />
+        <Flag code="FR" size="md" decorative />
+        <Flag code="FR" diameter={24} decorative />
       </>,
     );
-    const [ua, eng, un, pride, rect] = [...container.querySelectorAll<HTMLElement>('[data-flag]')];
+    const [ua, eng, un, pride, md, d24] = [...container.querySelectorAll<HTMLElement>('[data-flag]')];
     expect(ua!.dataset.round).toBe('true');
     expect(ua!.style.width).toBe('16px');
     expect(ua!.style.height).toBe('16px');
@@ -37,8 +38,10 @@ describe('круглі прапори чату', () => {
     expect(un!.querySelector('img')!.getAttribute('src')).toBe('/flags/round/un.svg');
     expect(pride!.querySelector('img')).toBeNull();
     expect(pride!.querySelector('svg')).not.toBeNull();
-    expect(rect!.dataset.round).toBeUndefined();
-    expect(rect!.style.width).toBe('16px');
-    expect(rect!.style.height).toBe('11px');
+    // Усі прапори — кола: розмір — діаметр, ширина дорівнює висоті.
+    expect(md!.dataset.round).toBe('true');
+    expect([md!.style.width, md!.style.height]).toEqual(['26px', '26px']);
+    expect([d24!.style.width, d24!.style.height]).toEqual(['24px', '24px']);
+    expect(container.querySelectorAll('[data-flag]:not([data-round="true"])')).toHaveLength(0);
   });
 });

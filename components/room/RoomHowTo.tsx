@@ -47,7 +47,7 @@ const ART: Record<'windows' | 'sound' | 'main' | 'stamp', ReactNode> = {
     <span className={s.stampCards} aria-hidden="true">
       {['fr', 'gb', 'ie'].map((c) => (
         <span key={c}>
-          <Flag round code={c} size="xs" decorative />
+          <Flag code={c} size="xs" decorative />
         </span>
       ))}
     </span>

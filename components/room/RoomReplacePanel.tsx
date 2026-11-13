@@ -52,7 +52,7 @@ export function RoomReplacePanel({
         <div className="min-w-0">
           <div className="text-caption text-text-muted">{t('adding')}</div>
           <div className="flex items-center gap-1.5 text-body-strong text-text">
-            <Flag round code={adding.flagCode} size="xs" decorative />
+            <Flag code={adding.flagCode} size="xs" decorative />
             <span className="truncate">{adding.title}</span>
           </div>
         </div>
@@ -84,7 +84,7 @@ export function RoomReplacePanel({
                 </span>
               </span>
               <span className={s.tileName}>
-                <Flag round code={w.flagCode} size="xs" decorative />
+                <Flag code={w.flagCode} size="xs" decorative />
                 <span>{w.title}</span>
               </span>
               <span className={s.tileBtn} aria-hidden="true">

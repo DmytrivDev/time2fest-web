@@ -100,7 +100,7 @@ export function TvTimelineCard({ item, onAir = false, dim = false, initial = fal
         </span>
       ) : null}
       <span className="flex items-center gap-2">
-        <Flag code={item.flagCode} size="md" round decorative />
+        <Flag code={item.flagCode} size="md" decorative />
         <span className={cn('min-w-0 flex-1 truncate', styles.cardCity)}>
           {item.title}
           {item.countryName ? <span className="sr-only">, {item.countryName}</span> : null}

@@ -161,7 +161,7 @@ export function Stamp({
           <h2 id={titleId} className={st.title}>
             <span className={st.flags}>
               {stamps.map((s) => (
-                <Flag key={s.flagCode + (s.eventId ?? s.city)} round code={s.flagCode} size="md" decorative />
+                <Flag key={s.flagCode + (s.eventId ?? s.city)} code={s.flagCode} size="md" decorative />
               ))}
             </span>
             {/* Слова — окремо: на планшеті назва переноситься лише цілими словами, не на дефісі (2026-11-10). */}

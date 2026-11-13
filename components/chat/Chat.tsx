@@ -588,7 +588,7 @@ export function Chat({
               <div className="flex min-h-full flex-col items-center justify-center gap-2 px-5 pb-4 pt-5 text-center" data-row="empty">
                 {emptyInfo?.flagCode ? (
                   <span aria-hidden="true" className="flex size-12 items-center justify-center rounded-full border border-border bg-surface">
-                    <Flag round code={emptyInfo.flagCode} size="md" decorative />
+                    <Flag code={emptyInfo.flagCode} size="md" decorative />
                   </span>
                 ) : null}
                 <h2 className="m-0 text-lg leading-snug font-bold text-text">{emptyText}</h2>

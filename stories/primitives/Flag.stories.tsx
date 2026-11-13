@@ -6,12 +6,12 @@ const meta = { title: 'Примітиви/Flag', component: Flag, args: { code: 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const SIZES: FlagSize[] = ['xs', 'sm', 'md', 'lg'];
+const SIZES: FlagSize[] = ['xs', 'card', 'pill', 'sm', 'md', 'xl', 'lg'];
 
 export const Sizes: Story = {
   render: () => (
     <Stage>
-      <StateRow label="xs 16×11 · sm 24×16 · md 30×20 · lg 54×36 (обводка однакова)">
+      <StateRow label="лише круглі (2026-11-13): xs 16 · card 16 · pill 18 · sm 20 · md 26 · xl 40 · lg 48 (обводка однакова)">
         {SIZES.map((s) => (
           <Flag key={s} code="UA" size={s} name="Україна" />
         ))}

@@ -36,7 +36,7 @@ export function TvRatingTab({ now }: { now: Ms }) {
           {top.map((r) => (
             <li key={r.eventId} className={styles.rtRow} data-place={r.place <= 3 ? r.place : undefined}>
               <span className={styles.rtMedal}>{r.place}</span>
-              <Flag round code={r.flagCode} diameter={28} decorative />
+              <Flag code={r.flagCode} diameter={28} decorative />
               <span className={styles.rtCity}>
                 <span className={styles.rtName}>{r.city}</span>
                 <span aria-hidden="true" className={styles.rtBar}>

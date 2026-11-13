@@ -69,7 +69,7 @@ export function ToastBubble({ nick, flagCode, text, tier, aside, meta = false, p
   return (
     <div className={cn(s.bubble, className)} data-tier={tier} data-toast-bubble="">
       <div className={s.head}>
-        <Flag round code={flagCode} size="xs" decorative />
+        <Flag code={flagCode} size="xs" decorative />
         <span className={s.nick}>{nick}</span>
         {pass ? <PassMark /> : null}
         {tier === 'plain' ? null : <ToastPill />}

@@ -192,7 +192,7 @@ export function SchedulePage() {
       <span className={s.rings} aria-hidden="true">
         {z.items.map((it) => (
           <span key={it.c.iso} className={s.ring} data-state={it.state}>
-            <Flag round code={it.c.flagCode} diameter={22} decorative />
+            <Flag code={it.c.flagCode} diameter={22} decorative />
           </span>
         ))}
         {Array.from({ length: free }, (_, i) => (
@@ -238,7 +238,7 @@ export function SchedulePage() {
               <li key={it.c.iso} className={cn(s.slot, it.state === 'stamp' && s.slotGold, it.state === 'missed' && s.slotMissed)} data-slot={it.c.iso}>
                 <NextLink href={it.c.href} className={cn('t2f-focus', s.slotLink)}>
                   <span className={s.slotName}>
-                    <Flag round code={it.c.flagCode} diameter={22} decorative />
+                    <Flag code={it.c.flagCode} diameter={22} decorative />
                     <b>{it.c.name}</b>
                   </span>
                   <span className={s.slotCity}>{it.c.place.split(' · ')[0]}</span>

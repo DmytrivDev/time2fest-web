@@ -63,7 +63,7 @@ export function BigPostcard({ rows, start }: { rows: readonly PassportStamp[]; s
         <StampArt illustrationId={r.illustrationId} stampText={tStamp('stamped', { city: r.city.toLocaleUpperCase('uk') })} />
       </div>
       <p className={s.bigCity}>
-        <Flag round code={r.flagCode} diameter={24} decorative />
+        <Flag code={r.flagCode} diameter={24} decorative />
         {r.city}
       </p>
       <p className={s.bigMeta}>{t('midnight', { country: r.country, time: formatClock(r.midnightMs) })}</p>

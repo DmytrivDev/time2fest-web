@@ -55,7 +55,7 @@ export function TvStampCard({ eventId, city, countryName, flagCode, illustration
         </div>
         <div className={styles.stampBody}>
           <div className="flex items-start gap-2.5">
-            <Flag code={flagCode} size="md" round decorative className="mt-1 shrink-0" />
+            <Flag code={flagCode} size="md" decorative className="mt-1 shrink-0" />
             <h2 className={cn(styles.stampCity, city.length > LONG_CITY && styles.stampCityLong)}>{city}</h2>
           </div>
           <p className={styles.stampSub}>{t('subline', { country: countryName })}</p>

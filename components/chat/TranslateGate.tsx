@@ -46,7 +46,7 @@ export function TranslateGate({ message, onGetPass, onPassInfo, className }: Tra
   const ex = translateExample(message);
   const who = (
     <span className={s.who}>
-      <Flag round code={ex.flagCode} size="xs" decorative />
+      <Flag code={ex.flagCode} size="xs" decorative />
       <span className={s.nick}>{ex.nick}</span>
     </span>
   );

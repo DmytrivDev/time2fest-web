@@ -159,7 +159,7 @@ export function StreamPicker({
                 {/* Назва — на всю ширину (до двох рядків); прапор — круглий, у рядку з країною (правка власника 2026-11-01). */}
                 <span className={s.titleText}>{row.title}</span>
                 <span className={s.sub}>
-                  <Flag round code={row.flagCode} size="xs" decorative />
+                  <Flag code={row.flagCode} size="xs" decorative />
                   <span className={s.subText}>{row.countryName}</span>
                 </span>
               </span>

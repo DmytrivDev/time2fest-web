@@ -124,7 +124,7 @@ export function AuthorPanel({
     <div data-window="O-AUTHOR" data-pass={hasPass ? 'yes' : 'no'} data-author-compact={column ? 'false' : 'true'} className={cn('flex min-h-0 min-w-0 flex-1 flex-col', className)}>
       <div className="t2f-chat-log t2f-author-body" data-row="body">
         <header className="flex items-center gap-3">
-          <Flag round code={author.flagCode} size="xl" name={countryName} decorative={!countryName} />
+          <Flag code={author.flagCode} size="xl" name={countryName} decorative={!countryName} />
           <div className="min-w-0 flex-1">
             <div className="flex min-w-0 flex-wrap items-center gap-x-2">
               <h2 tabIndex={-1} className="t2f-author-nick">
@@ -221,7 +221,7 @@ export function AuthorPanel({
                             {i > 0 ? <span aria-hidden="true" className="t2f-author-seg" data-part="top" data-dim={p.planned ? '' : undefined} /> : null}
                             {next ? <span aria-hidden="true" className="t2f-author-seg" data-part="bottom" data-dim={next.planned ? '' : undefined} /> : null}
                             <span className="t2f-author-flag">
-                              <Flag round code={p.flagCode} size="sm" name={p.country} />
+                              <Flag code={p.flagCode} size="sm" name={p.country} />
                             </span>
                             <div className="min-w-0 flex-1 [overflow-wrap:anywhere]">
                               <span className={cn('font-semibold', p.planned ? 'text-text-muted' : 'text-text')}>{p.city}</span>

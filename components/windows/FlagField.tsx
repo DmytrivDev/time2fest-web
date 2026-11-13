@@ -269,7 +269,7 @@ export function FlagField({
                         onClick={() => pick(item)}
                         className="t2f-nk-opt"
                       >
-                        <Flag round code={item.code} size="sm" decorative />
+                        <Flag code={item.code} size="sm" decorative />
                         <span className="flex min-w-0 flex-1 items-baseline gap-2 overflow-hidden whitespace-nowrap">
                           {item.name}
                           {item.sub ? <span className="text-caption text-text-muted">{item.sub}</span> : null}
@@ -294,7 +294,7 @@ export function FlagField({
           onClick={openList}
           className="t2f-nk-input t2f-nk-flagbtn"
         >
-          <Flag round code={value} size="md" decorative />
+          <Flag code={value} size="md" decorative />
           <span className="min-w-0 flex-1 truncate">{nameOf(value)}</span>
           <span className="text-label-sm font-medium text-text-secondary">{c('change')}</span>
           <Icon name="chevron-down" size={16} className="text-text-secondary" />

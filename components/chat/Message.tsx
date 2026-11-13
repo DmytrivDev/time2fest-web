@@ -194,7 +194,7 @@ function ToastGreeting({
           <ul className={tm.chips} data-row="toasters">
             {parts.chips.map((c, i) => (
               <li key={`${c.nick}-${i}`} className={tm.chip}>
-                <Flag round code={c.flagCode} diameter={18} decorative />
+                <Flag code={c.flagCode} diameter={18} decorative />
                 {c.nick}
               </li>
             ))}
@@ -242,7 +242,7 @@ export function Message({
           <span>{own ? t('deletedOwn') : t('deletedQuote')}</span>
         ) : (
           <span className="inline-flex min-w-0 items-center gap-1.5">
-            <Flag round code={message.author.flagCode} size="xs" decorative />
+            <Flag code={message.author.flagCode} size="xs" decorative />
             <span className="truncate">{t('deletedOther', { nick: message.author.nick })}</span>
           </span>
         )}
@@ -300,7 +300,6 @@ export function Message({
           <span aria-hidden="true" className="ms-1.5 inline-flex">
             {s.flagCodes.slice(0, 5).map((code, i) => (
               <Flag
-                round
                 key={code + i}
                 code={code}
                 size="xs"
@@ -415,7 +414,7 @@ export function Message({
             {/* Ціль 44 px невидима; наведення — підсвітка всього рядка повідомлення, фокус — рамка лише навколо
                 прапора й імені (раніше підсвітка 44-піксельної цілі заходила на попереднє повідомлення). */}
             <span className="t2f-nick-label inline-flex items-center gap-1.5 rounded-sm">
-              <Flag round code={a.flagCode} size="xs" decorative />
+              <Flag code={a.flagCode} size="xs" decorative />
               <span className="t2f-nick-name">{a.nick}</span>
             </span>
           </button>

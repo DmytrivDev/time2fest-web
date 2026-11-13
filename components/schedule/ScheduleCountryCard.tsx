@@ -66,7 +66,7 @@ export function ScheduleCountryCard({
         <span className={s.text}>
           <span className={s.titleText}>{c.name}</span>
           <span className={s.sub}>
-            <Flag round code={c.flagCode} size="xs" decorative />
+            <Flag code={c.flagCode} size="xs" decorative />
             <span className={s.subText}>{c.place}</span>
           </span>
         </span>

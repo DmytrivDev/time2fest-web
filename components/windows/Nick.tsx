@@ -190,7 +190,7 @@ export function Nick({
             className="t2f-nk-chip"
             data-row="preview-chip"
           >
-            <Flag round code={flag} size="xs" decorative />
+            <Flag code={flag} size="xs" decorative />
             <span aria-hidden="true">{trimmed || c('previewEmpty')}</span>
           </span>
         </div>

@@ -44,7 +44,7 @@ const SELECTED = '';
 export function SegmentedControl({ label, options, value, onValueChange, semantics = 'radio', className }: SegmentedControlProps) {
   const body = (o: SegmentOption) => (
     <span className="t2f-seg-pill">
-      {o.flag ? <Flag round code={o.flag} size="xs" decorative /> : null}
+      {o.flag ? <Flag code={o.flag} size="xs" decorative /> : null}
       {o.label}
       {o.menu ? <Icon name="chevron-down" size={12} strokeWidth={2.2} className="-me-0.5" /> : null}
       {o.dot && <span className="size-2 rounded-full bg-highlight" aria-hidden="true" />}
@@ -97,7 +97,7 @@ export function SegmentedControl({ label, options, value, onValueChange, semanti
             <DropdownMenuContent align="start">
               {o.menu.items.map((it) => (
                 <DropdownMenuItem key={it.value} onSelect={() => o.menu!.onSelect(it.value)} aria-current={it.value === o.menu!.selected ? 'true' : undefined}>
-                  <Flag round code={it.flag} size="xs" decorative />
+                  <Flag code={it.flag} size="xs" decorative />
                   {it.label}
                 </DropdownMenuItem>
               ))}

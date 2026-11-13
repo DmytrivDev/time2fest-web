@@ -123,7 +123,7 @@ export function ZoneTip({ zone, state, now, viewerIso }: { zone: MapZone; state:
       <div className={m.tipFlags} data-tip-flags={Math.min(MAX_FLAGS, flags.length)}>
         {flags.slice(0, MAX_FLAGS).map((c, i) => (
           <span key={c.iso} className={m.tipFlag} style={{ zIndex: MAX_FLAGS - i }}>
-            <Flag code={c.flagCode} round diameter={22} decorative />
+            <Flag code={c.flagCode} diameter={22} decorative />
           </span>
         ))}
         {more ? <span className={m.tipMore}>{t('moreCountries', { count: more })}</span> : null}
@@ -167,7 +167,7 @@ export function CountryTip({
   return (
     <>
       <div className={m.tipHead}>
-        <Flag code={country.flagCode} round diameter={24} decorative />
+        <Flag code={country.flagCode} diameter={24} decorative />
         <span className={m.tipTitle}>{country.name}</span>
       </div>
       <div className={m.tipSub} data-tip-zones={zoneCount}>
@@ -224,7 +224,7 @@ export function CityTip({ city, zone, country, state, now }: { city: MapCity; zo
   return (
     <>
       <div className={m.tipHead}>
-        {country ? <Flag code={country.flagCode} round diameter={20} decorative /> : null}
+        {country ? <Flag code={country.flagCode} diameter={20} decorative /> : null}
         <span className={m.tipTitle}>{city.name}</span>
       </div>
       {where ? <div className={m.tipSub}>{where}</div> : null}

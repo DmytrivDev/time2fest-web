@@ -213,7 +213,7 @@ export function Caption({
   // Прапор країни перед назвою трансляції (правка власника 2026-11-05): видно, де саме йде трансляція; висоту рядка не змінює.
   const flag = current.country?.flagCode ? (
     <span className={home.titleFlag}>
-      <Flag round code={current.country.flagCode} size="md" decorative />
+      <Flag code={current.country.flagCode} size="md" decorative />
     </span>
   ) : null;
   // Пульт: ми вже на сторінці країни — назва не посилання.
@@ -245,7 +245,7 @@ export function Caption({
           <h2 id={titleId} tabIndex={-1} className={cn(home.barTitle, hinted && 'sr-only', 'focus:outline-none')}>
             {current.country?.flagCode ? (
               <span className={home.titleFlag}>
-                <Flag round code={current.country.flagCode} size="sm" decorative />
+                <Flag code={current.country.flagCode} size="sm" decorative />
               </span>
             ) : null}
             {/* Місто тієї трансляції, що грає («Гамбург · порт» → «Гамбург»), інакше місто події. */}

@@ -144,7 +144,7 @@ export function ChatSettings({
           <span className={s.caption}>{t('nick')}</span>
           {nick ? (
             <span className={s.nick}>
-              {flagCode ? <Flag round code={flagCode} size="xs" name={countryName} /> : null}
+              {flagCode ? <Flag code={flagCode} size="xs" name={countryName} /> : null}
               <span className={s.nickText}>{nick}</span>
             </span>
           ) : (

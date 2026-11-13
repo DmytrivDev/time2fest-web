@@ -32,7 +32,7 @@ export function RatePanel({ eventId }: { eventId: string }) {
         <StampArt illustrationId={country?.illustrationId ?? 'generic'} stampText={tStamp('stamped', { city: city.toLocaleUpperCase('uk') })} />
         <div className={s.cardBody}>
           <p className={s.cardCity}>
-            <Flag round code={country?.flagCode ?? e.countryIso} diameter={20} decorative />
+            <Flag code={country?.flagCode ?? e.countryIso} diameter={20} decorative />
             {city}
           </p>
           <p className={s.cardMeta}>{t('mainCelebration', { country: country?.name.uk ?? '' })}</p>

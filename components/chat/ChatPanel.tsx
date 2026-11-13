@@ -423,7 +423,7 @@ export function ChatPanel({
                 <>
                   {' '}
                   {t('emptyCountryFlag')}{' '}
-                  <Flag round code={ownFlag} size="xs" name={getData().countries.find((c) => c.flagCode === ownFlag)?.name.uk} className="inline-block align-text-bottom" />
+                  <Flag code={ownFlag} size="xs" name={getData().countries.find((c) => c.flagCode === ownFlag)?.name.uk} className="inline-block align-text-bottom" />
                 </>
               ) : null}
             </>

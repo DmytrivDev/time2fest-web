@@ -155,7 +155,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
             <span className="text-text-muted">{tRoom('more')}</span>
             {roomOthers.map((e) => (
               <span key={e.eventId} className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface-raised pl-1 pr-2.5 text-label-sm text-text">
-                <Flag round code={e.flagCode} size="xs" decorative />
+                <Flag code={e.flagCode} size="xs" decorative />
                 {e.city}
                 <Icon name="check" size={14} className="text-highlight" />
               </span>

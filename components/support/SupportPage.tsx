@@ -58,7 +58,7 @@ function Counters({ total, countries, flags }: { total: number; countries: numbe
     <p className={s.counters} data-toast-counters="">
       <span aria-hidden="true" className={s.flags}>
         {flags.map((f) => (
-          <Flag key={f} round code={f} diameter={18} decorative />
+          <Flag key={f} code={f} diameter={18} decorative />
         ))}
       </span>
       <span>{t('toastsMeta', { count: total, countries })}</span>
@@ -203,7 +203,7 @@ function Hero({ season, children }: { season: ToastSeason | null; children?: Rea
       <div aria-hidden="true" className={s.art}>
         <span className={cn(s.artBubble, s.artBack)}>
           <span className={s.who}>
-            <Flag round code="JP" size="xs" decorative />
+            <Flag code="JP" size="xs" decorative />
             <b>Hiro</b>
             <span className="t2f-toast-badge">тост</span>
           </span>
@@ -211,7 +211,7 @@ function Hero({ season, children }: { season: ToastSeason | null; children?: Rea
         </span>
         <span className={cn(s.artBubble, s.artFront)}>
           <span className={s.who}>
-            <Flag round code="UA" size="xs" decorative />
+            <Flag code="UA" size="xs" decorative />
             <b>Олена</b>
             <span className="t2f-toast-badge">тост</span>
           </span>
