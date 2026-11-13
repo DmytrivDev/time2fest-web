@@ -24,7 +24,7 @@ import { Countdown } from '@/components/primitives/Countdown';
 import { Icon } from '@/components/primitives/Icon';
 import { Logo } from '@/components/primitives/Logo';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs';
-import { getData } from '@/lib/data/load';
+import { useLiveData, useStreamChains } from '@/lib/api/hooks/live';
 import type { PlayerSource } from '@/lib/player/types';
 import type { Ms } from '@/lib/data/types';
 import { HANDOVER_AFTER, LAST_MINUTE_FROM } from '@/lib/engine/config';
@@ -107,7 +107,8 @@ function ReplayButton({ place }: { place: AirPlace }) {
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const selection = player?.selection;
-  const source = selection && selection.kind !== 'countdown-scene' ? getData().chainsByEventId.get(place.event.id)?.sources.find((s) => s.id === selection.source.id) : undefined;
+  const chains = useStreamChains();
+  const source = selection && selection.kind !== 'countdown-scene' ? chains.get(place.event.id)?.sources.find((s) => s.id === selection.source.id) : undefined;
   const replay = source?.replay;
   if (!source || !replay?.videoId) return null;
   const watchAgain = () => {
@@ -167,7 +168,7 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const watchedSince = watching ? now - watching.event.midnightMs : null;
   const momentFired = watchedSince !== null ? watchedSince >= 0 && watchedSince < HANDOVER_AFTER : (phase?.flags.momentFired ?? false);
   const mode = sidebarMode({ ready, current, momentFired, view: watching ? 'stream' : air?.view });
-  const data = getData();
+  const data = useLiveData();
   const minute = Math.floor(now / 60_000) * 60_000;
   // Одне джерело для колонки: обрана вручну трансляція, інакше подія ефіру. Відлік, місто, «Як святкувати» й підпис
   // «північ о …» — того місця, яке зараз на екрані (перевірка сайту 2026-11-09, B14 / A-19).

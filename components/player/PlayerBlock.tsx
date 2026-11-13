@@ -34,6 +34,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { Link } from '@/components/primitives/Link';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
+import { useStreamChain, useStreamChains } from '@/lib/api/hooks/live';
 import { getData } from '@/lib/data/load';
 import type { ScheduledEvent, StreamSource } from '@/lib/data/types';
 import type { CaptionPhase } from '@/lib/engine/captionPhase';
@@ -123,6 +124,7 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
   waiting?: { title: string; startsAt: number | null };
 } {
   const player = useOptionalPlayer();
+  const chains = useStreamChains();
   if (props.videoArea) return { kind: props.videoArea, muted: player?.muted ?? true, switched: false };
   if (!props.ready || !player || !player.selection) return { kind: 'loading', muted: true, switched: false };
   const sel = player.selection;
@@ -130,7 +132,7 @@ function useVideoArea(props: Pick<PlayerBlockProps, 'ready' | 'videoArea' | 'air
   if (sel.kind === 'source' && player.videoId) return { kind: 'video', muted: player.muted, switched };
   if (sel.kind === 'facebook-consent') return { kind: 'facebook-consent', muted: true, switched };
   if (sel.kind === 'waiting') {
-    const src = getData().chainsByEventId.get(player.eventId ?? '')?.sources.find((s) => s.id === sel.source.id);
+    const src = chains.get(player.eventId ?? '')?.sources.find((s) => s.id === sel.source.id);
     return {
       kind: 'waiting',
       muted: true,
@@ -191,11 +193,12 @@ function VideoFallback({
  */
 function usePlaying(): { event: ScheduledEvent; source: StreamSource } | null {
   const player = useOptionalPlayer();
+  const chains = useStreamChains();
   const sel = player?.selection;
   if (!player?.eventId || !sel || sel.kind === 'countdown-scene') return null;
   const data = getData();
   const event = data.eventsById.get(player.eventId);
-  const source = data.chainsByEventId.get(player.eventId)?.sources.find((s) => s.id === sel.source.id);
+  const source = chains.get(player.eventId)?.sources.find((s) => s.id === sel.source.id);
   return event && source ? { event, source } : null;
 }
 
@@ -257,7 +260,7 @@ export function PlayerBlock({
   const actions = useOptionalPlayerActions();
   const area = useVideoArea({ ready, videoArea, airView });
   const switched = switchedProp ?? area.switched;
-  const chain = current ? getData().chainsByEventId.get(current.event.id) : undefined;
+  const chain = useStreamChain(current?.event.id);
   const verified = area.kind === 'video' && !!chain?.sources.some((s) => s.verified);
 
   // Ефір (головна): підпис — тієї трансляції, що грає (її місто, прапор і назва), якщо вона тієї самої півночі.

@@ -48,6 +48,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
 import { useStreamPicker } from '@/components/live/ActionRow';
 import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
+import { useLiveData, useViewers } from '@/lib/api/hooks/live';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
@@ -57,7 +58,6 @@ import { mainLiveLine, mainSourceOf, zoneHasLive } from '@/lib/engine/mainCelebr
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { useBroadcast } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
-import { currentViewers } from '@/lib/presence/viewers';
 import { useStampGrant } from '@/lib/presence/useStampGrant';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
@@ -92,7 +92,7 @@ function progressEdges(data: Dataset): { startLabel?: string; endLabel?: string 
 function useNowNextData(now: Ms) {
   const schedule = useGuestStore((s) => s.schedule);
   const minute = Math.floor(now / 60_000) * 60_000;
-  const data = getData();
+  const data = useLiveData();
   const items = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true, mainCards: true }), [data, minute, schedule]);
   const progress = useMemo(() => ({ ...festProgress(data, minute), ...progressEdges(data) }), [data, minute]);
   const zoneLabel = viewerZoneLabel();
@@ -100,9 +100,8 @@ function useNowNextData(now: Ms) {
 }
 
 function useMapData() {
-  const data = getData();
-  const mapModel = useMemo(() => buildMapModel(data), [data]);
-  const viewers = useMemo(() => currentViewers(data), [data]);
+  const mapModel = useMemo(() => buildMapModel(getData()), []);
+  const viewers = useViewers();
   return { mapModel, viewers };
 }
 
@@ -138,7 +137,7 @@ export function HomeLive() {
   // Головне святкування ефіру (2026-11-13): кнопка на заглушці й рядок «почалось · Перемкнути».
   const player = useOptionalPlayer();
   const reduced = useReducedMotion();
-  const data = getData();
+  const data = useLiveData();
   const minute = Math.floor(now / 60_000) * 60_000;
   const airMidnight = current?.event.midnightMs ?? null;
   const liveInZone = useMemo(() => (airMidnight !== null && minute > 0 ? zoneHasLive(data, airMidnight, minute) : false), [data, airMidnight, minute]);

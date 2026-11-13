@@ -13,6 +13,7 @@ import { Button } from '@/components/primitives/Button';
 import { IconButton } from '@/components/primitives/IconButton';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Switch } from '@/components/primitives/Switch';
+import { useStreamChains } from '@/lib/api/hooks/live';
 import { emitReplyToMe } from '@/lib/chat/testReply';
 import { getData } from '@/lib/data/load';
 import type { PayResult } from '@/lib/data/types';
@@ -146,10 +147,8 @@ function PanelBody({
     ref.current?.focus({ preventScroll: true });
   }, []);
 
-  const jumps = useMemo(() => {
-    const data = getData();
-    return computeJumps(currentAirEvent(now, data, data.chainsByEventId));
-  }, [now]);
+  const chains = useStreamChains();
+  const jumps = useMemo(() => computeJumps(currentAirEvent(now, getData(), chains)), [now, chains]);
 
   if (!machine) return null;
 

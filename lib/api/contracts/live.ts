@@ -47,3 +47,21 @@ export interface LiveService {
   /** Плеєр не зміг відтворити джерело — сигнал серверу перевірити його позачергово. `POST /api/live/source-errors`. */
   reportSourceError(report: SourceErrorReport): Promise<ApiResult<void>>;
 }
+
+/**
+ * Чисте правило застосування події каналу `live:streams` до ланцюжків (сервер і клієнт — одна функція): `source`
+ * замінює джерело з тим самим `id` у ланцюжку події (невідомі подія чи джерело — ігноруються: чекаємо `chain`), `chain`
+ * замінює ланцюжок цілком. Не змінилось нічого — повертає ту саму мапу (кеш не будить споживачів).
+ */
+export function applyStreamEvent(chains: ReadonlyMap<string, StreamChain>, event: StreamEvent): ReadonlyMap<string, StreamChain> {
+  if (event.type === 'chain') {
+    const next = new Map(chains);
+    next.set(event.chain.eventId, event.chain);
+    return next;
+  }
+  const chain = chains.get(event.eventId);
+  if (!chain || !chain.sources.some((s) => s.id === event.source.id)) return chains;
+  const next = new Map(chains);
+  next.set(event.eventId, { ...chain, sources: chain.sources.map((s) => (s.id === event.source.id ? event.source : s)) });
+  return next;
+}

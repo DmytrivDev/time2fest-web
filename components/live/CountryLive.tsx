@@ -55,8 +55,8 @@ import { Link } from '@/components/primitives/Link';
 import { Icon } from '@/components/primitives/Icon';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
+import { useLiveData, useViewers } from '@/lib/api/hooks/live';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
-import { getData } from '@/lib/data/load';
 import type { Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
 import { captionPhase } from '@/lib/engine/captionPhase';
 import { HANDOVER_AFTER, STAMP_DELAY } from '@/lib/engine/config';
@@ -71,7 +71,6 @@ import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
 import { useRatingBoard } from '@/lib/api/hooks/rating';
-import { currentViewers } from '@/lib/presence/viewers';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import {
   countryMainEvent,
@@ -202,7 +201,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const tHead = useTranslations('country.header');
   const tChat = useTranslations('chat');
   const tPlayer = useTranslations('player');
-  const data = getData();
+  const data = useLiveData();
   const country = data.countriesByIso.get(iso)!;
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
@@ -439,7 +438,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const toggleSchedule = useCallback(() => {
     if (mainEvent) passWindows.requestSchedule(mainEvent.id);
   }, [mainEvent, passWindows]);
-  const viewers = useMemo(() => currentViewers(data), [data]);
+  const viewers = useViewers();
 
   const faqItems: FaqItem[] = (['when', 'stamp', 'switch', 'room'] as const).map((id) => ({
     id,

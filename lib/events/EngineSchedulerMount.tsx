@@ -8,7 +8,7 @@
  * Типові залежності беруться зі стану гостя: присутність — `pendingPresence`,
  * штампи — `stamps`, закрита оцінка — `rate[eventId].closed`.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { PresenceSource } from '@/lib/data/types';
 import { useClock } from '@/lib/time/TimeProvider';
 import { safeSessionStorage } from '@/lib/time/params';
@@ -48,7 +48,19 @@ export function EngineScheduler(props: EngineSchedulerProps) {
     propsRef.current = props;
   });
 
-  const { data } = props;
+  // Ланцюжки можуть змінитися під час сеансу (поправки сервера): планувальник читає їх щоразу з актуальних props, а сам
+  // не перестворюється (інакше він забув би, що вже випромінив).
+  const { eventsBySlot, countriesByIso } = props.data;
+  const data = useMemo<SchedulerData>(
+    () => ({
+      eventsBySlot,
+      countriesByIso,
+      get chainsByEventId() {
+        return propsRef.current.data.chainsByEventId;
+      },
+    }),
+    [eventsBySlot, countriesByIso],
+  );
   useEffect(() => {
     const p = () => propsRef.current;
     const scheduler = createEngineScheduler({

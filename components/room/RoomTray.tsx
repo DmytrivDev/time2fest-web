@@ -15,7 +15,7 @@ import { useBarGeometry } from '@/components/offers/CookieLayer';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { getData } from '@/lib/data/load';
+import { useLiveData } from '@/lib/api/hooks/live';
 import { thumbOf } from '@/lib/live/thumb';
 import { useGuestStore } from '@/stores/guest';
 import { ROOM_LIMIT, useRoomStore } from '@/stores/room';
@@ -78,11 +78,12 @@ export function RoomTray() {
   const [el, setEl] = useState<HTMLDivElement | null>(null);
   const { box, overVideo } = useBarGeometry(el, true, active);
   const overActions = useOverActions(el, active);
+  const liveData = useLiveData();
   if (!active) return null;
 
   const limit = ROOM_LIMIT.desktop;
   const full = windows.length >= limit;
-  const data = getData();
+  const data = liveData;
   const style = box ? ({ left: box.left, width: box.width } as CSSProperties) : undefined;
   return (
     <div

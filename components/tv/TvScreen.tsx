@@ -34,7 +34,7 @@ import { FacebookConsentCard } from '@/components/player/FacebookConsentCard';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { cn } from '@/components/primitives/cn';
 import { Skeleton } from '@/components/primitives/Skeleton';
-import { getData } from '@/lib/data/load';
+import { useLiveData } from '@/lib/api/hooks/live';
 import { isPastStatus } from '@/components/live/eventCards';
 import { festProgress } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
@@ -209,7 +209,7 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   }, [full, leaveFull, panel]);
   useRemoteKeys({ rootRef, onExit: exit, onBack: back, ready });
 
-  const data = getData();
+  const data = useLiveData();
   const minute = Math.floor(now / 60_000) * 60_000;
   const items = useMemo(() => tvTimeline(data, minute, schedule), [data, minute, schedule]);
   const fest = useMemo(() => festProgress(data, minute), [data, minute]);

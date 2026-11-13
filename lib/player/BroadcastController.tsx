@@ -16,6 +16,7 @@
  */
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { getStreamChains, useStreamChains } from '@/lib/api/hooks/live';
 import type { City, Country, Ms, ScheduledEvent, StreamChain } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
 import { captionPhase, type CaptionPhase } from '@/lib/engine/captionPhase';
@@ -101,35 +102,39 @@ function placeOf(event: ScheduledEvent | null | undefined): AirPlace | null {
 }
 
 /** «Мій графік»: подія слота ефіру з графіка гостя (той самий вибір, що й в ефірі); поза графіком — ефір як є. */
-export function preferAir(now: Ms, air: AirState, ids: readonly string[]): AirState {
+export function preferAir(now: Ms, air: AirState, ids: readonly string[], chains: ReadonlyMap<string, StreamChain> = getStreamChains()): AirState {
   if (!air.event || !ids.length) return air;
   const data = getData();
   const slot = data.eventsBySlot.find((s) => s.midnightMs === air.event!.midnightMs);
   const mine = slot?.events.filter((e) => ids.includes(e.id)) ?? [];
-  const pick = mine.length ? pickSlotEvent(now, mine, data.countriesByIso, data.chainsByEventId) : null;
+  const pick = mine.length ? pickSlotEvent(now, mine, data.countriesByIso, chains) : null;
   if (!pick) return air;
   return { ...air, event: toRuntime(now, pick.event), source: pick.source, view: pick.view };
 }
 
 /** Ланцюжок обраної трансляції: обране джерело — бажане (`preferredSourceId`), решта — запасні. */
-export function watchChain(pick: WatchPick): (StreamChain & { preferredSourceId?: string }) | null {
-  const chain = getData().chainsByEventId.get(pick.eventId);
+export function watchChain(pick: WatchPick, chains: ReadonlyMap<string, StreamChain> = getStreamChains()): (StreamChain & { preferredSourceId?: string }) | null {
+  const chain = chains.get(pick.eventId);
   if (!chain?.sources.length) return null;
   return { eventId: pick.eventId, sources: chain.sources, ...(pick.sourceId ? { preferredSourceId: pick.sourceId } : {}) };
 }
 
 /** Чистий розрахунок стану ефіру для `now` (без React): подія, наступна, фаза підпису, ланцюжок. */
-export function computeBroadcast(now: Ms, prefer?: readonly string[] | null): Pick<BroadcastState, 'air' | 'phase' | 'current' | 'next' | 'chain'> {
+export function computeBroadcast(
+  now: Ms,
+  prefer?: readonly string[] | null,
+  chains: ReadonlyMap<string, StreamChain> = getStreamChains(),
+): Pick<BroadcastState, 'air' | 'phase' | 'current' | 'next' | 'chain'> {
   const data = getData();
-  const base = currentAirEvent(now, data, data.chainsByEventId);
-  const air = prefer?.length ? preferAir(now, base, prefer) : base;
+  const base = currentAirEvent(now, data, chains);
+  const air = prefer?.length ? preferAir(now, base, prefer, chains) : base;
   const phase = air.event ? captionPhase(now, air.event, 'broadcast', air.nextEvent) : null;
   return {
     air,
     phase,
     current: placeOf(air.event),
     next: placeOf(air.nextEvent),
-    chain: air.event ? (data.chainsByEventId.get(air.event.id) ?? { eventId: air.event.id, sources: [] }) : null,
+    chain: air.event ? (chains.get(air.event.id) ?? { eventId: air.event.id, sources: [] }) : null,
   };
 }
 
@@ -141,6 +146,8 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   const controlling = isBroadcastPath(pathname);
   const { setChain, setFacebookConsent } = usePlayerActions();
   const facebookConsent = useGuestStore((s) => s.consent.facebookVideo);
+  // Ланцюжки джерел з шва `live`: стартово зі збірки, далі поправки сервера (статус, вбудовування).
+  const chains = useStreamChains();
 
   // `/tv` починає «на паузі»: сторінка сама знімає її, коли знає, що це не телефон (інакше iframe встиг би створитися).
   const [suspended, suspend] = useState(() => pathname?.replace(/\/+$/, '') === '/tv');
@@ -150,7 +157,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   }, []);
 
   // Ефір змінюється раз на слот, а не щосекунди: розрахунок дешевий, але ланцюжок порівнюємо за id події.
-  const computed = useMemo(() => (known ? computeBroadcast(now, prefer) : null), [known, now, prefer]);
+  const computed = useMemo(() => (known ? computeBroadcast(now, prefer, chains) : null), [known, now, prefer, chains]);
   const eventId = computed?.air?.event?.id ?? null;
   const chain = computed?.chain ?? null;
 
@@ -184,7 +191,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
     }
     if (watchKey) {
       const [ev, src] = watchKey.split('|');
-      const picked = watchChain({ eventId: ev!, sourceId: src || undefined });
+      const picked = watchChain({ eventId: ev!, sourceId: src || undefined }, chains);
       if (picked) {
         setChain(picked);
         return;
@@ -198,7 +205,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
     // час початку невідомий чи вже минув (2026-11-13), а не інша трансляція.
     const main = chain.sources.find((x) => x.kind === 'main');
     setChain(main ? { eventId, sources: chain.sources, preferredSourceId: main.id, waitForPreferred: true } : { eventId, sources: chain.sources });
-  }, [controlling, known, suspended, eventId, chain, watchKey, setChain]);
+  }, [controlling, known, suspended, eventId, chain, chains, watchKey, setChain]);
 
   const stayed = useRef<string | null>(null);
   const controllingRef = useRef(controlling);
@@ -214,6 +221,8 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   }, []);
   /** Для `air:handover.stayedHere`: гість лишився на сторінці країни з подією, з якої переходить ефір. */
   const stayedHere = useCallback(() => stayed.current !== null && !controllingRef.current, []);
+
+  const schedulerData = useMemo(() => ({ ...getData(), chainsByEventId: chains }), [chains]);
 
   const value = useMemo<BroadcastState>(
     () => ({
@@ -236,7 +245,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
 
   return (
     <BroadcastContext.Provider value={value}>
-      <EngineScheduler data={getData()} getPresence={surfacePresence} stayedHere={stayedHere} rate={RATE_DEPS} getOfferContext={buildOfferContext} />
+      <EngineScheduler data={schedulerData} getPresence={surfacePresence} stayedHere={stayedHere} rate={RATE_DEPS} getOfferContext={buildOfferContext} />
       {children}
     </BroadcastContext.Provider>
   );

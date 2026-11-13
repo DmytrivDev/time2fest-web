@@ -15,6 +15,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { QRCode } from '@/components/primitives/QRCode';
+import { getStreamChains } from '@/lib/api/hooks/live';
 import { PASS_SHORT_URL, PASS_URL } from '@/lib/config/site';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
@@ -26,7 +27,7 @@ import styles from './tv.module.css';
 const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
 
 function thumbOf(row: StreamRowData): string | undefined {
-  const src = getData().chainsByEventId.get(row.eventId)?.sources.find((s) => s.id === row.id);
+  const src = getStreamChains().get(row.eventId)?.sources.find((s) => s.id === row.id);
   return src?.platform === 'youtube' && src.videoId ? `https://i.ytimg.com/vi/${src.videoId}/mqdefault.jpg` : undefined;
 }
 

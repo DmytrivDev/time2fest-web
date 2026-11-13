@@ -14,8 +14,8 @@ import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { getData } from '@/lib/data/load';
-import type { Ms } from '@/lib/data/types';
+import { useLiveData } from '@/lib/api/hooks/live';
+import type { Dataset, Ms } from '@/lib/data/types';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import { cityOf } from '@/lib/live/cityOf';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
@@ -38,8 +38,7 @@ const KIND_KEY = { main: 'main', webcam: 'webcam', tv: 'tv' } as const;
  * Трансляції, що йдуть зараз, у поясі події (та сама північ), за популярністю подій і порядком джерел. Порядок сталий:
  * вибір іншої трансляції лише переносить «Зараз грає», рядки місцями не міняються (правка власника 2026-11-01).
  */
-export function liveRowsForMidnight(midnightMs: Ms, now: Ms): StreamRowData[] {
-  const data = getData();
+export function liveRowsForMidnight(data: Dataset, midnightMs: Ms, now: Ms): StreamRowData[] {
   const events = data.events
     .filter((e) => e.midnightMs === midnightMs)
     .sort((a, b) => b.popularity - a.popularity || (a.id < b.id ? -1 : 1));
@@ -79,12 +78,13 @@ export function StreamPicker({
   const tType = useTranslations('liveCards.eventCard.type');
   const tStatus = useTranslations('country.streams.status');
   const now = useNow({ granularity: 'minute' });
+  const data = useLiveData();
   const player = useOptionalPlayer();
   const actions = useOptionalPlayerActions();
   const currentId = player?.selection?.kind === 'source' ? player.selection.source.id : null;
   const liveRows = useMemo(
-    () => (givenRows ? [] : liveRowsForMidnight(midnightMs, now)),
-    [givenRows, midnightMs, now],
+    () => (givenRows ? [] : liveRowsForMidnight(data, midnightMs, now)),
+    [givenRows, data, midnightMs, now],
   );
   const rows = givenRows ?? liveRows;
   const home = countryIso ? rows.filter((r) => r.countryIso === countryIso) : [];
@@ -117,7 +117,7 @@ export function StreamPicker({
   const pick = (row: StreamRowData) => {
     if (onPick) onPick(row);
     else {
-      const sources = getData().chainsByEventId.get(row.eventId)?.sources ?? [];
+      const sources = data.chainsByEventId.get(row.eventId)?.sources ?? [];
       actions?.setChain({ eventId: row.eventId, sources, preferredSourceId: row.id });
     }
     onPicked?.();

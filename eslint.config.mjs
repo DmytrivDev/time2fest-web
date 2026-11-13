@@ -33,6 +33,10 @@ export default tseslint.config(
               group: ['@/stores/notifications', '**/stores/notifications', '@/lib/notifications/*', '**/lib/notifications/*'],
               message: 'Сповіщення перенесено на шов: @/lib/api/hooks/notifications (типи — @/lib/api/contracts/notifications).',
             },
+            {
+              group: ['@/lib/presence/viewers', '**/lib/presence/viewers'],
+              message: 'Глядачі перенесено на шов «Ефір»: useViewers з @/lib/api/hooks/live (імітація — lib/api/sim/live).',
+            },
           ],
         },
       ],
@@ -43,6 +47,10 @@ export default tseslint.config(
         {
           selector: "MemberExpression[property.name='setRate']",
           message: 'Оцінки пише сервіс рейтингу: ratingActions.vote з @/lib/api/hooks/rating (не guest.setRate).',
+        },
+        {
+          selector: "MemberExpression[property.name='chainsByEventId'][object.type='CallExpression'][object.callee.name='getData']",
+          message: 'Ланцюжки трансляцій — за швом «Ефір»: useStreamChains / useStreamChain / useLiveData з @/lib/api/hooks/live (не getData().chainsByEventId).',
         },
       ],
     },

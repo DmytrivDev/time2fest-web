@@ -30,6 +30,7 @@ import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useLiveData } from '@/lib/api/hooks/live';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import {
   MORE_ACTIONS_ID,
@@ -59,7 +60,6 @@ import { OverlayInFlowOutlet, useChatColumn, useOverlay, usePartyHref } from '@/
 import { ShareContent } from '@/components/windows/Share';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { SITE_HOST } from '@/lib/config/site';
-import { getData } from '@/lib/data/load';
 import { cityOf } from '@/lib/live/cityOf';
 import type { Dataset, GuestRoomWindow, RoomId } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
@@ -99,9 +99,10 @@ const SHARE_ID = 'O-ROOM-SHARE';
 /** Головне вікно кімнати: обрана трансляція ще не почалась — заглушка «Трансляція очікується» (2026-11-11). */
 function MainWaiting() {
   const player = useOptionalPlayer();
+  const liveData = useLiveData();
   const sel = player?.selection;
   if (!sel || sel.kind !== 'waiting' || !player.eventId) return null;
-  const data = getData();
+  const data = liveData;
   const country = data.countriesByIso.get(data.eventsById.get(player.eventId)?.countryIso ?? '');
   const src = data.chainsByEventId.get(player.eventId)?.sources.find((s) => s.id === sel.source.id);
   if (!country || !src?.startsAt) return null;
@@ -167,7 +168,7 @@ export function RoomLive() {
   const tShare = useTranslations('room.share');
   const tPlayer = useTranslations('player');
   const tChat = useTranslations('chat');
-  const data = getData();
+  const data = useLiveData();
   const announce = useAnnounce();
   const overlay = useOverlay();
   // «Режим вечірки»: телефон і планшет-портрет — `/tv-info/` (2026-11-10).

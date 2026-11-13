@@ -6,12 +6,12 @@ import { Badge } from '@/components/primitives/Badge';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
+import { useStreamChains } from '@/lib/api/hooks/live';
 import type { CelebrationType, EventStatus, Ms } from '@/lib/data/types';
 import { formatClock, formatMidnightAgo } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { PostcardArt } from '@/components/windows/StampArt';
 import { useContext, useState } from 'react';
-import { getData } from '@/lib/data/load';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { RoomPageContext, usePlayingTarget, useRoomToggle } from '@/components/room/useRoomToggle';
 import type { RoomTarget } from '@/stores/room';
@@ -193,6 +193,7 @@ export function EventCard({
   const room = useRoomToggle();
   const roomPage = useContext(RoomPageContext);
   const playing = usePlayingTarget();
+  const chains = useStreamChains();
   const [confirming, setConfirming] = useState(false);
   const canPlus = !!liveSourceId && !isOnAir && !isPast;
   const inRoom = !!liveSourceId && room.has(liveSourceId);
@@ -201,8 +202,8 @@ export function EventCard({
   const confirmFirst = stack && !roomPage;
   const plusLabel = inRoom ? t('roomIn', { city: title }) : t('roomAdd', { city: title });
   const playingTitle = playing
-    ? (getData()
-        .chainsByEventId.get(playing.eventId)
+    ? (chains
+        .get(playing.eventId)
         ?.sources.find((x) => x.id === playing.sourceId)?.title.uk ?? '')
     : '';
 

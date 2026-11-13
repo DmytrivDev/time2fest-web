@@ -27,8 +27,8 @@ import { Icon } from '@/components/primitives/Icon';
 import { SoundToggle, type SoundToggleProps } from '@/components/player/SoundToggle';
 import { IconButton } from '@/components/primitives/IconButton';
 import { useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
+import { useStreamChains } from '@/lib/api/hooks/live';
 import { SITE_HOST } from '@/lib/config/site';
-import { getData } from '@/lib/data/load';
 import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
 import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
 import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
@@ -123,6 +123,7 @@ export function useStreamPicker({ mode = 'broadcast', streams, onToggleSchedule 
   const overlay = useOverlay();
   const column = useChatColumn();
   const broadcast = useOptionalBroadcast();
+  const chains = useStreamChains();
   const remote = mode === 'remote';
   const midnightMs = remote ? (streams?.midnightMs ?? null) : (broadcast?.current?.event.midnightMs ?? null);
   // Список живе у вікні поза контекстом ефіру — беремо найсвіжіший стан ефіру з посилання.
@@ -134,9 +135,9 @@ export function useStreamPicker({ mode = 'broadcast', streams, onToggleSchedule 
     const b = broadcastRef.current;
     if (!b) return;
     const air = b.current?.event.id;
-    const main = air ? getData().chainsByEventId.get(air)?.sources.find((x) => x.kind === 'main') : undefined;
+    const main = air ? chains.get(air)?.sources.find((x) => x.kind === 'main') : undefined;
     b.watch(row.eventId === air && row.id === main?.id ? null : { eventId: row.eventId, sourceId: row.id });
-  }, []);
+  }, [chains]);
   const open = () => {
     if (midnightMs === null) return;
     overlay.open({
