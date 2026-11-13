@@ -17,6 +17,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
+import { cityOf } from '@/lib/live/cityOf';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
 import { thumbOf } from '@/lib/live/thumb';
@@ -25,7 +26,7 @@ import { RoomAddConfirm } from './RoomAddConfirm';
 import { CalendarButton, scheduleClosed } from './CalendarButton';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
 import { useGuestStore } from '@/stores/guest';
-import { usePhone } from './StreamList';
+import { usePhone } from '@/lib/hooks/useMedia';
 import nn from './nowNext.module.css';
 import s from './streamPicker.module.css';
 
@@ -217,7 +218,7 @@ export function StreamPicker({
                   </button>
                 )}
                 <CalendarButton
-                  city={row.title.split(' · ')[0] ?? row.title}
+                  city={cityOf(row.title)}
                   inSchedule={inSched(row.eventId)}
                   closed={scheduleClosed(row.midnightMs, nowSec)}
                   onToggle={onToggleSchedule ? () => onToggleSchedule(row.eventId) : undefined}

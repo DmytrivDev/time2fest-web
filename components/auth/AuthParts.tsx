@@ -13,7 +13,7 @@ import { createContext, useContext, useEffect, useId, useRef, useState, type Rea
 import { cn } from '@/components/primitives/cn';
 import { Reveal } from '@/components/primitives/Reveal';
 import { PASS_HREF, useGetPass } from '@/components/pass/PassWindow';
-import { formatCountdown } from '@/lib/auth/sim';
+import { formatShortCountdown } from '@/lib/i18n/time';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { AuthIcon, GoogleMark, type AuthIconName } from './icons';
 import s from './auth.module.css';
@@ -237,7 +237,7 @@ export function ResendButton({
           {t('resend')}
         </button>
         <p id={`${uid}-resend`} className={cn(s.hint, s.center)}>
-          {t.rich('resendIn', { time: formatCountdown(left), b: Bold })}
+          {t.rich('resendIn', { time: formatShortCountdown(left), b: Bold })}
         </p>
       </>
     );

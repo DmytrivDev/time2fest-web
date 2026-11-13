@@ -44,14 +44,3 @@ function randomDigits(n: number): string {
 export function newToken(): string {
   return randomDigits(12);
 }
-
-/** «23:42» — час людини (локальний пояс браузера). */
-export function formatClock(ms: number): string {
-  return new Intl.DateTimeFormat('uk-UA', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(ms);
-}
-
-/** «0:42» для відліку до нового листа. */
-export function formatCountdown(ms: number): string {
-  const s = Math.max(0, Math.ceil(ms / 1000));
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}

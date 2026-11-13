@@ -11,6 +11,7 @@
  * Відкотити: `PANEL_SWAP = 'off'` — вікна знову міняються миттєво (компонент лишається простою обгорткою).
  */
 import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 
 export const PANEL_SWAP: 'slide' | 'off' = 'slide';
 
@@ -29,11 +30,7 @@ function motionOn(): boolean {
   if (PANEL_SWAP === 'off' || typeof window === 'undefined') return false;
   if (typeof Element === 'undefined' || typeof Element.prototype.animate !== 'function')
     return false;
-  if (document.documentElement.getAttribute('data-reduce-motion') === 'true') return false;
-  return !(
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
+  return !isReducedMotionNow();
 }
 
 function strip(node: Element) {

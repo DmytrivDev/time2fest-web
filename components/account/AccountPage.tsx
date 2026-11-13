@@ -34,6 +34,7 @@ import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
 import { IS_TEST_BUILD } from '@/lib/env';
 import { detectFlag } from '@/lib/geo/detectFlag';
+import { utcLabel } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useAccountStore } from '@/stores/account';
 import { useAuthStore } from '@/stores/auth';
@@ -49,15 +50,6 @@ const SECTIONS = [
 type SectionId = (typeof SECTIONS)[number]['id'];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-/** «UTC+2», «UTC−5», «UTC+5:30». */
-function utcLabel(min: number): string {
-  const sign = min < 0 ? '−' : '+';
-  const a = Math.abs(min);
-  const h = Math.floor(a / 60);
-  const m = a % 60;
-  return `UTC${sign}${h}${m ? `:${String(m).padStart(2, '0')}` : ''}`;
-}
 
 /** Пояси країни з назвою за головним містом поясу (без бази всіх міст, власник 2026-11-08). */
 function countryZones(iso: string) {

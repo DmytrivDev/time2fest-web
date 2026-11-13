@@ -5,24 +5,14 @@
  * І «+» зі сторінки країни: додати трансляцію в кімнату (`stores/room`) і відкрити кімнату.
  */
 import { useRouter } from 'next/navigation';
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback } from 'react';
+import { usePhone } from '@/lib/hooks/useMedia';
 import { useRoomStore, type RoomTarget, type RoomViewport } from '@/stores/room';
 
 export const ROOM_HREF = '/room/';
-const PHONE_QUERY = '(max-width: 767.98px)';
-
-function subscribe(cb: () => void): () => void {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
-  const mq = window.matchMedia(PHONE_QUERY);
-  mq.addEventListener('change', cb);
-  return () => mq.removeEventListener('change', cb);
-}
-function snapshot(): RoomViewport {
-  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(PHONE_QUERY).matches ? 'phone' : 'desktop';
-}
 
 export function useRoomViewport(): RoomViewport {
-  return useSyncExternalStore(subscribe, snapshot, () => 'desktop');
+  return usePhone() ? 'phone' : 'desktop';
 }
 
 /**
@@ -33,11 +23,12 @@ export function useRoomViewport(): RoomViewport {
 export function useAddToRoom(): (target: RoomTarget, main: RoomTarget | null) => void {
   const router = useRouter();
   const add = useRoomStore((s) => s.add);
+  const viewport = useRoomViewport();
   return useCallback(
     (target, main) => {
-      add(target, snapshot(), main);
+      add(target, viewport, main);
       router.push(ROOM_HREF);
     },
-    [add, router],
+    [add, router, viewport],
   );
 }

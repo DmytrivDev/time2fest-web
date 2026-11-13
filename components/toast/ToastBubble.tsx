@@ -11,21 +11,13 @@ import { cn } from '@/components/primitives/cn';
 import { EmojiText } from '@/components/primitives/Emoji';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
+import { PassMark } from '@/components/primitives/PassMark';
 import type { ToastTier } from '@/lib/toast/tiers';
 import s from './toast.module.css';
 
 export function ToastPill() {
   const t = useTranslations('toast');
   return <span className={s.pill}>{t('badge')}</span>;
-}
-
-export function PassMark() {
-  const t = useTranslations('primitives.badge');
-  return (
-    <span role="img" aria-label={t('vip')} title={t('vip')} className={s.passMark}>
-      <Icon name="ticket" size={12} strokeWidth={2.4} />
-    </span>
-  );
 }
 
 /** Рядок під тостом $5 / $10 у чаті й на успіху. */
@@ -71,7 +63,7 @@ export function ToastBubble({ nick, flagCode, text, tier, aside, meta = false, p
       <div className={s.head}>
         <Flag code={flagCode} size="xs" decorative />
         <span className={s.nick}>{nick}</span>
-        {pass ? <PassMark /> : null}
+        {pass ? <PassMark variant="outline" className={s.passMark} /> : null}
         {tier === 'plain' ? null : <ToastPill />}
         <span className={s.spacer} />
         {aside ? <span className={s.ago}>{aside}</span> : null}

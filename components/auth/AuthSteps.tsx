@@ -13,7 +13,8 @@ import NextLink from 'next/link';
 import { useEffect, useRef } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { IS_TEST_BUILD } from '@/lib/env';
-import { formatClock, GOOGLE_DEMO_NAME, LETTER_TTL_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
+import { formatClock } from '@/lib/i18n/time';
+import { GOOGLE_DEMO_NAME, LETTER_TTL_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
 import { useAuthStore } from '@/stores/auth';
 import {
   AccountPerks,

@@ -41,7 +41,7 @@ import type { StreamRowData } from '@/lib/live/countryData';
 import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
 import type { RoomTarget } from '@/stores/room';
 import { RoomAddConfirm } from './RoomAddConfirm';
-import { usePhone } from './StreamList';
+import { usePhone } from '@/lib/hooks/useMedia';
 import { thumbOf } from '@/lib/live/thumb';
 import s from './streamCards.module.css';
 

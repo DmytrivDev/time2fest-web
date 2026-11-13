@@ -13,7 +13,7 @@
  */
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
@@ -45,6 +45,7 @@ import { SubtitleSkeleton, ZoneRowsSkeleton } from './CountriesSkeleton';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { MapScheduleContext, PlayMark, ScheduleButton, StateBadge } from './ZonePanel';
 import { ZoneListView } from './ZoneListView';
+import { usePhone } from '@/lib/hooks/useMedia';
 import { REGION_ORDER, regionOf, type RegionKey } from './regions';
 import nn from './nowNext.module.css';
 import styles from './countryList.module.css';
@@ -59,15 +60,6 @@ export interface CountryListProps {
   data?: Dataset;
   className?: string;
 }
-
-const PHONE_QUERY = '(max-width: 767.98px)';
-function subscribePhone(cb: () => void): () => void {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return () => undefined;
-  const mq = window.matchMedia(PHONE_QUERY);
-  mq.addEventListener('change', cb);
-  return () => mq.removeEventListener('change', cb);
-}
-const getPhone = () => (typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(PHONE_QUERY).matches : false);
 
 // Пошук усіма мовами сайту (uk/en/es/fr), без регістру, діакритики, дефісів і апострофів — `lib/search/countrySearch.ts`
 // (рішення власника 2026-11-09): «nepal», «India», «new york», «Kyiv», «Britain», «sao paulo» знаходять потрібне.
@@ -260,7 +252,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   const hasPass = useGuestStore((s) => s.hasPass);
   const schedule = useGuestStore((s) => s.schedule);
   const data = dataProp ?? getData();
-  const phone = useSyncExternalStore(subscribePhone, getPhone, () => false);
+  const phone = usePhone();
   const chatColumn = useChatColumn();
   const vis = useChatVisibility();
   const { collapse } = useChatDockControls();

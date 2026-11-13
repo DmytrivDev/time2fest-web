@@ -67,6 +67,7 @@ import { useStreamPicker } from './ActionRow';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { eventStatus } from '@/lib/engine/eventStatus';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
+import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
 import { ratingState } from '@/lib/rating/rating';
@@ -125,8 +126,7 @@ export function chainInput(data: Dataset, eventId: string, preferredSourceId?: s
 
 /** Угору до плеєра (вибір трансляції в списку під ним). */
 function scrollToPlayer() {
-  const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  window.scrollTo({ top: 0, behavior: isReducedMotionNow() ? 'auto' : 'smooth' });
 }
 
 /** Наступна подія розкладу після півночі `event` (для «· далі: …» у пульті): подія наступного слота ефіру. */

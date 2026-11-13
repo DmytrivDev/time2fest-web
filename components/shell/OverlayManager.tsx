@@ -22,6 +22,7 @@ import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { CHAT_DOCK_SLOT_ID, ChatSlotPanel, InFlowSlot, LAYER_DOCK_SLOT_ID } from '@/components/primitives/Panel';
 import { Sheet } from '@/components/primitives/Sheet';
+import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 import { on, type UiEventType } from '@/lib/events/bus';
 import { useRegisterCoral } from '@/lib/overlay/coral';
 import { useChatDock } from '@/stores/chatDock';
@@ -107,8 +108,7 @@ export const CLOSE_MS = 200;
 
 function motionReduced(): boolean {
   if (typeof document === 'undefined') return true;
-  if (document.documentElement.getAttribute('data-reduce-motion') === 'true') return true;
-  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return isReducedMotionNow();
 }
 
 /** Поза OverlayManager (історії, тести) — тиха заглушка. */

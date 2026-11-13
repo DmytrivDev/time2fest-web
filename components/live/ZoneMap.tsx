@@ -10,7 +10,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type FocusEvent,
   type KeyboardEvent,
   type RefObject,
@@ -39,6 +38,8 @@ import { ZoneListView } from './ZoneListView';
 import { MapScheduleContext, ZonePanel } from './ZonePanel';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { Reveal } from '@/components/primitives/Reveal';
+import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
+import { usePhone } from '@/lib/hooks/useMedia';
 import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
 import './ZoneMap.css';
 import m from './zoneMap.module.css';
@@ -71,20 +72,6 @@ type Selection =
   /** `fromZone` — відкрито кліком по країні у вікні поясу (вікно змінилось на місці). */
   | { kind: 'country'; zoneId: string; iso: string; fromZone?: boolean }
   | null;
-
-const PHONE_QUERY = '(max-width: 767.98px)';
-
-function subscribePhone(cb: () => void): () => void {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function')
-    return () => undefined;
-  const mq = window.matchMedia(PHONE_QUERY);
-  mq.addEventListener('change', cb);
-  return () => mq.removeEventListener('change', cb);
-}
-const getPhone = () =>
-  typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-    ? window.matchMedia(PHONE_QUERY).matches
-    : false;
 
 /**
  * Геометрія мапи (~75 КБ) вантажиться, коли мапа наближається до екрана (SC-001): на першому екрані її немає,
@@ -182,7 +169,7 @@ export function ZoneMap({
   const headId = `${uid}-head`;
   const cardId = `${uid}-card`;
 
-  const phoneQuery = useSyncExternalStore(subscribePhone, getPhone, () => false);
+  const phoneQuery = usePhone();
   const layout = layoutProp ?? (phoneQuery ? 'phone' : 'desktop');
   const isPhone = layout === 'phone';
 
@@ -508,14 +495,8 @@ export function ZoneMap({
       if (el && typeof window !== 'undefined') {
         const r = el.getBoundingClientRect();
         if (r.top > window.innerHeight * 0.55) {
-          let reduce = document.documentElement.dataset.reduceMotion === 'true';
-          try {
-            reduce ||= window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          } catch {
-            /* без matchMedia — з анімацією */
-          }
           const top = window.scrollY + r.top - Math.min(window.innerHeight * 0.35, 280);
-          window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+          window.scrollTo({ top, behavior: isReducedMotionNow() ? 'auto' : 'smooth' });
         }
       }
     }

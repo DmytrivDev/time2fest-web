@@ -60,6 +60,7 @@ import { ShareContent } from '@/components/windows/Share';
 import { useChatSimulator } from '@/lib/chat-sim/useChatSimulator';
 import { SITE_HOST } from '@/lib/config/site';
 import { getData } from '@/lib/data/load';
+import { cityOf } from '@/lib/live/cityOf';
 import type { Dataset, GuestRoomWindow, RoomId } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
@@ -110,10 +111,6 @@ function MainWaiting() {
 function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
   const sources = data.chainsByEventId.get(eventId)?.sources ?? [];
   return preferredSourceId ? { eventId, sources, preferredSourceId } : { eventId, sources };
-}
-
-function cityOf(title: string): string {
-  return title.split(' · ')[0] ?? title;
 }
 
 function sourceTitle(data: Dataset, w: Pick<GuestRoomWindow, 'eventId' | 'sourceId'>): string {

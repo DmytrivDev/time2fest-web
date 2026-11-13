@@ -41,6 +41,15 @@ export function useSystemReducedMotion(): boolean {
   return useSyncExternalStore(subscribeSystem, getSystem, () => false);
 }
 
+/**
+ * Ефективне «зменшити рух» зараз, поза React (обробники, `scrollTo`, Web Animations): система АБО перемикач сайту
+ * (`<html data-reduce-motion="true">`). Без DOM (SSR) — `false`.
+ */
+export function isReducedMotionNow(): boolean {
+  if (typeof document === 'undefined') return false;
+  return document.documentElement.getAttribute(REDUCE_MOTION_ATTR) === 'true' || getSystem();
+}
+
 /** Ефективне «зменшити рух» для JS-анімацій (Embla autoplay, конфеті, лічильники). */
 export function useReducedMotion(): boolean {
   const system = useSystemReducedMotion();

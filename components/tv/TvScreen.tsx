@@ -27,8 +27,9 @@
  */
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type RefObject } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { eventTitle } from '@/components/live/Caption';
+import { PHONE_QUERY, useMedia } from '@/lib/hooks/useMedia';
 import { FacebookConsentCard } from '@/components/player/FacebookConsentCard';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { cn } from '@/components/primitives/cn';
@@ -51,18 +52,9 @@ import { TvTimeline } from './TvTimeline';
 import type { TvCardAction } from './TvTimelineCard';
 import styles from './tv.module.css';
 
-/** Телефон: інформаційна сторінка замість режиму вечірки. */
-const PHONE_QUERY = '(max-width: 767px)';
-
-function subscribePhone(cb: () => void): () => void {
-  const mq = window.matchMedia(PHONE_QUERY);
-  mq.addEventListener('change', cb);
-  return () => mq.removeEventListener('change', cb);
-}
-
-/** `null` — ще невідомо (статичний рендер і гідратація). */
+/** Телефон: інформаційна сторінка замість режиму вечірки. `null` — ще невідомо (статичний рендер і гідратація). */
 function useIsPhone(): boolean | null {
-  return useSyncExternalStore<boolean | null>(subscribePhone, () => window.matchMedia(PHONE_QUERY).matches, () => null);
+  return useMedia(PHONE_QUERY, null);
 }
 
 /** Розмір макета дошки, під який зверстано екран. */
