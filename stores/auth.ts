@@ -1,8 +1,9 @@
 /**
  * Акаунт на пристрої (імітація, `lib/auth/sim.ts`) у `localStorage['t2f:auth:v1']`.
- * `accounts` — адреси, для яких «на сервері» вже є акаунт. Вхід поштою (`emailSignIn`, без коду — рішення 2026-10-30):
- * нова адреса — акаунт створено й людина вже увійшла (екран «Акаунт створено», лист з посиланням для інших пристроїв);
- * адреса з акаунтом — лист з посиланням для входу. Лист (`letter`) один: новий замінює попередній.
+ * Шов (`docs/backend/frontend-seam.md`, E3): це «сервер» імітації входу. Інтерфейс бачить його лише через
+ * `lib/api/hooks/auth` → `lib/api/sim/auth` (компонентам імпортувати стор заборонено eslint). Правило «нова пошта входить
+ * одразу, без листа» (рішення 2026-10-30) живе в одному місці — `lib/api/sim/auth.ts`; тут лише примітиви.
+ * `accounts` — адреси, для яких «на сервері» вже є акаунт. Лист (`letter`) один: новий замінює попередній.
  * Вкладки синхронізуються через подію `storage` (`useAuthTabSync`): посилання з листа, відкрите в новій вкладці,
  * впускає й ту вкладку, що чекала на лист.
  * `passes` — адреси акаунтів з Новорічним пасом і коли його оформлено (імітація сервера): вхід у такий акаунт
@@ -83,11 +84,14 @@ interface AuthActions {
   /** Коли знову можна надіслати лист; `null` — можна зараз. */
   blockedUntil(now: number): SendResult | null;
   sendLetter(email: string, intent: AuthIntent, now: number): SendResult;
-  /** Вхід поштою без коду (див. вище). */
-  emailSignIn(email: string, intent: AuthIntent, now: number): EmailSignInResult;
+  /** Лист «ти увійшов» (посилання — для інших пристроїв) без ліміту листів. Коли його слати, вирішує `lib/api/sim/auth`. */
+  sendWelcome(email: string, intent: AuthIntent, now: number): void;
   openLink(token: string, now: number): LinkResult;
   signInGoogle(now: number): SignInResult;
-  /** Акаунт створюється разом з оплатою пасу (email з форми) — і людина одразу входить. */
+  /**
+   * Увійти поштою без листа (примітив «сервера» імітації). Коли так можна — вирішує ЛИШЕ `lib/api/sim/auth`
+   * (`simEmailSignIn`, `simSignInAfterPurchase`): нова пошта у формі входу й пошта з оплати пасу.
+   */
   signInWithPurchase(email: string, now: number): SignInResult;
   /** Пас оформлено на акаунт `email`. */
   grantPass(email: string, now: number): void;
@@ -151,16 +155,8 @@ export const useAuthStore = create<AuthStore>()(
           }));
           return { ok: true };
         },
-        emailSignIn: (raw, intent, now) => {
-          const email = normalizeEmail(raw);
-          if (get().accounts.includes(email)) {
-            const res = get().sendLetter(email, intent, now);
-            return res.ok ? { ok: true, sent: true } : res;
-          }
-          const result = signIn(email, 'email', now);
-          // Лист «ти увійшов»: посилання з нього — вхід на інших пристроях.
-          set({ letter: { email, token: newToken(), intent, sentAt: now, used: false, welcome: true } });
-          return { ok: true, sent: false, result };
+        sendWelcome: (raw, intent, now) => {
+          set({ letter: { email: normalizeEmail(raw), token: newToken(), intent, sentAt: now, used: false, welcome: true } });
         },
         openLink: (token, now) => {
           const letter = get().letter;

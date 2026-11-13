@@ -27,6 +27,12 @@ export interface ResourceSource<T, E> {
   subscribe?(onEvent: (event: E) => void): Unsubscribe;
   /** Як подія змінює дані (дельта чи повний знімок). */
   reduce?(data: T, event: E): T;
+  /**
+   * Останнє відоме значення без запиту (кеш на пристрої — напр. сесія, збережена адаптером). Є — перший клієнтський
+   * рендер після гідратації вже бачить дані (`ready`), а `load()` тихо їх оновлює. Лише для того, що адаптер справді
+   * тримає локально; сервер (`getServerSnapshot`) його не бачить.
+   */
+  peek?(): T | undefined;
 }
 
 export interface Resource<T> {
@@ -51,18 +57,36 @@ export function createResource<T, E = never>(source: () => ResourceSource<T, E>)
   let closeRealtime: Unsubscribe | null = null;
   /** Номер підключення: відповідь старого `load()` після `reset()` не пишеться. */
   let epoch = 0;
+  /**
+   * Лічильник змін кешу подією чи оптимістичною дією. Відповідь `load()`, запитана ДО такої зміни, старша за неї й не
+   * перезаписує її (інакше вихід, що прийшов подією, «скасувала» б повільна відповідь з ще входом).
+   */
+  let version = 0;
 
   const set = (next: ResourceState<T>) => {
     state = next;
     listeners.forEach((l) => l());
   };
 
+  /** Кеш на пристрої (`peek`) — до першого запиту; і з рендеру, і з підключення (гідратація підписується раніше за рендер). */
+  const applyPeek = () => {
+    if (state.status !== 'idle' || state.data !== undefined) return;
+    const cached = source().peek?.();
+    if (cached !== undefined) state = { status: 'ready', data: cached, error: null };
+  };
+
   const refresh = async () => {
+    applyPeek();
     const src = current ?? source();
     const mine = epoch;
+    const asked = version;
     if (state.status !== 'ready') set({ ...state, status: 'loading' });
     const res = await src.load();
     if (mine !== epoch) return;
+    if (res.ok && version !== asked && state.data !== undefined) {
+      if (state.status !== 'ready') set({ ...state, status: 'ready', error: null });
+      return;
+    }
     if (res.ok) set({ status: 'ready', data: res.value, error: null });
     // Відмова при вже завантажених даних — лишаємо дані, лише запам’ятовуємо помилку.
     else set({ status: state.data === undefined ? 'error' : 'ready', data: state.data, error: res.error });
@@ -75,6 +99,7 @@ export function createResource<T, E = never>(source: () => ResourceSource<T, E>)
       src.subscribe?.((event) => {
         if (state.data === undefined || !src.reduce) return;
         const next = src.reduce(state.data, event);
+        version += 1;
         // `reduce` повернув те саме — нічого не змінилось, споживачів не чіпаємо (знімки раз на секунду).
         if (next !== state.data) set({ ...state, data: next });
       }) ?? null;
@@ -88,7 +113,10 @@ export function createResource<T, E = never>(source: () => ResourceSource<T, E>)
   };
 
   const resource: Resource<T> = {
-    getSnapshot: () => state,
+    getSnapshot: () => {
+      applyPeek();
+      return state;
+    },
     subscribe(listener) {
       listeners.add(listener);
       if (listeners.size === 1) connect();
@@ -100,6 +128,7 @@ export function createResource<T, E = never>(source: () => ResourceSource<T, E>)
     refresh,
     mutate(fn) {
       if (state.data === undefined) return;
+      version += 1;
       set({ ...state, data: fn(state.data) });
     },
     reset() {

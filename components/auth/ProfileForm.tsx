@@ -16,6 +16,7 @@ import { validateNick, type NickIssue } from '@/lib/chat-sim/nick';
 import { NICK_MAX } from '@/lib/chat-sim/send';
 import { getData } from '@/lib/data/load';
 import { detectFlag } from '@/lib/geo/detectFlag';
+import { profileActions } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import s from './auth.module.css';
 
@@ -23,8 +24,6 @@ export function ProfileForm({ email, googleName, stream, onDone }: { email: stri
   const t = useTranslations('auth.welcome');
   const w = useTranslations('windows.nick');
   const c = useTranslations('chat.nick');
-  const setNickStore = useGuestStore((g) => g.setNick);
-  const setDetected = useGuestStore((g) => g.setDetectedFlag);
   // Підставляємо раз — при відкритті кроку.
   const [initial] = useState(() => {
     const g = useGuestStore.getState();
@@ -52,8 +51,8 @@ export function ProfileForm({ email, googleName, stream, onDone }: { email: stri
     : undefined;
 
   const save = (value: string) => {
-    if (initial.detected) setDetected(initial.detected);
-    setNickStore(value.trim(), flag);
+    // Шов (E3): профіль пише сервіс; у `sim` — синхронно в сторі гостя, тож `onDone` бачить новий нік.
+    void profileActions.update({ ...(initial.detected ? { detectedFlag: initial.detected } : {}), nick: value.trim(), flagCode: flag });
     onDone();
   };
 

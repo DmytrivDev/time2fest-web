@@ -9,7 +9,7 @@ import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Logo } from '@/components/primitives/Logo';
 import { Switch } from '@/components/primitives/Switch';
 import { usePartyHref } from '@/components/shell/OverlayManager';
-import { useAuthStore } from '@/stores/auth';
+import { useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import s from './footer.module.css';
 
@@ -83,7 +83,7 @@ export function Footer({ reducedMotion, onReducedMotionChange, onCookiesClick, c
   const pathname = usePathname();
   // Вхід читається лише на клієнті — до гідратації «Увійти» є завжди, тож розмітка збігається.
   const hydrated = useSyncExternalStore(noopSubscribe, () => true, () => false);
-  const signedIn = useAuthStore((st) => st.user) !== null && hydrated;
+  const signedIn = (useSession().session?.user ?? null) !== null && hydrated;
   const here = (href: string) => (href !== '#' && pathname?.startsWith(href.replace(/\/$/, '')) ? 'page' : undefined);
   // «Режим вечірки»: телефон і планшет-портрет — `/tv-info/` (2026-11-10).
   const partyHref = usePartyHref();

@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PassBuy } from '@/components/pass/PassBuy';
 import { PassPerksShowcase } from '@/components/pass/PassPerks';
@@ -138,7 +138,7 @@ describe('PassBuy — картка оформлення', () => {
     expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute('aria-invalid', 'true');
   });
 
-  it('адреса з пасом: «Надіслати посилання» надсилає лист і веде до кроку «Лист надіслано»', () => {
+  it('адреса з пасом: «Надіслати посилання» надсилає лист і веде до кроку «Лист надіслано»', async () => {
     useAuthStore.setState({ accounts: ['olena@example.com'], passes: { 'olena@example.com': 1 } });
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example.com' } });
@@ -149,7 +149,8 @@ describe('PassBuy — картка оформлення', () => {
     expect(screen.getByRole('button', { name: 'Оформити пас — $5' })).toHaveAttribute('aria-disabled', 'true');
     fireEvent.click(within(box).getByRole('button', { name: 'Надіслати посилання' }));
     expect(useAuthStore.getState().letter?.email).toBe('olena@example.com');
-    expect(props.onLetterSent).toHaveBeenCalled();
+    // Лист — через сервіс входу (асинхронно, шов E3).
+    await waitFor(() => expect(props.onLetterSent).toHaveBeenCalled());
   });
 
   it('увійшов: без поля email — «Оформлюємо на акаунт …», «Не ти?» виходить з акаунта', () => {

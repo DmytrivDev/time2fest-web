@@ -18,7 +18,7 @@ import { AuthIcon } from '@/components/auth/icons';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { ToastGift } from '@/components/toast/ToastGift';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
-import { useAuthStore } from '@/stores/auth';
+import { currentSession } from '@/lib/api/hooks/auth';
 import { usePassStore } from '@/stores/pass';
 import { PassBuy, usePassView } from './PassBuy';
 import { PassPerksCompact } from './PassPerks';
@@ -50,7 +50,7 @@ function PassWindowContent({ onClose, onSignIn }: { onClose: () => void; onSignI
         variant="stream"
         onSignIn={onSignIn}
         onLetterSent={() => {
-          const letter = useAuthStore.getState().letter;
+          const letter = currentSession()?.link;
           openAuthWindow('signin', { step: { kind: 'sent' }, email: letter?.email });
         }}
         onDone={onClose}

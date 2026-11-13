@@ -19,7 +19,7 @@ import { Reveal } from '@/components/primitives/Reveal';
 import { cn } from '@/components/primitives/cn';
 import { currentPath, rememberLetterSent, rememberReturn } from '@/lib/auth/returnTo';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
-import { useAuthTabSync } from '@/stores/auth';
+import { useSession } from '@/lib/api/hooks/auth';
 import { PassBuy, usePassView } from './PassBuy';
 import { PassPerksShowcase } from './PassPerks';
 import s from './pass.module.css';
@@ -187,7 +187,8 @@ function SidePanel() {
 }
 
 export function PassPage() {
-  useAuthTabSync();
+  // Підписка на сесію (і синхронізація вкладок у `sim`) — поки сторінка відкрита.
+  useSession();
   const t = useTranslations('pass.page');
   const router = useRouter();
   const view = usePassView();

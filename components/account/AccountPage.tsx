@@ -27,7 +27,6 @@ import { CLOSE_MS, useChatColumn, useOverlayOpen } from '@/components/shell/Over
 import { NotifSettings } from '@/components/notifications/NotificationsBody';
 import { FlagField } from '@/components/windows/FlagField';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
-import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
 import { validateNick, type NickIssue } from '@/lib/chat-sim/nick';
 import { NICK_MAX } from '@/lib/chat-sim/send';
 import { getData } from '@/lib/data/load';
@@ -37,7 +36,7 @@ import { detectFlag } from '@/lib/geo/detectFlag';
 import { utcLabel } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useAccountStore } from '@/stores/account';
-import { useAuthStore } from '@/stores/auth';
+import { authActions, profileActions, useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import s from './account.module.css';
 
@@ -117,10 +116,9 @@ function ProfileSection({ hasPass }: { hasPass: boolean }) {
   const c = useTranslations('chat.nick');
   const th = useTranslations('header');
   const user = useHeaderUser()!;
-  const email = useAuthStore((a) => a.user?.email ?? '');
+  const email = useSession().session?.user?.email ?? '';
   const storedNick = useGuestStore((g) => g.nick);
   const storedFlag = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
-  const setNickStore = useGuestStore((g) => g.setNick);
   const detected = useMemo(() => useGuestStore.getState().detectedFlag ?? detectFlag(), []);
   const [nick, setNick] = useState(storedNick ?? user.name);
   const [flag, setFlag] = useState(storedFlag ?? detected ?? 'earth');
@@ -161,7 +159,7 @@ function ProfileSection({ hasPass }: { hasPass: boolean }) {
           e.preventDefault();
           setTouched(true);
           if (issue) return;
-          setNickStore(nick.trim(), flag);
+          void profileActions.update({ nick: nick.trim(), flagCode: flag });
           setSaved(true);
         }}
         className={s.form}
@@ -276,11 +274,9 @@ function PassPlaque({ hasPass }: { hasPass: boolean }) {
 function LoginBlock() {
   const t = useTranslations('account.login');
   const router = useRouter();
-  const user = useAuthStore((a) => a.user);
-  const signOut = useAuthStore((a) => a.signOut);
+  const user = useSession().session?.user ?? null;
   const googleLinked = useAccountStore((a) => a.googleLinked);
   const pending = useAccountStore((a) => a.pendingEmail);
-  const setAcc = useAccountStore((a) => a.set);
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -292,7 +288,7 @@ function LoginBlock() {
     const v = value.trim().toLowerCase();
     if (!EMAIL_RE.test(v)) return setError(t('emailInvalid'));
     if (v === email) return setError(t('emailSame'));
-    setAcc('pendingEmail', { email: v, sentAt: Date.now() });
+    void profileActions.changeEmail(v);
     setEditing(false);
     setValue('');
     setError(null);
@@ -300,18 +296,11 @@ function LoginBlock() {
   // Тест: «лист відкрито» — пошту змінено.
   const confirm = () => {
     if (!pending) return;
-    useAuthStore.setState((a) => ({
-      user: a.user ? { ...a.user, email: pending.email } : a.user,
-      accounts: a.accounts.map((x) => (x === email ? pending.email : x)),
-    }));
-    setAcc('pendingEmail', null);
+    void profileActions.devConfirmEmail();
   };
   const connect = () => {
     setConnecting(true);
-    window.setTimeout(() => {
-      setConnecting(false);
-      setAcc('googleLinked', true);
-    }, GOOGLE_DELAY_MS);
+    void profileActions.linkGoogle().then(() => setConnecting(false));
   };
 
   return (
@@ -371,7 +360,7 @@ function LoginBlock() {
           <div>
             {t.rich('emailSent', { email: pending.email, b: (x) => <b>{x}</b> })}
             <div className={s.noticeActs}>
-              <button type="button" onClick={() => setAcc('pendingEmail', null)} className={cn('t2f-focus', s.link)}>
+              <button type="button" onClick={() => void profileActions.cancelEmailChange()} className={cn('t2f-focus', s.link)}>
                 {t('cancelChange')}
               </button>
               {IS_TEST_BUILD ? (
@@ -390,7 +379,7 @@ function LoginBlock() {
         ) : googleLinked ? (
           <span className={s.acts}>
             <span className={s.ok}>{t('googleLinked')}</span>
-            <button type="button" onClick={() => setAcc('googleLinked', false)} className={cn('t2f-focus', s.link)}>
+            <button type="button" onClick={() => void profileActions.unlinkGoogle()} className={cn('t2f-focus', s.link)}>
               {t('googleDisconnect')}
             </button>
           </span>
@@ -405,7 +394,7 @@ function LoginBlock() {
         <button
           type="button"
           onClick={() => {
-            signOut();
+            void authActions.signOut();
             router.push('/');
           }}
           className={cn('t2f-focus', s.link)}
@@ -458,8 +447,8 @@ function ZonePicker({ onDone }: { onDone(): void }) {
                       setPicking(false);
                       setQuery('');
                       const z = countryZones(x.iso);
-                      acc.set('homeCountry', x.iso);
-                      acc.set('homeZoneId', z[0]?.id ?? null);
+                      void profileActions.update({ settings: { homeCountry: x.iso } });
+                      void profileActions.update({ settings: { homeZoneId: z[0]?.id ?? null } });
                     }}
                     className={cn('t2f-focus t2f-transition', s.option)}
                   >
@@ -491,8 +480,8 @@ function ZonePicker({ onDone }: { onDone(): void }) {
                 role="radio"
                 aria-checked={z.id === zoneId}
                 onClick={() => {
-                  acc.set('homeCountry', iso);
-                  acc.set('homeZoneId', z.id);
+                  void profileActions.update({ settings: { homeCountry: iso } });
+                  void profileActions.update({ settings: { homeZoneId: z.id } });
                 }}
                 className={cn('t2f-focus t2f-transition', s.zone)}
               >
@@ -513,8 +502,8 @@ function ZonePicker({ onDone }: { onDone(): void }) {
         <button
           type="button"
           onClick={() => {
-            acc.set('homeCountry', null);
-            acc.set('homeZoneId', null);
+            void profileActions.update({ settings: { homeCountry: null } });
+            void profileActions.update({ settings: { homeZoneId: null } });
             setIso(autoIso);
           }}
           className={cn('t2f-focus', s.link)}
@@ -555,7 +544,7 @@ function SettingsSection({ hasPass }: { hasPass: boolean }) {
               { value: 'h24', label: t('h24') },
               { value: 'h12', label: t('h12') },
             ]}
-            onChange={(v) => acc.set('hour12', v === 'h12')}
+            onChange={(v) => void profileActions.update({ settings: { hour12: v === 'h12' } })}
           />
         </Row>
         <Row title={t('zone')} hint={acc.homeCountry ? t('zoneChosen', { place }) : t('zoneAuto', { place })}>
@@ -576,10 +565,10 @@ function SettingsSection({ hasPass }: { hasPass: boolean }) {
             onChange={(v) => useGuestStore.setState({ locale: v })}
           />
         </Row>
-        <Toggle label={t('showPassport')} hint={t('showPassportHint')} checked={acc.showPassport} onChange={(v) => acc.set('showPassport', v)} />
-        <Toggle label={t('showPath')} hint={t('showPathHint')} checked={hasPass && acc.showPath} disabled={!hasPass} onChange={(v) => acc.set('showPath', v)} />
-        <Toggle label={t('hints')} hint={t('hintsHint')} checked={acc.passportHints} onChange={(v) => acc.set('passportHints', v)} />
-        <Toggle label={t('quiet')} hint={t('quietHint')} checked={hasPass && acc.quietDefault} disabled={!hasPass} onChange={(v) => acc.set('quietDefault', v)} />
+        <Toggle label={t('showPassport')} hint={t('showPassportHint')} checked={acc.showPassport} onChange={(v) => void profileActions.update({ settings: { showPassport: v } })} />
+        <Toggle label={t('showPath')} hint={t('showPathHint')} checked={hasPass && acc.showPath} disabled={!hasPass} onChange={(v) => void profileActions.update({ settings: { showPath: v } })} />
+        <Toggle label={t('hints')} hint={t('hintsHint')} checked={acc.passportHints} onChange={(v) => void profileActions.update({ settings: { passportHints: v } })} />
+        <Toggle label={t('quiet')} hint={t('quietHint')} checked={hasPass && acc.quietDefault} disabled={!hasPass} onChange={(v) => void profileActions.update({ settings: { quietDefault: v } })} />
         <Toggle label={t('motion')} hint={t('motionHint')} checked={motion} onChange={setMotion} />
       </div>
     </section>
@@ -604,19 +593,12 @@ function NotificationsSection() {
 function DataSection() {
   const t = useTranslations('account.data');
   const router = useRouter();
-  const email = useAuthStore((a) => a.user?.email ?? '');
+  const email = useSession().session?.user?.email ?? '';
   const [confirm, setConfirm] = useState(false);
-  const download = () => {
-    const guest = useGuestStore.getState();
-    const payload = {
-      account: { email, via: useAuthStore.getState().user?.via },
-      nick: guest.nick,
-      flag: guest.flagCode,
-      stamps: guest.stamps,
-      schedule: guest.schedule,
-      hasPass: guest.hasPass,
-      settings: Object.fromEntries(Object.entries(useAccountStore.getState()).filter(([, v]) => typeof v !== 'function')),
-    };
+  const download = async () => {
+    const res = await profileActions.exportData();
+    if (!res.ok) return;
+    const payload = res.value;
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
     const a = document.createElement('a');
     a.href = url;
@@ -624,10 +606,8 @@ function DataSection() {
     a.click();
     URL.revokeObjectURL(url);
   };
-  const remove = () => {
-    useAuthStore.setState((a) => ({ user: null, accounts: a.accounts.filter((x) => x !== email), passes: Object.fromEntries(Object.entries(a.passes).filter(([k]) => k !== email)) }));
-    useGuestStore.getState().resetGuest();
-    useAccountStore.getState().reset();
+  const remove = async () => {
+    await profileActions.deleteAccount();
     router.push('/');
   };
   return (
@@ -676,7 +656,6 @@ function CabinetNav({ active, hasPass, onPick }: { active: SectionId; hasPass: b
   const th = useTranslations('header');
   const user = useHeaderUser();
   const stamps = useGuestStore((g) => g.stamps.length);
-  const signOut = useAuthStore((a) => a.signOut);
   const router = useRouter();
   if (!user) return null;
   const go = (id: SectionId) => {
@@ -742,7 +721,7 @@ function CabinetNav({ active, hasPass, onPick }: { active: SectionId; hasPass: b
       <button
         type="button"
         onClick={() => {
-          signOut();
+          void authActions.signOut();
           router.push('/');
         }}
         className={cn('t2f-focus t2f-transition', s.signOut)}

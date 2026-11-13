@@ -3,6 +3,7 @@
  * фільтр і підпис до оплати, свої тости переживають перезавантаження, незавершена оплата доходить до результату,
  * подарунковий пас гостя переходить на акаунт при першому вході чи створенні акаунта.
  */
+import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatFeed } from '@/lib/chat-sim/store';
@@ -133,14 +134,14 @@ describe('пас у подарунок до тосту за $10', () => {
     expect(hasPass()).toBe(true);
     // Вихід знімає пас з пристрою, а подарунок уже належить акаунту — інший вхід його не отримає.
     useAuthStore.getState().signOut();
-    useAuthStore.getState().emailSignIn('other@example.com', 'signup', T0 + 120_000);
+    simEmailSignIn('other@example.com', 'signup', T0 + 120_000);
     expect(hasPass()).toBe(false);
   });
 
   it('гість створює акаунт поштою — пас на новому акаунті', () => {
     payToast(10);
     settle();
-    const res = useAuthStore.getState().emailSignIn('new@example.com', 'signup', T0 + 60_000);
+    const res = simEmailSignIn('new@example.com', 'signup', T0 + 60_000);
     expect(res).toMatchObject({ ok: true, sent: false });
     expect(useAuthStore.getState().passes['new@example.com']).toBeDefined();
     expect(hasPass()).toBe(true);

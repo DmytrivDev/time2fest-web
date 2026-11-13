@@ -19,7 +19,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { ToastGift } from '@/components/toast/ToastGift';
 import { useCanToast } from '@/components/toast/useToastSeason';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
-import { useAuthStore } from '@/stores/auth';
+import { authActions, useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import { usePassStore } from '@/stores/pass';
 import s from './pass.module.css';
@@ -33,7 +33,7 @@ export function usePassView(): PassView {
   const hydrated = useHydrated();
   const phase = usePassStore((st) => st.phase);
   const hasPass = useGuestStore((st) => st.hasPass);
-  const user = useAuthStore((st) => st.user);
+  const user = (useSession().session?.user ?? null);
   if (!hydrated) return 'guest';
   if (phase === 'success') return 'success';
   if (hasPass) return 'active';
@@ -204,10 +204,10 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
   const issue = flow.emailIssue;
   const emailError =
     issue === 'empty' ? t('emailEmpty') : issue === 'invalid' ? (/@[^.]*$/.test(flow.email.trim()) ? t('emailNoDomain') : t('emailInvalid')) : null;
-  const sendLink = () => {
-    const res = useAuthStore.getState().sendLetter(flow.email, 'signin', Date.now());
+  const sendLink = async () => {
+    const res = await authActions.sendLink(flow.email, 'signin');
     // Лист нещодавно вже йшов — той самий крок «Лист надіслано» з відліком до нового.
-    if (res.ok || res.reason === 'wait') onLetterSent();
+    if (res.ok || res.error.reason === 'wait') onLetterSent();
   };
   return (
     <form
@@ -259,7 +259,7 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
 function SignedForm({ variant }: { variant: PassBuyVariant }) {
   const t = useTranslations('pass.buy');
   const stream = variant === 'stream';
-  const email = useAuthStore((st) => st.user?.email ?? '');
+  const email = (useSession().session?.user?.email ?? '');
   const flow = usePassStore();
   const canToast = useCanToast();
   const busy = flow.phase === 'opening';
@@ -278,7 +278,7 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
         note={t('accountNote')}
         mt={stream ? 14 : 20}
         notYou={() => {
-          useAuthStore.getState().signOut();
+          void authActions.signOut();
           flow.reset();
         }}
       />
@@ -302,7 +302,7 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
 
 function Pending({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => void }) {
   const t = useTranslations('pass.buy');
-  const email = useAuthStore((st) => st.user?.email) ?? usePassStore.getState().email.trim();
+  const email = useSession().session?.user?.email ?? usePassStore.getState().email.trim();
   return (
     <div className={col(variant)} data-phase="pending">
       <div role="status" aria-live="polite" className={s.status}>
@@ -322,7 +322,7 @@ function Pending({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
 
 function Failed() {
   const t = useTranslations('pass.buy');
-  const user = useAuthStore((st) => st.user);
+  const user = (useSession().session?.user ?? null);
   const flow = usePassStore();
   const email = user?.email ?? flow.email.trim();
   return (
@@ -389,7 +389,7 @@ const CONFETTI = (
 
 function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => void }) {
   const t = useTranslations('pass.buy');
-  const email = useAuthStore((st) => st.user?.email ?? '');
+  const email = (useSession().session?.user?.email ?? '');
   const nick = useGuestStore((st) => st.nick);
   const flagCode = useGuestStore((st) => st.flagCode ?? st.detectedFlag ?? 'earth');
   const name = nick?.trim() || email.split('@')[0] || '';
@@ -451,8 +451,8 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
 function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => void }) {
   const t = useTranslations('pass.buy');
   const p = useTranslations('pass.page');
-  const user = useAuthStore((st) => st.user);
-  const since = useAuthStore((st) => (st.user ? st.passes[st.user.email] : undefined));
+  const user = (useSession().session?.user ?? null);
+  const since = useSession().session?.passSince ?? undefined;
   const date = since !== undefined ? new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long' }).format(since) : null;
   return (
     <div className={col(variant)} data-phase="active">
@@ -484,7 +484,7 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
 /** Тіло картки оформлення за поточним станом. */
 export function PassBuy(props: PassBuyProps) {
   const view = usePassView();
-  const signedIn = useAuthStore((st) => st.user !== null);
+  const signedIn = (useSession().session?.user ?? null) !== null;
   const { variant, onDone } = props;
   switch (view) {
     case 'success':

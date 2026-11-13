@@ -34,6 +34,10 @@ export default tseslint.config(
               message: 'Сповіщення перенесено на шов: @/lib/api/hooks/notifications (типи — @/lib/api/contracts/notifications).',
             },
             {
+              group: ['@/stores/auth', '**/stores/auth', '@/lib/auth/sim', '**/lib/auth/sim'],
+              message: 'Вхід перенесено на шов (E3): сесія й дії — @/lib/api/hooks/auth (useSession, authActions, profileActions); пошта — @/lib/auth/email.',
+            },
+            {
               group: ['@/lib/presence/viewers', '**/lib/presence/viewers'],
               message: 'Глядачі перенесено на шов «Ефір»: useViewers з @/lib/api/hooks/live (імітація — lib/api/sim/live).',
             },
@@ -44,6 +48,10 @@ export default tseslint.config(
       // тепер чиста (формула, ряди з агрегатів) — її імпорт дозволений.
       'no-restricted-syntax': [
         'error',
+        {
+          selector: "MemberExpression[property.name='setHasPass']",
+          message: 'Пас — лише з сесії (useSession().session.hasPass / useHeaderPass); guest.hasPass пише тільки «сервер» імітації.',
+        },
         {
           selector: "MemberExpression[property.name='setRate']",
           message: 'Оцінки пише сервіс рейтингу: ratingActions.vote з @/lib/api/hooks/rating (не guest.setRate).',

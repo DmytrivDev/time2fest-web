@@ -21,7 +21,7 @@ import { currentAirEvent } from '@/lib/engine/currentAirEvent';
 import { computeJumps, JUMP_IDS, type JumpId } from '@/lib/time/jumps';
 import { parseIsoWithOffset, parseMachineParams } from '@/lib/time/params';
 import { useNow, useTimeMachine, useTimeSource } from '@/lib/time/TimeProvider';
-import { useAuthStore } from '@/stores/auth';
+import { authActions, useSession } from '@/lib/api/hooks/auth';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import styles from './time-machine-panel.module.css';
@@ -141,7 +141,7 @@ function PanelBody({
   const authUnavailable = useTestControls((s) => s.authUnavailable);
   const googleCancelled = useTestControls((s) => s.googleCancelled);
   const notifications = useTestControls((s) => s.notifications);
-  const signedIn = useAuthStore((s) => s.user !== null);
+  const signedIn = (useSession().session?.user ?? null) !== null;
 
   useEffect(() => {
     ref.current?.focus({ preventScroll: true });
@@ -347,7 +347,7 @@ function PanelBody({
           </select>
         </label>
         {signedIn ? (
-          <Button variant="secondary" compact onClick={() => useAuthStore.getState().signOut()} className="self-start">
+          <Button variant="secondary" compact onClick={() => void authActions.signOut()} className="self-start">
             {t('signOut')}
           </Button>
         ) : null}

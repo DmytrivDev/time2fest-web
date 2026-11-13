@@ -6,7 +6,7 @@
  */
 import { useSyncExternalStore } from 'react';
 import type { HeaderUser } from '@/components/shell/Header';
-import { useAuthStore, useAuthTabSync } from '@/stores/auth';
+import { useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 
 const noopSubscribe = () => () => undefined;
@@ -15,17 +15,16 @@ export function useHydrated(): boolean {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
 
-/** Пас на цьому пристрої — «Пас ✓» у хедері (після гідратації, як і користувач). */
+/** Пас того, хто увійшов, — «Пас ✓» у хедері (після гідратації, як і користувач). Джерело — сесія (сервіс входу). */
 export function useHeaderPass(): boolean {
   const hydrated = useHydrated();
-  const hasPass = useGuestStore((s) => s.hasPass);
+  const hasPass = useSession().session?.hasPass ?? false;
   return hydrated && hasPass;
 }
 
 export function useHeaderUser(): HeaderUser | null {
-  useAuthTabSync();
   const hydrated = useHydrated();
-  const email = useAuthStore((s) => s.user?.email ?? null);
+  const email = useSession().session?.user?.email ?? null;
   const nick = useGuestStore((s) => s.nick);
   // Прапор аватара — обраний у чаті/при реєстрації, інакше визначений за країною.
   const flag = useGuestStore((s) => s.flagCode ?? s.detectedFlag);

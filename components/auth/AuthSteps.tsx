@@ -14,8 +14,7 @@ import { useEffect, useRef } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { IS_TEST_BUILD } from '@/lib/env';
 import { formatClock } from '@/lib/i18n/time';
-import { GOOGLE_DEMO_NAME, LETTER_TTL_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
-import { useAuthStore } from '@/stores/auth';
+import { useDevMailbox, useSession } from '@/lib/api/hooks/auth';
 import {
   AccountPerks,
   AgeLine,
@@ -276,7 +275,7 @@ function GoogleIconLg() {
 }
 
 function resendUntil(flow: AuthFlow): number | null {
-  return flow.letter ? flow.letter.sentAt + RESEND_GAP_MS : null;
+  return flow.letter ? flow.letter.resendAt : null;
 }
 
 function SentStep({ flow }: { flow: AuthFlow }) {
@@ -440,14 +439,15 @@ function OtherDeviceStep({ email, exitHref }: { email: string; exitHref: string 
 
 function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean; onExit: () => void }) {
   const t = useTranslations('auth.welcome');
-  const google = useAuthStore((a) => a.user?.via === 'google');
+  const user = useSession().session?.user;
+  const google = user?.via === 'google';
   // Крок «Як тебе показувати» (дошка `Desk-Profile-Step`, 2026-11-08): нік і прапор одразу; «Готово» / «Пізніше» — далі як було.
   return (
     <div className="flex flex-col">
       <Badge icon="check-circle" className={s.pageTop} />
       <Title afterBadge>{t('title')}</Title>
       <Lead>{t.rich(google ? 'leadGoogle' : 'lead', { email, b: Bold })}</Lead>
-      <ProfileForm email={email} googleName={google ? GOOGLE_DEMO_NAME : undefined} stream={stream} onDone={onExit} />
+      <ProfileForm email={email} googleName={google ? user?.name : undefined} stream={stream} onDone={onExit} />
       {stream ? null : <PassOfferCard welcome toPage className="mt-6" />}
     </div>
   );
@@ -456,11 +456,11 @@ function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean
 /** Тестова збірка: замість справжнього листа — посилання просто тут. */
 function TestMailbox() {
   const t = useTranslations('auth.test');
-  const letter = useAuthStore((a) => a.letter);
-  const expire = useAuthStore((a) => a.expireLetter);
+  const box = useDevMailbox();
+  const letter = box?.letter ?? null;
   const now = useTick(IS_TEST_BUILD && !!letter);
-  if (!IS_TEST_BUILD || !letter) return null;
-  const expired = letter.used || now - letter.sentAt > LETTER_TTL_MS;
+  if (!IS_TEST_BUILD || !box || !letter) return null;
+  const expired = letter.used || now > letter.expiresAt;
   return (
     <aside aria-label={t('title')} className={s.mailbox} data-test-mailbox="">
       <span className={s.mailboxTitle}>{t('title')}</span>
@@ -470,7 +470,7 @@ function TestMailbox() {
         <a href={`/login/?link=${letter.token}`} target="_blank" rel="noopener" className={cn('t2f-focus', s.btn, s.ghost)} data-test-link="">
           {t('open')}
         </a>
-        <button type="button" onClick={expire} className={cn('t2f-focus', s.btn, s.ghost)}>
+        <button type="button" onClick={box.expire} className={cn('t2f-focus', s.btn, s.ghost)}>
           {t('expire')}
         </button>
       </span>

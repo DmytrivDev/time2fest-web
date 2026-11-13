@@ -3,6 +3,7 @@
  * Google, пошта, посилання з листа — задає прапор за IP (`detectFlag` → 'UA'), якщо людина ще не обрала свій.
  * Раніше після оформлення пасу аватар у шапці був літерою без прапора.
  */
+import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -29,12 +30,12 @@ describe('прапор профілю — одразу після входу', (
 
     useAuthStore.getState().signOut();
     useGuestStore.getState().resetGuest();
-    useAuthStore.getState().emailSignIn('new@example.com', 'signin', T0);
+    simEmailSignIn('new@example.com', 'signin', T0);
     expect(flag()).toBe('UA');
 
     useAuthStore.getState().signOut();
     useGuestStore.getState().resetGuest();
-    const res = useAuthStore.getState().emailSignIn('new@example.com', 'signin', T0 + 120_000);
+    const res = simEmailSignIn('new@example.com', 'signin', T0 + 120_000);
     expect(res).toEqual({ ok: true, sent: true });
     expect(flag()).toBeUndefined();
     useAuthStore.getState().openLink(useAuthStore.getState().letter!.token, T0 + 121_000);

@@ -11,10 +11,9 @@ import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import type { AuthIntent } from '@/lib/auth/sim';
-import type { SignInResult } from '@/stores/auth';
+import type { AuthIntent } from '@/lib/api/contracts/auth';
 import { AuthSteps } from './AuthSteps';
-import { useAuthFlow, type AuthStep } from './useAuthFlow';
+import { useAuthFlow, type AuthStep, type SignInResult } from './useAuthFlow';
 
 export const AUTH_WINDOW_ID = 'O-AUTH';
 

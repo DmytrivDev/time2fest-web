@@ -3,12 +3,16 @@
  * компонентам і сторінкам імпортувати звідси заборонено (`no-restricted-imports` в `eslint.config.mjs`).
  */
 import type { ServiceFactories } from '../services';
+import { createSimAuth } from './auth';
 import { createSimLive } from './live';
 import { createSimNotifications } from './notifications';
+import { createSimProfile } from './profile';
 import { createSimRating } from './rating';
 
 export const simFactories: ServiceFactories = {
   notifications: createSimNotifications,
   rating: createSimRating,
   live: createSimLive,
+  auth: createSimAuth,
+  profile: createSimProfile,
 };

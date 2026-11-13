@@ -12,12 +12,12 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
-import type { AuthIntent } from '@/lib/auth/sim';
+import type { AuthIntent } from '@/lib/api/contracts/auth';
+import { authActions, currentSession, useSession } from '@/lib/api/hooks/auth';
 import { returnPath, takeLetterSent } from '@/lib/auth/returnTo';
-import { useAuthStore, useAuthTabSync, type SignInResult } from '@/stores/auth';
 import { AuthSteps } from './AuthSteps';
 import { AuthIcon, type AuthIconName } from './icons';
-import { useAuthFlow, type AuthStep } from './useAuthFlow';
+import { useAuthFlow, type AuthStep, type SignInResult } from './useAuthFlow';
 import s from './auth.module.css';
 
 interface Start {
@@ -26,43 +26,52 @@ interface Start {
 }
 
 /** Розбір `?link=` один раз після монтування (статичний експорт не знає параметрів на збиранні). */
-function resolveStart(): Start {
+async function resolveStart(): Promise<Start> {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('link');
   if (!token) {
     // Лист уже надіслано з іншої сторінки (пас) — одразу «Лист надіслано».
-    const letter = useAuthStore.getState().letter;
+    const letter = currentSession()?.link;
     if (takeLetterSent() && letter && !letter.used) return { step: { kind: 'sent' }, email: letter.email };
     return {};
   }
   window.history.replaceState(null, '', window.location.pathname);
-  const now = Date.now();
-  const res = useAuthStore.getState().openLink(token, now);
-  if (res.ok) {
-    if (res.isNew) return { step: { kind: 'welcome', email: res.email } };
-    return { step: { kind: 'otherDevice', email: res.email } };
-  }
-  return { step: { kind: 'expired', email: res.email }, email: res.email };
+  const res = await authActions.openLink(token);
+  // Сервіс не відповів — показуємо як прострочене посилання (окремого вигляду «не вдалося перевірити» немає).
+  if (!res.ok) return { step: { kind: 'expired' } };
+  const out = res.value;
+  if (out.kind === 'signed-in') return { step: out.isNew ? { kind: 'welcome', email: out.email } : { kind: 'otherDevice', email: out.email } };
+  const email = out.kind === 'expired' ? out.email : undefined;
+  return { step: { kind: 'expired', email }, email };
 }
 
 export function AuthPage({ mode }: { mode: AuthIntent }) {
-  useAuthTabSync();
+  // Підписка на сесію (і синхронізація вкладок у `sim`) — поки сторінка відкрита.
+  useSession();
   const router = useRouter();
   const [exitHref, setExitHref] = useState('/');
   const [start, setStart] = useState<Start | null>(null);
 
   // Посилання з листа одноразове: розбираємо раз (StrictMode запускає ефект двічі).
-  const resolved = useRef<Start | null>(null);
+  const resolved = useRef<Promise<Start> | null>(null);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- одноразово після монтування: sessionStorage і `?link=` (статичний експорт)
     setExitHref(returnPath());
-    const next = resolved.current ?? (resolved.current = resolveStart());
-    // Уже увійшов і прийшов не з листа — сторінка входу не потрібна.
-    if (!next.step && useAuthStore.getState().user) {
-      router.replace(returnPath());
-      return;
-    }
-    setStart(next);
+    let alive = true;
+    const pending = resolved.current ?? (resolved.current = resolveStart());
+    void pending.then((next) => {
+      // Уже увійшов і прийшов не з листа — сторінка входу не потрібна.
+      const signedIn = !next.step && !!currentSession()?.user;
+      if (!alive) return;
+      if (signedIn) {
+        router.replace(returnPath());
+        return;
+      }
+      setStart(next);
+    });
+    return () => {
+      alive = false;
+    };
   }, [router]);
 
   const onSignedIn = useCallback(() => router.push(returnPath()), [router]);

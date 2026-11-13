@@ -17,16 +17,9 @@ export const GOOGLE_DEMO_NAME = 'Олена Коваленко';
 /** Скільки триває імітований перехід до Google. */
 export const GOOGLE_DELAY_MS = 1_500;
 
-export type AuthIntent = 'signin' | 'signup';
-
-/** Проста перевірка: щось@домен.зона, без пробілів. */
-export function isEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
-}
-
-export function normalizeEmail(value: string): string {
-  return value.trim().toLowerCase();
-}
+export type { AuthIntent } from '@/lib/api/contracts/auth';
+// Чисті правила пошти — у `lib/auth/email.ts` (інтерфейс імпортує їх звідти, не з імітації).
+export { isEmail, normalizeEmail } from './email';
 
 function randomDigits(n: number): string {
   let out = '';

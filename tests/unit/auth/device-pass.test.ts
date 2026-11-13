@@ -1,6 +1,7 @@
 /**
  * Пас на пристрої — лише пас акаунта, що увійшов (правка власника 2026-11-10), і «Скинути стан гостя» стирає все.
  */
+import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { syncDevicePass, useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -22,7 +23,7 @@ describe('пас лише з входом в акаунт з пасом', () => 
     expect(hasPass()).toBe(false);
     useAuthStore.getState().signOut();
     useGuestStore.getState().setHasPass(true);
-    useAuthStore.getState().emailSignIn('new@example.com', 'signin', T0);
+    simEmailSignIn('new@example.com', 'signin', T0);
     expect(hasPass()).toBe(false);
   });
 

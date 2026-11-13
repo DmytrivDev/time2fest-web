@@ -14,6 +14,7 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { simSignInAfterPurchase } from '@/lib/api/sim/auth';
 import { GOOGLE_DELAY_MS, isEmail, normalizeEmail } from '@/lib/auth/sim';
 import type { Ms } from '@/lib/data/types';
 import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
@@ -85,7 +86,8 @@ export const usePassStore = create<PassFlowState>()(
     const auth = useAuthStore.getState();
     const now = Date.now();
     const email = auth.user?.email ?? normalizeEmail(get().email);
-    if (!auth.user) auth.signInWithPurchase(email, now);
+    // Правило пошти імітації — в одному місці (`lib/api/sim/auth`): гість входить у пошту з оплати.
+    if (!auth.user) simSignInAfterPurchase(email, now);
     useAuthStore.getState().grantPass(email, now);
     set({ phase: 'success', pendingSince: undefined });
   };

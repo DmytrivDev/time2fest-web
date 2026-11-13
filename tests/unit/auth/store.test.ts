@@ -1,3 +1,4 @@
+import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { isEmail, LETTER_TTL_MS, RESEND_GAP_MS, SEND_WINDOW_MS } from '@/lib/auth/sim';
 import { clearReturn, rememberReturn, returnPath } from '@/lib/auth/returnTo';
@@ -13,7 +14,7 @@ describe('вхід (імітація): без коду — нова адреса
   beforeEach(reset);
 
   it('нова адреса: акаунт створено й людина увійшла одразу, лист «ти увійшов» з посиланням для інших пристроїв', () => {
-    const res = useAuthStore.getState().emailSignIn(' Olena@Example.com ', 'signin', T0);
+    const res = simEmailSignIn(' Olena@Example.com ', 'signin', T0);
     expect(res).toEqual({ ok: true, sent: false, result: { ok: true, isNew: true, email: 'olena@example.com' } });
     expect(useAuthStore.getState().user?.email).toBe('olena@example.com');
     expect(useAuthStore.getState().letter).toMatchObject({ email: 'olena@example.com', welcome: true });
@@ -23,7 +24,7 @@ describe('вхід (імітація): без коду — нова адреса
 
   it('адреса з акаунтом: лише посилання з листа — вхід після переходу за ним', () => {
     useAuthStore.setState({ accounts: ['olena@example.com'] });
-    expect(useAuthStore.getState().emailSignIn('olena@example.com', 'signin', T0)).toEqual({ ok: true, sent: true });
+    expect(simEmailSignIn('olena@example.com', 'signin', T0)).toEqual({ ok: true, sent: true });
     expect(useAuthStore.getState().user).toBeNull();
     const { token } = useAuthStore.getState().letter!;
     expect(useAuthStore.getState().openLink(token, T0 + 1000)).toEqual({ ok: true, isNew: false, email: 'olena@example.com' });
@@ -32,7 +33,7 @@ describe('вхід (імітація): без коду — нова адреса
 
   it('посилання діє 15 хвилин і спрацьовує раз', () => {
     useAuthStore.setState({ accounts: ['a@b.co'] });
-    useAuthStore.getState().emailSignIn('a@b.co', 'signin', T0);
+    simEmailSignIn('a@b.co', 'signin', T0);
     const { token } = useAuthStore.getState().letter!;
     expect(useAuthStore.getState().openLink(token, T0 + LETTER_TTL_MS + 1)).toEqual({ ok: false, reason: 'expired', email: 'a@b.co' });
     useAuthStore.getState().sendLetter('a@b.co', 'signin', T0 + RESEND_GAP_MS);
@@ -44,8 +45,8 @@ describe('вхід (імітація): без коду — нова адреса
 
   it('адреса з акаунтом: лист щойно надіслано — «зачекай»', () => {
     useAuthStore.setState({ accounts: ['a@b.co'] });
-    useAuthStore.getState().emailSignIn('a@b.co', 'signin', T0);
-    expect(useAuthStore.getState().emailSignIn('a@b.co', 'signin', T0 + 1000)).toEqual({ ok: false, reason: 'wait', until: T0 + RESEND_GAP_MS });
+    simEmailSignIn('a@b.co', 'signin', T0);
+    expect(simEmailSignIn('a@b.co', 'signin', T0 + 1000)).toEqual({ ok: false, reason: 'wait', until: T0 + RESEND_GAP_MS });
   });
 
   it('новий лист — не частіше ніж раз на хвилину; 4-й за 10 хвилин — «забагато спроб»', () => {

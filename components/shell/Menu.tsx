@@ -14,7 +14,7 @@ import { Switch } from '@/components/primitives/Switch';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useSheetTop } from '@/lib/overlay/sheetTop';
 import { usePartyHref } from './OverlayManager';
-import { useAuthStore } from '@/stores/auth';
+import { authActions, useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import { HeaderAvatar } from './Header';
 import ms from './menu.module.css';
@@ -146,8 +146,8 @@ export function MenuBody({
   const stamps = useGuestStore((s) => s.stamps.length);
   // Мова — у сторі гостя (запам’ятовується); перекладів ще немає.
   const storedLocale = useGuestStore((s) => s.locale);
-  const email = useAuthStore((s) => s.user?.email ?? null);
-  const signOut = useAuthStore((s) => s.signOut);
+  const email = useSession().session?.user?.email ?? null;
+  const signOut = () => void authActions.signOut();
   const user = useHeaderUser();
   const signedIn = signedInProp ?? Boolean(user);
   const hasPass = hasPassProp ?? (Boolean(user) && storedPass);

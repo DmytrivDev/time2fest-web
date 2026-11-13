@@ -1,7 +1,8 @@
 /**
- * Контракт домену «Профіль» (`docs/backend/frontend-seam.md`): нік і прапор (видно в чаті іншим), налаштування кабінету
- * (`stores/account.ts`), «Мій графік» (сервер шле за ним сповіщення «трансляція почалась»).
+ * Контракт домену «Профіль» (`docs/backend/frontend-seam.md`, E3): нік і прапор (видно в чаті іншим), налаштування кабінету
+ * (`stores/account.ts`), пошта й Google акаунта, «Мій графік» (сервер шле за ним сповіщення «трансляція почалась»).
  * Суто пристроєві речі — тема, згорнуті блоки, вікна кімнати, згода на cookies — лишаються в `localStorage` і сюди не йдуть.
+ * Дії повертають збережений профіль; інтерфейс змінює свої поля одразу (оптимістично), як і раніше.
  */
 import type { ApiResult } from '../result';
 import type { NickReason } from './chat';
@@ -26,10 +27,16 @@ export interface Profile {
   schedule: readonly string[];
   googleLinked: boolean;
   /** Нова пошта чекає підтвердження з листа. */
-  pendingEmail: string | null;
+  pendingEmail: { email: string; sentAt: number } | null;
 }
 
-export type ProfilePatch = Partial<Pick<Profile, 'nick' | 'flagCode'>> & { settings?: Partial<ProfileSettings> };
+export type ProfilePatch = {
+  nick?: string;
+  flagCode?: string;
+  /** Прапор, визначений на пристрої (у `http` визначає сервер за `CF-IPCountry` і поле ігнорує). */
+  detectedFlag?: string;
+  settings?: Partial<ProfileSettings>;
+};
 
 /** Відмови: `validation` з `reason: NickReason`; `conflict` `schedule-full` (пояс заповнено); `unauthorized` для дій акаунта. */
 export interface ProfileService {
@@ -39,10 +46,18 @@ export interface ProfileService {
   update(patch: ProfilePatch): Promise<ApiResult<Profile>>;
   /** `PUT /api/me/schedule` — увесь список (простіше за дельти, список малий). */
   setSchedule(eventIds: readonly string[]): Promise<ApiResult<readonly string[]>>;
-  /** Зміна пошти: лист на нову адресу. `POST /api/me/email`. */
-  changeEmail(email: string): Promise<ApiResult<{ pendingEmail: string }>>;
-  /** Видалення акаунта. `DELETE /api/me`. */
+  /** Зміна пошти: лист на нову адресу. `POST /api/me/email`; скасувати — `DELETE /api/me/email`. */
+  changeEmail(email: string): Promise<ApiResult<Profile>>;
+  cancelEmailChange(): Promise<ApiResult<Profile>>;
+  /** Підключити / відключити Google до акаунта з поштою. `POST/DELETE /api/me/google` (у `http` — перехід на Google). */
+  linkGoogle(): Promise<ApiResult<Profile>>;
+  unlinkGoogle(): Promise<ApiResult<Profile>>;
+  /** «Завантажити мої дані». `GET /api/me/export`. */
+  exportData(): Promise<ApiResult<Record<string, unknown>>>;
+  /** Видалення акаунта (разом з даними гостя на пристрої). `DELETE /api/me`. */
   deleteAccount(): Promise<ApiResult<void>>;
+  /** Лише `sim` у тестовій збірці: «лист підтвердження відкрито» — пошту змінено. */
+  devConfirmEmail?(): Promise<ApiResult<Profile>>;
 }
 
 export type { NickReason };
