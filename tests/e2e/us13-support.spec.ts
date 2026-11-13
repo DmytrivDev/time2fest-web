@@ -1,8 +1,10 @@
 /**
- * «Підтримати» (`/support/`, дошка `Desk-Support-New` варіант A, 2026-11-07); з 2026-11-12 підтримка — це тост
- * (дошки `Desk-Toast-New`, `Phone-Toast-New`): героїчний блок, «Обери тост» $2 / $5 / $10 і що дає рівень, «Тости світу»,
- * пас, «Питання й відповіді»; «Сказати тост · $5» → вікно тосту → текст до оплати → «Оплатити $5» → «Чекаємо оплату» →
- * «Тост опубліковано»; `/support/?toast=10` (зі сторінки пасу) — вікно з $10.
+ * «Тости світу» (`/support/`; було «Підтримати», рішення власника 2026-11-13). Три стани за правилом тосту:
+ * - свято йде — «Тости світу», лічильники, «Сказати тост» (вікно → текст до оплати → «Оплатити» → «Тост опубліковано»),
+ *   УСІ тости свята (закріплені, далі найновіші, «Показати ще»); порожньо — «Тостів ще немає — скажи перший»;
+ * - до свята — «Тости відкриються разом зі святом» з датою й часом, що таке тост, три рівні лише для показу, без оплати;
+ * - після свята — архів тостів без «Сказати тост», рядок про наступний Новий рік.
+ * `/support/?toast=10` (зі сторінки пасу) — під час свята вікно з $10; поза святом вікна немає.
  */
 import { gotoAt } from './fixtures/time';
 import { expect, test } from './fixtures/youtube-stub';
@@ -11,34 +13,40 @@ test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
 test.describe.configure({ timeout: 90_000 });
 test.beforeEach(async ({ page }, testInfo) => {
   void page;
-  test.skip(testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'Підтримати: телефон і десктоп');
+  test.skip(testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'Тости світу: телефон і десктоп');
 });
 
 const AT = '2027-01-01T03:02:00+02:00';
+/** Через 10 хв після півночі UTC−1: перший тост поясу ($5 / $10) уже закріплено до наступної півночі. */
+const PINNED = '2027-01-01T03:10:00+02:00';
+const BEFORE = '2026-12-28T14:00:00+02:00';
+const AFTER = '2027-01-02T14:00:00+02:00';
+/** За годину до першої півночі (UTC+14): свято вже йде, тостів ще немає. */
+const EMPTY = '2026-12-31T11:00:00+02:00';
 
-test('сторінка: героїчний блок, рівні тосту, «Тости світу», пас, питання', async ({ page }) => {
-  await gotoAt(page, AT, 1, '/support/');
-  await expect(page.getByRole('heading', { level: 1, name: 'Скажи тост на весь світ' })).toBeVisible();
-  const offer = page.locator('[data-offer="toast"]');
-  await expect(offer.getByRole('radio')).toHaveCount(3);
-  await expect(offer.getByRole('radio', { name: '$5 · пляшка ігристого' })).toHaveAttribute('aria-checked', 'true');
-  await expect(offer.getByRole('button', { name: 'Сказати тост · $5' })).toBeVisible();
+test('свято йде: «Тости світу», лічильники, усі тости — закріплені й найновіші, «Показати ще»', async ({ page }) => {
+  await gotoAt(page, PINNED, 1, '/support/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Тости світу' })).toBeVisible();
+  await expect(page.locator('[data-toast-counters]')).toContainText(/\d+ тост\S* за свято · \d+ країн/);
+  await expect(page.locator('[data-action="support-toast"]')).toHaveText('Сказати тост');
   const toasts = page.locator('[data-world-toasts]');
-  await expect(toasts).toContainText(/\d+ тост/);
-  await expect(toasts.locator('ul').first().getByRole('listitem')).toHaveCount(5);
-  // «Переглянути всі» — решта тостів розгортається.
-  await toasts.locator('[data-action="toasts-all"]').click();
-  await expect(toasts.locator('[data-action="toasts-all"]')).toHaveAttribute('aria-expanded', 'true');
+  await expect(toasts).toContainText('Закріплені до наступної півночі');
+  await expect(toasts.locator('[data-toast-list="pinned"] > li').first()).toContainText(/до \d\d:\d\d/);
+  const all = toasts.locator('[data-toast-list="all"] > li');
+  await expect(all).toHaveCount(20);
+  await toasts.locator('[data-action="toasts-more"]').click();
+  await expect.poll(() => all.count()).toBeGreaterThan(20);
   await expect(page.getByRole('link', { name: /Хочеш більше від свята/ })).toHaveAttribute('href', /\/pass\/?$/);
   await expect(page.getByRole('heading', { name: 'Питання й відповіді' })).toBeVisible();
+  // Вибору рівнів на сторінці немає — рівні у вікні тосту.
+  await expect(page.locator('main [role="radio"]')).toHaveCount(0);
 });
 
-test('«Сказати тост · $2» → підпис → тост з емодзі → «Оплатити $2» → «Чекаємо оплату» → «Тост опубліковано»', async ({ page }) => {
+test('«Сказати тост» → $2 → підпис → тост з емодзі → «Оплатити $2» → «Чекаємо оплату» → «Тост опубліковано»', async ({ page }) => {
   await gotoAt(page, AT, 1, '/support/');
-  const offer = page.locator('[data-offer="toast"]');
-  await offer.getByRole('radio', { name: '$2 · келих' }).click();
-  await offer.getByRole('button', { name: 'Сказати тост · $2' }).click();
+  await page.locator('[data-action="support-toast"]').click();
   const win = page.locator('[data-window="O-TOAST"]');
+  await win.getByRole('radio', { name: '$2 · келих' }).click();
   await expect(win.getByRole('radio', { name: '$2 · келих' })).toHaveAttribute('aria-checked', 'true');
   // Гість без ніку: «Оплатити» неактивна, доки не підписано.
   await expect(win.locator('[data-action="toast-pay"]')).toBeDisabled();
@@ -51,6 +59,8 @@ test('«Сказати тост · $2» → підпис → тост з емо�
   await expect(win).toContainText('Чекаємо оплату на PayPro Global');
   await expect(win).toContainText('Тост опубліковано', { timeout: 15_000 });
   await expect(win).toContainText('Він уже в чаті «Світ» — його бачать усі, хто зараз дивиться.');
+  // Свій тост — першим серед «Усі тости».
+  await expect(page.locator('[data-toast-list="all"] > li').first()).toContainText('За всіх із Time2Fest!');
 });
 
 test('/support/?toast=10 — вікно тосту одразу з $10', async ({ page }) => {
@@ -58,4 +68,43 @@ test('/support/?toast=10 — вікно тосту одразу з $10', async (
   const win = page.locator('[data-window="O-TOAST"]');
   await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).toHaveAttribute('aria-checked', 'true');
   await expect(win.getByRole('button', { name: 'Оплатити $10' })).toBeVisible();
+});
+
+test('свято йде, тостів ще немає: «Тостів ще немає — скажи перший»', async ({ page }) => {
+  await gotoAt(page, EMPTY, 1, '/support/');
+  await expect(page.locator('[data-world-toasts]')).toContainText('Тостів ще немає — скажи перший');
+  await expect(page.locator('[data-action="support-toast"]')).toBeVisible();
+  await expect(page.locator('[data-toast-counters]')).toHaveCount(0);
+});
+
+test('до свята: «Тости відкриються разом зі святом», дата й час, три рівні без вибору; оплати немає', async ({ page }) => {
+  await gotoAt(page, BEFORE, 1, '/support/?toast=10');
+  await expect(page.getByRole('heading', { level: 1, name: 'Тости світу' })).toBeVisible();
+  const opens = page.locator('[data-toasts-open]');
+  await expect(opens).toContainText('Тости відкриються разом зі святом');
+  // Перша північ — UTC+14 о 10:00 UTC; тости — за 2 год: 31 грудня о 10:00 за Києвом.
+  await expect(opens).toContainText('31 грудня о 10:00 за твоїм часом');
+  const about = page.locator('[data-toast-about]');
+  await expect(about.getByRole('listitem').filter({ hasText: '$10' }).first()).toBeVisible();
+  await expect(about.locator('[role="radio"]')).toHaveCount(0);
+  await expect(about).toContainText('Твій нік у привітанні опівночі');
+  await expect(page.locator('[data-action="support-toast"]')).toHaveCount(0);
+  await expect(page.locator('[data-world-toasts]')).toHaveCount(0);
+  // Застаріле посилання не відкриває оплату; адреса чиста.
+  await expect(page).not.toHaveURL(/toast=10/);
+  await expect(page.locator('[data-window="O-TOAST"]')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Хочеш більше від свята/ })).toBeVisible();
+  // У шапці — лише «Новорічний пас», «Сказати тост» немає.
+  await expect(page.locator('header [data-action="header-toast"]')).toHaveCount(0);
+});
+
+test('після свята: архів тостів без «Сказати тост», рядок про наступний Новий рік', async ({ page }) => {
+  await gotoAt(page, AFTER, 1, '/support/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Тости світу' })).toBeVisible();
+  await expect(page.locator('main')).toContainText('Нові тости відкриються наступного Нового року.');
+  await expect(page.locator('[data-action="support-toast"]')).toHaveCount(0);
+  const all = page.locator('[data-toast-list="all"] > li');
+  await expect(all.first()).toContainText(/1 січня, \d\d:\d\d/);
+  await expect(page.locator('[data-toast-list="pinned"]')).toHaveCount(0);
+  await expect(page.locator('header [data-action="header-toast"]')).toHaveCount(0);
 });

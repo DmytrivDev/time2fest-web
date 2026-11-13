@@ -117,7 +117,7 @@ describe('PassBuy — картка оформлення', () => {
     const alt = document.querySelector('[data-row="alternatives"]') as HTMLElement;
     expect(within(alt).getByRole('button', { name: 'Увійти' })).toBeInTheDocument();
     // «Перший ряд» прибрано (рішення 2026-11-12); замість нього — тост за $10 з пасом у подарунок (дошка `Pass-5-New`):
-    // на сторінці пасу вікон немає — посилання на «Підтримати» з вікном тосту на $10.
+    // на сторінці пасу вікон немає — посилання на «Тости світу» з вікном тосту на $10.
     const links = within(alt).getAllByRole('link');
     expect(links).toHaveLength(1);
     expect(links[0]).toHaveTextContent('Скажи тост за $10…і Новорічний пас у подарунок');

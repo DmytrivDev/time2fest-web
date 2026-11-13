@@ -26,7 +26,7 @@ test('гість: ціна, оформлення з Google чи поштою, п
   await expect(page.locator('main a[href="#"]')).toHaveCount(0);
 });
 
-test('«Скажи тост за $10 · …і Новорічний пас у подарунок» (дошка `Pass-5-New`): сторінка — «Підтримати» з вікном на $10', async ({ page }) => {
+test('«Скажи тост за $10 · …і Новорічний пас у подарунок» (дошка `Pass-5-New`): сторінка — «Тости світу» з вікном на $10', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   const row = page.locator('main [data-row="toast-gift"]');
   await expect(row).toContainText('Скажи тост за $10');
@@ -35,6 +35,12 @@ test('«Скажи тост за $10 · …і Новорічний пас у п�
   await expect(page).toHaveURL(/\/support\//, { timeout: 20_000 });
   const win = page.locator('[data-window="O-TOAST"]');
   await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).toHaveAttribute('aria-checked', 'true', { timeout: 20_000 });
+});
+
+test('до свята рядка «Скажи тост за $10» немає (тост лише під час свята, 2026-11-13) — пас оформлюється без нього', async ({ page }) => {
+  await gotoAt(page, '2026-12-28T14:00:00+02:00', 1, '/pass/');
+  await expect(page.getByRole('button', { name: 'Оформити пас — $5' })).toBeVisible();
+  await expect(page.locator('[data-row="toast-gift"]')).toHaveCount(0);
 });
 
 test('вікно пасу під час свята: рядок «Скажи тост за $10» → вікно тосту з $10; гість після $10 входить — пас на акаунті', async ({ page }) => {

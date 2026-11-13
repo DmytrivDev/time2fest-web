@@ -81,7 +81,7 @@ describe('PassInfo', () => {
   });
 });
 
-// Картка «Чайові» прибрана 2026-11-12: тепер рівні тосту — плитки й перелік того, що дає рівень (вікно тосту, «Підтримати»).
+// Картка «Чайові» прибрана 2026-11-12: тепер рівні тосту — плитки й перелік того, що дає рівень (вікно тосту; «Тости світу» до свята — лише показ).
 describe('рівні тосту — плитки й «що дає» (дошка `Desk-Toast-New`, 2026-11-12)', () => {
   function Tiers({ hasPass = false, onPick = () => undefined }: { hasPass?: boolean; onPick?: (v: number) => void }) {
     const [tier, setTier] = useState<ToastTier>(5);
@@ -120,6 +120,25 @@ describe('рівні тосту — плитки й «що дає» (дошка 
     expect(onPick).toHaveBeenCalledWith(10);
     expect(screen.getByText('Новорічний пас у тебе вже є')).toBeInTheDocument();
     expect(screen.queryByText('Новорічний пас у подарунок')).toBeNull();
+  });
+
+  it('лише показ («Тости світу» до свята, 2026-11-13): три плитки без вибору, усі пункти з рівнем, з якого діють', () => {
+    renderPage(
+      <>
+        <ToastTiers />
+        <ToastBenefits hasPass={false} readOnly />
+      </>,
+    );
+    expect(screen.queryAllByRole('radio')).toHaveLength(0);
+    const tiers = screen.getByRole('list', { name: 'Рівні тосту' });
+    expect(within(tiers).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['🥂$2келих', '🍾$5пляшка ігристого', '🎆$10феєрверк']);
+    const list = screen.getByRole('list', { name: 'Що дає тост' });
+    expect(within(list).getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Золотий тост у чаті «Світ»з $2',
+      'Закріплений під трансляцією до наступної півночіз $5',
+      'Твій нік у привітанні опівночіз $10',
+      'Новорічний пас у подарунокз $10',
+    ]);
   });
 });
 

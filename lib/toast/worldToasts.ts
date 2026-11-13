@@ -1,7 +1,8 @@
 /**
  * Імітовані тости інших глядачів (спільного бекенду на прототипі немає). Після кожної півночі поясу протягом години
  * автори сценарію чату піднімають тости — від двох до шести; перший — одразу після півночі, $5 чи $10 (закріплений),
- * решта — $2 / $5 / $10.
+ * решта — $2 / $5 / $10. Лише поки свято йде (до останньої півночі, рішення власника 2026-11-13): після неї тост не
+ * сказати — і імітованих немає, архів «Тостів світу» показує тости свята.
  * Ті самі тости — у смузі тостів, у чаті «Світ» і на сторінці «Підтримати».
  *
  * Ніякої вигаданої наповненості в робочій збірці (рішення власника 2026-11-12): імітовані тости живуть лише в тестовій
@@ -48,13 +49,14 @@ export function worldToasts(script: ChatScriptFile, data: Dataset, upTo = Infini
   const authors = script.authors;
   if (!authors.length) return [];
   const out: ToastRecord[] = [];
+  const last = data.zones.reduce((m, z) => Math.max(m, z.midnightMs), -Infinity);
   data.zones.forEach((z, i) => {
     const count = 2 + (hash(z.id) % 5);
     for (let j = 0; j < count; j++) {
       const h = hash(`${z.id}:${j}`);
       // Перший тост поясу — одразу після півночі й дорожчий ($5 / $10), щоб у смузі були закріплені.
       const at = z.midnightMs + (j === 0 ? 1 + (h % 6) : 2 + (h % 55)) * 60_000 + ((h >>> 6) % 60) * 1_000;
-      if (at > upTo) continue;
+      if (at > upTo || at > last) continue;
       const a = authors[(h >>> 3) % authors.length]!;
       const tier: ToastTier = j === 0 ? ((h >>> 11) % 3 === 0 ? 10 : 5) : tierOf(h >>> 11);
       out.push({

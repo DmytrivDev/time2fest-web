@@ -126,6 +126,18 @@
 .tier:hover {
   border-color: #4a4a52;
 }
+/* Лише показ («Тости світу» до свята): не кнопки — без наведення й курсора. */
+.tiers[data-readonly] {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.tiers[data-readonly] .tier {
+  cursor: default;
+}
+.tiers[data-readonly] .tier:hover {
+  border-color: #34343a;
+}
 .tier[aria-checked='true'] {
   border: 2px solid var(--color-highlight);
   background: rgb(252 226 134 / 0.12);

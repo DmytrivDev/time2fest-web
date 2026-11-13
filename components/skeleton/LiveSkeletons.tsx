@@ -265,46 +265,42 @@ export function RatingSkeleton() {
   );
 }
 
-/** «Підтримати»: велика картка-герой, картка чайових. */
+/**
+ * «Тости світу» (2026-11-13; перший екран під час свята): героїчний блок — ярлик, заголовок, підзаголовок, лічильники й
+ * «Сказати тост» (телефон — без ілюстрації); нижче — список тостів.
+ */
 export function SupportSkeleton() {
   const t = useTranslations('common');
   return (
     <SkeletonRoot kind="support" label={t('loading')} pad dock>
-      <Frame h={[408, 274, 258]} p={[19, 29, 29]}>
+      <Frame h={[293, 309, 285]} p={[19, 29, 29]}>
         <Only on="phone">
-          <Bar raised w={140} h={14} />
-          <Bar raised w={230} h={56} mt={10} />
-          <Bar raised w={280} h={64} mt={14} />
-          <Bar raised shape="card" w={250} h={120} mt={30} />
+          <Bar raised w={100} h={14} />
+          <Bar raised w={200} h={32} mt={10} />
+          <Bar raised w={300} h={62} mt={12} />
+          <Bar raised w={240} h={40} mt={12} />
+          <Bar raised shape="btn" h={48} mt={18} />
         </Only>
         <Only on="not-phone">
-          <Row h={[200, 200, 200]} g={40}>
+          <Row h={[250, 250, 226]} g={40}>
             <Bar raised shape="card" w={300} h={170} />
             <div className="flex min-w-0 flex-1 flex-col">
-              <Bar raised w={160} h={14} />
-              <Bar raised w={360} h={40} mt={12} />
-              <Bar raised w={420} h={18} mt={14} />
-              <Bar raised w={380} h={18} mt={8} />
+              <Bar raised w={110} h={14} />
+              <Bar raised w={300} h={40} mt={12} />
+              <Bar raised w={420} h={42} mt={12} />
+              <Bar raised w={300} h={18} mt={14} />
+              <Bar raised shape="btn" w={220} h={48} mt={18} />
             </div>
           </Row>
         </Only>
       </Frame>
-      <Frame h={[459, 291, 291]} mt={[16, 24, 24]} p={[17, 21, 21]}>
-        <Bar raised w={60} h={14} />
-        <Bar raised w={220} h={22} mt={6} />
-        <Bar raised w={[300, 520, 520]} h={18} mt={14} />
-        <Grid cols={[3, 3, 3]} g={12} mt={20}>
-          <Bar raised shape="btn" h={[88, 110, 110]} />
-          <Bar raised shape="btn" h={[88, 110, 110]} />
-          <Bar raised shape="btn" h={[88, 110, 110]} />
-        </Grid>
-      </Frame>
       <Frame h={[559, 520, 520]} mt={[16, 24, 24]} p={[17, 21, 21]}>
-        <Bar raised w={140} h={24} />
-        <Bar raised w={260} h={16} mt={10} />
-        <Bar raised shape="card" h={64} mt={16} />
-        <Bar raised shape="card" h={64} mt={10} />
-        <Bar raised shape="card" h={64} mt={10} />
+        <Bar raised w={220} h={14} />
+        <Bar raised shape="card" h={76} mt={12} />
+        <Bar raised shape="card" h={76} mt={10} />
+        <Bar raised w={180} h={24} mt={18} />
+        <Bar raised shape="card" h={56} mt={12} />
+        <Bar raised shape="card" h={56} mt={10} />
       </Frame>
     </SkeletonRoot>
   );
