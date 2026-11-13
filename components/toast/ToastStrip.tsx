@@ -22,20 +22,16 @@
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useEffect, useId, useState } from 'react';
-import { useChatDockControls } from '@/components/chat/ChatDock';
 import { cn } from '@/components/primitives/cn';
 import { EmojiText } from '@/components/primitives/Emoji';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
-import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { Ms } from '@/lib/data/types';
 import { formatClock, formatDurationShort } from '@/lib/i18n/time';
 import { keepIndex, LATEST_IN_LIST, stepIndex, type StripItem, type StripView } from '@/lib/toast/feed';
-import { useChatUi } from '@/stores/chat';
 import { useChatDock } from '@/stores/chatDock';
-import { useGuestStore } from '@/stores/guest';
 import { ToastBubble } from './ToastBubble';
 import { useOpenToastWindow } from './ToastWindow';
 import { useCanToast } from './useToastSeason';
@@ -57,24 +53,6 @@ function ToastButton({ label, onClick, className }: { label: string; onClick: ()
       {label}
     </button>
   );
-}
-
-/** Клік на тост (десктоп): чат «Світ» — показаний у колонці (на телефоні — розгорнутий). */
-function useOpenWorldChat() {
-  const overlay = useOverlay();
-  const column = useChatColumn();
-  const { expand } = useChatDockControls();
-  return () => {
-    useChatUi.getState().requestWorld();
-    overlay.close();
-    if (column) {
-      useGuestStore.getState().setChatHidden(false);
-      useChatUi.getState().markHidden(null);
-      document.getElementById('chat')?.scrollIntoView({ block: 'nearest' });
-    } else {
-      expand();
-    }
-  };
 }
 
 /** Ротація по одному: індекс тримає той самий тост, коли список змінюється; крок — ‹ › чи кінець смужки-годинника. */
@@ -170,7 +148,6 @@ function DeskStrip({ view, now, className }: { view: StripView; now: Ms; classNa
   const t = useTranslations('toast');
   const ts = useTranslations('toast.strip');
   const openToast = useOpenToastWindow();
-  const openWorld = useOpenWorldChat();
   const reduce = useReducedMotion();
   const ago = useAgo();
   const [open, setOpen] = useState(false);
@@ -255,7 +232,7 @@ function DeskStrip({ view, now, className }: { view: StripView; now: Ms; classNa
         <ToastButton label={t('action')} onClick={() => openToast()} />
       </div>
       {!open && item ? (
-        <button type="button" key={item.toast.id} className={cn('t2f-focus', s.deskCard, s.fade)} data-pinned={item.until ? '' : undefined} onClick={openWorld} data-toast-id={item.toast.id}>
+        <NextLink href="/support/" key={item.toast.id} className={cn('t2f-focus', s.deskCard, s.fade)} data-pinned={item.until ? '' : undefined} data-toast-id={item.toast.id} data-action="toast-card" aria-label={ts('cardLabel', { nick: item.toast.nick, text: item.toast.text })}>
           <span className={s.deskFlag}>
             <Flag code={item.toast.flagCode} diameter={30} decorative />
           </span>
@@ -268,7 +245,7 @@ function DeskStrip({ view, now, className }: { view: StripView; now: Ms; classNa
               <EmojiText text={item.toast.text} />
             </span>
           </span>
-        </button>
+        </NextLink>
       ) : null}
       <Reveal open={open} id={listId}>
         <Lists view={view} now={now} variant="desk" />

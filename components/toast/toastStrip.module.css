@@ -202,6 +202,7 @@
   color: var(--color-text);
   font-family: inherit;
   text-align: start;
+  text-decoration: none;
   cursor: pointer;
 }
 .deskCard[data-pinned] {

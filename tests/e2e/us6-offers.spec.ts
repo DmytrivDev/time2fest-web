@@ -262,6 +262,18 @@ test.describe('US6 · тост замість чайових', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Тости світу' })).toBeVisible();
   });
 
+  // Рішення 2026-11-13: клік на картку тосту (десктоп) веде на «Тости світу», а не перемикає чат на «Світ».
+  test('десктоп: картка тосту — посилання на «Тости світу»', async ({ page }) => {
+    test.skip(isPhone(page), 'картка-посилання є лише на десктопі');
+    await seedGuest(page, { stamps: TWO_STAMPS });
+    await gotoAt(page, AZORES_PLUS_6, 0);
+    const card = page.locator('[data-toast-strip] [data-action="toast-card"]');
+    await expect(card).toBeVisible({ timeout: 10_000 });
+    await expect(card).toHaveAttribute('href', /^\/support\/?$/);
+    await card.click();
+    await expect(page).toHaveURL(/\/support\//, { timeout: 20_000 });
+  });
+
   test('до свята смуги тостів і келиха в полі чату немає', async ({ page }) => {
     await seedGuest(page, {});
     await gotoAt(page, '2026-12-28T14:00:00+02:00', 0);

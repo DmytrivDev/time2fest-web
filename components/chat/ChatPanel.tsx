@@ -117,13 +117,6 @@ export function ChatPanel({
   const roomLabel = activeKey === 'country' && country ? t('roomCountryPicker', { country: country.name }) : t('roomWorld');
 
   useEffect(() => setLastRoom(roomId), [roomId, setLastRoom]);
-  // Смуга тостів: «Усі тости в чаті «Світ»» чи клік на тост — кімната «Світ» (рішення власника 2026-11-12).
-  const worldRequest = useChatUi((s) => s.worldRequest);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- запит ззовні: перемкнути кімнату на «Світ»
-    if (worldRequest) setRoomKey('world');
-  }, [worldRequest]);
-
   const rawMessages = useChatMessages(roomId);
   const roomMessages = useMemo(() => {
     // Перемикач «Порожня кімната «Країна»» (машина часу): лишаються тільки свої повідомлення.
