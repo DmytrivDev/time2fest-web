@@ -3,13 +3,14 @@
  *
  * Вікна й вікно зі звуком живуть у `guest.room` (`localStorage`, `stores/guest`): `windows` — у порядку показу,
  * `slot` — сталий номер вікна (для слота плеєра `room:N`), `soundSlot` — номер вікна зі звуком (≤ 1 вікна).
- * Перше вікно (`windows[0]`) — це спільний `PlayerHost` макета (головне вікно, єдине з автозапуском, FR-040).
+ * Перше вікно (`windows[0]`) — це спільний `PlayerHost` макета (головне вікно, єдине з автозапуском, FR-040; політика YouTube).
  *
  * Тут же — стан сеансу, який не зберігається:
  * - `pickTarget` — трансляція, що чекає місця, коли кімната повна (десктоп — режим вибору вікна для заміни;
  *   телефон — пояснення «до 2 вікон», нове вікно стає на місце прибраного);
- * - `started` — вікна 2–4, які людина запустила в цьому сеансі («+», «Грати», «Звук сюди»). Відновлені зі
- *   збереження вікна не стартують самі: показують `ResumeCard` до натискання.
+ * - `started` — вікна 2–4, які людина запустила в цьому сеансі («Грати», «Звук сюди», клавіші 1–4). Нові (+), замінені,
+ *   повернені й відновлені зі збереження вікна не стартують самі (автозапуск — лише в головного плеєра): `ResumeCard`
+ *   до натискання.
  *
  * Чисті функції (`addWindow`, `removeWindow`, …) не читають сховищ — їх перевіряють юніт-тести.
  */
@@ -262,9 +263,7 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
       return 'full';
     }
     writeRoom(res.state);
-    // «+» — дія людини: нове вікно (не головне) стартує одразу, без звуку.
-    if (res.kind === 'added' && res.state.windows[0]?.slot !== res.slot)
-      get().markStarted(res.slot);
+    // Нове вікно (не головне) НЕ грає саме (політика YouTube: автозапуск — лише в одного плеєра): фасад «Грати».
     set({ pickTarget: null });
     return res.kind;
   },
@@ -280,7 +279,6 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
       const res = addWindow(next, pick, before.windows.length);
       if (res.kind !== 'full') {
         writeRoom(res.state);
-        if (res.kind === 'added') get().markStarted(res.slot);
         set({ pickTarget: null });
         return;
       }
@@ -295,7 +293,8 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
     const next = replaceWindow(before, slot, t);
     if (next !== before) {
       writeRoom(next);
-      get().markStarted(slot);
+      // Нова трансляція на місці вікна — знову «готове» (фасад), само не грає.
+      set((s) => ({ started: s.started.filter((x) => x !== slot) }));
     }
     set({ pickTarget: null });
   },
@@ -321,8 +320,6 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
     const next = restoreWindow(before, win, pos, roomLimit(viewport), sound);
     if (next === before) return;
     writeRoom(next);
-    const back = next.windows.find((w) => w.sourceId === win.sourceId);
-    if (back) get().markStarted(back.slot);
   },
 
   setHostSlot(slot) {

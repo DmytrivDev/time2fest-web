@@ -40,7 +40,7 @@ export interface YTPlayer {
   loadVideoById(videoId: string | { videoId: string; startSeconds?: number }): void;
   seekTo?(seconds: number, allowSeekAhead: boolean): void;
   getCurrentTime?(): number;
-  cueVideoById(videoId: string): void;
+  cueVideoById(videoId: string | { videoId: string; startSeconds?: number }): void;
   playVideo(): void;
   pauseVideo(): void;
   mute(): void;
@@ -113,8 +113,10 @@ export interface YouTubePlayerHandlers {
 
 export interface YouTubePlayerHandle {
   readonly videoId: string | null;
-  /** Змінює відео без перестворення; той самий id — нічого не робить. */
+  /** Змінює відео без перестворення і ЗАПУСКАЄ його (loadVideoById); той самий id — нічого не робить. */
   load(videoId: string): void;
+  /** Змінює відео без перестворення і НЕ запускає (cueVideoById): кадр готовий, відтворення — лише від `play()`. */
+  cue(videoId: string): void;
   play(): void;
   pause(): void;
   mute(): void;
@@ -131,7 +133,7 @@ export interface CreatePlayerOptions {
   videoId?: string;
   /** `location.origin` — захист від перехоплення плеєра сторонніми скриптами. */
   origin?: string;
-  /** Без автозапуску (вікна кімнати 2–4 після фасаду теж стартують від кліку). */
+  /** `false` — без автозапуску (політика YouTube: автозапуск лише в одного плеєра на сторінці; вікна кімнати 2–4 стартують від кліку). */
   autoplay?: boolean;
   handlers?: YouTubePlayerHandlers;
 }
@@ -145,13 +147,17 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
   const handlers = opts.handlers ?? {};
   let currentId: string | null = opts.videoId ?? null;
   let ready = false;
-  let pending: string | null = null;
+  let pending: { id: string; mode: 'load' | 'cue' } | null = null;
   let destroyed = false;
 
   /** Запис — завантажити з позиції годинника; звичайне відео — як є. */
   const loadAt = (videoId: string) => {
     const pos = recordingPosition(videoId);
     player.loadVideoById(pos ? { videoId, startSeconds: Math.floor(pos.seconds) } : videoId);
+  };
+  const cueAt = (videoId: string) => {
+    const pos = recordingPosition(videoId);
+    player.cueVideoById(pos ? { videoId, startSeconds: Math.floor(pos.seconds) } : videoId);
   };
   /** Перемотати запис до годинника, якщо розійшлися (стрибок часу, пауза, буферизація). */
   const resync = (force: boolean) => {
@@ -178,9 +184,10 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
     events: {
       onReady: () => {
         ready = true;
-        if (pending && pending !== currentId) {
-          currentId = pending;
-          loadAt(pending);
+        if (pending && pending.id !== currentId) {
+          currentId = pending.id;
+          if (pending.mode === 'cue') cueAt(pending.id);
+          else loadAt(pending.id);
         } else resync(false);
         pending = null;
         handlers.onReady?.();
@@ -208,12 +215,22 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
     load(videoId) {
       if (destroyed) return;
       if (!ready) {
-        pending = videoId;
+        pending = { id: videoId, mode: 'load' };
         return;
       }
       if (videoId === currentId) return;
       currentId = videoId;
       loadAt(videoId);
+    },
+    cue(videoId) {
+      if (destroyed) return;
+      if (!ready) {
+        pending = { id: videoId, mode: 'cue' };
+        return;
+      }
+      if (videoId === currentId) return;
+      currentId = videoId;
+      cueAt(videoId);
     },
     play: () => safe(() => player.playVideo()),
     pause: () => safe(() => player.pauseVideo()),

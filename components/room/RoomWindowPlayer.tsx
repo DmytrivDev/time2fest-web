@@ -5,14 +5,15 @@
  *
  * - Вікно 1 (головне) — НЕ цей компонент: там стоїть `PlayerSlot id="main"`, і над ним сідає єдиний `PlayerHost`
  *   макета (перехід «країна → кімната» не перезапускає відео, FR-042). Лише воно має автозапуск (FR-040).
- * - Вікна 2–4 — окремі `YT.Player` (`lib/player/youtubeApi.ts`), які створюються лише після дії людини
- *   (`started`: «+», «Грати» на фасаді, «Звук сюди»). До того — `ResumeCard` (фасад із мініатюрою, той самий кадр).
- *   Створюються без звуку, `playsinline`; звук перемикає кімната через `mute/unMute` з реєстру `roomPlayers`.
+ * - Вікна 2–4 — окремі `YT.Player` (`lib/player/youtubeApi.ts`), створені БЕЗ автозапуску (політика YouTube: автозапуск
+ *   лише в одного плеєра на сторінці, 2026-11-13) і з кадром наготові (`cueVideoById`). Поки людина не натиснула
+ *   («Грати» на фасаді, «Звук сюди», клавіші 1–4 → `started`), над ними — `ResumeCard` (фасад із мініатюрою).
+ *   Грають без звуку, `playsinline`; звук перемикає кімната через `mute/unMute` з реєстру `roomPlayers`.
  * - Ланцюжок запасних джерел — `lib/player/chain.ts`: помилка → наступне джерело, `player:source-switched`
  *   для слота `room:N`. Вибране людиною джерело йде першим, як у головного плеєра.
  * - iframe живе у вузлі, яким не керує React (API замінює його); поверх відео нічого немає.
  * - Додана трансляція ще не почалась (`startsAt` попереду; 2026-11-11) — у вікні заглушка «Трансляція очікується» з
- *   відліком (без iframe — отже й без «на весь екран»); о `startsAt` вікно запускається саме.
+ *   відліком (без iframe — отже й без «на весь екран»); о `startsAt` вікно переходить у «готове» (фасад), само не грає.
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -97,18 +98,11 @@ export function RoomWindowPlayer({
     return selectSource(ctx);
   }, [slotId, eventId, sources, failed, facebookConsent, time, preferredSourceId, waiting]);
 
-  // Чекали — почалась: вікно стартує саме (людина вже обрала цю трансляцію).
-  const wasWaiting = useRef(waiting);
-  useEffect(() => {
-    if (wasWaiting.current && !waiting && !started) onStart(slot);
-    wasWaiting.current = waiting;
-  }, [waiting, started, onStart, slot]);
-
   const videoId = selection.kind === 'source' && selection.source.platform === 'youtube' ? (selection.source.videoId ?? null) : null;
 
-  const live = useRef({ selection, failed, sources, eventId, facebookConsent, hasSound, soundAllowed });
+  const live = useRef({ selection, failed, sources, eventId, facebookConsent, hasSound, soundAllowed, started });
   useLayoutEffect(() => {
-    live.current = { selection, failed, sources, eventId, facebookConsent, hasSound, soundAllowed };
+    live.current = { selection, failed, sources, eventId, facebookConsent, hasSound, soundAllowed, started };
   });
 
   const handleBreak = useCallback(
@@ -131,14 +125,24 @@ export function RoomWindowPlayer({
   const creating = useRef(false);
   const unmounted = useRef(false);
   const run = started && videoId !== null && !waiting;
+  const ready = videoId !== null && !waiting;
 
-  // Створення плеєра (один раз на вікно) і зміна відео через loadVideoById.
+  /** Старт відтворення — лише після дії людини (`started`): грає без звуку, звук — якщо це вікно зі звуком. */
+  const startPlayback = useCallback((handle: YouTubePlayerHandle) => {
+    handle.play();
+    if (live.current.hasSound && live.current.soundAllowed) handle.unMute();
+  }, []);
+
+  // Створення плеєра (один раз на вікно) — БЕЗ автозапуску, з кадром наготові (cue). Зміна відео: людина вже
+  // запустила вікно → loadVideoById, ні → cueVideoById (кадр змінюється, але не грає).
   useEffect(() => {
-    if (!run || !videoId) return;
+    if (!ready || !videoId) return;
     const h = handleRef.current;
     if (h) {
-      h.load(videoId);
-      h.play();
+      if (live.current.started) {
+        h.load(videoId);
+        h.play();
+      } else h.cue(videoId);
       return;
     }
     const host = hostRef.current;
@@ -148,12 +152,11 @@ export function RoomWindowPlayer({
     host.appendChild(mount);
     createYouTubePlayer(mount, {
       videoId,
+      autoplay: false,
       handlers: {
         onReady: () => {
           const handle = handleRef.current;
-          if (!handle) return;
-          handle.play();
-          if (live.current.hasSound && live.current.soundAllowed) handle.unMute();
+          if (handle && live.current.started) startPlayback(handle);
         },
         onStateChange: (state) => {
           if (state === YTState.ENDED) handleBreak({ type: 'ended' });
@@ -161,7 +164,7 @@ export function RoomWindowPlayer({
         onError: (code) => handleBreak({ type: 'error', code }),
         onAutoplayBlocked: () => {
           const handle = handleRef.current;
-          if (handle && !handle.isMuted()) {
+          if (handle && live.current.started && !handle.isMuted()) {
             handle.mute();
             handle.play();
           }
@@ -177,13 +180,24 @@ export function RoomWindowPlayer({
         players.set(slot, handle);
         const sel = live.current.selection;
         const wanted = sel.kind === 'source' ? sel.source.videoId : undefined;
-        if (wanted) handle.load(wanted);
+        if (wanted) {
+          if (live.current.started) handle.load(wanted);
+          else handle.cue(wanted);
+        }
       })
       .catch((err: unknown) => console.error('[room player]', err))
       .finally(() => {
         creating.current = false;
       });
-  }, [run, videoId, slot, handleBreak]);
+  }, [ready, videoId, slot, handleBreak, startPlayback]);
+
+  // Людина запустила вікно («Грати», «Звук сюди», «+» не рахується) → відтворення; скинула (заміна) → пауза.
+  useEffect(() => {
+    const h = handleRef.current;
+    if (!h) return; // ще створюється: `onReady` запустить, якщо `started`
+    if (started) startPlayback(h);
+    else h.pause();
+  }, [started, startPlayback]);
 
   // Розмонтування вікна (прибрали, вікно стало головним, вихід з кімнати) — знищення плеєра.
   useEffect(() => {

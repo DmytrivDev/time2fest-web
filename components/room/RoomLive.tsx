@@ -760,10 +760,12 @@ export function RoomLive() {
     }
     if (prev !== null && foldSlot === null) {
       const h = handle(prev);
-      if (h) h.play();
-      else actions?.play();
+      // Вікно, яке людина ще не запускала (готове, на фасаді), після згортання не стартує.
+      if (h) {
+        if (started.includes(prev)) h.play();
+      } else actions?.play();
     }
-  }, [foldSlot, windows, actions, isHost]);
+  }, [foldSlot, windows, actions, isHost, started]);
 
   const views: (RoomWindowCardView & { w: GuestRoomWindow; order: number })[] = windows.map(
     (w, index) => {
