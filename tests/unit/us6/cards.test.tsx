@@ -89,7 +89,6 @@ describe('рівні тосту — плитки й «що дає» (дошка 
       <>
         <ToastTiers
           value={tier}
-          hasPass={hasPass}
           onChange={(v) => {
             setTier(v);
             onPick(v);
@@ -100,11 +99,11 @@ describe('рівні тосту — плитки й «що дає» (дошка 
     );
   }
 
-  it('$2 келих / $5 пляшка ігристого / $10 феєрверк (типово $5), «найвигідніше» на $10; галочки за рівнем', () => {
+  it('$2 келих / $5 пляшка ігристого / $10 феєрверк (типово $5), без «найвигідніше»; галочки за рівнем', () => {
     renderPage(<Tiers />);
     expect(screen.getAllByRole('radio').map((r) => r.getAttribute('aria-label'))).toEqual(['$2 · келих', '$5 · пляшка ігристого', '$10 · феєрверк']);
     expect(screen.getByRole('radio', { name: /^\$5/ })).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByRole('radio', { name: /^\$10/ })).toHaveTextContent('найвигідніше');
+    expect(screen.getByRole('radio', { name: /^\$10/ })).not.toHaveTextContent('найвигідніше');
     const list = screen.getByRole('list', { name: 'Що дає тост' });
     expect(list.querySelectorAll('[data-on]')).toHaveLength(2);
     expect(within(list).getByText('Твій нік у привітанні опівночі').closest('li')).toHaveTextContent('з $10');
@@ -114,10 +113,9 @@ describe('рівні тосту — плитки й «що дає» (дошка 
     expect(coralButtons()).toHaveLength(0);
   });
 
-  it('з пасом: без «найвигідніше», замість подарунка — «Новорічний пас у тебе вже є»', () => {
+  it('з пасом: замість подарунка — «Новорічний пас у тебе вже є»', () => {
     const onPick = vi.fn();
     renderPage(<Tiers hasPass onPick={onPick} />);
-    expect(screen.getByRole('radio', { name: /^\$10/ })).not.toHaveTextContent('найвигідніше');
     fireEvent.click(screen.getByRole('radio', { name: /^\$10/ }));
     expect(onPick).toHaveBeenCalledWith(10);
     expect(screen.getByText('Новорічний пас у тебе вже є')).toBeInTheDocument();

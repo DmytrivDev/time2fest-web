@@ -97,7 +97,7 @@ export function WaitingScene({
         {compact ? null : <p className="hidden text-body text-text-secondary @lg:block">{t('waitingLead')}</p>}
         <h2 id={titleId} className={cn('flex items-center gap-2 text-text', compact ? 'text-body-strong' : 'text-body-strong @lg:text-headline-lg')}>
           <span className="shrink-0">
-            <Flag code={country.flagCode} size="sm" decorative />
+            <Flag round code={country.flagCode} size="sm" decorative />
           </span>
           <span className="line-clamp-2">{waitingFor.title}</span>
         </h2>
@@ -187,10 +187,10 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
           <div className="flex min-h-0 flex-1 items-center">{phase.kind === 'count' ? <SceneCountdown left={phase.left} /> : null}</div>
           <div className="flex items-center gap-3 @lg:gap-5">
             <span className="@lg:hidden">
-              <Flag code={country.flagCode} size="md" decorative />
+              <Flag round code={country.flagCode} size="md" decorative />
             </span>
             <span className="hidden @lg:block">
-              <Flag code={country.flagCode} size="lg" decorative />
+              <Flag round code={country.flagCode} size="lg" decorative />
             </span>
             <div className="min-w-0">
               <h2 id={titleId} className="text-headline-sm text-text @lg:text-headline-lg">

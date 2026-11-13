@@ -109,7 +109,7 @@ function ToastOffer({ onOpen }: { onOpen: (tier: ToastTier) => void }) {
       </h2>
       <p className={s.sub}>{t('supportCard.lead')}</p>
       <div className={s.offerGrid}>
-        <ToastTiers value={tier} onChange={setTier} hasPass={hasPass} />
+        <ToastTiers value={tier} onChange={setTier} />
         <ToastBenefits tier={tier} hasPass={hasPass} />
       </div>
       <Button variant="coral" size="lg" yieldToCoralWindow onClick={() => onOpen(tier)} className={s.offerBtn} data-action="support-toast">

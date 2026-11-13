@@ -53,7 +53,7 @@ describe('вікно «Сказати тост»: крок 1', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));
     const w = win();
     expect(within(w).getByRole('radio', { name: '$5 · пляшка ігристого' })).toHaveAttribute('aria-checked', 'true');
-    expect(within(w).getByRole('radio', { name: '$10 · феєрверк' })).toHaveTextContent('найвигідніше');
+    expect(within(w).getByRole('radio', { name: '$10 · феєрверк' })).not.toHaveTextContent('найвигідніше');
     expect(field()).toHaveValue('🥂 За всіх, хто зустрічає разом!');
     expect(within(w).getByRole('button', { name: '🥂 За всіх, хто зустрічає разом!' })).toHaveAttribute('aria-pressed', 'true');
     expect(w).toHaveTextContent('Без посилань — лише слова й емодзі · перевіряємо перед показом');
@@ -76,11 +76,10 @@ describe('вікно «Сказати тост»: крок 1', () => {
     expect(payBtn('$10')).toBeInTheDocument();
   });
 
-  it('власник пасу: $10 без «найвигідніше» й «Новорічний пас у тебе вже є»', () => {
+  it('власник пасу: «Новорічний пас у тебе вже є»', () => {
     useGuestStore.setState({ nick: 'Олена', flagCode: 'UA', hasPass: true });
     renderPage(<Opener tier={10} />);
     fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));
-    expect(within(win()).getByRole('radio', { name: '$10 · феєрверк' })).not.toHaveTextContent('найвигідніше');
     expect(win()).toHaveTextContent('Новорічний пас у тебе вже є');
   });
 

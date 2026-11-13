@@ -140,20 +140,6 @@
   line-height: 1.2;
   color: var(--color-text-secondary);
 }
-.best {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: var(--color-highlight);
-  box-shadow: 0 0 0 3px var(--color-surface);
-  color: var(--color-on-highlight);
-  font-size: 10.5px;
-  font-weight: 800;
-  white-space: nowrap;
-  transform: translateX(-50%);
-}
 
 .benefits {
   display: flex;

@@ -244,7 +244,6 @@ test.describe('US6 · тост замість чайових', () => {
     await page.locator('[data-toast-strip] [data-action="toast-open"]').first().click();
     const win = page.locator('[data-window="O-TOAST"]');
     await expect(win).toContainText('Новорічний пас у тебе вже є');
-    await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).not.toContainText('найвигідніше');
   });
 });
 

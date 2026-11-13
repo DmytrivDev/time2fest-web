@@ -5,8 +5,8 @@
  * «3 · Вікно тосту (шторка)», «4 · Оплата й результат», v2; рішення власника 2026-11-12; замінює вікно «Чайові»).
  * Десктоп — вікно 340 px на місці чату (не модальне), телефон — шторка до низу відео; вміст прокручується, кнопки
  * дій закріплені внизу. Стани — `stores/toast`:
- * - крок 1: «Обери тост» — $2 келих · $5 пляшка ігристого (за замовчуванням) · $10 феєрверк із «найвигідніше» (з пасом —
- *   без неї); під плитками — що дає рівень (галочки; решта сіра з «з $N»; з пасом — «Новорічний пас у тебе вже є»);
+ * - крок 1: «Обери тост» — $2 келих · $5 пляшка ігристого (за замовчуванням) · $10 феєрверк (без позначки «найвигідніше» — рішення
+ *   власника 2026-11-13: незрозуміло, чим саме); під плитками — що дає рівень (галочки; решта сіра з «з $N»; з пасом — «Новорічний пас у тебе вже є»);
  *   «Твій тост» — поле як повідомлення в чаті (нік, прапор, «тост», лічильник до 120, емодзі), ідеї-чипси, правило;
  *   підпис (нік і прапор, «Змінити»); гість без ніку — «Як підписати тост?» тут же, «Оплатити» неактивна до дійсного
  *   ніку (тост ніколи не підписують «Гість»); примітка про оплату; внизу «Оплатити $N · Скасувати»;
@@ -52,7 +52,7 @@ const PHRASES = ['one', 'two', 'three', 'four'] as const;
 const flagOptions = () => getData().countries.map((c) => ({ code: c.flagCode, name: c.name.uk }));
 
 /** Плитки рівнів: радіогрупа «$2 · келих», «$5 · пляшка ігристого», «$10 · феєрверк». */
-export function ToastTiers({ value, onChange, hasPass, phone }: { value: ToastTier; onChange: (v: ToastTier) => void; hasPass: boolean; phone?: boolean }) {
+export function ToastTiers({ value, onChange, phone }: { value: ToastTier; onChange: (v: ToastTier) => void; phone?: boolean }) {
   const t = useTranslations('toast');
   return (
     <div role="radiogroup" aria-label={t('chooseTitle')} className={s.tiers} data-phone={phone || undefined}>
@@ -67,7 +67,6 @@ export function ToastTiers({ value, onChange, hasPass, phone }: { value: ToastTi
           className={cn('t2f-focus', s.tier)}
           data-tier={tier}
         >
-          {tier === 10 && !hasPass ? <span className={s.best}>{t('best')}</span> : null}
           <Emoji char={TIER_EMOJI[tier]} size={19} />
           <b className={s.tierPrice}>{formatUsd(tier)}</b>
           <span className={s.tierName}>{t(`tiers.${tier}`)}</span>
@@ -422,7 +421,7 @@ function Compose({ onCancel, phone }: { onCancel: () => void; phone: boolean }) 
     <div className={s.flow} data-toast-step="compose" ref={ref}>
       <div className={s.body}>
         <h3 className={s.secTitle}>{t('chooseTitle')}</h3>
-        <ToastTiers value={tier} onChange={setTier} hasPass={hasPass} phone={phone} />
+        <ToastTiers value={tier} onChange={setTier} phone={phone} />
         <ToastBenefits tier={tier} hasPass={hasPass} />
         <h3 className={s.secTitle}>{t('yourToast')}</h3>
         <ToastField nick={showNick} flagCode={showNick ? draftFlag : undefined} />
