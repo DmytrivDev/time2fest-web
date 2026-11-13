@@ -44,7 +44,6 @@ import './ZoneMap.css';
 import m from './zoneMap.module.css';
 
 export { MapLegend } from './MapLegend';
-export { HowToPopover, MapTapCard, ZoneCard } from './ZoneMapCards';
 
 export interface ZoneMapProps {
   zones: readonly MapZone[];

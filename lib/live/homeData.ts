@@ -2,7 +2,6 @@
  * Дані блоків головної з набору даних області (чисті функції, «зараз» — аргументом від `TimeSource`):
  * картки «Зараз і далі», прогрес свята, країни поясу, основні святкування, рядок графіка (FR-014).
  */
-import type { CountryChipItem } from '@/components/live/CountryChips';
 import type { EventCardData, EventCardStream } from '@/components/live/EventCard';
 import type { FestProgressProps } from '@/components/live/Progress';
 import type { Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
@@ -101,6 +100,14 @@ export function festProgress(data: Dataset, now: Ms): FestProgressProps {
     zonesDone: zones.filter((z) => z.midnightMs <= now).length,
     zonesTotal: zones.length,
   };
+}
+
+/** Країна поясу (чип під плеєром). */
+export interface CountryChipItem {
+  iso: string;
+  /** Назва країни, як є (без відмінювання). */
+  name: string;
+  flagCode: string;
 }
 
 /** Країни поясу події (чипи під плеєром). */

@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { userEvent, within } from 'storybook/test';
 import { MapLegend } from '@/components/live/MapLegend';
 import { buildMapModel, type ZoneMapGeometry } from '@/components/live/MapModel';
-import { HowToPopover, MapTapCard, ZoneCard, ZoneMap } from '@/components/live/ZoneMap';
+import { ZoneMap } from '@/components/live/ZoneMap';
 import geometryJson from '@/data/zonemap.json';
 import { data } from '@/lib/data/load';
 import ukMessages from '../../messages/uk.json';
@@ -21,7 +21,6 @@ const withMapMessages: Decorator = (Story) => (
 
 const geometry = geometryJson as unknown as ZoneMapGeometry;
 const model = buildMapModel(data);
-const zoneOf = (id: string) => model.zones.find((z) => z.id === id)!;
 
 const meta = {
   title: 'Живий ефір/ZoneMap',
@@ -148,42 +147,13 @@ export const ReducedMotion: Story = {
 };
 
 export const Parts: Story = {
-  name: 'Частини: MapLegend, ZoneCard, MapTapCard, HowToPopover',
+  name: 'Частини: MapLegend',
   globals: { surface: 'phone' },
-  render: () => {
-    const zone = zoneOf('utc+0000');
-    const gb = zone.countries[0]!;
-    const city = model.cities.find((c) => c.id === 'london')!;
-    return (
-      <Stage>
-        <StateRow label="MapLegend">
-          <MapLegend />
-        </StateRow>
-        <StateRow label="ZoneCard: закріплена (наживо)">
-          <ZoneCard zone={zone} state="live" onClose={() => undefined} className="w-full" />
-        </StateRow>
-        <StateRow label="ZoneCard: попередній перегляд (наведення)">
-          <ZoneCard zone={zoneOf('utc+0100')} state="past" pinned className="w-full" />
-          <ZoneCard zone={zoneOf('utc-0100')} state="next" pinned={false} className="w-full" />
-        </StateRow>
-        <StateRow label="MapTapCard: Лондон">
-          <MapTapCard city={city} country={gb} zone={zone} state="live" typeLabel="Головне святкування" onClose={() => undefined} className="w-full" />
-        </StateRow>
-        <StateRow label="MapTapCard: попереду, лише відлік">
-          <MapTapCard
-            city={model.cities.find((c) => c.id === 'new-york')!}
-            country={zoneOf('utc-0500').countries[0]!}
-            zone={zoneOf('utc-0500')}
-            state="future"
-            typeLabel="Лише відлік"
-            onClose={() => undefined}
-            className="w-full"
-          />
-        </StateRow>
-        <StateRow label="HowToPopover (натисни)">
-          <HowToPopover country={gb} />
-        </StateRow>
-      </Stage>
-    );
-  },
+  render: () => (
+    <Stage>
+      <StateRow label="MapLegend">
+        <MapLegend />
+      </StateRow>
+    </Stage>
+  ),
 };

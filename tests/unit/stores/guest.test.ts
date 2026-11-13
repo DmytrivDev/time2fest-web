@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Stamp } from '@/lib/data/types';
 import { createDefaultGuest, dropLegacyKeys, GUEST_STORAGE_KEY, sanitizeGuest, useGuestStore } from '@/stores/guest';
-import { SOUND_KEY } from '@/stores/session';
 
 const stamp = (eventId: string): Stamp => ({
   eventId,
@@ -168,14 +167,5 @@ describe('guest store', () => {
     localStorage.setItem('t2f:firstrow:v1', JSON.stringify({ state: { passGifted: true }, version: 1 }));
     dropLegacyKeys();
     expect(localStorage.getItem('t2f:firstrow:v1')).toBeNull();
-  });
-});
-
-describe('session store', () => {
-  it('t2f:session:soundEnabled', async () => {
-    const { useSessionStore } = await import('@/stores/session');
-    useSessionStore.getState().setSoundEnabled(true);
-    expect(sessionStorage.getItem(SOUND_KEY)).toBe('true');
-    expect(useSessionStore.getState().soundEnabled).toBe(true);
   });
 });

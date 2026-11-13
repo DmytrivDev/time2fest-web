@@ -1,12 +1,10 @@
 import { fireEvent, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { CelebrationsSlider } from '@/components/live/CelebrationsSlider';
-import { CountryChips } from '@/components/live/CountryChips';
 import { EventCard } from '@/components/live/EventCard';
 import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
 import { FestProgress } from '@/components/live/Progress';
-import { AZORES, CAPE_VERDE, LONDON, PARIS, STRIP, TRADITIONS, ZONE_COUNTRIES } from '../../../stories/_support/liveFixtures';
+import { AZORES, CAPE_VERDE, LONDON, PARIS, STRIP, TRADITIONS } from '../../../stories/_support/liveFixtures';
 import { renderWithApp } from '../_support/render';
 
 // Embla у jsdom потребує matchMedia / ResizeObserver / IntersectionObserver.
@@ -150,15 +148,6 @@ describe('NowNext', () => {
   });
 });
 
-describe('CelebrationsSlider', () => {
-  it('показує основні святкування в каруселі з назвою секції', () => {
-    renderWithApp(<CelebrationsSlider items={STRIP.filter((i) => i.celebrationType === 'main')} />);
-    expect(screen.getByRole('heading', { name: 'Основні святкування' })).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Слайдер основних святкувань' })).toBeInTheDocument();
-    expect(screen.getAllByRole('article').length).toBeGreaterThan(2);
-  });
-});
-
 describe('HowToCard', () => {
   it('повна: заголовок із країною без відмінка, три традиції з номерами', () => {
     renderWithApp(<HowToCard country="Франція" traditions={TRADITIONS.slice(0, 3)} />);
@@ -176,21 +165,5 @@ describe('HowToCard', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(4);
     expect(screen.getByRole('heading', { level: 3, name: 'Як святкувати' })).toBeInTheDocument();
     expect(container.querySelector('[data-how-to="compact"]')).toHaveClass('border-highlight');
-  });
-});
-
-describe('CountryChips', () => {
-  it('«Ще N» розгортає й згортає; вибір повідомляє країну', () => {
-    const onSelect = vi.fn();
-    renderWithApp(<CountryChips countries={ZONE_COUNTRIES} selectedIso="FR" onSelect={onSelect} />);
-    const group = screen.getByRole('group', { name: 'Країни поясу' });
-    expect(within(group).getAllByRole('button', { pressed: undefined })).toHaveLength(7);
-    expect(screen.getByRole('button', { name: 'Франція' })).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(screen.getByRole('button', { name: 'Італія' }));
-    expect(onSelect).toHaveBeenCalledWith('IT');
-    const more = screen.getByRole('button', { name: /Ще 3/ });
-    fireEvent.click(more);
-    expect(screen.getByRole('button', { name: 'Норвегія' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Згорнути/ })).toHaveAttribute('aria-expanded', 'true');
   });
 });
