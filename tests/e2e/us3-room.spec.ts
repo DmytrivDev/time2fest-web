@@ -30,7 +30,6 @@ test.describe.configure({ timeout: 90_000 });
 const NOW = '2027-01-01T01:50:00+02:00';
 const ROOM = '/room/';
 const GB = '/country/velyka-brytaniia/';
-const FR = '/country/frantsiia/';
 const GUEST_KEY = 't2f:guest:v1';
 
 interface SeedWindow {
@@ -51,6 +50,36 @@ const win = (page: Page, slot: number) => page.locator(`[data-room-window="${slo
 const streamRow = (page: Page, id: string) => page.locator(`[data-stream-row="${id}"]`);
 const slotOf = (page: Page, slot: number) => page.locator(`[data-player-slot="room:${slot}"]`);
 const facade = (loc: Locator) => loc.locator('[data-facade], [data-resume-card]');
+
+interface RoomPlayerInfo {
+  /** Слот вікна кімнати (`room:N`); головний плеєр живе в спільному PlayerHost поза слотом — `main`. */
+  slot: string;
+  autoplay: number | string | undefined;
+  state: number;
+}
+
+/** Живі плеєри заглушки YouTube за вікнами: параметр `autoplay` при створенні й поточний стан (1 = грає; у заглушці створений без автозапуску плеєр лишається -1). */
+async function roomPlayers(page: Page): Promise<RoomPlayerInfo[]> {
+  return page.evaluate(() => {
+    type P = { _info: { destroyed: boolean; state: number; playerVars: Record<string, number | string> }; _iframe: HTMLElement };
+    const st = (window as unknown as { __ytStub: { players: P[] } }).__ytStub;
+    return st.players
+      .filter((p) => !p._info.destroyed)
+      .map((p) => ({
+        slot: p._iframe.closest('[data-player-slot]')?.getAttribute('data-player-slot') ?? 'main',
+        autoplay: p._info.playerVars.autoplay,
+        state: p._info.state,
+      }));
+  });
+}
+
+const playerOf = async (page: Page, slot: string) => (await roomPlayers(page)).find((p) => p.slot === slot);
+
+/** Лише головний плеєр створено з автозапуском; решта — `autoplay: 0` (політика YouTube: автозапуск в одного плеєра). */
+async function expectOnlyMainAutoplays(page: Page) {
+  const all = await roomPlayers(page);
+  expect(all.filter((p) => String(p.autoplay) === '1').map((p) => p.slot)).toEqual(['main']);
+}
 
 function isPhone(page: Page) {
   return (page.viewportSize()?.width ?? 0) < 768;
@@ -242,6 +271,7 @@ test.describe('US3 · кімната перегляду', () => {
     expect(Math.abs(host.x - slotBox.x)).toBeLessThan(3);
     expect(Math.abs(host.y - slotBox.y)).toBeLessThan(3);
     await expect(slotOf(page, 1).locator('iframe')).toHaveCount(1);
+    await expect.poll(async () => (await playerOf(page, 'room:1'))?.state).toBe(1);
     await expect(facade(slotOf(page, 1))).toHaveCount(0);
     expect(await ytStub.iframeId()).toBe(mainId);
     expect((await ytStub.counters()).created).toBe(2);
@@ -367,35 +397,94 @@ test.describe('US3 · кімната перегляду', () => {
     }
   });
 
-  test('автозапуск лише в головному вікні; після «перезавантаження» решта — заглушки до натискання (FR-040)', async ({
+  test('автозапуск лише в головному вікні; після «перезавантаження» решта — готові (cue) під заглушкою до натискання (FR-040)', async ({
     page,
     ytStub,
   }) => {
-    // Додаємо вікно з інтерфейсу: воно стартує одразу.
+    // Додаємо вікно з інтерфейсу: клік «+» — запит на відтворення, вікно грає.
     await gotoAt(page, NOW, 0, GB);
     await ytStub.waitForPlayer();
     await addFromCountryPage(page, 'src_london_2');
     await expect(slotOf(page, 1).locator('iframe')).toHaveCount(1);
+    await expect.poll(async () => (await playerOf(page, 'room:1'))?.state).toBe(1);
     expect((await savedRoom(page)).windows).toHaveLength(2);
 
     // «Перезавантаження»: повне завантаження сторінки; localStorage лишається, сеанс — ні.
     await gotoAt(page, NOW, 0, ROOM);
     await ytStub.waitForPlayer();
     await expect(grid(page)).toHaveAttribute('data-room-layout', '2');
-    expect((await ytStub.counters()).created).toBe(1);
-    await expect(slotOf(page, 1).locator('iframe')).toHaveCount(0);
     const card = slotOf(page, 1).locator('[data-resume-card]');
     await expect(card).toBeVisible();
     await expect(card).toContainText('Натисни, щоб увімкнути');
+    // Плеєр вікна 2 створено без автозапуску і не грає (кадр наготові під заглушкою); автозапуск — лише в головного.
+    await ytStub.waitForPlayer(2);
+    await expectOnlyMainAutoplays(page);
+    await expect.poll(async () => (await playerOf(page, 'room:1'))?.state).not.toBe(1);
+    await expect(slotOf(page, 1).locator('iframe')).toBeHidden();
     // заглушка має розмір плеєра
     const b = await box(card.first());
     expect(b.width).toBeGreaterThanOrEqual(MIN_PLAYER_PX);
     expect(b.height).toBeGreaterThanOrEqual(MIN_PLAYER_PX);
 
-    // Натискання запускає лише це вікно.
+    // Натискання запускає лише це вікно, без перестворення плеєра.
     await card.getByRole('button').first().click();
-    await expect(slotOf(page, 1).locator('iframe')).toHaveCount(1);
-    await expect.poll(async () => (await ytStub.counters()).created).toBe(2);
+    await expect(slotOf(page, 1).locator('iframe')).toBeVisible();
+    await expect.poll(async () => (await playerOf(page, 'room:1'))?.state).toBe(1);
+    expect((await ytStub.counters()).created).toBe(2);
+  });
+
+  test('кімната з кількома вікнами: неголовні — заглушка й не грають; «Грати» запускає лише своє вікно', async ({
+    page,
+    ytStub,
+  }) => {
+    const windows = isPhone(page) ? [L1, L2] : ALL;
+    await seedRoom(page, windows, 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await ytStub.waitForPlayer(windows.length);
+    await expectOnlyMainAutoplays(page);
+    for (const w of windows.slice(1)) {
+      await expect(slotOf(page, w.slot).locator('[data-resume-card]'), `вікно ${w.slot}: заглушка`).toBeVisible();
+      await expect.poll(async () => (await playerOf(page, `room:${w.slot}`))?.state, `вікно ${w.slot}: не грає`).not.toBe(1);
+    }
+    // Головний плеєр грає.
+    await expect.poll(async () => (await playerOf(page, 'main'))?.state).toBe(1);
+
+    // «Грати» у вікні 2 — грає лише воно.
+    await slotOf(page, 1).locator('[data-resume-card]').getByRole('button').first().click();
+    await expect.poll(async () => (await playerOf(page, 'room:1'))?.state).toBe(1);
+    for (const w of windows.slice(2)) {
+      expect((await playerOf(page, `room:${w.slot}`))?.state, `вікно ${w.slot} не запускалось`).not.toBe(1);
+      await expect(slotOf(page, w.slot).locator('[data-resume-card]')).toBeVisible();
+    }
+    await expectOnlyMainAutoplays(page);
+  });
+
+  test('«+» у списку трансляцій кімнати: нове вікно грає, головне не перестворюється', async ({ page, ytStub }) => {
+    test.skip(isPhone(page), 'вільне місце з порожнім списком — десктоп');
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await ytStub.waitForPlayer(2);
+    await page.locator('[data-room-slot]').first().click();
+    await pickerPlus(page, 'src_london_3').click();
+    await expect(grid(page)).toHaveAttribute('data-room-layout', '3');
+    await expect.poll(async () => (await playerOf(page, 'room:2'))?.state).toBe(1);
+    // вікно 2 (з відновленого стану) як було — заглушка
+    await expect(slotOf(page, 1).locator('[data-resume-card]')).toBeVisible();
+    await expectOnlyMainAutoplays(page);
+  });
+
+  test('заміна вікна вибором трансляції: нове відео грає', async ({ page, ytStub }) => {
+    test.skip(isPhone(page), 'схема 2×2 — десктоп');
+    const P1: SeedWindow = { slot: 2, sourceId: 'src_paris_1', eventId: 'evt_paris_2027' };
+    await seedRoom(page, [L1, L2, P1, P2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    await ytStub.waitForPlayer(4);
+    await expect.poll(async () => (await playerOf(page, 'room:2'))?.state).not.toBe(1);
+    await openPicker(page);
+    await pickerPlus(page, 'src_london_3').click();
+    await page.locator('[data-room-replace] [data-replace-slot="2"]').click();
+    await expect.poll(async () => (await playerOf(page, 'room:2'))?.state).toBe(1);
+    await expectOnlyMainAutoplays(page);
   });
 
   test('перетягування за смугу міняє вікна місцями без перезапуску плеєрів', async ({

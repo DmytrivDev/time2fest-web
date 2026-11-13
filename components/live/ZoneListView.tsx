@@ -13,6 +13,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { CountryPanel } from './CountryPanel';
 import { PanelSwap } from './PanelSwap';
 import { StateSwatch } from './MapSide';
+import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 import { utcLabel, type MapZone } from './MapModel';
 import { ZonePanel } from './ZonePanel';
 import m from './zoneList.module.css';
@@ -78,9 +79,8 @@ function scrollToRow(li: HTMLElement, collapsing: HTMLElement | null) {
     const reveal = collapsing.querySelector<HTMLElement>(':scope > .t2f-reveal');
     top -= reveal?.getBoundingClientRect().height ?? 0;
   }
-  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   if (typeof window.scrollTo !== 'function') return;
-  window.scrollTo({ top: Math.max(0, top - stickyTopOffset() - 8), behavior: reduce ? 'auto' : 'smooth' });
+  window.scrollTo({ top: Math.max(0, top - stickyTopOffset() - 8), behavior: isReducedMotionNow() ? 'auto' : 'smooth' });
 }
 
 /**

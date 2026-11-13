@@ -8,9 +8,9 @@
  * Тут же — стан сеансу, який не зберігається:
  * - `pickTarget` — трансляція, що чекає місця, коли кімната повна (десктоп — режим вибору вікна для заміни;
  *   телефон — пояснення «до 2 вікон», нове вікно стає на місце прибраного);
- * - `started` — вікна 2–4, які людина запустила в цьому сеансі («Грати», «Звук сюди», клавіші 1–4). Нові (+), замінені,
- *   повернені й відновлені зі збереження вікна не стартують самі (автозапуск — лише в головного плеєра): `ResumeCard`
- *   до натискання.
+ * - `started` — вікна 2–4, які людина запустила в цьому сеансі: «+», вибір для заміни, «Грати», «Звук сюди», клавіші
+ *   1–4 (усе це кліки людини). Повернені (undo) і відновлені зі збереження / `?w=` вікна не стартують самі (автозапуск —
+ *   лише в головного плеєра): `ResumeCard` до натискання.
  *
  * Чисті функції (`addWindow`, `removeWindow`, …) не читають сховищ — їх перевіряють юніт-тести.
  */
@@ -263,7 +263,9 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
       return 'full';
     }
     writeRoom(res.state);
-    // Нове вікно (не головне) НЕ грає саме (політика YouTube: автозапуск — лише в одного плеєра): фасад «Грати».
+    // «+» — клік людини, тобто запит на відтворення: нове вікно (не головне) стартує одразу, без звуку (не автозапуск).
+    if (res.kind === 'added' && res.state.windows[0]?.slot !== res.slot)
+      get().markStarted(res.slot);
     set({ pickTarget: null });
     return res.kind;
   },
@@ -279,6 +281,7 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
       const res = addWindow(next, pick, before.windows.length);
       if (res.kind !== 'full') {
         writeRoom(res.state);
+        if (res.kind === 'added') get().markStarted(res.slot);
         set({ pickTarget: null });
         return;
       }
@@ -293,8 +296,8 @@ export const useRoomStore = create<RoomStore>()((set, get) => ({
     const next = replaceWindow(before, slot, t);
     if (next !== before) {
       writeRoom(next);
-      // Нова трансляція на місці вікна — знову «готове» (фасад), само не грає.
-      set((s) => ({ started: s.started.filter((x) => x !== slot) }));
+      // Вибір трансляції для заміни — клік людини: вікно стартує одразу (не автозапуск).
+      get().markStarted(slot);
     }
     set({ pickTarget: null });
   },
