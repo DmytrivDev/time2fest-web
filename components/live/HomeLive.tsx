@@ -27,16 +27,13 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
-import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
-import { ChatPanel } from '@/components/chat/ChatPanel';
 import { useChatLookup } from '@/components/chat/useChatLookup';
-import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useLiveChat } from '@/components/chat/useLiveChat';
 import { buildMapModel } from '@/components/live/MapModel';
 import { NowNext } from '@/components/live/NowNext';
+import { MomentInflow } from '@/components/live/MomentInflow';
 import { StampBlock } from '@/components/live/StampBlock';
 import { ToastStrip } from '@/components/toast/ToastStrip';
-import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/live/ZoneMap';
 import { useGetPass } from '@/components/pass/PassWindow';
@@ -45,9 +42,9 @@ import { PlayerBlock } from '@/components/player/PlayerBlock';
 import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import { CHAT_SLOT_ID, WIDE_SLOT_ID } from '@/components/primitives/Panel';
+import { WIDE_SLOT_ID } from '@/components/primitives/Panel';
 import { useStreamPicker } from '@/components/live/ActionRow';
-import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
+import { useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useLiveData, useViewers } from '@/lib/api/hooks/live';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
@@ -163,21 +160,14 @@ export function HomeLive() {
   const city = current?.city?.name.uk;
   const { items, progress, zoneLabel } = useNowNextData(now);
   const { mapModel, viewers } = useMapData();
-  const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
   const wideSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(WIDE_SLOT_ID) : null;
-  const vis = useChatVisibility();
   const tChat = useTranslations('chat');
-  const { collapse } = useChatDockControls();
-  const panel = (className?: string) => (
-    <ChatPanel
-      country={airCountry ? { iso: airCountry.iso, name: airCountry.name.uk } : undefined}
-      startInWorld
-      onHide={chatColumn ? vis.hide : collapse}
-      collapseMode={!chatColumn}
-      onToEvents={chatColumn ? undefined : collapse}
-      className={className}
-    />
-  );
+  const chat = useLiveChat({
+    chatColumn,
+    room: 'world',
+    roomLabel: tChat('roomWorld'),
+    panel: { country: airCountry ? { iso: airCountry.iso, name: airCountry.name.uk } : undefined, startInWorld: true },
+  });
   const map = (
     // `id` — ціль «Перейти до мапи» і посилання-пропуску.
     <div id="zone-map">
@@ -204,19 +194,8 @@ export function HomeLive() {
       }}
     />
   );
-  const showChatButton = chatColumn && vis.hidden ? (
-    <ChatHiddenButton room="world" onShow={vis.show} />
-  ) : null;
   // Штамп (окремий блок) і вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра.
-  const inflow = (
-    <>
-      <StampBlock eventId={eventId} />
-      <OfferBlock />
-      <div data-moment-slot="">
-        <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
-      </div>
-    </>
-  );
+  const inflow = <MomentInflow stamp={<StampBlock eventId={eventId} />} label={tPlayer('inFlowLabel')} />;
 
   return (
     <>
@@ -234,7 +213,7 @@ export function HomeLive() {
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}
         stampHint
-        captionAside={showChatButton}
+        captionAside={chat.showButton}
         dock={!chatColumn}
         // Смуга тостів (телефон) — під липким рядком часу (дошка `Phone-Toast-New`, 2026-11-12).
         belowBar={<ToastStrip variant="phone" />}
@@ -248,7 +227,7 @@ export function HomeLive() {
           <ToastStrip variant="desk" />
           {inflow}
           <div className="mt-2">{nowNext('carousel')}</div>
-          {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
+          {chat.column}
           {wideSlot ? createPortal(map, wideSlot) : null}
           <RoomTray />
         </div>
@@ -266,9 +245,7 @@ export function HomeLive() {
             {nowNext(tabletPortrait ? 'grid' : 'stack')}
             {map}
           </div>
-          <ChatDock room="world" roomLabel={tChat('roomWorld')}>
-            {panel('min-h-0 flex-1')}
-          </ChatDock>
+          {chat.dock}
         </>
       )}
     </>

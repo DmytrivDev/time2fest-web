@@ -14,11 +14,7 @@
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
-import { ChatPanel } from '@/components/chat/ChatPanel';
-import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useLiveChat } from '@/components/chat/useLiveChat';
 import { Faq, type FaqItem } from '@/components/live/Faq';
 import { buildMapModel, type MapCountry, type MapZone, type ZoneMapGeometry } from '@/components/live/MapModel';
 import { ZoneMap } from '@/components/live/ZoneMap';
@@ -28,7 +24,6 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
@@ -255,8 +250,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   const data = dataProp ?? getData();
   const phone = usePhone();
   const chatColumn = useChatColumn();
-  const vis = useChatVisibility();
-  const { collapse } = useChatDockControls();
+  const chat = useLiveChat({ chatColumn, room: 'world', roomLabel: tChat('roomWorld'), panel: { startInWorld: true } });
   const passWindows = useOfferWindows();
   const getPass = useGetPass();
   useChatRooms(useMemo(() => ['world' as const], []));
@@ -312,10 +306,6 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   const faqItems = useFaqItems(data, now, ready);
   const empty = ready && narrowing && !locked && zones.length === 0;
 
-  const chatSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
-  const panel = (cls?: string) => (
-    <ChatPanel startInWorld onHide={chatColumn ? vis.hide : collapse} collapseMode={!chatColumn} onToEvents={chatColumn ? undefined : collapse} className={cls} />
-  );
 
   // Той самий фільтр, що в «Зараз і далі» на головній (`EventFilter`, правка власника 2026-11-04).
   const filterControl = (
@@ -368,7 +358,7 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
               <SubtitleSkeleton />
             )}
           </div>
-          {chatColumn && vis.hidden ? <ChatHiddenButton room="world" onShow={vis.show} /> : null}
+          {chat.showButton}
         </header>
 
         <div className={styles.toolbar}>
@@ -450,12 +440,8 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
 
         <Faq items={faqItems} columns={phone ? 1 : 2} className={styles.faq} />
 
-        {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
-        {!chatColumn ? (
-          <ChatDock room="world" roomLabel={tChat('roomWorld')}>
-            {panel('min-h-0 flex-1')}
-          </ChatDock>
-        ) : null}
+        {chat.column}
+        {chat.dock}
       </div>
     </MapScheduleContext.Provider>
   );

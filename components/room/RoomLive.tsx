@@ -25,11 +25,8 @@ import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NextLink from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
-import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
-import { ChatPanel } from '@/components/chat/ChatPanel';
-import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useChatDockControls } from '@/components/chat/ChatDock';
+import { useLiveChat } from '@/components/chat/useLiveChat';
 import { useStamps } from '@/lib/api/hooks/passport';
 import { useLiveData } from '@/lib/api/hooks/live';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
@@ -43,11 +40,11 @@ import {
 } from '@/components/live/MoreActions';
 import { StreamCards } from '@/components/live/StreamCards';
 import type { EventFilterValue } from '@/components/live/EventFilter';
+import { MomentInflow } from '@/components/live/MomentInflow';
 import { StampBlock } from '@/components/live/StampBlock';
 import { StreamPicker } from '@/components/live/StreamPicker';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
-import { OfferBlock } from '@/components/offers/OfferBlock';
 import { ToastStrip } from '@/components/toast/ToastStrip';
 import { WaitingScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
@@ -56,8 +53,7 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { OverlayInFlowOutlet, useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
+import { useChatColumn, useOverlay, usePartyHref } from '@/components/shell/OverlayManager';
 import { ShareContent } from '@/components/windows/Share';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import { SITE_HOST } from '@/lib/config/site';
@@ -739,8 +735,17 @@ export function RoomLive() {
 
   // ── Вікна ──
   const chatExpanded = useChatExpanded();
-  const vis = useChatVisibility();
-  const { collapse, collapse: collapseChat } = useChatDockControls();
+  const { collapse: collapseChat } = useChatDockControls();
+  const chat = useLiveChat({
+    chatColumn,
+    room: chatRoomCountry ?? 'world',
+    roomLabel: country ? tChat('roomCountryPicker', { country: country.name.uk }) : tChat('roomWorld'),
+    panel: {
+      country: country ? { iso: country.iso, name: country.name.uk } : undefined,
+      countries: windowCountries,
+      onCountryChange: setPickedIso,
+    },
+  });
   // Телефон, 2 вікна: розгорнутий чат або будь-яка шторка — вікно без звуку згортається в мініатюру й стає на паузу,
   // сторінка — нагору, шторка починається під мініатюрою (не накриває жодного вікна). Чат і шторки працюють лише так.
   const sheetOpen = phone && overlay.current !== null && overlay.current.kind !== 'inflow';
@@ -954,9 +959,7 @@ export function RoomLive() {
           <p className={s.infoSub}>{sub}</p>
         </div>
         {/* Чат сховано — «Показати чат» поруч із таймером, як на головній. */}
-        {chatColumn && vis.hidden ? (
-          <ChatHiddenButton room={chatRoomCountry ?? 'world'} onShow={vis.show} />
-        ) : null}
+        {chat.showButton}
         {nextMidnight ? (
           <div className={s.timer} data-room-timer="">
             <span>{t('untilMidnight', { cities: nextCities.join(' і ') })}</span>
@@ -992,19 +995,6 @@ export function RoomLive() {
   );
 
   // ── Чат ──
-  const chatSlot =
-    chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
-  const panel = (className?: string) => (
-    <ChatPanel
-      country={country ? { iso: country.iso, name: country.name.uk } : undefined}
-      countries={windowCountries}
-      onCountryChange={setPickedIso}
-      onHide={chatColumn ? vis.hide : collapse}
-      collapseMode={!chatColumn}
-      onToEvents={chatColumn ? undefined : collapse}
-      className={className}
-    />
-  );
 
   // «Поточні трансляції» — картки подій із трансляцією зараз; «+» — одразу у вікно.
   const [currentFilter, setCurrentFilter] = useState<EventFilterValue>('all');
@@ -1055,11 +1045,7 @@ export function RoomLive() {
         ) : null}
         <div className="mt-8 flex flex-col gap-4">
           {/* Штамп у кімнаті закривається «×» (постійний — лише на сторінці країни, власник 2026-11-06). */}
-          <StampBlock eventId={main?.eventId ?? null} roomEventIds={eventIds} />
-          <OfferBlock />
-          <div data-moment-slot="">
-            <OverlayInFlowOutlet label={t('heading')} />
-          </div>
+          <MomentInflow stamp={<StampBlock eventId={main?.eventId ?? null} roomEventIds={eventIds} />} label={t('heading')} />
         </div>
         <StreamCards
           heading={t('currentTitle')}
@@ -1088,22 +1074,7 @@ export function RoomLive() {
           className="mt-10"
         />
         <RoomHowTo className="mt-10" />
-        {chatColumn ? (
-          chatSlot && !vis.hidden ? (
-            createPortal(panel('h-full'), chatSlot)
-          ) : null
-        ) : (
-          <ChatDock
-            room={chatRoomCountry ?? 'world'}
-            roomLabel={
-              country
-                ? tChat('roomCountryPicker', { country: country.name.uk })
-                : tChat('roomWorld')
-            }
-          >
-            {panel('min-h-0 flex-1')}
-          </ChatDock>
-        )}
+        {chatColumn ? chat.column : chat.dock}
       </div>
     </RoomPageContext.Provider>
   );

@@ -30,20 +30,16 @@
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
-import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
-import { ChatPanel } from '@/components/chat/ChatPanel';
-import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useLiveChat } from '@/components/chat/useLiveChat';
 import { CountryHeader, type CountryZoneOption } from '@/components/live/CountryHeader';
 import { Faq, type FaqItem } from '@/components/live/Faq';
 import { HowToCard } from '@/components/live/HowToCard';
+import { MomentInflow } from '@/components/live/MomentInflow';
 import { NowNext } from '@/components/live/NowNext';
 import { StreamCards, type CountdownCountry } from '@/components/live/StreamCards';
 import type { EventFilterValue } from '@/components/live/EventFilter';
 import { StampBlock } from '@/components/live/StampBlock';
 import { ToastStrip } from '@/components/toast/ToastStrip';
-import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { useGetPass } from '@/components/pass/PassWindow';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
@@ -53,8 +49,7 @@ import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Link } from '@/components/primitives/Link';
 import { Icon } from '@/components/primitives/Icon';
-import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
-import { OverlayInFlowOutlet, useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
+import { useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
 import { useLiveData, useViewers } from '@/lib/api/hooks/live';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import type { Dataset, LoadedZone, Ms, RoomId, ScheduledEvent } from '@/lib/data/types';
@@ -654,29 +649,15 @@ export function CountryLive({ iso }: { iso: string }) {
     </div>
   );
 
-  const chatSlot =
-    chatColumn && typeof document !== 'undefined' ? document.getElementById(CHAT_SLOT_ID) : null;
-  const vis = useChatVisibility();
-  const chatRoom: RoomId = `country:${iso}`;
-  const { collapse } = useChatDockControls();
-  const panel = (className?: string) => (
-    <ChatPanel
-      country={{ iso, name: country.name.uk }}
-      onHide={chatColumn ? vis.hide : collapse}
-      collapseMode={!chatColumn}
-      onToEvents={chatColumn ? undefined : collapse}
-      className={className}
-    />
-  );
+  const chat = useLiveChat({
+    chatColumn,
+    room: `country:${iso}`,
+    roomLabel: tChat('roomCountryPicker', { country: country.name.uk }),
+    panel: { country: { iso, name: country.name.uk } },
+  });
   // Штамп (окремий блок) і вікна моменту (оцінка, пропозиції) — одразу під рядком дій плеєра, як на головній.
   const inflow = (
-    <>
-      <StampBlock eventId={mainEvent?.id ?? null} permanent />
-      <OfferBlock />
-      <div data-moment-slot="">
-        <OverlayInFlowOutlet label={tPlayer('inFlowLabel')} />
-      </div>
-    </>
+    <MomentInflow stamp={<StampBlock eventId={mainEvent?.id ?? null} permanent />} label={tPlayer('inFlowLabel')} />
   );
 
   return (
@@ -704,9 +685,7 @@ export function CountryLive({ iso }: { iso: string }) {
         titleId={PLAYER_TITLE_ID}
         watchers={viewers.length}
         stampHint
-        captionAside={
-          chatColumn && vis.hidden ? <ChatHiddenButton room={chatRoom} onShow={vis.show} /> : null
-        }
+        captionAside={chat.showButton}
         dock={!chatColumn}
         // Смуга тостів (телефон) — під липким рядком часу, та сама, що на головній (дошка `Phone-Toast-New`, 2026-11-12).
         belowBar={<ToastStrip variant="phone" />}
@@ -722,7 +701,7 @@ export function CountryLive({ iso }: { iso: string }) {
             {inflow}
           </div>
           <div className="pt-6">{events}</div>
-          {chatSlot && !vis.hidden ? createPortal(panel('h-full'), chatSlot) : null}
+          {chat.column}
           <RoomTray />
         </>
       ) : (
@@ -744,12 +723,7 @@ export function CountryLive({ iso }: { iso: string }) {
             ) : null}
           </div>
           <div className="pt-6">{events}</div>
-          <ChatDock
-            room={`country:${iso}`}
-            roomLabel={tChat('roomCountryPicker', { country: country.name.uk })}
-          >
-            {panel('min-h-0 flex-1')}
-          </ChatDock>
+          {chat.dock}
         </>
       )}
     </>
