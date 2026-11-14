@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseRoomShare, roomShareUrl } from '@/components/room/RoomLive';
+import { parseRoomShare, roomShareUrl } from '@/components/room/roomShare';
 import { getData } from '@/lib/data/load';
 
 describe('«Поділитися кімнатою»: місця сітки в посиланні', () => {
