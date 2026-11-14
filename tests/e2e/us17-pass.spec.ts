@@ -95,6 +95,9 @@ test('гість оплатив поштою: пас працює на прис�
   await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
   const success = page.locator('[data-phase="success"]');
   await expect(success).toContainText('Пас активний', { timeout: 60_000 });
+  // Гість без ніка: квиток без рядка імені — з пошти ім’я не вигадуємо (2026-11-14).
+  await expect(success.getByRole('img', { name: 'Новорічний пас 2026/27, активний' })).toBeVisible();
+  await expect(success.getByText('flag', { exact: true })).toHaveCount(0);
   // Входу немає — у шапці «Увійти», а не аватар; пас уже діє (жовтої кнопки «Пас» немає).
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:auth:v1') ?? '{}').state?.user ?? null)).toBeNull();
   await expect(page.getByRole('banner').getByRole('link', { name: /Новорічний пас/ })).toHaveCount(0);

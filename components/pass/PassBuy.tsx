@@ -483,7 +483,8 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
   const profile = useProfile();
   const nick = profile?.nick ?? undefined;
   const flagCode = profile?.flagCode ?? profile?.detectedFlag ?? 'earth';
-  const name = nick?.trim() || email.split('@')[0] || '';
+  // Ім’я на квитку — лише нік (профіль: у гостя — чат-нік); з пошти ім’я не вигадуємо.
+  const name = nick?.trim() ?? '';
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => ref.current?.focus({ preventScroll: true }), []);
   const works: { icon: 'ticket' | 'calendar' | 'filter'; key: string }[] = [
@@ -503,14 +504,16 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
           {t('successTitle')}
         </h3>
       </div>
-      <div role="img" aria-label={t('ticketLabel', { name })} className={s.ticket}>
+      <div role="img" aria-label={name ? t('ticketLabel', { name }) : t('ticketLabelNoName')} className={s.ticket}>
         <div className={s.ticketMain}>
           <span className={s.ticketBrand}>{t('ticketBrand')}</span>
           <span className={s.ticketName}>{t('ticketName')}</span>
-          <span className={s.ticketWho}>
-            <Flag code={flagCode} size="xs" decorative />
-            <span>{name}</span>
-          </span>
+          {name && (
+            <span className={s.ticketWho}>
+              <Flag code={flagCode} size="xs" decorative />
+              <span>{name}</span>
+            </span>
+          )}
         </div>
         <div aria-hidden="true" className={s.ticketStub}>
           <span className={s.ticketStar}>★</span>
