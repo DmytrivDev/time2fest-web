@@ -1,10 +1,10 @@
 /**
  * Коли тост можна сказати (рішення власника 2026-11-13): лише поки свято йде — те саме правило, що `isCelebrating`
- * (від 2 год до першої півночі до останньої півночі); до й після — ні.
+ * (від 2 год до першої півночі до 2 год після останньої); до й після — ні (кінець — 2026-11-14).
  */
 import { describe, expect, it } from 'vitest';
 import { getData } from '@/lib/data/load';
-import { CELEBRATION_LEAD, isCelebrating } from '@/lib/engine/celebration';
+import { CELEBRATION_LEAD, CELEBRATION_TAIL, isCelebrating } from '@/lib/engine/celebration';
 import { canSayToast, toastSeason, toastsOpenAt } from '@/lib/toast/season';
 
 const H = 3_600_000;
@@ -21,15 +21,15 @@ describe('canSayToast / toastSeason', () => {
     }
   });
 
-  it('свято йде — так: від 2 год до першої півночі до останньої півночі включно', () => {
-    for (const now of [FIRST - 2 * H, FIRST, Date.UTC(2026, 11, 31, 22, 40), LAST]) {
+  it('свято йде — так: від 2 год до першої півночі до 2 год після останньої півночі включно', () => {
+    for (const now of [FIRST - 2 * H, FIRST, Date.UTC(2026, 11, 31, 22, 40), LAST, LAST + 1_000, LAST + CELEBRATION_TAIL - 1_000, LAST + CELEBRATION_TAIL]) {
       expect(canSayToast(now, data)).toBe(true);
       expect(toastSeason(now, data)).toBe('during');
     }
   });
 
-  it('після свята — ні: щойно після останньої півночі й через день', () => {
-    for (const now of [LAST + 1, Date.UTC(2027, 0, 2, 12, 0)]) {
+  it('після свята — ні: за секунду після «остання північ + 2 год» і через день', () => {
+    for (const now of [LAST + CELEBRATION_TAIL + 1_000, Date.UTC(2027, 0, 2, 12, 0)]) {
       expect(canSayToast(now, data)).toBe(false);
       expect(toastSeason(now, data)).toBe('after');
     }

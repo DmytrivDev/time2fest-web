@@ -4,7 +4,13 @@ import type { Dataset, Ms } from '@/lib/data/types';
 export const CELEBRATION_LEAD = 2 * 60 * 60 * 1_000;
 
 /**
- * Свято йде: від `CELEBRATION_LEAD` до першої півночі до останньої півночі. У цей час дії, що ведуть з трансляцій
+ * За скільки після останньої півночі свято ще «йде» (рішення власника 2026-11-14): люди останнього поясу щойно
+ * зустріли Новий рік — їм потрібен час сказати тост.
+ */
+export const CELEBRATION_TAIL = 2 * 60 * 60 * 1_000;
+
+/**
+ * Свято йде: від `CELEBRATION_LEAD` до першої півночі до `CELEBRATION_TAIL` після останньої півночі. У цей час дії, що ведуть з трансляцій
  * («Підтримати», «Новорічний пас», «Увійти»), відкривають вікно на місці чату (телефон — шторку), а не сторінку.
  */
 export function isCelebrating(now: Ms, data: Pick<Dataset, 'zones'>): boolean {
@@ -15,5 +21,5 @@ export function isCelebrating(now: Ms, data: Pick<Dataset, 'zones'>): boolean {
     if (z.midnightMs < first) first = z.midnightMs;
     if (z.midnightMs > last) last = z.midnightMs;
   }
-  return now >= first - CELEBRATION_LEAD && now <= last;
+  return now >= first - CELEBRATION_LEAD && now <= last + CELEBRATION_TAIL;
 }

@@ -108,3 +108,16 @@ test('після свята: архів тостів без «Сказати т�
   await expect(page.locator('[data-toast-list="pinned"]')).toHaveCount(0);
   await expect(page.locator('header [data-action="header-toast"]')).toHaveCount(0);
 });
+
+/** Межа кінця свята (2026-11-14): остання північ (UTC−12) = 14:00 за Києвом; свято йде ще 2 год — до 16:00. */
+test('ще свято: за 30 с до «остання північ + 2 год» «Сказати тост» є', async ({ page }) => {
+  await gotoAt(page, '2027-01-01T15:59:30+02:00', 0, '/support/');
+  await expect(page.locator('[data-action="support-toast"]')).toBeVisible();
+  await expect(page.locator('main')).not.toContainText('Нові тости відкриються наступного Нового року.');
+});
+
+test('свято скінчилось: через 1,5 хв після «остання північ + 2 год» (годинник сторінки округлюється до хвилини, межа включно) — архів без «Сказати тост»', async ({ page }) => {
+  await gotoAt(page, '2027-01-01T16:01:30+02:00', 0, '/support/');
+  await expect(page.locator('main')).toContainText('Нові тости відкриються наступного Нового року.');
+  await expect(page.locator('[data-action="support-toast"]')).toHaveCount(0);
+});
