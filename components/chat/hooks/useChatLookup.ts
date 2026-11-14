@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo } from 'react';
 import { getData } from '@/lib/data/load';
 import type { MessageLookup } from '@/components/chat/parts/Message';

@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Свято штампа в шапці — стан і події (дошки `Desk-Stamp-Header` / `Phone-Stamp-Header` v2, рішення власника 2026-11-12).
  * Логіка черги, таймлайну й слів — чиста, у `lib/stamp/stampCelebration`; тут — React і браузер:

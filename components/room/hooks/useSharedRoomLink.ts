@@ -1,5 +1,3 @@
-'use client';
-
 /** Посилання «Поділитися кімнатою» (`?w=`): відкриває ті самі вікна. Виокремлено з `RoomLive.tsx` (WP-F). */
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';

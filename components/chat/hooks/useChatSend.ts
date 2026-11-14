@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Надсилання повідомлення з `ChatPanel` (`useChatSend`) і повільний режим кімнати (`useChatSlowMode`).
  */

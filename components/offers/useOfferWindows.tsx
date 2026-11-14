@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Пропозиції й підказки пасу на поверхні з плеєром (T120, FR-063/064, `contracts/ui-events.md` `offer:show`).
  * Сторінка з `OverlayInFlowOutlet` викликає `useOfferWindows()` один раз (поруч із `useMomentWindows`):

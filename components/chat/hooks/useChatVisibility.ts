@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatUi } from '@/stores/chat';
