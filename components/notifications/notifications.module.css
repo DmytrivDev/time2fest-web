@@ -257,3 +257,37 @@
   width: 100%;
   justify-content: space-between;
 }
+
+/* Стани для справжнього сервера (рішення власника 2026-11-13): скелет рядків і помилка завантаження. */
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 16px;
+}
+.loadError {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 14px 16px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.loadError svg {
+  flex: none;
+}
+.retry {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}

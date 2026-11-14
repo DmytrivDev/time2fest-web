@@ -80,6 +80,8 @@ async function updateSettings(patch: NotifSettingsPatch): Promise<void> {
 
 /** Дії зі сповіщеннями (сталі функції — можна передавати в обробники без `useCallback`). */
 export const notifActions = {
+  /** «Спробувати ще» після помилки завантаження. */
+  reload: () => notifInbox.refresh(),
   markRead: (id: string) => markRead({ ids: [id] }),
   markAllRead: () => markRead('all'),
   setEnabled: (enabled: boolean) => updateSettings({ enabled }),

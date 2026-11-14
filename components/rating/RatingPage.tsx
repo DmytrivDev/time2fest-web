@@ -19,6 +19,7 @@ import { useOverlay } from '@/components/shell/OverlayManager';
 import { RATE_PANEL_ID, RatePanel } from './RatePanel';
 import { FlagStrip } from '@/components/passport/FlagStrip';
 import { cn } from '@/components/primitives/cn';
+import { Skeleton } from '@/components/primitives/Skeleton';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { StampArt } from '@/components/windows/StampArt';
@@ -52,6 +53,8 @@ export function RatingPage() {
   useEffect(() => setMounted(true), []);
   // Картки, оцінені в цьому відвідуванні, лишаються з «Дякуємо!» — сторінка не перестрибує.
   const [ratedHere, setRatedHere] = useState<readonly string[]>([]);
+  /** Оцінка, яку сервер не прийняв (стан для `http`; у `sim` — `?simFail=rating.vote:network`). */
+  const [voteFailed, setVoteFailed] = useState<string | null>(null);
 
   const data = getData();
   const { status, state } = useRatingBoard(minute);
@@ -143,10 +146,19 @@ export function RatingPage() {
                       values={stars !== undefined ? { [id]: stars } : {}}
                       onRate={(eventId, v) => {
                         setRatedHere((cur) => (cur.includes(eventId) ? cur : [...cur, eventId]));
-                        void ratingActions.vote(eventId, v);
+                        setVoteFailed(null);
+                        void ratingActions.vote(eventId, v).then((ok) => {
+                          if (!ok) setVoteFailed(eventId);
+                        });
                       }}
                       className={s.cardRate}
                     />
+                    {voteFailed === id ? (
+                      <p role="alert" className={s.loadError} data-rating-error="vote">
+                        <Icon name="alert" size={16} />
+                        {t('voteFailed')}
+                      </p>
+                    ) : null}
                   </div>
                 </li>
               );
@@ -223,6 +235,27 @@ export function RatingPage() {
           </>
         ) : status === 'ready' ? (
           <p className={s.empty}>{filter === 'mine' ? t('noneMine') : t('none')}</p>
+        ) : status === 'error' ? (
+          // Стан для `http` (сервер не відповів); у `sim` — `?simFail=rating.board:network`.
+          <div role="alert" className={s.loadError} data-rating-error="load">
+            <Icon name="alert" size={18} />
+            <span>{t('loadFailed')}</span>
+            <button type="button" onClick={() => void ratingActions.reload()} className={cn('t2f-focus t2f-press', s.rateBtn)}>
+              {t('retry')}
+            </button>
+          </div>
+        ) : mounted ? (
+          // Поки дошка вантажиться (`http`; у `sim` — `?simDelay=rating:3000`): скелет рядів, а не порожнеча.
+          <ol className={s.list} aria-busy="true" data-rating-loading="">
+            <li className="sr-only">{t('loadingRows')}</li>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <li key={i} aria-hidden="true" className={s.row}>
+                <Skeleton variant="circle" className={s.skelMedal} />
+                <Skeleton variant="line" className={s.skelName} />
+                <Skeleton variant="line" className={s.skelBar} />
+              </li>
+            ))}
+          </ol>
         ) : null}
       </section>
 

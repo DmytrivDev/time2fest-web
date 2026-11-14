@@ -78,17 +78,19 @@ export function useMyVote(eventId: string | undefined): Stars | undefined {
   return eventId ? mine[eventId] : undefined;
 }
 
-async function vote(eventId: string, stars: Stars): Promise<void> {
+/** Голос. `false` — сервер не прийняв (оцінку перечитано з сервера; інтерфейс каже «не вдалося зберегти»). */
+async function vote(eventId: string, stars: Stars): Promise<boolean> {
   ratingBoard.mutate((b) => ({ ...b, mine: { ...b.mine, [eventId]: stars } }));
   const res = await getService('rating').vote(eventId, stars);
   // Відмова — правда у сервера. Дошку ніхто не читав (немає кешу) — теж читаємо, щоб оцінка не загубилась.
   if (!res.ok || ratingBoard.getSnapshot().status !== 'ready') {
     await ratingBoard.refresh();
-    return;
+    return res.ok;
   }
   // Дошка могла завантажитись між голосом і відповіддю, зі станом до голосу (подію до завантаження кеш відкидає).
   if (ratingBoard.getSnapshot().data?.mine[eventId] !== stars) ratingBoard.mutate((b) => ({ ...b, mine: { ...b.mine, [eventId]: stars } }));
+  return true;
 }
 
-/** Дії з оцінками (стала функція — можна передавати в обробники без `useCallback`). */
-export const ratingActions = { vote } as const;
+/** Дії з оцінками (стала функція — можна передавати в обробники без `useCallback`). `reload` — «Спробувати ще». */
+export const ratingActions = { vote, reload: () => ratingBoard.refresh() } as const;

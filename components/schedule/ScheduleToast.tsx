@@ -46,21 +46,23 @@ export function ScheduleToast() {
       className={cn(s.toast, !column && s.toastPhone)}
     >
       <span aria-hidden="true" className={s.toastIcon}>
-        <Icon name="calendar-check" size={18} />
+        <Icon name={toast.failed ? 'alert' : 'calendar-check'} size={18} />
       </span>
       <span className={s.toastText}>{toast.text}</span>
-      <button
-        type="button"
-        data-action="schedule-undo"
-        onClick={() => {
-          void profileActions.setSchedule(toast.prev);
-          hideScheduleToast();
-        }}
-        className={cn('t2f-focus t2f-press', s.toastUndo)}
-      >
-        <Icon name="undo" size={16} />
-        {t('undo')}
-      </button>
+      {toast.failed ? null : (
+        <button
+          type="button"
+          data-action="schedule-undo"
+          onClick={() => {
+            void profileActions.setSchedule(toast.prev);
+            hideScheduleToast();
+          }}
+          className={cn('t2f-focus t2f-press', s.toastUndo)}
+        >
+          <Icon name="undo" size={16} />
+          {t('undo')}
+        </button>
+      )}
       <span aria-hidden="true" className={s.toastBar} />
     </div>
   );

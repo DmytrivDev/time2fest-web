@@ -539,3 +539,29 @@
     font-size: 14px;
   }
 }
+
+/* Стани для справжнього сервера (рішення власника 2026-11-13): помилка завантаження й скелет рядів. */
+.loadError {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 12px 0 0;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.loadError svg {
+  flex: none;
+}
+.skelMedal {
+  width: 28px;
+  height: 28px;
+}
+.skelName {
+  max-width: 180px;
+}
+.skelBar {
+  max-width: 240px;
+}

@@ -97,7 +97,9 @@ export function useOfferWindows(): PassWindowsApi {
       if (!eventId || !event) return;
       const guest = useGuestStore.getState();
       const prev = guest.schedule;
-      void profileActions.replaceSchedule(outIso, eventId);
+      void profileActions.replaceSchedule(outIso, eventId).then((res) => {
+        if (!res.ok) showScheduleToast(tS('toast.failed'), prev, { failed: true });
+      });
       showScheduleToast(tS('toast.replaced', { from: countryName(outIso), to: countryName(event.countryIso) }), prev);
       overlay.close(SCHEDULE_REPLACE_ID);
     },
@@ -135,7 +137,10 @@ export function useOfferWindows(): PassWindowsApi {
           openScheduleReplace(eventId, back);
           return;
         }
-        void profileActions.toggleSchedule(eventId);
+        // Сервер не зберіг (`schedule-full`, мережа) — та сама плашка стає помилкою (у `sim` — `?simFail=profile.toggleSchedule:network`).
+        void profileActions.toggleSchedule(eventId).then((res) => {
+          if (!res.ok) showScheduleToast(tS('toast.failed'), prev, { failed: true });
+        });
         const iso = getData().eventsById.get(eventId)?.countryIso ?? '';
         showScheduleToast(tS(result === 'added' ? 'toast.added' : 'toast.removed', { country: countryName(iso) }), prev);
         return;

@@ -14,6 +14,7 @@ import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
+import { Skeleton } from '@/components/primitives/Skeleton';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Switch } from '@/components/primitives/Switch';
@@ -142,8 +143,24 @@ export function NotificationsBody({ onSettings, onGo }: { onSettings: () => void
           </button>
         ) : null}
       </div>
-      {/* До першого завантаження — лише верхній рядок (у `sim` це мить; вигляд завантаження для `http` — питання до дизайну). */}
-      {status !== 'ready' ? null : items.length === 0 ? (
+      {/* До першого завантаження — скелет рядків; помилка — рядок з «Спробувати ще» (стани для `http`, рішення власника
+          2026-11-13; у `sim` — `?simDelay=notifications.list:3000`, `?simFail=notifications.list:network`). */}
+      {status === 'error' ? (
+        <div role="alert" className={s.loadError} data-notif-error="">
+          <Icon name="alert" size={18} />
+          <span>{t('loadFailed')}</span>
+          <button type="button" onClick={() => void notifActions.reload()} className={cn('t2f-focus', s.retry)}>
+            {t('retry')}
+          </button>
+        </div>
+      ) : status !== 'ready' ? (
+        <div aria-busy="true" className={s.loading} data-notif-loading="">
+          <span className="sr-only">{t('loading')}</span>
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} variant="chat-line" />
+          ))}
+        </div>
+      ) : items.length === 0 ? (
         <div className={s.empty}>
           <span className={s.emptyIcon}>
             <Icon name="bell" size={32} />

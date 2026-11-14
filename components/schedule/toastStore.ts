@@ -8,7 +8,8 @@ import { create } from 'zustand';
 export const SCHEDULE_TOAST_MS = 6000;
 
 export interface ScheduleToastState {
-  toast: { id: number; text: string; prev: string[] } | null;
+  /** `failed` — сервер не зберіг графік: плашка-помилка без «Повернути» (стан для `http`). */
+  toast: { id: number; text: string; prev: string[]; failed?: boolean } | null;
 }
 
 export const useScheduleToast = create<ScheduleToastState>(() => ({ toast: null }));
@@ -16,9 +17,9 @@ export const useScheduleToast = create<ScheduleToastState>(() => ({ toast: null 
 let seq = 0;
 
 /** Показати тостер; `prev` — графік до дії (для «Повернути»). */
-export function showScheduleToast(text: string, prev: readonly string[]): void {
+export function showScheduleToast(text: string, prev: readonly string[], opts: { failed?: boolean } = {}): void {
   seq += 1;
-  useScheduleToast.setState({ toast: { id: seq, text, prev: [...prev] } });
+  useScheduleToast.setState({ toast: { id: seq, text, prev: [...prev], ...(opts.failed ? { failed: true } : {}) } });
 }
 
 export function hideScheduleToast(): void {
