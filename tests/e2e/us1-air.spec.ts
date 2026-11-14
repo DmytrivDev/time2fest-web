@@ -121,7 +121,8 @@ test.describe('US1 · ефір на головній', () => {
   test('сценарій 2: «+15 с» — штамп і системне повідомлення разом, у межах 1 с', async ({ page, ytStub }) => {
     await startAt(page, ytStub, '2027-01-01T01:59:58+02:00', 1);
     await openChat(page);
-    await expect(row3(page)).toHaveText('Велика Британія · північ о 02:00 за вашим часом');
+    // До півночі — «північ о 02:00»; з півночі (0…+15 с) таймера вже немає, рядок 3 — «зустріла» (2026-11-14, home.md).
+    await expect(row3(page)).toHaveText(/Велика Британія( · північ о 02:00 за вашим часом| зустріла Новий рік)/);
 
     const at = await waitForMoment(page);
     expect(at).toBeGreaterThanOrEqual(STAMP_AT);
