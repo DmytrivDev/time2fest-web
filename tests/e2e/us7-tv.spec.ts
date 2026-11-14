@@ -566,6 +566,21 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page.getByRole('timer')).toHaveCount(0);
   });
 
+  test('кінець свята (рішення 2026-11-14): остання північ UTC−12 = 14:00 за Києвом; +30 хв і +2 год −30 с — остання країна «зустріла», +2 год +90 с — «Свято завершено»', async ({
+    page,
+  }) => {
+    await skipWelcome(page);
+    for (const at of ['2027-01-01T14:30:00+02:00', '2027-01-01T15:59:30+02:00']) {
+      await gotoAt(page, at, 0, '/tv/');
+      await expect(sidebar(page)).toHaveAttribute('data-tv-mode', 'moment');
+      await expect(sidebar(page)).not.toContainText('Свято завершено');
+      await expect(met(page)).toContainText(/зустріл[аи] Новий рік/);
+    }
+    await gotoAt(page, '2027-01-01T16:01:30+02:00', 0, '/tv/');
+    await expect(sidebar(page)).toHaveAttribute('data-tv-mode', 'over');
+    await expect(sidebar(page)).toContainText('Свято завершено. З Новим роком!');
+  });
+
   test('без трансляції, після салюту: на місці відліку — рік, що настав («2027», рішення 2026-11-14), не 00:00:00', async ({ page }) => {
     // Північ Азорських островів — 01:00 UTC; +2 хв — салют (40 с) минув, подія ще на екрані.
     await skipWelcome(page);

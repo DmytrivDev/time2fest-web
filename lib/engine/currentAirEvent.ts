@@ -8,6 +8,7 @@ import type {
   StreamChain,
   StreamSource,
 } from '@/lib/data/types';
+import { CELEBRATION_TAIL } from './celebration';
 import { HANDOVER_AFTER } from './config';
 import { toRuntime } from './eventStatus';
 import { chainStatus, firstPlayableSource } from './sourceStatus';
@@ -46,9 +47,14 @@ export function airSlots(schedule: AirSchedule): { midnightMs: Ms; midnightUtc: 
   return out.sort((a, b) => a.midnightMs - b.midnightMs);
 }
 
-/** Індекс поточного слота: перший, для якого `now < midnight + 15 хв`; −1 — свято скінчилося. */
+/**
+ * Індекс поточного слота: перший, для якого `now < midnight + 15 хв`; −1 — свято скінчилося. Останній слот передавати нікуди,
+ * тому він лишається в ефірі до кінця свята — `CELEBRATION_TAIL` після останньої півночі (рішення власника 2026-11-14):
+ * тости ще приймаються, і сайт не каже «свято завершено» раніше.
+ */
 export function currentSlotIndex(now: Ms, slots: readonly { midnightMs: Ms }[]): number {
-  return slots.findIndex((s) => now < s.midnightMs + HANDOVER_AFTER);
+  const last = slots.length - 1;
+  return slots.findIndex((s, i) => (i === last ? now <= s.midnightMs + CELEBRATION_TAIL : now < s.midnightMs + HANDOVER_AFTER));
 }
 
 /**

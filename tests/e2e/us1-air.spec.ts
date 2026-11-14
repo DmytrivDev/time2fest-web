@@ -149,6 +149,16 @@ test.describe('US1 · ефір на головній', () => {
     await expect(hint).toHaveCount(0, { timeout: 15_000 });
   });
 
+  test('кінець свята (2026-11-14): після останньої півночі +15 хв і до +2 год ефір лишається на останній країні, «зустріла Новий рік», рік 2027 замість відліку', async ({ page }) => {
+    // Остання північ (UTC−12) = 14:00 за Києвом; +30 хв і +2 год −30 с (у цієї країни трансляції немає — плеєр не створюється).
+    for (const at of ['2027-01-01T14:30:00+02:00', '2027-01-01T15:59:30+02:00']) {
+      await gotoAt(page, at, 0);
+      await expect(row3(page)).toContainText(/зустріл[аи] Новий рік/);
+      await expect(timer(page)).toHaveCount(0);
+      await expect(page.locator('[data-caption]:visible').first()).toContainText('2027');
+    }
+  });
+
   test('«+15 с»: шапка святкує в межах своєї висоти; «Подивитися штамп» — до картки з фокусом; дзвіночок +1 наприкінці', async ({ page, ytStub }) => {
     await startAt(page, ytStub, '2027-01-01T01:59:58+02:00', 1);
     const header = page.locator('header').first();

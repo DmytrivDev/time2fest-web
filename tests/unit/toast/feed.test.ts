@@ -3,6 +3,7 @@
  * `Phone-Toast-New` v2).
  */
 import { describe, expect, it } from 'vitest';
+import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
 import {
   greetingParts,
   greetingToasters,
@@ -48,6 +49,39 @@ describe('закріплення до наступної півночі', () => 
     const after = stripView([t], M2, MIDNIGHTS);
     expect(after.pinned).toHaveLength(0);
     expect(after.latest.map((i) => i.toast.id)).toEqual([t.id]);
+  });
+});
+
+describe('закріплення після останньої півночі (рішення 2026-11-14)', () => {
+  const END = M3 + CELEBRATION_TAIL;
+
+  it('тост $5 і $10 після останньої півночі закріплений до кінця свята; $2 — ні', () => {
+    expect(pinnedUntil({ tier: 5, createdAt: M3 + 5 * MIN }, MIDNIGHTS)).toBe(END);
+    expect(pinnedUntil({ tier: 10, createdAt: M3 + 1 }, MIDNIGHTS)).toBe(END);
+    expect(pinnedUntil({ tier: 2, createdAt: M3 + 5 * MIN }, MIDNIGHTS)).toBeNull();
+  });
+
+  it('тост рівно в останню північ ще закріплений до наступної (її немає) → до кінця свята; до неї — до самої півночі', () => {
+    expect(pinnedUntil({ tier: 10, createdAt: M3 - 1 }, MIDNIGHTS)).toBe(M3);
+    expect(pinnedUntil({ tier: 10, createdAt: M3 }, MIDNIGHTS)).toBe(END);
+  });
+
+  it('межа кінця свята ±1 с: тост за секунду до кінця закріплений, у кінець і пізніше — ні', () => {
+    expect(pinnedUntil({ tier: 5, createdAt: END - 1_000 }, MIDNIGHTS)).toBe(END);
+    expect(pinnedUntil({ tier: 5, createdAt: END }, MIDNIGHTS)).toBeNull();
+    expect(pinnedUntil({ tier: 5, createdAt: END + 1_000 }, MIDNIGHTS)).toBeNull();
+  });
+
+  it('смуга: закріплений до END − 1 с, з END — серед найновіших', () => {
+    const t = toast(5, M3 + 10 * MIN);
+    expect(stripView([t], END - 1_000, MIDNIGHTS).pinned.map((i) => i.until)).toEqual([END]);
+    const after = stripView([t], END, MIDNIGHTS);
+    expect(after.pinned).toHaveLength(0);
+    expect(after.latest.map((i) => i.toast.id)).toEqual([t.id]);
+  });
+
+  it('без півночей — не закріплюється', () => {
+    expect(pinnedUntil({ tier: 10, createdAt: M1 }, [])).toBeNull();
   });
 });
 

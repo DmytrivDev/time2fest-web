@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { buildDataset } from '@/lib/data/build';
 import type { StreamChain } from '@/lib/data/types';
+import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
 import { currentAirEvent } from '@/lib/engine/currentAirEvent';
 import { country, event, LONDON_MIDNIGHT, MIN, miniSchedule, PARIS_MIDNIGHT, RIO_MIDNIGHT, SEC, source } from '../fixtures/data';
 
+const HOUR = 60 * MIN;
 const { schedule, countries, streams } = miniSchedule();
 const data = buildDataset(schedule, countries, streams);
 
@@ -30,9 +32,27 @@ describe('currentAirEvent: слоти', () => {
     expect(air.nextEvent!.id).toBe('evt_rio_2027');
   });
 
-  it('після останнього слота — festival-over', () => {
-    const air = currentAirEvent(RIO_MIDNIGHT + 15 * MIN, data, data.chainsByEventId);
+  it('останній слот лишається в ефірі після +15 хв — переходити нікуди (рішення 2026-11-14)', () => {
+    for (const now of [RIO_MIDNIGHT + 15 * MIN - SEC, RIO_MIDNIGHT + 15 * MIN, RIO_MIDNIGHT + 15 * MIN + SEC, RIO_MIDNIGHT + HOUR]) {
+      const air = currentAirEvent(now, data, data.chainsByEventId);
+      expect(air.event!.id).toBe('evt_rio_2027');
+      expect(air.view).not.toBe('festival-over');
+      expect(air.nextEvent).toBeNull();
+    }
+    expect(currentAirEvent(RIO_MIDNIGHT + 15 * MIN, data, data.chainsByEventId).handoverAt).toBe(RIO_MIDNIGHT + 15 * MIN);
+  });
+
+  it('festival-over — лише після останньої півночі + 2 год (±1 с)', () => {
+    const inside = currentAirEvent(RIO_MIDNIGHT + CELEBRATION_TAIL - SEC, data, data.chainsByEventId);
+    expect(inside.event!.id).toBe('evt_rio_2027');
+    expect(currentAirEvent(RIO_MIDNIGHT + CELEBRATION_TAIL, data, data.chainsByEventId).event!.id).toBe('evt_rio_2027');
+    const air = currentAirEvent(RIO_MIDNIGHT + CELEBRATION_TAIL + SEC, data, data.chainsByEventId);
     expect(air).toMatchObject({ view: 'festival-over', event: null, nextEvent: null, source: null, handoverAt: null });
+  });
+
+  it('передача між НЕ останніми слотами — як і раніше о +15 хв', () => {
+    expect(currentAirEvent(LONDON_MIDNIGHT + 15 * MIN - SEC, data, data.chainsByEventId).event!.id).toBe('evt_london_2027');
+    expect(currentAirEvent(LONDON_MIDNIGHT + 15 * MIN, data, data.chainsByEventId).event!.id).toBe('evt_rio_2027');
   });
 });
 

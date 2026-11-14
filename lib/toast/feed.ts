@@ -1,12 +1,14 @@
 /**
  * Тости світу — чисті правила смуги тостів, чату й привітання опівночі (рішення власника 2026-11-12, дошки
  * `Desk-Toast-New`, `Phone-Toast-New` v2):
- * - тост $5 і $10 закріплено під трансляцією до найближчої півночі поясу ПІСЛЯ того, як його сказали;
+ * - тост $5 і $10 закріплено під трансляцією до найближчої півночі поясу ПІСЛЯ того, як його сказали; після останньої
+ *   півночі наступної немає — закріплений до кінця свята (остання північ + `CELEBRATION_TAIL`, рішення власника 2026-11-14);
  * - смуга показує спершу закріплені (дорожчі першими, далі новіші), потім найновіші незакріплені; по одному, по колу;
  * - у привітанні опівночі — ніки тих, хто сказав тост на $10 до цієї півночі (після попередньої).
  * Тости загальні — без прив’язки до міста: однакові на головній, сторінці країни й у кімнаті.
  */
 import type { Ms } from '@/lib/data/types';
+import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
 import { tierGreets, tierPins, type ToastTier } from './tiers';
 
 export interface ToastRecord {
@@ -51,9 +53,18 @@ export function prevMidnightAtOrBefore(at: Ms, midnights: readonly Ms[]): Ms | n
   return out;
 }
 
-/** До якої миті тост закріплено під трансляцією (`null` — не закріплюється: $2 чи свято вже скінчилось). */
+/**
+ * До якої миті тост закріплено під трансляцією (`null` — не закріплюється: $2 чи свято вже скінчилось). Тост після
+ * останньої півночі закріплюється до кінця свята (`midnights` — за зростанням).
+ */
 export function pinnedUntil(t: Pick<ToastRecord, 'tier' | 'createdAt'>, midnights: readonly Ms[]): Ms | null {
-  return tierPins(t.tier) ? nextMidnightAfter(t.createdAt, midnights) : null;
+  if (!tierPins(t.tier)) return null;
+  const next = nextMidnightAfter(t.createdAt, midnights);
+  if (next !== null) return next;
+  const last = midnights[midnights.length - 1];
+  if (last === undefined) return null;
+  const end = last + CELEBRATION_TAIL;
+  return t.createdAt < end ? end : null;
 }
 
 export interface StripItem {
