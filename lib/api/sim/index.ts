@@ -12,15 +12,19 @@ import { createSimPassport } from './passport';
 import { createSimProfile } from './profile';
 import { createSimToasts } from './toasts';
 import { createSimRating } from './rating';
+import { withFaults } from './faults';
 
+export { simFaults } from './faults';
+
+/** Кожен адаптер — під обгорткою затримок і відмов (`faults.ts`): стани мережі видно й у `sim`. */
 export const simFactories: ServiceFactories = {
-  passport: createSimPassport,
-  notifications: createSimNotifications,
-  rating: createSimRating,
-  live: createSimLive,
-  auth: createSimAuth,
-  profile: createSimProfile,
-  checkout: createSimCheckout,
-  toasts: createSimToasts,
-  chat: createSimChat,
+  passport: () => withFaults('passport', createSimPassport()),
+  notifications: () => withFaults('notifications', createSimNotifications()),
+  rating: () => withFaults('rating', createSimRating()),
+  live: () => withFaults('live', createSimLive()),
+  auth: () => withFaults('auth', createSimAuth()),
+  profile: () => withFaults('profile', createSimProfile()),
+  checkout: () => withFaults('checkout', createSimCheckout()),
+  toasts: () => withFaults('toasts', createSimToasts()),
+  chat: () => withFaults('chat', createSimChat()),
 };

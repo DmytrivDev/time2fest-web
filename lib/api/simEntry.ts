@@ -3,4 +3,4 @@
  * `NEXT_PUBLIC_API_MODE=http` `next.config.ts` підміняє цей модуль на `lib/api/http/simEntry.disabled.ts` — імітація не
  * потрапляє в пакет. Компонентам імпортувати заборонено (eslint).
  */
-export { simFactories } from './sim';
+export { simFactories, simFaults } from './sim';

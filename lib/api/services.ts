@@ -18,7 +18,8 @@ import type { RatingService } from './contracts/rating';
 import type { ToastsService } from './contracts/toasts';
 import { httpFactories } from './http';
 // Імітація — лише через `simEntry` (у збірці `http` його підміняє `next.config.ts`, і `sim` не потрапляє в пакет).
-import { simFactories } from '@/lib/api/simEntry';
+import { simFactories, simFaults } from '@/lib/api/simEntry';
+import type { FaultControls } from './sim/faults';
 
 export interface Services {
   catalog: CatalogService;
@@ -69,4 +70,9 @@ export function setServicesForTest(partial: Partial<Services>): () => void {
     overrides = before;
     resetAllResources();
   };
+}
+
+/** Лише `sim` (тестова й демо-збірка): затримки й відмови сервісів для станів мережі (`window.__t2f.api`). */
+export function faultControls(): FaultControls | undefined {
+  return API_MODE === 'sim' ? (simFaults as FaultControls | undefined) : undefined;
 }
