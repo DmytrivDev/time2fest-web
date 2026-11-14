@@ -3,7 +3,6 @@
  * фільтр і підпис до оплати, свої тости переживають перезавантаження, незавершена оплата доходить до результату,
  * подарунковий пас гостя переходить на акаунт при першому вході чи створенні акаунта.
  */
-import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatFeed } from '@/lib/chat-sim/store';
@@ -31,7 +30,7 @@ beforeEach(() => {
   vi.setSystemTime(T0);
   setToastClock(() => Date.now());
   window.localStorage.clear();
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {}, pendingPassGift: null });
   useGuestStore.getState().resetGuest();
   useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
   useChatFeed.getState().reset();
@@ -114,7 +113,7 @@ describe('оплата й свої тости', () => {
 
 describe('пас у подарунок до тосту за $10', () => {
   it('той, хто увійшов, — пас одразу на акаунті', () => {
-    useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
+    useAuthStore.getState().signInVerified('olena@example.com', T0);
     payToast(10);
     settle();
     expect(useToastStore.getState().gift).toBe('active');
@@ -135,15 +134,15 @@ describe('пас у подарунок до тосту за $10', () => {
     expect(hasPass()).toBe(true);
     // Вихід знімає пас з пристрою, а подарунок уже належить акаунту — інший вхід його не отримає.
     useAuthStore.getState().signOut();
-    simEmailSignIn('other@example.com', 'signup', T0 + 120_000);
+    useAuthStore.getState().signInVerified('other@example.com', T0 + 120_000);
     expect(hasPass()).toBe(false);
   });
 
   it('гість створює акаунт поштою — пас на новому акаунті', () => {
     payToast(10);
     settle();
-    const res = simEmailSignIn('new@example.com', 'signup', T0 + 60_000);
-    expect(res).toMatchObject({ ok: true, sent: false });
+    const res = useAuthStore.getState().signInVerified('new@example.com', T0 + 60_000);
+    expect(res).toMatchObject({ ok: true, isNew: true });
     expect(useAuthStore.getState().passes['new@example.com']).toBeDefined();
     expect(hasPass()).toBe(true);
   });
@@ -153,7 +152,7 @@ describe('пас у подарунок до тосту за $10', () => {
     settle();
     expect(useToastStore.getState().gift).toBeNull();
     expect(useAuthStore.getState().pendingPassGift).toBeNull();
-    useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
+    useAuthStore.getState().signInVerified('olena@example.com', T0);
     useAuthStore.getState().grantPass('olena@example.com', T0);
     payToast(10);
     settle();

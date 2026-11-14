@@ -3,8 +3,10 @@
  * Одне оформлення на вкладку: сторінка `/pass/` і вікно під трансляцією показують той самий стан, тож людина, що
  * закрила вікно на «Чекаємо підтвердження», побачить пас, щойно оплату підтвердять (`PassPaymentWatcher`).
  *
- * Гість: Google або email (акаунт створюється разом з оплатою); той, хто увійшов, — email не вводить.
- * Email, на який пас уже оформлено, оплату не починає: «На цю адресу пас уже оформлено» + посилання для входу.
+ * Гість: Google або email (пас працює на цьому пристрої одразу після оплати; в акаунт — після входу з цією поштою,
+ * рішення власника 2026-11-13); той, хто увійшов, — email не вводить.
+ * Email, на який пас уже оформлено, оплату не починає: «На цю адресу пас уже оформлено» + код для входу.
+ * Старт оплати, що не вдався (мережа, оплату вимкнено), — `startFailed`; замовлення, що закрилось неоплаченим, — `expired`.
  * Результат оплати — перемикач тестової збірки (`stores/testControls.payResult`): `pending` → «Чекаємо підтвердження»
  * (підтверджується через `PASS_CONFIRM_MS` часу сайту), `declined` → «Оплата не пройшла», решта → «Пас активний».
  * Email — у пам’яті вкладки; поки оплата йде («opening», «pending»), стан разом з email зберігається в `localStorage`
@@ -21,7 +23,7 @@ import type { Ms } from '@/lib/data/types';
 import { PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
 
-export type PassPhase = 'form' | 'google' | 'opening' | 'pending' | 'failed' | 'success';
+export type PassPhase = 'form' | 'google' | 'opening' | 'pending' | 'failed' | 'startFailed' | 'expired' | 'success';
 export type PassEmailIssue = 'empty' | 'invalid' | null;
 
 /** «Чекаємо підтвердження» → підтверджено (час сайту). */
@@ -43,9 +45,11 @@ export interface PassFlowState {
   emailIssue: PassEmailIssue;
   /** На введену адресу пас уже оформлено. */
   paidEmail: boolean;
-  /** Посилання для входу на `paidEmail` надіслано. */
-  linkSent: boolean;
   googleFailed: boolean;
+  /** Запит старту оплати в дорозі (кнопка «Оформити пас» — «Відкриваємо оплату…» ще до відповіді сервісу). */
+  starting: boolean;
+  /** Чому не вдалося почати оплату (`startFailed`). */
+  startError: 'network' | 'unavailable' | null;
   pendingSince?: Ms;
   /** Замовлення цього вікна в спільному процесі оплати (`checkout`, шов E4). */
   clientId?: string;
@@ -72,7 +76,17 @@ export function setPassClock(now: () => Ms): void {
   getService('checkout').dev?.setClock(now);
 }
 
-const INITIAL = { phase: 'form' as PassPhase, email: '', emailIssue: null, paidEmail: false, linkSent: false, googleFailed: false, pendingSince: undefined, clientId: undefined };
+const INITIAL = {
+  phase: 'form' as PassPhase,
+  email: '',
+  emailIssue: null,
+  paidEmail: false,
+  googleFailed: false,
+  starting: false,
+  startError: null,
+  pendingSince: undefined,
+  clientId: undefined,
+};
 
 const newClientId = () => `pass-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -86,7 +100,8 @@ function listen(): void {
     if (o.status === 'pending') usePassStore.setState({ phase: 'pending', pendingSince: o.pendingSince });
     else if (o.status === 'paid') usePassStore.setState({ phase: 'success', pendingSince: undefined, clientId: undefined });
     else if (o.status === 'declined') usePassStore.setState({ phase: 'failed', pendingSince: undefined, clientId: undefined });
-    else if (o.status === 'cancelled' || o.status === 'expired') usePassStore.setState({ phase: 'form', pendingSince: undefined, clientId: undefined });
+    else if (o.status === 'expired') usePassStore.setState({ phase: 'expired', pendingSince: undefined, clientId: undefined });
+    else if (o.status === 'cancelled') usePassStore.setState({ phase: 'form', pendingSince: undefined, clientId: undefined });
   });
 }
 
@@ -102,7 +117,6 @@ export const usePassStore = create<PassFlowState>()(
       set({
         email: v,
         paidEmail: false,
-        linkSent: false,
         emailIssue: issue ? (!v.trim() ? 'empty' : isEmail(v) ? null : 'invalid') : null,
       });
     },
@@ -147,22 +161,24 @@ export const usePassStore = create<PassFlowState>()(
     pay: (opts) => {
       if (get().phase === 'opening' || get().clientId) return;
       const clientId = newClientId();
-      // Гість з поштою: «Переходимо на оплату» — лише коли сервіс прийняв замовлення (див. `submitEmail`).
-      set(opts?.afterStart ? { clientId } : { phase: 'opening', clientId });
+      // Гість з поштою: «Переходимо на оплату» — лише коли сервіс прийняв замовлення (див. `submitEmail`); до відповіді
+      // кнопка вже «зайнята» (`starting`).
+      set(opts?.afterStart ? { clientId, starting: true, startError: null } : { phase: 'opening', clientId, starting: true, startError: null });
       listen();
       const signedIn = (currentSession()?.user ?? null) !== null;
       void getService('checkout')
         .start({ product: { kind: 'pass' }, ...(signedIn ? {} : { email: get().email }), returnPath: '/pass/', clientId })
         .then((res) => {
           if (get().clientId !== clientId) return;
+          set({ starting: false });
           if (res.ok) {
             // Подія замовлення могла вже змінити фазу («чекаємо», «оплачено») — тоді не повертаємо «переходимо».
             if (get().phase === 'form' && res.value.order.status === 'open') set({ phase: 'opening' });
             return;
           }
-          // На цю адресу пас уже оформлено — як перевірка форми; інакше — «Оплата не пройшла».
+          // На цю адресу пас уже оформлено — як перевірка форми; інакше — «Не вдалося відкрити оплату» (гроші не списано).
           if (res.error.reason === 'pass-owned') set({ phase: 'form', paidEmail: true, clientId: undefined });
-          else set({ phase: 'failed', clientId: undefined });
+          else set({ phase: 'startFailed', startError: res.error.code === 'unavailable' ? 'unavailable' : 'network', clientId: undefined });
         });
     },
     confirm: () => {

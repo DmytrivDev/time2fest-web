@@ -3,14 +3,15 @@
  * автоматів у `stores/pass.ts` і `stores/toast.ts`. Імітує PayPro Global (перехід на оплату й назад) і вебхук:
  *   start → `open` → через «перехід» (`PAY_ROUNDTRIP_MS`, тост — ще `TOAST_PAY_MS`) результат з тестової панелі
  *   (`testControls.payResult`): `pending` (підтвердження через `PENDING_CONFIRM_MS` часу сайту) | `declined` | `paid`.
- * Результат за продуктом видає «сервер», тобто цей файл: пас — на акаунт (гість входить у пошту з оплати за правилом
- * `lib/api/sim/auth`), тост — у чат «Світ» і серед своїх, тост $10 дарує пас (гостю — після входу на цьому пристрої).
+ * Результат за продуктом видає «сервер», тобто цей файл: пас — на акаунт; гість без входу в акаунт НЕ входить (рішення
+ * власника 2026-11-13) — пас записано на пошту з оплати й працює на цьому пристрої одразу (`grantDevicePass`), а в акаунт
+ * потрапляє, коли людина увійде з цією поштою (код чи Google). Тост — у чат «Світ» і серед своїх, тост $10 дарує пас
+ * (гостю — після входу на цьому пристрої).
  * Незавершені замовлення (`open`, `pending`) живуть у `localStorage['t2f:orders:v1']` — переживають перезавантаження.
  * Події замовлень ідуть підписникам СИНХРОННО (як вебхук → канал): вікна оновлюються в тому ж такті таймера.
  */
 import { fail, ok } from '../result';
 import { isFinalOrder, type CheckoutService, type Order, type Product } from '../contracts/checkout';
-import { simSignInAfterPurchase } from './auth';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import { toastMessage } from '@/lib/chat/toast';
 import type { Ms } from '@/lib/data/types';
@@ -83,6 +84,7 @@ function settle(id: string): void {
   const result = useTestControls.getState().payResult;
   if (result === 'pending') put({ ...o, status: 'pending', pendingSince: siteNow(), updatedAt: Date.now() });
   else if (result === 'declined') put({ ...o, status: 'declined', pendingSince: undefined, updatedAt: Date.now() });
+  else if (result === 'expired') put({ ...o, status: 'expired', pendingSince: undefined, updatedAt: Date.now() });
   else complete(id);
 }
 
@@ -93,9 +95,8 @@ function complete(id: string): void {
   if (o.product.kind === 'pass') {
     const now = Date.now();
     const auth = useAuthStore.getState();
-    const email = auth.user?.email ?? normalizeEmail(o.email ?? '');
-    if (!auth.user) simSignInAfterPurchase(email, now);
-    useAuthStore.getState().grantPass(email, now);
+    if (auth.user) auth.grantPass(auth.user.email, now);
+    else auth.grantDevicePass(normalizeEmail(o.email ?? ''), now);
     put({ ...o, status: 'paid', pendingSince: undefined, updatedAt: now });
     return;
   }
@@ -186,6 +187,13 @@ export function createSimCheckout(): CheckoutService {
     },
     async status(orderId) {
       load();
+      // Тестові замовлення для сторінки повернення з PayPro (`/pass/?order=demo-paid` тощо) — лише стан, без наслідків.
+      const demo = /^demo-(toast-)?(open|pending|paid|declined|cancelled|expired)$/.exec(orderId);
+      if (demo) {
+        const now = Date.now();
+        const product: Product = demo[1] ? { kind: 'toast', tier: 5, text: 'З Новим роком!' } : { kind: 'pass' };
+        return ok({ id: orderId, clientId: orderId, product, status: demo[2] as Order['status'], createdAt: now, updatedAt: now });
+      }
       const o = orders.get(orderId);
       return o ? ok(o) : fail('not_found');
     },

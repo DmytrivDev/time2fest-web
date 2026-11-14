@@ -49,9 +49,9 @@ function PassWindowContent({ onClose, onSignIn }: { onClose: () => void; onSignI
       <PassBuy
         variant="stream"
         onSignIn={onSignIn}
-        onLetterSent={() => {
-          const letter = currentSession()?.link;
-          openAuthWindow('signin', { step: { kind: 'sent' }, email: letter?.email });
+        onCodeSent={() => {
+          const code = currentSession()?.code;
+          openAuthWindow('signin', { step: { kind: 'code' }, email: code?.email });
         }}
         onDone={onClose}
       />

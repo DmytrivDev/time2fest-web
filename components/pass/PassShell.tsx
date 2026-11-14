@@ -11,6 +11,7 @@ import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
 import { TimeProvider } from '@/lib/time/TimeProvider';
 import { PaymentWatcher } from '@/components/offers/PaymentWatcher';
+import { ReturnNotice } from '@/components/offers/ReturnNotice';
 import { ApiRuntime } from '@/lib/api/ApiRuntime';
 
 /**
@@ -43,6 +44,8 @@ export function PassShell({ children, passCurrent = true }: { children: ReactNod
           <Header user={user} hasPass={hasPass} passCurrent={passCurrent} onMenuClick={onMenu} menuOpen={menuOpen || panel === 'menu'} onNotificationsClick={onNotif} />
           <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
           <NotifDialog open={notifOpen} onOpenChange={setNotifOpen} />
+          {/* Повернення з PayPro (`?order=`) і з Google — смуга під шапкою. */}
+          <ReturnNotice />
           <PassSideContext.Provider value={{ panel, setPanel }}>{children}</PassSideContext.Provider>
           <Footer />
         </div>

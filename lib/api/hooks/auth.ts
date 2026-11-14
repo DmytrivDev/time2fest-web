@@ -7,7 +7,7 @@
  * Дії асинхронні й повертають `ApiResult` — крок вікна вирішує компонент (`useAuthFlow`).
  */
 import { useSyncExternalStore } from 'react';
-import type { AuthIntent, DevLetter, Session } from '../contracts/auth';
+import type { AuthIntent, DevCode, Session } from '../contracts/auth';
 import type { Profile, ProfilePatch } from '../contracts/profile';
 import { createResource, useResource } from '../resource';
 import { getService } from '../services';
@@ -45,23 +45,24 @@ export function hasPassNow(): boolean {
 }
 
 export const authActions = {
-  emailSignIn: (email: string, intent: AuthIntent) => getService('auth').emailSignIn(email, intent),
-  sendLink: (email: string, intent: AuthIntent) => getService('auth').sendLink(email, intent),
-  openLink: (token: string) => getService('auth').openLink(token),
+  /** Надіслати код із 6 цифр на пошту (вхід і створення акаунта). */
+  requestCode: (email: string, intent: AuthIntent) => getService('auth').requestCode(email, intent),
+  /** Перевірити код і увійти. */
+  verifyCode: (email: string, code: string) => getService('auth').verifyCode(email, code),
   google: (opts: { returnPath: string; signal?: AbortSignal }) => getService('auth').google(opts),
   signOut: () => getService('auth').signOut(),
   /** Свіжа сесія від сервісу (сторінка входу: «уже увійшов — далі»). */
   session: () => getService('auth').session(),
 } as const;
 
-const noMailbox = () => () => undefined;
-const nullLetter = () => null;
+const noBox = () => () => undefined;
+const nullCode = () => null;
 
-/** Тестова пошта (лише `sim`): останній «лист» і «зробити простроченим». У `http` — `null`. */
-export function useDevMailbox(): { letter: DevLetter | null; expire: () => void } | null {
-  const box = getService('auth').devMailbox;
-  const letter = useSyncExternalStore(box?.subscribe ?? noMailbox, box?.get ?? nullLetter, nullLetter);
-  return box ? { letter, expire: box.expire } : null;
+/** Тестова й демо-пошта (лише `sim`): останній код і «зробити простроченим». У `http` — `null`. */
+export function useDevCode(): { code: DevCode | null; expire: () => void } | null {
+  const box = getService('auth').devCode;
+  const code = useSyncExternalStore(box?.subscribe ?? noBox, box?.get ?? nullCode, nullCode);
+  return box ? { code, expire: box.expire } : null;
 }
 
 export const profileResource = createResource<Profile, Profile>(() => {
@@ -92,12 +93,13 @@ export const profileActions = {
   setSchedule: (eventIds: readonly string[]) => getService('profile').setSchedule(eventIds),
   toggleSchedule: (eventId: string) => getService('profile').toggleSchedule(eventId),
   replaceSchedule: (outIso: string, eventId: string) => getService('profile').replaceSchedule(outIso, eventId),
+  /** Зміна пошти: код на нову адресу. */
   changeEmail: (email: string) => getService('profile').changeEmail(email),
+  /** Код з листа на нову адресу — пошту змінено. */
+  confirmEmailChange: (code: string) => getService('profile').confirmEmailChange(code),
   cancelEmailChange: () => getService('profile').cancelEmailChange(),
   linkGoogle: () => getService('profile').linkGoogle(),
   unlinkGoogle: () => getService('profile').unlinkGoogle(),
   exportData: () => getService('profile').exportData(),
   deleteAccount: () => getService('profile').deleteAccount(),
-  /** Тестова збірка: «лист підтвердження відкрито». */
-  devConfirmEmail: () => getService('profile').devConfirmEmail?.(),
 } as const;

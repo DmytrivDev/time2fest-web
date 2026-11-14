@@ -2,8 +2,10 @@
 
 /**
  * Кабінет `/account/` за дошками `Desk-Cabinet-New2` / `Desk-Cabinet-New3` (рішення власника 2026-11-08; пароля немає —
- * вхід посиланням з листа або Google). Ліворуч — один аркуш із розділами «Профіль» (аватар, нік, прапор, плашка пасу, «Як ти
- * входиш»), «Налаштування», «Сповіщення» (заглушка), «Дані й акаунт». Десктоп: праворуч на місці чату — меню кабінету
+ * вхід через Google або кодом із листа, рішення 2026-11-13). Ліворуч — один аркуш із розділами «Профіль» (аватар, нік,
+ * прапор, плашка пасу, «Як ти входиш»: Google першим, зміна пошти кодом), «Налаштування», «Сповіщення», «Дані й акаунт».
+ * Записи на сервер показують «Зберігаємо…» і «Не вдалося зберегти» (стани для `http`, у `sim` — затримки й відмови
+ * `window.__t2f.api`). Десктоп: праворуч на місці чату — меню кабінету
  * (розділи, «Моє свято», «Вийти»); «☰ Меню» в шапці відкриває звичайне меню на тому ж місці. Телефон: чату немає, кнопка
  * розділів закріплена внизу — шторка. Гість — на вхід (з поверненням сюди).
  */
@@ -26,13 +28,16 @@ import { MENU_LANGUAGES } from '@/components/shell/Menu';
 import { CLOSE_MS, useChatColumn, useOverlayOpen } from '@/components/shell/OverlayManager';
 import { NotifSettings } from '@/components/notifications/NotificationsBody';
 import { FlagField } from '@/components/windows/FlagField';
+import { BusyButton, CodeField, DemoCodeHint, ResendButton } from '@/components/auth/AuthParts';
+import { authCodeError } from '@/lib/api/contracts/auth';
+import type { ApiResult } from '@/lib/api/result';
+import { formatClock } from '@/lib/i18n/time';
 import { useStamps } from '@/lib/api/hooks/passport';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { validateNick, type NickIssue } from '@/lib/chat/nick';
 import { NICK_MAX } from '@/lib/chat/send';
 import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
-import { IS_TEST_BUILD } from '@/lib/env';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { utcLabel } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -50,6 +55,40 @@ const SECTIONS = [
 type SectionId = (typeof SECTIONS)[number]['id'];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+type SaveState = 'idle' | 'saving' | 'saved' | 'failed';
+
+/** Запис на сервер з «Зберігаємо…» / «Збережено» / «Не вдалося зберегти» (у `sim` — `window.__t2f.api`). */
+function useSave() {
+  const [state, setState] = useState<SaveState>('idle');
+  const run = async <T,>(p: Promise<ApiResult<T>>): Promise<ApiResult<T>> => {
+    setState('saving');
+    const res = await p;
+    setState(res.ok ? 'saved' : 'failed');
+    return res;
+  };
+  return { state, run, reset: () => setState('idle') };
+}
+
+/** Рядок стану запису під розділом: «Зберігаємо…» чи «Не вдалося зберегти зміну». */
+function SaveLine({ state, failed }: { state: SaveState; failed: string }) {
+  const t = useTranslations('account.save');
+  if (state === 'saving')
+    return (
+      <p className={cn(s.hint, s.saveLine)} role="status">
+        <span className={s.spin} aria-hidden="true" />
+        {t('saving')}
+      </p>
+    );
+  if (state === 'failed')
+    return (
+      <p className={cn(s.err, s.saveLine)} role="alert">
+        <Icon name="alert" size={16} />
+        {failed}
+      </p>
+    );
+  return null;
+}
 
 /** Пояси країни з назвою за головним містом поясу (без бази всіх міст, власник 2026-11-08). */
 function countryZones(iso: string) {
@@ -126,7 +165,12 @@ function ProfileSection({ hasPass }: { hasPass: boolean }) {
   const [nick, setNick] = useState(storedNick ?? user.name);
   const [flag, setFlag] = useState(storedFlag ?? detected ?? 'earth');
   const [touched, setTouched] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const save = useSave();
+  const sv = useTranslations('account.save');
+  const saved = save.state === 'saved';
+  const setSaved = (v: boolean) => {
+    if (!v) save.reset();
+  };
   const flags = useMemo(() => getData().countries.map((x) => ({ code: x.flagCode, name: x.name.uk })), []);
   const uid = useId();
   const issue: NickIssue | null = validateNick(nick);
@@ -161,9 +205,8 @@ function ProfileSection({ hasPass }: { hasPass: boolean }) {
         onSubmit={(e) => {
           e.preventDefault();
           setTouched(true);
-          if (issue) return;
-          void profileActions.update({ nick: nick.trim(), flagCode: flag });
-          setSaved(true);
+          if (issue || save.state === 'saving') return;
+          void save.run(profileActions.update({ nick: nick.trim(), flagCode: flag }));
         }}
         className={s.form}
       >
@@ -212,8 +255,19 @@ function ProfileSection({ hasPass }: { hasPass: boolean }) {
               {t('profile.saved')}
             </span>
           ) : null}
-          <button type="submit" disabled={!dirty} className={cn('t2f-focus t2f-transition', s.btn, s.coral)}>
-            {t('profile.save')}
+          {save.state === 'failed' ? (
+            <span className={s.err} role="alert" data-save="failed">
+              {sv('failed')}
+            </span>
+          ) : null}
+          <button
+            type="submit"
+            disabled={!dirty && save.state !== 'saving'}
+            aria-busy={save.state === 'saving' || undefined}
+            className={cn('t2f-focus t2f-transition', s.btn, s.coral)}
+          >
+            {save.state === 'saving' ? <span className={s.spin} aria-hidden="true" /> : null}
+            {save.state === 'saving' ? sv('saving') : t('profile.save')}
           </button>
         </div>
       </form>
@@ -274,32 +328,93 @@ function PassPlaque({ hasPass }: { hasPass: boolean }) {
   );
 }
 
+/**
+ * «Як ти входиш»: Google — першим (головний спосіб, рішення власника 2026-11-13), далі пошта, далі «Вийти на всіх».
+ * Зміна пошти — тим самим кодом із 6 цифр, що й вхід: нова адреса → «Надіслати код» («Надсилаємо…») → поле коду
+ * (вхід на 6-й цифрі, «Перевіряємо…», помилки, «Надіслати ще раз» з відліком) → «Пошту змінено». Рядки — під лінією
+ * `.rows`, тож підзаголовок «Пароля немає…» не налазить на першу лінію (перевірка дошок 2026-11-14).
+ */
 function LoginBlock() {
   const t = useTranslations('account.login');
+  const tc = useTranslations('auth.code');
   const router = useRouter();
   const user = useSession().session?.user ?? null;
-  const googleLinked = useAccountStore((a) => a.googleLinked);
-  const pending = useAccountStore((a) => a.pendingEmail);
+  const profile = useProfile();
+  const googleLinked = profile?.googleLinked ?? false;
+  const pending = profile?.pendingEmail ?? null;
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ReactNode>(null);
+  const [sending, setSending] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState<{ text: string; dead: boolean } | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [changed, setChanged] = useState<string | null>(null);
   const google = user?.via === 'google';
   const email = user?.email ?? '';
 
-  const send = () => {
+  /** Відмова надсилання коду → рядок під полем. */
+  const sendError = (e: Parameters<typeof authCodeError>[0], now: number): ReactNode => {
+    if (e.reason === 'same-email') return t('emailSame');
+    if (e.reason === 'taken') return t('emailTaken');
+    if (e.reason === 'email') return t('emailInvalid');
+    const kind = authCodeError(e);
+    if (kind === 'rate-limited') return t.rich('sendLimited', { time: formatClock(now + (e.retryAfterMs ?? 0)), b: (x) => <b>{x}</b> });
+    if (kind === 'unavailable') return t('unavailable');
+    return t('sendFailed');
+  };
+
+  const send = async (to: string) => {
+    if (sending) return;
+    setSending(true);
+    setError(null);
+    const now = Date.now();
+    const res = await profileActions.changeEmail(to);
+    setSending(false);
+    if (!res.ok) {
+      // Код на цю адресу щойно йшов — лишаємо поле коду з відліком.
+      if (authCodeError(res.error) === 'cooldown') return;
+      setError(sendError(res.error, now));
+      return;
+    }
+    setEditing(false);
+    setValue('');
+    setCode('');
+    setCodeError(null);
+    setChanged(null);
+  };
+  const submit = () => {
     const v = value.trim().toLowerCase();
     if (!EMAIL_RE.test(v)) return setError(t('emailInvalid'));
     if (v === email) return setError(t('emailSame'));
-    void profileActions.changeEmail(v);
-    setEditing(false);
-    setValue('');
-    setError(null);
+    void send(v);
   };
-  // Тест: «лист відкрито» — пошту змінено.
-  const confirm = () => {
-    if (!pending) return;
-    void profileActions.devConfirmEmail();
+  const verify = async (digits: string) => {
+    if (checking || !pending) return;
+    setChecking(true);
+    setCodeError(null);
+    const target = pending.email;
+    const res = await profileActions.confirmEmailChange(digits);
+    setChecking(false);
+    if (res.ok) {
+      setCode('');
+      setChanged(target);
+      return;
+    }
+    const kind = authCodeError(res.error);
+    if (kind === 'wrong-code') {
+      setCode('');
+      setCodeError({ text: tc('wrong', { left: res.error.attemptsLeft ?? 0 }), dead: false });
+    } else if (kind === 'too-many-attempts') setCodeError({ text: tc('tooMany'), dead: true });
+    else if (kind === 'expired') setCodeError({ text: tc('expired'), dead: true });
+    else setCodeError({ text: tc('network'), dead: false });
+  };
+  const typeCode = (v: string) => {
+    const digits = v.replace(/\D/g, '').slice(0, 6);
+    setCode(digits);
+    if (codeError && !codeError.dead) setCodeError(null);
+    if (digits.length === 6) void verify(digits);
   };
   const connect = () => {
     setConnecting(true);
@@ -311,100 +426,141 @@ function LoginBlock() {
       <h3 className={s.h3}>{t('title')}</h3>
       <p className={s.lead}>{google ? t('noteGoogle') : t('noteEmail')}</p>
 
-      <Row title={t('email')} hint={google ? t('emailGoogle', { email }) : t('emailHint', { email })}>
-        {!google && !editing && !pending ? (
-          <button type="button" onClick={() => setEditing(true)} className={cn('t2f-focus', s.link)}>
-            {t('change')}
-          </button>
+      <div className={s.rows}>
+        <Row title={t('google')} hint={google || googleLinked ? t('googleOn') : connecting ? t('googleConnecting') : t('googleOff')}>
+          {google ? (
+            <span className={s.ok}>{t('googleLinked')}</span>
+          ) : googleLinked ? (
+            <span className={s.acts}>
+              <span className={s.ok}>{t('googleLinked')}</span>
+              <button type="button" onClick={() => void profileActions.unlinkGoogle()} className={cn('t2f-focus', s.link)}>
+                {t('googleDisconnect')}
+              </button>
+            </span>
+          ) : (
+            <button type="button" disabled={connecting} onClick={connect} className={cn('t2f-focus t2f-transition', s.btn, s.coral)} data-action="google-connect">
+              {connecting ? <span className={s.spin} aria-hidden="true" /> : null}
+              {t('googleConnect')}
+            </button>
+          )}
+        </Row>
+
+        <Row title={t('email')} hint={google ? t('emailGoogle', { email }) : t('emailHint', { email })}>
+          {!google && !editing && !pending ? (
+            <button type="button" onClick={() => setEditing(true)} className={cn('t2f-focus', s.link)} data-action="change-email">
+              {t('change')}
+            </button>
+          ) : null}
+        </Row>
+        {changed && !pending ? (
+          <p className={cn(s.saved, s.saveLine)} role="status" data-email-changed="">
+            <Icon name="check" size={16} />
+            {t('emailChanged', { email: changed })}
+          </p>
         ) : null}
-      </Row>
-      <div className="t2f-reveal" data-open={editing}>
-        <div className="t2f-reveal-inner">
-          <form
-            noValidate
-            onSubmit={(e) => {
-              e.preventDefault();
-              send();
-            }}
-            className={s.inline}
-          >
-            <label className={s.label} htmlFor="acc-new-email">
-              {t('newEmail')}
-            </label>
-            <input
-              id="acc-new-email"
-              type="email"
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-                setError(null);
+        <div className="t2f-reveal" data-open={editing && !pending}>
+          <div className="t2f-reveal-inner">
+            <form
+              noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                submit();
               }}
-              aria-invalid={error ? true : undefined}
-              className="t2f-nk-input"
-              autoComplete="email"
-            />
-            <p className={error ? s.err : s.hint} aria-live="polite">
-              {error ?? t('emailWait')}
-            </p>
-            <div className={s.inlineActs}>
-              <button type="submit" className={cn('t2f-focus t2f-transition', s.btn, s.coral)}>
-                {t('sendConfirm')}
-              </button>
-              <button type="button" onClick={() => setEditing(false)} className={cn('t2f-focus', s.link)}>
-                {t('cancel')}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-      {pending ? (
-        <div className={s.notice} role="status">
-          <Icon name="at" size={18} />
-          <div>
-            {t.rich('emailSent', { email: pending.email, b: (x) => <b>{x}</b> })}
-            <div className={s.noticeActs}>
-              <button type="button" onClick={() => void profileActions.cancelEmailChange()} className={cn('t2f-focus', s.link)}>
-                {t('cancelChange')}
-              </button>
-              {IS_TEST_BUILD ? (
-                <button type="button" onClick={confirm} className={cn('t2f-focus', s.link)} data-test-confirm-email="">
-                  {t('testOpen')}
+              className={s.inline}
+            >
+              <label className={s.label} htmlFor="acc-new-email">
+                {t('newEmail')}
+              </label>
+              <input
+                id="acc-new-email"
+                type="email"
+                value={value}
+                readOnly={sending}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                  setError(null);
+                }}
+                aria-invalid={error ? true : undefined}
+                className="t2f-nk-input"
+                autoComplete="email"
+              />
+              <p className={error ? s.err : s.hint} aria-live="polite">
+                {error ?? t('emailWait')}
+              </p>
+              <div className={s.inlineActs}>
+                <button type="submit" aria-busy={sending || undefined} className={cn('t2f-focus t2f-transition', s.btn, s.coral)} data-action="send-code">
+                  {sending ? <span className={s.spin} aria-hidden="true" /> : null}
+                  {sending ? tc('sendingShort') : t('sendConfirm')}
                 </button>
-              ) : null}
-            </div>
+                <button type="button" onClick={() => setEditing(false)} className={cn('t2f-focus', s.link)}>
+                  {t('cancel')}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-      ) : null}
+        {pending ? (
+          <div className={s.notice} role="status" data-block="email-code">
+            <Icon name="at" size={18} />
+            <div className="min-w-0 flex-1">
+              {t.rich('emailSent', { email: pending.email, b: (x) => <b>{x}</b> })}
+              <form
+                noValidate
+                className={s.codeBox}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (codeError?.dead) void send(pending.email);
+                  else void verify(code);
+                }}
+              >
+                <CodeField
+                  label={t('codeLabel')}
+                  value={code}
+                  onChange={typeCode}
+                  error={codeError?.text}
+                  status={checking ? t('checking') : null}
+                  disabled={codeError?.dead}
+                  focusOnMount
+                />
+                <DemoCodeHint purpose="email-change" />
+                {codeError?.dead ? (
+                  <BusyButton busy={sending} busyLabel={tc('sendingShort')} tone="coral" action="new-code">
+                    {tc('newCode')}
+                  </BusyButton>
+                ) : (
+                  <BusyButton busy={checking} busyLabel={t('checking')} tone="coral" action="verify">
+                    {t('codeConfirm')}
+                  </BusyButton>
+                )}
+                {codeError?.dead ? null : <ResendButton until={pending.resendAt} busy={sending} onResend={() => void send(pending.email)} />}
+                {error ? (
+                  <p className={s.err} role="alert">
+                    {error}
+                  </p>
+                ) : null}
+              </form>
+              <div className={s.noticeActs}>
+                <button type="button" onClick={() => void profileActions.cancelEmailChange()} className={cn('t2f-focus', s.link)}>
+                  {t('cancelChange')}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
-      <Row title={t('google')} hint={google || googleLinked ? t('googleOn') : connecting ? t('googleConnecting') : t('googleOff')}>
-        {google ? (
-          <span className={s.ok}>{t('googleLinked')}</span>
-        ) : googleLinked ? (
-          <span className={s.acts}>
-            <span className={s.ok}>{t('googleLinked')}</span>
-            <button type="button" onClick={() => void profileActions.unlinkGoogle()} className={cn('t2f-focus', s.link)}>
-              {t('googleDisconnect')}
-            </button>
-          </span>
-        ) : (
-          <button type="button" disabled={connecting} onClick={connect} className={cn('t2f-focus t2f-transition', s.btn, s.line)}>
-            {connecting ? <span className={s.spin} aria-hidden="true" /> : null}
-            {t('googleConnect')}
+        <Row title={t('devices')} hint={t('devicesHint')}>
+          <button
+            type="button"
+            onClick={() => {
+              void authActions.signOut();
+              router.push('/');
+            }}
+            className={cn('t2f-focus', s.link)}
+          >
+            {t('signOutAll')}
           </button>
-        )}
-      </Row>
-      <Row title={t('devices')} hint={t('devicesHint')}>
-        <button
-          type="button"
-          onClick={() => {
-            void authActions.signOut();
-            router.push('/');
-          }}
-          className={cn('t2f-focus', s.link)}
-        >
-          {t('signOutAll')}
-        </button>
-      </Row>
+        </Row>
+      </div>
     </div>
   );
 }
@@ -421,9 +577,11 @@ function ZonePicker({ onDone }: { onDone(): void }) {
   const data = getData();
   const country = data.countriesByIso.get(iso);
   const zones = countryZones(iso);
+  // Порожній пошук — увесь список (поточна країна першою), а не порожнє поле без підказок (перевірка дошок 2026-11-14).
+  const all = useMemo(() => [...data.countries].sort((a, b) => a.name.uk.localeCompare(b.name.uk, 'uk')), [data]);
   const found = query.trim()
     ? data.countries.filter((x) => x.name.uk.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 8)
-    : [];
+    : [...all.filter((x) => x.iso === iso), ...all.filter((x) => x.iso !== iso)];
   const zoneId = acc.homeCountry === iso && acc.homeZoneId ? acc.homeZoneId : zones[0]?.id;
 
   return (
@@ -435,12 +593,19 @@ function ZonePicker({ onDone }: { onDone(): void }) {
             ref={(el) => el?.focus()}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                setPicking(false);
+                setQuery('');
+              }
+            }}
             placeholder={t('countrySearch')}
             aria-label={t('countrySearch')}
             className="t2f-nk-input"
           />
           {found.length ? (
-            <ul className={s.options}>
+            <ul className={cn(s.options, !query.trim() && s.optionsAll)} data-list={query.trim() ? 'found' : 'all'}>
               {found.map((x) => (
                 <li key={x.iso}>
                   <button
@@ -521,7 +686,10 @@ function ZonePicker({ onDone }: { onDone(): void }) {
 
 function SettingsSection({ hasPass }: { hasPass: boolean }) {
   const t = useTranslations('account.settings');
+  const sv = useTranslations('account.save');
   const acc = useAccountStore();
+  const save = useSave();
+  const setting = (patch: Parameters<typeof profileActions.update>[0]['settings']) => void save.run(profileActions.update({ settings: patch }));
   const locale = useGuestStore((g) => g.locale);
   const motion = useGuestStore((g) => g.reducedMotion);
   const setMotion = useGuestStore((g) => g.setReducedMotion);
@@ -547,7 +715,7 @@ function SettingsSection({ hasPass }: { hasPass: boolean }) {
               { value: 'h24', label: t('h24') },
               { value: 'h12', label: t('h12') },
             ]}
-            onChange={(v) => void profileActions.update({ settings: { hour12: v === 'h12' } })}
+            onChange={(v) => setting({ hour12: v === 'h12' })}
           />
         </Row>
         <Row title={t('zone')} hint={acc.homeCountry ? t('zoneChosen', { place }) : t('zoneAuto', { place })}>
@@ -568,12 +736,13 @@ function SettingsSection({ hasPass }: { hasPass: boolean }) {
             onChange={(v) => useGuestStore.setState({ locale: v })}
           />
         </Row>
-        <Toggle label={t('showPassport')} hint={t('showPassportHint')} checked={acc.showPassport} onChange={(v) => void profileActions.update({ settings: { showPassport: v } })} />
-        <Toggle label={t('showPath')} hint={t('showPathHint')} checked={hasPass && acc.showPath} disabled={!hasPass} onChange={(v) => void profileActions.update({ settings: { showPath: v } })} />
-        <Toggle label={t('hints')} hint={t('hintsHint')} checked={acc.passportHints} onChange={(v) => void profileActions.update({ settings: { passportHints: v } })} />
-        <Toggle label={t('quiet')} hint={t('quietHint')} checked={hasPass && acc.quietDefault} disabled={!hasPass} onChange={(v) => void profileActions.update({ settings: { quietDefault: v } })} />
+        <Toggle label={t('showPassport')} hint={t('showPassportHint')} checked={acc.showPassport} onChange={(v) => setting({ showPassport: v })} />
+        <Toggle label={t('showPath')} hint={t('showPathHint')} checked={hasPass && acc.showPath} disabled={!hasPass} onChange={(v) => setting({ showPath: v })} />
+        <Toggle label={t('hints')} hint={t('hintsHint')} checked={acc.passportHints} onChange={(v) => setting({ passportHints: v })} />
+        <Toggle label={t('quiet')} hint={t('quietHint')} checked={hasPass && acc.quietDefault} disabled={!hasPass} onChange={(v) => setting({ quietDefault: v })} />
         <Toggle label={t('motion')} hint={t('motionHint')} checked={motion} onChange={setMotion} />
       </div>
+      <SaveLine state={save.state} failed={sv('settingFailed')} />
     </section>
   );
 }
@@ -597,9 +766,13 @@ function DataSection() {
   const t = useTranslations('account.data');
   const router = useRouter();
   const email = useSession().session?.user?.email ?? '';
+  const sv = useTranslations('account.save');
   const [confirm, setConfirm] = useState(false);
+  const del = useSave();
+  const [downloadFailed, setDownloadFailed] = useState(false);
   const download = async () => {
     const res = await profileActions.exportData();
+    setDownloadFailed(!res.ok);
     if (!res.ok) return;
     const payload = res.value;
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
@@ -610,8 +783,9 @@ function DataSection() {
     URL.revokeObjectURL(url);
   };
   const remove = async () => {
-    await profileActions.deleteAccount();
-    router.push('/');
+    if (del.state === 'saving') return;
+    const res = await del.run(profileActions.deleteAccount());
+    if (res.ok) router.push('/');
   };
   return (
     <section id="data" aria-labelledby="data-h" className={s.card}>
@@ -625,6 +799,12 @@ function DataSection() {
             {t('downloadBtn')}
           </button>
         </Row>
+        {downloadFailed ? (
+          <p className={cn(s.err, s.saveLine)} role="alert">
+            <Icon name="alert" size={16} />
+            {sv('downloadFailed')}
+          </p>
+        ) : null}
         <Row title={t('delete')} hint={t('deleteHint')}>
           {confirm ? null : (
             <button type="button" onClick={() => setConfirm(true)} className={cn('t2f-focus', s.link, s.danger)}>
@@ -637,13 +817,25 @@ function DataSection() {
             <div className={s.confirm} role="alert">
               <p>{t('deleteConfirm', { email })}</p>
               <div className={s.inlineActs}>
-                <button type="button" onClick={remove} className={cn('t2f-focus t2f-transition', s.btn, s.dangerBtn)}>
-                  {t('deleteYes')}
+                <button
+                  type="button"
+                  onClick={remove}
+                  aria-busy={del.state === 'saving' || undefined}
+                  className={cn('t2f-focus t2f-transition', s.btn, s.dangerBtn)}
+                >
+                  {del.state === 'saving' ? <span className={s.spin} aria-hidden="true" /> : null}
+                  {del.state === 'saving' ? sv('deleting') : t('deleteYes')}
                 </button>
                 <button type="button" onClick={() => setConfirm(false)} className={cn('t2f-focus', s.link)}>
                   {t('deleteNo')}
                 </button>
               </div>
+              {del.state === 'failed' ? (
+                <p className={cn(s.err, s.saveLine)} role="alert">
+                  <Icon name="alert" size={16} />
+                  {sv('deleteFailed')}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -692,7 +884,6 @@ function CabinetNav({ active, hasPass, onPick }: { active: SectionId; hasPass: b
                 <Icon name={x.icon} size={18} />
               </span>
               <span className={s.navText}>{t(`nav.${x.id}`)}</span>
-              {x.id === 'notifications' ? <span className={s.soon}>{t('nav.soon')}</span> : null}
             </a>
           </li>
         ))}

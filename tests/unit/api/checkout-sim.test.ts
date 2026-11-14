@@ -20,7 +20,7 @@ beforeEach(() => {
   vi.setSystemTime(T0);
   resetSimCheckout();
   setCheckoutClock(() => Date.now());
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {}, pendingPassGift: null });
   useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
   useToastStore.setState({ said: [] });
   useChatFeed.getState().reset();
@@ -35,13 +35,20 @@ afterEach(() => {
 });
 
 describe('процес оплати (sim)', () => {
-  it('пас гостя: open → оплачено після переходу; гість входить у пошту з оплати, пас на акаунті', async () => {
+  it('пас гостя: open → оплачено після переходу; гість НЕ входить (рішення 2026-11-13) — пас на пошті й на пристрої', async () => {
     const res = await svc.start({ product: { kind: 'pass' }, email: ' Olena@Example.com ', returnPath: '/pass/', clientId: 'c1' });
     expect(res.ok && res.value.order).toMatchObject({ status: 'open', clientId: 'c1', email: 'olena@example.com' });
     vi.advanceTimersByTime(PAY_ROUNDTRIP_MS);
     expect(seen.at(-1)?.status).toBe('paid');
-    expect(useAuthStore.getState().user?.email).toBe('olena@example.com');
+    expect(useAuthStore.getState().user).toBeNull();
     expect(useAuthStore.getState().passes['olena@example.com']).toBe(T0 + PAY_ROUNDTRIP_MS);
+    expect(useAuthStore.getState().devicePass).toEqual({ email: 'olena@example.com', since: T0 + PAY_ROUNDTRIP_MS });
+  });
+
+  it('повернення з PayPro: тестові замовлення demo-* для сторінки повернення', async () => {
+    expect(await svc.status('demo-expired')).toMatchObject({ ok: true, value: { status: 'expired', product: { kind: 'pass' } } });
+    expect(await svc.status('demo-toast-paid')).toMatchObject({ ok: true, value: { status: 'paid', product: { kind: 'toast' } } });
+    expect(await svc.status('nope')).toEqual({ ok: false, error: { code: 'not_found' } });
   });
 
   it('той самий clientId — те саме замовлення; пошта з пасом — conflict pass-owned', async () => {
@@ -54,7 +61,7 @@ describe('процес оплати (sim)', () => {
 
   it('«чекаємо підтвердження» → оплачено через PENDING_CONFIRM_MS часу сайту; відмова — declined без результату', async () => {
     useTestControls.getState().setPayResult('pending');
-    useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
+    useAuthStore.getState().signInVerified('olena@example.com', T0);
     await svc.start({ product: { kind: 'pass' }, returnPath: '/', clientId: 'p' });
     vi.advanceTimersByTime(PAY_ROUNDTRIP_MS);
     expect(seen.at(-1)).toMatchObject({ status: 'pending', pendingSince: T0 + PAY_ROUNDTRIP_MS });

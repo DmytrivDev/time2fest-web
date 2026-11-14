@@ -3,8 +3,9 @@
  * Встановлюється лише за `IS_TEST_BUILD` (див. `TimeProvider`).
  */
 import type { ISO, PayResult } from '@/lib/data/types';
-import { getService } from '@/lib/api/services';
-import type { DevLetter } from '@/lib/api/contracts/auth';
+import { faultControls, getService } from '@/lib/api/services';
+import type { DevCode } from '@/lib/api/contracts/auth';
+import type { FaultControls } from '@/lib/api/sim/faults';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import { parseIsoWithOffset } from './params';
@@ -21,12 +22,15 @@ export interface T2FTestApi {
   setChatAvailable(ok: boolean): void;
   setChatSlow(seconds: number): void;
   setChatEmpty(on: boolean): void;
-  /** Вхід (імітація): сервіс недоступний, Google скасовано, вийти, останній лист (код і посилання). */
+  /** Вхід (імітація): сервіс недоступний, Google скасовано, вийти, останній код із «листа», прострочити його. */
   setAuthUnavailable(on: boolean): void;
   setGoogleCancelled(on: boolean): void;
   setNotifications(n: number): void;
   signOut(): void;
-  lastLetter(): DevLetter | null;
+  lastCode(): DevCode | null;
+  expireCode(): void;
+  /** Затримки й відмови сервісів (`lib/api/sim/faults`): стани «надсилаємо…», «не вдалося…». */
+  api?: FaultControls;
   /** Хтось відповів на твоє повідомлення (перевірка «Сповіщати про відповіді»). */
   emitReply(): void;
 }
@@ -68,7 +72,9 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     setGoogleCancelled: (on) => useTestControls.getState().setGoogleCancelled(on),
     setNotifications: (n) => useTestControls.getState().setNotifications(n),
     signOut: () => void getService('auth').signOut(),
-    lastLetter: () => getService('auth').devMailbox?.get() ?? null,
+    lastCode: () => getService('auth').devCode?.get() ?? null,
+    expireCode: () => getService('auth').devCode?.expire(),
+    api: faultControls(),
     emitReply: () => {
       // Шов E5a: інструмент імітації чату (`chat.dev`).
       getService('chat').dev?.emitReplyToMe(machine.get().at);

@@ -1,7 +1,7 @@
 /**
  * Вхід і реєстрація (S-AUTH, рішення 2026-10-29; дошки `Phone-Auth-*`, `Desk-Auth-*`) на імітації:
- * сторінка `/login/` і `/signup/` (без коду, рішення 2026-10-30: нова адреса — одразу «Акаунт створено»; адреса з акаунтом —
- * «Ми надіслали посилання» й вхід за посиланням; помилки),
+ * сторінка `/login/` і `/signup/` (Google — головна кнопка; пошта — код із 6 цифр, рішення 2026-11-13: однаково для нової
+ * адреси й наявної; помилки коду, «Надіслати ще раз», стани «надсилаємо…» / «перевіряємо…» через `window.__t2f.api`),
  * вхід під час трансляції — вікно на місці O-NICK, після входу аватар у хедері; на телефоні вікно, відкрите при згорнутому
  * чаті, — окремий шар, чат не розгортається.
  *
@@ -31,8 +31,10 @@ async function fresh(page: Page, path: string) {
   await waitForTimeApi(page);
 }
 
-const token = (page: Page) => page.evaluate(() => window.__t2f?.lastLetter()?.token ?? '');
-const signInBtn = (page: Page) => page.locator('main form').getByRole('button', { name: 'Увійти', exact: true });
+const lastCode = (page: Page) => page.evaluate(() => window.__t2f?.lastCode()?.code ?? '');
+const sendBtn = (page: Page) => page.locator('main form').getByRole('button', { name: 'Отримати код', exact: true });
+const codeField = (page: Page) => page.getByRole('textbox', { name: 'Код із листа' });
+const wrongOf = (c: string) => (c === '000000' ? '111111' : '000000');
 
 async function expectAxeClean(page: Page) {
   const violations = await runAxe(page);
@@ -55,18 +57,19 @@ test.describe('S-AUTH · сторінка', () => {
     await expectAxeClean(page);
   });
 
-  test('реєстрація: як вхід — картка «Ще немає пасу?» під формою, коралова «Створити акаунт»', async ({ page }) => {
+  test('реєстрація: як вхід — картка «Ще немає пасу?» під формою, Google — коралова, пошта — «Отримати код»', async ({ page }) => {
     await fresh(page, '/signup/');
     await expect(page.getByRole('heading', { level: 1, name: 'Створити акаунт' })).toBeVisible();
     await expect(page.locator('[data-block="pass-hint"]')).toBeVisible();
     await expect(page.locator('[data-block="pass-offer"]')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Створити акаунт', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Створити з Google' })).toHaveClass(/coral/);
+    await expect(page.getByRole('button', { name: 'Отримати код', exact: true })).toBeVisible();
     await expectAxeClean(page);
   });
 
-  test('порожній і невірний email — помилка під полем; нова адреса — одразу «Акаунт створено», без коду', async ({ page }) => {
+  test('порожній і невірний email — помилка під полем; нова адреса — код, і лише після нього «Акаунт створено»', async ({ page }) => {
     await fresh(page, '/signup/');
-    const submit = page.getByRole('button', { name: 'Створити акаунт', exact: true });
+    const submit = sendBtn(page);
     await submit.click();
     await expect(page.getByRole('alert').filter({ hasText: 'Введи email' })).toBeVisible();
     await page.getByLabel('Email').fill('olena@example');
@@ -74,8 +77,17 @@ test.describe('S-AUTH · сторінка', () => {
     await expect(page.getByRole('alert').filter({ hasText: 'Перевір email' })).toBeVisible();
     await page.getByLabel('Email').fill('olena@example.com');
     await submit.click();
+    await expect(page.getByRole('heading', { name: 'Введи код із листа' })).toBeVisible();
+    // Фокус — одразу в полі коду (телефон підставить код з листа сам).
+    await expect(codeField(page)).toBeFocused();
+    await expect(codeField(page)).toHaveAttribute('autocomplete', 'one-time-code');
+    await expect(codeField(page)).toHaveAttribute('inputmode', 'numeric');
+    // Без коду входу немає.
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:auth:v1') ?? '{}').state?.user ?? null)).toBeNull();
+    // Вставка «123 456» — і вхід на 6-й цифрі, без натискання «Увійти».
+    const code = await lastCode(page);
+    await codeField(page).fill(`${code.slice(0, 3)} ${code.slice(3)}`);
     await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
-    await expect(page.locator('input[autocomplete="one-time-code"]')).toHaveCount(0);
     // «Як тебе показувати» (2026-11-08): нік з пошти — перше слово до «@», прапор — за розташуванням.
     const profile = page.locator('[data-block="profile"]');
     await expect(profile.getByLabel('Нік')).toHaveValue('Olena');
@@ -83,33 +95,88 @@ test.describe('S-AUTH · сторінка', () => {
     await expectAxeClean(page);
   });
 
-  test('адреса з акаунтом — «Ми надіслали посилання» без коду; посилання впускає й повертає, звідки прийшли', async ({ page }) => {
+  test('адреса з акаунтом — той самий код; вхід повертає, звідки прийшли', async ({ page }) => {
     await fresh(page, '/login/');
     await page.evaluate(() => {
-      localStorage.setItem('t2f:auth:v1', JSON.stringify({ state: { user: null, accounts: ['anna@example.com'], letter: null, sends: [], passes: {} }, version: 1 }));
+      localStorage.setItem('t2f:auth:v1', JSON.stringify({ state: { user: null, accounts: ['anna@example.com'], code: null, sends: [], passes: {} }, version: 2 }));
       sessionStorage.setItem('t2f:session:authReturn', '/countries/');
     });
     await page.reload();
     // Дочекатися гідратації: інакше введене поле очищається, а акаунт зі сховища ще не прочитано (гонка, 2026-11-09).
     await waitForTimeApi(page);
     await page.getByLabel('Email').fill('anna@example.com');
-    await signInBtn(page).click();
-    await expect(page.getByRole('heading', { name: 'Ми надіслали посилання' })).toBeFocused();
-    await expect(page.getByText(/код/i)).toHaveCount(0);
+    await sendBtn(page).click();
+    await expect(page.getByRole('heading', { name: 'Введи код із листа' })).toBeVisible();
+    // Фокус — одразу в полі коду (телефон підставить код з листа сам).
+    await expect(codeField(page)).toBeFocused();
     await expect(page.getByRole('button', { name: 'Надіслати ще раз' })).toHaveAttribute('aria-disabled', 'true');
-    const link = await token(page);
-    await page.goto(`/login/?link=${link}`);
-    await expect(page.getByRole('heading', { name: 'Вхід виконано на цьому пристрої' })).toBeVisible();
-    await page.goto(`/login/?link=${link}`);
-    await expect(page.getByRole('heading', { name: 'Посилання вже не діє' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Надіслати нове' })).toBeVisible();
+    await expect(page.getByText(/Новий код можна попросити через/)).toBeVisible();
+    await codeField(page).fill(await lastCode(page));
+    await expect(page).toHaveURL(/\/countries\/$/, { timeout: 15_000 });
+  });
+
+  test('помилки коду: не підходить (спроби), згорів після 5, прострочений, немає зв’язку', async ({ page }) => {
+    await fresh(page, '/login/');
+    await page.getByLabel('Email').fill('a@example.com');
+    await sendBtn(page).click();
+    await expect(codeField(page)).toBeVisible();
+    const wrong = wrongOf(await lastCode(page));
+    await codeField(page).fill(wrong);
+    await expect(page.getByRole('alert').filter({ hasText: 'Код не підходить. Лишилось 4 спроби.' })).toBeVisible();
+    await expect(codeField(page)).toHaveValue('');
+    for (let i = 0; i < 4; i++) {
+      await codeField(page).fill(wrong);
+      await page.waitForTimeout(120);
+    }
+    await expect(page.getByRole('alert').filter({ hasText: 'Забагато невдалих спроб' })).toBeVisible();
+    await expect(codeField(page)).toBeDisabled();
+    // «Надіслати новий код» — після відліку 30 с; тестом — прибираємо ліміт і просимо новий.
+    await page.evaluate(() => {
+      const raw = JSON.parse(localStorage.getItem('t2f:auth:v1')!);
+      raw.state.sends = [];
+      localStorage.setItem('t2f:auth:v1', JSON.stringify(raw));
+      window.dispatchEvent(new StorageEvent('storage', { key: 't2f:auth:v1' }));
+    });
+    await page.getByRole('button', { name: 'Надіслати новий код' }).click();
+    await expect(codeField(page)).toBeEnabled();
+    await page.evaluate(() => window.__t2f?.expireCode());
+    await codeField(page).fill(await lastCode(page));
+    await expect(page.getByRole('alert').filter({ hasText: 'Код уже не діє' })).toBeVisible();
+    // Мережа впала посеред перевірки — «Спробувати ще», введене лишається.
+    await page.evaluate(() => {
+      const raw = JSON.parse(localStorage.getItem('t2f:auth:v1')!);
+      raw.state.sends = [];
+      localStorage.setItem('t2f:auth:v1', JSON.stringify(raw));
+      window.dispatchEvent(new StorageEvent('storage', { key: 't2f:auth:v1' }));
+    });
+    await page.getByRole('button', { name: 'Надіслати новий код' }).click();
+    await expect(codeField(page)).toBeEnabled();
+    await page.evaluate(() => window.__t2f?.api?.failNext('auth', 'verifyCode', 'network'));
+    const fresh6 = await lastCode(page);
+    await codeField(page).fill(fresh6);
+    await expect(page.getByRole('alert').filter({ hasText: 'Немає зв’язку — код не перевірено' })).toBeVisible();
+    await expect(codeField(page)).toHaveValue(fresh6);
+    await page.getByRole('button', { name: 'Спробувати ще' }).click();
+    await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
+  });
+
+  test('«Надсилаємо…» і «Перевіряємо…» поки сервіс відповідає (затримка з адреси)', async ({ page }) => {
+    await fresh(page, '/login/?simDelay=auth.requestCode:1500,auth.verifyCode:1500');
+    await page.getByLabel('Email').fill('slow@example.com');
+    await sendBtn(page).click();
+    await expect(page.locator('main [data-action="send-code"]')).toHaveText('Надсилаємо…');
+    await expect(page.locator('main [data-action="send-code"]')).toHaveAttribute('aria-busy', 'true');
+    await expect(codeField(page)).toBeVisible({ timeout: 5_000 });
+    await codeField(page).fill(await lastCode(page));
+    await expect(page.locator('main [data-action="verify"]')).toHaveText('Перевіряємо…');
+    await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible({ timeout: 5_000 });
   });
 
   test('вхід недоступний і Google скасовано — з машини часу', async ({ page }) => {
     await fresh(page, '/login/');
     await page.evaluate(() => window.__t2f?.setAuthUnavailable(true));
     await page.getByLabel('Email').fill('a@example.com');
-    await signInBtn(page).click();
+    await sendBtn(page).click();
     await expect(page.getByRole('heading', { name: 'Вхід тимчасово недоступний' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Спробувати ще' })).toBeVisible();
     await page.evaluate(() => window.__t2f?.setAuthUnavailable(false));
@@ -122,23 +189,21 @@ test.describe('S-AUTH · сторінка', () => {
     await expect(page.getByRole('alert').filter({ hasText: 'Вхід через Google не завершено' })).toBeVisible({ timeout: 5_000 });
   });
 
-  test('забагато листів — «Забагато спроб» з часом нового листа', async ({ page }) => {
+  test('забагато кодів — «Забагато спроб» з часом нового коду', async ({ page }) => {
     await fresh(page, '/login/');
     await page.evaluate(() => {
       const now = Date.now();
       localStorage.setItem(
         't2f:auth:v1',
-        JSON.stringify({ state: { user: null, accounts: ['a@example.com'], letter: null, sends: [now - 300_000, now - 200_000, now - 100_000], passes: {} }, version: 1 }),
+        JSON.stringify({ state: { user: null, accounts: [], code: null, sends: [now - 300_000, now - 240_000, now - 180_000, now - 120_000, now - 60_000], passes: {} }, version: 2 }),
       );
     });
     await page.reload();
-    // Вхід без коду (2026-11-10): адреса з акаунтом — лист із посиланням, і саме листи обмежено (3 за 10 хв).
-    // Дочекатися гідратації: інакше введене поле очищається, а акаунт зі сховища ще не прочитано (та сама гонка, що вище).
     await waitForTimeApi(page);
     await page.getByLabel('Email').fill('a@example.com');
-    await signInBtn(page).click();
+    await sendBtn(page).click();
     await expect(page.getByRole('alert').filter({ hasText: 'Забагато спроб' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Надіслати посилання · о \d\d:\d\d/ })).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByRole('button', { name: /Отримати код · о \d\d:\d\d/ })).toHaveAttribute('aria-disabled', 'true');
   });
 });
 

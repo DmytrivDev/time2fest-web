@@ -3,8 +3,9 @@
 /**
  * S-AUTH сторінкою: `/login/` («Увійти») і `/signup/` («Створити акаунт») за дошками `Phone-Auth*` / `Desk-Auth*`.
  * Телефон — одна колонка; десктоп (≥ 1024) — ліворуч «Навіщо акаунт», праворуч картка кроку. Пас на вході й реєстрації —
- * однаково, карткою «Ще немає Новорічного пасу?» під формою (правка власника 2026-10-29). Посилання з листа відкривається тут же: `/login/?link=<токен>` → «Акаунт створено»
- * (новий акаунт), «Вхід виконано на цьому пристрої» (наявний) або «Посилання вже не діє».
+ * однаково, карткою «Ще немає Новорічного пасу?» під формою (правка власника 2026-10-29). Пошта — код із 6 цифр на тій
+ * самій сторінці (рішення 2026-11-13); посилань у листі немає. Код, надісланий зі сторінки пасу («На цю адресу пас уже
+ * оформлено»), відкриває сторінку одразу з кроку «Введи код».
  * Після входу в наявний акаунт — повернення туди, звідки прийшли (`lib/auth/returnTo`).
  */
 import { useTranslations } from 'next-intl';
@@ -13,8 +14,8 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import type { AuthIntent } from '@/lib/api/contracts/auth';
-import { authActions, currentSession, useSession } from '@/lib/api/hooks/auth';
-import { returnPath, takeLetterSent } from '@/lib/auth/returnTo';
+import { currentSession, useSession } from '@/lib/api/hooks/auth';
+import { returnPath, takeCodeSent } from '@/lib/auth/returnTo';
 import { AuthSteps } from './AuthSteps';
 import { AuthIcon, type AuthIconName } from './icons';
 import { useAuthFlow, type AuthStep, type SignInResult } from './useAuthFlow';
@@ -25,24 +26,11 @@ interface Start {
   email?: string;
 }
 
-/** Розбір `?link=` один раз після монтування (статичний експорт не знає параметрів на збиранні). */
+/** Старт після монтування (статичний експорт не знає стану на збиранні): код уже надіслано з іншої сторінки — крок коду. */
 async function resolveStart(): Promise<Start> {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('link');
-  if (!token) {
-    // Лист уже надіслано з іншої сторінки (пас) — одразу «Лист надіслано».
-    const letter = currentSession()?.link;
-    if (takeLetterSent() && letter && !letter.used) return { step: { kind: 'sent' }, email: letter.email };
-    return {};
-  }
-  window.history.replaceState(null, '', window.location.pathname);
-  const res = await authActions.openLink(token);
-  // Сервіс не відповів — показуємо як прострочене посилання (окремого вигляду «не вдалося перевірити» немає).
-  if (!res.ok) return { step: { kind: 'expired' } };
-  const out = res.value;
-  if (out.kind === 'signed-in') return { step: out.isNew ? { kind: 'welcome', email: out.email } : { kind: 'otherDevice', email: out.email } };
-  const email = out.kind === 'expired' ? out.email : undefined;
-  return { step: { kind: 'expired', email }, email };
+  const code = currentSession()?.code;
+  if (takeCodeSent() && code && code.expiresAt > Date.now()) return { step: { kind: 'code' }, email: code.email };
+  return {};
 }
 
 export function AuthPage({ mode }: { mode: AuthIntent }) {
@@ -52,15 +40,15 @@ export function AuthPage({ mode }: { mode: AuthIntent }) {
   const [exitHref, setExitHref] = useState('/');
   const [start, setStart] = useState<Start | null>(null);
 
-  // Посилання з листа одноразове: розбираємо раз (StrictMode запускає ефект двічі).
+  // Старт визначаємо раз (StrictMode запускає ефект двічі).
   const resolved = useRef<Promise<Start> | null>(null);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- одноразово після монтування: sessionStorage і `?link=` (статичний експорт)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- одноразово після монтування: sessionStorage (статичний експорт)
     setExitHref(returnPath());
     let alive = true;
     const pending = resolved.current ?? (resolved.current = resolveStart());
     void pending.then((next) => {
-      // Уже увійшов і прийшов не з листа — сторінка входу не потрібна.
+      // Уже увійшов — сторінка входу не потрібна.
       const signedIn = !next.step && !!currentSession()?.user;
       if (!alive) return;
       if (signedIn) {
@@ -83,11 +71,11 @@ export function AuthPage({ mode }: { mode: AuthIntent }) {
       tabIndex={-1}
       className={cn(s.main, 'focus:outline-none')}
       data-page={mode === 'signup' ? 'S-AUTH-signup' : 'S-AUTH'}
-      // Поки не розібрано `?link=` (статичний HTML до гідратації) — той самий маркер, що в `loading.tsx` (2026-11-10).
+      // До старту (статичний HTML до гідратації) — той самий маркер, що в `loading.tsx` (2026-11-10).
       data-skeleton={start ? undefined : mode === 'signup' ? 'signup' : 'login'}
     >
       <BackLink href={exitHref} />
-      {/* Поки не розібрано `?link=`, показуємо форму (той самий вигляд, що в статичному HTML). */}
+      {/* До старту показуємо форму (той самий вигляд, що в статичному HTML). */}
       <Flow key={start ? 'ready' : 'boot'} mode={mode} start={start ?? {}} onSignedIn={onSignedIn} onExit={onExit} exitHref={exitHref} />
     </main>
   );

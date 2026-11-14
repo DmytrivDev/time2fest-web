@@ -1,7 +1,7 @@
 /**
  * Налаштування кабінету (`/account/`, дошки `Desk-Cabinet-New2` / `New3`, рішення власника 2026-11-08). Окремо від стору
  * гостя, щоб не міняти його схему: формат часу, країна й пояс, видимість, підказки паспорта, тихий режим,
- * підключений Google і зміна пошти, що чекає підтвердження. Пароля немає (вхід посиланням з листа або Google).
+ * підключений Google. Пароля немає (вхід кодом з листа або Google); зміна пошти — кодом, його тримає `stores/auth` (`code`).
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -25,8 +25,6 @@ export interface AccountSettings {
   quietDefault: boolean;
   /** Google підключено до акаунта з поштою (імітація). */
   googleLinked: boolean;
-  /** Нова пошта чекає підтвердження з листа. */
-  pendingEmail: { email: string; sentAt: number } | null;
 }
 
 interface AccountActions {
@@ -43,7 +41,6 @@ export const DEFAULT_ACCOUNT: AccountSettings = {
   passportHints: true,
   quietDefault: false,
   googleLinked: false,
-  pendingEmail: null,
 };
 
 export const useAccountStore = create<AccountSettings & AccountActions>()(
@@ -62,7 +59,8 @@ export const useAccountStore = create<AccountSettings & AccountActions>()(
         for (const k of Object.keys(DEFAULT_ACCOUNT)) out[k] = s[k as keyof AccountSettings];
         return out as unknown as AccountSettings;
       },
-      // Лише відомі налаштування: старе `firstRowHidden` («Перший ряд» прибрано 2026-11-12) не потрапляє в стан.
+      // Лише відомі налаштування: старі `firstRowHidden` («Перший ряд» прибрано 2026-11-12) і `pendingEmail` (зміна пошти
+      // листом, до кодів 2026-11-14) не потрапляють у стан.
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Record<string, unknown>;
         const known: Record<string, unknown> = {};

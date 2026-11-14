@@ -1,57 +1,80 @@
-/** Шов E3: адаптери `sim` входу й профілю — тонкі обгортки над сторами; правило пошти — лише в `lib/api/sim/auth`. */
+/** Шов: адаптери `sim` входу й профілю — тонкі обгортки над сторами; пошта — лише кодом (рішення 2026-11-13). */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { createSimAuth, NEW_EMAIL_SIGNS_IN_AT_ONCE, simSignInAfterPurchase } from '@/lib/api/sim/auth';
+import { createSimAuth } from '@/lib/api/sim/auth';
 import { createSimProfile } from '@/lib/api/sim/profile';
+import { authCodeError } from '@/lib/api/contracts/auth';
 import { authSession, useHasPass, useSession } from '@/lib/api/hooks/auth';
-import { GOOGLE_DELAY_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
+import { CODE_MAX_ATTEMPTS, GOOGLE_DELAY_MS, RESEND_GAP_MS } from '@/lib/auth/sim';
 import { useAccountStore } from '@/stores/account';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
+const signIn = (email: string, now: number) => useAuthStore.getState().signInVerified(email, now);
+const lastCode = () => useAuthStore.getState().code!.code;
+const wrongOf = (c: string) => (c === '000000' ? '111111' : '000000');
+
 beforeEach(() => {
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null });
   useTestControls.setState({ authUnavailable: false, googleCancelled: false });
 });
 afterEach(() => vi.useRealTimers());
 
 describe('sim-адаптер входу', () => {
-  it('правило пошти (рішення 2026-10-30): нова — одразу вхід + лист «ти увійшов»; з акаунтом — лише посилання', async () => {
-    expect(NEW_EMAIL_SIGNS_IN_AT_ONCE).toBe(true);
+  it('код: нова адреса — вхід лише після коду (акаунт створено); наявна — так само', async () => {
     const svc = createSimAuth();
-    const first = await svc.emailSignIn(' New@Example.com ', 'signup');
-    expect(first).toEqual({ ok: true, value: { kind: 'signed-in', isNew: true, email: 'new@example.com' } });
-    expect(useAuthStore.getState().letter?.welcome).toBe(true);
-    await svc.signOut();
-    const again = await svc.emailSignIn('new@example.com', 'signin');
-    expect(again.ok && again.value.kind).toBe('link-sent');
+    const sent = await svc.requestCode(' New@Example.com ', 'signup');
+    expect(sent.ok && sent.value).toMatchObject({ email: 'new@example.com', attemptsLeft: CODE_MAX_ATTEMPTS });
+    expect(sent.ok && sent.value.resendAt - sent.value.sentAt).toBe(RESEND_GAP_MS);
     expect(useAuthStore.getState().user).toBeNull();
+    expect(svc.peek()?.code?.email).toBe('new@example.com');
+    expect(await svc.verifyCode('new@example.com', lastCode())).toEqual({ ok: true, value: { isNew: true, email: 'new@example.com' } });
+    expect(svc.peek()?.code).toBeNull();
+    await svc.signOut();
+    useAuthStore.setState({ sends: [] });
+    await svc.requestCode('new@example.com', 'signin');
+    expect(useAuthStore.getState().user).toBeNull();
+    expect(await svc.verifyCode('new@example.com', lastCode())).toEqual({ ok: true, value: { isNew: false, email: 'new@example.com' } });
   });
 
-  it('ліміт листів → rate_limited з причиною й часом; сервіс недоступний → unavailable', async () => {
-    useAuthStore.setState({ accounts: ['a@b.co'] });
+  it('помилки коду: wrong-code зі спробами, too-many-attempts, expired; authCodeError їх розрізняє', async () => {
     const svc = createSimAuth();
-    await svc.emailSignIn('a@b.co', 'signin');
-    const wait = await svc.emailSignIn('a@b.co', 'signin');
+    await svc.requestCode('a@b.co', 'signin');
+    const wrong = wrongOf(lastCode());
+    const first = await svc.verifyCode('a@b.co', wrong);
+    expect(first).toEqual({ ok: false, error: { code: 'validation', reason: 'wrong-code', attemptsLeft: CODE_MAX_ATTEMPTS - 1 } });
+    if (!first.ok) expect(authCodeError(first.error)).toBe('wrong-code');
+    for (let i = 2; i < CODE_MAX_ATTEMPTS; i++) await svc.verifyCode('a@b.co', wrong);
+    const burnt = await svc.verifyCode('a@b.co', wrong);
+    expect(!burnt.ok && authCodeError(burnt.error)).toBe('too-many-attempts');
+    useAuthStore.setState({ sends: [] });
+    await svc.requestCode('a@b.co', 'signin');
+    svc.devCode!.expire();
+    const old = await svc.verifyCode('a@b.co', lastCode());
+    expect(!old.ok && authCodeError(old.error)).toBe('expired');
+  });
+
+  it('ліміт кодів → rate_limited (wait — відлік; сервіс недоступний → unavailable)', async () => {
+    const svc = createSimAuth();
+    await svc.requestCode('a@b.co', 'signin');
+    const wait = await svc.requestCode('a@b.co', 'signin');
     expect(wait.ok).toBe(false);
     if (!wait.ok) {
       expect(wait.error).toMatchObject({ code: 'rate_limited', reason: 'wait' });
+      expect(authCodeError(wait.error)).toBe('cooldown');
       expect(wait.error.retryAfterMs).toBeGreaterThan(RESEND_GAP_MS - 1000);
     }
     useTestControls.setState({ authUnavailable: true });
-    expect(await svc.emailSignIn('x@y.co', 'signin')).toEqual({ ok: false, error: { code: 'unavailable' } });
+    expect(await svc.requestCode('x@y.co', 'signin')).toEqual({ ok: false, error: { code: 'unavailable' } });
+    expect(await svc.verifyCode('x@y.co', '123456')).toEqual({ ok: false, error: { code: 'unavailable' } });
   });
 
-  it('посилання з листа: вхід, повтор — прострочене, чужий токен — invalid', async () => {
-    useAuthStore.setState({ accounts: ['a@b.co'] });
+  it('тестова пошта: код видно лише через devCode', async () => {
     const svc = createSimAuth();
-    const sent = await svc.sendLink('a@b.co', 'signin');
-    expect(sent.ok && sent.value.resendAt - sent.value.sentAt).toBe(RESEND_GAP_MS);
-    const token = useAuthStore.getState().letter!.token;
-    expect(await svc.openLink(token)).toEqual({ ok: true, value: { kind: 'signed-in', isNew: false, email: 'a@b.co' } });
-    expect(await svc.openLink(token)).toEqual({ ok: true, value: { kind: 'expired', email: 'a@b.co' } });
-    expect(await svc.openLink('nope')).toEqual({ ok: true, value: { kind: 'invalid' } });
+    await svc.requestCode('a@b.co', 'signin');
+    expect(svc.devCode!.get()).toMatchObject({ email: 'a@b.co', code: lastCode(), purpose: 'signin', used: false });
+    expect(svc.devCode!.get()).toBe(svc.devCode!.get());
   });
 
   it('Google: вхід після затримки; скасування до кінця — входу немає', async () => {
@@ -73,7 +96,7 @@ describe('sim-адаптер входу', () => {
     const svc = createSimAuth();
     const seen: boolean[] = [];
     const off = svc.subscribe((s) => seen.push(s.hasPass));
-    simSignInAfterPurchase('Olena@Example.com', 1);
+    signIn('Olena@Example.com', 1);
     useAuthStore.getState().grantPass('olena@example.com', 2);
     off();
     expect(seen.at(-1)).toBe(true);
@@ -82,9 +105,20 @@ describe('sim-адаптер входу', () => {
   });
 });
 
+describe('пас гостя на пристрої (рішення 2026-11-13)', () => {
+  it('гість після оплати: пас на пристрої без входу; вхід з тією ж поштою — пас акаунта', async () => {
+    const svc = createSimAuth();
+    useAuthStore.getState().grantDevicePass('olena@example.com', 5);
+    expect(svc.peek()).toMatchObject({ user: null, hasPass: true, passSince: 5, devicePass: { email: 'olena@example.com', since: 5 } });
+    await svc.requestCode('olena@example.com', 'signin');
+    await svc.verifyCode('olena@example.com', lastCode());
+    expect(svc.peek()).toMatchObject({ user: { email: 'olena@example.com' }, hasPass: true, devicePass: null });
+  });
+});
+
 describe('хуки сесії', () => {
   it('peek: увійшов — видно в першому ж кадрі після монтування; вихід — одразу', async () => {
-    simSignInAfterPurchase('olena@example.com', 1);
+    signIn('olena@example.com', 1);
     useAuthStore.getState().grantPass('olena@example.com', 2);
     authSession.reset();
     const { result } = renderHook(() => ({ s: useSession(), pass: useHasPass() }));
@@ -98,7 +132,7 @@ describe('хуки сесії', () => {
 
 describe('кеш з peek', () => {
   it('підписка раніше за перший рендер (гідратація) — дані з peek, а не «loading» без сесії', () => {
-    simSignInAfterPurchase('olena@example.com', 1);
+    signIn('olena@example.com', 1);
     authSession.reset();
     const off = authSession.subscribe(() => undefined);
     expect(authSession.getSnapshot()).toMatchObject({ status: 'ready', data: { user: { email: 'olena@example.com' } } });
@@ -114,8 +148,25 @@ describe('sim-адаптер профілю', () => {
     expect(useAccountStore.getState().hour12).toBe(true);
   });
 
+  it('зміна пошти — кодом на нову адресу; помилки ті самі, що й у входу', async () => {
+    signIn('olena@example.com', 1);
+    useAuthStore.getState().grantPass('olena@example.com', 2);
+    const svc = createSimProfile();
+    expect(await svc.changeEmail('olena@example.com')).toEqual({ ok: false, error: { code: 'validation', reason: 'same-email' } });
+    const sent = await svc.changeEmail('New@Example.com');
+    expect(sent.ok && sent.value.pendingEmail).toMatchObject({ email: 'new@example.com', attemptsLeft: CODE_MAX_ATTEMPTS });
+    // Код зміни пошти не впускає як код входу.
+    expect((await createSimAuth().verifyCode('new@example.com', lastCode())).ok).toBe(false);
+    const bad = await svc.confirmEmailChange(wrongOf(lastCode()));
+    expect(!bad.ok && authCodeError(bad.error)).toBe('wrong-code');
+    const ok = await svc.confirmEmailChange(lastCode());
+    expect(ok.ok && ok.value.pendingEmail).toBeNull();
+    expect(useAuthStore.getState().user?.email).toBe('new@example.com');
+    expect(useAuthStore.getState().passes['new@example.com']).toBe(2);
+  });
+
   it('видалення акаунта: акаунт, пас, дані гостя й налаштування — геть', async () => {
-    simSignInAfterPurchase('olena@example.com', 1);
+    signIn('olena@example.com', 1);
     useAuthStore.getState().grantPass('olena@example.com', 2);
     useGuestStore.getState().setNick('Olena');
     useAccountStore.getState().set('hour12', true);

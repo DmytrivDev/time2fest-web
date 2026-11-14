@@ -18,7 +18,7 @@ afterEach(() => {
 /** Увійти в акаунт `email` (без листа — примітив «сервера» імітації) і видати на нього пас. */
 export function grantTestPass(email = TEST_PASS_EMAIL, now = Date.now()): void {
   granted = true;
-  useAuthStore.getState().signInWithPurchase(email, now);
+  useAuthStore.getState().signInVerified(email, now);
   useAuthStore.getState().grantPass(email, now);
 }
 

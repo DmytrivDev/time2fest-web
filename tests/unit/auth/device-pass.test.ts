@@ -1,7 +1,6 @@
 /**
  * Пас на пристрої — лише пас акаунта, що увійшов (правка власника 2026-11-10), і «Скинути стан гостя» стирає все.
  */
-import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -15,7 +14,7 @@ const hasPass = testHasPass;
 const staleDevicePass = () => useGuestStore.setState({ hasPass: true } as never);
 
 beforeEach(() => {
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {} });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {} });
   useGuestStore.getState().resetGuest();
 });
 
@@ -26,17 +25,17 @@ describe('пас лише з входом в акаунт з пасом', () => 
     expect(hasPass()).toBe(false);
     useAuthStore.getState().signOut();
     staleDevicePass();
-    simEmailSignIn('new@example.com', 'signin', T0);
+    useAuthStore.getState().signInVerified('new@example.com', T0);
     expect(hasPass()).toBe(false);
   });
 
   it('оформлення дає пас; вихід його знімає; вхід в акаунт з пасом — повертає', () => {
-    useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
+    useAuthStore.getState().signInVerified('olena@example.com', T0);
     useAuthStore.getState().grantPass('olena@example.com', T0);
     expect(hasPass()).toBe(true);
     useAuthStore.getState().signOut();
     expect(hasPass()).toBe(false);
-    useAuthStore.getState().signInWithPurchase('olena@example.com', T0 + 1);
+    useAuthStore.getState().signInVerified('olena@example.com', T0 + 1);
     expect(hasPass()).toBe(true);
   });
 
@@ -48,7 +47,7 @@ describe('пас лише з входом в акаунт з пасом', () => 
 
 describe('«Скинути стан гостя» — увесь стан на пристрої', () => {
   it('стирає вхід, паси акаунтів, гостя, незавершені оплати й усі ключі t2f: у localStorage', () => {
-    useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
+    useAuthStore.getState().signInVerified('olena@example.com', T0);
     useAuthStore.getState().grantPass('olena@example.com', T0);
     useGuestStore.getState().setSchedule(['evt_lisbon_2027']);
     usePassStore.setState({ phase: 'pending', email: 'olena@example.com', pendingSince: T0 });
@@ -58,7 +57,7 @@ describe('«Скинути стан гостя» — увесь стан на п
 
     resetDeviceState();
 
-    expect(useAuthStore.getState()).toMatchObject({ user: null, accounts: [], passes: {}, letter: null, pendingPassGift: null });
+    expect(useAuthStore.getState()).toMatchObject({ user: null, accounts: [], passes: {}, code: null, devicePass: null, pendingPassGift: null });
     expect(hasPass()).toBe(false);
     expect(useGuestStore.getState().schedule).toEqual([]);
     expect(usePassStore.getState().phase).toBe('form');

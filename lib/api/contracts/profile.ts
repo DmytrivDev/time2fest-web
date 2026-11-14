@@ -26,8 +26,8 @@ export interface Profile {
   /** «Мій графік» — id подій (до 4 країн у поясі; правило перевіряє й сервер). */
   schedule: readonly string[];
   googleLinked: boolean;
-  /** Нова пошта чекає підтвердження з листа. */
-  pendingEmail: { email: string; sentAt: number } | null;
+  /** Нова пошта чекає коду з листа (6 цифр): коли надіслано, коли можна новий, до коли діє, скільки спроб лишилось. */
+  pendingEmail: { email: string; sentAt: number; resendAt: number; expiresAt: number; attemptsLeft: number } | null;
 }
 
 export type ProfilePatch = {
@@ -57,8 +57,16 @@ export interface ProfileService {
   toggleSchedule(eventId: string): Promise<ApiResult<readonly string[]>>;
   /** «Замінити в графіку?»: країна `outIso` поясу події поступається місцем. `POST /api/me/schedule/replace`. */
   replaceSchedule(outIso: string, eventId: string): Promise<ApiResult<readonly string[]>>;
-  /** Зміна пошти: лист на нову адресу. `POST /api/me/email`; скасувати — `DELETE /api/me/email`. */
+  /**
+   * Зміна пошти — тим самим кодом із 6 цифр, що й вхід (рішення власника 2026-11-13): код на нову адресу
+   * (`POST /api/me/email`, Better Auth `emailOTP` `type: 'email-verification'`), повторний виклик — «Надіслати ще раз».
+   * Відмови — як у входу (`contracts/auth`, `authCodeError`): `rate_limited` `wait` | `too-many`, `validation` `email` |
+   * `same-email`, `conflict` `taken` (адреса вже в іншого акаунта).
+   */
   changeEmail(email: string): Promise<ApiResult<Profile>>;
+  /** Код з листа на нову адресу → пошту змінено. `POST /api/me/email/verify`. Відмови — `wrong-code`, `expired`, `too-many-attempts`. */
+  confirmEmailChange(code: string): Promise<ApiResult<Profile>>;
+  /** `DELETE /api/me/email`. */
   cancelEmailChange(): Promise<ApiResult<Profile>>;
   /** Підключити / відключити Google до акаунта з поштою. `POST/DELETE /api/me/google` (у `http` — перехід на Google). */
   linkGoogle(): Promise<ApiResult<Profile>>;
@@ -67,8 +75,6 @@ export interface ProfileService {
   exportData(): Promise<ApiResult<Record<string, unknown>>>;
   /** Видалення акаунта (разом з даними гостя на пристрої). `DELETE /api/me`. */
   deleteAccount(): Promise<ApiResult<void>>;
-  /** Лише `sim` у тестовій збірці: «лист підтвердження відкрито» — пошту змінено. */
-  devConfirmEmail?(): Promise<ApiResult<Profile>>;
 }
 
 export type { NickReason };

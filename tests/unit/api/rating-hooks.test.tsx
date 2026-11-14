@@ -118,7 +118,7 @@ describe('голоси', () => {
     );
     const { result } = renderHook(() => ({ mine: useMyVote(kyiv.id), all: useMyVotes() }));
     await waitFor(() => expect(result.current.all).toEqual({ [london.id]: 5 }));
-    let done!: Promise<void>;
+    let done!: Promise<boolean>;
     act(() => {
       done = ratingActions.vote(kyiv.id, 3);
     });

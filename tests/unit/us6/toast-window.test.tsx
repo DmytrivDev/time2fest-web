@@ -35,7 +35,7 @@ const settle = () =>
 beforeEach(() => {
   vi.useFakeTimers();
   useGuestStore.getState().resetGuest();
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {}, pendingPassGift: null });
   useChatFeed.getState().reset();
   useToastStore.getState().reset();
   useToastStore.setState({ said: [] });
@@ -187,7 +187,7 @@ describe('оплата й результат', () => {
   });
 
   it('$10 того, хто увійшов: «Пас активний», пас — на акаунті', () => {
-    useAuthStore.getState().signInWithPurchase('olena@example.com', Date.now());
+    useAuthStore.getState().signInVerified('olena@example.com', Date.now());
     useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
     renderPage(<Opener tier={10} />);
     fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));

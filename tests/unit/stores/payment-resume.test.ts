@@ -32,7 +32,7 @@ describe('незавершена оплата переживає перезав�
     vi.useFakeTimers();
     vi.setSystemTime(T0);
     window.localStorage.clear();
-    useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {} });
+    useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {} });
     usePassStore.getState().reset();
     useToastStore.getState().reset();
     useToastStore.setState({ said: [] });

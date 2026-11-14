@@ -28,6 +28,8 @@ export interface ApiError {
   /** Доменна причина: `link-forbidden`, `taken`, `expired`, `too-many`… Перелік — у контракті домену. */
   reason?: string;
   retryAfterMs?: number;
+  /** Код із листа: скільки спроб лишилось (`reason: 'wrong-code'`). */
+  attemptsLeft?: number;
   /** Для журналу, не для людини: тексти інтерфейсу беремо з `messages/*.json` за `code`/`reason`. */
   message?: string;
 }

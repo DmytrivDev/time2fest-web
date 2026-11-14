@@ -884,3 +884,79 @@
   border-top: 1px solid var(--color-border);
   background: var(--color-surface);
 }
+
+/* ---------- Код із листа (рішення власника 2026-11-13) ---------- */
+/* Одне поле на 6 цифр: великі рівні цифри з розрядкою, по центру. */
+.codeField {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding-left: 0.4em;
+}
+.codeField::placeholder {
+  letter-spacing: 0.4em;
+  color: var(--color-text-muted);
+}
+.codeStatus:empty {
+  display: none;
+}
+/* Демо: код під полем у пунктирному блоці (як тестова пошта) — видно, що це не частина продукту. */
+.demoHint {
+  margin: 10px 0 0;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--color-border-strong);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.demoHint b {
+  color: var(--color-text);
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+/* «Надсилаємо…» / «Перевіряємо…»: кнопка лишається у фокусі, але приглушена. */
+.busy {
+  cursor: progress;
+  opacity: 0.85;
+}
+.busyDot {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: t2f-busy-spin 0.8s linear infinite;
+}
+@keyframes t2f-busy-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .busyDot {
+    animation-duration: 2.4s;
+  }
+}
+/* Під кнопкою кроку: «Новий код надіслано» — видно, а не лише для зчитувача. */
+.okLine {
+  margin: 10px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.okLine svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--color-highlight);
+}

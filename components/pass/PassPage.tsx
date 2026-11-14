@@ -17,7 +17,7 @@ import { useContext, useId, useState } from 'react';
 import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { cn } from '@/components/primitives/cn';
-import { currentPath, rememberLetterSent, rememberReturn } from '@/lib/auth/returnTo';
+import { currentPath, rememberCodeSent, rememberReturn } from '@/lib/auth/returnTo';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useSession } from '@/lib/api/hooks/auth';
 import { PassBuy, usePassView } from './PassBuy';
@@ -210,8 +210,8 @@ export function PassPage() {
           <PassBuy
             variant="page"
             onSignIn={toLogin}
-            onLetterSent={() => {
-              rememberLetterSent();
+            onCodeSent={() => {
+              rememberCodeSent();
               toLogin();
             }}
           />

@@ -650,11 +650,6 @@
   font-size: 12px;
   font-weight: 600;
 }
-.soon {
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 700;
-}
 .signOut {
   display: flex;
   min-height: 44px;
@@ -769,4 +764,28 @@
   .spin {
     animation: none;
   }
+}
+
+/* Стан запису на сервер під розділом: «Зберігаємо…» / «Не вдалося зберегти зміну». */
+.saveLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.saveLine svg {
+  flex: none;
+}
+/* Порожній пошук країни — увесь список, прокрутка всередині (смуга — як у чаті). */
+.optionsAll {
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* Зміна пошти кодом: поле коду й дії в повідомленні. */
+.codeBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
 }

@@ -2,16 +2,18 @@
 
 /**
  * Оформлення Новорічного пасу — тіло картки на сторінці (`S-PASS · …`) і у вікні під трансляцією (`O-PASS-BUY · …`).
- * Стани (дошки v100, правки v102): гість (Google або email; помилка email; «На цю адресу пас уже оформлено»), увійшов — без email
- * («Оформлюємо на акаунт … · Не ти?»), «Відкриваємо оплату…», «Чекаємо підтвердження оплати», «Оплата не пройшла»,
- * «Пас активний — свято на повну!», «Твій пас уже діє». Логіку тримає `stores/pass`.
+ * Стани (дошки v100, правки v102): гість (Google або email; помилка email; «На цю адресу пас уже оформлено» → код для входу),
+ * увійшов — без email («Оформлюємо на акаунт … · Не ти?»), «Відкриваємо оплату…» (і поки сервіс приймає замовлення),
+ * «Не вдалося відкрити оплату» (мережа, оплату вимкнено), «Чекаємо підтвердження оплати», «Оплата не пройшла», «Час на
+ * оплату минув», «Пас активний — свято на повну!», «Твій пас уже діє». Гість, що оплатив без входу, має пас на цьому
+ * пристрої; «Увійти кодом» переносить його в акаунт (рішення власника 2026-11-13). Логіку тримає `stores/pass`.
  * Кнопка після оплати: на сторінці — «Повернутися на головну»; у вікні (воно поруч із трансляцією) — «Дивитися далі»:
  * закриває вікно, і права колонка стає такою, як була (чат чи нічого) — правка власника 2026-10-30.
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
-import { useEffect, useRef, type ReactNode } from 'react';
-import { Bold, EmailField, ErrorLine, GoogleButton, Separator, authStyles as a } from '@/components/auth/AuthParts';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Bold, BusyButton, EmailField, ErrorLine, GoogleButton, Separator, authStyles as a } from '@/components/auth/AuthParts';
 import { AuthIcon } from '@/components/auth/icons';
 import { useHydrated } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
@@ -19,13 +21,15 @@ import { Flag } from '@/components/primitives/Flag';
 import { ToastGift } from '@/components/toast/ToastGift';
 import { useCanToast } from '@/components/toast/useToastSeason';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { authCodeError } from '@/lib/api/contracts/auth';
 import { authActions, useHasPass, useProfile, useSession } from '@/lib/api/hooks/auth';
+import { formatClock } from '@/lib/i18n/time';
 import { usePassStore } from '@/stores/pass';
 import s from './pass.module.css';
 
 export type PassBuyVariant = 'page' | 'stream';
 
-export type PassView = 'guest' | 'signed' | 'opening' | 'pending' | 'failed' | 'success' | 'active';
+export type PassView = 'guest' | 'signed' | 'opening' | 'pending' | 'failed' | 'startFailed' | 'expired' | 'success' | 'active';
 
 /** Що показати зараз: з пасом — «уже діє» (крім щойно оплаченого), далі — етап оплати, далі — хто людина. */
 export function usePassView(): PassView {
@@ -36,7 +40,7 @@ export function usePassView(): PassView {
   if (!hydrated) return 'guest';
   if (phase === 'success') return 'success';
   if (hasPass) return 'active';
-  if (phase === 'opening' || phase === 'pending' || phase === 'failed') return phase;
+  if (phase === 'opening' || phase === 'pending' || phase === 'failed' || phase === 'startFailed' || phase === 'expired') return phase;
   return user ? 'signed' : 'guest';
 }
 
@@ -44,8 +48,8 @@ export interface PassBuyProps {
   variant: PassBuyVariant;
   /** «Вже маєш акаунт? Увійти»: сторінка — `/login/`, вікно — вхід вікном. */
   onSignIn: () => void;
-  /** «Надіслати посилання для входу» (адреса з пасом): лист уже надіслано — показати крок «Лист надіслано». */
-  onLetterSent: () => void;
+  /** «Надіслати код» (адреса з пасом, чи пас на пристрої): код уже надіслано — показати крок «Введи код». */
+  onCodeSent: () => void;
   /** Вікно: «Дивитися далі» — закрити вікно. */
   onDone?: () => void;
 }
@@ -67,6 +71,47 @@ function Head({ signed }: { signed: boolean }) {
       </div>
       <h3 className={s.h3}>{signed ? t('titleSigned') : t('titleGuest')}</h3>
     </>
+  );
+}
+
+/** «Надіслати код» на пошту: «Надсилаємо…», помилка рядком; надіслано (чи код щойно йшов) — крок «Введи код». */
+function useSendCode(email: string, onSent: () => void) {
+  const t = useTranslations('auth.code');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<ReactNode>(null);
+  const send = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    const now = Date.now();
+    const res = await authActions.requestCode(email, 'signin');
+    setBusy(false);
+    if (res.ok) return onSent();
+    const kind = authCodeError(res.error);
+    if (kind === 'cooldown') return onSent();
+    if (kind === 'rate-limited') setError(t.rich('sendFailedLimited', { time: formatClock(now + (res.error.retryAfterMs ?? 0)), b: Bold }));
+    else if (kind === 'unavailable') setError(t('sendFailedUnavailable'));
+    else setError(t('sendFailedNetwork'));
+  };
+  return { busy, error, send };
+}
+
+/** Пас на пристрої гостя: пояснення й «Увійти кодом» (код на пошту з оплати). */
+function DeviceSignIn({ email, onCodeSent }: { email: string; onCodeSent: () => void }) {
+  const t = useTranslations('pass.buy');
+  const code = useSendCode(email, onCodeSent);
+  return (
+    <div className={s.deviceNote} data-row="device-pass">
+      <p className={cn(s.note, s.noteSm)} style={{ marginTop: 0 }}>
+        <AuthIcon name="user" size={18} />
+        <span>{t.rich('deviceNote', { email, b: Bold })}</span>
+      </p>
+      <BusyButton type="button" busy={code.busy} busyLabel={t('sending')} tone="ghost" onClick={code.send} action="device-sign-in">
+        <AuthIcon name="mail" size={18} />
+        {t('deviceSignIn')}
+      </BusyButton>
+      {code.error ? <ErrorLine mt={4}>{code.error}</ErrorLine> : null}
+    </div>
   );
 }
 
@@ -194,20 +239,16 @@ function LinkRow({ items, mt = 8 }: { items: { label: string; href: string }[]; 
 }
 
 /** Гість: Google або email — як вхід; акаунт створиться разом з оплатою. */
-function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
+function GuestForm({ variant, onSignIn, onCodeSent }: PassBuyProps) {
   const t = useTranslations('pass.buy');
   const stream = variant === 'stream';
   const flow = usePassStore();
-  const busy = flow.phase === 'opening';
+  const busy = flow.phase === 'opening' || flow.starting;
   const google = flow.phase === 'google';
   const issue = flow.emailIssue;
   const emailError =
     issue === 'empty' ? t('emailEmpty') : issue === 'invalid' ? (/@[^.]*$/.test(flow.email.trim()) ? t('emailNoDomain') : t('emailInvalid')) : null;
-  const sendLink = async () => {
-    const res = await authActions.sendLink(flow.email, 'signin');
-    // Лист нещодавно вже йшов — той самий крок «Лист надіслано» з відліком до нового.
-    if (res.ok || res.error.reason === 'wait') onLetterSent();
-  };
+  const code = useSendCode(flow.email, onCodeSent);
   return (
     <form
       noValidate
@@ -233,10 +274,11 @@ function GuestForm({ variant, onSignIn, onLetterSent }: PassBuyProps) {
             </span>
           </span>
           <span className={s.paidHint}>{t('paidHint')}</span>
-          <button type="button" className={cn('t2f-focus', a.btn, a.coral, s.paidBtn)} onClick={sendLink} data-action="send-link">
+          <BusyButton type="button" busy={code.busy} busyLabel={t('sending')} tone="coral" className={s.paidBtn} onClick={code.send} action="send-code">
             <AuthIcon name="mail" size={18} />
             {t('paidSend')}
-          </button>
+          </BusyButton>
+          {code.error ? <ErrorLine mt={8}>{code.error}</ErrorLine> : null}
         </div>
       ) : null}
       <PayButton busy={busy} disabled={flow.paidEmail} mt={flow.paidEmail ? 12 : stream ? 12 : 16} />
@@ -261,7 +303,7 @@ function SignedForm({ variant }: { variant: PassBuyVariant }) {
   const email = (useSession().session?.user?.email ?? '');
   const flow = usePassStore();
   const canToast = useCanToast();
-  const busy = flow.phase === 'opening';
+  const busy = flow.phase === 'opening' || flow.starting;
   return (
     <form
       noValidate
@@ -348,6 +390,53 @@ function Failed() {
   );
 }
 
+/** Старт оплати не вдався (мережа, оплату вимкнено): гроші не списано, «Спробувати ще». */
+function StartFailed() {
+  const t = useTranslations('pass.buy');
+  const flow = usePassStore();
+  return (
+    <form
+      noValidate
+      className={cn(s.body, 'flex flex-col gap-1.5')}
+      data-phase="start-failed"
+      onSubmit={(e) => {
+        e.preventDefault();
+        flow.pay();
+      }}
+    >
+      <span aria-hidden="true" className={s.failBadge}>
+        <AuthIcon name="alert" size={24} />
+      </span>
+      <h3 role="alert" className={s.failTitle}>
+        {t('startFailedTitle')}
+      </h3>
+      <p className={s.text}>{flow.startError === 'unavailable' ? t('startUnavailableText') : t('startFailedText')}</p>
+      <PayButton busy={flow.starting || flow.phase === 'opening'} label={t('retry', { price: PRICE })} />
+      <LinkRow items={[{ label: t('payHelp'), href: '/help/' }]} mt={4} />
+    </form>
+  );
+}
+
+/** Замовлення закрилось неоплаченим (PayPro: час минув): «Оформити заново» — до форми з тим самим введеним. */
+function Expired() {
+  const t = useTranslations('pass.buy');
+  return (
+    <div className={cn(s.body, 'flex flex-col gap-1.5')} data-phase="expired">
+      <span aria-hidden="true" className={s.failBadge}>
+        <AuthIcon name="clock" size={24} />
+      </span>
+      <h3 role="alert" className={s.failTitle}>
+        {t('expiredTitle')}
+      </h3>
+      <p className={s.text}>{t('expiredText')}</p>
+      <button type="button" className={cn('t2f-focus', a.btn, a.coral)} style={{ marginTop: '1rem' }} onClick={() => usePassStore.setState({ phase: 'form' })} data-action="again">
+        {t('again')}
+      </button>
+      <LinkRow items={[{ label: t('payHelp'), href: '/help/' }]} mt={4} />
+    </div>
+  );
+}
+
 /** Сторінка: «Повернутися на головну»; вікно: «Дивитися далі» (закриває вікно). */
 function DoneButton({ variant, onDone, ghost, mt, homeLabel }: { variant: PassBuyVariant; onDone?: () => void; ghost?: boolean; mt: number; homeLabel?: string }) {
   const t = useTranslations('pass.buy');
@@ -386,9 +475,11 @@ const CONFETTI = (
   </svg>
 );
 
-function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => void }) {
+function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDone?: () => void; onCodeSent: () => void }) {
   const t = useTranslations('pass.buy');
-  const email = (useSession().session?.user?.email ?? '');
+  const session = useSession().session;
+  const devicePass = session?.user ? null : (session?.devicePass ?? null);
+  const email = session?.user?.email ?? devicePass?.email ?? '';
   const profile = useProfile();
   const nick = profile?.nick ?? undefined;
   const flagCode = profile?.flagCode ?? profile?.detectedFlag ?? 'earth';
@@ -439,20 +530,26 @@ function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
       </ul>
       <DoneButton variant={variant} onDone={onDone} mt={18} />
       {variant === 'stream' ? <MoreButton onDone={onDone} /> : null}
-      <p className={cn(s.note, s.noteSm)} style={{ marginTop: '0.875rem' }}>
-        <AuthIcon name="user" size={18} />
-        <span>{t.rich('signedAs', { email, b: Bold })}</span>
-      </p>
+      {devicePass ? (
+        <DeviceSignIn email={devicePass.email} onCodeSent={onCodeSent} />
+      ) : (
+        <p className={cn(s.note, s.noteSm)} style={{ marginTop: '0.875rem' }}>
+          <AuthIcon name="user" size={18} />
+          <span>{t.rich('signedAs', { email, b: Bold })}</span>
+        </p>
+      )}
       <LinkRow items={[{ label: t('terms'), href: '/payments/' }]} mt={2} />
     </div>
   );
 }
 
-function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => void }) {
+function Active({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDone?: () => void; onCodeSent: () => void }) {
   const t = useTranslations('pass.buy');
   const p = useTranslations('pass.page');
-  const user = (useSession().session?.user ?? null);
-  const since = useSession().session?.passSince ?? undefined;
+  const session = useSession().session;
+  const user = session?.user ?? null;
+  const devicePass = user ? null : (session?.devicePass ?? null);
+  const since = session?.passSince ?? undefined;
   const date = since !== undefined ? new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long' }).format(since) : null;
   return (
     <div className={col(variant)} data-phase="active">
@@ -467,7 +564,13 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
       <h3 className={s.failTitle} style={{ marginTop: '0.875rem' }}>
         {t('activeTitle')}
       </h3>
-      <p className={s.text}>{user && date ? t.rich('activeText', { date, email: user.email, b: Bold }) : t('activeTextDevice')}</p>
+      <p className={s.text}>
+        {user && date
+          ? t.rich('activeText', { date, email: user.email, b: Bold })
+          : devicePass && date
+            ? t.rich('activeTextGuestDevice', { date, email: devicePass.email, b: Bold })
+            : t('activeTextDevice')}
+      </p>
       <DoneButton variant={variant} onDone={onDone} mt={20} homeLabel={t('toHome')} />
       {variant === 'page' ? (
         <NextLink href="/passport/" className={cn('t2f-focus', a.btn, a.ghost)} style={{ marginTop: '0.5rem' }}>
@@ -476,6 +579,7 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
       ) : (
         <MoreButton onDone={onDone} />
       )}
+      {devicePass ? <DeviceSignIn email={devicePass.email} onCodeSent={onCodeSent} /> : null}
       <LinkRow items={[{ label: t('refunds'), href: '/payments/' }, { label: t('help'), href: '/help/' }]} mt={4} />
     </div>
   );
@@ -485,12 +589,16 @@ function Active({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => v
 export function PassBuy(props: PassBuyProps) {
   const view = usePassView();
   const signedIn = (useSession().session?.user ?? null) !== null;
-  const { variant, onDone } = props;
+  const { variant, onDone, onCodeSent } = props;
   switch (view) {
     case 'success':
-      return <Success variant={variant} onDone={onDone} />;
+      return <Success variant={variant} onDone={onDone} onCodeSent={onCodeSent} />;
     case 'active':
-      return <Active variant={variant} onDone={onDone} />;
+      return <Active variant={variant} onDone={onDone} onCodeSent={onCodeSent} />;
+    case 'startFailed':
+      return <StartFailed />;
+    case 'expired':
+      return <Expired />;
     case 'pending':
       return <Pending variant={variant} onDone={onDone} />;
     case 'failed':

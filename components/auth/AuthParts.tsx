@@ -1,8 +1,9 @@
 'use client';
 
 /**
- * Дрібні частини екранів входу за дошками `*-Auth-*`: поле email, Google, роздільник, рядок помилки, віковий рядок,
- * перемикач «вхід / реєстрація», поле коду, «Надіслати ще раз» з відліком і блоки пасу (картка «Ще немає пасу?»,
+ * Дрібні частини екранів входу за дошками `*-Auth-*`: поле email, Google (головна кнопка — рішення власника 2026-11-13),
+ * роздільник, рядок помилки, віковий рядок, перемикач «вхід / реєстрація», поле коду з 6 цифр (`CodeField`), «Надіслати ще
+ * раз» з відліком 30 с, «Надсилаємо…» на кнопках і блоки пасу (картка «Ще немає пасу?»,
  * розгорнута пропозиція, рядок у вікні під час трансляції).
  * «Оформити пас» — спокійна кнопка з жовтою межею (рішення 2026-10-29): веде до оформлення (`useGetPass`: вікно під
  * трансляцією чи сторінка `/pass/`). «Що дає пас» розгортає список можливостей на місці.
@@ -13,7 +14,9 @@ import { createContext, useContext, useEffect, useId, useRef, useState, type Rea
 import { cn } from '@/components/primitives/cn';
 import { Reveal } from '@/components/primitives/Reveal';
 import { PASS_HREF, useGetPass } from '@/components/pass/PassWindow';
+import { IS_DEMO_BUILD } from '@/lib/env';
 import { formatShortCountdown } from '@/lib/i18n/time';
+import { useDevCode } from '@/lib/api/hooks/auth';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { AuthIcon, GoogleMark, type AuthIconName } from './icons';
 import s from './auth.module.css';
@@ -92,12 +95,145 @@ export function Separator({ label, margin }: { label: string; margin?: string })
   );
 }
 
-export function GoogleButton({ label, onClick, className }: { label: string; onClick: () => void; className?: string }) {
+/** Google. `primary` — головна (коралова) кнопка кроку входу; у купівлі пасу головна — оплата, тож там Google спокійна. */
+export function GoogleButton({ label, onClick, className, primary }: { label: string; onClick: () => void; className?: string; primary?: boolean }) {
   return (
-    <button type="button" onClick={onClick} className={cn('t2f-focus', s.btn, s.second, className)}>
+    <button type="button" onClick={onClick} className={cn('t2f-focus', s.btn, primary ? s.coral : s.second, className)} data-action="google">
       <GoogleMark />
       {label}
     </button>
+  );
+}
+
+/** Маленьке коло, що крутиться, у кнопці «Надсилаємо…» / «Перевіряємо…» (колір — від тексту кнопки). */
+export function BusyDot() {
+  return <span aria-hidden="true" className={s.busyDot} />;
+}
+
+/**
+ * Кнопка дії, що йде на сервер: поки запит у дорозі — «Надсилаємо…» з колом, `aria-busy`, повторне натискання
+ * ігнорується (кнопка лишається у фокусі, тож не `disabled`).
+ */
+export function BusyButton({
+  busy,
+  busyLabel,
+  children,
+  tone = 'second',
+  type = 'submit',
+  onClick,
+  className,
+  action,
+}: {
+  busy: boolean;
+  busyLabel: string;
+  children: ReactNode;
+  tone?: 'coral' | 'second' | 'ghost';
+  type?: 'submit' | 'button';
+  onClick?: () => void;
+  className?: string;
+  action?: string;
+}) {
+  return (
+    <button
+      type={type}
+      aria-busy={busy || undefined}
+      aria-disabled={busy || undefined}
+      onClick={(e) => {
+        if (busy) {
+          e.preventDefault();
+          return;
+        }
+        onClick?.();
+      }}
+      className={cn('t2f-focus', s.btn, s[tone], busy && s.busy, className)}
+      data-action={action}
+    >
+      {busy ? <BusyDot /> : null}
+      {busy ? busyLabel : children}
+    </button>
+  );
+}
+
+/**
+ * Поле коду з листа: одне поле на 6 цифр (`inputMode="numeric"`, `autoComplete="one-time-code"` — телефон підставить код
+ * з листа сам), вставка «123 456» чи «123456» працює, на 6-й цифрі — перевірка (`onComplete`).
+ */
+export function CodeField({
+  value,
+  onChange,
+  error,
+  status,
+  disabled,
+  focusOnMount,
+  label,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  error?: ReactNode;
+  /** «Перевіряємо…» — під полем, ввічливо. */
+  status?: ReactNode;
+  disabled?: boolean;
+  /** Фокус у поле, щойно крок відкрився (код уже йде листом). */
+  focusOnMount?: boolean;
+  label: string;
+}) {
+  const uid = useId();
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (focusOnMount) ref.current?.focus({ preventScroll: true });
+  }, [focusOnMount]);
+  useEffect(() => {
+    if (error && !disabled) ref.current?.focus();
+  }, [error, disabled]);
+  return (
+    <div className="flex flex-col">
+      <label htmlFor={`${uid}-code`} className={s.label}>
+        {label}
+      </label>
+      <input
+        ref={ref}
+        id={`${uid}-code`}
+        name="one-time-code"
+        type="text"
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        pattern="[0-9]*"
+        spellCheck={false}
+        placeholder="••••••"
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${uid}-err` : status ? `${uid}-status` : undefined}
+        className={cn('t2f-nk-input', s.field, s.codeField)}
+        data-field="code"
+      />
+      {error ? (
+        <ErrorLine id={`${uid}-err`} mt={8}>
+          {error}
+        </ErrorLine>
+      ) : null}
+      <p id={`${uid}-status`} role="status" className={cn(s.hint, s.codeStatus)}>
+        {status ?? ''}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Демо-збірка: листів немає — код видно під полем у позначеному блоці (той самий пунктир, що в тестових засобах).
+ * У тестовій збірці код — у машині часу й `window.__t2f.lastCode()`; у робочій цього блоку немає.
+ */
+export function DemoCodeHint({ purpose = 'signin' }: { purpose?: 'signin' | 'email-change' }) {
+  const t = useTranslations('auth.code');
+  const box = useDevCode();
+  const c = box?.code ?? null;
+  if (!IS_DEMO_BUILD || !c || c.used || c.purpose !== purpose) return null;
+  return (
+    <p className={s.demoHint} data-demo-code="">
+      <span className={s.mailboxTitle}>{t('demo')}</span>
+      <span>{t.rich('demoText', { code: c.code, b: Bold })}</span>
+    </p>
   );
 }
 
@@ -207,19 +343,22 @@ export function SwitchRow({
   );
 }
 
-/** «Надіслати ще раз» з відліком до нового листа; після відліку — звичайна кнопка. */
+/** «Надіслати ще раз» з відліком 30 с до нового коду; після відліку — звичайна кнопка; у дорозі — «Надсилаємо…». */
 export function ResendButton({
   until,
   onResend,
   enabledLabel,
   className,
+  busy,
 }: {
   until: number | null;
   onResend: () => void;
   enabledLabel?: string;
   className?: string;
+  busy?: boolean;
 }) {
-  const t = useTranslations('auth.sent');
+  const t = useTranslations('auth.code');
+  const ta = useTranslations('auth');
   const uid = useId();
   const now = useTick(until !== null);
   const left = until !== null ? until - now : 0;
@@ -243,10 +382,10 @@ export function ResendButton({
     );
   }
   return (
-    <button type="button" onClick={onResend} className={cn('t2f-focus', s.btn, s.ghost, className)}>
+    <BusyButton type="button" busy={!!busy} busyLabel={ta('sending')} tone="ghost" onClick={onResend} className={className} action="resend">
       <AuthIcon name="refresh" />
       {enabledLabel ?? t('resend')}
-    </button>
+    </BusyButton>
   );
 }
 

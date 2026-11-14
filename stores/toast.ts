@@ -143,7 +143,9 @@ export const useToastStore = create<ToastFlowState>()(
           void getService('checkout')
             .start({ product: { kind: 'toast', tier: s.tier, text: s.text }, returnPath: '/', clientId })
             .then((res) => {
-              if (!res.ok && get().clientId === clientId) set({ phase: 'failed', pendingSince: undefined, clientId: undefined });
+              // Старт не вдався: мережа — «Немає з’єднання» (гроші не списано, текст лишається); інше — «Оплата не пройшла».
+              if (!res.ok && get().clientId === clientId)
+                set({ phase: res.error.code === 'network' ? 'offline' : 'failed', pendingSince: undefined, clientId: undefined });
             });
           return true;
         },

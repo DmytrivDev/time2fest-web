@@ -21,7 +21,8 @@ import { currentAirEvent } from '@/lib/engine/currentAirEvent';
 import { computeJumps, JUMP_IDS, type JumpId } from '@/lib/time/jumps';
 import { parseIsoWithOffset, parseMachineParams } from '@/lib/time/params';
 import { useNow, useTimeMachine, useTimeSource } from '@/lib/time/TimeProvider';
-import { authActions, useSession } from '@/lib/api/hooks/auth';
+import { authActions, useDevCode, useSession } from '@/lib/api/hooks/auth';
+import { devFaults } from '@/lib/api/hooks/dev';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import styles from './time-machine-panel.module.css';
@@ -31,7 +32,7 @@ const SPEEDS = [
   { value: '10', label: '×10' },
   { value: '60', label: '×60' },
 ] as const;
-const PAY_RESULTS: PayResult[] = ['success', 'pending', 'declined'];
+const PAY_RESULTS: PayResult[] = ['success', 'pending', 'declined', 'expired'];
 const OFFSETS = Array.from({ length: 27 }, (_, i) => i - 12).map((h) => {
   const sign = h < 0 ? '-' : '+';
   return `${sign}${String(Math.abs(h)).padStart(2, '0')}:00`;
@@ -142,6 +143,10 @@ function PanelBody({
   const googleCancelled = useTestControls((s) => s.googleCancelled);
   const notifications = useTestControls((s) => s.notifications);
   const signedIn = (useSession().session?.user ?? null) !== null;
+  const devCode = useDevCode();
+  const faults = devFaults();
+  const [apiSlow, setApiSlow] = useState(false);
+  const [apiDown, setApiDown] = useState(false);
 
   useEffect(() => {
     ref.current?.focus({ preventScroll: true });
@@ -331,6 +336,42 @@ function PanelBody({
           checked={googleCancelled}
           onCheckedChange={(v) => useTestControls.getState().setGoogleCancelled(v)}
         />
+        {devCode ? (
+          <div className="flex flex-col gap-1 text-caption text-text-secondary" data-control="auth-code">
+            {t('code')}
+            {devCode.code && !devCode.code.used ? (
+              <span className="flex flex-wrap items-center gap-2 text-body text-text">
+                <span data-testid="tm-code">{t('codeLine', { code: devCode.code.code, email: devCode.code.email })}</span>
+                <Button variant="secondary" compact onClick={devCode.expire}>
+                  {t('codeExpire')}
+                </Button>
+              </span>
+            ) : (
+              <span className="text-text-muted">{t('codeNone')}</span>
+            )}
+          </div>
+        ) : null}
+        {faults ? (
+          <>
+            <Switch
+              label={t('apiSlow')}
+              checked={apiSlow}
+              onCheckedChange={(v) => {
+                setApiSlow(v);
+                faults.delay('*', v ? 3000 : 0);
+              }}
+            />
+            <Switch
+              label={t('apiDown')}
+              checked={apiDown}
+              onCheckedChange={(v) => {
+                setApiDown(v);
+                if (v) faults.fail('*', undefined, 'network');
+                else faults.unfail('*');
+              }}
+            />
+          </>
+        ) : null}
         <label className="flex items-center justify-between gap-3 text-body">
           {t('notifications')}
           <select

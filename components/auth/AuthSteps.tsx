@@ -1,9 +1,10 @@
 'use client';
 
 /**
- * Вміст кроків S-AUTH за дошками (`Phone-Auth-*`, `Desk-Auth-*`): вхід, реєстрація, Google, лист з посиланням надіслано
- * (коду немає — рішення 2026-10-30), посилання не діє, забагато спроб, вхід недоступний (і «немає мережі» рядком під кнопкою),
- * посилання відкрито на іншому пристрої, «Акаунт створено».
+ * Вміст кроків S-AUTH за дошками (`Phone-Auth-*`, `Desk-Auth-*`): вхід, реєстрація, Google (головна кнопка), код із 6 цифр
+ * (рішення власника 2026-11-13: «надсилаємо…», поле коду, «перевіряємо…», код не підходить / згорів / прострочений, немає
+ * зв’язку, «Надіслати ще раз» з відліком 30 с), забагато кодів, вхід недоступний (і «немає мережі» рядком під кнопкою),
+ * «Акаунт створено».
  * `variant="stream"` — те саме у вікні під час трансляції: без «До трансляцій», пас — коротким рядком,
  * перемикання «вхід / реєстрація» — без переходу зі сторінки.
  * Коралова кнопка — одна на крок.
@@ -12,14 +13,16 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useEffect, useRef } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { IS_TEST_BUILD } from '@/lib/env';
 import { formatClock } from '@/lib/i18n/time';
-import { useDevMailbox, useSession } from '@/lib/api/hooks/auth';
+import { useSession } from '@/lib/api/hooks/auth';
 import {
   AccountPerks,
   AgeLine,
   Badge,
   Bold,
+  BusyButton,
+  CodeField,
+  DemoCodeHint,
   EmailField,
   ErrorLine,
   GoogleButton,
@@ -88,16 +91,12 @@ function Step({ flow, stream, onSwitchMode, onExit, exitHref }: Omit<AuthStepsPr
       return <PerksStep flow={flow} />;
     case 'google':
       return <GoogleStep flow={flow} stream={stream} />;
-    case 'sent':
-      return <SentStep flow={flow} />;
-    case 'expired':
-      return <ExpiredStep flow={flow} email={flow.step.email} />;
+    case 'code':
+      return <CodeStep flow={flow} />;
     case 'toomany':
       return <TooManyStep flow={flow} until={flow.step.until} />;
     case 'unavailable':
       return <UnavailableStep flow={flow} onExit={onExit} exitHref={stream ? undefined : exitHref} />;
-    case 'otherDevice':
-      return <OtherDeviceStep email={flow.step.email} exitHref={exitHref!} />;
     case 'welcome':
       return <WelcomeStep email={flow.step.email} stream={stream} onExit={onExit} />;
   }
@@ -110,6 +109,8 @@ function useEmailError(flow: AuthFlow): string | null {
 
 function OfflineLine({ flow }: { flow: AuthFlow }) {
   const t = useTranslations('auth.unavailable');
+  const c = useTranslations('auth.code');
+  if (flow.sendFailed) return <ErrorLine mt={12}>{c('sendFailedNetwork')}</ErrorLine>;
   return flow.offlinePending ? (
     <p role="status" className={s.note} style={{ marginTop: '0.75rem' }}>
       <AuthIcon name="cloud-off" size={18} />
@@ -126,7 +127,7 @@ function GoogleFailed({ flow }: { flow: AuthFlow }) {
 function onSubmit(flow: AuthFlow) {
   return (e: { preventDefault(): void }) => {
     e.preventDefault();
-    flow.submitEmail();
+    if (!flow.sending) flow.submitEmail();
   };
 }
 
@@ -144,17 +145,18 @@ function SigninForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
         </>
       )}
       <GoogleFailed flow={flow} />
-      <GoogleButton label={t('signin.google')} onClick={flow.startGoogle} className={stream ? s.mt16 : s.mt24} />
+      <GoogleButton primary label={t('signin.google')} onClick={flow.startGoogle} className={stream ? s.mt16 : s.mt24} />
       <Separator label={t('signin.orEmail')} margin={stream ? '16px 0' : undefined} />
       <EmailField
         value={flow.email}
         onChange={flow.setEmail}
         error={err}
         hint={stream ? t('email.hintStream') : t('email.hint')}
+        readOnly={flow.sending}
       />
-      <button type="submit" className={cn('t2f-focus', s.btn, s.coral, stream ? s.mt12 : s.mt16)}>
-        {t('signin.send')}
-      </button>
+      <BusyButton busy={flow.sending} busyLabel={t('sending')} className={stream ? s.mt12 : s.mt16} action="send-code">
+        {t('email.submit')}
+      </BusyButton>
       <OfflineLine flow={flow} />
       <SwitchRow
         question={t('signin.noAccount')}
@@ -183,12 +185,12 @@ function SignupForm({ flow, stream, onSwitchMode }: { flow: AuthFlow; stream: bo
         </>
       )}
       <GoogleFailed flow={flow} />
-      <GoogleButton label={t('signup.google')} onClick={flow.startGoogle} className={stream ? s.mt16 : s.mt24} />
+      <GoogleButton primary label={t('signup.google')} onClick={flow.startGoogle} className={stream ? s.mt16 : s.mt24} />
       <Separator label={t('signin.orEmail')} margin={stream ? '16px 0' : undefined} />
-      <EmailField value={flow.email} onChange={flow.setEmail} error={err} hint={t('email.hintSignup')} />
-      <button type="submit" className={cn('t2f-focus', s.btn, s.coral, stream ? s.mt12 : s.mt16)}>
-        {t('signup.submit')}
-      </button>
+      <EmailField value={flow.email} onChange={flow.setEmail} error={err} hint={t('email.hintSignup')} readOnly={flow.sending} />
+      <BusyButton busy={flow.sending} busyLabel={t('sending')} className={stream ? s.mt12 : s.mt16} action="send-code">
+        {t('email.submit')}
+      </BusyButton>
       <OfflineLine flow={flow} />
       <SwitchRow
         question={t('signup.haveAccount')}
@@ -254,10 +256,10 @@ function GoogleStep({ flow, stream }: { flow: AuthFlow; stream: boolean }) {
       </button>
       <Note icon="alert">{t('google.note')}</Note>
       <Separator label={t('google.or')} margin="20px 0 16px" />
-      <EmailField value={flow.email} onChange={flow.setEmail} error={err} hint={t('email.hint')} />
-      <button type="submit" className={cn('t2f-focus', s.btn, s.second, s.mt16)}>
-        {t('signin.send')}
-      </button>
+      <EmailField value={flow.email} onChange={flow.setEmail} error={err} hint={t('email.hint')} readOnly={flow.sending} />
+      <BusyButton busy={flow.sending} busyLabel={t('sending')} className={s.mt16} action="send-code">
+        {t('email.submit')}
+      </BusyButton>
       <OfflineLine flow={flow} />
     </form>
   );
@@ -274,71 +276,107 @@ function GoogleIconLg() {
   );
 }
 
-function resendUntil(flow: AuthFlow): number | null {
-  return flow.letter ? flow.letter.resendAt : null;
+/** Помилка під полем коду за станом. */
+function useCodeError(flow: AuthFlow): string | null {
+  const t = useTranslations('auth.code');
+  const st = flow.codeState;
+  if (st.kind === 'wrong') return t('wrong', { left: st.left });
+  if (st.kind === 'too-many') return t('tooMany');
+  if (st.kind === 'expired') return t('expired');
+  if (st.kind === 'network') return t('network');
+  return null;
 }
 
-function SentStep({ flow }: { flow: AuthFlow }) {
-  const t = useTranslations('auth.sent');
-  const email = flow.letter?.email ?? flow.email;
-  return (
-    <div className="flex flex-col">
-      <Badge icon="mail" className={s.pageTop} />
-      <Title afterBadge>{t('title')}</Title>
-      <Lead>{t.rich('lead', { email, b: Bold })}</Lead>
-      <button type="button" onClick={flow.changeEmail} className={cn('t2f-focus', s.linkBtn, s.linkStart)}>
-        {t('change')}
-      </button>
-      <p className={s.hint} style={{ marginTop: '0.25rem' }}>
-        {t('spam')}
-      </p>
-      <ResendButton until={resendUntil(flow)} onResend={() => flow.send(email, { resend: true })} className={s.mt20} />
-      <Resent flow={flow} email={email} />
-      <Note icon="moon" mt={24}>
-        {t('stay')}
-      </Note>
-      <TestMailbox />
-    </div>
-  );
-}
-
-function Resent({ flow, email }: { flow: AuthFlow; email: string }) {
-  const t = useTranslations('auth.sent');
-  return (
-    <p role="status" className="sr-only">
-      {flow.resentAt ? t('resent', { email }) : ''}
-    </p>
-  );
-}
-
-function ExpiredStep({ flow, email }: { flow: AuthFlow; email?: string }) {
+/**
+ * «Введи код із листа»: одне поле на 6 цифр, вхід на 6-й цифрі; «Перевіряємо…»; помилки (не підходить — скільки спроб
+ * лишилось; 5 невдалих — код згорів; минуло 10 хв — прострочений; немає зв’язку — «Спробувати ще»); «Надіслати ще раз»
+ * з відліком 30 с; «Змінити пошту». Згорілий чи прострочений код — головна дія «Надіслати новий код».
+ */
+function CodeStep({ flow }: { flow: AuthFlow }) {
   const t = useTranslations('auth');
-  const to = email ?? flow.letter?.email;
+  const st = flow.codeState;
+  const error = useCodeError(flow);
+  const email = flow.codeEmail;
+  const dead = st.kind === 'too-many' || st.kind === 'expired';
+  const checking = st.kind === 'checking';
   return (
-    <div className="flex flex-col">
-      <Badge icon="unlink" tone="grey" className={s.pageTop} />
-      <Title afterBadge>{t('expired.title')}</Title>
-      <Lead>{to ? t.rich('expired.lead', { email: to, b: Bold }) : t('expired.leadNoEmail')}</Lead>
-      {to ? (
-        <button type="button" onClick={() => flow.send(to)} className={cn('t2f-focus', s.btn, s.coral, s.mt24)}>
-          {t('expired.send')}
-        </button>
-      ) : null}
-      <button
-        type="button"
-        onClick={() => {
-          if (to && !flow.email) flow.setEmail(to);
-          flow.setStep({ kind: 'form' });
-        }}
-        className={cn('t2f-focus self-center', s.linkBtn, 'mt-2')}
-      >
-        {to ? t('expired.change') : t('signin.send')}
+    <form
+      noValidate
+      className="flex flex-col"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (dead) void flow.send(email, { resend: true });
+        else void flow.verify(flow.code);
+      }}
+    >
+      <Badge icon="mail" className={s.pageTop} />
+      <Title afterBadge>{t('code.title')}</Title>
+      <Lead>{t.rich('code.lead', { email, b: Bold })}</Lead>
+      <button type="button" onClick={flow.changeEmail} className={cn('t2f-focus', s.linkBtn, s.linkStart)} data-action="change-email">
+        {t('code.change')}
       </button>
-      <OfflineLine flow={flow} />
-      <Separator label={t('expired.or')} margin="12px 0 20px" />
-      <GoogleButton label={t('signin.google')} onClick={flow.startGoogle} />
-      <Note icon="chat">{t('why.free')}</Note>
-    </div>
+      <div className={s.mt12}>
+        <CodeField
+          label={t('code.label')}
+          value={flow.code}
+          onChange={flow.setCode}
+          error={error}
+          status={checking ? t('code.checking') : null}
+          disabled={dead}
+          focusOnMount
+        />
+        <DemoCodeHint />
+      </div>
+      {dead ? (
+        <BusyButton busy={flow.sending} busyLabel={t('sending')} tone="coral" className={s.mt16} action="new-code">
+          {t('code.newCode')}
+        </BusyButton>
+      ) : st.kind === 'network' ? (
+        <BusyButton busy={false} busyLabel={t('code.checking')} tone="coral" className={s.mt16} action="verify">
+          <AuthIcon name="refresh" />
+          {t('code.retry')}
+        </BusyButton>
+      ) : (
+        <BusyButton busy={checking} busyLabel={t('code.checking')} tone="coral" className={s.mt16} action="verify">
+          {t('code.submit')}
+        </BusyButton>
+      )}
+      {dead ? null : (
+        <>
+          <p className={s.hint} style={{ marginTop: '0.75rem' }}>
+            {t('code.spam')}
+          </p>
+          <ResendButton
+            until={flow.codeInfo?.resendAt ?? null}
+            busy={flow.sending}
+            onResend={() => void flow.send(email, { resend: true })}
+            className={s.mt12}
+          />
+        </>
+      )}
+      <ResendLine flow={flow} email={email} />
+      <Note icon="moon" mt={20}>
+        {t('code.stay')}
+      </Note>
+    </form>
+  );
+}
+
+/** Що сталося з «Надіслати ще раз»: надіслано (видно й оголошено), немає зв’язку, забагато кодів. */
+function ResendLine({ flow, email }: { flow: AuthFlow; email: string }) {
+  const t = useTranslations('auth.code');
+  const r = flow.resend;
+  if (r.kind === 'network') return <ErrorLine mt={10}>{t('resendNetwork')}</ErrorLine>;
+  if (r.kind === 'limited') return <ErrorLine mt={10}>{t.rich('resendLimited', { time: formatClock(r.until), b: Bold })}</ErrorLine>;
+  return (
+    <p role="status" className={r.kind === 'sent' ? s.okLine : 'sr-only'}>
+      {r.kind === 'sent' ? (
+        <>
+          <AuthIcon name="check-circle" size={18} />
+          <span>{t('resent', { email })}</span>
+        </>
+      ) : null}
+    </p>
   );
 }
 
@@ -347,7 +385,7 @@ function TooManyStep({ flow, until }: { flow: AuthFlow; until: number }) {
   const now = useTick(true);
   const left = until - now;
   const time = formatClock(until);
-  const email = flow.letter?.email ?? flow.email;
+  const email = flow.codeInfo?.email ?? flow.email;
   return (
     <div className="flex flex-col">
       <Title>{t('signin.title')}</Title>
@@ -369,12 +407,12 @@ function TooManyStep({ flow, until }: { flow: AuthFlow; until: number }) {
           {t('tooMany.sendAt', { time })}
         </button>
       ) : (
-        <button type="button" onClick={() => flow.submitEmail()} className={cn('t2f-focus', s.btn, s.coral, s.mt16)}>
-          {t('signin.send')}
-        </button>
+        <BusyButton type="button" busy={flow.sending} busyLabel={t('sending')} tone="coral" onClick={() => flow.submitEmail()} className={s.mt16} action="send-code">
+          {t('email.submit')}
+        </BusyButton>
       )}
       <Separator label={t('tooMany.meanwhile')} margin="20px 0 16px" />
-      <GoogleButton label={t('signin.google')} onClick={flow.startGoogle} />
+      <GoogleButton primary={left > 0} label={t('signin.google')} onClick={flow.startGoogle} />
       <Note icon="chat">{t('tooMany.note')}</Note>
     </div>
   );
@@ -411,32 +449,6 @@ function UnavailableStep({ flow, onExit, exitHref }: { flow: AuthFlow; onExit: (
   );
 }
 
-function OtherDeviceStep({ email, exitHref }: { email: string; exitHref: string }) {
-  const t = useTranslations('auth.otherDevice');
-  return (
-    <div className="flex flex-col">
-      <Badge icon="check-circle" className={s.pageTop} />
-      <Title afterBadge>{t('title')}</Title>
-      <Lead>{t.rich('lead', { email, b: Bold })}</Lead>
-      <NextLink href={exitHref} className={cn('t2f-focus', s.btn, s.coral, s.mt24)}>
-        {t('toLive')}
-      </NextLink>
-      <section aria-labelledby="auth-od-q" className={s.infoBox}>
-        <span aria-hidden="true" className={cn(s.dot, s.grey, s.badgeMd)}>
-          <AuthIcon name="devices" />
-        </span>
-        <span className={s.boxBody}>
-          <span id="auth-od-q" className={s.boxTitle}>
-            {t('q')}
-          </span>
-          <span className={s.boxText}>{t('qText')}</span>
-        </span>
-      </section>
-      <Note icon="moon">{t('stay')}</Note>
-    </div>
-  );
-}
-
 function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean; onExit: () => void }) {
   const t = useTranslations('auth.welcome');
   const user = useSession().session?.user;
@@ -450,31 +462,5 @@ function WelcomeStep({ email, stream, onExit }: { email: string; stream: boolean
       <ProfileForm email={email} googleName={google ? user?.name : undefined} stream={stream} onDone={onExit} />
       {stream ? null : <PassOfferCard welcome toPage className="mt-6" />}
     </div>
-  );
-}
-
-/** Тестова збірка: замість справжнього листа — посилання просто тут. */
-function TestMailbox() {
-  const t = useTranslations('auth.test');
-  const box = useDevMailbox();
-  const letter = box?.letter ?? null;
-  const now = useTick(IS_TEST_BUILD && !!letter);
-  if (!IS_TEST_BUILD || !box || !letter) return null;
-  const expired = letter.used || now > letter.expiresAt;
-  return (
-    <aside aria-label={t('title')} className={s.mailbox} data-test-mailbox="">
-      <span className={s.mailboxTitle}>{t('title')}</span>
-      <span>{t('letter', { email: letter.email })}</span>
-      {expired ? <span>✕</span> : null}
-      <span className={s.pair}>
-        <a href={`/login/?link=${letter.token}`} target="_blank" rel="noopener" className={cn('t2f-focus', s.btn, s.ghost)} data-test-link="">
-          {t('open')}
-        </a>
-        <button type="button" onClick={box.expire} className={cn('t2f-focus', s.btn, s.ghost)}>
-          {t('expire')}
-        </button>
-      </span>
-      <span className={s.hint}>{t('note')}</span>
-    </aside>
   );
 }

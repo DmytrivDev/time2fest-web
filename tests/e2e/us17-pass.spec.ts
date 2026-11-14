@@ -89,16 +89,27 @@ test('оплата поштою: «Чекаємо підтвердження» �
   await expect(active.getByRole('link', { name: 'Допомога' })).toHaveAttribute('href', '/help/');
 });
 
-test('оформлення пасу поштою: прапор за IP одразу в аватарі шапки, без перезавантаження (правка 2026-11-10)', async ({ page }) => {
+test('гість оплатив поштою: пас працює на пристрої без входу; «Увійти кодом» переносить його в акаунт (рішення 2026-11-13)', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   await page.getByRole('textbox', { name: 'Email' }).fill('flag@example.com');
   await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
-  await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
-  // Аватар — круглий прапор під вуаллю (не просто літера на темному тлі).
+  const success = page.locator('[data-phase="success"]');
+  await expect(success).toContainText('Пас активний', { timeout: 60_000 });
+  // Входу немає — у шапці «Увійти», а не аватар; пас уже діє (жовтої кнопки «Пас» немає).
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:auth:v1') ?? '{}').state?.user ?? null)).toBeNull();
+  await expect(page.getByRole('banner').getByRole('link', { name: /Новорічний пас/ })).toHaveCount(0);
+  const device = success.locator('[data-row="device-pass"]');
+  await expect(device).toContainText('Пас працює на цьому пристрої');
+  await device.getByRole('button', { name: 'Увійти кодом' }).click();
+  await expect(page).toHaveURL(/\/login\/$/);
+  await expect(page.getByRole('heading', { name: 'Введи код із листа' })).toBeVisible();
+  const code = await page.evaluate(() => window.__t2f?.lastCode()?.code ?? '');
+  await page.getByRole('textbox', { name: 'Код із листа' }).fill(code);
+  await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
+  // Прапор за IP — одразу в аватарі шапки (правка 2026-11-10), пас — на акаунті.
   const avatar = page.getByRole('banner').locator('span[style*="background-image"]');
   await expect(avatar.first()).toHaveAttribute('style', /ua/i);
-  const flag = await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.flagCode);
-  expect(flag).toBe('UA');
+  expect(await page.evaluate(accountPass)).toBe(true);
 });
 
 /** Старий стан пристрою: пас гостя без входу (до правки 2026-11-10 так лишалось після виходу й скидання). */

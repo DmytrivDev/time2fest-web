@@ -53,6 +53,8 @@ test('країна й пояс: США → Лос-Анджелес', async ({ pa
   await st.getByRole('button', { name: 'Змінити' }).click();
   const picker = page.locator('[data-block="zone-picker"]');
   await picker.locator('button').first().click();
+  // Перший клік — одразу список країн (поточна першою), а не порожній пошук (перевірка дошок 2026-11-14).
+  await expect(picker.locator('[data-list="all"]')).toBeVisible();
   await page.getByLabel('Пошук країни').fill('США');
   await picker.getByRole('button', { name: 'США', exact: true }).click();
   await picker.getByRole('radio', { name: /Лос-Анджелес/ }).click();

@@ -14,6 +14,7 @@ import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
 import { PaymentWatcher } from '@/components/offers/PaymentWatcher';
 import { ScheduleToast } from '@/components/schedule/ScheduleToast';
 import { OfflineNotice } from '@/components/shell/Offline';
+import { ReturnNotice } from '@/components/offers/ReturnNotice';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { ShellHeader } from '@/components/shell/ShellHeader';
 import { ApiRuntime } from '@/lib/api/ApiRuntime';
@@ -51,6 +52,8 @@ function LiveShell({ children }: { children: ReactNode }) {
               <ShellHeader current="home" />
               {/* Немає мережі: одна смуга в потоці (не поверх відео); відлік іде далі, зникає сама. */}
               <OfflineNotice />
+              {/* Повернення з PayPro (`?order=`) і з Google (`?signin=google`) — смуга в потоці, як «Немає з’єднання». */}
+              <ReturnNotice />
               {/* `.shell` — position: relative: PlayerHost стоїть у ньому абсолютно над слотом (прокрутка без JS). */}
               <div className={styles.shell}>
                 <div className={styles.top}>

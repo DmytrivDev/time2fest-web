@@ -1,55 +1,42 @@
 /**
- * Адаптер `sim` домену «Вхід» (`docs/backend/frontend-seam.md`, E3): обгортка над «сервером» імітації `stores/auth.ts`.
- * Тут — і лише тут — правило пошти (рішення власника 2026-10-30, остаточне рішення для бекенду ще не ухвалене):
- *   • нова пошта у формі входу → акаунт створено й людина увійшла одразу (+ лист «ти увійшов» для інших пристроїв);
- *   • пошта з акаунтом → лише посилання з листа;
- *   • пошта, введена при оплаті пасу гостем → після оплати людина входить у неї без листа (`simSignInAfterPurchase`).
- * Щоб імітувати бекенд «посилання для кожної пошти», досить `NEW_EMAIL_SIGNS_IN_AT_ONCE = false` — інтерфейс не змінюється.
- * Тестові перемикачі (`testControls.authUnavailable`, `googleCancelled`) теж читає адаптер, а не компоненти.
+ * Адаптер `sim` домену «Вхід» (`docs/backend/frontend-seam.md`, 3.6): обгортка над «сервером» імітації `stores/auth.ts`.
+ * Пошта — лише кодом із 6 цифр (рішення власника 2026-11-13): `requestCode` → `verifyCode`, однаково для нової адреси й
+ * наявної. Листів немає: код видно лише в тестових засобах (`devCode` → `window.__t2f.lastCode()`, машина часу, у демо —
+ * підказка під полем). Тестові перемикачі (`testControls.authUnavailable`, `googleCancelled`) теж читає адаптер.
  */
-import { fail, ok, type ApiResult } from '../result';
-import type { AuthIntent, AuthService, DevLetter, DevMailbox, LinkInfo, Session } from '../contracts/auth';
-import { GOOGLE_DELAY_MS, GOOGLE_DEMO_NAME, LETTER_TTL_MS, RESEND_GAP_MS, normalizeEmail } from '@/lib/auth/sim';
-import { accountHasPass, AUTH_STORAGE_KEY, useAuthStore, type AuthLetter, type EmailSignInResult, type SignInResult } from '@/stores/auth';
+import { fail, ok } from '../result';
+import type { AuthIntent, AuthService, CodeInfo, DevCode, DevCodeBox, Session } from '../contracts/auth';
+import { CODE_MAX_ATTEMPTS, CODE_TTL_MS, GOOGLE_DELAY_MS, GOOGLE_DEMO_NAME, isEmail, RESEND_GAP_MS } from '@/lib/auth/sim';
+import { accountHasPass, AUTH_STORAGE_KEY, useAuthStore, type AuthCode, type SendResult, type VerifyFail } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
-/** Правило пошти імітації (див. шапку). `false` — як бекенд, що вимагає посилання для кожної пошти. */
-export const NEW_EMAIL_SIGNS_IN_AT_ONCE = true;
-
-/** Вхід поштою з форми (синхронне ядро; адаптер загортає в `Promise`). */
-export function simEmailSignIn(raw: string, intent: AuthIntent, now: number): EmailSignInResult {
-  const auth = useAuthStore.getState();
-  const email = normalizeEmail(raw);
-  if (!NEW_EMAIL_SIGNS_IN_AT_ONCE || auth.accounts.includes(email)) {
-    const res = auth.sendLetter(email, intent, now);
-    return res.ok ? { ok: true, sent: true } : res;
-  }
-  const result = auth.signInWithPurchase(email, now);
-  // Лист «ти увійшов»: посилання з нього — вхід на інших пристроях.
-  useAuthStore.getState().sendWelcome(email, intent, now);
-  return { ok: true, sent: false, result };
-}
-
-/** Оплату пасу гостем підтверджено: вхід у пошту з форми оплати (той самий виняток правила, що й нова пошта). */
-export function simSignInAfterPurchase(raw: string, now: number): SignInResult {
-  return useAuthStore.getState().signInWithPurchase(normalizeEmail(raw), now);
-}
-
-const linkOf = (l: AuthLetter | null): LinkInfo | null =>
-  l ? { email: l.email, intent: l.intent, sentAt: l.sentAt, resendAt: l.sentAt + RESEND_GAP_MS, expiresAt: l.sentAt + LETTER_TTL_MS, used: l.used, welcome: !!l.welcome } : null;
+export const codeInfoOf = (c: AuthCode | null): CodeInfo | null =>
+  c && !c.used
+    ? {
+        email: c.email,
+        intent: c.intent,
+        sentAt: c.sentAt,
+        resendAt: c.sentAt + RESEND_GAP_MS,
+        expiresAt: c.sentAt + CODE_TTL_MS,
+        attemptsLeft: Math.max(0, CODE_MAX_ATTEMPTS - c.attempts),
+      }
+    : null;
 
 type AuthState = ReturnType<typeof useAuthStore.getState>;
 
 function sessionOf(a: AuthState): Session {
   const u = a.user;
+  const passSince = u ? (a.passes[u.email] ?? null) : null;
   return {
     user: u ? { id: u.email, email: u.email, via: u.via, signedInAt: u.signedInAt, ...(u.via === 'google' ? { name: GOOGLE_DEMO_NAME } : {}) } : null,
     guestId: useGuestStore.getState().id,
     hasPass: accountHasPass(a),
-    passSince: u ? (a.passes[u.email] ?? null) : null,
+    passSince: passSince ?? a.devicePass?.since ?? null,
+    devicePass: a.devicePass && a.devicePass.email !== u?.email ? a.devicePass : null,
     pendingPassGift: a.pendingPassGift != null,
-    link: linkOf(a.letter),
+    // Код для входу (код зміни пошти — у профілі).
+    code: a.code?.purpose === 'signin' ? codeInfoOf(a.code) : null,
   };
 }
 
@@ -63,19 +50,32 @@ function currentSession(): Session {
 
 const unavailable = () => useTestControls.getState().authUnavailable;
 
-let devCache: { letter: AuthLetter | null; out: DevLetter | null } = { letter: null, out: null };
-const devMailbox: DevMailbox = {
-  // Те саме посилання, поки лист не змінився (`useSyncExternalStore`).
+/** Відмова надсилання → `ApiError` (спільна для входу й зміни пошти). */
+export function sendFailure(res: Exclude<SendResult, { ok: true }>, now: number) {
+  return fail<never>('rate_limited', { reason: res.reason, retryAfterMs: Math.max(0, res.until - now) });
+}
+
+/** Відмова перевірки коду → `ApiError` (`contracts/auth`, `authCodeError`). */
+export function verifyFailure(res: VerifyFail) {
+  if (res.reason === 'wrong-code') return fail<never>('validation', { reason: 'wrong-code', attemptsLeft: res.attemptsLeft });
+  if (res.reason === 'too-many-attempts') return fail<never>('rate_limited', { reason: 'too-many-attempts' });
+  return fail<never>('conflict', { reason: 'expired' });
+}
+
+let devCache: { code: AuthCode | null; out: DevCode | null } = { code: null, out: null };
+const devCode: DevCodeBox = {
+  // Те саме посилання, поки код не змінився (`useSyncExternalStore`).
   get: () => {
-    const l = useAuthStore.getState().letter;
-    if (devCache.letter !== l) devCache = { letter: l, out: l ? { email: l.email, token: l.token, sentAt: l.sentAt, expiresAt: l.sentAt + LETTER_TTL_MS, used: l.used } : null };
+    const c = useAuthStore.getState().code;
+    if (devCache.code !== c)
+      devCache = { code: c, out: c ? { email: c.email, code: c.code, purpose: c.purpose, sentAt: c.sentAt, expiresAt: c.sentAt + CODE_TTL_MS, used: c.used } : null };
     return devCache.out;
   },
   subscribe: (cb) =>
     useAuthStore.subscribe((s, p) => {
-      if (s.letter !== p.letter) cb();
+      if (s.code !== p.code) cb();
     }),
-  expire: () => useAuthStore.getState().expireLetter(),
+  expire: () => useAuthStore.getState().expireCode(),
 };
 
 export function createSimAuth(): AuthService {
@@ -86,9 +86,10 @@ export function createSimAuth(): AuthService {
     peek: () => currentSession(),
     subscribe(onChange) {
       const off = useAuthStore.subscribe((s, p) => {
-        if (s.user !== p.user || s.passes !== p.passes || s.letter !== p.letter || s.pendingPassGift !== p.pendingPassGift) onChange(currentSession());
+        if (s.user !== p.user || s.passes !== p.passes || s.code !== p.code || s.pendingPassGift !== p.pendingPassGift || s.devicePass !== p.devicePass)
+          onChange(currentSession());
       });
-      // Синхронізація вкладок (колишній `useAuthTabSync`): посилання з листа, відкрите в іншій вкладці, впускає й цю.
+      // Синхронізація вкладок: вхід в іншій вкладці впускає й цю.
       const onStorage = (e: StorageEvent) => {
         if (e.key === AUTH_STORAGE_KEY) void useAuthStore.persist.rehydrate();
       };
@@ -98,29 +99,25 @@ export function createSimAuth(): AuthService {
         if (typeof window !== 'undefined') window.removeEventListener('storage', onStorage);
       };
     },
-    async emailSignIn(email, intent) {
+    async requestCode(email: string, intent: AuthIntent) {
+      if (unavailable()) return fail('unavailable');
+      if (!isEmail(email.trim())) return fail('validation', { reason: 'email' });
+      const now = Date.now();
+      const res = useAuthStore.getState().requestCode(email, intent, 'signin', now);
+      if (!res.ok) return sendFailure(res, now);
+      return ok(codeInfoOf(useAuthStore.getState().code)!);
+    },
+    async verifyCode(email, code) {
       if (unavailable()) return fail('unavailable');
       const now = Date.now();
-      const res = simEmailSignIn(email, intent, now);
-      if (!res.ok) return fail('rate_limited', { reason: res.reason, retryAfterMs: res.until - now });
-      if (!res.sent) return ok({ kind: 'signed-in', isNew: res.result.isNew, email: res.result.email });
-      return ok({ kind: 'link-sent', link: linkOf(useAuthStore.getState().letter)! });
-    },
-    async sendLink(email, intent) {
-      if (unavailable()) return fail('unavailable');
-      const now = Date.now();
-      const res = useAuthStore.getState().sendLetter(email, intent, now);
-      if (!res.ok) return fail('rate_limited', { reason: res.reason, retryAfterMs: res.until - now });
-      return ok(linkOf(useAuthStore.getState().letter)!);
-    },
-    async openLink(token) {
-      const res = useAuthStore.getState().openLink(token, Date.now());
-      if (res.ok) return ok({ kind: 'signed-in', isNew: res.isNew, email: res.email });
-      return ok(res.reason === 'expired' ? { kind: 'expired', ...(res.email ? { email: res.email } : {}) } : { kind: 'invalid' });
+      const res = useAuthStore.getState().checkCode(email, code, 'signin', now);
+      if (!res.ok) return verifyFailure(res);
+      const r = useAuthStore.getState().signInVerified(res.email, now);
+      return ok({ isNew: r.isNew, email: r.email });
     },
     google({ signal }) {
-      // Імітований перехід до Google і назад; скасування до кінця затримки — входу немає (як раніше `clearTimeout`).
-      return new Promise<ApiResult<{ kind: 'signed-in'; isNew: boolean; email: string }>>((resolve) => {
+      // Імітований перехід до Google і назад; скасування до кінця затримки — входу немає.
+      return new Promise((resolve) => {
         const timer = setTimeout(() => {
           signal?.removeEventListener('abort', onAbort);
           if (useTestControls.getState().googleCancelled) return resolve(fail('conflict', { reason: 'cancelled' }));
@@ -139,7 +136,7 @@ export function createSimAuth(): AuthService {
       useAuthStore.getState().signOut();
       return ok(undefined);
     },
-    devMailbox,
-    devReset: () => useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null }),
+    devCode,
+    devReset: () => useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null }),
   };
 }

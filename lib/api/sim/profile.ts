@@ -2,14 +2,27 @@
  * Адаптер `sim` домену «Профіль» (`docs/backend/frontend-seam.md`, E3): делегує сторам гостя (`nick`, прапор, графік) і
  * кабінету (`stores/account`). Поведінка — та сама, що була в компонентах (кабінет, крок «Як тебе показувати»).
  */
-import { ok } from '../result';
+import { fail, ok } from '../result';
 import type { Profile, ProfileService, ProfileSettings } from '../contracts/profile';
-import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
+import { codeInfoOf, sendFailure, verifyFailure } from './auth';
+import { GOOGLE_DELAY_MS, isEmail, normalizeEmail } from '@/lib/auth/sim';
 import { DEFAULT_ACCOUNT, useAccountStore } from '@/stores/account';
-import { accountHasPass, useAuthStore } from '@/stores/auth';
+import { accountHasPass, useAuthStore, type AuthCode } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
+import { useTestControls } from '@/stores/testControls';
 
-const SETTING_KEYS = Object.keys(DEFAULT_ACCOUNT).filter((k) => k !== 'googleLinked' && k !== 'pendingEmail') as (keyof ProfileSettings)[];
+const SETTING_KEYS = Object.keys(DEFAULT_ACCOUNT).filter((k) => k !== 'googleLinked') as (keyof ProfileSettings)[];
+
+/** Зміна пошти, що чекає коду: той самий об’єкт, поки код у «сервері» не змінився. */
+let pendingCache: { code: AuthCode | null; out: Profile['pendingEmail'] } = { code: null, out: null };
+function pendingEmailNow(): Profile['pendingEmail'] {
+  const c = useAuthStore.getState().code;
+  if (pendingCache.code !== c) {
+    const info = c?.purpose === 'email-change' ? codeInfoOf(c) : null;
+    pendingCache = { code: c, out: info ? { email: info.email, sentAt: info.sentAt, resendAt: info.resendAt, expiresAt: info.expiresAt, attemptsLeft: info.attemptsLeft } : null };
+  }
+  return pendingCache.out;
+}
 
 function profileNow(): Profile {
   const g = useGuestStore.getState();
@@ -22,7 +35,7 @@ function profileNow(): Profile {
     settings,
     schedule: g.schedule,
     googleLinked: a.googleLinked,
-    pendingEmail: a.pendingEmail,
+    pendingEmail: pendingEmailNow(),
   };
 }
 
@@ -60,9 +73,11 @@ export function createSimProfile(): ProfileService {
       };
       const offGuest = useGuestStore.subscribe(emit);
       const offAccount = useAccountStore.subscribe(emit);
+      const offAuth = useAuthStore.subscribe(emit);
       return () => {
         offGuest();
         offAccount();
+        offAuth();
       };
     },
     async update(patch) {
@@ -86,12 +101,30 @@ export function createSimProfile(): ProfileService {
       useGuestStore.getState().replaceSchedule(outIso, eventId);
       return ok(useGuestStore.getState().schedule);
     },
-    async changeEmail(email) {
-      useAccountStore.getState().set('pendingEmail', { email, sentAt: Date.now() });
+    async changeEmail(raw) {
+      if (useTestControls.getState().authUnavailable) return fail('unavailable');
+      const email = normalizeEmail(raw);
+      const auth = useAuthStore.getState();
+      if (!auth.user) return fail('unauthorized');
+      if (!isEmail(email)) return fail('validation', { reason: 'email' });
+      if (email === auth.user.email) return fail('validation', { reason: 'same-email' });
+      if (auth.accounts.includes(email)) return fail('conflict', { reason: 'taken' });
+      const now = Date.now();
+      const res = auth.requestCode(email, 'signin', 'email-change', now);
+      if (!res.ok) return sendFailure(res, now);
+      return ok(profileNow());
+    },
+    async confirmEmailChange(code) {
+      if (useTestControls.getState().authUnavailable) return fail('unavailable');
+      const pending = useAuthStore.getState().code;
+      if (!pending || pending.purpose !== 'email-change') return fail('conflict', { reason: 'expired' });
+      const res = useAuthStore.getState().checkCode(pending.email, code, 'email-change', Date.now());
+      if (!res.ok) return verifyFailure(res);
+      useAuthStore.getState().changeEmail(res.email);
       return ok(profileNow());
     },
     async cancelEmailChange() {
-      useAccountStore.getState().set('pendingEmail', null);
+      if (useAuthStore.getState().code?.purpose === 'email-change') useAuthStore.setState({ code: null });
       return ok(profileNow());
     },
     linkGoogle() {
@@ -130,18 +163,6 @@ export function createSimProfile(): ProfileService {
       useGuestStore.getState().resetGuest();
       useAccountStore.getState().reset();
       return ok(undefined);
-    },
-    async devConfirmEmail() {
-      const pending = useAccountStore.getState().pendingEmail;
-      if (pending) {
-        const email = useAuthStore.getState().user?.email ?? '';
-        useAuthStore.setState((a) => ({
-          user: a.user ? { ...a.user, email: pending.email } : a.user,
-          accounts: a.accounts.map((x) => (x === email ? pending.email : x)),
-        }));
-        useAccountStore.getState().set('pendingEmail', null);
-      }
-      return ok(profileNow());
     },
   };
 }
