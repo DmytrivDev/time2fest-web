@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "sdd-engineering@devdigest-marketplace": true,
+    "engineering-paved-path@devdigest-marketplace": true,
+    "research-tools@devdigest-marketplace": true,
+    "architecture-review@devdigest-marketplace": true
+  },
+  "permissions": {
+    "allow": [
+      "WebSearch"
+    ]
+  }
+}

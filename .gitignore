@@ -17,3 +17,7 @@ out-prod
 .next-demo
 .next-*
 out-*
+# Claude Code: особисті налаштування, worktree підсесій, журнали run-plan (docs/backend/README.md)
+.claude/settings.local.json
+.claude/worktrees/
+.claude/sdd/

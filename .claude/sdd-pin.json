@@ -1,0 +1,12 @@
+{
+  "$comment": "Pinned sdd-engineering for the current wave. run-plan-auto stops if the installed plugin differs. Change only between waves, by the orchestrator, with a line in docs/process.md. See D:/Work/Pets/Time2Fest/docs/backend/README.md, section 'Plugin version'.",
+  "plugin": "sdd-engineering@devdigest-marketplace",
+  "version": "1.0.0",
+  "gitCommitSha": "08bc00456b3ccbb5afff59d6ab0a97904d96e11a",
+  "dependencies": {
+    "engineering-paved-path@devdigest-marketplace": "1.0.0",
+    "research-tools@devdigest-marketplace": "1.0.0",
+    "architecture-review@devdigest-marketplace": "1.0.0"
+  },
+  "pinnedOn": "2026-11-14"
+}
