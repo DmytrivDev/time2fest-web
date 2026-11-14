@@ -36,7 +36,7 @@ import { cn } from '@/components/primitives/cn';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { useLiveData } from '@/lib/api/hooks/live';
 import { getData } from '@/lib/data/load';
-import { isPastStatus } from '@/components/live/eventCards';
+import { isPastStatus } from '@/lib/live/eventCards';
 import { festProgress } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';

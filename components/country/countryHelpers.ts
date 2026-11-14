@@ -3,7 +3,7 @@
  * півночі, пояс для вибору в шапці, пояс/подія з адреси (`?e=` / `?zone=` / `?s=`). Без React; виокремлено з
  * `CountryLive.tsx` (WP-F).
  */
-import type { CountryZoneOption } from '@/components/live/CountryHeader';
+import type { CountryZoneOption } from '@/components/country/CountryHeader';
 import type { Dataset, LoadedZone, Ms, ScheduledEvent } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';

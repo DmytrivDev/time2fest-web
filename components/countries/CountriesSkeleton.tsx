@@ -8,9 +8,9 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Skeleton } from '@/components/primitives/Skeleton';
-import { EventFilter } from './EventFilter';
+import { EventFilter } from '@/components/live/EventFilter';
 import styles from './countryList.module.css';
-import nn from './nowNext.module.css';
+import nn from '@/components/live/nowNext.module.css';
 import { useHasPass } from '@/lib/api/hooks/auth';
 
 const ROWS = 14;

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { CountryHeader } from '@/components/live/CountryHeader';
+import { CountryHeader } from '@/components/country/CountryHeader';
 import { Stage, StateRow } from '../_support/Stage';
 
 const FRANCE = { iso: 'FR', name: { uk: 'Франція' }, flagCode: 'FR', gender: 'f' } as const;

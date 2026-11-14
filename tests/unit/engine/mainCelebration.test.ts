@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hasStreamNow, sortForStrip, withStatus } from '@/components/live/eventCards';
+import { hasStreamNow, sortForStrip, withStatus } from '@/lib/live/eventCards';
 import { buildDataset } from '@/lib/data/build';
 import type { StreamsFile } from '@/lib/data/types';
 import { isMainLive, knownStart, mainCardStream, mainLiveLine, mainSourceOf, zoneHasLive, type MainLiveLineInput } from '@/lib/engine/mainCelebration';

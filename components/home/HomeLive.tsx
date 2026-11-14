@@ -57,7 +57,7 @@ import { useBroadcast } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { usePresence } from '@/lib/api/hooks/passport';
 import { useNow } from '@/lib/time/TimeProvider';
-import home from './home.module.css';
+import home from '@/components/live/home.module.css';
 import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 const CHAT_ROOMS = ['world'] as const;

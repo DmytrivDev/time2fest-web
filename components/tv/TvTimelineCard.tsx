@@ -7,7 +7,7 @@
  * автопілот. Картка в ефірі — жовта рамка. OK: трансляція наживо — дивитися; майбутня подія — у графік / з графіка.
  */
 import { useLocale, useTranslations } from 'next-intl';
-import { isPastStatus } from '@/components/live/eventCards';
+import { isPastStatus } from '@/lib/live/eventCards';
 import type { EventCardStream } from '@/components/live/EventCard';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';

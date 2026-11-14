@@ -6,7 +6,7 @@
  * показуємо скелетон тієї сторінки, куди йдемо, а не загальний.
  */
 import { usePathname } from 'next/navigation';
-import { CountriesSkeleton } from '@/components/live/CountriesSkeleton';
+import { CountriesSkeleton } from '@/components/countries/CountriesSkeleton';
 import {
   AccountSkeleton,
   CountrySkeleton,

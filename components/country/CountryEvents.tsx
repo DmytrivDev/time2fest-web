@@ -7,7 +7,7 @@
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import type { EventFilterValue } from '@/components/live/EventFilter';
-import type { CountryZoneOption } from '@/components/live/CountryHeader';
+import type { CountryZoneOption } from '@/components/country/CountryHeader';
 import { Faq, type FaqItem } from '@/components/live/Faq';
 import { HowToCard } from '@/components/live/HowToCard';
 import { NowNext } from '@/components/live/NowNext';
@@ -23,7 +23,7 @@ import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import type { StreamRowData } from '@/lib/live/countryData';
 import { utcLabel } from '@/lib/map/model';
-import styles from './live.module.css';
+import styles from '@/components/live/live.module.css';
 
 const STREAMS_ID = 'country-streams';
 const NOW_NEXT_ID = 'now-next';

@@ -34,7 +34,7 @@ import { formatClock, formatCountdown, formatDurationShort, formatTimeForViewer,
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { fold, getSearchIndex, matchesCityName, matchesCountryName, type SearchIndex } from '@/lib/search/countrySearch';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { EventFilter } from './EventFilter';
+import { EventFilter } from '@/components/live/EventFilter';
 import { SubtitleSkeleton, ZoneRowsSkeleton } from './CountriesSkeleton';
 import { useMidnightPhrase } from '@/components/map/ZoneMapCards';
 import { MapScheduleContext, PlayMark, ScheduleButton } from '@/components/map/MapStreamCard';
@@ -42,7 +42,7 @@ import { StateBadge } from '@/components/map/ZonePanel';
 import { ZoneListView } from '@/components/map/ZoneListView';
 import { usePhone } from '@/lib/hooks/useMedia';
 import { REGION_ORDER, regionOf, type RegionKey } from '@/lib/geo/regions';
-import nn from './nowNext.module.css';
+import nn from '@/components/live/nowNext.module.css';
 import styles from './countryList.module.css';
 import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 

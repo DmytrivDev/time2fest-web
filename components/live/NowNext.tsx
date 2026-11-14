@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/primitives/Skeleton';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { useNow } from '@/lib/time/TimeProvider';
 import { EventCard, type EventCardData } from './EventCard';
-import { hasStreamNow, isPastStatus, sortForStrip, withStatus } from './eventCards';
+import { hasStreamNow, isPastStatus, sortForStrip, withStatus } from '@/lib/live/eventCards';
 import { FestProgress, type FestProgressProps } from './Progress';
 import s from './nowNext.module.css';
 

@@ -3,8 +3,8 @@
  * Таймлайн (рішення 2026-11-06): **програма** — що покаже автопілот (по одній події на слот ефіру, ті самі картки,
  * що «Зараз і далі» на головній, `nowNextItems`) — і **події з графіка гостя**. Пояс — у картці поруч із часом.
  */
-import type { EventCardItem } from '@/components/live/eventCards';
-import { hasStreamNow, withStatus } from '@/components/live/eventCards';
+import type { EventCardItem } from '@/lib/live/eventCards';
+import { hasStreamNow, withStatus } from '@/lib/live/eventCards';
 import type { Dataset, Ms } from '@/lib/data/types';
 import { utcLabel } from '@/lib/i18n/time';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';

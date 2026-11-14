@@ -2,7 +2,7 @@
 // англійські назви з id міста й словника, нечутливість до регістру, діакритики, дефісів.
 import { describe, expect, it } from 'vitest';
 import { buildMapModel, type MapCountry } from '@/lib/map/model';
-import { matchCountry } from '@/components/live/CountryList';
+import { matchCountry } from '@/components/countries/CountryList';
 import { getData } from '@/lib/data/load';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { fold, getSearchIndex, translit } from '@/lib/search/countrySearch';

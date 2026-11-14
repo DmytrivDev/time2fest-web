@@ -1,6 +1,6 @@
 /** Посилання на сторінку країни з поясом / подією (власник 2026-11-10: «щоб перекидало на те, на що клікнув»). */
 import { describe, expect, it } from 'vitest';
-import { countryFocusFrom } from '@/components/live/countryHelpers';
+import { countryFocusFrom } from '@/components/country/countryHelpers';
 import { getData } from '@/lib/data/load';
 import { nowNextItems } from '@/lib/live/homeData';
 import { countryHref } from '@/lib/live/countryHref';

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { userEvent, within } from 'storybook/test';
-import { CountryList } from '@/components/live/CountryList';
+import { CountryList } from '@/components/countries/CountryList';
 import type { ZoneMapGeometry } from '@/lib/map/model';
 import geometryJson from '@/data/zonemap.json';
 import { sceneTime } from '../_support/liveFixtures';

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { CountryLive } from '@/components/live/CountryLive';
+import { CountryLive } from '@/components/country/CountryLive';
 import { getData } from '@/lib/data/load';
 
 /**
- * Сторінка країни, пульт (S-COUNTRY, US2): склад — `components/live/CountryLive.tsx` (ІНВ 4.3).
+ * Сторінка країни, пульт (S-COUNTRY, US2): склад — `components/country/CountryLive.tsx` (ІНВ 4.3).
  * Статичні сторінки для всіх країн з `countries.json`; невідомий slug — 404 (`dynamicParams = false`).
  * Перехід сюди з головної («Лишитися тут ›») — клієнтський у межах `(live)`: плеєр макета не перемонтовується (SC-003).
  */

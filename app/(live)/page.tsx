@@ -1,6 +1,6 @@
-import { HomeLive } from '@/components/live/HomeLive';
+import { HomeLive } from '@/components/home/HomeLive';
 
-/** Головна, ефір (S-HOME-LIVE): склад сторінки — `components/live/HomeLive.tsx` (ІНВ 4.3). */
+/** Головна, ефір (S-HOME-LIVE): склад сторінки — `components/home/HomeLive.tsx` (ІНВ 4.3). */
 export default function LivePage() {
   return <HomeLive />;
 }

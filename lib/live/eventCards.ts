@@ -1,6 +1,6 @@
 import type { EventStatus } from '@/lib/data/types';
 import { eventStatus } from '@/lib/engine/eventStatus';
-import type { EventCardData } from './EventCard';
+import type { EventCardData } from '@/components/live/EventCard';
 
 export interface EventCardItem extends EventCardData {
   status: EventStatus;
