@@ -42,12 +42,17 @@ type EventLike = Pick<Event, 'id' | 'midnightUtc'> & { midnightMs?: Ms };
 
 const NO_FLAGS = { howTo: false, delayNotice: false, momentFired: false };
 
-/** Фази до моменту (`t < +15 с`) — спільні для broadcast і remote. */
+/**
+ * Фази до моменту (`t < +15 с`) — спільні для broadcast і remote. Після півночі (0…+15 с) таймера вже немає й рядок 3 —
+ * «<Країна> зустріла Новий рік» (`docs/site/home.md`); раніше тут стояло «до півночі 00:00:00» і «північ о …» —
+ * нуль із підписом «до півночі» вже після півночі (перевірка дошок 2026-11-14). Штамп і `momentFired` — як і раніше з +15 с.
+ */
 function prePhase(t: number, event: EventLike): CaptionPhase {
+  const after = t >= 0;
   return {
-    id: t < 0 ? 'before' : 'celebrating',
-    row1Right: { kind: 'countdown', ms: Math.max(0, -t) },
-    row3: { kind: 'midnight-at', eventId: event.id },
+    id: after ? 'celebrating' : 'before',
+    row1Right: after ? { kind: 'none' } : { kind: 'countdown', ms: -t },
+    row3: after ? { kind: 'met', eventId: event.id } : { kind: 'midnight-at', eventId: event.id },
     button: 'choose-stream',
     flags: { howTo: t >= -HOWTO_BEFORE, delayNotice: t >= -DELAY_NOTICE_FROM, momentFired: false },
   };

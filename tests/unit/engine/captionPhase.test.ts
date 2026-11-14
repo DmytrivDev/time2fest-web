@@ -33,12 +33,12 @@ describe('captionPhase · broadcast', () => {
     expect(p.row3.kind).toBe('midnight-at');
   });
 
-  it('0 … +15 с: celebrating, відлік стоїть на 00:00:00', () => {
+  it('0 … +15 с: celebrating, таймера немає, «зустріла» (не «до півночі 00:00:00» після півночі, 2026-11-14)', () => {
     for (const t of [0, 10 * SEC, 15 * SEC - 1]) {
       const p = ph(t);
       expect(p.id).toBe('celebrating');
-      expect(p.row1Right).toEqual({ kind: 'countdown', ms: 0 });
-      expect(p.row3.kind).toBe('midnight-at');
+      expect(p.row1Right).toEqual({ kind: 'none' });
+      expect(p.row3.kind).toBe('met');
       expect(p.flags).toEqual({ howTo: true, delayNotice: true, momentFired: false });
     }
   });

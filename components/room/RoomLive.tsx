@@ -168,6 +168,7 @@ export function RoomLive() {
   const tWin = useTranslations('room.window');
   const tUndo = useTranslations('room.undo');
   const tShare = useTranslations('room.share');
+  const tCommon = useTranslations('common');
   const tPlayer = useTranslations('player');
   const tChat = useTranslations('chat');
   const data = useLiveData();
@@ -206,6 +207,8 @@ export function RoomLive() {
 
   // ── Посилання «Поділитися кімнатою» (`?w=`): відкриває ті самі вікна ──
   const sharedRef = useRef(false);
+  /** Відкрито посилання з більшою кількістю вікон, ніж уміщує телефон: тиха смуга «видно два, решта — в посиланні». */
+  const [sharedMore, setSharedMore] = useState<number | null>(null);
   useEffect(() => {
     if (sharedRef.current || !known) return;
     const raw = searchParams?.get('w');
@@ -216,7 +219,11 @@ export function RoomLive() {
     useGuestStore.getState().setRoomWindows(list);
     useGuestStore.getState().setSoundSlot(0);
     useRoomStore.getState().setHostSlot(null);
-    if (list.length > limit) announce(t('sharedPhone', { count: list.length }));
+    if (list.length > limit) {
+      announce(t('sharedPhone', { count: list.length }));
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- одноразово: посилання `?w=` розбирається, коли час відомий
+      setSharedMore(list.length);
+    }
   }, [known, searchParams, data, limit, announce, t]);
 
   // ── Головний плеєр = спільний PlayerHost у вікні `host` ──
@@ -1022,6 +1029,14 @@ export function RoomLive() {
         {/* Смуга тостів — під вікнами й рядком дій кімнати, та сама, що на головній (дошки `Desk-Toast-New`,
             `Phone-Toast-New`, 2026-11-12). */}
         <ToastStrip variant={chatColumn ? 'desk' : 'phone'} bare className={s.toastStrip} />
+        {phone && sharedMore !== null && sharedMore > limit && !undo ? (
+          // Перевірка дошок 2026-11-14: посилання з 3–4 вікнами на телефоні показувало 2 без пояснення.
+          <div className={s.notice} role="status" data-room-notice="shared-phone">
+            <Icon name="info" size={18} />
+            <span className={s.noticeText}>{t('sharedPhoneNotice', { count: sharedMore, hidden: sharedMore - limit })}</span>
+            <IconButton aria-label={tCommon('close')} icon="close" onClick={() => setSharedMore(null)} />
+          </div>
+        ) : null}
         {phone && undo ? (
           <div className={s.notice} role="status" data-room-notice="">
             <Icon name="check" size={18} />

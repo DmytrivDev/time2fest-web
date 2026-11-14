@@ -159,9 +159,12 @@ function Paris({ id, pal }: { id: string; pal: Palette }) {
 }
 
 function Template({ id, pal, seed }: { id: string; pal: Palette; seed: number }) {
+  // Беззнаковий зсув: від’ємний `seed` (хеш) давав від’ємну висоту `<rect>` — помилка в консолі й дірка в силуеті
+  // (заглушка «Трансляція очікується», прев’ю шляху у вікні «Поділитися», 2026-11-14).
+  const u = seed >>> 0;
   const towers = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-    const w = 22 + ((seed >> (i * 2)) % 18);
-    const h = 34 + ((seed >> (i + 3)) % 46);
+    const w = 22 + ((u >>> (i * 2)) % 18);
+    const h = 34 + ((u >>> (i + 3)) % 46);
     return { x: 6 + i * 36, w, h };
   });
   return (

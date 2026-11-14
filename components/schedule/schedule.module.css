@@ -738,6 +738,19 @@
 .toastPhone {
   right: 12px;
   left: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+/* Телефон: назва країни не обрізається «Ірландія…» — текст переноситься на другий рядок (перевірка дошок 2026-11-14). */
+.toastPhone .toastText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 html[data-has-chat-dock] .toastPhone {
   bottom: calc(var(--chat-dock-h, 0px) + 12px);
