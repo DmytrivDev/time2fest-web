@@ -13,7 +13,7 @@ import { isCelebrating } from '@/lib/engine/celebration';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useNow } from '@/lib/time/TimeProvider';
 import { Header, type HeaderProps } from './Header';
-import { TimeMachineBody } from '@/components/demo/TimeMachineBody';
+import { TimeMachineBody } from '@/components/dev/TimeMachineBody';
 import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
 import { IS_DEMO_BUILD } from '@/lib/env';
 import { MenuBody } from './Menu';

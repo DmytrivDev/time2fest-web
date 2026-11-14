@@ -6,7 +6,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent 
 import { cn } from '@/components/primitives/cn';
 import { roundFlagSrc } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { DemoClock } from '@/components/demo/DemoClock';
+import { DemoClock } from '@/components/dev/DemoClock';
 import { WhenCanToast } from '@/components/toast/useToastSeason';
 import { useUnreadNotifCount } from '@/lib/api/hooks/notifications';
 import { IS_DEMO_BUILD } from '@/lib/env';
