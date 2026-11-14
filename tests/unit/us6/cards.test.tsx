@@ -5,7 +5,7 @@ import { PassGate } from '@/components/windows/PassGate';
 import { PassInfo } from '@/components/windows/PassInfo';
 import { PassOffer } from '@/components/windows/PassOffer';
 import { ShareContent } from '@/components/windows/Share';
-import { ToastBenefits, ToastTiers } from '@/components/toast/ToastWindow';
+import { ToastBenefits, ToastTiers } from '@/components/toast/ToastTiers';
 import type { ToastTier } from '@/lib/toast/tiers';
 import { useState } from 'react';
 import { renderPage, renderPlain } from './render';
