@@ -15,7 +15,7 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
+import { GATE_KEYS, type PassGateFeature } from '@/components/pass/PassGate';
 import { hasPassNow, profileActions } from '@/lib/api/hooks/auth';
 import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';

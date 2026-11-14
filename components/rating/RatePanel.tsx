@@ -7,8 +7,8 @@
 import { useTranslations } from 'next-intl';
 import { FlagStrip } from '@/components/passport/FlagStrip';
 import { Flag } from '@/components/primitives/Flag';
-import { StampArt } from '@/components/windows/StampArt';
-import { StampRate } from '@/components/windows/StampRate';
+import { StampArt } from '@/components/stamp/StampArt';
+import { StampRate } from '@/components/stamp/StampRate';
 import { ratingActions, useMyVote } from '@/lib/api/hooks/rating';
 import { getData } from '@/lib/data/load';
 import s from './rating.module.css';

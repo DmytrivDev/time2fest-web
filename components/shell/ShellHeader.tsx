@@ -17,7 +17,7 @@ import { TimeMachineBody } from '@/components/demo/TimeMachineBody';
 import { NotificationsBody, NotifSettings } from '@/components/notifications/NotificationsBody';
 import { IS_DEMO_BUILD } from '@/lib/env';
 import { MenuBody } from './Menu';
-import { PASSPORT_HREF } from '@/components/live/StampBlock';
+import { PASSPORT_HREF } from '@/components/stamp/StampBlock';
 import { scrollToStampCard, useStampCelebration } from './useStampCelebration';
 import ms from './menu.module.css';
 import { useOverlay } from './OverlayManager';

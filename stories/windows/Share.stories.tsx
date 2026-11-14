@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, fireEvent, userEvent, within } from 'storybook/test';
-import { ShareContent } from '@/components/windows/Share';
+import { ShareContent } from '@/components/stamp/Share';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { Stage } from '../_support/Stage';
 

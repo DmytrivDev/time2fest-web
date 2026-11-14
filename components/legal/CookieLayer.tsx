@@ -14,7 +14,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState, useSyncExternalStore, type CSSProperties } from 'react';
-import { CookieBanner, CookieSettings, type CookieChoices, type CookieVariant } from '@/components/windows/Cookies';
+import { CookieBanner, CookieSettings, type CookieChoices, type CookieVariant } from '@/components/legal/Cookies';
 import { Footer } from '@/components/shell/Footer';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { ACCEPT_ALL, applyConsent, dismissSaveFailed, NECESSARY_ONLY, retryConsent, useConsentSaveFailed } from '@/lib/offers/cookieFlow';

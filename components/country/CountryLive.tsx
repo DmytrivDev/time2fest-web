@@ -32,7 +32,7 @@ import { Suspense, useCallback, useMemo } from 'react';
 import { useLiveChat } from '@/components/chat/useLiveChat';
 import { CountryHeader } from '@/components/country/CountryHeader';
 import { MomentInflow } from '@/components/live/MomentInflow';
-import { StampBlock } from '@/components/live/StampBlock';
+import { StampBlock } from '@/components/stamp/StampBlock';
 import { ToastStrip } from '@/components/toast/ToastStrip';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { useGetPass } from '@/components/pass/PassWindow';

@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { clearStampMoment, showStampMoment, StampBlock } from '@/components/live/StampBlock';
+import { clearStampMoment, showStampMoment, StampBlock } from '@/components/stamp/StampBlock';
 import { OverlayManager, useOverlay } from '@/components/shell/OverlayManager';
 import { emit } from '@/lib/events/bus';
 import { useGuestStore } from '@/stores/guest';

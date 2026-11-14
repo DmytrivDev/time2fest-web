@@ -8,7 +8,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, type CSSProperties } from 'react';
-import { useBarGeometry } from '@/components/offers/CookieLayer';
+import { useBarGeometry } from '@/components/legal/CookieLayer';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverActions } from '@/components/room/RoomTray';

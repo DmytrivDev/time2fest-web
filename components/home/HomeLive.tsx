@@ -32,7 +32,7 @@ import { useLiveChat } from '@/components/chat/useLiveChat';
 import { buildMapModel } from '@/lib/map/model';
 import { NowNext } from '@/components/live/NowNext';
 import { MomentInflow } from '@/components/live/MomentInflow';
-import { StampBlock } from '@/components/live/StampBlock';
+import { StampBlock } from '@/components/stamp/StampBlock';
 import { ToastStrip } from '@/components/toast/ToastStrip';
 import { useMomentWindows } from '@/components/live/useMomentWindows';
 import { ZoneMap } from '@/components/map/ZoneMap';

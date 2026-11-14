@@ -1,10 +1,10 @@
 import { fireEvent, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { CookieBanner, CookieSettings } from '@/components/windows/Cookies';
-import { PassGate } from '@/components/windows/PassGate';
-import { PassInfo } from '@/components/windows/PassInfo';
-import { PassOffer } from '@/components/windows/PassOffer';
-import { ShareContent } from '@/components/windows/Share';
+import { CookieBanner, CookieSettings } from '@/components/legal/Cookies';
+import { PassGate } from '@/components/pass/PassGate';
+import { PassInfo } from '@/components/pass/PassInfo';
+import { PassOffer } from '@/components/pass/PassOffer';
+import { ShareContent } from '@/components/stamp/Share';
 import { ToastBenefits, ToastTiers } from '@/components/toast/ToastTiers';
 import type { ToastTier } from '@/lib/toast/tiers';
 import { useState } from 'react';

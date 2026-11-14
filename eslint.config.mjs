@@ -89,7 +89,7 @@ export default tseslint.config(
   },
   {
     // Єдиний виняток: художні штампи
-    files: ['components/windows/StampArt*'],
+    files: ['components/stamp/StampArt*'],
     rules: { 'local/no-arbitrary-tailwind': 'off' },
   },
 );

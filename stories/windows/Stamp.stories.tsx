@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { InFlowSlot } from '@/components/primitives/Panel';
-import { Stamp, type StampEntry } from '@/components/windows/Stamp';
+import { Stamp, type StampEntry } from '@/components/stamp/Stamp';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { Stage } from '../_support/Stage';
 

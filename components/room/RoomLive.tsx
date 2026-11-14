@@ -31,7 +31,7 @@ import { useStamps } from '@/lib/api/hooks/passport';
 import { useLiveData } from '@/lib/api/hooks/live';
 import type { EventFilterValue } from '@/components/live/EventFilter';
 import { MomentInflow } from '@/components/live/MomentInflow';
-import { StampBlock } from '@/components/live/StampBlock';
+import { StampBlock } from '@/components/stamp/StampBlock';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { ToastStrip } from '@/components/toast/ToastStrip';
 import { Button } from '@/components/primitives/Button';

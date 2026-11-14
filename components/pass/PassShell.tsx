@@ -10,8 +10,8 @@ import { Footer } from '@/components/shell/Footer';
 import { Header } from '@/components/shell/Header';
 import { Menu } from '@/components/shell/Menu';
 import { TimeProvider } from '@/lib/time/TimeProvider';
-import { PaymentWatcher } from '@/components/offers/PaymentWatcher';
-import { ReturnNotice } from '@/components/offers/ReturnNotice';
+import { PaymentWatcher } from '@/components/checkout/PaymentWatcher';
+import { ReturnNotice } from '@/components/checkout/ReturnNotice';
 import { ApiRuntime } from '@/lib/api/ApiRuntime';
 
 /**

@@ -15,7 +15,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { Fireworks } from '@/components/player/Fireworks';
 import { midnightPhase } from '@/components/player/SceneMidnight';
-import { PostcardArt } from '@/components/windows/StampArt';
+import { PostcardArt } from '@/components/stamp/StampArt';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';

@@ -2,7 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react';
 import { useEffect } from 'react';
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CookieFooter, CookieLayer } from '@/components/offers/CookieLayer';
+import { CookieFooter, CookieLayer } from '@/components/legal/CookieLayer';
 import { OfferBlock } from '@/components/offers/OfferBlock';
 import { useOfferWindows, type PassWindowsApi } from '@/components/offers/useOfferWindows';
 import { FacebookConsentCard } from '@/components/player/FacebookConsentCard';

@@ -13,7 +13,7 @@
  */
 import { useEffect } from 'react';
 import { on } from '@/lib/events/bus';
-import { showStampMoment } from './StampBlock';
+import { showStampMoment } from '@/components/stamp/StampBlock';
 
 export function useMomentWindows(): void {
   // +15 с: штамп під плеєром.

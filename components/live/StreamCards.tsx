@@ -35,7 +35,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { formatClock } from '@/lib/i18n/time';
-import { PostcardArt } from '@/components/windows/StampArt';
+import { PostcardArt } from '@/components/stamp/StampArt';
 import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { thumbOf } from '@/lib/live/thumb';
 import { EventFilter, type EventFilterValue } from './EventFilter';

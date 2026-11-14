@@ -17,7 +17,7 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { PostcardArt } from '@/components/windows/StampArt';
+import { PostcardArt } from '@/components/stamp/StampArt';
 import { TV_SHORT_URL, TV_URL } from '@/lib/config/site';
 import styles from './tv.module.css';
 

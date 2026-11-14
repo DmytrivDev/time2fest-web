@@ -20,7 +20,7 @@ import { useTabletLandscape, useTabletPortrait } from '@/components/shell/Overla
 import { Button } from '@/components/primitives/Button';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { PostcardArt } from '@/components/windows/StampArt';
+import { PostcardArt } from '@/components/stamp/StampArt';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';

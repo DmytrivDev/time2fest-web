@@ -8,14 +8,14 @@
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { stampEntry } from '@/components/live/StampBlock';
+import { stampEntry } from '@/components/stamp/StampBlock';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import { shareWindowSpec } from '@/components/windows/Share';
-import { StampArt } from '@/components/windows/StampArt';
-import { StampRate } from '@/components/windows/StampRate';
+import { shareWindowSpec } from '@/components/stamp/Share';
+import { StampArt } from '@/components/stamp/StampArt';
+import { StampRate } from '@/components/stamp/StampRate';
 import { formatClock } from '@/lib/i18n/time';
 import type { PassportStamp } from '@/lib/passport/passport';
 import { ratingActions, useMyVotes } from '@/lib/api/hooks/rating';

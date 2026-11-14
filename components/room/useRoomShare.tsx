@@ -14,7 +14,7 @@ import {
   type ShareTarget,
 } from '@/components/live/MoreActions';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
-import { ShareContent } from '@/components/windows/Share';
+import { ShareContent } from '@/components/stamp/Share';
 import { SITE_HOST } from '@/lib/config/site';
 import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';

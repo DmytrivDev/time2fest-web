@@ -12,7 +12,7 @@ import { passGateSpec } from '@/components/offers/OfferWindows';
 import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
-import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
+import { GATE_KEYS, type PassGateFeature } from '@/components/pass/PassGate';
 import { Nick } from '@/components/windows/Nick';
 import { hasPassNow, profileActions } from '@/lib/api/hooks/auth';
 import { chatActions } from '@/lib/api/hooks/chat';

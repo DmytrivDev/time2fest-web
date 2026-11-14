@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { InFlowSlot } from '@/components/primitives/Panel';
-import { PassInfo } from '@/components/windows/PassInfo';
+import { PassInfo } from '@/components/pass/PassInfo';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { Stage } from '../_support/Stage';
 

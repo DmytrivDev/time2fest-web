@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { PassOffer } from '@/components/windows/PassOffer';
+import { PassOffer } from '@/components/pass/PassOffer';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { Stage } from '../_support/Stage';
 

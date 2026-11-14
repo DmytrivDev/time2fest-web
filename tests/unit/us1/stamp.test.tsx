@@ -1,6 +1,6 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Stamp, type StampEntry } from '@/components/windows/Stamp';
+import { Stamp, type StampEntry } from '@/components/stamp/Stamp';
 import { CoralProvider, useCoralWindowOpen } from '@/lib/overlay/coral';
 import { renderApp } from './render';
 

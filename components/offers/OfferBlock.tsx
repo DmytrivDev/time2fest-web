@@ -16,7 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePassDetails } from '@/components/pass/PassWindow';
 import { Reveal } from '@/components/primitives/Reveal';
-import { PassOffer } from '@/components/windows/PassOffer';
+import { PassOffer } from '@/components/pass/PassOffer';
 import { currentStamps, useStamps } from '@/lib/api/hooks/passport';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';

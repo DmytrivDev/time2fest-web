@@ -15,7 +15,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
-import type { PassGateFeature } from '@/components/windows/PassGate';
+import type { PassGateFeature } from '@/components/pass/PassGate';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { effectivePref, useChatPrefs, type ChatPrefKey } from '@/stores/chatPrefs';
 import s from './chatSettings.module.css';

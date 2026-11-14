@@ -11,7 +11,7 @@ import type { CelebrationType, EventStatus, Ms } from '@/lib/data/types';
 import { formatClock, formatMidnightAgo } from '@/lib/i18n/time';
 import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { useNow } from '@/lib/time/TimeProvider';
-import { PostcardArt } from '@/components/windows/StampArt';
+import { PostcardArt } from '@/components/stamp/StampArt';
 import { useContext, useState } from 'react';
 import { useAddToRoom } from '@/components/room/useRoomViewport';
 import { RoomPageContext, usePlayingTarget, useRoomToggle } from '@/components/room/useRoomToggle';

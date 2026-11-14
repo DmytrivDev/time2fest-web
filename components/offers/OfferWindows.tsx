@@ -10,10 +10,10 @@
  * пасу (`useGetPass`).
  */
 import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
-import { PassGate, type PassGateFeature } from '@/components/windows/PassGate';
-import { AlsoInPass, MainFeatures, PassActions, usePassFeatures } from '@/components/windows/PassInfo';
-import { ScheduleGate } from '@/components/windows/ScheduleGate';
-import type { PassOfferCountry } from '@/components/windows/PassOffer';
+import { PassGate, type PassGateFeature } from '@/components/pass/PassGate';
+import { AlsoInPass, MainFeatures, PassActions, usePassFeatures } from '@/components/pass/PassInfo';
+import { ScheduleGate } from '@/components/schedule/ScheduleGate';
+import type { PassOfferCountry } from '@/components/pass/PassOffer';
 import { useOverlay, type OverlaySpec } from '@/components/shell/OverlayManager';
 import { currentStamps } from '@/lib/api/hooks/passport';
 import { getData } from '@/lib/data/load';

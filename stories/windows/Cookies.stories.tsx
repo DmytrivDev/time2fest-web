@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { CookieBanner, CookieSettings } from '@/components/windows/Cookies';
+import { CookieBanner, CookieSettings } from '@/components/legal/Cookies';
 import { CoralProvider } from '@/lib/overlay/coral';
 import { Stage } from '../_support/Stage';
 
