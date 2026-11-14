@@ -1,8 +1,8 @@
 // Плашка при наведенні на мапі поясів: вибір цілі, затримки появи/зникання, позиція за курсором чи біля мітки (`ZoneMap`).
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
-import type { MapCity, MapCountry, MapZone, ZoneMapGeometry } from './MapModel';
-import { tipKey, type MapTipTarget } from './MapTooltip';
-import { placeTipAt } from './zoneMapGeometry';
+import type { MapCity, MapCountry, MapZone, ZoneMapGeometry } from '@/lib/map/model';
+import { tipKey, type MapTipTarget } from '@/components/map/parts/MapTooltip';
+import { placeTipAt } from '@/components/map/zoneMapGeometry';
 
 export function useZoneMapTip({
   isPhone,

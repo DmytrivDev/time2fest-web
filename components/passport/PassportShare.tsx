@@ -8,7 +8,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
-import type { ZoneMapGeometry } from '@/components/live/MapModel';
+import type { ZoneMapGeometry } from '@/lib/map/model';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { SHARE_WINDOW_ID, ShareContent } from '@/components/windows/Share';
 import type { PathPoint } from '@/lib/chat/authorPath';

@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
   type SetStateAction,
 } from 'react';
-import type { MapZone } from './MapModel';
+import type { MapZone } from '@/lib/map/model';
 import type { Selection } from './useZoneMapSelection';
 
 export function useZoneMapKeyboard({

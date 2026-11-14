@@ -3,7 +3,7 @@
 
   python -X utf8 scripts/zonemap-v2/to_site.py <тека з map_data.json>
 
-Вихід (`ZoneMapGeometry`, components/live/MapModel.ts):
+Вихід (`ZoneMapGeometry`, lib/map/model.ts):
   zones   — пояс: країни `countries` ({iso, d}), морські області острівних країн `sea` ({iso, d}), смуга в океані
             `band`, точка значка `label` (окремі шляхи країн — для підсвітки країни при наведенні);
   markers — пояси, суходолу яких майже не видно (дрібні острови): точка на мапі;

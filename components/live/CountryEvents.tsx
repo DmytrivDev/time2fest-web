@@ -22,7 +22,7 @@ import type { Country, Dataset, LoadedZone, Ms, ScheduledEvent } from '@/lib/dat
 import { formatClock, viewerZoneLabel } from '@/lib/i18n/time';
 import { festProgress, nowNextItems } from '@/lib/live/homeData';
 import type { StreamRowData } from '@/lib/live/countryData';
-import { utcLabel } from './MapModel';
+import { utcLabel } from '@/lib/map/model';
 import styles from './live.module.css';
 
 const STREAMS_ID = 'country-streams';

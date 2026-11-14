@@ -6,7 +6,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock } from '@/lib/i18n/time';
-import { utcLabel, type MapCountry, type MapZone } from './MapModel';
+import { utcLabel, type MapCountry, type MapZone } from '@/lib/map/model';
 import m from './zoneMap.module.css';
 
 const SW: Record<ZoneState, 'past' | 'live' | 'next' | 'ahead'> = { past: 'past', live: 'live', next: 'next', future: 'ahead' };

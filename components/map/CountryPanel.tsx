@@ -13,7 +13,7 @@ import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { StateSwatch } from './MapSide';
-import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from './MapModel';
+import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from '@/lib/map/model';
 import { MapScheduleContext, MapStreamCard, ScheduleButton, type MapStreamMode } from './MapStreamCard';
 import { Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';

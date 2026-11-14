@@ -1,9 +1,9 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/nextjs';
 import { NextIntlClientProvider } from 'next-intl';
 import { userEvent, within } from 'storybook/test';
-import { MapLegend } from '@/components/live/MapLegend';
-import { buildMapModel, type ZoneMapGeometry } from '@/components/live/MapModel';
-import { ZoneMap } from '@/components/live/ZoneMap';
+import { MapLegend } from '@/components/map/parts/MapLegend';
+import { buildMapModel, type ZoneMapGeometry } from '@/lib/map/model';
+import { ZoneMap } from '@/components/map/ZoneMap';
 import geometryJson from '@/data/zonemap.json';
 import { data } from '@/lib/data/load';
 import ukMessages from '../../messages/uk.json';

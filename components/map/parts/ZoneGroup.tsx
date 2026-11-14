@@ -5,9 +5,9 @@ import { useTranslations } from 'next-intl';
 import type { FocusEvent, KeyboardEvent, RefObject } from 'react';
 import { cn } from '@/components/primitives/cn';
 import type { ZoneState } from '@/lib/engine/zoneState';
-import type { MapZone, ZoneMapGeometry } from './MapModel';
-import { useMidnightPhrase } from './ZoneMapCards';
-import { FILL_CLASS } from './zoneMapGeometry';
+import type { MapZone, ZoneMapGeometry } from '@/lib/map/model';
+import { useMidnightPhrase } from '@/components/map/ZoneMapCards';
+import { FILL_CLASS } from '@/components/map/zoneMapGeometry';
 
 export interface ZoneGroupProps {
   g: ZoneMapGeometry['zones'][number];

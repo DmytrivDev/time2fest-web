@@ -9,7 +9,7 @@
  *   святкування, вебкамера, лише відлік);
  * - серії: «Усі континенти» (6), «5 поясів», «10 країн», «Усі пояси за свято».
  */
-import { regionOf, type RegionKey } from '@/components/live/regions';
+import { regionOf, type RegionKey } from '@/lib/geo/regions';
 import type { Dataset, Ms, Stamp } from '@/lib/data/types';
 import { countryHref } from '@/lib/live/countryHref';
 import { scheduledCountries, zoneCountryIsos } from '@/lib/schedule/countryZone';

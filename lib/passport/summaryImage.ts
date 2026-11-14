@@ -4,8 +4,8 @@
  * «Мої Нові роки» — мапа з поясами й відвіданими країнами золотом, шлях через вузли, чотири числа, маршрут і прапори.
  * Паспорт — числа й список штампів (прапор, місто, країна). Кольори — художні (зображення, не інтерфейс).
  */
-import type { ZoneMapGeometry } from '@/components/live/MapModel';
-import { pointToPercent } from '@/components/live/MapModel';
+import type { ZoneMapGeometry } from '@/lib/map/model';
+import { pointToPercent } from '@/lib/map/model';
 import type { PathPoint } from '@/lib/chat/authorPath';
 import { SHARE_SIZE, type ShareRatio } from '@/lib/offers/shareImage';
 

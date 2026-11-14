@@ -11,10 +11,10 @@ import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { CountryPanel } from './CountryPanel';
-import { PanelSwap } from './PanelSwap';
+import { PanelSwap } from './parts/PanelSwap';
 import { StateSwatch } from './MapSide';
 import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
-import { utcLabel, type MapZone } from './MapModel';
+import { utcLabel, type MapZone } from '@/lib/map/model';
 import { ZonePanel } from './ZonePanel';
 import m from './zoneList.module.css';
 

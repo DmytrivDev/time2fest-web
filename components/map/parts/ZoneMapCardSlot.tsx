@@ -4,12 +4,12 @@
 import type { Dispatch, RefObject, SetStateAction } from 'react';
 import { Reveal } from '@/components/primitives/Reveal';
 import type { ZoneState } from '@/lib/engine/zoneState';
-import type { MapCountry, MapZone } from './MapModel';
-import { CountryPanel } from './CountryPanel';
+import type { MapCountry, MapZone } from '@/lib/map/model';
+import { CountryPanel } from '@/components/map/CountryPanel';
 import { PanelSwap } from './PanelSwap';
-import { ZonePanel } from './ZonePanel';
-import type { Selection } from './useZoneMapSelection';
-import m from './zoneMap.module.css';
+import { ZonePanel } from '@/components/map/ZonePanel';
+import type { Selection } from '@/components/map/hooks/useZoneMapSelection';
+import m from '@/components/map/zoneMap.module.css';
 
 export function ZoneMapCardSlot({
   slotRef,

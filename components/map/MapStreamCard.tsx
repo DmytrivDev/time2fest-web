@@ -14,7 +14,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { useSchedule } from '@/lib/api/hooks/auth';
 import type { CelebrationType } from '@/lib/data/types';
 import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
-import nn from './nowNext.module.css';
+import nn from '@/components/live/nowNext.module.css';
 import m from './zonePanel.module.css';
 
 /**

@@ -1,7 +1,7 @@
 // Вибір на мапі поясів: пояс / місто / країна, похідні значення вибору і вікно під мапою (`ZoneMap`).
 import { useEffect, useRef, useState } from 'react';
 import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
-import type { MapCity, MapCountry, MapZone } from './MapModel';
+import type { MapCity, MapCountry, MapZone } from '@/lib/map/model';
 
 export type Selection =
   | { kind: 'zone'; id: string }

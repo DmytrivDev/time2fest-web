@@ -1,6 +1,6 @@
 // Чисті допоміжні речі мапи поясів (`ZoneMap`): класи станів, позиція плашки, відображення масштабу у viewBox і рамку.
 import type { ZoneState } from '@/lib/engine/zoneState';
-import type { MapView } from './useMapZoom';
+import type { MapView } from './hooks/useMapZoom';
 
 export const FILL_CLASS: Record<ZoneState, string> = {
   past: 'is-past',

@@ -40,7 +40,7 @@ import { on } from '@/lib/events/bus';
 import { ratingActions, useMyVotes } from '@/lib/api/hooks/rating';
 import { useAccountStore } from '@/stores/account';
 import { useGuestStore } from '@/stores/guest';
-import { utcLabel } from './MapModel';
+import { utcLabel } from '@/lib/map/model';
 import { create } from 'zustand';
 import { useHasPass } from '@/lib/api/hooks/auth';
 

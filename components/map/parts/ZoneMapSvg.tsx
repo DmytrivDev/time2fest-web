@@ -6,10 +6,10 @@ import { useTranslations } from 'next-intl';
 import type { Dispatch, FocusEvent, KeyboardEvent, RefObject, SetStateAction } from 'react';
 import { cn } from '@/components/primitives/cn';
 import type { ZoneState } from '@/lib/engine/zoneState';
-import type { MapZone, ZoneMapGeometry } from './MapModel';
+import type { MapZone, ZoneMapGeometry } from '@/lib/map/model';
 import { ZoneGroup } from './ZoneGroup';
-import { FILL_CLASS } from './zoneMapGeometry';
-import type { Selection } from './useZoneMapSelection';
+import { FILL_CLASS } from '@/components/map/zoneMapGeometry';
+import type { Selection } from '@/components/map/hooks/useZoneMapSelection';
 
 export function ZoneMapSvg({
   geometry,

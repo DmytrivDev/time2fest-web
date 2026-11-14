@@ -10,7 +10,7 @@ import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
 import { countryMainEvent, countryStreamRows } from '@/lib/live/countryData';
 import { countryHref, type AirPlace } from '@/lib/player/BroadcastController';
 import type { PlayerChainInput } from '@/lib/player/PlayerProvider';
-import { utcLabel } from './MapModel';
+import { utcLabel } from '@/lib/map/model';
 
 export function placeOf(data: Dataset, event: ScheduledEvent | undefined | null): AirPlace | null {
   if (!event) return null;

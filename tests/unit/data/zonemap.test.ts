@@ -3,7 +3,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { MAP_CITY_IDS, pointToPercent, utcLabel, type ZoneMapGeometry } from '@/components/live/MapModel';
+import { MAP_CITY_IDS, pointToPercent, utcLabel, type ZoneMapGeometry } from '@/lib/map/model';
 import type { ScheduleFile } from '@/lib/data/types';
 
 const root = resolve(__dirname, '../../..');

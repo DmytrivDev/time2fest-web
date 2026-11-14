@@ -18,8 +18,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState, type CSSProperties } from 'react';
 import { PageChat } from '@/components/chat/PageChat';
 import { scheduleClosed } from '@/components/live/CalendarButton';
-import { StateSwatch } from '@/components/live/MapSide';
-import { PathMap } from '@/components/live/PathMap';
+import { StateSwatch } from '@/components/map/MapSide';
+import { PathMap } from '@/components/map/PathMap';
 import { PathLock } from '@/components/passport/PathLock';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
 import { useGetPass } from '@/components/pass/PassWindow';
@@ -41,7 +41,7 @@ import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { SCHEDULE_ZONE_ID, useScheduleReplace } from './scheduleReplace';
 import { ZoneCountriesPanel, ZoneCountriesSub } from './ScheduleWindows';
 // Кольорові зразки стану поясу (`StateSwatch`) — ті самі, що в легенді мапи.
-import '@/components/live/ZoneMap.css';
+import '@/components/map/ZoneMap.css';
 import s from './schedule.module.css';
 import { hasPassNow, useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 

@@ -21,7 +21,7 @@ import { Skeleton } from '@/components/primitives/Skeleton';
 import { Tooltip } from '@/components/primitives/Tooltip';
 import type { PathPoint } from '@/lib/chat/authorPath';
 import { formatClock } from '@/lib/i18n/time';
-import { pointToPercent, type ZoneMapGeometry } from './MapModel';
+import { pointToPercent, type ZoneMapGeometry } from '@/lib/map/model';
 import './PathMap.css';
 
 export interface PathMapProps {

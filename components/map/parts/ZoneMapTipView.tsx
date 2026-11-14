@@ -4,7 +4,7 @@
 import type { CSSProperties, Ref } from 'react';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { useProfile } from '@/lib/api/hooks/auth';
-import type { MapCity, MapCountry, MapZone } from './MapModel';
+import type { MapCity, MapCountry, MapZone } from '@/lib/map/model';
 import { CityTip, CountryTip, MapTip, ZoneTip, type MapTipTarget } from './MapTooltip';
 
 export function ZoneMapTipView({

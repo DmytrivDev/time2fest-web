@@ -4,8 +4,8 @@
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { MAX_K } from './useMapZoom';
-import m from './zoneMap.module.css';
+import { MAX_K } from '@/components/map/hooks/useMapZoom';
+import m from '@/components/map/zoneMap.module.css';
 
 export function ZoneMapZoomControls({
   k,

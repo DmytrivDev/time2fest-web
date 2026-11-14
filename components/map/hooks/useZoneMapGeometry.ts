@@ -1,6 +1,6 @@
 // Ліниве завантаження геометрії мапи поясів (`data/zonemap.json`) для `ZoneMap`.
 import { useEffect, useState, type RefObject } from 'react';
-import type { ZoneMapGeometry } from './MapModel';
+import type { ZoneMapGeometry } from '@/lib/map/model';
 
 /**
  * Геометрія мапи (~75 КБ) вантажиться, коли мапа наближається до екрана (SC-001): на першому екрані її немає,

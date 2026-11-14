@@ -6,7 +6,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 import { CountryList } from '@/components/live/CountryList';
-import type { ZoneMapGeometry } from '@/components/live/MapModel';
+import type { ZoneMapGeometry } from '@/lib/map/model';
 import geometryJson from '@/data/zonemap.json';
 import uk from '@/messages/uk.json';
 import { TimeProvider } from '@/lib/time/TimeProvider';

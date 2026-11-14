@@ -6,9 +6,9 @@ import { useTranslations } from 'next-intl';
 import type { RefObject } from 'react';
 import { cn } from '@/components/primitives/cn';
 import type { ZoneState } from '@/lib/engine/zoneState';
-import { pointToPercent, type MapCity, type MapCountry, type ZoneMapGeometry } from './MapModel';
-import { MARKER_CLASS } from './zoneMapGeometry';
-import m from './zoneMap.module.css';
+import { pointToPercent, type MapCity, type MapCountry, type ZoneMapGeometry } from '@/lib/map/model';
+import { MARKER_CLASS } from '@/components/map/zoneMapGeometry';
+import m from '@/components/map/zoneMap.module.css';
 
 export function ZoneMapOverlay({
   geometry,

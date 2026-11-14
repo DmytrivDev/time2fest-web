@@ -1,7 +1,7 @@
 // Пошук країн і міст усіма мовами сайту (рішення власника 2026-11-09): uk/en/es/fr, транслітерація міст,
 // англійські назви з id міста й словника, нечутливість до регістру, діакритики, дефісів.
 import { describe, expect, it } from 'vitest';
-import { buildMapModel, type MapCountry } from '@/components/live/MapModel';
+import { buildMapModel, type MapCountry } from '@/lib/map/model';
 import { matchCountry } from '@/components/live/CountryList';
 import { getData } from '@/lib/data/load';
 import { detectFlag } from '@/lib/geo/detectFlag';

@@ -28,10 +28,10 @@ import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/ti
 import { useNow } from '@/lib/time/TimeProvider';
 import { MapStreamCard, PlayMark, ScheduleButton, type MapStreamMode } from './MapStreamCard';
 import { StateSwatch } from './MapSide';
-import { viewerOffsetAt } from './MapTooltip';
-import { utcLabel, type MapCountry, type MapStream, type MapZone } from './MapModel';
+import { viewerOffsetAt } from './parts/MapTooltip';
+import { utcLabel, type MapCountry, type MapStream, type MapZone } from '@/lib/map/model';
 import { useMidnightPhrase } from './ZoneMapCards';
-import { REGION_ORDER, regionOf, type RegionKey } from './regions';
+import { REGION_ORDER, regionOf, type RegionKey } from '@/lib/geo/regions';
 import m from './zonePanel.module.css';
 
 const TOP = 5;

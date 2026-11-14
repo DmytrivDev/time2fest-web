@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState, type RefObject } from 'react';
 import { mapHintSeen, markMapHintSeen } from '@/lib/storage/mapHint';
 import { useGuestStore } from '@/stores/guest';
-import m from './zoneMap.module.css';
+import m from '@/components/map/zoneMap.module.css';
 
 /** Одне коло анімації: пальці розходяться й сходяться, потім разом вправо-вліво (як у погодженому прикладі). */
 const LOOP_MS = 2600;

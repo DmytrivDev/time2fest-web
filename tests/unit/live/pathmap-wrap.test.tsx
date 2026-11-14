@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { wrapSegment } from '@/components/live/PathMap';
+import { wrapSegment } from '@/components/map/PathMap';
 
 const SPAN = 1781;
 

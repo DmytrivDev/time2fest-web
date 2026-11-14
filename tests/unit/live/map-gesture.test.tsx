@@ -5,7 +5,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { useRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MapGestureHint } from '@/components/live/MapGestureHint';
+import { MapGestureHint } from '@/components/map/parts/MapGestureHint';
 import { mapHintSeen } from '@/lib/storage/mapHint';
 import { resetGuest } from '@/stores/guest';
 import uk from '@/messages/uk.json';

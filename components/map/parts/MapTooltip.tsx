@@ -7,8 +7,8 @@ import { Flag } from '@/components/primitives/Flag';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatDurationShort, formatTimeForViewer, viewerTimeZone } from '@/lib/i18n/time';
-import { utcLabel, type MapCity, type MapCountry, type MapZone } from './MapModel';
-import m from './zoneMap.module.css';
+import { utcLabel, type MapCity, type MapCountry, type MapZone } from '@/lib/map/model';
+import m from '@/components/map/zoneMap.module.css';
 
 /** Що під курсором: пояс (смуга в океані), країна (суходіл чи морська область острівної країни) або точка міста. */
 export type MapTipTarget =

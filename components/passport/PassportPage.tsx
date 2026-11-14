@@ -17,7 +17,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHeaderUser } from '@/components/auth/session';
 import { PageChat } from '@/components/chat/PageChat';
-import { PathMap } from '@/components/live/PathMap';
+import { PathMap } from '@/components/map/PathMap';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';

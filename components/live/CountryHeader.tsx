@@ -22,7 +22,7 @@ import type { Country } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { ukOrdinal } from '@/lib/rating/rating';
 import h from './countryHeader.module.css';
-import m from './countryPanel.module.css';
+import m from '@/components/map/countryPanel.module.css';
 import styles from './live.module.css';
 
 export const ZONES_SHEET_ID = 'O-COUNTRY-ZONES';

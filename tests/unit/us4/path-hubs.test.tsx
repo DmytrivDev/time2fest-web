@@ -6,7 +6,7 @@
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { AuthorPanel, type AuthorPanelProps } from '@/components/live/AuthorPanel';
-import { pathMapScale } from '@/components/live/PathMap';
+import { pathMapScale } from '@/components/map/PathMap';
 import chatScript from '@/data/chat-script.json';
 import zonemap from '@/data/zonemap.json';
 import { assignZoneHubs, buildAuthorPath, buildOwnPath, pathSummary, type PathPoint } from '@/lib/chat/authorPath';
