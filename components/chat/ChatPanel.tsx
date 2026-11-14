@@ -30,7 +30,7 @@ import { ChatEmptyCountrySub, ChatRoomSwitcher } from './parts/ChatRoomSwitcher'
 import { ChatSettings } from './parts/ChatSettings';
 import { Composer, type ComposerError } from './parts/Composer';
 import { useChatLookup } from './hooks/useChatLookup';
-import { useChatMessageActions } from './hooks/useChatMessageActions';
+import { sendReport, useChatMessageActions, type ReportState } from './hooks/useChatMessageActions';
 import { useChatPanelRoom } from './hooks/useChatPanelRoom';
 import { useChatPanelWindows } from './hooks/useChatPanelWindows';
 import { useChatSend, useChatSlowMode } from './hooks/useChatSend';
@@ -91,11 +91,12 @@ export function ChatPanel({
   const draft = useChatUi((s) => s.draft);
   const setDraft = useChatUi((s) => s.setDraft);
   const [error, setError] = useState<ComposerError>(null);
-  const [reported, setReported] = useState(false);
+  const [reported, setReported] = useState<ReportState>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (!reported) return;
+    // Подяка гасне сама; «скаргу не надіслано» лишається, поки людина не спробує ще (чи не закриє).
+    if (reported !== true) return;
     const id = setTimeout(() => setReported(false), 4_000);
     return () => clearTimeout(id);
   }, [reported]);
@@ -133,6 +134,25 @@ export function ChatPanel({
 
   const banner = offline ? (
     <StatusMessage kind="offline">{t('offline')}</StatusMessage>
+  ) : typeof reported === 'object' ? (
+    <StatusMessage
+      kind="error"
+      action={
+        <button
+          type="button"
+          className="t2f-focus text-body-strong underline"
+          onClick={() => {
+            const m = reported.failed;
+            setReported(true);
+            void sendReport(m, setReported);
+          }}
+        >
+          {t('reportRetry')}
+        </button>
+      }
+    >
+      {t('reportFailed')}
+    </StatusMessage>
   ) : reported ? (
     <StatusMessage kind="success">{t('reportedVisible')}</StatusMessage>
   ) : undefined;

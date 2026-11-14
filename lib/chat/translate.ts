@@ -86,6 +86,10 @@ export interface TranslateState {
   showing: boolean;
   /** Готовий переклад (може ще вантажитися). */
   text: string | undefined;
+  /** Сервіс не переклав (стан шва №13): показуємо оригінал і «Не вдалося перекласти · Спробувати ще». */
+  failed: boolean;
+  /** Спробувати перекласти ще раз. */
+  retry(): void;
   /** Перемкнути «переклад ↔ оригінал» для цього повідомлення. */
   toggle(): void;
   /** Показати переклад (для меню повідомлення «Перекласти»). */
@@ -109,16 +113,24 @@ export function useTranslateMessage(message: Pick<ChatMessage, 'id' | 'text' | '
   const ov = overrides.get(message.id);
   const showing = !!lang && (ov ? ov === 'translated' : auto);
   const [text, setText] = useState<string | undefined>(() => cachedTranslation(message.id));
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    if (!showing || !lang || text !== undefined || !message.text) return;
+    if (!showing || !lang || text !== undefined || !message.text || failed) return;
     let live = true;
     void translate(message.text, lang, SITE_LANG, message.id).then((out) => {
-      if (live) setText(out);
+      if (!live) return;
+      if (out === undefined) setFailed(true);
+      else setText(out);
     });
     return () => {
       live = false;
     };
-  }, [showing, lang, text, message.text, message.id]);
+  }, [showing, lang, text, message.text, message.id, failed, attempt]);
+  const retry = useCallback(() => {
+    setFailed(false);
+    setAttempt((n) => n + 1);
+  }, []);
   const toggle = useCallback(() => {
     overrides.set(message.id, showing ? 'original' : 'translated');
     emit();
@@ -127,7 +139,7 @@ export function useTranslateMessage(message: Pick<ChatMessage, 'id' | 'text' | '
     overrides.set(message.id, 'translated');
     emit();
   }, [message.id]);
-  return { lang, showing, text, toggle, translateNow };
+  return { lang, showing, text, failed: showing && failed && text === undefined, retry, toggle, translateNow };
 }
 
 /** Для тестів: забути переклади й вибір «Оригінал». */

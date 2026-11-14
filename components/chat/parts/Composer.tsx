@@ -23,7 +23,8 @@ import { ANNOUNCE_AT, COUNTER_FROM, MAX_TEXT } from '@/lib/chat/send';
 import { EmojiPicker } from '@/components/chat/EmojiPicker';
 import ts from './composerToast.module.css';
 
-export type ComposerError = 'link' | 'too-long' | null;
+/** `not-sent` — сервер не прийняв повідомлення після локальної перевірки (мережа, недоступно): текст повернуто в поле. */
+export type ComposerError = 'link' | 'too-long' | 'not-sent' | null;
 
 export interface ComposerProps {
   room: { id: RoomId; label: string };
@@ -110,7 +111,7 @@ export function Composer({
       </span>
     ) : null;
 
-  const errorText = error === 'link' ? t('linkError') : error === 'too-long' ? t('tooLong') : undefined;
+  const errorText = error === 'link' ? t('linkError') : error === 'too-long' ? t('tooLong') : error === 'not-sent' ? t('notSent') : undefined;
   const sendLabel = slow ? t('sendWait', { seconds: slowRemaining }) : t('send');
 
   const closePicker = useCallback(

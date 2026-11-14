@@ -14,6 +14,9 @@
  * - coral «Готово» (єдина коралова кнопка), «Увійти» (вікно входу O-AUTH), «Оформити пас» (імітована оплата), «Акаунт — з 13 років (16 у ЄС) ·
  *   Умови й правила чату» (посилання на `/rules/`).
  * Текст повідомлення, заради якого відкрито вікно, лишається в полі чату — вікно про нього не знає.
+ * Запис ніка на сервер (рішення власника 2026-11-14, стан шва №10): `onDone` повертає обіцянку — поки зберігаємо, кнопка
+ * «Зберігаємо…»; не вдалося — вікно лишається відкритим з помилкою під кнопкою, «Готово» стає «Спробувати ще», а
+ * повідомлення зі старим підписом не надсилається.
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -45,7 +48,8 @@ export interface NickProps {
   takenNicks?: readonly string[];
   /** Примусовий стан помилки (історії, сервер): `taken` / `forbidden`. */
   forcedIssue?: Extract<NickIssue, 'taken' | 'forbidden'>;
-  onDone: (result: NickResult) => void;
+  /** `false` (з обіцянки) — нік не збережено: вікно лишається з помилкою й «Спробувати ще». */
+  onDone: (result: NickResult) => void | Promise<boolean>;
   /** «Увійти» — вікно входу (O-AUTH) на місці цього. */
   onSignIn?: () => void;
   /** «Оформити пас» — оформлення (вікно під трансляцією чи сторінка пасу). */
@@ -102,6 +106,7 @@ export function Nick({
     : undefined;
 
   const nameOf = useFlagName(flags);
+  const [save, setSave] = useState<'idle' | 'saving' | 'failed'>('idle');
 
   const submit = () => {
     setTouched(true);
@@ -109,7 +114,11 @@ export function Nick({
       nickRef.current?.focus();
       return;
     }
-    onDone({ nick: trimmed, flagCode: flag });
+    if (save === 'saving') return;
+    const done = onDone({ nick: trimmed, flagCode: flag });
+    if (!done) return;
+    setSave('saving');
+    void done.then((ok) => setSave(ok ? 'idle' : 'failed'));
   };
 
   const describedBy = [errorText ? errId : null, hintId, countId].filter(Boolean).join(' ');
@@ -196,9 +205,15 @@ export function Nick({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Button type="submit" variant="coral" size="lg" className="w-full">
-            {t('done')}
+          <Button type="submit" variant="coral" size="lg" className="w-full" loading={save === 'saving'} data-action="nick-done">
+            {save === 'saving' ? t('saving') : save === 'failed' ? t('retry') : t('done')}
           </Button>
+          {save === 'failed' ? (
+            <p role="alert" className="flex items-center gap-1 text-caption text-primary" data-row="nick-save-failed">
+              <Icon name="alert" size={16} />
+              {t('saveFailed')}
+            </p>
+          ) : null}
           <div className="flex gap-2">
             <Button type="button" className="min-h-touch-min flex-1" onClick={onSignIn}>
               {t('signIn')}

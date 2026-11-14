@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { resetSimFaultsForTest, simFaults } from '@/lib/api/sim/faults';
 import { ChatHiddenButton } from '@/components/chat/parts/ChatHiddenButton';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { OverlayManager } from '@/components/shell/OverlayManager';
@@ -51,7 +52,10 @@ beforeEach(() => {
   useTestControls.setState({ chatAvailable: true, offlineSimulated: false });
   useChatFeed.getState().append([message('m1', KARIM, 'Привіт з Каїра!'), message('m2', TARAS, 'У нас уже святкують', QUIET - 30_000)]);
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  resetSimFaultsForTest();
+});
 
 // Вікна й userEvent у jsdom повільні: запас на кожен тест.
 vi.setConfig({ testTimeout: 20_000 });
@@ -96,6 +100,27 @@ describe('ChatPanel — вікно ніка на першому власному
     expect(within(log).getByText('Привіт усім')).toBeInTheDocument();
     expect(log.querySelector('[data-own="true"]')).not.toBeNull();
     expect(field()).toHaveValue('');
+    expect(useGuestStore.getState().nick).toBe('Мирон');
+    expect(useGuestStore.getState().chat.sentAt).toHaveLength(1);
+  });
+
+  it('нік не зберігся на сервері (стан №10, рішення 2026-11-14): вікно лишається з помилкою, повідомлення не надіслано; «Спробувати ще» — надіслано', async () => {
+    const user = userEvent.setup();
+    setup();
+    await user.type(field(), 'Привіт усім');
+    await user.click(screen.getByRole('button', { name: 'Надіслати' }));
+    const dialog = await screen.findByRole('dialog', { name: /Як тебе підписати/ });
+    await user.type(within(dialog).getByRole('textbox', { name: /Нік/ }), 'Мирон');
+    // Відкриття вікна записує визначений прапор — відмова має влучити саме в запис ніка.
+    simFaults.failNext('profile', 'update', 'network');
+    await user.click(within(dialog).getByRole('button', { name: 'Готово' }));
+    expect(await within(dialog).findByText(/Не вдалося зберегти нік — повідомлення не надіслано/)).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: /Як тебе підписати/ })).toBeInTheDocument();
+    expect(useGuestStore.getState().nick).toBeUndefined();
+    expect(useGuestStore.getState().chat.sentAt).toHaveLength(0);
+    expect(field()).toHaveValue('Привіт усім');
+    await user.click(within(dialog).getByRole('button', { name: 'Спробувати ще' }));
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: /Як тебе підписати/ })).not.toBeInTheDocument());
     expect(useGuestStore.getState().nick).toBe('Мирон');
     expect(useGuestStore.getState().chat.sentAt).toHaveLength(1);
   });

@@ -121,6 +121,22 @@ function MessageText({ message }: { message: ChatMessage }) {
       </>
     );
   }
+  if (tr.failed) {
+    // Переклад не вдався (стан шва №13): оригінал і тихий рядок із «Спробувати ще».
+    return (
+      <>
+        <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>
+        <p className="t2f-msg-tr" data-row="translate-failed">
+          <Icon name="translate" size={12} className="shrink-0" />
+          <span>{t('failed')}</span>
+          <span aria-hidden="true">·</span>
+          <button type="button" onClick={tr.retry} className="t2f-focus t2f-msg-tr-btn">
+            {t('retry')}
+          </button>
+        </p>
+      </>
+    );
+  }
   if (!tr.showing || tr.text === undefined) return <p className="t2f-msg-text text-chat text-text">{withMentions(message.text)}</p>;
   return (
     <>

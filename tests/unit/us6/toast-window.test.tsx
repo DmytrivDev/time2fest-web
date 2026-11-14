@@ -5,6 +5,7 @@
  */
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { resetSimFaultsForTest, simFaults } from '@/lib/api/sim/faults';
 import { useOpenToastWindow } from '@/components/toast/ToastWindow';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import { PAY_ROUNDTRIP_MS } from '@/lib/offers/paySim';
@@ -45,6 +46,7 @@ afterEach(() => {
   useTestControls.getState().setPayResult('success');
   useTestControls.getState().setOfflineSimulated(false);
   vi.useRealTimers();
+  resetSimFaultsForTest();
 });
 
 describe('вікно «Сказати тост»: крок 1', () => {
@@ -85,7 +87,7 @@ describe('вікно «Сказати тост»: крок 1', () => {
     expect(win()).toHaveTextContent('Новорічний пас у тебе вже є');
   });
 
-  it('гість без ніку: «Як підписати тост?» у вікні, «Оплатити» неактивна до дійсного ніку; тост не підписують «Гість»', () => {
+  it('гість без ніку: «Як підписати тост?» у вікні, «Оплатити» неактивна до дійсного ніку; тост не підписують «Гість»', async () => {
     renderPage(<Opener />);
     fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));
     expect(win()).toHaveTextContent('Як підписати тост?');
@@ -100,6 +102,24 @@ describe('вікно «Сказати тост»: крок 1', () => {
     fireEvent.change(nick, { target: { value: 'Зоряна' } });
     expect(payBtn()).toBeEnabled();
     fireEvent.click(payBtn());
+    await act(async () => undefined);
+    expect(useGuestStore.getState().nick).toBe('Зоряна');
+    expect(useToastStore.getState().phase).toBe('paying');
+  });
+
+  it('підпис не зберігся на сервері (стан №10, рішення 2026-11-14): оплату не почато, помилка під підписом; «Оплатити» ще раз — оплата', async () => {
+    useGuestStore.setState({ nick: undefined, flagCode: undefined });
+    renderPage(<Opener />);
+    fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));
+    fireEvent.change(within(win()).getByRole('textbox', { name: 'Нік для тосту' }), { target: { value: 'Зоряна' } });
+    simFaults.failNext('profile', 'update', 'network');
+    fireEvent.click(payBtn());
+    await act(async () => undefined);
+    expect(useToastStore.getState().phase).toBe('form');
+    expect(win().querySelector('[data-row="signature-save-failed"]')).toHaveTextContent('Не вдалося зберегти підпис — тост не надіслано');
+    expect(useGuestStore.getState().nick).toBeUndefined();
+    fireEvent.click(payBtn());
+    await act(async () => undefined);
     expect(useGuestStore.getState().nick).toBe('Зоряна');
     expect(useToastStore.getState().phase).toBe('paying');
   });

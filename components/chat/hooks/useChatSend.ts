@@ -66,6 +66,10 @@ export function useChatSend(o: {
         else if (error === 'too-long') setError('too-long');
         else setError(null);
       };
+      // Сервер не прийняв (стан шва №12): мережа, сервіс недоступний чи невідома відмова — «Не надіслано…», текст у полі,
+      // «Надіслати» — спробувати ще. Повільний режим і перевірки тексту мають свої рядки.
+      const notSent = (code: string, reason: string | undefined) =>
+        !reason && (code === 'network' || code === 'unavailable' || code === 'unknown' || code === 'rate_limited');
       const bad = validateSend(req, ctx);
       if (bad) {
         showError(bad.error);
@@ -75,7 +79,8 @@ export function useChatSend(o: {
       void chatActions.send({ ...req, ...(reply ? { replyToId: reply.id } : {}) }).then((res) => {
         if (res.ok) return;
         setDraft(text);
-        showError(res.error.reason);
+        if (notSent(res.error.code, res.error.reason)) setError('not-sent');
+        else showError(res.error.reason);
       });
       recordSent(nowMs);
       setDraft('');

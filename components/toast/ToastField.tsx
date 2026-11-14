@@ -173,6 +173,7 @@ export function Signature({
   onNick,
   onFlag,
   issue,
+  saveFailed = false,
 }: {
   editing: boolean;
   draftNick: string;
@@ -181,6 +182,8 @@ export function Signature({
   onNick: (v: string) => void;
   onFlag: (v: string) => void;
   issue: NickIssue | null;
+  /** Підпис не зберігся на сервері (оплату не почато) — помилка під полем (стан шва №10). */
+  saveFailed?: boolean;
 }) {
   const t = useTranslations('toast');
   const tc = useTranslations('chat.nick');
@@ -273,6 +276,10 @@ export function Signature({
       {err ? (
         <p className={s.guestErr} role="alert">
           {err}
+        </p>
+      ) : saveFailed ? (
+        <p className={s.guestErr} role="alert" data-row="signature-save-failed">
+          {t('signatureFailed')}
         </p>
       ) : null}
       <p id={`${id}-h`} className={s.guestHint}>

@@ -23,6 +23,7 @@ import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { TRANSLATE_GATE_WINDOW_ID, TranslateGate } from '@/components/chat/parts/TranslateGate';
 import type { MessageLookup } from '@/components/chat/parts/Message';
+import { sendReport, type ReportState } from './useChatMessageActions';
 
 export const NICK_WINDOW_ID = 'O-NICK';
 export const AUTHOR_WINDOW_ID = 'O-AUTHOR';
@@ -31,7 +32,7 @@ export function useChatPanelWindows(o: {
   lookup: MessageLookup;
   focusField: () => void;
   trySend: (text: string, override?: { nick: string; flagCode: string }) => 'sent' | 'nick' | 'error';
-  setReported: Dispatch<SetStateAction<boolean>>;
+  setReported: Dispatch<SetStateAction<ReportState>>;
 }) {
   const { lookup, focusField, trySend, setReported } = o;
   const t = useTranslations('chat');
@@ -71,11 +72,14 @@ export function useChatPanelWindows(o: {
             takenNicks={takenNicks}
             onSignIn={() => openAuthWindow()}
             onGetPass={() => getPass()}
-            onDone={({ nick, flagCode }) => {
-              // Нік і прапор — профіль (шов, залишки E5); у `sim` запис синхронний — відправлення нижче бачить нік.
-              void profileActions.update({ nick, ...(flagCode ? { flagCode } : {}) });
+            onDone={async ({ nick, flagCode }) => {
+              // Нік і прапор — профіль (шов, залишки E5). Не збереглося (стан шва №10, рішення 2026-11-14) — вікно
+              // лишається з помилкою й «Спробувати ще»; повідомлення зі старим підписом не надсилаємо (текст — у полі).
+              const res = await profileActions.update({ nick, ...(flagCode ? { flagCode } : {}) });
+              if (!res.ok) return false;
               overlay.close(NICK_WINDOW_ID);
               if (pendingText) trySend(pendingText, { nick, flagCode });
+              return true;
             }}
           />
         ),
@@ -118,8 +122,8 @@ export function useChatPanelWindows(o: {
             viewerHasPass={viewerHasPass}
             // Підтвердження панель показує сама; у чаті після закриття картки ще кілька секунд — та сама плашка.
             onReport={(m) => {
-              if (m) void chatActions.report(m.room, m.id);
               setReported(true);
+              if (m) void sendReport(m, setReported);
             }}
             onEditProfile={author.isMine ? () => openNick(null) : undefined}
             onGetPass={() => getPass()}

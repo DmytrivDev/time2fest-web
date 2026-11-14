@@ -55,12 +55,22 @@ export function Compose({ onCancel, phone }: { onCancel: () => void; phone: bool
   const taken = useMemo(() => takenNicks(), []);
   const nickIssue = editing ? validateNick(draftNick, draftNick === storedNick ? [] : taken) : null;
   const nickOk = !editing || nickIssue === null;
-  const blocked = !text.trim() || !!issue || !nickOk;
+  const [sig, setSig] = useState<'idle' | 'saving' | 'failed'>('idle');
+  const blocked = !text.trim() || !!issue || !nickOk || sig === 'saving';
   const ref = useRef<HTMLDivElement>(null);
-  const pay = () => {
+  const pay = async () => {
     if (blocked) return;
-    // Нік і прапор — профіль (шов, залишки E5); у `sim` запис синхронний — оплата нижче бачить новий підпис.
-    if (editing) void profileActions.update({ nick: draftNick.trim(), flagCode: draftFlag });
+    // Нік і прапор — профіль (шов, залишки E5). Підпис не зберігся (стан шва №10, рішення 2026-11-14) — оплату не
+    // починаємо: тост зі старим підписом не йде; помилка під підписом, «Оплатити» — спробувати ще раз.
+    if (editing) {
+      setSig('saving');
+      const res = await profileActions.update({ nick: draftNick.trim(), flagCode: draftFlag });
+      if (!res.ok) {
+        setSig('failed');
+        return;
+      }
+      setSig('idle');
+    }
     const ok = useToastStore.getState().pay();
     // Фільтр не пропустив — повідомлення про помилку видно (прокрутка до поля).
     if (!ok && useToastStore.getState().issue) {
@@ -95,13 +105,22 @@ export function Compose({ onCancel, phone }: { onCancel: () => void; phone: bool
           onNick={setDraftNick}
           onFlag={setDraftFlag}
           issue={nickIssue}
+          saveFailed={sig === 'failed'}
         />
         <PayNote />
       </div>
       <Foot>
         <div className={s.footRow}>
-          <button type="button" disabled={blocked} onClick={pay} className={cn('t2f-focus', s.coral)} data-action="toast-pay" title={!nickOk ? t('payNeedsNick') : undefined}>
-            {t('pay', { price: formatUsd(tier) })}
+          <button
+            type="button"
+            disabled={blocked}
+            aria-busy={sig === 'saving' || undefined}
+            onClick={() => void pay()}
+            className={cn('t2f-focus', s.coral)}
+            data-action="toast-pay"
+            title={!nickOk ? t('payNeedsNick') : undefined}
+          >
+            {sig === 'saving' ? t('signatureSaving') : t('pay', { price: formatUsd(tier) })}
           </button>
           <button type="button" onClick={onCancel} className={cn('t2f-focus', s.line)}>
             {t('cancel')}

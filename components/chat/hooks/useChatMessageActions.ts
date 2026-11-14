@@ -11,11 +11,23 @@ import type { ChatMessage, ReactionId } from '@/lib/data/types';
 import { useChatUi } from '@/stores/chat';
 import { AUTHOR_WINDOW_ID } from './useChatPanelWindows';
 
+/** Смуга над полем після скарги: `true` — «Дякуємо, скаргу передано»; `{ failed }` — не дійшла (стан шва №13). */
+export type ReportState = boolean | { failed: ChatMessage };
+
+/**
+ * Надіслати скаргу: подяку показуємо одразу (як і раніше); сервер не прийняв — смуга «Скаргу не надіслано» з
+ * «Спробувати ще» на місці подяки.
+ */
+export async function sendReport(m: ChatMessage, setReported: Dispatch<SetStateAction<ReportState>>): Promise<void> {
+  const res = await chatActions.report(m.room, m.id);
+  if (!res.ok) setReported({ failed: m });
+}
+
 export function useChatMessageActions(o: {
   focusField: () => void;
   setDraft: ReturnType<typeof useChatUi.getState>['setDraft'];
   setReplyTo: ReturnType<typeof useChatUi.getState>['setReplyTo'];
-  setReported: Dispatch<SetStateAction<boolean>>;
+  setReported: Dispatch<SetStateAction<ReportState>>;
 }) {
   const { focusField, setDraft, setReplyTo, setReported } = o;
   const t = useTranslations('chat');
@@ -43,9 +55,9 @@ export function useChatMessageActions(o: {
   );
   const onReport = useCallback(
     (m?: ChatMessage) => {
-      if (m) void chatActions.report(m.room, m.id);
       setReported(true);
       announce(t('reported'));
+      if (m) void sendReport(m, setReported);
     },
     [announce, t, setReported],
   );
