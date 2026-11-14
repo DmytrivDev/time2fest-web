@@ -36,16 +36,16 @@ import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { formatClock } from '@/lib/i18n/time';
 import { PostcardArt } from '@/components/windows/StampArt';
+import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
+import { thumbOf } from '@/lib/live/thumb';
 import { EventFilter, type EventFilterValue } from './EventFilter';
 import type { StreamRowData } from '@/lib/live/countryData';
 import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
 import type { RoomTarget } from '@/stores/room';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { usePhone } from '@/lib/hooks/useMedia';
-import { thumbOf } from '@/lib/live/thumb';
 import s from './streamCards.module.css';
 
-const KIND_KEY = { main: 'main', webcam: 'webcam', tv: 'tv' } as const;
 const SLIDE = ':scope > li';
 
 /** Країна поясу без трансляції: обкладинка з «Відлік», посилання на сторінку країни. */
@@ -171,7 +171,7 @@ function PlusToggle({ row, main }: { row: StreamRowData; main: RoomTarget | null
 
 function DeskCard({ row, current, currentRow, showCountry, onSelect }: CardProps) {
   const tType = useTranslations('liveCards.eventCard.type');
-  const kind = tType(KIND_KEY[row.kind]);
+  const kind = tType(STREAM_TYPE_KEY[row.kind]);
   return (
     <li
       data-stream-card={row.id}
@@ -232,7 +232,7 @@ function PhoneRow({ row, current, currentRow, showCountry, onSelect, onAddToRoom
   const tType = useTranslations('liveCards.eventCard.type');
   const [confirming, setConfirming] = useState(false);
   const confirmId = useId();
-  const kind = tType(KIND_KEY[row.kind]);
+  const kind = tType(STREAM_TYPE_KEY[row.kind]);
   return (
     <li
       data-stream-card={row.id}

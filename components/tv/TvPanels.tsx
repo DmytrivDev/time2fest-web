@@ -15,21 +15,15 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { QRCode } from '@/components/primitives/QRCode';
-import { getStreamChains } from '@/lib/api/hooks/live';
 import { PASS_SHORT_URL, PASS_URL } from '@/lib/config/site';
 import { getData } from '@/lib/data/load';
 import { formatClock } from '@/lib/i18n/time';
 import type { StreamRowData } from '@/lib/live/countryData';
+import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
+import { thumbOf } from '@/lib/live/thumb';
 import type { AirPlace } from '@/lib/player/BroadcastController';
 import type { TvShow } from '@/stores/tv';
 import styles from './tv.module.css';
-
-const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
-
-function thumbOf(row: StreamRowData): string | undefined {
-  const src = getStreamChains().get(row.eventId)?.sources.find((s) => s.id === row.id);
-  return src?.platform === 'youtube' && src.videoId ? `https://i.ytimg.com/vi/${src.videoId}/mqdefault.jpg` : undefined;
-}
 
 export interface TvNowProps {
   place: AirPlace;
@@ -48,7 +42,7 @@ export function TvNow({ place, stream, title, canChange, onChange, changeRef }: 
   const tType = useTranslations('liveCards.eventCard.type');
   const tBadge = useTranslations('primitives.badge');
   const city = place.city?.name.uk ?? place.country?.name.uk ?? '';
-  const where = title ?? (stream ? `${city} · ${tType(TYPE_KEY[place.event.type])}` : place.country?.name.uk ?? city);
+  const where = title ?? (stream ? `${city} · ${tType(STREAM_TYPE_KEY[place.event.type])}` : place.country?.name.uk ?? city);
   return (
     <div className="flex flex-col items-start gap-3">
       <div className="flex w-full items-center gap-2.5">
@@ -128,7 +122,7 @@ export function TvStreamsNow({ rows, playingId, onWatch, onClose }: TvStreamsNow
                   <span className={styles.streamMeta}>
                     <Flag code={row.flagCode} size="sm" decorative />
                     <Icon name="broadcast" size={16} className="text-primary" />
-                    {tBadge('live')} · {tType(TYPE_KEY[row.kind])}
+                    {tBadge('live')} · {tType(STREAM_TYPE_KEY[row.kind])}
                   </span>
                 </span>
               </button>
@@ -156,7 +150,7 @@ export function TvNearest({ row, onWatch }: { row: StreamRowData; onWatch: (row:
         </b>
         <span className={styles.streamMeta}>
           <Icon name="broadcast" size={16} className="text-primary" />
-          {tBadge('live')} · {tType(TYPE_KEY[row.kind])}
+          {tBadge('live')} · {tType(STREAM_TYPE_KEY[row.kind])}
         </span>
       </div>
       <button type="button" onClick={() => onWatch(row)} data-action="switch" data-tv-initial="" className={cn('t2f-focus t2f-transition', styles.yellowBtn)}>

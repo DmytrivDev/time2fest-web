@@ -3,8 +3,6 @@
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import {
-  createContext,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -28,21 +26,14 @@ import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
+import { MapStreamCard, PlayMark, ScheduleButton, type MapStreamMode } from './MapStreamCard';
 import { StateSwatch } from './MapSide';
 import { viewerOffsetAt } from './MapTooltip';
 import { utcLabel, type MapCountry, type MapStream, type MapZone } from './MapModel';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { REGION_ORDER, regionOf, type RegionKey } from './regions';
-import nn from './nowNext.module.css';
 import m from './zonePanel.module.css';
-import { useSchedule } from '@/lib/api/hooks/auth';
 
-const TYPE_KEY = {
-  main: 'main',
-  webcam: 'webcam',
-  tv: 'tv',
-  'countdown-only': 'countdownOnly',
-} as const;
 const TOP = 5;
 const NOT_TOP = new Set(['RU', 'BY']);
 /** На телефоні одразу видно дві групи регіонів, решта — кнопкою «Ще …». */
@@ -186,7 +177,7 @@ export function ZonePanel({
               title={state === 'past' ? t('replayTitle') : t('watchTitle')}
             >
               {streams.map((s) => (
-                <StreamCard
+                <ZoneStreamCard
                   key={s.cityId}
                   stream={s}
                   mode={state === 'past' ? 'replay' : state === 'live' ? 'live' : 'upcoming'}
@@ -381,146 +372,20 @@ export function Slider({
   );
 }
 
-/**
- * «Додати в графік» з мапи (рішення власника 2026-11-04): та сама дія, що на картках «Зараз і далі» — з пасом перемикає,
- * без пасу відкриває вікно «Графік — у Новорічному пасі» в колонці чату. Мапа отримує її від сторінки.
- */
-export const MapScheduleContext = createContext<((eventId: string, next: boolean) => void) | null>(
-  null,
-);
-
-/**
- * Утримати натиснуту картку на тій самій висоті екрана: якщо колонка чату була схована й відкривається під вікно, мапа й
- * усе під нею звужуються — сторінка підкручується, щоб картка не «втекла» з-під курсора (дошка `Desk-Home-ChatColumn`).
- */
-function keepInPlace(el: HTMLElement | null) {
-  if (!el || typeof window === 'undefined') return;
-  const hold = () => {
-    const top = el.getBoundingClientRect().top;
-    let frames = 0;
-    const tick = () => {
-      const d = el.getBoundingClientRect().top - top;
-      if (Math.abs(d) > 1) window.scrollBy(0, d);
-      if (++frames < 12) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  };
-  hold();
-  // Колонку повернуло вікно (`data-chat-forced`) — коли вікно закриють і колонка знову сховається, картка теж лишається на
-  // місці: позицію «до» оновлюємо при кожній прокрутці, а після зміни атрибута повертаємо картку на неї.
-  const aside = document.getElementById('chat');
-  if (!aside || typeof MutationObserver === 'undefined') return;
-  let last = el.getBoundingClientRect().top;
-  const onScroll = () => {
-    last = el.getBoundingClientRect().top;
-  };
-  const stop = () => {
-    mo.disconnect();
-    window.removeEventListener('scroll', onScroll);
-  };
-  const mo = new MutationObserver(() => {
-    const d = el.getBoundingClientRect().top - last;
-    if (Math.abs(d) > 1) window.scrollBy(0, d);
-    if (!aside.hasAttribute('data-chat-forced')) stop();
-  });
-  window.setTimeout(() => {
-    if (!aside.hasAttribute('data-chat-forced')) return; // колонка й так була відкрита — стежити нічого
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    mo.observe(aside, { attributes: true, attributeFilter: ['data-chat-forced'] });
-  }, 400);
-}
-
-/** Кнопка календаря на картці трансляції, що ще попереду (вигляд — як на картках «Зараз і далі»). */
-export function ScheduleButton({
-  eventId,
-  city,
-  size = 'md',
-}: {
-  eventId?: string;
-  city: string;
-  /** `sm` — коло 26 px у плитці «за регіонами». */
-  size?: 'md' | 'sm';
-}) {
-  const onToggle = useContext(MapScheduleContext);
-  const mySchedule = useSchedule();
-  const inSchedule = eventId ? mySchedule.includes(eventId) : false;
-  const t = useTranslations('liveCards.eventCard');
-  const tNav = useTranslations('nav');
-  if (!eventId || !onToggle) return null;
-  const label = inSchedule ? t('scheduleRemove', { city }) : tNav('addToSchedule', { city });
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={inSchedule}
-      data-schedule-toggle={eventId}
-      className={cn('t2f-focus t2f-press rounded-full', nn.cal, m.cal, size === 'sm' && m.calSm)}
-      onClick={(e: MouseEvent<HTMLButtonElement>) => {
-        keepInPlace(e.currentTarget.closest('li'));
-        onToggle(eventId, !inSchedule);
-      }}
-    >
-      <span aria-hidden="true" className={nn.calCircle}>
-        <Icon
-          name={inSchedule ? 'calendar-check' : 'calendar-add'}
-          size={size === 'sm' ? 14 : 16}
-          strokeWidth={inSchedule ? 2.2 : 2}
-        />
-      </span>
-    </button>
-  );
-}
-
-/**
- * Знак «▶» на кнопці картки трансляції (рішення власника 2026-11-03): залитий трикутник (18 px) кольору тексту кнопки,
- * без кола, по центру з текстом.
- */
-export function PlayMark({
-  tone,
-  size = 18,
-}: {
-  tone: 'live' | 'replay' | 'upcoming';
-  size?: 12 | 14 | 18;
-}) {
-  return (
-    <span aria-hidden="true" className={m.playMark} data-play-mark={tone}>
-      <svg viewBox="0 0 24 24" width={size} height={size}>
-        <path d="M7 4.5l13 7.5-13 7.5z" fill="currentColor" />
-      </svg>
-    </span>
-  );
-}
-
-function StreamCard({
-  stream,
-  mode,
-  midnightMs,
-}: {
-  stream: MapStream;
-  mode: 'live' | 'upcoming' | 'replay';
-  midnightMs: number;
-}) {
-  const live = mode === 'live';
+/** Трансляція поясу: місто, країна з прапором, час півночі (коли попереду); кнопка — сторінка країни. */
+function ZoneStreamCard({ stream, mode, midnightMs }: { stream: MapStream; mode: MapStreamMode; midnightMs: number }) {
   const t = useTranslations('liveMap.panel');
-  const tType = useTranslations('liveCards.eventCard.type');
   const locale = useLocale();
   return (
-    <li className={m.card} data-stream-card={stream.cityId}>
-      <div className={m.cardTop}>
-        <span className={m.cardType}>{tType(TYPE_KEY[stream.type])}</span>
-        {live ? (
-          <span className={m.cardLive}>
-            <span aria-hidden="true" className={m.dotLive} />
-            {t('live')}
-          </span>
-        ) : mode === 'replay' ? (
-          <span className={m.cardReplay}>
-            <PlayMark tone="replay" size={12} />
-            {t('replay')}
-          </span>
-        ) : null}
-      </div>
+    <MapStreamCard
+      cityId={stream.cityId}
+      type={stream.type}
+      mode={mode}
+      href={stream.href}
+      eventId={stream.eventId}
+      city={stream.city}
+      upcomingLabel={t('countryPage')}
+    >
       <div className={m.cardCity}>{stream.city}</div>
       <div className={m.cardCountry}>
         <Flag code={stream.flagCode} diameter={18} decorative />
@@ -532,16 +397,7 @@ function StreamCard({
           {t('startsAt', { time: formatClock(midnightMs, { locale }) })}
         </div>
       ) : null}
-      <div className={m.cardActions}>
-        <NextLink href={stream.href} className={cn('t2f-focus', m.cardBtn, live && m.cardBtnLive)}>
-          {mode === 'upcoming' ? null : <PlayMark tone={live ? 'live' : 'replay'} />}
-          {live ? t('watch') : mode === 'replay' ? t('watchReplay') : t('countryPage')}
-        </NextLink>
-        {mode === 'upcoming' ? (
-          <ScheduleButton eventId={stream.eventId} city={stream.city} />
-        ) : null}
-      </div>
-    </li>
+    </MapStreamCard>
   );
 }
 

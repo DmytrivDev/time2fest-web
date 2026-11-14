@@ -9,6 +9,7 @@ import { Icon, type IconName } from '@/components/primitives/Icon';
 import { useStreamChains } from '@/lib/api/hooks/live';
 import type { CelebrationType, EventStatus, Ms } from '@/lib/data/types';
 import { formatClock, formatMidnightAgo } from '@/lib/i18n/time';
+import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { useNow } from '@/lib/time/TimeProvider';
 import { PostcardArt } from '@/components/windows/StampArt';
 import { useContext, useState } from 'react';
@@ -72,13 +73,6 @@ export interface EventCardProps extends EventCardData {
   onSelect?: () => void;
   className?: string;
 }
-
-const TYPE_KEY: Record<CelebrationType, 'main' | 'webcam' | 'tv' | 'countdownOnly'> = {
-  main: 'main',
-  webcam: 'webcam',
-  tv: 'tv',
-  'countdown-only': 'countdownOnly',
-};
 
 const STATUS_KEY: Record<
   Exclude<EventCardStream, 'live'>,
@@ -157,7 +151,7 @@ export function EventCard({
 
   const isPast = (status === 'ended' || status === 'recording') && !onAir;
   const isOnAir = status === 'live' || onAir;
-  const typeLabel = t(`type.${TYPE_KEY[celebrationType]}`);
+  const typeLabel = t(`type.${STREAM_TYPE_KEY[celebrationType]}`);
   // Головне святкування, що ще не почалось (2026-11-13): без «Наживо» — «Очікується», а картка ефіру на головній —
   // «В ефірі · очікується» (та сама позначка «В ефірі», що й у зчитувача; підпис сусідів «Головне святкування» не повторюємо).
   const mainWaiting = main && stream !== 'live';

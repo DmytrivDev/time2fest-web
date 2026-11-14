@@ -13,6 +13,7 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { formatAgo, formatClock } from '@/lib/i18n/time';
+import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { useNow } from '@/lib/time/TimeProvider';
 import type { TvTimelineItem } from '@/lib/tv/tvData';
 import styles from './tv.module.css';
@@ -39,7 +40,6 @@ const STATUS_ICON: Record<EventCardStream, IconName> = {
   'countdown-only': 'clock',
 };
 const STATUS_KEY = { expected: 'expected', possible: 'possible', 'countdown-only': 'countdownOnly' } as const;
-const TYPE_KEY = { main: 'main', webcam: 'webcam', tv: 'tv', 'countdown-only': 'countdownOnly' } as const;
 const ACTION_KEY = { watch: 'cardWatch', 'schedule-add': 'cardAdd', 'schedule-remove': 'cardRemove' } as const;
 
 export function TvTimelineCard({ item, onAir = false, dim = false, initial = false, action, onActivate }: TvTimelineCardProps) {
@@ -57,7 +57,7 @@ export function TvTimelineCard({ item, onAir = false, dim = false, initial = fal
       <>
         <Icon name="broadcast" size={18} className="text-primary" />
         <b className="text-primary">{tBadge('live')}</b>
-        <span className="truncate text-text-secondary">· {tType(TYPE_KEY[item.celebrationType])}</span>
+        <span className="truncate text-text-secondary">· {tType(STREAM_TYPE_KEY[item.celebrationType])}</span>
       </>
     );
   } else if (past) {

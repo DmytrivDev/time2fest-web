@@ -13,12 +13,11 @@ import { CalendarButton } from '@/components/live/CalendarButton';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
+import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { thumbOf } from '@/lib/live/thumb';
 import type { ScheduleCountry } from '@/lib/schedule/scheduleCountry';
 import s from '@/components/live/streamPicker.module.css';
 import sc from './schedule.module.css';
-
-const KIND_KEY = { main: 'main', webcam: 'webcam', tv: 'tv' } as const;
 
 export function ScheduleCountryCard({
   c,
@@ -38,7 +37,7 @@ export function ScheduleCountryCard({
   const thumb = c.row && (c.group === 'live' || c.group === 'webcam') ? thumbOf(c.row) : undefined;
   const label =
     c.group === 'live' && c.row
-      ? t('liveKind', { kind: tType(KIND_KEY[c.row.kind]) })
+      ? t('liveKind', { kind: tType(STREAM_TYPE_KEY[c.row.kind]) })
       : c.group === 'main'
         ? t('expectedMain')
         : c.group === 'webcam'

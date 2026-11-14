@@ -14,17 +14,12 @@ import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/ti
 import { useNow } from '@/lib/time/TimeProvider';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from './MapModel';
-import { MapScheduleContext, PlayMark, ScheduleButton, Slider, StateBadge } from './ZonePanel';
+import { MapScheduleContext, MapStreamCard, ScheduleButton, type MapStreamMode } from './MapStreamCard';
+import { Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
 import { useProfile, useSchedule } from '@/lib/api/hooks/auth';
 
-const TYPE_KEY = {
-  main: 'main',
-  webcam: 'webcam',
-  tv: 'tv',
-  'countdown-only': 'countdownOnly',
-} as const;
 /** Іконки традицій (`howTo.traditions[].iconId`) — з набору сайту; невідома — зірка. */
 const TRADITION_ICON: Record<string, IconName> = {
   countdown: 'clock',
@@ -191,7 +186,7 @@ export function CountryPanel({
           title={after ? t('replayTitle') : t('watchTitle')}
         >
           {streams.map((s) => (
-            <StreamCard
+            <CountryStreamCard
               key={s.cityId}
               stream={s}
               href={country.href}
@@ -366,7 +361,7 @@ function CountryTime({ zone, state, phone }: { zone: MapZone; state: ZoneState; 
   );
 }
 
-function StreamCard({
+function CountryStreamCard({
   stream,
   href,
   mode,
@@ -374,47 +369,32 @@ function StreamCard({
 }: {
   stream: MapCountryStream;
   href: string;
-  mode: 'live' | 'upcoming' | 'replay';
+  mode: MapStreamMode;
   midnightMs: number;
 }) {
   const t = useTranslations('liveMap.panel');
   const tc = useTranslations('liveMap.country');
-  const tType = useTranslations('liveCards.eventCard.type');
   const locale = useLocale();
-  const live = mode === 'live';
   return (
-    <li className={zp.card} data-stream-card={stream.cityId}>
-      <div className={zp.cardTop}>
-        <span className={zp.cardType}>{tType(TYPE_KEY[stream.type])}</span>
-        {live ? (
-          <span className={zp.cardLive}>
-            <span aria-hidden="true" className={zp.dotLive} />
-            {t('live')}
-          </span>
-        ) : mode === 'replay' ? (
-          <span className={zp.cardReplay}>
-            <PlayMark tone="replay" size={12} />
-            {t('replay')}
-          </span>
-        ) : (
-          <span className={cn(zp.cardReplay, m.cardWhen)}>
-            <Icon name="clock" size={12} />
-            {t('startsAt', { time: formatClock(midnightMs, { locale }) })}
-          </span>
-        )}
-      </div>
+    <MapStreamCard
+      cityId={stream.cityId}
+      type={stream.type}
+      mode={mode}
+      href={href}
+      eventId={stream.eventId}
+      city={stream.city}
+      upcomingBadge={
+        <span className={cn(zp.cardReplay, m.cardWhen)}>
+          <Icon name="clock" size={12} />
+          {t('startsAt', { time: formatClock(midnightMs, { locale }) })}
+        </span>
+      }
+      upcomingLabel={tc('openStream')}
+      upcomingPlayMark
+    >
       <div className={cn(zp.cardCity, m.cardPlace)}>{stream.place}</div>
       <div className={m.cardSub}>{stream.city}</div>
-      <div className={zp.cardActions}>
-        <NextLink href={href} className={cn('t2f-focus', zp.cardBtn, live && zp.cardBtnLive)}>
-          <PlayMark tone={mode} />
-          {live ? t('watch') : mode === 'replay' ? t('watchReplay') : tc('openStream')}
-        </NextLink>
-        {mode === 'upcoming' ? (
-          <ScheduleButton eventId={stream.eventId} city={stream.city} />
-        ) : null}
-      </div>
-    </li>
+    </MapStreamCard>
   );
 }
 

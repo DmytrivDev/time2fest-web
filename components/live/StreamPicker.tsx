@@ -18,9 +18,10 @@ import { useLiveData } from '@/lib/api/hooks/live';
 import type { Dataset, Ms } from '@/lib/data/types';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import { cityOf } from '@/lib/live/cityOf';
+import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
+import { thumbOf } from '@/lib/live/thumb';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
-import { thumbOf } from '@/lib/live/thumb';
 import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { CalendarButton, scheduleClosed } from './CalendarButton';
@@ -31,8 +32,6 @@ import s from './streamPicker.module.css';
 import { useSchedule } from '@/lib/api/hooks/auth';
 
 export const STREAM_PICKER_ID = 'O-STREAM-PICKER';
-
-const KIND_KEY = { main: 'main', webcam: 'webcam', tv: 'tv' } as const;
 
 /**
  * Трансляції, що йдуть зараз, у поясі події (та сама північ), за популярністю подій і порядком джерел. Порядок сталий:
@@ -170,12 +169,12 @@ export function StreamPicker({
                 {row.status === 'live' ? (
                   <>
                     <Icon name="broadcast-live" size={16} className="text-primary" />
-                    {t('liveKind', { kind: tType(KIND_KEY[row.kind]) })}
+                    {t('liveKind', { kind: tType(STREAM_TYPE_KEY[row.kind]) })}
                   </>
                 ) : (
                   <>
                     <Icon name={row.status === 'recording' ? 'play' : 'broadcast'} size={16} />
-                    {`${tStatus(row.status)} · ${tType(KIND_KEY[row.kind])}`}
+                    {`${tStatus(row.status)} · ${tType(STREAM_TYPE_KEY[row.kind])}`}
                   </>
                 )}
                 {on ? <span className="sr-only">. {t('playing')}</span> : null}

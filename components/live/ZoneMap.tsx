@@ -34,7 +34,8 @@ import { CityTip, CountryTip, MapTip, ZoneTip, tipKey, type MapTipTarget } from 
 import { CountryPanel } from './CountryPanel';
 import { PanelSwap } from './PanelSwap';
 import { ZoneListView } from './ZoneListView';
-import { MapScheduleContext, ZonePanel } from './ZonePanel';
+import { MapScheduleContext } from './MapStreamCard';
+import { ZonePanel } from './ZonePanel';
 import { useMidnightPhrase } from './ZoneMapCards';
 import { Reveal } from '@/components/primitives/Reveal';
 import { isReducedMotionNow } from '@/lib/a11y/reducedMotion';
