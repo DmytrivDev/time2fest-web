@@ -39,6 +39,23 @@ export function takeCodeSent(): boolean {
   return sent;
 }
 
+const WELCOME_KEY = 't2f:session:authWelcome';
+
+/**
+ * Новий акаунт Google повернувся на сторінку без вікон (напр. `/pass/`): `/signup/` відкриється з кроку «Акаунт
+ * створено» · «Як тебе показувати» (рішення власника 2026-11-14).
+ */
+export function rememberWelcome(): void {
+  safeSet('session', WELCOME_KEY, '1');
+}
+
+/** Чи чекає крок профілю нового акаунта (одноразово). */
+export function takeWelcome(): boolean {
+  const on = safeGet('session', WELCOME_KEY) === '1';
+  if (on) safeRemove('session', WELCOME_KEY);
+  return on;
+}
+
 /** Поточна адреса сторінки для `rememberReturn`. */
 export function currentPath(): string {
   if (typeof window === 'undefined') return '/';

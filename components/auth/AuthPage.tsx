@@ -15,7 +15,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import type { AuthIntent } from '@/lib/api/contracts/auth';
 import { currentSession, useSession } from '@/lib/api/hooks/auth';
-import { returnPath, takeCodeSent } from '@/lib/auth/returnTo';
+import { returnPath, takeCodeSent, takeWelcome } from '@/lib/auth/returnTo';
 import { AuthSteps } from './AuthSteps';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { useAuthFlow, type AuthStep, type SignInResult } from './useAuthFlow';
@@ -26,8 +26,13 @@ interface Start {
   email?: string;
 }
 
-/** Старт після монтування (статичний експорт не знає стану на збиранні): код уже надіслано з іншої сторінки — крок коду. */
+/**
+ * Старт після монтування (статичний експорт не знає стану на збиранні): код уже надіслано з іншої сторінки — крок коду;
+ * новий акаунт Google повернувся на сторінку без вікон — крок «Як тебе показувати».
+ */
 async function resolveStart(): Promise<Start> {
+  const user = currentSession()?.user;
+  if (takeWelcome() && user) return { step: { kind: 'welcome', email: user.email }, email: user.email };
   const code = currentSession()?.code;
   if (takeCodeSent() && code && code.expiresAt > Date.now()) return { step: { kind: 'code' }, email: code.email };
   return {};

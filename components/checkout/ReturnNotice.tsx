@@ -7,19 +7,25 @@
  *     «не вдалося перевірити» (з «Перевірити ще»). Вікно пасу чи тосту, з якого пішли платити, саме бачить своє
  *     замовлення (`stores/pass`, `stores/toast` → `PaymentWatcher`), тож смуга — лише пояснення, що сталося.
  *   • `?signin=google` (і `&error=…`) — повернення з Google: «Завершуємо вхід…» → «Ти увійшов» / «не завершено».
+ *     Новий акаунт (`&new=1`, Better Auth `newUserCallbackURL`) — одразу крок «Як тебе показувати» (нік і прапор,
+ *     рішення власника 2026-11-14): вікном входу на місці чату, а на сторінці без вікон (`/pass/`) — сторінкою `/signup/`.
+ *     Той, хто вже мав акаунт, кроку не бачить.
  * Обидві — спокійна смуга в потоці сторінки (як «Немає з’єднання»), не поверх відео. Параметр прибираємо з адреси одразу.
  * У `sim`: `/pass/?order=demo-paid` (`demo-pending`, `demo-declined`, `demo-expired`, `demo-cancelled`, `demo-toast-paid`),
  * затримка — `&simDelay=checkout.status:60000`, мережа — `&simFail=checkout.status:network`; Google — `/?signin=google`,
- * `/?signin=google&error=cancelled`, «завершуємо» — `&simDelay=auth.session:5000`.
+ * `/?signin=google&error=cancelled`, «завершуємо» — `&simDelay=auth.session:5000`; повний перехід Google з новим акаунтом —
+ * перемикач «Google: повним переходом сторінки» (`window.__t2f.setGoogleRedirect(true)`) і «Увійти з Google».
  */
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { IconButton } from '@/components/primitives/IconButton';
 import { StatusMessage, type StatusKind } from '@/components/primitives/StatusMessage';
 import { authActions } from '@/lib/api/hooks/auth';
 import { useOrderReturn, type OrderReturnState } from '@/lib/api/hooks/checkout';
-import { rememberReturn } from '@/lib/auth/returnTo';
+import { rememberReturn, rememberWelcome } from '@/lib/auth/returnTo';
 
 /** Прочитати й прибрати параметр з адреси (раз після монтування — статичний експорт не знає параметрів). */
 function takeParams(names: readonly string[]): Record<string, string> | null {
@@ -94,10 +100,16 @@ function OrderNotice({ orderId, onClose }: { orderId: string; onClose: () => voi
 
 type GoogleState = 'checking' | 'ok' | 'failed';
 
-function GoogleNotice({ error, onClose }: { error: string | undefined; onClose: () => void }) {
+/** Де відкрити крок «Як тебе показувати» для нового акаунта: вікном (макет `(live)`) чи сторінкою (`/pass/` — без вікон). */
+export type ProfileStepPlace = 'window' | 'page';
+
+function GoogleNotice({ error, isNew, profileStep, onClose }: { error: string | undefined; isNew: boolean; profileStep: ProfileStepPlace; onClose: () => void }) {
   const t = useTranslations('auth.google');
   const [state, setState] = useState<GoogleState>(error ? 'failed' : 'checking');
   const [email, setEmail] = useState('');
+  const openAuth = useOpenAuthWindow();
+  const router = useRouter();
+  const opened = useRef(false);
   useEffect(() => {
     if (error) return;
     let alive = true;
@@ -107,11 +119,20 @@ function GoogleNotice({ error, onClose }: { error: string | undefined; onClose: 
       const user = res.ok ? res.value.user : null;
       setEmail(user?.email ?? '');
       setState(user ? 'ok' : 'failed');
+      // Новий акаунт: одразу «Як тебе показувати» (раз).
+      if (!user || !isNew || opened.current) return;
+      opened.current = true;
+      if (profileStep === 'window') openAuth('signup', { step: { kind: 'welcome', email: user.email }, email: user.email });
+      else {
+        rememberReturn(window.location.pathname + window.location.search);
+        rememberWelcome();
+        router.push('/signup/');
+      }
     });
     return () => {
       alive = false;
     };
-  }, [error]);
+  }, [error, isNew, profileStep, openAuth, router]);
   if (state === 'checking')
     return (
       <Strip kind="info" data="google-checking">
@@ -145,21 +166,28 @@ function GoogleNotice({ error, onClose }: { error: string | undefined; onClose: 
 }
 
 /** Смуги повернення з PayPro і Google; ставиться раз на макет (як `OfflineNotice`). */
-export function ReturnNotice() {
-  const [ret, setRet] = useState<{ order?: string; google?: { error?: string } } | null>(null);
+export function ReturnNotice({ profileStep = 'window' }: { profileStep?: ProfileStepPlace }) {
+  const [ret, setRet] = useState<{ order?: string; google?: { error?: string; isNew: boolean } } | null>(null);
   useEffect(() => {
-    const p = takeParams(['order', 'signin', 'error']);
+    const p = takeParams(['order', 'signin', 'error', 'new']);
     if (!p) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- одноразово після монтування: параметри адреси (статичний експорт)
     setRet({
       ...(p.order ? { order: p.order } : {}),
-      ...(p.signin === 'google' ? { google: { error: p.error } } : {}),
+      ...(p.signin === 'google' ? { google: { error: p.error, isNew: p.new === '1' } } : {}),
     });
   }, []);
   if (!ret) return null;
   return (
     <>
-      {ret.google ? <GoogleNotice error={ret.google.error} onClose={() => setRet((r) => (r ? { ...r, google: undefined } : r))} /> : null}
+      {ret.google ? (
+        <GoogleNotice
+          error={ret.google.error}
+          isNew={ret.google.isNew}
+          profileStep={profileStep}
+          onClose={() => setRet((r) => (r ? { ...r, google: undefined } : r))}
+        />
+      ) : null}
       {ret.order ? <OrderNotice orderId={ret.order} onClose={() => setRet((r) => (r ? { ...r, order: undefined } : r))} /> : null}
     </>
   );

@@ -45,7 +45,7 @@ export function PassShell({ children, passCurrent = true }: { children: ReactNod
           <Menu open={menuOpen} onOpenChange={setMenuOpen} signedIn={Boolean(user)} hasPass={hasPass} />
           <NotifDialog open={notifOpen} onOpenChange={setNotifOpen} />
           {/* Повернення з PayPro (`?order=`) і з Google — смуга під шапкою. */}
-          <ReturnNotice />
+          <ReturnNotice profileStep="page" />
           <PassSideContext.Provider value={{ panel, setPanel }}>{children}</PassSideContext.Provider>
           <Footer />
         </div>
