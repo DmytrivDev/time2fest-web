@@ -4,7 +4,7 @@
  */
 import type { ISO, PayResult } from '@/lib/data/types';
 import { getService } from '@/lib/api/services';
-import { useAuthStore, type AuthLetter } from '@/stores/auth';
+import type { DevLetter } from '@/lib/api/contracts/auth';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import { parseIsoWithOffset } from './params';
@@ -26,7 +26,7 @@ export interface T2FTestApi {
   setGoogleCancelled(on: boolean): void;
   setNotifications(n: number): void;
   signOut(): void;
-  lastLetter(): AuthLetter | null;
+  lastLetter(): DevLetter | null;
   /** Хтось відповів на твоє повідомлення (перевірка «Сповіщати про відповіді»). */
   emitReply(): void;
 }
@@ -67,8 +67,8 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     setAuthUnavailable: (on) => useTestControls.getState().setAuthUnavailable(on),
     setGoogleCancelled: (on) => useTestControls.getState().setGoogleCancelled(on),
     setNotifications: (n) => useTestControls.getState().setNotifications(n),
-    signOut: () => useAuthStore.getState().signOut(),
-    lastLetter: () => useAuthStore.getState().letter,
+    signOut: () => void getService('auth').signOut(),
+    lastLetter: () => getService('auth').devMailbox?.get() ?? null,
     emitReply: () => {
       // Шов E5a: інструмент імітації чату (`chat.dev`).
       getService('chat').dev?.emitReplyToMe(machine.get().at);

@@ -15,13 +15,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getService } from '@/lib/api/services';
-import { setCheckoutClock, simConfirmOrder } from '@/lib/api/sim/checkout';
-import { authActions, hasPassNow } from '@/lib/api/hooks/auth';
+import { authActions, currentSession, hasPassNow } from '@/lib/api/hooks/auth';
 import { isEmail } from '@/lib/auth/email';
 import type { Ms } from '@/lib/data/types';
 import { PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
-import { useAuthStore } from '@/stores/auth';
 
 export type PassPhase = 'form' | 'google' | 'opening' | 'pending' | 'failed' | 'success';
 export type PassEmailIssue = 'empty' | 'invalid' | null;
@@ -71,7 +69,7 @@ let googleRun: AbortController | null = null;
 
 /** Годинник сайту для `pendingSince` (машина часу тестової збірки) — тепер у спільному процесі оплати. */
 export function setPassClock(now: () => Ms): void {
-  setCheckoutClock(now);
+  getService('checkout').dev?.setClock(now);
 }
 
 const INITIAL = { phase: 'form' as PassPhase, email: '', emailIssue: null, paidEmail: false, linkSent: false, googleFailed: false, pendingSince: undefined, clientId: undefined };
@@ -152,7 +150,7 @@ export const usePassStore = create<PassFlowState>()(
       // Гість з поштою: «Переходимо на оплату» — лише коли сервіс прийняв замовлення (див. `submitEmail`).
       set(opts?.afterStart ? { clientId } : { phase: 'opening', clientId });
       listen();
-      const signedIn = useAuthStore.getState().user !== null;
+      const signedIn = (currentSession()?.user ?? null) !== null;
       void getService('checkout')
         .start({ product: { kind: 'pass' }, ...(signedIn ? {} : { email: get().email }), returnPath: '/pass/', clientId })
         .then((res) => {
@@ -169,7 +167,7 @@ export const usePassStore = create<PassFlowState>()(
     },
     confirm: () => {
       const { phase, clientId } = get();
-      if (phase === 'pending' && clientId) simConfirmOrder(clientId);
+      if (phase === 'pending' && clientId) getService('checkout').dev?.confirm(clientId);
     },
     reset: () => {
       googleRun?.abort();

@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ReducedMotionScript } from '@/lib/a11y/ReducedMotionHeadScript';
 import { ReducedMotionSync } from '@/lib/a11y/ReducedMotionSync';
+import { ApiGuard } from '@/lib/api/ApiGuard';
 import { TIME_PREFETCH_SCRIPT } from '@/lib/time/timePrefetch';
 import './globals.css';
 
@@ -31,7 +32,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <ReducedMotionSync />
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          {/* Запобіжник шва: у збірці `http` без бекенду — «сервер недоступний», а не імітація. */}
+          <ApiGuard>{children}</ApiGuard>
         </NextIntlClientProvider>
       </body>
     </html>

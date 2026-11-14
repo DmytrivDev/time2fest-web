@@ -17,7 +17,8 @@ import type { ProfileService } from './contracts/profile';
 import type { RatingService } from './contracts/rating';
 import type { ToastsService } from './contracts/toasts';
 import { httpFactories } from './http';
-import { simFactories } from './sim';
+// Імітація — лише через `simEntry` (у збірці `http` його підміняє `next.config.ts`, і `sim` не потрапляє в пакет).
+import { simFactories } from '@/lib/api/simEntry';
 
 export interface Services {
   catalog: CatalogService;
@@ -34,6 +35,15 @@ export interface Services {
 
 export type ServiceName = keyof Services;
 export type ServiceFactories = { [K in ServiceName]?: () => Services[K] };
+
+/** Домени, які інтерфейс уже бере через шов (E0–E5): без їхніх адаптерів сайт працювати не може. */
+export const MIGRATED_DOMAINS: readonly ServiceName[] = ['notifications', 'rating', 'live', 'auth', 'profile', 'checkout', 'toasts', 'chat', 'passport'];
+
+/** Перенесені домени без адаптера в поточному режимі (у `http` зараз — усі: бекенду ще немає). */
+export function missingDomains(mode = API_MODE): ServiceName[] {
+  const factories = mode === 'http' ? httpFactories : simFactories;
+  return MIGRATED_DOMAINS.filter((d) => !factories[d]);
+}
 
 const instances: Partial<Services> = {};
 let overrides: Partial<Services> = {};

@@ -26,7 +26,7 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ['@/lib/api/sim', '@/lib/api/sim/*', '**/lib/api/sim', '**/lib/api/sim/*'],
+              group: ['@/lib/api/sim', '@/lib/api/sim/*', '**/lib/api/sim', '**/lib/api/sim/*', '@/lib/api/simEntry', '@/lib/api/simRuntimeEntry', '**/lib/api/simEntry', '**/lib/api/simRuntimeEntry'],
               message: 'Імітація — лише за швом: бери дані через хук з @/lib/api/hooks/*.',
             },
             {

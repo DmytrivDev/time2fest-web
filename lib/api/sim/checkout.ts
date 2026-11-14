@@ -206,5 +206,6 @@ export function createSimCheckout(): CheckoutService {
       load();
       return ok([...orders.values()].filter((o) => !isFinalOrder(o.status)));
     },
+    dev: { setClock: setCheckoutClock, confirm: simConfirmOrder, reset: resetSimCheckout },
   };
 }

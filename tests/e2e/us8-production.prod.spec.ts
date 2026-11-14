@@ -38,6 +38,24 @@ test.describe('US8.2 · робоча збірка', () => {
     expect(await page.locator('[data-t2f-time-machine]').count()).toBe(0);
   });
 
+  // Запобіжник шва (2026-11-14): робоча збірка — режим `http`; бекенду ще немає, тож замість сайту — «сервер недоступний»,
+  // а імітований чат, вхід, оплати й тости в пакет не потрапляють.
+  test('режим http без бекенду: BackendDown замість сайту, помилка в консолі', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (m) => {
+      if (m.type() === 'error') errors.push(m.text());
+    });
+    await page.goto('/');
+    await expect(page.locator('main#main [data-backend-down]')).toBeVisible();
+    await expect.poll(() => errors.some((e) => e.includes('сервіс недоступний'))).toBe(true);
+  });
+
+  test('у пакеті JS немає імітації (чат, вхід, оплати, тости)', () => {
+    for (const marker of ['[переклад]', 't2f:orders:v1', 'you@gmail.com', 'Дякую, що можна дивитися все разом']) {
+      expect(bundleFilesContaining(marker), marker).toEqual([]);
+    }
+  });
+
   test('у пакеті JS немає рядка-маркера панелі', () => {
     // Збірка має існувати: інакше перевірка порожня.
     expect(() => bundleFilesContaining('t2f', STATIC_DIR)).not.toThrow();

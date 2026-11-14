@@ -8,23 +8,26 @@
  */
 import { resetGuest } from '@/stores/guest';
 import { useAccountStore } from '@/stores/account';
-import { useAuthStore } from '@/stores/auth';
 import { useChatPrefs } from '@/stores/chatPrefs';
 import { NOTIF_KINDS, useNotifStore } from '@/stores/notifications';
 import { usePassStore } from '@/stores/pass';
 import { useToastStore } from '@/stores/toast';
 import { useTvPrefs } from '@/stores/tv';
-import { resetSimCheckout } from '@/lib/api/sim/checkout';
+import { API_MODE } from '@/lib/api/mode';
+import { getService } from '@/lib/api/services';
 
 /** Префікс ключів сайту в `localStorage`. */
 const PREFIX = 't2f:';
 
 export function resetDeviceState(): void {
-  resetSimCheckout();
+  // «Сервер» імітації (незавершені оплати, акаунти й паси) — через сервіси, без імпорту імітації (запобіжник збірки).
+  if (API_MODE === 'sim') {
+    getService('checkout').dev?.reset();
+    getService('auth').devReset?.();
+  }
   usePassStore.getState().reset();
   useToastStore.getState().reset();
   useToastStore.setState({ said: [] });
-  useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null });
   useAccountStore.getState().reset();
   useChatPrefs.getState().reset();
   useNotifStore.setState({ items: [], enabled: true, kinds: Object.fromEntries(NOTIF_KINDS.map((k) => [k, true])) as Record<(typeof NOTIF_KINDS)[number], boolean> });

@@ -17,7 +17,6 @@ import { persist } from 'zustand/middleware';
 import { validateNick } from '@/lib/chat/nick';
 import type { Ms } from '@/lib/data/types';
 import { getService } from '@/lib/api/services';
-import { setCheckoutClock, simConfirmOrder } from '@/lib/api/sim/checkout';
 import { PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import type { ToastRecord } from '@/lib/toast/feed';
@@ -76,7 +75,7 @@ export interface ToastFlowState {
 
 /** Годинник сайту (машина часу) для «чекаємо підтвердження» й часу тосту — тепер у спільному процесі оплати. */
 export function setToastClock(now: () => Ms): void {
-  setCheckoutClock(now);
+  getService('checkout').dev?.setClock(now);
 }
 
 const newClientId = () => `toast-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -155,7 +154,7 @@ export const useToastStore = create<ToastFlowState>()(
         },
         confirm: () => {
           const { phase, clientId } = get();
-          if (phase === 'paying' && clientId) simConfirmOrder(clientId);
+          if (phase === 'paying' && clientId) getService('checkout').dev?.confirm(clientId);
         },
         closed: () => {
           const phase = get().phase;

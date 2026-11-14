@@ -4,7 +4,8 @@
  * `TimeProvider`, на місці колишнього `NotificationsWatcher`.
  */
 import { API_MODE } from './mode';
-import { SimRuntime, type SimDomain } from './sim/SimRuntime';
+import { SimRuntime } from '@/lib/api/simRuntimeEntry';
+import type { SimDomain } from './sim/SimRuntime';
 
 /** `only` — лише частина «сервера» імітації (режим вечірки `/tv` живе без сповіщень, але рейтингу потрібен годинник). */
 export function ApiRuntime({ only }: { only?: readonly SimDomain[] }) {

@@ -77,6 +77,11 @@ export interface CheckoutService {
   cancel(orderId: string): Promise<ApiResult<Order>>;
   /** Незавершені замовлення цього гостя чи акаунта — довести до кінця після перезавантаження. `GET /api/me/orders?open=1`. */
   open(): Promise<ApiResult<readonly Order[]>>;
+  /**
+   * Лише `sim` у тестовій і демо-збірці: годинник сайту, тестова кнопка «підтвердити», «Скинути стан гостя». У `http` —
+   * немає (підтверджує вебхук). Стори вікон звертаються сюди замість імпорту імітації — щоб її не було в робочій збірці.
+   */
+  dev?: { setClock(now: () => Ms): void; confirm(clientId: string): void; reset(): void };
 }
 
 /** Кінцеві стани: після них опитування припиняється. */

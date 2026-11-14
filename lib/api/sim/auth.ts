@@ -140,5 +140,6 @@ export function createSimAuth(): AuthService {
       return ok(undefined);
     },
     devMailbox,
+    devReset: () => useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null }),
   };
 }

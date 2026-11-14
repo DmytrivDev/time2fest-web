@@ -5,7 +5,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-export const STATIC_DIR = resolve(process.cwd(), 'out', '_next', 'static');
+/** Тека збірки — `out` (проєкт `prod`); `T2F_OUT_DIR` — інша тека (перевірка окремої збірки). */
+export const STATIC_DIR = resolve(process.cwd(), process.env.T2F_OUT_DIR ?? 'out', '_next', 'static');
 
 function* walk(dir: string): Generator<string> {
   for (const name of readdirSync(dir)) {

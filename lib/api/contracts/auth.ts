@@ -105,4 +105,6 @@ export interface AuthService {
   signOut(): Promise<ApiResult<void>>;
   /** Лише `sim` у тестовій збірці. */
   devMailbox?: DevMailbox;
+  /** Лише `sim`: «Скинути стан гостя» — стерти імітовані акаунти, паси, лист. */
+  devReset?(): void;
 }
