@@ -7,7 +7,8 @@ import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import type { PlayerChainInput } from '@/lib/player/PlayerProvider';
 import { posOf } from '@/stores/room';
 
-export function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
+/** Ланцюжок події для вікна кімнати: обрана трансляція як є (без заглушки головного святкування, як у `countryChainInput`). */
+export function roomChainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
   const sources = data.chainsByEventId.get(eventId)?.sources ?? [];
   return preferredSourceId ? { eventId, sources, preferredSourceId } : { eventId, sources };
 }

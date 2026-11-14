@@ -17,7 +17,7 @@ import { countryMainEvent, countryZones, defaultZoneId, type StreamRowData } fro
 import { countryHref } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import type { PlayerSource } from '@/lib/player/types';
-import { chainInput, countryFocusFrom, nextAfter, placeOf, scrollToPlayer, type CountryFocus } from './countryHelpers';
+import { countryChainInput, countryFocusFrom, nextAfter, placeOf, scrollToPlayer, type CountryFocus } from './countryHelpers';
 
 interface Args {
   data: Dataset;
@@ -74,7 +74,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
     // eslint-disable-next-line react-hooks/set-state-in-effect -- пояс за замовчуванням залежить від часу, відомого лише після синхронізації
     if (zone !== zoneId) setZoneId(zone);
     const ev = zone ? countryMainEvent(data, iso, zone) : undefined;
-    if (ev) actions.setChain(chainInput(data, ev.id));
+    if (ev) actions.setChain(countryChainInput(data, ev.id));
     // Лише перший раз, коли час відомий.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [known, actions]);
@@ -101,7 +101,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
     setZoneId(focus.zoneId);
     setPickedEventId(focus.eventId && focus.eventId !== main?.id ? focus.eventId : null);
     setManual(!!focus.sourceId);
-    if (target && (player?.eventId !== target || focus.sourceId)) actions.setChain(chainInput(data, target, focus.sourceId ?? undefined));
+    if (target && (player?.eventId !== target || focus.sourceId)) actions.setChain(countryChainInput(data, target, focus.sourceId ?? undefined));
     // Лише на зміну адреси (і перший раз, коли час відомий).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlFocus, known, actions]);
@@ -150,7 +150,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
       setCountdown(false);
       setPickedEventId(row.eventId);
       setManual(true);
-      actions?.setChain(chainInput(data, row.eventId, row.id));
+      actions?.setChain(countryChainInput(data, row.eventId, row.id));
       scrollToPlayer();
     },
     [actions, data, iso, router],
@@ -162,7 +162,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
       setManual(false);
       setZoneId(id);
       const ev = countryMainEvent(data, iso, id);
-      if (ev) actions?.setChain(chainInput(data, ev.id));
+      if (ev) actions?.setChain(countryChainInput(data, ev.id));
     },
     [actions, data, iso],
   );
@@ -173,7 +173,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
       setManual(false);
       if (!mainEvent) return;
       actions?.setChain(
-        on ? { eventId: mainEvent.id, sources: [] } : chainInput(data, mainEvent.id),
+        on ? { eventId: mainEvent.id, sources: [] } : countryChainInput(data, mainEvent.id),
       );
     },
     [actions, data, mainEvent],
@@ -228,7 +228,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
     if (!mainEvent) return;
     setManual(false);
     setPickedEventId(null);
-    actions?.setChain(chainInput(data, mainEvent.id));
+    actions?.setChain(countryChainInput(data, mainEvent.id));
   }, [actions, data, mainEvent]);
   const mainCity = mainEvent ? (data.citiesById.get(mainEvent.cityId)?.name.uk ?? country.name.uk) : '';
 

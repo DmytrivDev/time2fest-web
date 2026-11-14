@@ -35,8 +35,6 @@ import { useChatPanelRoom } from './hooks/useChatPanelRoom';
 import { useChatPanelWindows } from './hooks/useChatPanelWindows';
 import { useChatSend, useChatSlowMode } from './hooks/useChatSend';
 
-export { NICK_WINDOW_ID, AUTHOR_WINDOW_ID } from './hooks/useChatPanelWindows';
-
 export interface ChatPanelProps {
   /** Кімната «Країна»: країна сторінки; на головній — країна ефіру, що йде зараз (без країни чипа немає). */
   country?: { iso: string; name: string };

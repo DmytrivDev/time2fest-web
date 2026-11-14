@@ -10,7 +10,7 @@ import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import type { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useGuestStore } from '@/stores/guest';
 import { useRoomStore, type RoomViewport } from '@/stores/room';
-import { chainInput } from '@/components/room/roomShare';
+import { roomChainInput } from '@/components/room/roomShare';
 
 export function useRoomHostPlayer({
   known,
@@ -55,7 +55,7 @@ export function useRoomHostPlayer({
     const st = useGuestStore.getState().room.windows;
     const hs = useRoomStore.getState().hostSlot;
     const h = st.find((w) => w.slot === hs) ?? st[0];
-    if (h) actions.setChain(chainInput(data, h.eventId, h.sourceId));
+    if (h) actions.setChain(roomChainInput(data, h.eventId, h.sourceId));
   }, [known, actions, data, viewport, hostEvent, hostSource, searchParams]);
 
   // Вікно-господар прибране → господарем стає перше вікно.

@@ -1,7 +1,14 @@
-/** Пояси країни для вибору «Мій пояс» у налаштуваннях кабінету (без React і сховищ). */
+/** Пояси країни для вибору «Мій пояс» у налаштуваннях кабінету (без React; `autoHomeIso` читає стан гостя). */
 
 import { getData } from '@/lib/data/load';
+import { detectFlag } from '@/lib/geo/detectFlag';
 import { utcLabel } from '@/lib/i18n/time';
+import { useGuestStore } from '@/stores/guest';
+
+/** Країна «Визначати автоматично»: прапор, визначений для гостя, інакше за мовою браузера, інакше Україна. */
+export function autoHomeIso(): string {
+  return (useGuestStore.getState().detectedFlag ?? detectFlag() ?? 'UA').toUpperCase();
+}
 
 /** Пояси країни з назвою за головним містом поясу (без бази всіх міст, власник 2026-11-08). */
 export function countryZones(iso: string) {

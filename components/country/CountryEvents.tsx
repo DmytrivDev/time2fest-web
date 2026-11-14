@@ -25,8 +25,9 @@ import type { StreamRowData } from '@/lib/live/countryData';
 import { utcLabel } from '@/lib/map/model';
 import styles from '@/components/live/live.module.css';
 
-const STREAMS_ID = 'country-streams';
-const NOW_NEXT_ID = 'now-next';
+/** Якорі блоків «Трансляції · Країна» і «Зараз і далі» (ціль «Дивитися, що вже йде ↓» у `CountryLive`). */
+export const STREAMS_ID = 'country-streams';
+export const NOW_NEXT_ID = 'now-next';
 
 interface Props {
   data: Dataset;

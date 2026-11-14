@@ -28,7 +28,7 @@ export function placeOf(data: Dataset, event: ScheduledEvent | undefined | null)
  * почалось — на місці відео заглушка «Очікуйте трансляцію» (правка власника 2026-11-11), а не перша-ліпша вебкамера; і коли
  * час початку невідомий чи вже минув (2026-11-13). Обрана людиною трансляція, що «очікується» без часу початку, — теж заглушка.
  */
-export function chainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
+export function countryChainInput(data: Dataset, eventId: string, preferredSourceId?: string): PlayerChainInput {
   const sources = data.chainsByEventId.get(eventId)?.sources ?? [];
   const preferred = preferredSourceId ?? sources.find((s) => s.kind === 'main')?.id;
   if (!preferred) return { eventId, sources };

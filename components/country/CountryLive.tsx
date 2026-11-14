@@ -59,15 +59,13 @@ import { eventTitle } from '@/components/live/Caption';
 import home from '@/components/live/home.module.css';
 import styles from '@/components/live/live.module.css';
 import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
-import { CountryEvents } from './CountryEvents';
+import { CountryEvents, NOW_NEXT_ID, STREAMS_ID } from './CountryEvents';
 import { zoneOption } from './countryHelpers';
 import { FocusFromUrl } from './FocusFromUrl';
 import { useCountryPlayer } from './useCountryPlayer';
 import { useCountryStreams } from './useCountryStreams';
 
 const PLAYER_TITLE_ID = 'player-title';
-const STREAMS_ID = 'country-streams';
-const NOW_NEXT_ID = 'now-next';
 
 export function CountryLive({ iso }: { iso: string }) {
   const tc = useTranslations('country');

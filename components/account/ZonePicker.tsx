@@ -9,16 +9,14 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { profileActions } from '@/lib/api/hooks/auth';
 import { getData } from '@/lib/data/load';
-import { detectFlag } from '@/lib/geo/detectFlag';
 import { useAccountStore } from '@/stores/account';
-import { useGuestStore } from '@/stores/guest';
-import { countryZones } from './countryZones';
+import { autoHomeIso, countryZones } from './countryZones';
 import s from './account.module.css';
 
 export function ZonePicker({ onDone }: { onDone(): void }) {
   const t = useTranslations('account.settings');
   const acc = useAccountStore();
-  const autoIso = useMemo(() => (useGuestStore.getState().detectedFlag ?? detectFlag() ?? 'UA').toUpperCase(), []);
+  const autoIso = useMemo(() => autoHomeIso(), []);
   const [iso, setIso] = useState(acc.homeCountry ?? autoIso);
   const [query, setQuery] = useState('');
   const [picking, setPicking] = useState(false);
