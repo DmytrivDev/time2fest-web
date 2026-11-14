@@ -7,7 +7,7 @@ const T0 = Date.UTC(2026, 11, 31, 22, 0, 0);
 const st = () => useAuthStore.getState();
 
 function reset() {
-  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null });
 }
 
 describe('вхід (імітація): лише код із 6 цифр (рішення 2026-11-13)', () => {
@@ -67,8 +67,10 @@ describe('вхід (імітація): лише код із 6 цифр (ріше
 
   it('пас гостя на пристрої: працює одразу, вхід з тією ж поштою робить його пасом акаунта', () => {
     st().grantDevicePass('Olena@Example.com', T0);
-    expect(st().devicePass).toEqual({ email: 'olena@example.com', since: T0 });
-    expect(st().passes['olena@example.com']).toBe(T0);
+    expect(st().devicePass).toMatchObject({ email: 'olena@example.com', since: T0 });
+    // До входу пас ще не належить жодному акаунту — чекає першого входу з поштою оплати.
+    expect(st().passes['olena@example.com']).toBeUndefined();
+    expect(st().unclaimed['olena@example.com']).toMatchObject({ id: st().devicePass!.id, since: T0 });
     expect(accountHasPass(st())).toBe(true);
     st().signInVerified('olena@example.com', T0 + 1);
     expect(st().devicePass).toBeNull();

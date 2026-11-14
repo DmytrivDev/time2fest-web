@@ -53,11 +53,11 @@ describe('«Скинути стан гостя» — увесь стан на п
     usePassStore.setState({ phase: 'pending', email: 'olena@example.com', pendingSince: T0 });
     localStorage.setItem('t2f:pass-flow:v1', JSON.stringify({ state: { phase: 'pending', email: 'x@y.zz' }, version: 1 }));
     localStorage.setItem('t2f:toast:v1', '{}');
-    useAuthStore.setState({ pendingPassGift: T0 });
+    useAuthStore.getState().grantDevicePass('gift@example.com', T0);
 
     resetDeviceState();
 
-    expect(useAuthStore.getState()).toMatchObject({ user: null, accounts: [], passes: {}, code: null, devicePass: null, pendingPassGift: null });
+    expect(useAuthStore.getState()).toMatchObject({ user: null, accounts: [], passes: {}, unclaimed: {}, attached: {}, code: null, devicePass: null });
     expect(hasPass()).toBe(false);
     expect(useGuestStore.getState().schedule).toEqual([]);
     expect(usePassStore.getState().phase).toBe('form');

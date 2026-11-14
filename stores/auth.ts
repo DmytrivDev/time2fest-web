@@ -1,5 +1,6 @@
 /**
- * Акаунт на пристрої (імітація, `lib/auth/sim.ts`) у `localStorage['t2f:auth:v1']` (версія 2 — коди замість посилань).
+ * Акаунт на пристрої (імітація, `lib/auth/sim.ts`) у `localStorage['t2f:auth:v1']` (версія 3 — пас приєднується до
+ * акаунта лише раз; версія 2 — коди замість посилань).
  * Шов (`docs/backend/frontend-seam.md`, E3): це «сервер» імітації входу. Інтерфейс бачить його лише через
  * `lib/api/hooks/auth` → `lib/api/sim/auth` (компонентам імпортувати стор заборонено eslint).
  * Пошта — лише кодом із 6 цифр (рішення власника 2026-11-13): `requestCode` → `verifyCode`. Входу без підтвердження
@@ -9,10 +10,14 @@
  * `passes` — адреси акаунтів з Новорічним пасом і коли його оформлено (імітація сервера): вхід у такий акаунт
  * вмикає пас (сесія `hasPass`, `lib/api/sim/auth`).
  * Пас на пристрої (`devicePass`, рішення власника 2026-11-13): гість, що оплатив пас поштою без входу, має пас на цьому
- * пристрої одразу; в акаунт пас потрапляє, коли людина увійде з цією поштою (кодом чи Google) — тоді пас просто акаунта,
- * а запис пристрою зникає. Вихід з акаунта знімає пас акаунта (правка власника 2026-11-10).
- * Пас у подарунок до тосту за $10 (рішення власника 2026-11-12): той, хто увійшов, отримує його на акаунт одразу;
- * гість — коли вперше увійде чи створить акаунт на цьому пристрої (`pendingPassGift`, `giftPass`).
+ * пристрої одразу. Пас приєднується до акаунта ЛИШЕ РАЗ (рішення власника 2026-11-14): до того, у який уперше ввійшли з
+ * поштою оплати (кодом чи Google, на будь-якому пристрої). Доти він неприєднаний (`unclaimed[пошта]`); після —
+ * `attached[id паса]` = акаунт, і до іншого акаунта він уже не перейде (ні після зміни пошти акаунта, ні новим акаунтом
+ * з тією самою адресою). На пристрої оплати вхід у той самий акаунт робить пас просто пасом акаунта (запис пристрою
+ * зникає); вхід в інший акаунт пас пристрою не чіпає — він працює тут далі, але до того акаунта не переходить.
+ * Вихід з акаунта знімає пас акаунта (правка власника 2026-11-10).
+ * Пас у подарунок до тосту за $10 (рішення власника 2026-11-12, змінено 2026-11-14): той, хто увійшов, отримує його на
+ * акаунт одразу; гість — як куплений пас: на цьому пристрої одразу, з поштою оплати (`giftPass` → `grantDevicePass`).
  * Прапор профілю (правка власника 2026-11-10): кожен вхід і створення акаунта одразу задає прапор за IP, якщо людина ще
  * не обрала свій (`guest.ensureProfileFlag`); так само після відновлення входу зі сховища.
  */
@@ -33,7 +38,7 @@ import { safeJsonStorage } from '@/lib/storage/safe';
 import { useGuestStore } from '@/stores/guest';
 
 export const AUTH_STORAGE_KEY = 't2f:auth:v1';
-export const AUTH_VERSION = 2 as const;
+export const AUTH_VERSION = 3 as const;
 
 export interface AuthUser {
   email: string;
@@ -73,20 +78,26 @@ export type VerifyFail =
 
 export type VerifyResult = { ok: true; email: string } | VerifyFail;
 
-interface AuthData {
+/** Пас, оплачений гостем без входу: `id` — пас «на сервері», пошта з оплати й коли. */
+export interface DevicePass {
+  id: string;
+  email: string;
+  since: number;
+}
+
+export interface AuthData {
   user: AuthUser | null;
   accounts: string[];
   code: AuthCode | null;
   sends: number[];
-  /** email → коли оформлено пас (мс). */
+  /** Пошта акаунта → коли оформлено пас (мс): пас належить акаунту. */
   passes: Record<string, number>;
-  /** Пас, оплачений на цьому пристрої без входу: пошта з оплати й коли. */
-  devicePass: { email: string; since: number } | null;
-  /**
-   * Пас у подарунок до тосту за $10, який сказав гість без входу (рішення власника 2026-11-12): чекає тут — коли тост
-   * сказано (мс) — до першого входу чи створення акаунта на цьому пристрої; тоді переходить на акаунт і зникає звідси.
-   */
-  pendingPassGift?: number | null;
+  /** Пас гостя, ще не приєднаний до жодного акаунта: пошта оплати → пас. */
+  unclaimed: Record<string, { id: string; since: number }>;
+  /** Пас гостя → пошта акаунта, до якого він приєднався (раз і назавжди; пошта змінюється разом з акаунтом). */
+  attached: Record<string, string>;
+  /** Пас, оплачений на цьому пристрої без входу (працює тут, поки людина не ввійде в акаунт, до якого він приєднався). */
+  devicePass: DevicePass | null;
 }
 
 interface AuthActions {
@@ -100,13 +111,16 @@ interface AuthActions {
   signInGoogle(now: number): SignInResult;
   /** Пас оформлено на акаунт `email`. */
   grantPass(email: string, now: number): void;
-  /** Гість оплатив пас поштою `email`: пас — на пошту (акаунт) і на цей пристрій одразу. */
+  /**
+   * Гість оплатив пас поштою `email`: пас працює на цьому пристрої одразу й чекає першого входу з цією поштою, щоб
+   * приєднатися до акаунта (`unclaimed`). На пошті вже є пас — пристрій отримує запис про нього, другого паса немає.
+   */
   grantDevicePass(email: string, now: number): void;
   /**
-   * Пас у подарунок до тосту за $10: той, хто увійшов, — одразу на акаунт (`active`); гість — чекає входу на цьому
-   * пристрої (`pending`, див. `pendingPassGift`).
+   * Пас у подарунок до тосту за $10: той, хто увійшов, — одразу на акаунт (`active`); гість — як куплений: на цьому
+   * пристрої з поштою оплати (`device`, далі те саме правило одноразового приєднання).
    */
-  giftPass(now: number): 'active' | 'pending';
+  giftPass(now: number, email: string): 'active' | 'device';
   /** Нова пошта акаунта (після коду зміни пошти). */
   changeEmail(email: string): void;
   signOut(): void;
@@ -116,13 +130,27 @@ interface AuthActions {
 
 export type AuthStore = AuthData & AuthActions;
 
-const EMPTY: AuthData = { user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null };
+/** Порожній стан (скидання гостя, тести). */
+export const AUTH_EMPTY: AuthData = { user: null, accounts: [], code: null, sends: [], passes: {}, unclaimed: {}, attached: {}, devicePass: null };
+const EMPTY = AUTH_EMPTY;
 
 /** Чи є пас: у того, хто увійшов, або оплачений на цьому пристрої без входу. */
 export function accountHasPass(a: Pick<AuthData, 'user' | 'passes' | 'devicePass'>): boolean {
-  if (a.user !== null && a.passes[a.user.email] !== undefined) return true;
-  return a.devicePass != null;
+  return passPlace(a) !== null;
 }
+
+/** Де живе пас, яким користується ця сесія: на акаунті, що увійшов, чи лише на цьому пристрої. */
+export function passPlace(a: Pick<AuthData, 'user' | 'passes' | 'devicePass'>): 'account' | 'device' | null {
+  if (a.user !== null && a.passes[a.user.email] !== undefined) return 'account';
+  return a.devicePass != null ? 'device' : null;
+}
+
+/** На цю пошту пас уже є — на акаунті чи ще неприєднаний (оплата з неї вдруге — `pass-owned`). */
+export function emailHasPass(a: Pick<AuthData, 'passes' | 'unclaimed'>, email: string): boolean {
+  return a.passes[email] !== undefined || a.unclaimed[email] !== undefined;
+}
+
+const newPassId = (now: number) => `pass-${now.toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -132,11 +160,18 @@ export const useAuthStore = create<AuthStore>()(
         // Прапор — до входу: шапка, що підпишеться на `user`, одразу має прапор.
         useGuestStore.getState().ensureProfileFlag();
         set((s) => ({ user: { email, via, signedInAt: now }, accounts: isNew ? [...s.accounts, email] : s.accounts }));
-        // Подарунок до тосту за $10, що чекав входу на цьому пристрої, — тепер пас цього акаунта.
-        const gift = get().pendingPassGift;
-        if (gift != null) set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? gift }, pendingPassGift: null }));
-        // Пас пристрою з тією ж поштою — тепер просто пас акаунта.
-        if (get().devicePass?.email === email) set({ devicePass: null });
+        // Перший вхід з поштою оплати: неприєднаний пас гостя приєднується до цього акаунта — раз і назавжди.
+        const waiting = get().unclaimed[email];
+        if (waiting) {
+          set((s) => {
+            const unclaimed = { ...s.unclaimed };
+            delete unclaimed[email];
+            return { passes: { ...s.passes, [email]: s.passes[email] ?? waiting.since }, attached: { ...s.attached, [waiting.id]: email }, unclaimed };
+          });
+        }
+        // Пас пристрою, приєднаний саме до цього акаунта, — тепер просто пас акаунта. Інший акаунт його не чіпає.
+        const device = get().devicePass;
+        if (device && get().attached[device.id] === email) set({ devicePass: null });
         return { ok: true, isNew, email };
       };
       return {
@@ -179,17 +214,30 @@ export const useAuthStore = create<AuthStore>()(
         },
         grantDevicePass: (raw, now) => {
           const email = normalizeEmail(raw);
-          get().grantPass(email, now);
-          set((s) => ({ devicePass: s.devicePass ?? { email, since: s.passes[email] ?? now } }));
+          const s = get();
+          const waiting = s.unclaimed[email];
+          const owned = s.passes[email];
+          let pass: DevicePass;
+          if (waiting) pass = { id: waiting.id, email, since: waiting.since };
+          else if (owned !== undefined) {
+            // На пошті вже є пас акаунта: пристрій користується ним, поки тут не ввійдуть у той акаунт.
+            pass = { id: newPassId(now), email, since: owned };
+            set((x) => ({ attached: { ...x.attached, [pass.id]: email } }));
+          } else {
+            pass = { id: newPassId(now), email, since: now };
+            set((x) => ({ unclaimed: { ...x.unclaimed, [email]: { id: pass.id, since: now } } }));
+          }
+          // На пристрої вже є пас — лишається той, що був (другий на пристрої нічого не додає).
+          set((x) => ({ devicePass: x.devicePass ?? pass }));
         },
-        giftPass: (now) => {
+        giftPass: (now, email) => {
           const user = get().user;
           if (user) {
             get().grantPass(user.email, now);
             return 'active';
           }
-          set((s) => ({ pendingPassGift: s.pendingPassGift ?? now }));
-          return 'pending';
+          get().grantDevicePass(email, now);
+          return 'device';
         },
         changeEmail: (raw) => {
           const next = normalizeEmail(raw);
@@ -199,6 +247,8 @@ export const useAuthStore = create<AuthStore>()(
             user: s.user ? { ...s.user, email: next } : s.user,
             accounts: s.accounts.map((x) => (x === prev ? next : x)),
             passes: Object.fromEntries(Object.entries(s.passes).map(([k, v]) => [k === prev ? next : k, v])),
+            // Приєднаний пас іде за акаунтом, а не за старою адресою.
+            attached: Object.fromEntries(Object.entries(s.attached).map(([k, v]) => [k, v === prev ? next : v])),
           }));
         },
         signOut: () => {
@@ -217,19 +267,47 @@ export const useAuthStore = create<AuthStore>()(
         code: s.code,
         sends: s.sends,
         passes: s.passes,
+        unclaimed: s.unclaimed,
+        attached: s.attached,
         devicePass: s.devicePass,
-        pendingPassGift: s.pendingPassGift ?? null,
       }),
-      // Версія 1 (посилання з листа): лист відкидаємо, акаунти, вхід і паси лишаються.
       migrate: (persisted, version) => {
         if (version === AUTH_VERSION) return persisted as AuthData;
-        if (version !== 1 || !persisted || typeof persisted !== 'object') return EMPTY;
-        const old = persisted as Partial<AuthData> & { letter?: unknown };
-        return { ...EMPTY, user: old.user ?? null, accounts: old.accounts ?? [], passes: old.passes ?? {}, pendingPassGift: old.pendingPassGift ?? null };
+        if (!persisted || typeof persisted !== 'object' || (version !== 1 && version !== 2)) return EMPTY;
+        // Версія 1 (посилання з листа): лист відкидаємо. Версії 1–2: пас гостя одразу записувався на пошту оплати як пас
+        // акаунта — тож пас пристрою вважаємо вже приєднаним до неї. Подарунок «чекає входу» (`pendingPassGift`) пошти
+        // не мав — відкидаємо (лише тестові й демо-дані).
+        const old = persisted as Partial<Omit<AuthData, 'devicePass'>> & { devicePass?: { email?: unknown; since?: unknown } | null };
+        const passes = { ...(old.passes ?? {}) };
+        const attached: Record<string, string> = {};
+        let devicePass: DevicePass | null = null;
+        const dp = old.devicePass;
+        if (version === 2 && dp && typeof dp.email === 'string' && typeof dp.since === 'number') {
+          devicePass = { id: `pass-v2-${dp.since}`, email: dp.email, since: dp.since };
+          attached[devicePass.id] = dp.email;
+          passes[dp.email] ??= dp.since;
+        }
+        return {
+          ...EMPTY,
+          user: old.user ?? null,
+          accounts: old.accounts ?? [],
+          passes,
+          attached,
+          devicePass,
+          ...(version === 2 ? { code: old.code ?? null, sends: old.sends ?? [] } : {}),
+        };
       },
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<AuthData>;
-        return { ...current, ...p, passes: p.passes ?? {}, devicePass: p.devicePass ?? null, code: p.code ?? null };
+        return {
+          ...current,
+          ...p,
+          passes: p.passes ?? {},
+          unclaimed: p.unclaimed ?? {},
+          attached: p.attached ?? {},
+          devicePass: p.devicePass && typeof p.devicePass.id === 'string' ? p.devicePass : null,
+          code: p.code ?? null,
+        };
       },
       // Після відновлення (і синхронізації вкладок): прапор профілю того, хто увійшов.
       onRehydrateStorage: () => (state) => {

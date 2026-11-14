@@ -4,7 +4,7 @@ import type { Order } from '@/lib/api/contracts/checkout';
 import { confirmDueOrders, createSimCheckout, reloadSimCheckoutForTest, resetSimCheckout, resumeOpenOrders, setCheckoutClock } from '@/lib/api/sim/checkout';
 import { createSimToasts } from '@/lib/api/sim/toasts';
 import { useChatFeed } from '@/lib/chat-sim/store';
-import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
+import { PAY_ROUNDTRIP_MS, PAYPRO_DEMO_EMAIL, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
@@ -20,7 +20,7 @@ beforeEach(() => {
   vi.setSystemTime(T0);
   resetSimCheckout();
   setCheckoutClock(() => Date.now());
-  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {} });
   useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
   useToastStore.setState({ said: [] });
   useChatFeed.getState().reset();
@@ -41,8 +41,9 @@ describe('процес оплати (sim)', () => {
     vi.advanceTimersByTime(PAY_ROUNDTRIP_MS);
     expect(seen.at(-1)?.status).toBe('paid');
     expect(useAuthStore.getState().user).toBeNull();
-    expect(useAuthStore.getState().passes['olena@example.com']).toBe(T0 + PAY_ROUNDTRIP_MS);
-    expect(useAuthStore.getState().devicePass).toEqual({ email: 'olena@example.com', since: T0 + PAY_ROUNDTRIP_MS });
+    // Пас записано на пошту оплати як неприєднаний: до акаунта — першим входом з нею (рішення 2026-11-14).
+    expect(useAuthStore.getState().unclaimed['olena@example.com']?.since).toBe(T0 + PAY_ROUNDTRIP_MS);
+    expect(useAuthStore.getState().devicePass).toMatchObject({ email: 'olena@example.com', since: T0 + PAY_ROUNDTRIP_MS });
   });
 
   it('повернення з PayPro: тестові замовлення demo-* для сторінки повернення', async () => {
@@ -75,14 +76,15 @@ describe('процес оплати (sim)', () => {
     expect(useToastStore.getState().said).toEqual([]);
   });
 
-  it('тост $10 гостя: у чаті «Світ», серед своїх, пас у подарунок чекає входу', async () => {
+  it('тост $10 гостя: у чаті «Світ», серед своїх, пас у подарунок одразу на пристрої з поштою PayPro', async () => {
     await svc.start({ product: { kind: 'toast', tier: 10, text: 'За всіх!' }, returnPath: '/', clientId: 't' });
     vi.advanceTimersByTime(PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
     const paid = seen.at(-1)!;
-    expect(paid).toMatchObject({ status: 'paid', gift: { pass: 'pending' }, toast: { text: 'За всіх!', tier: 10, nick: 'Олена', mine: true } });
+    expect(paid).toMatchObject({ status: 'paid', email: PAYPRO_DEMO_EMAIL, gift: { pass: 'device' }, toast: { text: 'За всіх!', tier: 10, nick: 'Олена', mine: true } });
     expect(useToastStore.getState().said.map((t) => t.id)).toEqual([paid.toast!.id]);
     expect(useChatFeed.getState().rooms.world?.some((m) => m.toast?.amount === 10)).toBe(true);
-    expect(useAuthStore.getState().pendingPassGift).toBe(T0 + PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
+    expect(useAuthStore.getState().devicePass).toMatchObject({ email: PAYPRO_DEMO_EMAIL, since: T0 + PAY_ROUNDTRIP_MS + TOAST_PAY_MS });
+    expect(useAuthStore.getState().unclaimed[PAYPRO_DEMO_EMAIL]).toBeDefined();
   });
 
   it('скасування до результату — cancelled, результату немає; перерваний перехід продовжується після перезавантаження', async () => {

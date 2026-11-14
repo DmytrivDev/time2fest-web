@@ -1,12 +1,17 @@
 'use client';
 
-/** Плашка пасу в профілі кабінету: стан пасу, квитанція / «Що це», «Отримати» (під час святкування — вікно пасу). */
+/**
+ * Плашка пасу в профілі кабінету: стан пасу, квитанція / «Що це», «Отримати» (під час святкування — вікно пасу).
+ * Пас лише на цьому пристрої (оплачено з іншої пошти, ніж акаунт; рішення 2026-11-14) — чесно: «на цьому пристрої» й
+ * звідки він, бо до цього акаунта такий пас не переходить.
+ */
 
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
+import { useSession } from '@/lib/api/hooks/auth';
 import { getData } from '@/lib/data/load';
 import { isCelebrating } from '@/lib/engine/celebration';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -16,17 +21,25 @@ export function PassPlaque({ hasPass }: { hasPass: boolean }) {
   const t = useTranslations('account.pass');
   const openPass = useOpenPassWindow();
   const celebrating = isCelebrating(useNow({ granularity: 'minute' }), getData());
+  const session = useSession().session;
+  const device = hasPass && session?.passOn === 'device' ? session.devicePass : null;
   return (
-    <div className={cn(s.plaque, hasPass ? s.plaqueOn : s.plaqueOff)} data-block="pass-plaque" data-pass={hasPass ? 'active' : 'inactive'}>
+    <div className={cn(s.plaque, hasPass ? s.plaqueOn : s.plaqueOff)} data-block="pass-plaque" data-pass={device ? 'device' : hasPass ? 'active' : 'inactive'}>
       <span aria-hidden="true" className={s.plaqueIcon}>
         <Icon name="ticket" size={22} />
       </span>
       <div className={s.plaqueText}>
         <div className={s.plaqueTitle}>
           {t('title')}
-          <span className={cn(s.status, hasPass ? s.statusOn : s.statusOff)}>{hasPass ? t('active') : t('inactive')}</span>
+          <span className={cn(s.status, hasPass ? s.statusOn : s.statusOff)}>{device ? t('device') : hasPass ? t('active') : t('inactive')}</span>
         </div>
-        <p className={s.plaqueHint}>{hasPass ? t('activeText') : t.rich('inactiveText', { b: (x) => <b>{x}</b> })}</p>
+        <p className={s.plaqueHint}>
+          {device
+            ? t.rich('deviceText', { email: device.email, b: (x) => <b>{x}</b> })
+            : hasPass
+              ? t('activeText')
+              : t.rich('inactiveText', { b: (x) => <b>{x}</b> })}
+        </p>
       </div>
       <div className={s.plaqueActs}>
         {hasPass ? (

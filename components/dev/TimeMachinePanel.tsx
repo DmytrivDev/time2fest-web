@@ -141,6 +141,7 @@ function PanelBody({
   const emptyCountry = useTestControls((s) => s.emptyCountry);
   const authUnavailable = useTestControls((s) => s.authUnavailable);
   const googleCancelled = useTestControls((s) => s.googleCancelled);
+  const googleRedirect = useTestControls((s) => s.googleRedirect);
   const notifications = useTestControls((s) => s.notifications);
   const signedIn = (useSession().session?.user ?? null) !== null;
   const devCode = useDevCode();
@@ -335,6 +336,11 @@ function PanelBody({
           label={t('googleCancelled')}
           checked={googleCancelled}
           onCheckedChange={(v) => useTestControls.getState().setGoogleCancelled(v)}
+        />
+        <Switch
+          label={t('googleRedirect')}
+          checked={googleRedirect}
+          onCheckedChange={(v) => useTestControls.getState().setGoogleRedirect(v)}
         />
         {devCode ? (
           <div className="flex flex-col gap-1 text-caption text-text-secondary" data-control="auth-code">

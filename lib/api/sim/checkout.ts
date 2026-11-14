@@ -4,9 +4,10 @@
  *   start → `open` → через «перехід» (`PAY_ROUNDTRIP_MS`, тост — ще `TOAST_PAY_MS`) результат з тестової панелі
  *   (`testControls.payResult`): `pending` (підтвердження через `PENDING_CONFIRM_MS` часу сайту) | `declined` | `paid`.
  * Результат за продуктом видає «сервер», тобто цей файл: пас — на акаунт; гість без входу в акаунт НЕ входить (рішення
- * власника 2026-11-13) — пас записано на пошту з оплати й працює на цьому пристрої одразу (`grantDevicePass`), а в акаунт
- * потрапляє, коли людина увійде з цією поштою (код чи Google). Тост — у чат «Світ» і серед своїх, тост $10 дарує пас
- * (гостю — після входу на цьому пристрої).
+ * власника 2026-11-13) — пас записано на пошту з оплати й працює на цьому пристрої одразу (`grantDevicePass`), а до
+ * акаунта приєднується один раз — до першого, у який увійдуть з цією поштою (код чи Google; рішення 2026-11-14). Тост — у
+ * чат «Світ» і серед своїх; тост $10 дарує пас тому, хто його ще не має: на акаунт або (гість) так само, як куплений —
+ * на цьому пристрої з поштою оплати (`PAYPRO_DEMO_EMAIL` — пошта «зі сторінки PayPro»).
  * Незавершені замовлення (`open`, `pending`) живуть у `localStorage['t2f:orders:v1']` — переживають перезавантаження.
  * Події замовлень ідуть підписникам СИНХРОННО (як вебхук → канал): вікна оновлюються в тому ж такті таймера.
  */
@@ -16,11 +17,11 @@ import { useChatFeed } from '@/lib/chat-sim/store';
 import { toastMessage } from '@/lib/chat/toast';
 import type { Ms } from '@/lib/data/types';
 import { normalizeEmail } from '@/lib/auth/email';
-import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
+import { PAY_ROUNDTRIP_MS, PAYPRO_DEMO_EMAIL, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
 import { safeGet, safeRemove, safeSet } from '@/lib/storage/safe';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { tierGiftsPass } from '@/lib/toast/tiers';
-import { accountHasPass, useAuthStore } from '@/stores/auth';
+import { accountHasPass, emailHasPass, useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { useToastStore } from '@/stores/toast';
@@ -103,8 +104,10 @@ function complete(id: string): void {
   const { tier, text } = o.product;
   const g = useGuestStore.getState();
   const now = siteNow();
+  // Гість: пошту ввів на сторінці PayPro (вебхук передає її в замовлення).
+  const email = useAuthStore.getState().user ? o.email : (o.email ?? PAYPRO_DEMO_EMAIL);
   let gift: Order['gift'];
-  if (tierGiftsPass(tier) && !accountHasPass(useAuthStore.getState())) gift = { pass: useAuthStore.getState().giftPass(now) };
+  if (tierGiftsPass(tier) && !accountHasPass(useAuthStore.getState())) gift = { pass: useAuthStore.getState().giftPass(now, email ?? PAYPRO_DEMO_EMAIL) };
   const record: ToastRecord = {
     id: `own-${g.id}-${now}`,
     authorId: g.id,
@@ -119,7 +122,7 @@ function complete(id: string): void {
   useChatFeed.getState().append([toastMessage(record, g.id)]);
   // Свої тости — «стрічка сервера» для цього пристрою (`lib/api/sim/toasts`).
   useToastStore.setState((s) => ({ said: [...s.said, record] }));
-  put({ ...o, status: 'paid', pendingSince: undefined, updatedAt: now, toast: record, ...(gift ? { gift } : {}) });
+  put({ ...o, status: 'paid', pendingSince: undefined, updatedAt: now, toast: record, ...(email ? { email } : {}), ...(gift ? { gift } : {}) });
 }
 
 /** «Чекаємо підтвердження» → підтверджено, коли минув `PENDING_CONFIRM_MS` часу сайту (`CheckoutSettler`). */
@@ -170,7 +173,7 @@ export function createSimCheckout(): CheckoutService {
       if (same) return ok({ order: same, checkoutUrl: '#sim-paypro' });
       if (req.product.kind === 'pass') {
         const email = useAuthStore.getState().user?.email ?? normalizeEmail(req.email ?? '');
-        if (useAuthStore.getState().passes[email] !== undefined) return fail('conflict', { reason: 'pass-owned' });
+        if (emailHasPass(useAuthStore.getState(), email)) return fail('conflict', { reason: 'pass-owned' });
       }
       const now = Date.now();
       const order = put({

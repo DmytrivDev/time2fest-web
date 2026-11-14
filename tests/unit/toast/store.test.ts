@@ -6,7 +6,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useChatFeed } from '@/lib/chat-sim/store';
-import { PAY_ROUNDTRIP_MS } from '@/lib/offers/paySim';
+import { PAY_ROUNDTRIP_MS, PAYPRO_DEMO_EMAIL } from '@/lib/offers/paySim';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { resetDeviceState } from '@/stores/resetDevice';
@@ -30,7 +30,7 @@ beforeEach(() => {
   vi.setSystemTime(T0);
   setToastClock(() => Date.now());
   window.localStorage.clear();
-  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {} });
   useGuestStore.getState().resetGuest();
   useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
   useChatFeed.getState().reset();
@@ -122,15 +122,15 @@ describe('пас у подарунок до тосту за $10', () => {
     expect(useToastStore.getState().last?.pass).toBe(true);
   });
 
-  it('гість — пас чекає на пристрої; перший вхід (Google) переносить його на акаунт і прибирає з пристрою', () => {
+  it('гість — пас одразу на пристрої (як куплений); вхід з поштою оплати приєднує його до акаунта', () => {
     payToast(10);
     settle();
-    expect(useToastStore.getState().gift).toBe('pending');
-    expect(useAuthStore.getState().pendingPassGift).toBe(T0 + PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
-    expect(hasPass()).toBe(false);
-    const { email } = useAuthStore.getState().signInGoogle(T0 + 60_000);
-    expect(useAuthStore.getState().passes[email]).toBe(T0 + PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
-    expect(useAuthStore.getState().pendingPassGift).toBeNull();
+    expect(useToastStore.getState().gift).toBe('device');
+    expect(useAuthStore.getState().devicePass).toMatchObject({ email: PAYPRO_DEMO_EMAIL, since: T0 + PAY_ROUNDTRIP_MS + TOAST_PAY_MS });
+    expect(hasPass()).toBe(true);
+    useAuthStore.getState().signInVerified(PAYPRO_DEMO_EMAIL, T0 + 60_000);
+    expect(useAuthStore.getState().passes[PAYPRO_DEMO_EMAIL]).toBe(T0 + PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
+    expect(useAuthStore.getState().devicePass).toBeNull();
     expect(hasPass()).toBe(true);
     // Вихід знімає пас з пристрою, а подарунок уже належить акаунту — інший вхід його не отримає.
     useAuthStore.getState().signOut();
@@ -138,12 +138,12 @@ describe('пас у подарунок до тосту за $10', () => {
     expect(hasPass()).toBe(false);
   });
 
-  it('гість створює акаунт поштою — пас на новому акаунті', () => {
+  it('гість входить з іншою поштою (Google) — пас працює на пристрої, але до того акаунта не переходить', () => {
     payToast(10);
     settle();
-    const res = useAuthStore.getState().signInVerified('new@example.com', T0 + 60_000);
-    expect(res).toMatchObject({ ok: true, isNew: true });
-    expect(useAuthStore.getState().passes['new@example.com']).toBeDefined();
+    const { email } = useAuthStore.getState().signInGoogle(T0 + 60_000);
+    expect(useAuthStore.getState().passes[email]).toBeUndefined();
+    expect(useAuthStore.getState().devicePass?.email).toBe(PAYPRO_DEMO_EMAIL);
     expect(hasPass()).toBe(true);
   });
 
@@ -151,7 +151,7 @@ describe('пас у подарунок до тосту за $10', () => {
     payToast(5);
     settle();
     expect(useToastStore.getState().gift).toBeNull();
-    expect(useAuthStore.getState().pendingPassGift).toBeNull();
+    expect(useAuthStore.getState().devicePass).toBeNull();
     useAuthStore.getState().signInVerified('olena@example.com', T0);
     useAuthStore.getState().grantPass('olena@example.com', T0);
     payToast(10);
@@ -159,12 +159,12 @@ describe('пас у подарунок до тосту за $10', () => {
     expect(useToastStore.getState().gift).toBeNull();
   });
 
-  it('«Скинути стан гостя» стирає й свої тости, й подарунок, що чекав', () => {
+  it('«Скинути стан гостя» стирає й свої тости, й пас-подарунок на пристрої', () => {
     payToast(10);
     settle();
     resetDeviceState();
     expect(useToastStore.getState().said).toEqual([]);
-    expect(useAuthStore.getState().pendingPassGift).toBeNull();
+    expect(useAuthStore.getState().devicePass).toBeNull();
     expect(Object.keys(window.localStorage).filter((k) => k.startsWith('t2f:'))).toEqual([]);
   });
 });

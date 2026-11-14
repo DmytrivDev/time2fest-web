@@ -19,6 +19,8 @@ export interface TestControlsState {
   authUnavailable: boolean;
   /** Імітований Google повертає «скасовано». */
   googleCancelled: boolean;
+  /** Імітований Google — повним переходом сторінки (як у `http`): повернення на `?signin=google[&new=1]`. */
+  googleRedirect: boolean;
   /** Тест: скільки сповіщень підкласти (усіх типів, нові) — `seedDemoNotifications`. */
   notifications: number;
   setPayResult(r: PayResult): void;
@@ -28,6 +30,7 @@ export interface TestControlsState {
   setEmptyCountry(v: boolean): void;
   setAuthUnavailable(v: boolean): void;
   setGoogleCancelled(v: boolean): void;
+  setGoogleRedirect(v: boolean): void;
   setNotifications(n: number): void;
 }
 
@@ -39,6 +42,7 @@ export const useTestControls = create<TestControlsState>()((set) => ({
   emptyCountry: false,
   authUnavailable: false,
   googleCancelled: false,
+  googleRedirect: false,
   notifications: 0,
   setPayResult: (payResult) => set({ payResult }),
   setChatAvailable: (chatAvailable) => set({ chatAvailable }),
@@ -47,6 +51,7 @@ export const useTestControls = create<TestControlsState>()((set) => ({
   setEmptyCountry: (emptyCountry) => set({ emptyCountry }),
   setAuthUnavailable: (authUnavailable) => set({ authUnavailable }),
   setGoogleCancelled: (googleCancelled) => set({ googleCancelled }),
+  setGoogleRedirect: (googleRedirect) => set({ googleRedirect }),
   setNotifications: (notifications) => {
     set({ notifications });
     seedDemoNotifications(notifications);

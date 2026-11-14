@@ -35,7 +35,7 @@ const settle = () =>
 beforeEach(() => {
   vi.useFakeTimers();
   useGuestStore.getState().resetGuest();
-  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {}, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, devicePass: null, sends: [], passes: {} });
   useChatFeed.getState().reset();
   useToastStore.getState().reset();
   useToastStore.setState({ said: [] });
@@ -171,7 +171,7 @@ describe('оплата й результат', () => {
     expect(win()).toHaveTextContent('Немає з’єднання');
   });
 
-  it('$10 гостя: «Новорічний пас — подарунок до тосту», «Увійти й активувати пас»; пас чекає входу', () => {
+  it('$10 гостя: «Пас активний на цьому пристрої» і «Увійти кодом» на пошту оплати; пас працює одразу', () => {
     useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
     renderPage(<Opener tier={10} />);
     fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));
@@ -179,11 +179,12 @@ describe('оплата й результат', () => {
     settle();
     expect(win()).toHaveTextContent('а твій нік — у привітанні опівночі');
     expect(win()).toHaveTextContent('закріплено·у привітанні опівночі');
-    const gift = win().querySelector('[data-toast-gift="pending"]') as HTMLElement;
-    expect(gift).toHaveTextContent('Новорічний пас — подарунок до тосту');
-    expect(within(gift).getByRole('button', { name: 'Увійти й активувати пас' })).toBeInTheDocument();
-    expect(useAuthStore.getState().pendingPassGift).toBeTypeOf('number');
-    expect(testHasPass()).toBe(false);
+    const gift = win().querySelector('[data-toast-gift="device"]') as HTMLElement;
+    expect(gift).toHaveTextContent('Пас активний на цьому пристрої');
+    expect(gift).toHaveTextContent('you@example.com');
+    expect(within(gift).getByRole('button', { name: 'Увійти кодом' })).toBeInTheDocument();
+    expect(useAuthStore.getState().devicePass?.email).toBe('you@example.com');
+    expect(testHasPass()).toBe(true);
   });
 
   it('$10 того, хто увійшов: «Пас активний», пас — на акаунті', () => {

@@ -25,6 +25,8 @@ export interface T2FTestApi {
   /** Вхід (імітація): сервіс недоступний, Google скасовано, вийти, останній код із «листа», прострочити його. */
   setAuthUnavailable(on: boolean): void;
   setGoogleCancelled(on: boolean): void;
+  /** Google повним переходом сторінки (як у `http`): новий акаунт повертається з `&new=1`. */
+  setGoogleRedirect(on: boolean): void;
   setNotifications(n: number): void;
   signOut(): void;
   lastCode(): DevCode | null;
@@ -70,6 +72,7 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
     setChatEmpty: (on) => useTestControls.getState().setEmptyCountry(on),
     setAuthUnavailable: (on) => useTestControls.getState().setAuthUnavailable(on),
     setGoogleCancelled: (on) => useTestControls.getState().setGoogleCancelled(on),
+    setGoogleRedirect: (on) => useTestControls.getState().setGoogleRedirect(on),
     setNotifications: (n) => useTestControls.getState().setNotifications(n),
     signOut: () => void getService('auth').signOut(),
     lastCode: () => getService('auth').devCode?.get() ?? null,

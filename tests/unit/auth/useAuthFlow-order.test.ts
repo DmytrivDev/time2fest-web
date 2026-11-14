@@ -10,7 +10,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 
 beforeEach(() => {
-  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null });
   useGuestStore.getState().resetGuest();
 });
 

@@ -6,7 +6,8 @@
  * увійшов — без email («Оформлюємо на акаунт … · Не ти?»), «Відкриваємо оплату…» (і поки сервіс приймає замовлення),
  * «Не вдалося відкрити оплату» (мережа, оплату вимкнено), «Чекаємо підтвердження оплати», «Оплата не пройшла», «Час на
  * оплату минув», «Пас активний — свято на повну!», «Твій пас уже діє». Гість, що оплатив без входу, має пас на цьому
- * пристрої; «Увійти кодом» переносить його в акаунт (рішення власника 2026-11-13). Логіку тримає `stores/pass`.
+ * пристрої; «Увійти кодом» переносить його в акаунт (рішення власника 2026-11-13) — лише раз, в акаунт пошти оплати;
+ * увійшли тут в інший акаунт — пас працює на пристрої, і так і сказано (рішення 2026-11-14). Логіку тримає `stores/pass`.
  * Кнопка після оплати: на сторінці — «Повернутися на головну»; у вікні (воно поруч із трансляцією) — «Дивитися далі»:
  * закриває вікно, і права колонка стає такою, як була (чат чи нічого) — правка власника 2026-10-30.
  */
@@ -96,22 +97,36 @@ function useSendCode(email: string, onSent: () => void) {
   return { busy, error, send };
 }
 
-/** Пас на пристрої гостя: пояснення й «Увійти кодом» (код на пошту з оплати). */
-function DeviceSignIn({ email, onCodeSent }: { email: string; onCodeSent: () => void }) {
+/**
+ * Пас на цьому пристрої (гість оплатив без входу чи пас за тост $10): де він живе й «Увійти кодом» (код на пошту з
+ * оплати), щоб пас був і на інших пристроях. `account` — тут увійшли в інший акаунт: пас працює лише на пристрої й до
+ * цього акаунта не переходить (рішення власника 2026-11-14: пас приєднується до акаунта лише раз — з поштою оплати).
+ */
+export function DeviceSignIn({ email, account, onCodeSent }: { email: string; account?: string | null; onCodeSent: () => void }) {
   const t = useTranslations('pass.buy');
-  const code = useSendCode(email, onCodeSent);
   return (
-    <div className={s.deviceNote} data-row="device-pass">
+    <div className={s.deviceNote} data-row="device-pass" data-device-pass={account ? 'other-account' : 'guest'}>
       <p className={cn(s.note, s.noteSm)} style={{ marginTop: 0 }}>
         <Icon name="user" size={18} />
-        <span>{t.rich('deviceNote', { email, b: Bold })}</span>
+        <span>{account ? t.rich('deviceNoteOther', { email, account, b: Bold }) : t.rich('deviceNote', { email, b: Bold })}</span>
       </p>
+      <SendCodeButton email={email} onSent={onCodeSent} />
+    </div>
+  );
+}
+
+/** «Увійти кодом» на пошту з оплати («Надсилаємо…», помилка рядком) — пас на пристрої (вікно пасу, подарунок тосту). */
+export function SendCodeButton({ email, onSent }: { email: string; onSent: () => void }) {
+  const t = useTranslations('pass.buy');
+  const code = useSendCode(email, onSent);
+  return (
+    <>
       <BusyButton type="button" busy={code.busy} busyLabel={t('sending')} tone="ghost" onClick={code.send} action="device-sign-in">
         <Icon name="envelope" size={18} />
         {t('deviceSignIn')}
       </BusyButton>
       {code.error ? <ErrorLine mt={4}>{code.error}</ErrorLine> : null}
-    </div>
+    </>
   );
 }
 
@@ -478,7 +493,8 @@ const CONFETTI = (
 function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDone?: () => void; onCodeSent: () => void }) {
   const t = useTranslations('pass.buy');
   const session = useSession().session;
-  const devicePass = session?.user ? null : (session?.devicePass ?? null);
+  // Пас лише на цьому пристрої (гість, чи увійшли в інший акаунт) — пояснення й «Увійти кодом» замість «Ти вже увійшов».
+  const devicePass = session?.passOn === 'device' ? session.devicePass : null;
   const email = session?.user?.email ?? devicePass?.email ?? '';
   const profile = useProfile();
   const nick = profile?.nick ?? undefined;
@@ -534,7 +550,7 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
       <DoneButton variant={variant} onDone={onDone} mt={18} />
       {variant === 'stream' ? <MoreButton onDone={onDone} /> : null}
       {devicePass ? (
-        <DeviceSignIn email={devicePass.email} onCodeSent={onCodeSent} />
+        <DeviceSignIn email={devicePass.email} account={session?.user?.email} onCodeSent={onCodeSent} />
       ) : (
         <p className={cn(s.note, s.noteSm)} style={{ marginTop: '0.875rem' }}>
           <Icon name="user" size={18} />
@@ -551,7 +567,8 @@ function Active({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDo
   const p = useTranslations('pass.page');
   const session = useSession().session;
   const user = session?.user ?? null;
-  const devicePass = user ? null : (session?.devicePass ?? null);
+  // Пас живе лише на цьому пристрої: гість, або тут увійшли в акаунт, до якого він не приєднаний (рішення 2026-11-14).
+  const devicePass = session?.passOn === 'device' ? session.devicePass : null;
   const since = session?.passSince ?? undefined;
   const date = since !== undefined ? new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long' }).format(since) : null;
   return (
@@ -568,10 +585,10 @@ function Active({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDo
         {t('activeTitle')}
       </h3>
       <p className={s.text}>
-        {user && date
-          ? t.rich('activeText', { date, email: user.email, b: Bold })
-          : devicePass && date
-            ? t.rich('activeTextGuestDevice', { date, email: devicePass.email, b: Bold })
+        {devicePass && date
+          ? t.rich('activeTextGuestDevice', { date, email: devicePass.email, b: Bold })
+          : user && date
+            ? t.rich('activeText', { date, email: user.email, b: Bold })
             : t('activeTextDevice')}
       </p>
       <DoneButton variant={variant} onDone={onDone} mt={20} homeLabel={t('toHome')} />
@@ -582,7 +599,7 @@ function Active({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDo
       ) : (
         <MoreButton onDone={onDone} />
       )}
-      {devicePass ? <DeviceSignIn email={devicePass.email} onCodeSent={onCodeSent} /> : null}
+      {devicePass ? <DeviceSignIn email={devicePass.email} account={user?.email} onCodeSent={onCodeSent} /> : null}
       <LinkRow items={[{ label: t('refunds'), href: '/payments/' }, { label: t('help'), href: '/help/' }]} mt={4} />
     </div>
   );

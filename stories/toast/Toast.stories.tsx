@@ -140,8 +140,8 @@ export const Success5: Story = {
   render: win,
 };
 export const Success10Guest: Story = {
-  name: 'вікно · успіх $10 · гість (пас чекає входу)',
-  decorators: [withState({ phase: 'success', gift: 'pending', last: { ...SAID[0]!, mine: true } })],
+  name: 'вікно · успіх $10 · гість (пас на цьому пристрої)',
+  decorators: [withState({ phase: 'success', gift: 'device', last: { ...SAID[0]!, mine: true } })],
   render: win,
 };
 export const Success10Signed: Story = {

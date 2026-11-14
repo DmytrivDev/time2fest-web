@@ -7,16 +7,22 @@ import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
 import { useOpenPassWindow, usePassDetails } from '@/components/pass/PassWindow';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
+import { SendCodeButton } from '@/components/pass/PassBuy';
+import { currentSession, useSession } from '@/lib/api/hooks/auth';
 import { useToastStore } from '@/stores/toast';
 import { ToastBubble } from './ToastBubble';
 import { Foot } from './ToastFoot';
 import s from './toastWindow.module.css';
 
 
-/** Подарунок до тосту за $10: «Пас активний» (увійшов) чи «Увійти й активувати пас» (гість). */
+/**
+ * Подарунок до тосту за $10: «Пас активний» (увійшов — на акаунті) чи «Пас активний на цьому пристрої» (гість — як
+ * куплений пас, з «Увійти кодом» на пошту з оплати, рішення 2026-11-14).
+ */
 function PassGiftCard() {
   const t = useTranslations('toast');
   const gift = useToastStore((x) => x.gift);
+  const devicePass = useSession().session?.devicePass ?? null;
   const passDetails = usePassDetails();
   const openAuth = useOpenAuthWindow();
   const openPass = useOpenPassWindow();
@@ -40,23 +46,26 @@ function PassGiftCard() {
       </div>
     );
   }
+  // Гість (рішення 2026-11-14): пас працює на цьому пристрої одразу, як куплений; «Увійти кодом» — щоб і на інших.
+  const email = devicePass?.email ?? '';
   return (
-    <div className={s.passCard} data-toast-gift="pending">
+    <div className={s.passCard} data-toast-gift="device">
       <div className={s.passHead}>
         <span className={s.passIcon} aria-hidden="true">
           <Icon name="ticket" size={18} />
         </span>
-        <p className={cn(s.passTitle, 'flex-1')}>{t('passGift.title')}</p>
+        <div className="flex-1">
+          <p className={s.passTitle}>{t('passGift.title')}</p>
+          <p className={s.passSub}>{t('passGift.sub')}</p>
+        </div>
       </div>
-      <p className={s.passText}>{t('passGift.text')}</p>
-      <button
-        type="button"
-        onClick={() => openAuth('signin', { afterSignIn: openPass })}
-        className={cn('t2f-focus', s.coral, s.passAction)}
-        data-action="toast-gift-signin"
-      >
-        {t('passGift.action')}
-      </button>
+      <p className={s.passText}>{t.rich('passGift.text', { email, b: (c) => <b>{c}</b> })}</p>
+      {email ? (
+        <SendCodeButton
+          email={email}
+          onSent={() => openAuth('signin', { step: { kind: 'code' }, email: currentSession()?.code?.email ?? email, afterSignIn: openPass })}
+        />
+      ) : null}
     </div>
   );
 }

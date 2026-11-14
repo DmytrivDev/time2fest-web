@@ -9,3 +9,8 @@ export const PENDING_CONFIRM_MS = 30_000;
 export const PAY_ROUNDTRIP_MS = 900;
 /** Імітація: скільки триває оплата тосту на PayPro (до результату), понад перехід. */
 export const TOAST_PAY_MS = 3_000;
+/**
+ * Імітація: пошта, яку гість «ввів на сторінці PayPro», оплачуючи тост (вікно тосту пошти не питає — її знає PayPro і
+ * передає вебхуком у `Order.email`). На неї записано пас у подарунок до тосту $10 гостя.
+ */
+export const PAYPRO_DEMO_EMAIL = 'you@example.com';

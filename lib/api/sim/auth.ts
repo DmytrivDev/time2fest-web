@@ -7,7 +7,7 @@
 import { fail, ok } from '../result';
 import type { AuthIntent, AuthService, CodeInfo, DevCode, DevCodeBox, Session } from '../contracts/auth';
 import { CODE_MAX_ATTEMPTS, CODE_TTL_MS, GOOGLE_DELAY_MS, GOOGLE_DEMO_NAME, isEmail, RESEND_GAP_MS } from '@/lib/auth/sim';
-import { accountHasPass, AUTH_STORAGE_KEY, useAuthStore, type AuthCode, type SendResult, type VerifyFail } from '@/stores/auth';
+import { accountHasPass, AUTH_EMPTY, AUTH_STORAGE_KEY, passPlace, useAuthStore, type AuthCode, type SendResult, type VerifyFail } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
@@ -27,14 +27,14 @@ type AuthState = ReturnType<typeof useAuthStore.getState>;
 
 function sessionOf(a: AuthState): Session {
   const u = a.user;
-  const passSince = u ? (a.passes[u.email] ?? null) : null;
+  const passOn = passPlace(a);
   return {
     user: u ? { id: u.email, email: u.email, via: u.via, signedInAt: u.signedInAt, ...(u.via === 'google' ? { name: GOOGLE_DEMO_NAME } : {}) } : null,
     guestId: useGuestStore.getState().id,
     hasPass: accountHasPass(a),
-    passSince: passSince ?? a.devicePass?.since ?? null,
-    devicePass: a.devicePass && a.devicePass.email !== u?.email ? a.devicePass : null,
-    pendingPassGift: a.pendingPassGift != null,
+    passOn,
+    passSince: passOn === 'account' && u ? (a.passes[u.email] ?? null) : passOn === 'device' ? (a.devicePass?.since ?? null) : null,
+    devicePass: a.devicePass ? { email: a.devicePass.email, since: a.devicePass.since } : null,
     // Код для входу (код зміни пошти — у профілі).
     code: a.code?.purpose === 'signin' ? codeInfoOf(a.code) : null,
   };
@@ -78,6 +78,13 @@ const devCode: DevCodeBox = {
   expire: () => useAuthStore.getState().expireCode(),
 };
 
+/** Куди повертає Google (як Better Auth: `callbackURL` чи `newUserCallbackURL` для нового акаунта). */
+export function googleReturnUrl(returnPath: string, isNew: boolean): string {
+  const [path = '/', hash] = returnPath.split('#');
+  const sep = path.includes('?') ? '&' : '?';
+  return `${path}${sep}signin=google${isNew ? '&new=1' : ''}${hash ? `#${hash}` : ''}`;
+}
+
 export function createSimAuth(): AuthService {
   return {
     async session() {
@@ -86,7 +93,7 @@ export function createSimAuth(): AuthService {
     peek: () => currentSession(),
     subscribe(onChange) {
       const off = useAuthStore.subscribe((s, p) => {
-        if (s.user !== p.user || s.passes !== p.passes || s.code !== p.code || s.pendingPassGift !== p.pendingPassGift || s.devicePass !== p.devicePass)
+        if (s.user !== p.user || s.passes !== p.passes || s.code !== p.code || s.devicePass !== p.devicePass)
           onChange(currentSession());
       });
       // Синхронізація вкладок: вхід в іншій вкладці впускає й цю.
@@ -115,13 +122,15 @@ export function createSimAuth(): AuthService {
       const r = useAuthStore.getState().signInVerified(res.email, now);
       return ok({ isNew: r.isNew, email: r.email });
     },
-    google({ signal }) {
+    google({ returnPath, signal }) {
       // Імітований перехід до Google і назад; скасування до кінця затримки — входу немає.
       return new Promise((resolve) => {
         const timer = setTimeout(() => {
           signal?.removeEventListener('abort', onAbort);
           if (useTestControls.getState().googleCancelled) return resolve(fail('conflict', { reason: 'cancelled' }));
           const r = useAuthStore.getState().signInGoogle(Date.now());
+          // «Повним переходом» (як `http`): вхід стався «на боці Google», сторінка повертається з `?signin=google`.
+          if (useTestControls.getState().googleRedirect) return resolve(ok({ kind: 'redirect', url: googleReturnUrl(returnPath, r.isNew) }));
           resolve(ok({ kind: 'signed-in', isNew: r.isNew, email: r.email }));
         }, GOOGLE_DELAY_MS);
         const onAbort = () => {
@@ -137,6 +146,6 @@ export function createSimAuth(): AuthService {
       return ok(undefined);
     },
     devCode,
-    devReset: () => useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null }),
+    devReset: () => useAuthStore.setState(AUTH_EMPTY),
   };
 }

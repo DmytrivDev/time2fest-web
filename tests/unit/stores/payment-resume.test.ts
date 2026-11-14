@@ -77,7 +77,7 @@ describe('незавершена оплата переживає перезав�
     expect(usePassStore.getState().pendingSince).toBeTypeOf('number');
     usePassStore.getState().confirm();
     expect(usePassStore.getState().phase).toBe('success');
-    expect(useAuthStore.getState().passes['olena@example.com']).toBeDefined();
+    expect(useAuthStore.getState().unclaimed['olena@example.com']).toBeDefined();
   });
 
   it('пас: «Оплата не пройшла» не зберігається — після перезавантаження звичайна форма', async () => {

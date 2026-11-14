@@ -16,7 +16,7 @@ const lastCode = () => useAuthStore.getState().code!.code;
 const wrongOf = (c: string) => (c === '000000' ? '111111' : '000000');
 
 beforeEach(() => {
-  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null, pendingPassGift: null });
+  useAuthStore.setState({ user: null, accounts: [], code: null, sends: [], passes: {}, devicePass: null });
   useTestControls.setState({ authUnavailable: false, googleCancelled: false });
 });
 afterEach(() => vi.useRealTimers());

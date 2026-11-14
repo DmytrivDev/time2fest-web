@@ -49,7 +49,7 @@ test('до свята рядка «Скажи тост за $10» немає (т
   await expect(page.locator('[data-row="toast-gift"]')).toHaveCount(0);
 });
 
-test('вікно пасу під час свята: рядок «Скажи тост за $10» → вікно тосту з $10; гість після $10 входить — пас на акаунті', async ({ page }) => {
+test('вікно пасу під час свята: рядок «Скажи тост за $10» → вікно тосту з $10; гість після $10 — пас одразу на пристрої, «Увійти кодом» приєднує його до акаунта', async ({ page }) => {
   await gotoAt(page, AT, 1, '/');
   await page.locator('header').getByRole('link', { name: /Пас|Новорічний пас/ }).first().click();
   const gift = page.locator('[data-window="O-PASS-BUY"] [data-row="toast-gift"]');
@@ -59,11 +59,41 @@ test('вікно пасу під час свята: рядок «Скажи то
   await expect(win.getByRole('radio', { name: '$10 · феєрверк' })).toHaveAttribute('aria-checked', 'true');
   await win.getByRole('textbox', { name: 'Нік для тосту' }).fill('Зоряна');
   await win.locator('[data-action="toast-pay"]').click();
-  await expect(win.locator('[data-toast-gift="pending"]')).toContainText('Новорічний пас — подарунок до тосту', { timeout: 15_000 });
-  await win.getByRole('button', { name: 'Увійти й активувати пас' }).click();
-  await page.getByRole('button', { name: /Увійти з Google|Google/ }).first().click();
-  // Пас — лише з акаунта, що увійшов (шов, залишки E5): окремого «паса на пристрої» в стані гостя більше немає.
+  const card = win.locator('[data-toast-gift="device"]');
+  await expect(card).toContainText('Пас активний на цьому пристрої', { timeout: 15_000 });
+  await expect(card).toContainText('you@example.com');
+  // Пас працює одразу, без входу (рішення 2026-11-14): у шапці жовтої «Новорічний пас» уже немає.
+  await expect(page.getByRole('banner').getByRole('link', { name: /Новорічний пас/ })).toHaveCount(0);
+  await card.getByRole('button', { name: 'Увійти кодом' }).click();
+  const auth = page.locator('[data-window="O-AUTH"]');
+  await expect(auth.getByRole('heading', { name: 'Введи код із листа' })).toBeVisible();
+  const code = await page.evaluate(() => window.__t2f?.lastCode()?.code ?? '');
+  await auth.getByRole('textbox', { name: 'Код із листа' }).fill(code);
+  // Пошта оплати — перший вхід: пас приєднався до цього акаунта.
   await expect.poll(() => page.evaluate(accountPass), { timeout: 15_000 }).toBe(true);
+});
+
+test('пас гостя на пристрої, вхід тут з іншою поштою (Google): пас працює, до акаунта не переходить — так і сказано (рішення 2026-11-14)', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/pass/');
+  await page.getByRole('textbox', { name: 'Email' }).fill('paid@example.com');
+  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
+  await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
+  await page.getByRole('link', { name: 'Увійти' }).first().click();
+  await page.getByRole('button', { name: /Google/ }).first().click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('t2f:auth:v1') ?? '{}').state?.user?.email ?? null), { timeout: 15_000 }).toBe('you@gmail.com');
+  expect(await page.evaluate(accountPass)).toBe(false);
+  await page.goto('/pass/');
+  await waitForTimeApi(page);
+  const active = page.locator('[data-phase="active"]');
+  await expect(active).toContainText('Оплачено');
+  const note = active.locator('[data-row="device-pass"][data-device-pass="other-account"]');
+  await expect(note).toContainText('Пас працює лише на цьому пристрої');
+  await expect(note).toContainText('paid@example.com');
+  await expect(note).toContainText('you@gmail.com');
+  // Кабінет — чесно: пас на цьому пристрої, в акаунті його немає.
+  await page.goto('/account/');
+  await waitForTimeApi(page);
+  await expect(page.locator('[data-block="pass-plaque"][data-pass="device"]')).toContainText('на цьому пристрої');
 });
 
 test('оплата поштою: «Чекаємо підтвердження» переживає перезавантаження → «Пас активний» → «Твій пас уже діє»', async ({ page }) => {

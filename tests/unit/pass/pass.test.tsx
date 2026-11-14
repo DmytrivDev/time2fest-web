@@ -43,7 +43,7 @@ describe('оформлення пасу (імітація): гість, увій
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
     expect(pass().phase).toBe('success');
     expect(useAuthStore.getState().user).toBeNull();
-    expect(useAuthStore.getState().passes['olena@example.com']).toBe(T0 + PAY_ROUNDTRIP_MS);
+    expect(useAuthStore.getState().unclaimed['olena@example.com']?.since).toBe(T0 + PAY_ROUNDTRIP_MS);
     expect(testHasPass()).toBe(true);
   });
 
