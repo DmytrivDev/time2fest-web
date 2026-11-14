@@ -35,6 +35,7 @@ import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { cn } from '@/components/primitives/cn';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { useLiveData } from '@/lib/api/hooks/live';
+import { getData } from '@/lib/data/load';
 import { isPastStatus } from '@/components/live/eventCards';
 import { festProgress } from '@/lib/live/homeData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
@@ -119,11 +120,13 @@ function PlayerFallback({ ready, current, view }: { ready: boolean; current: Air
   if (player?.selection?.kind === 'facebook-consent') {
     return <FacebookConsentCard onAllow={() => setConsent({ facebookVideo: true })} className="size-full" />;
   }
+  const zone = getData().zonesById.get(current.event.zoneId);
   return (
     <TvScene
       country={current.country}
       cityName={eventTitle(current.city)}
       midnightMs={current.event.midnightMs}
+      offsetMinutes={zone?.offsetMinutes ?? 0}
       variant={view === 'expected-scene' ? 'expected' : 'no-stream'}
     />
   );

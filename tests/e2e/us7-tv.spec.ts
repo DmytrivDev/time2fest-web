@@ -555,6 +555,17 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(sidebar(page).getByRole('button', { name: /Звук/ })).toBeDisabled();
   });
 
+  test('без трансляції, з півночі: на сцені «З Новим роком!» замість відліку (як на головній), у колонці відліку немає', async ({
+    page,
+  }) => {
+    // Північ Азорських островів — 01:00 UTC; +5 с.
+    await skipWelcome(page);
+    await gotoAt(page, '2027-01-01T01:00:05Z', 0, '/tv/');
+    await expect(page.locator('[data-tv-scene]')).toBeVisible();
+    await expect(page.locator('[data-tv-scene] [data-scene-celebrate]')).toContainText('З Новим роком!');
+    await expect(page.getByRole('timer')).toHaveCount(0);
+  });
+
   test('до події менше 5 хв — великого відліку в колонці немає; остання хвилина — «далі через»', async ({
     page,
     ytStub,
