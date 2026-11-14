@@ -205,15 +205,16 @@ export function Nick({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Button type="submit" variant="coral" size="lg" className="w-full" loading={save === 'saving'} data-action="nick-done">
-            {save === 'saving' ? t('saving') : save === 'failed' ? t('retry') : t('done')}
-          </Button>
+          {/* Помилка — над кнопкою: у шторці на телефоні її видно разом із «Спробувати ще». */}
           {save === 'failed' ? (
             <p role="alert" className="flex items-center gap-1 text-caption text-primary" data-row="nick-save-failed">
               <Icon name="alert" size={16} />
               {t('saveFailed')}
             </p>
           ) : null}
+          <Button type="submit" variant="coral" size="lg" className="w-full" loading={save === 'saving'} data-action="nick-done">
+            {save === 'saving' ? t('saving') : save === 'failed' ? t('retry') : t('done')}
+          </Button>
           <div className="flex gap-2">
             <Button type="button" className="min-h-touch-min flex-1" onClick={onSignIn}>
               {t('signIn')}

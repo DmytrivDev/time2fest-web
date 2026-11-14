@@ -135,23 +135,21 @@ export function ChatPanel({
   const banner = offline ? (
     <StatusMessage kind="offline">{t('offline')}</StatusMessage>
   ) : typeof reported === 'object' ? (
-    <StatusMessage
-      kind="error"
-      action={
-        <button
-          type="button"
-          className="t2f-focus text-body-strong underline"
-          onClick={() => {
-            const m = reported.failed;
-            setReported(true);
-            void sendReport(m, setReported);
-          }}
-        >
-          {t('reportRetry')}
-        </button>
-      }
-    >
-      {t('reportFailed')}
+    // Скарга не дійшла (стан №13): «Спробувати ще» — у рядку тексту (як смуги повернення), щоб текст не стискався.
+    <StatusMessage kind="error">
+      {t('reportFailed')}{' '}
+      <button
+        type="button"
+        className="t2f-focus text-body-strong underline"
+        data-action="report-retry"
+        onClick={() => {
+          const m = reported.failed;
+          setReported(true);
+          void sendReport(m, setReported);
+        }}
+      >
+        {t('reportRetry')}
+      </button>
     </StatusMessage>
   ) : reported ? (
     <StatusMessage kind="success">{t('reportedVisible')}</StatusMessage>
