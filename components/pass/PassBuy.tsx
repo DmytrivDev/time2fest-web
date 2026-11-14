@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Bold, BusyButton, EmailField, ErrorLine, GoogleButton, Separator, authStyles as a } from '@/components/auth/AuthParts';
-import { AuthIcon } from '@/components/auth/icons';
+import { Icon } from '@/components/primitives/Icon';
 import { useHydrated } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
@@ -64,7 +64,7 @@ function Head({ signed }: { signed: boolean }) {
     <>
       <div className={s.head}>
         <span className={s.eyebrow}>
-          <AuthIcon name="ticket" size={16} />
+          <Icon name="ticket" size={16} />
           {t('eyebrow')}
         </span>
         <span className={s.headPrice}>{PRICE}</span>
@@ -103,11 +103,11 @@ function DeviceSignIn({ email, onCodeSent }: { email: string; onCodeSent: () => 
   return (
     <div className={s.deviceNote} data-row="device-pass">
       <p className={cn(s.note, s.noteSm)} style={{ marginTop: 0 }}>
-        <AuthIcon name="user" size={18} />
+        <Icon name="user" size={18} />
         <span>{t.rich('deviceNote', { email, b: Bold })}</span>
       </p>
       <BusyButton type="button" busy={code.busy} busyLabel={t('sending')} tone="ghost" onClick={code.send} action="device-sign-in">
-        <AuthIcon name="mail" size={18} />
+        <Icon name="envelope" size={18} />
         {t('deviceSignIn')}
       </BusyButton>
       {code.error ? <ErrorLine mt={4}>{code.error}</ErrorLine> : null}
@@ -121,7 +121,7 @@ function LockLine({ stream, consent }: { stream: boolean; consent?: boolean }) {
   return (
     <div className={s.lockLine} data-row="fine-print">
       <span aria-hidden="true" className={s.lockIcon}>
-        <AuthIcon name="lock" size={14} />
+        <Icon name="lock-tall" size={14} />
       </span>
       <p>{stream ? t('payNoteStream') : t('payNote')}</p>
       {consent ? (
@@ -267,7 +267,7 @@ function GuestForm({ variant, onSignIn, onCodeSent }: PassBuyProps) {
       {flow.paidEmail ? (
         <div role="alert" className={s.paid} data-row="paid-email">
           <span className={s.paidHead}>
-            <AuthIcon name="check-circle" />
+            <Icon name="check-circle" size={20} />
             <span className={s.paidBody}>
               <span className={s.paidTitle}>{t('paidTitle')}</span>
               <span className={s.paidText}>{t('paidText')}</span>
@@ -275,7 +275,7 @@ function GuestForm({ variant, onSignIn, onCodeSent }: PassBuyProps) {
           </span>
           <span className={s.paidHint}>{t('paidHint')}</span>
           <BusyButton type="button" busy={code.busy} busyLabel={t('sending')} tone="coral" className={s.paidBtn} onClick={code.send} action="send-code">
-            <AuthIcon name="mail" size={18} />
+            <Icon name="envelope" size={18} />
             {t('paidSend')}
           </BusyButton>
           {code.error ? <ErrorLine mt={8}>{code.error}</ErrorLine> : null}
@@ -352,7 +352,7 @@ function Pending({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
         <p className={s.statusText}>{t('pendingText')}</p>
       </div>
       <p className={s.note}>
-        <AuthIcon name="mail" size={18} />
+        <Icon name="envelope" size={18} />
         <span>{t.rich('pendingNote', { email, b: Bold })}</span>
       </p>
       <DoneButton variant={variant} onDone={onDone} ghost mt={16} />
@@ -377,7 +377,7 @@ function Failed() {
       }}
     >
       <span aria-hidden="true" className={s.failBadge}>
-        <AuthIcon name="alert" size={24} />
+        <Icon name="alert-bold" size={24} />
       </span>
       <h3 role="alert" className={s.failTitle}>
         {t('failedTitle')}
@@ -405,7 +405,7 @@ function StartFailed() {
       }}
     >
       <span aria-hidden="true" className={s.failBadge}>
-        <AuthIcon name="alert" size={24} />
+        <Icon name="alert-bold" size={24} />
       </span>
       <h3 role="alert" className={s.failTitle}>
         {t('startFailedTitle')}
@@ -423,7 +423,7 @@ function Expired() {
   return (
     <div className={cn(s.body, 'flex flex-col gap-1.5')} data-phase="expired">
       <span aria-hidden="true" className={s.failBadge}>
-        <AuthIcon name="clock" size={24} />
+        <Icon name="clock-wide" size={24} />
       </span>
       <h3 role="alert" className={s.failTitle}>
         {t('expiredTitle')}
@@ -487,9 +487,9 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
   const name = nick?.trim() ?? '';
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => ref.current?.focus({ preventScroll: true }), []);
-  const works: { icon: 'ticket' | 'calendar' | 'filter'; key: string }[] = [
+  const works: { icon: 'ticket' | 'calendar-time' | 'filter'; key: string }[] = [
     { icon: 'ticket', key: 'worksBadge' },
-    { icon: 'calendar', key: 'worksSchedule' },
+    { icon: 'calendar-time', key: 'worksSchedule' },
     { icon: 'filter', key: 'worksQuiet' },
   ];
   return (
@@ -497,7 +497,7 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
       <div className={s.success}>
         {CONFETTI}
         <span role="status" className={s.successStatus}>
-          <AuthIcon name="tick" size={16} />
+          <Icon name="tick" size={16} />
           {t('successStatus')}
         </span>
         <h3 ref={ref} tabIndex={-1} className={cn(s.successTitle, 'focus:outline-none')}>
@@ -525,7 +525,7 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
         {works.map((w) => (
           <li key={w.key}>
             <span aria-hidden="true" className={cn(s.dot, s.dot28)}>
-              <AuthIcon name={w.icon} size={15} />
+              <Icon name={w.icon} size={15} />
             </span>
             {t(w.key)}
           </li>
@@ -537,7 +537,7 @@ function Success({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onD
         <DeviceSignIn email={devicePass.email} onCodeSent={onCodeSent} />
       ) : (
         <p className={cn(s.note, s.noteSm)} style={{ marginTop: '0.875rem' }}>
-          <AuthIcon name="user" size={18} />
+          <Icon name="user" size={18} />
           <span>{t.rich('signedAs', { email, b: Bold })}</span>
         </p>
       )}
@@ -560,7 +560,7 @@ function Active({ variant, onDone, onCodeSent }: { variant: PassBuyVariant; onDo
         {/* Без іконки квитка: вона вже в заголовку вікна й у герої сторінки (v102). */}
         <span className={s.eyebrow}>{t('activeEyebrow')}</span>
         <span className={s.activeBadge}>
-          <AuthIcon name="tick" size={14} />
+          <Icon name="tick" size={14} />
           {p('active')}
         </span>
       </div>

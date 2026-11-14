@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useCallback, useContext, useLayoutEffect, useRef, type MouseEvent } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
-import { AuthIcon } from '@/components/auth/icons';
+import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { ToastGift } from '@/components/toast/ToastGift';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
@@ -74,7 +74,7 @@ export function useOpenPassWindow(): () => void {
         coral: true,
         title: (
           <span className={s.windowTitle}>
-            <AuthIcon name="ticket" size={20} />
+            <Icon name="ticket" size={20} />
             {t('title')}
           </span>
         ),

@@ -18,7 +18,7 @@ import { IS_DEMO_BUILD } from '@/lib/env';
 import { formatShortCountdown } from '@/lib/i18n/time';
 import { useDevCode } from '@/lib/api/hooks/auth';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
-import { AuthIcon, GoogleMark, type AuthIconName } from './icons';
+import { Icon, GoogleMark, type IconName } from '@/components/primitives/Icon';
 import s from './auth.module.css';
 
 export { s as authStyles };
@@ -38,10 +38,10 @@ export function Bold(chunks: ReactNode) {
   return <b>{chunks}</b>;
 }
 
-export function Badge({ icon, tone = 'yel', className }: { icon: AuthIconName; tone?: 'yel' | 'grey'; className?: string }) {
+export function Badge({ icon, tone = 'yel', className }: { icon: IconName; tone?: 'yel' | 'grey'; className?: string }) {
   return (
     <span aria-hidden="true" className={cn(s.badge, s[tone], className)}>
-      <AuthIcon name={icon} size={26} />
+      <Icon name={icon} size={26} />
     </span>
   );
 }
@@ -68,10 +68,10 @@ export function Lead({ children, className, mt }: { children: ReactNode; classNa
   );
 }
 
-export function Note({ icon, children, mt }: { icon: AuthIconName; children: ReactNode; mt?: number }) {
+export function Note({ icon, children, mt }: { icon: IconName; children: ReactNode; mt?: number }) {
   return (
     <p className={s.note} style={mtStyle(mt)}>
-      <AuthIcon name={icon} size={18} />
+      <Icon name={icon} size={18} />
       <span>{children}</span>
     </p>
   );
@@ -80,7 +80,7 @@ export function Note({ icon, children, mt }: { icon: AuthIconName; children: Rea
 export function ErrorLine({ id, children, mt }: { id?: string; children: ReactNode; mt?: number }) {
   return (
     <p id={id} role="alert" className={s.error} style={mtStyle(mt)}>
-      <AuthIcon name="alert" size={18} />
+      <Icon name="alert-bold" size={18} />
       <span>{children}</span>
     </p>
   );
@@ -372,7 +372,7 @@ export function ResendButton({
           onClick={(e) => e.preventDefault()}
           className={cn('t2f-focus', s.btn, s.disabled, className)}
         >
-          <AuthIcon name="refresh" />
+          <Icon name="refresh" size={20} />
           {t('resend')}
         </button>
         <p id={`${uid}-resend`} className={cn(s.hint, s.center)}>
@@ -383,14 +383,14 @@ export function ResendButton({
   }
   return (
     <BusyButton type="button" busy={!!busy} busyLabel={ta('sending')} tone="ghost" onClick={onResend} className={className} action="resend">
-      <AuthIcon name="refresh" />
+      <Icon name="refresh" size={20} />
       {enabledLabel ?? t('resend')}
     </BusyButton>
   );
 }
 
 const PERKS = [
-  { icon: 'calendar', key: 'schedule' },
+  { icon: 'calendar-time', key: 'schedule' },
   { icon: 'ticket', key: 'path' },
   { icon: 'card', key: 'card' },
   { icon: 'filter', key: 'quiet' },
@@ -399,12 +399,12 @@ const PERKS = [
 const MAIN_PERKS = 3;
 
 /** Рядок можливості: значок у колонці 40 px (на одній осі зі значком заголовка картки), назва й пояснення. */
-function PerkItem({ icon, name, text, dense }: { icon: AuthIconName; name: string; text: string; dense?: boolean }) {
+function PerkItem({ icon, name, text, dense }: { icon: IconName; name: string; text: string; dense?: boolean }) {
   return (
     <li className={s.offerItem}>
       <span aria-hidden="true" className={dense ? s.iconCol : undefined}>
         <span className={cn(s.dot, s.yel, dense ? s.badgeXs : s.badgeSm)}>
-          <AuthIcon name={icon} size={dense ? 16 : 18} />
+          <Icon name={icon} size={dense ? 16 : 18} />
         </span>
       </span>
       <span>
@@ -437,7 +437,7 @@ export function PassMoreLink({ className }: { className?: string }) {
   return (
     <NextLink href="/pass/" className={cn('t2f-focus', s.moreLink, className)}>
       {t('more')}
-      <AuthIcon name="arrow-right" size={16} />
+      <Icon name="arrow-right" size={16} />
     </NextLink>
   );
 }
@@ -495,7 +495,7 @@ export function PassHint({ className, toPage }: { className?: string; toPage?: b
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.passHint, className)} data-block="pass-hint">
       <div className={s.passHintHead}>
         <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeMd)}>
-          <AuthIcon name="ticket" />
+          <Icon name="ticket" size={20} />
         </span>
         <span>
           <span id={`${uid}-t`} role="heading" aria-level={2} className={s.passHintTitle}>
@@ -540,7 +540,7 @@ export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolea
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.offer, className)} data-block="pass-offer">
       <span className={s.eyebrow}>
-        <AuthIcon name="ticket" size={16} />
+        <Icon name="ticket" size={16} />
         {t('eyebrow')}
       </span>
       <h2 id={`${uid}-t`} className={s.offerTitle}>
@@ -587,7 +587,7 @@ export function PassRow({ mt }: { mt?: number }) {
       <span className={s.passRowText}>
         <span aria-hidden="true" className={s.iconCol}>
           <span className={cn(s.dot, s.yel, s.badgeXs)}>
-            <AuthIcon name="ticket" size={16} />
+            <Icon name="ticket" size={16} />
           </span>
         </span>
         <span>{t.rich('passRow', { price: formatUsd(PASS_PRICE), b: Bold })}</span>
@@ -616,8 +616,8 @@ export function PassRow({ mt }: { mt?: number }) {
 }
 
 const ACCOUNT_PERKS = [
-  { icon: 'stamp', key: 'passport' },
-  { icon: 'calendar', key: 'schedule' },
+  { icon: 'rubber-stamp', key: 'passport' },
+  { icon: 'calendar-time', key: 'schedule' },
   { icon: 'ticket', key: 'purchases' },
 ] as const;
 
@@ -632,7 +632,7 @@ export function AccountPerks() {
     <section aria-labelledby={`${uid}-t`} className={s.accountCard} data-block="account-perks">
       <div className={s.passHintHead}>
         <span aria-hidden="true" className={cn(s.dot, s.grey, s.badgeMd)}>
-          <AuthIcon name="user" />
+          <Icon name="user" size={20} />
         </span>
         <span>
           <span id={`${uid}-t`} role="heading" aria-level={2} className={s.passHintTitle}>

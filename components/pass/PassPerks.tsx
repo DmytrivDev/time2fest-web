@@ -9,9 +9,8 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useId, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
-import { Icon } from '@/components/primitives/Icon';
+import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
-import { AuthIcon, type AuthIconName } from '@/components/auth/icons';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import s from './pass.module.css';
 
@@ -40,7 +39,7 @@ function MiniChat() {
           <MiniFlag bg={UA} />
           {t('nick')}
           <span className={s.miniBadge}>
-            <AuthIcon name="ticket" size={9} />
+            <Icon name="ticket" size={9} />
           </span>
         </span>
         <span>{t('msg2')}</span>
@@ -80,7 +79,7 @@ function MiniSchedule() {
           <span className={s.miniTime}>{r.time}</span>
           <span className={s.miniCity}>{r.city}</span>
           <span className={s.miniBell}>
-            <AuthIcon name="bell" size={14} />
+            <Icon name="bell" size={14} />
           </span>
         </div>
       ))}
@@ -139,14 +138,14 @@ function MiniChatx() {
         </span>
         <span className={s.miniTr}>{t('trText')}</span>
         <span className={s.miniTrFrom}>
-          <AuthIcon name="translate" size={12} />
+          <Icon name="translate" size={12} />
           {t('trFrom')}
         </span>
       </div>
       <div className={cn(s.mini, s.miniReply)}>
         <span className={s.miniReplyHead}>
           <span className={s.miniBell}>
-            <AuthIcon name="bell" size={18} />
+            <Icon name="bell" size={18} />
             <span className={s.miniBellCount}>2</span>
           </span>
           {t('replied')}
@@ -159,9 +158,9 @@ function MiniChatx() {
   );
 }
 
-export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
+export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card'; icon: IconName; Preview: () => React.JSX.Element }[] = [
   { key: 'chat', icon: 'ticket', Preview: MiniChat },
-  { key: 'schedule', icon: 'calendar', Preview: MiniSchedule },
+  { key: 'schedule', icon: 'calendar-time', Preview: MiniSchedule },
   { key: 'quiet', icon: 'filter', Preview: MiniQuiet },
   { key: 'card', icon: 'card', Preview: MiniCard },
 ];
@@ -170,7 +169,7 @@ export const PASS_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card'; icon: Au
  * Вітрина на сторінці пасу: чотири можливості й п’ята — «Переклад і сповіщення в чаті» (лише тут, не в інших списках).
  * Знижку −50% на «Перший ряд» прибрано разом із рядом (рішення власника 2026-11-12).
  */
-const SHOWCASE_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'chatx'; icon: AuthIconName; Preview: () => React.JSX.Element }[] = [
+const SHOWCASE_PERKS: { key: 'chat' | 'schedule' | 'quiet' | 'card' | 'chatx'; icon: IconName; Preview: () => React.JSX.Element }[] = [
   ...PASS_PERKS,
   { key: 'chatx', icon: 'translate', Preview: MiniChatx },
 ];
@@ -196,14 +195,14 @@ function PerkPanel({ perk, id, inline }: { perk: (typeof SHOWCASE_PERKS)[number]
         <div className={s.perkChip}>
           <span className={s.perkChipLabel}>{t('without')}</span>
           <span className={s.perkChipValue}>
-            <AuthIcon name="minus" size={16} />
+            <Icon name="minus-short" size={16} />
             {cmp.without}
           </span>
         </div>
         <div className={cn(s.perkChip, s.perkChipOn)}>
           <span className={s.perkChipLabel}>{t('with')}</span>
           <span className={s.perkChipValue}>
-            <AuthIcon name="tick" size={16} />
+            <Icon name="tick" size={16} />
             {cmp.with}
           </span>
         </div>
@@ -230,7 +229,7 @@ export function PassPerksShowcase() {
   return (
     <section aria-labelledby="pass-perks-title" className={s.perks} data-block="pass-perks">
       <span className={s.eyebrow}>
-        <AuthIcon name="spark" size={16} />
+        <Icon name="spark" size={16} />
         {t('eyebrow')}
       </span>
       <h2 id="pass-perks-title" className={s.perksTitle}>
@@ -238,7 +237,7 @@ export function PassPerksShowcase() {
       </h2>
       <p className={s.perksFree}>
         <span aria-hidden="true" className={s.perksFreeDot}>
-          <AuthIcon name="chat" size={15} />
+          <Icon name="chat" size={15} />
         </span>
         {t('free')}
       </p>
@@ -258,7 +257,7 @@ export function PassPerksShowcase() {
                   onClick={() => setActive(perk.key)}
                 >
                   <span aria-hidden="true" className={cn(s.dot, s.dot36, !on && s.dotGrey)}>
-                    <AuthIcon name={perk.icon} size={18} />
+                    <Icon name={perk.icon} size={18} />
                   </span>
                   <span className={s.perkItemText}>
                     <span className={s.perkItemName}>{t(perk.key)}</span>
@@ -300,7 +299,7 @@ export function PassPerksCompact() {
         {PASS_PERKS.map(({ key, icon }) => (
           <li key={key}>
             <span aria-hidden="true" className={cn(s.dot, s.dot28)}>
-              <AuthIcon name={icon} size={15} />
+              <Icon name={icon} size={15} />
             </span>
             {t(key)}
           </li>
@@ -308,7 +307,7 @@ export function PassPerksCompact() {
       </ul>
       <NextLink href="/pass/" className={cn('t2f-focus', s.allLink)}>
         {t('all')}
-        <AuthIcon name="arrow-right" size={16} />
+        <Icon name="arrow-right" size={16} />
       </NextLink>
     </section>
   );

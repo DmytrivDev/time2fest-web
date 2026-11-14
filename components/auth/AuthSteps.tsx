@@ -39,7 +39,7 @@ import {
   useTick,
 } from './AuthParts';
 import type { AuthFlow } from './useAuthFlow';
-import { AuthIcon } from './icons';
+import { Icon } from '@/components/primitives/Icon';
 import { ProfileForm } from './ProfileForm';
 import s from './auth.module.css';
 
@@ -113,7 +113,7 @@ function OfflineLine({ flow }: { flow: AuthFlow }) {
   if (flow.sendFailed) return <ErrorLine mt={12}>{c('sendFailedNetwork')}</ErrorLine>;
   return flow.offlinePending ? (
     <p role="status" className={s.note} style={{ marginTop: '0.75rem' }}>
-      <AuthIcon name="cloud-off" size={18} />
+      <Icon name="cloud-off" size={18} />
       <span>{t('offline')}</span>
     </p>
   ) : null;
@@ -225,7 +225,7 @@ function PerksStep({ flow }: { flow: AuthFlow }) {
   return (
     <div className="flex flex-col">
       <button type="button" onClick={back} className={cn('t2f-focus', s.linkBtn, s.linkStart, s.backBtn)}>
-        <AuthIcon name="chevron-left" size={16} />
+        <Icon name="chevron-left" size={16} strokeWidth={2} />
         {t('stream.back')}
       </button>
       <Title>{t('stream.perksTitle')}</Title>
@@ -254,7 +254,7 @@ function GoogleStep({ flow, stream }: { flow: AuthFlow; stream: boolean }) {
       <button type="button" onClick={flow.cancelGoogle} className={cn('t2f-focus', s.btn, s.ghost, s.mt24)}>
         {t('google.cancel')}
       </button>
-      <Note icon="alert">{t('google.note')}</Note>
+      <Note icon="alert-bold">{t('google.note')}</Note>
       <Separator label={t('google.or')} margin="20px 0 16px" />
       <EmailField value={flow.email} onChange={flow.setEmail} error={err} hint={t('email.hint')} readOnly={flow.sending} />
       <BusyButton busy={flow.sending} busyLabel={t('sending')} className={s.mt16} action="send-code">
@@ -309,7 +309,7 @@ function CodeStep({ flow }: { flow: AuthFlow }) {
         else void flow.verify(flow.code);
       }}
     >
-      <Badge icon="mail" className={s.pageTop} />
+      <Badge icon="envelope" className={s.pageTop} />
       <Title afterBadge>{t('code.title')}</Title>
       <Lead>{t.rich('code.lead', { email, b: Bold })}</Lead>
       <button type="button" onClick={flow.changeEmail} className={cn('t2f-focus', s.linkBtn, s.linkStart)} data-action="change-email">
@@ -333,7 +333,7 @@ function CodeStep({ flow }: { flow: AuthFlow }) {
         </BusyButton>
       ) : st.kind === 'network' ? (
         <BusyButton busy={false} busyLabel={t('code.checking')} tone="coral" className={s.mt16} action="verify">
-          <AuthIcon name="refresh" />
+          <Icon name="refresh" size={20} />
           {t('code.retry')}
         </BusyButton>
       ) : (
@@ -372,7 +372,7 @@ function ResendLine({ flow, email }: { flow: AuthFlow; email: string }) {
     <p role="status" className={r.kind === 'sent' ? s.okLine : 'sr-only'}>
       {r.kind === 'sent' ? (
         <>
-          <AuthIcon name="check-circle" size={18} />
+          <Icon name="check-circle" size={18} />
           <span>{t('resent', { email })}</span>
         </>
       ) : null}
@@ -391,7 +391,7 @@ function TooManyStep({ flow, until }: { flow: AuthFlow; until: number }) {
       <Title>{t('signin.title')}</Title>
       <Lead>{t('tooMany.lead')}</Lead>
       <div role="alert" className={s.alertBox}>
-        <AuthIcon name="clock" />
+        <Icon name="clock-wide" size={20} />
         <span className={s.boxBody}>
           <span className={s.boxTitle}>{t('tooMany.title')}</span>
           <span className={s.boxText}>
@@ -433,7 +433,7 @@ function UnavailableStep({ flow, onExit, exitHref }: { flow: AuthFlow; onExit: (
         }}
         className={cn('t2f-focus', s.btn, s.second, s.mt24)}
       >
-        <AuthIcon name="refresh" />
+        <Icon name="refresh" size={20} />
         {t('retry')}
       </button>
       {exitHref ? (

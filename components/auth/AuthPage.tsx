@@ -17,7 +17,7 @@ import type { AuthIntent } from '@/lib/api/contracts/auth';
 import { currentSession, useSession } from '@/lib/api/hooks/auth';
 import { returnPath, takeCodeSent } from '@/lib/auth/returnTo';
 import { AuthSteps } from './AuthSteps';
-import { AuthIcon, type AuthIconName } from './icons';
+import { Icon, type IconName } from '@/components/primitives/Icon';
 import { useAuthFlow, type AuthStep, type SignInResult } from './useAuthFlow';
 import s from './auth.module.css';
 
@@ -85,7 +85,7 @@ function BackLink({ href }: { href: string }) {
   const t = useTranslations('auth');
   return (
     <NextLink href={href} className={cn('t2f-focus', s.back)}>
-      <AuthIcon name="chevron-left" size={16} />
+      <Icon name="chevron-left" size={16} strokeWidth={2} />
       {t('back')}
     </NextLink>
   );
@@ -118,9 +118,9 @@ function Flow({
   );
 }
 
-const WHY: { icon: AuthIconName; key: 'passport' | 'schedule' | 'purchases' }[] = [
-  { icon: 'stamp', key: 'passport' },
-  { icon: 'calendar', key: 'schedule' },
+const WHY: { icon: IconName; key: 'passport' | 'schedule' | 'purchases' }[] = [
+  { icon: 'rubber-stamp', key: 'passport' },
+  { icon: 'calendar-time', key: 'schedule' },
   { icon: 'ticket', key: 'purchases' },
 ];
 
@@ -136,7 +136,7 @@ function WhyCard() {
         {WHY.map((w) => (
           <li key={w.key} className={s.whyItem}>
             <span aria-hidden="true" className={cn(s.dot, s.yel, s.badgeWhy)}>
-              <AuthIcon name={w.icon} size={22} />
+              <Icon name={w.icon} size={22} />
             </span>
             <span>
               <span className={s.whyName}>{t(w.key)}</span>
@@ -146,7 +146,7 @@ function WhyCard() {
         ))}
       </ul>
       <p className={s.whyFree}>
-        <AuthIcon name="chat" size={18} />
+        <Icon name="chat" size={18} />
         {t('free')}
       </p>
     </section>
