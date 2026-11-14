@@ -88,6 +88,10 @@ test.describe('S-AUTH · сторінка', () => {
     const code = await lastCode(page);
     await codeField(page).fill(`${code.slice(0, 3)} ${code.slice(3)}`);
     await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
+    // Нова адреса не перекидає з /signup/ (гонка сесії й finish, 2026-11-14): крок лишається, поки не натиснуто «Готово».
+    await page.waitForTimeout(1_500);
+    await expect(page).toHaveURL(/\/signup\/$/);
+    await expect(page.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
     // «Як тебе показувати» (2026-11-08): нік з пошти — перше слово до «@», прапор — за розташуванням.
     const profile = page.locator('[data-block="profile"]');
     await expect(profile.getByLabel('Нік')).toHaveValue('Olena');
@@ -239,6 +243,32 @@ test.describe('S-AUTH · під час трансляції', () => {
     await page.locator('[data-window="O-AUTH"]').getByRole('button', { name: 'Готово' }).click();
     await expect(page.locator('[data-window="O-AUTH"]')).toHaveCount(0);
     await expect(page.getByRole('link', { name: /Кабінет: Олена/ })).toBeVisible();
+  });
+
+  test('вікно входу: нова пошта з кодом — «Акаунт створено» (вікно не закривається саме); наявна — одразу входить', async ({ page }) => {
+    await gotoAt(page, LIVE, 1);
+    await waitForTimeApi(page);
+    await page.evaluate(() => {
+      localStorage.removeItem('t2f:auth:v1');
+      localStorage.removeItem('t2f:guest:v1');
+    });
+    await page.reload();
+    await waitForTimeApi(page);
+    if ((page.viewportSize()?.width ?? 0) < 768) await page.getByRole('button', { name: /^Розгорнути чат/ }).click();
+    await page.getByRole('textbox', { name: /Повідомлення в чат/ }).fill('Привіт');
+    await page.getByRole('button', { name: /^Надіслати/ }).click();
+    await page.locator('[data-window="O-NICK"]').getByRole('button', { name: 'Увійти' }).click();
+    const win = page.locator('[data-window="O-AUTH"]');
+    await win.getByLabel('Email').fill('olena@example.com');
+    await win.getByRole('button', { name: 'Отримати код', exact: true }).click();
+    await expect(win.getByRole('heading', { name: 'Введи код із листа' })).toBeVisible();
+    await win.getByRole('textbox', { name: 'Код із листа' }).fill(await lastCode(page));
+    await expect(win.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible({ timeout: 5_000 });
+    await page.waitForTimeout(1_500);
+    await expect(win.getByRole('heading', { name: 'Акаунт створено' })).toBeVisible();
+    await expect(win.locator('[data-block="profile"]').getByLabel('Нік')).toHaveValue('Olena');
+    await win.getByRole('button', { name: 'Готово' }).click();
+    await expect(win).toHaveCount(0);
   });
 
   test('свій нік у панелі автора — олівець відкриває «Нік і прапор»', async ({ page }) => {

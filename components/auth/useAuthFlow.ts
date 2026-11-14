@@ -99,7 +99,8 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
     const was = hadUser.current;
     hadUser.current = user !== null;
     const waiting = step.kind === 'code';
-    if (!was && user && !signedInSelf.current && waiting) {
+    // Поки наш власний код перевіряється, сесія з’являється раніше за `finish` — це не «інша вкладка»: рішення (новий акаунт чи ні) за `finish`.
+    if (!was && user && !signedInSelf.current && !checking.current && waiting) {
       signedInSelf.current = true;
       onSignedIn({ ok: true, isNew: false, email: user.email });
     }
@@ -172,14 +173,18 @@ export function useAuthFlow({ mode, initialStep, initialEmail = '', onSignedIn }
       }
       checking.current = true;
       setCodeState({ kind: 'checking' });
-      const res = await authActions.verifyCode(codeEmail, digits).finally(() => {
+      // `checking` лишається піднятим, поки `finish` не відпрацює: сесія з’являється раніше за нього.
+      const res = await authActions.verifyCode(codeEmail, digits).catch((e) => {
         checking.current = false;
+        throw e;
       });
       if (res.ok) {
         setCodeState({ kind: 'idle' });
         finish({ ok: true, isNew: res.value.isNew, email: res.value.email });
+        checking.current = false;
         return;
       }
+      checking.current = false;
       const kind = authCodeError(res.error);
       if (kind === 'wrong-code') {
         setCodeValue('');
