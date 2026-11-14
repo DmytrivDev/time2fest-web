@@ -905,6 +905,14 @@
   font-weight: 800;
   line-height: 1;
 }
+/* Після півночі — рік на місці відліку: той самий кегль і висота рядка (без стрибка, рішення 2026-11-14). */
+.sceneYear {
+  color: var(--color-highlight);
+  font-size: 150px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
 .sceneWhen {
   color: var(--color-text-secondary);
   font-size: var(--text-headline-md);
@@ -1112,7 +1120,8 @@
 .root[data-full] .sceneTitle {
   font-size: 72px;
 }
-.root[data-full] .sceneTimer [role='timer'] {
+.root[data-full] .sceneTimer [role='timer'],
+.root[data-full] .sceneYear {
   font-size: 300px;
 }
 .root[data-full] .sceneWhen {

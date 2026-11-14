@@ -480,6 +480,7 @@
       "watchLive": "Дивитися, що вже йде",
       "waitingNote": "Відео ввімкнеться саме, щойно трансляція почнеться",
       "countdownLabel": "До півночі",
+      "yearLabel": "Новий рік",
       "finalLead": "Новий рік за",
       "happyNewYear": "З Новим роком!",
       "celebrateLine": "{place} зустрічає {year}",
@@ -487,6 +488,7 @@
       "exitFullscreen": "Вийти з повного екрана"
     },
     "timerUntil": "до півночі",
+    "timerYear": "Новий рік",
     "timerNext": "далі через",
     "soundUnavailable": "Увімкнути звук — трансляції зараз немає",
     "scheduleHint": "За вашим графіком зараз — {place}",
@@ -970,6 +972,7 @@
     "scanPhone": "Скануй телефоном",
     "sceneChip": "Лише відлік · сцена Time2Fest",
     "sceneWhen": "до півночі · <b>{time}</b> за вашим часом",
+    "sceneYearWhen": "північ настала · <b>{time}</b> за вашим часом",
     "changeStream": "Змінити трансляцію",
     "streamsNowTitle": "Трансляції поясу · зараз",
     "streamsNowClose": "Закрити",

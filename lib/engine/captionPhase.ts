@@ -14,6 +14,8 @@ export type CaptionPhaseId = 'before' | 'celebrating' | 'last-minute' | 'next';
 
 export type CaptionRow1Right =
   | { kind: 'countdown'; ms: number }
+  /** Після півночі на місці таймера — рік, що настав («Новий рік 2027»; рішення власника 2026-11-14). */
+  | { kind: 'year' }
   | { kind: 'none' }
   | { kind: 'handover'; ms: number }
   | { kind: 'ago'; ms: number };
@@ -45,13 +47,14 @@ const NO_FLAGS = { howTo: false, delayNotice: false, momentFired: false };
 /**
  * Фази до моменту (`t < +15 с`) — спільні для broadcast і remote. Після півночі (0…+15 с) таймера вже немає й рядок 3 —
  * «<Країна> зустріла Новий рік» (`docs/site/home.md`); раніше тут стояло «до півночі 00:00:00» і «північ о …» —
- * нуль із підписом «до півночі» вже після півночі (перевірка дошок 2026-11-14). Штамп і `momentFired` — як і раніше з +15 с.
+ * нуль із підписом «до півночі» вже після півночі (перевірка дошок 2026-11-14). На місці таймера — рік, що настав
+ * (`year`, рішення власника 2026-11-14), поки ця подія лишається показаною. Штамп і `momentFired` — як і раніше з +15 с.
  */
 function prePhase(t: number, event: EventLike): CaptionPhase {
   const after = t >= 0;
   return {
     id: after ? 'celebrating' : 'before',
-    row1Right: after ? { kind: 'none' } : { kind: 'countdown', ms: -t },
+    row1Right: after ? { kind: 'year' } : { kind: 'countdown', ms: -t },
     row3: after ? { kind: 'met', eventId: event.id } : { kind: 'midnight-at', eventId: event.id },
     button: 'choose-stream',
     flags: { howTo: t >= -HOWTO_BEFORE, delayNotice: t >= -DELAY_NOTICE_FROM, momentFired: false },
@@ -61,7 +64,7 @@ function prePhase(t: number, event: EventLike): CaptionPhase {
 function metPhase(event: EventLike): CaptionPhase {
   return {
     id: 'celebrating',
-    row1Right: { kind: 'none' },
+    row1Right: { kind: 'year' },
     row3: { kind: 'met', eventId: event.id },
     button: 'choose-stream',
     flags: { ...NO_FLAGS, momentFired: true },

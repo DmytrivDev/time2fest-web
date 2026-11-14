@@ -17,6 +17,7 @@ import { Fireworks } from '@/components/player/Fireworks';
 import { midnightPhase } from '@/components/player/SceneMidnight';
 import { PostcardArt } from '@/components/stamp/StampArt';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
+import { arrivedYear } from '@/lib/engine/newYear';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -42,13 +43,14 @@ export function TvScene({ country, cityName, midnightMs, offsetMinutes = 0, vari
   const titleId = useId();
   const title = `${country.name.uk} · ${cityName}`;
   const traditions = country.howTo.traditions.slice(0, 3);
-  // Північ, як на головній (home.md «мить»): з півночі відліку немає — «З Новим роком!» із салютом, далі сцена без таймера.
+  // Північ, як на головній (home.md «мить»): з півночі відліку немає — «З Новим роком!» із салютом, далі на місці
+  // відліку — рік, що настав («2027», рішення 2026-11-14).
   const now = useNow({ granularity: 'second' });
   const reduced = useReducedMotion();
   const phase = midnightPhase(midnightMs, now);
   const celebrate = phase.kind === 'celebrate';
   const past = celebrate || phase.kind === 'after';
-  const year = new Date(midnightMs + offsetMinutes * 60_000).getUTCFullYear();
+  const year = arrivedYear(midnightMs, offsetMinutes);
 
   return (
     <section aria-labelledby={titleId} data-scene={variant} data-tv-scene="" className={cn(styles.scene, className)}>
@@ -74,7 +76,19 @@ export function TvScene({ country, cityName, midnightMs, offsetMinutes = 0, vari
             </p>
             <p className={styles.sceneWhen}>{t('celebrateLine', { place: title, year })}</p>
           </div>
-        ) : past ? null : (
+        ) : past ? (
+          // Після салюту — рік, що настав, на місці відліку (рішення власника 2026-11-14): той самий блок і кегль.
+          <>
+            <div className={styles.sceneTimer}>
+              <div>
+                <p className={styles.sceneYear} data-tv-scene-year={year}>
+                  {year}
+                </p>
+              </div>
+            </div>
+            <p className={styles.sceneWhen}>{tTv.rich('sceneYearWhen', { time: formatClock(midnightMs, { locale }), b: (c) => <b className="text-text">{c}</b> })}</p>
+          </>
+        ) : (
           <>
             <div className={styles.sceneTimer}>
               <Countdown target={midnightMs} variant="tv" label={tTv('countdownTitle', { city: cityName })} />

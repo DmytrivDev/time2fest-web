@@ -37,7 +37,7 @@ describe('captionPhase · broadcast', () => {
     for (const t of [0, 10 * SEC, 15 * SEC - 1]) {
       const p = ph(t);
       expect(p.id).toBe('celebrating');
-      expect(p.row1Right).toEqual({ kind: 'none' });
+      expect(p.row1Right).toEqual({ kind: 'year' });
       expect(p.row3.kind).toBe('met');
       expect(p.flags).toEqual({ howTo: true, delayNotice: true, momentFired: false });
     }
@@ -48,7 +48,7 @@ describe('captionPhase · broadcast', () => {
       const p = ph(t);
       expect(p).toMatchObject({
         id: 'celebrating',
-        row1Right: { kind: 'none' },
+        row1Right: { kind: 'year' },
         row3: { kind: 'met', eventId: london.id },
         button: 'choose-stream',
         flags: { howTo: false, delayNotice: false, momentFired: true },
@@ -100,7 +100,7 @@ describe('captionPhase · remote (сторінка країни)', () => {
   it('ніколи не переходить сам: без last-minute і next', () => {
     for (const t of [14 * MIN, 14 * MIN + 30 * SEC, 15 * MIN, 29 * MIN]) {
       const p = ph(t);
-      expect(p).toMatchObject({ id: 'celebrating', row1Right: { kind: 'none' }, row3: { kind: 'met' }, button: 'choose-stream' });
+      expect(p).toMatchObject({ id: 'celebrating', row1Right: { kind: 'year' }, row3: { kind: 'met' }, button: 'choose-stream' });
     }
   });
 

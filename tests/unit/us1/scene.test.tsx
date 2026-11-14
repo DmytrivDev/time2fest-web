@@ -49,6 +49,20 @@ describe('CountdownScene', () => {
     expect(screen.queryByText(/Північ о/)).toBeNull();
   });
 
+  it('після салюту (рішення 2026-11-14): на місці великого відліку — рік, що настав у поясі, а не 00:00:00', () => {
+    // Північ Нуука 02:00 UTC; +2 хв — салют уже минув.
+    renderApp(<CountdownScene country={GREENLAND} cityName="Нуук" midnightMs={MIDNIGHT} offsetMinutes={-120} />, '2027-01-01T02:02:00Z');
+    expect(document.querySelector('[data-scene-countdown]')).toBeNull();
+    expect(document.querySelector('[data-scene-year="2027"]')).toHaveTextContent(/Новий рік\s*2027/);
+    expect(document.body.textContent).not.toMatch(/00:00:00/);
+  });
+
+  it('у салют (0…+40 с) — «З Новим роком!», року ще немає', () => {
+    renderApp(<CountdownScene country={GREENLAND} cityName="Нуук" midnightMs={MIDNIGHT} offsetMinutes={-120} />, '2027-01-01T02:00:05Z');
+    expect(document.querySelector('[data-scene-celebrate]')).not.toBeNull();
+    expect(document.querySelector('[data-scene-year]')).toBeNull();
+  });
+
   it('власник 2026-11-11: великий відлік на сцені й єдина кнопка — «Сцена на весь екран»; фази півночі — у scene-midnight.test', () => {
     renderApp(<CountdownScene country={GREENLAND} cityName="Нуук" midnightMs={MIDNIGHT} offsetMinutes={-120} />, NOW);
     expect(screen.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Сцена на весь екран']);

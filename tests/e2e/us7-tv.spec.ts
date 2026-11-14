@@ -566,6 +566,16 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     await expect(page.getByRole('timer')).toHaveCount(0);
   });
 
+  test('без трансляції, після салюту: на місці відліку — рік, що настав («2027», рішення 2026-11-14), не 00:00:00', async ({ page }) => {
+    // Північ Азорських островів — 01:00 UTC; +2 хв — салют (40 с) минув, подія ще на екрані.
+    await skipWelcome(page);
+    await gotoAt(page, '2027-01-01T01:02:00Z', 0, '/tv/');
+    await expect(page.locator('[data-tv-scene] [data-tv-scene-year="2027"]')).toBeVisible();
+    await expect(page.locator('[data-tv-scene]')).toContainText('північ настала');
+    await expect(page.locator('[data-tv-scene]')).not.toContainText('00:00:00');
+    await expect(page.getByRole('timer')).toHaveCount(0);
+  });
+
   test('до події менше 5 хв — великого відліку в колонці немає; остання хвилина — «далі через»', async ({
     page,
     ytStub,

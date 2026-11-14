@@ -48,10 +48,18 @@ describe('PlayerBlock (broadcast): фази підпису', () => {
     expect(screen.getByText('Відео може запізнюватися на кілька секунд')).toBeInTheDocument();
   });
 
-  it('+15 с: без таймера, «Велика Британія зустріла Новий рік» (рід країни)', () => {
+  it('+15 с: без таймера, «Велика Британія зустріла Новий рік» (рід країни); на місці таймера — «Новий рік 2027»', () => {
     const { container } = renderAt(20_000);
     expect(timer(container)).toBeNull();
     expect(row3(container)).toBe('Велика Британія зустріла Новий рік');
+    expect(container.querySelector('[data-caption-year]')?.textContent).toMatch(/Новий рік\s*2027/);
+  });
+
+  it('0…+15 с (рішення 2026-11-14): нуля «00:00:00» немає — одразу рік, що настав', () => {
+    const { container } = renderAt(1_000);
+    expect(timer(container)).toBeNull();
+    expect(container.textContent).not.toMatch(/00:00:00/);
+    expect(container.querySelector('[data-caption-year="2027"]')).not.toBeNull();
   });
 
   it('+14 хв: «далі через 0:59», «Далі: Азорські острови», «Лишитися тут ›»', () => {

@@ -2,7 +2,8 @@
 
 /**
  * Підпис під плеєром (C1: CaptionRow1–3) — три рядки за фазою з `lib/engine/captionPhase`:
- * 1) позначка «Наживо» + таймер («до півночі 00:22:15» / «далі через 0:59»; після моменту таймера немає);
+ * 1) позначка «Наживо» + таймер («до півночі 00:22:15» / «далі через 0:59»); після півночі на місці таймера — рік, що
+ *    настав («Новий рік 2027», рішення власника 2026-11-14), той самий рядок і той самий кегль — без стрибка;
  * 2) назва події-посилання «Лондон · Біг-Бен ›» (на сторінку країни);
  * 3) «Велика Британія · північ о 02:00 за вашим часом» → «Велика Британія зустріла Новий рік» (`metPhrase`, рід країни)
  *    → «Далі: Азорські острови».
@@ -23,6 +24,7 @@ import { Flag } from '@/components/primitives/Flag';
 import type { City, Country, Ms } from '@/lib/data/types';
 import type { CaptionMode, CaptionPhase } from '@/lib/engine/captionPhase';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
+import { arrivedYear } from '@/lib/engine/newYear';
 import { formatAgo, formatClock, formatCountdown, formatShortCountdown } from '@/lib/i18n/time';
 import { Icon } from '@/components/primitives/Icon';
 import { Tooltip } from '@/components/primitives/Tooltip';
@@ -35,6 +37,8 @@ export interface CaptionPlace {
   country: Pick<Country, 'name' | 'gender'> & Partial<Pick<Country, 'flagCode'>> | undefined;
   /** Сторінка країни. */
   href: string | null;
+  /** Зсув пояса події від UTC, хв — рік, що настав опівночі («Новий рік 2027»). */
+  offsetMinutes?: number;
 }
 
 export interface CaptionProps {
@@ -178,6 +182,9 @@ export function Caption({
         }
       : null;
 
+  // Після півночі — рік, що настав, на місці таймера (рішення 2026-11-14).
+  const year = r1.kind === 'year' ? arrivedYear(current.midnightMs, current.offsetMinutes) : null;
+
   // Розмиття — лише відлік до півночі, поки грає відео; ключ — північ події (нова подія — знову розмито).
   const veiled = live && r1.kind === 'countdown' && r1.ms > 0 && r1.ms <= BLUR_FROM_MS;
   const veilKey = current.midnightMs;
@@ -261,6 +268,14 @@ export function Caption({
               </span>
               <span className={home.barClock}>
                 <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={cn(home.barDigits, stampHint && home.barDigitsHint)} hint={false} />
+              </span>
+            </span>
+          ) : year !== null ? (
+            // Після півночі — рік на місці таймера: ті самі підпис і цифри, висота рядка та сама.
+            <span data-caption-year={year} className={home.barTimerWrap}>
+              <span className={cn(home.barLabel, hinted && 'sr-only')}>{t('timerYear')}</span>
+              <span className={home.barClock}>
+                <span className={home.barDigits}>{year}</span>
               </span>
             </span>
           ) : (
@@ -368,6 +383,12 @@ export function Caption({
             {timer.label}
           </span>{' '}
           <TimerDigits key={veilKey} digits={timer.digits} veiled={veiled} className={home.timerDigits} hint />
+        </span>
+      ) : null}
+      {year !== null && !titleOnly ? (
+        // Після півночі — рік, що настав, у тому самому місці й кеглі, що й таймер (рішення 2026-11-14).
+        <span data-caption-year={year} className={home.timer}>
+          <span className={home.timerLabel}>{t('timerYear')}</span> <span className={home.timerDigits}>{year}</span>
         </span>
       ) : null}
       {ago !== null && !titleOnly ? (

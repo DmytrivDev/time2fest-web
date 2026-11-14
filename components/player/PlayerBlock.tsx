@@ -269,6 +269,8 @@ export function PlayerBlock({
   const playingHere = mode === 'broadcast' && !!playing && !!current && playing.event.midnightMs === current.event.midnightMs;
   const shown = playingHere && playing.event.id !== current?.event.id ? playing.event : null;
   const shownCountry = shown ? getData().countriesByIso.get(shown.countryIso) : undefined;
+  // Зсув пояса — для року, що настав опівночі (підпис після півночі: «Новий рік 2027»).
+  const offsetOf = (zoneId: string) => getData().zonesById.get(zoneId)?.offsetMinutes;
   const place = current
     ? shown
       ? {
@@ -276,8 +278,9 @@ export function PlayerBlock({
           city: getData().citiesById.get(shown.cityId),
           country: shownCountry,
           href: shownCountry ? countryHref(shownCountry, { eventId: shown.id }) : null,
+          offsetMinutes: offsetOf(shown.zoneId),
         }
-      : { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href }
+      : { midnightMs: current.event.midnightMs, city: current.city, country: current.country, href: current.href, offsetMinutes: offsetOf(current.event.zoneId) }
     : null;
   const captionTitle = title ?? (playingHere ? playing.source.title.uk : undefined);
   const nextPlace = next ? { midnightMs: next.event.midnightMs, city: next.city, country: next.country, href: next.href } : null;

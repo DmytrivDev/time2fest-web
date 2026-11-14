@@ -9,7 +9,8 @@
  * почалась (2026-11-11), і головне святкування за замовчуванням, поки воно не почалось (2026-11-13): «Очікуйте трансляцію» з її
  * назвою; час і відлік «до початку» — лише коли початок відомий; відео стартує саме.
  * Власник 2026-11-11: без трансляції відлік до півночі — і на самій сцені (великий), останні 12 с — куранти, опівночі — салют,
- * конфеті й «З Новим роком!»; сцену можна розгорнути на весь екран (`SceneMidnight`).
+ * конфеті й «З Новим роком!», далі на місці відліку — рік, що настав («2027», рішення 2026-11-14); сцену можна розгорнути на
+ * весь екран (`SceneMidnight`).
  */
 import { useTranslations } from 'next-intl';
 import { useId, useRef } from 'react';
@@ -26,7 +27,8 @@ import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { Fireworks } from './Fireworks';
-import { midnightPhase, SceneCountdown, SceneFullscreenButton, SceneMidnightCenter, useMidnightSound, useSceneFullscreen } from './SceneMidnight';
+import { midnightPhase, SceneCountdown, SceneFullscreenButton, SceneMidnightCenter, SceneYear, useMidnightSound, useSceneFullscreen } from './SceneMidnight';
+import { arrivedYear } from '@/lib/engine/newYear';
 
 export type CountdownSceneVariant = 'no-stream' | 'expected' | 'mode' | 'waiting';
 
@@ -158,7 +160,7 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
   const phase = midnightPhase(midnightMs, now);
   useMidnightSound(midnightMs, phase);
   const center = phase.kind === 'final' || phase.kind === 'celebrate';
-  const year = new Date(midnightMs + offsetMinutes * 60_000).getUTCFullYear();
+  const year = arrivedYear(midnightMs, offsetMinutes);
   // До гідратації «зараз» невідоме (0): місцевий час не показуємо як справжній.
   const local = now > 0 ? formatClock(now + offsetMinutes * 60_000, { timeZone: 'UTC' }) : '––:––';
   const traditions = country.howTo.traditions.slice(0, 3);
@@ -185,7 +187,9 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
       ) : (
         <div className="absolute inset-0 flex flex-col gap-2 bg-linear-to-t from-background/95 via-background/50 to-transparent p-4 @lg:bg-linear-to-r @lg:from-background/80 @lg:via-background/30 @lg:to-transparent @lg:p-8">
           <p className="hidden text-label-sm text-text-secondary @lg:block">{variant === 'mode' ? t('modeCaption') : t('caption')}</p>
-          <div className="flex min-h-0 flex-1 items-center">{phase.kind === 'count' ? <SceneCountdown left={phase.left} /> : null}</div>
+          <div className="flex min-h-0 flex-1 items-center">
+            {phase.kind === 'count' ? <SceneCountdown left={phase.left} /> : phase.kind === 'after' ? <SceneYear year={year} /> : null}
+          </div>
           <div className="flex items-center gap-3 @lg:gap-5">
             <span className="@lg:hidden">
               <Flag code={country.flagCode} size="md" decorative />

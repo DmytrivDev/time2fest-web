@@ -4,7 +4,7 @@
  * Північ на сцені відліку (власник 2026-11-11): коли трансляції немає або людина обрала «Відлік».
  * - великий відлік до півночі на самій сцені (а не лише в підписі плеєра);
  * - останні 12 с — по секунді великою цифрою й удар курантів щосекунди (12 ударів);
- * - опівночі — «З Новим роком!», салют і конфеті зі звуком (40 с);
+ * - опівночі — «З Новим роком!», салют і конфеті зі звуком (40 с); далі на місці відліку — рік, що настав («2027»);
  * - кнопка «На весь екран» для сцени.
  * Звук — лише коли людина ввімкнула його кнопкою звуку (або вже вмикала в цьому сеансі).
  */
@@ -71,6 +71,19 @@ export function useMidnightSound(midnightMs: Ms, phase: MidnightPhase) {
     startFireworksSound(0);
     return () => stopFireworksSound();
   }, [midnightMs, celebrating, reduced]);
+}
+
+/** Після півночі на місці великого відліку — рік, що настав (рішення власника 2026-11-14): той самий підпис і кегль. */
+export function SceneYear({ year }: { year: number }) {
+  const t = useTranslations('player.scene');
+  return (
+    <div className="flex flex-col" data-scene-year={year}>
+      <span className="text-label-sm uppercase tracking-wide text-text-secondary">{t('yearLabel')}</span>
+      <span className={cn('font-extrabold leading-none tabular-nums text-highlight', fx.glow)} style={{ fontSize: 'max(1.75rem, 7.5cqw)' }}>
+        {year}
+      </span>
+    </div>
+  );
 }
 
 /** Великий відлік до півночі на сцені. */

@@ -31,6 +31,7 @@ import type { Ms } from '@/lib/data/types';
 import { HANDOVER_AFTER, LAST_MINUTE_FROM } from '@/lib/engine/config';
 import { joinNamesUk, metPhrase } from '@/lib/engine/metPhrase';
 import { formatClock, formatShortCountdown } from '@/lib/i18n/time';
+import { arrivedYear } from '@/lib/engine/newYear';
 import type { StreamRowData } from '@/lib/live/countryData';
 import { useBroadcast, type AirPlace } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
@@ -146,6 +147,7 @@ export interface TvSidebarProps {
 export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', onPanelChange, askPass = false, changeRef, className }: TvSidebarProps) {
   const t = useTranslations('tv');
   const tp = useTranslations('player');
+  const tScene = useTranslations('player.scene');
   const tFlash = useTranslations('states');
   const locale = useLocale();
   const broadcast = useBroadcast();
@@ -268,6 +270,11 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
             </span>
             <Countdown target={midnightMs} variant="tv" label={t('countdownTitle', { city })} />
           </div>
+        ) : showLine && untilMs <= 0 ? (
+          // Північ уже настала (0…+15 с, до моменту): не «північ о …», а рік, що настав (рішення 2026-11-14).
+          <p className="text-text-secondary" data-tv-year={arrivedYear(midnightMs, data.zonesById.get(place.event.zoneId)?.offsetMinutes)}>
+            {tScene('celebrateLine', { place: place.country?.name.uk ?? city, year: arrivedYear(midnightMs, data.zonesById.get(place.event.zoneId)?.offsetMinutes) })}
+          </p>
         ) : showLine ? (
           <p className="text-text-secondary" data-tv-midnight-at="">
             {tp('lineBefore', { country: place.country?.name.uk ?? city, time: formatClock(midnightMs, { locale }) })}
