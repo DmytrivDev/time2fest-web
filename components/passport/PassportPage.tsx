@@ -26,7 +26,7 @@ import { shareWindowSpec } from '@/components/stamp/Share';
 import { StampArt } from '@/components/stamp/StampArt';
 import { StampRate } from '@/components/stamp/StampRate';
 import { stampEntry } from '@/components/stamp/StampBlock';
-import { useStamps } from '@/lib/api/hooks/passport';
+import { useStamps, useUnconfirmedStamps } from '@/lib/api/hooks/passport';
 import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import { zoneState } from '@/lib/engine/zoneState';
@@ -63,6 +63,7 @@ export function PassportPage() {
   const user = useHeaderUser();
   const hasPass = useHasPass();
   const stamps = useStamps();
+  const unconfirmed = useUnconfirmedStamps();
   const scheduleRaw = useSchedule();
   const profile = useProfile();
   const nick = profile?.nick ?? undefined;
@@ -255,6 +256,13 @@ export function PassportPage() {
       <header className={s.head}>
         <h1 className={s.h1}>{t('title')}</h1>
         <p className={s.sub}>{t('subtitle', { zone: timeReady ? viewerZoneLabel() : '' })}</p>
+        {unconfirmed.length ? (
+          // Штамп, якого сервер ще не підтвердив довше хвилини (стан №14): тихо, без кнопок — повтор іде сам.
+          <p className={cn(s.sub, 'flex items-center gap-1.5')} data-row="stamp-unconfirmed" role="status">
+            <Icon name="clock" size={16} className="shrink-0" />
+            {tStamp('unconfirmed')}
+          </p>
+        ) : null}
       </header>
 
       <section className={s.box} aria-label={t('profileLabel')} data-passport-profile="">

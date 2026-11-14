@@ -81,13 +81,11 @@ describe('Stamp', () => {
     expect(screen.queryByText(/Перший ряд/)).toBeNull();
   });
 
-  it('save-failed: повідомлення й тиха «Спробувати ще»', () => {
-    const onRetry = vi.fn();
-    renderApp(<Stamp stamps={[SYDNEY]} saveState="failed" onRetrySave={onRetry} />);
-    expect(screen.getByText('Збережемо самі, щойно з’явиться зв’язок')).toBeInTheDocument();
+  it('unconfirmed (стан №14, 2026-11-14): тихий рядок замість «Уже в твоєму паспорті», без кнопок — повтор іде сам', () => {
+    renderApp(<Stamp stamps={[SYDNEY]} saveState="unconfirmed" />);
+    expect(screen.getByText('Штамп збережено на цьому пристрої — додамо до паспорта, щойно з’явиться зв’язок')).toBeInTheDocument();
     expect(screen.queryByText('Уже в твоєму паспорті')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Спробувати ще' }));
-    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: 'Спробувати ще' })).toBeNull();
   });
 
   it('завжди розгорнутий: коралова «Поділитися» робить кнопку звуку нейтральною; «×» — «Прибрати штамп»', () => {

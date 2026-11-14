@@ -15,6 +15,7 @@ import { useToastStore } from '@/stores/toast';
 import { useTvPrefs } from '@/stores/tv';
 import { API_MODE } from '@/lib/api/mode';
 import { getService } from '@/lib/api/services';
+import { resetStampClaims } from '@/lib/api/hooks/passport';
 
 /** Префікс ключів сайту в `localStorage`. */
 const PREFIX = 't2f:';
@@ -33,6 +34,8 @@ export function resetDeviceState(): void {
   useNotifStore.setState({ items: [], enabled: true, kinds: Object.fromEntries(NOTIF_KINDS.map((k) => [k, true])) as Record<(typeof NOTIF_KINDS)[number], boolean> });
   useTvPrefs.setState({ show: 'all', welcomed: false });
   resetGuest();
+  // Штампи, що чекали підтвердження сервера, належали попередньому гостю.
+  resetStampClaims();
   // Сховища вище щойно записали типові значення — прибираємо й їх: після перезавантаження сайт як уперше.
   try {
     for (const key of Object.keys(window.localStorage)) if (key.startsWith(PREFIX)) window.localStorage.removeItem(key);

@@ -62,9 +62,9 @@ export const Template: Story = {
   args: { stamps: [NUUK] },
 };
 
-export const SaveFailed: Story = {
-  name: 'save-failed — «Збережемо самі, щойно з’явиться зв’язок»',
-  args: { saveState: 'failed' },
+export const Unconfirmed: Story = {
+  name: 'unconfirmed — «Штамп збережено на цьому пристрої — додамо до паспорта…» (стан №14)',
+  args: { saveState: 'unconfirmed' },
 };
 
 export const Dismiss: Story = {

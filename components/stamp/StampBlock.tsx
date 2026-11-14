@@ -32,7 +32,7 @@ import { useCanToast } from '@/components/toast/useToastSeason';
 import { shareWindowSpec } from '@/components/stamp/Share';
 import { Stamp, type StampEntry } from '@/components/stamp/Stamp';
 import { StampRate } from '@/components/stamp/StampRate';
-import { useHasStamp, useStamps } from '@/lib/api/hooks/passport';
+import { useHasStamp, useStamps, useUnconfirmedStamps } from '@/lib/api/hooks/passport';
 import { getData } from '@/lib/data/load';
 import { isRateable } from '@/lib/passport/passport';
 import type { Stars } from '@/lib/data/types';
@@ -114,6 +114,8 @@ export function StampBlock(props: StampBlockProps) {
 function StampBlockView({ eventId, permanent = false, roomEventIds, className }: StampBlockProps) {
   const tRoom = useTranslations('room.stamp');
   const ownStamps = useStamps();
+  // Сервер не підтвердив штамп довше хвилини — тихий рядок у картці (стан №14); штамп лишається.
+  const unconfirmed = useUnconfirmedStamps();
   const tShare = useTranslations('share');
   const { open, current: win } = useOverlay();
   const openAuth = useOpenAuthWindow();
@@ -223,6 +225,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
             stamping={current.stamping}
             quiet={win?.kind === 'inflow' || offerShown}
             signedIn={!!user}
+            saveState={current.list.some((e) => !!e.eventId && unconfirmed.includes(e.eventId)) ? 'unconfirmed' : 'saved'}
             onShare={() => open(shareWindowSpec(current.list, tShare('title')))}
             onSignIn={() => openAuth('signin')}
             onPassport={() => router.push(PASSPORT_HREF)}

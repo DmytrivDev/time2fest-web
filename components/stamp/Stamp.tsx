@@ -14,7 +14,8 @@
  * Картка — ціль «Подивитися штамп» зі свята в шапці (`data-stamp-card`, фокус програмно).
  *
  * Стани: `stamping` (удар штемпеля ≈ 0,6 с + конфеті — лише у `lively`), `multi` («Сідней · Мельбурн»),
- * `save-failed` (рамку «Першого ряду» прибрано разом із рядом, 2026-11-12). Коралова «Поділитися» реєструється в `lib/overlay/coral`
+ * `unconfirmed` — сервер не підтвердив штамп довше хвилини (стан шва №14, 2026-11-14): тихий рядок «Штамп збережено на
+ * цьому пристрої — додамо до паспорта, щойно з’явиться зв’язок» на місці «Уже в твоєму паспорті», без кнопок (повтор — сам). Коралова «Поділитися» реєструється в `lib/overlay/coral`
  * (кнопка звуку стає нейтральною); alt листівки = текст штампа.
  */
 import { useTranslations } from 'next-intl';
@@ -43,7 +44,8 @@ export interface StampEntry {
   zone?: string;
 }
 
-export type StampSaveState = 'saved' | 'pending' | 'failed';
+/** `unconfirmed` — штамп показано, але сервер його ще не підтвердив (повторюємо у фоні). */
+export type StampSaveState = 'saved' | 'unconfirmed';
 
 export interface StampProps {
   /** Одна або кілька подій цього моменту (кілька → «Сідней · Мельбурн»). */
@@ -58,7 +60,6 @@ export interface StampProps {
   /** «Сказати тост» — вікно тосту (`useOpenToastWindow`); без обробника кнопки немає. */
   onToast?: () => void;
   onSignIn?: () => void;
-  onRetrySave?: () => void;
   /** Під штампом інше вікно з власною кораловою дією (пропозиція, оцінка) → «Поділитися» стає вторинною: коралова — одна. */
   quiet?: boolean;
   /** «×» — прибрати цей штамп. */
@@ -95,7 +96,6 @@ export function Stamp({
   onPassport,
   onToast,
   onSignIn,
-  onRetrySave,
   onClose,
   rate,
   more,
@@ -124,7 +124,7 @@ export function Stamp({
   const countries = [...new Set(stamps.map((s) => s.countryName))].join(' · ') + (zone ? ` · ${zone}` : '');
   const stampText = t('stamped', { city: (zone ? `${placesShort} · ${zone}` : placesShort).toLocaleUpperCase('uk') });
   const multi = stamps.length > 1;
-  const failed = saveState === 'failed';
+  const unconfirmed = saveState === 'unconfirmed';
   const strip = flagGradient(first.flagCode);
 
   const content: ReactNode = (
@@ -176,13 +176,11 @@ export function Stamp({
           </h2>
           <p className={st.sub}>{t('subline', { country: countries })}</p>
         </div>
-        {failed ? (
-          <div className={cn('flex flex-wrap items-center gap-x-3 text-caption text-text-secondary', st.line)} data-row="save-failed">
-            <span>{t('saveFailed')}</span>
-            <Button variant="ghost" compact onClick={onRetrySave}>
-              {t('retry')}
-            </Button>
-          </div>
+        {unconfirmed ? (
+          <p className={cn('flex items-center gap-1.5 text-text-secondary', st.saved, st.line)} data-row="stamp-unconfirmed" role="status">
+            <Icon name="clock" size={16} className="shrink-0" />
+            {t('unconfirmed')}
+          </p>
         ) : (
           <>
             <p className={cn('flex items-center gap-1.5', st.inPassport, st.line)} data-row="in-passport">

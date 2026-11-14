@@ -2,22 +2,21 @@
  * Адаптер `sim` домену «Паспорт» (`docs/backend/frontend-seam.md`, E5b): «сервер» штампів у вкладці.
  * - Присутність: поверхні сторінок у реєстрі (`lib/presence/surfaces`) і запис `guest.pendingPresence` на кожному такті
  *   годинника сайту (`presenceOf`, `presenceMoment` — чисті правила `lib/engine/presence`), як раніше `useStampGrant`.
- * - Штамп: на `moment:stamp` (+15 с після півночі, `EngineScheduler`) — за кожну подію, де гість був присутній
- *   (`buildStamp`), у `guest.stamps` (один на подію). Як і раніше, слухаємо лише поки відкрита хоч одна сторінка
- *   ефіру / країни / кімнати / ТВ (вони викликають `trackPresence`, навіть без події — `null`).
+ * - Штамп: на `moment:stamp` (+15 с після півночі, `EngineScheduler`) клієнт показує штамп і просить підтвердження
+ *   (`claim`, `lib/api/hooks/passport` → `lib/passport/stampClaims`, 2026-11-14) — «сервер» записує його в `guest.stamps`
+ *   (`buildStamp`, один на подію). Відмову видно засобами `?simFail=passport.claim:network`.
  * - Події: зміна `guest.stamps` → `granted` (нові) чи `snapshot` (скидання).
  */
 import { ok, fail } from '../result';
 import type { PassportEvent, PassportService, PresenceClock, PresenceSurfaceInput } from '../contracts/passport';
 import { getData } from '@/lib/data/load';
-import type { Ms } from '@/lib/data/types';
+import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
 import { buildStamp, presenceMoment, presenceOf, type PresenceSurface } from '@/lib/engine/presence';
-import { on } from '@/lib/events/bus';
 import type { MomentStamp } from '@/lib/events/types';
 import { registerSurface } from '@/lib/presence/surfaces';
 import { useGuestStore } from '@/stores/guest';
 
-/** Обробник `moment:stamp`: штамп за кожну подію, де гість був присутній. Повертає id виданих. */
+/** Видати штампи за кожну подію з `moment:stamp`, де гість був присутній (тести; на сайті — `claim` з клієнта). Повертає id виданих. */
 export function grantStamps(payload: MomentStamp): string[] {
   const data = getData();
   const guest = useGuestStore.getState();
@@ -36,20 +35,21 @@ export function grantStamps(payload: MomentStamp): string[] {
   return granted;
 }
 
-/** Скільки сторінок присутності відкрито; поки > 0 — «сервер» видає штампи. */
-let open = 0;
-let offGrant: (() => void) | null = null;
+/** «Сервер» записує штамп за подію (один на подію); уже є — той самий. */
+export function grantStamp(eventId: string, source: PresenceSource): Stamp | null {
+  const data = getData();
+  const event = data.eventsById.get(eventId);
+  if (!event) return null;
+  const guest = useGuestStore.getState();
+  const had = guest.stamps.find((x) => x.eventId === eventId);
+  if (had) return had;
+  const stamp = buildStamp({ event, country: data.countriesByIso.get(event.countryIso), city: data.citiesById.get(event.cityId), presenceSource: source });
+  guest.addStamp(stamp);
+  return stamp;
+}
 
 function trackPresence(surface: PresenceSurfaceInput | null, clock: PresenceClock): () => void {
-  open += 1;
-  if (!offGrant) offGrant = on('moment:stamp', (payload) => void grantStamps(payload));
-  const release = () => {
-    open -= 1;
-    if (open === 0 && offGrant) {
-      offGrant();
-      offGrant = null;
-    }
-  };
+  const release = () => undefined;
   if (!surface || !surface.eventIds.length) return release;
 
   const now = clock.now() || clock.fallbackNow();
@@ -110,6 +110,10 @@ export function createSimPassport(): PassportService {
       });
     },
     trackPresence,
+    async claim(req) {
+      const stamp = grantStamp(req.eventId, req.source);
+      return stamp ? ok(stamp) : fail('not_found');
+    },
     async beat() {
       // `sim` не шле пульсів — присутність рахує `trackPresence` на кожному такті.
       return fail('unavailable', { reason: 'sim-uses-trackPresence' });
