@@ -5,7 +5,7 @@
  */
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { AuthorPanel, type AuthorPanelProps } from '@/components/live/AuthorPanel';
+import { AuthorPanel, type AuthorPanelProps } from '@/components/chat/parts/AuthorPanel';
 import { pathMapScale } from '@/components/map/PathMap';
 import chatScript from '@/data/chat-script.json';
 import zonemap from '@/data/zonemap.json';

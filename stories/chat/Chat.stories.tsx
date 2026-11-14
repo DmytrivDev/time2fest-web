@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { useEffect, useState, type ComponentProps } from 'react';
 import { Chat } from '@/components/chat/Chat';
-import { Message } from '@/components/chat/Message';
+import { Message } from '@/components/chat/parts/Message';
 import type { ChatMessage } from '@/lib/data/types';
 import { Stage, StateRow } from '../_support/Stage';
 import {

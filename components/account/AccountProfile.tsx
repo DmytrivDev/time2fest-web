@@ -8,7 +8,7 @@ import { useHeaderUser } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { HeaderAvatar } from '@/components/shell/Header';
-import { FlagField } from '@/components/windows/FlagField';
+import { FlagField } from '@/components/chat/FlagField';
 import { profileActions, useProfile, useSession } from '@/lib/api/hooks/auth';
 import { validateNick, type NickIssue } from '@/lib/chat/nick';
 import { NICK_MAX } from '@/lib/chat/send';

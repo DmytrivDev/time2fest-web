@@ -10,7 +10,7 @@ import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import { FlagField } from '@/components/windows/FlagField';
+import { FlagField } from '@/components/chat/FlagField';
 import { generatedNick, suggestNick } from '@/lib/auth/suggestNick';
 import { validateNick, type NickIssue } from '@/lib/chat/nick';
 import { NICK_MAX } from '@/lib/chat/send';

@@ -5,7 +5,7 @@
  */
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { TranslateGate, translateExample } from '@/components/chat/TranslateGate';
+import { TranslateGate, translateExample } from '@/components/chat/parts/TranslateGate';
 import { hitSizes, nearestPoint } from '@/components/map/PathMap';
 import { Marquee } from '@/components/primitives/Marquee';
 import chatScript from '@/data/chat-script.json';

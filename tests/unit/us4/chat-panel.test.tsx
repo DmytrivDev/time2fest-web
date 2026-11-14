@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatHiddenButton } from '@/components/chat/parts/ChatHiddenButton';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { OverlayManager } from '@/components/shell/OverlayManager';
 import { useChatFeed } from '@/lib/chat-sim/store';

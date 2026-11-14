@@ -1,7 +1,7 @@
 import { cleanup, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { AuthorPanel, type AuthorPanelProps } from '@/components/live/AuthorPanel';
+import { AuthorPanel, type AuthorPanelProps } from '@/components/chat/parts/AuthorPanel';
 import chatScript from '@/data/chat-script.json';
 import zonemap from '@/data/zonemap.json';
 import { buildAuthorPath } from '@/lib/chat/authorPath';

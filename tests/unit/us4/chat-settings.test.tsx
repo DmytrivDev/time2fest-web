@@ -1,9 +1,9 @@
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatHiddenButton } from '@/components/chat/parts/ChatHiddenButton';
 import { ChatPanel } from '@/components/chat/ChatPanel';
-import { AuthorPanel } from '@/components/live/AuthorPanel';
+import { AuthorPanel } from '@/components/chat/parts/AuthorPanel';
 import { OverlayInFlowOutlet, OverlayManager } from '@/components/shell/OverlayManager';
 import { isBanalText, isQuietHidden, quietHiddenCount } from '@/lib/chat/quiet';
 import { messageLang, resetTranslations } from '@/lib/chat/translate';

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, userEvent, within } from 'storybook/test';
-import { Nick } from '@/components/windows/Nick';
+import { Nick } from '@/components/chat/parts/Nick';
 import countriesJson from '@/data/countries.json';
 import type { CountriesFile } from '@/lib/data/types';
 import { Stage } from '../_support/Stage';

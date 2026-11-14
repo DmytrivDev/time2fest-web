@@ -11,7 +11,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObje
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { ChatMessage, RoomId } from '@/lib/data/types';
-import type { ChatState } from './Chat';
+import type { ChatState } from '@/components/chat/Chat';
 import type { ChatMenuState } from './useChatMenu';
 
 const SCROLL_MS = 250;

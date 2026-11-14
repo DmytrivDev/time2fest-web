@@ -21,12 +21,12 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import { FlagField, useFlagName, type FlagOption } from '@/components/windows/FlagField';
+import { FlagField, useFlagName, type FlagOption } from '@/components/chat/FlagField';
 import { validateNick, type NickIssue } from '@/lib/chat/nick';
 import { NICK_MAX } from '@/lib/chat/send';
 
-export type { FlagOption } from '@/components/windows/FlagField';
-export { SPECIAL_ALL } from '@/components/windows/FlagField';
+export type { FlagOption } from '@/components/chat/FlagField';
+export { SPECIAL_ALL } from '@/components/chat/FlagField';
 
 export interface NickResult {
   nick: string;

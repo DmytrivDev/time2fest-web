@@ -575,7 +575,7 @@ html[data-has-chat-dock] .t2f-cookie-phone {
   border-radius: var(--radius-md) var(--radius-lg) var(--radius-md) var(--radius-md);
   transition: background-color 120ms ease-out;
 }
-/* Тост у чаті — рамка й фон за рівнем (`components/chat/toastMessage.module.css`, рішення 2026-11-12); позначка «тост». */
+/* Тост у чаті — рамка й фон за рівнем (`components/chat/parts/toastMessage.module.css`, рішення 2026-11-12); позначка «тост». */
 .t2f-toast-badge {
   flex: none;
   padding: 1px 7px;

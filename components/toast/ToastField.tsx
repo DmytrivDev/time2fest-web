@@ -12,7 +12,7 @@ import { EmojiText } from '@/components/primitives/Emoji';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
-import { FlagField } from '@/components/windows/FlagField';
+import { FlagField } from '@/components/chat/FlagField';
 import { type NickIssue } from '@/lib/chat/nick';
 import { NICK_MAX } from '@/lib/chat/send';
 import { getData } from '@/lib/data/load';

@@ -8,7 +8,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useLayoutEffect, useRef, type KeyboardEvent } from 'react';
-import { EmojiGrid, arrowTarget } from './EmojiGrid';
+import { EmojiGrid, arrowTarget } from './parts/EmojiGrid';
 
 export interface EmojiPickerProps {
   id?: string;

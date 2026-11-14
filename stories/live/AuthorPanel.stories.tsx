@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { AuthorPanel } from '@/components/live/AuthorPanel';
+import { AuthorPanel } from '@/components/chat/parts/AuthorPanel';
 import { PathLegend, PathMap } from '@/components/map/PathMap';
 import chatScript from '@/data/chat-script.json';
 import { buildAuthorPath } from '@/lib/chat/authorPath';

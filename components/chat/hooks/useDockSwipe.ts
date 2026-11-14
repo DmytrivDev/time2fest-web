@@ -15,7 +15,7 @@ import {
   MOVE_THRESHOLD,
   ZONE,
   type DragState,
-} from './chatDockGeometry';
+} from '@/components/chat/chatDockGeometry';
 
 export function useDockSwipe(o: {
   sectionRef: RefObject<HTMLElement | null>;

@@ -8,7 +8,7 @@ import type { Author, ChatMessage } from '@/lib/data/types';
 import { Message, type MessageLookup } from './Message';
 import type { MessageActionHandlers } from './MessageActions';
 import { MessageMenu } from './MessageMenu';
-import type { ChatMenuState } from './useChatMenu';
+import type { ChatMenuState } from '@/components/chat/hooks/useChatMenu';
 
 export function ChatFeed({
   visible,

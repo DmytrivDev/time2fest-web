@@ -7,7 +7,7 @@
 import { useTranslations } from 'next-intl';
 import type { MouseEvent } from 'react';
 import type { ReactionId } from '@/lib/data/types';
-import { MENU_REACTION_ROWS, REACTION_SYMBOLS } from './reactions';
+import { MENU_REACTION_ROWS, REACTION_SYMBOLS } from '@/components/chat/reactions';
 import { Emoji } from '@/components/primitives/Emoji';
 
 export interface EmojiGridProps {

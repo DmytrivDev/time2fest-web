@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Flag } from '@/components/primitives/Flag';
 import { SegmentedControl, type SegmentOption } from '@/components/primitives/SegmentedControl';
 import { getData } from '@/lib/data/load';
-import type { RoomKey } from './useChatPanelRoom';
+import type { RoomKey } from '@/components/chat/hooks/useChatPanelRoom';
 
 export function ChatRoomSwitcher({
   country,

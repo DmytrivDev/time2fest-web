@@ -16,10 +16,10 @@ import {
   chooseMenuPlacement,
   menuTopInContainer,
   type MenuPlacement,
-} from './menuPlacement';
+} from '@/components/chat/menuPlacement';
 import { reactOptimistic, type MessageActionHandlers } from './MessageActions';
 import { EmojiGrid, arrowTarget } from './EmojiGrid';
-import { QUICK_REACTIONS, REACTION_SYMBOLS } from './reactions';
+import { QUICK_REACTIONS, REACTION_SYMBOLS } from '@/components/chat/reactions';
 import { Emoji } from '@/components/primitives/Emoji';
 import { useTranslateMessage } from '@/lib/chat/translate';
 import { useChatPref } from '@/stores/chatPrefs';

@@ -20,7 +20,7 @@ import { IconButton } from '@/components/primitives/IconButton';
 import { Textarea } from '@/components/primitives/Textarea';
 import type { RoomId } from '@/lib/data/types';
 import { ANNOUNCE_AT, COUNTER_FROM, MAX_TEXT } from '@/lib/chat/send';
-import { EmojiPicker } from './EmojiPicker';
+import { EmojiPicker } from '@/components/chat/EmojiPicker';
 import ts from './composerToast.module.css';
 
 export type ComposerError = 'link' | 'too-long' | null;

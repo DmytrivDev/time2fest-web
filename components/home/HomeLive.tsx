@@ -27,8 +27,8 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { useChatLookup } from '@/components/chat/useChatLookup';
-import { useLiveChat } from '@/components/chat/useLiveChat';
+import { useChatLookup } from '@/components/chat/hooks/useChatLookup';
+import { useLiveChat } from '@/components/chat/hooks/useLiveChat';
 import { buildMapModel } from '@/lib/map/model';
 import { NowNext } from '@/components/live/NowNext';
 import { MomentInflow } from '@/components/live/MomentInflow';

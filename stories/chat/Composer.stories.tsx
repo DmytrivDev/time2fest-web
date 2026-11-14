@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
-import { Composer, type ComposerProps } from '@/components/chat/Composer';
+import { Composer, type ComposerProps } from '@/components/chat/parts/Composer';
 import { Stage } from '../_support/Stage';
 
 

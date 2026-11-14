@@ -12,7 +12,7 @@ import type { TimeSourceLike } from '@/lib/time/types';
 import { useChatUi } from '@/stores/chat';
 import { useGuestStore, type GuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
-import type { ComposerError } from './Composer';
+import type { ComposerError } from '@/components/chat/parts/Composer';
 
 /** Повільний режим: загальна пауза, залишок до наступного повідомлення; тестовий перемикач додає системне повідомлення. */
 export function useChatSlowMode(o: { roomId: RoomId; now: number; source: TimeSourceLike; slowForced: ReturnType<typeof useTestControls.getState>['slowForcedSec']; guest: GuestStore }) {

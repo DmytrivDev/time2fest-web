@@ -5,7 +5,7 @@
  * відступ знизу (`inset`) і ознаку відкритої клавіатури (`kbUp`).
  */
 import { useEffect, useRef, useState } from 'react';
-import { KB_MIN, type DockViewport } from './chatDockGeometry';
+import { KB_MIN, type DockViewport } from '@/components/chat/chatDockGeometry';
 
 export function useDockViewport() {
   // Екранна клавіатура: visualViewport (Android/iOS зменшують лише візуальну область, макет лишається). Якщо клавіатура

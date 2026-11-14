@@ -14,7 +14,7 @@
 import NextLink from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
-import { useLiveChat } from '@/components/chat/useLiveChat';
+import { useLiveChat } from '@/components/chat/hooks/useLiveChat';
 import { Faq, type FaqItem } from '@/components/live/Faq';
 import { buildMapModel, type MapCountry, type MapZone, type ZoneMapGeometry } from '@/lib/map/model';
 import { ZoneMap } from '@/components/map/ZoneMap';

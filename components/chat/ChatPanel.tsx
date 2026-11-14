@@ -26,16 +26,16 @@ import { useChatUi } from '@/stores/chat';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { Chat } from './Chat';
-import { ChatEmptyCountrySub, ChatRoomSwitcher } from './ChatRoomSwitcher';
-import { ChatSettings } from './ChatSettings';
-import { Composer, type ComposerError } from './Composer';
-import { useChatLookup } from './useChatLookup';
-import { useChatMessageActions } from './useChatMessageActions';
-import { useChatPanelRoom } from './useChatPanelRoom';
-import { useChatPanelWindows } from './useChatPanelWindows';
-import { useChatSend, useChatSlowMode } from './useChatSend';
+import { ChatEmptyCountrySub, ChatRoomSwitcher } from './parts/ChatRoomSwitcher';
+import { ChatSettings } from './parts/ChatSettings';
+import { Composer, type ComposerError } from './parts/Composer';
+import { useChatLookup } from './hooks/useChatLookup';
+import { useChatMessageActions } from './hooks/useChatMessageActions';
+import { useChatPanelRoom } from './hooks/useChatPanelRoom';
+import { useChatPanelWindows } from './hooks/useChatPanelWindows';
+import { useChatSend, useChatSlowMode } from './hooks/useChatSend';
 
-export { NICK_WINDOW_ID, AUTHOR_WINDOW_ID } from './useChatPanelWindows';
+export { NICK_WINDOW_ID, AUTHOR_WINDOW_ID } from './hooks/useChatPanelWindows';
 
 export interface ChatPanelProps {
   /** Кімната «Країна»: країна сторінки; на головній — країна ефіру, що йде зараз (без країни чипа немає). */

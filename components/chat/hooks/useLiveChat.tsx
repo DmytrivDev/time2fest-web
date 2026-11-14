@@ -10,9 +10,9 @@
 import { createPortal } from 'react-dom';
 import type { ReactNode } from 'react';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
+import { ChatHiddenButton } from '@/components/chat/parts/ChatHiddenButton';
 import { ChatPanel, type ChatPanelProps } from '@/components/chat/ChatPanel';
-import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useChatVisibility } from '@/components/chat/hooks/useChatVisibility';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import type { RoomId } from '@/lib/data/types';
 

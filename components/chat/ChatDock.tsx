@@ -44,11 +44,11 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useChatUi, useHiddenCount, useRepliesToMe } from '@/stores/chat';
 import { useChatDock } from '@/stores/chatDock';
 import { dockStyle, FIELD, layerStyle } from './chatDockGeometry';
-import { ChatDockCollapsed } from './ChatDockCollapsed';
-import { ChatDockLayer } from './ChatDockLayer';
-import { useChatDockLayout } from './useChatDockLayout';
-import { useDockSwipe, useLayerSwipe } from './useDockSwipe';
-import { useDockViewport } from './useDockViewport';
+import { ChatDockCollapsed } from './parts/ChatDockCollapsed';
+import { ChatDockLayer } from './parts/ChatDockLayer';
+import { useChatDockLayout } from './hooks/useChatDockLayout';
+import { useDockSwipe, useLayerSwipe } from './hooks/useDockSwipe';
+import { useDockViewport } from './hooks/useDockViewport';
 
 /** Дані вікна для його вмісту: у альбомі розгорнутий чат дає кнопку «До відео» в шапку. */
 export const ChatDockContext = createContext<{ toVideo: (() => void) | null }>({ toVideo: null });

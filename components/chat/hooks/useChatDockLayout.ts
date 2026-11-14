@@ -6,7 +6,7 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { measureSheetTop, SHEET_TOP_SOURCES, stableViewportH } from '@/lib/overlay/sheetTop';
-import { findAnchor, type DockViewport } from './chatDockGeometry';
+import { findAnchor, type DockViewport } from '@/components/chat/chatDockGeometry';
 
 export function useChatDockLayout(o: {
   open: boolean;

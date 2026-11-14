@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { Chat } from '@/components/chat/Chat';
-import { Message, type MessageLookup } from '@/components/chat/Message';
+import { Message, type MessageLookup } from '@/components/chat/parts/Message';
 import type { Author, ChatMessage } from '@/lib/data/types';
 import { renderApp, wrap } from './render';
 

@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import { Chat } from '@/components/chat/Chat';
-import { ChatHiddenButton } from '@/components/chat/ChatHiddenButton';
-import { Composer } from '@/components/chat/Composer';
-import { ReactionsRow } from '@/components/chat/MessageActions';
-import { Message } from '@/components/chat/Message';
+import { ChatHiddenButton } from '@/components/chat/parts/ChatHiddenButton';
+import { Composer } from '@/components/chat/parts/Composer';
+import { ReactionsRow } from '@/components/chat/parts/MessageActions';
+import { Message } from '@/components/chat/parts/Message';
 import { useChatFeed } from '@/lib/chat-sim/store';
 import type { ChatMessage } from '@/lib/data/types';
 import { useChatUi } from '@/stores/chat';

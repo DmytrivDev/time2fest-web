@@ -29,7 +29,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { Suspense, useCallback, useMemo } from 'react';
-import { useLiveChat } from '@/components/chat/useLiveChat';
+import { useLiveChat } from '@/components/chat/hooks/useLiveChat';
 import { CountryHeader } from '@/components/country/CountryHeader';
 import { MomentInflow } from '@/components/live/MomentInflow';
 import { StampBlock } from '@/components/stamp/StampBlock';

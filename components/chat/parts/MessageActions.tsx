@@ -7,8 +7,8 @@
 import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import type { ChatMessage, ReactionId } from '@/lib/data/types';
-import { markReactPending, reactKey, isReactPending, useReactPending } from './reactPending';
-import { REACTION_DISPLAY_ORDER, REACTION_SYMBOLS } from './reactions';
+import { markReactPending, reactKey, isReactPending, useReactPending } from '@/components/chat/reactPending';
+import { REACTION_DISPLAY_ORDER, REACTION_SYMBOLS } from '@/components/chat/reactions';
 import { Emoji } from '@/components/primitives/Emoji';
 
 export interface MessageActionHandlers {

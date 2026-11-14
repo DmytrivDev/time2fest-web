@@ -26,7 +26,7 @@
 import { RoomSkeleton } from '@/components/skeleton/LiveSkeletons';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { useLiveChat } from '@/components/chat/useLiveChat';
+import { useLiveChat } from '@/components/chat/hooks/useLiveChat';
 import { useStamps } from '@/lib/api/hooks/passport';
 import { useLiveData } from '@/lib/api/hooks/live';
 import type { EventFilterValue } from '@/components/live/EventFilter';

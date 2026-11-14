@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom';
 import { useTranslations } from 'next-intl';
 import { ChatDock, useChatDockControls } from '@/components/chat/ChatDock';
 import { ChatPanel } from '@/components/chat/ChatPanel';
-import { useChatVisibility } from '@/components/chat/useChatVisibility';
+import { useChatVisibility } from '@/components/chat/hooks/useChatVisibility';
 import { CHAT_SLOT_ID } from '@/components/primitives/Panel';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatRooms } from '@/lib/api/hooks/chat';

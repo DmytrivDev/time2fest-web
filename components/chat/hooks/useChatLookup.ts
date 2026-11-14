@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { getData } from '@/lib/data/load';
-import type { MessageLookup } from './Message';
+import type { MessageLookup } from '@/components/chat/parts/Message';
 
 /** Назви країн за прапором/ISO і міст за `cityId` для рядків чату (лише називний відмінок). */
 export function useChatLookup(): MessageLookup {

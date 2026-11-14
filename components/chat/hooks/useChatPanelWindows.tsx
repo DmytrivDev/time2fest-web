@@ -7,13 +7,13 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useOpenAuthWindow } from '@/components/auth/AuthWindow';
-import { AuthorPanel } from '@/components/live/AuthorPanel';
+import { AuthorPanel } from '@/components/chat/parts/AuthorPanel';
 import { passGateSpec } from '@/components/offers/OfferWindows';
 import { useGetPass, usePassDetails } from '@/components/pass/PassWindow';
 import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { GATE_KEYS, type PassGateFeature } from '@/components/pass/PassGate';
-import { Nick } from '@/components/windows/Nick';
+import { Nick } from '@/components/chat/parts/Nick';
 import { hasPassNow, profileActions } from '@/lib/api/hooks/auth';
 import { chatActions } from '@/lib/api/hooks/chat';
 import { currentStamps } from '@/lib/api/hooks/passport';
@@ -23,8 +23,8 @@ import type { Author, ChatMessage } from '@/lib/data/types';
 import { detectFlag } from '@/lib/geo/detectFlag';
 import { useClock } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
-import { TRANSLATE_GATE_WINDOW_ID, TranslateGate } from './TranslateGate';
-import type { MessageLookup } from './Message';
+import { TRANSLATE_GATE_WINDOW_ID, TranslateGate } from '@/components/chat/parts/TranslateGate';
+import type { MessageLookup } from '@/components/chat/parts/Message';
 
 export const NICK_WINDOW_ID = 'O-NICK';
 export const AUTHOR_WINDOW_ID = 'O-AUTHOR';
