@@ -15,3 +15,5 @@ AGENTS.md
 out-demo
 out-prod
 .next-demo
+.next-*
+out-*
