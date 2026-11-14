@@ -42,16 +42,11 @@ function Strip({ kind, children, action, onClose, data }: { kind: StatusKind; ch
       <StatusMessage
         kind={kind}
         className="mx-auto max-w-content-max"
-        action={
-          action || onClose ? (
-            <span className="flex items-center gap-2">
-              {action}
-              {onClose ? <IconButton aria-label={t('close')} icon="close" onClick={onClose} /> : null}
-            </span>
-          ) : undefined
-        }
+        action={onClose ? <IconButton aria-label={t('close')} icon="close" onClick={onClose} /> : undefined}
       >
+        {/* Дія («Перевірити ще», «Увійти») — у рядку тексту: на телефоні смуга не стискає текст у вузьку колонку. */}
         {children}
+        {action ? <> {action}</> : null}
       </StatusMessage>
     </div>
   );
@@ -82,7 +77,7 @@ function OrderNotice({ orderId, onClose }: { orderId: string; onClose: () => voi
       onClose={final ? onClose : undefined}
       action={
         state.kind === 'failed' ? (
-          <button type="button" onClick={retry} className="t2f-focus min-h-touch-min rounded-md px-2 text-body-strong underline">
+          <button type="button" onClick={retry} className="t2f-focus text-body-strong underline">
             {t('retry')}
           </button>
         ) : state.kind === 'missing' ? (

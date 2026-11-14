@@ -43,7 +43,8 @@ export const ORDER_POLL_LIMIT_MS = 120_000;
 
 /**
  * Повернення з PayPro: опитує `status(orderId)` і слухає свої замовлення — що прийде першим. Кінцевий статус —
- * стоп; 2 хв без кінцевого — `slow` (усе ще `pending`) або `failed` (жодної відповіді, мережа); `not_found` — `missing`.
+ * стоп; 2 хв без кінцевого — `slow` (усе ще `pending`); 3 відмови мережі поспіль (≈ 8 с) — `failed` з «Перевірити ще»
+ * (людина не чекає 2 хв на «перевіряємо»); `not_found` — `missing`.
  */
 export function useOrderReturn(orderId: string): { state: OrderReturnState; retry: () => void } {
   const [state, setState] = useState<OrderReturnState>({ kind: 'checking' });
@@ -54,6 +55,7 @@ export function useOrderReturn(orderId: string): { state: OrderReturnState; retr
     let timer: ReturnType<typeof setTimeout> | undefined;
     let stopped = false;
     let attempt = 0;
+    let errors = 0;
     let last: Order | undefined;
     const apply = (o: Order) => {
       last = o;
@@ -70,10 +72,16 @@ export function useOrderReturn(orderId: string): { state: OrderReturnState; retr
       if (stopped) return;
       const res = await svc.status(orderId);
       if (stopped) return;
-      if (res.ok) apply(res.value);
-      else if (res.error.code === 'not_found') {
+      if (res.ok) {
+        errors = 0;
+        apply(res.value);
+      } else if (res.error.code === 'not_found') {
         stopped = true;
         setState({ kind: 'missing' });
+        return;
+      } else if (++errors >= 3) {
+        stopped = true;
+        setState(last ? { kind: 'failed', order: last } : { kind: 'failed' });
         return;
       }
       if (stopped) return;

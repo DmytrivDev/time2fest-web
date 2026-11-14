@@ -565,3 +565,7 @@
 .skelBar {
   max-width: 240px;
 }
+.loadError > span {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
