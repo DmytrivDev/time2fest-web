@@ -43,13 +43,13 @@ import {
 import { buildSchedulePath } from '@/lib/schedule/schedulePath';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import { ratingActions, useMyVotes } from '@/lib/api/hooks/rating';
-import { useGuestStore } from '@/stores/guest';
 import { BIG_POSTCARD_ID, BigPostcard } from './BigPostcard';
 import { FlagStrip } from './FlagStrip';
 import { PassportHowTo } from './PassportHowTo';
 import { PathLock } from './PathLock';
 import { usePassportShare } from './PassportShare';
 import s from './passport.module.css';
+import { useHasPass, useProfile, useSchedule } from '@/lib/api/hooks/auth';
 
 
 export function PassportPage() {
@@ -61,11 +61,12 @@ export function PassportPage() {
   const timeReady = useTimeReady();
   const now = useNow({ granularity: 'minute' });
   const user = useHeaderUser();
-  const hasPass = useGuestStore((g) => g.hasPass);
+  const hasPass = useHasPass();
   const stamps = useStamps();
-  const scheduleRaw = useGuestStore((g) => g.schedule);
-  const nick = useGuestStore((g) => g.nick);
-  const flagCode = useGuestStore((g) => g.flagCode);
+  const scheduleRaw = useSchedule();
+  const profile = useProfile();
+  const nick = profile?.nick ?? undefined;
+  const flagCode = profile?.flagCode ?? undefined;
   const myVotes = useMyVotes();
   const overlay = useOverlay();
   const share = usePassportShare();

@@ -41,10 +41,10 @@ import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { canSayToast } from '@/lib/toast/season';
 import { useTimeSource } from '@/lib/time/TimeProvider';
 import { tierBenefits, TOAST_MAX, TOAST_TIERS, type ToastTier } from '@/lib/toast/tiers';
-import { useGuestStore } from '@/stores/guest';
 import { signatureReady, useToastStore } from '@/stores/toast';
 import { ToastBubble, ToastPill } from './ToastBubble';
 import s from './toastWindow.module.css';
+import { profileActions, useHasPass, useProfile } from '@/lib/api/hooks/auth';
 
 export const TOAST_WINDOW_ID = 'O-TOAST';
 
@@ -306,7 +306,7 @@ function Signature({
   const t = useTranslations('toast');
   const tc = useTranslations('chat.nick');
   const w = useTranslations('windows.nick');
-  const detected = useGuestStore((g) => g.detectedFlag);
+  const detected = useProfile()?.detectedFlag ?? undefined;
   const [flagOpen, setFlagOpen] = useState(false);
   const [touched, setTouched] = useState(false);
   const flags = useMemo(() => flagOptions(), []);
@@ -432,9 +432,10 @@ function Compose({ onCancel, phone }: { onCancel: () => void; phone: boolean }) 
   const setTier = useToastStore((x) => x.setTier);
   const text = useToastStore((x) => x.text);
   const issue = useToastStore((x) => x.issue);
-  const hasPass = useGuestStore((g) => g.hasPass);
-  const storedNick = useGuestStore((g) => g.nick?.trim());
-  const storedFlag = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
+  const hasPass = useHasPass();
+  const profile = useProfile();
+  const storedNick = profile?.nick?.trim() || undefined;
+  const storedFlag = profile?.flagCode ?? profile?.detectedFlag ?? undefined;
   const hasNick = signatureReady(storedNick);
   // Підпис: свій нік — рядок «Підпис у чаті · Змінити»; без дійсного ніку чи «Змінити» — редагування тут же.
   const [editing, setEditing] = useState(!hasNick);
@@ -447,7 +448,8 @@ function Compose({ onCancel, phone }: { onCancel: () => void; phone: boolean }) 
   const ref = useRef<HTMLDivElement>(null);
   const pay = () => {
     if (blocked) return;
-    if (editing) useGuestStore.getState().setNick(draftNick.trim(), draftFlag);
+    // Нік і прапор — профіль (шов, залишки E5); у `sim` запис синхронний — оплата нижче бачить новий підпис.
+    if (editing) void profileActions.update({ nick: draftNick.trim(), flagCode: draftFlag });
     const ok = useToastStore.getState().pay();
     // Фільтр не пропустив — повідомлення про помилку видно (прокрутка до поля).
     if (!ok && useToastStore.getState().issue) {
@@ -517,8 +519,9 @@ function Summary() {
 /** Тост, який уже не змінити (оплата йде чи не пройшла). */
 function LockedField() {
   const text = useToastStore((x) => x.text);
-  const nick = useGuestStore((g) => g.nick?.trim());
-  const flag = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
+  const me = useProfile();
+  const nick = me?.nick?.trim() || undefined;
+  const flag = me?.flagCode ?? me?.detectedFlag ?? undefined;
   return (
     <div className={s.field} data-locked="">
       <div className={s.fieldHead}>

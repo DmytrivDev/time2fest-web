@@ -9,6 +9,7 @@ import { Menu, MenuBody } from '@/components/shell/Menu';
 import messages from '@/messages/uk.json';
 import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
+import { grantTestPass } from '@/tests/unit/_support/pass';
 
 function wrap(ui: React.ReactNode) {
   return render(
@@ -20,7 +21,7 @@ function wrap(ui: React.ReactNode) {
 
 afterEach(() => {
   useAuthStore.setState({ user: null });
-  useGuestStore.setState({ hasPass: false, nick: undefined });
+  useGuestStore.setState({ nick: undefined });
 });
 
 describe('Меню v2', () => {
@@ -46,8 +47,8 @@ describe('Меню v2', () => {
   });
 
   it('увійшла з пасом: картка зі статусом пасу, «Вийти» виходить з акаунта', () => {
-    useAuthStore.setState({ user: { email: 'olena@gmail.com', via: 'email', signedInAt: 0 } } as never);
-    useGuestStore.setState({ nick: 'Олена', hasPass: true });
+    grantTestPass('olena@gmail.com', 0);
+    useGuestStore.setState({ nick: 'Олена' });
     const onOpenChange = vi.fn();
     wrap(<Menu open onOpenChange={onOpenChange} />);
     const card = document.querySelector('[data-block="menu-account"]')!;

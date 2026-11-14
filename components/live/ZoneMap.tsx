@@ -20,7 +20,6 @@ import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
 import { useNow } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { MapLegend } from './MapLegend';
 import { MapGestureHint } from './MapGestureHint';
 import { MapNowCard } from './MapSide';
@@ -43,6 +42,7 @@ import { usePhone } from '@/lib/hooks/useMedia';
 import { MAX_K, MIN_K, useMapZoom } from './useMapZoom';
 import './ZoneMap.css';
 import m from './zoneMap.module.css';
+import { useProfile } from '@/lib/api/hooks/auth';
 
 export { MapLegend } from './MapLegend';
 
@@ -194,7 +194,7 @@ export function ZoneMap({
   const [onCity, setOnCity] = useState<string | null>(null);
   // Підсвітка поясу з рядка черги — черги біля мапи більше немає (рішення 2026-11-04).
   const previewId: string | null = null;
-  const viewerIso = useGuestStore((g) => g.flagCode);
+  const viewerIso = useProfile()?.flagCode ?? undefined;
   const dotRefs = useRef(new Map<string, HTMLElement>());
   const cardRef = useRef<HTMLElement>(null);
 

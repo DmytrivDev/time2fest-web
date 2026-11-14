@@ -6,7 +6,7 @@ import { ok } from '../result';
 import type { Profile, ProfileService, ProfileSettings } from '../contracts/profile';
 import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
 import { DEFAULT_ACCOUNT, useAccountStore } from '@/stores/account';
-import { useAuthStore } from '@/stores/auth';
+import { accountHasPass, useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 
 const SETTING_KEYS = Object.keys(DEFAULT_ACCOUNT).filter((k) => k !== 'googleLinked' && k !== 'pendingEmail') as (keyof ProfileSettings)[];
@@ -26,10 +26,44 @@ function profileNow(): Profile {
   };
 }
 
+/** Той самий об’єкт, поки поля профілю не змінились (стор гостя змінюється часто — чат, пропозиції — профіль ні). */
+let cached: Profile | null = null;
+function profileCached(): Profile {
+  const next = profileNow();
+  const same =
+    cached &&
+    cached.nick === next.nick &&
+    cached.flagCode === next.flagCode &&
+    cached.detectedFlag === next.detectedFlag &&
+    cached.schedule === next.schedule &&
+    cached.googleLinked === next.googleLinked &&
+    cached.pendingEmail === next.pendingEmail &&
+    SETTING_KEYS.every((k) => cached!.settings[k] === next.settings[k]);
+  if (!same) cached = next;
+  return cached!;
+}
+
 export function createSimProfile(): ProfileService {
   return {
     async get() {
-      return ok(profileNow());
+      return ok(profileCached());
+    },
+    peek: () => profileCached(),
+    subscribe(onChange) {
+      let last = profileCached();
+      const emit = () => {
+        const p = profileCached();
+        if (p !== last) {
+          last = p;
+          onChange(p);
+        }
+      };
+      const offGuest = useGuestStore.subscribe(emit);
+      const offAccount = useAccountStore.subscribe(emit);
+      return () => {
+        offGuest();
+        offAccount();
+      };
     },
     async update(patch) {
       const g = useGuestStore.getState();
@@ -82,7 +116,7 @@ export function createSimProfile(): ProfileService {
         flag: guest.flagCode,
         stamps: guest.stamps,
         schedule: guest.schedule,
-        hasPass: guest.hasPass,
+        hasPass: accountHasPass(useAuthStore.getState()),
         settings: Object.fromEntries(Object.entries(useAccountStore.getState()).filter(([, v]) => typeof v !== 'function')),
       });
     },

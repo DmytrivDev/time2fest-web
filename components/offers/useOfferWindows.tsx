@@ -16,7 +16,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { GATE_KEYS, type PassGateFeature } from '@/components/windows/PassGate';
-import { profileActions } from '@/lib/api/hooks/auth';
+import { hasPassNow, profileActions } from '@/lib/api/hooks/auth';
 import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';
 import { useClock } from '@/lib/time/TimeProvider';
@@ -128,7 +128,7 @@ export function useOfferWindows(): PassWindowsApi {
   const requestSchedule = useCallback(
     (eventId: string, _next?: boolean, back?: () => void) => {
       const guest = useGuestStore.getState();
-      if (guest.hasPass) {
+      if (hasPassNow()) {
         const prev = guest.schedule;
         const result = scheduleToggleResult(prev, eventId);
         if (result === 'full') {
@@ -166,7 +166,7 @@ export function useOfferWindows(): PassWindowsApi {
   useEffect(
     () =>
       on('offer:show', (p) => {
-        if (useGuestStore.getState().hasPass) return;
+        if (hasPassNow()) return;
         useGuestStore.getState().showOffer(p.kind, p.triggerEventId, p.at);
       }),
     [],

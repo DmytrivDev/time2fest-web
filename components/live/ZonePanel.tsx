@@ -28,7 +28,6 @@ import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { StateSwatch } from './MapSide';
 import { viewerOffsetAt } from './MapTooltip';
 import { utcLabel, type MapCountry, type MapStream, type MapZone } from './MapModel';
@@ -36,6 +35,7 @@ import { useMidnightPhrase } from './ZoneMapCards';
 import { REGION_ORDER, regionOf, type RegionKey } from './regions';
 import nn from './nowNext.module.css';
 import m from './zonePanel.module.css';
+import { useSchedule } from '@/lib/api/hooks/auth';
 
 const TYPE_KEY = {
   main: 'main',
@@ -443,7 +443,8 @@ export function ScheduleButton({
   size?: 'md' | 'sm';
 }) {
   const onToggle = useContext(MapScheduleContext);
-  const inSchedule = useGuestStore((g) => (eventId ? g.schedule.includes(eventId) : false));
+  const mySchedule = useSchedule();
+  const inSchedule = eventId ? mySchedule.includes(eventId) : false;
   const t = useTranslations('liveCards.eventCard');
   const tNav = useTranslations('nav');
   if (!eventId || !onToggle) return null;

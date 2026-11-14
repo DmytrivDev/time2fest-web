@@ -51,6 +51,7 @@ import { TvSidebar, type TvPanel } from './TvSidebar';
 import { TvTimeline } from './TvTimeline';
 import type { TvCardAction } from './TvTimelineCard';
 import styles from './tv.module.css';
+import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 /** Телефон: інформаційна сторінка замість режиму вечірки. `null` — ще невідомо (статичний рендер і гідратація). */
 function useIsPhone(): boolean | null {
@@ -154,8 +155,8 @@ function TvParty({ online, full: fullProp = false }: TvScreenProps) {
   const router = useRouter();
   const { ready, current, air, watching, watch, setPrefer } = useBroadcast();
   const now = useNow();
-  const schedule = useGuestStore((s) => s.schedule);
-  const hasPass = useGuestStore((s) => s.hasPass);
+  const schedule = useSchedule();
+  const hasPass = useHasPass();
   const show = useTvPrefs((s) => s.show);
   const rootRef = useRef<HTMLDivElement>(null);
   useTvScale(rootRef);

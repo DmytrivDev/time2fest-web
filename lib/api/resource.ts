@@ -95,6 +95,13 @@ export function createResource<T, E = never>(source: () => ResourceSource<T, E>)
   const connect = () => {
     current = source();
     const src = current;
+    // Повторне підключення після паузи без слухачів: дані могли застаріти (подій тоді ніхто не слухав). Свіже значення з
+    // локального кешу адаптера — одразу; React, підписуючись, побачить зміну знімка й перемалює в тому ж такті.
+    const fresh = state.data !== undefined ? src.peek?.() : undefined;
+    if (fresh !== undefined && fresh !== state.data) {
+      version += 1;
+      state = { status: 'ready', data: fresh, error: null };
+    }
     closeRealtime =
       src.subscribe?.((event) => {
         if (state.data === undefined || !src.reduce) return;

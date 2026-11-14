@@ -19,8 +19,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { ToastGift } from '@/components/toast/ToastGift';
 import { useCanToast } from '@/components/toast/useToastSeason';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
-import { authActions, useSession } from '@/lib/api/hooks/auth';
-import { useGuestStore } from '@/stores/guest';
+import { authActions, useHasPass, useProfile, useSession } from '@/lib/api/hooks/auth';
 import { usePassStore } from '@/stores/pass';
 import s from './pass.module.css';
 
@@ -32,7 +31,7 @@ export type PassView = 'guest' | 'signed' | 'opening' | 'pending' | 'failed' | '
 export function usePassView(): PassView {
   const hydrated = useHydrated();
   const phase = usePassStore((st) => st.phase);
-  const hasPass = useGuestStore((st) => st.hasPass);
+  const hasPass = useHasPass();
   const user = (useSession().session?.user ?? null);
   if (!hydrated) return 'guest';
   if (phase === 'success') return 'success';
@@ -130,7 +129,7 @@ function Spinner({ size = 20, big }: { size?: number; big?: boolean }) {
 /** «Оформлюємо на акаунт …» — той, хто увійшов, email не вводить. */
 function AccountRow({ email, note, mt = 16, notYou }: { email: string; note: string; mt?: number; notYou?: () => void }) {
   const t = useTranslations('pass.buy');
-  const nick = useGuestStore((st) => st.nick);
+  const nick = useProfile()?.nick ?? undefined;
   return (
     <>
       <div className={s.account} style={{ marginTop: `${mt / 16}rem` }} data-row="account">
@@ -390,8 +389,9 @@ const CONFETTI = (
 function Success({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => void }) {
   const t = useTranslations('pass.buy');
   const email = (useSession().session?.user?.email ?? '');
-  const nick = useGuestStore((st) => st.nick);
-  const flagCode = useGuestStore((st) => st.flagCode ?? st.detectedFlag ?? 'earth');
+  const profile = useProfile();
+  const nick = profile?.nick ?? undefined;
+  const flagCode = profile?.flagCode ?? profile?.detectedFlag ?? 'earth';
   const name = nick?.trim() || email.split('@')[0] || '';
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => ref.current?.focus({ preventScroll: true }), []);

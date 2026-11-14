@@ -5,16 +5,15 @@ import { PassPerksShowcase } from '@/components/pass/PassPerks';
 import { GOOGLE_DELAY_MS } from '@/lib/auth/sim';
 import { PAY_ROUNDTRIP_MS } from '@/lib/offers/paySim';
 import { useAuthStore } from '@/stores/auth';
-import { useGuestStore } from '@/stores/guest';
 import { usePassStore } from '@/stores/pass';
 import { useTestControls } from '@/stores/testControls';
 import { renderWithApp } from '../_support/render';
+import { grantTestPass, testHasPass } from '@/tests/unit/_support/pass';
 
 const T0 = Date.UTC(2026, 11, 28, 18, 0, 0);
 
 function resetAll() {
   useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {} });
-  useGuestStore.getState().setHasPass(false);
   usePassStore.getState().reset();
   useTestControls.getState().setPayResult('success');
   useTestControls.getState().setGoogleCancelled(false);
@@ -28,7 +27,7 @@ describe('оформлення пасу (імітація): гість, увій
   });
   afterEach(() => vi.useRealTimers());
 
-  it('гість з email: помилка адреси — оплату не почато; правильна — акаунт створено з оплатою, пас на акаунті й пристрої', () => {
+  it('гість з email: помилка адреси — оплату не почато; правильна — акаунт створено з оплатою, пас на акаунті й пристрої', async () => {
     const pass = () => usePassStore.getState();
     pass().setEmail('olena@example');
     expect(pass().submitEmail()).toBe(false);
@@ -36,24 +35,29 @@ describe('оформлення пасу (імітація): гість, увій
     pass().setEmail(' Olena@Example.com ');
     expect(pass().emailIssue).toBeNull();
     expect(pass().submitEmail()).toBe(true);
+    // «Переходимо на оплату» — щойно сервіс оплати прийняв замовлення (шов, залишки E5; у `sim` — той самий такт).
+    await act(async () => undefined);
     expect(pass().phase).toBe('opening');
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
     expect(pass().phase).toBe('success');
     expect(useAuthStore.getState().user?.email).toBe('olena@example.com');
     expect(useAuthStore.getState().passes['olena@example.com']).toBe(T0 + PAY_ROUNDTRIP_MS);
-    expect(useGuestStore.getState().hasPass).toBe(true);
+    expect(testHasPass()).toBe(true);
   });
 
-  it('адреса, на яку пас уже оформлено: «На цю адресу пас уже оформлено», без оплати', () => {
+  it('адреса, на яку пас уже оформлено: «На цю адресу пас уже оформлено», без оплати', async () => {
     useAuthStore.setState({ accounts: ['olena@example.com'], passes: { 'olena@example.com': T0 - 1000 } });
     const pass = () => usePassStore.getState();
     pass().setEmail('olena@example.com');
-    expect(pass().submitEmail()).toBe(false);
+    // Перевіряє сервіс оплати (`conflict` `pass-owned`), а не вікно саме.
+    pass().submitEmail();
+    await act(async () => undefined);
     expect(pass().paidEmail).toBe(true);
     expect(pass().phase).toBe('form');
+    expect(pass().clientId).toBeUndefined();
     // Вхід у такий акаунт вмикає пас і на цьому пристрої.
     useAuthStore.getState().signInWithPurchase('olena@example.com', T0);
-    expect(useGuestStore.getState().hasPass).toBe(true);
+    expect(testHasPass()).toBe(true);
   });
 
   it('той, хто увійшов: оплата без email; «Чекаємо підтвердження» → підтверджено; «Оплата не пройшла» → «Спробувати ще»', () => {
@@ -63,7 +67,7 @@ describe('оформлення пасу (імітація): гість, увій
     pass().pay();
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
     expect(pass().phase).toBe('failed');
-    expect(useGuestStore.getState().hasPass).toBe(false);
+    expect(testHasPass()).toBe(false);
 
     useTestControls.getState().setPayResult('pending');
     pass().pay();
@@ -72,21 +76,22 @@ describe('оформлення пасу (імітація): гість, увій
     expect(pass().pendingSince).toBeDefined();
     pass().confirm();
     expect(pass().phase).toBe('success');
-    expect(useGuestStore.getState().hasPass).toBe(true);
+    expect(testHasPass()).toBe(true);
   });
 
-  it('«Оформити з Google»: вхід Google, далі оплата; скасовано — рядок помилки й форма', () => {
+  it('«Оформити з Google»: вхід Google, далі оплата; скасовано — рядок помилки й форма', async () => {
     const pass = () => usePassStore.getState();
     useTestControls.getState().setGoogleCancelled(true);
     pass().startGoogle();
     expect(pass().phase).toBe('google');
-    act(() => vi.advanceTimersByTime(GOOGLE_DELAY_MS));
+    // Вхід Google — через сервіс входу (асинхронно, шов — залишки E5).
+    await act(async () => vi.advanceTimersByTime(GOOGLE_DELAY_MS));
     expect(pass().phase).toBe('form');
     expect(pass().googleFailed).toBe(true);
 
     useTestControls.getState().setGoogleCancelled(false);
     pass().startGoogle();
-    act(() => vi.advanceTimersByTime(GOOGLE_DELAY_MS));
+    await act(async () => vi.advanceTimersByTime(GOOGLE_DELAY_MS));
     expect(useAuthStore.getState().user?.via).toBe('google');
     expect(pass().phase).toBe('opening');
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
@@ -143,7 +148,7 @@ describe('PassBuy — картка оформлення', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $5' }));
-    const box = screen.getByRole('alert');
+    const box = await screen.findByRole('alert');
     expect(box).toHaveTextContent('На цю адресу пас уже оформлено');
     expect(box).toHaveTextContent('Посилання для входу надішлемо на цю пошту.');
     expect(screen.getByRole('button', { name: 'Оформити пас — $5' })).toHaveAttribute('aria-disabled', 'true');
@@ -179,7 +184,7 @@ describe('PassBuy — картка оформлення', () => {
   });
 
   it('пас уже є: «Твій пас уже діє», купувати вдруге не треба', () => {
-    useGuestStore.getState().setHasPass(true);
+    grantTestPass();
     renderWithApp(<PassBuy variant="page" {...props} />);
     expect(screen.getByRole('heading', { name: 'Твій пас уже діє' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Оформити пас/ })).toBeNull();
@@ -188,7 +193,7 @@ describe('PassBuy — картка оформлення', () => {
   });
 
   it('пас уже є, вікно: «Дивитися далі» і «Детальніше про пас», без «Мій паспорт»', () => {
-    useGuestStore.getState().setHasPass(true);
+    grantTestPass();
     renderWithApp(<PassBuy variant="stream" {...props} />);
     expect(screen.getByRole('button', { name: 'Дивитися далі' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Детальніше про пас' }).getAttribute('href')).toMatch(/^\/pass\/?$/);

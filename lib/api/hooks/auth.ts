@@ -8,7 +8,7 @@
  */
 import { useSyncExternalStore } from 'react';
 import type { AuthIntent, DevLetter, Session } from '../contracts/auth';
-import type { ProfilePatch } from '../contracts/profile';
+import type { Profile, ProfilePatch } from '../contracts/profile';
 import { createResource, useResource } from '../resource';
 import { getService } from '../services';
 
@@ -35,7 +35,13 @@ export function useHasPass(): boolean {
 
 /** Остання відома сесія поза React (обробники, перевірки після дії). */
 export function currentSession(): Session | null {
-  return authSession.getSnapshot().data ?? null;
+  // Спершу — локальний кеш адаптера (свіжий навіть тоді, коли ресурс зараз ніхто не слухає), далі — кеш ресурсу.
+  return getService('auth').peek() ?? authSession.getSnapshot().data ?? null;
+}
+
+/** Пас того, хто увійшов, поза React (обробники, правила пропозицій). Джерело — сесія, а не стан гостя. */
+export function hasPassNow(): boolean {
+  return currentSession()?.hasPass ?? false;
 }
 
 export const authActions = {
@@ -56,6 +62,28 @@ export function useDevMailbox(): { letter: DevLetter | null; expire: () => void 
   const box = getService('auth').devMailbox;
   const letter = useSyncExternalStore(box?.subscribe ?? noMailbox, box?.get ?? nullLetter, nullLetter);
   return box ? { letter, expire: box.expire } : null;
+}
+
+export const profileResource = createResource<Profile, Profile>(() => {
+  const svc = getService('profile');
+  return { load: () => svc.get(), subscribe: svc.subscribe ? (cb) => svc.subscribe!(cb) : undefined, reduce: (_, p) => p, peek: () => svc.peek?.() };
+});
+
+/** Профіль (нік, прапор, графік, налаштування кабінету). На сервері й під час гідратації — `null`. */
+export function useProfile(): Profile | null {
+  return useResource(profileResource).data ?? null;
+}
+
+const NO_SCHEDULE: readonly string[] = [];
+
+/** «Мій графік» (профіль). */
+export function useSchedule(): readonly string[] {
+  return useProfile()?.schedule ?? NO_SCHEDULE;
+}
+
+/** Профіль поза React (обробники) — свіжий кеш адаптера. */
+export function currentProfile(): Profile | null {
+  return getService('profile').peek?.() ?? profileResource.getSnapshot().data ?? null;
 }
 
 export const profileActions = {

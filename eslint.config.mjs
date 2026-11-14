@@ -69,8 +69,12 @@ export default tseslint.config(
           message: '«Мій графік» — профіль (E5b): profileActions.toggleSchedule / replaceSchedule / setSchedule з @/lib/api/hooks/auth.',
         },
         {
-          selector: "MemberExpression[property.name='setHasPass']",
-          message: 'Пас — лише з сесії (useSession().session.hasPass / useHeaderPass); guest.hasPass пише тільки «сервер» імітації.',
+          selector: "MemberExpression[property.name=/^(setNick|setFlag|setDetectedFlag|setHasPass)$/]",
+          message: 'Нік і прапор пише профіль (profileActions.update з @/lib/api/hooks/auth); пас — лише з сесії (useHasPass / hasPassNow).',
+        },
+        {
+          selector: "CallExpression[callee.name='useGuestStore'] MemberExpression[property.name=/^(nick|flagCode|detectedFlag|schedule|hasPass)$/]",
+          message: 'Профіль і графік читай через useProfile / useSchedule, пас — через useHasPass (@/lib/api/hooks/auth).',
         },
         {
           selector: "MemberExpression[property.name='setRate']",

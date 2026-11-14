@@ -6,8 +6,7 @@
  */
 import { useSyncExternalStore } from 'react';
 import type { HeaderUser } from '@/components/shell/Header';
-import { useSession } from '@/lib/api/hooks/auth';
-import { useGuestStore } from '@/stores/guest';
+import { useProfile, useSession } from '@/lib/api/hooks/auth';
 
 const noopSubscribe = () => () => undefined;
 
@@ -25,9 +24,10 @@ export function useHeaderPass(): boolean {
 export function useHeaderUser(): HeaderUser | null {
   const hydrated = useHydrated();
   const email = useSession().session?.user?.email ?? null;
-  const nick = useGuestStore((s) => s.nick);
+  const profile = useProfile();
+  const nick = profile?.nick;
   // Прапор аватара — обраний у чаті/при реєстрації, інакше визначений за країною.
-  const flag = useGuestStore((s) => s.flagCode ?? s.detectedFlag);
+  const flag = profile?.flagCode ?? profile?.detectedFlag ?? undefined;
   if (!hydrated || !email) return null;
   return { name: nick?.trim() || email.split('@')[0] || email, flag };
 }

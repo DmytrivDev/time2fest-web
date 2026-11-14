@@ -297,7 +297,6 @@ export interface GuestState {
   rate: Record<string, { stars?: Stars; closed: boolean }>;
   offers: OfferState;
   schedule: string[];
-  hasPass: boolean;
   nightId: NightId;
 }
 

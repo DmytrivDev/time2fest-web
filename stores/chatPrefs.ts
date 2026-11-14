@@ -5,7 +5,7 @@
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { useGuestStore } from './guest';
+import { useHasPass } from '@/lib/api/hooks/auth';
 
 export type ChatPrefKey = 'quiet' | 'translate' | 'notifyReplies' | 'showRoute';
 
@@ -44,7 +44,7 @@ export function effectivePref(prefs: Pick<ChatPrefsState, ChatPrefKey>, key: Cha
 
 /** Хук: чинне значення одного налаштування для гостя. */
 export function useChatPref(key: ChatPrefKey): boolean {
-  const hasPass = useGuestStore((s) => s.hasPass);
+  const hasPass = useHasPass();
   const value = useChatPrefs((s) => (key === 'showRoute' ? s.showRoute : s[key]));
   return effectivePref({ quiet: false, translate: false, notifyReplies: false, showRoute: null, [key]: value } as Pick<ChatPrefsState, ChatPrefKey>, key, hasPass);
 }

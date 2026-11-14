@@ -7,6 +7,12 @@
 import { gotoAt, waitForTimeApi } from './fixtures/time';
 import { expect, test } from './fixtures/youtube-stub';
 
+/** Пас того, хто увійшов (те саме, що `session.hasPass`): є вхід і на його пошту оформлено пас. */
+function accountPass(): boolean {
+  const a = JSON.parse(localStorage.getItem('t2f:auth:v1') ?? '{}').state ?? {};
+  return !!a.user && a.passes?.[a.user.email] !== undefined;
+}
+
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
 test.describe.configure({ timeout: 120_000 });
 test.beforeEach(async ({ page }, testInfo) => {
@@ -56,7 +62,8 @@ test('вікно пасу під час свята: рядок «Скажи то
   await expect(win.locator('[data-toast-gift="pending"]')).toContainText('Новорічний пас — подарунок до тосту', { timeout: 15_000 });
   await win.getByRole('button', { name: 'Увійти й активувати пас' }).click();
   await page.getByRole('button', { name: /Увійти з Google|Google/ }).first().click();
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.hasPass), { timeout: 15_000 }).toBe(true);
+  // Пас — лише з акаунта, що увійшов (шов, залишки E5): окремого «паса на пристрої» в стані гостя більше немає.
+  await expect.poll(() => page.evaluate(accountPass), { timeout: 15_000 }).toBe(true);
 });
 
 test('оплата поштою: «Чекаємо підтвердження» переживає перезавантаження → «Пас активний» → «Твій пас уже діє»', async ({ page }) => {
@@ -126,8 +133,8 @@ test('без входу паса немає: старий «пас на прис
   await expect(page.getByRole('button', { name: 'Оформити з Google' })).toBeVisible();
   await expect(page.locator('[data-phase="active"]')).toHaveCount(0);
   await expect(page.locator('main')).not.toContainText('Твій пас уже діє');
-  const hasPass = await page.evaluate(() => JSON.parse(localStorage.getItem('t2f:guest:v1') ?? '{}').state?.hasPass);
-  expect(hasPass).toBe(false);
+  // Старе поле `hasPass` у стані гостя ніхто не читає: пасу немає, бо немає входу в акаунт з пасом.
+  expect(await page.evaluate(accountPass)).toBe(false);
 });
 
 test('вхід Google без оплати пасу не дає; оплата дає; вихід знімає; «Скинути стан гостя» стирає все', async ({ page }) => {

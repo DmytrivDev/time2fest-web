@@ -42,6 +42,7 @@ import { useAccountStore } from '@/stores/account';
 import { useGuestStore } from '@/stores/guest';
 import { utcLabel } from './MapModel';
 import { create } from 'zustand';
+import { useHasPass } from '@/lib/api/hooks/auth';
 
 interface StampMoment {
   eventIds: string[];
@@ -128,8 +129,9 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   const myVotes = useMyVotes();
   const guestId = useGuestStore((s) => s.id);
   // Під штампом — пропозиція пасу (`OfferBlock`) зі своєю кораловою дією → «Поділитися» вторинна.
+  const hasPass = useHasPass();
   const offerShown = useGuestStore((s) => {
-    if (s.hasPass) return false;
+    if (hasPass) return false;
     const last = s.offers.history.findLast((e) => e.kind === 'pass-offer');
     return !!last && last.dismissedAt === undefined;
   });

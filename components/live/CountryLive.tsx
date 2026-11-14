@@ -89,11 +89,11 @@ import {
 import type { PlayerSource } from '@/lib/player/types';
 import { usePresence } from '@/lib/api/hooks/passport';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { eventTitle } from './Caption';
 import home from './home.module.css';
 import { utcLabel } from './MapModel';
 import styles from './live.module.css';
+import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 const PLAYER_TITLE_ID = 'player-title';
 const STREAMS_ID = 'country-streams';
@@ -329,7 +329,7 @@ export function CountryLive({ iso }: { iso: string }) {
   useMomentWindows();
   // Пропозиція пасу (offer:show) і стан введення для рушія пропозицій.
   const passWindows = useOfferWindows();
-  const hasPass = useGuestStore((s) => s.hasPass);
+  const hasPass = useHasPass();
   const getPass = useGetPass();
 
   const countryRows = useMemo(
@@ -434,7 +434,8 @@ export function CountryLive({ iso }: { iso: string }) {
     () => (mainEvent ? countryZoneEvents(mainEvent.id) : []),
     [mainEvent],
   );
-  const inSchedule = useGuestStore((g) => scheduleIds.some((id) => g.schedule.includes(id)));
+  const mySchedule = useSchedule();
+  const inSchedule = scheduleIds.some((id) => mySchedule.includes(id));
   const toggleSchedule = useCallback(() => {
     if (mainEvent) passWindows.requestSchedule(mainEvent.id);
   }, [mainEvent, passWindows]);
@@ -446,7 +447,7 @@ export function CountryLive({ iso }: { iso: string }) {
     answer: tc(`faq.items.${id}.a`, { time: mainEvent ? formatClock(mainEvent.midnightMs) : '' }),
   }));
 
-  const schedule = useGuestStore((s) => s.schedule);
+  const schedule = useSchedule();
   // «Зараз і далі» — і до півночі, і після (правка власника 2026-11-05: на Азорських островах його не було).
   const nowNext = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true, mainCards: true }), [data, minute, schedule]);
 

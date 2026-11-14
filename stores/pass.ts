@@ -16,12 +16,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getService } from '@/lib/api/services';
 import { setCheckoutClock, simConfirmOrder } from '@/lib/api/sim/checkout';
-import { GOOGLE_DELAY_MS, isEmail, normalizeEmail } from '@/lib/auth/sim';
+import { authActions, hasPassNow } from '@/lib/api/hooks/auth';
+import { isEmail } from '@/lib/auth/email';
 import type { Ms } from '@/lib/data/types';
 import { PENDING_CONFIRM_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
 import { useAuthStore } from '@/stores/auth';
-import { useTestControls } from '@/stores/testControls';
 
 export type PassPhase = 'form' | 'google' | 'opening' | 'pending' | 'failed' | 'success';
 export type PassEmailIssue = 'empty' | 'invalid' | null;
@@ -56,8 +56,8 @@ export interface PassFlowState {
   submitEmail(): boolean;
   /** «Оформити з Google» (гість): імітований вхід Google, далі — оплата. */
   startGoogle(): void;
-  /** «Оформити пас» того, хто увійшов, і «Спробувати ще». */
-  pay(): void;
+  /** «Оформити пас» того, хто увійшов, і «Спробувати ще». `afterStart` — фаза «переходимо» лише після згоди сервісу. */
+  pay(opts?: { afterStart?: boolean }): void;
   /** Тестова кнопка «підтвердити» (у `http` — вебхук; у `sim` — `CheckoutSettler` за часом сайту). */
   confirm(): void;
   /** Нове оформлення (вихід з акаунта, «Не ти?», закриття успіху). */
@@ -66,14 +66,8 @@ export interface PassFlowState {
   resume(): void;
 }
 
-let timer: ReturnType<typeof setTimeout> | null = null;
-function later(fn: () => void, ms: number) {
-  if (timer) clearTimeout(timer);
-  timer = setTimeout(() => {
-    timer = null;
-    fn();
-  }, ms);
-}
+/** Вхід Google, що триває (скасування — «Не ти?», скидання). */
+let googleRun: AbortController | null = null;
 
 /** Годинник сайту для `pendingSince` (машина часу тестової збірки) — тепер у спільному процесі оплати. */
 export function setPassClock(now: () => Ms): void {
@@ -121,40 +115,53 @@ export const usePassStore = create<PassFlowState>()(
         set({ emailIssue: issue, paidEmail: false });
         return false;
       }
-      if (useAuthStore.getState().passes[normalizeEmail(value)] !== undefined) {
-        set({ emailIssue: null, paidEmail: true });
-        return false;
-      }
+      // «На цю адресу пас уже оформлено» вирішує сервіс оплати (`conflict` `pass-owned`, шов — залишки E5): фаза
+      // «Переходимо на оплату» вмикається лише після згоди сервісу (у `sim` — у тому ж такті), тож відмова не блимає.
       set({ emailIssue: null, paidEmail: false });
-      get().pay();
+      get().pay({ afterStart: true });
       return true;
     },
     startGoogle: () => {
       set({ phase: 'google', googleFailed: false, paidEmail: false });
-      later(() => {
-        if (useTestControls.getState().googleCancelled) {
+      // Вхід Google — через сервіс входу (шов, залишки E5); «скасовано» з тестової панелі читає адаптер.
+      googleRun?.abort();
+      const run = new AbortController();
+      googleRun = run;
+      void authActions.google({ returnPath: '/pass/', signal: run.signal }).then((res) => {
+        if (run.signal.aborted || get().phase !== 'google') return;
+        googleRun = null;
+        if (!res.ok) {
           set({ phase: 'form', googleFailed: true });
           return;
         }
-        const res = useAuthStore.getState().signInGoogle(Date.now());
+        if (res.value.kind === 'redirect') {
+          window.location.assign(res.value.url);
+          return;
+        }
         // Акаунт Google уже з пасом — оплата не потрібна (сторінка покаже «Пас уже є»).
-        if (useAuthStore.getState().passes[res.email] !== undefined) {
+        if (hasPassNow()) {
           set({ phase: 'form' });
           return;
         }
         get().pay();
-      }, GOOGLE_DELAY_MS);
+      });
     },
-    pay: () => {
-      if (get().phase === 'opening') return;
+    pay: (opts) => {
+      if (get().phase === 'opening' || get().clientId) return;
       const clientId = newClientId();
-      set({ phase: 'opening', clientId });
+      // Гість з поштою: «Переходимо на оплату» — лише коли сервіс прийняв замовлення (див. `submitEmail`).
+      set(opts?.afterStart ? { clientId } : { phase: 'opening', clientId });
       listen();
       const signedIn = useAuthStore.getState().user !== null;
       void getService('checkout')
         .start({ product: { kind: 'pass' }, ...(signedIn ? {} : { email: get().email }), returnPath: '/pass/', clientId })
         .then((res) => {
-          if (res.ok || get().clientId !== clientId) return;
+          if (get().clientId !== clientId) return;
+          if (res.ok) {
+            // Подія замовлення могла вже змінити фазу («чекаємо», «оплачено») — тоді не повертаємо «переходимо».
+            if (get().phase === 'form' && res.value.order.status === 'open') set({ phase: 'opening' });
+            return;
+          }
           // На цю адресу пас уже оформлено — як перевірка форми; інакше — «Оплата не пройшла».
           if (res.error.reason === 'pass-owned') set({ phase: 'form', paidEmail: true, clientId: undefined });
           else set({ phase: 'failed', clientId: undefined });
@@ -165,8 +172,8 @@ export const usePassStore = create<PassFlowState>()(
       if (phase === 'pending' && clientId) simConfirmOrder(clientId);
     },
     reset: () => {
-      if (timer) clearTimeout(timer);
-      timer = null;
+      googleRun?.abort();
+      googleRun = null;
       set({ ...INITIAL });
     },
     resume: () => {

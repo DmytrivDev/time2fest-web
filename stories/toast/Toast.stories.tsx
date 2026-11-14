@@ -38,8 +38,12 @@ const SAID: ToastRecord[] = [
 /** Стан тосту й гостя для історії. */
 function withState(flow: Partial<ToastFlowState>, guest: { nick?: string; hasPass?: boolean } = { nick: 'Олена' }, signedIn = false): Decorator {
   return function ToastState(Story) {
-    useGuestStore.setState({ nick: guest.nick, flagCode: 'UA', detectedFlag: 'UA', hasPass: !!guest.hasPass });
-    useAuthStore.setState({ user: signedIn ? { email: 'olena@example.com', via: 'email', signedInAt: 0 } : null });
+    useGuestStore.setState({ nick: guest.nick, flagCode: 'UA', detectedFlag: 'UA' });
+    // Пас — лише з акаунта (шов, залишки E5): власник пасу в історії — той, хто увійшов, з пасом на акаунті.
+    useAuthStore.setState({
+      user: signedIn || guest.hasPass ? { email: 'olena@example.com', via: 'email', signedInAt: 0 } : null,
+      passes: guest.hasPass ? { 'olena@example.com': 0 } : {},
+    });
     useToastStore.setState({ phase: 'form', tier: 5, text: '🥂 За всіх, хто зустрічає разом!', issue: null, gift: null, said: SAID, ...flow });
     return <Story />;
   };

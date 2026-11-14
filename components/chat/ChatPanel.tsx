@@ -44,6 +44,7 @@ import { ChatSettings } from './ChatSettings';
 import { Composer, type ComposerError } from './Composer';
 import { TRANSLATE_GATE_WINDOW_ID, TranslateGate } from './TranslateGate';
 import { useChatLookup } from './useChatLookup';
+import { hasPassNow, profileActions, useHasPass } from '@/lib/api/hooks/auth';
 
 export const NICK_WINDOW_ID = 'O-NICK';
 export const AUTHOR_WINDOW_ID = 'O-AUTHOR';
@@ -94,7 +95,8 @@ export function ChatPanel({
   const lookup = useChatLookup();
 
   const guest = useGuestStore();
-  const { setNick, setDetectedFlag, recordSent, setLastRoom } = guest;
+  const viewerPass = useHasPass();
+  const { recordSent, setLastRoom } = guest;
   // «Немає з’єднання» — стан мережі пристрою (тестова панель імітує його для всього сайту, не лише чату).
   const offline = useTestControls((s) => s.offlineSimulated);
   const slowForced = useTestControls((s) => s.slowForcedSec);
@@ -168,7 +170,7 @@ export function ChatPanel({
         guestId: store.id,
         nick: override?.nick ?? store.nick,
         flagCode: override?.flagCode ?? store.flagCode ?? store.detectedFlag,
-        hasPass: store.hasPass,
+        hasPass: hasPassNow(),
         canWrite: () => true,
         slowSeconds: chatActions.slowSeconds(roomId, nowMs),
         sentAt: store.chat.sentAt,
@@ -212,7 +214,7 @@ export function ChatPanel({
     (pendingText: string | null) => {
       const store = useGuestStore.getState();
       const detected = store.detectedFlag ?? detectFlag();
-      if (detected && detected !== store.detectedFlag) setDetectedFlag(detected);
+      if (detected && detected !== store.detectedFlag) void profileActions.update({ detectedFlag: detected });
       overlay.open({
         id: NICK_WINDOW_ID,
         inChat: true,
@@ -232,7 +234,8 @@ export function ChatPanel({
             onSignIn={() => openAuthWindow()}
             onGetPass={() => getPass()}
             onDone={({ nick, flagCode }) => {
-              setNick(nick, flagCode);
+              // Нік і прапор — профіль (шов, залишки E5); у `sim` запис синхронний — відправлення нижче бачить нік.
+              void profileActions.update({ nick, ...(flagCode ? { flagCode } : {}) });
               overlay.close(NICK_WINDOW_ID);
               if (pendingText) trySend(pendingText, { nick, flagCode });
             }}
@@ -240,7 +243,7 @@ export function ChatPanel({
         ),
       });
     },
-    [overlay, t, flagOptions, takenNicks, setNick, setDetectedFlag, trySend, focusField, openAuthWindow, getPass],
+    [overlay, t, flagOptions, takenNicks, trySend, focusField, openAuthWindow, getPass],
   );
 
   const submit = useCallback(
@@ -297,7 +300,7 @@ export function ChatPanel({
       const path = author.isMine
         ? buildOwnPath(currentStamps(), guest.schedule, getData(), clock.getSnapshot())
         : (chatActions.authorPath(author, clock.getSnapshot())?.points ?? []);
-      const viewerHasPass = useGuestStore.getState().hasPass;
+      const viewerHasPass = hasPassNow();
       overlay.open({
         id: AUTHOR_WINDOW_ID,
         inChat: true,
@@ -438,7 +441,7 @@ export function ChatPanel({
         <ChatSettings
           id={id}
           titleRef={titleRef}
-          hasPass={guest.hasPass}
+          hasPass={viewerPass}
           quietHidden={quietHidden}
           nick={guest.nick ?? null}
           flagCode={guest.flagCode ?? guest.detectedFlag ?? null}
@@ -450,7 +453,7 @@ export function ChatPanel({
         />
       )}
       announceNew
-      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete, onTranslateLocked: guest.hasPass ? undefined : openTranslateGate }}
+      messageActions={{ menuAlways: !column, onReact, onReply, onMention, onReport, onDelete, onTranslateLocked: viewerPass ? undefined : openTranslateGate }}
       composer={
         <Composer
           room={{ id: roomId, label: roomLabel }}

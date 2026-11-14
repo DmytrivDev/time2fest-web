@@ -13,9 +13,10 @@ import { useGuestStore } from '@/stores/guest';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import { resumeToastFlow, setToastClock, TOAST_PAY_MS, TOAST_STORAGE_KEY, useToastStore } from '@/stores/toast';
+import { testHasPass } from '@/tests/unit/_support/pass';
 
 const T0 = Date.UTC(2026, 11, 31, 22, 30, 0);
-const hasPass = () => useGuestStore.getState().hasPass;
+const hasPass = testHasPass;
 const settle = () => act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS + TOAST_PAY_MS + 10));
 
 function payToast(tier: 2 | 5 | 10, text = 'З Новим роком!') {

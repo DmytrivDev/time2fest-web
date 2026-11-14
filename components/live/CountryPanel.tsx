@@ -12,12 +12,12 @@ import { HANDOVER_AFTER } from '@/lib/engine/config';
 import type { ZoneState } from '@/lib/engine/zoneState';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { StateSwatch } from './MapSide';
 import { utcLabel, type MapCountry, type MapCountryStream, type MapZone } from './MapModel';
 import { MapScheduleContext, PlayMark, ScheduleButton, Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
+import { useProfile, useSchedule } from '@/lib/api/hooks/auth';
 
 const TYPE_KEY = {
   main: 'main',
@@ -107,7 +107,7 @@ export function CountryPanel({
 }: CountryPanelProps) {
   const zoneBtnRef = useTakeFocus(takeFocus, `${zone.id}:${country.iso}`);
   const t = useTranslations('liveMap.country');
-  const viewerIso = useGuestStore((g) => g.flagCode);
+  const viewerIso = useProfile()?.flagCode ?? undefined;
   const now = useNow();
   const streams = country.streams ?? [];
   const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
@@ -440,7 +440,8 @@ function CountdownCard({ city, eventId }: { city: string; eventId?: string | und
 /** «Додати в графік» під кнопкою кімнати (рішення 2026-11-04): додали — «У графіку · нагадаємо за 10 хв». */
 function ScheduleWide({ eventId, city }: { eventId?: string | undefined; city: string }) {
   const onToggle = useContext(MapScheduleContext);
-  const inSchedule = useGuestStore((g) => (eventId ? g.schedule.includes(eventId) : false));
+  const mySchedule = useSchedule();
+  const inSchedule = eventId ? mySchedule.includes(eventId) : false;
   const t = useTranslations('liveMap.country');
   if (!eventId || !onToggle) return null;
   return (

@@ -9,6 +9,7 @@ import { midnightOf } from '@/lib/engine/eventStatus';
 import type { OfferContext } from '@/lib/engine/offerEligibility';
 import { useGuestStore } from '@/stores/guest';
 import { getOfferUi } from './uiState';
+import { hasPassNow } from '@/lib/api/hooks/auth';
 
 /** Сумісна з `getOfferContext(now)`: стан гостя від часу не залежить, тож `now` не потрібен. */
 export function buildOfferContext(): OfferContext | null {
@@ -31,7 +32,8 @@ export function buildOfferContext(): OfferContext | null {
     stamps: guest.stamps,
     lastEvent: last,
     nextEvent: next,
-    hasPass: guest.hasPass,
+    // Пас — із сесії (сервіс входу), не зі стану гостя (шов, залишки E5).
+    hasPass: hasPassNow(),
     // Оцінка — рядок у штампі (рішення 2026-11-01): вікна не займає й пропозицій не блокує; окремої картки немає.
     rate: 'none',
     offers: guest.offers,

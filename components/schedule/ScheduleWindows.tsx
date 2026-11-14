@@ -20,9 +20,9 @@ import { fold, getSearchIndex, matchesCityName, matchesCountryName } from '@/lib
 import { scheduledCountries, zoneCountryIsos, zoneSlotCount } from '@/lib/schedule/countryZone';
 import { GROUP_ORDER, scheduleCountry, type CountryGroup, type ScheduleCountry } from '@/lib/schedule/scheduleCountry';
 import { useNow } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { ScheduleCountryCard } from './ScheduleCountryCard';
 import s from './schedule.module.css';
+import { useSchedule } from '@/lib/api/hooks/auth';
 
 /** З якої кількості країн у поясі показуємо пошук. */
 const SEARCH_FROM = 6;
@@ -50,14 +50,14 @@ export function countryInSchedule(schedule: readonly string[], zoneId: string, i
 /** Підзаголовок вікна поясу: «У графіку 2 з 4 · клік по картці — сторінка країни» (оновлюється разом із графіком). */
 export function ZoneCountriesSub({ zoneId }: { zoneId: string }) {
   const t = useTranslations('schedulePage.zone');
-  const schedule = useGuestStore((g) => g.schedule);
+  const schedule = useSchedule();
   return <>{t('sub', { count: scheduledCountries(schedule, zoneId).length, limit: zoneSlotCount(zoneId) })}</>;
 }
 
 export function ZoneCountriesPanel({ zoneId, onToggle }: { zoneId: string; onToggle(eventId: string): void }) {
   const t = useTranslations('schedulePage.zone');
   const now = useNow();
-  const schedule = useGuestStore((g) => g.schedule);
+  const schedule = useSchedule();
   const countries = useZoneCountries(zoneId);
   const [query, setQuery] = useState('');
   const searchId = useId();
@@ -131,7 +131,7 @@ export function ScheduleReplaceContent({
   const locale = useLocale();
   const event = getData().eventsById.get(eventId);
   const zoneId = event?.zoneId ?? '';
-  const schedule = useGuestStore((g) => g.schedule);
+  const schedule = useSchedule();
   const countries = useZoneCountries(zoneId);
   const adding = countries.find((c) => c.iso === event?.countryIso);
   const inZone = scheduledCountries(schedule, zoneId)

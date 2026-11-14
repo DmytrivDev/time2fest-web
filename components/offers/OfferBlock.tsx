@@ -23,6 +23,7 @@ import { useGuestStore } from '@/stores/guest';
 import { metPoints, nextPoints } from '@/lib/offers/passPath';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useOfferGetPass } from './OfferWindows';
+import { useHasPass } from '@/lib/api/hooks/auth';
 
 const LEAVE_MS = 220;
 /** Reveal стягує місце за 240 мс. */
@@ -35,8 +36,9 @@ export function OfferBlock({ className }: { className?: string }) {
   const now = useNow({ granularity: 'minute' });
   // Картка блоку — остання незакрита пропозиція пасу (з історії, не з `visible`: вікна-підказки на кшталт
   // «Графік — у пасі» теж пишуть `visible`, але картку під штампом не витісняють).
+  const hasPass = useHasPass();
   const shownNow = useGuestStore((g): boolean => {
-    if (g.hasPass) return false;
+    if (hasPass) return false;
     const last = g.offers.history.findLast((e) => e.kind === 'pass-offer');
     return !!last && last.dismissedAt === undefined;
   });

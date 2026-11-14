@@ -88,6 +88,7 @@ import { RoomPageContext } from './useRoomToggle';
 import { useRoomDrag } from './useRoomDrag';
 import { useRoomViewport } from './useRoomViewport';
 import s from './room.module.css';
+import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 const SOUND_POLL_MS = 1_000;
 /** Після «Звук сюди» YouTube віддає новий стан звуку не миттєво — стільки довіряємо дії людини. */
@@ -190,9 +191,9 @@ export function RoomLive() {
 
   const room = useRoom();
   const { pickTarget, started, hostSlot } = useRoomStore();
-  const schedule = useGuestStore((st) => st.schedule);
+  const schedule = useSchedule();
   const stamps = useStamps();
-  const hasPass = useGuestStore((st) => st.hasPass);
+  const hasPass = useHasPass();
 
   // На телефоні видно до 2 вікон (збережені з десктопа 3–4 лишаються в `guest.room`).
   const windows = useMemo(() => room.windows.slice(0, limit), [room.windows, limit]);

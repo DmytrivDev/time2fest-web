@@ -15,7 +15,7 @@ import { useStamps } from '@/lib/api/hooks/passport';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useSheetTop } from '@/lib/overlay/sheetTop';
 import { usePartyHref } from './OverlayManager';
-import { authActions, useSession } from '@/lib/api/hooks/auth';
+import { authActions, useHasPass, useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import { HeaderAvatar } from './Header';
 import ms from './menu.module.css';
@@ -143,7 +143,7 @@ export function MenuBody({
   const th = useTranslations('header');
   const stored = useGuestStore((s) => s.reducedMotion);
   const setStored = useGuestStore((s) => s.setReducedMotion);
-  const storedPass = useGuestStore((s) => s.hasPass);
+  const storedPass = useHasPass();
   const stamps = useStamps().length;
   // Мова — у сторі гостя (запам’ятовується); перекладів ще немає.
   const storedLocale = useGuestStore((s) => s.locale);

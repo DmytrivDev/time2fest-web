@@ -8,10 +8,10 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Skeleton } from '@/components/primitives/Skeleton';
-import { useGuestStore } from '@/stores/guest';
 import { EventFilter } from './EventFilter';
 import styles from './countryList.module.css';
 import nn from './nowNext.module.css';
+import { useHasPass } from '@/lib/api/hooks/auth';
 
 const ROWS = 14;
 
@@ -48,7 +48,7 @@ export function CountriesSkeleton() {
   const t = useTranslations('countries');
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
-  const hasPass = useGuestStore((g) => g.hasPass);
+  const hasPass = useHasPass();
   const noop = () => undefined;
   return (
     <div aria-busy="true" data-countries-skeleton="" className={styles.page}>

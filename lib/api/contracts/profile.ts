@@ -4,7 +4,7 @@
  * Суто пристроєві речі — тема, згорнуті блоки, вікна кімнати, згода на cookies — лишаються в `localStorage` і сюди не йдуть.
  * Дії повертають збережений профіль; інтерфейс змінює свої поля одразу (оптимістично), як і раніше.
  */
-import type { ApiResult } from '../result';
+import type { ApiResult, Unsubscribe } from '../result';
 import type { NickReason } from './chat';
 
 export interface ProfileSettings {
@@ -42,6 +42,10 @@ export type ProfilePatch = {
 export interface ProfileService {
   /** `GET /api/me/profile` (і для гостя — анонімна сесія). */
   get(): Promise<ApiResult<Profile>>;
+  /** Останній відомий профіль без запиту (кеш на пристрої) — форми й шапка мають нік одразу після гідратації. */
+  peek?(): Profile | undefined;
+  /** Зміни профілю (інша вкладка, інший пристрій). У `http` — особистий канал `user:#<id>` (подія `profile`). */
+  subscribe?(onChange: (profile: Profile) => void): Unsubscribe;
   /** `PATCH /api/me/profile`. */
   update(patch: ProfilePatch): Promise<ApiResult<Profile>>;
   /** `PUT /api/me/schedule` — увесь список (простіше за дельти, список малий). */

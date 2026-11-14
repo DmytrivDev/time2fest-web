@@ -37,13 +37,13 @@ import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/Player
 import { useNow } from '@/lib/time/TimeProvider';
 import { nearestLive, zoneLiveRows } from '@/lib/tv/tvData';
 import { useOnline } from '@/lib/tv/useTvEnv';
-import { useGuestStore } from '@/stores/guest';
 import { useTvPrefs } from '@/stores/tv';
 import { TvControlBar } from './TvControlBar';
 import { TvRatingTab } from './TvRatingTab';
 import { TvNearest, TvNoPass, TvNow, TvShowSwitch, TvStreamsNow, TvWelcome } from './TvPanels';
 import { TvStampCard } from './TvStampCard';
 import styles from './tv.module.css';
+import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 /** Відлік у колонці показуємо, поки до події більше 5 хвилин (EXPERIENCE S-TV). */
 export const COUNTDOWN_UNTIL_MS = 5 * 60_000;
@@ -153,8 +153,8 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   const now = useNow();
   const stampId = (watching ?? current)?.event.id;
   const stamp = useStampOf(stampId);
-  const hasPass = useGuestStore((s) => s.hasPass);
-  const scheduleCount = useGuestStore((s) => s.schedule.length);
+  const hasPass = useHasPass();
+  const scheduleCount = useSchedule().length;
   const show = useTvPrefs((s) => s.show);
   const setShow = useTvPrefs((s) => s.setShow);
   const welcomed = useTvPrefs((s) => s.welcomed);

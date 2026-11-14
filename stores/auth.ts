@@ -7,10 +7,9 @@
  * Вкладки синхронізуються через подію `storage` (`useAuthTabSync`): посилання з листа, відкрите в новій вкладці,
  * впускає й ту вкладку, що чекала на лист.
  * `passes` — адреси акаунтів з Новорічним пасом і коли його оформлено (імітація сервера): вхід у такий акаунт
- * вмикає пас і на цьому пристрої (`guest.hasPass`).
- * Пас на пристрої — лише пас акаунта, що увійшов (правка власника 2026-11-10): без входу паса немає, вихід його
- * знімає, вхід в акаунт без пасу його не дає. `syncDevicePass` тримає `guest.hasPass` = «увійшов і акаунт з пасом»
- * після відновлення зі сховища, входу, виходу й оформлення пасу.
+ * вмикає пас (сесія `hasPass`, `lib/api/sim/auth`); окремого «паса на пристрої» немає (шов, залишки E5).
+ * Пас — лише пас акаунта, що увійшов (правка власника 2026-11-10): без входу паса немає, вихід його знімає, вхід в
+ * акаунт без пасу його не дає (`accountHasPass` → `Session.hasPass`).
  * Пас у подарунок до тосту за $10 (рішення власника 2026-11-12): той, хто увійшов, отримує його на акаунт одразу;
  * гість — коли вперше увійде чи створить акаунт на цьому пристрої (`pendingPassGift`, `giftPass`).
  * Прапор профілю (правка власника 2026-11-10): кожен вхід і створення акаунта (пас на `/pass/`, Google, пошта, посилання з
@@ -114,13 +113,6 @@ export function accountHasPass(a: Pick<AuthData, 'user' | 'passes'>): boolean {
   return a.user !== null && a.passes[a.user.email] !== undefined;
 }
 
-/** `guest.hasPass` — пас акаунта, що увійшов (див. шапку). `a` — стан акаунта, коли стор ще створюється. */
-export function syncDevicePass(a?: Pick<AuthData, 'user' | 'passes'>): void {
-  const want = accountHasPass(a ?? useAuthStore.getState());
-  const guest = useGuestStore.getState();
-  if (guest.hasPass !== want) guest.setHasPass(want);
-}
-
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => {
@@ -132,8 +124,6 @@ export const useAuthStore = create<AuthStore>()(
         // Подарунок до тосту за $10, що чекав входу на цьому пристрої, — тепер пас цього акаунта.
         const gift = get().pendingPassGift;
         if (gift != null) set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? gift }, pendingPassGift: null }));
-        // Пас на пристрої — пас цього акаунта: є — вмикається, немає — вимикається.
-        syncDevicePass(get());
         return { ok: true, isNew, email };
       };
       return {
@@ -170,7 +160,6 @@ export const useAuthStore = create<AuthStore>()(
         grantPass: (raw, now) => {
           const email = normalizeEmail(raw);
           set((s) => ({ passes: { ...s.passes, [email]: s.passes[email] ?? now } }));
-          syncDevicePass(get());
         },
         giftPass: (now) => {
           const user = get().user;
@@ -183,7 +172,6 @@ export const useAuthStore = create<AuthStore>()(
         },
         signOut: () => {
           set({ user: null });
-          syncDevicePass(get());
         },
         expireLetter: () =>
           set((s) => (s.letter ? { letter: { ...s.letter, sentAt: s.letter.sentAt - LETTER_TTL_MS - 1 } } : s)),
@@ -197,10 +185,10 @@ export const useAuthStore = create<AuthStore>()(
       migrate: (persisted, version) => (version === AUTH_VERSION ? (persisted as AuthData) : EMPTY),
       // Збережене до появи `passes` — без нього.
       merge: (persisted, current) => ({ ...current, ...(persisted as Partial<AuthData>), passes: (persisted as Partial<AuthData> | undefined)?.passes ?? {} }),
-      // Після відновлення (і синхронізації вкладок): пас гостя без входу, що лишився від старого стану, знімається.
+      // Після відновлення (і синхронізації вкладок): прапор профілю того, хто увійшов. Пас окремо не зберігається —
+      // його дає сесія (`accountHasPass`), тож старий «пас на пристрої» (`guest.hasPass`) нічого не вмикає.
       onRehydrateStorage: () => (state) => {
         if (!state) return;
-        syncDevicePass(state);
         if (state.user) useGuestStore.getState().ensureProfileFlag();
       },
     },

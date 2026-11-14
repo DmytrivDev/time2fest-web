@@ -39,7 +39,6 @@ import { formatClock, formatCountdown, formatDurationShort, formatTimeForViewer,
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { fold, getSearchIndex, matchesCityName, matchesCountryName, type SearchIndex } from '@/lib/search/countrySearch';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { EventFilter } from './EventFilter';
 import { SubtitleSkeleton, ZoneRowsSkeleton } from './CountriesSkeleton';
 import { useMidnightPhrase } from './ZoneMapCards';
@@ -49,6 +48,7 @@ import { usePhone } from '@/lib/hooks/useMedia';
 import { REGION_ORDER, regionOf, type RegionKey } from './regions';
 import nn from './nowNext.module.css';
 import styles from './countryList.module.css';
+import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 type Filter = 'all' | 'live' | 'mine';
 const NOT_FIRST = new Set(['RU', 'BY']);
@@ -249,8 +249,8 @@ export function CountryList({ geometry, data: dataProp, className }: CountryList
   }, []);
   const ready = useTimeReady();
   const now = useNow({ granularity: 'minute' });
-  const hasPass = useGuestStore((s) => s.hasPass);
-  const schedule = useGuestStore((s) => s.schedule);
+  const hasPass = useHasPass();
+  const schedule = useSchedule();
   const data = dataProp ?? getData();
   const phone = usePhone();
   const chatColumn = useChatColumn();

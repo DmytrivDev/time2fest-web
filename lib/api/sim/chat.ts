@@ -19,6 +19,7 @@ import type { ChatMessage, Ms, RoomId } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
+import { accountHasPass, useAuthStore } from '@/stores/auth';
 
 let siteNow: () => Ms = () => Date.now();
 /** Годинник сайту (машина часу) для відправлення й повільного режиму — з `ChatSimRuntime`. */
@@ -121,7 +122,7 @@ export function createSimChat(): ChatService {
           guestId: g.id,
           nick: g.nick,
           flagCode: g.flagCode ?? g.detectedFlag,
-          hasPass: g.hasPass,
+          hasPass: accountHasPass(useAuthStore.getState()),
           canWrite: () => true,
           slowSeconds: slowNow(req.room, now),
           sentAt: g.chat.sentAt,

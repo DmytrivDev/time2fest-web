@@ -11,6 +11,7 @@ import { useGuestStore } from '@/stores/guest';
 import { PASS_FLOW_STORAGE_KEY, resumePassFlow, usePassStore } from '@/stores/pass';
 import { resumeToastFlow, setToastClock, TOAST_STORAGE_KEY, useToastStore } from '@/stores/toast';
 import { useTestControls } from '@/stores/testControls';
+import { testHasPass } from '@/tests/unit/_support/pass';
 
 const T0 = Date.UTC(2026, 11, 31, 20, 0, 0);
 
@@ -32,7 +33,6 @@ describe('незавершена оплата переживає перезав�
     vi.setSystemTime(T0);
     window.localStorage.clear();
     useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {} });
-    useGuestStore.getState().setHasPass(false);
     usePassStore.getState().reset();
     useToastStore.getState().reset();
     useToastStore.setState({ said: [] });
@@ -58,7 +58,7 @@ describe('незавершена оплата переживає перезав�
     expect(usePassStore.getState().phase).toBe('opening');
     act(() => vi.advanceTimersByTime(PAY_ROUNDTRIP_MS));
     expect(usePassStore.getState().phase).toBe('success');
-    expect(useGuestStore.getState().hasPass).toBe(true);
+    expect(testHasPass()).toBe(true);
     // Після результату в сховищі — лише «форма», без email.
     expect(stored(PASS_FLOW_STORAGE_KEY)).toEqual({ phase: 'form', email: '' });
   });

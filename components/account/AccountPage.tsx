@@ -37,7 +37,7 @@ import { detectFlag } from '@/lib/geo/detectFlag';
 import { utcLabel } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { useAccountStore } from '@/stores/account';
-import { authActions, profileActions, useSession } from '@/lib/api/hooks/auth';
+import { authActions, profileActions, useProfile, useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
 import s from './account.module.css';
 
@@ -118,8 +118,10 @@ function ProfileSection({ hasPass }: { hasPass: boolean }) {
   const th = useTranslations('header');
   const user = useHeaderUser()!;
   const email = useSession().session?.user?.email ?? '';
-  const storedNick = useGuestStore((g) => g.nick);
-  const storedFlag = useGuestStore((g) => g.flagCode ?? g.detectedFlag);
+  // Профіль — з сервісу (`peek`: значення є вже в першому кадрі, тож початкові значення полів ті самі).
+  const profile = useProfile();
+  const storedNick = profile?.nick ?? undefined;
+  const storedFlag = profile?.flagCode ?? profile?.detectedFlag ?? undefined;
   const detected = useMemo(() => useGuestStore.getState().detectedFlag ?? detectFlag(), []);
   const [nick, setNick] = useState(storedNick ?? user.name);
   const [flag, setFlag] = useState(storedFlag ?? detected ?? 'earth');

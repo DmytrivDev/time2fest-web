@@ -58,7 +58,6 @@ export function createDefaultGuest(): GuestState {
     rate: {},
     offers: { nightId: CURRENT_NIGHT, history: [], visible: null },
     schedule: [],
-    hasPass: false,
     nightId: CURRENT_NIGHT,
   };
 }
@@ -97,7 +96,6 @@ export interface GuestActions {
   /** «Замінити в графіку?»: країна `outIso` поясу події поступається місцем країні цієї події. */
   replaceSchedule(outIso: string, eventId: string): void;
   setSchedule(eventIds: string[]): void;
-  setHasPass(v: boolean): void;
 }
 
 export type GuestStore = GuestState & GuestActions;
@@ -244,7 +242,6 @@ export const useGuestStore = create<GuestStore>()(
       toggleSchedule: (eventId) => set((s) => ({ schedule: toggleCountryZone(s.schedule, eventId) })),
       replaceSchedule: (outIso, eventId) => set((s) => ({ schedule: replaceCountryZone(s.schedule, outIso, eventId) })),
       setSchedule: (schedule) => set({ schedule: [...new Set(schedule)] }),
-      setHasPass: (hasPass) => set({ hasPass }),
     }),
     {
       name: GUEST_STORAGE_KEY,

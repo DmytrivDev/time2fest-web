@@ -13,6 +13,7 @@ import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { TOAST_PAY_MS, useToastStore } from '@/stores/toast';
 import { renderPage } from './render';
+import { grantTestPass, testHasPass } from '@/tests/unit/_support/pass';
 
 function Opener({ tier }: { tier?: 2 | 5 | 10 }) {
   const open = useOpenToastWindow();
@@ -77,7 +78,8 @@ describe('вікно «Сказати тост»: крок 1', () => {
   });
 
   it('власник пасу: «Новорічний пас у тебе вже є»', () => {
-    useGuestStore.setState({ nick: 'Олена', flagCode: 'UA', hasPass: true });
+    useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
+    grantTestPass();
     renderPage(<Opener tier={10} />);
     fireEvent.click(screen.getByRole('button', { name: 'Відкрити тост' }));
     expect(win()).toHaveTextContent('Новорічний пас у тебе вже є');
@@ -181,7 +183,7 @@ describe('оплата й результат', () => {
     expect(gift).toHaveTextContent('Новорічний пас — подарунок до тосту');
     expect(within(gift).getByRole('button', { name: 'Увійти й активувати пас' })).toBeInTheDocument();
     expect(useAuthStore.getState().pendingPassGift).toBeTypeOf('number');
-    expect(useGuestStore.getState().hasPass).toBe(false);
+    expect(testHasPass()).toBe(false);
   });
 
   it('$10 того, хто увійшов: «Пас активний», пас — на акаунті', () => {
@@ -193,6 +195,6 @@ describe('оплата й результат', () => {
     settle();
     expect(win().querySelector('[data-toast-gift="active"]')).toHaveTextContent('Пас активний');
     expect(useAuthStore.getState().passes['olena@example.com']).toBeDefined();
-    expect(useGuestStore.getState().hasPass).toBe(true);
+    expect(testHasPass()).toBe(true);
   });
 });

@@ -17,6 +17,7 @@ import { getOfferUi, installTypingTracking, resetOfferUi } from '@/lib/offers/ui
 import { useChatFeed } from '@/lib/chat-sim/store';
 import { sanitizeGuest, useGuestStore } from '@/stores/guest';
 import { renderPage } from './render';
+import { grantTestPass } from '@/tests/unit/_support/pass';
 
 const MIN = 60_000;
 const slots = airSlots(getData());
@@ -83,7 +84,7 @@ describe('контекст рушія пропозицій', () => {
 
   it('є пас — пропозицій немає', () => {
     giveStamps(s1, s2);
-    useGuestStore.getState().setHasPass(true);
+    grantTestPass();
     const t = s2.midnightMs + 6 * MIN;
     expect(offerEligibility(t, buildOfferContext()!).blockedBy).toContain('pass');
   });
@@ -238,7 +239,7 @@ describe('пропозиції — блок під штампом (рішенн�
 
   it('є пас — offer:show ігнорується', () => {
     giveStamps(s1, s2);
-    useGuestStore.getState().setHasPass(true);
+    grantTestPass();
     renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
     expect(document.querySelector('[data-offer]')).toBeNull();
@@ -260,7 +261,7 @@ describe('пропозиції — блок під штампом (рішенн�
     expect(screen.getByRole('heading', { name: 'Що дає Новорічний пас' })).toBeInTheDocument();
     expect(document.querySelector('[data-offer]')).toBeNull();
 
-    useGuestStore.getState().setHasPass(true);
+    grantTestPass();
     act(() => api.requestSchedule(s1.id, true));
     expect(useGuestStore.getState().schedule).toEqual([s1.id]);
     expect(document.querySelector('[data-offer]')).toBeNull();
@@ -272,7 +273,7 @@ describe('пропозиції — блок під штампом (рішенн�
     const { unmount } = renderPage(<Page />);
     expect(block()).toHaveTextContent('2 Нових роки вже твої — далі буде ще краще');
     unmount();
-    useGuestStore.getState().setHasPass(true);
+    grantTestPass();
     renderPage(<Page />);
     expect(block()).toBeNull();
   });

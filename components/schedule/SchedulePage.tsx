@@ -38,12 +38,12 @@ import { scheduledCountries, zoneSlotCount } from '@/lib/schedule/countryZone';
 import { scheduleCountry, type ScheduleCountry } from '@/lib/schedule/scheduleCountry';
 import { buildSchedulePath } from '@/lib/schedule/schedulePath';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import { SCHEDULE_ZONE_ID, useScheduleReplace } from './scheduleReplace';
 import { ZoneCountriesPanel, ZoneCountriesSub } from './ScheduleWindows';
 // Кольорові зразки стану поясу (`StateSwatch`) — ті самі, що в легенді мапи.
 import '@/components/live/ZoneMap.css';
 import s from './schedule.module.css';
+import { hasPassNow, useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 type SlotState = 'live' | 'main' | 'webcam' | 'countdown' | 'stamp' | 'missed';
 interface SlotItem {
@@ -80,8 +80,8 @@ export function SchedulePage() {
   const locale = useLocale();
   const ready = useTimeReady();
   const now = useNow({ granularity: 'minute' });
-  const hasPass = useGuestStore((g) => g.hasPass);
-  const scheduleRaw = useGuestStore((g) => g.schedule);
+  const hasPass = useHasPass();
+  const scheduleRaw = useSchedule();
   const stamps = useStamps();
   const schedule = useMemo(() => (hasPass ? scheduleRaw : []), [hasPass, scheduleRaw]);
   const replacing = useScheduleReplace((r) => r.eventId);
@@ -133,7 +133,7 @@ export function SchedulePage() {
 
   const openZone = useCallback(
     (zoneId: string) => {
-      if (!useGuestStore.getState().hasPass) {
+      if (!hasPassNow()) {
         passWindows.openScheduleGate();
         return;
       }

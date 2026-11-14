@@ -25,10 +25,10 @@ import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { CalendarButton, scheduleClosed } from './CalendarButton';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
-import { useGuestStore } from '@/stores/guest';
 import { usePhone } from '@/lib/hooks/useMedia';
 import nn from './nowNext.module.css';
 import s from './streamPicker.module.css';
+import { useSchedule } from '@/lib/api/hooks/auth';
 
 export const STREAM_PICKER_ID = 'O-STREAM-PICKER';
 
@@ -100,7 +100,7 @@ export function StreamPicker({
   const confirm = phone && !roomPage;
   const addRoom = useAddToRoom();
   const currentRow = currentId ? (rows.find((r) => r.id === currentId) ?? null) : null;
-  const schedule = useGuestStore((g) => g.schedule);
+  const schedule = useSchedule();
   const nowSec = useNow();
   const inSched = (eventId: string) =>
     countryZoneEvents(eventId).some((id) => schedule.includes(id));

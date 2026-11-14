@@ -3,13 +3,16 @@
  */
 import { simEmailSignIn } from '@/lib/api/sim/auth';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { syncDevicePass, useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { usePassStore } from '@/stores/pass';
 import { resetDeviceState } from '@/stores/resetDevice';
+import { testHasPass } from '@/tests/unit/_support/pass';
 
 const T0 = Date.UTC(2026, 11, 31, 22, 0, 0);
-const hasPass = () => useGuestStore.getState().hasPass;
+// Пас — лише з сесії (шов, залишки E5); старе поле `guest.hasPass` зі сховища нічого не вмикає.
+const hasPass = testHasPass;
+const staleDevicePass = () => useGuestStore.setState({ hasPass: true } as never);
 
 beforeEach(() => {
   useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {} });
@@ -18,11 +21,11 @@ beforeEach(() => {
 
 describe('пас лише з входом в акаунт з пасом', () => {
   it('вхід Google чи поштою в акаунт без пасу пасу не дає — навіть якщо на пристрої лишився старий', () => {
-    useGuestStore.getState().setHasPass(true);
+    staleDevicePass();
     useAuthStore.getState().signInGoogle(T0);
     expect(hasPass()).toBe(false);
     useAuthStore.getState().signOut();
-    useGuestStore.getState().setHasPass(true);
+    staleDevicePass();
     simEmailSignIn('new@example.com', 'signin', T0);
     expect(hasPass()).toBe(false);
   });
@@ -37,9 +40,8 @@ describe('пас лише з входом в акаунт з пасом', () => 
     expect(hasPass()).toBe(true);
   });
 
-  it('відновлення зі сховища: гість без входу з «пасом на пристрої» — пас знімається', () => {
-    useGuestStore.getState().setHasPass(true);
-    syncDevicePass();
+  it('відновлення зі сховища: гість без входу зі старим «пасом на пристрої» — паса немає', () => {
+    staleDevicePass();
     expect(hasPass()).toBe(false);
   });
 });

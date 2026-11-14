@@ -35,7 +35,6 @@ describe('guest store', () => {
       room: { windows: [], soundSlot: null },
       stamps: [],
       offers: { nightId: '2026-27', history: [], visible: null },
-      hasPass: false,
       nightId: '2026-27',
     });
     expect(g.id).toMatch(/.{8,}/);

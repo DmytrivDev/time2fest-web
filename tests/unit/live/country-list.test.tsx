@@ -1,6 +1,7 @@
 // «Країни й міста» — довідник країн за поясами (рішення власника 2026-11-04, дошка `Desk-Countries-Next`, v2): рядки поясів як у
 // «Списку» головної (п’ять прапорців і «ще N»), на старті згорнуті; розгорнутий пояс — картки країн за регіонами, клік —
 // сторінка країни; пошук і фільтри — ті самі рядки, лише зі збігами й розгорнуті.
+import { useAuthStore } from '@/stores/auth';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
@@ -10,7 +11,6 @@ import geometryJson from '@/data/zonemap.json';
 import uk from '@/messages/uk.json';
 import { TimeProvider } from '@/lib/time/TimeProvider';
 import { TimeMachine } from '@/lib/time/timeMachine';
-import { useGuestStore } from '@/stores/guest';
 
 const geometry = geometryJson as unknown as ZoneMapGeometry;
 const NOW = Date.parse('2026-12-31T23:50:00Z'); // UTC+0 «наживо», UTC−1 «далі»
@@ -116,7 +116,7 @@ describe('CountryList: довідник країн за поясами', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'З трансляціями' }));
     for (const c of container.querySelectorAll<HTMLElement>('[data-country-card]')) expect(c.dataset.status).not.toBe('none');
     expect(container.querySelector('[data-zone-row="utc-0100"]')).toBeNull(); // Азори й Кабо-Верде — лише відлік
-    useGuestStore.setState({ hasPass: false });
+    useAuthStore.setState({ user: null, passes: {} });
     fireEvent.click(screen.getByRole('radio', { name: /Мій графік/ }));
     expect(container.querySelector('[data-row="mine-locked"]')).toHaveTextContent('Новорічний пас');
     expect(rows(container)).toHaveLength(0);

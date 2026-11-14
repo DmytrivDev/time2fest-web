@@ -19,7 +19,7 @@ import { PAY_ROUNDTRIP_MS, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers
 import { safeGet, safeRemove, safeSet } from '@/lib/storage/safe';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { tierGiftsPass } from '@/lib/toast/tiers';
-import { useAuthStore } from '@/stores/auth';
+import { accountHasPass, useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { useToastStore } from '@/stores/toast';
@@ -103,7 +103,7 @@ function complete(id: string): void {
   const g = useGuestStore.getState();
   const now = siteNow();
   let gift: Order['gift'];
-  if (tierGiftsPass(tier) && !g.hasPass) gift = { pass: useAuthStore.getState().giftPass(now) };
+  if (tierGiftsPass(tier) && !accountHasPass(useAuthStore.getState())) gift = { pass: useAuthStore.getState().giftPass(now) };
   const record: ToastRecord = {
     id: `own-${g.id}-${now}`,
     authorId: g.id,
@@ -113,7 +113,7 @@ function complete(id: string): void {
     tier,
     createdAt: now,
     mine: true,
-    pass: useGuestStore.getState().hasPass || tierGiftsPass(tier),
+    pass: accountHasPass(useAuthStore.getState()) || tierGiftsPass(tier),
   };
   useChatFeed.getState().append([toastMessage(record, g.id)]);
   // Свої тости — «стрічка сервера» для цього пристрою (`lib/api/sim/toasts`).

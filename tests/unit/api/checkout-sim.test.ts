@@ -21,7 +21,7 @@ beforeEach(() => {
   resetSimCheckout();
   setCheckoutClock(() => Date.now());
   useAuthStore.setState({ user: null, accounts: [], letter: null, sends: [], passes: {}, pendingPassGift: null });
-  useGuestStore.setState({ nick: 'Олена', flagCode: 'UA', hasPass: false });
+  useGuestStore.setState({ nick: 'Олена', flagCode: 'UA' });
   useToastStore.setState({ said: [] });
   useChatFeed.getState().reset();
   useTestControls.getState().setPayResult('success');

@@ -15,6 +15,7 @@ import { useChatPrefs } from '@/stores/chatPrefs';
 import { createDefaultGuest, useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { renderApp, stubBrowserApis } from '../us1/render';
+import { grantTestPass } from '@/tests/unit/_support/pass';
 
 stubBrowserApis();
 
@@ -60,7 +61,7 @@ beforeEach(() => {
   useChatUi.getState().reset();
   useChatPrefs.getState().reset();
   resetTranslations();
-  useGuestStore.setState({ ...createDefaultGuest(), nick: 'Олена', flagCode: 'UA', hasPass: false });
+  useGuestStore.setState({ ...createDefaultGuest(), nick: 'Олена', flagCode: 'UA' });
   useTestControls.setState({ chatAvailable: true, offlineSimulated: false });
   useChatFeed.getState().append([
     msg('m1', EMMA, 'Happy New Year, everyone!'),
@@ -140,7 +141,7 @@ describe('«⋯» — налаштування чату на місці стрі
   });
 
   it('з пасом: шлях увімкнено одразу; тихий режим ховає привітання й рахує сховане', () => {
-    useGuestStore.setState({ hasPass: true });
+    grantTestPass();
     setup();
     fireEvent.click(dots());
     expect(screen.getByText('діють у всіх кімнатах')).toBeInTheDocument();
@@ -172,7 +173,7 @@ describe('«⋯» — налаштування чату на місці стрі
 
 describe('переклад повідомлень (пас)', () => {
   it('«Перекладати повідомлення»: чужа мова — українською з «Перекладено з … · Оригінал»', async () => {
-    useGuestStore.setState({ hasPass: true });
+    grantTestPass();
     useChatPrefs.getState().set('translate', true);
     setup();
     expect(await screen.findAllByText('З Новим роком усіх!', {}, { timeout: 3_000 })).toHaveLength(2);
@@ -193,7 +194,7 @@ describe('переклад повідомлень (пас)', () => {
 
 describe('«Сповіщати про відповіді» (пас)', () => {
   it('чат сховано, тобі відповіли — на кнопці «Тобі відповіли»; вимкнено — позначки немає', () => {
-    useGuestStore.setState({ hasPass: true });
+    grantTestPass();
     useChatPrefs.getState().set('notifyReplies', true);
     useChatUi.getState().markHidden(AT - 10_000);
     const reply = { ...msg('r1', EMMA, 'І тебе!', AT - 1_000), replyTo: { id: 'm9', nick: 'Олена', excerpt: 'Привіт' } };

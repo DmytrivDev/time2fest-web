@@ -60,8 +60,8 @@ import { useBroadcast } from '@/lib/player/BroadcastController';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { usePresence } from '@/lib/api/hooks/passport';
 import { useNow } from '@/lib/time/TimeProvider';
-import { useGuestStore } from '@/stores/guest';
 import home from './home.module.css';
+import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 
 const CHAT_ROOMS = ['world'] as const;
 const PLAYER_TITLE_ID = 'player-title';
@@ -90,7 +90,7 @@ function progressEdges(data: Dataset): { startLabel?: string; endLabel?: string 
 }
 
 function useNowNextData(now: Ms) {
-  const schedule = useGuestStore((s) => s.schedule);
+  const schedule = useSchedule();
   const minute = Math.floor(now / 60_000) * 60_000;
   const data = useLiveData();
   const items = useMemo(() => nowNextItems(data, minute, schedule, { liveOthers: true, mainCards: true }), [data, minute, schedule]);
@@ -114,7 +114,7 @@ export function HomeLive() {
   const chatColumn = useChatColumn();
   // Планшет-портрет (`Tab-P-New`, 2026-11-10): структура телефона, «Зараз і далі» — сіткою карток.
   const tabletPortrait = useTabletPortrait();
-  const schedule = useGuestStore((s) => s.schedule);
+  const schedule = useSchedule();
   const eventId = current?.event.id ?? null;
 
   // Присутність для штампа: ефір показує подію поточного слота.
@@ -129,7 +129,7 @@ export function HomeLive() {
   useMomentWindows();
   // Пропозиція пасу (offer:show), «Потрібен пас» для кнопки графіка, стан введення для рушія.
   const passWindows = useOfferWindows();
-  const hasPass = useGuestStore((s) => s.hasPass);
+  const hasPass = useHasPass();
   const getPass = useGetPass();
 
   const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
