@@ -66,6 +66,10 @@ export function AuthSteps({ flow, variant, onSwitchMode, onExit, exitHref = '/' 
     const title = ref.current?.querySelector<HTMLElement>('[data-auth-title]');
     if (variant === 'page') window.scrollTo({ top: 0 });
     else ref.current?.closest('[data-scroll], .overflow-y-auto')?.scrollTo?.({ top: 0 });
+    // Ефекти дітей спрацьовують раніше за батьківські: крок із власним фокусом (поле коду, `focusOnMount`) уже забрав його.
+    // Заголовок не відбирає фокус у поля — інакше телефон не підставить код із листа, а друк почнеться «в нікуди».
+    const active = document.activeElement;
+    if (active && active !== document.body && ref.current?.contains(active) && active.matches('input, textarea, select')) return;
     title?.focus({ preventScroll: true });
   }, [flow.step, variant]);
 

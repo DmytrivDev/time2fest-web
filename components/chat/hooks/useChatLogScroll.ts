@@ -89,13 +89,18 @@ export function useChatLogScroll(o: {
   // прокруткою людини: коли стрічка була внизу, лишаємо її внизу, а «прокрутка» від стиснення не зупиняє стрічку.
   const noMessages = visible.length === 0;
   const pinned = useRef(true);
+  // Пауза не відпускає стрічку до низу: ріст вмісту (нові повідомлення) на паузі не прокручує й не «прочитує» їх.
+  const pausedRef = useRef(paused);
+  useLayoutEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
   const lastClientHeight = useRef(0);
   useEffect(() => {
     const el = logRef.current;
     if (!el || typeof ResizeObserver !== 'function') return;
     let frame = 0;
     const pin = () => {
-      if (pinned.current) {
+      if (pinned.current && !pausedRef.current) {
         el.scrollTop = el.scrollHeight;
         setScrolledUp(false);
       }
