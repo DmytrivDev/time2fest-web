@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import type { ReactNode } from 'react';
-import { ResumeCard, RoomGrid, type RoomGridProps, type RoomWindowView } from '@/components/room/RoomGrid';
+import { ResumeCard, RoomGrid, type RoomGridProps, type RoomWindowView } from '@/components/room/parts/RoomGrid';
 import { Stage } from '../_support/Stage';
 
 function WithRoomMessages({ children }: { children: ReactNode }) {

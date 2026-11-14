@@ -11,7 +11,7 @@ import { createContext, useCallback } from 'react';
 import { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import { useGuestStore } from '@/stores/guest';
 import { ROOM_LIMIT, useRoomStore, type RoomTarget } from '@/stores/room';
-import { openRoomTray } from './RoomTray';
+import { openRoomTray } from '@/components/room/RoomTray';
 
 /**
  * Сторінка кімнати перегляду: «+» на картках («Поточні трансляції») додає вікно одразу — і на телефоні (без

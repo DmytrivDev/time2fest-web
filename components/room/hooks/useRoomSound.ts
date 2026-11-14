@@ -11,7 +11,7 @@ import type { GuestRoomWindow } from '@/lib/data/types';
 import { cityOf } from '@/lib/live/cityOf';
 import type { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { posOf, useRoomStore } from '@/stores/room';
-import { roomPlayers } from './RoomWindowPlayer';
+import { roomPlayers } from '@/components/room/parts/RoomWindowPlayer';
 
 const SOUND_POLL_MS = 1_000;
 /** Після «Звук сюди» YouTube віддає новий стан звуку не миттєво — стільки довіряємо дії людини. */

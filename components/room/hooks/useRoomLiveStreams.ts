@@ -11,7 +11,7 @@ import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import { HANDOVER_AFTER } from '@/lib/engine/config';
 import { formatClock } from '@/lib/i18n/time';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
-import type { SlotState } from './RoomSlots';
+import type { SlotState } from '@/components/room/parts/RoomSlots';
 
 export function useRoomLiveStreams({
   data,

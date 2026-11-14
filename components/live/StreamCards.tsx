@@ -40,7 +40,7 @@ import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { thumbOf } from '@/lib/live/thumb';
 import { EventFilter, type EventFilterValue } from './EventFilter';
 import type { StreamRowData } from '@/lib/live/countryData';
-import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
+import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/hooks/useRoomToggle';
 import type { RoomTarget } from '@/stores/room';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { usePhone } from '@/lib/hooks/useMedia';

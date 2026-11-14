@@ -20,7 +20,7 @@ import { thumbOf } from '@/lib/live/thumb';
 import { useGuestStore } from '@/stores/guest';
 import { ROOM_LIMIT, useRoomStore } from '@/stores/room';
 import { create } from 'zustand';
-import { ROOM_HREF } from './useRoomViewport';
+import { ROOM_HREF } from './hooks/useRoomViewport';
 import s from './roomTray.module.css';
 
 /**

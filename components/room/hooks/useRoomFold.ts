@@ -11,7 +11,7 @@ import { useOverlay } from '@/components/shell/OverlayManager';
 import type { GuestRoomWindow } from '@/lib/data/types';
 import type { useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useChatDock } from '@/stores/chatDock';
-import { roomPlayers } from './RoomWindowPlayer';
+import { roomPlayers } from '@/components/room/parts/RoomWindowPlayer';
 
 /** Чат розгорнуто (телефон) — для згортання вікна без звуку. */
 function useChatExpanded(): boolean {

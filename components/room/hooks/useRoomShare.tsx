@@ -20,7 +20,7 @@ import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { cityOf } from '@/lib/live/cityOf';
 import { roomShareSvg } from '@/lib/room/shareRoomImage';
-import { roomShareUrl } from './roomShare';
+import { roomShareUrl } from '@/components/room/roomShare';
 
 const SHARE_ID = 'O-ROOM-SHARE';
 

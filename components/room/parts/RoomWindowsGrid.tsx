@@ -16,9 +16,9 @@ import { MainWaiting } from './MainWaiting';
 import { SlotTile, UndoTile, type SlotState } from './RoomSlots';
 import { RoomWindowCard, type RoomWindowCardView } from './RoomWindowCard';
 import { RoomWindowPlayer } from './RoomWindowPlayer';
-import { flagOf } from './roomShare';
-import type { RoomDrag } from './useRoomDrag';
-import s from './room.module.css';
+import { flagOf } from '@/components/room/roomShare';
+import type { RoomDrag } from '@/components/room/hooks/useRoomDrag';
+import s from '@/components/room/room.module.css';
 
 export interface RoomUndo {
   win: GuestRoomWindow;

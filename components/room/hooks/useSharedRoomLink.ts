@@ -8,7 +8,7 @@ import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import type { Dataset } from '@/lib/data/types';
 import { useGuestStore } from '@/stores/guest';
 import { useRoomStore } from '@/stores/room';
-import { parseRoomShare } from './roomShare';
+import { parseRoomShare } from '@/components/room/roomShare';
 
 export function useSharedRoomLink({ known, data, limit }: { known: boolean; data: Dataset; limit: number }) {
   const t = useTranslations('room.page');

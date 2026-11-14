@@ -7,7 +7,7 @@
  */
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useAddToRoom } from '@/components/room/useRoomViewport';
+import { useAddToRoom } from '@/components/room/hooks/useRoomViewport';
 import type { Country, Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
 import { captionPhase } from '@/lib/engine/captionPhase';
 import { HANDOVER_AFTER } from '@/lib/engine/config';

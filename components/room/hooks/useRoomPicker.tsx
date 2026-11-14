@@ -16,8 +16,8 @@ import type { StreamRowData } from '@/lib/live/countryData';
 import { thumbOf } from '@/lib/live/thumb';
 import { useGuestStore } from '@/stores/guest';
 import { posOf, useRoomStore, type RoomTarget, type RoomViewport } from '@/stores/room';
-import { RoomReplacePanel } from './RoomReplacePanel';
-import { flagOf } from './roomShare';
+import { RoomReplacePanel } from '@/components/room/parts/RoomReplacePanel';
+import { flagOf } from '@/components/room/roomShare';
 import { REPLACE_ID } from './useRoomActions';
 import { RoomPageContext } from './useRoomToggle';
 

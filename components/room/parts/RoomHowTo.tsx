@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useId, type ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
-import s from './room.module.css';
+import s from '@/components/room/room.module.css';
 
 function Mini({ on, dash }: { on?: number; dash?: number }) {
   return (

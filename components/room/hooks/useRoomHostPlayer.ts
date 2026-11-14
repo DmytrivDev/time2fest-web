@@ -10,7 +10,7 @@ import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import type { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useGuestStore } from '@/stores/guest';
 import { useRoomStore, type RoomViewport } from '@/stores/room';
-import { chainInput } from './roomShare';
+import { chainInput } from '@/components/room/roomShare';
 
 export function useRoomHostPlayer({
   known,

@@ -12,7 +12,7 @@ import { Button } from '@/components/primitives/Button';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { usePartyHref } from '@/components/shell/OverlayManager';
-import s from './room.module.css';
+import s from '@/components/room/room.module.css';
 
 export function RoomInfoBar({
   phone,

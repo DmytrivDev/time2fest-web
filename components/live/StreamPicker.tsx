@@ -10,7 +10,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useContext, useId, useMemo, useState } from 'react';
-import { useAddToRoom } from '@/components/room/useRoomViewport';
+import { useAddToRoom } from '@/components/room/hooks/useRoomViewport';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -22,7 +22,7 @@ import { STREAM_TYPE_KEY } from '@/lib/live/streamType';
 import { thumbOf } from '@/lib/live/thumb';
 import { useOptionalPlayer, useOptionalPlayerActions } from '@/lib/player/PlayerProvider';
 import { useNow } from '@/lib/time/TimeProvider';
-import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/useRoomToggle';
+import { canAddToRoom, RoomPageContext, useRoomToggle } from '@/components/room/hooks/useRoomToggle';
 import { RoomAddConfirm } from './RoomAddConfirm';
 import { CalendarButton, scheduleClosed } from './CalendarButton';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';

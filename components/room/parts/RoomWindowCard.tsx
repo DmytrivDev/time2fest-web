@@ -15,7 +15,7 @@ import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import s from './room.module.css';
+import s from '@/components/room/room.module.css';
 
 export interface RoomWindowCardView {
   slot: number;
