@@ -81,13 +81,13 @@ export interface CaptionProps {
 }
 
 /** Остання хвилина до півночі, поки йде відео: цифри розмиті (відео відстає — нуль таймера випередив би північ на відео). */
-const BLUR_FROM_MS = 60_000;
+export const BLUR_FROM_MS = 60_000;
 
 /**
  * Цифри таймера. Коли `veiled` — розмиті, поверх них пігулка «Показати», і підказка про затримку відео (правка власника
  * 2026-10-31: лише коли трансляція справді йде; відлік без відео не розмивається). Натискання показує таймер до кінця події.
  */
-function TimerDigits({ digits, veiled, className, hint }: { digits: string; veiled: boolean; className?: string; hint: boolean }) {
+export function TimerDigits({ digits, veiled, className, hint }: { digits: string; veiled: boolean; className?: string; hint: boolean }) {
   const t = useTranslations('player');
   const [shown, setShown] = useState(false);
   const plain = (

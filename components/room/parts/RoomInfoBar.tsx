@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import type { ReactNode } from 'react';
+import { TimerDigits } from '@/components/live/Caption';
 import { Button } from '@/components/primitives/Button';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
@@ -23,6 +24,7 @@ export function RoomInfoBar({
   nextMidnight,
   nextCities,
   timerText,
+  timerVeiled = false,
   chatButton,
   onAdd,
   onShare,
@@ -37,6 +39,8 @@ export function RoomInfoBar({
   nextMidnight: number | undefined;
   nextCities: readonly string[];
   timerText: string;
+  /** Остання хвилина до півночі, поки у вікні з цією північчю йде відео: цифри розмиті, як на головній. */
+  timerVeiled?: boolean;
   chatButton: ReactNode;
   onAdd: () => void;
   onShare: () => void;
@@ -76,7 +80,9 @@ export function RoomInfoBar({
             ? t('phoneTimer', { count, limit })
             : t('phoneCount', { count, limit })}
         </span>
-        {nextMidnight ? <b>{timerText}</b> : null}
+        {nextMidnight ? (
+          <b>{timerVeiled ? <TimerDigits key={nextMidnight} digits={timerText} veiled hint={false} /> : timerText}</b>
+        ) : null}
       </div>
       <div className={s.phoneRow}>
         <Button
@@ -116,7 +122,7 @@ export function RoomInfoBar({
         {nextMidnight ? (
           <div className={s.timer} data-room-timer="">
             <span>{t('untilMidnight', { cities: nextCities.join(' і ') })}</span>
-            <b>{timerText}</b>
+            <b>{timerVeiled ? <TimerDigits key={nextMidnight} digits={timerText} veiled hint /> : timerText}</b>
           </div>
         ) : count ? (
           <div className={s.timer}>

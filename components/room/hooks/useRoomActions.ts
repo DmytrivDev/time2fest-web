@@ -69,7 +69,7 @@ export function useRoomActions({
 
   // ── Дії ──
   const remove = useCallback(
-    (slot: number) => {
+    (slot: number, opts?: { silent?: boolean }) => {
       const index = windows.findIndex((w) => w.slot === slot);
       const removed = windows[index];
       if (!removed) return;
@@ -79,6 +79,8 @@ export function useRoomActions({
       const after = useGuestStore.getState().room;
       if (hadSound && after.soundSlot !== null)
         applySound(after.windows.slice(0, limit), after.soundSlot);
+      // Тиха зупинка (трансляція завершилась): без «Повернути» — повертати нічого.
+      if (opts?.silent) return;
       const title = titleOf(removed);
       setUndo({ win: removed, pos, sound: hadSound, title, until: Date.now() + NOTICE_MS });
       announce(t('removed', { city: cityOf(title) }));

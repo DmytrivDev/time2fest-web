@@ -14,6 +14,7 @@ import type { useOptionalPlayer } from '@/lib/player/PlayerProvider';
 import type { RoomTarget } from '@/stores/room';
 import { MainWaiting } from './MainWaiting';
 import { SlotTile, UndoTile, type SlotState } from './RoomSlots';
+import { RoomEndedCard } from './RoomEndedCard';
 import { RoomWindowCard, type RoomWindowCardView } from './RoomWindowCard';
 import { RoomWindowPlayer } from './RoomWindowPlayer';
 import { flagOf } from '@/components/room/roomShare';
@@ -63,6 +64,8 @@ export function RoomWindowsGrid({
   onRemove,
   onSound,
   onAdd,
+  endedSlots,
+  onAddOther,
 }: {
   data: Dataset;
   known: boolean;
@@ -91,6 +94,9 @@ export function RoomWindowsGrid({
   onRemove: (slot: number) => void;
   onSound: (slot: number) => void;
   onAdd: () => void;
+  /** Вікна, чия трансляція завершилась (слот → кнопка «Додати іншу»). */
+  endedSlots?: ReadonlySet<number>;
+  onAddOther?: (slot: number) => void;
 }) {
   const tUndo = useTranslations('room.undo');
 
@@ -117,6 +123,7 @@ export function RoomWindowsGrid({
         audible: soundLive,
         inSchedule: schedule.includes(w.eventId),
         stamp: stamps.some((st) => st.eventId === w.eventId) ? 'got' : 'todo',
+        endedCard: endedSlots?.has(w.slot) ? <RoomEndedCard title={title} onAddOther={() => onAddOther?.(w.slot)} /> : undefined,
       };
     },
   );

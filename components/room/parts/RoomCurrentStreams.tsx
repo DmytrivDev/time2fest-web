@@ -6,6 +6,7 @@
  */
 import { useTranslations } from 'next-intl';
 import type { EventFilterValue } from '@/components/live/EventFilter';
+import { ScheduleLockedBar } from '@/components/live/ScheduleLockedBar';
 import { StreamCards } from '@/components/live/StreamCards';
 import type { Dataset } from '@/lib/data/types';
 import { formatClock, utcLabel } from '@/lib/i18n/time';
@@ -24,6 +25,9 @@ export function RoomCurrentStreams({
   onFilterChange,
   onToggle,
   onAdd,
+  phone = false,
+  onGetPass,
+  onPassInfo,
 }: {
   data: Dataset;
   roomZoneId: string | null;
@@ -35,11 +39,17 @@ export function RoomCurrentStreams({
   onFilterChange: (v: EventFilterValue) => void;
   onToggle: (target: RoomTarget) => void;
   onAdd: (target: RoomTarget) => void;
+  phone?: boolean;
+  /** «Оформити пас · $5» у блоці «Мій графік» без пасу. */
+  onGetPass?: () => void;
+  onPassInfo?: () => void;
 }) {
   const t = useTranslations('room.page');
   const inSchedule = (eventId: string) =>
     countryZoneEvents(eventId).some((id) => schedule.includes(id));
-  const currentRows = filter === 'mine' ? liveRows.filter((r) => inSchedule(r.eventId)) : liveRows;
+  // «Мій графік» без пасу — той самий блок, що в «Зараз і далі» (Т5, 2026-11-16): картки під ним лише тло.
+  const lockedMine = filter === 'mine' && !hasPass;
+  const currentRows = filter === 'mine' && !lockedMine ? liveRows.filter((r) => inSchedule(r.eventId)) : liveRows;
   const zone = roomZoneId ? data.zonesById.get(roomZoneId) : undefined;
   return (
     <StreamCards
@@ -53,6 +63,7 @@ export function RoomCurrentStreams({
           : undefined
       }
       rows={currentRows}
+      lockedNotice={lockedMine ? <ScheduleLockedBar stack={phone} onGetPass={onGetPass} onInfo={onPassInfo} /> : undefined}
       currentStreamId={null}
       onSelect={(row) => onToggle({ sourceId: row.id, eventId: row.eventId })}
       onAddToRoom={(row) => onAdd({ sourceId: row.id, eventId: row.eventId })}

@@ -678,6 +678,41 @@ test.describe('US3 · кімната перегляду', () => {
     await expect(win(page, 0)).not.toHaveAttribute('data-folded', /.*/);
   });
 
+  test('таймер кімнати розмивається в останню хвилину (відео йде): «Показати» відкриває цифри; раніше — без розмиття', async ({ page, ytStub }) => {
+    void ytStub;
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, '2027-01-01T01:55:00+02:00', 0, ROOM);
+    await expect(page.locator('[data-room-window]').first()).toBeVisible();
+    await expect(page.locator('[data-timer-veiled]')).toHaveCount(0);
+    await page.evaluate(() => window.__t2f?.timeMachine.set({ at: '2027-01-01T01:59:20+02:00' }));
+    const veiled = page.locator('[data-timer-veiled]');
+    await expect(veiled).toBeVisible();
+    await veiled.click();
+    await expect(page.locator('[data-timer-veiled]')).toHaveCount(0);
+  });
+
+  test('«Мій графік» без пасу в «Поточних трансляціях»: той самий блок, що в «Зараз і далі» (Оформити пас · $5, Що ще дає пас)', async ({ page, ytStub }) => {
+    void ytStub;
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    const cards = page.locator('[data-stream-cards]');
+    await cards.getByRole('radio', { name: /Мій графік/ }).click();
+    const locked = cards.locator('[data-row="mine-locked"]');
+    await expect(locked).toContainText('потрібен Новорічний пас');
+    await expect(locked.getByRole('button', { name: 'Оформити пас · $5' })).toBeVisible();
+    await expect(locked.getByRole('button', { name: 'Що ще дає пас' })).toBeVisible();
+    await expect(page.locator('[data-window="O-PASS-INFO"], [role="dialog"]')).toHaveCount(0);
+  });
+
+  test('між рядком про штамп і «Поточними трансляціями» немає порожнечі (блоки моменту без вмісту не займають місця)', async ({ page, ytStub }) => {
+    void ytStub;
+    await seedRoom(page, [L1, L2], 0);
+    await gotoAt(page, NOW, 0, ROOM);
+    const promise = await box(page.locator('[data-room-promise]'));
+    const heading = await box(page.locator('[data-stream-cards]'));
+    expect(heading.y - (promise.y + promise.height)).toBeLessThan(60);
+  });
+
   test('доступність: кімната з вікнами без порушень axe', async ({ page, ytStub }) => {
     void ytStub;
     await seedRoom(page, isPhone(page) ? [L1, L2] : ALL.slice(0, 3), 0);

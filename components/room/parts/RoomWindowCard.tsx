@@ -32,6 +32,8 @@ export interface RoomWindowCardView {
   inSchedule: boolean;
   /** Штамп події: `todo` — опівночі тут буде штамп, `got` — уже в паспорті. */
   stamp: 'todo' | 'got';
+  /** Трансляція завершилась: замість кадру — «Трансляція завершилась · Додати іншу». */
+  endedCard?: ReactNode;
 }
 
 export interface RoomWindowCardProps {
@@ -229,7 +231,7 @@ export function RoomWindowCard({
       ) : (
         bar
       )}
-      <div className={cn(s.media, folded && s.mediaFolded)}>{media}</div>
+      <div className={cn(s.media, folded && s.mediaFolded)}>{view.endedCard ?? media}</div>
     </section>
   );
 }

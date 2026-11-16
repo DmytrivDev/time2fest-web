@@ -25,14 +25,18 @@
  */
 import { RoomSkeleton } from '@/components/skeleton/LiveSkeletons';
 import { useTranslations } from 'next-intl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveChat } from '@/components/chat/hooks/useLiveChat';
 import { useStamps } from '@/lib/api/hooks/passport';
 import { useLiveData } from '@/lib/api/hooks/live';
 import type { EventFilterValue } from '@/components/live/EventFilter';
 import { MomentInflow } from '@/components/live/MomentInflow';
 import { StampBlock } from '@/components/stamp/StampBlock';
+import { BLUR_FROM_MS } from '@/components/live/Caption';
 import { useOfferWindows } from '@/components/offers/useOfferWindows';
+import { useGetPass } from '@/components/pass/PassWindow';
+import { streamRows } from '@/lib/live/countryData';
+import { ENDED_CARD_MS, windowEndedAt } from '@/lib/room/windowEnd';
 import { ToastStrip } from '@/components/toast/ToastStrip';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
@@ -87,6 +91,7 @@ export function RoomLive() {
   const schedule = useSchedule();
   const stamps = useStamps();
   const hasPass = useHasPass();
+  const getPass = useGetPass();
 
   // На телефоні видно до 2 вікон (збережені з десктопа 3–4 лишаються в `guest.room`).
   const windows = useMemo(() => room.windows.slice(0, limit), [room.windows, limit]);
@@ -157,6 +162,30 @@ export function RoomLive() {
     stamps,
   });
 
+  // Остання хвилина до найближчої півночі, поки у вікні з цією північчю йде відео: таймер розмитий, як на головній (п. 13).
+  const timerVeiled =
+    known &&
+    nextMidnight !== undefined &&
+    nextMidnight > now &&
+    nextMidnight - now <= BLUR_FROM_MS &&
+    windows.some((w) => {
+      const ev = data.eventsById.get(w.eventId);
+      return !!ev && ev.midnightMs === nextMidnight && streamRows(data, [ev], minute).find((r) => r.id === w.sourceId)?.status === 'live';
+    });
+
+  // Вікна, чия трансляція завершилась (п. 14): через 15 хв після півночі, якщо вже не йде наживо; 90 с «Трансляція
+  // завершилась · Додати іншу», далі вікно зникає саме.
+  const endedSeen = useRef(new Map<string, number>());
+  const endedSlots = useMemo(() => {
+    const out = new Set<number>();
+    if (!known) return out;
+    for (const w of windows) {
+      const src = data.chainsByEventId.get(w.eventId)?.sources.find((x) => x.id === w.sourceId);
+      if (windowEndedAt(now, data.eventsById.get(w.eventId), src) !== null) out.add(w.slot);
+    }
+    return out;
+  }, [known, windows, data, now]);
+
   const chat = useLiveChat({
     chatColumn,
     room: chatRoomCountry ?? 'world',
@@ -168,6 +197,35 @@ export function RoomLive() {
     },
   });
   const { foldSlot, unfold } = useRoomFold({ phone, windows, soundSlot, started, isHost, actions });
+
+  // Зникнення завершених вікон; відео головного вікна, що завершилось, зупиняємо (звук не лишається за карткою).
+  useEffect(() => {
+    const seen = endedSeen.current;
+    const live = new Set<string>();
+    for (const w of windows) {
+      if (!endedSlots.has(w.slot)) continue;
+      const key = `${w.slot}|${w.eventId}|${w.sourceId}`;
+      live.add(key);
+      const since = seen.get(key) ?? now;
+      seen.set(key, since);
+      if (host && w.slot === host.slot && since === now) actions?.setChain(null);
+      if (now - since >= ENDED_CARD_MS) remove(w.slot, { silent: true });
+    }
+    for (const k of [...seen.keys()]) if (!live.has(k)) seen.delete(k);
+  }, [endedSlots, windows, now, host, actions, remove]);
+  // «Додати іншу» на картці завершеної трансляції: вікно зникає, відкривається вибір трансляції.
+  const openPickerRef = useRef(openPicker);
+  useEffect(() => {
+    openPickerRef.current = openPicker;
+  });
+  const addOther = useCallback(
+    (slot: number) => {
+      remove(slot, { silent: true });
+      // Вибір відкриваємо після того, як кімната перерахується без цього вікна (тоді в ній є вільне місце).
+      window.setTimeout(() => openPickerRef.current(), 0);
+    },
+    [remove],
+  );
 
   // «Поточні трансляції» — картки подій із трансляцією зараз; «+» — одразу у вікно.
   const [currentFilter, setCurrentFilter] = useState<EventFilterValue>('all');
@@ -210,6 +268,8 @@ export function RoomLive() {
           onRemove={remove}
           onSound={(slot) => moveSound(slot, { apply: true })}
           onAdd={openPicker}
+          endedSlots={endedSlots}
+          onAddOther={addOther}
         />
         <RoomInfoBar
           phone={phone}
@@ -220,6 +280,7 @@ export function RoomLive() {
           nextMidnight={nextMidnight}
           nextCities={nextCities}
           timerText={timerText}
+          timerVeiled={timerVeiled}
           chatButton={chat.showButton}
           onAdd={openPicker}
           onShare={openShare}
@@ -252,7 +313,8 @@ export function RoomLive() {
             {t('promise', { cities: stampCities.join(', ') })}
           </p>
         ) : null}
-        <div className="mt-8 flex flex-col gap-4">
+        {/* Порожній контейнер (немає штампа, пропозиції й вікон моменту) не займає місця: раніше лишав ≈70 px порожнечі. */}
+        <div className={cn('flex flex-col', s.inflow)}>
           {/* Штамп у кімнаті закривається «×» (постійний — лише на сторінці країни, власник 2026-11-06). */}
           <MomentInflow stamp={<StampBlock eventId={main?.eventId ?? null} roomEventIds={eventIds} />} label={t('heading')} />
         </div>
@@ -264,11 +326,12 @@ export function RoomLive() {
           schedule={schedule}
           hasPass={hasPass}
           filter={currentFilter}
-          onFilterChange={(v) =>
-            v === 'mine' && !hasPass ? passWindows.openPassInfoBoard() : setCurrentFilter(v)
-          }
+          onFilterChange={setCurrentFilter}
           onToggle={toggleFromCard}
           onAdd={add}
+          phone={phone}
+          onGetPass={() => getPass()}
+          onPassInfo={passWindows.openPassInfoBoard}
         />
         <RoomHowTo className="mt-10" />
         {chatColumn ? chat.column : chat.dock}

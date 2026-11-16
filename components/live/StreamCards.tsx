@@ -86,6 +86,8 @@ export interface StreamCardsProps {
   footer?: ReactNode;
   countdown?: readonly CountdownCountry[];
   filter?: StreamCardsFilter;
+  /** Блок під фільтром («Мій графік» без пасу): картки під ним притемнені й недоступні, як у «Зараз і далі». */
+  lockedNotice?: ReactNode;
   /** Телефон: скільки рядків до «Ще N країн». */
   phoneLimit?: number;
   className?: string;
@@ -360,6 +362,7 @@ export function StreamCards({
   footer,
   countdown = [],
   filter,
+  lockedNotice,
   phoneLimit,
   className,
 }: StreamCardsProps) {
@@ -463,8 +466,9 @@ export function StreamCards({
           className={s.filterPhone}
         />
       ) : null}
-      {total === 0 ? <p className={s.empty}>{tc('othersEmpty')}</p> : null}
-      <ul ref={ref} className={phone ? s.list : s.track}>
+      {lockedNotice}
+      {total === 0 && !lockedNotice ? <p className={s.empty}>{tc('othersEmpty')}</p> : null}
+      <ul ref={ref} className={phone ? s.list : s.track} {...(lockedNotice ? { inert: true, 'aria-hidden': true, style: { opacity: 0.4, pointerEvents: 'none' as const } } : {})}>
         {shownRows.map((row) => (
           <Card
             key={row.id}

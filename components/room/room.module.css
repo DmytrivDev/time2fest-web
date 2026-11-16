@@ -406,6 +406,23 @@ button.slot:hover .slotCircle {
 .toastStrip {
   margin-top: 8px;
 }
+/* Блоки моменту під смугою тостів (штамп, пропозиція, вікна моменту): поки всі згорнуті, не займають місця — раніше
+   порожній контейнер лишав ≈70 px між рядком про штамп і «Поточними трансляціями» (п. 5, 2026-11-16). */
+.inflow {
+  gap: 0;
+  margin-top: 0;
+  transition: margin-top 0.25s ease;
+}
+.inflow:has([data-open='true']),
+.inflow:has([data-in-flow-slot]:not([data-in-flow-slot='empty'])) {
+  gap: 16px;
+  margin-top: 32px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .inflow {
+    transition: none;
+  }
+}
 @media (min-width: 1200px), (min-width: 768px) and (orientation: landscape) and (not ((max-height: 500px) and (pointer: coarse))) {
   .toastStrip {
     margin-top: 16px;
@@ -441,6 +458,13 @@ button.slot:hover .slotCircle {
   color: var(--color-highlight);
   font-size: 20px;
   font-variant-numeric: tabular-nums;
+}
+/* Розмитий таймер (остання хвилина): вкладені span не успадковують стиль підпису ліворуч. */
+.phoneTimer b span {
+  overflow: visible;
+  color: inherit;
+  font-size: inherit;
+  text-overflow: clip;
 }
 
 /* ── Заміна (колонка чату / шторка) ───────────────────────────────────────────────────────────────────────────────── */
