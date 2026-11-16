@@ -17,6 +17,8 @@ const API_MODE = resolveApiMode({
 });
 
 const nextConfig: NextConfig = {
+  // Workspace package ships TS source, so Next must transpile it.
+  transpilePackages: ['@time2fest/contracts'],
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
