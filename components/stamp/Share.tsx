@@ -182,9 +182,6 @@ export function ShareContent({
           </Button>
         </li>
       </ul>
-      <p className="truncate text-caption text-text-muted" data-row="url">
-        {data.url}
-      </p>
     </div>
   );
 }
