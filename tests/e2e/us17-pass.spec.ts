@@ -73,27 +73,25 @@ test('вікно пасу під час свята: рядок «Скажи то
   await expect.poll(() => page.evaluate(accountPass), { timeout: 15_000 }).toBe(true);
 });
 
-test('пас гостя на пристрої, вхід тут з іншою поштою (Google): пас працює, до акаунта не переходить — так і сказано (рішення 2026-11-14)', async ({ page }) => {
+test('пас гостя на пристрої, вхід тут з іншою поштою (Google): пас переходить до першого акаунта на пристрої (рішення 2026-11-15)', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   await page.getByRole('textbox', { name: 'Email' }).fill('paid@example.com');
   await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
   await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
+  await expect(page.locator('[data-row="device-pass"]')).toContainText('Увійди — і пас буде на всіх твоїх пристроях');
   await page.getByRole('link', { name: 'Увійти' }).first().click();
   await page.getByRole('button', { name: /Google/ }).first().click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('t2f:auth:v1') ?? '{}').state?.user?.email ?? null), { timeout: 15_000 }).toBe('you@gmail.com');
-  expect(await page.evaluate(accountPass)).toBe(false);
+  // Перший акаунт на пристрої, хоч і не пошта оплати, — пас тепер на ньому; запису пристрою немає.
+  expect(await page.evaluate(accountPass)).toBe(true);
   await page.goto('/pass/');
   await waitForTimeApi(page);
   const active = page.locator('[data-phase="active"]');
   await expect(active).toContainText('Оплачено');
-  const note = active.locator('[data-row="device-pass"][data-device-pass="other-account"]');
-  await expect(note).toContainText('Пас працює лише на цьому пристрої');
-  await expect(note).toContainText('paid@example.com');
-  await expect(note).toContainText('you@gmail.com');
-  // Кабінет — чесно: пас на цьому пристрої, в акаунті його немає.
+  await expect(active.locator('[data-row="device-pass"]')).toHaveCount(0);
   await page.goto('/account/');
   await waitForTimeApi(page);
-  await expect(page.locator('[data-block="pass-plaque"][data-pass="device"]')).toContainText('на цьому пристрої');
+  await expect(page.locator('[data-block="pass-plaque"][data-pass="active"]')).toBeVisible();
 });
 
 test('оплата поштою: «Чекаємо підтвердження» переживає перезавантаження → «Пас активний» → «Твій пас уже діє»', async ({ page }) => {

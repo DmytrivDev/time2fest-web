@@ -201,7 +201,7 @@ describe('оплата й результат', () => {
     expect(win()).toHaveTextContent('закріплено·у привітанні опівночі');
     const gift = win().querySelector('[data-toast-gift="device"]') as HTMLElement;
     expect(gift).toHaveTextContent('Пас активний на цьому пристрої');
-    expect(gift).toHaveTextContent('you@example.com');
+    expect(gift).toHaveTextContent('Увійди — і пас буде на всіх твоїх пристроях');
     expect(within(gift).getByRole('button', { name: 'Увійти кодом' })).toBeInTheDocument();
     expect(useAuthStore.getState().devicePass?.email).toBe('you@example.com');
     expect(testHasPass()).toBe(true);

@@ -138,12 +138,12 @@ describe('пас у подарунок до тосту за $10', () => {
     expect(hasPass()).toBe(false);
   });
 
-  it('гість входить з іншою поштою (Google) — пас працює на пристрої, але до того акаунта не переходить', () => {
+  it('гість входить з іншою поштою (Google) — пас переходить до першого акаунта на пристрої', () => {
     payToast(10);
     settle();
     const { email } = useAuthStore.getState().signInGoogle(T0 + 60_000);
-    expect(useAuthStore.getState().passes[email]).toBeUndefined();
-    expect(useAuthStore.getState().devicePass?.email).toBe(PAYPRO_DEMO_EMAIL);
+    expect(useAuthStore.getState().passes[email]).toBeDefined();
+    expect(useAuthStore.getState().devicePass).toBeNull();
     expect(hasPass()).toBe(true);
   });
 

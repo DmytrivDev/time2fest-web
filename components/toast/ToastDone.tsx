@@ -17,7 +17,7 @@ import s from './toastWindow.module.css';
 
 /**
  * Подарунок до тосту за $10: «Пас активний» (увійшов — на акаунті) чи «Пас активний на цьому пристрої» (гість — як
- * куплений пас, з «Увійти кодом» на пошту з оплати, рішення 2026-11-14).
+ * куплений пас, з «Увійти кодом»; пас іде до першого акаунта на пристрої, рішення 2026-11-15).
  */
 function PassGiftCard() {
   const t = useTranslations('toast');
@@ -61,10 +61,13 @@ function PassGiftCard() {
       </div>
       <p className={s.passText}>{t.rich('passGift.text', { email, b: (c) => <b>{c}</b> })}</p>
       {email ? (
-        <SendCodeButton
-          email={email}
-          onSent={() => openAuth('signin', { step: { kind: 'code' }, email: currentSession()?.code?.email ?? email, afterSignIn: openPass })}
-        />
+        // Відступ від тексту більший, кнопка на всю ширину картки (правка власника 2026-11-16).
+        <div className="mt-4 flex flex-col [&>button]:w-full">
+          <SendCodeButton
+            email={email}
+            onSent={() => openAuth('signin', { step: { kind: 'code' }, email: currentSession()?.code?.email ?? email, afterSignIn: openPass })}
+          />
+        </div>
       ) : null}
     </div>
   );

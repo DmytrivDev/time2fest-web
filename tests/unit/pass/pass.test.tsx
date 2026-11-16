@@ -151,7 +151,7 @@ describe('PassBuy — картка оформлення', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     const row = document.querySelector('[data-row="device-pass"]')!;
     expect(row).toHaveTextContent('Пас працює на цьому пристрої');
-    expect(row).toHaveTextContent('olena@example.com');
+    expect(row).toHaveTextContent('Увійди — і пас буде на всіх твоїх пристроях');
     fireEvent.click(within(row as HTMLElement).getByRole('button', { name: 'Увійти кодом' }));
     await waitFor(() => expect(props.onCodeSent).toHaveBeenCalled());
     expect(useAuthStore.getState().code?.email).toBe('olena@example.com');

@@ -79,10 +79,10 @@ describe('вхід (імітація): лише код із 6 цифр (ріше
     expect(accountHasPass(st())).toBe(false);
   });
 
-  it('пас на пристрої лишається, коли входять іншою поштою', () => {
+  it('пас пристрою переходить до першого акаунта, навіть коли ввійшли іншою поштою', () => {
     st().grantDevicePass('olena@example.com', T0);
     st().signInGoogle(T0 + 1);
-    expect(st().devicePass?.email).toBe('olena@example.com');
+    expect(st().devicePass).toBeNull();
     expect(accountHasPass(st())).toBe(true);
   });
 });
