@@ -207,7 +207,7 @@
 }
 .deskCard[data-pinned] {
   border-color: rgb(252 226 134 / 0.55);
-  background: linear-gradient(135deg, rgb(252 226 134 / 0.18), rgb(252 226 134 / 0.05));
+  background: var(--toast-grain), linear-gradient(135deg, rgb(252 226 134 / 0.18), rgb(252 226 134 / 0.05));
 }
 .deskFlag {
   display: flex;
@@ -299,7 +299,7 @@
 }
 .line[data-pinned] {
   border-color: rgb(252 226 134 / 0.5);
-  background: linear-gradient(135deg, rgb(252 226 134 / 0.18), rgb(252 226 134 / 0.06));
+  background: var(--toast-grain), linear-gradient(135deg, rgb(252 226 134 / 0.18), rgb(252 226 134 / 0.06));
 }
 .lineNick {
   flex: none;
