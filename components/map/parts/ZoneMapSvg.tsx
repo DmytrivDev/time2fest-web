@@ -5,7 +5,7 @@
 import { useTranslations } from 'next-intl';
 import type { Dispatch, FocusEvent, KeyboardEvent, RefObject, SetStateAction } from 'react';
 import { cn } from '@/components/primitives/cn';
-import type { ZoneState } from '@/lib/engine/zoneState';
+import type { ZoneState } from '@time2fest/rules/time';
 import type { MapZone, ZoneMapGeometry } from '@/lib/map/model';
 import { ZoneGroup } from './ZoneGroup';
 import { FILL_CLASS } from '@/components/map/zoneMapGeometry';

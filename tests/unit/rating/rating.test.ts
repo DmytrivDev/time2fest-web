@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { getData } from '@/lib/data/load';
 import { isRateable } from '@/lib/passport/passport';
 import { ratingState, worldVotes } from '@/lib/api/sim/rating';
-import { RATING_CLOSE_AFTER, RATING_OPEN_AFTER, buildRatingState, ratingCloseAt, ukOrdinal, weighted } from '@/lib/rating/rating';
+import { buildRatingState, ukOrdinal, weighted } from '@/lib/rating/rating';
+import { RATING_CLOSE_AFTER, RATING_OPEN_AFTER, ratingCloseAt } from '@time2fest/rules/time';
 
 const data = getData();
 const ev = (cityId: string) => data.events.find((e) => e.cityId === cityId)!;

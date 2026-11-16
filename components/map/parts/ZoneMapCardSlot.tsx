@@ -3,7 +3,7 @@
 // Слот під мапою поясів: вікно поясу (`ZonePanel`) чи країни (`CountryPanel`) у `Reveal` з плавним зсувом (`ZoneMap`).
 import type { Dispatch, RefObject, SetStateAction } from 'react';
 import { Reveal } from '@/components/primitives/Reveal';
-import type { ZoneState } from '@/lib/engine/zoneState';
+import type { ZoneState } from '@time2fest/rules/time';
 import type { MapCountry, MapZone } from '@/lib/map/model';
 import { CountryPanel } from '@/components/map/CountryPanel';
 import { PanelSwap } from './PanelSwap';

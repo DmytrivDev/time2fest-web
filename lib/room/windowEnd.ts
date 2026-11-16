@@ -4,8 +4,7 @@
  * свята (демо) «йде», доки не дійшов до кінця (`recordingPosition` = `replay`). Чиста логіка без React.
  */
 import type { Event, Ms, StreamSource } from '@/lib/data/types';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
-import { midnightOf } from '@/lib/engine/eventStatus';
+import { HANDOVER_AFTER, midnightOf } from '@time2fest/rules/time';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { recordingPosition } from '@/lib/player/recordingSync';
 

@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSimRating, minesOf, setSimRatingNow, simAggregates } from '@/lib/api/sim/rating';
 import { getData } from '@/lib/data/load';
-import { RATING_OPEN_AFTER, ratingCloseAt } from '@/lib/rating/rating';
+import { RATING_OPEN_AFTER, ratingCloseAt } from '@time2fest/rules/time';
 import { useGuestStore } from '@/stores/guest';
 
 const data = getData();

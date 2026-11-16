@@ -9,10 +9,10 @@
  * і демо-збірці (`IS_TEST_BUILD`; демо — та сама тестова збірка з `NEXT_PUBLIC_DEMO`). У робочій збірці без тостів
  * смуга показує порожній стан «Тостів ще немає — скажи перший».
  */
-import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
+import { CELEBRATION_TAIL } from '@time2fest/rules/time';
 import type { ChatScriptFile, Dataset, Ms } from '@/lib/data/types';
 import { IS_TEST_BUILD } from '@/lib/env';
-import type { ToastRecord } from './feed';
+import type { ToastRecord } from '@/lib/toast/feed';
 import type { ToastTier } from './tiers';
 
 /** Чи живлять імітовані тости смугу, чат і «Підтримати» (лише тестова й демо-збірка). */

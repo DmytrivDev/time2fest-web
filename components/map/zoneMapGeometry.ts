@@ -1,5 +1,5 @@
 // Чисті допоміжні речі мапи поясів (`ZoneMap`): класи станів, позиція плашки, відображення масштабу у viewBox і рамку.
-import type { ZoneState } from '@/lib/engine/zoneState';
+import type { ZoneState } from '@time2fest/rules/time';
 import type { MapView } from './hooks/useMapZoom';
 
 export const FILL_CLASS: Record<ZoneState, string> = {

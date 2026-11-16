@@ -31,7 +31,7 @@ import { useStamps } from '@/lib/api/hooks/passport';
 import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
-import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
+import { zoneState, type ZoneState } from '@time2fest/rules/time';
 import { formatClock, utcLabel, viewerZoneLabel } from '@/lib/i18n/time';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { scheduledCountries, zoneSlotCount } from '@/lib/schedule/countryZone';

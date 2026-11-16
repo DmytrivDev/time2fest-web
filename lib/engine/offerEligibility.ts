@@ -1,6 +1,6 @@
 import type { Event, Ms, OfferState, Stamp } from '@/lib/data/types';
-import { OFFER_MIN_AFTER, OFFER_MIN_BEFORE_NEXT, TYPING_QUIET } from './config';
-import { midnightOf } from './eventStatus';
+import { TYPING_QUIET } from './config';
+import { midnightOf, OFFER_MIN_AFTER, OFFER_MIN_BEFORE_NEXT } from '@time2fest/rules/time';
 
 type EventLike = Pick<Event, 'id' | 'midnightUtc'> & { midnightMs?: Ms };
 

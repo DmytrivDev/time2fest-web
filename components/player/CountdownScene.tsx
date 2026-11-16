@@ -28,7 +28,7 @@ import { useNow } from '@/lib/time/TimeProvider';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { Fireworks } from './Fireworks';
 import { midnightPhase, SceneCountdown, SceneFullscreenButton, SceneMidnightCenter, SceneYear, useMidnightSound, useSceneFullscreen } from './SceneMidnight';
-import { arrivedYear } from '@/lib/engine/newYear';
+import { arrivedYear } from '@time2fest/rules/time';
 
 export type CountdownSceneVariant = 'no-stream' | 'expected' | 'mode' | 'waiting';
 

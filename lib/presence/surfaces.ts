@@ -10,7 +10,7 @@
  */
 import type { Ms, PresenceSource } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
-import { presentEvents, type PresenceSurface } from '@/lib/engine/presence';
+import { type PresenceSurface, presentEvents } from '@time2fest/rules/time';
 import { useGuestStore } from '@/stores/guest';
 
 /** Відкриті поверхні сторінок (одна вкладка = один реєстр). */

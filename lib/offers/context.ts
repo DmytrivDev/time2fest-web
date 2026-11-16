@@ -5,7 +5,7 @@
 import { getData } from '@/lib/data/load';
 import type { ScheduledEvent } from '@/lib/data/types';
 import { airSlots } from '@/lib/engine/currentAirEvent';
-import { midnightOf } from '@/lib/engine/eventStatus';
+import { midnightOf } from '@time2fest/rules/time';
 import type { OfferContext } from '@/lib/engine/offerEligibility';
 import { useGuestStore } from '@/stores/guest';
 import { getOfferUi } from './uiState';

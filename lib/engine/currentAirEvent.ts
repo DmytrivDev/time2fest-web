@@ -8,9 +8,7 @@ import type {
   StreamChain,
   StreamSource,
 } from '@/lib/data/types';
-import { CELEBRATION_TAIL } from './celebration';
-import { HANDOVER_AFTER } from './config';
-import { toRuntime } from './eventStatus';
+import { currentSlotIndex, handoverMoment, toRuntime } from '@time2fest/rules/time';
 import { chainStatus, firstPlayableSource } from './sourceStatus';
 
 export type AirView = 'stream' | 'countdown-scene' | 'expected-scene' | 'festival-over';
@@ -45,16 +43,6 @@ export function airSlots(schedule: AirSchedule): { midnightMs: Ms; midnightUtc: 
     if (events.length) out.push({ midnightMs: slot.midnightMs, midnightUtc: slot.midnightUtc, events });
   }
   return out.sort((a, b) => a.midnightMs - b.midnightMs);
-}
-
-/**
- * Індекс поточного слота: перший, для якого `now < midnight + 15 хв`; −1 — свято скінчилося. Останній слот передавати нікуди,
- * тому він лишається в ефірі до кінця свята — `CELEBRATION_TAIL` після останньої півночі (рішення власника 2026-11-14):
- * тости ще приймаються, і сайт не каже «свято завершено» раніше.
- */
-export function currentSlotIndex(now: Ms, slots: readonly { midnightMs: Ms }[]): number {
-  const last = slots.length - 1;
-  return slots.findIndex((s, i) => (i === last ? now <= s.midnightMs + CELEBRATION_TAIL : now < s.midnightMs + HANDOVER_AFTER));
 }
 
 /**
@@ -110,6 +98,6 @@ export function currentAirEvent(now: Ms, schedule: AirSchedule, streams: ChainIn
     nextEvent: next ? toRuntime(now, next.event) : null,
     source: cur.source,
     view: cur.view,
-    handoverAt: slot.midnightMs + HANDOVER_AFTER,
+    handoverAt: handoverMoment(slot.midnightMs),
   };
 }

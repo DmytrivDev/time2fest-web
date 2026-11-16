@@ -39,7 +39,7 @@ import { useHasStamp } from '@/lib/api/hooks/passport';
 import { useStreamChain, useStreamChains } from '@/lib/api/hooks/live';
 import { getData } from '@/lib/data/load';
 import type { ScheduledEvent, StreamSource } from '@/lib/data/types';
-import type { CaptionPhase } from '@/lib/engine/captionPhase';
+import type { CaptionPhase } from '@time2fest/rules/time';
 import type { AirView } from '@/lib/engine/currentAirEvent';
 import { countryHref } from '@/lib/live/countryHref';
 import type { AirPlace } from '@/lib/player/BroadcastController';

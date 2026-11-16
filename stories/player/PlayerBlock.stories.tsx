@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { PlayerBlock, type PlayerBlockProps, type VideoAreaKind } from '@/components/player/PlayerBlock';
-import { captionPhase } from '@/lib/engine/captionPhase';
+import { captionPhase } from '@time2fest/rules/time';
 import { computeBroadcast } from '@/lib/player/BroadcastController';
 import { Stage } from '../_support/Stage';
 

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { eventStatus } from '@/lib/engine/eventStatus';
+import { eventStatus, zoneState } from '@time2fest/rules/time';
 import { chainStatus, firstPlayableSource, sourceStatus } from '@/lib/engine/sourceStatus';
-import { zoneState } from '@/lib/engine/zoneState';
 import { event, LONDON_MIDNIGHT, MIN, PARIS_MIDNIGHT, RIO_MIDNIGHT, source } from '../fixtures/data';
 
 describe('eventStatus', () => {

@@ -6,7 +6,7 @@
  */
 import type { ChatMessage, Dataset, Ms, RoomId } from '@/lib/data/types';
 import { messageId } from '@/lib/chat/message';
-import { greetingToasters, type ToastRecord } from './feed';
+import { greetingToasters, type ToastRecord } from '@/lib/toast/feed';
 
 /** Країни поясу — найпопулярніші першими (у рядку привітання — перші три й «й ще N»). */
 export function zoneCountryIsos(data: Pick<Dataset, 'countries'>, zoneId: string): string[] {

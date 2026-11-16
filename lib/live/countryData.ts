@@ -7,8 +7,7 @@
  * - після `RECORDING_AFTER` статус рядка — `recording` («Запис»).
  */
 import type { CelebrationType, Country, Dataset, LoadedZone, Ms, ScheduledEvent, StreamSource } from '@/lib/data/types';
-import { RECORDING_AFTER } from '@/lib/engine/config';
-import { eventStatus } from '@/lib/engine/eventStatus';
+import { eventStatus, RECORDING_AFTER } from '@time2fest/rules/time';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { countryHref } from '@/lib/player/BroadcastController';
 

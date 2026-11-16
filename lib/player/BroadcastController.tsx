@@ -19,9 +19,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { getStreamChains, useStreamChains } from '@/lib/api/hooks/live';
 import type { City, Country, Ms, ScheduledEvent, StreamChain } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
-import { captionPhase, type CaptionPhase } from '@/lib/engine/captionPhase';
+import { captionPhase, type CaptionPhase, toRuntime } from '@time2fest/rules/time';
 import { currentAirEvent, pickSlotEvent, type AirState } from '@/lib/engine/currentAirEvent';
-import { toRuntime } from '@/lib/engine/eventStatus';
 import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
 import { countryHref } from '@/lib/live/countryHref';
 import { isRateInteracting } from '@/lib/live/rateInteraction';

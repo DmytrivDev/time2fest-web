@@ -17,7 +17,7 @@ import { Fireworks } from '@/components/player/Fireworks';
 import { midnightPhase } from '@/components/player/SceneMidnight';
 import { PostcardArt } from '@/components/stamp/StampArt';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
-import { arrivedYear } from '@/lib/engine/newYear';
+import { arrivedYear } from '@time2fest/rules/time';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';

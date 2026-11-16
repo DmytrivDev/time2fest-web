@@ -8,8 +8,7 @@
  */
 import type { Dataset, Ms, Stamp } from '@/lib/data/types';
 import type { PathPoint } from '@/lib/chat/authorPath';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
-import { zoneState } from '@/lib/engine/zoneState';
+import { HANDOVER_AFTER, zoneState } from '@time2fest/rules/time';
 import { scheduledCountries } from './countryZone';
 
 function point(data: Dataset, eventId: string, planned: boolean, extra: Partial<PathPoint> = {}): PathPoint | null {

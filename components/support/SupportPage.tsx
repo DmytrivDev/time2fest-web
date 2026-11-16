@@ -36,7 +36,7 @@ import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { formatClock, formatTimeForViewer } from '@/lib/i18n/time';
 import { stripView, type StripItem } from '@/lib/toast/feed';
-import { toastsOpenAt, type ToastSeason } from '@/lib/toast/season';
+import { type ToastSeason, toastsOpenAt } from '@time2fest/rules/time';
 import { isToastTier } from '@/lib/toast/tiers';
 import { useNow } from '@/lib/time/TimeProvider';
 import s from './support.module.css';

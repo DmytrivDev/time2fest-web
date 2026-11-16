@@ -13,7 +13,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useSession } from '@/lib/api/hooks/auth';
 import { getData } from '@/lib/data/load';
-import { isCelebrating } from '@/lib/engine/celebration';
+import { isCelebrating } from '@time2fest/rules/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import s from './account.module.css';
 

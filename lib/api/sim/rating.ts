@@ -11,7 +11,8 @@ import type { RatingAggregate, RatingBoard, RatingService } from '../contracts/r
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, Stars } from '@/lib/data/types';
 import { isRateable } from '@/lib/passport/passport';
-import { buildRatingState, ratingCloseAt, RATING_OPEN_AFTER, weighted, type RatingAggregates, type RatingState } from '@/lib/rating/rating';
+import { buildRatingState, weighted, type RatingAggregates, type RatingState } from '@/lib/rating/rating';
+import { RATING_OPEN_AFTER, ratingCloseAt } from '@time2fest/rules/time';
 import { useGuestStore } from '@/stores/guest';
 
 const GROW: Ms = 3 * 60 * 60_000;

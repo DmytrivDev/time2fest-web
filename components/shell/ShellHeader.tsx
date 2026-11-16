@@ -9,7 +9,7 @@ import { useOpenPassWindow } from '@/components/pass/PassWindow';
 import { useOpenToastWindow } from '@/components/toast/ToastWindow';
 import { useNotifications } from '@/lib/api/hooks/notifications';
 import { getData } from '@/lib/data/load';
-import { isCelebrating } from '@/lib/engine/celebration';
+import { isCelebrating } from '@time2fest/rules/time';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useNow } from '@/lib/time/TimeProvider';
 import { Header, type HeaderProps } from './Header';

@@ -24,7 +24,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn, useOverlay } from '@/components/shell/OverlayManager';
 import { getData } from '@/lib/data/load';
-import { canSayToast } from '@/lib/toast/season';
+import { canSayToast } from '@time2fest/rules/time';
 import { useTimeSource } from '@/lib/time/TimeProvider';
 import { type ToastTier } from '@/lib/toast/tiers';
 import { useToastStore } from '@/stores/toast';

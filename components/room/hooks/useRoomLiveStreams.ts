@@ -6,7 +6,7 @@
  */
 import { useMemo } from 'react';
 import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
+import { HANDOVER_AFTER } from '@time2fest/rules/time';
 import { formatClock } from '@/lib/i18n/time';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import type { SlotState } from '@/components/room/parts/RoomSlots';

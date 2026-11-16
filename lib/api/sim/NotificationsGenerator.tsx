@@ -16,7 +16,7 @@ import { useChatFeed } from '@/lib/chat-sim/store';
 import { countryHref as countryPageHref } from '@/lib/live/countryHref';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
-import { HOWTO_BEFORE } from '@/lib/engine/config';
+import { HOWTO_BEFORE } from '@time2fest/rules/time';
 import { formatClock } from '@/lib/i18n/time';
 import { useClock, useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';

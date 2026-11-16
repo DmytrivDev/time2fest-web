@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { arrivedYear } from '@/lib/engine/newYear';
+import { arrivedYear } from '@time2fest/rules/time';
 
 describe('arrivedYear — рік, що настав опівночі пояса', () => {
   it('за зсувом пояса: Кірібаті (+14) і Самоа-Американське (−11) — обидва 2027', () => {

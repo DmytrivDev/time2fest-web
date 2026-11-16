@@ -29,7 +29,7 @@ import { stampEntry } from '@/components/stamp/StampBlock';
 import { useStamps, useUnconfirmedStamps } from '@/lib/api/hooks/passport';
 import { routeCities } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
-import { zoneState } from '@/lib/engine/zoneState';
+import { zoneState } from '@time2fest/rules/time';
 import { formatClock, formatDurationShort, utcLabel, viewerZoneLabel } from '@/lib/i18n/time';
 import {
   CONTINENTS,

@@ -3,7 +3,7 @@
  * але вже зустріла Новий рік у Сіднеї, Токіо, Нью-Делі, Дубаї й Києві: штампи в паспорті й сповіщення
  * про них. Один раз на пристрій (мітка `t2f:demo:v1`); «Скинути стан гостя» стирає мітку — після перезавантаження знову.
  */
-import { buildStamp } from '@/lib/engine/presence';
+import { buildStamp } from '@/lib/engine/stamp';
 import { getData } from '@/lib/data/load';
 import { useGuestStore } from '@/stores/guest';
 import { useNotifStore, type Notif } from '@/stores/notifications';

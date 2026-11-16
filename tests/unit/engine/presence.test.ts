@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { MomentStamp } from '@/lib/events/types';
-import { buildStamp, presenceMoment, presenceOf, presentEvents, type PresenceSurface } from '@/lib/engine/presence';
+import { buildStamp } from '@/lib/engine/stamp';
+import { presenceMoment, presenceOf, type PresenceSurface, presentEvents } from '@time2fest/rules/time';
 import { grantStamps } from '@/lib/api/sim/passport';
 import { clearPresenceRegistry, registerSurface, surfacePresence } from '@/lib/presence/surfaces';
 import { useGuestStore } from '@/stores/guest';

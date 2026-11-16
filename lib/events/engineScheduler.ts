@@ -9,8 +9,7 @@
  */
 import type { Country, Ms, PresenceSource, SlotGroup, StreamChain } from '@/lib/data/types';
 import { airSlots, currentAirEvent, pickSlotEvent } from '@/lib/engine/currentAirEvent';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
-import { momentTimeline } from '@/lib/engine/momentTimeline';
+import { HANDOVER_AFTER, momentTimeline } from '@time2fest/rules/time';
 import { offerEligibility, type OfferContext } from '@/lib/engine/offerEligibility';
 import type { UiEventMap, UiEventType } from './types';
 

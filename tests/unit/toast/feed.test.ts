@@ -3,12 +3,11 @@
  * `Phone-Toast-New` v2).
  */
 import { describe, expect, it } from 'vitest';
-import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
+import { CELEBRATION_TAIL, nextMidnightAfter } from '@time2fest/rules/time';
 import {
   greetingParts,
   greetingToasters,
   keepIndex,
-  nextMidnightAfter,
   pinnedUntil,
   stepIndex,
   stripView,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDataset } from '@/lib/data/build';
 import type { StreamChain } from '@/lib/data/types';
-import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
+import { CELEBRATION_TAIL } from '@time2fest/rules/time';
 import { currentAirEvent } from '@/lib/engine/currentAirEvent';
 import { country, event, LONDON_MIDNIGHT, MIN, miniSchedule, PARIS_MIDNIGHT, RIO_MIDNIGHT, SEC, source } from '../fixtures/data';
 
