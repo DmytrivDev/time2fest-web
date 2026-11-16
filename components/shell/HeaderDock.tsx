@@ -37,6 +37,8 @@ export function HeaderDock({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<HeaderMode>('flow');
   const modeRef = useRef<HeaderMode>('flow');
   const height = useRef(0);
+  // Висота місця в потоці, поки шапка закріплена (`fixed`): міряємо, поки вона ще в потоці.
+  const [reserve, setReserve] = useState(0);
   const frame = useRef(0);
 
   const apply = useCallback((next: HeaderMode) => {
@@ -49,7 +51,10 @@ export function HeaderDock({ children }: { children: ReactNode }) {
     if (!el) return;
     const header = el.firstElementChild as HTMLElement | null;
     const current = modeRef.current;
-    if (header && (current === 'flow' || current === 'sticky')) height.current = header.offsetHeight;
+    if (header && (current === 'flow' || current === 'sticky')) {
+      height.current = header.offsetHeight;
+      setReserve((r) => (r === header.offsetHeight ? r : header.offsetHeight));
+    }
     const { bottom, pinned } = measurePlayers();
     const next = computeHeaderMode({ current, scrollY: window.scrollY, playerBottom: bottom, pinned, reduced: isReducedMotionNow() });
     if (next !== current) apply(next);
@@ -110,7 +115,7 @@ export function HeaderDock({ children }: { children: ReactNode }) {
       ref={dock}
       className={styles.dock}
       data-header-dock={mode}
-      style={fixed && height.current ? { height: height.current } : undefined}
+      style={fixed && reserve ? { height: reserve } : undefined}
       onAnimationEnd={(e) => {
         if (modeRef.current === 'leaving' && e.target === dock.current?.firstElementChild) apply('flow');
       }}
