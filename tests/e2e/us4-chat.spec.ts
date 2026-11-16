@@ -384,6 +384,20 @@ test.describe('US4 · тост у чаті', () => {
     await expect(page.locator('[data-window="O-TOAST"]').getByRole('radio', { name: '$5 · пляшка ігристого' })).toHaveAttribute('aria-checked', 'true');
   });
 
+  test('келих ховається, коли в полі курсор чи текст, і повертається з порожнім полем без курсора (п. 17)', async ({ page }) => {
+    await startChat(page);
+    const glass = page.locator('[data-action="chat-toast"]').first().locator('..');
+    const field = page.getByRole('textbox').first();
+    await field.click();
+    await expect(glass).toHaveCSS('opacity', '0');
+    await field.fill('привіт');
+    await page.locator('body').click({ position: { x: 2, y: 2 } });
+    await expect(glass).toHaveCSS('opacity', '0');
+    await field.fill('');
+    await page.locator('body').click({ position: { x: 2, y: 2 } });
+    await expect(glass).toHaveCSS('opacity', '1');
+  });
+
   test('опівночі Лондона — привітання «Північ · UTC+0 — з Новим роком!» у чаті «Світ»', async ({ page }) => {
     await startChat(page, '2027-01-01T01:59:56+02:00', 1);
     const greet = page.locator('[data-system="toast-midnight"]').first();
