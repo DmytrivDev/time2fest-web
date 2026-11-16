@@ -94,7 +94,7 @@ describe('процес оплати (sim)', () => {
     expect(paid.toast?.countries).toEqual(['FR', 'DE']);
     const rooms = useChatFeed.getState().rooms;
     for (const room of ['world', 'country:FR', 'country:DE'] as const) {
-      expect(rooms[room]?.filter((m) => m.toast?.amount === 5 && m.author.isMine)).toHaveLength(1);
+      expect(rooms[room]?.filter((m) => m.toast?.amount === 5 && m.author?.isMine)).toHaveLength(1);
     }
     expect(useToastStore.getState().said).toHaveLength(1);
     expect(new Set([rooms.world![0]!.id, rooms['country:FR']![0]!.id, rooms['country:DE']![0]!.id]).size).toBe(3);
