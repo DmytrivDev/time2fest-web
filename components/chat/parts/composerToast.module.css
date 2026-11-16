@@ -4,6 +4,20 @@
   position: relative;
   display: inline-flex;
   flex: none;
+  max-width: 34px;
+  transition:
+    max-width 200ms ease-out,
+    opacity 160ms ease-out;
+}
+/* Поле з курсором чи текстом (п. 17, Т16): келих плавно згортається й не займає місця, не ловить дотик. */
+.wrap[data-shown='false'] {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+:global(html[data-reduce-motion='true']) .wrap {
+  transition: none;
 }
 .btn {
   display: inline-flex;

@@ -68,6 +68,9 @@ export function Composer({
   const announce = useAnnounce();
   // Вибір емодзі: `kb` — відкрито з клавіатури (фокус на першу клітинку).
   const [picker, setPicker] = useState<{ kb: boolean } | null>(null);
+  // Келих «Сказати тост» видно, лише поки поле порожнє й без курсора (власник 2026-11-15/16, п. 17, Т16): місце — тексту.
+  const [fieldFocused, setFieldFocused] = useState(false);
+  const toastShown = !fieldFocused && value.length === 0;
   const uid = useId();
   const inputId = `${uid}-input`;
   const emojiBtnId = `${uid}-emoji`;
@@ -191,12 +194,14 @@ export function Composer({
           ) : undefined
         }
         onChange={(e) => onValueChange(e.target.value)}
+        onFocus={() => setFieldFocused(true)}
+        onBlur={() => setFieldFocused(false)}
         onKeyDown={onKeyDown}
         endSlot={
           <>
             {onToast ? (
-              <span className={ts.wrap}>
-                <button type="button" aria-label={t('toastButton')} onClick={onToast} className={cn('t2f-focus', ts.btn)} data-action="chat-toast">
+              <span className={ts.wrap} data-shown={toastShown}>
+                <button type="button" aria-label={t('toastButton')} tabIndex={toastShown ? undefined : -1} onClick={onToast} className={cn('t2f-focus', ts.btn)} data-action="chat-toast">
                   <Icon name="glass" size={16} />
                 </button>
                 <span aria-hidden="true" className={ts.tip}>
