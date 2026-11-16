@@ -12,6 +12,7 @@ import { createSimPassport } from './passport';
 import { createSimProfile } from './profile';
 import { createSimToasts } from './toasts';
 import { createSimRating } from './rating';
+import { createSimSite } from './site';
 import { withFaults } from './faults';
 
 export { simFaults } from './faults';
@@ -27,4 +28,5 @@ export const simFactories: ServiceFactories = {
   checkout: () => withFaults('checkout', createSimCheckout()),
   toasts: () => withFaults('toasts', createSimToasts()),
   chat: () => withFaults('chat', createSimChat()),
+  site: () => withFaults('site', createSimSite()),
 };

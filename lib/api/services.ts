@@ -15,6 +15,7 @@ import type { NotificationsService } from './contracts/notifications';
 import type { PassportService } from './contracts/passport';
 import type { ProfileService } from './contracts/profile';
 import type { RatingService } from './contracts/rating';
+import type { SiteService } from './contracts/site';
 import type { ToastsService } from './contracts/toasts';
 import { httpFactories } from './http';
 // Імітація — лише через `simEntry` (у збірці `http` його підміняє `next.config.ts`, і `sim` не потрапляє в пакет).
@@ -32,6 +33,7 @@ export interface Services {
   passport: PassportService;
   rating: RatingService;
   notifications: NotificationsService;
+  site: SiteService;
 }
 
 export type ServiceName = keyof Services;
