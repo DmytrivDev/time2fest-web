@@ -152,7 +152,7 @@ describe('оплата й результат', () => {
     expect(win()).toHaveTextContent('Чекаємо оплату на PayPro Global');
     expect(win()).toHaveTextContent('Тост $5 · пляшка ігристого');
     expect(within(win()).queryByRole('textbox')).toBeNull();
-    expect(within(win()).getByRole('button', { name: 'Відкрити оплату' })).toBeInTheDocument();
+    expect(within(win()).getByRole('button', { name: 'До оплати' })).toBeInTheDocument();
     settle();
     expect(win()).toHaveTextContent('Тост опубліковано');
     expect(win()).toHaveTextContent('Він уже в чаті «Світ» і закріплений під трансляцією до наступної півночі.');

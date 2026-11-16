@@ -86,7 +86,9 @@
 /* Колонка чату (`Main`): sticky 16 px від верху, висота вікна − 104 px (560…840), surface, rounded.lg. */
 .chat {
   position: sticky;
-  top: var(--spacing-4);
+  /* Закріплена шапка (`HeaderDock`) не накриває колонку: відступ — її висота, коли вона стоїть. */
+  top: calc(var(--spacing-4) + var(--header-stuck, 0px));
+  transition: top 240ms ease-out;
   align-self: start;
   box-sizing: border-box;
   height: calc(100vh - 104px);

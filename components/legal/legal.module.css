@@ -22,7 +22,7 @@
 }
 .aside {
   position: sticky;
-  top: 24px;
+  top: calc(24px + var(--header-stuck, 0px));
   max-height: calc(100vh - 48px);
   overflow-y: auto;
   scrollbar-width: thin;
@@ -325,7 +325,7 @@
   }
   .bar {
     position: sticky;
-    top: 0;
+    top: var(--header-stuck, 0px);
     z-index: 15;
     display: flex;
     align-items: center;

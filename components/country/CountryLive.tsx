@@ -249,7 +249,7 @@ export function CountryLive({ iso }: { iso: string }) {
             <ToastStrip variant="desk" />
             {inflow}
           </div>
-          <div className="pt-6">{events}</div>
+          <div className={home.sectionTop}>{events}</div>
           {chat.column}
           <RoomTray />
         </>
@@ -271,7 +271,7 @@ export function CountryLive({ iso }: { iso: string }) {
               </p>
             ) : null}
           </div>
-          <div className="pt-6">{events}</div>
+          <div className={home.sectionTop}>{events}</div>
           {chat.dock}
         </>
       )}

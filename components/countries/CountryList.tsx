@@ -49,6 +49,16 @@ import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
 type Filter = 'all' | 'live' | 'mine';
 const NOT_FIRST = new Set(['RU', 'BY']);
 
+/**
+ * Порядок країн у поясі й у кожному регіоні (власник 2026-11-15/16, п. 12, 23, Т17): спершу країни з трансляцією, потім ті,
+ * де лише відлік; усередині кожної частини — наявний порядок (Росія й Білорусь — наприкінці своєї частини).
+ */
+export function orderCountries(countries: readonly MapCountry[]): MapCountry[] {
+  const rank = (c: MapCountry) => (NOT_FIRST.has(c.iso) ? 1 : 0);
+  const withStream = (c: MapCountry) => ((c.streams?.length ?? 0) > 0 ? 0 : 1);
+  return [...countries].sort((a, b) => withStream(a) - withStream(b) || rank(a) - rank(b));
+}
+
 export interface CountryListProps {
   /** Геометрія мапи (`data/zonemap.json`); без неї підвантажується окремим шматком. */
   geometry?: ZoneMapGeometry;
@@ -180,7 +190,7 @@ function ZoneDirectory({
   const tR = useTranslations('liveMap.regions');
   const groups = new Map<RegionKey | 'other', MapCountry[]>();
   // Росія й Білорусь — не серед перших (рішення власника 2026-11-03): у кінці свого регіону.
-  const list = [...zone.countries.filter((c) => !NOT_FIRST.has(c.iso)), ...zone.countries.filter((c) => NOT_FIRST.has(c.iso))];
+  const list = orderCountries(zone.countries);
   for (const c of list) {
     const r = regionOf(c.iso, zone.offsetMinutes) ?? 'other';
     groups.set(r, [...(groups.get(r) ?? []), c]);

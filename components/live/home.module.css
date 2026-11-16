@@ -214,14 +214,18 @@
 .column {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--section-gap);
+}
+/* Відступ блоку «події» від попереднього — той самий проміжок між блоками. */
+.sectionTop {
+  padding-top: var(--section-gap);
 }
 
 /* ── Телефон: вкладки «Події | Чат» і вміст «Подій» (поля 16, проміжок 24) ──────────────── */
 .events {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
+  gap: var(--section-gap);
   padding: var(--spacing-4);
 }
 .watchers {
@@ -239,11 +243,11 @@
    не потрібен; порожні (закриті) — зовсім не займають місця. */
 .column > :global(.t2f-reveal),
 .column > [aria-live='polite']:has(> :global(.t2f-reveal)) {
-  margin-bottom: calc(-1 * var(--spacing-4));
+  margin-bottom: calc(-1 * var(--section-gap));
 }
 /* Порожній InFlowSlot (жива область лишається в DOM) не додає проміжку колонки. */
 .column > [data-moment-slot]:has(> [data-in-flow-slot='empty']) {
-  margin-bottom: calc(-1 * var(--spacing-4));
+  margin-bottom: calc(-1 * var(--section-gap));
 }
 .phoneInflow:has([data-in-flow-slot='occupied']) {
   padding-bottom: var(--spacing-4);

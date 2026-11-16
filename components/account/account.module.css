@@ -612,6 +612,10 @@
   padding: 0;
   list-style: none;
 }
+/* Н6 (2026-11-16): проміжок між пунктами — активний і підсвічений сусід не злипаються. */
+.navList > li + li {
+  margin-top: 4px;
+}
 .navItem {
   display: flex;
   min-height: 48px;

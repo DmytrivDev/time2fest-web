@@ -70,8 +70,9 @@
   display: inline-flex;
   flex: none;
   align-items: center;
+  position: relative;
   gap: 8px;
-  height: 38px;
+  height: 32px;
   margin-right: 4px;
   padding: 0 12px;
   border: 1px solid var(--color-highlight);
@@ -84,6 +85,12 @@
 }
 .passFull {
   display: none;
+}
+/* Н3 (2026-11-16): на телефоні кнопка низька (32 px), а зона дотику лишається 44 px. */
+.pass::before {
+  position: absolute;
+  inset: -6px -2px;
+  content: '';
 }
 
 /* «Моє»: на телефоні — окремі значки (кабінет перед дзвіночком), ширше — капсула з рисками. */
@@ -222,6 +229,9 @@
     background: var(--color-highlight);
     color: var(--color-background);
     font-size: 15px;
+  }
+  .pass::before {
+    display: none;
   }
   .passShort {
     display: none;

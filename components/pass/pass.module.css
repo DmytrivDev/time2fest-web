@@ -173,7 +173,7 @@
 @media (min-width: 1024px) {
   .card {
     position: sticky;
-    top: 16px;
+    top: calc(16px + var(--header-stuck, 0px));
     margin-top: 0;
     height: calc(100vh - 104px);
     height: calc(100dvh - 104px);

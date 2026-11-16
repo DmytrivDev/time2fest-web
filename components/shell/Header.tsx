@@ -10,6 +10,7 @@ import { DemoClock } from '@/components/dev/DemoClock';
 import { WhenCanToast } from '@/components/toast/useToastSeason';
 import { useUnreadNotifCount } from '@/lib/api/hooks/notifications';
 import { IS_DEMO_BUILD } from '@/lib/env';
+import { HeaderDock } from './HeaderDock';
 import { CelebrationBackdrop, CelebrationContent, type HeaderCelebrationProps } from './HeaderCelebration';
 import styles from './header.module.css';
 
@@ -147,6 +148,7 @@ export function Header({
   }, [celebrationId]);
 
   return (
+    <HeaderDock>
     <header
       className={cn(styles.header, className)}
       data-celebration={celebration ? celebration.phase : undefined}
@@ -265,5 +267,6 @@ export function Header({
         {celebration ? <CelebrationContent key={celebration.celebration.id} {...celebration} /> : null}
       </div>
     </header>
+    </HeaderDock>
   );
 }
