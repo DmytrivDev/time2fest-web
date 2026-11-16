@@ -42,3 +42,7 @@ export function fail<T = never>(code: ApiErrorCode, extra: Omit<ApiError, 'code'
 
 /** Відписка від realtime-підписки (канал Centrifugo в `http`, підписка на стор у `sim`). */
 export type Unsubscribe = () => void;
+
+/** Platform reasons (SPEC-02), valid with any code: schema failure, duplicate in flight, door needs the exclusive lock. */
+export const PLATFORM_REASONS = ['invalid-input', 'in-progress', 'lock-required'] as const;
+export type PlatformReason = (typeof PLATFORM_REASONS)[number];
