@@ -20,3 +20,5 @@ export * from './moment';
 export * from './slot';
 export * from './pins';
 export * from './bounds';
+export * from './presence';
+export * from './divergent';
