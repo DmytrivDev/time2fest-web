@@ -311,7 +311,7 @@ test.describe('US6 · «Поділитися» штампом', () => {
   }) => {
     await seedGuest(page, { stamps: ['evt_london_2027'] });
     await gotoAt(page, '2027-01-01T02:00:20+02:00', 0);
-    await page.getByRole('button', { name: 'Поділитися' }).first().click();
+    await page.getByRole('button', { name: 'Поділитися', exact: true }).first().click();
     const dialog = page.getByRole('dialog', { name: 'Поділитися штампом' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('img')).toHaveAttribute('alt', /Прев’ю картки: .* Новий рік о/);
