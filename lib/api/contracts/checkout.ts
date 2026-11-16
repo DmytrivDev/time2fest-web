@@ -11,7 +11,10 @@ import type { Ms } from '@/lib/data/types';
 import type { ToastRecord } from '@/lib/toast/feed';
 import type { ToastTier } from '@/lib/toast/tiers';
 
-export type Product = { kind: 'pass' } | { kind: 'toast'; tier: ToastTier; text: string };
+export type Product =
+  | { kind: 'pass' }
+  /** `countries` — ISO країн, чиї чати показувала сторінка, коли тост сказано: тост іде і в їхні чати (разом зі «Світом»). */
+  | { kind: 'toast'; tier: ToastTier; text: string; countries?: readonly string[] };
 
 export interface CheckoutStartRequest {
   product: Product;

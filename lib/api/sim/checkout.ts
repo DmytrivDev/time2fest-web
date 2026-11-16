@@ -14,7 +14,7 @@
 import { fail, ok } from '../result';
 import { isFinalOrder, type CheckoutService, type Order, type Product } from '../contracts/checkout';
 import { useChatFeed } from '@/lib/chat-sim/store';
-import { toastMessage } from '@/lib/chat/toast';
+import { toastMessages } from '@/lib/chat/toast';
 import type { Ms } from '@/lib/data/types';
 import { normalizeEmail } from '@/lib/auth/email';
 import { PAY_ROUNDTRIP_MS, PAYPRO_DEMO_EMAIL, PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
@@ -101,7 +101,7 @@ function complete(id: string): void {
     put({ ...o, status: 'paid', pendingSince: undefined, updatedAt: now });
     return;
   }
-  const { tier, text } = o.product;
+  const { tier, text, countries } = o.product;
   const g = useGuestStore.getState();
   const now = siteNow();
   // Гість: пошту ввів на сторінці PayPro (вебхук передає її в замовлення).
@@ -118,8 +118,9 @@ function complete(id: string): void {
     createdAt: now,
     mine: true,
     pass: accountHasPass(useAuthStore.getState()) || tierGiftsPass(tier),
+    ...(countries?.length ? { countries: [...countries] } : {}),
   };
-  useChatFeed.getState().append([toastMessage(record, g.id)]);
+  useChatFeed.getState().append(toastMessages(record, g.id));
   // Свої тости — «стрічка сервера» для цього пристрою (`lib/api/sim/toasts`).
   useToastStore.setState((s) => ({ said: [...s.said, record] }));
   put({ ...o, status: 'paid', pendingSince: undefined, updatedAt: now, toast: record, ...(email ? { email } : {}), ...(gift ? { gift } : {}) });

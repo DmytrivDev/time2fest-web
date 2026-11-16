@@ -28,7 +28,7 @@ import { ratingState } from '@/lib/api/sim/rating';
 import type { ToastRecord } from '@/lib/toast/feed';
 import { toastGreetingMessages } from '@/lib/toast/greeting';
 import { simulatedToasts } from '@/lib/toast/worldToasts';
-import { toastMessage } from '@/lib/chat/toast';
+import { toastMessage, toastRooms } from '@/lib/chat/toast';
 import { compareMessages, messageId } from '@/lib/chat/message';
 // Чисті id й порядок повідомлень — у `lib/chat/message` (реекспорт для імітатора й тестів).
 export { compareMessages, messageId };
@@ -401,7 +401,11 @@ export function worldToastMessages(
   const data = getData();
   const all = [...simulatedToasts(script, data, to), ...own];
   const out = toastGreetingMessages(data, rooms, from, to, all);
-  if (rooms.includes('world')) for (const t of all) if (t.createdAt > from && t.createdAt <= to) out.push(toastMessage(t));
+  for (const t of all) {
+    if (t.createdAt <= from || t.createdAt > to) continue;
+    // Свій тост іде ще й у чати країн, де його сказано (`ToastRecord.countries`); у кожній кімнаті — своє повідомлення.
+    for (const room of toastRooms(t)) if (rooms.includes(room)) out.push(toastMessage(t, undefined, room));
+  }
   return out;
 }
 

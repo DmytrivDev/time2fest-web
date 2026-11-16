@@ -69,6 +69,11 @@ export function useChatRooms(list: readonly RoomId[]): void {
   }, [key]);
 }
 
+/** ISO країн, чиї чати показує сторінка зараз (головна — країна ефіру, країна, кімната — країни вікон): куди йде тост. */
+export function pageCountryIsos(): string[] {
+  return [...pageRooms.keys()].filter((r) => r.startsWith('country:')).map((r) => r.slice('country:'.length)).sort();
+}
+
 let pageSnap: readonly (readonly ChatMessage[])[] = [];
 function pageSnapshot(): readonly (readonly ChatMessage[])[] {
   const lists = [...pageRooms.keys()].sort().map((r) => roomResource(r).getSnapshot().data ?? EMPTY);

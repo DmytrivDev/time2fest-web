@@ -16,6 +16,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { validateNick } from '@/lib/chat/nick';
 import type { Ms } from '@/lib/data/types';
+import { pageCountryIsos } from '@/lib/api/hooks/chat';
 import { getService } from '@/lib/api/services';
 import { PENDING_CONFIRM_MS, TOAST_PAY_MS } from '@/lib/offers/paySim';
 import { safeJsonStorage } from '@/lib/storage/safe';
@@ -141,7 +142,7 @@ export const useToastStore = create<ToastFlowState>()(
           set({ phase: 'paying', issue: null, pendingSince: undefined, clientId });
           listen();
           void getService('checkout')
-            .start({ product: { kind: 'toast', tier: s.tier, text: s.text }, returnPath: '/', clientId })
+            .start({ product: { kind: 'toast', tier: s.tier, text: s.text, countries: pageCountryIsos() }, returnPath: '/', clientId })
             .then((res) => {
               // Старт не вдався: мережа — «Немає з’єднання» (гроші не списано, текст лишається); інше — «Оплата не пройшла».
               if (!res.ok && get().clientId === clientId)

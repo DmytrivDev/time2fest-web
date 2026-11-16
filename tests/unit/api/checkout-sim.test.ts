@@ -87,6 +87,20 @@ describe('процес оплати (sim)', () => {
     expect(useAuthStore.getState().unclaimed[PAYPRO_DEMO_EMAIL]).toBeDefined();
   });
 
+  it('тост у чатах країн, де його сказано: один тост, повідомлення у «Світі» й у кожній країні (без дублів у «Світі»)', async () => {
+    await svc.start({ product: { kind: 'toast', tier: 5, text: 'З Новим роком!', countries: ['FR', 'DE'] }, returnPath: '/', clientId: 'rooms' });
+    vi.advanceTimersByTime(PAY_ROUNDTRIP_MS + TOAST_PAY_MS);
+    const paid = seen.at(-1)!;
+    expect(paid.toast?.countries).toEqual(['FR', 'DE']);
+    const rooms = useChatFeed.getState().rooms;
+    for (const room of ['world', 'country:FR', 'country:DE'] as const) {
+      expect(rooms[room]?.filter((m) => m.toast?.amount === 5 && m.author.isMine)).toHaveLength(1);
+    }
+    expect(useToastStore.getState().said).toHaveLength(1);
+    expect(new Set([rooms.world![0]!.id, rooms['country:FR']![0]!.id, rooms['country:DE']![0]!.id]).size).toBe(3);
+    expect(rooms['country:IT']).toBeUndefined();
+  });
+
   it('скасування до результату — cancelled, результату немає; перерваний перехід продовжується після перезавантаження', async () => {
     const res = await svc.start({ product: { kind: 'toast', tier: 5, text: 'Ура' }, returnPath: '/', clientId: 'x' });
     await svc.cancel(res.ok ? res.value.order.id : '');
