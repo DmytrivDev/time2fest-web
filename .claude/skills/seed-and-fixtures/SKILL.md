@@ -5,7 +5,7 @@ description: Builds and checks Time2Fest backend data for local work and tests �
 
 # seed-and-fixtures
 
-Layout fidelity is impossible unless the server shows the same data as `sim`. **Status:** the seed script, fixture endpoint and seed translator are TODO until SPEC-01 (`server/src/seed/**`, `server/src/test-doors/fixtures/**`, `BT/http-seeds.mjs`).
+Layout fidelity is impossible unless the server shows the same data as `sim`. **Status:** built by SPEC-02: registry and CLI in `server/src/seed/{registry,index,cli}.ts` (`pnpm --dir server seed`), test doors `reset` and `fixtures` in `server/src/test-doors/` (`POST /api/_test/reset`, `POST /api/_test/fixtures`). The seed translator `BT/http-seeds.mjs` and the per-collection seeders arrive with the waves that add the collections.
 
 ## 1. Seed (all environments except production data)
 Sources — read them, never invent parallel copies:
@@ -22,7 +22,7 @@ Rules: idempotent (upsert by natural key: ISO, event id, videoId); prints counts
 - Fixtures are named after manifest seeds in `BT/manifests/_common.json` and `batch-*.json` (`guest`, `user`, `pass`, `authOther`, `nick`, …), where `BT = D:/Work/Pets/Time2Fest/docs/bmad/planning-artifacts/ux-designs/ux-Time2Fest-2026-10-21/board-tools`. One fixture = the server-side equivalent of that localStorage seed: same email, nick, flag, pass ids, stamp list, order states (`demo-paid`, `demo-pending`, `demo-declined`, `demo-expired`, `demo-cancelled`, `demo-open`, `demo-toast-paid` — `frontend-seam.md` §6.3), notification counts.
 - Values are copied from the sim seed/state, not retyped; a unit test compares the fixture with the sim store for each name.
 - Time comes from the test clock door, never from `Date.now()` in fixtures.
-- Fixtures are applied through `POST /api/_test/fixtures` (test flag only) and reset with `/api/_test/reset`.
+- Fixtures are applied through `POST /api/_test/fixtures` (test flag only) and reset with `POST /api/_test/reset`.
 
 ## 3. Privacy
 Only invented data. Never read or copy anything from `research_data/` (real visitors' cities and messages) or production databases; emails use `example.com` / the existing demo addresses; chat lines come only from `data/chat-script.json`.

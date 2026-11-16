@@ -1,5 +1,5 @@
-# The three `run` commands mirror the `full` entries of `.claude/sdd-engineering.json`
-# (packages web, contracts, rules). Change them together.
+# `web full`, `contracts full`, `rules full`, and the server steps (= `server.full` split in two)
+# mirror `.claude/sdd-engineering.json`. Change them together.
 name: verify
 
 on: push
@@ -14,7 +14,22 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    env:
+      T2F_LOCK_DIR: ${{ runner.temp }}/t2f-locks
+    services:
+      # GitHub cannot pass `--databases`, so CI uses slot 0 (Redis DB 0 of 16, enough).
+      postgres:
+        image: postgres:17.12-alpine
+        env:
+          POSTGRES_USER: t2f
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['5433:5432']
+        options: --health-cmd "pg_isready -U t2f" --health-interval 5s --health-retries 20
+      redis:
+        image: redis:7.4.12-alpine
+        ports: ['6380:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-retries 20
     steps:
       - uses: actions/checkout@v6
         with:
@@ -34,3 +49,15 @@ jobs:
       - name: rules full
         working-directory: packages/rules
         run: npx tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
+      - name: secret check
+        run: node scripts/check-secrets.mjs
+      - name: research_data path check
+        run: node scripts/check-research-data.mjs
+      - name: contract suites (sim)
+        run: pnpm contracts:run --sim-only
+      - name: server unit
+        working-directory: server
+        run: npx tsc --noEmit -p . && npx eslint . && npx vitest run --maxWorkers=2
+      - name: server integration
+        working-directory: server
+        run: node scripts/db.mjs create && node scripts/db.mjs env && pnpm migrate && pnpm test:int && node scripts/verify-schema.mjs

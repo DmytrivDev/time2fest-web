@@ -26,7 +26,8 @@
     "env:check": "tsx src/platform/env.check.ts",
     "serve": "node scripts/stack.mjs serve",
     "build": "next build",
-    "start": "node scripts/stack.mjs start"
+    "start": "node scripts/stack.mjs start",
+    "start:prod": "next build && node scripts/stack.mjs start"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.91.0",
