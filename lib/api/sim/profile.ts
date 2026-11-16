@@ -11,7 +11,9 @@ import { accountHasPass, useAuthStore, type AuthCode } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 
-const SETTING_KEYS = Object.keys(DEFAULT_ACCOUNT).filter((k) => k !== 'googleLinked') as (keyof ProfileSettings)[];
+/** Ключі налаштувань, що живуть у сховищі акаунта (поле шва без сховища сюди не потрапляє). */
+type SettingKey = keyof typeof DEFAULT_ACCOUNT & keyof ProfileSettings;
+const SETTING_KEYS = Object.keys(DEFAULT_ACCOUNT).filter((k) => k !== 'googleLinked') as SettingKey[];
 
 /** Зміна пошти, що чекає коду: той самий об’єкт, поки код у «сервері» не змінився. */
 let pendingCache: { code: AuthCode | null; out: Profile['pendingEmail'] } = { code: null, out: null };
@@ -86,7 +88,7 @@ export function createSimProfile(): ProfileService {
       if (patch.nick !== undefined) g.setNick(patch.nick, patch.flagCode);
       else if (patch.flagCode) g.setFlag(patch.flagCode);
       const acc = useAccountStore.getState();
-      for (const [k, v] of Object.entries(patch.settings ?? {})) acc.set(k as keyof ProfileSettings, v as never);
+      for (const [k, v] of Object.entries(patch.settings ?? {})) acc.set(k as SettingKey, v as never);
       return ok(profileNow());
     },
     async setSchedule(eventIds) {

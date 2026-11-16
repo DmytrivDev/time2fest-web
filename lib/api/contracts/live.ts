@@ -8,9 +8,11 @@ import type { ISO, StreamChain, StreamSource } from '@/lib/data/types';
 
 export type StreamEvent =
   /** Змінилось одне джерело (статус, `isLive`, `embeddable`, `startsAt`, запис). */
-  | { type: 'source'; eventId: string; source: StreamSource }
+  | { type: 'source'; eventId: string; source: StreamSource; version?: number }
   /** Адмінка переставила чи додала джерела — увесь ланцюжок. */
-  | { type: 'chain'; chain: StreamChain };
+  | { type: 'chain'; chain: StreamChain; version?: number }
+  /** `hide` цей клієнт ігнорує — поведінка належить хвилі «живе». */
+  | { type: 'hide'; eventId: string; sourceId: string; version?: number };
 
 export interface ViewerCountry {
   iso: string;
@@ -51,9 +53,10 @@ export interface LiveService {
 /**
  * Чисте правило застосування події каналу `live:streams` до ланцюжків (сервер і клієнт — одна функція): `source`
  * замінює джерело з тим самим `id` у ланцюжку події (невідомі подія чи джерело — ігноруються: чекаємо `chain`), `chain`
- * замінює ланцюжок цілком. Не змінилось нічого — повертає ту саму мапу (кеш не будить споживачів).
+ * замінює ланцюжок цілком, `hide` ігнорується. Не змінилось нічого — повертає ту саму мапу (кеш не будить споживачів).
  */
 export function applyStreamEvent(chains: ReadonlyMap<string, StreamChain>, event: StreamEvent): ReadonlyMap<string, StreamChain> {
+  if (event.type === 'hide') return chains;
   if (event.type === 'chain') {
     const next = new Map(chains);
     next.set(event.chain.eventId, event.chain);

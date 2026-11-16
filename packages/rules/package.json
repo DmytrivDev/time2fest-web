@@ -1,0 +1,16 @@
+{
+  "name": "@time2fest/rules",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./time": "./src/time/index.ts",
+    "./text": "./src/text/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

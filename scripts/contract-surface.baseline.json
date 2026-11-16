@@ -1,0 +1,3292 @@
+{
+  "version": 1,
+  "surfaces": {
+    "lib/api/contracts/auth.ts#AuthCodeError": {
+      "union": [
+        "'cooldown'",
+        "'expired'",
+        "'network'",
+        "'rate-limited'",
+        "'too-many-attempts'",
+        "'unavailable'",
+        "'unknown'",
+        "'wrong-code'"
+      ]
+    },
+    "lib/api/contracts/auth.ts#AuthIntent": {
+      "union": [
+        "'signin'",
+        "'signup'"
+      ]
+    },
+    "lib/api/contracts/auth.ts#AuthService": {
+      "props": {
+        "devCode": {
+          "optional": true,
+          "type": {
+            "ref": "lib/api/contracts/auth.ts#DevCodeBox"
+          }
+        },
+        "devReset": {
+          "optional": true,
+          "type": {
+            "fn": "devReset?(): void;"
+          }
+        },
+        "google": {
+          "optional": false,
+          "type": {
+            "fn": "google(opts: { returnPath: string; signal?: AbortSignal }): Promise<ApiResult<GoogleOutcome>>;"
+          }
+        },
+        "peek": {
+          "optional": false,
+          "type": {
+            "fn": "peek(): Session | undefined;"
+          }
+        },
+        "requestCode": {
+          "optional": false,
+          "type": {
+            "fn": "requestCode(email: string, intent: AuthIntent): Promise<ApiResult<CodeInfo>>;"
+          }
+        },
+        "session": {
+          "optional": false,
+          "type": {
+            "fn": "session(): Promise<ApiResult<Session>>;"
+          }
+        },
+        "signOut": {
+          "optional": false,
+          "type": {
+            "fn": "signOut(): Promise<ApiResult<void>>;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onChange: (session: Session) => void): Unsubscribe;"
+          }
+        },
+        "verifyCode": {
+          "optional": false,
+          "type": {
+            "fn": "verifyCode(email: string, code: string): Promise<ApiResult<SignInOutcome>>;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#CodeInfo": {
+      "props": {
+        "attemptsLeft": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "email": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "expiresAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "intent": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/auth.ts#AuthIntent"
+          }
+        },
+        "resendAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "sentAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#DevCode": {
+      "props": {
+        "code": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "email": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "expiresAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "purpose": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'email-change'",
+              "'signin'"
+            ]
+          }
+        },
+        "sentAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "used": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#DevCodeBox": {
+      "props": {
+        "expire": {
+          "optional": false,
+          "type": {
+            "fn": "expire(): void;"
+          }
+        },
+        "get": {
+          "optional": false,
+          "type": {
+            "fn": "get(): DevCode | null;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(cb: () => void): Unsubscribe;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#GoogleOutcome": {
+      "union": [
+        "{\"props\":{\"kind\":{\"optional\":false,\"type\":{\"union\":[\"'redirect'\"]}},\"url\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"text\":\"{ kind: 'signed-in' } & SignInOutcome\"}"
+      ]
+    },
+    "lib/api/contracts/auth.ts#Session": {
+      "props": {
+        "code": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "ref:lib/api/contracts/auth.ts#CodeInfo"
+            ]
+          }
+        },
+        "devicePass": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "{\"props\":{\"email\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"since\":{\"optional\":false,\"type\":{\"ref\":\"lib/data/types.ts#Ms\"}}}}"
+            ]
+          }
+        },
+        "guestId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "hasPass": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "passNight": {
+          "optional": true,
+          "type": {
+            "ref": "lib/data/types.ts#NightId"
+          }
+        },
+        "passOn": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'account'",
+              "'device'",
+              "null"
+            ]
+          }
+        },
+        "passSince": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "ref:lib/data/types.ts#Ms"
+            ]
+          }
+        },
+        "user": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "ref:lib/api/contracts/auth.ts#SessionUser"
+            ]
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#SessionUser": {
+      "props": {
+        "email": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "name": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "signedInAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "via": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'email'",
+              "'google'"
+            ]
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#SignInOutcome": {
+      "props": {
+        "email": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isNew": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/auth.ts#authCodeError": {
+      "fn": "export function authCodeError(e: ApiError): AuthCodeError"
+    },
+    "lib/api/contracts/catalog.ts#Catalog": {
+      "text": "Omit<Dataset, 'chainsByEventId'>"
+    },
+    "lib/api/contracts/catalog.ts#CatalogService": {
+      "props": {
+        "catalog": {
+          "optional": false,
+          "type": {
+            "fn": "catalog(): Catalog;"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "fn": "version(): string;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/chat.ts#AuthorPathInfo": {
+      "props": {
+        "hidden": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "points": {
+          "optional": false,
+          "type": {
+            "text": "readonly PathPoint[]"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/chat.ts#ChatConnection": {
+      "union": [
+        "'offline'",
+        "'ok'",
+        "'slow'",
+        "'unavailable'"
+      ]
+    },
+    "lib/api/contracts/chat.ts#ChatEvent": {
+      "variants": {
+        "'deleted'": {
+          "props": {
+            "id": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'deleted'"
+                ]
+              }
+            }
+          }
+        },
+        "'messages'": {
+          "props": {
+            "messages": {
+              "optional": false,
+              "type": {
+                "text": "readonly ChatMessage[]"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'messages'"
+                ]
+              }
+            }
+          }
+        },
+        "'slow-mode'": {
+          "props": {
+            "seconds": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'slow-mode'"
+                ]
+              }
+            }
+          }
+        },
+        "'snapshot'": {
+          "props": {
+            "messages": {
+              "optional": false,
+              "type": {
+                "text": "readonly ChatMessage[]"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'snapshot'"
+                ]
+              }
+            }
+          }
+        },
+        "'update'": {
+          "props": {
+            "id": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "patch": {
+              "optional": false,
+              "type": {
+                "text": "Pick<Partial<ChatMessage>, 'reactions' | 'moderation'>"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'update'"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/api/contracts/chat.ts#ChatSendReason": {
+      "union": [
+        "'banned'",
+        "'chat-closed'",
+        "'empty'",
+        "'link-forbidden'",
+        "'nick-required'",
+        "'room-forbidden'",
+        "'slow-mode'",
+        "'too-long'"
+      ]
+    },
+    "lib/api/contracts/chat.ts#ChatSendRequest": {
+      "props": {
+        "clientId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "replyToId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "room": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#RoomId"
+          }
+        },
+        "text": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/chat.ts#ChatService": {
+      "props": {
+        "authorPath": {
+          "optional": false,
+          "type": {
+            "fn": "authorPath(author: Author, at: Ms): AuthorPathInfo | undefined;"
+          }
+        },
+        "checkNick": {
+          "optional": false,
+          "type": {
+            "fn": "checkNick(nick: string): Promise<ApiResult<void>>;"
+          }
+        },
+        "connection": {
+          "optional": false,
+          "type": {
+            "fn": "connection(room: RoomId): ChatConnection;"
+          }
+        },
+        "dev": {
+          "optional": true,
+          "type": {
+            "props": {
+              "emitReplyToMe": {
+                "optional": false,
+                "type": {
+                  "fn": "emitReplyToMe(at: Ms): ChatMessage | null;"
+                }
+              },
+              "forcedSlowNotice": {
+                "optional": false,
+                "type": {
+                  "fn": "forcedSlowNotice(room: RoomId, at: Ms): void;"
+                }
+              }
+            }
+          }
+        },
+        "history": {
+          "optional": false,
+          "type": {
+            "fn": "history(room: RoomId, opts?: { limit?: number }): Promise<ApiResult<readonly ChatMessage[]>>;"
+          }
+        },
+        "peekRoom": {
+          "optional": true,
+          "type": {
+            "fn": "peekRoom?(room: RoomId): readonly ChatMessage[] | undefined;"
+          }
+        },
+        "react": {
+          "optional": false,
+          "type": {
+            "fn": "react(room: RoomId, messageId: string, reaction: ReactionId, on: boolean): Promise<ApiResult<void>>;"
+          }
+        },
+        "remove": {
+          "optional": false,
+          "type": {
+            "fn": "remove(room: RoomId, messageId: string): Promise<ApiResult<void>>;"
+          }
+        },
+        "report": {
+          "optional": false,
+          "type": {
+            "fn": "report(room: RoomId, messageId: string): Promise<ApiResult<void>>;"
+          }
+        },
+        "send": {
+          "optional": false,
+          "type": {
+            "fn": "send(req: ChatSendRequest): Promise<ApiResult<ChatMessage>>;"
+          }
+        },
+        "slowModeSeconds": {
+          "optional": false,
+          "type": {
+            "fn": "slowModeSeconds(room: RoomId, at: Ms): number;"
+          }
+        },
+        "subscribeRoom": {
+          "optional": false,
+          "type": {
+            "fn": "subscribeRoom(room: RoomId, onEvent: (event: ChatEvent) => void, onConnection?: (state: ChatConnection) => void): Unsubscribe;"
+          }
+        },
+        "takenNickHints": {
+          "optional": false,
+          "type": {
+            "fn": "takenNickHints(): readonly string[];"
+          }
+        },
+        "translate": {
+          "optional": false,
+          "type": {
+            "fn": "translate(messageId: string, text: string, from: string, to: string): Promise<ApiResult<string>>;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/chat.ts#ChatTranslateReason": {
+      "union": [
+        "'translate-limit'"
+      ]
+    },
+    "lib/api/contracts/chat.ts#NickReason": {
+      "union": [
+        "'forbidden'",
+        "'link'",
+        "'long'",
+        "'short'",
+        "'taken'"
+      ]
+    },
+    "lib/api/contracts/chat.ts#ROOM_HISTORY": {
+      "text": "200"
+    },
+    "lib/api/contracts/chat.ts#applyChatEvent": {
+      "fn": "export function applyChatEvent(list: readonly ChatMessage[], event: ChatEvent): readonly ChatMessage[]"
+    },
+    "lib/api/contracts/checkout.ts#CheckoutCancelReason": {
+      "union": [
+        "'already-paid'"
+      ]
+    },
+    "lib/api/contracts/checkout.ts#CheckoutService": {
+      "props": {
+        "cancel": {
+          "optional": false,
+          "type": {
+            "fn": "cancel(orderId: string): Promise<ApiResult<Order>>;"
+          }
+        },
+        "dev": {
+          "optional": true,
+          "type": {
+            "props": {
+              "confirm": {
+                "optional": false,
+                "type": {
+                  "fn": "confirm(clientId: string): void;"
+                }
+              },
+              "reset": {
+                "optional": false,
+                "type": {
+                  "fn": "reset(): void"
+                }
+              },
+              "setClock": {
+                "optional": false,
+                "type": {
+                  "fn": "setClock(now: () => Ms): void;"
+                }
+              }
+            }
+          }
+        },
+        "open": {
+          "optional": false,
+          "type": {
+            "fn": "open(): Promise<ApiResult<readonly Order[]>>;"
+          }
+        },
+        "start": {
+          "optional": false,
+          "type": {
+            "fn": "start(req: CheckoutStartRequest): Promise<ApiResult<CheckoutSession>>;"
+          }
+        },
+        "status": {
+          "optional": false,
+          "type": {
+            "fn": "status(orderId: string): Promise<ApiResult<Order>>;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onUpdate: (order: Order) => void): Unsubscribe;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/checkout.ts#CheckoutSession": {
+      "props": {
+        "checkoutUrl": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "order": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/checkout.ts#Order"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/checkout.ts#CheckoutStartReason": {
+      "union": [
+        "'banned'",
+        "'countries'",
+        "'pass-owned'",
+        "'payments-off'",
+        "'price-changed'",
+        "'tier-off'",
+        "'toasts-closed'"
+      ]
+    },
+    "lib/api/contracts/checkout.ts#CheckoutStartRequest": {
+      "props": {
+        "clientId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "email": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "priceVersion": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        },
+        "product": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/checkout.ts#Product"
+          }
+        },
+        "returnPath": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/checkout.ts#Order": {
+      "props": {
+        "clientId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "createdAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "email": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "gift": {
+          "optional": true,
+          "type": {
+            "props": {
+              "pass": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "'active'",
+                    "'device'"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "pendingSince": {
+          "optional": true,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "price": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/site.ts#Money"
+          }
+        },
+        "priceVersion": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        },
+        "product": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/checkout.ts#Product"
+          }
+        },
+        "status": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/checkout.ts#OrderStatus"
+          }
+        },
+        "toast": {
+          "optional": true,
+          "type": {
+            "text": "ToastRecord"
+          }
+        },
+        "updatedAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/checkout.ts#OrderStatus": {
+      "union": [
+        "'cancelled'",
+        "'declined'",
+        "'expired'",
+        "'open'",
+        "'paid'",
+        "'pending'",
+        "'refunded'"
+      ]
+    },
+    "lib/api/contracts/checkout.ts#Product": {
+      "variants": {
+        "'pass'": {
+          "props": {
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'pass'"
+                ]
+              }
+            }
+          }
+        },
+        "'toast'": {
+          "props": {
+            "countries": {
+              "optional": true,
+              "type": {
+                "text": "readonly string[]"
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'toast'"
+                ]
+              }
+            },
+            "text": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "tier": {
+              "optional": false,
+              "type": {
+                "text": "ToastTier"
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/api/contracts/checkout.ts#isFinalOrder": {
+      "fn": "export function isFinalOrder(status: OrderStatus): boolean"
+    },
+    "lib/api/contracts/live.ts#LiveService": {
+      "props": {
+        "chains": {
+          "optional": false,
+          "type": {
+            "fn": "chains(eventIds?: readonly string[]): Promise<ApiResult<readonly StreamChain[]>>;"
+          }
+        },
+        "reportSourceError": {
+          "optional": false,
+          "type": {
+            "fn": "reportSourceError(report: SourceErrorReport): Promise<ApiResult<void>>;"
+          }
+        },
+        "subscribeStreams": {
+          "optional": false,
+          "type": {
+            "fn": "subscribeStreams(onEvent: (event: StreamEvent) => void): Unsubscribe;"
+          }
+        },
+        "subscribeViewers": {
+          "optional": false,
+          "type": {
+            "fn": "subscribeViewers(onUpdate: (summary: ViewerSummary) => void): Unsubscribe;"
+          }
+        },
+        "viewers": {
+          "optional": false,
+          "type": {
+            "fn": "viewers(): Promise<ApiResult<ViewerSummary>>;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/live.ts#SourceErrorReport": {
+      "props": {
+        "code": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "sourceId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/live.ts#StreamEvent": {
+      "variants": {
+        "'chain'": {
+          "props": {
+            "chain": {
+              "optional": false,
+              "type": {
+                "ref": "lib/data/types.ts#StreamChain"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'chain'"
+                ]
+              }
+            },
+            "version": {
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        },
+        "'hide'": {
+          "props": {
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "sourceId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'hide'"
+                ]
+              }
+            },
+            "version": {
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        },
+        "'source'": {
+          "props": {
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "source": {
+              "optional": false,
+              "type": {
+                "ref": "lib/data/types.ts#StreamSource"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'source'"
+                ]
+              }
+            },
+            "version": {
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/api/contracts/live.ts#ViewerCountry": {
+      "props": {
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "iso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/live.ts#ViewerSummary": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#ISO"
+          }
+        },
+        "countries": {
+          "optional": false,
+          "type": {
+            "text": "readonly ViewerCountry[]"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/live.ts#applyStreamEvent": {
+      "fn": "export function applyStreamEvent(chains: ReadonlyMap<string, StreamChain>, event: StreamEvent): ReadonlyMap<string, StreamChain>"
+    },
+    "lib/api/contracts/notifications.ts#DEFAULT_NOTIF_SETTINGS": {
+      "text": "NotifSettings"
+    },
+    "lib/api/contracts/notifications.ts#NOTIF_KINDS": {
+      "text": "readonly [\"live\", \"stamp\", \"reply\", \"goal\", \"streak\"]"
+    },
+    "lib/api/contracts/notifications.ts#Notif": {
+      "props": {
+        "createdAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "flag": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "href": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/notifications.ts#NotifKind"
+          }
+        },
+        "params": {
+          "optional": false,
+          "type": {
+            "text": "Record<string, string | number>"
+          }
+        },
+        "read": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/notifications.ts#NotifEvent": {
+      "variants": {
+        "'added'": {
+          "props": {
+            "item": {
+              "optional": false,
+              "type": {
+                "ref": "lib/api/contracts/notifications.ts#Notif"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'added'"
+                ]
+              }
+            }
+          }
+        },
+        "'read'": {
+          "props": {
+            "target": {
+              "optional": false,
+              "type": {
+                "ref": "lib/api/contracts/notifications.ts#NotifReadTarget"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'read'"
+                ]
+              }
+            }
+          }
+        },
+        "'settings'": {
+          "props": {
+            "settings": {
+              "optional": false,
+              "type": {
+                "ref": "lib/api/contracts/notifications.ts#NotifSettings"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'settings'"
+                ]
+              }
+            }
+          }
+        },
+        "'snapshot'": {
+          "props": {
+            "items": {
+              "optional": false,
+              "type": {
+                "text": "readonly Notif[]"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'snapshot'"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/api/contracts/notifications.ts#NotifKind": {
+      "text": "(typeof NOTIF_KINDS)[number]"
+    },
+    "lib/api/contracts/notifications.ts#NotifReadTarget": {
+      "union": [
+        "'all'",
+        "{\"props\":{\"ids\":{\"optional\":false,\"type\":{\"text\":\"readonly string[]\"}}}}"
+      ]
+    },
+    "lib/api/contracts/notifications.ts#NotifSettings": {
+      "props": {
+        "enabled": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "kinds": {
+          "optional": false,
+          "type": {
+            "text": "Record<NotifKind, boolean>"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/notifications.ts#NotifSettingsPatch": {
+      "props": {
+        "enabled": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "kinds": {
+          "optional": true,
+          "type": {
+            "text": "Partial<Record<NotifKind, boolean>>"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/notifications.ts#NotificationsService": {
+      "props": {
+        "getSettings": {
+          "optional": false,
+          "type": {
+            "fn": "getSettings(): Promise<ApiResult<NotifSettings>>;"
+          }
+        },
+        "list": {
+          "optional": false,
+          "type": {
+            "fn": "list(): Promise<ApiResult<readonly Notif[]>>;"
+          }
+        },
+        "markRead": {
+          "optional": false,
+          "type": {
+            "fn": "markRead(target: NotifReadTarget): Promise<ApiResult<void>>;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onEvent: (event: NotifEvent) => void): Unsubscribe;"
+          }
+        },
+        "updateSettings": {
+          "optional": false,
+          "type": {
+            "fn": "updateSettings(patch: NotifSettingsPatch): Promise<ApiResult<NotifSettings>>;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/notifications.ts#applyNotifEvent": {
+      "fn": "export function applyNotifEvent(items: readonly Notif[], event: NotifEvent): readonly Notif[]"
+    },
+    "lib/api/contracts/notifications.ts#applyNotifSettingsPatch": {
+      "fn": "export function applyNotifSettingsPatch(s: NotifSettings, patch: NotifSettingsPatch): NotifSettings"
+    },
+    "lib/api/contracts/passport.ts#PassportClaimReason": {
+      "union": [
+        "'claim-closed'",
+        "'unknown-event'"
+      ]
+    },
+    "lib/api/contracts/passport.ts#PassportEvent": {
+      "variants": {
+        "'granted'": {
+          "props": {
+            "stamp": {
+              "optional": false,
+              "type": {
+                "ref": "lib/data/types.ts#Stamp"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'granted'"
+                ]
+              }
+            }
+          }
+        },
+        "'snapshot'": {
+          "props": {
+            "stamps": {
+              "optional": false,
+              "type": {
+                "text": "readonly Stamp[]"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'snapshot'"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/api/contracts/passport.ts#PassportService": {
+      "props": {
+        "beat": {
+          "optional": false,
+          "type": {
+            "fn": "beat(beat: PresenceBeat): Promise<ApiResult<{ nextBeatMs: number | null }>>;"
+          }
+        },
+        "claim": {
+          "optional": false,
+          "type": {
+            "fn": "claim(req: StampClaim): Promise<ApiResult<Stamp>>;"
+          }
+        },
+        "mergeGuest": {
+          "optional": true,
+          "type": {
+            "fn": "mergeGuest?(): Promise<ApiResult<{ merged: number }>>;"
+          }
+        },
+        "peek": {
+          "optional": true,
+          "type": {
+            "fn": "peek?(): readonly Stamp[] | undefined;"
+          }
+        },
+        "stamps": {
+          "optional": false,
+          "type": {
+            "fn": "stamps(): Promise<ApiResult<readonly Stamp[]>>;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onEvent: (event: PassportEvent) => void): Unsubscribe;"
+          }
+        },
+        "trackPresence": {
+          "optional": false,
+          "type": {
+            "fn": "trackPresence(surface: PresenceSurfaceInput | null, clock: PresenceClock): Unsubscribe;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/passport.ts#PresenceBeat": {
+      "props": {
+        "eventIds": {
+          "optional": false,
+          "type": {
+            "text": "readonly string[]"
+          }
+        },
+        "openedAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "source": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#PresenceSource"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/passport.ts#PresenceClock": {
+      "props": {
+        "fallbackNow": {
+          "optional": false,
+          "type": {
+            "fn": "fallbackNow(): Ms;"
+          }
+        },
+        "now": {
+          "optional": false,
+          "type": {
+            "fn": "now(): Ms;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onTick: () => void): Unsubscribe;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/passport.ts#PresenceSurfaceInput": {
+      "props": {
+        "eventIds": {
+          "optional": false,
+          "type": {
+            "text": "readonly string[]"
+          }
+        },
+        "openedAt": {
+          "optional": false,
+          "type": {
+            "text": "Map<string, Ms>"
+          }
+        },
+        "source": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#PresenceSource"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/passport.ts#StampClaim": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "source": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#PresenceSource"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/passport.ts#applyPassportEvent": {
+      "fn": "export function applyPassportEvent(stamps: readonly Stamp[], event: PassportEvent): readonly Stamp[]"
+    },
+    "lib/api/contracts/profile.ts#LinkGoogleReason": {
+      "union": [
+        "'google-taken'"
+      ]
+    },
+    "lib/api/contracts/profile.ts#Profile": {
+      "props": {
+        "detectedFlag": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "googleLinked": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "nick": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "pendingEmail": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "{\"props\":{\"attemptsLeft\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"email\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"expiresAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"resendAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"sentAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}"
+            ]
+          }
+        },
+        "schedule": {
+          "optional": false,
+          "type": {
+            "text": "readonly string[]"
+          }
+        },
+        "settings": {
+          "optional": false,
+          "type": {
+            "ref": "lib/api/contracts/profile.ts#ProfileSettings"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/profile.ts#ProfilePatch": {
+      "props": {
+        "detectedFlag": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "flagCode": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "nick": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "settings": {
+          "optional": true,
+          "type": {
+            "text": "Partial<ProfileSettings>"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/profile.ts#ProfileService": {
+      "props": {
+        "cancelEmailChange": {
+          "optional": false,
+          "type": {
+            "fn": "cancelEmailChange(): Promise<ApiResult<Profile>>;"
+          }
+        },
+        "changeEmail": {
+          "optional": false,
+          "type": {
+            "fn": "changeEmail(email: string): Promise<ApiResult<Profile>>;"
+          }
+        },
+        "confirmEmailChange": {
+          "optional": false,
+          "type": {
+            "fn": "confirmEmailChange(code: string): Promise<ApiResult<Profile>>;"
+          }
+        },
+        "deleteAccount": {
+          "optional": false,
+          "type": {
+            "fn": "deleteAccount(): Promise<ApiResult<void>>;"
+          }
+        },
+        "exportData": {
+          "optional": false,
+          "type": {
+            "fn": "exportData(): Promise<ApiResult<Record<string, unknown>>>;"
+          }
+        },
+        "get": {
+          "optional": false,
+          "type": {
+            "fn": "get(): Promise<ApiResult<Profile>>;"
+          }
+        },
+        "linkGoogle": {
+          "optional": false,
+          "type": {
+            "fn": "linkGoogle(): Promise<ApiResult<Profile>>;"
+          }
+        },
+        "peek": {
+          "optional": true,
+          "type": {
+            "fn": "peek?(): Profile | undefined;"
+          }
+        },
+        "replaceSchedule": {
+          "optional": false,
+          "type": {
+            "fn": "replaceSchedule(outIso: string, eventId: string): Promise<ApiResult<readonly string[]>>;"
+          }
+        },
+        "setSchedule": {
+          "optional": false,
+          "type": {
+            "fn": "setSchedule(eventIds: readonly string[]): Promise<ApiResult<readonly string[]>>;"
+          }
+        },
+        "subscribe": {
+          "optional": true,
+          "type": {
+            "fn": "subscribe?(onChange: (profile: Profile) => void): Unsubscribe;"
+          }
+        },
+        "toggleSchedule": {
+          "optional": false,
+          "type": {
+            "fn": "toggleSchedule(eventId: string): Promise<ApiResult<readonly string[]>>;"
+          }
+        },
+        "unlinkGoogle": {
+          "optional": false,
+          "type": {
+            "fn": "unlinkGoogle(): Promise<ApiResult<Profile>>;"
+          }
+        },
+        "update": {
+          "optional": false,
+          "type": {
+            "fn": "update(patch: ProfilePatch): Promise<ApiResult<Profile>>;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/profile.ts#ProfileSettings": {
+      "props": {
+        "homeCountry": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "homeZoneId": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "hour12": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "passportHints": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "quietDefault": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "reminderEmails": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "showPassport": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "showPath": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/rating.ts#RatingAggregate": {
+      "props": {
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "mean": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "place": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "score": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "votes": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/rating.ts#RatingBoard": {
+      "props": {
+        "closeAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "closed": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "mine": {
+          "optional": false,
+          "type": {
+            "text": "Readonly<Record<string, Stars>>"
+          }
+        },
+        "rows": {
+          "optional": false,
+          "type": {
+            "text": "readonly RatingAggregate[]"
+          }
+        },
+        "totalVotes": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/rating.ts#RatingService": {
+      "props": {
+        "board": {
+          "optional": false,
+          "type": {
+            "fn": "board(): Promise<ApiResult<RatingBoard>>;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onRows: (rows: readonly RatingAggregate[], totalVotes: number, mine?: Readonly<Record<string, Stars>>) => void): Unsubscribe;"
+          }
+        },
+        "vote": {
+          "optional": false,
+          "type": {
+            "fn": "vote(eventId: string, stars: Stars): Promise<ApiResult<{ eventId: string; stars: Stars }>>;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/rating.ts#RatingVoteReason": {
+      "union": [
+        "'closed'",
+        "'no-stamp'",
+        "'not-open'",
+        "'not-rated'"
+      ]
+    },
+    "lib/api/contracts/toasts.ts#ToastCheckReason": {
+      "union": [
+        "'moderation'"
+      ]
+    },
+    "lib/api/contracts/toasts.ts#ToastEvent": {
+      "variants": {
+        "'published'": {
+          "props": {
+            "toast": {
+              "optional": false,
+              "type": {
+                "text": "ToastRecord"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'published'"
+                ]
+              }
+            }
+          }
+        },
+        "'removed'": {
+          "props": {
+            "id": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'removed'"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/api/contracts/toasts.ts#ToastsService": {
+      "props": {
+        "check": {
+          "optional": false,
+          "type": {
+            "fn": "check(text: string): Promise<ApiResult<{ issue: ToastIssue | null }>>;"
+          }
+        },
+        "list": {
+          "optional": false,
+          "type": {
+            "fn": "list(opts?: { since?: Ms }): Promise<ApiResult<readonly ToastRecord[]>>;"
+          }
+        },
+        "mine": {
+          "optional": false,
+          "type": {
+            "fn": "mine(): Promise<ApiResult<readonly ToastRecord[]>>;"
+          }
+        },
+        "peek": {
+          "optional": true,
+          "type": {
+            "fn": "peek?(): readonly ToastRecord[] | undefined;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onEvent: (event: ToastEvent) => void): Unsubscribe;"
+          }
+        }
+      }
+    },
+    "lib/api/contracts/toasts.ts#applyToastEvent": {
+      "fn": "export function applyToastEvent(list: readonly ToastRecord[], event: ToastEvent): readonly ToastRecord[]"
+    },
+    "lib/data/types.ts#Author": {
+      "props": {
+        "badges": {
+          "optional": false,
+          "type": {
+            "text": "AuthorBadge[]"
+          }
+        },
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isMine": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "nick": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#AuthorBadge": {
+      "union": [
+        "'pass'",
+        "'vip'"
+      ]
+    },
+    "lib/data/types.ts#CelebrationType": {
+      "union": [
+        "'countdown-only'",
+        "'main'",
+        "'tv'",
+        "'webcam'"
+      ]
+    },
+    "lib/data/types.ts#ChatMessage": {
+      "props": {
+        "author": {
+          "optional": true,
+          "type": {
+            "ref": "lib/data/types.ts#Author"
+          }
+        },
+        "createdAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "deleteAt": {
+          "optional": true,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "deleted": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#MessageKind"
+          }
+        },
+        "moderation": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'hidden'",
+              "'ok'"
+            ]
+          }
+        },
+        "reactions": {
+          "optional": true,
+          "type": {
+            "text": "Partial<Record<ReactionId, { count: number; mine: boolean }>>"
+          }
+        },
+        "replyTo": {
+          "optional": true,
+          "type": {
+            "props": {
+              "excerpt": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              "id": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              "nick": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "room": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#RoomId"
+          }
+        },
+        "system": {
+          "optional": true,
+          "type": {
+            "ref": "lib/data/types.ts#SystemPayload"
+          }
+        },
+        "text": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "toast": {
+          "optional": true,
+          "type": {
+            "props": {
+              "amount": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#City": {
+      "props": {
+        "celebrationType": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#CelebrationType"
+          }
+        },
+        "countryIso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isCountryMain": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "landmark": {
+          "optional": true,
+          "type": {
+            "props": {
+              "uk": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "mapPoint": {
+          "optional": false,
+          "type": {
+            "props": {
+              "x": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "y": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              }
+            }
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "props": {
+              "uk": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "zoneId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Country": {
+      "props": {
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "gender": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Gender"
+          }
+        },
+        "howTo": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#HowTo"
+          }
+        },
+        "illustrationId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "iso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "props": {
+              "uk": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "popularity": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "slug": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "zoneIds": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Dataset": {
+      "props": {
+        "chainsByEventId": {
+          "optional": false,
+          "type": {
+            "text": "ReadonlyMap<string, StreamChain>"
+          }
+        },
+        "cities": {
+          "optional": false,
+          "type": {
+            "text": "City[]"
+          }
+        },
+        "citiesById": {
+          "optional": false,
+          "type": {
+            "text": "ReadonlyMap<string, City>"
+          }
+        },
+        "countries": {
+          "optional": false,
+          "type": {
+            "text": "Country[]"
+          }
+        },
+        "countriesByIso": {
+          "optional": false,
+          "type": {
+            "text": "ReadonlyMap<string, Country>"
+          }
+        },
+        "countriesBySlug": {
+          "optional": false,
+          "type": {
+            "text": "ReadonlyMap<string, Country>"
+          }
+        },
+        "events": {
+          "optional": false,
+          "type": {
+            "text": "ScheduledEvent[]"
+          }
+        },
+        "eventsById": {
+          "optional": false,
+          "type": {
+            "text": "ReadonlyMap<string, ScheduledEvent>"
+          }
+        },
+        "eventsBySlot": {
+          "optional": false,
+          "type": {
+            "text": "SlotGroup[]"
+          }
+        },
+        "meta": {
+          "optional": false,
+          "type": {
+            "props": {
+              "generatedAt": {
+                "optional": false,
+                "type": {
+                  "ref": "lib/data/types.ts#ISO"
+                }
+              },
+              "season": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              "tzdbVersion": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "zones": {
+          "optional": false,
+          "type": {
+            "text": "LoadedZone[]"
+          }
+        },
+        "zonesById": {
+          "optional": false,
+          "type": {
+            "text": "ReadonlyMap<string, LoadedZone>"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Event": {
+      "props": {
+        "cityId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "countryIso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isMainCelebration": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "midnightUtc": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#ISO"
+          }
+        },
+        "popularity": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "restrained": {
+          "optional": true,
+          "type": {
+            "props": {
+              "note": {
+                "optional": false,
+                "type": {
+                  "props": {
+                    "uk": {
+                      "optional": false,
+                      "type": {
+                        "text": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#CelebrationType"
+          }
+        },
+        "zoneId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Gender": {
+      "union": [
+        "'f'",
+        "'m'",
+        "'n'",
+        "'pl'",
+        "null"
+      ]
+    },
+    "lib/data/types.ts#HowTo": {
+      "props": {
+        "gallery": {
+          "optional": true,
+          "type": {
+            "text": "{ src: string; alt: string; author: string; license: string }[]"
+          }
+        },
+        "text": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "traditions": {
+          "optional": false,
+          "type": {
+            "text": "{ id: string; title: string; text: string; iconId: string }[]"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#ISO": {
+      "text": "string"
+    },
+    "lib/data/types.ts#LoadedZone": {
+      "extends": [
+        "Zone"
+      ],
+      "props": {
+        "midnightMs": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#MessageKind": {
+      "union": [
+        "'regular'",
+        "'system'"
+      ]
+    },
+    "lib/data/types.ts#Ms": {
+      "text": "number"
+    },
+    "lib/data/types.ts#NightId": {
+      "union": [
+        "'2026-27'"
+      ]
+    },
+    "lib/data/types.ts#PresenceSource": {
+      "union": [
+        "'air'",
+        "'country'",
+        "'room'",
+        "'tv'"
+      ]
+    },
+    "lib/data/types.ts#ReactionId": {
+      "union": [
+        "'applause'",
+        "'champagne'",
+        "'clap'",
+        "'dancer'",
+        "'dancing'",
+        "'earth'",
+        "'fire'",
+        "'fireworks'",
+        "'gift'",
+        "'glasses'",
+        "'heart'",
+        "'hug'",
+        "'laugh'",
+        "'loveeyes'",
+        "'party'",
+        "'pray'",
+        "'raised'",
+        "'sad'",
+        "'smile'",
+        "'sparkles'",
+        "'star'",
+        "'starstruck'",
+        "'thumbs'",
+        "'tree'",
+        "'yellowheart'"
+      ]
+    },
+    "lib/data/types.ts#RoomId": {
+      "union": [
+        "'world'",
+        "{\"text\":\"`country:${string}`\"}"
+      ]
+    },
+    "lib/data/types.ts#ScheduledEvent": {
+      "extends": [
+        "Event"
+      ],
+      "props": {
+        "midnightMs": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#SlotGroup": {
+      "props": {
+        "events": {
+          "optional": false,
+          "type": {
+            "text": "ScheduledEvent[]"
+          }
+        },
+        "midnightMs": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "midnightUtc": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#ISO"
+          }
+        },
+        "zoneId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Stamp": {
+      "props": {
+        "cityName": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "countryIso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "grantedAt": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#Ms"
+          }
+        },
+        "illustrationId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "presenceSource": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#PresenceSource"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Stars": {
+      "union": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    },
+    "lib/data/types.ts#StreamChain": {
+      "props": {
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "sources": {
+          "optional": false,
+          "type": {
+            "text": "StreamSource[]"
+          }
+        },
+        "version": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#StreamPlatform": {
+      "union": [
+        "'facebook'",
+        "'twitch'",
+        "'youtube'"
+      ]
+    },
+    "lib/data/types.ts#StreamSource": {
+      "props": {
+        "alwaysOn": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "embeddable": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isLive": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "isRecording": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'main'",
+              "'tv'",
+              "'webcam'"
+            ]
+          }
+        },
+        "lastChecked": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#ISO"
+          }
+        },
+        "order": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "override": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "platform": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#StreamPlatform"
+          }
+        },
+        "replay": {
+          "optional": true,
+          "type": {
+            "props": {
+              "url": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              "videoId": {
+                "optional": true,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "startsAt": {
+          "optional": true,
+          "type": {
+            "ref": "lib/data/types.ts#ISO"
+          }
+        },
+        "status": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#StreamStatus"
+          }
+        },
+        "sync": {
+          "optional": true,
+          "type": {
+            "props": {
+              "durationSec": {
+                "optional": true,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "midnightSec": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              }
+            }
+          }
+        },
+        "test": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "testNote": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "title": {
+          "optional": false,
+          "type": {
+            "props": {
+              "uk": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "url": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "verified": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "videoId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#StreamStatus": {
+      "union": [
+        "'expected'",
+        "'live'",
+        "'possible'"
+      ]
+    },
+    "lib/data/types.ts#SystemPayload": {
+      "variants": {
+        "'announcement'": {
+          "props": {
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'announcement'"
+                ]
+              }
+            },
+            "text": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            }
+          }
+        },
+        "'country-midnight'": {
+          "props": {
+            "countries": {
+              "optional": false,
+              "type": {
+                "text": "{ iso: string; gender: Gender }[]"
+              }
+            },
+            "eventIds": {
+              "optional": false,
+              "type": {
+                "text": "string[]"
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'country-midnight'"
+                ]
+              }
+            }
+          }
+        },
+        "'greetings-counter'": {
+          "props": {
+            "count": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            },
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "flagCodes": {
+              "optional": false,
+              "type": {
+                "text": "string[]"
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'greetings-counter'"
+                ]
+              }
+            }
+          }
+        },
+        "'poll-open'": {
+          "props": {
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'poll-open'"
+                ]
+              }
+            },
+            "pollId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            }
+          }
+        },
+        "'rating-leader'": {
+          "props": {
+            "city": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "flagCode": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'rating-leader'"
+                ]
+              }
+            },
+            "score": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        },
+        "'slow-mode'": {
+          "props": {
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'slow-mode'"
+                ]
+              }
+            },
+            "seconds": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        },
+        "'time-pending'": {
+          "props": {
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'time-pending'"
+                ]
+              }
+            }
+          }
+        },
+        "'toast-midnight'": {
+          "props": {
+            "countryIsos": {
+              "optional": false,
+              "type": {
+                "text": "string[]"
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'toast-midnight'"
+                ]
+              }
+            },
+            "offsetMinutes": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            },
+            "toasters": {
+              "optional": false,
+              "type": {
+                "text": "{ nick: string; flagCode: string }[]"
+              }
+            },
+            "zoneId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "lib/data/types.ts#Zone": {
+      "props": {
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "midnightUtc": {
+          "optional": false,
+          "type": {
+            "ref": "lib/data/types.ts#ISO"
+          }
+        },
+        "offsetMinutes": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "order": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "representativeCityId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/result.ts#ApiError": {
+      "props": {
+        "attemptsLeft": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        },
+        "code": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/result.ts#ApiErrorCode"
+          }
+        },
+        "message": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "reason": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "retryAfterMs": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/result.ts#ApiErrorCode": {
+      "union": [
+        "'conflict'",
+        "'forbidden'",
+        "'network'",
+        "'not_found'",
+        "'rate_limited'",
+        "'unauthorized'",
+        "'unavailable'",
+        "'unknown'",
+        "'validation'"
+      ]
+    },
+    "packages/contracts/src/result.ts#ApiResult": {
+      "params": "T",
+      "union": [
+        "{\"props\":{\"error\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/result.ts#ApiError\"}},\"ok\":{\"optional\":false,\"type\":{\"union\":[\"false\"]}}}}",
+        "{\"props\":{\"ok\":{\"optional\":false,\"type\":{\"union\":[\"true\"]}},\"value\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/result.ts#T\"}}}}"
+      ]
+    },
+    "packages/contracts/src/result.ts#Unsubscribe": {
+      "fn": "() => void"
+    },
+    "packages/contracts/src/result.ts#fail": {
+      "fn": "export function fail<T = never>(code: ApiErrorCode, extra: Omit<ApiError, 'code'> = {}): ApiResult<T>"
+    },
+    "packages/contracts/src/result.ts#ok": {
+      "fn": "export function ok<T>(value: T): ApiResult<T>"
+    },
+    "packages/contracts/src/site.ts#Money": {
+      "props": {
+        "amount": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "currency": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'USD'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#ProductKey": {
+      "union": [
+        "'pass'",
+        "'toast:10'",
+        "'toast:2'",
+        "'toast:5'"
+      ]
+    },
+    "packages/contracts/src/site.ts#SiteEvent": {
+      "props": {
+        "state": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/site.ts#SiteState"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'snapshot'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#SiteEventPatch": {
+      "props": {
+        "hidden": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "isMainCelebration": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "moment": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        },
+        "restrained": {
+          "optional": true,
+          "type": {
+            "props": {
+              "note": {
+                "optional": true,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#SiteProduct": {
+      "props": {
+        "key": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/site.ts#ProductKey"
+          }
+        },
+        "price": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/site.ts#Money"
+          }
+        },
+        "priceVersion": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#SiteService": {
+      "props": {
+        "peek": {
+          "optional": false,
+          "type": {
+            "fn": "peek(): SiteState | undefined;"
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "fn": "state(): Promise<ApiResult<SiteState>>;"
+          }
+        },
+        "subscribe": {
+          "optional": false,
+          "type": {
+            "fn": "subscribe(onEvent: (event: SiteEvent) => void): Unsubscribe;"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#SiteState": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "catalogVersion": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventPatches": {
+          "optional": false,
+          "type": {
+            "text": "Readonly<Record<string, SiteEventPatch>>"
+          }
+        },
+        "products": {
+          "optional": false,
+          "type": {
+            "text": "readonly SiteProduct[]"
+          }
+        },
+        "switches": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/site.ts#SiteSwitches"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#SiteSwitches": {
+      "props": {
+        "chat": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "chatRooms": {
+          "optional": false,
+          "type": {
+            "text": "Readonly<Record<string, boolean>>"
+          }
+        },
+        "pass": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "passGift": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "passOffer": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "payments": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "toastTiers": {
+          "optional": false,
+          "type": {
+            "props": {
+              "2": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "5": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "10": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "toasts": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "viewersMap": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/site.ts#applySiteEvent": {
+      "fn": "export function applySiteEvent(current: SiteState | undefined, event: SiteEvent): SiteState"
+    },
+    "packages/contracts/src/site.ts#catalogVersionOf": {
+      "fn": "export function catalogVersionOf(meta: { generatedAt: string; tzdbVersion: string }): string"
+    }
+  },
+  "breaking": []
+}

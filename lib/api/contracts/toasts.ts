@@ -8,6 +8,9 @@ import type { Ms } from '@/lib/data/types';
 import type { ToastRecord } from '@/lib/toast/feed';
 import type { ToastIssue } from '@/lib/toast/filter';
 
+/** Причина відмови перевірки тосту (`validation`): `moderation`. Причини фільтра лишаються в `ToastIssue.kind`. */
+export type ToastCheckReason = 'moderation';
+
 export type ToastEvent =
   /** Новий опублікований тост (після оплати). */
   | { type: 'published'; toast: ToastRecord }

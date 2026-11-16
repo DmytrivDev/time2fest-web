@@ -6,3 +6,4 @@
 
 | Spec | Feature | Status | Packages | Supersedes |
 |---|---|---|---|---|
+| [SPEC-01](SPEC-01-workspace-seam.md) | Репозиторій і словник шва — робочий простір pnpm, пакети contracts і rules, домен site, словник причин і полів, CI, перевірка «лише додаванням» | approved | web, contracts, rules | none |

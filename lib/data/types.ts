@@ -111,6 +111,8 @@ export interface StreamSource {
   alwaysOn?: boolean;
   /** Запис торішнього свята (демо, 2026-11-11): секунда півночі в записі й тривалість — грає синхронно з північчю події. */
   sync?: { midnightSec: number; durationSec?: number };
+  /** Джерело виставлено вручну в адмінці й не підміняється автоматикою. */
+  override?: boolean;
 }
 
 export interface TestStreamExtra {
@@ -122,6 +124,8 @@ export interface TestStreamExtra {
 export interface StreamChain {
   eventId: string;
   sources: StreamSource[];
+  /** Версія ланцюжка для упорядкування подій на сервері. */
+  version?: number;
 }
 
 // ── 1.7 Оплата (імітація) ──────────────────────────────────────────────────
@@ -192,7 +196,11 @@ export type SystemPayload =
    * Привітання опівночі поясу від Time2Fest (рішення власника 2026-11-12, дошки `Desk-Toast-New`, `Phone-Toast-New`):
    * у «Світі» й чатах країн поясу; `toasters` — хто сказав тост на $10 до цієї півночі (порожньо — без рядка тостів).
    */
-  | { kind: 'toast-midnight'; zoneId: string; offsetMinutes: number; countryIsos: string[]; toasters: { nick: string; flagCode: string }[] };
+  | { kind: 'toast-midnight'; zoneId: string; offsetMinutes: number; countryIsos: string[]; toasters: { nick: string; flagCode: string }[] }
+  /** Оголошення від адміністрації (FR-CHAT-26); показ — за хвилею чату. */
+  | { kind: 'announcement'; text: string }
+  /** Час події ще уточнюється (FR-CHAT-26); показ — за хвилею чату. */
+  | { kind: 'time-pending'; eventId: string };
 
 export interface ChatMessage {
   id: string;

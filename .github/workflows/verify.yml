@@ -1,0 +1,36 @@
+# The three `run` commands mirror the `full` entries of `.claude/sdd-engineering.json`
+# (packages web, contracts, rules). Change them together.
+name: verify
+
+on: push
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install pnpm
+        run: npm install -g pnpm@12.4.2
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: web full
+        run: npx tsc --noEmit -p . && node scripts/contract-surface.mjs --check && npx eslint . && npx vitest run --maxWorkers=2 && node scripts/sync_tokens.mjs --check && npx cross-env NEXT_DIST_DIR=out-verify next build
+      - name: contracts full
+        working-directory: packages/contracts
+        run: npx tsc --noEmit -p . && npx vitest run --maxWorkers=2 && node ../../scripts/contract-surface.mjs --check
+      - name: rules full
+        working-directory: packages/rules
+        run: npx tsc --noEmit -p .

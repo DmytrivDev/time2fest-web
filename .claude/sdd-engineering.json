@@ -6,13 +6,19 @@
       "package": "web",
       "dir": ".",
       "files": "npx tsc --noEmit -p . && npx eslint --no-warn-ignored {files} && npx vitest related --run --maxWorkers=2 --passWithNoTests {files}",
-      "full": "npx tsc --noEmit -p . && npx eslint . && npx vitest run --maxWorkers=2 && node scripts/sync_tokens.mjs --check && npx cross-env NEXT_DIST_DIR=out-verify next build"
+      "full": "npx tsc --noEmit -p . && node scripts/contract-surface.mjs --check && npx eslint . && npx vitest run --maxWorkers=2 && node scripts/sync_tokens.mjs --check && npx cross-env NEXT_DIST_DIR=out-verify next build"
     },
     {
       "package": "contracts",
       "dir": "packages/contracts",
-      "files": "echo 'TODO-until-created: SPEC-01 creates packages/contracts and replaces this command (typecheck + vitest related, --maxWorkers=2)' && exit 1",
-      "full": "echo 'TODO-until-created: SPEC-01 creates packages/contracts and replaces this command (typecheck + test + build)' && exit 1"
+      "files": "npx tsc --noEmit -p . && npx vitest related --run --maxWorkers=2 --passWithNoTests {files}",
+      "full": "npx tsc --noEmit -p . && npx vitest run --maxWorkers=2 && node ../../scripts/contract-surface.mjs --check"
+    },
+    {
+      "package": "rules",
+      "dir": "packages/rules",
+      "files": "npx tsc --noEmit -p .",
+      "full": "npx tsc --noEmit -p ."
     },
     {
       "package": "server",

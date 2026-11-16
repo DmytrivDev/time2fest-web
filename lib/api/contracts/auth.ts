@@ -12,7 +12,7 @@
  * Те саме, якщо це перший акаунт, у який ввійшли на цьому пристрої (будь-яка пошта) — пас пристрою приєднується до нього.
  */
 import type { ApiError, ApiResult, Unsubscribe } from '../result';
-import type { Ms } from '@/lib/data/types';
+import type { Ms, NightId } from '@/lib/data/types';
 
 export type AuthIntent = 'signin' | 'signup';
 
@@ -51,6 +51,8 @@ export interface Session {
   passOn: 'account' | 'device' | null;
   /** Коли пас оформлено (для «Пас активний з …») — того паса, що в `passOn`. */
   passSince: Ms | null;
+  /** FR-ID-15: святкування, для якого пас. */
+  passNight?: NightId;
   /**
    * Пас, оплачений гостем без входу (рішення власника 2026-11-13): працює на цьому пристрої (у `http` — на анонімній
    * сесії). До акаунта він приєднується ЛИШЕ РАЗ (рішення 2026-11-16) — до того, що станеться першим: перший акаунт, у який

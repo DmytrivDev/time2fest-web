@@ -7,6 +7,9 @@
 import type { ApiResult, Unsubscribe } from '../result';
 import type { NickReason } from './chat';
 
+/** Причина відмови прив’язки Google (`conflict`): цей Google уже зайнятий. */
+export type LinkGoogleReason = 'google-taken';
+
 export interface ProfileSettings {
   hour12: boolean;
   homeCountry: string | null;
@@ -15,6 +18,8 @@ export interface ProfileSettings {
   showPath: boolean;
   passportHints: boolean;
   quietDefault: boolean;
+  /** FR-PROF-11: листи-нагадування; типове значення вирішує хвиля профілю (OQ-3). */
+  reminderEmails?: boolean;
 }
 
 export interface Profile {
