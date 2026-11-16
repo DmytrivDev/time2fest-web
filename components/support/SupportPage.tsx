@@ -31,6 +31,7 @@ import { ToastTiers, ToastBenefits } from '@/components/toast/ToastTiers';
 import { useOpenToastWindow } from '@/components/toast/ToastWindow';
 import { useToastSeason } from '@/components/toast/useToastSeason';
 import { useWorldToasts } from '@/components/toast/useWorldToasts';
+import { useHasPass } from '@/lib/api/hooks/auth';
 import { getData } from '@/lib/data/load';
 import type { Ms } from '@/lib/data/types';
 import { formatClock, formatTimeForViewer } from '@/lib/i18n/time';
@@ -243,6 +244,7 @@ export function SupportPage() {
   const t = useTranslations('supportPage');
   const tt = useTranslations('toast');
   const season = useToastSeason();
+  const hasPass = useHasPass();
   const openToast = useOpenToastWindow();
   const { ready, now, view, flags } = useAllToasts();
   const faq = (['subscription', 'pass', 'refund', 'check'] as const).map((k) => ({ id: k, question: t(`faq.${k}Q`), answer: t(`faq.${k}A`) }));
@@ -276,19 +278,22 @@ export function SupportPage() {
 
       {season === 'before' || season === 'during' ? (
         <>
-          <NextLink href="/pass/" className={cn('t2f-focus', s.passCard)}>
-            <span aria-hidden="true" className={s.passIcon}>
-              <Icon name="ticket" size={18} />
-            </span>
-            <span className={s.passText}>
-              <b>{t('passTitle')}</b>
-              <span>{t('passText')}</span>
-            </span>
-            <span className={s.passLink}>
-              {t('passLink')}
-              <Icon name="chevron-right" size={14} />
-            </span>
-          </NextLink>
+          {/* «Хочеш більше від свята?» — пропозиція пасу: з пасом (акаунта чи пристрою) її немає. */}
+          {hasPass ? null : (
+            <NextLink href="/pass/" className={cn('t2f-focus', s.passCard)}>
+              <span aria-hidden="true" className={s.passIcon}>
+                <Icon name="ticket" size={18} />
+              </span>
+              <span className={s.passText}>
+                <b>{t('passTitle')}</b>
+                <span>{t('passText')}</span>
+              </span>
+              <span className={s.passLink}>
+                {t('passLink')}
+                <Icon name="chevron-right" size={14} />
+              </span>
+            </NextLink>
+          )}
           <Faq items={faq} columns={2} className={s.faq} />
         </>
       ) : null}

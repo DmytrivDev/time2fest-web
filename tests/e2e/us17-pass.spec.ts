@@ -61,7 +61,7 @@ test('вікно пасу під час свята: рядок «Скажи то
   await win.locator('[data-action="toast-pay"]').click();
   const card = win.locator('[data-toast-gift="device"]');
   await expect(card).toContainText('Пас активний на цьому пристрої', { timeout: 15_000 });
-  await expect(card).toContainText('you@example.com');
+  await expect(card).toContainText('Увійди — і пас буде на всіх твоїх пристроях');
   // Пас працює одразу, без входу (рішення 2026-11-14): у шапці жовтої «Новорічний пас» уже немає.
   await expect(page.getByRole('banner').getByRole('link', { name: /Новорічний пас/ })).toHaveCount(0);
   await card.getByRole('button', { name: 'Увійти кодом' }).click();
@@ -69,7 +69,7 @@ test('вікно пасу під час свята: рядок «Скажи то
   await expect(auth.getByRole('heading', { name: 'Введи код із листа' })).toBeVisible();
   const code = await page.evaluate(() => window.__t2f?.lastCode()?.code ?? '');
   await auth.getByRole('textbox', { name: 'Код із листа' }).fill(code);
-  // Пошта оплати — перший вхід: пас приєднався до цього акаунта.
+  // Перший вхід на пристрої: пас приєднався до цього акаунта.
   await expect.poll(() => page.evaluate(accountPass), { timeout: 15_000 }).toBe(true);
 });
 
@@ -87,11 +87,27 @@ test('пас гостя на пристрої, вхід тут з іншою п�
   await page.goto('/pass/');
   await waitForTimeApi(page);
   const active = page.locator('[data-phase="active"]');
-  await expect(active).toContainText('Оплачено');
+  await expect(active).toContainText('Оформлено');
+  await expect(active).toContainText('you@gmail.com');
   await expect(active.locator('[data-row="device-pass"]')).toHaveCount(0);
   await page.goto('/account/');
   await waitForTimeApi(page);
   await expect(page.locator('[data-block="pass-plaque"][data-pass="active"]')).toBeVisible();
+});
+
+test('пас на пристрої (гість): сторінка входу без «Ще немає Новорічного пасу?», сторінка тостів без «Хочеш більше від свята?» (2026-11-16)', async ({ page }) => {
+  await gotoAt(page, AT, 1, '/pass/');
+  await page.getByRole('textbox', { name: 'Email' }).fill('paid@example.com');
+  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
+  await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
+  await page.goto('/login/');
+  await waitForTimeApi(page);
+  await expect(page.getByRole('heading', { name: /Увійти|Вхід/ }).first()).toBeVisible();
+  await expect(page.locator('[data-block="pass-hint"]')).toHaveCount(0);
+  await expect(page.getByText('Ще немає Новорічного пасу?')).toHaveCount(0);
+  await page.goto('/support/');
+  await waitForTimeApi(page);
+  await expect(page.getByRole('link', { name: /Хочеш більше від свята/ })).toHaveCount(0);
 });
 
 test('оплата поштою: «Чекаємо підтвердження» переживає перезавантаження → «Пас активний» → «Твій пас уже діє»', async ({ page }) => {

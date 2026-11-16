@@ -219,13 +219,16 @@ export function Nick({
             <Button type="button" className="min-h-touch-min flex-1" onClick={onSignIn}>
               {t('signIn')}
             </Button>
-            <Button
-              type="button"
-              className="min-h-touch-min flex-1"
-              onClick={onGetPass}
-            >
-              {t('whatPassGives')}
-            </Button>
+            {/* Пас уже є — «Що дає пас» не пропонуємо (правка власника 2026-11-16). */}
+            {onGetPass ? (
+              <Button
+                type="button"
+                className="min-h-touch-min flex-1"
+                onClick={onGetPass}
+              >
+                {t('whatPassGives')}
+              </Button>
+            ) : null}
           </div>
           <p className="text-center text-caption text-text-muted">
             {t('age')} ·{' '}

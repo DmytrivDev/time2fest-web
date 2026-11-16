@@ -16,7 +16,7 @@ import { Reveal } from '@/components/primitives/Reveal';
 import { PASS_HREF, useGetPass } from '@/components/pass/PassWindow';
 import { IS_DEMO_BUILD } from '@/lib/env';
 import { formatShortCountdown } from '@/lib/i18n/time';
-import { useDevCode } from '@/lib/api/hooks/auth';
+import { useDevCode, useHasPass } from '@/lib/api/hooks/auth';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { Icon, GoogleMark, type IconName } from '@/components/primitives/Icon';
 import s from './auth.module.css';
@@ -487,10 +487,13 @@ function GetPassButton({ toPage, className, children }: { toPage?: boolean; clas
 
 /** Вхід і реєстрація: «Ще немає Новорічного пасу?» — коротко, ціна, «Оформити пас», «Що дає пас». `toPage` — див. `GetPassButton`. */
 export function PassHint({ className, toPage }: { className?: string; toPage?: boolean }) {
+  const hasPass = useHasPass();
   const t = useTranslations('auth.passHint');
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
+  // Пас уже є (на акаунті чи на пристрої): пропозиції немає (правка власника 2026-11-16).
+  if (hasPass) return null;
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.passHint, className)} data-block="pass-hint">
       <div className={s.passHintHead}>
@@ -533,10 +536,12 @@ export function PassHint({ className, toPage }: { className?: string; toPage?: b
 
 /** «Акаунт створено»: розгорнута пропозиція пасу. `toPage` — див. `GetPassButton`. */
 export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolean; className?: string; toPage?: boolean }) {
+  const hasPass = useHasPass();
   const t = useTranslations('auth.passOffer');
   const o = useTranslations('offers');
   const uid = useId();
   const [open, setOpen] = useState(false);
+  if (hasPass) return null;
   return (
     <section aria-labelledby={`${uid}-t`} className={cn(s.gold, s.offer, className)} data-block="pass-offer">
       <span className={s.eyebrow}>
@@ -582,6 +587,8 @@ export function PassRow({ mt }: { mt?: number }) {
   const uid = useId();
   const [open, setOpen] = useState(false);
   const getPass = useGetPass();
+  const hasPass = useHasPass();
+  if (hasPass) return null;
   return (
     <div className={s.passRow} style={mtStyle(mt)} data-block="pass-row">
       <span className={s.passRowText}>

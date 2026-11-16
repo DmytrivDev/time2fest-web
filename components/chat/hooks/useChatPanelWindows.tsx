@@ -71,7 +71,7 @@ export function useChatPanelWindows(o: {
             flags={flagOptions}
             takenNicks={takenNicks}
             onSignIn={() => openAuthWindow()}
-            onGetPass={() => getPass()}
+            onGetPass={hasPassNow() ? undefined : () => getPass()}
             onDone={async ({ nick, flagCode }) => {
               // Нік і прапор — профіль (шов, залишки E5). Не збереглося (стан шва №10, рішення 2026-11-14) — вікно
               // лишається з помилкою й «Спробувати ще»; повідомлення зі старим підписом не надсилаємо (текст — у полі).
