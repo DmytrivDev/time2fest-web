@@ -9,7 +9,7 @@ import { gotoAt } from './fixtures/time';
 import { expect, test } from './fixtures/youtube-stub';
 
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA', hasTouch: true, viewport: { width: 390, height: 844 } });
-test.beforeEach(async ({}, testInfo) => {
+test.beforeEach(async (_fixtures, testInfo) => {
   test.skip(testInfo.project.name === 'desktop' || testInfo.project.name === 'tv' || testInfo.project.name === 'prod', 'Свайп шторок — телефон');
 });
 test.describe.configure({ timeout: 90_000 });
