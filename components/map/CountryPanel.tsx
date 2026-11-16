@@ -8,7 +8,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { useStamps } from '@/lib/api/hooks/passport';
-import { HANDOVER_AFTER, type ZoneState } from '@time2fest/rules/time';
+import { isZonePast, type ZoneState } from '@time2fest/rules/time';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { StateSwatch } from './MapSide';
@@ -104,7 +104,7 @@ export function CountryPanel({
   const viewerIso = useProfile()?.flagCode ?? undefined;
   const now = useNow();
   const streams = country.streams ?? [];
-  const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
+  const after = state === 'past' || isZonePast(now, zone.midnightMs);
   const before = !after && now < zone.midnightMs;
   const offset = utcLabel(zone.offsetMinutes);
   const title = (
@@ -329,7 +329,7 @@ function CountryTime({ zone, state, phone }: { zone: MapZone; state: ZoneState; 
   const locale = useLocale();
   const now = useNow();
   const left = zone.midnightMs - now;
-  if (state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER) {
+  if (state === 'past' || isZonePast(now, zone.midnightMs)) {
     return (
       <div data-country-time="past">
         <div className={zp.smallCap}>{tz('pastLabel')}</div>

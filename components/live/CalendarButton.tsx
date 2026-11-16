@@ -9,10 +9,8 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { Tooltip } from '@/components/primitives/Tooltip';
+import { isScheduleClosed } from '@time2fest/rules/time';
 import s from './nowNext.module.css';
-
-/** За скільки до півночі додати в графік уже не можна. */
-export const SCHEDULE_CLOSE_MS = 2 * 60_000;
 
 export interface CalendarButtonProps {
   /** Місто для назви кнопки («Додати в графік: Париж»). */
@@ -26,7 +24,7 @@ export interface CalendarButtonProps {
 
 export function scheduleClosed(midnightMs: number, now: number): 'past' | 'soon' | null {
   if (now >= midnightMs) return 'past';
-  return midnightMs - now < SCHEDULE_CLOSE_MS ? 'soon' : null;
+  return isScheduleClosed(now, midnightMs) ? 'soon' : null;
 }
 
 export function CalendarButton({ city, inSchedule, closed, onToggle, className }: CalendarButtonProps) {

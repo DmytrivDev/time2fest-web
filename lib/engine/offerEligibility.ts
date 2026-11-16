@@ -1,6 +1,6 @@
 import type { Event, Ms, OfferState, Stamp } from '@/lib/data/types';
 import { TYPING_QUIET } from './config';
-import { midnightOf, OFFER_MIN_AFTER, OFFER_MIN_BEFORE_NEXT } from '@time2fest/rules/time';
+import { isTooCloseToNextForOffer, midnightOf, offerEarliestAt } from '@time2fest/rules/time';
 
 type EventLike = Pick<Event, 'id' | 'midnightUtc'> & { midnightMs?: Ms };
 
@@ -56,12 +56,12 @@ export function offerEligibility(now: Ms, ctx: OfferContext): OfferDecision {
 
   if (history.some((h) => h.triggerEventId === last.id)) blocked.push('one-per-event');
 
-  const earliest = midnightOf(last) + OFFER_MIN_AFTER;
+  const earliest = offerEarliestAt(midnightOf(last));
   if (now < earliest) {
     blocked.push('too-early');
     recheck.push(earliest);
   }
-  if (ctx.nextEvent && midnightOf(ctx.nextEvent) - now < OFFER_MIN_BEFORE_NEXT) blocked.push('too-late');
+  if (ctx.nextEvent && isTooCloseToNextForOffer(now, midnightOf(ctx.nextEvent))) blocked.push('too-late');
 
   if (ctx.rate === 'open') blocked.push('rate-open');
   if (ctx.offers.visible !== null || ctx.ui.overlayOpen) blocked.push('overlay');

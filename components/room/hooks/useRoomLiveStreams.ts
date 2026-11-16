@@ -6,7 +6,7 @@
  */
 import { useMemo } from 'react';
 import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
-import { HANDOVER_AFTER } from '@time2fest/rules/time';
+import { zonePassedHandover } from '@time2fest/rules/time';
 import { formatClock } from '@/lib/i18n/time';
 import { streamRows, type StreamRowData } from '@/lib/live/countryData';
 import type { SlotState } from '@/components/room/parts/RoomSlots';
@@ -28,7 +28,7 @@ export function useRoomLiveStreams({
 }) {
   const roomZoneId =
     (main ? data.eventsById.get(main.eventId)?.zoneId : undefined) ??
-    (known ? data.zones.find((z) => now < z.midnightMs + HANDOVER_AFTER)?.id : undefined) ??
+    (known ? data.zones.find((z) => !zonePassedHandover(now, z.midnightMs))?.id : undefined) ??
     null;
   const liveRows = useMemo(() => {
     if (!known || !roomZoneId) return [] as StreamRowData[];

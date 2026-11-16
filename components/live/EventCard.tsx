@@ -19,8 +19,7 @@ import type { RoomTarget } from '@/stores/room';
 import { Tooltip } from '@/components/primitives/Tooltip';
 import { RoomAddConfirm } from './RoomAddConfirm';
 
-/** За скільки до півночі додати в графік уже не можна (правка власника 2026-11-05: «менше 2 хвилин»). */
-const SCHEDULE_CLOSE_MS = 2 * 60_000;
+import { isScheduleClosed } from '@time2fest/rules/time';
 import s from './nowNext.module.css';
 
 /** Стан трансляції події для рядка статусу картки (чотири статуси — `Badge stream-status`). */
@@ -170,7 +169,7 @@ export function EventCard({
       : tNav('addToSchedule', { city: title });
   // Календарик — на всіх картках, і в ефірі теж (правка власника 2026-11-05). Північ минула чи до неї менше 2 хв —
   // неактивний з підказкою; був у графіку — лишається жовтим, лише тьмянішим.
-  const scheduleClosed = isPast || midnightMs - now < SCHEDULE_CLOSE_MS;
+  const scheduleClosed = isPast || isScheduleClosed(now, midnightMs);
   const scheduleInert = scheduleClosed || !onToggleSchedule;
   const icon: IconName = stream === 'live' && isOnAir ? 'broadcast-live' : STATUS_ICON[stream];
   const iconClass =

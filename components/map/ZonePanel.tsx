@@ -22,7 +22,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { IconButton } from '@/components/primitives/IconButton';
 import { Reveal } from '@/components/primitives/Reveal';
-import { HANDOVER_AFTER, type ZoneState } from '@time2fest/rules/time';
+import { isZonePast, type ZoneState } from '@time2fest/rules/time';
 import { formatClock, formatCountdown, formatDurationShort } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { MapStreamCard, PlayMark, ScheduleButton, type MapStreamMode } from './MapStreamCard';
@@ -210,7 +210,7 @@ function ZoneTime({ zone, state }: { zone: MapZone; state: ZoneState }) {
   const now = useNow();
   const when = useMidnightPhrase(zone.midnightMs);
   const left = zone.midnightMs - now;
-  if (state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER) {
+  if (state === 'past' || isZonePast(now, zone.midnightMs)) {
     return (
       <div data-zone-time="past">
         <div className={m.smallCap}>{t('pastLabel')}</div>

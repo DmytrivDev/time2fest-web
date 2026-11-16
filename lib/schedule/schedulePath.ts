@@ -8,7 +8,7 @@
  */
 import type { Dataset, Ms, Stamp } from '@/lib/data/types';
 import type { PathPoint } from '@/lib/chat/authorPath';
-import { HANDOVER_AFTER, zoneState } from '@time2fest/rules/time';
+import { isZonePast, zoneState } from '@time2fest/rules/time';
 import { scheduledCountries } from './countryZone';
 
 function point(data: Dataset, eventId: string, planned: boolean, extra: Partial<PathPoint> = {}): PathPoint | null {
@@ -51,7 +51,7 @@ export function buildSchedulePath(stamps: readonly Stamp[], schedule: readonly s
   // У графіку: пояси, що ще не минули.
   const stampedCountry = new Set(stamps.map((s) => `${data.eventsById.get(s.eventId)?.zoneId}:${s.countryIso}`));
   for (const zone of data.zones) {
-    if (now >= zone.midnightMs + HANDOVER_AFTER) continue;
+    if (isZonePast(now, zone.midnightMs)) continue;
     const isos = scheduledCountries(schedule, zone.id, data).filter((iso) => !stampedCountry.has(`${zone.id}:${iso}`));
     if (!isos.length) continue;
     const live = now > 0 && zoneState(now, zone, data.zones) === 'live';

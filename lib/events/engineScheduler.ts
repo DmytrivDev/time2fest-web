@@ -9,7 +9,7 @@
  */
 import type { Country, Ms, PresenceSource, SlotGroup, StreamChain } from '@/lib/data/types';
 import { airSlots, currentAirEvent, pickSlotEvent } from '@/lib/engine/currentAirEvent';
-import { HANDOVER_AFTER, momentTimeline } from '@time2fest/rules/time';
+import { momentTimeline, zonePassedHandover } from '@time2fest/rules/time';
 import { offerEligibility, type OfferContext } from '@/lib/engine/offerEligibility';
 import type { UiEventMap, UiEventType } from './types';
 
@@ -104,7 +104,7 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
   function forgetAhead(now: Ms) {
     const suffixes: string[] = [];
     for (const slot of slots) {
-      if (slot.midnightMs + HANDOVER_AFTER <= now) continue;
+      if (zonePassedHandover(now, slot.midnightMs)) continue;
       suffixes.push(`:${slot.midnightUtc}`, ...slot.events.map((e) => `:${e.id}`));
       pendingRateClose.delete(slot.midnightUtc);
     }
