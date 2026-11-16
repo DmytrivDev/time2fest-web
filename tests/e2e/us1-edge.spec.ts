@@ -63,6 +63,21 @@ test.describe('US1 · крайні випадки ефіру', () => {
     expect((await ytStub.counters()).created).toBe(0);
   });
 
+  test('сцена без трансляції: будь-який жест на сторінці вмикає звук сцени сам; вибір «Вимкнути звук» сильніший за жест', async ({ page }) => {
+    await gotoAt(page, '2027-01-01T02:20:00+02:00', 0);
+    await expect(page.locator('[data-video-area="countdown-scene"]')).toBeVisible();
+    // Без жесту звуку немає (правило браузерів) — лишається «Увімкнути звук».
+    await expect(page.getByRole('button', { name: 'Увімкнути звук' })).toBeVisible();
+    // Жест не на кнопці звуку: клавіша — і звук сцени вже ввімкнений.
+    await page.keyboard.press('Shift');
+    await expect(page.getByRole('button', { name: 'Звук увімкнено' })).toBeVisible();
+    // Людина вимикає — наступний жест звук не вмикає.
+    await page.getByRole('button', { name: 'Звук увімкнено' }).click();
+    await expect(page.getByRole('button', { name: 'Увімкнути звук' })).toBeVisible();
+    await page.keyboard.press('Shift');
+    await expect(page.getByRole('button', { name: 'Увімкнути звук' })).toBeVisible();
+  });
+
   test.fixme('єдине джерело — Facebook без згоди: картка на місці плеєра, звук неактивний (FR-044)', async ({ page }) => {
     // У data/streams.json немає події, де Facebook — єдине придатне джерело; потрібна тестова фікстура даних (T069).
     await gotoAt(page, '2027-01-01T02:00:00+02:00', 0);

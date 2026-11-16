@@ -8,6 +8,10 @@
  *
  * Звук сцени вмикає та сама кнопка «Увімкнути звук» (відео немає — вона керує сценою). Якщо людина вже вмикала звук
  * у цьому сеансі (дивилась трансляцію й перемкнулась на відлік), звук сцени ввімкнений одразу.
+ * Будь-який жест людини на сторінці (дотик, клік, клавіша — один раз за сеанс сторінки) теж вмикає звук сцени сам, без
+ * кнопки (правка власника 2026-11-15): на тому ж жесті розморожуємо AudioContext (iOS дозволяє звук лише з жесту), тож
+ * куранти й салют потім грають без нового кліку. Без жесту звуку нема — правило браузерів, кнопка «Увімкнути звук» лишається.
+ * Явний вибір людини (кнопка) сильніший: «Вимкнути звук» не повертається жестом.
  */
 import { useSyncExternalStore } from 'react';
 import { readSoundFlag, writeSoundFlag } from '@/lib/player/PlayerProvider';
@@ -17,6 +21,10 @@ let master: GainNode | null = null;
 let noise: AudioBuffer | null = null;
 /** `null` — ще не читали прапор сеансу. */
 let on: boolean | null = null;
+/** Людина вже щось робила на сторінці (жест) — звук сцени вмикається сам. */
+let interacted = false;
+/** Явний вибір людини кнопкою (`null` — не вибирала). */
+let choice: boolean | null = null;
 const listeners = new Set<() => void>();
 const files: Record<'bell' | 'fireworks', AudioBuffer | null> = { bell: null, fireworks: null };
 let loading: Promise<void> | null = null;
@@ -51,8 +59,42 @@ function emit() {
 }
 
 export function sceneSoundOn(): boolean {
+  if (choice !== null) return choice;
   if (on === null) on = typeof window !== 'undefined' && readSoundFlag();
-  return on;
+  return on || interacted;
+}
+
+const GESTURES = ['pointerdown', 'touchend', 'click', 'keydown'] as const;
+/** Перший справжній жест на сторінці: розморозити звук (iOS) і ввімкнути звук сцени. Один раз за сеанс сторінки. */
+function onFirstGesture(e: Event) {
+  if (!e.isTrusted) return;
+  // Сама кнопка звуку: її обробник вирішує (інакше `pointerdown` перемкнув би кнопку до `click` і той вимкнув би звук).
+  if (e.target instanceof Element && e.target.closest('[data-sound]')) return;
+  const first = !interacted;
+  interacted = true;
+  // `pointerdown` iOS не вважає жестом для звуку: слухаємо далі, доки не прийде `touchend` / `click` / `keydown`.
+  if (e.type !== 'pointerdown') for (const g of GESTURES) window.removeEventListener(g, onFirstGesture, true);
+  try {
+    const a = audio();
+    if (a) {
+      // Тихий кадр на жесті — iOS після цього дозволяє грати без нового жесту.
+      const s = a.createBufferSource();
+      s.buffer = a.createBuffer(1, 1, a.sampleRate);
+      s.connect(a.destination);
+      s.start(0);
+    }
+  } catch {
+    /* звук недоступний — кнопка лишається */
+  }
+  if (first) emit();
+}
+if (typeof window !== 'undefined') for (const g of GESTURES) window.addEventListener(g, onFirstGesture, { capture: true, passive: true });
+
+/** Для тестів: скинути стан жесту й вибору. */
+export function resetSceneSoundForTests(): void {
+  interacted = false;
+  choice = null;
+  on = null;
 }
 
 function subscribe(l: () => void) {
@@ -83,8 +125,10 @@ function audio(): AudioContext | null {
     for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
     // Браузер дозволяє звук після жесту людини: будь-який дотик на сторінці «розморожує» контекст.
     document.addEventListener('pointerdown', () => void ctx?.resume().catch(() => {}), { passive: true });
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && void ctx?.resume().catch(() => {}));
   }
-  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  // iOS: після блокування екрана чи виклику стан `interrupted` — теж потребує `resume`.
+  if ((ctx.state as string) === 'suspended' || (ctx.state as string) === 'interrupted') void ctx.resume().catch(() => {});
   return ctx;
 }
 
@@ -93,12 +137,14 @@ export function enableSceneSound() {
   audio();
   preloadSceneSounds();
   on = true;
+  choice = true;
   writeSoundFlag();
   emit();
 }
 
 export function disableSceneSound() {
   on = false;
+  choice = false;
   stopFireworksSound();
   emit();
 }

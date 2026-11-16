@@ -55,7 +55,12 @@ export function useMidnightSound(midnightMs: Ms, phase: MidnightPhase) {
     if (soundOn && near) preloadSceneSounds();
   }, [soundOn, near]);
   const sec = phase.kind === 'final' ? phase.sec : 0;
-  const celebrating = phase.kind === 'celebrate' && phase.since < 2_000;
+  const celebrate = phase.kind === 'celebrate';
+  const since = phase.kind === 'celebrate' ? phase.since : 0;
+  const sinceRef = useRef(0);
+  useEffect(() => {
+    sinceRef.current = since;
+  });
   useEffect(() => {
     if (!sec) return;
     const key = `${midnightMs}:${sec}`;
@@ -63,14 +68,17 @@ export function useMidnightSound(midnightMs: Ms, phase: MidnightPhase) {
     last.current = key;
     playChime(sec === 1);
   }, [midnightMs, sec]);
+  // Салют звуком (без картинки) триває весь салют — до `FIREWORKS_MS`. Раніше звук гасло, щойно спливали перші 2 с
+  // (`celebrating` ставало false): на телефоні зі «зменшеним рухом» (iPhone) салют звучав ≈3 с, а не 40 (2026-11-16).
   useEffect(() => {
-    if (!celebrating || !reduced) return;
+    if (!celebrate || !reduced) return;
     const key = `${midnightMs}:boom`;
-    if (last.current === key) return;
-    last.current = key;
-    startFireworksSound(0);
+    if (last.current !== key) {
+      last.current = key;
+      startFireworksSound(sinceRef.current / 1_000);
+    }
     return () => stopFireworksSound();
-  }, [midnightMs, celebrating, reduced]);
+  }, [midnightMs, celebrate, reduced]);
 }
 
 /** Після півночі на місці великого відліку — рік, що настав (рішення власника 2026-11-14): той самий підпис і кегль. */
