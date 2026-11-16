@@ -6,6 +6,7 @@
  * Десктоп: `fixed`, 16 px від низу, ширина колонки відео (без відео — колонки сторінки); як панель кімнати, ховається, щойно
  * підходить до відео (8 px) чи рядка кнопок під ним (16 px). Телефон: над згорнутим чатом.
  */
+import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, type CSSProperties } from 'react';
 import { useBarGeometry } from '@/components/legal/CookieLayer';
@@ -62,6 +63,12 @@ export function ScheduleToast() {
           <Icon name="undo" size={16} />
           {t('undo')}
         </button>
+      )}
+      {/* Перехід у «Мій графік» поруч із «Повернути» (власник 2026-11-15, п. 18). */}
+      {toast.failed ? null : (
+        <NextLink href="/schedule/" data-action="schedule-open" onClick={hideScheduleToast} className={cn('t2f-focus t2f-press', s.toastUndo, s.toastLink)}>
+          {t('open')}
+        </NextLink>
       )}
       <span aria-hidden="true" className={s.toastBar} />
     </div>

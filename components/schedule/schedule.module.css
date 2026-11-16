@@ -569,7 +569,7 @@
   .slots {
     grid-template-columns: repeat(min(var(--cols, 4), 2), minmax(0, 1fr));
     gap: 8px;
-    padding: 0 12px 12px 11px;
+    padding: 8px 12px 12px 11px; /* Т6 (2026-11-16): відступ слотів від плашки пояса */
   }
   .slotX {
     display: none;
@@ -790,6 +790,25 @@ html[data-has-chat-dock] .toastPhone {
 }
 .toastUndo:hover {
   background: var(--color-surface);
+}
+/* «Мій графік» — другорядна дія поруч із «Повернути»: тьмяніший колір, без значка. */
+.toastLink {
+  padding: 0 10px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.toastLink:hover {
+  color: var(--color-text);
+}
+.toastPhone {
+  gap: 8px;
+}
+.toastPhone .toastUndo {
+  padding: 0 8px;
+}
+/* Телефон: без значка «Повернути» — місце країні (перевірка 360 px, 2026-11-16). */
+.toastPhone .toastUndo svg {
+  display: none;
 }
 .toastBar {
   position: absolute;
