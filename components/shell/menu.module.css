@@ -334,22 +334,30 @@
 @media (max-width: 767.98px), (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait) {
   .panel {
     top: var(--menu-top, 17.1875rem);
-    border-top: 1px solid #3c3c44;
+    border-top: 1px solid var(--sheet-edge);
     border-radius: 22px 22px 0 0;
-    background: var(--color-surface);
+    background: var(--sheet-bg);
+    box-shadow: var(--sheet-shadow);
     animation: menu-up 240ms cubic-bezier(0.2, 0, 0, 1);
   }
   .panel[data-state='closed'] {
     animation: menu-down 200ms cubic-bezier(0.2, 0, 0, 1) forwards;
   }
   .handle {
+    position: relative;
     display: block;
     flex: none;
     width: 40px;
     height: 4px;
     margin: 8px auto 0;
     border-radius: 2px;
-    background: #4a4a52;
+    background: #5b5b66;
+  }
+  /* Широка зона захоплення навколо ручки (свайп униз закриває шторку). */
+  .handle::before {
+    content: '';
+    position: absolute;
+    inset: -8px -100px -4px;
   }
   .head {
     height: 48px;
@@ -384,9 +392,6 @@
   }
 }
 @keyframes menu-down {
-  from {
-    transform: translateY(0);
-  }
   to {
     transform: translateY(100%);
   }

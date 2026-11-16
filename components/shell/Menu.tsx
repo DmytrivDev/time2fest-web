@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dialog, RadioGroup, VisuallyHidden } from 'radix-ui';
-import { useRef, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
+import { useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
 import { useHeaderUser } from '@/components/auth/session';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
@@ -14,6 +14,7 @@ import { Switch } from '@/components/primitives/Switch';
 import { useStamps } from '@/lib/api/hooks/passport';
 import { currentPath, rememberReturn } from '@/lib/auth/returnTo';
 import { useSheetTop } from '@/lib/overlay/sheetTop';
+import { useSwipeDown } from '@/lib/overlay/useSwipeDown';
 import { usePartyHref } from './OverlayManager';
 import { authActions, useHasPass, useSession } from '@/lib/api/hooks/auth';
 import { useGuestStore } from '@/stores/guest';
@@ -322,6 +323,11 @@ export function MenuBody({
   );
 }
 
+/** Шторка, а не бічна панель: телефон і планшет-портрет (збігається з `menu.module.css`). */
+const isSheetViewport = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(max-width: 767.98px), (min-width: 768px) and (max-width: 1199.98px) and (orientation: portrait)').matches;
+
 /**
  * Бічне вікно поза `(live)` (службові сторінки, пас, вхід, 404) — Radix Dialog: десктоп — панель праворуч під шапкою,
  * телефон і планшет-портрет — шторка до низу відео / шапки + 16:9 без затемнення (2026-11-10), планшет-альбом — на весь екран. Спільне для меню й сповіщень.
@@ -350,11 +356,15 @@ export function SideDialog({
   // Вікно відкривається без Dialog.Trigger (кнопка — у хедері), тож Radix не знає, куди повернути фокус:
   // запам’ятовуємо елемент з фокусом до відкриття й повертаємо на нього після закриття (WCAG 2.4.3).
   const returnFocus = useRef<HTMLElement | null>(null);
+  // Свайп униз за ручку й шапку закриває шторку (телефон і планшет-портрет; Т9, 2026-11-16).
+  const [panelEl, setPanelEl] = useState<HTMLDivElement | null>(null);
+  const dragY = useSwipeDown(panelEl, open, () => onOpenChange(false), { when: isSheetViewport });
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Content
+          ref={setPanelEl}
           data-menu=""
           aria-describedby={undefined}
           onOpenAutoFocus={() => {
@@ -367,10 +377,15 @@ export function SideDialog({
             returnFocus.current.focus();
           }}
           className={cn('text-text', ms.panel)}
-          style={top !== undefined ? ({ '--menu-top': `${top}px` } as CSSProperties) : undefined}
+          style={
+            {
+              ...(top !== undefined ? { '--menu-top': `${top}px` } : null),
+              ...(dragY ? { transform: `translateY(${dragY}px)`, transition: 'none' } : null),
+            } as CSSProperties
+          }
         >
-          <span aria-hidden="true" className={ms.handle} />
-          <header className={ms.head}>
+          <span aria-hidden="true" className={ms.handle} data-swipe-zone="" />
+          <header className={ms.head} data-swipe-zone="">
             {onBack ? (
               <button type="button" onClick={onBack} className={cn('t2f-focus', ms.back)}>
                 <Icon name="chevron-left" size={18} />

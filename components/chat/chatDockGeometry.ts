@@ -13,14 +13,17 @@ export const MIN_DOCK = 300;
 /** Скільки висоти має «з’їсти» екранна клавіатура, щоб вважати її відкритою. */
 export const KB_MIN = 80;
 export const FIELD = '[data-composer] textarea, [data-composer] input';
-export const FLICK_PX_PER_MS = 0.5;
+export const FLICK_PX_PER_MS = 0.35;
+/** Скільки протягнути вікно чату вниз (розгорнуте → згорнуте) і вгору (згорнуте → розгорнуте), px. */
+export const DOCK_SNAP_DOWN_PX = 64;
+export const DOCK_SNAP_UP_PX = 40;
 /** Усе, що в шапці працює саме по собі (дотик не перемикає вікно). */
 export const INTERACTIVE = 'button, a, input, textarea, select, [role="radiogroup"], [role="group"], [role="menu"]';
 export const ZONE = '[data-dock-grip], .t2f-dock-grip-handle';
-/** Зона жестів шару вікон: ручка й шапка вікна. */
-export const LAYER_ZONE = '.t2f-layer-grip, [data-window-layer] [data-board-header]';
-/** Скільки протягнути шар униз (px), щоб він закрився, якщо відпустили повільно. */
-export const LAYER_CLOSE_PX = 80;
+/** Зона жестів шару вікон: ручка шару й усе, що позначено `data-swipe-zone` (шапки вікон). */
+export const LAYER_ZONE = '.t2f-layer-grip, [data-swipe-zone]';
+/** Шапки вікон чату всередині розгорнутого чату (автор, нік, правила): свайп униз по них згортає чат, як по його шапці. */
+export const SLOT_ZONE = '.t2f-dock-slot [data-swipe-zone]';
 
 /**
  * Телефон-альбом: усе, що лишається над чатом (відео, рядок часу й позначене `data-dock-above`), — прямі діти `<main>`; беремо

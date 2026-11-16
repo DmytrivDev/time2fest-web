@@ -41,7 +41,7 @@ export function ChatDockLayer({
         if ((e.target as HTMLElement).closest('.t2f-layer-grip')) onClose();
       }}
     >
-      <div aria-hidden="true" className="t2f-layer-grip">
+      <div aria-hidden="true" className="t2f-layer-grip" data-swipe-zone="">
         <span className="t2f-dock-handle" />
       </div>
       <div id={LAYER_DOCK_SLOT_ID} className="t2f-layer-slot" />

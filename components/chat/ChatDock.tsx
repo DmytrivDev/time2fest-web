@@ -160,9 +160,9 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
   }, [expanded, overlay, collapse]);
 
   // Шар вікон: свайп униз з ручки чи шапки закриває вікно.
-  const layerRef = useRef<HTMLDivElement>(null);
+  const [layerEl, setLayerEl] = useState<HTMLDivElement | null>(null);
   const closeLayer = overlay.close;
-  const layerDy = useLayerSwipe(layerRef, layerOpen, land, closeLayer);
+  const layerDy = useLayerSwipe(layerEl, layerOpen, land, closeLayer);
 
   const { dragH, onPointerDown, onPointerMove, onPointerEnd, onClickCapture, onClick } = useDockSwipe({
     sectionRef,
@@ -173,6 +173,36 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     expand,
     collapse,
   });
+
+  // Жести — нативні події на самому вікні: шапки вікон чату (автор, нік, правила) живуть у порталі, і React-події з них
+  // сюди не доходять (Т9, 2026-11-16). Свіжі обробники беремо з ref, щоб жест не обривався перемальовкою.
+  const swipeRef = useRef({ onPointerDown, onPointerMove, onPointerEnd, onClickCapture, onClick });
+  useLayoutEffect(() => {
+    swipeRef.current = { onPointerDown, onPointerMove, onPointerEnd, onClickCapture, onClick };
+  });
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const down = (e: Event) => swipeRef.current.onPointerDown(e as never);
+    const move = (e: Event) => swipeRef.current.onPointerMove(e as never);
+    const end = (e: Event) => swipeRef.current.onPointerEnd(e as never);
+    const clickCap = (e: Event) => swipeRef.current.onClickCapture(e as never);
+    const click = (e: Event) => swipeRef.current.onClick(e as never);
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    el.addEventListener('click', clickCap, true);
+    el.addEventListener('click', click);
+    return () => {
+      el.removeEventListener('pointerdown', down);
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', end);
+      el.removeEventListener('pointercancel', end);
+      el.removeEventListener('click', clickCap, true);
+      el.removeEventListener('click', click);
+    };
+  }, []);
 
   const style = dockStyle({ open, land, landFlow, kbOpen, vv, inset, top, dragH });
 
@@ -187,7 +217,6 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
 
   return (
     <>
-    {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */}
     <section
       ref={sectionRef}
       aria-label={t('dockLabel', { room: roomLabel })}
@@ -215,12 +244,6 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
       }}
       className="t2f-dock"
       style={style}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerEnd}
-      onPointerCancel={onPointerEnd}
-      onClickCapture={onClickCapture}
-      onClick={onClick}
     >
       <ChatDockCollapsed
         buttonRef={collapsedRef}
@@ -243,7 +266,7 @@ export function ChatDock({ room, roomLabel, children }: ChatDockProps) {
     </section>
     {/* Шар вікон поза чатом: контейнер є завжди (портал вікна шукає його в DOM), видно лише з вікном. */}
     <ChatDockLayer
-      layerRef={layerRef}
+      layerRef={setLayerEl}
       land={land}
       hidden={!layerOpen && !layerClosing}
       closing={layerClosing}

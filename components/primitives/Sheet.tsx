@@ -10,7 +10,8 @@
  * Основа — Radix Dialog (фокус-пастка й повернення фокуса).
  */
 import { Dialog } from 'radix-ui';
-import { useCallback, useRef, useState, type ComponentProps, type PointerEvent, type ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
+import { useSwipeDown } from '@/lib/overlay/useSwipeDown';
 import { useSheetTop, type SheetTopKind } from '@/lib/overlay/sheetTop';
 import { cn } from './cn';
 import { Icon } from './Icon';
@@ -57,8 +58,6 @@ export interface SheetProps {
   className?: string;
 }
 
-const SWIPE_CLOSE_PX = 64;
-
 export function Sheet({
   open,
   onOpenChange,
@@ -77,27 +76,9 @@ export function Sheet({
 }: SheetProps) {
   // Міряється до першого кадру (layout effect), тож аркуш не стрибає.
   const top = useSheetTop(kind, open) ?? 0;
-  const [dragY, setDragY] = useState(0);
-  const startY = useRef<number | null>(null);
-
-  const onPointerDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    startY.current = e.clientY;
-    e.currentTarget.setPointerCapture(e.pointerId);
-  }, []);
-  const onPointerMove = useCallback((e: PointerEvent<HTMLDivElement>) => {
-    if (startY.current === null) return;
-    setDragY(Math.max(0, e.clientY - startY.current));
-  }, []);
-  const onPointerEnd = useCallback(
-    (e: PointerEvent<HTMLDivElement>) => {
-      if (startY.current === null) return;
-      const dy = e.clientY - startY.current;
-      startY.current = null;
-      setDragY(0);
-      if (dy > SWIPE_CLOSE_PX) onOpenChange(false);
-    },
-    [onOpenChange],
-  );
+  // Свайп униз за ручку й шапку (`data-swipe-zone`) — спільна механіка всіх шторок (Т9, 2026-11-16).
+  const [contentEl, setContentEl] = useState<HTMLDivElement | null>(null);
+  const dragY = useSwipeDown(contentEl, open && !closing, () => onOpenChange(false));
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -106,10 +87,11 @@ export function Sheet({
           <Scrim top={top} data-closing={closing ? 'true' : undefined} className="t2f-sheet-scrim" />
         </Dialog.Overlay>
         <Dialog.Content
+          ref={setContentEl}
           data-sheet=""
           data-closing={closing ? 'true' : undefined}
           className={cn(
-            't2f-sheet fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg bg-surface text-text shadow-overlay',
+            't2f-sheet fixed inset-x-0 bottom-0 z-40 flex flex-col overflow-hidden rounded-t-lg text-text',
             className,
           )}
           style={{ top, transform: closing ? 'translateY(100%)' : dragY ? `translateY(${dragY}px)` : undefined, transition: dragY && !closing ? 'none' : undefined }}
@@ -118,17 +100,14 @@ export function Sheet({
           {authorHeader ? null : (
           <div
             className={cn('flex shrink-0 touch-none justify-center', boardHeader ? 'h-4 items-end pb-1' : 'h-6 items-center')}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerEnd}
-            onPointerCancel={onPointerEnd}
+            data-swipe-zone=""
             aria-hidden="true"
           >
             <span className={cn('h-1 rounded-full', boardHeader ? 'w-9 bg-border' : 'w-10 bg-border-strong')} />
           </div>
           )}
           {authorHeader ? (
-            <div className="t2f-author-header" data-author-header="">
+            <div className="t2f-author-header" data-author-header="" data-swipe-zone="">
               <Dialog.Close asChild>
                 <button type="button" className="t2f-focus t2f-transition t2f-author-back">
                   <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
@@ -139,7 +118,7 @@ export function Sheet({
               <Dialog.Title className="text-caption font-normal text-text-muted">{title}</Dialog.Title>
             </div>
           ) : boardHeader ? (
-            <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="">
+            <div className="flex shrink-0 items-start gap-1 pe-1 ps-4 pt-1" data-board-header="" data-swipe-zone="">
               {/* З «‹ Назад» рядок із × стоїть на тій самій висоті, що × у звичайних вікнах (правило 2026-11-01). */}
               <div className={cn('min-w-0 flex-1', onBack ? 'pt-0' : 'pt-2.5')}>
                 {onBack ? (
@@ -164,7 +143,7 @@ export function Sheet({
             </div>
           ) : (
             <>
-              <div className="flex shrink-0 items-center justify-between gap-2 px-4">
+              <div className="flex shrink-0 items-center justify-between gap-2 px-4" data-swipe-zone="">
                 <Dialog.Title className="text-headline-sm">{title}</Dialog.Title>
                 <Dialog.Close asChild>
                   <IconButton icon="close" aria-label={closeLabel} />

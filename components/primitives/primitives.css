@@ -1559,6 +1559,9 @@ html[data-reduce-motion='true'] .t2f-chip-spin {
 .t2f-sheet {
   animation: t2f-layer-in 200ms ease-out;
   transition: transform 200ms ease-out;
+  border-top: 1px solid var(--sheet-edge);
+  background: var(--sheet-bg);
+  box-shadow: var(--sheet-shadow);
 }
 .t2f-sheet-scrim {
   animation: t2f-scrim-in 200ms ease-out;
@@ -1786,4 +1789,34 @@ html[data-chat-land-expanded] body {
   .t2f-layer .t2f-layer-panel {
     padding-inline: 16px;
   }
+}
+
+/* ── Поверхня шторок на телефоні (Т14, 2026-11-16): чат, шар вікон, аркуш, меню — одна «шкіра», що відділяє шторку від сторінки.
+   Верхня зона (ручка й шапка) світліша, тіло трохи світліше за картки, світла верхня кромка, глибша тінь догори. */
+:root {
+  --sheet-body: #1e1e23;
+  --sheet-top: #30303a;
+  --sheet-edge: #5b5b66;
+  --sheet-bg: linear-gradient(to bottom, var(--sheet-top) 0, var(--sheet-body) 76px);
+  --sheet-shadow: 0 -14px 36px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.t2f-dock,
+.t2f-layer {
+  border-top-color: var(--sheet-edge);
+  background: var(--sheet-bg);
+  box-shadow: var(--sheet-shadow);
+}
+/* Т2 (2026-11-16): зерно-розсіювання для золотих градієнтів малої прозорості (картки тостів). Без нього на 8-бітному екрані
+   перехід 0.16 → 0.05 розпадається на помітні діагональні смуги; ледь помітний шум ховає сходинки. */
+:root {
+  --toast-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .12 -.04'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Шапки й ручки шторок (зона свайпу вниз, `lib/overlay/useSwipeDown.ts`): палець не гортає сторінку, а веде шторку. */
+[data-swipe-zone] {
+  touch-action: none;
+}
+/* Вікна чату й шару закривають вміст під собою, тож мають ту саму «шкіру» (ручка над ними — 13 px, звідси коротший градієнт). */
+.t2f-dock-slot > [data-chat-slot-panel],
+.t2f-layer-panel[data-chat-slot-panel] {
+  background: linear-gradient(to bottom, var(--sheet-top) 0, var(--sheet-body) 64px);
 }

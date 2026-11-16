@@ -105,6 +105,7 @@ export function ChatSlotPanel({
             <div
               className={cn('flex shrink-0 items-start gap-1 border-b pb-3 pe-2 ps-4 pt-2', scrolled ? 'border-border' : 'border-transparent')}
               data-board-header=""
+              data-swipe-zone=""
               data-scrolled={scrolled ? 'true' : undefined}
             >
               {/* З «‹ Назад» рядок із × стоїть на тій самій висоті, що × у звичайних вікнах (правило 2026-11-01). */}
@@ -131,7 +132,7 @@ export function ChatSlotPanel({
             </div>
           ) : null}
           {authorHeader ? (
-            <div className="t2f-author-header" data-author-header="">
+            <div className="t2f-author-header" data-author-header="" data-swipe-zone="">
               <Dialog.Close asChild>
                 <button type="button" className="t2f-focus t2f-transition t2f-author-back">
                   <Icon name="chevron-left" size={18} className="[stroke-width:2]" />
@@ -143,7 +144,7 @@ export function ChatSlotPanel({
             </div>
           ) : null}
           {!boardHeader && !authorHeader ? (
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2" data-swipe-zone="">
               {variant === 'nonmodal' ? (
                 <Dialog.Close asChild>
                   <Button variant="ghost" iconLeft="chevron-left">
