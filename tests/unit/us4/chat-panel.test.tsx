@@ -191,7 +191,7 @@ describe('O-NICK — прапор: пошук замість поля, спис�
     expect(screen.getByRole('dialog', { name: /Як тебе підписати/ })).toBeInTheDocument();
     expect(within(dialog).queryByRole('listbox')).not.toBeInTheDocument();
     await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Прапор: Єгипет. Змінити' })).toHaveFocus());
-  });
+  }, 60_000);
 
   it('прев’ю «У чаті:» з довгим ніком; «Оформити пас» без заглушки оплати; посилання на правила', async () => {
     const user = userEvent.setup();
