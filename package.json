@@ -34,6 +34,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "@time2fest/contracts": "workspace:*",
+    "@time2fest/rules": "workspace:*",
     "zustand": "5.0.15"
   },
   "devDependencies": {

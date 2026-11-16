@@ -17,8 +17,8 @@
     {
       "package": "rules",
       "dir": "packages/rules",
-      "files": "npx tsc --noEmit -p .",
-      "full": "npx tsc --noEmit -p ."
+      "files": "npx tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}",
+      "full": "npx tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2"
     },
     {
       "package": "server",

@@ -33,4 +33,4 @@ jobs:
         run: npx tsc --noEmit -p . && npx vitest run --maxWorkers=2 && node ../../scripts/contract-surface.mjs --check
       - name: rules full
         working-directory: packages/rules
-        run: npx tsc --noEmit -p .
+        run: npx tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2

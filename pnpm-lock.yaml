@@ -11,6 +11,9 @@ importers:
       '@time2fest/contracts':
         specifier: workspace:*
         version: link:packages/contracts
+      '@time2fest/rules':
+        specifier: workspace:*
+        version: link:packages/rules
       next:
         specifier: 16.4.1
         version: 16.4.1(@babel/core@7.29.7(supports-color@10.2.2))(@playwright/test@1.64.0)(@types/node@22.19.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
