@@ -66,3 +66,8 @@ export function applySiteEvent(current: SiteState | undefined, event: SiteEvent)
   if (!current || event.state.version > current.version) return event.state;
   return current;
 }
+
+/** Catalog version = `meta.generatedAt` + `tzdbVersion` (rule from the catalog contract). */
+export function catalogVersionOf(meta: { generatedAt: string; tzdbVersion: string }): string {
+  return `${meta.generatedAt}+${meta.tzdbVersion}`;
+}

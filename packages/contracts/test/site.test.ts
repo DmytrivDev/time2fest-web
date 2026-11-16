@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applySiteEvent, type SiteState } from '../src/index';
+import { applySiteEvent, catalogVersionOf, type SiteState } from '../src/index';
 
 const make = (version: number): SiteState => ({
   version,
@@ -43,5 +43,11 @@ describe('site contract', () => {
     expect(applySiteEvent(cur, { type: 'snapshot', state: newer })).toBe(newer);
     const first = make(1);
     expect(applySiteEvent(undefined, { type: 'snapshot', state: first })).toBe(first);
+  });
+});
+
+describe('catalogVersionOf', () => {
+  it('joins generatedAt and tzdbVersion with +', () => {
+    expect(catalogVersionOf({ generatedAt: '2026-11-16T00:00:00Z', tzdbVersion: '2026a' })).toBe('2026-11-16T00:00:00Z+2026a');
   });
 });

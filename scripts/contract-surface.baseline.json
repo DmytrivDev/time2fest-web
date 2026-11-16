@@ -3283,6 +3283,9 @@
     },
     "packages/contracts/src/site.ts#applySiteEvent": {
       "fn": "export function applySiteEvent(current: SiteState | undefined, event: SiteEvent): SiteState"
+    },
+    "packages/contracts/src/site.ts#catalogVersionOf": {
+      "fn": "export function catalogVersionOf(meta: { generatedAt: string; tzdbVersion: string }): string"
     }
   },
   "breaking": []

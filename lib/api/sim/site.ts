@@ -2,13 +2,8 @@
  * Адаптер `sim` домену `site` (SPEC-01): типові значення без сервера — усе ввімкнено, ціни з PRD. Подій не шле.
  */
 import { ok } from '../result';
-import { applySiteEvent, type SiteEvent, type SiteService, type SiteState } from '../contracts/site';
+import { applySiteEvent, catalogVersionOf, type SiteEvent, type SiteService, type SiteState } from '../contracts/site';
 import { getData } from '@/lib/data/load';
-
-/** Версія каталогу = `meta.generatedAt` + `tzdbVersion` (правило з `contracts/catalog.ts`). */
-export function catalogVersionOf(meta: { generatedAt: string; tzdbVersion: string }): string {
-  return `${meta.generatedAt}+${meta.tzdbVersion}`;
-}
 
 let last: SiteState | undefined;
 

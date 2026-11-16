@@ -1,7 +1,8 @@
 /** Шов: адаптер `sim` домену `site` — типові значення, `peek`, відмови й реєстр. */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { getService, MIGRATED_DOMAINS } from '@/lib/api/services';
-import { catalogVersionOf, resetSimSiteForTest } from '@/lib/api/sim/site';
+import { catalogVersionOf } from '@/lib/api/contracts/site';
+import { resetSimSiteForTest } from '@/lib/api/sim/site';
 import { resetSimFaultsForTest, simFaults } from '@/lib/api/sim/faults';
 import { getData } from '@/lib/data/load';
 
