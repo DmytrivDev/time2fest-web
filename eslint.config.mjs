@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 import noArbitraryTailwind from './eslint/no-arbitrary-tailwind.mjs';
 
 export default tseslint.config(
-  { ignores: ['.cache/**', '.next/**', '.next-*/**', 'out/**', 'out-*/**', 'public/yt/**', 'storybook-static/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', 'next-env.d.ts'] },
+  { ignores: ['.cache/**', '.claude/**', '.next/**', '.next-*/**', 'out/**', 'out-*/**', 'public/yt/**', 'storybook-static/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', 'next-env.d.ts'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...nextVitals,
