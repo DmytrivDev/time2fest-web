@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "module": "esnext",
     "moduleResolution": "bundler",
     "strict": true,
@@ -9,14 +13,36 @@
     "isolatedModules": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "allowJs": true,
     "checkJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "plugins": [{ "name": "next" }],
-    "paths": { "@payload-config": ["./src/payload.config.ts"] }
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@payload-config": [
+        "./src/payload.config.ts"
+      ]
+    },
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "src/**/*", "test/**/*", "scripts/**/*.mjs", "*.config.ts", "*.config.mjs", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", ".next", "graphify-out"]
+  "include": [
+    "next-env.d.ts",
+    "src/**/*",
+    "test/**/*",
+    "scripts/**/*.mjs",
+    "*.config.ts",
+    "*.config.mjs",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "graphify-out"
+  ]
 }
