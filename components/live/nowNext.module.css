@@ -506,9 +506,15 @@
 }
 .card[data-layout='stack'] .mid {
   grid-area: mid;
-  flex-direction: row;
+  flex-flow: row wrap;
   align-items: baseline;
+  gap: 0 6px;
+}
+/* Т7 (2026-11-16): «за вашим часом» і «У графіку» не ламаються посередині — разом лишаються в рядку або йдуть під час. */
+.card[data-layout='stack'] .yours {
+  flex-wrap: nowrap;
   gap: 6px;
+  white-space: nowrap;
 }
 /* Телефон з мініатюрою: «В ефірі» — червона смуга зліва (підпис не вміщається поруч з назвою). */
 .card[data-layout='stack'] .timeRow {
