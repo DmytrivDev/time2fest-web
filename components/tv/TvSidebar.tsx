@@ -224,10 +224,12 @@ export function TvSidebar({ online: onlineProp, onFullscreen, panel = 'tabs', on
   );
 
   let content;
-  if (!welcomed) content = <TvWelcome onDone={() => setWelcomed(true)} />;
-  else if (panel === 'streams' && mode === 'live') {
+  // Список трансляцій — раніше за пояснення: «Змінити трансляцію» на першому відкритті (пояснення ще не закрито)
+  // нічого не відкривало (2026-11-16).
+  if (panel === 'streams' && mode === 'live') {
     content = <TvStreamsNow rows={liveRows} playingId={playingId} onWatch={watchRow} onClose={() => onPanelChange?.('tabs')} />;
-  } else if (askPass || (show === 'mine' && !mineReady)) content = <TvNoPass hasPass={hasPass} />;
+  } else if (!welcomed) content = <TvWelcome onDone={() => setWelcomed(true)} />;
+  else if (askPass || (show === 'mine' && !mineReady)) content = <TvNoPass hasPass={hasPass} />;
   else content = tabs;
 
   let body;

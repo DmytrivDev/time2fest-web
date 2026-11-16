@@ -400,6 +400,13 @@ test.describe('US7 · режим вечірки на ТВ', () => {
     expect((await ytStub.counters()).created).toBe(1);
   });
 
+  test('«Змінити трансляцію» працює й на першому відкритті, поки пояснення не закрито', async ({ page, ytStub }) => {
+    await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0, false);
+    await expect(sidebar(page).locator('[data-tv-welcome]')).toBeVisible();
+    await sidebar(page).getByRole('button', { name: 'Змінити трансляцію' }).click();
+    await expect(sidebar(page).locator('[data-tv-panel="streams"]')).toBeVisible();
+  });
+
   test('«На весь екран»: лише відео на все вікно, без колонки й таймлайну; Esc — назад, фокус на кнопці', async ({ page, ytStub }) => {
     await openTv(page, ytStub, '2027-01-01T01:38:00+02:00', 0);
     await sidebar(page).getByRole('button', { name: 'На весь екран' }).click();
