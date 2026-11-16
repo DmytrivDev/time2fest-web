@@ -656,6 +656,12 @@ Technical judgement calls only:
 - **The CI installs pnpm with `npm install -g pnpm@12.4.2`** rather than `pnpm/action-setup` (no `packageManager` field; that action's pnpm ≥11 support is not established).
 - **AC-33 uses `scripts/baseline-shots.mjs diff`** for live-versus-live comparison, because `BT/compare-live.mjs` does not exist (Spec follow-up 5).
 
+## Deviations recorded during the run (orchestrator, 2026-11-16)
+- **`lib/api/sim/profile.ts` — type-only edit, outside the Affected surface (W5, AC-6).** Adding the optional `ProfileSettings.reminderEmails?` broke `acc.set(k as keyof ProfileSettings)` under tsc; the fix narrows the local alias `SettingKey = keyof typeof DEFAULT_ACCOUNT & keyof ProfileSettings`. No value, behaviour or emitted vocabulary changes (AC-30 grep empty, `*-sim` tests green). Accepted on the same rule as `stores/` ("types only if the compiler requires it").
+- **`catalogVersionOf` lives in `packages/contracts/src/site.ts`**, not in `lib/api/sim/site.ts` (architecture review A1, commit ca2a796); the baseline gained one additive entry.
+- **`timeout-minutes: 20`** on the CI job (security review S3, LOW, accepted).
+- **AC-32:** `perf-sc001` "JS budget" is red on `master` too (home-page production JS identical on both: same chunk hashes); not caused by the wave.
+
 ## Open questions
 None.
 
