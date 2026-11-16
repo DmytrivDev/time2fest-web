@@ -788,6 +788,10 @@
 }
 .perkPanelInline {
   margin: 6px 0 4px;
+  /* Т3 (2026-11-16): у акордеоні (висота анімується, вміст під `overflow: hidden`) — плоске тло без накладного градієнта:
+     шар із радіальним градієнтом, що змінює розмір, на Android давав смугу шуму при прокручуванні. */
+  border: 1px solid rgba(252, 226, 134, 0.12);
+  background: var(--color-surface);
 }
 .perkReveal {
   min-width: 0;
@@ -816,6 +820,15 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+/* Т4 (2026-11-16): на телефоні «Без пасу» й «З пасом» — одна під одною, на всю ширину (у двох колонках слова переносились). */
+@media (max-width: 599.98px) {
+  .perkChips {
+    flex-direction: column;
+  }
+  .perkChip {
+    flex: 0 0 auto;
+  }
 }
 .perkChipOn {
   border-color: rgba(252, 226, 134, 0.35);
