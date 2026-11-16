@@ -7,7 +7,7 @@ import type { ApiError } from '@time2fest/contracts';
 import type { Payload } from 'payload';
 import type { ZodType } from 'zod';
 import type { EnvClass } from '../platform/env';
-import type { Alarm, Clock, LockState, Logger } from '../ports';
+import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -40,6 +40,12 @@ export interface Deps {
   /** Payload, initialised on first use only (by a `needs: ['db']` route). */
   payload(): Promise<Payload>;
   lockState: LockState;
+  /** The fast store (Redis, this slot's database and key prefix); lazy — connects on first use. */
+  redis: FastStore;
+  /** The in-process store of the `memory` rate-limit policy (AC-50). */
+  memory: FastStore;
+  /** `order`-class idempotency records (Postgres, AC-55). */
+  orderStore: IdempotencyStore;
 }
 
 export interface Ctx {
@@ -73,5 +79,7 @@ export interface RouteRow {
 
 export interface Middleware {
   key: string;
+  /** Startup check of the route table; a throw stops the dispatcher from being built. */
+  check?(routes: readonly RouteRow[]): void;
   run(ctx: Ctx, next: () => Promise<Outcome>): Promise<Outcome>;
 }

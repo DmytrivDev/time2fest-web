@@ -146,6 +146,7 @@ export function createDispatcher({ routes, middleware, deps }: DispatcherInput):
     keys.add(row.key);
     table.set(id, row);
   }
+  for (const mw of middleware) mw.check?.(routes);
 
   return async function dispatch(req: Request): Promise<Response> {
     const url = new URL(req.url);

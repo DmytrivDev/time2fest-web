@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { buildDispatcher } from '../../src/container';
 import type { AppEnv, Deps } from '../../src/endpoints/types';
+import { createMemoryStore } from '../../src/adapters/redis';
 import { realClock } from '../../src/clock';
 
 const evaluated = vi.hoisted(() => ({ count: 0 }));
@@ -20,6 +21,9 @@ function depsFor(cls: AppEnv['class'], doorsFlag: boolean): Deps {
     alarm: { raise: () => {} },
     payload: () => Promise.reject(new Error('not used')),
     lockState: { holdsExclusive: () => false },
+    redis: createMemoryStore(realClock),
+    memory: createMemoryStore(realClock),
+    orderStore: { begin: () => Promise.reject(new Error('not used')), finish: async () => {}, abort: async () => {} },
   };
 }
 

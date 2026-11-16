@@ -7,6 +7,8 @@
  */
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
+import { createPayloadIdempotencyStore } from './adapters/payload';
+import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
 import type { AppEnv, Deps, RouteRow } from './endpoints/types';
@@ -67,13 +69,18 @@ export function createDeps(raw: RawEnv, overrides: Partial<Omit<Deps, 'env'>> = 
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
   const env: AppEnv = { class: loaded.class, vars: loaded.env };
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
+  const payload = overrides.payload ?? lazyPayload();
   return {
     env,
     clock: overrides.clock ?? clockFor(env.class),
     log,
     alarm: overrides.alarm ?? createAlarm(log),
-    payload: overrides.payload ?? lazyPayload(),
+    payload,
     lockState: overrides.lockState ?? createLockState(undefined, raw),
+    redis: overrides.redis ?? createRedisStore(env.vars),
+    // Windows of the in-process fallback run on real time, like Redis expiry.
+    memory: overrides.memory ?? createMemoryStore(realClock),
+    orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
 }
 

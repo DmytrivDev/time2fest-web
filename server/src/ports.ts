@@ -33,6 +33,8 @@ export interface FastStore {
   setIfAbsent(key: string, value: string, ttlMs: number): Promise<boolean>;
   get(key: string): Promise<string | null>;
   set(key: string, value: string, ttlMs: number): Promise<void>;
+  /** Deletes one key (no-op when absent). */
+  del(key: string): Promise<void>;
   /** Deletes every key under the prefix and returns how many were deleted. */
   deleteByPrefix(prefix: string): Promise<number>;
 }
