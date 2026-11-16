@@ -8,6 +8,13 @@
 import type { ApiResult, Unsubscribe } from '../result';
 import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
 
+/** Причини відмови підтвердження штампа (`ApiError.reason`). */
+export type PassportClaimReason =
+  /** `conflict`: вікно підтвердження закрито. */
+  | 'claim-closed'
+  /** `not_found`: подія невідома. */
+  | 'unknown-event';
+
 export interface PresenceBeat {
   /** Події, які сторінка показує зараз (ефір, країна, кімната, ТВ). */
   eventIds: readonly string[];

@@ -7,6 +7,7 @@
  * Сервер, а не клієнт, видає пас, публікує тост і дарує пас за тост $10. Клієнт лише показує стан замовлення.
  */
 import type { ApiResult, Unsubscribe } from '../result';
+import type { Money } from '@time2fest/contracts';
 import type { Ms } from '@/lib/data/types';
 import type { ToastRecord } from '@/lib/toast/feed';
 import type { ToastTier } from '@/lib/toast/tiers';
@@ -15,6 +16,28 @@ export type Product =
   | { kind: 'pass' }
   /** `countries` — ISO країн, чиї чати показувала сторінка, коли тост сказано: тост іде і в їхні чати (разом зі «Світом»). */
   | { kind: 'toast'; tier: ToastTier; text: string; countries?: readonly string[] };
+
+/** Причини відмови `start` (`ApiError.reason`). */
+export type CheckoutStartReason =
+  /** `conflict`: пас уже є на цій пошті/акаунті. */
+  | 'pass-owned'
+  /** `unavailable`: оплати вимкнено. */
+  | 'payments-off'
+  /** `forbidden`: покупця заблоковано. */
+  | 'banned'
+  /** `conflict`: ціна змінилась — клієнт перечитує `site` (DR-13). */
+  | 'price-changed'
+  /** `conflict`: тости зараз закриті. */
+  | 'toasts-closed'
+  /** `conflict`: цей рівень тосту вимкнено. */
+  | 'tier-off'
+  /** `validation`: список країн тосту недійсний. */
+  | 'countries';
+
+/** Причини відмови `cancel` (`ApiError.reason`). */
+export type CheckoutCancelReason =
+  /** `conflict`: замовлення вже оплачено. */
+  'already-paid';
 
 export interface CheckoutStartRequest {
   product: Product;
@@ -27,6 +50,8 @@ export interface CheckoutStartRequest {
   returnPath: string;
   /** Ідемпотентність: повторне натискання «Оплатити» не створює друге замовлення. */
   clientId: string;
+  /** Версія ціни з `site`, яку бачила людина; розбіжність дає `price-changed`. */
+  priceVersion?: number;
 }
 
 export type OrderStatus =
@@ -39,7 +64,9 @@ export type OrderStatus =
   /** Людина скасувала чи закрила оплату. */
   | 'cancelled'
   /** Не оплачено за відведений час. */
-  | 'expired';
+  | 'expired'
+  /** Кошти повернуто. НЕ кінцевий стан для клієнта (`isFinalOrder` = false); показ — за хвилею оплат. */
+  | 'refunded';
 
 export interface Order {
   id: string;
@@ -47,6 +74,10 @@ export interface Order {
   clientId: string;
   product: Product;
   status: OrderStatus;
+  /** Ціна замовлення, зафіксована сервером. */
+  price?: Money;
+  /** Версія ціни, за якою створено замовлення. */
+  priceVersion?: number;
   /** Відколи «чекаємо підтвердження» (`pending`). */
   pendingSince?: Ms;
   createdAt: Ms;

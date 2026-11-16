@@ -12,7 +12,12 @@ import type { Author, ChatMessage, Ms, ReactionId, RoomId } from '@/lib/data/typ
 
 /** Причини відмови відправлення (`ApiError.reason`): `validation` — link-forbidden | too-long | nick-required | empty;
  *  `rate_limited` — slow-mode (`retryAfterMs`); `forbidden` — banned | room-forbidden; `unavailable` — чат вимкнено. */
-export type ChatSendReason = 'nick-required' | 'link-forbidden' | 'too-long' | 'empty' | 'slow-mode' | 'banned' | 'room-forbidden';
+export type ChatSendReason = 'nick-required' | 'link-forbidden' | 'too-long' | 'empty' | 'slow-mode' | 'banned' | 'room-forbidden'
+  /** `unavailable`: чат вимкнено (spec.md, FR-CHAT). */
+  | 'chat-closed';
+
+/** Причини відмови перекладу (`ApiError.code` `rate_limited`): ліміт перекладів вичерпано. */
+export type ChatTranslateReason = 'translate-limit';
 
 /** Причини відмови ніку (`ApiError.reason` з кодом `validation`); `taken` знає лише сервер. */
 export type NickReason = 'short' | 'long' | 'link' | 'taken' | 'forbidden';

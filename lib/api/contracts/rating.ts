@@ -27,6 +27,9 @@ export interface RatingBoard {
 }
 
 /** Відмови `vote`: `forbidden` `no-stamp` (оцінює лише той, хто має штамп), `conflict` `closed` | `not-open`. */
+/** Причини відмови `vote`: `no-stamp`, `closed`, `not-open` — як вище; `not-rated` (`forbidden`) — подія не оцінюється. */
+export type RatingVoteReason = 'no-stamp' | 'closed' | 'not-open' | 'not-rated';
+
 export interface RatingService {
   /** `GET /api/rating` (CDN `s-maxage=15`, без `mine`) + `GET /api/me/rating-votes`. */
   board(): Promise<ApiResult<RatingBoard>>;
