@@ -354,6 +354,16 @@ test.describe('US1 · головне святкування ефіру', () => {
     expect((await ytStub.counters()).created).toBe(1);
   });
 
+  test('штамп іде країні трансляції, яку обрали («Обрати трансляцію» → Дублін), а не ефіру (Лондон) — 2026-11-16', async ({ page, ytStub }) => {
+    await gotoAt(page, '2027-01-01T01:55:00+02:00', 0);
+    await ytStub.waitForPlayer();
+    await page.getByRole('button', { name: /Обрати трансляцію/ }).first().click();
+    await page.locator('[data-window="O-STREAM-PICKER"] button[data-source="src_dublin_1"]').click();
+    await expect.poll(async () => (await ytStub.players())[0]?.videoId, { timeout: 10_000 }).not.toBeUndefined();
+    await setTime(page, { at: '2027-01-01T01:59:50+02:00', speed: 1 });
+    await expect.poll(async () => (await guestStampIds(page)).map((s) => s.eventId), { timeout: 40_000 }).toEqual(['evt_dublin_2027']);
+  });
+
   test('без вибору людини головне вмикається саме, коли настає його початок', async ({ page, ytStub }) => {
     // Кадр заморожено до перевірки заглушки, далі — за 2 с до початку звичайним ходом.
     await gotoAt(page, '2026-12-31T16:51:00+02:00', 0);
