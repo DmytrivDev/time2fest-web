@@ -32,6 +32,7 @@ import { SITE_HOST } from '@/lib/config/site';
 import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
 import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
 import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
+import { useShareStream } from './useShareStream';
 import type { CaptionButton } from '@/lib/engine/captionPhase';
 import type { StreamRowData } from '@/lib/live/countryData';
 import home from './home.module.css';
@@ -204,6 +205,7 @@ export function ActionRow({
     text: t('more.shareText', { place }),
   };
 
+  const share = useShareStream({ href, place });
   const openPicker = picker.open;
   function openReport() {
     overlay.open({
@@ -303,7 +305,12 @@ export function ActionRow({
           onClick={toggleMore}
         />
       </span>
-      <span className={styles.phoneOnly}>
+      <span className={cn(styles.phoneOnly, 'inline-flex items-center gap-2')}>
+        {/* Телефон, головна: кружечок «Поділитися» поруч із «⋯», як у кімнаті (п. 16, Т15). Сторінка країни й колонка чату —
+            іконка в підписі (`Caption`). */}
+        {remote || column ? null : (
+          <IconButton icon="share" variant="ring" aria-label={t('shareStream')} data-action="share-stream" onClick={share} />
+        )}
         <button
           type="button"
           aria-label={t('moreActions')}

@@ -68,6 +68,10 @@ export interface CaptionProps {
   notice?: { place: string; onSwitch(): void } | null;
   /** Від 768 px праворуч від таймера (`Desk-Cookies-Wide`: «Показати чат», коли чат сховано). */
   aside?: ReactNode;
+  /** «Поділитися» — іконка в рядку статусу над назвою (десктоп) чи біля назви (телефон, сторінка країни). */
+  onShare?: () => void;
+  /** Телефон: іконка біля назви — лише сторінка країни (на головній вона в рядку дій). */
+  shareInTitle?: boolean;
   /** `bar` — один рядок над вкладкою «Чат» на телефоні (`Phone-Chat`); `lead` — що стоїть ліворуч (кнопка звуку). */
   variant?: 'full' | 'bar' | 'title';
   lead?: ReactNode;
@@ -124,6 +128,16 @@ function TimerDigits({ digits, veiled, className, hint }: { digits: string; veil
   );
 }
 
+/** Кругла іконка «Поділитися» (п. 16): 28 px, зона дотику 44 px — через `::before` у стилі. */
+function ShareIcon({ onShare, className }: { onShare: () => void; className: string }) {
+  const t = useTranslations('player');
+  return (
+    <button type="button" aria-label={t('shareStream')} data-action="share-stream" onClick={onShare} className={cn('t2f-focus t2f-transition', className)}>
+      <Icon name="share" size={16} strokeWidth={2} />
+    </button>
+  );
+}
+
 /** «Лондон · Біг-Бен» або просто «Азорські острови». */
 export function eventTitle(city: CaptionPlace['city']): string {
   if (!city) return '';
@@ -161,6 +175,8 @@ export function Caption({
   stampHint = null,
   notice = null,
   aside,
+  onShare,
+  shareInTitle = false,
   variant = 'full',
   lead,
   srRow3 = true,
@@ -349,8 +365,10 @@ export function Caption({
           </span>
         ) : null}
         {phase.flags.delayNotice ? <span>{t('delayNote')}</span> : null}
+        {onShare ? <ShareIcon onShare={onShare} className={home.shareStatus ?? ''} /> : null}
       </div>}
-      <h2 id={titleId} tabIndex={-1} className={cn(home.title, 'focus:outline-none')}>
+      {titleOnly && onShare && shareInTitle ? <ShareIcon onShare={onShare} className={home.shareTitle ?? ''} /> : null}
+      <h2 id={titleId} tabIndex={-1} className={cn(home.title, titleOnly && onShare && shareInTitle && home.titleShare, 'focus:outline-none')}>
         {href ? (
           <NextLink href={href} className="t2f-focus t2f-transition rounded-sm">
             {flag}

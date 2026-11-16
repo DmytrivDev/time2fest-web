@@ -26,6 +26,7 @@
  */
 import { useTranslations } from 'next-intl';
 import { useEffect, useId, type ReactNode } from 'react';
+import { useShareStream } from '@/components/live/useShareStream';
 import { ActionRow, type CountdownModeControl, type RemoteStreams } from '@/components/live/ActionRow';
 import { Caption, eventTitle } from '@/components/live/Caption';
 import home from '@/components/live/home.module.css';
@@ -291,6 +292,8 @@ export function PlayerBlock({
     ? { muted: !sceneSoundOn, available: true, onUnmute: enableSceneSound, onMute: disableSceneSound }
     : { muted: area.muted, available: area.kind === 'video', onUnmute: () => actions?.unmute(), onMute: () => actions?.mute() };
   const barSound = <BarSound {...sound} />;
+  // «Поділитися» — іконка в підписі (п. 16): те саме вікно, що в «⋯»; адреса — сторінка країни поточної події.
+  const share = useShareStream({ href: current?.href ?? null, place: mode === 'remote' ? (title ?? '') : (current?.city?.name.uk ?? '') });
   // Підказка про штамп — остання хвилина відліку до півночі події плеєра, поки штампа за неї немає.
   const stamped = useHasStamp(current?.event.id);
   const r1 = phase?.row1Right;
@@ -359,6 +362,8 @@ export function PlayerBlock({
               stampHint={hintCountry}
               notice={notice}
               aside={captionAside}
+              onShare={bar ? undefined : share}
+              shareInTitle={mode === 'remote'}
               variant={dock ? 'title' : bar ? 'bar' : 'full'}
               lead={
                 bar ? <BarSound {...sound} /> : null

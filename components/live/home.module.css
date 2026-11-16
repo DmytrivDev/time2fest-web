@@ -605,3 +605,47 @@
   font-weight: 800;
   color: var(--color-highlight);
 }
+
+/* «Поділитися» — іконка 28 px із зоною дотику 44 px (п. 16, Т15, 2026-11-16): праворуч у рядку статусу над назвою
+   (десктоп, планшет-альбом) або біля назви (телефон, сторінка країни). */
+.shareStatus,
+.shareTitle {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.shareStatus::before,
+.shareTitle::before {
+  position: absolute;
+  inset: -8px;
+  content: '';
+}
+.shareStatus:hover,
+.shareTitle:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.shareStatus {
+  margin-left: auto;
+}
+.shareTitle {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.caption:has(> .shareTitle) {
+  position: relative;
+}
+.titleShare {
+  padding-right: 40px;
+}
