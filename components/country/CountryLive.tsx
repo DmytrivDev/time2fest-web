@@ -85,11 +85,9 @@ export function CountryLive({ iso }: { iso: string }) {
     next, phase, expected, select, changeZone, setMode, addToRoom, watchAgain, switchToMain, mainLive, mainCity, onUrlFocus,
   } = useCountryPlayer({ data, iso, country, now, known, minute });
 
-  // Присутність для штампа: головна подія вибраного поясу й подія, що грає (FR-060, `presenceSource: 'country'`).
-  const presenceIds = useMemo(
-    () => [...new Set([mainEvent?.id, shownEvent?.id].filter((x): x is string => !!x))],
-    [mainEvent, shownEvent],
-  );
+  // Присутність для штампа: подія, яку сторінка показує зараз (FR-060, `presenceSource: 'country'`): трансляція, що грає
+  // (своя країна чи обрана вручну), інакше головна подія вибраного поясу. Штамп іде країні того, що дивляться (2026-11-16).
+  const presenceIds = useMemo(() => (shownEvent?.id ? [shownEvent.id] : []), [shownEvent]);
   usePresence(presenceIds.length ? { source: 'country', eventIds: presenceIds } : null);
   useChatRooms(useMemo(() => ['world', `country:${iso}`] as RoomId[], [iso]));
   useMomentWindows();

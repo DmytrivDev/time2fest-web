@@ -114,8 +114,10 @@ export function HomeLive() {
   const schedule = useSchedule();
   const eventId = current?.event.id ?? null;
 
-  // Присутність для штампа: ефір показує подію поточного слота.
-  usePresence(eventId ? { source: 'air', eventIds: [eventId] } : null);
+  // Присутність для штампа: подія того, що на екрані — обраної вручну трансляції («Обрати трансляцію»), інакше слота ефіру
+  // (2026-11-16: обрано Берлін — штамп Берліна, а не Парижа).
+  const shownId = watching?.event.id ?? eventId;
+  usePresence(shownId ? { source: 'air', eventIds: [shownId] } : null);
   // Кімната «Країна» на головній — країна ефіру, що йде зараз (змінюється разом зі зміною ефіру).
   const airCountry = current?.event.countryIso ? getData().countriesByIso.get(current.event.countryIso) : undefined;
   const chatRooms = useMemo<RoomId[]>(
