@@ -2,6 +2,7 @@ packages:
   - '.'
   - 'packages/*'
   - 'server'
+  - 'workers/*'
 allowBuilds:
   '@parcel/watcher': true
   '@swc/core': true
