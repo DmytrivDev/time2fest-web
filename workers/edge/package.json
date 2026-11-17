@@ -3,6 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "deploy:test": "node scripts/deploy.mjs --env test",
+    "deploy:rehearsal": "node scripts/deploy.mjs --env rehearsal",
+    "deploy:prelaunch": "node scripts/deploy.mjs --env prelaunch",
+    "deploy:production": "node scripts/deploy.mjs --env production"
+  },
   "engines": {
     "node": ">=22.12"
   }
