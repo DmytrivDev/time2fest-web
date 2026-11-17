@@ -6,12 +6,10 @@ import { spawn } from 'node:child_process';
 import { isIPv4 } from 'node:net';
 import path from 'node:path';
 import { PassThrough } from 'node:stream';
-import { fileURLToPath } from 'node:url';
 import { isHostName } from './args.mjs';
-import { FORBIDDEN_TARGETS } from './config.mjs';
+import { FORBIDDEN_TARGETS, REPO_ROOT } from './config.mjs';
 
-/** Корінь репозиторію (worktree). */
-export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+export { REPO_ROOT };
 
 /** Точки входу Node-інструментів відносно кореня (як `workers/edge/scripts/deploy.mjs`). */
 export const NODE_TOOLS = /** @type {const} */ ({

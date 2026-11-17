@@ -13,7 +13,7 @@ const PKG = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WRANGLER_JS = path.resolve(PKG, '..', '..', 'node_modules', 'wrangler', 'bin', 'wrangler.js');
 const ENVS = ['test', 'rehearsal', 'prelaunch', 'production'];
 /** Environments whose routes claim the main domain: they need `--allow-main-domain` as well. */
-const MAIN_DOMAIN_ENVS = ['prelaunch', 'production'];
+export const MAIN_DOMAIN_ENVS = ['prelaunch', 'production'];
 const MIN_SECRET = 32;
 
 /** @param {string[]} argv @param {string} name */

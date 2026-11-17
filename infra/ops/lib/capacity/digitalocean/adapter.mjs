@@ -230,7 +230,9 @@ export function createDigitalOcean(o) {
       return provider.waitNode(id, 'active');
     },
 
-    async resizeNode(id, size) {
+    async resizeNode(id, size, opts) {
+      // Лише CPU/RAM (`disk: false`): збільшений диск не повернути назад, тож інше адаптер не робить (AC-48).
+      if (opts?.keepDisk !== true) throw new Error('resizeNode: підтримується лише keepDisk: true (без зміни диска)');
       let node = await getNode(id, 'resizeNode');
       if (node.size !== size) {
         if (node.status !== 'off') {
@@ -247,6 +249,7 @@ export function createDigitalOcean(o) {
         await actionDone(id, { type: 'power_on' }, 'resizeNode:power_on');
         await provider.waitNode(id, 'active');
       }
+      return { keepDisk: true };
     },
 
     async deleteNode(id) {

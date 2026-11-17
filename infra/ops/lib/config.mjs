@@ -1,11 +1,17 @@
 // @ts-check
-// Єдине місце конфігурації операцій: середовища, захищені хости, заборонені цілі, імена секретів.
+// Єдине місце конфігурації операцій: середовища, захищені хости, заборонені цілі, імена секретів, типові шляхи.
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/** Корінь репозиторію (worktree). */
+export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
 /**
  * @typedef {{
  *   workerEnv: string,
  *   serverSteps: boolean,
  *   mainDomain?: boolean,
+ *   bootstrap?: boolean,
  *   freeze?: boolean,
  *   siteHost?: string,
  *   nodeDir?: string,
@@ -13,7 +19,7 @@
  *   localProject?: string,
  *   distDir?: string,
  *   buildEnv?: Record<string, string>,
- * }} OpsEnv
+ * }} OpsEnv `bootstrap` — для середовища є підготовка вузла (`ops bootstrap`, вузол realtime у `capacity`).
  */
 
 /** @type {Record<string, OpsEnv>} */
@@ -22,6 +28,7 @@ export const ENVS = {
     siteHost: 'rehearsal.time2fest.com',
     workerEnv: 'rehearsal',
     serverSteps: true,
+    bootstrap: true,
     nodeDir: '/srv/t2f/rehearsal',
     project: 't2f-rehearsal',
     localProject: 't2f-node-rehearsal',
@@ -43,7 +50,10 @@ export const ENVS = {
   },
 };
 
-/** Хости робочого домену (той самий перелік, що `infra/cloudflare/lib/config.mjs`). */
+/** Середовища з підготовкою вузла (`ENVS[env].bootstrap`): `ops bootstrap` і вузол realtime у `capacity`. */
+export const BOOTSTRAP_ENVS = Object.keys(ENVS).filter((e) => ENVS[e].bootstrap === true);
+
+/** Хости робочого домену (той самий перелік, що `infra/cloudflare/lib/config.mjs`; рівність — `test/parity.test.mjs`). */
 export const MAIN_HOSTS = ['time2fest.com', 'www.time2fest.com', 'admin.time2fest.com'];
 
 /** Старий продакшн-сервер: жодна команда не діє на нього за жодних прапорців (AC-22). */
@@ -73,3 +83,26 @@ export const SECRET_ENV_NAMES = [
   'T2F_R2_SECRET_ACCESS_KEY',
   'TUNNEL_TOKEN',
 ];
+
+/** Профіль Compose вузла realtime (P4), відносно кореня репозиторію. */
+export const REALTIME_COMPOSE_PATH = 'infra/ops/node/compose.realtime.yml';
+
+/**
+ * Локальні шляхи ops. Типові — тут; тести підміняють їх через `main(argv, { paths })`.
+ * @typedef {{
+ *   stateRoot: string,
+ *   examplesDir: string,
+ *   tunnelEnvFile: (env: string) => string,
+ *   realtimeComposeFile: string,
+ * }} OpsPaths `stateRoot` — локальний стан (не в git): замки й журнали локальної цілі, `known_hosts`, `.local/<env>/`;
+ *   `examplesDir` — приклади файлів змінних вузла; `tunnelEnvFile` — токен тунелю середовища з `infra/cloudflare`;
+ *   `realtimeComposeFile` — профіль Compose вузла realtime.
+ */
+
+/** @type {Readonly<OpsPaths>} */
+export const DEFAULT_PATHS = Object.freeze({
+  stateRoot: path.join(REPO_ROOT, 'infra', 'ops', '.local'),
+  examplesDir: path.join(REPO_ROOT, 'infra', 'ops', 'node'),
+  tunnelEnvFile: (/** @type {string} */ env) => path.join(REPO_ROOT, 'infra', 'cloudflare', '.local', `tunnel-${env}.env`),
+  realtimeComposeFile: path.join(REPO_ROOT, REALTIME_COMPOSE_PATH),
+});

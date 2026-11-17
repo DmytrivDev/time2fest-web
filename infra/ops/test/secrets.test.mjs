@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { getVar, NODE_ENV_FILES, PUSH_SCRIPT, WORKER_PENDING } from '../lib/secrets.mjs';
+import { getVar } from '../lib/secrets/envFile.mjs';
+import { NODE_ENV_FILES, PUSH_SCRIPT, WORKER_PENDING } from '../lib/secrets/files.mjs';
 import { HOST, scenario } from './support/scenario.mjs';
 
 const TUNNEL = 'tunnel-token-sentinel-0123456789abcdefABCDEF'; // check-secrets: allow
@@ -38,7 +39,7 @@ function world(o = {}) {
   /** @param {string} name */
   const local = (name) => fs.readFileSync(path.join(localDir, name), 'utf8');
   /** @param {object} [extra] */
-  const deps = (extra = {}) => sc.deps({ examplesDir, tunnelEnvFile, platform: 'linux', ...extra });
+  const deps = (extra = {}) => sc.deps({ paths: { stateRoot: sc.stateRoot, examplesDir, tunnelEnvFile: () => tunnelEnvFile }, platform: 'linux', ...extra });
   return { sc, localDir, local, deps };
 }
 
@@ -120,7 +121,7 @@ describe('edge-secret --generate', () => {
     // Власник заповнив ключ R2 у .local до генерації.
     fs.mkdirSync(w.localDir, { recursive: true });
     fs.writeFileSync(path.join(w.localDir, 'server.env'), `T2F_R2_SECRET_ACCESS_KEY=${OWNER_R2}\nPAYLOAD_SECRET=\n`);
-    const base = /** @type {import('../lib/exec.mjs').Transport} */ (w.sc.deps().transport);
+    const base = /** @type {import('../lib/exec.mjs').Transport} */ (w.sc.transport);
     /** @type {Map<string, string>} */
     const pushed = new Map();
     /** @type {import('../lib/exec.mjs').Transport} */
@@ -132,7 +133,7 @@ describe('edge-secret --generate', () => {
       },
     };
 
-    expect(await main([...GEN, '--target', HOST], w.deps({ transport }))).toBe(0);
+    expect(await main([...GEN, '--target', HOST], w.deps({ transport: () => transport }))).toBe(0);
     const pushCalls = w.sc.fx.calls.filter((c) => c.argv[2] === PUSH_SCRIPT);
     expect(pushCalls.map((c) => c.argv)).toEqual(
       NODE_ENV_FILES.map((n) => ['sh', '-c', PUSH_SCRIPT, '_', `/srv/t2f/rehearsal/${n}`]),
@@ -212,11 +213,11 @@ describe('edge-secret --generate', () => {
         return fail ? { code: 1, message: 'wrangler secret put T2F_EDGE_SECRET завершився з кодом 1' } : { code: 0 };
       },
     };
-    expect(await main(GEN, w.deps({ worker }))).toBe(1);
+    expect(await main(GEN, w.deps({ worker: () => worker }))).toBe(1);
     expect(fs.existsSync(path.join(w.localDir, WORKER_PENDING))).toBe(true);
 
     fail = false;
-    expect(await main(GEN, w.deps({ worker }))).toBe(0);
+    expect(await main(GEN, w.deps({ worker: () => worker }))).toBe(0);
     const edge = getVar(w.local('server.env'), 'T2F_EDGE_SECRET');
     expect(puts.map((p) => p.value)).toEqual([edge, edge]);
     expect(fs.existsSync(path.join(w.localDir, WORKER_PENDING))).toBe(false);

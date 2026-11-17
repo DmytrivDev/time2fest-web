@@ -2,7 +2,10 @@
 // Реєстр провайдерів потужності: єдине місце поза текою адаптера, що називає його (точка підключення, AC-45).
 // Провайдер обирається змінною `T2F_PROVIDER`; адаптер завантажується лише коли його обрано.
 
-/** @typedef {(o: { env: Record<string, string | undefined> }) => import('./provider.mjs').ProviderBundle} BundleFactory */
+/**
+ * @typedef {{ env: Record<string, string | undefined>, fetch: typeof globalThis.fetch, clock: import('../node.mjs').Clock }} BundleInput
+ * @typedef {(o: BundleInput) => import('./provider.mjs').ProviderBundle} BundleFactory
+ */
 
 export const DEFAULT_PROVIDER = 'digitalocean';
 
@@ -13,12 +16,14 @@ export const PROVIDERS = {
 
 /**
  * Набір провайдера з `T2F_PROVIDER` (за замовчуванням — `DEFAULT_PROVIDER`). Невідома назва чи відсутній токен — виняток.
- * @param {Record<string, string | undefined>} env
+ * Мережа й годинник — порти контексту ops (складаються в `ops.mjs`).
+ * @param {BundleInput} o
  * @returns {Promise<import('./provider.mjs').ProviderBundle>}
  */
-export async function loadProvider(env) {
+export async function loadProvider(o) {
+  const { env } = o;
   const name = env.T2F_PROVIDER || DEFAULT_PROVIDER;
   if (!Object.hasOwn(PROVIDERS, name)) throw new Error(`T2F_PROVIDER: невідомий провайдер; дозволено: ${Object.keys(PROVIDERS).join(', ')}`);
   const factory = await PROVIDERS[name]();
-  return factory({ env });
+  return factory(o);
 }

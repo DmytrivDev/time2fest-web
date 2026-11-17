@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
+import { createCloudflareApi } from '../lib/cloudflareApi.mjs';
 import { detach, EDGE_JOURNAL, REHEARSAL_NAME, TWIN_MAIN, twinConfig } from '../lib/moveDomain.mjs';
 import { WRANGLER_JS } from '../lib/worker.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
@@ -48,7 +49,7 @@ function fakeFetch(o = {}) {
 async function run(argv, deps) {
   /** @type {string[]} */
   const lines = [];
-  const code = await main(argv, { out: (l) => lines.push(l), env: ENV, stateRoot, clock: NO_WAIT, ...deps });
+  const code = await main(argv, { out: (l) => lines.push(l), env: ENV, paths: { stateRoot }, clock: NO_WAIT, ...deps });
   return { code, text: lines.join('\n') };
 }
 
@@ -191,21 +192,21 @@ describe('detach (AC-34)', () => {
 
   it('without a journal record → 2 and no DELETE', async () => {
     const f = fakeFetch({ before: [{ id: 'dom-1', hostname: REHEARSAL_NAME }] });
-    const r = await detach({ name: REHEARSAL_NAME, records: [rec(REHEARSAL_NAME, null)], api: { fetch: f.fn, account: 'a', token: 't' } });
+    const r = await detach({ name: REHEARSAL_NAME, records: [rec(REHEARSAL_NAME, null)], api: createCloudflareApi({ fetch: f.fn, account: 'a', token: 't' }) });
     expect(r.code).toBe(2);
     expect(f.calls.filter((c) => c.method === 'DELETE')).toHaveLength(0);
   });
 
   it('time2fest.com with a record → 2, no request at all', async () => {
     const f = fakeFetch({ before: [{ id: 'dom-9', hostname: 'time2fest.com' }] });
-    const r = await detach({ name: 'time2fest.com', records: [rec('time2fest.com', 'dom-9')], api: { fetch: f.fn, account: 'a', token: 't' } });
+    const r = await detach({ name: 'time2fest.com', records: [rec('time2fest.com', 'dom-9')], api: createCloudflareApi({ fetch: f.fn, account: 'a', token: 't' }) });
     expect(r.code).toBe(2);
     expect(f.calls).toHaveLength(0);
   });
 
   it('deletes only the binding id the journal created', async () => {
     const f = fakeFetch({ before: [{ id: 'dom-other', hostname: REHEARSAL_NAME }, { id: 'dom-1', hostname: REHEARSAL_NAME }] });
-    const r = await detach({ name: REHEARSAL_NAME, records: [rec(REHEARSAL_NAME, 'dom-1')], api: { fetch: f.fn, account: 'a', token: 't' } });
+    const r = await detach({ name: REHEARSAL_NAME, records: [rec(REHEARSAL_NAME, 'dom-1')], api: createCloudflareApi({ fetch: f.fn, account: 'a', token: 't' }) });
     expect(r.code).toBe(0);
     const dels = f.calls.filter((c) => c.method === 'DELETE');
     expect(dels).toHaveLength(1);

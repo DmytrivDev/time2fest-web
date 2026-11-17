@@ -243,7 +243,7 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.resizeNode(main.id, 's-4vcpu-8gb');
+      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
       const posted = srv.log.filter((r) => r.method === 'POST' && r.path.endsWith('/actions')).map((r) => r.body);
       expect(posted).toEqual([{ type: 'shutdown' }, { type: 'resize', size: 's-4vcpu-8gb', disk: false }, { type: 'power_on' }]);
       expect(srv.droplets[0]).toMatchObject({ size_slug: 's-4vcpu-8gb', disk: 80, status: 'active' });
@@ -257,7 +257,7 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.resizeNode(main.id, 's-4vcpu-8gb');
+      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
       const types = srv.log.filter((r) => r.method === 'POST' && r.path.endsWith('/actions')).map((r) => r.body.type);
       expect(types).toEqual(['shutdown', 'power_off', 'resize', 'power_on']);
     } finally {
@@ -270,7 +270,7 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.resizeNode(main.id, 's-4vcpu-8gb');
+      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
       const types = srv.log.filter((r) => r.method === 'POST' && r.path.endsWith('/actions')).map((r) => r.body.type);
       expect(types).toEqual(['power_on']);
     } finally {

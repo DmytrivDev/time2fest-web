@@ -3,164 +3,17 @@
 // `build → deliver → migrate → swap → health → worker`, кожен — у журнал. Prelaunch — лише `worker`.
 // Коди: 0 — готово; 2 — відмова до будь-якої зміни; 1 — крок не вдався. Замок знімається у `finally`.
 // Розгортання ніколи не пише секретів Worker’а (AC-20) і ніколи не запускає `down` (AC-19).
-import path from 'node:path';
 import { ENVS } from './config.mjs';
-import { REPO_ROOT } from './exec.mjs';
-import { createGit } from './git.mjs';
-import { createImage, imageTag, keepShas } from './image.mjs';
-import { createJournal, currentGeneration, deployedShas, journalPath } from './journal.mjs';
+import { createStepper, maybeProbe, messageOf, reportFailure, resolveSite } from './common.mjs';
+import { imageTag, keepShas } from './image.mjs';
+import { currentGeneration, deployedShas } from './journal.mjs';
 import { acquireNodeLock } from './lock.mjs';
-import { composeAt, createNode, CURRENT_ENV, NEXT_ENV, SYSTEM_CLOCK } from './node.mjs';
-import { startProbe as realStartProbe } from './probe.mjs';
-import { createWorker } from './worker.mjs';
-
-/** Каталог локального стану ops (не в git): замки й журнали локальної цілі, `known_hosts`. */
-export const DEFAULT_STATE_ROOT = path.join(REPO_ROOT, 'infra', 'ops', '.local');
-export const DEPLOY_USER = 'deploy';
+import { composeAt, createNode, CURRENT_ENV, NEXT_ENV } from './node.mjs';
 
 /**
- * @typedef {import('./exec.mjs').Transport} Transport
- * @typedef {import('./node.mjs').Clock} Clock
- * @typedef {{
- *   transport?: Transport,
- *   worker?: import('./worker.mjs').Worker,
- *   clock?: Clock,
- *   git?: import('./git.mjs').Git,
- *   image?: import('./image.mjs').Image,
- *   stateRoot?: string,
- *   startProbe?: typeof realStartProbe,
- * }} OpsDeps Підставні залежності (тести); без них — справжні.
  * @typedef {import('../ops.mjs').OpsContext} OpsContext
- * @typedef {{
- *   server: boolean,
- *   transport: Transport,
- *   lockOpts: import('./lock.mjs').LockOpts,
- *   journal: import('./journal.mjs').Journal,
- *   project?: string,
- *   nodeDir?: string,
- * }} Site
+ * @typedef {import('./common.mjs').Site} Site
  */
-
-/** @param {unknown} e */
-export const messageOf = (e) => (e instanceof Error ? e.message : String(e));
-
-/**
- * Куди діє команда: транспорт, каталог вузла, проєкт Compose, замок і журнал. Нічого не змінює.
- * @param {OpsContext} ctx
- * @returns {{ code: 0, site: Site } | { code: 2, message: string }}
- */
-export function resolveSite(ctx) {
-  const env = /** @type {string} */ (ctx.args.env);
-  const cfg = ENVS[env];
-  const deps = ctx.deps ?? {};
-  const stateRoot = deps.stateRoot ?? DEFAULT_STATE_ROOT;
-  const journalOf = (/** @type {Transport} */ transport, /** @type {string} */ file) =>
-    createJournal({ transport, file, env: ctx.env, redactor: ctx.redactor });
-
-  if (!cfg.serverSteps) {
-    // Лише Worker: замок і журнал — у локальному каталозі стану, без вузла й без Docker.
-    const dir = path.join(stateRoot, `edge-${env}`);
-    const transport = deps.transport ?? ctx.exec.localTransport();
-    return { code: 0, site: { server: false, transport, lockOpts: { stateDir: dir }, journal: journalOf(transport, journalPath(dir, 'local')) } };
-  }
-
-  const target = ctx.args.values.target;
-  if (!target) return { code: 2, message: `--target: обов’язковий для ${env} (local або адреса вузла)` };
-  if (target === 'local') {
-    const dir = path.join(stateRoot, `node-local-${env}`);
-    const transport = deps.transport ?? ctx.exec.localTransport();
-    return {
-      code: 0,
-      site: {
-        server: true,
-        transport,
-        lockOpts: { stateDir: dir },
-        journal: journalOf(transport, journalPath(dir, 'local')),
-        project: cfg.localProject ?? `t2f-node-${env}`,
-        nodeDir: dir,
-      },
-    };
-  }
-  if (!cfg.nodeDir) return { code: 2, message: `у середовища ${env} немає каталогу вузла` };
-  /** @type {Transport} */
-  let transport;
-  try {
-    transport =
-      deps.transport ??
-      ctx.exec.sshTransport({
-        host: target,
-        user: DEPLOY_USER,
-        knownHostsFile: ctx.env.T2F_KNOWN_HOSTS_FILE || path.join(stateRoot, 'known_hosts'),
-      });
-  } catch (e) {
-    return { code: 2, message: messageOf(e) };
-  }
-  return {
-    code: 0,
-    site: {
-      server: true,
-      transport,
-      lockOpts: { nodeDir: cfg.nodeDir },
-      journal: journalOf(transport, journalPath(cfg.nodeDir, 'posix')),
-      project: cfg.project ?? `t2f-${env}`,
-      nodeDir: cfg.nodeDir,
-    },
-  };
-}
-
-/**
- * Крок у журналі: запис `start`, потім `ok`/`failed` з тривалістю. Виняток кроку — невдача кроку.
- * @param {{ journal: import('./journal.mjs').Journal, env: string, commit: string | null, clock: Clock, now: () => Date }} o
- */
-export function createStepper(o) {
-  /**
-   * @template {{ code: number }} R
-   * @param {string} name
-   * @param {() => Promise<R>} fn
-   * @returns {Promise<R | { code: 1, message: string }>}
-   */
-  return async function step(name, fn) {
-    const base = { kind: /** @type {const} */ ('step'), env: o.env, commit: o.commit, step: name };
-    await o.journal.append({ ...base, at: o.now().toISOString(), status: 'start', ms: null });
-    const t0 = o.clock.now();
-    /** @type {R | { code: 1, message: string }} */
-    let r;
-    try {
-      r = await fn();
-    } catch (e) {
-      r = { code: 1, message: messageOf(e) };
-    }
-    const ms = Math.max(0, Math.round(o.clock.now() - t0));
-    await o.journal.append({ ...base, at: o.now().toISOString(), status: r.code === 0 ? 'ok' : 'failed', ms });
-    return r;
-  };
-}
-
-/**
- * Повідомлення й хвіст виводу кроку в stderr (маскується).
- * @param {(line: string) => void} err
- * @param {{ message?: string, detail?: string }} r
- */
-export function reportFailure(err, r) {
-  if (!r.detail) return;
-  for (const line of String(r.detail).split(/\r?\n/).filter((l) => l.trim() !== '').slice(-20)) err(`  ${line}`);
-}
-
-/**
- * Зонд простою (`--probe`): через край для вузла, перевірка зсередини контейнера для локальної цілі.
- * @param {OpsContext} ctx
- * @param {Site} site
- * @param {import('./node.mjs').NodeOps | undefined} node
- */
-export function maybeProbe(ctx, site, node) {
-  if (ctx.args.flags.probe !== true) return undefined;
-  const start = ctx.deps?.startProbe ?? realStartProbe;
-  const cfg = ENVS[/** @type {string} */ (ctx.args.env)];
-  if (site.transport.kind === 'local' && node) return start({ check: node.healthCheck });
-  if (cfg.siteHost) return start({ url: `https://${cfg.siteHost}/api/health` });
-  ctx.err(`${ctx.args.sub}: зонд простою не запущено: у середовища немає імені сайту`);
-  return undefined;
-}
 
 /**
  * `ops deploy`.
@@ -171,7 +24,6 @@ export async function runDeploy(ctx) {
   const { args, out, err } = ctx;
   const env = /** @type {string} */ (args.env);
   const cfg = ENVS[env];
-  const deps = ctx.deps ?? {};
   /** @param {string} m */
   const refuse = (m) => {
     err(`deploy: ${m}`);
@@ -179,14 +31,14 @@ export async function runDeploy(ctx) {
   };
 
   // 1. Перевірки без змін.
-  const git = deps.git ?? createGit({ exec: ctx.exec, start: ctx.exec.start });
+  const git = ctx.deps.git;
   const clean = await git.assertClean();
   if (clean.code !== 0) return refuse(clean.message);
   const commit = await git.resolveCommit(args.values.commit);
   if (commit.code !== 0) return refuse(commit.message);
   const sha = commit.sha;
 
-  const worker = deps.worker ?? createWorker({ env, processEnv: ctx.env, run: ctx.exec.run, out });
+  const worker = ctx.deps.worker(env);
   const missing = worker.missingCredentials();
   if (missing.length) return refuse(`бракує змінних: ${missing.join(', ')} (середовище або --secrets-file)`);
   if (!worker.hasBuild() && !worker.assetsReady()) return refuse(`статика Worker’а ${env} відсутня або порожня; спершу зберіть її`);
@@ -206,7 +58,7 @@ export async function runDeploy(ctx) {
   const lock = await acquireNodeLock(site.transport, env, site.lockOpts);
   if (lock.code !== 0) return refuse(lock.message);
   try {
-    return await deployLocked(ctx, { site, sha, worker, git, composeText: composeText ?? '' });
+    return await deployLocked(ctx, { site, sha, worker, composeText: composeText ?? '' });
   } finally {
     await lock.release();
   }
@@ -214,14 +66,13 @@ export async function runDeploy(ctx) {
 
 /**
  * @param {OpsContext} ctx
- * @param {{ site: Site, sha: string, worker: import('./worker.mjs').Worker, git: import('./git.mjs').Git, composeText: string }} o
+ * @param {{ site: Site, sha: string, worker: import('./worker.mjs').Worker, composeText: string }} o
  * @returns {Promise<number>}
  */
-async function deployLocked(ctx, { site, sha, worker, git, composeText }) {
+async function deployLocked(ctx, { site, sha, worker, composeText }) {
   const { out, err } = ctx;
   const env = /** @type {string} */ (ctx.args.env);
-  const deps = ctx.deps ?? {};
-  const clock = deps.clock ?? SYSTEM_CLOCK;
+  const clock = ctx.deps.clock;
   const short = sha.slice(0, 12);
 
   // Ще без змін: стан журналу, поточна версія Worker’а, поточний образ, диск.
@@ -285,7 +136,7 @@ async function deployLocked(ctx, { site, sha, worker, git, composeText }) {
       ...stopProbe(),
     });
 
-  const image = node ? (deps.image ?? createImage({ local: ctx.exec.localTransport(), git, start: ctx.exec.start })) : undefined;
+  const image = node ? ctx.deps.image() : undefined;
 
   try {
     // 2. Кроки сервера.

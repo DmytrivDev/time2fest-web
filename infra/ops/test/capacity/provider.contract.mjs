@@ -60,9 +60,17 @@ export function describeProvider(name, makeProvider) {
 
     it('зміна розміру міняє розмір, диск лишається, вузол знову активний', async () => {
       const [main] = await h.provider.listNodes([MANAGED, ENV]);
-      await h.provider.resizeNode(main.id, 's-4vcpu-8gb');
+      await h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
       const [after] = await h.provider.listNodes([MANAGED, ENV]);
       expect(after).toMatchObject({ id: main.id, size: 's-4vcpu-8gb', diskGb: main.diskGb, status: 'active' });
+    });
+
+    it('зміна розміру з keepDisk: true повертає keepDisk: true; без нього — відмова до будь-якої зміни', async () => {
+      const [main] = await h.provider.listNodes([MANAGED, ENV]);
+      await expect(h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: false })).rejects.toThrow(/keepDisk/);
+      const [untouched] = await h.provider.listNodes([MANAGED, ENV]);
+      expect(untouched).toMatchObject({ id: main.id, size: main.size, diskGb: main.diskGb, status: main.status });
+      expect(await h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true })).toEqual({ keepDisk: true });
     });
 
     it('видалений вузол зникає зі списку', async () => {

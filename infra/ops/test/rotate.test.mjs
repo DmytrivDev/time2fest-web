@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { getVar, PUSH_SCRIPT } from '../lib/secrets.mjs';
+import { getVar } from '../lib/secrets/envFile.mjs';
+import { PUSH_SCRIPT } from '../lib/secrets/files.mjs';
 import { HOST, scenario, SHA_B } from './support/scenario.mjs';
 
 const OLD = 'old-edge-secret-sentinel-0123456789abcdefABCD'; // check-secrets: allow
@@ -43,7 +44,7 @@ function world(o = {}) {
   };
 
   const local = o.target === undefined || o.target === 'local';
-  const base = local ? sc.exec.localTransport() : /** @type {import('../lib/exec.mjs').Transport} */ (sc.deps().transport);
+  const base = local ? sc.exec.localTransport() : /** @type {import('../lib/exec.mjs').Transport} */ (sc.transport);
   /** @type {import('../lib/exec.mjs').Transport} */
   const transport = {
     ...base,
@@ -61,8 +62,8 @@ function world(o = {}) {
   /** @param {object} [extra] */
   const deps = (extra = {}) =>
     sc.deps({
-      transport,
-      worker,
+      transport: () => transport,
+      worker: () => worker,
       platform: 'linux',
       edgeCheck: async () => {
         events.push('check');

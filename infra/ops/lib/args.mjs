@@ -2,7 +2,7 @@
 // Розбір аргументів підкоманд: перелік дозволеного (allow-list) і перевірка кожного значення до будь-якої дії (AC-10).
 // Відмова — `{ code: 2, message }` з назвою прапорця; значення з керівними символами назад не виводиться.
 import { isIPv4 } from 'node:net';
-import { ENVS } from './config.mjs';
+import { BOOTSTRAP_ENVS, ENVS } from './config.mjs';
 
 const ALL_ENVS = Object.keys(ENVS);
 const RE_COMMIT = /^[0-9a-f]{7,40}$/;
@@ -87,7 +87,7 @@ export const SUBCOMMAND_SPECS = {
     required: ['--env'],
   },
   bootstrap: {
-    envs: ['rehearsal'],
+    envs: BOOTSTRAP_ENVS,
     values: { '--host': V.host, '--secrets-file': V.path },
     bools: [],
     required: ['--host'],

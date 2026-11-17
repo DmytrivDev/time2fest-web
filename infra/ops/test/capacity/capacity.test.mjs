@@ -35,8 +35,8 @@ function world(o = {}) {
   let lines = [];
   /** @type {{ user: string, argv: string[], input?: unknown }[]} */
   const remote = [];
-  /** @param {string} user */
-  const sshAs = (user) => ({
+  /** @param {{ user: string }} o */
+  const sshAs = ({ user }) => ({
     kind: /** @type {const} */ ('ssh'),
     describe: `fake ${user}`,
     exec: async (/** @type {string[]} */ argv, /** @type {any} */ opts) => {
@@ -60,9 +60,8 @@ function world(o = {}) {
     env: o.env ?? {},
     exec,
     now: () => new Date('2026-11-17T10:00:00Z'),
-    capacity: { name: 'fake', provider: fake.provider, envSizes: FAKE_ENV_SIZES },
-    stateRoot: dir,
-    realtimeComposeFile: composeFile,
+    provider: async () => ({ name: 'fake', provider: fake.provider, envSizes: FAKE_ENV_SIZES }),
+    paths: { stateRoot: dir, realtimeComposeFile: composeFile },
     sshAs,
     clock,
     ...o.deps,
@@ -140,7 +139,7 @@ describe('capacity: запобіжники', () => {
   });
 
   it('невідомий T2F_PROVIDER — 2', async () => {
-    const w = world({ env: { T2F_PROVIDER: 'nope' }, deps: { capacity: undefined } });
+    const w = world({ env: { T2F_PROVIDER: 'nope' }, deps: { provider: undefined } });
     const r = await w.run('plan');
     expect(r.code).toBe(2);
     expect(r.text).toContain('T2F_PROVIDER');

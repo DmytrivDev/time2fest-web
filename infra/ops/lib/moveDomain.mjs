@@ -8,18 +8,16 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { ENVS, MAIN_HOSTS } from './config.mjs';
-import { DEFAULT_STATE_ROOT, messageOf } from './deploy.mjs';
-import { REPO_ROOT } from './exec.mjs';
-import { SYSTEM_CLOCK } from './node.mjs';
-import { startProbe as realStartProbe } from './probe.mjs';
+import { cloudflareApiFrom } from './cloudflareApi.mjs';
+import { messageOf } from './common.mjs';
+import { ENVS, MAIN_HOSTS, REPO_ROOT } from './config.mjs';
 import { EDGE_DIR, WRANGLER_JS } from './worker.mjs';
 
 export const TWIN_WORKER = 't2f-edge-rehearsal-alt';
 export const TWIN_MAIN = path.join(REPO_ROOT, 'infra', 'ops', 'edge-twin', 'worker.mjs');
-export const REHEARSAL_NAME = 'rehearsal.time2fest.com';
+/** Ім’я репетиції — те саме, що `ENVS.rehearsal.siteHost`. */
+export const REHEARSAL_NAME = /** @type {string} */ (ENVS.rehearsal.siteHost);
 export const EDGE_JOURNAL = 'edge.jsonl';
-const API = 'https://api.cloudflare.com/client/v4';
 const DEPLOY_TIMEOUT_MS = 10 * 60_000;
 export const PROBE_BEFORE_MS = 5_000;
 export const PROBE_AFTER_MS = 30_000;
@@ -35,7 +33,7 @@ const RE_CONFLICT = /\b100117\b|(custom domain|hostname)[^\n]*(already|exist|con
 
 /**
  * @typedef {{ kind: 'move-domain', at: string, name: string, from: string | null, to: string, gapSeconds: number, createdBinding: string | null }} MoveRecord
- * @typedef {{ fetch: typeof fetch, account: string, token: string }} CfApi
+ * @typedef {import('./cloudflareApi.mjs').CloudflareApi} CfApi
  * @typedef {import('../ops.mjs').OpsContext} OpsContext
  */
 
@@ -65,26 +63,6 @@ export function readEdgeJournal(file) {
 }
 
 /**
- * @param {CfApi} api
- * @param {string} method
- * @param {string} pathAndQuery
- */
-async function cf(api, method, pathAndQuery) {
-  const res = await api.fetch(`${API}/accounts/${encodeURIComponent(api.account)}${pathAndQuery}`, {
-    method,
-    headers: { Authorization: `Bearer ${api.token}`, Accept: 'application/json' },
-  });
-  /** @type {any} */
-  let body = null;
-  try {
-    body = await res.json();
-  } catch {
-    body = null;
-  }
-  return { ok: res.ok && body?.success !== false, status: res.status, body };
-}
-
-/**
  * Прив’язки імені (`GET /workers/domains?hostname=`); `null` — запит не вдався.
  * @param {CfApi} api
  * @param {string} name
@@ -92,7 +70,7 @@ async function cf(api, method, pathAndQuery) {
  */
 export async function lookupBindings(api, name) {
   try {
-    const r = await cf(api, 'GET', `/workers/domains?hostname=${encodeURIComponent(name)}`);
+    const r = await api.get(`/workers/domains?hostname=${encodeURIComponent(name)}`);
     if (!r.ok || !Array.isArray(r.body?.result)) return null;
     return r.body.result
       .filter((/** @type {any} */ d) => d && typeof d.id === 'string' && norm(String(d.hostname ?? name)) === norm(name))
@@ -115,7 +93,7 @@ export async function detach(o) {
   const bindings = await lookupBindings(o.api, o.name);
   const mine = bindings?.find((b) => created.has(b.id));
   if (!mine) return { code: 2, message: `${o.name}: прив’язки з журналу в Cloudflare немає — не від’єдную` };
-  const r = await cf(o.api, 'DELETE', `/workers/domains/${encodeURIComponent(mine.id)}`);
+  const r = await o.api.delete(`/workers/domains/${encodeURIComponent(mine.id)}`);
   return r.ok ? { code: 0 } : { code: 2, message: `${o.name}: Cloudflare відмовив у від’єднанні (HTTP ${r.status})` };
 }
 
@@ -151,7 +129,6 @@ function envHosts(workerEnv) {
  */
 export async function runMoveDomain(ctx) {
   const { out, err } = ctx;
-  const deps = ctx.deps ?? {};
   const name = norm(String(ctx.args.values.name));
   const to = String(ctx.args.values.to);
   const confirm = ctx.args.values.confirm;
@@ -167,16 +144,14 @@ export async function runMoveDomain(ctx) {
   }
   if (target.workerEnv && !envHosts(target.workerEnv).includes(name)) return fail(err, `${to} не обслуговує ім’я ${name}`);
 
-  const token = ctx.env.CLOUDFLARE_API_TOKEN;
-  const account = ctx.env.CLOUDFLARE_ACCOUNT_ID;
-  if (!token || !account) return fail(err, 'бракує змінних: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID (середовище або --secrets-file)', 1);
+  const api = cloudflareApiFrom(ctx);
+  if (!api) return fail(err, 'бракує змінних: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID (середовище або --secrets-file)', 1);
 
-  const doFetch = deps.fetch ?? globalThis.fetch;
-  const api = { fetch: doFetch, account, token };
-  const clock = deps.clock ?? SYSTEM_CLOCK;
-  const start = deps.startProbe ?? realStartProbe;
+  const doFetch = ctx.deps.fetch;
+  const clock = ctx.deps.clock;
+  const start = ctx.deps.startProbe;
   const envKey = name === REHEARSAL_NAME ? 'rehearsal' : String(confirm);
-  const journalFile = path.join(deps.stateRoot ?? DEFAULT_STATE_ROOT, envKey, EDGE_JOURNAL);
+  const journalFile = path.join(ctx.paths.stateRoot, envKey, EDGE_JOURNAL);
   const records = readEdgeJournal(journalFile);
   const lastTo = [...records].reverse().find((r) => norm(r.name) === name)?.to ?? null;
   const from = lastTo ?? (name === REHEARSAL_NAME ? 't2f-edge-rehearsal' : null);

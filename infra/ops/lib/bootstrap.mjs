@@ -4,10 +4,8 @@
 // Кожен крок спершу перевіряє «вже зроблено» без змін; повторний запуск нічого не змінює.
 // Віддалені команди — фіксовані рядки; єдине значення ззовні — каталог вузла з `ENVS` (позиційний `$1`).
 // Коди: 0 — готово або без змін; 2 — відмова до будь-якої зміни; 1 — крок не вдався.
-import fs from 'node:fs';
-import path from 'node:path';
 import { ENVS } from './config.mjs';
-import { DEFAULT_STATE_ROOT, DEPLOY_USER, messageOf } from './deploy.mjs';
+import { DEPLOY_USER, knownHostsFile, messageOf } from './common.mjs';
 
 const REMOTE_TIMEOUT_MS = 60_000;
 const APT_TIMEOUT_MS = 15 * 60_000;
@@ -22,9 +20,6 @@ export const ROOT_ONLY_NOTE = 'перевірено при першому зап
  * @typedef {import('./exec.mjs').Transport} Transport
  * @typedef {import('./exec.mjs').RunResult} RunResult
  * @typedef {import('../ops.mjs').OpsContext} OpsContext
- * @typedef {{
- *   sshAs?: (user: string) => Transport,
- * }} BootstrapDeps `sshAs` — транспорт до вузла від імені користувача (тести)
  * @typedef {{
  *   id: string,
  *   title: string,
@@ -131,7 +126,6 @@ export async function runBootstrap(ctx) {
   const env = ctx.args.env ?? 'rehearsal';
   const cfg = ENVS[env];
   const host = /** @type {string} */ (ctx.args.values.host);
-  const deps = ctx.deps ?? {};
   /** @param {string} m */
   const refuse = (m) => {
     err(`bootstrap: ${m}`);
@@ -140,21 +134,18 @@ export async function runBootstrap(ctx) {
   if (env !== 'rehearsal' || !cfg?.nodeDir) return refuse('лише --env rehearsal');
   const nodeDir = cfg.nodeDir;
 
-  const stateRoot = deps.stateRoot ?? DEFAULT_STATE_ROOT;
-  const knownHosts = ctx.env.T2F_KNOWN_HOSTS_FILE || path.join(stateRoot, 'known_hosts');
+  const knownHosts = knownHostsFile(ctx);
   /** @type {Transport} */
   let asRoot;
   /** @type {Transport} */
   let asDeploy;
   try {
     // Перший вхід — довіра до ключа хоста при першій зустрічі (accept-new) у `known_hosts`; далі ключ закріплений.
-    const sshAs = deps.sshAs ?? ((/** @type {string} */ user) => ctx.exec.sshTransport({ host, user, knownHostsFile: knownHosts, accept: 'new' }));
-    asRoot = sshAs('root');
-    asDeploy = sshAs(DEPLOY_USER);
+    asRoot = ctx.deps.sshAs({ host, user: 'root', knownHostsFile: knownHosts });
+    asDeploy = ctx.deps.sshAs({ host, user: DEPLOY_USER, knownHostsFile: knownHosts });
   } catch (e) {
     return refuse(messageOf(e));
   }
-  if (!deps.sshAs) fs.mkdirSync(path.dirname(knownHosts), { recursive: true });
 
   try {
     const rootIn = await remote(asRoot, ['true']);

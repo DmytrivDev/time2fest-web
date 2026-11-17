@@ -248,7 +248,7 @@ describe('prelaunch (AC-21)', () => {
     fs.writeFileSync(path.join(assets, 'index.html'), '<!doctype html>');
     const deps = sc.deps();
     const worker = createWorker({ env: 'prelaunch', processEnv: deps.env, run: sc.exec.run, assetsDir: assets });
-    expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, worker })).toBe(0);
+    expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, worker: () => worker })).toBe(0);
     expect(sc.dockerCalls()).toEqual([]);
     expect(sc.fx.calls.filter((c) => c.transport.startsWith('ssh:'))).toEqual([]);
     expect(sc.fx.calls.some((c) => c.argv.includes('build'))).toBe(false);
@@ -269,7 +269,7 @@ describe('prelaunch (AC-21)', () => {
     cleanups.push(() => fs.rmSync(assets, { recursive: true, force: true }));
     const deps = sc.deps();
     const worker = createWorker({ env: 'prelaunch', processEnv: deps.env, run: sc.exec.run, assetsDir: assets });
-    expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, worker })).toBe(2);
+    expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, worker: () => worker })).toBe(2);
     expect(sc.wranglerCalls()).toEqual([]);
   });
 });

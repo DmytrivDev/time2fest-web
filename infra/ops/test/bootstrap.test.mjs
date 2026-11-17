@@ -76,8 +76,8 @@ function fakeNode(o = {}) {
     }
     return { kind: 'unknown', step: argv.join(' '), code: 99 };
   };
-  /** @param {string} user @returns {import('../lib/exec.mjs').Transport} */
-  const sshAs = (user) => ({
+  /** @param {{ user: string }} o @returns {import('../lib/exec.mjs').Transport} */
+  const sshAs = ({ user }) => ({
     kind: 'ssh',
     describe: `${user}@${HOST}`,
     async exec(argv, opts = {}) {
@@ -102,7 +102,7 @@ function fakeNode(o = {}) {
     err: (/** @type {string} */ l) => err.push(l),
     env: {},
     exec: fx,
-    stateRoot,
+    paths: { stateRoot },
     sshAs,
   };
   return { st, calls, fx, out, err, deps, stateRoot };

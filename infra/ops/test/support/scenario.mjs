@@ -240,6 +240,8 @@ export function scenario(o = {}) {
     readAt,
     writeAt,
     remoteFiles,
+    /** Підставний транспорт вузла (лише для віддаленої цілі). */
+    transport,
     /** Записи журналу вузла. */
     journal: () => parseJournal(readAt(journalFile)),
     /** Сирий текст журналу. */
@@ -258,8 +260,8 @@ export function scenario(o = {}) {
       exec,
       now: () => NOW,
       clock,
-      stateRoot,
-      ...(transport ? { transport } : {}),
+      paths: { stateRoot },
+      ...(transport ? { transport: () => /** @type {import('../../lib/exec.mjs').Transport} */ (transport) } : {}),
       ...extra,
     }),
     cleanup: () => fs.rmSync(stateRoot, { recursive: true, force: true }),

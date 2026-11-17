@@ -98,13 +98,15 @@ export function createFakeProvider(o = {}) {
       nodes.push(n);
       return copy(n);
     },
-    async resizeNode(id, size) {
+    async resizeNode(id, size, opts) {
+      if (opts?.keepDisk !== true) throw new Error('resizeNode: фейк уміє лише keepDisk: true');
       enter('resizeNode', [id, size]);
       const n = find(id, 'resizeNode');
       if (!sizes.some((s) => s.slug === size)) throw new ProviderError({ status: 422, step: 'resizeNode' });
       resizes.push({ id, size, disk: false });
       n.size = size;
       n.status = 'active';
+      return { keepDisk: true };
     },
     async deleteNode(id) {
       enter('deleteNode', [id]);

@@ -5,9 +5,8 @@
 import { currentGeneration, lastOk } from './journal.mjs';
 import { imageTag, shaOfImage } from './image.mjs';
 import { acquireNodeLock } from './lock.mjs';
-import { createNode, NEXT_ENV, SYSTEM_CLOCK } from './node.mjs';
-import { createWorker } from './worker.mjs';
-import { createStepper, maybeProbe, messageOf, reportFailure, resolveSite } from './deploy.mjs';
+import { createNode, NEXT_ENV } from './node.mjs';
+import { createStepper, maybeProbe, messageOf, reportFailure, resolveSite } from './common.mjs';
 
 /** Пояснення відмови за поколінням секрету краю (AC-27). */
 export const GENERATION_REFUSAL = 'секрет краю замінено після цього розгортання; відкат Worker’а заборонено';
@@ -19,14 +18,13 @@ export const GENERATION_REFUSAL = 'секрет краю замінено піс
  */
 export async function runRollback(ctx) {
   const env = /** @type {string} */ (ctx.args.env);
-  const deps = ctx.deps ?? {};
   /** @param {string} m */
   const refuse = (m) => {
     ctx.err(`rollback: ${m}`);
     return 2;
   };
 
-  const worker = deps.worker ?? createWorker({ env, processEnv: ctx.env, run: ctx.exec.run, out: ctx.out });
+  const worker = ctx.deps.worker(env);
   const missing = worker.missingCredentials();
   if (missing.length) return refuse(`бракує змінних: ${missing.join(', ')} (середовище або --secrets-file)`);
 
@@ -45,7 +43,7 @@ export async function runRollback(ctx) {
 
 /**
  * @param {import('../ops.mjs').OpsContext} ctx
- * @param {import('./deploy.mjs').Site} site
+ * @param {import('./common.mjs').Site} site
  * @param {import('./worker.mjs').Worker} worker
  * @param {(m: string) => number} refuse
  * @returns {Promise<number>}
@@ -53,8 +51,7 @@ export async function runRollback(ctx) {
 async function rollbackLocked(ctx, site, worker, refuse) {
   const { out, err } = ctx;
   const env = /** @type {string} */ (ctx.args.env);
-  const deps = ctx.deps ?? {};
-  const clock = deps.clock ?? SYSTEM_CLOCK;
+  const clock = ctx.deps.clock;
   const startedAt = clock.now();
 
   // Перевірки без змін: ціль відкату, покоління секрету, наявність образу, поточний стан.

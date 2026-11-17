@@ -16,16 +16,19 @@
  * }} Node `diskGb` — щоб контракт бачив: зміна розміру не чіпає диска (AC-48).
  * @typedef {{ slug: string, vcpus: number, memoryMb: number, diskGb: number, priceHourly: number }} Size
  * @typedef {{ name: string, region: string, size: string, tags: string[] }} NodeSpec
+ * @typedef {{ keepDisk: boolean }} ResizeOpts `keepDisk: true` — лише CPU/RAM, диск не змінюється (зміну можна повернути).
+ * @typedef {{ keepDisk: boolean }} ResizeResult Що адаптер справді зробив з диском.
  * @typedef {{
  *   listNodes(tags: string[]): Promise<Node[]>,
  *   sizes(): Promise<Size[]>,
  *   createNode(spec: NodeSpec): Promise<Node>,
- *   resizeNode(id: string, size: string): Promise<void>,
+ *   resizeNode(id: string, size: string, opts: ResizeOpts): Promise<ResizeResult>,
  *   deleteNode(id: string): Promise<void>,
  *   waitNode(id: string, state: NodeStatus): Promise<Node>,
  * }} Provider
- * `listNodes` — лише вузли з усіма тегами; `createNode` повертає вже активний вузол; `resizeNode` — лише CPU/RAM,
- * без диска, і вузол після неї знову активний (повторний виклик на вимкненому вузлі того ж розміру лише вмикає його).
+ * `listNodes` — лише вузли з усіма тегами; `createNode` повертає вже активний вузол; `resizeNode` виконує те, що
+ * просить `opts`, або відмовляє до будь-якої зміни (адаптер, що не вміє зберегти диск, — відмова на `keepDisk: true`);
+ * вузол після неї знову активний (повторний виклик на вимкненому вузлі того ж розміру лише вмикає його).
  * @typedef {{
  *   region: string,
  *   main: { offSeason: string, allowed: string[] },
