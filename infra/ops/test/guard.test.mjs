@@ -13,7 +13,19 @@ async function runMain(argv, at = CALM) {
   /** @type {string[]} */
   const lines = [];
   const code = await main(argv, { exec: fake, now: () => at, out: (l) => lines.push(l), err: (l) => lines.push(l), env: {} });
-  return { code, calls: fake.calls.length, text: lines.join('\n') };
+  return { code, calls: fake.calls.length, argv0: fake.calls.map((c) => c.argv[0]), text: lines.join('\n') };
+}
+
+/**
+ * Запобіжник пропустив: підкоманда (deploy/rollback, P7) почала свої перевірки й відмовила вже сама —
+ * фейк не знає коміту, а облікових даних Cloudflare в оточенні немає. Ні ssh, ні docker, ні wrangler.
+ * @param {{ code: number, argv0: string[], text: string }} r
+ */
+function passedGuard(r) {
+  expect(r.text).toMatch(/^(deploy|rollback): (HEAD не вказує на коміт|бракує змінних)/m);
+  expect(r.text).not.toContain('--allow-main-domain');
+  expect(r.text).not.toContain('заморозка');
+  expect(r.argv0.every((a) => a === 'git')).toBe(true);
 }
 
 describe('main domain needs --confirm <env> AND --allow-main-domain (AC-21)', () => {
@@ -59,15 +71,12 @@ describe('main domain needs --confirm <env> AND --allow-main-domain (AC-21)', ()
     expect((await runMain([...argv, '--confirm', 'production'])).code).not.toBe(2);
   });
 
-  it('both flags pass the guard (then `not implemented`, 0 calls)', async () => {
-    const r = await runMain(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain']);
-    expect(r.code).toBe(1);
-    expect(r.text).toContain('not implemented');
-    expect(r.calls).toBe(0);
+  it('both flags pass the guard (then the runner, no ssh/docker/wrangler)', async () => {
+    passedGuard(await runMain(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain']));
   });
 
   it('rehearsal to its own node needs neither flag', async () => {
-    expect((await runMain(['deploy', '--env', 'rehearsal', '--target', 'local'])).code).toBe(1);
+    passedGuard(await runMain(['deploy', '--env', 'rehearsal', '--target', 'local']));
   });
 });
 
@@ -106,21 +115,17 @@ describe('production freeze 31.12 08:00 – 01.01 14:00 UTC (AC-23)', () => {
   });
 
   it.each([['2027-01-01T14:00:00Z'], ['2026-12-31T07:59:59Z'], ['2026-12-30T12:00:00Z']])('deploy at %s → allowed', async (at) => {
-    const r = await runMain(['deploy', '--env', 'production', ...both], new Date(at));
-    expect(r.code).toBe(1);
-    expect(r.text).toContain('not implemented');
+    passedGuard(await runMain(['deploy', '--env', 'production', ...both], new Date(at)));
   });
 
   it('--emergency → allowed inside the window', async () => {
     for (const sub of ['deploy', 'rollback']) {
-      const r = await runMain([sub, '--env', 'production', ...both, '--emergency'], new Date('2026-12-31T23:00:00Z'));
-      expect(r.code).toBe(1);
+      passedGuard(await runMain([sub, '--env', 'production', ...both, '--emergency'], new Date('2026-12-31T23:00:00Z')));
     }
   });
 
   it('rehearsal is never frozen', async () => {
-    const r = await runMain(['deploy', '--env', 'rehearsal'], new Date('2026-12-31T23:00:00Z'));
-    expect(r.code).toBe(1);
+    passedGuard(await runMain(['deploy', '--env', 'rehearsal'], new Date('2026-12-31T23:00:00Z')));
   });
 
   it('inFreezeWindow edges', () => {

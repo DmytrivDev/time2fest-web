@@ -1,0 +1,16 @@
+{
+  "id": "6b3f0a52-5c1e-4d8e-9f3a-2c7d1e4b8a90",
+  "source": "wrangler",
+  "strategy": "percentage",
+  "author_email": "ops@example.invalid",
+  "annotations": {
+    "workers/triggered_by": "deployment"
+  },
+  "created_on": "2026-11-17T10:00:00.000000Z",
+  "versions": [
+    {
+      "percentage": 100,
+      "version_id": "1f0c2d3e-4a5b-4c6d-8e7f-90a1b2c3d4e5"
+    }
+  ]
+}

@@ -36,7 +36,8 @@ describe('ops.mjs entry', () => {
   it('returns 1 with `not implemented` for a known subcommand', async () => {
     /** @type {string[]} */
     const lines = [];
-    expect(await main(['deploy', '--env', 'rehearsal'], { out: (l) => lines.push(l) })).toBe(1);
+    // Підкоманда, ще не підключена (W31, P11); deploy/rollback підключено в P7.
+    expect(await main(['move-domain', '--name', 'rehearsal.time2fest.com', '--to', 't2f-edge-rehearsal'], { out: (l) => lines.push(l) })).toBe(1);
     expect(lines.join('\n')).toContain('not implemented');
   });
 

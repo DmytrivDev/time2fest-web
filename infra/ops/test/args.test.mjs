@@ -68,11 +68,12 @@ describe('ops main: refused arguments (AC-10)', () => {
     expect((await runMain(['deploy'])).code).toBe(2);
   });
 
-  it('a valid rehearsal deploy passes arguments and the guard (then `not implemented`)', async () => {
+  it('a valid rehearsal deploy passes arguments and the guard (then the runner checks git: the fake knows no commit)', async () => {
     const r = await runMain(['deploy', '--env', 'rehearsal', '--target', '203.0.113.10', '--commit', 'abc1234', '--probe']);
-    expect(r.code).toBe(1);
-    expect(r.text).toContain('not implemented');
-    expect(r.calls).toHaveLength(0);
+    expect(r.code).toBe(2);
+    expect(r.text).toContain('--commit: abc1234 не є комітом');
+    // Лише перевірки git до будь-якої зміни: ні ssh, ні docker, ні wrangler.
+    expect(r.calls.map((c) => c.argv[0])).toEqual(['git', 'git']);
   });
 });
 

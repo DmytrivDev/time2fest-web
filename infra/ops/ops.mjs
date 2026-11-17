@@ -2,13 +2,20 @@
 // Операції розгортання: `node infra/ops/ops.mjs <deploy|rollback|bootstrap|edge-secret|move-domain|capacity> …`.
 // Нуль залежностей. Порядок: аргументи → запобіжник → підкоманда. Відмова аргументу чи запобіжника — код 2,
 // до будь-якого виклику ssh, docker чи wrangler. Підкоманди підключаються по фазах; до того друкують `not implemented`.
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { parseEnv } from 'node:util';
 import { parseArgs } from './lib/args.mjs';
+import { SECRET_ENV_NAMES } from './lib/config.mjs';
+import { runDeploy } from './lib/deploy.mjs';
 import { realExec } from './lib/exec.mjs';
 import { guardRun } from './lib/guard.mjs';
 import { createOutput, redactorFromEnv } from './lib/redact.mjs';
+import { runRollback } from './lib/rollback.mjs';
 
 const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity'];
+/** Змінні з `--secrets-file`, значення яких маскуються, навіть коли їх немає в `SECRET_ENV_NAMES`. */
+const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
 
 /**
  * @typedef {{
@@ -19,11 +26,12 @@ const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-dom
  *   out: (line: string) => void,
  *   err: (line: string) => void,
  *   now: () => Date,
+ *   deps?: import('./lib/deploy.mjs').OpsDeps,
  * }} OpsContext
  */
 
 /** Реалізовані підкоманди (додаються по фазах). @type {Record<string, (ctx: OpsContext) => Promise<number>>} */
-const RUNNERS = {};
+const RUNNERS = { deploy: runDeploy, rollback: runRollback };
 
 /**
  * @param {string[]} argv
@@ -33,11 +41,13 @@ const RUNNERS = {};
  *   env?: Record<string, string | undefined>,
  *   exec?: import('./lib/exec.mjs').Executor,
  *   now?: () => Date,
- * }} [deps] `exec` і `now` — підставні в тестах
+ * } & import('./lib/deploy.mjs').OpsDeps} [deps] `exec`, `now`, `transport`, `worker`, `clock`, `git`, `image`,
+ *   `stateRoot`, `startProbe` — підставні в тестах
  * @returns {Promise<number>} exit code
  */
 export async function main(argv, deps = {}) {
-  const env = deps.env ?? process.env;
+  /** @type {Record<string, string | undefined>} */
+  let env = deps.env ?? process.env;
   const redactor = redactorFromEnv(env);
   const { out, err } = createOutput(
     redactor,
@@ -81,7 +91,28 @@ export async function main(argv, deps = {}) {
     out(`${sub}: not implemented`);
     return 1;
   }
-  return runner({ args, env, exec: deps.exec ?? realExec, redactor, out, err, now });
+
+  // `--secrets-file` (A6): змінні з файлу доповнюють середовище (наявні не перекриваються); значення секретів
+  // одразу реєструються в редакторі. Файл не друкується, назва змінної — так.
+  const secretsFile = args.values['secrets-file'];
+  if (secretsFile !== undefined) {
+    /** @type {Record<string, string | undefined>} */
+    let parsed;
+    try {
+      parsed = parseEnv(fs.readFileSync(secretsFile, 'utf8'));
+    } catch {
+      err(`${sub}: не вдалося прочитати --secrets-file`);
+      return 2;
+    }
+    env = { ...env };
+    for (const [k, v] of Object.entries(parsed)) {
+      if (env[k] === undefined && v !== undefined) env[k] = v;
+      if (SECRET_ENV_NAMES.includes(k) || SECRET_NAME_RE.test(k)) redactor.add(v);
+    }
+  }
+
+  const { out: _o, err: _e, env: _env, exec: _x, now: _n, ...opsDeps } = deps;
+  return runner({ args, env, exec: deps.exec ?? realExec, redactor, out, err, now, deps: opsDeps });
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
