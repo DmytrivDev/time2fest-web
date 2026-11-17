@@ -8,5 +8,12 @@ export async function register() {
       console.error('env: invalid ' + r.failing.join(', '));
       process.exit(1);
     }
+    // Access settings (AC-7): rehearsal/production refuse a missing or test issuer/JWKS.
+    const { parseAccessConfig } = await import('./domain/access/config');
+    const access = parseAccessConfig(process.env, r.class);
+    if (!access.ok) {
+      console.error('env: invalid ' + access.failing.join(', '));
+      process.exit(1);
+    }
   }
 }

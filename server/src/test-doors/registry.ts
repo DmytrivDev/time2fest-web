@@ -13,6 +13,7 @@ import {
 import type { ZodType } from 'zod';
 import type { TestClock } from '../clock';
 import { failure } from '../endpoints/pipeline';
+import { accessTokenDoor } from './accessToken';
 import type { Ctx, HttpMethod, Outcome } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 import type { SeedStore } from '../ports';
@@ -96,6 +97,7 @@ export function fixturesDoor(rows: readonly SeedRow[] = seedRegistry): DoorRow {
 }
 
 export const doorRegistry: readonly DoorRow[] = [
+  accessTokenDoor,
   {
     key: 'clock-get',
     method: 'GET',

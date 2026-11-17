@@ -7,9 +7,15 @@
  * Test doors are loaded by dynamic `import()` only when `shouldLoadDoors` is true (AC-29); no
  * request field takes part in that decision (AC-31).
  */
+import type { JWTVerifyGetKey } from 'jose';
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
+import { createAccessGate, createDenyLog, type AccessGate } from './access/gate';
+import type { IdentityMarker } from './access/ports';
+import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
+import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
+import { parseAccessConfig } from './domain/access/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
@@ -26,6 +32,7 @@ import { routeRegistry } from './registries/routes';
 const DEPS_KEY = Symbol.for('t2f.deps');
 const DISPATCHER_KEY = Symbol.for('t2f.dispatcher');
 const PAYLOAD_KEY = Symbol.for('t2f.payload');
+const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
 
 /** What a caller of `createDeps` may replace: any port, and the lazy Payload accessor. */
 export type DepsOverrides = Partial<Omit<Deps, 'env'>> & { payload?: () => Promise<Payload> };
@@ -150,6 +157,39 @@ export function edgeGateOf(deps: Deps): EdgeGate {
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
   const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).doorRoutes(deps, seedStoreOf(deps)) : [];
   return createDispatcher({ routes: [...routes, ...doors], middleware: middlewareRegistry, deps, edge: edgeGateOf(deps) });
+}
+
+/**
+ * The Access gate for `deps` (AC-1 … AC-10). An invalid config refuses boot earlier
+ * (`instrumentation.ts`); here it fails closed (no config → every gated path is 403). The test
+ * signer is reached only through the dynamic `import()` of the `test-signer:` branch, and only
+ * in the `test` class.
+ */
+export async function buildAccessGate(deps: Deps, raw: RawEnv): Promise<AccessGate> {
+  const parsed = parseAccessConfig(raw, deps.env.class);
+  const config = parsed.ok ? parsed.config : undefined;
+  let keys: JWTVerifyGetKey | undefined;
+  if (config?.jwks.kind === 'test-signer' && deps.env.class === 'test') {
+    const { getTestSigner } = await import('./adapters/testSigner');
+    keys = localKeys(await getTestSigner());
+  } else if (config?.jwks.kind === 'remote') {
+    keys = remoteKeys(config.jwks.url);
+  }
+  const verifier = keys
+    ? createAccessVerifier({ issuer: config?.issuer ?? '', audience: config?.audience ?? '', keys, alarm: deps.alarm })
+    : { verify: async () => ({ ok: false, reason: 'invalid' }) as const };
+  return createAccessGate({ config: keys ? config : undefined, verifier, denyLog: createDenyLog(deps.log, realClock) });
+}
+
+/** The Access gate of the process, built once. */
+export function getAccessGate(): Promise<AccessGate> {
+  const g = globalThis as unknown as Record<symbol, Promise<AccessGate> | undefined>;
+  return (g[ACCESS_GATE_KEY] ??= buildAccessGate(getDeps(), process.env));
+}
+
+/** The identity marker of the process (its key is per process). */
+export function getIdentityMarker(): IdentityMarker {
+  return createIdentityMarker(realClock);
 }
 
 /** The dispatcher of the process, built once. */
