@@ -5,6 +5,8 @@
  *   `server/realtime/` or `--dir`; it never writes anything else.
  * - `--check` regenerates in memory and compares with the stored files as JSON (line endings do not
  *   matter); a difference names the file and the first differing JSON path.
+ * - `--check` also compares the generated test env with the `centrifugo` blocks of `docker-compose.yml` and
+ *   `.github/workflows/verify.yml` under `--root` (default: the repository root); secret and engine keys are ignored.
  * - `--print-env <class>` prints the env rendering (`KEY=value` lines) of that class.
  * The generated files hold no secret and no engine address.
  * Exit codes: 0 done / in sync, 1 a stored file differs or is missing, 2 usage.
@@ -17,6 +19,7 @@ import type { EnvClass } from '../platform/env';
 import { channelClassesFor, REALTIME_SITE_ORIGINS } from '../registries/channels';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const repoRoot = path.resolve(serverDir, '..');
 
 /** The default folder of the generated files. */
 export const REALTIME_CONFIG_DIR = path.join(serverDir, 'realtime');
@@ -71,10 +74,11 @@ interface Args {
   mode: 'write' | 'check' | 'print-env' | undefined;
   envClass: string | undefined;
   dir: string;
+  root: string;
 }
 
 function parseArgs(argv: readonly string[]): Args | undefined {
-  const args: Args = { mode: undefined, envClass: undefined, dir: REALTIME_CONFIG_DIR };
+  const args: Args = { mode: undefined, envClass: undefined, dir: REALTIME_CONFIG_DIR, root: repoRoot };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--write' || arg === '--check') {
@@ -88,6 +92,10 @@ function parseArgs(argv: readonly string[]): Args | undefined {
       const dir = argv[(i += 1)];
       if (dir === undefined || dir === '') return undefined;
       args.dir = path.resolve(dir);
+    } else if (arg === '--root') {
+      const root = argv[(i += 1)];
+      if (root === undefined || root === '') return undefined;
+      args.root = path.resolve(root);
     } else {
       return undefined;
     }
@@ -95,7 +103,56 @@ function parseArgs(argv: readonly string[]): Args | undefined {
   return args;
 }
 
-function check(dir: string, io: CliIo): number {
+/** Env keys that differ by design between the stack files and the generated test env. */
+const IGNORED_ENV = /^CENTRIFUGO_(CLIENT_TOKEN_HMAC_SECRET_KEY|HTTP_API_KEY|ENGINE_.*)$/;
+
+/** The `CENTRIFUGO_*: value` lines (line-based) inside the `centrifugo:` block of a compose/workflow text. */
+export function centrifugoBlockEnv(text: string): Map<string, string> {
+  const out = new Map<string, string>();
+  const lines = text.split(/\r?\n/);
+  let indent = -1;
+  for (const line of lines) {
+    if (indent < 0) {
+      const head = /^(\s*)centrifugo:\s*$/.exec(line);
+      if (head) indent = (head[1] ?? '').length;
+      continue;
+    }
+    if (line.trim() === '' || line.trim().startsWith('#')) continue;
+    if ((/^\s*/.exec(line)?.[0] ?? '').length <= indent) break;
+    const m = /^\s+(CENTRIFUGO_[A-Z0-9_]+):\s*(.*?)\s*$/.exec(line);
+    if (!m) continue;
+    let value = m[2] ?? '';
+    if (/^'.*'$/.test(value)) value = value.slice(1, -1).replace(/''/g, "'");
+    else if (/^".*"$/.test(value)) value = value.slice(1, -1);
+    out.set(m[1] ?? '', value);
+  }
+  return out;
+}
+
+/** Compares the generated test env with the stack files; returns the number of problems. */
+function checkStackEnv(root: string, io: CliIo): number {
+  const expected = centrifugoEnv(generate('test'));
+  let problems = 0;
+  for (const rel of ['docker-compose.yml', '.github/workflows/verify.yml']) {
+    const file = path.join(root, rel);
+    if (!fs.existsSync(file)) {
+      io.err(`realtime:config: ${file} is missing`);
+      problems += 1;
+      continue;
+    }
+    const actual = centrifugoBlockEnv(fs.readFileSync(file, 'utf8'));
+    for (const [key, value] of expected) {
+      if (IGNORED_ENV.test(key)) continue;
+      if (actual.get(key) !== value) {
+        io.err(`realtime:config: ${rel} ${key} ${actual.has(key) ? 'differs from' : 'is missing next to'} the generated test env`);
+        problems += 1;
+      }
+    }
+  }
+  return problems;
+}
+
+function check(dir: string, root: string, io: CliIo): number {
   let code = 0;
   for (const cls of REALTIME_CLASSES) {
     const file = path.join(dir, configFileName(cls));
@@ -118,7 +175,8 @@ function check(dir: string, io: CliIo): number {
       code = 1;
     }
   }
-  if (code === 0) io.out(`realtime:config: ${REALTIME_CLASSES.length} files in sync`);
+  if (checkStackEnv(root, io) > 0) code = 1;
+  if (code === 0) io.out(`realtime:config: ${REALTIME_CLASSES.length} files in sync, stack env in sync`);
   return code;
 }
 
@@ -132,7 +190,7 @@ function write(dir: string, io: CliIo): number {
   return 0;
 }
 
-const USAGE = 'usage: realtime:config <--write | --check | --print-env <test|rehearsal|production>> [--dir <path>]';
+const USAGE = 'usage: realtime:config <--write | --check | --print-env <test|rehearsal|production>> [--dir <path>] [--root <path>]';
 
 /** Runs the CLI with `argv` (without the node and script paths); returns the exit code. */
 export function runRealtimeConfig(argv: readonly string[], io: CliIo): number {
@@ -142,7 +200,7 @@ export function runRealtimeConfig(argv: readonly string[], io: CliIo): number {
     return 2;
   }
   if (args.mode === 'write') return write(args.dir, io);
-  if (args.mode === 'check') return check(args.dir, io);
+  if (args.mode === 'check') return check(args.dir, args.root, io);
   if (!isClass(args.envClass)) {
     io.err(USAGE);
     return 2;

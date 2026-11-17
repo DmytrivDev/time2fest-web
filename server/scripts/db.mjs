@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import { resolveWorktree } from './lib/worktree.mjs';
 import { lockDir } from './lib/lock.mjs';
+import { ensureRealtimeSecrets, realtimeSecretsFile } from './lib/realtimeSecrets.mjs';
 
 const ADMIN_URI = 'postgres://t2f@127.0.0.1:5433/postgres';
 const IDENT = /^t2f_[a-z0-9_]{1,46}$/;
@@ -60,6 +61,10 @@ function writeEnv(wt) {
   }
   if (secret === '') secret = crypto.randomBytes(32).toString('hex');
   const web = wt.ports.web;
+  // Centrifugo values: process.env (CI) wins, else the shared local secrets file (SPEC-06 W11).
+  const tokenEnv = process.env.T2F_CENTRIFUGO_TOKEN_SECRET;
+  const apiEnv = process.env.T2F_CENTRIFUGO_API_KEY;
+  const shared = tokenEnv && apiEnv ? undefined : ensureRealtimeSecrets(realtimeSecretsFile(serverDir, {}));
   const lines = [
     'T2F_ENV=test',
     'T2F_TEST_DOORS=1',
@@ -85,6 +90,9 @@ function writeEnv(wt) {
     'T2F_R2_ENDPOINT=http://127.0.0.1:9090',
     'T2F_R2_BUCKET=t2f-catalog',
     `T2F_R2_PREFIX=${wt.slug}/`,
+    `T2F_CENTRIFUGO_URL=${process.env.T2F_CENTRIFUGO_URL || 'http://127.0.0.1:8000'}`,
+    `T2F_CENTRIFUGO_TOKEN_SECRET=${tokenEnv || shared?.T2F_CENTRIFUGO_TOKEN_SECRET}`,
+    `T2F_CENTRIFUGO_API_KEY=${apiEnv || shared?.T2F_CENTRIFUGO_API_KEY}`,
     'T2F_R2_ACCESS_KEY_ID=t2f-local',
     'T2F_R2_SECRET_ACCESS_KEY=t2f-local-secret-0000',
     '',
