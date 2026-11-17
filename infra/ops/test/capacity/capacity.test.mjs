@@ -16,7 +16,7 @@ const RT = { name: 't2f-rehearsal-realtime', size: 's-2vcpu-4gb', tags: [M, E, '
 const CLOUDFLARED_ONLY = 'services:\n  cloudflared:\n    image: cloudflare/cloudflared@sha256:' + 'a'.repeat(64) + '\n    restart: unless-stopped\n    env_file: [cloudflared.env]\n';
 const UFW_OK =
   'Status: active\nLogging: on (low)\nDefault: deny (incoming), allow (outgoing), disabled (routed)\nNew profiles: skip\n\n' +
-  'To                         Action      From\n--                         ------      ----\n22/tcp                     LIMIT IN    Anywhere\n22/tcp (v6)                LIMIT IN    Anywhere (v6)\n';
+  'To                         Action      From\n--                         ------      ----\n22/tcp                     ALLOW IN    Anywhere\n22/tcp (v6)                ALLOW IN    Anywhere (v6)\n';
 
 /** @type {string[]} */
 const temps = [];

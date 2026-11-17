@@ -42,8 +42,9 @@ const sh = (script) => (nodeDir) => ['sh', '-c', script, '_', nodeDir];
 
 /**
  * Брандмауер у стані AC-8: увімкнений, вхідні за замовчуванням заборонені, вихідні дозволені, дозволений вхідний
- * лише `22/tcp` з обмеженням частоти (`ufw limit`, IPv4 і IPv6). Правило `ALLOW` для 22 (давніший bootstrap) — не
- * готово: крок застосовується знову, і `ufw limit 22/tcp` оновлює правило.
+ * лише `22/tcp` з `ALLOW` (IPv4 і IPv6). Обмеження частоти (`ufw limit`) не використовується: інструмент відкриває
+ * багато SSH-з’єднань, і limit його блокує. Правило `LIMIT` для 22 — не готово: крок застосовується знову
+ * і замінює його на `allow` (одним рядком команди, порт ні на мить не лишається без правила).
  * @param {string} stdout вивід `ufw status verbose`
  */
 export function ufwOk(stdout) {
@@ -51,7 +52,7 @@ export function ufwOk(stdout) {
   if (!/^Status: active\s*$/m.test(s)) return false;
   if (!/^Default: deny \(incoming\), allow \(outgoing\)/m.test(s)) return false;
   const inbound = s.split(/\r?\n/).filter((l) => /\b(?:ALLOW|LIMIT) IN\b/.test(l));
-  return inbound.length > 0 && inbound.every((l) => /^22\/tcp(?:\s+\(v6\))?\s+LIMIT IN\b/.test(l.trim()));
+  return inbound.length > 0 && inbound.every((l) => /^22\/tcp(?:\s+\(v6\))?\s+ALLOW IN\b/.test(l.trim()));
 }
 
 /** Кроки від імені root, по порядку. Крок `deploy-login` — окремо (перевірка без змін, із другим входом). @type {Step[]} */
@@ -84,12 +85,13 @@ export const ROOT_STEPS = [
   },
   {
     id: 'firewall',
-    title: 'брандмауер: вхідний лише TCP 22 (limit)',
+    title: 'брандмауер: вхідний лише TCP 22 ',
     check: () => ['ufw', 'status', 'verbose'],
     ok: (r) => r.code === 0 && ufwOk(r.stdout),
     apply: sh(
       'set -e; command -v ufw >/dev/null 2>&1 || DEBIAN_FRONTEND=noninteractive apt-get install -y ufw; ' +
-        'ufw default deny incoming; ufw default allow outgoing; ufw limit 22/tcp; ufw --force enable',
+        'ufw default deny incoming; ufw default allow outgoing; ufw allow 22/tcp; ' +
+        'ufw delete limit 22/tcp >/dev/null 2>&1 || true; ufw --force enable',
     ),
     timeoutMs: APT_TIMEOUT_MS,
   },

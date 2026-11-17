@@ -22,8 +22,8 @@ const UFW_ACTIVE = [
   '',
   'To                         Action      From',
   '--                         ------      ----',
-  '22/tcp                     LIMIT IN    Anywhere',
-  '22/tcp (v6)                LIMIT IN    Anywhere (v6)',
+  '22/tcp                     ALLOW IN    Anywhere',
+  '22/tcp (v6)                ALLOW IN    Anywhere (v6)',
   '',
 ].join('\n');
 /** Прапорець стану вузла для кожного кроку. */
@@ -306,11 +306,15 @@ describe('ufwOk', () => {
     expect(ufwOk(`${UFW_ACTIVE}80/tcp                     ALLOW IN    Anywhere\n`)).toBe(false);
   });
 
-  it('F10: 22/tcp must be rate-limited — a plain ALLOW rule (older bootstrap) is not done, so the step re-applies', () => {
-    expect(ufwOk(UFW_ACTIVE.replaceAll('LIMIT IN', 'ALLOW IN'))).toBe(false);
+  it('L1: ALLOW on 22 is the done state; a node with the LIMIT rule gets the step and migrates in one remote command', () => {
+    expect(ufwOk(UFW_ACTIVE.replaceAll('ALLOW IN', 'LIMIT IN'))).toBe(false);
     const fw = ROOT_STEPS.find((x) => x.id === 'firewall');
-    const script = fw?.apply?.('/srv/t2f/rehearsal')[2] ?? '';
-    expect(script).toContain('ufw limit 22/tcp');
-    expect(script).not.toContain('ufw allow 22/tcp');
+    const argv = fw?.apply?.('/srv/t2f/rehearsal') ?? [];
+    expect(argv.slice(0, 2)).toEqual(['sh', '-c']);
+    const script = argv[2] ?? '';
+    expect(script).not.toContain('ufw limit 22/tcp');
+    // allow comes first, the old limit rule is removed after it: the port is never without a rule
+    expect(script.indexOf('ufw allow 22/tcp')).toBeGreaterThan(-1);
+    expect(script.indexOf('ufw delete limit 22/tcp')).toBeGreaterThan(script.indexOf('ufw allow 22/tcp'));
   });
 });
