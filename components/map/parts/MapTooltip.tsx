@@ -4,8 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
-import type { ZoneState } from '@/lib/engine/zoneState';
+import { isZonePast, type ZoneState } from '@time2fest/rules/time';
 import { formatDurationShort, formatTimeForViewer, viewerTimeZone } from '@/lib/i18n/time';
 import { utcLabel, type MapCity, type MapCountry, type MapZone } from '@/lib/map/model';
 import m from '@/components/map/zoneMap.module.css';
@@ -24,7 +23,7 @@ export type TipPhase = 'future' | 'next' | 'liveBefore' | 'liveAfter' | 'past';
 
 export function tipPhase(state: ZoneState, midnightMs: number, now: number): TipPhase {
   if (state === 'live') return now < midnightMs ? 'liveBefore' : 'liveAfter';
-  if (state === 'past' || now >= midnightMs + HANDOVER_AFTER) return 'past';
+  if (state === 'past' || isZonePast(now, midnightMs)) return 'past';
   return state;
 }
 

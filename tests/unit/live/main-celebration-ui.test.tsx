@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Caption, type CaptionPlace } from '@/components/live/Caption';
 import { EventCard } from '@/components/live/EventCard';
 import { WaitingScene } from '@/components/player/CountdownScene';
-import { captionPhase } from '@/lib/engine/captionPhase';
+import { captionPhase } from '@time2fest/rules/time';
 import { event, MIN, PARIS_MIDNIGHT, SEC } from '../fixtures/data';
 import { renderApp as renderWithApp } from '../us1/render';
 

@@ -15,7 +15,7 @@ import { createResource, useResource } from '../resource';
 import { getService } from '../services';
 import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
-import { buildStamp } from '@/lib/engine/presence';
+import { buildStamp } from '@/lib/engine/stamp';
 import { on } from '@/lib/events/bus';
 import type { MomentStamp } from '@/lib/events/types';
 import { createStampClaimer, type ClaimsSnapshot, type PendingClaim } from '@/lib/passport/stampClaims';

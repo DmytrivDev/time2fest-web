@@ -8,7 +8,7 @@
  */
 import type { ReactNode } from 'react';
 import { getData } from '@/lib/data/load';
-import { canSayToast, toastSeason, type ToastSeason } from '@/lib/toast/season';
+import { canSayToast, toastSeason, type ToastSeason } from '@time2fest/rules/time';
 import { TimeProvider, useHasTime, useNow, useTimeReady } from '@/lib/time/TimeProvider';
 
 export function useToastSeason(): ToastSeason | null {

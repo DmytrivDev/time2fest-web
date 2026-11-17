@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { momentStage, momentState, momentTimeline } from '@/lib/engine/momentTimeline';
+import { momentStage, momentState, momentTimeline } from '@time2fest/rules/time';
 import { event, LONDON_MIDNIGHT as T0, MIN, SEC } from '../fixtures/data';
 
 const tl = momentTimeline(event('london', T0));

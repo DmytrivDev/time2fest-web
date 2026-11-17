@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
-import type { ZoneState } from '@/lib/engine/zoneState';
+import type { ZoneState } from '@time2fest/rules/time';
 import { formatClock } from '@/lib/i18n/time';
 import { utcLabel, type MapCountry, type MapZone } from '@/lib/map/model';
 import m from './zoneMap.module.css';

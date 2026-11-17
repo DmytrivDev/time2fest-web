@@ -7,3 +7,4 @@
 | Spec | Feature | Status | Packages | Supersedes |
 |---|---|---|---|---|
 | [SPEC-01](SPEC-01-workspace-seam.md) | Репозиторій і словник шва — робочий простір pnpm, пакети contracts і rules, домен site, словник причин і полів, CI, перевірка «лише додаванням» | approved | web, contracts, rules | none |
+| [SPEC-03](SPEC-03-time-rules.md) | Модуль правил часу — один модуль `@time2fest/rules/time` для сайту й сервера, CI проти дублювання | approved | rules, web | none |

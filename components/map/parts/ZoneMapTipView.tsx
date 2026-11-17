@@ -2,7 +2,7 @@
 
 // Плашка при наведенні на мапі поясів (вміст — підказка зони, країни чи міста); стан і позиція — `useZoneMapTip`.
 import type { CSSProperties, Ref } from 'react';
-import type { ZoneState } from '@/lib/engine/zoneState';
+import type { ZoneState } from '@time2fest/rules/time';
 import { useProfile } from '@/lib/api/hooks/auth';
 import type { MapCity, MapCountry, MapZone } from '@/lib/map/model';
 import { CityTip, CountryTip, MapTip, ZoneTip, type MapTipTarget } from './MapTooltip';

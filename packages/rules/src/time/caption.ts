@@ -1,4 +1,4 @@
-import type { Event, Ms } from '@/lib/data/types';
+import type { EventLike, Ms } from './types';
 import {
   DELAY_NOTICE_FROM,
   HANDOVER_AFTER,
@@ -6,8 +6,8 @@ import {
   LAST_MINUTE_FROM,
   RECORDING_AFTER,
   STAMP_DELAY,
-} from './config';
-import { midnightOf } from './eventStatus';
+} from './constants';
+import { midnightOf } from './event';
 
 export type CaptionMode = 'broadcast' | 'remote';
 export type CaptionPhaseId = 'before' | 'celebrating' | 'last-minute' | 'next';
@@ -40,7 +40,6 @@ export interface CaptionPhase {
   flags: { howTo: boolean; delayNotice: boolean; momentFired: boolean };
 }
 
-type EventLike = Pick<Event, 'id' | 'midnightUtc'> & { midnightMs?: Ms };
 
 const NO_FLAGS = { howTo: false, delayNotice: false, momentFired: false };
 

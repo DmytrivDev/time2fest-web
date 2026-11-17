@@ -30,7 +30,7 @@ import { useChatColumn } from '@/components/shell/OverlayManager';
 import { pathSummary, routeCities, type PathPoint } from '@/lib/chat/authorPath';
 import { getData } from '@/lib/data/load';
 import type { Author, ChatMessage } from '@/lib/data/types';
-import { zoneState } from '@/lib/engine/zoneState';
+import { zoneState } from '@time2fest/rules/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { PathLegend, PathMap } from '@/components/map/PathMap';
 import type { ZoneMapGeometry } from '@/lib/map/model';

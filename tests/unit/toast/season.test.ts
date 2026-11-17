@@ -4,8 +4,14 @@
  */
 import { describe, expect, it } from 'vitest';
 import { getData } from '@/lib/data/load';
-import { CELEBRATION_LEAD, CELEBRATION_TAIL, isCelebrating } from '@/lib/engine/celebration';
-import { canSayToast, toastSeason, toastsOpenAt } from '@/lib/toast/season';
+import {
+  canSayToast,
+  CELEBRATION_LEAD,
+  CELEBRATION_TAIL,
+  isCelebrating,
+  toastSeason,
+  toastsOpenAt,
+} from '@time2fest/rules/time';
 
 const H = 3_600_000;
 const FIRST = Date.UTC(2026, 11, 31, 10, 0); // північ UTC+14

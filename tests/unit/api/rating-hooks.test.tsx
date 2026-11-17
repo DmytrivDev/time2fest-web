@@ -10,7 +10,7 @@ import { fail, ok } from '@/lib/api/result';
 import { setServicesForTest } from '@/lib/api/services';
 import { getData } from '@/lib/data/load';
 import type { Stars } from '@/lib/data/types';
-import { RATING_OPEN_AFTER } from '@/lib/rating/rating';
+import { RATING_OPEN_AFTER } from '@time2fest/rules/time';
 
 const data = getData();
 const kyiv = data.events.find((e) => e.cityId === 'kyiv')!;

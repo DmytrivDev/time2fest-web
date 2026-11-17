@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import messages from '@/messages/uk.json';
 import {
   addStamps,
-  CATCH_UP_MAX_AGE_MS,
   CELEBRATION_MS,
   celebrationPhase,
   clockElapsed,
@@ -30,6 +29,7 @@ import {
   type CelebrationStamp,
   type Msg,
 } from '@/lib/stamp/stampCelebration';
+import { CATCH_UP_MAX_AGE_MS } from '@time2fest/rules/time';
 
 const T0 = Date.parse('2026-12-31T23:00:15Z');
 const FR: CelebrationStamp = { eventId: 'evt_paris', country: 'Франція', gender: 'f', flagCode: 'FR', grantedAt: T0 };

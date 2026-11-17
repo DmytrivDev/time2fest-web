@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Caption, type CaptionPlace } from '@/components/live/Caption';
-import { captionPhase } from '@/lib/engine/captionPhase';
+import { captionPhase } from '@time2fest/rules/time';
 import { event, LONDON_MIDNIGHT, MIN, RIO_MIDNIGHT, SEC } from '../fixtures/data';
 import { renderWithApp } from '../_support/render';
 

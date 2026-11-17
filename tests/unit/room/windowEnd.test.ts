@@ -1,7 +1,7 @@
 /** Вікно кімнати завершується через 15 хв після півночі, якщо трансляція вже не йде; наживо — лишається. */
 import { describe, expect, it } from 'vitest';
 import type { StreamSource } from '@/lib/data/types';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
+import { HANDOVER_AFTER } from '@time2fest/rules/time';
 import { registerRecording, setRecordingClock } from '@/lib/player/recordingSync';
 import { windowEndedAt } from '@/lib/room/windowEnd';
 

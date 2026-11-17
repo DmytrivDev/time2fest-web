@@ -8,7 +8,7 @@ import { CelebrationContent } from '@/components/shell/HeaderCelebration';
 import { resetCelebration, useStampCelebration } from '@/components/shell/useStampCelebration';
 import { LiveAnnouncer } from '@/components/primitives/a11y/LiveAnnouncer';
 import { getData } from '@/lib/data/load';
-import { buildStamp } from '@/lib/engine/presence';
+import { buildStamp } from '@/lib/engine/stamp';
 import { emit } from '@/lib/events/bus';
 import type { MomentStamp } from '@/lib/events/types';
 import { TimeProvider } from '@/lib/time/TimeProvider';

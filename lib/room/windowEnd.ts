@@ -4,8 +4,7 @@
  * свята (демо) «йде», доки не дійшов до кінця (`recordingPosition` = `replay`). Чиста логіка без React.
  */
 import type { Event, Ms, StreamSource } from '@/lib/data/types';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
-import { midnightOf } from '@/lib/engine/eventStatus';
+import { handoverMoment, midnightOf } from '@time2fest/rules/time';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { recordingPosition } from '@/lib/player/recordingSync';
 
@@ -24,7 +23,7 @@ export function sourceStillLive(src: StreamSource | undefined, now: Ms): boolean
 /** Момент, відколи вікно вважається завершеним (`null` — ще ні): північ + 15 хв, якщо трансляція вже не йде. */
 export function windowEndedAt(now: Ms, event: EventLike | undefined, src: StreamSource | undefined): Ms | null {
   if (!event) return null;
-  const at = midnightOf(event) + HANDOVER_AFTER;
+  const at = handoverMoment(midnightOf(event));
   if (now < at) return null;
   return sourceStillLive(src, now) ? null : at;
 }

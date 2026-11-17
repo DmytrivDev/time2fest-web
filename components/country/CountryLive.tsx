@@ -45,12 +45,11 @@ import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useLiveData, useViewers } from '@/lib/api/hooks/live';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import type { RoomId } from '@/lib/data/types';
-import { STAMP_DELAY } from '@/lib/engine/config';
+import { eventStatus, stampGrantedAt } from '@time2fest/rules/time';
 import { zoneHasLive } from '@/lib/engine/mainCelebration';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { scrollToBlock } from './scrollToBlock';
 import { useStreamPicker } from '@/components/live/ActionRow';
-import { eventStatus } from '@/lib/engine/eventStatus';
 import { countryZoneEvents } from '@/lib/schedule/countryZone';
 import { useRatingBoard } from '@/lib/api/hooks/rating';
 import { usePresence } from '@/lib/api/hooks/passport';
@@ -99,7 +98,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const { countryRows, streams, nbFilter, nbRows, nbCountdown, nbScheduleCount, changeNbFilter, pickerRows } =
     useCountryStreams({ data, iso, zoneId, minute, mainEvent, select, addToRoom, hasPass, passWindows });
   const recording = !!shownEvent && known && eventStatus(now, shownEvent) === 'recording';
-  const after = !!mainEvent && known && now >= mainEvent.midnightMs + STAMP_DELAY;
+  const after = !!mainEvent && known && now >= stampGrantedAt(mainEvent.midnightMs);
 
   // Графік: запис «країна + пояс» (той самий, що в календариків головної); без пасу — вікно пасу.
   const scheduleIds = useMemo(

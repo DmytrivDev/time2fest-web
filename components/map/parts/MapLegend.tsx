@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import type { ZoneState } from '@/lib/engine/zoneState';
+import type { ZoneState } from '@time2fest/rules/time';
 import '@/components/map/ZoneMap.css';
 
 export interface MapLegendProps {

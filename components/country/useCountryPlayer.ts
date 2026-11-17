@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAddToRoom } from '@/components/room/hooks/useRoomViewport';
 import type { Country, Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
-import { captionPhase } from '@/lib/engine/captionPhase';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
+import { captionPhase, handoverMoment } from '@time2fest/rules/time';
 import { mainLiveLine, mainSourceOf } from '@/lib/engine/mainCelebration';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { countryMainEvent, countryZones, defaultZoneId, type StreamRowData } from '@/lib/live/countryData';
@@ -219,7 +218,7 @@ export function useCountryPlayer({ data, iso, country, now, known, minute }: Arg
           playing: { eventId: playing.id, sourceId: playingSel.source.id, midnightMs: playing.midnightMs },
           manual: manual && !countdown,
           stampHint: false, // рядок підказки про штамп віддає `PlayerBlock` (останні 60 с до півночі)
-          handoverAt: mainEvent.midnightMs + HANDOVER_AFTER,
+          handoverAt: handoverMoment(mainEvent.midnightMs),
         })
       : false;
   const switchToMain = useCallback(() => {

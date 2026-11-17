@@ -28,8 +28,7 @@ import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms } from '@/lib/data/types';
-import { HANDOVER_AFTER } from '@/lib/engine/config';
-import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
+import { isZonePast, zoneState, type ZoneState } from '@time2fest/rules/time';
 import { formatClock, formatCountdown, formatDurationShort, formatTimeForViewer, viewerZoneLabel } from '@/lib/i18n/time';
 import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
 import { fold, getSearchIndex, matchesCityName, matchesCountryName, type SearchIndex } from '@/lib/search/countrySearch';
@@ -97,7 +96,7 @@ function CountryCard({ c, state, zone, hit }: { c: MapCountry; state: ZoneState;
   const locale = useLocale();
   const now = useNow({ granularity: 'minute' });
   const stream = c.streams?.[0];
-  const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
+  const after = state === 'past' || isZonePast(now, zone.midnightMs);
   const kind = !stream ? 'none' : state === 'live' && !after ? 'live' : after ? 'replay' : 'soon';
   // Подія країни в цьому поясі (головна — та, що з трансляцією; інакше перша — лише відлік).
   const eventId = stream?.eventId ?? c.eventIds?.[0];
@@ -152,7 +151,7 @@ function ZoneSummary({ zone, state, total }: { zone: MapZone; state: ZoneState; 
   const locale = useLocale();
   const now = useNow();
   const when = useMidnightPhrase(zone.midnightMs);
-  const after = state === 'past' || now >= zone.midnightMs + HANDOVER_AFTER;
+  const after = state === 'past' || isZonePast(now, zone.midnightMs);
   const streams = total.countries.filter((c) => (c.streams?.length ?? 0) > 0).length;
   return (
     <p className={styles.summary} data-zone-summary="">

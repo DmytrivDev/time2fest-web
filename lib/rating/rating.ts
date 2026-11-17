@@ -14,17 +14,10 @@ import type { RatingAggregate } from '@/lib/api/contracts/rating';
 import type { Dataset, Ms, Stars } from '@/lib/data/types';
 import { isRateable } from '@/lib/passport/passport';
 import { countryHref } from '@/lib/live/countryHref';
+import { isRatingClosed, isRatingOpenFor, ratingCloseAt } from '@time2fest/rules/time';
 
 /** «Довіра» m у формулі (адмінка). */
 export const RATING_TRUST = 200;
-/** Скільки після останнього Нового року ще можна оцінювати (адмінка). */
-export const RATING_CLOSE_AFTER: Ms = 12 * 60 * 60_000;
-/**
- * Святкування з’являється в рейтингу одразу зі штампом — через 15 с після півночі (власник 2026-11-07: «щойно переглянув
- * Лондон — а в рейтингу його немає»). Оцінок спершу мало, тож воно стоїть біля загальної середньої й піднімається чи
- * опускається, поки оцінок більшає.
- */
-export const RATING_OPEN_AFTER: Ms = 15_000;
 
 export interface RatingRow {
   eventId: string;
@@ -70,11 +63,6 @@ export function weighted(mean: number, votes: number, globalMean: number, m = RA
   return (votes * mean + m * globalMean) / (votes + m);
 }
 
-/** Коли закривається оцінювання: 12 год після останньої півночі свята. */
-export function ratingCloseAt(data: Dataset): Ms {
-  return Math.max(...data.zones.map((z) => z.midnightMs)) + RATING_CLOSE_AFTER;
-}
-
 /** Що дає сервіс рейтингу для побудови рядів (`RatingBoard` без часу закриття). */
 export interface RatingAggregates {
   rows: readonly RatingAggregate[];
@@ -107,7 +95,7 @@ export function buildRatingState(data: Dataset, now: Ms, agg: RatingAggregates):
       };
     });
   const ahead = data.events
-    .filter((e) => isRateable(data, e.id) && now < e.midnightMs + RATING_OPEN_AFTER)
+    .filter((e) => isRateable(data, e.id) && !isRatingOpenFor(now, e.midnightMs))
     .sort((a, b) => a.midnightMs - b.midnightMs)
     .map((e) => ({
       eventId: e.id,
@@ -116,5 +104,5 @@ export function buildRatingState(data: Dataset, now: Ms, agg: RatingAggregates):
       midnightMs: e.midnightMs,
     }));
   const closeAt = ratingCloseAt(data);
-  return { rows, ahead, totalVotes: agg.totalVotes, closeAt, closed: now >= closeAt };
+  return { rows, ahead, totalVotes: agg.totalVotes, closeAt, closed: isRatingClosed(now, data) };
 }

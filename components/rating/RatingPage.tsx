@@ -28,7 +28,7 @@ import { useStamps } from '@/lib/api/hooks/passport';
 import { getData } from '@/lib/data/load';
 import { formatClock, formatCountdown, viewerTimeZone } from '@/lib/i18n/time';
 import { ratingActions, useMyVotes, useRatingBoard } from '@/lib/api/hooks/rating';
-import { RATING_OPEN_AFTER } from '@/lib/rating/rating';
+import { isRatingOpenFor } from '@time2fest/rules/time';
 import { isRateable } from '@/lib/passport/passport';
 import { useNow, useTimeReady } from '@/lib/time/TimeProvider';
 import s from './rating.module.css';
@@ -66,7 +66,7 @@ export function RatingPage() {
         .filter((id, i, arr) => arr.indexOf(id) === i)
         .filter((id) => {
           const e = data.eventsById.get(id);
-          return !!e && isRateable(data, id) && minute >= e.midnightMs + RATING_OPEN_AFTER && (myVotes[id] === undefined || ratedHere.includes(id));
+          return !!e && isRateable(data, id) && isRatingOpenFor(minute, e.midnightMs) && (myVotes[id] === undefined || ratedHere.includes(id));
         })
     : [];
   const waiting = toRate.filter((id) => myVotes[id] === undefined).length;

@@ -33,7 +33,7 @@ import { useOptionalBroadcast } from '@/lib/player/BroadcastController';
 import { MORE_ACTIONS_ID, MoreActionsDesk, MoreActionsList, REPORT_ID, ReportProblem, type ShareTarget } from './MoreActions';
 import { STREAM_PICKER_ID, StreamPicker } from './StreamPicker';
 import { useShareStream } from './useShareStream';
-import type { CaptionButton } from '@/lib/engine/captionPhase';
+import type { CaptionButton } from '@time2fest/rules/time';
 import type { StreamRowData } from '@/lib/live/countryData';
 import home from './home.module.css';
 import nn from './nowNext.module.css';

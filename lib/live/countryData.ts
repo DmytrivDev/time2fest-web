@@ -7,8 +7,7 @@
  * - після `RECORDING_AFTER` статус рядка — `recording` («Запис»).
  */
 import type { CelebrationType, Country, Dataset, LoadedZone, Ms, ScheduledEvent, StreamSource } from '@/lib/data/types';
-import { RECORDING_AFTER } from '@/lib/engine/config';
-import { eventStatus } from '@/lib/engine/eventStatus';
+import { defaultCountryZone, eventStatus } from '@time2fest/rules/time';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
 import { countryHref } from '@/lib/player/BroadcastController';
 
@@ -51,7 +50,7 @@ export function countryZones(data: Dataset, country: Pick<Country, 'iso' | 'zone
 export function defaultZoneId(data: Dataset, country: Pick<Country, 'iso' | 'zoneIds'>, now?: Ms): string | null {
   const zones = countryZones(data, country);
   if (now !== undefined && now > 0 && zones.length > 1) {
-    return (zones.find((z) => z.midnightMs + RECORDING_AFTER > now) ?? zones.at(-1))?.id ?? null;
+    return defaultCountryZone(now, zones)?.id ?? null;
   }
   const capital = CAPITAL_CITY[country.iso];
   const capitalZone = capital ? data.citiesById.get(capital)?.zoneId : undefined;

@@ -11,6 +11,7 @@
  *   Штамп, старший за 30 хв, — без свята (лише +1 на дзвіночку).
  */
 import type { Gender, Ms } from '@/lib/data/types';
+import { isStampTooOldToCelebrate } from '@time2fest/rules/time';
 
 /** Заливка золотом зліва направо. */
 export const FILL_MS = 400;
@@ -24,8 +25,6 @@ export const CELEBRATION_MS = 10_000;
 export const REDUCED_CELEBRATION_MS = 9_000;
 /** Аватар один раз світиться золотом після свята. */
 export const AVATAR_GLOW_MS = 1_500;
-/** Штамп, старший за це (повернулись пізно), — без свята, лише +1 на дзвіночку. */
-export const CATCH_UP_MAX_AGE_MS = 30 * 60_000;
 /** Штамп прийшов за стільки (реальних) мс після повернення на вкладку — це «Поки тебе не було» (такт проспав північ). */
 export const RETURN_GRACE_MS = 3_000;
 /** Підказка «Будь тут опівночі — отримаєш штамп» — останні 60 с до півночі. */
@@ -78,7 +77,7 @@ function fresh(stamps: readonly CelebrationStamp[], now: Ms): CelebrationStamp[]
   const seen = new Set<string>();
   const out: CelebrationStamp[] = [];
   for (const s of stamps) {
-    if (seen.has(s.eventId) || now - s.grantedAt > CATCH_UP_MAX_AGE_MS) continue;
+    if (seen.has(s.eventId) || isStampTooOldToCelebrate(now, s.grantedAt)) continue;
     seen.add(s.eventId);
     out.push(s);
   }

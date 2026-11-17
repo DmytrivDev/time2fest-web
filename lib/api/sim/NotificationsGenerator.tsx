@@ -16,7 +16,7 @@ import { useChatFeed } from '@/lib/chat-sim/store';
 import { countryHref as countryPageHref } from '@/lib/live/countryHref';
 import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
-import { HOWTO_BEFORE } from '@/lib/engine/config';
+import { isInReminderWindow } from '@time2fest/rules/time';
 import { formatClock } from '@/lib/i18n/time';
 import { useClock, useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
@@ -81,7 +81,7 @@ export function NotificationsGenerator() {
     for (const id of schedule) {
       const e = data.eventsById.get(id);
       if (!e) continue;
-      if (now >= e.midnightMs - HOWTO_BEFORE && now < e.midnightMs + HOWTO_BEFORE) {
+      if (isInReminderWindow(now, e.midnightMs)) {
         const city = data.citiesById.get(e.cityId)?.name.uk ?? '';
         const country = data.countriesByIso.get(e.countryIso)?.name.uk ?? '';
         push({ id: `live:${id}`, kind: 'live', params: { city, country, time: formatClock(e.midnightMs) }, href: countryHref(e.countryIso, e.id), flag: e.countryIso, createdAt: now });

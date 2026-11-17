@@ -11,7 +11,8 @@ import type { RatingAggregate, RatingBoard, RatingService } from '../contracts/r
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, Stars } from '@/lib/data/types';
 import { isRateable } from '@/lib/passport/passport';
-import { buildRatingState, ratingCloseAt, RATING_OPEN_AFTER, weighted, type RatingAggregates, type RatingState } from '@/lib/rating/rating';
+import { buildRatingState, weighted, type RatingAggregates, type RatingState } from '@/lib/rating/rating';
+import { isRatingOpenFor, ratingCloseAt } from '@time2fest/rules/time';
 import { useGuestStore } from '@/stores/guest';
 
 const GROW: Ms = 3 * 60 * 60_000;
@@ -44,7 +45,7 @@ export function minesOf(rate: Readonly<Record<string, { stars?: Stars } | undefi
 
 /** Що порахував би сервер: відкриті святкування з оцінками світу + оцінка людини, зважена оцінка й місце. */
 export function simAggregates(data: Dataset, now: Ms, mine: Readonly<Record<string, Stars>>): RatingAggregates {
-  const open = data.events.filter((e) => isRateable(data, e.id) && now >= e.midnightMs + RATING_OPEN_AFTER);
+  const open = data.events.filter((e) => isRateable(data, e.id) && isRatingOpenFor(now, e.midnightMs));
   const base = open.map((e) => {
     const w = worldVotes(e.id, e.popularity, e.midnightMs, now);
     const own = mine[e.id];

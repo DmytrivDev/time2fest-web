@@ -8,7 +8,7 @@
  * Тости загальні — без прив’язки до міста: однакові на головній, сторінці країни й у кімнаті.
  */
 import type { Ms } from '@/lib/data/types';
-import { CELEBRATION_TAIL } from '@/lib/engine/celebration';
+import { pinnedUntilAt } from '@time2fest/rules/time';
 import { tierGreets, tierPins, type ToastTier } from './tiers';
 
 export interface ToastRecord {
@@ -42,34 +42,12 @@ export const ROTATE_MS = 6_000;
 /** Згорнутий чат на телефоні показує новий тост ≈10 с. */
 export const DOCK_TOAST_MS = 10_000;
 
-/** Перша північ поясу строго після `at` (`midnights` — за зростанням); немає — `null`. */
-export function nextMidnightAfter(at: Ms, midnights: readonly Ms[]): Ms | null {
-  for (const m of midnights) if (m > at) return m;
-  return null;
-}
-
-/** Остання північ поясу не пізніше `at`; немає — `null`. */
-export function prevMidnightAtOrBefore(at: Ms, midnights: readonly Ms[]): Ms | null {
-  let out: Ms | null = null;
-  for (const m of midnights) {
-    if (m > at) break;
-    out = m;
-  }
-  return out;
-}
-
 /**
  * До якої миті тост закріплено під трансляцією (`null` — не закріплюється: $2 чи свято вже скінчилось). Тост після
  * останньої півночі закріплюється до кінця свята (`midnights` — за зростанням).
  */
 export function pinnedUntil(t: Pick<ToastRecord, 'tier' | 'createdAt'>, midnights: readonly Ms[]): Ms | null {
-  if (!tierPins(t.tier)) return null;
-  const next = nextMidnightAfter(t.createdAt, midnights);
-  if (next !== null) return next;
-  const last = midnights[midnights.length - 1];
-  if (last === undefined) return null;
-  const end = last + CELEBRATION_TAIL;
-  return t.createdAt < end ? end : null;
+  return tierPins(t.tier) ? pinnedUntilAt(t.createdAt, midnights) : null;
 }
 
 export interface StripItem {

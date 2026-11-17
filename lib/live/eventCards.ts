@@ -1,5 +1,5 @@
 import type { EventStatus } from '@/lib/data/types';
-import { eventStatus } from '@/lib/engine/eventStatus';
+import { eventStatus } from '@time2fest/rules/time';
 import type { EventCardData } from '@/components/live/EventCard';
 
 export interface EventCardItem extends EventCardData {

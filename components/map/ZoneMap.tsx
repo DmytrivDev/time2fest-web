@@ -6,7 +6,7 @@ import { cn } from '@/components/primitives/cn';
 import { SegmentedControl } from '@/components/primitives/SegmentedControl';
 import { Skeleton } from '@/components/primitives/Skeleton';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
-import { zoneState, type ZoneState } from '@/lib/engine/zoneState';
+import { zoneState, type ZoneState } from '@time2fest/rules/time';
 import { useNow } from '@/lib/time/TimeProvider';
 import { MapLegend } from './parts/MapLegend';
 import { MapGestureHint } from './parts/MapGestureHint';

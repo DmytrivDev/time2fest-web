@@ -1,6 +1,6 @@
 /** Свято йде (рішення власника 2026-11-08, кінець — 2026-11-14): від 2 год до першої півночі до 2 год після останньої. */
 import { describe, expect, it } from 'vitest';
-import { CELEBRATION_LEAD, CELEBRATION_TAIL, isCelebrating } from '@/lib/engine/celebration';
+import { CELEBRATION_LEAD, CELEBRATION_TAIL, isCelebrating } from '@time2fest/rules/time';
 
 const H = 60 * 60 * 1_000;
 const data = { zones: [{ midnightMs: 10 * H }, { midnightMs: 20 * H }, { midnightMs: 36 * H }] } as never;

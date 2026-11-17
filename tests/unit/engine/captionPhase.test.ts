@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { captionPhase } from '@/lib/engine/captionPhase';
+import { captionPhase } from '@time2fest/rules/time';
 import { event, LONDON_MIDNIGHT, MIN, RIO_MIDNIGHT, SEC } from '../fixtures/data';
 
 const london = event('london', LONDON_MIDNIGHT);

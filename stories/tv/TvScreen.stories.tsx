@@ -10,7 +10,7 @@ import { TvStreamsNow } from '@/components/tv/TvPanels';
 import { TvStampCard } from '@/components/tv/TvStampCard';
 import { TvTimelineCard } from '@/components/tv/TvTimelineCard';
 import { getData } from '@/lib/data/load';
-import { buildStamp } from '@/lib/engine/presence';
+import { buildStamp } from '@/lib/engine/stamp';
 import { BroadcastContext, computeBroadcast, type BroadcastState } from '@/lib/player/BroadcastController';
 import { tvTimeline, zoneLiveRows } from '@/lib/tv/tvData';
 import { useGuestStore } from '@/stores/guest';

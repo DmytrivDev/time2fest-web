@@ -5,30 +5,8 @@
 const SEC = 1_000;
 const MIN = 60 * SEC;
 
-/** «Як святкувати» — за 15 хв до півночі. */
-export const HOWTO_BEFORE = 15 * MIN;
-/** Штамп і системне повідомлення — через 15 с після півночі. */
-export const STAMP_DELAY = 15 * SEC;
-/** Оцінка відкривається через 5 хв після півночі (рішення власника 2026-11-01: о +2 хв ще йде салют)… */
-export const RATE_OPEN_AFTER = 5 * MIN;
-/** …і триває 3 хв (закрито о +5 хв, якщо гість не взаємодіє). */
-export const RATE_DURATION = 3 * MIN;
-/** Пропозиції — не раніше ніж через 5 хв після події… */
-export const OFFER_MIN_AFTER = 5 * MIN;
-/** …і не пізніше ніж за 10 хв до наступної. */
-export const OFFER_MIN_BEFORE_NEXT = 10 * MIN;
-/** Ефір переходить до наступної події через 15 хв після півночі. */
-export const HANDOVER_AFTER = 15 * MIN;
-/** «Остання хвилина» — з +14 хв. */
-export const LAST_MINUTE_FROM = 14 * MIN;
-/** «Запис» після півночі. **Припущення** (data-model 1.4). */
-export const RECORDING_AFTER = 30 * MIN;
 /** «Швидкий стрибок» машини часу «наступна подія»: північ наступного слота − 22 хв. */
 export const NEXT_EVENT_JUMP = -22 * MIN;
 
-// ── Допоміжні (не з таблиці data-model; уточнення реалізації) ─────────────
-
-/** «відео може запізнюватися» — з −5 хв до +15 с (таблиця фаз 3.2). */
-export const DELAY_NOTICE_FROM = 5 * MIN;
 /** Пауза після останнього натискання клавіші в чаті, до якої пропозиції не з’являються (~10 с). */
 export const TYPING_QUIET = 10 * SEC;

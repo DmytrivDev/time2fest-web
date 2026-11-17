@@ -1,4 +1,4 @@
-import type { Event, Ms } from '@/lib/data/types';
+import type { EventLike, Ms } from './types';
 import {
   HANDOVER_AFTER,
   HOWTO_BEFORE,
@@ -7,8 +7,8 @@ import {
   RATE_DURATION,
   RATE_OPEN_AFTER,
   STAMP_DELAY,
-} from './config';
-import { midnightOf } from './eventStatus';
+} from './constants';
+import { midnightOf } from './event';
 
 export interface MomentTimeline {
   eventId: string;
@@ -25,7 +25,7 @@ export interface MomentTimeline {
 export type MomentStage = 'pre' | 'awaiting-stamp' | 'stamp' | 'rate' | 'after-rate';
 
 /** `data-model.md` 3.3: усі моменти події від `midnightUtc`. */
-export function momentTimeline(event: Pick<Event, 'id' | 'midnightUtc'> & { midnightMs?: Ms }): MomentTimeline {
+export function momentTimeline(event: EventLike): MomentTimeline {
   const t0 = midnightOf(event);
   const rateOpenAt = t0 + RATE_OPEN_AFTER;
   return {

@@ -23,6 +23,7 @@ import type {
   SystemPayload,
 } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
+import { stampGrantedAt } from '@time2fest/rules/time';
 import { getData } from '@/lib/data/load';
 import { ratingState } from '@/lib/api/sim/rating';
 import type { ToastRecord } from '@/lib/toast/feed';
@@ -92,7 +93,7 @@ export interface MomentData {
  */
 export function buildMomentContexts(data: MomentData): MomentContext[] {
   return airSlots(data).map((slot) => {
-    const pick = pickSlotEvent(slot.midnightMs + 15_000, slot.events, data.countriesByIso, data.chainsByEventId);
+    const pick = pickSlotEvent(stampGrantedAt(slot.midnightMs), slot.events, data.countriesByIso, data.chainsByEventId);
     const event: Pick<Event, 'id' | 'cityId' | 'countryIso'> = pick?.event ?? slot.events[0]!;
     return {
       t0: slot.midnightMs,
