@@ -125,6 +125,7 @@ export async function main(argv, deps = {}) {
 
     const current = await readCurrent(api, ids, desired, redactor);
     const changes = diff(desired, current);
+    if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');
     if (!changes.length) out('без змін');
     for (const c of changes) out(`${c.op.padEnd(6)} ${c.kind}: ${c.summary}`);
     // Ті самі вердикти запобіжника, що й в apply; plan нічого не змінює, тож код 0.

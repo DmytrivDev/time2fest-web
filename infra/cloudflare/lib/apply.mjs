@@ -84,6 +84,7 @@ export async function runApply(ctx) {
   try {
     // Читання під замком: другий apply бачить результат першого.
     const current = await readCurrent(ctx.api, ctx.ids, ctx.desired, ctx.redactor);
+    if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');
     const changes = diff(ctx.desired, current);
 
     const verdict = guard(changes, ctx.flags);
