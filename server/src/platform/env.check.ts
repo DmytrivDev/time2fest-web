@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseAccessConfig } from '../domain/access/config';
+import { parseRealtimeConfig } from '../domain/realtime/config';
 import { envRegistry } from '../registries/env';
 import { loadEnv } from './env';
 
@@ -20,6 +21,12 @@ if (!result.ok) {
 const access = parseAccessConfig(process.env, result.class);
 if (!access.ok) {
   console.error(`env: invalid ${access.failing.join(', ')}`);
+  process.exit(1);
+}
+// Realtime settings (SPEC-06 AC-11, AC-20): a bad channel prefix, or no Centrifugo URL outside test.
+const realtime = parseRealtimeConfig(process.env, result.class);
+if (!realtime.ok) {
+  console.error(`env: invalid ${realtime.failing.join(', ')}`);
   process.exit(1);
 }
 console.log(`env: ok (${result.class})`);

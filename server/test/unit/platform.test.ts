@@ -31,6 +31,8 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     T2F_R2_PREFIX: 'spec_02_server_skeleton/',
     T2F_R2_ACCESS_KEY_ID: 't2f-local',
     T2F_R2_SECRET_ACCESS_KEY: 't2f-local-secret-0000', // check-secrets: allow fake local R2 key for the env loader unit test
+    T2F_CENTRIFUGO_API_KEY: 'centrifugo-api-key-unit-test-0000000000', // check-secrets: allow test fake
+    T2F_CENTRIFUGO_TOKEN_SECRET: 'centrifugo-token-secret-unit-test-000000', // check-secrets: allow test fake
     ...over,
   };
 }
