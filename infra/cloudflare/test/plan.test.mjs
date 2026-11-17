@@ -85,11 +85,12 @@ describe('plan', () => {
     expect(fake.log).toEqual([]);
   });
 
-  it('apply у P7: not implemented, код 1, жодного запиту', async () => {
+  it('apply без токена: код 1, названа змінна, жодного запиту (AC-44)', async () => {
     const fake = createFakeApi();
-    const r = await run(fake, baseEnv(), ['apply', '--env', 'test']);
+    const { CLOUDFLARE_API_TOKEN_INFRA: _t, ...env } = baseEnv();
+    const r = await run(fake, env, ['apply', '--env', 'test']);
     expect(r.code).toBe(1);
-    expect(r.text).toContain('not implemented');
+    expect(r.text).toContain('CLOUDFLARE_API_TOKEN_INFRA');
     expect(fake.log).toEqual([]);
   });
 

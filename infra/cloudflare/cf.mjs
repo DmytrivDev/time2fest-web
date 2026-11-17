@@ -1,15 +1,21 @@
 // @ts-check
 // Інфраструктура Cloudflare за описом: `node cf.mjs plan|apply --env test`.
-// Нуль залежностей. `plan` лише читає (GET). `apply` підключається в P8.
+// Нуль залежностей. `plan` лише читає (GET); `apply` змінює під замком `cloudflare` після запобіжника.
 import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { ApiRefusal, createApi } from './lib/api.mjs';
+import { runApply, takeCloudflareLock } from './lib/apply.mjs';
 import { ENVS, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
 import { readCurrent } from './lib/current.mjs';
 import { desiredState } from './lib/desired.mjs';
 import { diff } from './lib/diff.mjs';
+import { describeRefusals, guard } from './lib/guard.mjs';
 import { createRedactor } from './lib/redact.mjs';
+
+/** Тека для токенів тунелів (у .gitignore). */
+const LOCAL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '.local');
 
 /**
  * @param {string[]} argv
@@ -46,7 +52,15 @@ function parseArgs(argv) {
 
 /**
  * @param {string[]} argv
- * @param {{ env?: Record<string, string | undefined>, fetch?: typeof globalThis.fetch, out?: (line: string) => void, now?: () => Date }} [deps]
+ * @param {{
+ *   env?: Record<string, string | undefined>,
+ *   fetch?: typeof globalThis.fetch,
+ *   out?: (line: string) => void,
+ *   now?: () => Date,
+ *   localDir?: string,
+ *   desiredState?: typeof desiredState,
+ *   acquireLock?: () => Promise<{ release: () => Promise<void> }>,
+ * }} [deps] `localDir`, `desiredState`, `acquireLock` — лише для тестів
  * @returns {Promise<number>} код виходу
  */
 export async function main(argv, deps = {}) {
@@ -69,11 +83,6 @@ export async function main(argv, deps = {}) {
     out(`потрібен --env <${Object.keys(ENVS).join('|')}>`);
     return 1;
   }
-  if (args.command === 'apply') {
-    out('apply: not implemented');
-    return 1;
-  }
-
   if (args.secretsFile) {
     try {
       const parsed = parseEnv(readFileSync(args.secretsFile, 'utf8'));
@@ -95,16 +104,31 @@ export async function main(argv, deps = {}) {
 
   try {
     const api = createApi({ env, fetch: deps.fetch });
-    const desired = desiredState([args.env], { underAttack: args.underAttack });
-    const current = await readCurrent(
-      api,
-      { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) },
-      desired,
-      redactor,
-    );
+    const desired = (deps.desiredState ?? desiredState)([args.env], { underAttack: args.underAttack });
+    const ids = { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) };
+    const flags = { allowMainDomain: args.allowMainDomain, allowZoneSettings: args.allowZoneSettings, allowDelete: args.allowDelete };
+
+    if (args.command === 'apply') {
+      return await runApply({
+        api,
+        ids,
+        envName: args.env,
+        desired,
+        flags,
+        redactor,
+        out,
+        now: deps.now ?? (() => new Date()),
+        localDir: deps.localDir ?? LOCAL_DIR,
+        acquireLock: deps.acquireLock ?? (() => takeCloudflareLock(env)),
+      });
+    }
+
+    const current = await readCurrent(api, ids, desired, redactor);
     const changes = diff(desired, current);
     if (!changes.length) out('без змін');
     for (const c of changes) out(`${c.op.padEnd(6)} ${c.kind}: ${c.summary}`);
+    // Ті самі вердикти запобіжника, що й в apply; plan нічого не змінює, тож код 0.
+    for (const line of describeRefusals(guard(changes, flags).refused)) out(line);
     return 0;
   } catch (e) {
     if (e instanceof ApiRefusal) {

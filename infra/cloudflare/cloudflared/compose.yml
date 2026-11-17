@@ -1,0 +1,12 @@
+# Локальний cloudflared для тунелю середовища (типово test). Запуск: `pnpm edge:tunnel:up` / `pnpm edge:tunnel:down`.
+# Образ — лише закріплений тег (CLOUDFLARED_IMAGE), записаний у docs/services/cloudflare.md.
+# Токен тунелю — лише з файлу поза git (`infra/cloudflare/.local/tunnel-<env>.env`, пише `cf.mjs apply`);
+# тут секретів немає, жоден порт не публікується (cloudflared лише виходить назовні).
+services:
+  cloudflared:
+    image: ${CLOUDFLARED_IMAGE:?set CLOUDFLARED_IMAGE to a pinned cloudflare/cloudflared tag}
+    command: tunnel --no-autoupdate run
+    env_file: ../.local/tunnel-${T2F_EDGE_ENV:-test}.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: "no"
