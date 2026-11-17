@@ -16,7 +16,7 @@ import { createDispatcher } from './endpoints/pipeline';
 import type { AppEnv, Deps, RouteRow } from './endpoints/types';
 import { loadEnv, type RawEnv } from './platform/env';
 import { createAlarm, createLogger } from './platform/logger';
-import type { LockState, SeedStore } from './ports';
+import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { middlewareRegistry } from './registries/middleware';
 import { routeRegistry } from './registries/routes';
@@ -55,13 +55,34 @@ export function createLockState(dir?: string, raw: RawEnv = process.env): LockSt
   };
 }
 
+/**
+ * An idle pooled client that loses its connection (Postgres restart, code 57P01) emits `error` on
+ * the pool; with no listener Node treats it as an unhandled error and the process dies. The
+ * listener only raises a log-level alarm (code only, never the message): the dead client is
+ * dropped by `pg`, and the next query fails and surfaces as `unavailable` (AC-72).
+ */
+export function guardPool(payload: Payload, alarm: Alarm): void {
+  const pool = (payload.db as unknown as { pool?: { on?: (ev: 'error', fn: (err: unknown) => void) => unknown } }).pool;
+  pool?.on?.('error', (err: unknown) => {
+    const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+    alarm.raise({
+      level: 'log',
+      source: 'postgres',
+      code: 'pool_client_error',
+      details: { pgCode: typeof code === 'string' ? code : 'unknown' },
+    });
+  });
+}
+
 /** Lazy Payload: initialised once on first use; a failed start is retried on the next call. */
-function lazyPayload(): () => Promise<Payload> {
+function lazyPayload(alarm: Alarm): () => Promise<Payload> {
   let pending: Promise<Payload> | undefined;
   return () => {
     pending ??= (async () => {
       const [{ getPayload }, { default: config }] = await Promise.all([import('payload'), import('@payload-config')]);
-      return getPayload({ config });
+      const payload = await getPayload({ config });
+      guardPool(payload, alarm);
+      return payload;
     })().catch((err: unknown) => {
       pending = undefined;
       throw err;
@@ -76,12 +97,13 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
   const env: AppEnv = { class: loaded.class, vars: loaded.env };
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
-  const payload = overrides.payload ?? lazyPayload();
+  const alarm = overrides.alarm ?? createAlarm(log);
+  const payload = overrides.payload ?? lazyPayload(alarm);
   const deps: Deps = {
     env,
     clock: overrides.clock ?? clockFor(env.class),
     log,
-    alarm: overrides.alarm ?? createAlarm(log),
+    alarm,
     lockState: overrides.lockState ?? createLockState(undefined, raw),
     redis: overrides.redis ?? createRedisStore(env.vars),
     // Windows of the in-process fallback run on real time, like Redis expiry.
