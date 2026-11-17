@@ -1,5 +1,8 @@
 // @ts-check
-import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
 import { desiredState } from '../lib/desired.mjs';
 import { diff, hostsOf } from '../lib/diff.mjs';
@@ -16,11 +19,15 @@ const baseEnv = () => ({
   CLOUDFLARE_ZONE_ID: 'zone-test',
 });
 
+// Тека `.local` тимчасова: тест не читає й не пише справжню infra/cloudflare/.local.
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cf-plan-'));
+afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
+
 /** @param {ReturnType<typeof createFakeApi>} fake @param {Record<string, string | undefined>} env @param {string[]} [argv] */
 async function run(fake, env, argv = ['plan', '--env', 'test']) {
   /** @type {string[]} */
   const lines = [];
-  const code = await main(argv, { env: { ...env }, fetch: fake.fetch, out: (l) => lines.push(l) });
+  const code = await main(argv, { env: { ...env }, fetch: fake.fetch, out: (l) => lines.push(l), localDir: path.join(tmp, '.local') });
   return { code, lines, text: lines.join('\n') };
 }
 

@@ -1,0 +1,10 @@
+# Вузол реального часу (профіль, SPEC-13a W10): лише cloudflared — друга репліка
+# того самого тунелю. Без `ports:`.
+services:
+  cloudflared:
+    # cloudflare/cloudflared (той самий дайджест, що в compose.yml)
+    image: cloudflare/cloudflared@sha256:b94b96edf2c9c4360f8879c8580cfaa99077f19c849ec595ca2f711b27d4f344
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    env_file: cloudflared.env
+    mem_limit: 128m
