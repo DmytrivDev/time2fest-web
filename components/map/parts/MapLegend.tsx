@@ -5,6 +5,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import type { ZoneState } from '@time2fest/rules/time';
 import '@/components/map/ZoneMap.css';
+import { useMapPrefest } from '@/components/map/mapPrefest';
 
 export interface MapLegendProps {
   /**
@@ -34,6 +35,9 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
   const row = variant === 'row';
   const t = useTranslations('liveMap.legend');
   const tNav = useTranslations('nav');
+  // «До свята»: лише найближча північ і пояси попереду; трансляцій ще немає.
+  const prefest = useMapPrefest() !== null;
+  const states = prefest ? STATES.filter((x) => x.state === 'next' || x.state === 'future') : STATES;
   return (
     <ul
       aria-label={tNav('legend')}
@@ -50,7 +54,7 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
         className,
       )}
     >
-      {STATES.map(({ state, sw }) => (
+      {states.map(({ state, sw }) => (
         <li key={state} className={cn('flex items-center', column ? 'gap-2.5' : 'gap-2')}>
           <span aria-hidden="true" data-sw={sw} className="t2f-zm-sw">
             {state === 'live' ? <span className={cn('rounded-full bg-background', column ? 'size-1.5' : 'size-1.25')} /> : null}
@@ -66,6 +70,7 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
         </span>
         {t('city')}
       </li>
+      {prefest ? null : (
       <li className={cn('flex items-center', column ? 'gap-2.5' : 'gap-2')}>
         <span aria-hidden="true" className={cn('relative inline-flex flex-none items-center justify-center', column ? 'h-4.5 w-7' : 'h-3.5 w-5.5')}>
           <span className="t2f-zm-halo size-2.5" />
@@ -73,6 +78,7 @@ export function MapLegend({ variant = 'grid', className }: MapLegendProps) {
         </span>
         {t('stream')}
       </li>
+      )}
     </ul>
   );
 }

@@ -418,3 +418,29 @@
     transition: none;
   }
 }
+
+/* «До свята» (головна `/before`): замість кімнати країни — «Сторінка країни» (лише з описом) і «Додати в календар». */
+.prefestActs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.prefestBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.prefestBtn:hover {
+  background: var(--color-surface-raised);
+}

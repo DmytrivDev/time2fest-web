@@ -1,0 +1,78 @@
+/* Стрічка поясів (шаблон: .tline). */
+.tline {
+  position: relative;
+  padding-top: 34px;
+  padding-bottom: 40px;
+}
+.segs {
+  display: flex;
+  gap: 3px;
+}
+.segs i {
+  flex: 1;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--color-border);
+}
+.segs i.b {
+  background: var(--color-zone-future);
+}
+.segs i.me {
+  background: var(--color-highlight);
+  height: 16px;
+  margin-top: -3px;
+  border-radius: 3px;
+}
+.mk {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.2;
+}
+.mk::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 8px;
+  background: var(--color-border-strong);
+  margin: 4px auto 0;
+}
+.you {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-highlight);
+  white-space: nowrap;
+}
+.you::before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-bottom-color: var(--color-highlight);
+  margin: 0 auto 2px;
+}
+.mkBar {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+.youSk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 1023.98px) {
+  .opt {
+    display: none;
+  }
+}

@@ -1,0 +1,127 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s;
+}
+.card:hover {
+  border-color: var(--color-border-strong);
+}
+.card:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+.ph {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--color-background);
+}
+.chipPos {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 1;
+}
+.body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.when {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.when b {
+  color: var(--color-highlight);
+  font-weight: 700;
+}
+.trad {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.soon {
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  background: transparent;
+  justify-content: center;
+  padding: 28px;
+  gap: 12px;
+}
+.soon:hover {
+  border-color: var(--color-border-strong);
+}
+.soon b {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.soon > span:not(.stack) {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.stack {
+  display: flex;
+}
+.stack > span {
+  display: block;
+  border-radius: 50%;
+  border: 2px solid var(--color-background);
+  margin-right: -8px;
+  line-height: 0;
+}
+@media (max-width: 1023.98px) {
+  .grid,
+  .two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767.98px) {
+  .grid,
+  .two {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin: 24px -16px 0;
+    padding: 0 16px;
+  }
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+  .grid > * {
+    scroll-snap-align: start;
+  }
+}
+.skel {
+  display: inline-block;
+  vertical-align: middle;
+}

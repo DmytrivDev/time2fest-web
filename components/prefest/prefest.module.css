@@ -1,0 +1,219 @@
+/*
+ * Головна «до свята» (`/before`, дизайн v3 від 2026-11-17): спільні класи блоків — контейнер, секція, заголовки,
+ * кнопки, посилання. Кольори — лише токени (`styles/tokens.css`); px стають rem під час збірки (16 px = 1 rem).
+ */
+
+.page {
+  min-height: 100dvh;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.page h1,
+.page h2,
+.page h3,
+.page p {
+  margin: 0;
+}
+.page h1,
+.page h2,
+.page h3 {
+  text-wrap: balance;
+}
+.page [id] {
+  scroll-margin-top: 56px;
+}
+
+/* Контейнер 1440 з полями 32 (телефон — 16). */
+.wrap {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(var(--spacing-content-max) + 64px);
+  margin: 0 auto;
+  padding-left: max(32px, env(safe-area-inset-left, 0px));
+  padding-right: max(32px, env(safe-area-inset-right, 0px));
+}
+/* Брейкпойнти сайту: t1024 (до 1199), t834 (до 1023), p390 (до 767). */
+@media (max-width: 1199.98px) {
+  .wrap {
+    padding-left: max(28px, env(safe-area-inset-left, 0px));
+    padding-right: max(28px, env(safe-area-inset-right, 0px));
+  }
+}
+@media (max-width: 767.98px) {
+  .wrap {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Секція під банером: відступ згори 96. */
+.sec {
+  padding-top: 96px;
+}
+@media (max-width: 1199.98px) {
+  .sec {
+    padding-top: 80px;
+  }
+}
+@media (max-width: 767.98px) {
+  .sec {
+    padding-top: 64px;
+  }
+}
+.h2 {
+  font-size: 34px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 767.98px) {
+  .h2 {
+    font-size: 27px;
+  }
+  .intro {
+    font-size: 15px;
+  }
+}
+.kicker {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 12px !important;
+}
+.intro {
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  margin-top: 12px !important;
+  max-width: 640px;
+}
+.secHead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* Посилання «… ›». */
+.link {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.link:hover {
+  color: var(--color-highlight);
+}
+
+/* Кнопки дизайну: 48 px (мала — 40). */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn svg {
+  flex: none;
+}
+.btnCoral {
+  background: var(--color-primary-fill);
+  color: var(--color-on-primary);
+}
+.btnCoral:hover {
+  background: var(--color-primary-fill-hover);
+}
+.btnGhost {
+  background: color-mix(in srgb, var(--color-background) 40%, transparent);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+.btnGhost:hover {
+  background: var(--color-surface-raised);
+}
+.btnSm {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+.cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Круглі кнопки (стрілки слайдера, «×»). */
+.roundBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+.roundBtn:hover {
+  background: var(--color-surface-raised);
+}
+.roundBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Плашка-заглушка «стокове відео» / «фото — сток». */
+.chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: color-mix(in srgb, var(--color-background) 70%, transparent);
+  border-radius: var(--radius-full);
+  padding: 3px 8px;
+}
+
+/* Тост (заглушки: ролик, мова). */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-size: 14px;
+  z-index: 70;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  max-width: calc(100% - 32px);
+}
+.toastOn {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}

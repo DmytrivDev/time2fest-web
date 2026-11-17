@@ -1,0 +1,80 @@
+/* Скелетон `/before`: розміри банера й розкладу — як у `PrefestHero` і `ScheduleRail`. */
+.hero {
+  position: relative;
+  min-height: 700px;
+  background: var(--color-surface);
+}
+.bar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+.logo {
+  display: block;
+  width: 112px;
+  height: auto;
+  opacity: 0.6;
+}
+.heroGrid {
+  padding-top: 86px;
+  padding-bottom: 210px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: end;
+}
+.row {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.cd {
+  justify-self: end;
+  display: flex;
+  gap: 10px;
+}
+.sched {
+  position: relative;
+  margin-top: -170px;
+}
+.cards {
+  display: flex;
+  gap: 16px;
+  margin-top: 22px;
+  overflow: hidden;
+}
+.card {
+  flex: 0 0 calc((100% - 64px) / 4.5);
+}
+@media (max-width: 1023.98px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-bottom: 190px;
+  }
+  .cd {
+    justify-self: start;
+  }
+  .card {
+    flex-basis: calc((100% - 32px) / 2.4);
+  }
+}
+@media (max-width: 767.98px) {
+  .hero {
+    min-height: 0;
+  }
+  .bar {
+    height: 56px;
+  }
+  .heroGrid {
+    padding-top: 36px;
+    padding-bottom: 150px;
+  }
+  .sched {
+    margin-top: -110px;
+  }
+  .card {
+    flex-basis: 80%;
+  }
+}

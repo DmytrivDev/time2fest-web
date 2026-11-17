@@ -1,6 +1,7 @@
 'use client';
 
 import NextLink from 'next/link';
+import { useMapPrefest } from './mapPrefest';
 import { useLocale, useTranslations } from 'next-intl';
 import {
   useEffect,
@@ -74,6 +75,8 @@ export function ZonePanel({
   ref,
 }: ZonePanelProps) {
   const t = useTranslations('liveMap.panel');
+  // «До свята» (головна `/before`): без трансляцій — лише час і країни поясу.
+  const prefest = useMapPrefest() !== null;
   const offset = utcLabel(zone.offsetMinutes);
   const own = viewerOffsetAt(zone.midnightMs) === zone.offsetMinutes;
   const streams = zone.streams ?? [];
@@ -154,13 +157,16 @@ export function ZonePanel({
               n={zone.countries.length}
               label={t('countriesWord', { count: zone.countries.length })}
             />
-            <Stat
-              n={zone.streamCount ?? streams.length}
-              label={t('streamsWord', { count: zone.streamCount ?? streams.length })}
-            />
+            {prefest ? null : (
+              <Stat
+                n={zone.streamCount ?? streams.length}
+                label={t('streamsWord', { count: zone.streamCount ?? streams.length })}
+              />
+            )}
             <Stat n={zone.cityCount ?? 0} label={t('citiesWord', { count: zone.cityCount ?? 0 })} />
           </dl>
         </div>
+        {prefest ? null : (
         <div className={m.watchCol}>
           {streams.length === 0 ? (
             <>
@@ -186,6 +192,7 @@ export function ZonePanel({
             </Slider>
           )}
         </div>
+        )}
       </div>
       <Countries zone={zone} state={state} phone={phone} onSelectCountry={onSelectCountry} />
     </section>
@@ -422,6 +429,7 @@ function Countries({
   const t = useTranslations('liveMap.panel');
   const tR = useTranslations('liveMap.regions');
   const [more, setMore] = useState(false);
+  const prefest = useMapPrefest() !== null;
   // Росія й Білорусь — не серед найпопулярніших (рішення власника 2026-11-03); у регіонах — усі країни поясу.
   const top = zone.countries.filter((c) => !NOT_TOP.has(c.iso)).slice(0, TOP);
   const rest = zone.countries;
@@ -438,7 +446,7 @@ function Countries({
   const hiddenCount = hidden.reduce((n, g) => n + g.list.length, 0);
   const streamIsos = new Set((zone.streams ?? []).map((s) => s.iso));
   // Графік — це країни: календарик на кожній країні поясу, що ще попереду, і там, де лише відлік (рішення 2026-11-04).
-  const ahead = state === 'next' || state === 'future';
+  const ahead = !prefest && (state === 'next' || state === 'future');
   const eventOf = (c: MapCountry) => c.streams?.[0]?.eventId ?? c.eventIds?.[0];
   const group = (g: { key: RegionKey | 'other'; list: MapCountry[] }) => (
     <div key={g.key} className={m.region} data-region={g.key}>
@@ -492,7 +500,7 @@ function Countries({
               <Flag code={c.flagCode} diameter={40} decorative />
               <span className={m.topName}>{c.name}</span>
               {c.city ? <span className={m.topCity}>{c.city}</span> : null}
-              {streamIsos.has(c.iso) && state === 'live' ? (
+              {prefest ? null : streamIsos.has(c.iso) && state === 'live' ? (
                 // Трансляція йде — біла залита кнопка (правка власника 2026-11-04); веде, як і вся картка, на сторінку країни.
                 <span className={m.topBtn} data-country-stream="live">
                   <PlayMark tone="live" size={14} />

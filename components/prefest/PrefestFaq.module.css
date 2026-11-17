@@ -1,0 +1,86 @@
+.faq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+  margin-top: 32px;
+  align-items: start;
+}
+.qa {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.qa h3 {
+  margin: 0;
+  font-size: inherit;
+}
+.btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+.btn svg {
+  flex: none;
+  transition: transform 0.25s ease;
+  color: var(--color-text-secondary);
+}
+.qa[data-open='true'] .btn svg {
+  transform: rotate(45deg);
+}
+.a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+.qa[data-open='true'] .a {
+  grid-template-rows: 1fr;
+}
+.a > div {
+  overflow: hidden;
+}
+.a p {
+  padding: 0 22px 20px;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  max-width: 60ch;
+}
+.still .a,
+.still .btn svg {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .a,
+  .btn svg {
+    transition: none;
+  }
+}
+.skel {
+  display: inline-block;
+  vertical-align: middle;
+}
+@media (max-width: 767.98px) {
+  .faq {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 20px;
+  }
+  .btn {
+    font-size: 16px;
+    padding: 16px 18px;
+  }
+}

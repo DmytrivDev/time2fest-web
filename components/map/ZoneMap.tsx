@@ -26,6 +26,7 @@ import { ZoneMapOverlay } from './parts/ZoneMapOverlay';
 import { ZoneMapTipView } from './parts/ZoneMapTipView';
 import { ZoneMapZoomControls } from './parts/ZoneMapZoomControls';
 import { ZoneMapCardSlot } from './parts/ZoneMapCardSlot';
+import { MapPrefestContext, type MapPrefest } from './mapPrefest';
 import './ZoneMap.css';
 import m from './zoneMap.module.css';
 
@@ -48,6 +49,11 @@ export interface ZoneMapProps {
   onToggleSchedule?: (eventId: string, next: boolean) => void;
   /** Без своєї шапки («Мапа поясів» і «Мапа | Список»): лише мапа (сторінка «Країни й міста» має перемикач угорі). */
   headless?: boolean;
+  /**
+   * Мапа «до свята» (головна `/before`): без трансляцій, кімнат, штампів і графіка у вікнах і легенді
+   * (`components/map/mapPrefest.ts`). Не задано — жива мапа.
+   */
+  prefest?: MapPrefest;
   className?: string;
 }
 
@@ -68,6 +74,7 @@ export function ZoneMap({
   geometry: geometryProp,
   onToggleSchedule,
   headless = false,
+  prefest,
   className,
 }: ZoneMapProps) {
   const t = useTranslations('liveMap');
@@ -279,7 +286,8 @@ export function ZoneMap({
   );
 
   return (
-    <MapScheduleContext.Provider value={onToggleSchedule ?? null}>
+    <MapPrefestContext.Provider value={prefest ?? null}>
+    <MapScheduleContext.Provider value={prefest ? null : (onToggleSchedule ?? null)}>
       {/* Esc із будь-якого місця мапи й картки закриває картку (клавіатурний прийом, не окрема дія). */}
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <section
@@ -344,5 +352,6 @@ export function ZoneMap({
         {view === 'map' && !isPhone ? cardSlot : null}
       </section>
     </MapScheduleContext.Provider>
+    </MapPrefestContext.Provider>
   );
 }

@@ -18,6 +18,7 @@ import { Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
 import { useProfile, useSchedule } from '@/lib/api/hooks/auth';
+import { useMapPrefest } from './mapPrefest';
 
 /** Іконки традицій (`howTo.traditions[].iconId`) — з набору сайту; невідома — зірка. */
 const TRADITION_ICON: Record<string, IconName> = {
@@ -101,6 +102,10 @@ export function CountryPanel({
 }: CountryPanelProps) {
   const zoneBtnRef = useTakeFocus(takeFocus, `${zone.id}:${country.iso}`);
   const t = useTranslations('liveMap.country');
+  const tPre = useTranslations('prefest.map');
+  // «До свята» (головна `/before`): без трансляцій, кімнати й штампа; сторінка країни й традиції — лише з описом.
+  const prefest = useMapPrefest();
+  const pageLinked = !prefest || country.described !== false;
   const viewerIso = useProfile()?.flagCode ?? undefined;
   const now = useNow();
   const streams = country.streams ?? [];
@@ -110,10 +115,17 @@ export function CountryPanel({
   const title = (
     <span className={m.title}>
       {/* Прапор і назва — посилання на сторінку країни (правка власника 2026-11-04). */}
-      <NextLink href={country.href} className={cn('t2f-focus', m.nameLink)} data-country-page-link="">
-        <Flag code={country.flagCode} diameter={phone ? 32 : 40} decorative />
-        <h3 className={zp.name}>{country.name}</h3>
-      </NextLink>
+      {pageLinked ? (
+        <NextLink href={country.href} className={cn('t2f-focus', m.nameLink)} data-country-page-link="">
+          <Flag code={country.flagCode} diameter={phone ? 32 : 40} decorative />
+          <h3 className={zp.name}>{country.name}</h3>
+        </NextLink>
+      ) : (
+        <span className={m.nameLink}>
+          <Flag code={country.flagCode} diameter={phone ? 32 : 40} decorative />
+          <h3 className={zp.name}>{country.name}</h3>
+        </span>
+      )}
       {state === 'live' && streams.length === 0 ? (
         <span className={cn(zp.badge, m.badgeNow)} data-badge="now">
           {t('nowBadge')}
@@ -158,7 +170,7 @@ export function CountryPanel({
       />
     ) : null;
   const time = <CountryTime zone={zone} state={state} phone={phone} />;
-  const watch = (
+  const watch = prefest ? null : (
     <div className={m.watch}>
       {streams.length === 0 ? (
         <>
@@ -197,11 +209,33 @@ export function CountryPanel({
       )}
     </div>
   );
-  const room = <Room country={country} after={after} before={before} phone={phone} />;
+  const room = prefest ? (
+    <div className={m.prefestActs} data-country-prefest="">
+      {pageLinked ? (
+        <NextLink href={country.href} className={cn('t2f-focus', m.prefestBtn)} data-country-page="">
+          {tPre('countryPage')}
+          <Icon name="chevron-right" size={16} />
+        </NextLink>
+      ) : null}
+      {prefest.onCountryCalendar && before ? (
+        <button
+          type="button"
+          className={cn('t2f-focus', m.prefestBtn)}
+          data-country-calendar=""
+          onClick={() => prefest.onCountryCalendar?.(zone, country)}
+        >
+          <Icon name="calendar-add" size={18} />
+          {tPre('addCalendar')}
+        </button>
+      ) : null}
+    </div>
+  ) : (
+    <Room country={country} after={after} before={before} phone={phone} />
+  );
   // «Наступна північ» — під трансляціями, над кімнатою країни (правка власника 2026-11-03).
   const next =
-    after && nextZone ? <NextMidnight zone={nextZone} onSelectZone={onSelectZone} /> : null;
-  const how = country.traditions?.length ? (
+    !prefest && after && nextZone ? <NextMidnight zone={nextZone} onSelectZone={onSelectZone} /> : null;
+  const how = country.traditions?.length && pageLinked ? (
     <div className={m.how}>
       <h4 className={zp.h4}>{t('howTitle')}</h4>
       <ul className={m.howList}>

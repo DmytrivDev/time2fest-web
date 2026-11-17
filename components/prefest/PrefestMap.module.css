@@ -1,0 +1,15 @@
+/* «Мапа поясів»: мапа сайту (`ZoneMap`) у секції головної «до свята»; заголовок — розміру заголовків секцій сторінки. */
+.root {
+  display: block;
+}
+.root h2[id$='-head'] {
+  font-size: 34px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 767.98px) {
+  .root h2[id$='-head'] {
+    font-size: 27px;
+  }
+}

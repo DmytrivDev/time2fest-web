@@ -1,0 +1,111 @@
+/* Превʼю картки для сторіс (шаблон: .story-wrap … .story-cap). */
+.wrap {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+}
+.story {
+  width: 250px;
+  aspect-ratio: 9 / 16;
+  max-width: 100%;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-background);
+  box-shadow: 0 18px 50px color-mix(in srgb, black 50%, transparent);
+  container-type: inline-size;
+}
+.in {
+  position: absolute;
+  inset: 0;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-background) 25%, transparent),
+    color-mix(in srgb, var(--color-background) 10%, transparent) 35%,
+    color-mix(in srgb, var(--color-background) 94%, transparent) 70%
+  );
+}
+.logo {
+  height: 22px;
+  width: auto;
+  align-self: flex-start;
+}
+.s1 {
+  font-size: 6cqw;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+.s2 {
+  font-size: 30cqw;
+  line-height: 0.95;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--color-highlight);
+  margin-top: 2px;
+  min-height: 1em;
+}
+.s3 {
+  font-size: 5.6cqw;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 4px;
+}
+.s4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 5.2cqw;
+  font-weight: 700;
+  min-height: 22px;
+}
+.noFlag {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+.s5 {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent);
+  font-size: 4.8cqw;
+  color: var(--color-text-secondary);
+}
+.s5 b {
+  color: var(--color-text);
+}
+.cap {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+@media (max-width: 1199.98px) {
+  .story {
+    width: 220px;
+  }
+}
+@media (max-width: 1023.98px) {
+  .story {
+    width: 240px;
+  }
+}
+@media (max-width: 767.98px) {
+  .wrap {
+    padding: 20px;
+  }
+  .story {
+    width: 210px;
+  }
+}
