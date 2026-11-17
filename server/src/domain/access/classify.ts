@@ -53,6 +53,10 @@ export const isPublicApiPath = (path: string): boolean => under(path, '/api');
 /** Paths served by Payload: the admin UI and its REST API. */
 export const isPayloadPath = (path: string): boolean => under(path, '/admin') || under(path, '/cms-api');
 
+/** Payload's first-register screen and its REST call: absent in every class (AC-13). */
+export const isFirstRegisterPath = (path: string): boolean =>
+  under(path, '/admin/create-first-user') || under(path, '/cms-api/admins/first-register');
+
 /** The verdict for one request. `adminHost` is `undefined` when Access is not configured. */
 export function decide(input: { path: string; host: string; adminHost: string | undefined; auth: GateAuth }): Decision {
   const { path, host, adminHost, auth } = input;
@@ -61,6 +65,8 @@ export function decide(input: { path: string; host: string; adminHost: string | 
     return { kind: 'notFound404' };
   }
   if (!auth.ok) return { kind: 'deny403', reason: auth.reason };
+  // After the JWT check, so without a JWT this path is 403 like every other (AC-1).
+  if (isFirstRegisterPath(path)) return { kind: 'notFound404' };
   if (auth.kind === 'service-allowed' || auth.kind === 'service-foreign') {
     if (!under(path, '/cms-api')) return { kind: 'deny403', reason: 'service-path' };
     return auth.kind === 'service-allowed' ? { kind: 'pass' } : { kind: 'deny403', reason: 'foreign-service' };

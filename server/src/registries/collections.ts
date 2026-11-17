@@ -5,6 +5,7 @@
 import type { CollectionConfig } from 'payload';
 import { assertRegistry } from '../platform/registry';
 import { admins } from '../collections/admins';
+import { agentTestPosts } from '../collections/agentTestPosts';
 import { idempotencyRecords } from '../collections/idempotencyRecords';
 
 export interface CollectionRow {
@@ -15,6 +16,7 @@ export interface CollectionRow {
 
 export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'admins', collection: admins, resettable: false },
+  { key: 'agent-test-posts', collection: agentTestPosts, resettable: false },
   { key: 'idempotency-records', collection: idempotencyRecords, resettable: true },
 ];
 

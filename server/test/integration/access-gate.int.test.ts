@@ -43,7 +43,7 @@ describe('Access gate (proxy)', () => {
   beforeAll(async () => {
     payload = await payloadOf(testDeps())();
     await payload.delete({ collection: 'admins', where: { email: { equals: ADMIN_EMAIL } }, overrideAccess: true });
-    await payload.create({ collection: 'admins', data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD }, overrideAccess: true });
+    await payload.create({ collection: 'admins', data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, role: 'owner' }, overrideAccess: true });
     const login = await payload.login({ collection: 'admins', data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD } });
     cookie = `payload-token=${login.token ?? ''}`;
   });
