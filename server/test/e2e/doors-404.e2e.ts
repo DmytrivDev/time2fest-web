@@ -46,10 +46,8 @@ async function probe(request: APIRequestContext, method: string, path: string, q
   return { status: res.status(), body: await res.text(), names };
 }
 
-test('AC-30/31: the registry has 10 door rows', () => {
-  expect(DOORS).toHaveLength(10);
-test('AC-30/31: the registry has 11 door rows', () => {
-  expect(DOORS).toHaveLength(11);
+test('AC-30/31: the registry has 13 door rows', () => {
+  expect(DOORS).toHaveLength(13);
 });
 
 for (const v of VARIANTS) {
