@@ -31,6 +31,12 @@
       "dir": "workers/edge",
       "files": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}",
       "full": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2"
+    },
+    {
+      "package": "infra",
+      "dir": "infra/cloudflare",
+      "files": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}",
+      "full": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2"
     }
   ],
   "routing": "D:/Work/Pets/Time2Fest/docs/backend/sdd-routing.md",
