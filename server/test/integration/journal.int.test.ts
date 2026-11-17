@@ -5,7 +5,7 @@
  */
 import type { Payload } from 'payload';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { overrideJournalForTest } from '../../src/audit/hooks';
+import { overrideJournalForTest } from '../../src/collections/auditHooks';
 import { payloadOf } from '../../src/container';
 import { testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, sessionCookie } from './payload-rest';

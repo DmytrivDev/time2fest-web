@@ -19,7 +19,7 @@
 import { Forbidden } from 'payload';
 import type { CollectionConfig, CollectionSlug, Endpoint, GlobalConfig, PayloadRequest } from 'payload';
 import { createIdentityMarker, IDENTITY_HEADER } from '../adapters/identityMarker';
-import { auditAfterChange, auditAfterDelete } from '../audit/hooks';
+import { auditAfterChange, auditAfterDelete } from '../collections/auditHooks';
 import { realClock } from '../clock';
 import type { AccessIdentity } from './ports';
 import { roleOf } from './policies';

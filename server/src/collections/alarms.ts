@@ -5,10 +5,9 @@
  */
 import type { CollectionConfig, Endpoint } from 'payload';
 import { accessFor, roleOf } from '../access/policies';
-import { ALARMS, createPayloadAlarmStore } from '../adapters/payloadAlarms';
-import { createAlarmService } from '../alarms/service';
-import { clockFor } from '../clock';
-import { envClass } from '../platform/env';
+import { ALARMS } from '../adapters/payloadAlarms';
+import { processDeps } from '../adapters/processDeps';
+import { alarmServiceOf } from '../endpoints/deps';
 
 const never = () => false;
 const NO_STORE = { 'cache-control': 'no-store' };
@@ -17,8 +16,7 @@ const acknowledgeEndpoint: Endpoint = {
   path: '/:id/acknowledge',
   method: 'post',
   handler: async (req) => {
-    const clock = clockFor(envClass(process.env));
-    const service = createAlarmService(createPayloadAlarmStore(async () => req.payload, clock), clock);
+    const service = alarmServiceOf(await processDeps());
     const result = await service.acknowledge(req, roleOf(req.user), String(req.routeParams?.id ?? ''));
     if (result.ok) return Response.json({ ok: true, value: {} }, { headers: NO_STORE });
     const status = result.reason === 'forbidden' ? 403 : 404;

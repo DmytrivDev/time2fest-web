@@ -12,13 +12,11 @@
 import type { CollectionConfig, Endpoint, PayloadRequest } from 'payload';
 import { hasJsonContentType } from '../access/payloadGuard';
 import { ownerOnly, roleOf } from '../access/policies';
-import { createPayloadCorrectionStore, payloadCorrectionDeps } from '../adapters/payloadCorrections';
+import { processDeps } from '../adapters/processDeps';
 import { resolveActor } from '../audit/journal';
-import { clockFor } from '../clock';
 import { EVENT_PATCHES, previewCorrection, saveCorrection, type CorrectionRequest, type CorrectionResult } from '../corrections/service';
 import { NOTE_MAX, type CorrectionReason } from '../domain/corrections/rules';
-import { envClass } from '../platform/env';
-import { revertHandlerRegistry } from '../registries/revertHandlers';
+import { correctionsOf } from '../endpoints/deps';
 
 const never = () => false;
 const NO_STORE = { 'cache-control': 'no-store' };
@@ -66,7 +64,7 @@ const previewEndpoint: Endpoint = {
     if (roleOf(req.user) !== 'owner') return forbidden();
     const body = await bodyOf(req);
     if (!body) return invalid();
-    return answer(await previewCorrection(createPayloadCorrectionStore(), req, body));
+    return answer(await previewCorrection(correctionsOf(await processDeps()).store, req, body));
   },
 };
 
@@ -77,12 +75,7 @@ const saveEndpoint: Endpoint = {
     if (roleOf(req.user) !== 'owner') return forbidden();
     const body = await bodyOf(req);
     if (!body) return invalid();
-    const { eventsOf, getDeps } = await import('../container');
-    const deps = payloadCorrectionDeps({
-      publisher: eventsOf(getDeps()).publisher,
-      clock: clockFor(envClass(process.env)),
-      isRevertible: (action) => revertHandlerRegistry.some((r) => r.key === action),
-    });
+    const deps = correctionsOf(await processDeps());
     const actor = resolveActor(req.user, req.context);
     return answer(await saveCorrection(deps, req, body, { ...actor, kind: 'owner' }));
   },

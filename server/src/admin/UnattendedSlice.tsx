@@ -1,4 +1,6 @@
 /** Unattended slice of the first screen (AC-38): reads the mode, windows and open `page` alarms; the controls are a client part. */
+import { processDeps } from '../adapters/processDeps';
+import { alarmStoreOf, unattendedDepsOf } from '../endpoints/deps';
 import { UnattendedControls } from './UnattendedControls';
 
 const kyiv = new Intl.DateTimeFormat('uk-UA', { timeZone: 'Europe/Kyiv', dateStyle: 'short', timeStyle: 'short' });
@@ -7,8 +9,7 @@ const at = (ms: number) => kyiv.format(new Date(ms));
 const CAUSES: Record<string, string> = { schedule: 'за розкладом', manual: 'вручну', alarm: 'через тривогу' };
 
 export async function UnattendedSlice() {
-  const { alarmStoreOf, getDeps, unattendedDepsOf } = await import('../container');
-  const deps = getDeps();
+  const deps = await processDeps();
   const { readUnattended } = await import('../unattended/service');
   const view = await readUnattended(unattendedDepsOf(deps).store);
   const open = await alarmStoreOf(deps).listOpenPage();

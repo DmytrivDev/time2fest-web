@@ -6,9 +6,16 @@
  */
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
+import type { AlarmService } from '../alarms/service';
+import type { AlarmStore } from '../alarms/ports';
+import type { CatalogCopyDeps } from '../catalog/copy';
+import type { CatalogStore } from '../catalog/ports';
+import type { CorrectionDeps } from '../corrections/service';
+import type { EventLog, EventPublisher } from '../events/ports';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
+import type { UnattendedDeps } from '../unattended/service';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -32,6 +39,13 @@ export interface AppEnv {
   vars: Readonly<Record<string, unknown>>;
 }
 
+/** The internal-events ports (AC-40 … AC-42). */
+export interface EventPorts {
+  publisher: EventPublisher;
+  log: EventLog;
+  channel: string;
+}
+
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
@@ -45,6 +59,18 @@ export interface Deps {
   memory: FastStore;
   /** `order`-class idempotency records (Postgres, AC-55). */
   orderStore: IdempotencyStore;
+  /**
+   * Ports and services built once by `createDeps` (optional only so that a test can build a plain `Deps`;
+   * read them through the getters of `endpoints/deps.ts`, which throw when a field is absent).
+   */
+  catalogStore?: CatalogStore;
+  events?: EventPorts;
+  alarmStore?: AlarmStore;
+  alarmService?: AlarmService;
+  corrections?: CorrectionDeps;
+  unattended?: UnattendedDeps;
+  /** What the R2 copy needs, or `undefined` when the environment has no bucket (AC-72). */
+  catalogCopy?: () => CatalogCopyDeps | undefined;
 }
 
 export interface Ctx {

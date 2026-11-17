@@ -5,8 +5,9 @@
 import { createPayloadImportStore } from '../adapters/payloadCatalog';
 import { importCatalog, type ImportResult } from '../catalog/import';
 import { assertRegistry } from '../platform/registry';
+import { eventsOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';
-import { createPayloadJournal } from '../audit/journal';
+import { createPayloadJournal } from '../adapters/payloadJournal';
 
 export interface ImportContext {
   apply: boolean;
@@ -25,7 +26,7 @@ export const importRegistry: readonly ImportRow[] = [
     key: 'catalog',
     async run(ctx) {
       // The root is loaded here: it imports the other registries, so a static import would be a cycle.
-      const { eventsOf, payloadOf } = await import('../container');
+      const { payloadOf } = await import('../container');
       const payload = payloadOf(ctx.deps);
       return importCatalog(
         {

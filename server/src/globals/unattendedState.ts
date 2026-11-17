@@ -9,7 +9,9 @@
 import type { Endpoint, GlobalConfig, PayloadRequest } from 'payload';
 import { hasJsonContentType } from '../access/payloadGuard';
 import { ownerOnly, roleOf } from '../access/policies';
+import { processDeps } from '../adapters/processDeps';
 import { resolveActor } from '../audit/journal';
+import { unattendedDepsOf } from '../endpoints/deps';
 import { setManual, UNATTENDED_STATE } from '../unattended/service';
 
 const never = () => false;
@@ -40,8 +42,7 @@ const manualEndpoint: Endpoint = {
     if (roleOf(req.user) !== 'owner') return fail(403, 'forbidden');
     const on = await onOf(req);
     if (on === null) return fail(400, 'validation');
-    const { getDeps, unattendedDepsOf } = await import('../container');
-    const { state } = await setManual(unattendedDepsOf(getDeps()), req, on, { ...resolveActor(req.user, req.context), kind: 'owner' });
+    const { state } = await setManual(unattendedDepsOf(await processDeps()), req, on, { ...resolveActor(req.user, req.context), kind: 'owner' });
     return Response.json({ ok: true, value: { on: state.on, cause: state.cause, version: state.version } }, { headers: NO_STORE });
   },
 };

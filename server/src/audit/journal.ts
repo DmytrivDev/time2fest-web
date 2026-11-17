@@ -1,17 +1,14 @@
 /**
- * The audit journal over Payload (AC-20, NFR-5), Payload glue. Rows are created through the Local
- * API with the CALLER'S `req`, so the row joins the caller's transaction, and with
- * `overrideAccess`, because no role may write the journal through the API (AC-21).
- *
- * Also here, pure:
+ * Pure pieces of the audit journal (AC-20, NFR-5), ring 3 (the Payload implementation of `Journal` is
+ * `adapters/payloadJournal.ts`):
+ * - the collection name and the request-context keys;
  * - `resolveActor`: the signed-in record (`req.user`, including an API-key user), else
  *   `context.t2fActor` (`'system:<name>'` or an `Actor`), else the system itself;
  * - `redactSecrets`: drops password, hash, salt, API-key and token fields before a value enters
  *   `before`/`after` (NFR-5).
  */
-import type { PayloadRequest } from 'payload';
 import { roleOf } from '../access/policies';
-import type { Actor, Journal, JournalEntry, Tx } from './ports';
+import type { Actor } from './ports';
 
 export const AUDIT_LOG = 'audit-log';
 export const ACTOR_CONTEXT_KEY = 't2fActor';
@@ -75,28 +72,4 @@ function strip(value: unknown, depth: number): unknown {
 export function redactSecrets(doc: unknown): Record<string, unknown> | null {
   if (typeof doc !== 'object' || doc === null || Array.isArray(doc)) return null;
   return strip(doc, 0) as Record<string, unknown>;
-}
-
-export function createPayloadJournal(isRevertible: (action: string) => boolean): Journal {
-  return {
-    async append(tx: Tx, entry: JournalEntry) {
-      const req = tx as PayloadRequest;
-      await req.payload.create({
-        collection: AUDIT_LOG,
-        req,
-        overrideAccess: true,
-        depth: 0,
-        data: {
-          actor: { kind: entry.actor.kind, ref: entry.actor.id, label: entry.actor.label },
-          action: entry.action,
-          target: { collection: entry.target.collection, ref: entry.target.id },
-          at: new Date(entry.at).toISOString(),
-          before: entry.before,
-          after: entry.after,
-          revertOf: entry.revertOf,
-          revertible: isRevertible(entry.action),
-        },
-      });
-    },
-  };
 }

@@ -10,7 +10,7 @@
 import { sql } from '@payloadcms/db-postgres';
 import { commitTransaction, createLocalReq, initTransaction, killTransaction } from 'payload';
 import type { Payload, PayloadRequest } from 'payload';
-import { createPayloadJournal } from '../audit/journal';
+import { createPayloadJournal } from './payloadJournal';
 import type { AlarmStore } from '../alarms/ports';
 import type { UnattendedCause } from '../domain/unattended/machine';
 import type { SleepWindow } from '../domain/unattended/windows';

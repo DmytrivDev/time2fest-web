@@ -9,7 +9,7 @@
 import { sql } from '@payloadcms/db-postgres';
 import { commitTransaction, initTransaction, killTransaction } from 'payload';
 import type { Payload, PayloadRequest, Where } from 'payload';
-import { createPayloadJournal } from '../audit/journal';
+import { createPayloadJournal } from './payloadJournal';
 import type { CorrectionReader, CorrectionStore, StoredPatch, Tx } from '../corrections/ports';
 import { EVENT_PATCHES, type CorrectionDeps } from '../corrections/service';
 import type { EventBase, PatchState } from '../domain/corrections/rules';

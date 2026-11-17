@@ -21,15 +21,16 @@ import { parseAccessConfig } from './domain/access/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
-import type { AppEnv, Deps, RouteRow } from './endpoints/types';
+import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
+import type { AppEnv, Deps, EventPorts, RouteRow } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
-import type { EventLog, EventPublisher, EventSubscriber } from './events/ports';
-import type { AlarmStore } from './alarms/ports';
+import type { EventSubscriber } from './events/ports';
 import type { CatalogCopyDeps } from './catalog/copy';
-import type { CatalogStore } from './catalog/ports';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
+import { payloadCorrectionDeps } from './adapters/payloadCorrections';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
+import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
@@ -37,25 +38,26 @@ import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { middlewareRegistry } from './registries/middleware';
-import { revertHandlerRegistry } from './registries/revertHandlers';
+import { isRevertible } from './registries/revertHandlers';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
-import { evaluate, type UnattendedDeps } from './unattended/service';
+import { evaluate } from './unattended/service';
 import { startTicker, type Ticker } from './unattended/ticker';
 
 const DEPS_KEY = Symbol.for('t2f.deps');
 const DISPATCHER_KEY = Symbol.for('t2f.dispatcher');
 const PAYLOAD_KEY = Symbol.for('t2f.payload');
 const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
-const EVENTS_KEY = Symbol.for('t2f.events');
-const ALARM_STORE_KEY = Symbol.for('t2f.alarmStore');
-const CATALOG_STORE_KEY = Symbol.for('t2f.catalogStore');
 const BACKGROUND_KEY = Symbol.for('t2f.background');
 const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
-/** What a caller of `createDeps` may replace: any port, the lazy Payload accessor and the alarm store. */
-export type DepsOverrides = Partial<Omit<Deps, 'env'>> & { payload?: () => Promise<Payload>; alarmStore?: AlarmStore };
+/** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
+export { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf };
+export type { EventPorts };
+
+/** What a caller of `createDeps` may replace: any port or service of `Deps` and the lazy Payload accessor. */
+export type DepsOverrides = Partial<Omit<Deps, 'env'>> & { payload?: () => Promise<Payload> };
 
 type Dispatcher = (req: Request) => Promise<Response>;
 
@@ -146,29 +148,21 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
   const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
-  const events: EventPorts = {
+  deps.events = overrides.events ?? {
     publisher: createPgEventPublisher(payload, clock, channel),
     log: createPgEventLog(payload),
     channel,
   };
-  Object.defineProperty(deps, EVENTS_KEY, { value: events, enumerable: false });
-  Object.defineProperty(deps, ALARM_STORE_KEY, { value: alarmStore, enumerable: false });
-  Object.defineProperty(deps, CATALOG_STORE_KEY, { value: createPayloadCatalogStore(payload), enumerable: false });
+  deps.alarmStore = alarmStore;
+  deps.catalogStore = overrides.catalogStore ?? createPayloadCatalogStore(payload);
+  // Services over the stores, built once: the request binding is the `tx` parameter of their methods.
+  deps.alarmService = overrides.alarmService ?? createAlarmService(alarmStore, clock);
+  deps.corrections = overrides.corrections ?? payloadCorrectionDeps({ publisher: deps.events.publisher, clock, isRevertible });
+  deps.unattended =
+    overrides.unattended ??
+    payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
+  deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   return deps;
-}
-
-/** The alarm store of deps built by `createDeps` (AC-37 … AC-39): the alarm door and the slice read it. */
-export function alarmStoreOf(deps: Deps): AlarmStore {
-  const store = (deps as unknown as Record<symbol, AlarmStore | undefined>)[ALARM_STORE_KEY];
-  if (!store) throw new Error('deps: not built by createDeps');
-  return store;
-}
-
-/** The catalog read port of deps built by `createDeps` (AC-63). */
-export function catalogStoreOf(deps: Deps): CatalogStore {
-  const store = (deps as unknown as Record<symbol, CatalogStore | undefined>)[CATALOG_STORE_KEY];
-  if (!store) throw new Error('deps: not built by createDeps');
-  return store;
 }
 
 /**
@@ -197,19 +191,6 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
   };
 }
 
-/** The internal-events ports of deps built by `createDeps` (AC-40 … AC-42). */
-export interface EventPorts {
-  publisher: EventPublisher;
-  log: EventLog;
-  channel: string;
-}
-
-export function eventsOf(deps: Deps): EventPorts {
-  const events = (deps as unknown as Record<symbol, EventPorts | undefined>)[EVENTS_KEY];
-  if (!events) throw new Error('deps: not built by createDeps');
-  return events;
-}
-
 /**
  * Background work of one process: the internal-events delivery loop over the subscriber registry
  * (`testOnly` rows only in the `test` class). Called by `instrumentation.ts` once per process and
@@ -229,17 +210,6 @@ export function startBackground(deps: Deps, subscribers: readonly EventSubscribe
     }),
     subscribers: subscribers.filter((s) => !s.testOnly || deps.env.class === 'test'),
     log: deps.log,
-  });
-}
-
-/** The unattended-mode service dependencies of deps built by `createDeps` (AC-31 … AC-36). */
-export function unattendedDepsOf(deps: Deps): UnattendedDeps {
-  return payloadUnattendedDeps({
-    payload: payloadOf(deps),
-    alarms: alarmStoreOf(deps),
-    publisher: eventsOf(deps).publisher,
-    clock: deps.clock,
-    isRevertible: (action) => revertHandlerRegistry.some((r) => r.key === action),
   });
 }
 

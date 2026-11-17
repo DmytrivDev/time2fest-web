@@ -1,5 +1,5 @@
 /**
- * Journal hooks for audited collections (AC-20), Payload glue. `harden` attaches them to every
+ * Journal hooks for audited collections (AC-20), Payload glue (ring 4; the ports and pure code are in `audit/`). `harden` attaches them to every
  * registry row marked `audited`.
  *
  * `afterChange` / `afterDelete` append exactly one journal row on the operation's own `req`, so in
@@ -12,15 +12,15 @@
  * - `t2fActor`: see `resolveActor`.
  */
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, CollectionSlug, PayloadRequest } from 'payload';
+import { createPayloadJournal } from '../adapters/payloadJournal';
+import { ACTION_CONTEXT_KEY, redactSecrets, resolveActor, REVERT_OF_CONTEXT_KEY } from '../audit/journal';
+import type { Journal, JournalEntry } from '../audit/ports';
 import { clockFor } from '../clock';
 import { envClass } from '../platform/env';
-import { revertHandlerRegistry } from '../registries/revertHandlers';
-import { ACTION_CONTEXT_KEY, createPayloadJournal, redactSecrets, resolveActor, REVERT_OF_CONTEXT_KEY } from './journal';
-import type { Journal, JournalEntry } from './ports';
+import { isRevertible } from '../registries/revertHandlers';
 
 const OVERRIDE_KEY = Symbol.for('t2f.test.journalOverride');
-const revertible = new Set(revertHandlerRegistry.map((r) => r.key));
-const defaultJournal = createPayloadJournal((action) => revertible.has(action));
+let defaultJournal: Journal | undefined;
 
 /** Test class only: replaces the journal (e.g. one that throws); `null` restores it. */
 export function overrideJournalForTest(journal: Journal | null): void {
@@ -30,7 +30,9 @@ export function overrideJournalForTest(journal: Journal | null): void {
 
 function journal(): Journal {
   const override = (globalThis as unknown as Record<symbol, Journal | null | undefined>)[OVERRIDE_KEY];
-  return override && envClass(process.env) === 'test' ? override : defaultJournal;
+  if (override && envClass(process.env) === 'test') return override;
+  // Built on first use, so no registry is read at module load.
+  return (defaultJournal ??= createPayloadJournal(isRevertible));
 }
 
 function take(req: PayloadRequest, key: string): string | null {

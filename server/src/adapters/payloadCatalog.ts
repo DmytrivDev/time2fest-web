@@ -6,8 +6,18 @@
  */
 import { commitTransaction, createLocalReq, initTransaction, killTransaction } from 'payload';
 import type { CollectionSlug, Payload, PayloadRequest } from 'payload';
-import type { CatalogCollectionName, CatalogImportStore, CatalogStore, StoredCatalog } from '../catalog/ports';
+import type {
+  CatalogCollectionName,
+  CatalogImportStore,
+  CatalogReader,
+  CatalogStore,
+  SeasonStore,
+  StoredCatalog,
+} from '../catalog/ports';
+import { toSnapshotRow, type CatalogSnapshot } from '../domain/catalog/integrity';
 import type { Tx } from '../events/ports';
+
+const INTEGRITY_KINDS = ['zones', 'countries', 'cities', 'events'] as const;
 
 const READ_CONTEXT = { t2fTrusted: true, t2fInternal: true };
 const IMPORT_CONTEXT = { t2fImport: true, t2fTrusted: true, t2fActor: 'system:import' };
@@ -30,6 +40,46 @@ async function findAll(payload: Payload, collection: CollectionSlug, req: Payloa
   return found.docs as unknown as Record<string, unknown>[];
 }
 
+/** THE current season: the one with the lowest id (numeric order). One lookup for the import, the endpoint and the hooks. */
+function currentSeasonOf(seasons: readonly Record<string, unknown>[]): Record<string, unknown> | undefined {
+  return [...seasons].sort((a, b) => String(a.id).localeCompare(String(b.id), 'en', { numeric: true }))[0];
+}
+
+/** `CatalogReader` over Payload (the integrity hook of the catalog collections). */
+export function createPayloadCatalogReader(): CatalogReader {
+  return {
+    async snapshot(tx) {
+      const req = tx as PayloadRequest;
+      const [zones, countries, cities, events] = await Promise.all(
+        INTEGRITY_KINDS.map((k) => findAll(req.payload, k, req)),
+      );
+      return {
+        zones: (zones ?? []).map((r) => toSnapshotRow('zones', r)),
+        countries: (countries ?? []).map((r) => toSnapshotRow('countries', r)),
+        cities: (cities ?? []).map((r) => toSnapshotRow('cities', r)),
+        events: (events ?? []).map((r) => toSnapshotRow('events', r)),
+      } satisfies CatalogSnapshot;
+    },
+  };
+}
+
+/** `SeasonStore` over Payload (the version bump of the catalog hooks). */
+export function createPayloadSeasonStore(): SeasonStore {
+  return {
+    async current(tx) {
+      const req = tx as PayloadRequest;
+      const doc = currentSeasonOf(await findAll(req.payload, 'seasons', req)) as
+        | { id: string | number; tzdbVersion: string; generatedAt?: string | null }
+        | undefined;
+      return doc ? { id: String(doc.id), tzdbVersion: doc.tzdbVersion, generatedAt: doc.generatedAt ?? null } : null;
+    },
+    async setGeneratedAt(tx, id, generatedAt) {
+      const req = withContext(tx as PayloadRequest, READ_CONTEXT);
+      await req.payload.update({ collection: 'seasons', id, data: { generatedAt }, req, depth: 0, overrideAccess: true });
+    },
+  };
+}
+
 export function createPayloadCatalogStore(getPayload: () => Promise<Payload>): CatalogStore {
   return {
     async read(tx) {
@@ -39,7 +89,7 @@ export function createPayloadCatalogStore(getPayload: () => Promise<Payload>): C
         findAll(payload, 'seasons', req),
         ...COLLECTIONS.map((c) => findAll(payload, c, req)),
       ]);
-      const first = [...(seasons ?? [])].sort((a, b) => String(a.id).localeCompare(String(b.id), 'en', { numeric: true }))[0];
+      const first = currentSeasonOf(seasons ?? []);
       const stored: StoredCatalog = {
         season: first
           ? {

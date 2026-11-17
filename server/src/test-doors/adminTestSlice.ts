@@ -4,7 +4,7 @@
  * it exists only in the `test` class with `T2F_TEST_DOORS=1`.
  */
 import { z } from 'zod';
-import { ADMIN_TEST_SLICE_FAIL } from '../registries/adminSlots';
+import { setAdminTestSliceFail } from '../registries/adminSlots';
 import type { DoorRow } from './registry';
 
 export const AdminTestSliceBodySchema = z.object({ fail: z.boolean() }).strict();
@@ -16,7 +16,7 @@ export const adminTestSliceDoor: DoorRow = {
   body: AdminTestSliceBodySchema,
   async handler(ctx) {
     const { fail } = ctx.body as z.infer<typeof AdminTestSliceBodySchema>;
-    (globalThis as Record<symbol, unknown>)[ADMIN_TEST_SLICE_FAIL] = fail;
+    setAdminTestSliceFail(fail);
     return { ok: true, value: { fail } };
   },
 };
