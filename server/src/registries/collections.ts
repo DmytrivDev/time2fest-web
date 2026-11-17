@@ -8,6 +8,12 @@ import { admins } from '../collections/admins';
 import { agentTestPosts } from '../collections/agentTestPosts';
 import { alarms } from '../collections/alarms';
 import { auditLog } from '../collections/auditLog';
+import { cities } from '../collections/catalog/cities';
+import { countries } from '../collections/catalog/countries';
+import { events } from '../collections/catalog/events';
+import { seasons } from '../collections/catalog/seasons';
+import { traditions } from '../collections/catalog/traditions';
+import { zones } from '../collections/catalog/zones';
 import { idempotencyRecords } from '../collections/idempotencyRecords';
 import { internalEvents } from '../collections/internalEvents';
 
@@ -24,8 +30,14 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'agent-test-posts', collection: agentTestPosts, resettable: false, audited: true },
   { key: 'alarms', collection: alarms, resettable: false, audited: true },
   { key: 'audit-log', collection: auditLog, resettable: false },
+  { key: 'cities', collection: cities, resettable: true, audited: true },
+  { key: 'countries', collection: countries, resettable: true, audited: true },
+  { key: 'events', collection: events, resettable: true, audited: true },
   { key: 'idempotency-records', collection: idempotencyRecords, resettable: true },
   { key: 'internal-events', collection: internalEvents, resettable: false },
+  { key: 'seasons', collection: seasons, resettable: true, audited: true },
+  { key: 'traditions', collection: traditions, resettable: true, audited: true },
+  { key: 'zones', collection: zones, resettable: true, audited: true },
 ];
 
 assertRegistry('collections', collectionRegistry, (r) => r.key);

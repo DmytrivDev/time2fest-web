@@ -71,8 +71,14 @@ export interface Config {
     'agent-test-posts': AgentTestPost;
     alarms: Alarm;
     'audit-log': AuditLog;
+    cities: City;
+    countries: Country;
+    events: Event;
     'idempotency-records': IdempotencyRecord;
     'internal-events': InternalEvent;
+    seasons: Season;
+    traditions: Tradition;
+    zones: Zone;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,8 +90,14 @@ export interface Config {
     'agent-test-posts': AgentTestPostsSelect<false> | AgentTestPostsSelect<true>;
     alarms: AlarmsSelect<false> | AlarmsSelect<true>;
     'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
+    cities: CitiesSelect<false> | CitiesSelect<true>;
+    countries: CountriesSelect<false> | CountriesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     'idempotency-records': IdempotencyRecordsSelect<false> | IdempotencyRecordsSelect<true>;
     'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
+    seasons: SeasonsSelect<false> | SeasonsSelect<true>;
+    traditions: TraditionsSelect<false> | TraditionsSelect<true>;
+    zones: ZonesSelect<false> | ZonesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -227,6 +239,112 @@ export interface AuditLog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities".
+ */
+export interface City {
+  id: number;
+  cityId: string;
+  countryIso: string;
+  zoneId: string;
+  name: {
+    uk: string;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  landmark?: {
+    uk?: string | null;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  celebrationType?: string | null;
+  mapPoint?: {
+    x?: number | null;
+    y?: number | null;
+  };
+  isCountryMain?: boolean | null;
+  sortIndex?: number | null;
+  importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries".
+ */
+export interface Country {
+  id: number;
+  iso: string;
+  slug: string;
+  name: {
+    uk: string;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  gender?: ('m' | 'f' | 'n' | 'pl') | null;
+  flagCode?: string | null;
+  zoneIds?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  illustrationId?: string | null;
+  howToText?: {
+    uk?: string | null;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  gallery?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  popularity?: number | null;
+  sortIndex?: number | null;
+  importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  eventId: string;
+  cityId: string;
+  zoneId: string;
+  countryIso: string;
+  midnightUtc: string;
+  isMainCelebration?: boolean | null;
+  type?: string | null;
+  popularity?: number | null;
+  restrainedNote?: {
+    uk?: string | null;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  slot: 'midnight' | 'fireworks-20' | 'dawn' | 'jan-1';
+  startsAt?: string | null;
+  sortIndex?: number | null;
+  importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "idempotency-records".
  */
 export interface IdempotencyRecord {
@@ -263,6 +381,60 @@ export interface InternalEvent {
     | boolean
     | null;
   committedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seasons".
+ */
+export interface Season {
+  id: number;
+  key: string;
+  generatedAt: string;
+  tzdbVersion: string;
+  importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "traditions".
+ */
+export interface Tradition {
+  id: number;
+  traditionId: string;
+  countryIso: string;
+  title: {
+    uk: string;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  text: {
+    uk: string;
+    en?: string | null;
+    es?: string | null;
+    fr?: string | null;
+  };
+  iconId?: string | null;
+  sortIndex?: number | null;
+  importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "zones".
+ */
+export interface Zone {
+  id: number;
+  zoneId: string;
+  order: number;
+  offsetMinutes: number;
+  midnightUtc: string;
+  representativeCityId?: string | null;
+  importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -305,12 +477,36 @@ export interface PayloadLockedDocument {
         value: number | AuditLog;
       } | null)
     | ({
+        relationTo: 'cities';
+        value: number | City;
+      } | null)
+    | ({
+        relationTo: 'countries';
+        value: number | Country;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
         relationTo: 'idempotency-records';
         value: number | IdempotencyRecord;
       } | null)
     | ({
         relationTo: 'internal-events';
         value: number | InternalEvent;
+      } | null)
+    | ({
+        relationTo: 'seasons';
+        value: number | Season;
+      } | null)
+    | ({
+        relationTo: 'traditions';
+        value: number | Tradition;
+      } | null)
+    | ({
+        relationTo: 'zones';
+        value: number | Zone;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -434,6 +630,105 @@ export interface AuditLogSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities_select".
+ */
+export interface CitiesSelect<T extends boolean = true> {
+  cityId?: T;
+  countryIso?: T;
+  zoneId?: T;
+  name?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  landmark?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  celebrationType?: T;
+  mapPoint?:
+    | T
+    | {
+        x?: T;
+        y?: T;
+      };
+  isCountryMain?: T;
+  sortIndex?: T;
+  importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries_select".
+ */
+export interface CountriesSelect<T extends boolean = true> {
+  iso?: T;
+  slug?: T;
+  name?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  gender?: T;
+  flagCode?: T;
+  zoneIds?: T;
+  illustrationId?: T;
+  howToText?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  gallery?: T;
+  popularity?: T;
+  sortIndex?: T;
+  importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  eventId?: T;
+  cityId?: T;
+  zoneId?: T;
+  countryIso?: T;
+  midnightUtc?: T;
+  isMainCelebration?: T;
+  type?: T;
+  popularity?: T;
+  restrainedNote?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  slot?: T;
+  startsAt?: T;
+  sortIndex?: T;
+  importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "idempotency-records_select".
  */
 export interface IdempotencyRecordsSelect<T extends boolean = true> {
@@ -452,6 +747,61 @@ export interface InternalEventsSelect<T extends boolean = true> {
   version?: T;
   payload?: T;
   committedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seasons_select".
+ */
+export interface SeasonsSelect<T extends boolean = true> {
+  key?: T;
+  generatedAt?: T;
+  tzdbVersion?: T;
+  importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "traditions_select".
+ */
+export interface TraditionsSelect<T extends boolean = true> {
+  traditionId?: T;
+  countryIso?: T;
+  title?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  text?:
+    | T
+    | {
+        uk?: T;
+        en?: T;
+        es?: T;
+        fr?: T;
+      };
+  iconId?: T;
+  sortIndex?: T;
+  importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "zones_select".
+ */
+export interface ZonesSelect<T extends boolean = true> {
+  zoneId?: T;
+  order?: T;
+  offsetMinutes?: T;
+  midnightUtc?: T;
+  representativeCityId?: T;
+  importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
