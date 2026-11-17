@@ -2,17 +2,21 @@
  * Catalog use cases (ring 3): integrity of a pending write (AC-49) and the version bump with the
  * "Catalog changed" event (AC-67). No Payload import; every call carries the caller's transaction.
  */
+import { fail, ok, type ApiResult, type CatalogPayload, type CatalogReason } from '@time2fest/contracts';
+import { assembleCatalog, type CatalogRows } from '../domain/catalog/assemble';
 import {
   applyChange,
   checkCatalog,
   newViolations,
+  toSnapshotRow,
   type CatalogChange,
   type Violation,
 } from '../domain/catalog/integrity';
 import { bumpedMeta } from '../domain/catalog/version';
 import type { EventPublisher, Tx } from '../events/ports';
 import type { Clock } from '../ports';
-import type { CatalogReader, SeasonStore } from './ports';
+import type { CatalogReader, CatalogStore, SeasonStore } from './ports';
+import { CatalogChangedSchema } from '@time2fest/contracts/schemas';
 
 export const CATALOG_CHANGED_TOPIC = 'catalog.changed';
 
@@ -46,6 +50,62 @@ export async function recordCatalogChange(
   if (!season) return null;
   const { generatedAt, version } = bumpedMeta(season, deps.clock.now());
   await deps.seasons.setGeneratedAt(tx, season.id, generatedAt);
-  await deps.publisher.publish(tx, CATALOG_CHANGED_TOPIC, { version, at: generatedAt });
+  await deps.publisher.publish(tx, CATALOG_CHANGED_TOPIC, CatalogChangedSchema.parse({ version, at: generatedAt }));
   return { version };
+}
+
+const INVALID: CatalogReason = 'catalog-invalid';
+
+/** The stored catalog as the integrity rules see it; hidden events never count. */
+function snapshotOf(stored: Awaited<ReturnType<CatalogStore['read']>>) {
+  return {
+    zones: stored.zones.map((r) => toSnapshotRow('zones', r)),
+    countries: stored.countries.map((r) => toSnapshotRow('countries', r)),
+    cities: stored.cities.map((r) => toSnapshotRow('cities', r)),
+    events: stored.events.map((r) => toSnapshotRow('events', r)),
+  };
+}
+
+/**
+ * `GET /api/catalog` (AC-63, AC-65): the catalog in the shape of `data/`, or `unavailable` with the reason
+ * `catalog-invalid` when there is no season or a record breaks an integrity rule.
+ */
+export async function readCatalog(store: CatalogStore): Promise<ApiResult<CatalogPayload>> {
+  const stored = await store.read();
+  if (!stored.season || checkCatalog(snapshotOf(stored)).length > 0) return fail('unavailable', { reason: INVALID });
+  const rows: CatalogRows = { ...stored, season: stored.season };
+  return ok(assembleCatalog(rows));
+}
+
+/** A moment of a night other than midnight (AC-66), for the consumers of SPEC-12. */
+export interface NonMidnightEvent {
+  eventId: string;
+  cityId: string;
+  zoneId: string;
+  countryIso: string;
+  slot: string;
+  startsAt: string;
+}
+
+/** Read port: events of a kind other than `midnight`, with their own `startsAt` (AC-66). */
+export async function nonMidnightEvents(store: CatalogStore): Promise<NonMidnightEvent[]> {
+  const stored = await store.read();
+  return stored.events
+    .filter((e) => e.slot !== undefined && e.slot !== null && e.slot !== 'midnight')
+    .map((e) => ({
+      eventId: String(e.eventId),
+      cityId: String(e.cityId),
+      zoneId: String(e.zoneId),
+      countryIso: String(e.countryIso),
+      slot: String(e.slot),
+      startsAt: new Date(e.startsAt as string).toISOString(),
+    }));
+}
+
+/** Read port: the midnight moment of every zone. */
+export async function zoneMoments(store: CatalogStore): Promise<{ zoneId: string; midnightUtc: string }[]> {
+  const stored = await store.read();
+  return [...stored.zones]
+    .sort((a, b) => Number(a.order) - Number(b.order))
+    .map((z) => ({ zoneId: String(z.zoneId), midnightUtc: String(z.midnightUtc) }));
 }

@@ -14,6 +14,7 @@ import { createAccessGate, createDenyLog, type AccessGate } from './access/gate'
 import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
 import { createIdentityMarker } from './adapters/identityMarker';
+import { createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
@@ -24,6 +25,7 @@ import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventLog, EventPublisher, EventSubscriber } from './events/ports';
 import type { AlarmStore } from './alarms/ports';
+import type { CatalogStore } from './catalog/ports';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type RawEnv } from './platform/env';
@@ -41,6 +43,7 @@ const PAYLOAD_KEY = Symbol.for('t2f.payload');
 const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
 const EVENTS_KEY = Symbol.for('t2f.events');
 const ALARM_STORE_KEY = Symbol.for('t2f.alarmStore');
+const CATALOG_STORE_KEY = Symbol.for('t2f.catalogStore');
 const BACKGROUND_KEY = Symbol.for('t2f.background');
 const BACKGROUND_RETRY_MS = 5_000;
 
@@ -143,12 +146,20 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   };
   Object.defineProperty(deps, EVENTS_KEY, { value: events, enumerable: false });
   Object.defineProperty(deps, ALARM_STORE_KEY, { value: alarmStore, enumerable: false });
+  Object.defineProperty(deps, CATALOG_STORE_KEY, { value: createPayloadCatalogStore(payload), enumerable: false });
   return deps;
 }
 
 /** The alarm store of deps built by `createDeps` (AC-37 … AC-39): the alarm door and the slice read it. */
 export function alarmStoreOf(deps: Deps): AlarmStore {
   const store = (deps as unknown as Record<symbol, AlarmStore | undefined>)[ALARM_STORE_KEY];
+  if (!store) throw new Error('deps: not built by createDeps');
+  return store;
+}
+
+/** The catalog read port of deps built by `createDeps` (AC-63). */
+export function catalogStoreOf(deps: Deps): CatalogStore {
+  const store = (deps as unknown as Record<symbol, CatalogStore | undefined>)[CATALOG_STORE_KEY];
   if (!store) throw new Error('deps: not built by createDeps');
   return store;
 }

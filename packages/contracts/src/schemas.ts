@@ -1,5 +1,6 @@
 /** Zod wire schemas (SPEC-02). Server and tests only: never re-exported from index.ts, so the site bundle stays zod-free. */
 import { z } from 'zod';
+import { CatalogPayloadSchema } from './catalog.schemas';
 import type { ApiErrorCode } from './result';
 
 export const ApiErrorCodeSchema = z.enum([
@@ -56,3 +57,8 @@ export type TestClockState = z.infer<typeof TestClockStateSchema>;
 
 export const TestFixturesBodySchema = z.object({ name: z.string().min(1).max(64) }).strict();
 export type TestFixturesBody = z.infer<typeof TestFixturesBodySchema>;
+
+/** `GET /api/catalog` (AC-63): the catalog payload inside `ApiResult`. */
+export const CatalogResponseSchema = apiResultSchema(CatalogPayloadSchema);
+
+export * from './catalog.schemas';

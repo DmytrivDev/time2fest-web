@@ -29,6 +29,8 @@ describe('catalog version (AC-67)', () => {
       })
     ).totalDocs;
 
+  const totalRows = async () => (await payload.count({ collection: 'audit-log', overrideAccess: true })).totalDocs;
+
   beforeAll(async () => {
     deps = testDeps();
     payload = await payloadOf(deps)();
@@ -42,6 +44,7 @@ describe('catalog version (AC-67)', () => {
   it('renaming a city: new generatedAt, one catalog.changed with the new version, one journal row of the city', async () => {
     const eventBefore = await latest();
     const rowsBefore = await cityRows();
+    const totalBefore = await totalRows();
     await payload.update({ collection: 'cities', id: tiny.ids.cities, data: { name: { uk: 'Нова назва' } } });
     const season = await payload.findByID({ collection: 'seasons', id: tiny.ids.seasons, overrideAccess: true, depth: 0 });
     expect(season.generatedAt).not.toBe('2020-01-01T00:00:00Z');
@@ -50,6 +53,8 @@ describe('catalog version (AC-67)', () => {
     expect(eventAfter?.version).toBe((eventBefore?.version ?? 0) + 1);
     expect(eventAfter?.payload).toEqual({ version, at: season.generatedAt });
     expect((await cityRows()) - rowsBefore).toBe(1);
+    // One owner action = exactly one journal row: the season bump is a consequence, not journalled.
+    expect((await totalRows()) - totalBefore).toBe(1);
   });
 
   it('a write in the import context changes nothing of the version', async () => {

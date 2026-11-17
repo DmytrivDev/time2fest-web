@@ -50,8 +50,14 @@ async function append(req: PayloadRequest, base: Omit<JournalEntry, 'actor' | 'a
   await journal().append(req, entry);
 }
 
+/** An internal consequence (e.g. the season `generatedAt` bump) is not an owner action: no journal row. */
+function isInternal(req: PayloadRequest): boolean {
+  return req.context?.t2fInternal === true;
+}
+
 export function auditAfterChange(slug: CollectionSlug): CollectionAfterChangeHook {
   return async ({ doc, previousDoc, operation, req }) => {
+    if (isInternal(req)) return doc;
     const id = (doc as { id: string | number }).id;
     // The stored value at depth 0 (relations as ids), the same shape the revert check reads.
     const stored = await req.payload.findByID({ collection: slug, id, req, depth: 0, overrideAccess: true, disableErrors: true });
@@ -70,6 +76,7 @@ export function auditAfterChange(slug: CollectionSlug): CollectionAfterChangeHoo
 
 export function auditAfterDelete(slug: CollectionSlug): CollectionAfterDeleteHook {
   return async ({ doc, id, req }) => {
+    if (isInternal(req)) return doc;
     await append(req, { target: { collection: slug, id: String(id) }, before: redactSecrets(doc), after: null }, 'delete');
     return doc;
   };

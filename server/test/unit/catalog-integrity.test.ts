@@ -143,4 +143,13 @@ describe('version (AC-67)', () => {
     expect(generatedAtOf(Date.parse('2026-11-02T16:12:35.999Z'))).toBe('2026-11-02T16:12:35Z');
     expect(bumpedMeta({ tzdbVersion: '2026f' }, Date.parse('2026-11-02T16:12:35Z')).version).toBe('2026-11-02T16:12:35Z+2026f');
   });
+
+  it('is strictly monotonic: max(now, previous + 1 s)', () => {
+    const now = Date.parse('2026-11-02T16:12:35Z');
+    const season = { tzdbVersion: '2026f', generatedAt: '2026-11-02T16:12:35Z' };
+    expect(bumpedMeta(season, now).generatedAt).toBe('2026-11-02T16:12:36Z');
+    expect(bumpedMeta(season, now - 5000).generatedAt).toBe('2026-11-02T16:12:36Z');
+    expect(bumpedMeta(season, now + 9000).generatedAt).toBe('2026-11-02T16:12:44Z');
+    expect(bumpedMeta({ tzdbVersion: '2026f', generatedAt: null }, now).generatedAt).toBe('2026-11-02T16:12:35Z');
+  });
 });

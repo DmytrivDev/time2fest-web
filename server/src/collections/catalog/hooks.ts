@@ -67,8 +67,10 @@ function seasonsOf(): SeasonStore {
         sort: 'id',
         overrideAccess: true,
       });
-      const doc = found.docs[0] as unknown as { id: string | number; tzdbVersion: string } | undefined;
-      return doc ? { id: String(doc.id), tzdbVersion: doc.tzdbVersion } : null;
+      const doc = found.docs[0] as unknown as
+        | { id: string | number; tzdbVersion: string; generatedAt?: string | null }
+        | undefined;
+      return doc ? { id: String(doc.id), tzdbVersion: doc.tzdbVersion, generatedAt: doc.generatedAt ?? null } : null;
     },
     async setGeneratedAt(tx, id, generatedAt) {
       const req = tx as PayloadRequest;
