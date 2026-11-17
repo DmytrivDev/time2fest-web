@@ -1,0 +1,13 @@
+{
+  "action": {
+    "id": 72531856,
+    "status": "completed",
+    "type": "resize",
+    "started_at": "2026-11-17T09:20:00Z",
+    "completed_at": "2026-11-17T09:21:05Z",
+    "resource_id": 3164444,
+    "resource_type": "droplet",
+    "region": { "name": "Frankfurt 1", "slug": "fra1", "available": true },
+    "region_slug": "fra1"
+  }
+}

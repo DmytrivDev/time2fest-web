@@ -1,0 +1,60 @@
+{
+  "id": 3164444,
+  "name": "t2f-rehearsal-main",
+  "memory": 4096,
+  "vcpus": 2,
+  "disk": 80,
+  "locked": false,
+  "status": "active",
+  "kernel": null,
+  "created_at": "2026-11-17T09:00:00Z",
+  "features": ["droplet_agent", "private_networking"],
+  "backup_ids": [],
+  "next_backup_window": null,
+  "snapshot_ids": [],
+  "image": {
+    "id": 165064169,
+    "name": "24.04 (LTS) x64",
+    "distribution": "Ubuntu",
+    "slug": "ubuntu-24-04-x64",
+    "public": true,
+    "regions": ["fra1"],
+    "created_at": "2024-10-08T00:00:00Z",
+    "type": "base",
+    "min_disk_size": 7,
+    "size_gigabytes": 2.36,
+    "description": "Ubuntu 24.04 (LTS) x64",
+    "tags": [],
+    "status": "available"
+  },
+  "volume_ids": [],
+  "size": {
+    "slug": "s-2vcpu-4gb",
+    "memory": 4096,
+    "vcpus": 2,
+    "disk": 80,
+    "transfer": 4.0,
+    "price_monthly": 24.0,
+    "price_hourly": 0.03571,
+    "regions": ["fra1"],
+    "available": true,
+    "description": "Basic"
+  },
+  "size_slug": "s-2vcpu-4gb",
+  "networks": {
+    "v4": [
+      { "ip_address": "10.114.0.2", "netmask": "255.255.240.0", "gateway": "10.114.0.1", "type": "private" },
+      { "ip_address": "203.0.113.10", "netmask": "255.255.240.0", "gateway": "203.0.113.1", "type": "public" }
+    ],
+    "v6": []
+  },
+  "region": {
+    "name": "Frankfurt 1",
+    "slug": "fra1",
+    "features": ["backups", "ipv6", "metadata", "install_agent", "storage", "image_transfer"],
+    "available": true,
+    "sizes": ["s-2vcpu-4gb", "s-4vcpu-8gb", "s-8vcpu-16gb", "c-4"]
+  },
+  "tags": ["t2f-managed", "t2f-env-rehearsal", "t2f-role-main"],
+  "vpc_uuid": "760e09ef-dc84-11e8-981e-3cfdfeaae000"
+}

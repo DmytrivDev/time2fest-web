@@ -1,0 +1,10 @@
+{
+  "sizes": [
+    { "slug": "s-2vcpu-4gb", "memory": 4096, "vcpus": 2, "disk": 80, "transfer": 4.0, "price_monthly": 24.0, "price_hourly": 0.03571, "regions": ["fra1", "ams3"], "available": true, "description": "Basic", "disk_info": [{ "type": "local", "size": { "amount": 80, "unit": "gib" } }] },
+    { "slug": "s-4vcpu-8gb", "memory": 8192, "vcpus": 4, "disk": 160, "transfer": 5.0, "price_monthly": 48.0, "price_hourly": 0.07143, "regions": ["fra1", "ams3"], "available": true, "description": "Basic", "disk_info": [{ "type": "local", "size": { "amount": 160, "unit": "gib" } }] },
+    { "slug": "s-8vcpu-16gb", "memory": 16384, "vcpus": 8, "disk": 320, "transfer": 6.0, "price_monthly": 96.0, "price_hourly": 0.14286, "regions": ["fra1", "ams3"], "available": true, "description": "Basic", "disk_info": [{ "type": "local", "size": { "amount": 320, "unit": "gib" } }] },
+    { "slug": "c-4", "memory": 8192, "vcpus": 4, "disk": 50, "transfer": 5.0, "price_monthly": 84.0, "price_hourly": 0.125, "regions": ["fra1", "ams3"], "available": true, "description": "CPU-Optimized", "disk_info": [{ "type": "local", "size": { "amount": 50, "unit": "gib" } }] }
+  ],
+  "links": { "pages": {} },
+  "meta": { "total": 4 }
+}

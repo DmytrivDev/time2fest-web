@@ -1,0 +1,27 @@
+{
+  "droplet": {
+    "id": 3164494,
+    "name": "t2f-rehearsal-realtime",
+    "memory": 4096,
+    "vcpus": 2,
+    "disk": 80,
+    "locked": false,
+    "status": "new",
+    "kernel": null,
+    "created_at": "2026-11-17T09:10:00Z",
+    "features": [],
+    "backup_ids": [],
+    "next_backup_window": null,
+    "snapshot_ids": [],
+    "image": { "id": 165064169, "name": "24.04 (LTS) x64", "distribution": "Ubuntu", "slug": "ubuntu-24-04-x64", "public": true, "regions": ["fra1"], "type": "base", "status": "available" },
+    "volume_ids": [],
+    "size": { "slug": "s-2vcpu-4gb", "memory": 4096, "vcpus": 2, "disk": 80, "price_monthly": 24.0, "price_hourly": 0.03571, "available": true },
+    "size_slug": "s-2vcpu-4gb",
+    "networks": { "v4": [], "v6": [] },
+    "region": { "name": "Frankfurt 1", "slug": "fra1", "available": true },
+    "tags": ["t2f-managed", "t2f-env-rehearsal", "t2f-role-realtime"]
+  },
+  "links": {
+    "actions": [{ "id": 7515, "rel": "create", "href": "https://api.digitalocean.com/v2/actions/7515" }]
+  }
+}
