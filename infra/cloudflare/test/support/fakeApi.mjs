@@ -23,15 +23,18 @@ export function createFakeApi(opts = {}) {
     accessApps: [],
     /** Менша сторінка списку Access для тестів пагінації. @type {number | undefined} */
     accessPerPage: undefined,
+    /** Постачальники входу Access (тіло POST/PUT як є, з секретом; GET його не віддає — як Cloudflare). @type {any[]} */
+    identityProviders: [],
   };
   /** @type {{ method: string, path: string }[]} */
   const log = [];
-  /** @type {Record<string, number>} */
+  /** Відмови за категорією; `method` — лише для цього методу (напр. POST), інакше для всіх. @type {Record<string, { status: number, method?: string }>} */
   const refusals = {};
 
   /** @param {string} path */
   const categoryOf = (path) => {
     if (path.includes('cfd_tunnel')) return 'tunnel';
+    if (path.includes('/access/identity_providers')) return 'access-idp';
     if (path.includes('/access/')) return 'access';
     if (path.includes('dns_records')) return 'dns';
     if (path.includes('/rulesets/phases/http_config_settings')) return 'config-rules';
@@ -50,7 +53,7 @@ export function createFakeApi(opts = {}) {
   function handle(method, pathname, query, body) {
     log.push({ method, path: pathname });
     const refused = refusals[categoryOf(pathname)];
-    if (refused) return { status: refused };
+    if (refused && (!refused.method || refused.method === method)) return { status: refused.status };
     /** @type {RegExpMatchArray | null | undefined} */
     let m;
     if (method === 'GET' && (m = pathname.match(/^\/accounts\/[^/]+\/cfd_tunnel$/))) {
@@ -117,6 +120,25 @@ export function createFakeApi(opts = {}) {
         return { status: 200, result: { fight_mode: state.botFightMode } };
       }
     }
+    if (method === 'GET' && /^\/accounts\/[^/]+\/access\/identity_providers$/.test(pathname)) {
+      const result = state.identityProviders.map((p) => {
+        const { client_secret: _hidden, ...config } = p.config ?? {};
+        return { ...p, config };
+      });
+      return { status: 200, result, result_info: { page: 1, per_page: result.length, count: result.length, total_count: result.length, total_pages: 1 } };
+    }
+    if (method === 'POST' && /^\/accounts\/[^/]+\/access\/identity_providers$/.test(pathname)) {
+      const idp = { ...body, id: nextId() };
+      state.identityProviders.push(idp);
+      return { status: 200, result: { ...idp, config: { client_id: idp.config?.client_id } } };
+    }
+    if (method === 'PUT' && (m = pathname.match(/^\/accounts\/[^/]+\/access\/identity_providers\/([^/]+)$/))) {
+      const idp = state.identityProviders.find((x) => x.id === m?.[1]);
+      if (!idp) return { status: 404 };
+      for (const k of Object.keys(idp)) if (k !== 'id') delete idp[k];
+      Object.assign(idp, body);
+      return { status: 200, result: { ...idp, config: { client_id: idp.config?.client_id } } };
+    }
     if (method === 'GET' && /^\/accounts\/[^/]+\/access\/apps$/.test(pathname)) {
       // Сторінки, як у Cloudflare: `page`, `per_page` (у фейку можна зменшити через `accessPerPage`), `result_info`.
       const per = Math.min(Number(query.get('per_page') ?? state.accessApps.length) || 1, state.accessPerPage ?? Infinity);
@@ -153,9 +175,9 @@ export function createFakeApi(opts = {}) {
     state,
     log,
     /** Типові отвори: наступні виклики категорії відповідають цим статусом. */
-    /** @param {string} category @param {number} status */
-    refuse(category, status) {
-      refusals[category] = status;
+    /** @param {string} category @param {number} status @param {string} [method] лише для цього методу */
+    refuse(category, status, method) {
+      refusals[category] = { status, method };
     },
     /** @param {Partial<typeof state>} seed */
     seed(seed) {

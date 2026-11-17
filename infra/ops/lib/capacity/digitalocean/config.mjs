@@ -23,7 +23,7 @@ export const ENV_SIZES = {
   },
 };
 
-/** Права `DIGITALOCEAN_TOKEN` (власна роль токена, для README й латки документації). */
+/** Права `DIGITALOCEAN_API_TOKEN` (власна роль токена, для README й латки документації). */
 export const TOKEN_SCOPES = [
   'droplet:read',
   'droplet:create',
@@ -40,7 +40,7 @@ export const TOKEN_SCOPES = [
 ];
 
 /** Змінні середовища адаптера (лише назви). `T2F_DO_SSH_KEY` — відбиток ключа SSH власника в обліковому записі. */
-export const DO_ENV = { token: 'DIGITALOCEAN_TOKEN', base: 'DO_API_BASE', sshKey: 'T2F_DO_SSH_KEY' };
+export const DO_ENV = { token: 'DIGITALOCEAN_API_TOKEN', base: 'DO_API_BASE', sshKey: 'T2F_DO_SSH_KEY' };
 
 /** Очікування: стан вузла, дія; м’яке вимкнення — до переходу на `power_off`. */
 export const DO_TIMEOUTS = { pollMs: 5_000, nodeMs: 10 * 60_000, actionMs: 15 * 60_000, shutdownMs: 60_000 };

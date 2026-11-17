@@ -2,6 +2,9 @@
 // Застосунок Cloudflare Access для адмінки середовища (`adminHost`). Працює лише з `--with-access`.
 // Пошти власника — тільки зі змінної T2F_OWNER_EMAILS (локальний файл секретів), ніколи з git;
 // у вивід потрапляє лише їх кількість. `aud` застосунку — не секрет, друкується для T2F_ACCESS_AUD.
+// Вхід — лише через Google (постачальник `t2f-google`, рівень акаунта): застосунок має `allowed_idps` = його id і
+// `auto_redirect_to_identity`, тож одноразовий PIN поштою не пропонується. Секрет клієнта Google ніколи не друкується
+// і не повертається API у відкритому вигляді; client id — лише останні 6 символів.
 import { ApiRefusal } from './api.mjs';
 import { ENVS } from './config.mjs';
 
@@ -33,10 +36,29 @@ export function parseOwnerEmails(raw) {
   return [...new Set(list)];
 }
 
+/** Ім’я й тип постачальника входу, яким керує скрипт. */
+export const IDP_NAME = 't2f-google';
+export const IDP_TYPE = 'google';
+/** Право токена на постачальників входу (і на читання списку: крок їх створює чи оновлює). */
+export const IDP_RIGHT = 'Account · Access: Organizations, Identity Providers, and Groups · Edit';
+/** Заповнювач id постачальника, якого ще створить цей же запуск (лише для порівняння). */
+const PENDING_IDP = '<new t2f-google>';
+
 /**
  * @typedef {{ name: string, domain: string, type: string, session_duration: string,
  *   policies: { name: string, decision: string, include: { email: { email: string } }[] }[] }} AccessApp
+ * @typedef {{ clientId: string, clientSecret: string }} GoogleClient
  */
+
+/** @param {string} clientId */
+export const clientIdTail = (clientId) => `…${String(clientId).slice(-6)}`;
+
+/**
+ * Тіло застосунку для API: бажаний застосунок плюс єдиний дозволений спосіб входу.
+ * @param {AccessApp} app
+ * @param {string} idpId
+ */
+export const appBody = (app, idpId) => ({ ...app, allowed_idps: [idpId], auto_redirect_to_identity: true });
 
 /**
  * Бажаний застосунок Access для адмінки середовища.
@@ -64,6 +86,8 @@ const view = (a) =>
     domain: String(a?.domain ?? '').toLowerCase(),
     type: a?.type ?? '',
     session_duration: a?.session_duration ?? '',
+    allowed_idps: [...(Array.isArray(a?.allowed_idps) ? a.allowed_idps : [])].map(String).sort(),
+    auto_redirect_to_identity: a?.auto_redirect_to_identity === true,
     policies: (a?.policies ?? []).map((/** @type {any} */ p) => ({
       name: p?.name ?? '',
       decision: p?.decision ?? '',
@@ -85,12 +109,12 @@ export async function listAccessApps(api, accountId) {
 
 /**
  * Перевірка позначки (N3): адмінка лишається ввімкненою лише тоді, коли в Cloudflare справді є застосунок Access з
- * `domain` = ім’я адмінки й хоча б однією політикою. Бракує права читання — теж «вимкнено» (не перевірено), без збою
+ * `domain` = ім’я адмінки, хоча б однією політикою й непорожнім `allowed_idps`. Бракує права читання — теж «вимкнено» (не перевірено), без збою
  * всього запуску; інша відмова API — виняток.
  * @param {AccessApi} api
  * @param {string} accountId
  * @param {string} host
- * @returns {Promise<{ ok: true } | { ok: false, reason: 'missing' | 'no-policy' | 'no-right' }>}
+ * @returns {Promise<{ ok: true } | { ok: false, reason: 'missing' | 'no-policy' | 'no-idp' | 'no-right' }>}
  */
 export async function verifyAdminAccess(api, accountId, host) {
   /** @type {any[]} */
@@ -103,53 +127,106 @@ export async function verifyAdminAccess(api, accountId, host) {
   }
   const mine = apps.filter((a) => domainOf(a?.domain) === host.toLowerCase());
   if (!mine.length) return { ok: false, reason: 'missing' };
-  return mine.some((a) => Array.isArray(a?.policies) && a.policies.length > 0) ? { ok: true } : { ok: false, reason: 'no-policy' };
+  const withPolicy = mine.filter((a) => Array.isArray(a?.policies) && a.policies.length > 0);
+  if (!withPolicy.length) return { ok: false, reason: 'no-policy' };
+  return withPolicy.some((a) => Array.isArray(a?.allowed_idps) && a.allowed_idps.length > 0) ? { ok: true } : { ok: false, reason: 'no-idp' };
 }
 
 /**
- * Зміни застосунку Access: створити, якщо застосунку з цим `domain` немає; оновити, якщо відрізняється.
- * Підсумок називає лише кількість адрес, не самі адреси.
+ * Зміна постачальника входу Google: створити, якщо `t2f-google` немає; оновити (PUT), якщо client id інший.
+ * Той самий client id — без змін (секрет API назад не віддає, порівняти його не можна). Постачальник з цим ім’ям
+ * іншого типу — чужий: зміна з `data.conflict`, яку запобіжник відхиляє (скрипт його не змінює й не видаляє).
+ * @param {{ envName: string, host: string, clientId: string }} want
+ * @param {any[]} currentIdps відповідь `GET /accounts/{a}/access/identity_providers`
+ * @returns {{ changes: import('./diff.mjs').Change[], id: string | null }} `id` — наявного постачальника Google
+ */
+export function diffIdp({ envName, host, clientId }, currentIdps) {
+  const named = currentIdps.filter((p) => p?.name === IDP_NAME);
+  /** @type {{ kind: string, target: string, hosts: string[], category: string }} */
+  const base = { kind: 'access-idp', target: IDP_NAME, hosts: [host], category: 'access-idp' };
+  const foreign = named.find((p) => p?.type !== IDP_TYPE);
+  if (foreign) {
+    const type = String(foreign?.type ?? '?');
+    const summary = `постачальник входу ${IDP_NAME}: є з типом «${type}» — чужий, скрипт його не змінює`;
+    return { changes: [{ ...base, op: 'update', summary, data: { env: envName, conflict: type } }], id: null };
+  }
+  const cur = named[0];
+  const tail = clientIdTail(clientId);
+  if (!cur) {
+    return { changes: [{ ...base, op: 'create', summary: `постачальник входу ${IDP_NAME} (Google, client id ${tail}): створити`, data: { env: envName } }], id: null };
+  }
+  const id = String(cur.id);
+  if (String(cur?.config?.client_id ?? '') !== clientId) {
+    return { changes: [{ ...base, op: 'update', summary: `постачальник входу ${IDP_NAME} (Google): оновити client id на ${tail}`, data: { env: envName, id } }], id };
+  }
+  return { changes: [], id };
+}
+
+/**
+ * Зміни застосунку Access: створити, якщо застосунку з цим `domain` немає; оновити, якщо відрізняється (зокрема
+ * `allowed_idps` чи `auto_redirect_to_identity`). Підсумок називає лише кількість адрес, не самі адреси.
  * @param {AccessApp} app
  * @param {any[]} currentApps відповідь `GET /accounts/{a}/access/apps`
+ * @param {string | null} [idpId] id постачальника Google; null — його створить цей же запуск
  * @returns {import('./diff.mjs').Change[]}
  */
-export function diffAccess(app, currentApps) {
+export function diffAccess(app, currentApps, idpId = null) {
   const domain = app.domain.toLowerCase();
   const cur = currentApps.find((a) => domainOf(a?.domain) === domain);
   const count = app.policies.reduce((n, p) => n + p.include.length, 0);
   const base = { kind: 'access-app', target: app.domain, hosts: [app.domain], category: 'access' };
   if (!cur) {
-    return [{ ...base, op: 'create', summary: `Access ${app.name} (${app.domain}): створити, політика на ${count} адрес`, data: { app } }];
+    return [{ ...base, op: 'create', summary: `Access ${app.name} (${app.domain}): створити, політика на ${count} адрес, вхід лише через Google`, data: { app } }];
   }
-  if (view(cur) !== view(app)) {
+  if (view(cur) !== view(appBody(app, idpId ?? PENDING_IDP))) {
     return [{ ...base, op: 'update', summary: `Access ${app.name} (${app.domain}): оновити, політика на ${count} адрес`, data: { app, id: String(cur.id) } }];
   }
   return [];
 }
 
 /**
- * Крок Access для plan/apply: читання (GET) і застосування (POST/PUT).
+ * Крок Access для plan/apply: читання (GET постачальників, потім застосунків) і застосування — постачальник Google
+ * (POST/PUT), потім застосунок (POST/PUT) з `allowed_idps` = id постачальника.
  * @param {{
  *   api: AccessApi,
  *   accountId: string,
+ *   envName: string,
  *   app: AccessApp,
+ *   google: GoogleClient,
  *   out: (line: string) => void,
  * }} deps
  */
-export function createAccessStep({ api, accountId, app, out }) {
+export function createAccessStep({ api, accountId, envName, app, google, out }) {
   const base = `/accounts/${accountId}/access/apps`;
+  const idpBase = `/accounts/${accountId}/access/identity_providers`;
+  /** id постачальника Google: наявного (з `changes`) або щойно створеного (з `apply`). @type {string | null} */
+  let idpId = null;
+  const idpBody = () => ({ name: IDP_NAME, type: IDP_TYPE, config: { client_id: google.clientId, client_secret: google.clientSecret } });
   return {
     /** @returns {Promise<import('./diff.mjs').Change[]>} */
     async changes() {
-      return diffAccess(app, await listAccessApps(api, accountId));
+      const idp = diffIdp({ envName, host: app.domain, clientId: google.clientId }, await api.getAll('access-idp', idpBase));
+      idpId = idp.id;
+      return [...idp.changes, ...diffAccess(app, await listAccessApps(api, accountId), idpId)];
     },
     /** @param {import('./diff.mjs').Change} change */
     async apply(change) {
       const d = change.data ?? {};
-      const res =
-        change.op === 'create'
-          ? await api.request('POST', 'access', base, d.app)
-          : await api.request('PUT', 'access', `${base}/${d.id}`, d.app);
+      if (change.kind === 'access-idp') {
+        if (d.conflict) throw new Error(`постачальник входу ${IDP_NAME} іншого типу — скрипт його не змінює`);
+        if (change.op === 'create') {
+          const res = await api.request('POST', 'access-idp', idpBase, idpBody());
+          if (!res?.id) throw new Error(`Cloudflare не повернув id постачальника входу ${IDP_NAME}`);
+          idpId = String(res.id);
+        } else {
+          await api.request('PUT', 'access-idp', `${idpBase}/${d.id}`, idpBody());
+          idpId = String(d.id);
+        }
+        return;
+      }
+      if (!idpId) throw new Error(`немає id постачальника входу ${IDP_NAME}: застосунок Access не записано`);
+      const body = appBody(d.app, idpId);
+      const res = change.op === 'create' ? await api.request('POST', 'access', base, body) : await api.request('PUT', 'access', `${base}/${d.id}`, body);
       if (res?.aud) out(`Access ${app.name}: aud = ${String(res.aud)} → значення для T2F_ACCESS_AUD (не секрет)`);
     },
   };

@@ -1,12 +1,14 @@
 // @ts-check
 // `apply`: під замком `cloudflare` читає поточний стан, рахує різницю, перевіряє запобіжником і застосовує
-// зміни по порядку: застосунок Access (лише з `--with-access`) → тунель → ingress → DNS → набори правил (повний список
-// фази) → налаштування зони (лише з прапорцем). Access — першим: ім’я адмінки не з’являється раніше за свій захист.
+// зміни по порядку: постачальник входу Google → застосунок Access (обидва лише з `--with-access`) → тунель → ingress →
+// DNS → набори правил (повний список фази) → налаштування зони (лише з прапорцем). Access — першим: ім’я адмінки не
+// з’являється раніше за свій захист, а застосунок — раніше за єдиний дозволений спосіб входу.
 // Перша відмова зупиняє все; вивід називає дозвіл і вже застосовані зміни.
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { acquire, lockDir } from '../../../server/scripts/lib/lock.mjs';
 import { resolveWorktree } from '../../../server/scripts/lib/worktree.mjs';
+import { IDP_RIGHT } from './access.mjs';
 import { ApiRefusal } from './api.mjs';
 import { observe } from './current.mjs';
 import { diff } from './diff.mjs';
@@ -16,7 +18,7 @@ import { tokenFileExists, writeAccessMarker, writeTokenFile } from './tokenFile.
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 /** Порядок виконання за видом зміни. */
-const ORDER = /** @type {Record<string, number>} */ ({ 'access-app': 0, tunnel: 1, 'tunnel-config': 2, dns: 3, rule: 4, 'zone-setting': 5 });
+const ORDER = /** @type {Record<string, number>} */ ({ 'access-idp': -1, 'access-app': 0, tunnel: 1, 'tunnel-config': 2, dns: 3, rule: 4, 'zone-setting': 5 });
 
 /** Дозвіл токена, потрібний для категорії запиту. */
 const EDIT_PERMISSION = /** @type {Record<string, string>} */ ({
@@ -27,7 +29,10 @@ const EDIT_PERMISSION = /** @type {Record<string, string>} */ ({
   'zone-settings': 'Zone · Zone Settings · Edit',
   'bot-management': 'Zone · Bot Management · Edit',
   access: 'Account · Access: Apps and Policies · Edit',
+  'access-idp': IDP_RIGHT,
 });
+/** Категорії, де навіть читання потребує права Edit: крок завжди може записати (постачальник входу). */
+const EDIT_EVEN_FOR_READ = new Set(['access-idp']);
 
 /**
  * @param {string} category
@@ -35,7 +40,7 @@ const EDIT_PERMISSION = /** @type {Record<string, string>} */ ({
  */
 export function permissionFor(category, method) {
   const edit = EDIT_PERMISSION[category] ?? `${category} · Edit`;
-  return method === 'GET' ? edit.replace(/ · Edit$/, ' · Read') : edit;
+  return method === 'GET' && !EDIT_EVEN_FOR_READ.has(category) ? edit.replace(/ · Edit$/, ' · Read') : edit;
 }
 
 /**
@@ -192,7 +197,7 @@ async function execute(ctx, changes, tunnelIds, applied) {
         throw new Error(`невідоме налаштування зони ${String(d.setting)}`);
       }
       done(c);
-    } else if (c.kind === 'access-app' && ctx.access && (c.op === 'create' || c.op === 'update')) {
+    } else if ((c.kind === 'access-idp' || c.kind === 'access-app') && ctx.access && (c.op === 'create' || c.op === 'update')) {
       await ctx.access.apply(c);
       done(c);
     } else {

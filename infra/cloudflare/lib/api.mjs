@@ -41,7 +41,7 @@ export function createApi({ env, fetch = globalThis.fetch }) {
   const token = env.CLOUDFLARE_API_TOKEN_INFRA;
   /**
    * @param {string} method
-   * @param {string} category tunnel | dns | waf | config-rules | zone-settings | bot-management | access
+   * @param {string} category tunnel | dns | waf | config-rules | zone-settings | bot-management | access | access-idp
    * @param {string} path шлях після /client/v4
    * @param {unknown} [body]
    * @returns {Promise<any>} уся відповідь (`result`, `result_info`)

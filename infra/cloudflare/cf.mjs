@@ -5,10 +5,18 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { ACCESS_READ_RIGHT, OWNER_EMAILS_ENV, createAccessStep, desiredAccess, parseOwnerEmails, verifyAdminAccess } from './lib/access.mjs';
+import {
+  ACCESS_READ_RIGHT,
+  OWNER_EMAILS_ENV,
+  clientIdTail,
+  createAccessStep,
+  desiredAccess,
+  parseOwnerEmails,
+  verifyAdminAccess,
+} from './lib/access.mjs';
 import { ApiRefusal, createApi } from './lib/api.mjs';
 import { runApply, takeCloudflareLock } from './lib/apply.mjs';
-import { ENVS, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
+import { ENVS, GOOGLE_IDP_ENV, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
 import { observe } from './lib/current.mjs';
 import { desiredState, disabledAdminHosts } from './lib/desired.mjs';
 import { diff } from './lib/diff.mjs';
@@ -109,6 +117,8 @@ export async function main(argv, deps = {}) {
   // Access лише з --with-access: пошти — зі змінної (файл секретів), у вивід — лише кількість.
   /** @type {string[] | null} */
   let ownerEmails = null;
+  /** @type {import('./lib/access.mjs').GoogleClient | null} */
+  let google = null;
   if (args.withAccess) {
     ownerEmails = parseOwnerEmails(env[OWNER_EMAILS_ENV]);
     if (!ownerEmails) {
@@ -120,7 +130,16 @@ export async function main(argv, deps = {}) {
       out(`--with-access: середовище ${args.env} не має імені адмінки (adminHost)`);
       return 1;
     }
-    out(`Access: адрес власника — ${ownerEmails.length}`);
+    // Вхід в адмінку — лише через Google: без клієнта OAuth застосунок Access не створюється.
+    const absent = [GOOGLE_IDP_ENV.clientId, GOOGLE_IDP_ENV.clientSecret].filter((n) => !env[n]);
+    if (absent.length) {
+      out(`--with-access потребує ${absent.join(', ')} (клієнт OAuth Google для входу в Access) у середовищі або --secrets-file`);
+      return 1;
+    }
+    google = { clientId: String(env[GOOGLE_IDP_ENV.clientId]), clientSecret: String(env[GOOGLE_IDP_ENV.clientSecret]) };
+    redactor.add(google.clientId);
+    redactor.add(google.clientSecret);
+    out(`Access: адрес власника — ${ownerEmails.length}; вхід лише через Google (client id ${clientIdTail(google.clientId)})`);
   }
 
   try {
@@ -148,7 +167,12 @@ export async function main(argv, deps = {}) {
         if (v.reason === 'no-right') {
           out(`адмінка ${host}: позначка Access є, але токену бракує права ${ACCESS_READ_RIGHT} — Access не перевірено, ім'я адмінки вимкнено`);
         } else {
-          const why = v.reason === 'missing' ? 'застосунку Access з цим доменом у Cloudflare немає' : 'застосунок Access без жодної політики';
+          const why =
+            v.reason === 'missing'
+              ? 'застосунку Access з цим доменом у Cloudflare немає'
+              : v.reason === 'no-idp'
+                ? 'застосунок Access без дозволеного постачальника входу (allowed_idps порожній)'
+                : 'застосунок Access без жодної політики';
           out(`адмінка ${host}: позначка Access є, але ${why} — ім'я адмінки вимкнено; ${args.command === 'apply' ? 'позначку прибрано' : 'apply прибере позначку'}`);
           staleMarkers.push(n);
         }
@@ -158,7 +182,10 @@ export async function main(argv, deps = {}) {
     const build = (staleAdmin) =>
       (deps.desiredState ?? desiredState)(envNames, { underAttack: { [String(args.env)]: args.underAttack }, admin, staleAdmin });
     const adminWatch = disabledAdminHosts(envNames, admin);
-    const access = ownerEmails ? createAccessStep({ api, accountId: ids.accountId, app: desiredAccess(args.env, ownerEmails), out }) : undefined;
+    const access =
+      ownerEmails && google
+        ? createAccessStep({ api, accountId: ids.accountId, envName: String(args.env), app: desiredAccess(args.env, ownerEmails), google, out })
+        : undefined;
     const flags = { allowMainDomain: args.allowMainDomain, allowZoneSettings: args.allowZoneSettings, allowDelete: args.allowDelete };
 
     if (args.command === 'apply') {
@@ -206,7 +233,15 @@ export async function main(argv, deps = {}) {
 /** @param {Record<string, string | undefined>} env */
 function redactorSources(env) {
   return Object.fromEntries(
-    ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN', 'T2F_OWNER_EMAILS'].map((n) => [n, env[n]]),
+    [
+      'CLOUDFLARE_API_TOKEN_INFRA',
+      'CLOUDFLARE_API_TOKEN',
+      'T2F_EDGE_SECRET',
+      'TUNNEL_TOKEN',
+      'T2F_OWNER_EMAILS',
+      'CF_ACCESS_GOOGLE_CLIENT_ID',
+      'CF_ACCESS_GOOGLE_CLIENT_SECRET',
+    ].map((n) => [n, env[n]]),
   );
 }
 

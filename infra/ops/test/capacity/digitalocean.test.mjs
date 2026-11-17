@@ -190,7 +190,7 @@ const fastClock = () => {
  */
 const providerFor = (srv, extra = {}) =>
   createDigitalOcean({
-    env: { DIGITALOCEAN_TOKEN: TOKEN, DO_API_BASE: srv.base, T2F_DO_SSH_KEY: FINGERPRINT, ...extra },
+    env: { DIGITALOCEAN_API_TOKEN: TOKEN, DO_API_BASE: srv.base, T2F_DO_SSH_KEY: FINGERPRINT, ...extra },
     clock: fastClock(),
   });
 
@@ -328,7 +328,7 @@ describe('адаптер DigitalOcean: запити', () => {
     for (const bad of ['https://evil.example', 'http://localhost:8080', 'http://127.0.0.1:8080/x', 'http://10.0.0.1:80']) {
       expect(() => resolveBase({ DO_API_BASE: bad })).toThrow(/DO_API_BASE/);
     }
-    expect(() => createDigitalOcean({ env: {} })).toThrow(/DIGITALOCEAN_TOKEN/);
+    expect(() => createDigitalOcean({ env: {} })).toThrow(/DIGITALOCEAN_API_TOKEN/);
   });
 
   it('без відбитка ключа SSH створення відмовляє до запиту', async () => {
@@ -350,7 +350,7 @@ describe('назви провайдера лише в його адаптері 
    * @param {string} rel
    * @param {string} line
    */
-  const allowed = (rel, line) => rel === 'lib/capacity/providers.mjs' || (rel === 'lib/config.mjs' && line.trim() === "'DIGITALOCEAN_TOKEN',");
+  const allowed = (rel, line) => rel === 'lib/capacity/providers.mjs' || (rel === 'lib/config.mjs' && line.trim() === "'DIGITALOCEAN_API_TOKEN',");
 
   it('`droplet|digitalocean` не трапляється в infra/ops/lib і ops.mjs поза lib/capacity/digitalocean/', () => {
     /** @type {string[]} */

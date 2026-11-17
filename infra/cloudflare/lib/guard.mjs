@@ -1,14 +1,14 @@
 // @ts-check
 // Запобіжник: зміни, що зачіпають робочий домен, усю зону або щось видаляють, проходять лише з явним прапорцем.
 // Усе невідоме — заборонено (deny by default). Поштові DNS-записи (MX/TXT) не проходять ні з яким прапорцем.
-import { MAIN_HOSTS } from './config.mjs';
+import { ACCESS_IDP_ENVS, MAIN_HOSTS } from './config.mjs';
 import { OPAQUE_HOST, ZONE_WIDE } from './diff.mjs';
 
 /** @typedef {import('./diff.mjs').Change} Change */
 /** @typedef {{ allowMainDomain?: boolean, allowZoneSettings?: boolean, allowDelete?: boolean }} GuardFlags */
 /** @typedef {{ change: Change, reason: string, flag: string | null }} Refusal */
 
-const KINDS = new Set(['tunnel', 'tunnel-config', 'dns', 'rule', 'zone-setting', 'access-app']);
+const KINDS = new Set(['tunnel', 'tunnel-config', 'dns', 'rule', 'zone-setting', 'access-idp', 'access-app']);
 const OPS = new Set(['create', 'update', 'delete']);
 /** Типи DNS, які скрипт не змінює ніколи (пошта). */
 const NEVER_DNS_TYPES = new Set(['MX', 'TXT', 'SPF']);
@@ -39,6 +39,22 @@ export function guard(changes, flags = {}) {
     if (!OPS.has(change.op)) {
       refuse(`невідома операція «${change.op}»`, null);
       continue;
+    }
+    // Постачальник входу — об’єкт рівня акаунта: лише для дозволених середовищ, чужий (інший тип з тим самим ім’ям)
+    // не змінюється й не видаляється ніколи, жоден прапорець цього не дозволяє.
+    if (change.kind === 'access-idp') {
+      if (change.data?.conflict) {
+        refuse(`постачальник входу з цим ім’ям має тип «${String(change.data.conflict)}» — чужий`, null);
+        continue;
+      }
+      if (!ACCESS_IDP_ENVS.includes(String(change.data?.env))) {
+        refuse(`постачальник входу дозволено лише для середовищ ${ACCESS_IDP_ENVS.join(', ')}`, null);
+        continue;
+      }
+      if (change.op === 'delete') {
+        refuse('постачальника входу скрипт не видаляє', null);
+        continue;
+      }
     }
     if (change.kind === 'dns') {
       const type = String(change.data?.type ?? '').toUpperCase();

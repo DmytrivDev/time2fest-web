@@ -61,10 +61,25 @@ export const PERMISSIONS = [
   'Zone · Zone Settings · Read (Edit лише з --allow-zone-settings)',
   'Zone · Bot Management · Read',
   'Account · Access: Apps and Policies · Edit (лише з --with-access; Read — для перевірки позначки access-<env>.ok)',
+  'Account · Access: Organizations, Identity Providers, and Groups · Edit (лише з --with-access: постачальник входу Google)',
 ];
 
+/** Змінні OAuth-клієнта Google для постачальника входу Access (лише з `--with-access`). */
+export const GOOGLE_IDP_ENV = { clientId: 'CF_ACCESS_GOOGLE_CLIENT_ID', clientSecret: 'CF_ACCESS_GOOGLE_CLIENT_SECRET' };
+
+/** Середовища, для яких скрипт може створити чи оновити постачальника входу (об’єкт рівня акаунта). */
+export const ACCESS_IDP_ENVS = ['rehearsal'];
+
 /** Імена змінних, значення яких ніколи не потрапляють у вивід. */
-export const SECRET_ENV_NAMES = ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN', 'T2F_OWNER_EMAILS'];
+export const SECRET_ENV_NAMES = [
+  'CLOUDFLARE_API_TOKEN_INFRA',
+  'CLOUDFLARE_API_TOKEN',
+  'T2F_EDGE_SECRET',
+  'TUNNEL_TOKEN',
+  'T2F_OWNER_EMAILS',
+  'CF_ACCESS_GOOGLE_CLIENT_ID',
+  'CF_ACCESS_GOOGLE_CLIENT_SECRET',
+];
 
 /**
  * @param {string} envName

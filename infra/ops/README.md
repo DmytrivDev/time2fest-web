@@ -138,7 +138,7 @@ Postgres (кожен — 32 випадкові байти з системног�
 |---|---|
 | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | `wrangler`: розгортання й відкат Worker’а, перенесення імені |
 | `CLOUDFLARE_ZONE_ID` | зона `time2fest.com`: перевірка тримача імені перед розгортанням `prelaunch`/`production` (не секрет) |
-| `DIGITALOCEAN_TOKEN`, `T2F_DO_SSH_KEY`, `T2F_PROVIDER` (необов’язкова) | команда `capacity`; `T2F_DO_SSH_KEY` — відбиток або номер ключа власника в обліковому записі |
+| `DIGITALOCEAN_API_TOKEN`, `T2F_DO_SSH_KEY`, `T2F_PROVIDER` (необов’язкова) | команда `capacity`; `T2F_DO_SSH_KEY` — відбиток або номер ключа власника в обліковому записі |
 | `T2F_KNOWN_HOSTS_FILE` | файл відбитків ключів вузлів |
 | `T2F_CATALOG_URL` | адреса каталогу для збірки сайту (за замовчуванням `https://<хост сайту середовища>`) |
 | `T2F_EDGE_SECRET`, `T2F_EDGE_SECRET_PREVIOUS`, `PAYLOAD_SECRET`, `POSTGRES_PASSWORD`, `TUNNEL_TOKEN`, `T2F_R2_*` | значення секретів; живуть лише у файлах вузла, секретах Worker’а й `.local` |
@@ -147,7 +147,7 @@ Postgres (кожен — 32 випадкові байти з системног�
 
 ## Токени
 
-**`DIGITALOCEAN_TOKEN`** — власна роль (custom scopes), лише потрібне: `droplet:read`, `droplet:create`, `droplet:update`,
+**`DIGITALOCEAN_API_TOKEN`** — власна роль (custom scopes), лише потрібне: `droplet:read`, `droplet:create`, `droplet:update`,
 `droplet:delete`, `actions:read`, `sizes:read`, `regions:read`, `tag:read`, `tag:create`, `ssh_key:read`, `image:read`,
 `vpc:read`. Той самий перелік — `TOKEN_SCOPES` в `infra/ops/lib/capacity/digitalocean/config.mjs`.
 

@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
-import { desiredAccess, diffAccess, parseOwnerEmails } from '../lib/access.mjs';
+import { desiredAccess, diffAccess, diffIdp, parseOwnerEmails } from '../lib/access.mjs';
 import { guard } from '../lib/guard.mjs';
 import { createRedactor } from '../lib/redact.mjs';
 import { convergedSeed, createFakeApi } from './support/fakeApi.mjs';
@@ -18,6 +18,11 @@ const OWNER_A = 'owner.fixture@example.org';
 const OWNER_B = 'second.fixture@example.org';
 const tok = `tok-${'7e'.repeat(8)}`;
 const tunnelTok = `tt-${'8f'.repeat(8)}`;
+// Клієнт OAuth Google (фікстури): id не секрет, але друкується лише його хвіст; секрет — ніколи.
+const GOOGLE_ID = `fixture-${'1a'.repeat(6)}.apps.googleusercontent.example`;
+const GOOGLE_ID_2 = `fixture-${'2b'.repeat(6)}.apps.googleusercontent.example`;
+const GOOGLE_SECRET = `gsec-${'9d'.repeat(10)}`;
+const OWNERS = { T2F_OWNER_EMAILS: `${OWNER_A}, ${OWNER_B}` };
 
 /** @type {string} */
 let tmp;
@@ -33,7 +38,7 @@ afterEach(() => {
  * @param {string[]} argv
  * @param {Record<string, string | undefined>} [extraEnv]
  */
-async function run(fake, argv, extraEnv = { T2F_OWNER_EMAILS: `${OWNER_A}, ${OWNER_B}` }) {
+async function run(fake, argv, extraEnv = OWNERS) {
   /** @type {string[]} */
   const lines = [];
   const code = await main(argv, {
@@ -42,6 +47,8 @@ async function run(fake, argv, extraEnv = { T2F_OWNER_EMAILS: `${OWNER_A}, ${OWN
       CLOUDFLARE_ACCOUNT_ID: 'acct-test',
       CLOUDFLARE_ZONE_ID: 'zone-test',
       T2F_LOCK_DIR: path.join(tmp, 'locks'),
+      CF_ACCESS_GOOGLE_CLIENT_ID: GOOGLE_ID,
+      CF_ACCESS_GOOGLE_CLIENT_SECRET: GOOGLE_SECRET,
       ...extraEnv,
     },
     fetch: fake.fetch,
@@ -122,13 +129,16 @@ describe('Access: з --with-access', () => {
     expect(fake.log).toEqual([]);
   });
 
-  it('plan: одна зміна create access-app, лише GET, пошти — лише кількістю', async () => {
+  it('plan: create access-app (після create access-idp), лише GET, пошти — лише кількістю', async () => {
     const fake = converged();
     const r = await run(fake, ['plan', '--env', 'rehearsal', '--with-access']);
     expect(r.code).toBe(0);
     expect(fake.mutations()).toEqual([]);
-    expect(accessRequests(fake)).toEqual([{ method: 'GET', path: '/accounts/acct-test/access/apps' }]);
-    expect(r.text).toContain('create access-app: Access t2f-admin-rehearsal (admin-rehearsal.time2fest.com): створити, політика на 2 адрес');
+    expect(accessRequests(fake)).toEqual([
+      { method: 'GET', path: '/accounts/acct-test/access/identity_providers' },
+      { method: 'GET', path: '/accounts/acct-test/access/apps' },
+    ]);
+    expect(r.text).toContain('create access-app: Access t2f-admin-rehearsal (admin-rehearsal.time2fest.com): створити, політика на 2 адрес, вхід лише через Google');
     expect(r.text).toContain('адрес власника — 2');
     for (const e of [OWNER_A, OWNER_B]) expect(r.text).not.toContain(e);
   });
@@ -137,8 +147,9 @@ describe('Access: з --with-access', () => {
     const fake = converged();
     const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
     expect(r.code).toBe(0);
-    // F2: застосунок Access — першим, лише потім ingress адмінки і її CNAME.
+    // F2: постачальник входу Google і застосунок Access — першими, лише потім ingress адмінки і її CNAME.
     expect(fake.mutations()).toEqual([
+      { method: 'POST', path: '/accounts/acct-test/access/identity_providers' },
       { method: 'POST', path: '/accounts/acct-test/access/apps' },
       { method: 'PUT', path: '/accounts/acct-test/cfd_tunnel/tun2/configurations' },
       { method: 'POST', path: '/zones/zone-test/dns_records' },
@@ -165,7 +176,7 @@ describe('Access: з --with-access', () => {
     const again = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
     expect(again.code).toBe(0);
     expect(again.text).toContain('без змін');
-    expect(fake.mutations()).toHaveLength(3);
+    expect(fake.mutations()).toHaveLength(4);
   });
 
   it('F2/N3: після успішного кроку Access позначка тримає адмінку і без --with-access — Access лише читається (GET) для перевірки', async () => {
@@ -179,7 +190,7 @@ describe('Access: з --with-access', () => {
     const apply = await run(fake, ['apply', '--env', 'test'], {});
     expect(apply.code).toBe(0);
     expect(apply.text).toContain('без змін');
-    expect(fake.mutations()).toHaveLength(3);
+    expect(fake.mutations()).toHaveLength(4);
     // N3: одне читання списку застосунків на запуск, жодної зміни Access.
     expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toEqual([
       { method: 'GET', path: '/accounts/acct-test/access/apps' },
@@ -228,6 +239,192 @@ describe('Access: з --with-access', () => {
   });
 });
 
+describe('Access: вхід лише через Google (постачальник t2f-google)', () => {
+  const IDP_PATH = '/accounts/acct-test/access/identity_providers';
+  const APPS_PATH = '/accounts/acct-test/access/apps';
+  /** @param {ReturnType<typeof createFakeApi>} fake */
+  const adminDns = (fake) => fake.state.dns.some((x) => x.name === 'admin-rehearsal.time2fest.com');
+  const marker = () => path.join(tmp, '.local', 'access-rehearsal.ok');
+
+  it('новий акаунт: POST постачальника, потім POST застосунку з allowed_idps = його id і auto_redirect, потім ingress і DNS; повтор — без змін', async () => {
+    const fake = converged();
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(0);
+    expect(fake.mutations()).toEqual([
+      { method: 'POST', path: IDP_PATH },
+      { method: 'POST', path: APPS_PATH },
+      { method: 'PUT', path: '/accounts/acct-test/cfd_tunnel/tun2/configurations' },
+      { method: 'POST', path: '/zones/zone-test/dns_records' },
+    ]);
+    expect(fake.state.identityProviders).toHaveLength(1);
+    const idp = fake.state.identityProviders[0];
+    expect(idp).toEqual({ id: idp.id, name: 't2f-google', type: 'google', config: { client_id: GOOGLE_ID, client_secret: GOOGLE_SECRET } });
+    const app = fake.state.accessApps[0];
+    expect(app.allowed_idps).toEqual([idp.id]);
+    expect(app.auto_redirect_to_identity).toBe(true);
+    expect(r.text).toContain(`client id …${GOOGLE_ID.slice(-6)}`);
+
+    const again = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(again.code).toBe(0);
+    expect(again.text).toContain('без змін');
+    expect(fake.mutations()).toHaveLength(4);
+    expect(fake.state.identityProviders).toHaveLength(1);
+  });
+
+  it('plan: рядок create access-idp перед create access-app, лише GET', async () => {
+    const fake = converged();
+    const r = await run(fake, ['plan', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(0);
+    expect(fake.mutations()).toEqual([]);
+    expect(r.text).toContain(`create access-idp: постачальник входу t2f-google (Google, client id …${GOOGLE_ID.slice(-6)}): створити`);
+    expect(r.text.indexOf('create access-idp')).toBeLessThan(r.text.indexOf('create access-app'));
+  });
+
+  it('змінився client id → PUT того самого постачальника з повним тілом; застосунок не змінюється', async () => {
+    const fake = converged();
+    expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
+    const id = fake.state.identityProviders[0].id;
+    const before = fake.mutations().length;
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access'], { ...OWNERS, CF_ACCESS_GOOGLE_CLIENT_ID: GOOGLE_ID_2 });
+    expect(r.code).toBe(0);
+    expect(fake.mutations().slice(before)).toEqual([{ method: 'PUT', path: `${IDP_PATH}/${id}` }]);
+    expect(fake.state.identityProviders).toEqual([{ id, name: 't2f-google', type: 'google', config: { client_id: GOOGLE_ID_2, client_secret: GOOGLE_SECRET } }]);
+    expect(fake.state.accessApps[0].allowed_idps).toEqual([id]);
+    for (const v of [GOOGLE_ID_2, GOOGLE_SECRET]) expect(r.text).not.toContain(v);
+  });
+
+  it('застосунок з іншим allowed_idps (або без нього) → PUT застосунку з id постачальника', async () => {
+    const fake = converged();
+    expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
+    const app = fake.state.accessApps[0];
+    const idpId = fake.state.identityProviders[0].id;
+    app.allowed_idps = ['someone-else'];
+    delete app.auto_redirect_to_identity;
+    const before = fake.mutations().length;
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(0);
+    expect(fake.mutations().slice(before)).toEqual([{ method: 'PUT', path: `${APPS_PATH}/${app.id}` }]);
+    expect(fake.state.accessApps[0].allowed_idps).toEqual([idpId]);
+    expect(fake.state.accessApps[0].auto_redirect_to_identity).toBe(true);
+  });
+
+  it('постачальник t2f-google іншого типу (чужий) → plan показує заборону, apply код 2, 0 змін, чужий не змінено', async () => {
+    const fake = converged();
+    const foreign = { id: 'foreign-1', name: 't2f-google', type: 'onetimepin', config: {} };
+    fake.seed({ identityProviders: [{ ...foreign }] });
+    const plan = await run(fake, ['plan', '--env', 'rehearsal', '--with-access']);
+    expect(plan.code).toBe(0);
+    expect(plan.text).toContain('заборонено: update access-idp t2f-google');
+    expect(plan.text).toContain('жоден прапорець не дозволяє');
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(2);
+    expect(r.text).toContain('жодного запиту на зміну не зроблено');
+    expect(fake.mutations()).toEqual([]);
+    expect(fake.state.identityProviders).toEqual([foreign]);
+    expect(fake.state.accessApps).toEqual([]);
+    expect(adminDns(fake)).toBe(false);
+  });
+
+  it('403 на списку постачальників → код 3, названо право, жодної зміни (ні застосунку, ні ingress, ні DNS)', async () => {
+    const fake = converged();
+    fake.refuse('access-idp', 403);
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(3);
+    expect(r.text).toContain('Access: Organizations, Identity Providers, and Groups · Edit');
+    expect(fake.mutations()).toEqual([]);
+    expect(fake.state.accessApps).toEqual([]);
+    expect(adminDns(fake)).toBe(false);
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
+    expect(fs.existsSync(marker())).toBe(false);
+  });
+
+  it('403 на створенні постачальника → код 3, названо право, після відмови — 0 змін', async () => {
+    const fake = converged();
+    fake.refuse('access-idp', 403, 'POST');
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(3);
+    expect(r.text).toContain('needs permission: Account · Access: Organizations, Identity Providers, and Groups · Edit');
+    // Єдина спроба зміни — сама відхилена POST постачальника; далі нічого.
+    expect(fake.mutations()).toEqual([{ method: 'POST', path: IDP_PATH }]);
+    expect(fake.state.identityProviders).toEqual([]);
+    expect(fake.state.accessApps).toEqual([]);
+    expect(adminDns(fake)).toBe(false);
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
+    expect(fs.existsSync(marker())).toBe(false);
+    expect(r.text).not.toContain(GOOGLE_SECRET);
+  });
+
+  it.each([['CF_ACCESS_GOOGLE_CLIENT_ID'], ['CF_ACCESS_GOOGLE_CLIENT_SECRET']])('немає %s → код 1, змінну названо, жодного запиту', async (name) => {
+    const fake = converged();
+    for (const cmd of ['plan', 'apply']) {
+      const r = await run(fake, [cmd, '--env', 'rehearsal', '--with-access'], { ...OWNERS, [name]: undefined });
+      expect(r.code).toBe(1);
+      expect(r.text).toContain(name);
+    }
+    expect(fake.log).toEqual([]);
+  });
+
+  it('секрет клієнта (і повний client id) ніколи не у виводі й не в .local; значення з --secrets-file теж маскуються', async () => {
+    const fake = converged();
+    const file = path.join(tmp, 'secrets.env');
+    fs.writeFileSync(file, `T2F_OWNER_EMAILS=${OWNER_A}\nCF_ACCESS_GOOGLE_CLIENT_ID=${GOOGLE_ID}\nCF_ACCESS_GOOGLE_CLIENT_SECRET=${GOOGLE_SECRET}\n`);
+    /** @type {string[]} */
+    const texts = [];
+    const env = { CF_ACCESS_GOOGLE_CLIENT_ID: undefined, CF_ACCESS_GOOGLE_CLIENT_SECRET: undefined, T2F_OWNER_EMAILS: undefined };
+    for (const cmd of ['plan', 'apply']) {
+      const r = await run(fake, [cmd, '--env', 'rehearsal', '--with-access', '--secrets-file', file], env);
+      expect(r.code).toBe(0);
+      texts.push(r.text);
+    }
+    expect(fake.state.identityProviders[0].config.client_secret).toBe(GOOGLE_SECRET);
+    // Повідомлення про помилку (чужий тип) — теж без секрету.
+    fake.state.identityProviders[0].type = 'github';
+    texts.push((await run(fake, ['apply', '--env', 'rehearsal', '--with-access', '--secrets-file', file], env)).text);
+    const local = path.join(tmp, '.local');
+    for (const f of fs.readdirSync(local)) texts.push(fs.readFileSync(path.join(local, f), 'utf8'));
+    for (const t of texts) {
+      expect(t).not.toContain(GOOGLE_SECRET);
+      expect(t).not.toContain(GOOGLE_ID);
+    }
+    expect(texts[0]).toContain(`…${GOOGLE_ID.slice(-6)}`);
+  });
+
+  it('N3: позначка є, але allowed_idps застосунку порожній → адмінку вимкнено, позначку прибрано', async () => {
+    const fake = converged();
+    expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
+    expect(fs.existsSync(marker())).toBe(true);
+    fake.state.accessApps[0].allowed_idps = [];
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(r.text).toContain('allowed_idps порожній');
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
+    const block = (fake.state.rulesets.http_request_firewall_custom ?? []).find((x) => x.ref === 't2f-block-tunnel-hosts');
+    expect(block?.expression).toContain('"admin-rehearsal.time2fest.com"');
+    expect(fs.existsSync(marker())).toBe(false);
+    expect(fake.mutations().filter((m) => m.path.includes('/access/')).map((m) => m.method)).toEqual(['POST', 'POST']);
+  });
+
+  it('запобіжник: постачальник входу лише для rehearsal; видалення — ніколи', () => {
+    const base = { kind: 'access-idp', target: 't2f-google', hosts: ['admin-rehearsal.time2fest.com'], category: 'access-idp', summary: 's' };
+    expect(guard([{ ...base, op: 'create', data: { env: 'rehearsal' } }]).ok).toBe(true);
+    const flags = { allowMainDomain: true, allowZoneSettings: true, allowDelete: true };
+    expect(guard([{ ...base, op: 'create', data: { env: 'test' } }], flags).refused.map((x) => x.flag)).toEqual([null]);
+    expect(guard([{ ...base, op: 'delete', data: { env: 'rehearsal' } }], flags).refused.map((x) => x.flag)).toEqual([null]);
+    expect(guard([{ ...base, op: 'update', data: { env: 'rehearsal', conflict: 'github' } }], flags).refused.map((x) => x.flag)).toEqual([null]);
+  });
+
+  it('diffIdp: той самий client id — без змін; інший — update; немає — create', () => {
+    const want = { envName: 'rehearsal', host: 'admin-rehearsal.time2fest.com', clientId: GOOGLE_ID };
+    expect(diffIdp(want, []).changes.map((c) => c.op)).toEqual(['create']);
+    const same = [{ id: 'g1', name: 't2f-google', type: 'google', config: { client_id: GOOGLE_ID } }];
+    expect(diffIdp(want, same)).toEqual({ changes: [], id: 'g1' });
+    const other = [{ id: 'g1', name: 't2f-google', type: 'google', config: { client_id: GOOGLE_ID_2 } }];
+    expect(diffIdp(want, other).changes.map((c) => `${c.op}:${c.data.id}`)).toEqual(['update:g1']);
+    // Чужі постачальники з іншими іменами не чіпаються.
+    expect(diffIdp(want, [{ id: 'x', name: 'someone', type: 'github' }, ...same]).changes).toEqual([]);
+  });
+});
+
 describe('N3: позначка Access перевіряється в Cloudflare', () => {
   const ADMIN = 'admin-rehearsal.time2fest.com';
   const marker = () => path.join(tmp, '.local', 'access-rehearsal.ok');
@@ -259,7 +456,10 @@ describe('N3: позначка Access перевіряється в Cloudflare',
     expect(blockExpr(fake)).toContain(`"${ADMIN}"`);
     expect(fs.existsSync(marker())).toBe(false);
     // Жодного запису Access не створено й не змінено.
-    expect(fake.mutations().filter((m) => m.path.includes('/access/'))).toEqual([{ method: 'POST', path: '/accounts/acct-test/access/apps' }]);
+    expect(fake.mutations().filter((m) => m.path.includes('/access/'))).toEqual([
+      { method: 'POST', path: '/accounts/acct-test/access/identity_providers' },
+      { method: 'POST', path: '/accounts/acct-test/access/apps' },
+    ]);
   });
 
   it('застосунок з тим доменом, але без жодної політики → вимкнено, позначку прибрано', async () => {

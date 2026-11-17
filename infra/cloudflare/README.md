@@ -17,8 +17,8 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 
 - `plan` лише читає (GET) і друкує по рядку на зміну, або «без змін», а також вердикти запобіжника (код 0).
 - `apply` бере замок `cloudflare` (`server/scripts/lib/lock.mjs`, тека `<lockDir>/cloudflare`, виключний режим),
-  під ним читає поточний стан, рахує різницю й перевіряє запобіжником, потім застосовує по порядку: застосунок
-  Access (лише з `--with-access`) → тунель → ingress → DNS → набори правил (PUT повного бажаного списку фази) → налаштування зони (лише з прапорцем).
+  під ним читає поточний стан, рахує різницю й перевіряє запобіжником, потім застосовує по порядку: постачальник
+  входу Google → застосунок Access (обидва лише з `--with-access`) → тунель → ingress → DNS → набори правил (PUT повного бажаного списку фази) → налаштування зони (лише з прапорцем).
   Повторний `apply` без зміни опису друкує «без змін» і не робить жодного запиту на зміну.
 - Після змін `apply` друкує готовий рядок журналу для `docs/services/cloudflare.md`:
   `- <YYYY-MM-DD> — infra/cloudflare apply (<env>): <перелік змін>`.
@@ -41,7 +41,8 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 підтверджує. Позначку пише `apply --with-access` після того, як крок Access пройшов (застосунок створено, оновлено чи
 він уже такий); без значень, лише дата. Позначці не вірять наосліп: без `--with-access` `plan`/`apply` читають
 `GET /accounts/{a}/access/apps` (усі сторінки) і лишають адмінку, лише якщо є застосунок з `domain` = ім'я адмінки
-й хоча б однією політикою. Застосунку немає чи він без політик — адмінка вимкнена (ingress прибирається, залишок
+й хоча б однією політикою та непорожнім `allowed_idps`. Застосунку немає, він без політик чи без дозволеного
+постачальника входу — адмінка вимкнена (ingress прибирається, залишок
 імені йде в блок-правило), а `apply` видаляє застарілу позначку (`plan` лише пише, що її буде прибрано). Токену бракує
 права читання Access — адмінка теж вимкнена, друкується назва права, запуск не падає; позначка лишається до
 наступної перевірки. Без прапорця й без позначки `plan`/`apply` не показують і не створюють жодного об'єкта
@@ -59,8 +60,42 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 `t2f-owner-<env>`: allow для пошт власника). Пошти — лише зі змінної `T2F_OWNER_EMAILS` (через кому; оточення
 або `--secrets-file`, ніколи git); без неї — код 1. У вивід потрапляє лише кількість адрес; самі адреси
 маскуються. Після створення друкується `aud` застосунку — значення для `T2F_ACCESS_AUD` сервера (не секрет).
-Середовище без `adminHost` (`test`) з `--with-access` — код 1. Порядок `apply`: застосунок Access — **першим**, потім
-тунель, ingress і DNS; відмова на кроці Access зупиняє все, тож ім'я адмінки не з'являється без свого захисту.
+Середовище без `adminHost` (`test`) з `--with-access` — код 1.
+
+**Вхід лише через Google.** Власник входить в адмінку тільки своїм обліковим записом Google (з двофакторним
+захистом); одноразовий PIN поштою не дозволено. Для цього з `--with-access` скрипт спершу забезпечує постачальника
+входу (identity provider) рівня акаунта `t2f-google` типу `google`:
+
+- `GET /accounts/{a}/access/identity_providers` (усі сторінки); немає — `POST` з тілом
+  `{ name: "t2f-google", type: "google", config: { client_id, client_secret } }`; є з іншим `client_id` — `PUT` повним
+  тілом; той самий `client_id` — «без змін» (секрет API назад не віддає, тож на кожному запуску його не перезаписуємо;
+  щоб оновити лише секрет, змінити його в панелі Cloudflare вручну).
+- Постачальник з ім'ям `t2f-google`, але іншого типу — чужий: запобіжник відмовляє (**код 2**), скрипт його не змінює
+  й не видаляє. Чужі постачальники з іншими іменами не чіпаються.
+- Постачальника можна створити чи оновити лише з `--with-access` і лише для `rehearsal` (інші середовища запобіжник
+  відхиляє); `plan` показує рядок `create access-idp` / `update access-idp` або нічого.
+- Застосунок отримує `allowed_idps: [<id t2f-google>]` і `auto_redirect_to_identity: true` (одразу на сторінку
+  Google); застосунок з іншим `allowed_idps` оновлюється (`PUT`), як і при зміні пошт.
+
+Змінні (лише з `--with-access`; оточення або `--secrets-file`, ніколи git): `CF_ACCESS_GOOGLE_CLIENT_ID`,
+`CF_ACCESS_GOOGLE_CLIENT_SECRET` — клієнт OAuth Google (Google Cloud Console → Credentials → OAuth client ID, тип
+«Web application», Authorized redirect URI — `https://<team>.cloudflareaccess.com/cdn-cgi/access/callback`). Бракує
+будь-якої — код 1 до першого запиту, змінну названо. Обидва значення маскуються; секрет не потрапляє ні у вивід, ні в
+план, ні в повідомлення про помилки, ні в позначку `.local`; з client id друкуються лише останні 6 символів.
+
+Порядок `apply`: постачальник входу → застосунок Access з політикою → лише потім тунель, ingress і DNS адмінки.
+Відмова на кроці Access (зокрема 403 на списку чи створенні постачальника — `needs permission: Account · Access:
+Organizations, Identity Providers, and Groups · Edit`, **код 3**) зупиняє все, тож ім'я адмінки не з'являється без
+свого захисту.
+
+Перший запуск наживо:
+
+```
+pnpm infra:cf apply --env rehearsal --with-access --secrets-file <шлях>
+```
+
+де файл секретів містить `CLOUDFLARE_API_TOKEN_INFRA`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`,
+`T2F_OWNER_EMAILS`, `CF_ACCESS_GOOGLE_CLIENT_ID`, `CF_ACCESS_GOOGLE_CLIENT_SECRET`.
 
 ### Запобіжник
 
@@ -103,7 +138,7 @@ pnpm edge:tunnel:down
 - Змінні: `CLOUDFLARE_API_TOKEN_INFRA`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID` (з оточення або з
   `--secrets-file`). Бракує будь-якої → код 1 до першого запиту.
 - Значення секретів (`CLOUDFLARE_API_TOKEN_INFRA`, `CLOUDFLARE_API_TOKEN`, `T2F_EDGE_SECRET`,
-  `T2F_OWNER_EMAILS` і кожна адреса з неї, токени тунелів) маскуються в кожному рядку виводу; тіло відмови API не друкується.
+  `T2F_OWNER_EMAILS` і кожна адреса з неї, `CF_ACCESS_GOOGLE_CLIENT_ID`, `CF_ACCESS_GOOGLE_CLIENT_SECRET`, токени тунелів) маскуються в кожному рядку виводу; тіло відмови API не друкується.
 - `CLOUDFLARE_API_BASE` приймається лише як `http://127.0.0.1:<port>` / `http://localhost:<port>` (тести).
 
 ## Дозволи токена `CLOUDFLARE_API_TOKEN_INFRA`
@@ -116,6 +151,8 @@ pnpm edge:tunnel:down
 - Zone · Bot Management · Read
 - Account · Access: Apps and Policies · Edit (лише з `--with-access`); Read — щоб перевірити позначку `access-<env>.ok`
   (без нього адмінку вимкнено, див. вище)
+- Account · Access: Organizations, Identity Providers, and Groups · Edit (лише з `--with-access`: постачальник
+  входу Google; потрібне й для читання списку постачальників)
 
 ## Тести
 
