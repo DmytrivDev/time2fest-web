@@ -7,18 +7,28 @@ import { describe, expect, it } from 'vitest';
 // @ts-expect-error plain .mjs modules without types
 import { collectAll, SEED_MAP } from '../../../scripts/boards/http-seeds.mjs';
 // @ts-expect-error plain .mjs modules without types
-import { listManifestFiles } from '../../../scripts/boards/lib/manifests.mjs';
+import { btDir, listManifestFiles } from '../../../scripts/boards/lib/manifests.mjs';
 
 const SCRIPT = 'scripts/boards/http-seeds.mjs';
 
+// The board manifests live in the project docs folder, outside this repository: present locally, absent in CI.
+const HAS_MANIFESTS = (() => {
+  try {
+    btDir();
+    return true;
+  } catch {
+    return false;
+  }
+})();
+
 describe('http-seeds', () => {
-  it('maps every seed name used by the board manifests (read-only)', () => {
+  it.skipIf(!HAS_MANIFESTS)('maps every seed name used by the board manifests (read-only)', () => {
     const { named } = collectAll(listManifestFiles());
     expect(named.length).toBeGreaterThan(0);
     for (const n of named) expect(Object.keys(SEED_MAP)).toContain(n);
   });
 
-  it('--all --dry lists the 6 names and exits 0', () => {
+  it.skipIf(!HAS_MANIFESTS)('--all --dry lists the 6 names and exits 0', () => {
     const r = spawnSync(process.execPath, [SCRIPT, '--all', '--dry'], { encoding: 'utf8' });
     expect(r.status).toBe(0);
     for (const n of ['fresh', 'guest', 'user', 'pass', 'nick', 'authOther']) expect(r.stdout).toContain(`${n}:`);
