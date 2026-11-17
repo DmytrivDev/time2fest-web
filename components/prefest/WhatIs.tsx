@@ -31,7 +31,6 @@ export function WhatIs() {
   const { toast } = usePrefest();
   return (
     <section className={cn(s.sec, s.wrap)} id="what" aria-labelledby="what-h">
-      <p className={s.kicker}>{t('kicker')}</p>
       <h2 className={s.h2} id="what-h">
         {t('title')}
       </h2>

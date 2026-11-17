@@ -161,7 +161,6 @@ export function MyMidnight() {
 
   return (
     <section className={cn(s.sec, s.wrap)} id="mine" aria-labelledby="mine-h">
-      <p className={s.kicker}>{t('kicker')}</p>
       <h2 className={s.h2} id="mine-h">
         {t('title')}
       </h2>

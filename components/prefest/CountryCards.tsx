@@ -29,7 +29,6 @@ export function CountryCards() {
     <section className={cn(s.sec, s.wrap)} id="countries" aria-labelledby="cc-h">
       <div className={s.secHead}>
         <div>
-          <p className={s.kicker}>{t('kicker')}</p>
           <h2 className={s.h2} id="cc-h">
             {t('title')}
           </h2>

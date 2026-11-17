@@ -79,7 +79,6 @@ export function NightWalk() {
 
   return (
     <section className={cn(s.sec, s.wrap)} id="night" aria-labelledby="night-h">
-      <p className={s.kicker}>{t('kicker')}</p>
       <h2 className={s.h2} id="night-h">
         {t('title')}
       </h2>

@@ -76,14 +76,6 @@
     font-size: 15px;
   }
 }
-.kicker {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  margin-bottom: 12px !important;
-}
 .intro {
   font-size: 17px;
   color: var(--color-text-secondary);
