@@ -1,0 +1,4 @@
+{
+  "$comment": "Rectangles [x, y, w, h] painted black in both images before comparing, keyed by board id glob (* matches any run). Only dynamic regions, recorded after fidelity-triager classes them dynamic. Never raise --tol instead.",
+  "masks": {}
+}
