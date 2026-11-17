@@ -11,13 +11,13 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const cwd = process.env.T2F_CHECK_ROOT ? path.resolve(process.env.T2F_CHECK_ROOT) : root;
 
-/** Known test fakes: `file:line` + reason. Keep small; never weaken a pattern instead. */
-const ALLOWLIST = [
-  { at: 'scripts/tests/test_no_key_leak.py:19', reason: 'fake key used to prove the scripts never print a key' },
-  { at: 'server/test/unit/platform.test.ts:7', reason: 'fake payload secret for the env loader unit test' },
-  { at: 'server/test/unit/platform.test.ts:14', reason: 'fake local DATABASE_URI for the env loader unit test' },
-  { at: 'server/test/unit/platform.test.ts:48', reason: 'fake production-looking DATABASE_URI that the isolation guard must reject' },
-];
+/**
+ * Known test fakes carry an inline marker on the SAME line as the hit: a trailing comment
+ * `check-secrets: allow <reason>` (`//` in TS, `#` in Python). The marker counts only under test paths.
+ * Keep small; never weaken a pattern instead.
+ */
+const ALLOW_MARKER = /check-secrets: allow \S/;
+const TEST_PATH = /(^|\/)(test|tests)\/|^scripts\/tests\//;
 
 const SKIP_PATH = /(^|\/)(pnpm-lock\.yaml|data\/|docs\/)|\.(png|jpe?g|webp|woff2)$/;
 // This file and its test fixtures hold the patterns themselves.
@@ -59,7 +59,7 @@ for (const f of files) {
   for (let i = 0; i < lines.length; i += 1) {
     for (const [name, re] of PATTERNS) {
       if (!re.test(lines[i] ?? '')) continue;
-      if (ALLOWLIST.some((a) => a.at === `${f}:${i + 1}`)) continue;
+      if (TEST_PATH.test(f) && ALLOW_MARKER.test(lines[i] ?? '')) continue;
       console.log(`${f}:${i + 1} ${name}`);
       hits += 1;
     }
