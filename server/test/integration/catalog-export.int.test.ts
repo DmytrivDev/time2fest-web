@@ -1,18 +1,21 @@
 /**
  * `export catalog` (AC-82, AC-83, W33): the imported catalog goes back to the data files byte for byte;
- * a `dawn` event does not appear; without `--write` nothing changes; `--write` over a modified target is
- * refused. Everything is written to a temp directory, never to `data/`.
+ * a `dawn` event and an event correction do not appear; without `--write` nothing changes; `--write` over a
+ * modified target is refused. Everything is written to a temp directory, never to `data/`.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Payload } from 'payload';
+import { createLocalReq, type Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { exportCatalog, type ExportFile, type ExportPorts } from '../../src/catalog/export';
+import { payloadCorrectionDeps } from '../../src/adapters/payloadCorrections';
 import { readCatalog } from '../../src/catalog/service';
-import { catalogStoreOf, payloadOf } from '../../src/container';
+import { realClock } from '../../src/clock';
+import { catalogStoreOf, eventsOf, payloadOf } from '../../src/container';
+import { saveCorrection } from '../../src/corrections/service';
 import { gitDirty } from '../../src/cli/export';
 import type { Deps } from '../../src/endpoints/types';
 import { importRegistry } from '../../src/registries/imports';
@@ -87,7 +90,7 @@ describe('export catalog', { timeout: 600_000 }, () => {
     expect(sameAsData(out)).toBe(true);
   });
 
-  it('AC-82: an event of another slot (dawn) leaves the files unchanged', async () => {
+  it('AC-82: an event of another slot (dawn) and an event correction leave the files unchanged', async () => {
     const city = (await payload.find({ collection: 'cities', where: { cityId: { equals: 'auckland' } }, overrideAccess: true, depth: 0 })).docs[0] as unknown as
       | { cityId: string; zoneId: string; countryIso: string }
       | undefined;
@@ -106,13 +109,29 @@ describe('export catalog', { timeout: 600_000 }, () => {
       overrideAccess: true,
       context: IMPORT_CONTEXT,
     });
+    const midnight = (
+      await payload.find({ collection: 'events', where: { and: [{ cityId: { equals: 'auckland' } }, { slot: { equals: 'midnight' } }] }, overrideAccess: true, depth: 0 })
+    ).docs[0] as unknown as { eventId: string; midnightUtc: string } | undefined;
+    if (!midnight) throw new Error('fixture: auckland midnight event');
     try {
+      const corrected = await saveCorrection(
+        payloadCorrectionDeps({ publisher: eventsOf(deps).publisher, clock: realClock, isRevertible: () => true }),
+        await createLocalReq({ context: { t2fTrusted: true } }, payload),
+        {
+          changes: { [midnight.eventId]: { moment: Date.parse(midnight.midnightUtc) + 30 * 60_000, restrained: { note: 'Тест' }, hidden: true } },
+          expectedVersions: { [midnight.eventId]: 0 },
+          confirmWarnings: true,
+        },
+        { kind: 'system', id: 'test', label: 'test' },
+      );
+      expect(corrected.ok, JSON.stringify(corrected)).toBe(true);
       const out = tmp();
       staleTargets(out);
       expect((await exportCatalog(portsFor(out), { write: true })).code).toBe(0);
       expect(sameAsData(out)).toBe(true);
     } finally {
       await payload.delete({ collection: 'events', id: created.id, overrideAccess: true, context: { ...IMPORT_CONTEXT, t2fInternal: true } });
+      await payload.delete({ collection: 'event-patches', where: { eventId: { equals: midnight.eventId } }, overrideAccess: true, context: { t2fTrusted: true } });
     }
   });
 

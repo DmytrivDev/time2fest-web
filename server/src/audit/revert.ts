@@ -23,7 +23,8 @@ export async function revertEntry(deps: RevertDeps, tx: Tx, actorRole: string | 
     if (!entry) return { ok: false, reason: 'not-found' } as const;
     const handler = deps.handlers.find((h) => h.key === entry.action);
     if (!handler) return { ok: false, reason: 'not-revertible' } as const;
-    if (canRevert(entry, await deps.store.current(tx, entry.target)) !== 'ok') return { ok: false, reason: 'changed-since' } as const;
+    const current = handler.current ? await handler.current(tx, entry) : await deps.store.current(tx, entry.target);
+    if (canRevert(entry, current) !== 'ok') return { ok: false, reason: 'changed-since' } as const;
     await handler.revert(tx, entry);
     return { ok: true } as const;
   });

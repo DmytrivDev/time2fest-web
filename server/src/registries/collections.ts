@@ -14,6 +14,7 @@ import { events } from '../collections/catalog/events';
 import { seasons } from '../collections/catalog/seasons';
 import { traditions } from '../collections/catalog/traditions';
 import { zones } from '../collections/catalog/zones';
+import { eventPatches } from '../collections/eventPatches';
 import { idempotencyRecords } from '../collections/idempotencyRecords';
 import { internalEvents } from '../collections/internalEvents';
 
@@ -32,6 +33,7 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'audit-log', collection: auditLog, resettable: false },
   { key: 'cities', collection: cities, resettable: true, audited: true },
   { key: 'countries', collection: countries, resettable: true, audited: true },
+  { key: 'event-patches', collection: eventPatches, resettable: true },
   { key: 'events', collection: events, resettable: true, audited: true },
   { key: 'idempotency-records', collection: idempotencyRecords, resettable: true },
   { key: 'internal-events', collection: internalEvents, resettable: false },

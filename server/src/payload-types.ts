@@ -73,6 +73,7 @@ export interface Config {
     'audit-log': AuditLog;
     cities: City;
     countries: Country;
+    'event-patches': EventPatch;
     events: Event;
     'idempotency-records': IdempotencyRecord;
     'internal-events': InternalEvent;
@@ -92,6 +93,7 @@ export interface Config {
     'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
     countries: CountriesSelect<false> | CountriesSelect<true>;
+    'event-patches': EventPatchesSelect<false> | EventPatchesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     'idempotency-records': IdempotencyRecordsSelect<false> | IdempotencyRecordsSelect<true>;
     'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
@@ -318,6 +320,23 @@ export interface Country {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-patches".
+ */
+export interface EventPatch {
+  id: number;
+  eventId: string;
+  moment?: number | null;
+  isMainCelebration?: boolean | null;
+  restrained?: boolean | null;
+  restrainedNote?: string | null;
+  hidden?: boolean | null;
+  version: number;
+  topicVersion: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
  */
 export interface Event {
@@ -483,6 +502,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'countries';
         value: number | Country;
+      } | null)
+    | ({
+        relationTo: 'event-patches';
+        value: number | EventPatch;
       } | null)
     | ({
         relationTo: 'events';
@@ -696,6 +719,22 @@ export interface CountriesSelect<T extends boolean = true> {
   popularity?: T;
   sortIndex?: T;
   importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-patches_select".
+ */
+export interface EventPatchesSelect<T extends boolean = true> {
+  eventId?: T;
+  moment?: T;
+  isMainCelebration?: T;
+  restrained?: T;
+  restrainedNote?: T;
+  hidden?: T;
+  version?: T;
+  topicVersion?: T;
   updatedAt?: T;
   createdAt?: T;
 }

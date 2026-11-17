@@ -50,6 +50,11 @@ export interface Journal {
 /** A row of the revert-handler registry: reverts journal rows of one action kind (AC-22, AC-24). */
 export interface RevertHandler {
   key: string;
+  /**
+   * The target's current value in the shape of the entry's `after`, for a target that is not one
+   * stored document (e.g. a correction of several events); absent → `RevertStore.current`.
+   */
+  current?(tx: Tx, entry: StoredJournalEntry): Promise<Record<string, unknown> | null>;
   /** Restores the entry's `before` inside `tx`, writing a new journal row that points at `entry.id`. */
   revert(tx: Tx, entry: StoredJournalEntry): Promise<void>;
 }
