@@ -1,17 +1,17 @@
 # infra/cloudflare — інфраструктура Cloudflare за описом
 
-Нуль залежностей, звичайний Node ESM (`.mjs`, `// @ts-check`). Бажаний стан для середовища `test`:
-тунель, проксований CNAME, правила `http_request_firewall_custom` і `http_config_settings`, перевірка
+Нуль залежностей, звичайний Node ESM (`.mjs`, `// @ts-check`). Бажаний стан для середовищ `test` і `rehearsal`
+(завжди обидва разом, бо `PUT` фази замінює весь список): тунель, проксовані CNAME, правила `http_request_firewall_custom` і `http_config_settings`, перевірка
 налаштувань зони. Хости робочого домену (`time2fest.com`, `www`, `admin`) скрипт не чіпає.
 
 ## Запуск
 
 ```
-pnpm infra:cf plan --env test [--secrets-file <шлях>] [--under-attack on|off]
+pnpm infra:cf plan --env test|rehearsal [--secrets-file <шлях>] [--under-attack on|off] [--with-access]
 ```
 
 ```
-pnpm infra:cf apply --env test [--secrets-file <шлях>] [--under-attack on|off]
+pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-attack on|off] [--with-access]
                     [--allow-main-domain] [--allow-zone-settings] [--allow-delete]
 ```
 
@@ -22,7 +22,28 @@ pnpm infra:cf apply --env test [--secrets-file <шлях>] [--under-attack on|of
   Повторний `apply` без зміни опису друкує «без змін» і не робить жодного запиту на зміну.
 - Після змін `apply` друкує готовий рядок журналу для `docs/services/cloudflare.md`:
   `- <YYYY-MM-DD> — infra/cloudflare apply (<env>): <перелік змін>`.
-- `--under-attack on|off` перекриває перемикач середовища лише на цей запуск.
+- `--under-attack on|off` перекриває перемикач середовища `--env` лише на цей запуск.
+- `--env` обирає середовище для файлу токена тунелю, `--under-attack` і Access; бажаний стан завжди містить усі
+  середовища з `lib/config.mjs`, тож `plan`/`apply` з будь-яким `--env` показують і створюють обидва.
+
+### Середовища
+
+| Середовище | Тунель | Імена (проксовані CNAME) | Ingress |
+|---|---|---|---|
+| `test` | `t2f-test` | `o-test.time2fest.com` | `^/api/` → `host.docker.internal:4100`, решта — 404 |
+| `rehearsal` | `t2f-rehearsal` | `o-rehearsal.time2fest.com`, `admin-rehearsal.time2fest.com` | `o-rehearsal`: `^/api/` → `http://server:3000`; `admin-rehearsal`: усі шляхи → `http://server:3000`; решта — 404 |
+
+Правило `t2f-block-tunnel-hosts` блокує прямий доступ до імен тунелів (`o-*`); `admin-rehearsal` у нього не входить —
+його закриває Access і перевірка JWT Access на сервері. Власних правил WAF — 2, конфіг-правил — 3.
+
+### Access (`--with-access`)
+
+Лише з прапорцем `--with-access` скрипт читає (`GET /accounts/{a}/access/apps`, збіг за `domain`) і створює чи
+оновлює застосунок Access `t2f-admin-<env>` для `adminHost` середовища (`self_hosted`, сесія 24 год, політика
+`t2f-owner-<env>`: allow для пошт власника). Пошти — лише зі змінної `T2F_OWNER_EMAILS` (через кому; оточення
+або `--secrets-file`, ніколи git); без неї — код 1. У вивід потрапляє лише кількість адрес; самі адреси
+маскуються. Після створення друкується `aud` застосунку — значення для `T2F_ACCESS_AUD` сервера (не секрет).
+Середовище без `adminHost` (`test`) з `--with-access` — код 1.
 
 ### Запобіжник
 
@@ -65,7 +86,7 @@ pnpm edge:tunnel:down
 - Змінні: `CLOUDFLARE_API_TOKEN_INFRA`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID` (з оточення або з
   `--secrets-file`). Бракує будь-якої → код 1 до першого запиту.
 - Значення секретів (`CLOUDFLARE_API_TOKEN_INFRA`, `CLOUDFLARE_API_TOKEN`, `T2F_EDGE_SECRET`,
-  токени тунелів) маскуються в кожному рядку виводу; тіло відмови API не друкується.
+  `T2F_OWNER_EMAILS` і кожна адреса з неї, токени тунелів) маскуються в кожному рядку виводу; тіло відмови API не друкується.
 - `CLOUDFLARE_API_BASE` приймається лише як `http://127.0.0.1:<port>` / `http://localhost:<port>` (тести).
 
 ## Дозволи токена `CLOUDFLARE_API_TOKEN_INFRA`
@@ -76,10 +97,11 @@ pnpm edge:tunnel:down
 - Zone · Config Rules · Edit
 - Zone · Zone Settings · Read (Edit лише з `--allow-zone-settings`)
 - Zone · Bot Management · Read
+- Account · Access: Apps and Policies · Edit (лише з `--with-access`)
 
 ## Тести
 
 Усе проти фальшивого API (`test/support/fakeApi.mjs`), без мережі: `desired.test.mjs`, `plan.test.mjs`,
-`guard.test.mjs`, `apply.test.mjs`, `lock.test.mjs` (два процеси проти loopback-фейка; тимчасова тека замка
+`guard.test.mjs`, `apply.test.mjs`, `access.test.mjs`, `lock.test.mjs` (два процеси проти loopback-фейка; тимчасова тека замка
 через `T2F_LOCK_DIR`).
 Перевірка — конфігурація `verify` пакета `infra` (`.claude/sdd-engineering.json`).

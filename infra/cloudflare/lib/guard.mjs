@@ -8,7 +8,7 @@ import { OPAQUE_HOST, ZONE_WIDE } from './diff.mjs';
 /** @typedef {{ allowMainDomain?: boolean, allowZoneSettings?: boolean, allowDelete?: boolean }} GuardFlags */
 /** @typedef {{ change: Change, reason: string, flag: string | null }} Refusal */
 
-const KINDS = new Set(['tunnel', 'tunnel-config', 'dns', 'rule', 'zone-setting']);
+const KINDS = new Set(['tunnel', 'tunnel-config', 'dns', 'rule', 'zone-setting', 'access-app']);
 const OPS = new Set(['create', 'update', 'delete']);
 /** Типи DNS, які скрипт не змінює ніколи (пошта). */
 const NEVER_DNS_TYPES = new Set(['MX', 'TXT', 'SPF']);

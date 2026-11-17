@@ -1,6 +1,8 @@
 // @ts-check
 // Фальшивий Cloudflare в пам'яті: fetch(url, init) і loopback HTTP-сервер над тим самим станом.
 import { createServer } from 'node:http';
+import { ENVS } from '../../lib/config.mjs';
+import { desiredState } from '../../lib/desired.mjs';
 
 /**
  * @param {{ mutationDelayMs?: number }} [opts]
@@ -17,6 +19,8 @@ export function createFakeApi(opts = {}) {
     rulesets: {},
     settings: { pseudo_ipv4: 'off' },
     botFightMode: false,
+    /** Застосунки Access (тіло POST/PUT як є, плюс id і aud). @type {any[]} */
+    accessApps: [],
   };
   /** @type {{ method: string, path: string }[]} */
   const log = [];
@@ -26,6 +30,7 @@ export function createFakeApi(opts = {}) {
   /** @param {string} path */
   const categoryOf = (path) => {
     if (path.includes('cfd_tunnel')) return 'tunnel';
+    if (path.includes('/access/')) return 'access';
     if (path.includes('dns_records')) return 'dns';
     if (path.includes('/rulesets/phases/http_config_settings')) return 'config-rules';
     if (path.includes('/rulesets/')) return 'waf';
@@ -110,6 +115,21 @@ export function createFakeApi(opts = {}) {
         return { status: 200, result: { fight_mode: state.botFightMode } };
       }
     }
+    if (method === 'GET' && /^\/accounts\/[^/]+\/access\/apps$/.test(pathname)) {
+      return { status: 200, result: state.accessApps };
+    }
+    if (method === 'POST' && /^\/accounts\/[^/]+\/access\/apps$/.test(pathname)) {
+      const app = { ...body, id: nextId(), aud: `aud-${seq}` };
+      state.accessApps.push(app);
+      return { status: 200, result: app };
+    }
+    if (method === 'PUT' && (m = pathname.match(/^\/accounts\/[^/]+\/access\/apps\/([^/]+)$/))) {
+      const app = state.accessApps.find((x) => x.id === m?.[1]);
+      if (!app) return { status: 404 };
+      for (const k of Object.keys(app)) if (k !== 'id' && k !== 'aud') delete app[k];
+      Object.assign(app, body);
+      return { status: 200, result: app };
+    }
     return { status: 404 };
   }
 
@@ -167,5 +187,25 @@ export function createFakeApi(opts = {}) {
         close: () => new Promise((r) => server.close(() => r(undefined))),
       };
     },
+  };
+}
+
+/**
+ * Стан, що вже відповідає бажаному стану всіх середовищ (`desiredState(Object.keys(ENVS))`): тунель `tun<N>` на
+ * середовище (перший — `t2f-test`, `tun1`, токен `tunnelToken`), CNAME `d<N>` на кожне ім'я, повні списки фаз.
+ * Наявні записи DNS (пошта) лишаються.
+ * @param {ReturnType<typeof createFakeApi>} fake
+ * @param {string} tunnelToken
+ */
+export function convergedSeed(fake, tunnelToken) {
+  const d = desiredState(Object.keys(ENVS));
+  const ids = new Map(d.tunnels.map((t, i) => [t.name, `tun${i + 1}`]));
+  return {
+    tunnels: d.tunnels.map((t, i) => ({ id: `tun${i + 1}`, name: t.name, token: i === 0 ? tunnelToken : `fake-tunnel-token-${t.env}`, ingress: t.ingress })),
+    dns: [
+      ...fake.state.dns,
+      ...d.dns.map((r, i) => ({ id: `d${i + 1}`, name: r.name, type: r.type, content: `${ids.get(r.tunnelName)}.cfargotunnel.com`, proxied: r.proxied })),
+    ],
+    rulesets: Object.fromEntries(Object.entries(d.rulesets).map(([p, rs]) => [p, rs.map((r, i) => ({ id: `r${i}`, ...r }))])),
   };
 }

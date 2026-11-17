@@ -1,7 +1,7 @@
 // @ts-check
 /**
  * Deploys the edge Worker to one environment (AC-13, NFR-3).
- *   node scripts/deploy.mjs --env <test|rehearsal|prelaunch|production> [--secrets-file <path>] [--confirm <env>]
+ *   node scripts/deploy.mjs --env <test|rehearsal|prelaunch|production> [--secrets-file <path>] [--confirm <env>] [--allow-main-domain]
  * Secrets travel only in the environment and the child's stdin, never in argv or output. Node built-ins only.
  */
 import { spawn as nodeSpawn } from 'node:child_process';
@@ -12,6 +12,8 @@ import { fileURLToPath } from 'node:url';
 const PKG = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WRANGLER_JS = path.resolve(PKG, '..', '..', 'node_modules', 'wrangler', 'bin', 'wrangler.js');
 const ENVS = ['test', 'rehearsal', 'prelaunch', 'production'];
+/** Environments whose routes claim the main domain: they need `--allow-main-domain` as well. */
+const MAIN_DOMAIN_ENVS = ['prelaunch', 'production'];
 const MIN_SECRET = 32;
 
 /** @param {string[]} argv @param {string} name */
@@ -69,6 +71,11 @@ export async function deploy(argv, deps = {}) {
   }
   if (target !== 'test' && flag(argv, '--confirm') !== target) {
     err(`not deployed in this wave: ${target} needs --confirm ${target}\n`);
+    return 2;
+  }
+  // prelaunch and production routes claim time2fest.com: a second, explicit flag (AC-21).
+  if (MAIN_DOMAIN_ENVS.includes(target) && !argv.includes('--allow-main-domain')) {
+    err(`refused: ${target} needs --confirm ${target} and --allow-main-domain\n`);
     return 2;
   }
   const cfg = JSON.parse(fs.readFileSync(path.join(PKG, 'wrangler.json'), 'utf8'));

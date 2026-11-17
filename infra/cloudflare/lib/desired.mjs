@@ -10,7 +10,8 @@ const set = (items) => `{${items.map((i) => `"${i}"`).join(' ')}}`;
 /**
  * Бажаний стан для вказаних середовищ. Кожен вираз правила називає хости.
  * @param {string[]} envNames
- * @param {{ underAttack?: boolean }} [opts] `underAttack` перекриває типове значення середовища
+ * @param {{ underAttack?: boolean | Record<string, boolean | undefined> }} [opts] `underAttack` перекриває типове
+ *   значення середовища: булеве — для всіх, мапа — по середовищу (`undefined` → типове)
  */
 export function desiredState(envNames, opts = {}) {
   const envs = envNames.map((n) => {
@@ -37,16 +38,23 @@ export function desiredState(envNames, opts = {}) {
     env: e.name,
     name: e.tunnelName,
     hostname: e.tunnelHost,
-    ingress: [{ hostname: e.tunnelHost, path: TUNNEL_PATH, service: e.originService }, { service: 'http_status:404' }],
+    ingress: [
+      { hostname: e.tunnelHost, path: TUNNEL_PATH, service: e.originService },
+      // Адмінка — усі шляхи на сервер; не входить у блок-правило, бо закрита Access і перевіркою JWT на сервері.
+      ...(e.adminHost ? [{ hostname: e.adminHost, service: e.originService }] : []),
+      { service: 'http_status:404' },
+    ],
   }));
 
-  const dns = envs.map((e) => ({
-    env: e.name,
-    name: e.tunnelHost,
-    type: 'CNAME',
-    tunnelName: e.tunnelName,
-    proxied: true,
-  }));
+  const dns = envs.flatMap((e) =>
+    [e.tunnelHost, ...(e.adminHost ? [e.adminHost] : [])].map((name) => ({
+      env: e.name,
+      name,
+      type: 'CNAME',
+      tunnelName: e.tunnelName,
+      proxied: true,
+    })),
+  );
 
   /** @type {any[]} */
   const custom = [
@@ -79,7 +87,7 @@ export function desiredState(envNames, opts = {}) {
       expression: `(http.host eq "${e.siteHost}")`,
       action: 'set_config',
       action_parameters: { security_level: 'under_attack' },
-      enabled: opts.underAttack ?? e.underAttack,
+      enabled: (typeof opts.underAttack === 'object' ? opts.underAttack[e.name] : opts.underAttack) ?? e.underAttack,
     })),
     // Останнє правило перемагає: винятки шляхів не підпадають під Under Attack.
     {

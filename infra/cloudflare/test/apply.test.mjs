@@ -7,8 +7,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
 import { PHASE_CONFIG, PHASE_CUSTOM } from '../lib/config.mjs';
-import { desiredState } from '../lib/desired.mjs';
-import { createFakeApi } from './support/fakeApi.mjs';
+import { convergedSeed, createFakeApi } from './support/fakeApi.mjs';
 
 // Фальшиві секрети збираються під час виконання.
 const tok = `tok-${'f6'.repeat(8)}`;
@@ -50,15 +49,10 @@ async function run(fake, argv) {
   return { code, lines, text: lines.join('\n') };
 }
 
-/** Фальшивий Cloudflare, що вже відповідає бажаному стану. */
+/** Фальшивий Cloudflare, що вже відповідає бажаному стану (усі середовища: cf.mjs завжди будує їх разом). */
 function converged() {
   const fake = createFakeApi();
-  const d = desiredState(['test']);
-  fake.seed({
-    tunnels: [{ id: 'tun1', name: 't2f-test', token: tunnelTok, ingress: d.tunnels[0]?.ingress ?? null }],
-    dns: [...fake.state.dns, { id: 'd1', name: 'o-test.time2fest.com', type: 'CNAME', content: 'tun1.cfargotunnel.com', proxied: true }],
-    rulesets: Object.fromEntries(Object.entries(d.rulesets).map(([p, rs]) => [p, rs.map((r, i) => ({ id: `r${i}`, ...r }))])),
-  });
+  fake.seed(convergedSeed(fake, tunnelTok));
   return fake;
 }
 
@@ -70,10 +64,16 @@ describe('apply', () => {
     const r = await run(fake, ['apply', '--env', 'test']);
     expect(r.code).toBe(0);
 
+    // cf.mjs будує всі середовища разом (W28, AC-28): тунелі test і rehearsal, три CNAME, два PUT фаз.
     const tunnelId = fake.state.tunnels[0]?.id;
+    const rehearsalId = fake.state.tunnels.find((t) => t.name === 't2f-rehearsal')?.id;
     expect(fake.mutations()).toEqual([
       { method: 'POST', path: '/accounts/acct-test/cfd_tunnel' },
       { method: 'PUT', path: `/accounts/acct-test/cfd_tunnel/${tunnelId}/configurations` },
+      { method: 'POST', path: '/accounts/acct-test/cfd_tunnel' },
+      { method: 'PUT', path: `/accounts/acct-test/cfd_tunnel/${rehearsalId}/configurations` },
+      { method: 'POST', path: '/zones/zone-test/dns_records' },
+      { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'PUT', path: `/zones/zone-test/rulesets/phases/${PHASE_CUSTOM}/entrypoint` },
       { method: 'PUT', path: `/zones/zone-test/rulesets/phases/${PHASE_CONFIG}/entrypoint` },

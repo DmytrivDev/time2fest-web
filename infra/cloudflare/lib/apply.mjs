@@ -15,7 +15,7 @@ import { tokenFileExists, writeTokenFile } from './tokenFile.mjs';
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 /** Порядок виконання за видом зміни. */
-const ORDER = /** @type {Record<string, number>} */ ({ tunnel: 0, 'tunnel-config': 1, dns: 2, rule: 3, 'zone-setting': 4 });
+const ORDER = /** @type {Record<string, number>} */ ({ tunnel: 0, 'tunnel-config': 1, dns: 2, rule: 3, 'zone-setting': 4, 'access-app': 5 });
 
 /** Дозвіл токена, потрібний для категорії запиту. */
 const EDIT_PERMISSION = /** @type {Record<string, string>} */ ({
@@ -25,6 +25,7 @@ const EDIT_PERMISSION = /** @type {Record<string, string>} */ ({
   'config-rules': 'Zone · Config Rules · Edit',
   'zone-settings': 'Zone · Zone Settings · Edit',
   'bot-management': 'Zone · Bot Management · Edit',
+  access: 'Account · Access: Apps and Policies · Edit',
 });
 
 /**
@@ -69,7 +70,8 @@ function ymd(d) {
  *   now: () => Date,
  *   localDir: string,
  *   acquireLock: () => Promise<{ release: () => Promise<void> }>,
- * }} ApplyContext
+ *   access?: { changes: () => Promise<import('./diff.mjs').Change[]>, apply: (c: import('./diff.mjs').Change) => Promise<void> },
+ * }} ApplyContext `access` — лише з `--with-access` (lib/access.mjs)
  */
 
 /**
@@ -86,6 +88,7 @@ export async function runApply(ctx) {
     const current = await readCurrent(ctx.api, ctx.ids, ctx.desired, ctx.redactor);
     if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');
     const changes = diff(ctx.desired, current);
+    if (ctx.access) changes.push(...(await ctx.access.changes()));
 
     const verdict = guard(changes, ctx.flags);
     if (!verdict.ok) {
@@ -179,6 +182,9 @@ async function execute(ctx, changes, tunnelIds, applied) {
       } else {
         throw new Error(`невідоме налаштування зони ${String(d.setting)}`);
       }
+      done(c);
+    } else if (c.kind === 'access-app' && ctx.access && (c.op === 'create' || c.op === 'update')) {
+      await ctx.access.apply(c);
       done(c);
     } else {
       throw new Error(`невідома зміна ${c.op} ${c.kind}`);

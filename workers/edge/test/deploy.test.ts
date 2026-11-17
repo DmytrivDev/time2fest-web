@@ -91,11 +91,39 @@ describe('deploy script', () => {
   });
 
   it('skips secret put for prelaunch', async () => {
-    const r = await run(['--env', 'prelaunch', '--confirm', 'prelaunch'], {
+    const r = await run(['--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], {
       CLOUDFLARE_API_TOKEN: TOKEN,
       CLOUDFLARE_ACCOUNT_ID: 'acct',
     });
     expect(r.code).toBe(0);
     expect(r.calls).toHaveLength(1);
+  });
+});
+
+describe('main-domain double flag (AC-21)', () => {
+  const full = { CLOUDFLARE_API_TOKEN: TOKEN, CLOUDFLARE_ACCOUNT_ID: 'acct', T2F_EDGE_SECRET: SECRET };
+
+  for (const target of ['prelaunch', 'production']) {
+    it(`${target}: without both flags → 2 and no spawn`, async () => {
+      for (const extra of [[], ['--confirm', target], ['--allow-main-domain']]) {
+        const r = await run(['--env', target, ...extra], full);
+        expect(r.code).toBe(2);
+        expect(r.calls).toHaveLength(0);
+      }
+      const onlyConfirm = await run(['--env', target, '--confirm', target], full);
+      expect(onlyConfirm.output).toContain(`needs --confirm ${target} and --allow-main-domain`);
+    });
+
+    it(`${target}: with --confirm and --allow-main-domain → deploy is spawned`, async () => {
+      const r = await run(['--env', target, '--confirm', target, '--allow-main-domain'], full);
+      expect(r.code).toBe(0);
+      expect(r.calls[0]?.args.slice(1, 4)).toEqual(['deploy', '--env', target]);
+    });
+  }
+
+  it('rehearsal needs only --confirm', async () => {
+    const r = await run(['--env', 'rehearsal', '--confirm', 'rehearsal'], full);
+    expect(r.code).toBe(0);
+    expect(r.calls[0]?.args.slice(1, 4)).toEqual(['deploy', '--env', 'rehearsal']);
   });
 });

@@ -1,7 +1,9 @@
 // @ts-check
 import { describe, expect, it } from 'vitest';
+import { main } from '../cf.mjs';
 import { ENVS, EXEMPT_PATHS, MAIN_HOSTS, PAYPRO_IPN_SOURCES, PHASE_CONFIG, PHASE_CUSTOM } from '../lib/config.mjs';
 import { desiredState, TUNNEL_PATH } from '../lib/desired.mjs';
+import { createFakeApi } from './support/fakeApi.mjs';
 
 const d = desiredState(['test']);
 const rule = (/** @type {string} */ phase, /** @type {string} */ ref) => (d.rulesets[phase] ?? []).find((r) => r.ref === ref);
@@ -71,5 +73,84 @@ describe('desiredState(test)', () => {
         expect(r.expression).toMatch(/http\.host/);
       }
     }
+  });
+});
+
+describe('desiredState(test, rehearsal): усі середовища разом (AC-28, AC-29)', () => {
+  const all = desiredState(['test', 'rehearsal']);
+  const only = desiredState(['test']);
+  const R = ENVS.rehearsal;
+
+  it('rehearsal: тунель t2f-rehearsal; o-rehearsal — лише ^/api/, admin-rehearsal — усі шляхи; кінець http_status:404', () => {
+    expect(R).toEqual({
+      siteHost: 'rehearsal.time2fest.com',
+      tunnelHost: 'o-rehearsal.time2fest.com',
+      tunnelName: 't2f-rehearsal',
+      originService: 'http://server:3000',
+      adminHost: 'admin-rehearsal.time2fest.com',
+      underAttack: false,
+    });
+    const t = all.tunnels.find((x) => x.env === 'rehearsal');
+    expect(t?.name).toBe('t2f-rehearsal');
+    expect(t?.ingress).toEqual([
+      { hostname: 'o-rehearsal.time2fest.com', path: '^/api/', service: 'http://server:3000' },
+      { hostname: 'admin-rehearsal.time2fest.com', service: 'http://server:3000' },
+      { service: 'http_status:404' },
+    ]);
+  });
+
+  it('DNS: проксовані CNAME на тунель t2f-rehearsal для обох імен', () => {
+    expect(all.dns.filter((x) => x.env === 'rehearsal')).toEqual([
+      { env: 'rehearsal', name: 'o-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
+      { env: 'rehearsal', name: 'admin-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
+    ]);
+  });
+
+  it('блок-правило: o-rehearsal є, admin-rehearsal немає; нового власного правила немає', () => {
+    const custom = all.rulesets[PHASE_CUSTOM] ?? [];
+    const block = custom.find((r) => r.ref === 't2f-block-tunnel-hosts');
+    expect(block?.expression).toBe('(http.host in {"o-test.time2fest.com" "o-rehearsal.time2fest.com"})');
+    expect(block?.expression).not.toContain('admin-rehearsal');
+    expect(custom).toHaveLength(2);
+    expect(all.rulesets[PHASE_CONFIG]).toHaveLength(3);
+    expect((all.rulesets[PHASE_CONFIG] ?? []).map((r) => r.ref)).toEqual(['t2f-under-attack-test', 't2f-under-attack-rehearsal', 't2f-exempt-config']);
+    for (const rules of Object.values(all.rulesets)) for (const r of rules) for (const h of MAIN_HOSTS) expect(r.expression).not.toContain(`"${h}"`);
+  });
+
+  it('обʼєкти test байт-у-байт ті самі, що в desiredState([test])', () => {
+    const json = (/** @type {unknown} */ v) => JSON.stringify(v);
+    expect(json(all.tunnels.filter((x) => x.env === 'test'))).toBe(json(only.tunnels));
+    expect(json(all.dns.filter((x) => x.env === 'test'))).toBe(json(only.dns));
+    const ua = (/** @type {typeof all} */ d) => (d.rulesets[PHASE_CONFIG] ?? []).find((r) => r.ref === 't2f-under-attack-test');
+    expect(json(ua(all))).toBe(json(ua(only)));
+  });
+
+  it('under-attack мапою: лише назване середовище; булеве — як раніше', () => {
+    const cfg = (/** @type {typeof all} */ d) => Object.fromEntries((d.rulesets[PHASE_CONFIG] ?? []).map((r) => [r.ref, r.enabled]));
+    const on = cfg(desiredState(['test', 'rehearsal'], { underAttack: { rehearsal: true, test: undefined } }));
+    expect(on['t2f-under-attack-rehearsal']).toBe(true);
+    expect(on['t2f-under-attack-test']).toBe(false);
+    expect(cfg(desiredState(['test', 'rehearsal'], { underAttack: true }))['t2f-under-attack-test']).toBe(true);
+  });
+
+  it('cf.mjs plan --env test будує обидва середовища (у журналі фейка — обʼєкти rehearsal)', async () => {
+    const fake = createFakeApi();
+    /** @type {string[]} */
+    const lines = [];
+    const code = await main(['plan', '--env', 'test'], {
+      env: { CLOUDFLARE_API_TOKEN_INFRA: `tok-${'9a'.repeat(8)}`, CLOUDFLARE_ACCOUNT_ID: 'acct-test', CLOUDFLARE_ZONE_ID: 'zone-test' },
+      fetch: fake.fetch,
+      out: (l) => lines.push(l),
+    });
+    expect(code).toBe(0);
+    const paths = fake.log.map((l) => `${l.method} ${l.path}`);
+    expect(fake.log.every((l) => l.method === 'GET')).toBe(true);
+    expect(paths.filter((p) => p.endsWith('/cfd_tunnel'))).toHaveLength(2);
+    expect(paths.filter((p) => p.endsWith('/dns_records'))).toHaveLength(3);
+    const text = lines.join('\n');
+    expect(text).toContain('тунель t2f-rehearsal');
+    expect(text).toContain('DNS admin-rehearsal.time2fest.com');
+    expect(text).toContain('t2f-under-attack-rehearsal');
+    expect(text).toContain('тунель t2f-test');
   });
 });

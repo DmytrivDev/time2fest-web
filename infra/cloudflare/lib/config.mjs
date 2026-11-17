@@ -23,8 +23,9 @@ export const EXEMPT_PATHS = [
 ];
 
 /**
- * Лише `test` у цій хвилі.
- * @type {Record<string, { siteHost: string, tunnelHost: string, tunnelName: string, originService: string, underAttack: boolean }>}
+ * `test` і `rehearsal`; `plan`/`apply` завжди будують обидва разом (повний список фази).
+ * `adminHost` — ім'я адмінки через той самий тунель, усі шляхи; відкривається лише за Access.
+ * @type {Record<string, { siteHost: string, tunnelHost: string, tunnelName: string, originService: string, adminHost?: string, underAttack: boolean }>}
  */
 export const ENVS = {
   test: {
@@ -33,6 +34,15 @@ export const ENVS = {
     tunnelName: 't2f-test',
     // Порт 4100 — слот 10 цього worktree (server/scripts/lib/worktree.mjs).
     originService: 'http://host.docker.internal:4100',
+    underAttack: false,
+  },
+  rehearsal: {
+    siteHost: 'rehearsal.time2fest.com',
+    tunnelHost: 'o-rehearsal.time2fest.com',
+    tunnelName: 't2f-rehearsal',
+    // Джерело — служба `server` у мережі Compose вузла.
+    originService: 'http://server:3000',
+    adminHost: 'admin-rehearsal.time2fest.com',
     underAttack: false,
   },
 };
@@ -50,10 +60,11 @@ export const PERMISSIONS = [
   'Zone · Config Rules · Edit',
   'Zone · Zone Settings · Read (Edit лише з --allow-zone-settings)',
   'Zone · Bot Management · Read',
+  'Account · Access: Apps and Policies · Edit (лише з --with-access)',
 ];
 
 /** Імена змінних, значення яких ніколи не потрапляють у вивід. */
-export const SECRET_ENV_NAMES = ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN'];
+export const SECRET_ENV_NAMES = ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN', 'T2F_OWNER_EMAILS'];
 
 /**
  * @param {string} envName

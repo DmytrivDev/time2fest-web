@@ -1,10 +1,11 @@
 // @ts-check
-// Інфраструктура Cloudflare за описом: `node cf.mjs plan|apply --env test`.
+// Інфраструктура Cloudflare за описом: `node cf.mjs plan|apply --env test|rehearsal [--with-access]`.
 // Нуль залежностей. `plan` лише читає (GET); `apply` змінює під замком `cloudflare` після запобіжника.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { OWNER_EMAILS_ENV, createAccessStep, desiredAccess, parseOwnerEmails } from './lib/access.mjs';
 import { ApiRefusal, createApi } from './lib/api.mjs';
 import { runApply, takeCloudflareLock } from './lib/apply.mjs';
 import { ENVS, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
@@ -29,6 +30,7 @@ function parseArgs(argv) {
     allowMainDomain: false,
     allowZoneSettings: false,
     allowDelete: false,
+    withAccess: false,
     /** @type {string[]} */ errors: [],
   };
   const rest = [...argv];
@@ -45,6 +47,7 @@ function parseArgs(argv) {
     } else if (a === '--allow-main-domain') o.allowMainDomain = true;
     else if (a === '--allow-zone-settings') o.allowZoneSettings = true;
     else if (a === '--allow-delete') o.allowDelete = true;
+    else if (a === '--with-access') o.withAccess = true;
     else o.errors.push(`невідомий аргумент: ${a}`);
   }
   return o;
@@ -102,10 +105,30 @@ export async function main(argv, deps = {}) {
     return 1;
   }
 
+  // Access лише з --with-access: пошти — зі змінної (файл секретів), у вивід — лише кількість.
+  /** @type {string[] | null} */
+  let ownerEmails = null;
+  if (args.withAccess) {
+    ownerEmails = parseOwnerEmails(env[OWNER_EMAILS_ENV]);
+    if (!ownerEmails) {
+      out(`--with-access потребує ${OWNER_EMAILS_ENV} (пошти власника через кому) у середовищі або --secrets-file; у git їх немає`);
+      return 1;
+    }
+    for (const e of ownerEmails) redactor.add(e);
+    if (!ENVS[args.env]?.adminHost) {
+      out(`--with-access: середовище ${args.env} не має імені адмінки (adminHost)`);
+      return 1;
+    }
+    out(`Access: адрес власника — ${ownerEmails.length}`);
+  }
+
   try {
     const api = createApi({ env, fetch: deps.fetch });
-    const desired = (deps.desiredState ?? desiredState)([args.env], { underAttack: args.underAttack });
+    // Завжди всі середовища: PUT фази замінює весь список, тож жодне середовище не випадає. --env обирає
+    // файл токена тунелю, ціль --under-attack і застосунок Access.
+    const desired = (deps.desiredState ?? desiredState)(Object.keys(ENVS), { underAttack: { [args.env]: args.underAttack } });
     const ids = { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) };
+    const access = ownerEmails ? createAccessStep({ api, accountId: ids.accountId, app: desiredAccess(args.env, ownerEmails), out }) : undefined;
     const flags = { allowMainDomain: args.allowMainDomain, allowZoneSettings: args.allowZoneSettings, allowDelete: args.allowDelete };
 
     if (args.command === 'apply') {
@@ -120,11 +143,13 @@ export async function main(argv, deps = {}) {
         now: deps.now ?? (() => new Date()),
         localDir: deps.localDir ?? LOCAL_DIR,
         acquireLock: deps.acquireLock ?? (() => takeCloudflareLock(env)),
+        access,
       });
     }
 
     const current = await readCurrent(api, ids, desired, redactor);
     const changes = diff(desired, current);
+    if (access) changes.push(...(await access.changes()));
     if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');
     if (!changes.length) out('без змін');
     for (const c of changes) out(`${c.op.padEnd(6)} ${c.kind}: ${c.summary}`);
@@ -148,7 +173,7 @@ export async function main(argv, deps = {}) {
 /** @param {Record<string, string | undefined>} env */
 function redactorSources(env) {
   return Object.fromEntries(
-    ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN'].map((n) => [n, env[n]]),
+    ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN', 'T2F_OWNER_EMAILS'].map((n) => [n, env[n]]),
   );
 }
 

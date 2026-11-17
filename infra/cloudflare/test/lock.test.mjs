@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
+import { ENVS } from '../lib/config.mjs';
 import { createFakeApi } from './support/fakeApi.mjs';
 
 const INFRA_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -73,7 +74,8 @@ describe('замок cloudflare', () => {
       expect([a.code, b.code]).toEqual([0, 0]);
       expect(fake.mutations().length).toBe(expected);
       expect([a.out, b.out].filter((o) => o.includes('без змін'))).toHaveLength(1);
-      expect(fake.state.tunnels).toHaveLength(1);
+      // по одному тунелю на середовище (cf.mjs будує всі разом), без дублікатів
+      expect(fake.state.tunnels).toHaveLength(Object.keys(ENVS).length);
       expect(a.out + b.out).not.toContain(tok);
       expect(a.out + b.out).not.toContain(String(fake.state.tunnels[0]?.token));
     } finally {
