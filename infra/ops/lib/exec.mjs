@@ -5,8 +5,9 @@
 import { spawn } from 'node:child_process';
 import { isIPv4 } from 'node:net';
 import path from 'node:path';
+import { PassThrough } from 'node:stream';
 import { fileURLToPath } from 'node:url';
-import { hasControl, isHostName } from './args.mjs';
+import { isHostName } from './args.mjs';
 import { FORBIDDEN_TARGETS } from './config.mjs';
 
 /** Корінь репозиторію (worktree). */
@@ -51,7 +52,20 @@ export const DEFAULT_REMOTE_ALLOW = [SAFE_TOKEN];
  * `stdout` — потік, куди йде вивід дитини (тоді `stdout` у результаті порожній); `onLine` — кожен повний рядок
  * (роздільник `\r?\n`); `allow` — перелік дозволеного для транспорту.
  * @typedef {{ code: number, stdout: string, stderr: string, timedOut?: boolean }} RunResult
- * @typedef {{ kind: 'local' | 'ssh', describe: string, exec: (argv: string[], opts?: RunOpts) => Promise<RunResult> }} Transport
+ * @typedef {{ env?: NodeJS.ProcessEnv, cwd?: string, stdin?: boolean, allow?: AllowEntry[] }} StartOpts
+ * `stdin: true` — вхід дитини лишається відкритим каналом (`handle.stdin`), доки його не закриють.
+ * @typedef {{
+ *   stdout: import('node:stream').Readable,
+ *   stdin: import('node:stream').Writable | null,
+ *   done: Promise<RunResult>,
+ *   kill: (signal?: NodeJS.Signals) => void,
+ * }} Handle Запущений процес: вивід — потоком; `done` — код і stderr (stdout у ньому порожній).
+ * @typedef {{
+ *   kind: 'local' | 'ssh',
+ *   describe: string,
+ *   exec: (argv: string[], opts?: RunOpts) => Promise<RunResult>,
+ *   start?: (argv: string[], opts?: StartOpts) => Handle,
+ * }} Transport
  */
 
 /**
@@ -192,6 +206,73 @@ function errCode(e) {
   return e && typeof e === 'object' && 'code' in e ? String(e.code) : 'помилка';
 }
 
+/** Скільки stderr тримати в `Handle.done` (хвіст). */
+const STDERR_KEEP = 64 * 1024;
+
+/**
+ * Запускає `file args` без оболонки й одразу віддає вивід потоком (напр. `git archive` → `docker build -`)
+ * або тримає дитину живою з відкритим входом (власник замка). Вивід треба читати, інакше дитина стане.
+ * @param {string} file
+ * @param {string[]} args
+ * @param {StartOpts} [opts]
+ * @returns {Handle}
+ */
+export function start(file, args, opts = {}) {
+  assertArgv([file, ...args]);
+  if (/\.(cmd|bat)$/i.test(file)) throw new ExecRefusal('шими .cmd/.bat не запускаються: Node-інструменти — через process.execPath');
+  if (opts.allow) assertAllowed(args, opts.allow);
+
+  /** @type {import('node:child_process').ChildProcess} */
+  let child;
+  try {
+    child = spawn(file, args, {
+      shell: false,
+      windowsHide: true,
+      env: opts.env ?? process.env,
+      cwd: opts.cwd,
+      stdio: [opts.stdin ? 'pipe' : 'ignore', 'pipe', 'pipe'],
+    });
+  } catch (e) {
+    const empty = new PassThrough();
+    empty.end();
+    return {
+      stdout: empty,
+      stdin: null,
+      done: Promise.resolve({ code: CODE_SPAWN_FAILED, stdout: '', stderr: `не вдалося запустити ${path.basename(file)}: ${errCode(e)}` }),
+      kill: () => {},
+    };
+  }
+
+  let stderr = '';
+  child.stderr?.setEncoding('utf8');
+  child.stderr?.on('data', (d) => {
+    stderr = (stderr + String(d)).slice(-STDERR_KEEP);
+  });
+  child.stdin?.on('error', () => {});
+
+  /** @type {Promise<RunResult>} */
+  const done = new Promise((resolve) => {
+    let settled = false;
+    /** @param {RunResult} r */
+    const settle = (r) => {
+      if (settled) return;
+      settled = true;
+      resolve(r);
+    };
+    child.on('error', (e) => settle({ code: CODE_SPAWN_FAILED, stdout: '', stderr: `${stderr}не вдалося запустити ${path.basename(file)}: ${errCode(e)}` }));
+    child.on('close', (code) => settle({ code: code ?? 1, stdout: '', stderr }));
+  });
+
+  return {
+    stdout: /** @type {import('node:stream').Readable} */ (child.stdout),
+    stdin: child.stdin ?? null,
+    done,
+    kill: (signal = 'SIGTERM') => {
+      child.kill(signal);
+    },
+  };
+}
+
 /**
  * Node-інструмент як `process.execPath <js>` (без шимів).
  * @param {keyof typeof NODE_TOOLS} tool
@@ -205,9 +286,10 @@ export function runNodeTool(tool, args, opts) {
 /**
  * Локальний транспорт: `argv[0]` — файл, решта — аргументи, без оболонки.
  * @param {typeof run} [runner]
+ * @param {typeof start} [starter]
  * @returns {Transport}
  */
-export function localTransport(runner = run) {
+export function localTransport(runner = run, starter = start) {
   return {
     kind: 'local',
     describe: 'local',
@@ -217,6 +299,13 @@ export function localTransport(runner = run) {
       if (opts.allow) assertAllowed(argv, opts.allow);
       const { allow: _allow, ...rest } = opts;
       return runner(argv[0], argv.slice(1), rest);
+    },
+    start(argv, opts = {}) {
+      if (!argv.length) throw new ExecRefusal('порожня команда');
+      assertArgv(argv);
+      if (opts.allow) assertAllowed(argv, opts.allow);
+      const { allow: _allow, ...rest } = opts;
+      return starter(argv[0], argv.slice(1), rest);
     },
   };
 }
@@ -276,24 +365,35 @@ export function sshBaseArgs(o) {
  * перелік дозволеного (`opts.allow`, за замовчуванням `DEFAULT_REMOTE_ALLOW`).
  * @param {SshOpts} o
  * @param {typeof run} [runner]
+ * @param {typeof start} [starter]
  * @returns {Transport}
  */
-export function sshTransport(o, runner = run) {
+export function sshTransport(o, runner = run, starter = start) {
   const base = sshBaseArgs(o);
   const file = o.sshFile ?? 'ssh';
+  /** @param {string[]} argv @param {AllowEntry[] | undefined} allow */
+  const remote = (argv, allow) => {
+    if (!argv.length) throw new ExecRefusal('порожня команда');
+    assertArgv(argv);
+    assertAllowed(argv, allow ?? DEFAULT_REMOTE_ALLOW);
+    return argv.map(shq).join(' ');
+  };
   return {
     kind: 'ssh',
     describe: `ssh:${String(o.host).toLowerCase()}`,
     exec(argv, opts = {}) {
-      if (!argv.length) throw new ExecRefusal('порожня команда');
-      assertArgv(argv);
-      assertAllowed(argv, opts.allow ?? DEFAULT_REMOTE_ALLOW);
+      const line = remote(argv, opts.allow);
       const { allow: _allow, ...rest } = opts;
-      return runner(file, [...base, argv.map(shq).join(' ')], rest);
+      return runner(file, [...base, line], rest);
+    },
+    start(argv, opts = {}) {
+      const line = remote(argv, opts.allow);
+      const { allow: _allow, ...rest } = opts;
+      return starter(file, [...base, line], rest);
     },
   };
 }
 
 /** Справжній виконавець: те саме, що підставляє `test/support/fakeExec.mjs`. */
-export const realExec = { run, localTransport: () => localTransport(), sshTransport: (/** @type {SshOpts} */ o) => sshTransport(o) };
-/** @typedef {{ run: typeof run, localTransport: () => Transport, sshTransport: (o: SshOpts) => Transport }} Executor */
+export const realExec = { run, start, localTransport: () => localTransport(), sshTransport: (/** @type {SshOpts} */ o) => sshTransport(o) };
+/** @typedef {{ run: typeof run, start?: typeof start, localTransport: () => Transport, sshTransport: (o: SshOpts) => Transport }} Executor */
