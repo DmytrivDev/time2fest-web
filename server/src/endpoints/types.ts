@@ -6,6 +6,7 @@
  */
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
+import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 
@@ -54,6 +55,8 @@ export interface Ctx {
   deps: Deps;
   log: Logger;
   route: RouteRow;
+  /** The client as admitted by the edge gate: country and daily fingerprint, never the address (AC-23). */
+  client: ClientContext;
   /** The parsed body, set by `20-validate` when the row has a `body` schema. */
   body?: unknown;
   /** The parsed query, set by `20-validate` when the row has a `query` schema. */
@@ -75,6 +78,10 @@ export interface RouteRow {
    * `Origin` must be allowed, a mutating call must be `application/json`, and `Host` must be loopback.
    */
   testDoor?: true;
+  /** A public route: cacheable at the edge, its `Set-Cookie` stripped (SPEC-05 W15). */
+  public?: true;
+  /** The edge probe door (set only by door rows, SPEC-05 W16). */
+  edgeProbe?: true;
   /** Largest accepted request body in bytes; default `DEFAULT_MAX_BODY_BYTES` (16 KiB). */
   maxBodyBytes?: number;
   rateLimit?: string;

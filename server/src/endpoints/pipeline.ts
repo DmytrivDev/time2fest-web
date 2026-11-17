@@ -9,6 +9,7 @@
  */
 import { randomBytes } from 'node:crypto';
 import type { ApiError, ApiErrorCode } from '@time2fest/contracts';
+import { inactiveEdgeGate, type EdgeGate } from '../platform/edge';
 import { DependencyUnavailable } from '../ports';
 import type { ApiFailure, Ctx, Deps, HttpMethod, Middleware, Outcome, RouteRow } from './types';
 
@@ -190,10 +191,17 @@ export interface DispatcherInput {
   routes: readonly RouteRow[];
   middleware: readonly Middleware[];
   deps: Deps;
+  /** The edge gate (SPEC-05); absent → inactive: no check, no trusted address (AC-17). */
+  edge?: EdgeGate;
 }
 
-/** Builds the request handler of the process. Throws on a duplicate key or `method + path`. */
-export function createDispatcher({ routes, middleware, deps }: DispatcherInput): (req: Request) => Promise<Response> {
+/**
+ * Builds the request handler of the process. Throws on a duplicate key or `method + path`.
+ * The edge gate runs first, before the method check and the route lookup: a refused request
+ * gets the same single 404 as an unknown path (AC-15).
+ */
+export function createDispatcher({ routes, middleware, deps, edge }: DispatcherInput): (req: Request) => Promise<Response> {
+  const gate = edge ?? inactiveEdgeGate(deps.clock);
   const table = new Map<string, RouteRow>();
   const keys = new Set<string>();
   for (const row of routes) {
@@ -206,10 +214,12 @@ export function createDispatcher({ routes, middleware, deps }: DispatcherInput):
 
   return async function dispatch(req: Request): Promise<Response> {
     const url = new URL(req.url);
+    const client = gate.admit(req);
+    if (client === null) return notFoundResponse();
     const route = METHODS.has(req.method) ? table.get(`${req.method} ${url.pathname}`) : undefined;
     if (!route) return notFoundResponse();
 
-    const ctx: Ctx = { req, url, env: deps.env, clock: deps.clock, deps, log: deps.log, route };
+    const ctx: Ctx = { req, url, env: deps.env, clock: deps.clock, deps, log: deps.log, route, client };
     const run = (i: number): Promise<Outcome> => {
       const mw = middleware[i];
       return mw ? mw.run(ctx, () => run(i + 1)) : route.handler(ctx);

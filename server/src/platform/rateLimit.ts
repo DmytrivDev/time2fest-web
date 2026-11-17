@@ -3,7 +3,7 @@
  * Depends on `ports.ts` only — never on a Redis client (onion ban 2).
  */
 import type { ApiError } from '@time2fest/contracts';
-import { DependencyUnavailable, type Clock, type FastStore } from '../ports';
+import { DependencyUnavailable, type FastStore } from '../ports';
 
 export type RateLimitKeyKind = 'subject' | 'device' | 'ipDay';
 
@@ -24,7 +24,8 @@ export interface RateLimitRow {
 export interface LimitTarget {
   subject?: string;
   device?: string;
-  clock: Clock;
+  /** The daily client fingerprint or the no-address bucket (SPEC-05 AC-28). */
+  ipDay?: string;
 }
 
 export interface LimitStores {
@@ -34,19 +35,11 @@ export interface LimitStores {
 
 export type LimitResult = { ok: true } | { ok: false; error: ApiError };
 
-/**
- * The `ipDay` key — a SPEC-05 stub (AC-51): it reads no client address from any request
- * header, so every caller shares the key of the current UTC day.
- */
-export function ipDayKey(clock: Clock): string {
-  return `ipday:stub:${new Date(clock.now()).toISOString().slice(0, 10)}`;
-}
-
 /** The store keys of `row` for `target`; a row with no resolvable kind counts everyone together. */
 export function limitKeys(row: RateLimitRow, target: LimitTarget): string[] {
   const out: string[] = [];
   for (const kind of row.keys) {
-    const value = kind === 'ipDay' ? ipDayKey(target.clock) : target[kind];
+    const value = target[kind];
     if (value !== undefined && value !== '') out.push(`rl:${row.key}:${kind}:${value}`);
   }
   return out.length > 0 ? out : [`rl:${row.key}:all`];

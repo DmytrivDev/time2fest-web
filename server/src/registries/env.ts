@@ -30,6 +30,12 @@ const origins = z
 
 export const envRegistry: readonly EnvBlock[] = [
   {
+    key: 'edge',
+    vars: [
+      { name: 'T2F_EDGE_SECRET', schema: z.string().min(32).optional(), secret: true, requiredIn: ['rehearsal', 'production'] },
+    ],
+  },
+  {
     key: 'platform',
     vars: [
       // Classified by envClass(); any string is accepted here, unknown values fall to production.
