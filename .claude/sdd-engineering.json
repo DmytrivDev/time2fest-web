@@ -32,6 +32,7 @@
       "files": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}",
       "full": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2"
     },
+    { "package": "ops", "dir": "infra/ops", "files": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}", "full": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2" },
     {
       "package": "infra",
       "dir": "infra/cloudflare",

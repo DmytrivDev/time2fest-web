@@ -16,6 +16,7 @@ From December the database holds real people's passes, stamps and orders; a brok
 6. **Schema and types:** `node scripts/verify-schema.mjs` (in `server/`) passes; `pnpm --dir server generate:types` leaves no diff (`git diff --exit-code server/src/payload-types.ts`); shared wire schemas in `packages/contracts` still match (skill contract-conformance).
 7. **Seed still works:** `pnpm --dir server seed` on the migrated database is idempotent (run twice, same counts).
 8. **Locks on big tables:** for tables expected to be large at peak (`presence pulses`, `chat messages`, `orders`), adding an index uses `CREATE INDEX CONCURRENTLY` in a separate migration, or the plan says why not.
+9. **Compatible with the previous image:** the new migration works with the code of the previous server image (expand → contract across two deploys); the SPEC-13a rollback (`pnpm rollback:env`) never runs `down` — it only swaps the image back.
 
 ## Never
 Run migrations against the production server or another worktree's database; drop the main or another worktree's database; edit an already-merged migration.
