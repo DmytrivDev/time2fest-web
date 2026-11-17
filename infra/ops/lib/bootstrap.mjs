@@ -33,6 +33,7 @@ export const ROOT_ONLY_NOTE = 'перевірено при першому зап
  *   ok?: (r: RunResult) => boolean,
  *   apply?: (nodeDir: string) => string[],
  *   input?: string,
+ *   selfVerified?: boolean,
  *   timeoutMs?: number,
  * }} Step
  */
@@ -54,6 +55,11 @@ export function ufwOk(stdout) {
   const inbound = s.split(/\r?\n/).filter((l) => /\b(?:ALLOW|LIMIT) IN\b/.test(l));
   return inbound.length > 0 && inbound.every((l) => /^22\/tcp(?:\s+\(v6\))?\s+ALLOW IN\b/.test(l.trim()));
 }
+
+/** Дійсна конфігурація sshd (`sshd -T`): root і паролі вимкнено. Одна перевірка і для `check`, і для кінця `apply`. */
+const SSHD_EFFECTIVE =
+  'c="$(sshd -T)" && printf "%s\\n" "$c" | grep -qx "permitrootlogin no" && ' +
+  'printf "%s\\n" "$c" | grep -qx "passwordauthentication no" && printf "%s\\n" "$c" | grep -qx "kbdinteractiveauthentication no"';
 
 /** Кроки від імені root, по порядку. Крок `deploy-login` — окремо (перевірка без змін, із другим входом). @type {Step[]} */
 export const ROOT_STEPS = [
@@ -114,14 +120,15 @@ export const ROOT_STEPS = [
   {
     id: 'sshd',
     title: 'SSH: без входу root і паролів',
-    check: sh(
-      `test -f ${SSHD_DROP_IN} && c="$(sshd -T)" && printf "%s\\n" "$c" | grep -qx "permitrootlogin no" && ` +
-        'printf "%s\\n" "$c" | grep -qx "passwordauthentication no" && printf "%s\\n" "$c" | grep -qx "kbdinteractiveauthentication no"',
-    ),
+    check: sh(`test -f ${SSHD_DROP_IN} && ${SSHD_EFFECTIVE}`),
+    // Після застосування root уже не входить, тож перевірка — у тому самому з’єднанні (`selfVerified`), а не новим входом root.
+    // Не збіглася дійсна конфігурація → drop-in знімається, sshd перечитує конфігурацію, код виходу — справжній (1).
     apply: sh(
       `set -e; umask 022; cat > ${SSHD_DROP_IN}.tmp; mv ${SSHD_DROP_IN}.tmp ${SSHD_DROP_IN}; ` +
-        `sshd -t || { rm -f ${SSHD_DROP_IN}; exit 1; }; systemctl reload ssh`,
+        `sshd -t || { rm -f ${SSHD_DROP_IN}; exit 1; }; systemctl reload ssh; ` +
+        `${SSHD_EFFECTIVE} || { rm -f ${SSHD_DROP_IN}; systemctl reload ssh; exit 1; }`,
     ),
+    selfVerified: true,
     input: SSHD_CONF,
   },
 ];
@@ -250,7 +257,7 @@ async function rootPath(ctx, { asRoot, asDeploy, nodeDir }) {
     if (!s.apply) return 1;
     const r = await remote(asRoot, s.apply(nodeDir), { input: s.input, timeoutMs: s.timeoutMs });
     changed += 1;
-    if (r.code !== 0 || !(await passes(s))) {
+    if (r.code !== 0 || (!s.selfVerified && !(await passes(s)))) {
       err(`bootstrap: ${n} ${s.id} (${s.title}) не вдався (код ${r.code})`);
       for (const l of String(r.stderr).split(/\r?\n/).filter((x) => x.trim() !== '').slice(-10)) err(`  ${l}`);
       return 1;

@@ -46,10 +46,10 @@ const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 /**
  * Підставний вузол: стан, виклики `{ user, kind, step }`, транспорти від імені користувача.
- * @param {Partial<{ user: boolean, docker: boolean, dir: boolean, ufw: boolean, swap: boolean, sshd: boolean, rootRefused: boolean, deployLogin: boolean }>} [o]
+ * @param {Partial<{ user: boolean, docker: boolean, dir: boolean, ufw: boolean, swap: boolean, sshd: boolean, rootRefused: boolean, deployLogin: boolean, sshdVerifyFails: boolean, dropIn: boolean }>} [o]
  */
 function fakeNode(o = {}) {
-  const st = { user: false, docker: false, dir: false, ufw: false, swap: false, sshd: false, rootRefused: false, deployLogin: true, ...o };
+  const st = { user: false, docker: false, dir: false, ufw: false, swap: false, sshd: false, rootRefused: false, deployLogin: true, sshdVerifyFails: false, dropIn: false, ...o };
   /** @type {{ user: string, kind: string, step: string, inputLength: number }[]} */
   const calls = [];
   /** @param {string} user @param {string[]} argv @returns {{ kind: string, step: string, code: number, stdout?: string }} */
@@ -66,6 +66,14 @@ function fakeNode(o = {}) {
           return { kind: 'check', step: s.id, code: st[flag] ? 0 : 1 };
         }
         if (s.apply && same(argv, s.apply(NODE_DIR))) {
+          if (s.id === 'sshd') {
+            st.dropIn = true;
+            // Перевірка в тому самому з’єднанні не збіглася: скрипт знімає drop-in й виходить із кодом 1.
+            if (st.sshdVerifyFails) {
+              st.dropIn = false;
+              return { kind: 'apply', step: s.id, code: 1 };
+            }
+          }
           st[flag] = true;
           if (s.id === 'sshd') st.rootRefused = true;
           return { kind: 'apply', step: s.id, code: 0 };
@@ -140,6 +148,36 @@ describe('ops bootstrap', () => {
     expect(text).toContain('bootstrap: 7 sshd — зроблено');
     expect(text).toContain('bootstrap: готово');
     expect(n.fx.calls[0].argv).toEqual(['ssh-keygen', '-l', '-F', HOST, '-f', path.join(n.stateRoot, 'known_hosts')]);
+  });
+
+  it('L2: sshd verifies itself inside the apply connection; no root connection after the sshd apply', async () => {
+    const n = fakeNode();
+    expect(await main(BOOT, n.deps)).toBe(0);
+    const seq = n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`);
+    const at = seq.indexOf('root:apply:sshd');
+    expect(at).toBeGreaterThan(-1);
+    expect(seq.slice(at + 1).filter((x) => x.startsWith('root:'))).toEqual([]);
+    // Після sshd — лише вхід deploy, і він не перший: перевірка ззовні.
+    expect(seq.slice(at + 1)).toEqual(['deploy:login:deploy']);
+    expect(n.out.join('\n')).toContain('bootstrap: 7 sshd — зроблено');
+    expect(n.err).toEqual([]);
+    expect(n.st.dropIn).toBe(true);
+    // Перевірка дійсної конфігурації стоїть у команді apply після reload.
+    const apply = ROOT_STEPS.find((s) => s.id === 'sshd')?.apply?.(NODE_DIR)[2] ?? '';
+    expect(apply.indexOf('systemctl reload ssh')).toBeLessThan(apply.indexOf('sshd -T'));
+    for (const k of ['permitrootlogin no', 'passwordauthentication no', 'kbdinteractiveauthentication no']) expect(apply).toContain(k);
+  });
+
+  it('L2: a failing in-connection check fails the step with the real exit code and removes the drop-in', async () => {
+    const n = fakeNode({ sshdVerifyFails: true });
+    expect(await main(BOOT, n.deps)).toBe(1);
+    expect(n.err.join('\n')).toContain('7 sshd (SSH: без входу root і паролів) не вдався (код 1)');
+    expect(n.st.dropIn).toBe(false);
+    expect(n.st.sshd).toBe(false);
+    const seq = n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`);
+    expect(seq.slice(seq.indexOf('root:apply:sshd') + 1)).toEqual([]);
+    const apply = ROOT_STEPS.find((s) => s.id === 'sshd')?.apply?.(NODE_DIR)[2] ?? '';
+    expect(apply).toMatch(/\|\| \{ rm -f \/etc\/ssh\/sshd_config\.d\/00-t2f\.conf; systemctl reload ssh; exit 1; \}$/);
   });
 
   it('never runs step 7 (sshd) when the deploy login check fails', async () => {
