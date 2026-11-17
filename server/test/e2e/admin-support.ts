@@ -17,8 +17,14 @@ export const COLD_MS = 120_000;
 
 export const originHeaders = { Origin: server };
 
+/**
+ * Test doors answer only on a loopback `Host` (no DNS rebinding) and refuse an `Origin` that is not in
+ * T2F_ALLOWED_ORIGINS: they are called on 127.0.0.1 with no `Origin`, the admin pages on the admin host.
+ */
+export const doors = server ? server.replace(/^(https?:\/\/)[^:/]+/, (_m, scheme: string) => `${scheme}127.0.0.1`) : '';
+
 async function accessJwt(request: APIRequestContext): Promise<string> {
-  const res = await request.post(`${server}/api/_test/access-token`, { data: { kind: 'person', email: ownerEmail }, headers: originHeaders });
+  const res = await request.post(`${doors}/api/_test/access-token`, { data: { kind: 'person', email: ownerEmail } });
   expect(res.status()).toBe(200);
   return ((await res.json()) as { value: { token: string } }).value.token;
 }
@@ -33,6 +39,8 @@ export async function signIn(page: Page): Promise<void> {
   page.setDefaultTimeout(COLD_MS);
   await page.goto(`${server}/admin/login`, { waitUntil: 'domcontentloaded', timeout: COLD_MS });
   await page.locator('#field-email').waitFor({ timeout: COLD_MS });
+  // The form is server-rendered before it is hydrated: typing earlier is wiped when React takes over.
+  await page.waitForLoadState('networkidle', { timeout: COLD_MS });
   await page.locator('#field-email').fill(ownerEmail);
   await page.locator('#field-password').fill(ownerPassword);
   await page.locator('form button[type="submit"]').click();

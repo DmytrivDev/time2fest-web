@@ -4,7 +4,7 @@
  * `acknowledgedAt` (shown on the alarm's page).
  */
 import { expect, test } from '@playwright/test';
-import { api, configured, COLD_MS, openDashboard, originHeaders, ownerContext, server, signIn, SKIP_REASON } from './admin-support';
+import { api, configured, COLD_MS, doors, openDashboard, ownerContext, server, signIn, SKIP_REASON } from './admin-support';
 
 test.describe.configure({ mode: 'serial' });
 test.setTimeout(COLD_MS * 2);
@@ -58,7 +58,7 @@ test('AC-38: "Підтвердити" on an open alarm sets acknowledgedAt', asy
   const page = await context.newPage();
   await signIn(page);
   const code = `e2e-${Date.now()}`;
-  const raised = await request.post(`${server}/api/_test/alarm`, { data: { source: 'e2e', code }, headers: originHeaders });
+  const raised = await request.post(`${doors}/api/_test/alarm`, { data: { source: 'e2e', code } });
   expect(raised.status()).toBe(200);
   const alarmId = ((await raised.json()) as { value: { id: string } }).value.id;
 
@@ -72,6 +72,6 @@ test('AC-38: "Підтвердити" on an open alarm sets acknowledgedAt', asy
     .poll(async () => ((await api(context, 'GET', `/alarms/${alarmId}`)).body as { acknowledgedAt?: string | null } | null)?.acknowledgedAt, { timeout: 15_000 })
     .toBeTruthy();
   await page.goto(`${server}/admin/collections/alarms/${alarmId}`, { waitUntil: 'domcontentloaded', timeout: COLD_MS });
-  await expect(page.locator('#field-acknowledgedAt')).not.toHaveValue('', { timeout: COLD_MS });
+  await expect(page.locator('#field-acknowledgedAt input').first()).not.toHaveValue('', { timeout: COLD_MS });
   await context.close();
 });

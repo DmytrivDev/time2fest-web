@@ -4,13 +4,13 @@
  * place; the admin is Ukrainian; revert buttons exist only on revertible rows; ten loads stay ≤3 s p95.
  */
 import { expect, test } from '@playwright/test';
-import { api, configured, COLD_MS, openDashboard, originHeaders, ownerContext, server, signIn, SKIP_REASON } from './admin-support';
+import { api, configured, COLD_MS, doors, openDashboard, ownerContext, server, signIn, SKIP_REASON } from './admin-support';
 
 test.describe.configure({ mode: 'serial' });
 test.setTimeout(COLD_MS * 2);
 
 const setFail = (request: import('@playwright/test').APIRequestContext, fail: boolean) =>
-  request.post(`${server}/api/_test/admin-test-slice`, { data: { fail }, headers: originHeaders });
+  request.post(`${doors}/api/_test/admin-test-slice`, { data: { fail } });
 
 test.beforeEach(() => test.skip(!configured, SKIP_REASON));
 test.afterEach(async ({ request }) => {
@@ -89,13 +89,14 @@ test('AC-29: the test slice action is journalled and revertible from the journal
   await expect(page.locator('[data-testid="test-slice-count"]')).toHaveText('Лічильник: 1');
   await action.click();
   await expect(page.locator('[data-testid="test-slice-count"]')).toHaveText('Лічильник: 2');
+  // The slice text lives in component state: read the record id before the page is opened again.
+  const info = (await page.locator('[data-testid="test-slice-info"]').textContent()) ?? '';
+  const id = /запис (\d+):/.exec(info)?.[1];
+  expect(id).toBeTruthy();
   await openDashboard(page);
   const first = page.locator('[data-testid="journal-row"]').first();
   await expect(first).toHaveAttribute('data-revertible', 'true');
   await first.locator('[data-testid="revert-button"]').click();
-  const info = (await page.locator('[data-testid="test-slice-info"]').textContent()) ?? '';
-  const id = /запис (\d+):/.exec(info)?.[1];
-  expect(id).toBeTruthy();
   await expect
     .poll(async () => ((await api(context, 'GET', `/agent-test-posts/${id}`)).body as { title?: string } | null)?.title, { timeout: 15_000 })
     .toBe('slice-1');

@@ -80,7 +80,15 @@ test('AC-58: hiding the only event of a pair shows the warning, then saves after
   const events = await midnightEvents(context);
   const pairs = new Map<string, Ev[]>();
   for (const e of events) pairs.set(`${e.countryIso}|${e.zoneId}`, [...(pairs.get(`${e.countryIso}|${e.zoneId}`) ?? []), e]);
-  const lone = [...pairs.values()].find((g) => g.length === 1 && g[0]?.isMainCelebration === true)?.[0];
+  // A run leaves its patch behind: take a lone main event that no earlier run has already hidden.
+  let lone: Ev | undefined;
+  for (const g of pairs.values()) {
+    const [only] = g;
+    if (g.length === 1 && only?.isMainCelebration === true && (await patchOf(context, only.eventId))?.hidden !== true) {
+      lone = only;
+      break;
+    }
+  }
   test.skip(!lone, 'the seeded catalog has no country × zone pair with a single main event');
   const id = (lone as Ev).eventId;
 

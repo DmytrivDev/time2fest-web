@@ -36,7 +36,7 @@ const COLD_MS = 120_000;
 const origin = { Origin: server };
 
 async function doorJwt(request: APIRequestContext, data: Record<string, string>): Promise<string> {
-  const res = await request.post(`${server}/api/_test/access-token`, { data, headers: origin, timeout: COLD_MS });
+  const res = await request.post(`${server}/api/_test/access-token`, { data, timeout: COLD_MS });
   expect(res.status()).toBe(200);
   return ((await res.json()) as { value: { token: string } }).value.token;
 }

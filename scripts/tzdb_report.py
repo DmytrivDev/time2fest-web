@@ -25,7 +25,9 @@ def load_source(src: str) -> dict:
         return json.loads((ROOT / "data" / "schedule.json").read_text(encoding="utf-8"))
     if src.startswith(("http://", "https://")):
         with urllib.request.urlopen(src, timeout=30) as r:  # лише читання
-            return json.loads(r.read().decode("utf-8"))
+            body = json.loads(r.read().decode("utf-8"))
+        # GET /api/catalog answers { ok, value: { schedule, countries } }: the schedule is what is compared
+        return body["value"]["schedule"] if "value" in body else body
     return json.loads(Path(src).read_text(encoding="utf-8"))
 
 

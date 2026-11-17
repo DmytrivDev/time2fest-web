@@ -91,8 +91,12 @@ describe('R2 down (exclusive lock)', { timeout: 180_000 }, () => {
       expect(outcome?.ok).toBe(false);
       expect(outcome?.attempts).toBeGreaterThanOrEqual(4);
       expect(attempts.length).toBeGreaterThanOrEqual(4);
-      const alarms = await payload.count({ collection: 'alarms', where: { code: { equals: 'catalog-r2-copy-failed' } }, overrideAccess: true });
-      expect(alarms.totalDocs - alarmsBefore).toBe(1);
+      // `raise` stores the page alarm without being awaited by the copy: wait for the row, then
+      // give a second one time to appear before asserting that exactly one was stored.
+      const countAlarms = async () => (await payload.count({ collection: 'alarms', where: { code: { equals: 'catalog-r2-copy-failed' } }, overrideAccess: true })).totalDocs;
+      for (let i = 0; i < 40 && (await countAlarms()) === alarmsBefore; i += 1) await sleep(250);
+      await sleep(1000);
+      expect((await countAlarms()) - alarmsBefore).toBe(1);
     } finally {
       await bus.stop();
       await startAndWait(env);
