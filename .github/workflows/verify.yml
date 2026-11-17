@@ -1,4 +1,4 @@
-# `web full`, `contracts full`, `rules full`, and the server steps (= `server.full` split in two)
+# `web full`, `contracts full`, `rules full`, `edge full`, `infra full`, and the server steps (= `server.full` split in two)
 # mirror `.claude/sdd-engineering.json`. Change them together.
 name: verify
 
@@ -50,6 +50,12 @@ jobs:
       - name: rules full
         working-directory: packages/rules
         run: npx tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
+      - name: edge full
+        working-directory: workers/edge
+        run: node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
+      - name: infra full
+        working-directory: infra/cloudflare
+        run: node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
       - name: secret check
         run: node scripts/check-secrets.mjs
       - name: research_data path check

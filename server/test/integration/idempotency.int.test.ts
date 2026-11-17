@@ -3,6 +3,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { payloadOf } from '../../src/container';
 import { createDispatcher, originMiddleware, validateMiddleware } from '../../src/endpoints/pipeline';
+import { inactiveEdgeGate } from '../../src/platform/edge';
 import type { Deps, Middleware, RouteRow } from '../../src/endpoints/types';
 import { CHAT_RETENTION_MS, idemKey, type IdempotencyRow } from '../../src/platform/idempotency';
 import { idempotencyMiddleware, rateLimitMiddleware } from '../../src/registries/middleware';
@@ -50,7 +51,7 @@ function route(method: string, wait = false): RouteRow {
 const routes = [route('test.chat'), route('test.chat2'), route('test.order'), route('test.slow', true)];
 const redisStores = [ownRedis()];
 const deps = testDeps({ redis: redisStores[0] });
-const dispatch = createDispatcher({ routes, middleware, deps });
+const dispatch = createDispatcher({ routes, middleware, deps, edge: inactiveEdgeGate(deps.clock) });
 
 const call = (d: (r: Request) => Promise<Response>, method: string, clientId: string, subject = `alice-${RUN}`) =>
   d(post(`/api/sample/${method}`, { clientId }, { 'x-test-subject': subject }));
@@ -128,7 +129,7 @@ describe('idempotency by clientId', () => {
     const fresh = ownRedis();
     redisStores.push(fresh);
     const deps2: Deps = testDeps({ redis: fresh, payload: payloadOf(deps) });
-    const dispatch2 = createDispatcher({ routes, middleware, deps: deps2 });
+    const dispatch2 = createDispatcher({ routes, middleware, deps: deps2, edge: inactiveEdgeGate(deps2.clock) });
     const again = await call(dispatch2, 'test.order', cid);
     expect(again.status).toBe(200);
     // jsonb keeps the value, not the key order of the text.

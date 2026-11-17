@@ -3,8 +3,16 @@
  * subject, sorted by `capability`. Empty in SPEC-02; domain waves add their rows.
  */
 import { assertRegistry } from '../platform/registry';
-import type { SubjectDataHandler } from '../platform/subjectData';
+import type { SubjectDataRow } from '../platform/subjectData';
 
-export const subjectDataRegistry: readonly SubjectDataHandler[] = [];
+export const subjectDataRegistry: readonly SubjectDataRow[] = [
+  {
+    capability: 'ip-day-fingerprint',
+    declarative: true,
+    retention: '<= 24 h',
+    description:
+      'Daily IP fingerprint: rate-limit key only, no handler. Pseudonymous, not anonymous (a keyed hash of the address with a daily salt); IPv6 is counted per /64; all per-IP counters reset at UTC midnight.',
+  },
+];
 
 assertRegistry('subject-data', subjectDataRegistry, (h) => h.capability);

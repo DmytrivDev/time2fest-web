@@ -16,3 +16,6 @@ export const POST = handle;
 export const PUT = handle;
 export const PATCH = handle;
 export const DELETE = handle;
+// Exported so Next does not answer them itself: they reach the edge check and get its single 404.
+export const HEAD = handle;
+export const OPTIONS = handle;

@@ -42,8 +42,9 @@
     "node_modules",
     "out",
     "storybook-static",
-    "functions",
     "server",
+    "workers",
+    "infra",
     "packages/*/node_modules",
     "packages/*/dist"
   ]

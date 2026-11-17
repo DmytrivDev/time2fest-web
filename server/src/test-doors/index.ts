@@ -25,6 +25,7 @@ export function doorRoutes(deps: Deps, seed: SeedStore, rows: readonly DoorRow[]
     method: door.method,
     path: door.path,
     ...(door.body ? { body: door.body } : {}),
+    ...(door.edgeProbe ? { edgeProbe: true as const } : {}),
     testDoor: true,
     async handler(ctx) {
       if (door.dependencyBreaking && !(typeof slug === 'string' && deps.lockState.holdsExclusive(slug))) {

@@ -3,6 +3,7 @@ import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestClock } from '../../src/clock';
 import { payloadOf, seedStoreOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
+import { inactiveEdgeGate } from '../../src/platform/edge';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { runSeed } from '../../src/seed/index';
 import type { SeedRow } from '../../src/seed/registry';
@@ -51,6 +52,7 @@ const dispatch = createDispatcher({
   routes: doorRoutes(deps, seedStoreOf(deps), [fixturesDoor(rows), resetDoor(rows)]),
   middleware: middlewareRegistry,
   deps,
+  edge: inactiveEdgeGate(deps.clock),
 });
 
 function rawClient(db: number, keyPrefix?: string): Redis {

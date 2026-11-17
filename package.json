@@ -32,7 +32,12 @@
     "db:create": "node server/scripts/stack.mjs db-create",
     "build:int": "cross-env NEXT_PUBLIC_ENV=test NEXT_PUBLIC_API_MODE=http NEXT_DIST_DIR=out-int next build",
     "serve:int": "node server/scripts/serve-int.mjs",
-    "contracts:run": "node scripts/contract-run.mjs"
+    "contracts:run": "node scripts/contract-run.mjs",
+    "build:edge:test": "cross-env NEXT_PUBLIC_ENV=test NEXT_PUBLIC_API_MODE=http NEXT_DIST_DIR=out-edge-test next build",
+    "edge:deploy:test": "pnpm --dir workers/edge deploy:test",
+    "edge:tunnel:up": "docker compose -p t2f-edge -f infra/cloudflare/cloudflared/compose.yml up -d",
+    "edge:tunnel:down": "docker compose -p t2f-edge -f infra/cloudflare/cloudflared/compose.yml down",
+    "infra:cf": "node infra/cloudflare/cf.mjs"
   },
   "dependencies": {
     "next": "16.4.5",

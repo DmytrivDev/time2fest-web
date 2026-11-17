@@ -19,6 +19,7 @@ import type { SeedStore } from '../ports';
 import { collectionRegistry } from '../registries/collections';
 import { resetWorktree, runSeed, type ResettableCollection } from '../seed/index';
 import { seedRegistry, type SeedRow } from '../seed/registry';
+import { edgeEchoDoors } from './edgeEcho';
 
 /** What a door may use beyond the request context. */
 export interface DoorTools {
@@ -34,6 +35,8 @@ export interface DoorRow {
   body?: ZodType;
   /** Breaks a shared dependency: runs only while this worktree holds the exclusive lock (AC-33). */
   dependencyBreaking?: true;
+  /** The edge probe door only (SPEC-05 W16): copied to the route row, see `RouteRow.edgeProbe`. */
+  edgeProbe?: true;
   handler(ctx: Ctx, tools: DoorTools): Promise<Outcome>;
 }
 
@@ -111,6 +114,7 @@ export const doorRegistry: readonly DoorRow[] = [
       return { ok: true, value: clock.state() };
     },
   },
+  ...edgeEchoDoors,
   fixturesDoor(),
   stub('last-code', '/api/_test/last-code'),
   stub('moderation', '/api/_test/moderation'),

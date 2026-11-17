@@ -15,7 +15,15 @@ import { rateLimitRegistry } from './rateLimits';
 
 const CLIENT_ID_MAX = 64;
 
+/** Longest window of an `ipDay` row: the fingerprint salt lives one UTC day (SPEC-05 AC-29). */
+const IP_DAY_MAX_WINDOW_MS = 86_400_000;
+
 export function rateLimitMiddleware(rows: readonly RateLimitRow[] = rateLimitRegistry): Middleware {
+  for (const r of rows) {
+    if (r.keys.includes('ipDay') && r.windowMs > IP_DAY_MAX_WINDOW_MS) {
+      throw new Error(`rate-limits: ${r.key} ipDay window exceeds 24 h`);
+    }
+  }
   const byKey = new Map(rows.map((r) => [r.key, r]));
   return {
     key: '30-rate-limit',
@@ -33,7 +41,7 @@ export function rateLimitMiddleware(rows: readonly RateLimitRow[] = rateLimitReg
       if (!row) return failure('unknown');
       const verdict = await checkLimit(
         row,
-        { subject: ctx.subject, clock: ctx.clock },
+        { subject: ctx.subject, ipDay: row.keys.includes('ipDay') ? await ctx.client.ipDay() : undefined },
         { fast: ctx.deps.redis, memory: ctx.deps.memory },
       );
       return verdict.ok ? next() : { ok: false, error: verdict.error };

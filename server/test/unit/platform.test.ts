@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { envClass, loadEnv } from '../../src/platform/env';
 import { idemKey } from '../../src/platform/idempotency';
@@ -6,6 +7,7 @@ import { assertRegistry } from '../../src/platform/registry';
 import { envRegistry } from '../../src/registries/env';
 
 const SECRET = 'payload-secret-value-that-is-32-chars-long'; // check-secrets: allow fake payload secret for the env loader unit test
+const EDGE_SECRET = randomBytes(24).toString('hex');
 const clock = { now: () => 1_700_000_000_000 };
 
 /** A valid raw environment of the given class. */
@@ -16,6 +18,8 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     REDIS_URL: 'redis://localhost:6380/4',
     T2F_REDIS_PREFIX: 't2f:spec_02_server_skeleton:',
     PAYLOAD_SECRET: SECRET,
+    // Required in rehearsal/production since SPEC-05 AC-14; present so those cases stay valid.
+    T2F_EDGE_SECRET: EDGE_SECRET,
     ...over,
   };
 }

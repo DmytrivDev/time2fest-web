@@ -1,11 +1,13 @@
 /**
  * AC-30 / AC-31: in production every test door answers exactly like an unknown /api path
  * (status, body, header names except `date`), also with the test-door switches on the request.
- * Needs the server started with T2F_ENV=production. Env: T2F_E2E_SERVER (server URL).
+ * Needs the server started with T2F_ENV=production. Env: T2F_E2E_SERVER (server URL);
+ * T2F_E2E_EDGE_SECRET (the server's T2F_EDGE_SECRET) — when set, every request carries `x-t2f-edge`.
  */
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 const server = process.env.T2F_E2E_SERVER ?? '';
+const edgeSecret = process.env.T2F_E2E_EDGE_SECRET ?? '';
 
 /** Equal to the rows of `src/test-doors/registry.ts` (method + path). */
 const DOORS: Array<[string, string]> = [
@@ -13,6 +15,8 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/fixtures'],
   ['GET', '/api/_test/clock'],
   ['POST', '/api/_test/clock'],
+  ['GET', '/api/_test/edge-echo'],
+  ['POST', '/api/_test/edge-echo'],
   ['POST', '/api/_test/last-code'],
   ['POST', '/api/_test/moderation'],
   ['POST', '/api/_test/paypro-webhook'],
@@ -29,7 +33,7 @@ const VARIANTS: Array<{ name: string; query: string; headers: Record<string, str
 async function probe(request: APIRequestContext, method: string, path: string, query: string, headers: Record<string, string>) {
   const res = await request.fetch(`${server}${path}${query}`, {
     method,
-    headers: { Origin: server, ...headers },
+    headers: { Origin: server, ...(edgeSecret ? { 'x-t2f-edge': edgeSecret } : {}), ...headers },
     data: method === 'GET' ? undefined : {},
     maxRedirects: 0,
   });
@@ -39,8 +43,8 @@ async function probe(request: APIRequestContext, method: string, path: string, q
   return { status: res.status(), body: await res.text(), names };
 }
 
-test('AC-30/31: the registry has 8 door rows', () => {
-  expect(DOORS).toHaveLength(8);
+test('AC-30/31: the registry has 10 door rows', () => {
+  expect(DOORS).toHaveLength(10);
 });
 
 for (const v of VARIANTS) {

@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -5,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestClock } from '../../src/clock';
 import { buildDispatcher, createDeps, createLockState, seedStoreOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
+import { inactiveEdgeGate } from '../../src/platform/edge';
 import type { Deps } from '../../src/endpoints/types';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { routeRegistry } from '../../src/registries/routes';
@@ -15,8 +17,21 @@ const JSON_TYPE = { 'content-type': 'application/json' };
 const SLUG = 'doors_int_test';
 const silent = { info: () => {}, warn: () => {}, error: () => {} };
 
+// Rehearsal requires the edge secret since SPEC-05 AC-14; built at runtime, sent by `viaEdge`.
+const EDGE_SECRET = randomBytes(24).toString('hex');
+
 function depsFor(cls: 'test' | 'rehearsal', overrides: Partial<Omit<Deps, 'env'>> = {}): Deps {
-  return createDeps({ ...process.env, T2F_ENV: cls, T2F_TEST_DOORS: '1', T2F_SLUG: SLUG }, { log: silent, ...overrides });
+  const edge = cls === 'rehearsal' ? { T2F_EDGE_SECRET: EDGE_SECRET } : {};
+  return createDeps({ ...process.env, T2F_ENV: cls, T2F_TEST_DOORS: '1', T2F_SLUG: SLUG, ...edge }, { log: silent, ...overrides });
+}
+
+/** Sends every request as the edge Worker would, so the rehearsal gate admits it. */
+function viaEdge(dispatch: (r: Request) => Promise<Response>): (r: Request) => Promise<Response> {
+  return (r) => {
+    const headers = new Headers(r.headers);
+    headers.set('x-t2f-edge', EDGE_SECRET);
+    return dispatch(new Request(r, { headers }));
+  };
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -147,7 +162,7 @@ describe('test doors', () => {
       const deps = depsFor('test', { lockState: createLockState(dir) });
       const handler = vi.fn(async () => ({ ok: true as const, value: 'broken' }));
       const routes = doorRoutes(deps, seedStoreOf(deps), [{ key: 'break-db', method: 'POST', path: '/api/_test/break-db', dependencyBreaking: true, handler }]);
-      const dispatch = createDispatcher({ routes, middleware: middlewareRegistry, deps });
+      const dispatch = createDispatcher({ routes, middleware: middlewareRegistry, deps, edge: inactiveEdgeGate(deps.clock) });
       const call = () => dispatch(new Request(`${BASE}/api/_test/break-db`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
 
       const refused = await call();
@@ -174,7 +189,7 @@ describe('test doors', () => {
 
   it('AC-21: rehearsal with T2F_TEST_DOORS=1 has no doors and real time', async () => {
     const deps = depsFor('rehearsal');
-    const dispatch = await buildDispatcher(deps);
+    const dispatch = viaEdge(await buildDispatcher(deps));
     const missing = await dispatch(new Request(`${BASE}/api/_test/clock`));
     const unknown = await dispatch(new Request(`${BASE}/api/nope`));
     expect(missing.status).toBe(404);

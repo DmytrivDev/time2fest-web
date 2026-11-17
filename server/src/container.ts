@@ -14,7 +14,9 @@ import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
 import type { AppEnv, Deps, RouteRow } from './endpoints/types';
+import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { loadEnv, type RawEnv } from './platform/env';
+import { daySalts } from './platform/fingerprint';
 import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
@@ -133,10 +135,21 @@ export function getDeps(): Deps {
   return (g[DEPS_KEY] ??= createDeps(process.env));
 }
 
+/** The edge gate of `deps` (SPEC-05): active in rehearsal/production, and in test with a secret. */
+export function edgeGateOf(deps: Deps): EdgeGate {
+  const secret = deps.env.vars.T2F_EDGE_SECRET;
+  return createEdgeGate({
+    envClass: deps.env.class,
+    secret: typeof secret === 'string' ? secret : undefined,
+    salts: daySalts({ fast: deps.redis, clock: deps.clock }),
+    clock: deps.clock,
+  });
+}
+
 /** The dispatcher for `deps`: production routes, plus the doors when `shouldLoadDoors`. */
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
   const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).doorRoutes(deps, seedStoreOf(deps)) : [];
-  return createDispatcher({ routes: [...routes, ...doors], middleware: middlewareRegistry, deps });
+  return createDispatcher({ routes: [...routes, ...doors], middleware: middlewareRegistry, deps, edge: edgeGateOf(deps) });
 }
 
 /** The dispatcher of the process, built once. */

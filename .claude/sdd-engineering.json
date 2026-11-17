@@ -25,6 +25,18 @@
       "dir": "server",
       "files": "npx tsc --noEmit -p . && npx eslint --no-warn-ignored {files} && npx vitest related --run --maxWorkers=2 --passWithNoTests {files}",
       "full": "npx tsc --noEmit -p . && npx eslint . && npx vitest run --maxWorkers=2 && pnpm test:int && node scripts/verify-schema.mjs"
+    },
+    {
+      "package": "edge",
+      "dir": "workers/edge",
+      "files": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}",
+      "full": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2"
+    },
+    {
+      "package": "infra",
+      "dir": "infra/cloudflare",
+      "files": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs related --run --maxWorkers=2 --passWithNoTests {files}",
+      "full": "node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2"
     }
   ],
   "routing": "D:/Work/Pets/Time2Fest/docs/backend/sdd-routing.md",
