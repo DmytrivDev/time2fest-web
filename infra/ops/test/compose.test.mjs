@@ -89,7 +89,31 @@ describe('node compose.yml', () => {
       if (n !== 'egress') expect(c.networks[n], n).toBe(true);
     }
     expect(networksOf(c.services.server)).toContain('backend');
-    expect(networksOf(c.services.cloudflared)).toContain('backend');
+  });
+
+  it('S1: cloudflared is off backend and shares only the internal tunnel network with the server', () => {
+    const cf = networksOf(c.services.cloudflared);
+    expect(cf).not.toContain('backend');
+    expect(cf).toContain('tunnel');
+    expect(c.networks.tunnel).toBe(true);
+    expect(networksOf(c.services.server)).toContain('tunnel');
+    // Кожна мережа cloudflared, крім його власного виходу, спільна лише із сервером.
+    for (const n of cf) {
+      const members = Object.entries(c.services).filter(([, body]) => networksOf(body).includes(n)).map(([name]) => name).sort();
+      expect(members, n).toEqual(n === 'tunnel' ? ['cloudflared', 'server'] : ['cloudflared']);
+    }
+    // backend — лише postgres, redis, server.
+    const backend = Object.entries(c.services).filter(([, body]) => networksOf(body).includes('backend')).map(([name]) => name).sort();
+    expect(backend).toEqual(['postgres', 'redis', 'server']);
+  });
+
+  it('S1: redis requires a password from redis.env, never in argv or the healthcheck text', () => {
+    const body = c.services.redis.join('\n');
+    expect(body).toMatch(/^ {4}env_file:\s*redis\.env\s*$/m);
+    expect(body).toMatch(/requirepass/);
+    expect(body).not.toMatch(/--requirepass/);
+    expect(body).toMatch(/REDISCLI_AUTH=\\?"\$\$REDIS_PASSWORD\\?" redis-cli ping/);
+    expect(body).toMatch(/exec docker-entrypoint\.sh redis-server \/tmp\/redis\.conf/);
   });
 
   it('does not set what ops or the image own', () => {
@@ -97,7 +121,7 @@ describe('node compose.yml', () => {
       .split('\n')
       .filter((l) => !/^\s*#/.test(l))
       .join('\n');
-    for (const name of ['REDIS_URL', 'T2F_REDIS_PREFIX', 'DATABASE_URI', 'POSTGRES_USER', 'POSTGRES_DB', 'T2F_COMMIT']) {
+    for (const name of ['REDIS_URL', 'REDIS_PASSWORD', 'T2F_REDIS_PREFIX', 'DATABASE_URI', 'POSTGRES_USER', 'POSTGRES_DB', 'T2F_COMMIT']) {
       // `$$POSTGRES_USER` у healthcheck читає змінну контейнера, а не задає її
       const cleaned = text.replace(/\$\$[A-Z_]+/g, '');
       expect(cleaned, name).not.toMatch(new RegExp(`\\b${name}\\b`));

@@ -41,6 +41,8 @@ export const IDP_NAME = 't2f-google';
 export const IDP_TYPE = 'google';
 /** Право токена на постачальників входу (і на читання списку: крок їх створює чи оновлює). */
 export const IDP_RIGHT = 'Account · Access: Organizations, Identity Providers, and Groups · Edit';
+/** Право на читання постачальників входу (перевірка позначки `access-<env>.ok`, S8). */
+export const IDP_READ_RIGHT = 'Account · Access: Organizations, Identity Providers, and Groups · Read';
 /** Заповнювач id постачальника, якого ще створить цей же запуск (лише для порівняння). */
 const PENDING_IDP = '<new t2f-google>';
 
@@ -107,29 +109,55 @@ export async function listAccessApps(api, accountId) {
   return api.getAll('access', `/accounts/${accountId}/access/apps`);
 }
 
+/** Правило `include` лише з поштою: `{ email: { email: "<адреса>" } }` і нічого більше. @param {any} rule */
+const emailOnly = (rule) =>
+  rule !== null && typeof rule === 'object' && Object.keys(rule).length === 1 && typeof rule.email?.email === 'string' && rule.email.email !== '';
+
 /**
- * Перевірка позначки (N3): адмінка лишається ввімкненою лише тоді, коли в Cloudflare справді є застосунок Access з
- * `domain` = ім’я адмінки, хоча б однією політикою й непорожнім `allowed_idps`. Бракує права читання — теж «вимкнено» (не перевірено), без збою
- * всього запуску; інша відмова API — виняток.
+ * Перевірка позначки (N3, S8): адмінка лишається ввімкненою лише тоді, коли в Cloudflare справді є застосунок Access з
+ * `domain` = ім’я адмінки, хоча б однією політикою `allow`, у кожній політиці `allow` — лише правила `include` з поштою, і
+ * `allowed_idps` рівно з одного id — постачальника `t2f-google` типу `google`. Бракує права читання (застосунків чи
+ * постачальників) — теж «вимкнено» (не перевірено), без збою всього запуску, з назвою права; інша відмова API — виняток.
  * @param {AccessApi} api
  * @param {string} accountId
  * @param {string} host
- * @returns {Promise<{ ok: true } | { ok: false, reason: 'missing' | 'no-policy' | 'no-idp' | 'no-right' }>}
+ * @returns {Promise<{ ok: true } | { ok: false, reason: 'missing' | 'no-policy' | 'not-email' | 'no-idp' } | { ok: false, reason: 'no-right', right: string }>}
  */
 export async function verifyAdminAccess(api, accountId, host) {
+  /** @param {unknown} e */
+  const refused = (e) => e instanceof ApiRefusal && (e.status === 401 || e.status === 403);
   /** @type {any[]} */
   let apps;
   try {
     apps = await listAccessApps(api, accountId);
   } catch (e) {
-    if (e instanceof ApiRefusal && (e.status === 401 || e.status === 403)) return { ok: false, reason: 'no-right' };
+    if (refused(e)) return { ok: false, reason: 'no-right', right: ACCESS_READ_RIGHT };
     throw e;
   }
   const mine = apps.filter((a) => domainOf(a?.domain) === host.toLowerCase());
   if (!mine.length) return { ok: false, reason: 'missing' };
-  const withPolicy = mine.filter((a) => Array.isArray(a?.policies) && a.policies.length > 0);
+  /** @param {any} a */
+  const allows = (a) => (Array.isArray(a?.policies) ? a.policies : []).filter((/** @type {any} */ p) => p?.decision === 'allow');
+  const withPolicy = mine.filter((a) => allows(a).length > 0);
   if (!withPolicy.length) return { ok: false, reason: 'no-policy' };
-  return withPolicy.some((a) => Array.isArray(a?.allowed_idps) && a.allowed_idps.length > 0) ? { ok: true } : { ok: false, reason: 'no-idp' };
+  const emailPolicies = withPolicy.filter((a) =>
+    allows(a).every((/** @type {any} */ p) => Array.isArray(p?.include) && p.include.length > 0 && p.include.every(emailOnly)),
+  );
+  if (!emailPolicies.length) return { ok: false, reason: 'not-email' };
+  /** @type {any[]} */
+  let idps;
+  try {
+    idps = await api.getAll('access-idp', `/accounts/${accountId}/access/identity_providers`);
+  } catch (e) {
+    if (refused(e)) return { ok: false, reason: 'no-right', right: IDP_READ_RIGHT };
+    throw e;
+  }
+  const google = idps.filter((p) => p?.name === IDP_NAME && p?.type === IDP_TYPE && p?.id !== undefined && p?.id !== null);
+  if (google.length !== 1) return { ok: false, reason: 'no-idp' };
+  const id = String(google[0].id);
+  /** @param {any} a */
+  const onlyGoogle = (a) => Array.isArray(a?.allowed_idps) && a.allowed_idps.length === 1 && String(a.allowed_idps[0]) === id;
+  return emailPolicies.some(onlyGoogle) ? { ok: true } : { ok: false, reason: 'no-idp' };
 }
 
 /**

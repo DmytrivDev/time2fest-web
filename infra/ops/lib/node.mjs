@@ -2,7 +2,7 @@
 // Вузол (AC-9, AC-12, AC-13, AC-18): вільне місце, `compose.yml` з дерева коміту, файли інтерполяції Compose,
 // міграції одноразовим контейнером, заміна контейнера сервера, очікування здоров’я, тунель.
 // Ніколи `docker compose down` і нічого з томами (A02). Файли змінних вузла (`server.env`, `postgres.env`,
-// `cloudflared.env`) тут лише читаються на наявність `TUNNEL_TOKEN` — ніколи не пишуться (AC-25).
+// `redis.env`, `cloudflared.env`) тут лише читаються на наявність `TUNNEL_TOKEN` — ніколи не пишуться (AC-25).
 import fs from 'node:fs';
 import path from 'node:path';
 import { REPO_ROOT, SHA40 } from './exec.mjs';

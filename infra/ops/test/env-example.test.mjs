@@ -93,6 +93,12 @@ describe('node env examples', () => {
     expect(assignments(read('cloudflared.env.example'))).toEqual([{ name: 'TUNNEL_TOKEN', value: '' }]);
   });
 
+  it('S1: redis example holds the empty REDIS_PASSWORD only; every node file has an example', async () => {
+    expect(assignments(read('redis.env.example'))).toEqual([{ name: 'REDIS_PASSWORD', value: '' }]);
+    const { NODE_ENV_FILES } = await import('../lib/secrets/files.mjs');
+    for (const n of NODE_ENV_FILES) expect(() => read(`${n}.example`), n).not.toThrow();
+  });
+
   it('a new required registry variable turns the check red (synthetic block)', async () => {
     const registry = await loadRegistry();
     const synthetic = [

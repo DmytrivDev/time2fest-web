@@ -58,7 +58,7 @@ export const envRegistry: readonly EnvBlock[] = [
       },
       { name: 'T2F_ACCESS_SERVICE_CNS', schema: csv.optional() },
       { name: 'T2F_ACCESS_TEAM_DOMAIN', schema: httpsUrl.optional(), requiredIn: REQ },
-      { name: 'T2F_ADMIN_HOST', schema: hostPort.optional(), requiredIn: REQ },
+      { name: 'T2F_ADMIN_HOST', schema: hostPort.optional(), isolated: true, requiredIn: REQ },
       { name: 'T2F_OWNER_EMAILS', schema: csv.optional(), requiredIn: REQ },
     ],
   },

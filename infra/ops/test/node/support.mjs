@@ -20,7 +20,8 @@ import { getVar, setVar } from '../../lib/secrets/envFile.mjs';
 
 export const ENV = 'rehearsal';
 export const PROJECT = 't2f-node-rehearsal';
-export const NETWORK = `${PROJECT}_backend`;
+/** Мережа зонда — та, що cloudflared ділить лише із сервером (S1: cloudflared не в `backend`). */
+export const NETWORK = `${PROJECT}_tunnel`;
 const LABEL = `label=com.docker.compose.project=${PROJECT}`;
 const NODE_DIR_NAME = `node-local-${ENV}`;
 const DOCKER_TIMEOUT_MS = 10 * 60_000;
@@ -280,7 +281,7 @@ export function createSuite(name) {
   const nodeEdgeSecret = () => getVar(fs.readFileSync(nodeFile('server.env'), 'utf8'), 'T2F_EDGE_SECRET') ?? '';
 
   /**
-   * `health-probe.mjs` з контейнера в мережі `backend` проєкту (як `cloudflared`): `http://server:3000<path>`.
+   * `health-probe.mjs` з контейнера в мережі `tunnel` проєкту (як `cloudflared`): `http://server:3000<path>`.
    * Секрет — у файлі змінних для `docker exec` (не в argv).
    * @param {{ secret?: 'current' | 'none', value?: string, raw?: boolean, urlPath?: string }} [o]
    */

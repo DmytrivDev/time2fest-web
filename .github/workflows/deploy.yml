@@ -1,7 +1,9 @@
 name: deploy
 
 # Ручний запуск розгортання на вузол репетиції (SPEC-13a, W12). Секрети — лише за іменем,
-# у кроках `env:`; жодного `${{ }}` у `run:`.
+# у кроках `env:`; жодного `${{ }}` у `run:`. Секрети — у GitHub Environment `rehearsal`, доступному
+# лише гілці `master` (крок власника); ключ SSH з'являється після встановлення залежностей і
+# прибирається останнім кроком за будь-якого результату.
 on:
   workflow_dispatch:
     inputs:
@@ -20,6 +22,8 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/master'
+    environment: rehearsal
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -52,3 +56,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           T2F_CATALOG_URL: https://rehearsal.time2fest.com
         run: pnpm deploy:env -- --env "$T2F_DEPLOY_ENV" --target "$T2F_REHEARSAL_HOST"
+      - name: Remove SSH material
+        if: always()
+        run: rm -f "$RUNNER_TEMP"/t2f_*

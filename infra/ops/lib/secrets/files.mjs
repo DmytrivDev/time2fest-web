@@ -6,7 +6,7 @@ import path from 'node:path';
 import { REPO_ROOT } from '../config.mjs';
 
 /** Файли змінних вузла (W11): поруч із `compose.yml` на вузлі, оригінали — у `.local/<env>/`. */
-export const NODE_ENV_FILES = /** @type {const} */ (['server.env', 'postgres.env', 'cloudflared.env']);
+export const NODE_ENV_FILES = /** @type {const} */ (['server.env', 'postgres.env', 'redis.env', 'cloudflared.env']);
 /** Віддалений запис файлу змінних: права 0600 від початку, атомарна заміна. Шлях — `$1`, вміст — stdin. */
 export const PUSH_SCRIPT = 'umask 077 && cat > "$1.tmp" && mv "$1.tmp" "$1"';
 /** Позначка «новий секрет краю ще не в Worker’і» (без значення): повторний запуск дошле його. */
@@ -16,7 +16,7 @@ const PUSH_TIMEOUT_MS = 30_000;
 /**
  * @typedef {import('../exec.mjs').Transport} Transport
  * @typedef {import('../../ops.mjs').OpsContext} OpsContext
- * @typedef {'server.env' | 'postgres.env' | 'cloudflared.env'} EnvFileName
+ * @typedef {'server.env' | 'postgres.env' | 'redis.env' | 'cloudflared.env'} EnvFileName
  */
 
 /** Каталог локальних оригіналів середовища. @param {OpsContext} ctx @param {string} env */

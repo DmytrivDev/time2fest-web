@@ -42,7 +42,7 @@ const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity'];
 const isSecretName = (name) => SECRET_ENV_NAMES.includes(name) || SECRET_NAME_RE.test(name);
 
 /**
- * Значення секретних змінних з локальних оригіналів файлів вузла (`<stateRoot>/<env>/{server,postgres,cloudflared}.env`)
+ * Значення секретних змінних з локальних оригіналів файлів вузла (`<stateRoot>/<env>/{server,postgres,redis,cloudflared}.env`)
  * реєструються в редакторі: помилка міграції чи `docker`, що повторює рядок підключення, не виведе пароля. Файлів
  * немає — нічого не робить; нечитаний файл пропускається (його значень ops і не надсилає).
  * @param {import('./lib/redact.mjs').Redactor} redactor

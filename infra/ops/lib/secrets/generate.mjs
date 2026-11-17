@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { resolveSite } from '../common.mjs';
 import { acquireNodeLock } from '../lock.mjs';
-import { databaseUri, getVar, newSecret, setVar } from './envFile.mjs';
+import { databaseUri, getVar, newSecret, REDIS_URL_BASE, redisUrl, redisUrlPassword, setVar } from './envFile.mjs';
 import { assertPrivatePath, localEnvDir, NODE_ENV_FILES, pushFile, WORKER_PENDING, writePrivate } from './files.mjs';
 
 /**
@@ -14,8 +14,9 @@ import { assertPrivatePath, localEnvDir, NODE_ENV_FILES, pushFile, WORKER_PENDIN
  */
 
 /**
- * W22: заповнює порожні значення файлів `.local/<env>/`, за `--target` надсилає всі три файли, новий секрет
- * краю — у Worker. Наявні значення ніколи не генеруються заново.
+ * W22: заповнює порожні значення файлів `.local/<env>/`, за `--target` надсилає всі файли вузла, новий секрет
+ * краю — у Worker. Наявні значення ніколи не генеруються заново; єдине оновлення — `REDIS_URL` без пароля
+ * отримує пароль із `redis.env` (вузол, розгорнутий до пароля Redis, S1).
  * @param {OpsContext} ctx
  * @returns {Promise<number>}
  */
@@ -60,6 +61,14 @@ export async function generate(ctx) {
   const srv = text['server.env'];
   if (!getVar(pg, 'POSTGRES_PASSWORD') && getVar(srv, 'DATABASE_URI')) {
     return refuse('DATABASE_URI заповнено, а POSTGRES_PASSWORD — ні; виправте файли в .local вручну');
+  }
+  // Пароль Redis (S1): наявний REDIS_URL без пароля — оновлюється нижче; з паролем — має збігатися з REDIS_PASSWORD.
+  const redisUrlBefore = getVar(srv, 'REDIS_URL');
+  const redisPasswordBefore = getVar(text['redis.env'], 'REDIS_PASSWORD');
+  const urlPassword = redisUrlBefore ? redisUrlPassword(redisUrlBefore) : '';
+  if (urlPassword === undefined) return refuse('REDIS_URL — не URL; виправте server.env у .local вручну');
+  if (urlPassword && urlPassword !== redisPasswordBefore) {
+    return refuse('пароль у REDIS_URL не збігається з REDIS_PASSWORD (redis.env); виправте файли в .local вручну');
   }
   const pendingFile = path.join(dir, WORKER_PENDING);
   const edgeNew = !getVar(srv, 'T2F_EDGE_SECRET');
@@ -123,7 +132,17 @@ export async function generate(ctx) {
         db: /** @type {string} */ (getVar(text['postgres.env'], 'POSTGRES_DB')),
       }),
     );
-    fill('server.env', 'REDIS_URL', () => 'redis://redis:6379/0', 'задано');
+    fill('redis.env', 'REDIS_PASSWORD', newSecret);
+    const redisPassword = /** @type {string} */ (getVar(text['redis.env'], 'REDIS_PASSWORD'));
+    if (redisUrlBefore && !urlPassword) {
+      // Оновлення вузла без пароля Redis: той самий хост і база, тепер із паролем.
+      const v = redisUrl(redisUrlBefore, redisPassword);
+      ctx.redactor.add(v);
+      text['server.env'] = setVar(text['server.env'], 'REDIS_URL', v);
+      report.push('server.env REDIS_URL — оновлено (пароль Redis)');
+    } else {
+      fill('server.env', 'REDIS_URL', () => redisUrl(REDIS_URL_BASE, redisPassword), 'задано');
+    }
     fill('server.env', 'T2F_REDIS_PREFIX', () => `t2f:${env}:`, 'задано');
     const tunnelFile = ctx.paths.tunnelEnvFile(env);
     fill('cloudflared.env', 'TUNNEL_TOKEN', () => {

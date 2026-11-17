@@ -191,10 +191,12 @@ describe('Access: з --with-access', () => {
     expect(apply.code).toBe(0);
     expect(apply.text).toContain('без змін');
     expect(fake.mutations()).toHaveLength(4);
-    // N3: одне читання списку застосунків на запуск, жодної зміни Access.
+    // N3: одне читання списку застосунків на запуск, (S8) за ним одне читання постачальників входу, жодної зміни Access.
     expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toEqual([
       { method: 'GET', path: '/accounts/acct-test/access/apps' },
+      { method: 'GET', path: '/accounts/acct-test/access/identity_providers' },
       { method: 'GET', path: '/accounts/acct-test/access/apps' },
+      { method: 'GET', path: '/accounts/acct-test/access/identity_providers' },
     ]);
     expect(fs.existsSync(path.join(tmp, '.local', 'access-rehearsal.ok'))).toBe(true);
   });
@@ -494,7 +496,83 @@ describe('N3: позначка Access перевіряється в Cloudflare',
     const plan = await run(fake, ['plan', '--env', 'rehearsal'], {});
     expect(plan.code).toBe(0);
     expect(plan.text).toContain('без змін');
-    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toHaveLength(3);
+    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/apps'))).toHaveLength(3);
+    // S8: і один список постачальників входу.
+    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/identity_providers'))).toHaveLength(1);
+    expect(fs.existsSync(marker())).toBe(true);
+  });
+});
+
+describe('S8: позначка вимагає лише t2f-google і лише пошти', () => {
+  const ADMIN = 'admin-rehearsal.time2fest.com';
+  const marker = () => path.join(tmp, '.local', 'access-rehearsal.ok');
+  /** @param {ReturnType<typeof createFakeApi>} fake */
+  const adminIngress = (fake) => JSON.stringify(fake.state.tunnels).includes(ADMIN);
+
+  async function withAdmin() {
+    const fake = converged();
+    expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
+    expect(adminIngress(fake)).toBe(true);
+    return fake;
+  }
+
+  /** @param {ReturnType<typeof createFakeApi>} fake */
+  async function expectDisabled(fake, /** @type {string} */ why) {
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(r.text).toContain(why);
+    expect(adminIngress(fake)).toBe(false);
+    expect(fs.existsSync(marker())).toBe(false);
+  }
+
+  it('the converged app (allowed_idps = [t2f-google], email-only allow policy) keeps the admin name', async () => {
+    const fake = await withAdmin();
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(adminIngress(fake)).toBe(true);
+    expect(fs.existsSync(marker())).toBe(true);
+  });
+
+  it('allowed_idps naming another provider, or t2f-google plus another, disables the admin name', async () => {
+    for (const extra of [false, true]) {
+      const fake = await withAdmin();
+      fake.state.identityProviders.push({ id: 'other-idp', name: 'other', type: 'onetimepin', config: {} });
+      const google = String(fake.state.identityProviders[0].id);
+      fake.state.accessApps[0].allowed_idps = extra ? [google, 'other-idp'] : ['other-idp'];
+      await expectDisabled(fake, 'не лише t2f-google');
+    }
+  });
+
+  it('t2f-google of another type disables the admin name', async () => {
+    const fake = await withAdmin();
+    fake.state.identityProviders[0].type = 'github';
+    await expectDisabled(fake, 'не лише t2f-google');
+  });
+
+  it.each([
+    ['everyone', [{ everyone: {} }]],
+    ['email domain', [{ email_domain: { domain: 'example.org' } }]],
+    ['email plus everyone', [{ email: { email: OWNER_A } }, { everyone: {} }]],
+    ['empty include', []],
+  ])('an allow policy with %s disables the admin name', async (_name, include) => {
+    const fake = await withAdmin();
+    fake.state.accessApps[0].policies[0].include = include;
+    await expectDisabled(fake, 'пускає не лише за поштою');
+  });
+
+  it('an app with deny policies only disables the admin name', async () => {
+    const fake = await withAdmin();
+    fake.state.accessApps[0].policies[0].decision = 'deny';
+    await expectDisabled(fake, 'без жодної політики allow');
+  });
+
+  it('403 on reading identity providers → disabled naming the read right, the run does not fail, the marker stays', async () => {
+    const fake = await withAdmin();
+    fake.refuse('access-idp', 403);
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(r.text).toContain('Account · Access: Organizations, Identity Providers, and Groups · Read');
+    expect(adminIngress(fake)).toBe(false);
     expect(fs.existsSync(marker())).toBe(true);
   });
 });

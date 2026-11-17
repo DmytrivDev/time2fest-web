@@ -70,3 +70,30 @@ export function databaseUri(o) {
   u.password = o.password;
   return u.toString();
 }
+
+/** Типовий `REDIS_URL` вузла (без пароля; пароль додає `redisUrl`). */
+export const REDIS_URL_BASE = 'redis://redis:6379/0';
+
+/**
+ * `REDIS_URL` з паролем Redis: через `URL`, без рядкового літерала з паролем. Хост, порт і база — з `base`.
+ * @param {string} base наявний `REDIS_URL` або `REDIS_URL_BASE`
+ * @param {string} password
+ */
+export function redisUrl(base, password) {
+  const u = new URL(base);
+  u.username = '';
+  u.password = password;
+  return u.toString();
+}
+
+/**
+ * Пароль у `REDIS_URL`: `''` — без пароля; не URL — `undefined`.
+ * @param {string} url
+ */
+export function redisUrlPassword(url) {
+  try {
+    return decodeURIComponent(new URL(url).password);
+  } catch {
+    return undefined;
+  }
+}

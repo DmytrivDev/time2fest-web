@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { getVar } from '../lib/secrets/envFile.mjs';
+import { getVar, REDIS_URL_BASE, redisUrl } from '../lib/secrets/envFile.mjs';
 import { NODE_ENV_FILES, PUSH_SCRIPT, WORKER_PENDING } from '../lib/secrets/files.mjs';
 import { HOST, scenario } from './support/scenario.mjs';
 
@@ -31,6 +31,7 @@ function world(o = {}) {
     `${header}DATABASE_URI=\nREDIS_URL=\nPAYLOAD_SECRET=\nT2F_EDGE_SECRET=\nT2F_EDGE_SECRET_PREVIOUS=\nT2F_REDIS_PREFIX=\nT2F_R2_SECRET_ACCESS_KEY=\n`,
   );
   fs.writeFileSync(path.join(examplesDir, 'postgres.env.example'), `${header}POSTGRES_USER=\nPOSTGRES_DB=\nPOSTGRES_PASSWORD=\n`);
+  fs.writeFileSync(path.join(examplesDir, 'redis.env.example'), `${header}REDIS_PASSWORD=\n`);
   fs.writeFileSync(path.join(examplesDir, 'cloudflared.env.example'), `${header}TUNNEL_TOKEN=\n`);
   const tunnelEnvFile = path.join(sc.stateRoot, 'cf', 'tunnel-rehearsal.env');
   fs.mkdirSync(path.dirname(tunnelEnvFile), { recursive: true });
@@ -49,6 +50,8 @@ function secretsOf(w) {
     ...GENERATED.map((n) => getVar(w.local('server.env'), n)),
     getVar(w.local('server.env'), 'DATABASE_URI'),
     getVar(w.local('postgres.env'), 'POSTGRES_PASSWORD'),
+    getVar(w.local('redis.env'), 'REDIS_PASSWORD'),
+    getVar(w.local('server.env'), 'REDIS_URL'),
   ].map(String);
 }
 
@@ -79,7 +82,13 @@ describe('edge-secret --generate', () => {
     expect(decodeURIComponent(u.password)).toBe(pgPass);
 
     const srv = w.local('server.env');
-    expect(getVar(srv, 'REDIS_URL')).toBe('redis://redis:6379/0');
+    // S1: Redis з паролем — той самий у redis.env і в REDIS_URL.
+    const redisPass = String(getVar(w.local('redis.env'), 'REDIS_PASSWORD'));
+    expect(redisPass).toMatch(/^[A-Za-z0-9_-]{43,}$/);
+    expect(new Set([payload, edge, pgPass, redisPass]).size).toBe(4);
+    const ru = new URL(String(getVar(srv, 'REDIS_URL')));
+    expect([ru.protocol, ru.hostname, ru.port, ru.pathname, ru.username]).toEqual(['redis:', 'redis', '6379', '/0', '']);
+    expect(decodeURIComponent(ru.password)).toBe(redisPass);
     expect(getVar(srv, 'T2F_REDIS_PREFIX')).toBe('t2f:rehearsal:');
     expect(getVar(srv, 'T2F_EDGE_SECRET_PREVIOUS')).toBe('');
     expect(getVar(w.local('postgres.env'), 'POSTGRES_USER')).toBe('t2f');
@@ -228,5 +237,70 @@ describe('edge-secret --generate', () => {
     const w = world();
     expect(await main(GEN, w.deps({ env: {} }))).toBe(2);
     expect(fs.existsSync(w.localDir)).toBe(false);
+  });
+});
+
+describe('edge-secret --generate: Redis password upgrade of a deployed node (S1)', () => {
+  /** Стан вузла до пароля Redis: усе заповнено, `REDIS_URL` без пароля, `redis.env` немає. */
+  async function legacyWorld() {
+    const w = world();
+    expect(await main(GEN, w.deps())).toBe(0);
+    fs.rmSync(path.join(w.localDir, 'redis.env'));
+    const srv = w.local('server.env').replace(/^REDIS_URL=.*$/m, `REDIS_URL=${REDIS_URL_BASE}`);
+    fs.writeFileSync(path.join(w.localDir, 'server.env'), srv);
+    w.sc.out.length = 0;
+    return w;
+  }
+
+  it('generates the password, rewrites REDIS_URL with it, keeps every other value and pushes the files', async () => {
+    const w = await legacyWorld();
+    const before = w.local('server.env');
+    const callsBefore = w.sc.wranglerCalls().length;
+
+    expect(await main([...GEN, '--target', 'local'], w.deps())).toBe(0);
+    const pass = String(getVar(w.local('redis.env'), 'REDIS_PASSWORD'));
+    expect(pass).toMatch(/^[A-Za-z0-9_-]{43,}$/);
+    const u = new URL(String(getVar(w.local('server.env'), 'REDIS_URL')));
+    expect([u.hostname, u.port, u.pathname]).toEqual(['redis', '6379', '/0']);
+    expect(decodeURIComponent(u.password)).toBe(pass);
+    for (const n of ['DATABASE_URI', 'PAYLOAD_SECRET', 'T2F_EDGE_SECRET', 'T2F_REDIS_PREFIX']) {
+      expect(getVar(w.local('server.env'), n), n).toBe(getVar(before, n));
+    }
+    for (const n of NODE_ENV_FILES) expect(fs.readFileSync(w.sc.nodeFile(n), 'utf8')).toBe(w.local(n));
+    expect(w.sc.wranglerCalls()).toHaveLength(callsBefore);
+    const text = w.sc.out.join('\n');
+    expect(text).toContain('redis.env REDIS_PASSWORD — згенеровано');
+    expect(text).toContain('server.env REDIS_URL — оновлено (пароль Redis)');
+    expectNowhere(w, secretsOf(w));
+  });
+
+  it('keeps a REDIS_URL host and database other than the default', async () => {
+    const w = await legacyWorld();
+    fs.writeFileSync(path.join(w.localDir, 'server.env'), w.local('server.env').replace(/^REDIS_URL=.*$/m, 'REDIS_URL=redis://cache:6380/2'));
+    expect(await main(GEN, w.deps())).toBe(0);
+    const u = new URL(String(getVar(w.local('server.env'), 'REDIS_URL')));
+    expect([u.hostname, u.port, u.pathname]).toEqual(['cache', '6380', '/2']);
+    expect(decodeURIComponent(u.password)).toBe(getVar(w.local('redis.env'), 'REDIS_PASSWORD'));
+  });
+
+  it('after the upgrade a rerun changes nothing', async () => {
+    const w = await legacyWorld();
+    expect(await main(GEN, w.deps())).toBe(0);
+    const before = NODE_ENV_FILES.map((n) => w.local(n));
+    expect(await main(GEN, w.deps())).toBe(0);
+    expect(NODE_ENV_FILES.map((n) => w.local(n))).toEqual(before);
+    expect(w.sc.out.join('\n')).toContain('server.env REDIS_URL — вже було');
+  });
+
+  it('refuses with 2 and writes nothing when REDIS_URL carries a password that redis.env does not hold', async () => {
+    const w = await legacyWorld();
+    const withPass = redisUrl(REDIS_URL_BASE, 'not-the-redis-password-0123456789abcdef'); // check-secrets: allow fake password (S1 test)
+    fs.writeFileSync(path.join(w.localDir, 'server.env'), w.local('server.env').replace(/^REDIS_URL=.*$/m, `REDIS_URL=${withPass}`));
+    const before = w.local('server.env');
+    expect(await main(GEN, w.deps())).toBe(2);
+    expect(w.local('server.env')).toBe(before);
+    expect(fs.existsSync(path.join(w.localDir, 'redis.env'))).toBe(false);
+    expect(w.sc.err.join('\n')).toContain('REDIS_PASSWORD');
+    expectNowhere(w, [withPass]);
   });
 });

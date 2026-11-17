@@ -165,14 +165,16 @@ export async function main(argv, deps = {}) {
         admin[n] = v.ok;
         if (v.ok) continue;
         if (v.reason === 'no-right') {
-          out(`адмінка ${host}: позначка Access є, але токену бракує права ${ACCESS_READ_RIGHT} — Access не перевірено, ім'я адмінки вимкнено`);
+          out(`адмінка ${host}: позначка Access є, але токену бракує права ${v.right ?? ACCESS_READ_RIGHT} — Access не перевірено, ім'я адмінки вимкнено`);
         } else {
           const why =
             v.reason === 'missing'
               ? 'застосунку Access з цим доменом у Cloudflare немає'
               : v.reason === 'no-idp'
-                ? 'застосунок Access без дозволеного постачальника входу (allowed_idps порожній)'
-                : 'застосунок Access без жодної політики';
+                ? 'застосунок Access без дозволеного постачальника входу (allowed_idps порожній або не лише t2f-google типу google)'
+                : v.reason === 'not-email'
+                  ? 'політика allow застосунку Access пускає не лише за поштою'
+                  : 'застосунок Access без жодної політики allow';
           out(`адмінка ${host}: позначка Access є, але ${why} — ім'я адмінки вимкнено; ${args.command === 'apply' ? 'позначку прибрано' : 'apply прибере позначку'}`);
           staleMarkers.push(n);
         }

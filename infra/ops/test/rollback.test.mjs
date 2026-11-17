@@ -19,7 +19,7 @@ import {
 } from './support/scenario.mjs';
 
 const LOCAL = ['rollback', '--env', 'rehearsal', '--target', 'local'];
-const NODE_ENV_FILES = ['server.env', 'postgres.env', 'cloudflared.env'];
+const NODE_ENV_FILES = ['server.env', 'postgres.env', 'redis.env', 'cloudflared.env'];
 
 const cleanups = /** @type {(() => void)[]} */ ([]);
 afterEach(() => {
@@ -144,7 +144,7 @@ describe('rollback (AC-24, AC-25)', () => {
 
     // AC-25: файли змінних вузла не змінено; записано лише файли інтерполяції ops.
     expect(NODE_ENV_FILES.map((f) => fs.readFileSync(sc.nodeFile(f), 'utf8'))).toEqual(before);
-    expect(fs.readdirSync(path.dirname(sc.nodeFile('x'))).sort()).toEqual(['cloudflared.env', 'current.env', 'journal.jsonl', 'next.env', 'postgres.env', 'server.env']);
+    expect(fs.readdirSync(path.dirname(sc.nodeFile('x'))).sort()).toEqual(['cloudflared.env', 'current.env', 'journal.jsonl', 'next.env', 'postgres.env', 'redis.env', 'server.env']);
     assertNoMigrateNoDownNoSentinel(sc);
   });
 

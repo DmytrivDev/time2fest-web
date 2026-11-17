@@ -1,8 +1,8 @@
 # Вузол репетиції: Postgres + Redis + сервер + cloudflared (SPEC-13a, W10).
 # Без `name:` — проєкт задає `-p` (t2f-node-<env>). Без `ports:` — Docker
 # обходить ufw, тому назовні нічого не публікується; вхід лише через тунель.
-# Файли `server.env`, `postgres.env`, `cloudflared.env` лежать поруч на вузлі.
-# REDIS_URL, T2F_REDIS_PREFIX, DATABASE_URI, POSTGRES_USER, POSTGRES_DB пише
+# Файли `server.env`, `postgres.env`, `redis.env`, `cloudflared.env` лежать поруч на вузлі.
+# REDIS_URL, REDIS_PASSWORD, T2F_REDIS_PREFIX, DATABASE_URI, POSTGRES_USER, POSTGRES_DB пише
 # `edge-secret --generate` у env-файли; T2F_COMMIT запечено в образ.
 services:
   postgres:
@@ -25,8 +25,21 @@ services:
     # redis:7.4.12-alpine (індексний дайджест, linux/amd64 + arm64)
     image: redis:7.4.12-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
     restart: unless-stopped
+    env_file: redis.env
+    # Пароль (S1) — з redis.env у файл налаштувань контейнера, не в argv процесу; без пароля Redis не стартує.
+    # Далі — штатний docker-entrypoint.sh образу (власник /data, перехід на користувача redis).
+    entrypoint:
+      - sh
+      - -c
+      - |
+        [ -n "$$REDIS_PASSWORD" ] || { echo 'redis: empty password in redis.env' >&2; exit 1; }
+        umask 077
+        printf 'requirepass %s\n' "$$REDIS_PASSWORD" > /tmp/redis.conf
+        chown redis:redis /tmp/redis.conf
+        exec docker-entrypoint.sh redis-server /tmp/redis.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      # REDISCLI_AUTH — із змінної контейнера: у `docker inspect` видно лише її ім'я.
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -qx PONG"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -56,6 +69,7 @@ services:
     mem_limit: 1536m
     networks:
       - backend
+      - tunnel
       - egress
 
   cloudflared:
@@ -65,14 +79,20 @@ services:
     command: tunnel --no-autoupdate run
     env_file: cloudflared.env
     mem_limit: 128m
+    # Не в backend (S1): лише `tunnel` до сервера і власний вихід назовні до Cloudflare.
     networks:
-      - backend
-      - egress
+      - tunnel
+      - tunnel-egress
 
+# backend — лише postgres, redis, server; tunnel — лише server і cloudflared (перехід тунель → сервер);
+# egress — вихід сервера назовні, tunnel-egress — вихід cloudflared до Cloudflare.
 networks:
   backend:
     internal: true
+  tunnel:
+    internal: true
   egress: {}
+  tunnel-egress: {}
 
 volumes:
   pgdata: {}

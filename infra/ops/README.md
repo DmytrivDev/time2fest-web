@@ -86,13 +86,13 @@
 
 | Файл | Хто пише | Призначення |
 |---|---|---|
-| `compose.yml` | розгортання (з `git show <sha>:infra/ops/node/compose.yml`) | сервіси `postgres`, `redis`, `server`, `cloudflared`; жодного опублікованого порту |
+| `compose.yml` | розгортання (з `git show <sha>:infra/ops/node/compose.yml`) | сервіси `postgres`, `redis`, `server`, `cloudflared`; жодного опублікованого порту; мережі: `backend` (внутрішня) — лише `postgres`, `redis`, `server`; `tunnel` (внутрішня) — лише `server` і `cloudflared`; вихід назовні — `egress` (сервер) і `tunnel-egress` (`cloudflared`) |
 | `current.env`, `next.env` | розгортання, відкат | SHA образу для підстановки в Compose: поточний і той, що розгортається |
-| `server.env`, `postgres.env`, `cloudflared.env` | `edge-secret --generate`, замінa секрету | змінні вузла, режим 0600 |
+| `server.env`, `postgres.env`, `redis.env`, `cloudflared.env` | `edge-secret --generate`, замінa секрету | змінні вузла, режим 0600; `redis.env` — `REDIS_PASSWORD` (Redis без пароля не стартує), той самий пароль — у `REDIS_URL` |
 | `journal.jsonl` | розгортання, відкат, заміна секрету | журнал розгортань |
 | `deploy.lock` | замок | `flock` на вузлі |
 
-Приклади з самими назвами змінних — `infra/ops/node/{server,postgres,cloudflared}.env.example`; їх перевіряє тест
+Приклади з самими назвами змінних — `infra/ops/node/{server,postgres,redis,cloudflared}.env.example`; їх перевіряє тест
 `infra/ops/test/env-example.test.mjs`. `T2F_ENV`, `T2F_HOST`, `T2F_SERVER_PORT` і `T2F_COMMIT` у файлах вузла не пишуться:
 їх задають Compose й образ.
 
@@ -110,11 +110,16 @@ JSON-рядки (`journal.jsonl`), по одному на подію. Запис
 
 ## Секрети репетиції
 
-`pnpm edge:secret -- --env rehearsal --generate [--target <хост>|local]` створює `PAYLOAD_SECRET`, `T2F_EDGE_SECRET` і пароль
-Postgres (кожен — 32 випадкові байти з системного генератора) і заповнює порожні значення файлів у
-`infra/ops/.local/rehearsal/` (режим 0600). З `--target` усі три файли відправляються на вузол, а секрет краю —
+`pnpm edge:secret -- --env rehearsal --generate [--target <хост>|local]` створює `PAYLOAD_SECRET`, `T2F_EDGE_SECRET`, паролі
+Postgres і Redis (кожен — 32 випадкові байти з системного генератора) і заповнює порожні значення файлів у
+`infra/ops/.local/rehearsal/` (режим 0600). З `--target` усі чотири файли відправляються на вузол, а секрет краю —
 у секрети Worker’а; значення передаються лише через stdin, ніколи через аргументи, вивід чи журнал. Токен тунелю
 береться з `infra/cloudflare/.local/tunnel-<env>.env`.
+
+Вузол, розгорнутий до пароля Redis (`REDIS_URL` без пароля, `redis.env` немає): `--generate --target <хост>` створює
+`REDIS_PASSWORD`, дописує його в наявний `REDIS_URL` (хост і база ті самі) і надсилає файли; наступний `deploy`
+перестворює `redis` (лічильники обмеження частоти втрачаються — лише на репетиції), сервер і `cloudflared` (нові мережі).
+Пароль у `REDIS_URL`, що не збігається з `REDIS_PASSWORD`, — відмова (код 2) без змін.
 
 `--rotate` міняє секрет краю без простою, у такому порядку:
 
@@ -131,7 +136,7 @@ Postgres (кожен — 32 випадкові байти з системног�
 `--secrets-file <шлях>` — файл `NAME=value`; його змінні лише доповнюють оточення (наявні не перекриваються). Назви
 з `TOKEN`, `SECRET`, `PASSWORD`, `KEY` і перелік `SECRET_ENV_NAMES` (`infra/ops/lib/config.mjs`) маскуються в кожному рядку
 виводу. Файл не друкується. `deploy`, `rollback` і `capacity` так само маскують значення секретних змінних з локальних
-оригіналів `infra/ops/.local/<env>/{server,postgres,cloudflared}.env`, а пароль у будь-якому `схема://користувач:пароль@`
+оригіналів `infra/ops/.local/<env>/{server,postgres,redis,cloudflared}.env`, а пароль у будь-якому `схема://користувач:пароль@`
 маскується завжди (рядок підключення в помилці міграції).
 
 | Змінна | Навіщо |
@@ -141,7 +146,7 @@ Postgres (кожен — 32 випадкові байти з системног�
 | `DIGITALOCEAN_API_TOKEN`, `T2F_DO_SSH_KEY`, `T2F_PROVIDER` (необов’язкова) | команда `capacity`; `T2F_DO_SSH_KEY` — відбиток або номер ключа власника в обліковому записі |
 | `T2F_KNOWN_HOSTS_FILE` | файл відбитків ключів вузлів |
 | `T2F_CATALOG_URL` | адреса каталогу для збірки сайту (за замовчуванням `https://<хост сайту середовища>`) |
-| `T2F_EDGE_SECRET`, `T2F_EDGE_SECRET_PREVIOUS`, `PAYLOAD_SECRET`, `POSTGRES_PASSWORD`, `TUNNEL_TOKEN`, `T2F_R2_*` | значення секретів; живуть лише у файлах вузла, секретах Worker’а й `.local` |
+| `T2F_EDGE_SECRET`, `T2F_EDGE_SECRET_PREVIOUS`, `PAYLOAD_SECRET`, `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `REDIS_URL`, `TUNNEL_TOKEN`, `T2F_R2_*` | значення секретів; живуть лише у файлах вузла, секретах Worker’а й `.local` |
 
 Повна карта секретів і порядок введення — `docs/backend/secrets.md` (текст дає латка документації SPEC-13a).
 
@@ -240,3 +245,12 @@ Docker, створює каталог вузла, закриває брандм�
 дії закріплені за SHA, секрети — лише за назвами через `env:`: `T2F_REHEARSAL_SSH_KEY`, `T2F_REHEARSAL_KNOWN_HOSTS`,
 `T2F_REHEARSAL_HOST`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Викликає ту саму `pnpm deploy:env`.
 Ключ розгортання — окрема пара SSH лише для користувача `deploy` вузла репетиції.
+
+Робота йде лише з гілки `master` (`if: github.ref == 'refs/heads/master'`) і в GitHub Environment `rehearsal`. Ключ
+пишеться у `$RUNNER_TEMP` після `pnpm install` (скрипти залежностей його не бачать) і прибирається останнім кроком
+`if: always()`.
+
+**Крок власника (один раз):** Settings → Environments → New environment `rehearsal`; Deployment branches and tags →
+Selected branches → `master`; перенести в нього п’ять секретів вище (Environment secrets) і видалити їх із секретів
+репозиторію (Repository secrets). Без цього гілка зі зміненим workflow бачила б секрети репозиторію; до перенесення
+запуск знайде секрети репозиторію, після — лише з `master`.
