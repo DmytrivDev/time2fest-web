@@ -79,6 +79,7 @@ export interface Config {
     'internal-events': InternalEvent;
     seasons: Season;
     traditions: Tradition;
+    'unattended-windows': UnattendedWindow;
     zones: Zone;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -99,6 +100,7 @@ export interface Config {
     'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
     seasons: SeasonsSelect<false> | SeasonsSelect<true>;
     traditions: TraditionsSelect<false> | TraditionsSelect<true>;
+    'unattended-windows': UnattendedWindowsSelect<false> | UnattendedWindowsSelect<true>;
     zones: ZonesSelect<false> | ZonesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -111,9 +113,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'admin-settings': AdminSetting;
+    'unattended-state': UnattendedState;
   };
   globalsSelect: {
     'admin-settings': AdminSettingsSelect<false> | AdminSettingsSelect<true>;
+    'unattended-state': UnattendedStateSelect<false> | UnattendedStateSelect<true>;
   };
   locale: null;
   widgets: {
@@ -442,6 +446,20 @@ export interface Tradition {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "unattended-windows".
+ */
+export interface UnattendedWindow {
+  id: number;
+  startsAtKyiv: string;
+  endsAtKyiv: string;
+  startsAt: string;
+  endsAt: string;
+  label?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "zones".
  */
 export interface Zone {
@@ -526,6 +544,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'traditions';
         value: number | Tradition;
+      } | null)
+    | ({
+        relationTo: 'unattended-windows';
+        value: number | UnattendedWindow;
       } | null)
     | ({
         relationTo: 'zones';
@@ -830,6 +852,19 @@ export interface TraditionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "unattended-windows_select".
+ */
+export interface UnattendedWindowsSelect<T extends boolean = true> {
+  startsAtKyiv?: T;
+  endsAtKyiv?: T;
+  startsAt?: T;
+  endsAt?: T;
+  label?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "zones_select".
  */
 export interface ZonesSelect<T extends boolean = true> {
@@ -894,10 +929,38 @@ export interface AdminSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "unattended-state".
+ */
+export interface UnattendedState {
+  id: number;
+  on?: boolean | null;
+  cause?: ('schedule' | 'manual' | 'alarm') | null;
+  manualAt?: string | null;
+  version?: number | null;
+  changedAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "admin-settings_select".
  */
 export interface AdminSettingsSelect<T extends boolean = true> {
   agentPublish?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "unattended-state_select".
+ */
+export interface UnattendedStateSelect<T extends boolean = true> {
+  on?: T;
+  cause?: T;
+  manualAt?: T;
+  version?: T;
+  changedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

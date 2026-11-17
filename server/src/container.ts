@@ -29,6 +29,7 @@ import type { AlarmStore } from './alarms/ports';
 import type { CatalogCopyDeps } from './catalog/copy';
 import type { CatalogStore } from './catalog/ports';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
+import { payloadUnattendedDeps } from './adapters/payloadUnattended';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
@@ -36,8 +37,11 @@ import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { middlewareRegistry } from './registries/middleware';
+import { revertHandlerRegistry } from './registries/revertHandlers';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
+import { evaluate, type UnattendedDeps } from './unattended/service';
+import { startTicker, type Ticker } from './unattended/ticker';
 
 const DEPS_KEY = Symbol.for('t2f.deps');
 const DISPATCHER_KEY = Symbol.for('t2f.dispatcher');
@@ -47,6 +51,7 @@ const EVENTS_KEY = Symbol.for('t2f.events');
 const ALARM_STORE_KEY = Symbol.for('t2f.alarmStore');
 const CATALOG_STORE_KEY = Symbol.for('t2f.catalogStore');
 const BACKGROUND_KEY = Symbol.for('t2f.background');
+const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** What a caller of `createDeps` may replace: any port, the lazy Payload accessor and the alarm store. */
@@ -227,11 +232,42 @@ export function startBackground(deps: Deps, subscribers: readonly EventSubscribe
   });
 }
 
-/** Starts the process background once; a failed start (database down) is retried every 5 s. */
+/** The unattended-mode service dependencies of deps built by `createDeps` (AC-31 … AC-36). */
+export function unattendedDepsOf(deps: Deps): UnattendedDeps {
+  return payloadUnattendedDeps({
+    payload: payloadOf(deps),
+    alarms: alarmStoreOf(deps),
+    publisher: eventsOf(deps).publisher,
+    clock: deps.clock,
+    isRevertible: (action) => revertHandlerRegistry.some((r) => r.key === action),
+  });
+}
+
+/**
+ * The unattended-mode ticker of one process (AC-32): `evaluate` every 10 s on the server clock. A
+ * failing tick (database down) raises a log-level alarm (code only) and the ticker keeps going.
+ */
+export function startUnattendedTicker(deps: Deps, intervalMs?: number): Ticker {
+  const unattended = unattendedDepsOf(deps);
+  return startTicker({
+    tick: () => evaluate(unattended, null),
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'unattended', code: 'tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    ...(intervalMs === undefined ? {} : { intervalMs }),
+  });
+}
+
+/**
+ * Starts the process background once: the internal-events delivery loop (a failed start, database
+ * down, is retried every 5 s) and the unattended-mode ticker. Only `instrumentation.ts` calls it.
+ */
 export function startProcessBackground(): void {
-  const g = globalThis as unknown as Record<symbol, true | undefined>;
+  const g = globalThis as unknown as Record<symbol, true | Ticker | undefined>;
   if (g[BACKGROUND_KEY]) return;
   g[BACKGROUND_KEY] = true;
+  g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
   const attempt = () => {
     const deps = getDeps();
     startBackground(deps).catch(() => {

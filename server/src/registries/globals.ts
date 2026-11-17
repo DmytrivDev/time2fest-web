@@ -5,6 +5,7 @@
 import type { GlobalConfig } from 'payload';
 import { assertRegistry } from '../platform/registry';
 import { adminSettings } from '../globals/adminSettings';
+import { unattendedState } from '../globals/unattendedState';
 
 export interface GlobalRow {
   key: string;
@@ -13,6 +14,7 @@ export interface GlobalRow {
 
 export const globalRegistry: readonly GlobalRow[] = [
   { key: 'admin-settings', global: adminSettings },
+  { key: 'unattended-state', global: unattendedState },
 ];
 
 assertRegistry('globals', globalRegistry, (r) => r.key);
