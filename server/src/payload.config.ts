@@ -19,8 +19,9 @@ if (!loaded.ok) {
 const env = loaded.env as { PAYLOAD_SECRET: string; DATABASE_URI: string; T2F_ADMIN_HOST?: string };
 
 /**
- * CSRF (S4-01): Payload accepts its session cookie only from the admin origins (a request with an
- * `Origin` elsewhere, or without one and without `Sec-Fetch-Site`, is not signed in by cookie).
+ * CSRF (S4-01): Payload accepts its session cookie only from the admin origins when a request carries an
+ * `Origin` elsewhere; a request with no `Origin` is accepted (csrf.int.test.ts). The defence is the proxy
+ * rule (Origin / Sec-Fetch-Site checked in front of Payload) plus SameSite=Lax on the cookie.
  * `serverURL` stays unset: the admin client fetches relative URLs (W9 spike).
  */
 const csrf = env.T2F_ADMIN_HOST ? adminOrigins(env.T2F_ADMIN_HOST, envClass(process.env)) : [];

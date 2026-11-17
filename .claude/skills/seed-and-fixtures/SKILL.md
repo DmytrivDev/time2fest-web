@@ -5,7 +5,7 @@ description: Builds and checks Time2Fest backend data for local work and tests �
 
 # seed-and-fixtures
 
-Layout fidelity is impossible unless the server shows the same data as `sim`. **Status:** built by SPEC-02: registry and CLI in `server/src/seed/{registry,index,cli}.ts` (`pnpm --dir server seed`), test doors `reset` and `fixtures` in `server/src/test-doors/` (`POST /api/_test/reset`, `POST /api/_test/fixtures`). The seed translator `BT/http-seeds.mjs` and the per-collection seeders arrive with the waves that add the collections.
+Layout fidelity is impossible unless the server shows the same data as `sim`. **Status:** built by SPEC-02: registry and CLI in `server/src/seed/{registry,index,cli}.ts` (`pnpm --dir server seed`), test doors `reset` and `fixtures` in `server/src/test-doors/` (`POST /api/_test/reset`, `POST /api/_test/fixtures`). The seed translator is `scripts/boards/http-seeds.mjs` (in the repo, not in `BT/`); the catalog seed (SPEC-04: `server/src/seed/registry.ts` — the season, zones, events, countries, cities from `data/schedule.json` and `data/countries.json`, ≈6 s; `POST /api/_test/reset` reseeds it in ≈15 s) is the same data `pnpm --dir server import catalog --apply` writes (≈25 s) and `GET /api/catalog` returns. Other per-collection seeders arrive with the waves that add the collections.
 
 ## 1. Seed (all environments except production data)
 Sources — read them, never invent parallel copies:

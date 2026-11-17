@@ -3,7 +3,7 @@ import http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CatalogResponseSchema } from '@time2fest/contracts/schemas';
 import { checkCatalogUrl, fetchCatalogTo, resolveCatalogSource } from '@/lib/data/catalogSource.mjs';
 import { getService } from '@/lib/api/services';
@@ -56,6 +56,8 @@ describe('fetchCatalogTo', () => {
   let server: http.Server | null = null;
   let out: string | null = null;
   afterEach(async () => {
+    vi.unstubAllGlobals();
+    server?.closeAllConnections();
     const s = server;
     server = null;
     if (s?.listening) await new Promise((r) => s.close(r));
@@ -114,6 +116,70 @@ describe('fetchCatalogTo', () => {
     out = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cat-'));
     await expect(fetchCatalogTo(out, url, CatalogResponseSchema)).rejects.toThrow(`catalog: ${url}/api/catalog → 503`);
     expect(fs.readdirSync(out)).toEqual([]);
+  });
+
+  it('N-1: a redirect fails the build (redirect: error) and writes nothing', async () => {
+    const s = http.createServer((_req, res) => {
+      res.writeHead(302, { location: 'http://127.0.0.1:1/api/catalog' });
+      res.end();
+    });
+    server = s;
+    await new Promise<void>((r) => s.listen(0, '127.0.0.1', r));
+    const url = `http://127.0.0.1:${(s.address() as AddressInfo).port}`;
+    out = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cat-'));
+    await expect(fetchCatalogTo(out, url, CatalogResponseSchema)).rejects.toThrow(`catalog: ${url}/api/catalog → redirect refused`);
+    expect(fs.readdirSync(out)).toEqual([]);
+  });
+
+  it('N-1: a declared content-length over 10 MB fails before the body is read', async () => {
+    const s = http.createServer((_req, res) => {
+      res.writeHead(200, { 'content-type': 'application/json', 'content-length': String(10 * 1024 * 1024 + 1) });
+      res.write('{');
+    });
+    server = s;
+    await new Promise<void>((r) => s.listen(0, '127.0.0.1', r));
+    const url = `http://127.0.0.1:${(s.address() as AddressInfo).port}`;
+    out = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cat-'));
+    await expect(fetchCatalogTo(out, url, CatalogResponseSchema)).rejects.toThrow(`catalog: ${url}/api/catalog → too-large`);
+    expect(fs.readdirSync(out)).toEqual([]);
+  });
+
+  it('N-1: a body past 10 MB without a content-length stops being read and fails', async () => {
+    const chunk = new Uint8Array(1024 * 1024).fill(32);
+    let sent = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(c) {
+        sent += 1;
+        if (sent > 50) return c.close();
+        c.enqueue(chunk);
+      },
+    });
+    vi.stubGlobal('fetch', async () => new Response(body, { status: 200 }));
+    out = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cat-'));
+    await expect(fetchCatalogTo(out, 'http://127.0.0.1:1', CatalogResponseSchema)).rejects.toThrow('→ too-large');
+    expect(sent).toBeLessThan(20);
+    expect(fs.readdirSync(out)).toEqual([]);
+  });
+
+  it('N-1: a timeout fails the build, and the request carries a signal and redirect: error', async () => {
+    let init: RequestInit | undefined;
+    vi.stubGlobal('fetch', async (_u: string, i: RequestInit) => {
+      init = i;
+      throw new DOMException('The operation was aborted due to timeout', 'TimeoutError');
+    });
+    out = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cat-'));
+    await expect(fetchCatalogTo(out, 'http://127.0.0.1:1', CatalogResponseSchema)).rejects.toThrow('catalog: http://127.0.0.1:1/api/catalog → timeout');
+    expect(init?.redirect).toBe('error');
+    expect(init?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('N-3: an error names origin + path only (no userinfo, no query)', async () => {
+    vi.stubGlobal('fetch', async () => {
+      throw Object.assign(new TypeError('fetch failed'), { cause: { code: 'ECONNREFUSED' } });
+    });
+    out = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cat-'));
+    const err = await fetchCatalogTo(out, 'https://user:pw@catalog.example.com:8443/?token=abc', CatalogResponseSchema).catch((e: Error) => e);
+    expect((err as Error).message).toBe('catalog: https://catalog.example.com:8443/api/catalog → ECONNREFUSED');
   });
 
   it('connection refused: throws with the URL', async () => {

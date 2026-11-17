@@ -39,7 +39,10 @@ Machine-wide, shared/exclusive with leases: shared holders run in parallel (`tes
 3. Report: `Stack ready: slot k, ports ..., DB t2f_<slug>, seed N records, smoke n/n` or the exact failing step and its last 20 lines.
 
 ## 5. Rules
-- No S3/R2 emulator in compose: the R2 emulator belongs to the first wave that writes to R2.
+- Compose service `r2` (`adobe/s3mock:5.2.3`, `127.0.0.1:9090`, bucket `t2f-catalog`, key prefix per worktree = the slug; ≈165–200 MiB idle of its 256 MiB cap) emulates Cloudflare R2 for the catalog copy; `pnpm stack:smoke` is 6/6 with it. `pnpm stack:up` starts it with the others.
+- Timings on this machine: `POST /api/_test/reset` reseeds the catalog in ≈15 s, the catalog seed ≈6 s, `pnpm --dir server import catalog --apply` ≈25 s. Other commands: `pnpm --dir server import <domain> [--apply]`, `pnpm --dir server export catalog --from … [--write]`, `pnpm --dir server owner:create --email …`.
+- The integration build (`pnpm build:int`) is MIXED: http for domains that have an adapter (now `catalog`), sim for the rest (test builds only); it prints `[api] integration build: http = …; sim = …`. It fetches `GET /api/catalog` at config time and fails closed (server down → exit 1 naming the URL). The client time machine (`window.__t2f.timeMachine`, `?t=`) works in it; syncing it with the server test clock is SPEC-07.
+- e2e: Playwright path filters match the worktree path (`admin-catalog` also matches `spec-04-admin-catalog`; use `admin-catalog.e2e`). `access.e2e` and `origin-bypass.e2e` need `T2F_E2E_SERVER=http://127.0.0.1:<port>` (test doors answer only on loopback); admin UI specs need `T2F_E2E_SERVER=http://admin.localhost:<port>`. Admin writes need `Origin` = the admin origin and `content-type: application/json` (CSRF rule). Under load an integration file can hit the 10 s `beforeAll` boot timeout: re-run that single file.
 - Never drop volumes, databases of other worktrees or the main checkout's database; never run `docker system prune`.
 - Integration tests: serial (`--maxWorkers=1`); vitest unit tests `--maxWorkers=2`; Playwright `--workers=2`.
 - Stop your own server process when the phase ends (RAM). Leave shared containers running for other worktrees.

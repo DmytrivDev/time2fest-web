@@ -8,7 +8,7 @@ argument-hint: "<domain…> [--pages 02,04] [--only <slug substring>]"
 
 Owner rule (decision.md 2026-11-14): every component comes from the existing layout, so the difference must be minimal. Differences above the threshold that are **explained** are accepted by the orchestrator and listed for the owner. Reference = the live shots the boards were captured from: `BT/shots/<id>.live.png`, where `BT = D:/Work/Pets/Time2Fest/docs/bmad/planning-artifacts/ux-designs/ux-Time2Fest-2026-10-21/board-tools` (965 boards, 16 pages, manifests in `BT/manifests/`).
 
-**Status: partly built by SPEC-02.** The test-door names are final (section 3). `/api/_test/last-code` is a 501 stub until SPEC-10, `playwright.http.config.ts` is still SPEC-04, and `BT/http-seeds.mjs` and `BT/compare-live.mjs` are not built yet; until they exist this skill can only run the sim-side checks (step 5) and must say so in the report.
+**Status: built by SPEC-02 and SPEC-04.** The test-door names are final (section 3). `/api/_test/last-code` is a 501 stub until SPEC-10. The board tools live in the repo, `scripts/boards/` (not in `BT/`): `http-seeds.mjs`, `compare-live.mjs`, `snapshot.mjs` (supports `--shots`) and `masks.json`; `playwright.http.config.ts` exists. The integration build is MIXED (http for `catalog`, sim for the rest), so only catalog-backed boards differ from a pure sim build.
 
 ## 1. Never
 - Never fix a mismatch by changing layout: `components/**`, `*.module.css`, Tailwind classes, tokens, `messages/uk.json`, breakpoints. Fix the **fixture, seed, adapter mapping, server data or a mask**. If only a layout change would fix it → STOP: that is a site change that needs the owner, a `docs/site/<page>.md` update and a re-capture.
@@ -23,20 +23,20 @@ Owner rule (decision.md 2026-11-14): every component comes from the existing lay
 ## 3. What the server provides (test environment only)
 - Test doors, registered only when the test flag is on and absent from the production build (names are final, SPEC-02): `POST /api/_test/fixtures` (users, sessions, pass, stamps, orders, chat rooms, rating votes, notifications, site switches), `POST /api/_test/clock` (server time aligned with the time machine `?t=…&speed=0`; constitution II — one time source), `POST /api/_test/reset`.
 - Sign-in codes: the last OTP from Mailpit (`GET http://localhost:8025/api/v1/messages`) or `GET /api/_test/last-code?email=` (501 stub until SPEC-10) — replaces `window.__t2f.lastCode()`.
-- Seed translator `BT/http-seeds.mjs` (not built yet): manifest seed names (`guest`, `user`, `pass`, `authOther`, `nick`…) → fixture calls with the same values sim shows (skill `seed-and-fixtures`).
-- `BT/compare-live.mjs` (not built yet): live-vs-live pixel compare (`--ref BT/shots --new <dir> --ids … --tol 24`), masks from the manifest (`"mask": ["<selector>", …]` → painted out in both images), writes `<id>.fid.png` and a JSON report to the chosen dir.
-- An http e2e config (`playwright.http.config.ts`, SPEC-04) that runs the domain e2e against the integration build.
+- Seed translator `node scripts/boards/http-seeds.mjs`: manifest seed names (`guest`, `user`, `pass`, `authOther`, `nick`…) → fixture calls with the same values sim shows (skill `seed-and-fixtures`).
+- `node scripts/boards/compare-live.mjs`: live-vs-live pixel compare (`--ref BT/shots --new <dir> --ids … --tol 24`), masks are rectangles in `scripts/boards/masks.json` (not in the manifests; painted out in both images), writes `<id>.fid.png` and a JSON report to the chosen dir.
+- `playwright.http.config.ts` (repo root): runs the domain e2e against the integration build: `npx playwright test -c playwright.http.config.ts <spec> --workers=2`.
 
-## 4. Capture and compare (once the tools above exist)
+## 4. Capture and compare
 1. Stack up and seeded (skill `local-stack`), this worktree's database.
 2. Integration build of **this checkout**: `npx cross-env NEXT_PUBLIC_ENV=test NEXT_PUBLIC_API_MODE=http NEXT_DIST_DIR=out-fid next build`, serve `out-fid` on this worktree's web port, `/api/*` proxied to this worktree's server.
 3. Manifest subset: write `<tmp>/_fid-<wave>-<batch>.json` (ids from step 2; the leading `_` keeps the report out of `build-canvas.mjs`).
-4. `node BT/snapshot.mjs --manifest <tmp>/_fid-….json --base http://localhost:<web port> --web <this checkout> --shots <tmp>/shots --project <tmp>/project` — always both `--shots` and `--project` in a temp dir. The script still writes `BT/reports/_fid-….json`: delete it after the run.
-5. `node BT/compare-live.mjs --ref BT/shots --new <tmp>/shots --ids <ids> --out <tmp>/fid`.
+4. `node scripts/boards/snapshot.mjs --manifest <tmp>/_fid-….json --base http://localhost:<web port> --web <this checkout> --shots <tmp>/shots --project <tmp>/project` — always both `--shots` and `--project` in a temp dir. The script still writes `BT/reports/_fid-….json`: delete it after the run.
+5. `node scripts/boards/compare-live.mjs --ref BT/shots --new <tmp>/shots --ids <ids> --out <tmp>/fid`.
 6. One capture run at a time on the machine (Chromium + Next + Docker on 16 GB).
 
-## 5. Always (also before those tools)
-- Domain e2e (`tests/e2e/us*.spec.ts` of the touched pages) on the test build: `npx playwright test <files> --project=phone --project=desktop --workers=2`; once SPEC-04 lands also with the http config.
+## 5. Always
+- Domain e2e (`tests/e2e/us*.spec.ts` of the touched pages) on the test build: `npx playwright test <files> --project=phone --project=desktop --workers=2`; also with the http config (`-c playwright.http.config.ts`).
 - Contract suites: skill `contract-conformance`.
 
 ## 6. Thresholds and who decides
@@ -46,7 +46,7 @@ Owner rule (decision.md 2026-11-14): every component comes from the existing lay
 | 0.1–0.5 % | `fidelity-triager` (Sonnet) reads `<id>.fid.png` + both shots and classifies |
 | > 0.5 %, or any "layout shift" | defect: fix in this wave (data/adapter/fixture/mask) |
 
-Triage classes: `data` (fixture ≠ sim value) → fix fixture; `time` (clock, relative time) → fix clock/fixture; `dynamic` (viewers counter, animation frame) → add a mask to the manifest (orchestrator applies, it is a root file); `render` (font antialiasing, ≤1 px subpixel) → accept; `layout` (element moved, size changed, missing/extra element) → defect, never accepted by the orchestrator — owner decides; `state` (a loading/skeleton state that only http shows) → owner decides, design package.
+Triage classes: `data` (fixture ≠ sim value) → fix fixture; `time` (clock, relative time) → fix clock/fixture; `dynamic` (viewers counter, animation frame) → add a rectangle to `scripts/boards/masks.json` (a repo file); `render` (font antialiasing, ≤1 px subpixel) → accept; `layout` (element moved, size changed, missing/extra element) → defect, never accepted by the orchestrator — owner decides; `state` (a loading/skeleton state that only http shows) → owner decides, design package.
 Explained differences above 0.1 % that are not `layout` → the orchestrator accepts them and lists them for the owner (id, %, class, one-line reason).
 
 ## 7. Report

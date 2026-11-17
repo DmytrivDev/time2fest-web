@@ -96,7 +96,7 @@ async function configWithServerCatalog(url: string): Promise<NextConfig> {
   // Fail closed (AC-68): no fallback to data/ when the server cannot be reached.
   try {
     const { version } = await fetchCatalogTo(CATALOG_DIR, url, CatalogResponseSchema);
-    console.log(`catalog: ${url}/api/catalog (version ${version})`);
+    console.log(`catalog: ${new URL(url).origin}/api/catalog (version ${version})`); // N-3: no userinfo, no query
     return withNextIntl({ ...nextConfig, env: { ...nextConfig.env, NEXT_PUBLIC_CATALOG_VERSION: version } });
   } catch (e) {
     console.error(e instanceof Error ? e.message : String(e));

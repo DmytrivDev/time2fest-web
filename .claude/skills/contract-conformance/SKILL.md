@@ -20,7 +20,7 @@ The main threat to "the site looks exactly like the boards" is not CSS but a dif
 - Run (a) on **sim** as a unit test (`tests/unit/api/<domain>-contract.test.ts`, vitest, no network) — it pins what the boards show; (b) on **http** as an integration test against the local server of this worktree (`tests/contract/<domain>.http.test.ts`, serial, `--maxWorkers=1`, config `tests/contract/vitest.http.config.ts`), with fixtures and clock from the test doors.
 - Existing `tests/unit/api/*-sim.test.ts` are the starting material; move assertions into the suite, keep sim-only internals in the sim test.
 
-## 3. Completeness check (script not built yet: `pnpm contracts:check`; `node scripts/contract-surface.mjs --check` guards the exported surface)
+## 3. Completeness check (script not built yet: `pnpm contracts:check`; `node scripts/contract-surface.mjs --check` guards the exported surface; text descriptors are compared in canonical form: union members and object keys are order-insensitive, tuples and parameters are ordered)
 - every §3.11 route/channel → handler in `server/` and method in `lib/api/http/`;
 - every `ApiError` code/reason in a contract comment → produced by the server and handled by the UI;
 - every schema used by a handler is the shared one (no local copy).
