@@ -11,12 +11,12 @@
 
 | Скрипт `pnpm` | Що робить | Аргументи |
 |---|---|---|
-| `pnpm deploy:env -- --env <rehearsal\|prelaunch\|production>` | збірка образу → доставка на вузол → міграції → заміна контейнера → перевірка здоров’я → Worker | `[--target local\|<IPv4\|ім’я>] [--commit <sha>] [--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
+| `pnpm deploy:env -- --env <rehearsal\|prelaunch\|production>` | збірка образу → доставка на вузол → міграції → заміна контейнера → перевірка здоров’я → Worker | `[--target local\|<IPv4\|ім’я>] [--commit <sha>] [--confirm <env>] [--allow-main-domain] [--take-domain-from <worker\|dns>] [--emergency] [--probe] [--secrets-file <шлях>]` |
 | `pnpm rollback:env -- --env <…>` | повернути Worker, потім контейнер сервера на попередній образ | `[--target …] [--to <sha, 40 hex>] [--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
 | `pnpm node:bootstrap -- --host <IPv4\|ім’я>` | підготувати новий вузол (лише `rehearsal`) | `[--secrets-file <шлях>]` |
 | `pnpm edge:secret -- --env rehearsal` | згенерувати секрети репетиції або замінити секрет краю | рівно один із `--generate`, `--rotate`; `[--target local\|<хост>] [--probe] [--secrets-file <шлях>]` |
-| `pnpm edge:move-domain -- --name <ім’я> --to <worker>` | перенести ім’я між двома Worker’ами | `[--confirm <env>] [--allow-main-domain] [--secrets-file <шлях>]` |
-| `pnpm capacity -- --env <rehearsal\|production>` | потужність вузлів провайдера | дія: `plan`, `night --size <розмір>`, `back`, `off-season`, `realtime-create`, `realtime-delete`, `status`; `[--confirm <env>] [--allow-main-domain] [--probe] [--secrets-file <шлях>]` |
+| `pnpm edge:move-domain -- --name <ім’я> --to <worker>` | перенести ім’я між двома Worker’ами | `[--confirm <env>] [--allow-main-domain] [--emergency] [--secrets-file <шлях>]` |
+| `pnpm capacity -- --env <rehearsal\|production>` | потужність вузлів провайдера | дія: `plan`, `night --size <розмір>`, `back`, `off-season`, `realtime-create`, `realtime-delete`, `status`; `[--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
 
 `pnpm infra:cf …` (тунель, DNS, правила, Access) описано окремо в `infra/cloudflare/README.md`.
 
@@ -36,9 +36,21 @@
 
 - **Робочий домен.** Середовище `prelaunch` чи `production`, а також імена `time2fest.com`, `www.time2fest.com`,
   `admin.time2fest.com` — лише з обома `--confirm <середовище>` і `--allow-main-domain` разом. Без будь-якого з них — код 2.
-  Для `move-domain` підтвердження називає середовище робочого домену (`--confirm prelaunch|production`).
-- **Заморозка.** `production` з 31.12 08:00 до 01.01 14:00 за UTC: розгортання й відкат лише з `--emergency`.
-- **Заборонена ціль.** Адреса старого продакшн-сервера відхиляється завжди.
+  Для `move-domain` підтвердження називає середовище робочого домену (`--confirm prelaunch|production`); перенесення на
+  робочий Worker — лише з `--confirm` саме його середовища, двійник (`t2f-edge-rehearsal-alt`) — лише для імені репетиції.
+- **Тримач імені робочого домену.** Перед `wrangler deploy` середовища `prelaunch`/`production` (і так само
+  `workers/edge/scripts/deploy.mjs`) читаються прив’язки Custom Domain (`GET /accounts/<a>/workers/domains?hostname=`) і
+  записи зони (`GET /zones/<z>/dns_records?name=`) кожного хоста маршрутів. Ім’я прив’язане до іншого Worker’а чи має
+  запис A/AAAA/CNAME не від Worker’а (старий сайт) — код 2, якщо `--take-domain-from <worker|dns>` не називає саме цього
+  тримача (прапорець на вільному імені — теж код 2). Потрібні `CLOUDFLARE_ZONE_ID` і права токена на читання прив’язок і
+  DNS зони; бракує — код 2 з назвою того, чого бракує (перевірка не пропускається). Репетиції й `test` не зачеплені.
+- **Заморозка.** `production` з 31.12 08:00 до 01.01 14:00 за UTC: розгортання, відкат, `capacity --env production`
+  (крім `plan` і `status`) і `move-domain` робочого домену — лише з `--emergency`.
+- **Заборонена ціль.** Адреса старого продакшн-сервера відхиляється завжди — за адресою, а не написанням: до першого
+  виклику SSH ціль (`--target`/`--host`, адреса вузла від провайдера в `capacity`) проходить `ssh -G` (псевдоніми
+  `~/.ssh/config`) і DNS (усі адреси, зокрема IPv4 усередині IPv6); будь-яка адреса старого сервера, ім’я, що не
+  резолвиться, чи збій `ssh -G` — код 2. Ім’я з міткою з самих цифр чи `0x…` (`0xb2149d55`, `178.20.157.85.nip.io`)
+  не приймається взагалі. Сам `ssh` іде з `-F none` (налаштування користувача ціль не підмінять) і `CheckHostIP=yes`.
 - **Чисте дерево.** Розгортання без закомічених змін; збірка — з `git archive <sha>`, не з робочої теки.
 - **Диск.** На вузлі менше 5 ГБ вільного місця — відмова до доставки образу.
 - **Замок вузла `deploy-<env>`.** Друге розгортання чи відкат того самого середовища відмовляє одразу, нічого не чекаючи
@@ -115,11 +127,14 @@ Postgres (кожен — 32 випадкові байти з системног�
 
 `--secrets-file <шлях>` — файл `NAME=value`; його змінні лише доповнюють оточення (наявні не перекриваються). Назви
 з `TOKEN`, `SECRET`, `PASSWORD`, `KEY` і перелік `SECRET_ENV_NAMES` (`infra/ops/lib/config.mjs`) маскуються в кожному рядку
-виводу. Файл не друкується.
+виводу. Файл не друкується. `deploy`, `rollback` і `capacity` так само маскують значення секретних змінних з локальних
+оригіналів `infra/ops/.local/<env>/{server,postgres,cloudflared}.env`, а пароль у будь-якому `схема://користувач:пароль@`
+маскується завжди (рядок підключення в помилці міграції).
 
 | Змінна | Навіщо |
 |---|---|
 | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | `wrangler`: розгортання й відкат Worker’а, перенесення імені |
+| `CLOUDFLARE_ZONE_ID` | зона `time2fest.com`: перевірка тримача імені перед розгортанням `prelaunch`/`production` (не секрет) |
 | `DIGITALOCEAN_TOKEN`, `T2F_DO_SSH_KEY`, `T2F_PROVIDER` (необов’язкова) | команда `capacity`; `T2F_DO_SSH_KEY` — відбиток або номер ключа власника в обліковому записі |
 | `T2F_KNOWN_HOSTS_FILE` | файл відбитків ключів вузлів |
 | `T2F_CATALOG_URL` | адреса каталогу для збірки сайту (за замовчуванням `https://<хост сайту середовища>`) |
@@ -133,7 +148,7 @@ Postgres (кожен — 32 випадкові байти з системног�
 `droplet:delete`, `actions:read`, `sizes:read`, `regions:read`, `tag:read`, `tag:create`, `ssh_key:read`, `image:read`,
 `vpc:read`. Той самий перелік — `TOKEN_SCOPES` в `infra/ops/lib/capacity/digitalocean/config.mjs`.
 
-**`CLOUDFLARE_API_TOKEN`** (розгортання Worker’а й перенесення імені) — права на розгортання Worker’ів і прив’язку Custom Domain для акаунта й зони (точний перелік вкаже ведучий хвилі після живого прогону);
+**`CLOUDFLARE_API_TOKEN`** (розгортання Worker’а й перенесення імені) — права на розгортання Worker’ів і прив’язку Custom Domain для акаунта й зони (точний перелік вкаже ведучий хвилі після живого прогону); для `prelaunch`/`production` ще читання прив’язок Custom Domain (Account → Workers Scripts → Read) і DNS зони (Zone → DNS → Read) — без них розгортання робочого домену відмовляє;
 **`CLOUDFLARE_API_TOKEN_INFRA`** (`infra/cloudflare`) — перелік у `infra/cloudflare/README.md`, розділ «Дозволи токена».
 Підсумкова таблиця прав — у `docs/backend/secrets.md`.
 
@@ -194,7 +209,13 @@ node server/scripts/lock.mjs --mode exclusive -- node node_modules/vitest/vitest
 
 `bootstrap` ідемпотентний: повторний запуск друкує «без змін». Він створює користувача `deploy` з ключем власника, ставить
 Docker, створює каталог вузла, закриває брандмауер усім, крім TCP 22, і вимикає вхід root і паролі в SSH (лише після того,
-як вхід `deploy` перевірено). Якщо в брандмауері вже є зайві правила, перевірка не пройде (код 1).
+як вхід `deploy` перевірено). Якщо в брандмауері вже є зайві правила, перевірка не пройде (код 1). TCP 22 відкрито
+з обмеженням частоти (`ufw limit 22/tcp`: не більше 6 нових з’єднань за 30 с з однієї адреси); вузол, підготовлений
+давнішою версією з `ufw allow 22/tcp`, повторний `bootstrap` переводить на `limit`.
+
+**Група `docker` = root.** Користувач `deploy` у групі `docker` має права root на вузлі: будь-хто з його ключем може
+запустити контейнер з коренем файлової системи хоста. Тому ключ розгортання (і секрет `T2F_REHEARSAL_SSH_KEY` у GitHub)
+берегти як ключ root, а вхід root і паролі в SSH вимкнено саме для того, щоб цей ключ лишався єдиним входом.
 
 ## Розгортання з GitHub Actions
 

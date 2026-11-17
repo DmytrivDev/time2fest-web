@@ -3,6 +3,7 @@
 // Compose у каталог вузла — без запуску. Кожна частина спершу перевіряє «вже зроблено», тож повтор безпечний.
 import { runBootstrap, ROOT_STEPS } from '../bootstrap.mjs';
 import { DEPLOY_USER, knownHostsFile } from '../common.mjs';
+import { checkTarget } from '../target.mjs';
 import { REALTIME_COMPOSE_FILE, realtimeDir } from './plan.mjs';
 
 const SSH_WAIT = { tries: 60, everyMs: 5_000 };
@@ -36,6 +37,9 @@ export async function prepareRealtime(ctx, node, composeText, clock) {
   const dir = realtimeDir(env);
   const ip = node.publicIp;
   if (!ip) throw new Error(`у вузла ${node.name} немає публічної адреси`);
+  // Адреса від провайдера — та сама звірка зі старою продакшн-адресою, що й `--target`, до першого SSH (AC-22).
+  const checked = await checkTarget(ip, ctx.deps);
+  if (!checked.ok) throw new Error(`вузол ${node.name}: ${checked.message}`);
   const knownHosts = knownHostsFile(ctx);
   const asRoot = ctx.deps.sshAs({ host: ip, user: 'root', knownHostsFile: knownHosts });
   const asDeploy = ctx.deps.sshAs({ host: ip, user: DEPLOY_USER, knownHostsFile: knownHosts });

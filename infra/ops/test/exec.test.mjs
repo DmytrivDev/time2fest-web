@@ -1,5 +1,8 @@
 // @ts-check
 // AC-10 (нічого в рядку оболонки), NFR-4 (секрет не потрапляє у вивід): запуск, транспорти, лапки, маскування.
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { ExecRefusal, localTransport, run, shq, sshBaseArgs, sshTransport } from '../lib/exec.mjs';
 import { createOutput, createRedactor } from '../lib/redact.mjs';
@@ -64,7 +67,9 @@ describe('shq', () => {
 describe('ssh transport', () => {
   it('builds the pinned-host-key ssh line with `--` before the remote command', () => {
     expect(sshBaseArgs({ ...SSH, keyFile: 'C:\\t2f\\id_ed25519' })).toEqual([
+      '-F', 'none',
       '-o', 'BatchMode=yes',
+      '-o', 'CheckHostIP=yes',
       '-o', 'StrictHostKeyChecking=yes',
       '-o', 'UserKnownHostsFile=C:/t2f/known_hosts',
       '-o', 'ConnectTimeout=15',
@@ -78,6 +83,9 @@ describe('ssh transport', () => {
 
   it.each([
     [{ ...SSH, host: '178.20.157.85' }],
+    [{ ...SSH, host: '0xb2149d55' }],
+    [{ ...SSH, host: '178.20.157.0x55' }],
+    [{ ...SSH, host: '178.20.157.85.nip.io' }],
     [{ ...SSH, host: '-oProxyCommand=x' }],
     [{ ...SSH, host: 'a b' }],
     [{ ...SSH, user: 'root;id' }],
@@ -158,7 +166,7 @@ describe('run and the local transport', () => {
 });
 
 describe('redaction (NFR-4)', () => {
-  const SENTINEL = 'S3NT1NEL-edge-secret-value-0123456789'; // check-secrets: allow
+  const SENTINEL = 'S3NT1NEL-edge-secret-value-0123456789'; // check-secrets: allow fake sentinel (NFR-4 test)
 
   it('a sentinel secret in child stdout/stderr is masked in out', async () => {
     const redactor = createRedactor([SENTINEL]);
@@ -194,6 +202,42 @@ describe('redaction (NFR-4)', () => {
     const lines = [];
     await main(['deploy', '--env', SENTINEL], { env: { T2F_EDGE_SECRET: SENTINEL }, out: (l) => lines.push(l), err: (l) => lines.push(l) });
     expect(lines.join('\n')).not.toContain(SENTINEL);
+  });
+});
+
+describe('F4: node secrets from .local/<env>/ and credential URLs', () => {
+  const PG = 'pg-password-sentinel-0123456789abcdef'; // check-secrets: allow fake sentinel (NFR-4 test)
+  const PAYLOAD = 'payload-secret-sentinel-fedcba98765432'; // check-secrets: allow fake sentinel (NFR-4 test)
+
+  it('masks the password of any scheme://user:pass@ URL, even an unregistered one', () => {
+    const r = createRedactor([]);
+    const url = 'postgres://t2f:hunter2-unregistered@db:5432/t2f'; // check-secrets: allow fake credential URL (F4 mask test)
+    const masked = 'postgres://t2f:***@db:5432/t2f'; // check-secrets: allow masked fake credential URL (F4 mask test)
+    expect(r.mask(`error: connect ${url} failed`)).toBe(`error: connect ${masked} failed`);
+    expect(r.mask('see https://example.org/a@b and mailto:x@y')).toBe('see https://example.org/a@b and mailto:x@y');
+  });
+
+  it.each([['deploy'], ['rollback'], ['capacity']])('%s registers secret values from .local/<env>/*.env before the subcommand runs', async (sub) => {
+    const { main } = await import('../ops.mjs');
+    const stateRoot = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-f4-'));
+    try {
+      fs.mkdirSync(path.join(stateRoot, 'rehearsal'));
+      fs.writeFileSync(path.join(stateRoot, 'rehearsal', 'postgres.env'), `POSTGRES_PASSWORD=${PG}\nPOSTGRES_DB=t2f_rehearsal\n`);
+      fs.writeFileSync(path.join(stateRoot, 'rehearsal', 'server.env'), `PAYLOAD_SECRET=${PAYLOAD}\nNODE_ENV=production\n`);
+      /** @type {string[]} */
+      const lines = [];
+      const argv = sub === 'capacity' ? ['capacity', '--env', 'rehearsal', 'plan'] : [sub, '--env', 'rehearsal'];
+      const code = await main(argv, {
+        env: {},
+        out: (l) => lines.push(l),
+        paths: { stateRoot },
+        runners: { [sub]: async (ctx) => (ctx.out(`echo ${PG} ${PAYLOAD} t2f_rehearsal production`), 0) },
+      });
+      expect(code).toBe(0);
+      expect(lines.join('\n')).toBe('echo *** *** t2f_rehearsal production');
+    } finally {
+      fs.rmSync(stateRoot, { recursive: true, force: true });
+    }
   });
 });
 

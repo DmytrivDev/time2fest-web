@@ -4,7 +4,7 @@
 // Дії живлення (`shutdown`, `power_off`, `power_on`) існують лише всередині зміни розміру (AC-48); прибрати вузол —
 // лише `DELETE` (AC-49).
 import { SYSTEM_CLOCK } from '../../node.mjs';
-import { ProviderError } from '../provider.mjs';
+import { assertNodeTags, ProviderError } from '../provider.mjs';
 import { DO_API, DO_ENV, DO_IMAGE, DO_LOCAL_BASE, DO_TIMEOUTS, ENV_SIZES } from './config.mjs';
 
 /**
@@ -234,6 +234,8 @@ export function createDigitalOcean(o) {
       // Лише CPU/RAM (`disk: false`): збільшений диск не повернути назад, тож інше адаптер не робить (AC-48).
       if (opts?.keepDisk !== true) throw new Error('resizeNode: підтримується лише keepDisk: true (без зміни диска)');
       let node = await getNode(id, 'resizeNode');
+      // Тегова межа тут, а не лише у викликача: без обох тегів вузол не вимикається й не змінюється.
+      assertNodeTags(node, opts.requireTags, 'resizeNode');
       if (node.size !== size) {
         if (node.status !== 'off') {
           // М’яке вимкнення; якщо за 60 с не вимкнувся — `power_off`.
@@ -252,7 +254,8 @@ export function createDigitalOcean(o) {
       return { keepDisk: true };
     },
 
-    async deleteNode(id) {
+    async deleteNode(id, opts) {
+      assertNodeTags(await getNode(id, 'deleteNode'), opts?.requireTags, 'deleteNode');
       await request('DELETE', `/v2/droplets/${checkId(id)}`, undefined, 'deleteNode');
     },
 

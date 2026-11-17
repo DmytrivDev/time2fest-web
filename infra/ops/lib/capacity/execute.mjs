@@ -75,7 +75,7 @@ export async function execute(ctx, o) {
       if (s.kind === 'resize') {
         const probe = startProbeFor(ctx, o.env);
         try {
-          const r = await o.bundle.provider.resizeNode(s.node.id, s.to, { keepDisk: s.keepDisk });
+          const r = await o.bundle.provider.resizeNode(s.node.id, s.to, { keepDisk: s.keepDisk, requireTags: [TAG_MANAGED, envTag(o.env)] });
           if (r.keepDisk !== s.keepDisk) throw new Error(`провайдер не дотримав плану щодо диска ${s.node.name}`);
           if (probe) await waitSiteHealthy(ctx, o.env, o.clock);
         } finally {
@@ -90,7 +90,7 @@ export async function execute(ctx, o) {
         await prepareRealtime(ctx, node, o.composeText, o.clock);
         s.nodeId = node.id;
       } else {
-        await o.bundle.provider.deleteNode(s.node.id);
+        await o.bundle.provider.deleteNode(s.node.id, { requireTags: [TAG_MANAGED, envTag(o.env)] });
       }
     } catch (e) {
       const rec = stepRecord(s, created);

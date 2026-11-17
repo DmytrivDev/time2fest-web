@@ -5,6 +5,14 @@ import { SECRET_ENV_NAMES } from './config.mjs';
 /** Коротші значення не маскуються: надто легко зачепити звичайний текст. */
 export const MIN_SECRET_LENGTH = 8;
 export const MASK = '***';
+/**
+ * Облікові дані в URL (`scheme://user:pass@host`): пароль маскується завжди, навіть незареєстрований (рядок
+ * підключення в помилці міграції тощо). Ім’я користувача лишається.
+ */
+const CREDENTIAL_URL = /\b([a-z][a-z0-9+.-]*:\/\/[^\s:/@]*):([^\s@/]+)@/gi;
+
+/** @param {string} s */
+export const maskCredentialUrls = (s) => s.replace(CREDENTIAL_URL, `$1:${MASK}@`);
 
 /**
  * Значення та його закодовані форми, у яких воно може з’явитися у виводі.
@@ -42,7 +50,7 @@ export function createRedactor(values = []) {
     mask(line) {
       let out = String(line);
       for (const f of ordered) if (out.includes(f)) out = out.split(f).join(MASK);
-      return out;
+      return maskCredentialUrls(out);
     },
     /** Чи містить рядок зареєстроване значення (до маскування). @param {string} text */
     contains(text) {

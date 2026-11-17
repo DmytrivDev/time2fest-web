@@ -36,15 +36,16 @@ const sh = (script) => (nodeDir) => ['sh', '-c', script, '_', nodeDir];
 
 /**
  * Брандмауер у стані AC-8: увімкнений, вхідні за замовчуванням заборонені, вихідні дозволені, дозволений вхідний
- * лише `22/tcp` (IPv4 і IPv6).
+ * лише `22/tcp` з обмеженням частоти (`ufw limit`, IPv4 і IPv6). Правило `ALLOW` для 22 (давніший bootstrap) — не
+ * готово: крок застосовується знову, і `ufw limit 22/tcp` оновлює правило.
  * @param {string} stdout вивід `ufw status verbose`
  */
 export function ufwOk(stdout) {
   const s = String(stdout);
   if (!/^Status: active\s*$/m.test(s)) return false;
   if (!/^Default: deny \(incoming\), allow \(outgoing\)/m.test(s)) return false;
-  const allows = s.split(/\r?\n/).filter((l) => /\bALLOW IN\b/.test(l));
-  return allows.length > 0 && allows.every((l) => /^22\/tcp(?:\s+\(v6\))?\s+ALLOW IN\b/.test(l.trim()));
+  const inbound = s.split(/\r?\n/).filter((l) => /\b(?:ALLOW|LIMIT) IN\b/.test(l));
+  return inbound.length > 0 && inbound.every((l) => /^22\/tcp(?:\s+\(v6\))?\s+LIMIT IN\b/.test(l.trim()));
 }
 
 /** Кроки від імені root, по порядку. Крок `deploy-login` — окремо (перевірка без змін, із другим входом). @type {Step[]} */
@@ -77,12 +78,12 @@ export const ROOT_STEPS = [
   },
   {
     id: 'firewall',
-    title: 'брандмауер: вхідний лише TCP 22',
+    title: 'брандмауер: вхідний лише TCP 22 (limit)',
     check: () => ['ufw', 'status', 'verbose'],
     ok: (r) => r.code === 0 && ufwOk(r.stdout),
     apply: sh(
       'set -e; command -v ufw >/dev/null 2>&1 || DEBIAN_FRONTEND=noninteractive apt-get install -y ufw; ' +
-        'ufw default deny incoming; ufw default allow outgoing; ufw allow 22/tcp; ufw --force enable',
+        'ufw default deny incoming; ufw default allow outgoing; ufw limit 22/tcp; ufw --force enable',
     ),
     timeoutMs: APT_TIMEOUT_MS,
   },

@@ -3,12 +3,15 @@
 // `build → deliver → migrate → swap → health → worker`, кожен — у журнал. Prelaunch — лише `worker`.
 // Коди: 0 — готово; 2 — відмова до будь-якої зміни; 1 — крок не вдався. Замок знімається у `finally`.
 // Розгортання ніколи не пише секретів Worker’а (AC-20) і ніколи не запускає `down` (AC-19).
+import { cloudflareApiFrom } from './cloudflareApi.mjs';
 import { ENVS } from './config.mjs';
 import { createStepper, maybeProbe, messageOf, reportFailure, resolveSite } from './common.mjs';
+import { checkDomainHolders } from './domainHolder.mjs';
 import { imageTag, keepShas } from './image.mjs';
 import { currentGeneration, deployedShas } from './journal.mjs';
 import { acquireNodeLock } from './lock.mjs';
 import { composeAt, createNode, CURRENT_ENV, NEXT_ENV } from './node.mjs';
+import { workerRoutesOf } from './worker.mjs';
 
 /**
  * @typedef {import('../ops.mjs').OpsContext} OpsContext
@@ -43,6 +46,13 @@ export async function runDeploy(ctx) {
   if (missing.length) return refuse(`бракує змінних: ${missing.join(', ')} (середовище або --secrets-file)`);
   if (!worker.hasBuild() && !worker.assetsReady()) return refuse(`статика Worker’а ${env} відсутня або порожня; спершу зберіть її`);
 
+  // F1: хто зараз тримає ім’я робочого домену — до будь-якої зміни (і до кроків сервера production).
+  if (cfg.mainDomain) {
+    const held = await checkMainDomainHolder(ctx, worker.workerEnv);
+    if (!held.ok) return refuse(held.message);
+    if (held.taken.length) out(`deploy: ім’я забирається в ${held.taken.join(', ')} (--take-domain-from)`);
+  }
+
   /** @type {string | undefined} */
   let composeText;
   if (cfg.serverSteps) {
@@ -62,6 +72,20 @@ export async function runDeploy(ctx) {
   } finally {
     await lock.release();
   }
+}
+
+/**
+ * Тримач імен маршрутів Worker’а робочого домену (F1).
+ * @param {OpsContext} ctx
+ * @param {string} workerEnv
+ * @returns {Promise<import('./domainHolder.mjs').HolderCheck>}
+ */
+async function checkMainDomainHolder(ctx, workerEnv) {
+  const routes = workerRoutesOf(workerEnv);
+  if (!routes) return { ok: false, code: 2, message: `маршрути Worker’а ${workerEnv} не прочитано з wrangler.json` };
+  const api = cloudflareApiFrom(ctx);
+  if (!api) return { ok: false, code: 2, message: 'бракує змінних: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID' };
+  return checkDomainHolders({ api, hosts: routes.hosts, worker: routes.name, takeFrom: ctx.args.values['take-domain-from'] });
 }
 
 /**

@@ -24,14 +24,15 @@ export function hasControl(v) {
 
 /**
  * Ім’я хоста за RFC 1123: мітки a-z0-9 і дефіс (не на краях), ≤63 символи, усього ≤253.
- * Остання мітка не з самих цифр — інакше це схоже на адресу, а не ім’я.
+ * Жодна мітка не схожа на число — ні з самих цифр, ні шістнадцяткова `0x…`: інакше ім’я може бути іншим написанням
+ * адреси (`0xb2149d55`, `178.20.157.0x55`) чи вести на вбудовану адресу (`178.20.157.85.nip.io`).
  * @param {string} v
  */
 export function isHostName(v) {
   if (v.length < 1 || v.length > 253) return false;
   const labels = v.split('.');
   if (!labels.every((l) => RE_LABEL.test(l))) return false;
-  return !/^[0-9]+$/.test(labels[labels.length - 1]);
+  return !labels.some((l) => /^[0-9]+$/.test(l) || /^0x[0-9a-f]*$/i.test(l));
 }
 
 /** @param {string} v */
@@ -59,6 +60,7 @@ const V = {
   confirm: { check: (v) => ALL_ENVS.includes(v), expect: `одне з: ${ALL_ENVS.join(', ')}` },
   size: { check: (v) => RE_SIZE.test(v), expect: 'a-z, 0-9, дефіс, до 40 символів' },
   path: { check: isLocalPath, expect: 'шлях до файлу' },
+  holder: { check: (v) => v === 'dns' || RE_WORKER.test(v), expect: '`dns` або ім’я Worker’а, що зараз тримає ім’я', lower: true },
 };
 
 /**
@@ -76,7 +78,8 @@ const V = {
 export const SUBCOMMAND_SPECS = {
   deploy: {
     envs: ALL_ENVS,
-    values: { '--target': V.target, '--commit': V.commit, '--confirm': V.confirm, '--secrets-file': V.path },
+    // `--take-domain-from` — лише для робочого домену: хто зараз тримає ім’я (Worker чи `dns`), F1.
+    values: { '--target': V.target, '--commit': V.commit, '--confirm': V.confirm, '--secrets-file': V.path, '--take-domain-from': V.holder },
     bools: ['--allow-main-domain', '--emergency', '--probe'],
     required: ['--env'],
   },
@@ -101,14 +104,16 @@ export const SUBCOMMAND_SPECS = {
   },
   'move-domain': {
     values: { '--name': V.host, '--to': V.worker, '--confirm': V.confirm, '--secrets-file': V.path },
-    bools: ['--allow-main-domain'],
+    // `--emergency` — лише для заморозки робочого домену в новорічну ніч (AC-23).
+    bools: ['--allow-main-domain', '--emergency'],
     required: ['--name', '--to'],
   },
   capacity: {
     envs: ['rehearsal', 'production'],
     values: { '--size': V.size, '--confirm': V.confirm, '--secrets-file': V.path },
     // production — середовище робочого домену: запобіжник вимагає і `--confirm production`, і `--allow-main-domain`.
-    bools: ['--allow-main-domain', '--probe'],
+    // `--emergency` — зміна потужності production у вікні заморозки (AC-23); `plan`/`status` заморозка не чіпає.
+    bools: ['--allow-main-domain', '--emergency', '--probe'],
     required: ['--env'],
     positional: ['plan', 'night', 'back', 'off-season', 'realtime-create', 'realtime-delete', 'status'],
   },

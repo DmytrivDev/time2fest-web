@@ -7,7 +7,8 @@ import { isIPv4 } from 'node:net';
 import path from 'node:path';
 import { PassThrough } from 'node:stream';
 import { isHostName } from './args.mjs';
-import { FORBIDDEN_TARGETS, REPO_ROOT } from './config.mjs';
+import { REPO_ROOT } from './config.mjs';
+import { isForbiddenAddress } from './target.mjs';
 
 export { REPO_ROOT };
 
@@ -335,18 +336,21 @@ function sshPath(p, what) {
  */
 
 /**
- * Аргументи ssh до віддаленої команди. Ключ хоста завжди звіряється з `knownHostsFile`.
+ * Аргументи ssh до віддаленої команди. Ключ хоста завжди звіряється з `knownHostsFile`. `-F none` — налаштування
+ * користувача (`~/.ssh/config`) не можуть підмінити ціль псевдонімом; `CheckHostIP=yes` — адреса теж звіряється.
  * @param {SshOpts} o
  */
 export function sshBaseArgs(o) {
   const host = String(o.host ?? '').toLowerCase();
   if (!(isIPv4(host) || isHostName(host))) throw new ExecRefusal('ssh: ціль не IPv4-адреса і не ім’я хоста');
-  if (FORBIDDEN_TARGETS.includes(host)) throw new ExecRefusal(`ssh: заборонена ціль ${host}`);
+  if (isForbiddenAddress(host)) throw new ExecRefusal(`ssh: заборонена ціль ${host}`);
   if (!RE_USER.test(String(o.user ?? ''))) throw new ExecRefusal('ssh: недопустиме ім’я користувача');
   const accept = o.accept ?? 'strict';
   if (accept !== 'strict' && accept !== 'new') throw new ExecRefusal('ssh: accept — strict або new');
   const args = [
+    '-F', 'none',
     '-o', 'BatchMode=yes',
+    '-o', 'CheckHostIP=yes',
     '-o', `StrictHostKeyChecking=${accept === 'new' ? 'accept-new' : 'yes'}`,
     '-o', `UserKnownHostsFile=${sshPath(o.knownHostsFile, 'knownHostsFile')}`,
     '-o', 'ConnectTimeout=15',

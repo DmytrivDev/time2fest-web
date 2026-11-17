@@ -64,7 +64,8 @@ describe('apply', () => {
     const r = await run(fake, ['apply', '--env', 'test']);
     expect(r.code).toBe(0);
 
-    // cf.mjs будує всі середовища разом (W28, AC-28): тунелі test і rehearsal, три CNAME, два PUT фаз.
+    // cf.mjs будує всі середовища разом (W28, AC-28): тунелі test і rehearsal, два CNAME (адмінки без --with-access
+    // немає — F2), два PUT фаз.
     const tunnelId = fake.state.tunnels[0]?.id;
     const rehearsalId = fake.state.tunnels.find((t) => t.name === 't2f-rehearsal')?.id;
     expect(fake.mutations()).toEqual([
@@ -74,13 +75,14 @@ describe('apply', () => {
       { method: 'PUT', path: `/accounts/acct-test/cfd_tunnel/${rehearsalId}/configurations` },
       { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'POST', path: '/zones/zone-test/dns_records' },
-      { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'PUT', path: `/zones/zone-test/rulesets/phases/${PHASE_CUSTOM}/entrypoint` },
       { method: 'PUT', path: `/zones/zone-test/rulesets/phases/${PHASE_CONFIG}/entrypoint` },
     ]);
     expect(fake.state.dns.find((x) => x.name === 'o-test.time2fest.com')).toEqual(
       expect.objectContaining({ type: 'CNAME', content: `${tunnelId}.cfargotunnel.com`, proxied: true }),
     );
+    expect(fake.state.dns.some((x) => x.name === 'admin-rehearsal.time2fest.com')).toBe(false);
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
     // пошта не зачеплена
     expect(fake.state.dns.find((x) => x.type === 'MX')).toEqual(expect.objectContaining({ name: 'time2fest.com', content: 'mx.example.net' }));
 

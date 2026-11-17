@@ -3,8 +3,10 @@
 // Спрацьовує після розбору аргументів і до будь-якого виклику ssh, docker чи wrangler. Відмова — код 2.
 import { ENVS, FORBIDDEN_TARGETS, FREEZE_WINDOW, MAIN_HOSTS } from './config.mjs';
 
-/** Підкоманди, на які діє заморозка production. */
-const FREEZE_SUBS = new Set(['deploy', 'rollback']);
+/** Підкоманди, на які діє заморозка production (середовище з `freeze`). */
+const FREEZE_SUBS = new Set(['deploy', 'rollback', 'capacity']);
+/** Дії `capacity`, що лише читають стан: заморозка на них не діє. */
+const READ_ONLY_ACTIONS = new Set(['plan', 'status']);
 
 /** @param {string} h */
 const norm = (h) => String(h).trim().toLowerCase().replace(/\.$/, '');
@@ -28,14 +30,16 @@ export function inFreezeWindow(now) {
  * @param {{
  *   sub: string,
  *   env?: string,
+ *   action?: string,
  *   target?: string,
  *   hosts?: string[],
  *   flags: { confirm?: string, allowMainDomain?: boolean, emergency?: boolean },
  *   now: Date,
- * }} input `target` — вузол (`--target`/`--host`); `hosts` — інші імена, яких торкається команда (`--name`).
+ * }} input `target` — вузол (`--target`/`--host`); `hosts` — інші імена, яких торкається команда (`--name`);
+ *   `action` — дія `capacity` (`plan`, `status` — лише читання).
  * @returns {{ ok: true } | { ok: false, code: 2, message: string }}
  */
-export function guardRun({ sub, env, target, hosts = [], flags, now }) {
+export function guardRun({ sub, env, action, target, hosts = [], flags, now }) {
   /** @param {string} message @returns {{ ok: false, code: 2, message: string }} */
   const refuse = (message) => ({ ok: false, code: 2, message });
   const touched = [target, ...hosts].filter((h) => typeof h === 'string' && h !== '').map((h) => norm(/** @type {string} */ (h)));
@@ -62,9 +66,13 @@ export function guardRun({ sub, env, target, hosts = [], flags, now }) {
     }
   }
 
-  // AC-23: заморозка production у новорічну ніч.
-  if (cfg?.freeze && FREEZE_SUBS.has(sub) && inFreezeWindow(now) && !flags.emergency) {
-    return refuse(`заморозка ${env}: 31.12 08:00 – 01.01 14:00 UTC; ${sub} лише з --emergency`);
+  // AC-23: заморозка production у новорічну ніч. Діє на розгортання, відкат, зміну потужності production (крім
+  // `plan`/`status`) і перенесення імені робочого домену (`move-domain` без `--env`).
+  const frozenEnv = cfg?.freeze === true && FREEZE_SUBS.has(sub) && !(sub === 'capacity' && READ_ONLY_ACTIONS.has(String(action)));
+  const frozenMove = sub === 'move-domain' && mainHosts.length > 0;
+  if ((frozenEnv || frozenMove) && inFreezeWindow(now) && !flags.emergency) {
+    const what = frozenEnv ? `заморозка ${env}` : `заморозка робочого домену ${mainHosts.join(', ')}`;
+    return refuse(`${what}: 31.12 08:00 – 01.01 14:00 UTC; ${sub} лише з --emergency`);
   }
   return { ok: true };
 }

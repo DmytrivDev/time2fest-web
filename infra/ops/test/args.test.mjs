@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
 import { isHostName, parseArgs } from '../lib/args.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
+import { FAKE_TARGET } from './support/fakeTarget.mjs';
 
 const SHA = 'a'.repeat(40);
 
@@ -12,7 +13,7 @@ async function runMain(argv) {
   const fake = createFakeExec();
   /** @type {string[]} */
   const lines = [];
-  const code = await main(argv, { exec: fake, out: (l) => lines.push(l), err: (l) => lines.push(l), env: {} });
+  const code = await main(argv, { exec: fake, out: (l) => lines.push(l), err: (l) => lines.push(l), env: {}, ...FAKE_TARGET });
   return { code, calls: fake.calls, text: lines.join('\n') };
 }
 

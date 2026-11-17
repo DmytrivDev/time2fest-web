@@ -142,6 +142,12 @@ export async function runMoveDomain(ctx) {
   if ((isMain(name) || MAIN_WORKERS.includes(to)) && !doubleFlag) {
     return fail(err, 'робочий домен чи його Worker: потрібні разом --confirm <prelaunch|production> і --allow-main-domain');
   }
+  // Двійник — лише для імені репетиції: робочого імені він не отримує за жодних прапорців.
+  if (!target.workerEnv && name !== REHEARSAL_NAME) return fail(err, `${to}: двійник обслуговує лише ${REHEARSAL_NAME}`);
+  // Робочий Worker — лише з підтвердженням саме його середовища (`--confirm prelaunch` не відкриває production).
+  if (MAIN_WORKERS.includes(to) && confirm !== target.workerEnv) {
+    return fail(err, `${to}: потрібне --confirm ${target.workerEnv} (підтвердження іншого середовища не діє)`);
+  }
   if (target.workerEnv && !envHosts(target.workerEnv).includes(name)) return fail(err, `${to} не обслуговує ім’я ${name}`);
 
   const api = cloudflareApiFrom(ctx);

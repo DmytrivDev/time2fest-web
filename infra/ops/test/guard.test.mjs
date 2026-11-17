@@ -2,8 +2,10 @@
 // AC-21 (робочий домен лише з двома прапорцями), AC-22 (стара адреса — ніколи), AC-23 (заморозка production).
 import { describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
+import { parseArgs } from '../lib/args.mjs';
 import { guardRun, inFreezeWindow } from '../lib/guard.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
+import { FAKE_TARGET } from './support/fakeTarget.mjs';
 
 const CALM = new Date('2026-11-20T12:00:00Z');
 
@@ -12,7 +14,7 @@ async function runMain(argv, at = CALM) {
   const fake = createFakeExec();
   /** @type {string[]} */
   const lines = [];
-  const code = await main(argv, { exec: fake, now: () => at, out: (l) => lines.push(l), err: (l) => lines.push(l), env: {} });
+  const code = await main(argv, { exec: fake, now: () => at, out: (l) => lines.push(l), err: (l) => lines.push(l), env: {}, ...FAKE_TARGET });
   return { code, calls: fake.calls.length, argv0: fake.calls.map((c) => c.argv[0]), text: lines.join('\n') };
 }
 
@@ -126,6 +128,37 @@ describe('production freeze 31.12 08:00 – 01.01 14:00 UTC (AC-23)', () => {
 
   it('rehearsal is never frozen', async () => {
     passedGuard(await runMain(['deploy', '--env', 'rehearsal'], new Date('2026-12-31T23:00:00Z')));
+  });
+
+  it('F6: capacity production (changing actions) and move-domain on main hosts are frozen; --emergency unlocks', () => {
+    const night = new Date('2026-12-31T23:00:00Z');
+    const flags = { confirm: 'production', allowMainDomain: true };
+    for (const action of ['night', 'back', 'off-season', 'realtime-create', 'realtime-delete']) {
+      const r = guardRun({ sub: 'capacity', env: 'production', action, flags, now: night });
+      expect(r).toMatchObject({ ok: false, code: 2 });
+      expect(/** @type {{ message: string }} */ (r).message).toContain('--emergency');
+      expect(guardRun({ sub: 'capacity', env: 'production', action, flags: { ...flags, emergency: true }, now: night }).ok).toBe(true);
+      expect(guardRun({ sub: 'capacity', env: 'production', action, flags, now: CALM }).ok).toBe(true);
+    }
+    for (const action of ['plan', 'status']) {
+      expect(guardRun({ sub: 'capacity', env: 'production', action, flags, now: night }).ok).toBe(true);
+    }
+    expect(guardRun({ sub: 'capacity', env: 'rehearsal', action: 'night', flags: {}, now: night }).ok).toBe(true);
+
+    const move = { sub: 'move-domain', hosts: ['time2fest.com'], flags: { confirm: 'production', allowMainDomain: true } };
+    expect(guardRun({ ...move, now: night })).toMatchObject({ ok: false, code: 2 });
+    expect(guardRun({ ...move, flags: { ...move.flags, emergency: true }, now: night }).ok).toBe(true);
+    expect(guardRun({ ...move, now: CALM }).ok).toBe(true);
+    expect(guardRun({ sub: 'move-domain', hosts: ['rehearsal.time2fest.com'], flags: {}, now: night }).ok).toBe(true);
+  });
+
+  it('F6: capacity and move-domain accept --emergency', async () => {
+    const r = await runMain(['capacity', '--env', 'production', 'night', '--size', 's-4vcpu-8gb', ...both], new Date('2026-12-31T23:00:00Z'));
+    expect(r.code).toBe(2);
+    expect(r.calls).toBe(0);
+    expect(r.text).toContain('--emergency');
+    expect(parseArgs('capacity', ['--env', 'production', 'night', '--size', 's-4vcpu-8gb', '--emergency']).ok).toBe(true);
+    expect(parseArgs('move-domain', ['--name', 'time2fest.com', '--to', 't2f-edge-production', '--emergency']).ok).toBe(true);
   });
 
   it('inFreezeWindow edges', () => {

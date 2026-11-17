@@ -14,6 +14,7 @@ import { ProviderError } from '../../lib/capacity/provider.mjs';
 
 const MANAGED = 't2f-managed';
 const ENV = 't2f-env-rehearsal';
+const REQ = [MANAGED, ENV];
 
 /** @type {SeedNode[]} */
 export const CONTRACT_SEED = [
@@ -60,23 +61,36 @@ export function describeProvider(name, makeProvider) {
 
     it('зміна розміру міняє розмір, диск лишається, вузол знову активний', async () => {
       const [main] = await h.provider.listNodes([MANAGED, ENV]);
-      await h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
+      await h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ });
       const [after] = await h.provider.listNodes([MANAGED, ENV]);
       expect(after).toMatchObject({ id: main.id, size: 's-4vcpu-8gb', diskGb: main.diskGb, status: 'active' });
     });
 
     it('зміна розміру з keepDisk: true повертає keepDisk: true; без нього — відмова до будь-якої зміни', async () => {
       const [main] = await h.provider.listNodes([MANAGED, ENV]);
-      await expect(h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: false })).rejects.toThrow(/keepDisk/);
+      await expect(h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: false, requireTags: REQ })).rejects.toThrow(/keepDisk/);
       const [untouched] = await h.provider.listNodes([MANAGED, ENV]);
       expect(untouched).toMatchObject({ id: main.id, size: main.size, diskGb: main.diskGb, status: main.status });
-      expect(await h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true })).toEqual({ keepDisk: true });
+      expect(await h.provider.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ })).toEqual({ keepDisk: true });
     });
 
     it('видалений вузол зникає зі списку', async () => {
       const [main] = await h.provider.listNodes([MANAGED, ENV]);
-      await h.provider.deleteNode(main.id);
+      await h.provider.deleteNode(main.id, { requireTags: REQ });
       expect(await h.provider.listNodes([MANAGED, ENV])).toEqual([]);
+    });
+
+    it('F7: resize/delete re-check the tags inside the provider — a node without them is refused and left untouched', async () => {
+      const [manual] = (await h.provider.listNodes([ENV])).filter((n) => n.name === 'manual-box');
+      const [prod] = await h.provider.listNodes([MANAGED, 't2f-env-production']);
+      await expect(h.provider.resizeNode(manual.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ })).rejects.toThrow(/t2f-managed/);
+      await expect(h.provider.deleteNode(manual.id, { requireTags: REQ })).rejects.toThrow(/t2f-managed/);
+      await expect(h.provider.resizeNode(prod.id, 's-8vcpu-16gb', { keepDisk: true, requireTags: REQ })).rejects.toThrow(/t2f-env-rehearsal/);
+      await expect(h.provider.deleteNode(prod.id, { requireTags: REQ })).rejects.toThrow(/t2f-env-rehearsal/);
+      await expect(h.provider.deleteNode(prod.id, { requireTags: [] })).rejects.toThrow(/тегів/);
+      const after = await h.provider.listNodes([ENV]);
+      expect(after.find((n) => n.id === manual.id)).toMatchObject({ size: manual.size, status: manual.status });
+      expect((await h.provider.listNodes([MANAGED, 't2f-env-production']))[0]).toMatchObject({ id: prod.id, size: prod.size, status: prod.status });
     });
 
     it('обмеження частоти (429) — ProviderError зі статусом 429', async () => {

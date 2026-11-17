@@ -17,8 +17,8 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 
 - `plan` лише читає (GET) і друкує по рядку на зміну, або «без змін», а також вердикти запобіжника (код 0).
 - `apply` бере замок `cloudflare` (`server/scripts/lib/lock.mjs`, тека `<lockDir>/cloudflare`, виключний режим),
-  під ним читає поточний стан, рахує різницю й перевіряє запобіжником, потім застосовує по порядку: тунель →
-  ingress → DNS → набори правил (PUT повного бажаного списку фази) → налаштування зони (лише з прапорцем).
+  під ним читає поточний стан, рахує різницю й перевіряє запобіжником, потім застосовує по порядку: застосунок
+  Access (лише з `--with-access`) → тунель → ingress → DNS → набори правил (PUT повного бажаного списку фази) → налаштування зони (лише з прапорцем).
   Повторний `apply` без зміни опису друкує «без змін» і не робить жодного запиту на зміну.
 - Після змін `apply` друкує готовий рядок журналу для `docs/services/cloudflare.md`:
   `- <YYYY-MM-DD> — infra/cloudflare apply (<env>): <перелік змін>`.
@@ -31,10 +31,21 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 | Середовище | Тунель | Імена (проксовані CNAME) | Ingress |
 |---|---|---|---|
 | `test` | `t2f-test` | `o-test.time2fest.com` | `^/api/` → `host.docker.internal:4100`, решта — 404 |
-| `rehearsal` | `t2f-rehearsal` | `o-rehearsal.time2fest.com`, `admin-rehearsal.time2fest.com` | `o-rehearsal`: `^/api/` → `http://server:3000`; `admin-rehearsal`: усі шляхи → `http://server:3000`; решта — 404 |
+| `rehearsal` | `t2f-rehearsal` | `o-rehearsal.time2fest.com`; `admin-rehearsal.time2fest.com` — лише разом з Access (нижче) | `o-rehearsal`: `^/api/` → `http://server:3000`; `admin-rehearsal`: лише `^/(admin\|cms-api\|_next)(/\|$)` → `http://server:3000`; решта — 404 |
 
 Правило `t2f-block-tunnel-hosts` блокує прямий доступ до імен тунелів (`o-*`); `admin-rehearsal` у нього не входить —
 його закриває Access і перевірка JWT Access на сервері. Власних правил WAF — 2, конфіг-правил — 3.
+
+**Ім'я адмінки лише разом з Access.** `admin-rehearsal` (ingress і CNAME) входить у бажаний стан лише тоді, коли
+запуск має `--with-access` для цього середовища **або** в `.local/` є позначка `access-<env>.ok`. Позначку пише
+`apply --with-access` після того, як крок Access пройшов (застосунок створено, оновлено чи він уже такий); без
+значень, лише дата. Без прапорця й без позначки `plan`/`apply` не показують і не створюють жодного об'єкта
+`admin-rehearsal` і **не читають API Access** (токену може бракувати права). Якщо ж запис DNS чи ingress
+`admin-rehearsal` уже є в Cloudflare (залишок давнішого запуску), а позначки немає — `plan` про це пише, `apply`
+прибирає ingress адмінки, а саме ім'я додає в `t2f-block-tunnel-hosts` (запис DNS не видаляється). Шляхи адмінки:
+`/admin` і `/cms-api` — із SPEC-04; `/_next` — статика адмінки Payload на Next.js (наживо ще не звірено: якщо адмінка
+потребує ще якогось шляху, додати його в `ADMIN_PATH`, `lib/desired.mjs`). Позначку знято (файл видалено) — наступний
+`apply` без `--with-access` прибере ingress адмінки й заблокує ім'я.
 
 ### Access (`--with-access`)
 
@@ -43,7 +54,8 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 `t2f-owner-<env>`: allow для пошт власника). Пошти — лише зі змінної `T2F_OWNER_EMAILS` (через кому; оточення
 або `--secrets-file`, ніколи git); без неї — код 1. У вивід потрапляє лише кількість адрес; самі адреси
 маскуються. Після створення друкується `aud` застосунку — значення для `T2F_ACCESS_AUD` сервера (не секрет).
-Середовище без `adminHost` (`test`) з `--with-access` — код 1.
+Середовище без `adminHost` (`test`) з `--with-access` — код 1. Порядок `apply`: застосунок Access — **першим**, потім
+тунель, ingress і DNS; відмова на кроці Access зупиняє все, тож ім'я адмінки не з'являється без свого захисту.
 
 ### Запобіжник
 

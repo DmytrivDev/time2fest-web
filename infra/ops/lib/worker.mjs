@@ -63,6 +63,25 @@ export function assetsDirOf(workerEnv) {
 }
 
 /**
+ * Ім’я Worker’а й хости його маршрутів з `workers/edge/wrangler.json` (`env.<workerEnv>`; ім’я за правилом wrangler —
+ * `<name>-<env>`, якщо в середовища немає власного). `null` — конфіг не прочитано чи середовища немає.
+ * @param {string} workerEnv
+ * @returns {{ name: string, hosts: string[] } | null}
+ */
+export function workerRoutesOf(workerEnv) {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(EDGE_DIR, 'wrangler.json'), 'utf8'));
+    const block = cfg?.env?.[workerEnv];
+    if (!block) return null;
+    const name = String(block.name ?? `${cfg.name}-${workerEnv}`);
+    const hosts = (Array.isArray(block.routes) ? block.routes : []).map((/** @type {{ pattern: string }} */ r) => String(r.pattern).toLowerCase());
+    return { name, hosts };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Змінні збірки сайту середовища: `buildEnv` + `NEXT_DIST_DIR` (ті самі прапорці, що `build:edge:rehearsal`).
  * @param {string} env
  * @returns {Record<string, string> | null} `null` — у середовища немає збірки (prelaunch, production)

@@ -9,8 +9,8 @@ import { getVar } from '../lib/secrets/envFile.mjs';
 import { NODE_ENV_FILES, PUSH_SCRIPT, WORKER_PENDING } from '../lib/secrets/files.mjs';
 import { HOST, scenario } from './support/scenario.mjs';
 
-const TUNNEL = 'tunnel-token-sentinel-0123456789abcdefABCDEF'; // check-secrets: allow
-const OWNER_R2 = 'owner-r2-secret-sentinel-9876543210zyxw'; // check-secrets: allow
+const TUNNEL = 'tunnel-token-sentinel-0123456789abcdefABCDEF'; // check-secrets: allow fake sentinel (NFR-4 test)
+const OWNER_R2 = 'owner-r2-secret-sentinel-9876543210zyxw'; // check-secrets: allow fake sentinel (NFR-4 test)
 const GENERATED = ['PAYLOAD_SECRET', 'T2F_EDGE_SECRET'];
 const GEN = ['edge-secret', '--env', 'rehearsal', '--generate'];
 

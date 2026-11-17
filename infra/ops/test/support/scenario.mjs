@@ -2,6 +2,7 @@
 // Підставний «світ» для тестів розгортання й відкату (W20, W21): git, Docker, Compose, wrangler і вузол — лише фейки.
 // Локальна ціль пише файли вузла в тимчасовий каталог стану (справжня ФС); віддалена — у `remoteFiles`.
 // Кожен виклик записує `createFakeExec`; потоки (`git archive`, `docker save`) — як `transport: 'start'`.
+import { FAKE_TARGET } from './fakeTarget.mjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -18,8 +19,8 @@ export const V_NEW = '22222222-2222-4222-8222-222222222222';
 export const NOW = new Date('2026-11-17T10:00:00.000Z');
 export const HOST = '203.0.113.10';
 /** Сторожові значення (NFR-4): жодне не має з’явитися у виводі чи журналі. */
-export const SENTINEL_EDGE = 'sentinel-edge-secret-0123456789abcdef0123'; // check-secrets: allow
-export const SENTINEL_TOKEN = 'sentinel-cf-token-fedcba9876543210fedcba'; // check-secrets: allow
+export const SENTINEL_EDGE = 'sentinel-edge-secret-0123456789abcdef0123'; // check-secrets: allow fake sentinel (NFR-4 test)
+export const SENTINEL_TOKEN = 'sentinel-cf-token-fedcba9876543210fedcba'; // check-secrets: allow fake sentinel (NFR-4 test)
 export const PINNED_POSTGRES = `postgres:17.12-alpine@sha256:${'0'.repeat(64)}`;
 export const COMPOSE_TEXT = [
   'services:',
@@ -261,6 +262,7 @@ export function scenario(o = {}) {
       now: () => NOW,
       clock,
       paths: { stateRoot },
+      ...FAKE_TARGET,
       ...(transport ? { transport: () => /** @type {import('../../lib/exec.mjs').Transport} */ (transport) } : {}),
       ...extra,
     }),

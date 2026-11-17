@@ -1,7 +1,7 @@
 // @ts-check
 // Фейковий провайдер у пам’яті: теги, таблиця розмірів з цінами за годину, сценарні помилки й журнал викликів.
 // Для тестів `capacity` і контрактного набору; мережі не торкається.
-import { ProviderError } from './provider.mjs';
+import { assertNodeTags, ProviderError } from './provider.mjs';
 
 /**
  * @typedef {import('./provider.mjs').Node} Node
@@ -102,15 +102,16 @@ export function createFakeProvider(o = {}) {
       if (opts?.keepDisk !== true) throw new Error('resizeNode: фейк уміє лише keepDisk: true');
       enter('resizeNode', [id, size]);
       const n = find(id, 'resizeNode');
+      assertNodeTags(n, opts.requireTags, 'resizeNode');
       if (!sizes.some((s) => s.slug === size)) throw new ProviderError({ status: 422, step: 'resizeNode' });
       resizes.push({ id, size, disk: false });
       n.size = size;
       n.status = 'active';
       return { keepDisk: true };
     },
-    async deleteNode(id) {
+    async deleteNode(id, opts) {
       enter('deleteNode', [id]);
-      find(id, 'deleteNode');
+      assertNodeTags(find(id, 'deleteNode'), opts?.requireTags, 'deleteNode');
       nodes.splice(nodes.findIndex((x) => x.id === id), 1);
     },
     async waitNode(id, state) {

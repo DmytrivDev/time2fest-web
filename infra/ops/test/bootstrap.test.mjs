@@ -9,6 +9,7 @@ import { main } from '../ops.mjs';
 import { DEPLOY_CHECKS, ROOT_ONLY_NOTE, ROOT_STEPS, SSHD_CONF, ufwOk } from '../lib/bootstrap.mjs';
 import { assertAllowed, assertArgv, DEFAULT_REMOTE_ALLOW } from '../lib/exec.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
+import { FAKE_TARGET } from './support/fakeTarget.mjs';
 
 const HOST = '203.0.113.20';
 const NODE_DIR = '/srv/t2f/rehearsal';
@@ -21,8 +22,8 @@ const UFW_ACTIVE = [
   '',
   'To                         Action      From',
   '--                         ------      ----',
-  '22/tcp                     ALLOW IN    Anywhere',
-  '22/tcp (v6)                ALLOW IN    Anywhere (v6)',
+  '22/tcp                     LIMIT IN    Anywhere',
+  '22/tcp (v6)                LIMIT IN    Anywhere (v6)',
   '',
 ].join('\n');
 /** Прапорець стану вузла для кожного кроку. */
@@ -104,6 +105,7 @@ function fakeNode(o = {}) {
     exec: fx,
     paths: { stateRoot },
     sshAs,
+    ...FAKE_TARGET,
   };
   return { st, calls, fx, out, err, deps, stateRoot };
 }
@@ -211,5 +213,13 @@ describe('ufwOk', () => {
     expect(ufwOk(UFW_ACTIVE.replace('Status: active', 'Status: inactive'))).toBe(false);
     expect(ufwOk(UFW_ACTIVE.replace('deny (incoming)', 'allow (incoming)'))).toBe(false);
     expect(ufwOk(`${UFW_ACTIVE}80/tcp                     ALLOW IN    Anywhere\n`)).toBe(false);
+  });
+
+  it('F10: 22/tcp must be rate-limited — a plain ALLOW rule (older bootstrap) is not done, so the step re-applies', () => {
+    expect(ufwOk(UFW_ACTIVE.replaceAll('LIMIT IN', 'ALLOW IN'))).toBe(false);
+    const fw = ROOT_STEPS.find((x) => x.id === 'firewall');
+    const script = fw?.apply?.('/srv/t2f/rehearsal')[2] ?? '';
+    expect(script).toContain('ufw limit 22/tcp');
+    expect(script).not.toContain('ufw allow 22/tcp');
   });
 });

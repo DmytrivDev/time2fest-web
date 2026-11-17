@@ -1,5 +1,6 @@
 // @ts-check
 // `ops capacity` на фейковому провайдері (AC-46 … AC-53, NFR-3, NFR-5). Мережі й справжнього SSH тест не торкається.
+import { FAKE_TARGET } from '../support/fakeTarget.mjs';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -14,7 +15,7 @@ const RT = { name: 't2f-rehearsal-realtime', size: 's-2vcpu-4gb', tags: [M, E, '
 const CLOUDFLARED_ONLY = 'services:\n  cloudflared:\n    image: cloudflare/cloudflared@sha256:' + 'a'.repeat(64) + '\n    restart: unless-stopped\n    env_file: [cloudflared.env]\n';
 const UFW_OK =
   'Status: active\nLogging: on (low)\nDefault: deny (incoming), allow (outgoing), disabled (routed)\nNew profiles: skip\n\n' +
-  'To                         Action      From\n--                         ------      ----\n22/tcp                     ALLOW IN    Anywhere\n22/tcp (v6)                ALLOW IN    Anywhere (v6)\n';
+  'To                         Action      From\n--                         ------      ----\n22/tcp                     LIMIT IN    Anywhere\n22/tcp (v6)                LIMIT IN    Anywhere (v6)\n';
 
 /** @type {string[]} */
 const temps = [];
@@ -64,6 +65,7 @@ function world(o = {}) {
     paths: { stateRoot: dir, realtimeComposeFile: composeFile },
     sshAs,
     clock,
+    ...FAKE_TARGET,
     ...o.deps,
   });
   return {

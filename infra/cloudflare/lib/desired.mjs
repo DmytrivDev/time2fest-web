@@ -3,15 +3,40 @@ import { ENVS, PHASE_CONFIG, PHASE_CUSTOM, exemptPathsFor } from './config.mjs';
 
 /** Ingress тунелю пропускає до джерела лише API; решта шляхів (`/admin`, `/cms-api/*` …) — 404 у тунелі. */
 export const TUNNEL_PATH = '^/api/';
+/**
+ * Ingress адмінки: лише шляхи Payload — сторінки адмінки (`/admin`), REST (`/cms-api`) і статика Next.js (`/_next`);
+ * решта — 404 у тунелі. `/admin` і `/cms-api` — з SPEC-04 і `docs/backend/cloudflare-notes.md` §3; `/_next` —
+ * статика адмінки Payload на Next.js (наживо ще не звірено).
+ */
+export const ADMIN_PATH = '^/(admin|cms-api|_next)(/|$)';
 
 /** @param {string[]} items */
 const set = (items) => `{${items.map((i) => `"${i}"`).join(' ')}}`;
 
 /**
+ * Імена адмінки середовищ, для яких адмінку не ввімкнено (`admin[env] !== true`): їх стежать як можливі залишки.
+ * @param {string[]} envNames
+ * @param {Record<string, boolean | undefined>} [admin]
+ * @returns {string[]}
+ */
+export function disabledAdminHosts(envNames, admin = {}) {
+  return envNames.flatMap((n) => {
+    const h = ENVS[n]?.adminHost;
+    return h && admin[n] !== true ? [h] : [];
+  });
+}
+
+/**
  * Бажаний стан для вказаних середовищ. Кожен вираз правила називає хости.
  * @param {string[]} envNames
- * @param {{ underAttack?: boolean | Record<string, boolean | undefined> }} [opts] `underAttack` перекриває типове
- *   значення середовища: булеве — для всіх, мапа — по середовищу (`undefined` → типове)
+ * @param {{
+ *   underAttack?: boolean | Record<string, boolean | undefined>,
+ *   admin?: Record<string, boolean | undefined>,
+ *   staleAdmin?: string[],
+ * }} [opts] `underAttack` перекриває типове значення середовища: булеве — для всіх, мапа — по середовищу
+ *   (`undefined` → типове). `admin[env] === true` — ім’я адмінки (ingress і CNAME) входить у бажаний стан; інакше його
+ *   немає взагалі (адмінка з’являється лише разом із застосунком Access). `staleAdmin` — імена адмінки без Access, які
+ *   вже є в Cloudflare (запис DNS чи ingress): вони йдуть у блок-правило.
  */
 export function desiredState(envNames, opts = {}) {
   const envs = envNames.map((n) => {
@@ -19,8 +44,11 @@ export function desiredState(envNames, opts = {}) {
     if (!e) throw new Error(`невідоме середовище: ${n}`);
     return { name: n, ...e };
   });
-  const siteHosts = envs.map((e) => e.siteHost);
   const tunnelHosts = envs.map((e) => e.tunnelHost);
+  /** @param {{ name: string, adminHost?: string }} e @returns {string[]} */
+  const adminOf = (e) => (e.adminHost && opts.admin?.[e.name] === true ? [e.adminHost] : []);
+  const disabled = new Set(disabledAdminHosts(envNames, opts.admin));
+  const blockedAdmin = [...new Set(opts.staleAdmin ?? [])].filter((h) => disabled.has(h));
   // По умові на кожен шлях-виняток: хости середовищ, де він діє, і (якщо задано) адреси джерела.
   const seen = new Set();
   const clauses = envs
@@ -40,14 +68,14 @@ export function desiredState(envNames, opts = {}) {
     hostname: e.tunnelHost,
     ingress: [
       { hostname: e.tunnelHost, path: TUNNEL_PATH, service: e.originService },
-      // Адмінка — усі шляхи на сервер; не входить у блок-правило, бо закрита Access і перевіркою JWT на сервері.
-      ...(e.adminHost ? [{ hostname: e.adminHost, service: e.originService }] : []),
+      // Адмінка — лише шляхи Payload і лише разом з Access; у блок-правило не входить: її закривають Access і JWT.
+      ...adminOf(e).map((hostname) => ({ hostname, path: ADMIN_PATH, service: e.originService })),
       { service: 'http_status:404' },
     ],
   }));
 
   const dns = envs.flatMap((e) =>
-    [e.tunnelHost, ...(e.adminHost ? [e.adminHost] : [])].map((name) => ({
+    [e.tunnelHost, ...adminOf(e)].map((name) => ({
       env: e.name,
       name,
       type: 'CNAME',
@@ -73,7 +101,8 @@ export function desiredState(envNames, opts = {}) {
     {
       ref: 't2f-block-tunnel-hosts',
       description: 't2f: block direct access to tunnel hosts',
-      expression: `(http.host in ${set(tunnelHosts)})`,
+      // Імена тунелів і залишки адмінки без Access (запис DNS чи ingress є, застосунку Access немає).
+      expression: `(http.host in ${set([...tunnelHosts, ...blockedAdmin])})`,
       action: 'block',
       enabled: true,
     },

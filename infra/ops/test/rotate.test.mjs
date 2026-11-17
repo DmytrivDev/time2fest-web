@@ -9,7 +9,7 @@ import { getVar } from '../lib/secrets/envFile.mjs';
 import { PUSH_SCRIPT } from '../lib/secrets/files.mjs';
 import { HOST, scenario, SHA_B } from './support/scenario.mjs';
 
-const OLD = 'old-edge-secret-sentinel-0123456789abcdefABCD'; // check-secrets: allow
+const OLD = 'old-edge-secret-sentinel-0123456789abcdefABCD'; // check-secrets: allow fake sentinel (NFR-4 test)
 const ROTATE = ['edge-secret', '--env', 'rehearsal', '--rotate'];
 const STEPS = ['edge-secret:server', 'edge-secret:worker', 'edge-secret:check', 'edge-secret:drop-previous'];
 

@@ -9,11 +9,12 @@ import { OWNER_EMAILS_ENV, createAccessStep, desiredAccess, parseOwnerEmails } f
 import { ApiRefusal, createApi } from './lib/api.mjs';
 import { runApply, takeCloudflareLock } from './lib/apply.mjs';
 import { ENVS, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
-import { readCurrent } from './lib/current.mjs';
-import { desiredState } from './lib/desired.mjs';
+import { observe } from './lib/current.mjs';
+import { desiredState, disabledAdminHosts } from './lib/desired.mjs';
 import { diff } from './lib/diff.mjs';
 import { describeRefusals, guard } from './lib/guard.mjs';
 import { createRedactor } from './lib/redact.mjs';
+import { accessMarkerExists } from './lib/tokenFile.mjs';
 
 /** Тека для токенів тунелів (у .gitignore). */
 const LOCAL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '.local');
@@ -126,7 +127,18 @@ export async function main(argv, deps = {}) {
     const api = createApi({ env, fetch: deps.fetch });
     // Завжди всі середовища: PUT фази замінює весь список, тож жодне середовище не випадає. --env обирає
     // файл токена тунелю, ціль --under-attack і застосунок Access.
-    const desired = (deps.desiredState ?? desiredState)(Object.keys(ENVS), { underAttack: { [args.env]: args.underAttack } });
+    // Ім'я адмінки (ingress і CNAME) — лише з --with-access для цього середовища або коли позначка успішного кроку
+    // Access уже є в .local; інакше його в бажаному стані немає, а залишок у Cloudflare йде в блок-правило (F2).
+    const localDir = deps.localDir ?? LOCAL_DIR;
+    const envNames = Object.keys(ENVS);
+    /** @type {Record<string, boolean>} */
+    const admin = Object.fromEntries(
+      envNames.filter((n) => ENVS[n]?.adminHost).map((n) => [n, (args.withAccess && n === args.env) || accessMarkerExists(localDir, n)]),
+    );
+    /** @param {string[]} staleAdmin */
+    const build = (staleAdmin) =>
+      (deps.desiredState ?? desiredState)(envNames, { underAttack: { [String(args.env)]: args.underAttack }, admin, staleAdmin });
+    const adminWatch = disabledAdminHosts(envNames, admin);
     const ids = { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) };
     const access = ownerEmails ? createAccessStep({ api, accountId: ids.accountId, app: desiredAccess(args.env, ownerEmails), out }) : undefined;
     const flags = { allowMainDomain: args.allowMainDomain, allowZoneSettings: args.allowZoneSettings, allowDelete: args.allowDelete };
@@ -136,18 +148,20 @@ export async function main(argv, deps = {}) {
         api,
         ids,
         envName: args.env,
-        desired,
+        build,
+        adminWatch,
         flags,
         redactor,
         out,
         now: deps.now ?? (() => new Date()),
-        localDir: deps.localDir ?? LOCAL_DIR,
+        localDir,
         acquireLock: deps.acquireLock ?? (() => takeCloudflareLock(env)),
         access,
       });
     }
 
-    const current = await readCurrent(api, ids, desired, redactor);
+    const { desired, current, stale } = await observe({ api, ids, build, watch: adminWatch, redactor });
+    for (const h of stale) out(`адмінка ${h}: є в Cloudflare без Access — apply прибере ingress і додасть ім'я в блок-правило`);
     const changes = diff(desired, current);
     if (access) changes.push(...(await access.changes()));
     if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');

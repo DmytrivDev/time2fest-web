@@ -1,8 +1,11 @@
 // @ts-check
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
 import { ENVS, EXEMPT_PATHS, MAIN_HOSTS, PAYPRO_IPN_SOURCES, PHASE_CONFIG, PHASE_CUSTOM } from '../lib/config.mjs';
-import { desiredState, TUNNEL_PATH } from '../lib/desired.mjs';
+import { ADMIN_PATH, desiredState, TUNNEL_PATH } from '../lib/desired.mjs';
 import { createFakeApi } from './support/fakeApi.mjs';
 
 const d = desiredState(['test']);
@@ -81,7 +84,7 @@ describe('desiredState(test, rehearsal): усі середовища разом 
   const only = desiredState(['test']);
   const R = ENVS.rehearsal;
 
-  it('rehearsal: тунель t2f-rehearsal; o-rehearsal — лише ^/api/, admin-rehearsal — усі шляхи; кінець http_status:404', () => {
+  it('rehearsal: тунель t2f-rehearsal; o-rehearsal — лише ^/api/; без Access адмінки немає; кінець http_status:404', () => {
     expect(R).toEqual({
       siteHost: 'rehearsal.time2fest.com',
       tunnelHost: 'o-rehearsal.time2fest.com',
@@ -94,16 +97,40 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     expect(t?.name).toBe('t2f-rehearsal');
     expect(t?.ingress).toEqual([
       { hostname: 'o-rehearsal.time2fest.com', path: '^/api/', service: 'http://server:3000' },
-      { hostname: 'admin-rehearsal.time2fest.com', service: 'http://server:3000' },
+      { service: 'http_status:404' },
+    ]);
+    expect(JSON.stringify(all)).not.toContain('admin-rehearsal');
+  });
+
+  it('F2: з адмінкою (admin.rehearsal) — ingress адмінки лише на шляхи Payload', () => {
+    expect(ADMIN_PATH).toBe('^/(admin|cms-api|_next)(/|$)');
+    const re = new RegExp(ADMIN_PATH);
+    for (const p of ['/admin', '/admin/collections/events', '/cms-api/admins/me', '/_next/static/x.js']) expect(re.test(p)).toBe(true);
+    for (const p of ['/', '/api/health', '/administrator', '/cms-apix', '/x/admin']) expect(re.test(p)).toBe(false);
+    const withAdmin = desiredState(['test', 'rehearsal'], { admin: { rehearsal: true } });
+    expect(withAdmin.tunnels.find((x) => x.env === 'rehearsal')?.ingress).toEqual([
+      { hostname: 'o-rehearsal.time2fest.com', path: '^/api/', service: 'http://server:3000' },
+      { hostname: 'admin-rehearsal.time2fest.com', path: ADMIN_PATH, service: 'http://server:3000' },
       { service: 'http_status:404' },
     ]);
   });
 
-  it('DNS: проксовані CNAME на тунель t2f-rehearsal для обох імен', () => {
+  it('DNS: проксований CNAME на тунель t2f-rehearsal; ім’я адмінки — лише з admin.rehearsal', () => {
     expect(all.dns.filter((x) => x.env === 'rehearsal')).toEqual([
+      { env: 'rehearsal', name: 'o-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
+    ]);
+    expect(desiredState(['test', 'rehearsal'], { admin: { rehearsal: true } }).dns.filter((x) => x.env === 'rehearsal')).toEqual([
       { env: 'rehearsal', name: 'o-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
       { env: 'rehearsal', name: 'admin-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
     ]);
+  });
+
+  it('F2: залишок адмінки без Access (staleAdmin) — у блок-правилі; з Access — ні', () => {
+    const block = (/** @type {typeof all} */ d) => (d.rulesets[PHASE_CUSTOM] ?? []).find((r) => r.ref === 't2f-block-tunnel-hosts')?.expression;
+    expect(block(desiredState(['test', 'rehearsal'], { staleAdmin: ['admin-rehearsal.time2fest.com'] }))).toBe(
+      '(http.host in {"o-test.time2fest.com" "o-rehearsal.time2fest.com" "admin-rehearsal.time2fest.com"})',
+    );
+    expect(block(desiredState(['test', 'rehearsal'], { admin: { rehearsal: true }, staleAdmin: ['admin-rehearsal.time2fest.com'] }))).not.toContain('admin-rehearsal');
   });
 
   it('блок-правило: o-rehearsal є, admin-rehearsal немає; нового власного правила немає', () => {
@@ -137,19 +164,25 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     const fake = createFakeApi();
     /** @type {string[]} */
     const lines = [];
+    const localDir = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cf-plan-'));
     const code = await main(['plan', '--env', 'test'], {
       env: { CLOUDFLARE_API_TOKEN_INFRA: `tok-${'9a'.repeat(8)}`, CLOUDFLARE_ACCOUNT_ID: 'acct-test', CLOUDFLARE_ZONE_ID: 'zone-test' },
       fetch: fake.fetch,
       out: (l) => lines.push(l),
+      localDir,
     });
+    fs.rmSync(localDir, { recursive: true, force: true });
     expect(code).toBe(0);
     const paths = fake.log.map((l) => `${l.method} ${l.path}`);
     expect(fake.log.every((l) => l.method === 'GET')).toBe(true);
     expect(paths.filter((p) => p.endsWith('/cfd_tunnel'))).toHaveLength(2);
+    // o-test, o-rehearsal і (лише читання — пошук залишку) admin-rehearsal.
     expect(paths.filter((p) => p.endsWith('/dns_records'))).toHaveLength(3);
+    expect(paths.some((p) => p.includes('/access/'))).toBe(false);
     const text = lines.join('\n');
     expect(text).toContain('тунель t2f-rehearsal');
-    expect(text).toContain('DNS admin-rehearsal.time2fest.com');
+    expect(text).toContain('DNS o-rehearsal.time2fest.com');
+    expect(text).not.toContain('admin-rehearsal');
     expect(text).toContain('t2f-under-attack-rehearsal');
     expect(text).toContain('тунель t2f-test');
   });

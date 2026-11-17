@@ -6,6 +6,7 @@
 // Це й корінь композиції: справжні адаптери (процеси, мережа, git, wrangler, провайдер потужності, годинник) і
 // шляхи складаються тут один раз і йдуть у підкоманди як обов’язкові поля контексту (`ctx.deps`, `ctx.paths`,
 // `ctx.platform`). Підкоманди не мають власних запасних «справжніх» реалізацій.
+import dns from 'node:dns/promises';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,14 +25,41 @@ import { runMoveDomain } from './lib/moveDomain.mjs';
 import { SYSTEM_CLOCK } from './lib/node.mjs';
 import { startProbe as realStartProbe } from './lib/probe.mjs';
 import { createOutput, redactorFromEnv } from './lib/redact.mjs';
+import { NODE_ENV_FILES } from './lib/secrets/files.mjs';
 import { runRollback } from './lib/rollback.mjs';
 import { fetchOk } from './lib/secrets/rotate.mjs';
 import { runEdgeSecret } from './lib/secrets/secrets.mjs';
+import { checkTarget } from './lib/target.mjs';
 import { createWorker } from './lib/worker.mjs';
 
 const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity'];
 /** Змінні з `--secrets-file`, значення яких маскуються, навіть коли їх немає в `SECRET_ENV_NAMES`. */
 const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
+/** Підкоманди, що працюють із вузлом середовища: значення секретів з його `.local/<env>/*.env` маскуються у виводі. */
+const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity'];
+
+/** @param {string} name */
+const isSecretName = (name) => SECRET_ENV_NAMES.includes(name) || SECRET_NAME_RE.test(name);
+
+/**
+ * Значення секретних змінних з локальних оригіналів файлів вузла (`<stateRoot>/<env>/{server,postgres,cloudflared}.env`)
+ * реєструються в редакторі: помилка міграції чи `docker`, що повторює рядок підключення, не виведе пароля. Файлів
+ * немає — нічого не робить; нечитаний файл пропускається (його значень ops і не надсилає).
+ * @param {import('./lib/redact.mjs').Redactor} redactor
+ * @param {string} dir
+ */
+function registerLocalNodeSecrets(redactor, dir) {
+  for (const name of NODE_ENV_FILES) {
+    /** @type {string} */
+    let text;
+    try {
+      text = fs.readFileSync(path.join(dir, name), 'utf8');
+    } catch {
+      continue;
+    }
+    for (const [k, v] of Object.entries(parseEnv(text))) if (isSecretName(k)) redactor.add(v);
+  }
+}
 
 /**
  * @typedef {import('./lib/exec.mjs').Executor} Executor
@@ -49,9 +77,12 @@ const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
  *   transport: (ssh: SshTarget | null) => Transport,
  *   sshAs: (o: SshTarget) => Transport,
  *   provider: () => Promise<import('./lib/capacity/provider.mjs').ProviderBundle>,
+ *   lookupHost: (host: string) => Promise<string[]>,
+ *   sshHostname: (host: string) => Promise<string>,
  * }} OpsPorts Порти підкоманд (усі обов’язкові). `edgeCheck` — одна перевірка `GET <url>` → 200; `transport(null)` —
  *   локальна ціль, інакше SSH зі звіркою ключа хоста; `sshAs` — перший вхід на новий вузол (`accept-new`);
- *   `provider` — набір провайдера потужності з `T2F_PROVIDER`.
+ *   `provider` — набір провайдера потужності з `T2F_PROVIDER`; `lookupHost` — усі адреси імені (DNS);
+ *   `sshHostname` — `hostname` з `ssh -G` (куди веде ціль з налаштуваннями користувача).
  * @typedef {{
  *   args: import('./lib/args.mjs').ParsedArgs,
  *   env: Record<string, string | undefined>,
@@ -79,7 +110,20 @@ const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
 /** Реалізовані підкоманди (додаються по фазах). @type {Record<string, (ctx: OpsContext) => Promise<number>>} */
 const RUNNERS = { deploy: runDeploy, rollback: runRollback, 'edge-secret': runEdgeSecret, bootstrap: runBootstrap, capacity: runCapacity, 'move-domain': runMoveDomain };
 
-const PORT_KEYS = ['clock', 'fetch', 'startProbe', 'edgeCheck', 'git', 'image', 'worker', 'transport', 'sshAs', 'provider'];
+const PORT_KEYS = ['clock', 'fetch', 'startProbe', 'edgeCheck', 'git', 'image', 'worker', 'transport', 'sshAs', 'provider', 'lookupHost', 'sshHostname'];
+const SSH_G_TIMEOUT_MS = 15_000;
+
+/**
+ * `hostname` з `ssh -G <host>`: куди ssh з налаштуваннями користувача справді з’єднався б.
+ * @param {Executor} exec
+ * @param {string} host
+ */
+async function sshConfigHostname(exec, host) {
+  const r = await exec.run('ssh', ['-G', '--', host], { timeoutMs: SSH_G_TIMEOUT_MS });
+  const m = r.code === 0 ? r.stdout.match(/^hostname\s+(\S+)\s*$/m) : null;
+  if (!m) throw new Error('ssh -G не вдався');
+  return m[1];
+}
 const OVERRIDE_KEYS = ['out', 'err', 'env', 'exec', 'now', 'platform', 'paths', 'runners', ...PORT_KEYS];
 const PATH_KEYS = Object.keys(DEFAULT_PATHS);
 
@@ -141,6 +185,10 @@ function composePorts({ o, sandbox, env, out }) {
           return t;
         }),
       provider: o.provider ?? (() => loadProvider({ env, fetch: doFetch, clock })),
+      lookupHost:
+        o.lookupHost ??
+        (sandbox ? notInjected('lookupHost') : async (host) => (await dns.lookup(host, { all: true, verbatim: true })).map((a) => a.address)),
+      sshHostname: o.sshHostname ?? (sandbox ? notInjected('sshHostname') : (host) => sshConfigHostname(exec, host)),
     },
   };
 }
@@ -180,6 +228,7 @@ export async function main(argv, overrides) {
   const guarded = guardRun({
     sub,
     env: args.env,
+    action: args.action,
     target: args.values.target ?? args.values.host,
     hosts: args.values.name !== undefined ? [args.values.name] : [],
     flags: {
@@ -215,13 +264,24 @@ export async function main(argv, overrides) {
     env = { ...env };
     for (const [k, v] of Object.entries(parsed)) {
       if (env[k] === undefined && v !== undefined) env[k] = v;
-      if (SECRET_ENV_NAMES.includes(k) || SECRET_NAME_RE.test(k)) redactor.add(v);
+      if (isSecretName(k)) redactor.add(v);
     }
   }
 
   const { exec, deps } = composePorts({ o, sandbox, env, out });
   /** @type {OpsPaths} */
   const paths = { ...DEFAULT_PATHS, ...o.paths };
+  if (args.env !== undefined && NODE_SECRET_SUBS.includes(sub)) registerLocalNodeSecrets(redactor, path.join(paths.stateRoot, args.env));
+
+  // AC-22 за адресою, а не написанням: ціль вузла (`--target`/`--host`) резолвиться до першого виклику SSH.
+  const nodeTarget = args.values.target ?? args.values.host;
+  if (nodeTarget !== undefined && nodeTarget !== 'local') {
+    const checked = await checkTarget(nodeTarget, deps);
+    if (!checked.ok) {
+      err(`${sub}: ${checked.message}`);
+      return checked.code;
+    }
+  }
   return runner({ args, env, exec, redactor, out, err, now, platform: o.platform ?? process.platform, paths, deps });
 }
 

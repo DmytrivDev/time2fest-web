@@ -176,6 +176,30 @@ describe('move-domain refusals', () => {
     expect(exec.calls).toHaveLength(0);
   });
 
+  it('F5: the twin never takes a main name, even with the double flag', async () => {
+    const exec = createFakeExec();
+    const { fn, calls } = fakeFetch();
+    for (const confirm of ['prelaunch', 'production']) {
+      const r = await run(['move-domain', '--name', 'time2fest.com', '--to', 't2f-edge-rehearsal-alt', '--confirm', confirm, '--allow-main-domain'], { exec, fetch: fn });
+      expect(r.code).toBe(2);
+      expect(r.text).toContain('двійник');
+    }
+    expect(exec.calls).toHaveLength(0);
+    expect(calls).toHaveLength(0);
+  });
+
+  it('F5: a main Worker needs --confirm of exactly its own env (prelaunch does not unlock production)', async () => {
+    const exec = createFakeExec();
+    const { fn, calls } = fakeFetch();
+    const r = await run(['move-domain', '--name', 'time2fest.com', '--to', 't2f-edge-production', '--confirm', 'prelaunch', '--allow-main-domain'], { exec, fetch: fn });
+    expect(r.code).toBe(2);
+    expect(r.text).toContain('--confirm production');
+    const r2 = await run(['move-domain', '--name', 'time2fest.com', '--to', 't2f-edge-prelaunch', '--confirm', 'production', '--allow-main-domain'], { exec, fetch: fn });
+    expect(r2.code).toBe(2);
+    expect(exec.calls).toHaveLength(0);
+    expect(calls).toHaveLength(0);
+  });
+
   it('missing Cloudflare credentials → 1 before wrangler (same as deploy)', async () => {
     const exec = createFakeExec();
     const r = await run(['move-domain', '--name', REHEARSAL_NAME, '--to', 't2f-edge-rehearsal'], { exec, env: {} });

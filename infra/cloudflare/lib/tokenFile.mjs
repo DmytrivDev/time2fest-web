@@ -50,3 +50,33 @@ export function writeTokenFile(localDir, envName, token) {
   }
   return file;
 }
+
+/**
+ * Позначка «застосунок Access для адмінки середовища створено цим скриптом» (F2): без значень, лише дата.
+ * Поки вона є, `plan`/`apply` без `--with-access` лишають ім'я адмінки в бажаному стані (інакше — прибирають).
+ * @param {string} localDir
+ * @param {string} envName
+ */
+export function accessMarkerPath(localDir, envName) {
+  if (!/^[a-z0-9-]+$/.test(envName)) throw new Error('недопустима назва середовища для позначки Access');
+  return path.join(localDir, `access-${envName}.ok`);
+}
+
+/** @param {string} localDir @param {string} envName */
+export function accessMarkerExists(localDir, envName) {
+  return fs.existsSync(accessMarkerPath(localDir, envName));
+}
+
+/**
+ * Пише позначку після успішного кроку Access (застосунок створено, оновлено чи вже був таким).
+ * @param {string} localDir
+ * @param {string} envName
+ * @param {Date} at
+ * @returns {string} шлях до файлу
+ */
+export function writeAccessMarker(localDir, envName, at) {
+  const file = accessMarkerPath(localDir, envName);
+  fs.mkdirSync(localDir, { recursive: true, mode: 0o700 });
+  fs.writeFileSync(file, `access-app ok ${at.toISOString()}\n`, { mode: 0o600 });
+  return file;
+}

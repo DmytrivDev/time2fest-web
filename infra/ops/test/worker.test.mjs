@@ -11,8 +11,8 @@ import { createFakeExec } from './support/fakeExec.mjs';
 
 const FIXTURE = fs.readFileSync(new URL('./fixtures/deployments-status.json', import.meta.url), 'utf8');
 const FIXTURE_VERSION = '1f0c2d3e-4a5b-4c6d-8e7f-90a1b2c3d4e5';
-const SECRET = 'sentinel-worker-secret-00112233445566778899'; // check-secrets: allow
-const ENV = { CLOUDFLARE_API_TOKEN: 'token-for-tests-only-abcdef', CLOUDFLARE_ACCOUNT_ID: 'acc' }; // check-secrets: allow
+const SECRET = 'sentinel-worker-secret-00112233445566778899'; // check-secrets: allow fake sentinel (NFR-4 test)
+const ENV = { CLOUDFLARE_API_TOKEN: 'token-for-tests-only-abcdef', CLOUDFLARE_ACCOUNT_ID: 'acc' }; // check-secrets: allow fake sentinel (NFR-4 test)
 
 /**
  * Фейковий runner, що запам’ятовує й опції (cwd, env, input) — fakeExec записує лише argv і довжину входу.

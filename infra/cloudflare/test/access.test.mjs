@@ -71,6 +71,38 @@ describe('Access: без --with-access', () => {
     expect(accessRequests(fake)).toEqual([]);
     expect(fake.state.accessApps).toEqual([]);
   });
+
+  it('F2: plan і apply без --with-access не показують і не створюють жодного об’єкта admin-rehearsal', async () => {
+    const fake = createFakeApi();
+    for (const argv of [['plan', '--env', 'rehearsal'], ['apply', '--env', 'rehearsal']]) {
+      const r = await run(fake, argv, {});
+      expect(r.code).toBe(0);
+      expect(r.text).not.toContain('admin-rehearsal');
+    }
+    expect(fake.state.dns.some((x) => x.name === 'admin-rehearsal.time2fest.com')).toBe(false);
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
+    expect(JSON.stringify(fake.state.rulesets)).not.toContain('admin-rehearsal');
+    expect(accessRequests(fake)).toEqual([]);
+  });
+
+  it('F2: залишок адмінки (CNAME і ingress) без Access і без позначки → ingress прибрано, ім’я в блок-правилі', async () => {
+    const fake = converged();
+    const tun = fake.state.tunnels.find((t) => t.name === 't2f-rehearsal');
+    if (!tun?.ingress) throw new Error('немає тунелю t2f-rehearsal у фейку');
+    tun.ingress = [tun.ingress[0], { hostname: 'admin-rehearsal.time2fest.com', service: 'http://server:3000' }, tun.ingress.at(-1)];
+    fake.state.dns.push({ id: 'old-admin', name: 'admin-rehearsal.time2fest.com', type: 'CNAME', content: 'tun2.cfargotunnel.com', proxied: true });
+    const plan = await run(fake, ['plan', '--env', 'rehearsal'], {});
+    expect(plan.code).toBe(0);
+    expect(plan.text).toContain('адмінка admin-rehearsal.time2fest.com: є в Cloudflare без Access');
+    expect(plan.text).toContain('update tunnel-config: тунель t2f-rehearsal: оновити ingress');
+    expect(plan.text).toContain('update rule: правило t2f-block-tunnel-hosts');
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
+    const block = (fake.state.rulesets.http_request_firewall_custom ?? []).find((x) => x.ref === 't2f-block-tunnel-hosts');
+    expect(block?.expression).toContain('"admin-rehearsal.time2fest.com"');
+    expect(accessRequests(fake)).toEqual([]);
+  });
 });
 
 describe('Access: з --with-access', () => {
@@ -105,7 +137,20 @@ describe('Access: з --with-access', () => {
     const fake = converged();
     const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
     expect(r.code).toBe(0);
-    expect(fake.mutations()).toEqual([{ method: 'POST', path: '/accounts/acct-test/access/apps' }]);
+    // F2: застосунок Access — першим, лише потім ingress адмінки і її CNAME.
+    expect(fake.mutations()).toEqual([
+      { method: 'POST', path: '/accounts/acct-test/access/apps' },
+      { method: 'PUT', path: '/accounts/acct-test/cfd_tunnel/tun2/configurations' },
+      { method: 'POST', path: '/zones/zone-test/dns_records' },
+    ]);
+    expect(fake.state.dns.find((x) => x.name === 'admin-rehearsal.time2fest.com')).toEqual(
+      expect.objectContaining({ type: 'CNAME', content: 'tun2.cfargotunnel.com', proxied: true }),
+    );
+    expect(fake.state.tunnels.find((t) => t.name === 't2f-rehearsal')?.ingress).toContainEqual({
+      hostname: 'admin-rehearsal.time2fest.com',
+      path: '^/(admin|cms-api|_next)(/|$)',
+      service: 'http://server:3000',
+    });
     const app = fake.state.accessApps[0];
     expect(app).toEqual(
       expect.objectContaining({ name: 't2f-admin-rehearsal', domain: 'admin-rehearsal.time2fest.com', type: 'self_hosted', session_duration: '24h' }),
@@ -120,7 +165,32 @@ describe('Access: з --with-access', () => {
     const again = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
     expect(again.code).toBe(0);
     expect(again.text).toContain('без змін');
-    expect(fake.mutations()).toHaveLength(1);
+    expect(fake.mutations()).toHaveLength(3);
+  });
+
+  it('F2: після успішного кроку Access позначка в .local тримає адмінку і без --with-access; Access API не читається', async () => {
+    const fake = converged();
+    expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
+    expect(fs.existsSync(path.join(tmp, '.local', 'access-rehearsal.ok'))).toBe(true);
+    const before = fake.log.length;
+    const plan = await run(fake, ['plan', '--env', 'rehearsal'], {});
+    expect(plan.code).toBe(0);
+    expect(plan.text).toContain('без змін');
+    const apply = await run(fake, ['apply', '--env', 'test'], {});
+    expect(apply.code).toBe(0);
+    expect(apply.text).toContain('без змін');
+    expect(fake.mutations()).toHaveLength(3);
+    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toEqual([]);
+  });
+
+  it('F2: відмова на кроці Access — ні ingress, ні CNAME адмінки, позначки немає', async () => {
+    const fake = converged();
+    fake.refuse('access', 403);
+    const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
+    expect(r.code).toBe(3);
+    expect(fake.state.dns.some((x) => x.name === 'admin-rehearsal.time2fest.com')).toBe(false);
+    expect(JSON.stringify(fake.state.tunnels)).not.toContain('admin-rehearsal');
+    expect(fs.existsSync(path.join(tmp, '.local', 'access-rehearsal.ok'))).toBe(false);
   });
 
   it('змінився перелік пошт → PUT того самого застосунку', async () => {

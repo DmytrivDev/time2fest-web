@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createWorker } from '../lib/worker.mjs';
+import { fakeCloudflare } from './support/fakeCloudflare.mjs';
 import { main } from '../ops.mjs';
 import {
   HOST,
@@ -248,7 +249,13 @@ describe('prelaunch (AC-21)', () => {
     fs.writeFileSync(path.join(assets, 'index.html'), '<!doctype html>');
     const deps = sc.deps();
     const worker = createWorker({ env: 'prelaunch', processEnv: deps.env, run: sc.exec.run, assetsDir: assets });
-    expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, worker: () => worker })).toBe(0);
+    const cf = fakeCloudflare();
+    const env = { ...deps.env, CLOUDFLARE_ZONE_ID: 'zone1' };
+    expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, env, fetch: cf.fetch, worker: () => worker })).toBe(0);
+    expect(cf.calls.map((c) => c.url.replace(/^.*\/client\/v4/, ''))).toEqual([
+      '/accounts/account-id/workers/domains?hostname=time2fest.com',
+      '/zones/zone1/dns_records?name=time2fest.com&per_page=100',
+    ]);
     expect(sc.dockerCalls()).toEqual([]);
     expect(sc.fx.calls.filter((c) => c.transport.startsWith('ssh:'))).toEqual([]);
     expect(sc.fx.calls.some((c) => c.argv.includes('build'))).toBe(false);
@@ -271,6 +278,53 @@ describe('prelaunch (AC-21)', () => {
     const worker = createWorker({ env: 'prelaunch', processEnv: deps.env, run: sc.exec.run, assetsDir: assets });
     expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, worker: () => worker })).toBe(2);
     expect(sc.wranglerCalls()).toEqual([]);
+  });
+
+  /** @param {Parameters<typeof fakeCloudflare>[0]} cfo @param {string[]} [extra] @param {Record<string, string>} [envExtra] */
+  async function prelaunchWith(cfo, extra = [], envExtra = { CLOUDFLARE_ZONE_ID: 'zone1' }) {
+    const sc = world();
+    const assets = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-pre-'));
+    cleanups.push(() => fs.rmSync(assets, { recursive: true, force: true }));
+    fs.writeFileSync(path.join(assets, 'index.html'), '<!doctype html>');
+    const deps = sc.deps();
+    const worker = createWorker({ env: 'prelaunch', processEnv: deps.env, run: sc.exec.run, assetsDir: assets });
+    const cf = fakeCloudflare(cfo);
+    const code = await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain', ...extra], {
+      ...deps,
+      env: { ...deps.env, ...envExtra },
+      fetch: cf.fetch,
+      worker: () => worker,
+    });
+    return { code, sc, cf };
+  }
+
+  it('F1: the main name held by another Worker → 2 before any wrangler call', async () => {
+    const r = await prelaunchWith({ bindings: [{ id: 'd1', hostname: 'time2fest.com', service: 't2f-edge-production' }] });
+    expect(r.code).toBe(2);
+    expect(r.sc.wranglerCalls()).toEqual([]);
+    expect(r.sc.err.join('\n')).toContain('t2f-edge-production');
+  });
+
+  it('F1: the old site’s apex A record → 2; with --take-domain-from dns → deployed', async () => {
+    const records = [{ name: 'time2fest.com', type: 'A', content: '203.0.113.50', meta: {} }];
+    const refused = await prelaunchWith({ records });
+    expect(refused.code).toBe(2);
+    expect(refused.sc.wranglerCalls()).toEqual([]);
+    const taken = await prelaunchWith({ records }, ['--take-domain-from', 'dns']);
+    expect(taken.code).toBe(0);
+    expect(taken.sc.wranglerCalls().map((c) => c.argv.slice(2).join(' '))).toContain('deploy --env prelaunch');
+  });
+
+  it('F1: no CLOUDFLARE_ZONE_ID or no DNS-read right → 2 naming what is missing, 0 wrangler', async () => {
+    const noZone = await prelaunchWith({}, [], {});
+    expect(noZone.code).toBe(2);
+    expect(noZone.sc.err.join('\n')).toContain('CLOUDFLARE_ZONE_ID');
+    expect(noZone.cf.calls).toEqual([]);
+    expect(noZone.sc.wranglerCalls()).toEqual([]);
+    const noRight = await prelaunchWith({ recordsStatus: 403 });
+    expect(noRight.code).toBe(2);
+    expect(noRight.sc.err.join('\n')).toContain('DNS → Read');
+    expect(noRight.sc.wranglerCalls()).toEqual([]);
   });
 });
 

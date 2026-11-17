@@ -34,17 +34,35 @@ function fakeSpawn(calls: Call[]) {
   }) as never;
 }
 
-async function run(argv: string[], env: Record<string, string>, dir = assetsDir) {
+type CfOpts = { bindings?: object[]; records?: object[]; bindingsStatus?: number; recordsStatus?: number };
+
+/** Fake Cloudflare API for the holder check (F1): no network. */
+function fakeCf(o: CfOpts = {}) {
+  const urls: string[] = [];
+  const reply = (status: number, result: object[]) =>
+    status === 200 ? Response.json({ success: true, result }) : Response.json({ success: false, errors: [{ code: 9109 }] }, { status });
+  const fetch = (async (url: string | URL | Request) => {
+    const u = String(url);
+    urls.push(u);
+    if (u.includes('/workers/domains')) return reply(o.bindingsStatus ?? 200, o.bindings ?? []);
+    if (u.includes('/dns_records')) return reply(o.recordsStatus ?? 200, o.records ?? []);
+    return new Response('not found', { status: 404 });
+  }) as typeof globalThis.fetch;
+  return { fetch, urls };
+}
+
+async function run(argv: string[], env: Record<string, string>, dir = assetsDir, cf = fakeCf()) {
   const calls: Call[] = [];
   let output = '';
   const code = (await deploy(argv, {
     spawn: fakeSpawn(calls),
     env,
     assetsDir: dir,
+    fetch: cf.fetch,
     out: (s: string) => (output += s),
     err: (s: string) => (output += s),
   })) as number;
-  return { code, calls, output };
+  return { code, calls, output, cfUrls: cf.urls };
 }
 
 describe('deploy script', () => {
@@ -94,6 +112,7 @@ describe('deploy script', () => {
     const r = await run(['--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], {
       CLOUDFLARE_API_TOKEN: TOKEN,
       CLOUDFLARE_ACCOUNT_ID: 'acct',
+      CLOUDFLARE_ZONE_ID: 'zone1',
     });
     expect(r.code).toBe(0);
     expect(r.calls).toHaveLength(1);
@@ -101,7 +120,7 @@ describe('deploy script', () => {
 });
 
 describe('main-domain double flag (AC-21)', () => {
-  const full = { CLOUDFLARE_API_TOKEN: TOKEN, CLOUDFLARE_ACCOUNT_ID: 'acct', T2F_EDGE_SECRET: SECRET };
+  const full = { CLOUDFLARE_API_TOKEN: TOKEN, CLOUDFLARE_ACCOUNT_ID: 'acct', CLOUDFLARE_ZONE_ID: 'zone1', T2F_EDGE_SECRET: SECRET };
 
   for (const target of ['prelaunch', 'production']) {
     it(`${target}: without both flags → 2 and no spawn`, async () => {
@@ -125,5 +144,89 @@ describe('main-domain double flag (AC-21)', () => {
     const r = await run(['--env', 'rehearsal', '--confirm', 'rehearsal'], full);
     expect(r.code).toBe(0);
     expect(r.calls[0]?.args.slice(1, 4)).toEqual(['deploy', '--env', 'rehearsal']);
+  });
+});
+
+describe('main-domain holder check before wrangler deploy (F1)', () => {
+  const full = { CLOUDFLARE_API_TOKEN: TOKEN, CLOUDFLARE_ACCOUNT_ID: 'acct', CLOUDFLARE_ZONE_ID: 'zone1', T2F_EDGE_SECRET: SECRET };
+  const PRE = ['--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'];
+  const PROD = ['--env', 'production', '--confirm', 'production', '--allow-main-domain'];
+  const OLD_SITE = { name: 'time2fest.com', type: 'A', content: '203.0.113.50', meta: {} };
+  const PRELAUNCH_BINDING = { id: 'd1', hostname: 'time2fest.com', service: 't2f-edge-prelaunch' };
+
+  it('reads the bindings and the zone records of every route host', async () => {
+    const r = await run(PROD, full);
+    expect(r.code).toBe(0);
+    expect(r.cfUrls).toEqual([
+      'https://api.cloudflare.com/client/v4/accounts/acct/workers/domains?hostname=time2fest.com',
+      'https://api.cloudflare.com/client/v4/zones/zone1/dns_records?name=time2fest.com&per_page=100',
+    ]);
+  });
+
+  it('a name bound to another Worker → 2, no spawn; --take-domain-from that Worker → deployed', async () => {
+    const cf = { bindings: [PRELAUNCH_BINDING], records: [{ name: 'time2fest.com', type: 'AAAA', content: '100::', meta: { read_only: true } }] };
+    const refused = await run(PROD, full, assetsDir, fakeCf(cf));
+    expect(refused.code).toBe(2);
+    expect(refused.calls).toHaveLength(0);
+    expect(refused.output).toContain('t2f-edge-prelaunch');
+    const wrong = await run([...PROD, '--take-domain-from', 'dns'], full, assetsDir, fakeCf(cf));
+    expect(wrong.code).toBe(2);
+    expect(wrong.calls).toHaveLength(0);
+    const ok = await run([...PROD, '--take-domain-from', 't2f-edge-prelaunch'], full, assetsDir, fakeCf(cf));
+    expect(ok.code).toBe(0);
+    expect(ok.calls[0]?.args.slice(1, 4)).toEqual(['deploy', '--env', 'production']);
+  });
+
+  it('the same Worker already holding the name → deployed without a flag', async () => {
+    const r = await run(PRE, full, assetsDir, fakeCf({ bindings: [PRELAUNCH_BINDING] }));
+    expect(r.code).toBe(0);
+  });
+
+  it('a non-Worker apex record (old site) → 2; only --take-domain-from dns lets it through', async () => {
+    const refused = await run(PRE, full, assetsDir, fakeCf({ records: [OLD_SITE, { name: 'time2fest.com', type: 'MX', content: 'mx' }] }));
+    expect(refused.code).toBe(2);
+    expect(refused.calls).toHaveLength(0);
+    const ok = await run([...PRE, '--take-domain-from', 'dns'], full, assetsDir, fakeCf({ records: [OLD_SITE] }));
+    expect(ok.code).toBe(0);
+    expect(ok.output).toContain('taking the name from dns');
+  });
+
+  it('--take-domain-from on a free name → 2 (it does not name the holder)', async () => {
+    const r = await run([...PRE, '--take-domain-from', 'dns'], full);
+    expect(r.code).toBe(2);
+    expect(r.calls).toHaveLength(0);
+  });
+
+  it('no CLOUDFLARE_ZONE_ID → 2 naming it, no request, no spawn', async () => {
+    const { CLOUDFLARE_ZONE_ID: _z, ...noZone } = full;
+    const r = await run(PRE, noZone);
+    expect(r.code).toBe(2);
+    expect(r.output).toContain('CLOUDFLARE_ZONE_ID');
+    expect(r.cfUrls).toEqual([]);
+    expect(r.calls).toHaveLength(0);
+  });
+
+  it('a token without the DNS-read right → 2 naming the right; never skipped', async () => {
+    const r = await run(PRE, full, assetsDir, fakeCf({ recordsStatus: 403 }));
+    expect(r.code).toBe(2);
+    expect(r.output).toContain('DNS > Read');
+    expect(r.calls).toHaveLength(0);
+    const w = await run(PRE, full, assetsDir, fakeCf({ bindingsStatus: 403 }));
+    expect(w.code).toBe(2);
+    expect(w.output).toContain('Workers Scripts > Read');
+  });
+
+  it('a malformed --take-domain-from → 2 before anything', async () => {
+    const r = await run([...PRE, '--take-domain-from', 'a b'], full);
+    expect(r.code).toBe(2);
+    expect(r.cfUrls).toEqual([]);
+  });
+
+  it('rehearsal and test make no Cloudflare API call', async () => {
+    const reh = await run(['--env', 'rehearsal', '--confirm', 'rehearsal'], full);
+    const test = await run(['--env', 'test'], full);
+    expect(reh.code).toBe(0);
+    expect(test.code).toBe(0);
+    expect([...reh.cfUrls, ...test.cfUrls]).toEqual([]);
   });
 });

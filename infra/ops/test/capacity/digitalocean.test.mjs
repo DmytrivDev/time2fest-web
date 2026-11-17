@@ -16,7 +16,8 @@ const FIX = path.join(OPS, 'test', 'fixtures', 'do');
 /** @param {string} name @returns {any} */
 const fixture = (name) => JSON.parse(fs.readFileSync(path.join(FIX, `${name}.json`), 'utf8'));
 
-const TOKEN = 'dop_v1_test_token_value_0123456789abcdef';
+const TOKEN = 'fake-do-token-for-local-api-0123456789abcdef'; // check-secrets: allow fake DO token for local fake API
+const REQ = ['t2f-managed', 't2f-env-rehearsal'];
 const FINGERPRINT = '3b:16:bf:e4:8b:00:8b:b8:59:8c:a9:d3:f0:19:45:fa';
 
 /**
@@ -243,7 +244,7 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
+      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ });
       const posted = srv.log.filter((r) => r.method === 'POST' && r.path.endsWith('/actions')).map((r) => r.body);
       expect(posted).toEqual([{ type: 'shutdown' }, { type: 'resize', size: 's-4vcpu-8gb', disk: false }, { type: 'power_on' }]);
       expect(srv.droplets[0]).toMatchObject({ size_slug: 's-4vcpu-8gb', disk: 80, status: 'active' });
@@ -257,7 +258,7 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
+      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ });
       const types = srv.log.filter((r) => r.method === 'POST' && r.path.endsWith('/actions')).map((r) => r.body.type);
       expect(types).toEqual(['shutdown', 'power_off', 'resize', 'power_on']);
     } finally {
@@ -270,7 +271,7 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true });
+      await p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ });
       const types = srv.log.filter((r) => r.method === 'POST' && r.path.endsWith('/actions')).map((r) => r.body.type);
       expect(types).toEqual(['power_on']);
     } finally {
@@ -283,9 +284,23 @@ describe('адаптер DigitalOcean: запити', () => {
     try {
       const p = providerFor(srv);
       const [main] = await p.listNodes(['t2f-managed']);
-      await p.deleteNode(main.id);
+      await p.deleteNode(main.id, { requireTags: REQ });
       expect(srv.log.at(-1)).toMatchObject({ method: 'DELETE', path: `/v2/droplets/${main.id}` });
       expect(srv.droplets).toEqual([]);
+    } finally {
+      await srv.close();
+    }
+  });
+
+  it('F7: без обох тегів — відмова до будь-якої дії (жодного POST /actions, жодного DELETE)', async () => {
+    const srv = await startFakeDo([{ ...SEED[0], tags: ['t2f-env-rehearsal', 't2f-role-main'] }]);
+    try {
+      const p = providerFor(srv);
+      const [main] = await p.listNodes(['t2f-env-rehearsal']);
+      await expect(p.resizeNode(main.id, 's-4vcpu-8gb', { keepDisk: true, requireTags: REQ })).rejects.toThrow(/t2f-managed/);
+      await expect(p.deleteNode(main.id, { requireTags: REQ })).rejects.toThrow(/t2f-managed/);
+      expect(srv.log.filter((r) => r.method !== 'GET')).toEqual([]);
+      expect(srv.droplets).toHaveLength(1);
     } finally {
       await srv.close();
     }

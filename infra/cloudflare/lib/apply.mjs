@@ -1,21 +1,22 @@
 // @ts-check
 // `apply`: під замком `cloudflare` читає поточний стан, рахує різницю, перевіряє запобіжником і застосовує
-// зміни по порядку: тунель → ingress → DNS → набори правил (повний список фази) → налаштування зони (лише з прапорцем).
+// зміни по порядку: застосунок Access (лише з `--with-access`) → тунель → ingress → DNS → набори правил (повний список
+// фази) → налаштування зони (лише з прапорцем). Access — першим: ім’я адмінки не з’являється раніше за свій захист.
 // Перша відмова зупиняє все; вивід називає дозвіл і вже застосовані зміни.
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { acquire, lockDir } from '../../../server/scripts/lib/lock.mjs';
 import { resolveWorktree } from '../../../server/scripts/lib/worktree.mjs';
 import { ApiRefusal } from './api.mjs';
-import { readCurrent } from './current.mjs';
+import { observe } from './current.mjs';
 import { diff } from './diff.mjs';
 import { describeRefusals, guard } from './guard.mjs';
-import { tokenFileExists, writeTokenFile } from './tokenFile.mjs';
+import { tokenFileExists, writeAccessMarker, writeTokenFile } from './tokenFile.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 /** Порядок виконання за видом зміни. */
-const ORDER = /** @type {Record<string, number>} */ ({ tunnel: 0, 'tunnel-config': 1, dns: 2, rule: 3, 'zone-setting': 4, 'access-app': 5 });
+const ORDER = /** @type {Record<string, number>} */ ({ 'access-app': 0, tunnel: 1, 'tunnel-config': 2, dns: 3, rule: 4, 'zone-setting': 5 });
 
 /** Дозвіл токена, потрібний для категорії запиту. */
 const EDIT_PERMISSION = /** @type {Record<string, string>} */ ({
@@ -63,7 +64,8 @@ function ymd(d) {
  *   api: { request: (method: string, category: string, path: string, body?: unknown) => Promise<any>, get: (category: string, path: string) => Promise<any> },
  *   ids: { accountId: string, zoneId: string },
  *   envName: string,
- *   desired: ReturnType<typeof import('./desired.mjs').desiredState>,
+ *   build: (staleAdmin: string[]) => ReturnType<typeof import('./desired.mjs').desiredState>,
+ *   adminWatch: string[],
  *   flags: import('./guard.mjs').GuardFlags,
  *   redactor: { add: (v: string | undefined) => void },
  *   out: (line: string) => void,
@@ -71,21 +73,26 @@ function ymd(d) {
  *   localDir: string,
  *   acquireLock: () => Promise<{ release: () => Promise<void> }>,
  *   access?: { changes: () => Promise<import('./diff.mjs').Change[]>, apply: (c: import('./diff.mjs').Change) => Promise<void> },
- * }} ApplyContext `access` — лише з `--with-access` (lib/access.mjs)
+ * }} ApplyContext `access` — лише з `--with-access` (lib/access.mjs); `build` — бажаний стан за залишками адмінки без
+ *   Access (`observe`); `adminWatch` — імена адмінки середовищ, де адмінку не ввімкнено
+ * @typedef {ApplyContext & { desired: ReturnType<typeof import('./desired.mjs').desiredState> }} ApplyRun
  */
 
 /**
- * @param {ApplyContext} ctx
+ * @param {ApplyContext} base
  * @returns {Promise<number>} 0 — успіх; 2 — запобіжник відмовив (0 запитів на зміну); 3 — зупинено на відмові API
  */
-export async function runApply(ctx) {
-  const { out } = ctx;
-  const lock = await ctx.acquireLock();
+export async function runApply(base) {
+  const { out } = base;
+  const lock = await base.acquireLock();
   /** @type {string[]} */
   const applied = [];
   try {
     // Читання під замком: другий apply бачить результат першого.
-    const current = await readCurrent(ctx.api, ctx.ids, ctx.desired, ctx.redactor);
+    const { desired, current, stale } = await observe({ api: base.api, ids: base.ids, build: base.build, watch: base.adminWatch, redactor: base.redactor });
+    /** @type {ApplyRun} */
+    const ctx = { ...base, desired };
+    for (const h of stale) out(`адмінка ${h}: є в Cloudflare без Access — ingress прибирається, ім’я йде в блок-правило`);
     if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');
     const changes = diff(ctx.desired, current);
     if (ctx.access) changes.push(...(await ctx.access.changes()));
@@ -105,6 +112,8 @@ export async function runApply(ctx) {
     }
 
     await ensureTokenFile(ctx, tunnelIds);
+    // Позначка «Access для адмінки є»: наступні запуски без --with-access лишають адмінку в бажаному стані.
+    if (ctx.access) out(`позначку Access записано у ${writeAccessMarker(ctx.localDir, ctx.envName, ctx.now())}`);
 
     if (applied.length) out(`- ${ymd(ctx.now())} — infra/cloudflare apply (${ctx.envName}): ${applied.join('; ')}`);
     return 0;
@@ -124,7 +133,7 @@ export async function runApply(ctx) {
 }
 
 /**
- * @param {ApplyContext} ctx
+ * @param {ApplyRun} ctx
  * @param {import('./diff.mjs').Change[]} changes
  * @param {Map<string, string>} tunnelIds
  * @param {string[]} applied
@@ -194,7 +203,7 @@ async function execute(ctx, changes, tunnelIds, applied) {
 
 /**
  * Якщо файлу токена ще немає — бере токен тунелю середовища й пише його в `.local/` (0600). Токен не друкується.
- * @param {ApplyContext} ctx
+ * @param {ApplyRun} ctx
  * @param {Map<string, string>} tunnelIds
  */
 async function ensureTokenFile(ctx, tunnelIds) {
