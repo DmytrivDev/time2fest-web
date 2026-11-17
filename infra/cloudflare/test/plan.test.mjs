@@ -136,3 +136,21 @@ describe('diff', () => {
     expect(ch.filter((c) => c.kind === 'zone-setting')).toHaveLength(2);
   });
 });
+
+describe('Bot Management Read is optional', () => {
+  it('plan continues with a warning when the token cannot read bot management (403)', async () => {
+    const fake = createFakeApi();
+    fake.refuse('bot-management', 403);
+    const r = await run(fake, baseEnv());
+    expect(r.code).toBe(0);
+    expect(r.text).toContain('Bot Fight Mode: стан не перевірено');
+    expect(r.text).not.toContain('Bot Fight Mode: true');
+    expect(fake.mutations()).toEqual([]);
+  });
+
+  it('an unknown Bot Fight Mode state produces no change', () => {
+    const d = desiredState(['test']);
+    const ch = diff(d, { tunnels: [], dns: [], rulesets: {}, zone: { pseudo_ipv4: 'off', bot_fight_mode: null } });
+    expect(ch.some((c) => c.target === 'bot_fight_mode')).toBe(false);
+  });
+});

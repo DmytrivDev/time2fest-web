@@ -109,7 +109,7 @@ export function diff(desired, current) {
   if (current.zone.pseudo_ipv4 !== desired.zone.pseudo_ipv4) {
     changes.push({ kind: 'zone-setting', op: 'update', target: 'pseudo_ipv4', hosts: [ZONE_WIDE], category: 'zone-settings', summary: `налаштування зони pseudo_ipv4: ${current.zone.pseudo_ipv4} → ${desired.zone.pseudo_ipv4}`, data: { setting: 'pseudo_ipv4', value: desired.zone.pseudo_ipv4 } });
   }
-  if (current.zone.bot_fight_mode !== desired.zone.bot_fight_mode) {
+  if (current.zone.bot_fight_mode !== null && current.zone.bot_fight_mode !== desired.zone.bot_fight_mode) {
     changes.push({ kind: 'zone-setting', op: 'update', target: 'bot_fight_mode', hosts: [ZONE_WIDE], category: 'bot-management', summary: `Bot Fight Mode: ${current.zone.bot_fight_mode} → ${desired.zone.bot_fight_mode}`, data: { setting: 'bot_fight_mode', value: desired.zone.bot_fight_mode } });
   }
 

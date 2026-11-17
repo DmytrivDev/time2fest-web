@@ -42,11 +42,21 @@ export async function readCurrent(api, { accountId, zoneId }, desired, redactor)
   }
 
   const pseudo = await api.get('zone-settings', `/zones/${zoneId}/settings/pseudo_ipv4`);
-  const bot = await api.get('bot-management', `/zones/${zoneId}/bot_management`);
+  // Право Bot Management Read необов'язкове: без нього стан Bot Fight Mode лишається невідомим (null),
+  // різниця його не чіпає, а plan і apply друкують попередження.
+  /** @type {any} */
+  let bot = null;
+  let botKnown = true;
+  try {
+    bot = await api.get('bot-management', `/zones/${zoneId}/bot_management`);
+  } catch (e) {
+    if (e instanceof ApiRefusal && e.status === 403) botKnown = false;
+    else throw e;
+  }
   return {
     tunnels,
     dns,
     rulesets,
-    zone: { pseudo_ipv4: pseudo?.value ?? null, bot_fight_mode: !!bot?.fight_mode },
+    zone: { pseudo_ipv4: pseudo?.value ?? null, bot_fight_mode: botKnown ? !!bot?.fight_mode : null },
   };
 }
