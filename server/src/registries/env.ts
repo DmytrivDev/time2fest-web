@@ -1,6 +1,6 @@
 /**
  * Environment-schema registry (AC-62): one block per owning capability, sorted by `key`.
- * R2 and AI variables are added by their owner waves as new blocks or rows.
+ * AI variables are added by their owner wave as a new block.
  */
 import { z } from 'zod';
 import type { EnvBlock } from '../platform/env';
@@ -28,7 +28,51 @@ const origins = z
   .transform((s) => s.split(',').map((o) => o.trim()).filter((o) => o !== ''))
   .refine((list) => list.length > 0 && list.every(isOrigin));
 
+const REQ = ['rehearsal', 'production'] as const;
+
+const csv = z
+  .string()
+  .transform((s) => s.split(',').map((o) => o.trim()).filter((o) => o !== ''))
+  .refine((list) => list.length > 0);
+
+const httpsUrl = z.string().refine((s) => {
+  try {
+    return new URL(s).protocol === 'https:';
+  } catch {
+    return false;
+  }
+});
+
+const hostPort = z.string().regex(/^[a-z0-9.-]+(:\d{1,5})?$/i);
+
 export const envRegistry: readonly EnvBlock[] = [
+  {
+    key: 'access',
+    vars: [
+      { name: 'T2F_ACCESS_AUD', schema: z.string().min(1).optional(), requiredIn: REQ },
+      // A URL, or the literal `test-signer:` (the test signer replaces the remote key set).
+      {
+        name: 'T2F_ACCESS_JWKS_URL',
+        schema: z.union([z.literal('test-signer:'), z.url()]).optional(),
+        requiredIn: REQ,
+      },
+      { name: 'T2F_ACCESS_SERVICE_CNS', schema: csv.optional() },
+      { name: 'T2F_ACCESS_TEAM_DOMAIN', schema: httpsUrl.optional(), requiredIn: REQ },
+      { name: 'T2F_ADMIN_HOST', schema: hostPort.optional(), requiredIn: REQ },
+      { name: 'T2F_OWNER_EMAILS', schema: csv.optional(), requiredIn: REQ },
+    ],
+  },
+  {
+    key: 'catalog',
+    vars: [
+      { name: 'T2F_CATALOG_RATE_PER_MIN', schema: intIn(1, 10_000).default(30) },
+      { name: 'T2F_R2_ACCESS_KEY_ID', schema: z.string().min(1).optional(), secret: true, requiredIn: REQ },
+      { name: 'T2F_R2_BUCKET', schema: z.string().min(1).optional(), requiredIn: REQ },
+      { name: 'T2F_R2_ENDPOINT', schema: z.url().optional(), isolated: true, requiredIn: REQ },
+      { name: 'T2F_R2_PREFIX', schema: z.string().regex(/^[a-z0-9_]+\/$/).optional(), requiredIn: REQ },
+      { name: 'T2F_R2_SECRET_ACCESS_KEY', schema: z.string().min(1).optional(), secret: true, requiredIn: REQ },
+    ],
+  },
   {
     key: 'edge',
     vars: [

@@ -79,5 +79,19 @@ services:
         limits:
           memory: 256m
 
+  r2:
+    image: adobe/s3mock:5.2.3
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:9090:9090'
+    environment:
+      COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: t2f-catalog
+      JAVA_TOOL_OPTIONS: '-XX:MaxRAMPercentage=60 -Xss512k'
+    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
 volumes:
   t2f_pgdata:
