@@ -87,19 +87,35 @@ export interface NonMidnightEvent {
   startsAt: string;
 }
 
-/** Read port: events of a kind other than `midnight`, with their own `startsAt` (AC-66). */
+/** A stored `startsAt` as an ISO instant, or `null` when it is absent or not a date. */
+function instantOf(value: unknown): string | null {
+  if (typeof value !== 'string' && !(value instanceof Date)) return null;
+  const at = new Date(value);
+  return Number.isNaN(at.getTime()) ? null : at.toISOString();
+}
+
+/**
+ * Read port: events of a kind other than `midnight`, with their own `startsAt` (AC-66). Such an
+ * event without a valid `startsAt` breaks AC-48 (a write without it is refused), so it can only come
+ * from outside the API; it has no moment and is left out rather than failing the whole read.
+ */
 export async function nonMidnightEvents(store: CatalogStore): Promise<NonMidnightEvent[]> {
   const stored = await store.read();
-  return stored.events
-    .filter((e) => e.slot !== undefined && e.slot !== null && e.slot !== 'midnight')
-    .map((e) => ({
-      eventId: String(e.eventId),
-      cityId: String(e.cityId),
-      zoneId: String(e.zoneId),
-      countryIso: String(e.countryIso),
-      slot: String(e.slot),
-      startsAt: new Date(e.startsAt as string).toISOString(),
-    }));
+  return stored.events.flatMap((e) => {
+    if (e.slot === undefined || e.slot === null || e.slot === 'midnight') return [];
+    const startsAt = instantOf(e.startsAt);
+    if (startsAt === null) return [];
+    return [
+      {
+        eventId: String(e.eventId),
+        cityId: String(e.cityId),
+        zoneId: String(e.zoneId),
+        countryIso: String(e.countryIso),
+        slot: String(e.slot),
+        startsAt,
+      },
+    ];
+  });
 }
 
 /** Read port: the midnight moment of every zone. */

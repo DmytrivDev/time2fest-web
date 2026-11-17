@@ -333,7 +333,7 @@ export async function buildAccessGate(deps: Deps, raw: RawEnv): Promise<AccessGa
   const verifier = keys
     ? createAccessVerifier({ issuer: config?.issuer ?? '', audience: config?.audience ?? '', keys, alarm: deps.alarm })
     : { verify: async () => ({ ok: false, reason: 'invalid' }) as const };
-  return createAccessGate({ config: keys ? config : undefined, verifier, denyLog: createDenyLog(deps.log, realClock) });
+  return createAccessGate({ config: keys ? config : undefined, verifier, denyLog: createDenyLog(deps.log, realClock), cls: deps.env.class });
 }
 
 /** The Access gate of the process, built once. */

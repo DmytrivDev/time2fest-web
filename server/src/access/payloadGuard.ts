@@ -47,6 +47,16 @@ export function passedGate(req: GuardedRequest): boolean {
   return isServerCall(req) || gateIdentity(req) !== null;
 }
 
+/**
+ * The request declares a JSON body (`application/json`, any parameters). A custom endpoint that reads
+ * a JSON body requires it (S4-01): a cross-site form or a `no-cors` fetch cannot send this type
+ * without a CORS preflight.
+ */
+export function hasJsonContentType(req: Pick<PayloadRequest, 'headers'>): boolean {
+  const type = req.headers?.get('content-type') ?? '';
+  return type.split(';')[0]?.trim().toLowerCase() === 'application/json';
+}
+
 function refuseUnlessPassed(req: PayloadRequest): void {
   if (!passedGate(req)) throw new Forbidden(req.t);
 }

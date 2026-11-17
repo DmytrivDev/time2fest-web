@@ -76,7 +76,7 @@ describe('Access gate (proxy)', () => {
     await expect403(await proxy(req('/admin', { [IDENTITY_HEADER]: forged })));
     const res = await proxy(req('/admin', { ...jwt(await service(SERVICE_CN)), [IDENTITY_HEADER]: forged }));
     await expect403(res);
-    const ok = await proxy(req('/cms-api/admins', { ...jwt(await service(SERVICE_CN)), [IDENTITY_HEADER]: 'forged' }));
+    const ok = await proxy(req('/cms-api/admins/me', { ...jwt(await service(SERVICE_CN)), [IDENTITY_HEADER]: 'forged' }));
     expect(passed(ok)).toBe(true);
     expect(getIdentityMarker().verify(ok.headers.get(`x-middleware-request-${IDENTITY_HEADER}`))).toMatchObject({
       kind: 'service',
@@ -86,8 +86,10 @@ describe('Access gate (proxy)', () => {
 
   it('AC-4: a service token reaches only /cms-api/* and only with an allowed common_name', async () => {
     await expect403(await proxy(req('/admin', jwt(await service(SERVICE_CN)))));
-    await expect403(await proxy(req('/cms-api/admins', jwt(await service('foreign-agent.access')))));
-    expect(passed(await proxy(req('/cms-api/admins', jwt(await service(SERVICE_CN)))))).toBe(true);
+    await expect403(await proxy(req('/cms-api/admins/me', jwt(await service('foreign-agent.access')))));
+    expect(passed(await proxy(req('/cms-api/admins/me', jwt(await service(SERVICE_CN)))))).toBe(true);
+    // S4-02: within /cms-api only the allow-list (catalog reads, admins/me, test collection).
+    await expect403(await proxy(req('/cms-api/admins', jwt(await service(SERVICE_CN)))));
   });
 
   it('AC-6: /admin and /cms-api on a foreign host → rewrite to the not-found path, even with a JWT', async () => {
@@ -97,6 +99,19 @@ describe('Access gate (proxy)', () => {
         expect(res.headers.get('x-middleware-next')).toBeNull();
         expect(new URL(String(res.headers.get('x-middleware-rewrite'))).pathname).toBe(NOT_FOUND_PATH);
       }
+    }
+  });
+
+  it('AC-6 (B2): on a foreign host /admin and an unknown path leave the proxy with the same status and header names', async () => {
+    const shape = async (path: string, headers: Record<string, string>) => {
+      const res = await proxy(req(path, headers, 'time2fest.com'));
+      return { status: res.status, names: [...res.headers.keys()].filter((h) => h !== 'date').sort(), body: await res.text() };
+    };
+    const owner = jwt(await person(MAIN));
+    for (const headers of [{}, owner]) {
+      const unknown = await shape('/no-such-page', headers);
+      expect(unknown.names).toContain('x-middleware-rewrite');
+      for (const path of ['/admin', '/cms-api/admins']) expect(await shape(path, headers)).toEqual(unknown);
     }
   });
 

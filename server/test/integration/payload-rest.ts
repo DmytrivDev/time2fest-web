@@ -27,10 +27,25 @@ export const serviceMark = (subject = 'agent.access') => ({
 
 export const apiKeyHeader = (key: string) => ({ authorization: `admins API-Key ${key}` });
 
+/** The origin a browser on the admin page sends (test class: plain http). */
+export const ADMIN_ORIGIN = `http://${ADMIN_HOST.toLowerCase()}`;
+
+/**
+ * What a browser adds to a same-origin call from the admin page: `Sec-Fetch-Site`, and `Origin` on a
+ * write. Payload's `csrf` setting reads them before it accepts the session cookie (S4-01).
+ */
+const browserHeaders = (method: Method, headers: Record<string, string> | undefined): Record<string, string> =>
+  headers?.cookie === undefined ? {} : { 'sec-fetch-site': 'same-origin', ...(method === 'GET' ? {} : { origin: ADMIN_ORIGIN }) };
+
 /** One REST call of `/cms-api<path>` straight into Payload's route handler. */
 export async function rest(method: Method, path: string, opts: { headers?: Record<string, string>; body?: unknown } = {}): Promise<Response> {
   const slug = (path.split('?')[0] ?? '').split('/').filter(Boolean);
-  const headers: Record<string, string> = { host: ADMIN_HOST, ...(opts.body === undefined ? {} : { 'content-type': 'application/json' }), ...opts.headers };
+  const headers: Record<string, string> = {
+    host: ADMIN_HOST,
+    ...(opts.body === undefined ? {} : { 'content-type': 'application/json' }),
+    ...browserHeaders(method, opts.headers),
+    ...opts.headers,
+  };
   const request = new Request(`http://${ADMIN_HOST}/cms-api${path}`, {
     method,
     headers,

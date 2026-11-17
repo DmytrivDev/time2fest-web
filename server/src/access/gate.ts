@@ -4,7 +4,8 @@
  * Fail closed: without config every gated path is 403.
  */
 import { classify, decide, isPublicApiPath, type DenyReason, type GateAuth } from '../domain/access/classify';
-import type { AccessConfig } from '../domain/access/config';
+import { adminOrigins, type AccessConfig } from '../domain/access/config';
+import type { EnvClass } from '../platform/env';
 import type { Clock, Logger } from '../ports';
 import type { AccessIdentity, AccessVerifier, DenyLog } from './ports';
 
@@ -13,6 +14,11 @@ export interface GateRequest {
   host: string;
   /** Value of `Cf-Access-Jwt-Assertion`, if any. */
   token: string | null;
+  /** HTTP method; absent → `GET`. */
+  method?: string;
+  /** `Origin` and `Sec-Fetch-Site`, `null` when absent (S4-01). */
+  origin?: string | null;
+  fetchSite?: string | null;
 }
 
 export type GateResult =
@@ -24,8 +30,11 @@ export interface AccessGate {
   check(req: GateRequest): Promise<GateResult>;
 }
 
-export function createAccessGate(deps: { config: AccessConfig | undefined; verifier: AccessVerifier; denyLog: DenyLog }): AccessGate {
+/** `cls` (default `production`) sets the admin origins and whether `agent-test-posts` is open to services. */
+export function createAccessGate(deps: { config: AccessConfig | undefined; verifier: AccessVerifier; denyLog: DenyLog; cls?: EnvClass }): AccessGate {
   const { config, verifier, denyLog } = deps;
+  const cls = deps.cls ?? 'production';
+  const origins = config ? adminOrigins(config.adminHost, cls) : [];
   return {
     async check(req) {
       if (isPublicApiPath(req.path)) return { kind: 'pass', identity: undefined };
@@ -44,7 +53,17 @@ export function createAccessGate(deps: { config: AccessConfig | undefined; verif
           auth = { ok: false, reason: v.reason };
         }
       }
-      const d = decide({ path: req.path, host: req.host, adminHost: config?.adminHost, auth });
+      const d = decide({
+        path: req.path,
+        host: req.host,
+        adminHost: config?.adminHost,
+        auth,
+        method: req.method,
+        origin: req.origin,
+        fetchSite: req.fetchSite,
+        adminOrigins: origins,
+        testClass: cls === 'test',
+      });
       if (d.kind === 'deny403') {
         denyLog.deny(d.reason);
         return d;

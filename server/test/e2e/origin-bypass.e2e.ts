@@ -33,7 +33,8 @@ const SKIP_REASON =
 const AGENT = `origin-bypass-agent-${Date.now()}@example.com`;
 const AGENT_PASSWORD = `ob-${randomBytes(12).toString('hex')}`;
 const COLD_MS = 120_000;
-const origin = { Origin: server };
+/** A write is accepted only from the admin origin (CSRF, S4-01); the test class serves it over http. */
+const origin = { Origin: `http://${adminHost.toLowerCase()}` };
 
 async function doorJwt(request: APIRequestContext, data: Record<string, string>): Promise<string> {
   const res = await request.post(`${server}/api/_test/access-token`, { data, timeout: COLD_MS });

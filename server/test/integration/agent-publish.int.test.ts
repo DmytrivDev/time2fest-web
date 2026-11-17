@@ -55,6 +55,21 @@ describe('agentPublish (AC-19)', () => {
     expect(stored.docs.map((d) => d.status)).toEqual(['published', 'proposal']);
   });
 
+  it('S4-06: switch off → an agent edit of an already published record (no status sent) becomes a proposal; the owner edit stays published', async () => {
+    await setSwitch(true);
+    const created = await rest('POST', '/agent-test-posts', { headers: agent, body: { title: TITLE, status: 'published' } });
+    const id = ((await created.json()) as { doc: { id: number; status: string } }).doc.id;
+    await setSwitch(false);
+    const edited = await rest('PATCH', `/agent-test-posts/${id}`, { headers: agent, body: { title: TITLE } });
+    expect(edited.status).toBe(200);
+    expect(((await edited.json()) as { doc: { status: string } }).doc.status).toBe('proposal');
+    const draft = await rest('POST', '/agent-test-posts', { headers: agent, body: { title: TITLE, status: 'draft' } });
+    expect(((await draft.json()) as { doc: { status: string } }).doc.status).toBe('draft');
+    const byOwner = await rest('PATCH', `/agent-test-posts/${id}`, { headers: owner, body: { title: TITLE, status: 'published' } });
+    expect(((await byOwner.json()) as { doc: { status: string } }).doc.status).toBe('published');
+    await setSwitch(true);
+  });
+
   it('the owner reads the switch; an agent may not', async () => {
     expect((await rest('GET', '/globals/admin-settings', { headers: owner })).status).toBe(200);
     expect((await rest('GET', '/globals/admin-settings', { headers: agent })).status).toBe(403);

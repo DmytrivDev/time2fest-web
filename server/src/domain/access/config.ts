@@ -53,6 +53,20 @@ function isLoopbackHttp(url: URL): boolean {
   return url.protocol === 'http:' && url.hostname === '127.0.0.1' && url.port !== '';
 }
 
+/**
+ * The origins the admin is served from (S4-01): `https://<admin host>`, and in the `test` class
+ * also `http://<admin host>` (the local stand has no TLS). Lower-cased, as browsers send them.
+ */
+export function adminOrigins(adminHost: string, cls: EnvClass): string[] {
+  const host = adminHost.toLowerCase();
+  return cls === 'test' ? [`https://${host}`, `http://${host}`] : [`https://${host}`];
+}
+
+/** The session cookie is `Secure` in every class but `test`, rehearsal included (S4-04). */
+export function sessionCookieSecure(cls: EnvClass): boolean {
+  return cls !== 'test';
+}
+
 /** Validates and assembles the Access settings for `cls`; `failing` names each variable once. */
 export function parseAccessConfig(raw: RawEnv, cls: EnvClass): AccessConfigResult {
   const missing = REQUIRED.filter((name) => value(raw, name) === undefined);

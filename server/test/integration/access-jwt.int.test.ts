@@ -129,6 +129,6 @@ describe('Access JWT verifier', () => {
     });
     const service = await dispatch(post('/api/_test/access-token', { kind: 'service', commonName: 'test-agent.access' }));
     const st = ((await service.json()) as { value: { token: string } }).value.token;
-    expect((await gate.check({ path: '/cms-api/admins', host, token: st })).kind).toBe('pass');
+    expect((await gate.check({ path: '/cms-api/admins/me', host, token: st })).kind).toBe('pass');
   });
 });

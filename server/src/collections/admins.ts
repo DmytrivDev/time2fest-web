@@ -12,7 +12,8 @@ import type { CollectionConfig, Endpoint, PayloadRequest } from 'payload';
 import { createKeyService, type AgentKeyStore } from '../access/keys';
 import { ACTION_CONTEXT_KEY } from '../audit/journal';
 import { isServerCall } from '../access/payloadGuard';
-import { accessFor, roleOf } from '../access/policies';
+import { accessFor, ownerOnly, roleOf } from '../access/policies';
+import { sessionCookieSecure } from '../domain/access/config';
 import { ownerChangeRefused, ROLES } from '../domain/access/roles';
 import { envClass } from '../platform/env';
 
@@ -70,9 +71,10 @@ export const admins: CollectionConfig = {
   auth: {
     tokenExpiration: SESSION_SECONDS,
     useAPIKey: true,
-    cookies: { sameSite: 'Lax', secure: envClass(process.env) === 'production' },
+    cookies: { sameSite: 'Lax', secure: sessionCookieSecure(envClass(process.env)) },
   },
-  access: accessFor('keys'),
+  // Payload's default `unlock` is "any signed-in record"; it runs no `beforeOperation` (S4-02).
+  access: { ...accessFor('keys'), unlock: ownerOnly },
   endpoints: [keyEndpoint('issue'), keyEndpoint('revoke')],
   hooks: {
     beforeChange: [

@@ -1,10 +1,11 @@
 /**
  * Next 16 Proxy (Node runtime): the Cloudflare Access gate in front of Payload (AC-1, AC-4, AC-6).
  * Every path except `/api/*` needs a valid `Cf-Access-Jwt-Assertion` header (the header, never the
- * Access cookie); `/admin*` and `/cms-api*` on a foreign host are rewritten to Next's
- * own 404, the same as an unknown path. On a pass the request carries a signed identity marker
- * for the second check inside Payload; an inbound marker is always removed. Any error → 403.
- * Admin static assets are gated too (behind Access that is expected).
+ * Access cookie). On a foreign host every gated path — known or not — is rewritten to Next's own
+ * 404, so `/admin` answers exactly like an unknown path, headers included. A state-changing request
+ * whose `Origin` / `Sec-Fetch-Site` show another origin → 403 (CSRF, S4-01). On a pass the request
+ * carries a signed identity marker for the second check inside Payload; an inbound marker is always
+ * removed. Any error → 403. Admin static assets are gated too (behind Access that is expected).
  */
 import { NextResponse, type NextRequest } from 'next/server';
 import type { AccessGate } from './access/gate';
@@ -29,6 +30,9 @@ export function proxyWith(gate: () => Promise<AccessGate>, marker: () => Identit
         path: req.nextUrl.pathname,
         host: req.headers.get('host') ?? '',
         token: req.headers.get(ACCESS_JWT_HEADER),
+        method: req.method,
+        origin: req.headers.get('origin'),
+        fetchSite: req.headers.get('sec-fetch-site'),
       });
       if (result.kind === 'deny403') return forbidden();
       if (result.kind === 'notFound404') return NextResponse.rewrite(new URL(NOT_FOUND_PATH, req.url));

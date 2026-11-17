@@ -10,6 +10,7 @@
  * Body of both: `{ changes: { [eventId]: PatchChange }, expectedVersions: { [eventId]: number }, confirmWarnings?: true }`.
  */
 import type { CollectionConfig, Endpoint, PayloadRequest } from 'payload';
+import { hasJsonContentType } from '../access/payloadGuard';
 import { ownerOnly, roleOf } from '../access/policies';
 import { createPayloadCorrectionStore, payloadCorrectionDeps } from '../adapters/payloadCorrections';
 import { resolveActor } from '../audit/journal';
@@ -43,6 +44,7 @@ function answer<T>(result: CorrectionResult<T>): Response {
 
 /** The JSON body as a request, or `null` when it is not a JSON object within the size limit. */
 async function bodyOf(req: PayloadRequest): Promise<CorrectionRequest | null> {
+  if (!hasJsonContentType(req)) return null;
   try {
     const text = req.text ? await req.text() : '';
     if (text.length === 0 || text.length > MAX_BODY_BYTES) return null;

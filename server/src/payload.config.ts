@@ -4,7 +4,8 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { uk } from '@payloadcms/translations/languages/uk';
 import { buildConfig } from 'payload';
 import { harden, hardenGlobal } from './access/payloadGuard';
-import { loadEnv } from './platform/env';
+import { adminOrigins } from './domain/access/config';
+import { envClass, loadEnv } from './platform/env';
 import { collectionRegistry } from './registries/collections';
 import { envRegistry } from './registries/env';
 import { globalRegistry } from './registries/globals';
@@ -15,13 +16,21 @@ const loaded = loadEnv(process.env, envRegistry);
 if (!loaded.ok) {
   throw new Error('env: invalid ' + loaded.failing.join(', '));
 }
-const env = loaded.env as { PAYLOAD_SECRET: string; DATABASE_URI: string };
+const env = loaded.env as { PAYLOAD_SECRET: string; DATABASE_URI: string; T2F_ADMIN_HOST?: string };
+
+/**
+ * CSRF (S4-01): Payload accepts its session cookie only from the admin origins (a request with an
+ * `Origin` elsewhere, or without one and without `Sec-Fetch-Site`, is not signed in by cookie).
+ * `serverURL` stays unset: the admin client fetches relative URLs (W9 spike).
+ */
+const csrf = env.T2F_ADMIN_HOST ? adminOrigins(env.T2F_ADMIN_HOST, envClass(process.env)) : [];
 
 export default buildConfig({
   secret: env.PAYLOAD_SECRET,
   admin: { user: 'admins', avatar: 'default', importMap: { baseDir: dirname }, components: { views: { dashboard: { Component: '/admin/Dashboard#Dashboard' } } } },
   i18n: { supportedLanguages: { uk }, fallbackLanguage: 'uk' },
   routes: { api: '/cms-api', admin: '/admin' },
+  csrf,
   graphQL: { disable: true },
   collections: collectionRegistry.map((r) => harden(r.collection, r)),
   globals: globalRegistry.map((r) => hardenGlobal(r.global)),

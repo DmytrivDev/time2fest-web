@@ -7,6 +7,7 @@
  * `POST /cms-api/globals/unattended-state/manual` with `{ "on": boolean }` → `ApiResult`.
  */
 import type { Endpoint, GlobalConfig, PayloadRequest } from 'payload';
+import { hasJsonContentType } from '../access/payloadGuard';
 import { ownerOnly, roleOf } from '../access/policies';
 import { resolveActor } from '../audit/journal';
 import { setManual, UNATTENDED_STATE } from '../unattended/service';
@@ -19,6 +20,7 @@ const fail = (status: number, code: 'forbidden' | 'validation') => Response.json
 
 /** `{ on: boolean }` from the body, or `null`. */
 async function onOf(req: PayloadRequest): Promise<boolean | null> {
+  if (!hasJsonContentType(req)) return null;
   try {
     const text = req.text ? await req.text() : '';
     if (text.length === 0 || text.length > MAX_BODY_BYTES) return null;

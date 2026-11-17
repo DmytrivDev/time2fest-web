@@ -202,10 +202,11 @@ describe('AC-11: an admin request straight to the origin is refused (production 
     const login = await rest('POST', '/admins/login', { body: { email: OWNER, password: PASSWORD }, headers: { [IDENTITY_HEADER]: personMarker } });
     expect(login.status).toBe(200);
 
-    const service = await proxy(request({ name: 'agent', path: '/cms-api/agent-test-posts', method: 'GET', headers: apiKeyHeader(apiKey) }, await signed(cf.privateKey, 'service')));
+    // A catalog read: the production gate keeps `agent-test-posts` closed to services (S4-02).
+    const service = await proxy(request({ name: 'agent', path: '/cms-api/zones', method: 'GET', headers: apiKeyHeader(apiKey) }, await signed(cf.privateKey, 'service')));
     expect(service.headers.get('x-middleware-next')).toBe('1');
     const serviceMarker = String(service.headers.get(`x-middleware-request-${IDENTITY_HEADER}`));
-    const posts = await rest('GET', '/agent-test-posts', { headers: { ...apiKeyHeader(apiKey), [IDENTITY_HEADER]: serviceMarker } });
+    const posts = await rest('GET', '/zones', { headers: { ...apiKeyHeader(apiKey), [IDENTITY_HEADER]: serviceMarker } });
     expect(posts.status).toBe(200);
   });
 
