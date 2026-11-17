@@ -43,3 +43,9 @@ export interface CatalogImportStore extends CatalogStore {
   /** Creates or updates the season without a journal row of its own (the run's summary row covers it). */
   writeSeason(tx: Tx, season: { id?: string; key: string; generatedAt: string; tzdbVersion: string }): Promise<void>;
 }
+
+/** A bucket of an S3-compatible store (Cloudflare R2 in production, an emulator on a worktree stack). */
+export interface ObjectStore {
+  /** Writes (replaces) one object; the key already carries the environment's prefix. Throws when the write fails. */
+  put(key: string, body: string, contentType: string): Promise<void>;
+}

@@ -15,6 +15,7 @@ import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogStore } from './adapters/payloadCatalog';
+import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
@@ -25,6 +26,7 @@ import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventLog, EventPublisher, EventSubscriber } from './events/ports';
 import type { AlarmStore } from './alarms/ports';
+import type { CatalogCopyDeps } from './catalog/copy';
 import type { CatalogStore } from './catalog/ports';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
@@ -162,6 +164,32 @@ export function catalogStoreOf(deps: Deps): CatalogStore {
   const store = (deps as unknown as Record<symbol, CatalogStore | undefined>)[CATALOG_STORE_KEY];
   if (!store) throw new Error('deps: not built by createDeps');
   return store;
+}
+
+/**
+ * What the R2 copy of the catalog needs (AC-72), or `undefined` when the environment has no bucket
+ * configured (a class that does not require R2): then nothing is copied.
+ */
+export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
+  const v = deps.env.vars;
+  const endpoint = v.T2F_R2_ENDPOINT;
+  const bucket = v.T2F_R2_BUCKET;
+  const accessKeyId = v.T2F_R2_ACCESS_KEY_ID;
+  const secretAccessKey = v.T2F_R2_SECRET_ACCESS_KEY;
+  const prefix = v.T2F_R2_PREFIX;
+  if (!endpoint || !bucket || !accessKeyId || !secretAccessKey || !prefix) return undefined;
+  return {
+    store: catalogStoreOf(deps),
+    objects: createS3ObjectStore({
+      endpoint: String(endpoint),
+      bucket: String(bucket),
+      accessKeyId: String(accessKeyId),
+      secretAccessKey: String(secretAccessKey),
+    }),
+    prefix: String(prefix),
+    alarm: deps.alarm,
+    log: deps.log,
+  };
 }
 
 /** The internal-events ports of deps built by `createDeps` (AC-40 … AC-42). */

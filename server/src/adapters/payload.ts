@@ -8,6 +8,9 @@ import { DependencyUnavailable, type IdempotencyBegin, type IdempotencyStore, ty
 
 const COLLECTION = 'idempotency-records';
 
+/** The seed writes as the system: server-side, without the catalog's integrity and version hooks (AC-88). */
+const SEED_CONTEXT = { t2fTrusted: true, t2fImport: true, t2fActor: 'system:seed' };
+
 /** A connection-level Postgres failure becomes `DependencyUnavailable`; anything else is rethrown. */
 async function guard<T>(fn: () => Promise<T>): Promise<T> {
   try {
@@ -82,9 +85,9 @@ export function createPayloadSeedStore(getPayload: () => Promise<Payload>): Seed
         });
         const existing = found.docs[0] as { id: string | number } | undefined;
         if (existing) {
-          await payload.update({ collection, id: existing.id, data: data as never, overrideAccess: true });
+          await payload.update({ collection, id: existing.id, data: data as never, overrideAccess: true, context: SEED_CONTEXT });
         } else {
-          await payload.create({ collection, data: data as never, overrideAccess: true });
+          await payload.create({ collection, data: data as never, overrideAccess: true, context: SEED_CONTEXT });
         }
       }),
     count: (slug) =>

@@ -14,6 +14,7 @@ import type { Deps } from '../../src/endpoints/types';
 import { importRegistry } from '../../src/registries/imports';
 import { IMPORT_CONTEXT, KINDS } from './catalog-helpers';
 import { testDeps } from './helpers';
+import { listKeys, r2Env } from './r2-helpers';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = path.join(serverDir, '../data');
@@ -74,10 +75,13 @@ describe('import catalog', { timeout: 300_000 }, () => {
   }, 300_000);
 
   it('AC-75: a dry run writes nothing and reports the four groups', async () => {
+    const r2 = r2Env();
     const before = await counts();
+    const r2Before = await listKeys(r2, r2.prefix);
     const result = await run(false);
     expect(result.code).toBe(0);
     expect(await counts()).toEqual(before);
+    expect(await listKeys(r2, r2.prefix)).toEqual(r2Before);
     const text = result.lines.join('\n');
     for (const group of ['add:', 'change:', 'same:', 'skipped (changed in the admin):']) expect(text).toContain(group);
     expect(result.plan?.counts.add).toBe(1618);
