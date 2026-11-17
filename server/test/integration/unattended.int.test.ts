@@ -32,7 +32,7 @@ import { testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, sessionCookie } from './payload-rest';
 
 const OWNER = 'unattended-owner@example.com';
-const PASSWORD = 'unattended-password-0001';
+const PASSWORD = 'unattended-password-0001'; // check-secrets: allow test fake
 const run = `ua${Date.now()}`;
 const S = 1_000;
 const MIN = 60_000;

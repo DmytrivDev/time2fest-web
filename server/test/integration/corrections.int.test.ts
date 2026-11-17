@@ -18,7 +18,7 @@ import { testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, sessionCookie } from './payload-rest';
 
 const OWNER = 'corrections-owner@example.com';
-const PASSWORD = 'corrections-password-0001';
+const PASSWORD = 'corrections-password-0001'; // check-secrets: allow test fake
 const run = `cr${Date.now()}`;
 const MIN = 60_000;
 const MIDNIGHT = '2026-12-31T23:00:00Z';

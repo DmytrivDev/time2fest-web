@@ -12,7 +12,7 @@ import { apiKeyHeader, makeAdmin, personMark, removeAdmins, rest, serviceMark, s
 
 const OWNER = 'catalog-access-owner@example.com';
 const AGENT = 'catalog-access-agent@example.com';
-const PASSWORD = 'catalog-access-password-01';
+const PASSWORD = 'catalog-access-password-01'; // check-secrets: allow test fake
 const run = `ca${Date.now()}`;
 
 describe('catalog access (AC-18, AC-45, AC-46, AC-48)', () => {

@@ -10,7 +10,7 @@ import { testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest } from './payload-rest';
 
 const EMAIL = 'session-owner@example.com';
-const PASSWORD = 'session-owner-password-0001';
+const PASSWORD = 'session-owner-password-0001'; // check-secrets: allow test fake
 const DAY = 86_400;
 
 describe('Payload session 24 h (AC-12)', () => {

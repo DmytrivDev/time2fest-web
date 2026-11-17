@@ -9,7 +9,7 @@ import { apiKeyHeader, makeAdmin, personMark, removeAdmins, rest, serviceMark, s
 
 const OWNER = 'revert-owner@example.com';
 const AGENT = 'revert-agent@example.com';
-const PASSWORD = 'revert-password-00000001';
+const PASSWORD = 'revert-password-00000001'; // check-secrets: allow test fake
 
 type Row = { id: number; action: string; revertOf?: string | null; revertible: boolean };
 

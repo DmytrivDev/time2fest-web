@@ -15,7 +15,7 @@ import { ADMIN_HOST, personMark, rest } from './payload-rest';
 
 const OWNER = 'first-owner@example.com';
 const OWNER_LIST = `${OWNER},reserve-owner@example.com`;
-const PASSWORD = 'first-owner-password-0001';
+const PASSWORD = 'first-owner-password-0001'; // check-secrets: allow test fake
 const MAIN = String(process.env.T2F_OWNER_EMAILS).split(',')[0] ?? '';
 const DEFAULTS = { iss: new URL(String(process.env.T2F_ACCESS_TEAM_DOMAIN)).origin, aud: String(process.env.T2F_ACCESS_AUD) };
 

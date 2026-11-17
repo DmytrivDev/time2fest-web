@@ -15,7 +15,7 @@ import { ADMIN_HOST, apiKeyHeader, makeAdmin, personMark, removeAdmins, rest, se
 
 const OWNER = 'keys-owner@example.com';
 const AGENT = 'keys-agent@example.com';
-const PASSWORD = 'keys-password-00000001';
+const PASSWORD = 'keys-password-00000001'; // check-secrets: allow test fake
 const SERVICE_CN = String(process.env.T2F_ACCESS_SERVICE_CNS).split(',')[0] ?? '';
 const DEFAULTS = { iss: new URL(String(process.env.T2F_ACCESS_TEAM_DOMAIN)).origin, aud: String(process.env.T2F_ACCESS_AUD) };
 
@@ -142,7 +142,7 @@ describe('agent API keys (AC-15, AC-16, NFR-5)', () => {
   });
 
   it('the key fields cannot be set through the API', async () => {
-    const res = await rest('PATCH', `/admins/${agentId}`, { headers: owner, body: { enableAPIKey: true, apiKey: 'chosen-by-hand-0000000000000000' } });
+    const res = await rest('PATCH', `/admins/${agentId}`, { headers: owner, body: { enableAPIKey: true, apiKey: 'chosen-by-hand-0000000000000000' } }); // check-secrets: allow test fake
     expect(res.status).toBeLessThan(500);
     const strategyHit = await rest('GET', '/agent-test-posts', { headers: { ...apiKeyHeader('chosen-by-hand-0000000000000000'), ...serviceMark() } });
     expect(strategyHit.status).toBe(403);

@@ -14,7 +14,7 @@ const OWNER = 'roles-owner@example.com';
 const AGENT = 'roles-agent@example.com';
 const OTHER = 'roles-stream@example.com';
 const NEW = 'roles-new@example.com';
-const PASSWORD = 'roles-password-0000001';
+const PASSWORD = 'roles-password-0000001'; // check-secrets: allow test fake
 
 describe('roles (AC-14, AC-17, AC-18)', () => {
   let payload: Payload;

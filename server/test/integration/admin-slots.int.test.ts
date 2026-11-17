@@ -12,7 +12,7 @@ import { post, testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, sessionCookie } from './payload-rest';
 
 const OWNER = 'admin-slots-owner@example.com';
-const PASSWORD = 'admin-slots-password-0001';
+const PASSWORD = 'admin-slots-password-0001'; // check-secrets: allow test fake
 
 type Row = { id: number; action: string; revertible: boolean };
 

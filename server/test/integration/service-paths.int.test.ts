@@ -15,7 +15,7 @@ import { ADMIN_HOST, apiKeyHeader, makeAdmin, personMark, removeAdmins, rest, se
 
 const OWNER = 'svc-paths-owner@example.com';
 const AGENT = 'svc-paths-agent@example.com';
-const PASSWORD = 'svc-paths-password-0001';
+const PASSWORD = 'svc-paths-password-0001'; // check-secrets: allow test fake
 const SERVICE_CN = String(process.env.T2F_ACCESS_SERVICE_CNS).split(',')[0] ?? '';
 const DEFAULTS = { iss: new URL(String(process.env.T2F_ACCESS_TEAM_DOMAIN)).origin, aud: String(process.env.T2F_ACCESS_AUD) };
 

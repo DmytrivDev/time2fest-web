@@ -11,7 +11,7 @@ import { testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, sessionCookie } from './payload-rest';
 
 const OWNER = 'journal-owner@example.com';
-const PASSWORD = 'journal-password-0000001';
+const PASSWORD = 'journal-password-0000001'; // check-secrets: allow test fake
 
 type Row = {
   id: number;

@@ -10,7 +10,7 @@ import { testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, serviceMark, sessionCookie } from './payload-rest';
 
 const EMAIL = 'guard-owner@example.com';
-const PASSWORD = 'guard-owner-password-0001';
+const PASSWORD = 'guard-owner-password-0001'; // check-secrets: allow test fake
 
 describe('second check inside Payload (AC-5)', () => {
   let payload: Payload;

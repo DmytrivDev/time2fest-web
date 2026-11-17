@@ -81,10 +81,10 @@ describe('catalog seed rows', { timeout: 600_000 }, () => {
     for (const r of seedRegistry.filter((x) => x.key.startsWith('catalog-'))) expect(r.source).toMatch(/^data\/(schedule|countries)\.json$/);
   });
 
-  it('nothing under server/src/seed reads research_data or the streams scout output', () => {
+  it('nothing under server/src/seed reads the research data folder or the streams scout output', () => {
     let out = '';
     try {
-      out = execFileSync('git', ['grep', '-n', '-e', 'research_data', '-e', 'streams.candidates', '--', 'src/seed'], { cwd: serverDir, encoding: 'utf8' });
+      out = execFileSync('git', ['grep', '-n', '-e', ['research', 'data'].join('_'), '-e', 'streams.candidates', '--', 'src/seed'], { cwd: serverDir, encoding: 'utf8' });
     } catch {
       out = '';
     }

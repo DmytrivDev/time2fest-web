@@ -11,7 +11,7 @@ import { apiKeyHeader, makeAdmin, personMark, removeAdmins, rest, serviceMark, s
 
 const OWNER = 'publish-owner@example.com';
 const AGENT = 'publish-agent@example.com';
-const PASSWORD = 'publish-password-000001';
+const PASSWORD = 'publish-password-000001'; // check-secrets: allow test fake
 const TITLE = 'agent-publish test';
 
 describe('agentPublish (AC-19)', () => {

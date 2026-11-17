@@ -12,7 +12,7 @@ import { post, testDeps } from './helpers';
 import { makeAdmin, personMark, removeAdmins, rest, sessionCookie } from './payload-rest';
 
 const OWNER = 'alarms-owner@example.com';
-const PASSWORD = 'alarms-password-00000001';
+const PASSWORD = 'alarms-password-00000001'; // check-secrets: allow test fake
 
 function captureLog() {
   const lines: Record<string, unknown>[] = [];

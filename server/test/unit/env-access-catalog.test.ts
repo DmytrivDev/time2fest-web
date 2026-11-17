@@ -21,7 +21,7 @@ const base = {
   T2F_R2_BUCKET: 't2f-catalog',
   T2F_R2_PREFIX: 'spec_04_admin_catalog/',
   T2F_R2_ACCESS_KEY_ID: 't2f-local',
-  T2F_R2_SECRET_ACCESS_KEY: 't2f-local-secret-0000',
+  T2F_R2_SECRET_ACCESS_KEY: 't2f-local-secret-0000', // check-secrets: allow test fake
 };
 
 describe('env blocks access and catalog', () => {

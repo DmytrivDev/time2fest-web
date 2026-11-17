@@ -19,7 +19,7 @@ const [MAIN] = String(process.env.T2F_OWNER_EMAILS).split(',') as [string];
 const SERVICE_CN = String(process.env.T2F_ACCESS_SERVICE_CNS).split(',')[0] ?? '';
 const DEFAULTS = { iss: new URL(String(process.env.T2F_ACCESS_TEAM_DOMAIN)).origin, aud: String(process.env.T2F_ACCESS_AUD) };
 const OWNER = 'csrf-owner@example.com';
-const PASSWORD = 'csrf-owner-password-0001';
+const PASSWORD = 'csrf-owner-password-0001'; // check-secrets: allow test fake
 const SAME_SITE = 'https://www.time2fest.com';
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';

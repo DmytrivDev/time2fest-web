@@ -50,7 +50,7 @@ const PROD_RAW = {
 };
 const OWNER = 'origin-bypass-owner@example.com';
 const AGENT = 'origin-bypass-agent@example.com';
-const PASSWORD = 'origin-bypass-password-01';
+const PASSWORD = 'origin-bypass-password-01'; // check-secrets: allow test fake
 const CF_KID = 'cf-origin-bypass-kid';
 
 /** Counts and blocks every outbound `http(s).get/request` (jose's key-set fetch uses `get`). */

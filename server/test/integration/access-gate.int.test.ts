@@ -17,7 +17,7 @@ const [MAIN, RESERVE] = String(process.env.T2F_OWNER_EMAILS).split(',') as [stri
 const SERVICE_CN = String(process.env.T2F_ACCESS_SERVICE_CNS).split(',')[0] ?? '';
 const DEFAULTS = { iss: new URL(String(process.env.T2F_ACCESS_TEAM_DOMAIN)).origin, aud: String(process.env.T2F_ACCESS_AUD) };
 const ADMIN_EMAIL = 'gate-admin@example.com';
-const ADMIN_PASSWORD = 'gate-admin-password-0001';
+const ADMIN_PASSWORD = 'gate-admin-password-0001'; // check-secrets: allow test fake
 
 const person = async (email: string) => (await getTestSigner()).sign({ kind: 'person', email }, DEFAULTS);
 const service = async (commonName: string) => (await getTestSigner()).sign({ kind: 'service', commonName }, DEFAULTS);
