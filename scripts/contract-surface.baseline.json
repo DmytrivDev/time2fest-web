@@ -3032,6 +3032,12 @@
         "{\"props\":{\"ok\":{\"optional\":false,\"type\":{\"union\":[\"true\"]}},\"value\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/result.ts#T\"}}}}"
       ]
     },
+    "packages/contracts/src/result.ts#PLATFORM_REASONS": {
+      "text": "readonly [\"invalid-input\", \"in-progress\", \"lock-required\"]"
+    },
+    "packages/contracts/src/result.ts#PlatformReason": {
+      "text": "(typeof PLATFORM_REASONS)[number]"
+    },
     "packages/contracts/src/result.ts#Unsubscribe": {
       "fn": "() => void"
     },
@@ -3040,6 +3046,42 @@
     },
     "packages/contracts/src/result.ts#ok": {
       "fn": "export function ok<T>(value: T): ApiResult<T>"
+    },
+    "packages/contracts/src/schemas.ts#ApiErrorCodeSchema": {
+      "text": "ZodEnum<{ network: \"network\"; unavailable: \"unavailable\"; unauthorized: \"unauthorized\"; forbidden: \"forbidden\"; not_found: \"not_found\"; conflict: \"conflict\"; rate_limited: \"rate_limited\"; validation: \"validation\"; unknown: \"unknown\"; }>"
+    },
+    "packages/contracts/src/schemas.ts#ApiErrorSchema": {
+      "text": "ZodObject<{ code: ZodEnum<{ network: \"network\"; unavailable: \"unavailable\"; unauthorized: \"unauthorized\"; forbidden: \"forbidden\"; not_found: \"not_found\"; conflict: \"conflict\"; rate_limited: \"rate_limited\"; validation: \"validation\"; unknown: \"unknown\"; }>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; attemptsLeft: ZodOptional<ZodNumber>; message: ZodOptional<ZodString>; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#ApiFailureSchema": {
+      "text": "ZodObject<{ ok: ZodLiteral<false>; error: ZodObject<{ code: ZodEnum<{ network: \"network\"; unavailable: \"unavailable\"; unauthorized: \"unauthorized\"; forbidden: \"forbidden\"; not_found: \"not_found\"; conflict: \"conflict\"; rate_limited: \"rate_limited\"; validation: \"validation\"; unknown: \"unknown\"; }>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; attemptsLeft: ZodOptional<ZodNumber>; message: ZodOptional<ZodString>; }, $strict>; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#TestClockSet": {
+      "text": "z.infer<typeof TestClockSetSchema>"
+    },
+    "packages/contracts/src/schemas.ts#TestClockSetSchema": {
+      "text": "ZodObject<{ at: ZodOptional<ZodNumber>; speed: ZodOptional<ZodNumber>; frozen: ZodOptional<ZodBoolean>; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#TestClockState": {
+      "text": "z.infer<typeof TestClockStateSchema>"
+    },
+    "packages/contracts/src/schemas.ts#TestClockStateSchema": {
+      "text": "ZodObject<{ now: ZodNumber; speed: ZodNumber; frozen: ZodBoolean; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#TestFixturesBody": {
+      "text": "z.infer<typeof TestFixturesBodySchema>"
+    },
+    "packages/contracts/src/schemas.ts#TestFixturesBodySchema": {
+      "text": "ZodObject<{ name: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#TimeResponse": {
+      "text": "z.infer<typeof TimeResponseSchema>"
+    },
+    "packages/contracts/src/schemas.ts#TimeResponseSchema": {
+      "text": "ZodObject<{ now: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#apiResultSchema": {
+      "fn": "export function apiResultSchema<T extends z.ZodType>(value: T)"
     },
     "packages/contracts/src/site.ts#Money": {
       "props": {

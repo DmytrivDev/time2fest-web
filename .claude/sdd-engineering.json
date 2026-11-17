@@ -23,8 +23,8 @@
     {
       "package": "server",
       "dir": "server",
-      "files": "echo 'TODO-until-created: SPEC-01 creates server/ and replaces this command (typecheck + vitest related --maxWorkers=2, own test database)' && exit 1",
-      "full": "echo 'TODO-until-created: SPEC-01 creates server/ and replaces this command (typecheck + unit + integration serial + migrate:status + generate:types --check)' && exit 1"
+      "files": "npx tsc --noEmit -p . && npx eslint --no-warn-ignored {files} && npx vitest related --run --maxWorkers=2 --passWithNoTests {files}",
+      "full": "npx tsc --noEmit -p . && npx eslint . && npx vitest run --maxWorkers=2 && pnpm test:int && node scripts/verify-schema.mjs"
     }
   ],
   "routing": "D:/Work/Pets/Time2Fest/docs/backend/sdd-routing.md",
@@ -56,7 +56,7 @@
     {
       "name": "Test doors",
       "question": "Does the change add or touch a test-only door (fixtures, clock, last code)?",
-      "check": "door is registered only when NODE_ENV=test and T2F_TEST_DOORS=1; production build test proves the route returns 404"
+      "check": "door is registered only when T2F_ENV=test and T2F_TEST_DOORS=1 (dynamic import in server/src/test-doors); production build test proves every /api/_test/* path returns 404 identical to an unknown path"
     },
     {
       "name": "Agent write surface",

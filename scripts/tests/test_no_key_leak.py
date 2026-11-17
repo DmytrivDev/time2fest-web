@@ -16,7 +16,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parent.parent
-FAKE_KEY = "AIzaSyFAKE-KEY-for-tests_0123456789abcdef"
+FAKE_KEY = "AIzaSyFAKE-KEY-for-tests_0123456789abcdef"  # check-secrets: allow fake key used to prove the scripts never print a key
 MODE = {"value": "ok"}
 
 

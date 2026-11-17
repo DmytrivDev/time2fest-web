@@ -1,0 +1,56 @@
+/**
+ * AC-30 / AC-31: in production every test door answers exactly like an unknown /api path
+ * (status, body, header names except `date`), also with the test-door switches on the request.
+ * Needs the server started with T2F_ENV=production. Env: T2F_E2E_SERVER (server URL).
+ */
+import { expect, test, type APIRequestContext } from '@playwright/test';
+
+const server = process.env.T2F_E2E_SERVER ?? '';
+
+/** Equal to the rows of `src/test-doors/registry.ts` (method + path). */
+const DOORS: Array<[string, string]> = [
+  ['POST', '/api/_test/reset'],
+  ['POST', '/api/_test/fixtures'],
+  ['GET', '/api/_test/clock'],
+  ['POST', '/api/_test/clock'],
+  ['POST', '/api/_test/last-code'],
+  ['POST', '/api/_test/moderation'],
+  ['POST', '/api/_test/paypro-webhook'],
+  ['POST', '/api/_test/video-status'],
+];
+
+const VARIANTS: Array<{ name: string; query: string; headers: Record<string, string> }> = [
+  { name: 'plain', query: '', headers: {} },
+  { name: 'header', query: '', headers: { 'X-T2F-Test-Doors': '1' } },
+  { name: 'query', query: '?doors=1', headers: {} },
+  { name: 'cookie', query: '', headers: { Cookie: 't2f_env=test' } },
+];
+
+async function probe(request: APIRequestContext, method: string, path: string, query: string, headers: Record<string, string>) {
+  const res = await request.fetch(`${server}${path}${query}`, {
+    method,
+    headers: { Origin: server, ...headers },
+    data: method === 'GET' ? undefined : {},
+    maxRedirects: 0,
+  });
+  const names = Object.keys(res.headers())
+    .filter((h) => h !== 'date')
+    .sort();
+  return { status: res.status(), body: await res.text(), names };
+}
+
+test('AC-30/31: the registry has 8 door rows', () => {
+  expect(DOORS).toHaveLength(8);
+});
+
+for (const v of VARIANTS) {
+  for (const [method, path] of DOORS) {
+    test(`AC-30/31: ${method} ${path} is indistinguishable from an unknown path (${v.name})`, async ({ request }) => {
+      test.skip(!server, 'set T2F_E2E_SERVER (server started with T2F_ENV=production)');
+      const door = await probe(request, method, path, v.query, v.headers);
+      const nope = await probe(request, method, '/api/nope', v.query, v.headers);
+      expect(door.status).toBe(404);
+      expect(door).toEqual(nope);
+    });
+  }
+}

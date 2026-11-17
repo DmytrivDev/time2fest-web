@@ -43,6 +43,7 @@
     "out",
     "storybook-static",
     "functions",
+    "server",
     "packages/*/node_modules",
     "packages/*/dist"
   ]

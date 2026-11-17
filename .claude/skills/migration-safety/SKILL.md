@@ -5,15 +5,15 @@ description: Checks Payload/Postgres migrations of Time2Fest before merge — ge
 
 # migration-safety — Payload / Postgres migrations
 
-From December the database holds real people's passes, stamps and orders; a broken migration on the festival night cannot be undone. **Status:** commands are TODO until SPEC-01 creates `server/` (Payload 3, `@payloadcms/db-postgres`); then fix the exact script names here.
+From December the database holds real people's passes, stamps and orders; a broken migration on the festival night cannot be undone. **Status:** built by SPEC-02 (Payload 3.91, `@payloadcms/db-postgres`). Commands, from `web/`: `pnpm --dir server migrate:create <name>`, `migrate`, `migrate:status`, `migrate:down`, `generate:types`; in `server/`: `node scripts/verify-schema.mjs` (schema check) and `node scripts/db.mjs migcheck up|drop` (creates or drops only `t2f_<slug>_migcheck`).
 
 ## Checks (all must pass; report one line each)
-1. **Generated, not hand-written:** the migration file was produced by `pnpm --dir server payload migrate:create <name>` after the collection change; hand edits only for data backfills, each named in a plan item.
+1. **Generated, not hand-written:** the migration file was produced by `pnpm --dir server migrate:create <name>` after the collection change; hand edits only for data backfills, each named in a plan item.
 2. **No destructive operation without a plan item:** grep the new migration for `DROP TABLE`, `DROP COLUMN`, `ALTER COLUMN … TYPE`, `SET NOT NULL` on existing columns, `TRUNCATE`, `DELETE FROM`. Each hit needs a plan item with backfill/rollback; otherwise STOP and ask the orchestrator. Prefer expand → migrate data → contract over two releases.
 3. **Down exists and works:** the `down` function reverses `up` (not empty).
-4. **Up/down/up on a copy:** create `t2f_<slug>_migcheck` from this worktree's seeded database (`CREATE DATABASE … TEMPLATE …` while nothing is connected, or dump/restore), run `migrate` → `migrate:down` → `migrate` there, then drop **only** that `_migcheck` database.
+4. **Up/down/up on a copy:** `node scripts/db.mjs migcheck up` (in `server/`) creates `t2f_<slug>_migcheck` from this worktree's seeded database; run `migrate` → `migrate:down` → `migrate` there, then `node scripts/db.mjs migcheck drop` removes **only** that `_migcheck` database.
 5. **Order and numbering:** after `git rebase master`, the migration folder has no two migrations created from the same parent state; if master gained migrations, delete your generated file and regenerate (the spec that merges second regenerates — wave-orchestration §3).
-6. **Types:** `pnpm --dir server generate:types` leaves no diff (`git diff --exit-code server/src/payload-types.ts`); shared wire schemas in `packages/contracts` still match (skill contract-conformance).
+6. **Schema and types:** `node scripts/verify-schema.mjs` (in `server/`) passes; `pnpm --dir server generate:types` leaves no diff (`git diff --exit-code server/src/payload-types.ts`); shared wire schemas in `packages/contracts` still match (skill contract-conformance).
 7. **Seed still works:** `pnpm --dir server seed` on the migrated database is idempotent (run twice, same counts).
 8. **Locks on big tables:** for tables expected to be large at peak (`presence pulses`, `chat messages`, `orders`), adding an index uses `CREATE INDEX CONCURRENTLY` in a separate migration, or the plan says why not.
 
