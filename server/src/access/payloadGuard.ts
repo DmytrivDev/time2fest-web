@@ -17,8 +17,9 @@
  * Local API calls carry none).
  */
 import { Forbidden } from 'payload';
-import type { CollectionConfig, Endpoint, GlobalConfig, PayloadRequest } from 'payload';
+import type { CollectionConfig, CollectionSlug, Endpoint, GlobalConfig, PayloadRequest } from 'payload';
 import { createIdentityMarker, IDENTITY_HEADER } from '../adapters/identityMarker';
+import { auditAfterChange, auditAfterDelete } from '../audit/hooks';
 import { realClock } from '../clock';
 import type { AccessIdentity } from './ports';
 import { roleOf } from './policies';
@@ -69,14 +70,25 @@ function adminAccess(existing: AdminAccess | undefined): AdminAccess {
   };
 }
 
-/** Adds the second check to a collection (see the module comment). */
-export function harden(collection: CollectionConfig): CollectionConfig {
+/**
+ * Adds the second check to a collection (see the module comment); with `audited`, also the journal
+ * hooks (AC-20), after the collection's own `afterChange`/`afterDelete`.
+ */
+export function harden(collection: CollectionConfig, options: { audited?: boolean } = {}): CollectionConfig {
   const hooks = collection.hooks ?? {};
+  const slug = collection.slug as CollectionSlug;
+  const audit = options.audited
+    ? {
+        afterChange: [...(hooks.afterChange ?? []), auditAfterChange(slug)],
+        afterDelete: [...(hooks.afterDelete ?? []), auditAfterDelete(slug)],
+      }
+    : {};
   const guarded: CollectionConfig = {
     ...collection,
     endpoints: guardEndpoints(collection.endpoints),
     hooks: {
       ...hooks,
+      ...audit,
       beforeOperation: [({ req }) => refuseUnlessPassed(req), ...(hooks.beforeOperation ?? [])],
     },
   };

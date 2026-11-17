@@ -1,5 +1,6 @@
 import * as migration_20261116_221920_initial from './20261116_221920_initial';
 import * as migration_20261117_103807_spec04_wip_p3 from './20261117_103807_spec04_wip_p3';
+import * as migration_20261117_110521_spec04_wip_p4 from './20261117_110521_spec04_wip_p4';
 
 export const migrations = [
   {
@@ -10,6 +11,11 @@ export const migrations = [
   {
     up: migration_20261117_103807_spec04_wip_p3.up,
     down: migration_20261117_103807_spec04_wip_p3.down,
-    name: '20261117_103807_spec04_wip_p3'
+    name: '20261117_103807_spec04_wip_p3',
+  },
+  {
+    up: migration_20261117_110521_spec04_wip_p4.up,
+    down: migration_20261117_110521_spec04_wip_p4.down,
+    name: '20261117_110521_spec04_wip_p4'
   },
 ];

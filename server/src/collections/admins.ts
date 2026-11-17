@@ -10,6 +10,7 @@
 import { Forbidden } from 'payload';
 import type { CollectionConfig, Endpoint, PayloadRequest } from 'payload';
 import { createKeyService, type AgentKeyStore } from '../access/keys';
+import { ACTION_CONTEXT_KEY } from '../audit/journal';
 import { isServerCall } from '../access/payloadGuard';
 import { accessFor, roleOf } from '../access/policies';
 import { ownerChangeRefused, ROLES } from '../domain/access/roles';
@@ -37,6 +38,7 @@ function keyStore(req: PayloadRequest): AgentKeyStore {
         id: n,
         data: key === null ? { enableAPIKey: false, apiKey: null } : { enableAPIKey: true, apiKey: key },
         req,
+        context: { [ACTION_CONTEXT_KEY]: key === null ? 'key.revoke' : 'key.issue' },
         overrideAccess: true,
         depth: 0,
       });

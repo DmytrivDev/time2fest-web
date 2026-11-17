@@ -74,6 +74,16 @@ describe('no first-register; owner:create (AC-13)', () => {
     });
     const found = await payload.find({ collection: 'admins', where: { role: { equals: 'owner' } }, overrideAccess: true });
     expect(found.docs.map((d) => d.email)).toEqual([OWNER]);
+    // AC-20: the creation is journalled once, by the system, without the password.
+    const journal = await payload.find({
+      collection: 'audit-log',
+      where: { and: [{ 'target.collection': { equals: 'admins' } }, { 'target.ref': { equals: String(found.docs[0]?.id) } }] },
+      overrideAccess: true,
+      depth: 0,
+    });
+    expect(journal.docs).toHaveLength(1);
+    expect(journal.docs[0]).toMatchObject({ actor: { kind: 'system', ref: 'owner-create' }, action: 'collection.create' });
+    expect(JSON.stringify(journal.docs)).not.toContain(PASSWORD);
     const again = await createOwner(payload, { email: 'reserve-owner@example.com', password: PASSWORD, ownerEmailsRaw: OWNER_LIST });
     expect(again.code).toBe(2);
     expect(await countAdmins(payload)).toBe(1);

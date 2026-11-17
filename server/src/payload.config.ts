@@ -21,7 +21,7 @@ export default buildConfig({
   admin: { user: 'admins', avatar: 'default' },
   routes: { api: '/cms-api', admin: '/admin' },
   graphQL: { disable: true },
-  collections: collectionRegistry.map((r) => harden(r.collection)),
+  collections: collectionRegistry.map((r) => harden(r.collection, r)),
   globals: globalRegistry.map((r) => hardenGlobal(r.global)),
   db: postgresAdapter({
     pool: { connectionString: env.DATABASE_URI },

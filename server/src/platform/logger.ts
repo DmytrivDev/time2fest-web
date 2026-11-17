@@ -3,6 +3,7 @@
  * process stdout. Every secret value (length ≥ 4) in any string field — nested objects,
  * arrays and `Error` messages included — is replaced with `***` before the line is written.
  */
+import type { AlarmStore } from '../alarms/ports';
 import type { Alarm, AlarmInput, Clock, Logger } from '../ports';
 
 export const MASK = '***';
@@ -60,15 +61,62 @@ export function createLogger(secrets: readonly string[], options: LoggerOptions)
   };
 }
 
+/** Repeats of one alarm kind inside this window are suppressed (counted, not written or saved). */
+export const ALARM_THROTTLE_MS = 60_000;
+const MAX_TRACKED_KINDS = 1_000;
+
+export interface AlarmOptions {
+  throttleMs?: number;
+  /** Epoch ms for the throttle; defaults to `Date.now` (real time, like log timestamps). */
+  now?: () => number;
+}
+
 /**
- * One line `{ level: 'alarm', alarm, source, code, ...details }` per alarm.
- * Never throws, even when the write fails.
+ * One line `{ level: 'alarm', alarm, source, code, ...details }` per alarm; with `store`, a `page`
+ * alarm is also saved, fire-and-forget (AC-37 of SPEC-04): a failed save writes one log-level
+ * alarm line and is otherwise swallowed. Never throws, even when the write or the save fails.
+ *
+ * Per kind (`level`, `source`, `code`), at most one line and one save per `throttleMs`; the next
+ * line after a suppressed burst carries `suppressed: <count>`. This keeps a failure that repeats on
+ * every request (e.g. `access-jwks-unreachable`) from flooding the log and the alarm store.
  */
-export function createAlarm(logger: Logger): Alarm {
+export function createAlarm(logger: Logger, store?: Pick<AlarmStore, 'save'>, options: AlarmOptions = {}): Alarm {
+  const throttleMs = options.throttleMs ?? ALARM_THROTTLE_MS;
+  const now = options.now ?? Date.now;
+  const kinds = new Map<string, { at: number; suppressed: number }>();
+
+  function admit(a: AlarmInput): { suppressed: number } | null {
+    const key = `${a.level}\u0000${a.source}\u0000${a.code}`;
+    const t = now();
+    const seen = kinds.get(key);
+    if (seen && t - seen.at < throttleMs) {
+      seen.suppressed += 1;
+      return null;
+    }
+    if (!seen && kinds.size >= MAX_TRACKED_KINDS) kinds.clear();
+    kinds.set(key, { at: t, suppressed: 0 });
+    return { suppressed: seen?.suppressed ?? 0 };
+  }
+
   return {
     raise(a: AlarmInput): void {
       try {
-        logger.error({ ...a.details, level: 'alarm', alarm: a.level, source: a.source, code: a.code });
+        const admitted = admit(a);
+        if (!admitted) return;
+        const extra = admitted.suppressed > 0 ? { suppressed: admitted.suppressed } : {};
+        try {
+          logger.error({ ...a.details, ...extra, level: 'alarm', alarm: a.level, source: a.source, code: a.code });
+        } catch {
+          /* never throw */
+        }
+        if (a.level !== 'page' || !store) return;
+        store.save({ source: a.source, code: a.code }).catch(() => {
+          try {
+            logger.error({ level: 'alarm', alarm: 'log', source: 'alarms', code: 'alarm_store_failed' });
+          } catch {
+            /* never throw */
+          }
+        });
       } catch {
         /* never throw */
       }

@@ -36,9 +36,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "admin_settings" DISABLE ROW LEVEL SECURITY;
   DROP TABLE "agent_test_posts" CASCADE;
   DROP TABLE "admin_settings" CASCADE;
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_agent_test_posts_fk";
+  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_agent_test_posts_fk";
   
-  DROP INDEX "payload_locked_documents_rels_agent_test_posts_id_idx";
+  DROP INDEX IF EXISTS "payload_locked_documents_rels_agent_test_posts_id_idx";
   ALTER TABLE "admins" DROP COLUMN "role";
   ALTER TABLE "admins" DROP COLUMN "enable_a_p_i_key";
   ALTER TABLE "admins" DROP COLUMN "api_key";

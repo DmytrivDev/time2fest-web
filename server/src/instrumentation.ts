@@ -15,5 +15,7 @@ export async function register() {
       console.error('env: invalid ' + access.failing.join(', '));
       process.exit(1);
     }
+    // Internal-events delivery loop (AC-40); never during `next build`.
+    if (process.env.NEXT_PHASE !== 'phase-production-build') (await import('./container')).startProcessBackground();
   }
 }

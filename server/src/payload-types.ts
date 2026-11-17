@@ -69,7 +69,10 @@ export interface Config {
   collections: {
     admins: Admin;
     'agent-test-posts': AgentTestPost;
+    alarms: Alarm;
+    'audit-log': AuditLog;
     'idempotency-records': IdempotencyRecord;
+    'internal-events': InternalEvent;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -79,7 +82,10 @@ export interface Config {
   collectionsSelect: {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     'agent-test-posts': AgentTestPostsSelect<false> | AgentTestPostsSelect<true>;
+    alarms: AlarmsSelect<false> | AlarmsSelect<true>;
+    'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
     'idempotency-records': IdempotencyRecordsSelect<false> | IdempotencyRecordsSelect<true>;
+    'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -167,6 +173,60 @@ export interface AgentTestPost {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alarms".
+ */
+export interface Alarm {
+  id: number;
+  source: string;
+  code: string;
+  level: 'page';
+  raisedAt: string;
+  acknowledgedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log".
+ */
+export interface AuditLog {
+  id: number;
+  actor: {
+    kind: 'owner' | 'agent' | 'system';
+    ref: string;
+    label: string;
+  };
+  action: string;
+  target: {
+    collection: string;
+    ref: string;
+  };
+  at: string;
+  before?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  after?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  revertOf?: string | null;
+  revertible: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "idempotency-records".
  */
 export interface IdempotencyRecord {
@@ -184,6 +244,25 @@ export interface IdempotencyRecord {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "internal-events".
+ */
+export interface InternalEvent {
+  id: number;
+  topic: string;
+  version: number;
+  payload?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  committedAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -218,8 +297,20 @@ export interface PayloadLockedDocument {
         value: number | AgentTestPost;
       } | null)
     | ({
+        relationTo: 'alarms';
+        value: number | Alarm;
+      } | null)
+    | ({
+        relationTo: 'audit-log';
+        value: number | AuditLog;
+      } | null)
+    | ({
         relationTo: 'idempotency-records';
         value: number | IdempotencyRecord;
+      } | null)
+    | ({
+        relationTo: 'internal-events';
+        value: number | InternalEvent;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -303,6 +394,46 @@ export interface AgentTestPostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alarms_select".
+ */
+export interface AlarmsSelect<T extends boolean = true> {
+  source?: T;
+  code?: T;
+  level?: T;
+  raisedAt?: T;
+  acknowledgedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log_select".
+ */
+export interface AuditLogSelect<T extends boolean = true> {
+  actor?:
+    | T
+    | {
+        kind?: T;
+        ref?: T;
+        label?: T;
+      };
+  action?: T;
+  target?:
+    | T
+    | {
+        collection?: T;
+        ref?: T;
+      };
+  at?: T;
+  before?: T;
+  after?: T;
+  revertOf?: T;
+  revertible?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "idempotency-records_select".
  */
 export interface IdempotencyRecordsSelect<T extends boolean = true> {
@@ -311,6 +442,16 @@ export interface IdempotencyRecordsSelect<T extends boolean = true> {
   result?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "internal-events_select".
+ */
+export interface InternalEventsSelect<T extends boolean = true> {
+  topic?: T;
+  version?: T;
+  payload?: T;
+  committedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

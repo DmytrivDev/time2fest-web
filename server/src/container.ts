@@ -21,6 +21,11 @@ import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
 import type { AppEnv, Deps, RouteRow } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
+import { startEventBus, type EventBus } from './events/bus';
+import type { EventLog, EventPublisher, EventSubscriber } from './events/ports';
+import type { AlarmStore } from './alarms/ports';
+import { createPayloadAlarmStore } from './adapters/payloadAlarms';
+import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
 import { createAlarm, createLogger } from './platform/logger';
@@ -28,14 +33,19 @@ import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { middlewareRegistry } from './registries/middleware';
 import { routeRegistry } from './registries/routes';
+import { subscriberRegistry } from './registries/subscribers';
 
 const DEPS_KEY = Symbol.for('t2f.deps');
 const DISPATCHER_KEY = Symbol.for('t2f.dispatcher');
 const PAYLOAD_KEY = Symbol.for('t2f.payload');
 const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
+const EVENTS_KEY = Symbol.for('t2f.events');
+const ALARM_STORE_KEY = Symbol.for('t2f.alarmStore');
+const BACKGROUND_KEY = Symbol.for('t2f.background');
+const BACKGROUND_RETRY_MS = 5_000;
 
-/** What a caller of `createDeps` may replace: any port, and the lazy Payload accessor. */
-export type DepsOverrides = Partial<Omit<Deps, 'env'>> & { payload?: () => Promise<Payload> };
+/** What a caller of `createDeps` may replace: any port, the lazy Payload accessor and the alarm store. */
+export type DepsOverrides = Partial<Omit<Deps, 'env'>> & { payload?: () => Promise<Payload>; alarmStore?: AlarmStore };
 
 type Dispatcher = (req: Request) => Promise<Response>;
 
@@ -106,11 +116,16 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
   const env: AppEnv = { class: loaded.class, vars: loaded.env };
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
-  const alarm = overrides.alarm ?? createAlarm(log);
+  const clock = overrides.clock ?? clockFor(env.class);
+  // The store reaches Payload lazily, so the alarm exists before Payload (which reports through it).
+  let payloadRef: () => Promise<Payload> = () => Promise.reject(new Error('payload: not wired'));
+  const alarmStore = overrides.alarmStore ?? createPayloadAlarmStore(() => payloadRef(), clock);
+  const alarm = overrides.alarm ?? createAlarm(log, alarmStore);
   const payload = overrides.payload ?? lazyPayload(alarm);
+  payloadRef = payload;
   const deps: Deps = {
     env,
-    clock: overrides.clock ?? clockFor(env.class),
+    clock,
     log,
     alarm,
     lockState: overrides.lockState ?? createLockState(undefined, raw),
@@ -120,7 +135,72 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
+  const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
+  const events: EventPorts = {
+    publisher: createPgEventPublisher(payload, clock, channel),
+    log: createPgEventLog(payload),
+    channel,
+  };
+  Object.defineProperty(deps, EVENTS_KEY, { value: events, enumerable: false });
+  Object.defineProperty(deps, ALARM_STORE_KEY, { value: alarmStore, enumerable: false });
   return deps;
+}
+
+/** The alarm store of deps built by `createDeps` (AC-37 … AC-39): the alarm door and the slice read it. */
+export function alarmStoreOf(deps: Deps): AlarmStore {
+  const store = (deps as unknown as Record<symbol, AlarmStore | undefined>)[ALARM_STORE_KEY];
+  if (!store) throw new Error('deps: not built by createDeps');
+  return store;
+}
+
+/** The internal-events ports of deps built by `createDeps` (AC-40 … AC-42). */
+export interface EventPorts {
+  publisher: EventPublisher;
+  log: EventLog;
+  channel: string;
+}
+
+export function eventsOf(deps: Deps): EventPorts {
+  const events = (deps as unknown as Record<symbol, EventPorts | undefined>)[EVENTS_KEY];
+  if (!events) throw new Error('deps: not built by createDeps');
+  return events;
+}
+
+/**
+ * Background work of one process: the internal-events delivery loop over the subscriber registry
+ * (`testOnly` rows only in the `test` class). Called by `instrumentation.ts` once per process and
+ * by integration helpers, which stop it themselves.
+ */
+export function startBackground(deps: Deps, subscribers: readonly EventSubscriber[] = subscriberRegistry): Promise<EventBus> {
+  const uri = String(deps.env.vars.DATABASE_URI ?? '');
+  return startEventBus({
+    source: createPgEventSource({
+      payload: payloadOf(deps),
+      databaseUri: uri,
+      channel: eventsOf(deps).channel,
+      onError: (err) => {
+        const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+        deps.alarm.raise({ level: 'log', source: 'events', code: 'listener_error', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+      },
+    }),
+    subscribers: subscribers.filter((s) => !s.testOnly || deps.env.class === 'test'),
+    log: deps.log,
+  });
+}
+
+/** Starts the process background once; a failed start (database down) is retried every 5 s. */
+export function startProcessBackground(): void {
+  const g = globalThis as unknown as Record<symbol, true | undefined>;
+  if (g[BACKGROUND_KEY]) return;
+  g[BACKGROUND_KEY] = true;
+  const attempt = () => {
+    const deps = getDeps();
+    startBackground(deps).catch(() => {
+      deps.alarm.raise({ level: 'log', source: 'events', code: 'background_start_failed' });
+      setTimeout(attempt, BACKGROUND_RETRY_MS).unref?.();
+    });
+  };
+  attempt();
 }
 
 /** The lazy Payload accessor of deps built by `createDeps`. For the composition root and tests only. */

@@ -110,6 +110,31 @@ describe('agent API keys (AC-15, AC-16, NFR-5)', () => {
     expect(output.split(key).length - 1).toBe(0);
   });
 
+  it('AC-20, NFR-5: issue and revoke each write one journal row by the owner, without the key value', async () => {
+    const since = (
+      await payload.find({ collection: 'audit-log', sort: '-id', limit: 1, overrideAccess: true, depth: 0 })
+    ).docs[0]?.id ?? 0;
+    const issued = await rest('POST', `/admins/${agentId}/issue-key`, { headers: owner });
+    const key = ((await issued.json()) as { key: string }).key;
+    expect((await rest('POST', `/admins/${agentId}/revoke-key`, { headers: owner })).status).toBe(200);
+    const rows = (
+      await payload.find({
+        collection: 'audit-log',
+        where: { and: [{ id: { greater_than: since } }, { 'target.collection': { equals: 'admins' } }, { 'target.ref': { equals: String(agentId) } }] },
+        sort: 'id',
+        overrideAccess: true,
+        depth: 0,
+      })
+    ).docs;
+    expect(rows.map((r) => r.action)).toEqual(['key.issue', 'key.revoke']);
+    for (const r of rows) {
+      expect(r).toMatchObject({ actor: { kind: 'owner', ref: String(ownerId) }, revertible: false });
+      expect(r.at).toBeTruthy();
+    }
+    expect(JSON.stringify(rows)).not.toContain(key);
+    expect(JSON.stringify(rows)).not.toMatch(/"(apiKey|apiKeyIndex|enableAPIKey|hash|salt)"/);
+  });
+
   it('only the owner issues, and only for agent records', async () => {
     expect((await rest('POST', `/admins/${ownerId}/issue-key`, { headers: owner })).status).toBe(400);
     expect((await rest('POST', '/admins/999999999/issue-key', { headers: owner })).status).toBe(404);
