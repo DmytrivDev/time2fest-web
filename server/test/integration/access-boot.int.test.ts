@@ -3,6 +3,7 @@
  * variable. Spawns the real boot check (`env.check.ts`) with a production environment.
  */
 import { spawnSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -24,6 +25,8 @@ const PRODUCTION: Record<string, string> = {
   T2F_R2_PREFIX: 'prod/',
   T2F_R2_ACCESS_KEY_ID: 'key-id',
   T2F_R2_SECRET_ACCESS_KEY: 'key-secret',
+  // Required in rehearsal/production since SPEC-05 (edge gate); built at runtime, never a literal.
+  T2F_EDGE_SECRET: randomBytes(24).toString('hex'),
 };
 
 function envCheck(over: Record<string, string>) {

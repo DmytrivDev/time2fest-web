@@ -75,6 +75,17 @@ describe('edge secret in the env registry', () => {
       REDIS_URL: 'redis://localhost:6380/4',
       T2F_REDIS_PREFIX: 't2f:edge_unit:',
       PAYLOAD_SECRET: payloadSecret,
+      // SPEC-04 blocks `access` and `catalog` are required in rehearsal too; present so only the edge secret is missing.
+      T2F_ADMIN_HOST: 'admin.localhost:3100',
+      T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',
+      T2F_ACCESS_AUD: 't2f-test-aud',
+      T2F_ACCESS_JWKS_URL: 'test-signer:',
+      T2F_OWNER_EMAILS: 'owner@example.com',
+      T2F_R2_ENDPOINT: 'http://127.0.0.1:9090',
+      T2F_R2_BUCKET: 't2f-catalog',
+      T2F_R2_PREFIX: 'edge_unit/',
+      T2F_R2_ACCESS_KEY_ID: 't2f-local',
+      T2F_R2_SECRET_ACCESS_KEY: randomBytes(12).toString('hex'),
     };
     const missing = loadEnv({ ...base, T2F_ENV: 'rehearsal' }, envRegistry);
     expect(missing).toEqual({ ok: false, failing: ['T2F_EDGE_SECRET'] });

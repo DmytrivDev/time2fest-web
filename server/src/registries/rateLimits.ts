@@ -6,8 +6,9 @@ import type { RateLimitRow } from '../platform/rateLimit';
 import { assertRegistry } from '../platform/registry';
 
 export const rateLimitRegistry: readonly RateLimitRow[] = [
-  // The public build-time read of the catalog (AC-63): 30 a minute, counted in this process if Redis is down.
-  { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['device'], onStoreDown: 'memory' },
+  // The public build-time read of the catalog (AC-63): 30 a minute per client (SPEC-05 daily fingerprint),
+  // counted in this process if Redis is down.
+  { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
 ];
 
 assertRegistry('rate-limits', rateLimitRegistry, (r) => r.key);

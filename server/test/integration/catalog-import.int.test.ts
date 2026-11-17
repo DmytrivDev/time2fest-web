@@ -3,6 +3,7 @@
  * are emptied first (the door of this suite), then the real `data/` files are imported.
  */
 import { spawnSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -175,6 +176,8 @@ describe('import catalog', { timeout: 300_000 }, () => {
       T2F_R2_PREFIX: 'rehearsal/',
       T2F_R2_ACCESS_KEY_ID: 'key-id',
       T2F_R2_SECRET_ACCESS_KEY: 'key-secret',
+      // Required in rehearsal since SPEC-05 (edge gate); built at runtime, never a literal.
+      T2F_EDGE_SECRET: randomBytes(24).toString('hex'),
     };
     delete env.T2F_TEST_DOORS;
     const r = spawnSync(process.execPath, [tsx, 'src/cli/import.ts', 'catalog', '--source-dir', dataDir], {

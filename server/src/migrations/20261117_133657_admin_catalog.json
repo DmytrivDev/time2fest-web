@@ -1871,6 +1871,115 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.unattended_windows": {
+      "name": "unattended_windows",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "starts_at_kyiv": {
+          "name": "starts_at_kyiv",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ends_at_kyiv": {
+          "name": "ends_at_kyiv",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starts_at": {
+          "name": "starts_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ends_at": {
+          "name": "ends_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "unattended_windows_starts_at_idx": {
+          "name": "unattended_windows_starts_at_idx",
+          "columns": [
+            {
+              "expression": "starts_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "unattended_windows_updated_at_idx": {
+          "name": "unattended_windows_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "unattended_windows_created_at_idx": {
+          "name": "unattended_windows_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.zones": {
       "name": "zones",
       "schema": "",
@@ -2218,6 +2327,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "unattended_windows_id": {
+          "name": "unattended_windows_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "zones_id": {
           "name": "zones_id",
           "type": "integer",
@@ -2451,6 +2566,21 @@
           "method": "btree",
           "with": {}
         },
+        "payload_locked_documents_rels_unattended_windows_id_idx": {
+          "name": "payload_locked_documents_rels_unattended_windows_id_idx",
+          "columns": [
+            {
+              "expression": "unattended_windows_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "payload_locked_documents_rels_zones_id_idx": {
           "name": "payload_locked_documents_rels_zones_id_idx",
           "columns": [
@@ -2630,6 +2760,19 @@
           "tableTo": "traditions",
           "columnsFrom": [
             "traditions_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_unattended_windows_fk": {
+          "name": "payload_locked_documents_rels_unattended_windows_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "unattended_windows",
+          "columnsFrom": [
+            "unattended_windows_id"
           ],
           "columnsTo": [
             "id"
@@ -2992,6 +3135,70 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.unattended_state": {
+      "name": "unattended_state",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "on": {
+          "name": "on",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "cause": {
+          "name": "cause",
+          "type": "enum_unattended_state_cause",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "manual_at": {
+          "name": "manual_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version": {
+          "name": "version",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "changed_at": {
+          "name": "changed_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -3056,6 +3263,15 @@
         "running",
         "done"
       ]
+    },
+    "public.enum_unattended_state_cause": {
+      "name": "enum_unattended_state_cause",
+      "schema": "public",
+      "values": [
+        "schedule",
+        "manual",
+        "alarm"
+      ]
     }
   },
   "schemas": {},
@@ -3068,6 +3284,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "3b5dd44b-a40a-43b8-b700-b450a09aaf5d",
+  "id": "f639efa5-2fa2-4168-a7be-cab94147566c",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
