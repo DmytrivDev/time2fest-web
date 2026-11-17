@@ -298,7 +298,10 @@ export function edgeGateOf(deps: Deps): EdgeGate {
 
 /** The dispatcher for `deps`: production routes, plus the doors when `shouldLoadDoors`. */
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
-  const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).doorRoutes(deps, seedStoreOf(deps)) : [];
+  const doorsModule = shouldLoadDoors(deps.env) ? await import('./test-doors/index') : undefined;
+  // With the doors only: the realtime token follows the subject the test door set (AC-57).
+  if (doorsModule) deps.subjects = doorsModule.doorSubjects;
+  const doors = doorsModule ? doorsModule.doorRoutes(deps, seedStoreOf(deps)) : [];
   return createDispatcher({ routes: [...routes, ...doors], middleware: middlewareRegistry, deps, edge: edgeGateOf(deps) });
 }
 

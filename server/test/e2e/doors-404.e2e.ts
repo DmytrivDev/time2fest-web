@@ -23,6 +23,7 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/last-code'],
   ['POST', '/api/_test/moderation'],
   ['POST', '/api/_test/paypro-webhook'],
+  ['POST', '/api/_test/realtime-token'],
   ['POST', '/api/_test/video-status'],
 ];
 

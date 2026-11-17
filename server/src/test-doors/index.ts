@@ -7,7 +7,11 @@ import { createTestClock } from '../clock';
 import { failure } from '../endpoints/pipeline';
 import type { Deps, RouteRow } from '../endpoints/types';
 import type { SeedStore } from '../ports';
+import { testSubjects } from './realtimeToken';
 import { doorRegistry, type DoorRow } from './registry';
+
+/** The subject resolver of the realtime-token door (AC-57): the composition root wires it with the doors. */
+export const doorSubjects = testSubjects.resolver;
 
 /**
  * Door rows → route rows marked `testDoor`: the pipeline lets tooling call them without an

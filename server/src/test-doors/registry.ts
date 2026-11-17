@@ -23,6 +23,7 @@ import { collectionRegistry } from '../registries/collections';
 import { resetWorktree, runSeed, type ResettableCollection } from '../seed/index';
 import { seedRegistry, type SeedRow } from '../seed/registry';
 import { edgeEchoDoors } from './edgeEcho';
+import { realtimeTokenDoor, testSubjects } from './realtimeToken';
 
 /** What a door may use beyond the request context. */
 export interface DoorTools {
@@ -76,6 +77,7 @@ export function resetDoor(
         collections,
         rows: rows.filter((r) => !r.fixture),
       });
+      testSubjects.clear();
       return { ok: true, value: {} };
     },
   };
@@ -125,6 +127,7 @@ export const doorRegistry: readonly DoorRow[] = [
   stub('last-code', '/api/_test/last-code'),
   stub('moderation', '/api/_test/moderation'),
   stub('paypro-webhook', '/api/_test/paypro-webhook'),
+  realtimeTokenDoor,
   resetDoor(),
   stub('video-status', '/api/_test/video-status'),
 ];
