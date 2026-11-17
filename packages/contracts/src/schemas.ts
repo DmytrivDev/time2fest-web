@@ -1,6 +1,7 @@
 /** Zod wire schemas (SPEC-02). Server and tests only: never re-exported from index.ts, so the site bundle stays zod-free. */
 import { z } from 'zod';
 import { CatalogPayloadSchema } from './catalog.schemas';
+import { RealtimeTokenValueSchema } from './realtime.schemas';
 import type { ApiErrorCode } from './result';
 
 export const ApiErrorCodeSchema = z.enum([
@@ -62,3 +63,8 @@ export type TestFixturesBody = z.infer<typeof TestFixturesBodySchema>;
 export const CatalogResponseSchema = apiResultSchema(CatalogPayloadSchema);
 
 export * from './catalog.schemas';
+
+/** `GET /api/realtime/token`: built here because this file owns `apiResultSchema` (a cycle otherwise, as for the catalog). */
+export const RealtimeTokenResponseSchema = apiResultSchema(RealtimeTokenValueSchema);
+
+export * from './realtime.schemas';

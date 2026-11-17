@@ -12,3 +12,4 @@ allowBuilds:
   workerd: true
   better-sqlite3: false
   core-js-pure: false
+  protobufjs: false
