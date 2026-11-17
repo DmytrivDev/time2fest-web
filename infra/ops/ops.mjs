@@ -14,6 +14,7 @@ import { realExec } from './lib/exec.mjs';
 import { guardRun } from './lib/guard.mjs';
 import { createOutput, redactorFromEnv } from './lib/redact.mjs';
 import { runRollback } from './lib/rollback.mjs';
+import { runMoveDomain } from './lib/moveDomain.mjs';
 import { runEdgeSecret } from './lib/secrets.mjs';
 
 const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity'];
@@ -32,11 +33,11 @@ const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
  *   deps?: OpsDeps,
  * }} OpsContext
  * @typedef {import('./lib/deploy.mjs').OpsDeps & import('./lib/secrets.mjs').SecretsDeps & import('./lib/bootstrap.mjs').BootstrapDeps
- *   & import('./lib/capacity/capacity.mjs').CapacityDeps} OpsDeps
+ *   & import('./lib/capacity/capacity.mjs').CapacityDeps & { fetch?: typeof fetch }} OpsDeps
  */
 
 /** Реалізовані підкоманди (додаються по фазах). @type {Record<string, (ctx: OpsContext) => Promise<number>>} */
-const RUNNERS = { deploy: runDeploy, rollback: runRollback, 'edge-secret': runEdgeSecret, bootstrap: runBootstrap, capacity: runCapacity };
+const RUNNERS = { deploy: runDeploy, rollback: runRollback, 'edge-secret': runEdgeSecret, bootstrap: runBootstrap, capacity: runCapacity, 'move-domain': runMoveDomain };
 
 /**
  * @param {string[]} argv
@@ -46,6 +47,7 @@ const RUNNERS = { deploy: runDeploy, rollback: runRollback, 'edge-secret': runEd
  *   env?: Record<string, string | undefined>,
  *   exec?: import('./lib/exec.mjs').Executor,
  *   now?: () => Date,
+ *   runners?: Record<string, (ctx: OpsContext) => Promise<number>>,
  * } & OpsDeps} [deps] `exec`, `now`, `transport`, `worker`, `clock`, `git`, `image`,
  *   `stateRoot`, `startProbe`, `examplesDir`, `tunnelEnvFile`, `platform`, `edgeCheck`, `sshAs`, `capacity`,
  *   `realtimeComposeFile`, `fetch` — підставні в тестах
@@ -92,7 +94,7 @@ export async function main(argv, deps = {}) {
     return guarded.code;
   }
 
-  const runner = RUNNERS[sub];
+  const runner = (deps.runners ?? RUNNERS)[sub];
   if (!runner) {
     out(`${sub}: not implemented`);
     return 1;
@@ -117,7 +119,7 @@ export async function main(argv, deps = {}) {
     }
   }
 
-  const { out: _o, err: _e, env: _env, exec: _x, now: _n, ...opsDeps } = deps;
+  const { out: _o, err: _e, env: _env, exec: _x, now: _n, runners: _r, ...opsDeps } = deps;
   return runner({ args, env, exec: deps.exec ?? realExec, redactor, out, err, now, deps: opsDeps });
 }
 
