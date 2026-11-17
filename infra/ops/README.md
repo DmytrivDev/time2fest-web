@@ -156,7 +156,7 @@ Postgres і Redis (кожен — 32 випадкові байти з систе
 `droplet:delete`, `actions:read`, `sizes:read`, `regions:read`, `tag:read`, `tag:create`, `ssh_key:read`, `image:read`,
 `vpc:read`. Той самий перелік — `TOKEN_SCOPES` в `infra/ops/lib/capacity/digitalocean/config.mjs`.
 
-**`CLOUDFLARE_API_TOKEN`** (розгортання Worker’а й перенесення імені) — права на розгортання Worker’ів і прив’язку Custom Domain для акаунта й зони (точний перелік вкаже ведучий хвилі після живого прогону); для `prelaunch`/`production` ще читання прив’язок Custom Domain (Account → Workers Scripts → Read), DNS зони (Zone → DNS → Read) і маршрутів Worker’ів зони (Zone → Workers Routes → Read) — без них розгортання й `move-domain` на Worker робочого домену відмовляють;
+**`CLOUDFLARE_API_TOKEN`** (розгортання Worker’а й перенесення імені) — права на розгортання Worker’ів і прив’язку Custom Domain для акаунта й зони (розгортання репетиції, відкат і перенесення імені на двійника пройшли живими з токеном такого роду; мінімальний перелік по пунктах не вичищали — не перевірено); для `prelaunch`/`production` ще читання прив’язок Custom Domain (Account → Workers Scripts → Read), DNS зони (Zone → DNS → Read) і маршрутів Worker’ів зони (Zone → Workers Routes → Read) — без них розгортання й `move-domain` на Worker робочого домену відмовляють;
 **`CLOUDFLARE_API_TOKEN_INFRA`** (`infra/cloudflare`) — перелік у `infra/cloudflare/README.md`, розділ «Дозволи токена».
 Підсумкова таблиця прав — у `docs/backend/secrets.md`.
 
@@ -213,7 +213,7 @@ node server/scripts/lock.mjs --mode exclusive -- node node_modules/vitest/vitest
 
 ## Порядок кроків на справжньому вузлі (етап S2)
 
-Виконує сесія хвилі, коли власник надав вузол; докладно — «Stage 2 runbook» наприкінці `docs/plans/SPEC-13a-server-deploy.plan.md`.
+Виконано 2026-11-17/18 на вузлі репетиції (DigitalOcean `s-1vcpu-2gb`, FRA1): розгортання, відкат, заміна секрету краю, зміна розміру, тимчасовий вузол realtime і перенесення імені пройшли живими. Той самий порядок — для нового вузла; докладно — «Stage 2 runbook» наприкінці `docs/plans/SPEC-13a-server-deploy.plan.md`.
 
 1. Власник створює вузол DigitalOcean (теги `t2f-managed`, `t2f-env-rehearsal`, `t2f-role-main`, його ключ SSH), кладе ключі R2
    і значення Access у `infra/ops/.local/rehearsal/server.env`.
@@ -247,7 +247,7 @@ Docker, створює каталог вузла, закриває брандм�
 Ключ розгортання — окрема пара SSH лише для користувача `deploy` вузла репетиції.
 
 Робота йде лише з гілки `master` (`if: github.ref == 'refs/heads/master'`) і в GitHub Environment `rehearsal`. Ключ
-пишеться у `$RUNNER_TEMP` після `pnpm install` (скрипти залежностей його не бачать) і прибирається останнім кроком
+пишеться у `$RUNNER_TEMP` після `pnpm install` (це звужує ризик, але не знімає його: фоновий процес зі скрипта встановлення дозволеного пакета дожив би до цього кроку) і прибирається останнім кроком
 `if: always()`.
 
 **Крок власника (один раз):** Settings → Environments → New environment `rehearsal`; Deployment branches and tags →
