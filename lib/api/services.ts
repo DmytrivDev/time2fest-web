@@ -4,7 +4,9 @@
  * Домен потрапляє у фабрики, коли його перенесено (етапи E1…E5); до того `getService` для нього кидає помилку —
  * отже старий код домену ще не мусить ходити через шов.
  */
-import { API_MODE } from './mode';
+import { IS_TEST_BUILD } from '@/lib/env';
+import { domainServer, MIGRATED_DOMAINS, splitDomains, type DomainRule, type DomainServer, type DomainSplit } from './domains';
+import { API_MODE, type ApiMode } from './mode';
 import { resetAllResources } from './resource';
 import type { AuthService } from './contracts/auth';
 import type { CatalogService } from './contracts/catalog';
@@ -18,7 +20,8 @@ import type { RatingService } from './contracts/rating';
 import type { SiteService } from './contracts/site';
 import type { ToastsService } from './contracts/toasts';
 import { httpFactories } from './http';
-// Імітація — лише через `simEntry` (у збірці `http` його підміняє `next.config.ts`, і `sim` не потрапляє в пакет).
+// Імітація — лише через `simEntry` (у робочій збірці `http` його підміняє `next.config.ts`, і `sim` не потрапляє в пакет;
+// в інтеграційній — test + http — лишається для доменів без адаптера `http`).
 import { simFactories, simFaults } from '@/lib/api/simEntry';
 import type { FaultControls } from './sim/faults';
 
@@ -39,13 +42,26 @@ export interface Services {
 export type ServiceName = keyof Services;
 export type ServiceFactories = { [K in ServiceName]?: () => Services[K] };
 
-/** Домени, які інтерфейс уже бере через шов (E0–E5): без їхніх адаптерів сайт працювати не може. */
-export const MIGRATED_DOMAINS: readonly ServiceName[] = ['notifications', 'rating', 'live', 'auth', 'profile', 'checkout', 'toasts', 'chat', 'passport'];
+export { MIGRATED_DOMAINS };
 
-/** Перенесені домени без адаптера в поточному режимі (у `http` зараз — усі: бекенду ще немає). */
-export function missingDomains(mode = API_MODE): ServiceName[] {
-  const factories = mode === 'http' ? httpFactories : simFactories;
-  return MIGRATED_DOMAINS.filter((d) => !factories[d]);
+/** Правило збірки (`lib/api/domains.ts`) над справжніми фабриками. */
+function ruleOf(mode: ApiMode, testBuild: boolean): DomainRule {
+  return { mode, testBuild, hasHttp: (d) => !!httpFactories[d], hasSim: (d) => !!simFactories[d] };
+}
+
+/** Хто обслуговує домен у цій збірці: `http`, `sim` (режим `sim` або інтеграційна збірка) чи `null` — нікого. */
+export function domainSource(name: ServiceName, mode: ApiMode = API_MODE, testBuild = IS_TEST_BUILD): DomainServer | null {
+  return domainServer(name, ruleOf(mode, testBuild));
+}
+
+/** Розклад перенесених доменів за сервером (тести й `window.__t2f.apiDomains`). */
+export function apiDomains(mode: ApiMode = API_MODE, testBuild = IS_TEST_BUILD): DomainSplit {
+  return splitDomains(ruleOf(mode, testBuild));
+}
+
+/** Перенесені домени без адаптера в цій збірці (у робочій `http` — усі, яких ще немає на бекенді). */
+export function missingDomains(mode: ApiMode = API_MODE, testBuild = IS_TEST_BUILD): ServiceName[] {
+  return apiDomains(mode, testBuild).missing;
 }
 
 const instances: Partial<Services> = {};
@@ -56,7 +72,8 @@ export function getService<K extends ServiceName>(name: K): Services[K] {
   if (injected) return injected as Services[K];
   const ready = instances[name];
   if (ready) return ready as Services[K];
-  const factory = (API_MODE === 'http' ? httpFactories : simFactories)[name];
+  const by = domainSource(name);
+  const factory = by === 'http' ? httpFactories[name] : by === 'sim' ? simFactories[name] : undefined;
   if (!factory) throw new Error(`[api] домен «${name}» ще не перенесено на шов у режимі ${API_MODE}`);
   const made = factory() as Services[K];
   instances[name] = made;
@@ -74,7 +91,10 @@ export function setServicesForTest(partial: Partial<Services>): () => void {
   };
 }
 
-/** Лише `sim` (тестова й демо-збірка): затримки й відмови сервісів для станів мережі (`window.__t2f.api`). */
-export function faultControls(): FaultControls | undefined {
-  return API_MODE === 'sim' ? (simFaults as FaultControls | undefined) : undefined;
+/**
+ * Затримки й відмови імітованих сервісів (`window.__t2f.api`): у `sim` і в інтеграційній збірці (там діють лише на домени,
+ * що лишилися на імітації); у робочій `http` — немає.
+ */
+export function faultControls(mode: ApiMode = API_MODE, testBuild = IS_TEST_BUILD): FaultControls | undefined {
+  return mode === 'sim' || testBuild ? (simFaults as FaultControls | undefined) : undefined;
 }

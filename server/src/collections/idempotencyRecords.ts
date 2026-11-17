@@ -4,6 +4,7 @@ const deny = () => false;
 
 export const idempotencyRecords: CollectionConfig = {
   slug: 'idempotency-records',
+  labels: { singular: 'Запис ідемпотентності', plural: 'Записи ідемпотентності' },
   admin: { hidden: true },
   access: { read: deny, create: deny, update: deny, delete: deny },
   fields: [

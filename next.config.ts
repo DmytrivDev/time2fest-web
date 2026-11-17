@@ -1,13 +1,17 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { CatalogResponseSchema } from '@time2fest/contracts/schemas';
+import { describeIntegrationSplit, splitDomains } from './lib/api/domains';
+import { HTTP_DOMAINS } from './lib/api/http/domains';
 import { resolveApiMode } from './lib/api/mode';
+import { fetchCatalogTo, resolveCatalogSource } from './lib/data/catalogSource.mjs';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /**
  * Запобіжник шва (`docs/backend/frontend-seam.md`, §2.3): ефективний режим даних. Тестова й демо-збірка — `sim`, будь-яка
- * інша — `http`; `sim` у робочому збиранні без `NEXT_PUBLIC_ENV=test` — помилка збирання. У `http` імітація вирізається
- * з пакета: входи `simEntry` / `simRuntimeEntry` підміняються порожніми модулями.
+ * інша — `http`; `sim` у робочому збиранні без `NEXT_PUBLIC_ENV=test` — помилка збирання. У робочій `http` імітація
+ * вирізається з пакета: входи `simEntry` / `simRuntimeEntry` підміняються порожніми модулями (інтеграційна — нижче).
  */
 const TEST_BUILD = (process.env.NEXT_PUBLIC_ENV ?? 'production') === 'test';
 const API_MODE = resolveApiMode({
@@ -16,9 +20,24 @@ const API_MODE = resolveApiMode({
   productionBuild: process.env.NODE_ENV === 'production',
 });
 
+// FR-MIG-01: the integration build (test + http) is mixed. A domain with an http adapter uses it, any other keeps its
+// sim adapter, so the sim entries stay in its bundle. Only a production http build cuts sim out.
+const INTEGRATION_BUILD = TEST_BUILD && API_MODE === 'http';
+const CUT_SIM = API_MODE === 'http' && !TEST_BUILD;
+if (INTEGRATION_BUILD && !process.env.T2F_API_SPLIT_PRINTED) {
+  // Once per build: the static-export workers inherit the env and skip the line.
+  process.env.T2F_API_SPLIT_PRINTED = '1';
+  const http: readonly string[] = HTTP_DOMAINS;
+  console.log(describeIntegrationSplit(splitDomains({ mode: 'http', testBuild: true, hasHttp: (d) => http.includes(d), hasSim: () => true })));
+}
+
 // SPEC-02 (AC-44): only `next dev` of the test build in http mode proxies /api/* to this worktree's server.
 // A static export ignores rewrites (output: 'export'); the integration build uses server/scripts/serve-int.mjs.
 const DEV_API_PROXY = TEST_BUILD && API_MODE === 'http' && process.env.NODE_ENV !== 'production';
+
+// SPEC-04 (AC-68..70): the catalog source of this build. Runs in Node at build; zod and the fetch never reach the bundle.
+const CATALOG_SOURCE = resolveCatalogSource({ testBuild: TEST_BUILD, apiMode: API_MODE, env: process.env });
+const CATALOG_DIR = `.t2f-catalog/${process.env.NEXT_DIST_DIR ?? 'default'}`;
 
 const nextConfig: NextConfig = {
   // Workspace package ships TS source, so Next must transpile it.
@@ -40,8 +59,18 @@ const nextConfig: NextConfig = {
     ? {
         turbopack: {
           resolveAlias: {
-            '@/lib/api/simEntry': './lib/api/http/simEntry.disabled.ts',
-            '@/lib/api/simRuntimeEntry': './lib/api/http/simRuntimeEntry.disabled.tsx',
+            ...(CUT_SIM
+              ? {
+                  '@/lib/api/simEntry': './lib/api/http/simEntry.disabled.ts',
+                  '@/lib/api/simRuntimeEntry': './lib/api/http/simRuntimeEntry.disabled.tsx',
+                }
+              : {}),
+            ...(CATALOG_SOURCE === 'data'
+              ? {}
+              : {
+                  '@/data/schedule.json': `./${CATALOG_DIR}/schedule.json`,
+                  '@/data/countries.json': `./${CATALOG_DIR}/countries.json`,
+                }),
           },
         },
       }
@@ -60,4 +89,19 @@ const nextConfig: NextConfig = {
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
 };
 
-export default withNextIntl(nextConfig);
+// A plain object when the catalog comes from data/; an async config only when this build fetches it from the server.
+if (CATALOG_SOURCE === 'data' && API_MODE === 'http') console.log('catalog: data/ (T2F_CATALOG_URL not set)');
+
+async function configWithServerCatalog(url: string): Promise<NextConfig> {
+  // Fail closed (AC-68): no fallback to data/ when the server cannot be reached.
+  try {
+    const { version } = await fetchCatalogTo(CATALOG_DIR, url, CatalogResponseSchema);
+    console.log(`catalog: ${new URL(url).origin}/api/catalog (version ${version})`); // N-3: no userinfo, no query
+    return withNextIntl({ ...nextConfig, env: { ...nextConfig.env, NEXT_PUBLIC_CATALOG_VERSION: version } });
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    process.exit(1);
+  }
+}
+
+export default CATALOG_SOURCE === 'data' ? withNextIntl(nextConfig) : () => configWithServerCatalog(CATALOG_SOURCE.url);

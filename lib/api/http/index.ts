@@ -1,7 +1,13 @@
 /**
  * Адаптери `http` (справжній бекенд) — пишуться разом із бекендом, по домену (`docs/backend/frontend-seam.md`, E1…E5).
- * Поки порожньо: збірка з `NEXT_PUBLIC_API_MODE=http` впаде на першому ж `getService` із зрозумілою помилкою.
+ * Ключі — рівно `HTTP_DOMAINS` (`./domains.ts`): тип не дасть пропустити чи додати домен повз список.
  */
-import type { ServiceFactories } from '../services';
+import type { ServiceFactories, Services } from '../services';
+import { createHttpCatalog } from './catalog';
+import type { HttpDomain } from './domains';
 
-export const httpFactories: ServiceFactories = {};
+const factories: { [K in HttpDomain]: () => Services[K] } = {
+  catalog: () => createHttpCatalog(),
+};
+
+export const httpFactories: ServiceFactories = factories;

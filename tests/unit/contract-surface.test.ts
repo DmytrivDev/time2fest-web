@@ -93,4 +93,52 @@ describe('contract-surface', { timeout: 60_000 }, () => {
     expect(baseline.surfaces['lib/data/types.ts#Shared']).toBeDefined();
     expect(baseline.surfaces['lib/data/types.ts#Unused']).toBeUndefined();
   });
+
+  describe('printed-type member order is not a contract', () => {
+    const src = (type: string) => ({ 'packages/contracts/src/index.ts': `declare const v: ${type};
+export const X = v;
+` });
+    const setText = (dir: string, text: string) => {
+      const f = path.join(dir, 'baseline.json');
+      const b = JSON.parse(fs.readFileSync(f, 'utf8'));
+      b.surfaces['packages/contracts/src/index.ts#X'] = { text };
+      fs.writeFileSync(f, JSON.stringify(b));
+    };
+
+    it('reordered members: no change', () => {
+      const dir = makeTree(src('{ a: string; b: number }'));
+      run(dir, '--update');
+      setText(dir, '{ b: number; a: string; }');
+      expect(run(dir, '--check').code).toBe(0);
+    });
+
+    it('nested braces reordered: no change', () => {
+      const dir = makeTree(src('{ a: { y: 1; x: 2 }; b: number }'));
+      run(dir, '--update');
+      setText(dir, '{ b: number; a: { x: 2; y: 1; }; }');
+      expect(run(dir, '--check').code).toBe(0);
+    });
+
+    it('reordered union: no change', () => {
+      const dir = makeTree(src("'a' | 'b' | 'c'"));
+      run(dir, '--update');
+      setText(dir, '"c" | "a" | "b"');
+      expect(run(dir, '--check').code).toBe(0);
+    });
+
+    it.each([
+      ['removed union member', "'a' | 'b'", "'a'"],
+      ['removed field', '{ a: string; b: number }', '{ a: string }'],
+      ['changed field type', '{ a: string; b: number }', '{ a: string; b: string }'],
+      ['reordered tuple elements', '[string, number]', '[number, string]'],
+      ['reordered function parameters', '(x: string, y: number) => void', '(x: number, y: string) => void'],
+    ])('%s: breaking', (_n, before, after) => {
+      const dir = makeTree(src(before));
+      run(dir, '--update');
+      write(dir, src(after));
+      const r = run(dir, '--check');
+      expect(r.code).toBe(1);
+      expect(r.out).toContain('BREAKING');
+    });
+  });
 });

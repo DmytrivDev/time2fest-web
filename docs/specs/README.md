@@ -9,3 +9,4 @@
 | [SPEC-01](SPEC-01-workspace-seam.md) | Репозиторій і словник шва — робочий простір pnpm, пакети contracts і rules, домен site, словник причин і полів, CI, перевірка «лише додаванням» | approved | web, contracts, rules | none |
 | [SPEC-02](SPEC-02-server-skeleton.md) | Каркас сервера — Payload 3.91 + Postgres, стенд Docker, ізоляція дерев і замок, класи середовищ, модель помилок, дверцята й тестовий годинник, ліміти, ідемпотентність | approved | server, contracts, web | none |
 | [SPEC-03](SPEC-03-time-rules.md) | Модуль правил часу — один модуль `@time2fest/rules/time` для сайту й сервера, CI проти дублювання | approved | rules, web | none |
+| [SPEC-04](SPEC-04-admin-catalog.md) | Адмінка й каталог моментів — Access на сервері, ролі й ключі агентів, журнал і відкат, каркас першого екрана, режим без нагляду, каталог у Payload, поправки подій, `GET /api/catalog`, копія в R2, import/export, інструменти дошок для http | draft | server, web, contracts | none |

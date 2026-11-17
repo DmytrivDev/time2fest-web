@@ -208,7 +208,7 @@ function buildSurface(root) {
       return { fn: norm(decl.getText().slice(0, end - decl.getStart())) };
     }
     if (ts.isVariableDeclaration(decl)) {
-      return { text: checker.typeToString(checker.getTypeAtLocation(decl), undefined, ts.TypeFormatFlags.NoTruncation) };
+      return { text: canonText(checker.typeToString(checker.getTypeAtLocation(decl), undefined, ts.TypeFormatFlags.NoTruncation)) };
     }
     return { text: norm(decl.getText()) };
   }
@@ -239,6 +239,79 @@ function buildSurface(root) {
     }
   }
   return sortKeys(surfaces);
+}
+
+/** Sorts the top-level `|` members of a type string; leaves it alone when a top-level `=>` makes the split ambiguous. */
+function sortUnion(str) {
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (ch === '"' || ch === "'" || ch === '`') {
+      for (i++; i < str.length && str[i] !== ch; i++) if (str.charCodeAt(i) === 92) i++;
+    } else if (ch === '=' && str[i + 1] === '>') {
+      if (depth === 0) return str;
+      i++;
+    } else if ('([{<'.includes(ch)) depth++;
+    else if (')]}>'.includes(ch)) depth--;
+    else if (ch === '|' && depth === 0) {
+      parts.push(str.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  if (!parts.length) return str;
+  parts.push(str.slice(start).trim());
+  return parts.sort().join(' | ');
+}
+
+/**
+ * Canonical form of a printed type. Order-insensitive ONLY for the `;`-separated members of `{ ... }` blocks
+ * (innermost first) and for top-level union members of a type / member value. Parameters, tuple elements,
+ * generic arguments and overloads keep their order. The TS checker prints these in type-interning order,
+ * which shifts when unrelated files are added; the member set, not its order, is the contract.
+ */
+function canonText(text) {
+  if (typeof text !== 'string') return text;
+  let i = 0;
+  function block(inBrace) {
+    const members = [];
+    let cur = '';
+    const flush = () => {
+      const m = cur.trim();
+      cur = '';
+      if (!m) return;
+      const c = m.search(/:/);
+      members.push(c > 0 ? `${m.slice(0, c + 1)} ${sortUnion(m.slice(c + 1).trim())}` : m);
+    };
+    while (i < text.length) {
+      const ch = text[i];
+      if (ch === '"' || ch === "'" || ch === '`') {
+        cur += ch;
+        for (i++; i < text.length && text[i] !== ch; i++) {
+          if (text.charCodeAt(i) === 92) cur += text[i++];
+          cur += text[i] ?? '';
+        }
+        cur += text[i++] ?? '';
+      } else if (ch === '{') {
+        i++;
+        cur += `{ ${block(true)} }`;
+      } else if (ch === '}' && inBrace) {
+        i++;
+        break;
+      } else if (ch === ';' && inBrace) {
+        flush();
+        i++;
+      } else {
+        cur += ch;
+        i++;
+      }
+    }
+    if (!inBrace) return sortUnion(cur.trim());
+    flush();
+    return members.sort().map((m) => `${m};`).join(' ');
+  }
+  return block(false);
 }
 
 function sortKeys(v) {
@@ -284,7 +357,7 @@ function compareDesc(base, cur, where, out) {
     } else if (k === 'union') {
       for (const m of b) if (!c.includes(m)) out.push({ kind: 'breaking', line: `${at}: union member ${m} removed` });
       for (const m of c) if (!b.includes(m)) out.push({ kind: 'additive', line: `${at}: union member ${m} added` });
-    } else if (JSON.stringify(b) !== JSON.stringify(c)) {
+    } else if (JSON.stringify(k === 'text' ? canonText(b) : b) !== JSON.stringify(k === 'text' ? canonText(c) : c)) {
       out.push({ kind: 'breaking', line: `${at}: ${k} changed (${JSON.stringify(b)} -> ${JSON.stringify(c)})` });
     }
   }

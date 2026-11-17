@@ -55,6 +55,8 @@ export interface IdempotencyStore<R = unknown> {
 export interface SeedStore {
   /** Updates the row whose `naturalKey` equals `data[naturalKey]`, or creates it. */
   upsertByKey(collection: string, naturalKey: string, data: Record<string, unknown>): Promise<void>;
+  /** The same for many rows of one collection (distinct keys), with fewer round trips; the order of writes is not defined. */
+  upsertMany?(collection: string, naturalKey: string, rows: readonly Record<string, unknown>[]): Promise<void>;
   count(collection: string): Promise<number>;
   /** Deletes every row of the collection. */
   clear(collection: string): Promise<void>;

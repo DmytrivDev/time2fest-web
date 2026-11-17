@@ -52,7 +52,7 @@ function up() {
   }
   const r = run(
     'docker',
-    ['compose', '-p', 't2f', '-f', composeFile, 'up', '-d', '--wait', 'postgres', 'redis', 'centrifugo', 'mailpit'],
+    ['compose', '-p', 't2f', '-f', composeFile, 'up', '-d', '--wait', 'postgres', 'redis', 'centrifugo', 'mailpit', 'r2'],
     { encoding: 'utf8', stdio: 'inherit' },
   );
   if (r.status !== 0) process.exit(r.status ?? 1);
@@ -210,6 +210,22 @@ async function smoke() {
       async () => {
         const r = await fetch('http://127.0.0.1:8000/health');
         if (!r.ok) throw new Error(String(r.status));
+      },
+    ],
+    [
+      'r2',
+      async () => {
+        const deadline = Date.now() + 30_000;
+        for (;;) {
+          try {
+            const r = await fetch('http://127.0.0.1:9090/favicon.ico');
+            if (r.status === 200) return;
+            throw new Error(String(r.status));
+          } catch (e) {
+            if (Date.now() > deadline) throw e;
+            await new Promise((res) => setTimeout(res, 1000));
+          }
+        }
       },
     ],
   ];

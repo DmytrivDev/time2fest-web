@@ -2,8 +2,13 @@
  * Seed registry (AC-45, AC-62): sorted, unique rows, each naming its collection, its natural
  * key and the one source it reads. Only the sources of AC-45 are allowed (paths relative to
  * `web/`); the scout output `data/streams.candidates.json` is never seeded, and nothing outside
- * the list is read. Empty in SPEC-02; domain waves add their rows.
+ * the list is read. SPEC-04 adds the six catalog rows; later domain waves add theirs.
  */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { CountriesFileSchema, ScheduleFileSchema } from '@time2fest/contracts/schemas';
+import { fromData, type CatalogCollection } from '../domain/catalog/fromData';
 import { assertRegistry } from '../platform/registry';
 
 /** A source the seed may read (AC-45). */
@@ -46,6 +51,49 @@ export function isAllowedSource(source: string): boolean {
   return ALLOWED_PATTERNS.some((p) => p.test(source));
 }
 
-export const seedRegistry: readonly SeedRow[] = [];
+const dataDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../data');
+
+function readData(file: 'schedule.json' | 'countries.json'): unknown {
+  return JSON.parse(fs.readFileSync(path.join(dataDir, file), 'utf8'));
+}
+
+/** Both data files mapped by the same function as `import catalog` (AC-88): one row set, two writers. */
+function catalogSource() {
+  return fromData(ScheduleFileSchema.parse(readData('schedule.json')), CountriesFileSchema.parse(readData('countries.json')));
+}
+
+/** The rows of one catalog collection with the import hash, so an `import catalog` after the seed sees "same". */
+function catalogRows(collection: CatalogCollection): () => Promise<object[]> {
+  return async () =>
+    catalogSource()
+      .rows.filter((r) => r.collection === collection)
+      .map((r) => ({ ...r.data, importedHash: r.hash }));
+}
+
+function catalogRow(order: number, collection: CatalogCollection, naturalKey: string, source: 'data/schedule.json' | 'data/countries.json'): SeedRow {
+  return { key: `catalog-${order}-${collection}`, collection, naturalKey, source, rows: catalogRows(collection) };
+}
+
+/** The season of the catalog: the same record `import catalog --apply` writes on an empty database. */
+const seasonRow: SeedRow = {
+  key: 'catalog-1-seasons',
+  collection: 'seasons',
+  naturalKey: 'key',
+  source: 'data/schedule.json',
+  async rows() {
+    const { season } = catalogSource();
+    return [{ key: season.key, generatedAt: season.generatedAt, tzdbVersion: season.tzdbVersion }];
+  },
+};
+
+// The sorted keys give the dependency order: season, zones, countries, cities, events, traditions.
+export const seedRegistry: readonly SeedRow[] = [
+  seasonRow,
+  catalogRow(2, 'zones', 'zoneId', 'data/schedule.json'),
+  catalogRow(3, 'countries', 'iso', 'data/countries.json'),
+  catalogRow(4, 'cities', 'cityId', 'data/schedule.json'),
+  catalogRow(5, 'events', 'eventId', 'data/schedule.json'),
+  catalogRow(6, 'traditions', 'traditionId', 'data/countries.json'),
+];
 
 assertRegistry('seed', seedRegistry, (r) => r.key);

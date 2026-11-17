@@ -20,6 +20,17 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     PAYLOAD_SECRET: SECRET,
     // Required in rehearsal/production since SPEC-05 AC-14; present so those cases stay valid.
     T2F_EDGE_SECRET: EDGE_SECRET,
+    // SPEC-04 blocks `access` and `catalog` are required in rehearsal and production.
+    T2F_ADMIN_HOST: 'admin.localhost:3100',
+    T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',
+    T2F_ACCESS_AUD: 't2f-test-aud',
+    T2F_ACCESS_JWKS_URL: 'test-signer:',
+    T2F_OWNER_EMAILS: 'owner@example.com',
+    T2F_R2_ENDPOINT: 'http://127.0.0.1:9090',
+    T2F_R2_BUCKET: 't2f-catalog',
+    T2F_R2_PREFIX: 'spec_02_server_skeleton/',
+    T2F_R2_ACCESS_KEY_ID: 't2f-local',
+    T2F_R2_SECRET_ACCESS_KEY: 't2f-local-secret-0000', // check-secrets: allow fake local R2 key for the env loader unit test
     ...over,
   };
 }

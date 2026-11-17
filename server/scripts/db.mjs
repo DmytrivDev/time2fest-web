@@ -76,6 +76,17 @@ function writeEnv(wt) {
     `T2F_LOCK_DIR=${lockDir(serverDir, {})}`,
     `T2F_ALLOWED_ORIGINS=http://127.0.0.1:${web},http://localhost:${web},http://localhost:3000`,
     `PAYLOAD_SECRET=${secret}`,
+    `T2F_ADMIN_HOST=admin.localhost:${wt.ports.server}`,
+    'T2F_ACCESS_TEAM_DOMAIN=https://t2f-test.invalid',
+    'T2F_ACCESS_AUD=t2f-test-aud',
+    'T2F_ACCESS_JWKS_URL=test-signer:',
+    `T2F_OWNER_EMAILS=owner+${wt.slug}@example.com,owner2+${wt.slug}@example.com`,
+    'T2F_ACCESS_SERVICE_CNS=test-agent.access',
+    'T2F_R2_ENDPOINT=http://127.0.0.1:9090',
+    'T2F_R2_BUCKET=t2f-catalog',
+    `T2F_R2_PREFIX=${wt.slug}/`,
+    'T2F_R2_ACCESS_KEY_ID=t2f-local',
+    'T2F_R2_SECRET_ACCESS_KEY=t2f-local-secret-0000',
     '',
   ];
   fs.writeFileSync(file, lines.join('\n'));

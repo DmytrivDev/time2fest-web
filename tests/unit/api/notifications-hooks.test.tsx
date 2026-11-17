@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_NOTIF_SETTINGS, type Notif, type NotifEvent, type NotificationsService } from '@/lib/api/contracts/notifications';
 import { notifActions, useNotifications, useNotifSettings, useUnreadNotifCount } from '@/lib/api/hooks/notifications';
 import { fail, ok } from '@/lib/api/result';
-import { getService, setServicesForTest } from '@/lib/api/services';
+import { getService, setServicesForTest, type ServiceName } from '@/lib/api/services';
 
 const n = (id: string, read = false): Notif => ({ id, kind: 'stamp', params: { country: 'Японія', city: 'Токіо' }, href: '/passport/', read, createdAt: 1 });
 
@@ -129,6 +129,6 @@ describe('реєстр', () => {
   });
 
   it('неперенесений домен — зрозуміла помилка', () => {
-    expect(() => getService('catalog')).toThrow(/ще не перенесено/);
+    expect(() => getService('not-migrated' as ServiceName)).toThrow(/ще не перенесено/);
   });
 });

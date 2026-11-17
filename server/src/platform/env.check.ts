@@ -4,6 +4,7 @@
  */
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { parseAccessConfig } from '../domain/access/config';
 import { envRegistry } from '../registries/env';
 import { loadEnv } from './env';
 
@@ -13,6 +14,12 @@ if (fs.existsSync(envFile)) process.loadEnvFile(envFile);
 const result = loadEnv(process.env, envRegistry);
 if (!result.ok) {
   console.error(`env: invalid ${result.failing.join(', ')}`);
+  process.exit(1);
+}
+// Access settings (AC-7): rehearsal/production refuse a missing or test issuer/JWKS.
+const access = parseAccessConfig(process.env, result.class);
+if (!access.ok) {
+  console.error(`env: invalid ${access.failing.join(', ')}`);
   process.exit(1);
 }
 console.log(`env: ok (${result.class})`);

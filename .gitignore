@@ -21,3 +21,6 @@ out-*
 .claude/settings.local.json
 .claude/worktrees/
 .claude/sdd/
+
+# SPEC-04: каталог, отриманий з сервера під час інтеграційної збірки
+.t2f-catalog/

@@ -178,7 +178,7 @@ describe('stack', () => {
     const payload = await getPayload({ config });
     const email = `t+${wt.slug}@example.com`;
     const password = `pw-${Math.random().toString(36).slice(2)}-Aa1!`;
-    const admin = await payload.create({ collection: 'admins', data: { email, password }, overrideAccess: true });
+    const admin = await payload.create({ collection: 'admins', data: { email, password, role: 'owner' }, overrideAccess: true });
     try {
       const res = await fetch(`${SERVER}/cms-api/admins/login`, {
         method: 'POST',

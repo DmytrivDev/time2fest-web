@@ -7,27 +7,56 @@
  * Test doors are loaded by dynamic `import()` only when `shouldLoadDoors` is true (AC-29); no
  * request field takes part in that decision (AC-31).
  */
+import type { JWTVerifyGetKey } from 'jose';
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
+import { createAccessGate, createDenyLog, type AccessGate } from './access/gate';
+import type { IdentityMarker } from './access/ports';
+import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
+import { createIdentityMarker } from './adapters/identityMarker';
+import { createPayloadCatalogStore } from './adapters/payloadCatalog';
+import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
+import { parseAccessConfig } from './domain/access/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
-import type { AppEnv, Deps, RouteRow } from './endpoints/types';
+import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
+import type { AppEnv, Deps, EventPorts, RouteRow } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
+import { startEventBus, type EventBus } from './events/bus';
+import type { EventSubscriber } from './events/ports';
+import type { CatalogCopyDeps } from './catalog/copy';
+import { createPayloadAlarmStore } from './adapters/payloadAlarms';
+import { payloadCorrectionDeps } from './adapters/payloadCorrections';
+import { payloadUnattendedDeps } from './adapters/payloadUnattended';
+import { createAlarmService } from './alarms/service';
+import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
 import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { middlewareRegistry } from './registries/middleware';
+import { isRevertible } from './registries/revertHandlers';
 import { routeRegistry } from './registries/routes';
+import { subscriberRegistry } from './registries/subscribers';
+import { evaluate } from './unattended/service';
+import { startTicker, type Ticker } from './unattended/ticker';
 
 const DEPS_KEY = Symbol.for('t2f.deps');
 const DISPATCHER_KEY = Symbol.for('t2f.dispatcher');
 const PAYLOAD_KEY = Symbol.for('t2f.payload');
+const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
+const BACKGROUND_KEY = Symbol.for('t2f.background');
+const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
+const BACKGROUND_RETRY_MS = 5_000;
 
-/** What a caller of `createDeps` may replace: any port, and the lazy Payload accessor. */
+/** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
+export { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf };
+export type { EventPorts };
+
+/** What a caller of `createDeps` may replace: any port or service of `Deps` and the lazy Payload accessor. */
 export type DepsOverrides = Partial<Omit<Deps, 'env'>> & { payload?: () => Promise<Payload> };
 
 type Dispatcher = (req: Request) => Promise<Response>;
@@ -99,11 +128,16 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
   const env: AppEnv = { class: loaded.class, vars: loaded.env };
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
-  const alarm = overrides.alarm ?? createAlarm(log);
+  const clock = overrides.clock ?? clockFor(env.class);
+  // The store reaches Payload lazily, so the alarm exists before Payload (which reports through it).
+  let payloadRef: () => Promise<Payload> = () => Promise.reject(new Error('payload: not wired'));
+  const alarmStore = overrides.alarmStore ?? createPayloadAlarmStore(() => payloadRef(), clock);
+  const alarm = overrides.alarm ?? createAlarm(log, alarmStore);
   const payload = overrides.payload ?? lazyPayload(alarm);
+  payloadRef = payload;
   const deps: Deps = {
     env,
-    clock: overrides.clock ?? clockFor(env.class),
+    clock,
     log,
     alarm,
     lockState: overrides.lockState ?? createLockState(undefined, raw),
@@ -113,7 +147,105 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
+  const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
+  deps.events = overrides.events ?? {
+    publisher: createPgEventPublisher(payload, clock, channel),
+    log: createPgEventLog(payload),
+    channel,
+  };
+  deps.alarmStore = alarmStore;
+  deps.catalogStore = overrides.catalogStore ?? createPayloadCatalogStore(payload);
+  // Services over the stores, built once: the request binding is the `tx` parameter of their methods.
+  deps.alarmService = overrides.alarmService ?? createAlarmService(alarmStore, clock);
+  deps.corrections = overrides.corrections ?? payloadCorrectionDeps({ publisher: deps.events.publisher, clock, isRevertible });
+  deps.unattended =
+    overrides.unattended ??
+    payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
+  deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   return deps;
+}
+
+/**
+ * What the R2 copy of the catalog needs (AC-72), or `undefined` when the environment has no bucket
+ * configured (a class that does not require R2): then nothing is copied.
+ */
+export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
+  const v = deps.env.vars;
+  const endpoint = v.T2F_R2_ENDPOINT;
+  const bucket = v.T2F_R2_BUCKET;
+  const accessKeyId = v.T2F_R2_ACCESS_KEY_ID;
+  const secretAccessKey = v.T2F_R2_SECRET_ACCESS_KEY;
+  const prefix = v.T2F_R2_PREFIX;
+  if (!endpoint || !bucket || !accessKeyId || !secretAccessKey || !prefix) return undefined;
+  return {
+    store: catalogStoreOf(deps),
+    objects: createS3ObjectStore({
+      endpoint: String(endpoint),
+      bucket: String(bucket),
+      accessKeyId: String(accessKeyId),
+      secretAccessKey: String(secretAccessKey),
+    }),
+    prefix: String(prefix),
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
+ * Background work of one process: the internal-events delivery loop over the subscriber registry
+ * (`testOnly` rows only in the `test` class). Called by `instrumentation.ts` once per process and
+ * by integration helpers, which stop it themselves.
+ */
+export function startBackground(deps: Deps, subscribers: readonly EventSubscriber[] = subscriberRegistry): Promise<EventBus> {
+  const uri = String(deps.env.vars.DATABASE_URI ?? '');
+  return startEventBus({
+    source: createPgEventSource({
+      payload: payloadOf(deps),
+      databaseUri: uri,
+      channel: eventsOf(deps).channel,
+      onError: (err) => {
+        const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+        deps.alarm.raise({ level: 'log', source: 'events', code: 'listener_error', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+      },
+    }),
+    subscribers: subscribers.filter((s) => !s.testOnly || deps.env.class === 'test'),
+    log: deps.log,
+  });
+}
+
+/**
+ * The unattended-mode ticker of one process (AC-32): `evaluate` every 10 s on the server clock. A
+ * failing tick (database down) raises a log-level alarm (code only) and the ticker keeps going.
+ */
+export function startUnattendedTicker(deps: Deps, intervalMs?: number): Ticker {
+  const unattended = unattendedDepsOf(deps);
+  return startTicker({
+    tick: () => evaluate(unattended, null),
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'unattended', code: 'tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    ...(intervalMs === undefined ? {} : { intervalMs }),
+  });
+}
+
+/**
+ * Starts the process background once: the internal-events delivery loop (a failed start, database
+ * down, is retried every 5 s) and the unattended-mode ticker. Only `instrumentation.ts` calls it.
+ */
+export function startProcessBackground(): void {
+  const g = globalThis as unknown as Record<symbol, true | Ticker | undefined>;
+  if (g[BACKGROUND_KEY]) return;
+  g[BACKGROUND_KEY] = true;
+  g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
+  const attempt = () => {
+    const deps = getDeps();
+    startBackground(deps).catch(() => {
+      deps.alarm.raise({ level: 'log', source: 'events', code: 'background_start_failed' });
+      setTimeout(attempt, BACKGROUND_RETRY_MS).unref?.();
+    });
+  };
+  attempt();
 }
 
 /** The lazy Payload accessor of deps built by `createDeps`. For the composition root and tests only. */
@@ -150,6 +282,39 @@ export function edgeGateOf(deps: Deps): EdgeGate {
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
   const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).doorRoutes(deps, seedStoreOf(deps)) : [];
   return createDispatcher({ routes: [...routes, ...doors], middleware: middlewareRegistry, deps, edge: edgeGateOf(deps) });
+}
+
+/**
+ * The Access gate for `deps` (AC-1 … AC-10). An invalid config refuses boot earlier
+ * (`instrumentation.ts`); here it fails closed (no config → every gated path is 403). The test
+ * signer is reached only through the dynamic `import()` of the `test-signer:` branch, and only
+ * in the `test` class.
+ */
+export async function buildAccessGate(deps: Deps, raw: RawEnv): Promise<AccessGate> {
+  const parsed = parseAccessConfig(raw, deps.env.class);
+  const config = parsed.ok ? parsed.config : undefined;
+  let keys: JWTVerifyGetKey | undefined;
+  if (config?.jwks.kind === 'test-signer' && deps.env.class === 'test') {
+    const { getTestSigner } = await import('./adapters/testSigner');
+    keys = localKeys(await getTestSigner());
+  } else if (config?.jwks.kind === 'remote') {
+    keys = remoteKeys(config.jwks.url);
+  }
+  const verifier = keys
+    ? createAccessVerifier({ issuer: config?.issuer ?? '', audience: config?.audience ?? '', keys, alarm: deps.alarm })
+    : { verify: async () => ({ ok: false, reason: 'invalid' }) as const };
+  return createAccessGate({ config: keys ? config : undefined, verifier, denyLog: createDenyLog(deps.log, realClock), cls: deps.env.class });
+}
+
+/** The Access gate of the process, built once. */
+export function getAccessGate(): Promise<AccessGate> {
+  const g = globalThis as unknown as Record<symbol, Promise<AccessGate> | undefined>;
+  return (g[ACCESS_GATE_KEY] ??= buildAccessGate(getDeps(), process.env));
+}
+
+/** The identity marker of the process (its key is per process). */
+export function getIdentityMarker(): IdentityMarker {
+  return createIdentityMarker(realClock);
 }
 
 /** The dispatcher of the process, built once. */
