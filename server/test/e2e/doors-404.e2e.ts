@@ -11,6 +11,9 @@ const edgeSecret = process.env.T2F_E2E_EDGE_SECRET ?? '';
 
 /** Equal to the rows of `src/test-doors/registry.ts` (method + path). */
 const DOORS: Array<[string, string]> = [
+  ['POST', '/api/_test/access-token'],
+  ['POST', '/api/_test/admin-test-slice'],
+  ['POST', '/api/_test/alarm'],
   ['POST', '/api/_test/reset'],
   ['POST', '/api/_test/fixtures'],
   ['GET', '/api/_test/clock'],
@@ -45,6 +48,8 @@ async function probe(request: APIRequestContext, method: string, path: string, q
 
 test('AC-30/31: the registry has 10 door rows', () => {
   expect(DOORS).toHaveLength(10);
+test('AC-30/31: the registry has 11 door rows', () => {
+  expect(DOORS).toHaveLength(11);
 });
 
 for (const v of VARIANTS) {

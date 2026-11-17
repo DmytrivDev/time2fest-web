@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { postgresAdapter } from '@payloadcms/db-postgres';
+import { uk } from '@payloadcms/translations/languages/uk';
 import { buildConfig } from 'payload';
 import { harden, hardenGlobal } from './access/payloadGuard';
 import { loadEnv } from './platform/env';
@@ -18,7 +19,8 @@ const env = loaded.env as { PAYLOAD_SECRET: string; DATABASE_URI: string };
 
 export default buildConfig({
   secret: env.PAYLOAD_SECRET,
-  admin: { user: 'admins', avatar: 'default' },
+  admin: { user: 'admins', avatar: 'default', importMap: { baseDir: dirname }, components: { views: { dashboard: { Component: '/admin/Dashboard#Dashboard' } } } },
+  i18n: { supportedLanguages: { uk }, fallbackLanguage: 'uk' },
   routes: { api: '/cms-api', admin: '/admin' },
   graphQL: { disable: true },
   collections: collectionRegistry.map((r) => harden(r.collection, r)),

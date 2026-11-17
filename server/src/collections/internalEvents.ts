@@ -11,6 +11,7 @@ export const INTERNAL_EVENTS = 'internal-events';
 
 export const internalEvents: CollectionConfig = {
   slug: INTERNAL_EVENTS,
+  labels: { singular: 'Внутрішня подія', plural: 'Внутрішні події' },
   admin: { hidden: true },
   access: { read: never, create: never, update: never, delete: never },
   timestamps: false,

@@ -97,6 +97,7 @@ const policy = accessFor('audit');
 
 export const auditLog: CollectionConfig = {
   slug: AUDIT_LOG,
+  labels: { singular: 'Запис журналу', plural: 'Журнал змін' },
   admin: { useAsTitle: 'action', defaultColumns: ['at', 'action', 'actor', 'target', 'revertible'] },
   access: { read: policy.read, create: never, update: never, delete: never },
   endpoints: [revertEndpoint],

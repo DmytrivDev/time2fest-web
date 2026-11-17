@@ -66,6 +66,7 @@ function keyEndpoint(action: 'issue' | 'revoke'): Endpoint {
 
 export const admins: CollectionConfig = {
   slug: 'admins',
+  labels: { singular: 'Адміністратор', plural: 'Адміністратори' },
   auth: {
     tokenExpiration: SESSION_SECONDS,
     useAPIKey: true,

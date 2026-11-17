@@ -9,6 +9,7 @@ export const ADMIN_SETTINGS = 'admin-settings';
 
 export const adminSettings: GlobalConfig = {
   slug: ADMIN_SETTINGS,
+  label: 'Налаштування адмінки',
   access: { read: ownerOnly, update: ownerOnly, readVersions: ownerOnly },
   fields: [{ name: 'agentPublish', type: 'checkbox', defaultValue: true }],
 };

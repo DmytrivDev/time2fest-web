@@ -59,8 +59,12 @@ export function auditAfterChange(slug: CollectionSlug): CollectionAfterChangeHoo
   return async ({ doc, previousDoc, operation, req }) => {
     if (isInternal(req)) return doc;
     const id = (doc as { id: string | number }).id;
-    // The stored value at depth 0 (relations as ids), the same shape the revert check reads.
-    const stored = await req.payload.findByID({ collection: slug, id, req, depth: 0, overrideAccess: true, disableErrors: true });
+    // The stored value at depth 0 (relations as ids), the same shape the revert check reads. The import
+    // writes at depth 0 itself, so the returned document already is that value: one round trip less per row.
+    const stored =
+      req.context?.t2fImport === true
+        ? undefined
+        : await req.payload.findByID({ collection: slug, id, req, depth: 0, overrideAccess: true, disableErrors: true });
     await append(
       req,
       {

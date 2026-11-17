@@ -31,6 +31,7 @@ const policy = accessFor('alarms');
 
 export const alarms: CollectionConfig = {
   slug: ALARMS,
+  labels: { singular: 'Тривога', plural: 'Тривоги' },
   admin: { useAsTitle: 'code', defaultColumns: ['raisedAt', 'source', 'code', 'acknowledgedAt'] },
   access: { read: policy.read, create: never, update: never, delete: never },
   endpoints: [acknowledgeEndpoint],

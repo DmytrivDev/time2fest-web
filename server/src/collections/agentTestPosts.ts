@@ -19,6 +19,7 @@ const testOnly =
 
 export const agentTestPosts: CollectionConfig = {
   slug: 'agent-test-posts',
+  labels: { singular: 'Тестовий запис', plural: 'Тестові записи' },
   admin: { hidden: true },
   access: { read: testOnly('read'), create: testOnly('create'), update: testOnly('update'), delete: policy.delete },
   hooks: {
