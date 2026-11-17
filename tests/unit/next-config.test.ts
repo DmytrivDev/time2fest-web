@@ -3,13 +3,21 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 type Cfg = Record<string, unknown>;
 
+// The integration flavour (test + http) fetches the catalog at config time; here the fetch is replaced (SPEC-04, AC-68).
+const fetchCatalogTo = vi.hoisted(() => vi.fn<(dir: string, url: string) => Promise<{ version: string }>>(async () => ({ version: 'v-test' })));
+vi.mock('../../lib/data/catalogSource.mjs', async (orig) => ({
+  ...(await orig<typeof import('../../lib/data/catalogSource.mjs')>()),
+  fetchCatalogTo,
+}));
+
 async function load(env: { flavour?: string; mode?: string; nodeEnv: string }): Promise<Cfg> {
   vi.resetModules();
   vi.stubEnv('NEXT_PUBLIC_ENV', env.flavour ?? '');
   vi.stubEnv('NEXT_PUBLIC_API_MODE', env.mode ?? '');
   vi.stubEnv('NODE_ENV', env.nodeEnv);
   const mod = await import('../../next.config');
-  return mod.default as Cfg;
+  const cfg = mod.default as Cfg | (() => Promise<Cfg>);
+  return typeof cfg === 'function' ? cfg() : cfg;
 }
 
 describe('next.config dev rewrite (AC-44)', () => {
@@ -43,5 +51,32 @@ describe('next.config dev rewrite (AC-44)', () => {
     const again = Object.keys(await load({ nodeEnv: 'production', flavour: '', mode: 'http' })).sort();
     expect(again).toEqual(expected);
     expect(expected).not.toContain('rewrites');
+  });
+
+  it('test + http fetches the catalog (version inlined, alias to the fetched files); a failed fetch exits 1 with no fallback', async () => {
+    const cfg = await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
+    expect((cfg.env as Record<string, string>).NEXT_PUBLIC_CATALOG_VERSION).toBe('v-test');
+    const alias = (cfg.turbopack as { resolveAlias: Record<string, string> }).resolveAlias;
+    expect(alias['@/data/schedule.json']).toMatch(/schedule\.json$/);
+    expect(alias['@/data/countries.json']).toMatch(/countries\.json$/);
+
+    fetchCatalogTo.mockRejectedValueOnce(new Error('catalog: http://127.0.0.1:4000/api/catalog → ECONNREFUSED'));
+    const exit = vi.spyOn(process, 'exit').mockImplementation((() => {
+      throw new Error('exit');
+    }) as never);
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await expect(load({ flavour: 'test', mode: 'http', nodeEnv: 'production' })).rejects.toThrow('exit');
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(err).toHaveBeenCalledWith(expect.stringContaining('/api/catalog'));
+    exit.mockRestore();
+    err.mockRestore();
+  });
+
+  it('production http without T2F_CATALOG_URL reads data/: no fetch, no catalog alias', async () => {
+    fetchCatalogTo.mockClear();
+    const cfg = await load({ flavour: '', mode: 'http', nodeEnv: 'production' });
+    expect(fetchCatalogTo).not.toHaveBeenCalled();
+    const alias = (cfg.turbopack as { resolveAlias: Record<string, string> }).resolveAlias;
+    expect(alias['@/data/schedule.json']).toBeUndefined();
   });
 });

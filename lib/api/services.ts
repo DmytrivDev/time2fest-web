@@ -40,7 +40,7 @@ export type ServiceName = keyof Services;
 export type ServiceFactories = { [K in ServiceName]?: () => Services[K] };
 
 /** Домени, які інтерфейс уже бере через шов (E0–E5): без їхніх адаптерів сайт працювати не може. */
-export const MIGRATED_DOMAINS: readonly ServiceName[] = ['notifications', 'rating', 'live', 'auth', 'profile', 'checkout', 'toasts', 'chat', 'passport'];
+export const MIGRATED_DOMAINS: readonly ServiceName[] = ['notifications', 'rating', 'live', 'auth', 'profile', 'checkout', 'toasts', 'chat', 'passport', 'catalog'];
 
 /** Перенесені домени без адаптера в поточному режимі (у `http` зараз — усі: бекенду ще немає). */
 export function missingDomains(mode = API_MODE): ServiceName[] {

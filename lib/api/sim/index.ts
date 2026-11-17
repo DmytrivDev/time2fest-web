@@ -4,6 +4,7 @@
  */
 import type { ServiceFactories } from '../services';
 import { createSimAuth } from './auth';
+import { createSimCatalog } from './catalog';
 import { createSimChat } from './chat';
 import { createSimCheckout } from './checkout';
 import { createSimLive } from './live';
@@ -29,4 +30,5 @@ export const simFactories: ServiceFactories = {
   toasts: () => withFaults('toasts', createSimToasts()),
   chat: () => withFaults('chat', createSimChat()),
   site: () => withFaults('site', createSimSite()),
+  catalog: () => createSimCatalog(),
 };

@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import { resolveApiMode } from './lib/api/mode';
+import { fetchCatalogTo, resolveCatalogSource } from './lib/data/catalogSource.mjs';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
@@ -19,6 +20,10 @@ const API_MODE = resolveApiMode({
 // SPEC-02 (AC-44): only `next dev` of the test build in http mode proxies /api/* to this worktree's server.
 // A static export ignores rewrites (output: 'export'); the integration build uses server/scripts/serve-int.mjs.
 const DEV_API_PROXY = TEST_BUILD && API_MODE === 'http' && process.env.NODE_ENV !== 'production';
+
+// SPEC-04 (AC-68..70): the catalog source of this build. Runs in Node at build; zod and the fetch never reach the bundle.
+const CATALOG_SOURCE = resolveCatalogSource({ testBuild: TEST_BUILD, apiMode: API_MODE, env: process.env });
+const CATALOG_DIR = `.t2f-catalog/${process.env.NEXT_DIST_DIR ?? 'default'}`;
 
 const nextConfig: NextConfig = {
   // Workspace package ships TS source, so Next must transpile it.
@@ -42,6 +47,12 @@ const nextConfig: NextConfig = {
           resolveAlias: {
             '@/lib/api/simEntry': './lib/api/http/simEntry.disabled.ts',
             '@/lib/api/simRuntimeEntry': './lib/api/http/simRuntimeEntry.disabled.tsx',
+            ...(CATALOG_SOURCE === 'data'
+              ? {}
+              : {
+                  '@/data/schedule.json': `./${CATALOG_DIR}/schedule.json`,
+                  '@/data/countries.json': `./${CATALOG_DIR}/countries.json`,
+                }),
           },
         },
       }
@@ -60,4 +71,19 @@ const nextConfig: NextConfig = {
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
 };
 
-export default withNextIntl(nextConfig);
+// A plain object when the catalog comes from data/; an async config only when this build fetches it from the server.
+if (CATALOG_SOURCE === 'data' && API_MODE === 'http') console.log('catalog: data/ (T2F_CATALOG_URL not set)');
+
+async function configWithServerCatalog(url: string): Promise<NextConfig> {
+  // Fail closed (AC-68): no fallback to data/ when the server cannot be reached.
+  try {
+    const { version } = await fetchCatalogTo(CATALOG_DIR, url);
+    console.log(`catalog: ${url}/api/catalog (version ${version})`);
+    return withNextIntl({ ...nextConfig, env: { ...nextConfig.env, NEXT_PUBLIC_CATALOG_VERSION: version } });
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    process.exit(1);
+  }
+}
+
+export default CATALOG_SOURCE === 'data' ? withNextIntl(nextConfig) : () => configWithServerCatalog(CATALOG_SOURCE.url);
