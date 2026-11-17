@@ -27,6 +27,7 @@
     "import": "tsx src/cli/import.ts",
     "export": "tsx src/cli/export.ts",
     "owner:create": "tsx src/cli/createOwner.ts",
+    "realtime:config": "tsx src/cli/realtimeConfig.ts",
     "serve": "node scripts/stack.mjs serve",
     "build": "next build",
     "start": "node scripts/stack.mjs start",
