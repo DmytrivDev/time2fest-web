@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "live": "node ../../node_modules/vitest/vitest.mjs run -c vitest.live.config.ts",
     "deploy:test": "node scripts/deploy.mjs --env test",
     "deploy:rehearsal": "node scripts/deploy.mjs --env rehearsal",
     "deploy:prelaunch": "node scripts/deploy.mjs --env prelaunch",
