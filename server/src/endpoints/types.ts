@@ -16,6 +16,7 @@ import type { ReadinessProbe } from '../health/ports';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
+import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -47,6 +48,16 @@ export interface EventPorts {
   channel: string;
 }
 
+/** The realtime ports (SPEC-06). `signer` is absent only in a `test` class without the token secret (AC-19). */
+export interface RealtimePorts {
+  signer?: TokenSigner;
+  random: RandomSource;
+  /** Channel prefix `<slug>_` in `test`; `''` everywhere else. */
+  prefix: string;
+  publisher?: ChannelPublisher;
+  invalidator?: SubjectInvalidator;
+}
+
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
@@ -74,6 +85,9 @@ export interface Deps {
   catalogCopy?: () => CatalogCopyDeps | undefined;
   /** Whether the database and the fast store answer (SPEC-13a AC-5/AC-6). */
   readiness?: ReadinessProbe;
+  /** Who a realtime token is for (C5): no session in production until SPEC-10; the doors' resolver in tests. */
+  subjects?: SubjectResolver;
+  realtime?: RealtimePorts;
 }
 
 export interface Ctx {

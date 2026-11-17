@@ -7,18 +7,22 @@
  * Test doors are loaded by dynamic `import()` only when `shouldLoadDoors` is true (AC-29); no
  * request field takes part in that decision (AC-31).
  */
+import { randomInt } from 'node:crypto';
 import type { JWTVerifyGetKey } from 'jose';
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
 import { createAccessGate, createDenyLog, type AccessGate } from './access/gate';
 import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
+import { createHs256Signer } from './adapters/centrifugoToken';
+import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
+import { parseRealtimeConfig } from './domain/realtime/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
@@ -128,6 +132,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
   const env: AppEnv = { class: loaded.class, vars: loaded.env };
+  const realtime = parseRealtimeConfig(raw, env.class);
+  if (!realtime.ok) throw new Error(`env: invalid ${realtime.failing.join(', ')}`);
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
   const clock = overrides.clock ?? clockFor(env.class);
   // The store reaches Payload lazily, so the alarm exists before Payload (which reports through it).
@@ -164,6 +170,14 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
+  // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
+  deps.subjects = overrides.subjects ?? noSessionSubjects;
+  const tokenSecret = realtime.config.tokenSecret;
+  deps.realtime = overrides.realtime ?? {
+    ...(tokenSecret !== undefined ? { signer: createHs256Signer(tokenSecret) } : {}),
+    random: () => randomInt(0, 2 ** 32) / 2 ** 32,
+    prefix: realtime.config.prefix,
+  };
   return deps;
 }
 
