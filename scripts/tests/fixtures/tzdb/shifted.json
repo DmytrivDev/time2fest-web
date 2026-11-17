@@ -1,0 +1,74 @@
+{
+ "zones": [
+  {
+   "id": "utc+1400",
+   "order": 0,
+   "offsetMinutes": 840,
+   "midnightUtc": "2026-12-31T10:00:00Z",
+   "representativeCityId": "kiritimati",
+   "countries": [
+    {
+     "iso": "KI",
+     "cities": [
+      {
+       "id": "kiritimati",
+       "name": {
+        "uk": "Кірітіматі"
+       },
+       "celebrationType": "countdown-only",
+       "isCountryMain": true,
+       "mapPoint": {
+        "x": 0.063,
+        "y": 0.4896
+       },
+       "events": [
+        {
+         "id": "evt_kiritimati_2027",
+         "midnightUtc": "2026-12-31T10:00:00Z",
+         "isMainCelebration": true,
+         "type": "countdown-only",
+         "popularity": 55
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "utc+1345",
+   "order": 1,
+   "offsetMinutes": 855,
+   "midnightUtc": "2026-12-31T10:15:00Z",
+   "representativeCityId": "chatham",
+   "countries": [
+    {
+     "iso": "NZ",
+     "cities": [
+      {
+       "id": "chatham",
+       "name": {
+        "uk": "Чатем"
+       },
+       "celebrationType": "countdown-only",
+       "isCountryMain": true,
+       "mapPoint": {
+        "x": 0.0096,
+        "y": 0.7442
+       },
+       "events": [
+        {
+         "id": "evt_chatham_2027",
+         "midnightUtc": "2026-12-31T10:15:00Z",
+         "isMainCelebration": true,
+         "type": "countdown-only",
+         "popularity": 88
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -12,6 +12,7 @@
 """
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import json
 import sys
@@ -119,7 +120,10 @@ def schema() -> dict:
     }
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    ap = argparse.ArgumentParser(description="Збирання розкладу")
+    ap.add_argument("--out", type=Path, default=OUT, help="каталог виводу (за замовчуванням data/)")
+    out = ap.parse_args(argv).out
     if tzdata.IANA_VERSION != EXPECTED_TZDB:
         fail(f"tzdata.IANA_VERSION = {tzdata.IANA_VERSION!r}, очікується {EXPECTED_TZDB!r} (pip install tzdata==2026.6)")
 
@@ -224,18 +228,18 @@ def main() -> None:
 
     check_invariants(schedule, countries_file)
 
-    OUT.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     dump = lambda p, obj: p.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    dump(OUT / "schedule.json", schedule)
-    dump(OUT / "countries.json", countries_file)
-    dump(OUT / "schedule.schema.json", schema())
+    dump(out / "schedule.json", schedule)
+    dump(out / "countries.json", countries_file)
+    dump(out / "schedule.schema.json", schema())
 
     n_cities = sum(len(cn["cities"]) for z in zone_nodes for cn in z["countries"])
     print(f"tzdb {tzdata.IANA_VERSION}; поясів {len(zone_nodes)}; країн {len(countries)}; міст/подій {n_cities}")
     print(f"перший пояс {zone_nodes[0]['id']} {zone_nodes[0]['midnightUtc']}; останній {zone_nodes[-1]['id']} {zone_nodes[-1]['midnightUtc']}")
     if no_gender:
         print(f"ПОПЕРЕДЖЕННЯ: {len(no_gender)} країн без роду (запасна фраза): {', '.join(no_gender)}", file=sys.stderr)
-    print(f"записано: {OUT / 'schedule.json'}, {OUT / 'countries.json'}, {OUT / 'schedule.schema.json'}")
+    print(f"записано: {out / 'schedule.json'}, {out / 'countries.json'}, {out / 'schedule.schema.json'}")
 
 
 def check_invariants(schedule: dict, countries_file: dict) -> None:
