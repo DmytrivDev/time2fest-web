@@ -19,6 +19,15 @@ function read(file) {
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
 }
 
+/**
+ * Content equality ignoring line endings (CRLF vs LF).
+ * @param {string | null} a
+ * @param {string | null} b
+ */
+function sameContent(a, b) {
+  return a !== null && b !== null && a.replace(/\r\n/g, '\n') === b.replace(/\r\n/g, '\n');
+}
+
 /** @param {string[]} args */
 function payload(args) {
   const r = spawnSync(process.execPath, [payloadBin, ...args], { cwd: serverDir, encoding: 'utf8' });
@@ -58,7 +67,10 @@ for (const [rel, args] of generated) {
   const before = read(file);
   payload(args);
   const after = read(file);
-  if (before !== after) {
+  if (before !== null && after !== null && before !== after && sameContent(before, after)) {
+    // Only line endings differ (git autocrlf checkout vs. LF generator output): keep the checked-out bytes.
+    fs.writeFileSync(file, before);
+  } else if (before === null || after === null || !sameContent(before, after)) {
     problems.push(`${rel} was stale; regenerated — review and keep the new content`);
   }
 }
