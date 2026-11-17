@@ -15,6 +15,7 @@ import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogStore } from './adapters/payloadCatalog';
+import { createReadinessProbe } from './adapters/readiness';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
@@ -162,6 +163,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     overrides.unattended ??
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
+  deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
   return deps;
 }
 

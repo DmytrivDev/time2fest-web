@@ -7,6 +7,7 @@ import type { AlarmService } from '../alarms/service';
 import type { AlarmStore } from '../alarms/ports';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
+import type { ReadinessProbe } from '../health/ports';
 import type { UnattendedDeps } from '../unattended/service';
 import type { Deps, EventPorts } from './types';
 
@@ -27,3 +28,5 @@ export const catalogStoreOf = (deps: Deps): CatalogStore => built(deps.catalogSt
 export const correctionsOf = (deps: Deps): CorrectionDeps => built(deps.corrections, 'corrections');
 /** The unattended-mode service dependencies (AC-31 … AC-36). */
 export const unattendedDepsOf = (deps: Deps): UnattendedDeps => built(deps.unattended, 'unattended');
+/** The readiness probe of `GET /api/health` (SPEC-13a AC-5/AC-6). */
+export const readinessOf = (deps: Deps): ReadinessProbe => built(deps.readiness, 'readiness');
