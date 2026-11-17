@@ -6,11 +6,12 @@
  * - An unexpected throw is logged with a log id and answered `unknown`, never with its text (AC-26).
  * - A body larger than the row's `maxBodyBytes` (16 KiB by default) is refused `invalid-input`
  *   before it is read whole: by `content-length` first, then by a hard cap while streaming.
+ * - Every route outcome passes `finalize`: the cache and cookie policy (SPEC-05 AC-32, AC-33).
  */
 import { randomBytes } from 'node:crypto';
 import type { ApiError, ApiErrorCode } from '@time2fest/contracts';
 import { inactiveEdgeGate, type EdgeGate } from '../platform/edge';
-import { DependencyUnavailable } from '../ports';
+import { DependencyUnavailable, type Logger } from '../ports';
 import type { ApiFailure, Ctx, Deps, HttpMethod, Middleware, Outcome, RouteRow } from './types';
 
 /** Status of every error code. `network` is never produced by the server. */
@@ -26,9 +27,12 @@ export const errors: Readonly<Record<ApiErrorCode, number>> = Object.freeze({
   network: 503,
 });
 
+/** `Cache-Control` of every own response and of a non-public route without `no-store` (AC-32). */
+const PRIVATE_NO_STORE = 'private, no-store';
+
 const JSON_HEADERS: Readonly<Record<string, string>> = Object.freeze({
   'content-type': 'application/json; charset=utf-8',
-  'cache-control': 'no-store',
+  'cache-control': PRIVATE_NO_STORE,
 });
 
 const MUTATING: ReadonlySet<string> = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
@@ -79,6 +83,29 @@ function toResponse(outcome: Outcome): Response {
   return json({ ok: false, error }, errors[error.code]);
 }
 
+function hasNoStore(value: string | null): boolean {
+  return value !== null && value.split(',').some((d) => d.trim().toLowerCase() === 'no-store');
+}
+
+/**
+ * The cache and cookie policy of every route outcome (SPEC-05 AC-32, AC-33), applied after
+ * `toResponse`. The response is rebuilt, because a handler's `Response` may have immutable headers.
+ * - Non-public route: `Cache-Control` always carries `no-store`; missing or without it → `private, no-store`.
+ * - Public route: `Cache-Control` is kept; any `Set-Cookie` is dropped with a warning.
+ */
+function finalize(res: Response, route: RouteRow, log: Logger): Response {
+  const headers = new Headers(res.headers);
+  if (route.public) {
+    if (headers.has('set-cookie')) {
+      headers.delete('set-cookie');
+      log.warn({ event: 'public-set-cookie', route: route.key });
+    }
+  } else if (!hasNoStore(headers.get('cache-control'))) {
+    headers.set('cache-control', PRIVATE_NO_STORE);
+  }
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+}
+
 /** A connection-level failure of Postgres or Redis, possibly wrapped (`cause`, `AggregateError`). */
 export function isDependencyFailure(err: unknown, depth = 0): boolean {
   if (depth > 4 || err === null || typeof err !== 'object') return false;
@@ -121,14 +148,17 @@ function isJsonContentType(req: Request): boolean {
  * must be `application/json` (a cross-site form or no-cors fetch cannot send it without a
  * preflight), and an `Origin`, when present, must be allowed; only a missing `Origin` (tooling)
  * passes without one.
+ * The one exception is the edge probe door (SPEC-05 W16): when the edge secret was verified, a
+ * non-loopback `Host` and a non-JSON body are accepted for it; a present `Origin` must still be allowed.
  */
 export const originMiddleware: Middleware = {
   key: '10-origin',
   async run(ctx, next) {
     const { req, route } = ctx;
     if (route.testDoor) {
-      if (!isLoopbackHost(req, ctx.url)) return failure('forbidden');
-      if (MUTATING.has(req.method) && !isJsonContentType(req)) return failure('forbidden');
+      const edgeProbe = route.edgeProbe === true && ctx.client.edgeVerified;
+      if (!edgeProbe && !isLoopbackHost(req, ctx.url)) return failure('forbidden');
+      if (!edgeProbe && MUTATING.has(req.method) && !isJsonContentType(req)) return failure('forbidden');
     }
     if (!MUTATING.has(req.method) || (route.sameOriginExempt && !route.testDoor)) return next();
     const allowed = ctx.env.vars.T2F_ALLOWED_ORIGINS;
@@ -139,11 +169,11 @@ export const originMiddleware: Middleware = {
   },
 };
 
-/** The body as text, or `undefined` when it is over `max` bytes (declared or actually streamed). */
-async function readBody(req: Request, max: number): Promise<string | undefined> {
+/** The raw body, or `undefined` when it is over `max` bytes (declared or actually streamed). */
+export async function readBodyBytes(req: Request, max: number): Promise<Uint8Array | undefined> {
   const declared = req.headers.get('content-length');
   if (declared !== null && (!/^\d+$/.test(declared.trim()) || Number(declared) > max)) return undefined;
-  if (req.body === null) return '';
+  if (req.body === null) return new Uint8Array(0);
   const reader = req.body.getReader();
   const chunks: Uint8Array[] = [];
   let size = 0;
@@ -157,7 +187,13 @@ async function readBody(req: Request, max: number): Promise<string | undefined> 
     }
     chunks.push(value);
   }
-  return new TextDecoder().decode(Buffer.concat(chunks));
+  return Buffer.concat(chunks);
+}
+
+/** The body as text, or `undefined` when it is over `max` bytes. */
+async function readBody(req: Request, max: number): Promise<string | undefined> {
+  const bytes = await readBodyBytes(req, max);
+  return bytes === undefined ? undefined : new TextDecoder().decode(bytes);
 }
 
 /** `20-validate`: body and query against the row schemas; the handler does not run on failure (AC-24). */
@@ -225,16 +261,19 @@ export function createDispatcher({ routes, middleware, deps, edge }: DispatcherI
       return mw ? mw.run(ctx, () => run(i + 1)) : route.handler(ctx);
     };
 
+    let outcome: Outcome;
     try {
-      return toResponse(await run(0));
+      outcome = await run(0);
     } catch (err) {
       if (isDependencyFailure(err)) {
         deps.log.warn({ event: 'dependency-unavailable', route: route.key, err });
-        return toResponse(failure('unavailable'));
+        outcome = failure('unavailable');
+      } else {
+        const logId = newLogId();
+        deps.log.error({ event: 'unhandled', route: route.key, logId, err });
+        outcome = failure('unknown', { message: logId });
       }
-      const logId = newLogId();
-      deps.log.error({ event: 'unhandled', route: route.key, logId, err });
-      return toResponse(failure('unknown', { message: logId }));
     }
+    return finalize(toResponse(outcome), route, deps.log);
   };
 }

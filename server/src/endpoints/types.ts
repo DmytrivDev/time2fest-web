@@ -80,7 +80,10 @@ export interface RouteRow {
   testDoor?: true;
   /** A public route: cacheable at the edge, its `Set-Cookie` stripped (SPEC-05 W15). */
   public?: true;
-  /** The edge probe door (set only by door rows, SPEC-05 W16). */
+  /**
+   * The edge probe door (set only by door rows, SPEC-05 W16). Only on a `testDoor` and only with a
+   * verified edge secret, `10-origin` accepts a non-loopback `Host` and a non-JSON body.
+   */
   edgeProbe?: true;
   /** Largest accepted request body in bytes; default `DEFAULT_MAX_BODY_BYTES` (16 KiB). */
   maxBodyBytes?: number;
