@@ -9,6 +9,7 @@ import { createEdgeGate, inactiveEdgeGate, type ClientContext, type EdgeGate } f
 import { loadEnv } from '../../src/platform/env';
 import { daySalts, networkOf } from '../../src/platform/fingerprint';
 import { createLogger } from '../../src/platform/logger';
+import { runSubjectData } from '../../src/platform/subjectData';
 import { DependencyUnavailable, type Clock, type FastStore } from '../../src/ports';
 import { envRegistry } from '../../src/registries/env';
 import { rateLimitMiddleware } from '../../src/registries/middleware';
@@ -263,5 +264,17 @@ describe('edge gate', () => {
     const first = await run();
     const overhead = first <= 1 ? first : await run();
     expect(overhead).toBeLessThanOrEqual(1);
+  });
+});
+
+describe('declarative subject-data row (SPEC-05 AC-31)', () => {
+  it('a declarative row beside a handler → no throw, the row is named, the handler ran', async () => {
+    const handler = { capability: 'chat', export: async () => 1, erase: async () => 2, anonymise: async () => 3 };
+    const declaration = { capability: 'ip-day-fingerprint', declarative: true as const, retention: '<= 24 h', description: 'rate-limit key' };
+    expect(await runSubjectData('erase', 's-1', [declaration, handler])).toEqual({
+      ok: true,
+      results: { chat: 2 },
+      declarative: ['ip-day-fingerprint'],
+    });
   });
 });

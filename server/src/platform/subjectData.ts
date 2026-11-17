@@ -13,16 +13,32 @@ export interface SubjectDataHandler {
   anonymise(subjectId: string): Promise<unknown>;
 }
 
-export type SubjectDataResult =
-  | { ok: true; results: Record<string, unknown> }
-  | { ok: false; failed: string[] };
+/** A capability that keeps subject data without a handler (a short-lived key, nothing to export or erase). */
+export interface SubjectDataDeclaration {
+  capability: string;
+  declarative: true;
+  retention: string;
+  description: string;
+}
 
-/** Calls every handler (none is skipped when another fails); all results or the failed capabilities. */
+export type SubjectDataRow = SubjectDataHandler | SubjectDataDeclaration;
+
+export type SubjectDataResult =
+  | { ok: true; results: Record<string, unknown>; declarative: string[] }
+  | { ok: false; failed: string[]; declarative: string[] };
+
+function isDeclaration(row: SubjectDataRow): row is SubjectDataDeclaration {
+  return 'declarative' in row && row.declarative === true;
+}
+
+/** Calls every handler (none is skipped when another fails); declarative rows are only named. */
 export async function runSubjectData(
   op: SubjectDataOp,
   subjectId: string,
-  handlers: readonly SubjectDataHandler[],
+  rows: readonly SubjectDataRow[],
 ): Promise<SubjectDataResult> {
+  const declarative = rows.filter(isDeclaration).map((r) => r.capability);
+  const handlers = rows.filter((r): r is SubjectDataHandler => !isDeclaration(r));
   const settled = await Promise.allSettled(handlers.map((h) => h[op](subjectId)));
   const failed: string[] = [];
   const results: Record<string, unknown> = {};
@@ -31,5 +47,5 @@ export async function runSubjectData(
     if (s.status === 'rejected') failed.push(capability);
     else results[capability] = s.value;
   });
-  return failed.length > 0 ? { ok: false, failed } : { ok: true, results };
+  return failed.length > 0 ? { ok: false, failed, declarative } : { ok: true, results, declarative };
 }

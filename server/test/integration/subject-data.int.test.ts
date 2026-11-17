@@ -21,19 +21,24 @@ describe('subject-data registry', () => {
         return ok.export(id);
       },
     };
-    expect(await runSubjectData('export', 'subj-1', [spying, handler('orders', true)])).toEqual({ ok: false, failed: ['orders'] });
+    expect(await runSubjectData('export', 'subj-1', [spying, handler('orders', true)])).toEqual({ ok: false, failed: ['orders'], declarative: [] });
     expect(calls).toEqual(['subj-1']);
   });
 
   it('AC-57: every handler succeeds → all results keyed by capability', async () => {
     expect(await runSubjectData('erase', 'subj-2', [handler('chat'), handler('orders')])).toEqual({
       ok: true,
+      declarative: [],
       results: { chat: { capability: 'chat', id: 'subj-2' }, orders: { capability: 'orders', id: 'subj-2' } },
     });
   });
 
   it('AC-57: no handlers → an empty result', async () => {
-    expect(await runSubjectData('anonymise', 'subj-3', [])).toEqual({ ok: true, results: {} });
-    expect(await runSubjectData('export', 'subj-3', subjectDataRegistry)).toEqual({ ok: true, results: {} });
+    expect(await runSubjectData('anonymise', 'subj-3', [])).toEqual({ ok: true, results: {}, declarative: [] });
+    expect(await runSubjectData('export', 'subj-3', subjectDataRegistry)).toEqual({
+      ok: true,
+      results: {},
+      declarative: ['ip-day-fingerprint'],
+    });
   });
 });
