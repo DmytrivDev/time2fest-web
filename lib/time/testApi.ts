@@ -3,7 +3,8 @@
  * Встановлюється лише за `IS_TEST_BUILD` (див. `TimeProvider`).
  */
 import type { ISO, PayResult } from '@/lib/data/types';
-import { faultControls, getService } from '@/lib/api/services';
+import type { DomainSplit } from '@/lib/api/domains';
+import { apiDomains, faultControls, getService } from '@/lib/api/services';
 import type { DevCode } from '@/lib/api/contracts/auth';
 import type { FaultControls } from '@/lib/api/sim/faults';
 import { resetDeviceState } from '@/stores/resetDevice';
@@ -35,6 +36,8 @@ export interface T2FTestApi {
   api?: FaultControls;
   /** Хтось відповів на твоє повідомлення (перевірка «Сповіщати про відповіді»). */
   emitReply(): void;
+  /** Хто обслуговує домени в цій збірці: в інтеграційній (test + http) — `http` з адаптером, решта — `sim`. */
+  apiDomains: DomainSplit;
 }
 
 declare global {
@@ -82,6 +85,7 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
       // Шов E5a: інструмент імітації чату (`chat.dev`).
       getService('chat').dev?.emitReplyToMe(machine.get().at);
     },
+    apiDomains: apiDomains(),
   };
 }
 

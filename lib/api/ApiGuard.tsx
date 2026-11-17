@@ -7,11 +7,13 @@
  */
 import { useEffect, type ReactNode } from 'react';
 import { BackendDown } from '@/components/shell/Offline';
+import { IS_TEST_BUILD } from '@/lib/env';
 import { API_MODE, type ApiMode } from './mode';
 import { missingDomains } from './services';
 
-export function ApiGuard({ children, mode = API_MODE }: { children: ReactNode; mode?: ApiMode }) {
-  const missing = mode === 'http' ? missingDomains('http').join(', ') : '';
+/** Інтеграційна збірка (test + http): домени без адаптера `http` бере імітація — сайт працює (`lib/api/domains.ts`). */
+export function ApiGuard({ children, mode = API_MODE, testBuild = IS_TEST_BUILD }: { children: ReactNode; mode?: ApiMode; testBuild?: boolean }) {
+  const missing = mode === 'http' ? missingDomains('http', testBuild).join(', ') : '';
   const down = missing !== '';
   useEffect(() => {
     if (down) console.error(`[api] Режим http: немає адаптерів для ${missing} — сервіс недоступний, сайт не запускається.`);

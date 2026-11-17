@@ -169,6 +169,7 @@ export interface AppTimeSource {
 
 /** Джерело часу для сайту: у тестовій збірці — машина часу, інакше — серверний `TimeSource`. */
 export function createAppTimeSource(): AppTimeSource {
+  // Будь-яка тестова збірка, і `sim`, і інтеграційна (test + http): машина часу клієнта; узгодження з годинником сервера — ШВ-03, SPEC-07 (FR-CLK-15).
   if (IS_TEST_BUILD && typeof window !== 'undefined') {
     // Демо: час спільний для вкладок і переживає закриття (localStorage, «Скинути стан гостя» його стирає), адреса — без `t`.
     const storage = IS_DEMO_BUILD ? safeLocalStorage() : safeSessionStorage();

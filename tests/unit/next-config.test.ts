@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 type Cfg = Record<string, unknown>;
 
 // The integration flavour (test + http) fetches the catalog at config time; here the fetch is replaced (SPEC-04, AC-68).
-const fetchCatalogTo = vi.hoisted(() => vi.fn<(dir: string, url: string) => Promise<{ version: string }>>(async () => ({ version: 'v-test' })));
+const fetchCatalogTo = vi.hoisted(() => vi.fn<(dir: string, url: string, schema?: unknown) => Promise<{ version: string }>>(async () => ({ version: 'v-test' })));
 vi.mock('../../lib/data/catalogSource.mjs', async (orig) => ({
   ...(await orig<typeof import('../../lib/data/catalogSource.mjs')>()),
   fetchCatalogTo,
@@ -78,5 +78,53 @@ describe('next.config dev rewrite (AC-44)', () => {
     expect(fetchCatalogTo).not.toHaveBeenCalled();
     const alias = (cfg.turbopack as { resolveAlias: Record<string, string> }).resolveAlias;
     expect(alias['@/data/schedule.json']).toBeUndefined();
+  });
+});
+
+describe('next.config — three build kinds (FR-MIG-01, B3)', () => {
+  afterEach(() => vi.unstubAllEnvs());
+  const SIM_ALIASES = ['@/lib/api/simEntry', '@/lib/api/simRuntimeEntry'];
+  const aliasOf = (cfg: Cfg) => (cfg.turbopack as { resolveAlias: Record<string, string> } | undefined)?.resolveAlias;
+
+  it('test + sim (plain test and demo build): only the next-intl alias, as before', async () => {
+    for (const mode of ['sim', '']) {
+      const alias = aliasOf(await load({ flavour: 'test', mode, nodeEnv: 'production' })) ?? {};
+      expect(Object.keys(alias), mode).toEqual(Object.keys(alias).filter((k) => k.startsWith('next-intl')));
+    }
+  });
+
+  it('test + http (integration): sim stays in the bundle, only the catalog files are aliased; the split is printed once', async () => {
+    vi.stubEnv('T2F_API_SPLIT_PRINTED', '');
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const cfg = await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
+    const alias = aliasOf(cfg)!;
+    for (const a of SIM_ALIASES) expect(alias[a], a).toBeUndefined();
+    expect(alias['@/data/countries.json']).toMatch(/countries\.json$/);
+    const lines = log.mock.calls.map(([m]) => String(m)).filter((m) => m.startsWith('[api] integration build'));
+    expect(lines).toEqual(['[api] integration build: http = catalog; sim = notifications, rating, live, auth, profile, checkout, toasts, chat, passport']);
+    await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
+    expect(log.mock.calls.filter(([m]) => String(m).startsWith('[api] integration build'))).toHaveLength(1);
+    log.mockRestore();
+  });
+
+  it('test + http passes CatalogResponseSchema to the catalog fetch (S4-03)', async () => {
+    fetchCatalogTo.mockClear();
+    await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
+    const schema = fetchCatalogTo.mock.calls[0]?.[2] as { safeParse?: unknown } | undefined;
+    expect(typeof schema?.safeParse).toBe('function');
+  });
+
+  it('production + http: sim is cut out (both entries replaced by the disabled modules); no split line', async () => {
+    vi.stubEnv('T2F_API_SPLIT_PRINTED', '');
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const alias = aliasOf(await load({ flavour: '', mode: 'http', nodeEnv: 'production' }))!;
+    expect(alias['@/lib/api/simEntry']).toBe('./lib/api/http/simEntry.disabled.ts');
+    expect(alias['@/lib/api/simRuntimeEntry']).toBe('./lib/api/http/simRuntimeEntry.disabled.tsx');
+    expect(log.mock.calls.some(([m]) => String(m).startsWith('[api] integration build'))).toBe(false);
+    log.mockRestore();
+  });
+
+  it('production + sim is still refused', async () => {
+    await expect(load({ flavour: '', mode: 'sim', nodeEnv: 'production' })).rejects.toThrow(/Робоча збірка з імітацією заборонена/);
   });
 });

@@ -17,6 +17,8 @@ const port = webPort();
 const baseURL = process.env.T2F_E2E_BASE ?? (port ? `http://127.0.0.1:${port}` : undefined);
 
 // No webServer: the integration build and the server are started by `pnpm build:int`, `pnpm serve:int`, `pnpm stack`.
+// The build is mixed (catalog over http, the other domains on sim, time machine as in the test build), so every domain e2e
+// runs here unchanged. Smoke for the catalog switch (SPEC-04 W53 step 5): `tests/e2e/us2-country.spec.ts`.
 export default defineConfig({
   testDir: './tests/e2e',
   testIgnore: /.*\.prod\.spec\.ts/,
