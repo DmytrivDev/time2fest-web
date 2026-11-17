@@ -6,12 +6,14 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnv } from 'node:util';
 import { parseArgs } from './lib/args.mjs';
+import { runBootstrap } from './lib/bootstrap.mjs';
 import { SECRET_ENV_NAMES } from './lib/config.mjs';
 import { runDeploy } from './lib/deploy.mjs';
 import { realExec } from './lib/exec.mjs';
 import { guardRun } from './lib/guard.mjs';
 import { createOutput, redactorFromEnv } from './lib/redact.mjs';
 import { runRollback } from './lib/rollback.mjs';
+import { runEdgeSecret } from './lib/secrets.mjs';
 
 const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity'];
 /** Змінні з `--secrets-file`, значення яких маскуються, навіть коли їх немає в `SECRET_ENV_NAMES`. */
@@ -26,12 +28,13 @@ const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
  *   out: (line: string) => void,
  *   err: (line: string) => void,
  *   now: () => Date,
- *   deps?: import('./lib/deploy.mjs').OpsDeps,
+ *   deps?: OpsDeps,
  * }} OpsContext
+ * @typedef {import('./lib/deploy.mjs').OpsDeps & import('./lib/secrets.mjs').SecretsDeps & import('./lib/bootstrap.mjs').BootstrapDeps} OpsDeps
  */
 
 /** Реалізовані підкоманди (додаються по фазах). @type {Record<string, (ctx: OpsContext) => Promise<number>>} */
-const RUNNERS = { deploy: runDeploy, rollback: runRollback };
+const RUNNERS = { deploy: runDeploy, rollback: runRollback, 'edge-secret': runEdgeSecret, bootstrap: runBootstrap };
 
 /**
  * @param {string[]} argv
@@ -41,8 +44,8 @@ const RUNNERS = { deploy: runDeploy, rollback: runRollback };
  *   env?: Record<string, string | undefined>,
  *   exec?: import('./lib/exec.mjs').Executor,
  *   now?: () => Date,
- * } & import('./lib/deploy.mjs').OpsDeps} [deps] `exec`, `now`, `transport`, `worker`, `clock`, `git`, `image`,
- *   `stateRoot`, `startProbe` — підставні в тестах
+ * } & OpsDeps} [deps] `exec`, `now`, `transport`, `worker`, `clock`, `git`, `image`,
+ *   `stateRoot`, `startProbe`, `examplesDir`, `tunnelEnvFile`, `platform`, `edgeCheck`, `sshAs` — підставні в тестах
  * @returns {Promise<number>} exit code
  */
 export async function main(argv, deps = {}) {

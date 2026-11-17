@@ -1,0 +1,269 @@
+// @ts-check
+// Підготовка вузла (AC-8, EC-9): користувач `deploy` з ключем власника, Docker з архіву Ubuntu, каталог вузла,
+// брандмауер (вхідний лише TCP 22), потім — лише після перевірки входу `deploy` — вимкнення входу root і паролів.
+// Кожен крок спершу перевіряє «вже зроблено» без змін; повторний запуск нічого не змінює.
+// Віддалені команди — фіксовані рядки; єдине значення ззовні — каталог вузла з `ENVS` (позиційний `$1`).
+// Коди: 0 — готово або без змін; 2 — відмова до будь-якої зміни; 1 — крок не вдався.
+import fs from 'node:fs';
+import path from 'node:path';
+import { ENVS } from './config.mjs';
+import { DEFAULT_STATE_ROOT, DEPLOY_USER, messageOf } from './deploy.mjs';
+
+const REMOTE_TIMEOUT_MS = 60_000;
+const APT_TIMEOUT_MS = 15 * 60_000;
+/** Код ssh, коли не вдалося під’єднатися чи увійти (не код віддаленої команди). */
+export const SSH_FAILED = 255;
+export const SSHD_DROP_IN = '/etc/ssh/sshd_config.d/00-t2f.conf';
+/** `00-` — раніше за `50-cloud-init.conf`: sshd бере перше значення, тож наші рядки виграють. */
+export const SSHD_CONF = 'PermitRootLogin no\nPasswordAuthentication no\nKbdInteractiveAuthentication no\n';
+export const ROOT_ONLY_NOTE = 'перевірено при першому запуску; повторна перевірка — порт-скан R4';
+
+/**
+ * @typedef {import('./exec.mjs').Transport} Transport
+ * @typedef {import('./exec.mjs').RunResult} RunResult
+ * @typedef {import('../ops.mjs').OpsContext} OpsContext
+ * @typedef {{
+ *   sshAs?: (user: string) => Transport,
+ * }} BootstrapDeps `sshAs` — транспорт до вузла від імені користувача (тести)
+ * @typedef {{
+ *   id: string,
+ *   title: string,
+ *   check: (nodeDir: string) => string[],
+ *   ok?: (r: RunResult) => boolean,
+ *   apply?: (nodeDir: string) => string[],
+ *   input?: string,
+ *   timeoutMs?: number,
+ * }} Step
+ */
+
+/** @param {string} script @returns {(nodeDir: string) => string[]} */
+const sh = (script) => (nodeDir) => ['sh', '-c', script, '_', nodeDir];
+
+/**
+ * Брандмауер у стані AC-8: увімкнений, вхідні за замовчуванням заборонені, вихідні дозволені, дозволений вхідний
+ * лише `22/tcp` (IPv4 і IPv6).
+ * @param {string} stdout вивід `ufw status verbose`
+ */
+export function ufwOk(stdout) {
+  const s = String(stdout);
+  if (!/^Status: active\s*$/m.test(s)) return false;
+  if (!/^Default: deny \(incoming\), allow \(outgoing\)/m.test(s)) return false;
+  const allows = s.split(/\r?\n/).filter((l) => /\bALLOW IN\b/.test(l));
+  return allows.length > 0 && allows.every((l) => /^22\/tcp(?:\s+\(v6\))?\s+ALLOW IN\b/.test(l.trim()));
+}
+
+/** Кроки від імені root, по порядку. Крок `deploy-login` — окремо (перевірка без змін, із другим входом). @type {Step[]} */
+export const ROOT_STEPS = [
+  {
+    id: 'deploy-user',
+    title: 'користувач deploy з ключем власника',
+    check: sh('id -u deploy >/dev/null 2>&1 && test -s ~deploy/.ssh/authorized_keys'),
+    apply: sh(
+      'set -e; id -u deploy >/dev/null 2>&1 || useradd -m -s /bin/bash deploy; ' +
+        'install -d -m 700 -o deploy -g deploy ~deploy/.ssh; ' +
+        'install -m 600 -o deploy -g deploy /root/.ssh/authorized_keys ~deploy/.ssh/authorized_keys',
+    ),
+  },
+  {
+    id: 'docker',
+    title: 'Docker з архіву Ubuntu',
+    check: sh('docker --version >/dev/null 2>&1 && docker compose version >/dev/null 2>&1 && id -nG deploy | tr " " "\\n" | grep -qx docker'),
+    apply: sh(
+      'set -e; export DEBIAN_FRONTEND=noninteractive; apt-get update; apt-get install -y docker.io docker-compose-v2; ' +
+        'usermod -aG docker deploy',
+    ),
+    timeoutMs: APT_TIMEOUT_MS,
+  },
+  {
+    id: 'node-dir',
+    title: 'каталог вузла (deploy, 700)',
+    check: sh('test -d "$1" && test "$(stat -c %U:%a "$1")" = deploy:700'),
+    apply: sh('install -d -m 700 -o deploy -g deploy "$1"'),
+  },
+  {
+    id: 'firewall',
+    title: 'брандмауер: вхідний лише TCP 22',
+    check: () => ['ufw', 'status', 'verbose'],
+    ok: (r) => r.code === 0 && ufwOk(r.stdout),
+    apply: sh(
+      'set -e; command -v ufw >/dev/null 2>&1 || DEBIAN_FRONTEND=noninteractive apt-get install -y ufw; ' +
+        'ufw default deny incoming; ufw default allow outgoing; ufw allow 22/tcp; ufw --force enable',
+    ),
+    timeoutMs: APT_TIMEOUT_MS,
+  },
+  {
+    id: 'sshd',
+    title: 'SSH: без входу root і паролів',
+    check: sh(
+      `test -f ${SSHD_DROP_IN} && c="$(sshd -T)" && printf "%s\\n" "$c" | grep -qx "permitrootlogin no" && ` +
+        'printf "%s\\n" "$c" | grep -qx "passwordauthentication no" && printf "%s\\n" "$c" | grep -qx "kbdinteractiveauthentication no"',
+    ),
+    apply: sh(
+      `set -e; umask 022; cat > ${SSHD_DROP_IN}.tmp; mv ${SSHD_DROP_IN}.tmp ${SSHD_DROP_IN}; ` +
+        `sshd -t || { rm -f ${SSHD_DROP_IN}; exit 1; }; systemctl reload ssh`,
+    ),
+    input: SSHD_CONF,
+  },
+];
+
+/** Перевірка входу `deploy` тим самим ключем (крок 5): стоїть перед `sshd`. */
+export const LOGIN_STEP_ID = 'deploy-login';
+/** Перевірки повторного запуску від імені `deploy` (root уже не входить). @type {Step[]} */
+export const DEPLOY_CHECKS = [
+  { id: 'docker', title: 'docker info від імені deploy', check: () => ['docker', 'info', '--format', '{{.ServerVersion}}'] },
+  { id: 'node-dir', title: 'каталог вузла доступний deploy', check: sh('test -d "$1" && test -w "$1"') },
+];
+
+/**
+ * @param {Transport} t
+ * @param {string[]} argv
+ * @param {{ input?: string, timeoutMs?: number }} [o]
+ */
+const remote = (t, argv, o = {}) => t.exec(argv, { allow: [...argv], timeoutMs: o.timeoutMs ?? REMOTE_TIMEOUT_MS, ...(o.input !== undefined ? { input: o.input } : {}) });
+
+/**
+ * `ops bootstrap --host <ipv4|name> [--env rehearsal]`.
+ * @param {OpsContext} ctx
+ * @returns {Promise<number>}
+ */
+export async function runBootstrap(ctx) {
+  const { out, err } = ctx;
+  const env = ctx.args.env ?? 'rehearsal';
+  const cfg = ENVS[env];
+  const host = /** @type {string} */ (ctx.args.values.host);
+  const deps = ctx.deps ?? {};
+  /** @param {string} m */
+  const refuse = (m) => {
+    err(`bootstrap: ${m}`);
+    return 2;
+  };
+  if (env !== 'rehearsal' || !cfg?.nodeDir) return refuse('лише --env rehearsal');
+  const nodeDir = cfg.nodeDir;
+
+  const stateRoot = deps.stateRoot ?? DEFAULT_STATE_ROOT;
+  const knownHosts = ctx.env.T2F_KNOWN_HOSTS_FILE || path.join(stateRoot, 'known_hosts');
+  /** @type {Transport} */
+  let asRoot;
+  /** @type {Transport} */
+  let asDeploy;
+  try {
+    // Перший вхід — довіра до ключа хоста при першій зустрічі (accept-new) у `known_hosts`; далі ключ закріплений.
+    const sshAs = deps.sshAs ?? ((/** @type {string} */ user) => ctx.exec.sshTransport({ host, user, knownHostsFile: knownHosts, accept: 'new' }));
+    asRoot = sshAs('root');
+    asDeploy = sshAs(DEPLOY_USER);
+  } catch (e) {
+    return refuse(messageOf(e));
+  }
+  if (!deps.sshAs) fs.mkdirSync(path.dirname(knownHosts), { recursive: true });
+
+  try {
+    const rootIn = await remote(asRoot, ['true']);
+    if (rootIn.code === 0) {
+      await printFingerprint(ctx, host, knownHosts);
+      return await rootPath(ctx, { asRoot, asDeploy, nodeDir });
+    }
+    const deployIn = await remote(asDeploy, ['true']);
+    if (deployIn.code !== 0) {
+      err(`bootstrap: не вдалося увійти ні як root, ні як deploy (коди ${rootIn.code}, ${deployIn.code})`);
+      return 1;
+    }
+    await printFingerprint(ctx, host, knownHosts);
+    out('bootstrap: root не входить — повторна перевірка від імені deploy');
+    return await deployPath(ctx, { asDeploy, nodeDir });
+  } catch (e) {
+    err(`bootstrap: ${messageOf(e)}`);
+    return 1;
+  }
+}
+
+/**
+ * Відбиток ключа хоста з `known_hosts` — власник звіряє його з консоллю провайдера. Відбиток не секрет.
+ * @param {OpsContext} ctx
+ * @param {string} host
+ * @param {string} knownHosts
+ */
+async function printFingerprint(ctx, host, knownHosts) {
+  const r = await ctx.exec.run('ssh-keygen', ['-l', '-F', host, '-f', knownHosts], { timeoutMs: REMOTE_TIMEOUT_MS });
+  const lines = r.stdout.split(/\r?\n/).filter((l) => l.trim() !== '' && !l.startsWith('#'));
+  if (r.code !== 0 || !lines.length) {
+    ctx.err(`bootstrap: відбиток ключа хоста не прочитано (код ${r.code}) — звірте ключ вручну`);
+    return;
+  }
+  ctx.out('bootstrap: відбиток ключа хоста (звірте з консоллю провайдера):');
+  for (const l of lines) ctx.out(`  ${l.trim()}`);
+}
+
+/**
+ * @param {OpsContext} ctx
+ * @param {{ asRoot: Transport, asDeploy: Transport, nodeDir: string }} o
+ * @returns {Promise<number>}
+ */
+async function rootPath(ctx, { asRoot, asDeploy, nodeDir }) {
+  const { out, err } = ctx;
+  let changed = 0;
+  /** @param {Step} s */
+  const passes = async (s) => {
+    const r = await remote(asRoot, s.check(nodeDir));
+    return s.ok ? s.ok(r) : r.code === 0;
+  };
+
+  for (const [i, s] of ROOT_STEPS.entries()) {
+    const n = i < 4 ? i + 1 : 6;
+    if (s.id === 'sshd') {
+      // 5. Запобіжник від блокування: вимикати root можна лише коли `deploy` входить тим самим ключем.
+      const login = await remote(asDeploy, ['true']);
+      if (login.code !== 0) {
+        err(`bootstrap: 5 ${LOGIN_STEP_ID} — ssh deploy@вузол не працює (код ${login.code}); вхід root НЕ вимкнено`);
+        return 1;
+      }
+      out(`bootstrap: 5 ${LOGIN_STEP_ID} — вхід deploy працює`);
+    }
+    if (await passes(s)) {
+      out(`bootstrap: ${n} ${s.id} — вже зроблено`);
+      continue;
+    }
+    if (!s.apply) return 1;
+    const r = await remote(asRoot, s.apply(nodeDir), { input: s.input, timeoutMs: s.timeoutMs });
+    changed += 1;
+    if (r.code !== 0 || !(await passes(s))) {
+      err(`bootstrap: ${n} ${s.id} (${s.title}) не вдався (код ${r.code})`);
+      for (const l of String(r.stderr).split(/\r?\n/).filter((x) => x.trim() !== '').slice(-10)) err(`  ${l}`);
+      return 1;
+    }
+    out(`bootstrap: ${n} ${s.id} — зроблено`);
+  }
+
+  if (changed > 0) {
+    // Після вимкнення root новий вхід `deploy` має далі працювати.
+    const again = await remote(asDeploy, ['true']);
+    if (again.code !== 0) {
+      err(`bootstrap: після змін ssh deploy@вузол не працює (код ${again.code}) — відкрийте консоль провайдера`);
+      return 1;
+    }
+    out('bootstrap: готово');
+  } else {
+    out('bootstrap: без змін');
+  }
+  return 0;
+}
+
+/**
+ * Повторний запуск, коли root уже не входить: лише перевірки від імені `deploy`, жодних змін.
+ * @param {OpsContext} ctx
+ * @param {{ asDeploy: Transport, nodeDir: string }} o
+ * @returns {Promise<number>}
+ */
+async function deployPath(ctx, { asDeploy, nodeDir }) {
+  const { out, err } = ctx;
+  for (const s of DEPLOY_CHECKS) {
+    const r = await remote(asDeploy, s.check(nodeDir));
+    if (r.code !== 0) {
+      err(`bootstrap: ${s.id} (${s.title}) — не пройшло (код ${r.code}); root вимкнено, виправте через консоль провайдера`);
+      return 1;
+    }
+    out(`bootstrap: ${s.id} — без змін`);
+  }
+  out(`bootstrap: користувач root, брандмауер, sshd — ${ROOT_ONLY_NOTE}`);
+  out('bootstrap: без змін');
+  return 0;
+}
