@@ -2,7 +2,7 @@
  * Правила, що розходяться з головним слотом ефіру (`currentSlotIndex` / `isZonePast`), під власними назвами.
  * Поведінку збережено як на master 3f2389f (рішення власника Q2); чи зводити їх до слота — Open question 1 специфікації SPEC-03.
  */
-import { HANDOVER_AFTER, HOWTO_BEFORE, RECORDING_AFTER } from './constants';
+import { HANDOVER_AFTER, HOWTO_BEFORE } from './constants';
 import type { MidnightLike, Ms } from './types';
 
 /**
@@ -14,11 +14,11 @@ export function zonePassedHandover(now: Ms, m: Ms): boolean {
 }
 
 /**
- * Пояс країни за замовчуванням: перший, для якого `m + RECORDING_AFTER > now`; інакше останній (порожній список — `undefined`).
- * `zones` — за зростанням півночі. Див. Open question 1 SPEC-03.
+ * Пояс країни за замовчуванням: перший, для якого `m + HANDOVER_AFTER > now`; інакше останній (порожній список — `undefined`).
+ * `zones` — за зростанням півночі. Межа +15 хв, як у `zonePassedHandover` — рішення власника 2026-11-17 (було +30 хв).
  */
 export function defaultCountryZone<Z extends MidnightLike>(now: Ms, zones: readonly Z[]): Z | undefined {
-  return zones.find((z) => z.midnightMs + RECORDING_AFTER > now) ?? zones.at(-1);
+  return zones.find((z) => z.midnightMs + HANDOVER_AFTER > now) ?? zones.at(-1);
 }
 
 /** Вікно нагадування про подію: `m − HOWTO_BEFORE ≤ now < m + HOWTO_BEFORE`. Див. Open question 1 SPEC-03. */

@@ -32,10 +32,10 @@ describe('AC-7 defaultCountryZone', () => {
     { id: 'a', midnightMs: M },
     { id: 'b', midnightMs: M + 60 * MIN },
   ];
-  it('bound at m + 30 min of the first zone', () => {
-    expect(defaultCountryZone(M + 30 * MIN - 1, zones)?.id).toBe('a');
-    expect(defaultCountryZone(M + 30 * MIN, zones)?.id).toBe('b');
-    expect(defaultCountryZone(M + 30 * MIN + 1, zones)?.id).toBe('b');
+  it('bound at m + 15 min of the first zone (owner decision 2026-11-17)', () => {
+    expect(defaultCountryZone(M + 15 * MIN - 1, zones)?.id).toBe('a');
+    expect(defaultCountryZone(M + 15 * MIN, zones)?.id).toBe('b');
+    expect(defaultCountryZone(M + 15 * MIN + 1, zones)?.id).toBe('b');
   });
   it('after every zone — the last one', () => {
     expect(defaultCountryZone(M + 90 * MIN - 1, zones)?.id).toBe('b');
