@@ -11,7 +11,17 @@ import { fixturesDoor, resetDoor } from '../../src/test-doors/registry';
 import { ownRedis, post, testDeps } from './helpers';
 
 const COLLECTION = 'idempotency-records';
-const FOREIGN_DB = 63; // slots use 0–47, so 63 never belongs to a worktree
+// The last Redis database never belongs to a worktree: 63 on the local stand (slots use 0–47), 15 in CI (slot 0 only).
+async function foreignDbIndex(): Promise<number> {
+  const probe = new Redis(REDIS_URL, { lazyConnect: true });
+  try {
+    await probe.connect();
+    const [, count] = (await probe.config('GET', 'databases')) as string[];
+    return Number(count) - 1;
+  } finally {
+    probe.disconnect();
+  }
+}
 const PREFIX = process.env.T2F_REDIS_PREFIX as string;
 const REDIS_URL = process.env.REDIS_URL as string;
 
@@ -80,7 +90,7 @@ describe('seed, reset and fixtures', () => {
     createTestClock().set({ at: Date.parse('2026-12-31T23:59:00Z'), frozen: true });
 
     // The same prefix in a database that belongs to no worktree, and a foreign prefix in our own database.
-    const foreignDb = rawClient(FOREIGN_DB, PREFIX);
+    const foreignDb = rawClient(await foreignDbIndex(), PREFIX);
     const ownDbRaw = rawClient(Number(/\/(\d+)$/.exec(REDIS_URL)?.[1]));
     const foreignPrefixKey = 't2f:seed_reset_foreign:k';
     try {
