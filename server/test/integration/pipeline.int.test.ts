@@ -3,7 +3,7 @@ import { ApiFailureSchema } from '@time2fest/contracts/schemas';
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { buildDispatcher, createDeps } from '../../src/container';
-import { createDispatcher, LOG_ID } from '../../src/endpoints/pipeline';
+import { createDispatcher, DEFAULT_MAX_BODY_BYTES, LOG_ID } from '../../src/endpoints/pipeline';
 import type { Deps, RouteRow } from '../../src/endpoints/types';
 import { timeRoute } from '../../src/endpoints/time';
 import { middlewareRegistry } from '../../src/registries/middleware';
@@ -140,6 +140,50 @@ describe('HTTP pipeline', () => {
     expect(exempt).toHaveBeenCalledTimes(1);
   });
 
+  it('a body over maxBodyBytes (16 KiB by default) → 400 invalid-input without the handler, declared or streamed', async () => {
+    const handler = vi.fn(async () => ({ ok: true as const, value: 'ran' }));
+    const body = z.object({ s: z.string() });
+    const dispatch = dispatcherWith([
+      row('big', { method: 'POST', path: '/api/sample/big', body, handler }),
+      row('small', { method: 'POST', path: '/api/sample/small', body, maxBodyBytes: 64, handler }),
+    ]);
+    const tooBig = JSON.stringify({ s: 'x'.repeat(DEFAULT_MAX_BODY_BYTES) });
+    const invalid = { ok: false, error: { code: 'validation', reason: 'invalid-input' } };
+
+    const declared = await dispatch(post('/api/sample/big', tooBig));
+    expect(declared.status).toBe(400);
+    expect(await declared.json()).toEqual(invalid);
+
+    // No content-length: the cap applies while the stream is read.
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) {
+        for (let i = 0; i < 20; i++) c.enqueue(new TextEncoder().encode('x'.repeat(1024)));
+        c.close();
+      },
+    });
+    const streamed = await dispatch(
+      new Request(`${BASE}/api/sample/big`, {
+        method: 'POST',
+        body: stream,
+        headers: { 'content-type': 'application/json', origin: ORIGIN },
+        duplex: 'half',
+      } as RequestInit),
+    );
+    expect(streamed.status).toBe(400);
+    expect(await streamed.json()).toEqual(invalid);
+
+    const lying = await dispatch(new Request(`${BASE}/api/sample/big`, { method: 'POST', body: '{"s":"a"}', headers: { 'content-type': 'application/json', origin: ORIGIN, 'content-length': 'abc' } }));
+    expect(lying.status).toBe(400);
+    const announced = await dispatch(new Request(`${BASE}/api/sample/big`, { method: 'POST', body: '{"s":"a"}', headers: { 'content-type': 'application/json', origin: ORIGIN, 'content-length': String(DEFAULT_MAX_BODY_BYTES + 1) } }));
+    expect(announced.status).toBe(400);
+
+    expect((await dispatch(post('/api/sample/small', JSON.stringify({ s: 'y'.repeat(80) })))).status).toBe(400);
+    expect(handler).not.toHaveBeenCalled();
+    expect((await dispatch(post('/api/sample/small', JSON.stringify({ s: 'ok' })))).status).toBe(200);
+    expect((await dispatch(post('/api/sample/big', JSON.stringify({ s: 'y'.repeat(DEFAULT_MAX_BODY_BYTES - 100) })))).status).toBe(200);
+    expect(handler).toHaveBeenCalledTimes(2);
+  });
+
   it('AC-60: GraphQL, the playground and Payload collection REST are 404 under /api', async () => {
     const dispatch = await buildDispatcher(deps(capture().log));
     for (const [method, path] of [
@@ -157,13 +201,15 @@ describe('HTTP pipeline', () => {
 
   it('AC-72: a database route whose dependency refuses the connection → 503 unavailable; /api/time stays 200', async () => {
     const refused = Object.assign(new Error('connect ECONNREFUSED 127.0.0.1:1'), { code: 'ECONNREFUSED' });
-    const failingDeps: Deps = { ...deps(capture().log), payload: () => Promise.reject(refused) };
+    // The route reaches its database through a port (Deps holds no raw Payload); that port refuses.
+    const orderStore = { begin: () => Promise.reject(refused), finish: async () => {}, abort: async () => {} };
+    const failingDeps: Deps = { ...deps(capture().log), orderStore };
     const dispatch = createDispatcher({
       routes: [
         row('needs-db', {
           needs: ['db'],
           handler: async (ctx) => {
-            await ctx.deps.payload();
+            await ctx.deps.orderStore.begin('needs-db');
             return { ok: true, value: 'unreachable' };
           },
         }),

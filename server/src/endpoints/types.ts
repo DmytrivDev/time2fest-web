@@ -1,10 +1,10 @@
 /**
  * Shapes of the HTTP pipeline (ring 4, driving adapter): route rows, middleware rows, the
  * request context and the dependencies the composition root hands to every handler.
- * Routes never import `pg` or Payload: they reach a dependency through `ctx.deps` (onion ban 1).
+ * Routes never import `pg` or Payload: they reach a dependency through `ctx.deps` (onion ban 1),
+ * and `Deps` holds ports only — the raw Payload accessor stays in `container.ts`.
  */
 import type { ApiError } from '@time2fest/contracts';
-import type { Payload } from 'payload';
 import type { ZodType } from 'zod';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
@@ -31,14 +31,12 @@ export interface AppEnv {
   vars: Readonly<Record<string, unknown>>;
 }
 
-/** What the composition root provides. Every field is a port or a lazy accessor. */
+/** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
   clock: Clock;
   log: Logger;
   alarm: Alarm;
-  /** Payload, initialised on first use only (by a `needs: ['db']` route). */
-  payload(): Promise<Payload>;
   lockState: LockState;
   /** The fast store (Redis, this slot's database and key prefix); lazy — connects on first use. */
   redis: FastStore;
@@ -70,8 +68,15 @@ export interface RouteRow {
   body?: ZodType;
   query?: ZodType;
   needs?: readonly ('db' | 'redis')[];
-  /** The only way to skip the same-origin check (AC-28). */
+  /** The only way to skip the same-origin check (AC-28). Never set on a test door. */
   sameOriginExempt?: true;
+  /**
+   * A test door (set by `doorRoutes` only): no `Origin` is allowed for tooling, but a present
+   * `Origin` must be allowed, a mutating call must be `application/json`, and `Host` must be loopback.
+   */
+  testDoor?: true;
+  /** Largest accepted request body in bytes; default `DEFAULT_MAX_BODY_BYTES` (16 KiB). */
+  maxBodyBytes?: number;
   rateLimit?: string;
   idempotency?: string;
   handler(ctx: Ctx): Promise<Outcome>;

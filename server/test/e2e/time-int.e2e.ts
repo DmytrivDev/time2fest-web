@@ -20,6 +20,6 @@ test('AC-42: the integration build shows the server clock', async ({ page, reque
     expect(r).toBeTruthy();
     expect(Math.abs((r?.now ?? 0) - AT)).toBeLessThanOrEqual(2000);
   } finally {
-    await request.post(`${server}/api/_test/reset`, { headers: { Origin: web } });
+    await request.post(`${server}/api/_test/reset`, { data: {}, headers: { Origin: web } });
   }
 });

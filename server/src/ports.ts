@@ -1,6 +1,6 @@
 /**
  * Ports of the platform (ring 2): technology-neutral interfaces for what crosses a process
- * boundary — log, alarm, fast store, idempotency store, lock state, clock. No implementation
+ * boundary — log, alarm, fast store, idempotency store, seed store, lock state, clock. No implementation
  * may live here; adapters implement these, the container wires them.
  */
 
@@ -46,6 +46,18 @@ export interface IdempotencyStore<R = unknown> {
   begin(key: string): Promise<IdempotencyBegin<R>>;
   finish(key: string, result: R): Promise<void>;
   abort(key: string): Promise<void>;
+}
+
+/**
+ * Row store of the seed and the worktree reset (AC-45 … AC-47): collections are named by slug,
+ * rows are plain data. Only the seed, the test doors and the composition root use it.
+ */
+export interface SeedStore {
+  /** Updates the row whose `naturalKey` equals `data[naturalKey]`, or creates it. */
+  upsertByKey(collection: string, naturalKey: string, data: Record<string, unknown>): Promise<void>;
+  count(collection: string): Promise<number>;
+  /** Deletes every row of the collection. */
+  clear(collection: string): Promise<void>;
 }
 
 /** Read-only view of the machine integration lock. */

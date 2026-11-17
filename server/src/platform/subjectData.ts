@@ -1,9 +1,8 @@
 /**
  * Subject-data registry runner (ring 3, AC-57): export, erase or anonymise one subject across
- * every capability that holds its data. No adapter import — handlers bring their own ports.
+ * every capability that holds its data. No adapter or registry import — the caller passes
+ * `subjectDataRegistry`, and handlers bring their own ports.
  */
-import { subjectDataRegistry } from '../registries/subjectData';
-
 export type SubjectDataOp = 'export' | 'erase' | 'anonymise';
 
 /** One capability holding subject data; registered in `registries/subjectData.ts`. */
@@ -22,7 +21,7 @@ export type SubjectDataResult =
 export async function runSubjectData(
   op: SubjectDataOp,
   subjectId: string,
-  handlers: readonly SubjectDataHandler[] = subjectDataRegistry,
+  handlers: readonly SubjectDataHandler[],
 ): Promise<SubjectDataResult> {
   const settled = await Promise.allSettled(handlers.map((h) => h[op](subjectId)));
   const failed: string[] = [];

@@ -19,7 +19,6 @@ function depsFor(cls: AppEnv['class'], doorsFlag: boolean): Deps {
     clock: realClock,
     log: silent,
     alarm: { raise: () => {} },
-    payload: () => Promise.reject(new Error('not used')),
     lockState: { holdsExclusive: () => false },
     redis: createMemoryStore(realClock),
     memory: createMemoryStore(realClock),

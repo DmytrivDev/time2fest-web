@@ -4,6 +4,8 @@
  * - Unknown method + path → one 404 body, also used for test doors outside the test class (AC-30).
  * - A failure body keeps only the wire fields; `message` survives only as a field path or a log id.
  * - An unexpected throw is logged with a log id and answered `unknown`, never with its text (AC-26).
+ * - A body larger than the row's `maxBodyBytes` (16 KiB by default) is refused `invalid-input`
+ *   before it is read whole: by `content-length` first, then by a hard cap while streaming.
  */
 import { randomBytes } from 'node:crypto';
 import type { ApiError, ApiErrorCode } from '@time2fest/contracts';
@@ -34,6 +36,10 @@ const FIELD_PATH = /^[A-Za-z0-9_.[\]]+$/;
 export const LOG_ID = /^log_[a-z0-9]{10}$/;
 const LOG_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789';
 const CONNECTION_CODES: ReadonlySet<string> = new Set(['ECONNREFUSED', 'ETIMEDOUT', '57P01']);
+const LOOPBACK_HOSTS: ReadonlySet<string> = new Set(['127.0.0.1', 'localhost', '[::1]']);
+
+/** Default request-body limit of a route row (`RouteRow.maxBodyBytes`). */
+export const DEFAULT_MAX_BODY_BYTES = 16 * 1024;
 
 export function failure(code: ApiErrorCode, extra: Omit<ApiError, 'code'> = {}): ApiFailure {
   return { ok: false, error: { code, ...extra } };
@@ -93,17 +99,65 @@ function invalidInput(path?: string): ApiFailure {
   return failure('validation', { reason: 'invalid-input', ...(path ? { message: path } : {}) });
 }
 
-/** `10-origin`: a mutating request needs an allowed `Origin`, unless its row is exempt (AC-28). */
+/** The `Host` header (or the URL host when there is none) names this machine; any port. */
+export function isLoopbackHost(req: Request, url: URL): boolean {
+  const host = req.headers.get('host') ?? url.host;
+  try {
+    return LOOPBACK_HOSTS.has(new URL(`http://${host}`).hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+function isJsonContentType(req: Request): boolean {
+  const type = req.headers.get('content-type');
+  return type !== null && type.split(';')[0]?.trim().toLowerCase() === 'application/json';
+}
+
+/**
+ * `10-origin`: a mutating request needs an allowed `Origin`, unless its row is exempt (AC-28).
+ * A test door is never exempt: its `Host` must be loopback (no DNS rebinding), a mutating call
+ * must be `application/json` (a cross-site form or no-cors fetch cannot send it without a
+ * preflight), and an `Origin`, when present, must be allowed; only a missing `Origin` (tooling)
+ * passes without one.
+ */
 export const originMiddleware: Middleware = {
   key: '10-origin',
   async run(ctx, next) {
-    if (!MUTATING.has(ctx.req.method) || ctx.route.sameOriginExempt) return next();
+    const { req, route } = ctx;
+    if (route.testDoor) {
+      if (!isLoopbackHost(req, ctx.url)) return failure('forbidden');
+      if (MUTATING.has(req.method) && !isJsonContentType(req)) return failure('forbidden');
+    }
+    if (!MUTATING.has(req.method) || (route.sameOriginExempt && !route.testDoor)) return next();
     const allowed = ctx.env.vars.T2F_ALLOWED_ORIGINS;
-    const origin = ctx.req.headers.get('origin');
+    const origin = req.headers.get('origin');
+    if (origin === null && route.testDoor) return next();
     if (origin === null || !Array.isArray(allowed) || !allowed.includes(origin)) return failure('forbidden');
     return next();
   },
 };
+
+/** The body as text, or `undefined` when it is over `max` bytes (declared or actually streamed). */
+async function readBody(req: Request, max: number): Promise<string | undefined> {
+  const declared = req.headers.get('content-length');
+  if (declared !== null && (!/^\d+$/.test(declared.trim()) || Number(declared) > max)) return undefined;
+  if (req.body === null) return '';
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      await reader.cancel().catch(() => {});
+      return undefined;
+    }
+    chunks.push(value);
+  }
+  return new TextDecoder().decode(Buffer.concat(chunks));
+}
 
 /** `20-validate`: body and query against the row schemas; the handler does not run on failure (AC-24). */
 export const validateMiddleware: Middleware = {
@@ -111,9 +165,11 @@ export const validateMiddleware: Middleware = {
   async run(ctx, next) {
     const { route } = ctx;
     if (route.body) {
+      const text = await readBody(ctx.req, route.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES);
+      if (text === undefined) return invalidInput();
       let raw: unknown;
       try {
-        raw = JSON.parse(await ctx.req.text());
+        raw = JSON.parse(text);
       } catch {
         return invalidInput();
       }

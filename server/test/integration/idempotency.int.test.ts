@@ -1,6 +1,7 @@
 import { Redis } from 'ioredis';
 import { afterAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
+import { payloadOf } from '../../src/container';
 import { createDispatcher, originMiddleware, validateMiddleware } from '../../src/endpoints/pipeline';
 import type { Deps, Middleware, RouteRow } from '../../src/endpoints/types';
 import { CHAT_RETENTION_MS, idemKey, type IdempotencyRow } from '../../src/platform/idempotency';
@@ -57,7 +58,7 @@ const call = (d: (r: Request) => Promise<Response>, method: string, clientId: st
 afterAll(async () => {
   const redis = redisStores[redisStores.length - 1] as (typeof redisStores)[number];
   await redis.deleteByPrefix('idem:test.');
-  const payload = await deps.payload();
+  const payload = await payloadOf(deps)();
   await payload.delete({ collection: 'idempotency-records', where: { key: { like: 'idem:test.order' } }, overrideAccess: true });
   for (const r of redisStores) await r.close();
 });
@@ -126,7 +127,7 @@ describe('idempotency by clientId', () => {
 
     const fresh = ownRedis();
     redisStores.push(fresh);
-    const deps2: Deps = testDeps({ redis: fresh, payload: deps.payload });
+    const deps2: Deps = testDeps({ redis: fresh, payload: payloadOf(deps) });
     const dispatch2 = createDispatcher({ routes, middleware, deps: deps2 });
     const again = await call(dispatch2, 'test.order', cid);
     expect(again.status).toBe(200);

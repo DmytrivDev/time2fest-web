@@ -3,14 +3,15 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestClock } from '../../src/clock';
-import { buildDispatcher, createDeps, createLockState } from '../../src/container';
+import { buildDispatcher, createDeps, createLockState, seedStoreOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
 import type { Deps } from '../../src/endpoints/types';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { routeRegistry } from '../../src/registries/routes';
 import { doorRoutes } from '../../src/test-doors/index';
 
-const BASE = 'http://server.test';
+const BASE = 'http://127.0.0.1:3000';
+const JSON_TYPE = { 'content-type': 'application/json' };
 const SLUG = 'doors_int_test';
 const silent = { info: () => {}, warn: () => {}, error: () => {} };
 
@@ -31,7 +32,7 @@ async function clockState(dispatch: (r: Request) => Promise<Response>) {
 }
 
 const setClock = (dispatch: (r: Request) => Promise<Response>, body: unknown) =>
-  dispatch(new Request(`${BASE}/api/_test/clock`, { method: 'POST', body: JSON.stringify(body) }));
+  dispatch(new Request(`${BASE}/api/_test/clock`, { method: 'POST', body: JSON.stringify(body), headers: JSON_TYPE }));
 
 describe('test doors', () => {
   afterEach(() => {
@@ -90,10 +91,54 @@ describe('test doors', () => {
   it('AC-32: the four stub doors → 501 with the exact body', async () => {
     const dispatch = await buildDispatcher(depsFor('test'));
     for (const door of ['last-code', 'moderation', 'paypro-webhook', 'video-status']) {
-      const res = await dispatch(new Request(`${BASE}/api/_test/${door}`, { method: 'POST', body: '{}' }));
+      const res = await dispatch(new Request(`${BASE}/api/_test/${door}`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
       expect(res.status, door).toBe(501);
       expect(await res.text()).toBe('{"ok":false,"error":{"code":"unavailable"}}');
     }
+  });
+
+  it('doors refuse a foreign Origin, a non-JSON call and a non-loopback Host; tooling without Origin passes', async () => {
+    const deps = createDeps(
+      { ...process.env, T2F_ENV: 'test', T2F_TEST_DOORS: '1', T2F_SLUG: SLUG, T2F_ALLOWED_ORIGINS: 'http://allowed.test' },
+      { log: silent },
+    );
+    const dispatch = await buildDispatcher(deps);
+    const at = Date.parse('2026-12-31T23:00:00Z');
+    const set = (base: string, headers: Record<string, string>) =>
+      dispatch(new Request(`${base}/api/_test/clock`, { method: 'POST', body: JSON.stringify({ at, frozen: true }), headers }));
+    const forbidden = { ok: false, error: { code: 'forbidden' } };
+    const before = await clockState(dispatch);
+
+    const refused: [string, Record<string, string>][] = [
+      [BASE, { ...JSON_TYPE, origin: 'http://evil.test' }], // foreign Origin
+      [BASE, { ...JSON_TYPE, origin: 'null' }],
+      [BASE, { 'content-type': 'text/plain' }], // no-cors / form-like body without Origin
+      [BASE, { 'content-type': 'application/x-www-form-urlencoded', origin: 'http://allowed.test' }],
+      ['http://rebound.example:3000', JSON_TYPE], // DNS rebinding: Host is not loopback
+      ['http://10.0.0.5:3000', JSON_TYPE],
+    ];
+    for (const [base, headers] of refused) {
+      const res = await set(base, headers);
+      expect(res.status, `${base} ${JSON.stringify(headers)}`).toBe(403);
+      expect(await res.json()).toEqual(forbidden);
+    }
+    const wipe = await dispatch(new Request(`${BASE}/api/_test/reset`, { method: 'POST', body: '{}', headers: { 'content-type': 'text/plain' } }));
+    expect(wipe.status).toBe(403);
+    expect((await dispatch(new Request('http://rebound.example/api/_test/clock'))).status).toBe(403);
+    const after = await clockState(dispatch);
+    expect(after.frozen).toBe(before.frozen);
+    expect(after.frozen).toBe(false); // no refused call reached the clock
+    expect(after.now).not.toBe(at);
+
+    for (const [base, headers] of [
+      [BASE, JSON_TYPE], // tooling: no Origin
+      [BASE, { 'content-type': 'application/json; charset=utf-8', origin: 'http://allowed.test' }],
+      ['http://localhost:4001', JSON_TYPE],
+      ['http://[::1]:4001', JSON_TYPE],
+    ] as [string, Record<string, string>][]) {
+      expect((await set(base, headers)).status, `${base} ${JSON.stringify(headers)}`).toBe(200);
+    }
+    expect(await clockState(dispatch)).toMatchObject({ now: at, frozen: true });
   });
 
   it('AC-33: a dependency-breaking door runs only while this worktree holds the exclusive lock', async () => {
@@ -101,9 +146,9 @@ describe('test doors', () => {
     try {
       const deps = depsFor('test', { lockState: createLockState(dir) });
       const handler = vi.fn(async () => ({ ok: true as const, value: 'broken' }));
-      const routes = doorRoutes(deps, [{ key: 'break-db', method: 'POST', path: '/api/_test/break-db', dependencyBreaking: true, handler }]);
+      const routes = doorRoutes(deps, seedStoreOf(deps), [{ key: 'break-db', method: 'POST', path: '/api/_test/break-db', dependencyBreaking: true, handler }]);
       const dispatch = createDispatcher({ routes, middleware: middlewareRegistry, deps });
-      const call = () => dispatch(new Request(`${BASE}/api/_test/break-db`, { method: 'POST', body: '{}' }));
+      const call = () => dispatch(new Request(`${BASE}/api/_test/break-db`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
 
       const refused = await call();
       expect(refused.status).toBe(403);

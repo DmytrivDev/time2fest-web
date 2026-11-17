@@ -4,10 +4,11 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { buildConfig } from 'payload';
 import { loadEnv } from './platform/env';
 import { collectionRegistry } from './registries/collections';
+import { envRegistry } from './registries/env';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const loaded = loadEnv(process.env);
+const loaded = loadEnv(process.env, envRegistry);
 if (!loaded.ok) {
   throw new Error('env: invalid ' + loaded.failing.join(', '));
 }

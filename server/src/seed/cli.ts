@@ -1,11 +1,13 @@
 /**
  * `pnpm --dir server seed`: seeds the database of `DATABASE_URI` (from `.env.local` when the
- * shell has none) and prints the row count of each seeded collection.
+ * shell has none) and prints the row count of each seeded collection. Ring 4 entry point:
+ * wires the Payload seed store into the seed.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runSeed } from './index';
+import { createPayloadSeedStore } from '../adapters/payload';
+import { baseSeedRows, runSeed } from './index';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -22,7 +24,7 @@ async function main(): Promise<void> {
   const [{ getPayload }, { default: config }] = await Promise.all([import('payload'), import('../payload.config')]);
   const payload = await getPayload({ config });
   try {
-    const counts = await runSeed(payload);
+    const counts = await runSeed(createPayloadSeedStore(async () => payload), baseSeedRows());
     const keys = Object.keys(counts).sort();
     process.stdout.write(keys.length === 0 ? 'seed: no rows registered\n' : keys.map((k) => `seed: ${k} ${counts[k]}\n`).join(''));
   } finally {

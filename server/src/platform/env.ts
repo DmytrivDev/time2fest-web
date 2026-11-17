@@ -4,7 +4,6 @@
  * Every message names variables only, never their values.
  */
 import type { ZodType } from 'zod';
-import { envRegistry } from '../registries/env';
 
 export type EnvClass = 'test' | 'rehearsal' | 'production';
 
@@ -40,6 +39,46 @@ export type LoadEnvResult =
  */
 export const PRODUCTION_DENYLIST: readonly string[] = [];
 
+/** Hosts a `test` class may point its database and Redis at. */
+const LOOPBACK_HOSTS: ReadonlySet<string> = new Set(['127.0.0.1', 'localhost', '::1', '[::1]']);
+
+/** A worktree database: `t2f_<slug>` or `t2f_<slug>_test`. */
+export const WORKTREE_DATABASE = /^t2f_[a-z0-9_]+$/;
+
+/** A worktree Redis key prefix: `t2f:<slug>:`. */
+export const WORKTREE_REDIS_PREFIX = /^t2f:[a-z0-9_]+:$/;
+
+function loopbackUrl(value: unknown): URL | undefined {
+  if (typeof value !== 'string') return undefined;
+  try {
+    const url = new URL(value);
+    return LOOPBACK_HOSTS.has(url.hostname.toLowerCase()) ? url : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Positive allowlist of the `test` class (it may only touch this machine's worktree resources):
+ * database on loopback named `t2f_…`, Redis on loopback, a `t2f:<slug>:` key prefix.
+ * Returns the names of the variables that break it.
+ */
+export function testIsolationFailures(env: Readonly<Record<string, unknown>>): string[] {
+  const failing: string[] = [];
+  const db = loopbackUrl(env.DATABASE_URI);
+  let dbName = '';
+  try {
+    dbName = db ? decodeURIComponent(db.pathname.replace(/^\//, '')) : '';
+  } catch {
+    dbName = '';
+  }
+  if (!WORKTREE_DATABASE.test(dbName)) failing.push('DATABASE_URI');
+  if (!loopbackUrl(env.REDIS_URL)) failing.push('REDIS_URL');
+  const prefix = env.T2F_REDIS_PREFIX;
+  if (typeof prefix !== 'string' || !WORKTREE_REDIS_PREFIX.test(prefix)) failing.push('T2F_REDIS_PREFIX');
+  return failing;
+}
+
 /** Exact match only; anything else, including unset, is the strictest class (AC-18). */
 export function envClass(raw: RawEnv): EnvClass {
   const v = raw.T2F_ENV;
@@ -47,12 +86,13 @@ export function envClass(raw: RawEnv): EnvClass {
 }
 
 /**
- * Validates `raw` against the blocks and, for `test` / `rehearsal`, against the isolation guard.
- * `failing` lists variable names in registry order, each once.
+ * Validates `raw` against the blocks (the caller passes `envRegistry`) and, for `test` /
+ * `rehearsal`, against the production denylist; `test` must also pass `testIsolationFailures`.
+ * `failing` lists variable names in registry order, each once; never a value.
  */
 export function loadEnv(
   raw: RawEnv,
-  blocks: readonly EnvBlock[] = envRegistry,
+  blocks: readonly EnvBlock[],
   denylist: readonly string[] = PRODUCTION_DENYLIST,
 ): LoadEnvResult {
   const cls = envClass(raw);
@@ -87,6 +127,14 @@ export function loadEnv(
   if (cls !== 'production' && 'PAYPRO_MODE' in env && env.PAYPRO_MODE !== 'sandbox' && !failing.includes('PAYPRO_MODE')) {
     failing.push('PAYPRO_MODE');
   }
+
+  if (cls === 'test') {
+    for (const name of testIsolationFailures(env)) if (!failing.includes(name)) failing.push(name);
+  }
+
+  const order = blocks.flatMap((b) => b.vars.map((v) => v.name));
+  const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : order.length);
+  failing.sort((a, b) => rank(a) - rank(b));
 
   return failing.length > 0 ? { ok: false, failing } : { ok: true, class: cls, env, secrets };
 }

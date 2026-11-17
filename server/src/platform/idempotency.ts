@@ -27,8 +27,14 @@ export const IN_PROGRESS: { ok: false; error: ApiError } = Object.freeze({
   error: Object.freeze({ code: 'conflict', reason: 'in-progress' }) as ApiError,
 });
 
+/**
+ * `idem:<method>:<subject length>:<subject>:<clientId>`. The method is a registry key without
+ * `:`; the subject is length-prefixed, so no `subject` / `clientId` pair can produce the key of
+ * another pair (both may contain `:`). The method stays first, so `idem:<method>` is a key prefix.
+ */
 export function idemKey(subject: string, method: string, clientId: string): string {
-  return `idem:${method}:${subject}:${clientId}`;
+  if (method.includes(':')) throw new Error(`idempotency: method ${method} contains ':'`);
+  return `idem:${method}:${subject.length}:${subject}:${clientId}`;
 }
 
 const RUNNING = 'running';

@@ -15,12 +15,16 @@ import type { TestClock } from '../clock';
 import { failure } from '../endpoints/pipeline';
 import type { Ctx, HttpMethod, Outcome } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
-import { resetWorktree, runSeed } from '../seed/index';
+import type { SeedStore } from '../ports';
+import { collectionRegistry } from '../registries/collections';
+import { resetWorktree, runSeed, type ResettableCollection } from '../seed/index';
 import { seedRegistry, type SeedRow } from '../seed/registry';
 
 /** What a door may use beyond the request context. */
 export interface DoorTools {
   clock: TestClock;
+  /** The seed's row store; doors never see Payload itself. */
+  seed: SeedStore;
 }
 
 export interface DoorRow {
@@ -49,16 +53,21 @@ function stub(key: string, path: string): DoorRow {
 }
 
 /** `POST /api/_test/reset`: own rows and prefixed keys emptied, clock real, seed applied (AC-47, AC-39). */
-export function resetDoor(rows: readonly SeedRow[] = seedRegistry): DoorRow {
+export function resetDoor(
+  rows: readonly SeedRow[] = seedRegistry,
+  collections: readonly ResettableCollection[] = collectionRegistry,
+): DoorRow {
   return {
     key: 'reset',
     method: 'POST',
     path: '/api/_test/reset',
-    async handler(ctx, { clock }) {
+    async handler(ctx, { clock, seed }) {
       await resetWorktree({
-        payload: await ctx.deps.payload(),
+        store: seed,
         fast: ctx.deps.redis,
+        redisPrefix: ctx.env.vars.T2F_REDIS_PREFIX,
         clock,
+        collections,
         rows: rows.filter((r) => !r.fixture),
       });
       return { ok: true, value: {} };
@@ -73,11 +82,11 @@ export function fixturesDoor(rows: readonly SeedRow[] = seedRegistry): DoorRow {
     method: 'POST',
     path: '/api/_test/fixtures',
     body: TestFixturesBodySchema,
-    async handler(ctx) {
+    async handler(ctx, { seed }) {
       const { name } = ctx.body as TestFixturesBody;
       const row = rows.find((r) => r.fixture && r.key === name);
       if (!row) return failure('not_found');
-      await runSeed(await ctx.deps.payload(), [row]);
+      await runSeed(seed, [row]);
       return { ok: true, value: {} };
     },
   };

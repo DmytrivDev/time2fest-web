@@ -8,6 +8,7 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
+import { payloadOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
 import type { RouteRow } from '../../src/endpoints/types';
 import { timeRoute } from '../../src/endpoints/time';
@@ -53,7 +54,7 @@ const routes: RouteRow[] = [
     path: '/api/sample/db',
     needs: ['db'],
     async handler(ctx) {
-      const payload = await ctx.deps.payload();
+      const payload = await payloadOf(ctx.deps)();
       const found = await payload.find({ collection: 'idempotency-records', limit: 1, depth: 0, overrideAccess: true });
       return { ok: true, value: found.totalDocs };
     },

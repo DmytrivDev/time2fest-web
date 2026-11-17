@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { envClass, loadEnv } from '../../src/platform/env';
+import { idemKey } from '../../src/platform/idempotency';
 import { createAlarm, createLogger } from '../../src/platform/logger';
 import { assertRegistry } from '../../src/platform/registry';
 import { envRegistry } from '../../src/registries/env';
@@ -13,6 +14,7 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     T2F_ENV: 'test',
     DATABASE_URI: 'postgres://t2f:pw@localhost:5433/t2f_spec_02_server_skeleton_test',
     REDIS_URL: 'redis://localhost:6380/4',
+    T2F_REDIS_PREFIX: 't2f:spec_02_server_skeleton:',
     PAYLOAD_SECRET: SECRET,
     ...over,
   };
@@ -34,9 +36,9 @@ describe('environment', () => {
   });
 
   it('AC-19: a bad PAYLOAD_SECRET is named and its value is not in the result', () => {
-    expect(loadEnv(rawEnv()).ok).toBe(true);
+    expect(loadEnv(rawEnv(), envRegistry).ok).toBe(true);
     const bad = 'short-secret-xyz';
-    const result = loadEnv(rawEnv({ PAYLOAD_SECRET: bad }));
+    const result = loadEnv(rawEnv({ PAYLOAD_SECRET: bad }), envRegistry);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.failing).toContain('PAYLOAD_SECRET');
@@ -58,7 +60,32 @@ describe('environment', () => {
       denylist,
     );
     expect(prod.ok).toBe(true);
-    expect(loadEnv(rawEnv({ T2F_ENV: undefined }))).toEqual({ ok: false, failing: ['T2F_ALLOWED_ORIGINS'] });
+    expect(loadEnv(rawEnv({ T2F_ENV: undefined }), envRegistry)).toEqual({ ok: false, failing: ['T2F_ALLOWED_ORIGINS'] });
+  });
+
+  it('test class: database and Redis on loopback, a t2f_ database and a t2f:<slug>: prefix; refused by name only', () => {
+    for (const host of ['127.0.0.1', 'localhost', '[::1]']) {
+      expect(loadEnv(rawEnv({ DATABASE_URI: `postgres://t2f@${host}:5433/t2f_x_test`, REDIS_URL: `redis://${host}:6380/0` }), envRegistry).ok).toBe(true);
+    }
+    const cases: [Record<string, string | undefined>, string[]][] = [
+      [{ DATABASE_URI: 'postgres://u:pw-secret@db.example.com:5432/t2f_x' }, ['DATABASE_URI']],
+      [{ DATABASE_URI: 'postgres://t2f@127.0.0.1:5433/postgres' }, ['DATABASE_URI']],
+      [{ DATABASE_URI: 'postgres://t2f@127.0.0.1:5433/T2F_X' }, ['DATABASE_URI']],
+      [{ DATABASE_URI: 'postgres://t2f@127.0.0.1:5433/' }, ['DATABASE_URI']],
+      [{ REDIS_URL: 'redis://cache.example.com:6379/0' }, ['REDIS_URL']],
+      [{ T2F_REDIS_PREFIX: undefined }, ['T2F_REDIS_PREFIX']],
+      [{ T2F_REDIS_PREFIX: '' }, ['T2F_REDIS_PREFIX']],
+      [{ T2F_REDIS_PREFIX: 't2f:' }, ['T2F_REDIS_PREFIX']],
+      [{ T2F_REDIS_PREFIX: 'other:x:' }, ['T2F_REDIS_PREFIX']],
+      [{ REDIS_URL: 'redis://10.0.0.2:6379/0', DATABASE_URI: 'postgres://t2f@10.0.0.1/t2f_x', T2F_REDIS_PREFIX: undefined }, ['DATABASE_URI', 'REDIS_URL', 'T2F_REDIS_PREFIX']],
+    ];
+    for (const [over, failing] of cases) {
+      const result = loadEnv(rawEnv(over), envRegistry);
+      expect(result, JSON.stringify(over)).toEqual({ ok: false, failing });
+      expect(JSON.stringify(result)).not.toContain('pw-secret');
+    }
+    // Rehearsal keeps the denylist only; production is not guarded by the allowlist.
+    expect(loadEnv(rawEnv({ T2F_ENV: 'rehearsal', REDIS_URL: 'redis://cache.example.com:6379/0', T2F_REDIS_PREFIX: undefined }), envRegistry).ok).toBe(true);
   });
 });
 
@@ -85,7 +112,7 @@ describe('logger and alarm', () => {
   });
 
   it('NFR-4: a secret value in a log line, an Error message and an alarm is printed as ***', () => {
-    const env = loadEnv(rawEnv());
+    const env = loadEnv(rawEnv(), envRegistry);
     expect(env.ok).toBe(true);
     if (!env.ok) return;
     expect(env.secrets).toContain(SECRET);
@@ -112,5 +139,14 @@ describe('logger and alarm', () => {
       'registry synthetic: row a duplicate',
     );
     expect(() => assertRegistry('env', envRegistry, key)).not.toThrow();
+  });
+});
+
+describe('idempotency key', () => {
+  it('AC-53: a subject or clientId containing ":" cannot produce the key of another pair', () => {
+    expect(idemKey('a:b', 'chat.send', 'c')).not.toBe(idemKey('a', 'chat.send', 'b:c'));
+    expect(idemKey('a', 'chat.send', 'b')).toBe(idemKey('a', 'chat.send', 'b'));
+    expect(idemKey('alice', 'test.order', 'x').startsWith('idem:test.order:')).toBe(true);
+    expect(() => idemKey('a', 'bad:method', 'c')).toThrow();
   });
 });

@@ -1,6 +1,7 @@
 import { Redis } from 'ioredis';
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestClock } from '../../src/clock';
+import { payloadOf, seedStoreOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { runSeed } from '../../src/seed/index';
@@ -37,7 +38,7 @@ const rows = [seedRow, fixtureRow];
 const redis = ownRedis();
 const deps = testDeps({ redis });
 const dispatch = createDispatcher({
-  routes: doorRoutes(deps, [fixturesDoor(rows), resetDoor(rows)]),
+  routes: doorRoutes(deps, seedStoreOf(deps), [fixturesDoor(rows), resetDoor(rows)]),
   middleware: middlewareRegistry,
   deps,
 });
@@ -47,7 +48,7 @@ function rawClient(db: number, keyPrefix?: string): Redis {
 }
 
 async function keys(): Promise<string[]> {
-  const payload = await deps.payload();
+  const payload = await payloadOf(deps)();
   const found = await payload.find({ collection: COLLECTION, limit: 100, depth: 0, overrideAccess: true, sort: 'key' });
   return found.docs.map((d) => d.key);
 }
@@ -57,22 +58,22 @@ afterEach(() => {
 });
 
 afterAll(async () => {
-  const payload = await deps.payload();
+  const payload = await payloadOf(deps)();
   await payload.delete({ collection: COLLECTION, where: { id: { exists: true } }, overrideAccess: true });
   await redis.close();
 });
 
 describe('seed, reset and fixtures', () => {
   it('AC-46: seeding twice leaves the same counts', async () => {
-    const payload = await deps.payload();
-    const first = await runSeed(payload, [seedRow]);
-    const second = await runSeed(payload, [seedRow]);
+    const store = seedStoreOf(deps);
+    const first = await runSeed(store, [seedRow]);
+    const second = await runSeed(store, [seedRow]);
     expect(second).toEqual(first);
     expect(first[COLLECTION]).toBeGreaterThanOrEqual(2);
   });
 
   it('AC-47: reset empties own rows and prefixed keys, resets the clock and seeds; other data untouched', async () => {
-    const payload = await deps.payload();
+    const payload = await payloadOf(deps)();
     await payload.create({ collection: COLLECTION, data: { key: 'stray:row', status: 'running' }, overrideAccess: true });
     await redis.set('seedtest:one', '1', 60_000);
     await redis.set('seedtest:two', '2', 60_000);
@@ -129,10 +130,10 @@ describe('seed, reset and fixtures', () => {
     // Built from parts so the repository-wide path check (W25) finds no literal reference.
     const outside = ['research', 'data'].join('_') + '/x.json';
     const bad = { ...seedRow, key: 'bad', source: outside as SeedRow['source'], rows: read };
-    await expect(runSeed(await deps.payload(), [seedRow, bad])).rejects.toThrow(/source not allowed for bad/);
+    await expect(runSeed(seedStoreOf(deps), [seedRow, bad])).rejects.toThrow(/source not allowed for bad/);
     expect(read).not.toHaveBeenCalled();
     const candidates = { ...seedRow, key: 'cand', source: 'data/streams.candidates.json' as const, rows: read };
-    await expect(runSeed(await deps.payload(), [candidates])).rejects.toThrow(/source not allowed/);
+    await expect(runSeed(seedStoreOf(deps), [candidates])).rejects.toThrow(/source not allowed/);
     expect(read).not.toHaveBeenCalled();
   });
 });

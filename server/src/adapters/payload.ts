@@ -1,10 +1,10 @@
 /**
  * Payload adapters (ring 4). Payload rows never leave this file (onion ban 3): the idempotency
- * store returns only `{ status, result }`.
+ * store returns only `{ status, result }`, the seed store only counts.
  */
-import type { Payload } from 'payload';
+import type { CollectionSlug, Payload } from 'payload';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import { DependencyUnavailable, type IdempotencyBegin, type IdempotencyStore } from '../ports';
+import { DependencyUnavailable, type IdempotencyBegin, type IdempotencyStore, type SeedStore } from '../ports';
 
 const COLLECTION = 'idempotency-records';
 
@@ -62,6 +62,40 @@ export function createPayloadIdempotencyStore<R = unknown>(getPayload: () => Pro
       guard(async () => {
         const payload = await getPayload();
         await payload.delete({ collection: COLLECTION, where: { key: { equals: key } }, overrideAccess: true });
+      }),
+  };
+}
+
+/** The seed's row store over Payload (upsert by natural key, count, clear); access control is bypassed. */
+export function createPayloadSeedStore(getPayload: () => Promise<Payload>): SeedStore {
+  return {
+    upsertByKey: (slug, naturalKey, data) =>
+      guard(async () => {
+        const payload = await getPayload();
+        const collection = slug as CollectionSlug;
+        const found = await payload.find({
+          collection,
+          where: { [naturalKey]: { equals: data[naturalKey] } },
+          limit: 1,
+          depth: 0,
+          overrideAccess: true,
+        });
+        const existing = found.docs[0] as { id: string | number } | undefined;
+        if (existing) {
+          await payload.update({ collection, id: existing.id, data: data as never, overrideAccess: true });
+        } else {
+          await payload.create({ collection, data: data as never, overrideAccess: true });
+        }
+      }),
+    count: (slug) =>
+      guard(async () => {
+        const payload = await getPayload();
+        return (await payload.count({ collection: slug as CollectionSlug, overrideAccess: true })).totalDocs;
+      }),
+    clear: (slug) =>
+      guard(async () => {
+        const payload = await getPayload();
+        await payload.delete({ collection: slug as CollectionSlug, where: { id: { exists: true } }, overrideAccess: true });
       }),
   };
 }

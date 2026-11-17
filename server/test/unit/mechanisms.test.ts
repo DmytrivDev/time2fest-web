@@ -39,7 +39,6 @@ describe('platform mechanisms', () => {
       clock,
       log: { info: () => {}, warn: () => {}, error: () => {} },
       alarm: { raise: () => {} },
-      payload: () => Promise.reject(new Error('not used')),
       lockState: { holdsExclusive: () => false },
       redis: store,
       memory: createMemoryStore(realClock),

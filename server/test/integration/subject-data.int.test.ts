@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { runSubjectData, type SubjectDataHandler } from '../../src/platform/subjectData';
+import { subjectDataRegistry } from '../../src/registries/subjectData';
 
 function handler(capability: string, fail = false): SubjectDataHandler {
   const act = async (id: string) => {
@@ -33,6 +34,6 @@ describe('subject-data registry', () => {
 
   it('AC-57: no handlers → an empty result', async () => {
     expect(await runSubjectData('anonymise', 'subj-3', [])).toEqual({ ok: true, results: {} });
-    expect(await runSubjectData('export', 'subj-3')).toEqual({ ok: true, results: {} });
+    expect(await runSubjectData('export', 'subj-3', subjectDataRegistry)).toEqual({ ok: true, results: {} });
   });
 });
