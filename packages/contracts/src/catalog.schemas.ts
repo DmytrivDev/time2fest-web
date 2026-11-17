@@ -65,7 +65,7 @@ const CountrySchema = z
     flagCode: z.string(),
     zoneIds: z.array(z.string().min(1)),
     illustrationId: z.string(),
-    howTo: z.object({ traditions: z.array(TraditionSchema), text: z.string(), gallery: z.array(z.any()) }).strict(),
+    howTo: z.object({ traditions: z.array(TraditionSchema), text: z.string(), gallery: z.array(z.object({ src: z.string(), alt: z.string(), author: z.string(), license: z.string() }).strict()) }).strict(),
     popularity: z.number().int().min(0).max(100),
   })
   .strict();

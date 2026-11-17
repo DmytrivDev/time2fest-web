@@ -2978,6 +2978,384 @@
         }
       }
     },
+    "packages/contracts/src/catalog.schemas.ts#CatalogChanged": {
+      "text": "z.infer<typeof CatalogChangedSchema>"
+    },
+    "packages/contracts/src/catalog.schemas.ts#CatalogChangedSchema": {
+      "text": "ZodObject<{ at: ZodString; version: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/catalog.schemas.ts#CatalogPayloadSchema": {
+      "text": "ZodObject<{ countries: ZodObject<{ countries: ZodArray<ZodObject<{ flagCode: ZodString; gender: ZodString; howTo: ZodObject<{ gallery: ZodArray<ZodObject<{ alt: ZodString; author: ZodString; license: ZodString; src: ZodString; }, $strict>>; text: ZodString; traditions: ZodArray<ZodObject<{ iconId: ZodString; id: ZodString; text: ZodString; title: ZodString; }, $strict>>; }, $strict>; illustrationId: ZodString; iso: ZodString; name: ZodObject<{ uk: ZodString; }, $loose>; popularity: ZodNumber; slug: ZodString; zoneIds: ZodArray<ZodString>; }, $strict>>; version: ZodLiteral<1>; }, $strict>; schedule: ZodObject<{ $schema: ZodOptional<ZodString>; generatedAt: ZodString; season: ZodLiteral<\"2026-27\">; tzdbVersion: ZodLiteral<\"2026f\">; version: ZodLiteral<1>; zones: ZodArray<ZodObject<{ countries: ZodArray<ZodObject<{ cities: ZodArray<ZodObject<{ celebrationType: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; events: ZodArray<ZodObject<{ id: ZodString; isMainCelebration: ZodBoolean; midnightUtc: ZodString; popularity: ZodNumber; restrained: ZodOptional<ZodObject<{ note: ZodObject<{ uk: ZodString; }, $loose>; }, $loose>>; type: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; }, $strict>>; id: ZodString; isCountryMain: ZodBoolean; landmark: ZodOptional<ZodObject<{ uk: ZodString; }, $loose>>; mapPoint: ZodObject<{ x: ZodNumber; y: ZodNumber; }, $loose>; name: ZodObject<{ uk: ZodString; }, $loose>; }, $strict>>; iso: ZodString; }, $strict>>; id: ZodString; midnightUtc: ZodString; offsetMinutes: ZodNumber; order: ZodNumber; representativeCityId: ZodString; }, $strict>>; }, $strict>; version: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/catalog.schemas.ts#CountriesFileSchema": {
+      "text": "ZodObject<{ countries: ZodArray<ZodObject<{ flagCode: ZodString; gender: ZodString; howTo: ZodObject<{ gallery: ZodArray<ZodObject<{ alt: ZodString; author: ZodString; license: ZodString; src: ZodString; }, $strict>>; text: ZodString; traditions: ZodArray<ZodObject<{ iconId: ZodString; id: ZodString; text: ZodString; title: ZodString; }, $strict>>; }, $strict>; illustrationId: ZodString; iso: ZodString; name: ZodObject<{ uk: ZodString; }, $loose>; popularity: ZodNumber; slug: ZodString; zoneIds: ZodArray<ZodString>; }, $strict>>; version: ZodLiteral<1>; }, $strict>"
+    },
+    "packages/contracts/src/catalog.schemas.ts#EventPatchChangedSchema": {
+      "text": "ZodObject<{ actor: ZodObject<{ kind: ZodEnum<{ owner: \"owner\"; system: \"system\"; }>; label: ZodString; }, $strict>; after: ZodNullable<ZodObject<{ hidden: ZodOptional<ZodBoolean>; isMainCelebration: ZodOptional<ZodBoolean>; moment: ZodOptional<ZodNumber>; restrained: ZodOptional<ZodObject<{ note: ZodOptional<ZodString>; }, $strict>>; }, $strict>>; at: ZodString; before: ZodNullable<ZodObject<{ hidden: ZodOptional<ZodBoolean>; isMainCelebration: ZodOptional<ZodBoolean>; moment: ZodOptional<ZodNumber>; restrained: ZodOptional<ZodObject<{ note: ZodOptional<ZodString>; }, $strict>>; }, $strict>>; eventId: ZodString; version: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/catalog.schemas.ts#ScheduleFileSchema": {
+      "text": "ZodObject<{ $schema: ZodOptional<ZodString>; generatedAt: ZodString; season: ZodLiteral<\"2026-27\">; tzdbVersion: ZodLiteral<\"2026f\">; version: ZodLiteral<1>; zones: ZodArray<ZodObject<{ countries: ZodArray<ZodObject<{ cities: ZodArray<ZodObject<{ celebrationType: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; events: ZodArray<ZodObject<{ id: ZodString; isMainCelebration: ZodBoolean; midnightUtc: ZodString; popularity: ZodNumber; restrained: ZodOptional<ZodObject<{ note: ZodObject<{ uk: ZodString; }, $loose>; }, $loose>>; type: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; }, $strict>>; id: ZodString; isCountryMain: ZodBoolean; landmark: ZodOptional<ZodObject<{ uk: ZodString; }, $loose>>; mapPoint: ZodObject<{ x: ZodNumber; y: ZodNumber; }, $loose>; name: ZodObject<{ uk: ZodString; }, $loose>; }, $strict>>; iso: ZodString; }, $strict>>; id: ZodString; midnightUtc: ZodString; offsetMinutes: ZodNumber; order: ZodNumber; representativeCityId: ZodString; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/catalog.schemas.ts#UnattendedChangedSchema": {
+      "text": "ZodObject<{ at: ZodString; cause: ZodEnum<{ alarm: \"alarm\"; manual: \"manual\"; schedule: \"schedule\"; }>; on: ZodBoolean; version: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/catalog.ts#CATALOG_REASONS": {
+      "text": "readonly [\"catalog-invalid\"]"
+    },
+    "packages/contracts/src/catalog.ts#CatalogCelebrationType": {
+      "union": [
+        "'countdown-only'",
+        "'main'",
+        "'tv'",
+        "'webcam'"
+      ]
+    },
+    "packages/contracts/src/catalog.ts#CatalogCountries": {
+      "props": {
+        "countries": {
+          "optional": false,
+          "type": {
+            "text": "CatalogCountry[]"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "union": [
+              "1"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogCountry": {
+      "props": {
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "gender": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "howTo": {
+          "optional": false,
+          "type": {
+            "props": {
+              "gallery": {
+                "optional": false,
+                "type": {
+                  "text": "unknown[]"
+                }
+              },
+              "text": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              "traditions": {
+                "optional": false,
+                "type": {
+                  "text": "CatalogTradition[]"
+                }
+              }
+            }
+          }
+        },
+        "illustrationId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "iso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogText"
+          }
+        },
+        "popularity": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "slug": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "zoneIds": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogPayload": {
+      "props": {
+        "countries": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogCountries"
+          }
+        },
+        "schedule": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogSchedule"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogReason": {
+      "text": "(typeof CATALOG_REASONS)[number]"
+    },
+    "packages/contracts/src/catalog.ts#CatalogSchedule": {
+      "props": {
+        "$schema": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "generatedAt": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "season": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "tzdbVersion": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "union": [
+              "1"
+            ]
+          }
+        },
+        "zones": {
+          "optional": false,
+          "type": {
+            "text": "CatalogScheduleZone[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogScheduleCity": {
+      "props": {
+        "celebrationType": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogCelebrationType"
+          }
+        },
+        "events": {
+          "optional": false,
+          "type": {
+            "text": "CatalogScheduleEvent[]"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isCountryMain": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "landmark": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogText"
+          }
+        },
+        "mapPoint": {
+          "optional": false,
+          "type": {
+            "props": {
+              "x": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "y": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              }
+            }
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogText"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogScheduleEvent": {
+      "props": {
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isMainCelebration": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "midnightUtc": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "popularity": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "restrained": {
+          "optional": true,
+          "type": {
+            "props": {
+              "note": {
+                "optional": false,
+                "type": {
+                  "ref": "packages/contracts/src/catalog.ts#CatalogText"
+                }
+              }
+            }
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/catalog.ts#CatalogCelebrationType"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogScheduleZone": {
+      "props": {
+        "countries": {
+          "optional": false,
+          "type": {
+            "text": "{ iso: string; cities: CatalogScheduleCity[] }[]"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "midnightUtc": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "offsetMinutes": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "order": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "representativeCityId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogText": {
+      "props": {
+        "uk": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/catalog.ts#CatalogTradition": {
+      "props": {
+        "iconId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "text": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "title": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
     "packages/contracts/src/result.ts#ApiError": {
       "props": {
         "attemptsLeft": {
@@ -3048,25 +3426,28 @@
       "fn": "export function ok<T>(value: T): ApiResult<T>"
     },
     "packages/contracts/src/schemas.ts#ApiErrorCodeSchema": {
-      "text": "ZodEnum<{ network: \"network\"; unavailable: \"unavailable\"; unauthorized: \"unauthorized\"; forbidden: \"forbidden\"; not_found: \"not_found\"; conflict: \"conflict\"; rate_limited: \"rate_limited\"; validation: \"validation\"; unknown: \"unknown\"; }>"
+      "text": "ZodEnum<{ conflict: \"conflict\"; forbidden: \"forbidden\"; network: \"network\"; not_found: \"not_found\"; rate_limited: \"rate_limited\"; unauthorized: \"unauthorized\"; unavailable: \"unavailable\"; unknown: \"unknown\"; validation: \"validation\"; }>"
     },
     "packages/contracts/src/schemas.ts#ApiErrorSchema": {
-      "text": "ZodObject<{ code: ZodEnum<{ network: \"network\"; unavailable: \"unavailable\"; unauthorized: \"unauthorized\"; forbidden: \"forbidden\"; not_found: \"not_found\"; conflict: \"conflict\"; rate_limited: \"rate_limited\"; validation: \"validation\"; unknown: \"unknown\"; }>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; attemptsLeft: ZodOptional<ZodNumber>; message: ZodOptional<ZodString>; }, $strict>"
+      "text": "ZodObject<{ attemptsLeft: ZodOptional<ZodNumber>; code: ZodEnum<{ conflict: \"conflict\"; forbidden: \"forbidden\"; network: \"network\"; not_found: \"not_found\"; rate_limited: \"rate_limited\"; unauthorized: \"unauthorized\"; unavailable: \"unavailable\"; unknown: \"unknown\"; validation: \"validation\"; }>; message: ZodOptional<ZodString>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; }, $strict>"
     },
     "packages/contracts/src/schemas.ts#ApiFailureSchema": {
-      "text": "ZodObject<{ ok: ZodLiteral<false>; error: ZodObject<{ code: ZodEnum<{ network: \"network\"; unavailable: \"unavailable\"; unauthorized: \"unauthorized\"; forbidden: \"forbidden\"; not_found: \"not_found\"; conflict: \"conflict\"; rate_limited: \"rate_limited\"; validation: \"validation\"; unknown: \"unknown\"; }>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; attemptsLeft: ZodOptional<ZodNumber>; message: ZodOptional<ZodString>; }, $strict>; }, $strict>"
+      "text": "ZodObject<{ error: ZodObject<{ attemptsLeft: ZodOptional<ZodNumber>; code: ZodEnum<{ conflict: \"conflict\"; forbidden: \"forbidden\"; network: \"network\"; not_found: \"not_found\"; rate_limited: \"rate_limited\"; unauthorized: \"unauthorized\"; unavailable: \"unavailable\"; unknown: \"unknown\"; validation: \"validation\"; }>; message: ZodOptional<ZodString>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; }, $strict>; ok: ZodLiteral<false>; }, $strict>"
+    },
+    "packages/contracts/src/schemas.ts#CatalogResponseSchema": {
+      "text": "ZodUnion<readonly [ZodObject<{ ok: ZodLiteral<true>; value: ZodObject<{ countries: ZodObject<{ countries: ZodArray<ZodObject<{ flagCode: ZodString; gender: ZodString; howTo: ZodObject<{ gallery: ZodArray<ZodObject<{ alt: ZodString; author: ZodString; license: ZodString; src: ZodString; }, $strict>>; text: ZodString; traditions: ZodArray<ZodObject<{ iconId: ZodString; id: ZodString; text: ZodString; title: ZodString; }, $strict>>; }, $strict>; illustrationId: ZodString; iso: ZodString; name: ZodObject<{ uk: ZodString; }, $loose>; popularity: ZodNumber; slug: ZodString; zoneIds: ZodArray<ZodString>; }, $strict>>; version: ZodLiteral<1>; }, $strict>; schedule: ZodObject<{ $schema: ZodOptional<ZodString>; generatedAt: ZodString; season: ZodLiteral<\"2026-27\">; tzdbVersion: ZodLiteral<\"2026f\">; version: ZodLiteral<1>; zones: ZodArray<ZodObject<{ countries: ZodArray<ZodObject<{ cities: ZodArray<ZodObject<{ celebrationType: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; events: ZodArray<ZodObject<{ id: ZodString; isMainCelebration: ZodBoolean; midnightUtc: ZodString; popularity: ZodNumber; restrained: ZodOptional<ZodObject<{ note: ZodObject<{ uk: ZodString; }, $loose>; }, $loose>>; type: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; }, $strict>>; id: ZodString; isCountryMain: ZodBoolean; landmark: ZodOptional<ZodObject<{ uk: ZodString; }, $loose>>; mapPoint: ZodObject<{ x: ZodNumber; y: ZodNumber; }, $loose>; name: ZodObject<{ uk: ZodString; }, $loose>; }, $strict>>; iso: ZodString; }, $strict>>; id: ZodString; midnightUtc: ZodString; offsetMinutes: ZodNumber; order: ZodNumber; representativeCityId: ZodString; }, $strict>>; }, $strict>; version: ZodString; }, $strict>; }, $strict>, ZodObject<{ error: ZodObject<{ attemptsLeft: ZodOptional<ZodNumber>; code: ZodEnum<{ conflict: \"conflict\"; forbidden: \"forbidden\"; network: \"network\"; not_found: \"not_found\"; rate_limited: \"rate_limited\"; unauthorized: \"unauthorized\"; unavailable: \"unavailable\"; unknown: \"unknown\"; validation: \"validation\"; }>; message: ZodOptional<ZodString>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; }, $strict>; ok: ZodLiteral<false>; }, $strict>]>"
     },
     "packages/contracts/src/schemas.ts#TestClockSet": {
       "text": "z.infer<typeof TestClockSetSchema>"
     },
     "packages/contracts/src/schemas.ts#TestClockSetSchema": {
-      "text": "ZodObject<{ at: ZodOptional<ZodNumber>; speed: ZodOptional<ZodNumber>; frozen: ZodOptional<ZodBoolean>; }, $strict>"
+      "text": "ZodObject<{ at: ZodOptional<ZodNumber>; frozen: ZodOptional<ZodBoolean>; speed: ZodOptional<ZodNumber>; }, $strict>"
     },
     "packages/contracts/src/schemas.ts#TestClockState": {
       "text": "z.infer<typeof TestClockStateSchema>"
     },
     "packages/contracts/src/schemas.ts#TestClockStateSchema": {
-      "text": "ZodObject<{ now: ZodNumber; speed: ZodNumber; frozen: ZodBoolean; }, $strict>"
+      "text": "ZodObject<{ frozen: ZodBoolean; now: ZodNumber; speed: ZodNumber; }, $strict>"
     },
     "packages/contracts/src/schemas.ts#TestFixturesBody": {
       "text": "z.infer<typeof TestFixturesBodySchema>"
