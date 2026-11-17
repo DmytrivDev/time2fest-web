@@ -86,5 +86,7 @@ export function useSwipeDown(
       resetTimer.current = window.setTimeout(() => setDy(0), 320);
     };
   }, [el, enabled, zone]);
+  // Після розмонтування скидати нічого: таймер прибираємо (оголошено після основного ефекту — його очищення йде другим).
+  useEffect(() => () => window.clearTimeout(resetTimer.current), []);
   return dy;
 }
