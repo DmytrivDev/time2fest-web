@@ -15,7 +15,7 @@
 | `pnpm rollback:env -- --env <…>` | повернути Worker, потім контейнер сервера на попередній образ | `[--target …] [--to <sha, 40 hex>] [--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
 | `pnpm node:bootstrap -- --host <IPv4\|ім’я>` | підготувати новий вузол (лише `rehearsal`) | `[--secrets-file <шлях>]` |
 | `pnpm edge:secret -- --env rehearsal` | згенерувати секрети репетиції або замінити секрет краю | рівно один із `--generate`, `--rotate`; `[--target local\|<хост>] [--probe] [--secrets-file <шлях>]` |
-| `pnpm edge:move-domain -- --name <ім’я> --to <worker>` | перенести ім’я між двома Worker’ами | `[--confirm <env>] [--allow-main-domain] [--emergency] [--secrets-file <шлях>]` |
+| `pnpm edge:move-domain -- --name <ім’я> --to <worker>` | перенести ім’я між двома Worker’ами | `[--confirm <env>] [--allow-main-domain] [--take-domain-from <worker\|dns>] [--emergency] [--secrets-file <шлях>]` |
 | `pnpm capacity -- --env <rehearsal\|production>` | потужність вузлів провайдера | дія: `plan`, `night --size <розмір>`, `back`, `off-season`, `realtime-create`, `realtime-delete`, `status`; `[--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
 
 `pnpm infra:cf …` (тунель, DNS, правила, Access) описано окремо в `infra/cloudflare/README.md`.
@@ -39,11 +39,14 @@
   Для `move-domain` підтвердження називає середовище робочого домену (`--confirm prelaunch|production`); перенесення на
   робочий Worker — лише з `--confirm` саме його середовища, двійник (`t2f-edge-rehearsal-alt`) — лише для імені репетиції.
 - **Тримач імені робочого домену.** Перед `wrangler deploy` середовища `prelaunch`/`production` (і так само
-  `workers/edge/scripts/deploy.mjs`) читаються прив’язки Custom Domain (`GET /accounts/<a>/workers/domains?hostname=`) і
-  записи зони (`GET /zones/<z>/dns_records?name=`) кожного хоста маршрутів. Ім’я прив’язане до іншого Worker’а чи має
-  запис A/AAAA/CNAME не від Worker’а (старий сайт) — код 2, якщо `--take-domain-from <worker|dns>` не називає саме цього
-  тримача (прапорець на вільному імені — теж код 2). Потрібні `CLOUDFLARE_ZONE_ID` і права токена на читання прив’язок і
-  DNS зони; бракує — код 2 з назвою того, чого бракує (перевірка не пропускається). Репетиції й `test` не зачеплені.
+  `workers/edge/scripts/deploy.mjs`) читаються маршрути Worker’ів зони (`GET /zones/<z>/workers/routes`, один раз),
+  прив’язки Custom Domain (`GET /accounts/<a>/workers/domains?hostname=`) і записи зони (`GET /zones/<z>/dns_records?name=`)
+  кожного хоста маршрутів. Ім’я прив’язане до іншого Worker’а, покрите маршрутом іншого Worker’а чи має запис A/AAAA/CNAME
+  не від Worker’а (старий сайт) — код 2, якщо `--take-domain-from <worker|dns>` не називає саме цього тримача (прапорець
+  на вільному імені — теж код 2). Запис «Worker’а» (лише для читання, `AAAA 100::`) вважається Worker’овим лише разом із
+  прив’язкою Custom Domain цього хоста; без неї його тримач — `dns`. Потрібні `CLOUDFLARE_ZONE_ID` і права токена на
+  читання прив’язок, DNS і маршрутів зони; бракує — код 2 з назвою того, чого бракує (перевірка не пропускається).
+  Однакову поведінку двох копій перевірки тримає `test/parity.test.mjs`. Репетиції й `test` не зачеплені.
 - **Заморозка.** `production` з 31.12 08:00 до 01.01 14:00 за UTC: розгортання, відкат, `capacity --env production`
   (крім `plan` і `status`) і `move-domain` робочого домену — лише з `--emergency`.
 - **Заборонена ціль.** Адреса старого продакшн-сервера відхиляється завжди — за адресою, а не написанням: до першого
@@ -148,7 +151,7 @@ Postgres (кожен — 32 випадкові байти з системног�
 `droplet:delete`, `actions:read`, `sizes:read`, `regions:read`, `tag:read`, `tag:create`, `ssh_key:read`, `image:read`,
 `vpc:read`. Той самий перелік — `TOKEN_SCOPES` в `infra/ops/lib/capacity/digitalocean/config.mjs`.
 
-**`CLOUDFLARE_API_TOKEN`** (розгортання Worker’а й перенесення імені) — права на розгортання Worker’ів і прив’язку Custom Domain для акаунта й зони (точний перелік вкаже ведучий хвилі після живого прогону); для `prelaunch`/`production` ще читання прив’язок Custom Domain (Account → Workers Scripts → Read) і DNS зони (Zone → DNS → Read) — без них розгортання робочого домену відмовляє;
+**`CLOUDFLARE_API_TOKEN`** (розгортання Worker’а й перенесення імені) — права на розгортання Worker’ів і прив’язку Custom Domain для акаунта й зони (точний перелік вкаже ведучий хвилі після живого прогону); для `prelaunch`/`production` ще читання прив’язок Custom Domain (Account → Workers Scripts → Read), DNS зони (Zone → DNS → Read) і маршрутів Worker’ів зони (Zone → Workers Routes → Read) — без них розгортання й `move-domain` на Worker робочого домену відмовляють;
 **`CLOUDFLARE_API_TOKEN_INFRA`** (`infra/cloudflare`) — перелік у `infra/cloudflare/README.md`, розділ «Дозволи токена».
 Підсумкова таблиця прав — у `docs/backend/secrets.md`.
 
@@ -162,6 +165,9 @@ git. Робочі (production) значення вводить власник с
 
 - `night --size <розмір>` / `back` / `off-season` — основний вузол: лише вертикальна зміна розміру (CPU і RAM, без диска),
   розміри — зі списку середовища в `config.mjs` адаптера. `off-season` також видаляє вузол realtime.
+  Розміри DigitalOcean: `rehearsal` — поза сезоном `s-1vcpu-2gb` ($12/міс), дозволені `s-1vcpu-2gb`, `s-2vcpu-2gb`,
+  `s-2vcpu-4gb`, `s-4vcpu-8gb` (диск лишається 50 GB); `production` — поза сезоном `s-2vcpu-4gb`, дозволені
+  `s-1vcpu-2gb`, `s-2vcpu-2gb`, `s-2vcpu-4gb`, `s-4vcpu-8gb`, `s-8vcpu-16gb`.
 - `realtime-create` / `realtime-delete` — вузол realtime створюється з тегами й підготовкою, видаляється (не вимикається);
   Compose-профіль цього вузла — лише `cloudflared`. Другого екземпляра `server` команда не запускає.
 - `status` показує розбіжність із станом «поза сезоном».
@@ -179,6 +185,11 @@ pnpm edge:move-domain -- --name rehearsal.time2fest.com --to <worker> --secrets-
 Зонд щосекунди питає `GET https://<ім’я>/` від 5 с до й 30 с після розгортання, міряє проміжок і записує, хто
 відповів (заголовок `x-t2f-twin`). Журнал — `infra/ops/.local/rehearsal/edge.jsonl`. Явне від’єднання — лише запасний
 шлях при конфлікті й лише для прив’язки, яку журнал записав як створену цією командою; робочі хости не від’єднуються ніколи.
+
+Перенесення на Worker робочого домену (`t2f-edge-prelaunch`/`t2f-edge-production`) спершу робить ту саму перевірку
+тримача, що й `deploy`, для всіх імен маршрутів середовища: Worker, з якого журнал цього середовища переносить ім’я
+(`from`), віддає його без прапорця; будь-який інший тримач — лише з `--take-domain-from <worker>`, а запис DNS старого
+сайту — лише з `--take-domain-from dns`. Для імені репетиції прапорець не приймається (код 2).
 
 ## Локальний вузол і тести
 
@@ -211,7 +222,12 @@ node server/scripts/lock.mjs --mode exclusive -- node node_modules/vitest/vitest
 Docker, створює каталог вузла, закриває брандмауер усім, крім TCP 22, і вимикає вхід root і паролі в SSH (лише після того,
 як вхід `deploy` перевірено). Якщо в брандмауері вже є зайві правила, перевірка не пройде (код 1). TCP 22 відкрито
 з обмеженням частоти (`ufw limit 22/tcp`: не більше 6 нових з’єднань за 30 с з однієї адреси); вузол, підготовлений
-давнішою версією з `ufw allow 22/tcp`, повторний `bootstrap` переводить на `limit`.
+давнішою версією з `ufw allow 22/tcp`, повторний `bootstrap` переводить на `limit`. Ще до SSH-кроку він вмикає підкачку
+(вузол 1 vCPU / 2 GB, рішення 2026-11-17): файл `/swapfile` на 2 GB (режим 600, рядок у `/etc/fstab`) і
+`vm.swappiness=10` у `/etc/sysctl.d/99-t2f-swap.conf`; якщо `swapon --show` уже показує `/swapfile`, файл не чіпається.
+Вузол realtime (`capacity realtime-create`) проходить той самий перелік кроків. Якщо `--host` — ім’я, `bootstrap`
+з’єднується з уже перевіреною IPv4-адресою цього імені (`-o HostKeyAlias=<ім’я>`, тож `known_hosts` лишається за
+іменем), а не розв’язує ім’я вдруге; ім’я без IPv4-адреси — код 2.
 
 **Група `docker` = root.** Користувач `deploy` у групі `docker` має права root на вузлі: будь-хто з його ключем може
 запустити контейнер з коренем файлової системи хоста. Тому ключ розгортання (і секрет `T2F_REHEARSAL_SSH_KEY` у GitHub)

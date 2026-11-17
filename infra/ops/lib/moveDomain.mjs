@@ -4,6 +4,8 @@
 // ставить `override_existing_origin`). Зонд кожну секунду GET `https://<name>/` від 5 с до й 30 с після розгортання
 // міряє проміжок і фіксує, хто відповів (`x-t2f-twin`). Явне від’єднання — запасний шлях при конфлікті
 // й лише для прив’язки, яку журнал записав як створену цією командою; робочі хости — ніколи.
+// Перед розгортанням Worker’а робочого домену — та сама перевірка тримача, що в `deploy` (N2): Worker, з якого
+// журнал переносить ім’я, дозволений сам; запис DNS старого сайту — лише з явним `--take-domain-from dns`.
 // Токен і ідентифікатор акаунта — лише з середовища (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
 import fs from 'node:fs';
 import os from 'node:os';
@@ -11,6 +13,7 @@ import path from 'node:path';
 import { cloudflareApiFrom } from './cloudflareApi.mjs';
 import { messageOf } from './common.mjs';
 import { ENVS, MAIN_HOSTS, REPO_ROOT } from './config.mjs';
+import { checkDomainHolders } from './domainHolder.mjs';
 import { EDGE_DIR, WRANGLER_JS } from './worker.mjs';
 
 export const TWIN_WORKER = 't2f-edge-rehearsal-alt';
@@ -150,6 +153,9 @@ export async function runMoveDomain(ctx) {
   }
   if (target.workerEnv && !envHosts(target.workerEnv).includes(name)) return fail(err, `${to} не обслуговує ім’я ${name}`);
 
+  const explicitTake = ctx.args.values['take-domain-from'];
+  if (explicitTake !== undefined && !MAIN_WORKERS.includes(to)) return fail(err, '--take-domain-from: лише для Worker’а робочого домену');
+
   const api = cloudflareApiFrom(ctx);
   if (!api) return fail(err, 'бракує змінних: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID (середовище або --secrets-file)', 1);
 
@@ -161,6 +167,21 @@ export async function runMoveDomain(ctx) {
   const records = readEdgeJournal(journalFile);
   const lastTo = [...records].reverse().find((r) => norm(r.name) === name)?.to ?? null;
   const from = lastTo ?? (name === REHEARSAL_NAME ? 't2f-edge-rehearsal' : null);
+
+  if (target.workerEnv && MAIN_WORKERS.includes(to)) {
+    // `wrangler deploy --env <prelaunch|production>` ставить усі імена маршрутів середовища з override: спершу — хто
+    // їх тримає. Перенесення Worker → Worker: тримач, записаний журналом як `from`, дозволений; інший — лише явно.
+    const journalTake = from !== null && norm(from) !== norm(to) ? from : undefined;
+    const hosts = envHosts(target.workerEnv);
+    let held = await checkDomainHolders({ api, hosts, worker: to, takeFrom: explicitTake ?? journalTake });
+    if (!held.ok && explicitTake === undefined && journalTake !== undefined) {
+      // Журнальний `from` уже нічого не тримає (імена вільні чи вже в `to`) — це не причина відмовляти.
+      const free = await checkDomainHolders({ api, hosts, worker: to });
+      if (free.ok) held = free;
+    }
+    if (!held.ok) return fail(err, held.message);
+    if (held.taken.length) out(`move-domain: ім’я забирається в ${held.taken.join(', ')}`);
+  }
 
   /** @type {Set<string>} */
   const answered = new Set();

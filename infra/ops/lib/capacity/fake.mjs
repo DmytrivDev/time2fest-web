@@ -13,13 +13,18 @@ import { assertNodeTags, ProviderError } from './provider.mjs';
 
 /** Ціни за годину — публічні ціни (USD/міс ÷ 672 год), як їх віддає API провайдера. @type {Size[]} */
 export const FAKE_SIZES = [
+  { slug: 's-1vcpu-2gb', vcpus: 1, memoryMb: 2048, diskGb: 50, priceHourly: 0.01786 },
+  { slug: 's-2vcpu-2gb', vcpus: 2, memoryMb: 2048, diskGb: 60, priceHourly: 0.02679 },
   { slug: 's-2vcpu-4gb', vcpus: 2, memoryMb: 4096, diskGb: 80, priceHourly: 0.03571 },
   { slug: 's-4vcpu-8gb', vcpus: 4, memoryMb: 8192, diskGb: 160, priceHourly: 0.07143 },
   { slug: 's-8vcpu-16gb', vcpus: 8, memoryMb: 16384, diskGb: 320, priceHourly: 0.14286 },
   { slug: 'c-4', vcpus: 4, memoryMb: 8192, diskGb: 50, priceHourly: 0.125 },
 ];
 
-/** Ті самі розміри середовищ, що в конфігурації адаптера провайдера, — для тестів на фейку. @type {Record<string, EnvSizes>} */
+/**
+ * Розміри середовищ для тестів на фейку (форма — як у конфігурації адаптера провайдера; самі значення адаптера
+ * перевіряє `test/capacity/capacity.test.mjs` на фейку з його `ENV_SIZES`). @type {Record<string, EnvSizes>}
+ */
 export const FAKE_ENV_SIZES = {
   rehearsal: { region: 'fra1', main: { offSeason: 's-2vcpu-4gb', allowed: ['s-2vcpu-4gb', 's-4vcpu-8gb'] }, realtime: { size: 's-2vcpu-4gb' } },
   production: {

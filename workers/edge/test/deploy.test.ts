@@ -34,7 +34,7 @@ function fakeSpawn(calls: Call[]) {
   }) as never;
 }
 
-type CfOpts = { bindings?: object[]; records?: object[]; bindingsStatus?: number; recordsStatus?: number };
+type CfOpts = { bindings?: object[]; records?: object[]; routes?: object[]; bindingsStatus?: number; recordsStatus?: number; routesStatus?: number };
 
 /** Fake Cloudflare API for the holder check (F1): no network. */
 function fakeCf(o: CfOpts = {}) {
@@ -46,6 +46,7 @@ function fakeCf(o: CfOpts = {}) {
     urls.push(u);
     if (u.includes('/workers/domains')) return reply(o.bindingsStatus ?? 200, o.bindings ?? []);
     if (u.includes('/dns_records')) return reply(o.recordsStatus ?? 200, o.records ?? []);
+    if (u.includes('/workers/routes')) return reply(o.routesStatus ?? 200, o.routes ?? []);
     return new Response('not found', { status: 404 });
   }) as typeof globalThis.fetch;
   return { fetch, urls };
@@ -154,10 +155,11 @@ describe('main-domain holder check before wrangler deploy (F1)', () => {
   const OLD_SITE = { name: 'time2fest.com', type: 'A', content: '203.0.113.50', meta: {} };
   const PRELAUNCH_BINDING = { id: 'd1', hostname: 'time2fest.com', service: 't2f-edge-prelaunch' };
 
-  it('reads the bindings and the zone records of every route host', async () => {
+  it('reads the zone Worker routes once, then the bindings and the zone records of every route host', async () => {
     const r = await run(PROD, full);
     expect(r.code).toBe(0);
     expect(r.cfUrls).toEqual([
+      'https://api.cloudflare.com/client/v4/zones/zone1/workers/routes',
       'https://api.cloudflare.com/client/v4/accounts/acct/workers/domains?hostname=time2fest.com',
       'https://api.cloudflare.com/client/v4/zones/zone1/dns_records?name=time2fest.com&per_page=100',
     ]);
@@ -214,6 +216,26 @@ describe('main-domain holder check before wrangler deploy (F1)', () => {
     const w = await run(PRE, full, assetsDir, fakeCf({ bindingsStatus: 403 }));
     expect(w.code).toBe(2);
     expect(w.output).toContain('Workers Scripts > Read');
+  });
+
+  it('N1: a 100:: record with no Custom Domain binding → 2 (holder dns), no spawn', async () => {
+    const r = await run(PRE, full, assetsDir, fakeCf({ records: [{ name: 'time2fest.com', type: 'AAAA', content: '100::', meta: { read_only: true } }] }));
+    expect(r.code).toBe(2);
+    expect(r.calls).toHaveLength(0);
+    expect(r.output).toContain('dns');
+  });
+
+  it('N1: a zone route of another Worker → 2; --take-domain-from that Worker → deployed; no routes right → 2 naming it', async () => {
+    const routes = [{ id: 'r1', pattern: 'time2fest.com/*', script: 't2f-old-router' }];
+    const refused = await run(PRE, full, assetsDir, fakeCf({ routes }));
+    expect(refused.code).toBe(2);
+    expect(refused.calls).toHaveLength(0);
+    expect(refused.output).toContain('t2f-old-router');
+    const ok = await run([...PRE, '--take-domain-from', 't2f-old-router'], full, assetsDir, fakeCf({ routes }));
+    expect(ok.code).toBe(0);
+    const noRight = await run(PRE, full, assetsDir, fakeCf({ routesStatus: 403 }));
+    expect(noRight.code).toBe(2);
+    expect(noRight.output).toContain('Workers Routes > Read');
   });
 
   it('a malformed --take-domain-from → 2 before anything', async () => {

@@ -13,25 +13,9 @@ import { assertPrivatePath, localEnvDir, pushFile, writePrivate } from './files.
 
 const EDGE_CHECK_ATTEMPTS = 10;
 const EDGE_CHECK_EVERY_MS = 3_000;
-const EDGE_CHECK_TIMEOUT_MS = 5_000;
 const PROBE_CALL_TIMEOUT_MS = 10_000;
 
 /** @typedef {import('../../ops.mjs').OpsContext} OpsContext */
-
-/**
- * Одна перевірка `GET <url>` → 200 (без облікових даних, без переходів).
- * @param {typeof globalThis.fetch} fetch
- * @param {string} url
- */
-export async function fetchOk(fetch, url) {
-  try {
-    const res = await fetch(url, { method: 'GET', redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(EDGE_CHECK_TIMEOUT_MS) });
-    await res.body?.cancel().catch(() => {});
-    return res.status === 200;
-  } catch {
-    return false;
-  }
-}
 
 /**
  * W23: заміна секрету краю під замком вузла. (1) сервер: новий + старий як PREVIOUS, перезапуск, здоров’я;

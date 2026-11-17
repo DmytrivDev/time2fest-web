@@ -2,7 +2,7 @@
 // F1: перед `wrangler deploy` робочого домену — хто тримає ім’я (прив’язки Custom Domain і записи DNS). Фейковий API.
 import { describe, expect, it } from 'vitest';
 import { createCloudflareApi } from '../lib/cloudflareApi.mjs';
-import { checkDomainHolders, RIGHT_DNS_READ, RIGHT_WORKERS_READ } from '../lib/domainHolder.mjs';
+import { checkDomainHolders, RIGHT_DNS_READ, RIGHT_ROUTES_READ, RIGHT_WORKERS_READ, routeCoversHost } from '../lib/domainHolder.mjs';
 import { parseArgs } from '../lib/args.mjs';
 import { fakeCloudflare } from './support/fakeCloudflare.mjs';
 
@@ -19,10 +19,11 @@ function api(o, zone = 'zone1') {
 }
 
 describe('checkDomainHolders', () => {
-  it('a free name (only MX/TXT, no binding) → ok, reads both bindings and zone records', async () => {
+  it('a free name (only MX/TXT, no binding) → ok, reads zone routes once, bindings and zone records', async () => {
     const { cf, api: a } = api({ records: [MX] });
     expect(await checkDomainHolders({ api: a, hosts: HOSTS, worker: SELF })).toEqual({ ok: true, taken: [] });
     expect(cf.calls.map((c) => c.url)).toEqual([
+      'https://api.cloudflare.com/client/v4/zones/zone1/workers/routes',
       'https://api.cloudflare.com/client/v4/accounts/acct1/workers/domains?hostname=time2fest.com',
       'https://api.cloudflare.com/client/v4/zones/zone1/dns_records?name=time2fest.com&per_page=100',
     ]);
@@ -82,6 +83,45 @@ describe('checkDomainHolders', () => {
     expect(/** @type {{ message: string }} */ (wk).message).toContain(RIGHT_WORKERS_READ);
     const other = await checkDomainHolders({ api: api({ recordsStatus: 500 }).api, hosts: HOSTS, worker: SELF });
     expect(other).toMatchObject({ ok: false, code: 2 });
+  });
+
+  it('N1: a Worker-looking record (100:: / read-only) with no Custom Domain binding for the host → holder dns, refused', async () => {
+    for (const rec of [WORKER_REC, { name: 'time2fest.com', type: 'CNAME', content: 'x.example.org', meta: { read_only: true } }]) {
+      const { api: a } = api({ records: [rec] });
+      const r = await checkDomainHolders({ api: a, hosts: HOSTS, worker: SELF });
+      expect(r).toMatchObject({ ok: false, code: 2 });
+      expect(/** @type {{ message: string }} */ (r).message).toContain('dns');
+      expect(await checkDomainHolders({ api: a, hosts: HOSTS, worker: SELF, takeFrom: 'dns' })).toEqual({ ok: true, taken: ['dns'] });
+    }
+  });
+
+  it('N1: a zone Worker route covering the host → refused unless --take-domain-from names that Worker', async () => {
+    const routes = [{ id: 'r1', pattern: '*time2fest.com/*', script: 't2f-old-router' }];
+    const { api: a } = api({ routes });
+    const r = await checkDomainHolders({ api: a, hosts: HOSTS, worker: SELF });
+    expect(r).toMatchObject({ ok: false, code: 2 });
+    expect(/** @type {{ message: string }} */ (r).message).toContain('t2f-old-router');
+    expect((await checkDomainHolders({ api: a, hosts: HOSTS, worker: SELF, takeFrom: 'dns' })).ok).toBe(false);
+    expect(await checkDomainHolders({ api: a, hosts: HOSTS, worker: SELF, takeFrom: 't2f-old-router' })).toEqual({ ok: true, taken: ['t2f-old-router'] });
+    // A route of this same Worker, a route with no Worker and a route of another host are not holders.
+    const own = api({ routes: [{ pattern: 'time2fest.com/*', script: SELF }, { pattern: 'time2fest.com/x/*' }, { pattern: 'other.example.org/*', script: 'z' }] });
+    expect(await checkDomainHolders({ api: own.api, hosts: HOSTS, worker: SELF })).toEqual({ ok: true, taken: [] });
+  });
+
+  it('N1: a token without the Workers Routes read right → 2 naming it (never skipped)', async () => {
+    const r = await checkDomainHolders({ api: api({ routesStatus: 403 }).api, hosts: HOSTS, worker: SELF });
+    expect(r).toMatchObject({ ok: false, code: 2 });
+    expect(/** @type {{ message: string }} */ (r).message).toContain(RIGHT_ROUTES_READ);
+  });
+
+  it('routeCoversHost', () => {
+    expect(routeCoversHost('time2fest.com/*', 'time2fest.com')).toBe(true);
+    expect(routeCoversHost('https://time2fest.com/api/*', 'time2fest.com')).toBe(true);
+    expect(routeCoversHost('*time2fest.com/*', 'www.time2fest.com')).toBe(true);
+    expect(routeCoversHost('*.time2fest.com/*', 'www.time2fest.com')).toBe(true);
+    expect(routeCoversHost('*.time2fest.com/*', 'time2fest.com')).toBe(false);
+    expect(routeCoversHost('www.time2fest.com/*', 'time2fest.com')).toBe(false);
+    expect(routeCoversHost(undefined, 'time2fest.com')).toBe(false);
   });
 });
 

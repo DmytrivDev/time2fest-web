@@ -1,13 +1,13 @@
 // @ts-check
-// W24 — підготовка вузла на підставному транспорті (AC-8, EC-9): кроки й порядок, крок 6 лише після перевірки
-// входу deploy (крок 5), повторний запуск без змін, повторний запуск після вимкнення root — шлях deploy.
+// W24 — підготовка вузла на підставному транспорті (AC-8, EC-9): кроки й порядок, крок 7 (sshd) лише після перевірки
+// входу deploy (крок 6), повторний запуск без змін, повторний запуск після вимкнення root — шлях deploy.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { DEPLOY_CHECKS, ROOT_ONLY_NOTE, ROOT_STEPS, SSHD_CONF, ufwOk } from '../lib/bootstrap.mjs';
-import { assertAllowed, assertArgv, DEFAULT_REMOTE_ALLOW } from '../lib/exec.mjs';
+import { DEPLOY_CHECKS, ROOT_ONLY_NOTE, ROOT_STEPS, SSHD_CONF, SWAP_SYSCTL, ufwOk } from '../lib/bootstrap.mjs';
+import { assertAllowed, assertArgv, DEFAULT_REMOTE_ALLOW, sshTransport } from '../lib/exec.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
 import { FAKE_TARGET } from './support/fakeTarget.mjs';
 
@@ -27,11 +27,12 @@ const UFW_ACTIVE = [
   '',
 ].join('\n');
 /** Прапорець стану вузла для кожного кроку. */
-const FLAG = /** @type {Record<string, 'user' | 'docker' | 'dir' | 'ufw' | 'sshd'>} */ ({
+const FLAG = /** @type {Record<string, 'user' | 'docker' | 'dir' | 'ufw' | 'swap' | 'sshd'>} */ ({
   'deploy-user': 'user',
   docker: 'docker',
   'node-dir': 'dir',
   firewall: 'ufw',
+  swap: 'swap',
   sshd: 'sshd',
 });
 
@@ -45,10 +46,10 @@ const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 /**
  * Підставний вузол: стан, виклики `{ user, kind, step }`, транспорти від імені користувача.
- * @param {Partial<{ user: boolean, docker: boolean, dir: boolean, ufw: boolean, sshd: boolean, rootRefused: boolean, deployLogin: boolean }>} [o]
+ * @param {Partial<{ user: boolean, docker: boolean, dir: boolean, ufw: boolean, swap: boolean, sshd: boolean, rootRefused: boolean, deployLogin: boolean }>} [o]
  */
 function fakeNode(o = {}) {
-  const st = { user: false, docker: false, dir: false, ufw: false, sshd: false, rootRefused: false, deployLogin: true, ...o };
+  const st = { user: false, docker: false, dir: false, ufw: false, swap: false, sshd: false, rootRefused: false, deployLogin: true, ...o };
   /** @type {{ user: string, kind: string, step: string, inputLength: number }[]} */
   const calls = [];
   /** @param {string} user @param {string[]} argv @returns {{ kind: string, step: string, code: number, stdout?: string }} */
@@ -115,12 +116,15 @@ const applied = (n) => n.calls.filter((c) => c.kind === 'apply').map((c) => c.st
 const BOOT = ['bootstrap', '--host', HOST];
 
 describe('ops bootstrap', () => {
-  it('prepares a fresh node in order: user, Docker, dir, firewall, deploy login, sshd', async () => {
+  it('prepares a fresh node in order: user, Docker, dir, firewall, swap, deploy login, sshd', async () => {
     const n = fakeNode();
     expect(await main(BOOT, n.deps)).toBe(0);
-    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'sshd']);
+    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'swap', 'sshd']);
 
-    // Крок 5 (вхід deploy) — після брандмауера і до будь-якого виклику кроку sshd.
+    // Крок 6 (вхід deploy) — після брандмауера й підкачки і до будь-якого виклику кроку sshd.
+    expect(n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`).indexOf('deploy:login:deploy')).toBeGreaterThan(
+      n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`).indexOf('root:apply:swap'),
+    );
     const seq = n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`);
     const login = seq.indexOf('deploy:login:deploy');
     expect(login).toBeGreaterThan(seq.indexOf('root:apply:firewall'));
@@ -131,29 +135,31 @@ describe('ops bootstrap', () => {
 
     const text = n.out.join('\n');
     expect(text).toContain(FINGERPRINT);
-    expect(text).toContain('bootstrap: 6 sshd — зроблено');
+    expect(text).toContain('bootstrap: 5 swap — зроблено');
+    expect(text).toContain('bootstrap: 6 deploy-login — вхід deploy працює');
+    expect(text).toContain('bootstrap: 7 sshd — зроблено');
     expect(text).toContain('bootstrap: готово');
     expect(n.fx.calls[0].argv).toEqual(['ssh-keygen', '-l', '-F', HOST, '-f', path.join(n.stateRoot, 'known_hosts')]);
   });
 
-  it('never runs step 6 when the deploy login check fails', async () => {
+  it('never runs step 7 (sshd) when the deploy login check fails', async () => {
     const n = fakeNode({ deployLogin: false });
     expect(await main(BOOT, n.deps)).toBe(1);
-    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall']);
+    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'swap']);
     expect(n.calls.some((c) => c.step === 'sshd')).toBe(false);
     expect(n.st.sshd).toBe(false);
     expect(n.err.join('\n')).toContain('вхід root НЕ вимкнено');
   });
 
   it('with every check already passing makes 0 mutating calls and reports `без змін`', async () => {
-    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, sshd: true });
+    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, sshd: true });
     expect(await main(BOOT, n.deps)).toBe(0);
     expect(applied(n)).toEqual([]);
     expect(n.out.join('\n')).toContain('bootstrap: без змін');
   });
 
   it('when root is refused on rerun, checks as deploy only and reports `без змін`', async () => {
-    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, sshd: true, rootRefused: true });
+    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, sshd: true, rootRefused: true });
     expect(await main(BOOT, n.deps)).toBe(0);
     expect(applied(n)).toEqual([]);
     expect(n.calls.filter((c) => c.user === 'root').map((c) => c.kind)).toEqual(['login']);
@@ -204,6 +210,91 @@ describe('ops bootstrap', () => {
       ['root', 'new', path.join(n.stateRoot, 'known_hosts')],
       ['deploy', 'new', path.join(n.stateRoot, 'known_hosts')],
     ]);
+  });
+
+  it('N4: a host name is resolved once — first contact goes to the checked IP with HostKeyAlias=<name>', async () => {
+    const n = fakeNode();
+    /** @type {import('../lib/exec.mjs').SshOpts[]} */
+    const opened = [];
+    /** @type {string[]} */
+    const lookups = [];
+    /** @type {string[][]} */
+    const sshArgv = [];
+    const exec = {
+      ...n.fx,
+      /** @param {import('../lib/exec.mjs').SshOpts} o */
+      sshTransport: (o) => {
+        opened.push(o);
+        // Справжній транспорт на підставному виконавці: видно аргументи ssh.
+        return sshTransport(o, async (_file, args) => {
+          sshArgv.push(args);
+          return { code: 255, stdout: '', stderr: '' };
+        });
+      },
+    };
+    const { sshAs: _s, lookupHost: _l, ...deps } = n.deps;
+    // Перше розв’язання (звірка в main) і друге (bootstrap) дають різні адреси: з’єднання — лише з перевіреною в bootstrap.
+    const answers = [['203.0.113.30'], ['203.0.113.31']];
+    const lookupHost = async (/** @type {string} */ h) => {
+      lookups.push(h);
+      return answers[Math.min(lookups.length - 1, 1)];
+    };
+    await main(['bootstrap', '--host', 'node.example.org'], { ...deps, exec, lookupHost });
+    expect(opened.map((o) => [o.user, o.host, o.hostKeyAlias])).toEqual([
+      ['root', '203.0.113.31', 'node.example.org'],
+      ['deploy', '203.0.113.31', 'node.example.org'],
+    ]);
+    expect(sshArgv[0]).toEqual(expect.arrayContaining(['HostKeyAlias=node.example.org', 'root@203.0.113.31']));
+    expect(sshArgv.flat().some((a) => a.includes('node.example.org') && a.includes('@'))).toBe(false);
+  });
+
+  it('N4: a name without an IPv4 address → 2 before any ssh', async () => {
+    const n = fakeNode();
+    const r = await main(['bootstrap', '--host', 'v6only.example.org'], { ...n.deps, lookupHost: async () => ['2001:db8::7'] });
+    expect(r).toBe(2);
+    expect(n.calls).toEqual([]);
+    expect(n.err.join('\n')).toContain('немає IPv4-адреси');
+  });
+});
+
+describe('swap step (owner decision 2026-11-17: 1 vCPU / 2 GB node)', () => {
+  const step = ROOT_STEPS.find((x) => x.id === 'swap');
+  const check = step?.check(NODE_DIR)[2] ?? '';
+  const apply = step?.apply?.(NODE_DIR)[2] ?? '';
+
+  it('runs as root before the sshd step, so the realtime preparation (full step list) gets it too', () => {
+    const ids = ROOT_STEPS.map((x) => x.id);
+    expect(ids.indexOf('swap')).toBeGreaterThan(-1);
+    expect(ids.indexOf('swap')).toBeLessThan(ids.indexOf('sshd'));
+  });
+
+  it('check-before-apply: done only when swapon lists /swapfile, fstab has it and swappiness is 10', () => {
+    expect(check).toContain('swapon --show=NAME --noheadings | grep -qx /swapfile');
+    expect(check).toContain('grep -q "^/swapfile " /etc/fstab');
+    expect(check).toContain(`test -f ${SWAP_SYSCTL}`);
+    expect(check).toContain('"$(cat /proc/sys/vm/swappiness)" = 10');
+  });
+
+  it('apply: 2 GB /swapfile (fallocate, dd fallback), 600, mkswap, swapon, one fstab line, sysctl drop-in', () => {
+    expect(apply).toMatch(/^set -e; /);
+    expect(apply).toContain('fallocate -l 2048M /swapfile');
+    expect(apply).toContain('dd if=/dev/zero of=/swapfile bs=1M count=2048');
+    expect(apply).toContain('chmod 600 /swapfile');
+    expect(apply).toContain('mkswap /swapfile');
+    expect(apply).toContain('swapon /swapfile');
+    // Створення файлу — лише коли /swapfile ще не активний (повтор не чіпає робочу підкачку).
+    expect(apply.indexOf('if ! swapon --show=NAME --noheadings | grep -qx /swapfile; then')).toBeLessThan(apply.indexOf('fallocate'));
+    // Рядок у fstab додається лише якщо його немає.
+    expect(apply).toContain('grep -q "^/swapfile " /etc/fstab || echo "/swapfile none swap sw 0 0" >> /etc/fstab');
+    expect(apply).toContain(`echo "vm.swappiness=10" > ${SWAP_SYSCTL}`);
+    expect(SWAP_SYSCTL.startsWith('/etc/sysctl.d/')).toBe(true);
+  });
+
+  it('a node that already has swap: the step is skipped without an apply call', async () => {
+    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true });
+    expect(await main(BOOT, n.deps)).toBe(0);
+    expect(applied(n)).toEqual(['sshd']);
+    expect(n.out.join('\n')).toContain('bootstrap: 5 swap — вже зроблено');
   });
 });
 

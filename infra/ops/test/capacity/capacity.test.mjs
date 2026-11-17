@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { ENV_SIZES as DO_ENV_SIZES } from '../../lib/capacity/digitalocean/config.mjs';
 import { createFakeProvider, FAKE_ENV_SIZES } from '../../lib/capacity/fake.mjs';
 import { main } from '../../ops.mjs';
 
@@ -24,7 +25,7 @@ afterEach(() => {
 });
 
 /**
- * @param {{ nodes?: import('../../lib/capacity/fake.mjs').SeedNode[], compose?: string, deps?: Record<string, unknown>, env?: Record<string, string> }} [o]
+ * @param {{ nodes?: import('../../lib/capacity/fake.mjs').SeedNode[], compose?: string, deps?: Record<string, unknown>, env?: Record<string, string>, envSizes?: Record<string, import('../../lib/capacity/provider.mjs').EnvSizes> }} [o]
  */
 function world(o = {}) {
   const fake = createFakeProvider({ nodes: o.nodes ?? [MAIN] });
@@ -61,7 +62,7 @@ function world(o = {}) {
     env: o.env ?? {},
     exec,
     now: () => new Date('2026-11-17T10:00:00Z'),
-    provider: async () => ({ name: 'fake', provider: fake.provider, envSizes: FAKE_ENV_SIZES }),
+    provider: async () => ({ name: 'fake', provider: fake.provider, envSizes: o.envSizes ?? FAKE_ENV_SIZES }),
     paths: { stateRoot: dir, realtimeComposeFile: composeFile },
     sshAs,
     clock,
@@ -166,6 +167,32 @@ describe('capacity: виконання', () => {
       { size: 's-2vcpu-4gb', disk: false },
     ]);
     expect(w.fake.mutating().map((c) => c.method)).toEqual(['resizeNode', 'resizeNode']);
+  });
+
+  it('розміри DigitalOcean (рішення 2026-11-17): основний репетиції s-1vcpu-2gb → s-4vcpu-8gb → назад, диск без змін', async () => {
+    const w = world({ nodes: [{ ...MAIN, size: 's-1vcpu-2gb' }], envSizes: DO_ENV_SIZES });
+    const plan = await w.run('plan');
+    expect(plan.code).toBe(0);
+    expect(plan.text).toContain('дозволені s-1vcpu-2gb, s-2vcpu-2gb, s-2vcpu-4gb, s-4vcpu-8gb; поза сезоном s-1vcpu-2gb');
+    expect(plan.text).toContain('s-1vcpu-2gb — 1 vCPU, 2048 MB RAM, диск 50 GB — $0.01786/год');
+    expect(plan.text).toContain('s-2vcpu-2gb — 2 vCPU, 2048 MB RAM, диск 60 GB — $0.02679/год');
+    const night = await w.run('night', '--size', 's-4vcpu-8gb');
+    expect(night.text).toContain('збільшити t2f-rehearsal-main: s-1vcpu-2gb → s-4vcpu-8gb (лише CPU і RAM, диск без змін) — $0.07143/год');
+    expect((await w.run('night', '--size', 's-4vcpu-8gb', '--confirm', 'rehearsal')).code).toBe(0);
+    const back = await w.run('back');
+    expect(back.text).toMatch(/зменшити t2f-rehearsal-main: s-4vcpu-8gb → s-1vcpu-2gb/);
+    expect((await w.run('back', '--confirm', 'rehearsal')).code).toBe(0);
+    expect(w.fake.resizes.map(({ size, disk }) => ({ size, disk }))).toEqual([
+      { size: 's-4vcpu-8gb', disk: false },
+      { size: 's-1vcpu-2gb', disk: false },
+    ]);
+    expect(w.fake.nodes.find((n) => n.name === 't2f-rehearsal-main')).toMatchObject({ size: 's-1vcpu-2gb', diskGb: 50 });
+    expect((await w.run('status')).text).toContain('розбіжностей немає');
+  });
+
+  it('розміри DigitalOcean: production дозволяє малі розміри, поза сезоном лишається s-2vcpu-4gb', () => {
+    expect(DO_ENV_SIZES.production.main.offSeason).toBe('s-2vcpu-4gb');
+    expect(DO_ENV_SIZES.production.main.allowed).toEqual(expect.arrayContaining(['s-1vcpu-2gb', 's-2vcpu-2gb']));
   });
 
   it('realtime-create / realtime-delete — create + підготовка + delete; жодної зміни розміру чи вимкнення', async () => {

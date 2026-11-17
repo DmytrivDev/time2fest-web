@@ -253,6 +253,7 @@ describe('prelaunch (AC-21)', () => {
     const env = { ...deps.env, CLOUDFLARE_ZONE_ID: 'zone1' };
     expect(await main(['deploy', '--env', 'prelaunch', '--confirm', 'prelaunch', '--allow-main-domain'], { ...deps, env, fetch: cf.fetch, worker: () => worker })).toBe(0);
     expect(cf.calls.map((c) => c.url.replace(/^.*\/client\/v4/, ''))).toEqual([
+      '/zones/zone1/workers/routes',
       '/accounts/account-id/workers/domains?hostname=time2fest.com',
       '/zones/zone1/dns_records?name=time2fest.com&per_page=100',
     ]);

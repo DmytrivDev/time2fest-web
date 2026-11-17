@@ -6,11 +6,14 @@
  * Secrets travel only in the environment and the child's stdin, never in argv or output. Node built-ins only.
  *
  * Before deploying a main-domain env, the script checks who holds each route host now (F1): `wrangler deploy` silently
- * overrides an existing Custom Domain origin and DNS record. A host bound to another Worker, or with a non-Worker
- * A/AAAA/CNAME record, is refused (exit 2) unless `--take-domain-from` names that holder exactly. The check needs
- * `CLOUDFLARE_ZONE_ID` and a token that can read Workers Custom Domains and the zone's DNS records; if either is
- * missing the deploy is refused with a message naming it — the check is never skipped. Same rule as
- * `infra/ops/lib/domainHolder.mjs` (duplicated on purpose: this package does not import from `infra/ops`).
+ * overrides an existing Custom Domain origin and DNS record. A host bound to another Worker, covered by another
+ * Worker's zone route, or with a non-Worker A/AAAA/CNAME record, is refused (exit 2) unless `--take-domain-from`
+ * names that holder exactly. A Worker-looking record (read-only, `AAAA 100::`) counts as a Worker's only when the
+ * host has a Custom Domain binding; otherwise its holder is `dns`. The check needs `CLOUDFLARE_ZONE_ID` and a token
+ * that can read Workers Custom Domains, the zone's DNS records and the zone's Worker routes; if any is missing the
+ * deploy is refused with a message naming it — the check is never skipped. Same rule as
+ * `infra/ops/lib/domainHolder.mjs` (duplicated on purpose: this package does not import from `infra/ops`;
+ * `infra/ops/test/parity.test.mjs` runs both copies through the same scenarios).
  */
 import { spawn as nodeSpawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -28,15 +31,23 @@ const CF_API = 'https://api.cloudflare.com/client/v4';
 export const TAKE_FROM_DNS = 'dns';
 export const RIGHT_WORKERS_READ = 'Account > Workers Scripts > Read (Custom Domain bindings)';
 export const RIGHT_DNS_READ = 'Zone > DNS > Read (records of the main-domain zone)';
-const ADDRESS_TYPES = ['A', 'AAAA', 'CNAME'];
+export const RIGHT_ROUTES_READ = 'Zone > Workers Routes > Read (Worker routes of the zone)';
+export const ADDRESS_TYPES = ['A', 'AAAA', 'CNAME'];
 const RE_HOLDER = /^(dns|[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)$/;
 
 /** @param {string} s */
 const norm = (s) => String(s).trim().toLowerCase().replace(/\.$/, '');
 
-/** A DNS record created by a Worker Custom Domain. @param {any} r */
+/** A DNS record that looks created by a Worker Custom Domain (ours only together with a binding). @param {any} r */
 const isWorkerRecord = (r) =>
   r?.meta?.read_only === true || typeof r?.meta?.origin_worker_id === 'string' || (r?.type === 'AAAA' && r?.content === '100::');
+
+/** Does a Worker route pattern cover the host: `host/*`, `*.domain/*`, `*domain/*`. @param {unknown} pattern @param {string} host */
+const routeCoversHost = (pattern, host) => {
+  const p = norm(String(pattern ?? '').replace(/^[a-z]+:\/\//i, '').split('/')[0]?.replace(/:\d+$/, '') ?? '');
+  if (!p) return false;
+  return p === host || (p.startsWith('*') && host.endsWith(p.slice(1)));
+};
 
 /**
  * Who holds each route host now (F1). Never skipped: a missing zone id, a missing right or a failed read refuses.
@@ -79,13 +90,17 @@ export async function checkDomainHolders(o) {
   const self = norm(o.worker);
   /** @type {Set<string>} */
   const taken = new Set();
+  const routes = await get(`${CF_API}/zones/${encodeURIComponent(o.zone)}/workers/routes`);
+  if (!routes.ok) return { ok: false, message: failed(routes, RIGHT_ROUTES_READ, 'Worker routes of the zone') };
   for (const host of o.hosts.map(norm)) {
     /** @type {Set<string>} */
     const holders = new Set();
+    let bound = false;
     const b = await get(`${CF_API}/accounts/${encodeURIComponent(o.account)}/workers/domains?hostname=${encodeURIComponent(host)}`);
     if (!b.ok) return { ok: false, message: failed(b, RIGHT_WORKERS_READ, `${host}: Custom Domain bindings`) };
     for (const d of b.result) {
       if (norm(String(d?.hostname ?? host)) !== host) continue;
+      bound = true;
       const service = norm(String(d?.service ?? ''));
       if (service !== self) holders.add(service || 'unknown Worker');
     }
@@ -93,7 +108,13 @@ export async function checkDomainHolders(o) {
     if (!r.ok) return { ok: false, message: failed(r, RIGHT_DNS_READ, `${host}: DNS records`) };
     for (const rec of r.result) {
       if (norm(String(rec?.name ?? '')) !== host || !ADDRESS_TYPES.includes(String(rec?.type))) continue;
-      if (!isWorkerRecord(rec)) holders.add(TAKE_FROM_DNS);
+      // A Worker-looking record with no binding for this host is tied to no Worker: holder `dns`.
+      if (!isWorkerRecord(rec) || !bound) holders.add(TAKE_FROM_DNS);
+    }
+    for (const rt of routes.result) {
+      if (!routeCoversHost(rt?.pattern, host)) continue;
+      const script = norm(String(rt?.script ?? ''));
+      if (script && script !== self) holders.add(script);
     }
     if (holders.size === 0) continue;
     const list = [...holders].sort().join(', ');

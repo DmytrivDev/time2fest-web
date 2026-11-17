@@ -7,6 +7,7 @@ import { main } from '../ops.mjs';
 import { createCloudflareApi } from '../lib/cloudflareApi.mjs';
 import { detach, EDGE_JOURNAL, REHEARSAL_NAME, TWIN_MAIN, twinConfig } from '../lib/moveDomain.mjs';
 import { WRANGLER_JS } from '../lib/worker.mjs';
+import { fakeCloudflare } from './support/fakeCloudflare.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
 
 const ENV = { CLOUDFLARE_API_TOKEN: 'tok-aaaaaaaaaaaa', CLOUDFLARE_ACCOUNT_ID: 'acct1' };
@@ -143,6 +144,83 @@ describe('move-domain deploys', () => {
     const { code } = await run(['move-domain', '--name', REHEARSAL_NAME, '--to', 't2f-edge-rehearsal'], { exec, fetch: fn, startProbe: fakeProbe(0) });
     expect(code).toBe(1);
     expect(fs.existsSync(path.join(stateRoot, 'rehearsal', EDGE_JOURNAL))).toBe(false);
+  });
+});
+
+describe('N2: move-domain to a main Worker checks who holds the names first', () => {
+  const MAIN_ENV = { ...ENV, CLOUDFLARE_ZONE_ID: 'zone1' };
+  const PROD = ['move-domain', '--name', 'time2fest.com', '--to', 't2f-edge-production', '--confirm', 'production', '--allow-main-domain'];
+  const OLD_SITE = { name: 'time2fest.com', type: 'A', content: '203.0.113.50', meta: {} };
+  const PRELAUNCH = { id: 'd1', hostname: 'time2fest.com', service: 't2f-edge-prelaunch' };
+
+  /** @param {Parameters<typeof fakeCloudflare>[0]} cfo */
+  function mainFetch(cfo) {
+    const cf = fakeCloudflare(cfo);
+    const fn = /** @type {typeof fetch} */ (
+      async (url, init) => (String(url).startsWith('https://api.cloudflare.com/') ? cf.fetch(url, init) : new Response('ok', { status: 200 }))
+    );
+    return { fn, cf };
+  }
+
+  /** @param {string} to */
+  function journalPrevious(to) {
+    const dir = path.join(stateRoot, 'production');
+    fs.mkdirSync(dir, { recursive: true });
+    const rec = { kind: 'move-domain', at: '2026-11-01T00:00:00.000Z', name: 'time2fest.com', from: null, to, gapSeconds: 0, createdBinding: null };
+    fs.writeFileSync(path.join(dir, EDGE_JOURNAL), `${JSON.stringify(rec)}\n`);
+  }
+
+  it('an old-site A record on the apex → 2 and no wrangler; only --take-domain-from dns lets it through', async () => {
+    const exec = createFakeExec();
+    const { fn } = mainFetch({ records: [OLD_SITE] });
+    const r = await run(PROD, { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(0) });
+    expect(r.code).toBe(2);
+    expect(r.text).toContain('dns');
+    expect(exec.callsOf('run')).toHaveLength(0);
+    const ok = await run([...PROD, '--take-domain-from', 'dns'], { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(0) });
+    expect(ok.code).toBe(0);
+    expect(ok.text).toContain('забирається в dns');
+    expect(exec.callsOf('run')[0].argv).toEqual([process.execPath, WRANGLER_JS, 'deploy', '--env', 'production']);
+  });
+
+  it('Worker → Worker: the journal `from` (prelaunch) is allowed to give the name up without a flag', async () => {
+    journalPrevious('t2f-edge-prelaunch');
+    const exec = createFakeExec();
+    const { fn } = mainFetch({ bindings: [PRELAUNCH], records: [{ name: 'time2fest.com', type: 'AAAA', content: '100::', meta: { read_only: true } }] });
+    const r = await run(PROD, { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(1) });
+    expect(r.code).toBe(0);
+    expect(r.text).toContain('забирається в t2f-edge-prelaunch');
+    expect(exec.callsOf('run')).toHaveLength(1);
+  });
+
+  it('a holder other than the journal `from` (old-site record next to it) → 2, no wrangler', async () => {
+    journalPrevious('t2f-edge-prelaunch');
+    const exec = createFakeExec();
+    const { fn } = mainFetch({ bindings: [PRELAUNCH], records: [OLD_SITE] });
+    expect((await run(PROD, { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(0) })).code).toBe(2);
+    expect(exec.callsOf('run')).toHaveLength(0);
+  });
+
+  it('a foreign Worker with no journal record → 2 unless named by --take-domain-from', async () => {
+    const exec = createFakeExec();
+    const { fn } = mainFetch({ bindings: [PRELAUNCH] });
+    expect((await run(PROD, { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(0) })).code).toBe(2);
+    expect(exec.callsOf('run')).toHaveLength(0);
+    expect((await run([...PROD, '--take-domain-from', 't2f-edge-prelaunch'], { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(0) })).code).toBe(0);
+  });
+
+  it('free names → deployed; no CLOUDFLARE_ZONE_ID → 2 before wrangler; the flag on a rehearsal move → 2', async () => {
+    const exec = createFakeExec();
+    const { fn } = mainFetch({});
+    expect((await run(PROD, { exec, fetch: fn, env: MAIN_ENV, startProbe: fakeProbe(0) })).code).toBe(0);
+    expect(exec.callsOf('run')).toHaveLength(1);
+    const noZone = await run(PROD, { exec, fetch: fn, env: ENV, startProbe: fakeProbe(0) });
+    expect(noZone.code).toBe(2);
+    expect(noZone.text).toContain('CLOUDFLARE_ZONE_ID');
+    expect(exec.callsOf('run')).toHaveLength(1);
+    const reh = await run(['move-domain', '--name', REHEARSAL_NAME, '--to', 't2f-edge-rehearsal', '--take-domain-from', 'dns'], { exec, fetch: fn, startProbe: fakeProbe(0) });
+    expect(reh.code).toBe(2);
+    expect(exec.callsOf('run')).toHaveLength(1);
   });
 });
 

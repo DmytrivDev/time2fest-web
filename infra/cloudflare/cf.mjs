@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { OWNER_EMAILS_ENV, createAccessStep, desiredAccess, parseOwnerEmails } from './lib/access.mjs';
+import { ACCESS_READ_RIGHT, OWNER_EMAILS_ENV, createAccessStep, desiredAccess, parseOwnerEmails, verifyAdminAccess } from './lib/access.mjs';
 import { ApiRefusal, createApi } from './lib/api.mjs';
 import { runApply, takeCloudflareLock } from './lib/apply.mjs';
 import { ENVS, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
@@ -14,7 +14,7 @@ import { desiredState, disabledAdminHosts } from './lib/desired.mjs';
 import { diff } from './lib/diff.mjs';
 import { describeRefusals, guard } from './lib/guard.mjs';
 import { createRedactor } from './lib/redact.mjs';
-import { accessMarkerExists } from './lib/tokenFile.mjs';
+import { accessMarkerExists, removeAccessMarker } from './lib/tokenFile.mjs';
 
 /** Тека для токенів тунелів (у .gitignore). */
 const LOCAL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '.local');
@@ -128,22 +128,41 @@ export async function main(argv, deps = {}) {
     // Завжди всі середовища: PUT фази замінює весь список, тож жодне середовище не випадає. --env обирає
     // файл токена тунелю, ціль --under-attack і застосунок Access.
     // Ім'я адмінки (ingress і CNAME) — лише з --with-access для цього середовища або коли позначка успішного кроку
-    // Access уже є в .local; інакше його в бажаному стані немає, а залишок у Cloudflare йде в блок-правило (F2).
+    // Access є в .local і Cloudflare її підтверджує (N3: застосунок з domain = ім'я адмінки й політикою); інакше його
+    // в бажаному стані немає, а залишок у Cloudflare йде в блок-правило (F2).
     const localDir = deps.localDir ?? LOCAL_DIR;
     const envNames = Object.keys(ENVS);
+    const ids = { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) };
     /** @type {Record<string, boolean>} */
-    const admin = Object.fromEntries(
-      envNames.filter((n) => ENVS[n]?.adminHost).map((n) => [n, (args.withAccess && n === args.env) || accessMarkerExists(localDir, n)]),
-    );
+    const admin = {};
+    /** Середовища, чию позначку Access визнано застарілою (apply її прибирає). @type {string[]} */
+    const staleMarkers = [];
+    for (const n of envNames.filter((x) => ENVS[x]?.adminHost)) {
+      if (args.withAccess && n === args.env) admin[n] = true;
+      else if (!accessMarkerExists(localDir, n)) admin[n] = false;
+      else {
+        const host = String(ENVS[n]?.adminHost);
+        const v = await verifyAdminAccess(api, ids.accountId, host);
+        admin[n] = v.ok;
+        if (v.ok) continue;
+        if (v.reason === 'no-right') {
+          out(`адмінка ${host}: позначка Access є, але токену бракує права ${ACCESS_READ_RIGHT} — Access не перевірено, ім'я адмінки вимкнено`);
+        } else {
+          const why = v.reason === 'missing' ? 'застосунку Access з цим доменом у Cloudflare немає' : 'застосунок Access без жодної політики';
+          out(`адмінка ${host}: позначка Access є, але ${why} — ім'я адмінки вимкнено; ${args.command === 'apply' ? 'позначку прибрано' : 'apply прибере позначку'}`);
+          staleMarkers.push(n);
+        }
+      }
+    }
     /** @param {string[]} staleAdmin */
     const build = (staleAdmin) =>
       (deps.desiredState ?? desiredState)(envNames, { underAttack: { [String(args.env)]: args.underAttack }, admin, staleAdmin });
     const adminWatch = disabledAdminHosts(envNames, admin);
-    const ids = { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) };
     const access = ownerEmails ? createAccessStep({ api, accountId: ids.accountId, app: desiredAccess(args.env, ownerEmails), out }) : undefined;
     const flags = { allowMainDomain: args.allowMainDomain, allowZoneSettings: args.allowZoneSettings, allowDelete: args.allowDelete };
 
     if (args.command === 'apply') {
+      for (const n of staleMarkers) removeAccessMarker(localDir, n);
       return await runApply({
         api,
         ids,

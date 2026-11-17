@@ -40,9 +40,12 @@ export async function prepareRealtime(ctx, node, composeText, clock) {
   // Адреса від провайдера — та сама звірка зі старою продакшн-адресою, що й `--target`, до першого SSH (AC-22).
   const checked = await checkTarget(ip, ctx.deps);
   if (!checked.ok) throw new Error(`вузол ${node.name}: ${checked.message}`);
+  // З’єднання — саме з перевіреною адресою (ціль тут уже адреса, тож HostKeyAlias не потрібен).
+  const host = checked.address;
+  if (!host) throw new Error(`вузол ${node.name}: публічна адреса не IPv4`);
   const knownHosts = knownHostsFile(ctx);
-  const asRoot = ctx.deps.sshAs({ host: ip, user: 'root', knownHostsFile: knownHosts });
-  const asDeploy = ctx.deps.sshAs({ host: ip, user: DEPLOY_USER, knownHostsFile: knownHosts });
+  const asRoot = ctx.deps.sshAs({ host, user: 'root', knownHostsFile: knownHosts });
+  const asDeploy = ctx.deps.sshAs({ host, user: DEPLOY_USER, knownHostsFile: knownHosts });
 
   /** @type {'root' | 'deploy' | null} */
   let who = null;
@@ -63,7 +66,7 @@ export async function prepareRealtime(ctx, node, composeText, clock) {
     }
   }
 
-  const code = await runBootstrap({ ...ctx, args: { sub: 'bootstrap', env, values: { host: ip }, flags: {} } });
+  const code = await runBootstrap({ ...ctx, args: { sub: 'bootstrap', env, values: { host }, flags: {} } });
   if (code !== 0) throw new Error(`bootstrap вузла ${node.name} завершився з кодом ${code}`);
 
   const upload = ['sh', '-c', `set -e; umask 077; cat > "$1/${REALTIME_COMPOSE_FILE}.tmp"; mv "$1/${REALTIME_COMPOSE_FILE}.tmp" "$1/${REALTIME_COMPOSE_FILE}"`, '_', dir];

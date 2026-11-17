@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { isIPv4 } from 'node:net';
 import path from 'node:path';
 import { PassThrough } from 'node:stream';
-import { isHostName } from './args.mjs';
+import { isHostName } from './common.mjs';
 import { REPO_ROOT } from './config.mjs';
 import { isForbiddenAddress } from './target.mjs';
 
@@ -332,7 +332,9 @@ function sshPath(p, what) {
  *   knownHostsFile: string,
  *   accept?: 'strict' | 'new',
  *   sshFile?: string,
- * }} SshOpts `accept: 'new'` — лише для першого входу (bootstrap); далі ключ хоста закріплений.
+ *   hostKeyAlias?: string,
+ * }} SshOpts `accept: 'new'` — лише для першого входу (bootstrap); далі ключ хоста закріплений. `hostKeyAlias` —
+ *   ім’я, під яким ключ хоста лежить у `known_hosts`, коли `host` — уже перевірена адреса цього імені (перший вхід).
  */
 
 /**
@@ -347,6 +349,9 @@ export function sshBaseArgs(o) {
   if (!RE_USER.test(String(o.user ?? ''))) throw new ExecRefusal('ssh: недопустиме ім’я користувача');
   const accept = o.accept ?? 'strict';
   if (accept !== 'strict' && accept !== 'new') throw new ExecRefusal('ssh: accept — strict або new');
+  const alias = o.hostKeyAlias === undefined ? undefined : String(o.hostKeyAlias).toLowerCase();
+  if (alias !== undefined && !(isIPv4(alias) || isHostName(alias))) throw new ExecRefusal('ssh: HostKeyAlias не IPv4-адреса і не ім’я хоста');
+  if (alias !== undefined && isForbiddenAddress(alias)) throw new ExecRefusal(`ssh: заборонена ціль ${alias}`);
   const args = [
     '-F', 'none',
     '-o', 'BatchMode=yes',
@@ -357,6 +362,7 @@ export function sshBaseArgs(o) {
     '-o', 'ServerAliveInterval=15',
     '-o', 'ServerAliveCountMax=4',
   ];
+  if (alias !== undefined && alias !== host) args.push('-o', `HostKeyAlias=${alias}`);
   if (o.keyFile !== undefined) args.push('-i', sshPath(o.keyFile, 'keyFile'));
   args.push(`${o.user}@${host}`, '--');
   return args;

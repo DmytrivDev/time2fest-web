@@ -21,6 +21,8 @@ export function createFakeApi(opts = {}) {
     botFightMode: false,
     /** Застосунки Access (тіло POST/PUT як є, плюс id і aud). @type {any[]} */
     accessApps: [],
+    /** Менша сторінка списку Access для тестів пагінації. @type {number | undefined} */
+    accessPerPage: undefined,
   };
   /** @type {{ method: string, path: string }[]} */
   const log = [];
@@ -43,7 +45,7 @@ export function createFakeApi(opts = {}) {
    * @param {string} pathname без /client/v4
    * @param {URLSearchParams} query
    * @param {any} body
-   * @returns {{ status: number, result?: any }}
+   * @returns {{ status: number, result?: any, result_info?: any }}
    */
   function handle(method, pathname, query, body) {
     log.push({ method, path: pathname });
@@ -116,7 +118,12 @@ export function createFakeApi(opts = {}) {
       }
     }
     if (method === 'GET' && /^\/accounts\/[^/]+\/access\/apps$/.test(pathname)) {
-      return { status: 200, result: state.accessApps };
+      // Сторінки, як у Cloudflare: `page`, `per_page` (у фейку можна зменшити через `accessPerPage`), `result_info`.
+      const per = Math.min(Number(query.get('per_page') ?? state.accessApps.length) || 1, state.accessPerPage ?? Infinity);
+      const page = Number(query.get('page') ?? 1);
+      const total = Math.max(1, Math.ceil(state.accessApps.length / per));
+      const result = state.accessApps.slice((page - 1) * per, page * per);
+      return { status: 200, result, result_info: { page, per_page: per, count: result.length, total_count: state.accessApps.length, total_pages: total } };
     }
     if (method === 'POST' && /^\/accounts\/[^/]+\/access\/apps$/.test(pathname)) {
       const app = { ...body, id: nextId(), aud: `aud-${seq}` };
@@ -136,10 +143,10 @@ export function createFakeApi(opts = {}) {
   const isMutation = (/** @type {string} */ m) => m !== 'GET';
   const delay = () => (opts.mutationDelayMs ? new Promise((r) => setTimeout(r, opts.mutationDelayMs)) : undefined);
 
-  /** @param {{ status: number, result?: any }} r */
+  /** @param {{ status: number, result?: any, result_info?: any }} r */
   const envelope = (r) =>
     r.status >= 200 && r.status < 300
-      ? { status: r.status, json: { success: true, errors: [], result: r.result } }
+      ? { status: r.status, json: { success: true, errors: [], result: r.result, ...(r.result_info ? { result_info: r.result_info } : {}) } }
       : { status: r.status, json: { success: false, errors: [{ code: r.status, message: 'fake refusal' }], result: null } };
 
   return {

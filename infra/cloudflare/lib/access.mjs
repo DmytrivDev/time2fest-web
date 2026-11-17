@@ -2,10 +2,21 @@
 // Застосунок Cloudflare Access для адмінки середовища (`adminHost`). Працює лише з `--with-access`.
 // Пошти власника — тільки зі змінної T2F_OWNER_EMAILS (локальний файл секретів), ніколи з git;
 // у вивід потрапляє лише їх кількість. `aud` застосунку — не секрет, друкується для T2F_ACCESS_AUD.
+import { ApiRefusal } from './api.mjs';
 import { ENVS } from './config.mjs';
 
 /** Змінна з поштами власника (через кому, крапку з комою чи пробіл). */
 export const OWNER_EMAILS_ENV = 'T2F_OWNER_EMAILS';
+/** Право на читання застосунків Access (перевірка позначки `access-<env>.ok`). */
+export const ACCESS_READ_RIGHT = 'Account · Access: Apps and Policies · Read';
+
+/**
+ * @typedef {{
+ *   request: (method: string, category: string, path: string, body?: unknown) => Promise<any>,
+ *   get: (category: string, path: string) => Promise<any>,
+ *   getAll: (category: string, path: string) => Promise<any[]>,
+ * }} AccessApi
+ */
 
 const EMAIL_RE = /^[^@\s,;]+@[^@\s,;]+\.[^@\s,;]+$/;
 
@@ -60,6 +71,41 @@ const view = (a) =>
     })),
   });
 
+/** @param {unknown} d */
+const domainOf = (d) => String(d ?? '').toLowerCase().replace(/\/$/, '');
+
+/**
+ * Усі застосунки Access акаунта (усі сторінки).
+ * @param {AccessApi} api
+ * @param {string} accountId
+ */
+export async function listAccessApps(api, accountId) {
+  return api.getAll('access', `/accounts/${accountId}/access/apps`);
+}
+
+/**
+ * Перевірка позначки (N3): адмінка лишається ввімкненою лише тоді, коли в Cloudflare справді є застосунок Access з
+ * `domain` = ім’я адмінки й хоча б однією політикою. Бракує права читання — теж «вимкнено» (не перевірено), без збою
+ * всього запуску; інша відмова API — виняток.
+ * @param {AccessApi} api
+ * @param {string} accountId
+ * @param {string} host
+ * @returns {Promise<{ ok: true } | { ok: false, reason: 'missing' | 'no-policy' | 'no-right' }>}
+ */
+export async function verifyAdminAccess(api, accountId, host) {
+  /** @type {any[]} */
+  let apps;
+  try {
+    apps = await listAccessApps(api, accountId);
+  } catch (e) {
+    if (e instanceof ApiRefusal && (e.status === 401 || e.status === 403)) return { ok: false, reason: 'no-right' };
+    throw e;
+  }
+  const mine = apps.filter((a) => domainOf(a?.domain) === host.toLowerCase());
+  if (!mine.length) return { ok: false, reason: 'missing' };
+  return mine.some((a) => Array.isArray(a?.policies) && a.policies.length > 0) ? { ok: true } : { ok: false, reason: 'no-policy' };
+}
+
 /**
  * Зміни застосунку Access: створити, якщо застосунку з цим `domain` немає; оновити, якщо відрізняється.
  * Підсумок називає лише кількість адрес, не самі адреси.
@@ -69,7 +115,7 @@ const view = (a) =>
  */
 export function diffAccess(app, currentApps) {
   const domain = app.domain.toLowerCase();
-  const cur = currentApps.find((a) => String(a?.domain ?? '').toLowerCase().replace(/\/$/, '') === domain);
+  const cur = currentApps.find((a) => domainOf(a?.domain) === domain);
   const count = app.policies.reduce((n, p) => n + p.include.length, 0);
   const base = { kind: 'access-app', target: app.domain, hosts: [app.domain], category: 'access' };
   if (!cur) {
@@ -84,7 +130,7 @@ export function diffAccess(app, currentApps) {
 /**
  * Крок Access для plan/apply: читання (GET) і застосування (POST/PUT).
  * @param {{
- *   api: { request: (method: string, category: string, path: string, body?: unknown) => Promise<any>, get: (category: string, path: string) => Promise<any> },
+ *   api: AccessApi,
  *   accountId: string,
  *   app: AccessApp,
  *   out: (line: string) => void,
@@ -95,8 +141,7 @@ export function createAccessStep({ api, accountId, app, out }) {
   return {
     /** @returns {Promise<import('./diff.mjs').Change[]>} */
     async changes() {
-      const list = (await api.get('access', base)) ?? [];
-      return diffAccess(app, Array.isArray(list) ? list : []);
+      return diffAccess(app, await listAccessApps(api, accountId));
     },
     /** @param {import('./diff.mjs').Change} change */
     async apply(change) {

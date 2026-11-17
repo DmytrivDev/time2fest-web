@@ -3,13 +3,13 @@
 // Відмова — `{ code: 2, message }` з назвою прапорця; значення з керівними символами назад не виводиться.
 import { isIPv4 } from 'node:net';
 import { BOOTSTRAP_ENVS, ENVS } from './config.mjs';
+import { isHostName } from './common.mjs';
 
 const ALL_ENVS = Object.keys(ENVS);
 const RE_COMMIT = /^[0-9a-f]{7,40}$/;
 const RE_SHA40 = /^[0-9a-f]{40}$/;
 const RE_SIZE = /^[a-z0-9-]{1,40}$/;
 const RE_WORKER = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
-const RE_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 /**
  * Чи є в рядку керівні символи (U+0000–U+001F, U+007F): перевод рядка, NUL, табуляція тощо.
  * @param {string} v
@@ -20,19 +20,6 @@ export function hasControl(v) {
     if (c < 0x20 || c === 0x7f) return true;
   }
   return false;
-}
-
-/**
- * Ім’я хоста за RFC 1123: мітки a-z0-9 і дефіс (не на краях), ≤63 символи, усього ≤253.
- * Жодна мітка не схожа на число — ні з самих цифр, ні шістнадцяткова `0x…`: інакше ім’я може бути іншим написанням
- * адреси (`0xb2149d55`, `178.20.157.0x55`) чи вести на вбудовану адресу (`178.20.157.85.nip.io`).
- * @param {string} v
- */
-export function isHostName(v) {
-  if (v.length < 1 || v.length > 253) return false;
-  const labels = v.split('.');
-  if (!labels.every((l) => RE_LABEL.test(l))) return false;
-  return !labels.some((l) => /^[0-9]+$/.test(l) || /^0x[0-9a-f]*$/i.test(l));
 }
 
 /** @param {string} v */
@@ -103,7 +90,8 @@ export const SUBCOMMAND_SPECS = {
     oneOf: ['--generate', '--rotate'],
   },
   'move-domain': {
-    values: { '--name': V.host, '--to': V.worker, '--confirm': V.confirm, '--secrets-file': V.path },
+    // `--take-domain-from` — лише для Worker’а робочого домену: тримач, якого дозволено замінити (Worker чи `dns`), N2.
+    values: { '--name': V.host, '--to': V.worker, '--confirm': V.confirm, '--secrets-file': V.path, '--take-domain-from': V.holder },
     // `--emergency` — лише для заморозки робочого домену в новорічну ніч (AC-23).
     bools: ['--allow-main-domain', '--emergency'],
     required: ['--name', '--to'],

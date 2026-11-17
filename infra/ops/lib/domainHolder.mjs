@@ -2,17 +2,21 @@
 // Хто тримає ім’я робочого домену перед `wrangler deploy` середовища `prelaunch`/`production` (F1, AC-21).
 // `wrangler deploy` сам ставить `override_existing_origin`/`override_existing_dns_record`: без цієї перевірки
 // розгортання мовчки забирає ім’я в іншого Worker’а чи замінює запис DNS старого сайту. Тут: для кожного хоста
-// маршрутів середовища — прив’язки Custom Domain (`GET /accounts/<a>/workers/domains?hostname=`) і записи зони
-// (`GET /zones/<z>/dns_records?name=`). Чужий тримач — відмова (код 2), якщо `--take-domain-from` не називає саме
-// його. Будь-яке «не вдалося прочитати» — теж відмова з назвою того, чого бракує: перевірку не пропускаємо.
-// Ця сама перевірка продубльована в `workers/edge/scripts/deploy.mjs` (інший пакет не імпортує з `infra/ops`).
+// маршрутів середовища — прив’язки Custom Domain (`GET /accounts/<a>/workers/domains?hostname=`), записи зони
+// (`GET /zones/<z>/dns_records?name=`) і маршрути Worker’ів зони (`GET /zones/<z>/workers/routes`, один раз).
+// Запис «Worker’а» (лише для читання, `AAAA 100::`) вважається нашим лише тоді, коли для цього хоста є прив’язка
+// Custom Domain; без прив’язки він — тримач `dns`. Чужий тримач — відмова (код 2), якщо `--take-domain-from` не
+// називає саме його. Будь-яке «не вдалося прочитати» — теж відмова з назвою того, чого бракує: перевірку не пропускаємо.
+// Ця сама перевірка продубльована в `workers/edge/scripts/deploy.mjs` (інший пакет не імпортує з `infra/ops`);
+// однакову поведінку обох копій на тих самих сценаріях тримає `test/parity.test.mjs`.
 
 /** Значення `--take-domain-from` для записів DNS, що не належать жодному Worker’у. */
 export const TAKE_FROM_DNS = 'dns';
 /** Права токена, яких бракує при 401/403. */
 export const RIGHT_WORKERS_READ = 'Account → Workers Scripts → Read (прив’язки Custom Domain)';
 export const RIGHT_DNS_READ = 'Zone → DNS → Read (записи зони робочого домену)';
-const ADDRESS_TYPES = ['A', 'AAAA', 'CNAME'];
+export const RIGHT_ROUTES_READ = 'Zone → Workers Routes → Read (маршрути Worker’ів зони)';
+export const ADDRESS_TYPES = ['A', 'AAAA', 'CNAME'];
 
 /**
  * @typedef {import('./cloudflareApi.mjs').CloudflareApi} CfApi
@@ -24,11 +28,24 @@ const ADDRESS_TYPES = ['A', 'AAAA', 'CNAME'];
 const norm = (s) => String(s).trim().toLowerCase().replace(/\.$/, '');
 
 /**
- * Запис DNS, створений Custom Domain Worker’а (Cloudflare позначає його лише для читання / прив’язує до Worker’а).
+ * Запис DNS, схожий на створений Custom Domain Worker’а (Cloudflare позначає його лише для читання / прив’язує до
+ * Worker’а). Сам по собі не доводить, що запис наш: `checkDomainHolders` приймає його лише разом із прив’язкою.
  * @param {any} r
  */
 export function isWorkerRecord(r) {
   return r?.meta?.read_only === true || typeof r?.meta?.origin_worker_id === 'string' || (r?.type === 'AAAA' && r?.content === '100::');
+}
+
+/**
+ * Чи покриває шаблон маршруту Worker’а хост: `host/*`, `*.domain/*`, `*domain/*` (схема й шлях не важать).
+ * @param {unknown} pattern
+ * @param {string} host
+ */
+export function routeCoversHost(pattern, host) {
+  const p = norm(String(pattern ?? '').replace(/^[a-z]+:\/\//i, '').split('/')[0]?.replace(/:\d+$/, '') ?? '');
+  if (!p) return false;
+  if (p === host) return true;
+  return p.startsWith('*') && host.endsWith(p.slice(1));
 }
 
 /**
@@ -59,10 +76,20 @@ export async function checkDomainHolders(o) {
   /** @type {Set<string>} */
   const taken = new Set();
 
+  // Маршрути Worker’ів зони — один запит на всю зону.
+  let r;
+  try {
+    r = await o.api.getZone('/workers/routes');
+  } catch {
+    return refuse('маршрути Worker’ів зони не прочитано (мережа) — перевірку тримача не пропускаю');
+  }
+  if (!r.ok || !Array.isArray(r.body?.result)) return refuse(readFailure(r, RIGHT_ROUTES_READ, 'маршрути Worker’ів зони'));
+  const routes = r.body.result;
+
   for (const host of o.hosts.map(norm)) {
     /** @type {Set<string>} */
     const holders = new Set();
-    let r;
+    let bound = false;
     try {
       r = await o.api.get(`/workers/domains?hostname=${encodeURIComponent(host)}`);
     } catch {
@@ -71,6 +98,7 @@ export async function checkDomainHolders(o) {
     if (!r.ok || !Array.isArray(r.body?.result)) return refuse(readFailure(r, RIGHT_WORKERS_READ, `${host}: прив’язки Custom Domain`));
     for (const d of r.body.result) {
       if (norm(String(d?.hostname ?? host)) !== host) continue;
+      bound = true;
       const service = norm(String(d?.service ?? ''));
       if (service !== self) holders.add(service || 'невідомий Worker');
     }
@@ -83,7 +111,15 @@ export async function checkDomainHolders(o) {
     if (!r.ok || !Array.isArray(r.body?.result)) return refuse(readFailure(r, RIGHT_DNS_READ, `${host}: записи DNS`));
     for (const rec of r.body.result) {
       if (norm(String(rec?.name ?? '')) !== host || !ADDRESS_TYPES.includes(String(rec?.type))) continue;
-      if (!isWorkerRecord(rec)) holders.add(TAKE_FROM_DNS);
+      // Запис «Worker’а» без прив’язки Custom Domain для цього хоста нічим не пов’язаний з Worker’ом — тримач `dns`.
+      // З прив’язкою він належить її Worker’у, який уже врахований вище (свій — не тримач, чужий — тримач).
+      if (!isWorkerRecord(rec) || !bound) holders.add(TAKE_FROM_DNS);
+    }
+
+    for (const rt of routes) {
+      if (!routeCoversHost(rt?.pattern, host)) continue;
+      const script = norm(String(rt?.script ?? ''));
+      if (script && script !== self) holders.add(script);
     }
 
     if (holders.size === 0) continue;

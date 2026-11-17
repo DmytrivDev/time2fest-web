@@ -168,7 +168,7 @@ describe('Access: з --with-access', () => {
     expect(fake.mutations()).toHaveLength(3);
   });
 
-  it('F2: після успішного кроку Access позначка в .local тримає адмінку і без --with-access; Access API не читається', async () => {
+  it('F2/N3: після успішного кроку Access позначка тримає адмінку і без --with-access — Access лише читається (GET) для перевірки', async () => {
     const fake = converged();
     expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
     expect(fs.existsSync(path.join(tmp, '.local', 'access-rehearsal.ok'))).toBe(true);
@@ -180,7 +180,12 @@ describe('Access: з --with-access', () => {
     expect(apply.code).toBe(0);
     expect(apply.text).toContain('без змін');
     expect(fake.mutations()).toHaveLength(3);
-    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toEqual([]);
+    // N3: одне читання списку застосунків на запуск, жодної зміни Access.
+    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toEqual([
+      { method: 'GET', path: '/accounts/acct-test/access/apps' },
+      { method: 'GET', path: '/accounts/acct-test/access/apps' },
+    ]);
+    expect(fs.existsSync(path.join(tmp, '.local', 'access-rehearsal.ok'))).toBe(true);
   });
 
   it('F2: відмова на кроці Access — ні ingress, ні CNAME адмінки, позначки немає', async () => {
@@ -220,6 +225,77 @@ describe('Access: з --with-access', () => {
     const r = await run(fake, ['apply', '--env', 'rehearsal', '--with-access']);
     expect(r.code).toBe(3);
     expect(r.text).toContain('Access: Apps and Policies');
+  });
+});
+
+describe('N3: позначка Access перевіряється в Cloudflare', () => {
+  const ADMIN = 'admin-rehearsal.time2fest.com';
+  const marker = () => path.join(tmp, '.local', 'access-rehearsal.ok');
+  /** @param {ReturnType<typeof createFakeApi>} fake */
+  const blockExpr = (fake) => (fake.state.rulesets.http_request_firewall_custom ?? []).find((x) => x.ref === 't2f-block-tunnel-hosts')?.expression ?? '';
+  /** @param {ReturnType<typeof createFakeApi>} fake */
+  const adminIngress = (fake) => JSON.stringify(fake.state.tunnels).includes(ADMIN);
+
+  async function withAdmin() {
+    const fake = converged();
+    expect((await run(fake, ['apply', '--env', 'rehearsal', '--with-access'])).code).toBe(0);
+    expect(fs.existsSync(marker())).toBe(true);
+    expect(adminIngress(fake)).toBe(true);
+    return fake;
+  }
+
+  it('позначка є, застосунку немає → plan пише причину; apply: без ingress адмінки, ім’я в блок-правилі, позначку прибрано', async () => {
+    const fake = await withAdmin();
+    fake.state.accessApps.length = 0;
+    const plan = await run(fake, ['plan', '--env', 'rehearsal'], {});
+    expect(plan.code).toBe(0);
+    expect(plan.text).toContain(`адмінка ${ADMIN}: позначка Access є, але застосунку Access з цим доменом у Cloudflare немає`);
+    expect(plan.text).toContain('apply прибере позначку');
+    expect(plan.text).toContain('update rule: правило t2f-block-tunnel-hosts');
+    expect(fs.existsSync(marker())).toBe(true);
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(adminIngress(fake)).toBe(false);
+    expect(blockExpr(fake)).toContain(`"${ADMIN}"`);
+    expect(fs.existsSync(marker())).toBe(false);
+    // Жодного запису Access не створено й не змінено.
+    expect(fake.mutations().filter((m) => m.path.includes('/access/'))).toEqual([{ method: 'POST', path: '/accounts/acct-test/access/apps' }]);
+  });
+
+  it('застосунок з тим доменом, але без жодної політики → вимкнено, позначку прибрано', async () => {
+    const fake = await withAdmin();
+    fake.state.accessApps[0].policies = [];
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(r.text).toContain('застосунок Access без жодної політики');
+    expect(adminIngress(fake)).toBe(false);
+    expect(blockExpr(fake)).toContain(`"${ADMIN}"`);
+    expect(fs.existsSync(marker())).toBe(false);
+  });
+
+  it('токену бракує права читання Access (403) → вимкнено з назвою права, запуск не падає', async () => {
+    const fake = await withAdmin();
+    fake.refuse('access', 403);
+    const r = await run(fake, ['apply', '--env', 'rehearsal'], {});
+    expect(r.code).toBe(0);
+    expect(r.text).toContain('Account · Access: Apps and Policies · Read');
+    expect(adminIngress(fake)).toBe(false);
+    expect(blockExpr(fake)).toContain(`"${ADMIN}"`);
+    // Не доведено, що позначка застаріла: лишається, наступний запуск з правом перевірить знову.
+    expect(fs.existsSync(marker())).toBe(true);
+  });
+
+  it('застосунок на третій сторінці списку → знайдено (усі сторінки прочитано), адмінка лишається', async () => {
+    const fake = await withAdmin();
+    const ours = fake.state.accessApps[0];
+    const others = Array.from({ length: 7 }, (_, i) => ({ id: `o${i}`, name: `other-${i}`, domain: `other-${i}.example.org`, policies: [{ name: 'p' }] }));
+    fake.seed({ accessApps: [...others, ours], accessPerPage: 3 });
+    const before = fake.log.length;
+    const plan = await run(fake, ['plan', '--env', 'rehearsal'], {});
+    expect(plan.code).toBe(0);
+    expect(plan.text).toContain('без змін');
+    expect(fake.log.slice(before).filter((l) => l.path.includes('/access/'))).toHaveLength(3);
+    expect(fs.existsSync(marker())).toBe(true);
   });
 });
 

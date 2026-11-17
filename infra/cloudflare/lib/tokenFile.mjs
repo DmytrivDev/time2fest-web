@@ -53,7 +53,8 @@ export function writeTokenFile(localDir, envName, token) {
 
 /**
  * Позначка «застосунок Access для адмінки середовища створено цим скриптом» (F2): без значень, лише дата.
- * Поки вона є, `plan`/`apply` без `--with-access` лишають ім'я адмінки в бажаному стані (інакше — прибирають).
+ * Поки вона є й Access це підтверджує (N3: застосунок з цим `domain` і політикою є), `plan`/`apply` без
+ * `--with-access` лишають ім'я адмінки в бажаному стані (інакше — прибирають).
  * @param {string} localDir
  * @param {string} envName
  */
@@ -65,6 +66,18 @@ export function accessMarkerPath(localDir, envName) {
 /** @param {string} localDir @param {string} envName */
 export function accessMarkerExists(localDir, envName) {
   return fs.existsSync(accessMarkerPath(localDir, envName));
+}
+
+/**
+ * Прибирає позначку, яку перевірка (N3) визнала застарілою: застосунку Access для адмінки немає чи він без політик.
+ * @param {string} localDir @param {string} envName
+ * @returns {boolean} чи був файл
+ */
+export function removeAccessMarker(localDir, envName) {
+  const file = accessMarkerPath(localDir, envName);
+  if (!fs.existsSync(file)) return false;
+  fs.rmSync(file, { force: true });
+  return true;
 }
 
 /**

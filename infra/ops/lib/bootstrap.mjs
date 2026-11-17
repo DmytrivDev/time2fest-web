@@ -1,11 +1,12 @@
 // @ts-check
 // Підготовка вузла (AC-8, EC-9): користувач `deploy` з ключем власника, Docker з архіву Ubuntu, каталог вузла,
-// брандмауер (вхідний лише TCP 22), потім — лише після перевірки входу `deploy` — вимкнення входу root і паролів.
+// брандмауер (вхідний лише TCP 22), підкачка 2 GB, потім — лише після перевірки входу `deploy` — вимкнення входу root і паролів.
 // Кожен крок спершу перевіряє «вже зроблено» без змін; повторний запуск нічого не змінює.
 // Віддалені команди — фіксовані рядки; єдине значення ззовні — каталог вузла з `ENVS` (позиційний `$1`).
 // Коди: 0 — готово або без змін; 2 — відмова до будь-якої зміни; 1 — крок не вдався.
 import { ENVS } from './config.mjs';
 import { DEPLOY_USER, knownHostsFile, messageOf } from './common.mjs';
+import { checkTarget } from './target.mjs';
 
 const REMOTE_TIMEOUT_MS = 60_000;
 const APT_TIMEOUT_MS = 15 * 60_000;
@@ -14,6 +15,11 @@ export const SSH_FAILED = 255;
 export const SSHD_DROP_IN = '/etc/ssh/sshd_config.d/00-t2f.conf';
 /** `00-` — раніше за `50-cloud-init.conf`: sshd бере перше значення, тож наші рядки виграють. */
 export const SSHD_CONF = 'PermitRootLogin no\nPasswordAuthentication no\nKbdInteractiveAuthentication no\n';
+/** Файл підкачки (рішення власника 2026-11-17: вузол 1 vCPU / 2 GB) і drop-in `vm.swappiness`. */
+export const SWAP_FILE = '/swapfile';
+export const SWAP_SIZE_MB = 2048;
+export const SWAPPINESS = 10;
+export const SWAP_SYSCTL = '/etc/sysctl.d/99-t2f-swap.conf';
 export const ROOT_ONLY_NOTE = 'перевірено при першому запуску; повторна перевірка — порт-скан R4';
 
 /**
@@ -88,6 +94,22 @@ export const ROOT_STEPS = [
     timeoutMs: APT_TIMEOUT_MS,
   },
   {
+    id: 'swap',
+    title: `підкачка ${SWAP_FILE} ${SWAP_SIZE_MB / 1024} GB, vm.swappiness=${SWAPPINESS}`,
+    check: sh(
+      `swapon --show=NAME --noheadings | grep -qx ${SWAP_FILE} && grep -q "^${SWAP_FILE} " /etc/fstab && ` +
+        `test -f ${SWAP_SYSCTL} && test "$(cat /proc/sys/vm/swappiness)" = ${SWAPPINESS}`,
+    ),
+    apply: sh(
+      'set -e; ' +
+        `if ! swapon --show=NAME --noheadings | grep -qx ${SWAP_FILE}; then ` +
+        `rm -f ${SWAP_FILE}; fallocate -l ${SWAP_SIZE_MB}M ${SWAP_FILE} || { rm -f ${SWAP_FILE}; dd if=/dev/zero of=${SWAP_FILE} bs=1M count=${SWAP_SIZE_MB} status=none; }; ` +
+        `chown root:root ${SWAP_FILE}; chmod 600 ${SWAP_FILE}; mkswap ${SWAP_FILE} >/dev/null; swapon ${SWAP_FILE}; fi; ` +
+        `grep -q "^${SWAP_FILE} " /etc/fstab || echo "${SWAP_FILE} none swap sw 0 0" >> /etc/fstab; ` +
+        `echo "vm.swappiness=${SWAPPINESS}" > ${SWAP_SYSCTL}; sysctl -q -p ${SWAP_SYSCTL}`,
+    ),
+  },
+  {
     id: 'sshd',
     title: 'SSH: без входу root і паролів',
     check: sh(
@@ -102,7 +124,7 @@ export const ROOT_STEPS = [
   },
 ];
 
-/** Перевірка входу `deploy` тим самим ключем (крок 5): стоїть перед `sshd`. */
+/** Перевірка входу `deploy` тим самим ключем: стоїть безпосередньо перед `sshd`. */
 export const LOGIN_STEP_ID = 'deploy-login';
 /** Перевірки повторного запуску від імені `deploy` (root уже не входить). @type {Step[]} */
 export const DEPLOY_CHECKS = [
@@ -135,6 +157,12 @@ export async function runBootstrap(ctx) {
   if (env !== 'rehearsal' || !cfg?.nodeDir) return refuse('лише --env rehearsal');
   const nodeDir = cfg.nodeDir;
 
+  // Перший вхід (accept-new, root) іде на ту саму адресу, яку щойно перевірено, а не на повторне розв’язання імені
+  // (TOCTOU); `HostKeyAlias` — ім’я, яке ввів оператор, тож `known_hosts` лишається за ним.
+  const checked = await checkTarget(host, ctx.deps);
+  if (!checked.ok) return refuse(checked.message);
+  if (!checked.address) return refuse(`${host}: немає IPv4-адреси — перший вхід лише на перевірену IPv4-адресу`);
+  const pin = checked.address === host ? { host } : { host: checked.address, hostKeyAlias: host };
   const knownHosts = knownHostsFile(ctx);
   /** @type {Transport} */
   let asRoot;
@@ -142,8 +170,8 @@ export async function runBootstrap(ctx) {
   let asDeploy;
   try {
     // Перший вхід — довіра до ключа хоста при першій зустрічі (accept-new) у `known_hosts`; далі ключ закріплений.
-    asRoot = ctx.deps.sshAs({ host, user: 'root', knownHostsFile: knownHosts });
-    asDeploy = ctx.deps.sshAs({ host, user: DEPLOY_USER, knownHostsFile: knownHosts });
+    asRoot = ctx.deps.sshAs({ ...pin, user: 'root', knownHostsFile: knownHosts });
+    asDeploy = ctx.deps.sshAs({ ...pin, user: DEPLOY_USER, knownHostsFile: knownHosts });
   } catch (e) {
     return refuse(messageOf(e));
   }
@@ -199,16 +227,19 @@ async function rootPath(ctx, { asRoot, asDeploy, nodeDir }) {
     return s.ok ? s.ok(r) : r.code === 0;
   };
 
+  // Нумерація у виводі: кроки до `sshd` — 1…k, перевірка входу `deploy` — k+1, `sshd` — k+2.
+  const sshdAt = ROOT_STEPS.findIndex((x) => x.id === 'sshd');
+  const loginN = sshdAt + 1;
   for (const [i, s] of ROOT_STEPS.entries()) {
-    const n = i < 4 ? i + 1 : 6;
+    const n = i < sshdAt ? i + 1 : i + 2;
     if (s.id === 'sshd') {
-      // 5. Запобіжник від блокування: вимикати root можна лише коли `deploy` входить тим самим ключем.
+      // Запобіжник від блокування: вимикати root можна лише коли `deploy` входить тим самим ключем.
       const login = await remote(asDeploy, ['true']);
       if (login.code !== 0) {
-        err(`bootstrap: 5 ${LOGIN_STEP_ID} — ssh deploy@вузол не працює (код ${login.code}); вхід root НЕ вимкнено`);
+        err(`bootstrap: ${loginN} ${LOGIN_STEP_ID} — ssh deploy@вузол не працює (код ${login.code}); вхід root НЕ вимкнено`);
         return 1;
       }
-      out(`bootstrap: 5 ${LOGIN_STEP_ID} — вхід deploy працює`);
+      out(`bootstrap: ${loginN} ${LOGIN_STEP_ID} — вхід deploy працює`);
     }
     if (await passes(s)) {
       out(`bootstrap: ${n} ${s.id} — вже зроблено`);

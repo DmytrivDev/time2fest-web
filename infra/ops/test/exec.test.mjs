@@ -81,6 +81,16 @@ describe('ssh transport', () => {
     expect(sshBaseArgs({ ...SSH, accept: 'new' })).toContain('StrictHostKeyChecking=accept-new');
   });
 
+  it('N4: hostKeyAlias keys known_hosts by the typed name while connecting to the checked address', () => {
+    const a = sshBaseArgs({ ...SSH, accept: 'new', hostKeyAlias: 'Node.Example.org' });
+    expect(a.slice(-4)).toEqual(['-o', 'HostKeyAlias=node.example.org', 'deploy@203.0.113.10', '--']);
+    // Псевдонім, що дорівнює адресі, не додається.
+    expect(sshBaseArgs({ ...SSH, hostKeyAlias: '203.0.113.10' }).join(' ')).not.toContain('HostKeyAlias');
+    for (const bad of ['178.20.157.85', '-oProxyCommand=x', 'a b', '0xb2149d55']) {
+      expect(() => sshBaseArgs({ ...SSH, hostKeyAlias: bad })).toThrow(ExecRefusal);
+    }
+  });
+
   it.each([
     [{ ...SSH, host: '178.20.157.85' }],
     [{ ...SSH, host: '0xb2149d55' }],

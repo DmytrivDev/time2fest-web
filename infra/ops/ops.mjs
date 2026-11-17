@@ -27,7 +27,7 @@ import { startProbe as realStartProbe } from './lib/probe.mjs';
 import { createOutput, redactorFromEnv } from './lib/redact.mjs';
 import { NODE_ENV_FILES } from './lib/secrets/files.mjs';
 import { runRollback } from './lib/rollback.mjs';
-import { fetchOk } from './lib/secrets/rotate.mjs';
+import { fetchOk } from './lib/common.mjs';
 import { runEdgeSecret } from './lib/secrets/secrets.mjs';
 import { checkTarget } from './lib/target.mjs';
 import { createWorker } from './lib/worker.mjs';
@@ -65,7 +65,8 @@ function registerLocalNodeSecrets(redactor, dir) {
  * @typedef {import('./lib/exec.mjs').Executor} Executor
  * @typedef {import('./lib/exec.mjs').Transport} Transport
  * @typedef {import('./lib/config.mjs').OpsPaths} OpsPaths
- * @typedef {{ host: string, user: string, knownHostsFile: string }} SshTarget
+ * @typedef {{ host: string, user: string, knownHostsFile: string, hostKeyAlias?: string }} SshTarget `hostKeyAlias` — ім’я,
+ *   яке ввів оператор, коли `host` — уже перевірена адреса цього імені (`known_hosts` лишається за іменем)
  * @typedef {{
  *   clock: import('./lib/node.mjs').Clock,
  *   fetch: typeof globalThis.fetch,

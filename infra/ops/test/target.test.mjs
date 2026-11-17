@@ -2,7 +2,8 @@
 // F3 (AC-22 за адресою): інші написання старої адреси, DNS-імена й псевдоніми ssh, що ведуть на неї, — відмова до SSH.
 import { describe, expect, it, vi } from 'vitest';
 import { main } from '../ops.mjs';
-import { isHostName, parseArgs } from '../lib/args.mjs';
+import { parseArgs } from '../lib/args.mjs';
+import { isHostName } from '../lib/common.mjs';
 import { prepareRealtime } from '../lib/capacity/prepareRealtime.mjs';
 import { checkTarget, isForbiddenAddress, normalizeAddress } from '../lib/target.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
@@ -19,12 +20,20 @@ describe('normalizeAddress / isForbiddenAddress', () => {
     ['::178.20.157.85', '178.20.157.85'],
     ['2001:db8::1', '2001:db8:0:0:0:0:0:1'],
     ['::1', '0:0:0:0:0:0:0:1'],
+    // N4: NAT64 (RFC 6052 well-known prefix) і 6to4 (RFC 3056) несуть IPv4 усередині.
+    ['64:ff9b::178.20.157.85', '178.20.157.85'],
+    ['64:ff9b::b214:9d55', '178.20.157.85'],
+    ['2002:b214:9d55::1', '178.20.157.85'],
+    ['2002:b214:9d55:1:2:3:4:5', '178.20.157.85'],
+    ['64:ff9b:1::b214:9d55', '64:ff9b:1:0:0:0:b214:9d55'],
   ])('%s → %s', (a, n) => {
     expect(normalizeAddress(a)).toBe(n);
   });
 
   it('flags the old server in every IP spelling and nothing else', () => {
-    for (const a of ['178.20.157.85', '::ffff:178.20.157.85', '::ffff:b214:9d55', '::178.20.157.85']) expect(isForbiddenAddress(a)).toBe(true);
+    for (const a of ['178.20.157.85', '::ffff:178.20.157.85', '::ffff:b214:9d55', '::178.20.157.85', '64:ff9b::b214:9d55', '2002:b214:9d55::']) {
+      expect(isForbiddenAddress(a)).toBe(true);
+    }
     for (const a of ['178.20.157.86', '203.0.113.10', '2001:db8::1', 'example.org']) expect(isForbiddenAddress(a)).toBe(false);
   });
 });
@@ -76,9 +85,22 @@ describe('checkTarget (fake resolver, fake ssh -G)', () => {
 
   it('a clean name or IPv4 passes; an IPv4 literal is not looked up in DNS', async () => {
     const t = fakeTarget();
-    expect(await checkTarget('node.example.org', t)).toEqual({ ok: true });
-    expect(await checkTarget('203.0.113.10', t)).toEqual({ ok: true });
+    expect(await checkTarget('node.example.org', t)).toEqual({ ok: true, address: '203.0.113.10' });
+    expect(await checkTarget('203.0.113.10', t)).toEqual({ ok: true, address: '203.0.113.10' });
     expect(t.lookups).toEqual(['node.example.org']);
+  });
+
+  it('N4: a NAT64 or 6to4 answer carrying the old server → refused', async () => {
+    for (const a of ['64:ff9b::b214:9d55', '2002:b214:9d55::1']) {
+      const t = fakeTarget({ addresses: { 'nat.example.org': ['203.0.113.7', a] } });
+      expect(await checkTarget('nat.example.org', t)).toMatchObject({ ok: false, code: 2 });
+    }
+  });
+
+  it('N4: the checked address is the first IPv4 of the target name itself; an IPv6-only name → address null', async () => {
+    const t = fakeTarget({ addresses: { 'node.example.org': ['2001:db8::5', '203.0.113.21', '203.0.113.22'], 'v6only.example.org': ['2001:db8::6'] } });
+    expect(await checkTarget('node.example.org', t)).toEqual({ ok: true, address: '203.0.113.21' });
+    expect(await checkTarget('v6only.example.org', t)).toEqual({ ok: true, address: null });
   });
 });
 

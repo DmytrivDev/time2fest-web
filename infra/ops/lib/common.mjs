@@ -21,8 +21,39 @@ export const DEPLOY_USER = 'deploy';
  * }} Site
  */
 
+const FETCH_OK_TIMEOUT_MS = 5_000;
+const RE_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
 /** @param {unknown} e */
 export const messageOf = (e) => (e instanceof Error ? e.message : String(e));
+
+/**
+ * Ім’я хоста за RFC 1123: мітки a-z0-9 і дефіс (не на краях), ≤63 символи, усього ≤253.
+ * Жодна мітка не схожа на число — ні з самих цифр, ні шістнадцяткова `0x…`: інакше ім’я може бути іншим написанням
+ * адреси (`0xb2149d55`, `178.20.157.0x55`) чи вести на вбудовану адресу (`178.20.157.85.nip.io`).
+ * @param {string} v
+ */
+export function isHostName(v) {
+  if (v.length < 1 || v.length > 253) return false;
+  const labels = v.split('.');
+  if (!labels.every((l) => RE_LABEL.test(l))) return false;
+  return !labels.some((l) => /^[0-9]+$/.test(l) || /^0x[0-9a-f]*$/i.test(l));
+}
+
+/**
+ * Одна перевірка `GET <url>` → 200 (без облікових даних, без переходів).
+ * @param {typeof globalThis.fetch} fetch
+ * @param {string} url
+ */
+export async function fetchOk(fetch, url) {
+  try {
+    const res = await fetch(url, { method: 'GET', redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(FETCH_OK_TIMEOUT_MS) });
+    await res.body?.cancel().catch(() => {});
+    return res.status === 200;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * `known_hosts` для SSH: `T2F_KNOWN_HOSTS_FILE` або файл у каталозі стану.

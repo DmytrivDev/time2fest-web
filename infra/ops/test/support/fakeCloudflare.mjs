@@ -1,13 +1,15 @@
 // @ts-check
-// Підставний Cloudflare API для перевірки тримача імені (F1): прив’язки Custom Domain і записи DNS зони.
+// Підставний Cloudflare API для перевірки тримача імені (F1): прив’язки Custom Domain, записи DNS і маршрути Worker’ів зони.
 // Жодної мережі; кожен запит записується.
 
 /**
  * @param {{
  *   bindings?: object[],
  *   records?: object[],
+ *   routes?: object[],
  *   bindingsStatus?: number,
  *   recordsStatus?: number,
+ *   routesStatus?: number,
  * }} [o]
  */
 export function fakeCloudflare(o = {}) {
@@ -24,6 +26,7 @@ export function fakeCloudflare(o = {}) {
       calls.push({ method: init?.method ?? 'GET', url: u });
       if (u.includes('/workers/domains')) return reply(o.bindingsStatus ?? 200, o.bindings ?? []);
       if (u.includes('/dns_records')) return reply(o.recordsStatus ?? 200, o.records ?? []);
+      if (u.includes('/workers/routes')) return reply(o.routesStatus ?? 200, o.routes ?? []);
       return new Response('not found', { status: 404 });
     }
   );

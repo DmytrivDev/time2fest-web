@@ -2,7 +2,8 @@
 // AC-10: недопустимий аргумент → код 2 до будь-якої дії; жоден аргумент не потрапляє в рядок оболонки.
 import { describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { isHostName, parseArgs } from '../lib/args.mjs';
+import { parseArgs } from '../lib/args.mjs';
+import { isHostName } from '../lib/common.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
 import { FAKE_TARGET } from './support/fakeTarget.mjs';
 

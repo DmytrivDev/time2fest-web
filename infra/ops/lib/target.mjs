@@ -1,7 +1,9 @@
 // @ts-check
 // Звірка цілі SSH зі старою продакшн-адресою за тим, куди ціль справді веде (AC-22), а не лише за написанням:
-// ім’я з DNS (зокрема `*.nip.io`), псевдонім з `~/.ssh/config` (`ssh -G`), IPv4 усередині IPv6 (`::ffff:a.b.c.d`).
-// Перевірка йде до першого виклику SSH; резолвер DNS і `ssh -G` — порти (`ctx.deps`), у тестах підставні.
+// ім’я з DNS (зокрема `*.nip.io`), псевдонім з `~/.ssh/config` (`ssh -G`), IPv4 усередині IPv6 (`::ffff:a.b.c.d`,
+// NAT64 `64:ff9b::/96`, 6to4 `2002::/16`). Перевірка йде до першого виклику SSH; резолвер DNS і `ssh -G` — порти
+// (`ctx.deps`), у тестах підставні. Перевірена IPv4-адреса повертається: перший вхід (`bootstrap`, вузол realtime)
+// з’єднується саме з нею, а не резолвить ім’я вдруге (TOCTOU).
 import { isIP, isIPv4, isIPv6 } from 'node:net';
 import { FORBIDDEN_TARGETS } from './config.mjs';
 
@@ -35,9 +37,13 @@ function ipv6Groups(a) {
   return groups.length === 8 && groups.every((g) => Number.isInteger(g) && g >= 0 && g <= 0xffff) ? groups : null;
 }
 
+/** @param {number} hi @param {number} lo 32 біти з двох груп IPv6 → крапковий IPv4. */
+const v4 = (hi, lo) => [hi >> 8, hi & 0xff, lo >> 8, lo & 0xff].join('.');
+
 /**
- * Адреса в канонічному вигляді: IPv4 — крапковий десятковий; IPv4-mapped (`::ffff:a.b.c.d`) і IPv4-compatible
- * (`::a.b.c.d`) IPv6 — їхній IPv4; інший IPv6 — 8 груп hex без скорочень. Не адреса — `null`.
+ * Адреса в канонічному вигляді: IPv4 — крапковий десятковий; IPv4-mapped (`::ffff:a.b.c.d`), IPv4-compatible
+ * (`::a.b.c.d`), NAT64 (`64:ff9b::a.b.c.d`, RFC 6052) і 6to4 (`2002:AABB:CCDD::…`, RFC 3056) IPv6 — їхній IPv4;
+ * інший IPv6 — 8 груп hex без скорочень. Не адреса — `null`.
  * @param {string} addr
  * @returns {string | null}
  */
@@ -47,9 +53,9 @@ export function normalizeAddress(addr) {
   const g = ipv6Groups(a);
   if (!g) return null;
   const zero5 = g.slice(0, 5).every((x) => x === 0);
-  if (zero5 && (g[5] === 0xffff || (g[5] === 0 && (g[6] !== 0 || g[7] > 1)))) {
-    return [g[6] >> 8, g[6] & 0xff, g[7] >> 8, g[7] & 0xff].join('.');
-  }
+  if (zero5 && (g[5] === 0xffff || (g[5] === 0 && (g[6] !== 0 || g[7] > 1)))) return v4(g[6], g[7]);
+  if (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every((x) => x === 0)) return v4(g[6], g[7]);
+  if (g[0] === 0x2002) return v4(g[1], g[2]);
   return g.map((x) => x.toString(16)).join(':');
 }
 
@@ -64,9 +70,11 @@ export function isForbiddenAddress(addr) {
 /**
  * Куди веде ціль: `ssh -G` (псевдонім → справжнє ім’я), далі DNS для обох імен. Будь-яка адреса старого сервера —
  * відмова; ім’я, що не резолвиться, чи збій `ssh -G` — теж відмова (перевірку не пропускаємо).
+ * `address` — перевірена IPv4-адреса цілі (сама ціль або перша IPv4 з відповіді DNS для неї; `null`, якщо IPv4 немає):
+ * з нею з’єднується перший вхід, щоб друге розв’язання імені не вело кудись інде.
  * @param {string} host уже перевірене `args.mjs` (IPv4 або ім’я хоста)
  * @param {TargetPorts} ports
- * @returns {Promise<{ ok: true } | { ok: false, code: 2, message: string }>}
+ * @returns {Promise<{ ok: true, address: string | null } | { ok: false, code: 2, message: string }>}
  */
 export async function checkTarget(host, ports) {
   /** @param {string} message @returns {{ ok: false, code: 2, message: string }} */
@@ -84,6 +92,8 @@ export async function checkTarget(host, ports) {
   if (!effective) return refuse(`${h}: ssh -G не назвав hostname — перевірку цілі не пропускаю`);
   if (isForbiddenAddress(effective)) return refuse(`${h}: налаштування ssh ведуть на заборонену ціль (старий продакшн-сервер)`);
 
+  /** @type {string | null} */
+  let address = isIPv4(h) ? h : null;
   for (const name of new Set([h, effective])) {
     if (isIP(name)) continue;
     /** @type {string[]} */
@@ -95,6 +105,7 @@ export async function checkTarget(host, ports) {
     }
     if (!Array.isArray(addrs) || addrs.length === 0) return refuse(`${name}: ім’я не резолвиться — перевірку цілі не пропускаю`);
     if (addrs.some((a) => isForbiddenAddress(a))) return refuse(`${name} веде на заборонену ціль (старий продакшн-сервер); жоден прапорець не дозволяє`);
+    if (name === h) address = addrs.map((a) => String(a).trim()).find((a) => isIPv4(a)) ?? null;
   }
-  return { ok: true };
+  return { ok: true, address };
 }

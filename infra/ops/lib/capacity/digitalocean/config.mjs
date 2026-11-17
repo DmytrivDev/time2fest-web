@@ -9,15 +9,16 @@ export const DO_IMAGE = 'ubuntu-24-04-x64';
 
 /** @type {Record<string, import('../provider.mjs').EnvSizes>} */
 export const ENV_SIZES = {
+  // Рішення власника 2026-11-17: основний вузол репетиції — 1 vCPU / 2 GB; ніч — збільшення лише CPU/RAM (диск 50 GB).
   rehearsal: {
     region: 'fra1',
-    main: { offSeason: 's-2vcpu-4gb', allowed: ['s-2vcpu-4gb', 's-4vcpu-8gb'] },
+    main: { offSeason: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb', 's-2vcpu-4gb', 's-4vcpu-8gb'] },
     realtime: { size: 's-2vcpu-4gb' },
   },
   // SPEC-23 sets final night sizes.
   production: {
     region: 'fra1',
-    main: { offSeason: 's-2vcpu-4gb', allowed: ['s-2vcpu-4gb', 's-4vcpu-8gb', 's-8vcpu-16gb'] },
+    main: { offSeason: 's-2vcpu-4gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb', 's-2vcpu-4gb', 's-4vcpu-8gb', 's-8vcpu-16gb'] },
     realtime: { size: 'c-4' },
   },
 };

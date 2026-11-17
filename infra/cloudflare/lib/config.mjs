@@ -60,7 +60,7 @@ export const PERMISSIONS = [
   'Zone · Config Rules · Edit',
   'Zone · Zone Settings · Read (Edit лише з --allow-zone-settings)',
   'Zone · Bot Management · Read',
-  'Account · Access: Apps and Policies · Edit (лише з --with-access)',
+  'Account · Access: Apps and Policies · Edit (лише з --with-access; Read — для перевірки позначки access-<env>.ok)',
 ];
 
 /** Імена змінних, значення яких ніколи не потрапляють у вивід. */
