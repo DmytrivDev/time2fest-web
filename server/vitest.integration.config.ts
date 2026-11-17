@@ -10,5 +10,7 @@ export default defineConfig({
     maxWorkers: 1,
     globalSetup: './test/integration/global-setup.ts',
     testTimeout: 30000,
+    // The reset reseeds the whole catalog and the first request builds Payload: 10 s is no margin on a loaded machine.
+    hookTimeout: 60000,
   },
 });

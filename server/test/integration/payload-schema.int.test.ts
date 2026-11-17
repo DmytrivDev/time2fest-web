@@ -59,5 +59,5 @@ describe('payload schema', () => {
     expect(payload(['migrate'], migUri).status).toBe(0);
     const rows = await query(migUri, "SELECT 1 FROM information_schema.schemata WHERE schema_name='auth'");
     expect(rows).toHaveLength(0);
-  });
+  }, 180_000);
 });

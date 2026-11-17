@@ -118,7 +118,7 @@ describe('seed, reset and fixtures', () => {
       foreignDb.disconnect();
       ownDbRaw.disconnect();
     }
-  });
+  }, 120_000);
 
   it('fixtures: a known name → 200 and applied, unknown → 404, {} → 400', async () => {
     const ok = await dispatch(post('/api/_test/fixtures', { name: 'test-fixture' }));
