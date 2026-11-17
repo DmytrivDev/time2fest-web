@@ -3,15 +3,30 @@
 /** Псевдо-хост для правила без хоста та для налаштування зони: вважається дією на всю зону. */
 export const ZONE_WIDE = '*zone*';
 
+/**
+ * Псевдо-хост для виразу з логікою хостів, яку розбір не охоплює (заперечення, шаблони, підрядки,
+ * повний URI, `lower(`, хост з кінцевою крапкою чи великими літерами). Запобіжник вважає його
+ * робочим доменом (deny by default).
+ */
+export const OPAQUE_HOST = '*opaque-host-logic*';
+
 const HOST_RE = /"([a-z0-9.-]*time2fest\.com)"/gi;
+/** Будь-який рядок у лапках, що згадує домен: має бути точним нижньорегістровим іменем хоста. */
+const QUOTED_DOMAIN_RE = /"([^"]*time2fest\.com[^"]*)"/gi;
+const CLEAN_HOST_RE = /^[a-z0-9-]+(\.[a-z0-9-]+)*$/;
+/** Оператори й функції, з якими набір хостів не можна вивести з рядків у лапках. */
+const OPAQUE_LOGIC_RE = /\bnot\s|!|\bne\b|\bwildcard\b|\bmatches\b|~|\bends_with\b|\bcontains\b|\bstarts_with\b|\bfull_uri\b|\blower\(/i;
 
 /**
- * Усі імена хостів у виразі; порожньо → зона.
+ * Усі імена хостів у виразі; порожньо → зона; логіка, яку розбір не охоплює → `OPAQUE_HOST`.
  * @param {string} expression
  * @returns {string[]}
  */
 export function hostsOf(expression) {
-  const found = [...String(expression).matchAll(HOST_RE)].map((m) => String(m[1]).toLowerCase());
+  const text = String(expression);
+  const found = [...text.matchAll(HOST_RE)].map((m) => String(m[1]).toLowerCase());
+  const oddHost = [...text.matchAll(QUOTED_DOMAIN_RE)].some((m) => !CLEAN_HOST_RE.test(String(m[1])));
+  if (OPAQUE_LOGIC_RE.test(text) || oddHost) found.push(OPAQUE_HOST);
   return found.length ? [...new Set(found)] : [ZONE_WIDE];
 }
 

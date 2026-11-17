@@ -10,7 +10,7 @@
  */
 import { randomBytes } from 'node:crypto';
 import type { ApiError, ApiErrorCode } from '@time2fest/contracts';
-import { inactiveEdgeGate, type EdgeGate } from '../platform/edge';
+import type { EdgeGate } from '../platform/edge';
 import { DependencyUnavailable, type Logger } from '../ports';
 import type { ApiFailure, Ctx, Deps, HttpMethod, Middleware, Outcome, RouteRow } from './types';
 
@@ -227,8 +227,11 @@ export interface DispatcherInput {
   routes: readonly RouteRow[];
   middleware: readonly Middleware[];
   deps: Deps;
-  /** The edge gate (SPEC-05); absent → inactive: no check, no trusted address (AC-17). */
-  edge?: EdgeGate;
+  /**
+   * The edge gate (SPEC-05). Always explicit: production passes `edgeGateOf(deps)`; a caller that
+   * wants no gate passes `inactiveEdgeGate(clock)` (no check, no trusted address, AC-17).
+   */
+  edge: EdgeGate;
 }
 
 /**
@@ -237,7 +240,6 @@ export interface DispatcherInput {
  * gets the same single 404 as an unknown path (AC-15).
  */
 export function createDispatcher({ routes, middleware, deps, edge }: DispatcherInput): (req: Request) => Promise<Response> {
-  const gate = edge ?? inactiveEdgeGate(deps.clock);
   const table = new Map<string, RouteRow>();
   const keys = new Set<string>();
   for (const row of routes) {
@@ -250,7 +252,7 @@ export function createDispatcher({ routes, middleware, deps, edge }: DispatcherI
 
   return async function dispatch(req: Request): Promise<Response> {
     const url = new URL(req.url);
-    const client = gate.admit(req);
+    const client = edge.admit(req);
     if (client === null) return notFoundResponse();
     const route = METHODS.has(req.method) ? table.get(`${req.method} ${url.pathname}`) : undefined;
     if (!route) return notFoundResponse();

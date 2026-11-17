@@ -1,17 +1,23 @@
 // @ts-check
 import { describe, expect, it } from 'vitest';
-import { ENVS, EXEMPT_PATHS, MAIN_HOSTS, PHASE_CONFIG, PHASE_CUSTOM } from '../lib/config.mjs';
-import { desiredState } from '../lib/desired.mjs';
+import { ENVS, EXEMPT_PATHS, MAIN_HOSTS, PAYPRO_IPN_SOURCES, PHASE_CONFIG, PHASE_CUSTOM } from '../lib/config.mjs';
+import { desiredState, TUNNEL_PATH } from '../lib/desired.mjs';
 
 const d = desiredState(['test']);
 const rule = (/** @type {string} */ phase, /** @type {string} */ ref) => (d.rulesets[phase] ?? []).find((r) => r.ref === ref);
 
 describe('desiredState(test)', () => {
-  it('тунель: ingress закінчується http_status:404', () => {
+  it('тунель: до джерела — лише /api/*, решта (зокрема /admin, /cms-api/*) — http_status:404', () => {
     const t = d.tunnels[0];
     expect(t?.name).toBe('t2f-test');
-    expect(t?.ingress[0]).toEqual({ hostname: ENVS.test?.tunnelHost, service: ENVS.test?.originService });
-    expect(t?.ingress.at(-1)).toEqual({ service: 'http_status:404' });
+    expect(TUNNEL_PATH).toBe('^/api/');
+    expect(t?.ingress).toEqual([
+      { hostname: ENVS.test?.tunnelHost, path: '^/api/', service: ENVS.test?.originService },
+      { service: 'http_status:404' },
+    ]);
+    const toOrigin = (/** @type {string} */ p) => new RegExp(TUNNEL_PATH).test(p);
+    expect(['/api/time', '/api/webhooks/paypro'].every(toOrigin)).toBe(true);
+    expect(['/admin', '/admin/login', '/cms-api/users', '/', '/x/api/'].some(toOrigin)).toBe(false);
   });
 
   it('DNS: проксований CNAME для хоста тунелю', () => {
@@ -27,6 +33,15 @@ describe('desiredState(test)', () => {
     expect(inExpr).toEqual(paths);
     expect(r?.action_parameters.phases).toEqual(['http_ratelimit', 'http_request_firewall_managed']);
     expect(r?.action_parameters.products).toEqual(['securityLevel', 'bic', 'uaBlock', 'zoneLockdown', 'hot']);
+  });
+
+  it('вебхук: виняток лише з опублікованих адрес PayPro; дверцята-відлуння — лише хост test, без умови на адресу', () => {
+    const webhook = `(http.host in {"test.time2fest.com"} and http.request.uri.path eq "/api/webhooks/paypro" and ip.src in {${PAYPRO_IPN_SOURCES.join(' ')}})`;
+    const echo = '(http.host in {"test.time2fest.com"} and http.request.uri.path eq "/api/_test/edge-echo")';
+    expect(PAYPRO_IPN_SOURCES).toEqual(['198.199.123.239', '157.230.8.40', '2604:a880:400:d0::1843:7001', '2604:a880:400:d1::b6c:c001']);
+    for (const r of [rule(PHASE_CUSTOM, 't2f-skip-exempt'), rule(PHASE_CONFIG, 't2f-exempt-config')]) {
+      expect(r?.expression).toBe(`(${webhook} or ${echo})`);
+    }
   });
 
   it('блок-правило називає хост тунелю', () => {

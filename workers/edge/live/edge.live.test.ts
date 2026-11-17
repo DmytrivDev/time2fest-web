@@ -105,6 +105,20 @@ describe.skipIf(!SITE)('live edge', () => {
         statuses[`${method} ${path}`] = res.status;
         expect(res.status).toBe(403);
       }
+      // The tunnel host must refuse non-API paths and a Host-case variant (any non-2xx is a refusal).
+      const tunnelUrl = new URL(TUNNEL);
+      const upperHost = `${tunnelUrl.protocol}//${tunnelUrl.host.toUpperCase()}`;
+      const refusals: Array<[string, string]> = [
+        ['GET /admin', `${TUNNEL}/admin`],
+        ['GET /cms-api/users', `${TUNNEL}/cms-api/users`],
+        ['GET /admin (upper-cased host)', `${upperHost}/admin`],
+      ];
+      for (const [label, url] of refusals) {
+        const res = await fetch(url, { redirect: 'manual' });
+        await res.arrayBuffer();
+        statuses[label] = res.status;
+        expect(res.status < 200 || res.status >= 300, `${label} → ${res.status}`).toBe(true);
+      }
       evidence('AC-49', statuses);
     });
 

@@ -5,6 +5,8 @@ import { unavailable } from './responses';
 
 const EDGE_HEADER = 'x-t2f-edge';
 const CLIENT_HEADER = 'x-t2f-client';
+/** Client-sent address headers: never forwarded, so the origin sees only `x-t2f-client` as the address. */
+const CLIENT_ADDRESS_HEADERS = ['x-forwarded-for', 'x-real-ip', 'forwarded', 'true-client-ip', 'cf-connecting-ip'] as const;
 
 /** Statuses that, without a JSON body, are Cloudflare or tunnel failures, not the server's own answer. */
 function isEdgeFailure(res: Response): boolean {
@@ -27,6 +29,7 @@ export async function proxy(
   headers.delete('host');
   headers.delete(EDGE_HEADER);
   headers.delete(CLIENT_HEADER);
+  for (const name of CLIENT_ADDRESS_HEADERS) headers.delete(name);
   headers.set(EDGE_HEADER, secret);
   headers.set(
     CLIENT_HEADER,

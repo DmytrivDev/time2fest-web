@@ -27,6 +27,7 @@ interface Echo {
   edgeVerified: boolean;
   client: { country: string; addressPresent: boolean };
   probeCookie: string | null;
+  cookieNames: string[];
 }
 
 const withSecret = () => buildDispatcher(testDeps({}, { T2F_EDGE_SECRET: EDGE_SECRET }));
@@ -77,6 +78,7 @@ describe('echo door (SPEC-05)', () => {
       edgeVerified: true,
       client: { country: 'UA', addressPresent: true },
       probeCookie: null,
+      cookieNames: [],
     });
     expect(value.headers).toEqual({
       'content-type': 'application/x-www-form-urlencoded',
@@ -108,11 +110,16 @@ describe('echo door (SPEC-05)', () => {
     expect(lines[0]).not.toMatch(/domain/i);
     const cookie = match?.[1] ?? '';
 
-    const second = await dispatch(viaEdge(`${TUNNEL}${ECHO}`, { headers: { cookie: `other=1; t2f_edge_probe=${cookie}` } }));
+    // Another cookie's value (built at runtime) must never be echoed: only its name (S4).
+    const otherValue = randomBytes(12).toString('hex');
+    const second = await dispatch(viaEdge(`${TUNNEL}${ECHO}`, { headers: { cookie: `other=${otherValue}; t2f_edge_probe=${cookie}` } }));
     expect(second.headers.getSetCookie()).toEqual([]);
+    const text = await second.clone().text();
     const value = await echoOf(second);
     expect(value.probeCookie).toBe(cookie);
-    expect(value.headers.cookie).toBe(`other=1; t2f_edge_probe=${cookie}`);
+    expect(value.cookieNames).toEqual(['other']);
+    expect(value.headers).not.toHaveProperty('cookie');
+    expect(text).not.toContain(otherValue);
   });
 
   it('the exemption is this door only and needs the edge secret', async () => {

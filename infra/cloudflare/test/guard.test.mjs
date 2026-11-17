@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
 import { PHASE_CUSTOM } from '../lib/config.mjs';
 import { desiredState } from '../lib/desired.mjs';
+import { hostsOf, OPAQUE_HOST } from '../lib/diff.mjs';
 import { guard } from '../lib/guard.mjs';
 import { createFakeApi } from './support/fakeApi.mjs';
 
@@ -175,6 +176,39 @@ describe('guard: одиниці', () => {
   it('безхостове правило й порожній перелік хостів — дія на всю зону', () => {
     expect(guard([ch({ hosts: ['*zone*'] })]).refused[0]?.flag).toBe('--allow-zone-settings');
     expect(guard([ch({ hosts: [] })]).refused[0]?.flag).toBe('--allow-zone-settings');
+  });
+
+  it('безхостове правило потребує обох прапорців: --allow-zone-settings і --allow-main-domain', () => {
+    const c = ch({ hosts: hostsOf('(http.request.uri.path eq "/x")') });
+    expect(guard([c]).refused.map((x) => x.flag).sort()).toEqual(['--allow-main-domain', '--allow-zone-settings']);
+    expect(guard([c], { allowZoneSettings: true }).refused.map((x) => x.flag)).toEqual(['--allow-main-domain']);
+    expect(guard([c], { allowMainDomain: true }).refused.map((x) => x.flag)).toEqual(['--allow-zone-settings']);
+    expect(guard([c], { allowZoneSettings: true, allowMainDomain: true }).ok).toBe(true);
+  });
+
+  const opaque = /** @type {[string, string][]} */ ([
+    ['not ', '(not http.host eq "test.time2fest.com")'],
+    ['wildcard', '(http.host wildcard "*.time2fest.com")'],
+    ['matches', '(http.host matches "^test\\\\.time2fest\\\\.com$")'],
+    ['ends_with', '(ends_with(http.host, "test.time2fest.com"))'],
+    ['contains', '(http.host contains "test.time2fest.com")'],
+    ['starts_with', '(starts_with(http.host, "test.time2fest.com"))'],
+    ['full_uri', '(http.request.full_uri eq "https://test.time2fest.com/x")'],
+    ['lower(', '(lower(http.host) eq "test.time2fest.com")'],
+    ['кінцева крапка', '(http.host eq "test.time2fest.com.")'],
+    ['великі літери', '(http.host eq "Test.time2fest.com")'],
+  ]);
+  for (const [label, expression] of opaque) {
+    it(`логіка хостів «${label}», яку розбір не охоплює, — як робочий домен`, () => {
+      const hosts = hostsOf(expression);
+      expect(hosts).toContain(OPAQUE_HOST);
+      expect(guard([ch({ hosts })]).refused.map((x) => x.flag)).toEqual(['--allow-main-domain']);
+      expect(guard([ch({ hosts })], { allowMainDomain: true }).ok).toBe(true);
+    });
+  }
+
+  it('звичайний вираз тестового хоста (з ip.src) не вважається непрозорим', () => {
+    expect(hostsOf('(http.host in {"test.time2fest.com"} and http.request.uri.path eq "/api/webhooks/paypro" and ip.src in {198.199.123.239 2604:a880:400:d0::1843:7001})')).toEqual(['test.time2fest.com']);
   });
 
   it('невідомий вид, операція або тип DNS — заборонено без можливості дозволу', () => {

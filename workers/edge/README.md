@@ -55,8 +55,10 @@ Windows + Git Bash, from the worktree root. `<secrets-file>` is a file outside t
    ```
 
    ```
-   CLOUDFLARED_IMAGE=cloudflare/cloudflared:<tag> pnpm edge:tunnel:up
+   CLOUDFLARED_IMAGE=cloudflare/cloudflared@sha256:<digest> pnpm edge:tunnel:up
    ```
+
+   `CLOUDFLARED_IMAGE` must be pinned by digest: `cloudflare/cloudflared@sha256:<digest>` (no tag, never `:latest`); the digest in use is recorded in the service journal `docs/services/cloudflare.md`.
 
    If the server env does not already set `T2F_ENV=test` and `T2F_TEST_DOORS=1`, add them to the same environment (for example in the ignored `server/.env.local`).
 
@@ -79,7 +81,7 @@ Windows + Git Bash, from the worktree root. `<secrets-file>` is a file outside t
    ```
    pnpm edge:tunnel:down
    T2F_LIVE_SITE=https://test.time2fest.com T2F_LIVE_TUNNEL_HOST=https://o-test.time2fest.com T2F_LIVE_MODE=tunnel-down pnpm --dir workers/edge live
-   CLOUDFLARED_IMAGE=cloudflare/cloudflared:<tag> pnpm edge:tunnel:up
+   CLOUDFLARED_IMAGE=cloudflare/cloudflared@sha256:<digest> pnpm edge:tunnel:up
    ```
 
 6. Under attack: switch it on, run the suite, switch it off, confirm no differences remain:

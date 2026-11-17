@@ -51,14 +51,16 @@ pnpm infra:cf apply --env test [--secrets-file <шлях>] [--under-attack on|of
 ## Локальний `cloudflared`
 
 ```
-CLOUDFLARED_IMAGE=cloudflare/cloudflared:<тег> pnpm edge:tunnel:up
+CLOUDFLARED_IMAGE=cloudflare/cloudflared@sha256:<digest> pnpm edge:tunnel:up
 pnpm edge:tunnel:down
 ```
 
 - `cloudflared/compose.yml`: `tunnel --no-autoupdate run`, токен лише з `../.local/tunnel-${T2F_EDGE_ENV:-test}.env`,
   до сервера — через `host.docker.internal`; жоден порт не публікується.
-- Тег образу закріплює керівник хвилі й записує в `docs/services/cloudflare.md`; без `CLOUDFLARED_IMAGE` compose
-  не запускається.
+- Образ закріплюється лише дайджестом: значення `CLOUDFLARED_IMAGE` має вигляд
+  `cloudflare/cloudflared@sha256:<digest>` (не тег і не `:latest`). Дайджест обирає керівник хвилі й записує в
+  журнал сервісу `docs/services/cloudflare.md`; без `CLOUDFLARED_IMAGE` compose не запускається. Статичний
+  тест `test/compose.test.mjs` перевіряє, що в compose немає `:latest` і жоден порт не публікується.
 - Файл токена в git не потрапляє і ніколи не друкується.
 - Змінні: `CLOUDFLARE_API_TOKEN_INFRA`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID` (з оточення або з
   `--secrets-file`). Бракує будь-якої → код 1 до першого запиту.

@@ -5,12 +5,20 @@
 export const MAIN_HOSTS = ['time2fest.com', 'www.time2fest.com', 'admin.time2fest.com'];
 
 /**
+ * Опубліковані адреси, з яких PayPro Global надсилає IPN (вебхуки).
+ * Джерело: developers.payproglobal.com, сторінка Webhook IPN; перевірено 2026-11-17.
+ * Змінилися там → змінити тут і перезапустити `cf.mjs apply`.
+ */
+export const PAYPRO_IPN_SOURCES = ['198.199.123.239', '157.230.8.40', '2604:a880:400:d0::1843:7001', '2604:a880:400:d1::b6c:c001'];
+
+/**
  * Єдиний реєстр шляхів, для яких край пропускає захист (Skip + конфіг-правило).
- * `envs` — 'all' або перелік середовищ.
- * @type {{ path: string, envs: 'all' | string[] }[]}
+ * `envs` — 'all' або перелік середовищ; `sources` — якщо задано, виняток діє лише для цих адрес джерела.
+ * @type {{ path: string, envs: 'all' | string[], sources?: string[] }[]}
  */
 export const EXEMPT_PATHS = [
-  { path: '/api/webhooks/paypro', envs: 'all' },
+  { path: '/api/webhooks/paypro', envs: 'all', sources: PAYPRO_IPN_SOURCES },
+  // Лише хост тестового середовища і без умови на адресу: так виняток перевіряється наживо.
   { path: '/api/_test/edge-echo', envs: ['test'] },
 ];
 
@@ -49,7 +57,7 @@ export const SECRET_ENV_NAMES = ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_T
 
 /**
  * @param {string} envName
- * @returns {{ path: string, envs: 'all' | string[] }[]}
+ * @returns {{ path: string, envs: 'all' | string[], sources?: string[] }[]}
  */
 export function exemptPathsFor(envName) {
   return EXEMPT_PATHS.filter((e) => e.envs === 'all' || e.envs.includes(envName));

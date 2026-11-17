@@ -2,7 +2,7 @@
 // Запобіжник: зміни, що зачіпають робочий домен, усю зону або щось видаляють, проходять лише з явним прапорцем.
 // Усе невідоме — заборонено (deny by default). Поштові DNS-записи (MX/TXT) не проходять ні з яким прапорцем.
 import { MAIN_HOSTS } from './config.mjs';
-import { ZONE_WIDE } from './diff.mjs';
+import { OPAQUE_HOST, ZONE_WIDE } from './diff.mjs';
 
 /** @typedef {import('./diff.mjs').Change} Change */
 /** @typedef {{ allowMainDomain?: boolean, allowZoneSettings?: boolean, allowDelete?: boolean }} GuardFlags */
@@ -17,7 +17,8 @@ const DNS_TYPES = new Set(['CNAME']);
 
 /** @param {string} h */
 const norm = (h) => String(h).trim().toLowerCase().replace(/\.$/, '');
-const MAIN = new Set(MAIN_HOSTS.map(norm));
+/** Хост, логіку якого розбір не охоплює, вважається робочим доменом. */
+const MAIN = new Set([...MAIN_HOSTS.map(norm), OPAQUE_HOST]);
 
 /**
  * @param {Change[]} changes
@@ -56,6 +57,10 @@ export function guard(changes, flags = {}) {
     if (main.length && !flags.allowMainDomain) refuse(`зачіпає робочий домен: ${main.join(', ')}`, '--allow-main-domain');
     if ((hosts.includes(ZONE_WIDE) || change.kind === 'zone-setting') && !flags.allowZoneSettings) {
       refuse('діє на всю зону', '--allow-zone-settings');
+    }
+    // Безхостове правило діє й на робочий домен: потрібні обидва прапорці.
+    if (hosts.includes(ZONE_WIDE) && change.kind !== 'zone-setting' && !flags.allowMainDomain) {
+      refuse('безхостове правило діє й на робочий домен', '--allow-main-domain');
     }
     if (change.op === 'delete' && !flags.allowDelete) refuse('видаляє ресурс або правило', '--allow-delete');
   }

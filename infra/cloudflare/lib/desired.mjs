@@ -1,6 +1,9 @@
 // @ts-check
 import { ENVS, PHASE_CONFIG, PHASE_CUSTOM, exemptPathsFor } from './config.mjs';
 
+/** Ingress тунелю пропускає до джерела лише API; решта шляхів (`/admin`, `/cms-api/*` …) — 404 у тунелі. */
+export const TUNNEL_PATH = '^/api/';
+
 /** @param {string[]} items */
 const set = (items) => `{${items.map((i) => `"${i}"`).join(' ')}}`;
 
@@ -17,14 +20,24 @@ export function desiredState(envNames, opts = {}) {
   });
   const siteHosts = envs.map((e) => e.siteHost);
   const tunnelHosts = envs.map((e) => e.tunnelHost);
-  const paths = [...new Set(envs.flatMap((e) => exemptPathsFor(e.name).map((p) => p.path)))];
-  const exemptExpr = `(http.host in ${set(siteHosts)} and http.request.uri.path in ${set(paths)})`;
+  // По умові на кожен шлях-виняток: хости середовищ, де він діє, і (якщо задано) адреси джерела.
+  const seen = new Set();
+  const clauses = envs
+    .flatMap((e) => exemptPathsFor(e.name))
+    .filter((x) => !seen.has(x.path) && seen.add(x.path))
+    .map((x) => {
+      const hosts = envs.filter((e) => exemptPathsFor(e.name).includes(x)).map((e) => e.siteHost);
+      const src = x.sources ? ` and ip.src in {${x.sources.join(' ')}}` : '';
+      return `(http.host in ${set(hosts)} and http.request.uri.path eq "${x.path}"${src})`;
+    });
+  if (!clauses.length) throw new Error('немає шляхів-винятків для вибраних середовищ');
+  const exemptExpr = clauses.length === 1 ? clauses[0] : `(${clauses.join(' or ')})`;
 
   const tunnels = envs.map((e) => ({
     env: e.name,
     name: e.tunnelName,
     hostname: e.tunnelHost,
-    ingress: [{ hostname: e.tunnelHost, service: e.originService }, { service: 'http_status:404' }],
+    ingress: [{ hostname: e.tunnelHost, path: TUNNEL_PATH, service: e.originService }, { service: 'http_status:404' }],
   }));
 
   const dns = envs.map((e) => ({

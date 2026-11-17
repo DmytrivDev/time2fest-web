@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { buildDispatcher, createDeps } from '../../src/container';
 import { createDispatcher, DEFAULT_MAX_BODY_BYTES, LOG_ID } from '../../src/endpoints/pipeline';
+import { inactiveEdgeGate } from '../../src/platform/edge';
 import type { Deps, RouteRow } from '../../src/endpoints/types';
 import { timeRoute } from '../../src/endpoints/time';
 import { middlewareRegistry } from '../../src/registries/middleware';
@@ -28,7 +29,8 @@ function row(key: string, extra: Partial<RouteRow> = {}): RouteRow {
 }
 
 function dispatcherWith(routes: RouteRow[], log = capture().log) {
-  return createDispatcher({ routes, middleware: middlewareRegistry, deps: deps(log) });
+  const d = deps(log);
+  return createDispatcher({ routes, middleware: middlewareRegistry, deps: d, edge: inactiveEdgeGate(d.clock) });
 }
 
 const post = (path: string, body: string, origin: string | null = ORIGIN) =>
@@ -217,6 +219,7 @@ describe('HTTP pipeline', () => {
       ],
       middleware: middlewareRegistry,
       deps: failingDeps,
+      edge: inactiveEdgeGate(failingDeps.clock),
     });
     const down = await dispatch(new Request(`${BASE}/api/sample/needs-db`));
     expect(down.status).toBe(503);

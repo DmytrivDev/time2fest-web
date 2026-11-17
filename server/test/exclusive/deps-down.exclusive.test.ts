@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 import { payloadOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
+import { inactiveEdgeGate } from '../../src/platform/edge';
 import type { RouteRow } from '../../src/endpoints/types';
 import { timeRoute } from '../../src/endpoints/time';
 import type { RateLimitRow } from '../../src/platform/rateLimit';
@@ -64,7 +65,7 @@ const routes: RouteRow[] = [
 const redis = ownRedis();
 const deps = testDeps({ redis });
 const middleware = middlewareRegistry.map((m) => (m.key === '30-rate-limit' ? rateLimitMiddleware([closed, memory]) : m));
-const dispatch = createDispatcher({ routes, middleware, deps });
+const dispatch = createDispatcher({ routes, middleware, deps, edge: inactiveEdgeGate(deps.clock) });
 const get = (p: string) => dispatch(new Request(BASE + p));
 
 afterAll(async () => {

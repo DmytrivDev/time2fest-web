@@ -57,6 +57,35 @@ describe('edge handler (Node)', () => {
     expect(h.get('x-t2f-client')).toBe('198.51.100.7;UA');
   });
 
+  it('strips client-sent address headers and leaves body and other headers as sent', async () => {
+    const { calls, env, deps } = setup();
+    await handle(
+      new Request('https://test.time2fest.com/api/me', {
+        method: 'POST',
+        body: '{"a":1}',
+        headers: {
+          'CF-Connecting-IP': '198.51.100.7',
+          'X-Forwarded-For': '203.0.113.9',
+          'X-Real-IP': '203.0.113.10',
+          Forwarded: 'for=203.0.113.11',
+          'True-Client-IP': '203.0.113.12',
+          'Content-Type': 'application/json',
+          'X-Probe': 'p-2',
+        },
+      }),
+      env,
+      deps,
+    );
+    const h = headersOf(calls[0]);
+    for (const name of ['x-forwarded-for', 'x-real-ip', 'forwarded', 'true-client-ip', 'cf-connecting-ip']) {
+      expect(h.has(name), name).toBe(false);
+    }
+    expect(h.get('x-t2f-client')).toBe('198.51.100.7;UA');
+    expect(h.get('content-type')).toBe('application/json');
+    expect(h.get('x-probe')).toBe('p-2');
+    expect(await new Response(calls[0]?.init.body).text()).toBe('{"a":1}');
+  });
+
   it('leaves the country empty when request.cf is absent', async () => {
     const { calls, env, deps } = setup({}, { noCf: true });
     await handle(

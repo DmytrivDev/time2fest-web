@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestClock } from '../../src/clock';
 import { buildDispatcher, createDeps, createLockState, seedStoreOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
+import { inactiveEdgeGate } from '../../src/platform/edge';
 import type { Deps } from '../../src/endpoints/types';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { routeRegistry } from '../../src/registries/routes';
@@ -161,7 +162,7 @@ describe('test doors', () => {
       const deps = depsFor('test', { lockState: createLockState(dir) });
       const handler = vi.fn(async () => ({ ok: true as const, value: 'broken' }));
       const routes = doorRoutes(deps, seedStoreOf(deps), [{ key: 'break-db', method: 'POST', path: '/api/_test/break-db', dependencyBreaking: true, handler }]);
-      const dispatch = createDispatcher({ routes, middleware: middlewareRegistry, deps });
+      const dispatch = createDispatcher({ routes, middleware: middlewareRegistry, deps, edge: inactiveEdgeGate(deps.clock) });
       const call = () => dispatch(new Request(`${BASE}/api/_test/break-db`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
 
       const refused = await call();
