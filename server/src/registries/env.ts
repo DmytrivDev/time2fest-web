@@ -67,7 +67,7 @@ export const envRegistry: readonly EnvBlock[] = [
     vars: [
       { name: 'T2F_CATALOG_RATE_PER_MIN', schema: intIn(1, 10_000).default(30) },
       { name: 'T2F_R2_ACCESS_KEY_ID', schema: z.string().min(1).optional(), secret: true, requiredIn: REQ },
-      { name: 'T2F_R2_BUCKET', schema: z.string().min(1).optional(), requiredIn: REQ },
+      { name: 'T2F_R2_BUCKET', schema: z.string().min(1).optional(), isolated: true, requiredIn: REQ },
       { name: 'T2F_R2_ENDPOINT', schema: z.url().optional(), isolated: true, requiredIn: REQ },
       { name: 'T2F_R2_PREFIX', schema: z.string().regex(/^[a-z0-9_]+\/$/).optional(), requiredIn: REQ },
       { name: 'T2F_R2_SECRET_ACCESS_KEY', schema: z.string().min(1).optional(), secret: true, requiredIn: REQ },
@@ -77,6 +77,7 @@ export const envRegistry: readonly EnvBlock[] = [
     key: 'edge',
     vars: [
       { name: 'T2F_EDGE_SECRET', schema: z.string().min(32).optional(), secret: true, requiredIn: ['rehearsal', 'production'] },
+      { name: 'T2F_EDGE_SECRET_PREVIOUS', schema: z.string().min(32).optional(), secret: true },
     ],
   },
   {
@@ -88,12 +89,14 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_SLOT', schema: intIn(0, 47).optional() },
       { name: 'T2F_SLUG', schema: z.string().regex(/^[a-z0-9_]{1,40}$/).optional() },
       { name: 'T2F_SERVER_PORT', schema: port.optional() },
+      { name: 'T2F_HOST', schema: z.union([z.ipv4(), z.string().regex(/^[a-z0-9]([a-z0-9.-]{0,251}[a-z0-9])?$/i)]).optional() },
+      { name: 'T2F_COMMIT', schema: z.string().regex(/^[0-9a-f]{40}$/).optional() },
       { name: 'T2F_WEB_PORT', schema: port.optional() },
       { name: 'T2F_LOCK_DIR', schema: z.string().optional() },
       { name: 'T2F_ALLOWED_ORIGINS', schema: origins.optional(), requiredIn: ['production'] },
       { name: 'DATABASE_URI', schema: z.url(), secret: true, isolated: true },
       { name: 'REDIS_URL', schema: z.url(), secret: true, isolated: true },
-      { name: 'T2F_REDIS_PREFIX', schema: z.string().optional() },
+      { name: 'T2F_REDIS_PREFIX', schema: z.string().optional(), isolated: true },
       { name: 'T2F_CENTRIFUGO_URL', schema: z.url().optional(), isolated: true },
       { name: 'T2F_CENTRIFUGO_PREFIX', schema: z.string().optional() },
       { name: 'SMTP_HOST', schema: z.string().optional(), isolated: true },

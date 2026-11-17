@@ -3,6 +3,7 @@
  * - Active in `rehearsal` / `production`, and in `test` when `T2F_EDGE_SECRET` is set (AC-16, AC-17).
  * - `x-t2f-edge` is compared with the secret in constant time whatever its length or prefix
  *   (AC-18): both sides are HMAC-ed under a random per-gate key, then `timingSafeEqual`.
+ * - Rotation (SPEC-13a AC-35): with a previous secret, both comparisons always run and either admits.
  * - A refusal is `null` (fail closed): the dispatcher answers its single 404 before route lookup.
  * - Address and country come only from `x-t2f-client` (`<ip>;<country>`, set by the Worker);
  *   no forwarding header is read (AC-20). The raw address lives only in a closure: the context
@@ -42,6 +43,8 @@ export interface EdgeGate {
 export interface EdgeGateDeps {
   envClass: EnvClass;
   secret: string | undefined;
+  /** The secret being rotated out (SPEC-13a AC-35); accepted alongside `secret` while set. */
+  previousSecret?: string | undefined;
   salts: DaySalts;
   clock: Clock;
 }
@@ -65,7 +68,7 @@ export function inactiveEdgeGate(clock: Clock): EdgeGate {
 }
 
 /** The gate of a process. `secret` is never logged, returned or stored. */
-export function createEdgeGate({ envClass, secret, salts, clock }: EdgeGateDeps): EdgeGate {
+export function createEdgeGate({ envClass, secret, previousSecret, salts, clock }: EdgeGateDeps): EdgeGate {
   const known = secret !== undefined && secret !== '';
   const active = envClass !== 'test' || known;
   if (!active) return inactiveEdgeGate(clock);
@@ -74,12 +77,18 @@ export function createEdgeGate({ envClass, secret, salts, clock }: EdgeGateDeps)
   const mac = (value: string) => createHmac('sha256', key).update(value).digest();
   // An active gate without a secret (never built by `loadEnv`) refuses everything.
   const expected = known ? mac(secret) : undefined;
+  // The previous secret only extends a gate that has a current one.
+  const expectedPrev = known && previousSecret !== undefined && previousSecret !== '' ? mac(previousSecret) : undefined;
 
   return {
     active,
     admit(req) {
+      if (expected === undefined) return null;
       const received = mac(req.headers.get(EDGE_HEADER) ?? '');
-      if (expected === undefined || !timingSafeEqual(received, expected)) return null;
+      // Both comparisons run on every request; no early return between them.
+      const a = timingSafeEqual(received, expected);
+      const b = expectedPrev !== undefined ? timingSafeEqual(received, expectedPrev) : false;
+      if (!(a || b)) return null;
 
       const parts = (req.headers.get(CLIENT_HEADER) ?? '').split(';');
       if (parts.length !== 2) return noAddress(true, 'unknown', clock);

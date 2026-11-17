@@ -34,10 +34,15 @@ export type LoadEnvResult =
 
 /**
  * Identifiers of production resources (database hosts, Redis, buckets, …) that a `test` or
- * `rehearsal` class must never point at. Empty until the production resources exist:
- * spec SPEC-02 Open question 1 — SPEC-13a fills it.
+ * `rehearsal` class must never point at. Filled by SPEC-13a (AC-39): the production node's names
+ * are fixed by convention before it exists (SPEC-13a OQ-6); matched as substrings, case-insensitively.
  */
-export const PRODUCTION_DENYLIST: readonly string[] = [];
+export const PRODUCTION_DENYLIST: readonly string[] = [
+  'time2fest-prod',
+  'o.time2fest.com',
+  't2f_production',
+  't2f:production:',
+];
 
 /** Hosts a `test` class may point its database and Redis at. */
 const LOOPBACK_HOSTS: ReadonlySet<string> = new Set(['127.0.0.1', 'localhost', '::1', '[::1]']);
@@ -126,6 +131,15 @@ export function loadEnv(
 
   if (cls !== 'production' && 'PAYPRO_MODE' in env && env.PAYPRO_MODE !== 'sandbox' && !failing.includes('PAYPRO_MODE')) {
     failing.push('PAYPRO_MODE');
+  }
+
+  // Rotation (SPEC-13a AC-36): the previous edge secret must differ from the current one.
+  if (
+    env.T2F_EDGE_SECRET_PREVIOUS !== undefined &&
+    env.T2F_EDGE_SECRET_PREVIOUS === env.T2F_EDGE_SECRET &&
+    !failing.includes('T2F_EDGE_SECRET_PREVIOUS')
+  ) {
+    failing.push('T2F_EDGE_SECRET_PREVIOUS');
   }
 
   if (cls === 'test') {

@@ -270,9 +270,11 @@ export function getDeps(): Deps {
 /** The edge gate of `deps` (SPEC-05): active in rehearsal/production, and in test with a secret. */
 export function edgeGateOf(deps: Deps): EdgeGate {
   const secret = deps.env.vars.T2F_EDGE_SECRET;
+  const previousSecret = deps.env.vars.T2F_EDGE_SECRET_PREVIOUS;
   return createEdgeGate({
     envClass: deps.env.class,
     secret: typeof secret === 'string' ? secret : undefined,
+    previousSecret: typeof previousSecret === 'string' ? previousSecret : undefined,
     salts: daySalts({ fast: deps.redis, clock: deps.clock }),
     clock: deps.clock,
   });
