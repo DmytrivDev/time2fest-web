@@ -3356,6 +3356,326 @@
         }
       }
     },
+    "packages/contracts/src/clock.schemas.ts#ClockControlBody": {
+      "text": "z.infer<typeof ClockControlBodySchema>"
+    },
+    "packages/contracts/src/clock.schemas.ts#ClockControlBodySchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\"set\">; at: ZodNumber; }, $strict>, ZodObject<{ action: ZodLiteral<\"real\">; }, $strict>, ZodObject<{ action: ZodLiteral<\"restart-night\">; }, $strict>], \"action\">"
+    },
+    "packages/contracts/src/clock.schemas.ts#ClockEventSchema": {
+      "text": "ZodObject<{ data: ZodObject<{ speed: ZodNumber; virtual: ZodBoolean; }, $strict>; id: ZodString; type: ZodLiteral<\"clock\">; }, $strict>"
+    },
+    "packages/contracts/src/clock.schemas.ts#FaultDoorBody": {
+      "text": "z.infer<typeof FaultDoorBodySchema>"
+    },
+    "packages/contracts/src/clock.schemas.ts#FaultDoorBodySchema": {
+      "text": "ZodObject<{ action: ZodOptional<ZodString>; after: ZodLiteral<\"publish\">; }, $strict>"
+    },
+    "packages/contracts/src/clock.schemas.ts#FestivalStateViewSchema": {
+      "text": "ZodObject<{ clock: ZodObject<{ epoch: ZodNumber; speed: ZodNumber; virtual: ZodBoolean; }, $strict>; edgeSkewMs: ZodNullable<ZodNumber>; moments: ZodArray<ZodObject<{ at: ZodNumber; kind: ZodString; subject: ZodNullable<ZodString>; }, $strict>>; phase: ZodString; scheduler: ZodObject<{ delayMs: ZodNullable<ZodNumber>; epoch: ZodNumber; holder: ZodNullable<ZodString>; missed24h: ZodNumber; renewedAgeMs: ZodNullable<ZodNumber>; }, $strict>; slot: ZodObject<{ current: ZodNullable<ZodString>; next: ZodNullable<ZodString>; }, $strict>; }, $strict>"
+    },
+    "packages/contracts/src/clock.schemas.ts#LeaseDoorBody": {
+      "text": "z.infer<typeof LeaseDoorBodySchema>"
+    },
+    "packages/contracts/src/clock.schemas.ts#LeaseDoorBodySchema": {
+      "text": "ZodObject<{ action: ZodEnum<{ pause: \"pause\"; resume: \"resume\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/clock.schemas.ts#NightRunBody": {
+      "text": "z.infer<typeof NightRunBodySchema>"
+    },
+    "packages/contracts/src/clock.schemas.ts#NightRunBodySchema": {
+      "text": "ZodObject<{ from: ZodOptional<ZodNumber>; speed: ZodDefault<ZodNumber>; to: ZodOptional<ZodNumber>; }, $strict>"
+    },
+    "packages/contracts/src/clock.ts#ClockControlValue": {
+      "props": {
+        "epoch": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "now": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "speed": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "virtual": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#ClockEvent": {
+      "props": {
+        "data": {
+          "optional": false,
+          "type": {
+            "props": {
+              "speed": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "virtual": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'clock'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#EDGE_NOW_HEADER": {
+      "text": "\"x-t2f-edge-now\""
+    },
+    "packages/contracts/src/clock.ts#FestivalStateMoment": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "subject": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#FestivalStateView": {
+      "props": {
+        "clock": {
+          "optional": false,
+          "type": {
+            "props": {
+              "epoch": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "speed": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "virtual": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "edgeSkewMs": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "number"
+            ]
+          }
+        },
+        "moments": {
+          "optional": false,
+          "type": {
+            "text": "FestivalStateMoment[]"
+          }
+        },
+        "phase": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "scheduler": {
+          "optional": false,
+          "type": {
+            "props": {
+              "delayMs": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "number"
+                  ]
+                }
+              },
+              "epoch": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "holder": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "missed24h": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "renewedAgeMs": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "number"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "slot": {
+          "optional": false,
+          "type": {
+            "props": {
+              "current": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "next": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "string"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#LeaseDoorValue": {
+      "props": {
+        "epoch": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "holder": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#NightRunJournal": {
+      "props": {
+        "epoch": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "records": {
+          "optional": false,
+          "type": {
+            "text": "NightRunRecord[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#NightRunRecord": {
+      "props": {
+        "action": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "consequenceId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "keys": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        },
+        "plannedAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "startedAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/clock.ts#NightRunValue": {
+      "props": {
+        "epoch": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
     "packages/contracts/src/realtime.schemas.ts#RealtimeBatchSchema": {
       "text": "ZodObject<{ events: ZodArray<ZodObject<{ data: ZodOptional<ZodUnknown>; id: ZodString; type: ZodString; version: ZodOptional<ZodNumber>; }, $strict>>; id: ZodString; type: ZodLiteral<\"batch\">; }, $strict>"
     },

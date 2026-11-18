@@ -25,6 +25,7 @@ COPY --chown=node:node workers/edge/package.json workers/edge/
 # devDependencies stay: `pnpm migrate` (Payload CLI over tsx) runs in a one-shot container of this image.
 RUN pnpm install --frozen-lockfile --filter @time2fest/server... && pnpm store prune
 COPY --chown=node:node packages/contracts/ packages/contracts/
+COPY --chown=node:node packages/rules/ packages/rules/
 COPY --chown=node:node server/ server/
 # The seed reads the catalog sources from the repository's `data/` (server/src/seed/registry.ts).
 COPY --chown=node:node data/ data/

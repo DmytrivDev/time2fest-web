@@ -181,6 +181,9 @@ importers:
       '@time2fest/contracts':
         specifier: workspace:*
         version: link:../packages/contracts
+      '@time2fest/rules':
+        specifier: workspace:*
+        version: link:../packages/rules
       graphql:
         specifier: 16.15.0
         version: 16.15.0

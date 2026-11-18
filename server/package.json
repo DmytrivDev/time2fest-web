@@ -41,6 +41,7 @@
     "@payloadcms/translations": "3.91.0",
     "@payloadcms/ui": "3.91.0",
     "@time2fest/contracts": "workspace:*",
+    "@time2fest/rules": "workspace:*",
     "graphql": "16.15.0",
     "ioredis": "5.11.1",
     "jose": "5.10.0",
