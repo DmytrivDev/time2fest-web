@@ -1,22 +1,28 @@
 import type { Locale } from '@/i18n/locales';
 import { jsonLdFor, type MetaPage } from '@/lib/prelaunch/seo';
 
-/** Місце для структурованих даних сторінки: нічого не малює, доки `jsonLdFor` порожній (заповнює задача B). */
-export function JsonLd({
+/** Структуровані дані сторінки (`jsonLdFor`): головна англійською — сайт і організація, решта — хлібні крихти. */
+export async function JsonLd({
   locale,
   page,
-  values,
+  crumb,
 }: {
   locale: Locale;
   page: MetaPage;
-  values?: Record<string, string>;
+  /** Остання ланка крихт (назва й шлях без мови) — сторінка країни й документи. */
+  crumb?: { name: string; path: string };
 }) {
-  const data = jsonLdFor(locale, page, values);
+  const data = await jsonLdFor(locale, page, crumb);
   if (!data) return null;
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
-    />
+    <>
+      {data.map((d, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(d).replace(/</g, '\u003c') }}
+        />
+      ))}
+    </>
   );
 }

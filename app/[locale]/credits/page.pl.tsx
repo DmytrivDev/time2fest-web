@@ -14,7 +14,7 @@ export default async function Page({ params }: { params: LocaleParams }) {
   const locale = await localeOf(params);
   return (
     <>
-      <JsonLd locale={locale} page="privacy" />
+      <JsonLd locale={locale} page="credits" crumb={{ name: loadLegal('credits', locale).title, path: '/credits/' }} />
       <LegalPage
         site={siteData(locale)}
         doc={loadLegal('credits', locale)}

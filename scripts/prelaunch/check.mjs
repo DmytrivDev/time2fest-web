@@ -7,6 +7,9 @@
 //   - на сторінці іншої мови лишився український текст.
 // Попередження (з `--strict` — помилки): заглушки фото (`data-media-placeholder`), незаповнені місця `[[…]]`,
 // слова-заглушки («сток», «заглушк»), мова-чернетка.
+// Пошуковики (SEO-звіт, розділ 8): canonical на себе; у відкритих сторінок — взаємний hreflang (усі мови + x-default),
+// без noindex (ключ `--index`) і title до 65 знаків; у закритих — noindex і без hreflang; sitemap = рівно відкриті
+// сторінки; JSON-LD читається; og:image є; robots.txt є; кожне правило `_redirects` веде на наявну сторінку.
 import fs from 'node:fs';
 import path from 'node:path';
 import {
@@ -18,9 +21,11 @@ import {
   publicPath,
   root,
 } from './routes.mjs';
+import { localePath, openRoutes, SITE_ORIGIN } from './seo-files.mjs';
 
 const args = process.argv.slice(2);
 const strict = args.includes('--strict');
+const index = args.includes('--index');
 const out = path.resolve(root, args.find((a) => !a.startsWith('--')) ?? 'out-prelaunch');
 if (!fs.existsSync(out)) {
   console.error(`check:prelaunch: немає теки ${out} — спершу pnpm build:prelaunch`);
@@ -191,6 +196,64 @@ if (unfilled)
   warn(`незаповнених місць [[…]] у текстах: ${unfilled} — документи чекають даних власника`);
 for (const l of locales)
   if (LOCALE_STATUS[l] !== 'ready') warn(`мова ${l} — ${LOCALE_STATUS[l]} (не вичитано)`);
+
+// ── 4. Пошуковики ──────────────────────────────────────────────────────────────────────────────────────────────
+const open = new Set(openRoutes(locales));
+const metaContent = (page, attr, name) =>
+  new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`).exec(page)?.[1];
+const absolute = (locale, route) => `${SITE_ORIGIN}${localePath(locale, route)}`;
+let longTitles = 0;
+for (const [p, { locale, route }] of expected) {
+  if (!fileSet.has(p)) continue;
+  const page = fs.readFileSync(path.join(out, p), 'utf8');
+  const robots = metaContent(page, 'name', 'robots') ?? '';
+  const isOpen = route !== '/404/' && open.has(route);
+  if (route !== '/404/') {
+    const canonical = /<link rel="canonical" href="([^"]+)"/.exec(page)?.[1];
+    if (canonical !== absolute(locale, route)) err(`${p}: canonical «${canonical}», має бути ${absolute(locale, route)}`);
+  }
+  const alts = [...page.matchAll(/<link rel="alternate" hrefLang="([^"]+)" href="([^"]+)"/g)].map((m) => `${m[1]} ${m[2]}`);
+  if (isOpen) {
+    const want = [...locales.map((l) => `${l} ${absolute(l, route)}`), ...(locales.includes(DEFAULT_LOCALE) ? [`x-default ${absolute(DEFAULT_LOCALE, route)}`] : [])];
+    if (alts.sort().join('|') !== want.sort().join('|')) err(`${p}: hreflang неповний чи не взаємний (${alts.length} з ${want.length})`);
+    if (index && /noindex/.test(robots)) err(`${p}: відкрита сторінка з noindex у збірці для домену`);
+    if (!index && !/noindex/.test(robots)) err(`${p}: збірка перегляду без noindex`);
+    const title = /<title>([^<]+)<\/title>/.exec(page)?.[1]?.replace(/&amp;/g, '&') ?? '';
+    if ([...title].length > 65) {
+      longTitles += 1;
+      warn(`${p}: title ${[...title].length} знаків (понад 65)`);
+    }
+  } else {
+    if (!/noindex/.test(robots)) err(`${p}: закрита сторінка без noindex`);
+    if (alts.length) err(`${p}: закрита сторінка з hreflang`);
+  }
+  if (route !== '/404/' && !metaContent(page, 'property', 'og:image')) err(`${p}: немає og:image`);
+  for (const m of page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    try {
+      JSON.parse(m[1]);
+    } catch {
+      err(`${p}: JSON-LD не читається`);
+    }
+  }
+}
+const sitemapFile = path.join(out, 'sitemap.xml');
+if (!fs.existsSync(sitemapFile)) err('немає sitemap.xml');
+else {
+  const locs = [...fs.readFileSync(sitemapFile, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort();
+  const want = locales.flatMap((l) => [...open].map((r) => absolute(l, r))).sort();
+  if (locs.join('|') !== want.join('|')) err(`sitemap.xml: ${locs.length} адрес, відкритих сторінок ${want.length}`);
+}
+if (!fs.existsSync(path.join(out, 'robots.txt'))) err('немає robots.txt');
+const redirectsFile = path.join(out, '_redirects');
+if (fs.existsSync(redirectsFile)) {
+  for (const line of fs.readFileSync(redirectsFile, 'utf8').split('\n')) {
+    if (!line.trim() || line.startsWith('#')) continue;
+    const [from, to, code, extra] = line.split(' ');
+    if (!from?.startsWith('/') || !to || code !== '301' || extra) err(`_redirects: неправильний рядок «${line}»`);
+    else if (!to.includes(':') && to !== '/sitemap.xml' && !resolves(to)) err(`_redirects: «${from}» веде в нікуди (${to})`);
+  }
+} else err('немає _redirects');
+if (longTitles) console.log(`check:prelaunch: title понад 65 знаків — ${longTitles}`);
 
 // ── Підсумок ───────────────────────────────────────────────────────────────────────────────────────────────────
 const failures = strict ? [...errors, ...warnings] : errors;

@@ -4,7 +4,10 @@
 //      (файли `*.pl.tsx`); входу, оплати, ефіру, кабінету, тестових дверцят і машини часу в ній немає взагалі;
 //   3. кладе в `out-prelaunch` лише дозволені сторінки (`routes.mjs`): головна мова — в корінь без префікса,
 //      решта — під `/<мова>/`; сторінка `/404/` кожної мови стає `404.html`;
-//   4. запускає перевірку (`check.mjs`). Ключ `--strict` (для розгортання) — заглушки й відсутні переклади стають помилкою.
+//   4. кладе `robots.txt`, `sitemap.xml`, `_redirects` (`seo-files.mjs`);
+//   5. запускає перевірку (`check.mjs`). Ключ `--strict` (для розгортання) — заглушки й відсутні переклади стають помилкою.
+//   Ключ `--index` — збірка для домену: відкриті сторінки без `noindex`, `robots.txt` з адресою sitemap, без
+//   `X-Robots-Tag: noindex` у `_headers`. Без нього (локальний перегляд, тимчасова адреса) — усе закрито.
 // Нічого не розгортає.
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -19,11 +22,13 @@ import {
   publicPath,
   root,
 } from './routes.mjs';
+import { headersForIndex, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const BUILD_DIR = '.next-prelaunch';
 const OUT_DIR = 'out-prelaunch';
 const strict = process.argv.includes('--strict');
 const skipNext = process.argv.includes('--skip-next'); // лише перескласти out-prelaunch з готової збірки
+const index = process.argv.includes('--index');
 
 const node = (args, env = {}) => {
   const r = spawnSync(process.execPath, args, {
@@ -59,6 +64,7 @@ if (!skipNext) {
   fs.rmSync(path.join(root, BUILD_DIR), { recursive: true, force: true });
   const status = node(['node_modules/next/dist/bin/next', 'build'], {
     NEXT_PUBLIC_PRELAUNCH: '1',
+    NEXT_PUBLIC_PRELAUNCH_INDEX: index ? '1' : '',
     NEXT_PUBLIC_PRELAUNCH_LOCALES: locales.join(','),
     NEXT_DIST_DIR: BUILD_DIR,
     // Робоча збірка: без тестового коду. Режим даних — `http`; мовне дерево до `lib/api` не звертається.
@@ -145,6 +151,18 @@ if (!locales.includes(DEFAULT_LOCALE))
     `build:prelaunch: головної мови (${DEFAULT_LOCALE}) у збірці немає — корінь сайту порожній`,
   );
 
-console.log(`build:prelaunch: ${pages} сторінок, ${locales.length} мов → ${OUT_DIR}`);
-if (node(['scripts/prelaunch/check.mjs', OUT_DIR, ...(strict ? ['--strict'] : [])]))
+// Пошуковики й край: robots.txt, sitemap.xml, _redirects; у збірці для домену — `_headers` без noindex.
+const sitemap = sitemapXml(locales);
+fs.writeFileSync(path.join(out, 'sitemap.xml'), sitemap.text);
+fs.writeFileSync(path.join(out, 'robots.txt'), robotsTxt(index));
+const redirects = redirectsFile();
+fs.writeFileSync(path.join(out, '_redirects'), redirects.text);
+if (index) {
+  const headers = path.join(out, '_headers');
+  fs.writeFileSync(headers, headersForIndex(fs.readFileSync(headers, 'utf8')));
+}
+console.log(
+  `build:prelaunch: ${pages} сторінок, ${locales.length} мов → ${OUT_DIR}; ${index ? 'для домену (відкриті сторінки індексуються)' : 'перегляд (noindex)'}; sitemap — ${sitemap.count} адрес; _redirects — ${redirects.count} правил (${redirects.dynamic} з *)`,
+);
+if (node(['scripts/prelaunch/check.mjs', OUT_DIR, ...(strict ? ['--strict'] : []), ...(index ? ['--index'] : [])]))
   fail('перевірка out-prelaunch не пройшла');

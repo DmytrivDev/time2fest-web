@@ -6,7 +6,7 @@ import { pageMetadata } from '@/lib/prelaunch/seo';
 import { siteData } from '@/lib/prelaunch/siteData';
 
 export async function generateMetadata({ params }: { params: LocaleParams }): Promise<Metadata> {
-  return pageMetadata(await localeOf(params), 'notFound', { indexable: false });
+  return pageMetadata(await localeOf(params), 'notFound');
 }
 
 export default async function Page({ params }: { params: LocaleParams }) {

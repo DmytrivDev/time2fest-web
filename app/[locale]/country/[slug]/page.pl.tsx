@@ -25,6 +25,7 @@ async function resolve(params: Params) {
   return {
     locale,
     iso,
+    slug,
     site,
     name,
     described: describedIsos(locale).includes(iso),
@@ -33,16 +34,16 @@ async function resolve(params: Params) {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { locale, iso, name, described } = await resolve(params);
-  // Країна без розповіді — «лише факти»: у пошук і `sitemap` не йде (план, розділ 8; `countryIndexable`).
-  return countryMetadata(locale, iso, name, described);
+  const { locale, iso, name, slug, indexable } = await resolve(params);
+  // Країна без розповіді кожною мовою — «лише факти»: `noindex`, без `hreflang`, не в `sitemap` (`countryIndexable`).
+  return countryMetadata(locale, iso, name, slug, indexable);
 }
 
 export default async function Page({ params }: { params: Params }) {
-  const { locale, iso, site, name } = await resolve(params);
+  const { locale, iso, site, name, slug } = await resolve(params);
   return (
     <>
-      <JsonLd locale={locale} page="country" values={{ country: name }} />
+      <JsonLd locale={locale} page="country" crumb={{ name, path: `/country/${slug}/` }} />
       <CountryPage site={site} iso={iso} />
     </>
   );

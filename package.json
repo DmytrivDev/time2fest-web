@@ -15,6 +15,7 @@
     "prebuild:demo": "node scripts/sync_tokens.mjs --check && node scripts/sync_yt_loader.mjs",
     "build:demo": "cross-env NEXT_PUBLIC_ENV=test NEXT_PUBLIC_DEMO=1 NEXT_DIST_DIR=out-demo next build",
     "build:prelaunch": "node scripts/prelaunch/build.mjs",
+    "build:prelaunch:domain": "node scripts/prelaunch/build.mjs --index",
     "check:prelaunch": "node scripts/prelaunch/check.mjs out-prelaunch",
     "serve:prelaunch": "node scripts/prelaunch/serve.mjs out-prelaunch",
     "dev:prelaunch": "cross-env NEXT_PUBLIC_PRELAUNCH=1 NEXT_DIST_DIR=.next-prelaunch-dev next dev",
