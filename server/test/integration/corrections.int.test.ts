@@ -85,7 +85,7 @@ describe('event corrections', { timeout: 300_000 }, () => {
   });
 
   afterAll(async () => {
-    createTestClock().reset();
+    await createTestClock(deps.sharedClock!).reset();
     await payload.delete({ collection: 'event-patches', where: { eventId: { like: run } }, overrideAccess: true, context: { t2fTrusted: true } });
     await removeTinyCatalog(payload, run);
     await removeAdmins(payload, [OWNER]);
@@ -101,13 +101,13 @@ describe('event corrections', { timeout: 300_000 }, () => {
     const before = await readCatalog(catalogStoreOf(deps));
     const journal0 = await maxId('audit-log');
     const events0 = await maxId('internal-events');
-    const clock = createTestClock();
-    clock.set({ at: Date.parse('2026-12-31T23:40:00Z'), frozen: true });
+    const clock = createTestClock(deps.sharedClock!);
+    await clock.set({ at: Date.parse('2026-12-31T23:40:00Z'), frozen: true });
     try {
       const res = await save({ [ev('c2')]: { moment: BASE + 30 * MIN } });
       expect(res.status, JSON.stringify(res.body)).toBe(200);
     } finally {
-      clock.reset();
+      await clock.reset();
     }
     const rows = await rowsAfter('audit-log', journal0, 'action', 'correction.save');
     expect(rows).toHaveLength(1);

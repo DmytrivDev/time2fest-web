@@ -62,10 +62,10 @@ describe('unattended mode', { timeout: 300_000 }, () => {
   let ud: UnattendedDeps;
   let bus: EventBus;
   let owner: Record<string, string>;
-  const clock = createTestClock();
+  const testClock = () => createTestClock(deps.sharedClock!);
   const alarmIds: string[] = [];
 
-  const at = (ms: number) => clock.set({ at: ms, frozen: true });
+  const at = (ms: number) => testClock().set({ at: ms, frozen: true });
   const tick = (ms: number) => evaluate(ud, null, ms);
   const maxId = async (collection: 'audit-log' | 'internal-events') =>
     Number(((await payload.find({ collection, sort: '-id', limit: 1, overrideAccess: true, depth: 0 })).docs[0] as Row | undefined)?.id ?? 0);
@@ -135,7 +135,7 @@ describe('unattended mode', { timeout: 300_000 }, () => {
 
   afterAll(async () => {
     await bus?.stop();
-    clock.reset();
+    if (deps) await testClock().reset();
     await payload.delete({ collection: UNATTENDED_WINDOWS, where: { label: { equals: run } }, overrideAccess: true, context: INTERNAL });
     if (alarmIds.length > 0) {
       await payload.update({
@@ -198,7 +198,7 @@ describe('unattended mode', { timeout: 300_000 }, () => {
     expect((await manual(true, personMark())).status).toBe(403);
     expect((await manual('yes')).status).toBe(400);
 
-    at(W2.s + H);
+    await at(W2.s + H);
     const off = await manual(false);
     expect(off.status, await off.clone().text()).toBe(200);
     expect(await state()).toMatchObject({ on: false, cause: 'manual', manualAt: W2.s + H });
@@ -206,7 +206,7 @@ describe('unattended mode', { timeout: 300_000 }, () => {
     expect((await tick(W2.e - S)).changed).toBe(false);
     expect((await tick(W2.e)).state).toMatchObject({ on: false, cause: null });
 
-    at(W2.e + H);
+    await at(W2.e + H);
     expect((await manual(true)).status).toBe(200);
     expect((await readUnattended(ud.store)).manualUntil).toBe(W3.s);
     expect((await tick(W3.s - S)).changed).toBe(false);
@@ -224,7 +224,7 @@ describe('unattended mode', { timeout: 300_000 }, () => {
 
   it('AC-34: a page alarm at T → T+14:59 off, T+15:00 on with the cause alarm and the actor system', async () => {
     const base = await marks();
-    at(T);
+    await at(T);
     await raise('a1');
     expect((await tick(T + 15 * MIN - S)).changed).toBe(false);
     expect((await tick(T + 15 * MIN)).state).toMatchObject({ on: true, cause: 'alarm' });
@@ -236,9 +236,9 @@ describe('unattended mode', { timeout: 300_000 }, () => {
   it('AC-35: +2 h of quiet → still on; acknowledging one of two → on; the last → off', async () => {
     const base = await marks();
     expect((await tick(T + 2 * H + 15 * MIN)).changed).toBe(false);
-    at(T + 2 * H + 20 * MIN);
+    await at(T + 2 * H + 20 * MIN);
     await raise('a2');
-    at(T + 2 * H + 30 * MIN);
+    await at(T + 2 * H + 30 * MIN);
     expect((await acknowledge(alarmIds[0] as string)).status).toBe(200);
     expect((await tick(T + 2 * H + 30 * MIN)).changed).toBe(false);
     expect((await acknowledge(alarmIds[1] as string)).status).toBe(200);
@@ -249,10 +249,10 @@ describe('unattended mode', { timeout: 300_000 }, () => {
   it('AC-35: a manual off ends the alarm-caused mode, and the open alarm does not turn it back on', async () => {
     const base = await marks();
     const T2 = T + 5 * H;
-    at(T2);
+    await at(T2);
     await raise('a3');
     expect((await tick(T2 + 15 * MIN)).state).toMatchObject({ on: true, cause: 'alarm' });
-    at(T2 + 20 * MIN);
+    await at(T2 + 20 * MIN);
     expect((await manual(false)).status).toBe(200);
     expect((await tick(T2 + 3 * H)).changed).toBe(false);
     expect(await state()).toMatchObject({ on: false, cause: 'manual' });
@@ -265,9 +265,9 @@ describe('unattended mode', { timeout: 300_000 }, () => {
   it('AC-32, AC-34: the ticker applies a due alarm by itself', async () => {
     const base = await marks();
     const T3 = T + 10 * H;
-    at(T3);
+    await at(T3);
     await raise('a4');
-    at(T3 + 15 * MIN);
+    await at(T3 + 15 * MIN);
     const ticker = startUnattendedTicker(deps, 100);
     try {
       expect(await waitFor(async () => (await state()).on, 5_000)).toBe(true);
@@ -285,7 +285,7 @@ describe('unattended mode', { timeout: 300_000 }, () => {
 
   it('AC-22: reverting a manual switch restores the mode before it, with a linked journal row and one event', async () => {
     const T4 = T + 20 * H;
-    at(T4);
+    await at(T4);
     const base = await marks();
     expect((await manual(true)).status).toBe(200);
     const row = (

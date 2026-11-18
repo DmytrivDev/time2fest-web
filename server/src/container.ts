@@ -25,7 +25,10 @@ import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapter
 import { parseAccessConfig } from './domain/access/config';
 import { parseRealtimeConfig } from './domain/realtime/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
-import { clockFor, realClock } from './clock';
+import { createPayloadClockStateStore } from './adapters/payloadClockState';
+import { createPayloadJournal } from './adapters/payloadJournal';
+import { clockFor, processClockCache, realClock } from './clock';
+import { createSharedClock, startClockRefresh, type ClockRefresh } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
 import type { AppEnv, Deps, EventPorts, RouteRow } from './endpoints/types';
@@ -60,6 +63,7 @@ const PAYLOAD_KEY = Symbol.for('t2f.payload');
 const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
 const BACKGROUND_KEY = Symbol.for('t2f.background');
 const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
+const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -146,9 +150,26 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const realtime = parseRealtimeConfig(raw, env.class);
   if (!realtime.ok) throw new Error(`env: invalid ${realtime.failing.join(', ')}`);
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
-  const clock = overrides.clock ?? clockFor(env.class);
   // The store reaches Payload lazily, so the alarm exists before Payload (which reports through it).
   let payloadRef: () => Promise<Payload> = () => Promise.reject(new Error('payload: not wired'));
+  const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
+  // Shared virtual time (SPEC-07 AC-49): test and rehearsal only, over the process cache. Its store
+  // has its own outbox publisher on real time, so the clock does not depend on itself.
+  const sharedClock =
+    env.class === 'production'
+      ? undefined
+      : (overrides.sharedClock ??
+        createSharedClock({
+          store: createPayloadClockStateStore({
+            payload: () => payloadRef(),
+            journal: createPayloadJournal(isRevertible),
+            publisher: createPgEventPublisher(() => payloadRef(), realClock, channel),
+            real: realClock,
+          }),
+          real: realClock,
+          cache: processClockCache(),
+        }));
+  const clock = overrides.clock ?? clockFor(env.class, sharedClock);
   const alarmStore = overrides.alarmStore ?? createPayloadAlarmStore(() => payloadRef(), clock);
   const alarm = overrides.alarm ?? createAlarm(log, alarmStore);
   const payload = overrides.payload ?? lazyPayload(alarm);
@@ -165,7 +186,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
-  const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
+  if (sharedClock) deps.sharedClock = sharedClock;
   deps.events = overrides.events ?? {
     publisher: createPgEventPublisher(payload, clock, channel),
     log: createPgEventLog(payload),
@@ -269,14 +290,32 @@ export function startUnattendedTicker(deps: Deps, intervalMs?: number): Ticker {
 }
 
 /**
- * Starts the process background once: the internal-events delivery loop (a failed start, database
- * down, is retried every 5 s) and the unattended-mode ticker. Only `instrumentation.ts` calls it.
+ * The clock refresh of one process (SPEC-07 AC-49, AC-50): loads the shared clock state now, then
+ * every `intervalMs` (default 5 s) as a fallback to the `clock.changed` subscriber. A failed refresh
+ * raises a log-level alarm (code only) and keeps the cache. Resolves to `undefined` in production
+ * (no shared clock). Processes that start no background (CLI, tests) call it, or `refresh()`, themselves.
+ */
+export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<ClockRefresh | undefined> {
+  const shared = deps.sharedClock;
+  if (!shared) return Promise.resolve(undefined);
+  return startClockRefresh(shared, {
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'clock', code: 'refresh_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    ...(intervalMs === undefined ? {} : { intervalMs }),
+  });
+}
+
+/**
+ * Starts the process background once. First the shared clock is loaded (so nothing below starts
+ * on a stale clock), then the internal-events delivery loop (a failed start, database down, is
+ * retried every 5 s) and the unattended-mode ticker. Only `instrumentation.ts` calls it.
  */
 export function startProcessBackground(): void {
-  const g = globalThis as unknown as Record<symbol, true | Ticker | undefined>;
+  const g = globalThis as unknown as Record<symbol, true | Ticker | ClockRefresh | undefined>;
   if (g[BACKGROUND_KEY]) return;
   g[BACKGROUND_KEY] = true;
-  g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
   const attempt = () => {
     const deps = getDeps();
     startBackground(deps).catch(() => {
@@ -284,7 +323,13 @@ export function startProcessBackground(): void {
       setTimeout(attempt, BACKGROUND_RETRY_MS).unref?.();
     });
   };
-  attempt();
+  const rest = (refresher?: ClockRefresh) => {
+    g[CLOCK_REFRESH_KEY] = refresher;
+    g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
+    attempt();
+  };
+  // A failed refresh is reported by the refresher itself; the rest starts in either case.
+  void startClockRefresher(getDeps()).then(rest, () => rest());
 }
 
 /** The lazy Payload accessor of deps built by `createDeps`. For the composition root and tests only. */

@@ -1,10 +1,28 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { clockFor, createTestClock, realClock, virtualNow } from '../../src/clock';
+import { clockFor, createTestClock, processClockCache, realClock, virtualNow } from '../../src/clock';
+import { initialState, type VirtualState } from '../../src/domain/timekeeping/virtual';
+import type { ClockStateStore } from '../../src/timekeeping/ports';
+import { createSharedClock } from '../../src/timekeeping/shared';
 
 const AT = Date.parse('2026-12-31T23:59:00.000Z');
 
-afterEach(() => {
-  createTestClock().reset();
+/** The clock-state store in memory (the Payload adapter is covered by `clock-shared.int.test.ts`). */
+function memoryStore(): ClockStateStore {
+  let stored: VirtualState = initialState(realClock.now());
+  return {
+    load: async () => stored,
+    async change(_actor, fn) {
+      stored = fn(stored, realClock.now());
+      return stored;
+    },
+  };
+}
+
+// The process cache is shared by every shared clock of this process, as in the server.
+const shared = createSharedClock({ store: memoryStore(), real: realClock, cache: processClockCache() });
+
+afterEach(async () => {
+  await createTestClock(shared).reset();
 });
 
 describe('server clock', () => {
@@ -16,33 +34,32 @@ describe('server clock', () => {
     expect(virtualNow(frozen, 999_999)).toBe(AT);
   });
 
-  it('set({ at }) moves now() to that instant, and the test view of clockFor follows', () => {
-    const clock = createTestClock();
-    clock.set({ at: AT });
+  it('set({ at }) moves now() to that instant, and the test view of clockFor follows', async () => {
+    const clock = createTestClock(shared);
+    await clock.set({ at: AT });
     expect(Math.abs(clock.now() - AT)).toBeLessThan(1_000);
     expect(Math.abs(clockFor('test').now() - AT)).toBeLessThan(1_000);
     expect(clock.state()).toMatchObject({ speed: 1, frozen: false });
 
-    clock.set({ frozen: true });
+    await clock.set({ frozen: true });
     const a = clock.now();
-    clock.set({ speed: 60 });
+    await clock.set({ speed: 60 });
     expect(clock.now()).toBe(a);
     expect(clock.state()).toMatchObject({ now: a, speed: 60, frozen: true });
   });
 
-  it('reset() returns to real time', () => {
-    const clock = createTestClock();
-    clock.set({ at: AT, speed: 60, frozen: true });
-    clock.reset();
+  it('reset() returns to real time', async () => {
+    const clock = createTestClock(shared);
+    await clock.set({ at: AT, speed: 60, frozen: true });
+    await clock.reset();
     expect(Math.abs(clock.now() - realClock.now())).toBeLessThan(1_000);
     expect(clock.state()).toMatchObject({ speed: 1, frozen: false });
   });
 
-  it('AC-41: clockFor(production) is the real clock and exposes no setter', () => {
-    createTestClock().set({ at: AT, frozen: true });
-    const clock = clockFor('production');
+  it('AC-41: clockFor(production) is the real clock and exposes no setter', async () => {
+    await createTestClock(shared).set({ at: AT, frozen: true });
+    const clock = clockFor('production', shared);
     expect(clock).toBe(realClock);
-    expect(clockFor('rehearsal')).toBe(realClock);
     expect('set' in clock).toBe(false);
     expect(Math.abs(clock.now() - realClock.now())).toBeLessThan(1_000);
     expect(() => {

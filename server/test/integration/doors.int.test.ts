@@ -3,8 +3,11 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createTestClock } from '../../src/clock';
-import { buildDispatcher, createDeps, createLockState, seedStoreOf } from '../../src/container';
+import { createPayloadClockStateStore } from '../../src/adapters/payloadClockState';
+import { createTestClock, realClock } from '../../src/clock';
+import { buildDispatcher, createDeps, createLockState, payloadOf, seedStoreOf } from '../../src/container';
+import { initialState } from '../../src/domain/timekeeping/virtual';
+import { createSharedClock } from '../../src/timekeeping/shared';
 import { createDispatcher } from '../../src/endpoints/pipeline';
 import { inactiveEdgeGate } from '../../src/platform/edge';
 import type { Deps } from '../../src/endpoints/types';
@@ -49,9 +52,12 @@ async function clockState(dispatch: (r: Request) => Promise<Response>) {
 const setClock = (dispatch: (r: Request) => Promise<Response>, body: unknown) =>
   dispatch(new Request(`${BASE}/api/_test/clock`, { method: 'POST', body: JSON.stringify(body), headers: JSON_TYPE }));
 
+/** The test clock over the shared clock of this process (every `test` deps set shares its cache). */
+const testClock = () => createTestClock(depsFor('test').sharedClock!);
+
 describe('test doors', () => {
-  afterEach(() => {
-    createTestClock().reset();
+  afterEach(async () => {
+    await testClock().reset();
   });
 
   it('AC-35: at set with speed 1 → /api/time starts at `at` and advances', async () => {
@@ -194,16 +200,33 @@ describe('test doors', () => {
     const unknown = await dispatch(new Request(`${BASE}/api/nope`));
     expect(missing.status).toBe(404);
     expect(await missing.text()).toBe(await unknown.text());
-    // Even a moved test clock does not reach the rehearsal clock.
-    createTestClock().set({ at: Date.parse('2030-01-01T00:00:00Z'), frozen: true });
+    // While the shared clock is real, rehearsal time is real time. (SPEC-07 AC-1: a virtual clock set
+    // for this environment does reach rehearsal — only through its own store, never a door.)
     expect(Math.abs((await now(dispatch)) - Date.now())).toBeLessThanOrEqual(2_000);
     expect(routeRegistry.every((r) => !r.path.startsWith('/api/_test/'))).toBe(true);
+  });
+
+  it('SPEC-07 W14: the door state persists across two dispatchers and is stored, not only cached', async () => {
+    const at = Date.parse('2030-06-01T00:00:00Z');
+    const first = await buildDispatcher(depsFor('test'));
+    expect((await setClock(first, { at, speed: 60, frozen: true })).status).toBe(200);
+    const second = await buildDispatcher(depsFor('test'));
+    expect(await clockState(second)).toEqual({ now: at, speed: 60, frozen: true });
+    // A process with an empty cache (a restart) reads the same state from the store.
+    const stored = createSharedClock({ store: createPayloadClockStateStore({
+      payload: payloadOf(depsFor('test')),
+      journal: { append: async () => {} },
+      publisher: { publish: async () => ({ version: 0 }) },
+      real: realClock,
+    }), real: realClock, cache: { state: initialState(0) } });
+    await stored.refresh();
+    expect(stored.view()).toEqual({ now: at, speed: 60, frozen: true });
   });
 
   it('AC-39 (reset half): after reset the clock is real time, speed 1, not frozen', async () => {
     const dispatch = await buildDispatcher(depsFor('test'));
     expect((await setClock(dispatch, { at: Date.parse('2031-01-01T00:00:00Z'), speed: 600, frozen: true })).status).toBe(200);
-    createTestClock().reset();
+    await testClock().reset();
     const state = await clockState(dispatch);
     expect(state.speed).toBe(1);
     expect(state.frozen).toBe(false);

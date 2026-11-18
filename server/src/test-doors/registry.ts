@@ -120,7 +120,7 @@ export const doorRegistry: readonly DoorRow[] = [
     path: '/api/_test/clock',
     body: TestClockSetSchema,
     async handler(ctx, { clock }) {
-      clock.set(ctx.body as TestClockSet);
+      await clock.set(ctx.body as TestClockSet);
       return { ok: true, value: clock.state() };
     },
   },

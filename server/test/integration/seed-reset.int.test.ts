@@ -65,8 +65,8 @@ async function keys(): Promise<string[]> {
   return found.docs.map((d) => d.key);
 }
 
-afterEach(() => {
-  createTestClock().reset();
+afterEach(async () => {
+  await createTestClock(deps.sharedClock!).reset();
 });
 
 afterAll(async () => {
@@ -89,7 +89,7 @@ describe('seed, reset and fixtures', () => {
     await payload.create({ collection: COLLECTION, data: { key: 'stray:row', status: 'running' }, overrideAccess: true });
     await redis.set('seedtest:one', '1', 60_000);
     await redis.set('seedtest:two', '2', 60_000);
-    createTestClock().set({ at: Date.parse('2026-12-31T23:59:00Z'), frozen: true });
+    await createTestClock(deps.sharedClock!).set({ at: Date.parse('2026-12-31T23:59:00Z'), frozen: true });
 
     // The same prefix in a database that belongs to no worktree, and a foreign prefix in our own database.
     const foreignDb = rawClient(await foreignDbIndex(), PREFIX);
@@ -111,7 +111,7 @@ describe('seed, reset and fixtures', () => {
       expect(await ownDbRaw.get(foreignPrefixKey)).toBe('x');
       expect(await keys()).toEqual(['seed:test:a', 'seed:test:b']);
       expect(Math.abs(deps.clock.now() - Date.now())).toBeLessThanOrEqual(2_000);
-      expect(createTestClock().state()).toMatchObject({ speed: 1, frozen: false });
+      expect(createTestClock(deps.sharedClock!).state()).toMatchObject({ speed: 1, frozen: false });
     } finally {
       await foreignDb.del('seedtest:foreign').catch(() => 0);
       await ownDbRaw.del(foreignPrefixKey).catch(() => 0);
