@@ -114,13 +114,42 @@ describe('POST /clock refusals', () => {
     expect(resolved).toBe(0);
   });
 
-  it('S07-02: a missing, malformed or over-1 KB content-length → 400 before the body is read', async () => {
+  it('S07-02: a malformed or over-1 KB content-length → 400 before the body is read', async () => {
     reads = 0;
-    for (const length of [null, 'abc', '1025', '99999999999']) {
+    for (const length of ['abc', '1025', '99999999999']) {
       expect(await call(req({ length }))).toEqual({ status: 400, body: { ok: false, error: { code: 'validation' } } });
     }
     expect(reads).toBe(0);
     expect(resolved).toBe(0);
+  });
+
+  it('S07-02: without content-length the body stream is read at most 1 KB + 1 and an over-limit body → 400', async () => {
+    let pulled = 0;
+    const big = new TextEncoder().encode('x'.repeat(600));
+    const stream = new ReadableStream<Uint8Array>({
+      pull(c) {
+        pulled += big.byteLength;
+        c.enqueue(big); // never closes: the reader must stop on its own at the limit
+      },
+    });
+    const r = { ...req({ length: null }), body: stream } as unknown as PayloadRequest;
+    expect(await call(r)).toEqual({ status: 400, body: { ok: false, error: { code: 'validation' } } });
+    expect(pulled).toBeLessThanOrEqual(1800);
+    expect(resolved).toBe(0);
+  });
+
+  it('S07-02: without content-length a small valid body is accepted (re-wrapped request)', async () => {
+    const body = JSON.stringify({ action: 'real' });
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(new TextEncoder().encode(body));
+        c.close();
+      },
+    });
+    resolved = 0;
+    const r = { ...req({ length: null }), body: stream } as unknown as PayloadRequest;
+    await call(r).catch(() => undefined);
+    expect(resolved).toBe(1); // passed body validation and reached deps
   });
 
   it('S07-01: an instant beyond the schema bound (> 8.64e15) or a fraction → 400 validation', async () => {

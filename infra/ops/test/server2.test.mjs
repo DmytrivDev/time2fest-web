@@ -25,7 +25,7 @@ const REDIS_PASS = 'redis-fake-password-5678'; // check-secrets: allow test fake
 const API_KEY = 'centrifugo-fake-api-key-abcdefghijklmnop'; // check-secrets: allow test fake
 const SERVER_ENV = [
   '# коментар лишається',
-  `DATABASE_URI=postgres://t2f:${PG_PASS}@postgres:5432/t2f_rehearsal`,
+  `DATABASE_URI=postgres://t2f:${PG_PASS}@postgres:5432/t2f_rehearsal`, // check-secrets: allow test fake
   `REDIS_URL=redis://:${REDIS_PASS}@redis:6379/0`,
   'T2F_REDIS_PREFIX=t2f_rehearsal',
   'T2F_CENTRIFUGO_URL=http://centrifugo:9000',
@@ -247,7 +247,7 @@ describe('server2: похідний server.env', () => {
     const r = deriveServer2Env(SERVER_ENV, '10.114.0.2');
     if (!r.ok) throw new Error(r.message);
     expect(r.replaced).toEqual(['DATABASE_URI', 'REDIS_URL', 'T2F_CENTRIFUGO_URL']);
-    expect(r.text).toContain(`DATABASE_URI=postgres://t2f:${PG_PASS}@10.114.0.2:5432/t2f_rehearsal`);
+    expect(r.text).toContain(`DATABASE_URI=postgres://t2f:${PG_PASS}@10.114.0.2:5432/t2f_rehearsal`); // check-secrets: allow test fake
     expect(r.text).toContain(`REDIS_URL=redis://:${REDIS_PASS}@10.114.0.2:6379/0`);
     expect(r.text).toContain('T2F_CENTRIFUGO_URL=http://10.114.0.2:9000');
     const keep = (/** @type {string} */ s) => s.split('\n').filter((l) => !/^(DATABASE_URI|REDIS_URL|T2F_CENTRIFUGO_URL)=/.test(l));

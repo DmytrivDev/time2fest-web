@@ -17,7 +17,8 @@ import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { festivalDepsOf } from '../../src/adapters/processDeps';
 import { createTestClock } from '../../src/clock';
-import { payloadOf } from '../../src/container';
+import { payloadOf, seedStoreOf } from '../../src/container';
+import { baseSeedRows, runSeed } from '../../src/seed/index';
 import type { Deps } from '../../src/endpoints/types';
 import { festivalState } from '../../src/scheduler/festival';
 import { CLOCK_CHANGE_ACTION } from '../../src/timekeeping/ports';
@@ -77,6 +78,9 @@ describe('clock control and the festival slice', { timeout: 120_000 }, () => {
   beforeAll(async () => {
     deps = testDeps();
     payload = await payloadOf(deps)();
+    // The slice reads the season catalog: seed it here (idempotent) instead of relying on what an
+    // earlier file left in the shared test database (catalog-seed wipes and re-seeds it).
+    await runSeed(seedStoreOf(deps), baseSeedRows());
     await testClock().reset();
     await makeAdmin(payload, OWNER, PASSWORD, 'owner');
     const agentId = await makeAdmin(payload, AGENT, PASSWORD, 'content-agent');

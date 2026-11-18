@@ -35,15 +35,36 @@ const fail = (code: Code) => Response.json({ ok: false, error: { code } }, { sta
 /** Owner who passed the Access gate (or a server-side call carrying an owner user). */
 const isOwner = (req: PayloadRequest) => passedGate(req) && roleOf(req.user) === 'owner';
 
+/** The body as text, read at most `MAX_BODY_BYTES + 1` bytes; `null` when it is longer than the limit. */
+async function boundedText(req: PayloadRequest): Promise<string | null> {
+  const body = (req as { body?: ReadableStream<Uint8Array> | null }).body;
+  if (!body || typeof body.getReader !== 'function') return req.text ? req.text() : '';
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > MAX_BODY_BYTES) {
+      await reader.cancel().catch(() => undefined);
+      return null;
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 /** The parsed C9 body, or `null` (wrong type, empty, over 1 KB, not JSON, not the strict schema). */
 async function clockBodyOf(req: PayloadRequest) {
   if (!hasJsonContentType(req)) return null;
-  // S07-02: refuse before reading when the declared length is missing, not a number or over the limit.
+  // S07-02: a declared length over the limit (or malformed) is refused before reading; without a declared
+  // length (the request may arrive re-wrapped by Next/Payload) the body is read as a stream and cut at the limit.
   const declared = req.headers.get('content-length');
-  if (declared === null || !/^\d{1,9}$/.test(declared) || Number(declared) > MAX_BODY_BYTES) return null;
+  if (declared !== null && (!/^\d{1,9}$/.test(declared) || Number(declared) > MAX_BODY_BYTES)) return null;
   try {
-    const text = req.text ? await req.text() : '';
-    if (text.length === 0 || Buffer.byteLength(text, 'utf8') > MAX_BODY_BYTES) return null;
+    const text = await boundedText(req);
+    if (text === null || text.length === 0 || Buffer.byteLength(text, 'utf8') > MAX_BODY_BYTES) return null;
     const parsed = ClockControlBodySchema.safeParse(JSON.parse(text));
     return parsed.success ? parsed.data : null;
   } catch {
@@ -58,6 +79,9 @@ function festivalStateEndpoint(resolve: () => Promise<Deps>): Endpoint {
     handler: async (req) => {
       if (!isOwner(req)) return fail('forbidden');
       const deps = await resolve();
+      // The owner's view is authoritative: re-read the shared clock instead of trusting this process's cache
+      // (a process without the background refresher, or a change made a moment ago on another instance).
+      await deps.sharedClock?.refresh().catch(() => undefined);
       const view = await festivalState(festivalDepsOf(deps, async () => req.payload));
       return Response.json({ ok: true, value: view }, { headers: NO_STORE });
     },
