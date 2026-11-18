@@ -23,7 +23,9 @@ const baseURL = process.env.T2F_E2E_BASE ?? (port ? `http://127.0.0.1:${port}` :
 // NFR-4: the time machine now moves ONE shared server clock, so every spec that uses it runs serially in `server-clock`
 // and nowhere else. Two invocations (the serial one first):
 //   npx playwright test -c playwright.http.config.ts --project=server-clock --workers=1
-//   npx playwright test -c playwright.http.config.ts --project=phone --project=desktop --workers=2
+//   npx playwright test -c playwright.http.config.ts --project=phone --project=desktop --workers=1
+// Many other domain specs also set the time machine (`?t=`, `gotoAt`) and so move the same server clock: in this
+// config every project runs on ONE worker (two parallel workers made them overwrite each other's clock).
 // `server-clock` needs T2F_E2E_SERVER=http://127.0.0.1:<server port> (test doors answer on loopback only).
 // `edge-offline` is a separate project against a production-mode edge: see tests/e2e/edge-offline/server-stopped.spec.ts.
 //
@@ -37,8 +39,8 @@ const edgeOffline = new RegExp(`${E2E}edge-offline.[^.]*[.]spec[.]ts$`);
 export default defineConfig({
   testDir: './tests/e2e',
   testIgnore: /.*\.prod\.spec\.ts/,
-  workers: 2,
-  fullyParallel: true,
+  workers: 1,
+  fullyParallel: false,
   reporter: [['list']],
   use: { trace: 'retain-on-failure', baseURL },
   projects: [
