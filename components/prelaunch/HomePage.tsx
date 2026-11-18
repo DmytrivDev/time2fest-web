@@ -25,8 +25,9 @@ export function HomePage({ site }: { site: SiteData }) {
       <PrefestMap />
       <NightWalk />
       <WhatIs />
-      <CountryCards />
+      {/* Пас — над «Як зустрічають Новий рік у світі» (рішення власника 2026-11-18). */}
       <PassBlock />
+      <CountryCards />
       <PrefestFaq />
     </SiteShell>
   );

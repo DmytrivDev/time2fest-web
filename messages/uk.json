@@ -486,7 +486,7 @@
       "celebrateLine": "{place} зустрічає {year}",
       "fullscreen": "Сцена на весь екран",
       "exitFullscreen": "Вийти з повного екрана",
-      "daysShort": "д"
+      "countdownSpokenDays": "{d, plural, one {# день} few {# дні} many {# днів} other {# дня}} {h, plural, one {# година} few {# години} many {# годин} other {# години}} {m, plural, one {# хвилина} few {# хвилини} many {# хвилин} other {# хвилини}} {s, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}"
     },
     "timerUntil": "до півночі",
     "timerYear": "Новий рік",
@@ -2901,24 +2901,11 @@
       "ticketTitle": "НОВОРІЧНИЙ ПАС",
       "ticketSeason": "СЕЗОН"
     },
-    "legal": {
-      "updated": "Оновлено: {date}",
-      "short": "Коротко",
-      "toc": "Зміст",
-      "other": "Інші документи",
-      "prevails": "У разі розбіжностей діє англійська версія.",
-      "terms": "Умови користування",
-      "privacy": "Політика конфіденційності",
-      "cookies": "Cookies"
-    },
     "notFound": {
       "title": "Такої сторінки немає",
       "text": "Можливо, адреса змінилась або в ній помилка. Ось куди можна піти:",
       "home": "На головну",
       "countries": "Усі країни"
-    },
-    "nav": {
-      "map": "Хто зустрічає Новий рік першим: мапа часових поясів"
     },
     "overrides": {
       "common": {

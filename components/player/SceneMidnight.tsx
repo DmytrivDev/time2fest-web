@@ -94,19 +94,33 @@ export function SceneYear({ year }: { year: number }) {
   );
 }
 
-/** Великий відлік до півночі на сцені. */
 /**
- * `days` (передстартовий сайт, до свята місяць): понад добу — «29 д 23:59:59» тим самим шрифтом і кольором; без нього, як і
- * досі, лише год:хв:с (у ніч свята до півночі завжди менше доби).
+ * Рядок цифр відліку сцени — один формат для всіх місць: «23:59:59»; з `days` (передстартовий сайт, до свята місяць)
+ * понад добу — «29:23:59:59» (дні без провідного нуля; рішення власника 2026-11-18: без літери «д»). Частини — для
+ * тексту читачам екрана.
  */
+export function sceneCountdownParts(left: number, days = false): { text: string; d: number; h: number; m: number; s: number } {
+  const total = Math.max(0, Math.ceil(left / 1_000));
+  const d = days ? Math.floor(total / 86_400) : 0;
+  const rest = total - d * 86_400;
+  const h = Math.floor(rest / 3_600);
+  const m = Math.floor((rest % 3_600) / 60);
+  const sec = rest % 60;
+  const p = (n: number) => String(n).padStart(2, '0');
+  return { text: d > 0 ? `${d}:${p(h)}:${p(m)}:${p(sec)}` : hms(left), d, h, m, s: sec };
+}
+
+/** Великий відлік до півночі на сцені. */
 export function SceneCountdown({ left, days = false }: { left: number; days?: boolean }) {
   const t = useTranslations('player.scene');
-  const d = days ? Math.floor(Math.max(0, Math.ceil(left / 1_000)) / 86_400) : 0;
+  const parts = sceneCountdownParts(left, days);
+  // Понад добу (лише з `days`) — читачам екрана словами: «29 днів 23 години 59 хвилин 59 секунд».
+  const spoken = parts.d > 0 ? t('countdownSpokenDays', { d: parts.d, h: parts.h, m: parts.m, s: parts.s }) : undefined;
   return (
     <div className="flex flex-col" data-scene-countdown="">
       <span className="text-label-sm uppercase tracking-wide text-text-secondary">{t('countdownLabel')}</span>
-      <span className={cn('font-extrabold leading-none tabular-nums text-highlight', fx.glow)} style={{ fontSize: 'max(1.75rem, 7.5cqw)' }}>
-        {d > 0 ? `${d} ${t('daysShort')} ${hms(left - d * 86_400_000)}` : hms(left)}
+      <span className={cn('font-extrabold leading-none tabular-nums text-highlight', fx.glow)} style={{ fontSize: 'max(1.75rem, 7.5cqw)' }} {...(spoken ? { 'aria-label': spoken } : {})}>
+        {parts.text}
       </span>
     </div>
   );

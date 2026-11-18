@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/prelaunch/JsonLd';
 import { LegalPage } from '@/components/prelaunch/LegalPage';
-import { loadLegal } from '@/lib/prelaunch/legal';
+import { LEGAL_IDS, loadLegal } from '@/lib/prelaunch/legal';
 import { localeOf, type LocaleParams } from '@/lib/prelaunch/params';
 import { pageMetadata } from '@/lib/prelaunch/seo';
 import { siteData } from '@/lib/prelaunch/siteData';
@@ -15,7 +15,11 @@ export default async function Page({ params }: { params: LocaleParams }) {
   return (
     <>
       <JsonLd locale={locale} page="privacy" />
-      <LegalPage site={siteData(locale)} doc={loadLegal('privacy', locale)} />
+      <LegalPage
+        site={siteData(locale)}
+        doc={loadLegal('privacy', locale)}
+        docs={LEGAL_IDS.map((id) => loadLegal(id, locale))}
+      />
     </>
   );
 }

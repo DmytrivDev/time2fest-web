@@ -187,7 +187,8 @@ describe('тексти', () => {
     // Правки головної (`prelaunch.prefest`, `prelaunch.nav`) діють і англійською.
     const enSet = localeMessages('en', { uk: uk as never, en: en as never });
     expect((enSet.prefest as Record<string, Record<string, string>>).faq?.q5).toMatch(/first/i);
-    expect((enSet.nav as Record<string, string>).map).toMatch(/first/i);
+    // Заголовок мапи — наявний «Мапа поясів» (рішення власника 2026-11-18: без «хто зустрічає першим»).
+    expect((enSet.nav as Record<string, string>).map).not.toMatch(/first/i);
     const fr = localeMessages('fr', { uk: uk as never, en: en as never, fr: {} });
     expect((fr.prelaunch as Record<string, Record<string, string>>).header?.home).toBe(
       (en as never as { prelaunch: { header: { home: string } } }).prelaunch.header.home,
@@ -289,7 +290,7 @@ describe('рішення власника 2026-11-18 (SEO)', () => {
   });
 
   it('заголовок мапи й два нові питання FAQ — лише в мовному дереві', () => {
-    expect((source.nav as Record<string, string>).map).toMatch(/першим/);
+    expect((source.nav as Record<string, string>).map).toBe('Мапа поясів');
     expect((uk as never as { nav: { map: string } }).nav.map).toBe('Мапа поясів');
     const faq = (source.prefest as Record<string, Record<string, string>>).faq!;
     expect(faq.q5).toBeTruthy();
@@ -306,5 +307,16 @@ describe('одне правило індексації сторінки краї
     expect(countryIndexable('AD', ['en', 'uk'])).toBe(false);
     // Іспанська показує англійську розповідь, але власної ще немає — сторінка закрита.
     expect(countryIndexable('JP', ['en', 'uk', 'es'])).toBe(false);
+  });
+});
+
+describe('відлік сцени понад добу', () => {
+  it('«29:23:59:59» без літери; менше доби — як і досі', async () => {
+    const { sceneCountdownParts } = await import('@/components/player/SceneMidnight');
+    const day = 86_400_000;
+    expect(sceneCountdownParts(29 * day + 23 * 3_600_000 + 59 * 60_000 + 59_000, true).text).toBe('29:23:59:59');
+    expect(sceneCountdownParts(5 * 60_000, true).text).toBe('00:05:00');
+    // Сайт свята (без `days`) — без змін: години понад добу.
+    expect(sceneCountdownParts(2 * day, false).text).toBe('48:00:00');
   });
 });

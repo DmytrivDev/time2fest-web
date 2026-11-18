@@ -672,16 +672,6 @@
       "ticketTitle": "NEW YEAR PASS",
       "ticketSeason": "SEASON"
     },
-    "legal": {
-      "updated": "Updated: {date}",
-      "short": "In short",
-      "toc": "Contents",
-      "other": "Other documents",
-      "prevails": "If there are any discrepancies, the English version prevails.",
-      "terms": "Terms of Use",
-      "privacy": "Privacy Policy",
-      "cookies": "Cookies"
-    },
     "notFound": {
       "title": "There’s no such page",
       "text": "The address may have changed or have a typo. Here’s where you can go:",
@@ -719,9 +709,6 @@
         "clockKicker": "Your time"
       }
     },
-    "nav": {
-      "map": "Who celebrates New Year first: time zone map"
-    },
     "overrides": {
       "player": {
         "scene": {
@@ -742,7 +729,6 @@
   },
   "player": {
     "scene": {
-      "daysShort": "d",
       "caption": "Time2Fest countdown scene · no stream here",
       "expected": "The stream will start on its own as soon as it appears",
       "expectedNote": "countdown scene · local time {time}",
@@ -765,7 +751,8 @@
       "happyNewYear": "Happy New Year!",
       "celebrateLine": "{place} welcomes {year}",
       "fullscreen": "Full-screen scene",
-      "exitFullscreen": "Exit full screen"
+      "exitFullscreen": "Exit full screen",
+      "countdownSpokenDays": "{d, plural, one {# day} other {# days}} {h, plural, one {# hour} other {# hours}} {m, plural, one {# minute} other {# minutes}} {s, plural, one {# second} other {# seconds}}"
     }
   },
   "pass": {
@@ -992,5 +979,16 @@
       "mineLockedButton": "What else the pass gives",
       "mineLockedGet": "Get the pass · {price}"
     }
+  },
+  "legal": {
+    "docsLabel": "Documents",
+    "updated": "Updated {date}",
+    "short": "In short.",
+    "toc": "Contents",
+    "copyLink": "Copy link to section “{title}”",
+    "copied": "Link to section copied",
+    "other": "Other documents",
+    "ask": "Still have questions? <link>Write to us</link>.",
+    "toTop": "Back to top"
   }
 }

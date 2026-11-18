@@ -87,6 +87,8 @@ export interface PrefestModelOptions {
   mainCityId?: (iso: string) => string | undefined;
   /** Український текст (місто, пам’ятка) → мовою сторінки. */
   label?: (uk: string) => string;
+  /** Головні місця розкладу (за замовчуванням — `MAIN_CELEBRATIONS`). */
+  celebrations?: typeof MAIN_CELEBRATIONS;
 }
 
 /**
@@ -191,11 +193,12 @@ export function buildPrefestModel(data: Dataset, options: PrefestModelOptions = 
 
   // Назви міст у константах — українські; у мовному дереві каталог уже перекладено, тож місто шукаємо через `label`.
   const cityIdByName = new Map<string, string>();
-  for (const e of MAIN_CELEBRATIONS) {
+  const mainCelebrations = options.celebrations ?? MAIN_CELEBRATIONS;
+  for (const e of mainCelebrations) {
     const city = data.cities.find((x) => x.countryIso === e.iso && x.zoneId === e.zoneId && x.name.uk === label(e.city));
     if (city) cityIdByName.set(`${e.iso}|${e.city}`, city.id);
   }
-  const celebrations: MainCelebration[] = MAIN_CELEBRATIONS.flatMap((e) => {
+  const celebrations: MainCelebration[] = mainCelebrations.flatMap((e) => {
     const z = zonesById.get(e.zoneId);
     const c = countriesByIso.get(e.iso);
     if (!z || !c) return [];

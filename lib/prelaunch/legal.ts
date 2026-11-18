@@ -4,34 +4,30 @@
  *
  *   # Назва
  *   - **id:** … · **адреса:** …
+ *   - **у перемикачі:** Назва · **коротко про що:** …   ← назва в навігації й «Інших документах»
  *   - **оновлено:** 1 грудня 2026            ← останній рядок переліку — дата
  *   **Коротко.** Один абзац.
  *   ## Розділ {#id}
  *   абзаци, списки `- ` і `1. `, таблиці `| … |`, **жирний**, [посилання](/шлях/)
  *
- * Читається з диска під час збирання (лише на сервері). Місця у `[[подвійних дужках]]` — незаповнені: перевірка
+ * Розбір перетворює текст у формат наявної сторінки документів сайту (`LegalDoc` з `lib/legal/docs.ts`), а показує
+ * його наявний вигляд (`components/legal/LegalDocView`). Читається з диска під час збирання (лише на сервері). Місця у `[[подвійних дужках]]` — незаповнені: перевірка
  * збірки для домену рахує їх як заглушки.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
+import type { LegalBlock, LegalDoc as SiteLegalDoc } from '@/lib/legal/docs';
 
 export const LEGAL_IDS = ['privacy', 'cookies', 'terms'] as const;
 export type LegalId = (typeof LEGAL_IDS)[number];
 
-export type LegalBlock =
-  | { kind: 'p'; text: string }
-  | { kind: 'ul' | 'ol'; items: string[] }
-  | { kind: 'table'; head: string[]; rows: string[][] };
+export type { LegalBlock };
 
-export interface LegalDoc {
+/** Документ у форматі сайту + мова тексту (може відрізнятись від мови сторінки, якщо перекладу ще немає). */
+export interface LegalDoc extends SiteLegalDoc {
   id: LegalId;
-  /** Мова тексту (може відрізнятись від мови сторінки, якщо перекладу ще немає). */
   locale: Locale;
-  title: string;
-  updated: string;
-  short: string;
-  sections: { id: string; title: string; blocks: LegalBlock[] }[];
 }
 
 const DIR = path.join(process.cwd(), 'content', 'prelaunch', 'legal');
@@ -41,7 +37,18 @@ export function parseLegal(id: LegalId, locale: Locale, source: string): LegalDo
     .replace(/\r\n/g, '\n')
     .replace(/<!--[\s\S]*?-->/g, '')
     .split('\n');
-  const doc: LegalDoc = { id, locale, title: '', updated: '', short: '', sections: [] };
+  const doc: LegalDoc = {
+    id,
+    locale,
+    href: `/${id}/`,
+    tab: '',
+    about: '',
+    title: '',
+    updated: '',
+    short: '',
+    sections: [],
+  };
+  let metaWithParts = 0;
   let blocks: LegalBlock[] | null = null;
   let para: string[] = [];
   const flush = () => {
@@ -69,6 +76,18 @@ export function parseLegal(id: LegalId, locale: Locale, source: string): LegalDo
       // Службові рядки над першим розділом: з них потрібна лише дата (останній пункт переліку).
       const meta = /^- \*\*[^*]+:\*\*\s*(.+)$/.exec(line);
       if (meta && !line.includes('·')) doc.updated = meta[1]!.trim();
+      else if (meta) {
+        // Другий рядок із «·» — назва в перемикачі й «коротко про що».
+        metaWithParts += 1;
+        if (metaWithParts === 2) {
+          const values = line
+            .slice(2)
+            .split(' · ')
+            .map((p) => p.replace(/^\*\*[^*]+:\*\*\s*/, '').trim());
+          doc.tab = values[0] ?? '';
+          doc.about = values[1] ?? '';
+        }
+      }
       else if (!line.startsWith('- ')) {
         if (line.trim() === '') flush();
         else para.push(line.trim());
@@ -109,6 +128,7 @@ export function parseLegal(id: LegalId, locale: Locale, source: string): LegalDo
     para.push(line.trim());
   }
   flush();
+  if (!doc.tab) doc.tab = doc.title;
   return doc;
 }
 

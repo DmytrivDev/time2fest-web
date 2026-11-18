@@ -286,27 +286,6 @@
 .head {
   padding-top: 56px;
 }
-.crumbs {
-  list-style: none;
-  margin: 0 0 20px;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--color-text-muted);
-}
-.crumbs li + li::before {
-  content: '›';
-  margin-right: 8px;
-}
-.crumbs a {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-}
-.crumbs a:hover {
-  color: var(--color-text);
-}
 .h1 {
   font-size: 52px;
   line-height: 1.05;
@@ -317,32 +296,12 @@
   font-style: normal;
   color: var(--color-highlight);
 }
-.h1Row {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 .lead {
   font-size: 19px;
   line-height: 1.5;
   color: var(--color-text-secondary);
   margin-top: 16px !important;
   max-width: 720px;
-}
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-on-highlight);
-  background: var(--color-highlight);
-  border-radius: 999px;
-  padding: 6px 12px;
-  margin-bottom: 18px;
-}
-.sec {
-  padding-top: 72px;
 }
 .note {
   font-size: 15px;
@@ -353,9 +312,6 @@
   .h1 {
     font-size: 44px;
   }
-  .sec {
-    padding-top: 64px;
-  }
 }
 @media (max-width: 767.98px) {
   .head {
@@ -364,377 +320,18 @@
   .h1 {
     font-size: 32px;
   }
-  .h1Row {
-    gap: 14px;
-  }
   .lead {
     font-size: 16px;
     margin-top: 12px !important;
   }
-  .sec {
-    padding-top: 48px;
-  }
 }
 
-/* ── Картки-плитки (факти, можливості, кроки) ── */
-.tiles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 28px;
-}
-.tiles4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-.tiles5 {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-.tile {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-.tile h3,
-.tileTitle {
-  font-size: 17px;
-  line-height: 1.3;
-  font-weight: 700;
-}
-.tile p {
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-}
-.ic {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  background: var(--color-surface-raised);
-  display: grid;
-  place-items: center;
-  color: var(--color-highlight);
-  margin-bottom: 4px;
-}
-.kicker {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.big {
-  font-size: 40px;
-  line-height: 1.05;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--color-highlight);
-  font-variant-numeric: tabular-nums;
-}
-.sub {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-}
-@media (max-width: 1199.98px) {
-  .tiles5 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (max-width: 1023.98px) {
-  .tiles,
-  .tiles4,
-  .tiles5 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 767.98px) {
-  .tiles,
-  .tiles4,
-  .tiles5 {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    margin-top: 20px;
-  }
-  .tile {
-    padding: 18px;
-  }
-  .big {
-    font-size: 34px;
-  }
-}
-
-/* Відлік сторінки країни. */
-.cd {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-.cd div {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.cd b {
-  font-size: 32px;
-  line-height: 1.1;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-.cd span {
-  font-size: 12px;
-  color: var(--color-text-muted);
-}
-
-/* ── Пояси країни ── */
-.zones {
-  list-style: none;
-  margin: 24px 0 0;
-  padding: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-}
-.zones li {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: 16px;
-  align-items: center;
-  padding: 14px 20px;
-  font-size: 15px;
-}
-.zones li + li {
-  border-top: 1px solid var(--color-border);
-}
-.zones b {
-  font-weight: 700;
-}
-.zoneUtc {
-  color: var(--color-text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-.zoneTime {
-  text-align: right;
-  color: var(--color-text-secondary);
-}
-.zoneTime b {
-  color: var(--color-highlight);
-}
-.zoneMain {
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  background: var(--color-surface-raised);
-  border-radius: 999px;
-  padding: 2px 8px;
-}
-@media (max-width: 767.98px) {
-  .zones li {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 4px 12px;
-    padding: 12px 16px;
-  }
-  .zoneTime {
-    grid-column: 1 / -1;
-    text-align: left;
-  }
-}
-
-/* ── Розповідь про країну ── */
-.story {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 32px;
-  align-items: center;
-  margin-top: 28px;
-}
-.storyText {
-  font-size: 19px;
-  line-height: 1.6;
-}
-.photo {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-}
-@media (max-width: 1023.98px) {
-  .story {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-  }
-}
-@media (max-width: 767.98px) {
-  .storyText {
-    font-size: 16px;
-  }
-}
-
-/* ── Панель «наживо 31 грудня», «продаж згодом» ── */
-.panel {
-  margin-top: 28px;
-  border-radius: 20px;
-  padding: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-  background:
-    radial-gradient(
-      120% 140% at 100% 0%,
-      color-mix(in srgb, var(--color-highlight) 12%, transparent),
-      transparent 55%
-    ),
-    var(--color-surface);
-  border: 1px solid color-mix(in srgb, var(--color-highlight) 45%, transparent);
-}
-.panel h2 {
-  font-size: 24px;
-  line-height: 1.2;
-  font-weight: 800;
-}
-.panel p {
-  color: var(--color-text-secondary);
-  margin-top: 8px !important;
-  max-width: 640px;
-}
-.soonbox {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-.soonbox svg {
-  color: var(--color-highlight);
-  flex: none;
-}
-@media (max-width: 767.98px) {
-  .panel {
-    padding: 22px;
-    border-radius: 18px;
-  }
-}
-
-/* ── Перелік країн ── */
-.search {
-  margin-top: 28px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 480px;
-  height: 52px;
-  padding: 0 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-}
-.search:focus-within {
+/* ── Країни того ж поясу (сторінка країни) ── */
+.chipLink:focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
-.search input {
-  flex: 1;
-  min-width: 0;
-  font: inherit;
-  font-size: 16px;
-  color: var(--color-text);
-  background: transparent;
-  border: 0;
-  outline: 0;
-}
-.search input::placeholder {
-  color: var(--color-text-muted);
-}
-.list {
-  list-style: none;
-  margin: 24px 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-.row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 60px;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: inherit;
-  text-decoration: none;
-  transition: border-color 0.15s;
-}
-.row:hover {
-  border-color: var(--color-border-strong);
-}
-.row:focus-visible,
-.chipLink:focus-visible,
-.crumbs a:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-.rowText {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.rowName {
-  font-size: 15px;
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.rowWhen {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-}
-.rowStory {
-  margin-left: auto;
-  flex: none;
-  color: var(--color-highlight);
-}
-.empty {
-  margin-top: 24px !important;
-  color: var(--color-text-secondary);
-}
-@media (max-width: 1199.98px) {
-  .list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (max-width: 1023.98px) {
-  .list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 767.98px) {
-  .list {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-  }
-  .search {
-    max-width: none;
-  }
-}
 
-/* Країни того ж поясу. */
 .chips {
   list-style: none;
   margin: 20px 0 0;
@@ -760,45 +357,7 @@
   border-color: var(--color-border-strong);
 }
 
-/* ── Рівні тостів, порівняння пасу ── */
-.tier {
-  position: relative;
-}
-.tierPrice {
-  font-size: 44px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.tierTop {
-  border-color: color-mix(in srgb, var(--color-highlight) 45%, transparent);
-}
-.checks {
-  list-style: none;
-  margin: 12px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.checks li {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  font-size: 15px;
-  line-height: 1.4;
-}
-.checks svg {
-  flex: none;
-  margin-top: 1px;
-  color: var(--color-highlight);
-}
-.checks .off {
-  color: var(--color-text-muted);
-}
-.checks .off svg {
-  color: var(--color-text-muted);
-}
+/* ── Таблиці документів ── */
 .tableWrap {
   margin-top: 24px;
   overflow-x: auto;
@@ -836,123 +395,14 @@
 .table td:last-child {
   color: var(--color-text);
 }
-.price {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.price b {
-  font-size: 56px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.price span {
-  font-size: 15px;
-  color: var(--color-text-secondary);
-}
-.buy {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: min(100%, 340px);
-}
-.fine {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
 @media (max-width: 767.98px) {
   .table th,
   .table td {
     padding: 12px 14px;
   }
-  .price b {
-    font-size: 44px;
-  }
 }
 
-/* ── Акордеон «Питання й відповіді» (плавно) ── */
-.faq {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 24px;
-  margin-top: 28px;
-  align-items: start;
-}
-.qa {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-.qa h3 {
-  margin: 0;
-  font-size: inherit;
-}
-.qaBtn {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  text-align: left;
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-lg);
-  padding: 20px 22px;
-  font: inherit;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--color-text);
-  cursor: pointer;
-}
-.qaBtn:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-.qaBtn svg {
-  flex: none;
-  transition: transform 0.25s ease;
-  color: var(--color-text-secondary);
-}
-.qa[data-open='true'] .qaBtn svg {
-  transform: rotate(45deg);
-}
-.qaBody {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.28s ease;
-}
-.qa[data-open='true'] .qaBody {
-  grid-template-rows: 1fr;
-}
-.qaBody > div {
-  overflow: hidden;
-}
-.qaBody p {
-  padding: 0 22px 20px;
-  color: var(--color-text-secondary);
-  font-size: 15px;
-  max-width: 60ch;
-}
-@media (prefers-reduced-motion: reduce) {
-  .qaBody,
-  .qaBtn svg {
-    transition: none;
-  }
-}
-@media (max-width: 767.98px) {
-  .faq {
-    grid-template-columns: minmax(0, 1fr);
-    margin-top: 20px;
-  }
-  .qaBtn {
-    font-size: 16px;
-    padding: 16px 18px;
-  }
-}
-
-/* ── Текстові сторінки (про проєкт, документи) ── */
+/* ── Документи ── */
 .prose {
   max-width: 760px;
 }
@@ -1039,11 +489,6 @@
   outline-offset: 2px;
 }
 
-/* ── «Лишайся на зв’язку» (головна) ── */
-.stay {
-  margin-top: 36px;
-}
-
 /* ── 404 ── */
 .nf {
   padding-top: 96px;
@@ -1068,19 +513,3 @@
 }
 
 /* Фото країни з підписом автора й ліцензії. */
-.figure {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-.credit {
-  font-size: 12px;
-  color: var(--color-text-muted);
-}
-.credit a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}

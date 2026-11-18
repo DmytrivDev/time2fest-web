@@ -23,7 +23,11 @@ import { PAGES } from '@/lib/prelaunch/href';
 import type { SiteData } from '@/lib/prelaunch/site';
 import { SiteShell } from './SiteShell';
 
-const FAQ = ['subscription', 'pass', 'refund', 'check'] as const;
+/**
+ * Питання наявної сторінки «Тости світу» без «Як повернути гроші?»: до запуску купити тост не можна, тож і повертати нічого
+ * (рішення 2026-11-18 — неправдиве для сайту без оплат ховаємо, формулювань не змінюємо).
+ */
+const FAQ = ['subscription', 'pass', 'check'] as const;
 
 function Body() {
   const t = useTranslations('supportPage');

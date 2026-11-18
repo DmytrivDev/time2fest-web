@@ -165,6 +165,7 @@ const PLACES = {
   'пляж Копакабана': { en: 'Copacabana Beach' },
   'Таймс-сквер': { en: 'Times Square' },
   'Grand Park': { en: 'Grand Park' },
+  'Лас-Вегас-Стріп': { en: 'the Las Vegas Strip', es: 'el Strip de Las Vegas', fr: 'le Strip de Las Vegas' },
 };
 
 const slugify = (name) =>

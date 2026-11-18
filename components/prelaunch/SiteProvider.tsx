@@ -13,7 +13,7 @@ import {
 } from '@/components/prefest/PrefestContext';
 import { getData } from '@/lib/data/load';
 import { holdViewerTimeZoneUtc, setDefaultTimeLocale, viewerZoneLabel } from '@/lib/i18n/time';
-import { buildPrefestModel } from '@/lib/prefest/model';
+import { buildPrefestModel, MAIN_CELEBRATIONS } from '@/lib/prefest/model';
 import { countryPath, localeHref } from '@/lib/prelaunch/href';
 import {
   COUNTRY_EXTRAS,
@@ -24,6 +24,14 @@ import {
 } from '@/lib/prelaunch/site';
 import { createDeviceTimeSource } from '@/lib/time/deviceTimeSource';
 import { TimeProvider } from '@/lib/time/TimeProvider';
+
+/**
+ * Головні місця розкладу передстартового сайту: Лас-Вегас замість Лос-Анджелеса (рішення власника 2026-11-18; той самий
+ * пояс UTC−8). Сайт свята й `/before` — без змін.
+ */
+const PRELAUNCH_CELEBRATIONS = MAIN_CELEBRATIONS.map((e) =>
+  e.iso === 'US' && e.city === 'Лос-Анджелес' ? { iso: 'US', city: 'Лас-Вегас', place: 'Лас-Вегас-Стріп', zoneId: 'utc-0800' } : e,
+);
 
 const MEDIA = (mediaJson as { items: Record<string, MediaItem> }).items;
 
@@ -63,6 +71,7 @@ export function SiteProvider({ site, children }: { site: SiteData; children: Rea
       href: (c) => href(countryPath(COUNTRY_EXTRAS[c.iso]?.urlSlug ?? c.slug)),
       mainCityId: (iso) => COUNTRY_EXTRAS[iso]?.mainCityId,
       label: labelFor(base, site),
+      celebrations: PRELAUNCH_CELEBRATIONS,
     });
     const prefestSite: PrefestSite = {
       locale: site.locale,
