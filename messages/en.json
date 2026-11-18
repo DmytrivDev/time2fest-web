@@ -571,6 +571,10 @@
       "toasts": {
         "title": "New Year Toasts: Greet the Whole World | Time2Fest",
         "description": "Say a New Year toast the whole world sees: a golden chat message with your name and flag. Three levels: $2, $5 and $10. The $10 toast includes a New Year Pass."
+      },
+      "credits": {
+        "title": "Photo and video credits — Time2Fest",
+        "description": "Who made the photos and videos on Time2Fest, where they come from and under which licenses."
       }
     },
     "header": {
@@ -603,7 +607,8 @@
       "cookies": "Cookies",
       "socialLabel": "We’re on social media",
       "languageLabel": "Site language",
-      "copyright": "© 2026 Time2Fest · Made in Ukraine"
+      "copyright": "© 2026 Time2Fest · Made in Ukraine",
+      "credits": "Photo & video credits"
     },
     "home": {
       "cardsNote": "So far we have stories about {count, plural, one {# country} other {# countries}}, and we’re adding the rest.",

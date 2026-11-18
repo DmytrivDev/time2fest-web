@@ -1,1 +1,7 @@
-{}
+{
+  "prelaunch": {
+    "footer": {
+      "credits": "Crédits photos et vidéos"
+    }
+  }
+}

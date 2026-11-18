@@ -3,7 +3,8 @@
  * Тексти — заглушки прототипу (`[ПІБ]` тощо); юридичний текст дасть юрист. Розмітка в рядках: `**жирний**`,
  * `[посилання](/шлях/)`. Блоки: абзац, маркований і нумерований список, таблиця.
  */
-export type LegalDocId = 'terms' | 'privacy' | 'payments' | 'cookies' | 'rules' | 'help';
+/** `credits` — «Автори фото й відео» передстартового сайту (`lib/prelaunch/legal.ts`); у `LEGAL_DOCS` сайту свята її немає. */
+export type LegalDocId = 'terms' | 'privacy' | 'payments' | 'cookies' | 'rules' | 'help' | 'credits';
 
 export type LegalBlock =
   | { kind: 'p'; text: string }

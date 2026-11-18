@@ -19,6 +19,7 @@ export type MetaPage =
   | 'privacy'
   | 'cookies'
   | 'terms'
+  | 'credits'
   | 'notFound';
 
 export interface PageMetaOptions {

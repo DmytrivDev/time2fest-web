@@ -19,7 +19,7 @@ import path from 'node:path';
 import { DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
 import type { LegalBlock, LegalDoc as SiteLegalDoc } from '@/lib/legal/docs';
 
-export const LEGAL_IDS = ['privacy', 'cookies', 'terms'] as const;
+export const LEGAL_IDS = ['privacy', 'cookies', 'terms', 'credits'] as const;
 export type LegalId = (typeof LEGAL_IDS)[number];
 
 export type { LegalBlock };

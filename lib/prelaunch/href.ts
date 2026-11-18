@@ -11,6 +11,7 @@ export const PAGES = {
   privacy: '/privacy/',
   cookies: '/cookies/',
   terms: '/terms/',
+  credits: '/credits/',
 } as const;
 export type PageKey = keyof typeof PAGES;
 

@@ -42,6 +42,7 @@ const GROUPS: {
       { key: 'terms', path: PAGES.terms },
       { key: 'privacy', path: PAGES.privacy },
       { key: 'cookies', path: PAGES.cookies },
+      { key: 'credits', path: PAGES.credits },
     ],
   },
 ];
