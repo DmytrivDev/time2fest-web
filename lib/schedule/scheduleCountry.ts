@@ -4,7 +4,8 @@
  */
 import type { CelebrationType, Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
 import { countryEventsInZone, countryStreamRows, type StreamRowData } from '@/lib/live/countryData';
-import { countryHref } from '@/lib/player/BroadcastController';
+// Чистий модуль (той самий `countryHref`, що перевидає BroadcastController): без плеєра й шва в графі імпортів.
+import { countryHref } from '@/lib/live/countryHref';
 
 export type CountryGroup = 'live' | 'main' | 'webcam' | 'countdown';
 export const GROUP_ORDER: readonly CountryGroup[] = ['live', 'main', 'webcam', 'countdown'];

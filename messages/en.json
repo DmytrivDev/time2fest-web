@@ -717,11 +717,265 @@
     },
     "nav": {
       "map": "Who celebrates New Year first: time zone map"
+    },
+    "overrides": {
+      "player": {
+        "scene": {
+          "caption": "Time2Fest countdown scene · live streams from December 31"
+        }
+      }
     }
   },
   "player": {
     "scene": {
-      "daysShort": "d"
+      "daysShort": "d",
+      "caption": "Time2Fest countdown scene · no stream here",
+      "expected": "The stream will start on its own as soon as it appears",
+      "expectedNote": "countdown scene · local time {time}",
+      "midnightAt": "Midnight at <time>{value}</time> your time",
+      "localTime": "Local time · {time}",
+      "noStreamNote": "countdown scene · no stream here",
+      "modeCaption": "“Countdown” mode · exact midnight with no video delay",
+      "modeNote": "“Countdown” mode · no video delay",
+      "howTo": "How they celebrate",
+      "waitingBadge": "Stream expected",
+      "waitingLead": "Stream coming up",
+      "waitingStarts": "Starts at <time>{value}</time> your time",
+      "waitingLeft": "<b>{left}</b> until it starts",
+      "waitingAutoShort": "Video will start on its own",
+      "watchLive": "Watch what’s on now",
+      "waitingNote": "The video will start on its own as soon as the stream begins",
+      "countdownLabel": "Until midnight",
+      "yearLabel": "New Year",
+      "finalLead": "New Year in",
+      "happyNewYear": "Happy New Year!",
+      "celebrateLine": "{place} welcomes {year}",
+      "fullscreen": "Full-screen scene",
+      "exitFullscreen": "Exit full screen"
+    }
+  },
+  "pass": {
+    "page": {
+      "metaTitle": "New Year Pass — Time2Fest",
+      "back": "Back to home",
+      "title": "New Year Pass",
+      "priceNote": "one-time, for the whole season · no subscription",
+      "activeNote": "until the end of the 2026/27 season",
+      "lead": "Works through the whole celebration and after — your journey and the “My New Years” card stay with you",
+      "active": "Active",
+      "ticketLabel": "New Year Pass 2026/27",
+      "buyTitle": "Get your pass"
+    },
+    "perks": {
+      "eyebrow": "5 perks in the pass",
+      "title": "What turns on right after payment",
+      "chat": "Chat badge and visible journey",
+      "chatText": "A pass badge next to your name keeps your messages from getting lost in the flow, and others see the countries of your New Year.",
+      "schedule": "Your own schedule and reminders",
+      "scheduleText": "Build your celebration from your own events — we’ll remind you before every midnight.",
+      "quiet": "Quiet chat mode",
+      "quietText": "Hides identical greetings — only real conversations stay.",
+      "card": "“My New Years” card",
+      "cardText": "A recap of your celebration with all your stamps — for stories and friends.",
+      "all": "Everything about the pass",
+      "mini": {
+        "msg1": "Happy New Year! 🎉",
+        "nick": "Olena",
+        "msg2": "Happy New Year from Kyiv! 🎆",
+        "route": "Olena’s journey:",
+        "sydney": "Sydney",
+        "tokyo": "Tokyo",
+        "kyiv": "Kyiv",
+        "soon": "Sydney is 5 minutes away. Open the stream?",
+        "quiet": "Quiet mode",
+        "hidden": "248 identical “Happy New Year!” hidden",
+        "cardEyebrow": "MY NEW YEARS · 2027",
+        "cardTitle": "5 New Years in one celebration",
+        "trNick": "Lucas",
+        "trText": "Hugs from Brazil! 🎉",
+        "trFrom": "from Portuguese · Original",
+        "replied": "Someone replied to you",
+        "replyNick": "Amira:",
+        "replyText": "“Happy New Year to you too, Olena!”"
+      },
+      "free": "All streams and chat are free for everyone. The pass adds this:",
+      "without": "Without the pass",
+      "with": "With the pass",
+      "chatWithout": "Regular name",
+      "chatWith": "Badge and country journey",
+      "scheduleWithout": "Shared schedule only",
+      "scheduleWith": "Your own events and reminders",
+      "quietWithout": "The full flow of greetings",
+      "quietWith": "Only real conversations",
+      "cardWithout": "None",
+      "cardWith": "Card with stamps",
+      "chatx": "Chat translation and notifications",
+      "chatxText": "Messages in other languages shown in English, and when someone replies to you, a badge appears even if the chat is collapsed.",
+      "chatxWithout": "In the author’s language, no notifications",
+      "chatxWith": "Translation and notifications",
+      "hint": "Pick a perk to see how it works"
+    },
+    "faq": {
+      "title": "Questions and answers",
+      "q1": "Is it a subscription? Will I be charged again?",
+      "a1": "No. The pass is paid once and works for the whole 2026/27 season — there are no automatic charges.",
+      "q3": "How do I get a refund?",
+      "a3": "Write to us within 14 days of payment and we’ll refund you through PayPro Global. Details are in “Payment and refunds.”",
+      "q4": "Can I give the pass as a gift?",
+      "a4": "Not yet: the pass belongs to whoever paid — it works on the device you paid from and attaches to the first account you sign in to here (once only)."
+    }
+  },
+  "toast": {
+    "tiers": {
+      "2": "glass",
+      "5": "bottle of bubbly",
+      "10": "fireworks"
+    },
+    "benefits": {
+      "label": "What a toast gives you",
+      "gold": "A gold toast in the World chat",
+      "pinned": "Pinned under the stream until the next midnight",
+      "greeting": "Your nickname in the midnight greeting",
+      "pass": "New Year Pass as a gift",
+      "passApart": "· {price} separately",
+      "passOwned": "You already have the New Year Pass",
+      "from": "from {price}",
+      "included": "included",
+      "notIncluded": "not included"
+    }
+  },
+  "supportPage": {
+    "title": "Toasts of the World",
+    "kickerBefore": "Before the celebration",
+    "kickerDuring": "Celebration in progress",
+    "kickerAfter": "Celebration is over",
+    "leadDuring": "All the celebration’s toasts in one place. Everyone watching right now sees them — in the World chat, and for $5 and $10, under the stream too.",
+    "leadBefore": "All the celebration’s toasts will be here — from the first midnight to the last.",
+    "leadAfter": "Toasts raised during the celebration. New toasts open next New Year.",
+    "toastsMeta": "{count, plural, one {# toast} other {# toasts}} this celebration · {countries, plural, one {# country} other {# countries}}",
+    "allTitle": "All toasts",
+    "allSub": "Newest first",
+    "more": "Show more · {count}",
+    "emptyAfter": "No toasts this celebration",
+    "openTitle": "Toasts open with the celebration",
+    "openWhen": "{date} at <b>{time}</b> your time",
+    "today": "Today",
+    "openNote": "Then a “Raise a toast” button will appear here, and everyone watching the celebration will see your toast.",
+    "whatTitle": "What is a toast",
+    "whatText": "A toast is your greeting to the whole world, with your nickname and flag. You write the text, and we check it before payment. Everyone watching the celebration will see your toast.",
+    "tiersTitle": "Three tiers — what each one gives",
+    "passTitle": "Want more from the celebration?",
+    "passText": "New Year Pass — schedule, journey map, chat badge · $5 one-time",
+    "passLink": "What the pass gives",
+    "faq": {
+      "subscriptionQ": "Is it a subscription? Will I be charged again?",
+      "subscriptionA": "No. A toast is a one-time payment through PayPro Global, with no subscription and no repeat charges.",
+      "passQ": "How is a toast different from the pass?",
+      "passA": "A toast is your greeting to the whole world: a gold toast in the World chat; for $5, also pinned under the stream until the next midnight; for $10, your nickname in the midnight greeting and a New Year Pass as a gift. The pass unlocks features: schedule and reminders, journey map, chat badge. All streams and chat are free for everyone.",
+      "refundQ": "How do I get a refund?",
+      "refundA": "Contact PayPro Global support via the link in your receipt — refunds follow the payment terms.",
+      "checkQ": "What if my toast doesn’t pass the check?",
+      "checkA": "We check the text before payment: links, contact details and insults don’t get through — we’ll highlight what to change, and we won’t charge you."
+    }
+  },
+  "countries": {
+    "title": "Countries and cities",
+    "subtitle": "Time zones in order. Times are in your time ({zone}), now {date}, {time}.",
+    "subtitleStatic": "Time zones in order. Times are in your time.",
+    "searchLabel": "Find a country or city",
+    "viewLabel": "Map or list",
+    "listLabel": "Time zones and countries",
+    "filterLabel": "Which countries to show",
+    "clear": "Clear",
+    "card": {
+      "streamAt": "stream at {time}",
+      "streamAtShort": "at {time}",
+      "replay": "replay",
+      "cityHit": "city {city}"
+    },
+    "zone": {
+      "until": "until midnight",
+      "ago": "New Year arrived {dur} ago"
+    },
+    "empty": "Nothing found — try another name",
+    "emptyFilters": "Nothing found — try changing the filters",
+    "faq": {
+      "firstAnswer": "Kiribati — Kiritimati island. The last are the uninhabited Baker and Howland islands.",
+      "firstAnswerTimed": "Kiribati — Kiritimati island, {first}. The last are the uninhabited Baker and Howland islands, {last}.",
+      "londonQuestion": "London: what time is New Year in my time?",
+      "londonAnswer": "London and the whole UTC+0 time zone ring in the New Year at 00:00 UTC.",
+      "londonAnswerTimed": "London and the whole UTC+0 time zone ring in the New Year at 00:00 UTC — that’s {time}.",
+      "whyQuestion": "Why do some countries celebrate at a different time?",
+      "whyAnswer": "The world is divided into time zones, and each has its own midnight. Some countries use a non-standard offset — half an hour or 45 minutes — so their midnight doesn’t fall on the hour."
+    }
+  },
+  "country": {
+    "header": {
+      "breadcrumbs": "You are here",
+      "zones": "Country time zones",
+      "midnightAt": "midnight at <b>{time}</b> your time",
+      "midnightWas": "midnight was at <b>{time}</b> your time",
+      "stamp": "Be here at midnight — the stamp arrives in your passport",
+      "addToSchedule": "Add to schedule",
+      "yourTime": "your time",
+      "zonesTitle": "Time zones · {country}",
+      "zonesSub": "{count, plural, one {# time zone} other {# time zones}} — each with its own stamp",
+      "zonesPick": "Time zone: {zone}. Change",
+      "streamsCount": "{count, plural, one {# stream} other {# streams}}",
+      "countdownOnly": "countdown only",
+      "ratingChip": "{score} · {place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} place",
+      "ratingAria": "Celebration rating: {score} out of 5, {place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} place"
+    },
+    "howTo": {
+      "gallery": "Photos",
+      "photoAlt": "Photo: {alt}",
+      "photoCredit": "{author}, {license}",
+      "textTitle": "How {country} celebrates New Year"
+    },
+    "faq": {
+      "items": {
+        "when": {
+          "q": "When is midnight in my time?",
+          "a": "Midnight in this country arrives at {time} your time. The countdown runs right on the page, so you don’t need to calculate it."
+        },
+        "stamp": {
+          "q": "Will I get a stamp if there’s no stream?",
+          "a": "Yes. The stamp is for being on the country page at midnight, not for watching a video. A stream may appear later or not at all — the stamp will still arrive."
+        },
+        "switch": {
+          "q": "How do I switch streams?",
+          "a": "In the “Streams” block, tap the card you want — the player switches to it right away. Or tap “Choose stream” under the video."
+        },
+        "room": {
+          "q": "Can I watch several streams at once?",
+          "a": "Yes, in the viewing room. Tap “+” on a stream card to add it in a new window. On a computer you get up to four windows, on a phone up to two. Sound plays from only one."
+        }
+      }
+    }
+  },
+  "liveCards": {
+    "howTo": {
+      "title": "How to celebrate · {country}",
+      "compactTitle": "How to celebrate",
+      "list": "Key traditions"
+    },
+    "nowNext": {
+      "meta": "in your time ({zone})",
+      "listLabel": "Events: now and next",
+      "showMore": "{count, plural, one {# more event} other {# more events}}",
+      "showLess": "Show less",
+      "toMap": "Countries and time zones",
+      "empty": "No events with streams yet",
+      "showAll": "Show all events",
+      "filterLabel": "Which events to show",
+      "filterAll": "All",
+      "filterLive": "With streams",
+      "filterMine": "My Schedule",
+      "mineLocked": "Schedule comes with the New Year Pass",
+      "emptyMine": "No upcoming events in your schedule yet",
+      "mineLockedText": "To add celebrations to your schedule and get reminders before them, you need the <b>New Year Pass</b>.",
+      "mineLockedButton": "What else the pass gives",
+      "mineLockedGet": "Get the pass · {price}"
     }
   }
 }

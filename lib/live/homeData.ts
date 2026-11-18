@@ -8,7 +8,8 @@ import type { Dataset, Ms, ScheduledEvent } from '@/lib/data/types';
 import { airSlots, pickSlotEvent } from '@/lib/engine/currentAirEvent';
 import { mainCardStream, mainSourceOf } from '@/lib/engine/mainCelebration';
 import { chainStatus, sourceStatus } from '@/lib/engine/sourceStatus';
-import { countryHref } from '@/lib/player/BroadcastController';
+// Чистий модуль (той самий `countryHref`, що перевидає BroadcastController): без плеєра й шва в графі імпортів.
+import { countryHref } from '@/lib/live/countryHref';
 
 const HOUR = 3_600_000;
 

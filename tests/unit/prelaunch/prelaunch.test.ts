@@ -181,7 +181,9 @@ describe('тексти', () => {
   });
 
   it('англійська має всі ключі; мова без файла показує англійську', () => {
-    expect(missingKeys(rawMessages(uk as never), rawMessages(en as never))).toEqual([]);
+    expect(
+      missingKeys(rawMessages(uk as never), rawMessages(en as never)).filter((k) => !k.startsWith('prelaunch.overrides.')),
+    ).toEqual([]);
     // Правки головної (`prelaunch.prefest`, `prelaunch.nav`) діють і англійською.
     const enSet = localeMessages('en', { uk: uk as never, en: en as never });
     expect((enSet.prefest as Record<string, Record<string, string>>).faq?.q5).toMatch(/first/i);

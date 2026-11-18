@@ -29,7 +29,8 @@ if (sourceOut) {
 
 const report = { total, locales: {} };
 for (const locale of ['en', 'es', 'fr']) {
-  const missing = missingKeys(source, rawMessages(read(locale)));
+  // `prelaunch.overrides` — необов’язкові правки наявних текстів (тон «ти» українською), не переклад.
+  const missing = missingKeys(source, rawMessages(read(locale))).filter((k) => !k.startsWith('prelaunch.overrides.'));
   report.locales[locale] = { missing: missing.length, keys: missing };
   console.log(
     `messages: ${locale} — ${total - missing.length}/${total} keys${missing.length ? `, missing ${missing.length}` : ''}`,

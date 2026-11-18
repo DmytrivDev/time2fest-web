@@ -9,7 +9,8 @@
 import type { CelebrationType, Country, Dataset, LoadedZone, Ms, ScheduledEvent, StreamSource } from '@/lib/data/types';
 import { defaultCountryZone, eventStatus } from '@time2fest/rules/time';
 import { sourceStatus } from '@/lib/engine/sourceStatus';
-import { countryHref } from '@/lib/player/BroadcastController';
+// Чистий модуль (той самий `countryHref`, що перевидає BroadcastController): без плеєра й шва в графі імпортів.
+import { countryHref } from '@/lib/live/countryHref';
 
 /** Місто-столиця для країн з кількома поясами (у даних столиці немає; решта країн має один пояс). */
 export const CAPITAL_CITY: Readonly<Record<string, string>> = {

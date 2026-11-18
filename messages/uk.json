@@ -2915,6 +2915,74 @@
     },
     "nav": {
       "map": "Хто зустрічає Новий рік першим: мапа часових поясів"
+    },
+    "overrides": {
+      "common": {
+        "yourTime": "за твоїм часом"
+      },
+      "primitives": {
+        "badge": {
+          "inSchedule": "У твоєму графіку",
+          "yourMidnight": "твоя північ"
+        },
+        "time": {
+          "yourTime": "за твоїм часом"
+        }
+      },
+      "nav": {
+        "yourMidnight": "твоя північ"
+      },
+      "liveMap": {
+        "midnightAt": "північ о {time} за твоїм часом",
+        "midnightAtDate": "північ {date} о {time} за твоїм часом",
+        "country": {
+          "yourCountry": "твоя країна"
+        },
+        "panel": {
+          "yourZone": "твій пояс",
+          "pastAt": "північ була о {time} за твоїм часом"
+        },
+        "queue": {
+          "yourTime": "за твоїм часом",
+          "rowAria": "{offset}, північ о {time} за твоїм часом",
+          "rowAriaTag": "{offset}, {tag}, північ о {time} за твоїм часом"
+        },
+        "tip": {
+          "at": "о {time} за твоїм часом",
+          "atDate": "о {time}, {date}, за твоїм часом",
+          "yourZone": "твій пояс"
+        }
+      },
+      "countries": {
+        "subtitle": "Пояси по черзі. Час — за твоїм часом ({zone}), зараз {date}, {time}.",
+        "subtitleStatic": "Пояси по черзі. Час — за твоїм часом."
+      },
+      "country": {
+        "header": {
+          "breadcrumbs": "Ти тут",
+          "midnightAt": "північ о <b>{time}</b> за твоїм часом",
+          "midnightWas": "північ була о <b>{time}</b> за твоїм часом",
+          "yourTime": "за твоїм часом"
+        },
+        "faq": {
+          "items": {
+            "when": {
+              "a": "Північ у цій країні настане о {time} за твоїм часом. Відлік іде просто на сторінці, сам рахувати не треба."
+            }
+          }
+        }
+      },
+      "player": {
+        "scene": {
+          "midnightAt": "Північ о <time>{value}</time> за твоїм часом",
+          "caption": "Сцена відліку Time2Fest · трансляції — з 31 грудня"
+        }
+      },
+      "liveCards": {
+        "nowNext": {
+          "meta": "за твоїм часом ({zone})"
+        }
+      }
     }
   }
 }
