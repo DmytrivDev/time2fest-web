@@ -334,6 +334,32 @@ describe('відлік сцени понад добу', () => {
   });
 });
 
+describe('тексти до гідратації — «за UTC»', () => {
+  it('підписи часу відвідувача стають UTC; решта тексту без змін', async () => {
+    const { utcWording } = await import('@/lib/prelaunch/utcWording');
+    const m = { a: { b: 'північ о {time} за твоїм часом', c: 'Час — за вашим часом.' }, d: 'без часу' };
+    expect(utcWording(m, 'uk')).toEqual({
+      a: { b: 'північ о {time} за UTC', c: 'Час — за UTC.' },
+      d: 'без часу',
+    });
+    expect(utcWording({ x: 'at {when} your time' }, 'en')).toEqual({ x: 'at {when} UTC' });
+    expect(utcWording({ x: 'medianoche a tu hora' }, 'es')).toEqual({ x: 'medianoche en UTC' });
+    expect(utcWording({ x: 'minuit à ton heure' }, 'fr')).toEqual({ x: 'minuit en UTC' });
+  });
+});
+
+describe('метатексти сторінок', () => {
+  it('бренд відпадає, якщо title довший за 65 знаків', async () => {
+    const { fitTitle } = await import('@/lib/prelaunch/seo');
+    expect(fitTitle('Новий рік 2027 у Японії: як святкують, традиції | Time2Fest')).toBe(
+      'Новий рік 2027 у Японії: як святкують, традиції | Time2Fest',
+    );
+    expect(fitTitle('Новий рік 2027 у Великій Британії: як святкують, традиції | Time2Fest')).toBe(
+      'Новий рік 2027 у Великій Британії: як святкують, традиції',
+    );
+  });
+});
+
 describe('сторінка країни: є сцена / немає сцени', () => {
   it('власна сцена — лише в країн із намальованою листівкою; решта — без сцени', async () => {
     const { hasPostcardScene } = await import('@/components/stamp/StampArt');

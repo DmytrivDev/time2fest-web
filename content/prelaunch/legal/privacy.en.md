@@ -1,5 +1,3 @@
-<!-- Draft for the pre-launch site. Not legal advice. Items in [[double brackets]] must be filled in or checked before publishing. -->
-
 # Privacy Policy
 
 - **id:** `privacy` · **path:** `/privacy/`
@@ -10,7 +8,7 @@
 
 ## Who we are {#who}
 
-time2fest.com is run by [[full name]], a sole proprietor (FOP) registered in Ukraine (“we”, “us”). We are responsible for the data described below. Contact: [[email]].
+time2fest.com is run by Andrii Dmytriv, a private individual based in Ukraine (“we”, “us”). We are responsible for the data described below. Contact: info@time2fest.com.
 
 ## What this policy covers {#scope}
 
@@ -21,7 +19,7 @@ This policy describes the site as it is today: an introduction to the project, a
 - **Technical visit data.** When you open a page, your browser sends our hosting provider (Cloudflare) your IP address, browser and device type, the page address and the time of the request. A page can’t be delivered without this; the same data helps protect the site from attacks.
 - **Visit statistics.** We use Cloudflare Web Analytics. It sets no cookies, stores nothing in your browser and doesn’t follow you across other sites. We only see overall numbers: how many times a page was opened, from which country, from which site visitors came, and what kind of device and browser they used.
 - **Emails.** If you write to us, we receive your email address and whatever you include in your message.
-- **Settings on your device.** Your language choice [[and the country you pick in “When will the New Year reach you?” — if the site remembers it]] are stored only in your browser and are not sent to us. See [Cookies](/cookies/) for details.
+- **Settings on your device.** Your language choice is stored only in your browser and is not sent to us. See [Cookies](/cookies/) for details.
 
 Midnight “in your time” is calculated in your browser from your device settings; your time zone is not sent to us. Calendar files are also created on your device.
 
@@ -35,16 +33,10 @@ We don’t collect names, build visitor profiles, show ads, or use advertising o
 
 ## Who we share data with {#share}
 
-- **Cloudflare, Inc. (USA)** — hosting, security and visit statistics. Cloudflare processes data on our behalf on servers in various countries, including outside Ukraine and the European Union, under its data processing agreement with standard contractual clauses.
-- **Our email provider** [[email service name]] — only the messages you send us.
+- **Cloudflare, Inc. (USA)** — hosting, security, visit statistics and receiving email. Cloudflare processes data on our behalf on servers in various countries, including outside Ukraine and the European Union, under its data processing agreement with standard contractual clauses.
+- **Email.** Messages to info@time2fest.com are received by Cloudflare (Email Routing) and forwarded to our mailbox. These services see only the messages you send us.
 
 No one else. We don’t sell data or pass it to advertising networks.
-
-[[ONLY IF THE SITE HAS THE VIDEO — otherwise remove this section:]]
-
-## Video {#video}
-
-The home page includes a video about the project hosted on YouTube. It loads only after you press play and is embedded in privacy-enhanced mode. Once the video starts, YouTube (Google) receives your technical data and may set its own cookies under the [Google Privacy Policy](https://policies.google.com/privacy).
 
 ## Links to other sites {#links}
 
@@ -52,8 +44,8 @@ The site links to our social media pages and to other websites. When you follow 
 
 ## How long we keep data {#keep}
 
-- Emails — for as long as the conversation lasts and up to [[12 months]] afterwards.
-- Visit statistics — in aggregated form only, for the period set by Cloudflare ([[up to six months — check against Cloudflare documentation]]).
+- Emails — for as long as the conversation lasts and up to 12 months afterwards.
+- Visit statistics — in aggregated form only, for the period set by Cloudflare.
 - Cloudflare technical logs — briefly, under Cloudflare’s own rules.
 
 ## Your rights {#rights}
@@ -65,7 +57,7 @@ You can:
 - object to its processing;
 - complain to a data protection authority: in Ukraine, the Ukrainian Parliament Commissioner for Human Rights; in the European Union, the authority in your country.
 
-Write to [[email]] and we’ll reply within 30 days.
+Write to info@time2fest.com and we’ll reply within 30 days.
 
 ## Children {#children}
 

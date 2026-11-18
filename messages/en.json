@@ -699,7 +699,8 @@
       "hero": {
         "eyebrow": "New Year {year} around the world · live on December 31",
         "countdownLabel": "Until the world’s first midnight",
-        "countdownWhere": "Kiritimati — the world’s first midnight · <b>{when}</b> your time"
+        "countdownWhere": "Kiritimati — the world’s first midnight · <b>{when}</b> your time",
+        "lead": "Midnight travels the world for 26 hours — from Kiritimati through Sydney, Dubai and Kyiv to New York. On 31 December you’ll watch live streams of celebrations from every time zone here."
       },
       "faq": {
         "q5": "Which country celebrates New Year first?",
@@ -707,7 +708,9 @@
         "q6": "Who celebrates New Year last?",
         "a6": "The uninhabited Baker and Howland Islands (UTC−12) are last. Among inhabited places, American Samoa and Niue (UTC−11) celebrate last.",
         "a2": "The first midnight is on Kiritimati Island, {when} your time. Then midnight travels the world for 26 hours.",
-        "a3": "Just a browser. Streams are open to everyone, and there’s nothing to install."
+        "a3": "Just a browser. On 31 December streams will be open to everyone, and there’s nothing to install.",
+        "a1": "Yes. Streams, chat, country rooms and stamps will be free for everyone. Only the New Year Pass and toasts will be paid, and only if you want them.",
+        "a4": "We gather open streams from cities, TV channels and webcams on YouTube — on 31 December we’ll show them in the schedule, time zone by time zone."
       },
       "meta": {
         "description": "Ring in the New Year 38 times as midnight moves around the world for 26 hours. Schedule in your time, time zone map, traditions. Free."
@@ -724,6 +727,9 @@
       "night": {
         "intro": "Drag the slider to see when midnight reaches each time zone in your time, and who’s celebrating.",
         "clockKicker": "Your time"
+      },
+      "pass": {
+        "intro": "All streams and chat will be free for everyone. The Pass will add this:"
       }
     },
     "overrides": {
@@ -736,6 +742,11 @@
       "liveMap": {
         "list": {
           "now": "First"
+        }
+      },
+      "pass": {
+        "faq": {
+          "a4": "Not yet: the pass is personal — it will work for whoever gets it."
         }
       }
     },

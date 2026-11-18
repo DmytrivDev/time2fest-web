@@ -1,5 +1,3 @@
-<!-- Draft for the pre-launch site. Not legal advice. Items in [[double brackets]] must be filled in or checked before publishing. -->
-
 # Terms of Use
 
 - **id:** `terms` · **path:** `/terms/`
@@ -14,7 +12,7 @@ These terms explain how you may use time2fest.com (the “site”). By using the
 
 ## Who we are {#who}
 
-The site is run by [[full name]], a sole proprietor (FOP) registered in Ukraine (“we”, “us”). Contact: [[email]].
+The site is run by Andrii Dmytriv, a private individual based in Ukraine (“we”, “us”). Contact: info@time2fest.com.
 
 ## What this site is {#service}
 
@@ -32,7 +30,7 @@ We prepare midnight times, the celebration schedule and the stories about tradit
 
 ## Content rights {#content}
 
-The text, design, logo and the Time2Fest name belong to us. Photos and videos are used under free licenses and remain the property of their authors. Other companies’ names and marks belong to their owners.
+The text, design, logo and the Time2Fest name belong to us. Photos and videos are used under free licenses and remain the property of their authors, who are credited, with their licenses, under [“Photos on this site”](/about/#photos). Other companies’ names and marks belong to their owners.
 
 You may share links to the site and quote short excerpts with a link to the source. You may not copy the site or substantial parts of it, or collect its content automatically for republication, without our consent.
 
@@ -54,4 +52,4 @@ We may update these terms; the date of the latest update is shown at the top of 
 
 ## Contact {#contacts}
 
-Send questions about these terms to [[email]].
+Send questions about these terms to info@time2fest.com.

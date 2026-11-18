@@ -18,8 +18,8 @@ import { SEASON_LABEL } from '@/lib/prelaunch/season';
 import type { SiteData } from '@/lib/prelaunch/site';
 import { SiteShell } from './SiteShell';
 
-/** Питання сторінки паса, як у `PassPageParts` (`FAQ`). */
-const PASS_FAQ = [1, 3, 4] as const;
+/** Питання сторінки паса (`PassPageParts`), без «Як повернути гроші?» — до запуску оформити пас не можна. */
+const PASS_FAQ = [1, 4] as const;
 
 function Body() {
   const t = useTranslations('pass.page');

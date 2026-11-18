@@ -51,11 +51,13 @@ export interface CountdownSceneProps {
   longCountdown?: boolean;
   /** `false` — без ілюстрації-листівки: відлік і решта частин на тлі сцени (передстартовий сайт для країн без своєї сцени). */
   art?: boolean;
+  /** `false` — без «Як святкують» на сцені: сторінка показує традиції окремою карткою нижче (передстартовий сайт). */
+  traditions?: boolean;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, traditions }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} traditions={traditions} />;
 }
 
 /**
@@ -148,7 +150,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, traditions: withTraditions = true }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -167,7 +169,7 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
   const year = arrivedYear(midnightMs, offsetMinutes);
   // До гідратації «зараз» невідоме (0): місцевий час не показуємо як справжній.
   const local = now > 0 ? formatClock(now + offsetMinutes * 60_000, { timeZone: 'UTC' }) : '––:––';
-  const traditions = country.howTo.traditions.slice(0, 3);
+  const traditions = withTraditions ? country.howTo.traditions.slice(0, 3) : [];
 
   const scene = (
     <section

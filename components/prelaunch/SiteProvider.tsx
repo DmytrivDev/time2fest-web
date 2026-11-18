@@ -4,6 +4,7 @@
  * Спільне для сторінок мовного дерева (`app/[locale]`): каталог і модель мовою сторінки, час за годинником відвідувача,
  * адреси з мовою, місця для фото. Блоки головної «до свята» (`components/prefest`) беруть усе це з `usePrefest()`.
  */
+import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import expectedJson from '@/content/prelaunch/expected-streams.json';
 import mediaJson from '@/data/prelaunch/media.json';
@@ -25,6 +26,7 @@ import {
   type SiteData,
 } from '@/lib/prelaunch/site';
 import { createDeviceTimeSource } from '@/lib/time/deviceTimeSource';
+import { utcWording } from '@/lib/prelaunch/utcWording';
 import { TimeProvider } from '@/lib/time/TimeProvider';
 
 /**
@@ -95,11 +97,16 @@ export function SiteProvider({ site, children }: { site: SiteData; children: Rea
     };
     return { data, model, prefestSite };
   }, [site]);
+  // До гідратації підписи часу — «за UTC» (час у HTML теж за UTC); після — звичайні «за твоїм часом».
+  const messages = useMessages();
+  const utcMessages = useMemo(() => utcWording(messages, site.locale), [messages, site.locale]);
   return (
-    <TimeProvider source={source}>
-      <PrefestProvider model={value.model} data={value.data} site={value.prefestSite}>
-        {children}
-      </PrefestProvider>
-    </TimeProvider>
+    <NextIntlClientProvider locale={site.locale} messages={hydrated ? messages : utcMessages}>
+      <TimeProvider source={source}>
+        <PrefestProvider model={value.model} data={value.data} site={value.prefestSite}>
+          {children}
+        </PrefestProvider>
+      </TimeProvider>
+    </NextIntlClientProvider>
   );
 }

@@ -137,6 +137,7 @@ function Body({ iso }: { iso: string }) {
                 variant="no-stream"
                 longCountdown
                 art={scene}
+                traditions={false}
               />
             }
           />
