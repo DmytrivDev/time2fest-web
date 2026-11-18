@@ -7,7 +7,8 @@
  * Test doors are loaded by dynamic `import()` only when `shouldLoadDoors` is true (AC-29); no
  * request field takes part in that decision (AC-31).
  */
-import { randomInt } from 'node:crypto';
+import { randomBytes, randomInt } from 'node:crypto';
+import { hostname } from 'node:os';
 import type { JWTVerifyGetKey } from 'jose';
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
@@ -27,9 +28,12 @@ import { parseRealtimeConfig } from './domain/realtime/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { createPayloadClockStateStore } from './adapters/payloadClockState';
 import { createPayloadJournal } from './adapters/payloadJournal';
+import { createPayloadMomentSource } from './adapters/payloadMoments';
+import { createPgScheduler } from './adapters/pgScheduler';
+import { seasonRunEpoch } from './domain/scheduler/consequence';
 import { clockFor, processClockCache, realClock } from './clock';
 import { createDivergenceMeter } from './timekeeping/divergence';
-import { createSharedClock, startClockRefresh, type ClockRefresh } from './timekeeping/shared';
+import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
 import type { AppEnv, Deps, EventPorts, RouteRow } from './endpoints/types';
@@ -53,8 +57,10 @@ import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
 import type { Scheduler } from './realtime/ports';
 import { isRevertible } from './registries/revertHandlers';
+import { momentActionsFor } from './registries/moments';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
+import { createScheduler, type SchedulerHandle } from './scheduler/service';
 import { evaluate } from './unattended/service';
 import { startTicker, type Ticker } from './unattended/ticker';
 
@@ -204,6 +210,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
+  // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
+  deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   const tokenSecret = realtime.config.tokenSecret;
@@ -225,6 +233,30 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
       : {}),
   };
   return deps;
+}
+
+/**
+ * The moment scheduler of the process (SPEC-07 AC-27 … AC-48), not started. Server time is the
+ * shared clock's view in test/rehearsal (unless a test replaced `clock`), real time at speed 1 in
+ * production; the lease and lag use the monotonic `performance.now()`. The run epoch is the clock
+ * state's in test/rehearsal and the season key's year in production (C4).
+ */
+function createProcessScheduler(deps: Deps, payload: () => Promise<Payload>, shared: SharedClock | undefined): SchedulerHandle {
+  const stores = createPgScheduler({ payload, journal: createPayloadJournal(isRevertible) });
+  const virtual = shared !== undefined && deps.clock === shared ? shared : undefined;
+  return createScheduler({
+    view: virtual ? () => virtual.view() : () => ({ now: deps.clock.now(), speed: 1, frozen: false }),
+    mono: () => performance.now(),
+    lease: stores.lease,
+    runs: stores.runs,
+    source: createPayloadMomentSource({ payload, catalog: catalogStoreOf(deps) }),
+    rows: momentActionsFor(deps.env.class),
+    alarm: deps.alarm,
+    log: deps.log,
+    holderId: `${hostname()}:${process.pid}:${randomBytes(4).toString('hex')}`,
+    cls: deps.env.class,
+    runEpochOf: shared ? () => shared.state().runEpoch : (input) => seasonRunEpoch(input.seasonId),
+  });
 }
 
 /**
@@ -312,7 +344,8 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
 /**
  * Starts the process background once. First the shared clock is loaded (so nothing below starts
  * on a stale clock), then the internal-events delivery loop (a failed start, database down, is
- * retried every 5 s) and the unattended-mode ticker. Only `instrumentation.ts` calls it.
+ * retried every 5 s) and the unattended-mode ticker; once the delivery loop runs (so the
+ * recompute rows reach it), the moment scheduler. Only `instrumentation.ts` calls it — never a CLI.
  */
 export function startProcessBackground(): void {
   const g = globalThis as unknown as Record<symbol, true | Ticker | ClockRefresh | undefined>;
@@ -320,7 +353,7 @@ export function startProcessBackground(): void {
   g[BACKGROUND_KEY] = true;
   const attempt = () => {
     const deps = getDeps();
-    startBackground(deps).catch(() => {
+    startBackground(deps).then(() => deps.scheduler?.start(), () => {
       deps.alarm.raise({ level: 'log', source: 'events', code: 'background_start_failed' });
       setTimeout(attempt, BACKGROUND_RETRY_MS).unref?.();
     });
