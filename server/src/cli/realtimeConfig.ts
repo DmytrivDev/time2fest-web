@@ -7,6 +7,7 @@
  *   matter); a difference names the file and the first differing JSON path.
  * - `--check` also compares the generated test env with the `centrifugo` blocks of `docker-compose.yml` and
  *   `.github/workflows/verify.yml` under `--root` (default: the repository root); secret and engine keys are ignored.
+ * - `--check` also asserts that rehearsal and production serve the API and health on the internal port only (S1).
  * - `--print-env <class>` prints the env rendering (`KEY=value` lines) of that class.
  * The generated files hold no secret and no engine address.
  * Exit codes: 0 done / in sync, 1 a stored file differs or is missing, 2 usage.
@@ -14,7 +15,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { centrifugoConfig, centrifugoEnv, type CentrifugoConfig } from '../domain/realtime/centrifugoConfig';
+import { centrifugoConfig, centrifugoEnv, hasInternalSplit, type CentrifugoConfig } from '../domain/realtime/centrifugoConfig';
 import type { EnvClass } from '../platform/env';
 import { channelClassesFor, REALTIME_SITE_ORIGINS } from '../registries/channels';
 
@@ -168,6 +169,10 @@ function check(dir: string, root: string, io: CliIo): number {
       io.err(`realtime:config: ${file} is not valid JSON`);
       code = 1;
       continue;
+    }
+    if (cls !== 'test' && !hasInternalSplit(generate(cls))) {
+      io.err(`realtime:config: ${configFileName(cls)} serves the API and health on the public port — http_server.internal_port is required`);
+      code = 1;
     }
     const diff = firstDifference(generate(cls), stored);
     if (diff !== undefined) {

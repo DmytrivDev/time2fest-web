@@ -47,10 +47,13 @@ let dispatch: Dispatch;
 let proxy: RealtimeProxy;
 /** Whether each token response carried a token (`true`) or `token:null` (`false`); values never kept. */
 let tokenKinds: boolean[] = [];
+/** Every token request of the transport, answered or not (US-2: anonymous reconnects add none). */
+let tokenRequests = 0;
 const stops: (() => void)[] = [];
 
 /** `fetch` of the transport, served by the dispatcher in this process. */
 const tokenFetch: RealtimeFetch = async (input) => {
+  tokenRequests += 1;
   const res = await dispatch(new Request(new URL(input, BASE)));
   const body = (await res
     .clone()
@@ -115,6 +118,7 @@ describeRealtime('client transport against Centrifugo through a proxy', () => {
 
   beforeEach(async () => {
     tokenKinds = [];
+    tokenRequests = 0;
     await redis.deleteByPrefix(RL_PREFIX);
   });
 
@@ -149,6 +153,8 @@ describeRealtime('client transport against Centrifugo through a proxy', () => {
     for (let i = 0; i < 5 && !arrived; i += 1) arrived = await delivered(probe, await publishSite(0), 2_000);
     expect(arrived).toBe(true);
     const before = probe.events.length;
+    const requestsBefore = tokenRequests;
+    expect(requestsBefore).toBeGreaterThan(0);
 
     proxy.pause(PAUSE_MS);
     proxy.drop();
@@ -161,6 +167,8 @@ describeRealtime('client transport against Centrifugo through a proxy', () => {
     expect(transport.state()).toBe('connected');
     expect(probe.events.slice(before).map((e) => e.id)).toEqual(missed.map((e) => e.id));
     expect(probe.resyncs).toBe(0);
+    // US-2, FR-RT-09: the anonymous client reconnected without asking the token endpoint again.
+    expect(tokenRequests).toBe(requestsBefore);
   });
 
   it('AC-42 (a): history_size + 1 events during the pause → one onResync, none of them delivered', { timeout: 60_000 }, async () => {

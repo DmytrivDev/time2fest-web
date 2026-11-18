@@ -8,7 +8,7 @@ const evaluated = vi.hoisted(() => ({ count: 0 }));
 
 vi.mock('../../src/test-doors/index', () => {
   evaluated.count += 1;
-  return { doorRoutes: () => [], doorSubjects: { resolve: async () => null } };
+  return { createDoors: () => ({ routes: [], subjects: { resolve: async () => null } }) };
 });
 
 const silent = { info: () => {}, warn: () => {}, error: () => {} };
@@ -36,8 +36,11 @@ describe('test doors gating', () => {
     await buildDispatcher(depsFor('production', true));
     await buildDispatcher(depsFor('test', false));
     expect(evaluated.count).toBe(0);
-    await buildDispatcher(depsFor('test', true));
+    const testDeps = depsFor('test', true);
+    await buildDispatcher(testDeps);
     expect(evaluated.count).toBe(1);
+    // AC-57: the doors' subject resolver reaches the routes only; the built deps are left untouched.
+    expect(testDeps.subjects).toBeUndefined();
   });
 
   it('AC-31: in production, headers, query and cookies naming doors still get the unknown-path 404', async () => {

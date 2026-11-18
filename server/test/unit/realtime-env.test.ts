@@ -102,6 +102,11 @@ describe('realtime env (SPEC-06)', () => {
     it.each(['T2F_CENTRIFUGO_API_KEY', 'T2F_CENTRIFUGO_TOKEN_SECRET'])('refuses a 31-character %s, naming exactly it', (name) => {
       expect(boot(rawEnv({ T2F_ENV: cls, [name]: SHORT }))).toEqual({ ok: false, failing: [name] });
     });
+    it('refuses a token secret equal to the API key, naming the token secret and never a value', () => {
+      const result = boot(rawEnv({ T2F_ENV: cls, T2F_CENTRIFUGO_TOKEN_SECRET: API_KEY }));
+      expect(result).toEqual({ ok: false, failing: ['T2F_CENTRIFUGO_TOKEN_SECRET'] });
+      expect(JSON.stringify(result)).not.toContain(API_KEY);
+    });
   });
 
   it('both keys are secret (masked in logs) and required in rehearsal and production', () => {
@@ -113,6 +118,10 @@ describe('realtime env (SPEC-06)', () => {
     }
     const env = loadEnv(rawEnv(), envRegistry);
     expect(env.ok && env.secrets).toEqual(expect.arrayContaining([API_KEY, TOKEN_SECRET]));
+  });
+
+  it('test may share one value for the token secret and the API key (local stand)', () => {
+    expect(boot(rawEnv({ T2F_CENTRIFUGO_TOKEN_SECRET: API_KEY }))).toEqual({ ok: true });
   });
 
   it('test starts without the URL and both keys', () => {

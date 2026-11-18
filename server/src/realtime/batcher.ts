@@ -8,10 +8,14 @@
  * across batch boundaries. A failed batch is dropped with one `warn` line (class, event count, result;
  * never a body, a token or a key) and the schedule continues. Nothing here throws into domain code.
  *
+ * A channel's queue holds at most `BATCH_QUEUE_CAP` events (10 × the batch event cap): beyond it `enqueue`
+ * answers `full` and writes one `warn` line per flush window at most, so a stalled API cannot grow memory
+ * without bound or flood the log.
+ *
  * Timers come from the `Scheduler` port (the composition root passes `unref`'d global timers, so they
  * never keep a process alive) and time from `Clock`; `stop()` clears every timer.
  */
-import type { RealtimeEnvelope } from '@time2fest/contracts';
+import { REALTIME_MAX_BATCH_EVENTS, type RealtimeEnvelope } from '@time2fest/contracts';
 import { splitBatch } from '../domain/realtime/batch';
 import type { Clock, Logger } from '../ports';
 import type { CentrifugoApi, PublishOutcome, Scheduler } from './ports';
@@ -20,6 +24,11 @@ import type { CentrifugoApi, PublishOutcome, Scheduler } from './ports';
 export const BATCH_WINDOW_MS = 300;
 /** Adjacent flushes of one channel are at least this far apart (AC-37). */
 export const BATCH_MIN_GAP_MS = 250;
+/** Events one channel may hold queued: 10 batches' worth. */
+export const BATCH_QUEUE_CAP = 10 * REALTIME_MAX_BATCH_EVENTS;
+
+/** `queued`, `stopped` (the batcher is stopped) or `full` (the channel's queue is at `BATCH_QUEUE_CAP`). */
+export type EnqueueResult = 'queued' | 'stopped' | 'full';
 
 export interface ChannelBatcherOptions {
   api: CentrifugoApi;
@@ -31,8 +40,8 @@ export interface ChannelBatcherOptions {
 }
 
 export interface ChannelBatcher {
-  /** Queues `event` for `channel`; `false` once the batcher is stopped. */
-  enqueue(channel: string, classKey: string, event: RealtimeEnvelope): boolean;
+  /** Queues `event` for `channel`; `stopped` once the batcher is stopped, `full` at the queue cap. */
+  enqueue(channel: string, classKey: string, event: RealtimeEnvelope): EnqueueResult;
   /** Resolves when no flush is running (tests). */
   idle(): Promise<void>;
   /** Clears every timer and drops what is queued; later events are refused. */
@@ -48,6 +57,8 @@ interface Lane {
   running?: Promise<void>;
   /** Clock time the last flush of this channel started. */
   lastFlushAt?: number;
+  /** Clock time of the last queue-full warn line of this channel. */
+  fullWarnedAt?: number;
 }
 
 export function createChannelBatcher({ api, scheduler, clock, log, makeId }: ChannelBatcherOptions): ChannelBatcher {
@@ -104,16 +115,24 @@ export function createChannelBatcher({ api, scheduler, clock, log, makeId }: Cha
 
   return {
     enqueue(channel, classKey, event) {
-      if (stopped) return false;
+      if (stopped) return 'stopped';
       let lane = lanes.get(channel);
       if (lane === undefined) {
         lane = { classKey, queue: [], firstAt: clock.now() };
         lanes.set(channel, lane);
       }
+      if (lane.queue.length >= BATCH_QUEUE_CAP) {
+        const now = clock.now();
+        if (lane.fullWarnedAt === undefined || now - lane.fullWarnedAt >= BATCH_WINDOW_MS) {
+          lane.fullWarnedAt = now;
+          log.warn({ event: 'realtime_publish', class: lane.classKey, events: 1, result: 'unavailable', queue: 'full' });
+        }
+        return 'full';
+      }
       if (lane.queue.length === 0) lane.firstAt = clock.now();
       lane.queue.push(event);
       if (lane.timer === undefined && lane.running === undefined) schedule(channel, lane);
-      return true;
+      return 'queued';
     },
     async idle() {
       for (;;) {

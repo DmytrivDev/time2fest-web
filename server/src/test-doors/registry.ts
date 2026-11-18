@@ -23,13 +23,15 @@ import { collectionRegistry } from '../registries/collections';
 import { resetWorktree, runSeed, type ResettableCollection } from '../seed/index';
 import { seedRegistry, type SeedRow } from '../seed/registry';
 import { edgeEchoDoors } from './edgeEcho';
-import { realtimeTokenDoor, testSubjects } from './realtimeToken';
+import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
 
 /** What a door may use beyond the request context. */
 export interface DoorTools {
   clock: TestClock;
   /** The seed's row store; doors never see Payload itself. */
   seed: SeedStore;
+  /** The current realtime test subject of this doors construction (AC-57). */
+  subjects: TestSubjects;
 }
 
 export interface DoorRow {
@@ -68,7 +70,7 @@ export function resetDoor(
     key: 'reset',
     method: 'POST',
     path: '/api/_test/reset',
-    async handler(ctx, { clock, seed }) {
+    async handler(ctx, { clock, seed, subjects }) {
       await resetWorktree({
         store: seed,
         fast: ctx.deps.redis,
@@ -77,7 +79,7 @@ export function resetDoor(
         collections,
         rows: rows.filter((r) => !r.fixture),
       });
-      testSubjects.clear();
+      subjects.clear();
       return { ok: true, value: {} };
     },
   };

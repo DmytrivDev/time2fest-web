@@ -18,6 +18,8 @@ export const TOKEN_RETRY_MAX_MS = 10_000;
 export const PERMISSION_DENIED_CODE = 103;
 /** `disconnected` code of the client when a token refresh came back empty (AC-49). */
 const CLIENT_UNAUTHORIZED_CODE = 1;
+/** Centrifugo disconnect code of a state invalidation (C6, AC-35): the subject may have changed. */
+export const STATE_INVALIDATED_CODE = 3014;
 
 // --- The part of the `centrifuge` 5.x API the transport uses (the real module satisfies it structurally). ---
 
@@ -30,6 +32,7 @@ export interface CentrifugeSubscriptionLike {
 
 export interface CentrifugeClientLike {
   on(event: 'state', listener: (ctx: { newState: string }) => void): unknown;
+  on(event: 'connecting', listener: (ctx: { code: number }) => void): unknown;
   on(event: 'disconnected', listener: (ctx: { code: number }) => void): unknown;
   newSubscription(channel: string): CentrifugeSubscriptionLike;
   removeSubscription(sub: CentrifugeSubscriptionLike | null): void;
@@ -150,6 +153,13 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
   let loading = false;
   /** Bumped on every teardown, so a token loop of a finished connection stops. */
   let generation = 0;
+  /**
+   * The token endpoint answered `token:null` (AC-48). The client asks `getToken` before every reconnect while
+   * its token is empty, so without this a reconnect storm of anonymous visitors would hit the origin
+   * (US-2, FR-RT-09): reconnects stay anonymous without a request until a state invalidation (3014) or a
+   * teardown — the next first `subscribe` asks again.
+   */
+  let anonymous = false;
 
   function setState(next: ConnectionState): void {
     if (next === state) return;
@@ -193,10 +203,14 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
 
   /** `getToken` of the client: resolves only with a usable token (`''` = anonymous), never `UnauthorizedError`. */
   async function getToken(): Promise<string> {
+    if (anonymous) return '';
     const started = generation;
     for (;;) {
       const token = await requestToken();
-      if (token !== RETRY) return token;
+      if (token !== RETRY) {
+        if (started === generation) anonymous = token === '';
+        return token;
+      }
       if (!(await pause()) || started !== generation) {
         // The connection was closed meanwhile; the client ignores the outcome of an aborted attempt.
         throw new Error('realtime transport stopped');
@@ -250,6 +264,10 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
       if (channels.size === 0) return;
       if (ctx.newState === 'connecting' || ctx.newState === 'connected') setState(ctx.newState);
     });
+    centrifuge.on('connecting', (ctx) => {
+      // The server invalidated the state: the subject may have changed, so the next token is asked for again.
+      if (ctx.code === STATE_INVALIDATED_CODE) anonymous = false;
+    });
     centrifuge.on('disconnected', (ctx) => {
       if (channels.size > 0 && ctx.code === CLIENT_UNAUTHORIZED_CODE) {
         // A refresh came back without a subject (AC-49): reconnect anonymously; public channels resume,
@@ -297,6 +315,7 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
 
   function teardown(): void {
     generation += 1;
+    anonymous = false;
     for (const pending of [...pauses]) {
       timers.clearTimeout(pending.handle);
       pending.wake(false);

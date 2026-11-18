@@ -7,6 +7,7 @@ import type { RealtimeEnvelope } from '@time2fest/contracts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createRealtimeTransport,
+  STATE_INVALIDATED_CODE,
   type CentrifugeClientOptions,
   type CentrifugeModuleLike,
   type CentrifugeSubscriptionLike,
@@ -354,6 +355,57 @@ describe('AC-48 — token endpoint answers token:null', () => {
     h.transport.subscribe('site:state', listener());
     await flush();
     await expect(h.client().options.getToken()).resolves.toBe('fake-jwt'); // check-secrets: allow test fake
+  });
+});
+
+describe('US-2, FR-RT-09 — anonymous reconnects never reach the token endpoint', () => {
+  it('after token:null, reconnects reuse the anonymous answer without a request', async () => {
+    const h = harness();
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await expect(c.connectWith()).resolves.toBe('');
+    for (let i = 0; i < 5; i += 1) {
+      c.emit('state', { newState: 'connecting', oldState: 'connected' }); // a network drop
+      c.emit('connecting', { code: 3, reason: 'transport closed' });
+      await expect(c.connectWith()).resolves.toBe('');
+    }
+    expect(h.fetch).toHaveBeenCalledTimes(1);
+    expect(h.transport.state()).toBe('connected');
+  });
+
+  it('a state invalidation (3014) asks the endpoint again and picks up a new subject', async () => {
+    let body: unknown = ANONYMOUS;
+    const h = harness({ fetch: async () => response(200, body) });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await expect(c.connectWith()).resolves.toBe('');
+    body = SUBJECT;
+    c.emit('connecting', { code: STATE_INVALIDATED_CODE, reason: 'state invalidated' });
+    await expect(c.connectWith()).resolves.toBe('fake-jwt'); // check-secrets: allow test fake
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('a teardown forgets the anonymous answer: the next first subscribe asks again', async () => {
+    const h = harness();
+    const off = h.transport.subscribe('site:state', listener());
+    await flush();
+    await h.client().connectWith();
+    off();
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    await h.client().connectWith();
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('a subject token is never memoised: every getToken asks the endpoint', async () => {
+    const h = harness({ fetch: async () => response(200, SUBJECT) });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    await h.client().connectWith();
+    await h.client().connectWith();
+    expect(h.fetch).toHaveBeenCalledTimes(2);
   });
 });
 

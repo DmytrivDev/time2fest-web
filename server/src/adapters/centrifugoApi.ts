@@ -34,6 +34,8 @@ export function createCentrifugoApi({ url, apiKey, log }: CentrifugoApiOptions):
         method: 'POST',
         headers: { 'content-type': 'application/json', 'X-API-Key': apiKey },
         body: JSON.stringify(body),
+        // A redirect would re-send the API key to wherever it points: refused, so it reads as unavailable.
+        redirect: 'error',
         signal: AbortSignal.timeout(CENTRIFUGO_API_TIMEOUT_MS),
       });
       if (res.status === 401) {

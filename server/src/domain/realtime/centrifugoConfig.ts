@@ -21,6 +21,14 @@ export const CENTRIFUGO_PING_INTERVAL = '25s';
 export const PERSONAL_HISTORY_META_TTL_SECONDS = 3600;
 
 /** Origins a `test` connection may come from: loopback on any slot port (AC-6, glob-matched). */
+/**
+ * The internal port of rehearsal and production (S1): the server HTTP API (`/api/*`) and `/health` are
+ * served only there, never on the public client port the tunnel exposes. Centrifugo v6.10.3 keys
+ * `http_server.internal_port` (a string in its schema) with `http_api.external` left at its default `false`.
+ * The server's `T2F_CENTRIFUGO_URL` points at this port inside the network.
+ */
+export const CENTRIFUGO_INTERNAL_PORT = '9000';
+
 export const TEST_ALLOWED_ORIGINS: readonly string[] = ['http://127.0.0.1:*', 'http://localhost:*'];
 
 /** Options shared by a namespace and the channels without one (Centrifugo `ChannelOptions`). */
@@ -50,6 +58,13 @@ export interface CentrifugoConfig {
     ping_interval: string;
   };
   health: { enabled: boolean };
+  /** Rehearsal and production only: API and health on the internal port (S1). */
+  http_server?: { internal_port: string };
+}
+
+/** Whether `config` serves the API and health on an internal port apart from the public one (S1). */
+export function hasInternalSplit(config: CentrifugoConfig): boolean {
+  return typeof config.http_server?.internal_port === 'string' && config.http_server.internal_port !== '';
 }
 
 const seconds = (n: number): string => `${n}s`;
@@ -136,6 +151,9 @@ export function centrifugoConfig(
       ping_interval: CENTRIFUGO_PING_INTERVAL,
     },
     health: { enabled: true },
+    // `test` (local stand and CI, bound to loopback) stays single-port, so the shared container and the
+    // stack files need no change; rehearsal and production split API and health onto the internal port.
+    ...(cls === 'test' ? {} : { http_server: { internal_port: CENTRIFUGO_INTERNAL_PORT } }),
   };
 }
 

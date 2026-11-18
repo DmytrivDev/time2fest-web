@@ -7,7 +7,7 @@ import type { RealtimeBatch, RealtimeEnvelope } from '@time2fest/contracts';
 import { RealtimeBatchSchema } from '@time2fest/contracts/schemas';
 import { describe, expect, it } from 'vitest';
 import { batchOverheadBytes, jsonBytes, splitBatch } from '../../src/domain/realtime/batch';
-import { BATCH_MIN_GAP_MS, BATCH_WINDOW_MS } from '../../src/realtime/batcher';
+import { BATCH_MIN_GAP_MS, BATCH_QUEUE_CAP, BATCH_WINDOW_MS } from '../../src/realtime/batcher';
 import type { CentrifugoApi, CentrifugoPublishInput, PublishOutcome, Scheduler } from '../../src/realtime/ports';
 import { createChannelPublisher } from '../../src/realtime/publisher';
 import { channelClassesFor } from '../../src/registries/channels';
@@ -214,6 +214,28 @@ describe('batched publish (AC-37 … AC-40)', () => {
     expect(lines).toHaveLength(2);
     expect(batchOf(rec.calls[2]!.input).events.map((e) => e.id)).toEqual(['e4']);
     expect(JSON.stringify(lines)).not.toContain('body-marker');
+  });
+
+  it('a channel queue is capped at 10 batches: beyond it → unavailable, one warn line per flush window, nothing queued', async () => {
+    const { time, rec, lines, publisher } = setup();
+    const release = rec.hold();
+    await publisher.publish('rttest', 'b', ev(0));
+    await time.advance(300); // the first flush is now stuck in a held publish
+    expect(BATCH_QUEUE_CAP).toBe(2000);
+    for (let i = 1; i <= BATCH_QUEUE_CAP; i += 1) expect(await publisher.publish('rttest', 'b', ev(i))).toEqual({ status: 'queued' });
+    const over = (i: number): RealtimeEnvelope => ({ type: 'rt.test', id: `over${i}`, data: {} });
+    for (let i = 0; i < 5; i += 1) expect(await publisher.publish('rttest', 'b', over(i))).toEqual({ status: 'unavailable' });
+    const full = { level: 'warn', fields: { event: 'realtime_publish', class: 'rttest', events: 1, result: 'unavailable', queue: 'full' } };
+    expect(lines).toEqual([full]);
+    await time.advance(BATCH_WINDOW_MS);
+    expect(await publisher.publish('rttest', 'b', over(5))).toEqual({ status: 'unavailable' });
+    expect(lines).toEqual([full, full]);
+    release();
+    await time.advance(5_000);
+    await publisher.idle();
+    const ids = idsOf(rec.calls);
+    expect(ids).toHaveLength(1 + BATCH_QUEUE_CAP);
+    expect(ids.some((id) => id.startsWith('over'))).toBe(false);
   });
 
   it('a throwing API never reaches domain code and the schedule continues', async () => {

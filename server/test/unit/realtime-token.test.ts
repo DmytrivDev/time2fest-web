@@ -96,4 +96,20 @@ describe('realtime token', () => {
     expect(outcome).toEqual({ ok: false, error: { code: 'unavailable', reason: 'realtime-not-configured' } });
     expect(errors.unavailable).toBe(503);
   });
+
+  it('AC-19: the use case itself answers `realtime-not-configured` without a signer and never resolves the subject', async () => {
+    let resolved = 0;
+    const resolver: SubjectResolver = { resolve: async () => ((resolved += 1), { kind: 'guest', id: 'g1' }) };
+    const outcome = await issueRealtimeToken({ resolver, clock: manualClock(START_MS), random: () => 0.5 }, request());
+    expect(outcome).toEqual({ ok: false, error: { code: 'unavailable', reason: 'realtime-not-configured' } });
+    expect(resolved).toBe(0);
+  });
+
+  it('AC-58: the test-only `ttlSeconds` replaces the spread lifetime', async () => {
+    const signer = recordingSigner();
+    const deps = { resolver: subjectOf({ kind: 'guest', id: 'g1' }), signer, clock: manualClock(START_MS), random: () => 0.99 };
+    const result = await issueRealtimeToken(deps, request(), 5);
+    expect(result.ok).toBe(true);
+    expect(signer.calls.map((c) => c.exp - c.iat)).toEqual([5]);
+  });
 });

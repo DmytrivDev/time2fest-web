@@ -78,7 +78,11 @@ export function createChannelPublisher({ api, rows, prefix, log, scheduler, cloc
         } catch {
           return refuse('validation');
         }
-        return batcher.enqueue(channel, classKey, copy) ? { status: 'queued' } : refuse('unavailable');
+        const queued = batcher.enqueue(channel, classKey, copy);
+        if (queued === 'queued') return { status: 'queued' };
+        // A full queue: the batcher already wrote its rate-limited warn line.
+        if (queued === 'full') return { status: 'unavailable' };
+        return refuse('unavailable');
       }
 
       let outcome;

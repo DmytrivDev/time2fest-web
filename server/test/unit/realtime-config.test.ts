@@ -2,10 +2,16 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { CentrifugoChannelOptions, CentrifugoConfig } from '../../src/domain/realtime/centrifugoConfig';
+import {
+  CENTRIFUGO_INTERNAL_PORT,
+  centrifugoConfig,
+  hasInternalSplit,
+  type CentrifugoChannelOptions,
+  type CentrifugoConfig,
+} from '../../src/domain/realtime/centrifugoConfig';
 import { configFileName, REALTIME_CLASSES, REALTIME_CONFIG_DIR, runRealtimeConfig, type CliIo } from '../../src/cli/realtimeConfig';
 import type { EnvClass } from '../../src/platform/env';
-import { channelClassesFor } from '../../src/registries/channels';
+import { channelClassesFor, REALTIME_SITE_ORIGINS } from '../../src/registries/channels';
 
 /** The three generated files, parsed as stored in the repository. */
 const stored = Object.fromEntries(
@@ -76,6 +82,26 @@ describe('generated Centrifugo configuration (SPEC-06)', () => {
     for (const cls of ['rehearsal', 'production'] as const) {
       expect(stored[cls].channel.namespaces.map((ns) => ns.name), cls).not.toContain('rttest');
     }
+  });
+
+  it('S1: rehearsal and production serve API and health on the internal port only; test stays single-port', () => {
+    for (const cls of ['rehearsal', 'production'] as const) {
+      expect(stored[cls].http_server, cls).toEqual({ internal_port: CENTRIFUGO_INTERNAL_PORT });
+      expect(hasInternalSplit(stored[cls]), cls).toBe(true);
+      // `http_api.external` / `admin.external` would move them back onto the public port: never set.
+      expect(allKeys(stored[cls]).filter((k) => k === 'external'), cls).toEqual([]);
+    }
+    expect(stored.test.http_server).toBeUndefined();
+    expect(hasInternalSplit(stored.test)).toBe(false);
+  });
+
+  it('S1: the split check refuses a rehearsal or production config without the internal port', () => {
+    const base = centrifugoConfig(channelClassesFor('production'), 'production', REALTIME_SITE_ORIGINS);
+    expect(hasInternalSplit(base)).toBe(true);
+    const single: CentrifugoConfig = { ...base };
+    delete single.http_server;
+    expect(hasInternalSplit(single)).toBe(false);
+    expect(hasInternalSplit({ ...base, http_server: { internal_port: '' } })).toBe(false);
   });
 
   it('AC-5: client.ping_interval is 25s in all three classes', () => {

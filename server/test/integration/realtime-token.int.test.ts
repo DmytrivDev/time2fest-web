@@ -124,7 +124,15 @@ describe('GET /api/realtime/token and the realtime test door', () => {
         headers: { 'content-type': 'application/json', 'x-t2f-edge': EDGE_SECRET, 'x-t2f-client': '203.0.113.78;UA' },
       });
     const nope = () => new Request(`${BASE}/api/nope`, { headers: { 'x-t2f-edge': EDGE_SECRET, 'x-t2f-client': '203.0.113.78;UA' } });
-    const production = await buildDispatcher(testDeps({ redis }, { T2F_ENV: 'production', T2F_EDGE_SECRET: EDGE_SECRET }));
+    // SPEC-13a S4: a production-class env carries production's conventional names (never connected here).
+    const productionNames = {
+      DATABASE_URI: 'postgres://t2f@127.0.0.1:5432/t2f_production',
+      T2F_REDIS_PREFIX: 't2f:production:',
+      T2F_R2_BUCKET: 'time2fest-prod',
+    };
+    const production = await buildDispatcher(
+      testDeps({ redis }, { T2F_ENV: 'production', T2F_EDGE_SECRET: EDGE_SECRET, ...productionNames }),
+    );
     const noDoors = await buildDispatcher(testDeps({ redis }, { T2F_TEST_DOORS: undefined }));
     for (const d of [production, noDoors]) {
       const unknown = await shape(await d(nope()));

@@ -143,6 +143,16 @@ describe('warn lines carry no body, token or key (NFR-5)', () => {
     expect(await createSubjectInvalidator({ api: down.api, log }).invalidate('s1')).toBe('unavailable');
     expect(lines).toEqual([{ level: 'warn', fields: { event: 'realtime_invalidate', subject: 's1', result: 'unavailable' } }]);
   });
+
+  it('invalidate with a subject id outside the pattern → unavailable, 0 API calls, the same warn line', async () => {
+    for (const bad of ['', 'a:b', 'a b', '#x', 'x'.repeat(65)]) {
+      const stub = stubApi(undefined, 'ok');
+      const { log, lines } = capture();
+      expect(await createSubjectInvalidator({ api: stub.api, log }).invalidate(bad)).toBe('unavailable');
+      expect(stub.disconnects).toEqual([]);
+      expect(lines).toEqual([{ level: 'warn', fields: { event: 'realtime_invalidate', subject: bad.slice(0, 64), result: 'unavailable' } }]);
+    }
+  });
 });
 
 describe('Centrifugo HTTP API adapter (AC-32, AC-36, AC-17)', () => {
@@ -170,6 +180,15 @@ describe('Centrifugo HTTP API adapter (AC-32, AC-36, AC-17)', () => {
     expect(JSON.parse(String(calls[0]?.init.body))).toEqual({ channel: 'site:state', data: env, idempotency_key: 'ev-1' });
     expect((calls[0]?.init.headers as Record<string, string>)['X-API-Key']).toBe(API_KEY);
     expect(calls[0]?.init.signal).toBeInstanceOf(AbortSignal);
+    expect(calls[0]?.init.redirect).toBe('error');
+  });
+
+  it('a redirect is never followed: the call refuses it and reads as unavailable (the key is not re-sent)', async () => {
+    const calls = stubFetch(() => Promise.reject(new TypeError('unexpected redirect')));
+    const api = createCentrifugoApi({ url: 'http://centrifugo.test', apiKey: API_KEY, log: capture().log });
+    expect(await api.publish(input)).toEqual({ status: 'unavailable' });
+    expect(await api.disconnectUser('s1', 3014, 'x')).toBe('unavailable');
+    expect(calls.map((c) => c.init.redirect)).toEqual(['error', 'error']);
   });
 
   it('200 with error → rejected; 401, 500, a network error, a non-JSON body → unavailable; never throws', async () => {

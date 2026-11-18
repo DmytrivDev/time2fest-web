@@ -207,6 +207,16 @@ export function loadEnv(
     failing.push('T2F_EDGE_SECRET_PREVIOUS');
   }
 
+  // SPEC-06 (S4): outside `test` the token HMAC key must differ from the Centrifugo API key; values never reported.
+  if (
+    cls !== 'test' &&
+    env.T2F_CENTRIFUGO_TOKEN_SECRET !== undefined &&
+    env.T2F_CENTRIFUGO_TOKEN_SECRET === env.T2F_CENTRIFUGO_API_KEY &&
+    !failing.includes('T2F_CENTRIFUGO_TOKEN_SECRET')
+  ) {
+    failing.push('T2F_CENTRIFUGO_TOKEN_SECRET');
+  }
+
   if (cls === 'test') {
     for (const name of testIsolationFailures(env)) if (!failing.includes(name)) failing.push(name);
   }

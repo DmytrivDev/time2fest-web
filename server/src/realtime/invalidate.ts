@@ -2,7 +2,9 @@
  * `invalidateSubject` (ring 3, SPEC-06 C6: AC-35, AC-36, NFR-5): disconnects every connection of a subject
  * with code 3014, so that the client reconnects and gets its rights again. Never throws; a failure is
  * `unavailable` with exactly one `warn` line naming the subject id, never a token or a key.
+ * A subject id outside `SUBJECT_ID` never reaches the API: it is `unavailable` with the same warn line.
  */
+import { SUBJECT_ID } from '../domain/realtime/channels';
 import type { Logger } from '../ports';
 import type { CentrifugoApi, SubjectInvalidator } from './ports';
 
@@ -18,6 +20,11 @@ export interface SubjectInvalidatorOptions {
 export function createSubjectInvalidator({ api, log }: SubjectInvalidatorOptions): SubjectInvalidator {
   return {
     async invalidate(subjectId) {
+      if (!SUBJECT_ID.test(subjectId)) {
+        // Bounded, so an oversized id cannot flood the log line.
+        log.warn({ event: 'realtime_invalidate', subject: subjectId.slice(0, 64), result: 'unavailable' });
+        return 'unavailable';
+      }
       let result: 'ok' | 'unavailable';
       try {
         result = await api.disconnectUser(subjectId, INVALIDATE_CODE, INVALIDATE_REASON);

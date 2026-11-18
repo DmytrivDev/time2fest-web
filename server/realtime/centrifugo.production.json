@@ -68,5 +68,8 @@
   },
   "health": {
     "enabled": true
+  },
+  "http_server": {
+    "internal_port": "9000"
   }
 }
