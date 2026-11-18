@@ -149,7 +149,7 @@ function Body({ iso }: { iso: string }) {
                 city={city}
                 phone={false}
                 titleAs="h2"
-                className={live.pad}
+                className={cn(live.pad, s.watchClip)}
               />
             ) : null}
             {pc.described ? (

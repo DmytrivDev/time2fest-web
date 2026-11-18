@@ -18,6 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
 import type { LegalBlock, LegalDoc as SiteLegalDoc } from '@/lib/legal/docs';
+import edition from '@/content/prelaunch/legal/edition.json';
 
 export const LEGAL_IDS = ['privacy', 'cookies', 'terms', 'credits'] as const;
 export type LegalId = (typeof LEGAL_IDS)[number];
@@ -160,11 +161,28 @@ export function parseLegal(id: LegalId, locale: Locale, source: string): LegalDo
   return doc;
 }
 
+/**
+ * Дата редакції — одна на всі документи й мови (`content/prelaunch/legal/edition.json`), мовою сторінки:
+ * «18 листопада 2026», «18 November 2026». Рядок «оновлено» у файлах тексту не враховуємо.
+ */
+export function editionDate(locale: Locale, iso: string = edition.date): string {
+  const [y, m, d] = iso.split('-').map(Number) as [number, number, number];
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+    .format(Date.UTC(y, m - 1, d))
+    .replace(/\s*р\.$/, '');
+}
+
 /** Документ мовою сторінки; якщо перекладу немає — головною мовою (тоді сторінка показує примітку про чинну версію). */
 export function loadLegal(id: LegalId, locale: Locale): LegalDoc {
   for (const l of [locale, DEFAULT_LOCALE] as const) {
     const file = path.join(DIR, `${id}.${l}.md`);
-    if (fs.existsSync(file)) return parseLegal(id, l, fs.readFileSync(file, 'utf8'));
+    if (fs.existsSync(file))
+      return { ...parseLegal(id, l, fs.readFileSync(file, 'utf8')), updated: editionDate(l) };
   }
   throw new Error(`legal: немає файла content/prelaunch/legal/${id}.${locale}.md`);
 }

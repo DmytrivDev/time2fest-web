@@ -47,12 +47,17 @@ const FROM_SEO: readonly MetaPage[] = ['home', 'countries', 'pass', 'toasts', 'p
 /** Рік сезону в текст: «{year}» → «2027». */
 const withYear = (s: string) => s.replaceAll('{year}', SEASON_VALUES.year);
 
-/** Бренд у кінці; якщо разом понад 65 знаків — без бренду (SEO-звіт, розділ 2). */
+/**
+ * Бренд у кінці; якщо разом довше за стелю — без бренду (SEO-звіт, розділ 2: стеля 65). Сторінки країн мають рік
+ * (рішення власника 2026-11-19), з ним заголовки описаних країн — 66–70 знаків; бренд там лишаємо (стеля 70).
+ */
 const BRAND = ' | Time2Fest';
-export function fitTitle(title: string): string {
+export function fitTitle(title: string, ceiling = 65): string {
   const bare = title.endsWith(BRAND) ? title.slice(0, -BRAND.length) : title;
-  return bare.length + BRAND.length > 65 ? bare : bare + BRAND;
+  return bare.length + BRAND.length > ceiling ? bare : bare + BRAND;
 }
+/** Стеля title сторінки країни (з роком). */
+const COUNTRY_TITLE_CEILING = 70;
 
 export async function pageMetadata(
   locale: Locale,
@@ -102,7 +107,7 @@ export async function countryMetadata(
       ? `${feast} ${SEASON_VALUES.year}${seo.title.slice(feast.length)}`
       : seo.title;
     return {
-      title: fitTitle(title),
+      title: fitTitle(title, COUNTRY_TITLE_CEILING),
       description: withYear(seo.description),
       robots: { index: false, follow: false },
     };
@@ -110,7 +115,7 @@ export async function countryMetadata(
   const t = await getTranslations({ locale, namespace: 'prelaunch.meta.country' });
   const values = { ...SEASON_VALUES, country: name };
   return {
-    title: fitTitle(t('titleFacts', values)),
+    title: fitTitle(t('titleFacts', values), COUNTRY_TITLE_CEILING),
     description: t('descriptionFacts', values),
     robots: { index: false, follow: false },
   };

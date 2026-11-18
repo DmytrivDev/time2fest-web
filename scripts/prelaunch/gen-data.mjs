@@ -6,6 +6,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+/** Назви міст і місць іспанською й французькою, що відрізняються від англійських (Londres, Tokio, Pékin…). */
+const NAMES_ESFR = JSON.parse(fs.readFileSync(new URL('./names-esfr.json', import.meta.url), 'utf8'));
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
@@ -227,13 +229,15 @@ for (const locale of LOCALES) {
         .sort((a, b) => a.iso.localeCompare(b.iso))
         .map((c) => [c.iso, countryName(locale, c)]),
     ),
-    // Міста іспанською й французькою поки англійські: переклад — задача C.
+    // Міста: усталені назви мови (`names-esfr.json`, глосарій задачі C), інакше — англійська.
     cities: Object.fromEntries(
       cities
-        .map((c) => [c.id, CITY_EN[c.id] ?? titleCase(c.id)])
+        .map((c) => [c.id, NAMES_ESFR.cities[locale]?.[c.id] ?? CITY_EN[c.id] ?? titleCase(c.id)])
         .sort((a, b) => a[0].localeCompare(b[0])),
     ),
-    places: Object.fromEntries(Object.entries(PLACES).map(([uk, t]) => [uk, t[locale] ?? t.en])),
+    places: Object.fromEntries(
+      Object.entries(PLACES).map(([uk, t]) => [uk, NAMES_ESFR.places[locale]?.[uk] ?? t[locale] ?? t.en]),
+    ),
   };
 }
 

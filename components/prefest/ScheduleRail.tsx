@@ -295,6 +295,8 @@ export function ScheduleRail() {
           <div className={cn(s.secHead, r.head)}>
             <h2 id="prefest-sched-h">
               {t('title')}
+              {/* Мовне дерево: справжній пробіл (відступ CSS тексту не розділяє — пошук і читачі екрана бачили «свята за»). */}
+              {site ? ' ' : null}
               <span className={r.tz}>
                 {ready
                   ? site

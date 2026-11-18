@@ -42,6 +42,15 @@ async function shot(browser, url, size) {
   await page.clock.install({ time: new Date('2026-12-01T10:00:00Z') });
   const res = await page.goto(url, { waitUntil: 'load' });
   await page.waitForTimeout(1500);
+  // Ліниві блоки (мапа поясів) вантажаться, коли під'їжджають до екрана: проходимо сторінку й повертаємось угору.
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += 600) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(1200);
   const png = res && res.status() < 400 ? await page.screenshot({ fullPage: true }) : null;
   await ctx.close();
   return png ? PNG.sync.read(png) : null;
