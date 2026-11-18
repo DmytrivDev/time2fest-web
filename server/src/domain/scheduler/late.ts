@@ -64,8 +64,8 @@ export function untilBoundary(
 
 /**
  * Lag of a due action in real milliseconds (AC-38, AC-39): server lateness divided by the speed,
- * never more than `observedRealMs` (real time since the loop first saw it due; a virtual jump makes
- * a moment late in server time without any real delay). Frozen (speed 0) → no lag.
+ * never more than `observedRealMs` (real time the clock has run since its last jump or speed change;
+ * a virtual jump makes a moment late in server time without any real delay). Frozen (speed 0) → no lag.
  */
 export function lagMs(at: number, serverNow: number, speed: number, observedRealMs?: number): number {
   if (!(speed > 0)) return 0;

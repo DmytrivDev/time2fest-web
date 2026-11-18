@@ -18,9 +18,10 @@
  *   `failed` (journaled) — other groups keep running meanwhile (AC-40). A settled pair never runs
  *   again in the same run epoch (AC-26, AC-37).
  * - **lag** (AC-39, AC-41): only the holder, never while frozen; real lag of a due, not-started group
- *   = server lateness ÷ speed, capped by the real time since a pass could first have seen it due
- *   (a virtual jump or the moments missed before this process took the lease are not "lag"). One
- *   `page` `scheduler/lag` per lagging episode.
+ *   = real time since its moment came due = server time since `max(at, since)` ÷ speed, where `since`
+ *   is the instant the clock last jumped or changed speed (a virtual jump is not "lag"). Moments a
+ *   dead holder left behind DO count (AC-39 has no takeover exemption): the new holder pages if they
+ *   are over 2 s late. One `page` `scheduler/lag` per lagging episode.
  */
 import { seasonMoments, type SeasonInput } from '@time2fest/rules/time';
 import { consequenceFor, pairKey } from '../domain/scheduler/consequence';
@@ -42,6 +43,11 @@ export interface ClockView {
   now: number;
   speed: number;
   frozen: boolean;
+  /**
+   * Server instant since which the clock has run continuously at `speed` (the anchor of a virtual
+   * clock: every jump or speed change re-anchors). Absent = always (real time).
+   */
+  since?: number;
 }
 
 export interface SchedulerTimers {
@@ -197,8 +203,6 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
   const failures = new Map<string, { nextMono: number; attempts: number; code: string }>();
 
   // Lag bookkeeping (real time).
-  const firstSeen = new Map<string, number>();
-  let lastEvalMono: number | null = null;
   let lagging = false;
   let lastLag = 0;
   let epochError = false;
@@ -252,12 +256,9 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
           previousHolder: step.takeover?.previousHolder ?? null,
           epoch: step.takeover?.epoch ?? lease.epoch,
         });
-        // Another holder may have settled pairs: start from the store's ledger, and do not count
-        // what was missed before this process held the lease as lag.
+        // Another holder may have settled pairs: start from the store's ledger.
         ledgerFresh = false;
         failures.clear();
-        firstSeen.clear();
-        lastEvalMono = null;
         lagging = false;
         kick();
         break;
@@ -350,7 +351,7 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
     return 'stale';
   }
 
-  async function runGroup(group: DueGroup, gk: string, epoch: number): Promise<GroupOutcome> {
+  async function runGroup(group: DueGroup, epoch: number): Promise<GroupOutcome> {
     const p = plan;
     if (!p) return 'ok';
     const v = d.view();
@@ -384,7 +385,7 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
     if (keys.some((k) => (failures.get(pairKey(group.action, k))?.nextMono ?? -Infinity) > nowMono)) return 'deferred';
 
     if (!retrying) {
-      const lag = lagMs(group.at, v.now, v.speed, nowMono - (firstSeen.get(gk) ?? nowMono));
+      const lag = lagMs(group.at, v.now, v.speed, v.since === undefined ? undefined : (v.now - v.since) / v.speed);
       lastLag = Math.max(lastLag, lag);
       if (lag > LAG_ALARM_MS && !lagging && acting()) {
         lagging = true;
@@ -442,8 +443,6 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
     const season = input;
     if (!p || !season || !acting()) {
       // Standby or nothing loaded yet (NFR-8): no action, no scheduler alarm (AC-41, AC-43).
-      firstSeen.clear();
-      lastEvalMono = null;
       lastLag = 0;
       lagging = false;
       return;
@@ -462,33 +461,24 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
       started = new Map(ledger.started);
       if (epoch !== runEpoch) {
         failures.clear();
-        firstSeen.clear();
         lagging = false;
       }
       runEpoch = epoch;
       ledgerFresh = true;
     }
     const v = d.view();
-    const evalMono = d.mono();
     if (v.frozen || !(v.speed > 0)) {
       // AC-38: frozen runs nothing and is never late.
-      firstSeen.clear();
-      lastEvalMono = evalMono;
       lastLag = 0;
       lagging = false;
       return;
     }
     const due = dueGroups(p, v.now, settled);
-    const seenFrom = lastEvalMono ?? evalMono;
-    const keysDue = new Set(due.map((g) => `${g.action}@${g.at}`));
-    for (const k of [...firstSeen.keys()]) if (!keysDue.has(k)) firstSeen.delete(k);
-    for (const k of keysDue) if (!firstSeen.has(k)) firstSeen.set(k, seenFrom);
-    lastEvalMono = evalMono;
     lastLag = 0;
     let deferred = false;
     for (const group of due) {
       if (state !== 'running' || !acting()) break;
-      const outcome = await runGroup(group, `${group.action}@${group.at}`, epoch);
+      const outcome = await runGroup(group, epoch);
       if (outcome === 'stale') break;
       if (outcome === 'deferred') deferred = true;
     }

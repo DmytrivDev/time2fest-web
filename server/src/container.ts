@@ -245,7 +245,13 @@ function createProcessScheduler(deps: Deps, payload: () => Promise<Payload>, sha
   const stores = createPgScheduler({ payload, journal: createPayloadJournal(isRevertible) });
   const virtual = shared !== undefined && deps.clock === shared ? shared : undefined;
   return createScheduler({
-    view: virtual ? () => virtual.view() : () => ({ now: deps.clock.now(), speed: 1, frozen: false }),
+    // `since`: the last jump or speed change of a virtual clock, so a jump is not lag (AC-39).
+    view: virtual
+      ? () => {
+          const s = virtual.state();
+          return { ...virtual.view(), ...(s.virtual ? { since: s.anchorVirtual } : {}) };
+        }
+      : () => ({ now: deps.clock.now(), speed: 1, frozen: false }),
     mono: () => performance.now(),
     lease: stores.lease,
     runs: stores.runs,
