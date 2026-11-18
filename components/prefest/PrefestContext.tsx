@@ -30,6 +30,8 @@ export interface MediaItem {
   sourceUrl?: string;
   /** Для відео: кадр до запуску. */
   poster?: string;
+  /** Для відео: джерела по черзі (браузер бере перше, яке вміє й під яке підходить `media`); `src` — запасне. */
+  sources?: readonly { src: string; type: string; media?: string }[];
   kind?: 'image' | 'video';
 }
 

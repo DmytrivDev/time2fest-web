@@ -16,7 +16,7 @@ import { clock, dayMonth } from '@/lib/prefest/format';
 import { downloadIcs } from '@/lib/prefest/ics';
 import { SEASON_VALUES } from '@/lib/prelaunch/season';
 import { seeded, SCENE_COLORS } from './SceneCanvas';
-import { useClientReady, usePrefest } from './PrefestContext';
+import { useClientReady, usePrefest, type MediaItem } from './PrefestContext';
 import s from './prefest.module.css';
 import h from './PrefestHero.module.css';
 
@@ -180,6 +180,46 @@ function HeroFx({ reduced }: { reduced: boolean }) {
 /** Відео й фото банера — на всю площу, завжди по центру на будь-якій ширині (рішення власника 2026-11-18). */
 const HERO_MEDIA_FIT = { objectFit: 'cover', objectPosition: 'center' } as const;
 
+/**
+ * Ролик банера (власний файл, не YouTube): без звуку, по колу, джерела — webm, далі mp4; 1080p для широких екранів,
+ * 720p для вузьких. Запуск — лише з коду після гідрації і лише без «менше руху»; інакше видно тільки постер.
+ */
+export function HeroVideo({ media, reduced }: { media: MediaItem; reduced: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    if (reduced) {
+      v.pause();
+      return;
+    }
+    v.play().catch(() => {
+      // Браузер не дав запустити (енергозбереження тощо) — лишається постер.
+    });
+  }, [reduced]);
+  return (
+    <video
+      ref={ref}
+      className={h.fx}
+      poster={media.poster}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-hidden="true"
+      style={HERO_MEDIA_FIT}
+    >
+      {media.sources?.length ? (
+        media.sources.map((x) => <source key={x.src} src={x.src} type={x.type} media={x.media} />)
+      ) : (
+        <source src={media.src} />
+      )}
+    </video>
+  );
+}
+
 const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
 
 type Unit = 'days' | 'hours' | 'minutes' | 'seconds';
@@ -220,17 +260,7 @@ export function PrefestHero() {
   return (
     <section className={h.hero} aria-label={t('aria')}>
       {media?.kind === 'video' ? (
-        <video
-          className={h.fx}
-          src={media.src}
-          poster={media.poster}
-          autoPlay={!reduced}
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          style={HERO_MEDIA_FIT}
-        />
+        <HeroVideo media={media} reduced={reduced} />
       ) : media ? (
         // eslint-disable-next-line @next/next/no-img-element -- статичний експорт
         <img className={h.fx} src={media.src} alt="" style={HERO_MEDIA_FIT} />

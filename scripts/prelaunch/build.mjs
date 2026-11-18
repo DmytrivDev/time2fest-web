@@ -84,6 +84,17 @@ for (const entry of OPTIONAL_PUBLIC_ENTRIES) {
   const from = path.join(src, entry);
   if (fs.existsSync(from)) fs.cpSync(from, path.join(out, entry), { recursive: true });
 }
+// Відео й фото лише для домену (банер тощо) лежать поза `public/`, щоб не потрапити в демо.
+const prelaunchMedia = path.join(root, 'content', 'prelaunch', 'media');
+if (fs.existsSync(prelaunchMedia)) {
+  fs.cpSync(prelaunchMedia, path.join(out, 'media'), { recursive: true });
+  // Ролик банера йде по колу: без кешу браузер на кожному колі качав би файл наново (ривок на стику).
+  // Правило — лише в `_headers` збірки для домену; `public/_headers` демо не змінюється.
+  fs.appendFileSync(
+    path.join(out, '_headers'),
+    '\n# Відео й фото передстартового сайту не змінюються між збірками.\n/media/*\n  Cache-Control: public, max-age=86400\n',
+  );
+}
 
 function flattenSegments(fromDir, toPrefix) {
   for (const e of fs.readdirSync(fromDir, { withFileTypes: true })) {

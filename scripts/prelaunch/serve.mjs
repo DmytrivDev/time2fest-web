@@ -23,6 +23,8 @@ const TYPES = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.webp': 'image/webp',
+  '.webm': 'video/webm',
+  '.mp4': 'video/mp4',
   '.woff2': 'font/woff2',
   '.ico': 'image/x-icon',
   '.ics': 'text/calendar',
@@ -60,9 +62,34 @@ http
       res.writeHead(404).end('not found');
       return;
     }
+    const type = TYPES[path.extname(file)] ?? 'application/octet-stream';
+    // Відео й фото не змінюються між збірками — кеш, як у `_headers` збірки (`/media/*`), щоб петля ролика не
+    // качала файл наново.
+    const cache = pathname.startsWith('/media/') ? 'public, max-age=86400' : 'no-store';
+    // Відео: браузери (особливо Safari й телефони) просять частинами — віддаємо діапазон, як край.
+    const range = status === 200 ? /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '') : null;
+    if (range) {
+      const size = fs.statSync(file).size;
+      const start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+      const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+      if (start >= size || start > end) {
+        res.writeHead(416, { 'Content-Range': `bytes */${size}` }).end();
+        return;
+      }
+      res.writeHead(206, {
+        'Content-Type': type,
+        'Content-Range': `bytes ${start}-${end}/${size}`,
+        'Content-Length': end - start + 1,
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': cache,
+      });
+      fs.createReadStream(file, { start, end }).pipe(res);
+      return;
+    }
     res.writeHead(status, {
-      'Content-Type': TYPES[path.extname(file)] ?? 'application/octet-stream',
-      'Cache-Control': 'no-store',
+      'Content-Type': type,
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': cache,
     });
     fs.createReadStream(file).pipe(res);
   })
