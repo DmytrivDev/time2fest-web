@@ -5,13 +5,29 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { resolveSite } from '../common.mjs';
 import { acquireNodeLock } from '../lock.mjs';
-import { databaseUri, getVar, newSecret, REDIS_URL_BASE, redisUrl, redisUrlPassword, setVar } from './envFile.mjs';
+import {
+  CENTRIFUGO_API_URL,
+  CENTRIFUGO_REDIS_BASE,
+  databaseUri,
+  getVar,
+  newSecret,
+  REDIS_URL_BASE,
+  redisUrl,
+  redisUrlPassword,
+  setVar,
+} from './envFile.mjs';
 import { assertPrivatePath, localEnvDir, NODE_ENV_FILES, pushFile, WORKER_PENDING, writePrivate } from './files.mjs';
 
 /**
  * @typedef {import('../../ops.mjs').OpsContext} OpsContext
  * @typedef {import('./files.mjs').EnvFileName} EnvFileName
  */
+
+/** Пари «змінна сервера → змінна Centrifugo» з однаковим значенням. */
+const CENTRIFUGO_PAIRS = /** @type {const} */ ([
+  ['T2F_CENTRIFUGO_TOKEN_SECRET', 'CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY'],
+  ['T2F_CENTRIFUGO_API_KEY', 'CENTRIFUGO_HTTP_API_KEY'],
+]);
 
 /**
  * W22: заповнює порожні значення файлів `.local/<env>/`, за `--target` надсилає всі файли вузла, новий секрет
@@ -69,6 +85,12 @@ export async function generate(ctx) {
   if (urlPassword === undefined) return refuse('REDIS_URL — не URL; виправте server.env у .local вручну');
   if (urlPassword && urlPassword !== redisPasswordBefore) {
     return refuse('пароль у REDIS_URL не збігається з REDIS_PASSWORD (redis.env); виправте файли в .local вручну');
+  }
+  // Centrifugo (SPEC-06): ключі в server.env і centrifugo.env — ті самі значення; розбіжність — лише вручну.
+  for (const [srvName, rtName] of CENTRIFUGO_PAIRS) {
+    const a = getVar(srv, srvName);
+    const b = getVar(text['centrifugo.env'], rtName);
+    if (a && b && a !== b) return refuse(`${srvName} (server.env) не збігається з ${rtName} (centrifugo.env); виправте файли в .local вручну`);
   }
   const pendingFile = path.join(dir, WORKER_PENDING);
   const edgeNew = !getVar(srv, 'T2F_EDGE_SECRET');
@@ -144,6 +166,15 @@ export async function generate(ctx) {
       fill('server.env', 'REDIS_URL', () => redisUrl(REDIS_URL_BASE, redisPassword), 'задано');
     }
     fill('server.env', 'T2F_REDIS_PREFIX', () => `t2f:${env}:`, 'задано');
+    // Centrifugo (SPEC-06 → вузол): ключі сервера ≥32 символи й різні; Centrifugo бере ті самі значення; рушій — Redis
+    // вузла з паролем, окрема база. Наявні значення не змінюються (підтягує й старіший вузол без Centrifugo).
+    fill('server.env', 'T2F_CENTRIFUGO_URL', () => CENTRIFUGO_API_URL, 'задано');
+    for (const [srvName, rtName] of CENTRIFUGO_PAIRS) {
+      const have = getVar(text['centrifugo.env'], rtName);
+      fill('server.env', srvName, () => have || newSecret(), have ? 'скопійовано з centrifugo.env' : 'згенеровано');
+      fill('centrifugo.env', rtName, () => getVar(text['server.env'], srvName), 'скопійовано з server.env');
+    }
+    fill('centrifugo.env', 'CENTRIFUGO_ENGINE_REDIS_ADDRESS', () => redisUrl(CENTRIFUGO_REDIS_BASE, redisPassword), 'задано');
     const tunnelFile = ctx.paths.tunnelEnvFile(env);
     fill('cloudflared.env', 'TUNNEL_TOKEN', () => {
       if (!fs.existsSync(tunnelFile)) return undefined;

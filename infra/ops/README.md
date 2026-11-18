@@ -88,11 +88,11 @@
 |---|---|---|
 | `compose.yml` | розгортання (з `git show <sha>:infra/ops/node/compose.yml`) | сервіси `postgres`, `redis`, `server`, `cloudflared`; жодного опублікованого порту; мережі: `backend` (внутрішня) — лише `postgres`, `redis`, `server`; `tunnel` (внутрішня) — лише `server` і `cloudflared`; вихід назовні — `egress` (сервер) і `tunnel-egress` (`cloudflared`) |
 | `current.env`, `next.env` | розгортання, відкат | SHA образу для підстановки в Compose: поточний і той, що розгортається |
-| `server.env`, `postgres.env`, `redis.env`, `cloudflared.env` | `edge-secret --generate`, замінa секрету | змінні вузла, режим 0600; `redis.env` — `REDIS_PASSWORD` (Redis без пароля не стартує), той самий пароль — у `REDIS_URL` |
+| `server.env`, `postgres.env`, `redis.env`, `cloudflared.env`, `centrifugo.env` | `edge-secret --generate`, замінa секрету | змінні вузла, режим 0600; `redis.env` — `REDIS_PASSWORD` (Redis без пароля не стартує), той самий пароль — у `REDIS_URL` |
 | `journal.jsonl` | розгортання, відкат, заміна секрету | журнал розгортань |
 | `deploy.lock` | замок | `flock` на вузлі |
 
-Приклади з самими назвами змінних — `infra/ops/node/{server,postgres,redis,cloudflared}.env.example`; їх перевіряє тест
+Приклади з самими назвами змінних — `infra/ops/node/{server,postgres,redis,cloudflared,centrifugo}.env.example`; їх перевіряє тест
 `infra/ops/test/env-example.test.mjs`. `T2F_ENV`, `T2F_HOST`, `T2F_SERVER_PORT` і `T2F_COMMIT` у файлах вузла не пишуться:
 їх задають Compose й образ.
 
@@ -131,12 +131,24 @@ Postgres і Redis (кожен — 32 випадкові байти з систе
 Після заміни відкат до запису зі старішим поколінням відмовляє (код 2), доки не буде нового розгортання. Зміна
 `PAYLOAD_SECRET` анулює ключі агентів SPEC-04.
 
+### Centrifugo на вузлі (SPEC-06 → SPEC-07, фаза 0)
+
+Сервер у класі `rehearsal` не стартує без `T2F_CENTRIFUGO_URL`, `T2F_CENTRIFUGO_TOKEN_SECRET`, `T2F_CENTRIFUGO_API_KEY`.
+`edge-secret --generate` дописує відсутні: URL `http://centrifugo:9000` (внутрішній порт API), два різні ключі (32 байти)
+у `server.env` і ті самі значення в `centrifugo.env` (`CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY`, `CENTRIFUGO_HTTP_API_KEY`)
+плюс `CENTRIFUGO_ENGINE_REDIS_ADDRESS` (Redis вузла з паролем, база 1). Наявні значення не змінюються; розбіжність ключів
+між двома файлами — відмова (код 2). Старіший вузол: `edge-secret --generate --target <ip>`, потім `deploy`.
+Решта конфігурації — у `compose.yml` рядок у рядок з `pnpm --dir server realtime:config --print-env rehearsal` (звіряє
+`test/compose.test.mjs`). `deploy` піднімає `postgres redis centrifugo` до здоров'я перед міграціями. Мережі: `backend`
+(сервер → API 9000) і `realtime` (лише cloudflared → клієнтський порт 8000; ingress тунелю веде лише на 8000).
+Ім'я `rt-rehearsal.time2fest.com` — `infra/cloudflare`; збірка сайту репетиції бере `NEXT_PUBLIC_REALTIME_URL` з `buildEnv`.
+
 ### Змінні оточення й `--secrets-file`
 
 `--secrets-file <шлях>` — файл `NAME=value`; його змінні лише доповнюють оточення (наявні не перекриваються). Назви
 з `TOKEN`, `SECRET`, `PASSWORD`, `KEY` і перелік `SECRET_ENV_NAMES` (`infra/ops/lib/config.mjs`) маскуються в кожному рядку
 виводу. Файл не друкується. `deploy`, `rollback` і `capacity` так само маскують значення секретних змінних з локальних
-оригіналів `infra/ops/.local/<env>/{server,postgres,redis,cloudflared}.env`, а пароль у будь-якому `схема://користувач:пароль@`
+оригіналів `infra/ops/.local/<env>/{server,postgres,redis,cloudflared,centrifugo}.env`, а пароль у будь-якому `схема://користувач:пароль@`
 маскується завжди (рядок підключення в помилці міграції).
 
 | Змінна | Навіщо |

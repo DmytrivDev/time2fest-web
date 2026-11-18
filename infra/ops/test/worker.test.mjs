@@ -115,7 +115,12 @@ describe('site build (AC-31)', () => {
     const flags = Object.fromEntries([...script.matchAll(/\b([A-Z_]+)=(\S+)/g)].map((m) => [m[1], m[2]]));
     expect(script).toMatch(/next build$/);
     expect(siteBuildEnv('rehearsal')).toEqual(flags);
-    expect(flags).toEqual({ NEXT_PUBLIC_ENV: 'test', NEXT_PUBLIC_API_MODE: 'http', NEXT_DIST_DIR: 'out-edge-rehearsal' });
+    expect(flags).toEqual({
+      NEXT_PUBLIC_ENV: 'test',
+      NEXT_PUBLIC_API_MODE: 'http',
+      NEXT_PUBLIC_REALTIME_URL: 'wss://rt-rehearsal.time2fest.com/connection/websocket',
+      NEXT_DIST_DIR: 'out-edge-rehearsal',
+    });
     expect(siteBuildEnv('prelaunch')).toBeNull();
   });
 

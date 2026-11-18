@@ -33,6 +33,10 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 | `test` | `t2f-test` | `o-test.time2fest.com` | `^/api/` → `host.docker.internal:4100`, решта — 404 |
 | `rehearsal` | `t2f-rehearsal` | `o-rehearsal.time2fest.com`; `admin-rehearsal.time2fest.com` — лише разом з Access (нижче) | `o-rehearsal`: `^/api/` → `http://server:3000`; `admin-rehearsal`: лише `^/(admin\|cms-api\|_next)(/\|$)` → `http://server:3000`; решта — 404 |
 
+**Realtime репетиції.** `rt-rehearsal.time2fest.com` — CNAME на тунель `t2f-rehearsal`, ingress `^/connection/` → `http://centrifugo:8000`
+(клієнтський порт Centrifugo; API 9000 тунелю недосяжний). У блок-правило не входить (публічне ім'я); правило налаштувань
+`t2f-realtime-rehearsal` ставить `security_level: off` і вимикає перевірку браузера (cloudflare-notes).
+
 Правило `t2f-block-tunnel-hosts` блокує прямий доступ до імен тунелів (`o-*`); `admin-rehearsal` у нього не входить —
 його закриває Access і перевірка JWT Access на сервері. Власних правил WAF — 2, конфіг-правил — 3.
 

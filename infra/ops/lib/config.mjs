@@ -33,7 +33,8 @@ export const ENVS = {
     project: 't2f-rehearsal',
     localProject: 't2f-node-rehearsal',
     distDir: 'out-edge-rehearsal',
-    buildEnv: { NEXT_PUBLIC_ENV: 'test', NEXT_PUBLIC_API_MODE: 'http' },
+    // Realtime через край: ім'я rt-rehearsal (infra/cloudflare, тунель → centrifugo:8000).
+    buildEnv: { NEXT_PUBLIC_ENV: 'test', NEXT_PUBLIC_API_MODE: 'http', NEXT_PUBLIC_REALTIME_URL: 'wss://rt-rehearsal.time2fest.com/connection/websocket' },
   },
   // Лише Worker: сервера в prelaunch немає.
   prelaunch: {

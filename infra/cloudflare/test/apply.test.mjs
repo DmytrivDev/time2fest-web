@@ -64,8 +64,8 @@ describe('apply', () => {
     const r = await run(fake, ['apply', '--env', 'test']);
     expect(r.code).toBe(0);
 
-    // cf.mjs будує всі середовища разом (W28, AC-28): тунелі test і rehearsal, два CNAME (адмінки без --with-access
-    // немає — F2), два PUT фаз.
+    // cf.mjs будує всі середовища разом (W28, AC-28): тунелі test і rehearsal, три CNAME (o-test, o-rehearsal,
+    // rt-rehearsal; адмінки без --with-access немає — F2), два PUT фаз.
     const tunnelId = fake.state.tunnels[0]?.id;
     const rehearsalId = fake.state.tunnels.find((t) => t.name === 't2f-rehearsal')?.id;
     expect(fake.mutations()).toEqual([
@@ -73,6 +73,7 @@ describe('apply', () => {
       { method: 'PUT', path: `/accounts/acct-test/cfd_tunnel/${tunnelId}/configurations` },
       { method: 'POST', path: '/accounts/acct-test/cfd_tunnel' },
       { method: 'PUT', path: `/accounts/acct-test/cfd_tunnel/${rehearsalId}/configurations` },
+      { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'POST', path: '/zones/zone-test/dns_records' },
       { method: 'PUT', path: `/zones/zone-test/rulesets/phases/${PHASE_CUSTOM}/entrypoint` },

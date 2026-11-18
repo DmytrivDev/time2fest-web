@@ -1,7 +1,7 @@
-# Вузол репетиції: Postgres + Redis + сервер + cloudflared (SPEC-13a, W10).
+# Вузол репетиції: Postgres + Redis + Centrifugo + сервер + cloudflared (SPEC-13a, W10; Centrifugo — SPEC-06/07).
 # Без `name:` — проєкт задає `-p` (t2f-node-<env>). Без `ports:` — Docker
 # обходить ufw, тому назовні нічого не публікується; вхід лише через тунель.
-# Файли `server.env`, `postgres.env`, `redis.env`, `cloudflared.env` лежать поруч на вузлі.
+# Файли `server.env`, `postgres.env`, `redis.env`, `cloudflared.env`, `centrifugo.env` лежать поруч на вузлі.
 # REDIS_URL, REDIS_PASSWORD, T2F_REDIS_PREFIX, DATABASE_URI, POSTGRES_USER, POSTGRES_DB пише
 # `edge-secret --generate` у env-файли; T2F_COMMIT запечено в образ.
 services:
@@ -47,6 +47,51 @@ services:
     networks:
       - backend
 
+  centrifugo:
+    # centrifugo/centrifugo:v6.10.3 (індексний дайджест, linux/amd64 + arm64) — та сама версія, що в docker-compose.yml
+    image: centrifugo/centrifugo:v6.10.3@sha256:33fdbbce7d195dde316cbde17bc1d2a17b9e345de82799d1ec3c2bb8916e3803
+    restart: unless-stopped
+    command: centrifugo
+    # Ключі (HMAC токенів, ключ API) і адреса рушія з паролем Redis — у centrifugo.env (`edge-secret --generate`).
+    env_file: centrifugo.env
+    # Конфігурація класу rehearsal: `pnpm --dir server realtime:config --print-env rehearsal` (рядок у рядок;
+    # перевіряє infra/ops/test/compose.test.mjs). Клієнтський порт 8000 — лише для cloudflared (мережа realtime);
+    # HTTP API і health — внутрішній порт 9000 (сервер через backend, з ключем).
+    environment:
+      CENTRIFUGO_CHANNEL_NAMESPACES: '[{"name":"chat","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":100,"history_ttl":"300s"},{"name":"live","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"notif","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"orders","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"site","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"user","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"}]'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_ANONYMOUS: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_CLIENT: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_FORCE_RECOVERY: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_SIZE: '20'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_TTL: '300s'
+      CENTRIFUGO_CLIENT_ALLOWED_ORIGINS: 'https://rehearsal.time2fest.com'
+      CENTRIFUGO_CLIENT_ALLOW_ANONYMOUS_CONNECT_WITHOUT_TOKEN: 'true'
+      CENTRIFUGO_CLIENT_DISALLOW_ANONYMOUS_CONNECTION_TOKENS: 'true'
+      CENTRIFUGO_CLIENT_PING_INTERVAL: '25s'
+      CENTRIFUGO_HEALTH_ENABLED: 'true'
+      CENTRIFUGO_HTTP_SERVER_INTERNAL_PORT: '9000'
+      CENTRIFUGO_ENGINE_TYPE: 'redis'
+      CENTRIFUGO_ENGINE_REDIS_PREFIX: 't2f_centrifugo'
+      CENTRIFUGO_ADMIN_ENABLED: 'false'
+      # М'яка межа купи Go нижче за mem_limit: GC працює активніше, ніж OOM.
+      GOMEMLIMIT: '200MiB'
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ulimits:
+      nofile:
+        soft: 100000
+        hard: 100000
+    mem_limit: 256m
+    networks:
+      - backend
+      - realtime
+
   server:
     image: t2f-server:${T2F_SERVER_SHA:?set by ops}
     restart: unless-stopped
@@ -59,6 +104,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      centrifugo:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "node", "scripts/health-probe.mjs"]
@@ -79,17 +126,21 @@ services:
     command: tunnel --no-autoupdate run
     env_file: cloudflared.env
     mem_limit: 128m
-    # Не в backend (S1): лише `tunnel` до сервера і власний вихід назовні до Cloudflare.
+    # Не в backend (S1): лише `tunnel` до сервера, `realtime` до Centrifugo і власний вихід назовні до Cloudflare.
     networks:
       - tunnel
+      - realtime
       - tunnel-egress
 
-# backend — лише postgres, redis, server; tunnel — лише server і cloudflared (перехід тунель → сервер);
+# backend — лише postgres, redis, centrifugo, server; tunnel — лише server і cloudflared (перехід тунель → сервер);
+# realtime — лише centrifugo і cloudflared (тунель → клієнтський порт 8000; ingress не веде на 9000, API — з ключем);
 # egress — вихід сервера назовні, tunnel-egress — вихід cloudflared до Cloudflare.
 networks:
   backend:
     internal: true
   tunnel:
+    internal: true
+  realtime:
     internal: true
   egress: {}
   tunnel-egress: {}

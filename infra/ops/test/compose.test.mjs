@@ -58,8 +58,8 @@ function networksOf(body) {
 describe('node compose.yml', () => {
   const c = parse(read('compose.yml'));
 
-  it('has exactly postgres, redis, server, cloudflared', () => {
-    expect(Object.keys(c.services).sort()).toEqual(['cloudflared', 'postgres', 'redis', 'server']);
+  it('has exactly postgres, redis, centrifugo, server, cloudflared', () => {
+    expect(Object.keys(c.services).sort()).toEqual(['centrifugo', 'cloudflared', 'postgres', 'redis', 'server']);
   });
 
   it('publishes no ports', () => {
@@ -98,13 +98,18 @@ describe('node compose.yml', () => {
     expect(c.networks.tunnel).toBe(true);
     expect(networksOf(c.services.server)).toContain('tunnel');
     // Кожна мережа cloudflared, крім його власного виходу, спільна лише із сервером.
+    // realtime — лише з Centrifugo (клієнтський порт 8000).
+    /** @type {Record<string, string[]>} */
+    const shared = { tunnel: ['cloudflared', 'server'], realtime: ['centrifugo', 'cloudflared'] };
     for (const n of cf) {
       const members = Object.entries(c.services).filter(([, body]) => networksOf(body).includes(n)).map(([name]) => name).sort();
-      expect(members, n).toEqual(n === 'tunnel' ? ['cloudflared', 'server'] : ['cloudflared']);
+      expect(members, n).toEqual(shared[n] ?? ['cloudflared']);
     }
-    // backend — лише postgres, redis, server.
+    expect(c.networks.realtime).toBe(true);
+    // backend — лише postgres, redis, centrifugo, server.
     const backend = Object.entries(c.services).filter(([, body]) => networksOf(body).includes('backend')).map(([name]) => name).sort();
-    expect(backend).toEqual(['postgres', 'redis', 'server']);
+    expect(backend).toEqual(['centrifugo', 'postgres', 'redis', 'server']);
+    expect(networksOf(c.services.centrifugo).sort()).toEqual(['backend', 'realtime']);
   });
 
   it('S1: redis requires a password from redis.env, never in argv or the healthcheck text', () => {
@@ -133,6 +138,55 @@ describe('node compose.yml', () => {
     expect(body).toMatch(/T2F_HOST:\s*0\.0\.0\.0/);
     expect(body).toMatch(/T2F_SERVER_PORT:\s*"3000"/);
     expect(body).toMatch(/node.*scripts\/health-probe\.mjs/);
+  });
+});
+
+describe('node compose.yml: Centrifugo (SPEC-06 → вузол)', () => {
+  const c = parse(read('compose.yml'));
+  const body = () => c.services.centrifugo.join('\n');
+
+  /** Конфігурація класу як змінні Centrifugo (те саме, що `realtime:config --print-env`). @param {any} v @param {string} key @param {Map<string, string>} out */
+  function flatten(v, key, out) {
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      for (const [k, x] of Object.entries(v)) flatten(x, `${key}_${k.toUpperCase()}`, out);
+    } else if (Array.isArray(v)) {
+      out.set(key, v.every((x) => typeof x === 'string') ? v.join(' ') : JSON.stringify(v));
+    } else out.set(key, String(v));
+    return out;
+  }
+
+  it('environment is exactly the generated rehearsal config, plus engine and admin off', () => {
+    const json = JSON.parse(readFileSync(new URL('../../../server/realtime/centrifugo.rehearsal.json', import.meta.url), 'utf8'));
+    const want = flatten(json, 'CENTRIFUGO', new Map());
+    /** @type {Map<string, string>} */
+    const got = new Map();
+    for (const line of c.services.centrifugo) {
+      const m = line.match(/^ {6}(CENTRIFUGO_[A-Z0-9_]+):\s*'(.*)'\s*$/);
+      if (m) got.set(m[1], m[2].replace(/''/g, "'"));
+    }
+    for (const [k, v] of want) expect(got.get(k), k).toBe(v);
+    expect(want.get('CENTRIFUGO_CLIENT_ALLOWED_ORIGINS')).toBe('https://rehearsal.time2fest.com');
+    expect(want.get('CENTRIFUGO_HTTP_SERVER_INTERNAL_PORT')).toBe('9000');
+    expect(got.get('CENTRIFUGO_ENGINE_TYPE')).toBe('redis');
+    expect(got.get('CENTRIFUGO_ADMIN_ENABLED')).toBe('false');
+    expect([...got.keys()].filter((k) => !want.has(k)).sort()).toEqual(['CENTRIFUGO_ADMIN_ENABLED', 'CENTRIFUGO_ENGINE_REDIS_PREFIX', 'CENTRIFUGO_ENGINE_TYPE']);
+  });
+
+  it('keys and the engine address come from centrifugo.env only', () => {
+    expect(body()).toMatch(/^ {4}env_file:\s*centrifugo\.env\s*$/m);
+    for (const name of ['CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY', 'CENTRIFUGO_HTTP_API_KEY', 'CENTRIFUGO_ENGINE_REDIS_ADDRESS']) {
+      expect(body(), name).not.toContain(name);
+    }
+  });
+
+  it('nofile ≥ 70000, memory capped, health on the internal port, server waits for it', () => {
+    const soft = Number(body().match(/soft:\s*(\d+)/)?.[1]);
+    const hard = Number(body().match(/hard:\s*(\d+)/)?.[1]);
+    expect(soft).toBeGreaterThanOrEqual(70000);
+    expect(hard).toBeGreaterThanOrEqual(soft);
+    expect(body()).toMatch(/^ {4}mem_limit:\s*\d+m\s*$/m);
+    expect(body()).toMatch(/127\.0\.0\.1:9000\/health/);
+    expect(c.services.server.join('\n')).toMatch(/centrifugo:\n\s+condition: service_healthy/);
   });
 });
 

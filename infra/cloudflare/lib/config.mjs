@@ -25,7 +25,9 @@ export const EXEMPT_PATHS = [
 /**
  * `test` і `rehearsal`; `plan`/`apply` завжди будують обидва разом (повний список фази).
  * `adminHost` — ім'я адмінки через той самий тунель, усі шляхи; відкривається лише за Access.
- * @type {Record<string, { siteHost: string, tunnelHost: string, tunnelName: string, originService: string, adminHost?: string, underAttack: boolean }>}
+ * `realtimeHost` — публічне ім'я Centrifugo через той самий тунель (лише `/connection/…`, клієнтський порт
+ * `realtimeService`); без блок-правила тунелю й з `security_level: off` (SPEC-06, cloudflare-notes §85).
+ * @type {Record<string, { siteHost: string, tunnelHost: string, tunnelName: string, originService: string, adminHost?: string, realtimeHost?: string, realtimeService?: string, underAttack: boolean }>}
  */
 export const ENVS = {
   test: {
@@ -43,6 +45,9 @@ export const ENVS = {
     // Джерело — служба `server` у мережі Compose вузла.
     originService: 'http://server:3000',
     adminHost: 'admin-rehearsal.time2fest.com',
+    // Centrifugo вузла: клієнтський порт 8000 (API — внутрішній 9000, тунелю недосяжний за ingress).
+    realtimeHost: 'rt-rehearsal.time2fest.com',
+    realtimeService: 'http://centrifugo:8000',
     underAttack: false,
   },
 };
