@@ -1,0 +1,58 @@
+{
+  "AU": {
+    "text": "Les Australiens accueillent le Nouvel An 11 heures avant Londres, en pleine chaleur estivale. La fête se concentre autour de la baie de Sydney, qui offre l’un des feux d’artifice les plus célèbres au monde.",
+    "traditions": [
+      { "id": "t1", "title": "Feux d’artifice sur la baie", "text": "Dans la baie de Sydney, il y a deux feux d’artifice : l’un, familial, à 21 h, et le principal à minuit, au-dessus du Sydney Harbour Bridge et de la Sydney Opera House." },
+      { "id": "t2", "title": "Le Nouvel An en plein été", "text": "En janvier, c’est l’été en Australie : on fête donc le Nouvel An sur la plage, autour d’un barbecue ou d’un pique-nique en plein air." },
+      { "id": "t3", "title": "Une place avec vue", "text": "Les meilleures places au bord de l’eau sont prises bien à l’avance, dès la journée : les familles arrivent avec des plaids et des paniers, et beaucoup regardent depuis des bateaux." }
+    ]
+  },
+  "BR": {
+    "text": "Au Brésil, la nuit du Nouvel An s’appelle le Réveillon. À Rio, elle impressionne par son ampleur : des millions de personnes se rassemblent à Copacabana, la musique résonne et le feu d’artifice se reflète dans l’océan.",
+    "traditions": [
+      { "id": "t1", "title": "Tout en blanc", "text": "Les Brésiliens s’habillent en blanc, couleur de la paix et de la pureté, et vont à la plage, surtout à Copacabana." },
+      { "id": "t2", "title": "Sept vagues", "text": "À minuit, sur le rivage, on saute par-dessus sept vagues en formulant un vœu pour chacune." },
+      { "id": "t3", "title": "Des fleurs pour Iemanjá", "text": "Beaucoup de gens jettent des fleurs à l’eau en offrande à Iemanjá, déesse de la mer, et demandent le bonheur pour la nouvelle année." }
+    ]
+  },
+  "FR": {
+    "text": "Les Français appellent cette nuit la Saint-Sylvestre. C’est un long dîner avec les proches, un baiser à minuit et une promenade dans un Paris en fête, où la tour Eiffel étincelle.",
+    "traditions": [
+      { "id": "t1", "title": "Réveillon", "text": "Un long dîner de fête, avec champagne, huîtres et foie gras, se prolonge tard dans la nuit." },
+      { "id": "t2", "title": "Un baiser sous le gui", "text": "Selon la tradition, on s’embrasse à minuit sous une branche de gui, pour porter chance dans la nouvelle année. Le vieux souhait « Au gui l’an neuf ! » est lui aussi lié au gui." },
+      { "id": "t3", "title": "Les Champs-Élysées", "text": "Parisiens et visiteurs se retrouvent près de l’Arc de Triomphe : un spectacle de lumière sur ses murs, un compte à rebours partagé et un feu d’artifice à minuit." }
+    ]
+  },
+  "GB": {
+    "text": "En Grande-Bretagne, le Nouvel An, c’est à la fois le Hogmanay écossais et le feu d’artifice londonien au-dessus de la Tamise. L’essentiel : une étreinte, une chanson à minuit et le premier visiteur à franchir la porte.",
+    "traditions": [
+      { "id": "t1", "title": "Les cloches de Big Ben", "text": "À minuit, Big Ben sonne douze coups, et le grand feu d’artifice commence au-dessus de la Tamise, près du London Eye." },
+      { "id": "t2", "title": "Auld Lang Syne", "text": "À minuit, on forme un cercle, on se prend par la main et on chante la vieille chanson écossaise sur des vers de Robert Burns, en croisant les bras au dernier couplet." },
+      { "id": "t3", "title": "Le premier visiteur de l’année", "text": "En Écosse et dans le nord de l’Angleterre, on croit que la première personne à franchir le seuil après minuit apporte la chance à la maison. Elle arrive avec un cadeau : du charbon, du shortbread ou du whisky." }
+    ]
+  },
+  "JP": {
+    "text": "Pour les Japonais, le Nouvel An est la fête la plus importante de l’année : le calme, une maison impeccable, les cloches des temples et un dîner en famille. On accueille minuit chez soi ou près d’un temple.",
+    "traditions": [
+      { "id": "t1", "title": "Joya no kane", "text": "La nuit du Nouvel An, dans les temples bouddhistes, la cloche sonne 108 fois, comme les passions terrestres dont l’être humain se purifie. Le dernier coup retentit généralement déjà dans la nouvelle année." },
+      { "id": "t2", "title": "Toshikoshi soba", "text": "Le soir, on mange des toshikoshi soba, des nouilles de sarrasin : les nouilles longues symbolisent une longue vie, et leur façon de se rompre facilement, l’adieu aux soucis de l’année écoulée." },
+      { "id": "t3", "title": "Hatsumode", "text": "Dans les premiers jours de janvier, on se rend dans un sanctuaire ou un temple : c’est la première visite de l’année, pour prier pour une bonne année et acheter une amulette." }
+    ]
+  },
+  "NZ": {
+    "text": "La Nouvelle-Zélande salue le monde avec le Nouvel An parmi les premières : minuit n’arrive plus tôt que dans les îles de la Ligne, au Kiribati, et dans les îles Chatham, elles aussi néo-zélandaises.",
+    "traditions": [
+      { "id": "t1", "title": "Le feu d’artifice de la Sky Tower", "text": "À minuit, le feu d’artifice est tiré directement depuis la Sky Tower d’Auckland, et on le voit dans toute la baie." },
+      { "id": "t2", "title": "Parmi les premiers au monde", "text": "Auckland fête le Nouvel An deux heures avant Sydney." },
+      { "id": "t3", "title": "Les vacances d’été", "text": "Le début de janvier tombe pendant les vacances : les familles partent à la plage ou au camping et passent la nuit en plein air." }
+    ]
+  },
+  "US": {
+    "text": "Aux États-Unis, le grand symbole de la nuit est la boule de New York. Le pays couvre six fuseaux horaires : entre minuit à New York et minuit à Hawaï, il s’écoule donc cinq heures.",
+    "traditions": [
+      { "id": "t1", "title": "La boule de Times Square", "text": "À New York, une minute avant minuit, une boule de cristal commence à descendre, et toute la place décompte les soixante dernières secondes." },
+      { "id": "t2", "title": "Un baiser à minuit", "text": "Selon la tradition, au premier coup de minuit on embrasse la personne la plus proche, pour la chance et l’amour dans la nouvelle année." },
+      { "id": "t3", "title": "Haricots à œil noir porte-bonheur", "text": "Dans le sud du pays, le 1er janvier, on mange des haricots à œil noir et des légumes verts, pour l’abondance et l’argent." }
+    ]
+  }
+}

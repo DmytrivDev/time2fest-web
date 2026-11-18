@@ -22,8 +22,8 @@ export const LOCALE_NAMES: Record<Locale, string> = {
 export const LOCALE_STATUS: Record<Locale, 'ready' | 'draft' | 'pending'> = {
   en: 'draft',
   uk: 'ready',
-  es: 'pending',
-  fr: 'pending',
+  es: 'draft',
+  fr: 'draft',
 };
 
 export function isLocale(value: unknown): value is Locale {

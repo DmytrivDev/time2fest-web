@@ -16,11 +16,12 @@ const demo = arg('--demo', 'http://127.0.0.1:4402');
 // Демо живе на віртуальній ночі свята; знімаємо його «до свята» (1 грудня), як передстартовий сайт.
 const T = '?t=2026-12-01T12:00:00%2B02:00&speed=0';
 const PAIRS = [
+  { id: 'home', demo: `/${T}`, pre: '/uk/' },
   { id: 'pass', demo: `/pass/${T}`, pre: '/uk/pass/' },
   { id: 'countries', demo: `/countries/${T}`, pre: '/uk/countries/' },
-  { id: 'country-jp', demo: `/country/yaponiia/${T}`, pre: '/uk/country/japan/' },
-  { id: 'country-us', demo: `/country/ssha/${T}`, pre: '/uk/country/united-states/' },
-  { id: 'country-ad', demo: `/country/andorra/${T}`, pre: '/uk/country/andorra/' },
+  { id: 'country-fr', demo: `/country/frantsiia/${T}`, pre: '/uk/country/france/' },
+  { id: 'country-ph', demo: `/country/filippiny/${T}`, pre: '/uk/country/philippines/' },
+  { id: 'country-au', demo: `/country/avstraliia/${T}`, pre: '/uk/country/australia/' },
   { id: 'toasts', demo: `/support/${T}`, pre: '/uk/toasts/' },
   { id: 'privacy', demo: `/privacy/${T}`, pre: '/uk/privacy/' },
 ];

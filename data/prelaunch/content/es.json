@@ -1,0 +1,58 @@
+{
+  "AU": {
+    "text": "Los australianos reciben el Año Nuevo 11 horas antes que Londres y en pleno calor veraniego. El centro de la fiesta es la bahía de Sídney, con uno de los espectáculos de fuegos artificiales más famosos del mundo.",
+    "traditions": [
+      { "id": "t1", "title": "Fuegos artificiales sobre la bahía", "text": "En la bahía de Sídney hay dos espectáculos pirotécnicos: uno familiar a las 21:00 y el principal a medianoche, sobre el Sydney Harbour Bridge y la Sydney Opera House." },
+      { "id": "t2", "title": "Año Nuevo en pleno verano", "text": "En enero es verano en Australia, así que se celebra en la playa, en barbacoas y en picnics al aire libre." },
+      { "id": "t3", "title": "Un sitio con vistas", "text": "Los mejores lugares junto al agua se ocupan con mucha antelación, ya durante el día: las familias llegan con mantas y cestas de picnic, y muchos miran el espectáculo desde barcos." }
+    ]
+  },
+  "BR": {
+    "text": "La noche de Fin de Año en Brasil se llama Réveillon. En Río impresiona por su magnitud: millones de personas se reúnen en Copacabana, suena la música y los fuegos artificiales se reflejan en el océano.",
+    "traditions": [
+      { "id": "t1", "title": "Todo de blanco", "text": "Los brasileños se visten de blanco, el color de la paz y la pureza, y van a la playa, sobre todo a Copacabana." },
+      { "id": "t2", "title": "Siete olas", "text": "A medianoche, en la orilla se saltan siete olas y se pide un deseo con cada una." },
+      { "id": "t3", "title": "Flores para Iemanjá", "text": "Muchas personas arrojan flores al agua como ofrenda a Iemanjá, la diosa del mar, y piden felicidad para el nuevo año." }
+    ]
+  },
+  "FR": {
+    "text": "Los franceses llaman a esta noche la Saint-Sylvestre. Es una larga cena con los seres queridos, un beso a medianoche y un paseo por una París engalanada, donde brilla la torre Eiffel.",
+    "traditions": [
+      { "id": "t1", "title": "Réveillon", "text": "Una larga cena festiva con champán, ostras y foie gras se prolonga hasta bien entrada la noche." },
+      { "id": "t2", "title": "Un beso bajo el muérdago", "text": "Por tradición, a medianoche se besan bajo una rama de muérdago, para tener suerte en el nuevo año. Al muérdago también está ligado el antiguo deseo «Au gui l’an neuf !»." },
+      { "id": "t3", "title": "Campos Elíseos", "text": "Parisinos y visitantes se reúnen junto al Arc de Triomphe: un espectáculo de luces en sus muros, una cuenta regresiva compartida y fuegos artificiales a medianoche." }
+    ]
+  },
+  "GB": {
+    "text": "En Gran Bretaña, el Año Nuevo es tanto el Hogmanay escocés como los fuegos artificiales de Londres sobre el Támesis. Lo más importante es un abrazo, una canción a las doce y la primera visita que cruza la puerta.",
+    "traditions": [
+      { "id": "t1", "title": "Las campanadas del Big Ben", "text": "A medianoche el Big Ben da las doce campanadas y, sobre el Támesis, junto al London Eye, comienzan los fuegos artificiales principales." },
+      { "id": "t2", "title": "Auld Lang Syne", "text": "A las doce la gente forma un círculo, se toma de las manos y canta la antigua canción escocesa con versos de Robert Burns, cruzando los brazos en la última estrofa." },
+      { "id": "t3", "title": "El primer visitante del año", "text": "En Escocia y el norte de Inglaterra se cree que la primera persona que cruza el umbral después de medianoche trae buena suerte a la casa. Llega con un obsequio: carbón, shortbread o whisky." }
+    ]
+  },
+  "JP": {
+    "text": "Para los japoneses, el Año Nuevo es la fiesta más importante del año: silencio, la casa impecable, campanas de templo y una cena en familia. La medianoche se recibe en casa o junto a un templo.",
+    "traditions": [
+      { "id": "t1", "title": "Joya no kane", "text": "En Nochevieja, en los templos budistas la campana suena 108 veces, una por cada una de las pasiones terrenales de las que la persona se purifica. La última campanada suele sonar ya en el nuevo año." },
+      { "id": "t2", "title": "Toshikoshi soba", "text": "Por la noche se comen toshikoshi soba, fideos de trigo sarraceno: los fideos largos simbolizan una vida larga, y la facilidad con que se rompen, el adiós a las preocupaciones del año viejo." },
+      { "id": "t3", "title": "Hatsumode", "text": "En los primeros días de enero se visita un santuario o un templo. Es la primera visita del año, para rezar por un buen año y comprar un amuleto." }
+    ]
+  },
+  "NZ": {
+    "text": "Nueva Zelanda da la bienvenida al Año Nuevo entre los primeros del mundo: la medianoche llega antes solo a las islas de la Línea, en Kiribati, y a las islas Chatham, también neozelandesas.",
+    "traditions": [
+      { "id": "t1", "title": "Fuegos artificiales desde la Sky Tower", "text": "A medianoche se lanzan fuegos artificiales directamente desde la Sky Tower de Auckland, y se ven en toda la bahía." },
+      { "id": "t2", "title": "Entre los primeros del mundo", "text": "Auckland recibe el Año Nuevo dos horas antes que Sídney." },
+      { "id": "t3", "title": "Vacaciones de verano", "text": "A principios de enero caen las vacaciones: las familias van a las playas y a los campings y reciben la noche al aire libre." }
+    ]
+  },
+  "US": {
+    "text": "En Estados Unidos, el principal símbolo de la noche es la bola de Nueva York. El país abarca seis zonas horarias, así que entre la medianoche en Nueva York y la de Hawái pasan cinco horas.",
+    "traditions": [
+      { "id": "t1", "title": "La bola de Times Square", "text": "En Nueva York, un minuto antes de medianoche una bola de cristal empieza a descender, y toda la plaza cuenta los últimos sesenta segundos." },
+      { "id": "t2", "title": "Un beso a medianoche", "text": "Por tradición, con la primera campanada de las doce se besa a la persona más cercana, para tener suerte y amor en el nuevo año." },
+      { "id": "t3", "title": "Frijoles de carita para la suerte", "text": "En el sur del país, el 1 de enero se comen frijoles de carita (black-eyed peas) y verduras de hoja verde, para tener abundancia y dinero." }
+    ]
+  }
+}

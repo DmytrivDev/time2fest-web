@@ -10,7 +10,7 @@ export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const LOCALES = ['en', 'uk', 'es', 'fr'];
 export const DEFAULT_LOCALE = 'en';
 /** Готовність мов — те саме, що `LOCALE_STATUS` у `i18n/locales.ts` (тест `tests/unit/prelaunch/locales.test.ts` звіряє). */
-export const LOCALE_STATUS = { en: 'draft', uk: 'ready', es: 'pending', fr: 'pending' };
+export const LOCALE_STATUS = { en: 'draft', uk: 'ready', es: 'draft', fr: 'draft' };
 
 /** Сторінки без мови — список дозволених сторінок (`lib/prelaunch/pages.mjs`, спільний із навігацією сайту). */
 export const STATIC_ROUTES = ENABLED_ROUTES;

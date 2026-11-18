@@ -30,7 +30,7 @@ Nous préparons avec soin les heures de minuit, le programme de la fête et les 
 
 ## Droits sur le contenu {#content}
 
-Le texte, le design, le logo et le nom Time2Fest nous appartiennent. Les photos et les vidéos sont utilisées sous licences libres et restent la propriété de leurs auteurs, qui sont cités, avec leurs licences, sous [« Photos du site »](/about/#photos). Les noms et marques d’autres entreprises appartiennent à leurs propriétaires.
+Le texte, le design, le logo et le nom Time2Fest nous appartiennent. Les photos et les vidéos sont utilisées sous licences libres et restent la propriété de leurs auteurs, qui sont cités, avec leurs licences, sous [« Crédits photos et vidéos »](/credits/). Les noms et marques d’autres entreprises appartiennent à leurs propriétaires.
 
 Vous pouvez partager des liens vers le site et citer de courts extraits avec un lien vers la source. Sans notre accord, vous ne pouvez pas copier le site ni une partie substantielle de celui-ci, ni en collecter automatiquement le contenu pour le republier.
 

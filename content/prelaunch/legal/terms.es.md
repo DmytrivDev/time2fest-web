@@ -30,7 +30,7 @@ Preparamos con cuidado las horas de medianoche, el programa de la fiesta y los r
 
 ## Derechos sobre el contenido {#content}
 
-El texto, el diseño, el logotipo y el nombre Time2Fest nos pertenecen. Las fotos y los vídeos se usan con licencias libres y siguen siendo propiedad de sus autores, quienes figuran con sus licencias en [«Fotos del sitio»](/about/#photos). Los nombres y las marcas de otras empresas pertenecen a sus titulares.
+El texto, el diseño, el logotipo y el nombre Time2Fest nos pertenecen. Las fotos y los vídeos se usan con licencias libres y siguen siendo propiedad de sus autores, quienes figuran con sus licencias en [«Créditos de fotos y vídeos»](/credits/). Los nombres y las marcas de otras empresas pertenecen a sus titulares.
 
 Usted puede compartir enlaces al sitio y citar breves fragmentos con un enlace a la fuente. Sin nuestro consentimiento, no puede copiar el sitio ni partes sustanciales de él, ni recopilar su contenido de forma automática para volver a publicarlo.
 

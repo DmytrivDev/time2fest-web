@@ -1,5 +1,7 @@
 /** Мовні дані сторінки — збираються на сервері під час збирання й передаються клієнтським блокам пропом. */
 import storiesEn from '@/data/prelaunch/content/en.json';
+import storiesEs from '@/data/prelaunch/content/es.json';
+import storiesFr from '@/data/prelaunch/content/fr.json';
 import storiesUk from '@/data/prelaunch/content/uk.json';
 import namesEn from '@/data/prelaunch/names/en.json';
 import namesEs from '@/data/prelaunch/names/es.json';
@@ -18,14 +20,14 @@ const NAMES: Record<Locale, SiteNames | null> = {
 };
 
 /**
- * Розповіді про країни за мовами. Іспанської й французької ще немає (задача C) — ці мови показують англійські.
+ * Розповіді про країни за мовами (тексти задачі C, `docs/site/prelaunch-content/countries/`).
  * Файл нової мови: `data/prelaunch/content/<мова>.json` + рядок тут.
  */
 const STORIES: Record<Locale, Stories> = {
   uk: storiesUk as Stories,
   en: storiesEn as Stories,
-  es: storiesEn as Stories,
-  fr: storiesEn as Stories,
+  es: storiesEs as Stories,
+  fr: storiesFr as Stories,
 };
 
 export function siteData(locale: Locale): SiteData {
@@ -41,6 +43,8 @@ export function describedIsos(locale: Locale): string[] {
 const OWN_STORIES: Partial<Record<Locale, Stories>> = {
   uk: storiesUk as Stories,
   en: storiesEn as Stories,
+  es: storiesEs as Stories,
+  fr: storiesFr as Stories,
 };
 
 /**

@@ -30,7 +30,7 @@ We prepare midnight times, the celebration schedule and the stories about tradit
 
 ## Content rights {#content}
 
-The text, design, logo and the Time2Fest name belong to us. Photos and videos are used under free licenses and remain the property of their authors, who are credited, with their licenses, under [“Photos on this site”](/about/#photos). Other companies’ names and marks belong to their owners.
+The text, design, logo and the Time2Fest name belong to us. Photos and videos are used under free licenses and remain the property of their authors, who are credited, with their licenses, under [“Photo and video credits”](/credits/). Other companies’ names and marks belong to their owners.
 
 You may share links to the site and quote short excerpts with a link to the source. You may not copy the site or substantial parts of it, or collect its content automatically for republication, without our consent.
 

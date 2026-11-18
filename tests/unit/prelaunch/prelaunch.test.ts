@@ -307,8 +307,9 @@ describe('одне правило індексації сторінки краї
     const { countryIndexable } = await import('@/lib/prelaunch/siteData');
     expect(countryIndexable('JP', ['en', 'uk'])).toBe(true);
     expect(countryIndexable('AD', ['en', 'uk'])).toBe(false);
-    // Іспанська показує англійську розповідь, але власної ще немає — сторінка закрита.
-    expect(countryIndexable('JP', ['en', 'uk', 'es'])).toBe(false);
+    // Тексти задачі C — власні розповіді всіма чотирма мовами: описана країна відкрита й в іспанській збірці.
+    expect(countryIndexable('JP', ['en', 'uk', 'es', 'fr'])).toBe(true);
+    expect(countryIndexable('AD', ['en', 'uk', 'es', 'fr'])).toBe(false);
   });
 });
 

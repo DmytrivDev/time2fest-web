@@ -65,7 +65,12 @@ export function SiteFooter({ locale }: { locale: Locale }) {
               <ul className={s.social} aria-label={t('socialLabel')}>
                 {SITE.social.map((x) => (
                   <li key={x.url}>
-                    <a href={x.url} rel="noopener noreferrer" target="_blank">
+                    <a
+                      href={x.url}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      aria-label={t('socialLink', { network: x.name })}
+                    >
                       {x.name}
                     </a>
                   </li>
