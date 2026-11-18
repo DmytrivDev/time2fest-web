@@ -133,7 +133,10 @@ const text = (s) =>
     .replace(/<[^>]+>/g, ' ');
 const PLACEHOLDER_WORDS =
   /(?<![а-яіїєґ])сток(?:ов|\s|$|[.,·])|заглушк|placeholder|lorem ipsum|stock (?:photo|video|footage)/i;
+/** Заглушки, дозволені в збірці для домену (рішення власника 2026-11-18): лише кадр замість ролика. */
+const ALLOWED_PLACEHOLDERS = new Set(['video:what']);
 let placeholders = 0;
+let allowedPlaceholders = 0;
 let unfilled = 0;
 const broken = new Map();
 for (const [p, { locale }] of expected) {
@@ -156,7 +159,10 @@ for (const [p, { locale }] of expected) {
     if (m[1] === `${DEFAULT_LOCALE}/`)
       err(`${p}: посилання з префіксом головної мови: ${m[0].trim()}`);
   }
-  placeholders += (page.match(/data-media-placeholder=/g) ?? []).length;
+  for (const m of page.matchAll(/data-media-placeholder="([^"]*)"/g)) {
+    if (ALLOWED_PLACEHOLDERS.has(m[1])) allowedPlaceholders += 1;
+    else placeholders += 1;
+  }
   const body = text(page);
   unfilled += (body.match(/\[\[/g) ?? []).length;
   if (PLACEHOLDER_WORDS.test(body))
@@ -173,6 +179,10 @@ for (const [p, { locale }] of expected) {
   }
 }
 for (const [url, n] of broken) err(`посилання в нікуди: ${url} (${n} стор.)`);
+if (allowedPlaceholders)
+  console.log(
+    `check:prelaunch: дозволена заглушка — кадр замість ролика «Що таке Time2Fest» (video:what): ${allowedPlaceholders} стор.`,
+  );
 if (placeholders)
   warn(
     `заглушок фото й відео (data-media-placeholder): ${placeholders} — справжні кадри додає задача C (data/prelaunch/media.json)`,

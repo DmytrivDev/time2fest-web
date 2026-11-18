@@ -54,6 +54,15 @@ export function WhatIs() {
             preload="none"
             aria-label={t('videoTitle')}
           />
+        ) : site ? (
+          // Ролика ще немає: тимчасовий кадр без кнопки відтворення й без тривалості — єдина дозволена заглушка
+          // збірки для домену (`scripts/prelaunch/check.mjs`, `ALLOWED_PLACEHOLDERS`).
+          <div className={w.video} data-media-placeholder="video:what">
+            <SceneCanvas seed={77} bursts={5} warm />
+            <span className={w.vcap}>
+              <b>{t('videoTitle')}</b>
+            </span>
+          </div>
         ) : (
           <button
             type="button"
@@ -71,8 +80,6 @@ export function WhatIs() {
               <b>{t('videoTitle')}</b>
               <span>{t('videoLength')}</span>
             </span>
-            {/* Ролика ще немає (рішення власника 2026-11-18: блок лишається з тимчасовою заглушкою). */}
-            {site ? <span hidden data-media-placeholder="video:what" /> : null}
           </button>
         )}
         <div className={w.feats}>

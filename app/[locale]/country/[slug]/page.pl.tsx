@@ -6,7 +6,7 @@ import { isLocale } from '@/i18n/locales';
 import { getData } from '@/lib/data/load';
 import { pageMetadata } from '@/lib/prelaunch/seo';
 import { COUNTRY_EXTRAS, isoByUrlSlug } from '@/lib/prelaunch/site';
-import { describedIsos, siteData } from '@/lib/prelaunch/siteData';
+import { countryIndexable, describedIsos, siteData } from '@/lib/prelaunch/siteData';
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -22,16 +22,23 @@ async function resolve(params: Params) {
   if (!isLocale(locale) || !iso) notFound();
   const site = siteData(locale);
   const name = site.names?.countries[iso] ?? getData().countriesByIso.get(iso)?.name.uk ?? iso;
-  return { locale, iso, site, name, described: describedIsos(locale).includes(iso) };
+  return {
+    locale,
+    iso,
+    site,
+    name,
+    described: describedIsos(locale).includes(iso),
+    indexable: countryIndexable(iso),
+  };
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { locale, name, described } = await resolve(params);
+  const { locale, name, described, indexable } = await resolve(params);
   // Країна без розповіді — «лише факти»: у пошук і `sitemap` не йде (план, розділ 8).
   return pageMetadata(locale, 'country', {
     values: { country: name },
     ...(described ? {} : { titleKey: 'titleFacts', descriptionKey: 'descriptionFacts' }),
-    indexable: described,
+    indexable,
   });
 }
 

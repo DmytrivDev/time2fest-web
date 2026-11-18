@@ -4,7 +4,15 @@
  * Спільне для блоків головної «до свята»: модель даних (`lib/prefest/model`), «сторінка вже в браузері» (час
  * відвідувача відомий лише після гідратації — статичний експорт збирається в UTC) і тост для заглушок.
  */
-import { createContext, useCallback, useContext, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react';
 import type { Dataset } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
 import type { PrefestModel } from '@/lib/prefest/model';
@@ -14,10 +22,26 @@ import s from './prefest.module.css';
 /** Фото чи відео на місці заглушки (`data/prelaunch/media.json`). */
 export interface MediaItem {
   src: string;
-  alt?: string;
+  /** Підпис для незрячих: рядок або мовами (`{ "en": …, "uk": … }`). */
+  alt?: string | Record<string, string>;
+  /** Автор, ліцензія й сторінка джерела — підпис під фото (обов’язковий для Wikimedia). */
+  author?: string;
+  license?: string;
+  sourceUrl?: string;
   /** Для відео: кадр до запуску. */
   poster?: string;
   kind?: 'image' | 'video';
+}
+
+/** `alt` фото мовою сторінки. */
+export function mediaAlt(
+  item: MediaItem | undefined,
+  locale: string | undefined,
+  fallback: string,
+): string {
+  const alt = item?.alt;
+  if (!alt) return fallback;
+  return typeof alt === 'string' ? alt : (alt[locale ?? ''] ?? alt.en ?? fallback);
 }
 
 /**

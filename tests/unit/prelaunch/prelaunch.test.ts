@@ -297,3 +297,13 @@ describe('рішення власника 2026-11-18 (SEO)', () => {
     expect((source.prelaunch as Record<string, unknown>).nav).toBeUndefined();
   });
 });
+
+describe('одне правило індексації сторінки країни', () => {
+  it('відкрита лише країна з власною розповіддю кожною мовою збірки', async () => {
+    const { countryIndexable } = await import('@/lib/prelaunch/siteData');
+    expect(countryIndexable('JP', ['en', 'uk'])).toBe(true);
+    expect(countryIndexable('AD', ['en', 'uk'])).toBe(false);
+    // Іспанська показує англійську розповідь, але власної ще немає — сторінка закрита.
+    expect(countryIndexable('JP', ['en', 'uk', 'es'])).toBe(false);
+  });
+});

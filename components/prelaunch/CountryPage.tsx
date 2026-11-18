@@ -82,6 +82,7 @@ function Body({ iso }: { iso: string }) {
     .sort(byPreference)
     .slice(0, NEIGHBORS);
   const slug = COUNTRY_EXTRAS[iso]?.urlSlug ?? iso.toLowerCase();
+  const photo = site.media[`country:${iso}`];
 
   return (
     <article data-state={country.described ? 'story' : 'facts'}>
@@ -198,16 +199,32 @@ function Body({ iso }: { iso: string }) {
           </h2>
           <div className={s.story}>
             <p className={s.storyText}>{country.text}</p>
-            <div className={s.photo}>
-              <MediaSlot
-                slot={`country:${iso}`}
-                item={site.media[`country:${iso}`]}
-                mark
-                alt={t('photoAlt', { country: country.name })}
-                seed={20 + zone.index}
-                bursts={4}
-              />
-            </div>
+            {/* Одне фото на країну (рішення власника 2026-11-18): той самий кадр, що й у картці країни на головній. */}
+            <figure className={s.figure}>
+              <div className={s.photo}>
+                <MediaSlot
+                  slot={`country:${iso}`}
+                  item={photo}
+                  mark
+                  alt={t('photoAlt', { country: country.name })}
+                  seed={20 + zone.index}
+                  bursts={4}
+                />
+              </div>
+              {/* Автор і ліцензія — обов’язкові для кадрів із Wikimedia. */}
+              {photo?.author ? (
+                <figcaption className={s.credit}>
+                  {photo.sourceUrl ? (
+                    <a href={photo.sourceUrl} rel="noopener noreferrer" target="_blank">
+                      {photo.author}
+                    </a>
+                  ) : (
+                    photo.author
+                  )}
+                  {photo.license ? `, ${photo.license}` : ''}
+                </figcaption>
+              ) : null}
+            </figure>
           </div>
           <h3 className={cn(p.h2, s.sec)} id="trad-h">
             {t('traditionsTitle')}

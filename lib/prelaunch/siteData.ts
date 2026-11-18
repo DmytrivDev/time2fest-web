@@ -5,6 +5,7 @@ import namesEn from '@/data/prelaunch/names/en.json';
 import namesEs from '@/data/prelaunch/names/es.json';
 import namesFr from '@/data/prelaunch/names/fr.json';
 import type { Locale } from '@/i18n/locales';
+import { SITE_LOCALES } from './env';
 import type { CountryStory, SiteData, SiteNames } from './site';
 
 type Stories = Record<string, CountryStory>;
@@ -34,4 +35,18 @@ export function siteData(locale: Locale): SiteData {
 /** Країни з розповіддю цією мовою (ISO). */
 export function describedIsos(locale: Locale): string[] {
   return Object.keys(STORIES[locale]);
+}
+
+/** Власні файли розповідей (без підстановки англійської замість іспанської й французької). */
+const OWN_STORIES: Partial<Record<Locale, Stories>> = {
+  uk: storiesUk as Stories,
+  en: storiesEn as Stories,
+};
+
+/**
+ * Одне правило «сторінку країни відкрити пошуковикам» (план, розділ 8; звіт SEO): є власна розповідь кожною мовою
+ * цієї збірки. Інакше сторінка країни — `noindex` і поза `sitemap` (усіма мовами однаково).
+ */
+export function countryIndexable(iso: string, locales: readonly Locale[] = SITE_LOCALES): boolean {
+  return locales.every((l) => Boolean(OWN_STORIES[l]?.[iso]));
 }

@@ -1066,3 +1066,21 @@
   margin-top: 28px;
   justify-content: center;
 }
+
+/* Фото країни з підписом автора й ліцензії. */
+.figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.credit {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

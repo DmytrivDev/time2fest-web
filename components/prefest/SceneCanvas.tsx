@@ -6,6 +6,7 @@
  * Кольори феєрверків — токени сайту (жовтий, кораловий) та їхні світлі відтінки з дизайну.
  */
 import { useEffect, useRef } from 'react';
+import { mediaAlt, usePrefest, type MediaItem } from './PrefestContext';
 
 export const SCENE_COLORS = ['#FCE286', '#F94A51', '#FFF1BF', '#EDB843', '#FF9B8A', '#BFD7FF'];
 
@@ -24,7 +25,13 @@ export interface SceneOptions {
 }
 
 /** Намалювати сцену в контекст розміром `w × h` (CSS px). */
-export function drawScene(g: CanvasRenderingContext2D, w: number, h: number, seed: number, opts: SceneOptions = {}): void {
+export function drawScene(
+  g: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  seed: number,
+  opts: SceneOptions = {},
+): void {
   const r = seeded(seed + 1);
   const sky = g.createLinearGradient(0, 0, 0, h);
   sky.addColorStop(0, '#0B0B14');
@@ -90,16 +97,30 @@ export function MediaSlot({
   mark,
   alt = '',
   ...scene
-}: { slot: string; item?: { src: string; alt?: string } | undefined; mark: boolean; alt?: string; seed: number } & SceneOptions) {
+}: {
+  slot: string;
+  item?: MediaItem | undefined;
+  mark: boolean;
+  alt?: string;
+  seed: number;
+} & SceneOptions) {
+  const { site } = usePrefest();
   if (item)
     return (
       // eslint-disable-next-line @next/next/no-img-element -- статичний експорт
       <img
         src={item.src}
-        alt={item.alt ?? alt}
+        alt={mediaAlt(item, site?.locale, alt)}
         loading="lazy"
         decoding="async"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+        }}
       />
     );
   return (
@@ -111,7 +132,12 @@ export function MediaSlot({
 }
 
 /** Canvas на всю площу батька (батько — `position: relative`), перемальовується при зміні розміру. */
-export function SceneCanvas({ seed, bursts, warm, className }: { seed: number; className?: string } & SceneOptions) {
+export function SceneCanvas({
+  seed,
+  bursts,
+  warm,
+  className,
+}: { seed: number; className?: string } & SceneOptions) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const cv = ref.current;
@@ -137,7 +163,14 @@ export function SceneCanvas({ seed, bursts, warm, className }: { seed: number; c
       ref={ref}
       aria-hidden="true"
       className={className}
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', pointerEvents: 'none' }}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        pointerEvents: 'none',
+      }}
     />
   );
 }
