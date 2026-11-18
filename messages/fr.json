@@ -9,6 +9,30 @@
           "now": "Premier"
         }
       }
+    },
+    "country": {
+      "title": "Nouvel An {year} — {country}"
+    },
+    "meta": {
+      "country": {
+        "titleFacts": "Nouvel An {year} — {country} : heure de minuit | Time2Fest",
+        "descriptionFacts": "{country} et le Nouvel An {year} : l’heure de minuit à ton heure, le compte à rebours et les fuseaux horaires du pays."
+      }
+    }
+  },
+  "prefest": {
+    "map": {
+      "expected": {
+        "kind": {
+          "celebration": "Célébration principale",
+          "tv": "Diffusion TV",
+          "webcam": "Webcam",
+          "address": "Allocution du Nouvel An"
+        },
+        "neutralType": "Diffusion",
+        "expected": "Prévu",
+        "neutral": "Diffusion prévue"
+      }
     }
   }
 }

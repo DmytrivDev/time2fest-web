@@ -446,7 +446,7 @@
           "celebration": "Main celebration",
           "tv": "TV broadcast",
           "webcam": "Webcam",
-          "address": "Address"
+          "address": "New Year address"
         },
         "neutralType": "Stream",
         "expected": "Expected",
@@ -555,9 +555,9 @@
       },
       "country": {
         "title": "{country}: New Year {year}, midnight time and traditions | Time2Fest",
-        "titleFacts": "{country}: New Year {year}, midnight time | Time2Fest",
+        "titleFacts": "New Year {year} — {country}: Midnight Time & Countdown | Time2Fest",
         "description": "{country} welcomes New Year {year}: midnight in your time, a countdown, time zones and New Year traditions.",
-        "descriptionFacts": "{country} welcomes New Year {year}: midnight in your time, a countdown and time zones."
+        "descriptionFacts": "When New Year {year} arrives in {country}: midnight in your local time, a countdown to it and the country’s time zones."
       },
       "pass": {
         "title": "New Year Pass for $5 — Time2Fest",
@@ -648,7 +648,7 @@
       "breadcrumbLabel": "You are here",
       "breadcrumbHome": "Home",
       "breadcrumbCountries": "Countries",
-      "title": "{country}: New Year {year}",
+      "title": "New Year {year} — {country}",
       "lead": "When midnight arrives, how long is left, and what time the country keeps.",
       "leadStory": "When midnight arrives, how long is left, and how New Year is celebrated here.",
       "midnightTitle": "Midnight in your time",
@@ -733,7 +733,11 @@
           "noStreamNote": "countdown scene · live streams from December 31"
         }
       },
-      "liveMap": { "list": { "now": "First" } }
+      "liveMap": {
+        "list": {
+          "now": "First"
+        }
+      }
     },
     "toasts": {
       "art": {

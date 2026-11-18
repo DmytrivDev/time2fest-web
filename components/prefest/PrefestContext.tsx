@@ -60,8 +60,8 @@ export interface PrefestSite {
   zoneCity: (timeZone: string) => string;
   /** Форма «у країні» мовою сторінки, якщо вона є в даних. */
   inCountry: (iso: string) => string | undefined;
-  /** Тип очікуваної трансляції країни в поясі (`data/prelaunch/expected.json`) або `null`. */
-  expectedKind?: (iso: string, zoneId: string) => ExpectedKind | null;
+  /** Типи очікуваних трансляцій країни в поясі (`content/prelaunch/expected-streams.json`); порожньо — нейтрально. */
+  expectedKinds?: (iso: string, zoneId: string) => readonly ExpectedKind[];
 }
 
 interface PrefestContextValue {

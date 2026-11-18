@@ -1,0 +1,257 @@
+{
+  "_about": "Метазаголовки й метаописи передстартового сайту чотирма мовами — з docs/site/prelaunch-content/messages/seo-meta.json (SEO-звіт, додаток А, правка власника до опису головної). «2027» замінено на {year} (рік сезону — lib/prelaunch/season.ts). country — лише сім описаних країн; решта складається з шаблону в lib/prelaunch/seo.ts.",
+  "home": {
+    "uk": {
+      "title": "Новий рік {year}: відлік і трансляції з усього світу | Time2Fest",
+      "description": "Північ іде світом 26 годин через 38 поясів. Дізнайся, де Новий рік {year} настане першим, дивись розклад за своїм часом і трансляції новорічної ночі. Безплатно."
+    },
+    "en": {
+      "title": "New Year {year} Countdown, Live Around the World | Time2Fest",
+      "description": "Midnight crosses 38 time zones in 26 hours. See which country welcomes New Year {year} first, the schedule in your time and New Year’s Eve live streams. Free."
+    },
+    "es": {
+      "title": "Año Nuevo {year} en vivo: cuenta regresiva mundial | Time2Fest",
+      "description": "La medianoche recorre 38 zonas horarias en 26 horas. Descubre qué país recibe primero el Año Nuevo {year}, tu horario y las transmisiones de esa noche. Gratis."
+    },
+    "fr": {
+      "title": "Nouvel An {year} en direct : compte à rebours mondial | Time2Fest",
+      "description": "Minuit traverse 38 fuseaux horaires en 26 heures. Découvre quel pays fête le Nouvel An {year} en premier, le programme à ton heure et les directs du réveillon."
+    }
+  },
+  "countries": {
+    "uk": {
+      "title": "Де Новий рік {year} настане першим: країни й пояси | Time2Fest",
+      "description": "Усі 38 часових поясів у порядку, в якому до них приходить північ, і країни кожного поясу. Хто зустрічає Новий рік першим, хто останнім і коли це за твоїм часом."
+    },
+    "en": {
+      "title": "Which Country Celebrates New Year {year} First? | Time2Fest",
+      "description": "All 38 time zones in the order midnight reaches them, with every country and its New Year time in your local time. See who celebrates first and who is last."
+    },
+    "es": {
+      "title": "¿Qué país recibe primero el Año Nuevo {year}? | Time2Fest",
+      "description": "Las 38 zonas horarias en el orden en que llega la medianoche, con sus países. Quién recibe primero el Año Nuevo, quién el último y a qué hora para ti."
+    },
+    "fr": {
+      "title": "Quel pays fête le Nouvel An {year} en premier ? | Time2Fest",
+      "description": "Les 38 fuseaux horaires dans l’ordre où minuit les atteint, avec leurs pays. Qui fête le Nouvel An en premier, qui en dernier, et à quelle heure pour toi."
+    }
+  },
+  "pass": {
+    "uk": {
+      "title": "Новорічний пас за $5: разово, без підписки | Time2Fest",
+      "description": "Новорічний пас додає позначку в чаті, свій графік із нагадуваннями, тихий режим і переклад чату. $5 разово, без підписки. Трансляції й чат безплатні для всіх."
+    },
+    "en": {
+      "title": "New Year Pass: $5 Once, No Subscription | Time2Fest",
+      "description": "The New Year Pass adds a chat badge, your schedule with reminders, quiet chat mode and chat translation. $5 once, no subscription. Streams and chat stay free."
+    },
+    "es": {
+      "title": "Pase de Año Nuevo: 5 USD, pago único | Time2Fest",
+      "description": "El Pase de Año Nuevo añade una insignia en el chat, tu programa con recordatorios, modo silencioso y traducción del chat. 5 USD, pago único. El chat es gratis."
+    },
+    "fr": {
+      "title": "Pass Nouvel An : 5 USD, paiement unique | Time2Fest",
+      "description": "Le Pass Nouvel An ajoute un badge dans le chat, ton programme avec rappels, un mode discret et la traduction du chat. 5 USD, paiement unique. Chat gratuit."
+    }
+  },
+  "toasts": {
+    "uk": {
+      "title": "Новорічні тости: привітай увесь світ | Time2Fest",
+      "description": "Скажи новорічний тост, який побачить увесь світ: золоте повідомлення в чаті з твоїм ніком і прапором. Рівні: $2, $5 і $10. За $10 — Новорічний пас у подарунок."
+    },
+    "en": {
+      "title": "New Year Toasts: Greet the Whole World | Time2Fest",
+      "description": "Say a New Year toast the whole world sees: a golden chat message with your name and flag. Three levels: $2, $5 and $10. The $10 toast includes a New Year Pass."
+    },
+    "es": {
+      "title": "Brindis de Año Nuevo: saluda al mundo entero | Time2Fest",
+      "description": "Haz un brindis de Año Nuevo que verá todo el mundo: un mensaje dorado en el chat con tu nombre y bandera. Tres niveles: 2, 5 y 10 USD. El de 10 incluye el Pase."
+    },
+    "fr": {
+      "title": "Toasts du Nouvel An : salue le monde entier | Time2Fest",
+      "description": "Porte un toast du Nouvel An vu par le monde entier : un message doré dans le chat avec ton pseudo et ton drapeau. Trois niveaux : 2, 5 et 10 USD."
+    }
+  },
+  "privacy": {
+    "uk": {
+      "title": "Політика конфіденційності | Time2Fest",
+      "description": "Які дані отримує сайт Time2Fest і навіщо: статистика без cookies, технічні дані хостингу, листи. Без реклами й продажу даних."
+    },
+    "en": {
+      "title": "Privacy Policy | Time2Fest",
+      "description": "What data the Time2Fest site receives and why: cookie-free statistics, technical hosting data and emails. No ads, no selling of data."
+    },
+    "es": {
+      "title": "Política de privacidad | Time2Fest",
+      "description": "Qué datos recibe el sitio Time2Fest y por qué: estadísticas sin cookies, datos técnicos del alojamiento y correos. Sin anuncios ni venta de datos."
+    },
+    "fr": {
+      "title": "Politique de confidentialité | Time2Fest",
+      "description": "Quelles données le site Time2Fest reçoit et pourquoi : statistiques sans cookies, données techniques d’hébergement et e-mails. Sans pub ni revente de données."
+    }
+  },
+  "cookies": {
+    "uk": {
+      "title": "Cookies | Time2Fest",
+      "description": "Time2Fest не ставить cookies для статистики чи реклами. У браузері зберігається лише вибір мови."
+    },
+    "en": {
+      "title": "Cookies | Time2Fest",
+      "description": "Time2Fest sets no cookies for statistics or advertising. Only your language choice is stored in your browser."
+    },
+    "es": {
+      "title": "Cookies | Time2Fest",
+      "description": "Time2Fest no usa cookies de estadística ni de publicidad. En tu navegador solo se guarda el idioma elegido."
+    },
+    "fr": {
+      "title": "Cookies | Time2Fest",
+      "description": "Time2Fest n’utilise pas de cookies de statistiques ni de publicité. Seul ton choix de langue est enregistré dans ton navigateur."
+    }
+  },
+  "terms": {
+    "uk": {
+      "title": "Умови користування | Time2Fest",
+      "description": "Як користуватися сайтом Time2Fest: що це за сайт, права на вміст, межі відповідальності й контакти."
+    },
+    "en": {
+      "title": "Terms of Use | Time2Fest",
+      "description": "How to use the Time2Fest site: what it is, content rights, limitation of liability and contact details."
+    },
+    "es": {
+      "title": "Términos de uso | Time2Fest",
+      "description": "Cómo usar el sitio Time2Fest: qué es, derechos sobre el contenido, límites de responsabilidad y contacto."
+    },
+    "fr": {
+      "title": "Conditions d’utilisation | Time2Fest",
+      "description": "Comment utiliser le site Time2Fest : ce qu’il est, droits sur le contenu, limites de responsabilité et contact."
+    }
+  },
+  "country": {
+    "JP": {
+      "uk": {
+        "title": "Новий рік у Японії: як святкують, традиції | Time2Fest",
+        "description": "Як зустрічають Новий рік у Японії: 108 ударів храмового дзвона опівночі, тосікосі-соба й перший похід до святилища. Дивись, коли там північ за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in Japan: Traditions, Time & Countdown | Time2Fest",
+        "description": "How Japan welcomes the New Year: 108 temple bells at midnight, toshikoshi soba and the first shrine visit. See when midnight reaches Japan in your local time."
+      },
+      "es": {
+        "title": "Año Nuevo en Japón: tradiciones y hora | Time2Fest",
+        "description": "Así recibe Japón el Año Nuevo: 108 campanadas en los templos, toshikoshi soba y la primera visita al santuario. Mira cuándo es medianoche allí en tu hora local."
+      },
+      "fr": {
+        "title": "Nouvel An au Japon : traditions et heure de minuit | Time2Fest",
+        "description": "Le Nouvel An au Japon : 108 coups de cloche dans les temples, toshikoshi soba et première visite au sanctuaire. Vois minuit au Japon à ton heure."
+      }
+    },
+    "AU": {
+      "uk": {
+        "title": "Новий рік в Австралії: як святкують, традиції | Time2Fest",
+        "description": "Новий рік в Австралії: салют над Сіднейською гаванню о 21:00 і опівночі, літо, пляж і барбекю. Дивись, коли північ прийде в Австралію за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in Australia: Traditions, Time & Countdown | Time2Fest",
+        "description": "New Year in Australia: Sydney Harbour fireworks at 9 pm and midnight, summer beaches and barbecues. See when midnight reaches Australia in your local time."
+      },
+      "es": {
+        "title": "Año Nuevo en Australia: tradiciones y hora | Time2Fest",
+        "description": "Año Nuevo en Australia: fuegos artificiales en la bahía de Sídney a las 21:00 y a medianoche, verano, playa y barbacoas. Mira su medianoche en tu hora."
+      },
+      "fr": {
+        "title": "Nouvel An en Australie : traditions et heure | Time2Fest",
+        "description": "Nouvel An en Australie : feux d’artifice sur la baie de Sydney à 21 h et à minuit, été, plage et barbecues. Vois quand minuit arrive en Australie à ton heure."
+      }
+    },
+    "NZ": {
+      "uk": {
+        "title": "Новий рік у Новій Зеландії: як святкують, традиції | Time2Fest",
+        "description": "Нова Зеландія зустрічає Новий рік серед перших у світі: салют зі Скай-Тауер в Окленді й літні канікули просто неба. Дивись, коли там північ за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in New Zealand: Traditions, Time & Countdown | Time2Fest",
+        "description": "New Zealand is among the first to welcome the New Year: Sky Tower fireworks in Auckland and summer holidays. See when midnight arrives there in your time."
+      },
+      "es": {
+        "title": "Año Nuevo en Nueva Zelanda: tradiciones y hora | Time2Fest",
+        "description": "Nueva Zelanda recibe el Año Nuevo entre los primeros: fuegos artificiales desde la Sky Tower de Auckland y vacaciones de verano. Mira su medianoche en tu hora."
+      },
+      "fr": {
+        "title": "Nouvel An en Nouvelle-Zélande : traditions et heure | Time2Fest",
+        "description": "La Nouvelle-Zélande fête le Nouvel An parmi les premiers : feu d’artifice depuis la Sky Tower d’Auckland et vacances d’été. Vois son minuit à ton heure."
+      }
+    },
+    "FR": {
+      "uk": {
+        "title": "Новий рік у Франції: як святкують, традиції | Time2Fest",
+        "description": "Як святкують Сен-Сільвестр у Франції: довга вечеря réveillon, поцілунок під омелою й Єлисейські поля опівночі. Дивись, коли північ у Франції за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in France: Traditions, Time & Countdown | Time2Fest",
+        "description": "How France celebrates Saint-Sylvestre: a long réveillon dinner, a kiss under the mistletoe and the Champs-Élysées at midnight. See French midnight in your time."
+      },
+      "es": {
+        "title": "Año Nuevo en Francia: tradiciones y hora | Time2Fest",
+        "description": "Así se celebra la Saint-Sylvestre en Francia: una larga cena de réveillon, un beso bajo el muérdago y los Campos Elíseos a medianoche. Mírala en tu hora local."
+      },
+      "fr": {
+        "title": "Nouvel An en France : traditions et heure de minuit | Time2Fest",
+        "description": "La Saint-Sylvestre en France : long dîner du réveillon, baiser sous le gui et Champs-Élysées à minuit. Vois quand minuit sonne en France à ton heure."
+      }
+    },
+    "GB": {
+      "uk": {
+        "title": "Новий рік у Великій Британії: як святкують, традиції | Time2Fest",
+        "description": "Новий рік у Великій Британії: дзвони Біг-Бена, салют над Темзою, Auld Lang Syne і шотландський звичай першого гостя. Дивись, коли там північ за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in the UK: Traditions, Time & Countdown | Time2Fest",
+        "description": "New Year in the UK: Big Ben's chimes, fireworks over the Thames, Auld Lang Syne and the Scottish first-footing custom. See UK midnight in your local time."
+      },
+      "es": {
+        "title": "Año Nuevo en el Reino Unido: tradiciones y hora | Time2Fest",
+        "description": "Año Nuevo en el Reino Unido: campanadas del Big Ben, fuegos sobre el Támesis, Auld Lang Syne y la costumbre escocesa del primer visitante. Mírala en tu hora."
+      },
+      "fr": {
+        "title": "Nouvel An au Royaume-Uni : traditions et heure | Time2Fest",
+        "description": "Au Royaume-Uni : carillon de Big Ben, feu d’artifice sur la Tamise, Auld Lang Syne et la coutume écossaise du premier visiteur. Vois minuit à ton heure."
+      }
+    },
+    "BR": {
+      "uk": {
+        "title": "Новий рік у Бразилії: як святкують, традиції | Time2Fest",
+        "description": "Як святкують Réveillon у Бразилії: білий одяг, сім хвиль і квіти для Єманжі на пляжі Копакабана. Дивись, коли північ прийде в Бразилію за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in Brazil: Traditions, Time & Countdown | Time2Fest",
+        "description": "How Brazil celebrates Réveillon: white clothes, seven waves and flowers for Iemanjá on Copacabana beach. See when midnight reaches Brazil in your local time."
+      },
+      "es": {
+        "title": "Año Nuevo en Brasil: tradiciones y hora | Time2Fest",
+        "description": "Así se celebra el Réveillon en Brasil: ropa blanca, siete olas y flores para Iemanjá en la playa de Copacabana. Mira su medianoche en tu hora local."
+      },
+      "fr": {
+        "title": "Nouvel An au Brésil : traditions et heure de minuit | Time2Fest",
+        "description": "Le Réveillon au Brésil : vêtements blancs, sept vagues et fleurs pour Iemanjá sur la plage de Copacabana. Vois quand minuit arrive au Brésil à ton heure."
+      }
+    },
+    "US": {
+      "uk": {
+        "title": "Новий рік у США: як святкують, традиції | Time2Fest",
+        "description": "Новий рік у США: куля на Таймс-сквер, поцілунок опівночі й квасоля на удачу — у шести часових поясах. Дивись, коли північ прийде до них за твоїм часом."
+      },
+      "en": {
+        "title": "New Year in the USA: Traditions, Time & Countdown | Time2Fest",
+        "description": "New Year in the USA: the Times Square ball drop, a midnight kiss and black-eyed peas for luck, across six time zones. See US midnight in your local time."
+      },
+      "es": {
+        "title": "Año Nuevo en Estados Unidos: tradiciones y hora | Time2Fest",
+        "description": "Año Nuevo en Estados Unidos: la bola de Times Square, el beso de medianoche y frijoles de carita para la suerte, en seis zonas horarias. Mírala en tu hora."
+      },
+      "fr": {
+        "title": "Nouvel An aux États-Unis : traditions et heure | Time2Fest",
+        "description": "Aux États-Unis : la boule de Times Square, le baiser de minuit et les cornilles porte-bonheur, sur six fuseaux horaires. Vois minuit là-bas à ton heure."
+      }
+    }
+  }
+}

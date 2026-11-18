@@ -17,6 +17,7 @@ import { CountryCrumbs, showCountryCrumbs } from '@/components/country/CountryCr
 import { CountryHeader, type CountryZoneOption } from '@/components/country/CountryHeader';
 import { PrefestFaqList } from '@/components/prefest/PrefestFaq';
 import { HowToCard } from '@/components/live/HowToCard';
+import { ExpectedWatch } from '@/components/map/ExpectedWatch';
 import { CountdownScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { mediaAlt, usePrefest } from '@/components/prefest/PrefestContext';
@@ -70,6 +71,7 @@ function Body({ iso }: { iso: string }) {
   const city = pc.zones.find((z) => z.zoneId === zone.id)?.city ?? country.name.uk;
   // Своя сцена (листівка) є не в усіх країн; без неї — відлік на тлі, без шаблонної листівки.
   const scene = hasPostcardScene(country.illustrationId);
+  const heading = t('title', { ...SEASON_VALUES, country: country.name.uk });
   const after = now > 0 && now >= zone.midnightMs;
   const photo = site.media[`country:${iso}`];
   const gallery = photo
@@ -112,11 +114,8 @@ function Body({ iso }: { iso: string }) {
             />
           ) : null}
           {/* Як на наявній сторінці країни: H1 для читачів екрана й пошуку, видимий заголовок — рядок країни. */}
-          <h1 className="sr-only">
-            {site.inCountry(iso)
-              ? t('titleIn', { ...SEASON_VALUES, inCountry: site.inCountry(iso) ?? '' })
-              : t('title', { ...SEASON_VALUES, country: country.name.uk })}
-          </h1>
+          {/* Рядок країни показує той самий заголовок з роком (рішення власника 2026-11-19); крихти й списки — коротко. */}
+          <h1 className="sr-only">{heading}</h1>
           <CountryHeader
             country={country}
             midnightMs={zone.midnightMs}
@@ -124,6 +123,7 @@ function Body({ iso }: { iso: string }) {
             zones={zoneOptions}
             selectedZoneId={zone.id}
             onZoneChange={setZoneId}
+            displayName={heading}
           />
           <PlayerSlot
             id="main"
@@ -141,6 +141,16 @@ function Body({ iso }: { iso: string }) {
             }
           />
           <div className="flex flex-col gap-8 pb-8 pt-8">
+            {/* Що саме тут очікується (рішення власника 2026-11-18): тип події й головне місто, без посилань. */}
+            {!after ? (
+              <ExpectedWatch
+                kinds={site.expectedKinds?.(iso, zone.id) ?? []}
+                city={city}
+                phone={false}
+                titleAs="h2"
+                className={live.pad}
+              />
+            ) : null}
             {pc.described ? (
               <HowToCard
                 country={country.name.uk}

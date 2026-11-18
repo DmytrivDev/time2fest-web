@@ -57,6 +57,8 @@ export interface CountryHeaderProps {
   timeZone?: string;
   /** Після півночі головне святкування в «Рейтингу святкувань» — чіп «★ 4,5 · 6-те місце ›» (рішення власника 2026-11-07). */
   rating?: { score: number; place: number };
+  /** Видимий рядок замість назви країни (передстартовий сайт: «Новий рік 2027 — Кірибаті»); типово — назва. */
+  displayName?: string;
   className?: string;
 }
 
@@ -135,6 +137,7 @@ export function CountryHeader({
   onToggleSchedule,
   timeZone,
   rating,
+  displayName,
   className,
 }: CountryHeaderProps) {
   const t = useTranslations('country.header');
@@ -192,7 +195,7 @@ export function CountryHeader({
             <div data-country-row="" className={h.row}>
               <Flag code={country.flagCode} size="md" decorative />
               <div className={h.rowText}>
-                <p className={h.rowName}>{name}</p>
+                <p className={h.rowName}>{displayName ?? name}</p>
                 {multi && selected ? (
                   <button
                     type="button"
@@ -229,7 +232,7 @@ export function CountryHeader({
       <div className={cn(styles.deskOnly, h.desk)}>
         <div className={h.deskRow}>
           <Flag code={country.flagCode} size="xl" decorative />
-          <p className={h.deskName}>{name}</p>
+          <p className={h.deskName}>{displayName ?? name}</p>
           {multi ? null : <p className={h.deskTime}>{timeLine}</p>}
           {rating ? <RatingChip rating={rating} /> : null}
           <span className="flex-1" />

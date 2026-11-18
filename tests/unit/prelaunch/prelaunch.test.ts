@@ -346,15 +346,18 @@ describe('сторінка країни: є сцена / немає сцени',
 
 describe('очікувані трансляції для «Де дивитися»', () => {
   it('у даних лише країна, пояс і тип — без посилань і каналів', async () => {
-    const expected = (await import('@/data/prelaunch/expected.json')).default as {
-      kinds: Record<string, string>;
+    const expected = (await import('@/content/prelaunch/expected-streams.json')).default as {
+      kinds: Record<string, string[]>;
     };
     const entries = Object.entries(expected.kinds);
     expect(entries.length).toBeGreaterThan(0);
-    for (const [key, kind] of entries) {
+    for (const [key, kinds] of entries) {
       expect(key).toMatch(/^[A-Z]{2}:utc[+-]\d{4}$/);
-      expect(['celebration', 'tv', 'webcam', 'address']).toContain(kind);
+      for (const kind of kinds) expect(['celebration', 'tv', 'webcam', 'address']).toContain(kind);
     }
+    // Звернення — лише в останню годину перед північчю: Франції (18:00–20:45) немає.
+    expect(expected.kinds['FR:utc+0100']).not.toContain('address');
+    expect(expected.kinds['UA:utc+0200']).toContain('address');
     expect(JSON.stringify(expected)).not.toMatch(/https?:/);
   });
 });

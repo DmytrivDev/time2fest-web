@@ -13,10 +13,10 @@ export interface MapPrefest {
   /** «Додати в календар» у вікні країни (без обробника кнопки немає). */
   onCountryCalendar?: (zone: MapZone, country: MapCountry) => void;
   /**
-   * Передстартовий сайт: плашка «Де дивитися» у вікні країни — тип очікуваної трансляції в поясі (`null` — нейтральне
+   * Передстартовий сайт: плашка «Де дивитися» у вікні країни — типи очікуваних трансляцій у поясі (порожньо — нейтральне
    * «Трансляція очікується»). Без функції плашки немає (головна `/before`).
    */
-  expectedKind?: (iso: string, zoneId: string) => ExpectedKind | null;
+  expectedKinds?: (iso: string, zoneId: string) => readonly ExpectedKind[];
 }
 
 /** Тип очікуваної трансляції (дослідження `expected-streams`). */

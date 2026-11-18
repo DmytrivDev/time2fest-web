@@ -9,6 +9,30 @@
           "now": "Primero"
         }
       }
+    },
+    "country": {
+      "title": "Año Nuevo {year} — {country}"
+    },
+    "meta": {
+      "country": {
+        "titleFacts": "Año Nuevo {year} — {country}: hora de medianoche | Time2Fest",
+        "descriptionFacts": "{country} y el Año Nuevo {year}: la hora de la medianoche en tu hora local, la cuenta regresiva y las zonas horarias del país."
+      }
+    }
+  },
+  "prefest": {
+    "map": {
+      "expected": {
+        "kind": {
+          "celebration": "Celebración principal",
+          "tv": "Transmisión de TV",
+          "webcam": "Cámara web",
+          "address": "Mensaje de Año Nuevo"
+        },
+        "neutralType": "Transmisión",
+        "expected": "Se espera",
+        "neutral": "Transmisión prevista"
+      }
     }
   }
 }

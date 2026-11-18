@@ -5,7 +5,7 @@
  * адреси з мовою, місця для фото. Блоки головної «до свята» (`components/prefest`) беруть усе це з `usePrefest()`.
  */
 import { useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
-import expectedJson from '@/data/prelaunch/expected.json';
+import expectedJson from '@/content/prelaunch/expected-streams.json';
 import mediaJson from '@/data/prelaunch/media.json';
 import type { ExpectedKind } from '@/components/map/mapPrefest';
 import {
@@ -36,9 +36,10 @@ const PRELAUNCH_CELEBRATIONS = MAIN_CELEBRATIONS.map((e) =>
 );
 
 const MEDIA = (mediaJson as { items: Record<string, MediaItem> }).items;
-/** Очікувані трансляції «країна:пояс» → тип (`scripts/prelaunch/gen-expected.mjs`); немає запису — нейтрально. */
-const EXPECTED = (expectedJson as { kinds: Record<string, ExpectedKind> }).kinds;
-const expectedKind = (iso: string, zoneId: string): ExpectedKind | null => EXPECTED[`${iso}:${zoneId}`] ?? null;
+/** Очікувані трансляції «країна:пояс» → типи (`scripts/prelaunch/gen-expected.mjs`); немає запису — нейтрально. */
+const EXPECTED = (expectedJson as { kinds: Record<string, readonly ExpectedKind[]> }).kinds;
+const NONE: readonly ExpectedKind[] = [];
+const expectedKinds = (iso: string, zoneId: string): readonly ExpectedKind[] => EXPECTED[`${iso}:${zoneId}`] ?? NONE;
 
 /** Назви поясів IANA, що не збігаються з ідентифікатором міста в каталозі. */
 const ZONE_CITY_IDS: Record<string, string> = {
@@ -82,7 +83,7 @@ export function SiteProvider({ site, children }: { site: SiteData; children: Rea
       locale: site.locale,
       href,
       media: MEDIA,
-      expectedKind,
+      expectedKinds,
       inCountry: (iso) => inCountryOf(site, iso),
       zoneCity: (timeZone) => {
         const raw = (timeZone.split('/').pop() ?? '').toLowerCase();

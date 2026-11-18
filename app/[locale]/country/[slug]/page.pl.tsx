@@ -4,7 +4,7 @@ import { CountryPage } from '@/components/prelaunch/CountryPage';
 import { JsonLd } from '@/components/prelaunch/JsonLd';
 import { isLocale } from '@/i18n/locales';
 import { getData } from '@/lib/data/load';
-import { pageMetadata } from '@/lib/prelaunch/seo';
+import { countryMetadata } from '@/lib/prelaunch/seo';
 import { COUNTRY_EXTRAS, isoByUrlSlug } from '@/lib/prelaunch/site';
 import { countryIndexable, describedIsos, siteData } from '@/lib/prelaunch/siteData';
 
@@ -33,13 +33,9 @@ async function resolve(params: Params) {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { locale, name, described, indexable } = await resolve(params);
-  // Країна без розповіді — «лише факти»: у пошук і `sitemap` не йде (план, розділ 8).
-  return pageMetadata(locale, 'country', {
-    values: { country: name },
-    ...(described ? {} : { titleKey: 'titleFacts', descriptionKey: 'descriptionFacts' }),
-    indexable,
-  });
+  const { locale, iso, name, described } = await resolve(params);
+  // Країна без розповіді — «лише факти»: у пошук і `sitemap` не йде (план, розділ 8; `countryIndexable`).
+  return countryMetadata(locale, iso, name, described);
 }
 
 export default async function Page({ params }: { params: Params }) {
