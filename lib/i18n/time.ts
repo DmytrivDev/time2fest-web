@@ -41,7 +41,17 @@ function dtf(locale: string, options: Intl.DateTimeFormatOptions): Intl.DateTime
 }
 
 let viewerZone: string | null = null;
+/**
+ * Передстартовий сайт: до гідратації час форматується за UTC — так само, як у статичному HTML (і на машині збирання, і
+ * в браузері), щоб розмітка збіглася; після гідратації — за поясом відвідувача (`components/prelaunch/SiteProvider`).
+ * Сайт свята цього не вмикає: там час до гідратації не показується.
+ */
+let holdUtc = false;
+export function holdViewerTimeZoneUtc(on: boolean): void {
+  holdUtc = on;
+}
 export function viewerTimeZone(): string {
+  if (holdUtc) return 'UTC';
   if (viewerZone) return viewerZone;
   try {
     viewerZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';

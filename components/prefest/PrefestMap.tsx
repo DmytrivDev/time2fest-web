@@ -10,14 +10,18 @@ import { useMemo } from 'react';
 import { ZoneMap } from '@/components/map/ZoneMap';
 import type { MapPrefest } from '@/components/map/mapPrefest';
 import { cn } from '@/components/primitives/cn';
-import { buildMapModel } from '@/lib/map/model';
+import { buildMapModel, type MapModel } from '@/lib/map/model';
 import { downloadIcs } from '@/lib/prefest/ics';
 import { prefestMapModel } from '@/lib/prefest/map';
 import { usePrefest } from './PrefestContext';
 import s from './prefest.module.css';
 import m from './PrefestMap.module.css';
 
-export function PrefestMap() {
+/**
+ * Модель мапи «до свята» і «Додати в календар» вікна країни — для мапи головної й для списку країн передстартового
+ * сайту (той самий вигляд, ті самі дані).
+ */
+export function usePrefestMap(): { mapModel: MapModel; prefest: MapPrefest } {
   const { model, data, site } = usePrefest();
   const t = useTranslations('prefest.map');
   const mapModel = useMemo(() => {
@@ -47,6 +51,11 @@ export function PrefestMap() {
     }),
     [t],
   );
+  return { mapModel, prefest };
+}
+
+export function PrefestMap() {
+  const { mapModel, prefest } = usePrefestMap();
   return (
     <div id="map" className={cn(s.sec, s.wrap, m.root)}>
       <ZoneMap {...mapModel} prefest={prefest} />

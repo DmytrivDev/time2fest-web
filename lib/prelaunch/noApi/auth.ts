@@ -12,3 +12,8 @@ export function useProfile(): null {
 export function useSchedule(): readonly string[] {
   return NO_SCHEDULE;
 }
+
+/** Пасу до запуску оплат немає ні в кого. */
+export function useHasPass(): boolean {
+  return false;
+}

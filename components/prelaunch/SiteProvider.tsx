@@ -4,7 +4,7 @@
  * Спільне для сторінок мовного дерева (`app/[locale]`): каталог і модель мовою сторінки, час за годинником відвідувача,
  * адреси з мовою, місця для фото. Блоки головної «до свята» (`components/prefest`) беруть усе це з `usePrefest()`.
  */
-import { useMemo, useState, type ReactNode } from 'react';
+import { useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import mediaJson from '@/data/prelaunch/media.json';
 import {
   PrefestProvider,
@@ -12,7 +12,7 @@ import {
   type PrefestSite,
 } from '@/components/prefest/PrefestContext';
 import { getData } from '@/lib/data/load';
-import { setDefaultTimeLocale, viewerZoneLabel } from '@/lib/i18n/time';
+import { holdViewerTimeZoneUtc, setDefaultTimeLocale, viewerZoneLabel } from '@/lib/i18n/time';
 import { buildPrefestModel } from '@/lib/prefest/model';
 import { countryPath, localeHref } from '@/lib/prelaunch/href';
 import {
@@ -40,9 +40,19 @@ const ZONE_CITY_IDS: Record<string, string> = {
   sao_paulo: 'rio-de-janeiro',
 };
 
+/** `useLayoutEffect` у браузері; під час збирання (сервер) — нічого. */
+const useIsoLayoutEffect = typeof window === 'undefined' ? () => undefined : useLayoutEffect;
+
 export function SiteProvider({ site, children }: { site: SiteData; children: ReactNode }) {
   // У браузері сторінка має одну мову; час, що залежить від відвідувача, малюється лише після гідратації.
   setDefaultTimeLocale(site.locale);
+  // До гідратації — час за UTC, як у статичному HTML; одразу після — за поясом відвідувача (і повторний рендер).
+  const [hydrated, setHydrated] = useState(false);
+  holdViewerTimeZoneUtc(!hydrated);
+  useIsoLayoutEffect(() => {
+    holdViewerTimeZoneUtc(false);
+    setHydrated(true);
+  }, []);
   const [source] = useState(createDeviceTimeSource);
   const value = useMemo(() => {
     const base = getData();

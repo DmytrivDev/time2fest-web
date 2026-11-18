@@ -1,5 +1,6 @@
 export type MessageTree = { [key: string]: string | MessageTree };
 export declare const NAMESPACES: string[];
+export declare const SUBTREES: string[];
 export function mergeMessages(
   base: MessageTree | undefined,
   ...layers: (MessageTree | undefined)[]
