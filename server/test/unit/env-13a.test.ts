@@ -18,6 +18,8 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     REDIS_URL: 'redis://redis:6379/0',
     T2F_REDIS_PREFIX: 't2f:rehearsal:',
     T2F_CENTRIFUGO_URL: 'https://o-rehearsal.time2fest.com',
+    T2F_CENTRIFUGO_API_KEY: randomBytes(24).toString('hex'),
+    T2F_CENTRIFUGO_TOKEN_SECRET: randomBytes(24).toString('hex'),
     PAYLOAD_SECRET,
     T2F_EDGE_SECRET: EDGE_SECRET,
     T2F_ADMIN_HOST: 'admin-rehearsal.time2fest.com',

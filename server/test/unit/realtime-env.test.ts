@@ -9,6 +9,34 @@ const SHORT = 'k'.repeat(31); // check-secrets: allow test fake
 
 /** A valid raw environment of the `test` class, with the realtime settings of a worktree. */
 function rawEnv(over: Record<string, string | undefined> = {}): RawEnv {
+  const base = baseEnv();
+  return { ...base, ...classNames(over.T2F_ENV), ...over };
+}
+
+/** SPEC-13a names the `rehearsal` and `production` classes require (isolated or production-named values). */
+function classNames(cls: string | undefined): Record<string, string> {
+  if (cls === 'rehearsal') {
+    return {
+      DATABASE_URI: 'postgres://t2f@postgres:5432/t2f_rehearsal',
+      T2F_REDIS_PREFIX: 't2f:rehearsal:',
+      T2F_ADMIN_HOST: 'admin-rehearsal.time2fest.com',
+      T2F_R2_BUCKET: 'time2fest-rehearsal',
+      T2F_CENTRIFUGO_URL: 'https://o-rehearsal.time2fest.com',
+    };
+  }
+  if (cls === 'production') {
+    return {
+      DATABASE_URI: 'postgres://t2f@postgres:5432/t2f_production',
+      T2F_REDIS_PREFIX: 't2f:production:',
+      T2F_ADMIN_HOST: 'admin.time2fest.com',
+      T2F_R2_BUCKET: 'time2fest-prod',
+      T2F_CENTRIFUGO_URL: 'https://o.time2fest.com',
+    };
+  }
+  return {};
+}
+
+function baseEnv(): RawEnv {
   return {
     T2F_ENV: 'test',
     DATABASE_URI: 'postgres://t2f@127.0.0.1:5433/t2f_spec_06_realtime_test',
@@ -31,7 +59,6 @@ function rawEnv(over: Record<string, string | undefined> = {}): RawEnv {
     T2F_CENTRIFUGO_PREFIX: 'spec_06_realtime_',
     T2F_CENTRIFUGO_API_KEY: API_KEY,
     T2F_CENTRIFUGO_TOKEN_SECRET: TOKEN_SECRET,
-    ...over,
   };
 }
 
