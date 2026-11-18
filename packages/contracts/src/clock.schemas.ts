@@ -22,9 +22,12 @@ export const FaultDoorBodySchema = z
   .strict();
 export type FaultDoorBody = z.infer<typeof FaultDoorBodySchema>;
 
+/** The largest JS date (ms): an instant past it is not a date at all. */
+const MAX_INSTANT_MS = 8.64e15;
+
 /** `POST /cms-api/clock` body (C9). */
 export const ClockControlBodySchema = z.discriminatedUnion('action', [
-  z.object({ action: z.literal('set'), at: z.number().int().nonnegative() }).strict(),
+  z.object({ action: z.literal('set'), at: z.number().int().nonnegative().max(MAX_INSTANT_MS) }).strict(),
   z.object({ action: z.literal('real') }).strict(),
   z.object({ action: z.literal('restart-night') }).strict(),
 ]);

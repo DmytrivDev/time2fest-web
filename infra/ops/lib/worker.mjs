@@ -10,6 +10,7 @@ import { ENVS } from './config.mjs';
 export const EDGE_DIR = path.join(REPO_ROOT, 'workers', 'edge');
 export const WRANGLER_JS = path.join(REPO_ROOT, NODE_TOOLS.wrangler);
 export const NEXT_JS = path.join(REPO_ROOT, NODE_TOOLS.next);
+export const CHECK_BUNDLE_JS = path.join(REPO_ROOT, 'scripts', 'check-bundle.mjs');
 export const ROLLBACK_MESSAGE = 't2f rollback';
 
 const STATUS_TIMEOUT_MS = 2 * 60_000;
@@ -160,6 +161,19 @@ export function createWorker(o) {
         onLine,
       });
       return r.code === 0 ? { code: 0 } : { code: 1, message: `next build завершився з кодом ${r.code}` };
+    },
+
+    /**
+     * Перевірка статики перед вивантаженням (S07-03): `node scripts/check-bundle.mjs <каталог>`; `--allow-realtime`
+     * лише для репетиції. Ненульовий код — крок не вдався, до `wrangler deploy` справа не доходить.
+     * @returns {Promise<StepResult>}
+     */
+    async checkBundle() {
+      const dir = o.assetsDir ?? assetsDirOf(workerEnv);
+      if (dir === null) return { code: 1, message: `для ${o.env} невідомий каталог статики; перевірити збірку неможливо` };
+      const flags = o.env === 'rehearsal' ? ['--allow-realtime'] : [];
+      const r = await run(process.execPath, [CHECK_BUNDLE_JS, dir, ...flags], { cwd: REPO_ROOT, env: childEnv, timeoutMs: STATUS_TIMEOUT_MS, onLine });
+      return r.code === 0 ? { code: 0 } : { code: 1, message: `check-bundle завершився з кодом ${r.code}: у статиці заборонений підпис; вивантаження скасовано` };
     },
 
     /**

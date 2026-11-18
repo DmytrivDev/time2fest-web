@@ -71,14 +71,22 @@ describe('POST /clock refusals', () => {
     return Promise.reject(new Error('deps must not be reached'));
   };
   const handler = cmsEndpointsFor('rehearsal', resolve).find((e) => e.path === '/clock')!.handler;
-  const req = (opts: { role?: string | null; gate?: boolean; type?: string; body?: string }): PayloadRequest =>
+  let reads = 0;
+  const req = (opts: { role?: string | null; gate?: boolean; type?: string; body?: string; length?: string | null }): PayloadRequest =>
     ({
       user: opts.role === null ? null : { id: 7, email: 'x@example.com', role: opts.role ?? 'owner' },
       // A server-side call (no host) stands for "passed the gate"; a REST call with a host and no marker did not.
       payloadAPI: opts.gate === false ? 'REST' : 'local',
-      headers: new Headers({ ...(opts.gate === false ? { host: 'admin.test' } : {}), 'content-type': opts.type ?? 'application/json' }),
+      headers: new Headers({
+        ...(opts.gate === false ? { host: 'admin.test' } : {}),
+        'content-type': opts.type ?? 'application/json',
+        ...(opts.length === null ? {} : { 'content-length': opts.length ?? String(Buffer.byteLength(opts.body ?? JSON.stringify({ action: 'real' }))) }),
+      }),
       context: {},
-      text: async () => opts.body ?? JSON.stringify({ action: 'real' }),
+      text: async () => {
+        reads += 1;
+        return opts.body ?? JSON.stringify({ action: 'real' });
+      },
     }) as unknown as PayloadRequest;
   const call = async (r: PayloadRequest) => {
     const res = await handler(r);
@@ -105,13 +113,28 @@ describe('POST /clock refusals', () => {
     for (const r of bodies) expect(await call(r)).toEqual({ status: 400, body: { ok: false, error: { code: 'validation' } } });
     expect(resolved).toBe(0);
   });
+
+  it('S07-02: a missing, malformed or over-1 KB content-length → 400 before the body is read', async () => {
+    reads = 0;
+    for (const length of [null, 'abc', '1025', '99999999999']) {
+      expect(await call(req({ length }))).toEqual({ status: 400, body: { ok: false, error: { code: 'validation' } } });
+    }
+    expect(reads).toBe(0);
+    expect(resolved).toBe(0);
+  });
+
+  it('S07-01: an instant beyond the schema bound (> 8.64e15) or a fraction → 400 validation', async () => {
+    for (const at of [8.64e15 + 1, 1.5]) {
+      expect(await call(req({ body: JSON.stringify({ action: 'set', at }) }))).toEqual({ status: 400, body: { ok: false, error: { code: 'validation' } } });
+    }
+  });
 });
 
 describe('controlClock', () => {
   const depsOf = (cls: ClockControlDeps['cls'], result?: PublishResult | 'throw') => {
     const c = fakeClock();
     const p = fakePublisher(result);
-    const d: ClockControlDeps = { cls, clock: c.clock, publisher: p.publisher, log: silent };
+    const d: ClockControlDeps = { cls, clock: c.clock, real: realClock, publisher: p.publisher, log: silent };
     return { ...c, ...p, d };
   };
 
@@ -144,6 +167,18 @@ describe('controlClock', () => {
     expect(box.actors).toEqual([OPS_ACTOR]);
   });
 
+  it('S07-01: set farther than 400 days from the real now (either way) → validation, nothing changes; at the limit it is accepted', async () => {
+    const { d, box, sent } = depsOf('rehearsal');
+    const now = realClock.now();
+    const DAY = 86_400_000;
+    for (const at of [now + 401 * DAY, now - 401 * DAY, 8.64e15, 0]) {
+      expect(await controlClock(d, 'owner', OWNER, { action: 'set', at })).toEqual({ ok: false, code: 'validation' });
+    }
+    expect(box.actors).toEqual([]);
+    expect(sent).toEqual([]);
+    expect(await controlClock(d, 'owner', OWNER, { action: 'set', at: now + 399 * DAY })).toMatchObject({ ok: true });
+  });
+
   it('AC-52: production → forbidden, nothing changes, nothing is published', async () => {
     const { d, box, sent } = depsOf('production');
     expect(await controlClock(d, 'ops', OPS_ACTOR, { action: 'real' })).toEqual({ ok: false, code: 'forbidden' });
@@ -158,7 +193,7 @@ describe('controlClock', () => {
       expect(box.stored.virtual).toBe(true);
     }
     const { d, box } = depsOf('test');
-    const without: ClockControlDeps = { cls: d.cls, clock: d.clock, log: d.log };
+    const without: ClockControlDeps = { cls: d.cls, clock: d.clock, real: realClock, log: d.log };
     expect(await controlClock(without, 'owner', OWNER, { action: 'set', at: AT })).toMatchObject({ ok: true, value: { published: 'not-configured' } });
     expect(box.stored.seq).toBe(1);
   });
@@ -252,7 +287,7 @@ describe('clock CLI', () => {
     const ports: ClockCliPorts = {
       cls: 'rehearsal',
       shared: { refresh: async () => void (refreshed += 1), state: () => clock.state(), view: () => clock.view() },
-      control: { cls: 'rehearsal', clock, log: silent },
+      control: { cls: 'rehearsal', clock, real: realClock, log: silent },
       readers: {
         lease: { read: async () => ({ holder: 'node-a:12:abcd', epoch: 3, expiresInMs: 4_000, renewedAgoMs: 1_000 }) },
         runs: { ledger: async () => ({ settled: new Set(['run-recorder|pin-end:utc+0100']), started: new Map() }), missed24h: async () => ({ skipped: 0, failed: 0 }) },

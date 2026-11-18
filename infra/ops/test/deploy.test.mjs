@@ -160,6 +160,15 @@ describe('deploy to the local node (rehearsal)', () => {
     assertNoSentinel(sc); // stderr wrangler містив сторожовий токен
   });
 
+  it('S07-03: a failing bundle scan fails the worker step before any wrangler deploy; the scan runs first', async () => {
+    const sc = world({ running: SHA_A, images: [SHA_A] });
+    sc.st.bundleScan = 1;
+    expect(await main(LOCAL, sc.deps())).toBe(1);
+    expect(sc.fx.calls.some((c) => /check-bundle\.mjs$/.test(c.argv[1] ?? '') && c.argv.includes('--allow-realtime'))).toBe(true);
+    expect(sc.wranglerCalls().filter((c) => c.argv.includes('deploy'))).toEqual([]);
+    expect(outcomes(sc).at(-1)).toMatchObject({ result: 'worker-failed', failedStep: 'worker' });
+  });
+
   it('keeps the three latest images plus current and previous (AC-16)', async () => {
     const shas = ['1', '2', '3', '4'].map((c) => c.repeat(40));
     const sc = world({ running: shas[3], images: shas });

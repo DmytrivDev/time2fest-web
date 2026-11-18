@@ -24,7 +24,8 @@ import { pairKey } from '../domain/scheduler/consequence';
 import { LEASE_TERM_MS } from '../domain/scheduler/lease';
 import { isDependencyFailure } from '../endpoints/pipeline';
 import { DependencyUnavailable } from '../ports';
-import type { ClaimInput, ClaimResult, FinishInput, LeaseGrant, LeaseStore, RunLedger, RunStore } from '../scheduler/ports';
+import type { LeaseReader, LeaseSnapshot } from '../scheduler/festival';
+import type { ClaimInput,ClaimResult, FinishInput, LeaseGrant, LeaseStore, RunLedger, RunStore } from '../scheduler/ports';
 
 type SqlQuery = ReturnType<typeof sql>;
 interface Exec {
@@ -101,9 +102,69 @@ export interface PgScheduler {
   runs: RunStore;
 }
 
+/** Remaining term of the lease row by the database clock, ms (the one expiry expression of the lease SQL). */
+const leftOf = sql`GREATEST(0, EXTRACT(EPOCH FROM ("expires_at" - clock_timestamp())) * 1000)::float8`;
+
+/** Read-only lease row by the DATABASE clock (like the lease store itself); never takes the lease. */
+export function createPgLeaseReader(payload: () => Promise<Payload>, name: string = SCHEDULER_LEASE): LeaseReader {
+  return {
+    read(): Promise<LeaseSnapshot | null> {
+      return guard(async () => {
+        const db = (await payload()).db as unknown as DrizzleAdapter;
+        const { rows } = await db.drizzle.execute(sql`
+          SELECT "holder", "epoch"::text AS "epoch", ${leftOf} AS "left_ms",
+            GREATEST(0, EXTRACT(EPOCH FROM (clock_timestamp() - "renewed_at")) * 1000)::float8 AS "age_ms"
+          FROM "scheduler_leases" WHERE "name" = ${name}`);
+        const row = rows[0];
+        if (!row) return null;
+        const holder = typeof row.holder === 'string' && row.holder !== '' ? row.holder : null;
+        return {
+          holder,
+          epoch: num(row.epoch),
+          expiresInMs: Math.floor(num(row.left_ms)),
+          renewedAgoMs: holder === null ? null : Math.floor(num(row.age_ms)),
+        };
+      });
+    },
+  };
+}
+
+function ledgerOf(payload: () => Promise<Payload>): RunStore['ledger'] {
+  return (runEpoch) =>
+    guard(async (): Promise<RunLedger> => {
+      const db = (await payload()).db as unknown as DrizzleAdapter;
+      const { rows } = await db.drizzle.execute(sql`
+        SELECT "action", "moment_key", "status", "consequence_id" FROM "scheduler_runs" WHERE "run_epoch" = ${runEpoch}::numeric`);
+      const settled = new Set<string>();
+      const started = new Map<string, string>();
+      for (const r of rows) {
+        const key = pairKey(String(r.action), String(r.moment_key));
+        if (r.status === 'started') {
+          if (typeof r.consequence_id === 'string') started.set(key, r.consequence_id);
+        } else settled.add(key);
+      }
+      return { settled, started };
+    });
+}
+
+function missed24hOf(payload: () => Promise<Payload>): RunStore['missed24h'] {
+  return (serverNow) =>
+    guard(async () => {
+      const db = (await payload()).db as unknown as DrizzleAdapter;
+      const { rows } = await db.drizzle.execute(sql`
+        SELECT count(*) FILTER (WHERE "status" = 'skipped')::int AS "skipped", count(*) FILTER (WHERE "status" = 'failed')::int AS "failed"
+        FROM "scheduler_runs"
+        WHERE "status" IN ('skipped', 'failed') AND "finished_at" > ${serverNow - DAY_MS}::numeric AND "finished_at" <= ${serverNow}::numeric`);
+      return { skipped: num(rows[0]?.skipped ?? 0), failed: num(rows[0]?.failed ?? 0) };
+    });
+}
+
+/** Read-only run reader (the festival slice, the `clock` CLI): no journal, no claim, no finish. */
+export function createPgRunReader(payload: () => Promise<Payload>): Pick<RunStore, 'ledger' | 'missed24h'> {
+  return { ledger: ledgerOf(payload), missed24h: missed24hOf(payload) };
+}
+
 export function createPgScheduler({ payload, journal, name = SCHEDULER_LEASE, termMs = LEASE_TERM_MS }: PgSchedulerOptions): PgScheduler {
-  /** Remaining term of the lease row by the database clock, ms. */
-  const leftOf = sql`GREATEST(0, EXTRACT(EPOCH FROM ("expires_at" - clock_timestamp())) * 1000)::float8`;
   const standby = (row: Record<string, unknown>): LeaseGrant => ({ held: false, epoch: num(row.epoch), expiresInMs: 0, freeInMs: Math.max(0, Math.ceil(num(row.left_ms))) });
 
   const lease: LeaseStore = {
@@ -267,32 +328,8 @@ export function createPgScheduler({ payload, journal, name = SCHEDULER_LEASE, te
         return 'finished';
       });
     },
-    ledger(runEpoch) {
-      return guard(async (): Promise<RunLedger> => {
-        const db = (await payload()).db as unknown as DrizzleAdapter;
-        const { rows } = await db.drizzle.execute(sql`
-          SELECT "action", "moment_key", "status", "consequence_id" FROM "scheduler_runs" WHERE "run_epoch" = ${runEpoch}::numeric`);
-        const settled = new Set<string>();
-        const started = new Map<string, string>();
-        for (const r of rows) {
-          const key = pairKey(String(r.action), String(r.moment_key));
-          if (r.status === 'started') {
-            if (typeof r.consequence_id === 'string') started.set(key, r.consequence_id);
-          } else settled.add(key);
-        }
-        return { settled, started };
-      });
-    },
-    missed24h(serverNow) {
-      return guard(async () => {
-        const db = (await payload()).db as unknown as DrizzleAdapter;
-        const { rows } = await db.drizzle.execute(sql`
-          SELECT count(*) FILTER (WHERE "status" = 'skipped')::int AS "skipped", count(*) FILTER (WHERE "status" = 'failed')::int AS "failed"
-          FROM "scheduler_runs"
-          WHERE "status" IN ('skipped', 'failed') AND "finished_at" > ${serverNow - DAY_MS}::numeric AND "finished_at" <= ${serverNow}::numeric`);
-        return { skipped: num(rows[0]?.skipped ?? 0), failed: num(rows[0]?.failed ?? 0) };
-      });
-    },
+    ledger: ledgerOf(payload),
+    missed24h: missed24hOf(payload),
   };
 
   return { lease, runs };

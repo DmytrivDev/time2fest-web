@@ -227,6 +227,9 @@ async function deployLocked(ctx, { site, sha, worker, composeText }) {
         const b = await worker.buildSite();
         if (b.code !== 0) return b;
       }
+      // S07-03: статика без заборонених підписів — до будь-якого вивантаження.
+      const scan = await worker.checkBundle();
+      if (scan.code !== 0) return scan;
       const d = await worker.deploy();
       if (d.code === 0) versionAfter = d.version;
       return d;

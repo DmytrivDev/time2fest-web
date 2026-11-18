@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { REPO_ROOT } from '../lib/exec.mjs';
-import { createWorker, EDGE_DIR, NEXT_JS, parseDeploymentStatus, siteBuildEnv, WRANGLER_JS } from '../lib/worker.mjs';
+import { CHECK_BUNDLE_JS, createWorker, EDGE_DIR, NEXT_JS, parseDeploymentStatus, siteBuildEnv, WRANGLER_JS } from '../lib/worker.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
 
 const FIXTURE = fs.readFileSync(new URL('./fixtures/deployments-status.json', import.meta.url), 'utf8');
@@ -151,6 +151,17 @@ describe('site build (AC-31)', () => {
     fs.writeFileSync(path.join(dir, 'index.html'), '<!doctype html>');
     expect(w.assetsReady()).toBe(true);
     expect(createWorker({ env: 'prelaunch', processEnv: ENV, assetsDir: path.join(dir, 'missing') }).assetsReady()).toBe(false);
+  });
+
+  it('S07-03: checkBundle scans the assets dir — --allow-realtime for rehearsal only; a failing scan is a step failure', async () => {
+    for (const [env, flags] of /** @type {[string, string[]][]} */ ([['rehearsal', ['--allow-realtime']], ['prelaunch', []], ['production', []]])) {
+      const { run, seen } = recorder();
+      expect(await createWorker({ env, processEnv: ENV, assetsDir: '/tmp/assets-x', run }).checkBundle()).toEqual({ code: 0 });
+      expect(seen[0].argv).toEqual([process.execPath, CHECK_BUNDLE_JS, '/tmp/assets-x', ...flags]);
+    }
+    const bad = recorder([{ match: [], result: { code: 1 } }]);
+    const r = await createWorker({ env: 'prelaunch', processEnv: ENV, assetsDir: '/tmp/assets-x', run: bad.run }).checkBundle();
+    expect(r.code).toBe(1);
   });
 
   it('missing Cloudflare credentials are named', () => {

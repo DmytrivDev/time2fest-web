@@ -35,5 +35,8 @@ describe('clock wire schemas (SPEC-07, AC-69)', () => {
     expect(NightRunBodySchema.safeParse({ speed: 0 }).success).toBe(false);
     expect(NightRunBodySchema.safeParse({ from: -1 }).success).toBe(false);
     expect(ClockControlBodySchema.safeParse({ action: 'set', at: -1 }).success).toBe(false);
+    expect(ClockControlBodySchema.safeParse({ action: 'set', at: 1.5 }).success).toBe(false);
+    expect(ClockControlBodySchema.safeParse({ action: 'set', at: 8.64e15 + 2 }).success).toBe(false);
+    expect(ClockControlBodySchema.safeParse({ action: 'set', at: 8.64e15 }).success).toBe(true);
   });
 });

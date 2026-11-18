@@ -14,10 +14,8 @@
  */
 import type { ClockEvent } from '@time2fest/contracts';
 import { backToReal, clockEventId, effective, restartNight, setMoment, setSpeed, type VirtualState } from '../domain/timekeeping/virtual';
-import { publisherOf } from '../endpoints/deps';
-import type { Deps } from '../endpoints/types';
 import type { EnvClass } from '../platform/env';
-import type { Logger } from '../ports';
+import type { Clock, Logger } from '../ports';
 import type { ChannelPublisher } from '../realtime/ports';
 import type { Actor } from './ports';
 import type { SharedClock } from './shared';
@@ -27,6 +25,9 @@ export const CLOCK_CONTROL_CLASSES: readonly EnvClass[] = ['rehearsal', 'test'];
 
 /** The highest speed `ops` may set (C10). */
 export const MAX_CLOCK_SPEED = 600;
+
+/** `set` accepts only an instant within this distance of the REAL now, either way (S07-02: 400 days). */
+export const MAX_SET_DISTANCE_MS = 400 * 86_400_000;
 
 /** The `ops` actor of the CLI (AC-54): the journal shows who changed the clock. */
 export const OPS_ACTOR: Actor = Object.freeze({ kind: 'system', id: 'ops', label: 'ops' });
@@ -46,6 +47,8 @@ export type ClockControlRole = 'owner' | 'ops';
 export interface ClockControlDeps {
   cls: EnvClass;
   clock: Pick<SharedClock, 'change' | 'view'>;
+  /** The REAL clock (not the shared one): bounds the instant of `set`. */
+  real: Clock;
   /** Absent when realtime is not configured: the change still happens, the event is not sent. */
   publisher?: ChannelPublisher;
   log: Logger;
@@ -68,26 +71,14 @@ export interface ClockControlOutcome {
 
 export type ClockControlResult = { ok: true; value: ClockControlOutcome } | { ok: false; code: 'forbidden' | 'validation' };
 
-/** The control deps of a process, or `undefined` where the class has no shared clock (production). */
-export function clockControlDepsOf(deps: Deps): ClockControlDeps | undefined {
-  if (!deps.sharedClock) return undefined;
-  let publisher: ChannelPublisher | undefined;
-  try {
-    publisher = publisherOf(deps);
-  } catch {
-    publisher = undefined;
-  }
-  return { cls: deps.env.class, clock: deps.sharedClock, log: deps.log, ...(publisher ? { publisher } : {}) };
-}
-
-const isInstant = (v: number) => Number.isSafeInteger(v) && v >= 0;
+const isInstant = (v: number, realNow: number) => Number.isSafeInteger(v) && v >= 0 && Math.abs(v - realNow) <= MAX_SET_DISTANCE_MS;
 const isSpeed = (v: number) => Number.isInteger(v) && v >= 0 && v <= MAX_CLOCK_SPEED;
 
 /** The transition of `action`, or `null` when its argument is out of range. */
-function transitionOf(action: ClockAction): ((s: VirtualState, realNow: number) => VirtualState) | null {
+function transitionOf(action: ClockAction, realNow: number): ((s: VirtualState, realNow: number) => VirtualState) | null {
   switch (action.action) {
     case 'set':
-      return isInstant(action.at) ? (s, real) => setMoment(s, action.at, real) : null;
+      return isInstant(action.at, realNow) ? (s, real) => setMoment(s, action.at, real) : null;
     case 'real':
       return (s, real) => backToReal(s, real);
     case 'restart-night':
@@ -115,7 +106,7 @@ async function publish(d: ClockControlDeps, event: ClockEvent): Promise<ClockPub
 export async function controlClock(d: ClockControlDeps, role: ClockControlRole, actor: Actor, action: ClockAction): Promise<ClockControlResult> {
   if (!CLOCK_CONTROL_CLASSES.includes(d.cls)) return { ok: false, code: 'forbidden' };
   if (action.action === 'speed' && role !== 'ops') return { ok: false, code: 'forbidden' };
-  const transition = transitionOf(action);
+  const transition = transitionOf(action, d.real.now());
   if (!transition) return { ok: false, code: 'validation' };
 
   const written = await d.clock.change(actor, transition);

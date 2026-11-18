@@ -15,14 +15,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { seasonMoments } from '@time2fest/rules/time';
-import type { SchedulerReaders } from '../admin/cmsEndpoints';
+import type { SchedulerReaders } from '../adapters/processDeps';
 import { pairKey } from '../domain/scheduler/consequence';
 import { buildPlan, nextDueAt, type ActionRule } from '../domain/scheduler/plan';
 import type { VirtualState } from '../domain/timekeeping/virtual';
 import { envClass, type EnvClass, type RawEnv } from '../platform/env';
 import { liveHolder } from '../scheduler/festival';
 import type { RunRecordStore } from '../scheduler/recorder';
-import { CLOCK_CONTROL_CLASSES, clockControlDepsOf, controlClock, MAX_CLOCK_SPEED, OPS_ACTOR, type ClockAction, type ClockControlDeps } from '../timekeeping/control';
+import { CLOCK_CONTROL_CLASSES, controlClock, MAX_CLOCK_SPEED, OPS_ACTOR, type ClockAction, type ClockControlDeps } from '../timekeeping/control';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -162,9 +162,9 @@ export async function runClockCli(argv: readonly string[], raw: RawEnv, io: Cloc
 
 /** The real ports: the process container (scheduler built, never started), stores over its Payload. */
 async function openPorts(raw: RawEnv): Promise<ClockCliPorts> {
-  const [{ createDeps, payloadOf }, { schedulerReadersOf }, { momentActionsFor }, { createPayloadRunRecordStore }] = await Promise.all([
+  const [{ createDeps, payloadOf }, { clockControlDepsOf, schedulerReadersOf }, { momentActionsFor }, { createPayloadRunRecordStore }] = await Promise.all([
     import('../container'),
-    import('../admin/cmsEndpoints'),
+    import('../adapters/processDeps'),
     import('../registries/moments'),
     import('../adapters/payloadRunRecords'),
   ]);

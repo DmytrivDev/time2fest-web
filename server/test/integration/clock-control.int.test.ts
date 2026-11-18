@@ -15,7 +15,7 @@ import { ClockEventSchema, FestivalStateViewSchema } from '@time2fest/contracts/
 import type { Centrifuge, PublicationContext } from 'centrifuge';
 import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { festivalDepsOf } from '../../src/admin/cmsEndpoints';
+import { festivalDepsOf } from '../../src/adapters/processDeps';
 import { createTestClock } from '../../src/clock';
 import { payloadOf } from '../../src/container';
 import type { Deps } from '../../src/endpoints/types';

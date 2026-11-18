@@ -61,6 +61,7 @@ export function scenario(o = {}) {
     /** Чи контейнер цього образу відповідає 200. @type {(sha: string | null) => boolean} */
     healthy: (sha) => sha !== null,
     wrangler: { status: 0, deploy: 0, rollback: 0 },
+    /** Код `scripts/check-bundle.mjs` (S07-03). */ bundleScan: 0,
     /** @type {string | null} */ version: V_OLD,
     /** @type {string | null} */ saved: null,
   };
@@ -113,6 +114,7 @@ export function scenario(o = {}) {
         return {};
       },
     },
+    { match: (c) => /check-bundle\.mjs$/.test(c.argv[1] ?? ''), result: () => ({ code: st.bundleScan, stderr: st.bundleScan ? 'check-bundle: forbidden signature' : '' }) },
     { match: (c) => /next$/.test(c.argv[1] ?? '') && c.argv[2] === 'build', result: { stdout: `built with ${SENTINEL_EDGE}` } },
     {
       match: ['docker', 'image', 'inspect'],

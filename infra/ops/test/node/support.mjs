@@ -83,6 +83,7 @@ export function fakeWorker() {
     assetsReady: () => true,
     hasBuild: () => false,
     buildSite: async () => ({ code: /** @type {const} */ (0) }),
+    checkBundle: async () => ({ code: /** @type {const} */ (0) }),
     async deploy() {
       n += 1;
       current = version(n);
