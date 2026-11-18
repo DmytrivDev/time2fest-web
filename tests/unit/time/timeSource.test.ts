@@ -194,6 +194,39 @@ describe('TimeSource', () => {
     ts.stop();
   });
 
+  it('AC-3: після вдалого заміру сервер замовк — якір лишається, повтори 5/10/20/60/60 с, успіх повертає розклад', async () => {
+    h.plan.push([10, 10], [10, 10], [10, 10], [10, 10], [10, 10]);
+    const ts = new TimeSource(h.deps);
+    ts.start();
+    await vi.waitFor(() => expect(ts.status).toBe('server'));
+    await vi.waitFor(() => expect(pending(h).some((t) => t.ms === 10 * 60_000)).toBe(true));
+    const a = ts.anchor!;
+    const isRetry = (t: { ms: number }) => t.ms !== 10 * 60_000;
+    expect(pending(h).some(isRetry)).toBe(false);
+    // Періодичний розмір 1 запит: відмова, далі повтори.
+    await fire(h, pending(h).find((t) => t.ms === 10 * 60_000)!);
+    const delays: number[] = [];
+    for (let i = 0; i < 5; i++) {
+      await vi.waitFor(() => expect(pending(h).some(isRetry)).toBe(true));
+      const retry = pending(h).find(isRetry)!;
+      delays.push(retry.ms);
+      await fire(h, retry);
+    }
+    expect(delays).toEqual([5_000, 10_000, 20_000, 60_000, 60_000]);
+    expect(ts.status).toBe('server');
+    expect(ts.anchor).toBe(a);
+    expect(h.warn).not.toHaveBeenCalled();
+    // Сервер ожив: наступний повтор вдалий, повторів більше немає, періодичний розклад іде.
+    await vi.waitFor(() => expect(pending(h).some(isRetry)).toBe(true));
+    h.plan.push([10, 10], [10, 10], [10, 10], [10, 10], [10, 10]);
+    await fire(h, pending(h).find(isRetry)!);
+    await vi.waitFor(() => expect(ts.anchor).not.toBe(a));
+    await vi.waitFor(() => expect(pending(h).some(isRetry)).toBe(false));
+    expect(pending(h).some((t) => t.ms === 10 * 60_000)).toBe(true);
+    expect(ts.status).toBe('server');
+    ts.stop();
+  });
+
   it('після резерву перехід на якір без смикання, якщо різниця < 1 с', async () => {
     h.clock.skew = 600; // годинник пристрою поспішає на 0,6 с
     const ts = new TimeSource(h.deps);
