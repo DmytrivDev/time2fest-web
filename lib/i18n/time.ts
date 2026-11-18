@@ -114,7 +114,7 @@ export function formatTimeForViewer(
   utc: ISO | Ms,
   opts: { now: Ms; locale?: Locale; timeZone?: string },
 ): ViewerTime {
-  const locale = opts.locale ?? 'uk';
+  const locale = opts.locale ?? defaultLocale;
   const timeZone = opts.timeZone ?? viewerTimeZone();
   const ms = toMs(utc);
   const time = formatClock(ms, { locale, timeZone });
@@ -141,7 +141,7 @@ export function formatUtcHint(utc: ISO | Ms): string {
 }
 
 /** «38 хв тому» (`Intl.RelativeTimeFormat`, короткий стиль); `elapsedMs ≥ 0`. */
-export function formatAgo(elapsedMs: Ms, locale: Locale = 'uk'): string {
+export function formatAgo(elapsedMs: Ms, locale: Locale = defaultLocale): string {
   const rtf = new Intl.RelativeTimeFormat(locale, { style: 'short', numeric: 'always' });
   const sec = Math.max(0, Math.floor(elapsedMs / 1_000));
   if (sec < 60) return rtf.format(-sec, 'second');
@@ -151,7 +151,7 @@ export function formatAgo(elapsedMs: Ms, locale: Locale = 'uk'): string {
 }
 
 /** «північ була 38 хв тому». */
-export function formatMidnightAgo(elapsedMs: Ms, locale: Locale = 'uk'): string {
+export function formatMidnightAgo(elapsedMs: Ms, locale: Locale = defaultLocale): string {
   return `${phrase(locale).midnightWas} ${formatAgo(elapsedMs, locale)}`;
 }
 
@@ -169,7 +169,7 @@ export function formatCountdown(ms: Ms): string {
 }
 
 /** «54 хв», «2 год 54 хв», «1 год» — скільки лишилось (округлення вгору до хвилини). */
-export function formatDurationShort(ms: Ms, locale: Locale = 'uk'): string {
+export function formatDurationShort(ms: Ms, locale: Locale = defaultLocale): string {
   const min = Math.max(1, Math.ceil(ms / 60_000));
   const h = Math.floor(min / 60);
   const m = min % 60;

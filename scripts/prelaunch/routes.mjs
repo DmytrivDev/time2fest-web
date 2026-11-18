@@ -16,7 +16,7 @@ export const LOCALE_STATUS = { en: 'draft', uk: 'ready', es: 'pending', fr: 'pen
 export const STATIC_ROUTES = ENABLED_ROUTES;
 
 /** Теки з `public/`, потрібні передстартовому сайту (звуки ефіру й копія завантажувача YouTube — ні). */
-export const PUBLIC_ENTRIES = ['_next', 'brand', 'flags', '_headers'];
+export const PUBLIC_ENTRIES = ['_next', 'brand', 'flags', 'emoji', '_headers'];
 /** Необов’язкові теки: є — копіюємо (фото й відео задачі C у `public/media/`). */
 export const OPTIONAL_PUBLIC_ENTRIES = ['media'];
 
