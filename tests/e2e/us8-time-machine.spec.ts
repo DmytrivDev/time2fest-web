@@ -40,7 +40,10 @@ const MIDNIGHT_LONDON = Date.parse('2027-01-01T00:00:00Z');
 const panel = (page: Page) => page.getByRole('dialog', { name: 'Машина часу' });
 
 test.describe('US8 · параметри адреси', () => {
-  test('?t=01:59:30&speed=10 — північ Лондона через ≈3 с, штамп ще через ≈1,5 с', async ({ page }) => {
+  test('?t=01:59:30&speed=10 — північ Лондона через ≈3 с, штамп ще через ≈1,5 с', async ({ page }, testInfo) => {
+    // In the integration build the machine re-anchors to the server clock (drift threshold 250 ms, AC-61),
+    // so the measured real intervals may shift by up to that much; the sim build keeps the tight bounds.
+    const slack = testInfo.project.name === 'server-clock' ? 300 : 0;
     await gotoAt(page, '2027-01-01T01:59:30+02:00', 10);
     expect((await getTime(page)).speed).toBe(10);
     expect(await nowMs(page)).toBeGreaterThanOrEqual(Date.parse('2027-01-01T01:59:30+02:00'));
@@ -59,10 +62,10 @@ test.describe('US8 · параметри адреси', () => {
       return [await until(midnight), await until(midnight + 15_000)];
     }, MIDNIGHT_LONDON);
     // 30 віртуальних секунд за ×10 — ≈3 с; штамп (+15 с) — ще ≈1,5 с.
-    expect(toMidnight).toBeGreaterThan(2_600);
-    expect(toMidnight).toBeLessThan(3_600);
-    expect(toStamp - toMidnight).toBeGreaterThan(1_200);
-    expect(toStamp - toMidnight).toBeLessThan(2_000);
+    expect(toMidnight).toBeGreaterThan(2_600 - slack);
+    expect(toMidnight).toBeLessThan(3_600 + slack);
+    expect(toStamp - toMidnight).toBeGreaterThan(1_200 - slack);
+    expect(toStamp - toMidnight).toBeLessThan(2_000 + slack);
   });
 
   test('speed=0 — кадр заморожено: «північ + 10 с» без штампа', async ({ page }) => {

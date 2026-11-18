@@ -84,7 +84,9 @@ async function startAt(page: Page, ytStub: YouTubeStub, iso: string, speed = 1) 
 
 test.describe('US1 · ефір на головній', () => {
   let doorSet = false;
-  test.afterEach(async ({ request }) => {
+  test.afterEach(async ({ request }, testInfo) => {
+    // The reset reseeds the catalog (~12 s): give it its own budget instead of the leftover of the test's.
+    if (doorSet) testInfo.setTimeout(testInfo.timeout + 60_000);
     if (doorSet) await resetServer(request);
     doorSet = false;
   });

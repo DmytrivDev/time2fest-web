@@ -16,7 +16,9 @@ const MIDNIGHT_LONDON = Date.parse('2027-01-01T00:00:00Z');
 const PARIS_2359 = Date.parse('2026-12-31T23:59:00+01:00');
 const pageNow = async (page: Page) => Date.parse((await getTime(page)).at);
 
-test.afterEach(async ({ request }) => {
+test.afterEach(async ({ request }, testInfo) => {
+  // The reset reseeds the catalog (~12 s): give it its own budget instead of the leftover of the test's.
+  testInfo.setTimeout(testInfo.timeout + 60_000);
   await resetServer(request);
 });
 
@@ -74,6 +76,8 @@ test.describe('SPEC-07 · server clock and the time machine', () => {
     await expect.poll(async () => Math.abs((await getDoorClock(request)).now - MIDNIGHT_LONDON), { timeout: 10_000 }).toBeLessThan(1_500);
     await panel.getByRole('radio', { name: '×10' }).click();
     await expect.poll(async () => (await getDoorClock(request)).speed).toBe(10);
+    // Leave a quiet page: ×10 through London's midnight keeps the celebration animating during teardown.
+    await setDoorClock(request, { frozen: true });
   });
 
   test('AC-61: a door change from outside - the page follows within 2 s; frozen means speed 0', async ({ page, request }) => {
