@@ -18,6 +18,7 @@ import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SharedClock } from '../timekeeping/shared';
+import type { DivergenceMeter } from '../timekeeping/divergence';
 import type { UnattendedDeps } from '../unattended/service';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -95,6 +96,8 @@ export interface Deps {
    * which has no virtual time.
    */
   sharedClock?: SharedClock;
+  /** Edge-to-origin divergence of trusted requests on real time (SPEC-07 AC-11); read by the admin slice. */
+  divergence?: DivergenceMeter;
 }
 
 export interface Ctx {

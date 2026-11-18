@@ -28,6 +28,7 @@ import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { createPayloadClockStateStore } from './adapters/payloadClockState';
 import { createPayloadJournal } from './adapters/payloadJournal';
 import { clockFor, processClockCache, realClock } from './clock';
+import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
@@ -187,6 +188,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
   if (sharedClock) deps.sharedClock = sharedClock;
+  deps.divergence = overrides.divergence ?? createDivergenceMeter({ real: realClock, alarm, log });
   deps.events = overrides.events ?? {
     publisher: createPgEventPublisher(payload, clock, channel),
     log: createPgEventLog(payload),
