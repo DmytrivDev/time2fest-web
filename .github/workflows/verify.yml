@@ -73,6 +73,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: web full
         run: npx tsc --noEmit -p . && node scripts/contract-surface.mjs --check && npx eslint . && npx vitest run --maxWorkers=2 && node scripts/sync_tokens.mjs --check && npx cross-env NEXT_DIST_DIR=out-verify next build
+      - name: bundle check
+        run: node scripts/check-bundle.mjs out-verify
       - name: contracts full
         working-directory: packages/contracts
         run: npx tsc --noEmit -p . && npx vitest run --maxWorkers=2 && node ../../scripts/contract-surface.mjs --check
