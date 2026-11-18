@@ -200,7 +200,8 @@ describe('env test, fetch rejected inside workerd', () => {
   });
 });
 
-describe('env rehearsal (edge clock, origin unreachable)', () => {
+// Since SPEC-07 the rehearsal edge asks the origin first (AC-15); an unreachable origin falls back to the edge clock (AC-16).
+describe('env rehearsal (origin unreachable → edge clock)', () => {
   let origin = '';
   beforeAll(async () => {
     origin = `http://127.0.0.1:${await closedPort()}`;
