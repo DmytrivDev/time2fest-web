@@ -9,7 +9,7 @@ import { PHASE_CUSTOM } from '../lib/config.mjs';
 import { desiredState } from '../lib/desired.mjs';
 import { hostsOf, OPAQUE_HOST } from '../lib/diff.mjs';
 import { guard } from '../lib/guard.mjs';
-import { createFakeApi } from './support/fakeApi.mjs';
+import { convergedSeed, createFakeApi } from './support/fakeApi.mjs';
 
 // Фальшиві значення збираються під час виконання.
 const tok = `tok-${'d4'.repeat(8)}`;
@@ -49,15 +49,10 @@ async function run(fake, argv, desired) {
   return { code, lines, text: lines.join('\n') };
 }
 
-/** Фальшивий Cloudflare, що вже відповідає бажаному стану. */
+/** Фальшивий Cloudflare, що вже відповідає бажаному стану (усі середовища: cf.mjs завжди будує їх разом). */
 function converged() {
   const fake = createFakeApi();
-  const d = desiredState(['test']);
-  fake.seed({
-    tunnels: [{ id: 'tun1', name: 't2f-test', token: tunnelTok, ingress: d.tunnels[0]?.ingress ?? null }],
-    dns: [...fake.state.dns, { id: 'd1', name: 'o-test.time2fest.com', type: 'CNAME', content: 'tun1.cfargotunnel.com', proxied: true }],
-    rulesets: Object.fromEntries(Object.entries(d.rulesets).map(([p, rs]) => [p, rs.map((r, i) => ({ id: `r${i}`, ...r }))])),
-  });
+  fake.seed(convergedSeed(fake, tunnelTok));
   return fake;
 }
 

@@ -1,0 +1,61 @@
+name: deploy
+
+# Ручний запуск розгортання на вузол репетиції (SPEC-13a, W12). Секрети — лише за іменем,
+# у кроках `env:`; жодного `${{ }}` у `run:`. Секрети — у GitHub Environment `rehearsal`, доступному
+# лише гілці `master` (крок власника); ключ SSH з'являється після встановлення залежностей і
+# прибирається останнім кроком за будь-якого результату.
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: Середовище
+        type: choice
+        options: [rehearsal]
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.env }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    environment: rehearsal
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 22
+      - name: Install pnpm
+        run: npm install -g pnpm@12.4.2
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: SSH material
+        env:
+          T2F_REHEARSAL_SSH_KEY: ${{ secrets.T2F_REHEARSAL_SSH_KEY }}
+          T2F_REHEARSAL_KNOWN_HOSTS: ${{ secrets.T2F_REHEARSAL_KNOWN_HOSTS }}
+        run: |
+          umask 077
+          printf '%s\n' "$T2F_REHEARSAL_SSH_KEY" > "$RUNNER_TEMP/t2f_key"
+          printf '%s\n' "$T2F_REHEARSAL_KNOWN_HOSTS" > "$RUNNER_TEMP/t2f_known_hosts"
+          echo "T2F_SSH_KEY_FILE=$RUNNER_TEMP/t2f_key" >> "$GITHUB_ENV"
+          echo "T2F_KNOWN_HOSTS_FILE=$RUNNER_TEMP/t2f_known_hosts" >> "$GITHUB_ENV"
+      - name: Deploy
+        env:
+          T2F_DEPLOY_ENV: ${{ inputs.env }}
+          T2F_REHEARSAL_HOST: ${{ secrets.T2F_REHEARSAL_HOST }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          T2F_CATALOG_URL: https://rehearsal.time2fest.com
+        run: pnpm deploy:env -- --env "$T2F_DEPLOY_ENV" --target "$T2F_REHEARSAL_HOST"
+      - name: Remove SSH material
+        if: always()
+        run: rm -f "$RUNNER_TEMP"/t2f_*

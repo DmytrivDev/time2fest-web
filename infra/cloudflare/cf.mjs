@@ -1,18 +1,28 @@
 // @ts-check
-// Інфраструктура Cloudflare за описом: `node cf.mjs plan|apply --env test`.
+// Інфраструктура Cloudflare за описом: `node cf.mjs plan|apply --env test|rehearsal [--with-access]`.
 // Нуль залежностей. `plan` лише читає (GET); `apply` змінює під замком `cloudflare` після запобіжника.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import {
+  ACCESS_READ_RIGHT,
+  OWNER_EMAILS_ENV,
+  clientIdTail,
+  createAccessStep,
+  desiredAccess,
+  parseOwnerEmails,
+  verifyAdminAccess,
+} from './lib/access.mjs';
 import { ApiRefusal, createApi } from './lib/api.mjs';
 import { runApply, takeCloudflareLock } from './lib/apply.mjs';
-import { ENVS, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
-import { readCurrent } from './lib/current.mjs';
-import { desiredState } from './lib/desired.mjs';
+import { ENVS, GOOGLE_IDP_ENV, PERMISSIONS, REQUIRED_ENV } from './lib/config.mjs';
+import { observe } from './lib/current.mjs';
+import { desiredState, disabledAdminHosts } from './lib/desired.mjs';
 import { diff } from './lib/diff.mjs';
 import { describeRefusals, guard } from './lib/guard.mjs';
 import { createRedactor } from './lib/redact.mjs';
+import { accessMarkerExists, removeAccessMarker } from './lib/tokenFile.mjs';
 
 /** Тека для токенів тунелів (у .gitignore). */
 const LOCAL_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '.local');
@@ -29,6 +39,7 @@ function parseArgs(argv) {
     allowMainDomain: false,
     allowZoneSettings: false,
     allowDelete: false,
+    withAccess: false,
     /** @type {string[]} */ errors: [],
   };
   const rest = [...argv];
@@ -45,6 +56,7 @@ function parseArgs(argv) {
     } else if (a === '--allow-main-domain') o.allowMainDomain = true;
     else if (a === '--allow-zone-settings') o.allowZoneSettings = true;
     else if (a === '--allow-delete') o.allowDelete = true;
+    else if (a === '--with-access') o.withAccess = true;
     else o.errors.push(`невідомий аргумент: ${a}`);
   }
   return o;
@@ -102,29 +114,104 @@ export async function main(argv, deps = {}) {
     return 1;
   }
 
+  // Access лише з --with-access: пошти — зі змінної (файл секретів), у вивід — лише кількість.
+  /** @type {string[] | null} */
+  let ownerEmails = null;
+  /** @type {import('./lib/access.mjs').GoogleClient | null} */
+  let google = null;
+  if (args.withAccess) {
+    ownerEmails = parseOwnerEmails(env[OWNER_EMAILS_ENV]);
+    if (!ownerEmails) {
+      out(`--with-access потребує ${OWNER_EMAILS_ENV} (пошти власника через кому) у середовищі або --secrets-file; у git їх немає`);
+      return 1;
+    }
+    for (const e of ownerEmails) redactor.add(e);
+    if (!ENVS[args.env]?.adminHost) {
+      out(`--with-access: середовище ${args.env} не має імені адмінки (adminHost)`);
+      return 1;
+    }
+    // Вхід в адмінку — лише через Google: без клієнта OAuth застосунок Access не створюється.
+    const absent = [GOOGLE_IDP_ENV.clientId, GOOGLE_IDP_ENV.clientSecret].filter((n) => !env[n]);
+    if (absent.length) {
+      out(`--with-access потребує ${absent.join(', ')} (клієнт OAuth Google для входу в Access) у середовищі або --secrets-file`);
+      return 1;
+    }
+    google = { clientId: String(env[GOOGLE_IDP_ENV.clientId]), clientSecret: String(env[GOOGLE_IDP_ENV.clientSecret]) };
+    redactor.add(google.clientId);
+    redactor.add(google.clientSecret);
+    out(`Access: адрес власника — ${ownerEmails.length}; вхід лише через Google (client id ${clientIdTail(google.clientId)})`);
+  }
+
   try {
     const api = createApi({ env, fetch: deps.fetch });
-    const desired = (deps.desiredState ?? desiredState)([args.env], { underAttack: args.underAttack });
+    // Завжди всі середовища: PUT фази замінює весь список, тож жодне середовище не випадає. --env обирає
+    // файл токена тунелю, ціль --under-attack і застосунок Access.
+    // Ім'я адмінки (ingress і CNAME) — лише з --with-access для цього середовища або коли позначка успішного кроку
+    // Access є в .local і Cloudflare її підтверджує (N3: застосунок з domain = ім'я адмінки й політикою); інакше його
+    // в бажаному стані немає, а залишок у Cloudflare йде в блок-правило (F2).
+    const localDir = deps.localDir ?? LOCAL_DIR;
+    const envNames = Object.keys(ENVS);
     const ids = { accountId: String(env.CLOUDFLARE_ACCOUNT_ID), zoneId: String(env.CLOUDFLARE_ZONE_ID) };
+    /** @type {Record<string, boolean>} */
+    const admin = {};
+    /** Середовища, чию позначку Access визнано застарілою (apply її прибирає). @type {string[]} */
+    const staleMarkers = [];
+    for (const n of envNames.filter((x) => ENVS[x]?.adminHost)) {
+      if (args.withAccess && n === args.env) admin[n] = true;
+      else if (!accessMarkerExists(localDir, n)) admin[n] = false;
+      else {
+        const host = String(ENVS[n]?.adminHost);
+        const v = await verifyAdminAccess(api, ids.accountId, host);
+        admin[n] = v.ok;
+        if (v.ok) continue;
+        if (v.reason === 'no-right') {
+          out(`адмінка ${host}: позначка Access є, але токену бракує права ${v.right ?? ACCESS_READ_RIGHT} — Access не перевірено, ім'я адмінки вимкнено`);
+        } else {
+          const why =
+            v.reason === 'missing'
+              ? 'застосунку Access з цим доменом у Cloudflare немає'
+              : v.reason === 'no-idp'
+                ? 'застосунок Access без дозволеного постачальника входу (allowed_idps порожній або не лише t2f-google типу google)'
+                : v.reason === 'not-email'
+                  ? 'політика allow застосунку Access пускає не лише за поштою'
+                  : 'застосунок Access без жодної політики allow';
+          out(`адмінка ${host}: позначка Access є, але ${why} — ім'я адмінки вимкнено; ${args.command === 'apply' ? 'позначку прибрано' : 'apply прибере позначку'}`);
+          staleMarkers.push(n);
+        }
+      }
+    }
+    /** @param {string[]} staleAdmin */
+    const build = (staleAdmin) =>
+      (deps.desiredState ?? desiredState)(envNames, { underAttack: { [String(args.env)]: args.underAttack }, admin, staleAdmin });
+    const adminWatch = disabledAdminHosts(envNames, admin);
+    const access =
+      ownerEmails && google
+        ? createAccessStep({ api, accountId: ids.accountId, envName: String(args.env), app: desiredAccess(args.env, ownerEmails), google, out })
+        : undefined;
     const flags = { allowMainDomain: args.allowMainDomain, allowZoneSettings: args.allowZoneSettings, allowDelete: args.allowDelete };
 
     if (args.command === 'apply') {
+      for (const n of staleMarkers) removeAccessMarker(localDir, n);
       return await runApply({
         api,
         ids,
         envName: args.env,
-        desired,
+        build,
+        adminWatch,
         flags,
         redactor,
         out,
         now: deps.now ?? (() => new Date()),
-        localDir: deps.localDir ?? LOCAL_DIR,
+        localDir,
         acquireLock: deps.acquireLock ?? (() => takeCloudflareLock(env)),
+        access,
       });
     }
 
-    const current = await readCurrent(api, ids, desired, redactor);
+    const { desired, current, stale } = await observe({ api, ids, build, watch: adminWatch, redactor });
+    for (const h of stale) out(`адмінка ${h}: є в Cloudflare без Access — apply прибере ingress і додасть ім'я в блок-правило`);
     const changes = diff(desired, current);
+    if (access) changes.push(...(await access.changes()));
     if (current.zone.bot_fight_mode === null) out('Bot Fight Mode: стан не перевірено (токен без права Zone · Bot Management · Read)');
     if (!changes.length) out('без змін');
     for (const c of changes) out(`${c.op.padEnd(6)} ${c.kind}: ${c.summary}`);
@@ -148,7 +235,15 @@ export async function main(argv, deps = {}) {
 /** @param {Record<string, string | undefined>} env */
 function redactorSources(env) {
   return Object.fromEntries(
-    ['CLOUDFLARE_API_TOKEN_INFRA', 'CLOUDFLARE_API_TOKEN', 'T2F_EDGE_SECRET', 'TUNNEL_TOKEN'].map((n) => [n, env[n]]),
+    [
+      'CLOUDFLARE_API_TOKEN_INFRA',
+      'CLOUDFLARE_API_TOKEN',
+      'T2F_EDGE_SECRET',
+      'TUNNEL_TOKEN',
+      'T2F_OWNER_EMAILS',
+      'CF_ACCESS_GOOGLE_CLIENT_ID',
+      'CF_ACCESS_GOOGLE_CLIENT_SECRET',
+    ].map((n) => [n, env[n]]),
   );
 }
 

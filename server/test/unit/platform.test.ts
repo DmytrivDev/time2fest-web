@@ -68,14 +68,19 @@ describe('environment', () => {
     const paypro = loadEnv(rawEnv({ T2F_ENV: 'rehearsal', PAYPRO_MODE: 'live' }), envRegistry, denylist);
     expect(paypro).toEqual({ ok: false, failing: ['PAYPRO_MODE'] });
 
-    // Production is not guarded by the isolation rule (it requires its origins instead).
+    // Production is not guarded by the isolation rule (it requires its origins and its conventional names instead).
+    const conventional = {
+      DATABASE_URI: 'postgres://t2f@postgres:5432/t2f_production',
+      T2F_R2_BUCKET: 'time2fest-prod',
+      T2F_REDIS_PREFIX: 't2f:production:',
+    };
     const prod = loadEnv(
-      rawEnv({ T2F_ENV: 'production', PAYPRO_MODE: 'live', T2F_ALLOWED_ORIGINS: 'https://time2fest.com' }),
+      rawEnv({ ...conventional, T2F_ENV: 'production', PAYPRO_MODE: 'live', T2F_ALLOWED_ORIGINS: 'https://time2fest.com' }),
       envRegistry,
       denylist,
     );
     expect(prod.ok).toBe(true);
-    expect(loadEnv(rawEnv({ T2F_ENV: undefined }), envRegistry)).toEqual({ ok: false, failing: ['T2F_ALLOWED_ORIGINS'] });
+    expect(loadEnv(rawEnv({ ...conventional, T2F_ENV: undefined }), envRegistry)).toEqual({ ok: false, failing: ['T2F_ALLOWED_ORIGINS'] });
   });
 
   it('test class: database and Redis on loopback, a t2f_ database and a t2f:<slug>: prefix; refused by name only', () => {

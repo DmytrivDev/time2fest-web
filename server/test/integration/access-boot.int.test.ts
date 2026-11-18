@@ -21,7 +21,10 @@ const PRODUCTION: Record<string, string> = {
   T2F_ACCESS_JWKS_URL: `${TEAM}/cdn-cgi/access/certs`,
   T2F_OWNER_EMAILS: 'main@example.com,reserve@example.com',
   T2F_R2_ENDPOINT: 'https://r2.example.com',
-  T2F_R2_BUCKET: 'bucket',
+  T2F_R2_BUCKET: 'time2fest-prod',
+  // Production's conventional names (SPEC-13a S4): any other database, bucket or prefix refuses to start.
+  DATABASE_URI: 'postgres://t2f@127.0.0.1:5432/t2f_production',
+  T2F_REDIS_PREFIX: 't2f:production:',
   T2F_R2_PREFIX: 'prod/',
   T2F_R2_ACCESS_KEY_ID: 'key-id',
   T2F_R2_SECRET_ACCESS_KEY: 'key-secret',
@@ -57,7 +60,15 @@ describe('Access boot refusal (AC-7)', () => {
   });
 
   it('rehearsal with the test issuer → exit ≠ 0 naming T2F_ACCESS_TEAM_DOMAIN', () => {
-    const r = envCheck({ T2F_ENV: 'rehearsal', T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid' });
+    // Rehearsal names, so only the Access issuer is wrong (production names are denylisted in rehearsal, SPEC-13a S4).
+    const r = envCheck({
+      T2F_ENV: 'rehearsal',
+      T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',
+      T2F_ADMIN_HOST: 'admin-rehearsal.time2fest.com',
+      T2F_R2_BUCKET: 'time2fest-rehearsal',
+      DATABASE_URI: 'postgres://t2f@127.0.0.1:5432/t2f_rehearsal',
+      T2F_REDIS_PREFIX: 't2f:rehearsal:',
+    });
     expect(r.status).not.toBe(0);
     expect(r.stderr).toContain('T2F_ACCESS_TEAM_DOMAIN');
   });

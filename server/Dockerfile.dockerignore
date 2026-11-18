@@ -1,0 +1,17 @@
+# Context filter of server/Dockerfile when built from a directory (BuildKit reads <Dockerfile>.dockerignore).
+# The deploy builds from `git archive`, which already has none of these; this keeps a directory build equal.
+.git
+**/.git
+**/node_modules
+**/.next*
+out*
+**/.local
+**/.env*
+!**/.env.example
+!**/*.env.example
+.claude
+docs
+graphify-out
+tests
+**/test-results
+**/tsconfig.tsbuildinfo

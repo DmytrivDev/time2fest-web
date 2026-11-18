@@ -1,9 +1,12 @@
 // @ts-check
-import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
 import { main } from '../cf.mjs';
 import { desiredState } from '../lib/desired.mjs';
 import { diff, hostsOf } from '../lib/diff.mjs';
-import { createFakeApi } from './support/fakeApi.mjs';
+import { convergedSeed, createFakeApi } from './support/fakeApi.mjs';
 
 // Фальшиві секрети збираються під час виконання, щоб не скидатися на справжні.
 const tok = `tok-${'a1'.repeat(8)}`;
@@ -16,26 +19,22 @@ const baseEnv = () => ({
   CLOUDFLARE_ZONE_ID: 'zone-test',
 });
 
+// Тека `.local` тимчасова: тест не читає й не пише справжню infra/cloudflare/.local.
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 't2f-cf-plan-'));
+afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
+
 /** @param {ReturnType<typeof createFakeApi>} fake @param {Record<string, string | undefined>} env @param {string[]} [argv] */
 async function run(fake, env, argv = ['plan', '--env', 'test']) {
   /** @type {string[]} */
   const lines = [];
-  const code = await main(argv, { env: { ...env }, fetch: fake.fetch, out: (l) => lines.push(l) });
+  const code = await main(argv, { env: { ...env }, fetch: fake.fetch, out: (l) => lines.push(l), localDir: path.join(tmp, '.local') });
   return { code, lines, text: lines.join('\n') };
 }
 
-/** Фальшивий Cloudflare, що вже відповідає бажаному стану. */
+/** Фальшивий Cloudflare, що вже відповідає бажаному стану (усі середовища: cf.mjs завжди будує їх разом). */
 function converged() {
   const fake = createFakeApi();
-  const d = desiredState(['test']);
-  fake.seed({
-    tunnels: [{ id: 'tun1', name: 't2f-test', token: tunnelTok, ingress: d.tunnels[0]?.ingress ?? null }],
-    dns: [
-      ...fake.state.dns,
-      { id: 'd1', name: 'o-test.time2fest.com', type: 'CNAME', content: 'tun1.cfargotunnel.com', proxied: true },
-    ],
-    rulesets: Object.fromEntries(Object.entries(d.rulesets).map(([p, rs]) => [p, rs.map((r, i) => ({ id: `r${i}`, ...r }))])),
-  });
+  fake.seed(convergedSeed(fake, tunnelTok));
   return fake;
 }
 

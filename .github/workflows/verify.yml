@@ -1,5 +1,6 @@
 # `web full`, `contracts full`, `rules full`, `edge full`, `infra full`, and the server steps (= `server.full` split in two)
 # mirror `.claude/sdd-engineering.json`. Change them together.
+# `ops full` (infra/ops) follows the same rule.
 name: verify
 
 on: push
@@ -61,6 +62,9 @@ jobs:
         run: node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.test.json && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
       - name: infra full
         working-directory: infra/cloudflare
+        run: node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
+      - name: ops full
+        working-directory: infra/ops
         run: node ../../node_modules/typescript/bin/tsc --noEmit -p . && node ../../node_modules/vitest/vitest.mjs run --maxWorkers=2
       - name: secret check
         run: node scripts/check-secrets.mjs

@@ -12,6 +12,7 @@ import type { CatalogCopyDeps } from '../catalog/copy';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { EventLog, EventPublisher } from '../events/ports';
+import type { ReadinessProbe } from '../health/ports';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
@@ -71,6 +72,8 @@ export interface Deps {
   unattended?: UnattendedDeps;
   /** What the R2 copy needs, or `undefined` when the environment has no bucket (AC-72). */
   catalogCopy?: () => CatalogCopyDeps | undefined;
+  /** Whether the database and the fast store answer (SPEC-13a AC-5/AC-6). */
+  readiness?: ReadinessProbe;
 }
 
 export interface Ctx {

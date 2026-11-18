@@ -34,10 +34,33 @@ export type LoadEnvResult =
 
 /**
  * Identifiers of production resources (database hosts, Redis, buckets, …) that a `test` or
- * `rehearsal` class must never point at. Empty until the production resources exist:
- * spec SPEC-02 Open question 1 — SPEC-13a fills it.
+ * `rehearsal` class must never point at. Filled by SPEC-13a (AC-39): the production node's names
+ * are fixed by convention before it exists (SPEC-13a OQ-6); matched as substrings, case-insensitively.
  */
-export const PRODUCTION_DENYLIST: readonly string[] = [];
+export const PRODUCTION_DENYLIST: readonly string[] = [
+  'time2fest-prod',
+  'o.time2fest.com',
+  't2f_production',
+  't2f:production:',
+];
+
+/**
+ * Production hosts a `test` or `rehearsal` class must never point at, compared as whole host names
+ * (port and trailing dot dropped, case-insensitive) — `admin-rehearsal.time2fest.com` is not
+ * `admin.time2fest.com` (SPEC-13a S4).
+ */
+export const PRODUCTION_HOSTS: readonly string[] = ['admin.time2fest.com'];
+
+/**
+ * The production names by convention (SPEC-13a OQ-6, S4): a `production` class refuses to start
+ * unless its bucket contains `bucket`, its database is named `database` and its Redis prefix is
+ * `redisPrefix`, so the denylist above really describes production.
+ */
+export const PRODUCTION_NAMES = Object.freeze({
+  bucket: 'time2fest-prod',
+  database: 't2f_production',
+  redisPrefix: 't2f:production:',
+});
 
 /** Hosts a `test` class may point its database and Redis at. */
 const LOOPBACK_HOSTS: ReadonlySet<string> = new Set(['127.0.0.1', 'localhost', '::1', '[::1]']);
@@ -47,6 +70,51 @@ export const WORKTREE_DATABASE = /^t2f_[a-z0-9_]+$/;
 
 /** A worktree Redis key prefix: `t2f:<slug>:`. */
 export const WORKTREE_REDIS_PREFIX = /^t2f:[a-z0-9_]+:$/;
+
+/** A value written as `scheme://…`. */
+const URL_LIKE = /^[a-z][a-z0-9+.-]*:\/\//i;
+
+/** Host name without port and trailing dot, lower-cased; `[::1]` keeps its brackets. */
+function bareHost(value: string): string {
+  const host = value.startsWith('[') ? value.slice(0, value.indexOf(']') + 1) : value.replace(/:\d*$/, '');
+  return host.replace(/\.$/, '').toLowerCase();
+}
+
+/**
+ * Whether an isolated variable's value points at production (AC-39, S4, S5): any denylist entry as a
+ * substring of the raw value or — for a URL — of its percent-decoded host name and path; any
+ * production host as the whole host name. A URL that does not parse or decode is refused.
+ */
+function pointsAtProduction(value: string, deny: readonly string[], hosts: readonly string[]): boolean {
+  const texts = [value.toLowerCase()];
+  let host = bareHost(value);
+  if (URL_LIKE.test(value)) {
+    try {
+      const url = new URL(value);
+      host = bareHost(decodeURIComponent(url.hostname));
+      texts.push(host, decodeURIComponent(url.pathname).toLowerCase());
+    } catch {
+      return true;
+    }
+  }
+  return deny.some((id) => texts.some((t) => t.includes(id))) || hosts.includes(host);
+}
+
+/** The production-class variables that break `PRODUCTION_NAMES` (S4); names only. */
+export function productionNameFailures(env: Readonly<Record<string, unknown>>): string[] {
+  const failing: string[] = [];
+  const bucket = env.T2F_R2_BUCKET;
+  if (typeof bucket !== 'string' || !bucket.includes(PRODUCTION_NAMES.bucket)) failing.push('T2F_R2_BUCKET');
+  let dbName = '';
+  try {
+    dbName = typeof env.DATABASE_URI === 'string' ? decodeURIComponent(new URL(env.DATABASE_URI).pathname.replace(/^\//, '')) : '';
+  } catch {
+    dbName = '';
+  }
+  if (dbName !== PRODUCTION_NAMES.database) failing.push('DATABASE_URI');
+  if (env.T2F_REDIS_PREFIX !== PRODUCTION_NAMES.redisPrefix) failing.push('T2F_REDIS_PREFIX');
+  return failing;
+}
 
 function loopbackUrl(value: unknown): URL | undefined {
   if (typeof value !== 'string') return undefined;
@@ -87,19 +155,22 @@ export function envClass(raw: RawEnv): EnvClass {
 
 /**
  * Validates `raw` against the blocks (the caller passes `envRegistry`) and, for `test` /
- * `rehearsal`, against the production denylist; `test` must also pass `testIsolationFailures`.
+ * `rehearsal`, against the production denylist and hosts; `test` must also pass
+ * `testIsolationFailures`, `production` must pass `productionNameFailures`.
  * `failing` lists variable names in registry order, each once; never a value.
  */
 export function loadEnv(
   raw: RawEnv,
   blocks: readonly EnvBlock[],
   denylist: readonly string[] = PRODUCTION_DENYLIST,
+  productionHosts: readonly string[] = PRODUCTION_HOSTS,
 ): LoadEnvResult {
   const cls = envClass(raw);
   const failing: string[] = [];
   const env: Record<string, unknown> = {};
   const secrets: string[] = [];
   const deny = denylist.filter((id) => id !== '').map((id) => id.toLowerCase());
+  const hosts = productionHosts.filter((h) => h !== '').map(bareHost);
 
   for (const block of blocks) {
     for (const v of block.vars) {
@@ -117,9 +188,8 @@ export function loadEnv(
       }
       env[v.name] = parsed.data;
 
-      if (cls !== 'production' && v.isolated) {
-        const text = parsed.data === undefined ? '' : String(parsed.data).toLowerCase();
-        if (deny.some((id) => text.includes(id))) failing.push(v.name);
+      if (cls !== 'production' && v.isolated && parsed.data !== undefined) {
+        if (pointsAtProduction(String(parsed.data), deny, hosts)) failing.push(v.name);
       }
     }
   }
@@ -128,8 +198,20 @@ export function loadEnv(
     failing.push('PAYPRO_MODE');
   }
 
+  // Rotation (SPEC-13a AC-36): the previous edge secret must differ from the current one.
+  if (
+    env.T2F_EDGE_SECRET_PREVIOUS !== undefined &&
+    env.T2F_EDGE_SECRET_PREVIOUS === env.T2F_EDGE_SECRET &&
+    !failing.includes('T2F_EDGE_SECRET_PREVIOUS')
+  ) {
+    failing.push('T2F_EDGE_SECRET_PREVIOUS');
+  }
+
   if (cls === 'test') {
     for (const name of testIsolationFailures(env)) if (!failing.includes(name)) failing.push(name);
+  }
+  if (cls === 'production') {
+    for (const name of productionNameFailures(env)) if (!failing.includes(name)) failing.push(name);
   }
 
   const order = blocks.flatMap((b) => b.vars.map((v) => v.name));
