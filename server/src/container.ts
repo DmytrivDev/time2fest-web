@@ -14,6 +14,7 @@ import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
 import { createAccessGate, createDenyLog, type AccessGate } from './access/gate';
 import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
+import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
 import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
@@ -42,7 +43,10 @@ import { daySalts } from './platform/fingerprint';
 import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
+import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
+import { createChannelPublisher } from './realtime/publisher';
+import { createSubjectInvalidator } from './realtime/invalidate';
 import { isRevertible } from './registries/revertHandlers';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
@@ -173,10 +177,20 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   const tokenSecret = realtime.config.tokenSecret;
+  // The server API (C4, C6) only with both the URL and the API key; else the getters throw.
+  const { url: centrifugoUrl, apiKey: centrifugoApiKey } = realtime.config;
+  const centrifugoApi =
+    centrifugoUrl !== undefined && centrifugoApiKey !== undefined ? createCentrifugoApi({ url: centrifugoUrl, apiKey: centrifugoApiKey, log }) : undefined;
   deps.realtime = overrides.realtime ?? {
     ...(tokenSecret !== undefined ? { signer: createHs256Signer(tokenSecret) } : {}),
     random: () => randomInt(0, 2 ** 32) / 2 ** 32,
     prefix: realtime.config.prefix,
+    ...(centrifugoApi !== undefined
+      ? {
+          publisher: createChannelPublisher({ api: centrifugoApi, rows: channelClassesFor(env.class), prefix: realtime.config.prefix, log }),
+          invalidator: createSubjectInvalidator({ api: centrifugoApi, log }),
+        }
+      : {}),
   };
   return deps;
 }

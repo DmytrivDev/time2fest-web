@@ -105,4 +105,5 @@ jobs:
           T2F_CENTRIFUGO_URL: http://127.0.0.1:8000
           T2F_CENTRIFUGO_TOKEN_SECRET: ci-hmac-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
           T2F_CENTRIFUGO_API_KEY: ci-api-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
+          T2F_TEST_CENTRIFUGO_REDIS_DB: '15'
         run: node scripts/db.mjs create && node scripts/db.mjs env && pnpm migrate && pnpm test:int && node scripts/verify-schema.mjs
