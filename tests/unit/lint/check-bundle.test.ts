@@ -12,8 +12,15 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'check-bundle-'));
 
 afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
 
-function run(dir: string) {
-  return spawnSync(process.execPath, [script, dir], { encoding: 'utf8' });
+function run(dir: string, ...flags: string[]) {
+  return spawnSync(process.execPath, [script, dir, ...flags], { encoding: 'utf8' });
+}
+
+function fixture(name: string, content: string): string {
+  const d = path.join(tmp, name);
+  fs.mkdirSync(d, { recursive: true });
+  fs.writeFileSync(path.join(d, 'x.js'), content);
+  return d;
 }
 
 describe('check-bundle', () => {
@@ -33,6 +40,20 @@ describe('check-bundle', () => {
     const r = run(d);
     expect(r.status).toBe(1);
     expect(r.stderr).toContain('bad.js');
+  });
+
+  it.each([
+    ['door', 'fetch("/api/_test/clock")'],
+    ['machine', 'sessionStorage.getItem("t2f:session:timeMachine")'],
+  ])('підпис тестової збірки (%s) → 1, незалежно від кінців рядків', (name, code) => {
+    const r = run(fixture(`t-${name}`, `${code}\r\n`));
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain('x.js');
+  });
+
+  it('--allow-realtime: centrifuge дозволено, дверцята — ні', () => {
+    expect(run(fixture('rt-ok', `x("${SIGNATURE}")`), '--allow-realtime').status).toBe(0);
+    expect(run(fixture('rt-bad', `x("${SIGNATURE}");fetch("/api/_test/clock")`), '--allow-realtime').status).toBe(1);
   });
 
   it('немає теки → 2', () => {

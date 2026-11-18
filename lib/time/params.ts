@@ -4,6 +4,7 @@
  * машини константою `IS_TEST_BUILD`.
  */
 import { IS_DEMO_BUILD, IS_TEST_BUILD } from '@/lib/env';
+import { startRehearsalClock } from './rehearsalClock';
 import { ServerTimeMachine } from './serverTimeMachine';
 import { DEFAULT_START_MS, DEMO_START_MS, MACHINE_STORAGE_KEY, sanitizeSpeed, TimeMachine } from './timeMachine';
 import { TimeSource } from './TimeSource';
@@ -249,7 +250,13 @@ export function createAppTimeSource(): AppTimeSource {
     start: null,
     activate: () => {
       source.start();
-      return () => source.stop();
+      // Репетиція: подія `clock` каналу `site:state` → негайна пересинхронізація (SPEC-07, AC-57); у інших збірках гілку відсікає збирач.
+      const stopClock =
+        process.env.NEXT_PUBLIC_SITE_CLASS === 'rehearsal' ? startRehearsalClock(source) : null;
+      return () => {
+        stopClock?.();
+        source.stop();
+      };
     },
   };
 }

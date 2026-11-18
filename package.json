@@ -40,7 +40,7 @@
     "serve:int": "node server/scripts/serve-int.mjs",
     "contracts:run": "node scripts/contract-run.mjs",
     "build:edge:test": "cross-env NEXT_PUBLIC_ENV=test NEXT_PUBLIC_API_MODE=http NEXT_DIST_DIR=out-edge-test next build",
-    "build:edge:rehearsal": "cross-env NEXT_PUBLIC_ENV=test NEXT_PUBLIC_API_MODE=http NEXT_PUBLIC_REALTIME_URL=wss://rt-rehearsal.time2fest.com/connection/websocket NEXT_DIST_DIR=out-edge-rehearsal next build",
+    "build:edge:rehearsal": "cross-env NEXT_PUBLIC_SITE_CLASS=rehearsal NEXT_PUBLIC_ENV=test NEXT_PUBLIC_API_MODE=http NEXT_PUBLIC_REALTIME_URL=wss://rt-rehearsal.time2fest.com/connection/websocket NEXT_DIST_DIR=out-edge-rehearsal next build",
     "edge:deploy:test": "pnpm --dir workers/edge deploy:test",
     "edge:tunnel:up": "docker compose -p t2f-edge -f infra/cloudflare/cloudflared/compose.yml up -d",
     "edge:tunnel:down": "docker compose -p t2f-edge -f infra/cloudflare/cloudflared/compose.yml down",

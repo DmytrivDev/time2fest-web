@@ -123,6 +123,11 @@ export class TimeSource implements TimeSourceLike {
     this.cancelRetry = this.cancelPeriodic = null;
   }
 
+  /** Один раунд вибірки зараз (SPEC-07, AC-57): реакція на подію `clock` репетиції. */
+  resync(): Promise<boolean> {
+    return this.sync();
+  }
+
   /** Серія до `count` запитів; `true`, якщо якір оновлено. */
   sync(count: number = SAMPLE_COUNT): Promise<boolean> {
     if (this.inflight) return this.inflight;
