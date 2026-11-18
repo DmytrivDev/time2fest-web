@@ -320,3 +320,13 @@ describe('відлік сцени понад добу', () => {
     expect(sceneCountdownParts(2 * day, false).text).toBe('48:00:00');
   });
 });
+
+describe('дужки в адресах посилань документів', () => {
+  it('кодуються, текст і решта рядка — без змін', async () => {
+    const { encodeLinkParens } = await import('@/lib/prelaunch/legal');
+    expect(encodeLinkParens('| [Commons](https://x.org/File:Dubai_2015_(15971984728).jpg) | [CC](https://c.org/) |')).toBe(
+      '| [Commons](https://x.org/File:Dubai_2015_%2815971984728%29.jpg) | [CC](https://c.org/) |',
+    );
+    expect(encodeLinkParens('Без посилань (і дужки лишаються).')).toBe('Без посилань (і дужки лишаються).');
+  });
+});

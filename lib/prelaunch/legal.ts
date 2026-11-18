@@ -32,11 +32,39 @@ export interface LegalDoc extends SiteLegalDoc {
 
 const DIR = path.join(process.cwd(), 'content', 'prelaunch', 'legal');
 
+/**
+ * Дужки в адресах посилань (`…(15971984728).jpg`) — у `%28`/`%29`: наявний вигляд документів розпізнає посилання
+ * `[текст](адреса)` до першої `)`. Адреса та сама (браузер і сервер розкодовують однаково).
+ */
+export function encodeLinkParens(line: string): string {
+  let out = '';
+  let i = 0;
+  while (i < line.length) {
+    const start = line.indexOf('](', i);
+    if (start < 0) break;
+    out += line.slice(i, start + 2);
+    let j = start + 2;
+    let depth = 1;
+    let url = '';
+    for (; j < line.length; j += 1) {
+      const ch = line[j]!;
+      if (ch === '(') depth += 1;
+      else if (ch === ')') depth -= 1;
+      if (depth === 0) break;
+      url += ch;
+    }
+    out += url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+    i = j;
+  }
+  return out + line.slice(i);
+}
+
 export function parseLegal(id: LegalId, locale: Locale, source: string): LegalDoc {
   const lines = source
     .replace(/\r\n/g, '\n')
     .replace(/<!--[\s\S]*?-->/g, '')
-    .split('\n');
+    .split('\n')
+    .map(encodeLinkParens);
   const doc: LegalDoc = {
     id,
     locale,
