@@ -15,6 +15,7 @@ export type MetaPage =
   | 'countries'
   | 'country'
   | 'pass'
+  | 'toasts'
   | 'privacy'
   | 'cookies'
   | 'terms'

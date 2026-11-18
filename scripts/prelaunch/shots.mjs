@@ -22,8 +22,6 @@ const PAGES = [
   { id: 'country-facts', path: '/country/andorra/' },
   { id: 'country-zones', path: '/country/united-states/' },
   { id: 'pass', path: '/pass/' },
-  { id: 'toasts', path: '/toasts/' },
-  { id: 'about', path: '/about/' },
   { id: 'privacy', path: '/privacy/' },
   { id: 'cookies', path: '/cookies/' },
   { id: 'terms', path: '/terms/' },

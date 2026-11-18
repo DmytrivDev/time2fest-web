@@ -567,6 +567,10 @@
       "notFound": {
         "title": "Page not found — Time2Fest",
         "description": "There’s no such page on Time2Fest."
+      },
+      "toasts": {
+        "title": "New Year Toasts: Greet the Whole World | Time2Fest",
+        "description": "Say a New Year toast the whole world sees: a golden chat message with your name and flag. Three levels: $2, $5 and $10. The $10 toast includes a New Year Pass."
       }
     },
     "header": {
@@ -721,8 +725,18 @@
     "overrides": {
       "player": {
         "scene": {
-          "caption": "Time2Fest countdown scene · live streams from December 31"
+          "caption": "Time2Fest countdown scene · live streams from December 31",
+          "noStreamNote": "countdown scene · live streams from December 31"
         }
+      }
+    },
+    "toasts": {
+      "art": {
+        "badge": "toast",
+        "backNick": "Hiro",
+        "backText": "Happy New Year from Tokyo!",
+        "frontNick": "Olena",
+        "frontText": "🥂 Raising a glass to everyone ringing in the New Year together!"
       }
     }
   },
@@ -842,7 +856,8 @@
       "from": "from {price}",
       "included": "included",
       "notIncluded": "not included"
-    }
+    },
+    "tiersLabel": "Toast levels"
   },
   "supportPage": {
     "title": "Toasts of the World",

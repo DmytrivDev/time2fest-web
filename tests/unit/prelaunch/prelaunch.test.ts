@@ -254,9 +254,9 @@ describe('документи', () => {
 });
 
 describe('список дозволених сторінок', () => {
-  it('7 видів сторінок: 6 постійних і сторінка кожної країни', () => {
+  it('8 видів сторінок: 7 постійних і сторінка кожної країни', () => {
     const allowed = routes.allowedRoutes();
-    expect(allowed).toHaveLength(6 + Object.keys(COUNTRY_EXTRAS).length);
+    expect(allowed).toHaveLength(7 + Object.keys(COUNTRY_EXTRAS).length);
     expect(allowed).toContain('/country/japan/');
     expect(
       allowed.filter((r: string) =>
