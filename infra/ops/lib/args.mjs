@@ -9,7 +9,10 @@ const ALL_ENVS = Object.keys(ENVS);
 const RE_COMMIT = /^[0-9a-f]{7,40}$/;
 const RE_SHA40 = /^[0-9a-f]{40}$/;
 const RE_SIZE = /^[a-z0-9-]{1,40}$/;
-const RE_WORKER = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+const RE_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;
+const RE_SPEED = /^\d{1,3}(?:\.\d{1,3})?$/;
+const RE_EPOCH = /^\d{1,9}$/;
+const RE_WORKER =/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 /**
  * Чи є в рядку керівні символи (U+0000–U+001F, U+007F): перевод рядка, NUL, табуляція тощо.
  * @param {string} v
@@ -50,6 +53,10 @@ const V = {
   holder: { check: (v) => v === 'dns' || RE_WORKER.test(v), expect: '`dns` або ім’я Worker’а, що зараз тримає ім’я', lower: true },
   // O·P18a: приватна адреса другого вузла (RFC 1918 і мережу VPC перевіряє `private-db` до будь-якої зміни).
   peer: { check: (v) => isIPv4(v), expect: 'IPv4-адреса (приватна адреса другого вузла у VPC)' },
+  // O·P16: `ops clock` — момент ISO-8601 UTC, швидкість 0..600, номер епохи.
+  iso: { check: (v) => RE_ISO.test(v) && !Number.isNaN(Date.parse(v)), expect: 'ISO-8601 UTC, напр. 2026-12-31T23:59:50Z' },
+  speed: { check: (v) => RE_SPEED.test(v) && Number(v) <= 600, expect: 'число від 0 до 600' },
+  epoch: { check: (v) => RE_EPOCH.test(v), expect: 'ціле число (номер епохи)' },
 };
 
 /**
@@ -130,6 +137,24 @@ export const SUBCOMMAND_SPECS = {
     positional: ['up', 'down'],
   },
   // --- кінець O·P18a ---
+  // --- O·P16: час вузла й віртуальний час репетиції ---
+  // `time-check` — лише перевірка chrony на вже підготовленому вузлі (AC-7).
+  'time-check': {
+    envs: BOOTSTRAP_ENVS,
+    values: { '--host': V.host },
+    bools: [],
+    required: ['--host'],
+  },
+  // `clock` — лише rehearsal: production відмовляє тут, до будь-якого з’єднання (AC-55). Узгодженість дії й
+  // `--at`/`--speed`/`--epoch` перевіряє `runClock` (теж до з’єднання).
+  clock: {
+    envs: ['rehearsal'],
+    values: { '--target': V.host, '--at': V.iso, '--speed': V.speed, '--epoch': V.epoch },
+    bools: [],
+    required: ['--env', '--target'],
+    positional: ['status', 'set', 'real', 'restart-night', 'speed', 'records'],
+  },
+  // --- кінець O·P16 ---
 };
 
 /**

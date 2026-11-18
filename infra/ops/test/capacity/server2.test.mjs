@@ -14,6 +14,8 @@ const M = 't2f-managed';
 const E = 't2f-env-rehearsal';
 const S2 = 't2f-role-server2';
 const MAIN = { name: 't2f-rehearsal-main', size: 's-1vcpu-2gb', tags: [M, E, 't2f-role-main'], privateIp: '10.114.0.2' };
+// O·P16: підготовка вузла вимірює час (chronyc tracking) — синхронізовано, зсув 12 мс.
+const CHRONY_OK = `System time     : 0.012000000 seconds fast of NTP time${String.fromCharCode(10)}Leap status     : Normal${String.fromCharCode(10)}`;
 const UFW_OK =
   'Status: active\nLogging: on (low)\nDefault: deny (incoming), allow (outgoing), disabled (routed)\nNew profiles: skip\n\n' +
   'To                         Action      From\n--                         ------      ----\n22/tcp                     ALLOW IN    Anywhere\n22/tcp (v6)                ALLOW IN    Anywhere (v6)\n';
@@ -38,7 +40,7 @@ function world(o = {}) {
     describe: `fake ${user}`,
     exec: async (/** @type {string[]} */ argv) => {
       remote.push({ user, argv });
-      return { code: 0, stdout: argv[0] === 'ufw' ? UFW_OK : '', stderr: '' };
+      return { code: 0, stdout: argv[0] === 'ufw' ? UFW_OK : argv[0] === 'chronyc' ? CHRONY_OK : '', stderr: '' };
     },
   });
   let t = 0;

@@ -20,6 +20,14 @@ export const SWAP_FILE = '/swapfile';
 export const SWAP_SIZE_MB = 2048;
 export const SWAPPINESS = 10;
 export const SWAP_SYSCTL = '/etc/sysctl.d/99-t2f-swap.conf';
+/** Синхронізація часу (O·P16, AC-6/AC-7): chrony із `time.cloudflare.com`, без `systemd-timesyncd`. */
+export const CHRONY_SOURCES = '/etc/chrony/sources.d/t2f.sources';
+export const CHRONY_SOURCE_NTS = 'server time.cloudflare.com iburst nts';
+export const CHRONY_SOURCE_PLAIN = 'server time.cloudflare.com iburst';
+/** Межа зсуву годинника вузла, мс (AC-7). */
+export const MAX_OFFSET_MS = 100;
+/** Вимір зсуву: один виклик, без `-n` (читається будь-яким користувачем). */
+export const CHRONY_TRACKING_ARGV = ['chronyc', 'tracking'];
 export const ROOT_ONLY_NOTE = 'перевірено при першому запуску; повторна перевірка — порт-скан R4';
 
 /**
@@ -118,6 +126,28 @@ export const ROOT_STEPS = [
     ),
   },
   {
+    id: 'time-sync',
+    title: 'chrony (time.cloudflare.com) замість systemd-timesyncd',
+    check: sh(
+      `systemctl is-active --quiet chrony && ! systemctl is-active --quiet systemd-timesyncd && test -f ${CHRONY_SOURCES} && ` +
+        'chronyc -n tracking | grep -q "^Leap status *: Normal"',
+    ),
+    // NTS — спершу; не синхронізувалось — звичайний NTP із тим самим сервером (запасний шлях, якщо NTS недоступний).
+    apply: sh(
+      'set -e; export DEBIAN_FRONTEND=noninteractive; ' +
+        'command -v chronyd >/dev/null 2>&1 || { apt-get update; apt-get install -y chrony; }; ' +
+        'install -d /etc/chrony/sources.d; ' +
+        "sed -i -E 's/^(pool|server)[[:space:]]/#&/' /etc/chrony/chrony.conf; " +
+        'grep -q "^sourcedir /etc/chrony/sources.d" /etc/chrony/chrony.conf || echo "sourcedir /etc/chrony/sources.d" >> /etc/chrony/chrony.conf; ' +
+        `echo "${CHRONY_SOURCE_NTS}" > ${CHRONY_SOURCES}; ` +
+        'systemctl disable --now systemd-timesyncd >/dev/null 2>&1 || true; ' +
+        'systemctl enable chrony >/dev/null 2>&1; systemctl restart chrony; ' +
+        'sync_now() { chronyc makestep >/dev/null 2>&1; chronyc waitsync 15 0.1 0 2 >/dev/null 2>&1; }; ' +
+        `sync_now || { echo "${CHRONY_SOURCE_PLAIN}" > ${CHRONY_SOURCES}; systemctl restart chrony; sync_now; }`,
+    ),
+    timeoutMs: APT_TIMEOUT_MS,
+  },
+  {
     id: 'sshd',
     title: 'SSH: без входу root і паролів',
     check: sh(`test -f ${SSHD_DROP_IN} && ${SSHD_EFFECTIVE}`),
@@ -147,6 +177,71 @@ export const DEPLOY_CHECKS = [
  * @param {{ input?: string, timeoutMs?: number }} [o]
  */
 const remote = (t, argv, o = {}) => t.exec(argv, { allow: [...argv], timeoutMs: o.timeoutMs ?? REMOTE_TIMEOUT_MS, ...(o.input !== undefined ? { input: o.input } : {}) });
+
+/**
+ * Зсув годинника з виводу `chronyc tracking`: «System time : X seconds fast|slow of NTP time» і «Leap status : Normal».
+ * `offsetMs` зі знаком (fast — плюс); `null`, якщо рядка немає.
+ * @param {string} stdout
+ * @returns {{ leap: string | null, offsetMs: number | null }}
+ */
+export function parseTracking(stdout) {
+  const text = String(stdout);
+  const leap = text.match(/^Leap status\s*:\s*(.+?)\s*$/m)?.[1] ?? null;
+  const m = text.match(/^System time\s*:\s*([0-9.]+)\s+seconds\s+(fast|slow)\s+of NTP time/m);
+  const offsetMs = m ? (m[2] === 'slow' ? -1 : 1) * Number(m[1]) * 1000 : null;
+  return { leap, offsetMs: offsetMs !== null && Number.isFinite(offsetMs) ? offsetMs : null };
+}
+
+/**
+ * Перевірка часу вузла (AC-7) без змін: `Leap status : Normal` і |зсув| ≤ 100 мс. Друкує машинозчитуваний рядок
+ * `CHRONY offset_ms=<n>` (коли зсув відомий) і повертає `false` з поясненням у `err`, якщо не пройшло.
+ * @param {Transport} t
+ * @param {{ out: (l: string) => void, err: (l: string) => void }} io
+ * @param {string} [prefix]
+ */
+export async function checkTimeSync(t, io, prefix = 'time-check') {
+  const r = await remote(t, CHRONY_TRACKING_ARGV);
+  if (r.code !== 0) {
+    io.err(`${prefix}: chronyc tracking не вдався (код ${r.code}) — chrony не працює на вузлі`);
+    return false;
+  }
+  const { leap, offsetMs } = parseTracking(r.stdout);
+  if (offsetMs !== null) io.out(`CHRONY offset_ms=${Number(offsetMs.toFixed(3))}`);
+  if (leap !== 'Normal') {
+    io.err(`${prefix}: час вузла не синхронізовано (Leap status: ${leap ?? 'невідомо'})`);
+    return false;
+  }
+  if (offsetMs === null) {
+    io.err(`${prefix}: зсув часу вузла не прочитано з виводу chronyc tracking`);
+    return false;
+  }
+  if (Math.abs(offsetMs) > MAX_OFFSET_MS) {
+    io.err(`${prefix}: зсув часу вузла ${Number(offsetMs.toFixed(1))} мс — понад ${MAX_OFFSET_MS} мс`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * `ops time-check --host <ipv4|name> [--env rehearsal]` — лише перевірка часу вузла, без змін; для вже підготовленого вузла.
+ * @param {OpsContext} ctx
+ * @returns {Promise<number>}
+ */
+export async function runTimeCheck(ctx) {
+  const env = ctx.args.env ?? 'rehearsal';
+  const host = /** @type {string} */ (ctx.args.values.host);
+  if (env !== 'rehearsal' || !ENVS[env]?.nodeDir) {
+    ctx.err('time-check: лише --env rehearsal');
+    return 2;
+  }
+  try {
+    const t = ctx.deps.sshAs({ host, user: DEPLOY_USER, knownHostsFile: knownHostsFile(ctx) });
+    return (await checkTimeSync(t, ctx)) ? 0 : 1;
+  } catch (e) {
+    ctx.err(`time-check: ${messageOf(e)}`);
+    return 1;
+  }
+}
 
 /**
  * `ops bootstrap --host <ipv4|name> [--env rehearsal]`.
@@ -272,10 +367,10 @@ async function rootPath(ctx, { asRoot, asDeploy, nodeDir }) {
       err(`bootstrap: після змін ssh deploy@вузол не працює (код ${again.code}) — відкрийте консоль провайдера`);
       return 1;
     }
-    out('bootstrap: готово');
-  } else {
-    out('bootstrap: без змін');
   }
+  // AC-7: час вузла — після всіх змін (і при «без змін»); не синхронізовано чи зсув понад 100 мс — не готово.
+  if (!(await checkTimeSync(asDeploy, ctx, 'bootstrap: time-sync'))) return 1;
+  out(changed > 0 ? 'bootstrap: готово' : 'bootstrap: без змін');
   return 0;
 }
 
@@ -296,6 +391,7 @@ async function deployPath(ctx, { asDeploy, nodeDir }) {
     out(`bootstrap: ${s.id} — без змін`);
   }
   out(`bootstrap: користувач root, брандмауер, sshd — ${ROOT_ONLY_NOTE}`);
+  if (!(await checkTimeSync(asDeploy, ctx, 'bootstrap: time-sync'))) return 1;
   out('bootstrap: без змін');
   return 0;
 }

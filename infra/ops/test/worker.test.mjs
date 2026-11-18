@@ -118,6 +118,7 @@ describe('site build (AC-31)', () => {
     expect(flags).toEqual({
       NEXT_PUBLIC_ENV: 'test',
       NEXT_PUBLIC_API_MODE: 'http',
+      NEXT_PUBLIC_SITE_CLASS: 'rehearsal',
       NEXT_PUBLIC_REALTIME_URL: 'wss://rt-rehearsal.time2fest.com/connection/websocket',
       NEXT_DIST_DIR: 'out-edge-rehearsal',
     });
