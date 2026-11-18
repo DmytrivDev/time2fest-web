@@ -1,0 +1,11 @@
+export declare const root: string;
+export declare const LOCALES: string[];
+export declare const DEFAULT_LOCALE: string;
+export declare const LOCALE_STATUS: Record<string, string>;
+export declare const STATIC_ROUTES: string[];
+export declare const PUBLIC_ENTRIES: string[];
+export declare const OPTIONAL_PUBLIC_ENTRIES: string[];
+export function countrySlugs(): string[];
+export function prelaunchLocales(only?: string): string[];
+export function allowedRoutes(): string[];
+export function publicPath(locale: string, route: string): string;

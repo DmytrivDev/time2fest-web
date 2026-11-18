@@ -1,9 +1,11 @@
 'use client';
 
 /** «Новорічний пас» до запуску платежів: перелік переваг, ціна й позначка «продаж згодом». Без кнопки купівлі й посилань. */
+import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
+import { usePrefest } from './PrefestContext';
 import p from './PassBlock.module.css';
 import s from './prefest.module.css';
 
@@ -11,6 +13,8 @@ const ITEMS = ['i1', 'i2', 'i3', 'i4', 'i5'] as const;
 
 export function PassBlock() {
   const t = useTranslations('prefest.pass');
+  const tSite = useTranslations('prelaunch.home');
+  const { site } = usePrefest();
   return (
     <section className={cn(s.sec, s.wrap)} id="pass" aria-labelledby="pass-h">
       <div className={p.pass}>
@@ -42,6 +46,11 @@ export function PassBlock() {
             {t('soon')}
           </div>
           <span className={p.fine}>{t('fine')}</span>
+          {site ? (
+            <NextLink className={s.link} href={site.href('/pass/')}>
+              {tSite('passMore')} <span aria-hidden="true">›</span>
+            </NextLink>
+          ) : null}
         </div>
       </div>
     </section>

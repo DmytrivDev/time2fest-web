@@ -61,7 +61,7 @@ export function MyMidnight() {
 
   const landmarks: StripLandmark[] = STRIP_LANDMARKS.flatMap((l, i) => {
     const z = model.zonesById.get(l.zoneId);
-    return z ? [{ city: l.city, index: z.index, time: ready ? clock(z.midnightMs) : null, optional: i % 2 === 0 }] : [];
+    return z ? [{ city: model.label(l.city), index: z.index, time: ready ? clock(z.midnightMs) : null, optional: i % 2 === 0 }] : [];
   });
 
   const sentence = index === null ? null : around(model.celebrations, index, total);

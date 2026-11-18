@@ -64,6 +64,16 @@
   align-items: center;
   gap: 10px;
 }
+/* Мовне дерево: рядок над заголовком усередині H1 — той самий вигляд, що й окремий рядок. */
+.eyebrowInH1 {
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+@media (max-width: 767.98px) {
+  .eyebrowInH1 {
+    margin-bottom: 14px;
+  }
+}
 .eyebrow i {
   width: 8px;
   height: 8px;
@@ -71,12 +81,15 @@
   background: var(--color-primary);
   display: inline-block;
 }
+/*
+ * Відступу над заголовком немає: `.page h1 { margin: 0 }` (prefest.module.css) і так його скасовував, а
+ * результат залежав від порядку CSS-чанків. Затверджений вигляд `/before` — без відступу.
+ */
 .hero h1 {
   font-size: 68px;
   line-height: 1.02;
   font-weight: 800;
   letter-spacing: -0.03em;
-  margin-top: 18px;
 }
 .hero h1 em {
   font-style: normal;
@@ -233,7 +246,6 @@
   }
   .hero h1 {
     font-size: 40px;
-    margin-top: 14px;
   }
   .lead {
     font-size: 16px;

@@ -79,6 +79,37 @@ export function drawScene(g: CanvasRenderingContext2D, w: number, h: number, see
   for (let q = 0; q < 60; q++) g.fillRect(r() * w, h - r() * h * 0.3, 1.2, 1.2);
 }
 
+/**
+ * Місце для фото (мовне дерево): є запис у `data/prelaunch/media.json` — показуємо фото, немає — ту саму
+ * намальовану заглушку з позначкою `data-media-placeholder` (збірка для домену звітує про кожну таку позначку).
+ * На `/before` — завжди заглушка, без позначки.
+ */
+export function MediaSlot({
+  slot,
+  item,
+  mark,
+  alt = '',
+  ...scene
+}: { slot: string; item?: { src: string; alt?: string } | undefined; mark: boolean; alt?: string; seed: number } & SceneOptions) {
+  if (item)
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- статичний експорт
+      <img
+        src={item.src}
+        alt={item.alt ?? alt}
+        loading="lazy"
+        decoding="async"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+    );
+  return (
+    <>
+      <SceneCanvas {...scene} />
+      {mark ? <span hidden data-media-placeholder={slot} /> : null}
+    </>
+  );
+}
+
 /** Canvas на всю площу батька (батько — `position: relative`), перемальовується при зміні розміру. */
 export function SceneCanvas({ seed, bursts, warm, className }: { seed: number; className?: string } & SceneOptions) {
   const ref = useRef<HTMLCanvasElement>(null);

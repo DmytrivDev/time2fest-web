@@ -13,19 +13,36 @@ import f from './PrefestFaq.module.css';
 import s from './prefest.module.css';
 
 const KEYS = ['1', '2', '3', '4'] as const;
+/** Мовне дерево (рішення власника 2026-11-18): ще «хто першим» і «хто останнім». */
+const SITE_KEYS = ['1', '2', '3', '4', '5', '6'] as const;
+/** Відповіді з часом першої півночі за часом відвідувача. */
+const WITH_WHEN = new Set(['2', '5']);
 
 export function PrefestFaq() {
   const t = useTranslations('prefest');
   const q = useTranslations('prefest.faq');
-  const { model } = usePrefest();
+  const { model, site } = usePrefest();
   const ready = useClientReady();
   const reduced = useReducedMotion();
   const base = useId();
   const [open, setOpen] = useState<string>('1');
 
   const MARK = '';
-  const when = ready ? t('dateAt', { date: dayMonth(model.firstMidnightMs), time: clock(model.firstMidnightMs) }) : MARK;
-  const answer2 = q('a2', { when }).split(MARK);
+  const when = ready
+    ? t('dateAt', { date: dayMonth(model.firstMidnightMs), time: clock(model.firstMidnightMs) })
+    : MARK;
+  const answerWithWhen = (k: string) => {
+    const parts = q(`a${k}`, { when }).split(MARK);
+    return parts.length === 1 ? (
+      parts[0]
+    ) : (
+      <>
+        {parts[0]}
+        <Bar className={f.skel} h={14} w={140} />
+        {parts[1]}
+      </>
+    );
+  };
 
   return (
     <section className={cn(s.sec, s.wrap)} aria-labelledby="faq-h">
@@ -33,7 +50,7 @@ export function PrefestFaq() {
         {q('title')}
       </h2>
       <div className={cn(f.faq, reduced && f.still)}>
-        {KEYS.map((k) => {
+        {(site ? SITE_KEYS : KEYS).map((k) => {
           const isOpen = open === k;
           const panel = `${base}-a${k}`;
           return (
@@ -52,15 +69,7 @@ export function PrefestFaq() {
               </h3>
               <div className={f.a} id={panel} role="region" aria-hidden={!isOpen} inert={!isOpen}>
                 <div>
-                  <p>{k === '2' ? answer2.length === 1 ? (
-                      answer2[0]
-                    ) : (
-                      <>
-                        {answer2[0]}
-                        <Bar className={f.skel} h={14} w={140} />
-                        {answer2[1]}
-                      </>
-                    ) : q(`a${k}`)}</p>
+                  <p>{WITH_WHEN.has(k) ? answerWithWhen(k) : q(`a${k}`)}</p>
                 </div>
               </div>
             </div>

@@ -38,6 +38,8 @@ export interface PrefestCountry {
   popularity: number;
   /** Пояси країни в порядку півночі; `city` — головне місто країни в поясі (якщо є в розкладі). */
   zones: { zoneId: string; city?: string }[];
+  /** Пояс головного міста країни (мовне дерево): про нього картка країни. Без нього — перший пояс країни. */
+  main?: { zoneId: string; city?: string };
   /** Є власний текст про традиції — країну можна показувати з традиціями й посиланням на сторінку. */
   described: boolean;
   /** Лише для описаних країн; інакше порожньо. */
@@ -56,6 +58,8 @@ export interface MainCelebration {
   zoneId: string;
   midnightMs: Ms;
   zoneIndex: number;
+  /** Місце для фото міста: `city:<ідентифікатор міста>` (`data/prelaunch/media.json`). */
+  mediaSlot: string;
 }
 
 export interface PrefestModel {
@@ -69,6 +73,20 @@ export interface PrefestModel {
   celebrations: MainCelebration[];
   firstMidnightMs: Ms;
   lastMidnightMs: Ms;
+  /** Український текст із констант моделі (місто орієнтира) → мовою сторінки; на `/before` — без змін. */
+  label: (uk: string) => string;
+}
+
+/** Налаштування мовного дерева (`app/[locale]`); `/before` будує модель без них. */
+export interface PrefestModelOptions {
+  /** Мова сортування назв країн. */
+  locale?: string;
+  /** Адреса сторінки країни. */
+  href?: (country: { iso: string; slug: string }) => string;
+  /** ISO → ідентифікатор головного міста країни (`data/prelaunch/countries.json`). */
+  mainCityId?: (iso: string) => string | undefined;
+  /** Український текст (місто, пам’ятка) → мовою сторінки. */
+  label?: (uk: string) => string;
 }
 
 /**
@@ -119,7 +137,8 @@ export function byPreference(a: PrefestCountry, b: PrefestCountry): number {
   return rank(a) - rank(b) || b.popularity - a.popularity;
 }
 
-export function buildPrefestModel(data: Dataset): PrefestModel {
+export function buildPrefestModel(data: Dataset, options: PrefestModelOptions = {}): PrefestModel {
+  const label = options.label ?? ((uk: string) => uk);
   const sortedZones = [...data.zones].sort((a, b) => a.midnightMs - b.midnightMs);
   const zoneIndex = new Map(sortedZones.map((z, i) => [z.id, i]));
 
@@ -133,6 +152,8 @@ export function buildPrefestModel(data: Dataset): PrefestModel {
         const main = own.find((x) => x.isCountryMain) ?? own[0];
         return main ? { zoneId, city: main.name.uk } : { zoneId };
       });
+    const mainCity = data.citiesById.get(options.mainCityId?.(c.iso) ?? '');
+    const main = mainCity && zoneIndex.has(mainCity.zoneId) ? { zoneId: mainCity.zoneId, city: mainCity.name.uk } : undefined;
     return {
       iso: c.iso,
       slug: c.slug,
@@ -141,13 +162,14 @@ export function buildPrefestModel(data: Dataset): PrefestModel {
       gender: c.gender,
       popularity: c.popularity,
       zones,
+      ...(main ? { main } : {}),
       described,
       traditions: described ? c.howTo.traditions.slice(0, 3) : [],
       text: described ? c.howTo.text : '',
-      href: countryHref(c),
+      href: options.href ? options.href(c) : countryHref(c),
     };
   });
-  countries.sort((a, b) => a.name.localeCompare(b.name, 'uk'));
+  countries.sort((a, b) => a.name.localeCompare(b.name, options.locale ?? 'uk'));
   const countriesByIso = new Map(countries.map((c) => [c.iso, c]));
 
   const zones: PrefestZone[] = sortedZones.map((z, index) => ({
@@ -162,16 +184,23 @@ export function buildPrefestModel(data: Dataset): PrefestModel {
   }));
   const zonesById = new Map(zones.map((z) => [z.id, z]));
 
-  const firstZoneIndex = (c: PrefestCountry) => zonesById.get(c.zones[0]?.zoneId ?? '')?.index ?? 99;
+  const firstZoneIndex = (c: PrefestCountry) => zonesById.get((c.main ?? c.zones[0])?.zoneId ?? '')?.index ?? 99;
   const described = countries
     .filter((c) => c.described)
     .sort((a, b) => firstZoneIndex(a) - firstZoneIndex(b) || b.popularity - a.popularity);
 
+  // Назви міст у константах — українські; у мовному дереві каталог уже перекладено, тож місто шукаємо через `label`.
+  const cityIdByName = new Map<string, string>();
+  for (const e of MAIN_CELEBRATIONS) {
+    const city = data.cities.find((x) => x.countryIso === e.iso && x.zoneId === e.zoneId && x.name.uk === label(e.city));
+    if (city) cityIdByName.set(`${e.iso}|${e.city}`, city.id);
+  }
   const celebrations: MainCelebration[] = MAIN_CELEBRATIONS.flatMap((e) => {
     const z = zonesById.get(e.zoneId);
     const c = countriesByIso.get(e.iso);
     if (!z || !c) return [];
-    return [{ ...e, flagCode: c.flagCode, midnightMs: z.midnightMs, zoneIndex: z.index }];
+    const mediaSlot = `city:${cityIdByName.get(`${e.iso}|${e.city}`) ?? `${e.iso.toLowerCase()}-${e.zoneId}`}`;
+    return [{ ...e, city: label(e.city), place: label(e.place), flagCode: c.flagCode, midnightMs: z.midnightMs, zoneIndex: z.index, mediaSlot }];
   });
 
   return {
@@ -183,6 +212,7 @@ export function buildPrefestModel(data: Dataset): PrefestModel {
     celebrations,
     firstMidnightMs: zones[0]?.midnightMs ?? 0,
     lastMidnightMs: zones.at(-1)?.midnightMs ?? 0,
+    label,
   };
 }
 

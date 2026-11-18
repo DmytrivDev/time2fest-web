@@ -1,0 +1,989 @@
+{
+ "version": 1,
+ "countries": {
+  "AD": {
+   "urlSlug": "andorra",
+   "mainCityId": "andorra"
+  },
+  "AE": {
+   "urlSlug": "united-arab-emirates",
+   "mainCityId": "dubai"
+  },
+  "AF": {
+   "urlSlug": "afghanistan",
+   "mainCityId": "kabul"
+  },
+  "AG": {
+   "urlSlug": "antigua-and-barbuda",
+   "mainCityId": "st-johns-ag"
+  },
+  "AI": {
+   "urlSlug": "anguilla",
+   "mainCityId": "the-valley"
+  },
+  "AL": {
+   "urlSlug": "albania",
+   "mainCityId": "tirane"
+  },
+  "AM": {
+   "urlSlug": "armenia",
+   "mainCityId": "yerevan"
+  },
+  "AO": {
+   "urlSlug": "angola",
+   "mainCityId": "luanda"
+  },
+  "AR": {
+   "urlSlug": "argentina",
+   "mainCityId": "buenos-aires"
+  },
+  "AS": {
+   "urlSlug": "american-samoa",
+   "mainCityId": "pago-pago"
+  },
+  "AT": {
+   "urlSlug": "austria",
+   "mainCityId": "vienna"
+  },
+  "AU": {
+   "urlSlug": "australia",
+   "mainCityId": "sydney"
+  },
+  "AW": {
+   "urlSlug": "aruba",
+   "mainCityId": "oranjestad"
+  },
+  "AX": {
+   "urlSlug": "aland-islands",
+   "mainCityId": "mariehamn"
+  },
+  "AZ": {
+   "urlSlug": "azerbaijan",
+   "mainCityId": "baku"
+  },
+  "BA": {
+   "urlSlug": "bosnia-and-herzegovina",
+   "mainCityId": "sarajevo"
+  },
+  "BB": {
+   "urlSlug": "barbados",
+   "mainCityId": "bridgetown"
+  },
+  "BD": {
+   "urlSlug": "bangladesh",
+   "mainCityId": "dhaka"
+  },
+  "BE": {
+   "urlSlug": "belgium",
+   "mainCityId": "brussels"
+  },
+  "BF": {
+   "urlSlug": "burkina-faso",
+   "mainCityId": "ouagadougou"
+  },
+  "BG": {
+   "urlSlug": "bulgaria",
+   "mainCityId": "sofia"
+  },
+  "BH": {
+   "urlSlug": "bahrain",
+   "mainCityId": "manama"
+  },
+  "BI": {
+   "urlSlug": "burundi",
+   "mainCityId": "bujumbura"
+  },
+  "BJ": {
+   "urlSlug": "benin",
+   "mainCityId": "porto-novo"
+  },
+  "BL": {
+   "urlSlug": "saint-barthelemy",
+   "mainCityId": "st-barthelemy"
+  },
+  "BM": {
+   "urlSlug": "bermuda",
+   "mainCityId": "hamilton"
+  },
+  "BN": {
+   "urlSlug": "brunei",
+   "mainCityId": "bandar-seri-begawan"
+  },
+  "BO": {
+   "urlSlug": "bolivia",
+   "mainCityId": "la-paz"
+  },
+  "BQ": {
+   "urlSlug": "caribbean-netherlands",
+   "mainCityId": "kralendijk"
+  },
+  "BR": {
+   "urlSlug": "brazil",
+   "mainCityId": "rio-de-janeiro"
+  },
+  "BS": {
+   "urlSlug": "bahamas",
+   "mainCityId": "nassau"
+  },
+  "BT": {
+   "urlSlug": "bhutan",
+   "mainCityId": "thimphu"
+  },
+  "BW": {
+   "urlSlug": "botswana",
+   "mainCityId": "gaborone"
+  },
+  "BY": {
+   "urlSlug": "belarus",
+   "mainCityId": "minsk"
+  },
+  "BZ": {
+   "urlSlug": "belize",
+   "mainCityId": "belmopan"
+  },
+  "CA": {
+   "urlSlug": "canada",
+   "mainCityId": "toronto"
+  },
+  "CC": {
+   "urlSlug": "cocos-keeling-islands",
+   "mainCityId": "cocos"
+  },
+  "CD": {
+   "urlSlug": "dr-congo",
+   "mainCityId": "kinshasa"
+  },
+  "CF": {
+   "urlSlug": "central-african-republic",
+   "mainCityId": "bangui"
+  },
+  "CG": {
+   "urlSlug": "congo",
+   "mainCityId": "brazzaville"
+  },
+  "CH": {
+   "urlSlug": "switzerland",
+   "mainCityId": "zurich"
+  },
+  "CI": {
+   "urlSlug": "cote-divoire",
+   "mainCityId": "abidjan"
+  },
+  "CK": {
+   "urlSlug": "cook-islands",
+   "mainCityId": "rarotonga"
+  },
+  "CL": {
+   "urlSlug": "chile",
+   "mainCityId": "santiago"
+  },
+  "CM": {
+   "urlSlug": "cameroon",
+   "mainCityId": "yaounde"
+  },
+  "CN": {
+   "urlSlug": "china",
+   "mainCityId": "beijing"
+  },
+  "CO": {
+   "urlSlug": "colombia",
+   "mainCityId": "bogota"
+  },
+  "CR": {
+   "urlSlug": "costa-rica",
+   "mainCityId": "san-jose-cr"
+  },
+  "CU": {
+   "urlSlug": "cuba",
+   "mainCityId": "havana"
+  },
+  "CV": {
+   "urlSlug": "cape-verde",
+   "mainCityId": "praia"
+  },
+  "CW": {
+   "urlSlug": "curacao",
+   "mainCityId": "willemstad"
+  },
+  "CX": {
+   "urlSlug": "christmas-island",
+   "mainCityId": "christmas"
+  },
+  "CY": {
+   "urlSlug": "cyprus",
+   "mainCityId": "nicosia"
+  },
+  "CZ": {
+   "urlSlug": "czechia",
+   "mainCityId": "prague"
+  },
+  "DE": {
+   "urlSlug": "germany",
+   "mainCityId": "berlin"
+  },
+  "DJ": {
+   "urlSlug": "djibouti",
+   "mainCityId": "djibouti"
+  },
+  "DK": {
+   "urlSlug": "denmark",
+   "mainCityId": "copenhagen"
+  },
+  "DM": {
+   "urlSlug": "dominica",
+   "mainCityId": "roseau"
+  },
+  "DO": {
+   "urlSlug": "dominican-republic",
+   "mainCityId": "santo-domingo"
+  },
+  "DZ": {
+   "urlSlug": "algeria",
+   "mainCityId": "algiers"
+  },
+  "EC": {
+   "urlSlug": "ecuador",
+   "mainCityId": "guayaquil"
+  },
+  "EE": {
+   "urlSlug": "estonia",
+   "mainCityId": "tallinn"
+  },
+  "EG": {
+   "urlSlug": "egypt",
+   "mainCityId": "cairo"
+  },
+  "EH": {
+   "urlSlug": "western-sahara",
+   "mainCityId": "el-aaiun"
+  },
+  "ER": {
+   "urlSlug": "eritrea",
+   "mainCityId": "asmara"
+  },
+  "ES": {
+   "urlSlug": "spain",
+   "mainCityId": "madrid"
+  },
+  "ET": {
+   "urlSlug": "ethiopia",
+   "mainCityId": "addis-ababa"
+  },
+  "FI": {
+   "urlSlug": "finland",
+   "mainCityId": "helsinki"
+  },
+  "FJ": {
+   "urlSlug": "fiji",
+   "mainCityId": "suva"
+  },
+  "FK": {
+   "urlSlug": "falkland-islands",
+   "mainCityId": "stanley"
+  },
+  "FM": {
+   "urlSlug": "micronesia",
+   "mainCityId": "pohnpei"
+  },
+  "FO": {
+   "urlSlug": "faroe-islands",
+   "mainCityId": "faroe"
+  },
+  "FR": {
+   "urlSlug": "france",
+   "mainCityId": "paris"
+  },
+  "GA": {
+   "urlSlug": "gabon",
+   "mainCityId": "libreville"
+  },
+  "GB": {
+   "urlSlug": "united-kingdom",
+   "mainCityId": "london"
+  },
+  "GD": {
+   "urlSlug": "grenada",
+   "mainCityId": "st-georges"
+  },
+  "GE": {
+   "urlSlug": "georgia",
+   "mainCityId": "tbilisi"
+  },
+  "GF": {
+   "urlSlug": "french-guiana",
+   "mainCityId": "cayenne"
+  },
+  "GG": {
+   "urlSlug": "guernsey",
+   "mainCityId": "guernsey"
+  },
+  "GH": {
+   "urlSlug": "ghana",
+   "mainCityId": "accra"
+  },
+  "GI": {
+   "urlSlug": "gibraltar",
+   "mainCityId": "gibraltar"
+  },
+  "GL": {
+   "urlSlug": "greenland",
+   "mainCityId": "nuuk"
+  },
+  "GM": {
+   "urlSlug": "gambia",
+   "mainCityId": "banjul"
+  },
+  "GN": {
+   "urlSlug": "guinea",
+   "mainCityId": "conakry"
+  },
+  "GP": {
+   "urlSlug": "guadeloupe",
+   "mainCityId": "basse-terre"
+  },
+  "GQ": {
+   "urlSlug": "equatorial-guinea",
+   "mainCityId": "malabo"
+  },
+  "GR": {
+   "urlSlug": "greece",
+   "mainCityId": "athens"
+  },
+  "GS": {
+   "urlSlug": "south-georgia-and-south-sandwich-islands",
+   "mainCityId": "south-georgia"
+  },
+  "GT": {
+   "urlSlug": "guatemala",
+   "mainCityId": "guatemala"
+  },
+  "GU": {
+   "urlSlug": "guam",
+   "mainCityId": "guam"
+  },
+  "GW": {
+   "urlSlug": "guinea-bissau",
+   "mainCityId": "bissau"
+  },
+  "GY": {
+   "urlSlug": "guyana",
+   "mainCityId": "georgetown"
+  },
+  "HK": {
+   "urlSlug": "hong-kong",
+   "mainCityId": "hong-kong"
+  },
+  "HN": {
+   "urlSlug": "honduras",
+   "mainCityId": "tegucigalpa"
+  },
+  "HR": {
+   "urlSlug": "croatia",
+   "mainCityId": "zagreb"
+  },
+  "HT": {
+   "urlSlug": "haiti",
+   "mainCityId": "port-au-prince"
+  },
+  "HU": {
+   "urlSlug": "hungary",
+   "mainCityId": "budapest"
+  },
+  "ID": {
+   "urlSlug": "indonesia",
+   "mainCityId": "jakarta"
+  },
+  "IE": {
+   "urlSlug": "ireland",
+   "mainCityId": "dublin"
+  },
+  "IL": {
+   "urlSlug": "israel",
+   "mainCityId": "jerusalem"
+  },
+  "IM": {
+   "urlSlug": "isle-of-man",
+   "mainCityId": "isle-of-man"
+  },
+  "IN": {
+   "urlSlug": "india",
+   "mainCityId": "new-delhi"
+  },
+  "IO": {
+   "urlSlug": "british-indian-ocean-territory",
+   "mainCityId": "chagos"
+  },
+  "IQ": {
+   "urlSlug": "iraq",
+   "mainCityId": "baghdad"
+  },
+  "IR": {
+   "urlSlug": "iran",
+   "mainCityId": "tehran"
+  },
+  "IS": {
+   "urlSlug": "iceland",
+   "mainCityId": "reykjavik"
+  },
+  "IT": {
+   "urlSlug": "italy",
+   "mainCityId": "rome"
+  },
+  "JE": {
+   "urlSlug": "jersey",
+   "mainCityId": "jersey"
+  },
+  "JM": {
+   "urlSlug": "jamaica",
+   "mainCityId": "kingston"
+  },
+  "JO": {
+   "urlSlug": "jordan",
+   "mainCityId": "amman"
+  },
+  "JP": {
+   "urlSlug": "japan",
+   "mainCityId": "tokyo"
+  },
+  "KE": {
+   "urlSlug": "kenya",
+   "mainCityId": "nairobi"
+  },
+  "KG": {
+   "urlSlug": "kyrgyzstan",
+   "mainCityId": "bishkek"
+  },
+  "KH": {
+   "urlSlug": "cambodia",
+   "mainCityId": "phnom-penh"
+  },
+  "KI": {
+   "urlSlug": "kiribati",
+   "mainCityId": "tarawa"
+  },
+  "KM": {
+   "urlSlug": "comoros",
+   "mainCityId": "moroni"
+  },
+  "KN": {
+   "urlSlug": "saint-kitts-and-nevis",
+   "mainCityId": "basseterre"
+  },
+  "KP": {
+   "urlSlug": "north-korea",
+   "mainCityId": "pyongyang"
+  },
+  "KR": {
+   "urlSlug": "south-korea",
+   "mainCityId": "seoul"
+  },
+  "KW": {
+   "urlSlug": "kuwait",
+   "mainCityId": "kuwait"
+  },
+  "KY": {
+   "urlSlug": "cayman-islands",
+   "mainCityId": "george-town"
+  },
+  "KZ": {
+   "urlSlug": "kazakhstan",
+   "mainCityId": "almaty"
+  },
+  "LA": {
+   "urlSlug": "laos",
+   "mainCityId": "vientiane"
+  },
+  "LB": {
+   "urlSlug": "lebanon",
+   "mainCityId": "beirut"
+  },
+  "LC": {
+   "urlSlug": "saint-lucia",
+   "mainCityId": "castries"
+  },
+  "LI": {
+   "urlSlug": "liechtenstein",
+   "mainCityId": "vaduz"
+  },
+  "LK": {
+   "urlSlug": "sri-lanka",
+   "mainCityId": "colombo"
+  },
+  "LR": {
+   "urlSlug": "liberia",
+   "mainCityId": "monrovia"
+  },
+  "LS": {
+   "urlSlug": "lesotho",
+   "mainCityId": "maseru"
+  },
+  "LT": {
+   "urlSlug": "lithuania",
+   "mainCityId": "vilnius"
+  },
+  "LU": {
+   "urlSlug": "luxembourg",
+   "mainCityId": "luxembourg"
+  },
+  "LV": {
+   "urlSlug": "latvia",
+   "mainCityId": "riga"
+  },
+  "LY": {
+   "urlSlug": "libya",
+   "mainCityId": "tripoli"
+  },
+  "MA": {
+   "urlSlug": "morocco",
+   "mainCityId": "casablanca"
+  },
+  "MC": {
+   "urlSlug": "monaco",
+   "mainCityId": "monaco"
+  },
+  "MD": {
+   "urlSlug": "moldova",
+   "mainCityId": "chisinau"
+  },
+  "ME": {
+   "urlSlug": "montenegro",
+   "mainCityId": "podgorica"
+  },
+  "MF": {
+   "urlSlug": "saint-martin",
+   "mainCityId": "marigot"
+  },
+  "MG": {
+   "urlSlug": "madagascar",
+   "mainCityId": "antananarivo"
+  },
+  "MH": {
+   "urlSlug": "marshall-islands",
+   "mainCityId": "majuro"
+  },
+  "MK": {
+   "urlSlug": "north-macedonia",
+   "mainCityId": "skopje"
+  },
+  "ML": {
+   "urlSlug": "mali",
+   "mainCityId": "bamako"
+  },
+  "MM": {
+   "urlSlug": "myanmar",
+   "mainCityId": "yangon"
+  },
+  "MN": {
+   "urlSlug": "mongolia",
+   "mainCityId": "ulaanbaatar"
+  },
+  "MO": {
+   "urlSlug": "macao",
+   "mainCityId": "macau"
+  },
+  "MP": {
+   "urlSlug": "northern-mariana-islands",
+   "mainCityId": "saipan"
+  },
+  "MQ": {
+   "urlSlug": "martinique",
+   "mainCityId": "fort-de-france"
+  },
+  "MR": {
+   "urlSlug": "mauritania",
+   "mainCityId": "nouakchott"
+  },
+  "MS": {
+   "urlSlug": "montserrat",
+   "mainCityId": "plymouth"
+  },
+  "MT": {
+   "urlSlug": "malta",
+   "mainCityId": "valletta"
+  },
+  "MU": {
+   "urlSlug": "mauritius",
+   "mainCityId": "port-louis"
+  },
+  "MV": {
+   "urlSlug": "maldives",
+   "mainCityId": "maldives"
+  },
+  "MW": {
+   "urlSlug": "malawi",
+   "mainCityId": "blantyre"
+  },
+  "MX": {
+   "urlSlug": "mexico",
+   "mainCityId": "mexico-city"
+  },
+  "MY": {
+   "urlSlug": "malaysia",
+   "mainCityId": "kuala-lumpur"
+  },
+  "MZ": {
+   "urlSlug": "mozambique",
+   "mainCityId": "maputo"
+  },
+  "NA": {
+   "urlSlug": "namibia",
+   "mainCityId": "windhoek"
+  },
+  "NC": {
+   "urlSlug": "new-caledonia",
+   "mainCityId": "noumea"
+  },
+  "NE": {
+   "urlSlug": "niger",
+   "mainCityId": "niamey"
+  },
+  "NF": {
+   "urlSlug": "norfolk-island",
+   "mainCityId": "norfolk"
+  },
+  "NG": {
+   "urlSlug": "nigeria",
+   "mainCityId": "lagos"
+  },
+  "NI": {
+   "urlSlug": "nicaragua",
+   "mainCityId": "managua"
+  },
+  "NL": {
+   "urlSlug": "netherlands",
+   "mainCityId": "amsterdam"
+  },
+  "NO": {
+   "urlSlug": "norway",
+   "mainCityId": "oslo"
+  },
+  "NP": {
+   "urlSlug": "nepal",
+   "mainCityId": "kathmandu"
+  },
+  "NR": {
+   "urlSlug": "nauru",
+   "mainCityId": "yaren"
+  },
+  "NU": {
+   "urlSlug": "niue",
+   "mainCityId": "alofi"
+  },
+  "NZ": {
+   "urlSlug": "new-zealand",
+   "mainCityId": "auckland"
+  },
+  "OM": {
+   "urlSlug": "oman",
+   "mainCityId": "muscat"
+  },
+  "PA": {
+   "urlSlug": "panama",
+   "mainCityId": "panama"
+  },
+  "PE": {
+   "urlSlug": "peru",
+   "mainCityId": "lima"
+  },
+  "PF": {
+   "urlSlug": "french-polynesia",
+   "mainCityId": "tahiti"
+  },
+  "PG": {
+   "urlSlug": "papua-new-guinea",
+   "mainCityId": "port-moresby"
+  },
+  "PH": {
+   "urlSlug": "philippines",
+   "mainCityId": "manila"
+  },
+  "PK": {
+   "urlSlug": "pakistan",
+   "mainCityId": "karachi"
+  },
+  "PL": {
+   "urlSlug": "poland",
+   "mainCityId": "warsaw"
+  },
+  "PM": {
+   "urlSlug": "saint-pierre-and-miquelon",
+   "mainCityId": "miquelon"
+  },
+  "PN": {
+   "urlSlug": "pitcairn-islands",
+   "mainCityId": "pitcairn"
+  },
+  "PR": {
+   "urlSlug": "puerto-rico",
+   "mainCityId": "san-juan"
+  },
+  "PS": {
+   "urlSlug": "palestine",
+   "mainCityId": "gaza"
+  },
+  "PT": {
+   "urlSlug": "portugal",
+   "mainCityId": "lisbon"
+  },
+  "PW": {
+   "urlSlug": "palau",
+   "mainCityId": "ngerulmud"
+  },
+  "PY": {
+   "urlSlug": "paraguay",
+   "mainCityId": "asuncion"
+  },
+  "QA": {
+   "urlSlug": "qatar",
+   "mainCityId": "doha"
+  },
+  "RE": {
+   "urlSlug": "reunion",
+   "mainCityId": "saint-denis"
+  },
+  "RO": {
+   "urlSlug": "romania",
+   "mainCityId": "bucharest"
+  },
+  "RS": {
+   "urlSlug": "serbia",
+   "mainCityId": "belgrade"
+  },
+  "RU": {
+   "urlSlug": "russia",
+   "mainCityId": "moscow"
+  },
+  "RW": {
+   "urlSlug": "rwanda",
+   "mainCityId": "kigali"
+  },
+  "SA": {
+   "urlSlug": "saudi-arabia",
+   "mainCityId": "riyadh"
+  },
+  "SB": {
+   "urlSlug": "solomon-islands",
+   "mainCityId": "guadalcanal"
+  },
+  "SC": {
+   "urlSlug": "seychelles",
+   "mainCityId": "victoria-sc"
+  },
+  "SD": {
+   "urlSlug": "sudan",
+   "mainCityId": "khartoum"
+  },
+  "SE": {
+   "urlSlug": "sweden",
+   "mainCityId": "stockholm"
+  },
+  "SG": {
+   "urlSlug": "singapore",
+   "mainCityId": "singapore"
+  },
+  "SH": {
+   "urlSlug": "saint-helena",
+   "mainCityId": "st-helena"
+  },
+  "SI": {
+   "urlSlug": "slovenia",
+   "mainCityId": "ljubljana"
+  },
+  "SJ": {
+   "urlSlug": "svalbard-and-jan-mayen",
+   "mainCityId": "longyearbyen"
+  },
+  "SK": {
+   "urlSlug": "slovakia",
+   "mainCityId": "bratislava"
+  },
+  "SL": {
+   "urlSlug": "sierra-leone",
+   "mainCityId": "freetown"
+  },
+  "SM": {
+   "urlSlug": "san-marino",
+   "mainCityId": "san-marino"
+  },
+  "SN": {
+   "urlSlug": "senegal",
+   "mainCityId": "dakar"
+  },
+  "SO": {
+   "urlSlug": "somalia",
+   "mainCityId": "mogadishu"
+  },
+  "SR": {
+   "urlSlug": "suriname",
+   "mainCityId": "paramaribo"
+  },
+  "SS": {
+   "urlSlug": "south-sudan",
+   "mainCityId": "juba"
+  },
+  "ST": {
+   "urlSlug": "sao-tome-and-principe",
+   "mainCityId": "sao-tome"
+  },
+  "SV": {
+   "urlSlug": "el-salvador",
+   "mainCityId": "san-salvador"
+  },
+  "SX": {
+   "urlSlug": "sint-maarten",
+   "mainCityId": "philipsburg"
+  },
+  "SY": {
+   "urlSlug": "syria",
+   "mainCityId": "damascus"
+  },
+  "SZ": {
+   "urlSlug": "eswatini",
+   "mainCityId": "mbabane"
+  },
+  "TC": {
+   "urlSlug": "turks-and-caicos-islands",
+   "mainCityId": "cockburn-town"
+  },
+  "TD": {
+   "urlSlug": "chad",
+   "mainCityId": "ndjamena"
+  },
+  "TF": {
+   "urlSlug": "french-southern-territories",
+   "mainCityId": "kerguelen"
+  },
+  "TG": {
+   "urlSlug": "togo",
+   "mainCityId": "lome"
+  },
+  "TH": {
+   "urlSlug": "thailand",
+   "mainCityId": "bangkok"
+  },
+  "TJ": {
+   "urlSlug": "tajikistan",
+   "mainCityId": "dushanbe"
+  },
+  "TK": {
+   "urlSlug": "tokelau",
+   "mainCityId": "fakaofo"
+  },
+  "TL": {
+   "urlSlug": "timor-leste",
+   "mainCityId": "dili"
+  },
+  "TM": {
+   "urlSlug": "turkmenistan",
+   "mainCityId": "ashgabat"
+  },
+  "TN": {
+   "urlSlug": "tunisia",
+   "mainCityId": "tunis"
+  },
+  "TO": {
+   "urlSlug": "tonga",
+   "mainCityId": "tongatapu"
+  },
+  "TR": {
+   "urlSlug": "turkey",
+   "mainCityId": "istanbul"
+  },
+  "TT": {
+   "urlSlug": "trinidad-and-tobago",
+   "mainCityId": "port-of-spain"
+  },
+  "TV": {
+   "urlSlug": "tuvalu",
+   "mainCityId": "funafuti"
+  },
+  "TW": {
+   "urlSlug": "taiwan",
+   "mainCityId": "taipei"
+  },
+  "TZ": {
+   "urlSlug": "tanzania",
+   "mainCityId": "dar-es-salaam"
+  },
+  "UA": {
+   "urlSlug": "ukraine",
+   "mainCityId": "kyiv"
+  },
+  "UG": {
+   "urlSlug": "uganda",
+   "mainCityId": "kampala"
+  },
+  "UM": {
+   "urlSlug": "us-outlying-islands",
+   "mainCityId": "wake"
+  },
+  "US": {
+   "urlSlug": "united-states",
+   "mainCityId": "new-york"
+  },
+  "UY": {
+   "urlSlug": "uruguay",
+   "mainCityId": "montevideo"
+  },
+  "UZ": {
+   "urlSlug": "uzbekistan",
+   "mainCityId": "tashkent"
+  },
+  "VA": {
+   "urlSlug": "vatican-city",
+   "mainCityId": "vatican"
+  },
+  "VC": {
+   "urlSlug": "saint-vincent-and-the-grenadines",
+   "mainCityId": "kingstown"
+  },
+  "VE": {
+   "urlSlug": "venezuela",
+   "mainCityId": "caracas"
+  },
+  "VG": {
+   "urlSlug": "british-virgin-islands",
+   "mainCityId": "road-town"
+  },
+  "VI": {
+   "urlSlug": "us-virgin-islands",
+   "mainCityId": "charlotte-amalie"
+  },
+  "VN": {
+   "urlSlug": "vietnam",
+   "mainCityId": "ho-chi-minh"
+  },
+  "VU": {
+   "urlSlug": "vanuatu",
+   "mainCityId": "port-vila"
+  },
+  "WF": {
+   "urlSlug": "wallis-and-futuna",
+   "mainCityId": "mata-utu"
+  },
+  "WS": {
+   "urlSlug": "samoa",
+   "mainCityId": "apia"
+  },
+  "YE": {
+   "urlSlug": "yemen",
+   "mainCityId": "aden"
+  },
+  "YT": {
+   "urlSlug": "mayotte",
+   "mainCityId": "mamoudzou"
+  },
+  "ZA": {
+   "urlSlug": "south-africa",
+   "mainCityId": "johannesburg"
+  },
+  "ZM": {
+   "urlSlug": "zambia",
+   "mainCityId": "lusaka"
+  },
+  "ZW": {
+   "urlSlug": "zimbabwe",
+   "mainCityId": "harare"
+  }
+ }
+}

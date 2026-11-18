@@ -28,7 +28,8 @@ import { clock, dayMonth, viewerZoneName } from '@/lib/prefest/format';
 import { downloadIcs } from '@/lib/prefest/ics';
 import { progressBar, rubberBand, snapPosition } from '@/lib/prefest/slider';
 import type { MainCelebration } from '@/lib/prefest/model';
-import { SceneCanvas } from './SceneCanvas';
+import { viewerTimeZone } from '@/lib/i18n/time';
+import { MediaSlot } from './SceneCanvas';
 import { useClientReady, usePrefest } from './PrefestContext';
 import s from './prefest.module.css';
 import r from './ScheduleRail.module.css';
@@ -271,7 +272,7 @@ function withNode(text: string, node: ReactNode): ReactNode {
 
 export function ScheduleRail() {
   const t = useTranslations('prefest.schedule');
-  const { model } = usePrefest();
+  const { model, site } = usePrefest();
   const ready = useClientReady();
   const reduced = useReducedMotion();
   const sl = useSnapSlider(reduced);
@@ -296,7 +297,11 @@ export function ScheduleRail() {
               {t('title')}
               <span className={r.tz}>
                 {ready
-                  ? t('tzNamed', { tz: viewerZoneName() })
+                  ? site
+                    ? site.zoneCity(viewerTimeZone())
+                      ? t('tzNamed', { tz: site.zoneCity(viewerTimeZone()) })
+                      : t('tz')
+                    : t('tzNamed', { tz: viewerZoneName() })
                   : withNode(
                       t('tzNamed', { tz: SLOT }),
                       <span className={r.skInline} aria-hidden="true">
@@ -358,8 +363,8 @@ export function ScheduleRail() {
                 return (
                   <div key={`${c.zoneId}-${c.city}`} className={r.ev} data-card>
                     <div className={r.ph}>
-                      <SceneCanvas seed={i} bursts={3} />
-                      <span className={cn(s.chip, r.chipPos)}>{t('stockChip')}</span>
+                      <MediaSlot slot={c.mediaSlot} item={site?.media[c.mediaSlot]} mark={Boolean(site)} seed={i} bursts={3} />
+                      {site ? null : <span className={cn(s.chip, r.chipPos)}>{t('stockChip')}</span>}
                       <button
                         type="button"
                         className={r.cal}

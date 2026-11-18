@@ -5,13 +5,42 @@
  * відвідувача відомий лише після гідратації — статичний експорт збирається в UTC) і тост для заглушок.
  */
 import { createContext, useCallback, useContext, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import type { Dataset } from '@/lib/data/types';
+import { getData } from '@/lib/data/load';
 import type { PrefestModel } from '@/lib/prefest/model';
 import { cn } from '@/components/primitives/cn';
 import s from './prefest.module.css';
 
+/** Фото чи відео на місці заглушки (`data/prelaunch/media.json`). */
+export interface MediaItem {
+  src: string;
+  alt?: string;
+  /** Для відео: кадр до запуску. */
+  poster?: string;
+  kind?: 'image' | 'video';
+}
+
+/**
+ * Мовне дерево (`app/[locale]`, передстартовий сайт). Блоки головної, отримавши `site`, показують правки плану
+ * передстартового сайту (розділ 9); без нього (`/before`) — усе як було.
+ */
+export interface PrefestSite {
+  locale: string;
+  /** Адреса сторінки мовного дерева за шляхом без мови (`/countries/`). */
+  href: (path: string) => string;
+  media: Readonly<Record<string, MediaItem>>;
+  /** Місто пояса відвідувача мовою сторінки («Київ») або порожньо. */
+  zoneCity: (timeZone: string) => string;
+  /** Форма «у країні» мовою сторінки, якщо вона є в даних. */
+  inCountry: (iso: string) => string | undefined;
+}
+
 interface PrefestContextValue {
   model: PrefestModel;
   toast: (text: string) => void;
+  /** Каталог, з якого збудовано модель (у мовному дереві — мовою сторінки). */
+  data: Dataset;
+  site: PrefestSite | null;
 }
 
 const Ctx = createContext<PrefestContextValue | null>(null);
@@ -32,7 +61,17 @@ export function useClientReady(): boolean {
   );
 }
 
-export function PrefestProvider({ model, children }: { model: PrefestModel; children: ReactNode }) {
+export function PrefestProvider({
+  model,
+  data,
+  site = null,
+  children,
+}: {
+  model: PrefestModel;
+  data?: Dataset;
+  site?: PrefestSite | null;
+  children: ReactNode;
+}) {
   const [text, setText] = useState('');
   const [on, setOn] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,7 +82,7 @@ export function PrefestProvider({ model, children }: { model: PrefestModel; chil
     timer.current = setTimeout(() => setOn(false), 2600);
   }, []);
   return (
-    <Ctx.Provider value={{ model, toast }}>
+    <Ctx.Provider value={{ model, toast, data: data ?? getData(), site }}>
       {children}
       <div className={cn(s.toast, on && s.toastOn)} role="status" aria-live="polite">
         {text}

@@ -3,18 +3,18 @@
  * Обгортки над `lib/i18n/time`, щоб блоки сторінки писали час однаково.
  */
 import type { Ms } from '@/lib/data/types';
-import { formatClock, utcLabel, viewerTimeZone } from '@/lib/i18n/time';
+import { defaultTimeLocale, formatClock, utcLabel, viewerTimeZone } from '@/lib/i18n/time';
 
 export { utcLabel };
 
 /** «12:00» за часом відвідувача. */
 export function clock(ms: Ms, timeZone?: string): string {
-  return formatClock(ms, { locale: 'uk', ...(timeZone ? { timeZone } : {}) });
+  return formatClock(ms, { locale: defaultTimeLocale(), ...(timeZone ? { timeZone } : {}) });
 }
 
 /** «31 грудня» за часом відвідувача. */
 export function dayMonth(ms: Ms, timeZone?: string): string {
-  return new Intl.DateTimeFormat('uk', {
+  return new Intl.DateTimeFormat(defaultTimeLocale(), {
     day: 'numeric',
     month: 'long',
     timeZone: timeZone ?? viewerTimeZone(),

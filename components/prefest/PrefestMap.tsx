@@ -10,7 +10,6 @@ import { useMemo } from 'react';
 import { ZoneMap } from '@/components/map/ZoneMap';
 import type { MapPrefest } from '@/components/map/mapPrefest';
 import { cn } from '@/components/primitives/cn';
-import { getData } from '@/lib/data/load';
 import { buildMapModel } from '@/lib/map/model';
 import { downloadIcs } from '@/lib/prefest/ics';
 import { prefestMapModel } from '@/lib/prefest/map';
@@ -19,12 +18,20 @@ import s from './prefest.module.css';
 import m from './PrefestMap.module.css';
 
 export function PrefestMap() {
-  const { model } = usePrefest();
+  const { model, data, site } = usePrefest();
   const t = useTranslations('prefest.map');
-  const mapModel = useMemo(
-    () => prefestMapModel(buildMapModel(getData()), (iso) => model.countriesByIso.get(iso)?.described ?? false),
-    [model],
-  );
+  const mapModel = useMemo(() => {
+    const base = prefestMapModel(buildMapModel(data), (iso) => model.countriesByIso.get(iso)?.described ?? false);
+    if (!site) return base;
+    // Мовне дерево: «Сторінка країни» веде на сторінку цієї мови, а не на сторінку ефіру.
+    return {
+      ...base,
+      zones: base.zones.map((z) => ({
+        ...z,
+        countries: z.countries.map((c) => ({ ...c, href: model.countriesByIso.get(c.iso)?.href ?? c.href })),
+      })),
+    };
+  }, [model, data, site]);
   const prefest = useMemo<MapPrefest>(
     () => ({
       onCountryCalendar: (zone, country) =>

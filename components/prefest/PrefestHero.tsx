@@ -14,6 +14,7 @@ import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import { useNow } from '@/lib/time/TimeProvider';
 import { clock, dayMonth } from '@/lib/prefest/format';
 import { downloadIcs } from '@/lib/prefest/ics';
+import { SEASON_VALUES } from '@/lib/prelaunch/season';
 import { seeded, SCENE_COLORS } from './SceneCanvas';
 import { useClientReady, usePrefest } from './PrefestContext';
 import s from './prefest.module.css';
@@ -183,10 +184,11 @@ type Unit = 'days' | 'hours' | 'minutes' | 'seconds';
 export function PrefestHero() {
   const t = useTranslations('prefest.hero');
   const tRoot = useTranslations('prefest');
-  const { model } = usePrefest();
+  const { model, site } = usePrefest();
   const ready = useClientReady();
   const reduced = useReducedMotion();
   const now = useNow();
+  const media = site?.media.hero;
   const known = ready && now > 0;
   const first = model.firstMidnightMs;
   const secs = Math.max(0, Math.floor((first - now) / 1000));
@@ -214,17 +216,49 @@ export function PrefestHero() {
 
   return (
     <section className={h.hero} aria-label={t('aria')}>
-      <HeroFx reduced={reduced} />
-      <span className={h.stock}>{t('stock')}</span>
+      {media?.kind === 'video' ? (
+        <video
+          className={h.fx}
+          src={media.src}
+          poster={media.poster}
+          autoPlay={!reduced}
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        />
+      ) : media ? (
+        // eslint-disable-next-line @next/next/no-img-element -- статичний експорт
+        <img className={h.fx} src={media.src} alt="" style={{ objectFit: 'cover' }} />
+      ) : (
+        <HeroFx reduced={reduced} />
+      )}
+      {site ? (
+        media ? null : (
+          <span hidden data-media-placeholder="hero" />
+        )
+      ) : (
+        <span className={h.stock}>{t('stock')}</span>
+      )}
       <div className={cn(s.wrap, h.inner)}>
         <div className={h.copy}>
-          <p className={h.eyebrow}>
-            <i aria-hidden="true" />
-            {t('eyebrow')}
-          </p>
-          <h1>
-            {t('titleStart')} <em>{t('titleEm')}</em>
-          </h1>
+          {site ? (
+            // Мовне дерево (рішення власника 2026-11-18): рядок над заголовком — частина H1 зі словами пошуку.
+            <h1>
+              <span className={cn(h.eyebrow, h.eyebrowInH1)}>{t('eyebrow', SEASON_VALUES)}</span>{' '}
+              {t('titleStart')} <em>{t('titleEm')}</em>
+            </h1>
+          ) : (
+            <>
+              <p className={h.eyebrow}>
+                <i aria-hidden="true" />
+                {t('eyebrow')}
+              </p>
+              <h1>
+                {t('titleStart')} <em>{t('titleEm')}</em>
+              </h1>
+            </>
+          )}
           <p className={h.lead}>
             {t('lead')} <b>{t('leadFree')}</b>
           </p>
@@ -240,7 +274,7 @@ export function PrefestHero() {
                     description: t('calendarText'),
                     startMs: first,
                   },
-                  'time2fest-novyi-rik.ics',
+                  site ? 'time2fest-new-year.ics' : 'time2fest-novyi-rik.ics',
                 )
               }
             >

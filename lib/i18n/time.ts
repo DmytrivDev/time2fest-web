@@ -9,8 +9,21 @@ export type Locale = 'uk' | (string & {});
 
 const PHRASES: Record<string, { yourTime: string; midnightWas: string }> = {
   uk: { yourTime: 'за вашим часом', midnightWas: 'північ була' },
+  en: { yourTime: 'your time', midnightWas: 'midnight was' },
 };
 const phrase = (locale: Locale) => PHRASES[locale] ?? PHRASES.uk!;
+
+/**
+ * Мова, якою форматується час, коли її не передано аргументом. Сайт ефіру — українською; мовне дерево
+ * (`app/[locale]`) ставить мову сторінки один раз, у своєму провайдері (у браузері сторінка має одну мову).
+ */
+let defaultLocale: Locale = 'uk';
+export function setDefaultTimeLocale(locale: Locale): void {
+  defaultLocale = locale;
+}
+export function defaultTimeLocale(): Locale {
+  return defaultLocale;
+}
 
 /**
  * Кеш `Intl.DateTimeFormat`: створення форматера дороге (сотні мікросекунд), а час на сторінці форматується
@@ -64,7 +77,7 @@ function dayKey(ms: Ms, timeZone: string): string {
 
 /** Годину й хвилини у форматі мови: «03:00» (uk, 24 год) або «3:00 AM» (en-US, 12 год). */
 export function formatClock(utc: ISO | Ms, opts: { locale?: Locale; timeZone?: string } = {}): string {
-  const locale = opts.locale ?? 'uk';
+  const locale = opts.locale ?? defaultLocale;
   const timeZone = opts.timeZone ?? viewerTimeZone();
   const probe = dtf(locale, { hour: 'numeric', timeZone }).resolvedOptions();
   const h12 = probe.hourCycle === 'h11' || probe.hourCycle === 'h12';

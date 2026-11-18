@@ -39,9 +39,18 @@ const DEV_API_PROXY = TEST_BUILD && API_MODE === 'http' && process.env.NODE_ENV 
 const CATALOG_SOURCE = resolveCatalogSource({ testBuild: TEST_BUILD, apiMode: API_MODE, env: process.env });
 const CATALOG_DIR = `.t2f-catalog/${process.env.NEXT_DIST_DIR ?? 'default'}`;
 
+const PRELAUNCH_BUILD = process.env.NEXT_PUBLIC_PRELAUNCH === '1';
+
 const nextConfig: NextConfig = {
   // Workspace package ships TS source, so Next must transpile it.
   transpilePackages: ['@time2fest/contracts', '@time2fest/rules'],
+  // Мовне дерево (app/[locale]) — файли *.pl.tsx — збирається ЛИШЕ в збірці для домену (pnpm build:prelaunch), і в
+  // ній немає нічого іншого: ні ефіру, ні входу, ні оплати, ні кабінету. Демо, тестова й робоча збірки мовного дерева
+  // не бачать: Turbopack групує CSS усіх сторінок разом, і нові сторінки переставляли б чанки наявних (перевірено
+  // 2026-11-18: зсув заголовка /before і кнопки «Тости»), а демо має лишатись точно таким, як є.
+  pageExtensions: PRELAUNCH_BUILD ? ['pl.tsx'] : ['tsx', 'ts', 'jsx', 'js'],
+  // Типи перевіряє окремий крок (tsc --noEmit); у збірці для домену не дублюємо.
+  ...(PRELAUNCH_BUILD ? { typescript: { ignoreBuildErrors: true } } : {}),
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
@@ -63,6 +72,15 @@ const nextConfig: NextConfig = {
               ? {
                   '@/lib/api/simEntry': './lib/api/http/simEntry.disabled.ts',
                   '@/lib/api/simRuntimeEntry': './lib/api/http/simRuntimeEntry.disabled.tsx',
+                }
+              : {}),
+            // Передстартова збірка: годинник пристрою замість годинника сайту — без коду машини часу й window.__t2f.
+            ...(PRELAUNCH_BUILD
+              ? {
+                  '@/lib/time/TimeProvider': './lib/prelaunch/DeviceTimeProvider.tsx',
+                  // Бекенду ще немає: спільні блоки (мапа) не мають звертатися до шва даних.
+                  '@/lib/api/hooks/auth': './lib/prelaunch/noApi/auth.ts',
+                  '@/lib/api/hooks/passport': './lib/prelaunch/noApi/passport.ts',
                 }
               : {}),
             ...(CATALOG_SOURCE === 'data'
