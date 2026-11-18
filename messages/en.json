@@ -718,5 +718,10 @@
     "nav": {
       "map": "Who celebrates New Year first: time zone map"
     }
+  },
+  "player": {
+    "scene": {
+      "daysShort": "d"
+    }
   }
 }

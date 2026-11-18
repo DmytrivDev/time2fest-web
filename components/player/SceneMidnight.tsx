@@ -95,13 +95,18 @@ export function SceneYear({ year }: { year: number }) {
 }
 
 /** Великий відлік до півночі на сцені. */
-export function SceneCountdown({ left }: { left: number }) {
+/**
+ * `days` (передстартовий сайт, до свята місяць): понад добу — «29 д 23:59:59» тим самим шрифтом і кольором; без нього, як і
+ * досі, лише год:хв:с (у ніч свята до півночі завжди менше доби).
+ */
+export function SceneCountdown({ left, days = false }: { left: number; days?: boolean }) {
   const t = useTranslations('player.scene');
+  const d = days ? Math.floor(Math.max(0, Math.ceil(left / 1_000)) / 86_400) : 0;
   return (
     <div className="flex flex-col" data-scene-countdown="">
       <span className="text-label-sm uppercase tracking-wide text-text-secondary">{t('countdownLabel')}</span>
       <span className={cn('font-extrabold leading-none tabular-nums text-highlight', fx.glow)} style={{ fontSize: 'max(1.75rem, 7.5cqw)' }}>
-        {hms(left)}
+        {d > 0 ? `${d} ${t('daysShort')} ${hms(left - d * 86_400_000)}` : hms(left)}
       </span>
     </div>
   );

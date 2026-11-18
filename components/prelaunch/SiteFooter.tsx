@@ -75,11 +75,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           {GROUPS.map((g) => (
             <div className={ft.col} key={g.title}>
               <p className={s.footTitle}>{t(g.title)}</p>
-              {g.links.filter((l) => l.path.includes('#') || isRouteEnabled(l.path)).map((l) => (
-                <NextLink key={l.key} href={localeHref(locale, l.path)}>
-                  {t(l.key)}
-                </NextLink>
-              ))}
+              {g.links
+                .filter((l) => l.path.includes('#') || isRouteEnabled(l.path))
+                .map((l) => (
+                  <NextLink key={l.key} href={localeHref(locale, l.path)}>
+                    {t(l.key)}
+                  </NextLink>
+                ))}
             </div>
           ))}
         </div>

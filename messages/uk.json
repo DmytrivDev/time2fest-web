@@ -485,7 +485,8 @@
       "happyNewYear": "З Новим роком!",
       "celebrateLine": "{place} зустрічає {year}",
       "fullscreen": "Сцена на весь екран",
-      "exitFullscreen": "Вийти з повного екрана"
+      "exitFullscreen": "Вийти з повного екрана",
+      "daysShort": "д"
     },
     "timerUntil": "до півночі",
     "timerYear": "Новий рік",

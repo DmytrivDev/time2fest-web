@@ -17,7 +17,9 @@ import { SiteShell } from './SiteShell';
 function Body() {
   const { data } = usePrefest();
   const { mapModel, prefest } = usePrefestMap();
-  return <CountriesView data={data} model={mapModel} mapPrefest={prefest} filter={false} staticList />;
+  return (
+    <CountriesView data={data} model={mapModel} mapPrefest={prefest} filter={false} staticList />
+  );
 }
 
 export function CountriesPage({ site }: { site: SiteData }) {

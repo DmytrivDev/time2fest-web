@@ -1,311 +1,172 @@
 'use client';
 
 /**
- * Сторінка країни мовного дерева — інформаційний вигляд без плеєра й чату, у двох станах:
- *   «описано»      — факти + розповідь «Як країна зустрічає Новий рік» і традиції (`data-state="story"`);
- *   «лише факти»   — прапор, північ за часом відвідувача, відлік, пояси (`data-state="facts"`); без заглушки
- *                    «збираємо розповідь» і без вигаданих традицій.
- * Усе про одне місце — головне місто країни (`data/prelaunch/countries.json`).
+ * Сторінка країни мовного дерева — наявна сторінка країни (`components/country`, дошки `Desk-Country-Full`,
+ * `Phone-Country-Full`) без трансляції й чату, у наявних блоках і на тій самій сітці колонки (`live-shell`):
+ *   крихти (лише поки немає трансляції — `CountryCrumbs`) · рядок країни `CountryHeader` (кілька поясів — його наявні
+ *   чипи / кнопка поясу; один пояс — без них) · на місці відео — сцена відліку `CountdownScene` (як на сайті до
+ *   півночі; понад добу — з днями) · «Як святкувати» й «Як <країна> зустрічає Новий рік» (`HowToCard`, одне фото з
+ *   автором і ліцензією) — лише для описаних країн · «Питання й відповіді» сторінки країни (без питань про трансляції й
+ *   кімнату) · «Того ж часу Новий рік зустрічають» (схвалено власником 2026-11-18).
+ * Два стани (`data-state`): «описано» (є розповідь мовою сторінки) і «лише факти» (без розповіді й вигаданих традицій).
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
-import { usePrefest, useClientReady } from '@/components/prefest/PrefestContext';
-import { MediaSlot } from '@/components/prefest/SceneCanvas';
+import { useMemo, useState } from 'react';
+import { CountryCrumbs, showCountryCrumbs } from '@/components/country/CountryCrumbs';
+import { CountryHeader, type CountryZoneOption } from '@/components/country/CountryHeader';
+import { Faq } from '@/components/live/Faq';
+import { HowToCard } from '@/components/live/HowToCard';
+import { CountdownScene } from '@/components/player/CountdownScene';
+import { PlayerSlot } from '@/components/player/PlayerSlot';
+import { mediaAlt, usePrefest } from '@/components/prefest/PrefestContext';
 import { Flag } from '@/components/primitives/Flag';
-import { Icon, type IconName } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
-import { Bar } from '@/components/skeleton/parts';
-import p from '@/components/prefest/prefest.module.css';
-import { clock, dayMonth, utcLabel } from '@/lib/prefest/format';
-import { downloadIcs } from '@/lib/prefest/ics';
+import shell from '@/app/(live)/live-shell.module.css';
+import live from '@/components/live/live.module.css';
+import { formatClock } from '@/lib/i18n/time';
+import { utcLabel } from '@/lib/map/model';
 import { byPreference } from '@/lib/prefest/model';
 import { PAGES } from '@/lib/prelaunch/href';
 import { SEASON_VALUES } from '@/lib/prelaunch/season';
-import { COUNTRY_EXTRAS, type SiteData } from '@/lib/prelaunch/site';
+import type { SiteData } from '@/lib/prelaunch/site';
 import { useNow } from '@/lib/time/TimeProvider';
 import { SiteShell } from './SiteShell';
 import s from './site.module.css';
 
-const TRADITION_ICON: Record<string, IconName> = {
-  countdown: 'clock',
-  clock: 'clock',
-  feast: 'utensils',
-  food: 'utensils',
-  noodles: 'utensils',
-  fireworks: 'sparkles',
-  lights: 'sparkles',
-  ball: 'sparkles',
-  kiss: 'heart',
-  bell: 'bell',
-  mistletoe: 'mistletoe',
-  camp: 'moon',
-};
-
-const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
 /** Скільки країн того ж поясу показати посиланнями. */
 const NEIGHBORS = 12;
 
 function Body({ iso }: { iso: string }) {
   const t = useTranslations('prelaunch.country');
-  const { model, site } = usePrefest();
-  const ready = useClientReady();
-  const now = useNow();
-  const country = model.countriesByIso.get(iso);
-  if (!country || !site) return null;
+  const tc = useTranslations('country');
+  const { model, data, site } = usePrefest();
+  const now = useNow({ granularity: 'minute' });
+  const country = data.countriesByIso.get(iso);
+  const pc = model.countriesByIso.get(iso);
+  const main = pc?.main ?? pc?.zones[0];
+  const [zoneId, setZoneId] = useState<string | undefined>(main?.zoneId);
+  const zone = data.zonesById.get(zoneId ?? '');
+  const zoneOptions = useMemo<CountryZoneOption[] | undefined>(() => {
+    if (!pc || pc.zones.length < 2) return undefined;
+    return pc.zones.flatMap((z) => {
+      const zz = data.zonesById.get(z.zoneId);
+      return zz
+        ? [
+            {
+              id: z.zoneId,
+              utc: utcLabel(zz.offsetMinutes),
+              city: z.city ?? utcLabel(zz.offsetMinutes),
+              midnightMs: zz.midnightMs,
+            },
+          ]
+        : [];
+    });
+  }, [pc, data]);
+  if (!country || !pc || !zone || !site) return null;
 
-  const main = country.main ?? country.zones[0];
-  const zone = model.zonesById.get(main?.zoneId ?? '');
-  if (!zone) return null;
-  const ms = zone.midnightMs;
-  const known = ready && now > 0;
-  const secs = Math.max(0, Math.floor((ms - now) / 1000));
-  const passed = known && ms <= now;
-  const units = [
-    { key: 'days' as const, n: Math.floor(secs / 86400), text: String(Math.floor(secs / 86400)) },
-    {
-      key: 'hours' as const,
-      n: Math.floor((secs % 86400) / 3600),
-      text: pad(Math.floor((secs % 86400) / 3600)),
-    },
-    {
-      key: 'minutes' as const,
-      n: Math.floor((secs % 3600) / 60),
-      text: pad(Math.floor((secs % 3600) / 60)),
-    },
-    { key: 'seconds' as const, n: secs % 60, text: pad(secs % 60) },
-  ];
-  const total = model.zones.length;
-  const neighbors = zone.countries
-    .filter((x) => x !== iso)
+  const city = pc.zones.find((z) => z.zoneId === zone.id)?.city ?? country.name.uk;
+  const after = now > 0 && now >= zone.midnightMs;
+  const photo = site.media[`country:${iso}`];
+  const gallery = photo
+    ? [
+        {
+          src: photo.src,
+          alt: mediaAlt(photo, site.locale, t('photoAlt', { country: country.name.uk })),
+          author: photo.author ?? '',
+          license: photo.license ?? '',
+        },
+      ]
+    : [];
+  const faq = (['when', 'stamp'] as const).map((id) => ({
+    id,
+    question: tc(`faq.items.${id}.q`),
+    answer: tc(`faq.items.${id}.a`, { time: formatClock(zone.midnightMs) }),
+  }));
+  const neighbors = model.zonesById
+    .get(zone.id)
+    ?.countries.filter((x) => x !== iso)
     .map((x) => model.countriesByIso.get(x))
     .filter((x) => x !== undefined)
     .sort(byPreference)
     .slice(0, NEIGHBORS);
-  const slug = COUNTRY_EXTRAS[iso]?.urlSlug ?? iso.toLowerCase();
-  const photo = site.media[`country:${iso}`];
 
   return (
-    <article data-state={country.described ? 'story' : 'facts'}>
-      <div className={cn(p.wrap, s.head)}>
-        <nav aria-label={t('breadcrumbLabel')}>
-          <ol className={s.crumbs}>
-            <li>
-              <NextLink href={site.href(PAGES.home)}>{t('breadcrumbHome')}</NextLink>
-            </li>
-            <li>
-              <NextLink href={site.href(PAGES.countries)}>{t('breadcrumbCountries')}</NextLink>
-            </li>
-            <li aria-current="page">{country.name}</li>
-          </ol>
-        </nav>
-        <div className={s.h1Row}>
-          <Flag code={country.flagCode} diameter={56} decorative />
-          <h1 className={s.h1}>
-            {/* «Новий рік 2027 у Японії», коли є форма «у країні» (`names/<мова>.json` → `countriesIn`); інакше «Японія: Новий рік 2027». */}
+    <div className={shell.shell}>
+      <div className={shell.top}>
+        <article className={shell.main} data-state={pc.described ? 'story' : 'facts'}>
+          {/* Трансляції на передстартовому сайті немає ніколи — на місці відео сцена відліку, крихти є. */}
+          {showCountryCrumbs('countdown-scene') ? (
+            <CountryCrumbs
+              className={cn(live.pad, 'pb-3')}
+              label={t('breadcrumbLabel')}
+              links={[
+                { label: t('breadcrumbHome'), href: site.href(PAGES.home) },
+                { label: t('breadcrumbCountries'), href: site.href(PAGES.countries) },
+              ]}
+              current={country.name.uk}
+            />
+          ) : null}
+          {/* Як на наявній сторінці країни: H1 для читачів екрана й пошуку, видимий заголовок — рядок країни. */}
+          <h1 className="sr-only">
             {site.inCountry(iso)
               ? t('titleIn', { ...SEASON_VALUES, inCountry: site.inCountry(iso) ?? '' })
-              : t('title', { ...SEASON_VALUES, country: country.name })}
+              : t('title', { ...SEASON_VALUES, country: country.name.uk })}
           </h1>
-        </div>
-        <p className={s.lead}>{country.described ? t('leadStory') : t('lead')}</p>
-      </div>
-
-      <section className={p.wrap} aria-label={t('midnightTitle')}>
-        <div className={s.tiles}>
-          <div className={s.tile}>
-            <h2 className={s.kicker}>{t('midnightTitle')}</h2>
-            {ready ? (
-              <span className={s.big}>{clock(ms)}</span>
-            ) : (
-              <span className={s.big}>
-                <Bar w={120} h={42} />
-              </span>
-            )}
-            <span className={s.sub}>
-              {ready
-                ? t('midnightValue', { date: dayMonth(ms), time: clock(ms) })
-                : t('midnightUtc', { date: dayMonth(ms, 'UTC'), time: clock(ms, 'UTC') })}
-            </span>
-            {ready ? (
-              <span className={s.sub}>
-                {t('midnightUtc', { date: dayMonth(ms, 'UTC'), time: clock(ms, 'UTC') })}
-              </span>
-            ) : null}
-            <span className={s.sub}>
-              {main?.city
-                ? t('midnightCity', { city: main.city, utc: utcLabel(zone.offsetMinutes) })
-                : utcLabel(zone.offsetMinutes)}
-            </span>
-          </div>
-          <div className={s.tile}>
-            <h2 className={s.kicker}>{t('countdownTitle')}</h2>
-            {passed ? (
-              <span className={s.tileTitle} role="timer" aria-live="off">
-                {t('countdownPassed')}
-              </span>
-            ) : (
-              <div className={s.cd} role="timer" aria-live="off">
-                {units.map((u) => (
-                  <div key={u.key}>
-                    <b>{known ? u.text : <Bar w={44} h={34} />}</b>
-                    <span>{t(u.key, { count: known ? u.n : 5 })}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            <span className={s.sub}>{t('midnightLocal', SEASON_VALUES)}</span>
-          </div>
-          <div className={s.tile}>
-            <h2 className={s.kicker}>{t('orderTitle')}</h2>
-            <span className={s.big}>{t('orderValue', { n: zone.index + 1 })}</span>
-            <span className={s.sub}>
-              {zone.index === 0
-                ? t('orderFirst')
-                : zone.index === total - 1
-                  ? t('orderLast')
-                  : t('orderBefore', { count: zone.index })}
-            </span>
-          </div>
-        </div>
-        <div className={cn(p.cta, s.stay)}>
-          <button
-            type="button"
-            className={cn(p.btn, p.btnCoral)}
-            onClick={() =>
-              downloadIcs(
-                {
-                  uid: `time2fest-${zone.id}-${iso.toLowerCase()}`,
-                  title: t('calendarTitle', { country: country.name }),
-                  description: t('calendarText', { country: country.name }),
-                  startMs: ms,
-                },
-                `time2fest-${slug}.ics`,
-              )
+          <CountryHeader
+            country={country}
+            midnightMs={zone.midnightMs}
+            after={after}
+            zones={zoneOptions}
+            selectedZoneId={zone.id}
+            onZoneChange={setZoneId}
+          />
+          <PlayerSlot
+            id="main"
+            fallback={
+              <CountdownScene
+                country={country}
+                cityName={city}
+                midnightMs={zone.midnightMs}
+                offsetMinutes={zone.offsetMinutes}
+                variant="no-stream"
+                longCountdown
+              />
             }
-          >
-            <Icon name="calendar-add" size={20} />
-            {t('addCalendar')}
-          </button>
-          <NextLink className={cn(p.btn, p.btnGhost)} href={site.href(PAGES.countries)}>
-            {t('allCountries')}
-          </NextLink>
-        </div>
-      </section>
-
-      {country.described ? (
-        <section className={cn(p.wrap, s.sec)} aria-labelledby="story-h">
-          <h2 className={p.h2} id="story-h">
-            {t('storyTitle', { country: country.name })}
-          </h2>
-          <div className={s.story}>
-            <p className={s.storyText}>{country.text}</p>
-            {/* Одне фото на країну (рішення власника 2026-11-18): той самий кадр, що й у картці країни на головній. */}
-            <figure className={s.figure}>
-              <div className={s.photo}>
-                <MediaSlot
-                  slot={`country:${iso}`}
-                  item={photo}
-                  mark
-                  alt={t('photoAlt', { country: country.name })}
-                  seed={20 + zone.index}
-                  bursts={4}
-                />
-              </div>
-              {/* Автор і ліцензія — обов’язкові для кадрів із Wikimedia. */}
-              {photo?.author ? (
-                <figcaption className={s.credit}>
-                  {photo.sourceUrl ? (
-                    <a href={photo.sourceUrl} rel="noopener noreferrer" target="_blank">
-                      {photo.author}
-                    </a>
-                  ) : (
-                    photo.author
-                  )}
-                  {photo.license ? `, ${photo.license}` : ''}
-                </figcaption>
-              ) : null}
-            </figure>
+          />
+          <div className="flex flex-col gap-8 pb-8 pt-8">
+            {pc.described ? (
+              <HowToCard
+                country={country.name.uk}
+                traditions={country.howTo.traditions}
+                gallery={gallery}
+                text={country.howTo.text}
+                variant="full"
+                className={live.pad}
+              />
+            ) : null}
+            <Faq items={faq} columns={2} className={live.pad} />
+            {neighbors?.length ? (
+              <section className={live.pad} aria-labelledby="near-h">
+                <h2 id="near-h" className="text-headline-sm text-text">
+                  {t('neighborsTitle')}
+                </h2>
+                <ul className={s.chips}>
+                  {neighbors.map((c) => (
+                    <li key={c.iso}>
+                      <NextLink className={s.chipLink} href={c.href}>
+                        <Flag code={c.flagCode} diameter={24} decorative />
+                        {c.name}
+                      </NextLink>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
           </div>
-          <h3 className={cn(p.h2, s.sec)} id="trad-h">
-            {t('traditionsTitle')}
-          </h3>
-          <div className={s.tiles}>
-            {country.traditions.map((x) => (
-              <div className={s.tile} key={x.id}>
-                <span className={s.ic}>
-                  <Icon name={TRADITION_ICON[x.iconId] ?? 'star'} size={20} />
-                </span>
-                <h4 className={s.tileTitle}>{x.title}</h4>
-                <p>{x.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <section className={cn(p.wrap, s.sec)} aria-labelledby="zones-h">
-        <h2 className={p.h2} id="zones-h">
-          {t('zonesTitle')}
-        </h2>
-        <p className={s.note}>
-          {country.zones.length > 1
-            ? t('zonesMany', { count: country.zones.length })
-            : t('zonesOne')}
-        </p>
-        <ul className={s.zones}>
-          {country.zones.map((z) => {
-            const zz = model.zonesById.get(z.zoneId);
-            if (!zz) return null;
-            const tz = ready ? undefined : 'UTC';
-            return (
-              <li key={z.zoneId}>
-                <span>
-                  <b>{z.city ?? utcLabel(zz.offsetMinutes)}</b>
-                  {country.zones.length > 1 && z.zoneId === main?.zoneId ? (
-                    <span className={s.zoneMain}>{t('zoneMain')}</span>
-                  ) : null}
-                </span>
-                <span className={s.zoneUtc}>{utcLabel(zz.offsetMinutes)}</span>
-                <span className={s.zoneTime}>
-                  {dayMonth(zz.midnightMs, tz)}, <b>{clock(zz.midnightMs, tz)}</b>
-                  {ready ? '' : ' UTC'}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      <section className={cn(p.wrap, s.sec)} aria-labelledby="live-h">
-        <div className={s.panel}>
-          <div>
-            <h2 id="live-h">{t('liveTitle')}</h2>
-            <p>{t('liveText')}</p>
-          </div>
-          <NextLink className={cn(p.btn, p.btnGhost)} href={site.href('/#schedule')}>
-            {t('liveLink')}
-          </NextLink>
-        </div>
-      </section>
-
-      {neighbors.length ? (
-        <section className={cn(p.wrap, s.sec)} aria-labelledby="near-h">
-          <h2 className={p.h2} id="near-h">
-            {t('neighborsTitle')}
-          </h2>
-          <ul className={s.chips}>
-            {neighbors.map((c) => (
-              <li key={c.iso}>
-                <NextLink className={s.chipLink} href={c.href}>
-                  <Flag code={c.flagCode} diameter={24} decorative />
-                  {c.name}
-                </NextLink>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-    </article>
+        </article>
+      </div>
+    </div>
   );
 }
 

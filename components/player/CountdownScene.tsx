@@ -47,11 +47,13 @@ export interface CountdownSceneProps {
   /** `waiting`: «Дивитися, що вже йде ›» — у поясі зараз щось іде наживо; відкриває список трансляцій (2026-11-13). */
   onWatchLive?: () => void;
   className?: string;
+  /** Відлік понад добу — з днями (передстартовий сайт); див. `SceneCountdown`. */
+  longCountdown?: boolean;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} />;
 }
 
 /**
@@ -144,7 +146,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -188,7 +190,7 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
         <div className="absolute inset-0 flex flex-col gap-2 bg-linear-to-t from-background/95 via-background/50 to-transparent p-4 @lg:bg-linear-to-r @lg:from-background/80 @lg:via-background/30 @lg:to-transparent @lg:p-8">
           <p className="hidden text-label-sm text-text-secondary @lg:block">{variant === 'mode' ? t('modeCaption') : t('caption')}</p>
           <div className="flex min-h-0 flex-1 items-center">
-            {phase.kind === 'count' ? <SceneCountdown left={phase.left} /> : phase.kind === 'after' ? <SceneYear year={year} /> : null}
+            {phase.kind === 'count' ? <SceneCountdown left={phase.left} days={longCountdown} /> : phase.kind === 'after' ? <SceneYear year={year} /> : null}
           </div>
           <div className="flex items-center gap-3 @lg:gap-5">
             <span className="@lg:hidden">

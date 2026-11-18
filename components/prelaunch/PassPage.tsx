@@ -32,7 +32,12 @@ function Body() {
           seasonValue: SEASON_LABEL,
         }}
       />
-      <section aria-label={t('buyTitle')} className={cn('t2f-chat-log t2f-slot-body', ps.card)} style={{ gap: 14 }} data-block="pass-soon">
+      <section
+        aria-label={t('buyTitle')}
+        className={cn('t2f-chat-log t2f-slot-body', ps.card)}
+        style={{ gap: 14 }}
+        data-block="pass-soon"
+      >
         <div className={pb.soonbox}>
           <Icon name="clock" size={20} />
           {tp('soon')}

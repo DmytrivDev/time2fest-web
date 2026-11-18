@@ -18,7 +18,9 @@ import { LangSwitch, rememberLocale, useLocaleLinks } from './LangSwitch';
 import s from './site.module.css';
 
 /** Пункти шапки — лише увімкнені сторінки (`lib/prelaunch/pages.mjs`); «Про проєкт» прибрано (рішення власника 2026-11-18). */
-const NAV: readonly PageKey[] = (['home', 'countries', 'toasts', 'pass'] as const).filter(isPageEnabled);
+const NAV: readonly PageKey[] = (['home', 'countries', 'toasts', 'pass'] as const).filter(
+  isPageEnabled,
+);
 
 export function SiteHeader({
   locale,
