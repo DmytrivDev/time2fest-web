@@ -177,6 +177,9 @@ function HeroFx({ reduced }: { reduced: boolean }) {
   return <canvas ref={ref} className={h.fx} aria-hidden="true" />;
 }
 
+/** Відео й фото банера — на всю площу, завжди по центру на будь-якій ширині (рішення власника 2026-11-18). */
+const HERO_MEDIA_FIT = { objectFit: 'cover', objectPosition: 'center' } as const;
+
 const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
 
 type Unit = 'days' | 'hours' | 'minutes' | 'seconds';
@@ -226,10 +229,11 @@ export function PrefestHero() {
           loop
           playsInline
           aria-hidden="true"
+          style={HERO_MEDIA_FIT}
         />
       ) : media ? (
         // eslint-disable-next-line @next/next/no-img-element -- статичний експорт
-        <img className={h.fx} src={media.src} alt="" style={{ objectFit: 'cover' }} />
+        <img className={h.fx} src={media.src} alt="" style={HERO_MEDIA_FIT} />
       ) : (
         <HeroFx reduced={reduced} />
       )}
