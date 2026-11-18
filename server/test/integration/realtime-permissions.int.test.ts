@@ -189,15 +189,18 @@ describeRealtime('channel permissions against Centrifugo', () => {
     const got: Record<string, string[]> = {};
     for (const cls of PUBLIC) {
       const key = sampleKey(cls, 'x');
-      const { outcome } = await subscribe(client, name(cls, key), (ctx) =>
-        (got[cls] ??= []).push((ctx.data as RealtimeEnvelope).id),
-      );
+      // A batched class (W30) delivers `{type:'batch', events}`: collect the ids of its events.
+      const { outcome } = await subscribe(client, name(cls, key), (ctx) => {
+        const data = ctx.data as RealtimeEnvelope | { type: 'batch'; events: RealtimeEnvelope[] };
+        (got[cls] ??= []).push(...('events' in data ? data.events.map((e) => e.id) : [data.id]));
+      });
       expect(outcome, cls).toEqual({ state: 'subscribed' });
     }
     for (const cls of PUBLIC) {
       const env = envelope();
+      const batched = channelRegistry.find((r) => r.key === cls)?.batched === true;
       expect((await publisherOf(deps).publish(cls, sampleKey(cls, 'x'), env)).status, cls).toBe(
-        'ok',
+        batched ? 'queued' : 'ok',
       );
       expect(await waitFor(() => (got[cls] ?? []).includes(env.id), 2_000), cls).toBe(true);
     }

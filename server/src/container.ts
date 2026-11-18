@@ -47,6 +47,7 @@ import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
+import type { Scheduler } from './realtime/ports';
 import { isRevertible } from './registries/revertHandlers';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
@@ -131,6 +132,12 @@ function lazyPayload(alarm: Alarm): () => Promise<Payload> {
   };
 }
 
+/** Global timers that never keep the process alive (a CLI exits with a batch still pending). */
+const unrefTimers: Scheduler = {
+  setTimeout: (fn, ms) => setTimeout(fn, ms).unref(),
+  clearTimeout: (handle) => clearTimeout(handle as ReturnType<typeof setTimeout>),
+};
+
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
@@ -187,7 +194,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     prefix: realtime.config.prefix,
     ...(centrifugoApi !== undefined
       ? {
-          publisher: createChannelPublisher({ api: centrifugoApi, rows: channelClassesFor(env.class), prefix: realtime.config.prefix, log }),
+          publisher: createChannelPublisher({ api: centrifugoApi, rows: channelClassesFor(env.class), prefix: realtime.config.prefix, log,
+            // The batcher (AC-37) runs on real time and `unref`'d timers; batch ids are random UUIDs.
+            scheduler: unrefTimers, clock: realClock, makeId: () => crypto.randomUUID() }),
           invalidator: createSubjectInvalidator({ api: centrifugoApi, log }),
         }
       : {}),

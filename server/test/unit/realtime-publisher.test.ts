@@ -15,6 +15,12 @@ import { channelClassesFor } from '../../src/registries/channels';
 const API_KEY = randomBytes(24).toString('hex');
 const PREFIX = 'unit_test_';
 const rows = channelClassesFor('test');
+/** The batcher's timers never fire here: these cases use unbatched classes (batching: realtime-batch.test.ts). */
+const timing = {
+  scheduler: { setTimeout: () => undefined, clearTimeout: () => undefined },
+  clock: { now: () => 0 },
+  makeId: () => 'batch-id-000000000000000000000000000',
+};
 
 type Line = { level: 'info' | 'warn' | 'error'; fields: Record<string, unknown> };
 
@@ -58,7 +64,7 @@ describe('publish port: validation (AC-31)', () => {
   it('an unknown class → validation, 0 API calls, one warn line', async () => {
     const { api, publishes } = stubApi();
     const { log, lines } = capture();
-    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log });
+    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log, ...timing });
     expect(await publisher.publish('nope:class', undefined, env)).toEqual({ status: 'validation' });
     expect(publishes).toHaveLength(0);
     expect(lines).toEqual([{ level: 'warn', fields: { event: 'realtime_publish', class: 'nope:class', events: 1, result: 'validation' } }]);
@@ -66,7 +72,7 @@ describe('publish port: validation (AC-31)', () => {
 
   it('an envelope without id → validation, 0 API calls', async () => {
     const { api, publishes } = stubApi();
-    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log: capture().log });
+    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log: capture().log, ...timing });
     const noId = { type: 'site.state', data: {} } as unknown as RealtimeEnvelope;
     expect(await publisher.publish('site:state', undefined, noId)).toEqual({ status: 'validation' });
     expect(publishes).toHaveLength(0);
@@ -74,7 +80,7 @@ describe('publish port: validation (AC-31)', () => {
 
   it('a 65 537-byte envelope → validation, 0 API calls; 65 536 bytes is published', async () => {
     const { api, publishes } = stubApi();
-    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log: capture().log });
+    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log: capture().log, ...timing });
     const over = envelopeOfSize(65_537);
     expect(Buffer.byteLength(JSON.stringify(over))).toBe(65_537);
     expect(await publisher.publish('site:state', undefined, over)).toEqual({ status: 'validation' });
@@ -85,7 +91,7 @@ describe('publish port: validation (AC-31)', () => {
 
   it('a bad key (key on a fixed class, bad country) → validation, 0 API calls', async () => {
     const { api, publishes } = stubApi();
-    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log: capture().log });
+    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log: capture().log, ...timing });
     expect((await publisher.publish('site:state', 'UA', env)).status).toBe('validation');
     expect((await publisher.publish('chat:country', 'ua:x', env)).status).toBe('validation');
     expect(publishes).toHaveLength(0);
@@ -94,9 +100,10 @@ describe('publish port: validation (AC-31)', () => {
   it('a valid publish → the prefixed channel, the envelope as data, its id as idempotency key; no log line', async () => {
     const { api, publishes } = stubApi();
     const { log, lines } = capture();
-    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log });
-    expect(await publisher.publish('chat:country', 'UA', env)).toEqual({ status: 'ok', offset: 1, epoch: 'e' });
-    expect(publishes).toEqual([{ channel: `chat:${PREFIX}country.UA`, data: env, idempotencyKey: 'ev-1' }]);
+    const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log, ...timing });
+    // `chat:country` is batched since W30 (it returns `queued`); a keyed unbatched class keeps the immediate path.
+    expect(await publisher.publish('notif', 'u1', env)).toEqual({ status: 'ok', offset: 1, epoch: 'e' });
+    expect(publishes).toEqual([{ channel: `notif:${PREFIX}user#u1`, data: env, idempotencyKey: 'ev-1' }]);
     expect(lines).toEqual([]);
   });
 });
@@ -106,7 +113,7 @@ describe('warn lines carry no body, token or key (NFR-5)', () => {
     for (const outcome of [{ status: 'unavailable' }, { status: 'rejected', code: 102 }] as const) {
       const { api } = stubApi(outcome);
       const { log, lines } = capture();
-      const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log });
+      const publisher = createChannelPublisher({ api, rows, prefix: PREFIX, log, ...timing });
       expect(await publisher.publish('site:state', undefined, env)).toEqual({ status: 'unavailable' });
       expect(lines).toHaveLength(1);
       expect(lines[0]?.level).toBe('warn');
@@ -119,7 +126,7 @@ describe('warn lines carry no body, token or key (NFR-5)', () => {
   it('a throwing API never reaches domain code', async () => {
     const api: CentrifugoApi = { publish: () => Promise.reject(new Error('boom')), disconnectUser: () => Promise.reject(new Error('boom')) };
     const { log, lines } = capture();
-    await expect(createChannelPublisher({ api, rows, prefix: PREFIX, log }).publish('site:state', undefined, env)).resolves.toEqual({ status: 'unavailable' });
+    await expect(createChannelPublisher({ api, rows, prefix: PREFIX, log, ...timing }).publish('site:state', undefined, env)).resolves.toEqual({ status: 'unavailable' });
     await expect(createSubjectInvalidator({ api, log }).invalidate('s1')).resolves.toBe('unavailable');
     expect(lines.filter((l) => l.level === 'warn')).toHaveLength(2);
   });

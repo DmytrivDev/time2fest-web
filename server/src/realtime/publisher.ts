@@ -5,13 +5,16 @@
  *
  * Never throws into domain code. Every refusal or failure writes exactly one `warn` line with the class,
  * the event count and the result; never the envelope, a token or a key.
- * In this phase a batched class takes the same immediate path (the batcher replaces it, W30).
+ * A batched class (`batched: true`) is validated the same way, also against the size of a batch of one,
+ * then queued for the batcher (AC-37 … AC-40), and the call returns `queued`.
  */
 import { REALTIME_MAX_PUBLICATION_BYTES } from '@time2fest/contracts';
 import { RealtimeEnvelopeSchema } from '@time2fest/contracts/schemas';
+import { batchOverheadBytes } from '../domain/realtime/batch';
 import { channelName, type ChannelClassRow } from '../domain/realtime/channels';
-import type { Logger } from '../ports';
-import type { CentrifugoApi, ChannelPublisher, PublishResult } from './ports';
+import type { Clock, Logger } from '../ports';
+import { createChannelBatcher } from './batcher';
+import type { CentrifugoApi, ChannelPublisher, PublishResult, Scheduler } from './ports';
 
 export interface ChannelPublisherOptions {
   api: CentrifugoApi;
@@ -20,6 +23,20 @@ export interface ChannelPublisherOptions {
   /** Channel prefix `<slug>_` in `test`; `''` everywhere else. */
   prefix: string;
   log: Logger;
+  /** Timers of the batcher (`unref`'d global timers in the composition root, a manual one in tests). */
+  scheduler: Scheduler;
+  /** Real time for the batch window and spacing. */
+  clock: Clock;
+  /** A fresh batch id (the Centrifugo idempotency key of a batch); ids have one fixed length. */
+  makeId: () => string;
+}
+
+/** The publish port plus the lifecycle of its batcher (tests and shutdown). */
+export interface BatchingChannelPublisher extends ChannelPublisher {
+  /** Resolves when no batch flush is running. */
+  idle(): Promise<void>;
+  /** Clears the batcher's timers; queued events are dropped and later batched publishes are `unavailable`. */
+  stop(): void;
 }
 
 /** Serialized size in bytes, or `undefined` when the value cannot be serialized (a cycle, a `BigInt`). */
@@ -32,8 +49,13 @@ function serializedBytes(value: unknown): number | undefined {
   }
 }
 
-export function createChannelPublisher({ api, rows, prefix, log }: ChannelPublisherOptions): ChannelPublisher {
+export function createChannelPublisher({ api, rows, prefix, log, scheduler, clock, makeId }: ChannelPublisherOptions): BatchingChannelPublisher {
+  const batcher = createChannelBatcher({ api, scheduler, clock, log, makeId });
+  // What a batch costs before its events; a batched event must fit a batch on its own (AC-31).
+  const batchOverhead = batchOverheadBytes(makeId());
   return {
+    idle: () => batcher.idle(),
+    stop: () => batcher.stop(),
     async publish(classKey, key, envelope): Promise<PublishResult> {
       const refuse = (result: 'validation' | 'unavailable', apiCode?: number): PublishResult => {
         log.warn({ event: 'realtime_publish', class: classKey, events: 1, result, ...(apiCode !== undefined ? { apiCode } : {}) });
@@ -47,6 +69,17 @@ export function createChannelPublisher({ api, rows, prefix, log }: ChannelPublis
       if (!RealtimeEnvelopeSchema.safeParse(envelope).success) return refuse('validation');
       const bytes = serializedBytes(envelope);
       if (bytes === undefined || bytes > REALTIME_MAX_PUBLICATION_BYTES) return refuse('validation');
+      if (row.batched) {
+        if (bytes + batchOverhead > REALTIME_MAX_PUBLICATION_BYTES) return refuse('validation');
+        let copy: typeof envelope;
+        try {
+          // A snapshot: domain code may reuse its object before the flush.
+          copy = structuredClone(envelope);
+        } catch {
+          return refuse('validation');
+        }
+        return batcher.enqueue(channel, classKey, copy) ? { status: 'queued' } : refuse('unavailable');
+      }
 
       let outcome;
       try {
