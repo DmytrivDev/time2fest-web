@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ENABLED_ROUTES } from '../../lib/prelaunch/pages.mjs';
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -11,17 +12,8 @@ export const DEFAULT_LOCALE = 'en';
 /** Готовність мов — те саме, що `LOCALE_STATUS` у `i18n/locales.ts` (тест `tests/unit/prelaunch/locales.test.ts` звіряє). */
 export const LOCALE_STATUS = { en: 'draft', uk: 'ready', es: 'pending', fr: 'pending' };
 
-/** Сторінки без мови (шлях зі скісними рисками). */
-export const STATIC_ROUTES = [
-  '/',
-  '/countries/',
-  '/pass/',
-  '/toasts/',
-  '/about/',
-  '/privacy/',
-  '/cookies/',
-  '/terms/',
-];
+/** Сторінки без мови — список дозволених сторінок (`lib/prelaunch/pages.mjs`, спільний із навігацією сайту). */
+export const STATIC_ROUTES = ENABLED_ROUTES;
 
 /** Теки з `public/`, потрібні передстартовому сайту (звуки ефіру й копія завантажувача YouTube — ні). */
 export const PUBLIC_ENTRIES = ['_next', 'brand', 'flags', '_headers'];

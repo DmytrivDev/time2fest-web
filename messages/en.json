@@ -552,14 +552,6 @@
         "title": "New Year Pass for $5 — Time2Fest",
         "description": "Time2Fest New Year Pass: your own schedule and reminders, a chat badge, quiet mode, message translation and a “My New Years” card. $5 one-time, no subscription."
       },
-      "toasts": {
-        "title": "Toasts of the World: greet everyone — Time2Fest",
-        "description": "A Time2Fest toast is a greeting every viewer of the celebration sees. Three levels: $2, $5 and $10. What each one gets you and when you can raise a toast."
-      },
-      "about": {
-        "title": "About Time2Fest — New Year around the world",
-        "description": "Time2Fest shows how the world rings in the New Year: live celebrations from every time zone, 26 hours straight. Who we are and how it works."
-      },
       "privacy": {
         "title": "Privacy Policy — Time2Fest",
         "description": "What data the Time2Fest site collects and why."
@@ -584,7 +576,6 @@
       "countries": "Countries",
       "toasts": "Toasts",
       "pass": "New Year Pass",
-      "about": "About the project",
       "menu": "Menu",
       "menuClose": "Close menu",
       "menuLabel": "Site menu",
@@ -601,7 +592,6 @@
       "countries": "Countries",
       "schedule": "Schedule",
       "map": "Time zone map",
-      "about": "About the project",
       "pass": "New Year Pass",
       "toasts": "Toasts",
       "terms": "Terms",
@@ -614,10 +604,7 @@
     "home": {
       "cardsNote": "So far we have stories about {count, plural, one {# country} other {# countries}}, and we’re adding the rest.",
       "allCountries": "All 246 countries and territories",
-      "passMore": "More about the Pass",
-      "stayTitle": "Stay in touch",
-      "stayText": "Add the world’s first midnight to your calendar so you don’t miss the start of the celebration.",
-      "staySocial": "And for project news, follow us on social media:"
+      "passMore": "More about the Pass"
     },
     "countries": {
       "title": "Countries of the world: when New Year arrives",
@@ -722,66 +709,7 @@
       "q3": "When can I get the Pass?",
       "a3": "Closer to the celebration. We’ll open sales on this page.",
       "q4": "Can I get the Pass as a gift?",
-      "a4": "Yes: the New Year Pass comes as a gift with a $10 toast.",
-      "toastsLink": "What are toasts"
-    },
-    "toasts": {
-      "badge": "Toasts of the World",
-      "title": "A toast the whole world will see",
-      "lead": "While the celebration is on, you can raise a toast: a short greeting that everyone watching the streams sees.",
-      "soon": "Sales open soon",
-      "soonText": "Toasts open along with the celebration, two hours before the world’s first midnight. Payment is through PayPro Global.",
-      "howTitle": "How it works",
-      "h1Title": "Write a greeting",
-      "h1Text": "A ready-made phrase or your own words, up to 120 characters.",
-      "h2Title": "Pick a level",
-      "h2Text": "A glass, a bottle of bubbly or fireworks. The level decides where your toast appears.",
-      "h3Title": "Everyone sees your toast",
-      "h3Text": "It shows up in gold in the “World” chat, and higher levels also appear under the stream and in the midnight greeting.",
-      "tiersTitle": "Three toast levels",
-      "tiersLabel": "Toast levels",
-      "t2Name": "Glass",
-      "t2Price": "$2",
-      "t5Name": "Bottle of bubbly",
-      "t5Price": "$5",
-      "t10Name": "Fireworks",
-      "t10Price": "$10",
-      "b1": "Golden toast in the “World” chat",
-      "b2": "Pinned under the stream until the next midnight",
-      "b3": "Your nickname in the midnight greeting",
-      "b4": "New Year Pass as a gift",
-      "included": "included",
-      "notIncluded": "not included",
-      "rulesTitle": "Rules",
-      "r1": "No links, just words and emoji.",
-      "r2": "We check every toast before it’s shown.",
-      "r3": "A toast is for the whole world. It isn’t tied to a city or country.",
-      "passLink": "What the New Year Pass gives you"
-    },
-    "about": {
-      "title": "About Time2Fest",
-      "lead": "Time2Fest is New Year around the world: midnight travels the planet for 26 hours, and you can catch each one live.",
-      "whatTitle": "What it is",
-      "whatText": "We gather open streams of New Year celebrations from cities, TV channels and webcams, and show them in a schedule, time zone by time zone. From Kiritimati Island through Sydney, Tokyo, Dubai and Kyiv to New York and the Pacific islands.",
-      "howTitle": "How it will work on December 31",
-      "how1Title": "Live streams",
-      "how1Text": "Celebrations from cities in every time zone, one after another, 26 hours straight.",
-      "how2Title": "Country rooms with chat",
-      "how2Text": "Every country has its own room: ring in midnight together, with your name and flag.",
-      "how3Title": "Passport stamps",
-      "how3Text": "Be in a country room at midnight and you get a stamp. Collect your map of New Years.",
-      "how4Title": "Toasts of the World",
-      "how4Text": "Greet the whole world, and every viewer will see your toast.",
-      "freeTitle": "What’s free",
-      "freeText": "Streams, chat, country rooms and stamps are free for everyone. Only the New Year Pass and toasts are paid, and only if you want them. There are no ads.",
-      "nowTitle": "What’s here already",
-      "nowText": "The countdown to the first midnight, the celebration schedule in your time, a map of 38 time zones and country pages. Streams, chat and the rest will appear closer to the celebration.",
-      "whoTitle": "Who we are",
-      "whoText": "Time2Fest is made in Ukraine. It’s an independent project: we don’t run streams of our own, we gather in one place the ones that are already open to everyone.",
-      "contactTitle": "Write to us",
-      "contactText": "Questions, ideas or found a mistake? Write to us:",
-      "seeSchedule": "Celebration schedule",
-      "seeCountries": "All countries"
+      "a4": "Yes: the New Year Pass comes as a gift with a $10 toast."
     },
     "legal": {
       "updated": "Updated: {date}",

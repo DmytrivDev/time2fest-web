@@ -10,6 +10,7 @@ import ft from '@/components/prefest/PrefestFooter.module.css';
 import p from '@/components/prefest/prefest.module.css';
 import { LOCALE_NAMES, type Locale } from '@/i18n/locales';
 import { localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
+import { isRouteEnabled } from '@/lib/prelaunch/pages.mjs';
 import { rememberLocale, useLocaleLinks } from './LangSwitch';
 import s from './site.module.css';
 
@@ -31,7 +32,6 @@ const GROUPS: {
   {
     title: 'groupAbout',
     links: [
-      { key: 'about', path: PAGES.about },
       { key: 'pass', path: PAGES.pass },
       { key: 'toasts', path: PAGES.toasts },
     ],
@@ -75,7 +75,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           {GROUPS.map((g) => (
             <div className={ft.col} key={g.title}>
               <p className={s.footTitle}>{t(g.title)}</p>
-              {g.links.map((l) => (
+              {g.links.filter((l) => l.path.includes('#') || isRouteEnabled(l.path)).map((l) => (
                 <NextLink key={l.key} href={localeHref(locale, l.path)}>
                   {t(l.key)}
                 </NextLink>

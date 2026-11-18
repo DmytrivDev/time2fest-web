@@ -1,5 +1,6 @@
 import { DEFAULT_LOCALE, LOCALES, type Locale } from '@/i18n/locales';
 import { IS_PRELAUNCH_BUILD } from './env';
+import { isRouteEnabled } from './pages.mjs';
 
 /** Сторінки мовного дерева (шлях без мови, зі скісними рисками). */
 export const PAGES = {
@@ -7,7 +8,6 @@ export const PAGES = {
   countries: '/countries/',
   pass: '/pass/',
   toasts: '/toasts/',
-  about: '/about/',
   privacy: '/privacy/',
   cookies: '/cookies/',
   terms: '/terms/',
@@ -40,4 +40,9 @@ export function splitLocalePath(
   const found = m && (LOCALES as readonly string[]).includes(m[1]!) ? (m[1] as Locale) : null;
   if (found) return { locale: found, path: m![2] ?? '/' };
   return { locale: prelaunch ? DEFAULT_LOCALE : 'uk', path: pathname || '/' };
+}
+
+/** Сторінка увімкнена в передстартовому сайті (список дозволених — `lib/prelaunch/pages.mjs`). */
+export function isPageEnabled(key: PageKey): boolean {
+  return isRouteEnabled(PAGES[key]);
 }

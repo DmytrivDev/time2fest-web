@@ -202,8 +202,7 @@ describe('тексти', () => {
         'countries',
         'country',
         'pass',
-        'toasts',
-        'about',
+
         'privacy',
         'cookies',
         'terms',
@@ -253,9 +252,9 @@ describe('документи', () => {
 });
 
 describe('список дозволених сторінок', () => {
-  it('9 видів сторінок: 8 постійних і сторінка кожної країни', () => {
+  it('7 видів сторінок: 6 постійних і сторінка кожної країни', () => {
     const allowed = routes.allowedRoutes();
-    expect(allowed).toHaveLength(8 + Object.keys(COUNTRY_EXTRAS).length);
+    expect(allowed).toHaveLength(6 + Object.keys(COUNTRY_EXTRAS).length);
     expect(allowed).toContain('/country/japan/');
     expect(
       allowed.filter((r: string) =>

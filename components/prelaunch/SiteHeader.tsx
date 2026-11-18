@@ -13,11 +13,12 @@ import { cn } from '@/components/primitives/cn';
 import h from '@/components/prefest/PrefestHeader.module.css';
 import p from '@/components/prefest/prefest.module.css';
 import { LOCALE_NAMES, type Locale } from '@/i18n/locales';
-import { localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
+import { isPageEnabled, localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
 import { LangSwitch, rememberLocale, useLocaleLinks } from './LangSwitch';
 import s from './site.module.css';
 
-const NAV: readonly PageKey[] = ['home', 'countries', 'toasts', 'pass', 'about'];
+/** Пункти шапки — лише увімкнені сторінки (`lib/prelaunch/pages.mjs`); «Про проєкт» прибрано (рішення власника 2026-11-18). */
+const NAV: readonly PageKey[] = (['home', 'countries', 'toasts', 'pass'] as const).filter(isPageEnabled);
 
 export function SiteHeader({
   locale,
