@@ -150,7 +150,7 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     for (const rules of Object.values(all.rulesets)) for (const r of rules) for (const h of MAIN_HOSTS) expect(r.expression).not.toContain(`"${h}"`);
   });
 
-  it('realtime репетиції: ingress лише /connection/ → centrifugo:8000, CNAME, security_level off, не в блок-правилі', () => {
+  it('realtime репетиції: ingress лише /connection/ → centrifugo:8000, CNAME, security_level essentially_off, не в блок-правилі', () => {
     const t = all.tunnels.find((x) => x.env === 'rehearsal');
     const rt = t?.ingress.find((i) => i.hostname === 'rt-rehearsal.time2fest.com');
     expect(rt).toEqual({ hostname: 'rt-rehearsal.time2fest.com', path: '^/connection/', service: 'http://centrifugo:8000' });
@@ -158,7 +158,7 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     expect(all.dns.find((d) => d.name === 'rt-rehearsal.time2fest.com')).toMatchObject({ type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true });
     const rule = (all.rulesets[PHASE_CONFIG] ?? []).find((r) => r.ref === 't2f-realtime-rehearsal');
     expect(rule).toMatchObject({ expression: '(http.host eq "rt-rehearsal.time2fest.com")', action: 'set_config', enabled: true });
-    expect(rule?.action_parameters).toEqual({ security_level: 'off', bic: false });
+    expect(rule?.action_parameters).toEqual({ security_level: 'essentially_off', bic: false });
     for (const r of all.rulesets[PHASE_CUSTOM] ?? []) expect(r.expression).not.toContain('rt-rehearsal');
     expect(JSON.stringify(only)).not.toContain('rt-');
   });

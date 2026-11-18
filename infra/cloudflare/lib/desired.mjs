@@ -124,14 +124,15 @@ export function desiredState(envNames, opts = {}) {
       action_parameters: { security_level: 'under_attack' },
       enabled: (typeof opts.underAttack === 'object' ? opts.underAttack[e.name] : opts.underAttack) ?? e.underAttack,
     })),
-    // Realtime: перевірки браузера й рівень безпеки ламають WebSocket-клієнт (cloudflare-notes §85).
+    // Realtime: перевірки браузера й рівень безпеки ламають WebSocket-клієнт (cloudflare-notes §85). `off` зона
+    // не приймає (PUT фази — 400 на 2026-11-18, план зони без нього) — найнижчий доступний `essentially_off`.
     ...envs.flatMap((e) =>
       realtimeOf(e).map((r) => ({
         ref: `t2f-realtime-${e.name}`,
         description: `t2f: realtime host security off for ${e.name}`,
         expression: `(http.host eq "${r.host}")`,
         action: 'set_config',
-        action_parameters: { security_level: 'off', bic: false },
+        action_parameters: { security_level: 'essentially_off', bic: false },
         enabled: true,
       })),
     ),

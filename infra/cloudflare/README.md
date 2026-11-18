@@ -35,7 +35,7 @@ pnpm infra:cf apply --env test|rehearsal [--secrets-file <шлях>] [--under-at
 
 **Realtime репетиції.** `rt-rehearsal.time2fest.com` — CNAME на тунель `t2f-rehearsal`, ingress `^/connection/` → `http://centrifugo:8000`
 (клієнтський порт Centrifugo; API 9000 тунелю недосяжний). У блок-правило не входить (публічне ім'я); правило налаштувань
-`t2f-realtime-rehearsal` ставить `security_level: off` і вимикає перевірку браузера (cloudflare-notes).
+`t2f-realtime-rehearsal` ставить `security_level: essentially_off` (`off` зона не приймає — 400) і вимикає перевірку браузера (cloudflare-notes).
 
 Правило `t2f-block-tunnel-hosts` блокує прямий доступ до імен тунелів (`o-*`); `admin-rehearsal` у нього не входить —
 його закриває Access і перевірка JWT Access на сервері. Власних правил WAF — 2, конфіг-правил — 3.
