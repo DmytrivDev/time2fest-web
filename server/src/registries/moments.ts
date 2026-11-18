@@ -7,17 +7,38 @@
  *
  * The scheduler groups moments of one instant per action (one call per group), applies the late
  * rule and records exactly-once per (runEpoch, action, momentKey). `run` must be idempotent by
- * `group.consequenceId` and read time only from `group.now`. Empty until the run recorder (SPEC-07
- * W29); subscribers of other waves add their own rows.
+ * `group.consequenceId` and read time only from `group.now`. This wave has exactly one row, the run
+ * recorder (SPEC-07 W29, AC-73: `test` and `rehearsal` only); subscribers of other waves add theirs.
  */
+import { processDeps } from '../adapters/processDeps';
+import { createPayloadRunRecordStore } from '../adapters/payloadRunRecords';
+import { realClock } from '../clock';
 import { appliesIn, assertActionRules } from '../domain/scheduler/plan';
 import type { EnvClass } from '../platform/env';
 import { assertRegistry } from '../platform/registry';
 import type { MomentActionRow } from '../scheduler/ports';
+import { createRunRecorder, type RunRecorderDeps } from '../scheduler/recorder';
 
 export type { MomentActionRow };
 
-export const momentsRegistry: readonly MomentActionRow[] = [];
+let recorderDeps: Promise<RunRecorderDeps> | undefined;
+
+/** The recorder's dependencies over the process deps, resolved once on its first run. */
+function processRecorderDeps(): Promise<RunRecorderDeps> {
+  recorderDeps ??= (async () => {
+    const deps = await processDeps();
+    // Like `registries/imports.ts`: the container is loaded lazily (it imports this registry).
+    const { payloadOf } = await import('../container');
+    const publisher = deps.realtime?.publisher;
+    return { records: createPayloadRunRecordStore(payloadOf(deps)), real: realClock, ...(publisher ? { publisher } : {}) };
+  })();
+  recorderDeps.catch(() => {
+    recorderDeps = undefined;
+  });
+  return recorderDeps;
+}
+
+export const momentsRegistry: readonly MomentActionRow[] = [createRunRecorder(processRecorderDeps)];
 
 assertRegistry('moments', momentsRegistry, (r) => r.key);
 assertActionRules(momentsRegistry);

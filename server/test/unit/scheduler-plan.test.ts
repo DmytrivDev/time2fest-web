@@ -218,8 +218,8 @@ describe('scheduler timing helpers (AC-39)', () => {
 });
 
 describe('moment-action registry (C5, AC-73)', () => {
-  it('starts empty and filters by class', () => {
-    expect(momentsRegistry).toEqual([]);
+  it('holds only the run recorder (SPEC-07 W29) and filters by class', () => {
+    expect(momentsRegistry.map((r) => r.key)).toEqual(['run-recorder']);
     expect(momentActionsFor('production')).toEqual([]);
   });
 
