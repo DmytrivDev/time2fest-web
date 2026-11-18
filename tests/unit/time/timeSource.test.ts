@@ -146,6 +146,34 @@ describe('TimeSource', () => {
     );
   });
 
+  it('AC-2: fetch завжди відмовляє — device-fallback і рівно одне попередження на сеанс', async () => {
+    const ts = new TimeSource(h.deps);
+    ts.start();
+    await vi.waitFor(() => expect(ts.ready).toBe(true));
+    for (let i = 0; i < 3; i++) {
+      const retry = pending(h).find((t) => t.ms !== 10 * 60_000)!;
+      await fire(h, retry);
+      await vi.waitFor(() => expect(pending(h).some((t) => t.ms !== 10 * 60_000)).toBe(true));
+    }
+    expect(ts.status).toBe('device-fallback');
+    expect(h.warn).toHaveBeenCalledTimes(1);
+    ts.stop();
+  });
+
+  it('AC-3: після вдалого заміру відмови не змінюють стан server і now()', async () => {
+    h.plan.push([10, 10], [10, 10], [10, 10], [10, 10], [10, 10]);
+    const ts = new TimeSource(h.deps);
+    await ts.sync();
+    const a = ts.anchor!;
+    expect(await ts.sync()).toBe(false);
+    expect(await ts.sync(1)).toBe(false);
+    expect(ts.status).toBe('server');
+    expect(ts.anchor).toBe(a);
+    h.clock.perf += 5_000;
+    expect(ts.now()).toBeCloseTo(a.server + (h.clock.perf - a.perf), 6);
+    expect(h.warn).not.toHaveBeenCalled();
+  });
+
   it('експонентна пауза 5 → 10 → 20 → 60 с, після успіху — сервер', async () => {
     const ts = new TimeSource(h.deps);
     ts.start();

@@ -13,7 +13,7 @@ import { createClock, type Clock } from './clock';
 import { createAppTimeSource } from './params';
 import { installTestApi } from './testApi';
 import { TimeMachine } from './timeMachine';
-import type { TimeSourceLike } from './types';
+import type { MachineLike, TimeSourceLike } from './types';
 
 export interface TimeOverride {
   at: ISO | number;
@@ -32,7 +32,7 @@ export interface TimeProviderProps {
 
 interface TimeContextValue {
   source: TimeSourceLike;
-  machine: TimeMachine | null;
+  machine: MachineLike | null;
   clock: Clock;
 }
 
@@ -40,7 +40,7 @@ const TimeContext = createContext<TimeContextValue | null>(null);
 
 interface Setup {
   source: TimeSourceLike;
-  machine: TimeMachine | null;
+  machine: MachineLike | null;
   activate: () => () => void;
 }
 
@@ -80,7 +80,10 @@ export function TimeProvider({ children, override, source }: TimeProviderProps) 
     setRecordingClock(() => state.source.now());
     const offJump = state.machine?.subscribe(notifyRecordingResync);
     const deactivate = state.activate();
-    const uninstall = IS_TEST_BUILD && state.machine ? installTestApi(state.machine) : undefined;
+    // `window.__t2f` — лише там, де є машина часу (`HAS_TIME_MACHINE`: тестова збірка, крім репетиції, SPEC-07 AC-58).
+    // Клас — прямим `process.env`: збирач відсікає гілку, а тести підміняють `@/lib/env` двома константами.
+    const hasMachine = IS_TEST_BUILD && process.env.NEXT_PUBLIC_SITE_CLASS !== 'rehearsal';
+    const uninstall = hasMachine && state.machine ? installTestApi(state.machine) : undefined;
     return () => {
       offJump?.();
       deactivate();
@@ -130,8 +133,8 @@ export function useClock(): Clock {
   return useTimeContext().clock;
 }
 
-/** «Машина часу», якщо вона діє (тестова збірка або `override`), інакше `null`. */
-export function useTimeMachine(): TimeMachine | null {
+/** «Машина часу» (локальна чи серверна), якщо вона діє (тестова збірка або `override`), інакше `null`. */
+export function useTimeMachine(): MachineLike | null {
   return useTimeContext().machine;
 }
 

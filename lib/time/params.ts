@@ -4,9 +4,10 @@
  * машини константою `IS_TEST_BUILD`.
  */
 import { IS_DEMO_BUILD, IS_TEST_BUILD } from '@/lib/env';
+import { ServerTimeMachine } from './serverTimeMachine';
 import { DEFAULT_START_MS, DEMO_START_MS, MACHINE_STORAGE_KEY, sanitizeSpeed, TimeMachine } from './timeMachine';
 import { TimeSource } from './TimeSource';
-import type { TimeSourceLike } from './types';
+import type { MachineLike, TimeSourceLike } from './types';
 
 export interface MachineParams {
   at?: number;
@@ -161,16 +162,67 @@ export function safeSessionStorage(): Storage | null {
 
 export interface AppTimeSource {
   source: TimeSourceLike;
-  machine: TimeMachine | null;
+  machine: MachineLike | null;
   start: MachineStart | null;
   /** Підключити збереження/адресу (для машини) і запустити синхронізацію (для сервера). */
   activate(): () => void;
 }
 
+/** Прибирає `t` і `speed` з адреси: стан уже на сервері, оновлення сторінки бере його з дверцят (AC-59), а не перезаписує. */
+function dropMachineParams(win: Window): void {
+  try {
+    const url = new URL(win.location.href);
+    if (!url.searchParams.has('t') && !url.searchParams.has('speed')) return;
+    url.searchParams.delete('t');
+    url.searchParams.delete('speed');
+    win.history.replaceState(win.history.state, '', url.toString());
+  } catch {
+    // без адреси — не критично
+  }
+}
+
+/**
+ * Інтеграційна збірка (SPEC-07): машина на тестовому годиннику сервера. Дійсні `?t=` / `?speed=` — один `POST`
+ * (AC-60); недійсні — `[time-machine]` попередження й жодного `POST` (AC-62); без них — стан дверцят (AC-59), без сховища.
+ */
+function createServerMachineSource(win: Window): AppTimeSource {
+  const p = parseMachineParams(win.location.search);
+  for (const w of p.warnings) console.warn(`[time-machine] ${w}`);
+  const initial =
+    p.warnings.length > 0
+      ? undefined
+      : p.at !== undefined
+        ? { at: p.at, speed: p.speed ?? 1 }
+        : p.speed !== undefined
+          ? { speed: p.speed }
+          : undefined;
+  const machine = new ServerTimeMachine({
+    endpoint: '/api/_test/clock',
+    onUnreachable: () => console.warn('[time-machine] /api/_test/clock недоступний, повтор під час опитування'),
+  });
+  return {
+    source: machine,
+    machine,
+    start: null,
+    activate: () => {
+      machine.start(initial);
+      if (initial) dropMachineParams(win);
+      return () => machine.stop();
+    },
+  };
+}
+
 /** Джерело часу для сайту: у тестовій збірці — машина часу, інакше — серверний `TimeSource`. */
 export function createAppTimeSource(): AppTimeSource {
-  // Будь-яка тестова збірка, і `sim`, і інтеграційна (test + http): машина часу клієнта; узгодження з годинником сервера — ШВ-03, SPEC-07 (FR-CLK-15).
-  if (IS_TEST_BUILD && typeof window !== 'undefined') {
+  // Класи збірки читаються з `process.env` напряму: збирач підставляє літерали й відсікає гілки (AC-58, NFR-3),
+  // а наявні тести підміняють `@/lib/env` лише двома константами. Репетиція (test + http, `rehearsal`) — без машини.
+  const machineBuild = IS_TEST_BUILD && process.env.NEXT_PUBLIC_SITE_CLASS !== 'rehearsal';
+  if (machineBuild && typeof window !== 'undefined') {
+    // Інтеграційна збірка (test + http): машина на тестовому годиннику сервера (SPEC-07, FR-CLK-15).
+    if (process.env.NEXT_PUBLIC_ENV === 'test' && process.env.NEXT_PUBLIC_API_MODE === 'http') {
+      return createServerMachineSource(window);
+    }
+    // `sim` (тестова й демо): локальна машина часу, як до SPEC-07 (AC-63).
     // Демо: час спільний для вкладок і переживає закриття (localStorage, «Скинути стан гостя» його стирає), адреса — без `t`.
     const storage = IS_DEMO_BUILD ? safeLocalStorage() : safeSessionStorage();
     const start = resolveMachineStart({
