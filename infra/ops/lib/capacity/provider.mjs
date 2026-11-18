@@ -13,9 +13,13 @@
  *   tags: string[],
  *   publicIp: string | null,
  *   diskGb: number,
- * }} Node `diskGb` — щоб контракт бачив: зміна розміру не чіпає диска (AC-48).
+ *   privateIp?: string | null,
+ *   vpcId?: string | null,
+ * }} Node `diskGb` — щоб контракт бачив: зміна розміру не чіпає диска (AC-48). `privateIp`/`vpcId` — адреса й мережа
+ *   VPC (O·P18a: другий вузол сервера в тій самій VPC, що й основний).
  * @typedef {{ slug: string, vcpus: number, memoryMb: number, diskGb: number, priceHourly: number }} Size
- * @typedef {{ name: string, region: string, size: string, tags: string[] }} NodeSpec
+ * @typedef {{ name: string, region: string, size: string, tags: string[], vpcId?: string }} NodeSpec `vpcId` — у яку VPC
+ *   (без нього — типова VPC регіону).
  * @typedef {{ keepDisk: boolean, requireTags: string[] }} ResizeOpts `keepDisk: true` — лише CPU/RAM, диск не змінюється
  *   (зміну можна повернути); `requireTags` — теги, які вузол мусить мати в момент дії (див. `assertNodeTags`).
  * @typedef {{ requireTags: string[] }} DeleteOpts
@@ -37,7 +41,8 @@
  *   region: string,
  *   main: { offSeason: string, allowed: string[] },
  *   realtime: { size: string },
- * }} EnvSizes Розміри середовища: залежать від провайдера, тому живуть у його конфігурації.
+ *   server2?: { size: string, allowed: string[] },
+ * }} EnvSizes `server2` — тимчасовий другий вузол сервера (лише репетиція, O·P18a); немає — дії server2 відмовляють. Розміри середовища: залежать від провайдера, тому живуть у його конфігурації.
  * @typedef {{ name: string, provider: Provider, envSizes: Record<string, EnvSizes> }} ProviderBundle
  */
 

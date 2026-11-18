@@ -17,6 +17,7 @@ import { DO_API, DO_ENV, DO_IMAGE, DO_LOCAL_BASE, DO_TIMEOUTS, ENV_SIZES } from 
 
 const RE_ID = /^\d{1,20}$/;
 const RE_FINGERPRINT = /^(?:[0-9a-f]{2}:){15}[0-9a-f]{2}$/;
+const RE_VPC = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const REQUEST_TIMEOUT_MS = 30_000;
 const MAX_PAGES = 50;
 
@@ -54,6 +55,7 @@ export function retryAfterOf(headers, nowMs) {
 export function toNode(d) {
   const v4 = Array.isArray(d?.networks?.v4) ? d.networks.v4 : [];
   const pub = v4.find((/** @type {any} */ n) => n?.type === 'public');
+  const priv = v4.find((/** @type {any} */ n) => n?.type === 'private');
   const status = d?.status === 'active' || d?.status === 'new' ? d.status : 'off';
   return {
     id: String(d.id),
@@ -63,6 +65,8 @@ export function toNode(d) {
     tags: Array.isArray(d.tags) ? d.tags.map(String) : [],
     publicIp: typeof pub?.ip_address === 'string' ? pub.ip_address : null,
     diskGb: Number(d.disk ?? 0),
+    privateIp: typeof priv?.ip_address === 'string' ? priv.ip_address : null,
+    vpcId: typeof d?.vpc_uuid === 'string' && d.vpc_uuid !== '' ? d.vpc_uuid : null,
   };
 }
 
@@ -211,10 +215,12 @@ export function createDigitalOcean(o) {
       if (!RE_FINGERPRINT.test(key) && !RE_ID.test(key)) {
         throw new Error(`${DO_ENV.sshKey}: потрібен відбиток ключа SSH (aa:bb:…, 16 пар) або його числовий id`);
       }
+      if (spec.vpcId !== undefined && !RE_VPC.test(spec.vpcId)) throw new Error('createNode: недопустимий id VPC');
       const json = await request(
         'POST',
         '/v2/droplets',
         {
+          ...(spec.vpcId !== undefined ? { vpc_uuid: spec.vpcId } : {}),
           name: spec.name,
           region: spec.region,
           size: spec.size,

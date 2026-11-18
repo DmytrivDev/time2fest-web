@@ -16,7 +16,9 @@
 | `pnpm node:bootstrap -- --host <IPv4\|ім’я>` | підготувати новий вузол (лише `rehearsal`) | `[--secrets-file <шлях>]` |
 | `pnpm edge:secret -- --env rehearsal` | згенерувати секрети репетиції або замінити секрет краю | рівно один із `--generate`, `--rotate`; `[--target local\|<хост>] [--probe] [--secrets-file <шлях>]` |
 | `pnpm edge:move-domain -- --name <ім’я> --to <worker>` | перенести ім’я між двома Worker’ами | `[--confirm <env>] [--allow-main-domain] [--take-domain-from <worker\|dns>] [--emergency] [--secrets-file <шлях>]` |
-| `pnpm capacity -- --env <rehearsal\|production>` | потужність вузлів провайдера | дія: `plan`, `night --size <розмір>`, `back`, `off-season`, `realtime-create`, `realtime-delete`, `status`; `[--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
+| `pnpm capacity -- --env <rehearsal\|production>` | потужність вузлів провайдера | дія: `plan`, `night --size <розмір>`, `back`, `off-season`, `realtime-create`, `realtime-delete`, `status`, `server2-create [--size <розмір>]`, `server2-delete` (дві останні — лише `rehearsal`); `[--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
+| `node infra/ops/ops.mjs private-db --env rehearsal --target <основний>` | тимчасовий доступ другого вузла до Postgres і Redis основного | дія: `open --peer <приватна IPv4>` або `close` |
+| `node infra/ops/ops.mjs server2 --env rehearsal --target <основний>` | другий екземпляр сервера на тимчасовому вузлі | дія: `up` або `down`; `[--secrets-file <шлях>]` |
 
 `pnpm infra:cf …` (тунель, DNS, правила, Access) описано окремо в `infra/cloudflare/README.md`.
 
@@ -191,6 +193,69 @@ git. Робочі (production) значення вводить власник с
 - Змінює лише ресурси з обома тегами `t2f-managed` і `t2f-env-<env>`; основний вузол має ще `t2f-role-main`.
 - Помилка провайдера чи ліміт частоти — зупинка з переліком виконаного; повторний запуск не повторює виконане.
 - Журнал потужності — окремий файл `infra/ops/.local/<env>/capacity.jsonl`.
+- `server2-create` / `server2-delete` — тимчасовий другий вузол сервера, лише `rehearsal` (див. наступний розділ).
+
+## Другий вузол репетиції (навчання «два сервери»)
+
+Рішення власника 2026-11-18 (O·P18a): навчання «два сервери» йде на двох вузлах — основному `t2f-main` (postgres, redis,
+centrifugo, server, cloudflared) і **тимчасовому** другому, де працює лише другий контейнер `server`. Тунель і Worker
+лишаються на основному; публічного входу на другий вузол немає. Оренда планувальника (рядок у Postgres) — одна на обидва.
+
+**Межі згоди власника (не перевищувати):** один `s-1vcpu-2gb` у FRA1, роль — другий сервер, теги `t2f-managed` і
+`t2f-env-rehearsal` (плюс тег ролі `t2f-role-server2`), **не довше 3 годин**, створити й **ВИДАЛИТИ** після навчання.
+
+Що роблять команди:
+
+- `capacity server2-create` — один вузол з тегами `t2f-managed`, `t2f-env-rehearsal`, `t2f-role-server2`, у VPC і регіоні
+  основного, розмір `s-1vcpu-2gb` (інший — лише `--size` з переліку адаптера); ціна за годину друкується в плані до
+  `--confirm`. Підготовка — та сама, що для вузла realtime: `deploy`, Docker, ufw (вхідний лише `22/tcp`), підкачка;
+  каталог `/srv/t2f/rehearsal-server2`. Нічого не запускає. Якщо вузол уже є й підготовлений — відмова (код 2).
+- `private-db open --peer <приватна IPv4 другого вузла>` — на основному вузлі окремий проєкт Compose
+  `t2f-rehearsal-private-db` (`node/compose.private-db.yml`) з крихітним проксі (образ сервера, що вже на вузлі; лише
+  `node:net`): Docker публікує 5432 і 6379 **лише на приватній адресі VPC основного** (не `0.0.0.0`, не публічна), проксі
+  приймає з’єднання лише від `--peer`, решту закриває одразу. Postgres і Redis **не перезапускаються — простою немає**.
+  Адреса VPC читається з вузла (інтерфейс з приватною адресою поза маршрутом за замовчуванням); `--peer` мусить бути
+  RFC 1918 і в цій мережі — інакше відмова (код 2) до будь-якої зміни. Порт API Centrifugo (9000) не відкривається.
+  Крок завершується перевіркою з вузла: `ss -Htln` і `docker compose port` — порти слухаються лише на приватній адресі.
+  Невдача будь-якого кроку — автоматичний `close`.
+- `private-db close` — прибирає контейнер, мережу й файли проксі (`compose.private-db.yml`, `private-db.env`,
+  `private-db-proxy.mjs`) і перевіряє, що 5432/6379 на вузлі не слухаються; ідемпотентне. Стан вузла — як до `open`.
+- `server2 up` — бере образ, що **зараз працює на основному** (`current.env` там; розбіжність з журналом розгортань —
+  попередження), будує/бере його локально й доставляє на другий вузол так само, як `deploy` (`docker save | gzip` →
+  `docker load`); туди ж `compose.server2.yml` (як `compose.yml`) і похідний `server.env`: з `.local/rehearsal/server.env`
+  міняються **лише хости** `DATABASE_URI`, `REDIS_URL`, `T2F_CENTRIFUGO_URL` на приватну адресу основного (копія —
+  `.local/rehearsal/server2.env`, значення не друкуються). Міграцій немає; з основного вузла — лише читання. Відмова
+  (код 2), якщо `private-db` не відкрито саме для приватної адреси цього вузла.
+- `server2 down` — прибирає контейнер і мережі проєкту `t2f-rehearsal-server2`, `server.env` на вузлі й
+  `.local/rehearsal/server2.env`; ідемпотентне.
+- `capacity server2-delete` — видаляє **лише** вузол з усіма трьома тегами (провайдер ще раз перевіряє теги в момент
+  видалення); основний вузол — ніколи, ім’я саме нічого не обирає; після видалення друкує, що лишилося.
+- Журнал навчання — `infra/ops/.local/rehearsal/server2.jsonl` (`private-db` і `server2`), потужності — `capacity.jsonl`.
+
+Сервер на другому вузлі не досягає Centrifugo (9000 не відкрито): публікації з нього не доходять до клієнтів і кожна
+чекає тайм-аут адаптера (1,8 с) — сервер від цього не падає (адаптер Centrifugo ніколи не кидає). Події, які під час
+навчання шле власник оренди на другому вузлі, клієнти не побачать — це врахувати в сценарії навчання.
+
+Порядок живого запуску (`<main>` — публічна адреса основного вузла, `<peer>` — приватна адреса другого з `status`):
+
+```sh
+node infra/ops/ops.mjs capacity --env rehearsal status                           # до: розбіжностей немає, другого вузла немає
+node infra/ops/ops.mjs capacity --env rehearsal server2-create                   # план і ціна; далі те саме з --confirm rehearsal
+node infra/ops/ops.mjs capacity --env rehearsal server2-create --confirm rehearsal
+node infra/ops/ops.mjs capacity --env rehearsal status                           # приватна адреса другого вузла → <peer>
+node infra/ops/ops.mjs private-db --env rehearsal --target <main> open --peer <peer>
+node infra/ops/ops.mjs server2 --env rehearsal --target <main> up
+#   … навчання «два сервери» …
+node infra/ops/ops.mjs server2 --env rehearsal --target <main> down
+node infra/ops/ops.mjs private-db --env rehearsal --target <main> close
+node infra/ops/ops.mjs capacity --env rehearsal server2-delete --confirm rehearsal
+node infra/ops/ops.mjs capacity --env rehearsal status                           # після: другого вузла немає
+```
+
+Перевірити ззовні (з машини оператора, не з VPC) **до `open` і після `close`, а також під час навчання**: порти 5432 і 6379
+закриті з інтернету на обох вузлах — `nc -vz -w 3 <публічна адреса> 5432` і `… 6379` не з’єднуються (для основного й для
+другого вузла). Під час навчання з другого вузла `nc -vz -w 3 <приватна адреса основного> 5432` з’єднується. Таймер
+3 годин іде від `server2-create`; якщо щось пішло не так — однаково `down` → `close` → `server2-delete`.
 
 ## Перенесення імені між Worker’ами
 

@@ -1,5 +1,8 @@
 // @ts-check
-import { readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const read = (/** @type {string} */ name) =>
@@ -200,3 +203,109 @@ describe('node compose.realtime.yml', () => {
     expect(c.services.cloudflared.some((l) => /restart:\s*unless-stopped/.test(l))).toBe(true);
   });
 });
+
+// --- O·P18a: другий вузол репетиції (навчання «два сервери») ---
+describe('node compose.server2.yml', () => {
+  const c = parse(read('compose.server2.yml'));
+  const main = parse(read('compose.yml'));
+
+  it('only server: same image variable, server.env, no cloudflared, no ports, egress only', () => {
+    expect(Object.keys(c.services)).toEqual(['server']);
+    expect(c.lines.filter((l) => /^\s*ports:/.test(l))).toEqual([]);
+    const body = c.services.server.join('\n');
+    expect(body).toContain('image: t2f-server:${T2F_SERVER_SHA:?set by ops}');
+    expect(body).toMatch(/env_file: server\.env/);
+    expect(body).toMatch(/mem_limit: 1536m/);
+    expect(networksOf(c.services.server)).toEqual(['egress']);
+    expect(c.networks).toEqual({ egress: false });
+  });
+
+  it('environment and healthcheck are the same as the main node server', () => {
+    /** @param {string[]} b @param {string} key */
+    const block = (b, key) => {
+      const i = b.findIndex((l) => l === `    ${key}:`);
+      const out = [];
+      for (const l of b.slice(i + 1)) {
+        if (!/^ {6}/.test(l)) break;
+        out.push(l);
+      }
+      return out;
+    };
+    for (const key of ['environment', 'healthcheck']) expect(block(c.services.server, key)).toEqual(block(main.services.server, key));
+  });
+});
+
+describe('node compose.private-db.yml', () => {
+  const text = read('compose.private-db.yml');
+  const c = parse(text);
+
+  it('one proxy service; postgres/redis are not redeclared; ports only on the private address', () => {
+    expect(Object.keys(c.services)).toEqual(['private-db']);
+    const ports = c.services['private-db'].filter((l) => /^ {6}- "/.test(l) && /:\d+"$/.test(l)).map((l) => l.trim());
+    expect(ports).toEqual(['- "${T2F_PRIVATE_ADDR:?set by ops}:5432:5432"', '- "${T2F_PRIVATE_ADDR:?set by ops}:6379:6379"']);
+    const live = c.lines.join('\n'); // без коментарів
+    expect(live).not.toMatch(/0\.0\.0\.0/);
+    // Ні голого "5432:5432" (усі адреси), ні публічної адреси — лише змінна приватної.
+    expect(live).not.toMatch(/^\s*- ["']?(5432|6379):(5432|6379)["']?\s*$/m);
+    expect(ports.every((p) => p.startsWith('- "${T2F_PRIVATE_ADDR:?'))).toBe(true);
+    expect(live).not.toMatch(/9000/);
+    expect(c.services['private-db'].join('\n')).toMatch(/restart: "no"/);
+  });
+
+  it('joins the main project backend as external and its own network to publish', () => {
+    expect(networksOf(c.services['private-db'])).toEqual(['backend', 'private-db']);
+    expect(text).toMatch(/backend:\n {4}external: true\n {4}name: \$\{T2F_BACKEND_NETWORK:\?set by ops\}/);
+  });
+});
+
+describe('docker compose config (O·P18a files)', () => {
+  const docker = spawnSync('docker', ['compose', 'version'], { encoding: 'utf8' });
+  const hasDocker = docker.status === 0;
+
+  /**
+   * `docker compose config --format json` у тимчасовій теці з порожніми файлами змінних.
+   * @param {string} file
+   * @param {Record<string, string>} env
+   */
+  const config = (file, env) => {
+    const dir = mkdtempSync(join(tmpdir(), 't2f-compose-'));
+    try {
+      writeFileSync(join(dir, file), read(file));
+      writeFileSync(join(dir, 'server.env'), '');
+      writeFileSync(join(dir, 'private-db-proxy.mjs'), '');
+      const r = spawnSync('docker', ['compose', '-p', 't2f-check', '-f', join(dir, file), 'config', '--format', 'json'], {
+        encoding: 'utf8',
+        env: { ...process.env, ...env },
+      });
+      return { status: r.status, json: r.status === 0 ? JSON.parse(r.stdout) : null, stderr: r.stderr };
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  it.skipIf(!hasDocker)('compose.server2.yml validates and publishes nothing', () => {
+    const r = config('compose.server2.yml', { T2F_SERVER_SHA: 'c'.repeat(40), T2F_ENV: 'rehearsal' });
+    expect(r.status, r.stderr).toBe(0);
+    expect(Object.keys(r.json.services)).toEqual(['server']);
+    expect(r.json.services.server.ports).toBeUndefined();
+  });
+
+  it.skipIf(!hasDocker)('compose.private-db.yml validates; every published port is bound to the private address', () => {
+    const r = config('compose.private-db.yml', {
+      T2F_SERVER_SHA: 'c'.repeat(40),
+      T2F_PRIVATE_ADDR: '10.114.0.2',
+      T2F_PRIVATE_DB_PEER: '10.114.0.3',
+      T2F_BACKEND_NETWORK: 't2f-rehearsal_backend',
+    });
+    expect(r.status).toBe(0);
+    const ports = r.json.services['private-db'].ports;
+    expect(ports.map((/** @type {any} */ p) => `${p.host_ip}:${p.published}:${p.target}`)).toEqual(['10.114.0.2:5432:5432', '10.114.0.2:6379:6379']);
+    expect(r.json.networks.backend).toMatchObject({ external: true, name: 't2f-rehearsal_backend' });
+  });
+
+  it.skipIf(!hasDocker)('compose.private-db.yml without the private address does not validate', () => {
+    const r = config('compose.private-db.yml', { T2F_SERVER_SHA: 'c'.repeat(40), T2F_PRIVATE_DB_PEER: '10.114.0.3', T2F_BACKEND_NETWORK: 'x' });
+    expect(r.status).not.toBe(0);
+  });
+});
+// --- кінець O·P18a ---

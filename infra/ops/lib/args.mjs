@@ -48,6 +48,8 @@ const V = {
   size: { check: (v) => RE_SIZE.test(v), expect: 'a-z, 0-9, дефіс, до 40 символів' },
   path: { check: isLocalPath, expect: 'шлях до файлу' },
   holder: { check: (v) => v === 'dns' || RE_WORKER.test(v), expect: '`dns` або ім’я Worker’а, що зараз тримає ім’я', lower: true },
+  // O·P18a: приватна адреса другого вузла (RFC 1918 і мережу VPC перевіряє `private-db` до будь-якої зміни).
+  peer: { check: (v) => isIPv4(v), expect: 'IPv4-адреса (приватна адреса другого вузла у VPC)' },
 };
 
 /**
@@ -103,8 +105,31 @@ export const SUBCOMMAND_SPECS = {
     // `--emergency` — зміна потужності production у вікні заморозки (AC-23); `plan`/`status` заморозка не чіпає.
     bools: ['--allow-main-domain', '--emergency', '--probe'],
     required: ['--env'],
-    positional: ['plan', 'night', 'back', 'off-season', 'realtime-create', 'realtime-delete', 'status'],
+    positional: [
+      'plan', 'night', 'back', 'off-season', 'realtime-create', 'realtime-delete', 'status',
+      // --- O·P18a: другий вузол сервера (лише rehearsal; production відмовляє `capacity`) ---
+      'server2-create', 'server2-delete',
+      // --- кінець O·P18a ---
+    ],
   },
+  // --- O·P18a: навчання «два сервери» на репетиції ---
+  // `--target` — основний вузол (адреса чи ім’я, не `local`); `--peer` — приватна адреса другого вузла (лише `open`).
+  'private-db': {
+    envs: ['rehearsal'],
+    values: { '--target': V.host, '--peer': V.peer },
+    bools: [],
+    required: ['--env', '--target'],
+    positional: ['open', 'close'],
+  },
+  // `--target` — основний вузол (звідти — поточний образ і приватна адреса); другий вузол — з провайдера за тегами.
+  server2: {
+    envs: ['rehearsal'],
+    values: { '--target': V.host, '--secrets-file': V.path },
+    bools: [],
+    required: ['--env', '--target'],
+    positional: ['up', 'down'],
+  },
+  // --- кінець O·P18a ---
 };
 
 /**

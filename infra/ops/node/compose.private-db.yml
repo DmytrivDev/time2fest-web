@@ -1,0 +1,38 @@
+# Тимчасовий приватний доступ до Postgres і Redis основного вузла репетиції (O·P18a, навчання «два сервери»).
+# Окремий проєкт Compose (`-p t2f-<env>-private-db`), не накладка на compose.yml: postgres і redis не
+# перестворюються, а `ops private-db close` прибирає лише цей проєкт — стан вузла стає таким, як був.
+# Проксі (образ сервера, що вже на вузлі; лише node:net) у мережі backend проєкту вузла; Docker публікує його
+# порти ЛИШЕ на приватній адресі VPC основного вузла (не 0.0.0.0, не публічна адреса). Docker обходить ufw, тож
+# фільтр — у самому проксі: з’єднання приймається лише від T2F_PRIVATE_DB_PEER (другий вузол), решта
+# закривається одразу, без з’єднання з базою. Змінні інтерполяції — у private-db.env (пише ops).
+services:
+  private-db:
+    image: t2f-server:${T2F_SERVER_SHA:?set by ops}
+    # Тимчасово: після перезавантаження вузла доступ не повертається сам.
+    restart: "no"
+    entrypoint: ["node", "/opt/t2f/private-db-proxy.mjs"]
+    environment:
+      T2F_PROXY_PEER: ${T2F_PRIVATE_DB_PEER:?set by ops}
+      T2F_PROXY_ROUTES: "5432=postgres:5432,6379=redis:6379"
+    volumes:
+      - ./private-db-proxy.mjs:/opt/t2f/private-db-proxy.mjs:ro
+    ports:
+      - "${T2F_PRIVATE_ADDR:?set by ops}:5432:5432"
+      - "${T2F_PRIVATE_ADDR:?set by ops}:6379:6379"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    networks:
+      - backend
+      - private-db
+
+# backend — мережа проєкту основного вузла (internal, там postgres і redis); private-db — власна мережа проксі,
+# без неї Docker не публікує порти контейнера з лише internal-мережами. Обидві зникають з `close`, крім backend.
+networks:
+  backend:
+    external: true
+    name: ${T2F_BACKEND_NETWORK:?set by ops}
+  private-db: {}

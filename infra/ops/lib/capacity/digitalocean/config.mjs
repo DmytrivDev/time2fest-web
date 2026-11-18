@@ -14,6 +14,8 @@ export const ENV_SIZES = {
     region: 'fra1',
     main: { offSeason: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb', 's-2vcpu-4gb', 's-4vcpu-8gb'] },
     realtime: { size: 's-2vcpu-4gb' },
+    // O·P18a (рішення власника 2026-11-18): тимчасовий другий вузол сервера для навчання «два сервери» — 1 vCPU / 2 GB.
+    server2: { size: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb', 's-2vcpu-4gb'] },
   },
   // SPEC-23 sets final night sizes.
   production: {

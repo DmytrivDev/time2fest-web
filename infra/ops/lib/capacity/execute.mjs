@@ -5,8 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { messageOf } from '../common.mjs';
 import { ENVS } from '../config.mjs';
-import { envTag, label, ROLE_REALTIME, TAG_MANAGED } from './plan.mjs';
-import { prepareRealtime } from './prepareRealtime.mjs';
+import { envTag, label, ROLE_REALTIME, ROLE_SERVER2, TAG_MANAGED } from './plan.mjs';
+import { prepareRealtime, prepareServer2 } from './prepareRealtime.mjs';
 
 export const JOURNAL_NAME = 'capacity.jsonl';
 const HEALTH_WAIT_MS = 300_000;
@@ -82,15 +82,17 @@ export async function execute(ctx, o) {
           probed = probe?.stop();
         }
       } else if (s.kind === 'create') {
-        created = await o.bundle.provider.createNode({ name: s.name, region: s.region, size: s.size, tags: s.tags });
+        created = await o.bundle.provider.createNode({ name: s.name, region: s.region, size: s.size, tags: s.tags, ...(s.vpcId ? { vpcId: s.vpcId } : {}) });
       } else if (s.kind === 'prepare') {
         const nodeId = s.nodeId ?? created?.id;
-        const node = nodeId ? (await o.bundle.provider.listNodes([TAG_MANAGED, envTag(o.env), ROLE_REALTIME])).find((n) => n.id === nodeId) : undefined;
-        if (!node) throw new Error(`вузол realtime ${s.name} не знайдено`);
-        await prepareRealtime(ctx, node, o.composeText, o.clock);
+        const role = s.role === 'server2' ? ROLE_SERVER2 : ROLE_REALTIME;
+        const node = nodeId ? (await o.bundle.provider.listNodes([TAG_MANAGED, envTag(o.env), role])).find((n) => n.id === nodeId) : undefined;
+        if (!node) throw new Error(`вузол ${s.role === 'server2' ? 'другого сервера' : 'realtime'} ${s.name} не знайдено`);
+        if (s.role === 'server2') await prepareServer2(ctx, node, o.clock);
+        else await prepareRealtime(ctx, node, o.composeText, o.clock);
         s.nodeId = node.id;
       } else {
-        await o.bundle.provider.deleteNode(s.node.id, { requireTags: [TAG_MANAGED, envTag(o.env)] });
+        await o.bundle.provider.deleteNode(s.node.id, { requireTags: [TAG_MANAGED, envTag(o.env), ...(s.requireRole ? [s.requireRole] : [])] });
       }
     } catch (e) {
       const rec = stepRecord(s, created);
