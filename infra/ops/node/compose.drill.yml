@@ -1,0 +1,28 @@
+# Навчання планувальника на одному вузлі (SPEC-07 W56, `ops scheduler-drill --mode one-node`): другий екземпляр
+# сервера поруч з основним, той самий образ і ті самі змінні. Накладається на compose.yml того самого проєкту:
+#   docker compose -p t2f-rehearsal -f compose.yml -f compose.drill.yml --env-file current.env \
+#     --profile scheduler-drill up -d --no-deps server-drill
+# Профіль `scheduler-drill`: без нього жоден `up` (і deploy) цього сервісу не запускає. Без `ports:` і поза мережею
+# tunnel — публічного входу немає (cloudflared веде лише на `server`). Пам'ять зменшено до 640m (вільна пам'ять вузла
+# перевіряється до запуску); `restart: "no"` — залишок не воскресне після перезавантаження. Прибирає
+# `rm -sf server-drill` того самого набору файлів; розмір вузла навчання не змінює ніколи.
+services:
+  server-drill:
+    profiles: ["scheduler-drill"]
+    image: t2f-server:${T2F_SERVER_SHA:?set by ops}
+    restart: "no"
+    env_file: server.env
+    environment:
+      T2F_ENV: ${T2F_ENV:?set by ops}
+      T2F_HOST: 0.0.0.0
+      T2F_SERVER_PORT: "3000"
+    healthcheck:
+      test: ["CMD", "node", "scripts/health-probe.mjs"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    mem_limit: 640m
+    networks:
+      - backend
+      - egress

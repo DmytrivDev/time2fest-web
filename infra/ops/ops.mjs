@@ -42,12 +42,15 @@ import { runClock } from './lib/clock.mjs';
 /** Підкоманди часу: перевірка chrony вузла і віртуальний час репетиції. */
 const TIME_SUBS = ['time-check', 'clock'];
 // --- кінець O·P16 ---
+// --- O·P17 ---
+import { runSchedulerDrill } from './lib/drill.mjs';
+// --- кінець O·P17 ---
 
-const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity', ...SERVER2_SUBS, ...TIME_SUBS];
+const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity', ...SERVER2_SUBS, ...TIME_SUBS, 'scheduler-drill'];
 /** Змінні з `--secrets-file`, значення яких маскуються, навіть коли їх немає в `SECRET_ENV_NAMES`. */
 const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
 /** Підкоманди, що працюють із вузлом середовища: значення секретів з його `.local/<env>/*.env` маскуються у виводі. */
-const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity', ...SERVER2_SUBS, 'clock'];
+const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity', ...SERVER2_SUBS, 'clock', 'scheduler-drill'];
 
 /** @param {string} name */
 const isSecretName = (name) => SECRET_ENV_NAMES.includes(name) || SECRET_NAME_RE.test(name);
@@ -135,6 +138,9 @@ const RUNNERS = {
   'time-check': runTimeCheck,
   clock: runClock,
   // --- кінець O·P16 ---
+  // --- O·P17 ---
+  'scheduler-drill': runSchedulerDrill,
+  // --- кінець O·P17 ---
 };
 
 const PORT_KEYS = ['clock', 'fetch', 'startProbe', 'edgeCheck', 'git', 'image', 'worker', 'transport', 'sshAs', 'provider', 'lookupHost', 'sshHostname'];

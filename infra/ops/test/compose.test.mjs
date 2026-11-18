@@ -309,3 +309,64 @@ describe('docker compose config (O·P18a files)', () => {
   });
 });
 // --- кінець O·P18a ---
+
+// --- O·P17: навчання планувальника на одному вузлі (накладка на compose.yml) ---
+describe('node compose.drill.yml', () => {
+  const c = parse(read('compose.drill.yml'));
+  const main = parse(read('compose.yml'));
+
+  it('only server-drill behind the scheduler-drill profile: same image, server.env, 640m, no ports, off tunnel', () => {
+    expect(Object.keys(c.services)).toEqual(['server-drill']);
+    expect(c.lines.filter((l) => /^\s*ports:/.test(l))).toEqual([]);
+    const body = c.services['server-drill'].join('\n');
+    expect(body).toMatch(/profiles: \["scheduler-drill"\]/);
+    expect(body).toContain('image: t2f-server:${T2F_SERVER_SHA:?set by ops}');
+    expect(body).toMatch(/env_file: server\.env/);
+    expect(body).toMatch(/mem_limit: 640m/);
+    expect(body).toMatch(/restart: "no"/);
+    expect(networksOf(c.services['server-drill'])).toEqual(['backend', 'egress']);
+    // Мережі — з compose.yml (накладка не оголошує власних).
+    expect(c.networks).toEqual({});
+  });
+
+  it('environment and healthcheck are the same as the main node server', () => {
+    /** @param {string[]} b @param {string} key */
+    const block = (b, key) => {
+      const i = b.findIndex((l) => l === `    ${key}:`);
+      const out = [];
+      for (const l of b.slice(i + 1)) {
+        if (!/^ {6}/.test(l)) break;
+        out.push(l);
+      }
+      return out;
+    };
+    for (const key of ['environment', 'healthcheck']) expect(block(c.services['server-drill'], key)).toEqual(block(main.services.server, key));
+  });
+
+  const docker = spawnSync('docker', ['compose', 'version'], { encoding: 'utf8' });
+  it.skipIf(docker.status !== 0)('docker compose config: compose.yml + compose.drill.yml validates, publishes nothing, profile gates the service', () => {
+    const dir = mkdtempSync(join(tmpdir(), 't2f-compose-drill-'));
+    try {
+      for (const f of ['compose.yml', 'compose.drill.yml']) writeFileSync(join(dir, f), read(f));
+      for (const f of ['server.env', 'postgres.env', 'redis.env', 'centrifugo.env', 'cloudflared.env']) writeFileSync(join(dir, f), '');
+      /** @param {string[]} extra */
+      const config = (extra) => {
+        const r = spawnSync('docker', ['compose', '-p', 't2f-check', '-f', join(dir, 'compose.yml'), '-f', join(dir, 'compose.drill.yml'), ...extra, 'config', '--format', 'json'], {
+          encoding: 'utf8',
+          env: { ...process.env, T2F_SERVER_SHA: 'c'.repeat(40), T2F_ENV: 'rehearsal' },
+        });
+        expect(r.status, r.stderr).toBe(0);
+        return JSON.parse(r.stdout);
+      };
+      const on = config(['--profile', 'scheduler-drill']);
+      expect(Object.keys(on.services).sort()).toEqual(['centrifugo', 'cloudflared', 'postgres', 'redis', 'server', 'server-drill']);
+      for (const s of Object.values(on.services)) expect(/** @type {any} */ (s).ports).toBeUndefined();
+      expect(Object.keys(on.services['server-drill'].networks).sort()).toEqual(['backend', 'egress']);
+      expect(Number(on.services['server-drill'].mem_limit)).toBe(640 * 1024 * 1024);
+      expect(Object.keys(config([]).services)).not.toContain('server-drill');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+// --- кінець O·P17 ---

@@ -57,6 +57,8 @@ const V = {
   iso: { check: (v) => RE_ISO.test(v) && !Number.isNaN(Date.parse(v)), expect: 'ISO-8601 UTC, напр. 2026-12-31T23:59:50Z' },
   speed: { check: (v) => RE_SPEED.test(v) && Number(v) <= 600, expect: 'число від 0 до 600' },
   epoch: { check: (v) => RE_EPOCH.test(v), expect: 'ціле число (номер епохи)' },
+  // O·P17: режим `scheduler-drill`.
+  drillMode: { check: (v) => v === 'one-node' || v === 'two-nodes', expect: '`one-node` або `two-nodes`' },
 };
 
 /**
@@ -155,6 +157,16 @@ export const SUBCOMMAND_SPECS = {
     positional: ['status', 'set', 'real', 'restart-night', 'speed', 'records'],
   },
   // --- кінець O·P16 ---
+  // --- O·P17: навчання планувальника (лише rehearsal; production відмовляє тут, до будь-якого з’єднання) ---
+  // `--target` — основний вузол; `--second` — другий вузол (лише `--mode two-nodes`); `--midnight` — північ поясу.
+  // `--resize` і `--confirm-resize` розпізнаються лише для того, щоб відмовити з поясненням (П3: розмір не змінюється).
+  'scheduler-drill': {
+    envs: ['rehearsal'],
+    values: { '--target': V.host, '--mode': V.drillMode, '--second': V.host, '--midnight': V.iso },
+    bools: ['--resize', '--confirm-resize'],
+    required: ['--env', '--target', '--mode', '--midnight'],
+  },
+  // --- кінець O·P17 ---
 };
 
 /**

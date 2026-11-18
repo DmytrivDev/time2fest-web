@@ -19,6 +19,7 @@
 | `pnpm capacity -- --env <rehearsal\|production>` | потужність вузлів провайдера | дія: `plan`, `night --size <розмір>`, `back`, `off-season`, `realtime-create`, `realtime-delete`, `status`, `server2-create [--size <розмір>]`, `server2-delete` (дві останні — лише `rehearsal`); `[--confirm <env>] [--allow-main-domain] [--emergency] [--probe] [--secrets-file <шлях>]` |
 | `node infra/ops/ops.mjs private-db --env rehearsal --target <основний>` | тимчасовий доступ другого вузла до Postgres і Redis основного | дія: `open --peer <приватна IPv4>` або `close` |
 | `node infra/ops/ops.mjs server2 --env rehearsal --target <основний>` | другий екземпляр сервера на тимчасовому вузлі | дія: `up` або `down`; `[--secrets-file <шлях>]` |
+| `node infra/ops/ops.mjs scheduler-drill --env rehearsal --target <основний>` | навчання планувальника: зупинка власника оренди опівночі, замір перехоплення | `--mode one-node\|two-nodes`, `--midnight <ISO UTC північ поясу>`, `[--second <другий вузол>]` (лише `two-nodes`) |
 
 `pnpm infra:cf …` (тунель, DNS, правила, Access) описано окремо в `infra/cloudflare/README.md`.
 
@@ -245,7 +246,7 @@ node infra/ops/ops.mjs capacity --env rehearsal server2-create --confirm rehears
 node infra/ops/ops.mjs capacity --env rehearsal status                           # приватна адреса другого вузла → <peer>
 node infra/ops/ops.mjs private-db --env rehearsal --target <main> open --peer <peer>
 node infra/ops/ops.mjs server2 --env rehearsal --target <main> up
-#   … навчання «два сервери» …
+node infra/ops/ops.mjs scheduler-drill --env rehearsal --target <main> --mode two-nodes --second <публічна адреса другого> --midnight 2026-12-31T10:00:00Z
 node infra/ops/ops.mjs server2 --env rehearsal --target <main> down
 node infra/ops/ops.mjs private-db --env rehearsal --target <main> close
 node infra/ops/ops.mjs capacity --env rehearsal server2-delete --confirm rehearsal
@@ -256,6 +257,57 @@ node infra/ops/ops.mjs capacity --env rehearsal status                          
 закриті з інтернету на обох вузлах — `nc -vz -w 3 <публічна адреса> 5432` і `… 6379` не з’єднуються (для основного й для
 другого вузла). Під час навчання з другого вузла `nc -vz -w 3 <приватна адреса основного> 5432` з’єднується. Таймер
 3 годин іде від `server2-create`; якщо щось пішло не так — однаково `down` → `close` → `server2-delete`.
+
+## Навчання планувальника (`scheduler-drill`, SPEC-07 W56)
+
+Лише `rehearsal` (`production`/`prelaunch` — код 2 ще до SSH). Розмір вузла навчання **не змінює ніколи** (П3):
+`--resize` — відмова (код 2) навіть із `--confirm-resize`; збільшення — окремо `capacity`, лише після «так» власника.
+Два екземпляри сервера ділять одну оренду планувальника (рядок у Postgres). Навчання:
+
+1. перевіряє (лише читання): `one-node` — `MemAvailable` вузла ≥ 640 МБ екземпляра + 128 МБ запасу, інакше відмова з
+   «бракує N МБ»; `two-nodes` — `private-db` відкрито саме для приватної адреси `--second` (адреса VPC читається з
+   другого вузла) і другий екземпляр здоровий; обидва — сервер основного вузла здоровий. Відмова — код 2, нічого не змінено;
+2. `one-node`: кладе `node/compose.drill.yml` поруч із `compose.yml` і піднімає `server-drill` (профіль
+   `scheduler-drill`, 640m, без портів, поза мережею тунелю), чекає здоров’я; `two-nodes`: другий екземпляр уже працює
+   (`server2 up`). Власником оренди в `two-nodes` має бути основний — інакше другий екземпляр перезапускається один раз;
+3. `clock restart-night` → `clock set --at <північ − 60 с>` → (`clock speed 1`, якщо швидкість не 1); перевіряє, що
+   `nextMoment` — саме `--midnight`;
+4. рівно у віртуальну північ зупиняє (`docker compose stop`) контейнер власника оренди; власника визначає за ім’ям хоста
+   на початку `holder` (`<hostname>:<pid>:<hex>`) і `docker inspect` контейнерів обох екземплярів;
+5. кожні 500 мс читає статус у вцілілого — до нового власника з більшою епохою (межа 10 с), потім `clock records --epoch`
+   до запису всіх належних пар (дія, момент); друкує `DRILL takeover_ms=<n> late_ms=<n> duplicates=<n> missed=<n>` і
+   `T2F_MEASURE {"metric":"lease-takeover-ms",…}`. Заміри — від початку зупинки (чи від реальної півночі) до середини
+   виклику CLI, що вперше показав результат (точність — половина тривалості виклику `pnpm run clock`);
+6. **завжди** (і після збою будь-якого кроку) відновлює: запускає зупинений контейнер і чекає здоров’я, `clock real`,
+   прибирає `server-drill` і `compose.drill.yml`, перевіряє `https://rehearsal.time2fest.com/api/health` через край.
+   Не вийшло — код 1 і рядок журналу `restore` з `left` (що лишилося).
+
+**Простій:** коли власник — сервер основного вузла, публічний `/api` репетиції недоступний від зупинки до повторного
+запуску (≈ перехоплення + записи + старт, до ~1–2 хв). Початок і кінець простою — рядки `outage` у журналі
+`.local/rehearsal/server2.jsonl` (там само всі кроки навчання, `sub: "scheduler-drill"`). Ctrl+C під час навчання
+відновлення не гарантує — тоді вручну: `docker compose … start server`, `ops clock real`, `rm -sf server-drill`.
+
+Коди: 0 — перехоплення ≤ 10 с, дублів і пропусків 0, усе відновлено; 1 — межу порушено, крок не вдався або відновлення
+неповне; 2 — відмова до змін.
+
+Порядок живого запуску, один вузол (лише якщо вистачає пам’яті; `<main>` — публічна адреса основного вузла):
+
+```sh
+node infra/ops/ops.mjs clock --env rehearsal --target <main> status                  # годинник реальний, оренда є
+node infra/ops/ops.mjs scheduler-drill --env rehearsal --target <main> --mode one-node --midnight 2026-12-31T10:00:00Z
+node infra/ops/ops.mjs clock --env rehearsal --target <main> status                  # після: реальний час
+```
+
+Два вузли — продовження розділу «Другий вузол репетиції» (після `server2 up`):
+
+```sh
+node infra/ops/ops.mjs scheduler-drill --env rehearsal --target <main> --mode two-nodes --second <публічна адреса другого> --midnight 2026-12-31T10:00:00Z
+node infra/ops/ops.mjs server2 --env rehearsal --target <main> down
+node infra/ops/ops.mjs private-db --env rehearsal --target <main> close
+node infra/ops/ops.mjs capacity --env rehearsal server2-delete --confirm rehearsal
+```
+
+`--midnight` — північ поясу, на яку є моменти розкладу (ціла хвилина, кратна 15; `2026-12-31T10:00:00Z` — UTC+14).
 
 ## Перенесення імені між Worker’ами
 
