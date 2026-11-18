@@ -34,6 +34,11 @@
   padding-left: max(32px, env(safe-area-inset-left, 0px));
   padding-right: max(32px, env(safe-area-inset-right, 0px));
 }
+/* Передстартовий сайт (`data-locale` — лише в мовному дереві): ширина вмісту — як у решти сторінок сайту
+   (`.shell` живого макета: 1440 разом із полями 32), а не на 64 ширша (рішення власника 2026-11-19). */
+:global([data-locale]) .wrap {
+  max-width: var(--spacing-content-max);
+}
 /* Брейкпойнти сайту: t1024 (до 1199), t834 (до 1023), p390 (до 767). */
 @media (max-width: 1199.98px) {
   .wrap {

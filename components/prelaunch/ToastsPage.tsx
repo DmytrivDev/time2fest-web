@@ -7,7 +7,7 @@
  * лише колонку чату «Світ». Кнопки «Сказати тост» у стані «до свята» й так немає.
  */
 import { useTranslations } from 'next-intl';
-import { Faq } from '@/components/live/Faq';
+import { PrefestFaqList } from '@/components/prefest/PrefestFaq';
 import { usePrefest } from '@/components/prefest/PrefestContext';
 import {
   Hero,
@@ -19,6 +19,7 @@ import {
 import sp from '@/components/support/support.module.css';
 import shell from '@/app/(live)/live-shell.module.css';
 import { cn } from '@/components/primitives/cn';
+import siteCss from './site.module.css';
 import { PAGES } from '@/lib/prelaunch/href';
 import type { SiteData } from '@/lib/prelaunch/site';
 import { SiteShell } from './SiteShell';
@@ -32,6 +33,7 @@ const FAQ = ['subscription', 'pass', 'check'] as const;
 function Body() {
   const t = useTranslations('supportPage');
   const ta = useTranslations('prelaunch.toasts.art');
+  const tNav = useTranslations('nav');
   const { site } = usePrefest();
   const art: HeroArtText = {
     badge: ta('badge'),
@@ -42,7 +44,7 @@ function Body() {
   };
   const faq = FAQ.map((k) => ({ id: k, question: t(`faq.${k}Q`), answer: t(`faq.${k}A`) }));
   return (
-    <div className={shell.shell}>
+    <div className={cn(shell.shell, siteCss.solo)}>
       <div className={shell.top}>
         <div className={cn(shell.main, sp.page)} data-season="before">
           <Hero season="before" art={art}>
@@ -50,7 +52,7 @@ function Body() {
           </Hero>
           <WhatIsToast />
           <PassCard href={site ? site.href(PAGES.pass) : '/pass/'} />
-          <Faq items={faq} columns={2} className={sp.faq} />
+          <PrefestFaqList title={tNav('faq')} items={faq} className={sp.faq} />
         </div>
       </div>
     </div>

@@ -21,6 +21,8 @@ import {
 } from '@/lib/prelaunch/messageSet.mjs';
 import { COUNTRY_EXTRAS, labelFor, localizeDataset, type SiteData } from '@/lib/prelaunch/site';
 import en from '@/messages/en.json';
+import esJson from '@/messages/es.json';
+import frJson from '@/messages/fr.json';
 import uk from '@/messages/uk.json';
 import * as routes from '../../../scripts/prelaunch/routes.mjs';
 
@@ -318,6 +320,54 @@ describe('відлік сцени понад добу', () => {
     expect(sceneCountdownParts(5 * 60_000, true).text).toBe('00:05:00');
     // Сайт свята (без `days`) — без змін: години понад добу.
     expect(sceneCountdownParts(2 * day, false).text).toBe('48:00:00');
+  });
+
+  it('усі відліки — один формат: мапа й список країн з днями у збірці передстартового сайту', async () => {
+    const { formatCountdown, COUNTDOWN_DAYS } = await import('@/lib/i18n/time');
+    const day = 86_400_000;
+    // Збірка сайту свята (тести) — години, як і досі.
+    expect(COUNTDOWN_DAYS).toBe(false);
+    expect(formatCountdown(43 * day + 2 * 3_600_000 + 35 * 60_000 + 36_000)).toBe('1034:35:36');
+    expect(formatCountdown(43 * day + 2 * 3_600_000 + 35 * 60_000 + 36_000, true)).toBe('43:02:35:36');
+    expect(formatCountdown(22 * 60_000 + 15_000, true)).toBe('00:22:15');
+    expect(formatCountdown(day, true)).toBe('1:00:00:00');
+  });
+});
+
+describe('сторінка країни: є сцена / немає сцени', () => {
+  it('власна сцена — лише в країн із намальованою листівкою; решта — без сцени', async () => {
+    const { hasPostcardScene } = await import('@/components/stamp/StampArt');
+    expect(hasPostcardScene('fr-postcard')).toBe(true);
+    expect(hasPostcardScene('AU-postcard')).toBe(true);
+    expect(hasPostcardScene('ph-postcard')).toBe(false);
+    expect(hasPostcardScene('postcard-template')).toBe(false);
+  });
+});
+
+describe('очікувані трансляції для «Де дивитися»', () => {
+  it('у даних лише країна, пояс і тип — без посилань і каналів', async () => {
+    const expected = (await import('@/data/prelaunch/expected.json')).default as {
+      kinds: Record<string, string>;
+    };
+    const entries = Object.entries(expected.kinds);
+    expect(entries.length).toBeGreaterThan(0);
+    for (const [key, kind] of entries) {
+      expect(key).toMatch(/^[A-Z]{2}:utc[+-]\d{4}$/);
+      expect(['celebration', 'tv', 'webcam', 'address']).toContain(kind);
+    }
+    expect(JSON.stringify(expected)).not.toMatch(/https?:/);
+  });
+});
+
+describe('список країн: перша група — «Перший», не «Зараз»', () => {
+  it('правка є всіма чотирма мовами', () => {
+    const files = { uk: uk as never, en: en as never, es: esJson as never, fr: frJson as never };
+    const now = (l: 'uk' | 'en' | 'es' | 'fr') =>
+      (localeMessages(l, files) as { liveMap: { list: { now: string } } }).liveMap.list.now;
+    expect(now('uk')).toBe('Перший');
+    expect(now('en')).toBe('First');
+    expect(now('es')).toBe('Primero');
+    expect(now('fr')).toBe('Premier');
   });
 });
 

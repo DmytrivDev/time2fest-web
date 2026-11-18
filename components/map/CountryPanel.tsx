@@ -18,7 +18,7 @@ import { Slider, StateBadge } from './ZonePanel';
 import zp from './zonePanel.module.css';
 import m from './countryPanel.module.css';
 import { useProfile, useSchedule } from '@/lib/api/hooks/auth';
-import { useMapPrefest } from './mapPrefest';
+import { useMapPrefest, type ExpectedKind } from './mapPrefest';
 
 /** Іконки традицій (`howTo.traditions[].iconId`) — з набору сайту; невідома — зірка. */
 const TRADITION_ICON: Record<string, IconName> = {
@@ -170,7 +170,15 @@ export function CountryPanel({
       />
     ) : null;
   const time = <CountryTime zone={zone} state={state} phone={phone} />;
-  const watch = prefest ? null : (
+  const watch = prefest ? (
+    prefest.expectedKind && !after ? (
+      <ExpectedWatch
+        kind={prefest.expectedKind(country.iso, zone.id)}
+        city={country.city ?? country.name}
+        phone={phone}
+      />
+    ) : null
+  ) : (
     <div className={m.watch}>
       {streams.length === 0 ? (
         <>
@@ -432,6 +440,34 @@ function CountryStreamCard({
 }
 
 /** «Лише відлік» — картка того ж розміру, що й трансляція, щоб ряд не пустів. */
+/**
+ * Передстартовий сайт: «Де дивитися» — та сама плашка, що «Лише відлік», без кнопки графіка: тип очікуваної трансляції
+ * («Телеефір» · «Очікується») або нейтральне «Трансляція очікується», і головне місто країни в цьому поясі.
+ */
+function ExpectedWatch({ kind, city, phone }: { kind: ExpectedKind | null; city: string; phone: boolean }) {
+  const t = useTranslations('liveMap.country');
+  const te = useTranslations('prefest.map.expected');
+  return (
+    <div className={m.watch}>
+      <h4 className={zp.h4}>{t('watchTitle')}</h4>
+      <div className={zp.slider}>
+        <ul className={cn(zp.track, m.track, phone && zp.trackPhone)}>
+          <li className={cn(zp.card, m.countdownCard)} data-expected-card={kind ?? 'neutral'}>
+            <div className={zp.cardTop}>
+              <span className={zp.cardType}>{kind ? te(`kind.${kind}`) : te('neutralType')}</span>
+              <Icon name="clock" size={12} className={m.muted} />
+            </div>
+            <div className={cn(zp.cardCity, m.cardPlace)}>{city}</div>
+            <div className={m.countdownFoot}>
+              <p className={m.countdownText}>{kind ? te('expected') : te('neutral')}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 function CountdownCard({ city, eventId }: { city: string; eventId?: string | undefined }) {
   const t = useTranslations('liveMap.country');
   return (

@@ -2638,7 +2638,18 @@
       "calendarText": "Новий рік: {country}. Дивись наживо: time2fest.com",
       "countriesTitle": "Країни поясу",
       "countryPage": "Сторінка країни",
-      "addCalendar": "Додати в календар"
+      "addCalendar": "Додати в календар",
+      "expected": {
+        "kind": {
+          "celebration": "Головне святкування",
+          "tv": "Телеефір",
+          "webcam": "Вебкамера",
+          "address": "Звернення"
+        },
+        "neutralType": "Трансляція",
+        "expected": "Очікується",
+        "neutral": "Трансляція очікується"
+      }
     },
     "night": {
       "title": "Пройдися святом, що триває 26 годин",
@@ -2817,7 +2828,8 @@
       "menuClose": "Закрити меню",
       "menuLabel": "Меню сайту",
       "language": "Мова: {language}",
-      "languageLabel": "Мова сайту"
+      "languageLabel": "Мова сайту",
+      "passShort": "Пас"
     },
     "footer": {
       "tagline": "Новий рік по всьому світу, наживо — пояс за поясом.",
@@ -2947,7 +2959,8 @@
           "at": "о {time} за твоїм часом",
           "atDate": "о {time}, {date}, за твоїм часом",
           "yourZone": "твій пояс"
-        }
+        },
+        "list": { "now": "Перший" }
       },
       "countries": {
         "subtitle": "Пояси по черзі. Час — за твоїм часом ({zone}), зараз {date}, {time}.",

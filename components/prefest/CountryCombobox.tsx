@@ -147,7 +147,7 @@ export function CountryCombobox({
             >
               <Flag code={c.flagCode} diameter={22} decorative />
               {c.name}
-              <span>{optionHint(c)}</span>
+              <span className={m.hint}>{optionHint(c)}</span>
             </li>
           ))
         )}

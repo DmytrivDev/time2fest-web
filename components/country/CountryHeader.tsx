@@ -12,7 +12,8 @@
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
+import { useDragScroll } from '@/components/primitives/Carousel';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -139,6 +140,9 @@ export function CountryHeader({
   const t = useTranslations('country.header');
   const tSched = useTranslations('liveMap.country');
   const overlay = useOverlay();
+  // Смуга поясів ширша за рядок (Австралія — 5 поясів): мишею тягнемо, як інші стрічки сайту; дотик і тачпад — самі.
+  const chipsRef = useRef<HTMLDivElement>(null);
+  useDragScroll(chipsRef, '[data-zone-option]');
 
   const name = country.name.uk;
   const tz = timeZone ? { timeZone } : {};
@@ -248,7 +252,7 @@ export function CountryHeader({
           ) : null}
         </div>
         {multi ? (
-          <div role="radiogroup" aria-label={t('zones')} className={h.chips}>
+          <div ref={chipsRef} role="radiogroup" aria-label={t('zones')} className={h.chips}>
             {zones.map((z) => {
               const on = z.id === selectedZoneId;
               return (

@@ -160,12 +160,20 @@ function ceilSec(ms: Ms): number {
   return Math.max(0, Math.ceil(ms / 1_000));
 }
 
-/** Відлік до півночі «00:22:15» (завжди години, хвилини, секунди). */
-export function formatCountdown(ms: Ms): string {
+/**
+ * Відлік понад добу з днями — «29:23:59:59» (дні без нуля попереду, без літери; рішення власника 2026-11-18). Увімкнено
+ * у збірці передстартового сайту, де до півночі — тижні: замість «1034:35:36». Сайт свята (демо) лишає години.
+ */
+export const COUNTDOWN_DAYS = process.env.NEXT_PUBLIC_PRELAUNCH === '1';
+
+/** Відлік до півночі «00:22:15» (години, хвилини, секунди); з `days` і понад добу — «29:23:59:59». */
+export function formatCountdown(ms: Ms, days: boolean = COUNTDOWN_DAYS): string {
   const s = ceilSec(ms);
-  const h = Math.floor(s / 3_600);
+  const p = (n: number) => String(n).padStart(2, '0');
+  const d = days ? Math.floor(s / 86_400) : 0;
+  const h = Math.floor((s - d * 86_400) / 3_600);
   const m = Math.floor((s % 3_600) / 60);
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  return d > 0 ? `${d}:${p(h)}:${p(m)}:${p(s % 60)}` : `${p(h)}:${p(m)}:${p(s % 60)}`;
 }
 
 /** «54 хв», «2 год 54 хв», «1 год» — скільки лишилось (округлення вгору до хвилини). */

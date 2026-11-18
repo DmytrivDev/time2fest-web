@@ -440,7 +440,18 @@
       "calendarText": "New Year: {country}. Watch live: time2fest.com",
       "countriesTitle": "Countries in the time zone",
       "countryPage": "Country page",
-      "addCalendar": "Add to calendar"
+      "addCalendar": "Add to calendar",
+      "expected": {
+        "kind": {
+          "celebration": "Main celebration",
+          "tv": "TV broadcast",
+          "webcam": "Webcam",
+          "address": "Address"
+        },
+        "neutralType": "Stream",
+        "expected": "Expected",
+        "neutral": "Stream expected"
+      }
     },
     "night": {
       "title": "Walk through a celebration that lasts 26 hours",
@@ -588,7 +599,8 @@
       "menuClose": "Close menu",
       "menuLabel": "Site menu",
       "language": "Language: {language}",
-      "languageLabel": "Site language"
+      "languageLabel": "Site language",
+      "passShort": "Pass"
     },
     "footer": {
       "tagline": "New Year around the world, live — time zone by time zone.",
@@ -720,7 +732,8 @@
           "caption": "Time2Fest countdown scene · live streams from December 31",
           "noStreamNote": "countdown scene · live streams from December 31"
         }
-      }
+      },
+      "liveMap": { "list": { "now": "First" } }
     },
     "toasts": {
       "art": {

@@ -49,11 +49,13 @@ export interface CountdownSceneProps {
   className?: string;
   /** Відлік понад добу — з днями (передстартовий сайт); див. `SceneCountdown`. */
   longCountdown?: boolean;
+  /** `false` — без ілюстрації-листівки: відлік і решта частин на тлі сцени (передстартовий сайт для країн без своєї сцени). */
+  art?: boolean;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} />;
 }
 
 /**
@@ -146,7 +148,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -175,7 +177,7 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
       data-midnight-phase={phase.kind}
       className={cn('@container relative size-full min-h-player-min-height overflow-hidden bg-surface-raised', className, fs.pseudo && 'fixed! inset-0 z-50 h-dvh! w-screen!')}
     >
-      <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" />
+      {art ? <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" /> : null}
       {phase.kind === 'celebrate' && !reduced ? (
         <Fireworks elapsedMs={phase.since} className="pointer-events-none absolute inset-0 size-full" />
       ) : null}

@@ -13,6 +13,8 @@ import { usePrefestMap } from '@/components/prefest/PrefestMap';
 import { CountriesView } from '@/components/countries/CountriesView';
 import type { SiteData } from '@/lib/prelaunch/site';
 import shell from '@/app/(live)/live-shell.module.css';
+import { cn } from '@/components/primitives/cn';
+import site from './site.module.css';
 import { SiteShell } from './SiteShell';
 
 function Body() {
@@ -20,7 +22,7 @@ function Body() {
   const { mapModel, prefest } = usePrefestMap();
   // Та сама сітка колонки, що на сайті свята (місце чату праворуч лишається порожнім).
   return (
-    <div className={shell.shell}>
+    <div className={cn(shell.shell, site.solo)}>
       <div className={shell.top}>
         <div className={shell.main}>
           <CountriesView

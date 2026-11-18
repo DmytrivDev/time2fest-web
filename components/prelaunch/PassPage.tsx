@@ -10,17 +10,22 @@ import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
 import pb from '@/components/prefest/PassBlock.module.css';
-import { Faq, Hero } from '@/components/pass/PassPageParts';
+import { Hero } from '@/components/pass/PassPageParts';
+import { PrefestFaqList } from '@/components/prefest/PrefestFaq';
 import { PassPerksShowcase } from '@/components/pass/PassPerks';
 import ps from '@/components/pass/pass.module.css';
 import { SEASON_LABEL } from '@/lib/prelaunch/season';
 import type { SiteData } from '@/lib/prelaunch/site';
 import { SiteShell } from './SiteShell';
 
+/** Питання сторінки паса, як у `PassPageParts` (`FAQ`). */
+const PASS_FAQ = [1, 3, 4] as const;
+
 function Body() {
   const t = useTranslations('pass.page');
   const tp = useTranslations('prefest.pass');
   const tTicket = useTranslations('prelaunch.pass');
+  const tf = useTranslations('pass.faq');
   return (
     <div className={ps.main} data-view="soon">
       <Hero
@@ -45,7 +50,11 @@ function Body() {
         <span className={pb.fine}>{tp('fine')}</span>
       </section>
       <PassPerksShowcase />
-      <Faq />
+      {/* Питання — у вигляді «Коротко про головне» головної (рішення власника 2026-11-19); ті самі питання сторінки паса. */}
+      <PrefestFaqList
+        title={tf('title')}
+        items={PASS_FAQ.map((n) => ({ id: String(n), question: tf(`q${n}`), answer: tf(`a${n}`) }))}
+      />
     </div>
   );
 }

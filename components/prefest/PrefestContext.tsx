@@ -17,6 +17,7 @@ import type { Dataset } from '@/lib/data/types';
 import { getData } from '@/lib/data/load';
 import type { PrefestModel } from '@/lib/prefest/model';
 import { cn } from '@/components/primitives/cn';
+import type { ExpectedKind } from '@/components/map/mapPrefest';
 import s from './prefest.module.css';
 
 /** Фото чи відео на місці заглушки (`data/prelaunch/media.json`). */
@@ -59,6 +60,8 @@ export interface PrefestSite {
   zoneCity: (timeZone: string) => string;
   /** Форма «у країні» мовою сторінки, якщо вона є в даних. */
   inCountry: (iso: string) => string | undefined;
+  /** Тип очікуваної трансляції країни в поясі (`data/prelaunch/expected.json`) або `null`. */
+  expectedKind?: (iso: string, zoneId: string) => ExpectedKind | null;
 }
 
 interface PrefestContextValue {

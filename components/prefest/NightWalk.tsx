@@ -20,7 +20,7 @@ const bold = { b: (c: ReactNode) => <b>{c}</b> };
 
 export function NightWalk() {
   const t = useTranslations('prefest.night');
-  const { model } = usePrefest();
+  const { model, site } = usePrefest();
   const ready = useClientReady();
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
@@ -60,7 +60,8 @@ export function NightWalk() {
         }
         go(next);
       },
-      reduced ? 2600 : 1900,
+      // Передстартовий сайт — трохи швидше (рішення власника 2026-11-19): 38 поясів за ≈ 50 с замість ≈ 72.
+      site ? (reduced ? 2000 : 1300) : reduced ? 2600 : 1900,
     );
   };
 

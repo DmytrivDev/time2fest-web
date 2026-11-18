@@ -80,7 +80,8 @@
   font-size: 15px;
   font-weight: 600;
 }
-.opt span {
+/* Час праворуч; прапор (теж `span`) і назва — зліва (правило раніше чіпляло й прапор — рядок їхав до центру). */
+.opt .hint {
   margin-left: auto;
   font-size: 13px;
   color: var(--color-text-muted);

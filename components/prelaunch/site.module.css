@@ -22,17 +22,32 @@
   }
 }
 
-/* ── Шапка внутрішніх сторінок: у потоці, з лінією ── */
-.hdStatic {
-  position: relative;
-  z-index: 5;
-  border-bottom: 1px solid var(--color-border);
+/* ── Шапка (стилі сайту — `components/shell/header.module.css`): закріплена завжди. Внутрішні сторінки — липка в
+   потоці; головна — поверх банера, прозора, поки сторінку не прокрутили (рішення власника 2026-11-19). ── */
+.hdDock {
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
-.nav.nav {
-  gap: 24px;
+.hdDockOverlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+.hd {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+[data-header-clear] .hd {
+  background: transparent;
+  border-bottom-color: transparent;
 }
 .langDesktop.langDesktop {
-  margin-left: auto;
+  margin-right: 12px;
+}
+.menuWrap {
+  position: relative;
 }
 .langWrap {
   position: relative;
@@ -153,18 +168,10 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-/* П’ять посилань не вміщаються на планшеті: з 1023 і нижче — кнопка «Меню». */
+/* Планшет і телефон: мова — у «Меню» (як на сайті). */
 @media (max-width: 1023.98px) {
-  .nav.nav,
   .langDesktop.langDesktop {
     display: none;
-  }
-  .menuWrap.menuWrap {
-    display: block;
-    margin-left: auto;
-  }
-  .menuBtn.menuBtn {
-    display: inline-flex;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -513,3 +520,21 @@
 }
 
 /* Фото країни з підписом автора й ліцензії. */
+
+/* Сторінки з колонкою чату на сайті (країни, країна, тости): чату до запуску немає — вміст на всю ширину
+   контейнера, без порожньої колонки праворуч (рішення власника 2026-11-19). */
+.solo.solo {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Сторінка країни без своєї сцени (рішення власника 2026-11-19): відлік і решта частин сцени на тлі, без листівки —
+   не 16:9 на всю ширину (порожня площа), а сталої висоти. */
+.sceneBare {
+  aspect-ratio: auto;
+  height: 360px;
+}
+@media (max-width: 767.98px) {
+  .sceneBare {
+    height: 260px;
+  }
+}

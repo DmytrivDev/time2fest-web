@@ -15,12 +15,13 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { CountryCrumbs, showCountryCrumbs } from '@/components/country/CountryCrumbs';
 import { CountryHeader, type CountryZoneOption } from '@/components/country/CountryHeader';
-import { Faq } from '@/components/live/Faq';
+import { PrefestFaqList } from '@/components/prefest/PrefestFaq';
 import { HowToCard } from '@/components/live/HowToCard';
 import { CountdownScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { mediaAlt, usePrefest } from '@/components/prefest/PrefestContext';
 import { Flag } from '@/components/primitives/Flag';
+import { hasPostcardScene } from '@/components/stamp/StampArt';
 import { cn } from '@/components/primitives/cn';
 import shell from '@/app/(live)/live-shell.module.css';
 import live from '@/components/live/live.module.css';
@@ -40,6 +41,7 @@ const NEIGHBORS = 12;
 function Body({ iso }: { iso: string }) {
   const t = useTranslations('prelaunch.country');
   const tc = useTranslations('country');
+  const tNav = useTranslations('nav');
   const { model, data, site } = usePrefest();
   const now = useNow({ granularity: 'minute' });
   const country = data.countriesByIso.get(iso);
@@ -66,6 +68,8 @@ function Body({ iso }: { iso: string }) {
   if (!country || !pc || !zone || !site) return null;
 
   const city = pc.zones.find((z) => z.zoneId === zone.id)?.city ?? country.name.uk;
+  // Своя сцена (листівка) є не в усіх країн; без неї — відлік на тлі, без шаблонної листівки.
+  const scene = hasPostcardScene(country.illustrationId);
   const after = now > 0 && now >= zone.midnightMs;
   const photo = site.media[`country:${iso}`];
   const gallery = photo
@@ -92,7 +96,7 @@ function Body({ iso }: { iso: string }) {
     .slice(0, NEIGHBORS);
 
   return (
-    <div className={shell.shell}>
+    <div className={cn(shell.shell, s.solo)}>
       <div className={shell.top}>
         <article className={shell.main} data-state={pc.described ? 'story' : 'facts'}>
           {/* Трансляції на передстартовому сайті немає ніколи — на місці відео сцена відліку, крихти є. */}
@@ -123,6 +127,7 @@ function Body({ iso }: { iso: string }) {
           />
           <PlayerSlot
             id="main"
+            className={scene ? undefined : s.sceneBare}
             fallback={
               <CountdownScene
                 country={country}
@@ -131,6 +136,7 @@ function Body({ iso }: { iso: string }) {
                 offsetMinutes={zone.offsetMinutes}
                 variant="no-stream"
                 longCountdown
+                art={scene}
               />
             }
           />
@@ -145,7 +151,6 @@ function Body({ iso }: { iso: string }) {
                 className={live.pad}
               />
             ) : null}
-            <Faq items={faq} columns={2} className={live.pad} />
             {neighbors?.length ? (
               <section className={live.pad} aria-labelledby="near-h">
                 <h2 id="near-h" className="text-headline-sm text-text">
@@ -163,6 +168,8 @@ function Body({ iso }: { iso: string }) {
                 </ul>
               </section>
             ) : null}
+            {/* Питання — у самому низу (рішення власника 2026-11-19). */}
+            <PrefestFaqList title={tNav('faq')} items={faq} className={live.pad} />
           </div>
         </article>
       </div>

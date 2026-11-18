@@ -12,7 +12,15 @@ import type { MapCountry, MapZone } from '@/lib/map/model';
 export interface MapPrefest {
   /** «Додати в календар» у вікні країни (без обробника кнопки немає). */
   onCountryCalendar?: (zone: MapZone, country: MapCountry) => void;
+  /**
+   * Передстартовий сайт: плашка «Де дивитися» у вікні країни — тип очікуваної трансляції в поясі (`null` — нейтральне
+   * «Трансляція очікується»). Без функції плашки немає (головна `/before`).
+   */
+  expectedKind?: (iso: string, zoneId: string) => ExpectedKind | null;
 }
+
+/** Тип очікуваної трансляції (дослідження `expected-streams`). */
+export type ExpectedKind = 'celebration' | 'tv' | 'webcam' | 'address';
 
 export const MapPrefestContext = createContext<MapPrefest | null>(null);
 

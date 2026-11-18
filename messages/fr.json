@@ -2,6 +2,13 @@
   "prelaunch": {
     "footer": {
       "credits": "Crédits photos et vidéos"
+    },
+    "overrides": {
+      "liveMap": {
+        "list": {
+          "now": "Premier"
+        }
+      }
     }
   }
 }

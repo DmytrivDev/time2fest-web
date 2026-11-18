@@ -187,6 +187,13 @@ function Template({ id, pal, seed }: { id: string; pal: Palette; seed: number })
 }
 
 /** Листівка 3:2 без штемпеля. Декоративна, якщо немає `label`. */
+/** Країни з власною намальованою сценою; решта — спільний шаблон (`Template`). */
+const POSTCARD_SCENES = ['au-postcard', 'gb-postcard', 'fr-postcard'];
+/** Чи є в країни власна сцена (не шаблон) — передстартовий сайт без сцени показує відлік на тлі. */
+export function hasPostcardScene(illustrationId: string): boolean {
+  return POSTCARD_SCENES.includes(illustrationId.toLowerCase());
+}
+
 export function PostcardArt({ illustrationId, className, label, fill = false }: PostcardArtProps) {
   const raw = useId().replace(/[^a-zA-Z0-9]/g, '');
   const id = `pc${raw}`;

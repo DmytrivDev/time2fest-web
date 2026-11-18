@@ -14,6 +14,7 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
 import type { Ms } from '@/lib/data/types';
+import { formatCountdown } from '@/lib/i18n/time';
 import { playChime, preloadSceneSounds, startFireworksSound, stopFireworksSound, useSceneSound } from '@/lib/scene/sceneAudio';
 import { FIREWORKS_MS } from './Fireworks';
 import fx from './scene.module.css';
@@ -106,8 +107,7 @@ export function sceneCountdownParts(left: number, days = false): { text: string;
   const h = Math.floor(rest / 3_600);
   const m = Math.floor((rest % 3_600) / 60);
   const sec = rest % 60;
-  const p = (n: number) => String(n).padStart(2, '0');
-  return { text: d > 0 ? `${d}:${p(h)}:${p(m)}:${p(sec)}` : hms(left), d, h, m, s: sec };
+  return { text: formatCountdown(left, days), d, h, m, s: sec };
 }
 
 /** Великий відлік до півночі на сцені. */
