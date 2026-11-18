@@ -13,8 +13,8 @@ import { cn } from '@/components/primitives/cn';
 import { getData } from '@/lib/data/load';
 import { DEMO_SEED_KEY } from '@/lib/demo/seed';
 import { formatTimeForViewer, utcLabel } from '@/lib/i18n/time';
+import { machineKit } from '@/lib/time/machineLoader';
 import { useNow, useTimeMachine } from '@/lib/time/TimeProvider';
-import { DEMO_START_MS } from '@/lib/time/timeMachine';
 import { resetDeviceState } from '@/stores/resetDevice';
 import ms from '@/components/shell/menu.module.css';
 import s from './time-machine.module.css';
@@ -65,7 +65,9 @@ export function TimeMachineBody() {
   const t = useTranslations('demoTime');
   const machine = useTimeMachine();
   const now = useNow({ granularity: 'second' });
-  if (!machine) return null;
+  // Без машини (робоча збірка — `machineKit` там немає, AC-58) вікна немає.
+  if (!machine || !machineKit) return null;
+  const { DEMO_START_MS } = machineKit;
   const [near, after] = upcomingMidnights(now, 2);
 
   const go = (at: number) => machine.set({ at });

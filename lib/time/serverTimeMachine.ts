@@ -9,7 +9,7 @@
  * Адреса дверцят і текст попередження приходять від `createAppTimeSource` — їх немає в коді класу (AC-58).
  */
 import type { TestClockSet, TestClockState } from '@time2fest/contracts/schemas';
-import { sanitizeSpeed } from './timeMachine';
+import { sanitizeSpeed } from './speed';
 import type { MachineLike } from './types';
 
 export const POLL_MS = 1_500;

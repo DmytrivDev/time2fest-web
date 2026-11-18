@@ -11,8 +11,8 @@ import { notifyRecordingResync, setRecordingClock } from '@/lib/player/recording
 import { IS_DEMO_BUILD, IS_TEST_BUILD } from '@/lib/env';
 import { createClock, type Clock } from './clock';
 import { createAppTimeSource } from './params';
+import { machineKit } from './machineLoader';
 import { installTestApi } from './testApi';
-import { TimeMachine } from './timeMachine';
 import type { MachineLike, TimeSourceLike } from './types';
 
 export interface TimeOverride {
@@ -49,16 +49,17 @@ function setup(props: Pick<TimeProviderProps, 'override' | 'source'>): Setup {
     const source = props.source;
     return {
       source,
-      machine: source instanceof TimeMachine ? source : null,
+      machine: machineKit && source instanceof machineKit.TimeMachine ? source : null,
       activate: () => {
         source.start?.();
         return () => source.stop?.();
       },
     };
   }
-  if (props.override) {
+  // Віртуальний час (Storybook, тести) — машиною часу; у робочій збірці її немає (`machineLoader`, AC-58).
+  if (props.override && machineKit) {
     const { at, speed, frozen } = props.override;
-    const machine = new TimeMachine({
+    const machine = new machineKit.TimeMachine({
       at: typeof at === 'number' ? at : Date.parse(at),
       speed: frozen ? 0 : (speed ?? 1),
     });
