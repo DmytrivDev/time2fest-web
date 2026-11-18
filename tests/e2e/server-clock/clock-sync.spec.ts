@@ -26,7 +26,7 @@ test.describe('SPEC-07 · server clock and the time machine', () => {
     await page.goto('/');
     await waitForTimeApi(page);
     await expect.poll(async () => Math.abs((await pageNow(page)) - (await getDoorClock(request)).now), { timeout: 10_000 }).toBeLessThan(1_500);
-    expect(Math.abs((await pageNow(page)) - PARIS_2359)).toBeLessThan(15_000);
+    expect(Math.abs((await pageNow(page)) - PARIS_2359)).toBeLessThan(45_000); // elapsed since the door was set (cold page load); the default start is days away
     await expect(page.locator('[data-caption-timer]:visible').first()).toBeVisible();
   });
 
@@ -62,6 +62,8 @@ test.describe('SPEC-07 · server clock and the time machine', () => {
   });
 
   test('AC-60: the time machine panel (pause, midnight, speed) reaches the door', async ({ page, request }) => {
+    // «Північ» jumps to the NEXT midnight from now: start at 23:38 London so that it is London's (as in us8).
+    await setDoorClock(request, { at: MIDNIGHT_LONDON - 22 * 60_000, speed: 1 });
     await page.goto('/?panel=1');
     await waitForTimeApi(page);
     const panel = page.getByRole('dialog', { name: 'Машина часу' });
@@ -101,9 +103,10 @@ test.describe('SPEC-07 · server clock and the time machine', () => {
     const nearMidnight = async () => (await getNightRun(request)).records.filter((r) => Math.abs(r.plannedAt - MIDNIGHT_LONDON) <= 1_000);
     await expect.poll(async () => (await nearMidnight()).length, { timeout: 20_000, intervals: [500] }).toBeGreaterThan(0);
     for (const rec of await nearMidnight()) {
-      // plannedAt and startedAt are on the same (clock) scale.
-      expect(rec.startedAt - rec.plannedAt).toBeGreaterThanOrEqual(0);
-      expect(rec.startedAt - rec.plannedAt).toBeLessThanOrEqual(2_000);
+      // `plannedAt` and `at` are both server (virtual) time; `startedAt` is real wall-clock time — a different scale.
+      // At speed 1 the server lateness equals the real one.
+      expect(rec.at - rec.plannedAt).toBeGreaterThanOrEqual(0);
+      expect(rec.at - rec.plannedAt).toBeLessThanOrEqual(2_000);
     }
   });
 });

@@ -17,6 +17,7 @@ export interface NightRecord {
   action: string;
   plannedAt: number;
   startedAt: number;
+  at: number;
   consequenceId: string;
 }
 
@@ -35,4 +36,5 @@ export const startNightRun = (api: APIRequestContext, body: { speed?: number; fr
 export const getNightRun = (api: APIRequestContext) =>
   door<{ epoch: number; records: NightRecord[] }>(api, 'get', '/api/_test/scheduler/night-run');
 /** About 15 s: also clears faults, resumes the scheduler and puts the clock back to real time. */
-export const resetServer = (api: APIRequestContext) => door<unknown>(api, 'post', '/api/_test/reset');
+// The server refuses a mutating call without a JSON body (`content-type: application/json`) — send `{}`.
+export const resetServer = (api: APIRequestContext) => door<unknown>(api, 'post', '/api/_test/reset', {});

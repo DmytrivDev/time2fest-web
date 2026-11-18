@@ -85,7 +85,7 @@ export const nightRunJournalDoor: DoorRow = {
     const rows = await createPayloadRunRecordStore(await lazyPayload(ctx.deps)).list(epoch);
     const value: NightRunJournal = {
       epoch,
-      records: rows.map(({ keys, action, plannedAt, startedAt, consequenceId }) => ({ keys, action, plannedAt, startedAt, consequenceId })),
+      records: rows.map(({ keys, action, plannedAt, startedAt, at, consequenceId }) => ({ keys, action, plannedAt, startedAt, at, consequenceId })),
     };
     return { ok: true, value };
   },

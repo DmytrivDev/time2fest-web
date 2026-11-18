@@ -22,6 +22,8 @@ export interface NightRunRecord {
   action: string;
   plannedAt: number;
   startedAt: number;
+  /** Server (virtual) time when the action ran; `at - plannedAt` is the lateness on the clock scale. */
+  at: number;
   consequenceId: string;
 }
 
