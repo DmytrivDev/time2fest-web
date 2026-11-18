@@ -22,6 +22,7 @@ const PAIRS = [
   { id: 'country-us', demo: `/country/ssha/${T}`, pre: '/uk/country/united-states/' },
   { id: 'country-ad', demo: `/country/andorra/${T}`, pre: '/uk/country/andorra/' },
   { id: 'toasts', demo: `/support/${T}`, pre: '/uk/toasts/' },
+  { id: 'privacy', demo: `/privacy/${T}`, pre: '/uk/privacy/' },
 ];
 const SIZES = [
   { id: 'd1440', width: 1440, height: 900, scale: 0.4 },
