@@ -17,6 +17,8 @@ export interface LeaseGrant {
   epoch: number;
   /** Remaining term by the database clock; 0 when not held. */
   expiresInMs: number;
+  /** When not held: remaining term of the current holder by the database clock (0 = free now). */
+  freeInMs?: number;
   /** On a takeover: the holder that let the lease expire (AC-48). */
   previousHolder?: string;
 }
@@ -84,6 +86,13 @@ export interface RunStore {
    * A settled pair is never overwritten. `stale` when the lease epoch is no longer current.
    */
   finish(input: FinishInput): Promise<'finished' | 'stale'>;
+  /**
+   * `claim` of several groups of one holder and lease epoch in ONE transaction with ONE fencing
+   * check: `stale` writes nothing, otherwise one result per input, in input order.
+   */
+  claimGroups(inputs: readonly ClaimInput[]): Promise<'stale' | ClaimResult[]>;
+  /** `finish` of several groups of one holder and lease epoch in ONE transaction; `stale` writes nothing. */
+  finishGroups(inputs: readonly FinishInput[]): Promise<'finished' | 'stale'>;
   ledger(runEpoch: number): Promise<RunLedger>;
   /** Pairs skipped or failed with `finishedAt` in the 24 h before `serverNow` (festival slice). */
   missed24h(serverNow: number): Promise<{ skipped: number; failed: number }>;

@@ -2,7 +2,8 @@
  * The moment scheduler of one process (SPEC-07 AC-1, AC-25 … AC-48, NFR-7, NFR-8), ring 3: ports only.
  *
  * Two loops on injected, unref'd timers:
- * - **lease** — `acquireOrRenew` every 2 s REAL time. The term is the store's (database clock); the
+ * - **lease** — the holder runs `acquireOrRenew` every 2 s REAL time; a standby tries again right
+ *   after the current term ends (the store says when; else every 1 s) (AC-44). The term is the store's (database clock); the
  *   process trusts it only until its own MONOTONIC clock says the term (minus a safety margin,
  *   counted from the moment the request was sent) has run out (`holds`). Virtual time never enters.
  *   A holder that cannot reach the store stops acting when the term runs out and raises `page`
@@ -11,9 +12,11 @@
  * - **tick** — at most every 250 ms real (sooner when the next moment is closer at the current
  *   speed; never faster than that while frozen): nothing until the moment list is loaded (NFR-8)
  *   and while not holding the lease (AC-43); otherwise the due groups by SERVER time, in C1 order:
- *   late rule → `skipped` rows (journaled by the store); `claim` (fenced by lease epoch in the same
- *   transaction, AC-45) → run the action once per group (AC-30) with its consequence id (C4, reused
- *   after a crash, AC-29) → `finish done`. An action that throws (also on a publisher result
+ *   late rule → `skipped` rows (journaled by the store); ONE `claim` transaction for every group
+ *   due at that look (fenced by lease epoch, AC-45) → run the action once per group, in order
+ *   (AC-30), with its consequence id (C4, reused after a crash, AC-29) → ONE `finish done`
+ *   transaction. Groups that came due meanwhile are taken by the next look of the same pass, never
+ *   after a sleep (AC-32 at ×600). An action that throws (also on a publisher result
  *   `unavailable`/`rejected`) is retried ≥1 s apart while its late rule allows, then settled as
  *   `failed` (journaled) — other groups keep running meanwhile (AC-40). A settled pair never runs
  *   again in the same run epoch (AC-26, AC-37).
@@ -23,10 +26,10 @@
  *   dead holder left behind DO count (AC-39 has no takeover exemption): the new holder pages if they
  *   are over 2 s late. One `page` `scheduler/lag` per lagging episode.
  */
-import { seasonMoments, type SeasonInput } from '@time2fest/rules/time';
+import { seasonMoments, type SeasonInput, type SeasonMoment } from '@time2fest/rules/time';
 import { consequenceFor, pairKey } from '../domain/scheduler/consequence';
 import { LAG_ALARM_MS, lagMs, type LateSkipReason } from '../domain/scheduler/late';
-import { applyRenew, holds, LEASE_RENEW_MS, NO_LEASE, type LeaseView, type RenewOutcome } from '../domain/scheduler/lease';
+import { applyRenew, holds, LEASE_RENEW_MS, NO_LEASE, nextAttemptMs, type LeaseView, type RenewOutcome } from '../domain/scheduler/lease';
 import { buildPlan, dueGroups, nextDueAt, splitLate, wakeDelayMs, type DueGroup, type SchedulePlan } from '../domain/scheduler/plan';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Logger } from '../ports';
@@ -169,8 +172,6 @@ function errorCode(err: unknown): string {
   return 'error';
 }
 
-type GroupOutcome = 'ok' | 'deferred' | 'stale';
-
 export function createScheduler(d: SchedulerDeps): SchedulerHandle {
   const tickMs = d.tickMs ?? SCHEDULER_TICK_MS;
   const renewMs = d.renewMs ?? LEASE_RENEW_MS;
@@ -186,6 +187,8 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
   let tickTimer: unknown;
   let renewing: Promise<void> | null = null;
   let passing: Promise<void> | null = null;
+  /** The last pass threw (store down): wait a whole tick before the next look. */
+  let passFailed = false;
 
   // Moment list (NFR-8): reloaded whenever `dirty` moved past `loadedGen`.
   let dirty = 1;
@@ -230,19 +233,30 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
     });
   }
 
-  async function renew(): Promise<void> {
+  /** One acquire/renew attempt; resolves with what the store answered (for the next attempt's timing). */
+  async function renew(): Promise<RenewOutcome> {
     const sentAt = d.mono();
     let outcome: RenewOutcome;
     let failure: string | undefined;
     try {
       const g = await withTimeout(d.lease.acquireOrRenew(d.holderId), renewMs * 2);
       if (g === undefined) failure = 'timeout';
-      outcome = g === undefined ? { ok: false } : { ok: true, held: g.held, epoch: g.epoch, expiresInMs: g.expiresInMs, ...(g.previousHolder ? { previousHolder: g.previousHolder } : {}) };
+      outcome =
+        g === undefined
+          ? { ok: false }
+          : {
+              ok: true,
+              held: g.held,
+              epoch: g.epoch,
+              expiresInMs: g.expiresInMs,
+              ...(g.previousHolder ? { previousHolder: g.previousHolder } : {}),
+              ...(g.freeInMs !== undefined ? { freeInMs: g.freeInMs } : {}),
+            };
     } catch (err) {
       failure = errorCode(err);
       outcome = { ok: false };
     }
-    if (state === 'stopped') return;
+    if (state === 'stopped') return outcome;
     const wasHeld = lease.held;
     const step = applyRenew(lease, outcome, sentAt);
     lease = step.view;
@@ -276,6 +290,7 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
       default:
         break;
     }
+    return outcome;
   }
 
   function scheduleRenew(ms: number): void {
@@ -285,10 +300,16 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
       renewTimer = undefined;
       if (state !== 'running' || renewing) return;
       const sentAt = d.mono();
-      renewing = renew().finally(() => {
-        renewing = null;
-        scheduleRenew(Math.max(0, sentAt + renewMs - d.mono()));
-      });
+      // The holder renews every `renewMs`; a standby tries again right when the current term ends.
+      let outcome: RenewOutcome = { ok: false };
+      renewing = renew()
+        .then((o) => {
+          outcome = o;
+        })
+        .finally(() => {
+          renewing = null;
+          scheduleRenew(nextAttemptMs(lease, outcome, renewMs, d.mono() - sentAt));
+        });
     }, ms);
   }
 
@@ -351,11 +372,20 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
     return 'stale';
   }
 
-  async function runGroup(group: DueGroup, epoch: number): Promise<GroupOutcome> {
-    const p = plan;
-    if (!p) return 'ok';
-    const v = d.view();
-    if (v.frozen) return 'ok';
+  /** A due group cleared by its late rule, ready to be claimed and run. */
+  interface Ready {
+    group: DueGroup;
+    run: readonly SeasonMoment[];
+    keys: string[];
+    lateMs: number;
+    consequenceId: string;
+  }
+
+  /**
+   * Late rule, skips and failures of one due group (settled at once), retry spacing and the lag
+   * alarm: the runnable part of the group, or why there is none.
+   */
+  async function prepare(p: SchedulePlan, group: DueGroup, epoch: number, v: ClockView): Promise<Ready | 'ok' | 'deferred' | 'stale'> {
     const split = splitLate(p, group, v.now);
 
     // Late: never-tried moments are skipped, moments whose attempts failed are settled as failed.
@@ -394,48 +424,121 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
         d.alarm.raise({ level: 'page', source: 'scheduler', code: 'lag', details: { action: group.action, at: group.at, lagMs: Math.round(lag) } });
       }
     }
+    return { group, run: split.run, keys, lateMs: split.lateMs, consequenceId: consequenceFor(group.action, epoch, keys, started) };
+  }
 
-    const consequenceId = consequenceFor(group.action, epoch, keys, started);
+  /**
+   * The due groups of one look, in C1 order: ONE claim transaction for all of them (one fencing
+   * check, AC-45), each action run once, in order (AC-30), then ONE finish transaction for the runs
+   * that succeeded. Groups that come due meanwhile are taken by the next look of the same pass.
+   */
+  async function runDue(groups: readonly DueGroup[], epoch: number): Promise<{ deferred: boolean; stale: boolean }> {
+    const p = plan;
+    const v = d.view();
+    if (!p || v.frozen) return { deferred: false, stale: false };
+    let deferred = false;
+    const ready: Ready[] = [];
+    for (const group of groups) {
+      const r = await prepare(p, group, epoch, v);
+      if (r === 'stale') return { deferred, stale: true };
+      if (r === 'deferred') deferred = true;
+      else if (r !== 'ok') ready.push(r);
+    }
+    if (ready.length === 0) return { deferred, stale: false };
+
     const startedAt = d.view().now;
-    const claim = await d.runs.claim({
-      leaseEpoch: lease.epoch ?? -1,
-      holder: d.holderId,
-      runEpoch: epoch,
-      action: group.action,
-      keys,
-      consequenceId,
-      plannedAt: group.at,
-      startedAt,
-    });
-    if (claim === 'stale') return fenced('claim');
-    if (claim === 'done') {
-      for (const k of keys) settled.add(pairKey(group.action, k));
-      ledgerFresh = false;
-      return 'ok';
+    const claims = await d.runs.claimGroups(
+      ready.map((r) => ({
+        leaseEpoch: lease.epoch ?? -1,
+        holder: d.holderId,
+        runEpoch: epoch,
+        action: r.group.action,
+        keys: r.keys,
+        consequenceId: r.consequenceId,
+        plannedAt: r.group.at,
+        startedAt,
+      })),
+    );
+    if (claims === 'stale') {
+      fenced('claim');
+      return { deferred, stale: true };
     }
-    for (const k of keys) started.set(pairKey(group.action, k), consequenceId);
-    // The claim was fenced by the store; the local term must still allow acting before publishing.
-    // A holder that ran out leaves the pairs `started`: the next holder reruns them with the same id.
-    if (state !== 'running' || !acting()) return 'stale';
 
-    const row = rowsByKey.get(group.action);
-    try {
-      if (!row) throw Object.assign(new Error('moment action not registered'), { code: 'no_row' });
-      await row.run({ action: group.action, at: group.at, moments: split.run, consequenceId, now: startedAt, lateMs: split.lateMs, runEpoch: epoch }, ctx);
-    } catch (err) {
-      const code = errorCode(err);
-      counters.retries += 1;
-      for (const k of keys) {
-        const pk = pairKey(group.action, k);
-        failures.set(pk, { nextMono: d.mono() + retryMs, attempts: (failures.get(pk)?.attempts ?? 0) + 1, code });
+    const claimed: Ready[] = [];
+    ready.forEach((r, i) => {
+      if (claims[i] === 'claimed') {
+        for (const k of r.keys) started.set(pairKey(r.group.action, k), r.consequenceId);
+        claimed.push(r);
+        return;
       }
-      d.log.warn({ msg: 'scheduler-action-error', action: group.action, keys, code, attempts: failures.get(pairKey(group.action, keys[0] ?? ''))?.attempts });
-      return 'deferred';
+      // Every pair already settled (by another holder): trust the store's ledger from the next pass on.
+      for (const k of r.keys) settled.add(pairKey(r.group.action, k));
+      ledgerFresh = false;
+    });
+
+    const done: Ready[] = [];
+    let stale = false;
+    for (const r of claimed) {
+      // The claim was fenced by the store; the local term must still allow acting before publishing.
+      // A holder that ran out leaves the pairs `started`: the next holder reruns them with the same id.
+      if (state !== 'running' || !acting()) {
+        stale = true;
+        break;
+      }
+      const row = rowsByKey.get(r.group.action);
+      try {
+        if (!row) throw Object.assign(new Error('moment action not registered'), { code: 'no_row' });
+        const now = d.view().now;
+        await row.run({ action: r.group.action, at: r.group.at, moments: r.run, consequenceId: r.consequenceId, now, lateMs: r.lateMs, runEpoch: epoch }, ctx);
+        done.push(r);
+      } catch (err) {
+        const code = errorCode(err);
+        counters.retries += 1;
+        for (const k of r.keys) {
+          const pk = pairKey(r.group.action, k);
+          failures.set(pk, { nextMono: d.mono() + retryMs, attempts: (failures.get(pk)?.attempts ?? 0) + 1, code });
+        }
+        d.log.warn({ msg: 'scheduler-action-error', action: r.group.action, keys: r.keys, code, attempts: failures.get(pairKey(r.group.action, r.keys[0] ?? ''))?.attempts });
+        deferred = true;
+      }
     }
-    return (await settle(group, keys, 'done', epoch, { consequenceId })) === 'stale' ? 'stale' : 'ok';
+    if (done.length > 0 && (await settleDone(done, epoch)) === 'stale') stale = true;
+    return { deferred, stale };
+  }
+
+  /** `done` for every group that ran, in one transaction. */
+  async function settleDone(done: readonly Ready[], epoch: number): Promise<'finished' | 'stale'> {
+    const finishedAt = d.view().now;
+    const r = await d.runs.finishGroups(
+      done.map((x) => ({
+        leaseEpoch: lease.epoch ?? -1,
+        holder: d.holderId,
+        runEpoch: epoch,
+        action: x.group.action,
+        keys: x.keys,
+        status: 'done' as const,
+        consequenceId: x.consequenceId,
+        plannedAt: x.group.at,
+        finishedAt,
+      })),
+    );
+    if (r === 'stale') return fenced('finish');
+    for (const x of done) {
+      for (const k of x.keys) {
+        const pk = pairKey(x.group.action, k);
+        settled.add(pk);
+        started.delete(pk);
+        failures.delete(pk);
+      }
+      counters.done += x.keys.length;
+      last = { action: x.group.action, at: x.group.at, keys: x.keys, status: 'done', finishedAt, consequenceId: x.consequenceId };
+    }
+    return 'finished';
   }
 
   // ---- one pass -----------------------------------------------------------------------------
+
+  const groupId = (g: DueGroup) => `${g.action}|${g.at}`;
 
   async function pass(): Promise<void> {
     if (loadedGen < dirty) await load();
@@ -466,36 +569,48 @@ export function createScheduler(d: SchedulerDeps): SchedulerHandle {
       runEpoch = epoch;
       ledgerFresh = true;
     }
-    const v = d.view();
-    if (v.frozen || !(v.speed > 0)) {
-      // AC-38: frozen runs nothing and is never late.
-      lastLag = 0;
-      lagging = false;
-      return;
-    }
-    const due = dueGroups(p, v.now, settled);
     lastLag = 0;
     let deferred = false;
-    for (const group of due) {
+    // Drain: groups that come due while a look runs (at x600 a 50 ms look is 30 s of server time)
+    // are taken by the next look at once, never after a sleep. Each group is looked at once per pass.
+    const seen = new Set<string>();
+    for (;;) {
+      const v = d.view();
+      if (v.frozen || !(v.speed > 0)) {
+        // AC-38: frozen runs nothing and is never late.
+        lastLag = 0;
+        lagging = false;
+        return;
+      }
       if (state !== 'running' || !acting()) break;
-      const outcome = await runGroup(group, epoch);
-      if (outcome === 'stale') break;
-      if (outcome === 'deferred') deferred = true;
+      const due = dueGroups(p, v.now, settled).filter((g) => !seen.has(groupId(g)));
+      if (due.length === 0) break;
+      for (const g of due) seen.add(groupId(g));
+      const outcome = await runDue(due, epoch);
+      if (outcome.deferred) deferred = true;
+      if (outcome.stale) break;
     }
     if (!deferred && lastLag <= LAG_ALARM_MS) lagging = false;
   }
 
   function nextDelay(): number {
     const p = plan;
-    if (!p || !acting()) return tickMs;
+    if (!p || !acting() || passFailed) return tickMs;
     const v = d.view();
-    if (v.frozen) return tickMs;
+    if (v.frozen || !(v.speed > 0)) return tickMs;
+    // A group that came due after the last look of the pass, with a pair not waiting for a retry: now.
+    const dueNow = dueGroups(p, v.now, settled).some((g) => g.moments.some((m) => !failures.has(pairKey(g.action, m.key))));
+    if (dueNow) return 0;
     return Math.max(MIN_DELAY_MS, wakeDelayMs(nextDueAt(p, v.now, settled), v.now, v.speed, tickMs));
   }
 
   function runPass(): Promise<void> {
     passing ??= pass()
+      .then(() => {
+        passFailed = false;
+      })
       .catch((err: unknown) => {
+        passFailed = true;
         // Store down mid-pass: the ledger may have moved; the lease loop raises the page alarm.
         ledgerFresh = false;
         d.log.warn({ msg: 'scheduler-pass-failed', code: errorCode(err) });

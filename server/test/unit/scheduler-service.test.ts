@@ -22,6 +22,27 @@ function harness(opts: { rowRun?: (g: MomentActionGroup) => Promise<void>; withi
   const claims: ClaimInput[] = [];
   const finishes: FinishInput[] = [];
   let staleClaims = false;
+  const claim = async (c: ClaimInput) => {
+    claims.push(c);
+    if (staleClaims || c.leaseEpoch !== lease.epoch) return 'stale' as const;
+    let open = 0;
+    for (const k of c.keys) {
+      const cur = rows.get(pairKey(c.action, k));
+      if (cur && cur.status !== 'started') continue;
+      rows.set(pairKey(c.action, k), { status: 'started', consequenceId: c.consequenceId });
+      open += 1;
+    }
+    return open > 0 ? ('claimed' as const) : ('done' as const);
+  };
+  const finish = async (f: FinishInput) => {
+    finishes.push(f);
+    if (f.leaseEpoch !== lease.epoch) return 'stale' as const;
+    for (const k of f.keys) {
+      const cur = rows.get(pairKey(f.action, k));
+      if (!cur || cur.status === 'started') rows.set(pairKey(f.action, k), { status: f.status, ...(f.consequenceId ? { consequenceId: f.consequenceId } : {}) });
+    }
+    return 'finished' as const;
+  };
   const row: MomentActionRow = {
     key: 'rec',
     capability: 'test',
@@ -42,25 +63,21 @@ function harness(opts: { rowRun?: (g: MomentActionGroup) => Promise<void>; withi
       },
     },
     runs: {
-      claim: async (c) => {
-        claims.push(c);
-        if (staleClaims || c.leaseEpoch !== lease.epoch) return 'stale';
-        let open = 0;
-        for (const k of c.keys) {
-          const cur = rows.get(pairKey(c.action, k));
-          if (cur && cur.status !== 'started') continue;
-          rows.set(pairKey(c.action, k), { status: 'started', consequenceId: c.consequenceId });
-          open += 1;
+      claim,
+      finish,
+      // One batch = one fence: the store answers `stale` for all of it, before writing anything.
+      claimGroups: async (cs) => {
+        const out: ('claimed' | 'done')[] = [];
+        for (const c of cs) {
+          const r = await claim(c);
+          if (r === 'stale') return 'stale';
+          out.push(r);
         }
-        return open > 0 ? 'claimed' : 'done';
+        return out;
       },
-      finish: async (f) => {
-        finishes.push(f);
-        if (f.leaseEpoch !== lease.epoch) return 'stale';
-        for (const k of f.keys) {
-          const cur = rows.get(pairKey(f.action, k));
-          if (!cur || cur.status === 'started') rows.set(pairKey(f.action, k), { status: f.status, ...(f.consequenceId ? { consequenceId: f.consequenceId } : {}) });
-        }
+      finishGroups: async (fs) => {
+        if (fs.some((f) => f.leaseEpoch !== lease.epoch)) return 'stale';
+        for (const f of fs) await finish(f);
         return 'finished';
       },
       ledger: async () => ({
@@ -190,6 +207,27 @@ describe('scheduler service loop', () => {
     await vi.advanceTimersByTimeAsync(2_000);
     expect(h.rows.get(pairKey('rec', KEY))?.status).toBe('failed');
     expect(h.finishes.at(-1)).toMatchObject({ status: 'failed', reason: 'rejected' });
+    await h.scheduler.stop();
+  });
+
+  it('AC-32: at x600 a group that comes due during a look runs at once, not after a tick', async () => {
+    const SECOND = MIDNIGHT + 15_000; // 25 ms real at x600
+    const h = harness({
+      season: { seasonId: '2026-27', zones: [{ zoneId: 'Z1', midnightMs: MIDNIGHT }, { zoneId: 'Z2', midnightMs: SECOND }], events: [] },
+      rowRun: async (g) => {
+        // The first look costs 50 ms real = 30 s of server time: the second group is due when it ends.
+        if (g.at === MIDNIGHT) h.clock.now = SECOND + 15_000;
+      },
+    });
+    h.clock.speed = 600;
+    h.clock.now = MIDNIGHT + 600;
+    h.scheduler.start();
+    const t0 = Date.now();
+    await vi.advanceTimersByTimeAsync(20);
+    expect(h.calls.map((c) => c.at)).toEqual([MIDNIGHT, SECOND]);
+    expect(Date.now() - t0).toBeLessThan(250);
+    expect(h.claims.map((c) => c.plannedAt)).toEqual([MIDNIGHT, SECOND]);
+    expect(h.rows.get(pairKey('rec', 'zone-midnight:Z2'))?.status).toBe('done');
     await h.scheduler.stop();
   });
 });

@@ -2,11 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   applyRenew,
   holds,
+  LEASE_EXPIRY_MARGIN_MS,
   LEASE_RENEW_MS,
   LEASE_SAFETY_MS,
+  LEASE_STANDBY_RETRY_MS,
   LEASE_TERM_MS,
   mayAct,
   NO_LEASE,
+  nextAttemptMs,
   type LeaseView,
   type RenewOutcome,
 } from '../../src/domain/scheduler/lease';
@@ -89,5 +92,30 @@ describe('scheduler lease — renew outcomes (AC-42, AC-48)', () => {
     const down = applyRenew(held, { ok: false }, 2_000);
     expect(down.change).toBe('unreachable');
     expect(down.view).toBe(held);
+  });
+});
+
+describe('scheduler lease — when the next attempt goes out (AC-44)', () => {
+  const held: LeaseView = { held: true, epoch: 3, grantedAtMono: 0, termMs: LEASE_TERM_MS };
+  const standby = (freeInMs?: number): RenewOutcome => ({ ok: true, held: false, epoch: 3, expiresInMs: 0, ...(freeInMs !== undefined ? { freeInMs } : {}) });
+
+  it('the holder renews every renew period counted from the request, never more often', () => {
+    expect(nextAttemptMs(held, granted(3), LEASE_RENEW_MS, 120)).toBe(LEASE_RENEW_MS - 120);
+    expect(nextAttemptMs(held, { ok: false }, LEASE_RENEW_MS, 3_000)).toBe(0);
+  });
+
+  it('a standby tries right after the current term ends; without that answer every second', () => {
+    expect(nextAttemptMs(NO_LEASE, standby(300), LEASE_RENEW_MS, 40)).toBe(300 + LEASE_EXPIRY_MARGIN_MS);
+    expect(nextAttemptMs(NO_LEASE, standby(0), LEASE_RENEW_MS, 40)).toBe(LEASE_EXPIRY_MARGIN_MS);
+    expect(nextAttemptMs(NO_LEASE, standby(5_500), LEASE_RENEW_MS, 40)).toBe(5_500 + LEASE_EXPIRY_MARGIN_MS);
+    expect(nextAttemptMs(NO_LEASE, standby(60_000), LEASE_RENEW_MS, 40)).toBe(LEASE_TERM_MS + LEASE_EXPIRY_MARGIN_MS);
+    expect(nextAttemptMs(NO_LEASE, standby(), LEASE_RENEW_MS, 40)).toBe(LEASE_STANDBY_RETRY_MS);
+    expect(nextAttemptMs(NO_LEASE, { ok: false }, LEASE_RENEW_MS, 40)).toBe(LEASE_STANDBY_RETRY_MS);
+  });
+
+  it('worst case: a holder killed right after a renew is taken over a margin after its term, under 10 s', () => {
+    // The last look of the standby said the term ends in LEASE_TERM_MS: its next attempt is right then.
+    expect(nextAttemptMs(NO_LEASE, standby(LEASE_TERM_MS), LEASE_RENEW_MS, 0)).toBe(LEASE_TERM_MS + LEASE_EXPIRY_MARGIN_MS);
+    expect(LEASE_TERM_MS + LEASE_EXPIRY_MARGIN_MS).toBeLessThan(10_000);
   });
 });

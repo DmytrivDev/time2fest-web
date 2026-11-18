@@ -15,6 +15,10 @@ export const LEASE_TERM_MS = 6_000;
 export const LEASE_RENEW_MS = 2_000;
 /** The process stops acting this long before the local term ends. */
 export const LEASE_SAFETY_MS = 500;
+/** A standby that does not know when the current term ends tries this often (AC-44: takeover within 10 s). */
+export const LEASE_STANDBY_RETRY_MS = 1_000;
+/** A standby tries this long after the database said the current term ends. */
+export const LEASE_EXPIRY_MARGIN_MS = 50;
 
 export interface LeaseTerm {
   /** Monotonic instant the successful acquire/renew request was sent. */
@@ -39,7 +43,15 @@ export const NO_LEASE: LeaseView = { held: false, epoch: null, grantedAtMono: 0,
 
 /** What the lease store answered (`LeaseStore.acquireOrRenew`), or that it could not be reached. */
 export type RenewOutcome =
-  | { readonly ok: true; readonly held: boolean; readonly epoch: number; readonly expiresInMs: number; readonly previousHolder?: string }
+  | {
+      readonly ok: true;
+      readonly held: boolean;
+      readonly epoch: number;
+      readonly expiresInMs: number;
+      readonly previousHolder?: string;
+      /** Not held: remaining term of the current holder by the database clock. */
+      readonly freeInMs?: number;
+    }
   | { readonly ok: false };
 
 export type LeaseChange =
@@ -81,4 +93,17 @@ export function applyRenew(view: LeaseView, outcome: RenewOutcome, sentAtMono: n
   if (view.held && view.epoch === outcome.epoch) return { view: next, change: 'renewed' };
   const takeover = outcome.previousHolder === undefined ? { epoch: outcome.epoch } : { previousHolder: outcome.previousHolder, epoch: outcome.epoch };
   return { view: next, change: 'acquired', takeover };
+}
+
+/**
+ * Real ms until the next acquire/renew attempt. The holder renews every `renewMs` counted from the
+ * moment the request was sent (`sinceSentMs` ago). A standby (or a holder that lost the lease) tries
+ * again right after the current term ends when the store said when that is (a renewal meanwhile only
+ * moves the next look), else `LEASE_STANDBY_RETRY_MS` later. The term itself is never changed here:
+ * the database grants and expires it.
+ */
+export function nextAttemptMs(view: LeaseView, outcome: RenewOutcome, renewMs: number, sinceSentMs: number): number {
+  if (view.held) return Math.max(0, renewMs - sinceSentMs);
+  if (!outcome.ok || outcome.freeInMs === undefined) return Math.min(renewMs, LEASE_STANDBY_RETRY_MS);
+  return Math.min(LEASE_TERM_MS, outcome.freeInMs) + LEASE_EXPIRY_MARGIN_MS;
 }
