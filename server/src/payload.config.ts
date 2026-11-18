@@ -4,6 +4,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { uk } from '@payloadcms/translations/languages/uk';
 import { buildConfig } from 'payload';
 import { harden, hardenGlobal } from './access/payloadGuard';
+import { cmsEndpointsFor } from './admin/cmsEndpoints';
 import { adminOrigins } from './domain/access/config';
 import { envClass, loadEnv } from './platform/env';
 import { collectionRegistry } from './registries/collections';
@@ -33,6 +34,8 @@ export default buildConfig({
   routes: { api: '/cms-api', admin: '/admin' },
   csrf,
   graphQL: { disable: true },
+  // SPEC-07 C9 / AC-75: `GET /cms-api/festival-state` everywhere, `POST /cms-api/clock` only in rehearsal and test.
+  endpoints: cmsEndpointsFor(loaded.class),
   collections: collectionRegistry.map((r) => harden(r.collection, r)),
   globals: globalRegistry.map((r) => hardenGlobal(r.global)),
   db: postgresAdapter({

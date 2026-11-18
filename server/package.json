@@ -28,6 +28,7 @@
     "export": "tsx src/cli/export.ts",
     "owner:create": "tsx src/cli/createOwner.ts",
     "realtime:config": "tsx src/cli/realtimeConfig.ts",
+    "clock": "tsx src/cli/clock.ts",
     "k6": "node scripts/k6.mjs",
     "serve": "node scripts/stack.mjs serve",
     "build": "next build",

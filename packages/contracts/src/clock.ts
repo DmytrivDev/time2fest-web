@@ -53,7 +53,14 @@ export interface FestivalStateMoment {
   subject: string | null;
 }
 
-/** Data of the admin slice «стан свята» (AC-75). No stream statuses. */
+/** The blocks of the admin slice; each one is computed on its own (AC-78). */
+export const FESTIVAL_STATE_BLOCKS = ['phase', 'slot', 'moments', 'scheduler', 'edge', 'clock'] as const;
+export type FestivalStateBlock = (typeof FESTIVAL_STATE_BLOCKS)[number];
+
+/**
+ * Data of the admin slice «стан свята» (AC-75). No stream statuses. A block whose source failed is
+ * listed in `errors` (AC-78); its fields then hold neutral placeholders and must not be shown as data.
+ */
 export interface FestivalStateView {
   phase: string;
   slot: { current: string | null; next: string | null };
@@ -66,5 +73,8 @@ export interface FestivalStateView {
     missed24h: number;
   };
   edgeSkewMs: number | null;
-  clock: { virtual: boolean; speed: number; epoch: number };
+  /** `now` — the server instant (virtual while the clock is virtual), ms. */
+  clock: { virtual: boolean; speed: number; epoch: number; now?: number };
+  /** Blocks whose source failed this time (AC-78); absent or empty when every block is fine. */
+  errors?: FestivalStateBlock[];
 }

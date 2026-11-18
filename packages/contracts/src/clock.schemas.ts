@@ -1,6 +1,6 @@
 /** Zod wire schemas of the clock contract (SPEC-07). Server and tests only. */
 import { z } from 'zod';
-import type { ClockEvent, FestivalStateView } from './clock';
+import { FESTIVAL_STATE_BLOCKS, type ClockEvent, type FestivalStateView } from './clock';
 
 /** `POST /api/_test/scheduler/night-run` body (C7). */
 export const NightRunBodySchema = z
@@ -69,7 +69,9 @@ export const FestivalStateViewSchema = z
         virtual: z.boolean(),
         speed: z.number().int().min(0).max(600),
         epoch: z.number().int().nonnegative(),
+        now: z.number().int().nonnegative().optional(),
       })
       .strict(),
+    errors: z.array(z.enum(FESTIVAL_STATE_BLOCKS)).optional(),
   })
   .strict() satisfies z.ZodType<FestivalStateView>;

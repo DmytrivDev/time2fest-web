@@ -3372,7 +3372,7 @@
       "text": "ZodObject<{ action: ZodOptional<ZodString>; after: ZodLiteral<\"publish\">; }, $strict>"
     },
     "packages/contracts/src/clock.schemas.ts#FestivalStateViewSchema": {
-      "text": "ZodObject<{ clock: ZodObject<{ epoch: ZodNumber; speed: ZodNumber; virtual: ZodBoolean; }, $strict>; edgeSkewMs: ZodNullable<ZodNumber>; moments: ZodArray<ZodObject<{ at: ZodNumber; kind: ZodString; subject: ZodNullable<ZodString>; }, $strict>>; phase: ZodString; scheduler: ZodObject<{ delayMs: ZodNullable<ZodNumber>; epoch: ZodNumber; holder: ZodNullable<ZodString>; missed24h: ZodNumber; renewedAgeMs: ZodNullable<ZodNumber>; }, $strict>; slot: ZodObject<{ current: ZodNullable<ZodString>; next: ZodNullable<ZodString>; }, $strict>; }, $strict>"
+      "text": "ZodObject<{ clock: ZodObject<{ epoch: ZodNumber; now: ZodOptional<ZodNumber>; speed: ZodNumber; virtual: ZodBoolean; }, $strict>; edgeSkewMs: ZodNullable<ZodNumber>; errors: ZodOptional<ZodArray<ZodEnum<{ clock: \"clock\"; edge: \"edge\"; moments: \"moments\"; phase: \"phase\"; scheduler: \"scheduler\"; slot: \"slot\"; }>>>; moments: ZodArray<ZodObject<{ at: ZodNumber; kind: ZodString; subject: ZodNullable<ZodString>; }, $strict>>; phase: ZodString; scheduler: ZodObject<{ delayMs: ZodNullable<ZodNumber>; epoch: ZodNumber; holder: ZodNullable<ZodString>; missed24h: ZodNumber; renewedAgeMs: ZodNullable<ZodNumber>; }, $strict>; slot: ZodObject<{ current: ZodNullable<ZodString>; next: ZodNullable<ZodString>; }, $strict>; }, $strict>"
     },
     "packages/contracts/src/clock.schemas.ts#LeaseDoorBody": {
       "text": "z.infer<typeof LeaseDoorBodySchema>"
@@ -3454,6 +3454,12 @@
     "packages/contracts/src/clock.ts#EDGE_NOW_HEADER": {
       "text": "\"x-t2f-edge-now\""
     },
+    "packages/contracts/src/clock.ts#FESTIVAL_STATE_BLOCKS": {
+      "text": "readonly [\"phase\", \"slot\", \"moments\", \"scheduler\", \"edge\", \"clock\"]"
+    },
+    "packages/contracts/src/clock.ts#FestivalStateBlock": {
+      "text": "(typeof FESTIVAL_STATE_BLOCKS)[number]"
+    },
     "packages/contracts/src/clock.ts#FestivalStateMoment": {
       "props": {
         "at": {
@@ -3491,6 +3497,12 @@
                   "text": "number"
                 }
               },
+              "now": {
+                "optional": true,
+                "type": {
+                  "text": "number"
+                }
+              },
               "speed": {
                 "optional": false,
                 "type": {
@@ -3513,6 +3525,12 @@
               "null",
               "number"
             ]
+          }
+        },
+        "errors": {
+          "optional": true,
+          "type": {
+            "text": "FestivalStateBlock[]"
           }
         },
         "moments": {
