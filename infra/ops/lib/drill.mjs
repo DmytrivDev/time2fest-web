@@ -1,8 +1,8 @@
 // @ts-check
 // `ops scheduler-drill` (SPEC-07 W56, AC-70…AC-72; рішення власника 2026-11-18 — два режими). Лише `rehearsal`.
 // Два екземпляри сервера, одна оренда планувальника (рядок у Postgres). Навчання ставить віртуальний годинник на
-// `--midnight` мінус хвилину, чекає, доки відомий власник оренди, рівно у віртуальну північ зупиняє його контейнер
-// (`docker compose stop`), міряє реальний час до перехоплення іншим екземпляром і до запису опівнічних моментів
+// `--midnight` мінус хвилину, чекає, доки відомий власник оренди, рівно у віртуальну північ вбиває його контейнер
+// без благодатного періоду (`docker compose kill -s SIGKILL` — смерть, а не звільнення оренди), міряє реальний час до перехоплення іншим екземпляром і до запису опівнічних моментів
 // (`clock records`), перевіряє, що кожна належна пара (дія, момент) записана рівно один раз, і друкує рядок
 // `DRILL takeover_ms=<n> late_ms=<n> duplicates=<n> missed=<n>`. Відновлення — ЗАВЖДИ (finally): запуск зупиненого
 // контейнера, `clock real`, прибирання екземпляра навчання; кожен крок — у журнал `.local/<env>/server2.jsonl`.
@@ -508,17 +508,19 @@ async function drill(ctx, o) {
     if (clock.now() > midnightAt) fail('північ минула до зупинки — запасу часу забракло');
     await clock.sleep(Math.max(0, midnightAt - clock.now()));
 
-    // Північ: зупинка власника.
+    // Північ: власник «помирає» — SIGKILL без благодатного періоду. `stop` (SIGTERM) дав би серверу звільнити оренду
+    // (`stop()` планувальника робить release), і замір показав би швидший шлях звільнення, а не перехоплення після
+    // закінчення строку оренди, якого вимагає межа 10 с.
     const stopAt = clock.now();
     touched.stopped.push(h);
     if (h.publicApi) {
       outageAt = stopAt;
-      journal.append({ step: 'outage', result: 'started', public_api: 'down', reason: `зупинено ${h.name}/${h.service} (власник оренди)` });
+      journal.append({ step: 'outage', result: 'started', public_api: 'down', reason: `убито ${h.name}/${h.service} (власник оренди, SIGKILL)` });
       out(`scheduler-drill: УВАГА — публічний /api недоступний, доки ${h.service} основного вузла не запуститься знову`);
     }
-    const stop = await call(h, ['stop', h.service], STOP_TIMEOUT_MS);
-    if (stop.code !== 0) fail(`зупинка ${h.name} завершилася з кодом ${stop.code}`);
-    ok('stop', { instance: h.name, stop_ms: clock.now() - stopAt });
+    const kill = await call(h, ['kill', '-s', 'SIGKILL', h.service], STOP_TIMEOUT_MS);
+    if (kill.code !== 0) fail(`SIGKILL ${h.name} завершився з кодом ${kill.code}`);
+    ok('kill', { instance: h.name, signal: 'SIGKILL', kill_ms: clock.now() - stopAt });
 
     // Перехоплення.
     const taken = await pollStatus(survivor, (s, who) => who === survivor && s.epoch !== null && s.epoch > oldEpoch, TAKEOVER_WAIT_MS);

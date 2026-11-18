@@ -138,9 +138,21 @@ function world(o = {}) {
         return {};
       }
       if (verb === 'ps') return { stdout: i.running ? `${i.id}\n` : '' };
-      if (verb === 'stop') {
+      // SIGKILL — смерть: оренда лишається за мертвим до кінця строку (перехоплення через `takeoverDelay`).
+      if (verb === 'kill' && argv.includes('SIGKILL')) {
         i.running = false;
         if (lease.holder === name) lease.stoppedAt = t;
+        return {};
+      }
+      // Благодатна зупинка — як у сервера: `stop()` планувальника звільняє оренду, інший бере її одразу.
+      if (verb === 'stop') {
+        i.running = false;
+        const next = /** @type {const} */ (['main', 'drill', 'second']).find((n) => n !== name && inst[n].running);
+        if (lease.holder === name && next) {
+          lease.holder = next;
+          lease.epoch += 1;
+          lease.takenAt = t;
+        }
         return {};
       }
       if (verb === 'start') {
@@ -253,7 +265,7 @@ function world(o = {}) {
         if (c.argv[0] === 'sh' && c.argv[2].includes('cat > "$1.tmp"')) return `${who}: write ${path.posix.basename(c.argv[4])}`;
         if (c.argv[0] === 'sh' && c.argv[2] === 'rm -f -- "$1"') return `${who}: rm ${path.posix.basename(c.argv[4])}`;
         if (c.argv[1] !== 'compose') return null;
-        const m = a.match(/ (up -d --no-deps \S+|stop \S+|start \S+|restart \S+|rm -sf \S+)$/);
+        const m = a.match(/ (up -d --no-deps \S+|kill -s SIGKILL \S+|stop \S+|start \S+|restart \S+|rm -sf \S+)$/);
         if (m) return `${who}: ${m[1]}`;
         const k = a.match(/pnpm run clock (restart-night|set --at \S+|speed \S+|real)$/);
         return k ? `${who}: clock ${k[1]}` : null;
@@ -343,7 +355,7 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
       'main: clock restart-night',
       'main: clock set --at 2026-12-31T09:59:00Z',
       'main: clock speed 1',
-      'main: stop server',
+      'main: kill -s SIGKILL server',
       'main: start server',
       'main: clock real',
       'main: rm -sf server-drill',
@@ -353,6 +365,8 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
     expect(d).not.toBeNull();
     expect(d?.duplicates).toBe(0);
     expect(d?.missed).toBe(0);
+    // SIGKILL, не `stop`: благодатна зупинка звільнила б оренду (у фейку — миттєве перехоплення) і замір був би не той.
+    expect(w.calls.some((c) => c.argv[1] === 'compose' && c.argv.includes('stop'))).toBe(false);
     expect(d?.takeover).toBeGreaterThanOrEqual(6000);
     expect(d?.takeover).toBeLessThanOrEqual(6700);
     expect(w.out.some((l) => l.startsWith('T2F_MEASURE {"metric":"lease-takeover-ms"'))).toBe(true);
@@ -372,8 +386,8 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
     const w = world({ holder: 'drill' });
     expect(await main(oneNode(), w.deps), w.err.join('\n')).toBe(0);
     const ch = w.changes();
-    expect(ch).toContain('main: stop server-drill');
-    expect(ch).not.toContain('main: stop server');
+    expect(ch).toContain('main: kill -s SIGKILL server-drill');
+    expect(ch).not.toContain('main: kill -s SIGKILL server');
     expect(ch).not.toContain('main: start server');
     expect(ch.slice(-3)).toEqual(['main: clock real', 'main: rm -sf server-drill', 'main: rm compose.drill.yml']);
     expect(w.journal().some((r) => r.step === 'outage')).toBe(false);
@@ -407,7 +421,7 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
     ['up', (/** @type {string} */ a) => / up -d --no-deps server-drill$/.test(a), { start: false, real: false }],
     ['restart-night', (/** @type {string} */ a) => a.endsWith('clock restart-night'), { start: false, real: true }],
     ['set', (/** @type {string} */ a) => a.includes('clock set --at'), { start: false, real: true }],
-    ['stop', (/** @type {string} */ a) => / stop server$/.test(a), { start: true, real: true }],
+    ['kill', (/** @type {string} */ a) => / kill -s SIGKILL server$/.test(a), { start: true, real: true }],
     ['records', (/** @type {string} */ a) => a.includes('clock records'), { start: true, real: true }],
     ['takeover status', (/** @type {string} */ a) => a.includes('server-drill pnpm run clock status'), { start: true, real: true }],
   ])('збій на кроці %s — finally відновлює (start, clock real, прибирання) і код 1', async (_, failWhen, expect_) => {
@@ -443,7 +457,7 @@ describe('scheduler-drill --mode two-nodes', () => {
       'main: clock restart-night',
       'main: clock set --at 2026-12-31T09:59:00Z',
       'main: clock speed 1',
-      'main: stop server',
+      'main: kill -s SIGKILL server',
       'main: start server',
       'second: start server',
       'main: clock real',
