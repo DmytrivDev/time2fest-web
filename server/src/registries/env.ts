@@ -105,4 +105,13 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'PAYPRO_MODE', schema: z.enum(['sandbox', 'live']).default('sandbox'), isolated: true },
     ],
   },
+  {
+    // SPEC-06: Centrifugo HTTP API key and the HMAC key of connection tokens (≥256 bit, AC-20).
+    // T2F_CENTRIFUGO_URL / _PREFIX stay in `platform`; their class rules are in domain/realtime/config.ts.
+    key: 'realtime',
+    vars: [
+      { name: 'T2F_CENTRIFUGO_API_KEY', schema: z.string().min(32).optional(), secret: true, requiredIn: REQ },
+      { name: 'T2F_CENTRIFUGO_TOKEN_SECRET', schema: z.string().min(32).optional(), secret: true, requiredIn: REQ },
+    ],
+  },
 ];

@@ -35,6 +35,28 @@ jobs:
         env:
           COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: t2f-catalog
         ports: ['9090:9090']
+      # Centrifugo for the realtime integration tests; same generated env as docker-compose.yml (`pnpm realtime:config --check`).
+      centrifugo:
+        image: centrifugo/centrifugo:v6.10.3
+        ports: ['8000:8000']
+        options: --health-cmd "wget -qO- http://127.0.0.1:8000/health" --health-interval 5s --health-retries 20
+        env:
+          CENTRIFUGO_CHANNEL_NAMESPACES: '[{"name":"chat","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":100,"history_ttl":"300s"},{"name":"live","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"notif","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"orders","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"rttest","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":50,"history_ttl":"120s"},{"name":"site","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"user","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"}]'
+          CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_ANONYMOUS: 'true'
+          CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_CLIENT: 'true'
+          CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_FORCE_RECOVERY: 'true'
+          CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_SIZE: '20'
+          CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_TTL: '300s'
+          CENTRIFUGO_CLIENT_ALLOWED_ORIGINS: 'http://127.0.0.1:* http://localhost:*'
+          CENTRIFUGO_CLIENT_ALLOW_ANONYMOUS_CONNECT_WITHOUT_TOKEN: 'true'
+          CENTRIFUGO_CLIENT_DISALLOW_ANONYMOUS_CONNECTION_TOKENS: 'true'
+          CENTRIFUGO_CLIENT_PING_INTERVAL: '25s'
+          CENTRIFUGO_HEALTH_ENABLED: 'true'
+          CENTRIFUGO_ENGINE_TYPE: redis
+          CENTRIFUGO_ENGINE_REDIS_ADDRESS: redis://redis:6379/15
+          CENTRIFUGO_ENGINE_REDIS_PREFIX: t2f_centrifugo
+          CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY: ci-hmac-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
+          CENTRIFUGO_HTTP_API_KEY: ci-api-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
     steps:
       # `runner` context is not available in job-level `env`, so set it in a step.
       - name: Lock dir
@@ -51,6 +73,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: web full
         run: npx tsc --noEmit -p . && node scripts/contract-surface.mjs --check && npx eslint . && npx vitest run --maxWorkers=2 && node scripts/sync_tokens.mjs --check && npx cross-env NEXT_DIST_DIR=out-verify next build
+      - name: bundle check
+        run: node scripts/check-bundle.mjs out-verify
       - name: contracts full
         working-directory: packages/contracts
         run: npx tsc --noEmit -p . && npx vitest run --maxWorkers=2 && node ../../scripts/contract-surface.mjs --check
@@ -75,6 +99,13 @@ jobs:
       - name: server unit
         working-directory: server
         run: npx tsc --noEmit -p . && npx eslint . && npx vitest run --maxWorkers=2
+      - name: centrifugo ready
+        run: curl -sf http://127.0.0.1:8000/health || (docker restart ${{ job.services.centrifugo.id }} && sleep 5 && curl -sf http://127.0.0.1:8000/health)
       - name: server integration
         working-directory: server
+        env:
+          T2F_CENTRIFUGO_URL: http://127.0.0.1:8000
+          T2F_CENTRIFUGO_TOKEN_SECRET: ci-hmac-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
+          T2F_CENTRIFUGO_API_KEY: ci-api-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
+          T2F_TEST_CENTRIFUGO_REDIS_DB: '15'
         run: node scripts/db.mjs create && node scripts/db.mjs env && pnpm migrate && pnpm test:int && node scripts/verify-schema.mjs

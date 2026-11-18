@@ -49,6 +49,7 @@
   "dependencies": {
     "@time2fest/contracts": "workspace:*",
     "@time2fest/rules": "workspace:*",
+    "centrifuge": "5.8.0",
     "next": "16.4.5",
     "next-intl": "4.14.9",
     "qrcode.react": "4.2.0",

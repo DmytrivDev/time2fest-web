@@ -10,6 +10,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import { resolveWorktree } from './lib/worktree.mjs';
+import { ensureRealtimeSecrets, realtimeSecretsFile } from './lib/realtimeSecrets.mjs';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const rootDir = path.resolve(serverDir, '..');
@@ -42,6 +43,11 @@ function run(cmd, args, opts = { encoding: 'utf8' }) {
   return spawnSync(cmd, args, opts);
 }
 
+/** Compose child env with the shared Centrifugo secrets (SPEC-06 W11); values are never printed. */
+function composeEnv() {
+  return { ...process.env, ...ensureRealtimeSecrets(realtimeSecretsFile(serverDir, process.env)) };
+}
+
 function up() {
   const t0 = Date.now();
   const info = run('docker', ['info', '--format', '{{.ServerVersion}}'], { encoding: 'utf8', timeout: DOCKER_TIMEOUT_MS });
@@ -53,7 +59,7 @@ function up() {
   const r = run(
     'docker',
     ['compose', '-p', 't2f', '-f', composeFile, 'up', '-d', '--wait', 'postgres', 'redis', 'centrifugo', 'mailpit', 'r2'],
-    { encoding: 'utf8', stdio: 'inherit' },
+    { encoding: 'utf8', stdio: 'inherit', env: composeEnv() },
   );
   if (r.status !== 0) process.exit(r.status ?? 1);
   ok('up', t0);
@@ -61,7 +67,11 @@ function up() {
 
 function down() {
   const t0 = Date.now();
-  const r = run('docker', ['compose', '-p', 't2f', '-f', composeFile, 'stop'], { encoding: 'utf8', stdio: 'inherit' });
+  const r = run('docker', ['compose', '-p', 't2f', '-f', composeFile, 'stop'], {
+    encoding: 'utf8',
+    stdio: 'inherit',
+    env: composeEnv(),
+  });
   if (r.status !== 0) process.exit(r.status ?? 1);
   ok('down', t0);
 }
@@ -210,6 +220,18 @@ async function smoke() {
       async () => {
         const r = await fetch('http://127.0.0.1:8000/health');
         if (!r.ok) throw new Error(String(r.status));
+      },
+    ],
+    [
+      'centrifugo api key',
+      async () => {
+        const key = ensureRealtimeSecrets(realtimeSecretsFile(serverDir, env)).T2F_CENTRIFUGO_API_KEY;
+        const r = await fetch('http://127.0.0.1:8000/api/info', {
+          method: 'POST',
+          headers: { 'X-API-Key': key, 'Content-Type': 'application/json' },
+          body: '{}',
+        });
+        if (r.status !== 200) throw new Error(String(r.status));
       },
     ],
     [

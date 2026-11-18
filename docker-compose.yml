@@ -47,8 +47,25 @@ services:
     command: centrifugo
     ports:
       - '127.0.0.1:8000:8000'
+    depends_on:
+      redis:
+        condition: service_healthy
     environment:
-      CENTRIFUGO_HTTP_API_INSECURE: 'true'
+      CENTRIFUGO_CHANNEL_NAMESPACES: '[{"name":"chat","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":100,"history_ttl":"300s"},{"name":"live","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"notif","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"orders","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"rttest","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":50,"history_ttl":"120s"},{"name":"site","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"user","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"}]'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_ANONYMOUS: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_CLIENT: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_FORCE_RECOVERY: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_SIZE: '20'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_TTL: '300s'
+      CENTRIFUGO_CLIENT_ALLOWED_ORIGINS: 'http://127.0.0.1:* http://localhost:*'
+      CENTRIFUGO_CLIENT_ALLOW_ANONYMOUS_CONNECT_WITHOUT_TOKEN: 'true'
+      CENTRIFUGO_CLIENT_DISALLOW_ANONYMOUS_CONNECTION_TOKENS: 'true'
+      CENTRIFUGO_CLIENT_PING_INTERVAL: '25s'
+      CENTRIFUGO_ENGINE_TYPE: 'redis'
+      CENTRIFUGO_ENGINE_REDIS_ADDRESS: 'redis://redis:6379/63'
+      CENTRIFUGO_ENGINE_REDIS_PREFIX: 't2f_centrifugo'
+      CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY: '${T2F_CENTRIFUGO_TOKEN_SECRET:-}'
+      CENTRIFUGO_HTTP_API_KEY: '${T2F_CENTRIFUGO_API_KEY:-}'
       CENTRIFUGO_ADMIN_ENABLED: 'false'
       CENTRIFUGO_HEALTH_ENABLED: 'true'
     healthcheck:

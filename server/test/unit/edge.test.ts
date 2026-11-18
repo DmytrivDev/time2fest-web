@@ -86,6 +86,8 @@ describe('edge secret in the env registry', () => {
       T2F_R2_PREFIX: 'edge_unit/',
       T2F_R2_ACCESS_KEY_ID: 't2f-local',
       T2F_R2_SECRET_ACCESS_KEY: randomBytes(12).toString('hex'),
+      T2F_CENTRIFUGO_API_KEY: 'centrifugo-api-key-unit-test-0000000000', // check-secrets: allow test fake
+      T2F_CENTRIFUGO_TOKEN_SECRET: 'centrifugo-token-secret-unit-test-000000', // check-secrets: allow test fake
     };
     const missing = loadEnv({ ...base, T2F_ENV: 'rehearsal' }, envRegistry);
     expect(missing).toEqual({ ok: false, failing: ['T2F_EDGE_SECRET'] });

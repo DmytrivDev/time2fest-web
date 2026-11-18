@@ -1,0 +1,81 @@
+{
+  "channel": {
+    "namespaces": [
+      {
+        "name": "chat",
+        "allow_subscribe_for_anonymous": true,
+        "allow_subscribe_for_client": true,
+        "force_recovery": true,
+        "history_size": 100,
+        "history_ttl": "300s"
+      },
+      {
+        "name": "live",
+        "allow_subscribe_for_anonymous": true,
+        "allow_subscribe_for_client": true,
+        "force_recovery": true,
+        "history_size": 10,
+        "history_ttl": "300s"
+      },
+      {
+        "name": "notif",
+        "allow_user_limited_channels": true,
+        "force_recovery": true,
+        "history_meta_ttl": "3600s",
+        "history_size": 20,
+        "history_ttl": "600s"
+      },
+      {
+        "name": "orders",
+        "allow_user_limited_channels": true,
+        "force_recovery": true,
+        "history_meta_ttl": "3600s",
+        "history_size": 20,
+        "history_ttl": "600s"
+      },
+      {
+        "name": "rttest",
+        "allow_subscribe_for_anonymous": true,
+        "allow_subscribe_for_client": true,
+        "force_recovery": true,
+        "history_size": 50,
+        "history_ttl": "120s"
+      },
+      {
+        "name": "site",
+        "allow_subscribe_for_anonymous": true,
+        "allow_subscribe_for_client": true,
+        "force_recovery": true,
+        "history_size": 10,
+        "history_ttl": "300s"
+      },
+      {
+        "name": "user",
+        "allow_user_limited_channels": true,
+        "force_recovery": true,
+        "history_meta_ttl": "3600s",
+        "history_size": 20,
+        "history_ttl": "600s"
+      }
+    ],
+    "without_namespace": {
+      "allow_subscribe_for_anonymous": true,
+      "allow_subscribe_for_client": true,
+      "force_recovery": true,
+      "history_size": 20,
+      "history_ttl": "300s"
+    }
+  },
+  "client": {
+    "allow_anonymous_connect_without_token": true,
+    "allowed_origins": [
+      "http://127.0.0.1:*",
+      "http://localhost:*"
+    ],
+    "disallow_anonymous_connection_tokens": true,
+    "ping_interval": "25s"
+  },
+  "health": {
+    "enabled": true
+  }
+}

@@ -8,6 +8,8 @@ import type { AlarmStore } from '../alarms/ports';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { ReadinessProbe } from '../health/ports';
+import type { ChannelPublisher, SubjectInvalidator } from '../realtime/ports';
+import type { SubjectResolver } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
 import type { Deps, EventPorts } from './types';
 
@@ -26,6 +28,14 @@ export const alarmServiceOf = (deps: Deps): AlarmService => built(deps.alarmServ
 export const catalogStoreOf = (deps: Deps): CatalogStore => built(deps.catalogStore, 'catalogStore');
 /** The correction service dependencies (AC-53 … AC-62). */
 export const correctionsOf = (deps: Deps): CorrectionDeps => built(deps.corrections, 'corrections');
+/** The realtime ports (SPEC-06): signer, random source, channel prefix. */
+export const realtimeOf = (deps: Deps): NonNullable<Deps['realtime']> => built(deps.realtime, 'realtime');
+/** The publish port (C4); absent without `T2F_CENTRIFUGO_URL` and `T2F_CENTRIFUGO_API_KEY`. */
+export const publisherOf = (deps: Deps): ChannelPublisher => built(deps.realtime?.publisher, 'realtime publisher');
+/** `invalidateSubject` (C6); absent without `T2F_CENTRIFUGO_URL` and `T2F_CENTRIFUGO_API_KEY`. */
+export const invalidatorOf = (deps: Deps): SubjectInvalidator => built(deps.realtime?.invalidator, 'realtime invalidator');
+/** Who a realtime token is for (C5). */
+export const subjectsOf = (deps: Deps): SubjectResolver => built(deps.subjects, 'subjects');
 /** The unattended-mode service dependencies (AC-31 … AC-36). */
 export const unattendedDepsOf = (deps: Deps): UnattendedDeps => built(deps.unattended, 'unattended');
 /** The readiness probe of `GET /api/health` (SPEC-13a AC-5/AC-6). */

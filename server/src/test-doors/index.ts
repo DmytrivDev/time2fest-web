@@ -7,7 +7,24 @@ import { createTestClock } from '../clock';
 import { failure } from '../endpoints/pipeline';
 import type { Deps, RouteRow } from '../endpoints/types';
 import type { SeedStore } from '../ports';
+import type { SubjectResolver } from '../realtime/ports';
+import { createTestSubjects, type TestSubjects } from './realtimeToken';
 import { doorRegistry, type DoorRow } from './registry';
+
+/** The doors of one dispatcher: their route rows and the subject resolver their state feeds (AC-57). */
+export interface Doors {
+  routes: RouteRow[];
+  subjects: SubjectResolver;
+}
+
+/**
+ * The doors for the composition root: one test-subject state per construction, shared by the
+ * realtime-token door (sets it), the reset door (clears it) and the returned resolver (reads it).
+ */
+export function createDoors(deps: Deps, seed: SeedStore, rows: readonly DoorRow[] = doorRegistry): Doors {
+  const subjects = createTestSubjects();
+  return { routes: doorRoutes(deps, seed, rows, subjects), subjects: subjects.resolver };
+}
 
 /**
  * Door rows → route rows marked `testDoor`: the pipeline lets tooling call them without an
@@ -17,8 +34,13 @@ import { doorRegistry, type DoorRow } from './registry';
  * an unreadable lock state counts as "not held" (fail closed).
  * `seed` is the row store the composition root builds for the doors; route handlers never get it.
  */
-export function doorRoutes(deps: Deps, seed: SeedStore, rows: readonly DoorRow[] = doorRegistry): RouteRow[] {
-  const tools = { clock: createTestClock(), seed };
+export function doorRoutes(
+  deps: Deps,
+  seed: SeedStore,
+  rows: readonly DoorRow[] = doorRegistry,
+  subjects: TestSubjects = createTestSubjects(),
+): RouteRow[] {
+  const tools = { clock: createTestClock(), seed, subjects };
   const slug = deps.env.vars.T2F_SLUG;
   return rows.map((door) => ({
     key: `door-${door.key}`,

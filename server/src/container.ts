@@ -7,18 +7,23 @@
  * Test doors are loaded by dynamic `import()` only when `shouldLoadDoors` is true (AC-29); no
  * request field takes part in that decision (AC-31).
  */
+import { randomInt } from 'node:crypto';
 import type { JWTVerifyGetKey } from 'jose';
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
 import { createAccessGate, createDenyLog, type AccessGate } from './access/gate';
 import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
+import { createCentrifugoApi } from './adapters/centrifugoApi';
+import { createHs256Signer } from './adapters/centrifugoToken';
+import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
+import { parseRealtimeConfig } from './domain/realtime/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
 import { clockFor, realClock } from './clock';
 import { createDispatcher } from './endpoints/pipeline';
@@ -38,7 +43,11 @@ import { daySalts } from './platform/fingerprint';
 import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
+import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
+import { createChannelPublisher } from './realtime/publisher';
+import { createSubjectInvalidator } from './realtime/invalidate';
+import type { Scheduler } from './realtime/ports';
 import { isRevertible } from './registries/revertHandlers';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
@@ -123,11 +132,19 @@ function lazyPayload(alarm: Alarm): () => Promise<Payload> {
   };
 }
 
+/** Global timers that never keep the process alive (a CLI exits with a batch still pending). */
+const unrefTimers: Scheduler = {
+  setTimeout: (fn, ms) => setTimeout(fn, ms).unref(),
+  clearTimeout: (handle) => clearTimeout(handle as ReturnType<typeof setTimeout>),
+};
+
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
   const env: AppEnv = { class: loaded.class, vars: loaded.env };
+  const realtime = parseRealtimeConfig(raw, env.class);
+  if (!realtime.ok) throw new Error(`env: invalid ${realtime.failing.join(', ')}`);
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
   const clock = overrides.clock ?? clockFor(env.class);
   // The store reaches Payload lazily, so the alarm exists before Payload (which reports through it).
@@ -164,6 +181,26 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
+  // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
+  deps.subjects = overrides.subjects ?? noSessionSubjects;
+  const tokenSecret = realtime.config.tokenSecret;
+  // The server API (C4, C6) only with both the URL and the API key; else the getters throw.
+  const { url: centrifugoUrl, apiKey: centrifugoApiKey } = realtime.config;
+  const centrifugoApi =
+    centrifugoUrl !== undefined && centrifugoApiKey !== undefined ? createCentrifugoApi({ url: centrifugoUrl, apiKey: centrifugoApiKey, log }) : undefined;
+  deps.realtime = overrides.realtime ?? {
+    ...(tokenSecret !== undefined ? { signer: createHs256Signer(tokenSecret) } : {}),
+    random: () => randomInt(0, 2 ** 32) / 2 ** 32,
+    prefix: realtime.config.prefix,
+    ...(centrifugoApi !== undefined
+      ? {
+          publisher: createChannelPublisher({ api: centrifugoApi, rows: channelClassesFor(env.class), prefix: realtime.config.prefix, log,
+            // The batcher (AC-37) runs on real time and `unref`'d timers; batch ids are random UUIDs.
+            scheduler: unrefTimers, clock: realClock, makeId: () => crypto.randomUUID() }),
+          invalidator: createSubjectInvalidator({ api: centrifugoApi, log }),
+        }
+      : {}),
+  };
   return deps;
 }
 
@@ -284,8 +321,10 @@ export function edgeGateOf(deps: Deps): EdgeGate {
 
 /** The dispatcher for `deps`: production routes, plus the doors when `shouldLoadDoors`. */
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
-  const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).doorRoutes(deps, seedStoreOf(deps)) : [];
-  return createDispatcher({ routes: [...routes, ...doors], middleware: middlewareRegistry, deps, edge: edgeGateOf(deps) });
+  const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).createDoors(deps, seedStoreOf(deps)) : undefined;
+  // With the doors only: the routes see `deps` plus the doors' own subject resolver (AC-57); `deps` itself stays as built.
+  const served: Deps = doors ? Object.create(deps, { subjects: { value: doors.subjects, enumerable: true } }) : deps;
+  return createDispatcher({ routes: [...routes, ...(doors?.routes ?? [])], middleware: middlewareRegistry, deps: served, edge: edgeGateOf(deps) });
 }
 
 /**

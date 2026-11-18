@@ -3356,6 +3356,113 @@
         }
       }
     },
+    "packages/contracts/src/realtime.schemas.ts#RealtimeBatchSchema": {
+      "text": "ZodObject<{ events: ZodArray<ZodObject<{ data: ZodOptional<ZodUnknown>; id: ZodString; type: ZodString; version: ZodOptional<ZodNumber>; }, $strict>>; id: ZodString; type: ZodLiteral<\"batch\">; }, $strict>"
+    },
+    "packages/contracts/src/realtime.schemas.ts#RealtimeEnvelopeSchema": {
+      "text": "ZodObject<{ data: ZodOptional<ZodUnknown>; id: ZodString; type: ZodString; version: ZodOptional<ZodNumber>; }, $strict>"
+    },
+    "packages/contracts/src/realtime.schemas.ts#RealtimeTokenValueSchema": {
+      "text": "ZodObject<{ expiresAt: ZodNullable<ZodISODateTime>; token: ZodNullable<ZodString>; }, $strict>"
+    },
+    "packages/contracts/src/realtime.schemas.ts#TestRealtimeTokenBody": {
+      "text": "z.infer<typeof TestRealtimeTokenBodySchema>"
+    },
+    "packages/contracts/src/realtime.schemas.ts#TestRealtimeTokenBodySchema": {
+      "text": "ZodObject<{ subject: ZodObject<{ id: ZodString; kind: ZodEnum<{ account: \"account\"; guest: \"guest\"; }>; }, $strict>; ttlSeconds: ZodOptional<ZodNumber>; }, $strict>"
+    },
+    "packages/contracts/src/realtime.ts#REALTIME_MAX_BATCH_EVENTS": {
+      "text": "200"
+    },
+    "packages/contracts/src/realtime.ts#REALTIME_MAX_PUBLICATION_BYTES": {
+      "text": "65536"
+    },
+    "packages/contracts/src/realtime.ts#REALTIME_REASONS": {
+      "text": "readonly [\"realtime-not-configured\"]"
+    },
+    "packages/contracts/src/realtime.ts#RealtimeBatch": {
+      "props": {
+        "events": {
+          "optional": false,
+          "type": {
+            "text": "RealtimeEnvelope[]"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'batch'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/realtime.ts#RealtimeEnvelope": {
+      "props": {
+        "data": {
+          "optional": true,
+          "type": {
+            "text": "unknown"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "version": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/realtime.ts#RealtimeReason": {
+      "text": "(typeof REALTIME_REASONS)[number]"
+    },
+    "packages/contracts/src/realtime.ts#RealtimeSubjectKind": {
+      "union": [
+        "'account'",
+        "'guest'"
+      ]
+    },
+    "packages/contracts/src/realtime.ts#RealtimeTokenValue": {
+      "props": {
+        "expiresAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "token": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
     "packages/contracts/src/result.ts#ApiError": {
       "props": {
         "attemptsLeft": {
@@ -3436,6 +3543,9 @@
     },
     "packages/contracts/src/schemas.ts#CatalogResponseSchema": {
       "text": "ZodUnion<readonly [ZodObject<{ ok: ZodLiteral<true>; value: ZodObject<{ countries: ZodObject<{ countries: ZodArray<ZodObject<{ flagCode: ZodString; gender: ZodString; howTo: ZodObject<{ gallery: ZodArray<ZodObject<{ alt: ZodString; author: ZodString; license: ZodString; src: ZodString; }, $strict>>; text: ZodString; traditions: ZodArray<ZodObject<{ iconId: ZodString; id: ZodString; text: ZodString; title: ZodString; }, $strict>>; }, $strict>; illustrationId: ZodString; iso: ZodString; name: ZodObject<{ uk: ZodString; }, $loose>; popularity: ZodNumber; slug: ZodString; zoneIds: ZodArray<ZodString>; }, $strict>>; version: ZodLiteral<1>; }, $strict>; schedule: ZodObject<{ $schema: ZodOptional<ZodString>; generatedAt: ZodString; season: ZodLiteral<\"2026-27\">; tzdbVersion: ZodLiteral<\"2026f\">; version: ZodLiteral<1>; zones: ZodArray<ZodObject<{ countries: ZodArray<ZodObject<{ cities: ZodArray<ZodObject<{ celebrationType: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; events: ZodArray<ZodObject<{ id: ZodString; isMainCelebration: ZodBoolean; midnightUtc: ZodString; popularity: ZodNumber; restrained: ZodOptional<ZodObject<{ note: ZodObject<{ uk: ZodString; }, $loose>; }, $loose>>; type: ZodEnum<{ \"countdown-only\": \"countdown-only\"; main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; }, $strict>>; id: ZodString; isCountryMain: ZodBoolean; landmark: ZodOptional<ZodObject<{ uk: ZodString; }, $loose>>; mapPoint: ZodObject<{ x: ZodNumber; y: ZodNumber; }, $loose>; name: ZodObject<{ uk: ZodString; }, $loose>; }, $strict>>; iso: ZodString; }, $strict>>; id: ZodString; midnightUtc: ZodString; offsetMinutes: ZodNumber; order: ZodNumber; representativeCityId: ZodString; }, $strict>>; }, $strict>; version: ZodString; }, $strict>; }, $strict>, ZodObject<{ error: ZodObject<{ attemptsLeft: ZodOptional<ZodNumber>; code: ZodEnum<{ conflict: \"conflict\"; forbidden: \"forbidden\"; network: \"network\"; not_found: \"not_found\"; rate_limited: \"rate_limited\"; unauthorized: \"unauthorized\"; unavailable: \"unavailable\"; unknown: \"unknown\"; validation: \"validation\"; }>; message: ZodOptional<ZodString>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; }, $strict>; ok: ZodLiteral<false>; }, $strict>]>"
+    },
+    "packages/contracts/src/schemas.ts#RealtimeTokenResponseSchema": {
+      "text": "ZodUnion<readonly [ZodObject<{ ok: ZodLiteral<true>; value: ZodObject<{ expiresAt: ZodNullable<ZodISODateTime>; token: ZodNullable<ZodString>; }, $strict>; }, $strict>, ZodObject<{ error: ZodObject<{ attemptsLeft: ZodOptional<ZodNumber>; code: ZodEnum<{ conflict: \"conflict\"; forbidden: \"forbidden\"; network: \"network\"; not_found: \"not_found\"; rate_limited: \"rate_limited\"; unauthorized: \"unauthorized\"; unavailable: \"unavailable\"; unknown: \"unknown\"; validation: \"validation\"; }>; message: ZodOptional<ZodString>; reason: ZodOptional<ZodString>; retryAfterMs: ZodOptional<ZodNumber>; }, $strict>; ok: ZodLiteral<false>; }, $strict>]>"
     },
     "packages/contracts/src/schemas.ts#TestClockSet": {
       "text": "z.infer<typeof TestClockSetSchema>"

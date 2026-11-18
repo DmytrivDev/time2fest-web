@@ -1,0 +1,48 @@
+/** Скрипт перевірки бандла (SPEC-06, AC-56): коди виходу на фікстурних теках і справжність підпису в установленому centrifuge. */
+import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
+
+const root = path.resolve(__dirname, '../../..');
+const script = path.join(root, 'scripts/check-bundle.mjs');
+const SIGNATURE = 'token expired but no getToken function set in the configuration';
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'check-bundle-'));
+
+afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
+
+function run(dir: string) {
+  return spawnSync(process.execPath, [script, dir], { encoding: 'utf8' });
+}
+
+describe('check-bundle', () => {
+  it('чиста тека → 0', () => {
+    const d = path.join(tmp, 'clean');
+    fs.mkdirSync(path.join(d, 'sub'), { recursive: true });
+    fs.writeFileSync(path.join(d, 'sub', 'a.js'), 'console.log(1)');
+    const r = run(d);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('check-bundle: clean (1 files)');
+  });
+
+  it('файл із підписом → 1 і назва файлу', () => {
+    const d = path.join(tmp, 'dirty');
+    fs.mkdirSync(d, { recursive: true });
+    fs.writeFileSync(path.join(d, 'bad.js'), `x("${SIGNATURE}")`);
+    const r = run(d);
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain('bad.js');
+  });
+
+  it('немає теки → 2', () => {
+    const r = run(path.join(tmp, 'missing'));
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain('directory not found');
+  });
+
+  it('підпис справжній для встановленого centrifuge', () => {
+    const file = path.join(root, 'node_modules/centrifuge/dist/centrifuge.js');
+    expect(fs.readFileSync(file, 'utf8')).toContain(SIGNATURE);
+  });
+});
