@@ -20,64 +20,88 @@
     ]
   },
   "BR": {
-    "text": "Brazilians call New Year’s Eve Réveillon. In Rio the scale is staggering: millions of people gather on Copacabana Beach, music plays, and the fireworks are reflected in the ocean.",
+    "text": "Brazil welcomes the New Year — Réveillon — in white. The custom began with Candomblé followers who, in the 1970s, came to Copacabana beach in white with gifts for Iemanjá, the water goddess; since then white clothes and flowers set out to sea have spread across the country. At midnight people on the coast jump seven waves, making a wish on each.\n\nIn Rio de Janeiro the party is on Copacabana: the city estimates more than 2.6 million people came to greet 2026. At midnight fireworks fired from 19 barges for 12 minutes, 1,200 drones rose into the sky, and three stages played on the beach.",
     "traditions": [
       {
         "id": "t1",
+        "iconId": "white",
         "title": "All in white",
-        "text": "Brazilians dress in white, the color of peace and purity, and head to the beach, most of all to Copacabana."
+        "text": "People come to the beach in new white clothes. The custom goes back to Candomblé followers who greeted the New Year on Copacabana in white in the 1970s."
       },
       {
         "id": "t2",
-        "title": "Seven waves",
-        "text": "At midnight, people on the shore jump over seven waves, making a wish for each one."
+        "iconId": "flower",
+        "title": "Gifts for Iemanjá",
+        "text": "Iemanjá is a water goddess in Candomblé and Umbanda. People bring her flowers or small boats with gifts and push them out to sea — non-believers too."
       },
       {
         "id": "t3",
-        "title": "Flowers for Iemanjá",
-        "text": "Many people throw flowers into the water as an offering to Iemanjá, the goddess of the sea, and ask for happiness in the new year."
+        "iconId": "wave",
+        "title": "Seven waves",
+        "text": "At midnight people jump seven waves, making a wish on each: seven is a sacred number in Umbanda."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Réveillon 2027 in Brazil: Copacabana at Midnight | Time2Fest",
+      "description": "Millions in white greet 2027 on Copacabana in Rio, Brazil: fireworks over the ocean, seven waves for luck and flowers for Iemanjá. Rio’s midnight is 03:00 UTC."
+    },
+    "kit": "br-3"
   },
   "FR": {
-    "text": "The French call this night la Saint-Sylvestre. It means a long dinner with loved ones, a kiss at midnight and a stroll through festive Paris, where the Eiffel Tower sparkles.",
+    "text": "In France the last night of the year is called the Saint-Sylvestre, and it is spent over a festive dinner — the réveillon. It can be a quiet meal with family and friends or a party with dancing; on the table are foie gras, oysters and champagne, and people stay up until midnight. At 20:00 on 31 December the president addresses the French on television, reviewing the year and offering wishes — no president has missed it since 1958. At midnight some kiss under the mistletoe, a folk custom for luck.\n\nIn Paris the main party is on the Champs-Élysées: since 2014 the city has staged a free family show there. A giant video mapping is projected onto the Arc de Triomphe, and at midnight fireworks burst above it. According to the Interior Ministry, more than a million people greeted 2026 there.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Réveillon",
-        "text": "A long festive dinner with champagne, oysters and foie gras goes on late into the night."
+        "iconId": "feast",
+        "title": "The réveillon",
+        "text": "A festive dinner on 31 December with foie gras, oysters and champagne — with family and friends or at a party with dancing. People stay up until midnight."
       },
       {
         "id": "t2",
+        "iconId": "mistletoe",
         "title": "A kiss under the mistletoe",
-        "text": "By tradition, people kiss at midnight under a sprig of mistletoe for luck in the new year. The old greeting “Au gui l’an neuf!” is tied to mistletoe, too."
+        "text": "As midnight strikes, some kiss under a ball of mistletoe for a good year. It is a folk custom, said to have come from England in the 18th century."
       },
       {
         "id": "t3",
-        "title": "Champs-Élysées",
-        "text": "Parisians and visitors gather near the Arc de Triomphe for a light show on its walls, a shared countdown and fireworks at midnight."
+        "iconId": "fireworks",
+        "title": "Champs-Élysées show",
+        "text": "A video mapping lights up the Arc de Triomphe, then fireworks burst above it at midnight. Entry is free; more than a million people greeted 2026 here."
       }
-    ]
+    ],
+    "meta": {
+      "title": "New Year 2027 in France: Champs-Élysées Show | Time2Fest",
+      "description": "France greets 2027 with a réveillon dinner, a kiss under the mistletoe and fireworks over the Arc de Triomphe in Paris. Midnight in France is 23:00 UTC."
+    },
+    "kit": "fr"
   },
   "GB": {
-    "text": "In Britain, New Year means both Scotland’s Hogmanay and London’s fireworks over the Thames. What matters most is a hug, a song at twelve and the first guest through the door.",
+    "text": "In the United Kingdom midnight arrives with the chimes of Big Ben: in England the main celebration is in central London, with big events in Manchester, Liverpool and Birmingham too. At midnight people sing Auld Lang Syne, set to Robert Burns's 1788 poem; in Scotland they form a circle and cross arms for the last verse. There New Year's Eve is Hogmanay: right after midnight people go first-footing with coal, shortbread or whisky, as the first visitor brings the house its luck for the year. 1 January is a holiday across the country, and in Scotland so is the 2nd.\n\nIn London the countdown runs to the bongs of Big Ben, shown live on the BBC. Fireworks have lit the Thames by the London Eye since 2004. For 2026, City Hall says about 100,000 ticketholders lined the banks as more than 12,000 fireworks burned for 12 minutes.",
     "traditions": [
       {
         "id": "t1",
-        "title": "The chimes of Big Ben",
-        "text": "At midnight Big Ben strikes twelve, and the main fireworks begin over the Thames, by the London Eye."
+        "iconId": "music",
+        "title": "Auld Lang Syne",
+        "text": "At midnight people sing the old song set to Robert Burns's 1788 poem. In Scotland they stand in a circle and cross arms at the last verse."
       },
       {
         "id": "t2",
-        "title": "Auld Lang Syne",
-        "text": "At twelve, people form a circle, join hands and sing the old Scottish song with words by Robert Burns, crossing their arms on the last verse."
+        "iconId": "door",
+        "title": "First-footing at Hogmanay",
+        "text": "In Scotland, right after midnight, people visit friends and neighbours with coal, shortbread or whisky. The first visitor is said to set the household's luck for the year."
       },
       {
         "id": "t3",
-        "title": "First-footing",
-        "text": "In Scotland and northern England, it is believed that the first person to cross the threshold after midnight brings good luck to the house. Visitors arrive with a gift: coal, shortbread or whisky."
+        "iconId": "fireworks",
+        "title": "Big Ben and Thames fireworks",
+        "text": "London counts down to the bongs of Big Ben, then fireworks burst around the London Eye, as every year since 2004. For 2026, City Hall says more than 12,000 fireworks lit the sky for 12 minutes."
       }
-    ]
+    ],
+    "meta": {
+      "title": "New Year 2027 in the United Kingdom: London | Time2Fest",
+      "description": "The United Kingdom greets 2027 as Big Ben chimes over London, fireworks light the Thames and Scots go first-footing for Hogmanay. UK midnight is 00:00 UTC."
+    },
+    "kit": "gb"
   },
   "JP": {
     "text": "In Japan the New Year is a quiet family holiday rather than a street party. From about 29 December to 3 January most people are off, the streets empty and temples and shrines fill up. 31 December is Ōmisoka: in the evening people eat toshikoshi soba buckwheat noodles, and at midnight Buddhist temples ring their bell 108 times; at many, the last strike falls in the new year.\n\nOn 1 January families eat osechi at home — festive dishes in stacked boxes, each with a wish for the year — and in the first days of January they visit a shrine for a charm and a fortune. In Tokyo the biggest crowds go to Meiji Jingu and Sensō-ji, while the Shibuya street countdown has been cancelled in recent years.",
@@ -108,44 +132,60 @@
     "kit": "jp"
   },
   "NZ": {
-    "text": "New Zealand is among the first to welcome the New Year: midnight comes earlier only on the Line Islands of Kiribati and on New Zealand’s own Chatham Islands.",
+    "text": "New Zealand is among the first countries to see the New Year — in midsummer, on daylight time UTC+13, and on the Chatham Islands 45 minutes earlier still. For many New Zealanders the holidays mean summer, the beach and camping: historian Richard Wolfe explains that leaving town over Christmas and January became part of local culture back in the 1950s.\n\nIn Auckland a laser show lights the 328-metre Sky Tower from 9 pm, and at midnight five minutes of fireworks fire from three levels of the tower. The Harbour Bridge glows to music, and crowds gather on the waterfront and on Mt Eden, North Head and Mt Victoria.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Fireworks from the Sky Tower",
-        "text": "At midnight, fireworks are launched right from the Sky Tower in Auckland, and they can be seen all across the harbor."
+        "iconId": "wave",
+        "title": "Summer by the sea",
+        "text": "Here the New Year falls in summer: many people leave town for beaches and campsites — a habit that took shape back in the 1950s."
       },
       {
         "id": "t2",
-        "title": "Among the first in the world",
-        "text": "Auckland welcomes the New Year two hours before Sydney."
+        "iconId": "fireworks",
+        "title": "Sky Tower fireworks",
+        "text": "At midnight five minutes of fireworks fire from three levels of the 328-metre tower; from 9 pm it carries a laser and projection show."
       },
       {
         "id": "t3",
-        "title": "Summer holidays",
-        "text": "The start of January falls in the summer break: families head to beaches and campsites and see in the New Year under the open sky."
+        "iconId": "music",
+        "title": "Bridge and hilltops",
+        "text": "The Harbour Bridge glows to music, and the fireworks are best seen from the waterfront and Mt Eden, North Head and Mt Victoria. Watching is free."
       }
-    ]
+    ],
+    "meta": {
+      "title": "New Year in Auckland, New Zealand: Sky Tower | Time2Fest",
+      "description": "Auckland, New Zealand, is among the first big cities to greet 2027: five minutes of fireworks from the Sky Tower and a lit Harbour Bridge. Midnight: 11:00 UTC."
+    },
+    "kit": "nz+13"
   },
   "US": {
-    "text": "In the United States, the symbol of the night is the Times Square ball in New York. The country spans six time zones, so five hours pass between midnight in New York and midnight in Hawaii.",
+    "text": "In the United States the New Year is welcomed in front of the TV and in town squares, counting down with New Year’s Rockin’ Eve, on air since 1973. At midnight people sing Auld Lang Syne, a habit set by Guy Lombardo’s orchestra, which played it on the radio from 1929. Many cities have their own symbol: Atlanta drops a peach, Miami raises a Big Orange and fireworks light up the Las Vegas Strip. 1 January is a federal holiday: in the South people eat black-eyed peas and collard greens for luck, and Pasadena holds the Rose Parade.\n\nIn New York, Times Square has hosted the party since 1904 and the ball has dropped here since 1907. Today a crystal ball 12.5 feet wide glides 90 feet down its mast in 60 seconds. Entry is free; for 2026 the NYPD expected about a million people.",
     "traditions": [
       {
         "id": "t1",
-        "title": "The ball in Times Square",
-        "text": "In New York, a minute before midnight a crystal ball begins to descend, and the whole square counts down the last sixty seconds."
+        "iconId": "music",
+        "title": "Auld Lang Syne at midnight",
+        "text": "When midnight comes, everyone sings it together. Guy Lombardo’s orchestra made it the sound of New Year’s in North America, playing it on air from New York from 1929."
       },
       {
         "id": "t2",
-        "title": "A kiss at midnight",
-        "text": "By tradition, at the first stroke of twelve people kiss the person dearest to them, for luck and love in the new year."
+        "iconId": "address",
+        "title": "The ball drop on TV",
+        "text": "The country watches New Year’s Rockin’ Eve or the free webcast from Times Square. A minute before midnight the Mayor of New York presses a crystal button and the ball slowly descends its mast."
       },
       {
         "id": "t3",
-        "title": "Black-eyed peas for luck",
-        "text": "In the South, people eat black-eyed peas and greens on January 1 for abundance and money."
+        "iconId": "feast",
+        "title": "Lucky food on 1 January",
+        "text": "In the South the first day of the year means black-eyed peas, red beans and rice and collard greens, all for luck. Then come the Rose Parade in Pasadena and college football bowl games."
       }
-    ]
+    ],
+    "meta": {
+      "title": "New Year 2027 in the United States: New York | Time2Fest",
+      "description": "The United States greets 2027 in New York: the Times Square ball drops for a minute and wish confetti rains from rooftops. Midnight is 00:00 local, 05:00 UTC."
+    },
+    "kit": "us-5"
   },
   "BR@utc-0400": {
     "text": "Manaus stands on the Rio Negro in the UTC−4 time zone, so the New Year arrives here an hour after Rio. The city hall holds a free Réveillon at three places at once; the main one is Ponta Negra beach, where the party runs from 17:00 to 5 in the morning. In 2026 the city hall estimated about 160,000 people there and roughly 278,000 across all three sites.\n\nAt midnight fireworks go off at all three sites together, and they are low-noise so as not to frighten children, older people, autistic people and animals. Swimming at Ponta Negra is not allowed that night. As all over Brazil, many people dress in white, and some choose yellow for money or red for love.",
@@ -174,5 +214,285 @@
       "description": "Manaus, Brazil, greets 2027 on Ponta Negra beach by the Rio Negro: free concerts and low-noise fireworks at three places at midnight. Midnight: 04:00 UTC."
     },
     "kit": "br-4"
+  },
+  "UA": {
+    "text": "In Ukraine the New Year is a family holiday around the table: olivier salad, herring under a fur coat, kholodets, tangerines and champagne — dishes that took root back in Soviet times. In the last minutes of the year the president addresses the nation on TV (in 2025 the address aired at 23:40), and glasses are raised and wishes made as the clock strikes midnight.\n\nUnder martial law fireworks and firecrackers are banned and Kyiv has a curfew from 00:00 to 05:00, so people celebrate at home. The country’s main tree stands on Sofiivska Square. Since Christmas moved to 25 December in 2023, the holidays run from Christmas Eve to 6 January, and in January Chernivtsi holds its Malanka parade.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "The president’s address",
+        "text": "In the last minutes of the year the president gives a New Year address; in 2025 it aired at 23:40. Then come the midnight chimes and a glass of champagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "The festive table",
+        "text": "The family gathers round a table of olivier salad, herring under a fur coat, kholodets and tangerines — dishes that took root back in Soviet times."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "The tree on Sofiivska Square",
+        "text": "The country’s main tree stands on Sofiivska Square in Kyiv; in 2025 it was decorated after the frescoes of St Sophia’s Cathedral, with no mass events. Fireworks and firecrackers are banned; party poppers and sparklers are allowed."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Ukraine: Kyiv Midnight Countdown | Time2Fest",
+      "description": "Ukraine welcomes 2027 at midnight Kyiv time, 22:00 UTC: a festive family table, the countdown of the last seconds at home and the main tree on Sofiivska Square."
+    },
+    "kit": "ua"
+  },
+  "ES": {
+    "text": "In Spain the New Year arrives with grapes: at midnight people eat twelve of them to the twelve chimes of the clock, one per chime, for luck and prosperity. The custom is first recorded in 1895, and by 1903 it was known across the country. Television has shown the chimes since 1962; the first minute of 2026 drew more than 5.8 million viewers on La 1. After the grapes comes a glass of cava, sometimes with a gold ring at the bottom, drunk in one go. And for luck in love, folk belief says to wear red underwear.\n\nIn Madrid the countdown happens in Puerta del Sol: the chimes ring from the clock on the Royal House of the Post Office, inaugurated in 1866, and about half a minute before midnight a ball drops as the cue to get ready. To welcome 2025, Time Out reported, up to 15,000 people were let into the square.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Twelve grapes",
+        "text": "At midnight people eat one grape for each of the twelve chimes, one for every month's luck. To keep up, supermarkets sell cans of seedless grapes."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cava with a gold ring",
+        "text": "After the grapes comes a glass of cava: a gold ring or coin goes in for prosperity, a strawberry for love. The glass is finished in one go."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "Red underwear, right foot",
+        "text": "Folk belief says red underwear on New Year's Eve attracts love. And people step into the new year right foot first."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Spain: Madrid | Time2Fest",
+      "description": "Spain greets 2027 with twelve grapes, one per chime of the Puerta del Sol clock in Madrid, then cava and red underwear for luck. Madrid midnight is 23:00 UTC."
+    },
+    "kit": "es+1"
+  },
+  "RO": {
+    "text": "Romania sees in the New Year with carols and masked players. On New Year's Eve and New Year's Day carolers go round with Plugușorul, the 'little plough' carol, and in villages they sometimes carry a real plough from house to house. On the evening of 31 December villagers also bring out the buhai, a barrel covered with sheepskin that bellows like a bull. On 1 January children and young people come with the sorcova, a stick decked with flowers and ribbons, wishing health and luck. In Moldavia and Muntenia people play the Goat, which dies and comes back to life like the old year and the new. Grapes and figs go on the table for plenty. 1 and 2 January are holidays.\n\nBucharest's main open-air party moves every year: for 2025 it was in Titan Park with fireworks and 320 drones, for 2026 a free concert in Piața Alba Iulia by the Christmas market, with fireworks at midnight. The venue for 2027 has not been announced yet.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Plugușorul",
+        "text": "On New Year's Eve and New Year's Day carolers go from house to house singing Plugușorul, the 'little plough' carol. In villages they sometimes carry a real plough with them."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Sorcova",
+        "text": "On 1 January, St Basil's day, children and young people come with the sorcova, a stick decked with flowers, coloured paper and ribbons. They tap their hosts lightly and wish them health and plenty, and get sweets or money in thanks."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "The Goat and the Bear",
+        "text": "On New Year's Day in Moldavia and Muntenia people play the Goat, which dies and comes back to life like the old year and the new. In Moldavia young men in bearskins dance to drums, and in Maramureș masked players with bells and whips drive away evil spirits."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Romania: Bucharest | Time2Fest",
+      "description": "Romania greets 2027 with the Plugușor carol, buhai drums and goat and bear dances, plus a free open-air concert in Bucharest. Midnight: 00:00 local, 22:00 UTC."
+    },
+    "kit": "ro"
+  },
+  "DE": {
+    "text": "Germany welcomes the New Year — Silvester — with parties, a glass of Sekt and the wish «Guten Rutsch!». Since 1972 German TV has shown the British sketch Dinner for One on New Year's Eve. People tell fortunes by pouring melted tin or wax into cold water: lead sets have not been sold in the EU since 2018. They give lucky charms — pigs, clover, ladybugs and horseshoes — and eat jam-filled doughnuts and a marzipan pig. Almost everyone sets off fireworks, allowed from 18:00 on 31 December to 07:00 on 1 January.\n\nBerlin's biggest public fireworks are at the Brandenburg Gate. To welcome 2026, the state of Berlin held a free party there, Yeah26, with DJs and fireworks at midnight; the Senate announced about 20,000 free tickets. For 2027 a party at the Gate has been announced again. Private fireworks are banned there, as in several districts of the city.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Dinner for One",
+        "text": "Since 1972 German TV has shown this British sketch, recorded in Hamburg in 1963, every New Year's Eve. Its line «Same procedure as every year» is a German catchphrase."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Lucky charms and doughnuts",
+        "text": "For luck, people give little pigs, clover, ladybugs and horseshoes. With the Sekt come jam-filled doughnuts and a marzipan pig."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks and the Gate",
+        "text": "Rockets and firecrackers may go up from 18:00 on 31 December to 07:00 on 1 January. In Berlin a free party with DJs and fireworks at the Brandenburg Gate has been announced again for 2027."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Germany: Berlin | Time2Fest",
+      "description": "Germany greets 2027 with Sekt, tin pouring and Dinner for One, while Berlin gathers at the Brandenburg Gate for fireworks. Midnight: 00:00 local, 23:00 UTC."
+    },
+    "kit": "de"
+  },
+  "GR": {
+    "text": "In Greece New Year's Eve is spent at home with family and the vasilopita, St Basil's pie with a coin baked inside. Around midnight the head of the house crosses the pie with a knife and cuts the slices: the first for God, the Virgin Mary and the house, then one for everyone from eldest to youngest. Whoever finds the coin is said to be lucky all year. In the evening people play cards for small stakes, and children go from door to door singing kalanda carols to a triangle. Around midnight or on 1 January a pomegranate is smashed on the doorstep: the more seeds scatter, the more luck. Children get their presents from St Basil on 1 January, his feast day.\n\nLast year Athens saw in midnight at Syntagma Square: free entry, live music, a drone show before midnight, the largest ever in Attica, and at midnight silent fireworks, out of respect for animals and people sensitive to noise.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Vasilopita with a coin",
+        "text": "Around midnight the head of the house crosses the pie with a knife and cuts slices, first for God and the house, then for everyone from eldest to youngest. Whoever gets the coin is said to be lucky all year."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "A pomegranate on the doorstep",
+        "text": "Around midnight or on 1 January a pomegranate is smashed on the doorstep: the more seeds scatter, the more luck. The first to step in, right foot first, is someone lucky, often a child."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Silent fireworks at Syntagma",
+        "text": "Last year the City of Athens held a free countdown at Syntagma Square with a drone show before midnight. At midnight came silent fireworks, out of respect for animals and people sensitive to noise."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Greece: Athens | Time2Fest",
+      "description": "Greece greets 2027 with coin-filled vasilopita, a smashed pomegranate and kalanda carols; Athens counts down at Syntagma Square. Athens midnight: 22:00 UTC."
+    },
+    "kit": "gr"
+  },
+  "IT": {
+    "text": "In Italy New Year's Eve is the Night of Saint Sylvester. People spend it with family or friends: at home over a big dinner, or in a square with concerts. On the table are cotechino or zampone with lentils: the round seeds look like coins and promise prosperity. At 20:30 the country tunes in to the President's address on radio and TV. The last ten seconds before midnight are counted out loud, then glasses of spumante go up and everyone exchanges wishes. And for luck people wear red underwear: wearing red on this night, tradition says, goes back to ancient Rome.\n\nIn Rome the city marked the arrival of 2026 at the Circus Maximus: a free concert from 21:00, and at midnight the mayor raised a glass with everyone right on stage. According to the city, more than 70,000 people came. Firecrackers and amateur fireworks are banned in the city over the holidays.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Lentils with cotechino",
+        "text": "The New Year's Eve dinner brings cotechino or zampone with lentils. The round seeds look like coins, for a generous year ahead."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Red underwear",
+        "text": "Tradition says red was worn on this night back in ancient Rome; today it is underwear. Some put it on backwards and turn it round after midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Countdown and spumante",
+        "text": "The last ten seconds before midnight are counted out loud, then glasses of spumante go up. At midnight fireworks light up skies across the country."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Italy: Rome | Time2Fest",
+      "description": "Italy greets 2027 with lentils, red underwear and spumante, while Rome heads to a free concert at the Circus Maximus. Roman countdown ends at 23:00 UTC."
+    },
+    "kit": "it"
+  },
+  "HK": {
+    "text": "In Hong Kong 1 January is a public holiday, but only for one day. The year's big festival is Lunar New Year: three days off, a family reunion dinner on the eve, visits to relatives and red envelopes of money. In 2027 it falls on 6 February, and the celebrations last until the Lantern Festival on the fifteenth day. Still, the night of 31 December is shared too, with a countdown by Victoria Harbour and in Lan Kwai Fong.\n\nTo welcome 2025, fireworks fired from barges and rooftops lit the harbour for 12 minutes, a countdown clock glowed on the Convention and Exhibition Centre facade, and over 400,000 people watched, the government said. A year later the fireworks were cancelled out of respect for those affected by the Tai Po fire. For 2027 the Tourism Board has announced their return on a larger scale than ever.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Lunar New Year comes first",
+        "text": "The year's biggest festival is Lunar New Year, on 6 February in 2027: families gather for a reunion dinner on the eve, visit relatives and hand out red envelopes of money. 1 January is just a one-day holiday."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Count down with the city",
+        "text": "The last seconds are counted on a giant clock on the Convention and Exhibition Centre facade, and to welcome 2026 a live concert played in Central. Another favourite countdown spot is Lan Kwai Fong."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Victoria Harbour fireworks",
+        "text": "To welcome 2025, fireworks from barges and rooftops lit the harbour for 12 minutes. For 2027 the Tourism Board has announced their return on a larger scale than ever."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Hong Kong | Time2Fest",
+      "description": "Hong Kong greets 2027 with a countdown by Victoria Harbour, Lunar New Year in February and the announced return of its harbour fireworks. Midnight: 16:00 UTC."
+    },
+    "kit": "hk"
+  },
+  "KR": {
+    "text": "South Korea has 1 January off, but the main holiday here is Seollal, the lunar New Year, which falls on 7 February in 2027. Still, New Year's Eve on 31 December is celebrated too, with gatherings in most cities. On the morning of 1 January families and friends head to the east coast, the sea or the mountains: a wish made at the year's first sunrise is believed to bring luck. Tteokguk, a soup of sliced rice cakes, is eaten above all at Seollal; a bowl was once said to add a year to your age. Since June 2023, when age began to be counted from the birthday, that is only a saying.\n\nIn Seoul the Bosingak Pavilion bell rings out at midnight: eleven selected citizens strike it 33 times. The ceremony has been held since 1953; KBS expects up to 100,000 people, and KBS and YouTube show it live.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "A wish at the first sunrise",
+        "text": "On the morning of 1 January people head to the east coast, the sea or the mountains to make a wish at the first sunrise. Those who skip the early trip make theirs at the year's last sunset on 31 December."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Tteokguk, a year older",
+        "text": "This soup of sliced rice cakes is eaten above all at Seollal, the lunar New Year. A bowl was believed to add a year, though since 2023 age is counted from the birthday."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Bosingak bell, 33 strikes",
+        "text": "At midnight in central Seoul eleven selected citizens strike the Bosingak bell 33 times, a number from Buddhist tradition. KBS and the city's YouTube channel show it live."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in South Korea: Seoul | Time2Fest",
+      "description": "South Korea greets 2027 in Seoul as the Bosingak bell rings 33 times; families eat tteokguk and chase the first sunrise on the east coast. Midnight: 15:00 UTC."
+    },
+    "kit": "kr"
+  },
+  "TW": {
+    "text": "In Taiwan 1 January is a public holiday, though the biggest celebration of the year is Lunar New Year. The night is welcomed with open-air concerts and fireworks: Taichung, Kaohsiung and New Taipei hold their own countdowns. In the morning many head to the mountains or the east coast for the first sunrise of the year: last time the earliest sun was due at 6:03am on a peak above 3,000 m in Hualien County. Last time on Alishan the dawn was greeted with classical music, and on the morning of 1 January the flag is raised in front of the Presidential Office in Taipei.\n\nIn Taipei the main party is a concert on the plaza by City Hall, where tens of thousands gather. At midnight fireworks burst from the 508-metre Taipei 101 tower: the first show lit its opening night in 2004, and last time it lasted six minutes. Hundreds of thousands watch it in Xinyi District.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "First sunrise of the year",
+        "text": "On the morning of 1 January people head to the mountains or the east coast to catch the year's first sun. Last time on Alishan the dawn was greeted with a classical music concert."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Flag-raising in Taipei",
+        "text": "On the morning of 1 January the flag is raised in front of the Presidential Office in Taipei. In 2025 the ceremony was followed by the president's New Year address, and guests received red envelopes."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Taipei 101 fireworks",
+        "text": "At midnight fireworks burst straight from the Taipei 101 skyscraper, while a concert on the City Hall plaza counts down to them. Last time the show lasted six minutes."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Taiwan: Taipei | Time2Fest",
+      "description": "Taipei, Taiwan welcomes 2027 with a City Hall concert and fireworks from Taipei 101, then many climb peaks for the first sunrise. Local midnight is 16:00 UTC."
+    },
+    "kit": "tw"
+  },
+  "PH": {
+    "text": "The Philippines welcomes the New Year with Media Noche, a midnight feast of family and friends. On the table: pancit, long noodles for a long life, sticky rice to keep the family close, and often twelve round fruits, one for each month. Many people wear polka dots, as the dots look like coins and should bring wealth. At midnight coins jingle in pockets, children jump as high as they can to grow taller, and bad luck is chased away with noise: torotot horns, banging pots, car horns. Firecrackers are allowed only at community displays permitted by local authorities, and the health ministry asks people to swap them for horns and light sticks.\n\nIn the capital region last year the biggest free countdowns took place at SM Mall of Asia in Pasay, in Bonifacio Global City in Taguig and on Ayala Avenue in Makati. At Mall of Asia, fireworks set to music lit up the sky at midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Media Noche and 12 fruits",
+        "text": "At midnight family and friends sit down to eat: pancit for a long life, sticky rice for a close family. Next to them, twelve round fruits, one for each month of the year."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Polka dots, coins and a jump",
+        "text": "Wear something with polka dots: the dots look like coins and call in wealth. At midnight jingle the coins in your pocket and jump as high as you can; they say it makes you grow."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Noise instead of firecrackers",
+        "text": "Noise at midnight chases bad luck away: torotot horns, banging pots, car horns. The health ministry advises horns and light sticks instead of firecrackers, and fireworks at community displays."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Philippines: Manila | Time2Fest",
+      "description": "The Philippines rings in 2027 with Media Noche: pancit, twelve round fruits, polka dots and torotot horns. Manila's midnight falls at 16:00 UTC."
+    },
+    "kit": "ph"
   }
 }

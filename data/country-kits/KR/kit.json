@@ -1,0 +1,99 @@
+{
+  "code": "KR",
+  "zone": "UTC+9",
+  "zoneId": "utc+0900",
+  "cityId": "seoul",
+  "names": {
+    "uk": {
+      "name": "Південна Корея",
+      "city": "Сеул",
+      "cityIn": "у Сеулі",
+      "caps": "СЕУЛ · ПІВДЕННА КОРЕЯ"
+    },
+    "en": {
+      "name": "South Korea",
+      "city": "Seoul",
+      "cityIn": "in Seoul",
+      "caps": "SEOUL · SOUTH KOREA"
+    },
+    "es": {
+      "name": "Corea del Sur",
+      "city": "Seúl",
+      "cityIn": "en Seúl",
+      "caps": "SEÚL · COREA DEL SUR"
+    },
+    "fr": {
+      "name": "Corée du Sud",
+      "city": "Séoul",
+      "cityIn": "à Séoul",
+      "caps": "SÉOUL · CORÉE DU SUD"
+    }
+  },
+  "picto": "M20 8 V5 M7 13.5 Q12 16.5 14.5 15 H25.5 Q28 16.5 33 13.5 Q26 12.5 24 8 H16 Q14 12.5 7 13.5 Z M14.5 15 V19.5 M25.5 15 V19.5 M20 15 V16.4 M17.8 19.5 Q17.8 16.8 20 16.8 Q22.2 16.8 22.2 19.5 Z M2.5 24 Q8 28 12 26.5 H28 Q32 28 37.5 24 Q30 23 26.5 19.5 H13.5 Q10 23 2.5 24 Z M9 27 V34 M31 27 V34 M17 34 V29.5 H23 V34 M5 34 H35 V37.5 H5 Z",
+  "flagColors": [
+    "#E8EDF2",
+    "#E0434F",
+    "#4E7BD0"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сеулі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Seoul"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Seúl"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Séoul"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

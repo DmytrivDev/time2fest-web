@@ -1,0 +1,99 @@
+{
+  "code": "US",
+  "zone": "UTC-5",
+  "zoneId": "utc-0500",
+  "cityId": "new-york",
+  "names": {
+    "uk": {
+      "name": "США",
+      "city": "Нью-Йорк",
+      "cityIn": "у Нью-Йорку",
+      "caps": "НЬЮ-ЙОРК · США"
+    },
+    "en": {
+      "name": "United States",
+      "city": "New York",
+      "cityIn": "in New York",
+      "caps": "NEW YORK · USA"
+    },
+    "es": {
+      "name": "Estados Unidos",
+      "city": "Nueva York",
+      "cityIn": "en Nueva York",
+      "caps": "NUEVA YORK · EE. UU."
+    },
+    "fr": {
+      "name": "États-Unis",
+      "city": "New York",
+      "cityIn": "à New York",
+      "caps": "NEW YORK · ÉTATS-UNIS"
+    }
+  },
+  "picto": "M10 38 H30 M13 38 L14.4 28 H25.6 L27 38 M14 32 H26 M17 28 L18 17 H22.4 L23.4 28 M19.6 28 V20 M18.4 14.4 a1.8 1.8 0 1 0 3.6 0 a1.8 1.8 0 1 0 -3.6 0 M16.4 12.6 L14.8 11.2 M17.8 11.6 L17 9.4 M20.2 11.4 V9 M13.6 18.2 L16.6 17.4 L17.2 22 L14.2 22.8 Z M22.4 17.2 L26 8.4 M26 7.8 C24.6 6 26 4.8 26 2 C27.6 4.2 27.6 6 26 7.8 Z",
+  "flagColors": [
+    "#B22234",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нью-Йорку"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in New York"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Nueva York"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à New York"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

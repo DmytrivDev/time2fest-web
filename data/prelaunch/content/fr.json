@@ -20,64 +20,88 @@
     ]
   },
   "BR": {
-    "text": "Au Brésil, la nuit du Nouvel An s’appelle le Réveillon. À Rio, elle impressionne par son ampleur : des millions de personnes se rassemblent à Copacabana, la musique résonne et le feu d’artifice se reflète dans l’océan.",
+    "text": "Le Brésil accueille le Nouvel An — le Réveillon — en blanc. La coutume est née avec les fidèles du candomblé qui, dans les années 1970, venaient en blanc sur la plage de Copacabana avec des offrandes pour Iemanjá, déesse des eaux ; depuis, les vêtements blancs et les fleurs confiées à la mer se sont répandus dans tout le pays. À minuit, sur la côte, on saute sept vagues en faisant un vœu à chacune.\n\nÀ Rio de Janeiro, la fête a lieu à Copacabana : selon la ville, plus de 2,6 millions de personnes y sont venues accueillir 2026. À minuit, le feu d’artifice a été tiré de 19 barges pendant 12 minutes, 1 200 drones se sont élevés et trois scènes jouaient sur la plage.",
     "traditions": [
       {
         "id": "t1",
+        "iconId": "white",
         "title": "Tout en blanc",
-        "text": "Les Brésiliens s’habillent en blanc, couleur de la paix et de la pureté, et vont à la plage, surtout à Copacabana."
+        "text": "On vient à la plage en vêtements blancs neufs. La coutume remonte aux fidèles du candomblé qui fêtaient le Nouvel An à Copacabana en blanc dans les années 1970."
       },
       {
         "id": "t2",
-        "title": "Sept vagues",
-        "text": "À minuit, sur le rivage, on saute par-dessus sept vagues en formulant un vœu pour chacune."
+        "iconId": "flower",
+        "title": "Offrandes à Iemanjá",
+        "text": "Iemanjá est une déesse des eaux du candomblé et de l’umbanda. On lui apporte des fleurs ou de petits bateaux chargés d’offrandes qu’on pousse vers le large — même sans être croyant."
       },
       {
         "id": "t3",
-        "title": "Des fleurs pour Iemanjá",
-        "text": "Beaucoup de gens jettent des fleurs à l’eau en offrande à Iemanjá, déesse de la mer, et demandent le bonheur pour la nouvelle année."
+        "iconId": "wave",
+        "title": "Sept vagues",
+        "text": "À minuit, on saute sept vagues en faisant un vœu à chacune : sept est un nombre sacré dans l’umbanda."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Réveillon 2027 au Brésil : Copacabana à minuit | Time2Fest",
+      "description": "Des millions de gens en blanc fêtent 2027 à Copacabana, à Rio (Brésil) : feu d’artifice sur l’océan, sept vagues et fleurs pour Iemanjá. Minuit à Rio : 3 h UTC."
+    },
+    "kit": "br-3"
   },
   "FR": {
-    "text": "Les Français appellent cette nuit la Saint-Sylvestre. C’est un long dîner avec les proches, un baiser à minuit et une promenade dans un Paris en fête, où la tour Eiffel étincelle.",
+    "text": "En France, la dernière nuit de l’année s’appelle la Saint-Sylvestre, et on la passe autour d’un repas de fête : le réveillon. Dîner tranquille en famille et entre amis ou soirée dansante, avec foie gras, huîtres et champagne, on veille jusqu’à minuit. Le 31 décembre à 20 h, le président de la République adresse ses vœux aux Français à la télévision et dresse le bilan de l’année ; aucun président n’y a manqué depuis 1958. À minuit, certains s’embrassent sous le gui, une coutume populaire censée porter bonheur.\n\nÀ Paris, la grande fête a lieu sur les Champs-Élysées : depuis 2014, la Ville y organise un spectacle gratuit et familial. Un mapping vidéo géant est projeté sur l’Arc de Triomphe, puis un feu d’artifice éclate à minuit au-dessus. Selon le ministère de l’Intérieur, plus d’un million de personnes y ont accueilli 2026.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Réveillon",
-        "text": "Un long dîner de fête, avec champagne, huîtres et foie gras, se prolonge tard dans la nuit."
+        "iconId": "feast",
+        "title": "Le réveillon",
+        "text": "Un repas de fête le 31 décembre, avec foie gras, huîtres et champagne, en famille et entre amis ou lors d’une soirée dansante. On veille jusqu’à minuit."
       },
       {
         "id": "t2",
-        "title": "Un baiser sous le gui",
-        "text": "Selon la tradition, on s’embrasse à minuit sous une branche de gui, pour porter chance dans la nouvelle année. Le vieux souhait « Au gui l’an neuf ! » est lui aussi lié au gui."
+        "iconId": "mistletoe",
+        "title": "Le baiser sous le gui",
+        "text": "Aux douze coups de minuit, certains s’embrassent sous une boule de gui pour une bonne année. Une coutume populaire, venue, dit-on, d’Angleterre au XVIIIe siècle."
       },
       {
         "id": "t3",
-        "title": "Les Champs-Élysées",
-        "text": "Parisiens et visiteurs se retrouvent près de l’Arc de Triomphe : un spectacle de lumière sur ses murs, un compte à rebours partagé et un feu d’artifice à minuit."
+        "iconId": "fireworks",
+        "title": "Le show des Champs-Élysées",
+        "text": "Un mapping vidéo illumine l’Arc de Triomphe, puis le feu d’artifice éclate au-dessus à minuit. Entrée libre ; plus d’un million de personnes y ont fêté 2026."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en France : les Champs-Élysées | Time2Fest",
+      "description": "La France fête 2027 avec le réveillon, un baiser sous le gui et un feu d’artifice sur l’Arc de Triomphe parisien. En France, minuit sonne à 23 h UTC."
+    },
+    "kit": "fr"
   },
   "GB": {
-    "text": "En Grande-Bretagne, le Nouvel An, c’est à la fois le Hogmanay écossais et le feu d’artifice londonien au-dessus de la Tamise. L’essentiel : une étreinte, une chanson à minuit et le premier visiteur à franchir la porte.",
+    "text": "Au Royaume-Uni, minuit sonne avec les coups de Big Ben : en Angleterre, la grande fête a lieu au centre de Londres, et de grandes célébrations se tiennent aussi à Manchester, Liverpool ou Birmingham. À minuit, on chante « Auld Lang Syne », sur un poème de Robert Burns de 1788 ; en Écosse, on forme un cercle et on croise les bras au dernier couplet. Là-bas, le réveillon s’appelle Hogmanay : juste après minuit, on rend visite aux amis et voisins avec du charbon, des sablés ou du whisky, car le premier visiteur apporte la chance de l’année à la maison. Le 1er janvier est férié dans tout le pays, et en Écosse le 2 aussi.\n\nÀ Londres, le décompte mène aux coups de Big Ben, retransmis en direct par la BBC. Depuis 2004, un feu d’artifice illumine la Tamise près du London Eye. Pour accueillir 2026, selon la mairie, environ 100 000 personnes munies d’un billet bordaient les quais, et plus de 12 000 fusées ont brillé pendant 12 minutes.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Les cloches de Big Ben",
-        "text": "À minuit, Big Ben sonne douze coups, et le grand feu d’artifice commence au-dessus de la Tamise, près du London Eye."
+        "iconId": "music",
+        "title": "Auld Lang Syne",
+        "text": "À minuit, on chante la vieille chanson sur un poème de Robert Burns de 1788. En Écosse, on se met en cercle et on croise les bras au dernier couplet."
       },
       {
         "id": "t2",
-        "title": "Auld Lang Syne",
-        "text": "À minuit, on forme un cercle, on se prend par la main et on chante la vieille chanson écossaise sur des vers de Robert Burns, en croisant les bras au dernier couplet."
+        "iconId": "door",
+        "title": "Le premier visiteur",
+        "text": "En Écosse, juste après minuit, on rend visite aux amis et voisins avec du charbon, des sablés ou du whisky. On dit que le premier visiteur décide de la chance de la maison pour l’année."
       },
       {
         "id": "t3",
-        "title": "Le premier visiteur de l’année",
-        "text": "En Écosse et dans le nord de l’Angleterre, on croit que la première personne à franchir le seuil après minuit apporte la chance à la maison. Elle arrive avec un cadeau : du charbon, du shortbread ou du whisky."
+        "iconId": "fireworks",
+        "title": "Big Ben et feux sur la Tamise",
+        "text": "Londres compte les secondes jusqu’aux coups de Big Ben, puis le feu d’artifice éclate près du London Eye, comme chaque année depuis 2004. Pour 2026, selon la mairie, plus de 12 000 fusées ont brillé pendant 12 minutes."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Royaume-Uni : Londres | Time2Fest",
+      "description": "Le Royaume-Uni fête 2027 aux coups de Big Ben, feu d’artifice sur la Tamise et Hogmanay écossais au son d’« Auld Lang Syne ». Minuit à Londres : 0 h UTC."
+    },
+    "kit": "gb"
   },
   "JP": {
     "text": "Au Japon, le Nouvel An est une fête familiale calme plutôt qu’une fête de rue. D’environ le 29 décembre au 3 janvier, la plupart des gens ne travaillent pas, les rues se vident et temples et sanctuaires se remplissent. Le 31 décembre, c’est Ōmisoka : le soir, on mange des nouilles de sarrasin toshikoshi soba, et à minuit les temples bouddhistes font sonner leur cloche 108 fois ; dans beaucoup, le dernier coup tombe dans la nouvelle année.\n\nLe 1er janvier, on mange à la maison l’osechi — des plats de fête en boîtes superposées, chacun porteur d’un vœu — et les premiers jours de janvier on se rend au sanctuaire pour un porte-bonheur et un oracle. À Tokyo, les plus grandes foules vont au Meiji Jingu et au Sensō-ji ; le décompte de rue de Shibuya est annulé ces dernières années.",
@@ -108,44 +132,60 @@
     "kit": "jp"
   },
   "NZ": {
-    "text": "La Nouvelle-Zélande salue le monde avec le Nouvel An parmi les premières : minuit n’arrive plus tôt que dans les îles de la Ligne, au Kiribati, et dans les îles Chatham, elles aussi néo-zélandaises.",
+    "text": "La Nouvelle-Zélande est parmi les premiers pays à voir arriver le Nouvel An — en plein été, à l’heure d’été UTC+13, et aux îles Chatham encore 45 minutes plus tôt. Pour beaucoup de Néo-Zélandais, les fêtes riment avec été, plage et camping : l’historien Richard Wolfe explique que quitter la ville à Noël et en janvier fait partie de la culture locale depuis les années 1950.\n\nÀ Auckland, un spectacle laser illumine la Sky Tower, haute de 328 mètres, dès 21 h, et à minuit cinq minutes de feu d’artifice partent de trois niveaux de la tour. Le Harbour Bridge s’illumine en musique, et la foule se rassemble sur le front de mer et sur Mt Eden, North Head et Mt Victoria.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Le feu d’artifice de la Sky Tower",
-        "text": "À minuit, le feu d’artifice est tiré directement depuis la Sky Tower d’Auckland, et on le voit dans toute la baie."
+        "iconId": "wave",
+        "title": "L’été au bord de la mer",
+        "text": "Ici, le Nouvel An tombe en été : beaucoup quittent la ville pour les plages et les campings, une habitude née dans les années 1950."
       },
       {
         "id": "t2",
-        "title": "Parmi les premiers au monde",
-        "text": "Auckland fête le Nouvel An deux heures avant Sydney."
+        "iconId": "fireworks",
+        "title": "Feu d’artifice de la Sky Tower",
+        "text": "À minuit, cinq minutes de feu d’artifice partent de trois niveaux de la tour de 328 mètres ; dès 21 h, lasers et projections."
       },
       {
         "id": "t3",
-        "title": "Les vacances d’été",
-        "text": "Le début de janvier tombe pendant les vacances : les familles partent à la plage ou au camping et passent la nuit en plein air."
+        "iconId": "music",
+        "title": "Le pont et les collines",
+        "text": "Le Harbour Bridge s’illumine en musique, et le feu d’artifice se voit bien du front de mer et de Mt Eden, North Head et Mt Victoria. C’est gratuit."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Nouvel An à Auckland (Nouvelle-Zélande) | Time2Fest",
+      "description": "Auckland, en Nouvelle-Zélande, est parmi les premières grandes villes à fêter 2027 : cinq minutes de feu d’artifice depuis la Sky Tower. Minuit : 11 h UTC."
+    },
+    "kit": "nz+13"
   },
   "US": {
-    "text": "Aux États-Unis, le grand symbole de la nuit est la boule de New York. Le pays couvre six fuseaux horaires : entre minuit à New York et minuit à Hawaï, il s’écoule donc cinq heures.",
+    "text": "Aux États-Unis, on accueille la nouvelle année devant la télévision et sur les places, au rythme du décompte de New Year’s Rockin’ Eve, à l’antenne depuis 1973. À minuit, on chante « Auld Lang Syne », une habitude installée par l’orchestre de Guy Lombardo, qui la jouait à la radio dès 1929. Beaucoup de villes ont leur symbole : Atlanta fait descendre une pêche, Miami hisse une « Grosse Orange » et un feu d’artifice illumine le Strip de Las Vegas. Le 1er janvier est un jour férié fédéral : dans le Sud, on mange des haricots à œil noir et du chou cavalier pour la chance, et Pasadena accueille la Parade des roses.\n\nÀ New York, Times Square fête le Nouvel An depuis 1904, et la boule y descend depuis 1907. Aujourd’hui, une boule de cristal de 3,8 mètres de large parcourt 27 mètres le long de son mât en 60 secondes. L’entrée est libre ; pour 2026, la police attendait environ un million de personnes.",
     "traditions": [
       {
         "id": "t1",
-        "title": "La boule de Times Square",
-        "text": "À New York, une minute avant minuit, une boule de cristal commence à descendre, et toute la place décompte les soixante dernières secondes."
+        "iconId": "music",
+        "title": "Auld Lang Syne à minuit",
+        "text": "Quand sonne minuit, tout le monde la chante ensemble. L’orchestre de Guy Lombardo en a fait le son du Nouvel An en Amérique du Nord en la jouant à l’antenne depuis New York dès 1929."
       },
       {
         "id": "t2",
-        "title": "Un baiser à minuit",
-        "text": "Selon la tradition, au premier coup de minuit on embrasse la personne la plus proche, pour la chance et l’amour dans la nouvelle année."
+        "iconId": "address",
+        "title": "La boule en direct",
+        "text": "Le pays regarde New Year’s Rockin’ Eve ou la diffusion gratuite en ligne depuis Times Square. Une minute avant minuit, le maire de New York appuie sur un bouton de cristal et la boule descend lentement le long de son mât."
       },
       {
         "id": "t3",
-        "title": "Haricots à œil noir porte-bonheur",
-        "text": "Dans le sud du pays, le 1er janvier, on mange des haricots à œil noir et des légumes verts, pour l’abondance et l’argent."
+        "iconId": "feast",
+        "title": "Le repas porte-bonheur",
+        "text": "Dans le Sud, le premier jour de l’année, on mange des haricots à œil noir, des haricots rouges au riz et du chou cavalier, pour la chance. Viennent ensuite la Parade des roses à Pasadena et les matchs de football universitaire."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux États-Unis : New York | Time2Fest",
+      "description": "Les États-Unis fêtent 2027 à New York : la boule de Times Square descend en 60 secondes et des confettis tombent des toits. Minuit : 0 h locale, 5 h UTC."
+    },
+    "kit": "us-5"
   },
   "BR@utc-0400": {
     "text": "Manaus se dresse au bord du Rio Negro, dans le fuseau UTC−4 : le Nouvel An y arrive une heure après Rio. La mairie organise un Réveillon gratuit en trois lieux à la fois ; le principal est la plage de Ponta Negra, où la fête dure de 17 h à 5 h du matin. En 2026, la mairie y a compté environ 160 000 personnes, et près de 278 000 sur les trois sites.\n\nÀ minuit, le feu d’artifice part ensemble sur les trois sites, et il est silencieux pour ne pas effrayer les enfants, les aînés, les personnes autistes et les animaux. La baignade à Ponta Negra est interdite cette nuit-là. Comme partout au Brésil, beaucoup s’habillent en blanc, et certains choisissent le jaune pour l’argent ou le rouge pour l’amour.",
@@ -174,5 +214,285 @@
       "description": "Manaus, au Brésil, accueille 2027 sur la plage de Ponta Negra, au bord du Rio Negro : concerts gratuits et feu d’artifice silencieux à minuit, 4 h UTC."
     },
     "kit": "br-4"
+  },
+  "UA": {
+    "text": "En Ukraine, le Nouvel An est une fête de famille autour de la table : salade olivier, hareng « sous manteau de fourrure », kholodets, mandarines et champagne — des plats installés dès l’époque soviétique. Dans les dernières minutes de l’année, le président s’adresse au pays à la télévision (en 2025, à 23 h 40), puis on lève son verre et on fait un vœu aux douze coups de minuit.\n\nSous la loi martiale, feux d’artifice et pétards sont interdits, et Kyiv vit sous couvre-feu de 00 h à 05 h : on fête donc à la maison. Le sapin principal du pays se dresse place Sainte-Sophie. Depuis que Noël a été déplacé au 25 décembre en 2023, les fêtes vont du réveillon de Noël au 6 janvier, et en janvier Tchernivtsi organise son défilé de la Malanka.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Le discours du président",
+        "text": "Dans les dernières minutes de l’année, le président prononce ses vœux ; en 2025, ils ont été diffusés à 23 h 40. Viennent ensuite les douze coups et une coupe de champagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "La table de fête",
+        "text": "La famille se retrouve autour de la salade olivier, du hareng « sous manteau de fourrure », du kholodets et des mandarines — des plats installés dès l’époque soviétique."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Le sapin de la place Sainte-Sophie",
+        "text": "Le sapin principal du pays se dresse place Sainte-Sophie à Kyiv ; en 2025, il était décoré d’après les fresques de la cathédrale Sainte-Sophie, sans rassemblements. Feux d’artifice et pétards sont interdits ; cotillons et cierges magiques sont permis."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Ukraine : décompte de minuit à Kyiv | Time2Fest",
+      "description": "L’Ukraine accueille 2027 à minuit heure de Kyiv, soit 22 h UTC : repas de fête en famille, décompte des dernières secondes et grand sapin place Sainte-Sophie."
+    },
+    "kit": "ua"
+  },
+  "ES": {
+    "text": "En Espagne, la nouvelle année arrive avec des raisins : à minuit, on en mange douze, un à chacun des douze coups de l’horloge, pour la chance et la prospérité. La coutume est attestée par écrit pour la première fois en 1895, et dès 1903 elle était connue dans tout le pays. La télévision diffuse les douze coups depuis 1962 ; la première minute de 2026 a réuni plus de 5,8 millions de téléspectateurs sur La 1. Après les raisins vient une coupe de cava, parfois avec une bague en or au fond, bue d’un trait. Et pour la chance en amour, selon la croyance populaire, on porte des sous-vêtements rouges.\n\nÀ Madrid, le décompte se vit à la Puerta del Sol : les coups sonnent à l’horloge de la Real Casa de Correos, inaugurée en 1866, et une demi-minute avant minuit une boule descend pour donner le signal. Pour accueillir 2025, selon Time Out, jusqu’à 15 000 personnes ont pu entrer sur la place.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Les douze raisins",
+        "text": "À minuit, on mange un raisin à chacun des douze coups, un pour chaque mois de chance. Pour suivre le rythme, les supermarchés vendent des boîtes de raisins sans pépins."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Du cava avec une bague",
+        "text": "Après les raisins, on lève une coupe de cava : une bague ou une pièce en or dedans pour la prospérité, une fraise pour l’amour. La coupe se boit d’un trait."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "Dessous rouges, pied droit",
+        "text": "Selon la croyance populaire, des dessous rouges le soir du réveillon attirent l’amour. Et on entre dans la nouvelle année du pied droit."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Espagne : Madrid | Time2Fest",
+      "description": "L’Espagne fête 2027 avec douze grains de raisin, un par coup de l’horloge de la Puerta del Sol à Madrid, puis une coupe de cava. Minuit à Madrid : 23 h UTC."
+    },
+    "kit": "es+1"
+  },
+  "RO": {
+    "text": "La Roumanie accueille le Nouvel An avec des chants et des personnages masqués. La veille et le jour de l’An, on chante le Plugușorul, la chanson de la « petite charrue », et dans les villages on porte parfois une vraie charrue de maison en maison. Le soir du 31 décembre, on sort aussi le buhai, un tonneau couvert de peau de mouton qui mugit comme un taureau. Le 1er janvier, enfants et jeunes passent avec la sorcova, un bâton orné de fleurs et de rubans, pour souhaiter santé et chance. En Moldavie et en Munténie, on joue la Chèvre, qui meurt et renaît comme l’année qui part et celle qui vient. On met du raisin et des figues sur la table pour l’abondance. Les 1er et 2 janvier sont fériés.\n\nLa grande fête en plein air de Bucarest change de lieu chaque année : pour 2025, c’était au parc Titan, avec feu d’artifice et 320 drones ; pour 2026, un concert gratuit place Alba Iulia, près du marché de Noël, avec feu d’artifice à minuit. Le lieu pour 2027 n’est pas encore annoncé.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Plugușorul",
+        "text": "La veille et le jour de l’An, les chanteurs vont de maison en maison avec le Plugușorul, la chanson de la « petite charrue ». Dans les villages, ils portent parfois une vraie charrue."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "La sorcova",
+        "text": "Le 1er janvier, jour de la Saint-Basile, enfants et jeunes passent avec la sorcova, un bâton orné de fleurs, de papier coloré et de rubans. Ils touchent doucement leurs hôtes en leur souhaitant santé et abondance, et reçoivent des friandises ou de l’argent."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "La Chèvre et l’Ours",
+        "text": "Le jour de l’An, en Moldavie et en Munténie, on joue la Chèvre, qui meurt et renaît comme l’année qui part et celle qui vient. En Moldavie, des jeunes en peaux d’ours dansent au son des tambours, et dans le Maramureș des masques munis de cloches et de fouets chassent les mauvais esprits."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Roumanie : Bucarest | Time2Fest",
+      "description": "La Roumanie fête 2027 avec le Plugușor, le buhai et les danses de la chèvre et de l’ours, et un concert gratuit à Bucarest. Minuit : 0 h locale, 22 h UTC."
+    },
+    "kit": "ro"
+  },
+  "DE": {
+    "text": "L’Allemagne accueille la nouvelle année — Silvester — avec des fêtes, une coupe de Sekt et le vœu « Guten Rutsch! ». Depuis 1972, la télévision allemande diffuse le soir du réveillon le sketch britannique Dinner for One. On lit l’avenir en versant de l’étain ou de la cire fondus dans l’eau froide : les kits au plomb ne sont plus vendus dans l’UE depuis 2018. On offre des porte-bonheur — cochons, trèfles, coccinelles et fers à cheval — et on mange des beignets à la confiture et un cochon en massepain. Presque tout le monde tire ses propres feux d’artifice, autorisés du 31 décembre 18 h au 1er janvier 7 h.\n\nÀ Berlin, le plus grand feu d’artifice public a lieu à la porte de Brandebourg. Pour accueillir 2026, le Land de Berlin y a organisé une fête gratuite, Yeah26, avec des DJ et un feu d’artifice à minuit ; le Sénat avait annoncé environ 20 000 billets gratuits. Pour 2027, une fête à la porte a de nouveau été annoncée. Les feux privés y sont interdits, comme dans plusieurs quartiers de la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Dinner for One",
+        "text": "Depuis 1972, la télévision allemande diffuse chaque soir de réveillon ce sketch britannique, tourné à Hambourg en 1963. Sa réplique « Same procedure as every year » est proverbiale en Allemagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Porte-bonheur et beignets",
+        "text": "Pour la chance, on offre des petits cochons, des trèfles, des coccinelles et des fers à cheval. Avec le Sekt, des beignets à la confiture et un cochon en massepain."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux et porte de Brandebourg",
+        "text": "Fusées et pétards sont autorisés du 31 décembre 18 h au 1er janvier 7 h. À Berlin, une fête gratuite avec DJ et feu d’artifice à la porte de Brandebourg a de nouveau été annoncée pour 2027."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Allemagne : Berlin | Time2Fest",
+      "description": "L’Allemagne fête 2027 avec le Sekt, l’étain fondu et Dinner for One ; Berlin se retrouve à la porte de Brandebourg. Minuit à Berlin : 0 h locale, 23 h UTC."
+    },
+    "kit": "de"
+  },
+  "GR": {
+    "text": "En Grèce, on passe le réveillon à la maison, en famille, avec la vassilopita, le gâteau de saint Basile où l’on cache une pièce. Vers minuit, le chef de famille trace une croix au couteau sur le gâteau et le découpe : les premières parts pour Dieu, la Vierge et la maison, puis une pour chacun, du plus âgé au plus jeune. On dit que celui qui trouve la pièce aura de la chance toute l’année. Le soir, on joue aux cartes pour de petites mises, et les enfants vont de porte en porte chanter les kalanda au son d’un triangle. Vers minuit ou le 1er janvier, on brise une grenade sur le seuil : plus les grains s’éparpillent, plus on aura de chance. Les cadeaux des enfants, c’est saint Basile qui les apporte, le 1er janvier, jour de sa fête.\n\nL’an dernier, Athènes a accueilli minuit place Syntagma : entrée libre, musique live, avant minuit un spectacle de drones, le plus grand jamais vu en Attique, et à minuit un feu d’artifice silencieux, par respect pour les animaux et les personnes sensibles au bruit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "La vassilopita et sa pièce",
+        "text": "Vers minuit, le chef de famille trace une croix sur le gâteau et le découpe : d’abord pour Dieu et la maison, puis pour chacun, du plus âgé au plus jeune. On dit que celui qui trouve la pièce aura de la chance toute l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Une grenade sur le seuil",
+        "text": "Vers minuit ou le 1er janvier, on brise une grenade sur le seuil : plus les grains s’éparpillent, plus on aura de chance. Le premier à entrer, du pied droit, est une personne qui porte chance, souvent un enfant."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu silencieux à Syntagma",
+        "text": "L’an dernier, la mairie d’Athènes a organisé un décompte gratuit place Syntagma, avec un spectacle de drones avant minuit. À minuit, un feu d’artifice silencieux, par respect pour les animaux et les personnes sensibles au bruit."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Grèce : Athènes | Time2Fest",
+      "description": "La Grèce fête 2027 avec la vasilopita et sa pièce, une grenade brisée et les kalanda ; Athènes, avec un décompte place Syntagma. Minuit à Athènes : 22 h UTC."
+    },
+    "kit": "gr"
+  },
+  "IT": {
+    "text": "En Italie, le réveillon est la nuit de la Saint-Sylvestre. On la passe en famille ou entre amis : à la maison autour d’un grand dîner, ou sur une place où se tiennent des concerts. Sur la table, du cotechino ou du zampone aux lentilles : les petits grains ronds ressemblent à des pièces et promettent la prospérité. À 20 h 30, le pays écoute le discours du président à la radio et à la télévision. Les dix dernières secondes avant minuit se comptent à voix haute, puis on lève une coupe de spumante et on échange des vœux. Et pour la chance, on porte des sous-vêtements rouges : s’habiller de rouge cette nuit-là remonterait, dit la tradition, à la Rome antique.\n\nÀ Rome, la mairie a accueilli 2026 au Circus Maximus : un concert gratuit dès 21 h, et à minuit le maire a levé son verre avec tout le monde, sur scène. Selon la mairie, plus de 70 000 personnes sont venues. Pétards et feux d’artifice amateurs sont interdits en ville pendant les fêtes.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Lentilles et cotechino",
+        "text": "Au dîner du réveillon, on sert du cotechino ou du zampone aux lentilles. Les grains ronds ressemblent à des pièces, pour une année généreuse."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Des dessous rouges",
+        "text": "Selon la tradition, on portait déjà du rouge cette nuit-là dans la Rome antique ; aujourd’hui, ce sont les dessous. Certains les mettent à l’envers et les retournent après minuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Décompte et spumante",
+        "text": "Les dix dernières secondes avant minuit se comptent à voix haute, puis on lève une coupe de spumante. À minuit, des feux d’artifice illuminent tout le pays."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Italie : Rome | Time2Fest",
+      "description": "L’Italie fête 2027 avec des lentilles, dessous rouges et spumante, et Rome avec un concert gratuit au Circo Massimo. Minuit sonne à 23 h UTC à Rome."
+    },
+    "kit": "it"
+  },
+  "HK": {
+    "text": "À Hong Kong, le 1er janvier est férié, mais pour un seul jour. La grande fête de l’année, c’est le Nouvel An lunaire : trois jours de congé, un dîner de retrouvailles en famille la veille, des visites aux proches et des enveloppes rouges garnies d’argent. En 2027, il tombe le 6 février, et la fête dure jusqu’à la fête des Lanternes, le quinzième jour. La nuit du 31 décembre se vit pourtant aussi ensemble, avec le décompte au bord du port Victoria et à Lan Kwai Fong.\n\nPour accueillir 2025, un feu d’artifice tiré de barges et de toits a illuminé le port pendant 12 minutes, une horloge de décompte brillait sur la façade du Centre des congrès et des expositions, et plus de 400 000 personnes l’ont regardé, selon le gouvernement. Un an plus tard, le feu d’artifice a été annulé par respect pour les victimes de l’incendie de Tai Po. Pour 2027, l’office du tourisme a annoncé son retour, à une échelle plus grande que jamais.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "D’abord le Nouvel An lunaire",
+        "text": "La plus grande fête de l’année est le Nouvel An lunaire, le 6 février en 2027 : la famille se retrouve pour un dîner la veille, on rend visite aux proches et on offre des enveloppes rouges garnies d’argent. Le 1er janvier n’est férié qu’un jour."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Le décompte avec la ville",
+        "text": "Les dernières secondes se comptent sur une horloge géante sur la façade du Centre des congrès et des expositions, et pour accueillir 2026 un concert en direct a eu lieu à Central. Autre lieu prisé pour le décompte : Lan Kwai Fong."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux sur le port Victoria",
+        "text": "Pour accueillir 2025, un feu d’artifice tiré de barges et de toits a illuminé le port pendant 12 minutes. Pour 2027, l’office du tourisme a annoncé son retour, à une échelle plus grande que jamais."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Hong Kong | Time2Fest",
+      "description": "Hong Kong fête 2027 avec un décompte au bord du port Victoria, le Nouvel An lunaire en février et le retour annoncé du feu d’artifice. Minuit : 16 h UTC."
+    },
+    "kit": "hk"
+  },
+  "KR": {
+    "text": "La Corée du Sud a le 1er janvier férié, mais la grande fête ici, c’est Seollal, le Nouvel An lunaire, qui tombe le 7 février en 2027. Le réveillon du 31 décembre est tout de même fêté, avec des rassemblements dans la plupart des villes. Le matin du 1er janvier, familles et amis partent vers la côte est, la mer ou la montagne : un vœu fait au premier lever de soleil de l’année porterait chance. Le tteokguk, une soupe de galettes de riz, se mange surtout à Seollal ; on disait autrefois qu’un bol ajoutait un an. Depuis juin 2023, l’âge se compte à partir de l’anniversaire, et ce n’est plus qu’un dicton.\n\nÀ Séoul, à minuit, la cloche du pavillon Bosingak résonne : onze citoyens choisis la frappent 33 fois. La cérémonie a lieu depuis 1953 ; KBS attend jusqu’à 100 000 personnes, et KBS et YouTube la diffusent en direct.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Un vœu au premier soleil",
+        "text": "Le matin du 1er janvier, on part vers la côte est, la mer ou la montagne pour faire un vœu au premier lever du soleil. Qui ne part pas à l’aube le fait le 31 décembre, au dernier coucher de soleil de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Tteokguk, un an de plus",
+        "text": "Cette soupe de galettes de riz se mange surtout à Seollal, le Nouvel An lunaire. On croyait qu’un bol ajoutait un an, même si depuis 2023 l’âge se compte à partir de l’anniversaire."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Cloche de Bosingak, 33 coups",
+        "text": "À minuit, au centre de Séoul, onze citoyens choisis frappent la cloche de Bosingak 33 fois, un nombre issu de la tradition bouddhique. KBS et la chaîne YouTube de la ville diffusent la cérémonie en direct."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Corée du Sud : Séoul | Time2Fest",
+      "description": "La Corée du Sud fête 2027 à Séoul avec 33 coups de cloche à Bosingak, puis tteokguk et un vœu au premier soleil de la côte est. Minuit à Séoul : 15 h UTC."
+    },
+    "kit": "kr"
+  },
+  "TW": {
+    "text": "À Taïwan, le 1er janvier est férié, même si la grande fête de l’année reste le Nouvel An lunaire. La nuit est accueillie par des concerts en plein air et des feux d’artifice : Taichung, Kaohsiung et Nouveau Taipei organisent leur propre décompte. Le matin, beaucoup partent en montagne ou sur la côte est voir le premier lever de soleil de l’année : la dernière fois, le premier soleil était attendu à 6 h 03 sur un sommet de plus de 3 000 m du comté de Hualien. La dernière fois, sur le mont Alishan, l’aube a été saluée en musique classique, et le matin du 1er janvier on hisse le drapeau devant le Bureau présidentiel à Taipei.\n\nÀ Taipei, la grande fête est un concert sur la place de l’hôtel de ville, où se rassemblent des dizaines de milliers de personnes. À minuit, le feu d’artifice jaillit de la tour Taipei 101, haute de 508 mètres : le premier a illuminé son inauguration en 2004, et la dernière fois le spectacle a duré six minutes. Des centaines de milliers de personnes le regardent depuis le quartier de Xinyi.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Premier lever de soleil",
+        "text": "Le matin du 1er janvier, on part en montagne ou sur la côte est pour voir le premier soleil de l’année. La dernière fois, sur le mont Alishan, l’aube a été saluée par un concert de musique classique."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Lever du drapeau à Taipei",
+        "text": "Le matin du 1er janvier, on hisse le drapeau devant le Bureau présidentiel à Taipei. En 2025, la cérémonie a été suivie du discours du Nouvel An du président, et les invités ont reçu des enveloppes rouges."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux de la Taipei 101",
+        "text": "À minuit, le feu d’artifice jaillit directement de la tour Taipei 101, tandis qu’un concert sur la place de l’hôtel de ville mène le décompte. La dernière fois, le spectacle a duré six minutes."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Taïwan : Taipei | Time2Fest",
+      "description": "Taipei, à Taïwan, accueille 2027 avec un concert devant l’hôtel de ville et le feu d’artifice de la tour Taipei 101, puis le premier soleil des cimes. 16 h UTC."
+    },
+    "kit": "tw"
+  },
+  "PH": {
+    "text": "Les Philippines accueillent le Nouvel An avec la Media Noche, un repas de minuit en famille et entre amis. Sur la table : du pancit, de longues nouilles pour une longue vie, du riz gluant pour garder la famille unie et souvent douze fruits ronds, un par mois. Beaucoup portent des pois, car ils ressemblent à des pièces et doivent apporter la richesse. À minuit, les pièces tintent dans les poches, les enfants sautent le plus haut possible pour grandir, et l’on chasse le mauvais sort avec du bruit : trompettes torotot, casseroles, klaxons. Les pétards ne sont autorisés que lors de spectacles collectifs permis par les autorités locales, et le ministère de la Santé demande de les remplacer par des trompettes et des bâtons lumineux.\n\nDans la région de la capitale, l’an dernier, les plus grands comptes à rebours gratuits ont eu lieu au SM Mall of Asia à Pasay, à Bonifacio Global City à Taguig et sur Ayala Avenue à Makati. Au Mall of Asia, à minuit, un feu d’artifice en musique a illuminé le ciel.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Media Noche et 12 fruits",
+        "text": "À minuit, famille et amis passent à table : du pancit pour une longue vie, du riz gluant pour une famille unie. À côté, douze fruits ronds, un pour chaque mois de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Pois, pièces et un saut",
+        "text": "Porte quelque chose à pois : ils ressemblent à des pièces et attirent la richesse. À minuit, fais tinter les pièces dans ta poche et saute le plus haut possible ; on dit que ça fait grandir."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Du bruit plutôt que des pétards",
+        "text": "Le bruit de minuit chasse le mauvais sort : trompettes torotot, casseroles, klaxons. Le ministère de la Santé conseille trompettes et bâtons lumineux plutôt que pétards, et les feux d’artifice lors des spectacles collectifs."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Philippines : Manille | Time2Fest",
+      "description": "Les Philippines fêtent 2027 avec la Media Noche : pancit, douze fruits ronds, pois et trompettes torotot. Minuit à Manille : 16 h UTC, décomptes gratuits."
+    },
+    "kit": "ph"
   }
 }

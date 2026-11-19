@@ -1,0 +1,99 @@
+{
+  "code": "GR",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "athens",
+  "names": {
+    "uk": {
+      "name": "Греція",
+      "city": "Афіни",
+      "cityIn": "в Афінах",
+      "caps": "АФІНИ · ГРЕЦІЯ"
+    },
+    "en": {
+      "name": "Greece",
+      "city": "Athens",
+      "cityIn": "in Athens",
+      "caps": "ATHENS · GREECE"
+    },
+    "es": {
+      "name": "Grecia",
+      "city": "Atenas",
+      "cityIn": "en Atenas",
+      "caps": "ATENAS · GRECIA"
+    },
+    "fr": {
+      "name": "Grèce",
+      "city": "Athènes",
+      "cityIn": "à Athènes",
+      "caps": "ATHÈNES · GRÈCE"
+    }
+  },
+  "picto": "M2 14 L20 7 L38 14 Z M3 14 v3.2 h34 v-3.2 M6.4 17.2 V29.4 M10.6 17.2 V29.4 M14.8 17.2 V29.4 M19 17.2 V29.4 M21 17.2 V29.4 M25.2 17.2 V29.4 M29.4 17.2 V29.4 M33.6 17.2 V29.4 M4 29.4 h32 M3 32.2 h34 M1.6 35 h36.8 M5 38.4 h30",
+  "flagColors": [
+    "#0D5EAF",
+    "#FFFFFF",
+    "#5B8FD8"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Афінах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Athens"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Atenas"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Athènes"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

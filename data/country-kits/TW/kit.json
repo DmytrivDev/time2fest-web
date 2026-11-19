@@ -1,0 +1,99 @@
+{
+  "code": "TW",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "taipei",
+  "names": {
+    "uk": {
+      "name": "Тайвань",
+      "city": "Тайбей",
+      "cityIn": "у Тайбеї",
+      "caps": "ТАЙБЕЙ · ТАЙВАНЬ"
+    },
+    "en": {
+      "name": "Taiwan",
+      "city": "Taipei",
+      "cityIn": "in Taipei",
+      "caps": "TAIPEI · TAIWAN"
+    },
+    "es": {
+      "name": "Taiwán",
+      "city": "Taipéi",
+      "cityIn": "en Taipéi",
+      "caps": "TAIPÉI · TAIWÁN"
+    },
+    "fr": {
+      "name": "Taïwan",
+      "city": "Taipei",
+      "cityIn": "à Taipei",
+      "caps": "TAIPEI · TAÏWAN"
+    }
+  },
+  "picto": "M20 1 V6 M18.2 11 L19 6 H21 L21.8 11 Z M16.3 11.0 H23.7 L22.8 14.1 H17.2 Z M16.4 14.1 H23.6 L22.7 17.2 H17.3 Z M16.5 17.2 H23.5 L22.6 20.3 H17.4 Z M16.6 20.3 H23.4 L22.5 23.4 H17.5 Z M16.7 23.4 H23.3 L22.4 26.5 H17.6 Z M16.8 26.5 H23.2 L22.3 29.6 H17.7 Z M16.9 29.6 H23.1 L22.2 32.7 H17.8 Z M17.2 32.7 L15.6 36 H24.4 L22.8 32.7 M11 36 H29 V39 H11 Z",
+  "flagColors": [
+    "#E8465A",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Тайбеї"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Taipei"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Taipéi"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Taipei"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

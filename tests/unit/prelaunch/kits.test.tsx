@@ -29,8 +29,9 @@ describe('набори країн', () => {
       position: '50% 0%',
     });
     expect(sceneFile('JP', 'utc+0900', false)).toBeUndefined();
-    expect(sceneFile('BR', 'utc-0300', true)).toBeUndefined();
-    expect(sceneFile('FR', 'utc+0100', true)).toBeUndefined();
+    expect(sceneFile('BR', 'utc-0300', true)).toEqual({ src: '/scenes/BR.svg', position: '50% 0%' });
+    expect(sceneFile('BR', 'utc-0300', false)).toBeUndefined();
+    expect(sceneFile('AU', 'utc+1100', true)).toBeUndefined();
   });
 
   it('описані країни — без ключів поясів', () => {

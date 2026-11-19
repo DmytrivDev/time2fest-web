@@ -20,64 +20,88 @@
     ]
   },
   "BR": {
-    "text": "La noche de Fin de Año en Brasil se llama Réveillon. En Río impresiona por su magnitud: millones de personas se reúnen en Copacabana, suena la música y los fuegos artificiales se reflejan en el océano.",
+    "text": "Brasil recibe el Año Nuevo, el Réveillon, vestido de blanco. La costumbre nació con seguidores del candomblé que en los años setenta acudían de blanco a la playa de Copacabana con ofrendas para Yemanjá, la diosa del agua; desde entonces la ropa blanca y las flores que se sueltan en el mar se extendieron por todo el país. A medianoche, en la costa, se saltan siete olas pidiendo un deseo en cada una.\n\nEn Río de Janeiro la fiesta es en Copacabana: según la ciudad, más de 2,6 millones de personas llegaron a recibir 2026. A medianoche los fuegos salieron de 19 barcazas durante 12 minutos, se elevaron 1200 drones y en la playa sonaron tres escenarios.",
     "traditions": [
       {
         "id": "t1",
+        "iconId": "white",
         "title": "Todo de blanco",
-        "text": "Los brasileños se visten de blanco, el color de la paz y la pureza, y van a la playa, sobre todo a Copacabana."
+        "text": "Se va a la playa con ropa blanca nueva. La costumbre viene de los seguidores del candomblé que en los años setenta recibían el Año Nuevo en Copacabana vestidos de blanco."
       },
       {
         "id": "t2",
-        "title": "Siete olas",
-        "text": "A medianoche, en la orilla se saltan siete olas y se pide un deseo con cada una."
+        "iconId": "flower",
+        "title": "Ofrendas a Yemanjá",
+        "text": "Yemanjá es una diosa del agua del candomblé y la umbanda. Se le llevan flores o barquitos con regalos y se sueltan en el mar, también quienes no son creyentes."
       },
       {
         "id": "t3",
-        "title": "Flores para Iemanjá",
-        "text": "Muchas personas arrojan flores al agua como ofrenda a Iemanjá, la diosa del mar, y piden felicidad para el nuevo año."
+        "iconId": "wave",
+        "title": "Siete olas",
+        "text": "A medianoche se saltan siete olas pidiendo un deseo en cada una: el siete es un número sagrado en la umbanda."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Réveillon 2027 en Brasil: Copacabana de noche | Time2Fest",
+      "description": "Millones vestidos de blanco reciben 2027 en Copacabana, en Río (Brasil): fuegos sobre el océano, siete olas y flores para Yemanjá. Medianoche en Río: 03:00 UTC."
+    },
+    "kit": "br-3"
   },
   "FR": {
-    "text": "Los franceses llaman a esta noche la Saint-Sylvestre. Es una larga cena con los seres queridos, un beso a medianoche y un paseo por una París engalanada, donde brilla la torre Eiffel.",
+    "text": "En Francia la última noche del año se llama Saint-Sylvestre y se pasa en torno a una cena de fiesta, el réveillon. Puede ser una cena tranquila con familia y amigos o una fiesta con baile; en la mesa hay foie gras, ostras y champán, y se trasnocha hasta la medianoche. A las 20:00 del 31 de diciembre el presidente se dirige a los franceses por televisión para hacer balance del año y felicitarlos; ningún presidente ha faltado desde 1958. A medianoche hay quien se besa bajo el muérdago, una costumbre popular para tener suerte.\n\nEn París la gran fiesta es en los Campos Elíseos: desde 2014 la ciudad organiza allí un espectáculo gratuito para toda la familia. Sobre el Arco del Triunfo se proyecta un enorme videomapping y a medianoche estallan los fuegos encima. Según el Ministerio del Interior, más de un millón de personas recibieron allí 2026.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Réveillon",
-        "text": "Una larga cena festiva con champán, ostras y foie gras se prolonga hasta bien entrada la noche."
+        "iconId": "feast",
+        "title": "El réveillon",
+        "text": "Una cena de fiesta el 31 de diciembre con foie gras, ostras y champán, en familia y con amigos o en una fiesta con baile. Se trasnocha hasta la medianoche."
       },
       {
         "id": "t2",
+        "iconId": "mistletoe",
         "title": "Un beso bajo el muérdago",
-        "text": "Por tradición, a medianoche se besan bajo una rama de muérdago, para tener suerte en el nuevo año. Al muérdago también está ligado el antiguo deseo «Au gui l’an neuf !»."
+        "text": "Con las doce campanadas de medianoche, hay quien se besa bajo una bola de muérdago para tener un buen año. Es una costumbre popular que, según se dice, llegó de Inglaterra en el siglo XVIII."
       },
       {
         "id": "t3",
-        "title": "Campos Elíseos",
-        "text": "Parisinos y visitantes se reúnen junto al Arc de Triomphe: un espectáculo de luces en sus muros, una cuenta regresiva compartida y fuegos artificiales a medianoche."
+        "iconId": "fireworks",
+        "title": "Fiesta en los Campos Elíseos",
+        "text": "Un videomapping ilumina el Arco del Triunfo y a medianoche estallan los fuegos encima. La entrada es gratuita; más de un millón de personas recibieron aquí 2026."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Francia: Campos Elíseos | Time2Fest",
+      "description": "Francia recibe 2027 con la cena del réveillon, un beso bajo el muérdago y fuegos sobre el Arco del Triunfo en París. En Francia es medianoche a las 23:00 UTC."
+    },
+    "kit": "fr"
   },
   "GB": {
-    "text": "En Gran Bretaña, el Año Nuevo es tanto el Hogmanay escocés como los fuegos artificiales de Londres sobre el Támesis. Lo más importante es un abrazo, una canción a las doce y la primera visita que cruza la puerta.",
+    "text": "En el Reino Unido la medianoche llega con las campanadas del Big Ben: en Inglaterra la gran fiesta es en el centro de Londres, y también hay grandes celebraciones en Mánchester, Liverpool o Birmingham. A medianoche se canta «Auld Lang Syne», con versos de Robert Burns de 1788; en Escocia se forma un círculo y en la última estrofa se cruzan los brazos. Allí la Nochevieja es Hogmanay: justo después de medianoche se visita a amigos y vecinos con carbón, galletas de mantequilla o whisky, porque el primer visitante trae la suerte del año a la casa. El 1 de enero es festivo en todo el país, y en Escocia también el 2.\n\nEn Londres la cuenta atrás termina con las campanadas del Big Ben, en directo en la BBC. Desde 2004 hay fuegos artificiales sobre el Támesis junto al London Eye. Para recibir 2026, según el Ayuntamiento, unas 100.000 personas con entrada llenaron las orillas y más de 12.000 fuegos ardieron durante 12 minutos.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Las campanadas del Big Ben",
-        "text": "A medianoche el Big Ben da las doce campanadas y, sobre el Támesis, junto al London Eye, comienzan los fuegos artificiales principales."
+        "iconId": "music",
+        "title": "Auld Lang Syne",
+        "text": "A medianoche se canta la vieja canción con versos de Robert Burns de 1788. En Escocia se forma un círculo y en la última estrofa se cruzan los brazos."
       },
       {
         "id": "t2",
-        "title": "Auld Lang Syne",
-        "text": "A las doce la gente forma un círculo, se toma de las manos y canta la antigua canción escocesa con versos de Robert Burns, cruzando los brazos en la última estrofa."
+        "iconId": "door",
+        "title": "El primer visitante",
+        "text": "En Escocia, justo después de medianoche, se visita a amigos y vecinos con carbón, galletas de mantequilla o whisky. Se cree que el primer visitante marca la suerte de la casa para todo el año."
       },
       {
         "id": "t3",
-        "title": "El primer visitante del año",
-        "text": "En Escocia y el norte de Inglaterra se cree que la primera persona que cruza el umbral después de medianoche trae buena suerte a la casa. Llega con un obsequio: carbón, shortbread o whisky."
+        "iconId": "fireworks",
+        "title": "Big Ben y fuegos del Támesis",
+        "text": "Londres cuenta los segundos hasta las campanadas del Big Ben y luego estallan los fuegos junto al London Eye, como cada año desde 2004. Para 2026, según el Ayuntamiento, más de 12.000 fuegos brillaron durante 12 minutos."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en el Reino Unido: Londres | Time2Fest",
+      "description": "El Reino Unido recibe 2027 con las campanadas del Big Ben, fuegos en el Támesis y el Hogmanay escocés con «Auld Lang Syne». En Londres, medianoche: 00:00 UTC."
+    },
+    "kit": "gb"
   },
   "JP": {
     "text": "En Japón el Año Nuevo es una fiesta familiar tranquila, no una fiesta callejera. Del 29 de diciembre al 3 de enero, más o menos, casi todos descansan, las calles se vacían y los templos y santuarios se llenan. El 31 de diciembre es Ōmisoka: por la noche se comen fideos de alforfón toshikoshi soba y a medianoche los templos budistas tocan la campana 108 veces; en muchos, el último golpe suena ya en el año nuevo.\n\nEl 1 de enero se come en casa osechi, platos festivos en cajas apiladas, cada uno con un deseo para el año, y en los primeros días de enero se visita un santuario para comprar un amuleto y sacar la suerte. En Tokio las mayores multitudes van a Meiji Jingu y Sensō-ji; la cuenta regresiva callejera de Shibuya se ha cancelado en los últimos años.",
@@ -108,44 +132,60 @@
     "kit": "jp"
   },
   "NZ": {
-    "text": "Nueva Zelanda da la bienvenida al Año Nuevo entre los primeros del mundo: la medianoche llega antes solo a las islas de la Línea, en Kiribati, y a las islas Chatham, también neozelandesas.",
+    "text": "Nueva Zelanda es de los primeros países en recibir el Año Nuevo: en pleno verano, con el horario de verano UTC+13, y en las islas Chatham aún 45 minutos antes. Para muchos neozelandeses las fiestas son verano, playa y acampada: el historiador Richard Wolfe explica que salir de la ciudad en Navidad y enero se volvió parte de la cultura local ya en los años cincuenta.\n\nEn Auckland, desde las 21:00 hay láseres en la Sky Tower, de 328 metros, y a medianoche se lanzan cinco minutos de fuegos desde tres niveles de la torre. El Harbour Bridge se ilumina con música y la gente se reúne en el puerto y en Mt Eden, North Head y Mt Victoria.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Fuegos artificiales desde la Sky Tower",
-        "text": "A medianoche se lanzan fuegos artificiales directamente desde la Sky Tower de Auckland, y se ven en toda la bahía."
+        "iconId": "wave",
+        "title": "Verano junto al mar",
+        "text": "Aquí el Año Nuevo cae en verano: muchos dejan la ciudad para ir a playas y campings, una costumbre que nació en los años cincuenta."
       },
       {
         "id": "t2",
-        "title": "Entre los primeros del mundo",
-        "text": "Auckland recibe el Año Nuevo dos horas antes que Sídney."
+        "iconId": "fireworks",
+        "title": "Fuegos desde la Sky Tower",
+        "text": "A medianoche se lanzan cinco minutos de fuegos desde tres niveles de la torre de 328 metros; desde las 21:00 hay láseres y proyecciones."
       },
       {
         "id": "t3",
-        "title": "Vacaciones de verano",
-        "text": "A principios de enero caen las vacaciones: las familias van a las playas y a los campings y reciben la noche al aire libre."
+        "iconId": "music",
+        "title": "Puente y colinas",
+        "text": "El Harbour Bridge se ilumina con música, y los fuegos se ven bien desde el puerto y los cerros Mt Eden, North Head y Mt Victoria. Es gratis."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Año Nuevo en Auckland, Nueva Zelanda: Sky Tower | Time2Fest",
+      "description": "Auckland, en Nueva Zelanda, es de las primeras grandes ciudades en recibir 2027: cinco minutos de fuegos desde la Sky Tower. Medianoche allí: 11:00 UTC."
+    },
+    "kit": "nz+13"
   },
   "US": {
-    "text": "En Estados Unidos, el principal símbolo de la noche es la bola de Nueva York. El país abarca seis zonas horarias, así que entre la medianoche en Nueva York y la de Hawái pasan cinco horas.",
+    "text": "En Estados Unidos el Año Nuevo se recibe frente al televisor y en las plazas, con la cuenta atrás de New Year’s Rockin’ Eve, en antena desde 1973. A medianoche se canta «Auld Lang Syne», costumbre que fijó la orquesta de Guy Lombardo, que la tocaba en la radio desde 1929. Muchas ciudades tienen su propio símbolo: Atlanta baja un melocotón, Miami sube una «Gran Naranja» y los fuegos iluminan el Strip de Las Vegas. El 1 de enero es festivo federal: en el Sur se comen frijoles de carita y berza para tener suerte, y Pasadena celebra el Desfile de las Rosas.\n\nEn Nueva York, Times Square acoge la fiesta desde 1904 y la bola baja aquí desde 1907. Hoy una bola de cristal de 3,8 metros de ancho recorre 27 metros de mástil en 60 segundos. La entrada es libre; para recibir 2026, la policía esperaba cerca de un millón de personas.",
     "traditions": [
       {
         "id": "t1",
-        "title": "La bola de Times Square",
-        "text": "En Nueva York, un minuto antes de medianoche una bola de cristal empieza a descender, y toda la plaza cuenta los últimos sesenta segundos."
+        "iconId": "music",
+        "title": "Auld Lang Syne a medianoche",
+        "text": "Al llegar la medianoche, todos la cantan juntos. La convirtió en el sonido del Año Nuevo en Norteamérica la orquesta de Guy Lombardo, que la tocaba en antena desde Nueva York desde 1929."
       },
       {
         "id": "t2",
-        "title": "Un beso a medianoche",
-        "text": "Por tradición, con la primera campanada de las doce se besa a la persona más cercana, para tener suerte y amor en el nuevo año."
+        "iconId": "address",
+        "title": "La bola, en televisión",
+        "text": "El país sigue New Year’s Rockin’ Eve o la transmisión gratuita en línea desde Times Square. Un minuto antes de medianoche, el alcalde de Nueva York pulsa un botón de cristal y la bola desciende despacio por su mástil."
       },
       {
         "id": "t3",
-        "title": "Frijoles de carita para la suerte",
-        "text": "En el sur del país, el 1 de enero se comen frijoles de carita (black-eyed peas) y verduras de hoja verde, para tener abundancia y dinero."
+        "iconId": "feast",
+        "title": "Comida de la suerte",
+        "text": "En el Sur, el primer día del año se comen frijoles de carita, frijoles rojos con arroz y berza, todo para atraer la suerte. Después llegan el Desfile de las Rosas en Pasadena y los partidos de fútbol americano universitario."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Estados Unidos: Nueva York | Time2Fest",
+      "description": "Estados Unidos recibe 2027 en Nueva York: la bola de Times Square baja 60 segundos y cae confeti de deseos de los tejados. Medianoche: 00:00 local, 05:00 UTC."
+    },
+    "kit": "us-5"
   },
   "BR@utc-0400": {
     "text": "Manaos está a orillas del río Negro, en el huso UTC−4, así que el Año Nuevo llega aquí una hora después que a Río. El ayuntamiento organiza un Réveillon gratuito en tres lugares a la vez; el principal es la playa de Ponta Negra, donde la fiesta va de las 17:00 a las 5 de la mañana. En 2026 el ayuntamiento calculó unas 160 000 personas allí y cerca de 278 000 en los tres lugares.\n\nA medianoche los fuegos suenan a la vez en los tres sitios y son de bajo ruido para no asustar a niños, mayores, personas autistas y animales. Esa noche está prohibido bañarse en Ponta Negra. Como en todo Brasil, muchos visten de blanco, y algunos eligen amarillo para el dinero o rojo para el amor.",
@@ -174,5 +214,285 @@
       "description": "Manaos, en Brasil, recibe 2027 en la playa de Ponta Negra, junto al río Negro: conciertos gratuitos y fuegos de bajo ruido en tres puntos, a las 04:00 UTC."
     },
     "kit": "br-4"
+  },
+  "UA": {
+    "text": "En Ucrania el Año Nuevo es una fiesta familiar alrededor de la mesa: ensalada olivier, arenque «bajo abrigo de piel», kholodets, mandarinas y champán, platos que arraigaron ya en la época soviética. En los últimos minutos del año el presidente se dirige al país por televisión (en 2025 el mensaje se emitió a las 23:40) y con las campanadas se alzan las copas y se piden deseos.\n\nBajo la ley marcial están prohibidos los fuegos artificiales y los petardos, y en Kiev rige el toque de queda de 00:00 a 05:00, así que se celebra en casa. El árbol principal del país está en la plaza de Santa Sofía. Desde que en 2023 la Navidad pasó al 25 de diciembre, las fiestas van de Nochebuena al 6 de enero, y en enero Chernivtsí celebra su desfile de Malanka.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "El mensaje del presidente",
+        "text": "En los últimos minutos del año el presidente da su mensaje de Año Nuevo; en 2025 se emitió a las 23:40. Después llegan las campanadas y una copa de champán."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "La mesa de fiesta",
+        "text": "La familia se reúne ante una mesa con ensalada olivier, arenque «bajo abrigo de piel», kholodets y mandarinas, platos que arraigaron ya en la época soviética."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "El árbol de la plaza de Santa Sofía",
+        "text": "El árbol principal del país está en la plaza de Santa Sofía de Kiev; en 2025 se decoró con motivos de los frescos de la catedral de Santa Sofía, sin eventos masivos. Fuegos artificiales y petardos están prohibidos; se permiten matasuegras y bengalas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Ucrania: cuenta regresiva en Kiev | Time2Fest",
+      "description": "Ucrania recibe 2027 a medianoche de Kiev, las 22:00 UTC: cena en familia, cuenta regresiva de los últimos segundos y el gran árbol de la plaza de Santa Sofía."
+    },
+    "kit": "ua"
+  },
+  "ES": {
+    "text": "En España el Año Nuevo llega con uvas: a medianoche se comen doce, una con cada una de las doce campanadas del reloj, para tener suerte y prosperidad. La primera referencia escrita a la costumbre es de 1895, y en 1903 ya se conocía en todo el país. La televisión emite las campanadas desde 1962; el primer minuto de 2026 lo vieron más de 5,8 millones de personas en La 1. Después de las uvas se brinda con cava, a veces con un anillo de oro en el fondo de la copa, y se bebe de un trago. Y para la suerte en el amor, según la creencia popular, se lleva ropa interior roja.\n\nEn Madrid la cuenta atrás se vive en la Puerta del Sol: las campanadas suenan desde el reloj de la Real Casa de Correos, inaugurado en 1866, y medio minuto antes de medianoche baja la bola, la señal para prepararse. Para recibir 2025, según Time Out, se permitió la entrada a la plaza de hasta 15.000 personas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Las doce uvas",
+        "text": "A medianoche se come una uva con cada una de las doce campanadas, una por cada mes de suerte. Para no quedarse atrás, los supermercados venden latas de uvas sin pepitas."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cava con anillo de oro",
+        "text": "Después de las uvas se brinda con cava: un anillo o una moneda de oro en la copa para la prosperidad, una fresa para el amor. La copa se bebe de un trago."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "Ropa roja y pie derecho",
+        "text": "Según la creencia popular, la ropa interior roja en Nochevieja atrae el amor. Y al año nuevo se entra con el pie derecho."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en España: Madrid | Time2Fest",
+      "description": "España recibe 2027 con doce uvas al ritmo de las campanadas del reloj de la Puerta del Sol, en Madrid, una copa de cava y ropa roja. Medianoche: 23:00 UTC."
+    },
+    "kit": "es+1"
+  },
+  "RO": {
+    "text": "Rumanía recibe el Año Nuevo con villancicos y comparsas de máscaras. En Nochevieja y Año Nuevo se canta el Plugușorul, el villancico del «arado pequeño», y en los pueblos a veces se lleva un arado de verdad de casa en casa. La tarde del 31 de diciembre sale también el buhai, un barril cubierto de piel de oveja que muge como un toro. El 1 de enero niños y jóvenes llegan con la sorcova, una vara adornada con flores y cintas, deseando salud y suerte. En Moldavia y Muntenia se representa la Cabra, que muere y resucita como el año viejo y el nuevo. En la mesa se ponen uvas e higos para la abundancia. El 1 y el 2 de enero son festivos.\n\nLa gran fiesta al aire libre de Bucarest cambia de lugar cada año: para 2025 fue en el parque Titan, con fuegos y 320 drones; para 2026, un concierto gratuito en la plaza Alba Iulia, junto al mercado navideño, con fuegos a medianoche. Aún no se ha anunciado dónde será en 2027.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Plugușorul",
+        "text": "En Nochevieja y Año Nuevo los cantores van de casa en casa con el Plugușorul, el villancico del «arado pequeño». En los pueblos a veces llevan un arado de verdad."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "La sorcova",
+        "text": "El 1 de enero, día de San Basilio, niños y jóvenes llegan con la sorcova, una vara adornada con flores, papel de colores y cintas. Tocan suavemente a los anfitriones y les desean salud y abundancia; a cambio reciben dulces o dinero."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "La Cabra y el Oso",
+        "text": "El día de Año Nuevo, en Moldavia y Muntenia se representa la Cabra, que muere y resucita como el año viejo y el nuevo. En Moldavia, jóvenes con pieles de oso bailan al son de tambores, y en Maramureș figuras enmascaradas con campanas y látigos ahuyentan a los malos espíritus."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Rumanía: Bucarest | Time2Fest",
+      "description": "Rumanía recibe 2027 con el Plugușor, el buhai y las danzas de la cabra y el oso, y con un concierto gratis en Bucarest. Medianoche: 00:00 local, 22:00 UTC."
+    },
+    "kit": "ro"
+  },
+  "DE": {
+    "text": "Alemania recibe el Año Nuevo — Silvester — con fiestas, una copa de Sekt y el deseo «Guten Rutsch!». Desde 1972 la televisión alemana emite en Nochevieja el sketch británico Dinner for One. Se adivina el futuro vertiendo estaño o cera fundidos en agua fría: los juegos de plomo no se venden en la UE desde 2018. Se regalan amuletos — cerditos, tréboles, mariquitas y herraduras — y se comen rosquillas rellenas de mermelada y un cerdito de mazapán. Casi todo el mundo lanza fuegos artificiales, permitidos desde las 18:00 del 31 de diciembre hasta las 7:00 del 1 de enero.\n\nEn Berlín, los mayores fuegos públicos son en la Puerta de Brandeburgo. Para recibir 2026, el estado de Berlín organizó allí una fiesta gratuita, Yeah26, con DJ y fuegos a medianoche; el Senado anunció unas 20.000 entradas gratuitas. Para 2027 se ha vuelto a anunciar una fiesta en la Puerta. La pirotecnia particular está prohibida allí, como en varios distritos de la ciudad.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Dinner for One",
+        "text": "Desde 1972 la televisión alemana emite cada Nochevieja este sketch británico, grabado en Hamburgo en 1963. Su frase «Same procedure as every year» es proverbial en Alemania."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Amuletos y rosquillas",
+        "text": "Para la suerte se regalan cerditos, tréboles, mariquitas y herraduras. Con el Sekt, rosquillas de mermelada y un cerdito de mazapán."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos y la Puerta",
+        "text": "Cohetes y petardos se lanzan desde las 18:00 del 31 de diciembre hasta las 7:00 del 1 de enero. En Berlín se ha vuelto a anunciar para 2027 una fiesta gratuita con DJ y fuegos en la Puerta de Brandeburgo."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Alemania: Berlín | Time2Fest",
+      "description": "Alemania recibe 2027 con Sekt, estaño fundido en agua fría y Dinner for One; Berlín, en la Puerta de Brandeburgo. Medianoche en Berlín: 00:00 local, 23:00 UTC."
+    },
+    "kit": "de"
+  },
+  "GR": {
+    "text": "En Grecia la Nochevieja se pasa en casa, en familia y con la vasilopita, el pastel de San Basilio con una moneda escondida dentro. Hacia la medianoche el cabeza de familia traza una cruz con el cuchillo y corta las porciones: las primeras para Dios, la Virgen y la casa, y luego una para cada uno, del mayor al menor. Se dice que quien encuentra la moneda tendrá suerte todo el año. Por la noche se juega a las cartas con apuestas pequeñas, y los niños van de puerta en puerta cantando los kalanda al son de un triángulo. Hacia la medianoche o el 1 de enero se estrella una granada contra el umbral: cuantas más semillas salten, más suerte. Los regalos a los niños los trae San Basilio el 1 de enero, su día.\n\nEl año pasado Atenas recibió la medianoche en la plaza Syntagma: entrada libre, música en directo, antes de medianoche un espectáculo de drones, el mayor jamás visto en el Ática, y a medianoche fuegos artificiales silenciosos, por respeto a los animales y a las personas sensibles al ruido.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Vasilopita con moneda",
+        "text": "Hacia la medianoche el cabeza de familia traza una cruz sobre el pastel y lo corta: primero para Dios y la casa, luego para todos, del mayor al menor. Se dice que quien encuentra la moneda tendrá suerte todo el año."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Una granada en el umbral",
+        "text": "Hacia la medianoche o el 1 de enero se estrella una granada contra el umbral: cuantas más semillas salten, más suerte. Entra primero, con el pie derecho, alguien que trae suerte, a menudo un niño."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos silenciosos en Syntagma",
+        "text": "El año pasado el Ayuntamiento de Atenas organizó una cuenta atrás gratuita en la plaza Syntagma con un espectáculo de drones antes de medianoche. A medianoche llegaron los fuegos silenciosos, por respeto a los animales y a las personas sensibles al ruido."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Grecia: Atenas | Time2Fest",
+      "description": "Grecia recibe 2027 con vasilopita con moneda, una granada rota y villancicos kalanda; Atenas, con cuenta atrás en Syntagma. Medianoche en Atenas: 22:00 UTC."
+    },
+    "kit": "gr"
+  },
+  "IT": {
+    "text": "En Italia la Nochevieja es la Noche de San Silvestre. Se pasa en familia o con amigos: en casa, con una gran cena, o en una plaza con conciertos. En la mesa hay cotechino o zampone con lentejas: los granos redondos parecen monedas y prometen prosperidad. A las 20:30 el país escucha el mensaje del presidente por radio y televisión. Los últimos diez segundos antes de medianoche se cuentan en voz alta, y luego se brinda con spumante y todos se felicitan. Y para tener suerte se lleva ropa interior roja: vestir de rojo esa noche, según la tradición, viene de la antigua Roma.\n\nEn Roma, el Ayuntamiento recibió 2026 en el Circo Máximo: un concierto gratuito desde las 21:00, y a medianoche el alcalde brindó con todos en el mismo escenario. Según el Ayuntamiento, acudieron más de 70.000 personas. Los petardos y los fuegos artificiales caseros están prohibidos en la ciudad durante las fiestas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Lentejas con cotechino",
+        "text": "En la cena de Nochevieja se sirve cotechino o zampone con lentejas. Los granos redondos parecen monedas, para que el año sea generoso."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Ropa interior roja",
+        "text": "Según la tradición, el rojo ya se vestía esta noche en la antigua Roma; hoy es la ropa interior. Hay quien se la pone del revés y le da la vuelta después de medianoche."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás y spumante",
+        "text": "Los últimos diez segundos antes de medianoche se cuentan en voz alta y luego se brinda con spumante. A medianoche, fuegos artificiales iluminan todo el país."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Italia: Roma | Time2Fest",
+      "description": "Italia recibe 2027 con lentejas, ropa interior roja y spumante; Roma, con un concierto gratis en el Circo Máximo. Medianoche en Roma: 23:00 UTC."
+    },
+    "kit": "it"
+  },
+  "HK": {
+    "text": "En Hong Kong el 1 de enero es festivo, pero solo un día. La gran fiesta del año es el Año Nuevo lunar: tres días libres, una cena familiar de reencuentro la víspera, visitas a los parientes y sobres rojos con dinero. En 2027 cae el 6 de febrero, y la celebración dura hasta el Festival de los Faroles, el decimoquinto día. Aun así, la noche del 31 de diciembre también se vive en compañía, con la cuenta atrás junto al puerto Victoria y en Lan Kwai Fong.\n\nPara recibir 2025, fuegos lanzados desde barcazas y azoteas iluminaron el puerto durante 12 minutos, un reloj de cuenta atrás brilló en la fachada del Centro de Convenciones y Exposiciones y, según el gobierno, más de 400.000 personas lo vieron. Un año después los fuegos se cancelaron por respeto a los afectados por el incendio de Tai Po. Para 2027 la Junta de Turismo ha anunciado su regreso a una escala mayor que nunca.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Primero, el Año Nuevo lunar",
+        "text": "La fiesta más grande del año es el Año Nuevo lunar, el 6 de febrero en 2027: la familia se reúne a cenar la víspera, se visita a los parientes y se regalan sobres rojos con dinero. El 1 de enero es festivo solo un día."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Cuenta atrás con la ciudad",
+        "text": "Los últimos segundos se cuentan en un reloj gigante en la fachada del Centro de Convenciones y Exposiciones, y para recibir 2026 hubo un concierto en directo en Central. Otro lugar favorito para la cuenta atrás es Lan Kwai Fong."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el puerto Victoria",
+        "text": "Para recibir 2025, los fuegos lanzados desde barcazas y azoteas iluminaron el puerto durante 12 minutos. Para 2027 la Junta de Turismo ha anunciado su regreso a una escala mayor que nunca."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Hong Kong | Time2Fest",
+      "description": "Hong Kong recibe 2027 con cuenta atrás junto al puerto Victoria, el Año Nuevo lunar en febrero y el regreso anunciado de los fuegos. Medianoche: 16:00 UTC."
+    },
+    "kit": "hk"
+  },
+  "KR": {
+    "text": "Corea del Sur tiene festivo el 1 de enero, pero la gran fiesta aquí es Seollal, el Año Nuevo lunar, que en 2027 cae el 7 de febrero. Aun así, la Nochevieja del 31 de diciembre también se celebra, con fiestas en la mayoría de las ciudades. La mañana del 1 de enero, familias y amigos van a la costa este, al mar o a la montaña: se cree que el deseo pedido al primer amanecer del año trae suerte. El tteokguk, una sopa de pastelitos de arroz, se come sobre todo en Seollal; antes se decía que cada tazón sumaba un año. Desde junio de 2023, cuando la edad empezó a contarse desde el cumpleaños, es solo un dicho.\n\nEn Seúl, a medianoche suena la campana del pabellón Bosingak: once ciudadanos elegidos la golpean 33 veces. La ceremonia se celebra desde 1953; KBS espera hasta 100.000 personas, y KBS y YouTube la emiten en directo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Un deseo al primer amanecer",
+        "text": "La mañana del 1 de enero la gente va a la costa este, al mar o a la montaña para pedir un deseo al primer amanecer. Quien no madruga lo pide el 31 de diciembre, en la última puesta de sol del año."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Tteokguk, un año más",
+        "text": "Esta sopa de pastelitos de arroz se come sobre todo en Seollal, el Año Nuevo lunar. Se creía que cada tazón sumaba un año, aunque desde 2023 la edad se cuenta desde el cumpleaños."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Campana de Bosingak, 33 golpes",
+        "text": "A medianoche, en el centro de Seúl, once ciudadanos elegidos golpean la campana de Bosingak 33 veces, un número de tradición budista. KBS y el canal de YouTube de la ciudad lo emiten en directo."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Corea del Sur: Seúl | Time2Fest",
+      "description": "Corea del Sur recibe 2027 en Seúl con 33 campanadas en Bosingak; luego, tteokguk y un deseo al primer amanecer en la costa este. Medianoche en Seúl: 15:00 UTC."
+    },
+    "kit": "kr"
+  },
+  "TW": {
+    "text": "En Taiwán el 1 de enero es festivo, aunque la gran fiesta del año es el Año Nuevo lunar. La noche se recibe con conciertos al aire libre y fuegos artificiales: Taichung, Kaohsiung y Nuevo Taipéi organizan sus propias cuentas atrás. Por la mañana muchos suben a las montañas o van a la costa este a ver el primer amanecer del año: la última vez, el primer sol se esperaba a las 6:03 en una cima de más de 3.000 m del condado de Hualien. La última vez, en el monte Alishan el alba se recibió con música clásica, y la mañana del 1 de enero se iza la bandera ante la Oficina Presidencial de Taipéi.\n\nEn Taipéi la gran fiesta es un concierto en la plaza del Ayuntamiento, donde se reúnen decenas de miles de personas. A medianoche los fuegos salen del rascacielos Taipei 101, de 508 metros: el primer espectáculo iluminó su inauguración en 2004, y la última vez duró seis minutos. Cientos de miles de personas lo ven desde el distrito de Xinyi.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Primer amanecer del año",
+        "text": "La mañana del 1 de enero se sube a las montañas o se va a la costa este para ver el primer sol del año. La última vez, en el monte Alishan el alba se recibió con un concierto de música clásica."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "La bandera al amanecer",
+        "text": "La mañana del 1 de enero se iza la bandera ante la Oficina Presidencial de Taipéi. En 2025, tras la ceremonia, hubo un discurso de Año Nuevo del presidente y se repartieron sobres rojos."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos del Taipei 101",
+        "text": "A medianoche los fuegos salen directamente del rascacielos Taipei 101, mientras un concierto en la plaza del Ayuntamiento marca la cuenta atrás. La última vez el espectáculo duró seis minutos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Taiwán: Taipéi | Time2Fest",
+      "description": "Taipéi, en Taiwán, recibe 2027 con un concierto en el Ayuntamiento y fuegos desde la torre Taipei 101; muchos suben al monte al primer sol. Son las 16:00 UTC."
+    },
+    "kit": "tw"
+  },
+  "PH": {
+    "text": "Filipinas recibe el Año Nuevo con la Media Noche, un banquete de medianoche con la familia y los amigos. En la mesa: pancit, fideos largos para una vida larga, arroz glutinoso para que la familia siga unida y, a menudo, doce frutas redondas, una por cada mes. Muchos visten lunares, porque parecen monedas y deberían traer riqueza. A medianoche suenan las monedas en los bolsillos, los niños saltan lo más alto que pueden para crecer y la mala suerte se ahuyenta con ruido: cornetas torotot, ollas, bocinas. Los petardos solo se permiten en espectáculos comunitarios autorizados por las autoridades locales, y el Ministerio de Salud pide cambiarlos por cornetas y barras de luz.\n\nEn la región de la capital, el año pasado las mayores cuentas atrás gratuitas fueron en SM Mall of Asia, en Pasay, en Bonifacio Global City, en Taguig, y en la avenida Ayala, en Makati. En Mall of Asia, a medianoche, hubo fuegos artificiales con música.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Media Noche y 12 frutas",
+        "text": "A medianoche, familia y amigos se sientan a la mesa: pancit para una vida larga, arroz glutinoso para una familia unida. Al lado, doce frutas redondas, una por cada mes del año."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Lunares, monedas y un salto",
+        "text": "Ponte algo de lunares: parecen monedas y atraen riqueza. A medianoche haz sonar las monedas del bolsillo y salta lo más alto que puedas; dicen que así se crece."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Ruido en vez de petardos",
+        "text": "El ruido de medianoche ahuyenta la mala suerte: cornetas torotot, ollas, bocinas. El Ministerio de Salud aconseja cornetas y barras de luz en vez de petardos, y ver los fuegos en espectáculos comunitarios."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Filipinas: Manila | Time2Fest",
+      "description": "Filipinas recibe 2027 con la Media Noche: pancit, doce frutas redondas, lunares y cornetas torotot. En Manila la medianoche llega a las 16:00 UTC."
+    },
+    "kit": "ph"
   }
 }

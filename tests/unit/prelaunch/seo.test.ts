@@ -75,18 +75,18 @@ describe('метатексти сторінок країн — унікальн�
 });
 
 describe('sitemap і robots', () => {
-  it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті — 15 × 4', () => {
+  it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті — 25 × 4 (8 + 17 описаних країн)', () => {
     expect(files.openRoutes(ALL)).toEqual(routes.STATIC_ROUTES);
     expect(files.sitemapXml(ALL).count).toBe(32);
     expect(files.sitemapXml(ALL).text).not.toContain('/country/');
     const open = files.openRoutes(ALL, true);
-    expect(open).toHaveLength(15);
+    expect(open).toHaveLength(25);
     for (const r of routes.STATIC_ROUTES) expect(open).toContain(r);
     const { count, text } = files.sitemapXml(ALL, true);
-    expect(count).toBe(60);
+    expect(count).toBe(100);
     expect(text).toContain('<loc>https://time2fest.com/uk/country/japan/</loc>');
     expect(text).not.toContain('/country/andorra/');
-    expect(text.match(/hreflang="x-default"/g)).toHaveLength(60);
+    expect(text.match(/hreflang="x-default"/g)).toHaveLength(100);
     expect(text).not.toMatch(/lastmod|priority|changefreq/);
   });
 

@@ -1,0 +1,99 @@
+{
+  "code": "HK",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "hong-kong",
+  "names": {
+    "uk": {
+      "name": "Гонконг",
+      "city": "Гонконг",
+      "cityIn": "у Гонконзі",
+      "caps": "ГОНКОНГ"
+    },
+    "en": {
+      "name": "Hong Kong",
+      "city": "Hong Kong",
+      "cityIn": "in Hong Kong",
+      "caps": "HONG KONG"
+    },
+    "es": {
+      "name": "Hong Kong",
+      "city": "Hong Kong",
+      "cityIn": "en Hong Kong",
+      "caps": "HONG KONG"
+    },
+    "fr": {
+      "name": "Hong Kong",
+      "city": "Hong Kong",
+      "cityIn": "à Hong Kong",
+      "caps": "HONG KONG"
+    }
+  },
+  "picto": "M17.4 4 V9 M20 1 V9 M22.6 4 V9 M16.2 9 H23.8 L24.8 14 V37 H15.2 V14 Z M15.2 20 H24.8 M15.2 26 H24.8 M15.2 32 H24.8 M12 37 H28 M28 37 V27 L33.5 22.4 V37 M30.8 22 V18 M9 37 H12",
+  "flagColors": [
+    "#DE2910",
+    "#FFFFFF",
+    "#F2D68A"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гонконзі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Hong Kong"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Hong Kong"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Hong Kong"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

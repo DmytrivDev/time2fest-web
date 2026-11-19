@@ -1,0 +1,99 @@
+{
+  "code": "BR",
+  "zone": "UTC-3",
+  "zoneId": "utc-0300",
+  "cityId": "rio-de-janeiro",
+  "names": {
+    "uk": {
+      "name": "Бразилія",
+      "city": "Ріо-де-Жанейро",
+      "cityIn": "у Ріо-де-Жанейро",
+      "caps": "РІО · БРАЗИЛІЯ"
+    },
+    "en": {
+      "name": "Brazil",
+      "city": "Rio de Janeiro",
+      "cityIn": "in Rio de Janeiro",
+      "caps": "RIO · BRAZIL"
+    },
+    "es": {
+      "name": "Brasil",
+      "city": "Río de Janeiro",
+      "cityIn": "en Río de Janeiro",
+      "caps": "RÍO · BRASIL"
+    },
+    "fr": {
+      "name": "Brésil",
+      "city": "Rio de Janeiro",
+      "cityIn": "à Rio de Janeiro",
+      "caps": "RIO · BRÉSIL"
+    }
+  },
+  "picto": "M2 31 Q6 23 11 22.5 Q15 22 17 25 Q19 16 23.5 10 Q28 5 32 10 Q35.5 16 37 31 M11 22.5 L26 8.5 M17.2 16.6 h3 v2 h-3 Z M23 18 Q27 14 31 17 M1 31 H39 M4 35 q3 -2 6 0 t6 0 M22 35 q3 -2 6 0 t6 0",
+  "flagColors": [
+    "#009C3B",
+    "#FFDF00",
+    "#3E6FD8"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ріо-де-Жанейро"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Rio de Janeiro"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Río de Janeiro"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Rio de Janeiro"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

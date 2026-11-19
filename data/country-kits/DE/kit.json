@@ -1,0 +1,99 @@
+{
+  "code": "DE",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "berlin",
+  "names": {
+    "uk": {
+      "name": "Німеччина",
+      "city": "Берлін",
+      "cityIn": "у Берліні",
+      "caps": "БЕРЛІН · НІМЕЧЧИНА"
+    },
+    "en": {
+      "name": "Germany",
+      "city": "Berlin",
+      "cityIn": "in Berlin",
+      "caps": "BERLIN · GERMANY"
+    },
+    "es": {
+      "name": "Alemania",
+      "city": "Berlín",
+      "cityIn": "en Berlín",
+      "caps": "BERLÍN · ALEMANIA"
+    },
+    "fr": {
+      "name": "Allemagne",
+      "city": "Berlin",
+      "cityIn": "à Berlin",
+      "caps": "BERLIN · ALLEMAGNE"
+    }
+  },
+  "picto": "M20 1 V15.4 M19 4.5 h2 M19 8 h2 M19 11.5 h2 M18.4 15.4 h3.2 v3.4 h-3.2 Z M14.6 24.2 a5.4 5.4 0 1 0 10.8 0 a5.4 5.4 0 1 0 -10.8 0 M14.8 22.8 H25.2 M14.8 25.8 H25.2 M17.2 29 H22.8 M18.6 29.4 L17.6 36.4 M21.4 29.4 L22.4 36.4 M17.6 36.4 Q16.4 38 14.6 39 M22.4 36.4 Q23.6 38 25.4 39 M12.6 39 H27.4",
+  "flagColors": [
+    "#1A1A1A",
+    "#E0302A",
+    "#F2C94C"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Берліні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Berlin"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Berlín"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Berlin"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

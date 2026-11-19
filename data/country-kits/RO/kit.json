@@ -1,0 +1,99 @@
+{
+  "code": "RO",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "bucharest",
+  "names": {
+    "uk": {
+      "name": "Румунія",
+      "city": "Бухарест",
+      "cityIn": "у Бухаресті",
+      "caps": "БУХАРЕСТ · РУМУНІЯ"
+    },
+    "en": {
+      "name": "Romania",
+      "city": "Bucharest",
+      "cityIn": "in Bucharest",
+      "caps": "BUCHAREST · ROMANIA"
+    },
+    "es": {
+      "name": "Rumanía",
+      "city": "Bucarest",
+      "cityIn": "en Bucarest",
+      "caps": "BUCAREST · RUMANÍA"
+    },
+    "fr": {
+      "name": "Roumanie",
+      "city": "Bucarest",
+      "cityIn": "à Bucarest",
+      "caps": "BUCAREST · ROUMANIE"
+    }
+  },
+  "picto": "M3 37 H37 M3 37 V32 H37 V37 M6 37 V34 M10 37 V34 M14 37 V34 M26 37 V34 M30 37 V34 M34 37 V34 M3 32 V26 H12 V32 M28 32 V26 H37 V32 M12 26 V21 H28 V26 M10.4 21 V32 M29.6 21 V32 M12 21 H28 M13 32 V21 M15.6 32 V21 M24.4 32 V21 M27 32 V21 M17 32 V21 M23 32 V21 M13.4 21 V15 H26.6 V21 M16 15 V21 M20 15 V21 M24 15 V21 M15 15 V11 H25 V15 M20 11 V2 M20 2 H27 V6 H20",
+  "flagColors": [
+    "#4A6FD8",
+    "#FCD116",
+    "#CE1126"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Бухаресті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Bucharest"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Bucarest"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Bucarest"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

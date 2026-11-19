@@ -41,14 +41,18 @@
     "country:NZ": {
       "src": "/media/photos/auckland.webp",
       "alt": {
-        "uk": "Новорічний салют над вежею Скай-Тауер в Окленді",
-        "en": "New Year fireworks over the Sky Tower in Auckland",
-        "es": "Fuegos artificiales de Año Nuevo sobre la Sky Tower de Auckland",
-        "fr": "Feu d’artifice du Nouvel An au-dessus de la Sky Tower d’Auckland"
+        "uk": "Новорічний салют зі Скай-Тауер над Оклендом (зустріч 2023 року)",
+        "en": "New Year fireworks from the Sky Tower over Auckland (2023)",
+        "es": "Fuegos artificiales de Año Nuevo desde la Sky Tower sobre Auckland (2023)",
+        "fr": "Feu d’artifice du Nouvel An depuis la Sky Tower au-dessus d’Auckland (2023)"
       },
       "author": "James Shih",
       "license": "CC BY-SA 4.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2023_New_Year%27s_Eve_Firework_Display_Auckland.jpg"
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2023_New_Year%27s_Eve_Firework_Display_Auckland.jpg",
+      "position": {
+        "x": 53,
+        "y": 52
+      }
     },
     "city:sydney": {
       "src": "/media/photos/sydney.webp",
@@ -113,14 +117,18 @@
     "country:FR": {
       "src": "/media/photos/paris.webp",
       "alt": {
-        "uk": "Тріумфальна арка в Парижі в новорічну ніч",
-        "en": "The Arc de Triomphe in Paris on New Year’s Eve",
-        "es": "El Arco del Triunfo de París en Nochevieja",
-        "fr": "L’Arc de triomphe à Paris le soir du réveillon"
+        "uk": "Новорічна ніч на Єлисейських Полях: Тріумфальна арка в кольорах прапора (зустріч 2016 року)",
+        "en": "New Year’s Eve on the Champs-Élysées: the Arc de Triomphe in the colours of the flag (2016)",
+        "es": "Nochevieja en los Campos Elíseos: el Arco del Triunfo con los colores de la bandera (2016)",
+        "fr": "Le réveillon sur les Champs-Élysées : l’Arc de Triomphe aux couleurs du drapeau (2016)"
       },
       "author": "Ninara from Helsinki, Finland",
       "license": "CC BY 2.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:4Y1A6480_Paris_(23849104840).jpg"
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:4Y1A6480_Paris_(23849104840).jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
     },
     "city:rio-de-janeiro": {
       "src": "/media/photos/rio.webp",
@@ -137,14 +145,18 @@
     "country:BR": {
       "src": "/media/photos/brazil.webp",
       "alt": {
-        "uk": "Панорама новорічного салюту над Копакабаною",
-        "en": "Panorama of New Year fireworks over Copacabana",
-        "es": "Panorámica de los fuegos de Año Nuevo sobre Copacabana",
-        "fr": "Panorama du feu d’artifice du Nouvel An sur Copacabana"
+        "uk": "Салют над Копакабаною в новорічну ніч",
+        "en": "Fireworks over Copacabana on New Year’s Eve",
+        "es": "Fuegos artificiales sobre Copacabana en Nochevieja",
+        "fr": "Feu d’artifice au-dessus de Copacabana le soir du réveillon"
       },
       "author": "Leandro Neumann Ciuffo",
       "license": "CC BY 2.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:R%C3%A8veillon_2013_(8333332944).jpg"
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fireworks_(8333336004).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
     },
     "city:new-york": {
       "src": "/media/photos/new-york.webp",
@@ -159,16 +171,20 @@
       "sourceUrl": "https://www.flickr.com/photos/22882274@N04/15976655339/"
     },
     "country:US": {
-      "src": "/media/photos/new-york.webp",
+      "src": "/media/photos/united-states.webp",
       "alt": {
-        "uk": "Куля на Таймс-сквер опівночі",
-        "en": "The Times Square ball at midnight",
-        "es": "La bola de Times Square a medianoche",
-        "fr": "La boule de Times Square à minuit"
+        "uk": "Таймс-сквер напередодні Нового року: світні цифри року біля щогли з кулею, натовп під екранами",
+        "en": "Times Square on New Year’s Eve: the lit-up year numerals by the ball pole, crowds beneath the screens",
+        "es": "Times Square en Nochevieja: los números luminosos del año junto al mástil de la bola y la multitud bajo las pantallas",
+        "fr": "Times Square le soir du réveillon : les chiffres lumineux de l’année près du mât de la boule, la foule sous les écrans"
       },
       "author": "Anthony Quintano",
       "license": "CC BY 2.0",
-      "sourceUrl": "https://www.flickr.com/photos/22882274@N04/15976655339/"
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Times_Square_New_Year%27s_Eve_2023_Numbers_Ball_drop_(52580001173).jpg",
+      "position": {
+        "x": 50,
+        "y": 42
+      }
     },
     "city:las-vegas": {
       "src": "/media/photos/las-vegas.webp",
@@ -185,14 +201,14 @@
     "country:JP": {
       "src": "/media/photos/japan.webp",
       "alt": {
-        "uk": "Храм Дзьодзьо-дзі й Токійська вежа в новорічну ніч",
-        "en": "Zōjō-ji temple and Tokyo Tower on New Year’s Eve",
-        "es": "El templo Zōjō-ji y la Torre de Tokio en Nochevieja",
-        "fr": "Le temple Zōjō-ji et la tour de Tokyo le soir du réveillon"
+        "uk": "Храм Сенсо-дзі вночі: п’ятиярусна пагода й брама Хозомон, Асакуса",
+        "en": "Sensō-ji temple at night: the five-storey pagoda and Hōzōmon gate, Asakusa",
+        "es": "El templo Sensō-ji de noche: la pagoda de cinco pisos y la puerta Hōzōmon, Asakusa",
+        "fr": "Le temple Sensō-ji la nuit : la pagode à cinq étages et la porte Hōzōmon, Asakusa"
       },
-      "author": "NJo",
-      "license": "CC BY-SA 3.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zojo-ji_temple_and_Tokyo_Tower_in_New_Years_eve_2012.JPG",
+      "author": "DimiTalen",
+      "license": "CC0 1.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Five-storied_pagoda_and_Sens%C5%8D-ji_H%C5%8Dz%C5%8Dmon_at_night,_Asakusa,_Tokyo,_2016.jpg",
       "position": {
         "x": 50,
         "y": 62
@@ -235,16 +251,180 @@
       "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Years_2014_Fireworks_-_London_Eye.jpg"
     },
     "country:GB": {
-      "src": "/media/photos/london.webp",
+      "src": "/media/photos/united-kingdom.webp",
       "alt": {
-        "uk": "Новорічний салют за колесом London Eye в Лондоні",
-        "en": "New Year fireworks behind the London Eye",
-        "es": "Fuegos artificiales de Año Nuevo tras el London Eye",
-        "fr": "Feu d’artifice du Nouvel An derrière le London Eye"
+        "uk": "Новорічний салют над Лондонським оком і Біг-Бен (зустріч 2017 року)",
+        "en": "New Year fireworks over the London Eye and Big Ben (2017)",
+        "es": "Fuegos artificiales de Año Nuevo sobre el London Eye y el Big Ben (2017)",
+        "fr": "Feu d’artifice du Nouvel An au-dessus du London Eye et de Big Ben (2017)"
       },
-      "author": "Clarence Ji",
+      "author": "SIMarsden",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_London_Fireworks_Display.jpg",
+      "position": {
+        "x": 68,
+        "y": 55
+      }
+    },
+    "country:UA": {
+      "src": "/media/photos/ukraine.webp",
+      "alt": {
+        "uk": "Новорічна ялинка на Софійській площі й дзвіниця Софії, Київ (2021/22)",
+        "en": "The New Year tree on Sofiyska Square and the Saint Sophia bell tower, Kyiv (2021/22)",
+        "es": "El árbol de Año Nuevo en la plaza de Santa Sofía y el campanario de Santa Sofía, Kiev (2021/22)",
+        "fr": "Le sapin du Nouvel An place Sainte-Sophie et le clocher de Sainte-Sophie, Kyiv (2021/22)"
+      },
+      "author": "Greater Ukraine",
+      "license": "CC0 1.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B8%D1%97%D0%B2._%D0%A1%D0%BE%D1%84%D1%96%D1%97%D0%B2%D1%81%D1%8C%D0%BA%D0%B0_%D0%BF%D0%BB%D0%BE%D1%89%D0%B0_2021-2022.jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
+    },
+    "country:ES": {
+      "src": "/media/photos/spain.webp",
+      "alt": {
+        "uk": "Золота ялинка й фонтан на Пуерта-дель-Соль у Мадриді",
+        "en": "The golden Christmas tree and fountain in Puerta del Sol, Madrid",
+        "es": "El árbol dorado y la fuente de la Puerta del Sol, Madrid",
+        "fr": "Le sapin doré et la fontaine de la Puerta del Sol, à Madrid"
+      },
+      "author": "Luis García (Zaqarbal)",
+      "license": "CC BY-SA 3.0 ES",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Puerta_del_Sol_(Madrid)_19.jpg",
+      "position": {
+        "x": 58,
+        "y": 50
+      }
+    },
+    "country:RO": {
+      "src": "/media/photos/romania.webp",
+      "alt": {
+        "uk": "Різдвяний ярмарок і ялинка на Університетській площі в Бухаресті",
+        "en": "Christmas market and tree in University Square, Bucharest",
+        "es": "Mercado navideño y árbol en la plaza de la Universidad, Bucarest",
+        "fr": "Marché de Noël et sapin place de l’Université, à Bucarest"
+      },
+      "author": "Mihai Petre",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Piata_Universitatii_-_Targ_de_Craciun_2014.jpg",
+      "position": {
+        "x": 58,
+        "y": 50
+      }
+    },
+    "country:DE": {
+      "src": "/media/photos/germany.webp",
+      "alt": {
+        "uk": "Новорічний салют над Бранденбурзькою брамою одразу після опівночі (зустріч 2021 року)",
+        "en": "New Year fireworks over the Brandenburg Gate just after midnight (2021)",
+        "es": "Fuegos artificiales de Año Nuevo sobre la Puerta de Brandeburgo justo después de medianoche (2021)",
+        "fr": "Feu d’artifice du Nouvel An au-dessus de la porte de Brandebourg juste après minuit (2021)"
+      },
+      "author": "Leonhard Lenz",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:ZDF_new_year_TV_show_Brandenburg_gate_for_2021_firework_from_Unter_den_Linden_28.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:GR": {
+      "src": "/media/photos/greece.webp",
+      "alt": {
+        "uk": "Новорічний салют поруч з Акрополем і Парфеноном (зустріч 2018 року)",
+        "en": "New Year fireworks next to the Acropolis and the Parthenon (2018)",
+        "es": "Fuegos artificiales de Año Nuevo junto a la Acrópolis y el Partenón (2018)",
+        "fr": "Feu d’artifice du Nouvel An près de l’Acropole et du Parthénon (2018)"
+      },
+      "author": "Αγγελίδης Γρηγόριος",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%CE%91%CE%BA%CF%81%CE%BF%CF%80%CE%BF%CE%BB%CE%B9%CF%82_%CE%A0%CF%81%CF%89%CF%84%CE%BF%CF%87%CF%81%CE%BF%CE%BD%CE%B9%CE%B1_2.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:IT": {
+      "src": "/media/photos/rome.webp",
+      "alt": {
+        "uk": "Зустріч Нового року біля Колізею: салют і натовп (зустріч 2012 року)",
+        "en": "New Year’s Eve by the Colosseum: fireworks and the crowd (2012)",
+        "es": "Nochevieja junto al Coliseo: fuegos artificiales y la multitud (2012)",
+        "fr": "Le réveillon près du Colisée : feu d’artifice et foule (2012)"
+      },
+      "author": "Zabbo",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Capodanno_romano.jpg",
+      "position": {
+        "x": 40,
+        "y": 45
+      }
+    },
+    "country:HK": {
+      "src": "/media/photos/hong-kong.webp",
+      "alt": {
+        "uk": "Новорічний салют над гаванню Вікторія і натовп на набережній (зустріч 2024 року)",
+        "en": "New Year fireworks over Victoria Harbour and the crowd on the waterfront (2024)",
+        "es": "Fuegos artificiales de Año Nuevo sobre el puerto Victoria y la multitud en el paseo marítimo (2024)",
+        "fr": "Feu d’artifice du Nouvel An sur le port Victoria et la foule sur les quais (2024)"
+      },
+      "author": "Kit Wong",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_New_year%27s_Eve_fireworks_in_2023,Victoria_Harbour.jpg",
+      "position": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "country:KR": {
+      "src": "/media/photos/south-korea.webp",
+      "alt": {
+        "uk": "Опівнічний салют на вежі Lotte World Tower над рікою Хан, Сеул (зустріч 2018 року)",
+        "en": "Midnight fireworks on Lotte World Tower above the Han River, Seoul (2018)",
+        "es": "Fuegos artificiales de medianoche en la Lotte World Tower sobre el río Han, Seúl (2018)",
+        "fr": "Feu d’artifice de minuit sur la Lotte World Tower au-dessus du fleuve Han, Séoul (2018)"
+      },
+      "author": "Hwan Hyeok Kim",
       "license": "CC BY 2.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Years_2014_Fireworks_-_London_Eye.jpg"
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Happy_New_Year_(25557794478).jpg",
+      "position": {
+        "x": 62,
+        "y": 48
+      }
+    },
+    "country:TW": {
+      "src": "/media/photos/taiwan.webp",
+      "alt": {
+        "uk": "Новорічний салют із Тайбей 101 над нічним Тайбеєм (зустріч 2017 року)",
+        "en": "New Year fireworks from Taipei 101 over the city at night (2017)",
+        "es": "Fuegos artificiales de Año Nuevo desde el Taipei 101 sobre la ciudad de noche (2017)",
+        "fr": "Feu d’artifice du Nouvel An depuis Taipei 101 au-dessus de la ville la nuit (2017)"
+      },
+      "author": "Sinchen.Lin",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Taipei_101_NYE_2017_fireworks.jpg",
+      "position": {
+        "x": 28,
+        "y": 45
+      }
+    },
+    "country:PH": {
+      "src": "/media/photos/philippines.webp",
+      "alt": {
+        "uk": "Новорічний салют над Метро-Манілою (зустріч 2015 року)",
+        "en": "New Year fireworks over Metro Manila (2015)",
+        "es": "Fuegos artificiales de Año Nuevo sobre Metro Manila (2015)",
+        "fr": "Feu d’artifice du Nouvel An au-dessus de Metro Manila (2015)"
+      },
+      "author": "Jomar Hilario",
+      "license": "CC BY 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fireworks_In_Metro_Manila_Philippines_New_Year_S_Eve_2015_(94228271).jpeg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
     }
   }
 }

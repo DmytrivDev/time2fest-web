@@ -1,0 +1,98 @@
+{
+  "code": "UA",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "kyiv",
+  "names": {
+    "uk": {
+      "name": "Україна",
+      "city": "Київ",
+      "cityIn": "у Києві",
+      "caps": "КИЇВ · УКРАЇНА"
+    },
+    "en": {
+      "name": "Ukraine",
+      "city": "Kyiv",
+      "cityIn": "in Kyiv",
+      "caps": "KYIV · UKRAINE"
+    },
+    "es": {
+      "name": "Ucrania",
+      "city": "Kiev",
+      "cityIn": "en Kiev",
+      "caps": "KIEV · UCRANIA"
+    },
+    "fr": {
+      "name": "Ukraine",
+      "city": "Kyiv",
+      "cityIn": "à Kyiv",
+      "caps": "KYIV · UKRAINE"
+    }
+  },
+  "picto": "M20 1 V8.4 M18.3 3.4 H21.7 M16.6 13 Q20 3.5 23.4 13 Z M16 13 H24 V18.5 H16 Z M14.6 18.5 H25.4 V26 H14.6 Z M13 26 H27 V36.5 H13 Z M20 14.6 v2.4 M18 21 v3 M22 21 v3 M16.6 29 v5 M20 29 v5 M23.4 29 v5 M9 36.5 H31",
+  "flagColors": [
+    "#0057B7",
+    "#FFD700"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Києві"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Kyiv"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Kiev"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Kyiv"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

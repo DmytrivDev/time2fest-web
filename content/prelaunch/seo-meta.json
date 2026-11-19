@@ -129,20 +129,20 @@
   "country": {
     "JP": {
       "uk": {
-        "title": "Новий рік у Японії: як святкують, традиції | Time2Fest",
-        "description": "Як зустрічають Новий рік у Японії: 108 ударів храмового дзвона опівночі, тосікосі-соба й перший похід до святилища. Дивись, коли там північ за твоїм часом."
+        "title": "Новий рік у Японії: 108 ударів дзвона | Time2Fest",
+        "description": "У Токіо 2027 рік зустрічають 108 ударами храмових дзвонів, тосікосі-собою й першим походом до святилища. Північ у Японії — о 15:00 за UTC 31 грудня."
       },
       "en": {
-        "title": "New Year in Japan: Traditions, Time & Countdown | Time2Fest",
-        "description": "How Japan welcomes the New Year: 108 temple bells at midnight, toshikoshi soba and the first shrine visit. See when midnight reaches Japan in your local time."
+        "title": "New Year in Japan: 108 Bells at Midnight | Time2Fest",
+        "description": "In Tokyo, temple bells ring 108 times as 2027 begins; families eat toshikoshi soba and visit a shrine. Midnight in Japan falls at 15:00 UTC on 31 December."
       },
       "es": {
-        "title": "Año Nuevo en Japón: tradiciones y hora | Time2Fest",
-        "description": "Así recibe Japón el Año Nuevo: 108 campanadas en los templos, toshikoshi soba y la primera visita al santuario. Mira cuándo es medianoche allí en tu hora local."
+        "title": "Año Nuevo en Japón: 108 campanadas | Time2Fest",
+        "description": "En Tokio, los templos tocan la campana 108 veces al llegar 2027; se come toshikoshi soba y se visita un santuario. En Japón es medianoche a las 15:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An au Japon : traditions et heure de minuit | Time2Fest",
-        "description": "Le Nouvel An au Japon : 108 coups de cloche dans les temples, toshikoshi soba et première visite au sanctuaire. Vois minuit au Japon à ton heure."
+        "title": "Nouvel An au Japon : 108 coups de cloche | Time2Fest",
+        "description": "À Tokyo, les cloches des temples sonnent 108 fois pour accueillir 2027 ; on mange des toshikoshi soba, puis au sanctuaire. Au Japon, minuit tombe à 15 h UTC."
       }
     },
     "AU": {
@@ -165,92 +165,272 @@
     },
     "NZ": {
       "uk": {
-        "title": "Новий рік у Новій Зеландії: як святкують, традиції | Time2Fest",
-        "description": "Нова Зеландія зустрічає Новий рік серед перших у світі: салют зі Скай-Тауер в Окленді й літні канікули просто неба. Дивись, коли там північ за твоїм часом."
+        "title": "Новий рік в Окленді, Нова Зеландія: Скай-Тауер | Time2Fest",
+        "description": "Окленд у Новій Зеландії зустрічає 2027 рік серед перших великих міст: п’ятихвилинний салют зі Скай-Тауер опівночі й міст у вогнях. Північ — об 11:00 UTC."
       },
       "en": {
-        "title": "New Year in New Zealand: Traditions, Time & Countdown | Time2Fest",
-        "description": "New Zealand is among the first to welcome the New Year: Sky Tower fireworks in Auckland and summer holidays. See when midnight arrives there in your time."
+        "title": "New Year in Auckland, New Zealand: Sky Tower | Time2Fest",
+        "description": "Auckland, New Zealand, is among the first big cities to greet 2027: five minutes of fireworks from the Sky Tower and a lit Harbour Bridge. Midnight: 11:00 UTC."
       },
       "es": {
-        "title": "Año Nuevo en Nueva Zelanda: tradiciones y hora | Time2Fest",
-        "description": "Nueva Zelanda recibe el Año Nuevo entre los primeros: fuegos artificiales desde la Sky Tower de Auckland y vacaciones de verano. Mira su medianoche en tu hora."
+        "title": "Año Nuevo en Auckland, Nueva Zelanda: Sky Tower | Time2Fest",
+        "description": "Auckland, en Nueva Zelanda, es de las primeras grandes ciudades en recibir 2027: cinco minutos de fuegos desde la Sky Tower. Medianoche allí: 11:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An en Nouvelle-Zélande : traditions et heure | Time2Fest",
-        "description": "La Nouvelle-Zélande fête le Nouvel An parmi les premiers : feu d’artifice depuis la Sky Tower d’Auckland et vacances d’été. Vois son minuit à ton heure."
+        "title": "Nouvel An à Auckland (Nouvelle-Zélande) | Time2Fest",
+        "description": "Auckland, en Nouvelle-Zélande, est parmi les premières grandes villes à fêter 2027 : cinq minutes de feu d’artifice depuis la Sky Tower. Minuit : 11 h UTC."
       }
     },
     "FR": {
       "uk": {
-        "title": "Новий рік у Франції: як святкують, традиції | Time2Fest",
-        "description": "Як святкують Сен-Сільвестр у Франції: довга вечеря réveillon, поцілунок під омелою й Єлисейські поля опівночі. Дивись, коли північ у Франції за твоїм часом."
+        "title": "Новий рік у Франції: Єлисейські Поля | Time2Fest",
+        "description": "Франція зустрічає 2027 рік ревейоном із шампанським, поцілунком під омелою й салютом над Тріумфальною аркою в Парижі. У Франції північ настає о 23:00 UTC."
       },
       "en": {
-        "title": "New Year in France: Traditions, Time & Countdown | Time2Fest",
-        "description": "How France celebrates Saint-Sylvestre: a long réveillon dinner, a kiss under the mistletoe and the Champs-Élysées at midnight. See French midnight in your time."
+        "title": "New Year in France: Champs-Élysées Show | Time2Fest",
+        "description": "France greets 2027 with a réveillon dinner, a kiss under the mistletoe and fireworks over the Arc de Triomphe in Paris. Midnight in France is 23:00 UTC."
       },
       "es": {
-        "title": "Año Nuevo en Francia: tradiciones y hora | Time2Fest",
-        "description": "Así se celebra la Saint-Sylvestre en Francia: una larga cena de réveillon, un beso bajo el muérdago y los Campos Elíseos a medianoche. Mírala en tu hora local."
+        "title": "Año Nuevo en Francia: Campos Elíseos | Time2Fest",
+        "description": "Francia recibe 2027 con la cena del réveillon, un beso bajo el muérdago y fuegos sobre el Arco del Triunfo en París. En Francia es medianoche a las 23:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An en France : traditions et heure de minuit | Time2Fest",
-        "description": "La Saint-Sylvestre en France : long dîner du réveillon, baiser sous le gui et Champs-Élysées à minuit. Vois quand minuit sonne en France à ton heure."
+        "title": "Nouvel An en France : les Champs-Élysées | Time2Fest",
+        "description": "La France fête 2027 avec le réveillon, un baiser sous le gui et un feu d’artifice sur l’Arc de Triomphe parisien. En France, minuit sonne à 23 h UTC."
       }
     },
     "GB": {
       "uk": {
-        "title": "Новий рік у Великій Британії: як святкують, традиції | Time2Fest",
-        "description": "Новий рік у Великій Британії: дзвони Біг-Бена, салют над Темзою, Auld Lang Syne і шотландський звичай першого гостя. Дивись, коли там північ за твоїм часом."
+        "title": "Новий рік у Великій Британії: Лондон | Time2Fest",
+        "description": "Велика Британія зустрічає 2027 рік ударами Біг-Бена, салютом над Темзою й піснею «Auld Lang Syne», а Шотландія — Гоґманаєм. Північ у Лондоні — 00:00 UTC."
       },
       "en": {
-        "title": "New Year in the UK: Traditions, Time & Countdown | Time2Fest",
-        "description": "New Year in the UK: Big Ben's chimes, fireworks over the Thames, Auld Lang Syne and the Scottish first-footing custom. See UK midnight in your local time."
+        "title": "New Year in the United Kingdom: London | Time2Fest",
+        "description": "The United Kingdom greets 2027 as Big Ben chimes over London, fireworks light the Thames and Scots go first-footing for Hogmanay. UK midnight is 00:00 UTC."
       },
       "es": {
-        "title": "Año Nuevo en el Reino Unido: tradiciones y hora | Time2Fest",
-        "description": "Año Nuevo en el Reino Unido: campanadas del Big Ben, fuegos sobre el Támesis, Auld Lang Syne y la costumbre escocesa del primer visitante. Mírala en tu hora."
+        "title": "Año Nuevo en el Reino Unido: Londres | Time2Fest",
+        "description": "El Reino Unido recibe 2027 con las campanadas del Big Ben, fuegos en el Támesis y el Hogmanay escocés con «Auld Lang Syne». En Londres, medianoche: 00:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An au Royaume-Uni : traditions et heure | Time2Fest",
-        "description": "Au Royaume-Uni : carillon de Big Ben, feu d’artifice sur la Tamise, Auld Lang Syne et la coutume écossaise du premier visiteur. Vois minuit à ton heure."
+        "title": "Nouvel An au Royaume-Uni : Londres | Time2Fest",
+        "description": "Le Royaume-Uni fête 2027 aux coups de Big Ben, feu d’artifice sur la Tamise et Hogmanay écossais au son d’« Auld Lang Syne ». Minuit à Londres : 0 h UTC."
       }
     },
     "BR": {
       "uk": {
-        "title": "Новий рік у Бразилії: як святкують, традиції | Time2Fest",
-        "description": "Як святкують Réveillon у Бразилії: білий одяг, сім хвиль і квіти для Єманжі на пляжі Копакабана. Дивись, коли північ прийде в Бразилію за твоїм часом."
+        "title": "Новий рік у Бразилії: Копакабана опівночі | Time2Fest",
+        "description": "Мільйони в білому зустрічають 2027 рік на Копакабані в Ріо, Бразилія: салют над океаном, сім хвиль на щастя й квіти для Єманжі. Північ у Ріо — о 03:00 UTC."
       },
       "en": {
-        "title": "New Year in Brazil: Traditions, Time & Countdown | Time2Fest",
-        "description": "How Brazil celebrates Réveillon: white clothes, seven waves and flowers for Iemanjá on Copacabana beach. See when midnight reaches Brazil in your local time."
+        "title": "Réveillon 2027 in Brazil: Copacabana at Midnight | Time2Fest",
+        "description": "Millions in white greet 2027 on Copacabana in Rio, Brazil: fireworks over the ocean, seven waves for luck and flowers for Iemanjá. Rio’s midnight is 03:00 UTC."
       },
       "es": {
-        "title": "Año Nuevo en Brasil: tradiciones y hora | Time2Fest",
-        "description": "Así se celebra el Réveillon en Brasil: ropa blanca, siete olas y flores para Iemanjá en la playa de Copacabana. Mira su medianoche en tu hora local."
+        "title": "Réveillon 2027 en Brasil: Copacabana de noche | Time2Fest",
+        "description": "Millones vestidos de blanco reciben 2027 en Copacabana, en Río (Brasil): fuegos sobre el océano, siete olas y flores para Yemanjá. Medianoche en Río: 03:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An au Brésil : traditions et heure de minuit | Time2Fest",
-        "description": "Le Réveillon au Brésil : vêtements blancs, sept vagues et fleurs pour Iemanjá sur la plage de Copacabana. Vois quand minuit arrive au Brésil à ton heure."
+        "title": "Réveillon 2027 au Brésil : Copacabana à minuit | Time2Fest",
+        "description": "Des millions de gens en blanc fêtent 2027 à Copacabana, à Rio (Brésil) : feu d’artifice sur l’océan, sept vagues et fleurs pour Iemanjá. Minuit à Rio : 3 h UTC."
       }
     },
     "US": {
       "uk": {
-        "title": "Новий рік у США: як святкують, традиції | Time2Fest",
-        "description": "Новий рік у США: куля на Таймс-сквер, поцілунок опівночі й квасоля на удачу — у шести часових поясах. Дивись, коли північ прийде до них за твоїм часом."
+        "title": "Новий рік у США: Нью-Йорк | Time2Fest",
+        "description": "США зустрічають 2027 рік у Нью-Йорку: куля на Таймс-сквер опускається 60 секунд, а з дахів летить конфеті з бажаннями. Північ — 00:00 за місцевим (05:00 UTC)."
       },
       "en": {
-        "title": "New Year in the USA: Traditions, Time & Countdown | Time2Fest",
-        "description": "New Year in the USA: the Times Square ball drop, a midnight kiss and black-eyed peas for luck, across six time zones. See US midnight in your local time."
+        "title": "New Year in the United States: New York | Time2Fest",
+        "description": "The United States greets 2027 in New York: the Times Square ball drops for a minute and wish confetti rains from rooftops. Midnight is 00:00 local, 05:00 UTC."
       },
       "es": {
-        "title": "Año Nuevo en Estados Unidos: tradiciones y hora | Time2Fest",
-        "description": "Año Nuevo en Estados Unidos: la bola de Times Square, el beso de medianoche y frijoles de carita para la suerte, en seis zonas horarias. Mírala en tu hora."
+        "title": "Año Nuevo en Estados Unidos: Nueva York | Time2Fest",
+        "description": "Estados Unidos recibe 2027 en Nueva York: la bola de Times Square baja 60 segundos y cae confeti de deseos de los tejados. Medianoche: 00:00 local, 05:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An aux États-Unis : traditions et heure | Time2Fest",
-        "description": "Aux États-Unis : la boule de Times Square, le baiser de minuit et les cornilles porte-bonheur, sur six fuseaux horaires. Vois minuit là-bas à ton heure."
+        "title": "Nouvel An aux États-Unis : New York | Time2Fest",
+        "description": "Les États-Unis fêtent 2027 à New York : la boule de Times Square descend en 60 secondes et des confettis tombent des toits. Minuit : 0 h locale, 5 h UTC."
+      }
+    },
+    "UA": {
+      "uk": {
+        "title": "Новий рік в Україні: відлік до півночі в Києві | Time2Fest",
+        "description": "Україна зустрічає 2027 рік опівночі за Києвом (22:00 UTC): святкова вечеря в колі родини, відлік останніх секунд і головна ялинка країни на Софійській площі."
+      },
+      "en": {
+        "title": "New Year in Ukraine: Kyiv Midnight Countdown | Time2Fest",
+        "description": "Ukraine welcomes 2027 at midnight Kyiv time, 22:00 UTC: a festive family table, the countdown of the last seconds at home and the main tree on Sofiivska Square."
+      },
+      "es": {
+        "title": "Año Nuevo en Ucrania: cuenta regresiva en Kiev | Time2Fest",
+        "description": "Ucrania recibe 2027 a medianoche de Kiev, las 22:00 UTC: cena en familia, cuenta regresiva de los últimos segundos y el gran árbol de la plaza de Santa Sofía."
+      },
+      "fr": {
+        "title": "Nouvel An en Ukraine : décompte de minuit à Kyiv | Time2Fest",
+        "description": "L’Ukraine accueille 2027 à minuit heure de Kyiv, soit 22 h UTC : repas de fête en famille, décompte des dernières secondes et grand sapin place Sainte-Sophie."
+      }
+    },
+    "ES": {
+      "uk": {
+        "title": "Новий рік в Іспанії: Мадрид | Time2Fest",
+        "description": "Іспанія зустрічає 2027 рік дванадцятьма виноградинами під бій годинника на Пуерта-дель-Соль у Мадриді, ігристим і червоною білизною. Північ: 23:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Spain: Madrid | Time2Fest",
+        "description": "Spain greets 2027 with twelve grapes, one per chime of the Puerta del Sol clock in Madrid, then cava and red underwear for luck. Madrid midnight is 23:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en España: Madrid | Time2Fest",
+        "description": "España recibe 2027 con doce uvas al ritmo de las campanadas del reloj de la Puerta del Sol, en Madrid, una copa de cava y ropa roja. Medianoche: 23:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Espagne : Madrid | Time2Fest",
+        "description": "L’Espagne fête 2027 avec douze grains de raisin, un par coup de l’horloge de la Puerta del Sol à Madrid, puis une coupe de cava. Minuit à Madrid : 23 h UTC."
+      }
+    },
+    "RO": {
+      "uk": {
+        "title": "Новий рік у Румунії: Бухарест | Time2Fest",
+        "description": "Румунія зустрічає 2027 рік з Плугушором, бухаєм і танцями кози та ведмедя; у Бухаресті — концерт просто неба. Північ — 00:00 за місцевим (22:00 UTC)."
+      },
+      "en": {
+        "title": "New Year in Romania: Bucharest | Time2Fest",
+        "description": "Romania greets 2027 with the Plugușor carol, buhai drums and goat and bear dances, plus a free open-air concert in Bucharest. Midnight: 00:00 local, 22:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Rumanía: Bucarest | Time2Fest",
+        "description": "Rumanía recibe 2027 con el Plugușor, el buhai y las danzas de la cabra y el oso, y con un concierto gratis en Bucarest. Medianoche: 00:00 local, 22:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Roumanie : Bucarest | Time2Fest",
+        "description": "La Roumanie fête 2027 avec le Plugușor, le buhai et les danses de la chèvre et de l’ours, et un concert gratuit à Bucarest. Minuit : 0 h locale, 22 h UTC."
+      }
+    },
+    "DE": {
+      "uk": {
+        "title": "Новий рік у Німеччині: Берлін | Time2Fest",
+        "description": "Німеччина зустрічає 2027 рік з ігристим, оловом й «Dinner for One», а Берлін — біля Бранденбурзьких воріт. Північ у Берліні — 00:00 місцевого, 23:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Germany: Berlin | Time2Fest",
+        "description": "Germany greets 2027 with Sekt, tin pouring and Dinner for One, while Berlin gathers at the Brandenburg Gate for fireworks. Midnight: 00:00 local, 23:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Alemania: Berlín | Time2Fest",
+        "description": "Alemania recibe 2027 con Sekt, estaño fundido en agua fría y Dinner for One; Berlín, en la Puerta de Brandeburgo. Medianoche en Berlín: 00:00 local, 23:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Allemagne : Berlin | Time2Fest",
+        "description": "L’Allemagne fête 2027 avec le Sekt, l’étain fondu et Dinner for One ; Berlin se retrouve à la porte de Brandebourg. Minuit à Berlin : 0 h locale, 23 h UTC."
+      }
+    },
+    "GR": {
+      "uk": {
+        "title": "Новий рік у Греції: Афіни | Time2Fest",
+        "description": "Греція зустрічає 2027 василопітою з монетою, гранатом об поріг і колядками-каландами, а Афіни — відліком на площі Синтагма. Північ в Афінах — 22:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Greece: Athens | Time2Fest",
+        "description": "Greece greets 2027 with coin-filled vasilopita, a smashed pomegranate and kalanda carols; Athens counts down at Syntagma Square. Athens midnight: 22:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Grecia: Atenas | Time2Fest",
+        "description": "Grecia recibe 2027 con vasilopita con moneda, una granada rota y villancicos kalanda; Atenas, con cuenta atrás en Syntagma. Medianoche en Atenas: 22:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Grèce : Athènes | Time2Fest",
+        "description": "La Grèce fête 2027 avec la vasilopita et sa pièce, une grenade brisée et les kalanda ; Athènes, avec un décompte place Syntagma. Minuit à Athènes : 22 h UTC."
+      }
+    },
+    "IT": {
+      "uk": {
+        "title": "Новий рік в Італії: Рим | Time2Fest",
+        "description": "Італія зустрічає 2027 сочевицею з котекіно, червоною білизною й спуманте, а Рим — безплатним концертом у Великому цирку. Північ у Римі — 23:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Italy: Rome | Time2Fest",
+        "description": "Italy greets 2027 with lentils, red underwear and spumante, while Rome heads to a free concert at the Circus Maximus. Roman countdown ends at 23:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Italia: Roma | Time2Fest",
+        "description": "Italia recibe 2027 con lentejas, ropa interior roja y spumante; Roma, con un concierto gratis en el Circo Máximo. Medianoche en Roma: 23:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Italie : Rome | Time2Fest",
+        "description": "L’Italie fête 2027 avec des lentilles, dessous rouges et spumante, et Rome avec un concert gratuit au Circo Massimo. Minuit sonne à 23 h UTC à Rome."
+      }
+    },
+    "HK": {
+      "uk": {
+        "title": "Новий рік у Гонконзі | Time2Fest",
+        "description": "Гонконг зустрічає 2027 рік відліком біля гавані Вікторія, місячним Новим роком у лютому й оголошеним поверненням салюту. Північ у Гонконзі — 16:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Hong Kong | Time2Fest",
+        "description": "Hong Kong greets 2027 with a countdown by Victoria Harbour, Lunar New Year in February and the announced return of its harbour fireworks. Midnight: 16:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Hong Kong | Time2Fest",
+        "description": "Hong Kong recibe 2027 con cuenta atrás junto al puerto Victoria, el Año Nuevo lunar en febrero y el regreso anunciado de los fuegos. Medianoche: 16:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An à Hong Kong | Time2Fest",
+        "description": "Hong Kong fête 2027 avec un décompte au bord du port Victoria, le Nouvel An lunaire en février et le retour annoncé du feu d’artifice. Minuit : 16 h UTC."
+      }
+    },
+    "KR": {
+      "uk": {
+        "title": "Новий рік у Південній Кореї: Сеул | Time2Fest",
+        "description": "Південна Корея зустрічає 2027 рік у Сеулі: 33 удари дзвону Посінгак, ттоккук і бажання на перший схід сонця на східному узбережжі. Північ настає о 15:00 UTC."
+      },
+      "en": {
+        "title": "New Year in South Korea: Seoul | Time2Fest",
+        "description": "South Korea greets 2027 in Seoul as the Bosingak bell rings 33 times; families eat tteokguk and chase the first sunrise on the east coast. Midnight: 15:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Corea del Sur: Seúl | Time2Fest",
+        "description": "Corea del Sur recibe 2027 en Seúl con 33 campanadas en Bosingak; luego, tteokguk y un deseo al primer amanecer en la costa este. Medianoche en Seúl: 15:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Corée du Sud : Séoul | Time2Fest",
+        "description": "La Corée du Sud fête 2027 à Séoul avec 33 coups de cloche à Bosingak, puis tteokguk et un vœu au premier soleil de la côte est. Minuit à Séoul : 15 h UTC."
+      }
+    },
+    "TW": {
+      "uk": {
+        "title": "Новий рік на Тайвані: Тайбей | Time2Fest",
+        "description": "Тайбей на Тайвані стрічає 2027 рік концертом біля мерії та салютом з вежі Тайбей 101, а вранці люди їдуть у гори по перший світанок. Північ — о 16:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Taiwan: Taipei | Time2Fest",
+        "description": "Taipei, Taiwan welcomes 2027 with a City Hall concert and fireworks from Taipei 101, then many climb peaks for the first sunrise. Local midnight is 16:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Taiwán: Taipéi | Time2Fest",
+        "description": "Taipéi, en Taiwán, recibe 2027 con un concierto en el Ayuntamiento y fuegos desde la torre Taipei 101; muchos suben al monte al primer sol. Son las 16:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An à Taïwan : Taipei | Time2Fest",
+        "description": "Taipei, à Taïwan, accueille 2027 avec un concert devant l’hôtel de ville et le feu d’artifice de la tour Taipei 101, puis le premier soleil des cimes. 16 h UTC."
+      }
+    },
+    "PH": {
+      "uk": {
+        "title": "Новий рік на Філіппінах: Маніла | Time2Fest",
+        "description": "На Філіппінах 2027 рік починається з Медіа Ноче: пансіт, дванадцять круглих фруктів, горошок і торотот опівночі. Маніла зустрічає його о 16:00 UTC."
+      },
+      "en": {
+        "title": "New Year in the Philippines: Manila | Time2Fest",
+        "description": "The Philippines rings in 2027 with Media Noche: pancit, twelve round fruits, polka dots and torotot horns. Manila's midnight falls at 16:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Filipinas: Manila | Time2Fest",
+        "description": "Filipinas recibe 2027 con la Media Noche: pancit, doce frutas redondas, lunares y cornetas torotot. En Manila la medianoche llega a las 16:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An aux Philippines : Manille | Time2Fest",
+        "description": "Les Philippines fêtent 2027 avec la Media Noche : pancit, douze fruits ronds, pois et trompettes torotot. Minuit à Manille : 16 h UTC, décomptes gratuits."
       }
     }
   }
