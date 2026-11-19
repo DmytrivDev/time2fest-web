@@ -14,15 +14,12 @@ describe('набори країн', () => {
   it('іконка набору: відома — своя, невідома й порожня — undefined (наявний словник)', () => {
     expect(kitIcon('bell')).toBe('tradition-bell');
     expect(kitIcon('music')).toBe('tradition-music');
+    expect(kitIcon('sun')).toBe('tradition-sun');
     expect(kitIcon('unknown-icon')).toBeUndefined();
     expect(kitIcon(undefined)).toBeUndefined();
   });
 
   it('сцена з файла: пояс, для головного — країна; чужий пояс і країна без файла — нічого', () => {
-    expect(sceneFile('BR', 'utc-0400', false)).toEqual({
-      src: '/scenes/BR-utc-0400.svg',
-      position: '50% 0%',
-    });
     // Типовий фокус — верх по центру: верхівка пам'ятки в кадрі ширшому за 3:2.
     expect(sceneFile('JP', 'utc+0900', true)).toEqual({
       src: '/scenes/JP.svg',
@@ -34,6 +31,7 @@ describe('набори країн', () => {
       position: '50% 0%',
     });
     expect(sceneFile('BR', 'utc-0300', false)).toBeUndefined();
+    expect(sceneFile('BR', 'utc-0400', false)).toBeUndefined();
     expect(sceneFile('AU', 'utc+1100', true)).toBeUndefined();
   });
 

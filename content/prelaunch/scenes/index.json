@@ -2,7 +2,6 @@
   "_about": "Сцени наборів «країна + пояс» (SVG 3:2 з конвеєра «Країни»): ключ ISO або ISO@пояс → адреса в збірці.",
   "scenes": {
     "JP": "/scenes/JP.svg",
-    "BR@utc-0400": "/scenes/BR-utc-0400.svg",
     "UA": "/scenes/UA.svg",
     "BR": "/scenes/BR.svg",
     "NZ": "/scenes/NZ.svg",

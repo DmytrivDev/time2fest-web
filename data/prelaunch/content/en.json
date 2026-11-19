@@ -187,34 +187,6 @@
     },
     "kit": "us-5"
   },
-  "BR@utc-0400": {
-    "text": "Manaus stands on the Rio Negro in the UTC−4 time zone, so the New Year arrives here an hour after Rio. The city hall holds a free Réveillon at three places at once; the main one is Ponta Negra beach, where the party runs from 17:00 to 5 in the morning. In 2026 the city hall estimated about 160,000 people there and roughly 278,000 across all three sites.\n\nAt midnight fireworks go off at all three sites together, and they are low-noise so as not to frighten children, older people, autistic people and animals. Swimming at Ponta Negra is not allowed that night. As all over Brazil, many people dress in white, and some choose yellow for money or red for love.",
-    "traditions": [
-      {
-        "id": "t1",
-        "iconId": "music",
-        "title": "Ponta Negra",
-        "text": "The main party is on Ponta Negra beach by the Rio Negro: free concerts from evening until dawn. Swimming is not allowed that night."
-      },
-      {
-        "id": "t2",
-        "iconId": "fireworks",
-        "title": "Low-noise fireworks",
-        "text": "At midnight fireworks go off at three places in the city at once — low-noise, so as not to frighten children, older people, autistic people and animals."
-      },
-      {
-        "id": "t3",
-        "iconId": "white",
-        "title": "White and lucky colours",
-        "text": "Most people dress in white, as all over Brazil. Some choose yellow for money or red for love."
-      }
-    ],
-    "meta": {
-      "title": "New Year in Manaus, Brazil: Ponta Negra | Time2Fest",
-      "description": "Manaus, Brazil, greets 2027 on Ponta Negra beach by the Rio Negro: free concerts and low-noise fireworks at three places at midnight. Midnight: 04:00 UTC."
-    },
-    "kit": "br-4"
-  },
   "UA": {
     "text": "In Ukraine the New Year is a family holiday around the table: olivier salad, herring under a fur coat, kholodets, tangerines and champagne — dishes that took root back in Soviet times. In the last minutes of the year the president addresses the nation on TV (in 2025 the address aired at 23:40), and glasses are raised and wishes made as the clock strikes midnight.\n\nUnder martial law fireworks and firecrackers are banned and Kyiv has a curfew from 00:00 to 05:00, so people celebrate at home. The country’s main tree stands on Sofiivska Square. Since Christmas moved to 25 December in 2023, the holidays run from Christmas Eve to 6 January, and in January Chernivtsi holds its Malanka parade.",
     "traditions": [

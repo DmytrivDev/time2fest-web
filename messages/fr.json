@@ -110,7 +110,7 @@
         "description": "Conditions d’utilisation du site Time2Fest."
       },
       "notFound": {
-        "title": "Page introuvable — Time2Fest",
+        "title": "Page introuvable",
         "description": "Cette page n’existe pas sur Time2Fest."
       },
       "toasts": {
@@ -118,7 +118,7 @@
         "description": "Porte un toast du Nouvel An que le monde entier verra : un message doré dans le chat, avec ton nom et ton drapeau. Trois niveaux : $2, $5 et $10. Le toast à $10 inclut le Pass Nouvel An."
       },
       "credits": {
-        "title": "Crédits photos et vidéos — Time2Fest",
+        "title": "Crédits photos et vidéos",
         "description": "Qui a réalisé les photos et vidéos de Time2Fest, d’où elles viennent et sous quelles licences."
       }
     },

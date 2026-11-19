@@ -110,7 +110,7 @@
         "description": "Términos de uso del sitio Time2Fest."
       },
       "notFound": {
-        "title": "Página no encontrada — Time2Fest",
+        "title": "Página no encontrada",
         "description": "Esta página no existe en Time2Fest."
       },
       "toasts": {
@@ -118,7 +118,7 @@
         "description": "Haz un brindis de Año Nuevo que verá todo el mundo: un mensaje dorado en el chat con tu nombre y tu bandera. Tres niveles: $2, $5 y $10. El brindis de $10 incluye el Pase de Año Nuevo."
       },
       "credits": {
-        "title": "Créditos de fotos y vídeos — Time2Fest",
+        "title": "Créditos de fotos y vídeos",
         "description": "Quién hizo las fotos y los vídeos de Time2Fest, de dónde proceden y con qué licencias."
       }
     },

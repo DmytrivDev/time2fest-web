@@ -581,7 +581,7 @@
         "description": "Terms of Use for the Time2Fest site."
       },
       "notFound": {
-        "title": "Page not found — Time2Fest",
+        "title": "Page not found",
         "description": "There’s no such page on Time2Fest."
       },
       "toasts": {
@@ -589,7 +589,7 @@
         "description": "Say a New Year toast the whole world sees: a golden chat message with your name and flag. Three levels: $2, $5 and $10. The $10 toast includes a New Year Pass."
       },
       "credits": {
-        "title": "Photo and video credits — Time2Fest",
+        "title": "Photo and video credits",
         "description": "Who made the photos and videos on Time2Fest, where they come from and under which licenses."
       }
     },

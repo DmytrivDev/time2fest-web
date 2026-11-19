@@ -187,34 +187,6 @@
     },
     "kit": "us-5"
   },
-  "BR@utc-0400": {
-    "text": "Manaus se dresse au bord du Rio Negro, dans le fuseau UTC−4 : le Nouvel An y arrive une heure après Rio. La mairie organise un Réveillon gratuit en trois lieux à la fois ; le principal est la plage de Ponta Negra, où la fête dure de 17 h à 5 h du matin. En 2026, la mairie y a compté environ 160 000 personnes, et près de 278 000 sur les trois sites.\n\nÀ minuit, le feu d’artifice part ensemble sur les trois sites, et il est silencieux pour ne pas effrayer les enfants, les aînés, les personnes autistes et les animaux. La baignade à Ponta Negra est interdite cette nuit-là. Comme partout au Brésil, beaucoup s’habillent en blanc, et certains choisissent le jaune pour l’argent ou le rouge pour l’amour.",
-    "traditions": [
-      {
-        "id": "t1",
-        "iconId": "music",
-        "title": "Ponta Negra",
-        "text": "La grande fête a lieu sur la plage de Ponta Negra, au bord du Rio Negro : concerts gratuits du soir jusqu’à l’aube. La baignade est interdite cette nuit-là."
-      },
-      {
-        "id": "t2",
-        "iconId": "fireworks",
-        "title": "Feu d’artifice silencieux",
-        "text": "À minuit, le feu d’artifice part en trois points de la ville à la fois — silencieux, pour ne pas effrayer les enfants, les aînés, les personnes autistes et les animaux."
-      },
-      {
-        "id": "t3",
-        "iconId": "white",
-        "title": "Le blanc et les couleurs porte-bonheur",
-        "text": "La plupart s’habillent en blanc, comme partout au Brésil. Certains choisissent le jaune pour l’argent ou le rouge pour l’amour."
-      }
-    ],
-    "meta": {
-      "title": "Nouvel An à Manaus, Brésil : Ponta Negra | Time2Fest",
-      "description": "Manaus, au Brésil, accueille 2027 sur la plage de Ponta Negra, au bord du Rio Negro : concerts gratuits et feu d’artifice silencieux à minuit, 4 h UTC."
-    },
-    "kit": "br-4"
-  },
   "UA": {
     "text": "En Ukraine, le Nouvel An est une fête de famille autour de la table : salade olivier, hareng « sous manteau de fourrure », kholodets, mandarines et champagne — des plats installés dès l’époque soviétique. Dans les dernières minutes de l’année, le président s’adresse au pays à la télévision (en 2025, à 23 h 40), puis on lève son verre et on fait un vœu aux douze coups de minuit.\n\nSous la loi martiale, feux d’artifice et pétards sont interdits, et Kyiv vit sous couvre-feu de 00 h à 05 h : on fête donc à la maison. Le sapin principal du pays se dresse place Sainte-Sophie. Depuis que Noël a été déplacé au 25 décembre en 2023, les fêtes vont du réveillon de Noël au 6 janvier, et en janvier Tchernivtsi organise son défilé de la Malanka.",
     "traditions": [

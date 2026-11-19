@@ -8,7 +8,7 @@ import scenesJson from '@/content/prelaunch/scenes/index.json';
 /** Ключ одиниці: `JP` (країна з одним поясом чи головний пояс) або `BR@utc-0400` (інший пояс багатопоясної країни). */
 export const unitKey = (iso: string, zoneId: string) => `${iso}@${zoneId}`;
 
-/** Іконки традицій наборів (12 від конвеєра, `Icon.tsx`). Невідома — `undefined`: наявний словник `HowToCard`. */
+/** Іконки традицій наборів (13 від конвеєра, `Icon.tsx`; `sun` — перший схід сонця, KR і TW). Невідома — `undefined`: наявний словник `HowToCard`. */
 const KIT_ICONS: Readonly<Record<string, IconName>> = {
   bell: 'tradition-bell',
   noodles: 'tradition-noodles',
@@ -22,6 +22,7 @@ const KIT_ICONS: Readonly<Record<string, IconName>> = {
   fireworks: 'tradition-fireworks',
   boat: 'tradition-boat',
   music: 'tradition-music',
+  sun: 'tradition-sun',
 };
 
 export function kitIcon(iconId: string | undefined): IconName | undefined {

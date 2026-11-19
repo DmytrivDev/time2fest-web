@@ -187,34 +187,6 @@
     },
     "kit": "us-5"
   },
-  "BR@utc-0400": {
-    "text": "Manaos está a orillas del río Negro, en el huso UTC−4, así que el Año Nuevo llega aquí una hora después que a Río. El ayuntamiento organiza un Réveillon gratuito en tres lugares a la vez; el principal es la playa de Ponta Negra, donde la fiesta va de las 17:00 a las 5 de la mañana. En 2026 el ayuntamiento calculó unas 160 000 personas allí y cerca de 278 000 en los tres lugares.\n\nA medianoche los fuegos suenan a la vez en los tres sitios y son de bajo ruido para no asustar a niños, mayores, personas autistas y animales. Esa noche está prohibido bañarse en Ponta Negra. Como en todo Brasil, muchos visten de blanco, y algunos eligen amarillo para el dinero o rojo para el amor.",
-    "traditions": [
-      {
-        "id": "t1",
-        "iconId": "music",
-        "title": "Ponta Negra",
-        "text": "La fiesta principal es en la playa de Ponta Negra, junto al río Negro: conciertos gratuitos desde la tarde hasta el amanecer. Esa noche está prohibido bañarse."
-      },
-      {
-        "id": "t2",
-        "iconId": "fireworks",
-        "title": "Fuegos de bajo ruido",
-        "text": "A medianoche los fuegos suenan a la vez en tres puntos de la ciudad, y son de bajo ruido para no asustar a niños, mayores, personas autistas y animales."
-      },
-      {
-        "id": "t3",
-        "iconId": "white",
-        "title": "Blanco y colores de la suerte",
-        "text": "La mayoría viste de blanco, como en todo Brasil. Algunos eligen amarillo para el dinero o rojo para el amor."
-      }
-    ],
-    "meta": {
-      "title": "Año Nuevo en Manaos, Brasil: Ponta Negra | Time2Fest",
-      "description": "Manaos, en Brasil, recibe 2027 en la playa de Ponta Negra, junto al río Negro: conciertos gratuitos y fuegos de bajo ruido en tres puntos, a las 04:00 UTC."
-    },
-    "kit": "br-4"
-  },
   "UA": {
     "text": "En Ucrania el Año Nuevo es una fiesta familiar alrededor de la mesa: ensalada olivier, arenque «bajo abrigo de piel», kholodets, mandarinas y champán, platos que arraigaron ya en la época soviética. En los últimos minutos del año el presidente se dirige al país por televisión (en 2025 el mensaje se emitió a las 23:40) y con las campanadas se alzan las copas y se piden deseos.\n\nBajo la ley marcial están prohibidos los fuegos artificiales y los petardos, y en Kiev rige el toque de queda de 00:00 a 05:00, así que se celebra en casa. El árbol principal del país está en la plaza de Santa Sofía. Desde que en 2023 la Navidad pasó al 25 de diciembre, las fiestas van de Nochebuena al 6 de enero, y en enero Chernivtsí celebra su desfile de Malanka.",
     "traditions": [
