@@ -140,6 +140,10 @@ describe('_redirects', () => {
     expect(map.get('/uk/country/uae')).toBe('/uk/country/united-arab-emirates/');
     expect(map.get('/en/country/columbia')).toBe('/country/colombia/');
     expect(map.get('/es/agreement')).toBe('/es/terms/');
+    // І з кінцевою рискою: правило краю «без риски → з рискою» спрацьовує раніше за `_redirects`.
+    expect(map.get('/es/agreement/')).toBe('/es/terms/');
+    expect(map.get('/fr/contact/')).toBe('/fr/');
+    expect(map.get('/login/')).toBe('/');
     expect(map.get('/fr/login')).toBe('/fr/');
     expect(map.get('/api/sitemap.xml')).toBe('/sitemap.xml');
     expect(map.get('/country/kosovo')).toBe('/countries/');

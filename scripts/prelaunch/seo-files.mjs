@@ -105,8 +105,17 @@ export function redirectsFile() {
   // Правила з `*` — окремо й у кінці: Cloudflare (Workers Static Assets) рахує динамічними (ліміт 100) усі правила,
   // що стоять після першого правила з `*`. Джерела точних і динамічних правил не перетинаються, тож порядок безпечний.
   const dynamicRules = [];
+  // Кожне джерело — і без кінцевої риски, і з нею: на краї правило зони «без риски → з рискою» (301) спрацьовує раніше
+  // за `_redirects`, тож стара адреса `/agreement` приходить сюди вже як `/agreement/`.
+  const seen = new Set();
   const add = (from, to) => {
-    for (const f of new Set([from, encodeURI(from)])) rules.push(`${f} ${to} 301`);
+    const bare = from.replace(/\/+$/, '');
+    for (const form of [bare, `${bare}/`])
+      for (const f of new Set([form, encodeURI(form)])) {
+        if (seen.has(f)) continue;
+        seen.add(f);
+        rules.push(`${f} ${to} 301`);
+      }
   };
   for (const [p, t] of OLD_PREFIXES) {
     const home = `${t}/`;
