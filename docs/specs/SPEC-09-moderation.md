@@ -209,7 +209,7 @@ Verify: integration — обидва постачальники у фейку і
 Verify: integration — фейк віддає прозу «allow», порожній вміст, `score: 1.5`: щоразу перехід далі, жодного `allow` від цього постачальника.
 
 **AC-15 [server]** WHEN надходить запит вердикту ніку, the verdict service shall застосувати спільні правила ніку й той самий шлях AI, що й для повідомлень, а AI-вердикт `block` чи `review` віддати як причину `forbidden` (FR-PROF-09; унікальність `taken` — SPEC-11).
-Verify: unit — нік-образа у фейку (`score` 0,9) → `forbidden`; нік «ab» → `short` без виклику AI.
+Verify: unit — нік-образа у фейку (`score` 0,9) → `forbidden`; нік «a» → `short` (`NICK_MIN` = 2) без виклику AI.
 
 **AC-16 [server]** WHEN викликається повторна перевірка (для тостів «без AI», FR-MOD-02), the verdict service shall повернути вердикт лише від постачальника, а коли стан задачі `fallback`, — `unavailable` без вердикту запасного фільтра.
 Verify: integration — обидва постачальники вимкнені: повторна перевірка → `unavailable`; увімкнені → вердикт `primary`.
