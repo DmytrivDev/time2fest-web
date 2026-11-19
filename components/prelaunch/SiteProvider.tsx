@@ -27,6 +27,7 @@ import {
 } from '@/lib/prelaunch/site';
 import { createDeviceTimeSource } from '@/lib/time/deviceTimeSource';
 import { utcWording } from '@/lib/prelaunch/utcWording';
+import { unitKey } from '@/lib/prelaunch/kits';
 import { TimeProvider } from '@/lib/time/TimeProvider';
 
 /**
@@ -90,6 +91,7 @@ export function SiteProvider({ site, children }: { site: SiteData; children: Rea
       href,
       media: MEDIA,
       expectedKinds,
+      zoneStory: (iso, zoneId) => site.stories[unitKey(iso, zoneId)],
       inCountry: (iso) => inCountryOf(site, iso),
       zoneCity: (timeZone) => {
         const raw = (timeZone.split('/').pop() ?? '').toLowerCase();

@@ -11,7 +11,7 @@
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
-import { mediaAlt, usePrefest } from '@/components/prefest/PrefestContext';
+import { mediaAlt, usePrefest, type MediaItem } from '@/components/prefest/PrefestContext';
 import type { ExpectedKind } from '@/components/map/mapPrefest';
 import { PostcardArt } from '@/components/stamp/StampArt';
 import { formatClock } from '@/lib/i18n/time';
@@ -23,7 +23,7 @@ export function ExpectedCards({
   kinds,
   city,
   mediaSlot,
-  iso,
+  photo: photoProp,
   illustrationId,
   midnightMs,
   className,
@@ -33,7 +33,8 @@ export function ExpectedCards({
   city: string;
   /** Місце для фото міста з розкладу головної (`city:<id>`), якщо це його пояс. */
   mediaSlot?: string | undefined;
-  iso: string;
+  /** Фото одиниці (поясу чи країни), яке вибрала сторінка; без нього — фото міста з розкладу. */
+  photo?: MediaItem | undefined;
   illustrationId: string;
   midnightMs: number;
   className?: string;
@@ -42,7 +43,7 @@ export function ExpectedCards({
   const te = useTranslations('prefest.map.expected');
   const { site } = usePrefest();
   const phone = usePhone();
-  const photo = site?.media[`country:${iso}`] ?? (mediaSlot ? site?.media[mediaSlot] : undefined);
+  const photo = photoProp ?? (mediaSlot ? site?.media[mediaSlot] : undefined);
   const countdown = kinds.includes('countdown');
   // Немає підтвердженого джерела — одна картка з нейтральним «Трансляція» (рішення 2026-11-18).
   const cards: readonly (ExpectedKind | null)[] = countdown ? ['countdown'] : kinds.length ? kinds : [null];
@@ -52,7 +53,13 @@ export function ExpectedCards({
     <span className={s.thumb} aria-hidden={photo && kind !== 'countdown' ? undefined : true}>
       {photo && kind !== 'countdown' ? (
         // eslint-disable-next-line @next/next/no-img-element -- статичний експорт
-        <img src={photo.src} alt={mediaAlt(photo, site?.locale, city)} loading="lazy" decoding="async" />
+        <img
+          src={photo.src}
+          alt={mediaAlt(photo, site?.locale, city)}
+          loading="lazy"
+          decoding="async"
+          style={photo.position ? { objectPosition: `${photo.position.x}% ${photo.position.y}%` } : undefined}
+        />
       ) : (
         <PostcardArt illustrationId={illustrationId} fill className={s.coverArt} />
       )}

@@ -23,6 +23,7 @@ import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { mediaAlt, usePrefest } from '@/components/prefest/PrefestContext';
 import { Flag } from '@/components/primitives/Flag';
 import { hasPostcardScene } from '@/components/stamp/StampArt';
+import { kitIcon, sceneFile, unitKey } from '@/lib/prelaunch/kits';
 import { cn } from '@/components/primitives/cn';
 import shell from '@/app/(live)/live-shell.module.css';
 import live from '@/components/live/live.module.css';
@@ -69,15 +70,22 @@ function Body({ iso }: { iso: string }) {
   if (!country || !pc || !zone || !site) return null;
 
   const city = pc.zones.find((z) => z.zoneId === zone.id)?.city ?? country.name.uk;
-  // Своя сцена (листівка) є не в усіх країн; без неї — відлік на тлі, без шаблонної листівки.
-  const scene = hasPostcardScene(country.illustrationId);
+  // Одиниця набору — країна + пояс (`docs/site/country-kit.md` §6д): у неголовного поясу — свої тексти, сцена й фото.
+  const mainZone = zone.id === (pc.main ?? pc.zones[0])?.zoneId;
+  const zoneStory = mainZone ? undefined : site.zoneStory?.(iso, zone.id);
+  // Сцена: файл набору (пояс, для головного — і країна), інакше вбудована листівка; немає жодної — без сцени.
+  const sceneSrc = sceneFile(iso, zone.id, mainZone);
+  const scene = Boolean(sceneSrc) || hasPostcardScene(country.illustrationId);
   // Видимий заголовок і H1 — «Новий рік у Новій Зеландії» (рішення власника 2026-11-19); рік — лише в title/description.
   const inCountry = site.inCountry(iso);
   const heading = inCountry
     ? t('titleIn', { ...SEASON_VALUES, inCountry })
     : t('title', { ...SEASON_VALUES, country: country.name.uk });
   const after = now > 0 && now >= zone.midnightMs;
-  const photo = site.media[`country:${iso}`];
+  // Фото одиниці: пояс (`country:BR@utc-0400`), для головного поясу — країни; чужого міста не показуємо.
+  const photo =
+    site.media[`country:${unitKey(iso, zone.id)}`] ??
+    (mainZone ? site.media[`country:${iso}`] : undefined);
   const gallery = photo
     ? [
         {
@@ -85,9 +93,16 @@ function Body({ iso }: { iso: string }) {
           alt: mediaAlt(photo, site.locale, t('photoAlt', { country: country.name.uk })),
           author: photo.author ?? '',
           license: photo.license ?? '',
+          ...(photo.position ? { position: photo.position } : {}),
         },
       ]
     : [];
+  // Тексти поясу; немає — тексти країни. Назва блоку — місто поясу, якщо тексти саме про нього (§6б).
+  const storyText = zoneStory?.text ?? (pc.described ? country.howTo.text : undefined);
+  const storyTraditions = zoneStory
+    ? zoneStory.traditions.map((x) => ({ ...x, iconId: x.iconId ?? 'fireworks' }))
+    : country.howTo.traditions;
+  const storyName = zoneStory ? city : country.name.uk;
   const faq = (['when', 'stamp'] as const).map((id) => ({
     id,
     question: tc(`faq.items.${id}.q`),
@@ -141,6 +156,7 @@ function Body({ iso }: { iso: string }) {
                 variant="no-stream"
                 longCountdown
                 art={scene}
+                artSrc={sceneSrc}
                 traditions={false}
                 note={t('streamSoon')}
               />
@@ -153,20 +169,24 @@ function Body({ iso }: { iso: string }) {
                 country={country.name.uk}
                 kinds={site.expectedKinds?.(iso, zone.id) ?? []}
                 city={city}
-                mediaSlot={model.celebrations.find((c) => c.iso === iso && c.zoneId === zone.id)?.mediaSlot}
-                iso={iso}
+                mediaSlot={
+                  model.celebrations.find((c) => c.iso === iso && c.zoneId === zone.id)?.mediaSlot
+                }
+                photo={photo}
+
                 illustrationId={country.illustrationId}
                 midnightMs={zone.midnightMs}
                 className={live.pad}
               />
             ) : null}
-            {pc.described ? (
+            {zoneStory || pc.described ? (
               <HowToCard
-                country={country.name.uk}
-                traditions={country.howTo.traditions}
+                country={storyName}
+                traditions={storyTraditions}
                 gallery={gallery}
-                text={country.howTo.text}
+                text={storyText}
                 variant="full"
+                iconFor={kitIcon}
                 className={live.pad}
               />
             ) : null}

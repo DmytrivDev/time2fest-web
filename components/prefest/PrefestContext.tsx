@@ -18,6 +18,7 @@ import { getData } from '@/lib/data/load';
 import type { PrefestModel } from '@/lib/prefest/model';
 import { cn } from '@/components/primitives/cn';
 import type { ExpectedKind } from '@/components/map/mapPrefest';
+import type { CountryStory } from '@/lib/prelaunch/site';
 import s from './prefest.module.css';
 
 /** Фото чи відео на місці заглушки (`data/prelaunch/media.json`). */
@@ -31,6 +32,8 @@ export interface MediaItem {
   sourceUrl?: string;
   /** Для відео: кадр до запуску. */
   poster?: string;
+  /** Точка фокусу фото у % (`object-position`) — картка трансляції й блок розповіді; типово — центр. */
+  position?: { x: number; y: number };
   /** Для відео: джерела по черзі (браузер бере перше, яке вміє й під яке підходить `media`); `src` — запасне. */
   sources?: readonly { src: string; type: string; media?: string }[];
   kind?: 'image' | 'video';
@@ -62,6 +65,8 @@ export interface PrefestSite {
   inCountry: (iso: string) => string | undefined;
   /** Типи очікуваних трансляцій країни в поясі (`content/prelaunch/expected-streams.json`); порожньо — нейтрально. */
   expectedKinds?: (iso: string, zoneId: string) => readonly ExpectedKind[];
+  /** Тексти набору для неголовного поясу країни (`ISO@пояс`); немає — тексти країни. */
+  zoneStory?: (iso: string, zoneId: string) => CountryStory | undefined;
 }
 
 interface PrefestContextValue {

@@ -1,0 +1,90 @@
+import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { HowToCard } from '@/components/live/HowToCard';
+import { kitIcon, sceneFile, unitKey } from '@/lib/prelaunch/kits';
+import { describedIsos } from '@/lib/prelaunch/siteData';
+import { renderWithApp } from '../_support/render';
+
+// Набори «країна + пояс» (`docs/site/country-kit.md`): ключі, іконки, сцени, абзаци, точка фокусу фото.
+describe('набори країн', () => {
+  it('ключ одиниці — ISO@пояс', () => {
+    expect(unitKey('BR', 'utc-0400')).toBe('BR@utc-0400');
+  });
+
+  it('іконка набору: відома — своя, невідома й порожня — undefined (наявний словник)', () => {
+    expect(kitIcon('bell')).toBe('tradition-bell');
+    expect(kitIcon('music')).toBe('tradition-music');
+    expect(kitIcon('unknown-icon')).toBeUndefined();
+    expect(kitIcon(undefined)).toBeUndefined();
+  });
+
+  it('сцена з файла: пояс, для головного — країна; чужий пояс і країна без файла — нічого', () => {
+    expect(sceneFile('BR', 'utc-0400', false)).toBe('/scenes/BR-utc-0400.svg');
+    expect(sceneFile('JP', 'utc+0900', true)).toBe('/scenes/JP.svg');
+    expect(sceneFile('JP', 'utc+0900', false)).toBeUndefined();
+    expect(sceneFile('BR', 'utc-0300', true)).toBeUndefined();
+    expect(sceneFile('FR', 'utc+0100', true)).toBeUndefined();
+  });
+
+  it('описані країни — без ключів поясів', () => {
+    for (const locale of ['uk', 'en', 'es', 'fr'] as const) {
+      const isos = describedIsos(locale);
+      expect(isos).toContain('JP');
+      expect(isos.some((k) => k.includes('@'))).toBe(false);
+    }
+  });
+});
+
+describe('HowToCard з набором', () => {
+  const traditions = [
+    { id: 't1', iconId: 'bell', title: 'Дзвони', text: 'Сто вісім ударів.' },
+    { id: 't2', iconId: 'nope', title: 'Інше', text: 'Текст.' },
+    { id: 't3', iconId: 'fireworks', title: 'Салют', text: 'Текст.' },
+  ];
+
+  it('розповідь ділиться на абзаци за порожнім рядком', () => {
+    const { container } = renderWithApp(
+      <HowToCard
+        country="Японія"
+        traditions={traditions}
+        text={'Перший абзац.\n\nДругий абзац.'}
+        variant="full"
+      />,
+    );
+    expect(screen.getByText('Перший абзац.')).toBeInTheDocument();
+    expect(screen.getByText('Другий абзац.')).toBeInTheDocument();
+    expect(container.querySelectorAll('p').length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('iconFor підміняє іконку; невідома — запасна з наявного словника', () => {
+    const seen: (string | undefined)[] = [];
+    renderWithApp(
+      <HowToCard
+        country="Японія"
+        traditions={traditions}
+        variant="full"
+        iconFor={(id) => {
+          seen.push(id);
+          return kitIcon(id);
+        }}
+      />,
+    );
+    expect(seen).toEqual(expect.arrayContaining(['bell', 'nope', 'fireworks']));
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3);
+  });
+
+  it('точка фокусу фото — object-position, без неї — без стилю', () => {
+    const { container } = renderWithApp(
+      <HowToCard
+        country="Японія"
+        traditions={traditions}
+        variant="full"
+        gallery={[
+          { src: '/a.jpg', alt: 'a', author: 'x', license: 'CC0', position: { x: 50, y: 62 } },
+        ]}
+      />,
+    );
+    const img = container.querySelector('img[src="/a.jpg"]') as HTMLImageElement;
+    expect(img.style.objectPosition).toBe('50% 62%');
+  });
+});

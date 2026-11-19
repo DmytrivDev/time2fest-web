@@ -51,15 +51,20 @@ export interface CountdownSceneProps {
   longCountdown?: boolean;
   /** `false` — без ілюстрації-листівки: відлік і решта частин на тлі сцени (передстартовий сайт для країн без своєї сцени). */
   art?: boolean;
+  /**
+   * Сцена з файла (набори країн, SVG 3:2): те саме обрамлення, що в `PostcardArt` (на всю площу, по центру, з обрізкою),
+   * замість вбудованої листівки.
+   */
+  artSrc?: string;
   /** `false` — без «Як святкують» на сцені: сторінка показує традиції окремою карткою нижче (передстартовий сайт). */
   traditions?: boolean;
   /** Рядок під відліком (передстартовий сайт: «Ближче до святкування тут з’явиться трансляція»). */
   note?: string;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, traditions, note }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, artSrc, traditions, note }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} traditions={traditions} note={note} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} artSrc={artSrc} traditions={traditions} note={note} />;
 }
 
 /**
@@ -152,7 +157,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, traditions: withTraditions = true, note }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, artSrc, traditions: withTraditions = true, note }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -181,7 +186,12 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
       data-midnight-phase={phase.kind}
       className={cn('@container relative size-full min-h-player-min-height overflow-hidden bg-surface-raised', className, fs.pseudo && 'fixed! inset-0 z-50 h-dvh! w-screen!')}
     >
-      {art ? <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" /> : null}
+      {art && artSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element -- статичний SVG сцени
+        <img src={artSrc} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
+      ) : art ? (
+        <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" />
+      ) : null}
       {phase.kind === 'celebrate' && !reduced ? (
         <Fireworks elapsedMs={phase.since} className="pointer-events-none absolute inset-0 size-full" />
       ) : null}

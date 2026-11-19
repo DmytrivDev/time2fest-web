@@ -36,7 +36,16 @@ async function resolve(params: Params) {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, iso, name, slug, described, indexable, site } = await resolve(params);
   // Країна без розповіді кожною мовою — «лише факти»: `noindex`, без `hreflang`, не в `sitemap` (`countryIndexable`).
-  return countryMetadata(locale, iso, name, slug, described, indexable, inCountryOf(site, iso));
+  return countryMetadata(
+    locale,
+    iso,
+    name,
+    slug,
+    described,
+    indexable,
+    inCountryOf(site, iso),
+    site.stories[iso]?.meta,
+  );
 }
 
 export default async function Page({ params }: { params: Params }) {

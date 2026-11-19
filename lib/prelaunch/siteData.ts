@@ -41,7 +41,8 @@ export function siteData(locale: Locale): SiteData {
 
 /** Країни з розповіддю цією мовою (ISO). */
 export function describedIsos(locale: Locale): string[] {
-  return Object.keys(STORIES[locale]);
+  // Ключі `ISO@пояс` — тексти інших поясів країни; описаною країну робить розповідь головного поясу (`ISO`).
+  return Object.keys(STORIES[locale]).filter((k) => !k.includes('@'));
 }
 
 /** Власні файли розповідей (без підстановки англійської замість іспанської й французької). */

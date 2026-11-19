@@ -101,7 +101,20 @@ export type IconName =
   | 'lock-tall'
   | 'minus-short'
   | 'envelope'
-  | 'rubber-stamp';
+  | 'rubber-stamp'
+  // Іконки традицій наборів країн (конвеєр «Країни», 2026-11-19).
+  | 'tradition-bell'
+  | 'tradition-noodles'
+  | 'tradition-shrine'
+  | 'tradition-address'
+  | 'tradition-feast'
+  | 'tradition-tree'
+  | 'tradition-white'
+  | 'tradition-flower'
+  | 'tradition-wave'
+  | 'tradition-fireworks'
+  | 'tradition-boat'
+  | 'tradition-music';
 
 export type IconSize = 9 | 12 | 14 | 15 | 16 | 18 | 20 | 22 | 24 | 26 | 32;
 
@@ -568,6 +581,90 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M9.5 3h5v4.5l1.5 3.5h-8l1.5-3.5z" />
       <rect x="4" y="11" width="16" height="5" rx="1.5" />
       <path d="M6 20h12" />
+    </>
+  ),
+  'tradition-bell': (
+    <>
+      <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
+    </>
+  ),
+  'tradition-noodles': (
+    <>
+      <path d="M4 12h16a8 6 0 0 1-16 0z" />
+      <path d="M14 4l6 6M11 4.5l5 5.5" />
+      <path d="M8 9c-.6-.8-.6-1.6 0-2.4M11 9c-.6-.8-.6-1.6 0-2.4" />
+      <path d="M9 18.5h6" />
+    </>
+  ),
+  'tradition-shrine': (
+    <>
+      <path d="M3 6.5c3 .8 15 .8 18 0" />
+      <path d="M5 10h14" />
+      <path d="M7 7v13M17 7v13" />
+      <path d="M12 7.2V10" />
+    </>
+  ),
+  'tradition-address': (
+    <>
+      <rect x="3" y="5" width="18" height="12" rx="2" />
+      <path d="M9 21h6M12 17v4" />
+      <circle cx="12" cy="9.5" r="1.8" />
+      <path d="M8.5 15a3.5 3.5 0 0 1 7 0" />
+    </>
+  ),
+  'tradition-feast': (
+    <>
+      <circle cx="12" cy="12" r="5" />
+      <path d="M4 4v5a1.5 1.5 0 0 0 3 0V4M5.5 9v11" />
+      <path d="M19.5 4c-1.6 1.8-1.6 5 0 6.5V20" />
+    </>
+  ),
+  'tradition-tree': (
+    <>
+      <path d="M12 4l-5 6h3l-4 5h4l-3.5 4h11L14 15h4l-4-5h3z" />
+      <path d="M12 19v2" />
+      <path d="M12 1.8v.4" />
+    </>
+  ),
+  'tradition-white': (
+    <>
+      <path d="M8.5 4L4 6.5l1.8 4L8 9.5V20h8V9.5l2.2 1 1.8-4L15.5 4a3.5 3.5 0 0 1-7 0z" />
+    </>
+  ),
+  'tradition-flower': (
+    <>
+      <circle cx="12" cy="10" r="2.2" />
+      <path d="M12 7.8C10.5 4 13.5 4 12 7.8M14.2 10c3.8-1.5 3.8 1.5 0 0M12 12.2c1.5 3.8-1.5 3.8 0 0M9.8 10C6 11.5 6 8.5 9.8 10" />
+      <path d="M12 13v8M12 18c-2-.2-3.3-1.2-4-3M12 17c1.8 0 3-.8 3.6-2.3" />
+    </>
+  ),
+  'tradition-wave': (
+    <>
+      <path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0" />
+      <path d="M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0" />
+      <path d="M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0" />
+    </>
+  ),
+  'tradition-fireworks': (
+    <>
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" />
+      <circle cx="12" cy="12" r="1.5" />
+    </>
+  ),
+  'tradition-boat': (
+    <>
+      <path d="M3 15h18l-2.5 4h-13z" />
+      <path d="M6 15v-4h9l2 4" />
+      <path d="M9 11V8h4v3" />
+      <path d="M2 21c2 1 4 1 6 0s4-1 6 0 4 1 6 0" />
+    </>
+  ),
+  'tradition-music': (
+    <>
+      <path d="M9 18V6l10-2v12" />
+      <circle cx="7" cy="18" r="2" />
+      <circle cx="17" cy="16" r="2" />
     </>
   ),
 };

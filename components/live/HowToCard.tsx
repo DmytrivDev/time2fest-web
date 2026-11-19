@@ -26,6 +26,8 @@ export interface HowToCardProps {
   gallery?: HowTo['gallery'];
   /** `full`: текстовий блок країни під заголовком «Як <Країна> зустрічає Новий рік» (без «Читати більше»). */
   text?: string;
+  /** Власна іконка традиції за `iconId` (передстартовий сайт — набір іконок конвеєра); `undefined` — наявний словник. */
+  iconFor?: (iconId: string | undefined) => IconName | undefined;
   className?: string;
 }
 
@@ -53,7 +55,15 @@ const TRADITION_ICONS: Readonly<Record<string, IconName>> = {
   boat: 'globe',
 };
 
-function TraditionIcon({ size, iconId }: { size: 'md' | 'lg'; iconId?: string }) {
+function TraditionIcon({
+  size,
+  iconId,
+  iconFor,
+}: {
+  size: 'md' | 'lg';
+  iconId?: string;
+  iconFor?: (iconId: string | undefined) => IconName | undefined;
+}) {
   return (
     <span
       aria-hidden="true"
@@ -62,7 +72,7 @@ function TraditionIcon({ size, iconId }: { size: 'md' | 'lg'; iconId?: string })
         size === 'lg' ? 'size-16' : 'size-12',
       )}
     >
-      <Icon name={(iconId && TRADITION_ICONS[iconId]) || 'star'} size={22} />
+      <Icon name={iconFor?.(iconId) ?? ((iconId && TRADITION_ICONS[iconId]) || 'star')} size={22} />
     </span>
   );
 }
@@ -77,6 +87,7 @@ export function HowToCard({
   headingLevel: Heading = 'h2',
   gallery,
   text,
+  iconFor,
   className,
 }: HowToCardProps) {
   const t = useTranslations('liveCards.howTo');
@@ -124,7 +135,7 @@ export function HowToCard({
               key={item.id}
               className="flex items-start gap-4 rounded-lg border border-border bg-surface px-4 py-3"
             >
-              <TraditionIcon size="md" iconId={item.iconId} />
+              <TraditionIcon size="md" iconId={item.iconId} iconFor={iconFor} />
               <div className="min-w-0">
                 <h3 className="text-tv-title text-text">{item.title}</h3>
                 <p className="mt-2 text-tv-text text-text-secondary">{item.text}</p>
@@ -160,7 +171,7 @@ export function HowToCard({
             className="flex w-72 shrink-0 snap-start flex-col gap-3.5 rounded-lg border border-border bg-surface p-6 md:w-auto"
           >
             <div className="flex items-center justify-between">
-              <TraditionIcon size="lg" iconId={item.iconId} />
+              <TraditionIcon size="lg" iconId={item.iconId} iconFor={iconFor} />
               <span aria-hidden="true" className="text-label-badge tabular-nums text-text-muted">
                 {pad(i + 1)}
               </span>
@@ -185,7 +196,12 @@ export function HowToCard({
           {text ? (
             <div className="flex flex-col gap-3">
               <h3 className="text-headline-md text-text">{tc('textTitle', { country })}</h3>
-              <p className="text-body text-text-secondary">{text}</p>
+              {/* Абзаци — через порожній рядок у тексті (набори країн); текст без них — один абзац, як і раніше. */}
+              {text.split(/\n\s*\n/).map((para, i) => (
+                <p key={i} className="text-body text-text-secondary">
+                  {para.trim()}
+                </p>
+              ))}
             </div>
           ) : null}
           {photos.length ? (
@@ -216,6 +232,7 @@ export function HowToCard({
                       alt={tc('photoAlt', { alt: ph.alt })}
                       loading="lazy"
                       className="aspect-video size-full object-cover md:aspect-auto"
+                      style={ph.position ? { objectPosition: `${ph.position.x}% ${ph.position.y}%` } : undefined}
                     />
                     <figcaption className="absolute inset-x-0 bottom-0 bg-bg/80 px-3 py-1.5 text-caption text-text-secondary">
                       {tc('photoCredit', { author: ph.author, license: ph.license })}

@@ -31,8 +31,14 @@ export interface SiteNames {
 }
 
 export interface CountryStory {
+  /** Розповідь; абзаци — через порожній рядок. */
   text: string;
-  traditions: { id: string; title: string; text: string }[];
+  /** Рівно три картки «Як святкувати»; `iconId` — іконка набору (інакше — з каталогу країни). */
+  traditions: { id: string; title: string; text: string; iconId?: string }[];
+  /** Title і description сторінки з набору країни (головний пояс) — замість шаблону SEO-звіту. */
+  meta?: { title: string; description: string };
+  /** Одиниця конвеєра «Країни», з якої взято тексти (`jp`, `br-4`). */
+  kit?: string;
   /** Заголовок і опис сторінки для пошуку, написані під країну (звіт SEO, розділ 10); заповнює задача C, читає B. */
   seo?: { title?: string; description?: string };
   /** Дати публікації й правки розповіді (ISO), для структурованих даних. */
@@ -76,7 +82,7 @@ export function localizeDataset(data: Dataset, site: SiteData): Dataset {
             text: story.text,
             traditions: story.traditions.map((t) => ({
               ...t,
-              iconId: c.howTo.traditions.find((x) => x.id === t.id)?.iconId ?? 'fireworks',
+              iconId: t.iconId ?? c.howTo.traditions.find((x) => x.id === t.id)?.iconId ?? 'fireworks',
             })),
           }
         : { ...c.howTo, text: '', traditions: [] },

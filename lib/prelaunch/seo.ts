@@ -177,8 +177,11 @@ export async function countryMetadata(
   described: boolean,
   open: boolean,
   inCountry?: string,
+  kitMeta?: { title: string; description: string },
 ): Promise<Metadata> {
   const path = `/country/${slug}/`;
+  // Набір країни (головний пояс) має власні title і description, написані під країну (`docs/site/country-kit.md` §6а).
+  if (described && kitMeta) return seoFields(locale, path, fitTitle(kitMeta.title), kitMeta.description, open);
   const seo = described ? SEO_COUNTRY[iso]?.[locale] : undefined;
   if (seo) {
     const feast = FEAST[locale] ?? FEAST.en!;

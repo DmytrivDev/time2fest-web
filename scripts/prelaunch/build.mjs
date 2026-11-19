@@ -90,6 +90,13 @@ for (const entry of OPTIONAL_PUBLIC_ENTRIES) {
   const from = path.join(src, entry);
   if (fs.existsSync(from)) fs.cpSync(from, path.join(out, entry), { recursive: true });
 }
+// Сцени наборів країн (SVG) — теж лише для домену: `content/prelaunch/scenes/*.svg` → `/scenes/`.
+const prelaunchScenes = path.join(root, 'content', 'prelaunch', 'scenes');
+if (fs.existsSync(prelaunchScenes)) {
+  fs.mkdirSync(path.join(out, 'scenes'), { recursive: true });
+  for (const f of fs.readdirSync(prelaunchScenes))
+    if (f.endsWith('.svg')) fs.copyFileSync(path.join(prelaunchScenes, f), path.join(out, 'scenes', f));
+}
 // Відео й фото лише для домену (банер тощо) лежать поза `public/`, щоб не потрапити в демо.
 const prelaunchMedia = path.join(root, 'content', 'prelaunch', 'media');
 if (fs.existsSync(prelaunchMedia)) {
