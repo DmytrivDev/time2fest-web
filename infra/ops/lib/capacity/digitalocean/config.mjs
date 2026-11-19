@@ -15,7 +15,9 @@ export const ENV_SIZES = {
     main: { offSeason: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb', 's-2vcpu-4gb', 's-4vcpu-8gb'] },
     realtime: { size: 's-2vcpu-4gb' },
     // O·P18a (рішення власника 2026-11-18): тимчасовий другий вузол сервера для навчання «два сервери» — 1 vCPU / 2 GB.
-    server2: { size: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb', 's-2vcpu-4gb'] },
+    // 2026-11-19: s-1vcpu-2gb недоступний у fra1 (DO 422 «Size is not available in this region»); власник погодив
+    // той самий 1 vCPU / 2 GB у варіанті intel ($0.02083/год) — через --size.
+    server2: { size: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-1vcpu-2gb-intel', 's-2vcpu-2gb', 's-2vcpu-4gb'] },
   },
   // SPEC-23 sets final night sizes.
   production: {
