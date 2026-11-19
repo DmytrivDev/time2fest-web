@@ -27,8 +27,7 @@ if (!cur.includes(MARK)) fs.writeFileSync(hf, cur.replace(/\s*$/, '\n') + RULE);
 // генератор (scripts/prelaunch/seo-files.mjs) ставить їх у кінець — тут лише перевірка.
 const rf = path.join(OUT, '_redirects');
 if (fs.existsSync(rf)) {
-  const rules = fs.readFileSync(rf, 'utf8').split(/?
-/).filter((l) => l.trim() && !l.trim().startsWith('#'));
+  const rules = fs.readFileSync(rf, 'utf8').split(/\r?\n/).filter((l) => l.trim() && !l.trim().startsWith('#'));
   const isDyn = (l) => /[*]|\/:[a-z]/i.test(l.trim().split(/\s+/)[0] ?? '');
   const first = rules.findIndex(isDyn);
   if (first >= 0 && !rules.slice(first).every(isDyn)) {
