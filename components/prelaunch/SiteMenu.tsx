@@ -120,7 +120,7 @@ export function SiteMenu({
 
   return (
     <SideDialog open={open} onOpenChange={onOpenChange} title={t('title')}>
-      <div className={ms.content} data-menu-body="">
+      <div className={cn(ms.content, s.menuContent)} data-menu-body="">
         {/* Мова — угорі одним рядом, як у меню сайту; тут це посилання на ту саму сторінку іншою мовою. */}
         <div role="group" aria-label={t('language')} className={ms.langs}>
           {MENU_LANGUAGES.map((l) => {

@@ -15,11 +15,12 @@ import { ScheduleRail } from '@/components/prefest/ScheduleRail';
 import { WhatIs } from '@/components/prefest/WhatIs';
 import type { SiteData } from '@/lib/prelaunch/site';
 import { SiteShell } from './SiteShell';
+import s from './site.module.css';
 
 export function HomePage({ site }: { site: SiteData }) {
   return (
     <SiteShell site={site} current="home" page="S-PL-HOME" overlay>
-      <PrefestHero />
+      <PrefestHero className={s.heroFit} />
       <ScheduleRail />
       <MyMidnight />
       <PrefestMap />

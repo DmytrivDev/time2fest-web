@@ -224,7 +224,8 @@ const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
 
 type Unit = 'days' | 'hours' | 'minutes' | 'seconds';
 
-export function PrefestHero() {
+/** `className` — доповнення висоти банера на передстартовому сайті (`heroFit`); демо — без нього. */
+export function PrefestHero({ className }: { className?: string } = {}) {
   const t = useTranslations('prefest.hero');
   const tRoot = useTranslations('prefest');
   const { model, site } = usePrefest();
@@ -258,7 +259,7 @@ export function PrefestHero() {
     );
 
   return (
-    <section className={h.hero} aria-label={t('aria')}>
+    <section className={cn(h.hero, className)} aria-label={t('aria')}>
       {media?.kind === 'video' ? (
         <HeroVideo media={media} reduced={reduced} />
       ) : media ? (
