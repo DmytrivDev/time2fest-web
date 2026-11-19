@@ -49,7 +49,7 @@ describe('admin moderation slice (AC-41 … AC-43)', { timeout: 120_000 }, () =>
       props: {
         month: { usd: number; ceilingUsd: number };
         tasks: { task: string }[];
-        providers: { provider: string; status: string; calls: number; p95Ms: number; errorPercent: number }[];
+        providers: { provider: string; task: string; status: string; calls: number; p95Ms: number; errorPercent: number }[];
         settings: Record<string, number>;
       };
     };
@@ -57,9 +57,15 @@ describe('admin moderation slice (AC-41 … AC-43)', { timeout: 120_000 }, () =>
     expect(el.props.month.ceilingUsd).toBeGreaterThan(0);
     expect(el.props.tasks.map((t) => t.task)).toEqual(['moderation', 'translation']);
     expect(Object.keys(el.props.settings).sort()).toEqual(['block', 'monthCeilingUsd', 'nightCeilingUsd', 'review']);
-    expect(el.props.providers.map((p) => p.provider).sort()).toEqual(['anthropic', 'deepseek']);
+    // Security S1-b: one row per provider per task (each task has its own health window).
+    expect(el.props.providers.map((p) => `${p.provider}:${p.task}`).sort()).toEqual([
+      'anthropic:moderation',
+      'anthropic:translation',
+      'deepseek:moderation',
+      'deepseek:translation',
+    ]);
     for (const p of el.props.providers) {
-      expect(Object.keys(p).sort()).toEqual(['calls', 'errorPercent', 'p95Ms', 'provider', 'reason', 'status']);
+      expect(Object.keys(p).sort()).toEqual(['calls', 'errorPercent', 'p95Ms', 'provider', 'reason', 'status', 'task']);
       expect(p.errorPercent).toBeGreaterThanOrEqual(0);
       expect(p.p95Ms).toBeGreaterThanOrEqual(0);
     }

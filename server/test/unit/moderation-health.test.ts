@@ -1,7 +1,7 @@
 /** Provider health, AI task state and output checks (SPEC-09 AC-11, AC-14, AC-17 … AC-21, AC-24, AC-32, AC-46; W16 … W18). */
 import { describe, expect, it, vi } from 'vitest';
 import type { AiStatus } from '@time2fest/contracts';
-import { assess, probeDue, probeStreak, type HealthSample } from '../../src/domain/moderation/health';
+import { assess, probeDue, probeStreak, TRANSLATION_SLOW_MS, type HealthSample } from '../../src/domain/moderation/health';
 import { checkTranslation, parseScore } from '../../src/domain/moderation/output';
 import { taskState } from '../../src/domain/moderation/state';
 import { DEFAULT_THRESHOLDS, outcomeOf } from '../../src/domain/moderation/verdict';
@@ -102,6 +102,13 @@ describe('assess — the 60 s window (AC-17, AC-18)', () => {
     expect(assess(two, T0 + 20 * S)).toEqual({ status: 'unavailable', reason: 'unavailable' });
     const one = Array.from({ length: 20 }, (_, i) => sample(T0 + i * S, 100, i !== 3));
     expect(assess(one, T0 + 20 * S).status).toBe('available');
+  });
+
+  it('S1-b: the translation threshold is its own (2.5 s): p95 2.5 s is fine, 2.6 s is slow', () => {
+    const edge = Array.from({ length: 20 }, (_, i) => sample(T0 + i * S, 2_500, true));
+    expect(assess(edge, T0 + 20 * S, TRANSLATION_SLOW_MS).status).toBe('available');
+    const slow = Array.from({ length: 20 }, (_, i) => sample(T0 + i * S, 2_600, true));
+    expect(assess(slow, T0 + 20 * S, TRANSLATION_SLOW_MS)).toEqual({ status: 'unavailable', reason: 'slow' });
   });
 
   it('19 slow calls are below the share rule', () => {
@@ -228,8 +235,9 @@ describe('provider layer (AC-17 … AC-21, AC-32, AC-46)', () => {
     expect(layer.state('moderation').state).toBe('available');
     expect(layer.usable('moderation')).toContain(primary.provider);
     expect(lines.at(-1)).toMatchObject({ outcome: 'rejected', ms: 50, tokensIn: 10 });
-    expect(layer.stats().find((x) => x.provider === 'anthropic')).toEqual({
+    expect(layer.stats().find((x) => x.provider === 'anthropic' && x.task === 'moderation')).toEqual({
       provider: 'anthropic',
+      task: 'moderation',
       status: 'available',
       calls: 10,
       p95Ms: 50,
@@ -237,22 +245,92 @@ describe('provider layer (AC-17 … AC-21, AC-32, AC-46)', () => {
     });
   });
 
+  it('S1: 10 `refused` answers in a row return refused, are timed, and keep the provider available', async () => {
+    const { clock, primary, layer, lines } = setup();
+    const refused = async (): Promise<ProviderAnswer<{ raw: string }>> => {
+      clock.advance(80);
+      return { ok: false, kind: 'refused' };
+    };
+    for (let i = 0; i < 10; i++) {
+      expect(await layer.call('moderation', primary.provider, refused)).toEqual({ ok: false, kind: 'refused' });
+      expect(await layer.call('translation', primary.provider, refused)).toEqual({ ok: false, kind: 'refused' });
+    }
+    expect(layer.state('moderation').state).toBe('available');
+    expect(layer.state('translation').state).toBe('available');
+    expect(layer.usable('moderation')).toContain(primary.provider);
+    expect(lines.at(-1)).toMatchObject({ outcome: 'refused', ms: 80 });
+    expect(layer.stats().find((x) => x.provider === 'anthropic' && x.task === 'moderation')).toMatchObject({
+      calls: 10,
+      p95Ms: 80,
+      errorShare: 0,
+    });
+  });
+
+  it('S1: transport failures still count — 3 http 503 in a row take the provider down', async () => {
+    const { primary, layer } = setup();
+    const failed = async (): Promise<ProviderAnswer<{ raw: string }>> => ({ ok: false, kind: 'http', status: 503 });
+    for (let i = 0; i < 3; i++) await layer.call('moderation', primary.provider, failed);
+    expect(layer.state('moderation').state).toBe('degraded');
+  });
+
+  it('S1-b: 20 slow translations (2 s) do not mark the provider slow for moderation, nor for translation', async () => {
+    const { primary, layer } = setup();
+    for (let i = 0; i < 20; i++) await layer.call('translation', primary.provider, primary.answer(2_000, true));
+    expect(layer.state('moderation').state).toBe('available');
+    expect(layer.state('translation').state).toBe('available');
+    expect(layer.usable('moderation')).toContain(primary.provider);
+  });
+
+  it('S1-b: translations slower than 2.5 s mark translation degraded only; moderation stays available', async () => {
+    const { primary, layer } = setup();
+    for (let i = 0; i < 20; i++) await layer.call('translation', primary.provider, primary.answer(2_600, true));
+    expect(layer.state('translation')).toEqual({ task: 'translation', state: 'degraded', reason: 'slow' });
+    expect(layer.state('moderation').state).toBe('available');
+    expect(layer.usable('moderation')).toContain(primary.provider);
+    const rows = layer.stats().filter((x) => x.provider === 'anthropic');
+    expect(rows.map((r) => [r.task, r.status, r.calls])).toEqual([
+      ['moderation', 'available', 0],
+      ['translation', 'unavailable', 20],
+    ]);
+  });
+
+  it('S1-b: one probe per provider feeds every task window that is down; both recover after 120 s', async () => {
+    const { clock, primary, layer, probeUntil } = setup();
+    const failed = async (): Promise<ProviderAnswer<{ raw: string }>> => ({ ok: false, kind: 'timeout' });
+    for (let i = 0; i < 3; i++) await layer.call('moderation', primary.provider, failed);
+    for (let i = 0; i < 3; i++) await layer.call('translation', primary.provider, failed);
+    expect(layer.state('moderation').state).toBe('degraded');
+    expect(layer.state('translation').state).toBe('degraded');
+    const down = clock.now();
+    await probeUntil(down + 120 * S);
+    expect(primary.probe).toHaveBeenCalledTimes(12);
+    expect(layer.state('moderation').state).toBe('available');
+    expect(layer.state('translation').state).toBe('available');
+  });
+
   it('AC-41: stats give p95 and error share of the window per provider', async () => {
     const { clock, primary, layer, run } = setup();
     await run(primary, 100, true, 18);
     await run(primary, 900, true);
     await run(primary, 300, false);
-    const a = layer.stats().find((x) => x.provider === 'anthropic');
-    expect(a).toEqual({ provider: 'anthropic', status: 'available', calls: 20, p95Ms: 300, errorShare: 0.05 });
-    expect(layer.stats().find((x) => x.provider === 'deepseek')).toEqual({
+    expect(layer.stats().map((x) => `${x.provider}:${x.task}`)).toEqual([
+      'anthropic:moderation',
+      'anthropic:translation',
+      'deepseek:moderation',
+      'deepseek:translation',
+    ]);
+    const a = layer.stats().find((x) => x.provider === 'anthropic' && x.task === 'moderation');
+    expect(a).toEqual({ provider: 'anthropic', task: 'moderation', status: 'available', calls: 20, p95Ms: 300, errorShare: 0.05 });
+    expect(layer.stats().find((x) => x.provider === 'deepseek' && x.task === 'moderation')).toEqual({
       provider: 'deepseek',
+      task: 'moderation',
       status: 'available',
       calls: 0,
       p95Ms: 0,
       errorShare: 0,
     });
     clock.advance(61 * S);
-    expect(layer.stats().find((x) => x.provider === 'anthropic')?.calls).toBe(0);
+    expect(layer.stats().find((x) => x.provider === 'anthropic' && x.task === 'moderation')?.calls).toBe(0);
   });
 
   it('probes every 10 s: 110 s clean → still down, 120 s → back; a failure at 100 s restarts', async () => {

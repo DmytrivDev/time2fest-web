@@ -122,6 +122,28 @@ describe('SPEC-09 verdict service', () => {
     expect(m.layer.usable('moderation').map((p) => p.id)).toEqual(['anthropic', 'deepseek']);
   });
 
+  it('S1: the primary refuses the content 10 times → backup decides, the primary stays available', async () => {
+    await control('anthropic', { refuse: true });
+    await control('deepseek', { score: 0.1 });
+    for (let i = 0; i < 10; i++) {
+      expect(await m.verdict.verdict({ kind: 'message', text: `crafted ${i}` })).toEqual({ outcome: 'allow', source: 'backup' });
+    }
+    expect(m.layer.state('moderation').state).toBe('available');
+    expect(m.layer.usable('moderation').map((p) => p.id)).toEqual(['anthropic', 'deepseek']);
+  });
+
+  it('S1: both refuse 10 times → never an AI verdict (fallback; recheck unavailable), both providers stay available', async () => {
+    await control('anthropic', { refuse: true });
+    await control('deepseek', { refuse: true });
+    for (let i = 0; i < 10; i++) {
+      const v = await m.verdict.verdict({ kind: 'message', text: `crafted ${i}` });
+      expect(v.source).toBe('fallback');
+    }
+    expect(await m.verdict.recheck({ kind: 'message', text: 'crafted again' })).toEqual({ outcome: 'unavailable' });
+    expect(m.layer.state('moderation').state).toBe('available');
+    expect(m.layer.usable('moderation').map((p) => p.id)).toEqual(['anthropic', 'deepseek']);
+  });
+
   it('S3: an AI allow of a toast or message that the fallback list blocks is block/fallback; a nick is not second-checked', async () => {
     await control('anthropic', { score: 0 });
     expect(await m.verdict.verdict({ kind: 'message', text: 'hi zqxfallbackctl7' })).toEqual({ outcome: 'block', source: 'fallback' });

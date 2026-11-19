@@ -24,6 +24,15 @@ export interface DeepseekConfig {
 export const DEEPSEEK_MODERATION_MAX_TOKENS = 32;
 export const DEEPSEEK_TRANSLATION_MAX_TOKENS = 400;
 
+/**
+ * DeepSeek rejects a text it considers risky with HTTP 400 and the message "Content Exists Risk"
+ * (security S1). Matched conservatively on that phrase only; every other 400 stays `http`.
+ */
+export function isContentRisk(errorBody: unknown): boolean {
+  const message = asRecord(asRecord(errorBody)?.error)?.message;
+  return typeof message === 'string' && /content exists risk/i.test(message);
+}
+
 function parse(json: unknown): { text: string; usage?: TokenUsage } | undefined {
   const root = asRecord(json);
   const choices = root?.choices;
@@ -70,6 +79,7 @@ export function createDeepseekProvider(config: DeepseekConfig): AiProvider {
       },
       signal,
       timeoutMs,
+      contentRefusal: isContentRisk,
     });
     if (!answer.ok) return answer;
     const parsed = parse(answer.value);

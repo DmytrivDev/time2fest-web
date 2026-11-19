@@ -11,7 +11,12 @@ export interface TokenUsage {
   cacheWrite: number;
 }
 
-export type ProviderFailureKind = 'http' | 'timeout' | 'malformed' | 'not-configured';
+/**
+ * `refused`: the provider answered, but declined the content (Anthropic `stop_reason: "refusal"` or an
+ * empty answer, DeepSeek's content-risk 400). The transport worked, so health counts it as a success;
+ * the caller never treats it as `allow` (security S1).
+ */
+export type ProviderFailureKind = 'http' | 'timeout' | 'malformed' | 'refused' | 'not-configured';
 
 export type ProviderAnswer<T> =
   | { ok: true; value: T; usage?: TokenUsage; ms: number }

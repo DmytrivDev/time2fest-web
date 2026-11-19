@@ -102,6 +102,22 @@ describe('failures and usage', () => {
     expect(await deepseek().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'http', status });
   });
 
+  it('S1: a content refusal gives kind refused — anthropic stop_reason refusal, deepseek 400 Content Exists Risk', async () => {
+    await control('anthropic', { refuse: true });
+    await control('deepseek', { refuse: true });
+    expect(await anthropic().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'refused' });
+    expect(await anthropic().translate({ text: 'x', to: 'uk' }, signal())).toEqual({ ok: false, kind: 'refused' });
+    expect(await deepseek().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'refused', status: 400 });
+    expect(await deepseek().translate({ text: 'x', to: 'uk' }, signal())).toEqual({ ok: false, kind: 'refused', status: 400 });
+  });
+
+  it('S1: any other 400 stays kind http', async () => {
+    await control('anthropic', { down: 400 });
+    await control('deepseek', { down: 400 });
+    expect(await anthropic().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'http', status: 400 });
+    expect(await deepseek().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'http', status: 400 });
+  });
+
   it('a delay over the timeout gives kind timeout', async () => {
     await control('anthropic', { delayMs: 400 });
     expect(await anthropic(80).moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'timeout' });

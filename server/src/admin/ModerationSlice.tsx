@@ -21,6 +21,7 @@ export async function ModerationSlice() {
       })}
       providers={m.layer.stats().map((p) => ({
         provider: p.provider,
+        task: p.task,
         status: p.status,
         reason: p.reason ?? null,
         calls: p.calls,

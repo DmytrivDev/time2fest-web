@@ -59,6 +59,16 @@ describe('SPEC-09 translation service', () => {
     expect(await m.translate.translate({ text: 'Hello everyone', to: 'uk' })).toEqual({ ok: false, reason: 'unavailable' });
   });
 
+  it('S1: both refuse the content 10 times → unavailable each time, both providers stay available', async () => {
+    await control('anthropic', { refuse: true });
+    await control('deepseek', { refuse: true });
+    for (let i = 0; i < 10; i++) {
+      expect(await m.translate.translate({ text: `crafted ${i}`, to: 'uk' })).toEqual({ ok: false, reason: 'unavailable' });
+    }
+    expect(m.layer.state('translation').state).toBe('available');
+    expect(m.layer.usable('translation').map((p) => p.id)).toEqual(['anthropic', 'deepseek']);
+  });
+
   it('AC-25: both answer 503 → unavailable, no made-up translation', async () => {
     await control('anthropic', { down: 503 });
     await control('deepseek', { down: 503 });

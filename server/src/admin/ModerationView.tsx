@@ -16,9 +16,10 @@ export interface TaskView {
   reason: string | null;
 }
 
-/** One provider over the current 60 s window. */
+/** One provider for one task over the current 60 s window (each task has its own health window). */
 export interface ProviderView {
   provider: string;
+  task: string;
   status: string;
   reason: string | null;
   calls: number;
@@ -96,8 +97,8 @@ export function ModerationView({ night, month, tasks, providers, settings }: Mod
           </li>
         ))}
         {providers.map((p) => (
-          <li key={p.provider} data-testid={`provider-${p.provider}`}>
-            {`${PROVIDERS[p.provider] ?? p.provider}: ${PROVIDER_STATUS[p.status] ?? p.status}${p.reason ? ` (${REASONS[p.reason] ?? p.reason})` : ''}` +
+          <li key={`${p.provider}-${p.task}`} data-testid={`provider-${p.provider}-${p.task}`}>
+            {`${PROVIDERS[p.provider] ?? p.provider}, ${TASKS[p.task] ?? p.task}: ${PROVIDER_STATUS[p.status] ?? p.status}${p.reason ? ` (${REASONS[p.reason] ?? p.reason})` : ''}` +
               ` · за 60 с: ${p.calls} викл., p95 ${p.p95Ms} мс, помилок ${p.errorPercent}%`}
           </li>
         ))}

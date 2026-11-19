@@ -11,11 +11,11 @@ import { pathToFileURL } from 'node:url';
 const RING = 100;
 
 /** @typedef {{ marker: string, score: number }} ScoreRule */
-/** @typedef {{ score: number | ScoreRule | ScoreRule[], translation: string | null, delayMs: number, errorRate: number, down: number | null, usage: Record<string, number> | null | undefined, corrupt: 'prose' | 'empty' | 'out-of-range' | null }} Knobs */
+/** @typedef {{ score: number | ScoreRule | ScoreRule[], translation: string | null, delayMs: number, errorRate: number, down: number | null, usage: Record<string, number> | null | undefined, corrupt: 'prose' | 'empty' | 'out-of-range' | null, refuse: boolean }} Knobs */
 
 /** @returns {Knobs} */
 function defaults() {
-  return { score: 0, translation: null, delayMs: 0, errorRate: 0, down: null, usage: undefined, corrupt: null };
+  return { score: 0, translation: null, delayMs: 0, errorRate: 0, down: null, usage: undefined, corrupt: null, refuse: false };
 }
 
 /** @param {string} provider */
@@ -111,6 +111,15 @@ export async function startFakeAi({ port = 0 } = {}) {
       if (k.delayMs > 0) await sleep(k.delayMs);
       if (k.down !== null) return send(res, k.down, { error: { type: 'unavailable' } });
       if (k.errorRate > 0 && Math.random() < k.errorRate) return send(res, 500, { error: { type: 'fake_error' } });
+
+      // `refuse`: the provider declines the content (security S1) — Anthropic answers 200 with
+      // `stop_reason: "refusal"` and no text block; DeepSeek answers 400 "Content Exists Risk".
+      if (k.refuse) {
+        if (provider === 'anthropic') {
+          return send(res, 200, { id: 'msg_fake', type: 'message', role: 'assistant', content: [], stop_reason: 'refusal', usage: defaultUsage(provider) });
+        }
+        return send(res, 400, { error: { message: 'Content Exists Risk', type: 'invalid_request_error', param: null, code: 'invalid_request_error' } });
+      }
 
       /** @type {any[]} */
       const messages = Array.isArray(body.messages) ? body.messages : [];

@@ -67,6 +67,24 @@ export interface PostRequest {
   body: unknown;
   signal: AbortSignal;
   timeoutMs: number;
+  /**
+   * Recognises a content-policy rejection in a 400 error body (security S1); a match answers
+   * `refused`, anything else stays `http`. Only 400 bodies are read, at most `ERROR_BODY_MAX` bytes.
+   */
+  contentRefusal?: (errorBody: unknown) => boolean;
+}
+
+/** The longest 400 error body read to look for a content-policy rejection. */
+export const ERROR_BODY_MAX = 4_096;
+
+async function readErrorBody(res: Response): Promise<unknown> {
+  const text = await res.text();
+  if (text.length > ERROR_BODY_MAX) return undefined;
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return undefined;
+  }
 }
 
 /** POST JSON; the answer is the parsed JSON or a failure kind. Never throws. */
@@ -80,7 +98,11 @@ export async function postJson(req: PostRequest): Promise<ProviderAnswer<unknown
       signal: AbortSignal.any([req.signal, AbortSignal.timeout(req.timeoutMs)]),
     });
     if (!res.ok) {
-      await res.body?.cancel();
+      if (res.status === 400 && req.contentRefusal !== undefined) {
+        if (req.contentRefusal(await readErrorBody(res))) return { ok: false, kind: 'refused', status: 400 };
+      } else {
+        await res.body?.cancel();
+      }
       return { ok: false, kind: 'http', status: res.status };
     }
     try {

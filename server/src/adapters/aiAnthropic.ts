@@ -25,12 +25,18 @@ export interface AnthropicConfig {
 export const ANTHROPIC_MODERATION_MAX_TOKENS = 32;
 export const ANTHROPIC_TRANSLATION_MAX_TOKENS = 400;
 
-function parse(json: unknown): { text: string; usage?: TokenUsage } | undefined {
+/**
+ * The text and usage of a Messages answer; `'refused'` when the model declined the content
+ * (`stop_reason: "refusal"`, or a readable envelope with no text block first — security S1);
+ * `undefined` when the envelope itself is unreadable.
+ */
+function parse(json: unknown): { text: string; usage?: TokenUsage } | 'refused' | undefined {
   const root = asRecord(json);
   const content = root?.content;
   if (!Array.isArray(content)) return undefined;
+  if (root?.stop_reason === 'refusal') return 'refused';
   const first = asRecord(content[0]);
-  if (first === undefined || typeof first.text !== 'string') return undefined;
+  if (first === undefined || first.type !== 'text' || typeof first.text !== 'string') return 'refused';
   const u = asRecord(root?.usage);
   const usage =
     u === undefined
@@ -68,6 +74,7 @@ export function createAnthropicProvider(config: AnthropicConfig): AiProvider {
     if (!answer.ok) return answer;
     const parsed = parse(answer.value);
     if (parsed === undefined) return { ok: false, kind: 'malformed' };
+    if (parsed === 'refused') return { ok: false, kind: 'refused' };
     return { ok: true, value: { raw: parsed.text }, ms: answer.ms, ...(parsed.usage === undefined ? {} : { usage: parsed.usage }) };
   };
 
