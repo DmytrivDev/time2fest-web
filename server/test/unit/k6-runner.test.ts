@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildDockerArgs, K6_IMAGE, k6Env, parseArgs, prefixChannel, toSeconds } from '../../scripts/k6.mjs';
+import { buildDockerArgs, K6_IMAGE, k6Env, loadDirFor, moderationEnv, parseArgs, prefixChannel, toSeconds } from '../../scripts/k6.mjs';
 
 const BASE = ['--scenario', 'publish', '--vus', '50', '--ramp', '10s', '--duration', '60s', '--token', 'door:0.1', '--channels', 'site:state,rttest:batch,toasts'];
 
@@ -52,5 +52,39 @@ describe('k6 runner (AC-63)', () => {
     const argv = buildDockerArgs({ scenario: 'storm', loadDir: '/l', dataDir: undefined, envFile: '/e', network: undefined });
     expect(argv).not.toContain('--network');
     expect(argv.filter((x) => x === '-v')).toHaveLength(1);
+  });
+
+  describe('SPEC-09 NFR-1 moderation scenario', () => {
+    it('needs no channels and defaults to 3000/min for 5m', () => {
+      const a = parseArgs(['--scenario', 'moderation']);
+      expect(a).toMatchObject({ scenario: 'moderation', rate: '3000/min', duration: '5m', channels: [] });
+    });
+
+    it.each([
+      [['--scenario', 'moderation', '--rate', 'fast']],
+      [['--scenario', 'moderation', '--api-url', 'ftp://x']],
+      [['--scenario', 'moderation', '--api-url', 'http://h:1/path']],
+    ])('rejects bad arguments %j', (argv) => {
+      expect(() => parseArgs(argv)).toThrow();
+    });
+
+    it('targets the host gateway with the loopback Host the door requires', () => {
+      expect(moderationEnv(parseArgs(['--scenario', 'moderation']), 3009)).toEqual({
+        API_URL: 'http://host.docker.internal:3009',
+        HOST_HEADER: '127.0.0.1:3009',
+        RATE: '3000/min',
+        DURATION: '5m',
+      });
+      const custom = moderationEnv(parseArgs(['--scenario', 'moderation', '--api-url', 'http://10.0.0.5:4100/', '--rate', '50/s', '--duration', '30s']), 3009);
+      expect(custom).toEqual({ API_URL: 'http://10.0.0.5:4100', HOST_HEADER: '127.0.0.1:4100', RATE: '50/s', DURATION: '30s' });
+    });
+
+    it('runs load/moderation/verdict.js with the host gateway and no network', () => {
+      expect(loadDirFor('moderation').replaceAll('\\', '/')).toMatch(/load\/moderation$/);
+      expect(loadDirFor('publish').replaceAll('\\', '/')).toMatch(/load\/realtime$/);
+      const argv = buildDockerArgs({ scenario: 'moderation', loadDir: '/l', dataDir: undefined, envFile: '/e', network: undefined, hostGateway: true });
+      expect(argv).toEqual(expect.arrayContaining(['--add-host', 'host.docker.internal:host-gateway', '/scripts/verdict.js']));
+      expect(argv).not.toContain('--network');
+    });
   });
 });
