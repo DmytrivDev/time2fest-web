@@ -156,7 +156,8 @@ function Body({ iso }: { iso: string }) {
                 variant="no-stream"
                 longCountdown
                 art={scene}
-                artSrc={sceneSrc}
+                artSrc={sceneSrc?.src}
+                artPosition={sceneSrc?.position}
                 traditions={false}
                 note={t('streamSoon')}
               />

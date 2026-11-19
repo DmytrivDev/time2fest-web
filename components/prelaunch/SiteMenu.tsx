@@ -4,7 +4,7 @@
  * Меню передстартового сайту — те саме бічне вікно й ті самі рядки, що меню сайту свята (`components/shell/Menu`,
  * `SideDialog`, стилі `menu.module.css`; рішення власника 2026-11-19): мови одним рядом угорі (English · Español ·
  * Français · Українська), далі пункти з плиткою-значком і підписом. Лише те, що є на передстартовому сайті: сторінки,
- * документи, пошта й соцмережі — без входу, паспорта, графіка, кімнати перегляду, режиму вечірки й рейтингу.
+ * пошта й соцмережі одним рядом значків (документи — лише в підвалі) — без входу, паспорта, графіка, кімнати перегляду, режиму вечірки й рейтингу.
  */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -16,8 +16,8 @@ import { SideDialog } from '@/components/shell/SideDialog';
 import type { Locale } from '@/i18n/locales';
 import { isPageEnabled, localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
 import { rememberLocale, useLocaleLinks } from './LangSwitch';
-import { SITE } from './SiteFooter';
-import { SocialIcon } from './SocialIcon';
+import { SocialLinks } from './SocialIcon';
+import s from './site.module.css';
 
 function Row({
   href,
@@ -53,7 +53,12 @@ function Row({
   return (
     <li>
       {external ? (
-        <a href={href} target="_blank" rel="noopener noreferrer" className={cn('t2f-focus t2f-transition', ms.row)}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn('t2f-focus t2f-transition', ms.row)}
+        >
           {inner}
         </a>
       ) : (
@@ -95,12 +100,6 @@ const SITE_ROWS: readonly { key: PageKey; icon: IconName }[] = [
   { key: 'toasts', icon: 'glass' },
   { key: 'pass', icon: 'ticket' },
 ];
-const DOC_ROWS: readonly { key: 'privacy' | 'cookies' | 'terms' | 'credits'; icon: IconName }[] = [
-  { key: 'privacy', icon: 'shield-check' },
-  { key: 'cookies', icon: 'cookie' },
-  { key: 'terms', icon: 'text-short' },
-  { key: 'credits', icon: 'sparkles' },
-];
 
 export function SiteMenu({
   open,
@@ -115,7 +114,6 @@ export function SiteMenu({
 }) {
   const t = useTranslations('menu');
   const th = useTranslations('prelaunch.header');
-  const tf = useTranslations('prelaunch.footer');
   const links = useLocaleLinks();
   const close = () => onOpenChange(false);
   const hrefOf = (code: string) => links.find((l) => l.locale === code)?.href;
@@ -138,7 +136,7 @@ export function SiteMenu({
                 aria-current={on ? 'true' : undefined}
                 data-state={on ? 'checked' : 'unchecked'}
                 onClick={() => rememberLocale(l.code as Locale)}
-                className={cn('t2f-focus t2f-transition', ms.lang)}
+                className={cn('t2f-focus t2f-transition', ms.lang, s.menuLang)}
               >
                 {l.name}
               </a>
@@ -161,24 +159,9 @@ export function SiteMenu({
               />
             ))}
           </Section>
-          <Section title={tf('groupDocs')}>
-            {DOC_ROWS.filter((r) => isPageEnabled(r.key)).map((r) => (
-              <Row
-                key={r.key}
-                href={localeHref(locale, PAGES[r.key])}
-                icon={icon(r.icon)}
-                title={tf(r.key)}
-                onNavigate={close}
-              />
-            ))}
-          </Section>
-          <Section title={t('sectionMore')}>
-            <Row href={`mailto:${SITE.email}`} icon={icon('mail')} title={SITE.email} external />
-            {SITE.social.map((x) => (
-              <Row key={x.url} href={x.url} icon={<SocialIcon name={x.name} size={18} />} title={x.name} external />
-            ))}
-          </Section>
         </nav>
+        {/* Документи — лише в підвалі; пошта й соцмережі — одним рядом значків (рішення власника перед доменом). */}
+        <SocialLinks className={s.menuSocial} />
       </div>
     </SideDialog>
   );

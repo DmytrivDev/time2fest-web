@@ -12,6 +12,7 @@ import { LangPathContext } from './LangSwitch';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 import { SiteProvider } from './SiteProvider';
+import { OverlayManager } from '@/components/shell/OverlayManager';
 import s from './site.module.css';
 
 /** «Перейти до вмісту» мовою сторінки: перше в порядку Tab, видно лише у фокусі (як `SkipLinks` сайту). */
@@ -46,17 +47,24 @@ export function SiteShell({
 }) {
   return (
     <SiteProvider site={site}>
-      <LangPathContext.Provider value={langPath ?? null}>
-        <div className={cn(p.page, s.page)} data-page={page} data-locale={site.locale}>
-          <SkipLink />
-          <SiteHeader locale={site.locale} current={current} overlay={overlay} />
-          <main id="content" tabIndex={-1} className={cn('focus:outline-none', !overlay && s.main)}>
-            {children}
-          </main>
-          <SiteFooter locale={site.locale} />
-          <LangHint locale={site.locale} />
-        </div>
-      </LangPathContext.Provider>
+      {/* Шторки (вибір поясу країни на телефоні): без чату на сторінці менеджер показує звичайну `Sheet`. */}
+      <OverlayManager>
+        <LangPathContext.Provider value={langPath ?? null}>
+          <div className={cn(p.page, s.page)} data-page={page} data-locale={site.locale}>
+            <SkipLink />
+            <SiteHeader locale={site.locale} current={current} overlay={overlay} />
+            <main
+              id="content"
+              tabIndex={-1}
+              className={cn('focus:outline-none', !overlay && s.main)}
+            >
+              {children}
+            </main>
+            <SiteFooter locale={site.locale} />
+            <LangHint locale={site.locale} />
+          </div>
+        </LangPathContext.Provider>
+      </OverlayManager>
     </SiteProvider>
   );
 }

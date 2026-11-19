@@ -19,8 +19,15 @@ describe('набори країн', () => {
   });
 
   it('сцена з файла: пояс, для головного — країна; чужий пояс і країна без файла — нічого', () => {
-    expect(sceneFile('BR', 'utc-0400', false)).toBe('/scenes/BR-utc-0400.svg');
-    expect(sceneFile('JP', 'utc+0900', true)).toBe('/scenes/JP.svg');
+    expect(sceneFile('BR', 'utc-0400', false)).toEqual({
+      src: '/scenes/BR-utc-0400.svg',
+      position: '50% 0%',
+    });
+    // Типовий фокус — верх по центру: верхівка пам'ятки в кадрі ширшому за 3:2.
+    expect(sceneFile('JP', 'utc+0900', true)).toEqual({
+      src: '/scenes/JP.svg',
+      position: '50% 0%',
+    });
     expect(sceneFile('JP', 'utc+0900', false)).toBeUndefined();
     expect(sceneFile('BR', 'utc-0300', true)).toBeUndefined();
     expect(sceneFile('FR', 'utc+0100', true)).toBeUndefined();

@@ -56,15 +56,17 @@ export interface CountdownSceneProps {
    * замість вбудованої листівки.
    */
   artSrc?: string;
+  /** Точка фокусу сцени з файла (`object-position`); типово — центр. */
+  artPosition?: string;
   /** `false` — без «Як святкують» на сцені: сторінка показує традиції окремою карткою нижче (передстартовий сайт). */
   traditions?: boolean;
   /** Рядок під відліком (передстартовий сайт: «Ближче до святкування тут з’явиться трансляція»). */
   note?: string;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, artSrc, traditions, note }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, artSrc, artPosition, traditions, note }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} artSrc={artSrc} traditions={traditions} note={note} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} artSrc={artSrc} artPosition={artPosition} traditions={traditions} note={note} />;
 }
 
 /**
@@ -157,7 +159,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, artSrc, traditions: withTraditions = true, note }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, artSrc, artPosition, traditions: withTraditions = true, note }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -188,7 +190,13 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
     >
       {art && artSrc ? (
         // eslint-disable-next-line @next/next/no-img-element -- статичний SVG сцени
-        <img src={artSrc} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
+        <img
+          src={artSrc}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 size-full object-cover"
+          style={artPosition ? { objectPosition: artPosition } : undefined}
+        />
       ) : art ? (
         <PostcardArt illustrationId={country.illustrationId} fill className="absolute inset-0 size-full" />
       ) : null}
@@ -205,10 +213,11 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
       ) : (
         <div className="absolute inset-0 flex flex-col gap-2 bg-linear-to-t from-background/95 via-background/50 to-transparent p-4 @lg:bg-linear-to-r @lg:from-background/80 @lg:via-background/30 @lg:to-transparent @lg:p-8">
           <p className="hidden text-label-sm text-text-secondary @lg:block">{variant === 'mode' ? t('modeCaption') : t('caption')}</p>
-          <div className="flex min-h-0 flex-1 items-center">
+          {/* Примітка (передстартовий сайт) — одразу під відліком, не внизу над країною. */}
+          <div className="flex min-h-0 flex-1 flex-col justify-center gap-1 @lg:gap-2">
             {phase.kind === 'count' ? <SceneCountdown left={phase.left} days={longCountdown} /> : phase.kind === 'after' ? <SceneYear year={year} /> : null}
+            {note && phase.kind === 'count' ? <p className="text-caption text-text-secondary @lg:text-body">{note}</p> : null}
           </div>
-          {note && phase.kind === 'count' ? <p className="text-caption text-text-secondary @lg:text-body">{note}</p> : null}
           <div className="flex items-center gap-3 @lg:gap-5">
             <span className="@lg:hidden">
               <Flag code={country.flagCode} size="md" decorative />

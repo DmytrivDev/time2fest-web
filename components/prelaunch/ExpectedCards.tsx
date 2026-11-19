@@ -46,7 +46,11 @@ export function ExpectedCards({
   const photo = photoProp ?? (mediaSlot ? site?.media[mediaSlot] : undefined);
   const countdown = kinds.includes('countdown');
   // Немає підтвердженого джерела — одна картка з нейтральним «Трансляція» (рішення 2026-11-18).
-  const cards: readonly (ExpectedKind | null)[] = countdown ? ['countdown'] : kinds.length ? kinds : [null];
+  const cards: readonly (ExpectedKind | null)[] = countdown
+    ? ['countdown']
+    : kinds.length
+      ? kinds
+      : [null];
   const time = formatClock(midnightMs);
 
   const thumb = (kind: ExpectedKind | null) => (
@@ -58,7 +62,11 @@ export function ExpectedCards({
           alt={mediaAlt(photo, site?.locale, city)}
           loading="lazy"
           decoding="async"
-          style={photo.position ? { objectPosition: `${photo.position.x}% ${photo.position.y}%` } : undefined}
+          style={
+            photo.position
+              ? { objectPosition: `${photo.position.x}% ${photo.position.y}%` }
+              : undefined
+          }
         />
       ) : (
         <PostcardArt illustrationId={illustrationId} fill className={s.coverArt} />
@@ -79,9 +87,16 @@ export function ExpectedCards({
       </span>
     );
   const label = (kind: ExpectedKind | null) => (kind ? te(`kind.${kind}`) : te('neutralType'));
+  // Звернення лідера держави — без часу: коли воно почнеться, невідомо (рішення власника перед доменом).
+  const meta = (kind: ExpectedKind | null) =>
+    kind === 'address' ? label(kind) : `${label(kind)} · ${time}`;
 
   return (
-    <section className={cn(s.section, className)} data-expected-cards="" aria-labelledby="expected-h">
+    <section
+      className={cn(s.section, className)}
+      data-expected-cards=""
+      aria-labelledby="expected-h"
+    >
       <div className={s.head}>
         <div className={s.titleBlock}>
           <h2 id="expected-h" className={s.h2}>
@@ -98,9 +113,7 @@ export function ExpectedCards({
                 <span className={s.rowText}>
                   <span className={s.title}>{city}</span>
                   {status(kind) ? <span className={s.statusLine}>{status(kind)}</span> : null}
-                  <span className={s.meta}>
-                    {label(kind)} · {time}
-                  </span>
+                  <span className={s.meta}>{meta(kind)}</span>
                 </span>
               </div>
             </li>
@@ -117,9 +130,7 @@ export function ExpectedCards({
                 </span>
                 <span className={s.text}>
                   <span className={s.title}>{city}</span>
-                  <span className={s.meta}>
-                    {label(kind)} · {time}
-                  </span>
+                  <span className={s.meta}>{meta(kind)}</span>
                 </span>
               </div>
             </li>

@@ -12,7 +12,7 @@ import { LOCALE_NAMES, type Locale } from '@/i18n/locales';
 import { localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
 import { isRouteEnabled } from '@/lib/prelaunch/pages.mjs';
 import { rememberLocale, useLocaleLinks } from './LangSwitch';
-import { SocialIcon } from './SocialIcon';
+import { SocialLinks } from './SocialIcon';
 import s from './site.module.css';
 
 export const SITE = siteJson as { email: string; social: { name: string; url: string }[] };
@@ -59,25 +59,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <div className={ft.brand}>
             <Logo variant="footer" href={localeHref(locale, PAGES.home)} label={h('logoLabel')} />
             <p className={ft.tag}>{t('tagline')}</p>
-            <a className={ft.mail} href={`mailto:${SITE.email}`}>
-              {SITE.email}
-            </a>
-            {SITE.social.length ? (
-              <ul className={s.social} aria-label={t('socialLabel')}>
-                {SITE.social.map((x) => (
-                  <li key={x.url}>
-                    <a
-                      href={x.url}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      aria-label={t('socialLink', { network: x.name })}
-                    >
-                      <SocialIcon name={x.name} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+            <SocialLinks />
           </div>
           {GROUPS.map((g) => (
             <div className={ft.col} key={g.title}>

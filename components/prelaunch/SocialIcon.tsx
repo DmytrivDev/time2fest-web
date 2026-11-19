@@ -3,7 +3,13 @@
  * Facebook, Threads і LinkedIn — прості монохромні знаки в тому ж стилі (24×24, `currentColor`). Підпис — `aria-label`
  * на посиланні.
  */
+import { useTranslations } from 'next-intl';
+import siteJson from '@/data/prelaunch/site.json';
 import { Icon, type IconSize } from '@/components/primitives/Icon';
+import { cn } from '@/components/primitives/cn';
+import s from './site.module.css';
+
+const SITE = siteJson as { email: string; social: { name: string; url: string }[] };
 
 const PATHS: Record<string, string> = {
   Facebook:
@@ -19,8 +25,48 @@ export function SocialIcon({ name, size = 20 }: { name: string; size?: IconSize 
   const d = PATHS[name];
   if (!d) return null;
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+    >
       <path d={d} />
     </svg>
+  );
+}
+
+/**
+ * Ряд значків: пошта й соцмережі (рішення власника перед доменом, 2026-11-19) — у підвалі й унизу меню. Адреса пошти —
+ * лише в `aria-label` і `title`.
+ */
+export function SocialLinks({ className }: { className?: string }) {
+  const t = useTranslations('prelaunch.footer');
+  return (
+    <ul className={cn(s.social, className)} aria-label={t('socialLabel')}>
+      <li>
+        <a
+          href={`mailto:${SITE.email}`}
+          aria-label={`${t('write')}: ${SITE.email}`}
+          title={SITE.email}
+        >
+          <Icon name="mail" size={20} />
+        </a>
+      </li>
+      {SITE.social.map((x) => (
+        <li key={x.url}>
+          <a
+            href={x.url}
+            rel="noopener noreferrer"
+            target="_blank"
+            aria-label={t('socialLink', { network: x.name })}
+          >
+            <SocialIcon name={x.name} />
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
