@@ -37,6 +37,8 @@ export interface ProviderLayerDeps {
   probeIntervalMs?: number;
   /** Upper bound of one probe call; the provider's own timeout applies inside. */
   probeTimeoutMs?: number;
+  /** Every probe answer (the spend counter adds what the provider bills for it, AC-26). */
+  onProbe?: (provider: ProviderId, answer: ProviderAnswer<unknown>) => void;
 }
 
 export type StateListener = (status: AiStatus) => void;
@@ -90,6 +92,7 @@ export function createProviderLayer({
   log,
   probeIntervalMs = PROBE_INTERVAL_MS,
   probeTimeoutMs = 5_000,
+  onProbe,
 }: ProviderLayerDeps): ProviderLayer {
   const byId = new Map<ProviderId, ProviderHealth>();
   for (const task of AI_TASKS) {
@@ -196,6 +199,11 @@ export function createProviderLayer({
     h.lastProbeAt = clock.now();
     const { answer, ms, at } = await measure(() => h.provider.probe(AbortSignal.timeout(probeTimeoutMs)));
     logCall(h.provider.id, 'probe', ms, answer);
+    try {
+      onProbe?.(h.provider.id, answer);
+    } catch (err) {
+      log.warn({ event: 'ai-probe-hook-failed', err: err instanceof Error ? err.name : 'error' });
+    }
     if (h.health.status === 'available' || h.downSince === null) return;
     h.probes.push({ at, ms, ok: answer.ok });
     const streak = probeStreak(h.probes, h.downSince);
