@@ -181,6 +181,66 @@
       "author": "InSapphoWeTrust",
       "license": "CC BY-SA 2.0",
       "sourceUrl": "https://commons.wikimedia.org/wiki/File:Happy_New_Year_2012,_Las_Vegas_Strip_(8286163691).jpg"
+    },
+    "country:JP": {
+      "src": "/media/photos/japan.webp",
+      "alt": {
+        "uk": "Храм Дзьодзьо-дзі й Токійська вежа в новорічну ніч",
+        "en": "Zōjō-ji temple and Tokyo Tower on New Year’s Eve",
+        "es": "El templo Zōjō-ji y la Torre de Tokio en Nochevieja",
+        "fr": "Le temple Zōjō-ji et la tour de Tokyo le soir du réveillon"
+      },
+      "author": "NJo",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zojo-ji_temple_and_Tokyo_Tower_in_New_Years_eve_2012.JPG"
+    },
+    "city:berlin": {
+      "src": "/media/photos/berlin.webp",
+      "alt": {
+        "uk": "Салют за Бранденбурзькими воротами в Берліні",
+        "en": "Fireworks behind the Brandenburg Gate in Berlin",
+        "es": "Fuegos artificiales tras la Puerta de Brandeburgo en Berlín",
+        "fr": "Feu d’artifice derrière la porte de Brandebourg à Berlin"
+      },
+      "author": "Leonhard Lenz",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:ZDF_new_year_TV_show_Brandenburg_gate_for_2021_firework_from_Unter_den_Linden_20.jpg"
+    },
+    "city:rome": {
+      "src": "/media/photos/rome.webp",
+      "alt": {
+        "uk": "Салют над Колізеєм у Римі",
+        "en": "Fireworks over the Colosseum in Rome",
+        "es": "Fuegos artificiales sobre el Coliseo de Roma",
+        "fr": "Feu d’artifice au-dessus du Colisée à Rome"
+      },
+      "author": "Zabbo",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Capodanno_romano.jpg"
+    },
+    "city:london": {
+      "src": "/media/photos/london.webp",
+      "alt": {
+        "uk": "Новорічний салют за колесом London Eye в Лондоні",
+        "en": "New Year fireworks behind the London Eye",
+        "es": "Fuegos artificiales de Año Nuevo tras el London Eye",
+        "fr": "Feu d’artifice du Nouvel An derrière le London Eye"
+      },
+      "author": "Clarence Ji",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Years_2014_Fireworks_-_London_Eye.jpg"
+    },
+    "country:GB": {
+      "src": "/media/photos/london.webp",
+      "alt": {
+        "uk": "Новорічний салют за колесом London Eye в Лондоні",
+        "en": "New Year fireworks behind the London Eye",
+        "es": "Fuegos artificiales de Año Nuevo tras el London Eye",
+        "fr": "Feu d’artifice du Nouvel An derrière le London Eye"
+      },
+      "author": "Clarence Ji",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Years_2014_Fireworks_-_London_Eye.jpg"
     }
   }
 }
