@@ -77,6 +77,9 @@ export interface Config {
     events: Event;
     'idempotency-records': IdempotencyRecord;
     'internal-events': InternalEvent;
+    'run-records': RunRecord;
+    'scheduler-leases': SchedulerLease;
+    'scheduler-runs': SchedulerRun;
     seasons: Season;
     traditions: Tradition;
     'unattended-windows': UnattendedWindow;
@@ -98,6 +101,9 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     'idempotency-records': IdempotencyRecordsSelect<false> | IdempotencyRecordsSelect<true>;
     'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
+    'run-records': RunRecordsSelect<false> | RunRecordsSelect<true>;
+    'scheduler-leases': SchedulerLeasesSelect<false> | SchedulerLeasesSelect<true>;
+    'scheduler-runs': SchedulerRunsSelect<false> | SchedulerRunsSelect<true>;
     seasons: SeasonsSelect<false> | SeasonsSelect<true>;
     traditions: TraditionsSelect<false> | TraditionsSelect<true>;
     'unattended-windows': UnattendedWindowsSelect<false> | UnattendedWindowsSelect<true>;
@@ -113,10 +119,12 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'admin-settings': AdminSetting;
+    'clock-state': ClockState;
     'unattended-state': UnattendedState;
   };
   globalsSelect: {
     'admin-settings': AdminSettingsSelect<false> | AdminSettingsSelect<true>;
+    'clock-state': ClockStateSelect<false> | ClockStateSelect<true>;
     'unattended-state': UnattendedStateSelect<false> | UnattendedStateSelect<true>;
   };
   locale: null;
@@ -407,6 +415,63 @@ export interface InternalEvent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "run-records".
+ */
+export interface RunRecord {
+  id: number;
+  consequenceId: string;
+  keys?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  action: string;
+  runEpoch: number;
+  plannedAt: number;
+  startedAt: number;
+  at: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scheduler-leases".
+ */
+export interface SchedulerLease {
+  id: number;
+  name: string;
+  holder: string;
+  epoch: number;
+  expiresAt: string;
+  renewedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scheduler-runs".
+ */
+export interface SchedulerRun {
+  id: number;
+  runEpoch: number;
+  action: string;
+  momentKey: string;
+  status: 'started' | 'done' | 'skipped' | 'failed';
+  consequenceId?: string | null;
+  leaseEpoch?: number | null;
+  plannedAt?: number | null;
+  startedAt?: number | null;
+  finishedAt?: number | null;
+  reason?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "seasons".
  */
 export interface Season {
@@ -536,6 +601,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'internal-events';
         value: number | InternalEvent;
+      } | null)
+    | ({
+        relationTo: 'run-records';
+        value: number | RunRecord;
+      } | null)
+    | ({
+        relationTo: 'scheduler-leases';
+        value: number | SchedulerLease;
+      } | null)
+    | ({
+        relationTo: 'scheduler-runs';
+        value: number | SchedulerRun;
       } | null)
     | ({
         relationTo: 'seasons';
@@ -811,6 +888,52 @@ export interface InternalEventsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "run-records_select".
+ */
+export interface RunRecordsSelect<T extends boolean = true> {
+  consequenceId?: T;
+  keys?: T;
+  action?: T;
+  runEpoch?: T;
+  plannedAt?: T;
+  startedAt?: T;
+  at?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scheduler-leases_select".
+ */
+export interface SchedulerLeasesSelect<T extends boolean = true> {
+  name?: T;
+  holder?: T;
+  epoch?: T;
+  expiresAt?: T;
+  renewedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scheduler-runs_select".
+ */
+export interface SchedulerRunsSelect<T extends boolean = true> {
+  runEpoch?: T;
+  action?: T;
+  momentKey?: T;
+  status?: T;
+  consequenceId?: T;
+  leaseEpoch?: T;
+  plannedAt?: T;
+  startedAt?: T;
+  finishedAt?: T;
+  reason?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "seasons_select".
  */
 export interface SeasonsSelect<T extends boolean = true> {
@@ -929,6 +1052,22 @@ export interface AdminSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clock-state".
+ */
+export interface ClockState {
+  id: number;
+  virtual?: boolean | null;
+  anchorVirtual?: number | null;
+  anchorReal?: number | null;
+  speed?: number | null;
+  frozen?: boolean | null;
+  runEpoch?: number | null;
+  seq?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "unattended-state".
  */
 export interface UnattendedState {
@@ -947,6 +1086,22 @@ export interface UnattendedState {
  */
 export interface AdminSettingsSelect<T extends boolean = true> {
   agentPublish?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clock-state_select".
+ */
+export interface ClockStateSelect<T extends boolean = true> {
+  virtual?: T;
+  anchorVirtual?: T;
+  anchorReal?: T;
+  speed?: T;
+  frozen?: T;
+  runEpoch?: T;
+  seq?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

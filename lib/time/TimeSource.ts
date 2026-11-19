@@ -123,6 +123,11 @@ export class TimeSource implements TimeSourceLike {
     this.cancelRetry = this.cancelPeriodic = null;
   }
 
+  /** Один раунд вибірки зараз (SPEC-07, AC-57): реакція на подію `clock` репетиції. */
+  resync(): Promise<boolean> {
+    return this.sync();
+  }
+
   /** Серія до `count` запитів; `true`, якщо якір оновлено. */
   sync(count: number = SAMPLE_COUNT): Promise<boolean> {
     if (this.inflight) return this.inflight;
@@ -190,7 +195,11 @@ export class TimeSource implements TimeSourceLike {
   }
 
   private onFailure(): void {
-    if (this.anchor) return; // якір лишається дійсним; наступна спроба — за розкладом
+    if (this.anchor) {
+      // AC-3: якір лишається дійсним (стан `server`, годинник пристрою не береться); повтори 5/10/20/60 с, далі щохвилини.
+      this.scheduleRetry();
+      return;
+    }
     const wasReady = this.ready;
     this.status = 'device-fallback';
     this.ready = true;
@@ -198,16 +207,19 @@ export class TimeSource implements TimeSourceLike {
       this.warned = true;
       this.warn(FALLBACK_WARNING);
     }
-    if (this.started) {
-      const delay = RETRY_BACKOFF_MS[Math.min(this.failures, RETRY_BACKOFF_MS.length - 1)]!;
-      this.failures++;
-      this.cancelRetry?.();
-      this.cancelRetry = this.setTimer(() => {
-        this.cancelRetry = null;
-        void this.sync();
-      }, delay);
-    }
+    this.scheduleRetry();
     if (!wasReady) this.emit();
+  }
+
+  private scheduleRetry(): void {
+    if (!this.started) return;
+    const delay = RETRY_BACKOFF_MS[Math.min(this.failures, RETRY_BACKOFF_MS.length - 1)]!;
+    this.failures++;
+    this.cancelRetry?.();
+    this.cancelRetry = this.setTimer(() => {
+      this.cancelRetry = null;
+      void this.sync();
+    }, delay);
   }
 
   private schedulePeriodic(): void {

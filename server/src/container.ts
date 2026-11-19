@@ -7,7 +7,8 @@
  * Test doors are loaded by dynamic `import()` only when `shouldLoadDoors` is true (AC-29); no
  * request field takes part in that decision (AC-31).
  */
-import { randomInt } from 'node:crypto';
+import { randomBytes, randomInt } from 'node:crypto';
+import { hostname } from 'node:os';
 import type { JWTVerifyGetKey } from 'jose';
 import type { Payload } from 'payload';
 import { readHolders, resolveLockDir } from '../scripts/lib/lock.mjs';
@@ -25,7 +26,14 @@ import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapter
 import { parseAccessConfig } from './domain/access/config';
 import { parseRealtimeConfig } from './domain/realtime/config';
 import { createMemoryStore, createRedisStore } from './adapters/redis';
-import { clockFor, realClock } from './clock';
+import { createPayloadClockStateStore } from './adapters/payloadClockState';
+import { createPayloadJournal } from './adapters/payloadJournal';
+import { createPayloadMomentSource } from './adapters/payloadMoments';
+import { createPgScheduler } from './adapters/pgScheduler';
+import { seasonRunEpoch } from './domain/scheduler/consequence';
+import { clockFor, processClockCache, realClock } from './clock';
+import { createDivergenceMeter } from './timekeeping/divergence';
+import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
 import type { AppEnv, Deps, EventPorts, RouteRow } from './endpoints/types';
@@ -49,8 +57,10 @@ import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
 import type { Scheduler } from './realtime/ports';
 import { isRevertible } from './registries/revertHandlers';
+import { momentActionsFor } from './registries/moments';
 import { routeRegistry } from './registries/routes';
 import { subscriberRegistry } from './registries/subscribers';
+import { createScheduler, type SchedulerHandle } from './scheduler/service';
 import { evaluate } from './unattended/service';
 import { startTicker, type Ticker } from './unattended/ticker';
 
@@ -60,6 +70,7 @@ const PAYLOAD_KEY = Symbol.for('t2f.payload');
 const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
 const BACKGROUND_KEY = Symbol.for('t2f.background');
 const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
+const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -146,9 +157,26 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const realtime = parseRealtimeConfig(raw, env.class);
   if (!realtime.ok) throw new Error(`env: invalid ${realtime.failing.join(', ')}`);
   const log = overrides.log ?? createLogger(loaded.secrets, { clock: realClock });
-  const clock = overrides.clock ?? clockFor(env.class);
   // The store reaches Payload lazily, so the alarm exists before Payload (which reports through it).
   let payloadRef: () => Promise<Payload> = () => Promise.reject(new Error('payload: not wired'));
+  const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
+  // Shared virtual time (SPEC-07 AC-49): test and rehearsal only, over the process cache. Its store
+  // has its own outbox publisher on real time, so the clock does not depend on itself.
+  const sharedClock =
+    env.class === 'production'
+      ? undefined
+      : (overrides.sharedClock ??
+        createSharedClock({
+          store: createPayloadClockStateStore({
+            payload: () => payloadRef(),
+            journal: createPayloadJournal(isRevertible),
+            publisher: createPgEventPublisher(() => payloadRef(), realClock, channel),
+            real: realClock,
+          }),
+          real: realClock,
+          cache: processClockCache(),
+        }));
+  const clock = overrides.clock ?? clockFor(env.class, sharedClock);
   const alarmStore = overrides.alarmStore ?? createPayloadAlarmStore(() => payloadRef(), clock);
   const alarm = overrides.alarm ?? createAlarm(log, alarmStore);
   const payload = overrides.payload ?? lazyPayload(alarm);
@@ -165,7 +193,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
-  const channel = eventsChannel(String(env.vars.DATABASE_URI ?? ''));
+  if (sharedClock) deps.sharedClock = sharedClock;
+  deps.divergence = overrides.divergence ?? createDivergenceMeter({ real: realClock, alarm, log });
   deps.events = overrides.events ?? {
     publisher: createPgEventPublisher(payload, clock, channel),
     log: createPgEventLog(payload),
@@ -181,6 +210,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
+  // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
+  deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   const tokenSecret = realtime.config.tokenSecret;
@@ -202,6 +233,36 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
       : {}),
   };
   return deps;
+}
+
+/**
+ * The moment scheduler of the process (SPEC-07 AC-27 … AC-48), not started. Server time is the
+ * shared clock's view in test/rehearsal (unless a test replaced `clock`), real time at speed 1 in
+ * production; the lease and lag use the monotonic `performance.now()`. The run epoch is the clock
+ * state's in test/rehearsal and the season key's year in production (C4).
+ */
+function createProcessScheduler(deps: Deps, payload: () => Promise<Payload>, shared: SharedClock | undefined): SchedulerHandle {
+  const stores = createPgScheduler({ payload, journal: createPayloadJournal(isRevertible) });
+  const virtual = shared !== undefined && deps.clock === shared ? shared : undefined;
+  return createScheduler({
+    // `since`: the last jump or speed change of a virtual clock, so a jump is not lag (AC-39).
+    view: virtual
+      ? () => {
+          const s = virtual.state();
+          return { ...virtual.view(), ...(s.virtual ? { since: s.anchorVirtual } : {}) };
+        }
+      : () => ({ now: deps.clock.now(), speed: 1, frozen: false }),
+    mono: () => performance.now(),
+    lease: stores.lease,
+    runs: stores.runs,
+    source: createPayloadMomentSource({ payload, catalog: catalogStoreOf(deps) }),
+    rows: momentActionsFor(deps.env.class),
+    alarm: deps.alarm,
+    log: deps.log,
+    holderId: `${hostname()}:${process.pid}:${randomBytes(4).toString('hex')}`,
+    cls: deps.env.class,
+    runEpochOf: shared ? () => shared.state().runEpoch : (input) => seasonRunEpoch(input.seasonId),
+  });
 }
 
 /**
@@ -269,22 +330,47 @@ export function startUnattendedTicker(deps: Deps, intervalMs?: number): Ticker {
 }
 
 /**
- * Starts the process background once: the internal-events delivery loop (a failed start, database
- * down, is retried every 5 s) and the unattended-mode ticker. Only `instrumentation.ts` calls it.
+ * The clock refresh of one process (SPEC-07 AC-49, AC-50): loads the shared clock state now, then
+ * every `intervalMs` (default 5 s) as a fallback to the `clock.changed` subscriber. A failed refresh
+ * raises a log-level alarm (code only) and keeps the cache. Resolves to `undefined` in production
+ * (no shared clock). Processes that start no background (CLI, tests) call it, or `refresh()`, themselves.
+ */
+export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<ClockRefresh | undefined> {
+  const shared = deps.sharedClock;
+  if (!shared) return Promise.resolve(undefined);
+  return startClockRefresh(shared, {
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'clock', code: 'refresh_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    ...(intervalMs === undefined ? {} : { intervalMs }),
+  });
+}
+
+/**
+ * Starts the process background once. First the shared clock is loaded (so nothing below starts
+ * on a stale clock), then the internal-events delivery loop (a failed start, database down, is
+ * retried every 5 s) and the unattended-mode ticker; once the delivery loop runs (so the
+ * recompute rows reach it), the moment scheduler. Only `instrumentation.ts` calls it — never a CLI.
  */
 export function startProcessBackground(): void {
-  const g = globalThis as unknown as Record<symbol, true | Ticker | undefined>;
+  const g = globalThis as unknown as Record<symbol, true | Ticker | ClockRefresh | undefined>;
   if (g[BACKGROUND_KEY]) return;
   g[BACKGROUND_KEY] = true;
-  g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
   const attempt = () => {
     const deps = getDeps();
-    startBackground(deps).catch(() => {
+    startBackground(deps).then(() => deps.scheduler?.start(), () => {
       deps.alarm.raise({ level: 'log', source: 'events', code: 'background_start_failed' });
       setTimeout(attempt, BACKGROUND_RETRY_MS).unref?.();
     });
   };
-  attempt();
+  const rest = (refresher?: ClockRefresh) => {
+    g[CLOCK_REFRESH_KEY] = refresher;
+    g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
+    attempt();
+  };
+  // A failed refresh is reported by the refresher itself; the rest starts in either case.
+  void startClockRefresher(getDeps()).then(rest, () => rest());
 }
 
 /** The lazy Payload accessor of deps built by `createDeps`. For the composition root and tests only. */

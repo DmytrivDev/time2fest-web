@@ -90,7 +90,7 @@ describe('remote node argv', () => {
     const { fx, node } = remote();
     expect(await node.migrate()).toEqual({ code: 0 });
     expect(fx.calls.map((c) => c.argv)).toEqual([
-      [...BASE, '--env-file', `${DIR}/next.env`, 'up', '-d', '--wait', 'postgres', 'redis'],
+      [...BASE, '--env-file', `${DIR}/next.env`, 'up', '-d', '--wait', 'postgres', 'redis', 'centrifugo'],
       [...BASE, '--env-file', `${DIR}/next.env`, 'run', '--rm', '--no-deps', 'server', 'pnpm', 'migrate'],
     ]);
   });

@@ -26,6 +26,8 @@ const RULE_CONSTANTS = Object.freeze({
   RATING_CLOSE_AFTER: 12 * HOUR,
   SCHEDULE_CLOSE_MS: 2 * MIN,
   CATCH_UP_MAX_AGE_MS: 30 * MIN,
+  POLL_WINDOW_BEFORE: 60 * MIN,
+  POLL_WINDOW_AFTER: 60 * MIN,
 });
 
 /** Імена експортованих констант правил (усі з `constants.ts`, крім `SERVER_CLOCK_TOLERANCE_MS`). */

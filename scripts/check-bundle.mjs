@@ -1,12 +1,15 @@
-// Перевірка збірки (SPEC-06, AC-56): центральний бандл не має містити centrifuge-js.
-// Використання: node scripts/check-bundle.mjs <dir>. Коди виходу: 0 — чисто, 1 — знайдено підпис, 2 — немає теки або аргументу.
+// Перевірка збірки (SPEC-06 AC-56, SPEC-07 AC-58): центральний бандл не має містити centrifuge-js,
+// а жодна не тестова збірка — шляху дверцят `/api/_test/` і ключа машини часу.
+// Використання: node scripts/check-bundle.mjs <dir> [--allow-realtime]. Коди виходу: 0 — чисто, 1 — знайдено підпис, 2 — немає теки або аргументу.
+// `--allow-realtime` — збірка репетиції: підписи centrifuge дозволені, решта діє.
 import fs from 'node:fs';
 import path from 'node:path';
 
-const SIGNATURES = [
+const REALTIME_SIGNATURES = [
   'WebSocket constructor not found, make sure it is available globally or passed as a dependency in Centrifuge options',
   'token expired but no getToken function set in the configuration',
 ];
+const TEST_SIGNATURES = ['/api/_test/', 't2f:session:timeMachine'];
 
 function* walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -16,7 +19,10 @@ function* walk(dir) {
   }
 }
 
-const dir = process.argv[2];
+const args = process.argv.slice(2);
+const allowRealtime = args.includes('--allow-realtime');
+const SIGNATURES = allowRealtime ? TEST_SIGNATURES : [...REALTIME_SIGNATURES, ...TEST_SIGNATURES];
+const dir = args.find((a) => !a.startsWith('--'));
 if (!dir || !fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
   console.error(`check-bundle: directory not found: ${dir ?? '(no argument)'} — run the build first`);
   process.exit(2);
@@ -31,7 +37,7 @@ for (const file of walk(dir)) {
 }
 
 if (hits.length > 0) {
-  console.error('check-bundle: centrifuge-js found in:');
+  console.error('check-bundle: forbidden signature (centrifuge-js, test door or time machine) found in:');
   for (const f of hits) console.error(`  ${f}`);
   process.exit(1);
 }

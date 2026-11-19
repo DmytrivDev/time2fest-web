@@ -1,8 +1,8 @@
 /**
- * Test-door registry (AC-32, AC-35 … AC-38, AC-62): sorted, unique rows under `/api/_test/*`.
- * Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see `shouldLoadDoors`).
- * `reset` empties this worktree's data and seeds it (AC-47); `fixtures` applies one named
- * fixture row of the seed registry.
+ * Test-door registry (AC-32, AC-35 … AC-38, AC-62; SPEC-07 AC-67, AC-68): sorted, unique rows under
+ * `/api/_test/*` — 18 rows. Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
+ * `shouldLoadDoors`). `reset` empties this worktree's data (run records and scheduler runs included)
+ * and seeds it (AC-47); `fixtures` applies one named fixture row of the seed registry.
  */
 import {
   TestClockSetSchema,
@@ -20,10 +20,12 @@ import type { Ctx, HttpMethod, Outcome } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 import type { SeedStore } from '../ports';
 import { collectionRegistry } from '../registries/collections';
+import { clearRunFault } from '../scheduler/recorder';
 import { resetWorktree, runSeed, type ResettableCollection } from '../seed/index';
 import { seedRegistry, type SeedRow } from '../seed/registry';
 import { edgeEchoDoors } from './edgeEcho';
 import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
+import { schedulerDoors } from './scheduler';
 
 /** What a door may use beyond the request context. */
 export interface DoorTools {
@@ -61,7 +63,11 @@ function stub(key: string, path: string): DoorRow {
   };
 }
 
-/** `POST /api/_test/reset`: own rows and prefixed keys emptied, clock real, seed applied (AC-47, AC-39). */
+/**
+ * `POST /api/_test/reset`: own rows and prefixed keys emptied, clock real, seed applied (AC-47, AC-39).
+ * SPEC-07: `run-records` and `scheduler-runs` are resettable collections; an armed scheduler fault is
+ * dropped, a paused scheduler resumes and reloads its moments from the new seed.
+ */
 export function resetDoor(
   rows: readonly SeedRow[] = seedRegistry,
   collections: readonly ResettableCollection[] = collectionRegistry,
@@ -80,6 +86,9 @@ export function resetDoor(
         rows: rows.filter((r) => !r.fixture),
       });
       subjects.clear();
+      clearRunFault();
+      ctx.deps.scheduler?.resume();
+      ctx.deps.scheduler?.recompute();
       return { ok: true, value: {} };
     },
   };
@@ -120,7 +129,7 @@ export const doorRegistry: readonly DoorRow[] = [
     path: '/api/_test/clock',
     body: TestClockSetSchema,
     async handler(ctx, { clock }) {
-      clock.set(ctx.body as TestClockSet);
+      await clock.set(ctx.body as TestClockSet);
       return { ok: true, value: clock.state() };
     },
   },
@@ -131,6 +140,7 @@ export const doorRegistry: readonly DoorRow[] = [
   stub('paypro-webhook', '/api/_test/paypro-webhook'),
   realtimeTokenDoor,
   resetDoor(),
+  ...schedulerDoors,
   stub('video-status', '/api/_test/video-status'),
 ];
 

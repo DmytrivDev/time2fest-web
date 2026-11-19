@@ -1,6 +1,7 @@
 /**
  * `window.__t2f` — програмний інтерфейс тестової збірки (contracts/time-machine.md).
- * Встановлюється лише за `IS_TEST_BUILD` (див. `TimeProvider`).
+ * Встановлюється лише там, де є машина часу (`HAS_TIME_MACHINE`, див. `TimeProvider`); у інтеграційній збірці
+ * `timeMachine.set/advance` ідуть на тестовий годинник сервера (`ServerTimeMachine`, SPEC-07 AC-60).
  */
 import type { ISO, PayResult } from '@/lib/data/types';
 import type { DomainSplit } from '@/lib/api/domains';
@@ -10,7 +11,7 @@ import type { FaultControls } from '@/lib/api/sim/faults';
 import { resetDeviceState } from '@/stores/resetDevice';
 import { useTestControls } from '@/stores/testControls';
 import { parseIsoWithOffset } from './params';
-import type { TimeMachine } from './timeMachine';
+import type { MachineLike } from './types';
 
 export interface T2FTestApi {
   timeMachine: {
@@ -46,7 +47,7 @@ declare global {
   }
 }
 
-export function createTestApi(machine: TimeMachine): T2FTestApi {
+export function createTestApi(machine: MachineLike): T2FTestApi {
   return {
     timeMachine: {
       get: () => {
@@ -89,7 +90,7 @@ export function createTestApi(machine: TimeMachine): T2FTestApi {
   };
 }
 
-export function installTestApi(machine: TimeMachine, win: Window = window): () => void {
+export function installTestApi(machine: MachineLike, win: Window = window): () => void {
   const api = createTestApi(machine);
   win.__t2f = api;
   return () => {

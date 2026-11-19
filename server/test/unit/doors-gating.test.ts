@@ -1,5 +1,8 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { buildDispatcher } from '../../src/container';
+import { doorRegistry } from '../../src/test-doors/registry';
 import type { AppEnv, Deps } from '../../src/endpoints/types';
 import { createMemoryStore } from '../../src/adapters/redis';
 import { realClock } from '../../src/clock';
@@ -63,5 +66,35 @@ describe('test doors gating', () => {
       }),
     ];
     for (const req of attempts) expect(await snapshot(await dispatch(req))).toEqual(unknown);
+  });
+
+  it('SPEC-07 AC-67: in production the scheduler doors answer exactly like an unknown path', async () => {
+    const dispatch = await buildDispatcher(depsFor('production', true));
+    const unknownGet = await snapshot(await dispatch(new Request('http://server.test/api/nope')));
+    const unknownPost = await snapshot(
+      await dispatch(new Request('http://server.test/api/nope', { method: 'POST', body: '{}', headers: { 'content-type': 'application/json' } })),
+    );
+    expect(unknownGet.status).toBe(404);
+    const doors: Array<[string, string, string]> = [
+      ['POST', '/api/_test/scheduler/night-run', '{"speed":60}'],
+      ['GET', '/api/_test/scheduler/night-run', ''],
+      ['POST', '/api/_test/scheduler/lease', '{"action":"pause"}'],
+      ['POST', '/api/_test/scheduler/fault', '{"after":"publish"}'],
+    ];
+    for (const [method, p, body] of doors) {
+      const req =
+        method === 'GET'
+          ? new Request(`http://server.test${p}`, { headers: { 'X-T2F-Test-Doors': '1' } })
+          : new Request(`http://server.test${p}`, { method, body, headers: { 'content-type': 'application/json', 'X-T2F-Test-Doors': '1' } });
+      expect(await snapshot(await dispatch(req)), `${method} ${p}`).toEqual(method === 'GET' ? unknownGet : unknownPost);
+    }
+  });
+
+  it('SPEC-07 AC-68: the registry has 18 door rows, and the production e2e list names exactly them', () => {
+    expect(doorRegistry).toHaveLength(18);
+    const rows = doorRegistry.map((d) => `${d.method} ${d.path}`).sort();
+    const e2e = fs.readFileSync(path.resolve(__dirname, '../e2e/doors-404.e2e.ts'), 'utf8');
+    const listed = [...e2e.matchAll(/\['(GET|POST)', '(\/api\/_test\/[^']+)'\]/g)].map((m) => `${m[1]} ${m[2]}`).sort();
+    expect(listed).toEqual(rows);
   });
 });

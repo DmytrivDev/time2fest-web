@@ -15,6 +15,8 @@ export const CURRENT_ENV = 'current.env';
 /** Той самий формат для образу, що лише розгортається (міграції, заміна, перевірка здоров’я). */
 export const NEXT_ENV = 'next.env';
 export const TUNNEL_ENV = 'cloudflared.env';
+/** Служби, що мають бути здоровими до міграцій і заміни сервера (W10 + Centrifugo SPEC-06). */
+export const BACKING_SERVICES = /** @type {const} */ (['postgres', 'redis', 'centrifugo']);
 /** Менше — відмова до доставки образу (AC-18). */
 export const MIN_FREE_BYTES = 5 * 1024 ** 3;
 export const HEALTH_TIMEOUT_MS = 60_000;
@@ -245,12 +247,13 @@ export function createNode(o) {
     setCurrent: (sha) => writeFile(CURRENT_ENV, envContent(sha)),
 
     /**
-     * Postgres і Redis угору, потім міграції коміту одноразовим контейнером образу (`next.env`).
+     * Postgres, Redis і Centrifugo угору (до здоров'я), потім міграції коміту одноразовим контейнером образу (`next.env`).
+     * Сервер у класі rehearsal не стартує без змінних Centrifugo, тож Centrifugo піднімається раніше за заміну сервера.
      * @returns {Promise<StepResult>}
      */
     async migrate() {
-      const up = await compose(NEXT_ENV, ['up', '-d', '--wait', 'postgres', 'redis']);
-      if (up.code !== 0) return { code: 1, message: `postgres/redis не піднялися (код ${up.code})`, detail: up.stderr };
+      const up = await compose(NEXT_ENV, ['up', '-d', '--wait', ...BACKING_SERVICES]);
+      if (up.code !== 0) return { code: 1, message: `${BACKING_SERVICES.join('/')} не піднялися (код ${up.code})`, detail: up.stderr };
       const r = await compose(NEXT_ENV, ['run', '--rm', '--no-deps', 'server', 'pnpm', 'migrate'], MIGRATE_TIMEOUT_MS);
       return r.code === 0 ? { code: 0 } : { code: 1, message: `міграції завершилися з кодом ${r.code}`, detail: `${r.stdout}\n${r.stderr}` };
     },

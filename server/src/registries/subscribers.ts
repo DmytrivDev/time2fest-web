@@ -6,6 +6,8 @@ import { processDeps } from '../adapters/processDeps';
 import { createCatalogR2Subscriber } from '../catalog/copy';
 import type { EventSubscriber, InternalEvent } from '../events/ports';
 import { assertRegistry } from '../platform/registry';
+import { createSchedulerRecomputeSubscribers } from '../scheduler/recompute';
+import { createClockRefreshSubscriber } from '../timekeeping/shared';
 
 const RECORDED = Symbol.for('t2f.test.recordedEvents');
 
@@ -27,8 +29,17 @@ const testRecorder: EventSubscriber = {
 /** The R2 copy of the catalog (AC-72): its dependencies come from the process deps (`Deps.catalogCopy`). */
 const catalogR2Copy = createCatalogR2Subscriber(async () => (await processDeps()).catalogCopy?.());
 
+/** The clock cache of this process follows every committed clock change (SPEC-07 AC-49). */
+const clockRefresh = createClockRefreshSubscriber(async () => (await processDeps()).sharedClock);
+
+/** The scheduler's moment list follows every committed catalog change and correction (SPEC-07 AC-25, AC-74). */
+const [schedulerRecomputeCatalog, schedulerRecomputePatch] = createSchedulerRecomputeSubscribers(async () => (await processDeps()).scheduler);
+
 export const subscriberRegistry: readonly EventSubscriber[] = [
   catalogR2Copy,
+  clockRefresh,
+  schedulerRecomputeCatalog,
+  schedulerRecomputePatch,
   testRecorder,
 ];
 

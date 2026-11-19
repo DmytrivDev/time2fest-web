@@ -11,9 +11,9 @@ import { notifyRecordingResync, setRecordingClock } from '@/lib/player/recording
 import { IS_DEMO_BUILD, IS_TEST_BUILD } from '@/lib/env';
 import { createClock, type Clock } from './clock';
 import { createAppTimeSource } from './params';
+import { machineKit } from './machineLoader';
 import { installTestApi } from './testApi';
-import { TimeMachine } from './timeMachine';
-import type { TimeSourceLike } from './types';
+import type { MachineLike, TimeSourceLike } from './types';
 
 export interface TimeOverride {
   at: ISO | number;
@@ -32,7 +32,7 @@ export interface TimeProviderProps {
 
 interface TimeContextValue {
   source: TimeSourceLike;
-  machine: TimeMachine | null;
+  machine: MachineLike | null;
   clock: Clock;
 }
 
@@ -40,7 +40,7 @@ const TimeContext = createContext<TimeContextValue | null>(null);
 
 interface Setup {
   source: TimeSourceLike;
-  machine: TimeMachine | null;
+  machine: MachineLike | null;
   activate: () => () => void;
 }
 
@@ -49,16 +49,17 @@ function setup(props: Pick<TimeProviderProps, 'override' | 'source'>): Setup {
     const source = props.source;
     return {
       source,
-      machine: source instanceof TimeMachine ? source : null,
+      machine: machineKit && source instanceof machineKit.TimeMachine ? source : null,
       activate: () => {
         source.start?.();
         return () => source.stop?.();
       },
     };
   }
-  if (props.override) {
+  // Віртуальний час (Storybook, тести) — машиною часу; у робочій збірці її немає (`machineLoader`, AC-58).
+  if (props.override && machineKit) {
     const { at, speed, frozen } = props.override;
-    const machine = new TimeMachine({
+    const machine = new machineKit.TimeMachine({
       at: typeof at === 'number' ? at : Date.parse(at),
       speed: frozen ? 0 : (speed ?? 1),
     });
@@ -80,7 +81,10 @@ export function TimeProvider({ children, override, source }: TimeProviderProps) 
     setRecordingClock(() => state.source.now());
     const offJump = state.machine?.subscribe(notifyRecordingResync);
     const deactivate = state.activate();
-    const uninstall = IS_TEST_BUILD && state.machine ? installTestApi(state.machine) : undefined;
+    // `window.__t2f` — лише там, де є машина часу (`HAS_TIME_MACHINE`: тестова збірка, крім репетиції, SPEC-07 AC-58).
+    // Клас — прямим `process.env`: збирач відсікає гілку, а тести підміняють `@/lib/env` двома константами.
+    const hasMachine = IS_TEST_BUILD && process.env.NEXT_PUBLIC_SITE_CLASS !== 'rehearsal';
+    const uninstall = hasMachine && state.machine ? installTestApi(state.machine) : undefined;
     return () => {
       offJump?.();
       deactivate();
@@ -130,8 +134,8 @@ export function useClock(): Clock {
   return useTimeContext().clock;
 }
 
-/** «Машина часу», якщо вона діє (тестова збірка або `override`), інакше `null`. */
-export function useTimeMachine(): TimeMachine | null {
+/** «Машина часу» (локальна чи серверна), якщо вона діє (тестова збірка або `override`), інакше `null`. */
+export function useTimeMachine(): MachineLike | null {
   return useTimeContext().machine;
 }
 

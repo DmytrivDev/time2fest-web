@@ -1,5 +1,6 @@
 /**
  * Middleware registry (AC-62): run in key order before every handler.
+ * - `05-edge-time`: feeds the edge-divergence meter from a verified edge mark (SPEC-07 AC-10 … AC-14).
  * - `30-rate-limit`: a route with `rateLimit: '<row key>'` is counted against that row (AC-48 … AC-50).
  * - `40-idempotency`: a route with `idempotency: '<method>'` runs once per subject, method and
  *   `clientId` (AC-52 … AC-55).
@@ -10,6 +11,7 @@ import type { Middleware, Outcome } from '../endpoints/types';
 import { fastIdempotencyStore, idemKey, runOnce, type IdempotencyRow } from '../platform/idempotency';
 import { checkLimit, type RateLimitRow } from '../platform/rateLimit';
 import { assertRegistry } from '../platform/registry';
+import { EDGE_NOW_HEADER, parseEdgeNow } from '../timekeeping/divergence';
 import { idempotencyRegistry } from './idempotency';
 import { rateLimitRegistry } from './rateLimits';
 
@@ -88,7 +90,23 @@ export function idempotencyMiddleware(rows: readonly IdempotencyRow[] = idempote
   };
 }
 
+/**
+ * `05-edge-time`: a request that carries the valid edge secret and a well-formed `x-t2f-edge-now` feeds the
+ * divergence meter (SPEC-07 AC-10, AC-11). Without the secret the header is ignored, silently.
+ */
+export const edgeTimeMiddleware: Middleware = {
+  key: '05-edge-time',
+  async run(ctx, next) {
+    if (ctx.client.edgeVerified && ctx.deps.divergence) {
+      const mark = parseEdgeNow(ctx.req.headers.get(EDGE_NOW_HEADER));
+      if (mark !== undefined) ctx.deps.divergence.sample(mark);
+    }
+    return next();
+  },
+};
+
 export const middlewareRegistry: readonly Middleware[] = [
+  edgeTimeMiddleware,
   originMiddleware,
   validateMiddleware,
   rateLimitMiddleware(),

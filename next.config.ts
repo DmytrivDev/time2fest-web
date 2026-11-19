@@ -61,6 +61,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV ?? 'production',
     // Демо для тесту на людях (рішення 2026-11-11): тестова збірка + старт ночі перед Парижем, записи торішніх свят.
     NEXT_PUBLIC_DEMO: process.env.NEXT_PUBLIC_DEMO ?? '',
+    // SPEC-07 (AC-58): клас сайту; `rehearsal` — збірка test + http без машини часу (lib/env.ts).
+    NEXT_PUBLIC_SITE_CLASS: process.env.NEXT_PUBLIC_SITE_CLASS ?? '',
     // Шов: вбудований літерал режиму (див. вище).
     NEXT_PUBLIC_API_MODE: API_MODE,
   },

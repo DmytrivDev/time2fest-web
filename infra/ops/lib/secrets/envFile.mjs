@@ -73,6 +73,10 @@ export function databaseUri(o) {
 
 /** Типовий `REDIS_URL` вузла (без пароля; пароль додає `redisUrl`). */
 export const REDIS_URL_BASE = 'redis://redis:6379/0';
+/** Рушій Centrifugo — той самий Redis вузла, окрема база (SPEC-06 → SPEC-07, фаза 0). */
+export const CENTRIFUGO_REDIS_BASE = 'redis://redis:6379/1';
+/** Внутрішній порт HTTP API Centrifugo (лише мережа `backend`; `server/realtime/centrifugo.rehearsal.json`). */
+export const CENTRIFUGO_API_URL = 'http://centrifugo:9000';
 
 /**
  * `REDIS_URL` з паролем Redis: через `URL`, без рядкового літерала з паролем. Хост, порт і база — з `base`.

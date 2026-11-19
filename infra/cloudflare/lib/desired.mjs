@@ -9,6 +9,8 @@ export const TUNNEL_PATH = '^/api/';
  * статика адмінки Payload на Next.js (наживо ще не звірено).
  */
 export const ADMIN_PATH = '^/(admin|cms-api|_next)(/|$)';
+/** Ingress realtime: лише транспорти клієнта Centrifugo (`/connection/websocket` тощо); решта — 404 у тунелі. */
+export const REALTIME_PATH = '^/connection/';
 
 /** @param {string[]} items */
 const set = (items) => `{${items.map((i) => `"${i}"`).join(' ')}}`;
@@ -47,6 +49,8 @@ export function desiredState(envNames, opts = {}) {
   const tunnelHosts = envs.map((e) => e.tunnelHost);
   /** @param {{ name: string, adminHost?: string }} e @returns {string[]} */
   const adminOf = (e) => (e.adminHost && opts.admin?.[e.name] === true ? [e.adminHost] : []);
+  /** @param {{ realtimeHost?: string, realtimeService?: string }} e @returns {{ host: string, service: string }[]} */
+  const realtimeOf = (e) => (e.realtimeHost && e.realtimeService ? [{ host: e.realtimeHost, service: e.realtimeService }] : []);
   const disabled = new Set(disabledAdminHosts(envNames, opts.admin));
   const blockedAdmin = [...new Set(opts.staleAdmin ?? [])].filter((h) => disabled.has(h));
   // По умові на кожен шлях-виняток: хости середовищ, де він діє, і (якщо задано) адреси джерела.
@@ -70,12 +74,14 @@ export function desiredState(envNames, opts = {}) {
       { hostname: e.tunnelHost, path: TUNNEL_PATH, service: e.originService },
       // Адмінка — лише шляхи Payload і лише разом з Access; у блок-правило не входить: її закривають Access і JWT.
       ...adminOf(e).map((hostname) => ({ hostname, path: ADMIN_PATH, service: e.originService })),
+      // Realtime — клієнтський порт Centrifugo; у блок-правило не входить (публічне ім'я, як сайт).
+      ...realtimeOf(e).map((r) => ({ hostname: r.host, path: REALTIME_PATH, service: r.service })),
       { service: 'http_status:404' },
     ],
   }));
 
   const dns = envs.flatMap((e) =>
-    [e.tunnelHost, ...adminOf(e)].map((name) => ({
+    [e.tunnelHost, ...adminOf(e), ...realtimeOf(e).map((r) => r.host)].map((name) => ({
       env: e.name,
       name,
       type: 'CNAME',
@@ -118,6 +124,18 @@ export function desiredState(envNames, opts = {}) {
       action_parameters: { security_level: 'under_attack' },
       enabled: (typeof opts.underAttack === 'object' ? opts.underAttack[e.name] : opts.underAttack) ?? e.underAttack,
     })),
+    // Realtime: перевірки браузера й рівень безпеки ламають WebSocket-клієнт (cloudflare-notes §85). `off` зона
+    // не приймає (PUT фази — 400 на 2026-11-18, план зони без нього) — найнижчий доступний `essentially_off`.
+    ...envs.flatMap((e) =>
+      realtimeOf(e).map((r) => ({
+        ref: `t2f-realtime-${e.name}`,
+        description: `t2f: realtime host security off for ${e.name}`,
+        expression: `(http.host eq "${r.host}")`,
+        action: 'set_config',
+        action_parameters: { security_level: 'essentially_off', bic: false },
+        enabled: true,
+      })),
+    ),
     // Останнє правило перемагає: винятки шляхів не підпадають під Under Attack.
     {
       ref: 't2f-exempt-config',

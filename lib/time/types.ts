@@ -17,3 +17,16 @@ export interface TimeSourceLike {
   start?(): void;
   stop?(): void;
 }
+
+/**
+ * «Машина часу», якою керують панель, `window.__t2f` і `TimeProvider`: локальна (`TimeMachine`, збірка `sim`)
+ * або серверна (`ServerTimeMachine`, інтеграційна збірка test + http, SPEC-07 AC-59…AC-61).
+ */
+export interface MachineLike extends TimeSourceLike {
+  readonly status: 'machine';
+  get(): { at: number; speed: number };
+  /** Без `at` — продовжує з поточного віртуального часу. */
+  set(opts: { at?: number; speed?: number }): void;
+  /** Стрибок уперед (від’ємні значення ігноруються). */
+  advance(ms: number): void;
+}

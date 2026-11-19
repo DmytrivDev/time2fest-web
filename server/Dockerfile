@@ -25,13 +25,18 @@ COPY --chown=node:node workers/edge/package.json workers/edge/
 # devDependencies stay: `pnpm migrate` (Payload CLI over tsx) runs in a one-shot container of this image.
 RUN pnpm install --frozen-lockfile --filter @time2fest/server... && pnpm store prune
 COPY --chown=node:node packages/contracts/ packages/contracts/
+COPY --chown=node:node packages/rules/ packages/rules/
 COPY --chown=node:node server/ server/
 # The seed reads the catalog sources from the repository's `data/` (server/src/seed/registry.ts).
 COPY --chown=node:node data/ data/
 # `next build` evaluates the Payload config, which validates the environment. These build-only
 # placeholders (class `test`, loopback, nothing listens there) exist for this one RUN and are
 # never set in the runtime stage; no connection is opened during the build.
-RUN T2F_ENV=test \
+# `server/test` is dropped first: the image never runs tests, and since SPEC-06 the integration tests import the
+# web transport (`../lib/api/http/realtime`, `centrifuge`) that is not in this context, so `next build`'s type
+# check failed on them (deploy of 2026-11-18, TS7006 in realtime-transport.int.test.ts).
+RUN rm -rf server/test \
+ && T2F_ENV=test \
     DATABASE_URI=postgres://127.0.0.1:5432/t2f_build \
     REDIS_URL=redis://127.0.0.1:6379/0 \
     T2F_REDIS_PREFIX=t2f:build: \

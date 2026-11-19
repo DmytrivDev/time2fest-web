@@ -53,6 +53,19 @@ describe('payload schema', () => {
     expect(t).not.toContain('users');
   });
 
+  it('SPEC-07 NFR-2: lease, runs, run records and clock state tables exist with their unique indexes', async () => {
+    const t = await tables(testUri);
+    for (const name of ['scheduler_leases', 'scheduler_runs', 'run_records', 'clock_state']) expect(t).toContain(name);
+    const idx = await query(
+      testUri,
+      "SELECT indexname FROM pg_indexes WHERE schemaname='public' AND indexdef LIKE 'CREATE UNIQUE INDEX%' AND tablename IN ('scheduler_leases','scheduler_runs','run_records')",
+    );
+    const names = idx.map((r) => String(r.indexname));
+    expect(names).toEqual(
+      expect.arrayContaining(['scheduler_leases_name_idx', 'run_records_consequence_id_idx', 'runEpoch_action_momentKey_idx']),
+    );
+  });
+
   it('AC-59: migrate, migrate:down, migrate pass on a copy and no auth schema exists', async () => {
     expect(payload(['migrate'], migUri).status).toBe(0);
     expect(payload(['migrate:down'], migUri).status).toBe(0);

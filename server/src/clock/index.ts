@@ -1,83 +1,66 @@
 /**
- * Server clock (AC-34, AC-41). The only file in `server/src` that reads the wall clock.
- * - `virtualNow` is the pure core (ring 1);
- * - `realClock` reads `Date.now()`;
- * - the test clock is a process singleton, reachable for change only through `createTestClock`,
- *   which only `test-doors` imports. `clockFor('production' | 'rehearsal')` is the real clock.
+ * Server clock (AC-34, AC-41; SPEC-07 AC-1, AC-49). The only folder in `server/src` that reads the wall clock.
+ * - `virtualNow` is the pure core (ring 1, `domain/timekeeping/virtual.ts`), re-exported here;
+ * - `realClock` reads `Date.now()`, `monotonicClock` reads `performance.now()`;
+ * - `clockFor('production')` is the real clock: production has no virtual time at all;
+ * - `clockFor('test' | 'rehearsal', shared)` is the shared clock of the process (`timekeeping/shared.ts`),
+ *   whose state lives in the database and is cached per process in `processClockCache()`. Without
+ *   `shared` (a Payload hook that has no deps) it is the read-only view of that same process cache;
+ * - the test clock (`createTestClock`) is a facade over the shared clock and its store, reachable for
+ *   change only from `test-doors` (and tests). Its changes go through the store, so they persist and
+ *   reach every process of the environment.
  */
+import { backToReal, initialState, now as stateNow, testSet, type TestClockChange } from '../domain/timekeeping/virtual';
 import type { EnvClass } from '../platform/env';
 import type { Clock } from '../ports';
+import type { Actor, MonotonicClock } from '../timekeeping/ports';
+import type { ClockCache, SharedClock } from '../timekeeping/shared';
 
-export interface ClockState {
-  anchorVirtual: number;
-  anchorReal: number;
-  speed: number;
-  frozen: boolean;
-}
-
-/** Virtual instant for a real instant: constant when frozen, else anchor + elapsed · speed. */
-export function virtualNow(state: ClockState, realNow: number): number {
-  if (state.frozen) return state.anchorVirtual;
-  return Math.round(state.anchorVirtual + (realNow - state.anchorReal) * state.speed);
-}
+export { virtualNow, type VirtualAnchor as ClockState } from '../domain/timekeeping/virtual';
 
 export const realClock: Clock = Object.freeze({ now: () => Date.now() });
 
-export interface TestClock extends Clock {
-  /** Changes the virtual time; re-anchors at the current virtual instant first, so nothing jumps. */
-  set(change: { at?: number; speed?: number; frozen?: boolean }): void;
-  state(): { now: number; speed: number; frozen: boolean };
-  /** Back to real time, speed 1, not frozen. */
-  reset(): void;
-}
+/** Durations only: never goes backwards, unrelated to the wall clock or to virtual time. */
+export const monotonicClock: MonotonicClock = Object.freeze({ now: () => performance.now() });
 
 const KEY = Symbol.for('t2f.clock');
 
-function realState(): ClockState {
-  const t = Date.now();
-  return { anchorVirtual: t, anchorReal: t, speed: 1, frozen: false };
+/** The clock cache of this process, shared by every deps set and every module copy in it. */
+export function processClockCache(): ClockCache {
+  const g = globalThis as unknown as Record<symbol, ClockCache | undefined>;
+  return (g[KEY] ??= { state: initialState(Date.now()) });
 }
 
-/** The singleton state, shared by every module copy in the process. */
-function singleton(): { state: ClockState } {
-  const g = globalThis as unknown as Record<symbol, { state: ClockState } | undefined>;
-  let box = g[KEY];
-  if (!box) {
-    box = { state: realState() };
-    g[KEY] = box;
-  }
-  return box;
+/** Read-only view of the process cache, for callers without deps (Payload hooks). */
+const processView: Clock = Object.freeze({ now: () => stateNow(processClockCache().state, Date.now()) });
+
+/** Real time for production; the shared clock (or the read-only process view) for test and rehearsal. */
+export function clockFor(cls: EnvClass, shared?: SharedClock): Clock {
+  if (cls === 'production') return realClock;
+  return shared ?? processView;
 }
 
-const testView: Clock = Object.freeze({ now: () => virtualNow(singleton().state, Date.now()) });
+export interface TestClock extends Clock {
+  /** Changes the virtual time; re-anchors at the current virtual instant first, so nothing jumps. */
+  set(change: TestClockChange): Promise<void>;
+  state(): { now: number; speed: number; frozen: boolean };
+  /** Back to real time, speed 1, not frozen (no write when the clock is already real). */
+  reset(): Promise<void>;
+}
 
-/** The controllable test clock. Import only from `test-doors`. */
-export function createTestClock(): TestClock {
-  const box = singleton();
+/** The actor of the journal rows of the test door. */
+export const TEST_DOOR_ACTOR: Actor = Object.freeze({ kind: 'system', id: 'test-door', label: 'test-door' });
+
+/** The controllable test clock over `shared`. Import only from `test-doors` (and tests). */
+export function createTestClock(shared: SharedClock): TestClock {
   return {
-    now: () => virtualNow(box.state, Date.now()),
-    set(change) {
-      if (change.speed !== undefined && !(Number.isFinite(change.speed) && change.speed >= 0)) {
-        throw new Error('clock: speed must be a finite number ≥ 0');
-      }
-      if (change.at !== undefined && !Number.isFinite(change.at)) throw new Error('clock: at must be a finite number');
-      const real = Date.now();
-      const current = virtualNow(box.state, real);
-      box.state = {
-        anchorVirtual: change.at ?? current,
-        anchorReal: real,
-        speed: change.speed ?? box.state.speed,
-        frozen: change.frozen ?? box.state.frozen,
-      };
+    now: () => shared.now(),
+    async set(change) {
+      await shared.change(TEST_DOOR_ACTOR, (s, real) => testSet(s, change, real));
     },
-    state: () => ({ now: virtualNow(box.state, Date.now()), speed: box.state.speed, frozen: box.state.frozen }),
-    reset() {
-      box.state = realState();
+    state: () => shared.view(),
+    async reset() {
+      await shared.change(TEST_DOOR_ACTOR, (s, real) => (s.virtual ? backToReal(s, real) : s));
     },
   };
-}
-
-/** Real time for production and rehearsal; the read-only view of the test clock for `test`. */
-export function clockFor(cls: EnvClass): Clock {
-  return cls === 'test' ? testView : realClock;
 }

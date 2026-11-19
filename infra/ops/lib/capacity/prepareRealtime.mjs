@@ -4,7 +4,7 @@
 import { runBootstrap, ROOT_STEPS } from '../bootstrap.mjs';
 import { DEPLOY_USER, knownHostsFile } from '../common.mjs';
 import { checkTarget } from '../target.mjs';
-import { REALTIME_COMPOSE_FILE, realtimeDir } from './plan.mjs';
+import { REALTIME_COMPOSE_FILE, realtimeDir, server2Dir } from './plan.mjs';
 
 const SSH_WAIT = { tries: 60, everyMs: 5_000 };
 const REMOTE_TIMEOUT_MS = 60_000;
@@ -35,6 +35,39 @@ const remote = (t, argv, o = {}) => t.exec(argv, { allow: [...argv], timeoutMs: 
 export async function prepareRealtime(ctx, node, composeText, clock) {
   const env = /** @type {string} */ (ctx.args.env);
   const dir = realtimeDir(env);
+  const { asDeploy } = await bootstrapNode(ctx, node, dir, clock);
+  const upload = ['sh', '-c', `set -e; umask 077; cat > "$1/${REALTIME_COMPOSE_FILE}.tmp"; mv "$1/${REALTIME_COMPOSE_FILE}.tmp" "$1/${REALTIME_COMPOSE_FILE}"`, '_', dir];
+  const r = await remote(asDeploy, upload, { input: composeText });
+  if (r.code !== 0) throw new Error(`${REALTIME_COMPOSE_FILE} у ${dir}: не записано (код ${r.code})`);
+  ctx.out(`capacity: ${REALTIME_COMPOSE_FILE} записано в ${dir} (не запущено: токен тунелю realtime — П-RT)`);
+}
+
+// --- O·P18a: підготовка другого вузла сервера ---
+/**
+ * Те саме, що для realtime (SSH, `deploy`, каталог, весь `bootstrap`: Docker, ufw лише 22/tcp, підкачка), але каталог
+ * `/srv/t2f/<env>-server2` і без Compose-файлу: його й образ привозить `ops server2 up`. Нічого не запускає.
+ * @param {OpsContext} ctx
+ * @param {Node} node
+ * @param {Clock} clock
+ */
+export async function prepareServer2(ctx, node, clock) {
+  const env = /** @type {string} */ (ctx.args.env);
+  const dir = server2Dir(env);
+  await bootstrapNode(ctx, node, dir, clock);
+  ctx.out(`capacity: ${node.name} підготовлено, каталог ${dir} (сервер не запущено — ops server2 --env ${env} up)`);
+}
+// --- кінець O·P18a ---
+
+/**
+ * Спільне: чекати SSH; від імені root — `deploy` і каталог (кроки `ROOT_STEPS`); далі весь `bootstrap`.
+ * @param {OpsContext} ctx
+ * @param {Node} node
+ * @param {string} dir
+ * @param {Clock} clock
+ * @returns {Promise<{ asDeploy: Transport }>}
+ */
+async function bootstrapNode(ctx, node, dir, clock) {
+  const env = /** @type {string} */ (ctx.args.env);
   const ip = node.publicIp;
   if (!ip) throw new Error(`у вузла ${node.name} немає публічної адреси`);
   // Адреса від провайдера — та сама звірка зі старою продакшн-адресою, що й `--target`, до першого SSH (AC-22).
@@ -68,9 +101,5 @@ export async function prepareRealtime(ctx, node, composeText, clock) {
 
   const code = await runBootstrap({ ...ctx, args: { sub: 'bootstrap', env, values: { host }, flags: {} } });
   if (code !== 0) throw new Error(`bootstrap вузла ${node.name} завершився з кодом ${code}`);
-
-  const upload = ['sh', '-c', `set -e; umask 077; cat > "$1/${REALTIME_COMPOSE_FILE}.tmp"; mv "$1/${REALTIME_COMPOSE_FILE}.tmp" "$1/${REALTIME_COMPOSE_FILE}"`, '_', dir];
-  const r = await remote(asDeploy, upload, { input: composeText });
-  if (r.code !== 0) throw new Error(`${REALTIME_COMPOSE_FILE} у ${dir}: не записано (код ${r.code})`);
-  ctx.out(`capacity: ${REALTIME_COMPOSE_FILE} записано в ${dir} (не запущено: токен тунелю realtime — П-RT)`);
+  return { asDeploy };
 }

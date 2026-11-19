@@ -33,6 +33,10 @@ function world(o = {}) {
   fs.writeFileSync(path.join(examplesDir, 'postgres.env.example'), `${header}POSTGRES_USER=\nPOSTGRES_DB=\nPOSTGRES_PASSWORD=\n`);
   fs.writeFileSync(path.join(examplesDir, 'redis.env.example'), `${header}REDIS_PASSWORD=\n`);
   fs.writeFileSync(path.join(examplesDir, 'cloudflared.env.example'), `${header}TUNNEL_TOKEN=\n`);
+  fs.writeFileSync(
+    path.join(examplesDir, 'centrifugo.env.example'),
+    `${header}CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY=\nCENTRIFUGO_HTTP_API_KEY=\nCENTRIFUGO_ENGINE_REDIS_ADDRESS=\n`,
+  );
   const tunnelEnvFile = path.join(sc.stateRoot, 'cf', 'tunnel-rehearsal.env');
   fs.mkdirSync(path.dirname(tunnelEnvFile), { recursive: true });
   fs.writeFileSync(tunnelEnvFile, `TUNNEL_TOKEN=${TUNNEL}\n`);
@@ -52,6 +56,9 @@ function secretsOf(w) {
     getVar(w.local('postgres.env'), 'POSTGRES_PASSWORD'),
     getVar(w.local('redis.env'), 'REDIS_PASSWORD'),
     getVar(w.local('server.env'), 'REDIS_URL'),
+    getVar(w.local('server.env'), 'T2F_CENTRIFUGO_TOKEN_SECRET'),
+    getVar(w.local('server.env'), 'T2F_CENTRIFUGO_API_KEY'),
+    getVar(w.local('centrifugo.env'), 'CENTRIFUGO_ENGINE_REDIS_ADDRESS'),
   ].map(String);
 }
 
@@ -96,6 +103,20 @@ describe('edge-secret --generate', () => {
     expect(getVar(w.local('cloudflared.env'), 'TUNNEL_TOKEN')).toBe(TUNNEL);
     expect(srv.startsWith('# names only')).toBe(true);
 
+    // Centrifugo: два різні ключі ≥32 символи, ті самі в centrifugo.env; рушій — Redis вузла з паролем, база 1.
+    const rt = w.local('centrifugo.env');
+    const hmac = String(getVar(srv, 'T2F_CENTRIFUGO_TOKEN_SECRET'));
+    const api = String(getVar(srv, 'T2F_CENTRIFUGO_API_KEY'));
+    expect(hmac.length).toBeGreaterThanOrEqual(32);
+    expect(api.length).toBeGreaterThanOrEqual(32);
+    expect(new Set([payload, edge, pgPass, redisPass, hmac, api]).size).toBe(6);
+    expect(getVar(srv, 'T2F_CENTRIFUGO_URL')).toBe('http://centrifugo:9000');
+    expect(getVar(rt, 'CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY')).toBe(hmac);
+    expect(getVar(rt, 'CENTRIFUGO_HTTP_API_KEY')).toBe(api);
+    const cu = new URL(String(getVar(rt, 'CENTRIFUGO_ENGINE_REDIS_ADDRESS')));
+    expect([cu.protocol, cu.hostname, cu.port, cu.pathname, cu.username]).toEqual(['redis:', 'redis', '6379', '/1', '']);
+    expect(decodeURIComponent(cu.password)).toBe(redisPass);
+
     // Worker: `wrangler secret put T2F_EDGE_SECRET`, значення — лише на stdin (43 символи + перевод рядка).
     const puts = w.sc.wranglerCalls().filter((c) => c.argv.includes('secret'));
     expect(puts).toHaveLength(1);
@@ -107,6 +128,41 @@ describe('edge-secret --generate', () => {
     expect(text).toContain('server.env PAYLOAD_SECRET — згенеровано');
     expect(text).toContain('T2F_EDGE_SECRET — надіслано у Worker');
     expectNowhere(w, [...secretsOf(w), TUNNEL]);
+  });
+
+  it('an older node without Centrifugo gets only the missing Centrifugo values; nothing else changes', async () => {
+    const w = world();
+    expect(await main(GEN, w.deps())).toBe(0);
+    const srvPath = path.join(w.localDir, 'server.env');
+    const strip = (/** @type {string} */ t) => t.split('\n').filter((l) => !/^T2F_CENTRIFUGO_/.test(l)).join('\n');
+    fs.writeFileSync(srvPath, strip(fs.readFileSync(srvPath, 'utf8')));
+    fs.rmSync(path.join(w.localDir, 'centrifugo.env'));
+    const others = ['postgres.env', 'redis.env', 'cloudflared.env'].map((n) => w.local(n));
+    const srvBefore = w.local('server.env');
+    w.sc.out.length = 0;
+
+    expect(await main(GEN, w.deps())).toBe(0);
+    expect(['postgres.env', 'redis.env', 'cloudflared.env'].map((n) => w.local(n))).toEqual(others);
+    expect(strip(w.local('server.env'))).toBe(strip(srvBefore));
+    expect(getVar(w.local('centrifugo.env'), 'CENTRIFUGO_HTTP_API_KEY')).toBe(getVar(w.local('server.env'), 'T2F_CENTRIFUGO_API_KEY'));
+    const text = w.sc.out.join('\n');
+    expect(text).toContain('centrifugo.env створено з прикладу');
+    expect(text).toContain('server.env T2F_CENTRIFUGO_API_KEY — згенеровано');
+    expect(text).toContain('server.env PAYLOAD_SECRET — вже було');
+    expectNowhere(w, secretsOf(w));
+  });
+
+  it('refuses with 2 when server.env and centrifugo.env hold different Centrifugo keys', async () => {
+    const w = world();
+    expect(await main(GEN, w.deps())).toBe(0);
+    const rtPath = path.join(w.localDir, 'centrifugo.env');
+    const before = fs.readFileSync(rtPath, 'utf8');
+    // check-secrets: allow test fake
+    fs.writeFileSync(rtPath, before.replace(/^CENTRIFUGO_HTTP_API_KEY=.*$/m, 'CENTRIFUGO_HTTP_API_KEY=other-api-key-0123456789abcdef0123456789'));
+    const changed = fs.readFileSync(rtPath, 'utf8');
+    expect(await main(GEN, w.deps())).toBe(2);
+    expect(fs.readFileSync(rtPath, 'utf8')).toBe(changed);
+    expect(w.sc.err.join('\n')).toContain('T2F_CENTRIFUGO_API_KEY (server.env) не збігається');
   });
 
   it('a second run generates nothing and keeps every value', async () => {

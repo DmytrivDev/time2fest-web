@@ -12,7 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseEnv } from 'node:util';
 import { parseArgs } from './lib/args.mjs';
-import { runBootstrap } from './lib/bootstrap.mjs';
+import { runBootstrap, runTimeCheck } from './lib/bootstrap.mjs';
 import { runCapacity } from './lib/capacity/capacity.mjs';
 import { loadProvider } from './lib/capacity/providers.mjs';
 import { DEFAULT_PATHS, SECRET_ENV_NAMES } from './lib/config.mjs';
@@ -31,12 +31,26 @@ import { fetchOk } from './lib/common.mjs';
 import { runEdgeSecret } from './lib/secrets/secrets.mjs';
 import { checkTarget } from './lib/target.mjs';
 import { createWorker } from './lib/worker.mjs';
+// --- O·P18a ---
+import { runPrivateDb } from './lib/privateDb.mjs';
+import { runServer2 } from './lib/server2.mjs';
+/** Підкоманди навчання «два сервери» (лише rehearsal). */
+const SERVER2_SUBS = ['private-db', 'server2'];
+// --- кінець O·P18a ---
+// --- O·P16 ---
+import { runClock } from './lib/clock.mjs';
+/** Підкоманди часу: перевірка chrony вузла і віртуальний час репетиції. */
+const TIME_SUBS = ['time-check', 'clock'];
+// --- кінець O·P16 ---
+// --- O·P17 ---
+import { runSchedulerDrill } from './lib/drill.mjs';
+// --- кінець O·P17 ---
 
-const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity'];
+const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity', ...SERVER2_SUBS, ...TIME_SUBS, 'scheduler-drill'];
 /** Змінні з `--secrets-file`, значення яких маскуються, навіть коли їх немає в `SECRET_ENV_NAMES`. */
 const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
 /** Підкоманди, що працюють із вузлом середовища: значення секретів з його `.local/<env>/*.env` маскуються у виводі. */
-const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity'];
+const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity', ...SERVER2_SUBS, 'clock', 'scheduler-drill'];
 
 /** @param {string} name */
 const isSecretName = (name) => SECRET_ENV_NAMES.includes(name) || SECRET_NAME_RE.test(name);
@@ -109,7 +123,25 @@ function registerLocalNodeSecrets(redactor, dir) {
  */
 
 /** Реалізовані підкоманди (додаються по фазах). @type {Record<string, (ctx: OpsContext) => Promise<number>>} */
-const RUNNERS = { deploy: runDeploy, rollback: runRollback, 'edge-secret': runEdgeSecret, bootstrap: runBootstrap, capacity: runCapacity, 'move-domain': runMoveDomain };
+const RUNNERS = {
+  deploy: runDeploy,
+  rollback: runRollback,
+  'edge-secret': runEdgeSecret,
+  bootstrap: runBootstrap,
+  capacity: runCapacity,
+  'move-domain': runMoveDomain,
+  // --- O·P18a ---
+  'private-db': runPrivateDb,
+  server2: runServer2,
+  // --- кінець O·P18a ---
+  // --- O·P16 ---
+  'time-check': runTimeCheck,
+  clock: runClock,
+  // --- кінець O·P16 ---
+  // --- O·P17 ---
+  'scheduler-drill': runSchedulerDrill,
+  // --- кінець O·P17 ---
+};
 
 const PORT_KEYS = ['clock', 'fetch', 'startProbe', 'edgeCheck', 'git', 'image', 'worker', 'transport', 'sshAs', 'provider', 'lookupHost', 'sshHostname'];
 const SSH_G_TIMEOUT_MS = 15_000;

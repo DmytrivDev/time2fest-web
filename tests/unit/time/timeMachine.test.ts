@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  attachMachinePersistence,
-  parseMachineParams,
-  readSavedMachine,
-  resolveMachineStart,
-} from '@/lib/time/params';
+import { attachMachinePersistence, readSavedMachine, resolveMachineStart } from '@/lib/time/machineKit';
+import { parseMachineParams } from '@/lib/time/params';
 import {
   DEFAULT_START_ISO,
   DEFAULT_START_MS,

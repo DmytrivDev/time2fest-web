@@ -91,12 +91,15 @@ describe('desiredState(test, rehearsal): усі середовища разом 
       tunnelName: 't2f-rehearsal',
       originService: 'http://server:3000',
       adminHost: 'admin-rehearsal.time2fest.com',
+      realtimeHost: 'rt-rehearsal.time2fest.com',
+      realtimeService: 'http://centrifugo:8000',
       underAttack: false,
     });
     const t = all.tunnels.find((x) => x.env === 'rehearsal');
     expect(t?.name).toBe('t2f-rehearsal');
     expect(t?.ingress).toEqual([
       { hostname: 'o-rehearsal.time2fest.com', path: '^/api/', service: 'http://server:3000' },
+      { hostname: 'rt-rehearsal.time2fest.com', path: '^/connection/', service: 'http://centrifugo:8000' },
       { service: 'http_status:404' },
     ]);
     expect(JSON.stringify(all)).not.toContain('admin-rehearsal');
@@ -111,6 +114,7 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     expect(withAdmin.tunnels.find((x) => x.env === 'rehearsal')?.ingress).toEqual([
       { hostname: 'o-rehearsal.time2fest.com', path: '^/api/', service: 'http://server:3000' },
       { hostname: 'admin-rehearsal.time2fest.com', path: ADMIN_PATH, service: 'http://server:3000' },
+      { hostname: 'rt-rehearsal.time2fest.com', path: '^/connection/', service: 'http://centrifugo:8000' },
       { service: 'http_status:404' },
     ]);
   });
@@ -118,10 +122,12 @@ describe('desiredState(test, rehearsal): усі середовища разом 
   it('DNS: проксований CNAME на тунель t2f-rehearsal; ім’я адмінки — лише з admin.rehearsal', () => {
     expect(all.dns.filter((x) => x.env === 'rehearsal')).toEqual([
       { env: 'rehearsal', name: 'o-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
+      { env: 'rehearsal', name: 'rt-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
     ]);
     expect(desiredState(['test', 'rehearsal'], { admin: { rehearsal: true } }).dns.filter((x) => x.env === 'rehearsal')).toEqual([
       { env: 'rehearsal', name: 'o-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
       { env: 'rehearsal', name: 'admin-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
+      { env: 'rehearsal', name: 'rt-rehearsal.time2fest.com', type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true },
     ]);
   });
 
@@ -139,9 +145,22 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     expect(block?.expression).toBe('(http.host in {"o-test.time2fest.com" "o-rehearsal.time2fest.com"})');
     expect(block?.expression).not.toContain('admin-rehearsal');
     expect(custom).toHaveLength(2);
-    expect(all.rulesets[PHASE_CONFIG]).toHaveLength(3);
-    expect((all.rulesets[PHASE_CONFIG] ?? []).map((r) => r.ref)).toEqual(['t2f-under-attack-test', 't2f-under-attack-rehearsal', 't2f-exempt-config']);
+    expect(all.rulesets[PHASE_CONFIG]).toHaveLength(4);
+    expect((all.rulesets[PHASE_CONFIG] ?? []).map((r) => r.ref)).toEqual(['t2f-under-attack-test', 't2f-under-attack-rehearsal', 't2f-realtime-rehearsal', 't2f-exempt-config']);
     for (const rules of Object.values(all.rulesets)) for (const r of rules) for (const h of MAIN_HOSTS) expect(r.expression).not.toContain(`"${h}"`);
+  });
+
+  it('realtime репетиції: ingress лише /connection/ → centrifugo:8000, CNAME, security_level essentially_off, не в блок-правилі', () => {
+    const t = all.tunnels.find((x) => x.env === 'rehearsal');
+    const rt = t?.ingress.find((i) => i.hostname === 'rt-rehearsal.time2fest.com');
+    expect(rt).toEqual({ hostname: 'rt-rehearsal.time2fest.com', path: '^/connection/', service: 'http://centrifugo:8000' });
+    expect(t?.ingress.at(-1)).toEqual({ service: 'http_status:404' });
+    expect(all.dns.find((d) => d.name === 'rt-rehearsal.time2fest.com')).toMatchObject({ type: 'CNAME', tunnelName: 't2f-rehearsal', proxied: true });
+    const rule = (all.rulesets[PHASE_CONFIG] ?? []).find((r) => r.ref === 't2f-realtime-rehearsal');
+    expect(rule).toMatchObject({ expression: '(http.host eq "rt-rehearsal.time2fest.com")', action: 'set_config', enabled: true });
+    expect(rule?.action_parameters).toEqual({ security_level: 'essentially_off', bic: false });
+    for (const r of all.rulesets[PHASE_CUSTOM] ?? []) expect(r.expression).not.toContain('rt-rehearsal');
+    expect(JSON.stringify(only)).not.toContain('rt-');
   });
 
   it('обʼєкти test байт-у-байт ті самі, що в desiredState([test])', () => {
@@ -176,8 +195,8 @@ describe('desiredState(test, rehearsal): усі середовища разом 
     const paths = fake.log.map((l) => `${l.method} ${l.path}`);
     expect(fake.log.every((l) => l.method === 'GET')).toBe(true);
     expect(paths.filter((p) => p.endsWith('/cfd_tunnel'))).toHaveLength(2);
-    // o-test, o-rehearsal і (лише читання — пошук залишку) admin-rehearsal.
-    expect(paths.filter((p) => p.endsWith('/dns_records'))).toHaveLength(3);
+    // o-test, o-rehearsal, rt-rehearsal і (лише читання — пошук залишку) admin-rehearsal.
+    expect(paths.filter((p) => p.endsWith('/dns_records'))).toHaveLength(4);
     expect(paths.some((p) => p.includes('/access/'))).toBe(false);
     const text = lines.join('\n');
     expect(text).toContain('тунель t2f-rehearsal');

@@ -8,7 +8,7 @@ import { assertNodeTags, ProviderError } from './provider.mjs';
  * @typedef {import('./provider.mjs').Size} Size
  * @typedef {import('./provider.mjs').Provider} Provider
  * @typedef {import('./provider.mjs').EnvSizes} EnvSizes
- * @typedef {{ name: string, size: string, tags: string[], status?: Node['status'], diskGb?: number, publicIp?: string | null }} SeedNode
+ * @typedef {{ name: string, size: string, tags: string[], status?: Node['status'], diskGb?: number, publicIp?: string | null, privateIp?: string | null, vpcId?: string | null }} SeedNode
  */
 
 /** Ціни за годину — публічні ціни (USD/міс ÷ 672 год), як їх віддає API провайдера. @type {Size[]} */
@@ -26,7 +26,12 @@ export const FAKE_SIZES = [
  * перевіряє `test/capacity/capacity.test.mjs` на фейку з його `ENV_SIZES`). @type {Record<string, EnvSizes>}
  */
 export const FAKE_ENV_SIZES = {
-  rehearsal: { region: 'fra1', main: { offSeason: 's-2vcpu-4gb', allowed: ['s-2vcpu-4gb', 's-4vcpu-8gb'] }, realtime: { size: 's-2vcpu-4gb' } },
+  rehearsal: {
+    region: 'fra1',
+    main: { offSeason: 's-2vcpu-4gb', allowed: ['s-2vcpu-4gb', 's-4vcpu-8gb'] },
+    realtime: { size: 's-2vcpu-4gb' },
+    server2: { size: 's-1vcpu-2gb', allowed: ['s-1vcpu-2gb', 's-2vcpu-2gb'] },
+  },
   production: {
     region: 'fra1',
     main: { offSeason: 's-2vcpu-4gb', allowed: ['s-2vcpu-4gb', 's-4vcpu-8gb', 's-8vcpu-16gb'] },
@@ -35,6 +40,8 @@ export const FAKE_ENV_SIZES = {
 };
 
 export const MUTATING = ['createNode', 'resizeNode', 'deleteNode'];
+/** Типова VPC фейка (як типова VPC регіону в провайдера). */
+export const FAKE_VPC = 'fake-vpc-fra1';
 
 /**
  * @param {{ nodes?: SeedNode[], sizes?: Size[] }} [o]
@@ -53,6 +60,8 @@ export function createFakeProvider(o = {}) {
     tags: [...n.tags],
     publicIp: n.publicIp ?? `203.0.113.${nextId - 1000}`,
     diskGb: n.diskGb ?? diskOf(n.size),
+    privateIp: n.privateIp === undefined ? `10.114.0.${nextId - 1000}` : n.privateIp,
+    vpcId: n.vpcId === undefined ? FAKE_VPC : n.vpcId,
   }));
   /** @type {{ method: string, args: unknown[], failed?: number }[]} */
   const calls = [];
@@ -99,7 +108,7 @@ export function createFakeProvider(o = {}) {
       if (!sizes.some((s) => s.slug === spec.size)) throw new ProviderError({ status: 422, step: 'createNode' });
       const id = String(nextId++);
       /** @type {Node} */
-      const n = { id, name: spec.name, size: spec.size, status: 'active', tags: [...spec.tags], publicIp: `203.0.113.${Number(id) - 1000}`, diskGb: diskOf(spec.size) };
+      const n = { id, name: spec.name, size: spec.size, status: 'active', tags: [...spec.tags], publicIp: `203.0.113.${Number(id) - 1000}`, diskGb: diskOf(spec.size), privateIp: `10.114.0.${Number(id) - 1000}`, vpcId: spec.vpcId ?? FAKE_VPC };
       nodes.push(n);
       return copy(n);
     },

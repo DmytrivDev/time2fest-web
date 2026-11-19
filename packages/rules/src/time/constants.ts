@@ -39,3 +39,8 @@ export const CATCH_UP_MAX_AGE_MS = 30 * 60_000;
 
 /** Server clock tolerance Δ (ms). The site passes 0. */
 export const SERVER_CLOCK_TOLERANCE_MS = 1500;
+
+/** Zone poll window opens this long before the zone midnight (SPEC-07 AC-22)… */
+export const POLL_WINDOW_BEFORE = 60 * MIN;
+/** …and closes this long after it. */
+export const POLL_WINDOW_AFTER = 60 * MIN;

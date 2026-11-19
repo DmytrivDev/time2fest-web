@@ -3,7 +3,10 @@
  * `virtualNow = anchorVirtual + (performance.now() − anchorPerf) × speed`.
  * Підміняє лише джерело часу; вмикається тільки в тестовій збірці (`IS_TEST_BUILD`).
  */
+import { sanitizeSpeed } from './speed';
 import type { TimeSourceLike } from './types';
+
+export { MAX_SPEED, sanitizeSpeed } from './speed';
 
 /** Старт без параметрів (Clarifications 2026-10-26): до півночі Лондона 22 хв. */
 export const DEFAULT_START_ISO = '2027-01-01T01:38:00+02:00';
@@ -12,13 +15,6 @@ export const DEFAULT_START_MS = Date.parse(DEFAULT_START_ISO);
 export const DEMO_START_ISO = '2026-12-31T22:40:00Z';
 export const DEMO_START_MS = Date.parse(DEMO_START_ISO);
 export const MACHINE_STORAGE_KEY = 't2f:session:timeMachine';
-export const MAX_SPEED = 600;
-
-/** `0 ≤ speed ≤ 600`, скінченне; інакше `1`. */
-export function sanitizeSpeed(value: unknown): number {
-  const n = typeof value === 'number' ? value : typeof value === 'string' && value.trim() !== '' ? Number(value) : NaN;
-  return Number.isFinite(n) && n >= 0 && n <= MAX_SPEED ? n : 1;
-}
 
 export interface TimeMachineOptions {
   at: number;

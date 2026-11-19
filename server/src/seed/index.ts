@@ -57,7 +57,8 @@ export interface ResetDeps {
   fast: FastStore;
   /** The prefix the `fast` client applies; checked before anything is deleted (no half reset). */
   redisPrefix: unknown;
-  clock: { reset(): void };
+  /** The shared test clock: its reset writes the clock-state store (SPEC-07 W14). */
+  clock: { reset(): Promise<void> };
   collections: readonly ResettableCollection[];
   rows: readonly SeedRow[];
 }
@@ -69,6 +70,6 @@ export async function resetWorktree(deps: ResetDeps): Promise<SeedCounts> {
   }
   for (const c of deps.collections.filter((r) => r.resettable)) await deps.store.clear(c.key);
   await deps.fast.deleteByPrefix('');
-  deps.clock.reset();
+  await deps.clock.reset();
   return runSeed(deps.store, deps.rows);
 }

@@ -69,6 +69,11 @@ import {
   zonePassedHandover,
   defaultCountryZone,
   isInReminderWindow,
+  // season moments and poll window (SPEC-07 AC-19, AC-22)
+  POLL_WINDOW_BEFORE,
+  POLL_WINDOW_AFTER,
+  pollWindow,
+  seasonMoments,
 } from '@time2fest/rules/time';
 
 const surface = {
@@ -126,6 +131,10 @@ const surface = {
   zonePassedHandover,
   defaultCountryZone,
   isInReminderWindow,
+  POLL_WINDOW_BEFORE,
+  POLL_WINDOW_AFTER,
+  pollWindow,
+  seasonMoments,
 };
 
 describe('AC-1 exports of @time2fest/rules/time', () => {

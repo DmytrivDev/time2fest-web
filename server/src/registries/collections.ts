@@ -17,6 +17,9 @@ import { zones } from '../collections/catalog/zones';
 import { eventPatches } from '../collections/eventPatches';
 import { idempotencyRecords } from '../collections/idempotencyRecords';
 import { internalEvents } from '../collections/internalEvents';
+import { runRecords } from '../collections/runRecords';
+import { schedulerLeases } from '../collections/schedulerLeases';
+import { schedulerRuns } from '../collections/schedulerRuns';
 import { unattendedWindows } from '../collections/unattendedWindows';
 
 export interface CollectionRow {
@@ -38,6 +41,9 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'events', collection: events, resettable: true, audited: true },
   { key: 'idempotency-records', collection: idempotencyRecords, resettable: true },
   { key: 'internal-events', collection: internalEvents, resettable: false },
+  { key: 'run-records', collection: runRecords, resettable: true },
+  { key: 'scheduler-leases', collection: schedulerLeases, resettable: false },
+  { key: 'scheduler-runs', collection: schedulerRuns, resettable: true },
   { key: 'seasons', collection: seasons, resettable: true, audited: true },
   { key: 'traditions', collection: traditions, resettable: true, audited: true },
   { key: 'unattended-windows', collection: unattendedWindows, resettable: true, audited: true },

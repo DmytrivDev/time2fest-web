@@ -1,7 +1,9 @@
 /**
  * Test doors as route rows (AC-29, AC-33). This module is loaded only through the dynamic
  * `import()` in `container.ts` after `shouldLoadDoors` — never by a static import — and it is
- * the only importer of `createTestClock`.
+ * the only importer of `createTestClock`. The door clock is a facade over the shared clock of
+ * `deps` (SPEC-07): a change goes through the clock-state store, so it persists and reaches every
+ * process of the environment.
  */
 import { createTestClock } from '../clock';
 import { failure } from '../endpoints/pipeline';
@@ -40,7 +42,9 @@ export function doorRoutes(
   rows: readonly DoorRow[] = doorRegistry,
   subjects: TestSubjects = createTestSubjects(),
 ): RouteRow[] {
-  const tools = { clock: createTestClock(), seed, subjects };
+  // Doors exist only in the `test` class, where `createDeps` always builds the shared clock.
+  if (!deps.sharedClock) throw new Error('test doors: deps without a shared clock');
+  const tools = { clock: createTestClock(deps.sharedClock), seed, subjects };
   const slug = deps.env.vars.T2F_SLUG;
   return rows.map((door) => ({
     key: `door-${door.key}`,

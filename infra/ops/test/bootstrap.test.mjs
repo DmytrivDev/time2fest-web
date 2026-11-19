@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { DEPLOY_CHECKS, ROOT_ONLY_NOTE, ROOT_STEPS, SSHD_CONF, SWAP_SYSCTL, ufwOk } from '../lib/bootstrap.mjs';
+import { CHRONY_SOURCES, CHRONY_TRACKING_ARGV, DEPLOY_CHECKS, parseTracking, ROOT_ONLY_NOTE, ROOT_STEPS, SSHD_CONF, SWAP_SYSCTL, ufwOk } from '../lib/bootstrap.mjs';
 import { assertAllowed, assertArgv, DEFAULT_REMOTE_ALLOW, sshTransport } from '../lib/exec.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
 import { FAKE_TARGET } from './support/fakeTarget.mjs';
@@ -27,14 +27,17 @@ const UFW_ACTIVE = [
   '',
 ].join('\n');
 /** Прапорець стану вузла для кожного кроку. */
-const FLAG = /** @type {Record<string, 'user' | 'docker' | 'dir' | 'ufw' | 'swap' | 'sshd'>} */ ({
+const FLAG = /** @type {Record<string, 'user' | 'docker' | 'dir' | 'ufw' | 'swap' | 'time' | 'sshd'>} */ ({
   'deploy-user': 'user',
   docker: 'docker',
   'node-dir': 'dir',
   firewall: 'ufw',
   swap: 'swap',
+  'time-sync': 'time',
   sshd: 'sshd',
 });
+/** Вивід `chronyc tracking`: синхронізовано, зсув 12 мс (швидкий). */
+const TRACKING_OK = ['Reference ID    : A29FC801 (time.cloudflare.com)', 'System time     : 0.012000000 seconds fast of NTP time', 'Leap status     : Normal', ''].join('\n');
 
 const cleanups = /** @type {(() => void)[]} */ ([]);
 afterEach(() => {
@@ -46,10 +49,10 @@ const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 /**
  * Підставний вузол: стан, виклики `{ user, kind, step }`, транспорти від імені користувача.
- * @param {Partial<{ user: boolean, docker: boolean, dir: boolean, ufw: boolean, swap: boolean, sshd: boolean, rootRefused: boolean, deployLogin: boolean, sshdVerifyFails: boolean, dropIn: boolean }>} [o]
+ * @param {Partial<{ user: boolean, docker: boolean, dir: boolean, ufw: boolean, swap: boolean, time: boolean, tracking: string, trackingCode: number, sshd: boolean, rootRefused: boolean, deployLogin: boolean, sshdVerifyFails: boolean, dropIn: boolean }>} [o]
  */
 function fakeNode(o = {}) {
-  const st = { user: false, docker: false, dir: false, ufw: false, swap: false, sshd: false, rootRefused: false, deployLogin: true, sshdVerifyFails: false, dropIn: false, ...o };
+  const st = { user: false, docker: false, dir: false, ufw: false, swap: false, time: false, tracking: TRACKING_OK, trackingCode: 0, sshd: false, rootRefused: false, deployLogin: true, sshdVerifyFails: false, dropIn: false, ...o };
   /** @type {{ user: string, kind: string, step: string, inputLength: number }[]} */
   const calls = [];
   /** @param {string} user @param {string[]} argv @returns {{ kind: string, step: string, code: number, stdout?: string }} */
@@ -58,6 +61,7 @@ function fakeNode(o = {}) {
       if (user === 'root') return { kind: 'login', step: 'root', code: st.rootRefused ? 255 : 0 };
       return { kind: 'login', step: 'deploy', code: st.user && st.deployLogin ? 0 : 255 };
     }
+    if (same(argv, CHRONY_TRACKING_ARGV)) return { kind: 'measure', step: 'tracking', code: st.trackingCode, stdout: st.tracking };
     if (user === 'root') {
       for (const s of ROOT_STEPS) {
         const flag = FLAG[s.id];
@@ -124,12 +128,12 @@ const applied = (n) => n.calls.filter((c) => c.kind === 'apply').map((c) => c.st
 const BOOT = ['bootstrap', '--host', HOST];
 
 describe('ops bootstrap', () => {
-  it('prepares a fresh node in order: user, Docker, dir, firewall, swap, deploy login, sshd', async () => {
+  it('prepares a fresh node in order: user, Docker, dir, firewall, swap, time-sync, deploy login, sshd', async () => {
     const n = fakeNode();
     expect(await main(BOOT, n.deps)).toBe(0);
-    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'swap', 'sshd']);
+    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'swap', 'time-sync', 'sshd']);
 
-    // Крок 6 (вхід deploy) — після брандмауера й підкачки і до будь-якого виклику кроку sshd.
+    // Крок 7 (вхід deploy) — після брандмауера й підкачки і до будь-якого виклику кроку sshd.
     expect(n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`).indexOf('deploy:login:deploy')).toBeGreaterThan(
       n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`).indexOf('root:apply:swap'),
     );
@@ -144,8 +148,8 @@ describe('ops bootstrap', () => {
     const text = n.out.join('\n');
     expect(text).toContain(FINGERPRINT);
     expect(text).toContain('bootstrap: 5 swap — зроблено');
-    expect(text).toContain('bootstrap: 6 deploy-login — вхід deploy працює');
-    expect(text).toContain('bootstrap: 7 sshd — зроблено');
+    expect(text).toContain('bootstrap: 7 deploy-login — вхід deploy працює');
+    expect(text).toContain('bootstrap: 8 sshd — зроблено');
     expect(text).toContain('bootstrap: готово');
     expect(n.fx.calls[0].argv).toEqual(['ssh-keygen', '-l', '-F', HOST, '-f', path.join(n.stateRoot, 'known_hosts')]);
   });
@@ -158,8 +162,8 @@ describe('ops bootstrap', () => {
     expect(at).toBeGreaterThan(-1);
     expect(seq.slice(at + 1).filter((x) => x.startsWith('root:'))).toEqual([]);
     // Після sshd — лише вхід deploy, і він не перший: перевірка ззовні.
-    expect(seq.slice(at + 1)).toEqual(['deploy:login:deploy']);
-    expect(n.out.join('\n')).toContain('bootstrap: 7 sshd — зроблено');
+    expect(seq.slice(at + 1)).toEqual(['deploy:login:deploy', 'deploy:measure:tracking']);
+    expect(n.out.join('\n')).toContain('bootstrap: 8 sshd — зроблено');
     expect(n.err).toEqual([]);
     expect(n.st.dropIn).toBe(true);
     // Перевірка дійсної конфігурації стоїть у команді apply після reload.
@@ -171,7 +175,7 @@ describe('ops bootstrap', () => {
   it('L2: a failing in-connection check fails the step with the real exit code and removes the drop-in', async () => {
     const n = fakeNode({ sshdVerifyFails: true });
     expect(await main(BOOT, n.deps)).toBe(1);
-    expect(n.err.join('\n')).toContain('7 sshd (SSH: без входу root і паролів) не вдався (код 1)');
+    expect(n.err.join('\n')).toContain('8 sshd (SSH: без входу root і паролів) не вдався (код 1)');
     expect(n.st.dropIn).toBe(false);
     expect(n.st.sshd).toBe(false);
     const seq = n.calls.map((c) => `${c.user}:${c.kind}:${c.step}`);
@@ -180,24 +184,24 @@ describe('ops bootstrap', () => {
     expect(apply).toMatch(/\|\| \{ rm -f \/etc\/ssh\/sshd_config\.d\/00-t2f\.conf; systemctl reload ssh; exit 1; \}$/);
   });
 
-  it('never runs step 7 (sshd) when the deploy login check fails', async () => {
+  it('never runs step 8 (sshd) when the deploy login check fails', async () => {
     const n = fakeNode({ deployLogin: false });
     expect(await main(BOOT, n.deps)).toBe(1);
-    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'swap']);
+    expect(applied(n)).toEqual(['deploy-user', 'docker', 'node-dir', 'firewall', 'swap', 'time-sync']);
     expect(n.calls.some((c) => c.step === 'sshd')).toBe(false);
     expect(n.st.sshd).toBe(false);
     expect(n.err.join('\n')).toContain('вхід root НЕ вимкнено');
   });
 
   it('with every check already passing makes 0 mutating calls and reports `без змін`', async () => {
-    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, sshd: true });
+    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, time: true, sshd: true });
     expect(await main(BOOT, n.deps)).toBe(0);
     expect(applied(n)).toEqual([]);
     expect(n.out.join('\n')).toContain('bootstrap: без змін');
   });
 
   it('when root is refused on rerun, checks as deploy only and reports `без змін`', async () => {
-    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, sshd: true, rootRefused: true });
+    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, time: true, sshd: true, rootRefused: true });
     expect(await main(BOOT, n.deps)).toBe(0);
     expect(applied(n)).toEqual([]);
     expect(n.calls.filter((c) => c.user === 'root').map((c) => c.kind)).toEqual(['login']);
@@ -329,7 +333,7 @@ describe('swap step (owner decision 2026-11-17: 1 vCPU / 2 GB node)', () => {
   });
 
   it('a node that already has swap: the step is skipped without an apply call', async () => {
-    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true });
+    const n = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, time: true });
     expect(await main(BOOT, n.deps)).toBe(0);
     expect(applied(n)).toEqual(['sshd']);
     expect(n.out.join('\n')).toContain('bootstrap: 5 swap — вже зроблено');
@@ -354,5 +358,85 @@ describe('ufwOk', () => {
     // allow comes first, the old limit rule is removed after it: the port is never without a rule
     expect(script.indexOf('ufw allow 22/tcp')).toBeGreaterThan(-1);
     expect(script.indexOf('ufw delete limit 22/tcp')).toBeGreaterThan(script.indexOf('ufw allow 22/tcp'));
+  });
+});
+
+describe('time-sync step (O·P16, AC-6, AC-7)', () => {
+  const step = ROOT_STEPS.find((x) => x.id === 'time-sync');
+  const apply = step?.apply?.(NODE_DIR)[2] ?? '';
+  const check = step?.check(NODE_DIR)[2] ?? '';
+
+  it('runs after swap and before sshd', () => {
+    const ids = ROOT_STEPS.map((x) => x.id);
+    expect(ids.indexOf('time-sync')).toBe(ids.indexOf('swap') + 1);
+    expect(ids.indexOf('time-sync')).toBeLessThan(ids.indexOf('sshd'));
+  });
+
+  it('apply: installs chrony, writes the NTS source, disables systemd-timesyncd, restarts chrony, makestep; plain fallback', () => {
+    expect(apply).toContain('apt-get install -y chrony');
+    expect(apply).toContain(`echo "server time.cloudflare.com iburst nts" > ${CHRONY_SOURCES}`);
+    expect(apply).toContain('systemctl disable --now systemd-timesyncd');
+    expect(apply).toContain('systemctl restart chrony');
+    expect(apply).toContain('chronyc makestep');
+    expect(apply).toContain(`echo "server time.cloudflare.com iburst" > ${CHRONY_SOURCES}`);
+  });
+
+  it('check-before-apply: chrony active, timesyncd inactive, source file, Leap status Normal', () => {
+    expect(check).toContain('systemctl is-active --quiet chrony');
+    expect(check).toContain('! systemctl is-active --quiet systemd-timesyncd');
+    expect(check).toContain(CHRONY_SOURCES);
+    expect(check).toContain('Leap status');
+  });
+
+  it('parseTracking reads signed offset and leap status', () => {
+    expect(parseTracking(TRACKING_OK)).toEqual({ leap: 'Normal', offsetMs: 12 });
+    expect(parseTracking('System time     : 0.000500000 seconds slow of NTP time\nLeap status     : Normal\n').offsetMs).toBeCloseTo(-0.5, 6);
+    expect(parseTracking('nothing')).toEqual({ leap: null, offsetMs: null });
+  });
+
+  it('synced node at 12 ms: exit 0 and a machine-readable `CHRONY offset_ms=12` line', async () => {
+    const n = fakeNode();
+    expect(await main(BOOT, n.deps)).toBe(0);
+    expect(n.out).toContain('CHRONY offset_ms=12');
+    expect(n.out.join('\n')).toContain('bootstrap: 6 time-sync — зроблено');
+  });
+
+  it('offset 150 ms: non-zero exit with the time-state message', async () => {
+    const n = fakeNode({ tracking: TRACKING_OK.replace('0.012000000', '0.150000000') });
+    expect(await main(BOOT, n.deps)).toBe(1);
+    expect(n.out).toContain('CHRONY offset_ms=150');
+    expect(n.err.join('\n')).toContain('понад 100 мс');
+  });
+
+  it('"Not synchronised": non-zero exit', async () => {
+    const n = fakeNode({ tracking: 'System time     : 0.000000000 seconds fast of NTP time\nLeap status     : Not synchronised\n' });
+    expect(await main(BOOT, n.deps)).toBe(1);
+    expect(n.err.join('\n')).toContain('не синхронізовано (Leap status: Not synchronised)');
+  });
+
+  it('already prepared node (root refused): the measurement still runs and gates the result', async () => {
+    const ok = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, time: true, sshd: true, rootRefused: true });
+    expect(await main(BOOT, ok.deps)).toBe(0);
+    expect(ok.out).toContain('CHRONY offset_ms=12');
+    const bad = fakeNode({ user: true, docker: true, dir: true, ufw: true, swap: true, time: true, sshd: true, rootRefused: true, trackingCode: 1 });
+    expect(await main(BOOT, bad.deps)).toBe(1);
+    expect(bad.err.join('\n')).toContain('chrony не працює');
+  });
+});
+
+describe('ops time-check (standalone, no changes)', () => {
+  it('prints the offset line and exits 0; makes no mutating call', async () => {
+    const n = fakeNode({ user: true, deployLogin: true });
+    expect(await main(['time-check', '--host', HOST], n.deps)).toBe(0);
+    expect(n.out).toEqual(['CHRONY offset_ms=12']);
+    expect(n.calls.map((c) => c.kind)).toEqual(['measure']);
+  });
+
+  it('exits 1 over 100 ms; production env is refused with code 2 before any call', async () => {
+    const n = fakeNode({ tracking: TRACKING_OK.replace('0.012000000 seconds fast', '0.200000000 seconds slow') });
+    expect(await main(['time-check', '--host', HOST], { ...n.deps })).toBe(1);
+    const p = fakeNode();
+    expect(await main(['time-check', '--host', HOST, '--env', 'production'], p.deps)).toBe(2);
+    expect(p.calls).toEqual([]);
   });
 });

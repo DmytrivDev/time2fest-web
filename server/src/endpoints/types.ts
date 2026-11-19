@@ -17,6 +17,9 @@ import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
+import type { SchedulerHandle } from '../scheduler/service';
+import type { SharedClock } from '../timekeeping/shared';
+import type { DivergenceMeter } from '../timekeeping/divergence';
 import type { UnattendedDeps } from '../unattended/service';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -88,6 +91,20 @@ export interface Deps {
   /** Who a realtime token is for (C5): no session in production until SPEC-10; the doors' resolver in tests. */
   subjects?: SubjectResolver;
   realtime?: RealtimePorts;
+  /**
+   * The shared server clock of the process (SPEC-07 AC-49): set by `createDeps` in `test` and
+   * `rehearsal` (it is then also `clock`, unless `clock` is overridden); absent in `production`,
+   * which has no virtual time.
+   */
+  sharedClock?: SharedClock;
+  /** Edge-to-origin divergence of trusted requests on real time (SPEC-07 AC-11); read by the admin slice. */
+  divergence?: DivergenceMeter;
+  /**
+   * The moment scheduler of the process (SPEC-07 AC-27 … AC-48): built by `createDeps` in every
+   * process, started only by `startProcessBackground` (never in a CLI). `status()` is the view the
+   * doors and the festival-state slice read; `pause`/`resume` are the doors' lease controls.
+   */
+  scheduler?: SchedulerHandle;
 }
 
 export interface Ctx {

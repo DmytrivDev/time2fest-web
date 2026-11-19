@@ -11,7 +11,8 @@
 import type { Page } from '@playwright/test';
 import { runAxe } from './fixtures/axe';
 import { expectNothingOverPlayer, expectPlayerMinSize } from './fixtures/geometry';
-import { gotoAt, nowMs, setTime, shiftDeviceClock, waitForTimeApi } from './fixtures/time';
+import { SERVER, resetServer, setDoorClock } from './fixtures/serverClock';
+import { DEFAULT_START, gotoAt, nowMs, setTime, shiftDeviceClock, waitForTimeApi } from './fixtures/time';
 import { expect, test, type YouTubeStub } from './fixtures/youtube-stub';
 
 test.use({ timezoneId: 'Europe/Kyiv', locale: 'uk-UA' });
@@ -82,7 +83,20 @@ async function startAt(page: Page, ytStub: YouTubeStub, iso: string, speed = 1) 
 }
 
 test.describe('US1 · ефір на головній', () => {
-  test('сценарій 1: старт без параметрів — Лондон, відлік, відео без звуку', async ({ page, ytStub }) => {
+  let doorSet = false;
+  test.afterEach(async ({ request }, testInfo) => {
+    // The reset reseeds the catalog (~12 s): give it its own budget instead of the leftover of the test's.
+    if (doorSet) testInfo.setTimeout(testInfo.timeout + 60_000);
+    if (doorSet) await resetServer(request);
+    doorSet = false;
+  });
+  test('сценарій 1: старт без параметрів — Лондон, відлік, відео без звуку', async ({ page, ytStub, request }) => {
+    // Server clock (AC-59): without params the page takes the door state, so the door is set to the default start first.
+    const serverClock = test.info().project.name === 'server-clock' && Boolean(SERVER);
+    if (serverClock) {
+      doorSet = true;
+      await setDoorClock(request, { at: Date.parse(DEFAULT_START), speed: 1 });
+    }
     await page.goto('/');
     await waitForTimeApi(page);
     await ytStub.waitForPlayer();

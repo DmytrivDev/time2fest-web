@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
+import timeRules from '../packages/rules/eslint/no-time-rule-copy.mjs';
 
 export default tseslint.config(
   {
@@ -48,5 +49,12 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    // Time-rule boundaries only through @time2fest/rules (SPEC-07 AC-23; same rule as the site, SPEC-03 AC-5).
+    files: ['src/**/*.ts'],
+    ignores: ['src/migrations/**'],
+    plugins: { 't2f-time': timeRules },
+    rules: { 't2f-time/no-rule-copy': 'error' },
   },
 );
