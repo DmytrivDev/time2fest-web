@@ -26,6 +26,7 @@ export const adminSlotRegistry: readonly AdminSlotRow[] = [
   { key: '05-festival', order: 5, label: 'Стан свята', load: () => import('../admin/FestivalSlice').then((m) => m.FestivalSlice) },
   { key: '10-corrections', order: 10, label: 'Поправки подій', load: () => import('../admin/CorrectionsSlice').then((m) => m.CorrectionsSlice) },
   { key: '20-unattended', order: 20, label: 'Режим без нагляду', load: () => import('../admin/UnattendedSlice').then((m) => m.UnattendedSlice) },
+  { key: '30-moderation', order: 30, label: 'Модерація й AI', load: () => import('../admin/ModerationSlice').then((m) => m.ModerationSlice) },
   { key: '90-test', order: 90, label: 'Тестовий зріз', load: () => import('../admin/TestSlice').then((m) => m.TestSlice), testOnly: true },
 ];
 

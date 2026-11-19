@@ -33,8 +33,8 @@ test('AC-26/AC-30: three slices in order, 20 journal rows, language uk, Ukrainia
   await openDashboard(page);
 
   const slices = page.locator('[data-slice]');
-  await expect(slices).toHaveCount(3);
-  expect(await slices.evaluateAll((els) => els.map((e) => e.getAttribute('data-slice')))).toEqual(['10-corrections', '20-unattended', '90-test']);
+  await expect(slices).toHaveCount(4);
+  expect(await slices.evaluateAll((els) => els.map((e) => e.getAttribute('data-slice')))).toEqual(['10-corrections', '20-unattended', '30-moderation', '90-test']);
   await expect(page.locator('[data-testid="corrections-slice"]')).toBeVisible();
   await expect(page.locator('[data-testid="unattended-slice"]')).toBeVisible();
   await expect(page.locator('[data-testid="test-slice"]')).toBeVisible();
