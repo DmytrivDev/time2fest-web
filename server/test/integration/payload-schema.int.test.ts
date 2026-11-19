@@ -66,6 +66,17 @@ describe('payload schema', () => {
     );
   });
 
+  it('SPEC-09: ai_spend has a unique period index and the moderation-settings global table exists', async () => {
+    const t = await tables(testUri);
+    expect(t).toContain('ai_spend');
+    expect(t).toContain('moderation_settings');
+    const idx = await query(
+      testUri,
+      "SELECT indexname FROM pg_indexes WHERE schemaname='public' AND tablename='ai_spend' AND indexdef LIKE 'CREATE UNIQUE INDEX%' AND indexdef LIKE '%(period)%'",
+    );
+    expect(idx.length).toBeGreaterThanOrEqual(1);
+  });
+
   it('AC-59: migrate, migrate:down, migrate pass on a copy and no auth schema exists', async () => {
     expect(payload(['migrate'], migUri).status).toBe(0);
     expect(payload(['migrate:down'], migUri).status).toBe(0);

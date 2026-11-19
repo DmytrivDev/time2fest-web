@@ -3700,6 +3700,141 @@
         }
       }
     },
+    "packages/contracts/src/moderation.schemas.ts#AiStateReasonSchema": {
+      "text": "ZodEnum<{ \"not-configured\": \"not-configured\"; ceiling: \"ceiling\"; slow: \"slow\"; unavailable: \"unavailable\"; }>"
+    },
+    "packages/contracts/src/moderation.schemas.ts#AiStateSchema": {
+      "text": "ZodEnum<{ available: \"available\"; degraded: \"degraded\"; fallback: \"fallback\"; }>"
+    },
+    "packages/contracts/src/moderation.schemas.ts#AiStatusSchema": {
+      "text": "ZodObject<{ reason: ZodOptional<ZodEnum<{ \"not-configured\": \"not-configured\"; ceiling: \"ceiling\"; slow: \"slow\"; unavailable: \"unavailable\"; }>>; state: ZodEnum<{ available: \"available\"; degraded: \"degraded\"; fallback: \"fallback\"; }>; task: ZodEnum<{ moderation: \"moderation\"; translation: \"translation\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/moderation.schemas.ts#AiTaskSchema": {
+      "text": "ZodEnum<{ moderation: \"moderation\"; translation: \"translation\"; }>"
+    },
+    "packages/contracts/src/moderation.schemas.ts#ModerationDoorBodySchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ op: ZodLiteral<\"reset\">; }, $strict>, ZodObject<{ op: ZodLiteral<\"setSpend\">; period: ZodEnum<{ month: \"month\"; night: \"night\"; }>; usd: ZodNumber; }, $strict>, ZodObject<{ op: ZodLiteral<\"status\">; }, $strict>, ZodObject<{ kind: ZodEnum<{ message: \"message\"; nick: \"nick\"; toast: \"toast\"; }>; op: ZodLiteral<\"verdict\">; text: ZodString; }, $strict>], \"op\">"
+    },
+    "packages/contracts/src/moderation.schemas.ts#ModerationDoorValueSchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ op: ZodLiteral<\"reset\">; }, $strict>, ZodObject<{ op: ZodLiteral<\"setSpend\">; period: ZodEnum<{ month: \"month\"; night: \"night\"; }>; usd: ZodNumber; }, $strict>, ZodObject<{ op: ZodLiteral<\"status\">; statuses: ZodArray<ZodObject<{ reason: ZodOptional<ZodEnum<{ \"not-configured\": \"not-configured\"; ceiling: \"ceiling\"; slow: \"slow\"; unavailable: \"unavailable\"; }>>; state: ZodEnum<{ available: \"available\"; degraded: \"degraded\"; fallback: \"fallback\"; }>; task: ZodEnum<{ moderation: \"moderation\"; translation: \"translation\"; }>; }, $strict>>; }, $strict>, ZodObject<{ op: ZodLiteral<\"verdict\">; outcome: ZodEnum<{ allow: \"allow\"; block: \"block\"; review: \"review\"; }>; reason: ZodOptional<ZodString>; source: ZodEnum<{ backup: \"backup\"; fallback: \"fallback\"; primary: \"primary\"; rules: \"rules\"; }>; }, $strict>], \"op\">"
+    },
+    "packages/contracts/src/moderation.schemas.ts#ToastCheckBodySchema": {
+      "text": "ZodObject<{ text: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/moderation.schemas.ts#ToastCheckValueSchema": {
+      "text": "ZodObject<{ issue: ZodNullable<ZodObject<{ end: ZodNumber; kind: ZodEnum<{ contact: \"contact\"; link: \"link\"; word: \"word\"; }>; start: ZodNumber; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/moderation.schemas.ts#ToastIssueWireSchema": {
+      "text": "ZodObject<{ end: ZodNumber; kind: ZodEnum<{ contact: \"contact\"; link: \"link\"; word: \"word\"; }>; start: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/moderation.ts#AiState": {
+      "union": [
+        "'available'",
+        "'degraded'",
+        "'fallback'"
+      ]
+    },
+    "packages/contracts/src/moderation.ts#AiStateReason": {
+      "union": [
+        "'ceiling'",
+        "'not-configured'",
+        "'slow'",
+        "'unavailable'"
+      ]
+    },
+    "packages/contracts/src/moderation.ts#AiStatus": {
+      "props": {
+        "reason": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/moderation.ts#AiStateReason"
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/moderation.ts#AiState"
+          }
+        },
+        "task": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/moderation.ts#AiTask"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/moderation.ts#AiTask": {
+      "union": [
+        "'moderation'",
+        "'translation'"
+      ]
+    },
+    "packages/contracts/src/moderation.ts#ModerationDoorBody": {
+      "union": [
+        "{\"props\":{\"kind\":{\"optional\":false,\"type\":{\"union\":[\"'message'\",\"'nick'\",\"'toast'\"]}},\"op\":{\"optional\":false,\"type\":{\"union\":[\"'verdict'\"]}},\"text\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'reset'\"]}}}}",
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'setSpend'\"]}},\"period\":{\"optional\":false,\"type\":{\"union\":[\"'month'\",\"'night'\"]}},\"usd\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'status'\"]}}}}"
+      ]
+    },
+    "packages/contracts/src/moderation.ts#ModerationDoorValue": {
+      "union": [
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'reset'\"]}}}}",
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'setSpend'\"]}},\"period\":{\"optional\":false,\"type\":{\"union\":[\"'month'\",\"'night'\"]}},\"usd\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'status'\"]}},\"statuses\":{\"optional\":false,\"type\":{\"text\":\"AiStatus[]\"}}}}",
+        "{\"props\":{\"op\":{\"optional\":false,\"type\":{\"union\":[\"'verdict'\"]}},\"outcome\":{\"optional\":false,\"type\":{\"union\":[\"'allow'\",\"'block'\",\"'review'\"]}},\"reason\":{\"optional\":true,\"type\":{\"text\":\"string\"}},\"source\":{\"optional\":false,\"type\":{\"union\":[\"'backup'\",\"'fallback'\",\"'primary'\",\"'rules'\"]}}}}"
+      ]
+    },
+    "packages/contracts/src/moderation.ts#ToastCheckBody": {
+      "props": {
+        "text": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/moderation.ts#ToastCheckValue": {
+      "props": {
+        "issue": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "ref:packages/contracts/src/moderation.ts#ToastIssueWire"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/moderation.ts#ToastIssueWire": {
+      "props": {
+        "end": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'contact'",
+              "'link'",
+              "'word'"
+            ]
+          }
+        },
+        "start": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
     "packages/contracts/src/realtime.schemas.ts#RealtimeBatchSchema": {
       "text": "ZodObject<{ events: ZodArray<ZodObject<{ data: ZodOptional<ZodUnknown>; id: ZodString; type: ZodString; version: ZodOptional<ZodNumber>; }, $strict>>; id: ZodString; type: ZodLiteral<\"batch\">; }, $strict>"
     },

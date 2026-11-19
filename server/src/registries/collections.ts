@@ -5,6 +5,7 @@
 import type { CollectionConfig } from 'payload';
 import { assertRegistry } from '../platform/registry';
 import { admins } from '../collections/admins';
+import { aiSpend } from '../collections/aiSpend';
 import { agentTestPosts } from '../collections/agentTestPosts';
 import { alarms } from '../collections/alarms';
 import { auditLog } from '../collections/auditLog';
@@ -33,6 +34,7 @@ export interface CollectionRow {
 export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'admins', collection: admins, resettable: false, audited: true },
   { key: 'agent-test-posts', collection: agentTestPosts, resettable: false, audited: true },
+  { key: 'ai-spend', collection: aiSpend, resettable: true },
   { key: 'alarms', collection: alarms, resettable: false, audited: true },
   { key: 'audit-log', collection: auditLog, resettable: false },
   { key: 'cities', collection: cities, resettable: true, audited: true },

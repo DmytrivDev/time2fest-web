@@ -4,3 +4,4 @@ export * from './site';
 export * from './catalog';
 export * from './realtime';
 export * from './clock';
+export * from './moderation';
