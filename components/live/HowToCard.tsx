@@ -23,7 +23,8 @@ export interface HowToCardProps {
   /** Рівень заголовка (за замовчуванням `h2`). */
   headingLevel?: 'h2' | 'h3';
   /** `full`: до трьох фото (≈60/40) з автором і ліцензією; порожньо — блоку немає. */
-  gallery?: HowTo['gallery'];
+  /** Фото розповіді; `position` — точка фокусу у % (`object-position`), типово — центр. */
+  gallery?: (NonNullable<HowTo['gallery']>[number] & { position?: { x: number; y: number } })[];
   /** `full`: текстовий блок країни під заголовком «Як <Країна> зустрічає Новий рік» (без «Читати більше»). */
   text?: string;
   /** Власна іконка традиції за `iconId` (передстартовий сайт — набір іконок конвеєра); `undefined` — наявний словник. */
@@ -232,7 +233,11 @@ export function HowToCard({
                       alt={tc('photoAlt', { alt: ph.alt })}
                       loading="lazy"
                       className="aspect-video size-full object-cover md:aspect-auto"
-                      style={ph.position ? { objectPosition: `${ph.position.x}% ${ph.position.y}%` } : undefined}
+                      style={
+                        ph.position
+                          ? { objectPosition: `${ph.position.x}% ${ph.position.y}%` }
+                          : undefined
+                      }
                     />
                     <figcaption className="absolute inset-x-0 bottom-0 bg-bg/80 px-3 py-1.5 text-caption text-text-secondary">
                       {tc('photoCredit', { author: ph.author, license: ph.license })}

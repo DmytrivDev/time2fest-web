@@ -15,14 +15,7 @@ export type Gender = 'm' | 'f' | 'n' | 'pl' | null;
 
 export interface HowTo {
   traditions: { id: string; title: string; text: string; iconId: string }[];
-  gallery?: {
-    src: string;
-    alt: string;
-    author: string;
-    license: string;
-    /** Точка фокусу фото у % (`object-position`); типово — центр. */
-    position?: { x: number; y: number };
-  }[];
+  gallery?: { src: string; alt: string; author: string; license: string }[];
   text: string;
 }
 
