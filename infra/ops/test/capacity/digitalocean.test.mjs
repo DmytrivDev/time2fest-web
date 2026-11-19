@@ -322,6 +322,21 @@ describe('адаптер DigitalOcean: запити', () => {
     }
   });
 
+  it('422: у повідомленні — лише `id: message` відповіді (друкований ASCII, ≤200), без токена', async () => {
+    const srv = await startFakeDo(SEED);
+    try {
+      srv.failNext(422);
+      const e = await providerFor(srv).sizes().catch((x) => x);
+      expect(e).toBeInstanceOf(ProviderError);
+      expect(e.status).toBe(422);
+      const body = fixture('error-429');
+      expect(e.message).toContain(`${body.id}: ${body.message}`.slice(0, 200));
+      expect(e.message).not.toContain(TOKEN);
+    } finally {
+      await srv.close();
+    }
+  });
+
   it('базова адреса: лише справжній API або http://127.0.0.1:<port>; без токена — відмова', () => {
     expect(resolveBase({})).toBe('https://api.digitalocean.com');
     expect(resolveBase({ DO_API_BASE: 'http://127.0.0.1:8080' })).toBe('http://127.0.0.1:8080');

@@ -89,6 +89,21 @@ export function createDigitalOcean(o) {
   const baseHost = new URL(base).host;
 
   /**
+   * `id: message` of a DigitalOcean validation refusal, printable ASCII only, ≤200 chars; '' when absent.
+   * @param {Response} res
+   * @returns {Promise<string>}
+   */
+  async function rejectionOf(res) {
+    try {
+      const j = JSON.parse((await res.text()).slice(0, 4096));
+      const raw = [j?.id, j?.message].filter((v) => typeof v === 'string' && v.length > 0).join(': ');
+      return raw.replace(/[^\x20-\x7e]/g, '').slice(0, 200);
+    } catch {
+      return '';
+    }
+  }
+
+  /**
    * @param {string} method
    * @param {string} path шлях від `/v2/`
    * @param {unknown} body
@@ -109,9 +124,12 @@ export function createDigitalOcean(o) {
       throw new ProviderError({ status: 0, step });
     }
     if (!res.ok) {
-      // Тіло відмови (`message`) не читається й не друкується разом із даними запиту.
-      await res.body?.cancel().catch(() => {});
-      throw new ProviderError({ status: res.status, retryAfterSec: retryAfterOf(res.headers, clock.now()), step });
+      // Тіло відмови не друкується разом із даними запиту. Виняток — 400/422 (відмова перевірки): лише поля `id`
+      // і `message` відповіді, друковані ASCII, ≤200 символів, — щоб відмову можна було зрозуміти без вгадування.
+      const reason = res.status === 400 || res.status === 422 ? await rejectionOf(res) : '';
+      if (!reason) await res.body?.cancel().catch(() => {});
+      const retryAfterSec = retryAfterOf(res.headers, clock.now());
+      throw new ProviderError({ status: res.status, ...(retryAfterSec !== undefined ? { retryAfterSec } : {}), step: reason ? `${step} (${reason})` : step });
     }
     const text = res.status === 204 ? '' : await res.text();
     if (!text) return undefined;
