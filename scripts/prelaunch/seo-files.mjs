@@ -102,6 +102,9 @@ export function redirectsFile() {
   const countries = readJson('data/prelaunch/countries.json').countries;
   const old = readJson('content/prelaunch/old-country-slugs.json').slugs;
   const rules = [];
+  // Правила з `*` — окремо й у кінці: Cloudflare (Workers Static Assets) рахує динамічними (ліміт 100) усі правила,
+  // що стоять після першого правила з `*`. Джерела точних і динамічних правил не перетинаються, тож порядок безпечний.
+  const dynamicRules = [];
   const add = (from, to) => {
     for (const f of new Set([from, encodeURI(from)])) rules.push(`${f} ${to} 301`);
   };
@@ -121,11 +124,12 @@ export function redirectsFile() {
     for (const x of ['/about', '/contact']) add(`${p}${x}`, home);
     for (const x of ['/ambassadors', '/ambassadors/list', '/become-ambassador']) add(`${p}${x}`, home);
     for (const x of ACCOUNT_PATHS) add(`${p}${x}`, home);
-    rules.push(`${p}/profile/* ${home} 301`);
+    dynamicRules.push(`${p}/profile/* ${home} 301`);
   }
   rules.push('/api/sitemap.xml /sitemap.xml 301');
   // Решта `/en/…` — та сама адреса без префікса (після всіх точних правил: діє перше збігле).
   rules.push('/en / 301');
+  rules.push(...dynamicRules);
   rules.push('/en/* /:splat 301');
   const header = [
     '# Старі адреси time2fest.com → нові (SEO-звіт, розділ 7). Згенеровано build:prelaunch (scripts/prelaunch/seo-files.mjs).',

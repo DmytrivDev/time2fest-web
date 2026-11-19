@@ -148,5 +148,8 @@ describe('_redirects', () => {
     expect(map.has('/country/japan')).toBe(false);
     // `/en/*` — останнім, після точних правил `/en/…`.
     expect(rules.at(-1)).toEqual(['/en/*', '/:splat', '301']);
+    // Workers рахує динамічними всі правила після першого з `*` — тож жодного точного правила після нього.
+    const firstDynamic = rules.findIndex(([from]) => from.includes('*'));
+    expect(rules.slice(firstDynamic).every(([from]) => from.includes('*'))).toBe(true);
   });
 });

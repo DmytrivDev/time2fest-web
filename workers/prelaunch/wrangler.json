@@ -1,0 +1,24 @@
+{
+  "name": "t2f-prelaunch",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "../../out-prelaunch",
+    "binding": "ASSETS",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/media/hero/*",
+      "/ambassadors/list/*",
+      "/uk/ambassadors/list/*",
+      "/es/ambassadors/list/*",
+      "/fr/ambassadors/list/*",
+      "/en/ambassadors/list/*"
+    ]
+  },
+  "observability": {
+    "enabled": false
+  }
+}
