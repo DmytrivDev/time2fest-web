@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./time": "./src/time/index.ts",
-    "./text": "./src/text/index.ts"
+    "./text": "./src/text/index.ts",
+    "./text/fallback": "./src/text/fallback.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p ."
