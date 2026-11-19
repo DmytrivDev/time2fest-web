@@ -33,7 +33,7 @@ function cssVar(name: string, fallback: string): string {
 
 export function MyMidnight() {
   const t = useTranslations('prefest.mine');
-  const { model, toast } = usePrefest();
+  const { model, toast, site } = usePrefest();
   const ready = useClientReady();
   const now = useNow();
   const [picked, setPicked] = useState<{ iso: string; zoneId: string } | null>(null);
@@ -159,6 +159,14 @@ export function MyMidnight() {
     }
   };
 
+  // Мовне дерево: кнопка — під карткою сторіс на всю її ширину (рішення власника 2026-11-19).
+  const shareButton = (
+    <button type="button" className={cn(s.btn, s.btnGhost)} onClick={shareCard} disabled={!country || !ready || busy}>
+      <Icon name="share" size={20} />
+      {t('share')}
+    </button>
+  );
+
   return (
     <section className={cn(s.sec, s.wrap)} id="mine" aria-labelledby="mine-h">
       <h2 className={s.h2} id="mine-h">
@@ -269,14 +277,16 @@ export function MyMidnight() {
               <Icon name="calendar-add" size={20} />
               {t('addCalendar')}
             </button>
-            <button type="button" className={cn(s.btn, s.btnGhost)} onClick={shareCard} disabled={!country || !ready || busy}>
-              <Icon name="share" size={20} />
-              {t('share')}
-            </button>
+            {site ? null : shareButton}
           </div>
         </div>
 
-        <StoryCard ord={n === null ? null : ordText} flagCode={country?.flagCode ?? null} where={where} />
+        <StoryCard
+          ord={n === null ? null : ordText}
+          flagCode={country?.flagCode ?? null}
+          where={where}
+          action={site ? shareButton : undefined}
+        />
       </div>
     </section>
   );

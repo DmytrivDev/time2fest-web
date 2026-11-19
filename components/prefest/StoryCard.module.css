@@ -109,3 +109,35 @@
     width: 210px;
   }
 }
+
+/* Передстартовий сайт: картка ширша й угорі колонки, під нею — кнопка на всю ширину картки. */
+.wrapTop {
+  justify-content: flex-start;
+}
+.story.storyWide,
+.action {
+  width: 290px;
+  max-width: 100%;
+}
+.action > * {
+  width: 100%;
+  justify-content: center;
+}
+@media (max-width: 1199.98px) {
+  .story.storyWide,
+  .action {
+    width: 250px;
+  }
+}
+@media (max-width: 1023.98px) {
+  .story.storyWide,
+  .action {
+    width: 260px;
+  }
+}
+@media (max-width: 767.98px) {
+  .story.storyWide,
+  .action {
+    width: 230px;
+  }
+}

@@ -12,19 +12,15 @@ import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
-import h from '@/components/prefest/PrefestHeader.module.css';
 import hs from '@/components/shell/header.module.css';
-import { LOCALE_NAMES, type Locale } from '@/i18n/locales';
+import type { Locale } from '@/i18n/locales';
 import { isPageEnabled, localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
-import { LangSwitch, rememberLocale, useLocaleLinks } from './LangSwitch';
+import { LangSwitch } from './LangSwitch';
+import { SiteMenu } from './SiteMenu';
 import s from './site.module.css';
 
 /** Текстові пункти шапки — лише увімкнені сторінки (`lib/prelaunch/pages.mjs`); пас — окремою кнопкою. */
 const NAV: readonly PageKey[] = (['home', 'countries', 'toasts'] as const).filter(isPageEnabled);
-/** У меню — усі сторінки, разом із пасом. */
-const MENU: readonly PageKey[] = (['home', 'countries', 'toasts', 'pass'] as const).filter(
-  isPageEnabled,
-);
 
 /** Головна: шапка прозора, поки сторінку не прокрутили. */
 function useScrolled(enabled: boolean): boolean {
@@ -49,30 +45,10 @@ export function SiteHeader({
   overlay?: boolean;
 }) {
   const t = useTranslations('prelaunch.header');
-  const links = useLocaleLinks();
   const [open, setOpen] = useState(false);
   const scrolled = useScrolled(overlay);
   const wrapRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        btnRef.current?.focus();
-      }
-    };
-    const onDown = (e: PointerEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('pointerdown', onDown);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('pointerdown', onDown);
-    };
-  }, [open]);
 
   const home = localeHref(locale, PAGES.home);
   return (
@@ -122,50 +98,17 @@ export function SiteHeader({
               ref={btnRef}
               className={cn('t2f-focus', hs.text, hs.menu)}
               aria-expanded={open}
-              aria-controls="site-menu"
+              aria-haspopup="dialog"
               aria-label={open ? t('menuClose') : t('menu')}
               onClick={() => setOpen((v) => !v)}
             >
               <Icon name={open ? 'close' : 'menu'} size={20} />
               <span className={hs.label}>{t('menu')}</span>
             </button>
-            {/* Шторка меню завжди в розмітці й відкривається плавно. */}
-            <div className={cn(s.menuPop, open && s.menuPopOpen)} id="site-menu" inert={!open}>
-              <nav className={cn(h.sheet, s.menuSheet)} aria-label={t('menuLabel')}>
-                {MENU.map((key) => (
-                  <NextLink
-                    key={key}
-                    className={h.menuItem}
-                    href={localeHref(locale, PAGES[key])}
-                    aria-current={current === key ? 'page' : undefined}
-                    onClick={() => setOpen(false)}
-                  >
-                    {t(key)}
-                  </NextLink>
-                ))}
-                <span className={h.sep} aria-hidden="true" />
-                <span className={s.menuLangTitle}>
-                  <Icon name="globe" size={16} />
-                  {t('languageLabel')}
-                </span>
-                {links.map((l) => (
-                  <a
-                    key={l.locale}
-                    className={h.menuItem}
-                    href={l.href}
-                    hrefLang={l.locale}
-                    lang={l.locale}
-                    aria-current={l.locale === locale ? 'true' : undefined}
-                    onClick={() => rememberLocale(l.locale)}
-                  >
-                    {LOCALE_NAMES[l.locale]}
-                  </a>
-                ))}
-              </nav>
-            </div>
           </div>
         </div>
       </header>
+      <SiteMenu open={open} onOpenChange={setOpen} locale={locale} current={current} />
     </div>
   );
 }

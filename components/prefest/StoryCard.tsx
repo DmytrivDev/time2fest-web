@@ -1,17 +1,33 @@
 'use client';
 
 /** Превʼю картки для сторіс: 250 px, 9:16 — фон-заглушка, логотип, «Новий рік прийде до мене», твій номер пояса. */
+import type { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { SceneCanvas } from './SceneCanvas';
 import { Bar } from '@/components/skeleton/parts';
 import m from './StoryCard.module.css';
 
-export function StoryCard({ ord, flagCode, where }: { ord: string | null; flagCode: string | null; where: string | null }) {
+export function StoryCard({
+  ord,
+  flagCode,
+  where,
+  action,
+}: {
+  ord: string | null;
+  flagCode: string | null;
+  where: string | null;
+  /**
+   * Передстартовий сайт (рішення власника 2026-11-19): кнопка «Поділитися карткою» під карткою на всю її ширину замість
+   * підпису «Картка для сторіс · 1080×1920»; картка ширша й угорі колонки.
+   */
+  action?: ReactNode;
+}) {
   const t = useTranslations('prefest.mine');
   return (
-    <div className={m.wrap}>
-      <div className={m.story} role="group" aria-label={t('storyAria')}>
+    <div className={cn(m.wrap, action ? m.wrapTop : undefined)}>
+      <div className={cn(m.story, action ? m.storyWide : undefined)} role="group" aria-label={t('storyAria')}>
         <SceneCanvas seed={41} bursts={4} />
         <div className={m.in}>
           {/* eslint-disable-next-line @next/next/no-img-element -- статичний експорт */}
@@ -30,7 +46,7 @@ export function StoryCard({ ord, flagCode, where }: { ord: string | null; flagCo
           </div>
         </div>
       </div>
-      <span className={m.cap}>{t('storyCaption')}</span>
+      {action ? <div className={m.action}>{action}</div> : <span className={m.cap}>{t('storyCaption')}</span>}
     </div>
   );
 }
