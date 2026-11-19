@@ -9,7 +9,8 @@ const REALTIME_SIGNATURES = [
   'WebSocket constructor not found, make sure it is available globally or passed as a dependency in Centrifuge options',
   'token expired but no getToken function set in the configuration',
 ];
-const TEST_SIGNATURES = ['/api/_test/', 't2f:session:timeMachine'];
+// `zqxfallbackctl7` — контрольне слово розширеного запасного списку (SPEC-09 AC-6): лише в `extended-words.ts`.
+const TEST_SIGNATURES = ['/api/_test/', 't2f:session:timeMachine', 'zqxfallbackctl7'];
 
 function* walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

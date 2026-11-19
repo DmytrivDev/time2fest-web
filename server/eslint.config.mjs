@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
 import timeRules from '../packages/rules/eslint/no-time-rule-copy.mjs';
+import textRules from '../packages/rules/eslint/no-text-rule-copy.mjs';
 
 export default tseslint.config(
   {
@@ -56,5 +57,12 @@ export default tseslint.config(
     ignores: ['src/migrations/**'],
     plugins: { 't2f-time': timeRules },
     rules: { 't2f-time/no-rule-copy': 'error' },
+  },
+  {
+    // Text rules (limits, links, word lists) only through @time2fest/rules/text (SPEC-09 AC-3).
+    files: ['src/**/*.ts'],
+    ignores: ['src/migrations/**'],
+    plugins: { 't2f-text': textRules },
+    rules: { 't2f-text/no-rule-copy': 'error' },
   },
 );
