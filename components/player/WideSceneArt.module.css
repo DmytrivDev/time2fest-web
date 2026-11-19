@@ -32,6 +32,8 @@
     inset: auto 0 auto auto;
     top: 50%;
     width: 160cqw;
+    /* Базовий стиль `img { max-width: 100% }` обрізав би смугу до ширини рамки. */
+    max-width: none;
     height: auto;
     aspect-ratio: 12 / 5;
     object-fit: fill;
