@@ -270,18 +270,28 @@ node infra/ops/ops.mjs capacity --env rehearsal status                          
 2. `one-node`: кладе `node/compose.drill.yml` поруч із `compose.yml` і піднімає `server-drill` (профіль
    `scheduler-drill`, 640m, без портів, поза мережею тунелю), чекає здоров’я; `two-nodes`: другий екземпляр уже працює
    (`server2 up`). Власником оренди в `two-nodes` має бути основний — інакше другий екземпляр перезапускається один раз;
-3. `clock restart-night` → `clock set --at <північ − 60 с>` → (`clock speed 1`, якщо швидкість не 1); перевіряє, що
-   `nextMoment` — саме `--midnight`;
+3. `clock restart-night` → `clock set --at <північ − 180 с>` → (`clock speed 1`, якщо швидкість не 1); перевіряє, що
+   `nextMoment` — саме `--midnight`. Запас — три хвилини, бо один `clock status` на вузлі з 1 vCPU триває 8–9 с
+   (pnpm + tsx). Останній погляд на власника (`clock status`) починається за 30 с до півночі; якщо після нього до
+   півночі лишилося менше 2 с — відмова «північ минула до зупинки» (і відновлення);
 4. рівно у віртуальну північ **вбиває** контейнер власника оренди без благодатного періоду
    (`docker compose kill -s SIGKILL <сервіс>`) — так моделюється смерть власника: оренда лишається за ним до кінця
    строку (~6 с), і саме це перехоплення має вкластися в 10 с. Благодатна зупинка (`docker compose stop`, SIGTERM) — інший,
    швидший шлях: `stop()` планувальника сервера звільняє оренду, і інший екземпляр бере її майже одразу; цей шлях
    навчання не міряє. Власника визначає за ім’ям хоста на початку `holder` (`<hostname>:<pid>:<hex>`) і `docker inspect`
    контейнерів обох екземплярів;
-5. кожні 500 мс читає статус у вцілілого — до нового власника з більшою епохою (межа 10 с), потім `clock records --epoch`
-   до запису всіх належних пар (дія, момент); друкує `DRILL takeover_ms=<n> late_ms=<n> duplicates=<n> missed=<n>` і
-   `T2F_MEASURE {"metric":"lease-takeover-ms",…}`. Заміри — від SIGKILL (чи від реальної півночі) до середини
-   виклику CLI, що вперше показав результат (точність — половина тривалості виклику `pnpm run clock`);
+5. перехоплення міряє **годинником Postgres** основного вузла, а не викликами CLI: `psql` у контейнері `postgres`
+   (`docker compose … exec -T postgres sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -At …'`, значення змінних не
+   друкуються) — безпосередньо перед SIGKILL `SELECT (extract(epoch from clock_timestamp())*1000)::bigint` (мітка
+   вбивства), далі кожні 500 мс рядок `scheduler_leases` (`holder`, `epoch`, `renewed_at`, `clock_timestamp()`) — до
+   більшої епохи з власником-вцілілим (межа 10 с). `takeover_ms` = `renewed_at` першого рядка нової епохи (перехоплення
+   ставить його в `clock_timestamp()` бази) − мітка вбивства. Якщо між попереднім спостереженням і цим `renewed_at`
+   ≥ 2 с (`renewed_at` могло вже бути продовженням), — верхня межа: `clock_timestamp()` спостереження − мітка, і в рядку
+   `bound=upper`. Тривалість мітки й SIGKILL — `kill_call_ms` у виводі й журналі. Потім `clock records --epoch` до
+   запису всіх належних пар (дія, момент); друкує
+   `DRILL takeover_ms=<n> late_ms=<n> duplicates=<n> missed=<n> clock=postgres [bound=upper]` і
+   `T2F_MEASURE {"metric":"lease-takeover-ms",…}`. `late_ms` — від реальної півночі до середини виклику
+   `clock records`, що вперше показав усі пари (точність — половина тривалості виклику `pnpm run clock`);
 6. **завжди** (і після збою будь-якого кроку) відновлює: запускає вбитий контейнер (`docker compose start`) і чекає здоров’я, `clock real`,
    прибирає `server-drill` і `compose.drill.yml`, перевіряє `https://rehearsal.time2fest.com/api/health` через край.
    Не вийшло — код 1 і рядок журналу `restore` з `left` (що лишилося).

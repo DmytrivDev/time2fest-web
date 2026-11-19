@@ -7,8 +7,8 @@ import path from 'node:path';
 import { PassThrough } from 'node:stream';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
-  drillLine, holderHost, isZoneMidnight, measure, memoryShortMb, parseMemAvailableMb, parseStatus, realTimeOf,
-  recordPairs, tallyRecords,
+  drillLine, holderHost, isZoneMidnight, LAST_LOOK_MS, lateOf, LEAD_MS, memoryShortMb, MIN_SPARE_MS, parseLeaseRow,
+  parseMemAvailableMb, parseStatus, PG_SERVICE, realTimeOf, recordPairs, SQL_DB_NOW, SQL_LEASE, takeoverOf, tallyRecords,
 } from '../lib/drill.mjs';
 import { assertAllowed, assertArgv, DEFAULT_REMOTE_ALLOW } from '../lib/exec.mjs';
 import { main } from '../ops.mjs';
@@ -21,6 +21,8 @@ const MIDNIGHT_MS = Date.parse(MIDNIGHT);
 const KEY = 'midnight:+14:00';
 const DUE = [{ action: 'live-midnight', key: KEY }, { action: 'stamp-window', key: KEY }];
 const LAT = 50;
+/** Годинник Postgres зсунутий від годинника оператора: замір має йти лише в шкалі бази. */
+const DB_SKEW = 7_777_000;
 const SECOND_IP_OUT = [
   '2: eth0    inet 203.0.113.20/20 brd 203.0.127.255 scope global eth0',
   '3: eth1    inet 10.114.0.3/20 brd 10.114.15.255 scope global eth1',
@@ -47,6 +49,8 @@ afterEach(() => {
  *   missAction?: boolean,
  *   noDue?: boolean,
  *   edgeDown?: boolean,
+ *   leaseLat?: number,
+ *   statusLat?: number,
  *   failWhen?: (a: string) => boolean,
  * }} WorldOpts
  */
@@ -118,6 +122,19 @@ function world(o = {}) {
       return i ? { stdout: `${i.hostname}\n` } : { code: 1 };
     }
     if (argv[0] === 'docker' && argv[1] === 'compose') {
+      // Postgres основного вузла: оренда з `renewed_at` (перехоплення, далі продовження кожні 2 с) і clock_timestamp().
+      const ei = argv.indexOf('exec');
+      if (ei > 0 && argv[ei + 2] === PG_SERVICE) {
+        if (host !== MAIN) return { code: 1 };
+        const sql = argv[argv.length - 1];
+        if (sql === SQL_DB_NOW) return { stdout: `${t + DB_SKEW}\n` };
+        if (sql === SQL_LEASE) {
+          t += o.leaseLat ?? 0;
+          const renewed = lease.takenAt === null ? 0 : lease.takenAt + Math.floor((t - lease.takenAt) / 2000) * 2000;
+          return { stdout: `${inst[lease.holder].hostname}:1:0badc0de|${lease.epoch}|${renewed + DB_SKEW}|${t + DB_SKEW}\n` };
+        }
+        return { code: 1 };
+      }
       const project = argv[argv.indexOf('-p') + 1];
       const service = argv.includes('server-drill') ? 'server-drill' : 'server';
       const i = Object.values(inst).find((x) => x.host === host && x.project === project && x.service === service);
@@ -130,6 +147,7 @@ function world(o = {}) {
         if (!i.running) return { code: 1 };
         if (a.includes('health-probe.mjs')) return { stdout: `200 ${'e'.repeat(40)}\n` };
         const cli = argv.slice(argv.indexOf('clock') + 1);
+        if (cli[0] === 'status') t += o.statusLat ?? 0;
         return { stdout: `> clock\n${JSON.stringify(clockCli(cli))}\n` };
       }
       if (verb === 'up') {
@@ -283,12 +301,14 @@ function world(o = {}) {
 const oneNode = (...extra) => ['scheduler-drill', '--env', 'rehearsal', '--target', MAIN, '--mode', 'one-node', '--midnight', MIDNIGHT, ...extra];
 /** @param {string[]} extra */
 const twoNodes = (...extra) => ['scheduler-drill', '--env', 'rehearsal', '--target', MAIN, '--mode', 'two-nodes', '--second', SECOND, '--midnight', MIDNIGHT, ...extra];
-const RE_LINE = /^DRILL takeover_ms=(\d+) late_ms=(\d+) duplicates=(\d+) missed=(\d+)$/;
+const RE_LINE = /^DRILL takeover_ms=(\d+) late_ms=(\d+) duplicates=(\d+) missed=(\d+) clock=postgres( bound=upper)?$/;
 /** @param {string[]} out */
 const drillOf = (out) => {
   const m = out.map((l) => l.match(RE_LINE)).find(Boolean);
-  return m ? { takeover: Number(m[1]), late: Number(m[2]), duplicates: Number(m[3]), missed: Number(m[4]) } : null;
+  return m ? { takeover: Number(m[1]), late: Number(m[2]), duplicates: Number(m[3]), missed: Number(m[4]), upper: m[5] !== undefined } : null;
 };
+/** Виклики psql у Postgres основного вузла (SQL — останній аргумент). @param {{ host: string, argv: string[] }[]} calls */
+const psqlOf = (calls) => calls.filter((c) => c.argv[1] === 'compose' && c.argv.includes(PG_SERVICE) && c.argv.includes('exec')).map((c) => ({ host: c.host, argv: c.argv, sql: c.argv[c.argv.length - 1] }));
 
 describe('scheduler-drill: відмови до будь-якої зміни (AC-71, AC-72)', () => {
   it('production і prelaunch — код 2, жодного транспорту', async () => {
@@ -353,7 +373,7 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
       'main: write compose.drill.yml',
       'main: up -d --no-deps server-drill',
       'main: clock restart-night',
-      'main: clock set --at 2026-12-31T09:59:00Z',
+      'main: clock set --at 2026-12-31T09:57:00Z',
       'main: clock speed 1',
       'main: kill -s SIGKILL server',
       'main: start server',
@@ -378,8 +398,32 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
     const j = w.journal();
     expect(j.filter((r) => r.step === 'outage').map((r) => r.result)).toEqual(['started', 'ended']);
     expect(j.at(-1)).toMatchObject({ sub: 'scheduler-drill', mode: 'one-node', step: 'restore', result: 'ok', left: [] });
-    // Зупинка — рівно у віртуальну північ (запас LEAD 60 с на швидкості 1).
+    // Зупинка — рівно у віртуальну північ (запас LEAD 180 с на швидкості 1).
     expect(j.find((r) => r.step === 'clock-set')).toMatchObject({ midnight: MIDNIGHT, moment: KEY, due: 2 });
+    expect(LEAD_MS).toBe(180_000);
+    expect(LAST_LOOK_MS).toBe(30_000);
+    // Замір — годинник Postgres: мітка бази перед SIGKILL, далі опитування рядка оренди; усе — у Postgres основного вузла.
+    const q = psqlOf(w.calls);
+    expect(q[0].sql).toBe(SQL_DB_NOW);
+    expect(q.slice(1).every((c) => c.sql === SQL_LEASE)).toBe(true);
+    expect(q.length).toBeGreaterThan(2);
+    expect(q.every((c) => c.host === MAIN && c.argv.join(' ').includes('-p t2f-rehearsal ') && c.argv.join(' ').includes(`exec -T ${PG_SERVICE} sh -c psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -At`))).toBe(true);
+    const killIdx = w.calls.findIndex((c) => / kill -s SIGKILL server$/.test(c.argv.join(' ')));
+    expect(w.calls[killIdx - 1].argv.at(-1)).toBe(SQL_DB_NOW);
+    expect(d?.upper).toBe(false);
+    expect(j.find((r) => r.step === 'takeover')).toMatchObject({ bound: 'exact', clock: 'postgres', takeover_ms: d?.takeover });
+    expect(j.find((r) => r.step === 'kill')).toMatchObject({ kill_call_ms: 2 * LAT });
+    expect(w.out).toContain(`scheduler-drill: kill_call_ms=${2 * LAT} (мітка бази + SIGKILL)`);
+  });
+
+  it('повільне опитування оренди (продовження могло змінити renewed_at) — верхня межа bound=upper', async () => {
+    const w = world({ holder: 'main', leaseLat: 2_500, takeoverDelay: 3_000 });
+    expect(await main(oneNode(), w.deps), w.err.join('\n')).toBe(0);
+    const d = drillOf(w.out);
+    expect(d?.upper).toBe(true);
+    expect(d?.takeover).toBeGreaterThanOrEqual(3000);
+    expect(d?.takeover).toBeLessThanOrEqual(3000 + 2 * 2_550 + LAT);
+    expect(w.journal().find((r) => r.step === 'takeover')).toMatchObject({ bound: 'upper' });
   });
 
   it('власник — екземпляр навчання: зупиняється він, основний не чіпається, простою /api немає', async () => {
@@ -423,10 +467,12 @@ describe('scheduler-drill --mode one-node (AC-70)', () => {
     ['set', (/** @type {string} */ a) => a.includes('clock set --at'), { start: false, real: true }],
     ['kill', (/** @type {string} */ a) => / kill -s SIGKILL server$/.test(a), { start: true, real: true }],
     ['records', (/** @type {string} */ a) => a.includes('clock records'), { start: true, real: true }],
-    ['takeover status', (/** @type {string} */ a) => a.includes('server-drill pnpm run clock status'), { start: true, real: true }],
-  ])('збій на кроці %s — finally відновлює (start, clock real, прибирання) і код 1', async (_, failWhen, expect_) => {
-    // До зупинки статус читається з основного; статус `server-drill` — лише під час перехоплення.
-    const w = world({ holder: 'main', failWhen });
+    ['kill timestamp', (/** @type {string} */ a) => a.endsWith(SQL_DB_NOW), { start: false, real: true }],
+    ['lease poll', (/** @type {string} */ a) => a.endsWith(SQL_LEASE), { start: true, real: true }],
+    ['last look too late', () => false, { start: false, real: true }, /** @type {WorldOpts} */ ({ statusLat: LAST_LOOK_MS - MIN_SPARE_MS + 1_000 })],
+  ])('збій на кроці %s — finally відновлює (start, clock real, прибирання) і код 1', async (_, failWhen, expect_, extra = /** @type {WorldOpts} */ ({})) => {
+    // Перехоплення читається з Postgres основного вузла; статус екземплярів — лише до півночі.
+    const w = world({ holder: 'main', failWhen, ...extra });
     expect(await main(oneNode(), w.deps)).toBe(1);
     const ch = w.changes();
     expect(ch.includes('main: start server'), 'start').toBe(expect_.start);
@@ -455,7 +501,7 @@ describe('scheduler-drill --mode two-nodes', () => {
     expect(w.changes()).toEqual([
       'second: restart server',
       'main: clock restart-night',
-      'main: clock set --at 2026-12-31T09:59:00Z',
+      'main: clock set --at 2026-12-31T09:57:00Z',
       'main: clock speed 1',
       'main: kill -s SIGKILL server',
       'main: start server',
@@ -467,6 +513,10 @@ describe('scheduler-drill --mode two-nodes', () => {
     // Записи читаються з другого вузла (той, хто перехопив).
     expect(w.calls.some((c) => c.host === SECOND && c.argv.join(' ').includes('clock records --epoch 4'))).toBe(true);
     expect(w.journal().find((r) => r.step === 'result')).toMatchObject({ holder: 'main', by: 'second' });
+    // Оренда й мітка часу — з Postgres основного вузла (основний `server` убито, `postgres` працює).
+    const q = psqlOf(w.calls);
+    expect(q.length).toBeGreaterThan(1);
+    expect(q.every((c) => c.host === MAIN)).toBe(true);
   });
 
   it('власник — основний одразу: без перезапуску, на другому вузлі нічого не змінюється', async () => {
@@ -504,12 +554,19 @@ describe('scheduler-drill: чисті функції', () => {
     expect(recordPairs({ nope: 1 })).toBeNull();
   });
 
-  it('заміри з підставних міток: середина виклику мінус зупинка / північ', () => {
-    const r = measure({ stopAt: 10_000, takeover: { start: 16_000, end: 16_400 }, midnightAt: 10_000, records: { start: 17_000, end: 17_600 } });
-    expect(r).toEqual({ takeoverMs: 6_200, lateMs: 7_300 });
-    expect(measure({ stopAt: 5_000, takeover: { start: 4_000, end: 4_100 }, midnightAt: 5_000, records: { start: 4_000, end: 4_000 } })).toEqual({ takeoverMs: 0, lateMs: 0 });
+  it('заміри: перехоплення за годинником Postgres (точне й верхня межа), запізнення записів', () => {
+    // Мітка вбивства 1000, перший рядок нової епохи renewed_at 6200, попереднє спостереження 5000 → точно 5200.
+    expect(takeoverOf({ killDbMs: 1_000, prevDbMs: 5_000, row: { renewedMs: 6_200, nowMs: 6_300 } })).toEqual({ takeoverMs: 5_200, bound: 'exact' });
+    // Між спостереженнями ≥ 2 с — renewed_at може бути продовженням: clock_timestamp спостереження мінус мітка.
+    expect(takeoverOf({ killDbMs: 1_000, prevDbMs: 3_000, row: { renewedMs: 6_200, nowMs: 6_900 } })).toEqual({ takeoverMs: 5_900, bound: 'upper' });
+    expect(parseLeaseRow('cccccccccccc:1:0badc0de|8|6200|6300\n')).toEqual({ holder: 'cccccccccccc:1:0badc0de', epoch: 8, renewedMs: 6_200, nowMs: 6_300 });
+    expect(parseLeaseRow('')).toBeNull();
+    expect(parseLeaseRow('x|y|1|2')).toBeNull();
+    expect(lateOf({ midnightAt: 10_000, records: { start: 17_000, end: 17_600 } })).toBe(7_300);
+    expect(lateOf({ midnightAt: 5_000, records: { start: 4_000, end: 4_000 } })).toBe(0);
+    expect(drillLine({ takeoverMs: 1, lateMs: 2, duplicates: 0, missed: 0, bound: 'upper' })).toBe('DRILL takeover_ms=1 late_ms=2 duplicates=0 missed=0 clock=postgres bound=upper');
     expect(realTimeOf(MIDNIGHT_MS, { nowMs: MIDNIGHT_MS - 60_000, speed: 1 }, 1_000)).toBe(61_000);
     expect(realTimeOf(MIDNIGHT_MS, { nowMs: MIDNIGHT_MS - 60_000, speed: 60 }, 1_000)).toBe(2_000);
-    expect(drillLine({ takeoverMs: 6200, lateMs: 7300, duplicates: 0, missed: 0 })).toBe('DRILL takeover_ms=6200 late_ms=7300 duplicates=0 missed=0');
+    expect(drillLine({ takeoverMs: 6200, lateMs: 7300, duplicates: 0, missed: 0 })).toBe('DRILL takeover_ms=6200 late_ms=7300 duplicates=0 missed=0 clock=postgres');
   });
 });

@@ -4,7 +4,9 @@
 // `--midnight` мінус хвилину, чекає, доки відомий власник оренди, рівно у віртуальну північ вбиває його контейнер
 // без благодатного періоду (`docker compose kill -s SIGKILL` — смерть, а не звільнення оренди), міряє реальний час до перехоплення іншим екземпляром і до запису опівнічних моментів
 // (`clock records`), перевіряє, що кожна належна пара (дія, момент) записана рівно один раз, і друкує рядок
-// `DRILL takeover_ms=<n> late_ms=<n> duplicates=<n> missed=<n>`. Відновлення — ЗАВЖДИ (finally): запуск зупиненого
+// `DRILL takeover_ms=<n> late_ms=<n> duplicates=<n> missed=<n> clock=postgres [bound=upper]`. Перехоплення міряється
+// годинником Postgres основного вузла (`psql` у контейнері `postgres`: мітка перед SIGKILL і `renewed_at` рядка оренди
+// нової епохи), а не тривалістю виклику CLI годинника (8–9 с на 1 vCPU). Відновлення — ЗАВЖДИ (finally): запуск зупиненого
 // контейнера, `clock real`, прибирання екземпляра навчання; кожен крок — у журнал `.local/<env>/server2.jsonl`.
 //   --mode one-node   — другий `server-drill` на тому самому вузлі (`node/compose.drill.yml`, профіль
 //                       `scheduler-drill`, 640m); спершу перевірка MemAvailable (бракує — відмова з числом МБ).
@@ -30,8 +32,9 @@ export const DRILL_PROFILE = 'scheduler-drill';
 /** `mem_limit` сервісу `server-drill` у `compose.drill.yml` (МіБ) і запас для решти вузла. */
 export const DRILL_MEM_MB = 640;
 export const MEM_MARGIN_MB = 128;
-/** Віртуальний годинник ставиться на північ мінус стільки (реальний час на швидкості 1). */
-export const LEAD_MS = 60_000;
+/** Віртуальний годинник ставиться на північ мінус стільки (реальний час на швидкості 1). Один `clock status` на
+ * вузлі з 1 vCPU — 8–9 с (pnpm + tsx), тож запас — три хвилини. */
+export const LEAD_MS = 180_000;
 /** Межа перехоплення (C6: строк оренди ~6 с, продовження ~2 с). */
 export const TAKEOVER_LIMIT_MS = 10_000;
 export const POLL_MS = 500;
@@ -42,8 +45,20 @@ const RECORDS_WAIT_MS = 60_000;
 const HEALTH_WAIT_MS = 180_000;
 const EDGE_WAIT_MS = 90_000;
 const EDGE_EVERY_MS = 2_000;
-/** Останнє читання власника — за стільки до півночі; менше часу в запасі — навчання не починає зупинку. */
-const LAST_LOOK_MS = 3_000;
+/** Останнє читання власника (`clock status`, повільне) починається за стільки до півночі. */
+export const LAST_LOOK_MS = 30_000;
+/** Після останнього погляду до півночі має лишитися щонайменше стільки — інакше навчання не починає зупинку. */
+export const MIN_SPARE_MS = 2_000;
+/** Продовження оренди (`server/src/domain/scheduler/lease.ts` LEASE_RENEW_MS): `renewed_at` новішого рядка може бути
+ * вже не перехопленням, а наступним продовженням, якщо між спостереженнями пройшло стільки чи більше. */
+export const RENEW_MS = 2_000;
+/** Postgres основного вузла (сервіс у `node/compose.yml`): оренда й годинник заміру — з однієї бази. */
+export const PG_SERVICE = 'postgres';
+/** Значення змінних не друкуються: psql читає їх у контейнері, SQL — окремим аргументом `$1`. */
+const PSQL = 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -At -v ON_ERROR_STOP=1 -c "$1"';
+export const SQL_DB_NOW = 'SELECT (extract(epoch from clock_timestamp())*1000)::bigint';
+export const SQL_LEASE =
+  "SELECT holder, epoch::text, (extract(epoch from renewed_at)*1000)::bigint, (extract(epoch from clock_timestamp())*1000)::bigint FROM scheduler_leases WHERE name = 'scheduler'";
 const CALL_TIMEOUT_MS = 60_000;
 const STOP_TIMEOUT_MS = 120_000;
 const RE_ID = /^[0-9a-f]{12,64}$/;
@@ -206,20 +221,40 @@ export function tallyRecords(pairs, expect) {
 export const realTimeOf = (targetMs, status, readAt) => readAt + (targetMs - status.nowMs) / status.speed;
 
 /**
- * Заміри з міток часу: `takeoverMs` — від початку зупинки власника до середини виклику статусу, що вперше показав
- * нового власника; `lateMs` — від реальної півночі до середини виклику записів, що вперше показав усі належні пари.
- * @param {{ stopAt: number, takeover: { start: number, end: number }, midnightAt: number, records: { start: number, end: number } }} t
+ * `lateMs` — від реальної півночі до середини виклику записів, що вперше показав усі належні пари.
+ * @param {{ midnightAt: number, records: { start: number, end: number } }} t
  */
-export function measure(t) {
-  const mid = (/** @type {{ start: number, end: number }} */ c) => (c.start + c.end) / 2;
-  return {
-    takeoverMs: Math.max(0, Math.round(mid(t.takeover) - t.stopAt)),
-    lateMs: Math.max(0, Math.round(mid(t.records) - t.midnightAt)),
-  };
+export const lateOf = (t) => Math.max(0, Math.round((t.records.start + t.records.end) / 2 - t.midnightAt));
+
+/**
+ * Рядок `psql -At` із `SQL_LEASE`: `holder|epoch|renewed_ms|now_ms`; немає рядка чи не той вигляд — `null`.
+ * @param {string} stdout
+ * @returns {{ holder: string | null, epoch: number, renewedMs: number, nowMs: number } | null}
+ */
+export function parseLeaseRow(stdout) {
+  const line = String(stdout).split(/\r?\n/).find((l) => l.trim() !== '');
+  if (line === undefined) return null;
+  const f = line.trim().split('|');
+  if (f.length !== 4 || !f.slice(1).every((x) => /^-?\d+$/.test(x))) return null;
+  const [epoch, renewedMs, nowMs] = f.slice(1).map(Number);
+  return { holder: f[0] === '' ? null : f[0], epoch, renewedMs, nowMs };
 }
 
-/** @param {{ takeoverMs: number, lateMs: number, duplicates: number, missed: number }} r */
-export const drillLine = (r) => `DRILL takeover_ms=${r.takeoverMs} late_ms=${r.lateMs} duplicates=${r.duplicates} missed=${r.missed}`;
+/**
+ * Перехоплення за годинником Postgres. `renewed_at` першого рядка нової епохи — момент перехоплення, якщо від
+ * попереднього спостереження (стара епоха; перше — мітка вбивства) минуло менше за продовження оренди. Інакше
+ * `renewed_at` може бути вже продовженням — тоді верхня межа: `clock_timestamp()` спостереження мінус мітка вбивства.
+ * @param {{ killDbMs: number, prevDbMs: number, row: { renewedMs: number, nowMs: number } }} t
+ * @returns {{ takeoverMs: number, bound: 'exact' | 'upper' }}
+ */
+export function takeoverOf(t) {
+  if (t.row.renewedMs - t.prevDbMs < RENEW_MS) return { takeoverMs: Math.max(0, t.row.renewedMs - t.killDbMs), bound: 'exact' };
+  return { takeoverMs: Math.max(0, t.row.nowMs - t.killDbMs), bound: 'upper' };
+}
+
+/** @param {{ takeoverMs: number, lateMs: number, duplicates: number, missed: number, bound?: 'exact' | 'upper' }} r */
+export const drillLine = (r) =>
+  `DRILL takeover_ms=${r.takeoverMs} late_ms=${r.lateMs} duplicates=${r.duplicates} missed=${r.missed} clock=postgres${r.bound === 'upper' ? ' bound=upper' : ''}`;
 
 // ---------- екземпляри ----------
 
@@ -244,6 +279,17 @@ async function clockCli(inst, cli) {
   const json = lastJson(r.stdout);
   if (json === null) throw new Error(`clock ${cli[0]} у ${inst.name}: CLI не повернув JSON-рядка`);
   return json;
+}
+
+/**
+ * Один запит `psql` у Postgres основного вузла (без pnpm/tsx — частки секунди). Повертає stdout.
+ * @param {Instance} main
+ * @param {string} sql
+ */
+async function dbQuery(main, sql) {
+  const r = await call(main, ['exec', '-T', PG_SERVICE, 'sh', '-c', PSQL, '_', sql]);
+  if (r.code !== 0) throw new Error(`psql у ${PG_SERVICE}: код ${r.code}`);
+  return String(r.stdout);
 }
 
 /** @param {Instance} inst */
@@ -418,7 +464,7 @@ async function drill(ctx, o) {
   const touched = { drill: false, clock: false, stopped: [] };
   /** @type {number | null} */
   let outageAt = null;
-  /** @type {{ takeoverMs: number, lateMs: number, duplicates: number, missed: number } | null} */
+  /** @type {{ takeoverMs: number, lateMs: number, duplicates: number, missed: number, bound: 'exact' | 'upper' } | null} */
   let result = null;
   let failed = false;
   /** @param {string} step @param {Record<string, unknown>} [rec] */
@@ -495,7 +541,7 @@ async function drill(ctx, o) {
     const midnightAt = realTimeOf(o.midnightMs, { nowMs: /** @type {number} */ (st.nowMs), speed: 1 }, readAt);
     ok('clock-set', { at: isoOf(o.midnightMs - LEAD_MS), midnight: isoOf(o.midnightMs), runEpoch, moment: next.key, due: next.due?.length ?? null });
 
-    // Останній погляд на власника — за кілька секунд до півночі.
+    // Останній погляд на власника (повільний `clock status`) — за LAST_LOOK_MS до півночі.
     await clock.sleep(Math.max(0, midnightAt - LAST_LOOK_MS - clock.now()));
     const last = await readStatus(main);
     const holder = owner(last.holder);
@@ -505,13 +551,16 @@ async function drill(ctx, o) {
     const survivor = h === main ? other : main;
     const oldEpoch = /** @type {number} */ (last.epoch);
     ok('holder', { holder: h.name, epoch: oldEpoch });
-    if (clock.now() > midnightAt) fail('північ минула до зупинки — запасу часу забракло');
+    if (midnightAt - clock.now() < MIN_SPARE_MS) fail('північ минула до зупинки — запасу часу забракло');
     await clock.sleep(Math.max(0, midnightAt - clock.now()));
 
     // Північ: власник «помирає» — SIGKILL без благодатного періоду. `stop` (SIGTERM) дав би серверу звільнити оренду
     // (`stop()` планувальника робить release), і замір показав би швидший шлях звільнення, а не перехоплення після
-    // закінчення строку оренди, якого вимагає межа 10 с.
+    // закінчення строку оренди, якого вимагає межа 10 с. Мітка вбивства — годинник Postgres, той самий, що ставить
+    // `renewed_at` при перехопленні (`server/src/adapters/pgScheduler.ts`), тож замір — в одній шкалі.
     const stopAt = clock.now();
+    const killDbMs = Number(String(await dbQuery(main, SQL_DB_NOW)).trim().split(/\r?\n/)[0]);
+    if (!Number.isSafeInteger(killDbMs)) fail('psql: мітку часу бази перед зупинкою не прочитано');
     touched.stopped.push(h);
     if (h.publicApi) {
       outageAt = stopAt;
@@ -520,13 +569,31 @@ async function drill(ctx, o) {
     }
     const kill = await call(h, ['kill', '-s', 'SIGKILL', h.service], STOP_TIMEOUT_MS);
     if (kill.code !== 0) fail(`SIGKILL ${h.name} завершився з кодом ${kill.code}`);
-    ok('kill', { instance: h.name, signal: 'SIGKILL', kill_ms: clock.now() - stopAt });
+    const killCallMs = clock.now() - stopAt;
+    ok('kill', { instance: h.name, signal: 'SIGKILL', kill_call_ms: killCallMs, kill_db_ms: killDbMs });
+    out(`scheduler-drill: kill_call_ms=${killCallMs} (мітка бази + SIGKILL)`);
 
-    // Перехоплення.
-    const taken = await pollStatus(survivor, (s, who) => who === survivor && s.epoch !== null && s.epoch > oldEpoch, TAKEOVER_WAIT_MS);
-    if (!taken) fail(`${survivor.name} не взяв оренду за ${TAKEOVER_WAIT_MS / 1000} с`);
-    const tk = /** @type {NonNullable<typeof taken>} */ (taken);
-    ok('takeover', { by: survivor.name, epoch: tk.s.epoch, poll_ms: tk.end - tk.start });
+    // Перехоплення — опитування рядка оренди в Postgres кожні POLL_MS.
+    /** @type {{ holder: string | null, epoch: number, renewedMs: number, nowMs: number } | null} */
+    let row = null;
+    let prevDbMs = killDbMs;
+    const takeoverDeadline = clock.now() + TAKEOVER_WAIT_MS;
+    for (;;) {
+      const start = clock.now();
+      const r = parseLeaseRow(await dbQuery(main, SQL_LEASE).catch(() => ''));
+      if (r && r.epoch > oldEpoch && owner(r.holder) === survivor) {
+        row = r;
+        break;
+      }
+      if (r) prevDbMs = r.nowMs;
+      const end = clock.now();
+      if (end >= takeoverDeadline) break;
+      await clock.sleep(Math.max(0, POLL_MS - (end - start)));
+    }
+    if (!row) fail(`${survivor.name} не взяв оренду за ${TAKEOVER_WAIT_MS / 1000} с`);
+    const tr = /** @type {NonNullable<typeof row>} */ (row);
+    const tk = takeoverOf({ killDbMs, prevDbMs, row: tr });
+    ok('takeover', { by: survivor.name, epoch: tr.epoch, takeover_ms: tk.takeoverMs, bound: tk.bound, clock: 'postgres' });
 
     // Записи опівнічних моментів.
     const expect = { key: next.key, due: next.due };
@@ -546,8 +613,7 @@ async function drill(ctx, o) {
     }
     if (!rec) fail(`clock records не повернув записів епохи ${runEpoch}`);
     const rc = /** @type {NonNullable<typeof rec>} */ (rec);
-    const m = measure({ stopAt, takeover: tk, midnightAt, records: rc });
-    result = { ...m, ...tallyRecords(rc.pairs, expect) };
+    result = { takeoverMs: tk.takeoverMs, lateMs: lateOf({ midnightAt, records: rc }), ...tallyRecords(rc.pairs, expect), bound: tk.bound };
     ok('result', { ...result, holder: h.name, by: survivor.name });
     out(drillLine(result));
     out(`T2F_MEASURE ${JSON.stringify({ metric: 'lease-takeover-ms', n: 1, p50: result.takeoverMs, p99: result.takeoverMs, max: result.takeoverMs })}`);
