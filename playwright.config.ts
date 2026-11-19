@@ -20,13 +20,15 @@ export default defineConfig({
   webServer: [
     {
       command: 'pnpm dev:test',
-      url: 'http://localhost:3000',
+      // Готовність — за файлом саме нашого сайту: чужий процес на порту 3000 (інший проєкт) не пройде перевірку, і прогін
+      // не «перевикористає» його, а впаде з «порт зайнятий» (знахідка 2026-11-19: Remotion на :3000 і reuseExistingServer).
+      url: 'http://localhost:3000/brand/logo.png',
       reuseExistingServer: true,
       timeout: 120_000,
     },
     {
       command: 'pnpm build && npx --yes serve@14 out -l 3100',
-      url: 'http://localhost:3100',
+      url: 'http://localhost:3100/brand/logo.png',
       reuseExistingServer: true,
       timeout: 300_000,
     },
