@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/prelaunch/JsonLd';
 import { isLocale } from '@/i18n/locales';
 import { getData } from '@/lib/data/load';
 import { countryMetadata } from '@/lib/prelaunch/seo';
-import { COUNTRY_EXTRAS, isoByUrlSlug } from '@/lib/prelaunch/site';
+import { COUNTRY_EXTRAS, inCountryOf, isoByUrlSlug } from '@/lib/prelaunch/site';
 import { countryIndexable, describedIsos, siteData } from '@/lib/prelaunch/siteData';
 
 type Params = Promise<{ locale: string; slug: string }>;
@@ -34,9 +34,9 @@ async function resolve(params: Params) {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { locale, iso, name, slug, described, indexable } = await resolve(params);
+  const { locale, iso, name, slug, described, indexable, site } = await resolve(params);
   // Країна без розповіді кожною мовою — «лише факти»: `noindex`, без `hreflang`, не в `sitemap` (`countryIndexable`).
-  return countryMetadata(locale, iso, name, slug, described, indexable);
+  return countryMetadata(locale, iso, name, slug, described, indexable, inCountryOf(site, iso));
 }
 
 export default async function Page({ params }: { params: Params }) {

@@ -10,11 +10,177 @@
           "type": "video/webm; codecs=\"av01.0.08M.08\"",
           "media": "(min-width: 1000px)"
         },
-        { "src": "/media/hero/hero-1080.mp4", "type": "video/mp4", "media": "(min-width: 1000px)" },
-        { "src": "/media/hero/hero-720.webm", "type": "video/webm; codecs=\"av01.0.05M.08\"" },
-        { "src": "/media/hero/hero-720.mp4", "type": "video/mp4" }
+        {
+          "src": "/media/hero/hero-1080.mp4",
+          "type": "video/mp4",
+          "media": "(min-width: 1000px)"
+        },
+        {
+          "src": "/media/hero/hero-720.webm",
+          "type": "video/webm; codecs=\"av01.0.05M.08\""
+        },
+        {
+          "src": "/media/hero/hero-720.mp4",
+          "type": "video/mp4"
+        }
       ],
       "license": "CC BY-SA 4.0"
+    },
+    "city:auckland": {
+      "src": "/media/photos/auckland.webp",
+      "alt": {
+        "uk": "Новорічний салют над вежею Скай-Тауер в Окленді",
+        "en": "New Year fireworks over the Sky Tower in Auckland",
+        "es": "Fuegos artificiales de Año Nuevo sobre la Sky Tower de Auckland",
+        "fr": "Feu d’artifice du Nouvel An au-dessus de la Sky Tower d’Auckland"
+      },
+      "author": "James Shih",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2023_New_Year%27s_Eve_Firework_Display_Auckland.jpg"
+    },
+    "country:NZ": {
+      "src": "/media/photos/auckland.webp",
+      "alt": {
+        "uk": "Новорічний салют над вежею Скай-Тауер в Окленді",
+        "en": "New Year fireworks over the Sky Tower in Auckland",
+        "es": "Fuegos artificiales de Año Nuevo sobre la Sky Tower de Auckland",
+        "fr": "Feu d’artifice du Nouvel An au-dessus de la Sky Tower d’Auckland"
+      },
+      "author": "James Shih",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2023_New_Year%27s_Eve_Firework_Display_Auckland.jpg"
+    },
+    "city:sydney": {
+      "src": "/media/photos/sydney.webp",
+      "alt": {
+        "uk": "Салют над мостом Харбор-Брідж у Сіднеї",
+        "en": "Fireworks over the Sydney Harbour Bridge",
+        "es": "Fuegos artificiales sobre el Harbour Bridge de Sídney",
+        "fr": "Feu d’artifice au-dessus du Harbour Bridge de Sydney"
+      },
+      "author": "Jayden Lynch",
+      "license": "Unsplash License",
+      "sourceUrl": "https://unsplash.com/photos/Yww-2dCBZcw"
+    },
+    "country:AU": {
+      "src": "/media/photos/australia.webp",
+      "alt": {
+        "uk": "Феєрверк над мостом Харбор-Брідж",
+        "en": "Fireworks over the Harbour Bridge",
+        "es": "Fuegos artificiales sobre el Harbour Bridge",
+        "fr": "Feu d’artifice au-dessus du Harbour Bridge"
+      },
+      "author": "Jayden Lynch",
+      "license": "Unsplash License",
+      "sourceUrl": "https://unsplash.com/photos/a-bridge-with-a-bunch-of-fireworks-on-it-Oj6BSTbvcn8"
+    },
+    "city:tokyo": {
+      "src": "/media/photos/tokyo.webp",
+      "alt": {
+        "uk": "Підсвічена Токійська вежа вночі",
+        "en": "Tokyo Tower lit up at night",
+        "es": "La Torre de Tokio iluminada de noche",
+        "fr": "La tour de Tokyo illuminée la nuit"
+      },
+      "author": "Zengame from Tokyo, Japan",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tokyo_tower_2018_(39441473701).jpg"
+    },
+    "city:dubai": {
+      "src": "/media/photos/dubai.webp",
+      "alt": {
+        "uk": "Новорічний салют уздовж Бурдж-Халіфи в Дубаї",
+        "en": "New Year fireworks along the Burj Khalifa in Dubai",
+        "es": "Fuegos artificiales de Año Nuevo en el Burj Khalifa de Dubái",
+        "fr": "Feu d’artifice du Nouvel An le long du Burj Khalifa à Dubaï"
+      },
+      "author": "Bengin Ahmad",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dubai_2015_(15971984728).jpg"
+    },
+    "city:paris": {
+      "src": "/media/photos/paris.webp",
+      "alt": {
+        "uk": "Тріумфальна арка в Парижі в новорічну ніч",
+        "en": "The Arc de Triomphe in Paris on New Year’s Eve",
+        "es": "El Arco del Triunfo de París en Nochevieja",
+        "fr": "L’Arc de triomphe à Paris le soir du réveillon"
+      },
+      "author": "Ninara from Helsinki, Finland",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:4Y1A6480_Paris_(23849104840).jpg"
+    },
+    "country:FR": {
+      "src": "/media/photos/paris.webp",
+      "alt": {
+        "uk": "Тріумфальна арка в Парижі в новорічну ніч",
+        "en": "The Arc de Triomphe in Paris on New Year’s Eve",
+        "es": "El Arco del Triunfo de París en Nochevieja",
+        "fr": "L’Arc de triomphe à Paris le soir du réveillon"
+      },
+      "author": "Ninara from Helsinki, Finland",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:4Y1A6480_Paris_(23849104840).jpg"
+    },
+    "city:rio-de-janeiro": {
+      "src": "/media/photos/rio.webp",
+      "alt": {
+        "uk": "Салюти над затокою Копакабана в Ріо-де-Жанейро",
+        "en": "Fireworks over Copacabana Bay in Rio de Janeiro",
+        "es": "Fuegos artificiales sobre la bahía de Copacabana en Río de Janeiro",
+        "fr": "Feux d’artifice sur la baie de Copacabana à Rio de Janeiro"
+      },
+      "author": "Leandro Neumann Ciuffo",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Feliz_2013_(8332275903).jpg"
+    },
+    "country:BR": {
+      "src": "/media/photos/brazil.webp",
+      "alt": {
+        "uk": "Панорама новорічного салюту над Копакабаною",
+        "en": "Panorama of New Year fireworks over Copacabana",
+        "es": "Panorámica de los fuegos de Año Nuevo sobre Copacabana",
+        "fr": "Panorama du feu d’artifice du Nouvel An sur Copacabana"
+      },
+      "author": "Leandro Neumann Ciuffo",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:R%C3%A8veillon_2013_(8333332944).jpg"
+    },
+    "city:new-york": {
+      "src": "/media/photos/new-york.webp",
+      "alt": {
+        "uk": "Куля на Таймс-сквер опівночі",
+        "en": "The Times Square ball at midnight",
+        "es": "La bola de Times Square a medianoche",
+        "fr": "La boule de Times Square à minuit"
+      },
+      "author": "Anthony Quintano",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://www.flickr.com/photos/22882274@N04/15976655339/"
+    },
+    "country:US": {
+      "src": "/media/photos/new-york.webp",
+      "alt": {
+        "uk": "Куля на Таймс-сквер опівночі",
+        "en": "The Times Square ball at midnight",
+        "es": "La bola de Times Square a medianoche",
+        "fr": "La boule de Times Square à minuit"
+      },
+      "author": "Anthony Quintano",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://www.flickr.com/photos/22882274@N04/15976655339/"
+    },
+    "city:las-vegas": {
+      "src": "/media/photos/las-vegas.webp",
+      "alt": {
+        "uk": "Салют над Caesars Palace у Лас-Вегасі",
+        "en": "Fireworks over Caesars Palace in Las Vegas",
+        "es": "Fuegos artificiales sobre el Caesars Palace de Las Vegas",
+        "fr": "Feu d’artifice au-dessus du Caesars Palace à Las Vegas"
+      },
+      "author": "InSapphoWeTrust",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Happy_New_Year_2012,_Las_Vegas_Strip_(8286163691).jpg"
     }
   }
 }

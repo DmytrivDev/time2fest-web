@@ -560,7 +560,9 @@
         "title": "{country}: New Year {year}, midnight time and traditions | Time2Fest",
         "titleFacts": "New Year {year} — {country}: Midnight Time & Countdown | Time2Fest",
         "description": "{country} welcomes New Year {year}: midnight in your time, a countdown, time zones and New Year traditions.",
-        "descriptionFacts": "When New Year {year} arrives in {country}: midnight in your local time, a countdown to it and the country’s time zones."
+        "descriptionFacts": "When New Year {year} arrives in {country}: midnight in your local time, a countdown to it and the country’s time zones.",
+        "titleFactsIn": "New Year {year} {inCountry}: Midnight Time & Countdown | Time2Fest",
+        "descriptionFactsIn": "When New Year {year} arrives {inCountry}: midnight in your local time, a countdown to it and the country’s time zones."
       },
       "pass": {
         "title": "New Year Pass for $5 — Time2Fest",
@@ -687,7 +689,7 @@
       "neighborsTitle": "Ringing in the New Year at the same time",
       "allCountries": "All countries",
       "photoAlt": "{country}: New Year celebration",
-      "titleIn": "New Year {year} {inCountry}",
+      "titleIn": "New Year {inCountry}",
       "streamSoon": "A stream will appear here closer to the celebration."
     },
     "pass": {

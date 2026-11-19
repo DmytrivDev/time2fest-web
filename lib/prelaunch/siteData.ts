@@ -3,6 +3,7 @@ import storiesEn from '@/data/prelaunch/content/en.json';
 import storiesEs from '@/data/prelaunch/content/es.json';
 import storiesFr from '@/data/prelaunch/content/fr.json';
 import storiesUk from '@/data/prelaunch/content/uk.json';
+import inCountryJson from '@/content/prelaunch/in-country.json';
 import namesEn from '@/data/prelaunch/names/en.json';
 import namesEs from '@/data/prelaunch/names/es.json';
 import namesFr from '@/data/prelaunch/names/fr.json';
@@ -13,11 +14,14 @@ import type { CountryStory, SiteData, SiteNames } from './site';
 
 type Stories = Record<string, CountryStory>;
 
+/** Форма «у країні» 4 мовами (`content/prelaunch/in-country.json`) — заголовок і метатексти сторінки країни. */
+const IN_COUNTRY = inCountryJson as unknown as Record<Locale, Record<string, string>>;
+
 const NAMES: Record<Locale, SiteNames | null> = {
   uk: null,
-  en: namesEn as SiteNames,
-  es: namesEs as SiteNames,
-  fr: namesFr as SiteNames,
+  en: { ...(namesEn as SiteNames), countriesIn: IN_COUNTRY.en },
+  es: { ...(namesEs as SiteNames), countriesIn: IN_COUNTRY.es },
+  fr: { ...(namesFr as SiteNames), countriesIn: IN_COUNTRY.fr },
 };
 
 /**
@@ -32,7 +36,7 @@ const STORIES: Record<Locale, Stories> = {
 };
 
 export function siteData(locale: Locale): SiteData {
-  return { locale, names: NAMES[locale], stories: STORIES[locale] };
+  return { locale, names: NAMES[locale], inCountryUk: IN_COUNTRY.uk, stories: STORIES[locale] };
 }
 
 /** Країни з розповіддю цією мовою (ISO). */

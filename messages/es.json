@@ -72,7 +72,7 @@
       "neighborsTitle": "Reciben el Año Nuevo a la misma hora",
       "allCountries": "Todos los países",
       "photoAlt": "{country}: celebración de Año Nuevo",
-      "titleIn": "Año Nuevo {year} {inCountry}",
+      "titleIn": "Año Nuevo {inCountry}",
       "streamSoon": "Cerca de la celebración, aquí aparecerá una transmisión."
     },
     "meta": {
@@ -80,7 +80,9 @@
         "titleFacts": "Año Nuevo {year} — {country}: hora de medianoche | Time2Fest",
         "descriptionFacts": "{country} y el Año Nuevo {year}: la hora de la medianoche en tu hora local, la cuenta regresiva y las zonas horarias del país.",
         "title": "{country}: Año Nuevo {year}, hora de la medianoche y tradiciones | Time2Fest",
-        "description": "{country} recibe el Año Nuevo {year}: la medianoche en tu hora local, cuenta regresiva, zonas horarias y tradiciones de Año Nuevo."
+        "description": "{country} recibe el Año Nuevo {year}: la medianoche en tu hora local, cuenta regresiva, zonas horarias y tradiciones de Año Nuevo.",
+        "titleFactsIn": "Año Nuevo {year} {inCountry}: hora de medianoche | Time2Fest",
+        "descriptionFactsIn": "Cuándo llega el Año Nuevo {year} {inCountry}: la medianoche en tu hora local, la cuenta regresiva y las zonas horarias del país."
       },
       "siteName": "Time2Fest",
       "home": {

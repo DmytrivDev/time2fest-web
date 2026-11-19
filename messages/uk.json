@@ -2798,7 +2798,9 @@
         "title": "{country}: Новий рік {year} — коли північ і як святкують | Time2Fest",
         "titleFacts": "Новий рік {year} — {country}: коли північ, відлік | Time2Fest",
         "description": "{country} зустрічає Новий рік {year}: час півночі за твоїм часом, відлік, часові пояси й новорічні традиції.",
-        "descriptionFacts": "{country} зустрічає Новий рік {year}: коли там північ за твоїм часом, відлік до неї й часові пояси країни."
+        "descriptionFacts": "{country} зустрічає Новий рік {year}: коли там північ за твоїм часом, відлік до неї й часові пояси країни.",
+        "titleFactsIn": "Новий рік {year} {inCountry}: коли північ, відлік | Time2Fest",
+        "descriptionFactsIn": "Коли настане Новий рік {year} {inCountry}: північ за твоїм часом, відлік до неї й часові пояси країни."
       },
       "pass": {
         "title": "Новорічний пас за $5 — Time2Fest",
@@ -2925,7 +2927,7 @@
       "neighborsTitle": "Того ж часу Новий рік зустрічають",
       "allCountries": "Усі країни",
       "photoAlt": "{country}: новорічне святкування",
-      "titleIn": "Новий рік {year} {inCountry}",
+      "titleIn": "Новий рік {inCountry}",
       "streamSoon": "Ближче до святкування тут з’явиться трансляція."
     },
     "pass": {

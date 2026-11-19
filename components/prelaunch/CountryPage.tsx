@@ -71,7 +71,11 @@ function Body({ iso }: { iso: string }) {
   const city = pc.zones.find((z) => z.zoneId === zone.id)?.city ?? country.name.uk;
   // Своя сцена (листівка) є не в усіх країн; без неї — відлік на тлі, без шаблонної листівки.
   const scene = hasPostcardScene(country.illustrationId);
-  const heading = t('title', { ...SEASON_VALUES, country: country.name.uk });
+  // Видимий заголовок і H1 — «Новий рік у Новій Зеландії» (рішення власника 2026-11-19); рік — лише в title/description.
+  const inCountry = site.inCountry(iso);
+  const heading = inCountry
+    ? t('titleIn', { ...SEASON_VALUES, inCountry })
+    : t('title', { ...SEASON_VALUES, country: country.name.uk });
   const after = now > 0 && now >= zone.midnightMs;
   const photo = site.media[`country:${iso}`];
   const gallery = photo

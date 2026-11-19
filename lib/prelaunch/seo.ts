@@ -176,6 +176,7 @@ export async function countryMetadata(
   slug: string,
   described: boolean,
   open: boolean,
+  inCountry?: string,
 ): Promise<Metadata> {
   const path = `/country/${slug}/`;
   const seo = described ? SEO_COUNTRY[iso]?.[locale] : undefined;
@@ -187,13 +188,13 @@ export async function countryMetadata(
     return seoFields(locale, path, countryTitle(full, locale), withYear(seo.description), open);
   }
   const t = await getTranslations({ locale, namespace: 'prelaunch.meta.country' });
-  const values = { ...SEASON_VALUES, country: name };
+  const values = { ...SEASON_VALUES, country: name, inCountry: inCountry ?? '' };
   return seoFields(
     locale,
     path,
-    countryTitle(t('titleFacts', values), locale),
-    t('descriptionFacts', values),
-    false,
+    countryTitle(t(inCountry ? 'titleFactsIn' : 'titleFacts', values), locale),
+    t(inCountry ? 'descriptionFactsIn' : 'descriptionFacts', values),
+    open,
   );
 }
 

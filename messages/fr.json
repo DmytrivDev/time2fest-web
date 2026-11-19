@@ -72,7 +72,7 @@
       "neighborsTitle": "Fêtent le Nouvel An en même temps",
       "allCountries": "Tous les pays",
       "photoAlt": "{country} : célébration du Nouvel An",
-      "titleIn": "Nouvel An {year} {inCountry}",
+      "titleIn": "Le Nouvel An {inCountry}",
       "streamSoon": "Une diffusion apparaîtra ici à l’approche de la fête."
     },
     "meta": {
@@ -80,7 +80,9 @@
         "titleFacts": "Nouvel An {year} — {country} : heure de minuit | Time2Fest",
         "descriptionFacts": "Nouvel An {year} — {country} : l’heure de minuit à ton heure, le compte à rebours et les fuseaux horaires du pays.",
         "title": "{country} : Nouvel An {year}, heure de minuit et traditions | Time2Fest",
-        "description": "{country} fête le Nouvel An {year} : minuit à ton heure, compte à rebours, fuseaux horaires et traditions du Nouvel An."
+        "description": "{country} fête le Nouvel An {year} : minuit à ton heure, compte à rebours, fuseaux horaires et traditions du Nouvel An.",
+        "titleFactsIn": "Nouvel An {year} {inCountry} : heure de minuit | Time2Fest",
+        "descriptionFactsIn": "Quand arrive le Nouvel An {year} {inCountry} : minuit à ton heure, le compte à rebours et les fuseaux horaires du pays."
       },
       "siteName": "Time2Fest",
       "home": {

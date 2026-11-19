@@ -41,6 +41,39 @@ describe('метадані сторінок', () => {
   });
 });
 
+describe('метатексти сторінок країн — унікальні кожною мовою', () => {
+  it('title і description 246 країн × 4 мови без повторів; «у країні» є для кожної', async () => {
+    const { countryTitle } = await import('@/lib/prelaunch/seo');
+    const inCountry = (await import('@/content/prelaunch/in-country.json')).default as unknown as Record<
+      string,
+      Record<string, string>
+    >;
+    const msgs: Record<string, { prelaunch: { meta: { country: Record<string, string> } } }> = {
+      uk: (await import('@/messages/uk.json')).default as never,
+      en: (await import('@/messages/en.json')).default as never,
+      es: (await import('@/messages/es.json')).default as never,
+      fr: (await import('@/messages/fr.json')).default as never,
+    };
+    const fill = (tpl: string, v: Record<string, string>) => tpl.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? '');
+    const isos = Object.keys(extras);
+    expect(isos).toHaveLength(246);
+    for (const l of ALL) {
+      const m = msgs[l]!.prelaunch.meta.country;
+      const titles = new Set<string>();
+      const descriptions = new Set<string>();
+      for (const iso of isos) {
+        const form = inCountry[l]?.[iso];
+        expect(form, `${l} ${iso}`).toBeTruthy();
+        const v = { year: '2027', inCountry: form!, country: iso };
+        titles.add(countryTitle(fill(m.titleFactsIn!, v), l));
+        descriptions.add(fill(m.descriptionFactsIn!, v));
+      }
+      expect(titles.size, `${l}: title`).toBe(246);
+      expect(descriptions.size, `${l}: description`).toBe(246);
+    }
+  });
+});
+
 describe('sitemap і robots', () => {
   it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті — 15 × 4', () => {
     expect(files.openRoutes(ALL)).toEqual(routes.STATIC_ROUTES);
