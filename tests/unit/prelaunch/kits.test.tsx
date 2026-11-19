@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { HowToCard } from '@/components/live/HowToCard';
-import { kitIcon, sceneFile, unitKey } from '@/lib/prelaunch/kits';
+import { kitIcon, sceneFile, sceneOf, unitKey } from '@/lib/prelaunch/kits';
 import { describedIsos } from '@/lib/prelaunch/siteData';
 import { renderWithApp } from '../_support/render';
 
@@ -29,9 +29,28 @@ describe('набори країн', () => {
       position: '50% 0%',
     });
     expect(sceneFile('JP', 'utc+0900', false)).toBeUndefined();
-    expect(sceneFile('BR', 'utc-0300', true)).toEqual({ src: '/scenes/BR.svg', position: '50% 0%' });
+    expect(sceneFile('BR', 'utc-0300', true)).toEqual({
+      src: '/scenes/BR.svg',
+      position: '50% 0%',
+    });
     expect(sceneFile('BR', 'utc-0300', false)).toBeUndefined();
     expect(sceneFile('AU', 'utc+1100', true)).toBeUndefined();
+  });
+
+  it('запис сцени: шлях 3:2 — верх по центру; широка — правий край і кольори тла; фокус 3:2 — свій', () => {
+    expect(sceneOf('/scenes/NZ.svg')).toEqual({ src: '/scenes/NZ.svg', position: '50% 0%' });
+    expect(sceneOf({ src: '/scenes/NZ.svg', position: { x: 40, y: 20 } })).toEqual({
+      src: '/scenes/NZ.svg',
+      position: '40% 20%',
+    });
+    expect(sceneOf({ src: '/scenes/NZ-wide.svg', wide: true, sky: '#111', water: '#222' })).toEqual(
+      {
+        src: '/scenes/NZ-wide.svg',
+        position: 'right center',
+        wide: { sky: '#111', water: '#222' },
+      },
+    );
+    expect(sceneOf({ src: '/scenes/NZ-wide.svg', wide: true }).wide).toEqual({});
   });
 
   it('описані країни — без ключів поясів', () => {

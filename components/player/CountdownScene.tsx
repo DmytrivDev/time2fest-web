@@ -22,6 +22,7 @@ import { Button } from '@/components/primitives/Button';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { PostcardArt } from '@/components/stamp/StampArt';
+import { WideSceneArt } from './WideSceneArt';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -58,15 +59,17 @@ export interface CountdownSceneProps {
   artSrc?: string;
   /** Точка фокусу сцени з файла (`object-position`); типово — центр. */
   artPosition?: string;
+  /** Сцена з файла — широка (480×200): кадрування за правим краєм, тло неба й води у вузькій рамці (`WideSceneArt`). */
+  artWide?: { sky?: string; water?: string };
   /** `false` — без «Як святкують» на сцені: сторінка показує традиції окремою карткою нижче (передстартовий сайт). */
   traditions?: boolean;
   /** Рядок під відліком (передстартовий сайт: «Ближче до святкування тут з’явиться трансляція»). */
   note?: string;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, artSrc, artPosition, traditions, note }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, artSrc, artPosition, artWide, traditions, note }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} artSrc={artSrc} artPosition={artPosition} traditions={traditions} note={note} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} artSrc={artSrc} artPosition={artPosition} artWide={artWide} traditions={traditions} note={note} />;
 }
 
 /**
@@ -159,7 +162,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, artSrc, artPosition, traditions: withTraditions = true, note }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, artSrc, artPosition, artWide, traditions: withTraditions = true, note }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -188,7 +191,9 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
       data-midnight-phase={phase.kind}
       className={cn('@container relative size-full min-h-player-min-height overflow-hidden bg-surface-raised', className, fs.pseudo && 'fixed! inset-0 z-50 h-dvh! w-screen!')}
     >
-      {art && artSrc ? (
+      {art && artSrc && artWide ? (
+        <WideSceneArt src={artSrc} sky={artWide.sky} water={artWide.water} />
+      ) : art && artSrc ? (
         // eslint-disable-next-line @next/next/no-img-element -- статичний SVG сцени
         <img
           src={artSrc}

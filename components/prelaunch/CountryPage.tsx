@@ -158,6 +158,7 @@ function Body({ iso }: { iso: string }) {
                 art={scene}
                 artSrc={sceneSrc?.src}
                 artPosition={sceneSrc?.position}
+                artWide={sceneSrc?.wide}
                 traditions={false}
                 note={t('streamSoon')}
               />
