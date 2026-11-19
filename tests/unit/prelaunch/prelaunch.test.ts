@@ -126,7 +126,12 @@ describe('модель головної в мовному дереві', () => {
 
   it('описані — лише країни з розповіддю цією мовою; заглушок каталогу немає', () => {
     const m = model(siteUk);
-    expect(m.described.map((c) => c.iso).sort()).toEqual(Object.keys(storiesUk).sort());
+    expect(m.described.map((c) => c.iso).sort()).toEqual(
+      Object.keys(storiesUk)
+        // Ключі `ISO@пояс` — тексти інших поясів, не окремі країни.
+        .filter((k) => !k.includes('@'))
+        .sort(),
+    );
     const andorra = m.countriesByIso.get('AD');
     expect(andorra?.described).toBe(false);
     expect(andorra?.text).toBe('');
@@ -184,7 +189,9 @@ describe('тексти', () => {
 
   it('англійська має всі ключі; мова без файла показує англійську', () => {
     expect(
-      missingKeys(rawMessages(uk as never), rawMessages(en as never)).filter((k) => !k.startsWith('prelaunch.overrides.')),
+      missingKeys(rawMessages(uk as never), rawMessages(en as never)).filter(
+        (k) => !k.startsWith('prelaunch.overrides.'),
+      ),
     ).toEqual([]);
     // Правки головної (`prelaunch.prefest`, `prelaunch.nav`) діють і англійською.
     const enSet = localeMessages('en', { uk: uk as never, en: en as never });
@@ -319,7 +326,9 @@ describe('відлік сцени понад добу', () => {
   it('«29:23:59:59» без літери; менше доби — як і досі', async () => {
     const { sceneCountdownParts } = await import('@/components/player/SceneMidnight');
     const day = 86_400_000;
-    expect(sceneCountdownParts(29 * day + 23 * 3_600_000 + 59 * 60_000 + 59_000, true).text).toBe('29:23:59:59');
+    expect(sceneCountdownParts(29 * day + 23 * 3_600_000 + 59 * 60_000 + 59_000, true).text).toBe(
+      '29:23:59:59',
+    );
     expect(sceneCountdownParts(5 * 60_000, true).text).toBe('00:05:00');
     // Сайт свята (без `days`) — без змін: години понад добу.
     expect(sceneCountdownParts(2 * day, false).text).toBe('48:00:00');
@@ -331,7 +340,9 @@ describe('відлік сцени понад добу', () => {
     // Збірка сайту свята (тести) — години, як і досі.
     expect(COUNTDOWN_DAYS).toBe(false);
     expect(formatCountdown(43 * day + 2 * 3_600_000 + 35 * 60_000 + 36_000)).toBe('1034:35:36');
-    expect(formatCountdown(43 * day + 2 * 3_600_000 + 35 * 60_000 + 36_000, true)).toBe('43:02:35:36');
+    expect(formatCountdown(43 * day + 2 * 3_600_000 + 35 * 60_000 + 36_000, true)).toBe(
+      '43:02:35:36',
+    );
     expect(formatCountdown(22 * 60_000 + 15_000, true)).toBe('00:22:15');
     expect(formatCountdown(day, true)).toBe('1:00:00:00');
   });
@@ -340,7 +351,10 @@ describe('відлік сцени понад добу', () => {
 describe('тексти до гідратації — «за UTC»', () => {
   it('підписи часу відвідувача стають UTC; решта тексту без змін', async () => {
     const { utcWording } = await import('@/lib/prelaunch/utcWording');
-    const m = { a: { b: 'північ о {time} за твоїм часом', c: 'Час — за вашим часом.' }, d: 'без часу' };
+    const m = {
+      a: { b: 'північ о {time} за твоїм часом', c: 'Час — за вашим часом.' },
+      d: 'без часу',
+    };
     expect(utcWording(m, 'uk')).toEqual({
       a: { b: 'північ о {time} за UTC', c: 'Час — за UTC.' },
       d: 'без часу',
@@ -361,9 +375,9 @@ describe('метатексти сторінок', () => {
       'Новий рік 2027 у Великій Британії: як святкують, традиції',
     );
     // Сторінка країни — стеля 70: бренд лишається.
-    expect(fitTitle('Новий рік 2027 у Великій Британії: як святкують, традиції | Time2Fest', 70)).toBe(
-      'Новий рік 2027 у Великій Британії: як святкують, традиції | Time2Fest',
-    );
+    expect(
+      fitTitle('Новий рік 2027 у Великій Британії: як святкують, традиції | Time2Fest', 70),
+    ).toBe('Новий рік 2027 у Великій Британії: як святкують, традиції | Time2Fest');
   });
 });
 
@@ -410,9 +424,15 @@ describe('список країн: перша група — «Перший», �
 describe('дужки в адресах посилань документів', () => {
   it('кодуються, текст і решта рядка — без змін', async () => {
     const { encodeLinkParens } = await import('@/lib/prelaunch/legal');
-    expect(encodeLinkParens('| [Commons](https://x.org/File:Dubai_2015_(15971984728).jpg) | [CC](https://c.org/) |')).toBe(
+    expect(
+      encodeLinkParens(
+        '| [Commons](https://x.org/File:Dubai_2015_(15971984728).jpg) | [CC](https://c.org/) |',
+      ),
+    ).toBe(
       '| [Commons](https://x.org/File:Dubai_2015_%2815971984728%29.jpg) | [CC](https://c.org/) |',
     );
-    expect(encodeLinkParens('Без посилань (і дужки лишаються).')).toBe('Без посилань (і дужки лишаються).');
+    expect(encodeLinkParens('Без посилань (і дужки лишаються).')).toBe(
+      'Без посилань (і дужки лишаються).',
+    );
   });
 });
