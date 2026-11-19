@@ -23,6 +23,7 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { PostcardArt } from '@/components/stamp/StampArt';
 import { WideSceneArt } from './WideSceneArt';
+import wideCss from './WideSceneArt.module.css';
 import type { Country, Ms } from '@/lib/data/types';
 import { formatClock } from '@/lib/i18n/time';
 import { useNow } from '@/lib/time/TimeProvider';
@@ -219,7 +220,8 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
         <div className="absolute inset-0 flex flex-col gap-2 bg-linear-to-t from-background/95 via-background/50 to-transparent p-4 @lg:bg-linear-to-r @lg:from-background/80 @lg:via-background/30 @lg:to-transparent @lg:p-8">
           <p className="hidden text-label-sm text-text-secondary @lg:block">{variant === 'mode' ? t('modeCaption') : t('caption')}</p>
           {/* Примітка (передстартовий сайт) — одразу під відліком, не внизу над країною. */}
-          <div className="flex min-h-0 flex-1 flex-col justify-center gap-1 @lg:gap-2">
+          {/* Широка сцена: пам'ятка праворуч — на вузькій рамці відлік і примітка в лівих 60 %, текст переноситься. */}
+          <div className={cn('flex min-h-0 flex-1 flex-col justify-center gap-1 @lg:gap-2', artWide && wideCss.textCol)}>
             {phase.kind === 'count' ? <SceneCountdown left={phase.left} days={longCountdown} /> : phase.kind === 'after' ? <SceneYear year={year} /> : null}
             {note && phase.kind === 'count' ? <p className="text-caption text-text-secondary @lg:text-body">{note}</p> : null}
           </div>
