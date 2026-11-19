@@ -174,16 +174,17 @@ export async function countryMetadata(
   iso: string,
   name: string,
   slug: string,
+  described: boolean,
   open: boolean,
 ): Promise<Metadata> {
   const path = `/country/${slug}/`;
-  const seo = open ? SEO_COUNTRY[iso]?.[locale] : undefined;
+  const seo = described ? SEO_COUNTRY[iso]?.[locale] : undefined;
   if (seo) {
     const feast = FEAST[locale] ?? FEAST.en!;
     const full = seo.title.startsWith(feast)
       ? `${feast} ${SEASON_VALUES.year}${seo.title.slice(feast.length)}`
       : seo.title;
-    return seoFields(locale, path, countryTitle(full, locale), withYear(seo.description), true);
+    return seoFields(locale, path, countryTitle(full, locale), withYear(seo.description), open);
   }
   const t = await getTranslations({ locale, namespace: 'prelaunch.meta.country' });
   const values = { ...SEASON_VALUES, country: name };

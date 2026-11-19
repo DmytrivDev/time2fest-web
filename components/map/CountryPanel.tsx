@@ -106,7 +106,7 @@ export function CountryPanel({
   const tPre = useTranslations('prefest.map');
   // «До свята» (головна `/before`): без трансляцій, кімнати й штампа; сторінка країни й традиції — лише з описом.
   const prefest = useMapPrefest();
-  const pageLinked = !prefest || country.described !== false;
+  const pageLinked = !prefest || prefest.linkAllPages === true || country.described !== false;
   const viewerIso = useProfile()?.flagCode ?? undefined;
   const now = useNow();
   const streams = country.streams ?? [];

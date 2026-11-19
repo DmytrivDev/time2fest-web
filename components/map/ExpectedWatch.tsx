@@ -29,7 +29,11 @@ export function ExpectedWatch({
 }) {
   const t = useTranslations('liveMap.country');
   const te = useTranslations('prefest.map.expected');
-  const cards: readonly (ExpectedKind | null)[] = kinds.length ? kinds : [null];
+  const cards: readonly (ExpectedKind | null)[] = kinds.includes('countdown')
+    ? ['countdown']
+    : kinds.length
+      ? kinds
+      : [null];
   return (
     <div className={cn(m.watch, className)} data-expected-watch="">
       <Title className={zp.h4}>{t('watchTitle')}</Title>
@@ -43,7 +47,9 @@ export function ExpectedWatch({
               </div>
               <div className={cn(zp.cardCity, m.cardPlace)}>{city}</div>
               <div className={m.countdownFoot}>
-                <p className={m.countdownText}>{kind ? te('expected') : te('neutral')}</p>
+                <p className={m.countdownText}>
+                {kind === 'countdown' ? te('countdownText') : kind ? te('expected') : te('neutral')}
+              </p>
               </div>
             </li>
           ))}

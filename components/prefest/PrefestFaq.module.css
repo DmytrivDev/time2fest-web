@@ -84,3 +84,11 @@
     padding: 16px 18px;
   }
 }
+
+/* Дві незалежні колонки (передстартовий сайт): кожна — свій стовпець карток. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}

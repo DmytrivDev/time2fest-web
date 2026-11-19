@@ -1,7 +1,7 @@
 'use client';
 
 /** «Коротко про головне»: акордеон у дві колонки, перше питання відкрите. */
-import { useId, useState, type ReactNode } from 'react';
+import { Fragment, useId, useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Bar } from '@/components/skeleton/parts';
 import { Icon } from '@/components/primitives/Icon';
@@ -33,12 +33,18 @@ export function PrefestFaqList({
   items,
   className,
   headingId,
+  stacks = false,
 }: {
   title: ReactNode;
   items: readonly PrefestFaqItem[];
   className?: string;
   /** Сталий id заголовка (головна — `faq-h`); без нього — згенерований. */
   headingId?: string;
+  /**
+   * Дві незалежні колонки (передстартовий сайт, рішення власника 2026-11-19): відкрите питання ліворуч не зсуває
+   * картки праворуч. Перша половина — ліворуч, друга — праворуч; на телефоні — одна колонка в тому самому порядку.
+   */
+  stacks?: boolean;
 }) {
   const reduced = useReducedMotion();
   const base = useId();
@@ -50,34 +56,49 @@ export function PrefestFaqList({
         {title}
       </h2>
       <div className={cn(f.faq, reduced && f.still)}>
-        {items.map(({ id, question, answer }) => {
-          const isOpen = open === id;
-          const panel = `${base}-a${id}`;
-          return (
-            <div className={f.qa} data-open={isOpen} key={id}>
-              <h3>
-                <button
-                  type="button"
-                  className={f.btn}
-                  aria-expanded={isOpen}
-                  aria-controls={panel}
-                  onClick={() => setOpen(isOpen ? '' : id)}
-                >
-                  {question}
-                  <Icon name="plus" size={20} />
-                </button>
-              </h3>
-              <div className={f.a} id={panel} role="region" aria-hidden={!isOpen} inert={!isOpen}>
-                <div>
-                  <p>{answer}</p>
+        {(stacks ? halves(items) : [items]).map((column, ci) => {
+          const list = column.map(({ id, question, answer }) => {
+            const isOpen = open === id;
+            const panel = `${base}-a${id}`;
+            return (
+              <div className={f.qa} data-open={isOpen} key={id}>
+                <h3>
+                  <button
+                    type="button"
+                    className={f.btn}
+                    aria-expanded={isOpen}
+                    aria-controls={panel}
+                    onClick={() => setOpen(isOpen ? '' : id)}
+                  >
+                    {question}
+                    <Icon name="plus" size={20} />
+                  </button>
+                </h3>
+                <div className={f.a} id={panel} role="region" aria-hidden={!isOpen} inert={!isOpen}>
+                  <div>
+                    <p>{answer}</p>
+                  </div>
                 </div>
               </div>
+            );
+          });
+          return stacks ? (
+            <div className={f.stack} key={ci}>
+              {list}
             </div>
+          ) : (
+            <Fragment key={ci}>{list}</Fragment>
           );
         })}
       </div>
     </section>
   );
+}
+
+/** Перша половина питань — ліворуч, друга — праворуч. */
+function halves<T>(items: readonly T[]): (readonly T[])[] {
+  const half = Math.ceil(items.length / 2);
+  return [items.slice(0, half), items.slice(half)];
 }
 
 export function PrefestFaq() {
@@ -106,6 +127,7 @@ export function PrefestFaq() {
   return (
     <PrefestFaqList
       className={cn(s.sec, s.wrap)}
+      stacks={site !== null}
       headingId="faq-h"
       title={q('title')}
       items={(site ? SITE_KEYS : KEYS).map((k) => ({

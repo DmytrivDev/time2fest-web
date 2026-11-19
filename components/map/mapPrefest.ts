@@ -17,10 +17,12 @@ export interface MapPrefest {
    * «Трансляція очікується»). Без функції плашки немає (головна `/before`).
    */
   expectedKinds?: (iso: string, zoneId: string) => readonly ExpectedKind[];
+  /** Передстартовий сайт: сторінка є в кожної країни — посилання на неї й без розповіді. */
+  linkAllPages?: boolean;
 }
 
 /** Тип очікуваної трансляції (дослідження `expected-streams`). */
-export type ExpectedKind = 'celebration' | 'tv' | 'webcam' | 'address';
+export type ExpectedKind = 'celebration' | 'tv' | 'webcam' | 'address' | 'countdown';
 
 export const MapPrefestContext = createContext<MapPrefest | null>(null);
 

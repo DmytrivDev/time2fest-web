@@ -47,8 +47,8 @@ export function PassBlock() {
           </div>
           <span className={p.fine}>{t('fine')}</span>
           {site ? (
-            <NextLink className={s.link} href={site.href('/pass/')}>
-              {tSite('passMore')} <span aria-hidden="true">›</span>
+            <NextLink className={cn(s.btn, s.btnCoral, p.moreBtn)} href={site.href('/pass/')}>
+              {tSite('passMore')}
             </NextLink>
           ) : null}
         </div>

@@ -231,3 +231,17 @@
     display: none;
   }
 }
+
+/* Мовне дерево: плашка країни — посилання на її сторінку. */
+.flags > .pillLink {
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.flags > .pillLink:hover {
+  background: color-mix(in srgb, var(--color-surface-raised) 80%, var(--color-text));
+}
+.flags > .pillLink:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

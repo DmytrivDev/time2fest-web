@@ -446,11 +446,14 @@
           "celebration": "Main celebration",
           "tv": "TV broadcast",
           "webcam": "Webcam",
-          "address": "New Year address"
+          "address": "New Year address",
+          "countdown": "Countdown only"
         },
         "neutralType": "Stream",
         "expected": "Expected",
-        "neutral": "Stream expected"
+        "neutral": "Stream expected",
+        "countdownText": "No stream",
+        "countdownTag": "Countdown"
       }
     },
     "night": {
@@ -684,7 +687,8 @@
       "neighborsTitle": "Ringing in the New Year at the same time",
       "allCountries": "All countries",
       "photoAlt": "{country}: New Year celebration",
-      "titleIn": "New Year {year} {inCountry}"
+      "titleIn": "New Year {year} {inCountry}",
+      "streamSoon": "A stream will appear here closer to the celebration."
     },
     "pass": {
       "ticketTitle": "NEW YEAR PASS",

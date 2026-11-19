@@ -4,6 +4,7 @@
 // Чого `_redirects` не вміє (410, 301 з адреси без кінцевої риски) — описано в `docs/site/prelaunch-edge.md`.
 import fs from 'node:fs';
 import path from 'node:path';
+import { COUNTRY_PAGES_INDEXED } from '../../lib/prelaunch/pages.mjs';
 import { DEFAULT_LOCALE, STATIC_ROUTES, root } from './routes.mjs';
 
 export const SITE_ORIGIN = 'https://time2fest.com';
@@ -18,7 +19,7 @@ export const localePath = (locale, route) =>
  * Відкриті сторінки (SEO-звіт, розділ 6): головна, список країн, пас, тости, документи — і країни з власною
  * розповіддю кожною мовою збірки (те саме правило, що `countryIndexable` у `lib/prelaunch/siteData.ts`).
  */
-export function openRoutes(locales) {
+export function openRoutes(locales, countriesIndexed = COUNTRY_PAGES_INDEXED) {
   const countries = readJson('data/prelaunch/countries.json').countries;
   const stories = locales.map((l) => {
     const file = path.join(root, 'data', 'prelaunch', 'content', `${l}.json`);
@@ -27,14 +28,15 @@ export function openRoutes(locales) {
   const described = Object.keys(countries)
     .filter((iso) => stories.every((s) => s[iso]))
     .sort();
+  if (!countriesIndexed) return [...STATIC_ROUTES];
   return [...STATIC_ROUTES, ...described.map((iso) => `/country/${countries[iso].urlSlug}/`)];
 }
 
 const xml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 /** `sitemap.xml`: кожна відкрита сторінка кожною мовою + взаємні `xhtml:link` (усі мови й `x-default`). */
-export function sitemapXml(locales) {
-  const routes = openRoutes(locales);
+export function sitemapXml(locales, countriesIndexed = COUNTRY_PAGES_INDEXED) {
+  const routes = openRoutes(locales, countriesIndexed);
   const urls = [];
   for (const route of routes) {
     const alts = locales.map((l) => [l, `${SITE_ORIGIN}${localePath(l, route)}`]);

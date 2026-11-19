@@ -17,7 +17,7 @@ import { CountryCrumbs, showCountryCrumbs } from '@/components/country/CountryCr
 import { CountryHeader, type CountryZoneOption } from '@/components/country/CountryHeader';
 import { PrefestFaqList } from '@/components/prefest/PrefestFaq';
 import { HowToCard } from '@/components/live/HowToCard';
-import { ExpectedWatch } from '@/components/map/ExpectedWatch';
+import { ExpectedCards } from './ExpectedCards';
 import { CountdownScene } from '@/components/player/CountdownScene';
 import { PlayerSlot } from '@/components/player/PlayerSlot';
 import { mediaAlt, usePrefest } from '@/components/prefest/PrefestContext';
@@ -127,7 +127,7 @@ function Body({ iso }: { iso: string }) {
           />
           <PlayerSlot
             id="main"
-            className={scene ? undefined : s.sceneBare}
+            className={scene ? s.sceneFit : s.sceneBare}
             fallback={
               <CountdownScene
                 country={country}
@@ -138,18 +138,22 @@ function Body({ iso }: { iso: string }) {
                 longCountdown
                 art={scene}
                 traditions={false}
+                note={t('streamSoon')}
               />
             }
           />
           <div className="flex flex-col gap-8 pb-8 pt-8">
             {/* Що саме тут очікується (рішення власника 2026-11-18): тип події й головне місто, без посилань. */}
             {!after ? (
-              <ExpectedWatch
+              <ExpectedCards
+                country={country.name.uk}
                 kinds={site.expectedKinds?.(iso, zone.id) ?? []}
                 city={city}
-                phone={false}
-                titleAs="h2"
-                className={cn(live.pad, s.watchClip)}
+                mediaSlot={model.celebrations.find((c) => c.iso === iso && c.zoneId === zone.id)?.mediaSlot}
+                iso={iso}
+                illustrationId={country.illustrationId}
+                midnightMs={zone.midnightMs}
+                className={live.pad}
               />
             ) : null}
             {pc.described ? (
@@ -180,7 +184,7 @@ function Body({ iso }: { iso: string }) {
               </section>
             ) : null}
             {/* Питання — у самому низу (рішення власника 2026-11-19). */}
-            <PrefestFaqList title={tNav('faq')} items={faq} className={live.pad} />
+            <PrefestFaqList stacks title={tNav('faq')} items={faq} className={live.pad} />
           </div>
         </article>
       </div>

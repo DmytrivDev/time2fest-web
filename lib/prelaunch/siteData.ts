@@ -8,6 +8,7 @@ import namesEs from '@/data/prelaunch/names/es.json';
 import namesFr from '@/data/prelaunch/names/fr.json';
 import type { Locale } from '@/i18n/locales';
 import { SITE_LOCALES } from './env';
+import { COUNTRY_PAGES_INDEXED } from './pages.mjs';
 import type { CountryStory, SiteData, SiteNames } from './site';
 
 type Stories = Record<string, CountryStory>;
@@ -51,6 +52,10 @@ const OWN_STORIES: Partial<Record<Locale, Stories>> = {
  * Одне правило «сторінку країни відкрити пошуковикам» (план, розділ 8; звіт SEO): є власна розповідь кожною мовою
  * цієї збірки. Інакше сторінка країни — `noindex` і поза `sitemap` (усіма мовами однаково).
  */
-export function countryIndexable(iso: string, locales: readonly Locale[] = SITE_LOCALES): boolean {
-  return locales.every((l) => Boolean(OWN_STORIES[l]?.[iso]));
+export function countryIndexable(
+  iso: string,
+  locales: readonly Locale[] = SITE_LOCALES,
+  enabled: boolean = COUNTRY_PAGES_INDEXED,
+): boolean {
+  return enabled && locales.every((l) => Boolean(OWN_STORIES[l]?.[iso]));
 }

@@ -48,7 +48,7 @@ export function usePrefestMap(): { mapModel: MapModel; prefest: MapPrefest } {
           },
           `time2fest-${country.iso.toLowerCase()}.ics`,
         ),
-      ...(site?.expectedKinds ? { expectedKinds: site.expectedKinds } : {}),
+      ...(site?.expectedKinds ? { expectedKinds: site.expectedKinds, linkAllPages: true } : {}),
     }),
     [t, site],
   );

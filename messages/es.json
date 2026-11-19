@@ -72,7 +72,8 @@
       "neighborsTitle": "Reciben el Año Nuevo a la misma hora",
       "allCountries": "Todos los países",
       "photoAlt": "{country}: celebración de Año Nuevo",
-      "titleIn": "Año Nuevo {year} {inCountry}"
+      "titleIn": "Año Nuevo {year} {inCountry}",
+      "streamSoon": "Cerca de la celebración, aquí aparecerá una transmisión."
     },
     "meta": {
       "country": {
@@ -222,11 +223,14 @@
           "celebration": "Celebración principal",
           "tv": "Transmisión de TV",
           "webcam": "Cámara web",
-          "address": "Mensaje de Año Nuevo"
+          "address": "Mensaje de Año Nuevo",
+          "countdown": "Solo cuenta regresiva"
         },
         "neutralType": "Transmisión",
         "expected": "Se espera",
-        "neutral": "Transmisión prevista"
+        "neutral": "Transmisión prevista",
+        "countdownText": "Sin transmisión",
+        "countdownTag": "Cuenta regresiva"
       },
       "calendarTitle": "Medianoche · {country} — Time2Fest",
       "calendarText": "Año Nuevo: {country}. Míralo en vivo: time2fest.com",

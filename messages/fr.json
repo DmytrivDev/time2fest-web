@@ -72,7 +72,8 @@
       "neighborsTitle": "Fêtent le Nouvel An en même temps",
       "allCountries": "Tous les pays",
       "photoAlt": "{country} : célébration du Nouvel An",
-      "titleIn": "Nouvel An {year} {inCountry}"
+      "titleIn": "Nouvel An {year} {inCountry}",
+      "streamSoon": "Une diffusion apparaîtra ici à l’approche de la fête."
     },
     "meta": {
       "country": {
@@ -222,11 +223,14 @@
           "celebration": "Célébration principale",
           "tv": "Diffusion TV",
           "webcam": "Webcam",
-          "address": "Allocution du Nouvel An"
+          "address": "Allocution du Nouvel An",
+          "countdown": "Compte à rebours seul"
         },
         "neutralType": "Diffusion",
         "expected": "Prévu",
-        "neutral": "Diffusion prévue"
+        "neutral": "Diffusion prévue",
+        "countdownText": "Sans diffusion",
+        "countdownTag": "Compte à rebours"
       },
       "calendarTitle": "Minuit · {country} — Time2Fest",
       "calendarText": "Le Nouvel An : {country}. Regarde en direct : time2fest.com",

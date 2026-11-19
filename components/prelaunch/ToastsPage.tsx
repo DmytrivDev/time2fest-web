@@ -52,7 +52,7 @@ function Body() {
           </Hero>
           <WhatIsToast />
           <PassCard href={site ? site.href(PAGES.pass) : '/pass/'} />
-          <PrefestFaqList title={tNav('faq')} items={faq} className={sp.faq} />
+          <PrefestFaqList stacks title={tNav('faq')} items={faq} className={sp.faq} />
         </div>
       </div>
     </div>

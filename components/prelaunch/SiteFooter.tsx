@@ -12,6 +12,7 @@ import { LOCALE_NAMES, type Locale } from '@/i18n/locales';
 import { localeHref, PAGES, type PageKey } from '@/lib/prelaunch/href';
 import { isRouteEnabled } from '@/lib/prelaunch/pages.mjs';
 import { rememberLocale, useLocaleLinks } from './LangSwitch';
+import { SocialIcon } from './SocialIcon';
 import s from './site.module.css';
 
 export const SITE = siteJson as { email: string; social: { name: string; url: string }[] };
@@ -71,7 +72,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                       target="_blank"
                       aria-label={t('socialLink', { network: x.name })}
                     >
-                      {x.name}
+                      <SocialIcon name={x.name} />
                     </a>
                   </li>
                 ))}

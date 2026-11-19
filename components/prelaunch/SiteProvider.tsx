@@ -41,7 +41,11 @@ const MEDIA = (mediaJson as { items: Record<string, MediaItem> }).items;
 /** Очікувані трансляції «країна:пояс» → типи (`scripts/prelaunch/gen-expected.mjs`); немає запису — нейтрально. */
 const EXPECTED = (expectedJson as { kinds: Record<string, readonly ExpectedKind[]> }).kinds;
 const NONE: readonly ExpectedKind[] = [];
-const expectedKinds = (iso: string, zoneId: string): readonly ExpectedKind[] => EXPECTED[`${iso}:${zoneId}`] ?? NONE;
+/** Країни, трансляцій з яких не показуємо (рішення власника 2026-11-19): лише відлік. */
+const COUNTDOWN_ONLY = new Set(['RU', 'BY']);
+const ONLY_COUNTDOWN: readonly ExpectedKind[] = ['countdown'];
+const expectedKinds = (iso: string, zoneId: string): readonly ExpectedKind[] =>
+  COUNTDOWN_ONLY.has(iso) ? ONLY_COUNTDOWN : (EXPECTED[`${iso}:${zoneId}`] ?? NONE);
 
 /** Назви поясів IANA, що не збігаються з ідентифікатором міста в каталозі. */
 const ZONE_CITY_IDS: Record<string, string> = {

@@ -52,6 +52,7 @@ function Body() {
       <PassPerksShowcase />
       {/* Питання — у вигляді «Коротко про головне» головної (рішення власника 2026-11-19); ті самі питання сторінки паса. */}
       <PrefestFaqList
+        stacks
         title={tf('title')}
         items={PASS_FAQ.map((n) => ({ id: String(n), question: tf(`q${n}`), answer: tf(`a${n}`) }))}
       />

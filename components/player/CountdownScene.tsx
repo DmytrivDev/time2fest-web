@@ -53,11 +53,13 @@ export interface CountdownSceneProps {
   art?: boolean;
   /** `false` — без «Як святкують» на сцені: сторінка показує традиції окремою карткою нижче (передстартовий сайт). */
   traditions?: boolean;
+  /** Рядок під відліком (передстартовий сайт: «Ближче до святкування тут з’явиться трансляція»). */
+  note?: string;
 }
 
-export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, traditions }: CountdownSceneProps) {
+export function CountdownScene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', waitingFor, onWatchLive, className, longCountdown, art, traditions, note }: CountdownSceneProps) {
   if (variant === 'waiting' && waitingFor) return <WaitingScene country={country} waitingFor={waitingFor} onWatchLive={onWatchLive} className={className} />;
-  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} traditions={traditions} />;
+  return <Scene country={country} cityName={cityName} midnightMs={midnightMs} offsetMinutes={offsetMinutes} variant={variant} className={className} longCountdown={longCountdown} art={art} traditions={traditions} note={note} />;
 }
 
 /**
@@ -150,7 +152,7 @@ export function WaitingScene({
   );
 }
 
-function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, traditions: withTraditions = true }: CountdownSceneProps) {
+function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-stream', className, longCountdown = false, art = true, traditions: withTraditions = true, note }: CountdownSceneProps) {
   const t = useTranslations('player.scene');
   const titleId = useId();
   // Планшет: назва міста — цілим словом (на 1024 рвалась «Фернанду-ді- / Норонья», 2026-11-10). Поза планшетом —
@@ -196,6 +198,7 @@ function Scene({ country, cityName, midnightMs, offsetMinutes, variant = 'no-str
           <div className="flex min-h-0 flex-1 items-center">
             {phase.kind === 'count' ? <SceneCountdown left={phase.left} days={longCountdown} /> : phase.kind === 'after' ? <SceneYear year={year} /> : null}
           </div>
+          {note && phase.kind === 'count' ? <p className="text-caption text-text-secondary @lg:text-body">{note}</p> : null}
           <div className="flex items-center gap-3 @lg:gap-5">
             <span className="@lg:hidden">
               <Flag code={country.flagCode} size="md" decorative />

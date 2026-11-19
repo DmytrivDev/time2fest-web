@@ -2644,11 +2644,14 @@
           "celebration": "Головне святкування",
           "tv": "Телетрансляція",
           "webcam": "Вебкамера",
-          "address": "Звернення"
+          "address": "Звернення",
+          "countdown": "Лише відлік"
         },
         "neutralType": "Трансляція",
         "expected": "Очікується",
-        "neutral": "Трансляція очікується"
+        "neutral": "Трансляція очікується",
+        "countdownText": "Без трансляції",
+        "countdownTag": "Відлік"
       }
     },
     "night": {
@@ -2922,7 +2925,8 @@
       "neighborsTitle": "Того ж часу Новий рік зустрічають",
       "allCountries": "Усі країни",
       "photoAlt": "{country}: новорічне святкування",
-      "titleIn": "Новий рік {year} {inCountry}"
+      "titleIn": "Новий рік {year} {inCountry}",
+      "streamSoon": "Ближче до святкування тут з’явиться трансляція."
     },
     "pass": {
       "ticketTitle": "НОВОРІЧНИЙ ПАС",

@@ -544,3 +544,39 @@
 .watchClip {
   overflow-x: clip;
 }
+
+/* «Усі 38 поясів і країни ›» та інші якорі — плавно (рішення власника 2026-11-19); з «менше руху» — стрибком. */
+@media (prefers-reduced-motion: no-preference) {
+  :global(html:not([data-reduce-motion='true']):has([data-locale])) {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Сцена країни з листівкою (рішення власника 2026-11-19): уся сцена з підписом країни — під шапкою на типовому
+   десктопі: не вища за вікно мінус шапка, рядок країни й крихти, і не вища за 640. */
+@media (min-width: 768px) {
+  .sceneFit {
+    max-height: min(calc(100vh - 230px), 640px);
+    max-height: min(calc(100dvh - 230px), 640px);
+  }
+}
+
+/* Соцмережі в підвалі — значки (рішення власника 2026-11-19): кругла кнопка 36, підпис — aria-label. */
+.social.social {
+  gap: 8px;
+}
+.social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.social a:hover {
+  border-color: var(--color-border-strong);
+}

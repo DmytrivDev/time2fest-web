@@ -2,6 +2,7 @@
 
 /** «Свято в русі»: годинник півночі обраного поясу в часі відвідувача, прапори країн, повзунок на 38 поясів і «Програти свято». */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Bar } from '@/components/skeleton/parts';
 import { Icon } from '@/components/primitives/Icon';
@@ -104,12 +105,20 @@ export function NightWalk() {
           <div>
             <span className={n.k}>{t('nowKicker')}</span>
             <div className={cn(n.flags, reduced && n.still)} key={index}>
-              {list.slice(0, SHOWN).map((c) => (
-                <span key={c.iso} className={n.pill}>
-                  <Flag code={c.flagCode} diameter={24} decorative />
-                  {c.name}
-                </span>
-              ))}
+              {list.slice(0, SHOWN).map((c) =>
+                // Мовне дерево: плашка веде на сторінку країни (рішення власника 2026-11-19).
+                site ? (
+                  <NextLink key={c.iso} href={c.href} className={cn(n.pill, n.pillLink)}>
+                    <Flag code={c.flagCode} diameter={24} decorative />
+                    {c.name}
+                  </NextLink>
+                ) : (
+                  <span key={c.iso} className={n.pill}>
+                    <Flag code={c.flagCode} diameter={24} decorative />
+                    {c.name}
+                  </span>
+                ),
+              )}
               {list.length > SHOWN ? <span className={cn(n.pill, n.more)}>{t('more', { count: list.length - SHOWN })}</span> : null}
             </div>
             <p className={n.met} aria-live="polite">

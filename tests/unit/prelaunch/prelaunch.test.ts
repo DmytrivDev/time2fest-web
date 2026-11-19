@@ -305,11 +305,13 @@ describe('рішення власника 2026-11-18 (SEO)', () => {
 describe('одне правило індексації сторінки країни', () => {
   it('відкрита лише країна з власною розповіддю кожною мовою збірки', async () => {
     const { countryIndexable } = await import('@/lib/prelaunch/siteData');
-    expect(countryIndexable('JP', ['en', 'uk'])).toBe(true);
-    expect(countryIndexable('AD', ['en', 'uk'])).toBe(false);
+    expect(countryIndexable('JP', ['en', 'uk'], true)).toBe(true);
+    expect(countryIndexable('AD', ['en', 'uk'], true)).toBe(false);
+    // Перемикач (рішення власника 2026-11-19): поки розповіді неповні, закриті всі країни.
+    expect(countryIndexable('JP', ['en', 'uk'])).toBe(false);
     // Тексти задачі C — власні розповіді всіма чотирма мовами: описана країна відкрита й в іспанській збірці.
-    expect(countryIndexable('JP', ['en', 'uk', 'es', 'fr'])).toBe(true);
-    expect(countryIndexable('AD', ['en', 'uk', 'es', 'fr'])).toBe(false);
+    expect(countryIndexable('JP', ['en', 'uk', 'es', 'fr'], true)).toBe(true);
+    expect(countryIndexable('AD', ['en', 'uk', 'es', 'fr'], true)).toBe(false);
   });
 });
 
