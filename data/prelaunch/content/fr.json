@@ -2,57 +2,177 @@
   "AU": {
     "text": "Les Australiens accueillent le Nouvel An 11 heures avant Londres, en pleine chaleur estivale. La fête se concentre autour de la baie de Sydney, qui offre l’un des feux d’artifice les plus célèbres au monde.",
     "traditions": [
-      { "id": "t1", "title": "Feux d’artifice sur la baie", "text": "Dans la baie de Sydney, il y a deux feux d’artifice : l’un, familial, à 21 h, et le principal à minuit, au-dessus du Sydney Harbour Bridge et de la Sydney Opera House." },
-      { "id": "t2", "title": "Le Nouvel An en plein été", "text": "En janvier, c’est l’été en Australie : on fête donc le Nouvel An sur la plage, autour d’un barbecue ou d’un pique-nique en plein air." },
-      { "id": "t3", "title": "Une place avec vue", "text": "Les meilleures places au bord de l’eau sont prises bien à l’avance, dès la journée : les familles arrivent avec des plaids et des paniers, et beaucoup regardent depuis des bateaux." }
+      {
+        "id": "t1",
+        "title": "Feux d’artifice sur la baie",
+        "text": "Dans la baie de Sydney, il y a deux feux d’artifice : l’un, familial, à 21 h, et le principal à minuit, au-dessus du Sydney Harbour Bridge et de la Sydney Opera House."
+      },
+      {
+        "id": "t2",
+        "title": "Le Nouvel An en plein été",
+        "text": "En janvier, c’est l’été en Australie : on fête donc le Nouvel An sur la plage, autour d’un barbecue ou d’un pique-nique en plein air."
+      },
+      {
+        "id": "t3",
+        "title": "Une place avec vue",
+        "text": "Les meilleures places au bord de l’eau sont prises bien à l’avance, dès la journée : les familles arrivent avec des plaids et des paniers, et beaucoup regardent depuis des bateaux."
+      }
     ]
   },
   "BR": {
     "text": "Au Brésil, la nuit du Nouvel An s’appelle le Réveillon. À Rio, elle impressionne par son ampleur : des millions de personnes se rassemblent à Copacabana, la musique résonne et le feu d’artifice se reflète dans l’océan.",
     "traditions": [
-      { "id": "t1", "title": "Tout en blanc", "text": "Les Brésiliens s’habillent en blanc, couleur de la paix et de la pureté, et vont à la plage, surtout à Copacabana." },
-      { "id": "t2", "title": "Sept vagues", "text": "À minuit, sur le rivage, on saute par-dessus sept vagues en formulant un vœu pour chacune." },
-      { "id": "t3", "title": "Des fleurs pour Iemanjá", "text": "Beaucoup de gens jettent des fleurs à l’eau en offrande à Iemanjá, déesse de la mer, et demandent le bonheur pour la nouvelle année." }
+      {
+        "id": "t1",
+        "title": "Tout en blanc",
+        "text": "Les Brésiliens s’habillent en blanc, couleur de la paix et de la pureté, et vont à la plage, surtout à Copacabana."
+      },
+      {
+        "id": "t2",
+        "title": "Sept vagues",
+        "text": "À minuit, sur le rivage, on saute par-dessus sept vagues en formulant un vœu pour chacune."
+      },
+      {
+        "id": "t3",
+        "title": "Des fleurs pour Iemanjá",
+        "text": "Beaucoup de gens jettent des fleurs à l’eau en offrande à Iemanjá, déesse de la mer, et demandent le bonheur pour la nouvelle année."
+      }
     ]
   },
   "FR": {
     "text": "Les Français appellent cette nuit la Saint-Sylvestre. C’est un long dîner avec les proches, un baiser à minuit et une promenade dans un Paris en fête, où la tour Eiffel étincelle.",
     "traditions": [
-      { "id": "t1", "title": "Réveillon", "text": "Un long dîner de fête, avec champagne, huîtres et foie gras, se prolonge tard dans la nuit." },
-      { "id": "t2", "title": "Un baiser sous le gui", "text": "Selon la tradition, on s’embrasse à minuit sous une branche de gui, pour porter chance dans la nouvelle année. Le vieux souhait « Au gui l’an neuf ! » est lui aussi lié au gui." },
-      { "id": "t3", "title": "Les Champs-Élysées", "text": "Parisiens et visiteurs se retrouvent près de l’Arc de Triomphe : un spectacle de lumière sur ses murs, un compte à rebours partagé et un feu d’artifice à minuit." }
+      {
+        "id": "t1",
+        "title": "Réveillon",
+        "text": "Un long dîner de fête, avec champagne, huîtres et foie gras, se prolonge tard dans la nuit."
+      },
+      {
+        "id": "t2",
+        "title": "Un baiser sous le gui",
+        "text": "Selon la tradition, on s’embrasse à minuit sous une branche de gui, pour porter chance dans la nouvelle année. Le vieux souhait « Au gui l’an neuf ! » est lui aussi lié au gui."
+      },
+      {
+        "id": "t3",
+        "title": "Les Champs-Élysées",
+        "text": "Parisiens et visiteurs se retrouvent près de l’Arc de Triomphe : un spectacle de lumière sur ses murs, un compte à rebours partagé et un feu d’artifice à minuit."
+      }
     ]
   },
   "GB": {
     "text": "En Grande-Bretagne, le Nouvel An, c’est à la fois le Hogmanay écossais et le feu d’artifice londonien au-dessus de la Tamise. L’essentiel : une étreinte, une chanson à minuit et le premier visiteur à franchir la porte.",
     "traditions": [
-      { "id": "t1", "title": "Les cloches de Big Ben", "text": "À minuit, Big Ben sonne douze coups, et le grand feu d’artifice commence au-dessus de la Tamise, près du London Eye." },
-      { "id": "t2", "title": "Auld Lang Syne", "text": "À minuit, on forme un cercle, on se prend par la main et on chante la vieille chanson écossaise sur des vers de Robert Burns, en croisant les bras au dernier couplet." },
-      { "id": "t3", "title": "Le premier visiteur de l’année", "text": "En Écosse et dans le nord de l’Angleterre, on croit que la première personne à franchir le seuil après minuit apporte la chance à la maison. Elle arrive avec un cadeau : du charbon, du shortbread ou du whisky." }
+      {
+        "id": "t1",
+        "title": "Les cloches de Big Ben",
+        "text": "À minuit, Big Ben sonne douze coups, et le grand feu d’artifice commence au-dessus de la Tamise, près du London Eye."
+      },
+      {
+        "id": "t2",
+        "title": "Auld Lang Syne",
+        "text": "À minuit, on forme un cercle, on se prend par la main et on chante la vieille chanson écossaise sur des vers de Robert Burns, en croisant les bras au dernier couplet."
+      },
+      {
+        "id": "t3",
+        "title": "Le premier visiteur de l’année",
+        "text": "En Écosse et dans le nord de l’Angleterre, on croit que la première personne à franchir le seuil après minuit apporte la chance à la maison. Elle arrive avec un cadeau : du charbon, du shortbread ou du whisky."
+      }
     ]
   },
   "JP": {
-    "text": "Pour les Japonais, le Nouvel An est la fête la plus importante de l’année : le calme, une maison impeccable, les cloches des temples et un dîner en famille. On accueille minuit chez soi ou près d’un temple.",
+    "text": "Au Japon, le Nouvel An est une fête familiale calme plutôt qu’une fête de rue. D’environ le 29 décembre au 3 janvier, la plupart des gens ne travaillent pas, les rues se vident et temples et sanctuaires se remplissent. Le 31 décembre, c’est Ōmisoka : le soir, on mange des nouilles de sarrasin toshikoshi soba, et à minuit les temples bouddhistes font sonner leur cloche 108 fois ; dans beaucoup, le dernier coup tombe dans la nouvelle année.\n\nLe 1er janvier, on mange à la maison l’osechi — des plats de fête en boîtes superposées, chacun porteur d’un vœu — et les premiers jours de janvier on se rend au sanctuaire pour un porte-bonheur et un oracle. À Tokyo, les plus grandes foules vont au Meiji Jingu et au Sensō-ji ; le décompte de rue de Shibuya est annulé ces dernières années.",
     "traditions": [
-      { "id": "t1", "title": "Joya no kane", "text": "La nuit du Nouvel An, dans les temples bouddhistes, la cloche sonne 108 fois, comme les passions terrestres dont l’être humain se purifie. Le dernier coup retentit généralement déjà dans la nouvelle année." },
-      { "id": "t2", "title": "Toshikoshi soba", "text": "Le soir, on mange des toshikoshi soba, des nouilles de sarrasin : les nouilles longues symbolisent une longue vie, et leur façon de se rompre facilement, l’adieu aux soucis de l’année écoulée." },
-      { "id": "t3", "title": "Hatsumode", "text": "Dans les premiers jours de janvier, on se rend dans un sanctuaire ou un temple : c’est la première visite de l’année, pour prier pour une bonne année et acheter une amulette." }
-    ]
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Joya no Kane",
+        "text": "Dans les temples bouddhistes, la cloche sonne 108 fois : souvent, 107 coups tombent dans l’ancienne année et le dernier dans la nouvelle. Certains temples laissent les visiteurs la frapper."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Toshikoshi soba",
+        "text": "Le soir du 31 décembre, on mange des nouilles de sarrasin soba. Longues, elles promettent une longue vie ; faciles à couper, elles tranchent avec les soucis de l’année écoulée."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "Hatsumōde",
+        "text": "La première visite de l’année au sanctuaire, en général du 1er au 3 janvier ; certains y vont dès minuit passé. On achète un porte-bonheur omamori et on tire un oracle omikuji."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Japon : 108 coups de cloche | Time2Fest",
+      "description": "À Tokyo, les cloches des temples sonnent 108 fois pour accueillir 2027 ; on mange des toshikoshi soba, puis au sanctuaire. Au Japon, minuit tombe à 15 h UTC."
+    },
+    "kit": "jp"
   },
   "NZ": {
     "text": "La Nouvelle-Zélande salue le monde avec le Nouvel An parmi les premières : minuit n’arrive plus tôt que dans les îles de la Ligne, au Kiribati, et dans les îles Chatham, elles aussi néo-zélandaises.",
     "traditions": [
-      { "id": "t1", "title": "Le feu d’artifice de la Sky Tower", "text": "À minuit, le feu d’artifice est tiré directement depuis la Sky Tower d’Auckland, et on le voit dans toute la baie." },
-      { "id": "t2", "title": "Parmi les premiers au monde", "text": "Auckland fête le Nouvel An deux heures avant Sydney." },
-      { "id": "t3", "title": "Les vacances d’été", "text": "Le début de janvier tombe pendant les vacances : les familles partent à la plage ou au camping et passent la nuit en plein air." }
+      {
+        "id": "t1",
+        "title": "Le feu d’artifice de la Sky Tower",
+        "text": "À minuit, le feu d’artifice est tiré directement depuis la Sky Tower d’Auckland, et on le voit dans toute la baie."
+      },
+      {
+        "id": "t2",
+        "title": "Parmi les premiers au monde",
+        "text": "Auckland fête le Nouvel An deux heures avant Sydney."
+      },
+      {
+        "id": "t3",
+        "title": "Les vacances d’été",
+        "text": "Le début de janvier tombe pendant les vacances : les familles partent à la plage ou au camping et passent la nuit en plein air."
+      }
     ]
   },
   "US": {
     "text": "Aux États-Unis, le grand symbole de la nuit est la boule de New York. Le pays couvre six fuseaux horaires : entre minuit à New York et minuit à Hawaï, il s’écoule donc cinq heures.",
     "traditions": [
-      { "id": "t1", "title": "La boule de Times Square", "text": "À New York, une minute avant minuit, une boule de cristal commence à descendre, et toute la place décompte les soixante dernières secondes." },
-      { "id": "t2", "title": "Un baiser à minuit", "text": "Selon la tradition, au premier coup de minuit on embrasse la personne la plus proche, pour la chance et l’amour dans la nouvelle année." },
-      { "id": "t3", "title": "Haricots à œil noir porte-bonheur", "text": "Dans le sud du pays, le 1er janvier, on mange des haricots à œil noir et des légumes verts, pour l’abondance et l’argent." }
+      {
+        "id": "t1",
+        "title": "La boule de Times Square",
+        "text": "À New York, une minute avant minuit, une boule de cristal commence à descendre, et toute la place décompte les soixante dernières secondes."
+      },
+      {
+        "id": "t2",
+        "title": "Un baiser à minuit",
+        "text": "Selon la tradition, au premier coup de minuit on embrasse la personne la plus proche, pour la chance et l’amour dans la nouvelle année."
+      },
+      {
+        "id": "t3",
+        "title": "Haricots à œil noir porte-bonheur",
+        "text": "Dans le sud du pays, le 1er janvier, on mange des haricots à œil noir et des légumes verts, pour l’abondance et l’argent."
+      }
     ]
+  },
+  "BR@utc-0400": {
+    "text": "Manaus se dresse au bord du Rio Negro, dans le fuseau UTC−4 : le Nouvel An y arrive une heure après Rio. La mairie organise un Réveillon gratuit en trois lieux à la fois ; le principal est la plage de Ponta Negra, où la fête dure de 17 h à 5 h du matin. En 2026, la mairie y a compté environ 160 000 personnes, et près de 278 000 sur les trois sites.\n\nÀ minuit, le feu d’artifice part ensemble sur les trois sites, et il est silencieux pour ne pas effrayer les enfants, les aînés, les personnes autistes et les animaux. La baignade à Ponta Negra est interdite cette nuit-là. Comme partout au Brésil, beaucoup s’habillent en blanc, et certains choisissent le jaune pour l’argent ou le rouge pour l’amour.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Ponta Negra",
+        "text": "La grande fête a lieu sur la plage de Ponta Negra, au bord du Rio Negro : concerts gratuits du soir jusqu’à l’aube. La baignade est interdite cette nuit-là."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice silencieux",
+        "text": "À minuit, le feu d’artifice part en trois points de la ville à la fois — silencieux, pour ne pas effrayer les enfants, les aînés, les personnes autistes et les animaux."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "Le blanc et les couleurs porte-bonheur",
+        "text": "La plupart s’habillent en blanc, comme partout au Brésil. Certains choisissent le jaune pour l’argent ou le rouge pour l’amour."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Manaus, Brésil : Ponta Negra | Time2Fest",
+      "description": "Manaus, au Brésil, accueille 2027 sur la plage de Ponta Negra, au bord du Rio Negro : concerts gratuits et feu d’artifice silencieux à minuit, 4 h UTC."
+    },
+    "kit": "br-4"
   }
 }

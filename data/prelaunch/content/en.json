@@ -2,57 +2,177 @@
   "AU": {
     "text": "Australians ring in the New Year 11 hours before London, in the middle of summer heat. The celebration centers on Sydney Harbour, home to one of the most famous fireworks displays in the world.",
     "traditions": [
-      { "id": "t1", "title": "Fireworks over the harbor", "text": "Sydney Harbour puts on two fireworks shows: a family-friendly one at 9 p.m. and the main display at midnight over the Sydney Harbour Bridge and the Sydney Opera House." },
-      { "id": "t2", "title": "New Year at the height of summer", "text": "January is summertime in Australia, so people celebrate on the beach, at barbecues and at picnics under the open sky." },
-      { "id": "t3", "title": "A spot with a view", "text": "The best spots by the water are claimed hours ahead, while it’s still daylight: families arrive with blankets and picnic baskets, and many watch from boats." }
+      {
+        "id": "t1",
+        "title": "Fireworks over the harbor",
+        "text": "Sydney Harbour puts on two fireworks shows: a family-friendly one at 9 p.m. and the main display at midnight over the Sydney Harbour Bridge and the Sydney Opera House."
+      },
+      {
+        "id": "t2",
+        "title": "New Year at the height of summer",
+        "text": "January is summertime in Australia, so people celebrate on the beach, at barbecues and at picnics under the open sky."
+      },
+      {
+        "id": "t3",
+        "title": "A spot with a view",
+        "text": "The best spots by the water are claimed hours ahead, while it’s still daylight: families arrive with blankets and picnic baskets, and many watch from boats."
+      }
     ]
   },
   "BR": {
     "text": "Brazilians call New Year’s Eve Réveillon. In Rio the scale is staggering: millions of people gather on Copacabana Beach, music plays, and the fireworks are reflected in the ocean.",
     "traditions": [
-      { "id": "t1", "title": "All in white", "text": "Brazilians dress in white, the color of peace and purity, and head to the beach, most of all to Copacabana." },
-      { "id": "t2", "title": "Seven waves", "text": "At midnight, people on the shore jump over seven waves, making a wish for each one." },
-      { "id": "t3", "title": "Flowers for Iemanjá", "text": "Many people throw flowers into the water as an offering to Iemanjá, the goddess of the sea, and ask for happiness in the new year." }
+      {
+        "id": "t1",
+        "title": "All in white",
+        "text": "Brazilians dress in white, the color of peace and purity, and head to the beach, most of all to Copacabana."
+      },
+      {
+        "id": "t2",
+        "title": "Seven waves",
+        "text": "At midnight, people on the shore jump over seven waves, making a wish for each one."
+      },
+      {
+        "id": "t3",
+        "title": "Flowers for Iemanjá",
+        "text": "Many people throw flowers into the water as an offering to Iemanjá, the goddess of the sea, and ask for happiness in the new year."
+      }
     ]
   },
   "FR": {
     "text": "The French call this night la Saint-Sylvestre. It means a long dinner with loved ones, a kiss at midnight and a stroll through festive Paris, where the Eiffel Tower sparkles.",
     "traditions": [
-      { "id": "t1", "title": "Réveillon", "text": "A long festive dinner with champagne, oysters and foie gras goes on late into the night." },
-      { "id": "t2", "title": "A kiss under the mistletoe", "text": "By tradition, people kiss at midnight under a sprig of mistletoe for luck in the new year. The old greeting “Au gui l’an neuf!” is tied to mistletoe, too." },
-      { "id": "t3", "title": "Champs-Élysées", "text": "Parisians and visitors gather near the Arc de Triomphe for a light show on its walls, a shared countdown and fireworks at midnight." }
+      {
+        "id": "t1",
+        "title": "Réveillon",
+        "text": "A long festive dinner with champagne, oysters and foie gras goes on late into the night."
+      },
+      {
+        "id": "t2",
+        "title": "A kiss under the mistletoe",
+        "text": "By tradition, people kiss at midnight under a sprig of mistletoe for luck in the new year. The old greeting “Au gui l’an neuf!” is tied to mistletoe, too."
+      },
+      {
+        "id": "t3",
+        "title": "Champs-Élysées",
+        "text": "Parisians and visitors gather near the Arc de Triomphe for a light show on its walls, a shared countdown and fireworks at midnight."
+      }
     ]
   },
   "GB": {
     "text": "In Britain, New Year means both Scotland’s Hogmanay and London’s fireworks over the Thames. What matters most is a hug, a song at twelve and the first guest through the door.",
     "traditions": [
-      { "id": "t1", "title": "The chimes of Big Ben", "text": "At midnight Big Ben strikes twelve, and the main fireworks begin over the Thames, by the London Eye." },
-      { "id": "t2", "title": "Auld Lang Syne", "text": "At twelve, people form a circle, join hands and sing the old Scottish song with words by Robert Burns, crossing their arms on the last verse." },
-      { "id": "t3", "title": "First-footing", "text": "In Scotland and northern England, it is believed that the first person to cross the threshold after midnight brings good luck to the house. Visitors arrive with a gift: coal, shortbread or whisky." }
+      {
+        "id": "t1",
+        "title": "The chimes of Big Ben",
+        "text": "At midnight Big Ben strikes twelve, and the main fireworks begin over the Thames, by the London Eye."
+      },
+      {
+        "id": "t2",
+        "title": "Auld Lang Syne",
+        "text": "At twelve, people form a circle, join hands and sing the old Scottish song with words by Robert Burns, crossing their arms on the last verse."
+      },
+      {
+        "id": "t3",
+        "title": "First-footing",
+        "text": "In Scotland and northern England, it is believed that the first person to cross the threshold after midnight brings good luck to the house. Visitors arrive with a gift: coal, shortbread or whisky."
+      }
     ]
   },
   "JP": {
-    "text": "For the Japanese, New Year is the most important holiday of the year: quiet, a spotless home, temple bells and a family dinner. Midnight is welcomed at home or at a temple.",
+    "text": "In Japan the New Year is a quiet family holiday rather than a street party. From about 29 December to 3 January most people are off, the streets empty and temples and shrines fill up. 31 December is Ōmisoka: in the evening people eat toshikoshi soba buckwheat noodles, and at midnight Buddhist temples ring their bell 108 times; at many, the last strike falls in the new year.\n\nOn 1 January families eat osechi at home — festive dishes in stacked boxes, each with a wish for the year — and in the first days of January they visit a shrine for a charm and a fortune. In Tokyo the biggest crowds go to Meiji Jingu and Sensō-ji, while the Shibuya street countdown has been cancelled in recent years.",
     "traditions": [
-      { "id": "t1", "title": "Joya no kane", "text": "On New Year’s Eve, Buddhist temples ring their bells 108 times, one for each of the earthly desires a person is cleansed of. The final strike usually sounds once the new year has begun." },
-      { "id": "t2", "title": "Toshikoshi soba", "text": "In the evening, people eat toshikoshi soba, buckwheat noodles: the long noodles stand for a long life, and how easily they break stands for parting with the troubles of the old year." },
-      { "id": "t3", "title": "Hatsumode", "text": "In the first days of January, people visit a shrine or temple. This first visit of the year is to pray for a good year and to buy an amulet." }
-    ]
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Joya no Kane",
+        "text": "Buddhist temples ring their bell 108 times: at many, 107 strikes fall in the old year and the last one in the new. Some temples let visitors strike the bell too."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Toshikoshi soba",
+        "text": "On the evening of 31 December people eat buckwheat soba noodles. The long noodles stand for a long life, and because they break easily they cut off the hardships of the old year."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "Hatsumōde",
+        "text": "The first shrine visit of the year, usually on 1–3 January; some go right after midnight. People buy an omamori charm and draw an omikuji fortune."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Japan: 108 Bells at Midnight | Time2Fest",
+      "description": "In Tokyo, temple bells ring 108 times as 2027 begins; families eat toshikoshi soba and visit a shrine. Midnight in Japan falls at 15:00 UTC on 31 December."
+    },
+    "kit": "jp"
   },
   "NZ": {
     "text": "New Zealand is among the first to welcome the New Year: midnight comes earlier only on the Line Islands of Kiribati and on New Zealand’s own Chatham Islands.",
     "traditions": [
-      { "id": "t1", "title": "Fireworks from the Sky Tower", "text": "At midnight, fireworks are launched right from the Sky Tower in Auckland, and they can be seen all across the harbor." },
-      { "id": "t2", "title": "Among the first in the world", "text": "Auckland welcomes the New Year two hours before Sydney." },
-      { "id": "t3", "title": "Summer holidays", "text": "The start of January falls in the summer break: families head to beaches and campsites and see in the New Year under the open sky." }
+      {
+        "id": "t1",
+        "title": "Fireworks from the Sky Tower",
+        "text": "At midnight, fireworks are launched right from the Sky Tower in Auckland, and they can be seen all across the harbor."
+      },
+      {
+        "id": "t2",
+        "title": "Among the first in the world",
+        "text": "Auckland welcomes the New Year two hours before Sydney."
+      },
+      {
+        "id": "t3",
+        "title": "Summer holidays",
+        "text": "The start of January falls in the summer break: families head to beaches and campsites and see in the New Year under the open sky."
+      }
     ]
   },
   "US": {
     "text": "In the United States, the symbol of the night is the Times Square ball in New York. The country spans six time zones, so five hours pass between midnight in New York and midnight in Hawaii.",
     "traditions": [
-      { "id": "t1", "title": "The ball in Times Square", "text": "In New York, a minute before midnight a crystal ball begins to descend, and the whole square counts down the last sixty seconds." },
-      { "id": "t2", "title": "A kiss at midnight", "text": "By tradition, at the first stroke of twelve people kiss the person dearest to them, for luck and love in the new year." },
-      { "id": "t3", "title": "Black-eyed peas for luck", "text": "In the South, people eat black-eyed peas and greens on January 1 for abundance and money." }
+      {
+        "id": "t1",
+        "title": "The ball in Times Square",
+        "text": "In New York, a minute before midnight a crystal ball begins to descend, and the whole square counts down the last sixty seconds."
+      },
+      {
+        "id": "t2",
+        "title": "A kiss at midnight",
+        "text": "By tradition, at the first stroke of twelve people kiss the person dearest to them, for luck and love in the new year."
+      },
+      {
+        "id": "t3",
+        "title": "Black-eyed peas for luck",
+        "text": "In the South, people eat black-eyed peas and greens on January 1 for abundance and money."
+      }
     ]
+  },
+  "BR@utc-0400": {
+    "text": "Manaus stands on the Rio Negro in the UTC−4 time zone, so the New Year arrives here an hour after Rio. The city hall holds a free Réveillon at three places at once; the main one is Ponta Negra beach, where the party runs from 17:00 to 5 in the morning. In 2026 the city hall estimated about 160,000 people there and roughly 278,000 across all three sites.\n\nAt midnight fireworks go off at all three sites together, and they are low-noise so as not to frighten children, older people, autistic people and animals. Swimming at Ponta Negra is not allowed that night. As all over Brazil, many people dress in white, and some choose yellow for money or red for love.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Ponta Negra",
+        "text": "The main party is on Ponta Negra beach by the Rio Negro: free concerts from evening until dawn. Swimming is not allowed that night."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Low-noise fireworks",
+        "text": "At midnight fireworks go off at three places in the city at once — low-noise, so as not to frighten children, older people, autistic people and animals."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "White and lucky colours",
+        "text": "Most people dress in white, as all over Brazil. Some choose yellow for money or red for love."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Manaus, Brazil: Ponta Negra | Time2Fest",
+      "description": "Manaus, Brazil, greets 2027 on Ponta Negra beach by the Rio Negro: free concerts and low-noise fireworks at three places at midnight. Midnight: 04:00 UTC."
+    },
+    "kit": "br-4"
   }
 }

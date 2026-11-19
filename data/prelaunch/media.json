@@ -192,7 +192,11 @@
       },
       "author": "NJo",
       "license": "CC BY-SA 3.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zojo-ji_temple_and_Tokyo_Tower_in_New_Years_eve_2012.JPG"
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zojo-ji_temple_and_Tokyo_Tower_in_New_Years_eve_2012.JPG",
+      "position": {
+        "x": 50,
+        "y": 62
+      }
     },
     "city:berlin": {
       "src": "/media/photos/berlin.webp",
