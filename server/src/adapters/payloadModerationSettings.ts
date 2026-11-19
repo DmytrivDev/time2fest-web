@@ -6,26 +6,16 @@
  */
 import { commitTransaction, createLocalReq, initTransaction, killTransaction } from 'payload';
 import type { Payload, PayloadRequest } from 'payload';
-import type { Actor, Journal, Tx } from '../audit/ports';
+import type { Journal } from '../audit/ports';
 import { DEFAULT_SETTINGS, type ModerationSettings } from '../domain/moderation/settings';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import type { SettingsSource } from '../moderation/spend';
+import type { ModerationSettingsStore } from '../moderation/spend';
 import type { Clock } from '../ports';
 import { DependencyUnavailable } from '../ports';
 
 export const MODERATION_SETTINGS = 'moderation-settings';
 export const SETTINGS_ACTION = 'moderation.settings';
 const CONTEXT = { t2fTrusted: true, t2fInternal: true };
-
-export type SettingsValues = Omit<ModerationSettings, 'version'>;
-
-export interface ModerationSettingsStore extends SettingsSource {
-  /**
-   * Writes `next` (version + 1) and one journal row with the old and new values, in `tx` or in a
-   * transaction of its own. Validation is the caller's (`validateSettings`).
-   */
-  write(tx: Tx | null, next: SettingsValues, actor: Actor): Promise<ModerationSettings>;
-}
 
 const numOr = (v: unknown, fallback: number): number => {
   const n = typeof v === 'number' ? v : typeof v === 'string' && v !== '' ? Number(v) : Number.NaN;

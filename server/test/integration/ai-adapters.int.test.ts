@@ -69,13 +69,28 @@ describe('AC-44 / AC-45 request shape', () => {
     for (const r of await recorded()) {
       const system = typeof r.body.system === 'string' ? r.body.system : r.body.messages[0]!.content;
       const user = r.body.messages.at(-1)!.content;
-      expect(user.indexOf('ignore previous')).toBeGreaterThan(user.indexOf('<<<T2F_TEXT'));
-      expect(user.indexOf('ignore previous')).toBeLessThan(user.lastIndexOf('T2F_TEXT>>>'));
+      const [, open, close] = /DATA between (\S+) and (\S+);/.exec(system) ?? [];
+      expect(open).toMatch(/^<<<T2F_TEXT_[0-9a-f]{16}$/);
+      expect(close).toBe(`T2F_TEXT_${open!.slice('<<<T2F_TEXT_'.length)}>>>`);
+      expect(user.indexOf('ignore previous')).toBeGreaterThan(user.indexOf(open!));
+      expect(user.indexOf('ignore previous')).toBeLessThan(user.lastIndexOf(close!));
+      expect(user.split(open!)).toHaveLength(2);
+      expect(user.split(close!)).toHaveLength(2);
       expect(user.split('<<<T2F_TEXT')).toHaveLength(2);
-      expect(user.split('T2F_TEXT>>>')).toHaveLength(2);
+      expect(user).not.toContain('T2F_TEXT>>>');
       expect(system).not.toContain('ignore previous');
       expect(system).toMatch(/never instructions/);
     }
+  });
+
+  it('S3: every request gets its own random delimiters', async () => {
+    await anthropic().moderate('hello', undefined, signal());
+    await anthropic().moderate('hello', undefined, signal());
+    await deepseek().translate({ text: 'hello', to: 'en' }, signal());
+    await deepseek().translate({ text: 'hello', to: 'en' }, signal());
+    const opens = (await recorded()).map((r) => /<<<T2F_TEXT_[0-9a-f]{16}/.exec(r.body.messages.at(-1)!.content)?.[0]);
+    expect(opens.every((o) => o !== undefined)).toBe(true);
+    expect(new Set(opens).size).toBe(4);
   });
 });
 
@@ -103,6 +118,15 @@ describe('failures and usage', () => {
     expect(a.ok && a.usage).toEqual({ input: 10, output: 2, cacheRead: 7, cacheWrite: 3 });
     expect(a.ok && a.value.raw).toBe('{"score":0.4}');
     expect(d.ok && d.usage).toEqual({ input: 4, output: 2, cacheRead: 6, cacheWrite: 0 });
+  });
+
+  it('S6: deepseek without prompt_cache_miss_tokens bills prompt_tokens minus the cache hits as input', async () => {
+    await control('deepseek', { usage: { prompt_tokens: 10, prompt_cache_hit_tokens: 6, completion_tokens: 2 } });
+    const d = await deepseek().moderate('x', undefined, signal());
+    expect(d.ok && d.usage).toEqual({ input: 4, output: 2, cacheRead: 6, cacheWrite: 0 });
+    await control('deepseek', { usage: { prompt_tokens: 9, completion_tokens: 1 } });
+    const e = await deepseek().moderate('x', undefined, signal());
+    expect(e.ok && e.usage).toEqual({ input: 9, output: 1, cacheRead: 0, cacheWrite: 0 });
   });
 
   it('usage omitted by the provider stays undefined', async () => {

@@ -12,10 +12,12 @@ import {
   assess,
   AVAILABLE,
   inWindow,
+  p95,
   PROBE_INTERVAL_MS,
   probeDue,
   probeStreak,
   type Health,
+  type HealthReason,
   type HealthSample,
 } from '../domain/moderation/health';
 import { sameState, taskState, type TaskState } from '../domain/moderation/state';
@@ -43,6 +45,19 @@ export interface ProviderLayerDeps {
 
 export type StateListener = (status: AiStatus) => void;
 
+/** One provider's health over the current 60 s window, read-only (admin slice, AC-41). */
+export interface ProviderStats {
+  provider: ProviderId;
+  status: Health['status'];
+  reason?: HealthReason;
+  /** User calls in the window. */
+  calls: number;
+  /** Nearest-rank p95 of their durations, ms (0 without calls). */
+  p95Ms: number;
+  /** Share of transport failures among them, 0 … 1 (0 without calls). */
+  errorShare: number;
+}
+
 export interface ProviderLayer {
   /** Providers to try now for the task, in order; empty when the task is `fallback`. */
   usable(task: AiTask): AiProvider[];
@@ -55,7 +70,10 @@ export interface ProviderLayer {
   /**
    * Runs one user call to `provider` for `task`: measures it on the clock, records the health sample
    * and logs one line. `accept` judges an `ok` answer (strict score, translation output check); a
-   * rejected answer counts and returns as `malformed`. A thrown error counts and returns as `http`.
+   * rejected answer returns as `malformed` so the caller never uses it, but its health sample is a
+   * success (security S1): the transport worked, and crafted text must not take a provider down. Only
+   * transport failures (status, timeout, unreadable envelope) count against health. A thrown error
+   * counts and returns as `http`.
    */
   call<T>(
     task: AiTask,
@@ -63,6 +81,8 @@ export interface ProviderLayer {
     run: () => Promise<ProviderAnswer<T>>,
     accept?: (value: T) => boolean,
   ): Promise<ProviderAnswer<T>>;
+  /** Per configured or not provider: status, p95 and error share over the current window (AC-41). */
+  stats(): ProviderStats[];
   /** Sends a probe to every configured provider that is down and due (every 10 s). */
   tick(): Promise<void>;
   /** Starts the `unref` probe timer. */
@@ -170,14 +190,20 @@ export function createProviderLayer({
     }
   }
 
-  function logCall(provider: ProviderId, task: AiTask | 'probe', ms: number, answer: ProviderAnswer<unknown>) {
+  function logCall(
+    provider: ProviderId,
+    task: AiTask | 'probe',
+    ms: number,
+    answer: ProviderAnswer<unknown>,
+    rejected = false,
+  ) {
     const usage = answer.ok ? answer.usage : undefined;
     log.info({
       event: 'ai-call',
       provider,
       task,
       ms,
-      outcome: answer.ok ? 'ok' : answer.kind,
+      outcome: rejected ? 'rejected' : answer.ok ? 'ok' : answer.kind,
       tokensIn: usage ? usage.input + usage.cacheRead + usage.cacheWrite : null,
       tokensOut: usage ? usage.output : null,
     });
@@ -256,10 +282,26 @@ export function createProviderLayer({
     },
     async call(task, provider, run, accept) {
       const { answer: raw, ms, at } = await measure(run);
-      const answer = raw.ok && accept && !accept(raw.value) ? failure<typeof raw.value>('malformed') : raw;
-      logCall(provider.id, task, ms, answer);
-      record(healthOf(provider), { at, ms, ok: answer.ok });
-      return answer;
+      const rejected = raw.ok && accept !== undefined && !accept(raw.value);
+      logCall(provider.id, task, ms, raw, rejected);
+      // Health judges the transport only: a rejected answer is a healthy (and timed) sample.
+      record(healthOf(provider), { at, ms, ok: raw.ok });
+      return rejected ? { ok: false, kind: 'malformed' } : raw;
+    },
+    stats() {
+      const now = clock.now();
+      return [...byId.values()].map((h) => {
+        const recent = inWindow(h.samples, now);
+        const errors = recent.filter((x) => !x.ok).length;
+        return {
+          provider: h.provider.id,
+          status: h.health.status,
+          ...(h.health.reason ? { reason: h.health.reason } : {}),
+          calls: recent.length,
+          p95Ms: p95(recent.map((x) => x.ms)),
+          errorShare: recent.length === 0 ? 0 : errors / recent.length,
+        };
+      });
     },
     tick,
     start() {

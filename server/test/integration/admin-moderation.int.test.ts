@@ -46,12 +46,23 @@ describe('admin moderation slice (AC-41 … AC-43)', { timeout: 120_000 }, () =>
     const m = moderationOf(await processDeps());
     await m.spend.setSpendForDoor('month', 12.5);
     const el = (await ModerationSlice()) as unknown as {
-      props: { month: { usd: number; ceilingUsd: number }; tasks: { task: string }[]; settings: Record<string, number> };
+      props: {
+        month: { usd: number; ceilingUsd: number };
+        tasks: { task: string }[];
+        providers: { provider: string; status: string; calls: number; p95Ms: number; errorPercent: number }[];
+        settings: Record<string, number>;
+      };
     };
     expect(el.props.month.usd).toBeCloseTo(12.5, 4);
     expect(el.props.month.ceilingUsd).toBeGreaterThan(0);
     expect(el.props.tasks.map((t) => t.task)).toEqual(['moderation', 'translation']);
     expect(Object.keys(el.props.settings).sort()).toEqual(['block', 'monthCeilingUsd', 'nightCeilingUsd', 'review']);
+    expect(el.props.providers.map((p) => p.provider).sort()).toEqual(['anthropic', 'deepseek']);
+    for (const p of el.props.providers) {
+      expect(Object.keys(p).sort()).toEqual(['calls', 'errorPercent', 'p95Ms', 'provider', 'reason', 'status']);
+      expect(p.errorPercent).toBeGreaterThanOrEqual(0);
+      expect(p.p95Ms).toBeGreaterThanOrEqual(0);
+    }
     m.spend.reset();
   });
 

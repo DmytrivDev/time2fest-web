@@ -8,8 +8,6 @@
 import { createServer } from 'node:http';
 import { pathToFileURL } from 'node:url';
 
-const OPEN = '<<<T2F_TEXT';
-const CLOSE = 'T2F_TEXT>>>';
 const RING = 100;
 
 /** @typedef {{ marker: string, score: number }} ScoreRule */
@@ -57,9 +55,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** The user text inside the delimiters, or the whole content when there are none. */
 function delimited(/** @type {string} */ content) {
-  const a = content.indexOf(OPEN);
-  const b = content.lastIndexOf(CLOSE);
-  return a >= 0 && b > a ? content.slice(a + OPEN.length, b) : content;
+  // The adapters add a random per-request tag (`<<<T2F_TEXT_<hex>` … `T2F_TEXT_<hex>>>>`).
+  const m = /<<<T2F_TEXT(?:_[0-9a-f]+)?([\s\S]*)T2F_TEXT(?:_[0-9a-f]+)?>>>/.exec(content);
+  return m ? (m[1] ?? '') : content;
 }
 
 /** @param {Knobs['score']} rule @param {string} text */

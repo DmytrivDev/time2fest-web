@@ -1,4 +1,4 @@
-/** Moderation and AI slice of the first screen (AC-41, AC-43): spend, ceilings, thresholds, task states; the form is a client part. */
+/** Moderation and AI slice of the first screen (AC-41, AC-43): spend, ceilings, thresholds, task states, per-provider p95 and error share; the form is a client part. */
 import { processDeps } from '../adapters/processDeps';
 import { moderationOf } from '../endpoints/deps';
 import { ModerationView, type ModerationViewProps } from './ModerationView';
@@ -19,6 +19,14 @@ export async function ModerationSlice() {
         const s = m.layer.state(t);
         return { task: t, state: s.state, reason: s.reason ?? null };
       })}
+      providers={m.layer.stats().map((p) => ({
+        provider: p.provider,
+        status: p.status,
+        reason: p.reason ?? null,
+        calls: p.calls,
+        p95Ms: p.p95Ms,
+        errorPercent: Math.round(p.errorShare * 1000) / 10,
+      }))}
       settings={{
         review: settings.reviewThreshold,
         block: settings.blockThreshold,

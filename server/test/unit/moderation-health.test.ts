@@ -219,13 +219,40 @@ describe('provider layer (AC-17 … AC-21, AC-32, AC-46)', () => {
     expect(layer.state('moderation').state).toBe('degraded');
   });
 
-  it('an answer rejected by `accept` counts as malformed', async () => {
-    const { primary, layer } = setup();
-    for (let i = 0; i < 3; i++) {
+  it('S1: 10 answers rejected by `accept` in a row return malformed but keep the provider available', async () => {
+    const { primary, layer, lines } = setup();
+    for (let i = 0; i < 10; i++) {
       const a = await layer.call('moderation', primary.provider, primary.answer(50, true), () => false);
       expect(a).toEqual({ ok: false, kind: 'malformed' });
     }
-    expect(layer.state('moderation').state).toBe('degraded');
+    expect(layer.state('moderation').state).toBe('available');
+    expect(layer.usable('moderation')).toContain(primary.provider);
+    expect(lines.at(-1)).toMatchObject({ outcome: 'rejected', ms: 50, tokensIn: 10 });
+    expect(layer.stats().find((x) => x.provider === 'anthropic')).toEqual({
+      provider: 'anthropic',
+      status: 'available',
+      calls: 10,
+      p95Ms: 50,
+      errorShare: 0,
+    });
+  });
+
+  it('AC-41: stats give p95 and error share of the window per provider', async () => {
+    const { clock, primary, layer, run } = setup();
+    await run(primary, 100, true, 18);
+    await run(primary, 900, true);
+    await run(primary, 300, false);
+    const a = layer.stats().find((x) => x.provider === 'anthropic');
+    expect(a).toEqual({ provider: 'anthropic', status: 'available', calls: 20, p95Ms: 300, errorShare: 0.05 });
+    expect(layer.stats().find((x) => x.provider === 'deepseek')).toEqual({
+      provider: 'deepseek',
+      status: 'available',
+      calls: 0,
+      p95Ms: 0,
+      errorShare: 0,
+    });
+    clock.advance(61 * S);
+    expect(layer.stats().find((x) => x.provider === 'anthropic')?.calls).toBe(0);
   });
 
   it('probes every 10 s: 110 s clean → still down, 120 s → back; a failure at 100 s restarts', async () => {

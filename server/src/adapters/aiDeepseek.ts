@@ -8,10 +8,10 @@ import {
   asRecord,
   count,
   DEFAULT_TIMEOUT_MS,
-  MODERATION_INSTRUCTION,
+  moderationInstruction,
   postJson,
-  TRANSLATION_INSTRUCTION,
-  wrapText,
+  prompt,
+  translationInstruction,
 } from './aiHttp';
 
 export interface DeepseekConfig {
@@ -35,7 +35,11 @@ function parse(json: unknown): { text: string; usage?: TokenUsage } | undefined 
     u === undefined
       ? undefined
       : {
-          input: count(u.prompt_cache_miss_tokens),
+          // Without the miss count, everything not read from the cache is billed as plain input.
+          input:
+            u.prompt_cache_miss_tokens === undefined
+              ? Math.max(0, count(u.prompt_tokens) - count(u.prompt_cache_hit_tokens))
+              : count(u.prompt_cache_miss_tokens),
           output: count(u.completion_tokens),
           cacheRead: count(u.prompt_cache_hit_tokens),
           cacheWrite: 0,
@@ -46,8 +50,7 @@ function parse(json: unknown): { text: string; usage?: TokenUsage } | undefined 
 export function createDeepseekProvider(config: DeepseekConfig): AiProvider {
   const timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const call = async (
-    system: string,
-    user: string,
+    { system, user }: { system: string; user: string },
     maxTokens: number,
     json: boolean,
     signal: AbortSignal,
@@ -76,8 +79,7 @@ export function createDeepseekProvider(config: DeepseekConfig): AiProvider {
 
   const moderate: AiProvider['moderate'] = (text, lang, signal) =>
     call(
-      MODERATION_INSTRUCTION,
-      wrapText(text, lang === undefined ? undefined : `Language: ${lang}`),
+      prompt(moderationInstruction, text, lang === undefined ? undefined : `Language: ${lang}`),
       DEEPSEEK_MODERATION_MAX_TOKENS,
       true,
       signal,
@@ -89,7 +91,7 @@ export function createDeepseekProvider(config: DeepseekConfig): AiProvider {
     moderate,
     async translate({ text, to, from }, signal) {
       const langLine = `Translate ${from === undefined ? '' : `from ${from} `}to ${to}.`;
-      const answer = await call(TRANSLATION_INSTRUCTION, wrapText(text, langLine), DEEPSEEK_TRANSLATION_MAX_TOKENS, false, signal);
+      const answer = await call(prompt(translationInstruction, text, langLine), DEEPSEEK_TRANSLATION_MAX_TOKENS, false, signal);
       return answer.ok ? { ...answer, value: { text: answer.value.raw } } : answer;
     },
     probe: (signal) => moderate('ping', undefined, signal),

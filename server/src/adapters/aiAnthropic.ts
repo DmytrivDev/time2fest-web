@@ -8,10 +8,10 @@ import {
   asRecord,
   count,
   DEFAULT_TIMEOUT_MS,
-  MODERATION_INSTRUCTION,
+  moderationInstruction,
   postJson,
-  TRANSLATION_INSTRUCTION,
-  wrapText,
+  prompt,
+  translationInstruction,
 } from './aiHttp';
 
 export interface AnthropicConfig {
@@ -47,8 +47,7 @@ function parse(json: unknown): { text: string; usage?: TokenUsage } | undefined 
 export function createAnthropicProvider(config: AnthropicConfig): AiProvider {
   const timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const call = async (
-    system: string,
-    user: string,
+    { system, user }: { system: string; user: string },
     maxTokens: number,
     signal: AbortSignal,
   ): Promise<ProviderAnswer<{ raw: string }>> => {
@@ -74,8 +73,7 @@ export function createAnthropicProvider(config: AnthropicConfig): AiProvider {
 
   const moderate: AiProvider['moderate'] = (text, lang, signal) =>
     call(
-      MODERATION_INSTRUCTION,
-      wrapText(text, lang === undefined ? undefined : `Language: ${lang}`),
+      prompt(moderationInstruction, text, lang === undefined ? undefined : `Language: ${lang}`),
       ANTHROPIC_MODERATION_MAX_TOKENS,
       signal,
     );
@@ -86,7 +84,7 @@ export function createAnthropicProvider(config: AnthropicConfig): AiProvider {
     moderate,
     async translate({ text, to, from }, signal) {
       const langLine = `Translate ${from === undefined ? '' : `from ${from} `}to ${to}.`;
-      const answer = await call(TRANSLATION_INSTRUCTION, wrapText(text, langLine), ANTHROPIC_TRANSLATION_MAX_TOKENS, signal);
+      const answer = await call(prompt(translationInstruction, text, langLine), ANTHROPIC_TRANSLATION_MAX_TOKENS, signal);
       return answer.ok ? { ...answer, value: { text: answer.value.raw } } : answer;
     },
     probe: (signal) => moderate('ping', undefined, signal),

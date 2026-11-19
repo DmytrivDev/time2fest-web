@@ -6,7 +6,10 @@
  *    total; an answer that is not the strict `{"score": 0..1}` is a provider error (AC-12, AC-14);
  * 3. no usable answer, or the task in `fallback`: the fallback filter, `source: 'fallback'` (AC-13).
  *
- * Fail-closed: an error never becomes `allow` from a provider. A nick's AI `block` / `review` carries the
+ * Fail-closed: an error never becomes `allow` from a provider. A toast's or message's AI `allow` is
+ * also run through the fallback filter (extended list); if that blocks, the verdict is `block` with
+ * `source: 'fallback'`, the filter being what decided (security S3). A `lang` that is not a language
+ * tag is dropped before it reaches a prompt (S5). A nick's AI `block` / `review` carries the
  * reason `forbidden` (AC-15). `recheck` answers from a provider only, else `unavailable` (AC-16).
  * Ports and pure rules arrive as parameters; the time budget is read on the injected monotonic clock.
  */
@@ -60,6 +63,9 @@ export interface VerdictDeps {
   perCallMs?: number;
   budgetMs?: number;
 }
+
+/** A language tag the services accept (`uk`, `en-GB`); anything else is dropped (verdict) or refused (translation). */
+export const LANG = /^[a-z]{2,3}(-[A-Z]{2})?$/;
 
 /** One provider's wait (AC-12). */
 export const PER_CALL_MS = 1_000;
@@ -135,6 +141,17 @@ export function createVerdictService({
     return { outcome, source };
   }
 
+  /** An AI verdict, with the fallback filter as a second check of a toast's or message's `allow`. */
+  function fromAi(kind: TextKind, text: string, ai: { score: number; source: 'primary' | 'backup' }): Verdict {
+    const v = fromScore(kind, ai.score, ai.source);
+    if (v.outcome === 'allow' && (kind === 'toast' || kind === 'message') && fallback(kind, text) === 'block') {
+      return { outcome: 'block', source: 'fallback' };
+    }
+    return v;
+  }
+
+  const langOf = (lang: string | undefined) => (typeof lang === 'string' && LANG.test(lang) ? lang : undefined);
+
   function byRules(kind: TextKind, text: string): Verdict | null {
     const rule = rules(kind, text);
     return rule ? { outcome: 'block', source: 'rules', reason: rule.reason } : null;
@@ -144,16 +161,16 @@ export function createVerdictService({
     async verdict({ kind, text, lang }) {
       const ruled = byRules(kind, text);
       if (ruled) return ruled;
-      const ai = await ask(text, lang);
-      if (ai) return fromScore(kind, ai.score, ai.source);
+      const ai = await ask(text, langOf(lang));
+      if (ai) return fromAi(kind, text, ai);
       if (fallback(kind, text) === 'allow') return { outcome: 'allow', source: 'fallback' };
       return kind === 'nick' ? { outcome: 'block', source: 'fallback', reason: 'forbidden' } : { outcome: 'block', source: 'fallback' };
     },
     async recheck({ kind, text, lang }) {
       const ruled = byRules(kind, text);
       if (ruled) return ruled;
-      const ai = await ask(text, lang);
-      return ai ? fromScore(kind, ai.score, ai.source) : { outcome: 'unavailable' };
+      const ai = await ask(text, langOf(lang));
+      return ai ? fromAi(kind, text, ai) : { outcome: 'unavailable' };
     },
   };
 }

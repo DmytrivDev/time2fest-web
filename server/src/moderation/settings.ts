@@ -1,7 +1,7 @@
 /** Saving the moderation settings (SPEC-09 AC-42, AC-43): validate, then write through the store (one journal row, version + 1). */
 import { validateSettings, type ModerationSettings, type SettingsField, type SettingsInput } from '../domain/moderation/settings';
-import type { ModerationSettingsStore } from '../adapters/payloadModerationSettings';
 import type { Actor, Tx } from '../audit/ports';
+import type { ModerationSettingsStore } from './spend';
 
 export type SaveSettingsResult =
   | { ok: true; value: ModerationSettings }

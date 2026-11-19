@@ -14,7 +14,7 @@ import type { SpendRequest } from '../domain/moderation/spend';
 import type { Clock } from '../ports';
 import type { TokenUsage, TranslationInput } from './ports';
 import type { ProviderId, ProviderLayer } from './providers';
-import { bounded } from './verdict';
+import { bounded, LANG } from './verdict';
 
 export type TranslationResult =
   | { ok: true; text: string; source: 'primary' | 'backup' }
@@ -41,7 +41,6 @@ export interface TranslationDeps {
 export const PRIMARY_MS = 2_500;
 export const BACKUP_MS = 3_000;
 export const TOTAL_MS = 6_000;
-const LANG = /^[a-z]{2,3}(-[A-Z]{2})?$/;
 
 export function validTranslationInput({ text, to, from }: TranslationInput): boolean {
   if (typeof text !== 'string' || text.trim() === '' || [...text].length > MAX_TEXT) return false;

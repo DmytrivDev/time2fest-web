@@ -36,8 +36,31 @@ describe('AI env', () => {
     if (!r.ok) expect(r.failing).toEqual([name]);
   });
 
-  it('AC-48: a loopback fake address passes in test', () => {
-    expect(loadEnv({ ...base, T2F_AI_ANTHROPIC_URL: 'http://127.0.0.1:4010' }, envRegistry).ok).toBe(true);
+  it.each(['http://127.0.0.1:4010', 'http://localhost:4010', 'http://[::1]:4010'])('AC-48: a loopback fake address %s passes in test', (url) => {
+    expect(loadEnv({ ...base, T2F_AI_ANTHROPIC_URL: url, T2F_AI_DEEPSEEK_URL: url }, envRegistry).ok).toBe(true);
+  });
+
+  it.each([
+    ['T2F_AI_ANTHROPIC_URL', 'https://ai-proxy.example.com'],
+    ['T2F_AI_DEEPSEEK_URL', 'http://10.0.0.5:4010'],
+  ])('S8: test class refuses a non-loopback %s = %s', (name, value) => {
+    const r = loadEnv({ ...base, [name]: value }, envRegistry);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.failing).toEqual([name]);
+  });
+
+  it.each([
+    ['T2F_AI_ANTHROPIC_URL', 'http://api.anthropic.com'],
+    ['T2F_AI_DEEPSEEK_URL', 'http://127.0.0.1:4010'],
+  ])('S8: outside test %s = %s (not https) is refused', (name, value) => {
+    const r = loadEnv({ ...base, T2F_ENV: 'rehearsal', [name]: value }, envRegistry);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.failing).toContain(name);
+  });
+
+  it('S8: outside test an https provider address passes the AI check', () => {
+    const r = loadEnv({ ...base, T2F_ENV: 'rehearsal', T2F_AI_ANTHROPIC_URL: 'https://api.anthropic.com' }, envRegistry);
+    if (!r.ok) expect(r.failing).not.toContain('T2F_AI_ANTHROPIC_URL');
   });
 
   it('NFR-6: the key value is masked in a log line', () => {

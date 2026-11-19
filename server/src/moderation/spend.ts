@@ -13,8 +13,10 @@
  *   conditional update: exactly one process wins per bucket and level for the whole cluster
  *   (AC-29 … AC-31). A level already claimed is never raised again in that bucket (a lowered ceiling
  *   does not re-raise it).
- * - Store failures keep the pending sum; after more than 60 s of continuous failure the ceiling counts
- *   as reached and one `page` is raised until the first success (AC-34).
+ * - Store failures keep the pending sum; when the store is failing (or a call is in flight) and its last
+ *   success is more than 60 s ago, the ceiling counts as reached and one `page` is raised until the
+ *   first success (AC-34). Every store call is bounded (5 s): a hung query counts as a failure and
+ *   never holds the tick (security S2).
  */
 import {
   costMicros,
@@ -27,6 +29,7 @@ import {
   type SpendLevel,
   type SpendRequest,
 } from '../domain/moderation/spend';
+import type { Actor, Tx } from '../audit/ports';
 import { DEFAULT_SETTINGS, type ModerationSettings } from '../domain/moderation/settings';
 import type { Alarm, Clock, Logger } from '../ports';
 import type { ProviderAnswer, TokenUsage } from './ports';
@@ -48,6 +51,17 @@ export interface SettingsSource {
   read(): Promise<ModerationSettings>;
 }
 
+export type SettingsValues = Omit<ModerationSettings, 'version'>;
+
+/** The owner's moderation settings: read, and write with one journal row (AC-42, AC-43). */
+export interface ModerationSettingsStore extends SettingsSource {
+  /**
+   * Writes `next` (version + 1) and one journal row with the old and new values, in `tx` or in a
+   * transaction of its own. Validation is the caller's (`validateSettings`).
+   */
+  write(tx: Tx | null, next: SettingsValues, actor: Actor): Promise<ModerationSettings>;
+}
+
 /** The provider layer's ceiling switch (AC-32). */
 export interface CeilingSwitch {
   setCeiling(reached: boolean): void;
@@ -65,6 +79,8 @@ export interface SpendCounterDeps {
   flushMs?: number;
   flushAtMicros?: number;
   storeDownMs?: number;
+  /** Upper bound of one store call; past it the call counts as failed (a hung query, S2). */
+  storeTimeoutMs?: number;
   /** Upper estimate of a probe without `usage`: fixed service text and the moderation `max_tokens`. */
   probeRequest?: SpendRequest;
 }
@@ -101,10 +117,15 @@ const LEVEL_ALARM: Record<SpendLevel, 'log' | 'page'> = { 50: 'log', 80: 'page',
 export const STORE_DOWN_MS = 60_000;
 export const FLUSH_MS = 5_000;
 export const FLUSH_AT_MICROS = 100_000;
+export const STORE_TIMEOUT_MS = 5_000;
 /** `ping` (4 characters) with the moderation `max_tokens` of both adapters (32). */
 const PROBE_REQUEST: SpendRequest = { chars: 4, maxTokens: 32 };
 
 const errName = (err: unknown) => (err instanceof Error ? err.name : 'error');
+
+class StoreTimeout extends Error {
+  override name = 'StoreTimeout';
+}
 
 export function createSpendCounter({
   store,
@@ -117,6 +138,7 @@ export function createSpendCounter({
   flushMs = FLUSH_MS,
   flushAtMicros = FLUSH_AT_MICROS,
   storeDownMs = STORE_DOWN_MS,
+  storeTimeoutMs = STORE_TIMEOUT_MS,
   probeRequest = PROBE_REQUEST,
 }: SpendCounterDeps): SpendCounter {
   let current: ModerationSettings = DEFAULT_SETTINGS;
@@ -127,6 +149,9 @@ export function createSpendCounter({
   /** `period:level` already claimed (by anyone): never asked again. */
   const claimed = new Set<string>();
   let failingSince: number | null = null;
+  let lastSuccessAt = clock.now();
+  /** Store calls started and not yet settled or timed out. */
+  let inFlight = 0;
   let downRaised = false;
   let flushing: Promise<void> | null = null;
   let ticking: Promise<void> | null = null;
@@ -145,7 +170,21 @@ export function createSpendCounter({
   }
 
   function storeDown(): boolean {
-    return failingSince !== null && clock.now() - failingSince > storeDownMs;
+    return (failingSince !== null || inFlight > 0) && clock.now() - lastSuccessAt > storeDownMs;
+  }
+
+  /** One store call, bounded by `storeTimeoutMs`: a hang rejects with `StoreTimeout`. */
+  function bounded<T>(work: () => Promise<T>): Promise<T> {
+    inFlight++;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new StoreTimeout()), storeTimeoutMs);
+      timer.unref?.();
+    });
+    return Promise.race([work(), timeout]).finally(() => {
+      clearTimeout(timer);
+      inFlight--;
+    });
   }
 
   function judge() {
@@ -164,6 +203,7 @@ export function createSpendCounter({
 
   function succeeded() {
     failingSince = null;
+    lastSuccessAt = clock.now();
     if (downRaised) {
       downRaised = false;
       alarm.raise({ level: 'log', source: 'mod', code: 'spend_store_recovered' });
@@ -178,7 +218,7 @@ export function createSpendCounter({
     for (let i = 0; i < batch.length; i++) {
       const [period, micros] = batch[i] as [string, number];
       try {
-        const total = await store.add(period, micros);
+        const total = await bounded(() => store.add(period, micros));
         if (gen !== generation) return;
         known.set(period, total);
         succeeded();
@@ -206,7 +246,7 @@ export function createSpendCounter({
     const gen = generation;
     const periods = activePeriods();
     try {
-      const [next, totals] = await Promise.all([source.read(), store.read(periods)]);
+      const [next, totals] = await bounded(() => Promise.all([source.read(), store.read(periods)]));
       if (gen !== generation) return;
       current = next;
       for (const p of periods) known.set(p, totals.get(p) ?? 0);
@@ -221,7 +261,7 @@ export function createSpendCounter({
         const key = `${p}:${level}`;
         if (claimed.has(key)) continue;
         try {
-          const won = await store.claimAlarm(p, level);
+          const won = await bounded(() => store.claimAlarm(p, level));
           if (gen !== generation) return;
           claimed.add(key);
           if (won) {
@@ -309,6 +349,7 @@ export function createSpendCounter({
       pending.clear();
       claimed.clear();
       failingSince = null;
+      lastSuccessAt = clock.now();
       downRaised = false;
       current = DEFAULT_SETTINGS;
       layer.setCeiling(false);

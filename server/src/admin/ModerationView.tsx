@@ -16,6 +16,16 @@ export interface TaskView {
   reason: string | null;
 }
 
+/** One provider over the current 60 s window. */
+export interface ProviderView {
+  provider: string;
+  status: string;
+  reason: string | null;
+  calls: number;
+  p95Ms: number;
+  errorPercent: number;
+}
+
 export interface ModerationFormValues {
   review: number;
   block: number;
@@ -27,12 +37,15 @@ export interface ModerationViewProps {
   night: SpendView | null;
   month: SpendView;
   tasks: TaskView[];
+  providers: ProviderView[];
   settings: ModerationFormValues;
 }
 
 const TASKS: Record<string, string> = { moderation: 'Модерація', translation: 'Переклад' };
 const STATES: Record<string, string> = { ai: 'AI працює', fallback: 'запасний фільтр' };
 const REASONS: Record<string, string> = { unavailable: 'недоступний', slow: 'повільний', ceiling: 'стеля витрат', 'not-configured': 'без ключа' };
+const PROVIDERS: Record<string, string> = { anthropic: 'Anthropic', deepseek: 'DeepSeek' };
+const PROVIDER_STATUS: Record<string, string> = { available: 'доступний', unavailable: 'недоступний' };
 const FIELDS: Record<string, string> = {
   review: 'поріг перевірки',
   block: 'поріг блокування',
@@ -42,7 +55,7 @@ const FIELDS: Record<string, string> = {
 
 const money = (n: number) => `$${n.toFixed(2)}`;
 
-export function ModerationView({ night, month, tasks, settings }: ModerationViewProps) {
+export function ModerationView({ night, month, tasks, providers, settings }: ModerationViewProps) {
   const router = useRouter();
   const [form, setForm] = useState<Record<keyof ModerationFormValues, string>>({
     review: String(settings.review),
@@ -80,6 +93,12 @@ export function ModerationView({ night, month, tasks, settings }: ModerationView
         {tasks.map((t) => (
           <li key={t.task} data-testid={`task-${t.task}`}>
             {`${TASKS[t.task] ?? t.task}: ${STATES[t.state] ?? t.state}${t.reason ? ` (${REASONS[t.reason] ?? t.reason})` : ''}`}
+          </li>
+        ))}
+        {providers.map((p) => (
+          <li key={p.provider} data-testid={`provider-${p.provider}`}>
+            {`${PROVIDERS[p.provider] ?? p.provider}: ${PROVIDER_STATUS[p.status] ?? p.status}${p.reason ? ` (${REASONS[p.reason] ?? p.reason})` : ''}` +
+              ` · за 60 с: ${p.calls} викл., p95 ${p.p95Ms} мс, помилок ${p.errorPercent}%`}
           </li>
         ))}
       </ul>
