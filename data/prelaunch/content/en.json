@@ -1,23 +1,31 @@
 {
   "AU": {
-    "text": "Australians ring in the New Year 11 hours before London, in the middle of summer heat. The celebration centers on Sydney Harbour, home to one of the most famous fireworks displays in the world.",
+    "text": "In Australia the New Year falls in summer, so the party moves outdoors: fireworks, concerts and exhibitions, many of them at beaches. Some head to a party with music, a boat cruise, a city park or the beach; others gather at home for a barbecue. At midnight the fireworks go up and glasses of champagne or wine are raised. Big cities stage two shows: an early family one in the evening and the main one at midnight. 31 December is not a public holiday; 1 January is a day off in every state and territory.\n\nSydney fires two shows, at 9 pm and at midnight, from the Harbour Bridge, the Opera House and barges on the harbour. The 9 pm show, Calling Country, celebrates sky, land and sea and is created by Aboriginal and Torres Strait Islander artists. In 2025 the City of Sydney expected more than a million people on the harbour foreshore.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Fireworks over the harbor",
-        "text": "Sydney Harbour puts on two fireworks shows: a family-friendly one at 9 p.m. and the main display at midnight over the Sydney Harbour Bridge and the Sydney Opera House."
+        "iconId": "sun",
+        "title": "Beach, park or barbecue",
+        "text": "Here the New Year comes in midsummer: people see it in on the beach, in a city park, on a boat or at a home barbecue. At midnight, glasses of champagne or wine go up."
       },
       {
         "id": "t2",
-        "title": "New Year at the height of summer",
-        "text": "January is summertime in Australia, so people celebrate on the beach, at barbecues and at picnics under the open sky."
+        "iconId": "fireworks",
+        "title": "Two shows in one night",
+        "text": "Big cities stage an early family show and the main one at midnight. In 2025 the early one was at 9 pm in Sydney and Adelaide and at 9:30 pm in Melbourne and Hobart."
       },
       {
         "id": "t3",
-        "title": "A spot with a view",
-        "text": "The best spots by the water are claimed hours ahead, while it’s still daylight: families arrive with blankets and picnic baskets, and many watch from boats."
+        "iconId": "wave",
+        "title": "A spot on Sydney Harbour",
+        "text": "The harbour has 49 vantage points, and parks and headlands are free to watch from. In 2025 the top spots, such as the Opera House Forecourt, took free registered tickets."
       }
-    ]
+    ],
+    "meta": {
+      "title": "New Year 2027 in Australia: Sydney Harbour | Time2Fest",
+      "description": "Australia greets 2027 in summer, and Sydney fires two shows from the Harbour Bridge, Opera House and barges, at 9 pm and midnight. Sydney midnight is 13:00 UTC."
+    },
+    "kit": "au+11"
   },
   "BR": {
     "text": "Brazil welcomes the New Year — Réveillon — in white. The custom began with Candomblé followers who, in the 1970s, came to Copacabana beach in white with gifts for Iemanjá, the water goddess; since then white clothes and flowers set out to sea have spread across the country. At midnight people on the coast jump seven waves, making a wish on each.\n\nIn Rio de Janeiro the party is on Copacabana: the city estimates more than 2.6 million people came to greet 2026. At midnight fireworks fired from 19 barges for 12 minutes, 1,200 drones rose into the sky, and three stages played on the beach.",
@@ -466,5 +474,85 @@
       "description": "The Philippines rings in 2027 with Media Noche: pancit, twelve round fruits, polka dots and torotot horns. Manila's midnight falls at 16:00 UTC."
     },
     "kit": "ph"
+  },
+  "BR@utc-0400": {
+    "text": "Brazil welcomes the New Year — Réveillon — in white. The custom began with Candomblé followers who, in the 1970s, came to Copacabana beach in white with gifts for Iemanjá, the water goddess; since then white clothes and flowers set out to sea have spread across the country. At midnight people on the coast jump seven waves, making a wish on each.\n\nManaus, on the Rio Negro, greets the year an hour after Rio. The main party is the free Réveillon on Ponta Negra beach; at midnight low-noise fireworks go off at three places in the city so as not to frighten children, older people and animals, and swimming is not allowed that night.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "White and lucky colours",
+        "text": "Most people dress in white, as all over Brazil. Some choose yellow for money or red for love."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Ponta Negra",
+        "text": "The main party is on Ponta Negra beach by the Rio Negro: free concerts from evening until dawn. Swimming is not allowed that night."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Low-noise fireworks",
+        "text": "At midnight fireworks go off at three places in the city at once — low-noise, so as not to frighten children, older people, autistic people and animals."
+      }
+    ],
+    "kit": "br-4"
+  },
+  "CN": {
+    "text": "In China, 1 January is Yuandan, the Gregorian New Year. It is a short break: in 2027 the holiday lasts three days, 1 to 3 January. The country's main celebration is the Spring Festival, the lunar New Year, which brings nine days off in 2027, from 5 to 13 February. On the evening of 31 December many people watch New Year galas: national and provincial TV channels air shows with a countdown to midnight. Hunan TV aired the first such concert in 2005.\n\nBeijing greets the year with a bell: since 1982 the Yongle Bell, more than 600 years old, has been struck 108 times at midnight in the Dazhong Temple. Last year the countdown was also held, for the first time, on the Great Wall at Juyongguan. Both venues were invitation-only; everyone else watched live on TV and online. Fireworks are banned inside the Fifth Ring Road and, since 2022, across the whole city except approved displays.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Three days of Yuandan",
+        "text": "In 2027 China's New Year holiday runs from 1 to 3 January. The long break comes later: the Spring Festival brings nine days off, 5 to 13 February."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "New Year galas on TV",
+        "text": "On the evening of 31 December national and provincial channels air New Year shows with a countdown to midnight. The tradition began in 2005 with a Hunan TV concert."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "108 bell strikes in Beijing",
+        "text": "At midnight the Yongle Bell at the Dazhong Temple rings 108 times; last year the ceremony was shown live on TV and online. On the morning of 1 January people greet the first sunrise on the Great Wall."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in China: Beijing | Time2Fest",
+      "description": "China greets 2027 in Beijing as the 600-year-old Yongle Bell rings 108 times at Dazhong Temple and TV galas count down. Beijing's midnight comes at 16:00 UTC."
+    },
+    "kit": "cn+8"
+  },
+  "SG": {
+    "text": "Singapore's calendar holds festivals of many cultures side by side: Chinese New Year, the Muslim Hari Raya, Hindu Deepavali and Christmas. 1 January is a single day off, while Chinese New Year gets two: 6 and 7 February in 2027. The night of 31 December is celebrated across the island, with fireworks and events at Marina Bay, Kallang, Sentosa and Clarke Quay, and the People's Association holds countdown parties in residential neighbourhoods. Mediacorp broadcasts a New Year concert on TV.\n\nThe first Marina Bay countdown took place in 2005 and, according to URA, drew more than 160,000 people. To welcome 2026, the fireworks over the bay came in four parts, from 11pm according to URA, and police closed waterfronts as they filled up. For 2027 a 10.30pm start has been announced, along with the first live stream on YouTube.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Countdown in your neighbourhood",
+        "text": "No need to head downtown: the People's Association holds countdown parties in residential neighbourhoods across the island. Six neighbourhoods have been announced for 2027."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks over Marina Bay",
+        "text": "The country's biggest fireworks are over Marina Bay; to welcome 2026 they came in four parts. Police close waterfronts once they fill up, so it's worth checking crowd levels on Crowd@MarinaBay."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Midnight on Sentosa's beaches",
+        "text": "On Sentosa's Siloso Beach, 2026 was welcomed with a Mediacorp concert. For 2027, midnight fireworks have been announced on two beaches at once, Siloso and Palawan."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Singapore | Time2Fest",
+      "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first YouTube live stream. Midnight there is 16:00 UTC."
+    },
+    "kit": "sg"
   }
 }

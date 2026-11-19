@@ -20,19 +20,19 @@ describe('набори країн', () => {
   });
 
   it('сцена з файла: пояс, для головного — країна; чужий пояс і країна без файла — нічого', () => {
-    // Типовий фокус — верх по центру: верхівка пам'ятки в кадрі ширшому за 3:2.
-    expect(sceneFile('JP', 'utc+0900', true)).toEqual({
-      src: '/scenes/JP.svg',
-      position: '50% 0%',
+    // Пачка 2: затверджені набори — широкі сцени 480×200 з кольорами тла.
+    expect(sceneFile('BR', 'utc-0400', false)).toMatchObject({
+      src: '/scenes/BR-utc-0400-wide.svg',
+      position: 'right center',
+      wide: { sky: expect.stringMatching(/^#[0-9a-f]{6}$/), water: expect.stringMatching(/^#[0-9a-f]{6}$/) },
     });
+    expect(sceneFile('JP', 'utc+0900', true)).toMatchObject({ src: '/scenes/JP-wide.svg', position: 'right center' });
     expect(sceneFile('JP', 'utc+0900', false)).toBeUndefined();
-    expect(sceneFile('BR', 'utc-0300', true)).toEqual({
-      src: '/scenes/BR.svg',
-      position: '50% 0%',
-    });
+    expect(sceneFile('BR', 'utc-0300', true)).toMatchObject({ src: '/scenes/BR-wide.svg' });
     expect(sceneFile('BR', 'utc-0300', false)).toBeUndefined();
-    expect(sceneFile('BR', 'utc-0400', false)).toBeUndefined();
-    expect(sceneFile('AU', 'utc+1100', true)).toBeUndefined();
+    // Сцена 3:2 (набір FR опубліковано до широких сцен) — верх по центру.
+    expect(sceneFile('FR', 'utc+0100', true)).toEqual({ src: '/scenes/FR.svg', position: '50% 0%' });
+    expect(sceneFile('VN', 'utc+0700', true)).toBeUndefined();
   });
 
   it('запис сцени: шлях 3:2 — верх по центру; широка — правий край і кольори тла; фокус 3:2 — свій', () => {

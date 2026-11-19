@@ -1,21 +1,120 @@
 {
   "_about": "Сцени наборів «країна + пояс» (SVG 3:2 з конвеєра «Країни»): ключ ISO або ISO@пояс → адреса в збірці.",
   "scenes": {
-    "JP": "/scenes/JP.svg",
-    "UA": "/scenes/UA.svg",
-    "BR": "/scenes/BR.svg",
-    "NZ": "/scenes/NZ.svg",
+    "JP": {
+      "src": "/scenes/JP-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2a2444"
+    },
+    "UA": {
+      "src": "/scenes/UA-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#4a4c72"
+    },
+    "BR": {
+      "src": "/scenes/BR-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#6f6251"
+    },
+    "NZ": {
+      "src": "/scenes/NZ-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#232f52"
+    },
     "FR": "/scenes/FR.svg",
-    "GB": "/scenes/GB.svg",
-    "ES": "/scenes/ES.svg",
-    "RO": "/scenes/RO.svg",
-    "US": "/scenes/US.svg",
-    "DE": "/scenes/DE.svg",
-    "GR": "/scenes/GR.svg",
-    "IT": "/scenes/IT.svg",
-    "HK": "/scenes/HK.svg",
-    "KR": "/scenes/KR.svg",
-    "TW": "/scenes/TW.svg",
-    "PH": "/scenes/PH.svg"
+    "GB": {
+      "src": "/scenes/GB-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "ES": {
+      "src": "/scenes/ES-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2e2a48"
+    },
+    "RO": {
+      "src": "/scenes/RO-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2f294d"
+    },
+    "US": {
+      "src": "/scenes/US-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "DE": {
+      "src": "/scenes/DE-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "GR": {
+      "src": "/scenes/GR-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#2a2748"
+    },
+    "IT": {
+      "src": "/scenes/IT-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2a2032"
+    },
+    "HK": {
+      "src": "/scenes/HK-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2a2444"
+    },
+    "KR": {
+      "src": "/scenes/KR-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#24244a"
+    },
+    "TW": {
+      "src": "/scenes/TW-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#18203d"
+    },
+    "PH": {
+      "src": "/scenes/PH-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#2c2a52"
+    },
+    "BR@utc-0400": {
+      "src": "/scenes/BR-utc-0400-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#12302c"
+    },
+    "AU": {
+      "src": "/scenes/AU-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "CN": {
+      "src": "/scenes/CN-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#272039"
+    },
+    "SG": {
+      "src": "/scenes/SG-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    }
   }
 }

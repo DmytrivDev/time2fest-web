@@ -69,14 +69,18 @@
     "country:AU": {
       "src": "/media/photos/australia.webp",
       "alt": {
-        "uk": "Феєрверк над мостом Харбор-Брідж",
-        "en": "Fireworks over the Harbour Bridge",
-        "es": "Fuegos artificiales sobre el Harbour Bridge",
-        "fr": "Feu d’artifice au-dessus du Harbour Bridge"
+        "uk": "Новорічний салют над Харбор-Брідж, Сідней (зустріч 2025 року)",
+        "en": "New Year fireworks over the Harbour Bridge, Sydney (welcoming 2025)",
+        "es": "Fuegos artificiales de Año Nuevo sobre el Harbour Bridge, Sídney (llegada de 2025)",
+        "fr": "Feu d’artifice du Nouvel An au-dessus du Harbour Bridge, Sydney (passage à 2025)"
       },
-      "author": "Jayden Lynch",
-      "license": "Unsplash License",
-      "sourceUrl": "https://unsplash.com/photos/a-bridge-with-a-bunch-of-fireworks-on-it-Oj6BSTbvcn8"
+      "author": "Dicklyon",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sydney_welcomes_2025.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
     },
     "city:tokyo": {
       "src": "/media/photos/tokyo.webp",
@@ -424,6 +428,54 @@
       "position": {
         "x": 45,
         "y": 45
+      }
+    },
+    "country:BR@utc-0400": {
+      "src": "/media/photos/brazil-manaus.webp",
+      "alt": {
+        "uk": "Театр Амазонас у сутінках, Манаус",
+        "en": "Amazon Theatre at dusk, Manaus",
+        "es": "Teatro Amazonas al anochecer, Manaos",
+        "fr": "Le Théâtre Amazonas au crépuscule, Manaus"
+      },
+      "author": "Rezendevaleria",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vista_noturna_Teatro_Amazonas_horizontal.jpg",
+      "position": {
+        "x": 55,
+        "y": 100
+      }
+    },
+    "country:CN": {
+      "src": "/media/photos/china.webp",
+      "alt": {
+        "uk": "Салют над брамою Інтянь у Лояні на Свято весни 2023",
+        "en": "Fireworks over Yingtian Gate in Luoyang during the 2023 Spring Festival",
+        "es": "Fuegos artificiales sobre la puerta Yingtian de Luoyang en la Fiesta de la Primavera de 2023",
+        "fr": "Feu d’artifice au-dessus de la porte Yingtian à Luoyang pendant la fête du Printemps 2023"
+      },
+      "author": "Windmemories",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:20230124_Yingtian_Gate_at_Night_08.jpg",
+      "position": {
+        "x": 72,
+        "y": 60
+      }
+    },
+    "country:SG": {
+      "src": "/media/photos/singapore.webp",
+      "alt": {
+        "uk": "Салют над затокою Марина-Бей і готель Marina Bay Sands",
+        "en": "Fireworks over Marina Bay and the Marina Bay Sands hotel",
+        "es": "Fuegos artificiales sobre la bahía Marina y el hotel Marina Bay Sands",
+        "fr": "Feu d’artifice au-dessus de Marina Bay et de l’hôtel Marina Bay Sands"
+      },
+      "author": "CEphoto, Uwe Aranas",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marina-Bay_Singapore_Firework-launching-CNY-2015-03.jpg",
+      "position": {
+        "x": 45,
+        "y": 50
       }
     }
   }

@@ -1,0 +1,99 @@
+{
+  "code": "SG",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "singapore",
+  "names": {
+    "uk": {
+      "name": "Сінгапур",
+      "city": "Сінгапур",
+      "cityIn": "у Сінгапурі",
+      "caps": "СІНГАПУР"
+    },
+    "en": {
+      "name": "Singapore",
+      "city": "Singapore",
+      "cityIn": "in Singapore",
+      "caps": "SINGAPORE"
+    },
+    "es": {
+      "name": "Singapur",
+      "city": "Singapur",
+      "cityIn": "en Singapur",
+      "caps": "SINGAPUR"
+    },
+    "fr": {
+      "name": "Singapour",
+      "city": "Singapour",
+      "cityIn": "à Singapour",
+      "caps": "SINGAPOUR"
+    }
+  },
+  "picto": "M1.5 9 L35.6 7.6 Q38.8 7.6 38.4 10 Q37.8 12.4 34.4 12.7 L10 13.3 Q5 12.8 1.5 9 Z M8.5 13.1 L7.1 34 M12.5 13 L13.9 34 M10.5 13.1 V34 M20 13.1 L18.6 34 M24 13 L25.4 34 M22 13.1 V34 M31.5 13.1 L30.1 34 M35.5 13 L36.9 34 M33.5 13.1 V34 M3.5 34 H38.5 M7 37 H35 M12 39.5 H30",
+  "flagColors": [
+    "#EF3340",
+    "#FFFFFF",
+    "#F2D68A"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сінгапурі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Singapore"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Singapur"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Singapour"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

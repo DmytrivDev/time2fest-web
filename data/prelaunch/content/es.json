@@ -1,23 +1,31 @@
 {
   "AU": {
-    "text": "Los australianos reciben el Año Nuevo 11 horas antes que Londres y en pleno calor veraniego. El centro de la fiesta es la bahía de Sídney, con uno de los espectáculos de fuegos artificiales más famosos del mundo.",
+    "text": "En Australia el Año Nuevo cae en verano, así que la fiesta sale a la calle: fuegos artificiales, conciertos y exposiciones, muchos en la playa. Unos van a una fiesta con música, a un crucero en barco, a un parque de la ciudad o a la playa; otros se reúnen en casa para una barbacoa. A medianoche estallan los fuegos y se brinda con champán o vino. Las grandes ciudades hacen dos espectáculos: uno temprano para familias y el principal a medianoche. El 31 de diciembre no es festivo; el 1 de enero sí lo es en todos los estados y territorios.\n\nSídney lanza dos espectáculos, a las 21:00 y a medianoche, desde el Harbour Bridge, la Ópera y barcazas en la bahía. El de las 21:00, Calling Country, celebra el cielo, la tierra y el mar, y lo crean artistas aborígenes y de las islas del Estrecho de Torres. En 2025 el Ayuntamiento de Sídney esperaba más de un millón de personas junto a la bahía.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Fuegos artificiales sobre la bahía",
-        "text": "En la bahía de Sídney hay dos espectáculos pirotécnicos: uno familiar a las 21:00 y el principal a medianoche, sobre el Sydney Harbour Bridge y la Sydney Opera House."
+        "iconId": "sun",
+        "title": "Playa, parque o barbacoa",
+        "text": "Aquí el Año Nuevo llega en pleno verano: se recibe en la playa, en un parque, en un barco o con una barbacoa en casa. A medianoche se brinda con champán o vino."
       },
       {
         "id": "t2",
-        "title": "Año Nuevo en pleno verano",
-        "text": "En enero es verano en Australia, así que se celebra en la playa, en barbacoas y en picnics al aire libre."
+        "iconId": "fireworks",
+        "title": "Dos espectáculos por noche",
+        "text": "Las grandes ciudades hacen un espectáculo temprano para familias y el principal a medianoche. En 2025 el temprano fue a las 21:00 en Sídney y Adelaida y a las 21:30 en Melbourne y Hobart."
       },
       {
         "id": "t3",
-        "title": "Un sitio con vistas",
-        "text": "Los mejores lugares junto al agua se ocupan con mucha antelación, ya durante el día: las familias llegan con mantas y cestas de picnic, y muchos miran el espectáculo desde barcos."
+        "iconId": "wave",
+        "title": "Un sitio en la bahía de Sídney",
+        "text": "La bahía tiene 49 miradores, y en parques y cabos se mira gratis. En 2025 los mejores sitios, como la explanada de la Ópera, pedían entradas gratuitas con registro."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Australia: la bahía de Sídney | Time2Fest",
+      "description": "Australia recibe 2027 en verano y Sídney lanza fuegos desde el Harbour Bridge, la Ópera y barcazas, a las 21:00 y a medianoche. Medianoche en Sídney: 13:00 UTC."
+    },
+    "kit": "au+11"
   },
   "BR": {
     "text": "Brasil recibe el Año Nuevo, el Réveillon, vestido de blanco. La costumbre nació con seguidores del candomblé que en los años setenta acudían de blanco a la playa de Copacabana con ofrendas para Yemanjá, la diosa del agua; desde entonces la ropa blanca y las flores que se sueltan en el mar se extendieron por todo el país. A medianoche, en la costa, se saltan siete olas pidiendo un deseo en cada una.\n\nEn Río de Janeiro la fiesta es en Copacabana: según la ciudad, más de 2,6 millones de personas llegaron a recibir 2026. A medianoche los fuegos salieron de 19 barcazas durante 12 minutos, se elevaron 1200 drones y en la playa sonaron tres escenarios.",
@@ -466,5 +474,85 @@
       "description": "Filipinas recibe 2027 con la Media Noche: pancit, doce frutas redondas, lunares y cornetas torotot. En Manila la medianoche llega a las 16:00 UTC."
     },
     "kit": "ph"
+  },
+  "BR@utc-0400": {
+    "text": "Brasil recibe el Año Nuevo, el Réveillon, vestido de blanco. La costumbre nació con seguidores del candomblé que en los años setenta acudían de blanco a la playa de Copacabana con ofrendas para Yemanjá, la diosa del agua; desde entonces la ropa blanca y las flores que se sueltan en el mar se extendieron por todo el país. A medianoche, en la costa, se saltan siete olas pidiendo un deseo en cada una.\n\nManaos, a orillas del río Negro, recibe el año una hora después que Río. La fiesta principal es el Réveillon gratuito en la playa de Ponta Negra; a medianoche suenan fuegos de bajo ruido en tres puntos de la ciudad para no asustar a niños, mayores y animales, y esa noche está prohibido bañarse.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "Blanco y colores de la suerte",
+        "text": "La mayoría viste de blanco, como en todo Brasil. Algunos eligen amarillo para el dinero o rojo para el amor."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Ponta Negra",
+        "text": "La fiesta principal es en la playa de Ponta Negra, junto al río Negro: conciertos gratuitos desde la tarde hasta el amanecer. Esa noche está prohibido bañarse."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos de bajo ruido",
+        "text": "A medianoche los fuegos suenan a la vez en tres puntos de la ciudad, y son de bajo ruido para no asustar a niños, mayores, personas autistas y animales."
+      }
+    ],
+    "kit": "br-4"
+  },
+  "CN": {
+    "text": "En China, el 1 de enero es Yuandan, el Año Nuevo gregoriano. Es una pausa corta: en 2027 el festivo dura tres días, del 1 al 3 de enero. La gran fiesta del país es la Fiesta de la Primavera, el Año Nuevo lunar, con nueve días libres en 2027, del 5 al 13 de febrero. La noche del 31 de diciembre mucha gente ve las galas de Año Nuevo: las cadenas nacionales y provinciales emiten espectáculos con cuenta atrás hasta la medianoche. La televisión de Hunan emitió el primer concierto de este tipo en 2005.\n\nPekín recibe el año con una campana: desde 1982, en el templo de Dazhong, la campana Yongle, de más de 600 años, suena 108 veces a medianoche. El año pasado la cuenta atrás se celebró además, por primera vez, en la Gran Muralla, en Juyongguan. Ambos lugares eran solo con invitación; el resto lo siguió en directo por televisión y en internet. Los fuegos artificiales están prohibidos dentro del Quinto Anillo y, desde 2022, en toda la ciudad, salvo los espectáculos autorizados.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Tres días de Yuandan",
+        "text": "En 2027 el festivo de Año Nuevo en China va del 1 al 3 de enero. Las vacaciones largas llegan después: la Fiesta de la Primavera trae nueve días libres, del 5 al 13 de febrero."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Galas de Año Nuevo en la tele",
+        "text": "La noche del 31 de diciembre, las cadenas nacionales y provinciales emiten espectáculos de Año Nuevo con cuenta atrás hasta la medianoche. La tradición empezó en 2005 con un concierto de la televisión de Hunan."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "108 campanadas en Pekín",
+        "text": "A medianoche, la campana Yongle del templo de Dazhong suena 108 veces; el año pasado la ceremonia se emitió en directo por televisión y en internet. La mañana del 1 de enero se recibe el primer amanecer en la Gran Muralla."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en China: Pekín | Time2Fest",
+      "description": "China recibe 2027 en Pekín con 108 campanadas de la campana Yongle en el templo Dazhong y galas de televisión con cuenta atrás. Medianoche en Pekín: 16:00 UTC."
+    },
+    "kit": "cn+8"
+  },
+  "SG": {
+    "text": "En el calendario de Singapur conviven fiestas de distintas culturas: el Año Nuevo chino, el Hari Raya musulmán, el Deepavali hindú y la Navidad. El 1 de enero es un solo día festivo, mientras que el Año Nuevo chino tiene dos: el 6 y el 7 de febrero en 2027. La noche del 31 de diciembre se celebra en toda la isla, con fuegos y actividades en Marina Bay, Kallang, Sentosa y Clarke Quay, y la Asociación Popular organiza fiestas con cuenta atrás en los barrios residenciales. Mediacorp emite por televisión un concierto de Año Nuevo.\n\nLa primera cuenta atrás de Marina Bay se celebró en 2005 y, según la URA, reunió a más de 160.000 personas. Para recibir 2026, los fuegos sobre la bahía llegaron en cuatro partes, desde las 23:00 según la URA, y la policía cerró los paseos marítimos a medida que se llenaban. Para 2027 se ha anunciado el inicio a las 22:30 y, por primera vez, una retransmisión en directo en YouTube.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Cuenta atrás en tu barrio",
+        "text": "No hace falta ir al centro: la Asociación Popular organiza fiestas con cuenta atrás en barrios residenciales de toda la isla. Para 2027 se han anunciado seis barrios."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre Marina Bay",
+        "text": "Los mayores fuegos del país se lanzan sobre Marina Bay; para recibir 2026 llegaron en cuatro partes. La policía cierra los paseos marítimos cuando se llenan, así que conviene consultar la afluencia en Crowd@MarinaBay."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Medianoche en las playas de Sentosa",
+        "text": "En la playa Siloso de Sentosa, 2026 se recibió con un concierto de Mediacorp. Para 2027 se han anunciado fuegos a medianoche en dos playas a la vez, Siloso y Palawan."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Singapur | Time2Fest",
+      "description": "Singapur recibe 2027 con fuegos sobre Marina Bay, cuenta atrás en los barrios y una emisión anunciada en YouTube. En Singapur, medianoche son las 16:00 UTC."
+    },
+    "kit": "sg"
   }
 }

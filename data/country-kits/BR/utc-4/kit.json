@@ -1,0 +1,99 @@
+{
+  "code": "BR",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "manaus",
+  "names": {
+    "uk": {
+      "name": "Бразилія",
+      "city": "Манаус",
+      "cityIn": "у Манаусі",
+      "caps": "МАНАУС · БРАЗИЛІЯ"
+    },
+    "en": {
+      "name": "Brazil",
+      "city": "Manaus",
+      "cityIn": "in Manaus",
+      "caps": "MANAUS · BRAZIL"
+    },
+    "es": {
+      "name": "Brasil",
+      "city": "Manaos",
+      "cityIn": "en Manaos",
+      "caps": "MANAOS · BRASIL"
+    },
+    "fr": {
+      "name": "Brésil",
+      "city": "Manaus",
+      "cityIn": "à Manaus",
+      "caps": "MANAUS · BRÉSIL"
+    }
+  },
+  "picto": "M20 4 V10 M18.6 10 h2.8 v6 h-2.8 Z M9 25 C9 12 31 12 31 25 Z M12 19.5 H28 M11 25 H29 V30 H11 Z M7 34 L20 28 L33 34 Z M5 34 H35 V38 H5 Z M11 34 v4 M16 34 v4 M24 34 v4 M29 34 v4",
+  "flagColors": [
+    "#009C3B",
+    "#FFDF00",
+    "#3E6FD8"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Манаусі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Manaus"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Manaos"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Manaus"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -147,20 +147,20 @@
     },
     "AU": {
       "uk": {
-        "title": "Новий рік в Австралії: як святкують, традиції | Time2Fest",
-        "description": "Новий рік в Австралії: салют над Сіднейською гаванню о 21:00 і опівночі, літо, пляж і барбекю. Дивись, коли північ прийде в Австралію за твоїм часом."
+        "title": "Новий рік в Австралії: салют у Сіднеї | Time2Fest",
+        "description": "Австралія зустрічає 2027 рік улітку, а Сідней — двома салютами з мосту Харбор-Брідж, Опери й барж у гавані, о 21:00 і опівночі. Північ у Сіднеї — це 13:00 UTC."
       },
       "en": {
-        "title": "New Year in Australia: Traditions, Time & Countdown | Time2Fest",
-        "description": "New Year in Australia: Sydney Harbour fireworks at 9 pm and midnight, summer beaches and barbecues. See when midnight reaches Australia in your local time."
+        "title": "New Year in Australia: Sydney Harbour | Time2Fest",
+        "description": "Australia greets 2027 in summer, and Sydney fires two shows from the Harbour Bridge, Opera House and barges, at 9 pm and midnight. Sydney midnight is 13:00 UTC."
       },
       "es": {
-        "title": "Año Nuevo en Australia: tradiciones y hora | Time2Fest",
-        "description": "Año Nuevo en Australia: fuegos artificiales en la bahía de Sídney a las 21:00 y a medianoche, verano, playa y barbacoas. Mira su medianoche en tu hora."
+        "title": "Año Nuevo en Australia: la bahía de Sídney | Time2Fest",
+        "description": "Australia recibe 2027 en verano y Sídney lanza fuegos desde el Harbour Bridge, la Ópera y barcazas, a las 21:00 y a medianoche. Medianoche en Sídney: 13:00 UTC."
       },
       "fr": {
-        "title": "Nouvel An en Australie : traditions et heure | Time2Fest",
-        "description": "Nouvel An en Australie : feux d’artifice sur la baie de Sydney à 21 h et à minuit, été, plage et barbecues. Vois quand minuit arrive en Australie à ton heure."
+        "title": "Nouvel An en Australie : la baie de Sydney | Time2Fest",
+        "description": "L’Australie fête 2027 en plein été, et Sydney tire deux feux depuis le Harbour Bridge, l’Opéra et des barges, à 21 h puis à minuit. Minuit à Sydney : 13 h UTC."
       }
     },
     "NZ": {
@@ -431,6 +431,42 @@
       "fr": {
         "title": "Nouvel An aux Philippines : Manille | Time2Fest",
         "description": "Les Philippines fêtent 2027 avec la Media Noche : pancit, douze fruits ronds, pois et trompettes torotot. Minuit à Manille : 16 h UTC, décomptes gratuits."
+      }
+    },
+    "CN": {
+      "uk": {
+        "title": "Новий рік у Китаї: Пекін | Time2Fest",
+        "description": "Китай зустрічає 2027 рік у Пекіні: храм Дачжун б’є в дзвін Юнле 108 разів, а гала-концерти телеканалів ведуть відлік до півночі. Північ у Пекіні — 16:00 UTC."
+      },
+      "en": {
+        "title": "New Year in China: Beijing | Time2Fest",
+        "description": "China greets 2027 in Beijing as the 600-year-old Yongle Bell rings 108 times at Dazhong Temple and TV galas count down. Beijing's midnight comes at 16:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en China: Pekín | Time2Fest",
+        "description": "China recibe 2027 en Pekín con 108 campanadas de la campana Yongle en el templo Dazhong y galas de televisión con cuenta atrás. Medianoche en Pekín: 16:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Chine : Pékin | Time2Fest",
+        "description": "La Chine fête 2027 à Pékin : la cloche Yongle du temple Dazhong sonne 108 coups et les galas télévisés font le décompte. En UTC, minuit à Pékin, c’est 16 h."
+      }
+    },
+    "SG": {
+      "uk": {
+        "title": "Новий рік у Сінгапурі | Time2Fest",
+        "description": "Сінгапур зустрічає 2027 рік салютом над затокою Марина-Бей, відліками в житлових кварталах і оголошеним ефіром на YouTube. Північ у Сінгапурі — 16:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Singapore | Time2Fest",
+        "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first YouTube live stream. Midnight there is 16:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Singapur | Time2Fest",
+        "description": "Singapur recibe 2027 con fuegos sobre Marina Bay, cuenta atrás en los barrios y una emisión anunciada en YouTube. En Singapur, medianoche son las 16:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An à Singapour | Time2Fest",
+        "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un direct annoncé sur YouTube. À Singapour, minuit, c’est 16 h UTC."
       }
     }
   }

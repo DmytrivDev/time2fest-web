@@ -1,23 +1,31 @@
 {
   "AU": {
-    "text": "Les Australiens accueillent le Nouvel An 11 heures avant Londres, en pleine chaleur estivale. La fête se concentre autour de la baie de Sydney, qui offre l’un des feux d’artifice les plus célèbres au monde.",
+    "text": "En Australie, le Nouvel An tombe en été, alors la fête se passe dehors : feux d’artifice, concerts et expositions, souvent sur les plages. Certains vont à une fête en musique, en croisière en bateau, dans un parc ou à la plage ; d’autres se retrouvent à la maison autour d’un barbecue. À minuit, le feu d’artifice éclate et on lève un verre de champagne ou de vin. Les grandes villes proposent deux spectacles : un premier en soirée pour les familles et le principal à minuit. Le 31 décembre n’est pas férié ; le 1er janvier l’est dans tous les États et territoires.\n\nSydney tire deux feux, à 21 h et à minuit, depuis le Harbour Bridge, l’Opéra et des barges dans la baie. Celui de 21 h, Calling Country, célèbre le ciel, la terre et la mer ; il est créé par des artistes aborigènes et des îles du détroit de Torrès. En 2025, la ville de Sydney attendait plus d’un million de personnes au bord de la baie.",
     "traditions": [
       {
         "id": "t1",
-        "title": "Feux d’artifice sur la baie",
-        "text": "Dans la baie de Sydney, il y a deux feux d’artifice : l’un, familial, à 21 h, et le principal à minuit, au-dessus du Sydney Harbour Bridge et de la Sydney Opera House."
+        "iconId": "sun",
+        "title": "Plage, parc ou barbecue",
+        "text": "Ici, le Nouvel An arrive en plein été : on le fête à la plage, dans un parc, sur un bateau ou autour d’un barbecue à la maison. À minuit, on lève un verre de champagne ou de vin."
       },
       {
         "id": "t2",
-        "title": "Le Nouvel An en plein été",
-        "text": "En janvier, c’est l’été en Australie : on fête donc le Nouvel An sur la plage, autour d’un barbecue ou d’un pique-nique en plein air."
+        "iconId": "fireworks",
+        "title": "Deux feux dans la soirée",
+        "text": "Les grandes villes tirent un feu en soirée pour les familles, puis le principal à minuit. En 2025, le premier était à 21 h à Sydney et Adélaïde, à 21 h 30 à Melbourne et Hobart."
       },
       {
         "id": "t3",
-        "title": "Une place avec vue",
-        "text": "Les meilleures places au bord de l’eau sont prises bien à l’avance, dès la journée : les familles arrivent avec des plaids et des paniers, et beaucoup regardent depuis des bateaux."
+        "iconId": "wave",
+        "title": "Sur la baie de Sydney",
+        "text": "La baie compte 49 points de vue, gratuits dans les parcs et sur les caps. En 2025, les meilleures places, comme le parvis de l’Opéra, demandaient un billet gratuit sur inscription."
       }
-    ]
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Australie : la baie de Sydney | Time2Fest",
+      "description": "L’Australie fête 2027 en plein été, et Sydney tire deux feux depuis le Harbour Bridge, l’Opéra et des barges, à 21 h puis à minuit. Minuit à Sydney : 13 h UTC."
+    },
+    "kit": "au+11"
   },
   "BR": {
     "text": "Le Brésil accueille le Nouvel An — le Réveillon — en blanc. La coutume est née avec les fidèles du candomblé qui, dans les années 1970, venaient en blanc sur la plage de Copacabana avec des offrandes pour Iemanjá, déesse des eaux ; depuis, les vêtements blancs et les fleurs confiées à la mer se sont répandus dans tout le pays. À minuit, sur la côte, on saute sept vagues en faisant un vœu à chacune.\n\nÀ Rio de Janeiro, la fête a lieu à Copacabana : selon la ville, plus de 2,6 millions de personnes y sont venues accueillir 2026. À minuit, le feu d’artifice a été tiré de 19 barges pendant 12 minutes, 1 200 drones se sont élevés et trois scènes jouaient sur la plage.",
@@ -466,5 +474,85 @@
       "description": "Les Philippines fêtent 2027 avec la Media Noche : pancit, douze fruits ronds, pois et trompettes torotot. Minuit à Manille : 16 h UTC, décomptes gratuits."
     },
     "kit": "ph"
+  },
+  "BR@utc-0400": {
+    "text": "Le Brésil accueille le Nouvel An — le Réveillon — en blanc. La coutume est née avec les fidèles du candomblé qui, dans les années 1970, venaient en blanc sur la plage de Copacabana avec des offrandes pour Iemanjá, déesse des eaux ; depuis, les vêtements blancs et les fleurs confiées à la mer se sont répandus dans tout le pays. À minuit, sur la côte, on saute sept vagues en faisant un vœu à chacune.\n\nManaus, au bord du Rio Negro, fête la nouvelle année une heure après Rio. La grande fête est le Réveillon gratuit sur la plage de Ponta Negra ; à minuit, un feu d’artifice silencieux part en trois points de la ville pour ne pas effrayer enfants, aînés et animaux, et la baignade est interdite cette nuit-là.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "Le blanc et les couleurs porte-bonheur",
+        "text": "La plupart s’habillent en blanc, comme partout au Brésil. Certains choisissent le jaune pour l’argent ou le rouge pour l’amour."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Ponta Negra",
+        "text": "La grande fête a lieu sur la plage de Ponta Negra, au bord du Rio Negro : concerts gratuits du soir jusqu’à l’aube. La baignade est interdite cette nuit-là."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice silencieux",
+        "text": "À minuit, le feu d’artifice part en trois points de la ville à la fois — silencieux, pour ne pas effrayer les enfants, les aînés, les personnes autistes et les animaux."
+      }
+    ],
+    "kit": "br-4"
+  },
+  "CN": {
+    "text": "En Chine, le 1er janvier, c’est Yuandan, le Nouvel An grégorien. C’est une courte pause : en 2027, le congé dure trois jours, du 1er au 3 janvier. La grande fête du pays reste la fête du Printemps, le Nouvel An lunaire, avec neuf jours de congé en 2027, du 5 au 13 février. Le soir du 31 décembre, beaucoup regardent les galas du Nouvel An : les chaînes nationales et provinciales diffusent des spectacles avec compte à rebours jusqu’à minuit. La télévision du Hunan a diffusé le premier concert de ce genre en 2005.\n\nPékin accueille l’année au son d’une cloche : depuis 1982, au temple Dazhong, la cloche Yongle, vieille de plus de 600 ans, sonne 108 coups à minuit. L’an dernier, le compte à rebours a aussi eu lieu, pour la première fois, sur la Grande Muraille, à Juyongguan. Les deux sites étaient réservés aux invités ; les autres ont suivi en direct à la télévision et en ligne. Les feux d’artifice sont interdits à l’intérieur du cinquième périphérique et, depuis 2022, dans toute la ville, hors spectacles autorisés.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Trois jours de Yuandan",
+        "text": "En 2027, le congé du Nouvel An en Chine va du 1er au 3 janvier. Les longues vacances viennent plus tard : la fête du Printemps offre neuf jours de congé, du 5 au 13 février."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Galas du Nouvel An à la télé",
+        "text": "Le soir du 31 décembre, les chaînes nationales et provinciales diffusent des spectacles du Nouvel An avec compte à rebours jusqu’à minuit. La tradition a commencé en 2005 avec un concert de la télévision du Hunan."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "108 coups de cloche à Pékin",
+        "text": "À minuit, la cloche Yongle du temple Dazhong sonne 108 coups ; l’an dernier, la cérémonie était diffusée en direct à la télévision et en ligne. Le matin du 1er janvier, on accueille le premier lever de soleil sur la Grande Muraille."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Chine : Pékin | Time2Fest",
+      "description": "La Chine fête 2027 à Pékin : la cloche Yongle du temple Dazhong sonne 108 coups et les galas télévisés font le décompte. En UTC, minuit à Pékin, c’est 16 h."
+    },
+    "kit": "cn+8"
+  },
+  "SG": {
+    "text": "Le calendrier de Singapour réunit les fêtes de plusieurs cultures : le Nouvel An chinois, le Hari Raya musulman, le Deepavali hindou et Noël. Le 1er janvier n’est férié qu’un jour, alors que le Nouvel An chinois en compte deux : les 6 et 7 février en 2027. La nuit du 31 décembre se fête dans toute l’île, avec feux d’artifice et animations à Marina Bay, Kallang, Sentosa et Clarke Quay, et l’Association populaire organise des fêtes avec décompte dans les quartiers résidentiels. Mediacorp diffuse un concert du Nouvel An à la télévision.\n\nLe premier décompte de Marina Bay a eu lieu en 2005 et, selon l’URA, a réuni plus de 160 000 personnes. Pour accueillir 2026, le feu d’artifice sur la baie s’est déroulé en quatre parties, à partir de 23 h selon l’URA, et la police a fermé les quais à mesure qu’ils se remplissaient. Pour 2027, un début à 22 h 30 a été annoncé, ainsi que, pour la première fois, une diffusion en direct sur YouTube.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Le décompte dans ton quartier",
+        "text": "Pas besoin d’aller au centre : l’Association populaire organise des fêtes avec décompte dans les quartiers résidentiels de toute l’île. Six quartiers sont annoncés pour 2027."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur Marina Bay",
+        "text": "Le plus grand feu d’artifice du pays est tiré sur Marina Bay ; pour accueillir 2026, il s’est déroulé en quatre parties. La police ferme les quais une fois pleins : mieux vaut suivre l’affluence sur Crowd@MarinaBay."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Minuit sur les plages de Sentosa",
+        "text": "Sur la plage de Siloso, à Sentosa, 2026 a été accueilli avec un concert de Mediacorp. Pour 2027, un feu d’artifice à minuit est annoncé sur deux plages à la fois, Siloso et Palawan."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Singapour | Time2Fest",
+      "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un direct annoncé sur YouTube. À Singapour, minuit, c’est 16 h UTC."
+    },
+    "kit": "sg"
   }
 }

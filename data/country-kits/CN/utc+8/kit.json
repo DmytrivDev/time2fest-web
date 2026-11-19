@@ -1,0 +1,99 @@
+{
+  "code": "CN",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "beijing",
+  "names": {
+    "uk": {
+      "name": "Китай",
+      "city": "Пекін",
+      "cityIn": "у Пекіні",
+      "caps": "ПЕКІН · КИТАЙ"
+    },
+    "en": {
+      "name": "China",
+      "city": "Beijing",
+      "cityIn": "in Beijing",
+      "caps": "BEIJING · CHINA"
+    },
+    "es": {
+      "name": "China",
+      "city": "Pekín",
+      "cityIn": "en Pekín",
+      "caps": "PEKÍN · CHINA"
+    },
+    "fr": {
+      "name": "Chine",
+      "city": "Pékin",
+      "cityIn": "à Pékin",
+      "caps": "PÉKIN · CHINE"
+    }
+  },
+  "picto": "M20 3 V6 M20 6 Q19.4 10.5 14 13 H26 Q20.6 10.5 20 6 M16 13 V16 M24 13 V16 M16 16 H24 M16 16 Q15.5 18.5 10.5 20.5 H29.5 Q24.5 18.5 24 16 M13 20.5 V24 M27 20.5 V24 M13 24 H27 M13 24 Q12.5 26.5 7 28.5 H33 Q27.5 26.5 27 24 M11 28.5 V31 M29 28.5 V31 M9 31 V33 H31 V31 M5 33 V35.5 H35 V33 M2 35.5 V38 H38 V35.5 Z M18 38 V35.5 M22 38 V35.5",
+  "flagColors": [
+    "#DE2910",
+    "#FFDE00",
+    "#E8EDF2"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Пекіні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Beijing"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Pekín"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Pékin"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
