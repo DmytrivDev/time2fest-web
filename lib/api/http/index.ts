@@ -4,10 +4,12 @@
  */
 import type { ServiceFactories, Services } from '../services';
 import { createHttpCatalog } from './catalog';
+import { createHttpSite } from './site';
 import type { HttpDomain } from './domains';
 
 const factories: { [K in HttpDomain]: () => Services[K] } = {
   catalog: () => createHttpCatalog(),
+  site: () => createHttpSite(),
 };
 
 export const httpFactories: ServiceFactories = factories;

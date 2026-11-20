@@ -8,7 +8,7 @@
 import type { ServiceName } from './services';
 
 /** Домени, які інтерфейс уже бере через шов (E0–E5): без їхніх адаптерів сайт працювати не може. */
-export const MIGRATED_DOMAINS: readonly ServiceName[] = ['notifications', 'rating', 'live', 'auth', 'profile', 'checkout', 'toasts', 'chat', 'passport', 'catalog'];
+export const MIGRATED_DOMAINS: readonly ServiceName[] = ['notifications', 'rating', 'live', 'auth', 'profile', 'checkout', 'toasts', 'chat', 'passport', 'catalog', 'site'];
 
 export type DomainServer = 'http' | 'sim';
 

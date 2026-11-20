@@ -8,6 +8,24 @@ import { createResource, useResource, type ResourceStatus } from '../resource';
 import { applySiteEvent, type SiteEvent, type SiteState } from '../contracts/site';
 import { ok } from '../result';
 import { getService } from '../services';
+import { buildSnapshot } from '../site/buildSnapshot';
+
+/**
+ * Знімки збірки, віддані як запасні (AC-51). Позначка не йде на дріт: будь-який знімок сервера (і версії 1) заміняє
+ * запасний, бо його `version` — не версія сервера.
+ */
+const fallbacks = new WeakSet<SiteState>();
+
+function fallbackSnapshot(): SiteState {
+  const s = buildSnapshot();
+  fallbacks.add(s);
+  return s;
+}
+
+/** `applySiteEvent`, але запасний знімок збірки поступається будь-якому знімку сервера. */
+export function reduceSite(current: SiteState, event: SiteEvent): SiteState {
+  return fallbacks.has(current) ? event.state : applySiteEvent(current, event);
+}
 
 export const siteState = createResource<SiteState, SiteEvent>(() => {
   const svc = getService('site');
@@ -15,14 +33,16 @@ export const siteState = createResource<SiteState, SiteEvent>(() => {
   return {
     load: async () => {
       const r = await svc.state();
-      return r.ok && seen ? ok(applySiteEvent(r.value, { type: 'snapshot', state: seen })) : r;
+      if (r.ok) return seen ? ok(applySiteEvent(r.value, { type: 'snapshot', state: seen })) : r;
+      // Читання не вдалося (AC-51): останній застосований знімок, а без нього — знімок збірки.
+      return ok(seen ?? svc.peek() ?? fallbackSnapshot());
     },
     subscribe: (cb) =>
       svc.subscribe((e) => {
         seen = applySiteEvent(seen, e);
         cb(e);
       }),
-    reduce: applySiteEvent,
+    reduce: reduceSite,
     peek: () => svc.peek(),
   };
 });
