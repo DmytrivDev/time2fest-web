@@ -8,8 +8,8 @@ export const TOAST_TIERS = [2, 5, 10] as const;
 export type ToastTier = (typeof TOAST_TIERS)[number];
 export const DEFAULT_TIER: ToastTier = 5;
 
-/** Найдовший тост — як підпис у чаті, коротко. */
-export const TOAST_MAX = 120;
+/** Найдовший тост — правило в `packages/rules/src/text/limits.ts` (SPEC-09). */
+export { TOAST_MAX } from '@time2fest/rules/text';
 
 /** З якого рівня тост закріплено під трансляцією до наступної півночі. */
 export const PIN_FROM: ToastTier = 5;

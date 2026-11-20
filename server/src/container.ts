@@ -31,12 +31,23 @@ import { createPayloadJournal } from './adapters/payloadJournal';
 import { createPayloadMomentSource } from './adapters/payloadMoments';
 import { createPgScheduler } from './adapters/pgScheduler';
 import { seasonRunEpoch } from './domain/scheduler/consequence';
-import { clockFor, processClockCache, realClock } from './clock';
+import { textRulesFor } from '@time2fest/rules/text';
+import { fallbackVerdict } from '@time2fest/rules/text/fallback';
+import { ANTHROPIC_MODERATION_MAX_TOKENS, ANTHROPIC_TRANSLATION_MAX_TOKENS, createAnthropicProvider } from './adapters/aiAnthropic';
+import { createDeepseekProvider } from './adapters/aiDeepseek';
+import { createPayloadModerationSettings } from './adapters/payloadModerationSettings';
+import { createPgAiSpend } from './adapters/pgAiSpend';
+import { aiPricesFrom } from './domain/moderation/spend';
+import { createProviderLayer, perProcessRpm } from './moderation/providers';
+import { createSpendCounter, type SpendCounter } from './moderation/spend';
+import { createTranslationService } from './moderation/translate';
+import { createVerdictService } from './moderation/verdict';
+import { clockFor, monotonicClock, processClockCache, realClock } from './clock';
 import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
-import type { AppEnv, Deps, EventPorts, RouteRow } from './endpoints/types';
+import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventSubscriber } from './events/ports';
@@ -71,6 +82,7 @@ const ACCESS_GATE_KEY = Symbol.for('t2f.accessGate');
 const BACKGROUND_KEY = Symbol.for('t2f.background');
 const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
 const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
+const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -214,6 +226,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
+  // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.
+  deps.moderation = overrides.moderation ?? createModeration(env, payload, { clock, alarm, log });
   const tokenSecret = realtime.config.tokenSecret;
   // The server API (C4, C6) only with both the URL and the API key; else the getters throw.
   const { url: centrifugoUrl, apiKey: centrifugoApiKey } = realtime.config;
@@ -263,6 +277,137 @@ function createProcessScheduler(deps: Deps, payload: () => Promise<Payload>, sha
     cls: deps.env.class,
     runEpochOf: shared ? () => shared.state().runEpoch : (input) => seasonRunEpoch(input.seasonId),
   });
+}
+
+const REAL_AI_HOSTS = { anthropic: 'https://api.anthropic.com', deepseek: 'https://api.deepseek.com' } as const;
+
+/**
+ * Text moderation and AI (SPEC-09 W25): the two adapters from the environment, the provider layer,
+ * the settings global, the spend counter and the two services. Keys come only from the secret
+ * variables (AC-47); a missing key is a provider `not-configured`. The real hosts are the default
+ * base address outside `test` only: in `test` a provider without a URL is not configured either.
+ * Nothing starts here (no timer, no request).
+ */
+function createModeration(
+  env: AppEnv,
+  payload: () => Promise<Payload>,
+  ports: { clock: Deps['clock']; alarm: Alarm; log: Deps['log'] },
+): ModerationDeps {
+  const v = env.vars;
+  const str = (name: string): string | undefined => {
+    const value = v[name];
+    return typeof value === 'string' && value !== '' ? value : undefined;
+  };
+  const urlOf = (name: string, real: string) => str(name) ?? (env.class === 'test' ? undefined : real);
+  const anthropicUrl = urlOf('T2F_AI_ANTHROPIC_URL', REAL_AI_HOSTS.anthropic);
+  const deepseekUrl = urlOf('T2F_AI_DEEPSEEK_URL', REAL_AI_HOSTS.deepseek);
+  const anthropic = createAnthropicProvider({
+    url: anthropicUrl ?? '',
+    apiKey: anthropicUrl === undefined ? undefined : str('ANTHROPIC_API_KEY'),
+    model: String(v.T2F_AI_ANTHROPIC_MODEL),
+    version: String(v.T2F_AI_ANTHROPIC_VERSION),
+  });
+  const deepseek = createDeepseekProvider({
+    url: deepseekUrl ?? '',
+    apiKey: deepseekUrl === undefined ? undefined : str('DEEPSEEK_API_KEY'),
+    model: String(v.T2F_AI_DEEPSEEK_MODEL),
+  });
+  // The counter is built after the layer; probes reach it through this reference (AC-26).
+  const sink: { spend?: SpendCounter } = {};
+  const layer = createProviderLayer({
+    providers: { moderation: [anthropic, deepseek], translation: [anthropic, deepseek] },
+    clock: monotonicClock,
+    alarm: ports.alarm,
+    log: ports.log,
+    onProbe: (provider, answer) => sink.spend?.recordProbe(provider, answer),
+    // Account-level budgets split across the server processes (S7).
+    ratePerMin: {
+      anthropic: perProcessRpm(Number(v.T2F_AI_ANTHROPIC_RPM), Number(v.T2F_AI_PROCESSES)),
+      deepseek: perProcessRpm(Number(v.T2F_AI_DEEPSEEK_RPM), Number(v.T2F_AI_PROCESSES)),
+    },
+    toastsRpmShare: Number(v.T2F_AI_TOASTS_RPM_SHARE),
+  });
+  const settings = createPayloadModerationSettings({ payload, journal: createPayloadJournal(isRevertible), clock: ports.clock });
+  const counter = createSpendCounter({
+    store: createPgAiSpend(payload),
+    settings,
+    layer,
+    prices: aiPricesFrom({
+      anthropic: {
+        input: String(v.T2F_AI_ANTHROPIC_PRICE_INPUT),
+        output: String(v.T2F_AI_ANTHROPIC_PRICE_OUTPUT),
+        cacheRead: String(v.T2F_AI_ANTHROPIC_PRICE_CACHE_READ),
+        cacheWrite: String(v.T2F_AI_ANTHROPIC_PRICE_CACHE_WRITE),
+      },
+      deepseek: {
+        cacheMiss: String(v.T2F_AI_DEEPSEEK_PRICE_CACHE_MISS),
+        cacheHit: String(v.T2F_AI_DEEPSEEK_PRICE_CACHE_HIT),
+        output: String(v.T2F_AI_DEEPSEEK_PRICE_OUTPUT),
+      },
+    }),
+    clock: ports.clock,
+    alarm: ports.alarm,
+    log: ports.log,
+    toastsShare: Number(v.T2F_AI_TOASTS_SPEND_SHARE),
+  });
+  sink.spend = counter;
+  return {
+    layer,
+    spend: counter,
+    settings,
+    verdict: createVerdictService({
+      layer,
+      spend: counter,
+      rules: textRulesFor,
+      fallback: fallbackVerdict,
+      clock: monotonicClock,
+      primary: anthropic.id,
+      maxTokens: ANTHROPIC_MODERATION_MAX_TOKENS,
+    }),
+    translate: createTranslationService({
+      layer,
+      spend: counter,
+      clock: monotonicClock,
+      primary: anthropic.id,
+      maxTokens: ANTHROPIC_TRANSLATION_MAX_TOKENS,
+    }),
+  };
+}
+
+/**
+ * AC-47: in `rehearsal` and `production`, one `page` per AI provider without a key, at process start
+ * (never in `createDeps`, which CLIs call too). Returns the providers it paged for.
+ */
+export function pageMissingAiKeys(deps: Deps): string[] {
+  if (deps.env.class !== 'rehearsal' && deps.env.class !== 'production') return [];
+  const missing: string[] = [];
+  for (const [provider, name] of [
+    ['anthropic', 'ANTHROPIC_API_KEY'],
+    ['deepseek', 'DEEPSEEK_API_KEY'],
+  ] as const) {
+    const key = deps.env.vars[name];
+    if (typeof key === 'string' && key !== '') continue;
+    missing.push(provider);
+    deps.alarm.raise({ level: 'page', source: 'mod', code: 'provider_not_configured', details: { provider } });
+  }
+  return missing;
+}
+
+/**
+ * Starts the moderation timers of one process (SPEC-09): the layer's probes of providers that are down
+ * and the spend counter's flush and refresh, both `unref`. `stop` writes what is pending.
+ */
+export function startModerationTimers(deps: Deps): { stop(): Promise<void> } | undefined {
+  const m = deps.moderation;
+  if (!m) return undefined;
+  const probes = m.layer.start();
+  const counter = m.spend.start();
+  return {
+    stop: async () => {
+      await probes.stop();
+      await counter.stop();
+    },
+  };
 }
 
 /**
@@ -354,7 +499,7 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
  * recompute rows reach it), the moment scheduler. Only `instrumentation.ts` calls it — never a CLI.
  */
 export function startProcessBackground(): void {
-  const g = globalThis as unknown as Record<symbol, true | Ticker | ClockRefresh | undefined>;
+  const g = globalThis as unknown as Record<symbol, true | Ticker | ClockRefresh | { stop(): Promise<void> } | undefined>;
   if (g[BACKGROUND_KEY]) return;
   g[BACKGROUND_KEY] = true;
   const attempt = () => {
@@ -367,6 +512,10 @@ export function startProcessBackground(): void {
   const rest = (refresher?: ClockRefresh) => {
     g[CLOCK_REFRESH_KEY] = refresher;
     g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
+    if (!g[MODERATION_TIMERS_KEY]) {
+      pageMissingAiKeys(getDeps());
+      g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());
+    }
     attempt();
   };
   // A failed refresh is reported by the refresher itself; the rest starts in either case.

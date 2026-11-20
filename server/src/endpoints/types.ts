@@ -13,6 +13,10 @@ import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { EventLog, EventPublisher } from '../events/ports';
 import type { ReadinessProbe } from '../health/ports';
+import type { ProviderLayer } from '../moderation/providers';
+import type { ModerationSettingsStore, SpendCounter } from '../moderation/spend';
+import type { TranslationService } from '../moderation/translate';
+import type { VerdictService } from '../moderation/verdict';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
@@ -61,6 +65,15 @@ export interface RealtimePorts {
   invalidator?: SubjectInvalidator;
 }
 
+/** Text moderation and AI (SPEC-09): the services and what the doors and the admin slice read. */
+export interface ModerationDeps {
+  verdict: VerdictService;
+  translate: TranslationService;
+  layer: ProviderLayer;
+  spend: SpendCounter;
+  settings: ModerationSettingsStore;
+}
+
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
@@ -105,6 +118,8 @@ export interface Deps {
    * doors and the festival-state slice read; `pause`/`resume` are the doors' lease controls.
    */
   scheduler?: SchedulerHandle;
+  /** Text moderation and AI (SPEC-09): built by `createDeps`; timers started only by `startProcessBackground`. */
+  moderation?: ModerationDeps;
 }
 
 export interface Ctx {

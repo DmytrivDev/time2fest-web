@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
+import { FALLBACK_CONTROL_WORD } from '../../../packages/rules/src/text/extended-words';
 
 const root = path.resolve(__dirname, '../../..');
 const script = path.join(root, 'scripts/check-bundle.mjs');
@@ -54,6 +55,14 @@ describe('check-bundle', () => {
   it('--allow-realtime: centrifuge дозволено, дверцята — ні', () => {
     expect(run(fixture('rt-ok', `x("${SIGNATURE}")`), '--allow-realtime').status).toBe(0);
     expect(run(fixture('rt-bad', `x("${SIGNATURE}");fetch("/api/_test/clock")`), '--allow-realtime').status).toBe(1);
+  });
+
+  it('контрольне слово запасного списку (SPEC-09, AC-6) → 1, і з --allow-realtime теж', () => {
+    for (const flags of [[], ['--allow-realtime']]) {
+      const r = run(fixture(`fb-${flags.length}`, `x("${FALLBACK_CONTROL_WORD}")`), ...flags);
+      expect(r.status).toBe(1);
+      expect(r.stderr).toContain('x.js');
+    }
   });
 
   it('немає теки → 2', () => {

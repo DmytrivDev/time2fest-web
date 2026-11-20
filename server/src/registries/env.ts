@@ -43,6 +43,12 @@ const httpsUrl = z.string().refine((s) => {
   }
 });
 
+/** USD per million tokens as a decimal string (parsed where the spend is computed). */
+/** A share in (0, 1], decimal: `0.2`. */
+const share = z.string().regex(/^\d+(\.\d+)?$/).transform(Number).pipe(z.number().gt(0).max(1));
+
+const usdPerMTok = z.string().regex(/^\d+(\.\d+)?$/);
+
 const hostPort = z.string().regex(/^[a-z0-9.-]+(:\d{1,5})?$/i);
 
 export const envRegistry: readonly EnvBlock[] = [
@@ -60,6 +66,37 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_ACCESS_TEAM_DOMAIN', schema: httpsUrl.optional(), requiredIn: REQ },
       { name: 'T2F_ADMIN_HOST', schema: hostPort.optional(), isolated: true, requiredIn: REQ },
       { name: 'T2F_OWNER_EMAILS', schema: csv.optional(), requiredIn: REQ },
+    ],
+  },
+  {
+    key: 'ai',
+    vars: [
+      // Provider keys are optional: absence means `not-configured`, never a boot failure (SPEC-09 AC-47).
+      { name: 'ANTHROPIC_API_KEY', schema: z.string().min(1).optional(), secret: true },
+      { name: 'DEEPSEEK_API_KEY', schema: z.string().min(1).optional(), secret: true },
+      // Base addresses default to the real hosts only outside `test`, where the adapters are built.
+      { name: 'T2F_AI_ANTHROPIC_MODEL', schema: z.string().min(1).default('claude-haiku-5-5') },
+      { name: 'T2F_AI_ANTHROPIC_PRICE_CACHE_READ', schema: usdPerMTok.default('0.01') },
+      { name: 'T2F_AI_ANTHROPIC_PRICE_CACHE_WRITE', schema: usdPerMTok.default('0.125') },
+      { name: 'T2F_AI_ANTHROPIC_PRICE_INPUT', schema: usdPerMTok.default('0.10') },
+      { name: 'T2F_AI_ANTHROPIC_PRICE_OUTPUT', schema: usdPerMTok.default('0.50') },
+      { name: 'T2F_AI_ANTHROPIC_URL', schema: z.url().optional() },
+      { name: 'T2F_AI_ANTHROPIC_VERSION', schema: z.string().min(1).default('2026-10-21') },
+      { name: 'T2F_AI_DEEPSEEK_MODEL', schema: z.string().min(1).default('deepseek-flash') },
+      { name: 'T2F_AI_DEEPSEEK_PRICE_CACHE_HIT', schema: usdPerMTok.default('0.006') },
+      { name: 'T2F_AI_DEEPSEEK_PRICE_CACHE_MISS', schema: usdPerMTok.default('0.30') },
+      { name: 'T2F_AI_DEEPSEEK_PRICE_OUTPUT', schema: usdPerMTok.default('1.20') },
+      { name: 'T2F_AI_DEEPSEEK_URL', schema: z.url().optional() },
+      // User AI calls a minute per provider for the whole ACCOUNT (security S7); each server process takes
+      // floor(budget / T2F_AI_PROCESSES) as its token bucket. Anthropic: 85 % of the owner-verified 4 000 RPM.
+      { name: 'T2F_AI_ANTHROPIC_RPM', schema: intIn(1, 1_000_000).default(3_400) },
+      { name: 'T2F_AI_DEEPSEEK_RPM', schema: intIn(1, 1_000_000).default(1_000) },
+      // Number of server processes sharing the AI accounts (positive integer).
+      { name: 'T2F_AI_PROCESSES', schema: intIn(1, 1_000).default(1) },
+      // Share of each spend ceiling (night, month) that POST /api/toasts/check may use (security S4).
+      { name: 'T2F_AI_TOASTS_SPEND_SHARE', schema: share.default(0.2) },
+      // Share of each provider's RPM reserved for POST /api/toasts/check; chat, nick and translation use the rest (security N1).
+      { name: 'T2F_AI_TOASTS_RPM_SHARE', schema: z.string().regex(/^0?\.\d+$/).transform(Number).pipe(z.number().gt(0).lt(1)).default(0.2) },
     ],
   },
   {

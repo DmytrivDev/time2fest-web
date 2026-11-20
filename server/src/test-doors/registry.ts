@@ -24,6 +24,7 @@ import { clearRunFault } from '../scheduler/recorder';
 import { resetWorktree, runSeed, type ResettableCollection } from '../seed/index';
 import { seedRegistry, type SeedRow } from '../seed/registry';
 import { edgeEchoDoors } from './edgeEcho';
+import { moderationDoor } from './moderation';
 import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
 import { schedulerDoors } from './scheduler';
 
@@ -48,7 +49,7 @@ export interface DoorRow {
   handler(ctx: Ctx, tools: DoorTools): Promise<Outcome>;
 }
 
-/** Doors whose fake does not exist yet (AC-32). */
+/** Doors whose fake does not exist yet (AC-32); `moderation` is real since SPEC-09. */
 function stub(key: string, path: string): DoorRow {
   return {
     key,
@@ -136,7 +137,7 @@ export const doorRegistry: readonly DoorRow[] = [
   ...edgeEchoDoors,
   fixturesDoor(),
   stub('last-code', '/api/_test/last-code'),
-  stub('moderation', '/api/_test/moderation'),
+  moderationDoor,
   stub('paypro-webhook', '/api/_test/paypro-webhook'),
   realtimeTokenDoor,
   resetDoor(),

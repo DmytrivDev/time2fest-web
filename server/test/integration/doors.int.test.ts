@@ -109,13 +109,29 @@ describe('test doors', () => {
     expect(await clockState(dispatch)).toEqual(before);
   });
 
-  it('AC-32: the four stub doors → 501 with the exact body', async () => {
+  it('AC-32: the three stub doors → 501 with the exact body (moderation is real since SPEC-09)', async () => {
     const dispatch = await buildDispatcher(depsFor('test'));
-    for (const door of ['last-code', 'moderation', 'paypro-webhook', 'video-status']) {
+    for (const door of ['last-code', 'paypro-webhook', 'video-status']) {
       const res = await dispatch(new Request(`${BASE}/api/_test/${door}`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
       expect(res.status, door).toBe(501);
       expect(await res.text()).toBe('{"ok":false,"error":{"code":"unavailable"}}');
     }
+  });
+
+  it('SPEC-09 AC-50: the moderation door answers in test (status, reset, rules verdict); a bad op is invalid-input', async () => {
+    const dispatch = await buildDispatcher(depsFor('test'));
+    const call = (body: unknown) =>
+      dispatch(new Request(`${BASE}/api/_test/moderation`, { method: 'POST', body: JSON.stringify(body), headers: JSON_TYPE }));
+    const reset = await call({ op: 'reset' });
+    expect(reset.status).toBe(200);
+    expect(await reset.json()).toEqual({ ok: true, value: { op: 'reset' } });
+    const status = (await (await call({ op: 'status' })).json()) as { value: { statuses: { task: string }[] } };
+    expect(status.value.statuses.map((s) => s.task)).toEqual(['moderation', 'translation']);
+    const verdict = await call({ op: 'verdict', kind: 'nick', text: 'a' });
+    expect(await verdict.json()).toEqual({ ok: true, value: { op: 'verdict', outcome: 'block', source: 'rules', reason: 'short' } });
+    const bad = await call({ op: 'nope' });
+    expect(bad.status).toBe(400);
+    expect(((await bad.json()) as { error: { reason: string } }).error.reason).toBe('invalid-input');
   });
 
   it('doors refuse a foreign Origin, a non-JSON call and a non-loopback Host; tooling without Origin passes', async () => {

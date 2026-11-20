@@ -26,7 +26,8 @@ export interface ToastsService {
   mine(): Promise<ApiResult<readonly ToastRecord[]>>;
   /**
    * Перевірити текст до оплати тим самим фільтром, що й сервер. `POST /api/toasts/check`.
-   * Відмова — `validation` з `reason` = `ToastIssue.kind`; деталі (де саме) — у `issue`.
+   * Проблема фільтра правил — `ok({ issue })` (де саме — у `issue`); відмова ШІ чи запасного фільтра — `validation`
+   * з `reason: 'moderation'` (`ToastCheckReason`); схема запиту — `invalid-input`; ліміт — `rate_limited`.
    */
   check(text: string): Promise<ApiResult<{ issue: ToastIssue | null }>>;
   /** Останній відомий список без запиту (кеш на пристрої) — смуга не блимає «Тостів ще немає» до відповіді. */

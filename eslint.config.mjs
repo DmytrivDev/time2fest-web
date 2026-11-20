@@ -5,6 +5,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import noArbitraryTailwind from './eslint/no-arbitrary-tailwind.mjs';
 import timeRules, { RULE_CONSTANT_NAMES } from './packages/rules/eslint/no-time-rule-copy.mjs';
+import textRules from './packages/rules/eslint/no-text-rule-copy.mjs';
 
 // Шов з бекендом (docs/backend/frontend-seam.md): компоненти й сторінки ходять до даних лише через хуки
 // `@/lib/api/hooks/*`. Адаптери імітації — тільки для `lib/api`. Перенесений домен додає сюди свої старі імітатори.
@@ -95,6 +96,12 @@ const oldRuleLocalPatterns = [
   ...Object.entries(MOVED_NAMES).map(([path, importNames]) => ({ regex: `^\\./${path.split('/')[1]}$`, importNames, message: OLD_RULE_MESSAGE })),
 ];
 
+// Запасний фільтр сервера (SPEC-09, AC-6) не потрапляє в збірку сайту: підшлях `text/fallback` лише для сервера й тестів.
+// Заборона йде в тих самих списках, що й старі шляхи, бо в flat config пізніший блок заміняє опції правила.
+const fallbackPatterns = [
+  { group: ['@time2fest/rules/text/fallback'], message: 'Запасний фільтр — лише для сервера: у збірку сайту він не входить (SPEC-09, AC-6).' },
+];
+
 export default tseslint.config(
   { ignores: ['.cache/**', '.claude/**', '.next/**', '.next-*/**', 'out/**', 'out-*/**', 'public/yt/**', 'server/**', 'workers/**', 'infra/**', 'storybook-static/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', 'next-env.d.ts'] },
   js.configs.recommended,
@@ -115,14 +122,20 @@ export default tseslint.config(
   {
     // Теки старих модулів: ще й відносний `./<m>`. Пізніший блок заміняє опції правила, тож шляхи — разом.
     files: ['lib/engine/**/*.{ts,tsx}', 'lib/toast/**/*.{ts,tsx}', 'lib/rating/**/*.{ts,tsx}', 'lib/stamp/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-imports': ['error', { patterns: [...oldRulePatterns, ...oldRuleLocalPatterns] }] },
+    rules: { 'no-restricted-imports': ['error', { patterns: [...oldRulePatterns, ...oldRuleLocalPatterns, ...fallbackPatterns] }] },
+  },
+  {
+    // Решта lib і stores: ті самі старі шляхи + заборона запасного фільтра (теки старих модулів — у блоці вище).
+    files: ['lib/**/*.{ts,tsx}', 'stores/**/*.{ts,tsx}'],
+    ignores: ['lib/engine/**', 'lib/toast/**', 'lib/rating/**', 'lib/stamp/**'],
+    rules: { 'no-restricted-imports': ['error', { patterns: [...oldRulePatterns, ...fallbackPatterns] }] },
   },
   {
     // Шов з бекендом + старі шляхи правил часу: у flat config пізніший блок заміняє опції правила для тих самих файлів,
     // тому обидва набори — в одному списку.
     files: ['components/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: [...seamPatterns, ...oldRulePatterns] }],
+      'no-restricted-imports': ['error', { patterns: [...seamPatterns, ...oldRulePatterns, ...fallbackPatterns] }],
       'no-restricted-syntax': ['error', ...seamSyntax],
     },
   },
@@ -158,6 +171,13 @@ export default tseslint.config(
     ignores: ['packages/rules/**', 'tests/**'],
     plugins: { 't2f-time': timeRules },
     rules: { 't2f-time/no-rule-copy': 'error' },
+  },
+  {
+    // Перевірка дублювання правил тексту (SPEC-09, AC-3): ті самі файли й винятки, що в правила часу.
+    files: ['**/*.{ts,tsx}'],
+    ignores: ['packages/rules/**', 'tests/**'],
+    plugins: { 't2f-text': textRules },
+    rules: { 't2f-text/no-rule-copy': 'error' },
   },
   {
     // Єдиний виняток: художні штампи

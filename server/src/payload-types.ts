@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     admins: Admin;
     'agent-test-posts': AgentTestPost;
+    'ai-spend': AiSpend;
     alarms: Alarm;
     'audit-log': AuditLog;
     cities: City;
@@ -93,6 +94,7 @@ export interface Config {
   collectionsSelect: {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     'agent-test-posts': AgentTestPostsSelect<false> | AgentTestPostsSelect<true>;
+    'ai-spend': AiSpendSelect<false> | AiSpendSelect<true>;
     alarms: AlarmsSelect<false> | AlarmsSelect<true>;
     'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
@@ -120,11 +122,13 @@ export interface Config {
   globals: {
     'admin-settings': AdminSetting;
     'clock-state': ClockState;
+    'moderation-settings': ModerationSetting;
     'unattended-state': UnattendedState;
   };
   globalsSelect: {
     'admin-settings': AdminSettingsSelect<false> | AdminSettingsSelect<true>;
     'clock-state': ClockStateSelect<false> | ClockStateSelect<true>;
+    'moderation-settings': ModerationSettingsSelect<false> | ModerationSettingsSelect<true>;
     'unattended-state': UnattendedStateSelect<false> | UnattendedStateSelect<true>;
   };
   locale: null;
@@ -194,6 +198,20 @@ export interface AgentTestPost {
   id: number;
   title: string;
   status: 'draft' | 'published' | 'proposal';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-spend".
+ */
+export interface AiSpend {
+  id: number;
+  period: string;
+  amountMicros: number;
+  alarm50At?: string | null;
+  alarm80At?: string | null;
+  alarm100At?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -571,6 +589,10 @@ export interface PayloadLockedDocument {
         value: number | AgentTestPost;
       } | null)
     | ({
+        relationTo: 'ai-spend';
+        value: number | AiSpend;
+      } | null)
+    | ({
         relationTo: 'alarms';
         value: number | Alarm;
       } | null)
@@ -707,6 +729,19 @@ export interface AdminsSelect<T extends boolean = true> {
 export interface AgentTestPostsSelect<T extends boolean = true> {
   title?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-spend_select".
+ */
+export interface AiSpendSelect<T extends boolean = true> {
+  period?: T;
+  amountMicros?: T;
+  alarm50At?: T;
+  alarm80At?: T;
+  alarm100At?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1068,6 +1103,20 @@ export interface ClockState {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "moderation-settings".
+ */
+export interface ModerationSetting {
+  id: number;
+  reviewThreshold?: number | null;
+  blockThreshold?: number | null;
+  nightCeilingUsd?: number | null;
+  monthCeilingUsd?: number | null;
+  version?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "unattended-state".
  */
 export interface UnattendedState {
@@ -1102,6 +1151,20 @@ export interface ClockStateSelect<T extends boolean = true> {
   frozen?: T;
   runEpoch?: T;
   seq?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "moderation-settings_select".
+ */
+export interface ModerationSettingsSelect<T extends boolean = true> {
+  reviewThreshold?: T;
+  blockThreshold?: T;
+  nightCeilingUsd?: T;
+  monthCeilingUsd?: T;
+  version?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

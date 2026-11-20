@@ -147,6 +147,21 @@ export function testIsolationFailures(env: Readonly<Record<string, unknown>>): s
   return failing;
 }
 
+/**
+ * SPEC-09 AC-48 (security S8): where an AI provider base address may point. In `test` only a loopback
+ * host (the fake AI); in every other class only `https:` (the key travels in a header).
+ */
+function aiUrlAllowed(value: unknown, cls: EnvClass): boolean {
+  if (value === undefined) return true;
+  if (cls === 'test') return loopbackUrl(value) !== undefined;
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 /** Exact match only; anything else, including unset, is the strictest class (AC-18). */
 export function envClass(raw: RawEnv): EnvClass {
   const v = raw.T2F_ENV;
@@ -215,6 +230,11 @@ export function loadEnv(
     !failing.includes('T2F_CENTRIFUGO_TOKEN_SECRET')
   ) {
     failing.push('T2F_CENTRIFUGO_TOKEN_SECRET');
+  }
+
+  // SPEC-09 AC-48: in `test` an AI provider base address is loopback only; elsewhere `https:` only.
+  for (const name of ['T2F_AI_ANTHROPIC_URL', 'T2F_AI_DEEPSEEK_URL']) {
+    if (!aiUrlAllowed(env[name], cls) && !failing.includes(name)) failing.push(name);
   }
 
   if (cls === 'test') {

@@ -5,9 +5,10 @@ import { catalogRoute } from '../endpoints/catalog';
 import { healthRoute } from '../endpoints/health';
 import { realtimeTokenRoute } from '../endpoints/realtimeToken';
 import { timeRoute } from '../endpoints/time';
+import { toastsCheckRoute } from '../endpoints/toastsCheck';
 import type { RouteRow } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 
-export const routeRegistry: readonly RouteRow[] = [catalogRoute, healthRoute, realtimeTokenRoute, timeRoute];
+export const routeRegistry: readonly RouteRow[] = [catalogRoute, healthRoute, realtimeTokenRoute, timeRoute, toastsCheckRoute];
 
 assertRegistry('routes', routeRegistry, (r) => r.key);
