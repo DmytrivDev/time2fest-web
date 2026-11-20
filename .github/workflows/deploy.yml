@@ -12,6 +12,16 @@ on:
         type: choice
         options: [rehearsal]
         required: true
+      reason:
+        description: Причина запуску (лише в назві запуску й журналі)
+        type: string
+        required: false
+      catalogVersion:
+        description: Версія каталогу, після зміни якої запущено (лише в назві запуску й журналі)
+        type: string
+        required: false
+
+run-name: deploy ${{ inputs.env }} ${{ inputs.reason }} ${{ inputs.catalogVersion }}
 
 permissions:
   contents: read

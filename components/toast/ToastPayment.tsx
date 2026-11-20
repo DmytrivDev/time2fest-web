@@ -9,6 +9,7 @@ import NextLink from 'next/link';
 import { cn } from '@/components/primitives/cn';
 import { Emoji, EmojiText } from '@/components/primitives/Emoji';
 import { Icon } from '@/components/primitives/Icon';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { formatUsd } from '@/lib/offers/format';
 import { useToastStore } from '@/stores/toast';
 import { useProfile } from '@/lib/api/hooks/auth';
@@ -23,11 +24,12 @@ import s from './toastWindow.module.css';
 function Summary() {
   const t = useTranslations('toast');
   const tier = useToastStore((x) => x.tier);
+  const { tiers } = useSitePrices();
   return (
     <div className={s.summary} data-toast-summary={tier}>
       <Emoji char={TIER_EMOJI[tier]} size={22} />
       <div className="min-w-0 flex-1">
-        <p className={s.summaryTitle}>{t('summary.title', { price: formatUsd(tier), name: t(`tiers.${tier}`) })}</p>
+        <p className={s.summaryTitle}>{t('summary.title', { price: formatUsd(tiers[tier]), name: t(`tiers.${tier}`) })}</p>
         <p className={s.summaryText}>{t(`summary.${tier}`)}</p>
       </div>
     </div>
@@ -89,6 +91,7 @@ export function Paying({ onCancel }: { onCancel: () => void }) {
 export function Failed({ onCancel, offline }: { onCancel: () => void; offline?: boolean }) {
   const t = useTranslations('toast');
   const tier = useToastStore((x) => x.tier);
+  const { tiers } = useSitePrices();
   return (
     <div className={s.flow} data-toast-step={offline ? 'offline' : 'failed'}>
       <div className={s.body}>
@@ -117,7 +120,7 @@ export function Failed({ onCancel, offline }: { onCancel: () => void; offline?: 
       <Foot>
         <div className={s.footRow}>
           <button type="button" onClick={() => useToastStore.getState().pay()} className={cn('t2f-focus', s.coral)} data-action="toast-retry">
-            {offline ? t('offline.retry') : t('failed.retry', { price: formatUsd(tier) })}
+            {offline ? t('offline.retry') : t('failed.retry', { price: formatUsd(tiers[tier]) })}
           </button>
           <button type="button" onClick={onCancel} className={cn('t2f-focus', s.line, s.lineNarrow)}>
             {t('cancel')}

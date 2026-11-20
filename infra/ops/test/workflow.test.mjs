@@ -26,6 +26,17 @@ describe('deploy workflow', () => {
     expect(text).toMatch(/options:\s*\[\s*rehearsal\s*\]/);
   });
 
+  it('declares the optional reason and catalogVersion string inputs (A-1: no repository_dispatch)', () => {
+    expect(code.join('\n')).not.toMatch(/repository_dispatch/);
+    for (const name of ['reason', 'catalogVersion']) {
+      const at = code.findIndex((l) => new RegExp(`^ {6}${name}:\\s*$`).test(l));
+      expect(at, name).toBeGreaterThanOrEqual(0);
+      const body = code.slice(at + 1, at + 4).join('\n');
+      expect(body).toMatch(/type:\s*string/);
+      expect(body).toMatch(/required:\s*false/);
+    }
+  });
+
   it('pins every action by 40-hex SHA', () => {
     const uses = code.filter((l) => /\buses:/.test(l));
     expect(uses.length).toBeGreaterThan(0);

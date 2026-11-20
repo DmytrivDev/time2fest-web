@@ -9,6 +9,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { validateNick } from '@/lib/chat/nick';
 import { chatActions } from '@/lib/api/hooks/chat';
 import { detectFlag } from '@/lib/geo/detectFlag';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { formatUsd } from '@/lib/offers/format';
 import { signatureReady, useToastStore } from '@/stores/toast';
 import { profileActions, useHasPass, useProfile } from '@/lib/api/hooks/auth';
@@ -40,6 +41,7 @@ const takenNicks = () => chatActions.takenNicks();
 export function Compose({ onCancel, phone }: { onCancel: () => void; phone: boolean }) {
   const t = useTranslations('toast');
   const tier = useToastStore((x) => x.tier);
+  const { tiers } = useSitePrices();
   const setTier = useToastStore((x) => x.setTier);
   const text = useToastStore((x) => x.text);
   const issue = useToastStore((x) => x.issue);
@@ -120,7 +122,7 @@ export function Compose({ onCancel, phone }: { onCancel: () => void; phone: bool
             data-action="toast-pay"
             title={!nickOk ? t('payNeedsNick') : undefined}
           >
-            {sig === 'saving' ? t('signatureSaving') : t('pay', { price: formatUsd(tier) })}
+            {sig === 'saving' ? t('signatureSaving') : t('pay', { price: formatUsd(tiers[tier]) })}
           </button>
           <button type="button" onClick={onCancel} className={cn('t2f-focus', s.line)}>
             {t('cancel')}

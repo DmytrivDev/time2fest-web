@@ -12,6 +12,7 @@ import NextLink from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { formatUsd } from '@/lib/offers/format';
 import { useOpenToastWindow } from './ToastWindow';
 import { useCanToast } from './useToastSeason';
@@ -22,13 +23,14 @@ export const SUPPORT_TOAST_10_HREF = '/support/?toast=10';
 
 function Body() {
   const t = useTranslations('toast.passRow');
+  const { tiers } = useSitePrices();
   return (
     <>
       <span aria-hidden="true" className={s.giftIcon}>
         <Icon name="glass" size={18} />
       </span>
       <span className={s.giftText}>
-        <span className={s.giftTitle}>{t('title', { price: formatUsd(10) })}</span>
+        <span className={s.giftTitle}>{t('title', { price: formatUsd(tiers[10]) })}</span>
         <span className={s.giftSub}>{t('text')}</span>
       </span>
       <span aria-hidden="true" className={s.giftArrow}>
