@@ -3,7 +3,7 @@
 text{font-family:Manrope,'Segoe UI',Arial,sans-serif}</style><svg width="520" height="520"><svg viewBox="0 0 130 130" style="color:#FCE286"><defs><filter id="s0i" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter>
 <path id="s0t" d="M18.5,65 a46.5,46.5 0 0,1 93,0"/><path id="s0b" d="M11,65 a54,54 0 0,0 108,0"/></defs>
 <g filter="url(#s0i)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="65" cy="65" r="59" stroke-width="3" stroke-dasharray="70 4 40 3 120 5 60 3"/><circle cx="65" cy="65" r="41" stroke-width="1.5" stroke-dasharray="50 3 80 4 70 2"/>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0t" startOffset="50%" text-anchor="middle">AÑO NUEVO 2027</textPath></text>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0b" startOffset="50%" text-anchor="middle">ATENAS · GRECIA</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="46.5"><textPath href="#s0t" startOffset="50%" text-anchor="middle">AÑO NUEVO 2027</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="54"><textPath href="#s0b" startOffset="50%" text-anchor="middle">GRECIA</textPath></text>
 <circle cx="14.5" cy="65" r="1.8" fill="currentColor" stroke="none"/><circle cx="115.5" cy="65" r="1.8" fill="currentColor" stroke="none"/>
 <g transform="translate(36 35) scale(1.45)" stroke-width="1.6"><path d="M2 14 L20 7 L38 14 Z M3 14 v3.2 h34 v-3.2 M6.4 17.2 V29.4 M10.6 17.2 V29.4 M14.8 17.2 V29.4 M19 17.2 V29.4 M21 17.2 V29.4 M25.2 17.2 V29.4 M29.4 17.2 V29.4 M33.6 17.2 V29.4 M4 29.4 h32 M3 32.2 h34 M1.6 35 h36.8 M5 38.4 h30"/></g></g></svg></svg></svg>

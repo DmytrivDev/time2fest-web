@@ -3,7 +3,7 @@
 text{font-family:Manrope,'Segoe UI',Arial,sans-serif}</style><svg width="520" height="520"><svg viewBox="0 0 130 130" style="color:#FCE286"><defs><filter id="s0i" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter>
 <path id="s0t" d="M18.5,65 a46.5,46.5 0 0,1 93,0"/><path id="s0b" d="M11,65 a54,54 0 0,0 108,0"/></defs>
 <g filter="url(#s0i)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="65" cy="65" r="59" stroke-width="3" stroke-dasharray="70 4 40 3 120 5 60 3"/><circle cx="65" cy="65" r="41" stroke-width="1.5" stroke-dasharray="50 3 80 4 70 2"/>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0t" startOffset="50%" text-anchor="middle">AÑO NUEVO 2027</textPath></text>
-<text font-size="9" font-weight="700" fill="currentColor" stroke="none"><textPath href="#s0b" startOffset="50%" text-anchor="middle" textLength="150" lengthAdjust="spacingAndGlyphs">CIUDAD HO CHI MINH · VIETNAM</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="46.5"><textPath href="#s0t" startOffset="50%" text-anchor="middle">AÑO NUEVO 2027</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="54"><textPath href="#s0b" startOffset="50%" text-anchor="middle">VIETNAM</textPath></text>
 <circle cx="14.5" cy="65" r="1.8" fill="currentColor" stroke="none"/><circle cx="115.5" cy="65" r="1.8" fill="currentColor" stroke="none"/>
 <g transform="translate(36 35) scale(1.45)" stroke-width="1.6"><path d="M14 31 Q12.5 21 15 14 Q17 7.5 20 3 Q23 7.5 25 14 Q27.5 21 26 31 M20 3 V0.8 M24.8 12.6 A5 1.6 0 1 1 25.1 14.4 M26.4 19.5 L33.8 14.2 M20 31 Q19.4 18 20 6 M8 37 V31 H32 V37 M14 34 H26 M5 37 H35"/></g></g></svg></svg></svg>

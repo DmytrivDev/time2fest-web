@@ -3,7 +3,7 @@
 text{font-family:Manrope,'Segoe UI',Arial,sans-serif}</style><svg width="520" height="520"><svg viewBox="0 0 130 130" style="color:#FCE286"><defs><filter id="s0i" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter>
 <path id="s0t" d="M18.5,65 a46.5,46.5 0 0,1 93,0"/><path id="s0b" d="M11,65 a54,54 0 0,0 108,0"/></defs>
 <g filter="url(#s0i)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="65" cy="65" r="59" stroke-width="3" stroke-dasharray="70 4 40 3 120 5 60 3"/><circle cx="65" cy="65" r="41" stroke-width="1.5" stroke-dasharray="50 3 80 4 70 2"/>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0t" startOffset="50%" text-anchor="middle">NOUVEL AN 2027</textPath></text>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0b" startOffset="50%" text-anchor="middle">NAIROBI · KENYA</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="46.5"><textPath href="#s0t" startOffset="50%" text-anchor="middle">NOUVEL AN 2027</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="54"><textPath href="#s0b" startOffset="50%" text-anchor="middle">KENYA</textPath></text>
 <circle cx="14.5" cy="65" r="1.8" fill="currentColor" stroke="none"/><circle cx="115.5" cy="65" r="1.8" fill="currentColor" stroke="none"/>
 <g transform="translate(36 35) scale(1.45)" stroke-width="1.6"><path d="M2 36 H38 M15 36 V13.5 M25 36 V13.5 M15 17 H25 M15 20.5 H25 M15 24 H25 M15 27.5 H25 M15 31 H25 M16 13.5 V11 H24 V13.5 H16 M16 11 L10 8 H30 L24 11 M10 8 V6.8 H30 V8 M25 31 L32 24 L39 31 Z M27.5 31 V36 M36.5 31 V36"/></g></g></svg></svg></svg>

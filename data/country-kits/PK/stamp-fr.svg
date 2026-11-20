@@ -3,7 +3,7 @@
 text{font-family:Manrope,'Segoe UI',Arial,sans-serif}</style><svg width="520" height="520"><svg viewBox="0 0 130 130" style="color:#FCE286"><defs><filter id="s0i" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter>
 <path id="s0t" d="M18.5,65 a46.5,46.5 0 0,1 93,0"/><path id="s0b" d="M11,65 a54,54 0 0,0 108,0"/></defs>
 <g filter="url(#s0i)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="65" cy="65" r="59" stroke-width="3" stroke-dasharray="70 4 40 3 120 5 60 3"/><circle cx="65" cy="65" r="41" stroke-width="1.5" stroke-dasharray="50 3 80 4 70 2"/>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0t" startOffset="50%" text-anchor="middle">NOUVEL AN 2027</textPath></text>
-<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1"><textPath href="#s0b" startOffset="50%" text-anchor="middle">KARACHI · PAKISTAN</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="46.5"><textPath href="#s0t" startOffset="50%" text-anchor="middle">NOUVEL AN 2027</textPath></text>
+<text font-size="10" font-weight="700" fill="currentColor" stroke="none" letter-spacing="1" data-arc="54"><textPath href="#s0b" startOffset="50%" text-anchor="middle">PAKISTAN</textPath></text>
 <circle cx="14.5" cy="65" r="1.8" fill="currentColor" stroke="none"/><circle cx="115.5" cy="65" r="1.8" fill="currentColor" stroke="none"/>
 <g transform="translate(36 35) scale(1.45)" stroke-width="1.6"><path d="M20 3 V9.6 M12 18 Q12 9.6 20 9.6 Q28 9.6 28 18 M10 18 H30 M9 21 H31 M10.5 21 L8.5 34 H31.5 L29.5 21 M15.6 34 V28 Q15.6 24.6 20 22.4 Q24.4 24.6 24.4 28 V34 M4 34 H36 M6 36.8 H34 M9 39.4 H31"/></g></g></svg></svg></svg>
