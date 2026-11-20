@@ -1,0 +1,99 @@
+{
+  "code": "MX",
+  "zone": "UTC-8",
+  "zoneId": "utc-0800",
+  "cityId": "tijuana",
+  "names": {
+    "uk": {
+      "name": "Мексика",
+      "city": "Тіхуана",
+      "cityIn": "у Тіхуані",
+      "caps": "ТІХУАНА · МЕКСИКА"
+    },
+    "en": {
+      "name": "Mexico",
+      "city": "Tijuana",
+      "cityIn": "in Tijuana",
+      "caps": "TIJUANA · MEXICO"
+    },
+    "es": {
+      "name": "México",
+      "city": "Tijuana",
+      "cityIn": "en Tijuana",
+      "caps": "TIJUANA · MÉXICO"
+    },
+    "fr": {
+      "name": "Mexique",
+      "city": "Tijuana",
+      "cityIn": "à Tijuana",
+      "caps": "TIJUANA · MEXIQUE"
+    }
+  },
+  "picto": "M3.5 37.5 H36.5 M8.5 21.5 a11.5 11.5 0 1 0 23 0 a11.5 11.5 0 1 0 -23 0 M9.2 18 Q20 21 30.8 18 M9.6 25.5 Q20 28.5 30.4 25.5 M3.5 37.5 V35 H6 V32.5 H8.5 V30 H12.2 M36.5 37.5 V35 H34 V32.5 H31.5 V30 H27.8 M18 37.5 V33 H22 V37.5",
+  "flagColors": [
+    "#006847",
+    "#FFFFFF",
+    "#CE1126"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Тіхуані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Tijuana"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Tijuana"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Tijuana"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

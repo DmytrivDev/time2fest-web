@@ -1694,5 +1694,101 @@
       }
     ],
     "kit": "mx-5"
+  },
+  "CA@utc-0330": {
+    "text": "Le Canada fête le Nouvel An différemment selon les provinces, mais certaines coutumes sont connues partout. Au Québec, le soir du 31 décembre, on regarde le « Bye Bye », la revue humoristique de l’année de Radio-Canada, qui se termine depuis 1968 par le décompte jusqu’à minuit. Et le 1er janvier, le gouverneur général et les lieutenants-gouverneurs des provinces tiennent leurs levées, des réceptions du Nouvel An ouvertes à tous, enfants compris.\n\nTerre-Neuve vit à sa propre heure : c’est le seul fuseau des Amériques décalé d’une demi-heure, si bien que minuit y sonne une demi-heure plus tôt que dans le reste du Canada atlantique. L’an dernier, St. John’s a fêté en plein air sur George Street, avec musique et pyrotechnie à minuit. Et pendant les jours de Noël, des mummers déguisés vont encore de maison en maison.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Salue le lieutenant-gouverneur",
+        "text": "Le 1er janvier, le lieutenant-gouverneur de la province, comme le gouverneur général, reçoit les visiteurs du Nouvel An : la porte est ouverte à tous, enfants compris."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Ouvre aux mummers",
+        "text": "Si des visiteurs déguisés frappent à ta porte pendant les jours de Noël, fais-les entrer, offre-leur un verre et devine qui se cache sous le masque."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Décompte sur George Street",
+        "text": "L’an dernier, la fête en plein air du centre de St. John’s était gratuite pour tous les âges : musique, DJ et pyrotechnie à minuit."
+      }
+    ],
+    "kit": "ca-330"
+  },
+  "CA@utc-0400": {
+    "text": "Le Canada fête le Nouvel An un peu différemment dans chaque province, mais certaines coutumes rassemblent tout le pays. Au Québec, le 31 décembre, on allume le « Bye Bye », la revue humoristique de l’année de Radio-Canada, diffusée depuis 1968 et qui se termine par le décompte jusqu’à minuit. Le 1er janvier, les lieutenants-gouverneurs des provinces et les unités militaires tiennent leurs levées, des réceptions du Nouvel An ouvertes à tous ; la première au Canada remonte à 1646.\n\nL’an dernier, Halifax a fêté en plein air sur la place Grand Parade : DJ et musiciens ont joué dès 23 h, un feu d’artifice a éclaté à minuit et les transports en commun étaient gratuits. Le matin, Government House, la plus ancienne résidence vice-royale d’Amérique du Nord, accueille les visiteurs, et à Dartmouth des centaines de personnes plongent dans un bassin taillé dans la glace du lac Banook.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fête minuit à Grand Parade",
+        "text": "La fête gratuite du centre de Halifax commence à 23 h et se termine par un feu d’artifice à minuit ; les transports gratuits te ramènent chez toi."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Passe à Government House",
+        "text": "Le 1er janvier, le lieutenant-gouverneur ouvre ses portes à tous, sans invitation ; environ 700 invités viennent chaque année. Le Nouveau-Brunswick tient aussi sa levée."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Plonge dans le lac Banook",
+        "text": "Le 1er janvier à Dartmouth, on taille un grand bassin dans la glace, et des centaines de courageux sautent à l’eau sous les encouragements depuis la rive."
+      }
+    ],
+    "kit": "ca-4"
+  },
+  "MX@utc-0700": {
+    "text": "Le Mexique accueille le Nouvel An avec douze grains de raisin : à minuit, on en mange un à chaque coup de l’horloge en faisant un vœu à chaque fois, une coutume venue d’Espagne. Dès le soir, on balaie la maison jusqu’à la rue pour chasser le mauvais de l’année passée, et la couleur des sous-vêtements neufs annonce le vœu : rouge pour l’amour, jaune pour l’argent, vert pour la santé. Après le douzième coup retentit « ¡Feliz Año Nuevo! », feux d’artifice et pétards s’envolent, et certains font déjà le tour du pâté de maisons avec une valise pour voyager toute l’année.\n\nLa zone Pacifique — Sinaloa, Sonora, Nayarit et Basse-Californie du Sud — fête l’année une heure après Mexico. À Mazatlán, l’an dernier, la ville a organisé la fête en plein Malecón, une promenade de bord de mer d’environ 8,5 km : dès 21 h, musique live au pied des grandes lettres du nom de la ville, spectacle de drones et feu d’artifice. Selon les médias locaux, plus de 40 000 personnes sont venues.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Douze vœux",
+        "text": "Prépare douze grains de raisin : à minuit, mange-en un à chaque coup de l’horloge et fais un vœu à chaque fois."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Balaie la vieille année",
+        "text": "Avant minuit, balaie la maison des chambres jusqu’à la porte et dans la rue pour chasser tout le mauvais laissé par l’année passée."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Minuit sur le Malecón",
+        "text": "À Mazatlán, va sur le front de mer près des grandes lettres de la ville : l’an dernier, musique dès 21 h, drones et feu d’artifice, entrée libre."
+      }
+    ],
+    "kit": "mx-7"
+  },
+  "MX@utc-0800": {
+    "text": "Le Mexique termine l’année par un dîner de famille tardif : dinde ou longe de porc et, selon la région, tamales, pozole ou bacalao. À minuit, on mange un grain de raisin à chacun des douze coups en faisant un vœu à chaque fois, et la couleur des sous-vêtements neufs appelle ce qu’on espère : rouge pour l’amour, jaune pour l’argent, vert pour la santé. Avant minuit, on balaie la maison jusqu’à la porte pour ne pas emporter le mauvais dans l’année neuve.\n\nLa Basse-Californie est le seul État du pays dans le fuseau UTC−8 : Tijuana est donc le dernier endroit du Mexique à fêter l’année, deux heures après Mexico. Vendre et tirer des pétards y est interdit, et la ville conseille plutôt des bâtons lumineux et des guirlandes. La vraie fête se passe à la maison, autour de la table : l’an dernier, selon le journal El Imparcial, les familles ont dépensé jusqu’à 5 000 pesos pour le dîner.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Une valise pour voyager",
+        "text": "Dès les douze coups, sors avec une valise et fais le tour du pâté de maisons : plus tu vas loin, dit-on, plus tu voyageras loin cette année."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "De la lumière, pas de pétards",
+        "text": "À Tijuana, les feux d’artifice ne se vendent ni ne se tirent. Prends un bâton lumineux ou une guirlande LED, et garde tes animaux au calme à la maison."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "La rosca devant le Cecut",
+        "text": "Début janvier, passe au Centre culturel de Tijuana : l’an dernier, le 10 janvier, une rosca des Rois géante y a été partagée gratuitement autour du dôme IMAX."
+      }
+    ],
+    "kit": "mx-8"
   }
 }

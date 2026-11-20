@@ -1694,5 +1694,101 @@
       }
     ],
     "kit": "mx-5"
+  },
+  "CA@utc-0330": {
+    "text": "Canada sees in the New Year differently in each province, but some customs are known nationwide. In Quebec, on the evening of 31 December, people watch Bye Bye, Radio-Canada's comedy review of the year, which since 1968 has ended with the countdown to midnight. And on 1 January the Governor General and the provincial lieutenant governors hold levees, New Year receptions open to anyone, children included.\n\nNewfoundland keeps its own time: it is the only zone in the Americas with a half-hour offset, so midnight arrives half an hour earlier than in the rest of Atlantic Canada. Last year St. John's celebrated outdoors on George Street, with music and midnight pyrotechnics. And over the Christmas days, disguised mummers still go from house to house.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Greet the lieutenant governor",
+        "text": "On 1 January the provincial lieutenant governor, like the Governor General, receives New Year guests: the doors are open to everyone, children included."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Let the mummers in",
+        "text": "If disguised visitors knock during the Christmas days, let them in, offer a drink and try to guess who is behind the mask."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Count down on George Street",
+        "text": "Last year the outdoor party in downtown St. John's was free for all ages: live music, DJs and pyrotechnics at midnight."
+      }
+    ],
+    "kit": "ca-330"
+  },
+  "CA@utc-0400": {
+    "text": "Canada sees in the New Year a little differently in each province, though some customs unite the whole country. In Quebec people switch on Bye Bye on 31 December, Radio-Canada’s comedy review of the year, aired since 1968 and ending with the countdown to midnight. On 1 January the provincial lieutenant governors and military units hold levees, New Year receptions open to everyone; the first one in Canada took place back in 1646.\n\nLast year Halifax celebrated outdoors in Grand Parade: DJs and musicians played from 11 pm, fireworks went up at midnight and city transit ran free. In the morning Government House, the oldest vice-regal residence in North America, welcomes visitors, and in Dartmouth hundreds of people plunge into a pool cut in the ice of Lake Banook.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Count down in Grand Parade",
+        "text": "Halifax’s free city party downtown starts at 11 pm and ends with fireworks at midnight; free transit will take you home."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Visit Government House",
+        "text": "On 1 January the lieutenant governor opens the doors to everyone, no invitation needed; about 700 guests come each year. New Brunswick holds its own levee too."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Take the plunge at Banook",
+        "text": "On 1 January in Dartmouth a big pool is cut in the ice, and hundreds of brave souls jump in while friends cheer from the shore."
+      }
+    ],
+    "kit": "ca-4"
+  },
+  "MX@utc-0700": {
+    "text": "Mexico greets the New Year with twelve grapes: at midnight people eat one with each chime of the clock and make a wish every time, a custom that came from Spain. Earlier in the evening the house is swept out all the way to the street to clear away the bad of the old year, and the colour of new underwear hints at the wish: red for love, yellow for money, green for health. After the twelfth chime comes “¡Feliz Año Nuevo!”, fireworks and firecrackers go up, and someone is already running round the block with a suitcase to bring a year of travel.\n\nThe Pacific zone — Sinaloa, Sonora, Nayarit and Baja California Sur — sees in the year an hour after Mexico City. In Mazatlán last year the city threw the party right on the Malecón, a seafront promenade about 8.5 km long: from 9 p.m. there was live music by the giant letters spelling the city’s name, a drone show and fireworks. Local media reported more than 40,000 people.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Twelve wishes",
+        "text": "Get twelve grapes ready: at midnight eat one on each stroke of the clock and make a wish every time."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Sweep out the old year",
+        "text": "Before midnight sweep the house from the rooms to the door and out into the street to chase away whatever bad the old year left behind."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight on the Malecón",
+        "text": "In Mazatlán head to the seafront by the city’s giant letters: last year there was live music from 9 p.m., a drone show and fireworks, all free."
+      }
+    ],
+    "kit": "mx-7"
+  },
+  "MX@utc-0800": {
+    "text": "Mexico sees out the year over a late family dinner: turkey or pork loin, or, depending on the region, tamales, pozole or bacalao. At midnight people eat a grape on each of the twelve chimes and make a wish every time, while the colour of new underwear calls in what you want: red for love, yellow for money, green for health. Before midnight the house is swept out right to the door so nothing bad follows into the new year.\n\nBaja California is the only state in the UTC−8 zone, so Tijuana is the last place in Mexico to greet the year, two hours after Mexico City. Selling and setting off fireworks are both banned here, and the city suggests light wands and string lights instead. The real party is at home around the table: last year, according to the newspaper El Imparcial, families spent up to 5,000 pesos on the dinner.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "A suitcase for the road",
+        "text": "As soon as midnight strikes, take a suitcase and walk round the block: they say the further you go, the further you will travel this year."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Light instead of firecrackers",
+        "text": "In Tijuana fireworks may be neither sold nor set off. Grab a light wand or LED string lights, and keep your pets indoors somewhere quiet."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Rosca by the Cecut dome",
+        "text": "In early January head to the Tijuana Cultural Centre: last year, on 10 January, a giant Three Kings rosca was shared for free around its IMAX dome."
+      }
+    ],
+    "kit": "mx-8"
   }
 }

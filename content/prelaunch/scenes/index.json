@@ -378,6 +378,30 @@
       "wide": true,
       "sky": "#112a2e",
       "water": "#84785e"
+    },
+    "CA@utc-0330": {
+      "src": "/scenes/CA-utc-0330-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "CA@utc-0400": {
+      "src": "/scenes/CA-utc-0400-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "MX@utc-0700": {
+      "src": "/scenes/MX-utc-0700-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "MX@utc-0800": {
+      "src": "/scenes/MX-utc-0800-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#333d5a"
     }
   }
 }

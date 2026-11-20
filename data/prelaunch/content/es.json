@@ -1694,5 +1694,101 @@
       }
     ],
     "kit": "mx-5"
+  },
+  "CA@utc-0330": {
+    "text": "Canadá recibe el Año Nuevo de forma distinta en cada provincia, pero algunas costumbres se conocen en todo el país. En Quebec, la noche del 31 de diciembre se ve «Bye Bye», el repaso humorístico del año de Radio-Canada, que desde 1968 termina con la cuenta atrás hasta medianoche. Y el 1 de enero, el gobernador general y los vicegobernadores provinciales celebran los levees, recepciones de Año Nuevo abiertas a cualquiera, también con niños.\n\nTerranova tiene su propia hora: es la única zona de América con un desfase de media hora, así que la medianoche llega media hora antes que en el resto del Canadá atlántico. El año pasado, St. John's lo celebró al aire libre en George Street, con música y pirotecnia a medianoche. Y en los días de Navidad, los mummers disfrazados aún van de casa en casa.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Saluda al vicegobernador",
+        "text": "El 1 de enero, el vicegobernador de la provincia, igual que el gobernador general, recibe visitas de Año Nuevo: las puertas están abiertas a todos, también con niños."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Abre la puerta a los mummers",
+        "text": "Si en los días de Navidad llaman a tu puerta visitantes disfrazados, déjalos pasar, invítalos a una copa e intenta adivinar quién se esconde tras la máscara."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Cuenta atrás en George Street",
+        "text": "El año pasado, la fiesta al aire libre en el centro de St. John's fue gratuita para todas las edades: música, DJ y pirotecnia a medianoche."
+      }
+    ],
+    "kit": "ca-330"
+  },
+  "CA@utc-0400": {
+    "text": "Canadá recibe el Año Nuevo de forma algo distinta en cada provincia, aunque algunas costumbres unen a todo el país. En Quebec, el 31 de diciembre se pone «Bye Bye», el repaso humorístico del año de Radio-Canada, que se emite desde 1968 y termina con la cuenta atrás hasta medianoche. El 1 de enero, los vicegobernadores de las provincias y las unidades militares celebran los levees, recepciones de Año Nuevo abiertas a todos; la primera en Canadá se celebró ya en 1646.\n\nEl año pasado, Halifax celebró al aire libre en la plaza Grand Parade: DJ y músicos tocaron desde las 23:00, a medianoche hubo fuegos artificiales y el transporte urbano fue gratis. Por la mañana, Government House, la residencia virreinal más antigua de Norteamérica, recibe visitas, y en Dartmouth cientos de personas se zambullen en una piscina abierta en el hielo del lago Banook.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Recibe el año en Grand Parade",
+        "text": "La fiesta gratuita del centro de Halifax empieza a las 23:00 y termina con fuegos artificiales a medianoche; el transporte gratis te lleva a casa."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Visita Government House",
+        "text": "El 1 de enero, el vicegobernador abre las puertas a todos sin invitación; cada año acuden unos 700 invitados. Nuevo Brunswick celebra también su levee."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Zambúllete en el Banook",
+        "text": "El 1 de enero en Dartmouth se abre una gran piscina en el hielo y cientos de valientes se lanzan al agua mientras los amigos animan desde la orilla."
+      }
+    ],
+    "kit": "ca-4"
+  },
+  "MX@utc-0700": {
+    "text": "México recibe el Año Nuevo con doce uvas: a medianoche se come una con cada campanada y se pide un deseo cada vez, costumbre llegada de España. Ya por la tarde se barre la casa hasta la calle para sacar lo malo del año viejo, y el color de la ropa interior nueva marca el deseo: rojo para el amor, amarillo para el dinero, verde para la salud. Tras la duodécima campanada suena el «¡Feliz Año Nuevo!», estallan cohetes y petardos, y alguien ya corre con la maleta alrededor de la manzana para atraer viajes.\n\nLa zona del Pacífico —Sinaloa, Sonora, Nayarit y Baja California Sur— recibe el año una hora después que la Ciudad de México. En Mazatlán, el año pasado el municipio organizó la fiesta en pleno Malecón, un paseo frente al mar de unos 8,5 km: desde las nueve de la noche hubo música en vivo junto a las letras de la ciudad, show de drones y fuegos artificiales. Según medios locales, llegaron más de 40 000 personas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Doce deseos",
+        "text": "Ten listas doce uvas: a medianoche come una con cada campanada y pide un deseo cada vez."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Barre el año viejo",
+        "text": "Antes de medianoche barre la casa desde las habitaciones hasta la puerta y hacia la calle para echar lo malo que dejó el año viejo."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Medianoche en el Malecón",
+        "text": "En Mazatlán ve al malecón, junto a las letras de la ciudad: el año pasado hubo música desde las nueve, show de drones y fuegos artificiales, gratis."
+      }
+    ],
+    "kit": "mx-7"
+  },
+  "MX@utc-0800": {
+    "text": "México despide el año con una cena familiar tardía: pavo o lomo de cerdo y, según la región, tamales, pozole o bacalao. A medianoche se come una uva con cada una de las doce campanadas y se pide un deseo con cada una, y el color de la ropa interior nueva llama lo que buscas: rojo para el amor, amarillo para el dinero, verde para la salud. Antes de medianoche se barre la casa hasta la puerta para no llevar lo malo al año nuevo.\n\nBaja California es el único estado del país en la zona UTC−8, así que Tijuana es el último lugar de México en recibir el año, dos horas después de la Ciudad de México. Aquí está prohibido vender y tronar pirotecnia, y el municipio propone varitas de luz y series LED. La fiesta de verdad es en casa, alrededor de la mesa: el año pasado, según El Imparcial, las familias gastaron hasta 5 mil pesos en la cena.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "La maleta para viajar",
+        "text": "En cuanto den las doce, sal con una maleta y da la vuelta a la cuadra: dicen que cuanto más lejos llegues, más lejos viajarás este año."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Luz en vez de cohetes",
+        "text": "En Tijuana la pirotecnia no se puede vender ni tronar. Usa una varita de luz o una serie LED, y deja a tus mascotas en casa, en un lugar tranquilo."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Megarosca en el Cecut",
+        "text": "A principios de enero pásate por el Centro Cultural Tijuana: el año pasado, el 10 de enero, se partió gratis una enorme rosca de Reyes alrededor del Domo IMAX."
+      }
+    ],
+    "kit": "mx-8"
   }
 }

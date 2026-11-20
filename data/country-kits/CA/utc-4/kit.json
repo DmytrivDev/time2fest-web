@@ -1,0 +1,98 @@
+{
+  "code": "CA",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "halifax",
+  "names": {
+    "uk": {
+      "name": "Канада",
+      "city": "Галіфакс",
+      "cityIn": "у Галіфаксі",
+      "caps": "ГАЛІФАКС · КАНАДА"
+    },
+    "en": {
+      "name": "Canada",
+      "city": "Halifax",
+      "cityIn": "in Halifax",
+      "caps": "HALIFAX · CANADA"
+    },
+    "es": {
+      "name": "Canadá",
+      "city": "Halifax",
+      "cityIn": "en Halifax",
+      "caps": "HALIFAX · CANADÁ"
+    },
+    "fr": {
+      "name": "Canada",
+      "city": "Halifax",
+      "cityIn": "à Halifax",
+      "caps": "HALIFAX · CANADA"
+    }
+  },
+  "picto": "M13.5 37 L16.4 17 H23.6 L26.5 37 Z M18.4 37 V33 Q20 31.6 21.6 33 V37 M19.2 25 H20.8 M19.3 30 H20.7 M14.4 17 H25.6 M14.4 17 V14 H25.6 V17 M17 17 V14 M20 17 V14 M23 17 V14 M16.6 14 V8.4 H23.4 V14 M16.6 8.4 Q17 5 20 4.6 Q23 5 23.4 8.4 M20 4.6 V1.8",
+  "flagColors": [
+    "#D52B1E",
+    "#FFFFFF"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Галіфаксі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Halifax"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Halifax"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Halifax"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

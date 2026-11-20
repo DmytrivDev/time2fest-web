@@ -1165,6 +1165,70 @@
         "x": 55,
         "y": 45
       }
+    },
+    "country:CA@utc-0330": {
+      "src": "/media/photos/st-johns.webp",
+      "alt": {
+        "uk": "Салют над затокою Кіді-Віді в Сент-Джонсі, нічні вогні міста й причал із човнами",
+        "en": "Fireworks over Quidi Vidi harbour in St. John’s, city lights at night and a wharf with boats",
+        "es": "Fuegos artificiales sobre la bahía de Quidi Vidi en St. John’s, luces nocturnas de la ciudad y un muelle con barcas",
+        "fr": "Feu d’artifice sur le port de Quidi Vidi à Saint-Jean, lumières de la ville et quai avec des bateaux"
+      },
+      "author": "Ting ting Chen",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Canada_Day%27s_Fireworks_in_Quidi_Vidi,_St._John%27s,_Newfoundland.jpg",
+      "position": {
+        "x": 60,
+        "y": 35
+      }
+    },
+    "country:CA@utc-0400": {
+      "src": "/media/photos/halifax.webp",
+      "alt": {
+        "uk": "Новорічна ніч на площі Гранд-Парейд у Галіфаксі: натовп, сцена й підсвічена ратуша з вежею",
+        "en": "New Year’s Eve on Grand Parade in Halifax: the crowd, the stage and the lit city hall with its tower",
+        "es": "Nochevieja en la plaza Grand Parade de Halifax: el público, el escenario y el ayuntamiento iluminado con su torre",
+        "fr": "Réveillon sur la place Grand Parade à Halifax : la foule, la scène et l’hôtel de ville illuminé avec sa tour"
+      },
+      "author": "A Disappearing Act",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Year%27s_Eve_2025_at_Grand_Parade_in_Halifax,_Canada.jpg",
+      "position": {
+        "x": 45,
+        "y": 55
+      }
+    },
+    "country:MX@utc-0700": {
+      "src": "/media/photos/mazatlan.webp",
+      "alt": {
+        "uk": "Феєрверк над затокою Масатлана під час морського шоу карнавалу, вогні набережної, лютий 2020 року",
+        "en": "Fireworks over the bay of Mazatlán during the carnival’s naval show, waterfront lights, February 2020",
+        "es": "Fuegos artificiales sobre la bahía de Mazatlán durante el Combate Naval del carnaval, luces del malecón, febrero de 2020",
+        "fr": "Feu d’artifice sur la baie de Mazatlán pendant le spectacle naval du carnaval, lumières du front de mer, février 2020"
+      },
+      "author": "Monica Guadalupe Delgado Del Real",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Combate_Naval_Mazatlan,_Sin._Mex._%22carnaval_de_Mazatlan%22_tricolor,_desde_mar_adentro.jpg",
+      "position": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "country:MX@utc-0800": {
+      "src": "/media/photos/ensenada.webp",
+      "alt": {
+        "uk": "Енсенада, Нижня Каліфорнія: світломузичний фонтан і літери ENSENADA на набережній порту, 27 грудня 2018 року",
+        "en": "Ensenada, Baja California: the light-and-music fountain and the ENSENADA letters on the harbour front, 27 December 2018",
+        "es": "Ensenada, Baja California: la fuente de luz y música y las letras ENSENADA en el malecón del puerto, 27 de diciembre de 2018",
+        "fr": "Ensenada, Basse-Californie : la fontaine musicale illuminée et les lettres ENSENADA sur le front de port, 27 décembre 2018"
+      },
+      "author": "Molerick",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ensenada_Mexico_NightPier.jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
     }
   }
 }

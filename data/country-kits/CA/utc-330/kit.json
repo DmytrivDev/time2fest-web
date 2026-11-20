@@ -1,0 +1,98 @@
+{
+  "code": "CA",
+  "zone": "UTC-3:30",
+  "zoneId": "utc-0330",
+  "cityId": "st-johns",
+  "names": {
+    "uk": {
+      "name": "Канада",
+      "city": "Сент-Джонс",
+      "cityIn": "у Сент-Джонсі",
+      "caps": "СЕНТ-ДЖОНС · КАНАДА"
+    },
+    "en": {
+      "name": "Canada",
+      "city": "St. John’s",
+      "cityIn": "in St. John’s",
+      "caps": "ST. JOHN’S · CANADA"
+    },
+    "es": {
+      "name": "Canadá",
+      "city": "St. John’s",
+      "cityIn": "en St. John’s",
+      "caps": "ST. JOHN’S · CANADÁ"
+    },
+    "fr": {
+      "name": "Canada",
+      "city": "St. John’s",
+      "cityIn": "à St. John’s",
+      "caps": "ST. JOHN’S · CANADA"
+    }
+  },
+  "picto": "M15 36 V14 H16.5 V12 H18.5 V14 H20.5 V12 H22.5 V14 H24.5 V12 H26.5 V14 H28.5 V12 H30.5 V36 M15 36 H9 V12 H10.2 V10.4 H12 V12 H13.4 V10.4 H15 M2 39 Q5 36 8 36 H33 Q36 36 38.6 39 M14.4 17.4 H31.2 M18 21.4 V24 M22.6 21.4 V24 M27.2 21.4 V24 M18 28.4 V31 M22.6 28.4 V31 M27.2 28.4 V31 M11.6 18 V20 M23.5 14 V5 M21.5 7.4 H25.5 M29.4 12 V2.6",
+  "flagColors": [
+    "#D52B1E",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сент-Джонсі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in St. John’s"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en St. John’s"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à St. John’s"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
