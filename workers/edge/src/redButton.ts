@@ -2,7 +2,7 @@
 // is served at the public `site` address instead of the origin or the cache.
 // Read at most once per 10 s per isolate; the memo keeps "absent" too, and concurrent requests share one read.
 import { parseSiteState, type SiteStateLike } from '../../../packages/contracts/src/siteGuard';
-import type { EdgeDeps, EdgeEnv } from './env';
+import { siteBucketOf, type EdgeDeps, type EdgeEnv } from './env';
 
 /** One bucket read per isolate per this window (NFR-4). */
 export const RED_BUTTON_MEMO_MS = 10_000;
@@ -25,11 +25,11 @@ export function redButtonState(
   key: string,
   deps: Pick<EdgeDeps, 'now'>,
 ): Promise<SiteStateLike | null> {
-  const bucket = env.SITE_BUCKET;
-  if (!bucket) return Promise.resolve(null);
+  const site = siteBucketOf(env); // no bucket, or a missing/malformed prefix → never read (fail closed)
+  if (!site) return Promise.resolve(null);
   const now = deps.now();
   if (memo && now >= memo.at && now - memo.at < RED_BUTTON_MEMO_MS) return memo.state;
-  const state = read(bucket, `${env.R2_PREFIX ?? ''}${key}`);
+  const state = read(site.bucket, `${site.prefix}${key}`);
   memo = { at: now, state };
   return state;
 }

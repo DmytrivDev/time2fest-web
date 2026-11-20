@@ -131,8 +131,9 @@ describe('workerd: cache in front of the origin (AC-25, AC-30)', () => {
   });
 });
 
-describe('workerd: origin failing → R2 copy (AC-28)', () => {
-  const site = useSiteHarness('r2');
+// Separate harnesses: the isolate memoises the R2 copy (also "absent") for 10 s (S8-03).
+describe('workerd: origin failing, nothing anywhere (AC-29)', () => {
+  const site = useSiteHarness('empty');
 
   it('nothing anywhere → the existing 503', async () => {
     site.origin().up = false;
@@ -140,9 +141,14 @@ describe('workerd: origin failing → R2 copy (AC-28)', () => {
     expect(res.status).toBe(503);
     expect(await res.text()).toBe(UNAVAILABLE_BODY);
   });
+});
+
+describe('workerd: origin failing → R2 copy (AC-28)', () => {
+  const site = useSiteHarness('r2');
 
   it('AC-28: empty cache + failing origin + R2 copy → the copy, x-t2f-source: r2', async () => {
     site.origin().up = false;
+    // Put before the first request: the isolate memo has not read the bucket yet.
     await (await site.bucket()).put(`${PREFIX}${SITE_R2_KEYS.latest}`, JSON.stringify(snapshot(5)));
     await expectSource(await site.fetch(SITE), 'r2', 5, 'r2 copy');
   });

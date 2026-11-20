@@ -5,7 +5,7 @@
 import type { PublicRoute } from '../../../packages/contracts/src/publicRoutes';
 import { parseSiteState, type SiteStateLike } from '../../../packages/contracts/src/siteGuard';
 import { SITE_CACHE_TAG } from '../../../packages/contracts/src/site';
-import type { EdgeCache, EdgeDeps, EdgeEnv } from './env';
+import { siteBucketOf, type EdgeCache, type EdgeDeps, type EdgeEnv } from './env';
 import { proxy } from './proxy';
 import { redButtonState } from './redButton';
 import { unavailable } from './responses';
@@ -29,8 +29,26 @@ export function defaultCache(): EdgeCache {
   return (globalThis as unknown as { caches: { default: EdgeCache } }).caches.default;
 }
 
+/** Budget of one public-path origin call; past it the call is aborted and counts as an origin failure. */
+export const PUBLIC_ORIGIN_BUDGET_MS = 1500;
+/** One R2 fallback read per key per isolate per this window (the memo keeps "absent" too). */
+export const R2_COPY_MEMO_MS = 10_000;
+/** The only client headers a shared public answer's origin request carries; `proxy()` adds its own on top. */
+const FORWARDED_HEADERS = ['accept', 'user-agent', 'cf-connecting-ip'] as const;
+
 /** Route keys whose background refresh is in flight in this isolate (one at a time per route). */
 const refreshing = new Set<string>();
+/** Cache-miss origin calls in flight in this isolate, one per cache key: every waiter gets the same answer. */
+const inflight = new Map<string, Promise<SiteStateLike | null>>();
+/** R2 fallback reads per bucket key: started at `at` (edge clock), shared by every request in the window. */
+const r2Memo = new Map<string, { at: number; state: Promise<SiteStateLike | null> }>();
+
+/** Forgets the isolate state of this module (tests only: every test is a "fresh isolate"). */
+export function resetPublicCacheMemo(): void {
+  r2Memo.clear();
+  inflight.clear();
+  refreshing.clear();
+}
 
 type Origin = { secret: string; url: string } | null;
 type Copy = { body: string; version: string; age: number };
@@ -75,16 +93,12 @@ export async function servePublic(
     return answer(copy.body, copy.version, 'cache');
   }
 
-  // 3. Origin (stored on success).
-  const fresh = origin ? await fetchOrigin(req, key, origin, deps) : null;
-  if (fresh) {
-    const body = JSON.stringify(fresh);
-    await store(deps, key, fresh).catch(() => undefined);
-    return answer(body, String(fresh.version), 'origin');
-  }
+  // 3. Origin (stored on success); concurrent misses share one origin call.
+  const fresh = origin ? await originOnce(req, key, origin, deps) : null;
+  if (fresh) return answer(JSON.stringify(fresh), String(fresh.version), 'origin');
 
   // 4. R2 copy, then the existing 503 (AC-28, AC-29). A copy past fresh + stale was already refused above.
-  const r2 = await readR2(env, route.r2Copy);
+  const r2 = await readR2(env, route.r2Copy, deps.now());
   if (r2) return answer(JSON.stringify(r2), String(r2.version), 'r2');
   return unavailable();
 }
@@ -102,15 +116,58 @@ function answer(body: string, version: string, source: PublicSource): Response {
   });
 }
 
-/** The origin's snapshot, or null on any failure: network, non-2xx, non-JSON, or a body the guard refuses. */
+/** One origin call (and store) per cache key in flight; later misses for the same key wait on it. */
+function originOnce(req: Request, key: Request, origin: NonNullable<Origin>, deps: EdgeDeps): Promise<SiteStateLike | null> {
+  const running = inflight.get(key.url);
+  if (running) return running;
+  const work = fetchOrigin(req, key, origin, deps)
+    .then(async (fresh) => {
+      if (fresh) await store(deps, key, fresh).catch(() => undefined);
+      return fresh;
+    })
+    .catch(() => null)
+    .finally(() => inflight.delete(key.url));
+  inflight.set(key.url, work);
+  return work;
+}
+
+/**
+ * The origin's snapshot, or null on any failure: network, non-2xx, non-JSON, a body the guard refuses, or no
+ * complete answer within `PUBLIC_ORIGIN_BUDGET_MS` (the call is then aborted).
+ */
 async function fetchOrigin(req: Request, key: Request, origin: NonNullable<Origin>, deps: EdgeDeps): Promise<SiteStateLike | null> {
-  // Query dropped (key URL); cookies and credentials never reach the origin for a shared answer.
-  const headers = new Headers(req.headers);
-  headers.delete('cookie');
-  headers.delete('authorization');
+  const ctrl = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const expired = new Promise<null>((resolve) => {
+    timer = setTimeout(() => {
+      ctrl.abort();
+      resolve(null);
+    }, PUBLIC_ORIGIN_BUDGET_MS);
+  });
+  try {
+    return await Promise.race([askOrigin(req, key, origin, deps, ctrl.signal), expired]);
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
+}
+
+async function askOrigin(
+  req: Request,
+  key: Request,
+  origin: NonNullable<Origin>,
+  deps: EdgeDeps,
+  signal: AbortSignal,
+): Promise<SiteStateLike | null> {
+  // Query dropped (key URL); only allow-listed client headers are forwarded (no cookie, credential,
+  // conditional, range or identity header reaches the origin for a shared answer).
+  const headers = new Headers();
+  for (const name of FORWARDED_HEADERS) {
+    const value = req.headers.get(name);
+    if (value !== null) headers.set(name, value);
+  }
   const forward = new Request(key.url, { method: 'GET', headers });
   try {
-    const res = await proxy(forward, origin.url, origin.secret, deps);
+    const res = await proxy(forward, origin.url, origin.secret, deps, signal);
     if (res.status < 200 || res.status > 299) {
       await res.body?.cancel().catch(() => undefined);
       return null;
@@ -160,11 +217,24 @@ async function readCopy(cache: EdgeCache, key: Request, now: number): Promise<Co
   return { body: await res.text(), version, age: Math.max(0, now - at) };
 }
 
-/** The R2 copy `<R2_PREFIX><key>` if present and accepted by the guard; any read error → null. */
-async function readR2(env: EdgeEnv, key: string): Promise<SiteStateLike | null> {
-  if (!env.SITE_BUCKET) return null;
+/**
+ * The R2 copy `<R2_PREFIX><key>` if present and accepted by the guard; any read error → null. Read at most once
+ * per key per `R2_COPY_MEMO_MS` in this isolate; no bucket or a bad prefix → never read (fail closed).
+ */
+function readR2(env: EdgeEnv, key: string, now: number): Promise<SiteStateLike | null> {
+  const site = siteBucketOf(env);
+  if (!site) return Promise.resolve(null);
+  const full = `${site.prefix}${key}`;
+  const memo = r2Memo.get(full);
+  if (memo && now >= memo.at && now - memo.at < R2_COPY_MEMO_MS) return memo.state;
+  const state = readR2Object(site.bucket, full);
+  r2Memo.set(full, { at: now, state });
+  return state;
+}
+
+async function readR2Object(bucket: NonNullable<EdgeEnv['SITE_BUCKET']>, key: string): Promise<SiteStateLike | null> {
   try {
-    const obj = await env.SITE_BUCKET.get(`${env.R2_PREFIX ?? ''}${key}`);
+    const obj = await bucket.get(key);
     if (!obj) return null;
     return parseSiteState(JSON.parse(await obj.text()));
   } catch {

@@ -6,7 +6,15 @@ import { SITE_R2_KEYS, SITE_SOURCE_HEADER, SITE_VERSION_HEADER } from '../../../
 import { parseSiteState } from '../../../packages/contracts/src/siteGuard';
 import type { EdgeCache, EdgeDeps, EdgeEnv, SiteBucket } from '../src/env';
 import { handle } from '../src/handler';
-import { CACHED_AT_HEADER, SITE_CACHE_TAG, SOURCE_HEADER, VERSION_HEADER } from '../src/publicCache';
+import {
+  CACHED_AT_HEADER,
+  PUBLIC_ORIGIN_BUDGET_MS,
+  R2_COPY_MEMO_MS,
+  resetPublicCacheMemo,
+  SITE_CACHE_TAG,
+  SOURCE_HEADER,
+  VERSION_HEADER,
+} from '../src/publicCache';
 import { resetRedButtonMemo } from '../src/redButton';
 import { UNAVAILABLE_BODY } from '../src/responses';
 
@@ -138,6 +146,7 @@ const events = () => logged;
 
 beforeEach(() => {
   resetRedButtonMemo();
+  resetPublicCacheMemo();
   logged = [];
   vi.spyOn(console, 'warn').mockImplementation((line: unknown) => {
     logged.push((JSON.parse(String(line)) as { event: string }).event);
@@ -303,13 +312,15 @@ describe('origin failure (AC-27 … AC-29)', () => {
     expect((await get()).status).toBe(503);
     bucket.objects.set(`${PREFIX}site/latest.json`, JSON.stringify({ version: 3 }));
     resetRedButtonMemo();
+    resetPublicCacheMemo();
     expect((await get()).status).toBe(503);
   });
 
   it('without the edge secret the origin is never called; cache, R2 and 503 still answer', async () => {
-    const { get, calls, bucket } = setup({ T2F_EDGE_SECRET: undefined });
+    const { get, calls, bucket, clock } = setup({ T2F_EDGE_SECRET: undefined });
     expect((await get()).status).toBe(503);
     bucket.objects.set(`${PREFIX}site/latest.json`, JSON.stringify(snapshot(4)));
+    clock.t = T0 + R2_COPY_MEMO_MS; // past the R2 memo window (S8-03)
     expectHeaders(await get(), 'r2', 4);
     expect(calls).toHaveLength(0);
   });
@@ -438,5 +449,163 @@ describe('every source sets both headers (NFR-2)', () => {
     bucket.objects.set(`${PREFIX}site/red-button.json`, JSON.stringify(snapshot(8, { outage: 'technical' })));
     clock.t = T0 + 52 * S;
     expectHeaders(await get(), 'red-button', 8);
+  });
+});
+
+describe('security-review fixes (S8-01 … S8-06)', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const neverAnswers: Respond = () => new Promise<Response>(() => undefined);
+
+  it('S8-01: an origin that never answers, empty cache → the R2 copy within 1.5 s, the call aborted', async () => {
+    const { get, origin, bucket } = setup();
+    let signal: AbortSignal | null | undefined;
+    origin.respond = (input, init) => {
+      signal = init.signal;
+      return neverAnswers(input, init);
+    };
+    bucket.objects.set(`${PREFIX}site/latest.json`, JSON.stringify(snapshot(6)));
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const pending = get();
+    let settled = false;
+    void pending.then(() => {
+      settled = true;
+    });
+    await vi.advanceTimersByTimeAsync(PUBLIC_ORIGIN_BUDGET_MS - 1);
+    expect(settled).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    expectHeaders(await pending, 'r2', 6);
+    expect(signal?.aborted).toBe(true);
+  });
+
+  it('S8-01: an origin that never answers, nothing anywhere → the existing 503 after the budget', async () => {
+    const { get, origin } = setup();
+    origin.respond = neverAnswers;
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const pending = get();
+    await vi.advanceTimersByTimeAsync(PUBLIC_ORIGIN_BUDGET_MS);
+    const res = await pending;
+    expect(res.status).toBe(503);
+    expect(await res.text()).toBe(UNAVAILABLE_BODY);
+  });
+
+  it('S8-01: a hanging background refresh → stale copy at once, and the refresh ends within the budget', async () => {
+    const { get, clock, origin, flush } = setup();
+    await get();
+    origin.respond = neverAnswers;
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    clock.t = T0 + 20 * S;
+    expectHeaders(await get(), 'cache', 1);
+    const done = flush();
+    await vi.advanceTimersByTimeAsync(PUBLIC_ORIGIN_BUDGET_MS);
+    await done; // settled as an origin failure instead of hanging
+  });
+
+  it('S8-02: 100 concurrent misses → 1 origin call, every waiter gets the same answer', async () => {
+    const { get, calls, origin, cache } = setup();
+    let release!: () => void;
+    const gate = new Promise<void>((r) => {
+      release = r;
+    });
+    origin.respond = async () => {
+      await gate;
+      return json(snapshot(4));
+    };
+    const all = Promise.all(Array.from({ length: 100 }, () => get()));
+    await new Promise((r) => setTimeout(r, 0));
+    release();
+    const answers = await all;
+    expect(calls).toHaveLength(1);
+    expect(cache.puts).toBe(1);
+    for (const res of answers) {
+      expectHeaders(res, 'origin', 4);
+      expect(await versionOf(res)).toBe(4);
+    }
+  });
+
+  it('S8-02: a failed shared call is not kept: the next miss asks the origin again', async () => {
+    const { get, calls, origin } = setup({}, { noCache: true });
+    origin.respond = async () => new Response('cf', { status: 530 });
+    await Promise.all([get(), get(), get()]);
+    expect(calls).toHaveLength(1);
+    origin.respond = async () => json(snapshot(2));
+    expectHeaders(await get(), 'origin', 2);
+    expect(calls).toHaveLength(2);
+  });
+
+  it('S8-03: 1 000 requests while the origin is down → at most one R2 read per 10 s', async () => {
+    const { get, bucket, clock, origin } = setup({}, { noCache: true });
+    origin.respond = async () => new Response('cf', { status: 530 });
+    bucket.objects.set(`${PREFIX}site/latest.json`, JSON.stringify(snapshot(5)));
+    for (let i = 0; i < 1000; i += 1) {
+      clock.t = T0 + i * 20; // 1 000 requests over 20 s → two 10 s windows
+      expectHeaders(await get(), 'r2', 5);
+    }
+    expect(bucket.readsOf('site/latest.json')).toBe(2);
+  });
+
+  it('S8-03: the memo keeps "absent" too; a copy added later is seen after 10 s', async () => {
+    const { get, bucket, clock, origin } = setup({}, { noCache: true });
+    origin.respond = async () => new Response('cf', { status: 530 });
+    expect((await get()).status).toBe(503);
+    bucket.objects.set(`${PREFIX}site/latest.json`, JSON.stringify(snapshot(5)));
+    clock.t = T0 + R2_COPY_MEMO_MS - 1;
+    expect((await get()).status).toBe(503);
+    clock.t = T0 + R2_COPY_MEMO_MS;
+    expectHeaders(await get(), 'r2', 5);
+    expect(bucket.readsOf('site/latest.json')).toBe(2);
+  });
+
+  it('S8-04: only allow-listed client headers reach the origin', async () => {
+    const { get, calls } = setup();
+    await get(SITE, {
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'probe/1',
+        'cf-connecting-ip': '203.0.113.9',
+        'if-none-match': '"abc"',
+        range: 'bytes=0-10',
+        'accept-language': 'uk',
+        'x-t2f-access-identity': 'forged',
+        cookie: 'a=b',
+        authorization: 'Bearer x',
+        'x-probe': '1',
+      },
+    });
+    expect(calls).toHaveLength(1);
+    const h = calls[0]!.headers;
+    for (const name of [
+      'if-none-match',
+      'range',
+      'accept-language',
+      'x-t2f-access-identity',
+      'cookie',
+      'authorization',
+      'x-probe',
+    ]) {
+      expect(h.get(name), name).toBeNull();
+    }
+    expect(h.get('accept')).toBe('application/json');
+    expect(h.get('user-agent')).toBe('probe/1');
+    expect(h.get('x-t2f-client')).toBe('203.0.113.9;UA');
+    expect(h.get('x-t2f-edge')).toBe(SECRET);
+  });
+
+  it.each([
+    ['missing', undefined],
+    ['empty', ''],
+    ['without the trailing slash', 'test'],
+    ['a bare slash', '/'],
+    ['uppercase', 'Test/'],
+    ['nested', 'a/b/'],
+  ])('S8-06: R2_PREFIX %s → the bucket is never read (red button, R2 copy)', async (_n, prefix) => {
+    const { get, bucket, origin } = setup({ R2_PREFIX: prefix });
+    origin.respond = async () => new Response('cf', { status: 530 });
+    bucket.objects.set('site/latest.json', JSON.stringify(snapshot(5)));
+    bucket.objects.set('site/red-button.json', JSON.stringify(snapshot(9, { outage: 'technical' })));
+    expect((await get()).status).toBe(503);
+    expect(bucket.gets).toEqual([]);
   });
 });

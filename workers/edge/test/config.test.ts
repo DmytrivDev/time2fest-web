@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { R2_PREFIX_PATTERN } from '../src/env';
 
 type Env = {
   workers_dev?: boolean;
@@ -64,6 +65,16 @@ describe('wrangler.json', () => {
     for (const name of ['test', 'production', 'prelaunch'] as const) {
       expect(config.env[name]!.r2_buckets ?? [], name).toEqual([]);
       expect(config.env[name]!.vars, name).not.toHaveProperty('R2_PREFIX');
+    }
+  });
+
+  it('S8-06: every env that binds SITE_BUCKET has an R2_PREFIX the edge accepts, named after the env', () => {
+    for (const name of NAMES) {
+      const binds = (config.env[name]!.r2_buckets ?? []).some((b) => b.binding === 'SITE_BUCKET');
+      if (!binds) continue;
+      const prefix = config.env[name]!.vars?.R2_PREFIX;
+      expect(prefix, name).toMatch(R2_PREFIX_PATTERN);
+      expect(prefix, name).toBe(`${name}/`);
     }
   });
 });
