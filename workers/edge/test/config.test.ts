@@ -55,16 +55,15 @@ describe('wrangler.json', () => {
     for (const name of NAMES) expect(config.env[name], name).not.toHaveProperty('cache');
   });
 
-  it('SITE_BUCKET: only per env, with its own bucket and an R2_PREFIX; never in prelaunch', () => {
+  it('SITE_BUCKET: bound only in rehearsal (its bucket, prefix `rehearsal/`); never in test, production or prelaunch', () => {
     expect(config).not.toHaveProperty('r2_buckets');
-    expect(config.env.prelaunch!.r2_buckets ?? []).toEqual([]);
-    expect(config.env.prelaunch!.vars).not.toHaveProperty('R2_PREFIX');
-    for (const name of NAMES) {
-      const site = (config.env[name]!.r2_buckets ?? []).filter((b) => b.binding === 'SITE_BUCKET');
-      expect(site.length, name).toBeLessThanOrEqual(1);
-      if (site.length === 0) continue;
-      expect(site[0]!.bucket_name, name).toBe(BUCKETS[name]);
-      expect(config.env[name]!.vars?.R2_PREFIX, name).toMatch(/^[a-z0-9_]+\/$/);
+    expect(config.env.rehearsal!.r2_buckets).toEqual([
+      { binding: 'SITE_BUCKET', bucket_name: BUCKETS.rehearsal },
+    ]);
+    expect(config.env.rehearsal!.vars?.R2_PREFIX).toBe('rehearsal/');
+    for (const name of ['test', 'production', 'prelaunch'] as const) {
+      expect(config.env[name]!.r2_buckets ?? [], name).toEqual([]);
+      expect(config.env[name]!.vars, name).not.toHaveProperty('R2_PREFIX');
     }
   });
 });
