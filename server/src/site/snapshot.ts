@@ -29,7 +29,9 @@ export type SnapshotRead = { ok: true; state: SiteState } | { ok: false; reason:
 /** The current `site` snapshot, outside any transaction. */
 export async function readSnapshot(deps: SnapshotReadDeps): Promise<SnapshotRead> {
   const record = await deps.store.read();
-  const [patches, catalogMeta] = await Promise.all([deps.patches(), deps.catalogMeta()]);
+  // Sequential on purpose: both readers may share one database session (pg refuses concurrent queries on a client).
+  const patches = await deps.patches();
+  const catalogMeta = await deps.catalogMeta();
   if (!catalogMeta) return { ok: false, reason: 'catalog-unavailable' };
   return { ok: true, state: buildSnapshot({ record, patches, catalogMeta }) };
 }

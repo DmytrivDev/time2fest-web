@@ -179,7 +179,10 @@ function siteViewEndpoint(resolve: () => Promise<Deps>): Endpoint {
       if (!isOwner(req)) return fail('forbidden');
       const site = siteOf(await resolve());
       try {
-        const [read, record, products] = await Promise.all([readSnapshot(site.snapshot), site.store.read(), site.products.list()]);
+        // Sequential: the reads may share one database session (pg refuses concurrent queries on a client).
+        const read = await readSnapshot(site.snapshot);
+        const record = await site.store.read();
+        const products = await site.products.list();
         if (!read.ok) return fail('unavailable', read.reason);
         const value = { state: read.state, paymentsPause: record.paymentsPause, products, selections: record.productSelections };
         return Response.json({ ok: true, value }, { headers: NO_STORE });

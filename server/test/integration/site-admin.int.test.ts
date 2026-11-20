@@ -87,7 +87,9 @@ describe('owner site-state endpoints', { timeout: 120_000 }, () => {
   afterAll(async () => {
     if (!payload) return;
     await siteOf(deps).resetForTests?.();
-    await removeAdmins(payload, [OWNER, CONTENT, STREAM]);
+    // One admin per call: a multi-document `payload.delete` runs its cleanup queries in parallel on one
+    // transaction client, which pg flags as deprecated («client.query() when the client is already executing»).
+    for (const email of [OWNER, CONTENT, STREAM]) await removeAdmins(payload, [email]);
   });
 
   it('AC-10: a Payload REST update of the global is refused; the state is unchanged', async () => {
