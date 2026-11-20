@@ -1,0 +1,99 @@
+{
+  "code": "PG",
+  "zone": "UTC+10",
+  "zoneId": "utc+1000",
+  "cityId": "port-moresby",
+  "names": {
+    "uk": {
+      "name": "Папуа Нова Гвінея",
+      "city": "Порт-Морсбі",
+      "cityIn": "у Порт-Морсбі",
+      "caps": "ПАПУА НОВА ГВІНЕЯ"
+    },
+    "en": {
+      "name": "Papua New Guinea",
+      "city": "Port Moresby",
+      "cityIn": "in Port Moresby",
+      "caps": "PAPUA NEW GUINEA"
+    },
+    "es": {
+      "name": "Papúa Nueva Guinea",
+      "city": "Port Moresby",
+      "cityIn": "en Port Moresby",
+      "caps": "PAPÚA NUEVA GUINEA"
+    },
+    "fr": {
+      "name": "Papouasie-Nouvelle-Guinée",
+      "city": "Port Moresby",
+      "cityIn": "à Port Moresby",
+      "caps": "PAPOUASIE-NOUVELLE-GUINÉE"
+    }
+  },
+  "picto": "M1 36 H39 M3 36 V27 L37 6 L35.6 9.4 L30.2 15 V36 M3 29.2 L35.6 9.4 M25.4 36 V15.6 M26.4 34 V23 Q26.4 19 27.9 17.6 Q29.4 19 29.4 23 V34 M26.4 34 H29.4 M17.3 36 V20.5 M19.5 36 V19.2 M21.7 36 V17.8 M3 31.4 H17.3 M7 36 V31.4 M10.6 36 V31.4 M14 36 V31.4",
+  "flagColors": [
+    "#CE1126",
+    "#FCD116",
+    "#FFFFFF"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Порт-Морсбі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Port Moresby"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Port Moresby"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Port Moresby"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

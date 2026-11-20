@@ -1,0 +1,99 @@
+{
+  "code": "SB",
+  "zone": "UTC+11",
+  "zoneId": "utc+1100",
+  "cityId": "guadalcanal",
+  "names": {
+    "uk": {
+      "name": "Соломонові Острови",
+      "city": "Хоніара",
+      "cityIn": "у Хоніарі",
+      "caps": "СОЛОМОНОВІ ОСТРОВИ"
+    },
+    "en": {
+      "name": "Solomon Islands",
+      "city": "Honiara",
+      "cityIn": "in Honiara",
+      "caps": "SOLOMON ISLANDS"
+    },
+    "es": {
+      "name": "Islas Salomón",
+      "city": "Honiara",
+      "cityIn": "en Honiara",
+      "caps": "ISLAS SALOMÓN"
+    },
+    "fr": {
+      "name": "Îles Salomon",
+      "city": "Honiara",
+      "cityIn": "à Honiara",
+      "caps": "ÎLES SALOMON"
+    }
+  },
+  "picto": "M2 36 H38 M8 36 V28.5 M32 36 V28.5 M8 32.3 H32 M3 28.5 H37 M3 28.5 Q8 21 16 16.5 M37 28.5 Q32 21 24 16.5 M16 16.5 H24 M16 16.5 V12 H24 V16.5 M15.3 12 H24.7 M20 12 V5.5 M12 32.3 V28.5 M16 32.3 V28.5 M20 32.3 V28.5 M24 32.3 V28.5 M28 32.3 V28.5 M18 36 V33.6 H22 V36",
+  "flagColors": [
+    "#0051BA",
+    "#FCD116",
+    "#215B33"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Хоніарі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Honiara"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Honiara"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Honiara"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

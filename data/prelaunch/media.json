@@ -1517,6 +1517,54 @@
         "x": 62,
         "y": 50
       }
+    },
+    "country:PG": {
+      "src": "/media/photos/port-moresby.webp",
+      "alt": {
+        "uk": "Центр Порт-Морсбі в сутінках: вежі над гаванню й захід сонця над затокою",
+        "en": "Central Port Moresby at dusk: towers above the harbour and sunset over the bay",
+        "es": "El centro de Port Moresby al anochecer: torres sobre el puerto y la puesta de sol sobre la bahía",
+        "fr": "Le centre de Port Moresby au crépuscule : tours au-dessus du port et coucher de soleil sur la baie"
+      },
+      "author": "Michael Cousins",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Port_Moresby_at_dusk.jpeg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
+    },
+    "country:RU": {
+      "src": "/media/photos/moscow.webp",
+      "alt": {
+        "uk": "Червона площа в грудневі сутінки: новорічна ялинка, ілюмінований ГУМ, удалині Нікольська вежа Кремля",
+        "en": "Red Square at December dusk: the New Year tree, the illuminated GUM and the Kremlin’s Nikolskaya Tower in the distance",
+        "es": "La Plaza Roja en un atardecer de diciembre: el árbol de Año Nuevo, el GUM iluminado y a lo lejos la torre Nikólskaya del Kremlin",
+        "fr": "La place Rouge au crépuscule de décembre : le sapin du Nouvel An, le GOUM illuminé et au loin la tour Nikolskaïa du Kremlin"
+      },
+      "author": "Valeri Pizhanski",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Moscow_(Red_Square)_(25249638183).jpg",
+      "position": {
+        "x": 45,
+        "y": 50
+      }
+    },
+    "country:SB": {
+      "src": "/media/photos/honiara.webp",
+      "alt": {
+        "uk": "Центр Хоніари пізно по обіді: дахи міста, пальми й море на обрії",
+        "en": "Central Honiara in the late afternoon: town roofs, palm trees and the sea on the horizon",
+        "es": "El centro de Honiara a última hora de la tarde: tejados, palmeras y el mar en el horizonte",
+        "fr": "Le centre de Honiara en fin d’après-midi : toits de la ville, palmiers et mer à l’horizon"
+      },
+      "author": "Kahunapule Michael Johnson",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Honiara_View.jpg",
+      "position": {
+        "x": 45,
+        "y": 55
+      }
     }
   }
 }

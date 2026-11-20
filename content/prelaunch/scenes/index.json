@@ -510,6 +510,24 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#20364a"
+    },
+    "PG": {
+      "src": "/scenes/PG-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#233435"
+    },
+    "RU": {
+      "src": "/scenes/RU-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#6b6159"
+    },
+    "SB": {
+      "src": "/scenes/SB-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

@@ -2278,5 +2278,89 @@
       "description": "Wallis-et-Futuna fête 2027 à 12 h UTC, la première en France. À Mata-Utu, on attend minuit sur les îlots du lagon, et à Futuna, on réveillonne au village."
     },
     "kit": "wf"
+  },
+  "PG": {
+    "text": "En Papouasie-Nouvelle-Guinée, on parle environ 840 langues — plus que dans tout autre pays — et plus de 95 % des habitants se disent chrétiens. Les grandes fêtes et les réunions de famille passent par le mumu : des aliments enveloppés de feuilles de bananier cuisent lentement dans un four creusé dans la terre, sur des pierres brûlantes. Le pays vit sur deux fuseaux : Bougainville passe minuit une heure plus tôt, le reste du pays à 14 h UTC.\n\nPort Moresby allume ses illuminations de Noël sur la plage d’Ela dès début décembre. Sur cette même plage, la commission de la ville organise chaque année une soirée du Nouvel An avec de la musique, et à minuit un feu d’artifice éclaire la capitale. Même la forte pluie de la dernière nuit de 2025 n’a pas empêché des milliers de personnes de descendre vers la mer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un mumu pour toute la famille",
+        "text": "Pour un grand festin, on creuse une fosse, on la garnit de pierres brûlantes et on y fait cuire lentement viande et légumes dans des feuilles de bananier. Le mumu se prépare ensemble — et se mange ensemble."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Minuit sur la plage d’Ela",
+        "text": "À Port Moresby, la dernière soirée de l’année se passe au bord de la mer : musique et humoristes sur la plage d’Ela, puis à minuit un feu d’artifice au-dessus de la ville."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Une plage propre au matin",
+        "text": "Après le feu d’artifice qui a accueilli 2025, des jeunes de Port Moresby ont nettoyé la plage d’Ela. Commence l’année de la même façon : avec une plage propre pour tous."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Papouasie-Nouvelle-Guinée : Port Moresby",
+      "description": "La Papouasie-Nouvelle-Guinée fête 2027 à 14 h UTC : Port Moresby se retrouve sur la plage d’Ela pour la musique et le feu d’artifice, puis on partage le mumu."
+    },
+    "kit": "pg+10"
+  },
+  "RU": {
+    "text": "En Russie, le Nouvel An est la grande fête familiale de l’hiver. On décore des sapins à la maison et sur les places, et Ded Moroz (le Grand-père Gel) et Snegourotchka (la Fille des neiges) apportent les cadeaux aux enfants. La nuit se passe autour d’une longue table de fête, avec salade Olivier, salade de hareng « shouba » et pelmeni. Beaucoup de familles regardent par habitude ce soir-là les comédies soviétiques du Nouvel An « La Nuit du carnaval » et « L’Ironie du sort », puis, à minuit, sonnent les carillons du Kremlin, suivis de l’hymne. Viennent ensuite les vacances du Nouvel An, jusqu’au Noël orthodoxe du 7 janvier.\n\nLes carillons que tout le pays entend se trouvent sur la tour Spasskaïa du Kremlin, au-dessus de la place Rouge. Fin 2025, des marchés du Nouvel An avec chocolat chaud et manèges se tenaient près de la place, la patinoire du GOUM ouvrait pour la vingtième fois, et le sapin principal du pays, un épicéa centenaire de 26 mètres, se dressait sur la place des Cathédrales, au Kremlin. La nuit du 31 décembre 2025, le métro de Moscou a circulé jusqu’au matin, gratuitement.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Sapin et Ded Moroz",
+        "text": "Décore un sapin à la maison : la nuit du Nouvel An, Ded Moroz et Snegourotchka apportent les cadeaux aux enfants."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Olivier et « shouba »",
+        "text": "Dresse une longue table de famille : salade Olivier, hareng sous manteau de fourrure et pelmeni."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Les carillons du Kremlin",
+        "text": "Accueille minuit au son des carillons du Kremlin, sur la tour Spasskaïa, suivis de l’hymne."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Russie : Moscou | Time2Fest",
+      "description": "À minuit à Moscou, 21 h UTC, la Russie fête 2027 au son des carillons du Kremlin et de l’hymne, et chez soi avec le sapin, Ded Moroz et la salade Olivier."
+    },
+    "kit": "ru+3"
+  },
+  "SB": {
+    "text": "Les Îles Salomon, ce sont six grandes îles et plus d’un millier de petites, où l’on parle de 60 à 70 langues et où le pidgin sert de langue commune. Presque tous les habitants sont chrétiens : on quitte donc la vieille année en priant. Sur l’île de Simbo, trois villages fêtent ensemble chaque année : après la veillée de prière, à minuit, on embrase sur la plage une pyramide de palmes sèches et de bambou, puis viennent les courses de pirogues, les danses et les concours de chorales. Tout le pays passe minuit à 13 h UTC.\n\nHoniara, la capitale, s’étend sur la côte nord-ouest de Guadalcanal et compte près de 130 000 habitants. Ici, le Nouvel An arrive en musique avec un compte à rebours : fin 2024, les groupes locaux One Tox et DMP ont joué dans les hôtels de la ville avec le chanteur de reggae Quino, et la fête a duré jusqu’au matin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Un feu à minuit",
+        "text": "À Simbo, après la veillée de prière, on brûle sur la plage une pyramide de palmes et de bambou. La haute flamme de minuit chasse la vieille année."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Courses de pirogues",
+        "text": "Pendant les jours du Nouvel An, les villages s’affrontent en pirogue, en danse et en chant choral. À la fin, le village hôte confie la fête suivante à ses voisins."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Compte à rebours en musique",
+        "text": "À Honiara, la dernière nuit de l’année se passe en concert : les groupes locaux jouent jusqu’à minuit, la foule compte les secondes, puis continue de danser."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An aux Îles Salomon : Honiara | Time2Fest",
+      "description": "Les Îles Salomon fêtent 2027 à 13 h UTC : Honiara compte à rebours en concert, et l’île de Simbo allume un grand feu sur la plage à minuit pile."
+    },
+    "kit": "sb"
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "RU",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "moscow",
+  "names": {
+    "uk": {
+      "name": "Росія",
+      "city": "Москва",
+      "cityIn": "у Москві",
+      "caps": "МОСКВА · РОСІЯ"
+    },
+    "en": {
+      "name": "Russia",
+      "city": "Moscow",
+      "cityIn": "in Moscow",
+      "caps": "MOSCOW · RUSSIA"
+    },
+    "es": {
+      "name": "Rusia",
+      "city": "Moscú",
+      "cityIn": "en Moscú",
+      "caps": "MOSCÚ · RUSIA"
+    },
+    "fr": {
+      "name": "Russie",
+      "city": "Moscou",
+      "cityIn": "à Moscou",
+      "caps": "MOSCOU · RUSSIE"
+    }
+  },
+  "picto": "M3 37 H37 M6 37 V30 H34 V37 M6 30 H34 M10 37 V34 A2 2 0 0 1 14 34 V37 M18 37 V34 A2 2 0 0 1 22 34 V37 M26 37 V34 A2 2 0 0 1 30 34 V37 M16.8 30 V17 H23.2 V30 M16.8 22 H23.2 M16.8 17 L19.2 6.6 H20.8 L23.2 17 M18.2 11.8 H21.8 M19.1 6.6 Q17.6 5 20 3 Q22.4 5 20.9 6.6 M20 3 V0.8 M18.8 1.8 H21.2 M7.6 30 V21 H12.4 V30 M7.9 21 C4.6 19 5.2 15.2 10 11.6 C14.8 15.2 15.4 19 12.1 21 Z M7 18.4 Q10 16.4 12.8 14.8 M10 11.6 V8.8 M8.9 9.8 H11.1 M27.6 30 V21 H32.4 V30 M27.9 21 C24.6 19 25.2 15.2 30 11.6 C34.8 15.2 35.4 19 32.1 21 Z M26.4 17.4 L28.4 18.8 L30 17.2 L31.6 18.8 L33.6 17.4 M30 11.6 V8.8 M28.9 9.8 H31.1",
+  "flagColors": [
+    "#FFFFFF",
+    "#0039A6",
+    "#D52B1E"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Москві"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Moscow"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Moscú"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Moscou"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

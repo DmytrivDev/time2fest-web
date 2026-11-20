@@ -2278,5 +2278,89 @@
       "description": "Wallis and Futuna greets 2027 at 12:00 UTC, first in France. Around Mata-Utu families wait for midnight on lagoon islets, and Futuna villages party together."
     },
     "kit": "wf"
+  },
+  "PG": {
+    "text": "Around 840 languages are spoken in Papua New Guinea — more than in any other country — and over 95% of people call themselves Christian. Big holidays and family gatherings here come with a mumu: food wrapped in banana leaves and slow-cooked in an earth oven over hot stones. The country runs on two time zones: Bougainville sees midnight an hour earlier, the rest of the country at 14:00 UTC.\n\nPort Moresby switches on its Christmas lights at Ela Beach in early December. The city commission holds a New Year's Eve party with live music on the same beach every year, and at midnight fireworks light up the capital. Even heavy rain on the last night of 2025 did not stop thousands of people from coming down to the sea.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A mumu for the whole family",
+        "text": "For a big feast people dig a pit, line it with hot stones and slow-cook meat and vegetables wrapped in banana leaves. A mumu is made together — and eaten together."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Midnight at Ela Beach",
+        "text": "In Port Moresby the last evening of the year is spent by the sea: music and comedy fill Ela Beach, and at midnight fireworks burst over the city."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "A clean beach by morning",
+        "text": "After the fireworks that welcomed 2025, young people in Port Moresby turned out to clean up Ela Beach. Start the year the same way — with a clean shore for everyone."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Papua New Guinea: Port Moresby | Time2Fest",
+      "description": "Papua New Guinea greets 2027 at 14:00 UTC: Port Moresby gathers at Ela Beach for music and midnight fireworks, and families share a mumu from the earth oven."
+    },
+    "kit": "pg+10"
+  },
+  "RU": {
+    "text": "In Russia, New Year is the main family holiday of winter. Trees are decorated at home and on city squares, and Ded Moroz (Grandfather Frost) and Snegurochka (the Snow Maiden) bring children their presents. The night is spent at a long festive table with Olivier salad, 'shuba' herring salad and pelmeni dumplings. Many families habitually watch the Soviet New Year comedies Carnival Night and The Irony of Fate that evening, and at midnight the Kremlin chimes ring out, followed by the anthem. Then come the New Year holidays, lasting until Orthodox Christmas on 7 January.\n\nThe chimes the whole country hears are on the Kremlin's Spasskaya Tower above Red Square. At the end of 2025 New Year fairs with hot chocolate and carousels ran near the square, the GUM ice rink opened for the twentieth time, and the country's main tree, a 100-year-old, 26-metre spruce, stood on Cathedral Square inside the Kremlin. On the night into 1 January 2026 the Moscow metro ran until morning, free of charge.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Tree and Ded Moroz",
+        "text": "Decorate a tree at home: on New Year's Eve Ded Moroz and Snegurochka bring children their presents."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Olivier and 'shuba'",
+        "text": "Set a long family table: Olivier salad, herring under a fur coat and pelmeni."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "The Kremlin chimes",
+        "text": "Greet midnight to the Kremlin chimes from the Spasskaya Tower, followed by the anthem."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Russia: Moscow | Time2Fest",
+      "description": "At midnight in Moscow, 21:00 UTC, Russia meets 2027 with the Kremlin chimes and the anthem, and at home with a tree, Ded Moroz and a bowl of Olivier salad."
+    },
+    "kit": "ru+3"
+  },
+  "SB": {
+    "text": "Solomon Islands is six large islands and more than a thousand small ones, where 60–70 languages are spoken and Pijin is the shared tongue. Almost everyone is Christian, so the old year is seen out with prayer. On Simbo Island three villages celebrate together every year: after the watch night service, at midnight they set fire to a pyramid of dried coconut leaves and bamboo on the beach, followed by canoe races, dancing and choir contests. The whole country reaches midnight at 13:00 UTC.\n\nHoniara, the capital on the northwest coast of Guadalcanal, is home to almost 130,000 people. Here the New Year arrives with countdown concerts: at the end of 2024 local bands One Tox and DMP shared hotel stages with reggae singer Quino, and the music went on until morning.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Fire at midnight",
+        "text": "On Simbo, after the watch night service, a pyramid of coconut leaves and bamboo is burned on the beach. The tall flame at midnight sees off the old year."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Canoe races",
+        "text": "Over the New Year days villages compete in canoe races, dancing and choir singing. At the end the host village hands the next New Year over to its neighbours."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A live-music countdown",
+        "text": "In Honiara the last night of the year is spent at concerts: local bands play right up to midnight, the crowd counts down the seconds — and keeps dancing."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Solomon Islands: Honiara | Time2Fest",
+      "description": "Solomon Islands greets 2027 at 13:00 UTC: Honiara counts down at live concerts, while Simbo Island lights a beach bonfire at midnight and races canoes."
+    },
+    "kit": "sb"
   }
 }

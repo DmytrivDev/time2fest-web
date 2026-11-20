@@ -2278,5 +2278,89 @@
       "description": "Wallis y Futuna recibe 2027 a las 12:00 UTC, antes que el resto de Francia. En Mata-Utu esperan la medianoche en los islotes y en Futuna lo celebra el pueblo."
     },
     "kit": "wf"
+  },
+  "PG": {
+    "text": "En Papúa Nueva Guinea se hablan unas 840 lenguas, más que en ningún otro país, y más del 95 % de la gente se declara cristiana. Las grandes fiestas y reuniones familiares llevan mumu: comida envuelta en hojas de plátano que se cocina despacio en un horno de tierra sobre piedras calientes. El país tiene dos husos horarios: Bougainville recibe la medianoche una hora antes y el resto del país, a las 14:00 UTC.\n\nPort Moresby enciende sus luces de Navidad en la playa de Ela a principios de diciembre. En esa misma playa la comisión de la ciudad organiza cada año la fiesta de Nochevieja con música en vivo, y a medianoche los fuegos artificiales iluminan la capital. Ni la lluvia intensa de la última noche de 2025 impidió que miles de personas bajaran al mar.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un mumu para toda la familia",
+        "text": "Para un gran banquete se cava un hoyo, se cubre de piedras calientes y se cocinan despacio carne y verduras envueltas en hojas de plátano. El mumu se prepara en grupo y en grupo se come."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Medianoche en la playa de Ela",
+        "text": "En Port Moresby la última tarde del año se pasa junto al mar: en la playa de Ela hay música y humoristas, y a medianoche los fuegos artificiales estallan sobre la ciudad."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Playa limpia por la mañana",
+        "text": "Tras los fuegos que recibieron 2025, jóvenes de Port Moresby salieron a limpiar la playa de Ela. Empieza el año igual: con una orilla limpia para todos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Papúa Nueva Guinea: Port Moresby",
+      "description": "Papúa Nueva Guinea recibe 2027 a las 14:00 UTC: Port Moresby se reúne en la playa de Ela con música y fuegos a medianoche, y las familias comparten un mumu."
+    },
+    "kit": "pg+10"
+  },
+  "RU": {
+    "text": "En Rusia, el Año Nuevo es la gran fiesta familiar del invierno. Se decoran abetos en casa y en las plazas, y Ded Moroz (el Abuelo Frío) y Snegúrochka (la Doncella de las Nieves) traen los regalos a los niños. La noche transcurre ante una larga mesa festiva con ensalada Olivier, ensalada «shuba» de arenque y pelmeni. Muchas familias ven por costumbre esa tarde las comedias soviéticas de Año Nuevo «La noche de carnaval» y «La ironía del destino» y, a medianoche, suenan las campanadas del Kremlin y después el himno. Luego llegan las vacaciones de Año Nuevo, que duran hasta la Navidad ortodoxa, el 7 de enero.\n\nLas campanadas que oye todo el país están en la torre Spásskaya del Kremlin, sobre la Plaza Roja. A finales de 2025 hubo junto a la plaza mercadillos de Año Nuevo con chocolate caliente y tiovivos, la pista de hielo de GUM abrió por vigésima vez y en la plaza de las Catedrales del Kremlin se alzó el árbol principal del país, un abeto centenario de 26 metros. En la Nochevieja de 2025 el metro de Moscú funcionó hasta la mañana y gratis.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Abeto y Ded Moroz",
+        "text": "Decora un abeto en casa: en Nochevieja Ded Moroz y Snegúrochka traen los regalos a los niños."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Olivier y «shuba»",
+        "text": "Prepara una larga mesa familiar: ensalada Olivier, arenque bajo abrigo de piel y pelmeni."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Las campanadas del Kremlin",
+        "text": "Recibe la medianoche con las campanadas del Kremlin desde la torre Spásskaya, seguidas del himno."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Rusia: Moscú | Time2Fest",
+      "description": "A medianoche en Moscú, 21:00 UTC, Rusia recibe 2027 con las campanadas del Kremlin y el himno, y en casa con el abeto, Ded Moroz y la ensalada Olivier."
+    },
+    "kit": "ru+3"
+  },
+  "SB": {
+    "text": "Las Islas Salomón son seis islas grandes y más de mil pequeñas, donde se hablan entre 60 y 70 lenguas y el pijin sirve de idioma común. Casi todos sus habitantes son cristianos, así que el año viejo se despide rezando. En la isla de Simbo tres aldeas lo celebran juntas cada año: tras la misa de vigilia, a medianoche prenden fuego en la playa a una pirámide de hojas secas de cocotero y bambú, y después llegan las regatas de canoas, los bailes y los concursos de coros. Todo el país recibe la medianoche a las 13:00 UTC.\n\nHoniara, la capital, está en la costa noroeste de Guadalcanal y tiene casi 130 000 habitantes. Aquí el Año Nuevo llega con conciertos y cuenta atrás: a finales de 2024 las bandas locales One Tox y DMP tocaron en hoteles de la ciudad junto al cantante de reggae Quino, y la música siguió hasta el amanecer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Fuego a medianoche",
+        "text": "En Simbo, tras la misa de vigilia, se quema en la playa una pirámide de hojas de cocotero y bambú. La gran llama de medianoche despide el año viejo."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Regatas de canoas",
+        "text": "En los días de Año Nuevo las aldeas compiten en canoas, bailes y coros. Al final, la aldea anfitriona cede a sus vecinos la fiesta del año siguiente."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Cuenta atrás con música",
+        "text": "En Honiara la última noche del año se pasa en conciertos: las bandas locales tocan hasta la medianoche, el público cuenta los segundos y sigue bailando."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en las Islas Salomón: Honiara | Time2Fest",
+      "description": "Las Islas Salomón reciben 2027 a las 13:00 UTC: Honiara cuenta atrás con conciertos y la isla de Simbo enciende una hoguera en la playa a medianoche."
+    },
+    "kit": "sb"
   }
 }

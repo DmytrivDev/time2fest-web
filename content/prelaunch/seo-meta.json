@@ -1206,6 +1206,60 @@
         "title": "Nouvel An à Wallis-et-Futuna : Mata-Utu | Time2Fest",
         "description": "Wallis-et-Futuna fête 2027 à 12 h UTC, la première en France. À Mata-Utu, on attend minuit sur les îlots du lagon, et à Futuna, on réveillonne au village."
       }
+    },
+    "PG": {
+      "uk": {
+        "title": "Новий рік у Папуа Новій Гвінеї: Порт-Морсбі | Time2Fest",
+        "description": "Папуа Нова Гвінея зустрічає 2027 рік о 14:00 UTC: у Порт-Морсбі вечір із музикою на пляжі Ела, салют опівночі й муму з земляної печі для всієї родини."
+      },
+      "en": {
+        "title": "New Year in Papua New Guinea: Port Moresby | Time2Fest",
+        "description": "Papua New Guinea greets 2027 at 14:00 UTC: Port Moresby gathers at Ela Beach for music and midnight fireworks, and families share a mumu from the earth oven."
+      },
+      "es": {
+        "title": "Año Nuevo en Papúa Nueva Guinea: Port Moresby",
+        "description": "Papúa Nueva Guinea recibe 2027 a las 14:00 UTC: Port Moresby se reúne en la playa de Ela con música y fuegos a medianoche, y las familias comparten un mumu."
+      },
+      "fr": {
+        "title": "Nouvel An en Papouasie-Nouvelle-Guinée : Port Moresby",
+        "description": "La Papouasie-Nouvelle-Guinée fête 2027 à 14 h UTC : Port Moresby se retrouve sur la plage d’Ela pour la musique et le feu d’artifice, puis on partage le mumu."
+      }
+    },
+    "RU": {
+      "uk": {
+        "title": "Новий рік у Росії: Москва | Time2Fest",
+        "description": "Опівночі в Москві, о 21:00 UTC, Росія зустрічає 2027 рік боєм Кремлівських курантів і гімном, а вдома — ялинкою, Дідом Морозом і салатом олів’є."
+      },
+      "en": {
+        "title": "New Year in Russia: Moscow | Time2Fest",
+        "description": "At midnight in Moscow, 21:00 UTC, Russia meets 2027 with the Kremlin chimes and the anthem, and at home with a tree, Ded Moroz and a bowl of Olivier salad."
+      },
+      "es": {
+        "title": "Año Nuevo en Rusia: Moscú | Time2Fest",
+        "description": "A medianoche en Moscú, 21:00 UTC, Rusia recibe 2027 con las campanadas del Kremlin y el himno, y en casa con el abeto, Ded Moroz y la ensalada Olivier."
+      },
+      "fr": {
+        "title": "Nouvel An en Russie : Moscou | Time2Fest",
+        "description": "À minuit à Moscou, 21 h UTC, la Russie fête 2027 au son des carillons du Kremlin et de l’hymne, et chez soi avec le sapin, Ded Moroz et la salade Olivier."
+      }
+    },
+    "SB": {
+      "uk": {
+        "title": "Новий рік на Соломонових Островах: Хоніара | Time2Fest",
+        "description": "Соломонові Острови зустрічають 2027 рік о 13:00 UTC: у Хоніарі — концерти з відліком, а на острові Сімбо опівночі палає вогонь на пляжі й гуде свято."
+      },
+      "en": {
+        "title": "New Year in Solomon Islands: Honiara | Time2Fest",
+        "description": "Solomon Islands greets 2027 at 13:00 UTC: Honiara counts down at live concerts, while Simbo Island lights a beach bonfire at midnight and races canoes."
+      },
+      "es": {
+        "title": "Año Nuevo en las Islas Salomón: Honiara | Time2Fest",
+        "description": "Las Islas Salomón reciben 2027 a las 13:00 UTC: Honiara cuenta atrás con conciertos y la isla de Simbo enciende una hoguera en la playa a medianoche."
+      },
+      "fr": {
+        "title": "Nouvel An aux Îles Salomon : Honiara | Time2Fest",
+        "description": "Les Îles Salomon fêtent 2027 à 13 h UTC : Honiara compte à rebours en concert, et l’île de Simbo allume un grand feu sur la plage à minuit pile."
+      }
     }
   }
 }
