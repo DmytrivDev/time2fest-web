@@ -900,6 +900,24 @@
         "title": "Nouvel An au Viêt Nam : Hô-Chi-Minh-Ville | Time2Fest",
         "description": "Hô-Chi-Minh-Ville fait son décompte rue Nguyen Hue, puis un feu d’artifice illumine la rivière de Saïgon. Au Viêt Nam, 2027 arrive à 17 h UTC le 31 décembre."
       }
+    },
+    "CW": {
+      "uk": {
+        "title": "Новий рік на Кюрасао: Віллемстад | Time2Fest",
+        "description": "Опівночі у Віллемстаді, о 04:00 UTC, Кюрасао зустрічає 2027 рік гуркотом пагари в Пітермаай, ладаном на щастя й обіймами на площі Бріонплейн."
+      },
+      "en": {
+        "title": "New Year in Curaçao: Willemstad | Time2Fest",
+        "description": "At midnight in Willemstad, 04:00 UTC, Curaçao greets 2027 with roaring pagara firecrackers in Pietermaai, incense for luck and hugs on Brionplein square."
+      },
+      "es": {
+        "title": "Año Nuevo en Curazao: Willemstad | Time2Fest",
+        "description": "A medianoche en Willemstad, 04:00 UTC, Curazao recibe 2027 con el estruendo de la pagara en Pietermaai, incienso para la suerte y abrazos en la plaza Brion."
+      },
+      "fr": {
+        "title": "Nouvel An à Curaçao : Willemstad | Time2Fest",
+        "description": "À minuit à Willemstad, 4 h UTC, Curaçao fête 2027 au fracas des pagaras de Pietermaai, avec de l’encens porte-bonheur et des embrassades sur la place Brion."
+      }
     }
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "NZ",
+  "zone": "UTC+13:45",
+  "zoneId": "utc+1345",
+  "cityId": "chatham",
+  "names": {
+    "uk": {
+      "name": "Нова Зеландія",
+      "city": "Острови Чатем",
+      "cityIn": "на островах Чатем",
+      "caps": "ЧАТЕМ · НОВА ЗЕЛАНДІЯ"
+    },
+    "en": {
+      "name": "New Zealand",
+      "city": "Chatham Islands",
+      "cityIn": "on the Chatham Islands",
+      "caps": "CHATHAM · NEW ZEALAND"
+    },
+    "es": {
+      "name": "Nueva Zelanda",
+      "city": "Islas Chatham",
+      "cityIn": "en las islas Chatham",
+      "caps": "CHATHAM · NUEVA ZELANDA"
+    },
+    "fr": {
+      "name": "Nouvelle-Zélande",
+      "city": "Îles Chatham",
+      "cityIn": "aux îles Chatham",
+      "caps": "CHATHAM · NOUVELLE-ZÉLANDE"
+    }
+  },
+  "picto": "M6 25 L7.2 23.3 H9.8 L11 25 L9.8 26.7 H7.2 Z M6 25 V32 M11 25 V32 M11 19 L12.2 17.3 H14.8 L16 19 L14.8 20.7 H12.2 Z M11 19 V32 M16 19 V32 M16 13 L17.2 11.3 H19.8 L21 13 L19.8 14.7 H17.2 Z M16 13 V32 M21 13 V32 M21 17 L22.2 15.3 H24.8 L26 17 L24.8 18.7 H22.2 Z M21 17 V32 M26 17 V32 M26 22 L27.2 20.3 H29.8 L31 22 L29.8 23.7 H27.2 Z M26 22 V32 M31 22 V32 M31 27 L32.2 25.3 H34.8 L36 27 L34.8 28.7 H32.2 Z M31 27 V32 M36 27 V32 M4 32 H38 M4 36 q2.5 -2 5 0 t5 0 t5 0 t5 0 t5 0 t5 0 t5 0",
+  "flagColors": [
+    "#C8102E",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на островах Чатем"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on the Chatham Islands"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en las islas Chatham"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux îles Chatham"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "CW",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "willemstad",
+  "names": {
+    "uk": {
+      "name": "Кюрасао",
+      "city": "Віллемстад",
+      "cityIn": "у Віллемстаді",
+      "caps": "ВІЛЛЕМСТАД · КЮРАСАО"
+    },
+    "en": {
+      "name": "Curaçao",
+      "city": "Willemstad",
+      "cityIn": "in Willemstad",
+      "caps": "WILLEMSTAD · CURAÇAO"
+    },
+    "es": {
+      "name": "Curazao",
+      "city": "Willemstad",
+      "cityIn": "en Willemstad",
+      "caps": "WILLEMSTAD · CURAZAO"
+    },
+    "fr": {
+      "name": "Curaçao",
+      "city": "Willemstad",
+      "cityIn": "à Willemstad",
+      "caps": "WILLEMSTAD · CURAÇAO"
+    }
+  },
+  "picto": "M1 33 H39 M3 33 V19 H10.5 V33 M2.4 19 L5 15 H8.5 L11.1 19 M10.5 33 V17 C10.5 13 12.8 13.4 13.4 10.5 H16.6 C17.2 13.4 19.5 13 19.5 17 V33 M13.4 10.5 L15 7.6 L16.6 10.5 M19.5 33 V20 H27 V33 M18.9 20 L21.5 16 H25 L27.6 20 M27 33 V16 C27 12 29.3 12.4 29.9 9.5 H33.1 C33.7 12.4 36 12 36 16 V33 M29.9 9.5 L31.5 6.6 L33.1 9.5 M5 22 h1.6 v2.4 h-1.6 Z M5 27 h1.6 v2.4 h-1.6 Z M14.2 20 h1.6 v2.4 h-1.6 Z M14.2 25.5 h1.6 v2.4 h-1.6 Z M22.4 23 h1.6 v2.4 h-1.6 Z M30.7 19.5 h1.6 v2.4 h-1.6 Z M30.7 25.5 h1.6 v2.4 h-1.6 Z M4 36.5 Q7 35 10 36.5 T16 36.5 T22 36.5 T28 36.5 T34 36.5",
+  "flagColors": [
+    "#002B7F",
+    "#F9E814",
+    "#FFFFFF"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Віллемстаді"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Willemstad"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Willemstad"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Willemstad"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

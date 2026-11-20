@@ -264,6 +264,18 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "CW": {
+      "src": "/scenes/CW-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "NZ@utc+1345": {
+      "src": "/scenes/NZ-utc+1345-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

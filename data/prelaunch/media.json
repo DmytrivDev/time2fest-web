@@ -861,6 +861,38 @@
         "x": 62,
         "y": 40
       }
+    },
+    "country:CW": {
+      "src": "/media/photos/willemstad.webp",
+      "alt": {
+        "uk": "Понтонний міст королеви Емми вночі: арки з вогнями, позаду фасади Пунди, Віллемстад",
+        "en": "The Queen Emma pontoon bridge at night: lit arches and the Punda façades behind, Willemstad",
+        "es": "El puente flotante Reina Emma de noche: arcos iluminados y las fachadas de Punda detrás, Willemstad",
+        "fr": "Le pont flottant Reine-Emma la nuit : arches illuminées et façades de Punda en arrière-plan, Willemstad"
+      },
+      "author": "dronepicr",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Willemstad_Curacao_Queen_Emma_Bridge_by_night_(36304702930).jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:NZ@utc+1345": {
+      "src": "/media/photos/chatham.webp",
+      "alt": {
+        "uk": "Вайтангі, головне селище островів Чатем: бухта з човнами в низькому ранковому світлі",
+        "en": "Waitangi, the main settlement of the Chatham Islands: a bay with boats in low morning light",
+        "es": "Waitangi, el principal poblado de las islas Chatham: una bahía con barcas a la luz baja de la mañana",
+        "fr": "Waitangi, principal village des îles Chatham : une baie avec des bateaux dans la lumière rasante du matin"
+      },
+      "author": "Marshelec",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Waitangi_and_harbour_scene.jpg",
+      "position": {
+        "x": 60,
+        "y": 45
+      }
     }
   }
 }

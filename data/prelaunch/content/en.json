@@ -1226,5 +1226,57 @@
       "description": "Ho Chi Minh City counts down on Nguyen Hue walking street and fireworks light the Saigon River at midnight. On 31 December, Vietnam welcomes 2027 at 17:00 UTC."
     },
     "kit": "vn"
+  },
+  "CW": {
+    "text": "Curaçao sees off the old year to the roar of the pagara, long strings of firecrackers lit to chase away bad spirits. From 27 December there are free fireworks shows every night, and Dutch oliebollen join the festive table. Before midnight many families clean the house thoroughly, fumigate it with incense and pass burning incense around themselves, believing the herbs bring luck, love and prosperity.\n\nWillemstad, whose historic centre has been on the UNESCO World Heritage List since 1997, is split by Sint Anna Bay into Punda and Otrobanda. The loudest pagara on 31 December goes off in Pietermaai, from early afternoon, with DJs and live bands. In the evening families bring chairs and food to Brionplein square, the crowd spills onto the Queen Emma pontoon bridge, and at midnight everyone hugs and wishes each other a happy new year.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "A string of pagara",
+        "text": "A long string of firecrackers is lit to chase away the bad spirits of the old year. The island's biggest pagara roars on 31 December in Willemstad's Pietermaai, from early afternoon into a street-wide party."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Incense before midnight",
+        "text": "The house is cleaned and fumigated with incense, and just before midnight people pass burning incense around themselves for luck, love and prosperity in the new year."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Midnight on Brionplein",
+        "text": "Grab a chair and some food and head to Brionplein in Otrobanda: bands, a blessing from the bishop and, at midnight, hugs with everyone around you and fireworks over the bay."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Curaçao: Willemstad | Time2Fest",
+      "description": "At midnight in Willemstad, 04:00 UTC, Curaçao greets 2027 with roaring pagara firecrackers in Pietermaai, incense for luck and hugs on Brionplein square."
+    },
+    "kit": "cw"
+  },
+  "NZ@utc+1345": {
+    "text": "New Zealand is one of the first countries to welcome the New Year — in the middle of summer. For many New Zealanders it is holiday time: since the 1950s families have left town over Christmas and January for beaches and campsites, and the habit has become part of local culture. The country's loudest midnight is in Auckland, where fireworks pour from three levels of the Sky Tower for five minutes.\n\nThe Chatham Islands lie 800 km east of the South Island, and midnight comes here 45 minutes earlier than in the rest of the country. After a day at the horse races, islanders raise a glass with visitors, and Kahuitara Point on Pitt Island is the first inhabited place to see the year's first sunrise. The picture shows Waitangi with its wharf and basalt columns like those at Ohira Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "The year's first sunrise",
+        "text": "Kahuitara Point on Pitt Island is the first inhabited place to see the new year's sunrise. In 2000 about 300 people greeted the dawn on Mt Rangaika with a haka and a blown conch."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Horse races",
+        "text": "Around Christmas the island spends three days at the races: the local jockey club was founded in 1874 and is the second oldest in the country. Picnic blankets go down right in front of the trucks."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "A toast before everyone",
+        "text": "At midnight, 45 minutes before Auckland, islanders raise a glass, and visitors from the mainland celebrate with locals at the hotel in Waitangi."
+      }
+    ],
+    "kit": "nz+1345"
   }
 }

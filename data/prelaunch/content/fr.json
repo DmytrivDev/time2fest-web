@@ -1226,5 +1226,57 @@
       "description": "Hô-Chi-Minh-Ville fait son décompte rue Nguyen Hue, puis un feu d’artifice illumine la rivière de Saïgon. Au Viêt Nam, 2027 arrive à 17 h UTC le 31 décembre."
     },
     "kit": "vn"
+  },
+  "CW": {
+    "text": "Curaçao dit adieu à l’année au fracas de la pagara, de longues guirlandes de pétards allumées pour chasser les mauvais esprits. Dès le 27 décembre, des feux d’artifice gratuits éclatent chaque soir, et les oliebollen hollandais rejoignent la table de fête. Avant minuit, beaucoup de familles nettoient la maison à fond, l’encensent et passent de l’encens allumé autour d’elles : on dit que les herbes apportent chance, amour et prospérité.\n\nWillemstad, dont le centre historique est inscrit au patrimoine mondial de l’UNESCO depuis 1997, est coupée par la baie de Sint Anna en Punda et Otrobanda. La pagara la plus bruyante du 31 décembre éclate à Pietermaai, dès le début d’après-midi, avec DJ et groupes live. Le soir, les familles apportent chaises et plats sur la place Brion, la foule déborde sur le pont flottant de la Reine-Emma, et à minuit tout le monde s’embrasse en se souhaitant une bonne année.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Une guirlande de pagara",
+        "text": "On allume une longue guirlande de pétards pour chasser les mauvais esprits de l’année. La plus grande pagara de l’île tonne le 31 décembre à Pietermaai, à Willemstad, dès l’après-midi, puis la rue entière fait la fête."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "De l’encens avant minuit",
+        "text": "On nettoie la maison et on l’encense, puis juste avant minuit on passe de l’encens allumé autour de soi pour la chance, l’amour et la prospérité."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Minuit sur la place Brion",
+        "text": "Prends une chaise et de quoi manger, direction la place Brion à Otrobanda : groupes, bénédiction de l’évêque et, à minuit, embrassades avec tous tes voisins et feux d’artifice sur la baie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Curaçao : Willemstad | Time2Fest",
+      "description": "À minuit à Willemstad, 4 h UTC, Curaçao fête 2027 au fracas des pagaras de Pietermaai, avec de l’encens porte-bonheur et des embrassades sur la place Brion."
+    },
+    "kit": "cw"
+  },
+  "NZ@utc+1345": {
+    "text": "La Nouvelle-Zélande est l’un des premiers pays à fêter le Nouvel An, en plein été. Pour beaucoup de Néo-Zélandais, c’est le temps des vacances : depuis les années 1950, à Noël et en janvier, les familles quittent la ville pour les plages et les campings, une habitude devenue partie de la culture locale. Le minuit le plus bruyant du pays est à Auckland, où le feu d’artifice jaillit pendant cinq minutes de trois niveaux de la Sky Tower.\n\nLes îles Chatham se trouvent à 800 km à l’est de l’île du Sud, et minuit y sonne 45 minutes plus tôt que dans le reste du pays. Après une journée de courses de chevaux, les habitants trinquent avec les visiteurs, et la pointe Kahuitara, sur l’île Pitt, est le premier lieu habité à voir le lever du soleil de l’année. L’image montre Waitangi avec son quai et des colonnes de basalte comme celles de la baie d’Ohira.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Le premier lever de soleil",
+        "text": "La pointe Kahuitara, sur l’île Pitt, est le premier lieu habité à voir se lever le soleil de la nouvelle année. En 2000, environ 300 personnes ont salué l’aube sur le mont Rangaika avec un haka et une conque."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Courses de chevaux",
+        "text": "Autour de Noël, l’île vit trois jours de courses : le jockey-club local a été fondé en 1874, c’est le deuxième plus ancien du pays. On étend les plaids de pique-nique juste devant les pick-up."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Trinquer avant tout le monde",
+        "text": "À minuit, 45 minutes avant Auckland, les insulaires lèvent leur verre, et les visiteurs venus de la grande île fêtent avec les habitants à l’hôtel de Waitangi."
+      }
+    ],
+    "kit": "nz+1345"
   }
 }

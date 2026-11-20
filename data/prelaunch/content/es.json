@@ -1226,5 +1226,57 @@
       "description": "Ciudad Ho Chi Minh cuenta atrás en la calle Nguyen Hue y a medianoche los fuegos iluminan el río Saigón. En Vietnam llega 2027 a las 17:00 UTC del 31/12."
     },
     "kit": "vn"
+  },
+  "CW": {
+    "text": "Curazao despide el año viejo con el estruendo de la pagara, largas tiras de petardos que se encienden para ahuyentar a los malos espíritus. Desde el 27 de diciembre hay fuegos artificiales gratuitos cada noche, y a la mesa festiva llegan los oliebollen holandeses. Antes de medianoche muchas familias limpian a fondo la casa, la sahúman con incienso y se pasan incienso encendido alrededor del cuerpo: creen que las hierbas traen suerte, amor y prosperidad.\n\nWillemstad, cuyo centro histórico es Patrimonio de la Humanidad desde 1997, está dividida por la bahía de Santa Ana en Punda y Otrobanda. La pagara más ruidosa del 31 de diciembre estalla en Pietermaai, desde primera hora de la tarde, con DJ y bandas en vivo. Por la noche las familias llevan sillas y comida a la plaza Brion, el gentío llena el puente flotante de la Reina Emma y a medianoche todos se abrazan y se desean un feliz año.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Una tira de pagara",
+        "text": "Se enciende una larga tira de petardos para ahuyentar a los malos espíritus del año viejo. La mayor pagara de la isla truena el 31 de diciembre en Pietermaai, en Willemstad, desde la tarde y hasta la fiesta callejera."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Incienso antes de medianoche",
+        "text": "La casa se limpia y se sahúma con incienso, y justo antes de medianoche cada uno se pasa incienso encendido alrededor del cuerpo para atraer suerte, amor y prosperidad."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Medianoche en la plaza Brion",
+        "text": "Lleva una silla y algo de comer a la plaza Brion, en Otrobanda: bandas, la bendición del obispo y, a medianoche, abrazos con todos los que tengas cerca y fuegos sobre la bahía."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Curazao: Willemstad | Time2Fest",
+      "description": "A medianoche en Willemstad, 04:00 UTC, Curazao recibe 2027 con el estruendo de la pagara en Pietermaai, incienso para la suerte y abrazos en la plaza Brion."
+    },
+    "kit": "cw"
+  },
+  "NZ@utc+1345": {
+    "text": "Nueva Zelanda es uno de los primeros países en recibir el Año Nuevo, en pleno verano. Para muchos neozelandeses es tiempo de vacaciones: desde los años cincuenta, en Navidad y enero las familias dejan la ciudad para ir a la playa y de acampada, una costumbre que ya forma parte de la cultura local. La medianoche más ruidosa del país es la de Auckland, donde los fuegos salen durante cinco minutos desde tres niveles de la Sky Tower.\n\nLas islas Chatham están a 800 km al este de la Isla Sur, y aquí la medianoche llega 45 minutos antes que en el resto del país. Tras un día de carreras de caballos, los isleños brindan con los visitantes, y la punta Kahuitara, en la isla Pitt, es el primer lugar habitado que ve el amanecer del año. En la imagen, Waitangi con su muelle y columnas de basalto como las de la bahía de Ohira.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "El primer amanecer del año",
+        "text": "La punta Kahuitara, en la isla Pitt, es el primer lugar habitado que ve salir el sol del año nuevo. En 2000 unas 300 personas recibieron el alba en el monte Rangaika con un haka y el sonido de una caracola."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Carreras de caballos",
+        "text": "En torno a Navidad, la isla vive tres días de carreras: el club de jockeys local se fundó en 1874 y es el segundo más antiguo del país. Las mantas de pícnic se extienden justo delante de las camionetas."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Un brindis antes que nadie",
+        "text": "A medianoche, 45 minutos antes que Auckland, los isleños alzan las copas, y los visitantes del continente lo celebran con los vecinos en el hotel de Waitangi."
+      }
+    ],
+    "kit": "nz+1345"
   }
 }
