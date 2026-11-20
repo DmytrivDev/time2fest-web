@@ -1229,6 +1229,70 @@
         "x": 55,
         "y": 55
       }
+    },
+    "country:US@utc-0800": {
+      "src": "/media/photos/san-francisco.webp",
+      "alt": {
+        "uk": "Новорічний салют над Сан-Франциско",
+        "en": "New Year fireworks over San Francisco",
+        "es": "Fuegos artificiales de Año Nuevo sobre San Francisco",
+        "fr": "Feu d’artifice du Nouvel An au-dessus de San Francisco"
+      },
+      "author": "Jay Huang",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Happy_New_Year_2016_(23741353439).jpg",
+      "position": {
+        "x": 45,
+        "y": 42
+      }
+    },
+    "country:ES@utc+0000": {
+      "src": "/media/photos/canary.webp",
+      "alt": {
+        "uk": "Бухта пляжу Лас-Кантерас уночі, Лас-Пальмас-де-Гран-Канарія",
+        "en": "Las Canteras beach bay at night, Las Palmas de Gran Canaria",
+        "es": "La bahía de la playa de Las Canteras de noche, Las Palmas de Gran Canaria",
+        "fr": "La baie de la plage de Las Canteras la nuit, Las Palmas de Gran Canaria"
+      },
+      "author": "El Coleccionista de Instantes Fotografía & Video",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fuegos_de_San_Juan_2010.Playa_de_Las_Canteras.Las_Palmas_de_Gran_Canaria_(4730802050).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:WS": {
+      "src": "/media/photos/apia.webp",
+      "alt": {
+        "uk": "Вечірній ринок на набережній Апіа: танці під живу музику",
+        "en": "The evening market on the Apia waterfront: dancing to live music",
+        "es": "El mercado nocturno del malecón de Apia: baile con música en directo",
+        "fr": "Le marché du soir sur le front de mer d’Apia : danse sur de la musique live"
+      },
+      "author": "U.S. Navy, Elijah Webb",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pacific_Partnership_2025_Multinational_Band_Performs_at_the_Waterfront_Night_Market_(9379611).jpg",
+      "position": {
+        "x": 55,
+        "y": 40
+      }
+    },
+    "country:CA@utc-0700": {
+      "src": "/media/photos/vancouver.webp",
+      "alt": {
+        "uk": "Канада-Плейс з білими «вітрилами» й хмарочоси Ванкувера вночі, відображені у воді бухти",
+        "en": "Canada Place with its white “sails” and Vancouver’s skyscrapers at night, reflected in the harbour",
+        "es": "Canada Place con sus «velas» blancas y los rascacielos de Vancouver de noche, reflejados en la bahía",
+        "fr": "Canada Place et ses « voiles » blanches avec les gratte-ciel de Vancouver la nuit, reflétés dans la baie"
+      },
+      "author": "KimonBerlin",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Passenger_terminal_at_night_(2288833135).jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
     }
   }
 }

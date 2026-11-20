@@ -954,6 +954,24 @@
         "title": "Nouvel An en Lituanie : Vilnius | Time2Fest",
         "description": "À minuit à Vilnius, 22 h UTC, la Lituanie fête 2027 par un jeu de lumière place de la Cathédrale au lieu du feu d’artifice ; chez soi, la cire dit l’avenir."
       }
+    },
+    "WS": {
+      "uk": {
+        "title": "Новий рік у Самоа: Апіа | Time2Fest",
+        "description": "Самоа вітає 2027 рік однією з перших: північ в Апіа — об 11:00 UTC. Родини моляться в церкві, а з набережної дивляться салют із пагорба Палісі."
+      },
+      "en": {
+        "title": "New Year in Samoa: Apia | Time2Fest",
+        "description": "Samoa greets 2027 among the very first: midnight in Apia is at 11:00 UTC. Families pray in church, then watch fireworks over Palisi hill from the seawall."
+      },
+      "es": {
+        "title": "Año Nuevo en Samoa: Apia | Time2Fest",
+        "description": "Samoa recibe 2027 entre los primeros: la medianoche en Apia llega a las 11:00 UTC. Las familias rezan en la iglesia y ven los fuegos de Palisi desde el malecón."
+      },
+      "fr": {
+        "title": "Nouvel An aux Samoa : Apia | Time2Fest",
+        "description": "Les Samoa fêtent 2027 parmi les premiers : minuit sonne à Apia à 11 h UTC. Les familles prient à l’église, puis voient le feu d’artifice de Palisi sur la digue."
+      }
     }
   }
 }

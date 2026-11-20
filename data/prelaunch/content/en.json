@@ -560,9 +560,9 @@
     "traditions": [
       {
         "id": "t1",
-        "iconId": "address",
-        "title": "Watch Bye Bye",
-        "text": "On the evening of 31 December, turn on Radio-Canada: the comedy review of the year Quebec has watched since 1968 ends with the countdown to midnight."
+        "iconId": "fireworks",
+        "title": "See in midnight at Niagara",
+        "text": "Thousands see in the New Year in Niagara Falls, Ontario: at midnight fireworks burst over the illuminated falls."
       },
       {
         "id": "t2",
@@ -1720,7 +1720,7 @@
     "kit": "ca-330"
   },
   "CA@utc-0400": {
-    "text": "Canada sees in the New Year a little differently in each province, though some customs unite the whole country. In Quebec people switch on Bye Bye on 31 December, Radio-Canada’s comedy review of the year, aired since 1968 and ending with the countdown to midnight. On 1 January the provincial lieutenant governors and military units hold levees, New Year receptions open to everyone; the first one in Canada took place back in 1646.\n\nLast year Halifax celebrated outdoors in Grand Parade: DJs and musicians played from 11 pm, fireworks went up at midnight and city transit ran free. In the morning Government House, the oldest vice-regal residence in North America, welcomes visitors, and in Dartmouth hundreds of people plunge into a pool cut in the ice of Lake Banook.",
+    "text": "Canada sees in the New Year a little differently in each province, though some customs unite the whole country. In Quebec people watch Bye Bye on 31 December, Radio-Canada’s comedy review of the year, aired since 1968 and ending with the countdown to midnight. On 1 January the provincial lieutenant governors and military units hold levees, New Year receptions open to everyone; the first one in Canada took place back in 1646.\n\nLast year Halifax celebrated outdoors in Grand Parade: DJs and musicians played from 11 pm, fireworks went up at midnight and city transit ran free. In the morning Government House, the oldest vice-regal residence in North America, welcomes visitors, and in Dartmouth hundreds of people plunge into a pool cut in the ice of Lake Banook.",
     "traditions": [
       {
         "id": "t1",
@@ -1790,5 +1790,105 @@
       }
     ],
     "kit": "mx-8"
+  },
+  "US@utc-0800": {
+    "text": "The Pacific zone of the United States, from Seattle and San Francisco to Los Angeles and Las Vegas, welcomes the New Year three hours after New York. Since 2000 Las Vegas has thrown America’s Party on the Strip: for 2025 the Sphere, the world’s largest LED screen, led the countdown for the first time, followed by eight minutes of fireworks from the rooftops of nine resorts. In San Francisco free midnight fireworks light up the Bay by the Ferry Building on the Embarcadero, and in Seattle a drone show gives way to fireworks over the Space Needle.\n\nIn Los Angeles, Grand Park hosts the free NYELA party, and at midnight the countdown glows on City Hall. On the morning of 1 January neighbouring Pasadena starts the 138th Rose Parade.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Walk the Strip at midnight",
+        "text": "On New Year’s Eve the Las Vegas Strip closes to cars and the boulevard fills with people on foot. At midnight fireworks fly from resort rooftops for eight minutes, so leave big bags at the hotel."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Fireworks over bay and tower",
+        "text": "In San Francisco the free fireworks look best from the Embarcadero just south of the Ferry Building. In Seattle people watch from Seattle Center, on the lawn by the International Fountain."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "A morning at the Rose Parade",
+        "text": "1 January is a federal holiday. At 8 a.m. the Rose Parade sets off in Pasadena: flower-covered floats roll 9 km, and some people hold their spot on the sidewalk from the night of 31 December."
+      }
+    ],
+    "kit": "us-8"
+  },
+  "ES@utc+0000": {
+    "text": "In Spain the New Year arrives with grapes: at midnight people eat twelve of them to the twelve chimes of the clock, one per chime, for luck and prosperity. Then comes a glass of cava, sometimes with a gold ring at the bottom, drunk in one go. But since 1940 the Canary Islands have lived an hour behind the mainland, and Spaniards are used to hearing on radio and TV: «una hora menos en Canarias» — one hour less in the Canaries.\n\nSo on the islands the grapes are eaten when Madrid is already celebrating. Since the night 1984 began, state television has shown the Canarian midnight an hour after Puerta del Sol, each time from a different island; 2026 was welcomed in Plaza de la Candelaria in Santa Cruz de Tenerife. In Las Palmas de Gran Canaria fireworks rise over Las Canteras beach at midnight, and on the afternoon of 31 December the San Silvestre race runs through the city.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Grapes an hour later",
+        "text": "One grape for each of the twelve chimes, for a lucky year. Midnight in the Canaries comes an hour after Madrid, so television shows the islands' chimes separately."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "A gold ring in the glass",
+        "text": "After the grapes, raise a glass of cava: a gold ring or coin goes in for prosperity, a strawberry for love. Then drink it in one go."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over Las Canteras",
+        "text": "Las Palmas de Gran Canaria welcomed 2026 with fireworks launched from Los Muellitos over Las Canteras beach. That night's free concerts played behind Parque de Santa Catalina."
+      }
+    ],
+    "kit": "es+0"
+  },
+  "WS": {
+    "text": "Samoa is one of the first countries in the world to see the new year. That began at the end of 2011, when the country moved to the other side of the date line and simply skipped 30 December, so midnight here falls at 11:00 UTC. For many families the old year ends in church: evening services start at nine or eleven, and the last minutes of the year are spent in prayer. 1 and 2 January are public holidays.\n\nApia is the capital, on the north coast of Upolu island. People claim their spots early on the seawall by the Government Building, count down the last twenty seconds, and at midnight a ten-minute fireworks show rises from Palisi hill above the centre. Bells ring and sirens sound across town, and the Prime Minister addresses the nation with a New Year message.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A service until midnight",
+        "text": "Many families see the year out in church: the service begins in the evening, and the congregation prays together through the last minutes before midnight to give thanks for the year."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks from Palisi",
+        "text": "In Apia people take their places on the seawall hours ahead to watch the fireworks from the hill above the centre. Away from downtown, children line the streets with their own small crackers."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "A week of prayer and fasting",
+        "text": "On the first Sunday of January the government opens a national week of prayer and fasting. The custom dates from 1990, after Cyclone Ofa struck: people ask for protection for Samoa through the year."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Samoa: Apia | Time2Fest",
+      "description": "Samoa greets 2027 among the very first: midnight in Apia is at 11:00 UTC. Families pray in church, then watch fireworks over Palisi hill from the seawall."
+    },
+    "kit": "ws"
+  },
+  "CA@utc-0700": {
+    "text": "Each Canadian province greets the New Year a little differently, but a few customs bring the country together. On 31 December Quebec settles in front of the TV for Bye Bye, Radio-Canada's comedy review of the year, aired since 1968 and ending with the countdown to midnight. On 1 January the Governor General and the provincial lieutenant governors hold levees, New Year receptions open to anyone.\n\nSince 2026 British Columbia has kept permanent Pacific time, UTC−7. Vancouver has had no city fireworks since 2018, so people count down on their own outside Canada Place and at the Gastown Steam Clock, or head up Grouse Mountain. On 1 January thousands plunge into English Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Greet the governor",
+        "text": "On 1 January anyone can walk into a New Year's levee, children too: shake the host's hand and wish them a good year."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Meet midnight on a mountain",
+        "text": "Last year on Grouse Mountain above Vancouver people skated to a DJ, and at midnight fireworks set to music lit up the summit."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Join the Polar Bear Swim",
+        "text": "Every 1 January since 1920 Vancouver has plunged into chilly English Bay; it is free, and more than 11,000 swimmers registered last year."
+      }
+    ],
+    "kit": "ca-7"
   }
 }

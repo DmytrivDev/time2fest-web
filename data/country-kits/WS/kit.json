@@ -1,0 +1,99 @@
+{
+  "code": "WS",
+  "zone": "UTC+13",
+  "zoneId": "utc+1300",
+  "cityId": "apia",
+  "names": {
+    "uk": {
+      "name": "Самоа",
+      "city": "Апіа",
+      "cityIn": "в Апіа",
+      "caps": "АПІА · САМОА"
+    },
+    "en": {
+      "name": "Samoa",
+      "city": "Apia",
+      "cityIn": "in Apia",
+      "caps": "APIA · SAMOA"
+    },
+    "es": {
+      "name": "Samoa",
+      "city": "Apia",
+      "cityIn": "en Apia",
+      "caps": "APIA · SAMOA"
+    },
+    "fr": {
+      "name": "Samoa",
+      "city": "Apia",
+      "cityIn": "à Apia",
+      "caps": "APIA · SAMOA"
+    }
+  },
+  "picto": "M8 37 V13 H16 V37 M24 37 V13 H32 V37 M5 37 H35 M16 22 L20 17 L24 22 M20 17 V14 M18.6 15.2 H21.4 M18 27 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M18 37 V33 a2 2 0 0 1 4 0 V37 M9.5 13 Q9 8.6 12 7 Q15 8.6 14.5 13 M12 7 V2 M10.4 3.6 H13.6 M25.5 13 Q25 8.6 28 7 Q31 8.6 30.5 13 M28 7 V2 M26.4 3.6 H29.6 M10.6 30 V34 M13.4 30 V34 M26.6 30 V34 M29.4 30 V34 M11 24 V20 A1 1 0 0 1 13 20 V24 M27 24 V20 A1 1 0 0 1 29 20 V24 M8 27 H16 M24 27 H32",
+  "flagColors": [
+    "#CE1126",
+    "#002B7F",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Апіа"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Apia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Apia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Apia"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

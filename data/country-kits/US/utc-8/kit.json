@@ -1,0 +1,99 @@
+{
+  "code": "US",
+  "zone": "UTC-8",
+  "zoneId": "utc-0800",
+  "cityId": "los-angeles",
+  "names": {
+    "uk": {
+      "name": "США",
+      "city": "Лос-Анджелес",
+      "cityIn": "у Лос-Анджелесі",
+      "caps": "ЛОС-АНДЖЕЛЕС · США"
+    },
+    "en": {
+      "name": "United States",
+      "city": "Los Angeles",
+      "cityIn": "in Los Angeles",
+      "caps": "LOS ANGELES · USA"
+    },
+    "es": {
+      "name": "Estados Unidos",
+      "city": "Los Ángeles",
+      "cityIn": "en Los Ángeles",
+      "caps": "LOS ÁNGELES · EE. UU."
+    },
+    "fr": {
+      "name": "États-Unis",
+      "city": "Los Angeles",
+      "cityIn": "à Los Angeles",
+      "caps": "LOS ANGELES · ÉTATS-UNIS"
+    }
+  },
+  "picto": "M3 33 H37 M5.5 33 V22.5 H10.5 V33 M4.5 22.5 H11.5 M5.6 22.5 A2.4 2.4 0 0 1 10.4 22.5 M29.5 33 V22.5 H34.5 V33 M28.5 22.5 H35.5 M29.6 22.5 A2.4 2.4 0 0 1 34.4 22.5 M10.5 27 H15 M25 27 H29.5 M15 33 V21 H25 V33 M14 21 H26 M14.5 21 A5.5 5.5 0 0 1 25.5 21 M20 15.5 V13 M17.5 33 V26 M20 33 V26 M22.5 33 V26 M13 33 V29.5 M27 33 V29.5 M2 37.5 C12 35 28 35 38 37.5",
+  "flagColors": [
+    "#B22234",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Лос-Анджелесі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Los Angeles"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Los Ángeles"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Los Angeles"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -560,9 +560,9 @@
     "traditions": [
       {
         "id": "t1",
-        "iconId": "address",
-        "title": "Regarde le « Bye Bye »",
-        "text": "Le soir du 31 décembre, allume Radio-Canada : la revue humoristique de l’année que le Québec regarde depuis 1968 se termine par le décompte jusqu’à minuit."
+        "iconId": "fireworks",
+        "title": "Fête minuit au Niagara",
+        "text": "Des milliers de personnes fêtent le Nouvel An à Niagara Falls, en Ontario : à minuit, les feux éclatent au-dessus des chutes illuminées."
       },
       {
         "id": "t2",
@@ -1720,7 +1720,7 @@
     "kit": "ca-330"
   },
   "CA@utc-0400": {
-    "text": "Le Canada fête le Nouvel An un peu différemment dans chaque province, mais certaines coutumes rassemblent tout le pays. Au Québec, le 31 décembre, on allume le « Bye Bye », la revue humoristique de l’année de Radio-Canada, diffusée depuis 1968 et qui se termine par le décompte jusqu’à minuit. Le 1er janvier, les lieutenants-gouverneurs des provinces et les unités militaires tiennent leurs levées, des réceptions du Nouvel An ouvertes à tous ; la première au Canada remonte à 1646.\n\nL’an dernier, Halifax a fêté en plein air sur la place Grand Parade : DJ et musiciens ont joué dès 23 h, un feu d’artifice a éclaté à minuit et les transports en commun étaient gratuits. Le matin, Government House, la plus ancienne résidence vice-royale d’Amérique du Nord, accueille les visiteurs, et à Dartmouth des centaines de personnes plongent dans un bassin taillé dans la glace du lac Banook.",
+    "text": "Le Canada fête le Nouvel An un peu différemment dans chaque province, mais certaines coutumes rassemblent tout le pays. Au Québec, le 31 décembre, on regarde le « Bye Bye », la revue humoristique de l’année de Radio-Canada, diffusée depuis 1968 et qui se termine par le décompte jusqu’à minuit. Le 1er janvier, les lieutenants-gouverneurs des provinces et les unités militaires tiennent leurs levées, des réceptions du Nouvel An ouvertes à tous ; la première au Canada remonte à 1646.\n\nL’an dernier, Halifax a fêté en plein air sur la place Grand Parade : DJ et musiciens ont joué dès 23 h, un feu d’artifice a éclaté à minuit et les transports en commun étaient gratuits. Le matin, Government House, la plus ancienne résidence vice-royale d’Amérique du Nord, accueille les visiteurs, et à Dartmouth des centaines de personnes plongent dans un bassin taillé dans la glace du lac Banook.",
     "traditions": [
       {
         "id": "t1",
@@ -1790,5 +1790,105 @@
       }
     ],
     "kit": "mx-8"
+  },
+  "US@utc-0800": {
+    "text": "Le fuseau Pacifique des États-Unis, de Seattle et San Francisco à Los Angeles et Las Vegas, fête le Nouvel An trois heures après New York. Depuis 2000, Las Vegas organise America’s Party sur le Strip : pour 2025, la Sphere, plus grand écran LED du monde, a mené le décompte pour la première fois, suivie de huit minutes de feux tirés des toits de neuf complexes hôteliers. À San Francisco, un feu d’artifice gratuit illumine la baie à minuit près du Ferry Building, sur l’Embarcadero, et à Seattle un spectacle de drones laisse place aux feux au-dessus de la Space Needle.\n\nÀ Los Angeles, le Grand Park accueille la fête gratuite NYELA et, à minuit, le décompte s’affiche sur l’hôtel de ville. Le matin du 1er janvier, la voisine Pasadena lance la 138e Rose Parade.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Le Strip à pied",
+        "text": "Le soir du Nouvel An, le Strip de Las Vegas est fermé aux voitures et le boulevard se remplit de piétons. À minuit, les feux partent des toits des complexes pendant huit minutes : laisse les grands sacs à l’hôtel."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Feux sur la baie et la tour",
+        "text": "À San Francisco, le feu d’artifice gratuit se voit le mieux depuis l’Embarcadero, au sud du Ferry Building. À Seattle, on le regarde depuis le Seattle Center, sur la pelouse de l’International Fountain."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Un matin de Rose Parade",
+        "text": "Le 1er janvier est un jour férié fédéral. À 8 h, la Rose Parade s’élance à Pasadena : des chars couverts de fleurs parcourent 9 km, et certains gardent leur place sur le trottoir dès la nuit du 31 décembre."
+      }
+    ],
+    "kit": "us-8"
+  },
+  "ES@utc+0000": {
+    "text": "En Espagne, la nouvelle année arrive avec des raisins : à minuit, on en mange douze, un à chacun des douze coups de l’horloge, pour la chance et la prospérité. Puis vient une coupe de cava, parfois avec une bague en or au fond, bue d’un trait. Mais depuis 1940, les Canaries vivent une heure derrière le continent, et l’Espagne a l’habitude d’entendre à la radio et à la télévision « una hora menos en Canarias » — une heure de moins aux Canaries.\n\nSur les îles, on mange donc les raisins quand Madrid fait déjà la fête. Depuis le passage à 1984, la télévision publique montre le minuit canarien une heure après la Puerta del Sol, chaque fois depuis une île différente ; 2026 a été accueillie sur la place de la Candelaria à Santa Cruz de Tenerife. À Las Palmas de Gran Canaria, un feu d’artifice illumine la plage de Las Canteras à minuit, et l’après-midi du 31 décembre la course de la San Silvestre traverse la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Les raisins, une heure après",
+        "text": "Un raisin à chacun des douze coups, pour une année de chance. Aux Canaries, minuit sonne une heure après Madrid : la télévision diffuse donc à part les douze coups des îles."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Une bague dans la coupe",
+        "text": "Après les raisins, on lève une coupe de cava : une bague ou une pièce en or pour la prospérité, une fraise pour l’amour. Puis on la boit d’un trait."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à Las Canteras",
+        "text": "Las Palmas de Gran Canaria a accueilli 2026 avec un feu d’artifice tiré depuis Los Muellitos au-dessus de la plage de Las Canteras. Les concerts gratuits de la nuit se tenaient derrière le parc Santa Catalina."
+      }
+    ],
+    "kit": "es+0"
+  },
+  "WS": {
+    "text": "Les Samoa sont l’un des premiers pays au monde à accueillir la nouvelle année. C’est le cas depuis fin 2011 : le pays est passé de l’autre côté de la ligne de changement de date et a tout simplement sauté le 30 décembre, si bien que minuit sonne ici à 11 h UTC. Pour beaucoup de familles, l’année s’achève à l’église : les offices du soir commencent à neuf ou onze heures, et les dernières minutes de l’année se passent en prière. Les 1er et 2 janvier sont fériés.\n\nApia est la capitale, sur la côte nord de l’île d’Upolu. On y prend place tôt sur la digue près du Bâtiment du gouvernement, on compte les vingt dernières secondes et, à minuit, un feu d’artifice de dix minutes s’élève de la colline de Palisi au-dessus du centre. Les cloches sonnent, les sirènes retentissent dans toute la ville, et le Premier ministre adresse au pays son message du Nouvel An.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un office jusqu’à minuit",
+        "text": "Beaucoup de familles terminent l’année à l’église : l’office commence le soir, et la paroisse prie ensemble pendant les dernières minutes avant minuit pour rendre grâce de l’année écoulée."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Le feu d’artifice de Palisi",
+        "text": "À Apia, on s’installe sur la digue des heures à l’avance pour voir le feu d’artifice tiré de la colline au-dessus du centre. Loin du centre, les enfants allument dans la rue leurs propres petits pétards."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Semaine de prière et de jeûne",
+        "text": "Le premier dimanche de janvier, le gouvernement ouvre une semaine nationale de prière et de jeûne. La coutume date de 1990, après le cyclone Ofa : on demande la protection des Samoa pour toute l’année."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An aux Samoa : Apia | Time2Fest",
+      "description": "Les Samoa fêtent 2027 parmi les premiers : minuit sonne à Apia à 11 h UTC. Les familles prient à l’église, puis voient le feu d’artifice de Palisi sur la digue."
+    },
+    "kit": "ws"
+  },
+  "CA@utc-0700": {
+    "text": "Chaque province canadienne fête le Nouvel An à sa façon, mais quelques coutumes rassemblent le pays. Le 31 décembre, le Québec s’installe devant la télé pour le « Bye Bye », la revue humoristique de l’année de Radio-Canada, diffusée depuis 1968 et qui se termine par le décompte jusqu’à minuit. Le 1er janvier, le gouverneur général et les lieutenants-gouverneurs des provinces tiennent leurs levées, des réceptions du Nouvel An ouvertes à tous.\n\nDepuis 2026, la Colombie-Britannique vit à l’heure du Pacifique toute l’année, UTC−7. Vancouver n’a plus de feu d’artifice municipal depuis 2018 : on fait donc le décompte soi-même devant Canada Place et près de l’horloge à vapeur de Gastown, ou l’on monte au mont Grouse. Le 1er janvier, des milliers de personnes plongent dans la baie English Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Salue le gouverneur",
+        "text": "Le 1er janvier, tout le monde peut entrer à une levée du Nouvel An, enfants compris : serre la main de l’hôte et souhaite-lui une bonne année."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fête minuit sur la montagne",
+        "text": "L’an dernier, sur le mont Grouse au-dessus de Vancouver, on a patiné au son d’un DJ, puis à minuit un feu d’artifice en musique a illuminé le sommet."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Rejoins le Polar Bear Swim",
+        "text": "Chaque 1er janvier depuis 1920, Vancouver plonge dans l’eau froide d’English Bay ; c’est gratuit, et plus de 11 000 nageurs se sont inscrits l’an dernier."
+      }
+    ],
+    "kit": "ca-7"
   }
 }

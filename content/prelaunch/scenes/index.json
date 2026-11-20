@@ -402,6 +402,30 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#333d5a"
+    },
+    "US@utc-0800": {
+      "src": "/scenes/US-utc-0800-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#72655c"
+    },
+    "ES@utc+0000": {
+      "src": "/scenes/ES-utc+0000-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "WS": {
+      "src": "/scenes/WS-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "CA@utc-0700": {
+      "src": "/scenes/CA-utc-0700-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

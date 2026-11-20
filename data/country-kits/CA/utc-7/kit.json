@@ -1,0 +1,98 @@
+{
+  "code": "CA",
+  "zone": "UTC-7",
+  "zoneId": "utc-0700",
+  "cityId": "vancouver",
+  "names": {
+    "uk": {
+      "name": "Канада",
+      "city": "Ванкувер",
+      "cityIn": "у Ванкувері",
+      "caps": "ВАНКУВЕР · КАНАДА"
+    },
+    "en": {
+      "name": "Canada",
+      "city": "Vancouver",
+      "cityIn": "in Vancouver",
+      "caps": "VANCOUVER · CANADA"
+    },
+    "es": {
+      "name": "Canadá",
+      "city": "Vancouver",
+      "cityIn": "en Vancouver",
+      "caps": "VANCOUVER · CANADÁ"
+    },
+    "fr": {
+      "name": "Canada",
+      "city": "Vancouver",
+      "cityIn": "à Vancouver",
+      "caps": "VANCOUVER · CANADA"
+    }
+  },
+  "picto": "M2.6 28 H33 Q37.6 28 37.6 30.6 Q37.6 33.2 33 33.2 H2.6 Z M2.6 30.6 H36 M3.25 28 Q5 23.4 6.5 16 Q8 23.4 9.75 28 M9.75 28 Q11.5 23.4 13 16 Q14.5 23.4 16.25 28 M16.25 28 Q18 23.4 19.5 16 Q21 23.4 22.75 28 M22.75 28 Q24.5 23.4 26 16 Q27.5 23.4 29.25 28 M29.25 28 Q31 23.4 32.5 16 Q34 23.4 35.75 28 M6.5 16.4 V12.8 M13 16.4 V12.8 M19.5 16.4 V12.8 M26 16.4 V12.8 M32.5 16.4 V12.8",
+  "flagColors": [
+    "#D52B1E",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ванкувері"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Vancouver"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Vancouver"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Vancouver"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

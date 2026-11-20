@@ -1,0 +1,99 @@
+{
+  "code": "ES",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "canary",
+  "names": {
+    "uk": {
+      "name": "Іспанія",
+      "city": "Канарські острови",
+      "cityIn": "на Канарських островах",
+      "caps": "КАНАРИ · ІСПАНІЯ"
+    },
+    "en": {
+      "name": "Spain",
+      "city": "Canary Islands",
+      "cityIn": "in the Canary Islands",
+      "caps": "CANARIES · SPAIN"
+    },
+    "es": {
+      "name": "España",
+      "city": "Islas Canarias",
+      "cityIn": "en Canarias",
+      "caps": "CANARIAS · ESPAÑA"
+    },
+    "fr": {
+      "name": "Espagne",
+      "city": "Îles Canaries",
+      "cityIn": "aux îles Canaries",
+      "caps": "CANARIES · ESPAGNE"
+    }
+  },
+  "picto": "M-2.5 32 H42.5 M41.7 32.0 C41.6 31.2 41.7 29.0 41.2 27.3 C40.7 25.6 39.7 23.4 38.8 21.7 C37.8 20.0 36.6 18.3 35.6 17.0 C34.5 15.7 33.4 14.9 32.3 14.0 C31.3 13.1 30.2 12.4 29.1 11.8 C28.0 11.1 27.0 10.7 25.9 10.2 C24.8 9.8 23.8 9.3 22.7 9.1 C21.5 8.8 20.2 8.6 18.9 8.6 C17.7 8.5 16.5 8.6 15.2 8.7 C13.8 8.9 12.4 9.1 10.9 9.5 C9.4 10.0 7.6 10.5 6.0 11.3 C4.5 12.0 3.1 12.9 1.8 14.1 C0.4 15.2 -1.4 17.5 -2.0 18.2 C-1.4 17.8 0.1 16.5 1.5 15.8 C2.8 15.1 4.4 14.4 6.0 14.0 C7.7 13.5 9.7 13.3 11.4 13.2 C13.1 13.2 14.9 13.5 16.2 13.7 C17.6 14.0 18.4 14.4 19.5 14.9 C20.5 15.5 21.7 16.1 22.7 17.0 C23.7 17.9 24.7 19.0 25.6 20.3 C26.5 21.6 27.4 23.7 28.0 25.0 C28.7 26.2 29.2 26.6 29.4 27.8 C29.6 29.0 29.4 31.3 29.4 32.0 Z M-0.9 32.0 L-0.9 28.4 C-0.1 27.7 2.1 25.8 3.9 24.6 C5.7 23.5 7.7 22.3 9.8 21.5 C12.0 20.6 14.9 19.9 16.8 19.5 C18.7 19.0 19.9 18.9 21.1 18.7 C22.3 18.5 23.5 18.4 24.0 18.3 M9.8 21.5 C10.2 21.1 11.0 19.9 12.0 19.2 C12.9 18.5 14.4 17.8 15.7 17.3 C17.0 16.7 18.9 16.2 19.7 16.0 C20.5 15.7 20.2 15.5 20.5 15.7 C20.9 16.0 21.4 16.9 21.7 17.4 C22.0 17.8 22.3 18.2 22.4 18.4 M1.2 32.0 C1.8 27.8 6.6 26.6 12.8 26.6 C18.9 26.6 23.8 27.8 24.3 32.0",
+  "flagColors": [
+    "#C60B1E",
+    "#FFC400",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Канарських островах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Canary Islands"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Canarias"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux îles Canaries"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -560,9 +560,9 @@
     "traditions": [
       {
         "id": "t1",
-        "iconId": "address",
-        "title": "Mira «Bye Bye»",
-        "text": "La noche del 31 de diciembre, pon Radio-Canada: el repaso humorístico del año que Quebec ve desde 1968 termina con la cuenta atrás hasta medianoche."
+        "iconId": "fireworks",
+        "title": "Recibe el año en el Niágara",
+        "text": "Miles de personas reciben el Año Nuevo en Niagara Falls, Ontario: a medianoche, los fuegos estallan sobre las cataratas iluminadas."
       },
       {
         "id": "t2",
@@ -1720,7 +1720,7 @@
     "kit": "ca-330"
   },
   "CA@utc-0400": {
-    "text": "Canadá recibe el Año Nuevo de forma algo distinta en cada provincia, aunque algunas costumbres unen a todo el país. En Quebec, el 31 de diciembre se pone «Bye Bye», el repaso humorístico del año de Radio-Canada, que se emite desde 1968 y termina con la cuenta atrás hasta medianoche. El 1 de enero, los vicegobernadores de las provincias y las unidades militares celebran los levees, recepciones de Año Nuevo abiertas a todos; la primera en Canadá se celebró ya en 1646.\n\nEl año pasado, Halifax celebró al aire libre en la plaza Grand Parade: DJ y músicos tocaron desde las 23:00, a medianoche hubo fuegos artificiales y el transporte urbano fue gratis. Por la mañana, Government House, la residencia virreinal más antigua de Norteamérica, recibe visitas, y en Dartmouth cientos de personas se zambullen en una piscina abierta en el hielo del lago Banook.",
+    "text": "Canadá recibe el Año Nuevo de forma algo distinta en cada provincia, aunque algunas costumbres unen a todo el país. En Quebec, el 31 de diciembre se ve «Bye Bye», el repaso humorístico del año de Radio-Canada, que se emite desde 1968 y termina con la cuenta atrás hasta medianoche. El 1 de enero, los vicegobernadores de las provincias y las unidades militares celebran los levees, recepciones de Año Nuevo abiertas a todos; la primera en Canadá se celebró ya en 1646.\n\nEl año pasado, Halifax celebró al aire libre en la plaza Grand Parade: DJ y músicos tocaron desde las 23:00, a medianoche hubo fuegos artificiales y el transporte urbano fue gratis. Por la mañana, Government House, la residencia virreinal más antigua de Norteamérica, recibe visitas, y en Dartmouth cientos de personas se zambullen en una piscina abierta en el hielo del lago Banook.",
     "traditions": [
       {
         "id": "t1",
@@ -1790,5 +1790,105 @@
       }
     ],
     "kit": "mx-8"
+  },
+  "US@utc-0800": {
+    "text": "La zona del Pacífico de Estados Unidos, de Seattle y San Francisco a Los Ángeles y Las Vegas, recibe el Año Nuevo tres horas después que Nueva York. Desde 2000 Las Vegas celebra America’s Party en el Strip: para 2025 la Sphere, la mayor pantalla LED del mundo, dirigió por primera vez la cuenta atrás, y después hubo ocho minutos de fuegos desde las azoteas de nueve resorts. En San Francisco, los fuegos gratuitos de medianoche iluminan la bahía junto al Ferry Building del Embarcadero, y en Seattle un espectáculo de drones da paso a los fuegos sobre la Space Needle.\n\nEn Los Ángeles, el Grand Park acoge la fiesta gratuita NYELA y a medianoche la cuenta atrás brilla en el Ayuntamiento. La mañana del 1 de enero, la vecina Pasadena inicia el 138.º Desfile de las Rosas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "A pie por el Strip",
+        "text": "En Nochevieja el Strip de Las Vegas se cierra a los coches y el bulevar se llena de gente a pie. A medianoche, los fuegos salen de las azoteas de los resorts durante ocho minutos; mejor deja las bolsas grandes en el hotel."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Fuegos sobre bahía y torre",
+        "text": "En San Francisco, los fuegos gratuitos se ven mejor desde el Embarcadero, al sur del Ferry Building. En Seattle se miran desde el Seattle Center, en el césped junto a la International Fountain."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Una mañana de rosas",
+        "text": "El 1 de enero es festivo federal. A las 8 de la mañana arranca en Pasadena el Desfile de las Rosas: carrozas cubiertas de flores recorren 9 km, y hay quien guarda su sitio en la acera desde la noche del 31 de diciembre."
+      }
+    ],
+    "kit": "us-8"
+  },
+  "ES@utc+0000": {
+    "text": "En España el Año Nuevo llega con uvas: a medianoche se comen doce, una con cada una de las doce campanadas del reloj, para tener suerte y prosperidad. Después se brinda con cava, a veces con un anillo de oro en el fondo de la copa, y se bebe de un trago. Pero desde 1940 Canarias vive una hora por detrás de la Península, y en la radio y la televisión todo el país está acostumbrado a oír «una hora menos en Canarias».\n\nAsí que en las islas las uvas se toman cuando Madrid ya está de fiesta. Desde la llegada de 1984, la televisión pública emite la medianoche canaria una hora después de la Puerta del Sol, cada vez desde una isla distinta; 2026 se recibió en la plaza de la Candelaria de Santa Cruz de Tenerife. En Las Palmas de Gran Canaria los fuegos artificiales iluminan la playa de Las Canteras a medianoche, y la tarde del 31 de diciembre la San Silvestre recorre la ciudad.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Las uvas, una hora después",
+        "text": "Una uva con cada una de las doce campanadas, para un año de suerte. En Canarias la medianoche llega una hora después que en Madrid, así que la televisión emite aparte las campanadas de las islas."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Un anillo en la copa",
+        "text": "Tras las uvas se brinda con cava: un anillo o una moneda de oro en la copa para la prosperidad, una fresa para el amor. Y se bebe de un trago."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre Las Canteras",
+        "text": "Las Palmas de Gran Canaria recibió 2026 con fuegos artificiales lanzados desde Los Muellitos sobre la playa de Las Canteras. Los conciertos gratuitos de esa noche fueron detrás del parque de Santa Catalina."
+      }
+    ],
+    "kit": "es+0"
+  },
+  "WS": {
+    "text": "Samoa es uno de los primeros países del mundo en recibir el año nuevo. Así es desde finales de 2011, cuando el país pasó al otro lado de la línea de cambio de fecha y se saltó el 30 de diciembre, de modo que aquí la medianoche llega a las 11:00 UTC. Para muchas familias el año viejo termina en la iglesia: los oficios de la noche empiezan a las nueve o a las once, y los últimos minutos del año se pasan rezando. El 1 y el 2 de enero son festivos.\n\nApia es la capital, en la costa norte de la isla de Upolu. La gente busca sitio temprano en el malecón junto al Edificio del Gobierno, cuenta los últimos veinte segundos y, a medianoche, desde la colina de Palisi sobre el centro se lanzan diez minutos de fuegos artificiales. Repican campanas y suenan sirenas por toda la ciudad, y el primer ministro dirige al país su mensaje de Año Nuevo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un oficio hasta medianoche",
+        "text": "Muchas familias despiden el año en la iglesia: el oficio empieza por la noche y la congregación reza unida durante los últimos minutos antes de medianoche para dar gracias por el año."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos desde Palisi",
+        "text": "En Apia la gente ocupa el malecón horas antes para ver los fuegos desde la colina sobre el centro. Lejos del centro, los niños encienden en la calle sus propios petardos pequeños."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Semana de oración y ayuno",
+        "text": "El primer domingo de enero el gobierno abre una semana nacional de oración y ayuno. La costumbre viene de 1990, tras el ciclón Ofa: se pide protección para Samoa durante todo el año."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Samoa: Apia | Time2Fest",
+      "description": "Samoa recibe 2027 entre los primeros: la medianoche en Apia llega a las 11:00 UTC. Las familias rezan en la iglesia y ven los fuegos de Palisi desde el malecón."
+    },
+    "kit": "ws"
+  },
+  "CA@utc-0700": {
+    "text": "Cada provincia de Canadá recibe el Año Nuevo a su manera, pero algunas costumbres unen al país. El 31 de diciembre Quebec se sienta frente al televisor para ver «Bye Bye», el repaso humorístico del año de Radio-Canada, en antena desde 1968 y que termina con la cuenta atrás hasta medianoche. El 1 de enero, el gobernador general y los vicegobernadores provinciales celebran los levees, recepciones de Año Nuevo abiertas a cualquiera.\n\nDesde 2026, Columbia Británica usa la hora del Pacífico todo el año, UTC−7. Vancouver no tiene fuegos artificiales municipales desde 2018, así que la gente hace su propia cuenta atrás frente a Canada Place y junto al reloj de vapor de Gastown, o sube a Grouse Mountain. El 1 de enero, miles se lanzan al agua en English Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Saluda al gobernador",
+        "text": "El 1 de enero cualquiera puede entrar en un levee de Año Nuevo, también con niños: estrecha la mano del anfitrión y deséale un buen año."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Recibe la medianoche en la cima",
+        "text": "El año pasado, en Grouse Mountain, sobre Vancouver, se patinó con DJ y a medianoche hubo fuegos artificiales con música en la cumbre."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Únete al Polar Bear Swim",
+        "text": "Cada 1 de enero desde 1920, Vancouver se zambulle en las frías aguas de English Bay; es gratis y el año pasado se inscribieron más de 11 000 nadadores."
+      }
+    ],
+    "kit": "ca-7"
   }
 }
