@@ -1,0 +1,99 @@
+{
+  "code": "AR",
+  "zone": "UTC-3",
+  "zoneId": "utc-0300",
+  "cityId": "buenos-aires",
+  "names": {
+    "uk": {
+      "name": "Аргентина",
+      "city": "Буенос-Айрес",
+      "cityIn": "у Буенос-Айресі",
+      "caps": "БУЕНОС-АЙРЕС · АРГЕНТИНА"
+    },
+    "en": {
+      "name": "Argentina",
+      "city": "Buenos Aires",
+      "cityIn": "in Buenos Aires",
+      "caps": "BUENOS AIRES · ARGENTINA"
+    },
+    "es": {
+      "name": "Argentina",
+      "city": "Buenos Aires",
+      "cityIn": "en Buenos Aires",
+      "caps": "BUENOS AIRES · ARGENTINA"
+    },
+    "fr": {
+      "name": "Argentine",
+      "city": "Buenos Aires",
+      "cityIn": "à Buenos Aires",
+      "caps": "BUENOS AIRES · ARGENTINE"
+    }
+  },
+  "picto": "M3 37 H37 M12.5 37 V35 H27.5 V37 M16.6 35 L18.3 9 H21.7 L23.4 35 M18.3 9 L20 3.5 L21.7 9 M19.3 11.5 H20.7 V14 H19.3 Z M5 37 V26 H11 V37 M7 29 H9 M7 32 H9 M29 37 V24 H35 V37 M31 27 H33 M31 30 H33 M31 33 H33",
+  "flagColors": [
+    "#74ACDF",
+    "#FFFFFF",
+    "#F6B40E"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Буенос-Айресі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Buenos Aires"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Buenos Aires"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Buenos Aires"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

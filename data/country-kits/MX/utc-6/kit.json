@@ -1,0 +1,99 @@
+{
+  "code": "MX",
+  "zone": "UTC-6",
+  "zoneId": "utc-0600",
+  "cityId": "mexico-city",
+  "names": {
+    "uk": {
+      "name": "Мексика",
+      "city": "Мехіко",
+      "cityIn": "у Мехіко",
+      "caps": "МЕХІКО · МЕКСИКА"
+    },
+    "en": {
+      "name": "Mexico",
+      "city": "Mexico City",
+      "cityIn": "in Mexico City",
+      "caps": "MEXICO CITY · MEXICO"
+    },
+    "es": {
+      "name": "México",
+      "city": "Ciudad de México",
+      "cityIn": "en Ciudad de México",
+      "caps": "CDMX · MÉXICO"
+    },
+    "fr": {
+      "name": "Mexique",
+      "city": "Mexico",
+      "cityIn": "à Mexico",
+      "caps": "MEXICO · MEXIQUE"
+    }
+  },
+  "picto": "M6 38 H34 M9 38 V35.5 H31 V38 M12.5 35.5 V27.5 H27.5 V35.5 M17.5 35.5 V31 H22.5 V35.5 M15.5 27.5 V24.5 H24.5 V27.5 M18.2 24.5 L18.7 11.5 M21.8 24.5 L21.3 11.5 M18.4 20 H21.6 M18.55 15.8 H21.45 M18.7 11.5 L17.2 9.6 H22.8 L21.3 11.5 M18.8 9.6 V8.2 H21.2 V9.6 M19.2 8.2 L19.5 4.8 H20.5 L20.8 8.2 M19.2 4.3 a0.8 0.8 0 1 0 1.6 0 a0.8 0.8 0 1 0 -1.6 0 M19.5 5.4 Q16.4 4.6 15 1.4 Q17 3 19.5 3.6 M20.5 5.4 Q23.6 4.6 25 1.4 Q23 3 20.5 3.6 M20.4 5 L22.4 1.8 M22.5 1.8 a0.9 0.9 0 1 0 0.01 0",
+  "flagColors": [
+    "#006847",
+    "#FFFFFF",
+    "#CE1126"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Мехіко"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Mexico City"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Ciudad de México"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Mexico"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

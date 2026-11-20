@@ -1,0 +1,100 @@
+{
+  "code": "LK",
+  "zone": "UTC+5:30",
+  "zoneId": "utc+0530",
+  "cityId": "colombo",
+  "names": {
+    "uk": {
+      "name": "Шрі-Ланка",
+      "city": "Коломбо",
+      "cityIn": "у Коломбо",
+      "caps": "КОЛОМБО · ШРІ-ЛАНКА"
+    },
+    "en": {
+      "name": "Sri Lanka",
+      "city": "Colombo",
+      "cityIn": "in Colombo",
+      "caps": "COLOMBO · SRI LANKA"
+    },
+    "es": {
+      "name": "Sri Lanka",
+      "city": "Colombo",
+      "cityIn": "en Colombo",
+      "caps": "COLOMBO · SRI LANKA"
+    },
+    "fr": {
+      "name": "Sri Lanka",
+      "city": "Colombo",
+      "cityIn": "à Colombo",
+      "caps": "COLOMBO · SRI LANKA"
+    }
+  },
+  "picto": "M20 1 V6.4 M18.4 3.2 H21.6 M17 14 Q16.6 9.4 20 6.4 Q23.4 9.4 23 14 M17 14 Q12.6 12.8 13.2 7.8 Q16 9.2 17.6 11.8 M23 14 Q27.4 12.8 26.8 7.8 Q24 9.2 22.4 11.8 M17 14 H23 L22.4 18.6 H17.6 Z M18.9 18.6 L18.4 32 M21.1 18.6 L21.6 32 M18.6 24 H21.4 M18.5 28 H21.5 M8 32 H32 V37 H8 Z M11 37 V35 A1.4 1.4 0 0 1 13.8 35 V37 M17.3 37 V35 A1.4 1.4 0 0 1 20.1 35 V37 M23.5 37 V35 A1.4 1.4 0 0 1 26.3 35 V37 M5 39.2 H35",
+  "flagColors": [
+    "#8D153A",
+    "#EB7400",
+    "#FFBE29",
+    "#00534E"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Коломбо"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Colombo"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Colombo"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Colombo"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "RS",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "belgrade",
+  "names": {
+    "uk": {
+      "name": "Сербія",
+      "city": "Белград",
+      "cityIn": "у Белграді",
+      "caps": "БЕЛГРАД · СЕРБІЯ"
+    },
+    "en": {
+      "name": "Serbia",
+      "city": "Belgrade",
+      "cityIn": "in Belgrade",
+      "caps": "BELGRADE · SERBIA"
+    },
+    "es": {
+      "name": "Serbia",
+      "city": "Belgrado",
+      "cityIn": "en Belgrado",
+      "caps": "BELGRADO · SERBIA"
+    },
+    "fr": {
+      "name": "Serbie",
+      "city": "Belgrade",
+      "cityIn": "à Belgrade",
+      "caps": "BELGRADE · SERBIE"
+    }
+  },
+  "picto": "M3 37 H37 M5 37 V24 H35 V37 M16.5 37 V31.5 A3.5 3.5 0 0 1 23.5 31.5 V37 M13 24 V22 Q13 19.6 20 19.4 Q27 19.6 27 22 V24 M5 24 V16.5 H11 V24 M29 24 V16.5 H35 V24 M5.6 16.5 Q5.6 13 8 12.8 Q10.4 13 10.4 16.5 M29.6 16.5 Q29.6 13 32 12.8 Q34.4 13 34.4 16.5 M8 12.8 V9 M6.8 10.3 H9.2 M32 12.8 V9 M30.8 10.3 H33.2 M13 19.4 V14 H27 V19.4 M15.5 18 V16 M18.5 18 V16 M21.5 18 V16 M24.5 18 V16 M12 14 Q12 7.6 20 7.2 Q28 7.6 28 14 M18.8 7.3 V5.6 H21.2 V7.3 M20 5.6 V1.8 M18.6 3.2 H21.4 M8 33 V29 M32 33 V29",
+  "flagColors": [
+    "#C6363C",
+    "#0C4076",
+    "#FFFFFF"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Белграді"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Belgrade"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Belgrado"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Belgrade"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "CL",
+  "zone": "UTC-3",
+  "zoneId": "utc-0300",
+  "cityId": "santiago",
+  "names": {
+    "uk": {
+      "name": "Чилі",
+      "city": "Сантьяго",
+      "cityIn": "у Сантьяго",
+      "caps": "САНТЬЯГО · ЧИЛІ"
+    },
+    "en": {
+      "name": "Chile",
+      "city": "Santiago",
+      "cityIn": "in Santiago",
+      "caps": "SANTIAGO · CHILE"
+    },
+    "es": {
+      "name": "Chile",
+      "city": "Santiago",
+      "cityIn": "en Santiago",
+      "caps": "SANTIAGO · CHILE"
+    },
+    "fr": {
+      "name": "Chili",
+      "city": "Santiago",
+      "cityIn": "à Santiago",
+      "caps": "SANTIAGO · CHILI"
+    }
+  },
+  "picto": "M15.6 34 L16.6 11 M24.4 34 L23.4 11 M16.6 11 H23.4 M16.6 11 V6.5 M18.8 11 V5 M21.2 11 V5 M23.4 11 V6.5 M16.2 22 H23.8 M16.4 17 H23.6 M16 27 H24 M20 11 V34 M10 34 H30 V31 H10 Z M1 36 H39 M2 34 L8 23 L11.5 27 L16.1 21.6 M38 34 L32 22 L28.5 26.5 L23.9 21.6",
+  "flagColors": [
+    "#D52B1E",
+    "#FFFFFF",
+    "#0039A6"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сантьяго"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Santiago"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Santiago"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Santiago"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

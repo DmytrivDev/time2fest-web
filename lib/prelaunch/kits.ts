@@ -26,6 +26,7 @@ const KIT_ICONS: Readonly<Record<string, IconName>> = {
   door: 'tradition-door',
   grapes: 'tradition-grapes',
   suitcase: 'tradition-suitcase',
+  flame: 'tradition-flame',
 };
 
 export function kitIcon(iconId: string | undefined): IconName | undefined {

@@ -594,6 +594,312 @@
         "title": "Nouvel An au Venezuela : Caracas | Time2Fest",
         "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons à la radio, pendant que la cathédrale sonne douze coups."
       }
+    },
+    "AE": {
+      "uk": {
+        "title": "Новий рік: Дубай, Об’єднані Арабські Емірати | Time2Fest",
+        "description": "Дубай в Об’єднаних Арабських Еміратах зустрічає 2027 рік салютом, шоу дронів і Cirque du Soleil біля Бурдж-Халіфи. Північ у Дубаї — 20:00 UTC."
+      },
+      "en": {
+        "title": "New Year: Dubai, United Arab Emirates | Time2Fest",
+        "description": "Dubai, United Arab Emirates, greets 2027 with fireworks, a drone show and Cirque du Soleil at the Burj Khalifa, free viewing Downtown. Midnight: 20:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo: Dubái, Emiratos Árabes Unidos | Time2Fest",
+        "description": "Dubái, en los Emiratos Árabes Unidos, recibe 2027 con fuegos, drones y el Cirque du Soleil junto al Burj Khalifa, con zonas gratis. Medianoche: 20:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An : Dubaï, Émirats arabes unis | Time2Fest",
+        "description": "Dubaï, aux Émirats arabes unis, fête 2027 avec feu d’artifice, drones et Cirque du Soleil au pied du Burj Khalifa, zones gratuites. Minuit : 20 h UTC."
+      }
+    },
+    "AM": {
+      "uk": {
+        "title": "Новий рік у Вірменії: Єреван | Time2Fest",
+        "description": "Опівночі в Єревані, о 20:00 UTC, Вірменія вітає 2027 рік: ялинка й салют на площі Республіки, анушапур на столі й тиждень гостин аж до Різдва 6 січня."
+      },
+      "en": {
+        "title": "New Year in Armenia: Yerevan | Time2Fest",
+        "description": "At midnight in Yerevan, 20:00 UTC, Armenia welcomes 2027: tree and fireworks on Republic Square, anoushabour on the table and visits until 6 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Armenia: Ereván | Time2Fest",
+        "description": "A medianoche en Ereván, 20:00 UTC, Armenia recibe 2027: árbol y fuegos en la plaza de la República, anushabur en la mesa y visitas hasta el 6 de enero."
+      },
+      "fr": {
+        "title": "Nouvel An en Arménie : Erevan | Time2Fest",
+        "description": "À minuit à Erevan, 20 h UTC, l’Arménie accueille 2027 : sapin et feu d’artifice place de la République, anouchabour sur la table et visites jusqu’au 6 janvier."
+      }
+    },
+    "AR": {
+      "uk": {
+        "title": "Новий рік в Аргентині: Буенос-Айрес | Time2Fest",
+        "description": "Опівночі в Буенос-Айресі, о 03:00 UTC, Аргентина зустрічає 2027 рік сидром, пан дульсе й 12 виноградинами, а в Ла-Платі спалюють ляльок старого року."
+      },
+      "en": {
+        "title": "New Year in Argentina: Buenos Aires | Time2Fest",
+        "description": "At midnight in Buenos Aires, 03:00 UTC, Argentina toasts 2027 with cider, pan dulce and 12 grapes on a summer night, while La Plata burns dolls of the old year."
+      },
+      "es": {
+        "title": "Año Nuevo en Argentina: Buenos Aires | Time2Fest",
+        "description": "A medianoche en Buenos Aires, 03:00 UTC, Argentina brinda por 2027 con sidra, pan dulce y 12 uvas en pleno verano, y La Plata quema sus muñecos del año viejo."
+      },
+      "fr": {
+        "title": "Nouvel An en Argentine : Buenos Aires | Time2Fest",
+        "description": "À minuit à Buenos Aires, 3 h UTC, l’Argentine fête 2027 au cidre, au pan dulce et aux 12 raisins en plein été, tandis que La Plata brûle ses poupées géantes."
+      }
+    },
+    "CL": {
+      "uk": {
+        "title": "Новий рік у Чилі: Сантьяго | Time2Fest",
+        "description": "Опівночі в Сантьяго, о 03:00 UTC, Чилі вітає 2027 рік виноградом, жовтою білизною й валізою, а місто — салютом і дронами біля телевежі Entel."
+      },
+      "en": {
+        "title": "New Year in Chile: Santiago | Time2Fest",
+        "description": "At midnight in Santiago, 03:00 UTC, Chile greets 2027 with grapes, yellow underwear and a suitcase walk, and the city with drones and fireworks at Entel Tower."
+      },
+      "es": {
+        "title": "Año Nuevo en Chile: Santiago | Time2Fest",
+        "description": "A medianoche en Santiago, 03:00 UTC, Chile recibe 2027 con uvas, ropa amarilla y la vuelta con maleta, y la ciudad, con drones y fuegos en la Torre Entel."
+      },
+      "fr": {
+        "title": "Nouvel An au Chili : Santiago | Time2Fest",
+        "description": "À minuit à Santiago, 3 h UTC, le Chili accueille 2027 avec raisins, sous-vêtements jaunes et tour de valise, et la ville avec drones et feux à la tour Entel."
+      }
+    },
+    "DO": {
+      "uk": {
+        "title": "Новий рік у Домініканській Республіці: Санто-Домінго",
+        "description": "Опівночі в Санто-Домінго, о 04:00 UTC, Домініканська Республіка вітає 2027 рік фієстоном на Малеконі, дванадцятьма виноградинами й валізою довкола кварталу."
+      },
+      "en": {
+        "title": "New Year in the Dominican Republic: Santo Domingo",
+        "description": "At midnight in Santo Domingo, 04:00 UTC, the Dominican Republic greets 2027 with an all-night fiestón on the Malecón, twelve grapes and a suitcase walk."
+      },
+      "es": {
+        "title": "Año Nuevo en República Dominicana: Santo Domingo",
+        "description": "A medianoche en Santo Domingo, 04:00 UTC, República Dominicana recibe 2027 con el fiestón del Malecón, doce uvas y una vuelta a la manzana con la maleta."
+      },
+      "fr": {
+        "title": "Nouvel An en République dominicaine : Saint-Domingue",
+        "description": "À minuit à Saint-Domingue, 4 h UTC, la République dominicaine fête 2027 avec le fiestón du Malecón, douze raisins et un tour du quartier valise à la main."
+      }
+    },
+    "EG": {
+      "uk": {
+        "title": "Новий рік у Єгипті: Каїр | Time2Fest",
+        "description": "Опівночі в Каїрі, о 22:00 UTC, Єгипет зустрічає 2027 рік: вечеря з рідними, круїз Нілом із танцем живота й відлік на мостах і набережній Корніш."
+      },
+      "en": {
+        "title": "New Year in Egypt: Cairo | Time2Fest",
+        "description": "At midnight in Cairo, 22:00 UTC, Egypt greets 2027 with family dinners, Nile cruises with belly dancing and tanoura, and a countdown on the Corniche bridges."
+      },
+      "es": {
+        "title": "Año Nuevo en Egipto: El Cairo | Time2Fest",
+        "description": "A medianoche en El Cairo, 22:00 UTC, Egipto recibe 2027 con cenas en familia, cruceros por el Nilo con danza del vientre y cuenta atrás en la Corniche."
+      },
+      "fr": {
+        "title": "Nouvel An en Égypte : Le Caire | Time2Fest",
+        "description": "À minuit au Caire, 22 h UTC, l’Égypte accueille 2027 : dîner en famille, croisière sur le Nil avec danse orientale et compte à rebours sur la Corniche."
+      }
+    },
+    "ID": {
+      "uk": {
+        "title": "Новий рік в Індонезії: Джакарта | Time2Fest",
+        "description": "Індонезія зустрічає 2027 рік у Джакарті: проспекти Судірман і Тамрін без машин, теромпет, бакар-бакар і родинний стіл. Опівночі там 17:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Indonesia: Jakarta | Time2Fest",
+        "description": "Indonesia greets 2027 in Jakarta: car-free Sudirman and Thamrin avenues, terompet horns, bakar-bakar grills and a family feast. Midnight there: 17:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Indonesia: Yakarta | Time2Fest",
+        "description": "Indonesia recibe 2027 en Yakarta: avenidas Sudirman y Thamrin sin coches, terompet, bakar-bakar y mesa familiar. Allí la medianoche llega a las 17:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Indonésie : Jakarta | Time2Fest",
+        "description": "L’Indonésie fête 2027 à Jakarta : avenues Sudirman et Thamrin sans voitures, terompet, bakar-bakar et repas en famille. Là-bas, minuit sonne à 17 h UTC."
+      }
+    },
+    "IN": {
+      "uk": {
+        "title": "Новий рік в Індії: Нью-Делі | Time2Fest",
+        "description": "Індія зустрічає 2027 рік: вечірки й концерти у великих містах, натовпи біля Воріт Індії в Нью-Делі, а 1 січня — храми й гурдвари. Північ о 18:30 UTC."
+      },
+      "en": {
+        "title": "New Year in India: New Delhi | Time2Fest",
+        "description": "India welcomes 2027 with parties and concerts in its big cities, crowds at India Gate in New Delhi and temple visits on 1 January. Midnight is 18:30 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en la India: Nueva Delhi | Time2Fest",
+        "description": "La India recibe 2027 con fiestas y conciertos en sus grandes ciudades, gente en la Puerta de la India de Nueva Delhi y templos el 1 de enero. 18:30 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Inde : New Delhi | Time2Fest",
+        "description": "L’Inde accueille 2027 avec fêtes et concerts dans ses métropoles, la foule à la Porte de l’Inde à New Delhi et les temples le 1er janvier. Minuit à 18 h 30 UTC."
+      }
+    },
+    "KE": {
+      "uk": {
+        "title": "Новий рік у Кенії: Найробі | Time2Fest",
+        "description": "Опівночі в Найробі, о 21:00 UTC, Кенія вітає 2027 рік службами в церквах і радісними вигуками, а натовп у центрі рахує секунди під вежею KICC."
+      },
+      "en": {
+        "title": "New Year in Kenya: Nairobi | Time2Fest",
+        "description": "At midnight in Nairobi, 21:00 UTC, Kenya meets 2027 with crossover church services and joyful cheers, while crowds count down beneath the KICC tower."
+      },
+      "es": {
+        "title": "Año Nuevo en Kenia: Nairobi | Time2Fest",
+        "description": "A medianoche en Nairobi, 21:00 UTC, Kenia recibe 2027 con cultos en las iglesias y gritos de alegría, y la multitud cuenta los segundos bajo la torre KICC."
+      },
+      "fr": {
+        "title": "Nouvel An au Kenya : Nairobi | Time2Fest",
+        "description": "À minuit à Nairobi, 21 h UTC, le Kenya accueille 2027 entre cultes dans les églises et cris de joie, et la foule compte les secondes au pied de la tour KICC."
+      }
+    },
+    "KZ": {
+      "uk": {
+        "title": "Новий рік у Казахстані: Астана | Time2Fest",
+        "description": "Опівночі в Астані, о 19:00 UTC, Казахстан зустрічає 2027 рік гімном після звернення президента, а Алмати — концертом і салютом на Старій площі."
+      },
+      "en": {
+        "title": "New Year in Kazakhstan: Astana | Time2Fest",
+        "description": "At midnight in Astana, 19:00 UTC, Kazakhstan greets 2027 with the anthem after the president’s address, and Almaty with a concert and fireworks on Old Square."
+      },
+      "es": {
+        "title": "Año Nuevo en Kazajistán: Astaná | Time2Fest",
+        "description": "A medianoche en Astaná, 19:00 UTC, Kazajistán recibe 2027 con el himno tras el mensaje del presidente, y Almaty, con concierto y fuegos en la Plaza Vieja."
+      },
+      "fr": {
+        "title": "Nouvel An au Kazakhstan : Astana | Time2Fest",
+        "description": "À minuit à Astana, 19 h UTC, le Kazakhstan fête 2027 avec l’hymne après le discours du président, et Almaty avec concert et feu d’artifice sur la Vieille Place."
+      }
+    },
+    "LK": {
+      "uk": {
+        "title": "Новий рік у Шрі-Ланці: Коломбо | Time2Fest",
+        "description": "У Коломбо, Шрі-Ланка, 2027 рік настає о 18:30 UTC. Родини йдуть на Галле-Фейс-Грін по вуличну їжу, готелі дають бали, а торік салют сяяв над Лотосовою вежею."
+      },
+      "en": {
+        "title": "New Year in Sri Lanka: Colombo | Time2Fest",
+        "description": "In Colombo, Sri Lanka, 2027 arrives at 18:30 UTC. Families pack Galle Face Green for street food, hotels host galas, fireworks lit the Lotus Tower last year."
+      },
+      "es": {
+        "title": "Año Nuevo en Sri Lanka: Colombo | Time2Fest",
+        "description": "En Colombo, Sri Lanka, 2027 llega a las 18:30 UTC. Las familias van a Galle Face Green por comida callejera, hay galas de hotel y hubo fuegos en la Torre Loto."
+      },
+      "fr": {
+        "title": "Nouvel An au Sri Lanka : Colombo | Time2Fest",
+        "description": "À Colombo, au Sri Lanka, 2027 arrive à 18 h 30 UTC. Les familles remplissent Galle Face Green et ses stands, les hôtels font la fête, la Lotus Tower s’illumine."
+      }
+    },
+    "LV": {
+      "uk": {
+        "title": "Новий рік у Латвії: Рига | Time2Fest",
+        "description": "Опівночі в Ризі, о 22:00 UTC, Латвія зустрічає 2027 рік сірим горохом, литтям щастя й діджеями на площах Старої Риги біля Будинку Чорноголових."
+      },
+      "en": {
+        "title": "New Year in Latvia: Riga | Time2Fest",
+        "description": "At midnight in Riga, 22:00 UTC, Latvia greets 2027 with grey peas, molten-metal fortunes and DJs in Old Riga's squares by the House of the Blackheads."
+      },
+      "es": {
+        "title": "Año Nuevo en Letonia: Riga | Time2Fest",
+        "description": "A medianoche en Riga, 22:00 UTC, Letonia recibe 2027 con guisantes grises, suerte de metal fundido y DJ en las plazas junto a la Casa de los Cabezas Negras."
+      },
+      "fr": {
+        "title": "Nouvel An en Lettonie : Riga | Time2Fest",
+        "description": "À minuit à Riga, 22 h UTC, la Lettonie fête 2027 avec des pois gris, la chance coulée dans l’eau froide et des DJ près de la Maison des Têtes noires."
+      }
+    },
+    "MX": {
+      "uk": {
+        "title": "Новий рік у Мексиці: Мехіко | Time2Fest",
+        "description": "Мексика вітає 2027 рік у Мехіко: дванадцять виноградин під удари, біг із валізою навколо кварталу й діджеї біля Ангела. Північ — 00:00 місцевого, 06:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Mexico: Mexico City | Time2Fest",
+        "description": "Mexico greets 2027 in Mexico City: twelve grapes on the chimes, a suitcase dash round the block and DJs by the Angel. Midnight is 00:00 local, 06:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en México: Ciudad de México | Time2Fest",
+        "description": "México recibe 2027 en la capital: doce uvas con las campanadas, la vuelta con la maleta y DJ junto al Ángel. Medianoche: 00:00 local, 06:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An au Mexique : Mexico | Time2Fest",
+        "description": "Le Mexique fête 2027 à Mexico : douze raisins aux douze coups, le tour du quartier avec une valise et des DJ au pied de l’Ange. Minuit : 0 h locale, 6 h UTC."
+      }
+    },
+    "MY": {
+      "uk": {
+        "title": "Новий рік у Малайзії: Куала-Лумпур | Time2Fest",
+        "description": "Малайзія зустрічає 2027 рік у Куала-Лумпурі: відлік у парку KLCC під вежами Петронас і феєрверк із Менара KL. Північ о 16:00 UTC, свято для всіх народів."
+      },
+      "en": {
+        "title": "New Year in Malaysia: Kuala Lumpur | Time2Fest",
+        "description": "Malaysia sees in 2027 in Kuala Lumpur: a countdown at KLCC Park under the Petronas Towers and fireworks from KL Tower. Midnight is 16:00 UTC, for all."
+      },
+      "es": {
+        "title": "Año Nuevo en Malasia: Kuala Lumpur | Time2Fest",
+        "description": "Malasia recibe 2027 en Kuala Lumpur: cuenta atrás en el parque KLCC, junto a las Torres Petronas y fuegos artificiales desde la Torre KL. Medianoche, 16:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Malaisie : Kuala Lumpur | Time2Fest",
+        "description": "La Malaisie accueille 2027 à Kuala Lumpur : compte à rebours au parc KLCC, au pied des tours Petronas, et feux d'artifice depuis la tour KL. Minuit à 16 h UTC."
+      }
+    },
+    "PY": {
+      "uk": {
+        "title": "Новий рік у Парагваї: Асунсьйон | Time2Fest",
+        "description": "Опівночі в Асунсьйоні, о 03:00 UTC, Парагвай зустрічає 2027 рік вечерею просто неба з холодним клерико й сидром, поки над затокою світиться Палац Лопеса."
+      },
+      "en": {
+        "title": "New Year in Paraguay: Asunción | Time2Fest",
+        "description": "At midnight in Asunción, 03:00 UTC, Paraguay greets 2027 with an outdoor family dinner, cold clericó and sidra, while López Palace glows above the bay."
+      },
+      "es": {
+        "title": "Año Nuevo en Paraguay: Asunción | Time2Fest",
+        "description": "A medianoche en Asunción, 03:00 UTC, Paraguay recibe 2027 con cena familiar al aire libre, clericó y sidra bien fríos, y el Palacio de los López iluminado."
+      },
+      "fr": {
+        "title": "Nouvel An au Paraguay : Asunción | Time2Fest",
+        "description": "À minuit à Asunción, 3 h UTC, le Paraguay accueille 2027 avec un dîner en famille en plein air, clericó et sidra bien frais, sous le palais de López éclairé."
+      }
+    },
+    "RS": {
+      "uk": {
+        "title": "Новий рік у Сербії: Белград | Time2Fest",
+        "description": "Опівночі в Белграді, о 23:00 UTC, Сербія вітає 2027 рік салютом над Савою й подарунками від Діда Мраза, а 14 січня святкує ще раз — за старим стилем."
+      },
+      "en": {
+        "title": "New Year in Serbia: Belgrade | Time2Fest",
+        "description": "At midnight in Belgrade, 23:00 UTC, Serbia greets 2027 with fireworks over the Sava and gifts from Deda Mraz, then celebrates again on 14 January, old style."
+      },
+      "es": {
+        "title": "Año Nuevo en Serbia: Belgrado | Time2Fest",
+        "description": "A medianoche en Belgrado, 23:00 UTC, Serbia recibe 2027 con fuegos sobre el Sava y regalos de Deda Mraz, y el 14 de enero repite la fiesta, al estilo juliano."
+      },
+      "fr": {
+        "title": "Nouvel An en Serbie : Belgrade | Time2Fest",
+        "description": "À minuit à Belgrade, 23 h UTC, la Serbie fête 2027 avec un feu d’artifice sur la Save et les cadeaux de Deda Mraz, puis remet ça le 14 janvier, à l’ancienne."
+      }
+    },
+    "VN": {
+      "uk": {
+        "title": "Новий рік у В’єтнамі: Хошимін | Time2Fest",
+        "description": "Хошимін веде відлік на пішохідній вулиці Нгуєн Хюе, а опівночі салют освітлює річку Сайгон. Північ у В’єтнамі — о 17:00 за UTC 31 грудня, а Тет — 6 лютого."
+      },
+      "en": {
+        "title": "New Year in Vietnam: Ho Chi Minh City | Time2Fest",
+        "description": "Ho Chi Minh City counts down on Nguyen Hue walking street and fireworks light the Saigon River at midnight. On 31 December, Vietnam welcomes 2027 at 17:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Vietnam: Ciudad Ho Chi Minh | Time2Fest",
+        "description": "Ciudad Ho Chi Minh cuenta atrás en la calle Nguyen Hue y a medianoche los fuegos iluminan el río Saigón. En Vietnam llega 2027 a las 17:00 UTC del 31/12."
+      },
+      "fr": {
+        "title": "Nouvel An au Viêt Nam : Hô-Chi-Minh-Ville | Time2Fest",
+        "description": "Hô-Chi-Minh-Ville fait son décompte rue Nguyen Hue, puis un feu d’artifice illumine la rivière de Saïgon. Au Viêt Nam, 2027 arrive à 17 h UTC le 31 décembre."
+      }
     }
   }
 }

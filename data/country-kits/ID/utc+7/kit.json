@@ -1,0 +1,99 @@
+{
+  "code": "ID",
+  "zone": "UTC+7",
+  "zoneId": "utc+0700",
+  "cityId": "jakarta",
+  "names": {
+    "uk": {
+      "name": "Індонезія",
+      "city": "Джакарта",
+      "cityIn": "у Джакарті",
+      "caps": "ДЖАКАРТА · ІНДОНЕЗІЯ"
+    },
+    "en": {
+      "name": "Indonesia",
+      "city": "Jakarta",
+      "cityIn": "in Jakarta",
+      "caps": "JAKARTA · INDONESIA"
+    },
+    "es": {
+      "name": "Indonesia",
+      "city": "Yakarta",
+      "cityIn": "en Yakarta",
+      "caps": "YAKARTA · INDONESIA"
+    },
+    "fr": {
+      "name": "Indonésie",
+      "city": "Jakarta",
+      "cityIn": "à Jakarta",
+      "caps": "JAKARTA · INDONÉSIE"
+    }
+  },
+  "picto": "M20 1 C16.6 4.4 16.6 8 18.2 10.4 C18.6 8.8 19.4 8.2 20 6.6 C20.6 8.2 21.4 8.8 21.8 10.4 C23.4 8 23.4 4.4 20 1 Z M17.4 10.4 H22.6 V14 H17.4 Z M12 14 H28 L26.4 17.2 H13.6 Z M18.6 17.2 L18 30 M21.4 17.2 L22 30 M12.4 30 H27.6 V34 H12.4 Z M6 34 H34 V37 H6 Z M18 34 V31.4 H22 V34 M3 38.2 H37",
+  "flagColors": [
+    "#D8352A",
+    "#F2EBDD",
+    "#D8352A"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Джакарті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Jakarta"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Yakarta"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Jakarta"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

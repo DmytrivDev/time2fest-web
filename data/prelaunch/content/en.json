@@ -750,5 +750,481 @@
       "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and radio songs, while the cathedral bells ring twelve times over the city."
     },
     "kit": "ve"
+  },
+  "AE": {
+    "text": "In the United Arab Emirates 1 January is a day off in both the public and private sectors. In 2027 it falls on a Friday, so the year starts with a three-day weekend, and the first working day is Monday 4 January. Every New Year's Eve fireworks go up from the Burj Khalifa in Dubai. Only to welcome 2018 were they replaced by a light and sound show, which entered Guinness World Records as the largest ever staged on a single building.\n\nDubai will greet 2027 in Downtown. On 31 December 2026 the programme starts at 7 pm, Cirque du Soleil performs for the first time at 11:25 pm, and from 11:59 pm the Burj Khalifa facade will count down the last sixty seconds of the year. At midnight fireworks, a drone show, the Dubai Fountain and projections light up together. Last year, the show's creators estimate, over 1.7 million people watched it live, and to welcome 2025 the city's transport carried 2.5 million passengers.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "A three-day weekend",
+        "text": "On 1 January both the public and private sectors in the Emirates have the day off. In 2027 it's a Friday, so work waits until Monday 4 January."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Free viewing areas Downtown",
+        "text": "Public viewing areas in Downtown are free and first come, first served, with LED screens showing the show, and you can bring food and non-alcoholic drinks. Roads there are due to close from 4 pm, so take the metro: over 1.1 million passengers rode it to welcome 2025."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight at the Burj Khalifa",
+        "text": "As scheduled, from 11:59 pm the tower's facade counts down the last sixty seconds of 2026, and at midnight fireworks, drones, the Dubai Fountain and projections light up together. This time Cirque du Soleil artists join the countdown for the first time."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027: Dubai, United Arab Emirates | Time2Fest",
+      "description": "Dubai, United Arab Emirates, greets 2027 with fireworks, a drone show and Cirque du Soleil at the Burj Khalifa, free viewing Downtown. Midnight: 20:00 UTC."
+    },
+    "kit": "ae"
+  },
+  "AM": {
+    "text": "In Armenia, New Year is the biggest family holiday, and it lasts a whole week: from 31 December to Christmas, which is celebrated here on 6 January. People bake New Year cookies and set a generous table, with anoushabour at its centre, a sweet grain pudding decorated with dried fruit, nuts and pomegranate. Children write letters to Dzmer Pap, Grandfather Winter, who brings presents on New Year’s night. From 1 January doors are open to everyone, and family and friends visit each other.\n\nIn Yerevan the country’s main tree shines on Republic Square from mid-December, with a market next door in Shahumyan Park. Last year 2,026 drones and fireworks lit up the square at midnight. Mount Ararat, Armenia’s symbol, rises above the city, though the mountain itself is in Turkey; in the picture it stands behind Khor Virap monastery, 30 km from Yerevan.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Anoushabour at the centre",
+        "text": "Try anoushabour, a sweet grain pudding with dried fruit, nuts and pomegranate seeds. In Armenia it is the centrepiece of the New Year table."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "A week of visits to Christmas",
+        "text": "From 1 January until Christmas on 6 January, go visiting with gifts and wishes: Armenian homes keep their doors open to everyone."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight on Republic Square",
+        "text": "In Yerevan, come to the main tree on Republic Square: last year a concert played there from 11 pm, and at midnight 2,026 drones and fireworks took off."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Armenia: Yerevan | Time2Fest",
+      "description": "At midnight in Yerevan, 20:00 UTC, Armenia welcomes 2027: tree and fireworks on Republic Square, anoushabour on the table and visits until 6 January."
+    },
+    "kit": "am"
+  },
+  "AR": {
+    "text": "In Argentina the New Year arrives at the height of summer. People welcome it over a long dinner with family and friends: asado, vitel toné (cold veal in tuna sauce), and pan dulce and turrón for dessert. At midnight everyone wishes each other well and clinks glasses of cider or champagne, while some hurry through 12 grapes. Then the young go out until dawn, and many families head for the Atlantic coast. In La Plata giant dolls of the old year, made of wire and papier-mâché, are set alight at midnight.\n\nIn Buenos Aires, offices downtown have long showered the streets with scraps of paper at the end of the year, even though the city asks people to stop. Noisy fireworks were banned here last year, so the midnight toast is the main event. The picture shows the Obelisco on Avenida 9 de Julio and the pink Casa Rosada, the presidential palace on Plaza de Mayo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cider and pan dulce",
+        "text": "Have dinner with family and friends, then at midnight clink glasses of cider or champagne and move on to the sweets: pan dulce, turrón and nuts."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "12 grapes and white clothes",
+        "text": "After midnight eat 12 grapes and make a wish on each. Wear white, and before the party sweep the house from the inside out to clear away the bad."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Burn the old year",
+        "text": "In La Plata neighbours build figures up to 6 metres tall from wire, wood and papier-mâché, then burn them at midnight to start the year from zero."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Argentina: Buenos Aires | Time2Fest",
+      "description": "At midnight in Buenos Aires, 03:00 UTC, Argentina toasts 2027 with cider, pan dulce and 12 grapes on a summer night, while La Plata burns dolls of the old year."
+    },
+    "kit": "ar"
+  },
+  "CL": {
+    "text": "Chile sees in the New Year at the height of summer, so many people celebrate on the beach. At the family dinner there are lentils for luck, at midnight twelve grapes, yellow underwear is a must, and anyone dreaming of travel walks around the block with a suitcase. Selling fireworks to individuals has been banned since 2000, so the fireworks here are official shows only. The biggest, 'Año Nuevo en el Mar' in Valparaíso, draws over a million spectators.\n\nIn Santiago the heart of the night is the Entel Tower on the Alameda. For the arrival of 2026 the party returned there after a seven-year break: at midnight a thousand drones and seven thousand fireworks rose into the sky. Above the city stand Gran Torre Santiago, the tallest building in South America, and the Andes to the east.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Lentils and twelve grapes",
+        "text": "Have some lentils at dinner for prosperity, and at midnight eat twelve grapes: one, with a wish, for each month."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Yellow underwear, a suitcase",
+        "text": "Wear yellow underwear for joy and money. Dreaming of travel? At midnight, walk around the block with a suitcase."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks by sea and tower",
+        "text": "There are no private fireworks here, so go to an official show: in Valparaíso they rise from the sea, in Santiago by the Entel Tower."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Chile: Santiago | Time2Fest",
+      "description": "At midnight in Santiago, 03:00 UTC, Chile greets 2027 with grapes, yellow underwear and a suitcase walk, and the city with drones and fireworks at Entel Tower."
+    },
+    "kit": "cl-3"
+  },
+  "DO": {
+    "text": "The Dominican Republic sees in the New Year with family, and many people from the capital head back to their home town for the night. The season's festive table brings roast pork, pasteles en hoja of plantain wrapped in plantain leaves, moro (rice with pigeon peas and coconut milk) and Russian salad, with ponche and rum. At midnight, the \"cañonazo\", everyone eats twelve grapes, one for each month, with a wish. Yellow underwear calls money, red calls love.\n\nSanto Domingo is the city of the first cathedral in the Americas. Its big party is on the Malecón, the seafront Avenida George Washington, where Telemicro has thrown a free fiestón until morning for over thirty years. Last year, despite the rain, thousands danced merengue, bachata and salsa for twelve hours straight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "A bucket of water out the door",
+        "text": "Before midnight the house is swept outward through the front door, and as the year turns a bucket of water goes into the street to carry the bad luck away."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "A suitcase at the cañonazo",
+        "text": "The moment the midnight cañonazo sounds, people step out with a suitcase, empty or packed, and walk it around the block so the new year brings travel."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fiestón on the Malecón",
+        "text": "In Santo Domingo, Avenida George Washington becomes an all-night free concert of merengue, bachata, salsa and urban music, broadcast live by Telemicro on TV and YouTube."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Dominican Republic: Santo Domingo",
+      "description": "At midnight in Santo Domingo, 04:00 UTC, the Dominican Republic greets 2027 with an all-night fiestón on the Malecón, twelve grapes and a suitcase walk."
+    },
+    "kit": "do"
+  },
+  "EG": {
+    "text": "Egypt sees in the New Year over a festive dinner — with family at home or in a hotel restaurant — with music and fireworks over its landmarks. The most famous backdrop of the night is the Giza Pyramids just outside Cairo: at the start of 2025 fireworks burst over them at midnight, and in other years the pyramids and the Great Sphinx were lit up in many colours. A week later, on 7 January, the country marks Coptic Christmas, a national holiday.\n\nIn Cairo the heart of the night is the Nile. Hotels and floating restaurants line the Corniche from Cairo Tower, and as midnight nears people gather on the riverbanks and bridges to count down the last seconds together. On the boats there is live music, belly dancing and tanoura. At midnight fireworks rise over the city centre.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dinner with family",
+        "text": "In Egypt the night often starts at the table — with family at home or in a hotel restaurant — before heading out for music and fireworks."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "A Nile cruise countdown",
+        "text": "Board a Nile boat in Cairo: dinner, live music, belly dancing and tanoura, and at midnight a countdown right on the water."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight on the Corniche",
+        "text": "Head to the Nile bank or a bridge: last year a dense barrage of fireworks lit up central Cairo and the Corniche at midnight."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Egypt: Cairo | Time2Fest",
+      "description": "At midnight in Cairo, 22:00 UTC, Egypt greets 2027 with family dinners, Nile cruises with belly dancing and tanoura, and a countdown on the Corniche bridges."
+    },
+    "kit": "eg"
+  },
+  "ID": {
+    "text": "In Indonesia, New Year's Eve is unthinkable without the terompet, horns sold right along the roadsides. With family and friends people hold a bakar-bakar: they grill chicken or corn, drink coffee and stay up late. Before the new year almost every family gathers for a shared meal: long noodles for a long life, a whole chicken for family unity, ketupat for forgiving one another. And 1 January is a national holiday.\n\nIn Jakarta the Sudirman and Thamrin avenues close to cars for the night, with stages along the route and the main one at the Bundaran HI roundabout. Last year the city's official programme had no fireworks, out of solidarity with flood victims in Sumatra; a drone show lit up the sky over Bundaran HI instead.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "A terompet horn",
+        "text": "In Indonesia the New Year's Eve party is hard to imagine without a terompet horn. Vendors sell them right along the roadsides."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "The family meal",
+        "text": "Before the new year the family sits down to a shared meal. Long noodles stand for a long life, a whole chicken for unity, ketupat for forgiving one another."
+      },
+      {
+        "id": "t3",
+        "iconId": "address",
+        "title": "Car-free night in Jakarta",
+        "text": "For years now the Sudirman and Thamrin avenues have closed to cars on New Year's Eve. Stages with concerts line the route, the main one at the Bundaran HI roundabout."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Indonesia: Jakarta | Time2Fest",
+      "description": "Indonesia greets 2027 in Jakarta: car-free Sudirman and Thamrin avenues, terompet horns, bakar-bakar grills and a family feast. Midnight there: 17:00 UTC."
+    },
+    "kit": "id+7"
+  },
+  "IN": {
+    "text": "In India, New Year's Eve blends modern parties with traditional festivities. It is loudest in the big cities: Mumbai, Delhi, Bengaluru, Chennai, Hyderabad, Kolkata, Pune and Kochi host parties and concerts. Kolkata celebrates on Park Street, Goa on its beaches and Manali at its winter festivals. The country is hugely diverse, so many people also welcome the year with prayers and rituals.\n\nNew Delhi celebrates in style too. Last New Year's Eve, the centre around Connaught Place was closed to cars from 7 pm, and visitors heading to India Gate, where big crowds were expected, were advised to take public transport. And on 1 January 2025, Delhiites filled temples and gurdwaras, including Gurdwara Bangla Sahib near Connaught Place.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "A party in a big city",
+        "text": "Mumbai, Delhi, Bengaluru, Kolkata and other big cities greet midnight with parties and concerts, and in Kolkata the main celebration is on Park Street."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Goa's beaches or Manali's hills",
+        "text": "Goa is famous for its New Year beach parties, and Manali in the mountains for its winter festivals."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "The first day at a temple",
+        "text": "Many people begin the year with prayer. In Delhi on 1 January, people visit temples and gurdwaras such as Bangla Sahib, Rakab Ganj, Akshardham and Hanuman temples."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in India: New Delhi | Time2Fest",
+      "description": "India welcomes 2027 with parties and concerts in its big cities, crowds at India Gate in New Delhi and temple visits on 1 January. Midnight is 18:30 UTC."
+    },
+    "kit": "in"
+  },
+  "KE": {
+    "text": "Kenya sees in the New Year both in church and out on the streets. On the evening of 31 December places of worship fill up as people pray and give thanks for the year that is ending, and the next morning churches open again for thanksgiving services. Others count down the final seconds in the streets, at restaurants and at concerts. At midnight come joyful cries and applause, people dance, and fireworks rise over the big cities.\n\nIn Nairobi the heart of the night is the Kenyatta International Convention Centre (KICC) in the business district. Last year a crowd gathered beneath its tower to count down to midnight together, while fireworks burst over the centre, Westlands and residential estates. Car horns sounded across the city too.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A crossover service at church",
+        "text": "On the evening of 31 December churches are full: people pray, give thanks for the passing year and cross into the new one together. On 1 January there’s a morning thanksgiving service."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks over the KICC tower",
+        "text": "In Nairobi, count down beneath the KICC tower in the centre. For the start of 2025 the shows here and over Old Mutual Tower were free and lasted about 25 minutes."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Cheers, dancing and car horns",
+        "text": "At midnight Kenyans greet the year with joyful cries and dancing. In Nairobi last year car horns joined in — add your voice to the noise."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Kenya: Nairobi | Time2Fest",
+      "description": "At midnight in Nairobi, 21:00 UTC, Kenya meets 2027 with crossover church services and joyful cheers, while crowds count down beneath the KICC tower."
+    },
+    "kit": "ke"
+  },
+  "KZ": {
+    "text": "Kazakhstan sees in the New Year with customs that go back to Soviet times. Before midnight the president addresses the nation on TV, and at midnight the national anthem plays. It is above all a family holiday: people gather at a festive table at home first, then head out to the city celebrations. At the start of 2026 the New Year break lasted four days in a row, from 1 to 4 January.\n\nIn Almaty the heart of the night is Astana Square, which locals call Old Square. Last year a concert of Kazakh pop stars ran there from 6 pm to half past midnight, and the fireworks began at exactly midnight. Nearby, a New Year market served hot drinks and tornado potatoes, and by the Republic Palace there was a skating rink with a tree and Ayaz Ata.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "President’s address and anthem",
+        "text": "Turn on the TV before midnight: the president greets the country, and at twelve sharp Kazakhstan’s anthem plays."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "A festive table, a long break",
+        "text": "First dinner with family at home, then a walk around the city. At the start of 2026 people had four days off, 1 to 4 January."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks on Astana Square",
+        "text": "In Almaty, head to Old Square: last year a concert ran there until half past midnight, and the fireworks began at midnight."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Kazakhstan: Astana | Time2Fest",
+      "description": "At midnight in Astana, 19:00 UTC, Kazakhstan greets 2027 with the anthem after the president’s address, and Almaty with a concert and fireworks on Old Square."
+    },
+    "kit": "kz"
+  },
+  "LK": {
+    "text": "Sri Lanka's traditional new year, Avurudda, comes in April at hours set by astrologers, with kiribath milk rice and sweets, while the night of 1 January is a modern city celebration. At midnight families head to the seafronts, and five-star hotels hold galas with a buffet, a live band or DJ and a toast. The biggest crowds gather in Colombo: last year the police drew up a special traffic and security plan for the city.\n\nIn Colombo midnight is welcomed on Galle Face Green, where families and street-food stalls fill the promenade. Last year fireworks lit up the sky over Galle Face Green, Port City and the illuminated Lotus Tower. Close to midnight tuk-tuks are hard to find, so agree on the fare first.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Midnight on Galle Face Green",
+        "text": "Last year at midnight fireworks burst over the Galle Face Green promenade, Port City and the Lotus Tower. Come early: police expect crowds and heavy traffic in Fort, Pettah and Kollupitiya."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Street food by the ocean",
+        "text": "On New Year's Eve families stroll along Galle Face Green while stalls sell street food. From there you can see the illuminated Lotus Tower above the skyline."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A hotel gala",
+        "text": "Hotels along Galle Road and around the lake sell tickets to galas with a buffet, a live band or DJ and a midnight toast. The 2025 gala at Cinnamon Life was reported at about LKR 35,000 per person."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Sri Lanka: Colombo | Time2Fest",
+      "description": "In Colombo, Sri Lanka, 2027 arrives at 18:30 UTC. Families pack Galle Face Green for street food, hotels host galas, fireworks lit the Lotus Tower last year."
+    },
+    "kit": "lk"
+  },
+  "LV": {
+    "text": "Latvians call the evening of 31 December Vecgada vakars, the evening of the old year. Grey peas with herring are a must: folk belief says they bring health and money, and the peas have to be finished before midnight or the year will be full of tears. People also pour their fortune, tipping molten metal into cold water and reading the year ahead in the odd shape it makes. Above all, don't fall asleep before twelve, or you'll sleep through the whole year.\n\nIn Riga the night belongs to the Old Town. Last year six squares rocked to DJs from 9 p.m. to 2 a.m., with projections glowing on the House of the Blackheads. Nearby, a plaque in the cobblestones marks where, as the story goes, the first decorated Christmas tree stood in 1510. Fireworks in Riga are allowed for just one hour, from 00:00 to 01:00.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Grey peas before midnight",
+        "text": "Put grey peas and herring on the table for health and money. Finish them before twelve: folk belief says leftover peas mean a year of tears."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Pour your fortune",
+        "text": "Melt a small piece of metal, pour it into cold water and study the shape: Latvians have long read the coming year in it."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Town Hall Square, Riga",
+        "text": "Find the plaque in the cobblestones where the 1510 tree stood, by the House of the Blackheads. Last year DJs played here and in nearby squares until 2 a.m."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Latvia: Riga | Time2Fest",
+      "description": "At midnight in Riga, 22:00 UTC, Latvia greets 2027 with grey peas, molten-metal fortunes and DJs in Old Riga's squares by the House of the Blackheads."
+    },
+    "kit": "lv"
+  },
+  "MX": {
+    "text": "Mexico sees in the New Year over a late family dinner: turkey or pork loin, or, depending on the region, tamales, pozole or bacalao. At midnight people eat a grape with each of the twelve chimes, making a wish every time, a custom that came from Spain. The colour of new underwear tells what you want from the year: red for love, yellow for money, green for health. Before midnight the house is swept out towards the door to chase away the bad, and in the first minutes of the year people run around the block with a suitcase to bring travel.\n\nIn Mexico City the main party is on Paseo de la Reforma at the Angel of Independence, a 36-metre column topped by a golden winged Victory. Last year DJs played there until 2 a.m., Mayor Clara Brugada led the countdown from the stage and, by the city's count, more than 250,000 people came. Cups of twelve grapes were sold right on the street for 30 pesos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A grape for every chime",
+        "text": "Have twelve grapes ready and at midnight eat one with each chime, making a wish for each month ahead."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Suitcase round the block",
+        "text": "As soon as midnight strikes, grab a suitcase and walk round the block: the further you go, the further you’ll travel this year. Yellow underwear is for money."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Party at the Angel",
+        "text": "In Mexico City head to Paseo de la Reforma: last year DJs played at the Angel of Independence from 6 p.m. to 2 a.m., with free entry."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Mexico: Mexico City | Time2Fest",
+      "description": "Mexico greets 2027 in Mexico City: twelve grapes on the chimes, a suitcase dash round the block and DJs by the Angel. Midnight is 00:00 local, 06:00 UTC."
+    },
+    "kit": "mx-6"
+  },
+  "MY": {
+    "text": "In Malaysia, 1 January is a state holiday: a day off in most states, but not in Johor, Kedah, Kelantan, Perlis and Terengganu. The country's calendar brings together the festivals of different peoples and faiths: Chinese New Year, Hari Raya Aidilfitri and Deepavali are federal holidays, often celebrated by everyone together. New Year's Eve is marked with countdowns and fireworks in many cities, from Melaka and Ipoh to Kuching, while some welcome it in prayer: last year in Putrajaya, thousands joined religious programmes at Putra Mosque.\n\nLast year Kuala Lumpur saw in midnight in three places: KLCC Park beneath the Petronas Towers, with fireworks and a tower light show; KL Tower, with fireworks; and Pavilion in Bukit Bintang, with a countdown festival, pyromusical fireworks and lasers. Above the city also rises Merdeka 118, the second-tallest building in the world.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Countdown in your own city",
+        "text": "Countdowns with fireworks are not just for the capital: last year more than 40,000 people came out in Melaka and more than 30,000 in Ipoh, and Kuching's waterfront ended the night with fireworks."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "A year that begins in prayer",
+        "text": "Alongside the fireworks, people across the country also gather to pray: last year in Putrajaya, thousands welcomed the new year at religious programmes in Putra Mosque."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Beneath the Petronas Towers",
+        "text": "KLCC Park is Kuala Lumpur's favourite spot for watching the midnight fireworks. Last year it hosted a free evening with Malaysian artists, fireworks and a light show on the towers."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Malaysia: Kuala Lumpur | Time2Fest",
+      "description": "Malaysia sees in 2027 in Kuala Lumpur: a countdown at KLCC Park under the Petronas Towers and fireworks from KL Tower. Midnight is 16:00 UTC, for all."
+    },
+    "kit": "my"
+  },
+  "PY": {
+    "text": "Paraguay sees in the New Year at the height of summer, so the festive dinner is often held outdoors. The extended family gathers, and each household brings a dish: meat, sopa paraguaya and chipa guazú made with Paraguayan cheese. There is cold sidra, wine and beer, and for dessert clericó, fruit in wine. Last year the country’s biggest party was in Encarnación on the Paraná River: at least 80,000 people were expected on San José beach, and the midnight fireworks lasted 20 minutes.\n\nAsunción lies on the bank of the Paraguay River, and December days here average almost 33 °C. At night the López Palace, seat of the government and the building you see in the picture, glows above the bay. In the city, fireworks may only be sold with a municipal permit, at Mercado 4 and on a few plazas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dinner under the stars",
+        "text": "Gather the family outdoors: everyone brings a dish, and the table holds meat, sopa paraguaya and chipa guazú with Paraguayan cheese."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Cold clericó and sidra",
+        "text": "Chill the clericó, fruit in wine, and the sidra: at midnight adults toast with champagne or sidra, and children with juice."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks on Encarnación’s beach",
+        "text": "Last year almost a thousand tables stood on San José beach by the Paraná, bands played from 8 pm, and the midnight fireworks lasted 20 minutes."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Paraguay: Asunción | Time2Fest",
+      "description": "At midnight in Asunción, 03:00 UTC, Paraguay greets 2027 with an outdoor family dinner, cold clericó and sidra, while López Palace glows above the bay."
+    },
+    "kit": "py"
+  },
+  "RS": {
+    "text": "Serbia welcomes the New Year twice. First comes the night of 1 January: 1 and 2 January are days off, and presents for children come from Deda Mraz, Grandfather Frost, who since Yugoslav times has arrived at New Year rather than at Christmas. Christmas itself falls on 7 January, and on the night of 14 January the Julian calendar brings the Serbian New Year, with another countdown and fireworks, even though the day is a working one.\n\nIn Belgrade, New Year's Eve has drawn crowds to Republic Square, in front of the National Theatre, for decades. Last year a fifteen-minute fireworks show burst from the Kula Beograd tower over the Sava at midnight, while brass bands in Santa costumes paraded along Knez Mihailova Street.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Presents from Deda Mraz",
+        "text": "Children wait for Deda Mraz on New Year's Eve: since Yugoslav times presents have come at New Year, while Christmas is kept separately on 7 January."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks over the Sava",
+        "text": "At midnight, look to the sky over the Sava: for New Year 2026 the fireworks from the Kula Beograd tower lasted fifteen minutes and could be seen across New Belgrade."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "One more New Year on 14 January",
+        "text": "On the night of 14 January the celebration returns by the Julian calendar: in 2025 Belgrade had a concert on Republic Square and fireworks over the Sava at midnight."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Serbia: Belgrade | Time2Fest",
+      "description": "At midnight in Belgrade, 23:00 UTC, Serbia greets 2027 with fireworks over the Sava and gifts from Deda Mraz, then celebrates again on 14 January, old style."
+    },
+    "kit": "rs"
+  },
+  "VN": {
+    "text": "In Vietnam, 1 January is a public holiday, but only for one day: the main celebration of the year is Tết, the lunar New Year, which in 2027 falls on 6 February. At Tết the whole family gathers, ancestors are honoured, red envelopes are handed out and people watch who is first to cross the threshold of the home. So young city dwellers say 1 January is “for myself” — trips, friends and the countdown — while Tết is for family. The largest cities, including Hanoi, Da Nang and Ho Chi Minh City, put on fireworks on New Year’s Eve.\n\nLast year in Ho Chi Minh City the main countdown was on Nguyen Hue walking street: the stage ran from 19:00 to midnight, the centre was closed to cars, and at midnight fireworks lit up the Saigon River for fifteen minutes. Thousands of people had gathered on the riverside since early evening.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Tết comes first",
+        "text": "In Vietnam 1 January is a single day off, while Tết, the lunar New Year, is the longest holiday of the year; in 2027 it falls on 6 February. At Tết families gather for meals, honour their ancestors and hand out red envelopes."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Countdown on Nguyen Hue",
+        "text": "Last year Ho Chi Minh City’s main countdown was on Nguyen Hue walking street: a stage, bands and DJs, seven big screens. From 21:00 the central streets were closed to cars, so people walked to the stage."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the river",
+        "text": "Last year, right at midnight, fireworks lit the sky over the Saigon River and the city centre for fifteen minutes. People claimed spots on the riverside from about seven in the evening."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Vietnam: Ho Chi Minh City | Time2Fest",
+      "description": "Ho Chi Minh City counts down on Nguyen Hue walking street and fireworks light the Saigon River at midnight. On 31 December, Vietnam welcomes 2027 at 17:00 UTC."
+    },
+    "kit": "vn"
   }
 }

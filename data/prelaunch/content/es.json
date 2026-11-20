@@ -750,5 +750,481 @@
       "description": "A medianoche en Caracas, 04:00 UTC, Venezuela recibe 2027 con doce uvas y gaitas en la radio, mientras las campanas de la catedral dan doce toques."
     },
     "kit": "ve"
+  },
+  "AE": {
+    "text": "En los Emiratos Árabes Unidos el 1 de enero es festivo tanto en el sector público como en el privado. En 2027 cae en viernes, así que el año empieza con un fin de semana de tres días, y el primer día laborable es el lunes 4 de enero. Cada Nochevieja se lanzan fuegos artificiales desde el Burj Khalifa, en Dubái. Solo para recibir 2018 los sustituyó un espectáculo de luz y sonido, que entró en el Libro Guinness como el mayor jamás hecho sobre un solo edificio.\n\nDubái recibirá 2027 en Downtown. El 31 de diciembre de 2026 el programa empieza a las 19:00, el Cirque du Soleil actúa por primera vez a las 23:25 y desde las 23:59 la fachada del Burj Khalifa contará los últimos sesenta segundos del año. A medianoche se encienden a la vez fuegos, un espectáculo de drones, la Fuente de Dubái y proyecciones. El año pasado, según los creadores del espectáculo, más de 1,7 millones de personas lo vieron en directo, y para recibir 2025 el transporte de la ciudad llevó a 2,5 millones de pasajeros.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Tres días libres para empezar",
+        "text": "El 1 de enero descansan en los Emiratos tanto el sector público como el privado. En 2027 cae en viernes, así que se vuelve al trabajo el lunes 4 de enero."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Zonas gratuitas en Downtown",
+        "text": "En Downtown las zonas públicas son gratuitas y por orden de llegada, el espectáculo se ve en pantallas LED y se puede llevar comida y bebidas sin alcohol. Las calles se cortarán desde las 16:00, así que ve en metro: para recibir 2025 lo usaron más de 1,1 millones de pasajeros."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Medianoche en el Burj Khalifa",
+        "text": "Según el programa, desde las 23:59 la fachada de la torre cuenta los últimos sesenta segundos de 2026 y a medianoche se encienden a la vez fuegos, drones, la Fuente de Dubái y proyecciones. Esta vez el Cirque du Soleil se suma por primera vez a la cuenta atrás."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027: Dubái, Emiratos Árabes Unidos | Time2Fest",
+      "description": "Dubái, en los Emiratos Árabes Unidos, recibe 2027 con fuegos, drones y el Cirque du Soleil junto al Burj Khalifa, con zonas gratis. Medianoche: 20:00 UTC."
+    },
+    "kit": "ae"
+  },
+  "AM": {
+    "text": "En Armenia, el Año Nuevo es la gran fiesta familiar y dura toda una semana: desde el 31 de diciembre hasta la Navidad, que aquí se celebra el 6 de enero. En casa se hornean galletas de Año Nuevo y se pone una mesa generosa, con el anushabur en el centro, un pudin dulce de grano decorado con frutos secos, nueces y granada. Los niños escriben cartas a Dzmer Pap, el Abuelo Invierno, que trae los regalos en Nochevieja. Desde el 1 de enero las puertas están abiertas para todos y familiares y amigos se visitan.\n\nEn Ereván, el árbol principal del país brilla en la plaza de la República desde mediados de diciembre, con un mercado al lado, en el parque Shahumyan. El año pasado, a medianoche, 2026 drones y fuegos artificiales iluminaron la plaza. Sobre la ciudad se alza el Ararat, símbolo de Armenia, aunque la montaña está en Turquía; en la imagen aparece detrás del monasterio de Jor Virap, a 30 km de Ereván.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Anushabur en el centro",
+        "text": "Prueba el anushabur, un pudin dulce de grano con frutos secos, nueces y semillas de granada. En Armenia es el centro de la mesa de Año Nuevo."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Una semana de visitas",
+        "text": "Del 1 de enero a la Navidad del 6 de enero, ve de visita con regalos y buenos deseos: los hogares armenios abren sus puertas a todos."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Medianoche en la plaza",
+        "text": "En Ereván, ven al árbol principal de la plaza de la República: el año pasado hubo concierto desde las 23:00 y, a medianoche, 2026 drones y fuegos artificiales."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Armenia: Ereván | Time2Fest",
+      "description": "A medianoche en Ereván, 20:00 UTC, Armenia recibe 2027: árbol y fuegos en la plaza de la República, anushabur en la mesa y visitas hasta el 6 de enero."
+    },
+    "kit": "am"
+  },
+  "AR": {
+    "text": "En Argentina el Año Nuevo llega en pleno verano. Se recibe con una larga cena en familia y con amigos: asado, vitel toné y, de postre, pan dulce y turrones. A medianoche todos se desean lo mejor y brindan con sidra o champán, y algunos comen a toda prisa las 12 uvas. Después los jóvenes salen hasta el amanecer y muchas familias se van a la costa atlántica. En La Plata, a medianoche se queman muñecos gigantes del año viejo, hechos de alambre y papel maché.\n\nEn Buenos Aires, desde hace mucho, a fin de año cae una lluvia de papelitos desde las oficinas del centro, aunque la Ciudad pide no hacerlo. La pirotecnia sonora se prohibió aquí el año pasado, así que a medianoche lo principal es el brindis. En la imagen, el Obelisco sobre la avenida 9 de Julio y la Casa Rosada, sede del Gobierno en la Plaza de Mayo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Sidra y pan dulce",
+        "text": "Cena en familia o con amigos y, a medianoche, brinda con sidra o champán y pasa a la mesa dulce: pan dulce, turrones y frutos secos."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "12 uvas y ropa blanca",
+        "text": "Después de medianoche come 12 uvas y pide un deseo con cada una. Vístete de blanco y, antes de la fiesta, barre la casa hacia afuera para sacar lo malo."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Quemar el año viejo",
+        "text": "En La Plata los vecinos arman muñecos de hasta 6 metros con alambre, madera y papel maché, y a medianoche los queman para empezar el año de cero."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Argentina: Buenos Aires | Time2Fest",
+      "description": "A medianoche en Buenos Aires, 03:00 UTC, Argentina brinda por 2027 con sidra, pan dulce y 12 uvas en pleno verano, y La Plata quema sus muñecos del año viejo."
+    },
+    "kit": "ar"
+  },
+  "CL": {
+    "text": "Chile recibe el Año Nuevo en pleno verano, así que mucha gente lo celebra en la playa. En la cena familiar hay lentejas para la suerte, a medianoche doce uvas, la ropa interior amarilla no falta y quien sueña con viajar da la vuelta a la manzana con una maleta. Vender fuegos artificiales a particulares está prohibido desde 2000, así que aquí solo hay shows oficiales. El mayor, Año Nuevo en el Mar en Valparaíso, reúne a más de un millón de espectadores.\n\nEn Santiago, el corazón de la noche es la Torre Entel, en la Alameda. Para recibir 2026, la fiesta volvió allí tras siete años: a medianoche se elevaron mil drones y siete mil disparos de fuegos artificiales. Sobre la ciudad se alzan la Gran Torre Santiago, el edificio más alto de Sudamérica, y los Andes al este.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Lentejas y doce uvas",
+        "text": "En la cena come lentejas para la prosperidad y, a medianoche, doce uvas: una, con un deseo, por cada mes."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Ropa amarilla y maleta",
+        "text": "Ponte ropa interior amarilla para la alegría y el dinero. ¿Sueñas con viajar? A medianoche, da la vuelta a la manzana con una maleta."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos en el mar y la Alameda",
+        "text": "Aquí no hay fuegos particulares, así que ve a un show oficial: en Valparaíso salen del mar y en Santiago, junto a la Torre Entel."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Chile: Santiago | Time2Fest",
+      "description": "A medianoche en Santiago, 03:00 UTC, Chile recibe 2027 con uvas, ropa amarilla y la vuelta con maleta, y la ciudad, con drones y fuegos en la Torre Entel."
+    },
+    "kit": "cl-3"
+  },
+  "DO": {
+    "text": "La República Dominicana recibe el Año Nuevo en familia, y muchos capitaleños se van esa noche a su pueblo. En la mesa festiva de la temporada hay cerdo asado, pasteles en hoja de plátano, moro de guandules con coco y ensalada rusa, con ponche y ron. A medianoche, con el «cañonazo», se comen doce uvas, una por cada mes, pidiendo un deseo con cada una. La ropa interior amarilla llama al dinero; la roja, al amor.\n\nSanto Domingo es la ciudad de la primera catedral de América. La gran fiesta está en el Malecón, la avenida George Washington, donde Telemicro organiza desde hace más de treinta años un fiestón gratuito hasta el amanecer. El año pasado, pese a la lluvia, miles de personas bailaron merengue, bachata y salsa durante doce horas seguidas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Un cubo de agua a la calle",
+        "text": "Antes de medianoche se barre la casa hacia afuera, y al cambiar el año se lanza un cubo de agua a la calle para que se lleve lo malo."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "La maleta del cañonazo",
+        "text": "En cuanto suena el cañonazo de medianoche, la gente sale con una maleta, vacía o llena, y le da la vuelta a la manzana para que el año traiga viajes."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fiestón en el Malecón",
+        "text": "En Santo Domingo, la avenida George Washington se convierte en un concierto gratuito de toda la noche: merengue, bachata, salsa y urbano, en vivo por Telemicro y YouTube."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en República Dominicana: Santo Domingo",
+      "description": "A medianoche en Santo Domingo, 04:00 UTC, República Dominicana recibe 2027 con el fiestón del Malecón, doce uvas y una vuelta a la manzana con la maleta."
+    },
+    "kit": "do"
+  },
+  "EG": {
+    "text": "Egipto recibe el Año Nuevo con una cena festiva —en familia en casa o en el restaurante de un hotel—, con música y fuegos artificiales sobre sus monumentos. El escenario más famoso de la noche son las pirámides de Guiza, a las afueras de El Cairo: a comienzos de 2025 estallaron fuegos sobre ellas a medianoche, y otros años las pirámides y la Gran Esfinge se iluminaron de muchos colores. Una semana después, el 7 de enero, el país celebra la Navidad copta, fiesta nacional.\n\nEn El Cairo el corazón de la noche es el Nilo. Desde la Torre de El Cairo, la Corniche se llena de hoteles y restaurantes flotantes, y al acercarse la medianoche la gente se reúne en las orillas y los puentes para contar juntos los últimos segundos. En los barcos hay música en directo, danza del vientre y tanoura. A medianoche, los fuegos se elevan sobre el centro.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cena en familia",
+        "text": "En Egipto la noche suele empezar a la mesa —en familia en casa o en el restaurante de un hotel— y luego se sale a por música y fuegos."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Crucero por el Nilo",
+        "text": "Sube a un barco en El Cairo: cena, música en directo, danza del vientre y tanoura, y a medianoche, la cuenta atrás sobre el agua."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Medianoche en la Corniche",
+        "text": "Ve a la orilla del Nilo o a un puente: el año pasado, a medianoche, una lluvia de fuegos iluminó el centro de El Cairo y la Corniche."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Egipto: El Cairo | Time2Fest",
+      "description": "A medianoche en El Cairo, 22:00 UTC, Egipto recibe 2027 con cenas en familia, cruceros por el Nilo con danza del vientre y cuenta atrás en la Corniche."
+    },
+    "kit": "eg"
+  },
+  "ID": {
+    "text": "En Indonesia, la Nochevieja no se concibe sin la terompet, una trompetilla que se vende en los arcenes de las carreteras. Con la familia y los amigos se hace un bakar-bakar: se asa pollo o maíz a la parrilla, se toma café y se trasnocha. Antes del Año Nuevo casi todas las familias se reúnen a la mesa: fideos largos para una vida larga, un pollo entero para la unidad familiar y ketupat para perdonarse unos a otros. Y el 1 de enero es festivo nacional.\n\nEn Yakarta, las avenidas Sudirman y Thamrin se cierran a los coches esa noche, con escenarios a lo largo del recorrido y el principal en la rotonda de Bundaran HI. El año pasado el programa oficial de la ciudad no tuvo fuegos artificiales, en solidaridad con las víctimas de las inundaciones en Sumatra; en su lugar hubo un espectáculo de drones sobre Bundaran HI.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Una terompet",
+        "text": "En Indonesia cuesta imaginar la Nochevieja sin una terompet, la trompetilla de la fiesta. Se vende en los arcenes de las carreteras."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "La mesa familiar",
+        "text": "Antes del Año Nuevo la familia se sienta a la mesa. Los fideos largos son para una vida larga, el pollo entero para la unidad y el ketupat para perdonarse."
+      },
+      {
+        "id": "t3",
+        "iconId": "address",
+        "title": "Noche sin coches en Yakarta",
+        "text": "Desde hace años, las avenidas Sudirman y Thamrin se cierran a los coches en Nochevieja. A lo largo del recorrido hay escenarios con conciertos, y el principal está en Bundaran HI."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Indonesia: Yakarta | Time2Fest",
+      "description": "Indonesia recibe 2027 en Yakarta: avenidas Sudirman y Thamrin sin coches, terompet, bakar-bakar y mesa familiar. Allí la medianoche llega a las 17:00 UTC."
+    },
+    "kit": "id+7"
+  },
+  "IN": {
+    "text": "En la India, la Nochevieja une las fiestas modernas con las celebraciones tradicionales. Donde más se nota es en las grandes ciudades: Bombay, Delhi, Bangalore, Chennai, Hyderabad, Calcuta, Pune y Kochi organizan fiestas y conciertos. Calcuta lo celebra en Park Street, Goa en sus playas y Manali en sus festivales de invierno. El país es muy diverso, así que muchos reciben también el año con oraciones y rituales.\n\nNueva Delhi también lo celebra a lo grande. La última Nochevieja, el centro en torno a Connaught Place se cerró a los coches desde las 19:00, y a quienes iban a la Puerta de la India, donde se esperaban multitudes, se les recomendó el transporte público. Y el 1 de enero de 2025, los vecinos de Delhi llenaron templos y gurdwaras, entre ellos el Gurdwara Bangla Sahib, junto a Connaught Place.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Fiesta en una gran ciudad",
+        "text": "Bombay, Delhi, Bangalore, Calcuta y otras grandes ciudades reciben la medianoche con fiestas y conciertos; en Calcuta, la gran fiesta está en Park Street."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Playas de Goa o montañas de Manali",
+        "text": "Goa es famosa por sus fiestas de Año Nuevo en la playa, y Manali, en la montaña, por sus festivales de invierno."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "El primer día, en el templo",
+        "text": "Muchos empiezan el año rezando. En Delhi, el 1 de enero la gente acude a templos y gurdwaras como Bangla Sahib, Rakab Ganj, Akshardham y los templos de Hanuman."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en la India: Nueva Delhi | Time2Fest",
+      "description": "La India recibe 2027 con fiestas y conciertos en sus grandes ciudades, gente en la Puerta de la India de Nueva Delhi y templos el 1 de enero. 18:30 UTC."
+    },
+    "kit": "in"
+  },
+  "KE": {
+    "text": "Kenia recibe el Año Nuevo tanto en la iglesia como en la calle. La tarde del 31 de diciembre los templos se llenan: la gente reza y da gracias por el año que termina, y a la mañana siguiente las iglesias vuelven a abrir para los servicios de acción de gracias. Otros cuentan los últimos segundos en la calle, en restaurantes y en conciertos. A medianoche estallan gritos de alegría y aplausos, la gente baila y los fuegos artificiales suben sobre las grandes ciudades.\n\nEn Nairobi, el corazón de la noche es el Centro Internacional de Convenciones Kenyatta (KICC), en el distrito de negocios. El año pasado una multitud se reunió bajo su torre para contar juntos los segundos hasta la medianoche, mientras los fuegos estallaban sobre el centro, Westlands y los barrios residenciales. Por toda la ciudad sonaban además las bocinas de los coches.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Culto de «crossover»",
+        "text": "La tarde del 31 de diciembre las iglesias están llenas: la gente reza, agradece el año que se va y pasa junta al nuevo. El 1 de enero, servicio de acción de gracias por la mañana."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre la torre del KICC",
+        "text": "En Nairobi, cuenta los segundos bajo la torre del KICC, en el centro. Para recibir 2025, los espectáculos aquí y sobre la torre Old Mutual fueron gratis y duraron unos 25 minutos."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Gritos, baile y bocinas",
+        "text": "A medianoche, los kenianos reciben el año con gritos de alegría y bailes. En Nairobi, el año pasado se sumaron las bocinas de los coches: únete al bullicio."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Kenia: Nairobi | Time2Fest",
+      "description": "A medianoche en Nairobi, 21:00 UTC, Kenia recibe 2027 con cultos en las iglesias y gritos de alegría, y la multitud cuenta los segundos bajo la torre KICC."
+    },
+    "kit": "ke"
+  },
+  "KZ": {
+    "text": "Kazajistán recibe el Año Nuevo con costumbres heredadas de la época soviética. Antes de medianoche el presidente da un mensaje por televisión y, a medianoche, suena el himno nacional. Es sobre todo una fiesta familiar: primero se reúnen en casa alrededor de la mesa festiva y luego salen a las celebraciones de la ciudad. A comienzos de 2026 las vacaciones de Año Nuevo duraron cuatro días seguidos, del 1 al 4 de enero.\n\nEn Almaty el corazón de la noche es la plaza Astana, que los vecinos llaman la Plaza Vieja. El año pasado hubo allí un concierto de estrellas del pop kazajo desde las seis de la tarde hasta las doce y media, y los fuegos artificiales empezaron justo a medianoche. Cerca, un mercado de Año Nuevo ofrecía bebidas calientes y patatas tornado, y junto al Palacio de la República había una pista de hielo con un árbol y Ayaz Ata.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Mensaje del presidente e himno",
+        "text": "Enciende la tele antes de medianoche: el presidente felicita al país y, a las doce en punto, suena el himno de Kazajistán."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Mesa festiva y días libres",
+        "text": "Primero, cena en casa con la familia; después, un paseo por la ciudad. A comienzos de 2026 hubo cuatro días libres, del 1 al 4 de enero."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos en la plaza Astana",
+        "text": "En Almaty, ve a la Plaza Vieja: el año pasado hubo un concierto hasta las doce y media, y los fuegos empezaron a medianoche."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Kazajistán: Astaná | Time2Fest",
+      "description": "A medianoche en Astaná, 19:00 UTC, Kazajistán recibe 2027 con el himno tras el mensaje del presidente, y Almaty, con concierto y fuegos en la Plaza Vieja."
+    },
+    "kit": "kz"
+  },
+  "LK": {
+    "text": "El año nuevo tradicional de Sri Lanka, el Avurudda, llega en abril, a horas fijadas por astrólogos, con arroz con leche kiribath y dulces, mientras que la noche del 1 de enero es una fiesta urbana y moderna. A medianoche las familias salen a los paseos marítimos y los hoteles de cinco estrellas organizan galas con bufé, música en vivo o DJ y un brindis. La mayor multitud se reúne en Colombo: el año pasado la policía preparó un plan especial de tráfico y seguridad para la ciudad.\n\nEn Colombo la medianoche se recibe en Galle Face Green, donde familias y puestos de comida callejera llenan el paseo. El año pasado los fuegos artificiales iluminaron Galle Face Green, Port City y la Torre Loto iluminada. Cerca de medianoche cuesta encontrar un tuk-tuk, así que acuerda el precio antes.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Medianoche en Galle Face Green",
+        "text": "El año pasado, a medianoche, los fuegos estallaron sobre el paseo de Galle Face Green, Port City y la Torre Loto. Llega pronto: la policía espera multitudes y atascos en Fort, Pettah y Kollupitiya."
+      },
+      {
+        "id": "t2",
+        "iconId": "noodles",
+        "title": "Comida callejera junto al mar",
+        "text": "En Nochevieja las familias pasean por Galle Face Green mientras los puestos venden comida callejera. Desde allí se ve la Torre Loto iluminada sobre la ciudad."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Gala en un hotel",
+        "text": "Los hoteles de Galle Road y junto al lago venden entradas para galas con bufé, música en vivo o DJ y brindis a medianoche. Según se informó, la gala de 2025 en Cinnamon Life costaba unas 35.000 rupias por persona."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Sri Lanka: Colombo | Time2Fest",
+      "description": "En Colombo, Sri Lanka, 2027 llega a las 18:30 UTC. Las familias van a Galle Face Green por comida callejera, hay galas de hotel y hubo fuegos en la Torre Loto."
+    },
+    "kit": "lk"
+  },
+  "LV": {
+    "text": "Los letones llaman a la tarde del 31 de diciembre Vecgada vakars, la tarde del año viejo. No pueden faltar los guisantes grises con arenque: según la creencia popular traen salud y dinero, y hay que terminarlos antes de medianoche o el año vendrá lleno de lágrimas. También se «vierte la suerte»: se echa metal fundido en agua fría y se adivina el año en la figura caprichosa que sale. Y sobre todo, no dormirse antes de las doce, o te pasarás el año durmiendo.\n\nEn Riga la noche se vive en el casco antiguo. El año pasado seis plazas vibraron con DJ de las nueve de la noche a las dos de la madrugada, con proyecciones sobre la Casa de los Cabezas Negras. Al lado, una placa en el empedrado señala dónde, según la tradición, se levantó en 1510 el primer árbol de Navidad decorado. En Riga los fuegos artificiales solo se permiten una hora, de 00:00 a 01:00.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Guisantes grises antes de las doce",
+        "text": "Pon en la mesa guisantes grises con arenque, para la salud y el dinero. Termínalos antes de las doce: según la creencia, si sobran, el año traerá lágrimas."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Vierte tu suerte",
+        "text": "Funde un trocito de metal, viértelo en agua fría y mira la figura: los letones llevan mucho tiempo adivinando en ella cómo será el año."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Plaza del Ayuntamiento, Riga",
+        "text": "Busca en el empedrado la placa del árbol de 1510, junto a la Casa de los Cabezas Negras. El año pasado hubo DJ aquí y en las plazas vecinas hasta las dos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Letonia: Riga | Time2Fest",
+      "description": "A medianoche en Riga, 22:00 UTC, Letonia recibe 2027 con guisantes grises, suerte de metal fundido y DJ en las plazas junto a la Casa de los Cabezas Negras."
+    },
+    "kit": "lv"
+  },
+  "MX": {
+    "text": "México recibe el Año Nuevo con una cena familiar tardía: pavo o lomo de cerdo y, según la región, tamales, pozole o bacalao. A medianoche se come una uva con cada una de las doce campanadas y se pide un deseo con cada una, costumbre llegada de España. El color de la ropa interior nueva dice qué esperas del año: rojo para el amor, amarillo para el dinero, verde para la salud. Antes de medianoche se barre la casa hacia la puerta para sacar lo malo, y en los primeros minutos del año se corre alrededor de la manzana con una maleta para atraer viajes.\n\nEn Ciudad de México la gran fiesta es en Paseo de la Reforma, junto al Ángel de la Independencia, una columna de 36 metros coronada por una Victoria alada dorada. El año pasado hubo DJ hasta las dos de la madrugada, la jefa de Gobierno Clara Brugada encabezó la cuenta regresiva desde el escenario y, según la ciudad, llegaron más de 250 000 personas. Los vasos con doce uvas se vendían en la calle a 30 pesos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Una uva por campanada",
+        "text": "Ten listas doce uvas y a medianoche come una con cada campanada, pidiendo un deseo para cada mes."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "La vuelta con la maleta",
+        "text": "En cuanto den las doce, toma una maleta y da la vuelta a la manzana: cuanto más lejos camines, más lejos viajarás. La ropa interior amarilla, para el dinero."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fiesta en el Ángel",
+        "text": "En Ciudad de México ve a Paseo de la Reforma: el año pasado hubo DJ junto al Ángel de la Independencia de 18:00 a 2:00, con entrada libre."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en México: Ciudad de México | Time2Fest",
+      "description": "México recibe 2027 en la capital: doce uvas con las campanadas, la vuelta con la maleta y DJ junto al Ángel. Medianoche: 00:00 local, 06:00 UTC."
+    },
+    "kit": "mx-6"
+  },
+  "MY": {
+    "text": "En Malasia, el 1 de enero es festivo a nivel de estado: día libre en la mayoría de ellos, pero no en Johor, Kedah, Kelantan, Perlis y Terengganu. El calendario del país reúne fiestas de distintos pueblos y credos: el Año Nuevo chino, el Hari Raya Aidilfitri y el Deepavali son festivos federales, y a menudo los celebran todos juntos. La Nochevieja se vive con cuentas atrás y fuegos artificiales en muchas ciudades, de Malaca e Ipoh a Kuching, y hay quien la recibe rezando: el año pasado, en Putrajaya, miles de personas acudieron a actos religiosos en la mezquita Putra.\n\nEl año pasado Kuala Lumpur recibió la medianoche en tres lugares: el parque KLCC, bajo las Torres Petronas, con fuegos y un espectáculo de luces en las torres; la torre KL Tower, con fuegos; y Pavilion, en Bukit Bintang, con un festival de cuenta atrás, fuegos piromusicales y láseres. Sobre la ciudad se alza también Merdeka 118, el segundo edificio más alto del mundo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás en tu ciudad",
+        "text": "Las cuentas atrás con fuegos no son solo cosa de la capital: el año pasado acudieron más de 40.000 personas en Malaca y más de 30.000 en Ipoh, y el paseo fluvial de Kuching cerró la noche con fuegos."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Un año que empieza rezando",
+        "text": "Junto a los fuegos, en el país también se reúnen para rezar: el año pasado, en Putrajaya, miles de personas recibieron el año nuevo en actos religiosos en la mezquita Putra."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Bajo las Torres Petronas",
+        "text": "El parque KLCC es el lugar favorito de Kuala Lumpur para ver los fuegos de medianoche. El año pasado acogió una velada gratuita con artistas malasios, fuegos y un espectáculo de luces en las torres."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Malasia: Kuala Lumpur | Time2Fest",
+      "description": "Malasia recibe 2027 en Kuala Lumpur: cuenta atrás en el parque KLCC, junto a las Torres Petronas y fuegos artificiales desde la Torre KL. Medianoche, 16:00 UTC."
+    },
+    "kit": "my"
+  },
+  "PY": {
+    "text": "Paraguay recibe el Año Nuevo en pleno verano, así que la cena de fiesta suele hacerse al aire libre. Se reúne la familia numerosa y cada casa trae un plato: carne, sopa paraguaya y chipa guazú con queso Paraguay. Hay sidra, vino y cerveza bien fríos y, de postre, clericó, fruta con vino. El año pasado la mayor fiesta del país fue en Encarnación, a orillas del Paraná: en la playa San José se esperaban al menos 80 000 personas y los fuegos de medianoche duraron 20 minutos.\n\nAsunción está a orillas del río Paraguay y en diciembre la máxima media ronda los 33 °C. De noche, sobre la bahía brilla el Palacio de los López, sede del Gobierno y el edificio que ves en la imagen. En la ciudad los fuegos artificiales solo se venden con permiso municipal, en el Mercado 4 y en algunas plazas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cena al aire libre",
+        "text": "Reúne a la familia al aire libre: cada uno trae un plato y en la mesa hay carne, sopa paraguaya y chipa guazú con queso Paraguay."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Clericó y sidra bien fríos",
+        "text": "Enfría el clericó, fruta con vino, y la sidra: a medianoche los adultos brindan con champán o sidra, y los niños con jugo."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos en la playa de Encarnación",
+        "text": "El año pasado hubo casi mil mesas en la playa San José, junto al Paraná; las bandas tocaron desde las 20:00 y los fuegos de medianoche duraron 20 minutos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Paraguay: Asunción | Time2Fest",
+      "description": "A medianoche en Asunción, 03:00 UTC, Paraguay recibe 2027 con cena familiar al aire libre, clericó y sidra bien fríos, y el Palacio de los López iluminado."
+    },
+    "kit": "py"
+  },
+  "RS": {
+    "text": "Serbia recibe el Año Nuevo dos veces. Primero llega la noche del 1 de enero: el 1 y el 2 de enero son festivos, y los regalos de los niños los trae Deda Mraz, el Abuelo Escarcha, que desde los tiempos de Yugoslavia llega en Año Nuevo y no en Navidad. La Navidad se celebra el 7 de enero, y en la noche del 14 de enero el calendario juliano trae el Año Nuevo serbio, con otra cuenta atrás y fuegos artificiales, aunque ese día se trabaja.\n\nEn Belgrado, la Nochevieja reúne desde hace décadas a la gente en la plaza de la República, frente al Teatro Nacional. El año pasado, a medianoche, unos fuegos de quince minutos estallaron desde la torre Kula Beograd sobre el Sava, mientras bandas de metales vestidas de Papá Noel recorrían la calle Knez Mihailova.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Regalos de Deda Mraz",
+        "text": "Los niños esperan a Deda Mraz en Nochevieja: desde los tiempos de Yugoslavia los regalos llegan en Año Nuevo, y la Navidad se celebra aparte, el 7 de enero."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el Sava",
+        "text": "A medianoche, mira al cielo sobre el Sava: en el Año Nuevo 2026 los fuegos desde la torre Kula Beograd duraron quince minutos y se vieron en todo Nuevo Belgrado."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Otro Año Nuevo el 14 de enero",
+        "text": "En la noche del 14 de enero la fiesta vuelve según el calendario juliano: en 2025 Belgrado tuvo concierto en la plaza de la República y fuegos sobre el Sava a medianoche."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Serbia: Belgrado | Time2Fest",
+      "description": "A medianoche en Belgrado, 23:00 UTC, Serbia recibe 2027 con fuegos sobre el Sava y regalos de Deda Mraz, y el 14 de enero repite la fiesta, al estilo juliano."
+    },
+    "kit": "rs"
+  },
+  "VN": {
+    "text": "En Vietnam el 1 de enero es festivo, pero solo un día: la gran fiesta del año es el Tết, el Año Nuevo lunar, que en 2027 cae el 6 de febrero. En el Tết se reúne toda la familia, se honra a los antepasados, se regalan sobres rojos y se mira quién cruza primero el umbral de la casa. Por eso los jóvenes de las ciudades dicen que el 1 de enero es «para uno mismo» —viajes, amigos y cuenta regresiva— y el Tết, para la familia. Las grandes ciudades, entre ellas Hanói, Da Nang y Ciudad Ho Chi Minh, lanzan fuegos artificiales en Nochevieja.\n\nEl año pasado, en Ciudad Ho Chi Minh, la cuenta regresiva principal fue en la calle peatonal Nguyen Hue: el escenario funcionó de 19:00 a medianoche, el centro se cerró al tráfico y a medianoche los fuegos iluminaron el río Saigón durante quince minutos. Miles de personas se reunieron en la ribera desde la tarde.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "El Tết es lo principal",
+        "text": "En Vietnam el 1 de enero es un solo día libre, y el Tết, el Año Nuevo lunar, es el festivo más largo del año; en 2027 cae el 6 de febrero. En el Tết las familias se reúnen a comer, honran a los antepasados y regalan sobres rojos."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Cuenta atrás en Nguyen Hue",
+        "text": "El año pasado la cuenta atrás principal de Ciudad Ho Chi Minh fue en la calle peatonal Nguyen Hue: escenario, bandas y DJ, siete pantallas gigantes. Desde las 21:00 las calles del centro se cerraron al tráfico, así que se llegaba a pie."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el río",
+        "text": "El año pasado, justo a medianoche, los fuegos iluminaron durante quince minutos el cielo sobre el río Saigón y el centro. La gente ocupaba sitio en la ribera desde las siete de la tarde."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Vietnam: Ciudad Ho Chi Minh | Time2Fest",
+      "description": "Ciudad Ho Chi Minh cuenta atrás en la calle Nguyen Hue y a medianoche los fuegos iluminan el río Saigón. En Vietnam llega 2027 a las 17:00 UTC del 31/12."
+    },
+    "kit": "vn"
   }
 }

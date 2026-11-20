@@ -1,0 +1,98 @@
+{
+  "code": "KZ",
+  "zone": "UTC+5",
+  "zoneId": "utc+0500",
+  "cityId": "almaty",
+  "names": {
+    "uk": {
+      "name": "Казахстан",
+      "city": "Астана",
+      "cityIn": "в Астані",
+      "caps": "АСТАНА · КАЗАХСТАН"
+    },
+    "en": {
+      "name": "Kazakhstan",
+      "city": "Astana",
+      "cityIn": "in Astana",
+      "caps": "ASTANA · KAZAKHSTAN"
+    },
+    "es": {
+      "name": "Kazajistán",
+      "city": "Astaná",
+      "cityIn": "en Astaná",
+      "caps": "ASTANÁ · KAZAJISTÁN"
+    },
+    "fr": {
+      "name": "Kazakhstan",
+      "city": "Astana",
+      "cityIn": "à Astana",
+      "caps": "ASTANA · KAZAKHSTAN"
+    }
+  },
+  "picto": "M13.6 10.2 A6.4 6.4 0 1 1 26.4 10.2 A6.4 6.4 0 1 1 13.6 10.2 Z M18.2 24 L12.4 9.2 M21.8 24 L27.6 9.2 M12.4 9.2 Q20 22 27.6 9.2 M20 24 V16.6 M18.2 24 L17.6 31 Q17.2 34 13.5 34.5 M21.8 24 L22.4 31 Q22.8 34 26.5 34.5 M13.5 34.5 H26.5 M10 37.5 H30 M13.5 34.5 L12 37.5 M26.5 34.5 L28 37.5",
+  "flagColors": [
+    "#00AFCA",
+    "#FEC50C"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Астані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Astana"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Astaná"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Astana"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "EG",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "cairo",
+  "names": {
+    "uk": {
+      "name": "Єгипет",
+      "city": "Каїр",
+      "cityIn": "у Каїрі",
+      "caps": "КАЇР · ЄГИПЕТ"
+    },
+    "en": {
+      "name": "Egypt",
+      "city": "Cairo",
+      "cityIn": "in Cairo",
+      "caps": "CAIRO · EGYPT"
+    },
+    "es": {
+      "name": "Egipto",
+      "city": "El Cairo",
+      "cityIn": "en El Cairo",
+      "caps": "EL CAIRO · EGIPTO"
+    },
+    "fr": {
+      "name": "Égypte",
+      "city": "Le Caire",
+      "cityIn": "au Caire",
+      "caps": "LE CAIRE · ÉGYPTE"
+    }
+  },
+  "picto": "M9 34 L21 12 L33 34 M21 12 L24 34 M18.8 16 H23.2 M29.2 27.1 L32 22 L38.5 34 M32 22 L33.4 34 M3.5 34 L8 26 L10.7 30.8 M1.5 34 H38.5",
+  "flagColors": [
+    "#CE1126",
+    "#FFFFFF",
+    "#C09300"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Каїрі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Cairo"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en El Cairo"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Caire"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

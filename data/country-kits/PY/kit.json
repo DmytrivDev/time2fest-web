@@ -1,0 +1,99 @@
+{
+  "code": "PY",
+  "zone": "UTC-3",
+  "zoneId": "utc-0300",
+  "cityId": "asuncion",
+  "names": {
+    "uk": {
+      "name": "Парагвай",
+      "city": "Асунсьйон",
+      "cityIn": "в Асунсьйоні",
+      "caps": "АСУНСЬЙОН · ПАРАГВАЙ"
+    },
+    "en": {
+      "name": "Paraguay",
+      "city": "Asunción",
+      "cityIn": "in Asunción",
+      "caps": "ASUNCIÓN · PARAGUAY"
+    },
+    "es": {
+      "name": "Paraguay",
+      "city": "Asunción",
+      "cityIn": "en Asunción",
+      "caps": "ASUNCIÓN · PARAGUAY"
+    },
+    "fr": {
+      "name": "Paraguay",
+      "city": "Asunción",
+      "cityIn": "à Asunción",
+      "caps": "ASUNCIÓN · PARAGUAY"
+    }
+  },
+  "picto": "M2 36 H38 M4 36 V24.5 H11 V36 M4.5 24.5 Q7.5 20.5 10.5 24.5 M7.5 21.5 V19.6 M29 36 V24.5 H36 V36 M29.5 24.5 Q32.5 20.5 35.5 24.5 M32.5 21.5 V19.6 M11 27 H16.5 M23.5 27 H29 M11 31.5 H29 M12.6 36 V34 Q13.6 32.6 14.6 34 V36 M25.4 36 V34 Q26.4 32.6 27.4 34 V36 M16.5 36 V27 H23.5 V36 M18.4 36 V33.4 Q20 31.4 21.6 33.4 V36 M16 27 V17 H24 V27 M17.6 25.5 V22 Q18.5 20.6 19.4 22 V25.5 M20.6 25.5 V22 Q21.5 20.6 22.4 22 V25.5 M16 17 V14.5 M24 17 V14.5 M18.3 17 V13.5 H21.7 V17 M18.3 13.5 Q20 11.4 21.7 13.5 M20 12.4 V9.5",
+  "flagColors": [
+    "#D52B1E",
+    "#FFFFFF",
+    "#0038A8"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Асунсьйоні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Asunción"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Asunción"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Asunción"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

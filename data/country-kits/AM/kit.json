@@ -1,0 +1,99 @@
+{
+  "code": "AM",
+  "zone": "UTC+4",
+  "zoneId": "utc+0400",
+  "cityId": "yerevan",
+  "names": {
+    "uk": {
+      "name": "Вірменія",
+      "city": "Єреван",
+      "cityIn": "в Єревані",
+      "caps": "ЄРЕВАН · ВІРМЕНІЯ"
+    },
+    "en": {
+      "name": "Armenia",
+      "city": "Yerevan",
+      "cityIn": "in Yerevan",
+      "caps": "YEREVAN · ARMENIA"
+    },
+    "es": {
+      "name": "Armenia",
+      "city": "Ereván",
+      "cityIn": "en Ereván",
+      "caps": "EREVÁN · ARMENIA"
+    },
+    "fr": {
+      "name": "Arménie",
+      "city": "Erevan",
+      "cityIn": "à Erevan",
+      "caps": "EREVAN · ARMÉNIE"
+    }
+  },
+  "picto": "M5 35 H35 M14 35 V24.2 H30 V35 M12.4 24.8 L22 18.8 L31.6 24.8 M18.6 20.9 V13 M25.4 20.9 V13 M17.8 13 H26.2 M20.6 15 V18.2 M23.4 15 V18.2 M17.8 13 L22 7 L26.2 13 M22 7 V2.4 M20.2 4.2 H23.8 M20 35 V30.6 Q22 28.4 24 30.6 V35 M16.8 27 V30 M27.2 27 V30 M7.2 35 V28 H14 M8 28 V24.6 M13.2 28 V24.6 M10.6 28 V24.6 M7.2 24.6 L10.6 20.8 L14 24.6 Z M10.6 20.8 V17.6 M9.3 18.8 H11.9",
+  "flagColors": [
+    "#D90012",
+    "#0033A0",
+    "#F2A800"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Єревані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Yerevan"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Ereván"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Erevan"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

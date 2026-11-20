@@ -162,6 +162,108 @@
       "wide": true,
       "sky": "#112a2e",
       "water": "#11333a"
+    },
+    "AE": {
+      "src": "/scenes/AE-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "AM": {
+      "src": "/scenes/AM-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#232434"
+    },
+    "AR": {
+      "src": "/scenes/AR-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#16243a"
+    },
+    "CL": {
+      "src": "/scenes/CL-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#1e2846"
+    },
+    "DO": {
+      "src": "/scenes/DO-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "EG": {
+      "src": "/scenes/EG-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "ID": {
+      "src": "/scenes/ID-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#212e47"
+    },
+    "IN": {
+      "src": "/scenes/IN-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2a2444"
+    },
+    "KE": {
+      "src": "/scenes/KE-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#1e2846"
+    },
+    "KZ": {
+      "src": "/scenes/KZ-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#142b3a"
+    },
+    "LK": {
+      "src": "/scenes/LK-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "LV": {
+      "src": "/scenes/LV-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "MX": {
+      "src": "/scenes/MX-wide.svg",
+      "wide": true,
+      "sky": "#261a0c",
+      "water": "#2c2216"
+    },
+    "MY": {
+      "src": "/scenes/MY-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#18203d"
+    },
+    "PY": {
+      "src": "/scenes/PY-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "RS": {
+      "src": "/scenes/RS-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "VN": {
+      "src": "/scenes/VN-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }
