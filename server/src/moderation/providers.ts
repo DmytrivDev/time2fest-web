@@ -51,7 +51,8 @@ export interface ProviderLayerDeps {
   onProbe?: (provider: ProviderId, answer: ProviderAnswer<unknown>) => void;
   /**
    * User calls a minute per provider in this process (security S7): a token bucket of that size,
-   * refilled evenly. Absent → no limit. With N server processes the account sees up to N× this.
+   * refilled evenly. Absent → no limit. The composition root passes this process's part of the
+   * account budget (`perProcessRpm`), so N processes together stay within the account limit.
    */
   ratePerMin?: Partial<Record<ProviderId, number>>;
   /**
@@ -146,8 +147,10 @@ interface ProviderHealth {
   /** Token buckets of user calls (S7): toast checks and the rest (N1); `Infinity` without a rate. */
   tokens: Record<Lane, number>;
   refilledAt: number;
-  /** Skipped until then after a 429 (S7); one `moderation_saturated` page per episode. */
+  /** Skipped until then after a 429 on a non-toast call (S7); one `moderation_saturated` page per episode. */
   saturatedUntil: number | null;
+  /** Toast calls only are skipped until then after a 429 on a toast call; no page, other tasks untouched. */
+  toastsPausedUntil: number | null;
 }
 
 /** Above this share of `rejected-request` answers in a window of ≥ 20 calls, one `log` alarm (S6). */
@@ -158,6 +161,15 @@ export const THROTTLED_ALARM_SHARE = 0.2;
 export const TOASTS_RPM_SHARE = 0.2;
 export const SATURATION_BACKOFF_MS = 10_000;
 export const MAX_SATURATION_BACKOFF_MS = 60_000;
+
+/**
+ * This process's calls a minute out of an account-level budget shared by `processes` server processes
+ * (S7): the floor of an even split, at least 1 (0 would mean "no limit" to the bucket).
+ */
+export function perProcessRpm(accountRpm: number, processes: number): number {
+  const n = Number.isInteger(processes) && processes > 0 ? processes : 1;
+  return Math.max(1, Math.floor(accountRpm / n));
+}
 
 function failure<T>(kind: 'http' | 'malformed'): ProviderAnswer<T> {
   return { ok: false, kind };
@@ -189,7 +201,7 @@ export function createProviderLayer({
     for (const p of providers[task]) {
       let h = byId.get(p.id);
       if (h === undefined) {
-        h = { provider: p, tasks: new Map(), lastProbeAt: null, tokens: fullTokens(p.id), refilledAt: clock.now(), saturatedUntil: null };
+        h = { provider: p, tasks: new Map(), lastProbeAt: null, tokens: fullTokens(p.id), refilledAt: clock.now(), saturatedUntil: null, toastsPausedUntil: null };
         byId.set(p.id, h);
       }
       if (!h.tasks.has(task)) {
@@ -255,6 +267,17 @@ export function createProviderLayer({
     if (episode) {
       alarm.raise({ level: 'page', source: 'mod', code: 'moderation_saturated', details: { provider: h.provider.id, backoffMs: backoff } });
     }
+  }
+
+  /**
+   * A 429 on a toast call: only this provider's toast share stops — the bucket empties and toast calls
+   * are skipped for the backoff. Anonymous toast traffic thus never pauses chat, nicks or translation
+   * for everyone, and it does not page (the account limit is reached by toasts, not by users).
+   */
+  function pauseToasts(h: ProviderHealth, retryAfterMs: number | undefined, now: number) {
+    const backoff = Math.min(maxSaturationBackoffMs, Math.max(0, retryAfterMs ?? saturationBackoffMs));
+    h.tokens.toasts = 0;
+    h.toastsPausedUntil = Math.max(h.toastsPausedUntil ?? 0, now + backoff);
   }
 
   /** Tracks `rejected-request` answers of a task window; one `log` alarm while their share stays high (S6). */
@@ -443,6 +466,10 @@ export function createProviderLayer({
       const t = taskHealthOf(provider, task);
       const lane: Lane = scope === 'toasts' ? 'toasts' : 'main';
       const now = clock.now();
+      if (lane === 'toasts' && h.toastsPausedUntil !== null && now < h.toastsPausedUntil) {
+        logCall(provider.id, task, 0, { ok: false, kind: 'throttled' });
+        return { ok: false, kind: 'throttled' };
+      }
       // This process's share of the account rate (S7): an empty bucket sends nothing and leaves health
       // alone. Toast checks spend their own share only, so anonymous traffic cannot starve chat (N1).
       const granted = takeToken(h, lane, now);
@@ -455,7 +482,8 @@ export function createProviderLayer({
       const rejected = raw.ok && accept !== undefined && !accept(raw.value);
       logCall(provider.id, task, ms, raw, rejected);
       if (!raw.ok && raw.kind === 'saturated') {
-        saturate(h, raw.retryAfterMs, at);
+        if (lane === 'toasts') pauseToasts(h, raw.retryAfterMs, at);
+        else saturate(h, raw.retryAfterMs, at);
         return raw;
       }
       const rejectedRequest = !raw.ok && raw.kind === 'rejected-request';
@@ -506,6 +534,7 @@ export function createProviderLayer({
         h.tokens = fullTokens(h.provider.id);
         h.refilledAt = clock.now();
         h.saturatedUntil = null;
+        h.toastsPausedUntil = null;
         for (const t of h.tasks.values()) {
           t.samples = [];
           t.rejects = [];

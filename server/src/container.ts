@@ -38,7 +38,7 @@ import { createDeepseekProvider } from './adapters/aiDeepseek';
 import { createPayloadModerationSettings } from './adapters/payloadModerationSettings';
 import { createPgAiSpend } from './adapters/pgAiSpend';
 import { aiPricesFrom } from './domain/moderation/spend';
-import { createProviderLayer } from './moderation/providers';
+import { createProviderLayer, perProcessRpm } from './moderation/providers';
 import { createSpendCounter, type SpendCounter } from './moderation/spend';
 import { createTranslationService } from './moderation/translate';
 import { createVerdictService } from './moderation/verdict';
@@ -320,7 +320,11 @@ function createModeration(
     alarm: ports.alarm,
     log: ports.log,
     onProbe: (provider, answer) => sink.spend?.recordProbe(provider, answer),
-    ratePerMin: { anthropic: Number(v.T2F_AI_ANTHROPIC_RPM), deepseek: Number(v.T2F_AI_DEEPSEEK_RPM) },
+    // Account-level budgets split across the server processes (S7).
+    ratePerMin: {
+      anthropic: perProcessRpm(Number(v.T2F_AI_ANTHROPIC_RPM), Number(v.T2F_AI_PROCESSES)),
+      deepseek: perProcessRpm(Number(v.T2F_AI_DEEPSEEK_RPM), Number(v.T2F_AI_PROCESSES)),
+    },
     toastsRpmShare: Number(v.T2F_AI_TOASTS_RPM_SHARE),
   });
   const settings = createPayloadModerationSettings({ payload, journal: createPayloadJournal(isRevertible), clock: ports.clock });
