@@ -46,14 +46,18 @@ import { clockFor, monotonicClock, processClockCache, realClock } from './clock'
 import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
-import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
+import { alarmStoreOf, catalogStoreOf, eventsOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
 import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventSubscriber } from './events/ports';
 import type { CatalogCopyDeps } from './catalog/copy';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
-import { payloadCorrectionDeps } from './adapters/payloadCorrections';
+import { createPayloadCorrectionReader, payloadCorrectionDeps } from './adapters/payloadCorrections';
+import { createPayloadFanOutClaim, createPayloadSiteStore } from './adapters/payloadSiteState';
+import { createCfPurge } from './adapters/cfPurge';
+import { currentPatches } from './corrections/service';
+import type { FanOutDeps } from './site/fanout';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
 import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
@@ -66,7 +70,7 @@ import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
-import type { Scheduler } from './realtime/ports';
+import type { ChannelPublisher, Scheduler } from './realtime/ports';
 import { isRevertible } from './registries/revertHandlers';
 import { momentActionsFor } from './registries/moments';
 import { routeRegistry } from './registries/routes';
@@ -221,6 +225,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     overrides.unattended ??
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
+  deps.siteFanOut = overrides.siteFanOut ?? (() => siteFanOutDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
@@ -431,6 +436,45 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
       secretAccessKey: String(secretAccessKey),
     }),
     prefix: String(prefix),
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
+ * What the after-commit fan-out of the `site` snapshot needs (SPEC-08 W12 … W14): the snapshot readers over
+ * Payload, the fan-out claim, the realtime publisher (when configured), the edge purge only with token, zone
+ * and site URL (else every change logs `site/purge-skipped`, AC-34), the catalog's bucket and prefix (else
+ * `site/r2-copy-skipped`).
+ */
+export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
+  const payload = payloadOf(deps);
+  const v = deps.env.vars;
+  const catalog = catalogStoreOf(deps);
+  const corrections = createPayloadCorrectionReader(payload);
+  let publisher: ChannelPublisher | undefined;
+  try {
+    publisher = publisherOf(deps);
+  } catch {
+    publisher = undefined;
+  }
+  const token = v.T2F_CF_PURGE_TOKEN;
+  const zoneId = v.T2F_CF_ZONE_ID;
+  const siteUrl = v.T2F_SITE_URL;
+  const bucket = deps.catalogCopy?.();
+  return {
+    snapshot: {
+      store: createPayloadSiteStore({ payload, clock: realClock }),
+      patches: async () => (await currentPatches(corrections)).patches,
+      catalogMeta: async () => {
+        const season = (await catalog.read()).season;
+        return season ? { generatedAt: season.generatedAt, tzdbVersion: season.tzdbVersion } : null;
+      },
+    },
+    claim: createPayloadFanOutClaim(payload),
+    ...(publisher ? { publisher } : {}),
+    ...(token && zoneId && siteUrl ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token) }), siteUrl: String(siteUrl) } } : {}),
+    ...(bucket ? { copy: { objects: bucket.objects, prefix: bucket.prefix } } : {}),
     alarm: deps.alarm,
     log: deps.log,
   };

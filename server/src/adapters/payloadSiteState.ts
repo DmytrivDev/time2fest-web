@@ -16,6 +16,7 @@ import { isProductKey, type ProductSelection, type ProductSelections } from '../
 import { DEFAULT_SITE_RECORD, type SiteRecord } from '../domain/site/snapshot';
 import { DEFAULT_SWITCHES, TOAST_TIER_KEYS, type PaymentsPause } from '../domain/site/switches';
 import type { Clock } from '../ports';
+import type { FanOutClaim } from '../site/fanout';
 import type { SiteRecordPatch, SiteStore, Tx } from '../site/ports';
 
 export const SITE_STATE = 'site-state';
@@ -165,6 +166,24 @@ export function createPayloadSiteStore(deps: PayloadSiteStateDeps): SiteStore {
         RETURNING "version"::text AS "version"`);
       if (!rows[0]) throw new Error('site-state: update returned no row');
       return Number(rows[0].version);
+    },
+  };
+}
+
+/**
+ * The fan-out claim (SPEC-08 AC-5, AC-37): ONE conditional `UPDATE … SET last_fanned_out = v WHERE
+ * last_fanned_out < v RETURNING`, outside any transaction, so exactly one instance and one event claim a
+ * version, and none claims a version at or below one already fanned out.
+ */
+export function createPayloadFanOutClaim(payload: () => Promise<Payload>): FanOutClaim {
+  return {
+    async claim(version) {
+      const db = (await payload()).db as unknown as DrizzleAdapter;
+      const { rows } = await db.drizzle.execute(sql`
+        UPDATE "site_state" SET "last_fanned_out" = ${version}::numeric
+        WHERE "id" = ${FIRST_ROW} AND COALESCE("last_fanned_out", 0) < ${version}::numeric
+        RETURNING "id"`);
+      return rows.length === 1;
     },
   };
 }

@@ -151,4 +151,16 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_CENTRIFUGO_TOKEN_SECRET', schema: z.string().min(32).optional(), secret: true, requiredIn: REQ },
     ],
   },
+  {
+    // SPEC-08: edge purge after a site change and the catalog rebuild launch. All optional in every class:
+    // absence means the purge or the launch is skipped with a log line, never a boot failure (AC-34).
+    key: 'site',
+    vars: [
+      { name: 'T2F_CF_PURGE_TOKEN', schema: z.string().min(1).optional(), secret: true },
+      { name: 'T2F_CF_ZONE_ID', schema: z.string().regex(/^[0-9a-f]{32}$/).optional() },
+      { name: 'T2F_GITHUB_DISPATCH_TOKEN', schema: z.string().min(1).optional(), secret: true },
+      { name: 'T2F_REBUILD_PRODUCTION', schema: z.enum(['0', '1']).default('0') },
+      { name: 'T2F_SITE_URL', schema: z.url().optional() },
+    ],
+  },
 ];

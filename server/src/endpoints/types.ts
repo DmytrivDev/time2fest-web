@@ -22,6 +22,7 @@ import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
+import type { FanOutDeps } from '../site/fanout';
 import type { SharedClock } from '../timekeeping/shared';
 import type { DivergenceMeter } from '../timekeeping/divergence';
 import type { UnattendedDeps } from '../unattended/service';
@@ -99,6 +100,8 @@ export interface Deps {
   unattended?: UnattendedDeps;
   /** What the R2 copy needs, or `undefined` when the environment has no bucket (AC-72). */
   catalogCopy?: () => CatalogCopyDeps | undefined;
+  /** What the after-commit fan-out of the `site` snapshot needs (SPEC-08 AC-5 … AC-7, AC-33 … AC-36). */
+  siteFanOut?: () => FanOutDeps;
   /** Whether the database and the fast store answer (SPEC-13a AC-5/AC-6). */
   readiness?: ReadinessProbe;
   /** Who a realtime token is for (C5): no session in production until SPEC-10; the doors' resolver in tests. */

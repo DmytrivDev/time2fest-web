@@ -1,0 +1,49 @@
+/**
+ * Cloudflare cache purge by Cache-Tag (SPEC-08 AC-33, conductor decision А-2), ring 4: the `purge` side of
+ * `SnapshotSink`. ONE request per call: `POST <base>/zones/<zone>/purge_cache` with `{"tags":["t2f-site-state"]}`,
+ * the tag the edge stores the public site answer under (`workers/edge/src/publicCache.ts` `SITE_CACHE_TAG`).
+ * Success = a 2xx answer whose body has `success: true`; anything else throws an error that names the
+ * HTTP status only. The token travels only in the `Authorization` header and is never logged or thrown.
+ */
+import type { SnapshotSink } from '../site/ports';
+
+/** Must equal `SITE_CACHE_TAG` of `workers/edge/src/publicCache.ts` (the edge stores the answer under it). */
+export const SITE_CACHE_TAG = 't2f-site-state';
+export const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
+const TIMEOUT_MS = 10_000;
+
+export interface CfPurgeOptions {
+  zoneId: string;
+  token: string;
+  /** Tests point it at a fake on port 0. */
+  baseUrl?: string;
+  timeoutMs?: number;
+}
+
+export class PurgeFailed extends Error {
+  constructor(readonly status: number | 'network') {
+    super(`purge failed: ${status}`);
+    this.name = 'PurgeFailed';
+  }
+}
+
+export function createCfPurge(opts: CfPurgeOptions): Pick<SnapshotSink, 'purge'> {
+  const url = `${(opts.baseUrl ?? CF_API_BASE).replace(/\/$/, '')}/zones/${encodeURIComponent(opts.zoneId)}/purge_cache`;
+  return {
+    async purge() {
+      let res: Response;
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: { authorization: `Bearer ${opts.token}`, 'content-type': 'application/json' },
+          body: JSON.stringify({ tags: [SITE_CACHE_TAG] }),
+          signal: AbortSignal.timeout(opts.timeoutMs ?? TIMEOUT_MS),
+        });
+      } catch {
+        throw new PurgeFailed('network');
+      }
+      const body = (await res.json().catch(() => null)) as { success?: unknown } | null;
+      if (!res.ok || body?.success !== true) throw new PurgeFailed(res.status);
+    },
+  };
+}
