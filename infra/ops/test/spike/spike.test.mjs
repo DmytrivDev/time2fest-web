@@ -15,7 +15,7 @@ import { buildPlan, lifetime, runGuard, splitConnections } from '../../spike/lib
 import { genEnv } from '../../spike/lib/run.mjs';
 import { main, parseArgs, scenarioWith } from '../../spike/spike.mjs';
 
-const SIZES = [...FAKE_SIZES, { slug: 'c-8', vcpus: 8, memoryMb: 16384, diskGb: 100, priceHourly: 0.25 }];
+const SIZES = [...FAKE_SIZES, { slug: 's-4vcpu-8gb-intel', vcpus: 4, memoryMb: 8192, diskGb: 160, priceHourly: 0.08333 }];
 const SPIKE_TAGS = ['t2f-managed', 't2f-env-spike'];
 
 /** @type {string} */
@@ -55,29 +55,29 @@ function harness(seed) {
 }
 
 describe('plan і межа цін', () => {
-  it('план за замовчуванням: c-8 + 4 × s-4vcpu-8gb (fra1, fra1, ams3, ams3), $0.536/год', () => {
+  it('план за замовчуванням (ред. 2): 5 × s-4vcpu-8gb-intel (fra1; fra1, fra1, ams3, ams3), $0.417/год', () => {
     const p = buildPlan(SIZES);
     expect(p.refusals).toEqual([]);
-    expect(p.rows.map((r) => `${r.size}@${r.region}`)).toEqual(['c-8@fra1', 's-4vcpu-8gb@fra1', 's-4vcpu-8gb@fra1', 's-4vcpu-8gb@ams3', 's-4vcpu-8gb@ams3']);
-    expect(p.perHour).toBeCloseTo(0.25 + 4 * 0.07143, 4);
+    expect(p.rows.map((r) => `${r.size}@${r.region}`)).toEqual(['s-4vcpu-8gb-intel@fra1', 's-4vcpu-8gb-intel@fra1', 's-4vcpu-8gb-intel@fra1', 's-4vcpu-8gb-intel@ams3', 's-4vcpu-8gb-intel@ams3']);
+    expect(p.perHour).toBeCloseTo(5 * 0.08333, 4);
   });
 
   it('ціна в API понад план більш ніж на 10% — відмова; у межах 10% — ні', () => {
-    const dear = SIZES.map((s) => (s.slug === 'c-8' ? { ...s, priceHourly: 0.2751 } : s));
-    expect(buildPlan(dear).refusals.join(' ')).toMatch(/c-8.*понад план/);
-    const ok = SIZES.map((s) => (s.slug === 'c-8' ? { ...s, priceHourly: 0.274 } : s));
+    const dear = SIZES.map((s) => (s.slug === 's-4vcpu-8gb-intel' ? { ...s, priceHourly: 0.0917 } : s));
+    expect(buildPlan(dear).refusals.join(' ')).toMatch(/s-4vcpu-8gb-intel.*понад план/);
+    const ok = SIZES.map((s) => (s.slug === 's-4vcpu-8gb-intel' ? { ...s, priceHourly: 0.0916 } : s));
     expect(buildPlan(ok).refusals).toEqual([]);
   });
 
   it('немає розміру в API — відмова', () => {
-    expect(buildPlan(FAKE_SIZES).refusals.join(' ')).toMatch(/c-8 немає/);
+    expect(buildPlan(FAKE_SIZES).refusals.join(' ')).toMatch(/s-4vcpu-8gb-intel немає/);
   });
 
   it('`plan` лише читає і з дорогою ціною повертає 2', async () => {
-    const h = harness({ sizes: SIZES.map((s) => (s.slug === 's-4vcpu-8gb' ? { ...s, priceHourly: 0.09 } : s)) });
+    const h = harness({ sizes: SIZES.map((s) => (s.slug === 's-4vcpu-8gb-intel' ? { ...s, priceHourly: 0.1 } : s)) });
     expect(await h.run(['plan'])).toBe(2);
     expect(h.fake.mutating()).toEqual([]);
-    expect(h.lines.join('\n')).toMatch(/ВІДМОВА: s-4vcpu-8gb/);
+    expect(h.lines.join('\n')).toMatch(/ВІДМОВА: s-4vcpu-8gb-intel/);
   });
 
   it('змінні команди без --confirm spike — відмова до будь-якого виклику', async () => {
@@ -100,7 +100,7 @@ describe('delete: лише вузли з обома тегами спайку', 
       { name: 't2f-rehearsal-realtime', size: 's-2vcpu-4gb', tags: ['t2f-managed', 't2f-env-rehearsal', 't2f-role-realtime'] },
       { name: 'prod-x', size: 'c-4', tags: ['t2f-managed', 't2f-env-production'] },
       { name: 'stray-spike', size: 's-1vcpu-2gb', tags: ['t2f-env-spike'] },
-      { name: 't2f-spike-realtime', size: 'c-8', tags: [...SPIKE_TAGS, 't2f-role-realtime'] },
+      { name: 't2f-spike-realtime', size: 's-4vcpu-8gb-intel', tags: [...SPIKE_TAGS, 't2f-role-realtime'] },
       { name: 't2f-spike-gen-1', size: 's-4vcpu-8gb', tags: [...SPIKE_TAGS, 't2f-role-loadgen'] },
       { name: 't2f-spike-gen-2', size: 's-4vcpu-8gb', tags: [...SPIKE_TAGS, 't2f-role-loadgen'] },
     ],
@@ -303,27 +303,27 @@ describe('межа життя й вартості', () => {
   const node = (hoursAgo, size) => ({ id: '1', name: 'n', size, status: /** @type {const} */ ('active'), tags: SPIKE_TAGS, publicIp: '203.0.113.1', diskGb: 50, createdAt: new Date(now - hoursAgo * 3_600_000).toISOString() });
 
   it('свіжі вузли й короткий прогін — можна', () => {
-    const lt = lifetime([node(0.5, 'c-8'), node(0.5, 's-4vcpu-8gb')], SIZES, now);
+    const lt = lifetime([node(0.5, 's-4vcpu-8gb-intel'), node(0.5, 's-4vcpu-8gb')], SIZES, now);
     expect(runGuard(lt, 1800)).toEqual([]);
     expect(lt.hoursLeft).toBeCloseTo(5.5, 5);
   });
 
   it('вузли 5.9 год + прогін 30 хв — відмова (межа 6 год)', () => {
-    expect(runGuard(lifetime([node(5.9, 'c-8')], SIZES, now), 1800).join(' ')).toMatch(/понад 6 год/);
+    expect(runGuard(lifetime([node(5.9, 's-4vcpu-8gb-intel')], SIZES, now), 1800).join(' ')).toMatch(/понад 6 год/);
   });
 
   it('прогнозована вартість понад $8 — відмова', () => {
-    const many = Array.from({ length: 20 }, () => node(1, 'c-8'));
+    const many = Array.from({ length: 60 }, () => node(1, 's-4vcpu-8gb-intel'));
     expect(runGuard(lifetime(many, SIZES, now), 3600).join(' ')).toMatch(/понад стелю \$8/);
   });
 
   it('вік невідомий — відмова', () => {
-    const { createdAt: _, ...n } = node(1, 'c-8');
+    const { createdAt: _, ...n } = node(1, 's-4vcpu-8gb-intel');
     expect(runGuard(lifetime([n], SIZES, now), 60).join(' ')).toMatch(/вік вузлів невідомий/);
   });
 
   it('`run` на старих вузлах відмовляє до будь-якого SSH', async () => {
-    const h = harness({ sizes: SIZES, nodes: [{ name: 't2f-spike-realtime', size: 'c-8', tags: [...SPIKE_TAGS, 't2f-role-realtime'] }, { name: 't2f-spike-gen-1', size: 's-4vcpu-8gb', tags: [...SPIKE_TAGS, 't2f-role-loadgen'] }] });
+    const h = harness({ sizes: SIZES, nodes: [{ name: 't2f-spike-realtime', size: 's-4vcpu-8gb-intel', tags: [...SPIKE_TAGS, 't2f-role-realtime'] }, { name: 't2f-spike-gen-1', size: 's-4vcpu-8gb', tags: [...SPIKE_TAGS, 't2f-role-loadgen'] }] });
     for (const n of h.fake.nodes) n.createdAt = '2026-11-21T03:30:00Z';
     expect(await h.run(['run', 'S1'])).toBe(2);
     expect(h.lines.join('\n')).toMatch(/ВІДМОВА: вузлам 6\.50 год/);

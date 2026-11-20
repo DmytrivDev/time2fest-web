@@ -57,8 +57,8 @@ services:
       # Спайк: /metrics на внутрішньому порту 9000; причини розривів — на рівні debug.
       CENTRIFUGO_PROMETHEUS_ENABLED: 'true'
       CENTRIFUGO_LOG_LEVEL: '${SPIKE_LOG_LEVEL:-info}'
-      # c-8 / 16 ГБ: м’яка межа купи Go нижче за mem_limit.
-      GOMEMLIMIT: '6GiB'
+      # s-4vcpu-8gb-intel / 8 ГБ (ред. 2): м’яка межа купи Go нижче за mem_limit.
+      GOMEMLIMIT: '3GiB'
     depends_on:
       redis:
         condition: service_healthy
@@ -71,7 +71,7 @@ services:
       nofile:
         soft: 200000
         hard: 200000
-    mem_limit: 8g
+    mem_limit: 4g
     networks:
       - spike
 
@@ -89,7 +89,7 @@ services:
       nofile:
         soft: 200000
         hard: 200000
-    mem_limit: 2g
+    mem_limit: 1536m
     networks:
       - spike
       - tunnel-egress

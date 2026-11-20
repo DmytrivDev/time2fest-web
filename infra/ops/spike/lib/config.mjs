@@ -13,14 +13,14 @@ export const ROLE_TAGS = /** @type {const} */ ({ realtime: 't2f-role-realtime', 
 /** Обидва теги, без яких вузол спайку не видаляється й не вважається вузлом спайку. */
 export const REQUIRED_TAGS = [TAG_MANAGED, TAG_ENV];
 
-/** Вузли (план §2): 1 × realtime c-8 у fra1 і 4 генератори s-4vcpu-8gb (2 × fra1, 2 × ams3). */
+/** Вузли (план §2, ред. 2 — рішення власника 2026-11-20: акаунту DO доступні лише Basic Intel до 4 vCPU): 1 × realtime і 4 генератори s-4vcpu-8gb-intel (realtime і 2 генератори fra1, 2 генератори ams3). */
 export const NODES = {
-  realtime: { name: 't2f-spike-realtime', size: 'c-8', region: 'fra1' },
-  loadgen: { namePrefix: 't2f-spike-gen-', size: 's-4vcpu-8gb', regions: ['fra1', 'fra1', 'ams3', 'ams3'] },
+  realtime: { name: 't2f-spike-realtime', size: 's-4vcpu-8gb-intel', region: 'fra1' },
+  loadgen: { namePrefix: 't2f-spike-gen-', size: 's-4vcpu-8gb-intel', regions: ['fra1', 'fra1', 'ams3', 'ams3'] },
 };
 
 /** Ціни плану §6 ($/год); API дорожче більш ніж на 10% — відмова. */
-export const PLAN_PRICES = /** @type {Record<string, number>} */ ({ 'c-8': 0.25, 's-4vcpu-8gb': 0.071 });
+export const PLAN_PRICES = /** @type {Record<string, number>} */ ({ 's-4vcpu-8gb-intel': 0.0833 });
 export const PRICE_TOLERANCE = 0.1;
 /** Очікувані години життя вузлів (план §6). */
 export const EXPECTED_HOURS = { realtime: 4, loadgen: 3.5 };
