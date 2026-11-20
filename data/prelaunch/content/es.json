@@ -1430,5 +1430,173 @@
       }
     ],
     "kit": "br-2"
+  },
+  "AU@utc+0800": {
+    "text": "En Australia la Nochevieja es una noche de verano, así que se pasa al aire libre: en la playa o en un parque, en barco, en un concierto o en casa junto a la barbacoa con amigos. Las ciudades reciben la medianoche con fuegos artificiales y las copas se llenan de champán o vino. El 31 de diciembre es un día laborable normal, pero el 1 de enero es festivo en todo el país.\n\nPerth, la capital de Australia Occidental, recibe el año tres horas después que Sídney. Sobre Elizabeth Quay, en el río Swan, hay dos espectáculos de fuegos, a las 20:30 y a medianoche; en 2025, según el ayuntamiento, unas 130 000 personas acudieron al centro. Al lado, en Barrack Square, se alza el campanario Swan Bells: 12 de sus campanas vienen de St Martin-in-the-Fields, en Londres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Dos shows en Elizabeth Quay",
+        "text": "Sobre la ensenada de Elizabeth Quay, en el río Swan, hay fuegos dos veces: a las 20:30 para familias con niños y el principal a medianoche. Northbridge lanza además los suyos a medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Medianoche tres horas después",
+        "text": "Australia Occidental no cambia al horario de verano: en el referéndum de 2009 el 54,6 % votó no. Cuando Sídney ya celebra, en Perth son las 21:00, y la medianoche llega a las 16:00 UTC."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Vista desde Langley Park",
+        "text": "Los fuegos se ven bien desde Langley Park y Birdiya Drive, junto al centro de convenciones. Volver es gratis: en 2025 autobuses y trenes circularon toda la noche, sin pagar de medianoche a las 6:00."
+      }
+    ],
+    "kit": "au+8"
+  },
+  "AU@utc+0845": {
+    "text": "En Australia el 31 de diciembre es pleno verano, así que la noche de Año Nuevo se pasa casi siempre al aire libre: en la playa, en los parques, en barco o en casa junto a la parrilla. A medianoche los fuegos artificiales estallan sobre las ciudades y la gente brinda con champán o vino. Ese día se trabaja, pero el 1 de enero es festivo en todo el país.\n\nEucla es un pueblo de la llanura de Nullarbor, a 11 km de la frontera con Australia Meridional. Nació en 1877 alrededor de una estación telegráfica cuyas ruinas siguen en pie entre las dunas. Aquí y en las gasolineras cercanas de la carretera Eyre, los relojes van extraoficialmente 45 minutos por delante de Perth.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Tres relojes en la pared",
+        "text": "En el control fronterizo y sobre la entrada del motel de Eucla cuelgan tres relojes: la hora de Adelaida, de Perth y de Eucla. El móvil aquí marca la hora de Perth, así que cuenta hacia la medianoche de Eucla con el reloj de la pared o ajústalo a mano."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "El último atardecer del año",
+        "text": "El motel de Eucla está sobre el escarpe que domina la Gran Bahía Australiana, y desde la terraza del pub se ve el sol hundirse en el océano. Su restaurante abre todas las noches."
+      },
+      {
+        "id": "t3",
+        "iconId": "cliff",
+        "title": "Año Nuevo en los acantilados Bunda",
+        "text": "El 1 de enero es festivo: buen día para ir hacia el este por la carretera Eyre hasta los miradores. Los acantilados calizos de Bunda, de 60 a 120 metros, se extienden 210 km a lo largo de la bahía."
+      }
+    ],
+    "kit": "au+845"
+  },
+  "AU@utc+0930": {
+    "text": "En Australia, el Año Nuevo es una noche de verano al aire libre. La gente va a conciertos y fiestas, a playas y parques, sale en barco o invita a sus amigos a una barbacoa en el jardín. A medianoche estallan fuegos artificiales sobre las ciudades y las copas se llenan de champán o vino. El 1 de enero es festivo en todos los estados y territorios; el 31 de diciembre es un día laborable.\n\nDarwin, capital del Territorio del Norte, lo celebra en el paseo marítimo Darwin Waterfront. Es la mayor fiesta familiar del tropical Top End: entrada libre, concierto, pícnics y dos espectáculos de fuegos, a las 21:00 y a medianoche. Más al sur, en el desierto de Australia Central, en el mismo territorio, se alza Uluru, una roca de 348 metros sagrada para el pueblo anangu.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Un brindis en pleno verano",
+        "text": "Aquí el Año Nuevo se recibe al aire libre: en la playa, en un parque, en barco o junto a la parrilla con amigos. A medianoche, fuegos y una copa de champán o vino."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Dos shows en el Waterfront",
+        "text": "En el paseo marítimo de Darwin hay fuegos dos veces: a las 21:00 para familias con niños y el principal a medianoche. Entrada libre y pícnics bienvenidos, pero sin alcohol ni tabaco."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Medianoche 90 minutos después",
+        "text": "El Territorio del Norte no usa horario de verano. Cuando Sídney ya celebra, en Darwin aún falta hora y media: la medianoche llega a las 14:30 UTC."
+      }
+    ],
+    "kit": "au+930"
+  },
+  "US@utc-1000": {
+    "text": "Hawái vive en UTC−10 y nunca cambia la hora, así que el Año Nuevo llega aquí cinco horas después que a Nueva York. A medianoche las islas estallan en petardos y fuegos artificiales, para ahuyentar a los malos espíritus. Los trabajadores japoneses de las plantaciones trajeron el mochi a mediados del siglo XIX: las familias machacan el arroz juntas en un mortero de madera y toman ozoni, una sopa con mochi y verduras, para tener suerte. Se saluda con «Hauʻoli Makahiki Hou», «Feliz Año Nuevo» en hawaiano.\n\nEn Honolulu, los fuegos de medianoche estallan sobre la playa de Waikiki: la gente pone sillas y mantas en la arena o mira desde los balcones de los hoteles. El 1 de enero, una caminata del primer día en la costa de Kaʻiwi empieza con el sonido de una caracola y una oración al amanecer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Petardos, solo con permiso",
+        "text": "En Oʻahu los petardos solo se encienden de 21:00 a 1:00 y con un permiso de 25 $, que permite comprar hasta 5.000. Los cohetes, las bengalas y las fuentes están prohibidos."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Mochi y sopa ozoni",
+        "text": "El mochi se machaca en familia: es un trabajo duro que necesita muchas manos. En la fiesta se toma ozoni, un caldo claro con mochi, verduras y pastel de pescado, para tener suerte en el año nuevo."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Una manta en Waikiki",
+        "text": "Los fuegos de medianoche de Honolulu se ven mejor desde la misma playa de Waikiki: lleva una silla o una manta. Donde más gente se reúne es junto al Hilton Hawaiian Village."
+      }
+    ],
+    "kit": "us-10"
+  },
+  "US@utc-0600": {
+    "text": "En la zona central de Estados Unidos, de Chicago a Nueva Orleans, la medianoche llega una hora después que en Nueva York. La cuenta atrás se sigue con los especiales de televisión y a medianoche se canta «Auld Lang Syne». En Nashville una nota musical roja baja por una torre de 42 metros en un concierto gratuito que reunió a 205 000 personas en 2025. En Nueva Orleans una flor de lis desciende desde una azotea del Barrio Francés mientras los fuegos estallan sobre el Misisipi. El 1 de enero, en el Sur se comen frijoles de carita y berza para tener suerte.\n\nPara recibir 2026, New Year’s Rockin’ Eve hizo desde Chicago su primera cuenta atrás de la hora central, con fuegos lanzados desde los puentes del río. A medianoche, Navy Pier suma un espectáculo gratuito de 10 minutos sobre el lago Míchigan.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "La nota y la flor de lis",
+        "text": "En lugar de una bola, las ciudades del centro bajan sus propios símbolos: Nashville, una nota roja con 28 000 ledes; Nueva Orleans, una flor de lis desde una azotea del Barrio Francés. Ambas fiestas son gratuitas."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el agua",
+        "text": "En Chicago, a medianoche los fuegos se elevan sobre el lago Míchigan junto a Navy Pier, y para recibir 2026 también salieron de los puentes del río. En Nueva Orleans se ven desde ambas orillas del Misisipi."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Frijoles y berza de la suerte",
+        "text": "El 1 de enero es festivo federal. En el Sur se comen frijoles de carita, frijoles rojos con arroz y berza, y los fuegos de Nueva Orleans suenan con himnos universitarios para los aficionados del Sugar Bowl."
+      }
+    ],
+    "kit": "us-6"
+  },
+  "US@utc-0700": {
+    "text": "En la zona horaria de montaña de Estados Unidos, de Montana a Arizona, la medianoche llega dos horas después que a Nueva York. Aquí también se canta «Auld Lang Syne» a medianoche, y las estaciones de esquí de Colorado celebran a su manera: en Breckenridge los instructores bajan la pista con bengalas rojas y en Steamboat Springs los fuegos artificiales siguen a un desfile de antorchas. En Boise, una grúa baja una papa gigante de más de cinco metros sobre la multitud justo antes de medianoche. El 1 de enero es festivo federal y mucha gente sale a la primera caminata del año en un parque estatal.\n\nEn Denver los fuegos iluminan el centro dos veces, a las 21:00 y a medianoche, y la mejor vista está en la calle 16. Esa noche los autobuses y trenes de RTD son gratis.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Antorchas en las pistas",
+        "text": "En las estaciones de Colorado, la noche de fin de año los instructores bajan con antorchas: en Breckenridge, a las 18:00, una serpiente roja de bengalas cruza la montaña. Tras el desfile, fuegos artificiales sobre el valle."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Dos espectáculos en Denver",
+        "text": "El espectáculo gratuito se lanza desde azoteas del centro a las 21:00 y otra vez a medianoche; míralo desde la calle 16. De 19:00 a 7:00, los autobuses y trenes de RTD son gratis."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Primera caminata del año",
+        "text": "El 1 de enero es festivo y los parques estatales de todo el país organizan caminatas del primer día. En la zona de montaña, eso es pasear entre picos nevados y rocas rojas."
+      }
+    ],
+    "kit": "us-7"
+  },
+  "US@utc-0900": {
+    "text": "Alaska recibe el Año Nuevo cuatro horas después que Nueva York, y en una larga oscuridad invernal: el 31 de diciembre el sol se pone en Anchorage a las 15:51. Por el frío, los fuegos artificiales suelen lanzarse mucho antes de medianoche, y en la estación de esquí de Alyeska los esquiadores bajan la pista con antorchas antes de que, a las 21:00, los fuegos iluminen la montaña. En las noches claras de invierno, la aurora boreal suele danzar sobre Fairbanks. A medianoche, como en todo Estados Unidos, se canta «Auld Lang Syne», y el 1 de enero es festivo federal.\n\nEn Anchorage, una fiesta gratuita reúne a la gente en la 3.ª Avenida con la calle E: colina para trineos, food trucks, hot toddy y espectáculos de fuego. Los fuegos se elevan sobre el Cook Inlet a las 20:00, justo cuando es medianoche en Nueva York. La pirotecnia particular está prohibida en la ciudad, así que es el único espectáculo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Antorchas en Alyeska",
+        "text": "En la estación de Alyeska, cerca de Anchorage, los esquiadores bajan la pista con antorchas en Nochevieja. Justo después, a las 21:00, hay fuegos sobre la montaña."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos a las 20:00",
+        "text": "Los únicos fuegos oficiales de Anchorage se lanzan a las 20:00, para que las familias con niños puedan ir pese al frío. De 19:00 a 21:00 hay colina para trineos y food trucks en el centro; en 2025 se esperaban unas 10 000 personas."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Primera caminata del año",
+        "text": "El 1 de enero es festivo y los parques estatales de todo el país organizan caminatas del primer día. En Alaska sal cerca del mediodía: a finales de diciembre, Anchorage tiene menos de seis horas de luz."
+      }
+    ],
+    "kit": "us-9"
   }
 }

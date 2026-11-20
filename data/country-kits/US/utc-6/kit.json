@@ -1,0 +1,99 @@
+{
+  "code": "US",
+  "zone": "UTC-6",
+  "zoneId": "utc-0600",
+  "cityId": "chicago",
+  "names": {
+    "uk": {
+      "name": "США",
+      "city": "Чикаго",
+      "cityIn": "у Чикаго",
+      "caps": "ЧИКАГО · США"
+    },
+    "en": {
+      "name": "United States",
+      "city": "Chicago",
+      "cityIn": "in Chicago",
+      "caps": "CHICAGO · USA"
+    },
+    "es": {
+      "name": "Estados Unidos",
+      "city": "Chicago",
+      "cityIn": "en Chicago",
+      "caps": "CHICAGO · EE. UU."
+    },
+    "fr": {
+      "name": "États-Unis",
+      "city": "Chicago",
+      "cityIn": "à Chicago",
+      "caps": "CHICAGO · ÉTATS-UNIS"
+    }
+  },
+  "picto": "M4 37 H36 M7.5 37 V9 H12.5 V14 H15 V37 M7.5 19.8 H10 M10 14 H12.5 M12.5 24 H15 M7.5 29 H15 M7.5 20.6 H10 M8.8 9 V2.6 M11.2 9 V4.4 M16.50 37.00 L17.50 30.99 L18.50 26.55 L19.50 23.28 L20.50 20.88 L21.50 19.13 L22.50 17.88 L23.50 17.00 L24.50 16.43 L25.50 16.10 L26.50 16.00 L27.50 16.10 L28.50 16.43 L29.50 17.00 L30.50 17.88 L31.50 19.13 L32.50 20.88 L33.50 23.28 L34.50 26.55 L35.50 30.99 L36.50 37.00 M19.30 37.00 L20.02 31.96 L20.74 28.24 L21.46 25.50 L22.18 23.49 L22.90 22.02 L23.62 20.97 L24.34 20.24 L25.06 19.76 L25.78 19.49 L26.50 19.40 L27.22 19.49 L27.94 19.76 L28.66 20.24 L29.38 20.97 L30.10 22.02 L30.82 23.49 L31.54 25.50 L32.26 28.24 L32.98 31.96 L33.70 37.00",
+  "flagColors": [
+    "#B22234",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Чикаго"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Chicago"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Chicago"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Chicago"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

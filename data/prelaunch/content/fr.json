@@ -1430,5 +1430,173 @@
       }
     ],
     "kit": "br-2"
+  },
+  "AU@utc+0800": {
+    "text": "En Australie, la nuit du Nouvel An est une nuit d'été : on la passe dehors, sur la plage ou dans un parc, en bateau, à un concert ou chez soi autour du barbecue entre amis. Les villes saluent minuit par des feux d'artifice et l'on remplit les verres de champagne ou de vin. Le 31 décembre est un jour ouvré ordinaire, mais le 1er janvier est férié dans tout le pays.\n\nPerth, capitale de l'Australie-Occidentale, accueille l'année trois heures après Sydney. Deux feux d'artifice sont tirés au-dessus d'Elizabeth Quay, sur la Swan, à 20 h 30 et à minuit ; en 2025, selon la mairie, environ 130 000 personnes sont venues dans le centre. Tout près, sur Barrack Square, se dresse le clocher Swan Bells : 12 de ses cloches viennent de St Martin-in-the-Fields, à Londres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Deux feux sur Elizabeth Quay",
+        "text": "Au-dessus de la crique d'Elizabeth Quay, sur la Swan, deux feux : à 20 h 30 pour les familles avec enfants, puis le grand à minuit. Northbridge tire aussi le sien à minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Minuit trois heures plus tard",
+        "text": "L'Australie-Occidentale n'applique pas l'heure d'été : 54,6 % ont voté non au référendum de 2009. Quand Sydney fête déjà, il n'est que 21 h à Perth, et minuit arrive à 16 h UTC."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "La vue de Langley Park",
+        "text": "On voit bien les feux depuis Langley Park et Birdiya Drive, près du centre des congrès. Le retour est gratuit : en 2025, bus et trains ont roulé toute la nuit, gratuits de minuit à 6 h."
+      }
+    ],
+    "kit": "au+8"
+  },
+  "AU@utc+0845": {
+    "text": "En Australie, le 31 décembre tombe en plein été : la nuit du Nouvel An se passe surtout dehors, sur la plage, dans les parcs, en bateau ou à la maison autour du barbecue. À minuit, les feux d’artifice éclatent au-dessus des villes et l’on trinque au champagne ou au vin. Ce jour-là, on travaille, mais le 1er janvier tout le pays est en congé.\n\nEucla est un village de la plaine de Nullarbor, à 11 km de la frontière de l’Australie-Méridionale. Il est né en 1877 autour d’une station télégraphique dont les ruines se dressent encore dans les dunes. Ici et dans les relais routiers voisins de l’Eyre Highway, les horloges avancent officieusement de 45 minutes sur Perth.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Trois horloges au mur",
+        "text": "Au poste-frontière et au-dessus de l’entrée du motel d’Eucla, trois horloges donnent l’heure d’Adélaïde, de Perth et d’Eucla. Ici, le téléphone reste à l’heure de Perth : compte jusqu’au minuit d’Eucla avec l’horloge murale ou règle-le à la main."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "Le dernier coucher de soleil",
+        "text": "Le motel d’Eucla domine la Grande Baie australienne depuis l’escarpement, et de la terrasse du pub on voit le soleil plonger dans l’océan. Son restaurant ouvre tous les soirs."
+      },
+      {
+        "id": "t3",
+        "iconId": "cliff",
+        "title": "Le 1er janvier aux falaises Bunda",
+        "text": "Le 1er janvier est férié : l’occasion de rouler vers l’est sur l’Eyre Highway jusqu’aux belvédères. Les falaises calcaires de Bunda, hautes de 60 à 120 mètres, longent la baie sur 210 km."
+      }
+    ],
+    "kit": "au+845"
+  },
+  "AU@utc+0930": {
+    "text": "En Australie, le Nouvel An est une nuit d’été passée dehors. On va aux concerts et aux fêtes, sur les plages et dans les parcs, on sort en bateau ou on invite des amis pour un barbecue au jardin. À minuit, des feux d’artifice éclatent au-dessus des villes et l’on remplit les verres de champagne ou de vin. Le 1er janvier est férié dans tous les États et territoires ; le 31 décembre est un jour ouvré.\n\nDarwin, capitale du Territoire du Nord, fait la fête sur le front de mer de Darwin Waterfront. C’est la plus grande fête familiale du Top End tropical : entrée libre, concert, pique-niques et deux feux d’artifice, à 21 h et à minuit. Plus au sud, dans le désert du centre du même territoire, se dresse Uluru, un rocher de 348 mètres sacré pour le peuple anangu.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Trinquer sous le ciel d’été",
+        "text": "Ici, le Nouvel An se fête dehors : à la plage, dans un parc, en bateau ou autour du barbecue entre amis. À minuit, feux d’artifice et coupe de champagne ou de vin."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Deux feux au Waterfront",
+        "text": "Sur le front de mer de Darwin, deux feux d’artifice : à 21 h pour les familles avec enfants, à minuit le grand spectacle. Entrée libre, pique-niques bienvenus, mais ni alcool ni tabac."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Minuit 90 minutes plus tard",
+        "text": "Le Territoire du Nord ne passe pas à l’heure d’été. Quand Sydney fête déjà l’année, Darwin attend encore une heure et demie : minuit y sonne à 14 h 30 UTC."
+      }
+    ],
+    "kit": "au+930"
+  },
+  "US@utc-1000": {
+    "text": "Hawaï vit à l’heure UTC−10 et ne change jamais d’heure : le Nouvel An y arrive cinq heures après New York. À minuit, les îles crépitent de pétards et de feux d’artifice, censés chasser les mauvais esprits. Les ouvriers japonais des plantations ont apporté le mochi au milieu du XIXe siècle : les familles pilent le riz ensemble dans un mortier en bois et mangent l’ozoni, une soupe au mochi et aux légumes, pour la chance. On se salue d’un « Hauʻoli Makahiki Hou », « Bonne année » en hawaïen.\n\nÀ Honolulu, le feu d’artifice de minuit éclate au-dessus de la plage de Waikiki : on installe chaises et couvertures sur le sable ou on regarde depuis les balcons des hôtels. Le 1er janvier, une randonnée du premier jour sur la côte de Kaʻiwi s’ouvre au son d’une conque et d’une prière au lever du soleil.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Pétards sur permis",
+        "text": "À Oʻahu, les pétards ne sont permis que de 21 h à 1 h et avec un permis de 25 $, valable pour 5 000 pétards au plus. Fusées, cierges magiques et fontaines y sont interdits."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Mochi et soupe ozoni",
+        "text": "Le mochi se pile en famille : c’est un travail long qui demande beaucoup de bras. Pour la fête, on mange l’ozoni, un bouillon clair au mochi, aux légumes et au pâté de poisson, pour la chance."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Une couverture à Waikiki",
+        "text": "Le feu d’artifice de minuit à Honolulu se voit le mieux depuis la plage de Waikiki : apporte une chaise ou une couverture. La plus grande foule se rassemble près du Hilton Hawaiian Village."
+      }
+    ],
+    "kit": "us-10"
+  },
+  "US@utc-0600": {
+    "text": "Dans le fuseau central des États-Unis, de Chicago à La Nouvelle-Orléans, minuit sonne une heure après New York. On suit le décompte à la télévision et, à minuit, on chante « Auld Lang Syne ». À Nashville, une note de musique rouge descend une tour de 42 mètres lors d’un concert gratuit qui a réuni 205 000 personnes en 2025. À La Nouvelle-Orléans, une fleur de lys descend d’un toit du Quartier français tandis que le feu d’artifice éclate au-dessus du Mississippi. Le 1er janvier, le Sud mange des haricots à œil noir et du chou cavalier pour la chance.\n\nPour 2026, New Year’s Rockin’ Eve a mené depuis Chicago son premier décompte à l’heure du Centre, avec des feux tirés depuis les ponts de la rivière. À minuit, Navy Pier offre aussi un spectacle gratuit de 10 minutes au-dessus du lac Michigan.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "La note et la fleur de lys",
+        "text": "Au lieu d’une boule, les villes du Centre font descendre leurs symboles : Nashville une note rouge aux 28 000 LED, La Nouvelle-Orléans une fleur de lys depuis un toit du Quartier français. Les deux fêtes sont gratuites."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Des feux sur l’eau",
+        "text": "À Chicago, à minuit, le feu d’artifice s’élève au-dessus du lac Michigan près de Navy Pier ; pour 2026, il partait aussi des ponts de la rivière. À La Nouvelle-Orléans, on le voit depuis les deux rives du Mississippi."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Pois et chou porte-bonheur",
+        "text": "Le 1er janvier est un jour férié fédéral. Dans le Sud, on mange haricots à œil noir, haricots rouges au riz et chou cavalier, et le feu d’artifice de La Nouvelle-Orléans joue les hymnes universitaires pour les fans du Sugar Bowl."
+      }
+    ],
+    "kit": "us-6"
+  },
+  "US@utc-0700": {
+    "text": "Dans le fuseau des Rocheuses, du Montana à l’Arizona, minuit arrive deux heures après New York. Ici aussi, on chante « Auld Lang Syne » à minuit, et les stations de ski du Colorado fêtent la nuit à leur façon : à Breckenridge, les moniteurs descendent la piste avec des torches rouges, et à Steamboat Springs un feu d’artifice suit la descente aux flambeaux. À Boise, une grue fait descendre une pomme de terre géante de plus de cinq mètres dans la foule juste avant minuit. Le 1er janvier est un jour férié fédéral, et beaucoup partent pour une première randonnée de l’année dans un parc d’État.\n\nÀ Denver, le feu d’artifice s’élève au-dessus du centre deux fois, à 21 h et à minuit, et c’est depuis la 16th Street qu’on le voit le mieux. Cette nuit-là, les bus et les trains de RTD sont gratuits.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Flambeaux sur les pistes",
+        "text": "Dans les stations du Colorado, le soir du réveillon, les moniteurs descendent avec des torches : à Breckenridge, à 18 h, un serpent rouge de flambeaux traverse la montagne. Un feu d’artifice suit la descente."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Deux feux sur Denver",
+        "text": "Le spectacle gratuit part des toits du centre à 21 h, puis de nouveau à minuit ; regarde-le depuis la 16th Street. De 19 h à 7 h, les bus et trains de RTD sont gratuits."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Première randonnée de l’année",
+        "text": "Le 1er janvier est férié, et les parcs d’État de tout le pays organisent des randonnées du premier jour. Dans le fuseau des Rocheuses, c’est une marche entre sommets enneigés et roches rouges."
+      }
+    ],
+    "kit": "us-7"
+  },
+  "US@utc-0900": {
+    "text": "L’Alaska accueille le Nouvel An quatre heures après New York, et dans une longue nuit d’hiver : le 31 décembre, le soleil se couche à Anchorage à 15 h 51. À cause du froid, les feux d’artifice partent souvent bien avant minuit, et à la station de ski d’Alyeska les skieurs descendent la piste avec des flambeaux avant que, à 21 h, un feu d’artifice n’illumine la montagne. Par les nuits claires d’hiver, les aurores boréales dansent souvent au-dessus de Fairbanks. À minuit, comme partout aux États-Unis, on chante « Auld Lang Syne », et le 1er janvier est un jour férié fédéral.\n\nÀ Anchorage, une fête gratuite réunit le monde à l’angle de la 3e Avenue et de la rue E : piste de luge, food trucks, hot toddy et cracheurs de feu. Le feu d’artifice s’élève au-dessus du Cook Inlet à 20 h, pile quand sonne minuit à New York. Les feux d’artifice privés sont interdits en ville : c’est le seul spectacle.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Flambeaux à Alyeska",
+        "text": "À la station d’Alyeska, près d’Anchorage, les skieurs descendent la piste avec des flambeaux le soir du réveillon. Juste après, à 21 h, un feu d’artifice éclate au-dessus de la montagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à 20 h",
+        "text": "Le seul feu d’artifice officiel d’Anchorage part à 20 h, pour que les familles avec enfants puissent venir malgré le froid. De 19 h à 21 h, le centre propose piste de luge et food trucks ; en 2025, on attendait environ 10 000 personnes."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Première randonnée de l’année",
+        "text": "Le 1er janvier est férié, et les parcs d’État de tout le pays organisent des randonnées du premier jour. En Alaska, pars vers midi : fin décembre, Anchorage a moins de six heures de jour."
+      }
+    ],
+    "kit": "us-9"
   }
 }

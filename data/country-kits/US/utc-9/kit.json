@@ -1,0 +1,99 @@
+{
+  "code": "US",
+  "zone": "UTC-9",
+  "zoneId": "utc-0900",
+  "cityId": "anchorage",
+  "names": {
+    "uk": {
+      "name": "США",
+      "city": "Анкоридж",
+      "cityIn": "в Анкориджі",
+      "caps": "АНКОРИДЖ · США"
+    },
+    "en": {
+      "name": "United States",
+      "city": "Anchorage",
+      "cityIn": "in Anchorage",
+      "caps": "ANCHORAGE · USA"
+    },
+    "es": {
+      "name": "Estados Unidos",
+      "city": "Anchorage",
+      "cityIn": "en Anchorage",
+      "caps": "ANCHORAGE · EE. UU."
+    },
+    "fr": {
+      "name": "États-Unis",
+      "city": "Anchorage",
+      "cityIn": "à Anchorage",
+      "caps": "ANCHORAGE · ÉTATS-UNIS"
+    }
+  },
+  "picto": "M3 36 H37 M2.6 36 L11 21 L15 24 L22 9 L25 13 L28 11 L37.4 33.6 M18.2 17.6 L20.2 19.4 L22 16.8 L24.2 19 L26 16.6 L28.4 18.6 L30.4 16.8 M11.6 36 V29 H15.6 V36 M16.6 36 V26.4 H21.6 V36 M22.6 36 V28.6 H26.6 V36 M18 29 H20.2 M18 32 H20.2 M12.8 31.6 H14.4 M23.8 31.2 H25.4",
+  "flagColors": [
+    "#B22234",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Анкориджі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Anchorage"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Anchorage"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Anchorage"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

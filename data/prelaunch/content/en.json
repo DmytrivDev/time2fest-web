@@ -1430,5 +1430,173 @@
       }
     ],
     "kit": "br-2"
+  },
+  "AU@utc+0800": {
+    "text": "In Australia New Year's Eve is a summer night, so it is spent outdoors: on a beach or in a park, on a boat, at a concert or at home by the barbecue with friends. Cities greet midnight with fireworks, and glasses are filled with champagne or wine. 31 December itself is an ordinary working day, but 1 January is a holiday across the country.\n\nPerth, the capital of Western Australia, welcomes the year three hours after Sydney. Two fireworks shows go up over Elizabeth Quay on the Swan River, at 8.30 pm and at midnight; in 2025, according to the City of Perth, about 130,000 people came into the centre. Nearby on Barrack Square stands the Swan Bells tower; 12 of its bells came from St Martin-in-the-Fields in London.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Two shows over Elizabeth Quay",
+        "text": "Over the Elizabeth Quay inlet on the Swan River there are two shows: at 8.30 pm for families with children and the main one at midnight. Northbridge fires its own at midnight too."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Midnight three hours later",
+        "text": "Western Australia does not use daylight saving: 54.6% voted no in the 2009 referendum. When Sydney is already celebrating it is only 9 pm in Perth, and midnight comes at 16:00 UTC."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "The view from Langley Park",
+        "text": "The fireworks are easy to see from Langley Park and Birdiya Drive by the Convention Centre. Getting home is free: in 2025 buses and trains ran all night, with free travel from midnight to 6 am."
+      }
+    ],
+    "kit": "au+8"
+  },
+  "AU@utc+0845": {
+    "text": "In Australia 31 December is midsummer, so New Year's night is spent mostly outdoors: on beaches, in parks, on boats or at home around the barbecue. At midnight fireworks burst over the cities and people raise a glass of champagne or wine. The day itself is a working day, but on 1 January the whole country has the day off.\n\nEucla is a settlement on the Nullarbor Plain, 11 km from the South Australian border. It grew up in 1877 around a telegraph station whose ruins still stand in the dunes. Here and at nearby roadhouses along the Eyre Highway, clocks unofficially run 45 minutes ahead of Perth.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Three clocks on the wall",
+        "text": "At the border checkpoint and above the Eucla Motel entrance hang three clocks: Adelaide, Perth and Eucla time. Phones here show Perth time, so count down to Eucla's midnight by the clock on the wall or set yours by hand."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "The year's last sunset",
+        "text": "The Eucla Motel sits on the escarpment above the Great Australian Bight, and from the pub deck you can watch the sun set into the ocean. Its restaurant is open every night."
+      },
+      {
+        "id": "t3",
+        "iconId": "cliff",
+        "title": "New Year's Day at Bunda Cliffs",
+        "text": "1 January is a public holiday, a good day to drive east along the Eyre Highway to the lookouts. The limestone Bunda Cliffs, 60–120 metres high, run for 210 km along the Bight."
+      }
+    ],
+    "kit": "au+845"
+  },
+  "AU@utc+0930": {
+    "text": "In Australia, New Year is a summer night spent outdoors. People head to concerts and parties, to beaches and city parks, take a boat out on the water or invite friends round for a backyard barbecue. At midnight fireworks burst over the cities and glasses are filled with champagne or wine. 1 January is a public holiday in every state and territory, while 31 December is an ordinary working day.\n\nDarwin, the capital of the Northern Territory, celebrates at the Darwin Waterfront. It is the biggest family party of the tropical Top End: free entry, a concert, picnics and two fireworks displays, at 9 pm and at midnight. Further south, in the Central Australian desert of the same territory, rises Uluru, a 348-metre rock sacred to the Anangu people.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "A toast under summer skies",
+        "text": "New Year here is spent outdoors: on the beach, in a park, on a boat or round the grill with friends. At midnight come the fireworks and a glass of champagne or wine."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Two shows at the Waterfront",
+        "text": "Darwin’s waterfront has fireworks twice: at 9 pm for families with children and the main show at midnight. Entry is free and picnics are welcome, but alcohol and smoking are not."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Midnight 90 minutes later",
+        "text": "The Northern Territory does not use daylight saving time. So when Sydney is already celebrating, Darwin still has an hour and a half to go: midnight here falls at 14:30 UTC."
+      }
+    ],
+    "kit": "au+930"
+  },
+  "US@utc-1000": {
+    "text": "Hawaii runs on UTC−10 and never changes its clocks, so the New Year arrives here five hours after New York. At midnight the islands crackle with firecrackers and fireworks, meant to chase away evil spirits. Japanese plantation workers brought mochi in the mid-1800s: families pound rice together in a wooden mortar and eat ozoni, a soup with mochi and vegetables, for good luck. The greeting is “Hauʻoli Makahiki Hou”, Hawaiian for “Happy New Year”.\n\nIn Honolulu the midnight fireworks burst over Waikiki Beach, where people set up chairs and blankets on the sand or watch from hotel balconies. On 1 January a First Day Hike at the Kaʻiwi shoreline opens with the call of a conch shell and a sunrise prayer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Firecrackers need a permit",
+        "text": "On Oʻahu firecrackers are allowed only from 9 p.m. to 1 a.m. and only with a $25 permit, good for up to 5,000 of them. Aerials, sparklers and fountains are banned."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Mochi and ozoni soup",
+        "text": "Mochi is pounded as a family: it is hard work that takes many hands. For the holiday people eat ozoni, a clear broth with mochi, vegetables and fish cake, for luck in the new year."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "A blanket on Waikiki Beach",
+        "text": "Honolulu’s midnight fireworks are best seen right from Waikiki Beach, so bring a chair or a blanket. The biggest crowds gather near the Hilton Hawaiian Village."
+      }
+    ],
+    "kit": "us-10"
+  },
+  "US@utc-0600": {
+    "text": "In the Central zone of the United States, from Chicago to New Orleans, midnight arrives an hour after New York. People count down with TV specials and sing Auld Lang Syne at midnight. In Nashville a red music note descends a 138-foot tower at a free concert that drew 205,000 people in 2025. In New Orleans a fleur-de-lis drops from a French Quarter rooftop as fireworks burst over the Mississippi. On 1 January the South eats black-eyed peas and collard greens for luck.\n\nFor 2026, New Year’s Rockin’ Eve ran its first Central Time countdown from Chicago, with fireworks launched from the river bridges. At midnight Navy Pier adds a free 10-minute show over Lake Michigan.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "A note and a fleur-de-lis",
+        "text": "Instead of a ball, Central cities drop their own symbols: Nashville a red music note with 28,000 LEDs, New Orleans a fleur-de-lis from a French Quarter rooftop. Both parties are free."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks over the water",
+        "text": "In Chicago, midnight fireworks rise over Lake Michigan by Navy Pier, and for 2026 they also flew from the river bridges. In New Orleans you can watch them from both banks of the Mississippi."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Peas and greens for luck",
+        "text": "1 January is a federal holiday. In the South it means black-eyed peas, red beans and rice and collard greens, and the New Orleans fireworks even play college fight songs for Sugar Bowl fans."
+      }
+    ],
+    "kit": "us-6"
+  },
+  "US@utc-0700": {
+    "text": "In the Mountain time zone of the United States, from Montana to Arizona, midnight comes two hours after New York. Here too people sing Auld Lang Syne at midnight, and Colorado’s ski resorts mark the night their own way: in Breckenridge instructors ski down the slope with red flares, and in Steamboat Springs fireworks follow a torchlight parade. In Boise a crane lowers a giant potato more than five metres long into the crowd moments before midnight. 1 January is a federal holiday, and many people set out on a First Day Hike in a state park.\n\nIn Denver fireworks rise over downtown twice, at 9 p.m. and at midnight, and the best view is from 16th Street. That night RTD buses and trains are free.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Torches on the slopes",
+        "text": "At Colorado resorts on New Year’s Eve, instructors ski down with torches: in Breckenridge a red snake of flares crosses the mountain at 6 p.m. Fireworks over the valley follow the parade."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Two shows over Denver",
+        "text": "The free show launches from downtown rooftops at 9 p.m. and again at midnight; watch it from 16th Street. From 7 p.m. to 7 a.m. RTD buses and trains are free."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A First Day Hike",
+        "text": "1 January is a day off, and state parks across the country hold First Day Hikes. In the Mountain zone that means a walk among snowy peaks and red rock."
+      }
+    ],
+    "kit": "us-7"
+  },
+  "US@utc-0900": {
+    "text": "Alaska greets the New Year four hours after New York, and in long winter darkness: on 31 December the sun sets in Anchorage at 3:51 p.m. Because of the cold, fireworks here often go up well before midnight, and at Alyeska ski resort skiers come down the slope carrying torches before fireworks light up the mountain at 9 p.m. On clear winter nights the northern lights often dance over Fairbanks. At midnight, as everywhere in the US, people sing Auld Lang Syne, and 1 January is a federal holiday.\n\nIn Anchorage a free downtown party gathers people at 3rd Avenue and E Street, with a sledding hill, food trucks, hot toddies and fire dancers. Fireworks rise over Cook Inlet at 8 p.m., exactly when midnight strikes in New York. Personal fireworks are banned in the city, so this is the only show.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Torches at Alyeska",
+        "text": "At Alyeska Resort near Anchorage, skiers come down the slope with torches on New Year’s Eve. Right after, at 9 p.m., fireworks burst over the mountain."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks at 8 p.m.",
+        "text": "Anchorage’s only official fireworks go up at 8 p.m., so families with children can come despite the cold. From 7 to 9 p.m. downtown has a sledding hill and food trucks; in 2025 organisers expected about 10,000 people."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A First Day Hike",
+        "text": "1 January is a day off, and state parks across the country hold First Day Hikes. In Alaska head out near noon: in late December Anchorage gets less than six hours of daylight."
+      }
+    ],
+    "kit": "us-9"
   }
 }

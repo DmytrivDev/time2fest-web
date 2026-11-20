@@ -1,0 +1,99 @@
+{
+  "code": "US",
+  "zone": "UTC-7",
+  "zoneId": "utc-0700",
+  "cityId": "denver",
+  "names": {
+    "uk": {
+      "name": "США",
+      "city": "Денвер",
+      "cityIn": "у Денвері",
+      "caps": "ДЕНВЕР · США"
+    },
+    "en": {
+      "name": "United States",
+      "city": "Denver",
+      "cityIn": "in Denver",
+      "caps": "DENVER · USA"
+    },
+    "es": {
+      "name": "Estados Unidos",
+      "city": "Denver",
+      "cityIn": "en Denver",
+      "caps": "DENVER · EE. UU."
+    },
+    "fr": {
+      "name": "États-Unis",
+      "city": "Denver",
+      "cityIn": "à Denver",
+      "caps": "DENVER · ÉTATS-UNIS"
+    }
+  },
+  "picto": "M4 36 H36 M5 36 V25 H35 V36 M8.2 28.4 V31.4 M11.4 28.4 V31.4 M28.6 28.4 V31.4 M31.8 28.4 V31.4 M14.6 25 L20 21.4 L25.4 25 M17.4 27 V34 M20 27 V34 M22.6 27 V34 M16 24.1 V15.4 H24 V24.1 M18 17.2 V22.8 M20 17.2 V21.4 M22 17.2 V22.8 M16.2 15.4 V13.4 H23.8 V15.4 M16.6 13.4 A3.4 3.4 0 0 1 23.4 13.4 M18.4 10.6 Q18 12 18.1 13.4 M21.6 10.6 Q22 12 21.9 13.4 M19.1 10.2 V7.8 H20.9 V10.2 M19.1 7.8 Q20 6.8 20.9 7.8 M20 7.2 V5",
+  "flagColors": [
+    "#B22234",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Денвері"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Denver"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Denver"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Denver"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

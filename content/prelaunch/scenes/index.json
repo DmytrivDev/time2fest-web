@@ -312,6 +312,48 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#20364a"
+    },
+    "AU@utc+0800": {
+      "src": "/scenes/AU-utc+0800-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "AU@utc+0845": {
+      "src": "/scenes/AU-utc+0845-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#755a69"
+    },
+    "AU@utc+0930": {
+      "src": "/scenes/AU-utc+0930-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#472f35"
+    },
+    "US@utc-1000": {
+      "src": "/scenes/US-utc-1000-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "US@utc-0600": {
+      "src": "/scenes/US-utc-0600-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#232f52"
+    },
+    "US@utc-0700": {
+      "src": "/scenes/US-utc-0700-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#241b2e"
+    },
+    "US@utc-0900": {
+      "src": "/scenes/US-utc-0900-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

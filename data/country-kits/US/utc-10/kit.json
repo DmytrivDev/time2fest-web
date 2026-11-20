@@ -1,0 +1,99 @@
+{
+  "code": "US",
+  "zone": "UTC-10",
+  "zoneId": "utc-1000",
+  "cityId": "honolulu",
+  "names": {
+    "uk": {
+      "name": "США",
+      "city": "Гонолулу",
+      "cityIn": "у Гонолулу",
+      "caps": "ГОНОЛУЛУ · США"
+    },
+    "en": {
+      "name": "United States",
+      "city": "Honolulu",
+      "cityIn": "in Honolulu",
+      "caps": "HONOLULU · USA"
+    },
+    "es": {
+      "name": "Estados Unidos",
+      "city": "Honolulu",
+      "cityIn": "en Honolulu",
+      "caps": "HONOLULU · EE. UU."
+    },
+    "fr": {
+      "name": "États-Unis",
+      "city": "Honolulu",
+      "cityIn": "à Honolulu",
+      "caps": "HONOLULU · ÉTATS-UNIS"
+    }
+  },
+  "picto": "M2 33 H38 M12 33 Q15.5 30.6 19.5 29.4 L25.5 28.6 Q29 28.2 31 26.8 Q32.6 25 33.6 23.8 Q34.4 23.2 35.2 24.2 Q37 27.6 38.6 33 M7.5 33 Q8.2 24 10 17 M10 17 Q5.5 14.6 2.6 18 M10 17 Q7 12 3.6 11.8 M10 17 Q13 12 17 12.6 M10 17 Q15 16.2 17 20 M5 37 q3 -2 6 0 t6 0 M23 37 q3 -2 6 0 t6 0",
+  "flagColors": [
+    "#B22234",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гонолулу"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Honolulu"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Honolulu"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Honolulu"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

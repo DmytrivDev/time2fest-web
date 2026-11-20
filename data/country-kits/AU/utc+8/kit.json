@@ -1,0 +1,99 @@
+{
+  "code": "AU",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "perth",
+  "names": {
+    "uk": {
+      "name": "Австралія",
+      "city": "Перт",
+      "cityIn": "у Перті",
+      "caps": "ПЕРТ · АВСТРАЛІЯ"
+    },
+    "en": {
+      "name": "Australia",
+      "city": "Perth",
+      "cityIn": "in Perth",
+      "caps": "PERTH · AUSTRALIA"
+    },
+    "es": {
+      "name": "Australia",
+      "city": "Perth",
+      "cityIn": "en Perth",
+      "caps": "PERTH · AUSTRALIA"
+    },
+    "fr": {
+      "name": "Australie",
+      "city": "Perth",
+      "cityIn": "à Perth",
+      "caps": "PERTH · AUSTRALIE"
+    }
+  },
+  "picto": "M20 1.5 V5 M20 5 L18.4 21 M20 5 L21.6 21 M19.2 12.5 H20.8 M18.9 16.5 H21.1 M18.4 20.5 C12.4 23.5 11.2 31 14.8 35 M18.4 20.5 V35 M21.6 20.5 C27.6 23.5 28.8 31 25.2 35 M21.6 20.5 V35 M3.5 35 V22 H9 V35 M30.5 35 V17 H36.5 V35 M6.2 25 V32 M33.5 20 V32 M2 35 H38 M11 38 H29",
+  "flagColors": [
+    "#E4002B",
+    "#FFFFFF",
+    "#4A6FD8"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Перті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Perth"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Perth"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Perth"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
