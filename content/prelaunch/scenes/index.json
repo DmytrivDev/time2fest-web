@@ -306,6 +306,12 @@
       "wide": true,
       "sky": "#112a2e",
       "water": "#464e4a"
+    },
+    "BR@utc-0200": {
+      "src": "/scenes/BR-utc-0200-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
     }
   }
 }

@@ -973,6 +973,22 @@
         "x": 55,
         "y": 45
       }
+    },
+    "country:BR@utc-0200": {
+      "src": "/media/photos/fernando-de-noronha.webp",
+      "alt": {
+        "uk": "Захід сонця над Морру-ду-Піку й бухтою, Фернанду-ді-Норонья",
+        "en": "Sunset over Morro do Pico and the bay, Fernando de Noronha",
+        "es": "Atardecer sobre el Morro do Pico y la bahía, Fernando de Noronha",
+        "fr": "Coucher de soleil sur le Morro do Pico et la baie, Fernando de Noronha"
+      },
+      "author": "Carla Belke",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Poente_no_Morro_do_Pico.jpg",
+      "position": {
+        "x": 38,
+        "y": 45
+      }
     }
   }
 }
