@@ -1,0 +1,99 @@
+{
+  "code": "ID",
+  "zone": "UTC+9",
+  "zoneId": "utc+0900",
+  "cityId": "jayapura",
+  "names": {
+    "uk": {
+      "name": "Індонезія",
+      "city": "Джаяпура",
+      "cityIn": "у Джаяпурі",
+      "caps": "ДЖАЯПУРА · ІНДОНЕЗІЯ"
+    },
+    "en": {
+      "name": "Indonesia",
+      "city": "Jayapura",
+      "cityIn": "in Jayapura",
+      "caps": "JAYAPURA · INDONESIA"
+    },
+    "es": {
+      "name": "Indonesia",
+      "city": "Jayapura",
+      "cityIn": "en Jayapura",
+      "caps": "JAYAPURA · INDONESIA"
+    },
+    "fr": {
+      "name": "Indonésie",
+      "city": "Jayapura",
+      "cityIn": "à Jayapura",
+      "caps": "JAYAPURA · INDONÉSIE"
+    }
+  },
+  "picto": "M2 26 H38 M5 26 Q12.5 12 20 26 M20 26 Q27.5 12 35 26 M8.5 20.6 V26 M12.5 18.8 V26 M16.5 20.6 V26 M23.5 20.6 V26 M27.5 18.8 V26 M31.5 20.6 V26 M5 26 V32 M20 26 V32 M35 26 V32 M4 35.5 q3 -2 6 0 t6 0 t6 0 t6 0 t6 0",
+  "flagColors": [
+    "#D8352A",
+    "#F2EBDD",
+    "#D8352A"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Джаяпурі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Jayapura"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Jayapura"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Jayapura"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

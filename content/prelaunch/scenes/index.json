@@ -354,6 +354,30 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "CL@utc-0500": {
+      "src": "/scenes/CL-utc-0500-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#172a2b"
+    },
+    "ID@utc+0800": {
+      "src": "/scenes/ID-utc+0800-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#2a2444"
+    },
+    "ID@utc+0900": {
+      "src": "/scenes/ID-utc+0900-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "MX@utc-0500": {
+      "src": "/scenes/MX-utc-0500-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#84785e"
     }
   }
 }

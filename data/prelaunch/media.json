@@ -1101,6 +1101,70 @@
         "x": 62,
         "y": 58
       }
+    },
+    "country:CL@utc-0500": {
+      "src": "/media/photos/easter.webp",
+      "alt": {
+        "uk": "Моаї Аху-Тонгарікі під Чумацьким Шляхом, Острів Пасхи",
+        "en": "The moai of Ahu Tongariki under the Milky Way, Easter Island",
+        "es": "Los moáis de Ahu Tongariki bajo la Vía Láctea, Isla de Pascua",
+        "fr": "Les moaï d’Ahu Tongariki sous la Voie lactée, île de Pâques"
+      },
+      "author": "Anne Dirkse",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Moai_Under_the_Milky_Way,_Ahu_Tongariki,_Easter_Island.jpg",
+      "position": {
+        "x": 60,
+        "y": 85
+      }
+    },
+    "country:ID@utc+0800": {
+      "src": "/media/photos/makassar.webp",
+      "alt": {
+        "uk": "Вечір у Макассарі біля набережної Лосарі: Мечеть 99 куполів на мисі Center Point of Indonesia",
+        "en": "Evening in Makassar by Losari Beach: the 99 Domes Mosque on the Center Point of Indonesia headland",
+        "es": "Atardecer en Macasar junto a la playa de Losari: la mezquita de las 99 cúpulas en el cabo Center Point of Indonesia",
+        "fr": "Soir à Makassar près de la plage de Losari : la mosquée aux 99 coupoles sur le cap Center Point of Indonesia"
+      },
+      "author": "Diahasy",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sore_hari_di_Makassar,_dekat_Pantai_Losari_April_2026_8.jpg",
+      "position": {
+        "x": 25,
+        "y": 50
+      }
+    },
+    "country:ID@utc+0900": {
+      "src": "/media/photos/jayapura.webp",
+      "alt": {
+        "uk": "Нічна Джаяпура з пагорба Джаяпура: вогні міста над затокою",
+        "en": "Jayapura at night from Jayapura Hill: city lights above the bay",
+        "es": "Jayapura de noche desde la colina de Jayapura: las luces de la ciudad sobre la bahía",
+        "fr": "Jayapura la nuit depuis la colline de Jayapura : les lumières de la ville au-dessus de la baie"
+      },
+      "author": "Dimas H (WMID)",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jayapura_dari_Bukit_Jayapura.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:MX@utc-0500": {
+      "src": "/media/photos/cancun.webp",
+      "alt": {
+        "uk": "Нічний Канкун: дерев’яний пірс над лагуною, позаду — освітлені готелі й пальми",
+        "en": "Cancún at night: a wooden pier over the lagoon, lit hotels and palm trees behind",
+        "es": "Cancún de noche: un muelle de madera sobre la laguna y detrás hoteles iluminados y palmeras",
+        "fr": "Cancún la nuit : un ponton en bois sur la lagune, derrière les hôtels illuminés et les palmiers"
+      },
+      "author": "Ncysea",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cancun_Beach_at_Night.jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
     }
   }
 }

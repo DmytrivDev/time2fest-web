@@ -1598,5 +1598,101 @@
       }
     ],
     "kit": "us-9"
+  },
+  "CL@utc-0500": {
+    "text": "Chile sees in the New Year at the height of summer, so many people celebrate on the beach. At the family dinner there are lentils for luck, at midnight twelve grapes, yellow underwear is a must, and anyone dreaming of travel walks around the block with a suitcase. Selling fireworks to individuals has been banned since 2000, so the fireworks here are official only.\n\nRapa Nui, or Easter Island, lies 3,512 km from the mainland, and midnight arrives two hours after Santiago, the last in Chile. In Hanga Roa, restaurants host New Year's Eve dinners with live music and Rapa Nui songs and dances, and after dinner people head to the fireworks at Hanga Vare Vare.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Grapes and yellow underwear",
+        "text": "At midnight eat twelve grapes, one with a wish for each month. Yellow underwear brings joy and money."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Dinner with Rapa Nui songs",
+        "text": "Book a New Year's Eve dinner in Hanga Roa with live music and Rapa Nui songs and dances, then walk to the fireworks at Hanga Vare Vare."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Sunset and sunrise by the moai",
+        "text": "See the year's last sunset by the moai at Tahai, where no guide is needed. Greet 1 January at Tongariki: it opens at sunrise, but you need a park ticket and a local guide."
+      }
+    ],
+    "kit": "cl-5"
+  },
+  "ID@utc+0800": {
+    "text": "Central Indonesia — Bali, Sulawesi, southern and eastern Kalimantan and the Lesser Sunda Islands — sees in the New Year an hour before Jakarta. As everywhere in the country, people blow terompet horns, grill chicken or corn and sit down to a family meal. On Bali they head for the sea: on the eve of 2026 about 18,500 people gathered in Canggu and 12,000 in Kuta. That year fireworks were called off almost everywhere out of sympathy for flood victims in Sumatra, and many prayed together at midnight. 1 January is a holiday across the country.\n\nIn Makassar everyone makes for the Losari waterfront. From ten in the evening the crowd grows until it stretches all the way to old Fort Rotterdam, and the first fireworks go up before midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "A night by the sea in Bali",
+        "text": "On Bali the New Year is met on the beaches of Canggu and Kuta and in the GWK cultural park. Whether there are fireworks is decided each time: for 2026 they were replaced by a shared prayer at midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "An evening of art in Denpasar",
+        "text": "Instead of fireworks, Denpasar marked the arrival of 2026 with a free evening of Balinese art on Puputan Badung square. The city's own art studios performed."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Fireworks from a phinisi deck",
+        "text": "In Makassar, fireworks go up at midnight on the Losari waterfront and at Center Point of Indonesia. Some people launch them straight from the decks of phinisi sailing ships moored by the shore."
+      }
+    ],
+    "kit": "id+8"
+  },
+  "ID@utc+0900": {
+    "text": "Indonesia's east — the Maluku Islands and Papua — welcomes the New Year before the rest of the country. For Christians, the evening of 31 December begins in church: in Ambon the night is called 'konci taong', locking up the year, and after the service people pour into the streets. At midnight the ships anchored in Ambon Bay sound their horns, church bells and mosque drums answer, and fireworks fill the sky over the city and the hills. 1 January is a holiday across Indonesia.\n\nIn Jayapura people gather every year by the Youtefa Bridge: families arrive from nine in the evening and set off their own fireworks at midnight. Cafes along the Hamadi–Holtekamp road stay open late, and in the yards neighbours grill fish together over the fire.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A service to close the year",
+        "text": "On the evening of 31 December Christians in Ambon and Jayapura go to church for a service that sees out the year. Afterwards the celebration moves to the streets."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Ship horns at midnight",
+        "text": "In Ambon, at exactly 00:00, the ships anchored in the bay sound their horns. Church bells and the beduk drums of the mosques answer them."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Grilled fish with the neighbours",
+        "text": "In Jayapura, before midnight, neighbours grill fish together outdoors and everyone brings something to the shared table. That way children see in the year close to their family."
+      }
+    ],
+    "kit": "id+9"
+  },
+  "MX@utc-0500": {
+    "text": "Mexico sees out the year over a late family dinner, and at midnight eats a grape with each of the twelve chimes, making a wish every time, a custom that came from Spain. Before midnight the house is swept out towards the street to drive away the bad, a plate of lentils and rice goes on the table for abundance, and the colour of new underwear calls in love, money or health. After the twelfth chime comes a shout of «¡Feliz Año Nuevo!» and firecrackers and sparklers light up.\n\nQuintana Roo has had its own time zone since 2015, so Cancún is the first place in the country to greet the year, an hour ahead of central Mexico. Last year the city party on the Malecón Tajamar waterfront ran from 9 p.m. to 5 a.m.: five bands and, instead of pyrotechnics, a drone show. That night the fireworks went up over nearby Isla Mujeres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Sweep out the old year",
+        "text": "Before midnight, sweep from the back room to the door and out into the street, the way Mexicans chase off the bad of the old year."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Lentils for plenty",
+        "text": "Put a plate of lentils and rice on the festive table, or tuck a few lentils into your wallet, for a full and generous year."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A night on Malecón Tajamar",
+        "text": "In Cancún, head to the Malecón Tajamar waterfront: last year bands played there until 5 a.m. and a drone show lit up midnight."
+      }
+    ],
+    "kit": "mx-5"
   }
 }

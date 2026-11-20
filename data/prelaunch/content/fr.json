@@ -1598,5 +1598,101 @@
       }
     ],
     "kit": "us-9"
+  },
+  "CL@utc-0500": {
+    "text": "Le Chili fête le Nouvel An en plein été, alors beaucoup le célèbrent à la plage. Au dîner de famille, on mange des lentilles pour la chance, à minuit douze raisins, on porte des sous-vêtements jaunes, et qui rêve de voyages fait le tour du pâté de maisons avec une valise. Vendre des feux d’artifice aux particuliers est interdit depuis 2000 : ici, il n’y a que des feux officiels.\n\nRapa Nui, l’île de Pâques, se trouve à 3 512 km du continent, et minuit y sonne deux heures après Santiago, en dernier au Chili. À Hanga Roa, les restaurants proposent des dîners de réveillon avec musique live, chants et danses rapanui, puis on va voir le feu d’artifice à Hanga Vare Vare.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Raisins et jaune",
+        "text": "À minuit, mange douze raisins, un vœu pour chaque mois. Les sous-vêtements jaunes portent joie et argent."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Dîner aux chants rapanui",
+        "text": "Réserve un dîner de réveillon à Hanga Roa avec musique live, chants et danses rapanui, puis file voir le feu d’artifice à Hanga Vare Vare."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Soleil et moaïs",
+        "text": "Admire le dernier coucher de soleil de l’année près des moaïs de Tahai, sans guide obligatoire. Le 1er janvier, Tongariki ouvre au lever du soleil, avec billet du parc et guide local."
+      }
+    ],
+    "kit": "cl-5"
+  },
+  "ID@utc+0800": {
+    "text": "Le centre de l’Indonésie — Bali, Célèbes, le sud et l’est de Kalimantan, les petites îles de la Sonde — fête le Nouvel An une heure avant Jakarta. Comme partout dans le pays, on souffle dans des trompettes terompet, on grille du poulet ou du maïs et on se retrouve à table en famille. À Bali, on va vers la mer : la veille de 2026, environ 18 500 personnes se sont réunies à Canggu et 12 000 à Kuta. Cette année-là, les feux d’artifice ont été annulés presque partout par solidarité avec les victimes des inondations à Sumatra, et beaucoup ont prié ensemble à minuit. Le 1er janvier est férié dans tout le pays.\n\nÀ Makassar, tout le monde se rend sur le front de mer de Losari. Dès dix heures du soir, la foule grossit jusqu’au vieux fort Rotterdam, et les premiers feux partent avant minuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Une nuit au bord de la mer à Bali",
+        "text": "À Bali, on accueille le Nouvel An sur les plages de Canggu et de Kuta et dans le parc culturel GWK. Les feux d’artifice se décident chaque année : pour 2026, une prière commune à minuit les a remplacés."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Une soirée d’art à Denpasar",
+        "text": "Au lieu de feux d’artifice, Denpasar a accueilli 2026 avec une soirée gratuite d’art balinais sur la place Puputan Badung. Les ateliers artistiques de la ville s’y sont produits."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Des feux depuis un pinisi",
+        "text": "À Makassar, les feux partent à minuit sur le front de mer de Losari et à Center Point of Indonesia. Certains les tirent depuis le pont des voiliers pinisi amarrés près du rivage."
+      }
+    ],
+    "kit": "id+8"
+  },
+  "ID@utc+0900": {
+    "text": "L’est de l’Indonésie — les Moluques et la Papouasie — accueille le Nouvel An avant le reste du pays. Pour les chrétiens, la soirée du 31 décembre commence à l’église : à Ambon, on appelle cette nuit « konci taong », fermer l’année, et après l’office tout le monde sort dans les rues. À minuit, les navires ancrés dans la baie d’Ambon font retentir leurs sirènes, les cloches des églises et les tambours des mosquées leur répondent, et les feux d’artifice emplissent le ciel au-dessus de la ville et des collines. Le 1er janvier est férié dans toute l’Indonésie.\n\nÀ Jayapura, on se retrouve chaque année près du pont Youtefa : les familles arrivent dès neuf heures du soir et tirent leurs propres feux à minuit. Les cafés de la route Hamadi–Holtekamp restent ouverts tard, et dans les cours les voisins grillent du poisson ensemble.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un office pour clore l’année",
+        "text": "Le soir du 31 décembre, les chrétiens d’Ambon et de Jayapura vont à l’église pour un office qui clôt l’année. Ensuite, la fête gagne les rues."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Sirènes de navires à minuit",
+        "text": "À Ambon, à 00 h 00 pile, les navires ancrés dans la baie font retentir leurs sirènes. Les cloches des églises et les tambours beduk des mosquées leur répondent."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Poisson grillé entre voisins",
+        "text": "À Jayapura, avant minuit, les voisins grillent du poisson ensemble dehors et chacun apporte quelque chose à la table commune. Les enfants fêtent ainsi l’année auprès de leur famille."
+      }
+    ],
+    "kit": "id+9"
+  },
+  "MX@utc-0500": {
+    "text": "Le Mexique termine l’année par un dîner de famille tardif et, à minuit, mange un grain de raisin à chacun des douze coups en faisant un vœu à chaque fois, une coutume venue d’Espagne. Avant minuit, on balaie la maison vers la rue pour chasser le mauvais, on pose sur la table une assiette de lentilles et de riz pour l’abondance, et la couleur des sous-vêtements neufs appelle l’amour, l’argent ou la santé. Après le douzième coup, on crie « ¡Feliz Año Nuevo! » et les pétards et les cierges magiques s’allument.\n\nLe Quintana Roo a son propre fuseau horaire depuis 2015 : Cancún est donc le premier endroit du pays à fêter l’année, une heure avant le centre du Mexique. L’an dernier, la fête de la ville sur le front de mer du Malecón Tajamar a duré de 21 h à 5 h : cinq groupes et, au lieu de la pyrotechnie, un spectacle de drones. Cette nuit-là, les feux d’artifice ont éclaté au-dessus de l’île voisine d’Isla Mujeres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Balayer la vieille année",
+        "text": "Avant minuit, balaie de la pièce du fond jusqu’à la porte et dans la rue : c’est ainsi qu’on chasse le mauvais de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Des lentilles pour l’abondance",
+        "text": "Pose sur la table une assiette de lentilles et de riz, ou glisse quelques lentilles dans ton porte-monnaie, pour une année généreuse."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Une nuit au Malecón Tajamar",
+        "text": "À Cancún, va sur le front de mer du Malecón Tajamar : l’an dernier, des groupes y ont joué jusqu’à 5 h et des drones ont illuminé minuit."
+      }
+    ],
+    "kit": "mx-5"
   }
 }

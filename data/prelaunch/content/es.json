@@ -1598,5 +1598,101 @@
       }
     ],
     "kit": "us-9"
+  },
+  "CL@utc-0500": {
+    "text": "Chile recibe el Año Nuevo en pleno verano, así que mucha gente lo celebra en la playa. En la cena familiar hay lentejas para la suerte, a medianoche doce uvas, la ropa interior amarilla no falta y quien sueña con viajar da la vuelta a la manzana con una maleta. Vender fuegos artificiales a particulares está prohibido desde 2000, así que aquí solo hay fuegos oficiales.\n\nRapa Nui, o Isla de Pascua, está a 3512 km del continente, y la medianoche llega dos horas después que en Santiago: la última de Chile. En Hanga Roa, los restaurantes ofrecen cenas de Año Nuevo con música en vivo, cantos y bailes rapanui, y después la gente va a ver los fuegos en Hanga Vare Vare.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Uvas y ropa amarilla",
+        "text": "A medianoche come doce uvas, una con un deseo por cada mes. La ropa interior amarilla trae alegría y dinero."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Cena con cantos rapanui",
+        "text": "Reserva una cena de Año Nuevo en Hanga Roa con música en vivo, cantos y bailes rapanui, y luego ve a los fuegos en Hanga Vare Vare."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Ocaso y amanecer con moáis",
+        "text": "Despide el año con el ocaso junto a los moáis de Tahai, donde no hace falta guía. Recibe el 1 de enero en Tongariki: abre al amanecer, pero necesitas entrada al parque y guía local."
+      }
+    ],
+    "kit": "cl-5"
+  },
+  "ID@utc+0800": {
+    "text": "El centro de Indonesia —Bali, Célebes, el sur y el este de Kalimantan y las islas menores de la Sonda— recibe el Año Nuevo una hora antes que Yakarta. Como en todo el país, se soplan trompetillas terompet, se asa pollo o maíz a la parrilla y la familia se sienta a la mesa. En Bali la gente va al mar: en la víspera de 2026 se reunieron unas 18 500 personas en Canggu y 12 000 en Kuta. Aquel año los fuegos artificiales se suspendieron casi en todas partes en solidaridad con las víctimas de las inundaciones de Sumatra, y muchos rezaron juntos a medianoche. El 1 de enero es festivo en todo el país.\n\nEn Macasar todos van al paseo marítimo de Losari. Desde las diez de la noche la multitud crece hasta llegar al viejo fuerte Rotterdam, y los primeros fuegos estallan antes de medianoche.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Una noche junto al mar en Bali",
+        "text": "En Bali el Año Nuevo se recibe en las playas de Canggu y Kuta y en el parque cultural GWK. Si habrá fuegos se decide cada vez: para 2026 los sustituyó una oración común a medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Una velada de arte en Denpasar",
+        "text": "En lugar de fuegos, Denpasar recibió 2026 con una velada gratuita de arte balinés en la plaza Puputan Badung. Actuaron los talleres artísticos de la ciudad."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Fuegos desde un pinisi",
+        "text": "En Macasar, a medianoche hay fuegos en el paseo de Losari y en Center Point of Indonesia. Algunos los lanzan desde la cubierta de los veleros pinisi amarrados junto a la orilla."
+      }
+    ],
+    "kit": "id+8"
+  },
+  "ID@utc+0900": {
+    "text": "El este de Indonesia —las islas Molucas y Papúa— recibe el Año Nuevo antes que el resto del país. Para los cristianos, la tarde del 31 de diciembre empieza en la iglesia: en Ambon a esta noche la llaman «konci taong», cerrar el año, y después del oficio la gente sale a la calle. A medianoche los barcos fondeados en la bahía de Ambon hacen sonar sus sirenas, responden las campanas de las iglesias y los tambores de las mezquitas, y los fuegos artificiales llenan el cielo sobre la ciudad y las colinas. El 1 de enero es festivo en toda Indonesia.\n\nEn Jayapura la gente se reúne cada año junto al puente Youtefa: las familias llegan desde las nueve de la noche y a medianoche lanzan sus propios fuegos. Los cafés de la carretera Hamadi–Holtekamp abren hasta tarde y en los patios los vecinos asan pescado juntos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un oficio para despedir el año",
+        "text": "La tarde del 31 de diciembre los cristianos de Ambon y Jayapura van a la iglesia a un oficio de despedida del año. Después, la fiesta sale a la calle."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Sirenas de barcos a medianoche",
+        "text": "En Ambon, a las 00:00 en punto, suenan las sirenas de los barcos fondeados en la bahía. Les responden las campanas de las iglesias y los tambores beduk de las mezquitas."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Pescado a la brasa con los vecinos",
+        "text": "En Jayapura, antes de medianoche, los vecinos asan pescado juntos al aire libre y cada uno aporta algo a la mesa común. Así los niños reciben el año cerca de su familia."
+      }
+    ],
+    "kit": "id+9"
+  },
+  "MX@utc-0500": {
+    "text": "México despide el año con una cena familiar tardía y, a medianoche, come una uva con cada una de las doce campanadas y pide un deseo cada vez, costumbre llegada de España. Antes de medianoche se barre la casa hacia la calle para sacar lo malo, en la mesa se pone un plato de lentejas con arroz para la abundancia y el color de la ropa interior nueva llama al amor, al dinero o a la salud. Tras la duodécima campanada se grita «¡Feliz Año Nuevo!» y estallan cohetes y luces de bengala.\n\nQuintana Roo tiene su propio huso horario desde 2015, así que Cancún es el primer lugar del país en recibir el año, una hora antes que el centro de México. El año pasado la fiesta de la ciudad en el Malecón Tajamar duró de las 21:00 a las 5:00: cinco grupos y, en lugar de pirotecnia, un espectáculo de drones. Esa noche los fuegos artificiales iluminaron la vecina Isla Mujeres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Barrer el año viejo",
+        "text": "Antes de medianoche, barre desde el último cuarto hasta la puerta y hacia la calle, como se saca lo malo del año viejo."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Lentejas para la abundancia",
+        "text": "Pon en la mesa un plato de lentejas con arroz o guarda unas lentejas en la cartera para un año lleno y generoso."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Noche en el Malecón Tajamar",
+        "text": "En Cancún, ve al Malecón Tajamar: el año pasado hubo grupos hasta las 5:00 y un espectáculo de drones iluminó la medianoche."
+      }
+    ],
+    "kit": "mx-5"
   }
 }
