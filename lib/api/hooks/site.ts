@@ -9,6 +9,7 @@ import { applySiteEvent, type SiteEvent, type SiteState } from '../contracts/sit
 import { ok } from '../result';
 import { getService } from '../services';
 import { buildSnapshot } from '../site/buildSnapshot';
+import { sitePrices, type SitePrices } from '@/lib/offers/prices';
 
 /**
  * Знімки збірки, віддані як запасні (AC-51). Позначка не йде на дріт: будь-який знімок сервера (і версії 1) заміняє
@@ -50,4 +51,9 @@ export const siteState = createResource<SiteState, SiteEvent>(() => {
 export function useSiteState(): { status: ResourceStatus; state: SiteState | undefined } {
   const st = useResource(siteState);
   return { status: st.status, state: st.data };
+}
+
+/** Показувані ціни: зі знімка, а без знімка чи без продукту — значення збірки. */
+export function useSitePrices(): SitePrices {
+  return sitePrices(useSiteState().state);
 }

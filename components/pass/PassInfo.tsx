@@ -9,7 +9,8 @@
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/primitives/Button';
 import { Icon } from '@/components/primitives/Icon';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { useRegisterCoral } from '@/lib/overlay/coral';
 import { OfferCard, PaymentNotice } from './OfferCard';
 
@@ -47,10 +48,11 @@ export function AlsoInPass({ items }: { items: string[] }) {
 }
 
 export function PassPrice() {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('offers');
   return (
     <p className="flex flex-wrap items-baseline gap-x-2" data-row="price">
-      <span className="text-headline-sm text-text">{formatUsd(PASS_PRICE)}</span>
+      <span className="text-headline-sm text-text">{formatUsd(passPrice)}</span>
       <span className="text-caption text-text-muted">{t('priceNote')}</span>
     </p>
   );

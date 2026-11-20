@@ -21,7 +21,8 @@ import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { ToastGift } from '@/components/toast/ToastGift';
 import { useCanToast } from '@/components/toast/useToastSeason';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { authCodeError } from '@/lib/api/contracts/auth';
 import { authActions, useHasPass, useProfile, useSession } from '@/lib/api/hooks/auth';
 import { formatClock } from '@/lib/i18n/time';
@@ -55,11 +56,11 @@ export interface PassBuyProps {
   onDone?: () => void;
 }
 
-const PRICE = formatUsd(PASS_PRICE);
 /** На сторінці картка тримає крок 6 px між рядками (як на дошці), у вікні — без нього. */
 const col = (variant: PassBuyVariant) => cn(s.body, variant === 'page' ? 'flex flex-col gap-1.5' : 'flex flex-col');
 
 function Head({ signed }: { signed: boolean }) {
+  const price = formatUsd(useSitePrices().pass);
   const t = useTranslations('pass.buy');
   return (
     <>
@@ -68,7 +69,7 @@ function Head({ signed }: { signed: boolean }) {
           <Icon name="ticket" size={16} />
           {t('eyebrow')}
         </span>
-        <span className={s.headPrice}>{PRICE}</span>
+        <span className={s.headPrice}>{price}</span>
       </div>
       <h3 className={s.h3}>{signed ? t('titleSigned') : t('titleGuest')}</h3>
     </>
@@ -216,11 +217,12 @@ function AccountRow({ email, note, mt = 16, notYou }: { email: string; note: str
 }
 
 function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled?: boolean; mt?: number; label?: string }) {
+  const price = formatUsd(useSitePrices().pass);
   const t = useTranslations('pass.buy');
   if (disabled) {
     return (
       <button type="button" aria-disabled="true" className={cn('t2f-focus', a.btn, a.disabled)} style={{ marginTop: `${mt / 16}rem` }} onClick={(e) => e.preventDefault()}>
-        {label ?? t('pay', { price: PRICE })}
+        {label ?? t('pay', { price })}
       </button>
     );
   }
@@ -234,7 +236,7 @@ function PayButton({ busy, disabled, mt = 16, label }: { busy: boolean; disabled
       data-action="pay"
     >
       {busy ? <Spinner /> : null}
-      {busy ? t('opening') : (label ?? t('pay', { price: PRICE }))}
+      {busy ? t('opening') : (label ?? t('pay', { price }))}
     </button>
   );
 }
@@ -376,6 +378,7 @@ function Pending({ variant, onDone }: { variant: PassBuyVariant; onDone?: () => 
 }
 
 function Failed() {
+  const price = formatUsd(useSitePrices().pass);
   const t = useTranslations('pass.buy');
   const user = (useSession().session?.user ?? null);
   const flow = usePassStore();
@@ -398,7 +401,7 @@ function Failed() {
       </h3>
       <p className={s.text}>{t('failedText')}</p>
       <AccountRow email={email} note={t('failedAccount')} />
-      <PayButton busy={false} label={t('retry', { price: PRICE })} />
+      <PayButton busy={false} label={t('retry', { price })} />
       <LinkRow items={[{ label: t('payHelp'), href: '/help/' }, { label: t('refunds'), href: '/payments/' }]} mt={4} />
     </form>
   );
@@ -406,6 +409,7 @@ function Failed() {
 
 /** Старт оплати не вдався (мережа, оплату вимкнено): гроші не списано, «Спробувати ще». */
 function StartFailed() {
+  const price = formatUsd(useSitePrices().pass);
   const t = useTranslations('pass.buy');
   const flow = usePassStore();
   return (
@@ -425,7 +429,7 @@ function StartFailed() {
         {t('startFailedTitle')}
       </h3>
       <p className={s.text}>{flow.startError === 'unavailable' ? t('startUnavailableText') : t('startFailedText')}</p>
-      <PayButton busy={flow.starting || flow.phase === 'opening'} label={t('retry', { price: PRICE })} />
+      <PayButton busy={flow.starting || flow.phase === 'opening'} label={t('retry', { price })} />
       <LinkRow items={[{ label: t('payHelp'), href: '/help/' }]} mt={4} />
     </form>
   );

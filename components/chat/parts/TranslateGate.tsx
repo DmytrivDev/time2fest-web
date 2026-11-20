@@ -15,7 +15,8 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import { cannedTranslation, messageLang } from '@/lib/chat/translate';
 import type { ChatMessage } from '@/lib/data/types';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import s from './translateGate.module.css';
 
 export const TRANSLATE_GATE_WINDOW_ID = 'O-TRANSLATE-GATE';
@@ -41,6 +42,7 @@ export interface TranslateGateProps {
 }
 
 export function TranslateGate({ message, onGetPass, onPassInfo, className }: TranslateGateProps) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('chat.translateGate');
   const tr = useTranslations('chat.translate');
   const ex = translateExample(message);
@@ -87,7 +89,7 @@ export function TranslateGate({ message, onGetPass, onPassInfo, className }: Tra
       </div>
       <div className={s.actions} data-row="actions">
         <Button variant="coral" className={s.btn} data-action="get-pass" onClick={() => onGetPass?.()}>
-          {t('getPass', { price: formatUsd(PASS_PRICE) })}
+          {t('getPass', { price: formatUsd(passPrice) })}
         </Button>
         <Button variant="secondary" iconLeft="help" className={s.btn} data-action="pass-info" onClick={() => onPassInfo?.()}>
           {t('more')}

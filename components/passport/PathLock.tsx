@@ -9,10 +9,12 @@ import { useTranslations } from 'next-intl';
 import { usePassDetails, useGetPass } from '@/components/pass/PassWindow';
 import { Button } from '@/components/primitives/Button';
 import { Icon } from '@/components/primitives/Icon';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import s from './passport.module.css';
 
 export function PathLock({ variant = 'passport' }: { variant?: 'passport' | 'schedule' }) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('passport.map');
   const getPass = useGetPass();
   const passInfo = usePassDetails();
@@ -26,7 +28,7 @@ export function PathLock({ variant = 'passport' }: { variant?: 'passport' | 'sch
       <p className={s.lockText}>{schedule ? t('lockTextSchedule') : t('lockText')}</p>
       <div className={s.lockBtns}>
         <Button variant="coral" compact onClick={() => getPass()}>
-          {t('getPass', { price: formatUsd(PASS_PRICE) })}
+          {t('getPass', { price: formatUsd(passPrice) })}
         </Button>
         <Button variant="secondary" compact onClick={() => passInfo()}>
           {t('passInfo')}

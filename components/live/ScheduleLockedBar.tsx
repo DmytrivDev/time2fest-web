@@ -9,7 +9,8 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import s from './nowNext.module.css';
 
 export function ScheduleLockedBar({
@@ -22,6 +23,7 @@ export function ScheduleLockedBar({
   onGetPass?: () => void;
   onInfo?: () => void;
 }) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('liveCards.nowNext');
   return (
     <div role="status" data-row="mine-locked" className={cn(s.lockedBar, stack && s.lockedBarStack)}>
@@ -30,7 +32,7 @@ export function ScheduleLockedBar({
       <span className={s.lockedActions}>
         {onGetPass ? (
           <Button variant="coral" compact iconLeft="ticket" data-action="get-pass" onClick={onGetPass}>
-            {t('mineLockedGet', { price: formatUsd(PASS_PRICE) })}
+            {t('mineLockedGet', { price: formatUsd(passPrice) })}
           </Button>
         ) : null}
         <Button variant="tonal" compact data-action="pass-info" onClick={onInfo}>

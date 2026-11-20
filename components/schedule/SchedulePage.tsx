@@ -33,7 +33,8 @@ import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
 import { zoneState, type ZoneState } from '@time2fest/rules/time';
 import { formatClock, utcLabel, viewerZoneLabel } from '@/lib/i18n/time';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { scheduledCountries, zoneSlotCount } from '@/lib/schedule/countryZone';
 import { scheduleCountry, type ScheduleCountry } from '@/lib/schedule/scheduleCountry';
 import { buildSchedulePath } from '@/lib/schedule/schedulePath';
@@ -74,6 +75,7 @@ function stampOf(stamps: readonly Stamp[], zoneId: string, iso: string): Stamp |
 }
 
 export function SchedulePage() {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('schedulePage');
   const tType = useTranslations('liveCards.eventCard.type');
   const tA = useTranslations('windows.author');
@@ -303,7 +305,7 @@ export function SchedulePage() {
           <p className={s.subtitle}>
             {t('noPass')} ·{' '}
             <button type="button" onClick={() => getPass()} className={cn('t2f-focus', s.inlineLink)}>
-              {t('getPass', { price: formatUsd(PASS_PRICE) })}
+              {t('getPass', { price: formatUsd(passPrice) })}
             </button>
           </p>
         )}
