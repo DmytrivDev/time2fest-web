@@ -729,7 +729,26 @@
       },
       "mine": {
         "factMidnightSub": "your time",
-        "factLeft": "Until your midnight"
+        "factLeft": "Until your midnight",
+        "invite": {
+          "aria": "Invitation to New Year’s Eve: {ord} midnight, {country}",
+          "title1": "Invitation",
+          "title2": "to New Year’s Eve",
+          "night": "NEW YEAR",
+          "hours": "{count, plural, one {# hour} other {# hours}}",
+          "midnights": "{count, plural, one {# midnight} other {# midnights}}",
+          "tagline": "{hours} · {midnights} · the whole world live",
+          "scaleNo": "#{n}",
+          "ord": "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}",
+          "mine": "MY MIDNIGHT",
+          "start": "IT STARTS",
+          "startCity": "{date}, {time} · {city}",
+          "startNoCity": "{date}, {time} your time",
+          "startSub": "Kiritimati · first midnight",
+          "free": "free entry ·",
+          "sealTop": "HAPPY NEW YEAR",
+          "footer": "{midnights} live —"
+        }
       },
       "night": {
         "intro": "Drag the slider to see when midnight reaches each time zone in your time, and who’s celebrating.",

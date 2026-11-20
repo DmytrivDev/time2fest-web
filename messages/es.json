@@ -142,7 +142,26 @@
       },
       "mine": {
         "factMidnightSub": "en tu hora local",
-        "factLeft": "Falta para tu medianoche"
+        "factLeft": "Falta para tu medianoche",
+        "invite": {
+          "aria": "Invitación a la Nochevieja: medianoche {ord}, {country}",
+          "title1": "Invitación",
+          "title2": "a la Nochevieja",
+          "night": "AÑO NUEVO",
+          "hours": "{count, plural, one {# hora} other {# horas}}",
+          "midnights": "{count, plural, one {# medianoche} other {# medianoches}}",
+          "tagline": "{hours} · {midnights} · todo el mundo en vivo",
+          "scaleNo": "n.º {n}",
+          "ord": "{n}.ª",
+          "mine": "MI MEDIANOCHE",
+          "start": "EMPIEZA",
+          "startCity": "{date}, {time} · {city}",
+          "startNoCity": "{date}, {time} en tu hora local",
+          "startSub": "Kiritimati · primera medianoche",
+          "free": "entrada libre ·",
+          "sealTop": "FELIZ AÑO NUEVO",
+          "footer": "{midnights} en vivo —"
+        }
       },
       "night": {
         "intro": "Mueve el control deslizante y verás a qué hora, en tu hora local, llega la medianoche a cada zona horaria y quién la celebra.",

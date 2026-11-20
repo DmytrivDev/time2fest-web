@@ -65,8 +65,12 @@ describe('словник uk.json', () => {
     expect(PREPOSITION_BEFORE_ARG.test(rendered), `прийменник перед підстановкою в «${key}»: ${rendered}`).toBe(false);
   });
 
+  // Виняток — картка «Запрошення на новорічну ніч» передстартового сайту: назву з «ніч» затвердив власник
+  // (docs/decision.md, 2026-11-20 день); решта словника — без «ніч».
+  const NIGHT_ALLOWED = /^prelaunch\.prefest\.mine\.invite\.(title2|night|aria)$/;
   it('не містить слова «ніч» (конституція)', () => {
     for (const [key, raw] of Object.entries(flat)) {
+      if (NIGHT_ALLOWED.test(key)) continue;
       expect(FORBIDDEN_WORD.test(raw), `слово «ніч» у «${key}»: ${raw}`).toBe(false);
     }
   });

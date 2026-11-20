@@ -5,7 +5,7 @@
  * скільки лишилось, стрічка поясів, «Додати в календар» і картка для сторіс 1080×1920. Країна за замовчуванням — з
  * часового поясу браузера в ніч свята (лише після гідратації; до того — нейтральні заглушки тієї ж розкладки).
  */
-import { useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
@@ -16,11 +16,14 @@ import { downloadIcs } from '@/lib/prefest/ics';
 import { around, timeLeft, type AfterPart, type BeforePart } from '@/lib/prefest/mine';
 import { defaultCountry, STRIP_LANDMARKS, viewerZone, type PrefestCountry } from '@/lib/prefest/model';
 import { renderStoryPng, STORY_H, STORY_W } from '@/lib/prefest/story';
+import { nightHours, renderInvitePng } from '@/lib/prefest/invite';
+import { viewerTimeZone } from '@/lib/i18n/time';
 import { roundFlagSrc } from '@/components/primitives/Flag';
 import { drawScene } from './SceneCanvas';
 import { CountryCombobox } from './CountryCombobox';
 import { useClientReady, usePrefest } from './PrefestContext';
 import { StoryCard } from './StoryCard';
+import { InviteCard, inviteParams, useInviteTexts, type InviteVars } from './InviteCard';
 import { ZoneStrip, type StripLandmark } from './ZoneStrip';
 import { Bar } from '@/components/skeleton/parts';
 import s from './prefest.module.css';
@@ -56,6 +59,26 @@ export function MyMidnight() {
       ? t('storyWhereCity', { country: country.name, city: cityOfZone })
       : t('storyWhere', { country: country.name })
     : null;
+
+  // Передстартовий сайт: змінні картки «Запрошення на новорічну ніч» (усе — за часом відвідувача, як «Твоя північ»).
+  const inviteKey =
+    site && ready && country && zone && n !== null
+      ? [n, total, nightHours(model.firstMidnightMs, model.lastMidnightMs), country.name, country.flagCode, zone.midnightMs].join('|')
+      : '';
+  const inviteVars = useMemo<InviteVars | null>(() => {
+    if (!inviteKey || !site || !country || !zone || n === null) return null;
+    return {
+      n,
+      total,
+      hours: nightHours(model.firstMidnightMs, model.lastMidnightMs),
+      country: { name: country.name, flagCode: country.flagCode },
+      mineWhen: t('factMidnightValue', { date: dayMonth(zone.midnightMs), time: clock(zone.midnightMs) }),
+      start: { date: dayMonth(model.firstMidnightMs), time: clock(model.firstMidnightMs), city: site.zoneCity(viewerTimeZone()) },
+    };
+    // Ключ уже містить усе, від чого залежить картка.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inviteKey]);
+  const inviteTexts = useInviteTexts(inviteVars);
 
   const left = ready && zone && now > 0 ? timeLeft(zone.midnightMs, now) : null;
 
@@ -111,7 +134,7 @@ export function MyMidnight() {
       await document.fonts.ready;
       await Promise.all(['500', '600', '700', '800'].map((w) => document.fonts.load(`${w} 16px ${family}`).catch(() => [])));
       const k = STORY_W / 250;
-      const blob = await renderStoryPng({
+      const blob = site && inviteVars && inviteTexts ? await renderInvitePng(await inviteParams(inviteTexts, inviteVars)) : await renderStoryPng({
         line1: t('storyLine1'),
         ord: t('ordinal', { n }),
         line3: t('storyLine3'),
@@ -281,12 +304,11 @@ export function MyMidnight() {
           </div>
         </div>
 
-        <StoryCard
-          ord={n === null ? null : ordText}
-          flagCode={country?.flagCode ?? null}
-          where={where}
-          action={site ? shareButton : undefined}
-        />
+        {site ? (
+          <InviteCard vars={inviteVars} texts={inviteTexts} action={shareButton} />
+        ) : (
+          <StoryCard ord={n === null ? null : ordText} flagCode={country?.flagCode ?? null} where={where} />
+        )}
       </div>
     </section>
   );

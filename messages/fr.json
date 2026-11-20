@@ -142,7 +142,26 @@
       },
       "mine": {
         "factMidnightSub": "à ton heure",
-        "factLeft": "Avant ton minuit"
+        "factLeft": "Avant ton minuit",
+        "invite": {
+          "aria": "Invitation au réveillon : {ord} minuit, {country}",
+          "title1": "Invitation",
+          "title2": "au réveillon",
+          "night": "NOUVEL AN",
+          "hours": "{count, plural, one {# heure} other {# heures}}",
+          "midnights": "{count, plural, one {# minuit} other {# minuits}}",
+          "tagline": "{hours} · {midnights} · le monde entier en direct",
+          "scaleNo": "n° {n}",
+          "ord": "{n, selectordinal, one {#er} other {#e}}",
+          "mine": "MON MINUIT",
+          "start": "DÉBUT",
+          "startCity": "{date}, {time} · {city}",
+          "startNoCity": "{date}, {time} à ton heure",
+          "startSub": "Kiritimati · premier minuit",
+          "free": "entrée libre ·",
+          "sealTop": "BONNE ANNÉE",
+          "footer": "{midnights} en direct —"
+        }
       },
       "night": {
         "intro": "Fais glisser le curseur pour voir à quelle heure, chez toi, minuit arrive dans chaque fuseau et qui fête.",

@@ -2761,7 +2761,26 @@
       },
       "mine": {
         "factMidnightSub": "за твоїм часом",
-        "factLeft": "До твоєї півночі"
+        "factLeft": "До твоєї півночі",
+        "invite": {
+          "aria": "Запрошення на новорічну ніч: {ord} північ, {country}",
+          "title1": "Запрошення",
+          "title2": "на новорічну ніч",
+          "night": "НОВОРІЧНА НІЧ",
+          "hours": "{count, plural, one {# година} few {# години} many {# годин} other {# години}}",
+          "midnights": "{count, plural, one {# північ} few {# півночі} many {# півночей} other {# півночі}}",
+          "tagline": "{hours} · {midnights} · увесь світ наживо",
+          "scaleNo": "№{n}",
+          "ord": "{n}-{s, select, sha {ша} ga {га} tya {тя} ma {ма} other {та}}",
+          "mine": "МОЯ ПІВНІЧ",
+          "start": "ПОЧАТОК",
+          "startCity": "{date}, {time} · {city}",
+          "startNoCity": "{date}, {time} за твоїм часом",
+          "startSub": "Кіритіматі · перша північ",
+          "free": "вхід вільний ·",
+          "sealTop": "НОВИЙ РІК",
+          "footer": "{midnights} наживо —"
+        }
       },
       "night": {
         "intro": "Потягни повзунок — побачиш, о котрій за твоїм часом північ прийде в кожен пояс і хто святкуватиме.",
