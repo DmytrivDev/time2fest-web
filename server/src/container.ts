@@ -19,7 +19,7 @@ import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
 import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
-import { createPayloadCatalogStore } from './adapters/payloadCatalog';
+import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
@@ -456,16 +456,13 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
  * The snapshot readers of the `site` state (SPEC-08 AC-8, AC-9): the record, the corrections' effective
  * patches and the catalog's season meta, over Payload.
  */
-function siteSnapshotDeps(deps: Deps, payload: () => Promise<Payload>): SnapshotReadDeps {
-  const catalog = catalogStoreOf(deps);
+function siteSnapshotDeps(payload: () => Promise<Payload>): SnapshotReadDeps {
   const corrections = createPayloadCorrectionReader(payload);
   return {
     store: createPayloadSiteStore({ payload, clock: realClock }),
     patches: async () => (await currentPatches(corrections)).patches,
-    catalogMeta: async () => {
-      const season = (await catalog.read()).season;
-      return season ? { generatedAt: season.generatedAt, tzdbVersion: season.tzdbVersion } : null;
-    },
+    // The season row only: the whole catalog per request starves the pool under parallel readers (AC-37).
+    catalogMeta: createPayloadCatalogMeta(payload),
   };
 }
 
@@ -477,7 +474,7 @@ function siteSnapshotDeps(deps: Deps, payload: () => Promise<Payload>): Snapshot
  */
 function createSiteWiring(deps: Deps, payload: () => Promise<Payload>): SiteWiring {
   const store = createPayloadSiteStore({ payload, clock: deps.clock });
-  const base = { store, journal: createPayloadJournal(isRevertible), publisher: eventsOf(deps).publisher, clock: deps.clock, snapshot: siteSnapshotDeps(deps, payload) };
+  const base = { store, journal: createPayloadJournal(isRevertible), publisher: eventsOf(deps).publisher, clock: deps.clock, snapshot: siteSnapshotDeps(payload) };
   if (deps.env.class !== 'test') return { ...base, products: emptyProducts };
   const fake = createFakeProducts();
   const resetRecord = createPayloadSiteReset({ payload, clock: deps.clock });
@@ -512,7 +509,7 @@ export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
   const siteUrl = v.T2F_SITE_URL;
   const bucket = deps.catalogCopy?.();
   return {
-    snapshot: deps.site?.snapshot ?? siteSnapshotDeps(deps, payload),
+    snapshot: deps.site?.snapshot ?? siteSnapshotDeps(payload),
     claim: createPayloadFanOutClaim(payload),
     ...(publisher ? { publisher } : {}),
     ...(token && zoneId && siteUrl ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token) }), siteUrl: String(siteUrl) } } : {}),
@@ -531,7 +528,7 @@ export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
 export function rebuildDepsOf(deps: Deps, opts: { dispatchBaseUrl?: string } = {}): RebuildDeps {
   const payload = payloadOf(deps);
   const token = deps.env.vars.T2F_GITHUB_DISPATCH_TOKEN;
-  const snapshot = deps.site?.snapshot ?? siteSnapshotDeps(deps, payload);
+  const snapshot = deps.site?.snapshot ?? siteSnapshotDeps(payload);
   return {
     store: createPayloadRebuildStore(payload),
     clock: deps.clock,

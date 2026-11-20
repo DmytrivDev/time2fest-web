@@ -117,6 +117,18 @@ export function createPayloadCatalogStore(getPayload: () => Promise<Payload>): C
   };
 }
 
+/**
+ * The current season's `generatedAt` and `tzdbVersion` only — ONE `find` on `seasons`, the same values
+ * `createPayloadCatalogStore().read()` puts in `season`. The site snapshot reads it on every request
+ * (SPEC-08 AC-37): reading the whole catalog there starves the connection pool under parallel readers.
+ */
+export function createPayloadCatalogMeta(getPayload: () => Promise<Payload>): () => Promise<{ generatedAt: string; tzdbVersion: string } | null> {
+  return async () => {
+    const first = currentSeasonOf(await findAll(await getPayload(), 'seasons', undefined));
+    return first ? { generatedAt: String(first.generatedAt), tzdbVersion: String(first.tzdbVersion) } : null;
+  };
+}
+
 export function createPayloadImportStore(getPayload: () => Promise<Payload>): CatalogImportStore {
   const reads = createPayloadCatalogStore(getPayload);
   return {
