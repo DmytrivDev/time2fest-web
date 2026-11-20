@@ -51,3 +51,19 @@ describe('withEventPatches: поправка −20 хв', () => {
     expect(withEventPatches(data, { evt_paris_2027: { moment: moved - MIN } })).not.toBe(patched);
   });
 });
+
+describe('scheduleNow (підказка графіка головної) іде за поправкою моменту (AC-53)', () => {
+  it('поправка −20 хв: збіг півночі рахується за даними з поправками, не за незміненими', async () => {
+    const { scheduleNow } = await import('@/lib/live/homeData');
+    const moved = PARIS_MIDNIGHT - 20 * MIN;
+    const patched = withEventPatches(data, { evt_paris_2027: { moment: moved }, evt_berlin_2027: { moment: moved } });
+    const current = patched.eventsById.get('evt_paris_2027')!;
+    const schedule = ['evt_berlin_2027'];
+    expect(scheduleNow(patched, schedule, current)).not.toBeNull();
+    // На незмінених даних Берлін лишається на старій півночі — збігу немає (саме так було до виправлення).
+    expect(scheduleNow(data, schedule, current)).toBeNull();
+    // Без поправки — як і раніше.
+    const own = data.eventsById.get('evt_paris_2027')!;
+    expect(scheduleNow(withEventPatches(data, undefined), schedule, own)).toEqual(scheduleNow(data, schedule, own));
+  });
+});
