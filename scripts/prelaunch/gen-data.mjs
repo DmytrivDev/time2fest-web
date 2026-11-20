@@ -57,7 +57,7 @@ const MAIN_CITY = {
   PG: 'port-moresby',
   PT: 'lisbon',
   RU: 'moscow',
-  UM: 'wake',
+  UM: 'midway',
   US: 'new-york',
 };
 
@@ -150,7 +150,6 @@ const CITY_EN = {
   tirane: 'Tirana',
   vatican: 'Vatican City',
   'victoria-sc': 'Victoria',
-  wake: 'Wake Island',
   yaounde: 'Yaoundé',
   zurich: 'Zurich',
 };

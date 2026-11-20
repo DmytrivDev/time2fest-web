@@ -24,7 +24,7 @@ describe('fromData', () => {
   it('maps the data files to one row per record', () => {
     const counts: Record<string, number> = {};
     for (const r of source.rows) counts[r.collection] = (counts[r.collection] ?? 0) + 1;
-    expect(counts).toEqual({ zones: 38, countries: 246, cities: 298, events: 298, traditions: 738 });
+    expect(counts).toEqual({ zones: 38, countries: 246, cities: 297, events: 297, traditions: 738 });
     expect(new Set(source.rows.map((r) => `${r.collection}/${r.key}`)).size).toBe(source.rows.length);
   });
 

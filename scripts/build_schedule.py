@@ -24,6 +24,9 @@ import tzdata
 EXPECTED_TZDB = "2026f"
 EXPECTED_ZONES = 38
 NY_LOCAL = dt.datetime(2027, 1, 1, 0, 0)
+# Міста, яких на сайті не має бути, навіть якщо їх повернуть у seed (рішення власника 2026-11-20:
+# Вейк, UM у UTC+12, — безлюдний атол; UM лишається через Мідвей і Бейкер).
+EXCLUDED_CITY_IDS = {"wake"}
 
 ROOT = Path(__file__).resolve().parent.parent
 SEED = ROOT / "scripts" / "seed"
@@ -138,6 +141,8 @@ def main(argv: list[str] | None = None) -> None:
     for c in seed["countries"]:
         by_off: dict[int, list[dict]] = {}
         for city in c["cities"]:
+            if city["id"] in EXCLUDED_CITY_IDS:
+                continue
             by_off.setdefault(offset_minutes(city), []).append(city)
         for off, cities in by_off.items():
             mains = [x for x in cities if x.get("main")]

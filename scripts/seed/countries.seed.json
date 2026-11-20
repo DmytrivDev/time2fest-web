@@ -6350,19 +6350,6 @@
    "illustrationId": "postcard-template",
    "cities": [
     {
-     "id": "wake",
-     "name": {
-      "uk": "Вейк"
-     },
-     "tz": "Pacific/Wake",
-     "mapPoint": {
-      "x": 0.9628,
-      "y": 0.3929
-     },
-     "celebrationType": "countdown-only",
-     "main": true
-    },
-    {
      "id": "midway",
      "name": {
       "uk": "Мідвей"

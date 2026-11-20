@@ -61,9 +61,9 @@ export function describeDomain(name: string, makeService: () => CatalogService, 
       expect(svc.version()).toBe(catalogVersionOf(svc.catalog().meta));
     });
 
-    it('has 38 zones, 246 countries, 298 cities and 298 events', () => {
+    it('has 38 zones, 246 countries, 297 cities and 297 events', () => {
       const c = makeService().catalog();
-      expect([c.zones.length, c.countries.length, c.cities.length, c.events.length]).toEqual([38, 246, 298, 298]);
+      expect([c.zones.length, c.countries.length, c.cities.length, c.events.length]).toEqual([38, 246, 297, 297]);
     });
 
     it('does not carry stream chains (they belong to the live domain)', () => {

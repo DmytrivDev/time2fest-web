@@ -8717,7 +8717,6 @@
       "gender": "pl",
       "flagCode": "UM",
       "zoneIds": [
-        "utc+1200",
         "utc-1100",
         "utc-1200"
       ],

@@ -2,7 +2,7 @@
   "$schema": "schedule.schema.json",
   "version": 1,
   "season": "2026-27",
-  "generatedAt": "2026-11-02T16:12:35Z",
+  "generatedAt": "2026-11-20T20:23:53Z",
   "tzdbVersion": "2026f",
   "zones": [
     {
@@ -397,32 +397,6 @@
               "events": [
                 {
                   "id": "evt_funafuti_2027",
-                  "midnightUtc": "2026-12-31T12:00:00Z",
-                  "isMainCelebration": true,
-                  "type": "countdown-only",
-                  "popularity": 20
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "iso": "UM",
-          "cities": [
-            {
-              "id": "wake",
-              "name": {
-                "uk": "Вейк"
-              },
-              "celebrationType": "countdown-only",
-              "isCountryMain": true,
-              "mapPoint": {
-                "x": 0.9628,
-                "y": 0.3929
-              },
-              "events": [
-                {
-                  "id": "evt_wake_2027",
                   "midnightUtc": "2026-12-31T12:00:00Z",
                   "isMainCelebration": true,
                   "type": "countdown-only",
