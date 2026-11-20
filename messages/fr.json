@@ -156,7 +156,6 @@
           "mine": "MON MINUIT",
           "start": "DÉBUT",
           "startCity": "{date}, {time} · {city}",
-          "startNoCity": "{date}, {time} à ton heure",
           "startSub": "Kiritimati · premier minuit",
           "free": "entrée libre ·",
           "sealTop": "BONNE ANNÉE",

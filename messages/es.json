@@ -156,7 +156,6 @@
           "mine": "MI MEDIANOCHE",
           "start": "EMPIEZA",
           "startCity": "{date}, {time} · {city}",
-          "startNoCity": "{date}, {time} en tu hora local",
           "startSub": "Kiritimati · primera medianoche",
           "free": "entrada libre ·",
           "sealTop": "FELIZ AÑO NUEVO",

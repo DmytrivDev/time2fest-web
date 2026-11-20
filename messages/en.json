@@ -743,7 +743,6 @@
           "mine": "MY MIDNIGHT",
           "start": "IT STARTS",
           "startCity": "{date}, {time} · {city}",
-          "startNoCity": "{date}, {time} your time",
           "startSub": "Kiritimati · first midnight",
           "free": "free entry ·",
           "sealTop": "HAPPY NEW YEAR",

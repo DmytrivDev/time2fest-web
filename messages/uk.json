@@ -2775,7 +2775,6 @@
           "mine": "МОЯ ПІВНІЧ",
           "start": "ПОЧАТОК",
           "startCity": "{date}, {time} · {city}",
-          "startNoCity": "{date}, {time} за твоїм часом",
           "startSub": "Кіритіматі · перша північ",
           "free": "вхід вільний ·",
           "sealTop": "НОВИЙ РІК",

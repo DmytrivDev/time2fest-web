@@ -17,7 +17,6 @@ import { around, timeLeft, type AfterPart, type BeforePart } from '@/lib/prefest
 import { defaultCountry, STRIP_LANDMARKS, viewerZone, type PrefestCountry } from '@/lib/prefest/model';
 import { renderStoryPng, STORY_H, STORY_W } from '@/lib/prefest/story';
 import { nightHours, renderInvitePng } from '@/lib/prefest/invite';
-import { viewerTimeZone } from '@/lib/i18n/time';
 import { roundFlagSrc } from '@/components/primitives/Flag';
 import { drawScene } from './SceneCanvas';
 import { CountryCombobox } from './CountryCombobox';
@@ -60,20 +59,29 @@ export function MyMidnight() {
       : t('storyWhere', { country: country.name })
     : null;
 
-  // Передстартовий сайт: змінні картки «Запрошення на новорічну ніч» (усе — за часом відвідувача, як «Твоя північ»).
+  // Передстартовий сайт: змінні картки «Запрошення на новорічну ніч» — усе від обраної країни й її пояса (правка власника
+  // 2026-11-20): «Моя північ» і «Початок» (перша північ світу) — за місцевим часом цього пояса, з його містом; пояс
+  // браузера лише обирає країну за замовчуванням.
   const inviteKey =
     site && ready && country && zone && n !== null
-      ? [n, total, nightHours(model.firstMidnightMs, model.lastMidnightMs), country.name, country.flagCode, zone.midnightMs].join('|')
+      ? [n, total, nightHours(model.firstMidnightMs, model.lastMidnightMs), country.name, country.flagCode, zone.id, cityOfZone ?? ''].join('|')
       : '';
   const inviteVars = useMemo<InviteVars | null>(() => {
     if (!inviteKey || !site || !country || !zone || n === null) return null;
+    /** Мить `ms` як «місцевий час пояса», що форматується в UTC (пояси на кшталт +5:45 не мають назви IANA). */
+    const local = (ms: number) => ms + zone.offsetMinutes * 60_000;
     return {
       n,
       total,
       hours: nightHours(model.firstMidnightMs, model.lastMidnightMs),
       country: { name: country.name, flagCode: country.flagCode },
-      mineWhen: t('factMidnightValue', { date: dayMonth(zone.midnightMs), time: clock(zone.midnightMs) }),
-      start: { date: dayMonth(model.firstMidnightMs), time: clock(model.firstMidnightMs), city: site.zoneCity(viewerTimeZone()) },
+      mineWhen: t('factMidnightValue', { date: dayMonth(local(zone.midnightMs), 'UTC'), time: clock(local(zone.midnightMs), 'UTC') }),
+      start: {
+        date: dayMonth(local(model.firstMidnightMs), 'UTC'),
+        time: clock(local(model.firstMidnightMs), 'UTC'),
+        // Місто пояса; у країни з одним поясом без міста — сама країна, у кількох — «UTC+5:45».
+        city: cityOfZone ?? (country.main?.zoneId === zone.id ? country.main.city : undefined) ?? (multi ? utcLabel(zone.offsetMinutes) : country.name),
+      },
     };
     // Ключ уже містить усе, від чого залежить картка.
     // eslint-disable-next-line react-hooks/exhaustive-deps

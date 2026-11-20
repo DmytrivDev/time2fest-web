@@ -19,9 +19,9 @@ export interface InviteVars {
   total: number;
   hours: number;
   country: { name: string; flagCode: string };
-  /** «1 січня, 00:00» — моя північ за часом відвідувача. */
+  /** «1 січня, 00:00» — моя північ за місцевим часом обраного пояса. */
   mineWhen: string;
-  /** Перша північ (Кіритіматі) за часом відвідувача: дата, час і місто його пояса (порожньо — без міста). */
+  /** Перша північ світу (Кіритіматі) за місцевим часом обраного пояса: дата, час і місто пояса (або країна / UTC±). */
   start: { date: string; time: string; city: string };
 }
 
@@ -44,7 +44,7 @@ export function useInviteTexts(v: InviteVars | null): InviteTexts | null {
     country: v.country.name,
     mineWhen: v.mineWhen,
     startLabel: t('start'),
-    startWhen: v.start.city ? t('startCity', v.start) : t('startNoCity', { date: v.start.date, time: v.start.time }),
+    startWhen: t('startCity', v.start),
     startSub: t('startSub'),
     free: `${t('free')} `,
     site: 'time2fest.com',
