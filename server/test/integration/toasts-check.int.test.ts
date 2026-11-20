@@ -203,3 +203,46 @@ describe('SPEC-09 security round 3: toasts.check (S6, S4)', () => {
     expect(m.spend.totals().month.usd).toBeGreaterThan(before);
   });
 });
+
+describe('SPEC-09 security re-check: toasts.check (N1, N2)', () => {
+  it('N1: toasts share 5 a minute (RPM 25) — 50 toasts send 5 and fall back; a message right after still reaches the primary', async () => {
+    const deps = testDeps(
+      { redis, log: { info: push, warn: push, error: push } },
+      {
+        T2F_EDGE_SECRET: EDGE_SECRET,
+        T2F_AI_ANTHROPIC_URL: url,
+        T2F_AI_DEEPSEEK_URL: url,
+        ANTHROPIC_API_KEY: KEY,
+        DEEPSEEK_API_KEY: KEY,
+        T2F_AI_ANTHROPIC_RPM: '25',
+        T2F_AI_DEEPSEEK_RPM: '25',
+      },
+    );
+    const own = moderationOf(deps);
+    own.layer.reset();
+    own.spend.reset();
+    const sources: string[] = [];
+    for (let i = 0; i < 50; i++) sources.push((await own.verdict.verdict({ kind: 'toast', text: 'З Новим роком!', budget: 'toasts' })).source);
+    expect(sources.slice(0, 5)).toEqual(['primary', 'primary', 'primary', 'primary', 'primary']);
+    expect(sources.slice(5).every((s) => s === 'fallback')).toBe(true);
+    expect(await requestCount()).toBe(5);
+    expect(await own.verdict.verdict({ kind: 'message', text: 'hello' })).toEqual({ outcome: 'allow', source: 'primary' });
+    expect(await requestCount()).toBe(6);
+    expect(own.layer.state('moderation')).toEqual({ task: 'moderation', state: 'available' });
+  });
+
+  it('N2: a toast answered 400 (rejected-request) by both providers still moves the toast sub-budget', async () => {
+    await control('anthropic', { down: 400 });
+    await control('deepseek', { down: 400 });
+    // One micro-dollar short of 20 % of the default $100 month ceiling.
+    await m.spend.setSpendForDoor('month', 19.999999, 'toasts');
+    try {
+      expect(m.spend.toastsReached()).toBe(false);
+      expect(await m.verdict.verdict({ kind: 'toast', text: 'З Новим роком!', budget: 'toasts' })).toEqual({ outcome: 'allow', source: 'fallback' });
+      expect(await requestCount()).toBe(2);
+      expect(m.spend.toastsReached()).toBe(true);
+    } finally {
+      await m.spend.setSpendForDoor('month', 0, 'toasts');
+    }
+  });
+});

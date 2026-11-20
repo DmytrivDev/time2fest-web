@@ -9,6 +9,8 @@ import { retryAfter, wireText } from '../../src/adapters/aiHttp';
 import { createProviderLayer, type ProviderLayerDeps } from '../../src/moderation/providers';
 import type { AiProvider, ProviderAnswer } from '../../src/moderation/ports';
 import type { AlarmInput } from '../../src/ports';
+import { createVerdictService } from '../../src/moderation/verdict';
+import { DEFAULT_SETTINGS } from '../../src/domain/moderation/settings';
 
 const T0 = 1_000_000;
 
@@ -102,22 +104,116 @@ describe('S7: account saturation and the per-process bucket', () => {
     expect(layer.usable('moderation').map((p) => p.id)).toEqual(['anthropic', 'deepseek']);
   });
 
-  it('bucket of 5 a minute: the 6th call skips the primary without touching its health, refills over time', async () => {
-    const { layer, primary, ok, advance } = setup({ ratePerMin: { anthropic: 5 } });
+  // N1 changed the bucket: 80 % of the rate is for non-toast calls, so 25 a minute leaves them 20.
+  it('bucket of 25 a minute: the 21st non-toast call skips the primary without touching its health, refills over time', async () => {
+    const { layer, primary, ok, advance } = setup({ ratePerMin: { anthropic: 25 } });
     let sent = 0;
     const counted = async () => {
       sent++;
       return ok();
     };
-    for (let i = 0; i < 5; i++) expect((await layer.call('moderation', primary, counted)).ok).toBe(true);
-    const sixth = await layer.call('moderation', primary, counted);
-    expect(sixth).toEqual({ ok: false, kind: 'throttled' });
-    expect(sent).toBe(5);
-    expect(layer.stats().find((s) => s.provider === 'anthropic' && s.task === 'moderation')).toMatchObject({ calls: 5, errorShare: 0 });
+    for (let i = 0; i < 20; i++) expect((await layer.call('moderation', primary, counted)).ok).toBe(true);
+    const next = await layer.call('moderation', primary, counted);
+    expect(next).toEqual({ ok: false, kind: 'throttled' });
+    expect(sent).toBe(20);
+    expect(layer.stats().find((s) => s.provider === 'anthropic' && s.task === 'moderation')).toMatchObject({ calls: 20, errorShare: 0 });
     expect(layer.state('moderation').state).toBe('available');
-    advance(12_000); // one token back (5 a minute)
+    advance(3_000); // one token back (20 a minute)
+    expect((await layer.call('moderation', primary, counted)).ok).toBe(true);
+    expect(sent).toBe(21);
+  });
+});
+
+describe('N1: the toast check has its own share of the bucket; throttled chat pages', () => {
+  it('toasts share 5 a minute: 50 toast calls send 5, a chat call right after still goes out', async () => {
+    const { layer, primary, ok } = setup({ ratePerMin: { anthropic: 25 } });
+    let sent = 0;
+    const counted = async () => {
+      sent++;
+      return ok();
+    };
+    const toasts: ProviderAnswer<{ raw: string }>[] = [];
+    for (let i = 0; i < 50; i++) toasts.push(await layer.call('moderation', primary, counted, undefined, 'toasts'));
+    expect(toasts.filter((a) => a.ok)).toHaveLength(5);
+    expect(toasts.slice(5).every((a) => !a.ok && a.kind === 'throttled')).toBe(true);
+    expect(sent).toBe(5);
     expect((await layer.call('moderation', primary, counted)).ok).toBe(true);
     expect(sent).toBe(6);
+  });
+
+  it('toasts never take the non-toast share: 20 chat calls still go out after the toast share is spent', async () => {
+    const { layer, primary, ok, alarms } = setup({ ratePerMin: { anthropic: 25 } });
+    for (let i = 0; i < 30; i++) await layer.call('moderation', primary, ok, undefined, 'toasts');
+    for (let i = 0; i < 20; i++) expect((await layer.call('moderation', primary, ok)).ok).toBe(true);
+    // Throttled toasts are not non-toast attempts: no page.
+    expect(alarms.filter((a) => a.code === 'moderation_throttled')).toHaveLength(0);
+  });
+
+  it('above 20 % throttled non-toast calls in a window of ≥ 20 → one page moderation_throttled per episode', async () => {
+    const { layer, primary, ok, advance, alarms } = setup({ ratePerMin: { anthropic: 25 } });
+    for (let i = 0; i < 20; i++) await layer.call('moderation', primary, ok);
+    for (let i = 0; i < 5; i++) expect(await layer.call('moderation', primary, ok)).toEqual({ ok: false, kind: 'throttled' });
+    expect(alarms.filter((a) => a.code === 'moderation_throttled')).toHaveLength(0); // 5 / 25 = 20 %
+    for (let i = 0; i < 10; i++) await layer.call('moderation', primary, ok);
+    const raised = alarms.filter((a) => a.code === 'moderation_throttled');
+    expect(raised).toHaveLength(1);
+    expect(raised[0]).toMatchObject({ level: 'page', source: 'mod', details: { provider: 'anthropic', task: 'moderation' } });
+    expect(layer.state('moderation').state).toBe('available');
+    // The window empties and refills: the episode ends while the share is back ≤ 20 %, a new one pages again.
+    advance(61_000);
+    for (let i = 0; i < 20; i++) await layer.call('moderation', primary, ok);
+    expect(alarms.filter((a) => a.code === 'moderation_throttled')).toHaveLength(1);
+    for (let i = 0; i < 20; i++) await layer.call('moderation', primary, ok);
+    expect(alarms.filter((a) => a.code === 'moderation_throttled')).toHaveLength(2);
+  });
+});
+
+describe('N1/N2: verdicts of toasts', () => {
+  function verdictSetup() {
+    const env = setup({ ratePerMin: { anthropic: 25, deepseek: 25 } });
+    const records: { scope: string | undefined; usage: unknown }[] = [];
+    const service = createVerdictService({
+      layer: env.layer,
+      spend: {
+        record: (_p, usage, _r, scope) => void records.push({ scope, usage }),
+        settings: () => DEFAULT_SETTINGS,
+        toastsReached: () => false,
+      },
+      rules: () => null,
+      fallback: () => 'allow',
+      clock: { now: () => 0 },
+      primary: 'anthropic',
+      maxTokens: 32,
+    });
+    return { ...env, service, records };
+  }
+
+  it('toast share spent → the toast falls back without asking the backup; a message after still gets the primary', async () => {
+    const { service, primary, backup } = verdictSetup();
+    const score = async (): Promise<ProviderAnswer<{ raw: string }>> => ({ ok: true, value: { raw: '{"score":0.1}' }, ms: 1 });
+    vi.mocked(primary.moderate).mockImplementation(score);
+    vi.mocked(backup.moderate).mockImplementation(score);
+    const sources: string[] = [];
+    for (let i = 0; i < 50; i++) sources.push((await service.verdict({ kind: 'toast', text: 'hi', budget: 'toasts' })).source);
+    expect(sources.slice(0, 5)).toEqual(['primary', 'primary', 'primary', 'primary', 'primary']);
+    expect(sources.slice(5).every((s) => s === 'fallback')).toBe(true);
+    expect(primary.moderate).toHaveBeenCalledTimes(5);
+    expect(backup.moderate).not.toHaveBeenCalled();
+    expect(await service.verdict({ kind: 'message', text: 'hi' })).toEqual({ outcome: 'allow', source: 'primary' });
+  });
+
+  it('a toast answered rejected-request or refused moves the toast sub-budget at the estimate', async () => {
+    const { service, primary, backup, records } = verdictSetup();
+    vi.mocked(primary.moderate).mockResolvedValue({ ok: false, kind: 'rejected-request', status: 400 });
+    vi.mocked(backup.moderate).mockResolvedValue({ ok: false, kind: 'refused' });
+    expect(await service.verdict({ kind: 'toast', text: 'hi', budget: 'toasts' })).toEqual({ outcome: 'allow', source: 'fallback' });
+    expect(records).toEqual([
+      { scope: 'toasts', usage: undefined },
+      { scope: 'toasts', usage: undefined },
+    ]);
+    // A chat message refused the same way is not a toast: nothing recorded.
+    await service.verdict({ kind: 'message', text: 'hi' });
+    expect(records).toHaveLength(2);
   });
 });
 

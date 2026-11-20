@@ -32,7 +32,8 @@ export interface VerdictInput {
   lang?: string;
   /**
    * `toasts`: the call spends the toast check's sub-budget too (security S4); once it is spent, no
-   * provider is asked and the fallback filter decides (`source: 'fallback'`).
+   * provider is asked and the fallback filter decides (`source: 'fallback'`). Its provider calls take
+   * the toast check's own share of each provider's rate; once that is empty, the filter decides too (N1).
    */
   budget?: SpendScope;
 }
@@ -132,10 +133,18 @@ export function createVerdictService({
           const a = await bounded(provider.moderate(text, lang, signal), signal);
           // Inside `run`: a rejected (malformed) answer was still billed.
           if (a.ok) spend.record(provider.id, a.usage, request, budget);
+          // A toast the provider refused (content or request) may not be billed, but it must still
+          // move the toast sub-budget, at the upper estimate (AC-27), or it is free to repeat (N2).
+          else if (budget === 'toasts' && (a.kind === 'refused' || a.kind === 'rejected-request')) {
+            spend.record(provider.id, undefined, request, budget);
+          }
           return a;
         },
         (v) => parseScore(v.raw) !== null,
+        budget,
       );
+      // The toast check's share of the bucket is empty: straight to the filter, no other request (N1).
+      if (!answer.ok && answer.kind === 'throttled' && budget === 'toasts') return null;
       if (!answer.ok) continue;
       const score = parseScore(answer.value.raw);
       if (score === null) continue;

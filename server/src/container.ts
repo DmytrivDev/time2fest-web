@@ -321,6 +321,7 @@ function createModeration(
     log: ports.log,
     onProbe: (provider, answer) => sink.spend?.recordProbe(provider, answer),
     ratePerMin: { anthropic: Number(v.T2F_AI_ANTHROPIC_RPM), deepseek: Number(v.T2F_AI_DEEPSEEK_RPM) },
+    toastsRpmShare: Number(v.T2F_AI_TOASTS_RPM_SHARE),
   });
   const settings = createPayloadModerationSettings({ payload, journal: createPayloadJournal(isRevertible), clock: ports.clock });
   const counter = createSpendCounter({

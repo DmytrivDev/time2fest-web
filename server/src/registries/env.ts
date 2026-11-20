@@ -93,6 +93,8 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_AI_DEEPSEEK_RPM', schema: intIn(1, 1_000_000).default(1_000) },
       // Share of each spend ceiling (night, month) that POST /api/toasts/check may use (security S4).
       { name: 'T2F_AI_TOASTS_SPEND_SHARE', schema: share.default(0.2) },
+      // Share of each provider's RPM reserved for POST /api/toasts/check; chat, nick and translation use the rest (security N1).
+      { name: 'T2F_AI_TOASTS_RPM_SHARE', schema: z.string().regex(/^0?\.\d+$/).transform(Number).pipe(z.number().gt(0).lt(1)).default(0.2) },
     ],
   },
   {

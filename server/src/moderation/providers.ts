@@ -54,11 +54,20 @@ export interface ProviderLayerDeps {
    * refilled evenly. Absent → no limit. With N server processes the account sees up to N× this.
    */
   ratePerMin?: Partial<Record<ProviderId, number>>;
+  /**
+   * Share of each provider's rate reserved for the anonymous toast check (security N1), in (0, 1):
+   * toast calls take only from it, every other call only from the rest, so toasts never starve chat.
+   */
+  toastsRpmShare?: number;
   /** Backoff after a 429 without `Retry-After` (S7). */
   saturationBackoffMs?: number;
   /** Upper bound of any backoff, `Retry-After` included (S7). */
   maxSaturationBackoffMs?: number;
 }
+
+/** Whose share of the provider's bucket a call takes: `toasts` is the toast check's own (N1). */
+export type CallScope = 'toasts';
+type Lane = 'main' | 'toasts';
 
 export type StateListener = (status: AiStatus) => void;
 
@@ -92,13 +101,15 @@ export interface ProviderLayer {
    * success (security S1): the transport worked, and crafted text must not take a provider down. A
    * `refused` answer (the provider declined the content) is the same: a healthy, timed sample that
    * the caller never uses. Only transport failures (status, timeout, unreadable envelope) count
-   * against health. A thrown error counts and returns as `http`.
+   * against health. A thrown error counts and returns as `http`. `scope: 'toasts'` takes the token from
+   * the toast check's own share of the bucket (N1); any other call from the rest.
    */
   call<T>(
     task: AiTask,
     provider: AiProvider,
     run: () => Promise<ProviderAnswer<T>>,
     accept?: (value: T) => boolean,
+    scope?: CallScope,
   ): Promise<ProviderAnswer<T>>;
   /** Per provider (configured or not) and per task it serves: status, p95 and error share over the current window (AC-41). */
   stats(): ProviderStats[];
@@ -118,6 +129,10 @@ interface TaskHealth {
   rejects: number[];
   /** The rejected-request alarm is raised and not yet re-armed. */
   rejectAlarmed: boolean;
+  /** Non-toast user calls of the window, oldest first, and whether the bucket turned each away (N1). */
+  attempts: { at: number; throttled: boolean }[];
+  /** The throttled alarm is raised and not yet re-armed. */
+  throttleAlarmed: boolean;
   health: Health;
   /** When it became unavailable (start of the probe run). */
   downSince: number | null;
@@ -128,8 +143,8 @@ interface ProviderHealth {
   provider: AiProvider;
   tasks: Map<AiTask, TaskHealth>;
   lastProbeAt: number | null;
-  /** Token bucket of user calls (S7); `Infinity` without a rate. */
-  tokens: number;
+  /** Token buckets of user calls (S7): toast checks and the rest (N1); `Infinity` without a rate. */
+  tokens: Record<Lane, number>;
   refilledAt: number;
   /** Skipped until then after a 429 (S7); one `moderation_saturated` page per episode. */
   saturatedUntil: number | null;
@@ -137,6 +152,10 @@ interface ProviderHealth {
 
 /** Above this share of `rejected-request` answers in a window of ≥ 20 calls, one `log` alarm (S6). */
 export const REJECTED_ALARM_SHARE = 0.2;
+/** Above this share of throttled non-toast calls in a window of ≥ 20, one `page` alarm per episode (N1). */
+export const THROTTLED_ALARM_SHARE = 0.2;
+/** Default share of each provider's rate for the toast check (N1). */
+export const TOASTS_RPM_SHARE = 0.2;
 export const SATURATION_BACKOFF_MS = 10_000;
 export const MAX_SATURATION_BACKOFF_MS = 60_000;
 
@@ -153,19 +172,24 @@ export function createProviderLayer({
   probeTimeoutMs = 5_000,
   onProbe,
   ratePerMin = {},
+  toastsRpmShare = TOASTS_RPM_SHARE,
   saturationBackoffMs = SATURATION_BACKOFF_MS,
   maxSaturationBackoffMs = MAX_SATURATION_BACKOFF_MS,
 }: ProviderLayerDeps): ProviderLayer {
   const byId = new Map<ProviderId, ProviderHealth>();
-  const capacity = (id: ProviderId): number => {
+  const toastsShare = Number.isFinite(toastsRpmShare) && toastsRpmShare > 0 && toastsRpmShare < 1 ? toastsRpmShare : TOASTS_RPM_SHARE;
+  /** One lane's bucket size and refill a minute. */
+  const capacity = (id: ProviderId, lane: Lane): number => {
     const r = ratePerMin[id];
-    return r !== undefined && Number.isFinite(r) && r > 0 ? r : Infinity;
+    if (r === undefined || !Number.isFinite(r) || r <= 0) return Infinity;
+    return r * (lane === 'toasts' ? toastsShare : 1 - toastsShare);
   };
+  const fullTokens = (id: ProviderId): Record<Lane, number> => ({ main: capacity(id, 'main'), toasts: capacity(id, 'toasts') });
   for (const task of AI_TASKS) {
     for (const p of providers[task]) {
       let h = byId.get(p.id);
       if (h === undefined) {
-        h = { provider: p, tasks: new Map(), lastProbeAt: null, tokens: capacity(p.id), refilledAt: clock.now(), saturatedUntil: null };
+        h = { provider: p, tasks: new Map(), lastProbeAt: null, tokens: fullTokens(p.id), refilledAt: clock.now(), saturatedUntil: null };
         byId.set(p.id, h);
       }
       if (!h.tasks.has(task)) {
@@ -174,6 +198,8 @@ export function createProviderLayer({
           samples: [],
           rejects: [],
           rejectAlarmed: false,
+          attempts: [],
+          throttleAlarmed: false,
           health: p.configured ? AVAILABLE : NOT_CONFIGURED,
           downSince: null,
           probes: [],
@@ -182,15 +208,41 @@ export function createProviderLayer({
     }
   }
 
-  /** Takes one token of the provider's bucket; false when it is empty (S7). */
-  function takeToken(h: ProviderHealth, now: number): boolean {
-    const cap = capacity(h.provider.id);
-    if (cap === Infinity) return true;
-    h.tokens = Math.min(cap, h.tokens + ((now - h.refilledAt) * cap) / 60_000);
+  /** Takes one token of the lane's bucket; false when it is empty (S7, N1). Both lanes refill together. */
+  function takeToken(h: ProviderHealth, lane: Lane, now: number): boolean {
+    for (const l of ['main', 'toasts'] as const) {
+      const cap = capacity(h.provider.id, l);
+      if (cap !== Infinity) h.tokens[l] = Math.min(cap, h.tokens[l] + ((now - h.refilledAt) * cap) / 60_000);
+    }
     h.refilledAt = now;
-    if (h.tokens < 1) return false;
-    h.tokens -= 1;
+    if (capacity(h.provider.id, lane) === Infinity) return true;
+    if (h.tokens[lane] < 1) return false;
+    h.tokens[lane] -= 1;
     return true;
+  }
+
+  /**
+   * Tracks non-toast calls the bucket turned away in a task window; one `page` per episode while their
+   * share stays above 20 % of ≥ 20 attempts (N1). Health is untouched, so this is the only signal.
+   */
+  function trackThrottle(h: ProviderHealth, t: TaskHealth, at: number, throttled: boolean) {
+    t.attempts.push({ at, throttled });
+    let drop = 0;
+    while (drop < t.attempts.length && (t.attempts[drop] as { at: number }).at <= at - WINDOW_MS) drop++;
+    if (drop > 0) t.attempts.splice(0, drop);
+    if (t.attempts.length < MIN_SAMPLES) return;
+    const share = t.attempts.filter((x) => x.throttled).length / t.attempts.length;
+    if (share <= THROTTLED_ALARM_SHARE) {
+      t.throttleAlarmed = false;
+    } else if (!t.throttleAlarmed) {
+      t.throttleAlarmed = true;
+      alarm.raise({
+        level: 'page',
+        source: 'mod',
+        code: 'moderation_throttled',
+        details: { provider: h.provider.id, task: t.task, share: Math.round(share * 100) / 100 },
+      });
+    }
   }
 
   const saturated = (h: ProviderHealth, now: number) => h.saturatedUntil !== null && now < h.saturatedUntil;
@@ -386,11 +438,16 @@ export function createProviderLayer({
       ceiling = reached;
       recompute();
     },
-    async call(task, provider, run, accept) {
+    async call(task, provider, run, accept, scope) {
       const h = healthOf(provider);
       const t = taskHealthOf(provider, task);
-      // This process's share of the account rate (S7): an empty bucket sends nothing and leaves health alone.
-      if (!takeToken(h, clock.now())) {
+      const lane: Lane = scope === 'toasts' ? 'toasts' : 'main';
+      const now = clock.now();
+      // This process's share of the account rate (S7): an empty bucket sends nothing and leaves health
+      // alone. Toast checks spend their own share only, so anonymous traffic cannot starve chat (N1).
+      const granted = takeToken(h, lane, now);
+      if (lane === 'main') trackThrottle(h, t, now, !granted);
+      if (!granted) {
         logCall(provider.id, task, 0, { ok: false, kind: 'throttled' });
         return { ok: false, kind: 'throttled' };
       }
@@ -446,13 +503,15 @@ export function createProviderLayer({
     reset() {
       for (const h of byId.values()) {
         h.lastProbeAt = null;
-        h.tokens = capacity(h.provider.id);
+        h.tokens = fullTokens(h.provider.id);
         h.refilledAt = clock.now();
         h.saturatedUntil = null;
         for (const t of h.tasks.values()) {
           t.samples = [];
           t.rejects = [];
           t.rejectAlarmed = false;
+          t.attempts = [];
+          t.throttleAlarmed = false;
           t.probes = [];
           t.downSince = null;
           t.health = h.provider.configured ? AVAILABLE : NOT_CONFIGURED;
