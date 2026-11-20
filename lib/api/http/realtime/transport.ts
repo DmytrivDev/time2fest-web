@@ -19,6 +19,13 @@ export const MAX_RECONNECT_DELAY_MS = 20_000;
 /** Pause before the next token request after a failed one (AC-50); a 4xx refusal other than 429 waits 30–60 s (AC-60). */
 export const TOKEN_RETRY_MIN_MS = 5_000;
 export const TOKEN_RETRY_MAX_MS = 10_000;
+/**
+ * Later token retries grow (S8-07): retry `n ≥ 1` waits uniform in [5 000, min(45 000, 1 500·2ⁿ⁺²)] ms
+ * (`reconnectDelay`, full jitter); the first one stays 5–10 s (AC-50).
+ */
+const TOKEN_RETRY_GROWTH_OFFSET = 2;
+/** Upper bound of a `Retry-After` the transport honours on a 429 (S8-07). */
+export const TOKEN_RETRY_AFTER_MAX_MS = 60_000;
 /** Centrifugo error code of a refused subscription (AC-51). */
 export const PERMISSION_DENIED_CODE = 103;
 /** `disconnected` code of the client when a token refresh came back empty (AC-49). */
@@ -75,6 +82,15 @@ export interface RealtimeTokenResponse {
   ok: boolean;
   status: number;
   json(): Promise<unknown>;
+  /** `Retry-After` of a 429 is read from here (S8-07); a `fetch` `Response` fits. */
+  headers?: { get(name: string): string | null };
+}
+
+/** `Retry-After` in delta-seconds → ms, capped at 60 s; anything else (absent, 0, a date, garbage) → `null`. */
+export function retryAfterMs(value: string | null | undefined): number | null {
+  if (!value || !/^\s*\d+\s*$/.test(value)) return null;
+  const seconds = Number(value);
+  return seconds > 0 ? Math.min(TOKEN_RETRY_AFTER_MAX_MS, seconds * 1000) : null;
 }
 
 export type RealtimeFetch = (
@@ -114,7 +130,10 @@ interface ChannelEntry {
   sub: CentrifugeSubscriptionLike | null;
 }
 
-const RETRY = Symbol('retry');
+interface RetryHint {
+  retryAfter: number | null;
+}
+const RETRY: RetryHint = Object.freeze({ retryAfter: null });
 const REFUSED = Symbol('refused');
 /** `error` event types of a failed connection attempt that the client would retry on its own schedule. */
 const ATTEMPT_ERRORS = new Set(['transport', 'connect']);
@@ -194,14 +213,23 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     notifyAll(stateListeners, (listener) => listener(next));
   }
 
-  /** Random 5–10 s (AC-50). */
-  function tokenRetryDelay(): number {
-    const spread = TOKEN_RETRY_MAX_MS - TOKEN_RETRY_MIN_MS;
-    return TOKEN_RETRY_MIN_MS + Math.min(spread, Math.floor(random() * (spread + 1)));
+  /**
+   * Pause before token retry `n` (0-based, per `getToken` loop): the first one random 5–10 s (AC-50), later ones grow
+   * with full jitter up to 45 s (S8-07). A 429 `Retry-After` is honoured: never sooner than it says (capped at 60 s).
+   */
+  function tokenRetryDelay(n: number, retryAfter: number | null): number {
+    let ms: number;
+    if (n <= 0) {
+      const spread = TOKEN_RETRY_MAX_MS - TOKEN_RETRY_MIN_MS;
+      ms = TOKEN_RETRY_MIN_MS + Math.min(spread, Math.floor(random() * (spread + 1)));
+    } else {
+      ms = Math.max(TOKEN_RETRY_MIN_MS, reconnectDelay(n + TOKEN_RETRY_GROWTH_OFFSET, random));
+    }
+    return retryAfter === null ? ms : Math.max(ms, retryAfter);
   }
 
   /** Pause of `ms`; resolves `false` when the transport was torn down meanwhile. */
-  function pause(ms: number = tokenRetryDelay()): Promise<boolean> {
+  function pause(ms: number): Promise<boolean> {
     return new Promise((resolve) => {
       const pending = {
         handle: undefined as unknown,
@@ -215,7 +243,8 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     });
   }
 
-  async function requestToken(): Promise<string | typeof RETRY | typeof REFUSED> {
+  /** `RetryHint` = retry; `retryAfter` is the honoured `Retry-After` of a 429 in ms, if any. */
+  async function requestToken(): Promise<string | RetryHint | typeof REFUSED> {
     let response: RealtimeTokenResponse;
     try {
       response = await fetchToken(tokenUrl, { credentials: 'same-origin', cache: 'no-store' });
@@ -225,7 +254,10 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     // Network errors, 5xx and 429 are retried (AC-50); so is any other refusal or a body that is not C1,
     // because a rejected `getToken` would make the client stop or back off on its own schedule.
     // A refusal (4xx other than 429) waits 30–60 s instead (AC-60).
-    if (!response.ok) return response.status >= 400 && response.status < 500 && response.status !== 429 ? REFUSED : RETRY;
+    if (!response.ok) {
+      if (response.status === 429) return { retryAfter: retryAfterMs(response.headers?.get('retry-after')) };
+      return response.status >= 400 && response.status < 500 ? REFUSED : RETRY;
+    }
     try {
       return tokenOf(await response.json()) ?? RETRY;
     } catch {
@@ -237,13 +269,14 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
   async function getToken(): Promise<string> {
     if (anonymous) return '';
     const started = generation;
-    for (;;) {
+    for (let failures = 0; ; ) {
       const token = await requestToken();
-      if (token !== RETRY && token !== REFUSED) {
+      if (typeof token === 'string') {
         if (started === generation) anonymous = token === '';
         return token;
       }
-      if (!(await pause(token === REFUSED ? refusalDelay(random) : undefined)) || started !== generation) {
+      const ms = token === REFUSED ? refusalDelay(random) : tokenRetryDelay(failures++, token.retryAfter);
+      if (!(await pause(ms)) || started !== generation) {
         // The connection was closed meanwhile; the client ignores the outcome of an aborted attempt.
         throw new Error('realtime transport stopped');
       }
@@ -386,7 +419,7 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
         loading = false;
         if (client || channels.size === 0) return;
         // The chunk did not load: try again after a pause, still `connecting`.
-        if ((await pause()) && !client && channels.size > 0) load();
+        if ((await pause(tokenRetryDelay(0, null))) && !client && channels.size > 0) load();
       });
   }
 

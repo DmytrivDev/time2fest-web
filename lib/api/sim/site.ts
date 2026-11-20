@@ -4,6 +4,7 @@
 import { ok } from '../result';
 import { applySiteEvent, type SiteEvent, type SiteService, type SiteState } from '../contracts/site';
 import { buildSnapshot } from '../site/buildSnapshot';
+import { getData } from '@/lib/data/load';
 
 let last: SiteState | undefined;
 
@@ -11,7 +12,7 @@ export function createSimSite(): SiteService {
   const listeners = new Set<(event: SiteEvent) => void>();
   return {
     async state() {
-      const s = buildSnapshot();
+      const s = buildSnapshot(getData().meta);
       last = s;
       return ok(s);
     },

@@ -21,7 +21,7 @@ import type { Dataset } from '@/lib/data/types';
 const fallbacks = new WeakSet<SiteState>();
 
 function fallbackSnapshot(): SiteState {
-  const s = buildSnapshot();
+  const s = buildSnapshot(getData().meta);
   fallbacks.add(s);
   return s;
 }

@@ -10,6 +10,10 @@ import type { ConnectionState, RealtimeListener, RealtimeTransport } from '@/lib
 import { fail, ok } from '@/lib/api/result';
 import { setServicesForTest } from '@/lib/api/services';
 import { buildSnapshot } from '@/lib/api/site/buildSnapshot';
+import { httpFactories } from '@/lib/api/http';
+import { getData } from '@/lib/data/load';
+
+const build = () => buildSnapshot(getData().meta);
 
 const make = (version: number, extra: Partial<SiteState> = {}): SiteState => ({
   version,
@@ -282,7 +286,7 @@ describe('AC-51 — the hook without any applied snapshot', () => {
   }
 
   it('failure and nothing applied → the build snapshot', async () => {
-    expect(await loaded(serviceFailing())).toEqual(buildSnapshot());
+    expect(await loaded(serviceFailing())).toEqual(build());
   });
 
   it('the build snapshot never blocks the server: the first server snapshot (even version 1) replaces it', async () => {
@@ -298,7 +302,7 @@ describe('AC-51 — the hook without any applied snapshot', () => {
     const restore = setServicesForTest({ site: svc });
     const off = siteState.subscribe(() => {});
     await flush();
-    expect(siteState.getSnapshot().data).toEqual(buildSnapshot());
+    expect(siteState.getSnapshot().data).toEqual(build());
     const server = make(1, { switches: { ...make(1).switches, chat: false } });
     emit?.({ type: 'snapshot', state: server });
     expect(siteState.getSnapshot().data).toBe(server);
@@ -324,14 +328,38 @@ describe('prelaunch build (А-3)', () => {
   it('serves the build snapshot with no request and no timer', async () => {
     const fetch = fetchQueue(answer(200, make(2)));
     const load = vi.fn(async () => fakeTransport('connected').transport);
-    const svc = createHttpSite({ fetch, loadTransport: load, prelaunch: true });
-    expect(svc.peek()).toEqual(buildSnapshot());
+    const svc = createHttpSite({ fetch, loadTransport: load, prelaunch: true, buildSnapshot: build });
+    expect(svc.peek()).toEqual(build());
     const c = collect(svc);
-    expect(await svc.state()).toEqual(ok(buildSnapshot()));
+    expect(await svc.state()).toEqual(ok(build()));
     await vi.advanceTimersByTimeAsync(120_000);
     expect(fetch).not.toHaveBeenCalled();
     expect(load).not.toHaveBeenCalled();
     expect(vi.getTimerCount()).toBe(0);
     c.off();
+  });
+
+  it('serves exactly the injected build snapshot (the adapter reads no data itself)', async () => {
+    const own = make(1, { catalogVersion: 'injected+1' });
+    const svc = createHttpSite({ fetch: fetchQueue(), loadTransport: null, prelaunch: true, buildSnapshot: () => own });
+    expect(svc.peek()).toBe(own);
+    expect(await svc.state()).toEqual(ok(own));
+  });
+
+  it('refuses a prelaunch build without a build snapshot provider', () => {
+    expect(() => createHttpSite({ loadTransport: null, prelaunch: true })).toThrow(/buildSnapshot/);
+  });
+
+  it('the composition point injects the build snapshot of the bundled catalog', async () => {
+    vi.stubEnv('NEXT_PUBLIC_PRELAUNCH', '1');
+    try {
+      const factory = httpFactories.site;
+      if (!factory) throw new Error('no http site factory');
+      const svc = factory();
+      expect(svc.peek()).toEqual(build());
+      expect(await svc.state()).toEqual(ok(build()));
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 });

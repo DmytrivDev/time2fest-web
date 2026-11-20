@@ -5,13 +5,13 @@
  * - `subscribe()` — канал `site:state` (лише події `snapshot`, що проходять схему; `clock` і решту ігнорує, AC-45) і
  *   перечитування: кожні 15 с, поки realtime не `connected` чи його немає (AC-48), інакше кожні 30 с (AC-49);
  *   `onResync` — одразу (AC-50). Невдале перечитування лишає останній знімок (AC-51).
- * - Передстартова збірка (`NEXT_PUBLIC_PRELAUNCH=1`) — знімок збірки без мережі й таймерів.
+ * - Передстартова збірка (`NEXT_PUBLIC_PRELAUNCH=1`) — знімок збірки без мережі й таймерів. Знімок дає впорснутий
+ *   `buildSnapshot` (`http/index.ts`): адаптер не читає `lib/data` сам.
  * Транспорт realtime вантажиться динамічно й лише коли `NEXT_PUBLIC_REALTIME_URL` задано під час збирання (AC-58).
  */
 import { parseSiteState, SITE_CHANNEL_CLASS, type RealtimeEnvelope } from '@time2fest/contracts';
 import { applySiteEvent, type SiteEvent, type SiteService, type SiteState } from '../contracts/site';
 import { fail, ok, type ApiResult } from '../result';
-import { buildSnapshot } from '../site/buildSnapshot';
 import type { ConnectionState, RealtimeTransport } from './realtime/types';
 
 export const SITE_STATE_URL = '/api/site/state';
@@ -40,6 +40,8 @@ export interface HttpSiteOptions {
   timers?: SiteTimers;
   /** Передстартова збірка: знімок збірки, без мережі. */
   prelaunch?: boolean;
+  /** Постачальник знімка збірки (FR-EDGE-06 крок 5); обов'язковий для передстартової збірки. */
+  buildSnapshot?: () => SiteState;
 }
 
 /** Літерал збирання: без `NEXT_PUBLIC_REALTIME_URL` гілка з `import()` мертва, і `centrifuge` у пакет не потрапляє (AC-58). */
@@ -59,7 +61,8 @@ function sameSnapshot(a: SiteState | undefined, b: SiteState): boolean {
   return !!a && a.version === b.version && a.at === b.at && a.outage === b.outage;
 }
 
-function prelaunchSite(): SiteService {
+function prelaunchSite(buildSnapshot: (() => SiteState) | undefined): SiteService {
+  if (!buildSnapshot) throw new Error('createHttpSite: prelaunch build needs a buildSnapshot provider');
   const snapshot = buildSnapshot();
   return {
     state: async () => ok(snapshot),
@@ -69,7 +72,7 @@ function prelaunchSite(): SiteService {
 }
 
 export function createHttpSite(options: HttpSiteOptions = {}): SiteService {
-  if (options.prelaunch ?? process.env.NEXT_PUBLIC_PRELAUNCH === '1') return prelaunchSite();
+  if (options.prelaunch ?? process.env.NEXT_PUBLIC_PRELAUNCH === '1') return prelaunchSite(options.buildSnapshot);
   const fetchState: SiteFetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   const loadTransport = options.loadTransport === undefined ? defaultLoadTransport() : options.loadTransport;
   const timers = options.timers ?? defaultTimers;

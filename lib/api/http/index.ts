@@ -5,11 +5,14 @@
 import type { ServiceFactories, Services } from '../services';
 import { createHttpCatalog } from './catalog';
 import { createHttpSite } from './site';
+import { buildSnapshot } from '../site/buildSnapshot';
+import { getData } from '@/lib/data/load';
 import type { HttpDomain } from './domains';
 
 const factories: { [K in HttpDomain]: () => Services[K] } = {
   catalog: () => createHttpCatalog(),
-  site: () => createHttpSite(),
+  // Запасний знімок збірки (FR-EDGE-06 крок 5) впорскуємо тут, щоб адаптер не тягнув `lib/data`.
+  site: () => createHttpSite({ buildSnapshot: () => buildSnapshot(getData().meta) }),
 };
 
 export const httpFactories: ServiceFactories = factories;

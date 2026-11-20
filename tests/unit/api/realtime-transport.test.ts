@@ -7,6 +7,7 @@ import type { RealtimeEnvelope } from '@time2fest/contracts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createRealtimeTransport,
+  retryAfterMs,
   STATE_INVALIDATED_CODE,
   type CentrifugeClientOptions,
   type CentrifugeModuleLike,
@@ -467,6 +468,70 @@ describe('AC-50 — token request failures are retried after 5–10 s', () => {
     await expect(outcome).resolves.toBe('rejected');
     await vi.advanceTimersByTimeAsync(60_000);
     expect(h.fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('S8-07 — token retries grow and honour Retry-After', () => {
+  /** Times (ms since start) at which the token endpoint was asked, while it answers with `fail` forever. */
+  async function askTimes(random: () => number, fail: () => RealtimeTokenResponse, horizon: number): Promise<number[]> {
+    const start = Date.now();
+    const times: number[] = [];
+    const h = harness({
+      random,
+      fetch: async () => {
+        times.push(Date.now() - start);
+        return fail();
+      },
+    });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    void h.client().options.getToken().catch(() => {});
+    await vi.advanceTimersByTimeAsync(horizon);
+    return times;
+  }
+
+  const gaps = (times: number[]) => times.slice(1).map((t, i) => t - (times[i] ?? 0));
+
+  it('5xx forever: the first retry stays 10 s at most, later ones grow to the 45 s cap (random 1)', async () => {
+    const times = await askTimes(() => 1, () => response(503, {}), 200_000);
+    expect(gaps(times).slice(0, 6)).toEqual([10_000, 12_000, 24_000, 45_000, 45_000, 45_000]);
+  });
+
+  it('full jitter never goes below 5 s (random 0)', async () => {
+    const times = await askTimes(() => 0, () => response(503, {}), 27_000);
+    expect(gaps(times)).toEqual([5_000, 5_000, 5_000, 5_000, 5_000]);
+  });
+
+  it('429 with Retry-After: 30 → the next request not before 30 s', async () => {
+    const tooMany = () => ({ ...response(429, {}), headers: new Headers({ 'Retry-After': '30' }) });
+    const times = await askTimes(() => 0, tooMany, 65_000);
+    expect(gaps(times)).toEqual([30_000, 30_000]);
+  });
+
+  it('429 with Retry-After: 600 → capped at 60 s', async () => {
+    const tooMany = () => ({ ...response(429, {}), headers: new Headers({ 'Retry-After': '600' }) });
+    const times = await askTimes(() => 0, tooMany, 125_000);
+    expect(gaps(times)).toEqual([60_000, 60_000]);
+  });
+
+  it('429 with an unusable Retry-After → the grown delay', async () => {
+    const tooMany = () => ({ ...response(429, {}), headers: new Headers({ 'Retry-After': 'Wed, 21 Oct 2026 07:28:00 GMT' }) });
+    const times = await askTimes(() => 1, tooMany, 50_000);
+    expect(gaps(times)).toEqual([10_000, 12_000, 24_000]);
+  });
+
+  it.each([
+    ['30', 30_000],
+    [' 2 ', 2_000],
+    ['61', 60_000],
+    ['0', null],
+    ['-5', null],
+    ['1.5', null],
+    ['soon', null],
+    [null, null],
+    [undefined, null],
+  ])('retryAfterMs(%j) → %j', (value, ms) => {
+    expect(retryAfterMs(value)).toBe(ms);
   });
 });
 
