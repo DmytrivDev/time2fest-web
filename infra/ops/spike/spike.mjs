@@ -47,6 +47,7 @@ const FLAGS = {
   hold: /^\d{1,5}(s|m)?$/,
   'live-history': /^\d{1,5}$/,
   'fast-last': /^\d{1,5}s?$/,
+  'batch-ms': /^\d{2,5}$/,
   'log-level': /^(debug|info|warn|error)$/,
   'secrets-file': /^[^-].{0,4095}$/,
 };
@@ -109,6 +110,8 @@ export function scenarioWith(name, v) {
     sc.fastLastSec = Math.min(sc.fastLastSec, sc.holdSec);
   }
   if (v['fast-last'] !== undefined) sc.fastLastSec = Math.min(secs(v['fast-last']), sc.holdSec);
+  // Легкий профіль (20.11, після S1): той самий інтервал і для «швидкої» фази.
+  if (v['batch-ms'] !== undefined) sc.batchMs = sc.batchMs2 = Number(v['batch-ms']);
   if (sc.storm && v['storm-window'] !== undefined) sc.storm.windowSec = secs(v['storm-window']);
   if (sc.storm && v['storm-at'] !== undefined) sc.storm.atSec = secs(v['storm-at']);
   if (sc.restart && v['restart-at'] !== undefined) sc.restart.atSec = secs(v['restart-at']);
