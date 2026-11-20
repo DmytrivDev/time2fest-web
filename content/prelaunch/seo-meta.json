@@ -454,19 +454,19 @@
     "SG": {
       "uk": {
         "title": "Новий рік у Сінгапурі | Time2Fest",
-        "description": "Сінгапур зустрічає 2027 рік салютом над затокою Марина-Бей, відліками в житлових кварталах і оголошеним ефіром на YouTube. Північ у Сінгапурі — 16:00 UTC."
+        "description": "Сінгапур зустрічає 2027 рік салютом над затокою Марина-Бей, відліками в житлових кварталах і оголошеним прямим ефіром. Північ у Сінгапурі — 16:00 UTC."
       },
       "en": {
         "title": "New Year in Singapore | Time2Fest",
-        "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first YouTube live stream. Midnight there is 16:00 UTC."
+        "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first live stream. Midnight there is 16:00 UTC."
       },
       "es": {
         "title": "Año Nuevo en Singapur | Time2Fest",
-        "description": "Singapur recibe 2027 con fuegos sobre Marina Bay, cuenta atrás en los barrios y una emisión anunciada en YouTube. En Singapur, medianoche son las 16:00 UTC."
+        "description": "Singapur recibe 2027 con fuegos sobre Marina Bay, cuenta atrás en los barrios y una emisión en directo anunciada. En Singapur, medianoche son las 16:00 UTC."
       },
       "fr": {
         "title": "Nouvel An à Singapour | Time2Fest",
-        "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un direct annoncé sur YouTube. À Singapour, minuit, c’est 16 h UTC."
+        "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un premier direct annoncé. À Singapour, minuit, c’est 16 h UTC."
       }
     },
     "CA": {
@@ -580,19 +580,19 @@
     "VE": {
       "uk": {
         "title": "Новий рік у Венесуелі: Каракас | Time2Fest",
-        "description": "Опівночі в Каракасі, о 04:00 UTC, Венесуела вітає 2027 рік дванадцятьма виноградинами й піснями по радіо, а дзвони собору б’ють дванадцять разів."
+        "description": "Опівночі в Каракасі, о 04:00 UTC, Венесуела вітає 2027 рік дванадцятьма виноградинами й піснями про кінець року, а дзвони собору б’ють дванадцять разів."
       },
       "en": {
         "title": "New Year in Venezuela: Caracas | Time2Fest",
-        "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and radio songs, while the cathedral bells ring twelve times over the city."
+        "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and end-of-year songs, while the cathedral bells ring twelve times over the city."
       },
       "es": {
         "title": "Año Nuevo en Venezuela: Caracas | Time2Fest",
-        "description": "A medianoche en Caracas, 04:00 UTC, Venezuela recibe 2027 con doce uvas y gaitas en la radio, mientras las campanas de la catedral dan doce toques."
+        "description": "A medianoche en Caracas, 04:00 UTC, Venezuela recibe 2027 con doce uvas y gaitas de fin de año, mientras las campanas de la catedral dan doce toques."
       },
       "fr": {
         "title": "Nouvel An au Venezuela : Caracas | Time2Fest",
-        "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons à la radio, pendant que la cathédrale sonne douze coups."
+        "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons de fin d’année, pendant que la cathédrale sonne douze coups."
       }
     },
     "AE": {
@@ -971,6 +971,78 @@
       "fr": {
         "title": "Nouvel An aux Samoa : Apia | Time2Fest",
         "description": "Les Samoa fêtent 2027 parmi les premiers : minuit sonne à Apia à 11 h UTC. Les familles prient à l’église, puis voient le feu d’artifice de Palisi sur la digue."
+      }
+    },
+    "FJ": {
+      "uk": {
+        "title": "Новий рік на Фіджі: Сува | Time2Fest",
+        "description": "Фіджі вітає 2027 рік серед перших: північ у Суві — о 12:00 UTC. Після служби в церкві рідних обливають водою на щастя, а над парком Альберта — салют."
+      },
+      "en": {
+        "title": "New Year in Fiji: Suva | Time2Fest",
+        "description": "Fiji greets 2027 among the first: midnight in Suva is at 12:00 UTC. After church, families splash each other with water as fireworks rise over Albert Park."
+      },
+      "es": {
+        "title": "Año Nuevo en Fiyi: Suva | Time2Fest",
+        "description": "Fiyi recibe 2027 entre los primeros: la medianoche en Suva es a las 12:00 UTC. Tras la misa, las familias se echan agua y hay fuegos sobre el parque Albert."
+      },
+      "fr": {
+        "title": "Nouvel An aux Fidji : Suva | Time2Fest",
+        "description": "Les Fidji fêtent 2027 parmi les premiers : minuit sonne à Suva à 12 h UTC. Après l’office, on s’asperge d’eau en famille sous le feu d’artifice d’Albert Park."
+      }
+    },
+    "KI": {
+      "uk": {
+        "title": "Новий рік у Тараві, Кірибаті | Time2Fest",
+        "description": "Тарава, столиця Кірибаті, зустрічає 2027 рік опівночі за UTC+12, о 12:00 UTC: церковні служби, хори й танці фрегата, каное в лагуні та вечори на пляжі."
+      },
+      "en": {
+        "title": "New Year in Tarawa, Kiribati | Time2Fest",
+        "description": "Tarawa, the capital of Kiribati, greets 2027 at midnight UTC+12, which is 12:00 UTC: church services, choirs, frigatebird dances, canoe races and beach nights."
+      },
+      "es": {
+        "title": "Año Nuevo en Tarawa, Kiribati | Time2Fest",
+        "description": "Tarawa, capital de Kiribati, recibe 2027 a medianoche UTC+12, a las 12:00 UTC: misas y cultos, coros, danzas de la fragata, canoas en la laguna y la playa."
+      },
+      "fr": {
+        "title": "Nouvel An à Tarawa (Kiribati) | Time2Fest",
+        "description": "Tarawa, capitale des Kiribati, entre en 2027 à minuit UTC+12, soit 12 h UTC : offices religieux, chœurs, danse de la frégate, pirogues et soirées sur la plage."
+      }
+    },
+    "TK": {
+      "uk": {
+        "title": "Новий рік на Токелау: Факаофо | Time2Fest",
+        "description": "Токелау зустрічає 2027 рік серед перших: північ на атолі Факаофо — об 11:00 UTC. Родини пливуть додому на свята, а світло на острови дає сонячна енергія."
+      },
+      "en": {
+        "title": "New Year in Tokelau: Fakaofo | Time2Fest",
+        "description": "Tokelau is among the first to see 2027: midnight on Fakaofo atoll falls at 11:00 UTC. Families sail home for the holidays to islands powered by the sun."
+      },
+      "es": {
+        "title": "Año Nuevo en Tokelau: Fakaofo | Time2Fest",
+        "description": "Tokelau recibe 2027 entre los primeros: la medianoche en el atolón Fakaofo llega a las 11:00 UTC. Las familias vuelven en barco a unas islas que viven del sol."
+      },
+      "fr": {
+        "title": "Nouvel An aux Tokelau : Fakaofo | Time2Fest",
+        "description": "Les Tokelau fêtent 2027 parmi les premiers : minuit sonne à 11 h UTC sur l’atoll de Fakaofo. Les familles rentrent en bateau sur des îles alimentées au soleil."
+      }
+    },
+    "TO": {
+      "uk": {
+        "title": "Новий рік у Тонзі: Тонгатапу | Time2Fest",
+        "description": "Тонга вітає 2027 рік серед перших: північ на Тонгатапу настає об 11:00 UTC. Нічні служби в церквах, дзвони й гімн оркестру, а далі — тиждень молитви."
+      },
+      "en": {
+        "title": "New Year in Tonga: Tongatapu | Time2Fest",
+        "description": "Tonga greets 2027 among the first: midnight on Tongatapu falls at 11:00 UTC. Late-night church services, bells and a brass-band hymn, then a week of prayer."
+      },
+      "es": {
+        "title": "Año Nuevo en Tonga: Tongatapu | Time2Fest",
+        "description": "Tonga es de los primeros en recibir 2027: medianoche en Tongatapu a las 11:00 UTC. Cultos nocturnos, campanas, el himno de una banda y una semana de oración."
+      },
+      "fr": {
+        "title": "Nouvel An aux Tonga : Tongatapu | Time2Fest",
+        "description": "Les Tonga accueillent 2027 parmi les premiers : minuit sonne à 11 h UTC sur Tongatapu. Offices de nuit, cloches, hymne de fanfare, puis une semaine de prière."
       }
     }
   }

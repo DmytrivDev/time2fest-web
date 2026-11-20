@@ -426,6 +426,36 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "CA@utc-0600": {
+      "src": "/scenes/CA-utc-0600-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#454b6e"
+    },
+    "FJ": {
+      "src": "/scenes/FJ-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "KI": {
+      "src": "/scenes/KI-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "TK": {
+      "src": "/scenes/TK-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "TO": {
+      "src": "/scenes/TO-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

@@ -1293,6 +1293,86 @@
         "x": 45,
         "y": 45
       }
+    },
+    "country:CA@utc-0600": {
+      "src": "/media/photos/banff.webp",
+      "alt": {
+        "uk": "Новорічний салют опівночі в Банфі, Скелясті гори: сніг, ялини й люди біля адміністративного будинку парку",
+        "en": "Midnight New Year fireworks in Banff, Rocky Mountains: snow, fir trees and people by the park administration building",
+        "es": "Fuegos artificiales de medianoche en Banff, montañas Rocosas: nieve, abetos y gente junto al edificio de administración del parque",
+        "fr": "Feu d’artifice de minuit à Banff, Rocheuses : neige, sapins et promeneurs près du bâtiment administratif du parc"
+      },
+      "author": "Wilson Hui",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Banff_New_Years_Eve_Fireworks_(15977474337).jpg",
+      "position": {
+        "x": 62,
+        "y": 40
+      }
+    },
+    "country:FJ": {
+      "src": "/media/photos/suva.webp",
+      "alt": {
+        "uk": "Захід сонця над гаванню Суви: пальма, альтанка на набережній і гори Віті-Леву за затокою",
+        "en": "Sunset over Suva harbour: a palm, a waterfront gazebo and the Viti Levu mountains across the bay",
+        "es": "Atardecer sobre el puerto de Suva: una palmera, un cenador en el malecón y las montañas de Viti Levu al otro lado de la bahía",
+        "fr": "Coucher de soleil sur le port de Suva : un palmier, un kiosque sur le front de mer et les montagnes de Viti Levu de l’autre côté de la baie"
+      },
+      "author": "Matthias Süßen",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sunset_Suva_MatthiasSuessen-7976.jpg",
+      "position": {
+        "x": 62,
+        "y": 55
+      }
+    },
+    "country:KI": {
+      "src": "/media/photos/tarawa.webp",
+      "alt": {
+        "uk": "Будинок парламенту Кірибаті (Манеаба-ні-Маунгатабу) в Амбо, Південна Тарава",
+        "en": "The Kiribati Parliament House (Maneaba ni Maungatabu) in Ambo, South Tarawa",
+        "es": "El Parlamento de Kiribati (Maneaba ni Maungatabu) en Ambo, Tarawa Sur",
+        "fr": "Le Parlement des Kiribati (Maneaba ni Maungatabu) à Ambo, Tarawa-Sud"
+      },
+      "author": "KiribatiTraveller",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kiribatiparliament.jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
+    },
+    "country:TK": {
+      "src": "/media/photos/fakaofo.webp",
+      "alt": {
+        "uk": "Моту з кокосовими пальмами в бірюзовій лагуні Токелау",
+        "en": "A motu with coconut palms in Tokelau’s turquoise lagoon",
+        "es": "Un motu con cocoteros en la laguna turquesa de Tokelau",
+        "fr": "Un motu planté de cocotiers dans le lagon turquoise des Tokelau"
+      },
+      "author": "New Zealand Ministry of Foreign Affairs and Trade",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Landscape-tokelau-2011-photo-new-zealand-ministry-of-foreign-affairs-and-trade_12779814375_o.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:TO": {
+      "src": "/media/photos/tongatapu.webp",
+      "alt": {
+        "uk": "Королівський палац у Нукуалофі: білий дерев’яний палац із червоними дахами й вежею",
+        "en": "The Royal Palace in Nukuʻalofa: a white wooden palace with red roofs and a tower",
+        "es": "El Palacio Real de Nukualofa: un palacio blanco de madera con tejados rojos y una torre",
+        "fr": "Le palais royal de Nukuʻalofa : un palais blanc en bois aux toits rouges, avec une tour"
+      },
+      "author": "Uhooep",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Royal_Palace,_Nuku%27alofa,_Nov_18.jpg",
+      "position": {
+        "x": 42,
+        "y": 45
+      }
     }
   }
 }

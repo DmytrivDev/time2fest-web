@@ -1,0 +1,99 @@
+{
+  "code": "KI",
+  "zone": "UTC+12",
+  "zoneId": "utc+1200",
+  "cityId": "tarawa",
+  "names": {
+    "uk": {
+      "name": "Кірибаті",
+      "city": "Тарава",
+      "cityIn": "у Тараві",
+      "caps": "ТАРАВА · КІРИБАТІ"
+    },
+    "en": {
+      "name": "Kiribati",
+      "city": "Tarawa",
+      "cityIn": "in Tarawa",
+      "caps": "TARAWA · KIRIBATI"
+    },
+    "es": {
+      "name": "Kiribati",
+      "city": "Tarawa",
+      "cityIn": "en Tarawa",
+      "caps": "TARAWA · KIRIBATI"
+    },
+    "fr": {
+      "name": "Kiribati",
+      "city": "Tarawa",
+      "cityIn": "à Tarawa",
+      "caps": "TARAWA · KIRIBATI"
+    }
+  },
+  "picto": "M1 33 H39 M9 28 L20 15 L31 28 Z M11 28 V33 M29 28 V33 M18 33 V30 H22 V33 M18.5 22.5 a1.5 1.5 0 1 0 3 0 a1.5 1.5 0 1 0 -3 0 M7 33 V17.5 Q5 28 1 33 M33 33 V17.5 Q35 28 39 33",
+  "flagColors": [
+    "#CE1126",
+    "#FCD116",
+    "#4A6FD8"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Тараві"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Tarawa"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Tarawa"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Tarawa"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

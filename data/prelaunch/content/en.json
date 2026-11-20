@@ -84,7 +84,7 @@
     "kit": "fr"
   },
   "GB": {
-    "text": "In the United Kingdom midnight arrives with the chimes of Big Ben: in England the main celebration is in central London, with big events in Manchester, Liverpool and Birmingham too. At midnight people sing Auld Lang Syne, set to Robert Burns's 1788 poem; in Scotland they form a circle and cross arms for the last verse. There New Year's Eve is Hogmanay: right after midnight people go first-footing with coal, shortbread or whisky, as the first visitor brings the house its luck for the year. 1 January is a holiday across the country, and in Scotland so is the 2nd.\n\nIn London the countdown runs to the bongs of Big Ben, shown live on the BBC. Fireworks have lit the Thames by the London Eye since 2004. For 2026, City Hall says about 100,000 ticketholders lined the banks as more than 12,000 fireworks burned for 12 minutes.",
+    "text": "In the United Kingdom midnight arrives with the chimes of Big Ben: in England the main celebration is in central London, with big events in Manchester, Liverpool and Birmingham too. At midnight people sing Auld Lang Syne, set to Robert Burns's 1788 poem; in Scotland they form a circle and cross arms for the last verse. There New Year's Eve is Hogmanay: right after midnight people go first-footing with coal, shortbread or whisky, as the first visitor brings the house its luck for the year. 1 January is a holiday across the country, and in Scotland so is the 2nd.\n\nIn London the countdown runs to the bongs of Big Ben. Fireworks have lit the Thames by the London Eye since 2004. For 2026, City Hall says about 100,000 ticketholders lined the banks as more than 12,000 fireworks burned for 12 minutes.",
     "traditions": [
       {
         "id": "t1",
@@ -392,7 +392,7 @@
     "kit": "hk"
   },
   "KR": {
-    "text": "South Korea has 1 January off, but the main holiday here is Seollal, the lunar New Year, which falls on 7 February in 2027. Still, New Year's Eve on 31 December is celebrated too, with gatherings in most cities. On the morning of 1 January families and friends head to the east coast, the sea or the mountains: a wish made at the year's first sunrise is believed to bring luck. Tteokguk, a soup of sliced rice cakes, is eaten above all at Seollal; a bowl was once said to add a year to your age. Since June 2023, when age began to be counted from the birthday, that is only a saying.\n\nIn Seoul the Bosingak Pavilion bell rings out at midnight: eleven selected citizens strike it 33 times. The ceremony has been held since 1953; KBS expects up to 100,000 people, and KBS and YouTube show it live.",
+    "text": "South Korea has 1 January off, but the main holiday here is Seollal, the lunar New Year, which falls on 7 February in 2027. Still, New Year's Eve on 31 December is celebrated too, with gatherings in most cities. On the morning of 1 January families and friends head to the east coast, the sea or the mountains: a wish made at the year's first sunrise is believed to bring luck. Tteokguk, a soup of sliced rice cakes, is eaten above all at Seollal; a bowl was once said to add a year to your age. Since June 2023, when age began to be counted from the birthday, that is only a saying.\n\nIn Seoul the Bosingak Pavilion bell rings out at midnight: eleven selected citizens strike it 33 times. The ceremony has been held since 1953; KBS expects up to 100,000 people, and it is shown live.",
     "traditions": [
       {
         "id": "t1",
@@ -410,7 +410,7 @@
         "id": "t3",
         "iconId": "bell",
         "title": "Bosingak bell, 33 strikes",
-        "text": "At midnight in central Seoul eleven selected citizens strike the Bosingak bell 33 times, a number from Buddhist tradition. KBS and the city's YouTube channel show it live."
+        "text": "At midnight in central Seoul eleven selected citizens strike the Bosingak bell 33 times, a number from Buddhist tradition. The ceremony is shown live."
       }
     ],
     "meta": {
@@ -528,7 +528,7 @@
     "kit": "cn+8"
   },
   "SG": {
-    "text": "Singapore's calendar holds festivals of many cultures side by side: Chinese New Year, the Muslim Hari Raya, Hindu Deepavali and Christmas. 1 January is a single day off, while Chinese New Year gets two: 6 and 7 February in 2027. The night of 31 December is celebrated across the island, with fireworks and events at Marina Bay, Kallang, Sentosa and Clarke Quay, and the People's Association holds countdown parties in residential neighbourhoods. Mediacorp broadcasts a New Year concert on TV.\n\nThe first Marina Bay countdown took place in 2005 and, according to URA, drew more than 160,000 people. To welcome 2026, the fireworks over the bay came in four parts, from 11pm according to URA, and police closed waterfronts as they filled up. For 2027 a 10.30pm start has been announced, along with the first live stream on YouTube.",
+    "text": "Singapore's calendar holds festivals of many cultures side by side: Chinese New Year, the Muslim Hari Raya, Hindu Deepavali and Christmas. 1 January is a single day off, while Chinese New Year gets two: 6 and 7 February in 2027. The night of 31 December is celebrated across the island, with fireworks and events at Marina Bay, Kallang, Sentosa and Clarke Quay, and the People's Association holds countdown parties in residential neighbourhoods. A New Year concert is broadcast live on TV.\n\nThe first Marina Bay countdown took place in 2005 and, according to URA, drew more than 160,000 people. To welcome 2026, the fireworks over the bay came in four parts, from 11pm according to URA, and police closed waterfronts as they filled up. For 2027 a 10.30pm start has been announced, along with the first live stream.",
     "traditions": [
       {
         "id": "t1",
@@ -551,7 +551,7 @@
     ],
     "meta": {
       "title": "New Year 2027 in Singapore | Time2Fest",
-      "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first YouTube live stream. Midnight there is 16:00 UTC."
+      "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first live stream. Midnight there is 16:00 UTC."
     },
     "kit": "sg"
   },
@@ -724,7 +724,7 @@
     "kit": "th"
   },
   "VE": {
-    "text": "Venezuela sees in the New Year with the radio on: the broadcast counts down, end-of-year songs play — “Cinco pa’ las 12” (“Five to twelve”) and “Año Nuevo, Vida Nueva” (“New Year, new life”) by Billo’s Caracas Boys — and at home people play the national anthem. At midnight they eat twelve grapes, making a wish with each, and wear yellow underwear for luck. The festive season means hallacas and pan de jamón, and 1 January is a day off.\n\nIn Caracas the cathedral bells ring twelve times at midnight, and TV channels show the country’s main New Year concert from Bolívar Square. Above the city rises the green Ávila mountain, with the round tower of the Hotel Humboldt on its summit, and in the centre stand the twin Parque Central towers.",
+    "text": "Venezuela sees in the New Year with music: end-of-year songs play — “Cinco pa’ las 12” (“Five to twelve”) and “Año Nuevo, Vida Nueva” (“New Year, new life”) by Billo’s Caracas Boys — and at home people play the national anthem. At midnight they eat twelve grapes, making a wish with each, and wear yellow underwear for luck. The festive season means hallacas and pan de jamón, and 1 January is a day off.\n\nIn Caracas the cathedral bells ring twelve times at midnight, and the country’s main New Year concert takes place on Bolívar Square. Above the city rises the green Ávila mountain, with the round tower of the Hotel Humboldt on its summit, and in the centre stand the twin Parque Central towers.",
     "traditions": [
       {
         "id": "t1",
@@ -735,8 +735,8 @@
       {
         "id": "t2",
         "iconId": "bell",
-        "title": "Radio countdown and bells",
-        "text": "Turn on the radio: it counts down and plays “Cinco pa’ las 12”, and in Caracas the cathedral bells ring twelve times."
+        "title": "Bells and the anthem",
+        "text": "At midnight in Caracas the cathedral bells ring twelve times, and at home families play the national anthem."
       },
       {
         "id": "t3",
@@ -747,7 +747,7 @@
     ],
     "meta": {
       "title": "New Year 2027 in Venezuela: Caracas | Time2Fest",
-      "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and radio songs, while the cathedral bells ring twelve times over the city."
+      "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and end-of-year songs, while the cathedral bells ring twelve times over the city."
     },
     "kit": "ve"
   },
@@ -882,7 +882,7 @@
         "id": "t3",
         "iconId": "music",
         "title": "Fiestón on the Malecón",
-        "text": "In Santo Domingo, Avenida George Washington becomes an all-night free concert of merengue, bachata, salsa and urban music, broadcast live by Telemicro on TV and YouTube."
+        "text": "In Santo Domingo, Avenida George Washington becomes an all-night free concert of merengue, bachata, salsa and urban music, broadcast live on TV."
       }
     ],
     "meta": {
@@ -1010,7 +1010,7 @@
         "id": "t1",
         "iconId": "address",
         "title": "President’s address and anthem",
-        "text": "Turn on the TV before midnight: the president greets the country, and at twelve sharp Kazakhstan’s anthem plays."
+        "text": "Before midnight the president greets the country, and at twelve sharp Kazakhstan’s anthem plays."
       },
       {
         "id": "t2",
@@ -1340,7 +1340,7 @@
         "id": "t2",
         "iconId": "address",
         "title": "Address and anthem at midnight",
-        "text": "Spend the last minutes of the year by the TV: after the President’s greeting, Azerbaijan’s anthem plays on every channel."
+        "text": "The last minutes of the year are spent by the TV: after the President’s greeting, Azerbaijan’s anthem plays on every channel."
       },
       {
         "id": "t3",
@@ -1890,5 +1890,141 @@
       }
     ],
     "kit": "ca-7"
+  },
+  "CA@utc-0600": {
+    "text": "Canada sees in the New Year differently in each province, but a few customs are known across the country. In Quebec people watch Bye Bye on 31 December, the comedy review of the year that Radio-Canada has aired since 1968; last year more than four million viewers tuned in. On 1 January the provincial lieutenant governors hold levees, New Year receptions open to anyone.\n\nIn Edmonton, Alberta's capital, last year's party was on Churchill Square: music, a rink with free skate rentals and two fireworks shows, at 8 pm for little ones and at midnight. Next to the arena in the Ice District, a concert and a DJ set followed the Oilers game. In Calgary that night people danced on the ice of the Prince's Island lagoon until the midnight fireworks lit up the Bow.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Dance at a Malanka",
+        "text": "In January the Ukrainian communities of Edmonton and Winnipeg hold Malankas, Old New Year galas with dinner, live music and dancing late into the night."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Skate, then watch fireworks",
+        "text": "In Edmonton and Calgary the city party is free: skate to music, and bring the kids by 8 pm, when Edmonton sets off an early fireworks show."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Visit the New Year's levee",
+        "text": "On 1 January Alberta's lieutenant governor opens Government House in Edmonton to all: refreshments, a tour and a postcard for Canadian troops abroad."
+      }
+    ],
+    "kit": "ca-6"
+  },
+  "FJ": {
+    "text": "Fiji is among the first places in the world to see the new year: midnight here falls at 12:00 UTC. On the islands the holiday is called Na Vakatawase, the ‘division’ between the old year and the new. Many people see the year out in church, and once the service ends, veisui begins: friends, family and even passers-by are splashed with water to wash away the bad of the past year, then wrapped in dry cloth. In villages the mood often lasts all of January.\n\nSuva is the capital, on a hilly peninsula on the southeast coast of Viti Levu. On the evening of 31 December, hundreds of families and young people from across the island head to Albert Park in the city centre: music, a countdown of the final seconds, and fireworks bursting over the park at midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "A splash for a fresh start",
+        "text": "After midnight, family and friends get splashed with water to wash off the bad of the old year. Whoever is soaked is wrapped in dry cloth or dressed in dry clothes straight away."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Thanks in church",
+        "text": "For many Fijians the year ends at a church service, giving thanks at midnight for everything it brought. Plenty travel back to their home village to welcome the New Year with family."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "New Year's Day by the water",
+        "text": "1 January is a public holiday, and families across the country head to parks, beaches and swimming spots to start the year together, with a picnic and a swim."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Fiji: Suva | Time2Fest",
+      "description": "Fiji greets 2027 among the first: midnight in Suva is at 12:00 UTC. After church, families splash each other with water as fireworks rise over Albert Park."
+    },
+    "kit": "fj"
+  },
+  "KI": {
+    "text": "Kiribati is one of the first countries to welcome the New Year, though not all at once: the country spans three time zones. The Line Islands, with Kiritimati, open the year first at UTC+14, then come the Phoenix Islands, and two hours after Kiritimati the Gilbert Islands. Life here rests on family, church and the sea, so from Christmas to New Year there are choirs, dancing, canoe races and other contests.\n\nTarawa in the Gilbert Islands is the capital, home to more than half the country: a string of islets between the lagoon and the ocean, joined by causeways. It is also home to parliament, called the Maneaba ni Maungatabu after the maneaba, the traditional meeting house. Tarawa sees in the New Year at church services, then celebrates quietly with family or at small parties on the beach.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A church service at midnight",
+        "text": "In Tarawa the New Year begins in church, followed by quiet celebrations with family. Church is one of the three pillars of life here, alongside family and the sea."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "The frigatebird dance",
+        "text": "The holidays mean choirs and dancing. Dancers spread their arms and snap their heads like the frigatebird on the flag, while men beat the rhythm on a wooden box."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Canoes and a beach night",
+        "text": "From Christmas to New Year the atoll holds canoe races and other contests, and on 31 December people gather for small parties on the beaches between lagoon and ocean."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Tarawa, Kiribati | Time2Fest",
+      "description": "Tarawa, the capital of Kiribati, greets 2027 at midnight UTC+12, which is 12:00 UTC: church services, choirs, frigatebird dances, canoe races and beach nights."
+    },
+    "kit": "ki+12"
+  },
+  "TK": {
+    "text": "Tokelau is three low atolls in the Pacific Ocean, home to about 1,500 people at the 2016 census, and one of the first places the new year reaches. That began at the end of 2011: following Samoa, the islands moved to the other side of the date line and simply skipped 30 December. Christmas and New Year are public holidays and the time when families come home — though there is no airport, so the trip from Apia takes over a day by ship.\n\nFakaofo was once the heart of the celebration: in May the people of all the islands gathered here for the old new year, with a feast and dancing through the night. The atoll's main village is Fale, and in 2012 solar plants went live on all three atolls, making Tokelau the world's first territory powered entirely by the sun.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "Home for the holidays",
+        "text": "Before Christmas and New Year, Tokelauans sail home from Apia on the MV Mataliki to spend the holidays with family. A barge carries them across the reef to shore."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "A service for the new year",
+        "text": "The church is at the centre of atoll life: half the people are Congregationalists and over a third are Catholics. In 2021 Tokelau's office in Apia began the year with a service full of Tokelauan customs."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fatele to the pokihi",
+        "text": "The fatele is Tokelau's best-known dance: villages perform it at their gatherings to the pokihi box drum, and the singing grows higher and faster towards the end."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Tokelau: Fakaofo | Time2Fest",
+      "description": "Tokelau is among the first to see 2027: midnight on Fakaofo atoll falls at 11:00 UTC. Families sail home for the holidays to islands powered by the sun."
+    },
+    "kit": "tk"
+  },
+  "TO": {
+    "text": "Tonga is one of the first countries the new year reaches: the kingdom keeps UTC+13 all year, so midnight here falls at 11:00 UTC. The celebration is quiet and rooted in church: most people see it in at late-night thanksgiving services, and families gather at home and in their villages on Tongatapu, Vava'u, Ha'apai and 'Eua. At midnight church bells ring and crackers pop for a few minutes, and the following week the Free Wesleyan Church prays every morning and evening.\n\nTongatapu is the main island, flat and made of limestone, home to over 70% of Tongans. In the capital, Nuku'alofa, the King welcomes the year at a service in Saione church, and on 1 January he usually receives guests at the wooden Royal Palace of 1867. In the east of the island stands Ha'amonga 'a Maui, a 13th-century stone gateway.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A midnight service",
+        "text": "In Tonga the new year is welcomed in church, at late-night services of thanks for the year gone by. At midnight the bells ring and a brass band plays a hymn."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "At home with family",
+        "text": "After the service, families gather at home and in their villages on Tongatapu, Vava'u, Ha'apai and 'Eua. It is a quiet night, without big public parties."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "A week of prayer",
+        "text": "The Free Wesleyan Church gives the first week of the new year to prayer, with services every morning and evening to give thanks and ask blessings for the year ahead."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Tonga: Tongatapu | Time2Fest",
+      "description": "Tonga greets 2027 among the first: midnight on Tongatapu falls at 11:00 UTC. Late-night church services, bells and a brass-band hymn, then a week of prayer."
+    },
+    "kit": "to"
   }
 }

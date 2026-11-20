@@ -84,7 +84,7 @@
     "kit": "fr"
   },
   "GB": {
-    "text": "Au Royaume-Uni, minuit sonne avec les coups de Big Ben : en Angleterre, la grande fête a lieu au centre de Londres, et de grandes célébrations se tiennent aussi à Manchester, Liverpool ou Birmingham. À minuit, on chante « Auld Lang Syne », sur un poème de Robert Burns de 1788 ; en Écosse, on forme un cercle et on croise les bras au dernier couplet. Là-bas, le réveillon s’appelle Hogmanay : juste après minuit, on rend visite aux amis et voisins avec du charbon, des sablés ou du whisky, car le premier visiteur apporte la chance de l’année à la maison. Le 1er janvier est férié dans tout le pays, et en Écosse le 2 aussi.\n\nÀ Londres, le décompte mène aux coups de Big Ben, retransmis en direct par la BBC. Depuis 2004, un feu d’artifice illumine la Tamise près du London Eye. Pour accueillir 2026, selon la mairie, environ 100 000 personnes munies d’un billet bordaient les quais, et plus de 12 000 fusées ont brillé pendant 12 minutes.",
+    "text": "Au Royaume-Uni, minuit sonne avec les coups de Big Ben : en Angleterre, la grande fête a lieu au centre de Londres, et de grandes célébrations se tiennent aussi à Manchester, Liverpool ou Birmingham. À minuit, on chante « Auld Lang Syne », sur un poème de Robert Burns de 1788 ; en Écosse, on forme un cercle et on croise les bras au dernier couplet. Là-bas, le réveillon s’appelle Hogmanay : juste après minuit, on rend visite aux amis et voisins avec du charbon, des sablés ou du whisky, car le premier visiteur apporte la chance de l’année à la maison. Le 1er janvier est férié dans tout le pays, et en Écosse le 2 aussi.\n\nÀ Londres, le décompte mène aux coups de Big Ben. Depuis 2004, un feu d’artifice illumine la Tamise près du London Eye. Pour accueillir 2026, selon la mairie, environ 100 000 personnes munies d’un billet bordaient les quais, et plus de 12 000 fusées ont brillé pendant 12 minutes.",
     "traditions": [
       {
         "id": "t1",
@@ -392,7 +392,7 @@
     "kit": "hk"
   },
   "KR": {
-    "text": "La Corée du Sud a le 1er janvier férié, mais la grande fête ici, c’est Seollal, le Nouvel An lunaire, qui tombe le 7 février en 2027. Le réveillon du 31 décembre est tout de même fêté, avec des rassemblements dans la plupart des villes. Le matin du 1er janvier, familles et amis partent vers la côte est, la mer ou la montagne : un vœu fait au premier lever de soleil de l’année porterait chance. Le tteokguk, une soupe de galettes de riz, se mange surtout à Seollal ; on disait autrefois qu’un bol ajoutait un an. Depuis juin 2023, l’âge se compte à partir de l’anniversaire, et ce n’est plus qu’un dicton.\n\nÀ Séoul, à minuit, la cloche du pavillon Bosingak résonne : onze citoyens choisis la frappent 33 fois. La cérémonie a lieu depuis 1953 ; KBS attend jusqu’à 100 000 personnes, et KBS et YouTube la diffusent en direct.",
+    "text": "La Corée du Sud a le 1er janvier férié, mais la grande fête ici, c’est Seollal, le Nouvel An lunaire, qui tombe le 7 février en 2027. Le réveillon du 31 décembre est tout de même fêté, avec des rassemblements dans la plupart des villes. Le matin du 1er janvier, familles et amis partent vers la côte est, la mer ou la montagne : un vœu fait au premier lever de soleil de l’année porterait chance. Le tteokguk, une soupe de galettes de riz, se mange surtout à Seollal ; on disait autrefois qu’un bol ajoutait un an. Depuis juin 2023, l’âge se compte à partir de l’anniversaire, et ce n’est plus qu’un dicton.\n\nÀ Séoul, à minuit, la cloche du pavillon Bosingak résonne : onze citoyens choisis la frappent 33 fois. La cérémonie a lieu depuis 1953 ; KBS attend jusqu’à 100 000 personnes, et elle est diffusée en direct.",
     "traditions": [
       {
         "id": "t1",
@@ -410,7 +410,7 @@
         "id": "t3",
         "iconId": "bell",
         "title": "Cloche de Bosingak, 33 coups",
-        "text": "À minuit, au centre de Séoul, onze citoyens choisis frappent la cloche de Bosingak 33 fois, un nombre issu de la tradition bouddhique. KBS et la chaîne YouTube de la ville diffusent la cérémonie en direct."
+        "text": "À minuit, au centre de Séoul, onze citoyens choisis frappent la cloche de Bosingak 33 fois, un nombre issu de la tradition bouddhique. La cérémonie est diffusée en direct."
       }
     ],
     "meta": {
@@ -528,7 +528,7 @@
     "kit": "cn+8"
   },
   "SG": {
-    "text": "Le calendrier de Singapour réunit les fêtes de plusieurs cultures : le Nouvel An chinois, le Hari Raya musulman, le Deepavali hindou et Noël. Le 1er janvier n’est férié qu’un jour, alors que le Nouvel An chinois en compte deux : les 6 et 7 février en 2027. La nuit du 31 décembre se fête dans toute l’île, avec feux d’artifice et animations à Marina Bay, Kallang, Sentosa et Clarke Quay, et l’Association populaire organise des fêtes avec décompte dans les quartiers résidentiels. Mediacorp diffuse un concert du Nouvel An à la télévision.\n\nLe premier décompte de Marina Bay a eu lieu en 2005 et, selon l’URA, a réuni plus de 160 000 personnes. Pour accueillir 2026, le feu d’artifice sur la baie s’est déroulé en quatre parties, à partir de 23 h selon l’URA, et la police a fermé les quais à mesure qu’ils se remplissaient. Pour 2027, un début à 22 h 30 a été annoncé, ainsi que, pour la première fois, une diffusion en direct sur YouTube.",
+    "text": "Le calendrier de Singapour réunit les fêtes de plusieurs cultures : le Nouvel An chinois, le Hari Raya musulman, le Deepavali hindou et Noël. Le 1er janvier n’est férié qu’un jour, alors que le Nouvel An chinois en compte deux : les 6 et 7 février en 2027. La nuit du 31 décembre se fête dans toute l’île, avec feux d’artifice et animations à Marina Bay, Kallang, Sentosa et Clarke Quay, et l’Association populaire organise des fêtes avec décompte dans les quartiers résidentiels. Un concert du Nouvel An est diffusé en direct à la télévision.\n\nLe premier décompte de Marina Bay a eu lieu en 2005 et, selon l’URA, a réuni plus de 160 000 personnes. Pour accueillir 2026, le feu d’artifice sur la baie s’est déroulé en quatre parties, à partir de 23 h selon l’URA, et la police a fermé les quais à mesure qu’ils se remplissaient. Pour 2027, un début à 22 h 30 a été annoncé, ainsi que, pour la première fois, une diffusion en direct.",
     "traditions": [
       {
         "id": "t1",
@@ -551,7 +551,7 @@
     ],
     "meta": {
       "title": "Nouvel An 2027 à Singapour | Time2Fest",
-      "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un direct annoncé sur YouTube. À Singapour, minuit, c’est 16 h UTC."
+      "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un premier direct annoncé. À Singapour, minuit, c’est 16 h UTC."
     },
     "kit": "sg"
   },
@@ -724,7 +724,7 @@
     "kit": "th"
   },
   "VE": {
-    "text": "Le Venezuela accueille le Nouvel An radio allumée : l’antenne fait le compte à rebours, les chansons de fin d’année s’enchaînent — « Cinco pa’ las 12 » (« Minuit moins cinq ») et « Año Nuevo, Vida Nueva » (« Nouvel An, nouvelle vie ») des Billo’s Caracas Boys — et chez soi on passe l’hymne national. À minuit, on mange douze raisins en faisant un vœu pour chacun, et on porte des sous-vêtements jaunes pour la chance. La saison des fêtes, ce sont les hallacas et le pan de jamón, et le 1er janvier est férié.\n\nÀ Caracas, à minuit, les cloches de la cathédrale sonnent douze coups, et la télévision diffuse le grand concert du Nouvel An du pays depuis la place Bolívar. Au-dessus de la ville s’élève la verte montagne de l’Ávila, avec la tour ronde de l’hôtel Humboldt à son sommet, et au centre se dressent les tours jumelles de Parque Central.",
+    "text": "Le Venezuela accueille le Nouvel An en musique : les chansons de fin d’année s’enchaînent — « Cinco pa’ las 12 » (« Minuit moins cinq ») et « Año Nuevo, Vida Nueva » (« Nouvel An, nouvelle vie ») des Billo’s Caracas Boys — et chez soi on passe l’hymne national. À minuit, on mange douze raisins en faisant un vœu pour chacun, et on porte des sous-vêtements jaunes pour la chance. La saison des fêtes, ce sont les hallacas et le pan de jamón, et le 1er janvier est férié.\n\nÀ Caracas, à minuit, les cloches de la cathédrale sonnent douze coups, et la place Bolívar accueille le grand concert du Nouvel An du pays. Au-dessus de la ville s’élève la verte montagne de l’Ávila, avec la tour ronde de l’hôtel Humboldt à son sommet, et au centre se dressent les tours jumelles de Parque Central.",
     "traditions": [
       {
         "id": "t1",
@@ -735,8 +735,8 @@
       {
         "id": "t2",
         "iconId": "bell",
-        "title": "Radio et cloches à minuit",
-        "text": "Allume la radio : compte à rebours et « Cinco pa’ las 12 » au programme, et à Caracas les cloches de la cathédrale sonnent douze coups."
+        "title": "Cloches et hymne",
+        "text": "À minuit, à Caracas, les cloches de la cathédrale sonnent douze coups, et chez soi on passe l’hymne national."
       },
       {
         "id": "t3",
@@ -747,7 +747,7 @@
     ],
     "meta": {
       "title": "Nouvel An 2027 au Venezuela : Caracas | Time2Fest",
-      "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons à la radio, pendant que la cathédrale sonne douze coups."
+      "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons de fin d’année, pendant que la cathédrale sonne douze coups."
     },
     "kit": "ve"
   },
@@ -882,7 +882,7 @@
         "id": "t3",
         "iconId": "music",
         "title": "Fiestón sur le Malecón",
-        "text": "À Saint-Domingue, l’avenue George Washington devient un concert gratuit toute la nuit : merengue, bachata, salsa et urbain, diffusé en direct par Telemicro et sur YouTube."
+        "text": "À Saint-Domingue, l’avenue George Washington devient un concert gratuit toute la nuit : merengue, bachata, salsa et urbain, diffusé en direct à la télévision."
       }
     ],
     "meta": {
@@ -1010,7 +1010,7 @@
         "id": "t1",
         "iconId": "address",
         "title": "Discours du président et hymne",
-        "text": "Allume la télé avant minuit : le président salue le pays, et à minuit pile retentit l’hymne du Kazakhstan."
+        "text": "Avant minuit, le président salue le pays, et à minuit pile retentit l’hymne du Kazakhstan."
       },
       {
         "id": "t2",
@@ -1340,7 +1340,7 @@
         "id": "t2",
         "iconId": "address",
         "title": "Vœux et hymne à minuit",
-        "text": "Passe les dernières minutes de l’année devant la télé : après les vœux du président, l’hymne de l’Azerbaïdjan passe sur toutes les chaînes."
+        "text": "Les dernières minutes de l’année se passent devant la télé : après les vœux du président, l’hymne de l’Azerbaïdjan passe sur toutes les chaînes."
       },
       {
         "id": "t3",
@@ -1890,5 +1890,141 @@
       }
     ],
     "kit": "ca-7"
+  },
+  "CA@utc-0600": {
+    "text": "Le Canada fête le Nouvel An différemment d’une province à l’autre, mais certaines coutumes sont connues dans tout le pays. Au Québec, le 31 décembre, on regarde le « Bye Bye », la revue humoristique de l’année que Radio-Canada diffuse depuis 1968 ; l’an dernier, plus de quatre millions de téléspectateurs l’ont suivi. Le 1er janvier, les lieutenants-gouverneurs des provinces tiennent leurs levées du Nouvel An, des réceptions ouvertes à tous.\n\nÀ Edmonton, capitale de l’Alberta, la fête de l’an dernier avait lieu sur la place Churchill : musique, patinoire avec patins prêtés gratuitement et deux feux d’artifice, à 20 h pour les petits et à minuit. Près de l’aréna de l’Ice District, un concert et un DJ ont suivi le match des Oilers. À Calgary, cette nuit-là, on a dansé sur la glace du lagon de l’île Prince jusqu’aux feux de minuit au-dessus de la Bow.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Danse à une Malanka",
+        "text": "En janvier, les communautés ukrainiennes d’Edmonton et de Winnipeg organisent des Malankas, galas du Nouvel An selon l’ancien calendrier, avec souper, musique live et danse tard dans la nuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Patine, puis vois les feux",
+        "text": "À Edmonton et à Calgary, la fête de la ville est gratuite : patine en musique et, avec des enfants, viens avant 20 h, quand Edmonton tire un premier feu d’artifice."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Va à la levée du Nouvel An",
+        "text": "Le 1er janvier, le lieutenant-gouverneur de l’Alberta ouvre à tous la Maison du gouvernement d’Edmonton : rafraîchissements, visite et carte postale aux soldats canadiens à l’étranger."
+      }
+    ],
+    "kit": "ca-6"
+  },
+  "FJ": {
+    "text": "Les Fidji sont parmi les premiers au monde à accueillir la nouvelle année : minuit y sonne à 12 h UTC. Sur les îles, la fête s’appelle Na Vakatawase, la « séparation » entre l’ancienne et la nouvelle année. Beaucoup finissent l’année à l’église et, une fois l’office terminé, commence le veisui : on asperge d’eau amis, famille et même passants pour laver le mauvais de l’année écoulée, puis on les enveloppe d’un tissu sec. Dans les villages, l’ambiance dure souvent tout le mois de janvier.\n\nSuva est la capitale, sur une péninsule vallonnée de la côte sud-est de Viti Levu. Le soir du 31 décembre, des centaines de familles et de jeunes venus de toute l’île se retrouvent à Albert Park, au centre-ville : musique, compte à rebours des dernières secondes et, à minuit, feu d’artifice au-dessus du parc.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Un seau d’eau pour repartir",
+        "text": "Après minuit, on asperge d’eau la famille et les amis pour laver le mauvais de l’année passée. Celui qui est trempé est aussitôt enveloppé d’un tissu sec ou habillé de vêtements secs."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Rendre grâce à l’église",
+        "text": "Pour beaucoup de Fidjiens, l’année s’achève à l’office, en rendant grâce à minuit pour tout ce qu’elle a apporté. Nombreux sont ceux qui rentrent au village pour fêter le Nouvel An en famille."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Le premier jour, au bord de l’eau",
+        "text": "Le 1er janvier est férié : dans tout le pays, les familles partent vers les parcs, les plages et les coins de baignade pour commencer l’année ensemble, avec pique-nique et baignade."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An aux Fidji : Suva | Time2Fest",
+      "description": "Les Fidji fêtent 2027 parmi les premiers : minuit sonne à Suva à 12 h UTC. Après l’office, on s’asperge d’eau en famille sous le feu d’artifice d’Albert Park."
+    },
+    "kit": "fj"
+  },
+  "KI": {
+    "text": "Les Kiribati sont parmi les premiers à fêter le Nouvel An, mais pas d’un seul coup : le pays s’étend sur trois fuseaux horaires. Les îles de la Ligne, avec Kiritimati, ouvrent l’année les premières à UTC+14, puis viennent les îles Phoenix et, deux heures après Kiritimati, les îles Gilbert. Ici, la vie repose sur la famille, l’Église et la mer : de Noël au Nouvel An, on entend des chœurs, on danse, on fait des courses de pirogues et d’autres compétitions.\n\nTarawa, aux îles Gilbert, est la capitale et abrite plus de la moitié du pays : un chapelet d’îlots entre le lagon et l’océan, reliés par des digues. C’est aussi le siège du parlement, appelé Maneaba ni Maungatabu d’après la maneaba, la maison de réunion traditionnelle. À Tarawa, on accueille le Nouvel An lors d’offices religieux, puis on fête tranquillement en famille ou lors de petites soirées sur la plage.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un office à minuit",
+        "text": "À Tarawa, le Nouvel An commence à l’église, puis on fête tranquillement en famille. L’Église est l’un des trois piliers de la vie ici, avec la famille et la mer."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "La danse de la frégate",
+        "text": "Les fêtes, ce sont des chœurs et des danses. Les danseurs ouvrent les bras et tournent vivement la tête comme la frégate du drapeau, tandis que les hommes frappent le rythme sur une caisse en bois."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Pirogues et soirée à la plage",
+        "text": "De Noël au Nouvel An, l’atoll vit au rythme des courses de pirogues et d’autres compétitions, et le 31 décembre on se retrouve pour de petites soirées sur les plages entre lagon et océan."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Tarawa (Kiribati) | Time2Fest",
+      "description": "Tarawa, capitale des Kiribati, entre en 2027 à minuit UTC+12, soit 12 h UTC : offices religieux, chœurs, danse de la frégate, pirogues et soirées sur la plage."
+    },
+    "kit": "ki+12"
+  },
+  "TK": {
+    "text": "Les Tokelau, ce sont trois atolls bas du Pacifique, où vivaient environ 1 500 personnes au recensement de 2016, et l’un des premiers endroits où arrive la nouvelle année. C’est le cas depuis fin 2011 : à la suite des Samoa, les îles sont passées de l’autre côté de la ligne de changement de date et ont tout simplement sauté le 30 décembre. Noël et le Nouvel An sont fériés, et c’est le moment où les familles rentrent à la maison — sans aéroport, il faut plus d’une journée de bateau depuis Apia.\n\nFakaofo fut le cœur de la fête : en mai, toutes les îles s’y réunissaient pour l’ancien nouvel an, avec un festin et des danses toute la nuit. Le village principal de l’atoll est Fale, et en 2012 des centrales solaires ont été mises en service sur les trois atolls : les Tokelau sont devenues le premier territoire au monde entièrement alimenté par le soleil.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "Rentrer pour les fêtes",
+        "text": "Avant Noël et le Nouvel An, les Tokelauans rentrent d’Apia à bord du Mataliki pour passer les fêtes en famille. Une barge leur fait franchir le récif jusqu’au rivage."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Un office pour l’an neuf",
+        "text": "L’Église est au cœur de la vie des atolls : la moitié des habitants sont congrégationalistes, plus d’un tiers catholiques. En 2021, le bureau des Tokelau à Apia a commencé l’année par un office aux coutumes tokelauanes."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Le fatele au pokihi",
+        "text": "Le fatele est la danse la plus connue des Tokelau : on la danse aux fêtes du village au son du pokihi, un tambour-caisse, et le chant devient plus aigu et plus rapide à la fin."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An aux Tokelau : Fakaofo | Time2Fest",
+      "description": "Les Tokelau fêtent 2027 parmi les premiers : minuit sonne à 11 h UTC sur l’atoll de Fakaofo. Les familles rentrent en bateau sur des îles alimentées au soleil."
+    },
+    "kit": "tk"
+  },
+  "TO": {
+    "text": "Les Tonga sont l’un des premiers pays où arrive la nouvelle année : le royaume vit à UTC+13 toute l’année, si bien que minuit y sonne à 11 h UTC. La fête est calme et tournée vers l’église : la plupart des gens l’accueillent lors d’offices nocturnes d’action de grâce, et les familles se retrouvent chez elles et dans leurs villages, sur Tongatapu, Vava'u, Ha'apai et 'Eua. À minuit, les cloches sonnent et des pétards claquent quelques minutes ; la semaine suivante, l’Église wesleyenne libre prie chaque matin et chaque soir.\n\nTongatapu est l’île principale, plate et calcaire, où vivent plus de 70 % des Tongiens. Dans la capitale, Nuku'alofa, le roi accueille l’année lors d’un office à l’église de Saione, et le 1er janvier il reçoit d’ordinaire ses invités au palais royal en bois, bâti en 1867. À l’est de l’île se dresse Ha'amonga 'a Maui, une porte de pierre du XIIIe siècle.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un office à minuit",
+        "text": "Aux Tonga, on accueille l’an neuf à l’église, lors d’offices de nuit pour remercier de l’année écoulée. À minuit, les cloches sonnent et une fanfare joue un hymne."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "En famille à la maison",
+        "text": "Après l’office, les familles se retrouvent chez elles et dans leurs villages, sur Tongatapu, Vava'u, Ha'apai et 'Eua. La nuit reste calme, sans grandes fêtes publiques."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Une semaine de prière",
+        "text": "L’Église wesleyenne libre consacre la première semaine de l’année à la prière, avec des offices chaque matin et chaque soir pour remercier et prier pour l’année à venir."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An aux Tonga : Tongatapu | Time2Fest",
+      "description": "Les Tonga accueillent 2027 parmi les premiers : minuit sonne à 11 h UTC sur Tongatapu. Offices de nuit, cloches, hymne de fanfare, puis une semaine de prière."
+    },
+    "kit": "to"
   }
 }

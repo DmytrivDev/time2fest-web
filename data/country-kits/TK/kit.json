@@ -1,0 +1,99 @@
+{
+  "code": "TK",
+  "zone": "UTC+13",
+  "zoneId": "utc+1300",
+  "cityId": "fakaofo",
+  "names": {
+    "uk": {
+      "name": "Токелау",
+      "city": "Факаофо",
+      "cityIn": "на Факаофо",
+      "caps": "ФАКАОФО · ТОКЕЛАУ"
+    },
+    "en": {
+      "name": "Tokelau",
+      "city": "Fakaofo",
+      "cityIn": "on Fakaofo",
+      "caps": "FAKAOFO · TOKELAU"
+    },
+    "es": {
+      "name": "Tokelau",
+      "city": "Fakaofo",
+      "cityIn": "en Fakaofo",
+      "caps": "FAKAOFO · TOKELAU"
+    },
+    "fr": {
+      "name": "Tokelau",
+      "city": "Fakaofo",
+      "cityIn": "à Fakaofo",
+      "caps": "FAKAOFO · TOKELAU"
+    }
+  },
+  "picto": "M2.64 28.36 C2.17 28.35 7.03 25.77 11.1 22.45 C16.44 18.11 27.93 11.15 31.3 10.02 C31.66 9.9 30.58 10.62 30.44 10.86 C26.83 15.12 29.71 23.18 34.22 27.23 C35.57 28.26 35.5 28.32 38.02 28.42 L38.02 28.65 Z M2.34 28.83 C2.34 28.83 2 29.07 2 29.26 C2 29.46 2.38 29.73 2.38 29.73 L37.28 30.11 L37.92 29.68 L37.03 29.13 Z",
+  "flagColors": [
+    "#FED100",
+    "#FFFFFF",
+    "#3A6FD8"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Факаофо"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on Fakaofo"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Fakaofo"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Fakaofo"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
