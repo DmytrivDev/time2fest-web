@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createPayloadClockStateStore } from '../../src/adapters/payloadClockState';
 import { createTestClock, realClock } from '../../src/clock';
 import { buildDispatcher, createDeps, createLockState, payloadOf, seedStoreOf } from '../../src/container';
@@ -14,6 +14,12 @@ import type { Deps } from '../../src/endpoints/types';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { routeRegistry } from '../../src/registries/routes';
 import { doorRoutes } from '../../src/test-doors/index';
+import { SITE_R2_KEYS, type SiteState } from '@time2fest/contracts';
+import { SiteStateSchema } from '@time2fest/contracts/schemas';
+import { createPayloadFanOutClaim } from '../../src/adapters/payloadSiteState';
+import { siteOf } from '../../src/endpoints/deps';
+import { baseSeedRows, runSeed } from '../../src/seed/index';
+import { deleteUnder, listKeys, r2Env, readObject } from './r2-helpers';
 
 const BASE = 'http://127.0.0.1:3000';
 const JSON_TYPE = { 'content-type': 'application/json' };
@@ -247,5 +253,107 @@ describe('test doors', () => {
     expect(state.speed).toBe(1);
     expect(state.frozen).toBe(false);
     expect(Math.abs((await now(dispatch)) - Date.now())).toBeLessThanOrEqual(2_000);
+  });
+});
+
+/**
+ * SPEC-08 AC-68 (W19): `POST /api/_test/site` in the `test` class — switch, products fake, select, red button in
+ * the test bucket, reset (version 1 and `last_fanned_out` 0) — and the unknown-path 404 in `rehearsal`.
+ */
+describe('site door', { timeout: 120_000 }, () => {
+  const run = `sd${Date.now()}`;
+  const r2 = r2Env();
+  const redKey = `${r2.prefix}${SITE_R2_KEYS.redButton}`;
+  const siteDoor = (dispatch: (r: Request) => Promise<Response>, body: unknown) =>
+    dispatch(new Request(`${BASE}/api/_test/site`, { method: 'POST', body: JSON.stringify(body), headers: JSON_TYPE }));
+  const state = async (dispatch: (r: Request) => Promise<Response>): Promise<SiteState> => {
+    const res = await dispatch(new Request(`${BASE}/api/site/state`));
+    expect(res.status, await res.clone().text()).toBe(200);
+    return SiteStateSchema.parse(await res.json()) as SiteState;
+  };
+
+  beforeAll(async () => {
+    // The snapshot reads the season catalog: seed it (idempotent).
+    await runSeed(seedStoreOf(depsFor('test')), baseSeedRows());
+    await deleteUnder(r2, redKey);
+  });
+
+  afterAll(async () => {
+    await siteOf(depsFor('test')).resetForTests?.();
+    await deleteUnder(r2, redKey);
+  });
+
+  it('AC-68: switch (key, value, mode) → the snapshot changes under a higher version', async () => {
+    const dispatch = await buildDispatcher(depsFor('test'));
+    expect((await siteDoor(dispatch, { action: 'reset' })).status).toBe(200);
+    expect((await state(dispatch)).version).toBe(1);
+    const res = await siteDoor(dispatch, { action: 'switch', key: 'toastTiers', tier: '5', value: false, mode: 'manual', reason: `door ${run}` });
+    expect(res.status, await res.clone().text()).toBe(200);
+    expect(((await res.json()) as { value: unknown }).value).toEqual({ version: 2, changed: true });
+    const after = await state(dispatch);
+    expect(after.switches.toastTiers['5']).toBe(false);
+    expect(after.version).toBe(2);
+    // A bad body is refused by the schema; nothing changes.
+    expect((await siteDoor(dispatch, { action: 'switch', key: 'chat', value: 'no', mode: 'manual' })).status).toBe(400);
+    expect((await state(dispatch)).version).toBe(2);
+  });
+
+  it('AC-68: products sets the fake, select chooses a listed product; an unknown id is refused', async () => {
+    const dispatch = await buildDispatcher(depsFor('test'));
+    expect((await siteDoor(dispatch, { action: 'reset' })).status).toBe(200);
+    const list = [
+      { key: 'pass', productId: `pass-${run}`, price: { amount: 500, currency: 'USD' } },
+      { key: 'toast:10', productId: `toast-${run}`, price: { amount: 1000, currency: 'USD' } },
+    ];
+    expect((await siteDoor(dispatch, { action: 'products', list })).status).toBe(200);
+    expect((await siteDoor(dispatch, { action: 'select', key: 'toast:10', productId: `toast-${run}` })).status).toBe(200);
+    expect((await state(dispatch)).products).toEqual([{ key: 'toast:10', price: { amount: 1000, currency: 'USD' }, priceVersion: 1 }]);
+    const unknown = await siteDoor(dispatch, { action: 'select', key: 'pass', productId: `nope-${run}` });
+    expect(unknown.status).toBe(400);
+    expect(((await unknown.json()) as { error: unknown }).error).toEqual({ code: 'validation', reason: 'unknown-product' });
+  });
+
+  it('AC-68: redButton put writes the snapshot with outage technical to the test bucket; delete removes it', async () => {
+    const dispatch = await buildDispatcher(depsFor('test'));
+    expect((await siteDoor(dispatch, { action: 'reset' })).status).toBe(200);
+    const current = await state(dispatch);
+    expect((await siteDoor(dispatch, { action: 'redButton', op: 'put' })).status).toBe(200);
+    const stored = SiteStateSchema.parse(JSON.parse(await readObject(r2, redKey))) as SiteState;
+    expect(stored).toEqual({ ...current, outage: 'technical' });
+    expect((await siteDoor(dispatch, { action: 'redButton', op: 'delete' })).status).toBe(200);
+    expect(await listKeys(r2, redKey)).toEqual([]);
+    // Deleting an absent object is not an error.
+    expect((await siteDoor(dispatch, { action: 'redButton', op: 'delete' })).status).toBe(200);
+  });
+
+  it('AC-68: reset → version 1, default switches, no products, empty fake, and nothing fanned out yet', async () => {
+    const deps = depsFor('test');
+    const dispatch = await buildDispatcher(deps);
+    await siteDoor(dispatch, { action: 'products', list: [{ key: 'pass', productId: `pass-${run}`, price: { amount: 500, currency: 'USD' } }] });
+    await siteDoor(dispatch, { action: 'select', key: 'pass', productId: `pass-${run}` });
+    await siteDoor(dispatch, { action: 'switch', key: 'chat', value: false, mode: 'manual' });
+    const changed = await state(dispatch);
+    expect(changed.products).toHaveLength(1);
+    const claim = createPayloadFanOutClaim(payloadOf(deps));
+    expect(await claim.claim(changed.version)).toBe(true);
+
+    expect((await siteDoor(dispatch, { action: 'reset' })).status).toBe(200);
+    const reset = await state(dispatch);
+    expect(reset.version).toBe(1);
+    expect(reset.products).toEqual([]);
+    expect(reset.switches).toMatchObject({ chat: true, toasts: true, pass: true, passGift: true, payments: true, viewersMap: true, passOffer: true });
+    expect(reset.switches.toastTiers).toEqual({ '2': true, '5': true, '10': true });
+    expect(await siteOf(deps).products.list()).toEqual([]);
+    // `last_fanned_out` is back to 0: version 1 can be claimed again.
+    expect(await claim.claim(1)).toBe(true);
+    expect((await siteDoor(dispatch, { action: 'reset' })).status).toBe(200);
+  });
+
+  it('AC-68: in rehearsal the site door answers exactly like an unknown path', async () => {
+    const dispatch = viaEdge(await buildDispatcher(depsFor('rehearsal')));
+    const unknown = await dispatch(new Request(`${BASE}/api/_test/nope`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
+    const door = await siteDoor(dispatch, { action: 'reset' });
+    expect(unknown.status).toBe(404);
+    expect({ status: door.status, body: await door.text() }).toEqual({ status: unknown.status, body: await unknown.text() });
   });
 });

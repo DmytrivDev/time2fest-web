@@ -1,14 +1,14 @@
 /**
  * Cloudflare cache purge by Cache-Tag (SPEC-08 AC-33, conductor decision А-2), ring 4: the `purge` side of
  * `SnapshotSink`. ONE request per call: `POST <base>/zones/<zone>/purge_cache` with `{"tags":["t2f-site-state"]}`,
- * the tag the edge stores the public site answer under (`workers/edge/src/publicCache.ts` `SITE_CACHE_TAG`).
+ * the tag the edge stores the public site answer under (`SITE_CACHE_TAG`, one copy in `packages/contracts`).
  * Success = a 2xx answer whose body has `success: true`; anything else throws an error that names the
  * HTTP status only. The token travels only in the `Authorization` header and is never logged or thrown.
  */
+import { SITE_CACHE_TAG } from '@time2fest/contracts';
 import type { SnapshotSink } from '../site/ports';
 
-/** Must equal `SITE_CACHE_TAG` of `workers/edge/src/publicCache.ts` (the edge stores the answer under it). */
-export const SITE_CACHE_TAG = 't2f-site-state';
+export { SITE_CACHE_TAG };
 export const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
 const TIMEOUT_MS = 10_000;
 

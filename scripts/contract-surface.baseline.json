@@ -4167,6 +4167,9 @@
         "'toast:5'"
       ]
     },
+    "packages/contracts/src/site.ts#SITE_CACHE_TAG": {
+      "text": "\"t2f-site-state\""
+    },
     "packages/contracts/src/site.ts#SITE_CHANNEL_CLASS": {
       "text": "\"site:state\""
     },

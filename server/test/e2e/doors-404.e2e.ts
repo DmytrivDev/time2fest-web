@@ -28,6 +28,7 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/scheduler/lease'],
   ['POST', '/api/_test/scheduler/night-run'],
   ['GET', '/api/_test/scheduler/night-run'],
+  ['POST', '/api/_test/site'],
   ['POST', '/api/_test/video-status'],
 ];
 

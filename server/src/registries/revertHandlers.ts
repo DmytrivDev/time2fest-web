@@ -8,15 +8,13 @@ import { resolveActor } from '../audit/journal';
 import type { RevertHandler } from '../audit/ports';
 import { collectionUpdate, correctionSave, unattendedSetManual } from '../adapters/payloadRevert';
 import { processDeps } from '../adapters/processDeps';
-import type { Deps } from '../endpoints/types';
+import { siteOf } from '../endpoints/deps';
 import { assertRegistry } from '../platform/registry';
 import { siteRevertHandlers, type SiteDeps } from '../site/service';
 
-/** The process's site deps (SPEC-08). `Deps.site` and its getter are wired by the composition root (S·P5). */
+/** The process's site deps (SPEC-08), wired by the composition root. */
 async function siteDeps(): Promise<SiteDeps> {
-  const site = ((await processDeps()) as Deps & { site?: SiteDeps }).site;
-  if (!site) throw new Error('deps: site missing (deps not built by createDeps)');
-  return site;
+  return siteOf(await processDeps());
 }
 
 /** `site.product`, `site.switch`: the reverting owner, from the revert's request. */

@@ -73,6 +73,9 @@ export const SITE_R2_KEYS = {
 export const SITE_SOURCE_HEADER = 'x-t2f-source';
 export const SITE_VERSION_HEADER = 'x-t2f-site-version';
 
+/** Cache-Tag the edge stores the public site answer under; the server purges by it (conductor decision А-2). Never sent to clients. */
+export const SITE_CACHE_TAG = 't2f-site-state';
+
 export interface SiteService {
   /** `GET /api/site/state` (proposed). Failures: `network` | `unavailable`; the client keeps the last known snapshot. */
   state(): Promise<ApiResult<SiteState>>;

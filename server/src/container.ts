@@ -47,17 +47,19 @@ import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
-import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow } from './endpoints/types';
+import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventSubscriber } from './events/ports';
 import type { CatalogCopyDeps } from './catalog/copy';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
 import { createPayloadCorrectionReader, payloadCorrectionDeps } from './adapters/payloadCorrections';
-import { createPayloadFanOutClaim, createPayloadSiteStore } from './adapters/payloadSiteState';
+import { createPayloadFanOutClaim, createPayloadSiteReset, createPayloadSiteStore } from './adapters/payloadSiteState';
+import { createFakeProducts, emptyProducts } from './adapters/products';
 import { createCfPurge } from './adapters/cfPurge';
 import { currentPatches } from './corrections/service';
 import type { FanOutDeps } from './site/fanout';
+import type { SnapshotReadDeps } from './site/snapshot';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
 import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
@@ -220,7 +222,10 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.catalogStore = overrides.catalogStore ?? createPayloadCatalogStore(payload);
   // Services over the stores, built once: the request binding is the `tx` parameter of their methods.
   deps.alarmService = overrides.alarmService ?? createAlarmService(alarmStore, clock);
-  deps.corrections = overrides.corrections ?? payloadCorrectionDeps({ publisher: deps.events.publisher, clock, isRevertible });
+  // The site state (SPEC-08): built before the corrections, whose changes bump its version in their transaction.
+  deps.site = overrides.site ?? createSiteWiring(deps, payload);
+  deps.corrections =
+    overrides.corrections ?? { ...payloadCorrectionDeps({ publisher: deps.events.publisher, clock, isRevertible }), siteVersion: deps.site.store };
   deps.unattended =
     overrides.unattended ??
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
@@ -442,6 +447,46 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
 }
 
 /**
+ * The snapshot readers of the `site` state (SPEC-08 AC-8, AC-9): the record, the corrections' effective
+ * patches and the catalog's season meta, over Payload.
+ */
+function siteSnapshotDeps(deps: Deps, payload: () => Promise<Payload>): SnapshotReadDeps {
+  const catalog = catalogStoreOf(deps);
+  const corrections = createPayloadCorrectionReader(payload);
+  return {
+    store: createPayloadSiteStore({ payload, clock: realClock }),
+    patches: async () => (await currentPatches(corrections)).patches,
+    catalogMeta: async () => {
+      const season = (await catalog.read()).season;
+      return season ? { generatedAt: season.generatedAt, tzdbVersion: season.tzdbVersion } : null;
+    },
+  };
+}
+
+/**
+ * The site state of the process (SPEC-08 W20): the store, the products port, the journal and the outbox
+ * publisher for toggle-with-reason and the product choice, and the snapshot readers of `GET /api/site/state`.
+ * `products` is the empty port in every class (AC-18); in `test` it is a settable fake, empty until the
+ * `POST /api/_test/site` door fills it, plus the door's record reset.
+ */
+function createSiteWiring(deps: Deps, payload: () => Promise<Payload>): SiteWiring {
+  const store = createPayloadSiteStore({ payload, clock: deps.clock });
+  const base = { store, journal: createPayloadJournal(isRevertible), publisher: eventsOf(deps).publisher, clock: deps.clock, snapshot: siteSnapshotDeps(deps, payload) };
+  if (deps.env.class !== 'test') return { ...base, products: emptyProducts };
+  const fake = createFakeProducts();
+  const resetRecord = createPayloadSiteReset({ payload, clock: deps.clock });
+  return {
+    ...base,
+    products: fake,
+    testProducts: fake,
+    async resetForTests() {
+      await resetRecord();
+      fake.set([]);
+    },
+  };
+}
+
+/**
  * What the after-commit fan-out of the `site` snapshot needs (SPEC-08 W12 … W14): the snapshot readers over
  * Payload, the fan-out claim, the realtime publisher (when configured), the edge purge only with token, zone
  * and site URL (else every change logs `site/purge-skipped`, AC-34), the catalog's bucket and prefix (else
@@ -450,8 +495,6 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
 export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
   const payload = payloadOf(deps);
   const v = deps.env.vars;
-  const catalog = catalogStoreOf(deps);
-  const corrections = createPayloadCorrectionReader(payload);
   let publisher: ChannelPublisher | undefined;
   try {
     publisher = publisherOf(deps);
@@ -463,14 +506,7 @@ export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
   const siteUrl = v.T2F_SITE_URL;
   const bucket = deps.catalogCopy?.();
   return {
-    snapshot: {
-      store: createPayloadSiteStore({ payload, clock: realClock }),
-      patches: async () => (await currentPatches(corrections)).patches,
-      catalogMeta: async () => {
-        const season = (await catalog.read()).season;
-        return season ? { generatedAt: season.generatedAt, tzdbVersion: season.tzdbVersion } : null;
-      },
-    },
+    snapshot: deps.site?.snapshot ?? siteSnapshotDeps(deps, payload),
     claim: createPayloadFanOutClaim(payload),
     ...(publisher ? { publisher } : {}),
     ...(token && zoneId && siteUrl ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token) }), siteUrl: String(siteUrl) } } : {}),

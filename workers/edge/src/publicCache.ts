@@ -4,6 +4,7 @@
 // No `fetch` cache options are used; the cache key and the origin request carry the path and allowed params only.
 import type { PublicRoute } from '../../../packages/contracts/src/publicRoutes';
 import { parseSiteState, type SiteStateLike } from '../../../packages/contracts/src/siteGuard';
+import { SITE_CACHE_TAG } from '../../../packages/contracts/src/site';
 import type { EdgeCache, EdgeDeps, EdgeEnv } from './env';
 import { proxy } from './proxy';
 import { redButtonState } from './redButton';
@@ -14,8 +15,8 @@ export const SOURCE_HEADER = 'x-t2f-source';
 export const VERSION_HEADER = 'x-t2f-site-version';
 /** Stored with each cache copy: the edge clock at the moment it was stored (ms). Never sent to clients. */
 export const CACHED_AT_HEADER = 'x-t2f-cached-at';
-/** Purge tag of the site snapshot (conductor decision А-2). Never sent to clients. */
-export const SITE_CACHE_TAG = 't2f-site-state';
+/** Purge tag of the site snapshot (conductor decision А-2), one copy in `packages/contracts/src/site.ts`. Never sent to clients. */
+export { SITE_CACHE_TAG };
 
 export type PublicSource = 'red-button' | 'origin' | 'cache' | 'r2';
 

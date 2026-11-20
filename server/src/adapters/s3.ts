@@ -2,7 +2,7 @@
  * S3-compatible object store adapter (AC-72, AC-73), ring 4: Cloudflare R2 in production, the `r2` emulator
  * of the compose stack on a worktree. The keys come from the environment only and never reach a log.
  */
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import type { ObjectStore } from '../catalog/ports';
 
 export interface S3Config {
@@ -33,6 +33,9 @@ export function createS3ObjectStore(config: S3Config, client: S3Client = createS
   return {
     async put(key, body, contentType) {
       await client.send(new PutObjectCommand({ Bucket: config.bucket, Key: key, Body: body, ContentType: contentType }));
+    },
+    async delete(key) {
+      await client.send(new DeleteObjectCommand({ Bucket: config.bucket, Key: key }));
     },
   };
 }

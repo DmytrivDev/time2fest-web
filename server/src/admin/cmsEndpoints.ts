@@ -12,17 +12,29 @@
  * POST also needs `content-type: application/json` (S4-01: a cross-site form cannot send it without
  * a preflight; the proxy checks Origin) and a body of at most 1 KB matching the strict C9 schema.
  * Speed is not an admin action: it exists only in the `ops` CLI (spec07-q1).
+ *
+ * SPEC-08 (AC-10, AC-16, AC-17, AC-19 … AC-21), every class, the same gate, role, JSON and 1 KB rules:
+ * - `POST /cms-api/site/switch` `SiteSwitchBody` → toggle-with-reason, mode always `manual`;
+ * - `POST /cms-api/site/product` `SiteProductBody` → the choice of a product the products port lists;
+ * - `GET /cms-api/site/view` → `{ state, paymentsPause, products, selections }` for the owner's slice.
+ * A write runs in one transaction on the request (record, journal row, outbox event). Refusals:
+ * `invalid` → 400 `validation` (with `reason`, e.g. `unknown-product`), `forbidden` → 403. No endpoint
+ * accepts an amount: a price is always the listed product's.
  */
 import type { ClockControlValue } from '@time2fest/contracts';
-import { ClockControlBodySchema } from '@time2fest/contracts/schemas';
+import { ClockControlBodySchema, SiteProductBodySchema, SiteSwitchBodySchema } from '@time2fest/contracts/schemas';
 import type { Endpoint, PayloadRequest } from 'payload';
+import type { ZodType } from 'zod';
 import { hasJsonContentType, passedGate } from '../access/payloadGuard';
 import { roleOf } from '../access/policies';
 import { clockControlDepsOf, festivalDepsOf, processDeps } from '../adapters/processDeps';
 import { resolveActor } from '../audit/journal';
+import { siteOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';
 import type { EnvClass } from '../platform/env';
 import { festivalState } from '../scheduler/festival';
+import { chooseProduct, toggle, type SiteResult } from '../site/service';
+import { readSnapshot } from '../site/snapshot';
 import { CLOCK_CONTROL_CLASSES, controlClock } from '../timekeeping/control';
 
 const NO_STORE = { 'cache-control': 'no-store' };
@@ -30,7 +42,8 @@ const MAX_BODY_BYTES = 1024;
 
 type Code = 'forbidden' | 'validation' | 'unavailable';
 const STATUS: Record<Code, number> = { forbidden: 403, validation: 400, unavailable: 503 };
-const fail = (code: Code) => Response.json({ ok: false, error: { code } }, { status: STATUS[code], headers: NO_STORE });
+const fail = (code: Code, reason?: string) =>
+  Response.json({ ok: false, error: reason ? { code, reason } : { code } }, { status: STATUS[code], headers: NO_STORE });
 
 /** Owner who passed the Access gate (or a server-side call carrying an owner user). */
 const isOwner = (req: PayloadRequest) => passedGate(req) && roleOf(req.user) === 'owner';
@@ -55,8 +68,8 @@ async function boundedText(req: PayloadRequest): Promise<string | null> {
   return Buffer.concat(chunks).toString('utf8');
 }
 
-/** The parsed C9 body, or `null` (wrong type, empty, over 1 KB, not JSON, not the strict schema). */
-async function clockBodyOf(req: PayloadRequest) {
+/** The parsed body of `schema`, or `null` (wrong type, empty, over 1 KB, not JSON, not the strict schema). */
+async function jsonBodyOf<T>(req: PayloadRequest, schema: ZodType<T>): Promise<T | null> {
   if (!hasJsonContentType(req)) return null;
   // S07-02: a declared length over the limit (or malformed) is refused before reading; without a declared
   // length (the request may arrive re-wrapped by Next/Payload) the body is read as a stream and cut at the limit.
@@ -65,7 +78,7 @@ async function clockBodyOf(req: PayloadRequest) {
   try {
     const text = await boundedText(req);
     if (text === null || text.length === 0 || Buffer.byteLength(text, 'utf8') > MAX_BODY_BYTES) return null;
-    const parsed = ClockControlBodySchema.safeParse(JSON.parse(text));
+    const parsed = schema.safeParse(JSON.parse(text));
     return parsed.success ? parsed.data : null;
   } catch {
     return null;
@@ -94,7 +107,7 @@ function clockEndpoint(resolve: () => Promise<Deps>): Endpoint {
     method: 'post',
     handler: async (req) => {
       if (!isOwner(req)) return fail('forbidden');
-      const body = await clockBodyOf(req);
+      const body = await jsonBodyOf(req, ClockControlBodySchema);
       if (body === null) return fail('validation');
       const control = clockControlDepsOf(await resolve());
       if (!control) return fail('forbidden');
@@ -112,6 +125,71 @@ function clockEndpoint(resolve: () => Promise<Deps>): Endpoint {
   };
 }
 
+/** A site service result as the owner's answer. */
+function siteAnswer(result: SiteResult): Response {
+  if (!result.ok) return result.reason === 'forbidden' ? fail('forbidden') : fail('validation', result.detail);
+  return Response.json({ ok: true, value: { version: result.version, changed: result.changed } }, { headers: NO_STORE });
+}
+
+/** The owner from the request, as the journal names them. */
+const ownerActor = (req: PayloadRequest) => ({ ...resolveActor(req.user, req.context), kind: 'owner' as const });
+
+function siteSwitchEndpoint(resolve: () => Promise<Deps>): Endpoint {
+  return {
+    path: '/site/switch',
+    method: 'post',
+    handler: async (req) => {
+      if (!isOwner(req)) return fail('forbidden');
+      const body = await jsonBodyOf(req, SiteSwitchBodySchema);
+      if (body === null) return fail('validation');
+      const site = siteOf(await resolve());
+      try {
+        // The request is the transaction: the record, its journal row and the outbox event commit together.
+        return siteAnswer(await toggle(site, req, ownerActor(req), body, 'manual'));
+      } catch {
+        return fail('unavailable');
+      }
+    },
+  };
+}
+
+function siteProductEndpoint(resolve: () => Promise<Deps>): Endpoint {
+  return {
+    path: '/site/product',
+    method: 'post',
+    handler: async (req) => {
+      if (!isOwner(req)) return fail('forbidden');
+      const body = await jsonBodyOf(req, SiteProductBodySchema);
+      if (body === null) return fail('validation');
+      const site = siteOf(await resolve());
+      try {
+        return siteAnswer(await chooseProduct(site, req, ownerActor(req), body));
+      } catch {
+        return fail('unavailable');
+      }
+    },
+  };
+}
+
+function siteViewEndpoint(resolve: () => Promise<Deps>): Endpoint {
+  return {
+    path: '/site/view',
+    method: 'get',
+    handler: async (req) => {
+      if (!isOwner(req)) return fail('forbidden');
+      const site = siteOf(await resolve());
+      try {
+        const [read, record, products] = await Promise.all([readSnapshot(site.snapshot), site.store.read(), site.products.list()]);
+        if (!read.ok) return fail('unavailable', read.reason);
+        const value = { state: read.state, paymentsPause: record.paymentsPause, products, selections: record.productSelections };
+        return Response.json({ ok: true, value }, { headers: NO_STORE });
+      } catch {
+        return fail('unavailable');
+      }
+    },
+  };
+}
+
 /**
  * The root endpoints of class `cls`. `resolve` gives the process deps (tests may pass their own).
  * `POST /clock` exists only where clock control exists (`rehearsal`, `test`).
@@ -119,5 +197,7 @@ function clockEndpoint(resolve: () => Promise<Deps>): Endpoint {
 export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = processDeps): Endpoint[] {
   const endpoints = [festivalStateEndpoint(resolve)];
   if (CLOCK_CONTROL_CLASSES.includes(cls)) endpoints.push(clockEndpoint(resolve));
+  // SPEC-08: the owner's site-state endpoints exist in every class.
+  endpoints.push(siteProductEndpoint(resolve), siteSwitchEndpoint(resolve), siteViewEndpoint(resolve));
   return endpoints;
 }

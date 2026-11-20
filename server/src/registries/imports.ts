@@ -5,7 +5,7 @@
 import { createPayloadImportStore } from '../adapters/payloadCatalog';
 import { importCatalog, type ImportResult } from '../catalog/import';
 import { assertRegistry } from '../platform/registry';
-import { eventsOf } from '../endpoints/deps';
+import { eventsOf, siteOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';
 import { createPayloadJournal } from '../adapters/payloadJournal';
 
@@ -34,6 +34,8 @@ export const importRegistry: readonly ImportRow[] = [
           publisher: eventsOf(ctx.deps).publisher,
           journal: createPayloadJournal(() => false),
           clock: ctx.deps.clock,
+          // SPEC-08 AC-4, AC-9: a changed catalog bumps the site version in the import's transaction.
+          siteVersion: siteOf(ctx.deps).store,
         },
         { apply: ctx.apply, readSource: ctx.readSource },
       );

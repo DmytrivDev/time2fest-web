@@ -90,8 +90,8 @@ describe('test doors gating', () => {
     }
   });
 
-  it('SPEC-07 AC-68: the registry has 18 door rows, and the production e2e list names exactly them', () => {
-    expect(doorRegistry).toHaveLength(18);
+  it('SPEC-07 AC-68: the registry has 19 door rows (SPEC-08 W19: + site), and the production e2e list names exactly them', () => {
+    expect(doorRegistry).toHaveLength(19);
     const rows = doorRegistry.map((d) => `${d.method} ${d.path}`).sort();
     const e2e = fs.readFileSync(path.resolve(__dirname, '../e2e/doors-404.e2e.ts'), 'utf8');
     const listed = [...e2e.matchAll(/\['(GET|POST)', '(\/api\/_test\/[^']+)'\]/g)].map((m) => `${m[1]} ${m[2]}`).sort();

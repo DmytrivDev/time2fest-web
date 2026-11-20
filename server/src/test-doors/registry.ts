@@ -1,6 +1,6 @@
 /**
  * Test-door registry (AC-32, AC-35 … AC-38, AC-62; SPEC-07 AC-67, AC-68): sorted, unique rows under
- * `/api/_test/*` — 18 rows. Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
+ * `/api/_test/*` — 19 rows. Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
  * `shouldLoadDoors`). `reset` empties this worktree's data (run records and scheduler runs included)
  * and seeds it (AC-47); `fixtures` applies one named fixture row of the seed registry.
  */
@@ -27,6 +27,7 @@ import { edgeEchoDoors } from './edgeEcho';
 import { moderationDoor } from './moderation';
 import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
 import { schedulerDoors } from './scheduler';
+import { siteDoor } from './site';
 
 /** What a door may use beyond the request context. */
 export interface DoorTools {
@@ -142,6 +143,7 @@ export const doorRegistry: readonly DoorRow[] = [
   realtimeTokenDoor,
   resetDoor(),
   ...schedulerDoors,
+  siteDoor,
   stub('video-status', '/api/_test/video-status'),
 ];
 

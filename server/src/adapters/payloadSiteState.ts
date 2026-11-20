@@ -187,3 +187,31 @@ export function createPayloadFanOutClaim(payload: () => Promise<Payload>): FanOu
     },
   };
 }
+
+/**
+ * Test-class reset of the site record (SPEC-08 W19, the `reset` action of `POST /api/_test/site`): every
+ * column back to its default — version 1, no change time, default switches, no pause, no selections, no
+ * rebuild — AND `last_fanned_out` back to 0, so the next change (version 2) is claimed and fanned out again.
+ * One transaction under the site lock. Reached only through the test door (the composition root wires it in
+ * the `test` class only).
+ */
+export function createPayloadSiteReset(deps: PayloadSiteStateDeps): () => Promise<void> {
+  const store = createPayloadSiteStore(deps);
+  return () =>
+    store.inTransaction(null, async (tx) => {
+      const conn = await sessionOf(tx);
+      await lockRow(conn);
+      await conn.execute(sql`
+        UPDATE "site_state" SET
+          "version" = DEFAULT,
+          "at" = NULL,
+          "switches" = DEFAULT,
+          "payments_pause" = NULL,
+          "product_selections" = DEFAULT,
+          "rebuild_due_at" = NULL,
+          "rebuild_deferred" = DEFAULT,
+          "last_fanned_out" = DEFAULT,
+          "updated_at" = clock_timestamp()
+        WHERE "id" = ${FIRST_ROW}`);
+    });
+}

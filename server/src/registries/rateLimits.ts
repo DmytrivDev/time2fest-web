@@ -11,6 +11,10 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
   // Realtime connection tokens (SPEC-06 AC-16): 30 a minute per client, counted in this process if Redis is down.
   { key: 'realtime-token', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
+  // The public site snapshot (SPEC-08 AC-3, AC-37): mostly answered by the edge cache, so the origin sees few
+  // reads; 600 a minute per client keeps a reload storm or a reader test far below the limit. Counted in this
+  // process if Redis is down (a public read never fails closed on the fast store).
+  { key: 'site-read', limit: 600, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
   // Toast text check (SPEC-09 AC-39, C12): 20 a minute per client, before any AI call; counted in this process if Redis is down.
   { key: 'toasts-check', limit: 20, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
 ];
