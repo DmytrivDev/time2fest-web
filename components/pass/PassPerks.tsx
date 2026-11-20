@@ -11,7 +11,8 @@ import { useId, useState } from 'react';
 import { cn } from '@/components/primitives/cn';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import s from './pass.module.css';
 
 const UA = 'linear-gradient(#0057B7 50%, #FFD700 50%)';
@@ -287,12 +288,13 @@ export function PassPerksShowcase() {
 
 /** Вікно під трансляцією: ціна, назви можливостей і «Усе про пас». */
 export function PassPerksCompact() {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('pass.perks');
   const p = useTranslations('pass.page');
   return (
     <section aria-label={t('title')} className={cn(s.gold, s.perksCard)} style={{ borderColor: 'rgba(252,226,134,0.22)' }}>
       <div className={s.priceRow}>
-        <span>{formatUsd(PASS_PRICE)}</span>
+        <span>{formatUsd(passPrice)}</span>
         <span>{p('priceNote')}</span>
       </div>
       <ul className={s.compact}>

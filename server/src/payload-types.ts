@@ -123,12 +123,14 @@ export interface Config {
     'admin-settings': AdminSetting;
     'clock-state': ClockState;
     'moderation-settings': ModerationSetting;
+    'site-state': SiteState;
     'unattended-state': UnattendedState;
   };
   globalsSelect: {
     'admin-settings': AdminSettingsSelect<false> | AdminSettingsSelect<true>;
     'clock-state': ClockStateSelect<false> | ClockStateSelect<true>;
     'moderation-settings': ModerationSettingsSelect<false> | ModerationSettingsSelect<true>;
+    'site-state': SiteStateSelect<false> | SiteStateSelect<true>;
     'unattended-state': UnattendedStateSelect<false> | UnattendedStateSelect<true>;
   };
   locale: null;
@@ -1117,6 +1119,39 @@ export interface ModerationSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-state".
+ */
+export interface SiteState {
+  id: number;
+  version?: number | null;
+  at?: string | null;
+  switches?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  paymentsPause?: ('manual' | 'auto') | null;
+  productSelections?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  rebuildDueAt?: string | null;
+  rebuildDeferred?: boolean | null;
+  lastFannedOut?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "unattended-state".
  */
 export interface UnattendedState {
@@ -1165,6 +1200,23 @@ export interface ModerationSettingsSelect<T extends boolean = true> {
   nightCeilingUsd?: T;
   monthCeilingUsd?: T;
   version?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-state_select".
+ */
+export interface SiteStateSelect<T extends boolean = true> {
+  version?: T;
+  at?: T;
+  switches?: T;
+  paymentsPause?: T;
+  productSelections?: T;
+  rebuildDueAt?: T;
+  rebuildDeferred?: T;
+  lastFannedOut?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

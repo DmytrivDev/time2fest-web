@@ -16,7 +16,8 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon } from '@/components/primitives/Icon';
 import type { Ms } from '@/lib/data/types';
 import { formatClock, formatDurationShort } from '@/lib/i18n/time';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import type { PathPoint } from '@/lib/offers/passPath';
 import { useRegisterCoral } from '@/lib/overlay/coral';
 import { OfferCard } from './OfferCard';
@@ -66,11 +67,12 @@ const Line = ({ past, wide }: { past?: boolean; wide?: boolean }) => (
 );
 
 export function PassOffer({ count, met, next, now, onClose, onDetails, onGetPass, className }: PassOfferProps) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('offers');
   useRegisterCoral();
   const shownMet = met.slice(-MET_MAX);
   const upcoming = next[0];
-  const price = formatUsd(PASS_PRICE);
+  const price = formatUsd(passPrice);
 
   return (
     <OfferCard variant="pass-offer" kicker={t('pathKicker')} title={t('pathTitle', { count })} closeLabel={t('dismiss')} onClose={onClose} className={cn(s.card, className)}>

@@ -31,6 +31,7 @@ import {
 } from '../domain/corrections/rules';
 import type { EventPublisher } from '../events/ports';
 import type { Clock } from '../ports';
+import type { SiteVersionBump } from '../site/ports';
 import type { CorrectionReader, CorrectionStore, StoredPatch, Tx } from './ports';
 
 export const CORRECTION_ACTION = 'correction.save';
@@ -56,6 +57,8 @@ export interface CorrectionDeps {
   journal: Journal;
   publisher: EventPublisher;
   clock: Clock;
+  /** The site snapshot's version grows in the same transaction (SPEC-08 AC-4, AC-8); absent → no bump. */
+  siteVersion?: SiteVersionBump;
 }
 
 export interface CorrectionItem {
@@ -204,6 +207,8 @@ export async function saveCorrection(
       after[item.eventId] = toSitePatch(n.state);
     }
     const eventIds = changed.map((i) => i.eventId);
+    // Before the first publish: the site lock is always taken before the outbox lock (site/ports.ts).
+    await deps.siteVersion?.bumpVersion(tx);
     await deps.journal.append(tx, {
       actor,
       action: CORRECTION_ACTION,

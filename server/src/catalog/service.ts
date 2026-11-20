@@ -15,6 +15,7 @@ import {
 import { bumpedMeta } from '../domain/catalog/version';
 import type { EventPublisher, Tx } from '../events/ports';
 import type { Clock } from '../ports';
+import type { SiteVersionBump } from '../site/ports';
 import type { CatalogReader, CatalogStore, SeasonStore } from './ports';
 import { CatalogChangedSchema } from '@time2fest/contracts/schemas';
 
@@ -39,17 +40,25 @@ export async function assertIntegrityAfter(reader: CatalogReader, tx: Tx, change
 }
 
 /**
- * A catalog record changed: sets the season's `generatedAt` to server time and publishes
- * `catalog.changed` `{ version, at }` in the same transaction. No season → nothing to version.
+ * A catalog record changed: sets the season's `generatedAt` to server time, bumps the site version and
+ * publishes `catalog.changed` `{ version, at }` in the same transaction. No season → nothing to version.
  */
 export async function recordCatalogChange(
-  deps: { seasons: SeasonStore; publisher: EventPublisher; clock: Clock },
+  deps: {
+    seasons: SeasonStore;
+    publisher: EventPublisher;
+    clock: Clock;
+    /** The site snapshot's version grows in the same transaction (SPEC-08 AC-4, AC-9); absent → no bump. */
+    siteVersion?: SiteVersionBump;
+  },
   tx: Tx,
 ): Promise<{ version: string } | null> {
   const season = await deps.seasons.current(tx);
   if (!season) return null;
   const { generatedAt, version } = bumpedMeta(season, deps.clock.now());
   await deps.seasons.setGeneratedAt(tx, season.id, generatedAt);
+  // Before the publish: the site lock is always taken before the outbox lock (site/ports.ts).
+  await deps.siteVersion?.bumpVersion(tx);
   await deps.publisher.publish(tx, CATALOG_CHANGED_TOPIC, CatalogChangedSchema.parse({ version, at: generatedAt }));
   return { version };
 }

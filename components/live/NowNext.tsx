@@ -9,7 +9,8 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Skeleton } from '@/components/primitives/Skeleton';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { useNow } from '@/lib/time/TimeProvider';
 import { EventCard, type EventCardData } from './EventCard';
 import { hasStreamNow, isPastStatus, sortForStrip, withStatus } from '@/lib/live/eventCards';
@@ -93,6 +94,7 @@ export function NowNext({
   title,
   className,
 }: NowNextProps) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('liveCards.nowNext');
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
@@ -241,7 +243,7 @@ export function NowNext({
           <span className={s.lockedActions}>
             {onGetPass ? (
               <Button variant="coral" compact iconLeft="ticket" data-action="get-pass" onClick={onGetPass}>
-                {t('mineLockedGet', { price: formatUsd(PASS_PRICE) })}
+                {t('mineLockedGet', { price: formatUsd(passPrice) })}
               </Button>
             ) : null}
             <Button variant="tonal" compact data-action="pass-info" onClick={onScheduleLocked}>

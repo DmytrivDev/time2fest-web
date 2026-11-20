@@ -10,7 +10,8 @@ import { useId, useState } from 'react';
 import { Icon } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import { cn } from '@/components/primitives/cn';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import s from './pass.module.css';
 
 /** Квиток пасу (той самий малюнок, що на дошках): небо з феєрверками, місто, корінець «СЕЗОН 2026/27». */
@@ -90,6 +91,7 @@ export function TicketArt({
 }
 
 export function Hero({ active, ticket }: { active: boolean; ticket?: Parameters<typeof TicketArt>[0] }) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('pass.page');
   return (
     <section aria-labelledby="pass-title" className={cn(s.gold, s.hero)}>
@@ -103,7 +105,7 @@ export function Hero({ active, ticket }: { active: boolean; ticket?: Parameters<
             ✓ {t('active')}
           </span>
         ) : (
-          <span className={s.price}>{formatUsd(PASS_PRICE)}</span>
+          <span className={s.price}>{formatUsd(passPrice)}</span>
         )}
         <span className={s.priceNote}>{active ? t('activeNote') : t('priceNote')}</span>
         <p className={s.lead}>{t('lead')}</p>

@@ -17,7 +17,8 @@ import { PASS_HREF, useGetPass } from '@/components/pass/PassWindow';
 import { IS_DEMO_BUILD } from '@/lib/env';
 import { formatShortCountdown } from '@/lib/i18n/time';
 import { useDevCode, useHasPass } from '@/lib/api/hooks/auth';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { Icon, GoogleMark, type IconName } from '@/components/primitives/Icon';
 import s from './auth.module.css';
 
@@ -487,6 +488,7 @@ function GetPassButton({ toPage, className, children }: { toPage?: boolean; clas
 
 /** Вхід і реєстрація: «Ще немає Новорічного пасу?» — коротко, ціна, «Оформити пас», «Що дає пас». `toPage` — див. `GetPassButton`. */
 export function PassHint({ className, toPage }: { className?: string; toPage?: boolean }) {
+  const passPrice = useSitePrices().pass;
   const hasPass = useHasPass();
   const t = useTranslations('auth.passHint');
   const o = useTranslations('offers');
@@ -512,7 +514,7 @@ export function PassHint({ className, toPage }: { className?: string; toPage?: b
         <span aria-hidden="true" className={s.perksGap} />
       </Reveal>
       <div className={s.priceRow}>
-        <span className={s.priceSm}>{formatUsd(PASS_PRICE)}</span>
+        <span className={s.priceSm}>{formatUsd(passPrice)}</span>
         <span className={s.priceNote}>{o('priceNote')}</span>
       </div>
       <div className={s.pair}>
@@ -536,6 +538,7 @@ export function PassHint({ className, toPage }: { className?: string; toPage?: b
 
 /** «Акаунт створено»: розгорнута пропозиція пасу. `toPage` — див. `GetPassButton`. */
 export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolean; className?: string; toPage?: boolean }) {
+  const passPrice = useSitePrices().pass;
   const hasPass = useHasPass();
   const t = useTranslations('auth.passOffer');
   const o = useTranslations('offers');
@@ -558,11 +561,11 @@ export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolea
         </div>
       </Reveal>
       <div className={s.priceRow} style={mtStyle(18)}>
-        <span className={s.priceLg}>{formatUsd(PASS_PRICE)}</span>
+        <span className={s.priceLg}>{formatUsd(passPrice)}</span>
         <span className={s.priceLgNote}>{o('priceNote')}</span>
       </div>
       <GetPassButton toPage={toPage} className={cn('t2f-focus', s.btn, s.passBtn, s.mt16)}>
-        {t('get', { price: formatUsd(PASS_PRICE) })}
+        {t('get', { price: formatUsd(passPrice) })}
       </GetPassButton>
       <ToggleButton
         open={open}
@@ -583,6 +586,7 @@ export function PassOfferCard({ welcome, className, toPage }: { welcome?: boolea
 
 /** Вікно під час трансляції: «Ще немає пасу? $5 разово, на весь сезон» і дві кнопки. */
 export function PassRow({ mt }: { mt?: number }) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('auth');
   const uid = useId();
   const [open, setOpen] = useState(false);
@@ -597,7 +601,7 @@ export function PassRow({ mt }: { mt?: number }) {
             <Icon name="ticket" size={16} />
           </span>
         </span>
-        <span>{t.rich('passRow', { price: formatUsd(PASS_PRICE), b: Bold })}</span>
+        <span>{t.rich('passRow', { price: formatUsd(passPrice), b: Bold })}</span>
       </span>
       <Reveal open={open} className={s.colReveal}>
         <PassPerks id={`${uid}-more`} dense />

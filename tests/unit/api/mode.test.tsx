@@ -36,9 +36,9 @@ describe('resolveApiMode — правило збирання', () => {
 });
 
 describe('реєстр і «сервер недоступний»', () => {
-  it('у sim є адаптери всіх перенесених доменів; у http — лише `catalog` (SPEC-04), решти ще немає', () => {
+  it('у sim є адаптери всіх перенесених доменів; у http — лише `catalog` (SPEC-04) і `site` (SPEC-08), решти ще немає', () => {
     expect(missingDomains('sim')).toEqual([]);
-    expect(missingDomains('http')).toEqual(MIGRATED_DOMAINS.filter((d) => d !== 'catalog'));
+    expect(missingDomains('http')).toEqual(MIGRATED_DOMAINS.filter((d) => d !== 'catalog' && d !== 'site'));
   });
 
   const wrap = (ui: React.ReactNode) =>

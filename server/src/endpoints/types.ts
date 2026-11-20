@@ -22,6 +22,11 @@ import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
+import type { FanOutDeps } from '../site/fanout';
+import type { RebuildDeps } from '../site/rebuild';
+import type { CatalogProduct } from '../site/ports';
+import type { SiteDeps } from '../site/service';
+import type { SnapshotReadDeps } from '../site/snapshot';
 import type { SharedClock } from '../timekeeping/shared';
 import type { DivergenceMeter } from '../timekeeping/divergence';
 import type { UnattendedDeps } from '../unattended/service';
@@ -74,6 +79,20 @@ export interface ModerationDeps {
   settings: ModerationSettingsStore;
 }
 
+/**
+ * The site state (SPEC-08), built once by `createDeps`: the toggle / product-choice service deps, the snapshot
+ * readers of `GET /api/site/state`, and — in the `test` class only — the products fake and the reset the
+ * `POST /api/_test/site` door uses. `products` is the empty port in every class; in `test` it is the fake,
+ * empty until a door call fills it (AC-18).
+ */
+export interface SiteWiring extends SiteDeps {
+  snapshot: SnapshotReadDeps;
+  /** `test` class only: the settable products list behind `products`. */
+  testProducts?: { set(list: readonly CatalogProduct[]): void };
+  /** `test` class only: the record back to its defaults (version 1, nothing fanned out yet). */
+  resetForTests?: () => Promise<void>;
+}
+
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
@@ -99,6 +118,12 @@ export interface Deps {
   unattended?: UnattendedDeps;
   /** What the R2 copy needs, or `undefined` when the environment has no bucket (AC-72). */
   catalogCopy?: () => CatalogCopyDeps | undefined;
+  /** What the after-commit fan-out of the `site` snapshot needs (SPEC-08 AC-5 … AC-7, AC-33 … AC-36). */
+  siteFanOut?: () => FanOutDeps;
+  /** What the catalog rebuild launch needs (SPEC-08 AC-61 … AC-66). */
+  rebuild?: () => RebuildDeps;
+  /** The site state service and snapshot readers (SPEC-08); read through `siteOf`. */
+  site?: SiteWiring;
   /** Whether the database and the fast store answer (SPEC-13a AC-5/AC-6). */
   readiness?: ReadinessProbe;
   /** Who a realtime token is for (C5): no session in production until SPEC-10; the doors' resolver in tests. */

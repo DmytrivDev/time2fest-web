@@ -35,6 +35,7 @@ const E2E = '.tests.e2e.'; // `.` = either path separator, no backslashes to esc
 const CLOCK_SPECS = ['global-states', 'us1-air', 'us16-notifications', 'us17-pass', 'us3-room', 'us7-tv', 'us8-time-machine', 'us9-auth'];
 const clockSpecs = new RegExp(`${E2E}(server-clock.[^.]*[.]spec[.]ts|(${CLOCK_SPECS.join('|')})[.]spec[.]ts)$`);
 const edgeOffline = new RegExp(`${E2E}edge-offline.[^.]*[.]spec[.]ts$`);
+const siteState = new RegExp(`${E2E}site-state.[^.]*[.]spec[.]ts$`);
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -44,13 +45,22 @@ export default defineConfig({
   reporter: [['list']],
   use: { trace: 'retain-on-failure', baseURL },
   projects: [
-    { name: 'phone', use: { viewport: { width: 390, height: 844 } }, testIgnore: [/.*\.prod\.spec\.ts/, clockSpecs, edgeOffline] },
-    { name: 'desktop', use: { viewport: { width: 1520, height: 900 } }, testIgnore: [/.*\.prod\.spec\.ts/, clockSpecs, edgeOffline] },
+    { name: 'phone', use: { viewport: { width: 390, height: 844 } }, testIgnore: [/.*\.prod\.spec\.ts/, clockSpecs, edgeOffline, siteState] },
+    { name: 'desktop', use: { viewport: { width: 1520, height: 900 } }, testIgnore: [/.*\.prod\.spec\.ts/, clockSpecs, edgeOffline, siteState] },
     {
       name: 'server-clock',
       use: { viewport: { width: 1520, height: 900 } },
       testMatch: clockSpecs,
       testIgnore: /.*\.prod\.spec\.ts/,
+      fullyParallel: false,
+    },
+    {
+      // SPEC-08 (AC-44, AC-52, AC-53): serial, they move the shared server clock / start their own edge. Run with
+      //   npx playwright test -c playwright.http.config.ts --project=site-state --workers=2
+      // (one worker per file group is enough: the files run in order inside the project, `fullyParallel: false`).
+      name: 'site-state',
+      use: { viewport: { width: 1520, height: 900 } },
+      testMatch: siteState,
       fullyParallel: false,
     },
     {

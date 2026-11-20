@@ -35,7 +35,12 @@
         "run_worker_first": ["/api", "/api/*"]
       },
       "routes": [{ "pattern": "rehearsal.time2fest.com", "custom_domain": true }],
-      "vars": { "EDGE_ENV": "rehearsal", "ORIGIN_URL": "https://o-rehearsal.time2fest.com" }
+      "r2_buckets": [{ "binding": "SITE_BUCKET", "bucket_name": "time2fest-rehearsal" }],
+      "vars": {
+        "EDGE_ENV": "rehearsal",
+        "ORIGIN_URL": "https://o-rehearsal.time2fest.com",
+        "R2_PREFIX": "rehearsal/"
+      }
     },
     "prelaunch": {
       "workers_dev": false,

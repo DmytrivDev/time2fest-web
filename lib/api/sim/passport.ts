@@ -9,6 +9,7 @@
  */
 import { ok, fail } from '../result';
 import type { PassportEvent, PassportService, PresenceClock, PresenceSurfaceInput } from '../contracts/passport';
+import { patchedData } from '../hooks/site';
 import { getData } from '@/lib/data/load';
 import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
 import { buildStamp } from '@/lib/engine/stamp';
@@ -19,7 +20,7 @@ import { useGuestStore } from '@/stores/guest';
 
 /** Видати штампи за кожну подію з `moment:stamp`, де гість був присутній (тести; на сайті — `claim` з клієнта). Повертає id виданих. */
 export function grantStamps(payload: MomentStamp): string[] {
-  const data = getData();
+  const data = patchedData();
   const guest = useGuestStore.getState();
   const granted: string[] = [];
   for (const id of payload.presentEventIds) {
@@ -38,7 +39,7 @@ export function grantStamps(payload: MomentStamp): string[] {
 
 /** «Сервер» записує штамп за подію (один на подію); уже є — той самий. */
 export function grantStamp(eventId: string, source: PresenceSource): Stamp | null {
-  const data = getData();
+  const data = patchedData();
   const event = data.eventsById.get(eventId);
   if (!event) return null;
   const guest = useGuestStore.getState();

@@ -65,6 +65,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SITE_CLASS: process.env.NEXT_PUBLIC_SITE_CLASS ?? '',
     // Шов: вбудований літерал режиму (див. вище).
     NEXT_PUBLIC_API_MODE: API_MODE,
+    // SPEC-08 (AC-58): літерал завжди — без адреси realtime `import('./realtime')` у lib/api/http/site.ts мертвий і
+    // centrifuge не потрапляє в пакет (Next вбудовує лише задані NEXT_PUBLIC_*).
+    NEXT_PUBLIC_REALTIME_URL: process.env.NEXT_PUBLIC_REALTIME_URL ?? '',
   },
   ...(API_MODE === 'http'
     ? {

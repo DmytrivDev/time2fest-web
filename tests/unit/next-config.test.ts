@@ -53,6 +53,15 @@ describe('next.config dev rewrite (AC-44)', () => {
     expect(expected).not.toContain('rewrites');
   });
 
+  it('SPEC-08 (AC-58): NEXT_PUBLIC_REALTIME_URL is always an inlined literal — "" when unset, the address when set', async () => {
+    vi.stubEnv('NEXT_PUBLIC_REALTIME_URL', undefined);
+    const unset = await load({ nodeEnv: 'production', flavour: '', mode: '' });
+    expect(unset.env).toHaveProperty('NEXT_PUBLIC_REALTIME_URL', '');
+    vi.stubEnv('NEXT_PUBLIC_REALTIME_URL', 'wss://rt.test/connection/websocket');
+    const set = await load({ nodeEnv: 'production', flavour: '', mode: '' });
+    expect(set.env).toHaveProperty('NEXT_PUBLIC_REALTIME_URL', 'wss://rt.test/connection/websocket');
+  });
+
   it('test + http fetches the catalog (version inlined, alias to the fetched files); a failed fetch exits 1 with no fallback', async () => {
     const cfg = await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
     expect((cfg.env as Record<string, string>).NEXT_PUBLIC_CATALOG_VERSION).toBe('v-test');
@@ -101,7 +110,7 @@ describe('next.config — three build kinds (FR-MIG-01, B3)', () => {
     for (const a of SIM_ALIASES) expect(alias[a], a).toBeUndefined();
     expect(alias['@/data/countries.json']).toMatch(/countries\.json$/);
     const lines = log.mock.calls.map(([m]) => String(m)).filter((m) => m.startsWith('[api] integration build'));
-    expect(lines).toEqual(['[api] integration build: http = catalog; sim = notifications, rating, live, auth, profile, checkout, toasts, chat, passport']);
+    expect(lines).toEqual(['[api] integration build: http = catalog, site; sim = notifications, rating, live, auth, profile, checkout, toasts, chat, passport']);
     await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
     expect(log.mock.calls.filter(([m]) => String(m).startsWith('[api] integration build'))).toHaveLength(1);
     log.mockRestore();

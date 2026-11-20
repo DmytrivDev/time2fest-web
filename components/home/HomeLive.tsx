@@ -131,12 +131,12 @@ export function HomeLive() {
   const hasPass = useHasPass();
   const getPass = useGetPass();
 
-  const hint = useMemo(() => scheduleNow(getData(), schedule, current?.event ?? null), [schedule, current]);
-
   // Головне святкування ефіру (2026-11-13): кнопка на заглушці й рядок «почалось · Перемкнути».
   const player = useOptionalPlayer();
   const reduced = useReducedMotion();
   const data = useLiveData();
+  // Підказка графіка читає моменти подій — з даними з поправками (AC-53), не з `getData()`.
+  const hint = useMemo(() => scheduleNow(data, schedule, current?.event ?? null), [data, schedule, current]);
   const minute = Math.floor(now / 60_000) * 60_000;
   const airMidnight = current?.event.midnightMs ?? null;
   const liveInZone = useMemo(() => (airMidnight !== null && minute > 0 ? zoneHasLive(data, airMidnight, minute) : false), [data, airMidnight, minute]);

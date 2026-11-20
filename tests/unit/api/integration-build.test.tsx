@@ -13,7 +13,8 @@ import { httpFactories } from '@/lib/api/http';
 import { apiDomains, domainSource, faultControls, MIGRATED_DOMAINS, missingDomains } from '@/lib/api/services';
 import messages from '@/messages/uk.json';
 
-const SIM_REST = MIGRATED_DOMAINS.filter((d) => d !== 'catalog');
+const HTTP_NOW = ['catalog', 'site'];
+const SIM_REST = MIGRATED_DOMAINS.filter((d) => !HTTP_NOW.includes(d));
 
 describe('who serves a domain — three build kinds', () => {
   it('test + sim (test and demo build): everything from sim, nothing missing', () => {
@@ -22,16 +23,16 @@ describe('who serves a domain — three build kinds', () => {
   });
 
   it('test + http (integration): catalog over http, the rest derived to sim, nothing missing', () => {
-    expect(apiDomains('http', true)).toEqual({ http: ['catalog'], sim: SIM_REST, missing: [] });
+    expect(apiDomains('http', true)).toEqual({ http: HTTP_NOW, sim: SIM_REST, missing: [] });
     expect(domainSource('catalog', 'http', true)).toBe('http');
     expect(domainSource('live', 'http', true)).toBe('sim');
-    expect(domainSource('site', 'http', true)).toBe('sim');
+    expect(domainSource('site', 'http', true)).toBe('http');
     expect(missingDomains('http', true)).toEqual([]);
     expect(faultControls('http', true)).toBeDefined();
   });
 
   it('production + http: no sim at all — the rest is missing, fault controls absent', () => {
-    expect(apiDomains('http', false)).toEqual({ http: ['catalog'], sim: [], missing: SIM_REST });
+    expect(apiDomains('http', false)).toEqual({ http: HTTP_NOW, sim: [], missing: SIM_REST });
     expect(domainSource('live', 'http', false)).toBeNull();
     expect(faultControls('http', false)).toBeUndefined();
   });
@@ -41,7 +42,7 @@ describe('who serves a domain — three build kinds', () => {
     const http: readonly string[] = HTTP_DOMAINS;
     const atBuild = splitDomains({ mode: 'http', testBuild: true, hasHttp: (d) => http.includes(d), hasSim: () => true });
     expect(atBuild).toEqual(apiDomains('http', true));
-    expect(describeIntegrationSplit(atBuild)).toBe(`[api] integration build: http = catalog; sim = ${SIM_REST.join(', ')}`);
+    expect(describeIntegrationSplit(atBuild)).toBe(`[api] integration build: http = ${HTTP_NOW.join(', ')}; sim = ${SIM_REST.join(', ')}`);
   });
 
   it('the rule itself: sim mode never uses http; a production build never falls back to sim', () => {
@@ -120,7 +121,7 @@ describe('integration build at runtime (NEXT_PUBLIC_ENV=test, NEXT_PUBLIC_API_MO
     expect(api.timeMachine.get()).toEqual({ at: '2026-12-31T23:59:00.000Z', speed: 0, source: 'machine' });
     act(() => api.timeMachine.set({ at: '2027-01-01T00:30:00+02:00' }));
     expect(api.timeMachine.get().at).toBe('2026-12-31T22:30:00.000Z');
-    expect(api.apiDomains).toEqual({ http: ['catalog'], sim: SIM_REST, missing: [] });
+    expect(api.apiDomains).toEqual({ http: HTTP_NOW, sim: SIM_REST, missing: [] });
     view.unmount();
     expect(window.__t2f).toBeUndefined();
   });

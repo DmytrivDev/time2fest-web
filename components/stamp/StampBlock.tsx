@@ -33,7 +33,7 @@ import { shareWindowSpec } from '@/components/stamp/Share';
 import { Stamp, type StampEntry } from '@/components/stamp/Stamp';
 import { StampRate } from '@/components/stamp/StampRate';
 import { useHasStamp, useStamps, useUnconfirmedStamps } from '@/lib/api/hooks/passport';
-import { getData } from '@/lib/data/load';
+import { patchedData } from '@/lib/api/hooks/site';
 import { isRateable } from '@/lib/passport/passport';
 import type { Stars } from '@/lib/data/types';
 import { on } from '@/lib/events/bus';
@@ -74,7 +74,7 @@ export function clearStampMoment(): void {
 }
 
 export function stampEntry(eventId: string): StampEntry | null {
-  const data = getData();
+  const data = patchedData();
   const event = data.eventsById.get(eventId);
   if (!event) return null;
   const country = data.countriesByIso.get(event.countryIso);
@@ -211,7 +211,7 @@ function StampBlockView({ eventId, permanent = false, roomEventIds, className }:
   }
   // «Як тобі шоу?» — лише святкування з трансляцією (`isRateable`), як у паспорті й «Рейтингу святкувань».
   const rateRows = (current?.list ?? [])
-    .filter((e) => !!e.eventId && isRateable(getData(), e.eventId))
+    .filter((e) => !!e.eventId && isRateable(patchedData(), e.eventId))
     .map((e) => ({ eventId: e.eventId!, city: e.city }));
 
   return (

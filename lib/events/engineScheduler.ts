@@ -70,7 +70,16 @@ interface Due {
 export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
   const realNow = deps.realNow ?? (() => performance.now());
   const emitted = new Set<string>(readJson<string[]>(deps.storage, EMITTED_KEY) ?? []);
-  const slots = airSlots(deps.data);
+  // Слоти ефіру — з поточних даних: поправка моменту події (знімок `site`, AC-53/54) пересуває слот без перезапуску.
+  let slotsOf = deps.data.eventsBySlot;
+  let slots = airSlots(deps.data);
+  const currentSlots = () => {
+    if (deps.data.eventsBySlot !== slotsOf) {
+      slotsOf = deps.data.eventsBySlot;
+      slots = airSlots(deps.data);
+    }
+    return slots;
+  };
   let prev: Ms | null = null;
   let prevReal = 0;
   let restored = false;
@@ -103,7 +112,7 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
 
   function forgetAhead(now: Ms) {
     const suffixes: string[] = [];
-    for (const slot of slots) {
+    for (const slot of currentSlots()) {
       if (zonePassedHandover(now, slot.midnightMs)) continue;
       suffixes.push(`:${slot.midnightUtc}`, ...slot.events.map((e) => `:${e.id}`));
       pendingRateClose.delete(slot.midnightUtc);
@@ -145,6 +154,7 @@ export function createEngineScheduler(deps: SchedulerDeps): EngineScheduler {
     const from = prev;
     const due: Due[] = [];
     const inWindow = (at: Ms) => at > from && at <= now;
+    const slots = currentSlots();
 
     slots.forEach((slot, i) => {
       const tl = momentTimeline({ id: slot.midnightUtc, midnightUtc: slot.midnightUtc, midnightMs: slot.midnightMs });

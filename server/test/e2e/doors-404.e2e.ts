@@ -28,6 +28,7 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/scheduler/lease'],
   ['POST', '/api/_test/scheduler/night-run'],
   ['GET', '/api/_test/scheduler/night-run'],
+  ['POST', '/api/_test/site'],
   ['POST', '/api/_test/video-status'],
 ];
 
@@ -51,8 +52,8 @@ async function probe(request: APIRequestContext, method: string, path: string, q
   return { status: res.status(), body: await res.text(), names };
 }
 
-test('AC-30/31, SPEC-07 AC-68: the registry has 18 door rows', () => {
-  expect(DOORS).toHaveLength(18);
+test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19: the registry has 19 door rows', () => {
+  expect(DOORS).toHaveLength(19);
 });
 
 for (const v of VARIANTS) {

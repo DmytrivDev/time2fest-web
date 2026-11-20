@@ -5,19 +5,43 @@
  * The connection token lives only inside the Centrifugo client: never stored, never logged.
  */
 import type { RealtimeBatch, RealtimeEnvelope, Unsubscribe } from '@time2fest/contracts';
+import { reconnectDelay, refusalDelay } from './backoff';
 import { createChannelFilter, type ChannelFilter } from './dedupe';
 import type { ConnectionState, RealtimeListener, RealtimeTransport } from './types';
 
-/** Reconnect bounds handed to the client; the library spreads the delay randomly between them (AC-53). */
+/**
+ * Reconnect bounds handed to the client (SPEC-06 AC-53). Since SPEC-08 (AC-59) the transport schedules reconnects
+ * itself (`./backoff`): on a drop or a failed attempt it stops the client and calls `connect()` after its own pause.
+ * These bounds apply only to a retry the client starts without reporting it (no `connecting` / `error` event).
+ */
 export const MIN_RECONNECT_DELAY_MS = 500;
 export const MAX_RECONNECT_DELAY_MS = 20_000;
-/** Pause before the next token request after a failed one (AC-50). */
+/** Pause before the next token request after a failed one (AC-50); a 4xx refusal other than 429 waits 30–60 s (AC-60). */
 export const TOKEN_RETRY_MIN_MS = 5_000;
 export const TOKEN_RETRY_MAX_MS = 10_000;
+/**
+ * Later token retries grow (S8-07): retry `n ≥ 1` waits uniform in [5 000, min(45 000, 1 500·2ⁿ⁺²)] ms
+ * (`reconnectDelay`, full jitter); the first one stays 5–10 s (AC-50).
+ */
+const TOKEN_RETRY_GROWTH_OFFSET = 2;
+/** Upper bound of a `Retry-After` the transport honours on a 429 (S8-07). */
+export const TOKEN_RETRY_AFTER_MAX_MS = 60_000;
 /** Centrifugo error code of a refused subscription (AC-51). */
 export const PERMISSION_DENIED_CODE = 103;
 /** `disconnected` code of the client when a token refresh came back empty (AC-49). */
 const CLIENT_UNAUTHORIZED_CODE = 1;
+/** `connecting` code of the client's own `connect()`. */
+const CONNECT_CALLED_CODE = 0;
+/** Centrifugo disconnect codes of a refused connection: invalid token, permission denied. */
+const REFUSAL_DISCONNECT_CODES = new Set([3500, 3507]);
+
+/**
+ * A refused handshake (AC-60): an error reply to the connect command (1xx, e.g. 101 unauthorized, 103 permission
+ * denied; the temporary ones never reach `disconnected`) or a refusal disconnect code.
+ */
+export function isHandshakeRefusal(code: number): boolean {
+  return (code >= 100 && code < 200) || REFUSAL_DISCONNECT_CODES.has(code);
+}
 /** Centrifugo disconnect code of a state invalidation (C6, AC-35): the subject may have changed. */
 export const STATE_INVALIDATED_CODE = 3014;
 
@@ -34,6 +58,7 @@ export interface CentrifugeClientLike {
   on(event: 'state', listener: (ctx: { newState: string }) => void): unknown;
   on(event: 'connecting', listener: (ctx: { code: number }) => void): unknown;
   on(event: 'disconnected', listener: (ctx: { code: number }) => void): unknown;
+  on(event: 'error', listener: (ctx: { type: string }) => void): unknown;
   newSubscription(channel: string): CentrifugeSubscriptionLike;
   removeSubscription(sub: CentrifugeSubscriptionLike | null): void;
   setToken(token: string): void;
@@ -57,6 +82,15 @@ export interface RealtimeTokenResponse {
   ok: boolean;
   status: number;
   json(): Promise<unknown>;
+  /** `Retry-After` of a 429 is read from here (S8-07); a `fetch` `Response` fits. */
+  headers?: { get(name: string): string | null };
+}
+
+/** `Retry-After` in delta-seconds → ms, capped at 60 s; anything else (absent, 0, a date, garbage) → `null`. */
+export function retryAfterMs(value: string | null | undefined): number | null {
+  if (!value || !/^\s*\d+\s*$/.test(value)) return null;
+  const seconds = Number(value);
+  return seconds > 0 ? Math.min(TOKEN_RETRY_AFTER_MAX_MS, seconds * 1000) : null;
 }
 
 export type RealtimeFetch = (
@@ -96,7 +130,13 @@ interface ChannelEntry {
   sub: CentrifugeSubscriptionLike | null;
 }
 
-const RETRY = Symbol('retry');
+interface RetryHint {
+  retryAfter: number | null;
+}
+const RETRY: RetryHint = Object.freeze({ retryAfter: null });
+const REFUSED = Symbol('refused');
+/** `error` event types of a failed connection attempt that the client would retry on its own schedule. */
+const ATTEMPT_ERRORS = new Set(['transport', 'connect']);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -160,6 +200,12 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
    * teardown — the next first `subscribe` asks again.
    */
   let anonymous = false;
+  /** Number of the next reconnect attempt (AC-59); back to 0 once connected. */
+  let attempt = 0;
+  /** Own reconnect scheduled by the transport (drop, failed attempt or refusal). */
+  let retry: { handle: unknown } | null = null;
+  /** Set while the transport itself stops the client: that `disconnected` is not a refusal. */
+  let quiet = false;
 
   function setState(next: ConnectionState): void {
     if (next === state) return;
@@ -167,10 +213,23 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     notifyAll(stateListeners, (listener) => listener(next));
   }
 
-  /** Random 5–10 s pause (AC-50); resolves `false` when the transport was torn down meanwhile. */
-  function pause(): Promise<boolean> {
-    const spread = TOKEN_RETRY_MAX_MS - TOKEN_RETRY_MIN_MS;
-    const ms = TOKEN_RETRY_MIN_MS + Math.min(spread, Math.floor(random() * (spread + 1)));
+  /**
+   * Pause before token retry `n` (0-based, per `getToken` loop): the first one random 5–10 s (AC-50), later ones grow
+   * with full jitter up to 45 s (S8-07). A 429 `Retry-After` is honoured: never sooner than it says (capped at 60 s).
+   */
+  function tokenRetryDelay(n: number, retryAfter: number | null): number {
+    let ms: number;
+    if (n <= 0) {
+      const spread = TOKEN_RETRY_MAX_MS - TOKEN_RETRY_MIN_MS;
+      ms = TOKEN_RETRY_MIN_MS + Math.min(spread, Math.floor(random() * (spread + 1)));
+    } else {
+      ms = Math.max(TOKEN_RETRY_MIN_MS, reconnectDelay(n + TOKEN_RETRY_GROWTH_OFFSET, random));
+    }
+    return retryAfter === null ? ms : Math.max(ms, retryAfter);
+  }
+
+  /** Pause of `ms`; resolves `false` when the transport was torn down meanwhile. */
+  function pause(ms: number): Promise<boolean> {
     return new Promise((resolve) => {
       const pending = {
         handle: undefined as unknown,
@@ -184,7 +243,8 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     });
   }
 
-  async function requestToken(): Promise<string | typeof RETRY> {
+  /** `RetryHint` = retry; `retryAfter` is the honoured `Retry-After` of a 429 in ms, if any. */
+  async function requestToken(): Promise<string | RetryHint | typeof REFUSED> {
     let response: RealtimeTokenResponse;
     try {
       response = await fetchToken(tokenUrl, { credentials: 'same-origin', cache: 'no-store' });
@@ -193,7 +253,11 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     }
     // Network errors, 5xx and 429 are retried (AC-50); so is any other refusal or a body that is not C1,
     // because a rejected `getToken` would make the client stop or back off on its own schedule.
-    if (!response.ok) return RETRY;
+    // A refusal (4xx other than 429) waits 30–60 s instead (AC-60).
+    if (!response.ok) {
+      if (response.status === 429) return { retryAfter: retryAfterMs(response.headers?.get('retry-after')) };
+      return response.status >= 400 && response.status < 500 ? REFUSED : RETRY;
+    }
     try {
       return tokenOf(await response.json()) ?? RETRY;
     } catch {
@@ -205,13 +269,14 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
   async function getToken(): Promise<string> {
     if (anonymous) return '';
     const started = generation;
-    for (;;) {
+    for (let failures = 0; ; ) {
       const token = await requestToken();
-      if (token !== RETRY) {
+      if (typeof token === 'string') {
         if (started === generation) anonymous = token === '';
         return token;
       }
-      if (!(await pause()) || started !== generation) {
+      const ms = token === REFUSED ? refusalDelay(random) : tokenRetryDelay(failures++, token.retryAfter);
+      if (!(await pause(ms)) || started !== generation) {
         // The connection was closed meanwhile; the client ignores the outcome of an aborted attempt.
         throw new Error('realtime transport stopped');
       }
@@ -254,6 +319,46 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     sub.subscribe();
   }
 
+  function cancelRetry(): void {
+    if (!retry) return;
+    timers.clearTimeout(retry.handle);
+    retry = null;
+  }
+
+  /** `connect()` of the client after `ms`, unless the transport was torn down or connected meanwhile. */
+  function scheduleConnect(ms: number): void {
+    cancelRetry();
+    const started = generation;
+    const pending: { handle: unknown } = { handle: undefined };
+    pending.handle = timers.setTimeout(() => {
+      if (retry !== pending) return;
+      retry = null;
+      if (started !== generation || channels.size === 0 || !client) return;
+      setState('connecting');
+      client.connect();
+    }, ms);
+    retry = pending;
+  }
+
+  /**
+   * The connection dropped or an attempt failed (AC-59): stop the client's own retry and call `connect()` after
+   * `reconnectDelay(attempt)`. Subscriptions stay on the client and resubscribe (with recovery) on `connect()`.
+   */
+  function dropped(centrifuge: CentrifugeClientLike): void {
+    if (channels.size === 0 || retry) return;
+    // A token loop of the abandoned attempt stops at its next pause.
+    generation += 1;
+    quiet = true;
+    try {
+      centrifuge.disconnect();
+    } finally {
+      quiet = false;
+    }
+    setState('connecting');
+    scheduleConnect(reconnectDelay(attempt, random));
+    attempt += 1;
+  }
+
   function createClient(module: CentrifugeModuleLike): CentrifugeClientLike {
     const centrifuge = new module.Centrifuge(url, {
       getToken,
@@ -262,13 +367,23 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     });
     centrifuge.on('state', (ctx) => {
       if (channels.size === 0) return;
+      if (ctx.newState === 'connected') {
+        attempt = 0;
+        cancelRetry();
+      }
       if (ctx.newState === 'connecting' || ctx.newState === 'connected') setState(ctx.newState);
     });
     centrifuge.on('connecting', (ctx) => {
       // The server invalidated the state: the subject may have changed, so the next token is asked for again.
       if (ctx.code === STATE_INVALIDATED_CODE) anonymous = false;
+      // Any code but our own `connect()` is a drop the client would retry on its own schedule.
+      if (ctx.code !== CONNECT_CALLED_CODE) dropped(centrifuge);
+    });
+    centrifuge.on('error', (ctx) => {
+      if (state === 'connecting' && ATTEMPT_ERRORS.has(ctx.type)) dropped(centrifuge);
     });
     centrifuge.on('disconnected', (ctx) => {
+      if (quiet) return;
       if (channels.size > 0 && ctx.code === CLIENT_UNAUTHORIZED_CODE) {
         // A refresh came back without a subject (AC-49): reconnect anonymously; public channels resume,
         // personal ones are refused with 103 → `onForbidden`.
@@ -281,6 +396,8 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
         return;
       }
       setState('disconnected');
+      // The server refused the handshake (AC-60): retry in 30–60 s. Any other final code stays final, as in SPEC-06.
+      if (channels.size > 0 && isHandshakeRefusal(ctx.code)) scheduleConnect(refusalDelay(random));
     });
     return centrifuge;
   }
@@ -302,12 +419,13 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
         loading = false;
         if (client || channels.size === 0) return;
         // The chunk did not load: try again after a pause, still `connecting`.
-        if ((await pause()) && !client && channels.size > 0) load();
+        if ((await pause(tokenRetryDelay(0, null))) && !client && channels.size > 0) load();
       });
   }
 
   function start(): void {
-    if (state !== 'disconnected') return;
+    // A refusal pause is pending (AC-60): its timer connects.
+    if (state !== 'disconnected' || retry) return;
     setState('connecting');
     if (client) client.connect();
     else load();
@@ -316,6 +434,8 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
   function teardown(): void {
     generation += 1;
     anonymous = false;
+    attempt = 0;
+    cancelRetry();
     for (const pending of [...pauses]) {
       timers.clearTimeout(pending.handle);
       pending.wake(false);

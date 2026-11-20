@@ -1,15 +1,23 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { R2_PREFIX_PATTERN } from '../src/env';
 
 type Env = {
   workers_dev?: boolean;
   preview_urls?: boolean;
   assets?: { directory?: string; html_handling?: string; run_worker_first?: string[] };
   vars?: Record<string, string>;
-};
+  r2_buckets?: { binding?: string; bucket_name?: string }[];
+} & Record<string, unknown>;
 
 const config = JSON.parse(readFileSync(new URL('../wrangler.json', import.meta.url), 'utf8')) as {
   env: Record<string, Env>;
+} & Record<string, unknown>;
+/** The R2 bucket of each environment (docs/services/cloudflare.md, 2026-11-16); prelaunch has none. */
+const BUCKETS: Record<string, string> = {
+  test: 'time2fest-test',
+  rehearsal: 'time2fest-rehearsal',
+  production: 'time2fest-prod',
 };
 const NAMES = ['test', 'rehearsal', 'prelaunch', 'production'] as const;
 
@@ -40,6 +48,33 @@ describe('wrangler.json', () => {
       for (const key of Object.keys(config.env[name]!.vars ?? {})) {
         expect(key).not.toMatch(/secret|token|key|password/i);
       }
+    }
+  });
+
+  it('AC-32: no `cache` key at the top level or in any env', () => {
+    expect(config).not.toHaveProperty('cache');
+    for (const name of NAMES) expect(config.env[name], name).not.toHaveProperty('cache');
+  });
+
+  it('SITE_BUCKET: bound only in rehearsal (its bucket, prefix `rehearsal/`); never in test, production or prelaunch', () => {
+    expect(config).not.toHaveProperty('r2_buckets');
+    expect(config.env.rehearsal!.r2_buckets).toEqual([
+      { binding: 'SITE_BUCKET', bucket_name: BUCKETS.rehearsal },
+    ]);
+    expect(config.env.rehearsal!.vars?.R2_PREFIX).toBe('rehearsal/');
+    for (const name of ['test', 'production', 'prelaunch'] as const) {
+      expect(config.env[name]!.r2_buckets ?? [], name).toEqual([]);
+      expect(config.env[name]!.vars, name).not.toHaveProperty('R2_PREFIX');
+    }
+  });
+
+  it('S8-06: every env that binds SITE_BUCKET has an R2_PREFIX the edge accepts, named after the env', () => {
+    for (const name of NAMES) {
+      const binds = (config.env[name]!.r2_buckets ?? []).some((b) => b.binding === 'SITE_BUCKET');
+      if (!binds) continue;
+      const prefix = config.env[name]!.vars?.R2_PREFIX;
+      expect(prefix, name).toMatch(R2_PREFIX_PATTERN);
+      expect(prefix, name).toBe(`${name}/`);
     }
   });
 });

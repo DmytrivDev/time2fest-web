@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { StatusMessage } from '@/components/primitives/StatusMessage';
+import { useSiteState } from '@/lib/api/hooks/site';
 import { useOnline } from '@/lib/tv/useTvEnv';
 
 /** Чи є мережа (`navigator.onLine` + події `online`/`offline`); на сервері й до гідратації — `true`. */
@@ -23,7 +24,11 @@ export interface OfflineNoticeProps {
 export function OfflineNotice({ offline, className }: OfflineNoticeProps) {
   const t = useTranslations('states');
   const online = useOnline();
-  const show = offline ?? !online;
+  const { state } = useSiteState();
+  const isOffline = offline ?? !online;
+  // Червона кнопка (SPEC-08): той самий смуговий блок, текст `backendDown`; без мережі лишається `offline`.
+  const outage = !isOffline && state?.outage === 'technical';
+  const show = isOffline || outage;
   return (
     <div
       role="status"
@@ -32,8 +37,8 @@ export function OfflineNotice({ offline, className }: OfflineNoticeProps) {
       className={cn(show && 'px-4 pt-3', className)}
     >
       {show ? (
-        <StatusMessage kind="offline" className="mx-auto max-w-content-max">
-          {t('offline')}
+        <StatusMessage kind={isOffline ? 'offline' : 'info'} className="mx-auto max-w-content-max">
+          {isOffline ? t('offline') : t('backendDown')}
         </StatusMessage>
       ) : null}
     </div>

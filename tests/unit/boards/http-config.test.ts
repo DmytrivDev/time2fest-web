@@ -7,8 +7,8 @@ describe('playwright.http.config', () => {
     expect(config).not.toHaveProperty('webServer');
   });
 
-  it('has phone and desktop projects, the serial server-clock and edge-offline projects, and ignores prod specs', () => {
-    expect(config.projects?.map((p) => p.name)).toEqual(['phone', 'desktop', 'server-clock', 'edge-offline']);
+  it('has phone and desktop projects, the serial server-clock, site-state and edge-offline projects, and ignores prod specs', () => {
+    expect(config.projects?.map((p) => p.name)).toEqual(['phone', 'desktop', 'server-clock', 'site-state', 'edge-offline']);
     const serverClock = config.projects?.find((p) => p.name === 'server-clock');
     expect(serverClock?.fullyParallel).not.toBe(true);
     expect(String(config.testIgnore)).toContain('prod');

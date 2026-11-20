@@ -12,7 +12,8 @@ import { Button } from '@/components/primitives/Button';
 import { cn } from '@/components/primitives/cn';
 import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import win from './scheduleGate.module.css';
 
 export interface ScheduleGateProps {
@@ -34,6 +35,7 @@ const BENEFITS: { key: 'list' | 'remind' | 'filter'; icon: IconName }[] = [
 ];
 
 export function ScheduleGate({ city, flagCode, time, onGetPass, onPassInfo, onClose, className }: ScheduleGateProps) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('pass.scheduleGate');
   return (
     <section data-window="O-SCHEDULE-GATE" className={cn('flex min-h-full flex-col', className)}>
@@ -79,7 +81,7 @@ export function ScheduleGate({ city, flagCode, time, onGetPass, onPassInfo, onCl
       </div>
       <div className="sticky bottom-0 flex flex-col gap-2 border-t border-border bg-surface px-4 pb-4 pt-3" data-row="buy">
         <Button variant="coral" size="lg" iconLeft="ticket" data-action="get-pass" onClick={onGetPass} className="w-full">
-          {t('get', { price: formatUsd(PASS_PRICE) })}
+          {t('get', { price: formatUsd(passPrice) })}
         </Button>
         <Button variant="secondary" size="lg" data-action="close" onClick={onClose} className="w-full">
           {t('close')}

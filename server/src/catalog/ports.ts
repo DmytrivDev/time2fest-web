@@ -48,4 +48,6 @@ export interface CatalogImportStore extends CatalogStore {
 export interface ObjectStore {
   /** Writes (replaces) one object; the key already carries the environment's prefix. Throws when the write fails. */
   put(key: string, body: string, contentType: string): Promise<void>;
+  /** Removes one object (absent → no error). Used only by the `test` door of the red button (SPEC-08 W19). */
+  delete?(key: string): Promise<void>;
 }

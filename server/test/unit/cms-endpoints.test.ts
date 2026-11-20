@@ -57,10 +57,12 @@ function fakePublisher(result: PublishResult | 'throw' = { status: 'ok' }) {
 const paths = (cls: 'production' | 'rehearsal' | 'test') => cmsEndpointsFor(cls, () => Promise.reject(new Error('not resolved'))).map((e) => `${e.method} ${e.path}`);
 
 describe('root cms endpoints per class', () => {
+  // SPEC-08 W18 adds the owner's site-state endpoints in every class (switch, product, view).
+  const site = ['post /site/product', 'post /site/switch', 'get /site/view'];
   it('AC-52: production has only the read-only slice; rehearsal and test also have POST /clock', () => {
-    expect(paths('production')).toEqual(['get /festival-state']);
-    expect(paths('rehearsal')).toEqual(['get /festival-state', 'post /clock']);
-    expect(paths('test')).toEqual(['get /festival-state', 'post /clock']);
+    expect(paths('production')).toEqual(['get /festival-state', ...site]);
+    expect(paths('rehearsal')).toEqual(['get /festival-state', 'post /clock', ...site]);
+    expect(paths('test')).toEqual(['get /festival-state', 'post /clock', ...site]);
   });
 });
 

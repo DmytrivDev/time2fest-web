@@ -19,7 +19,7 @@ import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
 import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
-import { createPayloadCatalogStore } from './adapters/payloadCatalog';
+import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
@@ -46,14 +46,24 @@ import { clockFor, monotonicClock, processClockCache, realClock } from './clock'
 import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
-import { alarmStoreOf, catalogStoreOf, eventsOf, unattendedDepsOf } from './endpoints/deps';
-import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow } from './endpoints/types';
+import { alarmStoreOf, catalogStoreOf, eventsOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
+import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventSubscriber } from './events/ports';
 import type { CatalogCopyDeps } from './catalog/copy';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
-import { payloadCorrectionDeps } from './adapters/payloadCorrections';
+import { createPayloadCorrectionReader, payloadCorrectionDeps } from './adapters/payloadCorrections';
+import { createPayloadFanOutClaim, createPayloadRebuildStore, createPayloadSiteReset, createPayloadSiteStore } from './adapters/payloadSiteState';
+import { createFakeProducts, emptyProducts } from './adapters/products';
+import { createCfPurge } from './adapters/cfPurge';
+import { catalogVersionOf } from '@time2fest/contracts';
+import { createGithubDispatch } from './adapters/githubDispatch';
+import { REBUILD_TICK_MS } from './domain/site/rebuild';
+import { currentPatches } from './corrections/service';
+import type { FanOutDeps } from './site/fanout';
+import { tickRebuild, type RebuildDeps } from './site/rebuild';
+import type { SnapshotReadDeps } from './site/snapshot';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
 import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
@@ -66,7 +76,7 @@ import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
-import type { Scheduler } from './realtime/ports';
+import type { ChannelPublisher, Scheduler } from './realtime/ports';
 import { isRevertible } from './registries/revertHandlers';
 import { momentActionsFor } from './registries/moments';
 import { routeRegistry } from './registries/routes';
@@ -83,6 +93,7 @@ const BACKGROUND_KEY = Symbol.for('t2f.background');
 const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
 const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
 const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
+const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -216,11 +227,16 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.catalogStore = overrides.catalogStore ?? createPayloadCatalogStore(payload);
   // Services over the stores, built once: the request binding is the `tx` parameter of their methods.
   deps.alarmService = overrides.alarmService ?? createAlarmService(alarmStore, clock);
-  deps.corrections = overrides.corrections ?? payloadCorrectionDeps({ publisher: deps.events.publisher, clock, isRevertible });
+  // The site state (SPEC-08): built before the corrections, whose changes bump its version in their transaction.
+  deps.site = overrides.site ?? createSiteWiring(deps, payload);
+  deps.corrections =
+    overrides.corrections ?? { ...payloadCorrectionDeps({ publisher: deps.events.publisher, clock, isRevertible }), siteVersion: deps.site.store };
   deps.unattended =
     overrides.unattended ??
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
+  deps.siteFanOut = overrides.siteFanOut ?? (() => siteFanOutDepsOf(deps));
+  deps.rebuild = overrides.rebuild ?? (() => rebuildDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
@@ -437,6 +453,117 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
 }
 
 /**
+ * The snapshot readers of the `site` state (SPEC-08 AC-8, AC-9): the record, the corrections' effective
+ * patches and the catalog's season meta, over Payload.
+ */
+function siteSnapshotDeps(payload: () => Promise<Payload>): SnapshotReadDeps {
+  const corrections = createPayloadCorrectionReader(payload);
+  return {
+    store: createPayloadSiteStore({ payload, clock: realClock }),
+    patches: async () => (await currentPatches(corrections)).patches,
+    // The season row only: the whole catalog per request starves the pool under parallel readers (AC-37).
+    catalogMeta: createPayloadCatalogMeta(payload),
+  };
+}
+
+/**
+ * The site state of the process (SPEC-08 W20): the store, the products port, the journal and the outbox
+ * publisher for toggle-with-reason and the product choice, and the snapshot readers of `GET /api/site/state`.
+ * `products` is the empty port in every class (AC-18); in `test` it is a settable fake, empty until the
+ * `POST /api/_test/site` door fills it, plus the door's record reset.
+ */
+function createSiteWiring(deps: Deps, payload: () => Promise<Payload>): SiteWiring {
+  const store = createPayloadSiteStore({ payload, clock: deps.clock });
+  const base = { store, journal: createPayloadJournal(isRevertible), publisher: eventsOf(deps).publisher, clock: deps.clock, snapshot: siteSnapshotDeps(payload) };
+  if (deps.env.class !== 'test') return { ...base, products: emptyProducts };
+  const fake = createFakeProducts();
+  const resetRecord = createPayloadSiteReset({ payload, clock: deps.clock });
+  return {
+    ...base,
+    products: fake,
+    testProducts: fake,
+    async resetForTests() {
+      await resetRecord();
+      fake.set([]);
+    },
+  };
+}
+
+/**
+ * What the after-commit fan-out of the `site` snapshot needs (SPEC-08 W12 … W14): the snapshot readers over
+ * Payload, the fan-out claim, the realtime publisher (when configured), the edge purge only with token, zone
+ * and site URL (else every change logs `site/purge-skipped`, AC-34), the catalog's bucket and prefix (else
+ * `site/r2-copy-skipped`).
+ */
+export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
+  const payload = payloadOf(deps);
+  const v = deps.env.vars;
+  let publisher: ChannelPublisher | undefined;
+  try {
+    publisher = publisherOf(deps);
+  } catch {
+    publisher = undefined;
+  }
+  const token = v.T2F_CF_PURGE_TOKEN;
+  const zoneId = v.T2F_CF_ZONE_ID;
+  const siteUrl = v.T2F_SITE_URL;
+  const bucket = deps.catalogCopy?.();
+  return {
+    snapshot: deps.site?.snapshot ?? siteSnapshotDeps(payload),
+    claim: createPayloadFanOutClaim(payload),
+    ...(publisher ? { publisher } : {}),
+    ...(token && zoneId && siteUrl ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token) }), siteUrl: String(siteUrl) } } : {}),
+    ...(bucket ? { copy: { objects: bucket.objects, prefix: bucket.prefix } } : {}),
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
+ * What the catalog rebuild launch needs (SPEC-08 W26): the rebuild state on the site record, the server clock,
+ * the class and `T2F_REBUILD_PRODUCTION`, the GitHub dispatch only with `T2F_GITHUB_DISPATCH_TOKEN` (else every
+ * scheduled launch logs `site/rebuild-not-configured` — boot never fails, AC-65), and the catalog version.
+ * `dispatchBaseUrl` is for tests (a fake on port 0); the token never leaves the adapter's header.
+ */
+export function rebuildDepsOf(deps: Deps, opts: { dispatchBaseUrl?: string } = {}): RebuildDeps {
+  const payload = payloadOf(deps);
+  const token = deps.env.vars.T2F_GITHUB_DISPATCH_TOKEN;
+  const snapshot = deps.site?.snapshot ?? siteSnapshotDeps(payload);
+  return {
+    store: createPayloadRebuildStore(payload),
+    clock: deps.clock,
+    envClass: deps.env.class,
+    productionFlag: deps.env.vars.T2F_REBUILD_PRODUCTION === '1',
+    ...(typeof token === 'string' && token
+      ? { launcher: createGithubDispatch({ token, ...(opts.dispatchBaseUrl ? { baseUrl: opts.dispatchBaseUrl } : {}) }) }
+      : {}),
+    catalogVersion: async () => {
+      const meta = await snapshot.catalogMeta();
+      return meta ? catalogVersionOf(meta) : null;
+    },
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
+ * The catalog rebuild ticker of one process (SPEC-08 AC-61 … AC-63): every 15 s on the server clock. A failing
+ * tick (database down) raises a log-level alarm (code only) and the ticker keeps going.
+ */
+export function startRebuildTicker(deps: Deps, intervalMs: number = REBUILD_TICK_MS): Ticker | undefined {
+  const rebuild = deps.rebuild?.();
+  if (!rebuild) return undefined;
+  return startTicker({
+    tick: () => tickRebuild(rebuild),
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'site', code: 'rebuild_tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    intervalMs,
+  });
+}
+
+/**
  * Background work of one process: the internal-events delivery loop over the subscriber registry
  * (`testOnly` rows only in the `test` class). Called by `instrumentation.ts` once per process and
  * by integration helpers, which stop it themselves.
@@ -512,6 +639,7 @@ export function startProcessBackground(): void {
   const rest = (refresher?: ClockRefresh) => {
     g[CLOCK_REFRESH_KEY] = refresher;
     g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
+    g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());

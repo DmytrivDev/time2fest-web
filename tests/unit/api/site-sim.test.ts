@@ -51,11 +51,11 @@ describe('sim-адаптер site', () => {
     expect(r.ok && svc.peek()).toBe(r.ok ? r.value : undefined);
   });
 
-  it('сервіс є в sim, відмова network працює, site не в MIGRATED_DOMAINS', async () => {
+  it('сервіс є в sim, відмова network працює, site у MIGRATED_DOMAINS (SPEC-08, адаптер http)', async () => {
     const svc = getService('site');
     simFaults.failNext('site', 'state', 'network');
     const r = await svc.state();
     expect(r).toMatchObject({ ok: false, error: { code: 'network' } });
-    expect(MIGRATED_DOMAINS).not.toContain('site');
+    expect(MIGRATED_DOMAINS).toContain('site');
   });
 });

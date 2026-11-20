@@ -12,7 +12,7 @@ import { processDeps } from '../../adapters/processDeps';
 import { assertIntegrityAfter, CatalogIntegrityError, recordCatalogChange } from '../../catalog/service';
 import { NATURAL_KEYS } from '../../domain/catalog/fromData';
 import type { CatalogKind } from '../../domain/catalog/integrity';
-import { eventsOf } from '../../endpoints/deps';
+import { eventsOf, siteOf } from '../../endpoints/deps';
 
 export const IMPORT_CONTEXT_KEY = 't2fImport';
 export const INTERNAL_CONTEXT_KEY = 't2fInternal';
@@ -49,7 +49,7 @@ export const bumpCatalogVersion: CollectionAfterChangeHook = async ({ doc, req }
   if (skipsCatalogHooks(req)) return doc;
   const deps = await processDeps();
   await recordCatalogChange(
-    { seasons: createPayloadSeasonStore(), publisher: eventsOf(deps).publisher, clock: deps.clock },
+    { seasons: createPayloadSeasonStore(), publisher: eventsOf(deps).publisher, clock: deps.clock, siteVersion: siteOf(deps).store },
     req,
   );
   return doc;

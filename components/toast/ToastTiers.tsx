@@ -5,7 +5,8 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/components/primitives/cn';
 import { Emoji } from '@/components/primitives/Emoji';
 import { Icon } from '@/components/primitives/Icon';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
+import { formatUsd } from '@/lib/offers/format';
 import { tierBenefits, TOAST_TIERS, type ToastTier } from '@/lib/toast/tiers';
 import s from './toastWindow.module.css';
 
@@ -18,13 +19,14 @@ export const TIER_EMOJI: Record<ToastTier, string> = { 2: '🥂', 5: '🍾', 10:
  */
 export function ToastTiers({ value, onChange, phone }: { value?: ToastTier; onChange?: (v: ToastTier) => void; phone?: boolean }) {
   const t = useTranslations('toast');
+  const { tiers } = useSitePrices();
   if (!onChange) {
     return (
       <ul aria-label={t('tiersLabel')} className={s.tiers} data-phone={phone || undefined} data-readonly="">
         {TOAST_TIERS.map((tier) => (
           <li key={tier} className={s.tier} data-tier={tier}>
             <Emoji char={TIER_EMOJI[tier]} size={19} />
-            <b className={s.tierPrice}>{formatUsd(tier)}</b>
+            <b className={s.tierPrice}>{formatUsd(tiers[tier])}</b>
             <span className={s.tierName}>{t(`tiers.${tier}`)}</span>
           </li>
         ))}
@@ -39,13 +41,13 @@ export function ToastTiers({ value, onChange, phone }: { value?: ToastTier; onCh
           type="button"
           role="radio"
           aria-checked={tier === value}
-          aria-label={t('tierLabel', { price: formatUsd(tier), name: t(`tiers.${tier}`) })}
+          aria-label={t('tierLabel', { price: formatUsd(tiers[tier]), name: t(`tiers.${tier}`) })}
           onClick={() => onChange(tier)}
           className={cn('t2f-focus', s.tier)}
           data-tier={tier}
         >
           <Emoji char={TIER_EMOJI[tier]} size={19} />
-          <b className={s.tierPrice}>{formatUsd(tier)}</b>
+          <b className={s.tierPrice}>{formatUsd(tiers[tier])}</b>
           <span className={s.tierName}>{t(`tiers.${tier}`)}</span>
         </button>
       ))}
@@ -59,6 +61,7 @@ export function ToastTiers({ value, onChange, phone }: { value?: ToastTier; onCh
  */
 export function ToastBenefits({ tier, hasPass, readOnly }: { tier?: ToastTier; hasPass: boolean; readOnly?: boolean }) {
   const t = useTranslations('toast.benefits');
+  const { tiers, pass } = useSitePrices();
   if (readOnly || tier === undefined) {
     return (
       <ul className={s.benefits} aria-label={t('label')} data-toast-benefits="all">
@@ -68,7 +71,7 @@ export function ToastBenefits({ tier, hasPass, readOnly }: { tier?: ToastTier; h
               <Icon name="check" size={12} strokeWidth={3} />
             </span>
             <span className={s.benefitText}>{t(b.key)}</span>
-            <span className={s.from}>{t('from', { price: formatUsd(b.from) })}</span>
+            <span className={s.from}>{t('from', { price: formatUsd(tiers[b.from]) })}</span>
           </li>
         ))}
       </ul>
@@ -91,12 +94,12 @@ export function ToastBenefits({ tier, hasPass, readOnly }: { tier?: ToastTier; h
             </span>
             <span className={s.benefitText}>
               {t(b.key)}
-              {b.key === 'pass' && b.included ? <span className={s.apart}> {t('passApart', { price: formatUsd(PASS_PRICE) })}</span> : null}
+              {b.key === 'pass' && b.included ? <span className={s.apart}> {t('passApart', { price: formatUsd(pass) })}</span> : null}
               <span className="sr-only"> — {b.included ? t('included') : t('notIncluded')}</span>
             </span>
             {b.included ? null : (
               <span className={s.from} aria-hidden="true">
-                {t('from', { price: formatUsd(b.from) })}
+                {t('from', { price: formatUsd(tiers[b.from]) })}
               </span>
             )}
           </li>

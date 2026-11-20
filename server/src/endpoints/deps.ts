@@ -11,7 +11,7 @@ import type { ReadinessProbe } from '../health/ports';
 import type { ChannelPublisher, SubjectInvalidator } from '../realtime/ports';
 import type { SubjectResolver } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
-import type { Deps, EventPorts, ModerationDeps } from './types';
+import type { Deps, EventPorts, ModerationDeps, SiteWiring } from './types';
 
 function built<T>(value: T | undefined, name: string): T {
   if (value === undefined) throw new Error(`deps: ${name} missing (deps not built by createDeps)`);
@@ -42,3 +42,5 @@ export const unattendedDepsOf = (deps: Deps): UnattendedDeps => built(deps.unatt
 export const readinessOf = (deps: Deps): ReadinessProbe => built(deps.readiness, 'readiness');
 /** Text moderation and AI (SPEC-09): verdict, translation, provider layer, spend counter, settings. */
 export const moderationOf = (deps: Deps): ModerationDeps => built(deps.moderation, 'moderation');
+/** The site state service and snapshot readers (SPEC-08). */
+export const siteOf = (deps: Deps): SiteWiring => built(deps.site, 'site');

@@ -16,6 +16,7 @@ import { emptyDbRows, planImport, reportLines, type DbRows, type ImportPlan } fr
 import { bumpedMeta } from '../domain/catalog/version';
 import type { EventPublisher } from '../events/ports';
 import type { Clock } from '../ports';
+import type { SiteVersionBump } from '../site/ports';
 import type { CatalogImportStore, StoredCatalog } from './ports';
 import { CATALOG_CHANGED_TOPIC } from './service';
 
@@ -28,6 +29,8 @@ export interface CatalogImportPorts {
   publisher: EventPublisher;
   journal: Journal;
   clock: Clock;
+  /** The site snapshot's version grows with the `catalog.changed` of an apply (SPEC-08 AC-4, AC-9); absent → no bump. */
+  siteVersion?: SiteVersionBump;
 }
 
 export interface ImportRun {
@@ -142,6 +145,7 @@ export async function importCatalog(ports: CatalogImportPorts, run: ImportRun): 
         tzdbVersion: source.season.tzdbVersion,
       });
       version = catalogVersionOf({ generatedAt, tzdbVersion: source.season.tzdbVersion });
+      await ports.siteVersion?.bumpVersion(tx);
       await ports.publisher.publish(tx, CATALOG_CHANGED_TOPIC, CatalogChangedSchema.parse({ version, at: generatedAt }));
       published = true;
     }

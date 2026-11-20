@@ -21,7 +21,8 @@ import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
 import { useChatRooms } from '@/lib/api/hooks/chat';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { usePhone } from '@/lib/hooks/useMedia';
 import nn from '@/components/live/nowNext.module.css';
 import { useHasPass, useSchedule } from '@/lib/api/hooks/auth';
@@ -31,6 +32,7 @@ export { matchCountry, orderCountries, type CountryListProps } from './Countries
 
 /** Сторінка свята: довідник (`CountriesView`) + чат «Світ», вікна паса й графіка, «Мій графік». */
 export function CountryList(props: CountryListProps) {
+  const passPrice = useSitePrices().pass;
   const tNN = useTranslations('liveCards.nowNext');
   const tChat = useTranslations('chat');
   const hasPass = useHasPass();
@@ -65,7 +67,7 @@ export function CountryList(props: CountryListProps) {
           data-action="get-pass"
           onClick={() => getPass()}
         >
-          {tNN('mineLockedGet', { price: formatUsd(PASS_PRICE) })}
+          {tNN('mineLockedGet', { price: formatUsd(passPrice) })}
         </Button>
         <Button
           variant="tonal"

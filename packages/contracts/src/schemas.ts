@@ -72,3 +72,5 @@ export * from './realtime.schemas';
 export * from './clock.schemas';
 
 export * from './moderation.schemas';
+
+export * from './site.schemas';

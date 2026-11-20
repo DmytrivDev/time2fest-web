@@ -12,6 +12,7 @@ import { applyStreamEvent, type StreamEvent, type ViewerCountry, type ViewerSumm
 import { createResource, useResource, type Resource } from '../resource';
 import { getService } from '../services';
 import { ok, type ApiResult } from '../result';
+import { usePatchedData } from './site';
 import { getData } from '@/lib/data/load';
 import type { Dataset, StreamChain } from '@/lib/data/types';
 
@@ -61,10 +62,14 @@ export function withChains(data: Dataset, chains: Chains): Dataset {
   return chains === data.chainsByEventId ? data : { ...data, chainsByEventId: chains };
 }
 
-/** `getData()` з ланцюжками сервера. Та сама посилання, поки ланцюжки не змінились (безпечно в залежностях `useMemo`). */
+/**
+ * `getData()` з поправками моменту подій (знімок `site`, AC-53/54) і ланцюжками сервера. Та сама посилання, поки не
+ * змінились ні поправки моменту, ні ланцюжки (безпечно в залежностях `useMemo`).
+ */
 export function useLiveData(): Dataset {
+  const data = usePatchedData();
   const chains = useStreamChains();
-  return useMemo(() => withChains(getData(), chains), [chains]);
+  return useMemo(() => withChains(data, chains), [data, chains]);
 }
 
 const NO_VIEWERS: readonly ViewerCountry[] = [];

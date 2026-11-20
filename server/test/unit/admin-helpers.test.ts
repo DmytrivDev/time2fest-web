@@ -8,9 +8,9 @@ const base: EffectiveForm = { moment: 1_000_000, isMainCelebration: true, restra
 
 describe('admin slots (AC-26, AC-28)', () => {
   it('the test slice is listed only in the test class; order is by `order`', () => {
-    expect(visibleSlots('test').map((s) => s.key)).toEqual(['05-festival', '10-corrections', '20-unattended', '30-moderation', '90-test']);
+    expect(visibleSlots('test').map((s) => s.key)).toEqual(['05-festival', '10-corrections', '20-unattended', '30-moderation', '40-site', '90-test']);
     for (const cls of ['production', 'rehearsal'] as const) {
-      expect(visibleSlots(cls).map((s) => s.key)).toEqual(['05-festival', '10-corrections', '20-unattended', '30-moderation']);
+      expect(visibleSlots(cls).map((s) => s.key)).toEqual(['05-festival', '10-corrections', '20-unattended', '30-moderation', '40-site']);
     }
     expect(adminSlotRegistry.filter((s) => s.testOnly).map((s) => s.key)).toEqual(['90-test']);
   });

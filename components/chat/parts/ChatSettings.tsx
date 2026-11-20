@@ -16,7 +16,8 @@ import { Flag } from '@/components/primitives/Flag';
 import { Icon, type IconName } from '@/components/primitives/Icon';
 import { Reveal } from '@/components/primitives/Reveal';
 import type { PassGateFeature } from '@/components/pass/PassGate';
-import { formatUsd, PASS_PRICE } from '@/lib/offers/format';
+import { formatUsd } from '@/lib/offers/format';
+import { useSitePrices } from '@/lib/api/hooks/site';
 import { effectivePref, useChatPrefs, type ChatPrefKey } from '@/stores/chatPrefs';
 import s from './chatSettings.module.css';
 
@@ -63,6 +64,7 @@ export function ChatSettings({
   titleRef,
   id,
 }: ChatSettingsProps) {
+  const passPrice = useSitePrices().pass;
   const t = useTranslations('chat.settings');
   const chat = useTranslations('chat');
   const uid = useId();
@@ -124,7 +126,7 @@ export function ChatSettings({
                     <p className={s.cardText}>{t(`lock.${key}`)}</p>
                     <div className={s.lockActions}>
                       <button type="button" onClick={onGetPass} className={cn('t2f-focus t2f-transition', s.cardBtn, s.lockBtn)}>
-                        {t('getPass', { price: formatUsd(PASS_PRICE) })}
+                        {t('getPass', { price: formatUsd(passPrice) })}
                       </button>
                       <NextLink href="/pass/" className={cn('t2f-focus', s.cardLink)}>
                         {t('more')}
