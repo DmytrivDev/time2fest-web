@@ -2,8 +2,17 @@
 import { z } from 'zod';
 import type { ModerationDoorBody, ModerationDoorValue, ToastCheckBody, ToastCheckValue } from './moderation';
 
+/** `String.prototype.isWellFormed` (ES2024; this package targets the ES2022 library): no lone surrogate. */
+const wellFormed = (t: string): boolean => (t as string & { isWellFormed(): boolean }).isWellFormed();
+
 export const ToastCheckBodySchema = z
-  .object({ text: z.string().refine((t) => t.trim().length >= 1 && t.trim().length <= 120, 'text must be 1-120 chars after trim') })
+  .object({
+    text: z
+      .string()
+      .refine((t) => t.trim().length >= 1 && t.trim().length <= 120, 'text must be 1-120 chars after trim')
+      // A lone surrogate is not text; a provider would reject the request with 400 (security S6).
+      .refine(wellFormed, 'text must be well-formed UTF-16'),
+  })
   .strict() satisfies z.ZodType<ToastCheckBody>;
 
 export const ToastIssueWireSchema = z

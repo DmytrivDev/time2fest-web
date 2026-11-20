@@ -44,6 +44,9 @@ const httpsUrl = z.string().refine((s) => {
 });
 
 /** USD per million tokens as a decimal string (parsed where the spend is computed). */
+/** A share in (0, 1], decimal: `0.2`. */
+const share = z.string().regex(/^\d+(\.\d+)?$/).transform(Number).pipe(z.number().gt(0).max(1));
+
 const usdPerMTok = z.string().regex(/^\d+(\.\d+)?$/);
 
 const hostPort = z.string().regex(/^[a-z0-9.-]+(:\d{1,5})?$/i);
@@ -84,6 +87,12 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_AI_DEEPSEEK_PRICE_CACHE_MISS', schema: usdPerMTok.default('0.30') },
       { name: 'T2F_AI_DEEPSEEK_PRICE_OUTPUT', schema: usdPerMTok.default('1.20') },
       { name: 'T2F_AI_DEEPSEEK_URL', schema: z.url().optional() },
+      // User AI calls a minute per provider and server process (security S7, token bucket); N processes → N× on the account.
+      // Anthropic: 85 % of the owner-verified 4 000 RPM.
+      { name: 'T2F_AI_ANTHROPIC_RPM', schema: intIn(1, 1_000_000).default(3_400) },
+      { name: 'T2F_AI_DEEPSEEK_RPM', schema: intIn(1, 1_000_000).default(1_000) },
+      // Share of each spend ceiling (night, month) that POST /api/toasts/check may use (security S4).
+      { name: 'T2F_AI_TOASTS_SPEND_SHARE', schema: share.default(0.2) },
     ],
   },
   {

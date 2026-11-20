@@ -14,6 +14,7 @@ import {
   assess,
   AVAILABLE,
   inWindow,
+  MIN_SAMPLES,
   p95,
   PROBE_INTERVAL_MS,
   probeDue,
@@ -23,6 +24,7 @@ import {
   type Health,
   type HealthReason,
   type HealthSample,
+  WINDOW_MS,
 } from '../domain/moderation/health';
 import { sameState, taskState, type TaskState } from '../domain/moderation/state';
 import type { Alarm, Clock, Logger } from '../ports';
@@ -47,6 +49,15 @@ export interface ProviderLayerDeps {
   probeTimeoutMs?: number;
   /** Every probe answer (the spend counter adds what the provider bills for it, AC-26). */
   onProbe?: (provider: ProviderId, answer: ProviderAnswer<unknown>) => void;
+  /**
+   * User calls a minute per provider in this process (security S7): a token bucket of that size,
+   * refilled evenly. Absent → no limit. With N server processes the account sees up to N× this.
+   */
+  ratePerMin?: Partial<Record<ProviderId, number>>;
+  /** Backoff after a 429 without `Retry-After` (S7). */
+  saturationBackoffMs?: number;
+  /** Upper bound of any backoff, `Retry-After` included (S7). */
+  maxSaturationBackoffMs?: number;
 }
 
 export type StateListener = (status: AiStatus) => void;
@@ -103,6 +114,10 @@ export interface ProviderLayer {
 interface TaskHealth {
   task: AiTask;
   samples: HealthSample[];
+  /** Ends (`at`) of the window's `rejected-request` answers (S6). */
+  rejects: number[];
+  /** The rejected-request alarm is raised and not yet re-armed. */
+  rejectAlarmed: boolean;
   health: Health;
   /** When it became unavailable (start of the probe run). */
   downSince: number | null;
@@ -113,7 +128,17 @@ interface ProviderHealth {
   provider: AiProvider;
   tasks: Map<AiTask, TaskHealth>;
   lastProbeAt: number | null;
+  /** Token bucket of user calls (S7); `Infinity` without a rate. */
+  tokens: number;
+  refilledAt: number;
+  /** Skipped until then after a 429 (S7); one `moderation_saturated` page per episode. */
+  saturatedUntil: number | null;
 }
+
+/** Above this share of `rejected-request` answers in a window of ≥ 20 calls, one `log` alarm (S6). */
+export const REJECTED_ALARM_SHARE = 0.2;
+export const SATURATION_BACKOFF_MS = 10_000;
+export const MAX_SATURATION_BACKOFF_MS = 60_000;
 
 function failure<T>(kind: 'http' | 'malformed'): ProviderAnswer<T> {
   return { ok: false, kind };
@@ -127,18 +152,76 @@ export function createProviderLayer({
   probeIntervalMs = PROBE_INTERVAL_MS,
   probeTimeoutMs = 5_000,
   onProbe,
+  ratePerMin = {},
+  saturationBackoffMs = SATURATION_BACKOFF_MS,
+  maxSaturationBackoffMs = MAX_SATURATION_BACKOFF_MS,
 }: ProviderLayerDeps): ProviderLayer {
   const byId = new Map<ProviderId, ProviderHealth>();
+  const capacity = (id: ProviderId): number => {
+    const r = ratePerMin[id];
+    return r !== undefined && Number.isFinite(r) && r > 0 ? r : Infinity;
+  };
   for (const task of AI_TASKS) {
     for (const p of providers[task]) {
       let h = byId.get(p.id);
       if (h === undefined) {
-        h = { provider: p, tasks: new Map(), lastProbeAt: null };
+        h = { provider: p, tasks: new Map(), lastProbeAt: null, tokens: capacity(p.id), refilledAt: clock.now(), saturatedUntil: null };
         byId.set(p.id, h);
       }
       if (!h.tasks.has(task)) {
-        h.tasks.set(task, { task, samples: [], health: p.configured ? AVAILABLE : NOT_CONFIGURED, downSince: null, probes: [] });
+        h.tasks.set(task, {
+          task,
+          samples: [],
+          rejects: [],
+          rejectAlarmed: false,
+          health: p.configured ? AVAILABLE : NOT_CONFIGURED,
+          downSince: null,
+          probes: [],
+        });
       }
+    }
+  }
+
+  /** Takes one token of the provider's bucket; false when it is empty (S7). */
+  function takeToken(h: ProviderHealth, now: number): boolean {
+    const cap = capacity(h.provider.id);
+    if (cap === Infinity) return true;
+    h.tokens = Math.min(cap, h.tokens + ((now - h.refilledAt) * cap) / 60_000);
+    h.refilledAt = now;
+    if (h.tokens < 1) return false;
+    h.tokens -= 1;
+    return true;
+  }
+
+  const saturated = (h: ProviderHealth, now: number) => h.saturatedUntil !== null && now < h.saturatedUntil;
+
+  /** A 429 (S7): skip the provider for the backoff; one page per episode, never a health sample. */
+  function saturate(h: ProviderHealth, retryAfterMs: number | undefined, now: number) {
+    const episode = !saturated(h, now);
+    const backoff = Math.min(maxSaturationBackoffMs, Math.max(0, retryAfterMs ?? saturationBackoffMs));
+    h.saturatedUntil = Math.max(h.saturatedUntil ?? 0, now + backoff);
+    if (episode) {
+      alarm.raise({ level: 'page', source: 'mod', code: 'moderation_saturated', details: { provider: h.provider.id, backoffMs: backoff } });
+    }
+  }
+
+  /** Tracks `rejected-request` answers of a task window; one `log` alarm while their share stays high (S6). */
+  function trackRejects(h: ProviderHealth, t: TaskHealth, at: number, rejected: boolean) {
+    if (rejected) t.rejects.push(at);
+    t.rejects = t.rejects.filter((x) => x > at - WINDOW_MS && x <= at);
+    const calls = inWindow(t.samples, at).length;
+    if (calls < MIN_SAMPLES) return;
+    const share = t.rejects.length / calls;
+    if (share <= REJECTED_ALARM_SHARE) {
+      t.rejectAlarmed = false;
+    } else if (!t.rejectAlarmed) {
+      t.rejectAlarmed = true;
+      alarm.raise({
+        level: 'log',
+        source: 'mod',
+        code: 'moderation_rejected_requests',
+        details: { provider: h.provider.id, task: t.task, share: Math.round(share * 100) / 100 },
+      });
     }
   }
   let ceiling = false;
@@ -288,7 +371,8 @@ export function createProviderLayer({
     usable(task) {
       const s = current.get(task) as TaskState;
       if (s.state === 'fallback') return [];
-      return providers[task].filter((p) => taskHealthOf(p, task).health.status === 'available');
+      const now = clock.now();
+      return providers[task].filter((p) => taskHealthOf(p, task).health.status === 'available' && !saturated(healthOf(p), now));
     },
     state: statusOf,
     subscribe(fn) {
@@ -303,11 +387,25 @@ export function createProviderLayer({
       recompute();
     },
     async call(task, provider, run, accept) {
+      const h = healthOf(provider);
+      const t = taskHealthOf(provider, task);
+      // This process's share of the account rate (S7): an empty bucket sends nothing and leaves health alone.
+      if (!takeToken(h, clock.now())) {
+        logCall(provider.id, task, 0, { ok: false, kind: 'throttled' });
+        return { ok: false, kind: 'throttled' };
+      }
       const { answer: raw, ms, at } = await measure(run);
       const rejected = raw.ok && accept !== undefined && !accept(raw.value);
       logCall(provider.id, task, ms, raw, rejected);
-      // Health judges the transport only: a rejected or refused answer is a healthy (and timed) sample.
-      record(healthOf(provider), taskHealthOf(provider, task), { at, ms, ok: raw.ok || raw.kind === 'refused' });
+      if (!raw.ok && raw.kind === 'saturated') {
+        saturate(h, raw.retryAfterMs, at);
+        return raw;
+      }
+      const rejectedRequest = !raw.ok && raw.kind === 'rejected-request';
+      // Health judges the transport only: a rejected answer, a refused text or a refused request
+      // (status 400 / 413 / 422, S6) is a healthy (and timed) sample; the caller never uses it.
+      record(h, t, { at, ms, ok: raw.ok || raw.kind === 'refused' || rejectedRequest });
+      if (t.health.status === 'available') trackRejects(h, t, at, rejectedRequest);
       return rejected ? { ok: false, kind: 'malformed' } : raw;
     },
     stats() {
@@ -348,8 +446,13 @@ export function createProviderLayer({
     reset() {
       for (const h of byId.values()) {
         h.lastProbeAt = null;
+        h.tokens = capacity(h.provider.id);
+        h.refilledAt = clock.now();
+        h.saturatedUntil = null;
         for (const t of h.tasks.values()) {
           t.samples = [];
+          t.rejects = [];
+          t.rejectAlarmed = false;
           t.probes = [];
           t.downSince = null;
           t.health = h.provider.configured ? AVAILABLE : NOT_CONFIGURED;

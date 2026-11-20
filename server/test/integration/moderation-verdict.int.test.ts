@@ -208,3 +208,42 @@ describe('SPEC-09 verdict service', () => {
     expect(await requests()).toHaveLength(0);
   });
 });
+
+describe('SPEC-09 security round 3: refused requests and saturation (S6, S7)', () => {
+  it('S6: 10 verdicts whose primary answers 400 keep moderation available; the text goes to the backup', async () => {
+    await control('anthropic', { down: 400 });
+    await control('deepseek', { score: 0.1 });
+    for (let i = 0; i < 10; i++) {
+      expect(await m.verdict.verdict({ kind: 'message', text: `hi ${i}` })).toEqual({ outcome: 'allow', source: 'backup' });
+    }
+    expect(m.layer.state('moderation')).toEqual({ task: 'moderation', state: 'available' });
+    expect(m.layer.usable('moderation').map((p) => p.id)).toEqual(['anthropic', 'deepseek']);
+  });
+
+  it('S6: a lone surrogate reaches the provider as U+FFFD (no 400 from a provider that rejects ill-formed text)', async () => {
+    await control('anthropic', { rejectIllFormed: true, score: 0.1 });
+    for (let i = 0; i < 5; i++) {
+      expect(await m.verdict.verdict({ kind: 'message', text: 'hi \uD800' })).toEqual({ outcome: 'allow', source: 'primary' });
+    }
+    const sent = (await (await fetch(`${url}/_control/requests`)).json()) as { body: { messages: { content: string }[] } }[];
+    expect(sent.length).toBe(5);
+    for (const r of sent) expect(JSON.stringify(r.body)).not.toMatch(/\\ud[89a-f]/i);
+    expect(m.layer.state('moderation').state).toBe('available');
+  });
+
+  it('S7: 429 from the primary → no fallback, verdicts from the backup, one moderation_saturated page', async () => {
+    const cap = capture();
+    const own = testDeps({ log: cap.log }, aiEnv());
+    const mod = moderationOf(own);
+    await resetAll(mod);
+    await control('anthropic', { down: 429 });
+    await control('deepseek', { score: 0.1 });
+    for (let i = 0; i < 50; i++) {
+      expect(await mod.verdict.verdict({ kind: 'message', text: `hi ${i}` })).toEqual({ outcome: 'allow', source: 'backup' });
+    }
+    expect(mod.layer.state('moderation')).toEqual({ task: 'moderation', state: 'available' });
+    const anthropicCalls = (await requests()).filter((r) => r.provider === 'anthropic').length;
+    expect(anthropicCalls).toBe(1); // skipped for the 10 s backoff after the first 429
+    expect(cap.lines.filter((l) => l.alarm === 'page' && l.code === 'moderation_saturated')).toHaveLength(1);
+  });
+});

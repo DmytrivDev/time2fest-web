@@ -95,7 +95,7 @@ describe('AC-44 / AC-45 request shape', () => {
 });
 
 describe('failures and usage', () => {
-  it.each([429, 529, 503])('status %i gives {ok:false, kind:http}', async (status) => {
+  it.each([401, 403, 404, 529, 503])('status %i gives {ok:false, kind:http}', async (status) => {
     await control('anthropic', { down: status });
     await control('deepseek', { down: status });
     expect(await anthropic().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'http', status });
@@ -111,11 +111,20 @@ describe('failures and usage', () => {
     expect(await deepseek().translate({ text: 'x', to: 'uk' }, signal())).toEqual({ ok: false, kind: 'refused', status: 400 });
   });
 
-  it('S1: any other 400 stays kind http', async () => {
-    await control('anthropic', { down: 400 });
-    await control('deepseek', { down: 400 });
-    expect(await anthropic().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'http', status: 400 });
-    expect(await deepseek().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'http', status: 400 });
+  // Security S6: a refused request (400 other than DeepSeek's content risk, 413, 422) is `rejected-request`, not `http`.
+  it.each([400, 413, 422])('S6: status %i gives kind rejected-request', async (status) => {
+    await control('anthropic', { down: status });
+    await control('deepseek', { down: status });
+    expect(await anthropic().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'rejected-request', status });
+    expect(await deepseek().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'rejected-request', status });
+  });
+
+  // Security S7: 429 is `saturated`, with the Retry-After when present.
+  it('S7: status 429 gives kind saturated, Retry-After in ms', async () => {
+    await control('anthropic', { down: 429, retryAfter: '7' });
+    await control('deepseek', { down: 429 });
+    expect(await anthropic().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'saturated', status: 429, retryAfterMs: 7_000 });
+    expect(await deepseek().moderate('x', undefined, signal())).toEqual({ ok: false, kind: 'saturated', status: 429 });
   });
 
   it('a delay over the timeout gives kind timeout', async () => {

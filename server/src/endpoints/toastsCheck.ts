@@ -30,7 +30,8 @@ export const toastsCheckRoute: RouteRow = {
       const value: ToastCheckValue = { issue: { kind: issue.kind, start: issue.start, end: issue.end } };
       return { ok: true, value };
     }
-    const verdict = await moderationOf(ctx.deps).verdict.verdict({ kind: 'toast', text });
+    // Anonymous, so its AI calls spend a sub-budget of their own (security S4): once spent, the filter decides.
+    const verdict = await moderationOf(ctx.deps).verdict.verdict({ kind: 'toast', text, budget: 'toasts' });
     if (verdict.outcome !== 'allow') return failure('validation', { reason: 'moderation' });
     const value: ToastCheckValue = { issue: null };
     return { ok: true, value };

@@ -9,13 +9,15 @@ import { createServer } from 'node:http';
 import { pathToFileURL } from 'node:url';
 
 const RING = 100;
+/** JSON.stringify escapes exactly the lone surrogates (well-formed pairs stay raw). */
+const LONE_SURROGATE = /\\ud[89a-f][0-9a-f]{2}/i;
 
 /** @typedef {{ marker: string, score: number }} ScoreRule */
-/** @typedef {{ score: number | ScoreRule | ScoreRule[], translation: string | null, delayMs: number, errorRate: number, down: number | null, usage: Record<string, number> | null | undefined, corrupt: 'prose' | 'empty' | 'out-of-range' | null, refuse: boolean }} Knobs */
+/** @typedef {{ score: number | ScoreRule | ScoreRule[], translation: string | null, delayMs: number, errorRate: number, down: number | null, usage: Record<string, number> | null | undefined, corrupt: 'prose' | 'empty' | 'out-of-range' | null, refuse: boolean, rejectIllFormed: boolean, retryAfter: string | null }} Knobs */
 
 /** @returns {Knobs} */
 function defaults() {
-  return { score: 0, translation: null, delayMs: 0, errorRate: 0, down: null, usage: undefined, corrupt: null, refuse: false };
+  return { score: 0, translation: null, delayMs: 0, errorRate: 0, down: null, usage: undefined, corrupt: null, refuse: false, rejectIllFormed: false, retryAfter: null };
 }
 
 /** @param {string} provider */
@@ -109,7 +111,16 @@ export async function startFakeAi({ port = 0 } = {}) {
 
       const k = /** @type {Knobs} */ (knobs[provider]);
       if (k.delayMs > 0) await sleep(k.delayMs);
-      if (k.down !== null) return send(res, k.down, { error: { type: 'unavailable' } });
+      if (k.down !== null) {
+        // `retryAfter`: the `Retry-After` header of a `down` answer (a 429, security S7).
+        if (k.retryAfter !== null) res.setHeader('retry-after', k.retryAfter);
+        return send(res, k.down, { error: { type: 'unavailable' } });
+      }
+      // `rejectIllFormed`: like Anthropic, a request whose JSON holds a lone surrogate is a 400
+      // invalid_request_error (security S6).
+      if (k.rejectIllFormed && LONE_SURROGATE.test(JSON.stringify(body))) {
+        return send(res, 400, { type: 'error', error: { type: 'invalid_request_error', message: 'invalid unicode' } });
+      }
       if (k.errorRate > 0 && Math.random() < k.errorRate) return send(res, 500, { error: { type: 'fake_error' } });
 
       // `refuse`: the provider declines the content (security S1) — Anthropic answers 200 with

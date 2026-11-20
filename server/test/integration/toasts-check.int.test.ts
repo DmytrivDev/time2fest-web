@@ -163,3 +163,43 @@ describe('SPEC-09 POST /api/toasts/check', () => {
     expect(p95).toBeLessThanOrEqual(2_000);
   });
 });
+
+describe('SPEC-09 security round 3: toasts.check (S6, S4)', () => {
+  it('S6: 10 checks of text with a lone surrogate → 400 invalid-input from the body schema, no AI request', async () => {
+    const ip = nextIp();
+    for (let i = 0; i < 10; i++) {
+      const res = await check({ text: 'a\uD800' }, ip);
+      expect(res.status).toBe(400);
+      expect(await errorOf(res)).toMatchObject({ code: 'validation', reason: 'invalid-input' });
+    }
+    expect(await requestCount()).toBe(0);
+    expect(m.layer.state('moderation')).toEqual({ task: 'moderation', state: 'available' });
+  });
+
+  it('S4: toasts sub-budget spent → the check uses only the fallback filter, chat verdicts still reach the primary', async () => {
+    // 20 % of the default $100 month ceiling.
+    await m.spend.setSpendForDoor('month', 20, 'toasts');
+    try {
+      expect(m.spend.toastsReached()).toBe(true);
+      expect(m.spend.reached()).toBe(false);
+      const ok = await check({ text: 'З Новим роком!' }, nextIp());
+      expect(ok.status).toBe(200);
+      expect(await ok.json()).toMatchObject({ ok: true, value: { issue: null } });
+      expect(await requestCount()).toBe(0);
+      expect(await m.verdict.verdict({ kind: 'toast', text: 'З Новим роком!', budget: 'toasts' })).toEqual({ outcome: 'allow', source: 'fallback' });
+      expect(await requestCount()).toBe(0);
+      expect(await m.verdict.verdict({ kind: 'message', text: 'hello' })).toEqual({ outcome: 'allow', source: 'primary' });
+      expect(await requestCount()).toBe(1);
+    } finally {
+      await m.spend.setSpendForDoor('month', 0, 'toasts');
+    }
+  });
+
+  it('S4: a toast check spends the shared ceiling and the toasts sub-budget', async () => {
+    const before = m.spend.totals().month.usd;
+    const res = await check({ text: 'З Новим роком!' }, nextIp());
+    expect(res.status).toBe(200);
+    expect(await requestCount()).toBe(1);
+    expect(m.spend.totals().month.usd).toBeGreaterThan(before);
+  });
+});

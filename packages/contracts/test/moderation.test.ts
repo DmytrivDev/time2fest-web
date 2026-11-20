@@ -4,6 +4,12 @@ import type { ToastIssueWire } from '../src/moderation';
 import { ModerationDoorBodySchema, ToastCheckBodySchema, ToastCheckValueSchema } from '../src/moderation.schemas';
 
 describe('moderation wire schemas', () => {
+  it('toast check body: text that is not well-formed UTF-16 is rejected (security S6)', () => {
+    expect(ToastCheckBodySchema.safeParse({ text: 'a\uD800' }).success).toBe(false);
+    expect(ToastCheckBodySchema.safeParse({ text: '\uDC00 b' }).success).toBe(false);
+    expect(ToastCheckBodySchema.safeParse({ text: 'з Новим роком 😀' }).success).toBe(true);
+  });
+
   it('ToastCheckBody accepts text and rejects empty, blank, >120, extra keys', () => {
     expect(ToastCheckBodySchema.safeParse({ text: ' a ' }).success).toBe(true);
     expect(ToastCheckBodySchema.safeParse({ text: '' }).success).toBe(false);

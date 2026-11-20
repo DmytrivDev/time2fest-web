@@ -49,13 +49,25 @@ export function translationInstruction(d: Delimiters): string {
   return `You translate a short user text. ${dataRule(d)}Answer with the translation only.`;
 }
 
+/** C0 and C1 control characters except a line feed (security S6). */
+// eslint-disable-next-line no-control-regex
+const CONTROL = /[\u0000-\u0009\u000B-\u001F\u007F-\u009F]/g;
+
+/**
+ * User text as it may reach a provider (security S6): well-formed UTF-16 (a lone surrogate becomes
+ * U+FFFD, which a provider would otherwise reject with 400) and no control characters but a line feed.
+ */
+export function wireText(text: string): string {
+  return text.toWellFormed().replace(CONTROL, '');
+}
+
 /** The system instruction and the user message of one request, under one fresh pair of delimiters. */
 export function prompt(
   instruction: (d: Delimiters) => string,
   text: string,
   langLine?: string,
 ): { system: string; user: string } {
-  const clean = stripDelimiters(text);
+  const clean = stripDelimiters(wireText(text));
   const d = newDelimiters(clean);
   const body = `${d.open}\n${clean}\n${d.close}`;
   return { system: instruction(d), user: langLine === undefined ? body : `${langLine}\n${body}` };
@@ -87,6 +99,21 @@ async function readErrorBody(res: Response): Promise<unknown> {
   }
 }
 
+/** Statuses that answer `rejected-request` (S6); 401 / 403 / 404 / 5xx stay `http`, 429 is `saturated` (S7). */
+const REJECTED_REQUEST = new Set([400, 413, 422]);
+
+/**
+ * A `Retry-After` header in ms: seconds, or an HTTP date measured from the response's own `Date`
+ * (`servedMs`; the server clock is not read here). `undefined` when absent or unreadable.
+ */
+export function retryAfter(header: string | null, servedMs: number | undefined): number | undefined {
+  if (header === null) return undefined;
+  const v = header.trim();
+  if (/^\d+$/.test(v)) return Number(v) * 1_000;
+  const at = Date.parse(v);
+  return Number.isNaN(at) || servedMs === undefined ? undefined : Math.max(0, at - servedMs);
+}
+
 /** POST JSON; the answer is the parsed JSON or a failure kind. Never throws. */
 export async function postJson(req: PostRequest): Promise<ProviderAnswer<unknown>> {
   const started = performance.now();
@@ -102,6 +129,13 @@ export async function postJson(req: PostRequest): Promise<ProviderAnswer<unknown
         if (req.contentRefusal(await readErrorBody(res))) return { ok: false, kind: 'refused', status: 400 };
       } else {
         await res.body?.cancel();
+      }
+      // The request itself was refused (security S6): user text can cause it, so it is not a transport failure.
+      if (REJECTED_REQUEST.has(res.status)) return { ok: false, kind: 'rejected-request', status: res.status };
+      if (res.status === 429) {
+        const served = Date.parse(res.headers.get('date') ?? '');
+        const retryAfterMs = retryAfter(res.headers.get('retry-after'), Number.isNaN(served) ? undefined : served);
+        return { ok: false, kind: 'saturated', status: 429, ...(retryAfterMs === undefined ? {} : { retryAfterMs }) };
       }
       return { ok: false, kind: 'http', status: res.status };
     }

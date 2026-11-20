@@ -17,6 +17,11 @@
  *   success is more than 60 s ago, the ceiling counts as reached and one `page` is raised until the
  *   first success (AC-34). Every store call is bounded (5 s): a hung query counts as a failure and
  *   never holds the tick (security S2).
+ * - Sub-budget of `POST /api/toasts/check` (security S4): its calls are also summed under
+ *   `<bucket>:toasts` keys of the same table, against `toastsShare` (0.2) of each ceiling. Once one is
+ *   spent, `toastsReached()` is true and the toast check uses only the fallback filter while chat and
+ *   nick verdicts keep their providers. 50 % (`log`) and 80 % (`page`) of it alarm once per bucket,
+ *   cluster-wide, through the same claim.
  */
 import {
   costMicros,
@@ -35,7 +40,7 @@ import type { Alarm, Clock, Logger } from '../ports';
 import type { ProviderAnswer, TokenUsage } from './ports';
 import type { ProviderId } from './providers';
 
-/** Postgres sums per bucket (`night:YYYY`, `month:YYYY-MM`), micro-dollars. */
+/** Postgres sums per bucket (`night:YYYY`, `month:YYYY-MM`, each also with `:toasts`), micro-dollars. */
 export interface SpendStore {
   /** Adds `micros` to the bucket (creating it) and returns its new total. */
   add(period: string, micros: number): Promise<number>;
@@ -83,7 +88,12 @@ export interface SpendCounterDeps {
   storeTimeoutMs?: number;
   /** Upper estimate of a probe without `usage`: fixed service text and the moderation `max_tokens`. */
   probeRequest?: SpendRequest;
+  /** Share of each ceiling the toast check may spend (S4), in (0, 1]. */
+  toastsShare?: number;
 }
+
+/** Whose budget a call spends besides the shared one: `toasts` is the toast check's sub-budget (S4). */
+export type SpendScope = 'toasts';
 
 export interface SpendTotals {
   night: { period: string; usd: number; ceilingUsd: number } | null;
@@ -92,7 +102,9 @@ export interface SpendTotals {
 
 export interface SpendCounter {
   /** Adds the cost of one answered call (AC-26, AC-27). */
-  record(provider: ProviderId, usage: TokenUsage | undefined, request: SpendRequest): void;
+  record(provider: ProviderId, usage: TokenUsage | undefined, request: SpendRequest, scope?: SpendScope): void;
+  /** Whether the toast check's sub-budget is spent in a current bucket (S4). */
+  toastsReached(): boolean;
   /** Adds the cost of a probe that the provider answered (probes cost money too). */
   recordProbe(provider: ProviderId, answer: ProviderAnswer<unknown>): void;
   /** Whether the ceiling counts as reached now (a bucket at its ceiling, or the store down > 60 s). */
@@ -107,13 +119,17 @@ export interface SpendCounter {
   tick(): Promise<void>;
   /** Starts the `unref` timer (first tick at once). */
   start(): { stop(): Promise<void> };
-  /** Test door `setSpend`: the bucket of `period` near now gets exactly `usd`. */
-  setSpendForDoor(period: 'night' | 'month', usd: number): Promise<void>;
+  /** Test door `setSpend`: the bucket of `period` near now (or its toasts sub-bucket) gets exactly `usd`. */
+  setSpendForDoor(period: 'night' | 'month', usd: number, scope?: SpendScope): Promise<void>;
   /** Test door `reset`: forgets every in-memory sum, claim and failure; ceiling lifted. */
   reset(): void;
 }
 
 const LEVEL_ALARM: Record<SpendLevel, 'log' | 'page'> = { 50: 'log', 80: 'page', 100: 'page' };
+/** Default share of each ceiling for the toast check (S4). */
+export const TOASTS_SPEND_SHARE = 0.2;
+export const TOASTS_SUFFIX = ':toasts';
+const isToasts = (period: string) => period.endsWith(TOASTS_SUFFIX);
 export const STORE_DOWN_MS = 60_000;
 export const FLUSH_MS = 5_000;
 export const FLUSH_AT_MICROS = 100_000;
@@ -140,6 +156,7 @@ export function createSpendCounter({
   storeDownMs = STORE_DOWN_MS,
   storeTimeoutMs = STORE_TIMEOUT_MS,
   probeRequest = PROBE_REQUEST,
+  toastsShare = TOASTS_SPEND_SHARE,
 }: SpendCounterDeps): SpendCounter {
   let current: ModerationSettings = DEFAULT_SETTINGS;
   /** Totals last seen in Postgres, per bucket. */
@@ -153,16 +170,20 @@ export function createSpendCounter({
   /** Store calls started and not yet settled or timed out. */
   let inFlight = 0;
   let downRaised = false;
+  /** The toast check's sub-budget is spent (S4), as of the last judgement. */
+  let toastsSpent = false;
   let flushing: Promise<void> | null = null;
   let ticking: Promise<void> | null = null;
   let generation = 0;
 
-  const ceilingOf = (period: string) => usdToMicros(period.startsWith('night:') ? current.nightCeilingUsd : current.monthCeilingUsd);
+  const ceilingOf = (period: string) =>
+    usdToMicros((period.startsWith('night:') ? current.nightCeilingUsd : current.monthCeilingUsd) * (isToasts(period) ? toastsShare : 1));
   const sumOf = (period: string) => (known.get(period) ?? 0) + (pending.get(period) ?? 0);
   const activePeriods = (): string[] => {
     const p = periodsAt(clock.now());
     return p.night ? [p.night, p.month] : [p.month];
   };
+  const toastsPeriods = (): string[] => activePeriods().map((p) => p + TOASTS_SUFFIX);
   const pendingTotal = () => Math.max(0, ...pending.values());
 
   function atCeiling(): boolean {
@@ -194,6 +215,8 @@ export function createSpendCounter({
       alarm.raise({ level: 'page', source: 'mod', code: 'spend_store_down', details: { seconds: Math.round(storeDownMs / 1000) } });
     }
     layer.setCeiling(down || atCeiling());
+    // Judged with the ceiling, so a flush in flight (pending cleared, total not yet known) never reopens it.
+    toastsSpent = toastsPeriods().some((p) => sumOf(p) >= ceilingOf(p));
   }
 
   function failed(err: unknown) {
@@ -244,7 +267,7 @@ export function createSpendCounter({
 
   async function refresh() {
     const gen = generation;
-    const periods = activePeriods();
+    const periods = [...activePeriods(), ...toastsPeriods()];
     try {
       const [next, totals] = await bounded(() => Promise.all([source.read(), store.read(periods)]));
       if (gen !== generation) return;
@@ -257,7 +280,10 @@ export function createSpendCounter({
       return;
     }
     for (const p of periods) {
+      const toasts = isToasts(p);
       for (const level of levelsAt(known.get(p) ?? 0, ceilingOf(p))) {
+        // The toast sub-budget alarms at 50 % and 80 % only; its 100 % is the switch to the filter.
+        if (toasts && level === 100) continue;
         const key = `${p}:${level}`;
         if (claimed.has(key)) continue;
         try {
@@ -268,7 +294,7 @@ export function createSpendCounter({
             alarm.raise({
               level: LEVEL_ALARM[level],
               source: 'mod',
-              code: `spend_${level}`,
+              code: toasts ? `toasts_spend_${level}` : `spend_${level}`,
               details: { period: p, ceilingUsd: microsToUsd(ceilingOf(p)), spentUsd: microsToUsd(known.get(p) ?? 0) },
             });
           }
@@ -294,10 +320,11 @@ export function createSpendCounter({
     return ticking;
   }
 
-  function add(provider: ProviderId, usage: TokenUsage | undefined, request: SpendRequest) {
+  function add(provider: ProviderId, usage: TokenUsage | undefined, request: SpendRequest, scope?: SpendScope) {
     const micros = costMicros(provider, usage, request, prices);
     if (micros <= 0) return;
-    for (const p of activePeriods()) pending.set(p, (pending.get(p) ?? 0) + micros);
+    const periods = scope === 'toasts' ? [...activePeriods(), ...toastsPeriods()] : activePeriods();
+    for (const p of periods) pending.set(p, (pending.get(p) ?? 0) + micros);
     judge();
     if (!flushing && pendingTotal() >= flushAtMicros && failingSince === null) {
       void flush()
@@ -312,6 +339,7 @@ export function createSpendCounter({
       if (answer.ok) add(provider, answer.usage, probeRequest);
     },
     reached: () => storeDown() || atCeiling(),
+    toastsReached: () => toastsSpent,
     settings: () => current,
     totals() {
       const p = periodsAt(clock.now());
@@ -334,9 +362,10 @@ export function createSpendCounter({
         },
       };
     },
-    async setSpendForDoor(period, usd) {
+    async setSpendForDoor(period, usd, scope) {
       const now = clock.now();
-      const key = period === 'night' ? nightKeyNear(now) : periodsAt(now).month;
+      const base = period === 'night' ? nightKeyNear(now) : periodsAt(now).month;
+      const key = scope === 'toasts' ? base + TOASTS_SUFFIX : base;
       const micros = usdToMicros(usd);
       await store.set(key, micros);
       pending.delete(key);
@@ -351,6 +380,7 @@ export function createSpendCounter({
       failingSince = null;
       lastSuccessAt = clock.now();
       downRaised = false;
+      toastsSpent = false;
       current = DEFAULT_SETTINGS;
       layer.setCeiling(false);
     },

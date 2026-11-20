@@ -20,6 +20,7 @@ import type { ModerationSettings } from '../domain/moderation/settings';
 import type { SpendRequest } from '../domain/moderation/spend';
 import type { Clock } from '../ports';
 import type { AiProvider, ProviderAnswer, TokenUsage } from './ports';
+import type { SpendScope } from './spend';
 import type { ProviderId, ProviderLayer } from './providers';
 
 export type { TextKind };
@@ -29,6 +30,11 @@ export interface VerdictInput {
   kind: TextKind;
   text: string;
   lang?: string;
+  /**
+   * `toasts`: the call spends the toast check's sub-budget too (security S4); once it is spent, no
+   * provider is asked and the fallback filter decides (`source: 'fallback'`).
+   */
+  budget?: SpendScope;
 }
 
 export interface Verdict {
@@ -47,8 +53,9 @@ export interface VerdictService {
 export interface VerdictDeps {
   layer: Pick<ProviderLayer, 'usable' | 'state' | 'call'>;
   spend: {
-    record(provider: ProviderId, usage: TokenUsage | undefined, request: SpendRequest): void;
+    record(provider: ProviderId, usage: TokenUsage | undefined, request: SpendRequest, scope?: SpendScope): void;
     settings(): ModerationSettings;
+    toastsReached(): boolean;
   };
   /** `textRulesFor` of `@time2fest/rules/text`. */
   rules: (kind: TextKind, text: string) => { reason: string } | null;
@@ -105,8 +112,13 @@ export function createVerdictService({
   budgetMs = PROVIDER_BUDGET_MS,
 }: VerdictDeps): VerdictService {
   /** The first strict score of a usable provider, or `null` (none usable, all failed, budget spent). */
-  async function ask(text: string, lang: string | undefined): Promise<{ score: number; source: 'primary' | 'backup' } | null> {
+  async function ask(
+    text: string,
+    lang: string | undefined,
+    budget: SpendScope | undefined,
+  ): Promise<{ score: number; source: 'primary' | 'backup' } | null> {
     if (layer.state('moderation').state === 'fallback') return null;
+    if (budget === 'toasts' && spend.toastsReached()) return null;
     const started = clock.now();
     const request: SpendRequest = { chars: text.length, maxTokens };
     for (const provider of layer.usable('moderation')) {
@@ -119,7 +131,7 @@ export function createVerdictService({
         async () => {
           const a = await bounded(provider.moderate(text, lang, signal), signal);
           // Inside `run`: a rejected (malformed) answer was still billed.
-          if (a.ok) spend.record(provider.id, a.usage, request);
+          if (a.ok) spend.record(provider.id, a.usage, request, budget);
           return a;
         },
         (v) => parseScore(v.raw) !== null,
@@ -158,18 +170,18 @@ export function createVerdictService({
   }
 
   return {
-    async verdict({ kind, text, lang }) {
+    async verdict({ kind, text, lang, budget }) {
       const ruled = byRules(kind, text);
       if (ruled) return ruled;
-      const ai = await ask(text, langOf(lang));
+      const ai = await ask(text, langOf(lang), budget);
       if (ai) return fromAi(kind, text, ai);
       if (fallback(kind, text) === 'allow') return { outcome: 'allow', source: 'fallback' };
       return kind === 'nick' ? { outcome: 'block', source: 'fallback', reason: 'forbidden' } : { outcome: 'block', source: 'fallback' };
     },
-    async recheck({ kind, text, lang }) {
+    async recheck({ kind, text, lang, budget }) {
       const ruled = byRules(kind, text);
       if (ruled) return ruled;
-      const ai = await ask(text, langOf(lang));
+      const ai = await ask(text, langOf(lang), budget);
       return ai ? fromAi(kind, text, ai) : { outcome: 'unavailable' };
     },
   };

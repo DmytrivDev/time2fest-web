@@ -16,11 +16,26 @@ export interface TokenUsage {
  * empty answer, DeepSeek's content-risk 400). The transport worked, so health counts it as a success;
  * the caller never treats it as `allow` (security S1).
  */
-export type ProviderFailureKind = 'http' | 'timeout' | 'malformed' | 'refused' | 'not-configured';
+/**
+ * `rejected-request`: the provider refused the request itself (HTTP 400 / 413 / 422) — user text can
+ * cause that, so on a user call it is a healthy sample like `refused`, never `allow` (security S6).
+ * `saturated`: the account's rate limit (HTTP 429); no health sample, the provider is skipped for a
+ * backoff (security S7). `throttled`: this process's own token bucket for the provider is empty; the
+ * request was never sent and no health sample is recorded (S7).
+ */
+export type ProviderFailureKind =
+  | 'http'
+  | 'timeout'
+  | 'malformed'
+  | 'refused'
+  | 'rejected-request'
+  | 'saturated'
+  | 'throttled'
+  | 'not-configured';
 
 export type ProviderAnswer<T> =
   | { ok: true; value: T; usage?: TokenUsage; ms: number }
-  | { ok: false; kind: ProviderFailureKind; status?: number };
+  | { ok: false; kind: ProviderFailureKind; status?: number; retryAfterMs?: number };
 
 /** The model's raw answer to a moderation task; the strict score parse lives in the domain. */
 export interface ModerationRaw {
