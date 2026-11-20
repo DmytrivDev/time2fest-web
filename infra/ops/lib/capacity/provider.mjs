@@ -15,8 +15,10 @@
  *   diskGb: number,
  *   privateIp?: string | null,
  *   vpcId?: string | null,
+ *   createdAt?: string,
  * }} Node `diskGb` — щоб контракт бачив: зміна розміру не чіпає диска (AC-48). `privateIp`/`vpcId` — адреса й мережа
- *   VPC (O·P18a: другий вузол сервера в тій самій VPC, що й основний).
+ *   VPC (O·P18a: другий вузол сервера в тій самій VPC, що й основний). `createdAt` — час створення ISO-8601, якщо провайдер
+ *   його віддає (межа життя вузлів спайку П-RT).
  * @typedef {{ slug: string, vcpus: number, memoryMb: number, diskGb: number, priceHourly: number }} Size
  * @typedef {{ name: string, region: string, size: string, tags: string[], vpcId?: string }} NodeSpec `vpcId` — у яку VPC
  *   (без нього — типова VPC регіону).

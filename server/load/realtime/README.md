@@ -56,3 +56,23 @@ Pass: `rt_unexpected_disconnects` 0, `rt_failed_checks` 0, `rt_delivery_latency_
 ## Position П-RT (30 000 connections through Cloudflare)
 
 Clients connect from a load host with `--ws-url wss://rt.example.test/connection/websocket --prefix '' --network ''` (hostnames come after SPEC-13a) and `--token anon` (the local door is not reachable remotely) or tokens prepared separately. The public `rt.*` host serves only the client port: in rehearsal and production the Centrifugo HTTP API and `/health` listen on the internal port (`http_server.internal_port`, 9000) that the tunnel never exposes. So the `publish` scenario's publishers run inside the server's network, with `--api-url http://centrifugo:9000` and `T2F_CENTRIFUGO_API_KEY` in their environment — never `--api-url` on the public host. Likewise the server's `T2F_CENTRIFUGO_URL` in rehearsal and production points at that internal API port. Target: p95 delivery at most 1 s at 1 000 messages/min (NFR-7).
+
+## Spike П-RT scripts (`spike.js`, `spike-publisher.js`)
+
+Driven by `node infra/ops/spike/spike.mjs run …` (see `infra/ops/spike/README.md`); they also run by hand with `docker run … grafana/k6:2.4.0 run /scripts/spike.js` and an env file. Plan: `docs/backend/spike-rt-plan.md`.
+
+`spike.js` — one VU holds `CONNS_PER_VU` sockets (default 50), so 7 500 sockets need 150 VUs, not 7 500. Anonymous connect, subscribes `CHANNELS` (default `live:spike,site:state`, no prefix), answers the server ping `{}`. Openings are spread evenly over `RAMP` from the common start `START_AT` (epoch ms; `setup()` waits for it, so N generators and the publisher align). Any unexpected close reconnects with centrifuge-js-like backoff (`RECONNECT_MIN_MS` 500 … `RECONNECT_MAX_MS` 20 000, exponential, full jitter) asking recovery (epoch/offset). `STORM_AT` + `STORM_WINDOW`: every socket closes at a random moment in the window and reconnects at once with recovery. Only a `LATENCY_SAMPLE` share (default 0.1) of sockets parses publications for latency; the rest count frames and track offsets with string search. `GEN_INDEX`/`GEN_COUNT` only tag the summary; `handleSummary` writes `SUMMARY_FILE` (default `/out/summary.json`).
+
+| Metric | Meaning |
+|---|---|
+| `rt_connect_ok`, `rt_ever_subscribed` | sockets subscribed at least once (rate / count) |
+| `rt_unexpected_disconnects{code}`, `rt_unexpected_disconnects_hold`, `rt_disconnect_3012_no_pong` | closes we did not ask for (by close code; during the hold) |
+| `rt_handshake_errors{cls}` | failed openings by error class (`s<status>` if the text carries one, `timeout`, `reset`, `refused`, `eof`, `tls`, `dns`, `bad_handshake`, `other`) |
+| `rt_reconnect_attempts`, `rt_reconnect_ok`, `rt_time_to_reconnect_ms` | reconnect episodes: attempts, share that came back before the end, time from close to subscribed again |
+| `rt_recovered_subscriptions`, `rt_recovered_publications`, `rt_offset_gaps` | recovery result; publications returned on recovery; offsets skipped in pushes (lost messages) |
+| `rt_delivery_latency_ms`, `rt_messages_received` | publisher `t` to receipt (sampled sockets); all publications received |
+| `rt_connected{b}`, `rt_reporters{b}` | every `REPORT_SEC` (10 s) each VU adds its live socket count to bucket `b`: the sum per bucket is "connected sockets over time" |
+
+Note: k6 reports a refused WebSocket upgrade as `websocket: bad handshake` without the HTTP status (checked against Centrifugo's 403 on a wrong `Origin`), so Cloudflare 5xx/52x show up as `bad_handshake`; their codes come from the zone analytics and the cloudflared logs.
+
+`spike-publisher.js` — runs on the realtime node in its Docker network against `http://centrifugo:9000` (`X-API-Key` from `API_KEY` or `CENTRIFUGO_HTTP_API_KEY` of `centrifugo.env`). After `START_AT` + `DELAY` it publishes to `live:spike` a batch of `PAYLOAD_BYTES` (default 1 000) JSON `{t, msgs, reactions, pad}` every `BATCH_MS` (500), switching to `BATCH_MS_2` (250) for the last `FAST_LAST` seconds of `DURATION`, and `site:state` every 30 s. Metrics: `rt_published`, `rt_publish_failed`, `rt_publish_ms`.

@@ -67,6 +67,8 @@ export function toNode(d) {
     diskGb: Number(d.disk ?? 0),
     privateIp: typeof priv?.ip_address === 'string' ? priv.ip_address : null,
     vpcId: typeof d?.vpc_uuid === 'string' && d.vpc_uuid !== '' ? d.vpc_uuid : null,
+    // Час створення (ISO) — для межі життя вузлів спайку П-RT (`infra/ops/spike`).
+    ...(typeof d?.created_at === 'string' && d.created_at !== '' ? { createdAt: d.created_at } : {}),
   };
 }
 

@@ -1,0 +1,131 @@
+# Вузол спайку П-RT (docs/backend/spike-rt-plan.md): Redis + Centrifugo (клас rehearsal, той самий образ) + дві копії
+# cloudflared одного тунелю `t2f-rtspike` + видавець k6 (профіль `run`) + збирач метрик у контейнері (профіль `collector`,
+# лише для локального прогону; на вузлі збирач — скрипт хоста rtspike-collector.sh).
+# Без `name:` — проєкт задає `-p t2f-spike`. Без `ports:` — назовні нічого не публікується; вхід лише через тунель.
+# Поруч на вузлі: `redis.env`, `centrifugo.env` (свіжі ключі спайку), `cloudflared.env` (TUNNEL_TOKEN), `publisher.env`
+# (параметри прогону, без секретів), тека `k6/` зі скриптами й `out/` для підсумків. Пише їх `spike create` / `spike run`.
+# Змінні Compose (необов’язкові): SPIKE_ORIGIN, SPIKE_LOG_LEVEL, SPIKE_TUNNEL_PROTOCOL, SPIKE_LIVE_HISTORY_SIZE.
+services:
+  redis:
+    # redis:7.4.12-alpine (той самий дайджест, що в compose.yml)
+    image: redis:7.4.12-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
+    restart: unless-stopped
+    env_file: redis.env
+    entrypoint:
+      - sh
+      - -c
+      - |
+        [ -n "$$REDIS_PASSWORD" ] || { echo 'redis: empty password in redis.env' >&2; exit 1; }
+        umask 077
+        printf 'requirepass %s\n' "$$REDIS_PASSWORD" > /tmp/redis.conf
+        chown redis:redis /tmp/redis.conf
+        exec docker-entrypoint.sh redis-server /tmp/redis.conf
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -qx PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 1g
+    networks:
+      - spike
+
+  centrifugo:
+    # centrifugo/centrifugo:v6.10.3 (той самий дайджест, що в compose.yml)
+    image: centrifugo/centrifugo:v6.10.3@sha256:33fdbbce7d195dde316cbde17bc1d2a17b9e345de82799d1ec3c2bb8916e3803
+    restart: unless-stopped
+    command: centrifugo
+    # Ключі (HMAC, ключ API) і адреса рушія з паролем Redis — у centrifugo.env (свіжі для спайку, `spike create`).
+    env_file: centrifugo.env
+    # Конфігурація класу rehearsal з compose.yml рядок у рядок, крім: походження — ім’я спайку; історія `live` —
+    # SPIKE_LIVE_HISTORY_SIZE (типово 10, як у rehearsal); метрики Prometheus і рівень журналу — для спайку.
+    environment:
+      CENTRIFUGO_CHANNEL_NAMESPACES: '[{"name":"chat","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":100,"history_ttl":"300s"},{"name":"live","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":${SPIKE_LIVE_HISTORY_SIZE:-10},"history_ttl":"300s"},{"name":"notif","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"orders","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"},{"name":"site","allow_subscribe_for_anonymous":true,"allow_subscribe_for_client":true,"force_recovery":true,"history_size":10,"history_ttl":"300s"},{"name":"user","allow_user_limited_channels":true,"force_recovery":true,"history_meta_ttl":"3600s","history_size":20,"history_ttl":"600s"}]'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_ANONYMOUS: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_ALLOW_SUBSCRIBE_FOR_CLIENT: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_FORCE_RECOVERY: 'true'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_SIZE: '20'
+      CENTRIFUGO_CHANNEL_WITHOUT_NAMESPACE_HISTORY_TTL: '300s'
+      CENTRIFUGO_CLIENT_ALLOWED_ORIGINS: '${SPIKE_ORIGIN:-https://rt-spike.time2fest.com}'
+      CENTRIFUGO_CLIENT_ALLOW_ANONYMOUS_CONNECT_WITHOUT_TOKEN: 'true'
+      CENTRIFUGO_CLIENT_DISALLOW_ANONYMOUS_CONNECTION_TOKENS: 'true'
+      CENTRIFUGO_CLIENT_PING_INTERVAL: '25s'
+      CENTRIFUGO_HEALTH_ENABLED: 'true'
+      CENTRIFUGO_HTTP_SERVER_INTERNAL_PORT: '9000'
+      CENTRIFUGO_ENGINE_TYPE: 'redis'
+      CENTRIFUGO_ENGINE_REDIS_PREFIX: 't2f_centrifugo'
+      CENTRIFUGO_ADMIN_ENABLED: 'false'
+      # Спайк: /metrics на внутрішньому порту 9000; причини розривів — на рівні debug.
+      CENTRIFUGO_PROMETHEUS_ENABLED: 'true'
+      CENTRIFUGO_LOG_LEVEL: '${SPIKE_LOG_LEVEL:-info}'
+      # c-8 / 16 ГБ: м’яка межа купи Go нижче за mem_limit.
+      GOMEMLIMIT: '6GiB'
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ulimits:
+      nofile:
+        soft: 200000
+        hard: 200000
+    mem_limit: 8g
+    networks:
+      - spike
+
+  # Дві копії одного тунелю: кожна у своєму мережевому просторі (~64 тис. локальних портів до centrifugo:8000).
+  cloudflared-a: &cloudflared
+    # cloudflare/cloudflared (той самий дайджест, що в compose.yml)
+    image: cloudflare/cloudflared@sha256:b94b96edf2c9c4360f8879c8580cfaa99077f19c849ec595ca2f711b27d4f344
+    restart: unless-stopped
+    # --protocol: auto (QUIC) або http2 (запасний шлях плану §1); --metrics — лише всередині мережі спайку.
+    command: tunnel --no-autoupdate --protocol ${SPIKE_TUNNEL_PROTOCOL:-auto} --metrics 0.0.0.0:2000 run
+    env_file: cloudflared.env
+    sysctls:
+      net.ipv4.ip_local_port_range: "1024 65000"
+    ulimits:
+      nofile:
+        soft: 200000
+        hard: 200000
+    mem_limit: 2g
+    networks:
+      - spike
+      - tunnel-egress
+
+  cloudflared-b: *cloudflared
+
+  # Видавець k6 (профіль `run`): внутрішній API centrifugo:9000 з ключем із centrifugo.env; параметри — publisher.env.
+  publisher:
+    image: grafana/k6:2.4.0
+    profiles: ["run"]
+    env_file:
+      - centrifugo.env
+      - publisher.env
+    volumes:
+      - ./k6:/scripts:ro
+      - ./out:/out
+    command: run --quiet /scripts/spike-publisher.js
+    mem_limit: 512m
+    networks:
+      - spike
+
+  # Збирач у контейнері (профіль `collector`) — для локального прогону, де немає Linux-хоста; на вузлі — скрипт хоста.
+  collector:
+    # docker:27.5.1-cli (індексний дайджест)
+    image: docker:27.5.1-cli@sha256:851f91d241214e7c6db86513b270d58776379aacc5eb9c4a87e5b47115e3065c
+    profiles: ["collector"]
+    pid: host
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./collector:/collector:ro
+      - ./out:/out
+    entrypoint: ["sh", "/collector/rtspike-collector.sh", "/out/collector.jsonl", "10", "t2f-spike-centrifugo-1"]
+
+# spike — внутрішня мережа спайку (redis, centrifugo, cloudflared, видавець); tunnel-egress — вихід cloudflared до Cloudflare.
+networks:
+  spike:
+    internal: true
+  tunnel-egress: {}
