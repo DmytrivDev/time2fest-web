@@ -38,6 +38,7 @@ import { StatusMessage } from '@/components/primitives/StatusMessage';
 import { useHasStamp } from '@/lib/api/hooks/passport';
 import { useStreamChain, useStreamChains } from '@/lib/api/hooks/live';
 import { getData } from '@/lib/data/load';
+import { usePatchedData } from '@/lib/api/hooks/site';
 import type { ScheduledEvent, StreamSource } from '@/lib/data/types';
 import type { CaptionPhase } from '@time2fest/rules/time';
 import type { AirView } from '@/lib/engine/currentAirEvent';
@@ -196,9 +197,9 @@ function VideoFallback({
 function usePlaying(): { event: ScheduledEvent; source: StreamSource } | null {
   const player = useOptionalPlayer();
   const chains = useStreamChains();
+  const data = usePatchedData();
   const sel = player?.selection;
   if (!player?.eventId || !sel || sel.kind === 'countdown-scene') return null;
-  const data = getData();
   const event = data.eventsById.get(player.eventId);
   const source = chains.get(player.eventId)?.sources.find((s) => s.id === sel.source.id);
   return event && source ? { event, source } : null;

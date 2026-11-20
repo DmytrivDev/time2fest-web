@@ -48,18 +48,22 @@ export function EngineScheduler(props: EngineSchedulerProps) {
     propsRef.current = props;
   });
 
-  // Ланцюжки можуть змінитися під час сеансу (поправки сервера): планувальник читає їх щоразу з актуальних props, а сам
-  // не перестворюється (інакше він забув би, що вже випромінив).
-  const { eventsBySlot, countriesByIso } = props.data;
+  // Дані (слоти, країни, ланцюжки) можуть змінитися під час сеансу: поправки моменту й ланцюжків сервера. Планувальник
+  // читає їх щоразу з актуальних props і сам не перестворюється — інакше новий екземпляр відновив би «пропущене»
+  // (`late: true`) і забув би, що вже випромінив. Слоти ядро перераховує, коли змінилось посилання `eventsBySlot`.
   const data = useMemo<SchedulerData>(
     () => ({
-      eventsBySlot,
-      countriesByIso,
+      get eventsBySlot() {
+        return propsRef.current.data.eventsBySlot;
+      },
+      get countriesByIso() {
+        return propsRef.current.data.countriesByIso;
+      },
       get chainsByEventId() {
         return propsRef.current.data.chainsByEventId;
       },
     }),
-    [eventsBySlot, countriesByIso],
+    [],
   );
   useEffect(() => {
     const p = () => propsRef.current;

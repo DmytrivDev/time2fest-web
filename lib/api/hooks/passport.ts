@@ -14,7 +14,7 @@ import { applyPassportEvent, type PassportEvent } from '../contracts/passport';
 import { createResource, useResource } from '../resource';
 import { getService } from '../services';
 import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
-import { getData } from '@/lib/data/load';
+import { patchedData } from '@/lib/api/hooks/site';
 import { buildStamp } from '@/lib/engine/stamp';
 import { on } from '@/lib/events/bus';
 import type { MomentStamp } from '@/lib/events/types';
@@ -68,7 +68,7 @@ function startClaims(): void {
 
 /** Опівночі +15 с: штамп за кожну подію, де гість був присутній, — одразу на пристрої, підтвердження — у фоні. */
 function claimFromMoment(payload: MomentStamp): void {
-  const data = getData();
+  const data = patchedData();
   const have = new Set(currentStamps().map((x) => x.eventId));
   for (const id of payload.presentEventIds) {
     if (have.has(id)) continue;

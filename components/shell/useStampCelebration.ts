@@ -18,7 +18,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { create } from 'zustand';
 import { useAnnounce } from '@/components/primitives/a11y/LiveAnnouncer';
 import { useReducedMotion } from '@/lib/a11y/reducedMotion';
-import { getData } from '@/lib/data/load';
+import { patchedData } from '@/lib/api/hooks/site';
 import { on } from '@/lib/events/bus';
 import {
   addStamps,
@@ -70,7 +70,7 @@ const realNow = () => (typeof performance !== 'undefined' ? performance.now() : 
 
 /** Штамп гостя → запис свята (країна, рід, прапор). */
 function toCelebrationStamp(eventId: string, grantedAt: number): CelebrationStamp | null {
-  const data = getData();
+  const data = patchedData();
   const event = data.eventsById.get(eventId);
   if (!event) return null;
   const country = data.countriesByIso.get(event.countryIso);
