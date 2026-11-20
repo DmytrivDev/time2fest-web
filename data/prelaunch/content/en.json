@@ -2362,5 +2362,61 @@
       "description": "Solomon Islands greets 2027 at 13:00 UTC: Honiara counts down at live concerts, while Simbo Island lights a beach bonfire at midnight and races canoes."
     },
     "kit": "sb"
+  },
+  "KP": {
+    "text": "In North Korea the New Year is welcomed on 1 January, a public holiday and day off since 1946. Many families spend it at home and clean the house beforehand. Later, by the lunar calendar, comes another holiday, Seollal, when people fly kites, spin tops and play the folk game yunnori.\n\nIn Pyongyang midnight is struck by the clock chimes of the Grand People’s Study House, and fireworks light up the city. Since 2013 fireworks have been launched over Kim Il Sung Square and over the Juche Tower on the opposite bank of the Taedong. Since 2022 the main concert and fireworks have been held at the May Day Stadium on an island in the river.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Chimes at midnight",
+        "text": "At twelve sharp the clock of the Grand People’s Study House chimes in Pyongyang, and the new year begins."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks over the Taedong",
+        "text": "Pyongyang residents gather on Kim Il Sung Square and the Taedong embankment. Since 2022 the main fireworks have risen over the May Day Stadium."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "A day off at home",
+        "text": "1 January is a day off. Most families spend the first day of the year at home, with the house cleaned beforehand."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in North Korea: Pyongyang | Time2Fest",
+      "description": "At midnight in Pyongyang, 15:00 UTC, North Korea greets 2027 with the chimes of the Grand People’s Study House and fireworks over the Taedong River."
+    },
+    "kit": "kp"
+  },
+  "VU": {
+    "text": "Vanuatu keeps UTC+11 all year, so midnight arrives here at 13:00 UTC, among the first in the world. The holidays come one after another: Christmas, Family Day on 26 December and New Year's Day on 1 January, all three days off. Many town dwellers head back to their home islands to be with family, and the islands celebrate more loudly than the towns: from 1 January groups go from village to village singing and dancing ‘Bonne année’, and on the east of Epi island such visitors are welcomed until 15 January.\n\nIn Port Vila, the capital, fireworks light up the town at midnight. Some raise a glass of champagne at a party, some go to a midnight church service, others see the year in at home with family. Some families pitch tents right on the beach and celebrate there for several days.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "‘Bonne année’ singing",
+        "text": "From 1 January, groups on the islands visit neighbouring villages singing and dancing to see off the old year and welcome the new one. It is a long-standing tradition in Vanuatu."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Home to your island",
+        "text": "Christmas, Family Day and New Year come back to back, so many people from Port Vila travel to their own island to celebrate with family."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "A few days on the beach",
+        "text": "Some families in Port Vila see the year in camping on the beach: swimming, playing beach volleyball, sharing meals and praying morning and evening."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Vanuatu: Port Vila | Time2Fest",
+      "description": "Vanuatu welcomes 2027 at 13:00 UTC. Port Vila marks midnight with fireworks and church services, while island groups tour villages singing Bonne année."
+    },
+    "kit": "vu"
   }
 }

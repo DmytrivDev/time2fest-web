@@ -1,0 +1,99 @@
+{
+  "code": "VU",
+  "zone": "UTC+11",
+  "zoneId": "utc+1100",
+  "cityId": "port-vila",
+  "names": {
+    "uk": {
+      "name": "Вануату",
+      "city": "Порт-Віла",
+      "cityIn": "у Порт-Вілі",
+      "caps": "ВАНУАТУ"
+    },
+    "en": {
+      "name": "Vanuatu",
+      "city": "Port Vila",
+      "cityIn": "in Port Vila",
+      "caps": "VANUATU"
+    },
+    "es": {
+      "name": "Vanuatu",
+      "city": "Port Vila",
+      "cityIn": "en Port Vila",
+      "caps": "VANUATU"
+    },
+    "fr": {
+      "name": "Vanuatu",
+      "city": "Port-Vila",
+      "cityIn": "à Port-Vila",
+      "caps": "VANUATU"
+    }
+  },
+  "picto": "M2 35 H38 M20 6 L9 27 H31 Z M11 27 V35 M29 27 V35 M17 35 V30.5 H23 V35 M16.3 13 H10 L7 21 M23.7 13 H30 L33 21 M12.1 21 H5 L2 24 H10.6 M27.9 21 H35 L38 24 H29.4 M3 24 V35 M37 24 V35",
+  "flagColors": [
+    "#D21034",
+    "#009543",
+    "#FDCE12"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Порт-Вілі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Port Vila"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Port Vila"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Port-Vila"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

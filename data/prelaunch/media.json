@@ -1565,6 +1565,38 @@
         "x": 45,
         "y": 55
       }
+    },
+    "country:KP": {
+      "src": "/media/photos/pyongyang.webp",
+      "alt": {
+        "uk": "Новорічний салют над вежею Чучхе й рікою Тедонган, Пхеньян, перші хвилини 2017 року",
+        "en": "New Year fireworks over the Juche Tower and the Taedong River, Pyongyang, the first minutes of 2017",
+        "es": "Fuegos artificiales de Año Nuevo sobre la torre Juche y el río Taedong, Pionyang, primeros minutos de 2017",
+        "fr": "Feu d’artifice du Nouvel An au-dessus de la tour du Juche et du fleuve Taedong, Pyongyang, premières minutes de 2017"
+      },
+      "author": "jennybento",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fireworks,_NYE_2016-7_from_Kim_Il_Sung_Square_(33139794355).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:VU": {
+      "src": "/media/photos/port-vila.webp",
+      "alt": {
+        "uk": "Золотий захід сонця над затокою Віла: хмари, лісистий берег Ефате й тиха вода",
+        "en": "A golden sunset over Vila Bay: clouds, the wooded shore of Efate and calm water",
+        "es": "Un atardecer dorado sobre la bahía de Vila: nubes, la costa boscosa de Efate y agua en calma",
+        "fr": "Un coucher de soleil doré sur la baie de Vila : nuages, rivage boisé d’Efate et eau calme"
+      },
+      "author": "Graham Crumb (Imagicity.com)",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sunset_on_Vila_Bay_(Imagicity_71).jpg",
+      "position": {
+        "x": 35,
+        "y": 50
+      }
     }
   }
 }

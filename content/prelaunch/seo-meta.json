@@ -1260,6 +1260,42 @@
         "title": "Nouvel An aux Îles Salomon : Honiara | Time2Fest",
         "description": "Les Îles Salomon fêtent 2027 à 13 h UTC : Honiara compte à rebours en concert, et l’île de Simbo allume un grand feu sur la plage à minuit pile."
       }
+    },
+    "KP": {
+      "uk": {
+        "title": "Новий рік у Північній Кореї: Пхеньян | Time2Fest",
+        "description": "Опівночі в Пхеньяні, о 15:00 UTC, Північна Корея вітає 2027 рік курантами Великого народного палацу навчання й святковим салютом над рікою Тедонган."
+      },
+      "en": {
+        "title": "New Year in North Korea: Pyongyang | Time2Fest",
+        "description": "At midnight in Pyongyang, 15:00 UTC, North Korea greets 2027 with the chimes of the Grand People’s Study House and fireworks over the Taedong River."
+      },
+      "es": {
+        "title": "Año Nuevo en Corea del Norte: Pionyang | Time2Fest",
+        "description": "A medianoche en Pionyang, 15:00 UTC, Corea del Norte recibe 2027 con las campanadas del Gran Palacio de Estudios del Pueblo y fuegos sobre el Taedong."
+      },
+      "fr": {
+        "title": "Nouvel An en Corée du Nord : Pyongyang | Time2Fest",
+        "description": "À minuit à Pyongyang, 15 h UTC, la Corée du Nord fête 2027 au carillon de la Grande Maison d’études du peuple et sous un feu d’artifice sur le Taedong."
+      }
+    },
+    "VU": {
+      "uk": {
+        "title": "Новий рік у Вануату: Порт-Віла | Time2Fest",
+        "description": "Вануату зустрічає 2027 рік о 13:00 UTC. У Порт-Вілі опівночі салют і нічні служби, а на островах гурти обходять села зі співами й танцями Bonne année."
+      },
+      "en": {
+        "title": "New Year in Vanuatu: Port Vila | Time2Fest",
+        "description": "Vanuatu welcomes 2027 at 13:00 UTC. Port Vila marks midnight with fireworks and church services, while island groups tour villages singing Bonne année."
+      },
+      "es": {
+        "title": "Año Nuevo en Vanuatu: Port Vila | Time2Fest",
+        "description": "Vanuatu recibe 2027 a las 13:00 UTC. En Port Vila hay fuegos y misas a medianoche, y en las islas los grupos recorren las aldeas cantando Bonne année."
+      },
+      "fr": {
+        "title": "Nouvel An au Vanuatu : Port-Vila | Time2Fest",
+        "description": "Le Vanuatu fête 2027 à 13 h UTC. À Port-Vila, feu d’artifice et messe de minuit ; dans les îles, des groupes font le tour des villages en chantant Bonne année."
+      }
     }
   }
 }

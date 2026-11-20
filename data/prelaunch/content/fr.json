@@ -2362,5 +2362,61 @@
       "description": "Les Îles Salomon fêtent 2027 à 13 h UTC : Honiara compte à rebours en concert, et l’île de Simbo allume un grand feu sur la plage à minuit pile."
     },
     "kit": "sb"
+  },
+  "KP": {
+    "text": "En Corée du Nord, on fête le Nouvel An le 1er janvier, jour férié et chômé depuis 1946. Beaucoup de familles le passent à la maison et font le ménage la veille. Plus tard, selon le calendrier lunaire, vient une autre fête, Seollal : on fait voler des cerfs-volants, tourner des toupies et on joue au yunnori, un jeu traditionnel.\n\nÀ Pyongyang, minuit sonne au carillon de la Grande Maison d’études du peuple, et un feu d’artifice illumine la ville. Depuis 2013, les feux sont tirés au-dessus de la place Kim Il-sung et de la tour du Juche, sur l’autre rive du Taedong. Depuis 2022, le concert principal et le feu d’artifice ont lieu au stade du Premier-Mai, sur une île du fleuve.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Le carillon de minuit",
+        "text": "À minuit pile, le carillon de la Grande Maison d’études du peuple sonne à Pyongyang, et la nouvelle année commence."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur le Taedong",
+        "text": "Les habitants de Pyongyang se retrouvent place Kim Il-sung et sur les quais du Taedong. Depuis 2022, le grand feu d’artifice est tiré au-dessus du stade du Premier-Mai."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Un jour de congé chez soi",
+        "text": "Le 1er janvier est chômé. La plupart des familles passent le premier jour de l’année chez elles, la maison faite à l’avance."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Corée du Nord : Pyongyang | Time2Fest",
+      "description": "À minuit à Pyongyang, 15 h UTC, la Corée du Nord fête 2027 au carillon de la Grande Maison d’études du peuple et sous un feu d’artifice sur le Taedong."
+    },
+    "kit": "kp"
+  },
+  "VU": {
+    "text": "Le Vanuatu vit à l’heure UTC+11 toute l’année : minuit y sonne à 13 h UTC, parmi les premiers au monde. Les fêtes s’enchaînent : Noël, la Journée de la famille le 26 décembre et le jour de l’An le 1er janvier, trois jours fériés. Beaucoup de citadins rentrent sur leur île natale retrouver la famille, et les îles fêtent plus fort que les villes : dès le 1er janvier, des groupes vont de village en village en chantant et dansant « Bonne année », et à l’est de l’île d’Epi on les accueille jusqu’au 15 janvier.\n\nÀ Port-Vila, la capitale, un feu d’artifice illumine la ville à minuit. Certains trinquent au champagne en soirée, d’autres vont à la messe de minuit, d’autres encore fêtent en famille à la maison. Quelques familles plantent même leur tente sur la plage et y font la fête plusieurs jours.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Chants « Bonne année »",
+        "text": "Dès le 1er janvier, sur les îles, des groupes passent dans les villages voisins en chantant et en dansant pour dire adieu à l’année écoulée et saluer la nouvelle. Une tradition ancienne au Vanuatu."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Retour sur l’île natale",
+        "text": "Noël, la Journée de la famille et le jour de l’An se suivent : beaucoup d’habitants de Port-Vila partent sur leur île pour fêter en famille."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Quelques jours à la plage",
+        "text": "Certaines familles de Port-Vila accueillent l’année en campant sur la plage : baignade, beach-volley, repas partagés et prière matin et soir."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Vanuatu : Port-Vila | Time2Fest",
+      "description": "Le Vanuatu fête 2027 à 13 h UTC. À Port-Vila, feu d’artifice et messe de minuit ; dans les îles, des groupes font le tour des villages en chantant Bonne année."
+    },
+    "kit": "vu"
   }
 }

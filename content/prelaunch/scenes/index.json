@@ -528,6 +528,18 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "KP": {
+      "src": "/scenes/KP-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "VU": {
+      "src": "/scenes/VU-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
     }
   }
 }

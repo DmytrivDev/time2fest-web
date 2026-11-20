@@ -2362,5 +2362,61 @@
       "description": "Las Islas Salomón reciben 2027 a las 13:00 UTC: Honiara cuenta atrás con conciertos y la isla de Simbo enciende una hoguera en la playa a medianoche."
     },
     "kit": "sb"
+  },
+  "KP": {
+    "text": "En Corea del Norte el Año Nuevo se recibe el 1 de enero, fiesta oficial y día libre desde 1946. Muchas familias lo pasan en casa y antes limpian el hogar. Más tarde, según el calendario lunar, llega otra fiesta, Seollal, en la que se vuelan cometas, se hacen girar peonzas y se juega al yunnori, un juego tradicional.\n\nEn Pionyang la medianoche la marcan las campanadas del reloj del Gran Palacio de Estudios del Pueblo, y los fuegos artificiales iluminan la ciudad. Desde 2013 los fuegos se han lanzado sobre la plaza Kim Il-sung y sobre la Torre Juche, en la otra orilla del Taedong. Desde 2022 el concierto principal y los fuegos se celebran en el Estadio Primero de Mayo, en una isla del río.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Campanadas a medianoche",
+        "text": "A las doce en punto suenan en Pionyang las campanadas del Gran Palacio de Estudios del Pueblo y empieza el nuevo año."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el Taedong",
+        "text": "Los vecinos de Pionyang se reúnen en la plaza Kim Il-sung y a orillas del Taedong. Desde 2022 los fuegos principales se lanzan sobre el Estadio Primero de Mayo."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Un día libre en casa",
+        "text": "El 1 de enero es día libre. La mayoría de las familias pasa el primer día del año en casa, con el hogar ya limpio."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Corea del Norte: Pionyang | Time2Fest",
+      "description": "A medianoche en Pionyang, 15:00 UTC, Corea del Norte recibe 2027 con las campanadas del Gran Palacio de Estudios del Pueblo y fuegos sobre el Taedong."
+    },
+    "kit": "kp"
+  },
+  "VU": {
+    "text": "Vanuatu vive en UTC+11 todo el año, así que la medianoche llega aquí a las 13:00 UTC, entre las primeras del mundo. Las fiestas se suceden una tras otra: Navidad, el Día de la Familia el 26 de diciembre y Año Nuevo el 1 de enero, los tres festivos. Muchos vuelven de la ciudad a su isla natal para estar con la familia, y en las islas se celebra con más ruido que en las ciudades: desde el 1 de enero, grupos van de aldea en aldea cantando y bailando «Bonne année», y en el este de la isla de Epi los reciben hasta el 15 de enero.\n\nEn Port Vila, la capital, los fuegos artificiales iluminan la ciudad a medianoche. Unos brindan con champán en una fiesta, otros van a la misa de medianoche y otros reciben el año en casa con la familia. Algunas familias montan tiendas en la misma playa y celebran allí varios días.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Cantos de «Bonne année»",
+        "text": "Desde el 1 de enero, en las islas hay grupos que visitan las aldeas vecinas cantando y bailando para despedir el año viejo y recibir el nuevo. Es una tradición antigua en Vanuatu."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "De vuelta a la isla natal",
+        "text": "Navidad, el Día de la Familia y Año Nuevo van seguidos, así que mucha gente de Port Vila viaja a su isla para celebrarlo con la familia."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Unos días en la playa",
+        "text": "Algunas familias de Port Vila reciben el año acampadas en la playa: se bañan, juegan al vóley playa, comparten comidas y rezan por la mañana y por la tarde."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Vanuatu: Port Vila | Time2Fest",
+      "description": "Vanuatu recibe 2027 a las 13:00 UTC. En Port Vila hay fuegos y misas a medianoche, y en las islas los grupos recorren las aldeas cantando Bonne année."
+    },
+    "kit": "vu"
   }
 }
