@@ -48,9 +48,30 @@ export interface SiteState {
   products: readonly SiteProduct[];
   catalogVersion: string;
   eventPatches: Readonly<Record<string, SiteEventPatch>>;
+  /** Set only by the red-button / prepared technical file (SPEC-08). Absent = normal state. */
+  outage?: 'technical';
 }
 
 export type SiteEvent = { type: 'snapshot'; state: SiteState };
+
+/** Channel class of the site snapshot events (SPEC-08). */
+export const SITE_CHANNEL_CLASS = 'site:state';
+
+/** Event id of a snapshot: `site:<version>`. */
+export function siteEventId(version: number): string {
+  return `site:${version}`;
+}
+
+/** R2 object keys of the environment bucket (SPEC-08), relative to the environment prefix. */
+export const SITE_R2_KEYS = {
+  latest: 'site/latest.json',
+  prepared: 'site/prepared/technical.json',
+  redButton: 'site/red-button.json',
+} as const;
+
+/** Response headers the edge adds to the public site address (SPEC-08). */
+export const SITE_SOURCE_HEADER = 'x-t2f-source';
+export const SITE_VERSION_HEADER = 'x-t2f-site-version';
 
 export interface SiteService {
   /** `GET /api/site/state` (proposed). Failures: `network` | `unavailable`; the client keeps the last known snapshot. */
@@ -61,9 +82,14 @@ export interface SiteService {
   peek(): SiteState | undefined;
 }
 
-/** Newer `version` wins; otherwise the current state is kept (same reference). */
+/**
+ * Newer `version` wins; otherwise the current state is kept (same reference). Outage rule (AC-47): a snapshot with
+ * `outage`, or the first one without it after a current state that has it, is applied whatever its `version`
+ * (the red-button file carries its own version).
+ */
 export function applySiteEvent(current: SiteState | undefined, event: SiteEvent): SiteState {
   if (!current || event.state.version > current.version) return event.state;
+  if (event.state.outage || current.outage) return event.state;
   return current;
 }
 

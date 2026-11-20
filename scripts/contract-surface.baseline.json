@@ -3835,6 +3835,55 @@
         }
       }
     },
+    "packages/contracts/src/publicRoutes.ts#PUBLIC_ROUTES": {
+      "text": "readonly PublicRoute[]"
+    },
+    "packages/contracts/src/publicRoutes.ts#PublicRoute": {
+      "props": {
+        "allowedParams": {
+          "optional": false,
+          "type": {
+            "text": "readonly string[]"
+          }
+        },
+        "freshMs": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "key": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "path": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "r2Copy": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "redButton": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "staleMs": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
     "packages/contracts/src/realtime.schemas.ts#RealtimeBatchSchema": {
       "text": "ZodObject<{ events: ZodArray<ZodObject<{ data: ZodOptional<ZodUnknown>; id: ZodString; type: ZodString; version: ZodOptional<ZodNumber>; }, $strict>>; id: ZodString; type: ZodLiteral<\"batch\">; }, $strict>"
     },
@@ -4053,6 +4102,45 @@
     "packages/contracts/src/schemas.ts#apiResultSchema": {
       "fn": "export function apiResultSchema<T extends z.ZodType>(value: T)"
     },
+    "packages/contracts/src/site.schemas.ts#SiteDoorBody": {
+      "text": "z.infer<typeof SiteDoorBodySchema>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteDoorBodySchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\"switch\">; key: ZodEnum<{ chat: \"chat\"; chatRooms: \"chatRooms\"; pass: \"pass\"; passGift: \"passGift\"; passOffer: \"passOffer\"; payments: \"payments\"; toastTiers: \"toastTiers\"; toasts: \"toasts\"; viewersMap: \"viewersMap\"; }>; mode: ZodEnum<{ auto: \"auto\"; manual: \"manual\"; }>; reason: ZodOptional<ZodString>; room: ZodOptional<ZodString>; tier: ZodOptional<ZodEnum<{ 10: \"10\"; 2: \"2\"; 5: \"5\"; }>>; value: ZodBoolean; }, $strict>, ZodObject<{ action: ZodLiteral<\"products\">; list: ZodArray<ZodObject<{ key: ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>; price: ZodObject<{ amount: ZodNumber; currency: ZodLiteral<\"USD\">; }, $strict>; productId: ZodString; }, $strict>>; }, $strict>, ZodObject<{ action: ZodLiteral<\"select\">; key: ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>; productId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"redButton\">; op: ZodEnum<{ delete: \"delete\"; put: \"put\"; }>; }, $strict>, ZodObject<{ action: ZodLiteral<\"reset\">; }, $strict>], \"action\">"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteEventPatchSchema": {
+      "text": "ZodObject<{ hidden: ZodOptional<ZodBoolean>; isMainCelebration: ZodOptional<ZodBoolean>; moment: ZodOptional<ZodNumber>; restrained: ZodOptional<ZodObject<{ note: ZodOptional<ZodString>; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteProductBody": {
+      "text": "z.infer<typeof SiteProductBodySchema>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteProductBodySchema": {
+      "text": "ZodObject<{ key: ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>; productId: ZodString; reason: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteProductKeySchema": {
+      "text": "ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteProductSchema": {
+      "text": "ZodObject<{ key: ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>; price: ZodObject<{ amount: ZodNumber; currency: ZodLiteral<\"USD\">; }, $strict>; priceVersion: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteSnapshotEnvelopeSchema": {
+      "text": "ZodObject<{ data: ZodObject<{ at: ZodString; catalogVersion: ZodString; eventPatches: ZodRecord<ZodString, ZodObject<{ hidden: ZodOptional<ZodBoolean>; isMainCelebration: ZodOptional<ZodBoolean>; moment: ZodOptional<ZodNumber>; restrained: ZodOptional<ZodObject<{ note: ZodOptional<ZodString>; }, $strict>>; }, $strict>>; outage: ZodOptional<ZodLiteral<\"technical\">>; products: ZodArray<ZodObject<{ key: ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>; price: ZodObject<{ amount: ZodNumber; currency: ZodLiteral<\"USD\">; }, $strict>; priceVersion: ZodNumber; }, $strict>>; switches: ZodObject<{ chat: ZodBoolean; chatRooms: ZodRecord<ZodString, ZodBoolean>; pass: ZodBoolean; passGift: ZodBoolean; passOffer: ZodBoolean; payments: ZodBoolean; toastTiers: ZodObject<{ '10': ZodBoolean; '2': ZodBoolean; '5': ZodBoolean; }, $strict>; toasts: ZodBoolean; viewersMap: ZodBoolean; }, $strict>; version: ZodNumber; }, $strict>; id: ZodString; type: ZodLiteral<\"snapshot\">; version: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteStateSchema": {
+      "text": "ZodObject<{ at: ZodString; catalogVersion: ZodString; eventPatches: ZodRecord<ZodString, ZodObject<{ hidden: ZodOptional<ZodBoolean>; isMainCelebration: ZodOptional<ZodBoolean>; moment: ZodOptional<ZodNumber>; restrained: ZodOptional<ZodObject<{ note: ZodOptional<ZodString>; }, $strict>>; }, $strict>>; outage: ZodOptional<ZodLiteral<\"technical\">>; products: ZodArray<ZodObject<{ key: ZodEnum<{ \"toast: 10\": \"toast:10\"; \"toast: 2\": \"toast:2\"; \"toast: 5\": \"toast:5\"; pass: \"pass\"; }>; price: ZodObject<{ amount: ZodNumber; currency: ZodLiteral<\"USD\">; }, $strict>; priceVersion: ZodNumber; }, $strict>>; switches: ZodObject<{ chat: ZodBoolean; chatRooms: ZodRecord<ZodString, ZodBoolean>; pass: ZodBoolean; passGift: ZodBoolean; passOffer: ZodBoolean; payments: ZodBoolean; toastTiers: ZodObject<{ '10': ZodBoolean; '2': ZodBoolean; '5': ZodBoolean; }, $strict>; toasts: ZodBoolean; viewersMap: ZodBoolean; }, $strict>; version: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteSwitchBody": {
+      "text": "z.infer<typeof SiteSwitchBodySchema>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteSwitchBodySchema": {
+      "text": "ZodObject<{ key: ZodEnum<{ chat: \"chat\"; chatRooms: \"chatRooms\"; pass: \"pass\"; passGift: \"passGift\"; passOffer: \"passOffer\"; payments: \"payments\"; toastTiers: \"toastTiers\"; toasts: \"toasts\"; viewersMap: \"viewersMap\"; }>; reason: ZodString; room: ZodOptional<ZodString>; tier: ZodOptional<ZodEnum<{ 10: \"10\"; 2: \"2\"; 5: \"5\"; }>>; value: ZodBoolean; }, $strict>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteSwitchKeySchema": {
+      "text": "ZodEnum<{ chat: \"chat\"; chatRooms: \"chatRooms\"; pass: \"pass\"; passGift: \"passGift\"; passOffer: \"passOffer\"; payments: \"payments\"; toastTiers: \"toastTiers\"; toasts: \"toasts\"; viewersMap: \"viewersMap\"; }>"
+    },
+    "packages/contracts/src/site.schemas.ts#SiteSwitchesSchema": {
+      "text": "ZodObject<{ chat: ZodBoolean; chatRooms: ZodRecord<ZodString, ZodBoolean>; pass: ZodBoolean; passGift: ZodBoolean; passOffer: ZodBoolean; payments: ZodBoolean; toastTiers: ZodObject<{ '10': ZodBoolean; '2': ZodBoolean; '5': ZodBoolean; }, $strict>; toasts: ZodBoolean; viewersMap: ZodBoolean; }, $strict>"
+    },
     "packages/contracts/src/site.ts#Money": {
       "props": {
         "amount": {
@@ -4078,6 +4166,18 @@
         "'toast:2'",
         "'toast:5'"
       ]
+    },
+    "packages/contracts/src/site.ts#SITE_CHANNEL_CLASS": {
+      "text": "\"site:state\""
+    },
+    "packages/contracts/src/site.ts#SITE_R2_KEYS": {
+      "text": "{ readonly latest: \"site/latest.json\"; readonly prepared: \"site/prepared/technical.json\"; readonly redButton: \"site/red-button.json\"; }"
+    },
+    "packages/contracts/src/site.ts#SITE_SOURCE_HEADER": {
+      "text": "\"x-t2f-source\""
+    },
+    "packages/contracts/src/site.ts#SITE_VERSION_HEADER": {
+      "text": "\"x-t2f-site-version\""
     },
     "packages/contracts/src/site.ts#SiteEvent": {
       "props": {
@@ -4196,6 +4296,14 @@
             "text": "Readonly<Record<string, SiteEventPatch>>"
           }
         },
+        "outage": {
+          "optional": true,
+          "type": {
+            "union": [
+              "'technical'"
+            ]
+          }
+        },
         "products": {
           "optional": false,
           "type": {
@@ -4298,6 +4406,224 @@
     },
     "packages/contracts/src/site.ts#catalogVersionOf": {
       "fn": "export function catalogVersionOf(meta: { generatedAt: string; tzdbVersion: string }): string"
+    },
+    "packages/contracts/src/site.ts#siteEventId": {
+      "fn": "export function siteEventId(version: number): string"
+    },
+    "packages/contracts/src/siteGuard.ts#SiteStateLike": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "catalogVersion": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventPatches": {
+          "optional": false,
+          "type": {
+            "text": "Readonly< Record<string, { moment?: number; isMainCelebration?: boolean; restrained?: { note?: string }; hidden?: boolean }> >"
+          }
+        },
+        "outage": {
+          "optional": true,
+          "type": {
+            "union": [
+              "'technical'"
+            ]
+          }
+        },
+        "products": {
+          "optional": false,
+          "type": {
+            "text": "readonly { key: 'pass' | 'toast:2' | 'toast:5' | 'toast:10'; price: { amount: number; currency: 'USD' }; priceVersion: number; }[]"
+          }
+        },
+        "switches": {
+          "optional": false,
+          "type": {
+            "props": {
+              "chat": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "chatRooms": {
+                "optional": false,
+                "type": {
+                  "text": "Readonly<Record<string, boolean>>"
+                }
+              },
+              "pass": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "passGift": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "passOffer": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "payments": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "toastTiers": {
+                "optional": false,
+                "type": {
+                  "props": {
+                    "2": {
+                      "optional": false,
+                      "type": {
+                        "text": "boolean"
+                      }
+                    },
+                    "5": {
+                      "optional": false,
+                      "type": {
+                        "text": "boolean"
+                      }
+                    },
+                    "10": {
+                      "optional": false,
+                      "type": {
+                        "text": "boolean"
+                      }
+                    }
+                  }
+                }
+              },
+              "toasts": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "viewersMap": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/siteGuard.ts#parseSiteState": {
+      "fn": "export function parseSiteState(x: unknown): SiteStateLike | null"
+    },
+    "packages/contracts/src/siteRules.ts#IsEnabledTarget": {
+      "variants": {
+        "'product'": {
+          "props": {
+            "key": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'pass'",
+                  "'passGift'"
+                ]
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'product'"
+                ]
+              }
+            }
+          }
+        },
+        "'room'": {
+          "props": {
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'room'"
+                ]
+              }
+            },
+            "room": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            }
+          }
+        },
+        "'switch'": {
+          "props": {
+            "key": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'chat'",
+                  "'passOffer'",
+                  "'viewersMap'"
+                ]
+              }
+            },
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'switch'"
+                ]
+              }
+            }
+          }
+        },
+        "'tier'": {
+          "props": {
+            "kind": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'tier'"
+                ]
+              }
+            },
+            "tier": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'10'",
+                  "'2'",
+                  "'5'"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "packages/contracts/src/siteRules.ts#isEnabled": {
+      "fn": "export function isEnabled(switches: SiteSwitches, target: IsEnabledTarget): boolean"
     }
   },
   "breaking": []
