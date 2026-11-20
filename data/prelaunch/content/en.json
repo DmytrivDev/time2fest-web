@@ -2026,5 +2026,257 @@
       "description": "Tonga greets 2027 among the first: midnight on Tongatapu falls at 11:00 UTC. Late-night church services, bells and a brass-band hymn, then a week of prayer."
     },
     "kit": "to"
+  },
+  "FM": {
+    "text": "Pohnpei, the island that gives its name to a state of the Federated States of Micronesia, keeps UTC+11, so midnight arrives at 13:00 UTC, an hour earlier than on Chuuk and Yap. New Year’s Eve is the biggest holiday of the year here: families cook all day and gather in a big circle. There is usually no countdown to the second; people check a watch, and only then does the night begin.\n\nThe moment the new year arrives, children run from house to house beating drums made of tins and asking for candy, while people leaving church shake hands in the street. Until dawn Kolonia rings with car horns and music, and on Sokehs Island there is marching, cross-dressing and water-throwing too. In the east of Pohnpei stand the basalt walls of Nan Madol, a UNESCO site.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Drums made of tins",
+        "text": "After midnight children go from house to house in groups, beating home-made drums made of big tins and shouting for candy to be thrown to them."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "A feast for the whole clan",
+        "text": "Families cook all day to feed the whole extended family, and after midnight neighbours drop in on each other and trade greetings until morning."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Marching and water fights",
+        "text": "On Sokehs Island the New Year is greeted with noisy marching and cross-dressing, and groups by the roadside splash water on passing cars."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Micronesia: Pohnpei | Time2Fest",
+      "description": "Pohnpei greets 2027 at 13:00 UTC, among the first in Micronesia. Children beat drums made of tins and shout for candy, and families celebrate until dawn."
+    },
+    "kit": "fm+11"
+  },
+  "GU": {
+    "text": "Guam, a Pacific territory of the United States, keeps UTC+10 with no summer time, so midnight arrives here at 14:00 UTC. Private fireworks are banned on the island by law, which makes the New Year fireworks a shared celebration: the Guam Visitors Bureau stages them every year, and people gather on the shore to greet the year together. The CHamoru, the island's Indigenous people, also keep a count of their own: in the ancient lunar calendar the year begins with the month of Tumaiguini, a time for setting goals.\n\nIn Hagåtña, the capital, and in the resort district of Tumon, fireworks rise at midnight over both bays at once. Residents claim a spot at Ypao Beach Park, and before midnight going into 2023 a drone show also flew over the bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over two bays",
+        "text": "On the stroke of midnight fireworks go up over Tumon Bay and Hagåtña Bay at once, lasting around a quarter of an hour."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Midnight at Ypao Beach",
+        "text": "Guam residents greet the year at Ypao Beach Park in Tumon; swimming in the bay is discouraged that night, as the fireworks are launched over it."
+      },
+      {
+        "id": "t3",
+        "iconId": "cliff",
+        "title": "The CHamoru new year",
+        "text": "The ancient CHamoru year begins with the month of Tumaiguini; at its start people walk in pilgrimage to Fouha Rock in Humåtak with offerings for the ancestors."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Guam: Hagåtña | Time2Fest",
+      "description": "Guam greets 2027 at 14:00 UTC. At midnight fireworks rise over Tumon Bay and Hagåtña Bay at once, as island residents gather at Ypao Beach Park."
+    },
+    "kit": "gu"
+  },
+  "MH": {
+    "text": "The Marshall Islands keep a single time zone, UTC+12, and greet the New Year among the first in the world. It was not always so: Kwajalein Atoll long lived a day behind and caught up with the rest of the country by simply dropping 21 August 1993 from its calendar. The big holidays here begin in church: at Christmas, church groups called jeptas sing and dance about island life — fishing, building homes, navigation — while church leaders pick the best.\n\nMajuro is the capital: 64 islets around a vast lagoon, where the highest point is less than three metres above the sea. The city sees in the New Year at a big open-air party with local bands, food stalls and a shared countdown, and at midnight fireworks have often boomed over Uliga — though some years go without.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Christmas jeptas",
+        "text": "At Christmas, church groups called jeptas sing and dance in Majuro’s churches, each in its own uniform. Their dances show fishing and navigation, and candies fly into the crowd."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "An open-air block party",
+        "text": "On 31 December Majuro gathers for a party with local bands, food stalls and a shared countdown. At midnight fireworks often boom over Uliga, though not every year."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "A canoe on the lagoon",
+        "text": "Islanders long sailed between atolls in proas, guided by the stars and stick charts. In Majuro canoes are still built today, young people learn to sail, and guests can ride across the lagoon."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Majuro, Marshall Islands | Time2Fest",
+      "description": "Majuro, capital of the Marshall Islands, rings in 2027 at midnight UTC+12: an open-air party with bands and food stalls, a countdown and fireworks over Uliga."
+    },
+    "kit": "mh"
+  },
+  "MP": {
+    "text": "The Northern Mariana Islands, a US territory in Micronesia, keep Chamorro Time, UTC+10, all year with no daylight saving. Midnight comes at 14:00 UTC, so together with Guam the islands are the first inhabited US land to see the New Year. Most of the celebrating happens on Saipan, in Garapan on the west coast: hotels lay on New Year’s Eve dinners, and one beachfront hotel throws a free countdown party open to all every year.\n\nAt midnight fireworks rise over that hotel’s garden and beach, and locals drive in to watch, filling Garapan’s car parks. On neighbouring Tinian the mayor’s office gathers people at the fiesta grounds every year: the party starts at seven in the evening and ends with a countdown and fireworks.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Countdown on Garapan’s beach",
+        "text": "From nine in the evening until one in the morning a beachfront hotel in Garapan opens its garden and beach to everyone, no ticket needed: a live band plays, fire dancers perform and prizes are raffled."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Midnight fireworks in Garapan",
+        "text": "At midnight fireworks rise over a hotel beach in Garapan. Local families come to watch too, so it pays to find a parking spot early."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Tinian’s fiesta grounds",
+        "text": "On neighbouring Tinian the mayor’s office gathers people at the fiesta grounds from seven in the evening every year, and leads the countdown under fireworks at midnight."
+      }
+    ],
+    "meta": {
+      "title": "New Year in the Northern Mariana Islands | Time2Fest",
+      "description": "The Northern Mariana Islands greet 2027 at 14:00 UTC. On Saipan, a free countdown party in Garapan, fireworks over the beach and a fiesta night on Tinian."
+    },
+    "kit": "mp"
+  },
+  "NC": {
+    "text": "New Caledonia keeps UTC+11 all year, so midnight arrives here at 13:00 UTC, among the first in the world. Caledonians spend the night in many ways: quietly with family, at costume parties or at dressier evenings, with parties in town and out in the countryside alike. In the days before, shops sell out of ‘Bonne année’ balloons, headbands and confetti cannons.\n\nIn Nouméa, the capital, the heart of the night is the bays of Baie des Citrons and Anse Vata. Families claim a spot on the shore with mats and folding chairs, and at midnight a ‘concert of car horns’ rings out as cars drive round the bays, while the boldest dive into the sea. On the evening of 1 January the city gathers at Sainte-Marie bay: for years it meant fireworks, and in 2026 a sound and light show.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Round the bays, horns blaring",
+        "text": "At midnight Nouméa strikes up its ‘concert of car horns’: cars with loud music drive round the bays, while families make the same tour on foot or with prams."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "A midnight swim",
+        "text": "The boldest greet the year in the water: the moment midnight strikes, they dive into the sea straight from the beach at Baie des Citrons or Anse Vata."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "An evening on the shore",
+        "text": "Families stake out a spot on the shore early with mats, folding tables and cool boxes, and pétanque players keep going late into the night."
+      }
+    ],
+    "meta": {
+      "title": "New Year in New Caledonia: Nouméa | Time2Fest",
+      "description": "New Caledonia greets 2027 at 13:00 UTC. In Nouméa families picnic on the bay beaches, car horns sound at midnight and the boldest dive in for a midnight swim."
+    },
+    "kit": "nc"
+  },
+  "NF": {
+    "text": "Norfolk Island is an external territory of Australia in the middle of the Pacific, home to 2,188 people at the 2021 census. Many islanders descend from the Bounty mutineers and Tahitians who moved here from Pitcairn in 1856; their language, Norf'k, is official alongside English. The holiday season starts in November with Thanksgiving — Norfolk is the only place in Australia that keeps it — and before Christmas the main road of Burnt Pine glows with lights, with a Norfolk pine standing in for the Christmas tree.\n\nKingston is the island's capital, more a seat of government than a town. Its stone buildings from the 1830s — Government House, the Old Military Barracks, the Commissariat Store — are World Heritage. And from November to February families pitch tents under the pines around Emily Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "A pine for a Christmas tree",
+        "text": "At the Christmas parade in Burnt Pine the main road is strung with lights, floats and Santa roll by, and a Norfolk pine — the tree on the island's flag — serves as the Christmas tree."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Summer in a tent under the pines",
+        "text": "From November to February Norfolk families move into tents under the pines around Emily Bay or by Cemetery Beach — and still stay within a quarter of an hour of home."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Dishes that came from Pitcairn",
+        "text": "Island cooking mixes British and Tahitian: try mudda, green-banana dumplings, and kumara pilhi, brought from Pitcairn by the settlers of 1856."
+      }
+    ],
+    "meta": {
+      "title": "New Year on Norfolk Island: Kingston | Time2Fest",
+      "description": "Norfolk Island greets 2027 at 12:00 UTC. Kingston's stone buildings from the 1830s are World Heritage, and in summer families camp under the pines by Emily Bay."
+    },
+    "kit": "nf"
+  },
+  "NR": {
+    "text": "Naoero, formerly Nauru, is a raised coral island of 21 km² in the Pacific Ocean, home to 11,680 people at the 2021 census; in 2026 it officially took back its name in its own language. Midnight arrives here at 12:00 UTC, one of the first in the world. New Year's Day is a public holiday, and the festive month ends on 31 January with Independence Day: the country won its independence from Australia in 1968. The church is the heart of the community, and celebrations bring singing and the reigen circle dance.\n\nYaren is the de facto capital, since the country has no official one. Its one and a half square kilometres hold Parliament House, the airport, government offices and Moqua Well, an underground lake that was long the source of drinking water. Next door, in the neighbouring district, lies Buada Lagoon, a small rain-fed lake among coconut palms and gardens.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Holidays with the parish",
+        "text": "In Naoero the church holds the community together: at the 2021 census a third of people belonged to the Nauru Congregational Church and another third were Catholic."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Reigen and the frigate bird",
+        "text": "At celebrations people sing rhythmic songs and dance in a circle, the reigen. In the frigate bird dance, girls mime the bird in flight and landing."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "From New Year to 31 January",
+        "text": "New Year opens a festive January: on the 31st Naoero marks Independence Day, won in 1968 and the country's main national holiday."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Naoero (Nauru): Yaren | Time2Fest",
+      "description": "Naoero meets 2027 among the first: midnight in Yaren comes at 12:00 UTC. The coral island sings and dances the reigen, and January closes with Independence Day."
+    },
+    "kit": "nr"
+  },
+  "TV": {
+    "text": "Tuvalu keeps a single time zone, UTC+12, and greets the New Year — Tausaga Fou in Tuvaluan — among the first in the world. It is nine low islands and atolls whose highest point is just 4.6 metres above the sea, and most people belong to the Church of Tuvalu. So the big holidays begin with prayer: at Christmas all five churches of Funafuti come together to sing in Tuvaluan, and communities dance the fatele in traditional titi skirts.\n\nFunafuti is the capital atoll: a narrow strip of land 20 to 400 metres wide around a vast lagoon, home to more than 6,600 people. The country's largest building is the three-storey Government Building in Vaiaku, and between flights the runway down the middle of the island becomes a volleyball court. Every evening the town pauses for a quarter of an hour of prayer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Dance the fatele",
+        "text": "The song starts in the maneapa, the community hall, and grows louder and faster until it stops dead. Young women dance in lines while the beat is kept on mats and empty cracker tins."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "A fakaala feast",
+        "text": "A big occasion calls for a fakaala, a feast in the maneapa with food served on trays woven from coconut fronds. Speeches and dancing follow the meal."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Wear a fou",
+        "text": "After church Tuvaluans step out in their Sunday best, and women and men alike wear a fou, a wreath of tropical flowers. Put one on and wish your family a happy Tausaga Fou."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Funafuti, Tuvalu | Time2Fest",
+      "description": "Funafuti, Tuvalu’s capital, welcomes 2027 at midnight UTC+12, among the first on Earth: prayer, the fatele dance, a feast in the maneapa and flower wreaths."
+    },
+    "kit": "tv"
+  },
+  "WF": {
+    "text": "Wallis and Futuna keeps UTC+12, so midnight arrives here at 12:00 UTC — earlier than anywhere else in France, 11 hours ahead of Paris. People see in the new year in many ways: at home with family, at restaurants or in a crowd at a bar. On Futuna the party can belong to a whole village: in 2019 the young people of Ono laid on an evening for their parents, with traditional dances, modern music and cups of kava, and almost no alcohol.\n\nOn Wallis, home to the capital Mata-Utu, many families cross to the islets of the lagoon during the day on 31 December and wait for midnight there, by the water. Custom has its place too: in 2022 the New Year ceremonies on Wallis began with offerings to the king.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "A night on a lagoon islet",
+        "text": "Many Wallis families cross to an islet in the lagoon during the day on 31 December and greet midnight right by the water."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Kava with the whole village",
+        "text": "On Futuna a whole village may see in the year together: the young people prepare food and dances for their parents, and cups of kava go round instead of alcohol."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Offerings to the king",
+        "text": "Wallis still has a king, and custom is alive here: in 2022 the island’s New Year ceremonies began with offerings to him."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Wallis and Futuna: Mata-Utu | Time2Fest",
+      "description": "Wallis and Futuna greets 2027 at 12:00 UTC, first in France. Around Mata-Utu families wait for midnight on lagoon islets, and Futuna villages party together."
+    },
+    "kit": "wf"
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "FM",
+  "zone": "UTC+11",
+  "zoneId": "utc+1100",
+  "cityId": "pohnpei",
+  "names": {
+    "uk": {
+      "name": "Мікронезія",
+      "city": "Понпеї",
+      "cityIn": "на Понпеї",
+      "caps": "ПОНПЕЇ · МІКРОНЕЗІЯ"
+    },
+    "en": {
+      "name": "Micronesia",
+      "city": "Pohnpei",
+      "cityIn": "on Pohnpei",
+      "caps": "POHNPEI · MICRONESIA"
+    },
+    "es": {
+      "name": "Micronesia",
+      "city": "Pohnpei",
+      "cityIn": "en Pohnpei",
+      "caps": "POHNPEI · MICRONESIA"
+    },
+    "fr": {
+      "name": "Micronésie",
+      "city": "Pohnpei",
+      "cityIn": "à Pohnpei",
+      "caps": "POHNPEI · MICRONÉSIE"
+    }
+  },
+  "picto": "M3.5 36 H36.5 M7 36 L5.6 13 Q20 22 34.4 8.5 L33 36 M6.2 31.5 H33.4 M5.9 23.8 H33.9 M5.6 16.5 Q20 25.2 34.2 13.2 M9.6 27.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M14.1 27.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M18.6 27.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M23.1 27.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M27.6 27.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M9.6 20.2 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M14.1 20.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M18.6 20.7 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M23.1 20.5 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M27.6 19.6 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M31.5 10.5 L38 6",
+  "flagColors": [
+    "#75B2DD",
+    "#FFFFFF",
+    "#FCE286"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Понпеї"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on Pohnpei"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Pohnpei"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Pohnpei"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

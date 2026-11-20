@@ -1044,6 +1044,168 @@
         "title": "Nouvel An aux Tonga : Tongatapu | Time2Fest",
         "description": "Les Tonga accueillent 2027 parmi les premiers : minuit sonne à 11 h UTC sur Tongatapu. Offices de nuit, cloches, hymne de fanfare, puis une semaine de prière."
       }
+    },
+    "FM": {
+      "uk": {
+        "title": "Новий рік у Мікронезії: Понпеї | Time2Fest",
+        "description": "Понпеї зустрічає 2027 рік о 13:00 UTC — серед перших у Мікронезії. Діти б’ють у барабани з бляшанок і просять цукерок, а родини гуляють до ранку."
+      },
+      "en": {
+        "title": "New Year in Micronesia: Pohnpei | Time2Fest",
+        "description": "Pohnpei greets 2027 at 13:00 UTC, among the first in Micronesia. Children beat drums made of tins and shout for candy, and families celebrate until dawn."
+      },
+      "es": {
+        "title": "Año Nuevo en Micronesia: Pohnpei | Time2Fest",
+        "description": "Pohnpei recibe 2027 a las 13:00 UTC, de los primeros en Micronesia. Los niños tocan tambores de lata y piden caramelos; la fiesta dura hasta el alba."
+      },
+      "fr": {
+        "title": "Nouvel An en Micronésie : Pohnpei | Time2Fest",
+        "description": "Pohnpei fête 2027 à 13 h UTC, parmi les premiers en Micronésie. Les enfants tapent sur des boîtes en fer et réclament des bonbons, la fête dure jusqu’à l’aube."
+      }
+    },
+    "GU": {
+      "uk": {
+        "title": "Новий рік на Гуамі: Хаґатня | Time2Fest",
+        "description": "Гуам зустрічає 2027 рік о 14:00 UTC. Опівночі салют злітає разом над бухтами Тумон і Хаґатня, а мешканці острова збираються в парку на пляжі Іпао."
+      },
+      "en": {
+        "title": "New Year in Guam: Hagåtña | Time2Fest",
+        "description": "Guam greets 2027 at 14:00 UTC. At midnight fireworks rise over Tumon Bay and Hagåtña Bay at once, as island residents gather at Ypao Beach Park."
+      },
+      "es": {
+        "title": "Año Nuevo en Guam: Hagåtña | Time2Fest",
+        "description": "Guam recibe 2027 a las 14:00 UTC. A medianoche los fuegos estallan a la vez sobre las bahías de Tumon y Hagåtña, y la isla se reúne en la playa de Ypao."
+      },
+      "fr": {
+        "title": "Nouvel An à Guam : Hagåtña | Time2Fest",
+        "description": "Guam fête 2027 à 14 h UTC. À minuit, les feux d’artifice jaillissent au-dessus des baies de Tumon et de Hagåtña, et l’île se retrouve à la plage d’Ypao."
+      }
+    },
+    "MH": {
+      "uk": {
+        "title": "Новий рік у Маджуро, Маршаллові Острови | Time2Fest",
+        "description": "Маджуро, столиця Маршаллових Островів, вітає 2027 рік опівночі за UTC+12: вечірка просто неба з гуртами й ятками, відлік, салют над Улігою та різдвяні джепти."
+      },
+      "en": {
+        "title": "New Year in Majuro, Marshall Islands | Time2Fest",
+        "description": "Majuro, capital of the Marshall Islands, rings in 2027 at midnight UTC+12: an open-air party with bands and food stalls, a countdown and fireworks over Uliga."
+      },
+      "es": {
+        "title": "Año Nuevo en Majuro, Islas Marshall | Time2Fest",
+        "description": "Majuro, capital de las Islas Marshall, entra en 2027 a medianoche UTC+12: fiesta al aire libre con bandas y puestos, cuenta atrás y fuegos sobre Uliga."
+      },
+      "fr": {
+        "title": "Nouvel An à Majuro (Îles Marshall) | Time2Fest",
+        "description": "Majuro, capitale des Îles Marshall, passe en 2027 à minuit UTC+12 : fête en plein air avec groupes et stands, compte à rebours et feux au-dessus d’Uliga."
+      }
+    },
+    "MP": {
+      "uk": {
+        "title": "Новий рік на Північних Маріанських Островах | Time2Fest",
+        "description": "Північні Маріанські Острови зустрічають 2027 рік о 14:00 UTC. На Сайпані — безкоштовна вечірка з відліком у Гарапані, салют над пляжем і свято на Тініані."
+      },
+      "en": {
+        "title": "New Year in the Northern Mariana Islands | Time2Fest",
+        "description": "The Northern Mariana Islands greet 2027 at 14:00 UTC. On Saipan, a free countdown party in Garapan, fireworks over the beach and a fiesta night on Tinian."
+      },
+      "es": {
+        "title": "Año Nuevo en las Islas Marianas del Norte | Time2Fest",
+        "description": "Las Islas Marianas del Norte reciben 2027 a las 14:00 UTC. En Saipán, fiesta gratuita de cuenta atrás en Garapan, fuegos sobre la playa y verbena en Tinian."
+      },
+      "fr": {
+        "title": "Nouvel An : Îles Mariannes du Nord | Time2Fest",
+        "description": "Les Îles Mariannes du Nord fêtent 2027 à 14 h UTC. À Saipan, soirée gratuite de compte à rebours à Garapan, feu d’artifice sur la plage et fête à Tinian."
+      }
+    },
+    "NC": {
+      "uk": {
+        "title": "Новий рік у Новій Каледонії: Нумеа | Time2Fest",
+        "description": "Нова Каледонія зустрічає 2027 рік о 13:00 UTC. У Нумеа родини святкують на пляжах бухт, опівночі лунає концерт клаксонів, а сміливці пірнають у море."
+      },
+      "en": {
+        "title": "New Year in New Caledonia: Nouméa | Time2Fest",
+        "description": "New Caledonia greets 2027 at 13:00 UTC. In Nouméa families picnic on the bay beaches, car horns sound at midnight and the boldest dive in for a midnight swim."
+      },
+      "es": {
+        "title": "Año Nuevo en Nueva Caledonia: Numea | Time2Fest",
+        "description": "Nueva Caledonia recibe 2027 a las 13:00 UTC. En Numea las familias acampan en las playas de las bahías, suenan los cláxones y los más valientes se dan un baño."
+      },
+      "fr": {
+        "title": "Nouvel An en Nouvelle-Calédonie : Nouméa | Time2Fest",
+        "description": "La Nouvelle-Calédonie fête 2027 à 13 h UTC. À Nouméa, on réveillonne en famille sur les plages des baies, les klaxons résonnent et les audacieux plongent."
+      }
+    },
+    "NF": {
+      "uk": {
+        "title": "Новий рік на острові Норфолк: Кінгстон | Time2Fest",
+        "description": "Острів Норфолк зустрічає 2027 рік о 12:00 UTC. У Кінгстоні — кам’яні будівлі світової спадщини, а влітку родини живуть у наметах під соснами затоки Емілі."
+      },
+      "en": {
+        "title": "New Year on Norfolk Island: Kingston | Time2Fest",
+        "description": "Norfolk Island greets 2027 at 12:00 UTC. Kingston's stone buildings from the 1830s are World Heritage, and in summer families camp under the pines by Emily Bay."
+      },
+      "es": {
+        "title": "Año Nuevo en Isla Norfolk: Kingston | Time2Fest",
+        "description": "Isla Norfolk recibe 2027 a las 12:00 UTC. Kingston guarda edificios de piedra de 1830, Patrimonio Mundial, y en verano se acampa bajo los pinos de Emily Bay."
+      },
+      "fr": {
+        "title": "Nouvel An sur l’Île Norfolk : Kingston | Time2Fest",
+        "description": "L’Île Norfolk fête 2027 à 12 h UTC. À Kingston, des bâtiments en pierre des années 1830 classés par l’Unesco ; l’été, on campe sous les pins d’Emily Bay."
+      }
+    },
+    "NR": {
+      "uk": {
+        "title": "Новий рік на Науру: Ярен | Time2Fest",
+        "description": "Науру зустрічає 2027 рік серед перших: північ у Ярені — о 12:00 UTC. На кораловому острові співають і танцюють рейген, а січень закриває День незалежності."
+      },
+      "en": {
+        "title": "New Year in Naoero (Nauru): Yaren | Time2Fest",
+        "description": "Naoero meets 2027 among the first: midnight in Yaren comes at 12:00 UTC. The coral island sings and dances the reigen, and January closes with Independence Day."
+      },
+      "es": {
+        "title": "Año Nuevo en Naoero (Nauru): Yaren | Time2Fest",
+        "description": "Naoero recibe 2027 entre los primeros: la medianoche en Yaren llega a las 12:00 UTC. La isla canta y baila el reigen, y enero cierra con la Independencia."
+      },
+      "fr": {
+        "title": "Nouvel An à Naoero (Nauru) : Yaren | Time2Fest",
+        "description": "Naoero accueille 2027 parmi les premiers : minuit sonne à Yaren à 12 h UTC. L’île chante et danse le reigen, et janvier se clôt sur la fête de l’Indépendance."
+      }
+    },
+    "TV": {
+      "uk": {
+        "title": "Новий рік у Фунафуті, Тувалу | Time2Fest",
+        "description": "Фунафуті, столиця Тувалу, вітає 2027 рік опівночі за UTC+12 серед перших у світі: молитва, танець фателе, бенкет у манеапі й вінки з тропічних квітів."
+      },
+      "en": {
+        "title": "New Year in Funafuti, Tuvalu | Time2Fest",
+        "description": "Funafuti, Tuvalu’s capital, welcomes 2027 at midnight UTC+12, among the first on Earth: prayer, the fatele dance, a feast in the maneapa and flower wreaths."
+      },
+      "es": {
+        "title": "Año Nuevo en Funafuti, Tuvalu | Time2Fest",
+        "description": "Funafuti, capital de Tuvalu, recibe 2027 a medianoche UTC+12, entre los primeros del mundo: oración, baile fatele, banquete en el maneapa y coronas de flores."
+      },
+      "fr": {
+        "title": "Nouvel An à Funafuti (Tuvalu) | Time2Fest",
+        "description": "Funafuti, capitale de Tuvalu, entre en 2027 à minuit UTC+12, parmi les premiers au monde : prière, danse fatele, festin dans le maneapa et couronnes de fleurs."
+      }
+    },
+    "WF": {
+      "uk": {
+        "title": "Новий рік на Воллісі й Футуні: Мата-Уту | Time2Fest",
+        "description": "Волліс і Футуна зустрічають 2027 рік о 12:00 UTC, першими у Франції. У Мата-Уту родини чекають півночі на острівцях лагуни, а на Футуні святкують селом."
+      },
+      "en": {
+        "title": "New Year in Wallis and Futuna: Mata-Utu | Time2Fest",
+        "description": "Wallis and Futuna greets 2027 at 12:00 UTC, first in France. Around Mata-Utu families wait for midnight on lagoon islets, and Futuna villages party together."
+      },
+      "es": {
+        "title": "Año Nuevo en Wallis y Futuna: Mata-Utu | Time2Fest",
+        "description": "Wallis y Futuna recibe 2027 a las 12:00 UTC, antes que el resto de Francia. En Mata-Utu esperan la medianoche en los islotes y en Futuna lo celebra el pueblo."
+      },
+      "fr": {
+        "title": "Nouvel An à Wallis-et-Futuna : Mata-Utu | Time2Fest",
+        "description": "Wallis-et-Futuna fête 2027 à 12 h UTC, la première en France. À Mata-Utu, on attend minuit sur les îlots du lagon, et à Futuna, on réveillonne au village."
+      }
     }
   }
 }

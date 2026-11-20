@@ -2026,5 +2026,257 @@
       "description": "Tonga es de los primeros en recibir 2027: medianoche en Tongatapu a las 11:00 UTC. Cultos nocturnos, campanas, el himno de una banda y una semana de oración."
     },
     "kit": "to"
+  },
+  "FM": {
+    "text": "Pohnpei, la isla que da nombre a uno de los estados de los Estados Federados de Micronesia, vive en UTC+11, así que la medianoche llega a las 13:00 UTC, una hora antes que en Chuuk y Yap. La Nochevieja es aquí la mayor fiesta del año: las familias cocinan todo el día y se reúnen en un gran círculo. No suele haber cuenta atrás al segundo; se mira el reloj, y solo entonces empieza la noche.\n\nEn cuanto llega el año nuevo, los niños corren de casa en casa tocando tambores de lata y pidiendo caramelos, y quienes salen de la iglesia se dan la mano en la calle. Hasta el amanecer Kolonia suena a cláxones y música, y en la isla de Sokehs hay además desfiles, disfraces y batallas de agua. Al este de Pohnpei se alzan los muros de basalto de Nan Madol, patrimonio de la UNESCO.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Tambores de lata",
+        "text": "Pasada la medianoche, los niños van en grupo de casa en casa, golpeando tambores caseros hechos con latas grandes y pidiendo a gritos que les tiren caramelos."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Fiesta con toda la familia",
+        "text": "Las familias cocinan todo el día para toda la parentela, y después de medianoche los vecinos se visitan y se felicitan hasta la mañana."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Desfiles y batallas de agua",
+        "text": "En la isla de Sokehs el Año Nuevo se recibe con ruidosos desfiles y disfraces cruzados, y los grupos al borde de la carretera mojan a los coches que pasan."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Micronesia: Pohnpei | Time2Fest",
+      "description": "Pohnpei recibe 2027 a las 13:00 UTC, de los primeros en Micronesia. Los niños tocan tambores de lata y piden caramelos; la fiesta dura hasta el alba."
+    },
+    "kit": "fm+11"
+  },
+  "GU": {
+    "text": "Guam, territorio estadounidense del Pacífico, vive en UTC+10 sin horario de verano, así que la medianoche llega aquí a las 14:00 UTC. Los fuegos artificiales privados están prohibidos por ley en la isla, de modo que los de Año Nuevo son una fiesta compartida: la Oficina de Turismo de Guam los organiza cada año y la gente se reúne en la orilla para recibir el año junta. Los chamorros, el pueblo originario de la isla, tienen además su propia cuenta: en el antiguo calendario lunar el año empieza con el mes de Tumaiguini, tiempo de fijarse metas.\n\nEn Hagåtña, la capital, y en la zona turística de Tumon, los fuegos estallan a medianoche sobre las dos bahías a la vez. Los vecinos buscan sitio en el parque de la playa de Ypao, y antes de la medianoche de 2023 también sobrevoló la bahía un espectáculo de drones.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre dos bahías",
+        "text": "Justo a medianoche, los fuegos se elevan a la vez sobre las bahías de Tumon y Hagåtña y duran cerca de un cuarto de hora."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Medianoche en la playa de Ypao",
+        "text": "Los vecinos de Guam reciben el año en el parque de la playa de Ypao, en Tumon; esa noche se desaconseja bañarse en la bahía, porque sobre ella se lanzan los fuegos."
+      },
+      {
+        "id": "t3",
+        "iconId": "cliff",
+        "title": "El año nuevo chamorro",
+        "text": "El antiguo año chamorro empieza con el mes de Tumaiguini; al comienzo se peregrina a la roca Fouha, en Humåtak, con ofrendas para los antepasados."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Guam: Hagåtña | Time2Fest",
+      "description": "Guam recibe 2027 a las 14:00 UTC. A medianoche los fuegos estallan a la vez sobre las bahías de Tumon y Hagåtña, y la isla se reúne en la playa de Ypao."
+    },
+    "kit": "gu"
+  },
+  "MH": {
+    "text": "Las Islas Marshall tienen un solo huso horario, UTC+12, y reciben el Año Nuevo entre los primeros del mundo. No siempre fue así: el atolón de Kwajalein vivió mucho tiempo un día por detrás y alcanzó al resto del país borrando sin más el 21 de agosto de 1993 de su calendario. Las grandes fiestas empiezan aquí en la iglesia: en Navidad, los grupos parroquiales llamados jeptas cantan y bailan sobre la vida en las islas —la pesca, la construcción de casas, la navegación— y los líderes de la iglesia eligen al mejor.\n\nMajuro es la capital: 64 islotes alrededor de una enorme laguna, donde el punto más alto no llega a tres metros sobre el mar. La ciudad recibe el Año Nuevo en una gran fiesta al aire libre con bandas locales, puestos de comida y una cuenta atrás compartida, y a medianoche los fuegos artificiales han retumbado muchas veces sobre Uliga, aunque algunos años no los hay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Los jeptas de Navidad",
+        "text": "En Navidad, los grupos parroquiales llamados jeptas cantan y bailan en las iglesias de Majuro, cada uno con su uniforme. Sus danzas muestran la pesca y la navegación, y al público le lanzan caramelos."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fiesta al aire libre",
+        "text": "El 31 de diciembre Majuro se reúne en una fiesta con bandas locales, puestos de comida y cuenta atrás compartida. A medianoche suelen estallar fuegos sobre Uliga, aunque no todos los años."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Canoa en la laguna",
+        "text": "Los isleños navegaban entre atolones en proas, guiados por las estrellas y por cartas de palitos. En Majuro aún se construyen canoas, los jóvenes aprenden a navegar a vela y los visitantes pueden recorrer la laguna."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Majuro, Islas Marshall | Time2Fest",
+      "description": "Majuro, capital de las Islas Marshall, entra en 2027 a medianoche UTC+12: fiesta al aire libre con bandas y puestos, cuenta atrás y fuegos sobre Uliga."
+    },
+    "kit": "mh"
+  },
+  "MP": {
+    "text": "Las Islas Marianas del Norte, territorio de EE. UU. en Micronesia, viven en la hora de Chamorro, UTC+10, todo el año y sin horario de verano. La medianoche llega a las 14:00 UTC, así que, junto con Guam, son la primera tierra habitada de EE. UU. en recibir el Año Nuevo. La fiesta se concentra en Saipán, en Garapan, en la costa oeste: los hoteles sirven cenas de Nochevieja y un hotel de playa organiza cada año una fiesta de cuenta atrás gratuita y abierta a todos.\n\nA medianoche, los fuegos artificiales se elevan sobre el jardín y la playa de ese hotel, y la gente de la isla acude a verlos, hasta llenar los aparcamientos de Garapan. En la vecina Tinian, la alcaldía reúne cada año a los vecinos en el recinto de fiestas: la celebración empieza a las siete de la tarde y termina con la cuenta atrás y fuegos artificiales.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Cuenta atrás en la playa de Garapan",
+        "text": "De nueve de la noche a una de la madrugada, un hotel de playa de Garapan abre su jardín y su playa a todos, sin entrada: toca una banda en directo, actúan bailarines de fuego y se sortean premios."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Salva de medianoche en Garapan",
+        "text": "A medianoche, los fuegos artificiales se elevan sobre la playa de un hotel de Garapan. También acuden familias de la isla, así que conviene buscar aparcamiento con tiempo."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "El recinto de fiestas de Tinian",
+        "text": "En la vecina Tinian, la alcaldía reúne cada año a la gente en el recinto de fiestas desde las siete de la tarde y, a medianoche, dirige la cuenta atrás bajo los fuegos artificiales."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en las Islas Marianas del Norte | Time2Fest",
+      "description": "Las Islas Marianas del Norte reciben 2027 a las 14:00 UTC. En Saipán, fiesta gratuita de cuenta atrás en Garapan, fuegos sobre la playa y verbena en Tinian."
+    },
+    "kit": "mp"
+  },
+  "NC": {
+    "text": "Nueva Caledonia vive en UTC+11 todo el año, así que la medianoche llega aquí a las 13:00 UTC, entre las primeras del mundo. Los caledonios pasan la noche de muchas formas: tranquilos en familia, en fiestas de disfraces o en veladas de gala, tanto en la ciudad como en el campo. Los días previos, las tiendas agotan los globos de «Bonne année», las diademas y los cañones de confeti.\n\nEn Numea, la capital, el corazón de la noche son las bahías de Baie des Citrons y Anse Vata. Las familias se instalan en la orilla con esterillas y sillas plegables, y a medianoche suena un «concierto de cláxones» mientras los coches recorren las bahías, y los más atrevidos se lanzan al mar. La noche del 1 de enero la ciudad se reúne en la bahía de Sainte-Marie: durante años hubo fuegos artificiales, y en 2026, un espectáculo de luz y sonido.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Vuelta a las bahías con cláxones",
+        "text": "A medianoche, Numea arranca su «concierto de cláxones»: coches con la música a todo volumen recorren las bahías y las familias hacen el mismo paseo a pie o con carritos."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Un baño de medianoche",
+        "text": "Los más atrevidos reciben el año en el agua: en cuanto da la medianoche, se lanzan al mar desde la playa de Baie des Citrons o de Anse Vata."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Una noche en la orilla",
+        "text": "Las familias ocupan pronto su sitio en la orilla con esterillas, mesas plegables y neveras, y los aficionados a la petanca juegan hasta bien entrada la noche."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Nueva Caledonia: Numea | Time2Fest",
+      "description": "Nueva Caledonia recibe 2027 a las 13:00 UTC. En Numea las familias acampan en las playas de las bahías, suenan los cláxones y los más valientes se dan un baño."
+    },
+    "kit": "nc"
+  },
+  "NF": {
+    "text": "La isla Norfolk es un territorio externo de Australia en pleno Pacífico, con 2.188 habitantes según el censo de 2021. Muchos isleños descienden de los amotinados del Bounty y de los tahitianos que llegaron desde Pitcairn en 1856; su lengua, el norfuk, es oficial junto al inglés. Las fiestas empiezan en noviembre con Acción de Gracias —en Australia solo se celebra en Norfolk— y antes de Navidad la calle principal de Burnt Pine se ilumina y un pino de Norfolk hace de árbol navideño.\n\nKingston es la capital de la isla, más sede de gobierno que ciudad. Sus edificios de piedra de la década de 1830 —la Casa de Gobierno, el Antiguo Cuartel Militar, el Almacén de Intendencia— son Patrimonio Mundial. Y de noviembre a febrero las familias acampan bajo los pinos de Emily Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Un pino como árbol de Navidad",
+        "text": "En el desfile navideño de Burnt Pine la calle principal se llena de luces, pasan carrozas y Papá Noel, y un pino de Norfolk —el árbol de la bandera— hace de árbol de Navidad."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Verano en tienda bajo los pinos",
+        "text": "De noviembre a febrero las familias de Norfolk se mudan a tiendas bajo los pinos de Emily Bay o junto a Cemetery Beach, sin alejarse más de un cuarto de hora de casa."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Platos llegados de Pitcairn",
+        "text": "La cocina de la isla mezcla lo británico y lo tahitiano: prueba el mudda, unas bolitas de plátano verde, y el pilhi de boniato que trajeron de Pitcairn los colonos de 1856."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Isla Norfolk: Kingston | Time2Fest",
+      "description": "Isla Norfolk recibe 2027 a las 12:00 UTC. Kingston guarda edificios de piedra de 1830, Patrimonio Mundial, y en verano se acampa bajo los pinos de Emily Bay."
+    },
+    "kit": "nf"
+  },
+  "NR": {
+    "text": "Naoero, antes Nauru, es una isla de coral elevada de 21 km² en el océano Pacífico, con 11 680 habitantes según el censo de 2021; en 2026 recuperó oficialmente su nombre en su propia lengua. La medianoche llega aquí a las 12:00 UTC, una de las primeras del mundo. El 1 de enero es festivo, y el mes de fiesta termina el 31 de enero con el Día de la Independencia: el país la obtuvo de Australia en 1968. La iglesia es el corazón de la comunidad, y en las fiestas se canta y se baila en corro el reigen.\n\nYaren es la capital de hecho, porque el país no tiene una oficial. En kilómetro y medio cuadrado reúne el Parlamento, el aeropuerto, las oficinas del Gobierno y el pozo Moqua, un lago subterráneo que durante siglos dio el agua potable. Al lado, en el distrito vecino, está la laguna Buada, un pequeño lago de lluvia entre cocoteros y huertos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Fiestas con la parroquia",
+        "text": "En Naoero la iglesia mantiene unida a la comunidad: según el censo de 2021, un tercio de la gente pertenece a la Iglesia Congregacional de Nauru y otro tercio es católica."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "El reigen y el ave fragata",
+        "text": "En las fiestas, la gente canta canciones rítmicas y baila en corro, el reigen. En la danza del ave fragata, las chicas imitan su vuelo y cómo se posa."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Del Año Nuevo al 31 de enero",
+        "text": "El Año Nuevo abre un enero de fiesta: el día 31 Naoero celebra el Día de la Independencia, lograda en 1968, su principal fiesta nacional."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Naoero (Nauru): Yaren | Time2Fest",
+      "description": "Naoero recibe 2027 entre los primeros: la medianoche en Yaren llega a las 12:00 UTC. La isla canta y baila el reigen, y enero cierra con la Independencia."
+    },
+    "kit": "nr"
+  },
+  "TV": {
+    "text": "Tuvalu tiene un solo huso horario, UTC+12, y recibe el Año Nuevo —Tausaga Fou en tuvaluano— entre los primeros del mundo. Son nueve islas y atolones bajos cuyo punto más alto apenas llega a 4,6 metros sobre el mar, y la mayoría de la gente pertenece a la Iglesia de Tuvalu. Por eso las grandes fiestas empiezan con una oración: en Navidad las cinco iglesias de Funafuti se reúnen para cantar en tuvaluano, y las comunidades bailan el fatele con las faldas tradicionales titi.\n\nFunafuti es el atolón capital: una estrecha franja de tierra de 20 a 400 metros de ancho alrededor de una laguna inmensa, donde viven más de 6600 personas. El edificio más grande del país es el Edificio del Gobierno, de tres plantas, en Vaiaku, y entre vuelo y vuelo la pista que cruza la isla se convierte en cancha de voleibol. Cada tarde la ciudad se detiene un cuarto de hora para rezar.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Baila el fatele",
+        "text": "La canción empieza en el maneapa, la casa comunal, y suena cada vez más fuerte y rápida hasta cortarse de golpe. Las jóvenes bailan en filas y el ritmo se marca sobre esteras y latas de galletas."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Banquete fakaala",
+        "text": "Una gran ocasión pide un fakaala, un banquete en el maneapa con la comida servida en bandejas tejidas con hojas de cocotero. Después llegan los discursos y el baile."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Ponte un fou",
+        "text": "Después de la iglesia, los tuvaluanos salen con su mejor ropa, y mujeres y hombres se ponen un fou, una corona de flores tropicales. Ponte uno y desea a tu familia un feliz Tausaga Fou."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Funafuti, Tuvalu | Time2Fest",
+      "description": "Funafuti, capital de Tuvalu, recibe 2027 a medianoche UTC+12, entre los primeros del mundo: oración, baile fatele, banquete en el maneapa y coronas de flores."
+    },
+    "kit": "tv"
+  },
+  "WF": {
+    "text": "Wallis y Futuna vive en UTC+12, así que la medianoche llega aquí a las 12:00 UTC, antes que en ningún otro lugar de Francia y 11 horas antes que en París. La noche se recibe de muchas formas: en casa con la familia, en restaurantes o en grupo en un bar. En Futuna la fiesta puede ser de todo el pueblo: en 2019, los jóvenes de Ono prepararon para sus padres una velada con danzas tradicionales, música moderna y cuencos de kava, casi sin alcohol.\n\nEn la isla de Wallis, donde está la capital, Mata-Utu, muchas familias pasan el 31 de diciembre de día a los islotes de la laguna y esperan allí la medianoche, junto al agua. La costumbre también cuenta: en 2022, las ceremonias de Año Nuevo en Wallis empezaron con ofrendas al rey.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "Una noche en un islote",
+        "text": "Muchas familias de Wallis cruzan de día, el 31 de diciembre, a un islote de la laguna y reciben allí la medianoche junto al agua."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Kava con todo el pueblo",
+        "text": "En Futuna, todo un pueblo puede recibir el año junto: los jóvenes preparan comida y danzas para sus padres, y en lugar de alcohol circulan cuencos de kava."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Ofrendas al rey",
+        "text": "Wallis todavía tiene rey y la costumbre sigue viva: en 2022, las ceremonias de Año Nuevo de la isla empezaron con ofrendas para él."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Wallis y Futuna: Mata-Utu | Time2Fest",
+      "description": "Wallis y Futuna recibe 2027 a las 12:00 UTC, antes que el resto de Francia. En Mata-Utu esperan la medianoche en los islotes y en Futuna lo celebra el pueblo."
+    },
+    "kit": "wf"
   }
 }

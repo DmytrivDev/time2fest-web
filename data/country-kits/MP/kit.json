@@ -1,0 +1,99 @@
+{
+  "code": "MP",
+  "zone": "UTC+10",
+  "zoneId": "utc+1000",
+  "cityId": "saipan",
+  "names": {
+    "uk": {
+      "name": "Північні Маріанські Острови",
+      "city": "Сайпан",
+      "cityIn": "на Сайпані",
+      "caps": "ПІВНІЧНІ МАРІАНСЬКІ ОСТРОВИ"
+    },
+    "en": {
+      "name": "Northern Mariana Islands",
+      "city": "Saipan",
+      "cityIn": "on Saipan",
+      "caps": "NORTHERN MARIANA ISLANDS"
+    },
+    "es": {
+      "name": "Islas Marianas del Norte",
+      "city": "Saipán",
+      "cityIn": "en Saipán",
+      "caps": "ISLAS MARIANAS DEL NORTE"
+    },
+    "fr": {
+      "name": "Îles Mariannes du Nord",
+      "city": "Saipan",
+      "cityIn": "à Saipan",
+      "caps": "ÎLES MARIANNES DU NORD"
+    }
+  },
+  "picto": "M9.5 5.5 H30.5 A10.5 7 0 0 1 9.5 5.5 Z M20 14.5 L21.91 20.37 L28.08 20.37 L23.09 24 L25 29.88 L20 26.25 L15 29.88 L16.91 24 L11.92 20.37 L18.09 20.37 Z M15.5 11.9 L14.32 20.37 M14.1 21.96 L12 37 H28 L25.9 21.96 M25.68 20.37 L24.5 11.9",
+  "flagColors": [
+    "#0033A1",
+    "#FFFFFF",
+    "#B5B5B5"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Сайпані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on Saipan"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Saipán"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Saipan"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -27,6 +27,7 @@ const SLUG_OVERRIDES = {
   MF: 'saint-martin',
   MM: 'myanmar',
   MO: 'macao',
+  NR: 'nauru', // англійська назва — Naoero (з 2026), адреса лишається
   PM: 'saint-pierre-and-miquelon',
   PS: 'palestine',
   SH: 'saint-helena',
@@ -71,6 +72,7 @@ const NAME_OVERRIDES = {
     CG: 'Republic of the Congo',
     PS: 'Palestine',
     TR: 'Turkey',
+    NR: 'Naoero',
   },
   es: {
     HK: 'Hong Kong',
@@ -80,6 +82,7 @@ const NAME_OVERRIDES = {
     TL: 'Timor Oriental',
     CG: 'República del Congo',
     PS: 'Palestina',
+    NR: 'Naoero',
   },
   fr: {
     HK: 'Hong Kong',
@@ -88,6 +91,7 @@ const NAME_OVERRIDES = {
     CD: 'RD Congo',
     CG: 'République du Congo',
     PS: 'Palestine',
+    NR: 'Naoero',
   },
 };
 

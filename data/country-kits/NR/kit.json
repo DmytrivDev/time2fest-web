@@ -1,0 +1,99 @@
+{
+  "code": "NR",
+  "zone": "UTC+12",
+  "zoneId": "utc+1200",
+  "cityId": "yaren",
+  "names": {
+    "uk": {
+      "name": "Науру",
+      "city": "Ярен",
+      "cityIn": "у Ярені",
+      "caps": "НАУРУ"
+    },
+    "en": {
+      "name": "Naoero",
+      "city": "Yaren",
+      "cityIn": "in Yaren",
+      "caps": "NAOERO"
+    },
+    "es": {
+      "name": "Naoero",
+      "city": "Yaren",
+      "cityIn": "en Yaren",
+      "caps": "NAOERO"
+    },
+    "fr": {
+      "name": "Naoero",
+      "city": "Yaren",
+      "cityIn": "à Yaren",
+      "caps": "NAOERO"
+    }
+  },
+  "picto": "M0 34 H40 M2 34 V27 H15 M1 27 L4.5 22.5 H15 M5.5 34 V27 M9 34 V27 M12.5 34 V27 M25 27 H38 V34 M25 22.5 H35.5 L39 27 M27.5 34 V27 M31 34 V27 M34.5 34 V27 M15 34 V18 M25 18 V34 M13.5 18 L20 9 L26.5 18 Z M20 11 V18 M16.5 18 L20 14.5 L23.5 18 M14.5 24.5 H25.5 M14.5 22 H25.5 M18.5 34 V29.5 H21.5 V34",
+  "flagColors": [
+    "#002B7F",
+    "#FFC61E",
+    "#FFFFFF"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ярені"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Yaren"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Yaren"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Yaren"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

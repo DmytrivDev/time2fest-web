@@ -1,0 +1,99 @@
+{
+  "code": "WF",
+  "zone": "UTC+12",
+  "zoneId": "utc+1200",
+  "cityId": "mata-utu",
+  "names": {
+    "uk": {
+      "name": "Волліс і Футуна",
+      "city": "Мата-Уту",
+      "cityIn": "у Мата-Уту",
+      "caps": "ВОЛЛІС І ФУТУНА"
+    },
+    "en": {
+      "name": "Wallis and Futuna",
+      "city": "Mata-Utu",
+      "cityIn": "in Mata-Utu",
+      "caps": "WALLIS AND FUTUNA"
+    },
+    "es": {
+      "name": "Wallis y Futuna",
+      "city": "Mata-Utu",
+      "cityIn": "en Mata-Utu",
+      "caps": "WALLIS Y FUTUNA"
+    },
+    "fr": {
+      "name": "Wallis-et-Futuna",
+      "city": "Mata-Utu",
+      "cityIn": "à Mata-Utu",
+      "caps": "WALLIS-ET-FUTUNA"
+    }
+  },
+  "picto": "M4 36 H36 M7 36 V4 H9.2 V6 H11.8 V4 H14 V36 M26 36 V4 H28.2 V6 H30.8 V4 H33 V36 M7 8 H14 M26 8 H33 M14 14 L20 8.6 L26 14 M20 8.6 V7.2 M20 7.2 L19.2 4.6 H20.8 Z M20 4.6 V3.4 M23 18 A3 3 0 1 1 17 18 A3 3 0 1 1 23 18 M20 15.6 V20.4 M17.6 18 H22.4 M21.4 25 A1.4 1.4 0 1 1 18.6 25 A1.4 1.4 0 1 1 21.4 25 M18 36 V30.6 A2 2 0 0 1 22 30.6 V36 M9 36 V32.2 A1.5 1.5 0 0 1 12 32.2 V36 M28 36 V32.2 A1.5 1.5 0 0 1 31 32.2 V36 M11.8 12 A1.3 1.3 0 1 1 9.2 12 A1.3 1.3 0 1 1 11.8 12 M30.8 12 A1.3 1.3 0 1 1 28.2 12 A1.3 1.3 0 1 1 30.8 12",
+  "flagColors": [
+    "#ED2939",
+    "#FFFFFF",
+    "#002395"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Мата-Уту"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Mata-Utu"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Mata-Utu"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Mata-Utu"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

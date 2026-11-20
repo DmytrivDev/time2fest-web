@@ -1373,6 +1373,150 @@
         "x": 42,
         "y": 45
       }
+    },
+    "country:FM": {
+      "src": "/media/photos/pohnpei.webp",
+      "alt": {
+        "uk": "Колонія з повітря: дахи міста серед зелені, лагуна з острівцями й скеля Сокеш удалині",
+        "en": "Kolonia from the air: town roofs among greenery, a lagoon with islets and Sokehs Rock in the distance",
+        "es": "Kolonia desde el aire: tejados entre la vegetación, una laguna con islotes y la roca de Sokehs a lo lejos",
+        "fr": "Kolonia vue du ciel : toits de la ville dans la verdure, lagon et îlots, le rocher de Sokehs au loin"
+      },
+      "author": "Lando78.Cook",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kolonia_Town_drone_pciture_2023_L_Cook.jpg",
+      "position": {
+        "x": 40,
+        "y": 35
+      }
+    },
+    "country:GU": {
+      "src": "/media/photos/guam.webp",
+      "alt": {
+        "uk": "Вечір над затокою Тумон на Гуамі: захід сонця над морем, освітлений готель на мисі й пальми",
+        "en": "Evening over Tumon Bay, Guam: sunset over the sea, a lit hotel on the headland and palm trees",
+        "es": "Atardecer en la bahía de Tumon, Guam: puesta de sol sobre el mar, un hotel iluminado en el cabo y palmeras",
+        "fr": "Soir sur la baie de Tumon, Guam : coucher de soleil sur la mer, hôtel illuminé sur le cap et palmiers"
+      },
+      "author": "Daniel Ramirez",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Evening_at_Tumon_Bay_(49255617617).jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:MH": {
+      "src": "/media/photos/majuro.webp",
+      "alt": {
+        "uk": "Католицький собор Успіння в Маджуро (Делап-Уліга-Джаррит)",
+        "en": "The Catholic Cathedral of the Assumption in Majuro (Delap-Uliga-Djarrit)",
+        "es": "La catedral católica de la Asunción en Majuro (Delap-Uliga-Djarrit)",
+        "fr": "La cathédrale catholique de l’Assomption à Majuro (Delap-Uliga-Djarrit)"
+      },
+      "author": "Prefecture Apostolic of Marshall Islands",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cathedral_of_the_Assumption,_Majuro.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:MP": {
+      "src": "/media/photos/saipan.webp",
+      "alt": {
+        "uk": "Захід сонця над пляжем Мікро-Біч у Гарапані на Сайпані: сонце за хмарою, промені й спокійне море",
+        "en": "Sunset over Micro Beach in Garapan, Saipan: the sun behind a cloud, rays and a calm sea",
+        "es": "Atardecer sobre Micro Beach en Garapan, Saipán: el sol tras una nube, rayos y mar en calma",
+        "fr": "Coucher de soleil sur Micro Beach à Garapan, Saipan : soleil derrière un nuage, rayons et mer calme"
+      },
+      "author": "tata_aka_T",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Day_Ends_(4570334753).jpg",
+      "position": {
+        "x": 55,
+        "y": 40
+      }
+    },
+    "country:NC": {
+      "src": "/media/photos/noumea.webp",
+      "alt": {
+        "uk": "Вечір 31 грудня 2016 року в порту Мозель у Нумеа: яхти й освітлений собор Святого Йосипа на пагорбі",
+        "en": "The evening of 31 December 2016 at Port Moselle in Nouméa: yachts and the lit Saint Joseph Cathedral on the hill",
+        "es": "La tarde del 31 de diciembre de 2016 en el puerto Moselle de Numea: yates y la catedral de San José iluminada en la colina",
+        "fr": "Le soir du 31 décembre 2016 au port Moselle à Nouméa : voiliers et cathédrale Saint-Joseph illuminée sur la colline"
+      },
+      "author": "StephaneFradetPhotographie",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cath%C3%A9drale_Saint_Joseph_de_Noum%C3%A9a.jpg",
+      "position": {
+        "x": 40,
+        "y": 45
+      }
+    },
+    "country:NF": {
+      "src": "/media/photos/norfolk.webp",
+      "alt": {
+        "uk": "Кінгстон з пагорба Флегстафф: георгіанські будівлі, норфолкські сосни й острів Непін",
+        "en": "Kingston from Flagstaff Hill: Georgian buildings, Norfolk Island pines and Nepean Island",
+        "es": "Kingston desde Flagstaff Hill: edificios georgianos, pinos de Norfolk y la isla Nepean",
+        "fr": "Kingston depuis Flagstaff Hill : bâtiments géorgiens, pins de Norfolk et île Nepean"
+      },
+      "author": "Inas",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kingston_from_Flagstaff_Hill.jpg",
+      "position": {
+        "x": 66,
+        "y": 62
+      }
+    },
+    "country:NR": {
+      "src": "/media/photos/yaren.webp",
+      "alt": {
+        "uk": "Захід сонця над рифом Науру: вапнякові пінаклі коралу й пальми на березі",
+        "en": "Sunset over the Naoero reef: limestone coral pinnacles and palms on the shore",
+        "es": "Atardecer sobre el arrecife de Naoero: pináculos de coral calizo y palmeras en la orilla",
+        "fr": "Coucher de soleil sur le récif de Naoero : pinacles de corail calcaire et palmiers sur le rivage"
+      },
+      "author": "Angela Spalding, Australian adviser (DFAT)",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sunset_in_Nauru,_December_2012._Photo-_Angela_Spalding,_Australian_adviser_(12045829493).jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
+    },
+    "country:TV": {
+      "src": "/media/photos/funafuti.webp",
+      "alt": {
+        "uk": "Урядова будівля Тувалу у Ваяку (Фунафуті) з боку лагуни в низькому вечірньому світлі",
+        "en": "The Tuvalu Government Building in Vaiaku (Funafuti) seen from the lagoon in low evening light",
+        "es": "El edificio del Gobierno de Tuvalu en Vaiaku (Funafuti) visto desde la laguna con luz baja de la tarde",
+        "fr": "Le bâtiment du gouvernement des Tuvalu à Vaiaku (Funafuti), côté lagon, dans la lumière rasante du soir"
+      },
+      "author": "Michael Coghlan",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Government_Building_From_Beach_Side.jpg",
+      "position": {
+        "x": 50,
+        "y": 28
+      }
+    },
+    "country:WF": {
+      "src": "/media/photos/mata-utu.webp",
+      "alt": {
+        "uk": "Собор Успіння Богородиці в Мата-Уту вдень: дві квадратні вежі з зубцями, кам’яний фасад із білими швами, червоний дах нави",
+        "en": "The Cathedral of Our Lady of the Assumption in Mata-Utu by day: two crenellated square towers, a stone façade with white joints and the red roof of the nave",
+        "es": "La catedral de Nuestra Señora de la Asunción en Mata-Utu de día: dos torres cuadradas almenadas, fachada de piedra con juntas blancas y el tejado rojo de la nave",
+        "fr": "La cathédrale Notre-Dame-de-l’Assomption de Mata-Utu le jour : deux tours carrées crénelées, façade de pierre aux joints blancs et toit rouge de la nef"
+      },
+      "author": "Brigitte & Heinz",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:179_Cath%C3%A9drale_de_Mata-Utu_-_side_view_(36940866791).jpg",
+      "position": {
+        "x": 62,
+        "y": 50
+      }
     }
   }
 }
