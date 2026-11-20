@@ -1,0 +1,99 @@
+{
+  "code": "MD",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "chisinau",
+  "names": {
+    "uk": {
+      "name": "Молдова",
+      "city": "Кишинів",
+      "cityIn": "у Кишиневі",
+      "caps": "КИШИНІВ · МОЛДОВА"
+    },
+    "en": {
+      "name": "Moldova",
+      "city": "Chișinău",
+      "cityIn": "in Chișinău",
+      "caps": "CHIȘINĂU · MOLDOVA"
+    },
+    "es": {
+      "name": "Moldavia",
+      "city": "Chisináu",
+      "cityIn": "en Chisináu",
+      "caps": "CHISINÁU · MOLDAVIA"
+    },
+    "fr": {
+      "name": "Moldavie",
+      "city": "Chișinău",
+      "cityIn": "à Chișinău",
+      "caps": "CHIȘINĂU · MOLDAVIE"
+    }
+  },
+  "picto": "M4 37 H36 M8 37 V22 H32 V37 M16 37 V27 H24 V37 M10 37 V24 M12.5 37 V24 M27.5 37 V24 M30 37 V24 M6.5 22 H33.5 M7 19.5 H33 M6.5 22 V19.5 M33.5 22 V19.5 M10 19.5 V11 H30 V19.5 M15 19.5 V15.5 A5 5 0 0 1 25 15.5 V19.5 M20 10.5 V15.4 M18 18.4 Q18 15.4 20 15.4 Q22 15.4 22 18.4 Z M9 11 H31 M12 11 V9 H28 V11 M20 9 V3",
+  "flagColors": [
+    "#0046AE",
+    "#FFD200",
+    "#CC092F"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Кишиневі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Chișinău"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Chisináu"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Chișinău"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "TH",
+  "zone": "UTC+7",
+  "zoneId": "utc+0700",
+  "cityId": "bangkok",
+  "names": {
+    "uk": {
+      "name": "Таїланд",
+      "city": "Бангкок",
+      "cityIn": "у Бангкоку",
+      "caps": "БАНГКОК · ТАЇЛАНД"
+    },
+    "en": {
+      "name": "Thailand",
+      "city": "Bangkok",
+      "cityIn": "in Bangkok",
+      "caps": "BANGKOK · THAILAND"
+    },
+    "es": {
+      "name": "Tailandia",
+      "city": "Bangkok",
+      "cityIn": "en Bangkok",
+      "caps": "BANGKOK · TAILANDIA"
+    },
+    "fr": {
+      "name": "Thaïlande",
+      "city": "Bangkok",
+      "cityIn": "à Bangkok",
+      "caps": "BANGKOK · THAÏLANDE"
+    }
+  },
+  "picto": "M12 31 L13.6 26 H15.4 L16.6 20 H17.8 L18.4 14 H21.6 L22.2 20 H23.4 L24.6 26 H26.4 L28 31 M18.4 14 L19.2 10 H20.8 L21.6 14 M20 10 V3 M18.2 5.6 H21.8 M19 7.6 H21 M4 31 L5.4 25 H7.2 L8.4 19 H9.6 L10.4 12 L11.6 19 H13 L14 25 M36 31 L34.6 25 H32.8 L31.6 19 H30.4 L29.6 12 L28.4 19 H27 L26 25 M2 31 H38 V37 H2 Z M20 31 V37 M13 37 V33.4 M27 37 V33.4 M2 39.4 H38",
+  "flagColors": [
+    "#D6403F",
+    "#F4F5F8",
+    "#2A3E86"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Бангкоку"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Bangkok"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Bangkok"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Bangkok"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

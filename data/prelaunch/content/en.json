@@ -554,5 +554,201 @@
       "description": "Singapore greets 2027 with fireworks over Marina Bay, neighbourhood countdown parties and an announced first YouTube live stream. Midnight there is 16:00 UTC."
     },
     "kit": "sg"
+  },
+  "CA": {
+    "text": "Canada sees in the New Year differently in each province, but a few customs are known across the country. In Quebec people watch Bye Bye on 31 December, the comedy review of the year that Radio-Canada has aired since 1968 and that ends with the countdown to midnight; last year more than four million viewers tuned in. On 1 January the Governor General and the provincial lieutenant governors hold levees, New Year receptions open to anyone, children included.\n\nIn Toronto the main party is on the shore of Lake Ontario, near the CN Tower. Last year people skated to a DJ and listened to a concert at Harbourfront Centre, and at midnight ten minutes of fireworks set to music lit up the lake. Subway and commuter trains ran free that night.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Watch Bye Bye",
+        "text": "On the evening of 31 December, turn on Radio-Canada: the comedy review of the year Quebec has watched since 1968 ends with the countdown to midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Drop in at a levee",
+        "text": "On 1 January the Governor General and the provincial lieutenant governors open their doors to all: shake hands and wish them a Happy New Year."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Take a polar bear dip",
+        "text": "On 1 January hundreds of people in Oakville jump into icy Lake Ontario, often in costume, raising money for clean water in other countries."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Canada: Toronto | Time2Fest",
+      "description": "At midnight in Toronto, 05:00 UTC, Canada greets 2027 with fireworks set to music over Lake Ontario, while Quebec watches the Bye Bye comedy review."
+    },
+    "kit": "ca-5"
+  },
+  "GE": {
+    "text": "Georgia sees in the New Year around a big family table with Georgian wine, and the night is unthinkable without gozinaki, walnuts fried in honey. After midnight everyone waits for the mekvle, the first guest of the year, who brings sweets and is believed to decide the family's luck for the whole year. Homes glow with a chichilaki, a little white tree shaved from dried hazel or walnut branches and burned before Epiphany on 19 January. Then on 14 January the party comes round again as Georgia marks the Old New Year.\n\nIn Tbilisi, First Republic Square was last season's festive heart for almost a month, with a New Year's Village and concerts. There is no single city fireworks show: at midnight people launch their own from their balconies and the sky lights up over the whole city.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Welcome the mekvle",
+        "text": "The first guest to cross the threshold in the new year is the mekvle: they bring sweets and the hosts treat them in return. People say the year depends on them."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "A white chichilaki tree",
+        "text": "This tree of shaved dried hazel or walnut branches is hung with small fruits and burned before Epiphany on 19 January, taking last year's troubles with it."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks from Tbilisi balconies",
+        "text": "The capital has no single city show: at midnight fireworks go up from balconies all over Tbilisi. By day, stroll the festive First Republic Square."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Georgia: Tbilisi | Time2Fest",
+      "description": "At midnight in Tbilisi, 20:00 UTC, Georgia meets 2027 with fireworks fired from balconies, gozinaki on the table and the mekvle, the lucky first guest."
+    },
+    "kit": "ge"
+  },
+  "MD": {
+    "text": "Moldova welcomes the New Year twice. On the night of 1 January carolers go from house to house with Plugușorul, a rhymed wish chanted to cracking whips, bells and the buhai drum, while Malanca troupes act out comic sketches in bright costumes. In the morning children go sowing, tossing a handful of wheat or maize into each home for a good year. Then on the night of 14 January, the Old New Year, villages do it all again and the table is laid once more: cabbage rolls, cabbage pies and cozonac.\n\nIn Chișinău the big night happens on Great National Assembly Square, by the Christmas fair and the tree. Last year thousands danced the hora there to the Advahov brothers' folk orchestra, carols rang out before midnight, fireworks followed the countdown, and Zdob și Zdub played until almost 3 a.m.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Sowing on 1 January",
+        "text": "In the morning children visit relatives and neighbours and toss a handful of wheat or maize into the house, wishing wealth and luck for the new year."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "A second New Year on 14 January",
+        "text": "On the night of 14 January the old-calendar New Year comes round: villagers go out with Plugușorul, mummers dance the Goat and the Bear, and cabbage rolls and cabbage pies fill the table."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Hora and fireworks downtown",
+        "text": "In Chișinău, head to Great National Assembly Square: last year the concert began at 8 p.m., fireworks went up at midnight and the hora went on until almost 3 a.m."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Moldova: Chișinău | Time2Fest",
+      "description": "At midnight in Chișinău, 22:00 UTC, Moldova greets 2027 with hora dancing and fireworks on Great National Assembly Square, then children sow grain at dawn."
+    },
+    "kit": "md"
+  },
+  "PK": {
+    "text": "In Pakistan the loudest New Year celebrations are in the big cities: Lahore, Karachi and Islamabad. They hold musical nights and concerts, and fireworks go up in public places where families gather. The holiday can be quiet too: in Karachi, the press reported, people pray in mosques on the last day of the year, photograph the final sunset from rooftops and send friends and relatives messages asking for forgiveness.\n\nAt midnight in Karachi crowds gather on Sea View beach, dancing to drums and exchanging greetings. Last year the event at Governor House opened with a Quran recitation and national songs and ended with the longest fireworks display the city had seen. Aerial firing and fireworks outside permitted places were banned last year.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "A concert in a big city",
+        "text": "In Lahore, Karachi and Islamabad New Year's Eve means musical nights and concerts. Fireworks go up in public places where families gather."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Midnight at Sea View",
+        "text": "Last year at midnight young people and families danced to drums on Sea View beach. Set off early: cars and motorbikes pour in, and police and Rangers step up checks."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Governor House celebration",
+        "text": "Last year the Governor House celebration drew thousands and ended with the longest fireworks display the city had seen. Fireworks outside permitted places were banned last year."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Pakistan: Karachi | Time2Fest",
+      "description": "Karachi, Pakistan, meets 2027 at local midnight, 19:00 UTC, with crowds dancing to drums on Sea View beach and, last year, big fireworks over Governor House."
+    },
+    "kit": "pk"
+  },
+  "QA": {
+    "text": "Qatar's biggest celebration is National Day on 18 December: cities are decked in white and maroon, and fireworks go up over the Corniche in Doha, Katara Cultural Village and Al Maha Island. New Year fireworks are a recent tradition here, and 31 December is not a public holiday: offices and shops keep normal hours. Still, in the evening the country gathers for the countdown, and in 2026 the state agency QNA called the New Year show the largest fireworks display in Qatar.\n\nThat show is on Lusail Boulevard, just north of Doha. To welcome 2026, over 250,000 people came: laser shows and music from 6 pm, then at midnight a thousand pyrodrones and fireworks above Al Saad Plaza. Entry was free but for families only. The programme for welcoming 2027 has not been announced yet.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Countdown on Lusail Boulevard",
+        "text": "In 2026 laser shows and music ran there from 6 pm, and at midnight pyrodrones and fireworks took off. Take the metro: on New Year's Eve it ran late, until about 1–2 am."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Souq Waqif and Katara",
+        "text": "In 2026 Souq Waqif had free street acts and live music. Katara Cultural Village offered performances, car parades and activities for children."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Dinner at a hotel or on a dhow",
+        "text": "Hotels in West Bay, Lusail and The Pearl host paid dinners and galas, and some dhows leave the Corniche around 8 pm and return after midnight. Alcohol is served only in licensed hotel venues."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027: Doha, Qatar | Time2Fest",
+      "description": "Qatar counts down to 2027 on Lusail Boulevard near Doha, where pyrodrones and the country's largest fireworks lit up last year. Midnight in Doha is UTC+3."
+    },
+    "kit": "qa"
+  },
+  "TH": {
+    "text": "Thailand has marked the New Year on 1 January since 1940, but the traditional and biggest new year here is Songkran in April. On New Year's Eve temples across the country hold «suat mon kham pi», chanting that carries people from the old year into the new. According to the Department of Religious Affairs, more than 12 million people joined in last year, at temples and online. On the morning of 1 January people offer alms to monks: rice, dried food and everyday necessities.\n\nIn Bangkok the biggest countdown is at the CentralWorld mall: according to the organisers, more than 350,000 people gathered there last year. At ICONSIAM last year fireworks over the Chao Phraya River went up together with a drone show. And at Wat Arun the bells ring at midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Chanting across the year",
+        "text": "On New Year's Eve temples across the country hold «suat mon kham pi»: people chant and meditate as the old year turns into the new. At Bangkok's Wat Arun the bells ring at midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "shrine",
+        "title": "Morning alms for monks",
+        "text": "On the morning of 1 January people offer monks rice, dried food and everyday necessities, for a blessing on themselves and their families. That day many visit temples and shrines to seek blessings for the year."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Countdown on the Chao Phraya",
+        "text": "In Bangkok midnight is welcomed outside CentralWorld and on the banks of the Chao Phraya. Last year at ICONSIAM fireworks over the river went up together with a drone show."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Thailand: Bangkok | Time2Fest",
+      "description": "Thailand welcomes 2027 with temple chanting, bells at Wat Arun and a countdown at CentralWorld; at dawn, alms for monks. Midnight in Bangkok: 17:00 UTC."
+    },
+    "kit": "th"
+  },
+  "VE": {
+    "text": "Venezuela sees in the New Year with the radio on: the broadcast counts down, end-of-year songs play — “Cinco pa’ las 12” (“Five to twelve”) and “Año Nuevo, Vida Nueva” (“New Year, new life”) by Billo’s Caracas Boys — and at home people play the national anthem. At midnight they eat twelve grapes, making a wish with each, and wear yellow underwear for luck. The festive season means hallacas and pan de jamón, and 1 January is a day off.\n\nIn Caracas the cathedral bells ring twelve times at midnight, and TV channels show the country’s main New Year concert from Bolívar Square. Above the city rises the green Ávila mountain, with the round tower of the Hotel Humboldt on its summit, and in the centre stand the twin Parque Central towers.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Twelve grapes",
+        "text": "At midnight, eat twelve grapes and make a wish with each — one for every month. For luck, wear yellow underwear."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Radio countdown and bells",
+        "text": "Turn on the radio: it counts down and plays “Cinco pa’ las 12”, and in Caracas the cathedral bells ring twelve times."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "A walk with a suitcase",
+        "text": "Dreaming of travel? Right after the midnight toast, grab a suitcase and walk it around the block."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Venezuela: Caracas | Time2Fest",
+      "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and radio songs, while the cathedral bells ring twelve times over the city."
+    },
+    "kit": "ve"
   }
 }

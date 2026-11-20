@@ -1,0 +1,99 @@
+{
+  "code": "GE",
+  "zone": "UTC+4",
+  "zoneId": "utc+0400",
+  "cityId": "tbilisi",
+  "names": {
+    "uk": {
+      "name": "Грузія",
+      "city": "Тбілісі",
+      "cityIn": "у Тбілісі",
+      "caps": "ТБІЛІСІ · ГРУЗІЯ"
+    },
+    "en": {
+      "name": "Georgia",
+      "city": "Tbilisi",
+      "cityIn": "in Tbilisi",
+      "caps": "TBILISI · GEORGIA"
+    },
+    "es": {
+      "name": "Georgia",
+      "city": "Tiflis",
+      "cityIn": "en Tiflis",
+      "caps": "TIFLIS · GEORGIA"
+    },
+    "fr": {
+      "name": "Géorgie",
+      "city": "Tbilissi",
+      "cityIn": "à Tbilissi",
+      "caps": "TBILISSI · GÉORGIE"
+    }
+  },
+  "picto": "M3 37 H37 M5 37 V35 H35 V37 M6 35 V27 L10.5 24.5 L15 27 V35 M25 35 V27 L29.5 24.5 L34 27 V35 M13 35 V21 L20 16.5 L27 21 V35 M17.6 35 V30.5 A2.4 2.4 0 0 1 22.4 30.5 V35 M16.5 18.8 V11 H23.5 V18.8 M18.8 15.6 V12.8 M21.2 15.6 V12.8 M16 11 Q16.8 7 20 4.6 Q23.2 7 24 11 Z M20 4.6 V0.8 M18.6 2.2 H21.4",
+  "flagColors": [
+    "#FFFFFF",
+    "#E8112D",
+    "#FFFFFF"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Тбілісі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Tbilisi"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Tiflis"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Tbilissi"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

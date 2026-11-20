@@ -554,5 +554,201 @@
       "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un direct annoncé sur YouTube. À Singapour, minuit, c’est 16 h UTC."
     },
     "kit": "sg"
+  },
+  "CA": {
+    "text": "Le Canada fête le Nouvel An différemment d’une province à l’autre, mais certaines coutumes sont connues dans tout le pays. Au Québec, le 31 décembre, on regarde le « Bye Bye », la revue humoristique de l’année que Radio-Canada diffuse depuis 1968 et qui se termine par le décompte jusqu’à minuit ; l’an dernier, plus de quatre millions de téléspectateurs l’ont suivi. Le 1er janvier, le gouverneur général et les lieutenants-gouverneurs des provinces tiennent leurs levées du Nouvel An, des réceptions ouvertes à tous, enfants compris.\n\nÀ Toronto, la grande fête a lieu au bord du lac Ontario, près de la tour CN. L’an dernier, on a patiné au son d’un DJ et écouté un concert au Harbourfront Centre, puis à minuit dix minutes de feux d’artifice en musique ont illuminé le lac. Le métro et les trains de banlieue étaient gratuits cette nuit-là.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Regarde le « Bye Bye »",
+        "text": "Le soir du 31 décembre, allume Radio-Canada : la revue humoristique de l’année que le Québec regarde depuis 1968 se termine par le décompte jusqu’à minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Passe à une levée",
+        "text": "Le 1er janvier, le gouverneur général et les lieutenants-gouverneurs des provinces ouvrent leurs portes à tous : serre-leur la main et souhaite-leur bonne année."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Plonge dans le lac glacé",
+        "text": "Le 1er janvier, des centaines de personnes sautent dans le lac Ontario glacé à Oakville, souvent déguisées, pour financer l’accès à l’eau potable ailleurs dans le monde."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Canada : Toronto | Time2Fest",
+      "description": "À minuit à Toronto, 5 h UTC, le Canada accueille 2027 avec des feux d’artifice en musique sur le lac Ontario, et le Québec avec la revue du « Bye Bye »."
+    },
+    "kit": "ca-5"
+  },
+  "GE": {
+    "text": "La Géorgie fête le Nouvel An autour d’une grande table familiale avec du vin géorgien, et la nuit est impensable sans gozinaki, des noix frites dans le miel. Après minuit, on attend le mekvle, le premier invité de l’année : il apporte des douceurs et, dit-on, décide de la chance de la famille pour toute l’année. Dans les maisons trône le chichilaki, un petit arbre blanc fait de copeaux de branches sèches de noisetier ou de noyer, brûlé avant l’Épiphanie, le 19 janvier. Puis le 14 janvier, la fête revient : la Géorgie célèbre le Nouvel An de l’ancien calendrier.\n\nÀ Tbilissi, la place de la Première République a été la saison dernière le cœur de la fête pendant presque un mois, avec un Village du Nouvel An et des concerts. Il n’y a pas de feu d’artifice municipal unique : à minuit, chacun tire le sien depuis son balcon et le ciel s’embrase au-dessus de toute la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Accueille le mekvle",
+        "text": "Le premier invité à franchir le seuil dans la nouvelle année est le mekvle : il apporte des douceurs et ses hôtes le régalent en retour. On dit que l’année dépend de lui."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Le petit arbre chichilaki",
+        "text": "Ce petit arbre en copeaux de branches sèches de noisetier ou de noyer se pare de petits fruits et brûle avant l’Épiphanie, le 19 janvier, avec les soucis de l’année passée."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux tirés des balcons",
+        "text": "La capitale n’a pas de spectacle unique : à minuit, les feux partent des balcons de tout Tbilissi. Le jour, promène-toi sur la place festive de la Première République."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Géorgie : Tbilissi | Time2Fest",
+      "description": "À minuit à Tbilissi, 20 h UTC, la Géorgie fête 2027 avec des feux tirés des balcons, du gozinaki sur la table et le mekvle, premier invité porte-bonheur."
+    },
+    "kit": "ge"
+  },
+  "MD": {
+    "text": "La Moldavie fête le Nouvel An deux fois. La nuit du 1er janvier, les chanteurs vont de maison en maison avec le Plugușorul, un vœu en vers rythmé par les claquements de fouet, les clochettes et le tambour buhai, tandis que la Malanca joue des saynètes comiques en costumes colorés. Le matin, les enfants « sèment » : ils lancent une poignée de blé ou de maïs dans chaque maison pour une bonne année. Puis la nuit du 14 janvier, le Nouvel An de l’ancien calendrier, les villages recommencent et la table se garnit de nouveau : chou farci, tourtes au chou et cozonac.\n\nÀ Chișinău, la grande nuit se passe place de la Grande Assemblée nationale, près du marché de Noël et du sapin. L’an dernier, des milliers de personnes y ont dansé la hora avec l’orchestre folklorique des frères Advahov, des chants de Noël ont résonné avant minuit, le feu d’artifice a suivi le compte à rebours et Zdob și Zdub a joué presque jusqu’à 3 h.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Les semailles du 1er janvier",
+        "text": "Le matin, les enfants rendent visite aux proches et aux voisins et lancent une poignée de blé ou de maïs dans la maison en souhaitant richesse et chance pour l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Un second Nouvel An le 14 janvier",
+        "text": "La nuit du 14 janvier, la fête revient selon l’ancien calendrier : dans les villages, on sort avec le Plugușorul, les masques dansent la Chèvre et l’Ours, et la table se couvre de chou farci et de tourtes au chou."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Hora et feu d’artifice en ville",
+        "text": "À Chișinău, va place de la Grande Assemblée nationale : l’an dernier, le concert a commencé à 20 h, le feu d’artifice a éclaté à minuit et la hora a duré presque jusqu’à 3 h."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Moldavie : Chișinău | Time2Fest",
+      "description": "À minuit à Chișinău, 22 h UTC, la Moldavie fête 2027 avec la hora et un feu d’artifice place de la Grande Assemblée nationale ; à l’aube, les enfants sèment."
+    },
+    "kit": "md"
+  },
+  "PK": {
+    "text": "Au Pakistan, le Nouvel An se fête le plus bruyamment dans les grandes villes : Lahore, Karachi et Islamabad. On y organise des soirées musicales et des concerts, et des feux d’artifice éclatent dans les lieux publics où se retrouvent les familles. La fête peut aussi être calme : à Karachi, selon la presse, on prie à la mosquée le dernier jour de l’année, on photographie le dernier coucher de soleil depuis les toits et on envoie aux amis et à la famille des messages pour demander pardon.\n\nÀ minuit, à Karachi, la foule se rassemble sur la plage de Sea View, danse au son des tambours et échange des vœux. L’an dernier, la fête de la Governor House a commencé par une lecture du Coran et des chants patriotiques, et s’est terminée par le plus long feu d’artifice qu’ait connu la ville. Tirer en l’air et lancer des feux hors des lieux autorisés était interdit l’an dernier.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Un concert en ville",
+        "text": "À Lahore, Karachi et Islamabad, le réveillon rime avec soirées musicales et concerts. Des feux d’artifice éclatent là où se retrouvent les familles."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Minuit à Sea View",
+        "text": "L’an dernier, à minuit, jeunes et familles dansaient au son des tambours sur la plage de Sea View. Pars tôt : voitures et motos affluent, et police et Rangers renforcent les contrôles."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fête à la Governor House",
+        "text": "L’an dernier, la fête de la Governor House a réuni des milliers de personnes et s’est achevée par le plus long feu d’artifice de la ville. Hors des lieux autorisés, les feux étaient interdits."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Pakistan : Karachi | Time2Fest",
+      "description": "Karachi, au Pakistan, fête 2027 à minuit heure locale, 19 h UTC : danses aux tambours sur la plage de Sea View et, l’an dernier, feux à la Governor House."
+    },
+    "kit": "pk"
+  },
+  "QA": {
+    "text": "La grande fête du Qatar, c’est la fête nationale du 18 décembre : les villes se parent de blanc et de bordeaux, et les feux d’artifice éclatent au-dessus de la Corniche de Doha, du village culturel de Katara et de l’île d’Al Maha. Le feu du Nouvel An y est une tradition récente, et le 31 décembre n’est pas férié : bureaux et magasins ouvrent comme d’habitude. Le soir, pourtant, le pays se rassemble pour le compte à rebours, et en 2026 l’agence officielle QNA a qualifié le spectacle de plus grand feu d’artifice du Qatar.\n\nCe spectacle a lieu sur le boulevard de Lusail, aux portes de Doha. Pour accueillir 2026, plus de 250 000 personnes sont venues : lasers et musique dès 18 h, puis à minuit mille pyrodrones et un feu d’artifice au-dessus de la place Al Saad. L’entrée était gratuite, mais réservée aux familles. Le programme pour accueillir 2027 n’est pas encore annoncé.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Décompte à Lusail",
+        "text": "En 2026, lasers et musique ont commencé dès 18 h, et à minuit pyrodrones et feu d’artifice ont pris le ciel. Prends le métro : au réveillon, il roulait jusque vers 1 h ou 2 h."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Souq Waqif et Katara",
+        "text": "En 2026, le souk Souq Waqif proposait gratuitement artistes de rue et musique live. Le village culturel de Katara offrait spectacles, parades de voitures et activités pour enfants."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Dîner à l’hôtel ou en boutre",
+        "text": "Les hôtels de West Bay, Lusail et The Pearl proposent dîners et galas payants, et certains boutres quittent la Corniche vers 20 h pour rentrer après minuit. L’alcool n’est servi que dans les établissements hôteliers agréés."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 : Doha, Qatar | Time2Fest",
+      "description": "Le Qatar fête 2027 avec le décompte sur le boulevard de Lusail, près de Doha : l’an dernier, pyrodrones et plus grand feu d’artifice du pays. Minuit : UTC+3."
+    },
+    "kit": "qa"
+  },
+  "TH": {
+    "text": "La Thaïlande fête le Nouvel An le 1er janvier depuis 1940, mais le nouvel an traditionnel et le plus important ici, c’est Songkran, en avril. Le soir du réveillon, les temples de tout le pays organisent le « suat mon kham pi », des chants de prières qui font passer de l’ancienne année à la nouvelle. Selon le Département des affaires religieuses, plus de 12 millions de personnes s’y sont jointes l’an dernier, dans les temples et en ligne. Le matin du 1er janvier, on fait l’aumône aux moines : riz, aliments secs et produits du quotidien.\n\nÀ Bangkok, le plus grand compte à rebours a lieu au centre commercial CentralWorld : selon les organisateurs, plus de 350 000 personnes s’y sont réunies l’an dernier. À ICONSIAM, l’an dernier, les feux d’artifice au-dessus du fleuve Chao Phraya ont été tirés avec un spectacle de drones. Et au Wat Arun, les cloches sonnent à minuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Prières entre deux années",
+        "text": "Le soir du réveillon, les temples de tout le pays organisent le « suat mon kham pi » : on chante et on médite pendant que l’ancienne année cède la place à la nouvelle. Au Wat Arun, à Bangkok, les cloches sonnent à minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "shrine",
+        "title": "L’aumône aux moines",
+        "text": "Le matin du 1er janvier, on offre aux moines du riz, des aliments secs et des produits du quotidien, pour attirer une bénédiction sur soi et sa famille. Ce jour-là, beaucoup se rendent dans les temples et les sanctuaires pour demander une bonne année."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Décompte sur le Chao Phraya",
+        "text": "À Bangkok, on accueille minuit devant CentralWorld et sur les rives du Chao Phraya. L’an dernier, à ICONSIAM, les feux d’artifice au-dessus du fleuve ont été tirés avec un spectacle de drones."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Thaïlande : Bangkok | Time2Fest",
+      "description": "La Thaïlande fête 2027 avec chants dans les temples, cloches du Wat Arun et compte à rebours à CentralWorld ; à l’aube, aumône. Minuit à Bangkok : 17 h UTC."
+    },
+    "kit": "th"
+  },
+  "VE": {
+    "text": "Le Venezuela accueille le Nouvel An radio allumée : l’antenne fait le compte à rebours, les chansons de fin d’année s’enchaînent — « Cinco pa’ las 12 » (« Minuit moins cinq ») et « Año Nuevo, Vida Nueva » (« Nouvel An, nouvelle vie ») des Billo’s Caracas Boys — et chez soi on passe l’hymne national. À minuit, on mange douze raisins en faisant un vœu pour chacun, et on porte des sous-vêtements jaunes pour la chance. La saison des fêtes, ce sont les hallacas et le pan de jamón, et le 1er janvier est férié.\n\nÀ Caracas, à minuit, les cloches de la cathédrale sonnent douze coups, et la télévision diffuse le grand concert du Nouvel An du pays depuis la place Bolívar. Au-dessus de la ville s’élève la verte montagne de l’Ávila, avec la tour ronde de l’hôtel Humboldt à son sommet, et au centre se dressent les tours jumelles de Parque Central.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Douze raisins",
+        "text": "À minuit, mange douze raisins en faisant un vœu pour chacun, un par mois. Pour la chance : des sous-vêtements jaunes."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Radio et cloches à minuit",
+        "text": "Allume la radio : compte à rebours et « Cinco pa’ las 12 » au programme, et à Caracas les cloches de la cathédrale sonnent douze coups."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Le tour avec une valise",
+        "text": "Envie de voyages ? Juste après le toast de minuit, prends une valise et fais le tour du pâté de maisons."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Venezuela : Caracas | Time2Fest",
+      "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons à la radio, pendant que la cathédrale sonne douze coups."
+    },
+    "kit": "ve"
   }
 }

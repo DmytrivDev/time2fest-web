@@ -1,0 +1,98 @@
+{
+  "code": "PK",
+  "zone": "UTC+5",
+  "zoneId": "utc+0500",
+  "cityId": "karachi",
+  "names": {
+    "uk": {
+      "name": "Пакистан",
+      "city": "Карачі",
+      "cityIn": "у Карачі",
+      "caps": "КАРАЧІ · ПАКИСТАН"
+    },
+    "en": {
+      "name": "Pakistan",
+      "city": "Karachi",
+      "cityIn": "in Karachi",
+      "caps": "KARACHI · PAKISTAN"
+    },
+    "es": {
+      "name": "Pakistán",
+      "city": "Karachi",
+      "cityIn": "en Karachi",
+      "caps": "KARACHI · PAKISTÁN"
+    },
+    "fr": {
+      "name": "Pakistan",
+      "city": "Karachi",
+      "cityIn": "à Karachi",
+      "caps": "KARACHI · PAKISTAN"
+    }
+  },
+  "picto": "M20 3 V9.6 M12 18 Q12 9.6 20 9.6 Q28 9.6 28 18 M10 18 H30 M9 21 H31 M10.5 21 L8.5 34 H31.5 L29.5 21 M15.6 34 V28 Q15.6 24.6 20 22.4 Q24.4 24.6 24.4 28 V34 M4 34 H36 M6 36.8 H34 M9 39.4 H31",
+  "flagColors": [
+    "#01411C",
+    "#FFFFFF"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Карачі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Karachi"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Karachi"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Karachi"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

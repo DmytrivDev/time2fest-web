@@ -477,6 +477,118 @@
         "x": 45,
         "y": 50
       }
+    },
+    "country:CA": {
+      "src": "/media/photos/toronto.webp",
+      "alt": {
+        "uk": "Опівнічний салют над набережною Торонто в новорічну ніч 2023 року",
+        "en": "Midnight fireworks over the Toronto waterfront on New Year's Eve 2023",
+        "es": "Fuegos artificiales de medianoche sobre el paseo marítimo de Toronto en la Nochevieja de 2023",
+        "fr": "Feu d'artifice de minuit au-dessus du front de mer de Toronto le soir du Nouvel An 2023"
+      },
+      "author": "Enoch Leung",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Starting_off_2023_with_a_Bang_(1).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:GE": {
+      "src": "/media/photos/tbilisi.webp",
+      "alt": {
+        "uk": "Салют над нічним Тбілісі: собор Самеба на пагорбі, Міст Миру й парк Ріке на березі Мтквари",
+        "en": "Fireworks over Tbilisi at night: Sameba Cathedral on the hill, the Bridge of Peace and Rike Park on the Mtkvari",
+        "es": "Fuegos artificiales sobre Tiflis de noche: la catedral de Sameba en la colina, el Puente de la Paz y el parque Rike junto al Mtkvari",
+        "fr": "Feu d'artifice sur Tbilissi la nuit : la cathédrale Sameba sur la colline, le pont de la Paix et le parc Rike au bord de la Mtkvari"
+      },
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tbilisi_at_night,_Fireworks,_Holiday,_Georgia.jpg",
+      "position": {
+        "x": 62,
+        "y": 40
+      }
+    },
+    "country:MD": {
+      "src": "/media/photos/chisinau.webp",
+      "alt": {
+        "uk": "Тріумфальна арка в Кишиневі з годинником і новорічною ялинкою на площі Великих національних зборів",
+        "en": "The Triumphal Arch in Chișinău with its clock and a New Year tree on Great National Assembly Square",
+        "es": "El Arco del Triunfo de Chisináu con su reloj y un árbol de Año Nuevo en la plaza de la Gran Asamblea Nacional",
+        "fr": "L'arc de triomphe de Chișinău avec son horloge et un sapin du Nouvel An sur la place de la Grande Assemblée nationale"
+      },
+      "author": "Vi Ko",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D0%A0%D1%96%D0%B7%D0%B4%D0%B2%60%D1%8F%D0%BD%D0%B8%D0%B9_%D0%B4%D0%B5%D0%BA%D0%BE%D1%80_%D0%A2%D1%80%D1%96%D1%83%D0%BC%D1%84%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D1%97_%D0%B0%D1%80%D0%BA%D0%B8.jpg",
+      "position": {
+        "x": 45,
+        "y": 35
+      }
+    },
+    "country:PK": {
+      "src": "/media/photos/karachi.webp",
+      "alt": {
+        "uk": "Феєрверки над Карачі, район Файв-Стар-Чоуранґі",
+        "en": "Fireworks over Karachi, Five Star Chowrangi area",
+        "es": "Fuegos artificiales sobre Karachi, zona de Five Star Chowrangi",
+        "fr": "Feu d'artifice au-dessus de Karachi, quartier de Five Star Chowrangi"
+      },
+      "author": "Shahnoor1",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Karachi_new_year_fireworks.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:QA": {
+      "src": "/media/photos/doha.webp",
+      "alt": {
+        "uk": "Нічна панорама Дохи з гавані доу: вежі Вест-Бея над затокою (2023)",
+        "en": "Night panorama of Doha from the dhow harbour: West Bay towers above the bay (2023)",
+        "es": "Panorámica nocturna de Doha desde el puerto de dhows: las torres de West Bay sobre la bahía (2023)",
+        "fr": "Panorama nocturne de Doha depuis le port des boutres : les tours de West Bay au-dessus de la baie (2023)"
+      },
+      "author": "Zairon",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Doha_Dhow_Harbour_Skyline_View_at_Night_02.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:TH": {
+      "src": "/media/photos/bangkok.webp",
+      "alt": {
+        "uk": "Новорічний салют над Чаупхраєю з висоти: яскраві човни й хмарочоси (зустріч 2020 року)",
+        "en": "New Year fireworks over the Chao Phraya from above: bright boats and skyscrapers (welcoming 2020)",
+        "es": "Fuegos artificiales de Año Nuevo sobre el Chao Phraya desde lo alto: barcos iluminados y rascacielos (llegada de 2020)",
+        "fr": "Feu d'artifice du Nouvel An au-dessus du Chao Phraya vu d'en haut : bateaux lumineux et gratte-ciel (passage à 2020)"
+      },
+      "author": "kizamaya",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_year_fire_work_at_Bangkok.jpg",
+      "position": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "country:VE": {
+      "src": "/media/photos/caracas.webp",
+      "alt": {
+        "uk": "Новорічна ніч у Каракасі: салют над нічним містом",
+        "en": "New Year's Eve in Caracas: fireworks over the city at night",
+        "es": "Nochevieja en Caracas: fuegos artificiales sobre la ciudad de noche",
+        "fr": "Réveillon du Nouvel An à Caracas : feu d'artifice au-dessus de la ville la nuit"
+      },
+      "author": "Enzo861",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Caracas_en_A%C3%B1o_Nuevo.JPG",
+      "position": {
+        "x": 55,
+        "y": 60
+      }
     }
   }
 }

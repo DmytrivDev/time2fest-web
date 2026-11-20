@@ -1,0 +1,99 @@
+{
+  "code": "VE",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "caracas",
+  "names": {
+    "uk": {
+      "name": "Венесуела",
+      "city": "Каракас",
+      "cityIn": "у Каракасі",
+      "caps": "КАРАКАС · ВЕНЕСУЕЛА"
+    },
+    "en": {
+      "name": "Venezuela",
+      "city": "Caracas",
+      "cityIn": "in Caracas",
+      "caps": "CARACAS · VENEZUELA"
+    },
+    "es": {
+      "name": "Venezuela",
+      "city": "Caracas",
+      "cityIn": "en Caracas",
+      "caps": "CARACAS · VENEZUELA"
+    },
+    "fr": {
+      "name": "Venezuela",
+      "city": "Caracas",
+      "cityIn": "à Caracas",
+      "caps": "CARACAS · VENEZUELA"
+    }
+  },
+  "picto": "M4 36 H36 M17 36 V11 H24 V36 M17 16 H24 M17 22 H24 M17 28 H24 M26 36 V7 H33 V36 M26 11 H33 M26 17 H33 M26 23 H33 M26 29 H33 M29.5 7 V2 M1 31 Q5 24 8 20.5 H12 Q14 22 17 24 M33 21 Q36 19 39 27 M8.6 20.5 V14 H11.4 V20.5 M8 14 H12 M8.6 16.6 H11.4 M8.6 18.6 H11.4",
+  "flagColors": [
+    "#FFCC00",
+    "#00247D",
+    "#CF142B"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Каракасі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Caracas"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Caracas"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Caracas"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -554,5 +554,201 @@
       "description": "Singapur recibe 2027 con fuegos sobre Marina Bay, cuenta atrás en los barrios y una emisión anunciada en YouTube. En Singapur, medianoche son las 16:00 UTC."
     },
     "kit": "sg"
+  },
+  "CA": {
+    "text": "Canadá recibe el Año Nuevo de forma distinta en cada provincia, pero algunas costumbres se conocen en todo el país. En Quebec, el 31 de diciembre se ve «Bye Bye», el repaso humorístico del año que Radio-Canada emite desde 1968 y que termina con la cuenta atrás hasta medianoche; el año pasado lo vieron más de cuatro millones de personas. El 1 de enero, el gobernador general y los vicegobernadores de las provincias celebran los levees, recepciones de Año Nuevo abiertas a cualquiera, también con niños.\n\nEn Toronto, la gran fiesta está a orillas del lago Ontario, junto a la CN Tower. El año pasado se patinó con DJ y hubo un concierto en el Harbourfront Centre, y a medianoche diez minutos de fuegos artificiales con música iluminaron el lago. El metro y los trenes de cercanías fueron gratis esa noche.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "address",
+        "title": "Mira «Bye Bye»",
+        "text": "La noche del 31 de diciembre, pon Radio-Canada: el repaso humorístico del año que Quebec ve desde 1968 termina con la cuenta atrás hasta medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Pasa por un levee",
+        "text": "El 1 de enero, el gobernador general y los vicegobernadores provinciales abren sus puertas a todos: estrecha su mano y deséales feliz año."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Date un baño helado",
+        "text": "El 1 de enero, cientos de personas en Oakville se lanzan al helado lago Ontario, a menudo disfrazadas, para recaudar fondos para agua potable en otros países."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Canadá: Toronto | Time2Fest",
+      "description": "A medianoche en Toronto, 05:00 UTC, Canadá recibe 2027 con fuegos al ritmo de la música sobre el lago Ontario, y Quebec, con el humor del «Bye Bye»."
+    },
+    "kit": "ca-5"
+  },
+  "GE": {
+    "text": "Georgia recibe el Año Nuevo en torno a una gran mesa familiar con vino georgiano, y esa noche no se concibe sin gozinaki, nueces fritas en miel. Pasada la medianoche todos esperan al mekvle, el primer invitado del año, que trae dulces y, según se cree, decide la suerte de la familia durante todo el año. En las casas brilla el chichilaki, un arbolito blanco hecho con virutas de ramas secas de avellano o nogal que se quema antes de la Epifanía, el 19 de enero. Y el 14 de enero la fiesta vuelve: Georgia celebra el Año Nuevo antiguo.\n\nEn Tiflis, la plaza de la Primera República fue la temporada pasada el corazón de la fiesta durante casi un mes, con una Aldea de Año Nuevo y conciertos. No hay un único espectáculo de fuegos de la ciudad: a medianoche la gente lanza los suyos desde los balcones y el cielo se ilumina sobre toda la ciudad.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Recibe al mekvle",
+        "text": "El primer invitado que cruza el umbral en el año nuevo es el mekvle: trae dulces y los anfitriones lo convidan a su vez. Dicen que de él depende cómo será el año."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "El arbolito chichilaki",
+        "text": "Este arbolito de virutas de ramas secas de avellano o nogal se adorna con frutos pequeños y se quema antes de la Epifanía, el 19 de enero, junto con los males del año pasado."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos desde los balcones",
+        "text": "La capital no tiene un único espectáculo: a medianoche los fuegos suben desde balcones de todo Tiflis. De día, pasea por la festiva plaza de la Primera República."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Georgia: Tiflis | Time2Fest",
+      "description": "A medianoche en Tiflis, 20:00 UTC, Georgia recibe 2027 con fuegos lanzados desde los balcones, gozinaki en la mesa y el mekvle, el primer invitado."
+    },
+    "kit": "ge"
+  },
+  "MD": {
+    "text": "Moldavia recibe el Año Nuevo dos veces. En la noche del 1 de enero los cantores van de casa en casa con el Plugușorul, un deseo en verso al ritmo de látigos, campanillas y el tambor buhai, y la Malanca representa escenas cómicas con trajes vistosos. Por la mañana los niños «siembran»: lanzan un puñado de trigo o maíz dentro de cada casa para que el año sea bueno. Y en la noche del 14 de enero, el Año Nuevo antiguo, los pueblos lo repiten todo y la mesa vuelve a llenarse: rollitos de col, empanadas de repollo y cozonac.\n\nEn Chisináu la gran noche se vive en la plaza de la Gran Asamblea Nacional, junto al mercado navideño y el árbol. El año pasado miles de personas bailaron allí la hora con la orquesta folclórica de los hermanos Advahov, antes de medianoche sonaron villancicos, tras la cuenta atrás llegaron los fuegos artificiales y Zdob și Zdub tocó casi hasta las tres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "La siembra del 1 de enero",
+        "text": "Por la mañana los niños visitan a parientes y vecinos y lanzan un puñado de trigo o maíz dentro de la casa, deseando riqueza y suerte para el nuevo año."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Otro Año Nuevo el 14 de enero",
+        "text": "En la noche del 14 de enero vuelve la fiesta según el calendario antiguo: en los pueblos salen con el Plugușorul, las máscaras bailan la Cabra y el Oso, y en la mesa hay rollitos y empanadas de col."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Hora y fuegos en la plaza",
+        "text": "En Chisináu, ve a la plaza de la Gran Asamblea Nacional: el año pasado el concierto empezó a las ocho de la tarde, a medianoche hubo fuegos y la hora siguió casi hasta las tres."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Moldavia: Chisináu | Time2Fest",
+      "description": "A medianoche en Chisináu, 22:00 UTC, Moldavia recibe 2027 con hora y fuegos en la plaza de la Gran Asamblea Nacional; al alba, los niños siembran trigo."
+    },
+    "kit": "md"
+  },
+  "PK": {
+    "text": "En Pakistán, el Año Nuevo se celebra con más ruido en las grandes ciudades: Lahore, Karachi e Islamabad. Hay veladas musicales y conciertos, y fuegos artificiales en lugares públicos donde se reúnen las familias. La fiesta también puede ser tranquila: en Karachi, según la prensa, el último día del año se reza en las mezquitas, se fotografía la última puesta de sol desde las azoteas y se envían mensajes a amigos y familiares pidiendo perdón.\n\nA medianoche, en Karachi, la multitud se reúne en la playa de Sea View, baila al ritmo de los tambores e intercambia felicitaciones. El año pasado la fiesta de la Casa del Gobernador empezó con una lectura del Corán y canciones patrióticas y terminó con los fuegos más largos que había visto la ciudad. Disparar al aire y lanzar fuegos fuera de los lugares autorizados estaba prohibido el año pasado.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Un concierto en la ciudad",
+        "text": "En Lahore, Karachi e Islamabad la Nochevieja se recibe con veladas musicales y conciertos. Hay fuegos en lugares públicos donde se reúnen las familias."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Medianoche en Sea View",
+        "text": "El año pasado, a medianoche, jóvenes y familias bailaron al ritmo de los tambores en la playa de Sea View. Ve con tiempo: llegan coches y motos, y policía y Rangers refuerzan los controles."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fiesta en la Casa del Gobernador",
+        "text": "El año pasado la fiesta de la Casa del Gobernador reunió a miles de personas y terminó con los fuegos más largos que había visto la ciudad. Fuera de los lugares autorizados, los fuegos estaban prohibidos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Pakistán: Karachi | Time2Fest",
+      "description": "Karachi, Pakistán, recibe 2027 a medianoche local, 19:00 UTC: bailes con tambores en la playa de Sea View y, el año pasado, fuegos en la Casa del Gobernador."
+    },
+    "kit": "pk"
+  },
+  "QA": {
+    "text": "La gran fiesta de Catar es el Día Nacional, el 18 de diciembre: las ciudades se visten de blanco y granate y los fuegos estallan sobre la Corniche de Doha, la Aldea Cultural de Katara y la isla de Al Maha. Los fuegos de Año Nuevo son aquí una tradición reciente, y el 31 de diciembre no es festivo: oficinas y tiendas abren como siempre. Aun así, por la noche el país se reúne para la cuenta atrás, y en 2026 la agencia estatal QNA calificó el espectáculo como los mayores fuegos de Catar.\n\nEse espectáculo es en el bulevar de Lusail, junto a Doha. Para recibir 2026 acudieron más de 250 000 personas: láseres y música desde las 18:00 y, a medianoche, mil pirodrones y fuegos sobre la plaza Al Saad. La entrada fue gratuita, pero solo para familias. El programa para recibir 2027 aún no se ha anunciado.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás en Lusail",
+        "text": "En 2026 hubo láseres y música desde las 18:00, y a medianoche despegaron pirodrones y fuegos. Ve en metro: en Nochevieja funcionó hasta más tarde, hacia la 1 o las 2."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Souq Waqif y Katara",
+        "text": "En 2026 el zoco Souq Waqif tuvo artistas callejeros y música en directo gratis. La Aldea Cultural de Katara ofreció espectáculos, desfiles de coches y actividades infantiles."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Cena en hotel o en un dhow",
+        "text": "Los hoteles de West Bay, Lusail y The Pearl organizan cenas y galas de pago, y algunos dhows zarpan de la Corniche hacia las 20:00 y vuelven pasada la medianoche. El alcohol solo se sirve en locales de hotel con licencia."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027: Doha, Catar | Time2Fest",
+      "description": "Catar recibe 2027 con la cuenta atrás en el bulevar de Lusail, junto a Doha, donde el año pasado hubo pirodrones y sus mayores fuegos. Medianoche: UTC+3."
+    },
+    "kit": "qa"
+  },
+  "TH": {
+    "text": "Tailandia celebra el Año Nuevo el 1 de enero desde 1940, pero el año nuevo tradicional y más grande aquí es Songkran, en abril. En Nochevieja los templos de todo el país celebran el «suat mon kham pi», cantos de oración que llevan del año viejo al nuevo. Según el Departamento de Asuntos Religiosos, el año pasado se sumaron más de 12 millones de personas, en los templos y en línea. La mañana del 1 de enero se ofrecen limosnas a los monjes: arroz, alimentos secos y artículos de uso diario.\n\nEn Bangkok la mayor cuenta atrás es en el centro comercial CentralWorld: según los organizadores, el año pasado se reunieron allí más de 350.000 personas. En ICONSIAM, el año pasado, los fuegos artificiales sobre el río Chao Phraya se lanzaron junto con un espectáculo de drones. Y en Wat Arun las campanas suenan a medianoche.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Oraciones entre dos años",
+        "text": "En Nochevieja los templos de todo el país celebran el «suat mon kham pi»: se canta y se medita mientras el año viejo da paso al nuevo. En Wat Arun, en Bangkok, las campanas suenan a medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "shrine",
+        "title": "Limosna a los monjes",
+        "text": "La mañana del 1 de enero se ofrece a los monjes arroz, alimentos secos y artículos de uso diario, para recibir una bendición para uno mismo y la familia. Ese día muchos visitan templos y santuarios en busca de buena suerte para el año."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás en el Chao Phraya",
+        "text": "En Bangkok la medianoche se recibe frente a CentralWorld y a orillas del Chao Phraya. El año pasado, en ICONSIAM, los fuegos sobre el río se lanzaron junto con un espectáculo de drones."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Tailandia: Bangkok | Time2Fest",
+      "description": "Tailandia recibe 2027 con cantos en templos, campanas en Wat Arun y cuenta atrás en CentralWorld; al alba, limosnas a monjes. Medianoche en Bangkok: 17:00 UTC."
+    },
+    "kit": "th"
+  },
+  "VE": {
+    "text": "Venezuela recibe el Año Nuevo con la radio encendida: la emisión lleva la cuenta regresiva, suenan canciones de fin de año —«Cinco pa’ las 12» y «Año Nuevo, Vida Nueva», de la Billo’s Caracas Boys— y en casa se pone el himno nacional. A medianoche se comen doce uvas, pidiendo un deseo con cada una, y para la suerte se usa ropa interior amarilla. La temporada festiva trae hallacas y pan de jamón, y el 1 de enero es feriado.\n\nEn Caracas, a medianoche, las campanas de la catedral dan doce toques, y la televisión transmite el principal concierto de Año Nuevo del país desde la plaza Bolívar. Sobre la ciudad se alza el verde Ávila, con la torre redonda del hotel Humboldt en la cima, y en el centro se levantan las torres gemelas de Parque Central.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Las doce uvas",
+        "text": "A medianoche, cómete doce uvas y pide un deseo con cada una, uno por mes. Para la suerte, ropa interior amarilla."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Cuenta por radio y campanas",
+        "text": "Pon la radio: hay cuenta regresiva y suena «Cinco pa’ las 12», y en Caracas las campanas de la catedral dan doce toques."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "La vuelta con la maleta",
+        "text": "¿Sueñas con viajar? Justo después del brindis de medianoche, toma una maleta y da la vuelta a la manzana."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Venezuela: Caracas | Time2Fest",
+      "description": "A medianoche en Caracas, 04:00 UTC, Venezuela recibe 2027 con doce uvas y gaitas en la radio, mientras las campanas de la catedral dan doce toques."
+    },
+    "kit": "ve"
   }
 }

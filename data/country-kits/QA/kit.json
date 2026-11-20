@@ -1,0 +1,99 @@
+{
+  "code": "QA",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "doha",
+  "names": {
+    "uk": {
+      "name": "Катар",
+      "city": "Доха",
+      "cityIn": "у Досі",
+      "caps": "ДОХА · КАТАР"
+    },
+    "en": {
+      "name": "Qatar",
+      "city": "Doha",
+      "cityIn": "in Doha",
+      "caps": "DOHA · QATAR"
+    },
+    "es": {
+      "name": "Catar",
+      "city": "Doha",
+      "cityIn": "en Doha",
+      "caps": "DOHA · CATAR"
+    },
+    "fr": {
+      "name": "Qatar",
+      "city": "Doha",
+      "cityIn": "à Doha",
+      "caps": "DOHA · QATAR"
+    }
+  },
+  "picto": "M14 37 C16 31 16.5 26 16.5 24 C16.5 20 14 15 13.5 11 M26 37 C24 31 23.5 26 23.5 24 C23.5 20 26 15 26.5 11 M12 11 H28 M12.5 8.6 H27.5 M12 8.6 V11 M28 8.6 V11 M13.5 8.6 Q20 1.5 26.5 8.6 M20 5.2 V1 M16.2 32 L23.8 26.5 M23.8 32 L16.2 26.5 M16.8 21 L23.2 16.5 M23.2 21 L16.8 16.5 M7 37 H33 M4 40 H36",
+  "flagColors": [
+    "#8A1538",
+    "#FFFFFF",
+    "#8A1538"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Досі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Doha"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Doha"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Doha"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

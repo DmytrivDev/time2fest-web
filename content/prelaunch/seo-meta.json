@@ -468,6 +468,132 @@
         "title": "Nouvel An à Singapour | Time2Fest",
         "description": "Singapour fête 2027 avec un feu d’artifice sur Marina Bay, des décomptes de quartier et un direct annoncé sur YouTube. À Singapour, minuit, c’est 16 h UTC."
       }
+    },
+    "CA": {
+      "uk": {
+        "title": "Новий рік у Канаді: Торонто | Time2Fest",
+        "description": "Опівночі в Торонто, о 05:00 UTC, Канада зустрічає 2027 рік салютом під музику над озером Онтаріо, а Квебек — гумористичним «Bye Bye» на Радіо-Канаді."
+      },
+      "en": {
+        "title": "New Year in Canada: Toronto | Time2Fest",
+        "description": "At midnight in Toronto, 05:00 UTC, Canada greets 2027 with fireworks set to music over Lake Ontario, while Quebec watches the Bye Bye comedy review."
+      },
+      "es": {
+        "title": "Año Nuevo en Canadá: Toronto | Time2Fest",
+        "description": "A medianoche en Toronto, 05:00 UTC, Canadá recibe 2027 con fuegos al ritmo de la música sobre el lago Ontario, y Quebec, con el humor del «Bye Bye»."
+      },
+      "fr": {
+        "title": "Nouvel An au Canada : Toronto | Time2Fest",
+        "description": "À minuit à Toronto, 5 h UTC, le Canada accueille 2027 avec des feux d’artifice en musique sur le lac Ontario, et le Québec avec la revue du « Bye Bye »."
+      }
+    },
+    "GE": {
+      "uk": {
+        "title": "Новий рік у Грузії: Тбілісі | Time2Fest",
+        "description": "Опівночі в Тбілісі, о 20:00 UTC, Грузія зустрічає 2027 рік салютом з балконів, гозинаками на столі й меквле — першим гостем, що приносить удачу."
+      },
+      "en": {
+        "title": "New Year in Georgia: Tbilisi | Time2Fest",
+        "description": "At midnight in Tbilisi, 20:00 UTC, Georgia meets 2027 with fireworks fired from balconies, gozinaki on the table and the mekvle, the lucky first guest."
+      },
+      "es": {
+        "title": "Año Nuevo en Georgia: Tiflis | Time2Fest",
+        "description": "A medianoche en Tiflis, 20:00 UTC, Georgia recibe 2027 con fuegos lanzados desde los balcones, gozinaki en la mesa y el mekvle, el primer invitado."
+      },
+      "fr": {
+        "title": "Nouvel An en Géorgie : Tbilissi | Time2Fest",
+        "description": "À minuit à Tbilissi, 20 h UTC, la Géorgie fête 2027 avec des feux tirés des balcons, du gozinaki sur la table et le mekvle, premier invité porte-bonheur."
+      }
+    },
+    "MD": {
+      "uk": {
+        "title": "Новий рік у Молдові: Кишинів | Time2Fest",
+        "description": "Опівночі в Кишиневі, о 22:00 UTC, Молдова вітає 2027 рік хорою й салютом на площі Великих національних зборів, а вранці діти посівають зерном."
+      },
+      "en": {
+        "title": "New Year in Moldova: Chișinău | Time2Fest",
+        "description": "At midnight in Chișinău, 22:00 UTC, Moldova greets 2027 with hora dancing and fireworks on Great National Assembly Square, then children sow grain at dawn."
+      },
+      "es": {
+        "title": "Año Nuevo en Moldavia: Chisináu | Time2Fest",
+        "description": "A medianoche en Chisináu, 22:00 UTC, Moldavia recibe 2027 con hora y fuegos en la plaza de la Gran Asamblea Nacional; al alba, los niños siembran trigo."
+      },
+      "fr": {
+        "title": "Nouvel An en Moldavie : Chișinău | Time2Fest",
+        "description": "À minuit à Chișinău, 22 h UTC, la Moldavie fête 2027 avec la hora et un feu d’artifice place de la Grande Assemblée nationale ; à l’aube, les enfants sèment."
+      }
+    },
+    "PK": {
+      "uk": {
+        "title": "Новий рік у Пакистані: Карачі | Time2Fest",
+        "description": "Карачі, Пакистан, зустрічає 2027 рік опівночі за місцевим часом, о 19:00 UTC: танці під барабани на пляжі Сі-В’ю, а торік — салют у Губернаторському домі."
+      },
+      "en": {
+        "title": "New Year in Pakistan: Karachi | Time2Fest",
+        "description": "Karachi, Pakistan, meets 2027 at local midnight, 19:00 UTC, with crowds dancing to drums on Sea View beach and, last year, big fireworks over Governor House."
+      },
+      "es": {
+        "title": "Año Nuevo en Pakistán: Karachi | Time2Fest",
+        "description": "Karachi, Pakistán, recibe 2027 a medianoche local, 19:00 UTC: bailes con tambores en la playa de Sea View y, el año pasado, fuegos en la Casa del Gobernador."
+      },
+      "fr": {
+        "title": "Nouvel An au Pakistan : Karachi | Time2Fest",
+        "description": "Karachi, au Pakistan, fête 2027 à minuit heure locale, 19 h UTC : danses aux tambours sur la plage de Sea View et, l’an dernier, feux à la Governor House."
+      }
+    },
+    "QA": {
+      "uk": {
+        "title": "Новий рік: Доха, Катар | Time2Fest",
+        "description": "Катар зустрічає 2027 рік відліком на бульварі Лусаїл біля Дохи: торік там злетіли піродрони й найбільший салют країни. Північ у Досі — 00:00 за UTC+3."
+      },
+      "en": {
+        "title": "New Year: Doha, Qatar | Time2Fest",
+        "description": "Qatar counts down to 2027 on Lusail Boulevard near Doha, where pyrodrones and the country's largest fireworks lit up last year. Midnight in Doha is UTC+3."
+      },
+      "es": {
+        "title": "Año Nuevo: Doha, Catar | Time2Fest",
+        "description": "Catar recibe 2027 con la cuenta atrás en el bulevar de Lusail, junto a Doha, donde el año pasado hubo pirodrones y sus mayores fuegos. Medianoche: UTC+3."
+      },
+      "fr": {
+        "title": "Nouvel An : Doha, Qatar | Time2Fest",
+        "description": "Le Qatar fête 2027 avec le décompte sur le boulevard de Lusail, près de Doha : l’an dernier, pyrodrones et plus grand feu d’artifice du pays. Minuit : UTC+3."
+      }
+    },
+    "TH": {
+      "uk": {
+        "title": "Новий рік у Таїланді: Бангкок | Time2Fest",
+        "description": "Таїланд зустрічає 2027 рік молитвами «суат мон кхам пі», дзвонами Ват Аруна й відліком біля CentralWorld у Бангкоку. Північ у Бангкоку — 17:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Thailand: Bangkok | Time2Fest",
+        "description": "Thailand welcomes 2027 with temple chanting, bells at Wat Arun and a countdown at CentralWorld; at dawn, alms for monks. Midnight in Bangkok: 17:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Tailandia: Bangkok | Time2Fest",
+        "description": "Tailandia recibe 2027 con cantos en templos, campanas en Wat Arun y cuenta atrás en CentralWorld; al alba, limosnas a monjes. Medianoche en Bangkok: 17:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An en Thaïlande : Bangkok | Time2Fest",
+        "description": "La Thaïlande fête 2027 avec chants dans les temples, cloches du Wat Arun et compte à rebours à CentralWorld ; à l’aube, aumône. Minuit à Bangkok : 17 h UTC."
+      }
+    },
+    "VE": {
+      "uk": {
+        "title": "Новий рік у Венесуелі: Каракас | Time2Fest",
+        "description": "Опівночі в Каракасі, о 04:00 UTC, Венесуела вітає 2027 рік дванадцятьма виноградинами й піснями по радіо, а дзвони собору б’ють дванадцять разів."
+      },
+      "en": {
+        "title": "New Year in Venezuela: Caracas | Time2Fest",
+        "description": "At midnight in Caracas, 04:00 UTC, Venezuela greets 2027 with twelve grapes and radio songs, while the cathedral bells ring twelve times over the city."
+      },
+      "es": {
+        "title": "Año Nuevo en Venezuela: Caracas | Time2Fest",
+        "description": "A medianoche en Caracas, 04:00 UTC, Venezuela recibe 2027 con doce uvas y gaitas en la radio, mientras las campanas de la catedral dan doce toques."
+      },
+      "fr": {
+        "title": "Nouvel An au Venezuela : Caracas | Time2Fest",
+        "description": "À minuit à Caracas, 4 h UTC, le Venezuela accueille 2027 avec douze raisins et des chansons à la radio, pendant que la cathédrale sonne douze coups."
+      }
     }
   }
 }

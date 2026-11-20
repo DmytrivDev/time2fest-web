@@ -30,8 +30,9 @@ describe('набори країн', () => {
     expect(sceneFile('JP', 'utc+0900', false)).toBeUndefined();
     expect(sceneFile('BR', 'utc-0300', true)).toMatchObject({ src: '/scenes/BR-wide.svg' });
     expect(sceneFile('BR', 'utc-0300', false)).toBeUndefined();
-    // Сцена 3:2 (набір FR опубліковано до широких сцен) — верх по центру.
-    expect(sceneFile('FR', 'utc+0100', true)).toEqual({ src: '/scenes/FR.svg', position: '50% 0%' });
+    // Пачка 3: FR теж широка; TH — новий набір.
+    expect(sceneFile('FR', 'utc+0100', true)).toMatchObject({ src: '/scenes/FR-wide.svg', position: 'right center' });
+    expect(sceneFile('TH', 'utc+0700', true)).toMatchObject({ src: '/scenes/TH-wide.svg' });
     expect(sceneFile('VN', 'utc+0700', true)).toBeUndefined();
   });
 

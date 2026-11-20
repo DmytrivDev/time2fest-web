@@ -115,7 +115,10 @@ export type IconName =
   | 'tradition-fireworks'
   | 'tradition-boat'
   | 'tradition-music'
-  | 'tradition-sun';
+  | 'tradition-sun'
+  | 'tradition-door'
+  | 'tradition-grapes'
+  | 'tradition-suitcase';
 
 export type IconSize = 9 | 12 | 14 | 15 | 16 | 18 | 20 | 22 | 24 | 26 | 32;
 
@@ -672,6 +675,35 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <circle cx="12" cy="12" r="4" />
       <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
+    </>
+  ),
+  'tradition-door': (
+    <>
+      <path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17" />
+      <path d="M3 21h18" />
+      <path d="M9 3v18" />
+      <circle cx="14.5" cy="12" r="1" />
+    </>
+  ),
+  'tradition-grapes': (
+    <>
+      <path d="M12 7V4.5M12 5c1.5-1.8 3.8-2 5-1.2-.8 1.6-2.8 2.4-5 1.7" />
+      <circle cx="9.5" cy="9.5" r="2.2" />
+      <circle cx="14.5" cy="9.5" r="2.2" />
+      <circle cx="7.5" cy="13.6" r="2.2" />
+      <circle cx="12" cy="13.6" r="2.2" />
+      <circle cx="16.5" cy="13.6" r="2.2" />
+      <circle cx="9.8" cy="17.7" r="2.2" />
+      <circle cx="14.2" cy="17.7" r="2.2" />
+      <circle cx="12" cy="21" r="1.6" />
+    </>
+  ),
+  'tradition-suitcase': (
+    <>
+      <rect x="5" y="7.5" width="14" height="11.5" rx="2" />
+      <path d="M9.5 7.5V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2.5" />
+      <path d="M9 11v4.5M15 11v4.5" />
+      <path d="M8 19v2M16 19v2" />
     </>
   ),
 };
