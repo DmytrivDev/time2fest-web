@@ -5,6 +5,7 @@
  * In-process dispatcher, no server.
  */
 import { randomBytes } from 'node:crypto';
+import { PUBLIC_ROUTES } from '@time2fest/contracts';
 import { Redis } from 'ioredis';
 import { afterAll, describe, expect, it } from 'vitest';
 import { buildDispatcher, edgeGateOf } from '../../src/container';
@@ -207,7 +208,7 @@ describe('edge origin check and client (real Redis)', () => {
     expect(unavailable.headers.get('cache-control')).toContain('no-store');
   });
 
-  it('AC-33: a public route loses its Set-Cookie and logs one warning; no production route is public', async () => {
+  it('AC-33: a public route loses its Set-Cookie and logs one warning; the public production routes are exactly PUBLIC_ROUTES', async () => {
     const warnings: unknown[] = [];
     const log = {
       ...silent,
@@ -229,6 +230,6 @@ describe('edge origin check and client (real Redis)', () => {
     expect(res.status).toBe(200);
     expect(res.headers.has('set-cookie')).toBe(false);
     expect(warnings).toEqual([{ event: 'public-set-cookie', route: 'pub' }]);
-    expect(routeRegistry.filter((r) => r.public)).toHaveLength(0);
+    expect(routeRegistry.filter((r) => r.public).map((r) => r.path).sort()).toEqual(PUBLIC_ROUTES.map((r) => r.path).sort());
   });
 });

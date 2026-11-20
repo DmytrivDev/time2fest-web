@@ -16,9 +16,7 @@ import { isProductKey, type ProductSelection, type ProductSelections } from '../
 import { DEFAULT_SITE_RECORD, type SiteRecord } from '../domain/site/snapshot';
 import { DEFAULT_SWITCHES, TOAST_TIER_KEYS, type PaymentsPause } from '../domain/site/switches';
 import type { Clock } from '../ports';
-import type { FanOutClaim } from '../site/fanout';
-import type { RebuildStore } from '../site/rebuild';
-import type { SiteRecordPatch, SiteStore, Tx } from '../site/ports';
+import type { FanOutClaim, RebuildStore, SiteRecordPatch, SiteStore, Tx } from '../site/ports';
 
 export const SITE_STATE = 'site-state';
 

@@ -14,8 +14,8 @@ import {
   scheduleRebuild,
   tickRebuild,
   type RebuildDeps,
-  type RebuildStore,
 } from '../../src/site/rebuild';
+import type { RebuildStore } from '../../src/site/ports';
 
 const utc = (s: string) => Date.parse(`${s}Z`);
 

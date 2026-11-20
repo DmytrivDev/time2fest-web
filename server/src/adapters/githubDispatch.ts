@@ -6,7 +6,7 @@
  * with "Actions: write" only. Success = 204; anything else throws an error that names the HTTP status only.
  * The token travels only in the `Authorization` header and is never logged or thrown.
  */
-import type { RebuildLauncher } from '../site/rebuild';
+import type { RebuildLauncher } from '../site/ports';
 
 export const GITHUB_API_BASE = 'https://api.github.com';
 export const DISPATCH_PATH = '/repos/DmytrivDev/time2fest-web/actions/workflows/deploy.yml/dispatches';

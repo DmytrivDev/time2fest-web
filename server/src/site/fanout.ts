@@ -24,7 +24,7 @@ import { EVENT_PATCH_CHANGED_TOPIC } from '../corrections/service';
 import type { EventSubscriber } from '../events/ports';
 import type { Alarm, Logger } from '../ports';
 import type { ChannelPublisher } from '../realtime/ports';
-import type { SnapshotSink } from './ports';
+import type { FanOutClaim, SnapshotSink } from './ports';
 import { SITE_CHANGED_TOPIC } from './service';
 import { readSnapshot, type SnapshotReadDeps } from './snapshot';
 
@@ -39,11 +39,6 @@ export const R2_COPY_FAILED = 'site/r2-copy-failed';
 export const PURGE_SCHEDULE: readonly number[] = [0, 30_000, 120_000];
 /** Offsets from the change, in ms (AC-36): the write and three retries (as `catalog/copy.ts`). */
 export const COPY_SCHEDULE: readonly number[] = [0, 30_000, 120_000, 300_000];
-
-/** Claims the fan-out of one version across instances: true for exactly one caller per version, and never for a version ≤ one already claimed. */
-export interface FanOutClaim {
-  claim(version: number): Promise<boolean>;
-}
 
 export interface FanOutDeps {
   snapshot: SnapshotReadDeps;

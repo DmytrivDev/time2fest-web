@@ -51,3 +51,29 @@ export interface SnapshotSink {
   purge(): Promise<void>;
   copy(state: SiteState): Promise<void>;
 }
+
+/** The persisted rebuild state of the site record (`rebuildDueAt`, `rebuildDeferred`). */
+export interface RebuildStore {
+  /**
+   * Moves the due time to `dueAt`, never earlier than the stored one. With `keepDeferred`, a launch already
+   * deferred to the window's end stays where it is.
+   */
+  schedule(dueAt: number, keepDeferred: boolean): Promise<void>;
+  /** The pending launch, or `null`. */
+  pending(): Promise<{ dueAt: number; deferred: boolean } | null>;
+  /**
+   * Claims the launch due at `dueAt` (conditional on the stored due time being exactly `dueAt`): `next` =
+   * `null` clears it, a number defers it to that time. True for exactly one caller across instances.
+   */
+  claim(dueAt: number, next: number | null): Promise<boolean>;
+}
+
+/** Starts one rebuild; throws when it was not accepted. */
+export interface RebuildLauncher {
+  launch(catalogVersion: string): Promise<void>;
+}
+
+/** Claims the fan-out of one version across instances: true for exactly one caller per version, and never for a version ≤ one already claimed. */
+export interface FanOutClaim {
+  claim(version: number): Promise<boolean>;
+}

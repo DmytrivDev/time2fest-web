@@ -18,11 +18,12 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { DISPATCH_PATH } from '../../src/adapters/githubDispatch';
 import { createPayloadRebuildStore, createPayloadSiteStore } from '../../src/adapters/payloadSiteState';
 import { CATALOG_CHANGED_TOPIC } from '../../src/catalog/service';
-import { eventsOf, payloadOf, rebuildDepsOf, startBackground, startRebuildTicker } from '../../src/container';
+import { eventsOf, payloadOf, rebuildDepsOf, seedStoreOf, startBackground, startRebuildTicker } from '../../src/container';
 import { dueAfter, REBUILD_DEBOUNCE_MS, REBUILD_TICK_MS } from '../../src/domain/site/rebuild';
 import type { Deps } from '../../src/endpoints/types';
 import type { EventBus } from '../../src/events/bus';
 import type { AlarmInput } from '../../src/ports';
+import { baseSeedRows, runSeed } from '../../src/seed/index';
 import {
   createRebuildSubscriber,
   REBUILD_FAILED,
@@ -31,10 +32,9 @@ import {
   settleRebuilds,
   tickRebuild,
   type RebuildDeps,
-  type RebuildStore,
   type TickOutcome,
 } from '../../src/site/rebuild';
-import type { SiteStore } from '../../src/site/ports';
+import type { RebuildStore, SiteStore } from '../../src/site/ports';
 import { testDeps } from './helpers';
 
 const TOKEN = `ghd-${randomBytes(18).toString('hex')}`; // check-secrets: allow random per-run fake token
@@ -140,6 +140,8 @@ async function clearPending(): Promise<void> {
 beforeAll(async () => {
   deps = testDeps({ log: capture, clock }, { T2F_GITHUB_DISPATCH_TOKEN: TOKEN });
   const payload = payloadOf(deps);
+  // The catalog season: seed it (idempotent) instead of relying on an earlier file.
+  await runSeed(seedStoreOf(deps), baseSeedRows());
   site = createPayloadSiteStore({ payload, clock });
   state = createPayloadRebuildStore(payload);
   // The row exists before the first schedule (a real catalog change bumps the site version first).
