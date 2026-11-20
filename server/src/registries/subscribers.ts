@@ -8,6 +8,7 @@ import type { EventSubscriber, InternalEvent } from '../events/ports';
 import { assertRegistry } from '../platform/registry';
 import { createSchedulerRecomputeSubscribers } from '../scheduler/recompute';
 import { createSiteFanOutSubscribers } from '../site/fanout';
+import { createRebuildSubscriber } from '../site/rebuild';
 import { createClockRefreshSubscriber } from '../timekeeping/shared';
 
 const RECORDED = Symbol.for('t2f.test.recordedEvents');
@@ -39,6 +40,9 @@ const [schedulerRecomputeCatalog, schedulerRecomputePatch] = createSchedulerReco
 /** The `site` snapshot follows every committed site, catalog and correction change (SPEC-08 AC-5 … AC-7, AC-33 … AC-36). */
 const [siteFanOutCatalog, siteFanOutPatch, siteFanOutSite] = createSiteFanOutSubscribers(async () => (await processDeps()).siteFanOut?.());
 
+/** The catalog rebuild follows every committed catalog change, 150 s after the last (SPEC-08 AC-61). */
+const siteRebuild = createRebuildSubscriber(async () => (await processDeps()).rebuild?.());
+
 export const subscriberRegistry: readonly EventSubscriber[] = [
   catalogR2Copy,
   clockRefresh,
@@ -47,6 +51,7 @@ export const subscriberRegistry: readonly EventSubscriber[] = [
   siteFanOutCatalog,
   siteFanOutPatch,
   siteFanOutSite,
+  siteRebuild,
   testRecorder,
 ];
 

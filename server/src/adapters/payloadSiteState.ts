@@ -17,6 +17,7 @@ import { DEFAULT_SITE_RECORD, type SiteRecord } from '../domain/site/snapshot';
 import { DEFAULT_SWITCHES, TOAST_TIER_KEYS, type PaymentsPause } from '../domain/site/switches';
 import type { Clock } from '../ports';
 import type { FanOutClaim } from '../site/fanout';
+import type { RebuildStore } from '../site/rebuild';
 import type { SiteRecordPatch, SiteStore, Tx } from '../site/ports';
 
 export const SITE_STATE = 'site-state';
@@ -182,6 +183,45 @@ export function createPayloadFanOutClaim(payload: () => Promise<Payload>): FanOu
       const { rows } = await db.drizzle.execute(sql`
         UPDATE "site_state" SET "last_fanned_out" = ${version}::numeric
         WHERE "id" = ${FIRST_ROW} AND COALESCE("last_fanned_out", 0) < ${version}::numeric
+        RETURNING "id"`);
+      return rows.length === 1;
+    },
+  };
+}
+
+/**
+ * The rebuild state of the site record (SPEC-08 AC-61 … AC-63): `rebuild_due_at`, `rebuild_deferred`. Each call is
+ * ONE statement outside any transaction. `schedule` only moves the due time later (`GREATEST`), so events
+ * delivered out of order never bring a launch forward; `claim` is a conditional `UPDATE … WHERE rebuild_due_at =
+ * $due RETURNING`, so exactly one instance claims a due launch. The row exists once any change committed
+ * (the catalog change bumps the site version first); without it `schedule` changes nothing.
+ */
+export function createPayloadRebuildStore(payload: () => Promise<Payload>): RebuildStore {
+  const exec = async () => ((await payload()).db as unknown as DrizzleAdapter).drizzle;
+  return {
+    async schedule(dueAt, keepDeferred) {
+      const due = new Date(dueAt).toISOString();
+      await (await exec()).execute(sql`
+        UPDATE "site_state" SET "rebuild_due_at" = CASE
+          WHEN ${keepDeferred}::boolean AND "rebuild_deferred" AND "rebuild_due_at" IS NOT NULL THEN "rebuild_due_at"
+          ELSE GREATEST(COALESCE("rebuild_due_at", ${due}::timestamptz), ${due}::timestamptz) END
+        WHERE "id" = ${FIRST_ROW}`);
+    },
+    async pending() {
+      const { rows } = await (await exec()).execute(sql`
+        SELECT "rebuild_due_at" AS "due", "rebuild_deferred" AS "deferred" FROM "site_state"
+        WHERE "id" = ${FIRST_ROW} AND "rebuild_due_at" IS NOT NULL`);
+      const row = rows[0];
+      if (!row) return null;
+      const due = row.due instanceof Date ? row.due : new Date(String(row.due));
+      return Number.isFinite(due.getTime()) ? { dueAt: due.getTime(), deferred: row.deferred === true } : null;
+    },
+    async claim(dueAt, next) {
+      const due = new Date(dueAt).toISOString();
+      const to = next === null ? null : new Date(next).toISOString();
+      const { rows } = await (await exec()).execute(sql`
+        UPDATE "site_state" SET "rebuild_due_at" = ${to}::timestamptz, "rebuild_deferred" = ${to !== null}::boolean
+        WHERE "id" = ${FIRST_ROW} AND "rebuild_due_at" = ${due}::timestamptz
         RETURNING "id"`);
       return rows.length === 1;
     },

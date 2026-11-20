@@ -40,6 +40,18 @@ async function findAll(payload: Payload, collection: CollectionSlug, req: Payloa
   return found.docs as unknown as Record<string, unknown>[];
 }
 
+/**
+ * `findAll` of every collection, in order. On a transaction's request the reads run one after another: they
+ * share ONE database connection, and concurrent queries on one transaction client are not safe. Without a
+ * transaction each read takes its own pooled connection, so they run side by side.
+ */
+async function findEach(payload: Payload, collections: readonly CollectionSlug[], req: PayloadRequest | undefined) {
+  if (!req?.transactionID) return Promise.all(collections.map((c) => findAll(payload, c, req)));
+  const out: Record<string, unknown>[][] = [];
+  for (const c of collections) out.push(await findAll(payload, c, req));
+  return out;
+}
+
 /** THE current season: the one with the lowest id (numeric order). One lookup for the import, the endpoint and the hooks. */
 function currentSeasonOf(seasons: readonly Record<string, unknown>[]): Record<string, unknown> | undefined {
   return [...seasons].sort((a, b) => String(a.id).localeCompare(String(b.id), 'en', { numeric: true }))[0];
@@ -50,9 +62,7 @@ export function createPayloadCatalogReader(): CatalogReader {
   return {
     async snapshot(tx) {
       const req = tx as PayloadRequest;
-      const [zones, countries, cities, events] = await Promise.all(
-        INTEGRITY_KINDS.map((k) => findAll(req.payload, k, req)),
-      );
+      const [zones, countries, cities, events] = await findEach(req.payload, INTEGRITY_KINDS, req);
       return {
         zones: (zones ?? []).map((r) => toSnapshotRow('zones', r)),
         countries: (countries ?? []).map((r) => toSnapshotRow('countries', r)),
@@ -85,10 +95,7 @@ export function createPayloadCatalogStore(getPayload: () => Promise<Payload>): C
     async read(tx) {
       const payload = await getPayload();
       const req = tx as PayloadRequest | undefined;
-      const [seasons, ...rest] = await Promise.all([
-        findAll(payload, 'seasons', req),
-        ...COLLECTIONS.map((c) => findAll(payload, c, req)),
-      ]);
+      const [seasons, ...rest] = await findEach(payload, ['seasons', ...COLLECTIONS], req);
       const first = currentSeasonOf(seasons ?? []);
       const stored: StoredCatalog = {
         season: first

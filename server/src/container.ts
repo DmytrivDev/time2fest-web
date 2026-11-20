@@ -54,11 +54,15 @@ import type { EventSubscriber } from './events/ports';
 import type { CatalogCopyDeps } from './catalog/copy';
 import { createPayloadAlarmStore } from './adapters/payloadAlarms';
 import { createPayloadCorrectionReader, payloadCorrectionDeps } from './adapters/payloadCorrections';
-import { createPayloadFanOutClaim, createPayloadSiteReset, createPayloadSiteStore } from './adapters/payloadSiteState';
+import { createPayloadFanOutClaim, createPayloadRebuildStore, createPayloadSiteReset, createPayloadSiteStore } from './adapters/payloadSiteState';
 import { createFakeProducts, emptyProducts } from './adapters/products';
 import { createCfPurge } from './adapters/cfPurge';
+import { catalogVersionOf } from '@time2fest/contracts';
+import { createGithubDispatch } from './adapters/githubDispatch';
+import { REBUILD_TICK_MS } from './domain/site/rebuild';
 import { currentPatches } from './corrections/service';
 import type { FanOutDeps } from './site/fanout';
+import { tickRebuild, type RebuildDeps } from './site/rebuild';
 import type { SnapshotReadDeps } from './site/snapshot';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
 import { createAlarmService } from './alarms/service';
@@ -89,6 +93,7 @@ const BACKGROUND_KEY = Symbol.for('t2f.background');
 const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
 const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
 const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
+const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -231,6 +236,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     payloadUnattendedDeps({ payload, alarms: alarmStore, publisher: deps.events.publisher, clock, isRevertible });
   deps.catalogCopy = overrides.catalogCopy ?? (() => catalogCopyDepsOf(deps));
   deps.siteFanOut = overrides.siteFanOut ?? (() => siteFanOutDepsOf(deps));
+  deps.rebuild = overrides.rebuild ?? (() => rebuildDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
@@ -517,6 +523,50 @@ export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
 }
 
 /**
+ * What the catalog rebuild launch needs (SPEC-08 W26): the rebuild state on the site record, the server clock,
+ * the class and `T2F_REBUILD_PRODUCTION`, the GitHub dispatch only with `T2F_GITHUB_DISPATCH_TOKEN` (else every
+ * scheduled launch logs `site/rebuild-not-configured` — boot never fails, AC-65), and the catalog version.
+ * `dispatchBaseUrl` is for tests (a fake on port 0); the token never leaves the adapter's header.
+ */
+export function rebuildDepsOf(deps: Deps, opts: { dispatchBaseUrl?: string } = {}): RebuildDeps {
+  const payload = payloadOf(deps);
+  const token = deps.env.vars.T2F_GITHUB_DISPATCH_TOKEN;
+  const snapshot = deps.site?.snapshot ?? siteSnapshotDeps(deps, payload);
+  return {
+    store: createPayloadRebuildStore(payload),
+    clock: deps.clock,
+    envClass: deps.env.class,
+    productionFlag: deps.env.vars.T2F_REBUILD_PRODUCTION === '1',
+    ...(typeof token === 'string' && token
+      ? { launcher: createGithubDispatch({ token, ...(opts.dispatchBaseUrl ? { baseUrl: opts.dispatchBaseUrl } : {}) }) }
+      : {}),
+    catalogVersion: async () => {
+      const meta = await snapshot.catalogMeta();
+      return meta ? catalogVersionOf(meta) : null;
+    },
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
+ * The catalog rebuild ticker of one process (SPEC-08 AC-61 … AC-63): every 15 s on the server clock. A failing
+ * tick (database down) raises a log-level alarm (code only) and the ticker keeps going.
+ */
+export function startRebuildTicker(deps: Deps, intervalMs: number = REBUILD_TICK_MS): Ticker | undefined {
+  const rebuild = deps.rebuild?.();
+  if (!rebuild) return undefined;
+  return startTicker({
+    tick: () => tickRebuild(rebuild),
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'site', code: 'rebuild_tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    intervalMs,
+  });
+}
+
+/**
  * Background work of one process: the internal-events delivery loop over the subscriber registry
  * (`testOnly` rows only in the `test` class). Called by `instrumentation.ts` once per process and
  * by integration helpers, which stop it themselves.
@@ -592,6 +642,7 @@ export function startProcessBackground(): void {
   const rest = (refresher?: ClockRefresh) => {
     g[CLOCK_REFRESH_KEY] = refresher;
     g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
+    g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());
