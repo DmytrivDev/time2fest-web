@@ -163,13 +163,16 @@ describe('edge handler (Node)', () => {
     expect(calls).toHaveLength(0);
   });
 
-  it('uses no Cache API and no cf cache options anywhere in src (AC-7)', () => {
+  // SPEC-08 W30 narrows AC-7: the Cache API is allowed in `publicCache.ts` only; cf cache options nowhere.
+  it('names the Cache API only in publicCache.ts and uses no cf cache options anywhere in src (AC-7)', () => {
     const dir = new URL('../src/', import.meta.url);
     const files = readdirSync(dir).filter((f) => f.endsWith('.ts'));
     expect(files.length).toBeGreaterThan(0);
-    const banned = /\bcaches\b|cacheTtl|cacheEverything|cacheKey|cacheTtlByStatus|\bcf:/;
+    const cfOptions = /cacheTtl|cacheEverything|cacheKey|cacheTtlByStatus|\bcf:/;
     for (const f of files) {
-      expect(readFileSync(new URL(f, dir), 'utf8'), f).not.toMatch(banned);
+      const text = readFileSync(new URL(f, dir), 'utf8');
+      expect(text, f).not.toMatch(cfOptions);
+      if (f !== 'publicCache.ts') expect(text, f).not.toMatch(/\bcaches\b/);
     }
   });
 

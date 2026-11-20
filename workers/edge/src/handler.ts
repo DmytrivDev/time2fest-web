@@ -1,7 +1,10 @@
 // Routing of the edge Worker. Order matters: static first, then the single 404s,
-// the edge clock, the prelaunch 404, the fail-closed secret check, and only then the proxy.
+// the edge clock, the prelaunch 404, the public cacheable addresses, the fail-closed secret check,
+// and only then the proxy.
+import { PUBLIC_ROUTES } from '../../../packages/contracts/src/publicRoutes';
 import type { EdgeDeps, EdgeEnv } from './env';
 import { proxy } from './proxy';
+import { servePublic } from './publicCache';
 import { notFound, timeNow, unavailable } from './responses';
 
 /** Budget of the rehearsal origin clock before the edge answers with its own (SPEC-07 AC-16). */
@@ -28,7 +31,12 @@ export async function handle(req: Request, env: EdgeEnv, deps: EdgeDeps): Promis
   // 4. No origin (prelaunch).
   if (!env.ORIGIN_URL) return notFound();
 
-  // 5. Fail closed: never forward without the edge secret.
+  // 5. Public cacheable addresses (SPEC-08, one list with the server): red button / cache / origin / R2.
+  //    Without the secret the origin counts as failed for this path only; nothing is forwarded.
+  const route = req.method === 'GET' ? PUBLIC_ROUTES.find((r) => r.path === pathname) : undefined;
+  if (route) return servePublic(req, route, env, deps);
+
+  // 6. Fail closed: never forward without the edge secret.
   if (!env.T2F_EDGE_SECRET) return unavailable();
 
   return proxy(req, env.ORIGIN_URL, env.T2F_EDGE_SECRET, deps);
