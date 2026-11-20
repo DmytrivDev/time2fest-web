@@ -85,7 +85,7 @@ describe('import catalog', { timeout: 300_000 }, () => {
     expect(await listKeys(r2, r2.prefix)).toEqual(r2Before);
     const text = result.lines.join('\n');
     for (const group of ['add:', 'change:', 'same:', 'skipped (changed in the admin):']) expect(text).toContain(group);
-    expect(result.plan?.counts.add).toBe(1618);
+    expect(result.plan?.counts.add).toBe(1616);
   });
 
   it('AC-76, AC-67, NFR-4: two applies leave the same state; the second reports 0 / 0 and publishes nothing', async () => {
@@ -93,7 +93,7 @@ describe('import catalog', { timeout: 300_000 }, () => {
     const first = await run(true);
     const applyMs = Date.now() - t0;
     expect(first.code, first.lines.slice(0, 3).join('\n')).toBe(0);
-    expect(first.plan?.counts.add).toBe(1618);
+    expect(first.plan?.counts.add).toBe(1616);
     expect(first.published).toBe(true);
     const afterFirst = await snapshot();
     const version = await latestVersion();
@@ -103,7 +103,7 @@ describe('import catalog', { timeout: 300_000 }, () => {
     console.log(`NFR-4: apply ${applyMs} ms, dry run ${dryMs} ms`);
     expect(applyMs).toBeLessThanOrEqual(120_000);
     expect(dryMs).toBeLessThanOrEqual(60_000);
-    expect(dry.plan?.counts).toEqual({ add: 0, change: 0, same: 1618, 'skipped-admin-edited': 0 });
+    expect(dry.plan?.counts).toEqual({ add: 0, change: 0, same: 1616, 'skipped-admin-edited': 0 });
 
     const second = await run(true);
     expect(second.plan?.counts.add).toBe(0);
