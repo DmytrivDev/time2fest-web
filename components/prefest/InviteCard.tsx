@@ -108,7 +108,7 @@ export function InviteCard({ vars, texts, action }: { vars: InviteVars | null; t
   return (
     <div className={cn(m.wrap, m.wrapTop)}>
       <div
-        className={cn(m.story, m.storyWide)}
+        className={cn(m.story, m.storyWide, m.storyInvite)}
         role="img"
         aria-label={vars && texts ? t('aria', { ord: texts.ord, country: vars.country.name }) : t('title1')}
       >

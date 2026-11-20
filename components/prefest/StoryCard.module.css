@@ -148,3 +148,12 @@
   width: 100%;
   height: 100%;
 }
+
+/* Рамка превʼю «Запрошення» (правка власника 2026-11-20): темний кадр не зливається з темною плашкою — тонка
+   золотиста межа кольору акцентів сайту і ледь помітне світіння; сам PNG для поширення без рамки. */
+.story.storyInvite {
+  box-shadow:
+    0 0 0 1.5px color-mix(in srgb, var(--color-highlight) 75%, transparent),
+    0 0 18px color-mix(in srgb, var(--color-highlight) 14%, transparent),
+    0 18px 50px color-mix(in srgb, black 50%, transparent);
+}
