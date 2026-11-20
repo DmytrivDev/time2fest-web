@@ -16,9 +16,9 @@
  */
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { getStreamChains, useStreamChains } from '@/lib/api/hooks/live';
-import type { City, Country, Ms, ScheduledEvent, StreamChain } from '@/lib/data/types';
-import { getData } from '@/lib/data/load';
+import { getStreamChains, useStreamChains, withChains } from '@/lib/api/hooks/live';
+import { patchedData, usePatchedData } from '@/lib/api/hooks/site';
+import type { City, Country, Dataset, Ms, ScheduledEvent, StreamChain } from '@/lib/data/types';
 import { captionPhase, type CaptionPhase, toRuntime } from '@time2fest/rules/time';
 import { currentAirEvent, pickSlotEvent, type AirState } from '@/lib/engine/currentAirEvent';
 import { EngineScheduler } from '@/lib/events/EngineSchedulerMount';
@@ -88,9 +88,8 @@ const BroadcastContext = createContext<BroadcastState | null>(null);
 /** Закриття оцінки за часом відкладається, поки людина працює з карткою (WCAG 2.2.1). */
 const RATE_DEPS = { isInteracting: () => isRateInteracting() };
 
-function placeOf(event: ScheduledEvent | null | undefined): AirPlace | null {
+function placeOf(event: ScheduledEvent | null | undefined, data: Dataset): AirPlace | null {
   if (!event) return null;
-  const data = getData();
   const country = data.countriesByIso.get(event.countryIso);
   return {
     event: data.eventsById.get(event.id) ?? event,
@@ -100,10 +99,18 @@ function placeOf(event: ScheduledEvent | null | undefined): AirPlace | null {
   };
 }
 
-/** «Мій графік»: подія слота ефіру з графіка гостя (той самий вибір, що й в ефірі); поза графіком — ефір як є. */
-export function preferAir(now: Ms, air: AirState, ids: readonly string[], chains: ReadonlyMap<string, StreamChain> = getStreamChains()): AirState {
+/**
+ * «Мій графік»: подія слота ефіру з графіка гостя (той самий вибір, що й в ефірі); поза графіком — ефір як є.
+ * `data` — каталог з поправками моменту подій (знімок `site`).
+ */
+export function preferAir(
+  now: Ms,
+  air: AirState,
+  ids: readonly string[],
+  chains: ReadonlyMap<string, StreamChain> = getStreamChains(),
+  data: Dataset = patchedData(),
+): AirState {
   if (!air.event || !ids.length) return air;
-  const data = getData();
   const slot = data.eventsBySlot.find((s) => s.midnightMs === air.event!.midnightMs);
   const mine = slot?.events.filter((e) => ids.includes(e.id)) ?? [];
   const pick = mine.length ? pickSlotEvent(now, mine, data.countriesByIso, chains) : null;
@@ -118,21 +125,24 @@ export function watchChain(pick: WatchPick, chains: ReadonlyMap<string, StreamCh
   return { eventId: pick.eventId, sources: chain.sources, ...(pick.sourceId ? { preferredSourceId: pick.sourceId } : {}) };
 }
 
-/** Чистий розрахунок стану ефіру для `now` (без React): подія, наступна, фаза підпису, ланцюжок. */
+/**
+ * Чистий розрахунок стану ефіру для `now` (без React): подія, наступна, фаза підпису, ланцюжок. `data` — каталог з
+ * поправками моменту подій (знімок `site`, AC-54): виправлений момент веде перехід ефіру.
+ */
 export function computeBroadcast(
   now: Ms,
   prefer?: readonly string[] | null,
   chains: ReadonlyMap<string, StreamChain> = getStreamChains(),
+  data: Dataset = patchedData(),
 ): Pick<BroadcastState, 'air' | 'phase' | 'current' | 'next' | 'chain'> {
-  const data = getData();
   const base = currentAirEvent(now, data, chains);
-  const air = prefer?.length ? preferAir(now, base, prefer, chains) : base;
+  const air = prefer?.length ? preferAir(now, base, prefer, chains, data) : base;
   const phase = air.event ? captionPhase(now, air.event, 'broadcast', air.nextEvent) : null;
   return {
     air,
     phase,
-    current: placeOf(air.event),
-    next: placeOf(air.nextEvent),
+    current: placeOf(air.event, data),
+    next: placeOf(air.nextEvent, data),
     chain: air.event ? (chains.get(air.event.id) ?? { eventId: air.event.id, sources: [] }) : null,
   };
 }
@@ -147,6 +157,8 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   const facebookConsent = useGuestStore((s) => s.consent.facebookVideo);
   // Ланцюжки джерел з шва `live`: стартово зі збірки, далі поправки сервера (статус, вбудовування).
   const chains = useStreamChains();
+  // Каталог з поправками моменту подій (знімок `site`); без поправок — сам `getData()`.
+  const data = usePatchedData();
 
   // `/tv` починає «на паузі»: сторінка сама знімає її, коли знає, що це не телефон (інакше iframe встиг би створитися).
   const [suspended, suspend] = useState(() => pathname?.replace(/\/+$/, '') === '/tv');
@@ -156,7 +168,7 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   }, []);
 
   // Ефір змінюється раз на слот, а не щосекунди: розрахунок дешевий, але ланцюжок порівнюємо за id події.
-  const computed = useMemo(() => (known ? computeBroadcast(now, prefer, chains) : null), [known, now, prefer, chains]);
+  const computed = useMemo(() => (known ? computeBroadcast(now, prefer, chains, data) : null), [known, now, prefer, chains, data]);
   const eventId = computed?.air?.event?.id ?? null;
   const chain = computed?.chain ?? null;
 
@@ -172,10 +184,10 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   const watching = useMemo<WatchingPlace | null>(() => {
     if (!watchKey) return null;
     const [ev, src] = watchKey.split('|');
-    const event = getData().eventsById.get(ev!);
-    const place = event ? placeOf(event) : null;
+    const event = data.eventsById.get(ev!);
+    const place = event ? placeOf(event, data) : null;
     return place ? { ...place, sourceId: src || null } : null;
-  }, [watchKey]);
+  }, [watchKey, data]);
 
   useEffect(() => {
     setFacebookConsent(facebookConsent);
@@ -221,7 +233,8 @@ export function BroadcastController({ children }: { children?: ReactNode }) {
   /** Для `air:handover.stayedHere`: гість лишився на сторінці країни з подією, з якої переходить ефір. */
   const stayedHere = useCallback(() => stayed.current !== null && !controllingRef.current, []);
 
-  const schedulerData = useMemo(() => ({ ...getData(), chainsByEventId: chains }), [chains]);
+  // Слоти планувальника — з виправленими моментами; без поправок `eventsBySlot` той самий, і планувальник не перестворюється.
+  const schedulerData = useMemo(() => withChains(data, chains), [data, chains]);
 
   const value = useMemo<BroadcastState>(
     () => ({
