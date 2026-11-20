@@ -177,6 +177,8 @@ export async function runScenario(io, o) {
     const r = await g.docker(
       [
         'run', '-d', '--name', CONTAINERS.k6, '--network', o.k6Network,
+        // Скрипти й out на вузлі створено з umask 077 від root; образ k6 працює як uid 12345 — без root не прочитає.
+        '--user', '0',
         '--ulimit', 'nofile=250000:250000',
         '-v', `${g.path('k6')}:/scripts:ro`, '-v', `${g.path('out')}:/out`,
         '--env-file', g.path('k6.env'),

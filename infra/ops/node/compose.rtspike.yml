@@ -100,6 +100,8 @@ services:
   publisher:
     image: grafana/k6:2.4.0
     profiles: ["run"]
+    # Файли вузла — umask 077 від root; образ k6 інакше (uid 12345) їх не прочитає.
+    user: "0"
     env_file:
       - centrifugo.env
       - publisher.env
