@@ -70,6 +70,7 @@ describe('payload schema', () => {
     const t = await tables(testUri);
     expect(t).toContain('ai_spend');
     expect(t).toContain('moderation_settings');
+    expect(t).toContain('site_state');
     const idx = await query(
       testUri,
       "SELECT indexname FROM pg_indexes WHERE schemaname='public' AND tablename='ai_spend' AND indexdef LIKE 'CREATE UNIQUE INDEX%' AND indexdef LIKE '%(period)%'",
