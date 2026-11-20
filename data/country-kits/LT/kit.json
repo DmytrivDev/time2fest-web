@@ -1,0 +1,99 @@
+{
+  "code": "LT",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "vilnius",
+  "names": {
+    "uk": {
+      "name": "Литва",
+      "city": "Вільнюс",
+      "cityIn": "у Вільнюсі",
+      "caps": "ВІЛЬНЮС · ЛИТВА"
+    },
+    "en": {
+      "name": "Lithuania",
+      "city": "Vilnius",
+      "cityIn": "in Vilnius",
+      "caps": "VILNIUS · LITHUANIA"
+    },
+    "es": {
+      "name": "Lituania",
+      "city": "Vilna",
+      "cityIn": "en Vilna",
+      "caps": "VILNA · LITUANIA"
+    },
+    "fr": {
+      "name": "Lituanie",
+      "city": "Vilnius",
+      "cityIn": "à Vilnius",
+      "caps": "VILNIUS · LITUANIE"
+    }
+  },
+  "picto": "M2 37 H38 M4 37 Q9 30 14.5 28 H25.5 Q31 30 36 37 M7.5 34 q1.6 -3 3.2 0 M29.3 34 q1.6 -3 3.2 0 M15 28 V12 H25 V28 M18 28 V12 M22 28 V12 M14.6 22.6 H25.4 M14.6 17.4 H25.4 M19.2 26.4 V25 A0.8 0.8 0 0 1 20.8 25 V26.4 M19.2 21.2 V19.8 A0.8 0.8 0 0 1 20.8 19.8 V21.2 M19.2 16 V14.6 A0.8 0.8 0 0 1 20.8 14.6 V16 M14 12 H26 M15 12 V9 H25 V12 M20 9 V2.5 M20 2.5 H25 L23.6 4 L25 5.5 H20",
+  "flagColors": [
+    "#FDB913",
+    "#006A44",
+    "#C1272D"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Вільнюсі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Vilnius"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Vilna"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Vilnius"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

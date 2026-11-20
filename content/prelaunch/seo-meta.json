@@ -918,6 +918,42 @@
         "title": "Nouvel An à Curaçao : Willemstad | Time2Fest",
         "description": "À minuit à Willemstad, 4 h UTC, Curaçao fête 2027 au fracas des pagaras de Pietermaai, avec de l’encens porte-bonheur et des embrassades sur la place Brion."
       }
+    },
+    "AZ": {
+      "uk": {
+        "title": "Новий рік: Баку, Азербайджан | Time2Fest",
+        "description": "Баку в Азербайджані зустрічає 2027 рік салютом над Приморським бульваром, ялинкою й Шахта Бабою; 31 грудня ще й День солідарності. Північ — 20:00 UTC."
+      },
+      "en": {
+        "title": "New Year: Baku, Azerbaijan | Time2Fest",
+        "description": "Baku, Azerbaijan, rings in 2027 with fireworks over the Seaside Boulevard by the Caspian, Shakhta Baba and the glowing Flame Towers. Midnight: 20:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo: Bakú, Azerbaiyán | Time2Fest",
+        "description": "Bakú, en Azerbaiyán, recibe 2027 con fuegos sobre el Bulevar Marítimo del Caspio, Shakhta Baba y las Torres Llama iluminadas. Medianoche: 20:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An : Bakou, Azerbaïdjan | Time2Fest",
+        "description": "Bakou, en Azerbaïdjan, fête 2027 avec un feu d’artifice sur le boulevard de la Caspienne, Chakhta Baba et les Flame Towers. Minuit à Bakou : 20:00 UTC."
+      }
+    },
+    "LT": {
+      "uk": {
+        "title": "Новий рік у Литві: Вільнюс | Time2Fest",
+        "description": "Опівночі у Вільнюсі, о 22:00 UTC, Литва зустрічає 2027 рік світловим шоу на Кафедральній площі замість салюту, а вдома ллють віск у воду на долю."
+      },
+      "en": {
+        "title": "New Year in Lithuania: Vilnius | Time2Fest",
+        "description": "At midnight in Vilnius, 22:00 UTC, Lithuania meets 2027 with a light show on Cathedral Square instead of fireworks, while at home melted wax tells fortunes."
+      },
+      "es": {
+        "title": "Año Nuevo en Lituania: Vilna | Time2Fest",
+        "description": "A medianoche en Vilna, 22:00 UTC, Lituania recibe 2027 con luces en la plaza de la Catedral en vez de fuegos, y en casa la cera en el agua predice la suerte."
+      },
+      "fr": {
+        "title": "Nouvel An en Lituanie : Vilnius | Time2Fest",
+        "description": "À minuit à Vilnius, 22 h UTC, la Lituanie fête 2027 par un jeu de lumière place de la Cathédrale au lieu du feu d’artifice ; chez soi, la cire dit l’avenir."
+      }
     }
   }
 }

@@ -1278,5 +1278,133 @@
       }
     ],
     "kit": "nz+1345"
+  },
+  "AU@utc+1000": {
+    "text": "L’Australie fête le Nouvel An en plein été, alors la fête se passe dehors : à la plage, dans les parcs, sur un bateau ou autour d’un barbecue au jardin. À minuit, les feux d’artifice éclatent au-dessus des villes et l’on remplit les verres de champagne ou de vin. Cette nuit-là, le pays vit sur plusieurs fuseaux : le Queensland ne passe pas à l’heure d’été, donc minuit y sonne une heure plus tard qu’à Sydney. Dans les villes jumelles de Tweed Heads et Coolangatta, à la frontière entre deux États, il suffit de traverser la rue pour fêter l’année deux fois.\n\nBrisbane, capitale du Queensland, fait la fête au bord du fleuve qui porte son nom. Le feu d’artifice gratuit de la mairie est tiré deux fois, à 19 h 45 pour les familles et à minuit ; en 2025, il est parti pour la première fois de quatre points de la rive à la fois, et selon ABC, environ 90 000 personnes se sont massées à South Bank. L’image montre le Story Bridge, un pont cantilever sur le fleuve Brisbane, et les tours du centre.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Deux minuits en une soirée",
+        "text": "En été, la Nouvelle-Galles du Sud a une heure d’avance sur le Queensland. À Tweed Heads et Coolangatta, la frontière suit une rue : tu peux trinquer deux fois, d’abord côté sud, puis une heure plus tard côté nord."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Un premier feu à 19 h 45",
+        "text": "Pour ceux qui ne tiendront pas jusqu’à minuit, le premier feu au-dessus du fleuve part à 19 h 45. En 2025, deux spectacles de drones ont suivi, à 21 h et à 23 h."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Vue des falaises, retour gratuit",
+        "text": "Outre South Bank, on voit bien le feu depuis les falaises de Kangaroo Point et le Jardin botanique. Le retour est gratuit : en 2025, bus, trains et ferries ont transporté tout le monde de 20 h à 5 h 30, avec des CityCats toutes les 15 minutes."
+      }
+    ],
+    "kit": "au+10"
+  },
+  "AU@utc+1030": {
+    "text": "L’Australie accueille le Nouvel An en plein été, alors la fête se passe dehors : feux d’artifice, concerts, soirées sur les plages et dans les parcs. Certains réunissent leurs amis autour d’un barbecue ou partent en bateau, et à minuit, sous les feux, on lève un verre de champagne ou de vin. Le 31 décembre n’est pas férié ; le 1er janvier l’est.\n\nAdélaïde, capitale de l’Australie-Méridionale, passe à la nouvelle année une demi-heure après Sydney. La grande fête est gratuite, à Elder Park, au bord de la Torrens : des musiciens locaux jouent dès le soir, un feu pour les familles part à 21 h et le principal à minuit. Sur l’image : le stade Adelaide Oval et les flèches de la cathédrale Saint-Pierre.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "L’été, le bateau, le barbecue",
+        "text": "En Australie, le Nouvel An tombe au cœur de l’été : à la plage, dans un parc, en bateau ou près du gril à la maison. À minuit, feu d’artifice et coupe de champagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Deux feux sur la Torrens",
+        "text": "Elder Park tire deux feux : un pour les familles à 21 h, le principal à minuit. En 2025, l’entrée était gratuite et le parc accueillait jusqu’à 25 000 personnes."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Minuit à la plage de Glenelg",
+        "text": "À Glenelg et Brighton, au bord du golfe, feu en musique à 21 h 30 ; à minuit, seulement à Glenelg. L’entrée est gratuite et les jetées ferment pour la nuit."
+      }
+    ],
+    "kit": "au+1030"
+  },
+  "AZ": {
+    "text": "En Azerbaïdjan, le dernier soir de l’année est une double fête : le 31 décembre est aussi la Journée de la solidarité des Azerbaïdjanais du monde, donc un jour férié, et les 1er et 2 janvier sont chômés pour le Nouvel An. Beaucoup de coutumes datent de l’époque soviétique : on décore un sapin du Nouvel An, la famille se retrouve autour d’une table de fête et les enfants reçoivent des cadeaux de Chakhta Baba (le grand-père Gel) et de Gar Gyz (la fille des neiges). Avant minuit, le président adresse ses vœux au pays, puis l’hymne retentit sur toutes les chaînes.\n\nÀ Bakou, tout se passe sur le boulevard du bord de mer, face à la Caspienne. En décembre dernier, il accueillait un marché avec boissons chaudes et la première patinoire en plein air de la ville. À minuit, le feu d’artifice de la ville éclate au-dessus du boulevard, tandis que sur la colline dominant la baie brillent les Flame Towers, dont les façades-écrans montrent des flammes et les couleurs du drapeau.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Sapin et Chakhta Baba",
+        "text": "Décore le sapin à l’avance et, le 31 décembre, passe à table en famille. Chakhta Baba et Gar Gyz apportent les cadeaux aux enfants."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Vœux et hymne à minuit",
+        "text": "Passe les dernières minutes de l’année devant la télé : après les vœux du président, l’hymne de l’Azerbaïdjan passe sur toutes les chaînes."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à Bakou",
+        "text": "Va sur le boulevard du bord de mer, face à la Caspienne : en décembre dernier, marché et patinoire, et à minuit le feu d’artifice éclate sur la baie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 : Bakou, Azerbaïdjan | Time2Fest",
+      "description": "Bakou, en Azerbaïdjan, fête 2027 avec un feu d’artifice sur le boulevard de la Caspienne, Chakhta Baba et les Flame Towers. Minuit à Bakou : 20:00 UTC."
+    },
+    "kit": "az"
+  },
+  "BR@utc-0500": {
+    "text": "Le Brésil accueille le Nouvel An — le Réveillon — en blanc. La coutume est née avec les fidèles du candomblé qui, dans les années 1970, venaient en blanc sur la plage de Copacabana avec des offrandes pour Iemanjá, déesse des eaux ; depuis, les vêtements blancs et les fleurs confiées à la mer se sont répandus dans tout le pays. À minuit, sur la côte, on saute sept vagues en faisant un vœu à chacune.\n\nRio Branco, capitale de l’État d’Acre, est la dernière au Brésil à fêter la nouvelle année, deux heures après Rio. En 2026, la mairie a organisé une fête gratuite sur la Praça da Revolução, en centre-ville : groupes locaux, compte à rebours et feu d’artifice à minuit pile. Ici, le feu d’artifice est silencieux : une loi de l’État interdit les pétards pour protéger enfants, aînés et animaux.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "En blanc, comme tout le Brésil",
+        "text": "Au Nouvel An, la plupart s’habillent en blanc. La coutume vient des religions afro-brésiliennes et s’est depuis longtemps répandue dans tout le pays."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Un feu d’artifice sans détonations",
+        "text": "Depuis 2022, l’Acre interdit les feux qui détonnent : seuls ceux qui se contentent d’illuminer sont permis. Minuit y est lumineux, mais calme pour les animaux et les personnes autistes."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Praça da Revolução",
+        "text": "En 2026, la mairie a réuni les familles pour une fête gratuite en centre-ville : des groupes dès 18 h, un compte à rebours et un feu d’artifice à minuit pile."
+      }
+    ],
+    "kit": "br-5"
+  },
+  "LT": {
+    "text": "La Lituanie accueille le Nouvel An avec de vieilles coutumes. Il faisait autrefois partie des fêtes d’hiver, de la veille de Noël aux Rois : des personnages masqués jouaient le duel de l’année ancienne et de la nouvelle, et en Samogitie les jeunes brûlaient une gerbe de paille en guise d’année ancienne. À minuit, on lisait l’avenir en versant de la cire fondue dans l’eau : une roue annonce un voyage, un berceau un enfant. On réveillait les petits à minuit pile pour qu’ils ne laissent pas passer leur chance.\n\nÀ Vilnius, on aime fêter minuit dehors, place de la Cathédrale, près du sapin de la ville, de la cathédrale et de son clocher, sous la tour de Gediminas perchée sur sa colline. La ville se passe de feu d’artifice depuis plusieurs années : l’an dernier, des vidéos colorées ont été projetées sur le clocher dès 22 h, et à minuit un spectacle de lumière a illuminé la place.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Lire la cire",
+        "text": "À minuit, verse un peu de cire fondue dans l’eau froide et observe la forme : une roue annonce un voyage, un berceau une naissance dans la famille."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Ne pas manquer sa chance",
+        "text": "Selon la coutume, personne ne dort cette nuit-là, et l’on réveille les petits à minuit pile pour que la chance de l’année ne leur échappe pas."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Lumières place de la Cathédrale",
+        "text": "Fête minuit à Vilnius près du sapin : à la place du feu d’artifice, des projections colorées sur le clocher et un spectacle de lumière. La pyrotechnie près des églises est interdite par la loi."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Lituanie : Vilnius | Time2Fest",
+      "description": "À minuit à Vilnius, 22 h UTC, la Lituanie fête 2027 par un jeu de lumière place de la Cathédrale au lieu du feu d’artifice ; chez soi, la cire dit l’avenir."
+    },
+    "kit": "lt"
   }
 }

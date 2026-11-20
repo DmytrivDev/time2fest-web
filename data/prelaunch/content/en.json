@@ -1278,5 +1278,133 @@
       }
     ],
     "kit": "nz+1345"
+  },
+  "AU@utc+1000": {
+    "text": "Australia welcomes the New Year in midsummer, so the party moves outdoors: to beaches, parks, boats or a backyard barbecue. At midnight fireworks burst over the cities and glasses fill with champagne or wine. That night the country runs on several time zones: Queensland does not switch to daylight saving, so midnight arrives here an hour later than in Sydney. In the twin towns of Tweed Heads and Coolangatta, on the state border, crossing the street is enough to see the year in twice.\n\nBrisbane, the capital of Queensland, celebrates over the river that shares its name. The council's free fireworks go up twice, at 7:45 pm for families and at midnight; in 2025 they were launched for the first time from four spots along the river at once, and ABC reported about 90,000 people at South Bank. The picture shows the Story Bridge, a cantilever bridge over the Brisbane River, and the city-centre towers.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Midnight twice in one night",
+        "text": "In summer New South Wales is an hour ahead of Queensland. In Tweed Heads and Coolangatta the border runs along a street, so you can raise a glass twice: first on the southern side, then an hour later on the northern one."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "An early show at 7:45 pm",
+        "text": "For those who won't last until midnight, the first fireworks over the river go up at 7:45 pm. In 2025 two drone shows filled the gap, at 9 pm and 11 pm."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "A cliff-top view, a free ride",
+        "text": "Besides South Bank, the Kangaroo Point cliffs and the City Botanic Gardens give a good view. Getting home is free: in 2025 buses, trains and ferries carried everyone from 8 pm to 5:30 am, with CityCats every 15 minutes."
+      }
+    ],
+    "kit": "au+10"
+  },
+  "AU@utc+1030": {
+    "text": "Australia sees in the New Year in midsummer, so the party moves outdoors: fireworks, concerts, parties on beaches and in city parks. Some gather friends for a barbecue or head out on a boat, and at midnight, under the fireworks, glasses of champagne or wine go up. 31 December is not a day off; 1 January is.\n\nAdelaide, the capital of South Australia, welcomes the year half an hour after Sydney. The main party is free, in Elder Park on the bank of the Torrens: local musicians play from the evening, a family fireworks show goes up at 9 pm and the main one at midnight. The picture shows Adelaide Oval and the spires of St Peter’s Cathedral.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Summer, boats and barbecues",
+        "text": "In Australia the New Year comes at the height of summer: on the beach, in a park, on a boat or by the grill at home. At midnight: fireworks and a glass of champagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Two shows over the Torrens",
+        "text": "Elder Park has two shows: a family one at 9 pm and the main one at midnight. In 2025 entry was free and the park held up to 25,000 people."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Midnight at Glenelg beach",
+        "text": "At Glenelg and Brighton on the gulf shore, fireworks set to music go up at 9:30 pm; at midnight, at Glenelg only. Entry is free, and the jetties close for the night."
+      }
+    ],
+    "kit": "au+1030"
+  },
+  "AZ": {
+    "text": "In Azerbaijan the last evening of the year is a double celebration: 31 December is also World Azerbaijanis Solidarity Day, so it is a day off, and 1 and 2 January are the New Year holiday. Many customs date from Soviet times: families decorate a New Year tree, gather around a festive table, and children get presents from Shakhta Baba (Grandfather Frost) and Gar Gyz (the Snow Girl). Before midnight the President addresses the nation, and at midnight the anthem plays on every TV channel.\n\nIn Baku the place to be is the Seaside Boulevard on the Caspian. Last December it hosted a fair with hot drinks and the city’s first open-air ice rink. At midnight the city’s fireworks burst over the boulevard, while on the hill above the bay the Flame Towers glow, their LED facades showing fire and the colours of the flag.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Tree and Shakhta Baba",
+        "text": "Decorate the tree ahead of time and sit down to a festive dinner with family on 31 December. Shakhta Baba and Gar Gyz bring the children their presents."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Address and anthem at midnight",
+        "text": "Spend the last minutes of the year by the TV: after the President’s greeting, Azerbaijan’s anthem plays on every channel."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks on Baku’s boulevard",
+        "text": "Head to the Seaside Boulevard by the Caspian: last December it had a fair and an ice rink, and at midnight fireworks burst over the bay."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027: Baku, Azerbaijan | Time2Fest",
+      "description": "Baku, Azerbaijan, rings in 2027 with fireworks over the Seaside Boulevard by the Caspian, Shakhta Baba and the glowing Flame Towers. Midnight: 20:00 UTC."
+    },
+    "kit": "az"
+  },
+  "BR@utc-0500": {
+    "text": "Brazil welcomes the New Year — Réveillon — in white. The custom began with Candomblé followers who, in the 1970s, came to Copacabana beach in white with gifts for Iemanjá, the water goddess; since then white clothes and flowers set out to sea have spread across the country. At midnight people on the coast jump seven waves, making a wish on each.\n\nRio Branco, capital of the state of Acre, greets the year last in Brazil — two hours after Rio. In 2026 the city hall threw a free party on Praça da Revolução in the centre: local bands, a countdown and fireworks right at midnight. The fireworks here are quiet: state law bans bangers to protect children, older people and animals.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "In white, like all of Brazil",
+        "text": "At New Year most people dress in white. The custom comes from Afro-Brazilian religions and long ago spread across the whole country."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks without bangs",
+        "text": "Since 2022 Acre has banned fireworks that go bang — only ones that simply light up are allowed. Midnight is bright but quiet for animals and autistic people."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Praça da Revolução",
+        "text": "In 2026 the city hall gathered families for a free party in the city centre: bands from six in the evening, a countdown and fireworks at midnight sharp."
+      }
+    ],
+    "kit": "br-5"
+  },
+  "LT": {
+    "text": "Lithuania greets the New Year with old customs. It once belonged to the winter feasts running from Christmas Eve to Three Kings: masked mummers staged a duel between the old year and the new, and in Samogitia young people burned a sheaf of straw as the old year. At midnight people told fortunes, pouring melted wax into water and reading the shapes: a wheel means a journey, a cradle a child. Small children were woken at twelve sharp so they would not sleep through their luck.\n\nIn Vilnius people like to meet midnight outdoors, on Cathedral Square, by the city Christmas tree, the cathedral and its bell tower, with Gediminas Tower on the hill above. The city has skipped fireworks for several years: last year colourful videos were projected onto the bell tower from 10 p.m., and at midnight a light show swept the square.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Reading the wax",
+        "text": "At midnight pour a little melted wax into cold water and study the shape: a wheel means a journey, a cradle a new arrival in the family."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Don’t sleep through your luck",
+        "text": "By old custom nobody sleeps on New Year’s night, and small children are woken at twelve sharp so the year’s luck won’t pass them by."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Lights on Cathedral Square",
+        "text": "Meet midnight in Vilnius by the Christmas tree: instead of fireworks there are colourful projections on the bell tower and a light show. Pyrotechnics near churches are banned by law."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Lithuania: Vilnius | Time2Fest",
+      "description": "At midnight in Vilnius, 22:00 UTC, Lithuania meets 2027 with a light show on Cathedral Square instead of fireworks, while at home melted wax tells fortunes."
+    },
+    "kit": "lt"
   }
 }

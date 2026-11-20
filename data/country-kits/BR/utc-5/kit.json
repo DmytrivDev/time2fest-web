@@ -1,0 +1,99 @@
+{
+  "code": "BR",
+  "zone": "UTC-5",
+  "zoneId": "utc-0500",
+  "cityId": "rio-branco",
+  "names": {
+    "uk": {
+      "name": "Бразилія",
+      "city": "Ріо-Бранко",
+      "cityIn": "у Ріо-Бранко",
+      "caps": "РІО-БРАНКО · БРАЗИЛІЯ"
+    },
+    "en": {
+      "name": "Brazil",
+      "city": "Rio Branco",
+      "cityIn": "in Rio Branco",
+      "caps": "RIO BRANCO · BRAZIL"
+    },
+    "es": {
+      "name": "Brasil",
+      "city": "Río Branco",
+      "cityIn": "en Río Branco",
+      "caps": "RÍO BRANCO · BRASIL"
+    },
+    "fr": {
+      "name": "Brésil",
+      "city": "Rio Branco",
+      "cityIn": "à Rio Branco",
+      "caps": "RIO BRANCO · BRÉSIL"
+    }
+  },
+  "picto": "M18.5 5.5 a1.5 1.5 0 1 0 3 0 a1.5 1.5 0 1 0 -3 0 M20 7 V9 M11 13.5 Q11 9 16 9 H24 Q29 9 29 13.5 M8 13.5 H32 V16 H8 Z M9 16 V31 H31 V16 M15 17 V31 M18.3 17 V31 M21.7 17 V31 M25 17 V31 M11 19.5 h2 v3.5 h-2 Z M27 19.5 h2 v3.5 h-2 Z M11 25.5 h2 v3.5 h-2 Z M27 25.5 h2 v3.5 h-2 Z M5 31 H35 V35 H5 Z M4 35 H36",
+  "flagColors": [
+    "#009C3B",
+    "#FFDF00",
+    "#3E6FD8"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ріо-Бранко"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Rio Branco"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Río Branco"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Rio Branco"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

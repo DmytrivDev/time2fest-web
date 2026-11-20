@@ -1278,5 +1278,133 @@
       }
     ],
     "kit": "nz+1345"
+  },
+  "AU@utc+1000": {
+    "text": "Australia recibe el Año Nuevo en pleno verano, así que la fiesta sale al aire libre: a la playa, a los parques, a los barcos o a la barbacoa del patio. A medianoche los fuegos estallan sobre las ciudades y las copas se llenan de champán o vino. Esa noche el país vive en varios husos: Queensland no adopta el horario de verano, así que aquí la medianoche llega una hora más tarde que en Sídney. En las ciudades gemelas de Tweed Heads y Coolangatta, en la frontera entre estados, basta cruzar la calle para recibir el año dos veces.\n\nBrisbane, capital de Queensland, lo celebra junto al río que le da nombre. Los fuegos gratuitos del ayuntamiento se lanzan dos veces, a las 19:45 para las familias y a medianoche; en 2025 salieron por primera vez desde cuatro puntos de la orilla a la vez, y según ABC unas 90.000 personas llenaron South Bank. En la imagen, el Story Bridge, un puente cantilever sobre el río Brisbane, y los rascacielos del centro.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Dos medianoches en una noche",
+        "text": "En verano, Nueva Gales del Sur va una hora por delante de Queensland. En Tweed Heads y Coolangatta la frontera sigue una calle, así que puedes brindar dos veces: primero en el lado sur y, una hora después, en el norte."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Fuegos tempranos a las 19:45",
+        "text": "Para quien no aguante hasta medianoche, los primeros fuegos sobre el río se lanzan a las 19:45. En 2025, entre ellos y la medianoche hubo dos espectáculos de drones, a las 21:00 y a las 23:00."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Vista desde el acantilado",
+        "text": "Además de South Bank, los fuegos se ven bien desde los acantilados de Kangaroo Point y el Jardín Botánico. La vuelta es gratis: en 2025 autobuses, trenes y ferris llevaron a todos de 20:00 a 5:30, con CityCats cada 15 minutos."
+      }
+    ],
+    "kit": "au+10"
+  },
+  "AU@utc+1030": {
+    "text": "Australia recibe el Año Nuevo en pleno verano, así que la fiesta sale al aire libre: fuegos artificiales, conciertos, fiestas en playas y parques. Hay quien reúne a sus amigos para una barbacoa o sale en barco, y a medianoche, bajo los fuegos, se brinda con champán o vino. El 31 de diciembre no es festivo; el 1 de enero sí.\n\nAdelaida, capital de Australia Meridional, recibe el año media hora después que Sídney. La fiesta principal es gratuita, en Elder Park, a orillas del Torrens: desde la tarde tocan músicos locales, a las 21:00 hay fuegos para familias y a medianoche, los principales. En la imagen, el estadio Adelaide Oval y las agujas de la catedral de San Pedro.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Verano, barco y barbacoa",
+        "text": "En Australia el Año Nuevo llega en pleno verano: en la playa, en un parque, en barco o junto a la parrilla en casa. A medianoche, fuegos y una copa de champán."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Dos fuegos sobre el Torrens",
+        "text": "En Elder Park hay dos espectáculos: uno familiar a las 21:00 y el principal a medianoche. En 2025 la entrada fue gratuita y el parque admitía hasta 25 000 personas."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Medianoche en la playa de Glenelg",
+        "text": "En Glenelg y Brighton, junto al golfo, hay fuegos con música a las 21:30; a medianoche, solo en Glenelg. La entrada es gratuita y los muelles cierran esa noche."
+      }
+    ],
+    "kit": "au+1030"
+  },
+  "AZ": {
+    "text": "En Azerbaiyán la última noche del año es una doble fiesta: el 31 de diciembre es también el Día de la Solidaridad de los Azerbaiyanos del Mundo, así que es festivo, y el 1 y el 2 de enero se descansa por Año Nuevo. Muchas costumbres vienen de la época soviética: se adorna un árbol de Año Nuevo, la familia se reúne en torno a una mesa festiva y los niños reciben regalos de Shakhta Baba (el abuelo Escarcha) y Gar Gyz (la niña de las nieves). Antes de la medianoche el presidente felicita al país y, a las doce, el himno suena en todos los canales.\n\nEn Bakú, el lugar de la noche es el Bulevar Marítimo, junto al Caspio. El pasado diciembre acogió un mercado con bebidas calientes y la primera pista de hielo al aire libre de la ciudad. A medianoche estallan sobre el bulevar los fuegos artificiales de la ciudad, y en la colina sobre la bahía brillan las Torres Llama, cuyas fachadas de pantallas muestran fuego y los colores de la bandera.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Árbol y Shakhta Baba",
+        "text": "Adorna el árbol con antelación y el 31 de diciembre siéntate a la mesa con tu familia. Shakhta Baba y Gar Gyz traen los regalos a los niños."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Mensaje e himno a medianoche",
+        "text": "Pasa los últimos minutos del año frente a la tele: tras el mensaje del presidente, el himno de Azerbaiyán suena en todos los canales."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos en el bulevar de Bakú",
+        "text": "Ve al Bulevar Marítimo junto al Caspio: el pasado diciembre tuvo mercado y pista de hielo, y a medianoche los fuegos estallan sobre la bahía."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027: Bakú, Azerbaiyán | Time2Fest",
+      "description": "Bakú, en Azerbaiyán, recibe 2027 con fuegos sobre el Bulevar Marítimo del Caspio, Shakhta Baba y las Torres Llama iluminadas. Medianoche: 20:00 UTC."
+    },
+    "kit": "az"
+  },
+  "BR@utc-0500": {
+    "text": "Brasil recibe el Año Nuevo, el Réveillon, vestido de blanco. La costumbre nació con seguidores del candomblé que en los años setenta acudían de blanco a la playa de Copacabana con ofrendas para Yemanjá, la diosa del agua; desde entonces la ropa blanca y las flores que se sueltan en el mar se extendieron por todo el país. A medianoche, en la costa, se saltan siete olas pidiendo un deseo en cada una.\n\nRío Branco, capital del estado de Acre, es la última de Brasil en recibir el año, dos horas después que Río. En 2026 la alcaldía organizó una fiesta gratuita en la Praça da Revolução, en el centro: grupos locales, cuenta atrás y fuegos justo a medianoche. Aquí los fuegos son silenciosos: una ley del estado prohíbe los petardos para proteger a niños, mayores y animales.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "De blanco, como todo Brasil",
+        "text": "En Año Nuevo la mayoría se viste de blanco. La costumbre viene de las religiones afrobrasileñas y hace tiempo se extendió por todo el país."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sin estruendo",
+        "text": "Desde 2022 Acre prohíbe los fuegos con estruendo: solo se permiten los que únicamente iluminan. La medianoche es brillante, pero tranquila para animales y personas autistas."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Praça da Revolução",
+        "text": "En 2026 la alcaldía reunió a las familias en una fiesta gratuita en el centro: grupos desde las seis de la tarde, cuenta atrás y fuegos a medianoche en punto."
+      }
+    ],
+    "kit": "br-5"
+  },
+  "LT": {
+    "text": "Lituania recibe el Año Nuevo con costumbres antiguas. Antes formaba parte de las fiestas de invierno que iban de Nochebuena a los Reyes: personajes enmascarados representaban un duelo entre el año viejo y el nuevo, y en Samogitia los jóvenes quemaban una gavilla de paja como año viejo. A medianoche se adivinaba el futuro vertiendo cera derretida en agua y leyendo las figuras: una rueda anuncia un viaje; una cuna, un hijo. A los niños pequeños se los despertaba a las doce en punto para que no se perdieran su suerte.\n\nEn Vilna la gente prefiere recibir la medianoche al aire libre, en la plaza de la Catedral, junto al árbol de Navidad, la catedral y su campanario, con la torre de Gediminas en la colina. La ciudad lleva varios años sin fuegos artificiales: el año pasado se proyectaron vídeos de colores sobre el campanario desde las diez de la noche, y a medianoche un espectáculo de luces llenó la plaza.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Leer la cera",
+        "text": "A medianoche vierte un poco de cera derretida en agua fría y observa la figura: una rueda anuncia un viaje; una cuna, un nuevo miembro en la familia."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "No dormirse la suerte",
+        "text": "Según la costumbre, esa noche nadie duerme, y a los niños pequeños se los despierta a las doce en punto para que la suerte del año no pase de largo."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Luces en la plaza de la Catedral",
+        "text": "Recibe la medianoche en Vilna junto al árbol: en lugar de fuegos hay proyecciones de colores en el campanario y un espectáculo de luces. La pirotecnia junto a las iglesias está prohibida por ley."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Lituania: Vilna | Time2Fest",
+      "description": "A medianoche en Vilna, 22:00 UTC, Lituania recibe 2027 con luces en la plaza de la Catedral en vez de fuegos, y en casa la cera en el agua predice la suerte."
+    },
+    "kit": "lt"
   }
 }

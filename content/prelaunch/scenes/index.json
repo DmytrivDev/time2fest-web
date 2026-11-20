@@ -276,6 +276,36 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "AU@utc+1000": {
+      "src": "/scenes/AU-utc+1000-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#232f52"
+    },
+    "AU@utc+1030": {
+      "src": "/scenes/AU-utc+1030-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "AZ": {
+      "src": "/scenes/AZ-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "BR@utc-0500": {
+      "src": "/scenes/BR-utc-0500-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#373956"
+    },
+    "LT": {
+      "src": "/scenes/LT-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#464e4a"
     }
   }
 }
