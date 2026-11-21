@@ -1,0 +1,99 @@
+{
+  "code": "KW",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "kuwait",
+  "names": {
+    "uk": {
+      "name": "Кувейт",
+      "city": "Ель-Кувейт",
+      "cityIn": "в Ель-Кувейті",
+      "caps": "КУВЕЙТ"
+    },
+    "en": {
+      "name": "Kuwait",
+      "city": "Kuwait City",
+      "cityIn": "in Kuwait City",
+      "caps": "KUWAIT"
+    },
+    "es": {
+      "name": "Kuwait",
+      "city": "Ciudad de Kuwait",
+      "cityIn": "en Ciudad de Kuwait",
+      "caps": "KUWAIT"
+    },
+    "fr": {
+      "name": "Koweït",
+      "city": "Koweït City",
+      "cityIn": "à Koweït City",
+      "caps": "KOWEÏT"
+    }
+  },
+  "picto": "M3 36 H37 M24.6 36 L25.6 26.8 M29.4 36 L28.4 26.8 M22.4 22.2 A4.6 4.6 0 1 0 31.6 22.2 A4.6 4.6 0 1 0 22.4 22.2 M20.8 20.4 H33.2 M26.2 17.7 V15.4 M27.8 17.7 V15.4 M24 12.6 A3 3 0 1 0 30 12.6 A3 3 0 1 0 24 12.6 M26.2 9.8 L27 2 L27.8 9.8 M12.1 36 L12.8 27.6 M16.3 36 L15.6 27.6 M9.899999999999999 23.5 A4.3 4.3 0 1 0 18.5 23.5 A4.3 4.3 0 1 0 9.899999999999999 23.5 M13.4 19.3 L14.2 9.3 L15 19.3 M5.1 36 L6.2 14 L7.3 36",
+  "flagColors": [
+    "#007A3D",
+    "#FFFFFF",
+    "#CE1126"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Ель-Кувейті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Kuwait City"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Ciudad de Kuwait"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Koweït City"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

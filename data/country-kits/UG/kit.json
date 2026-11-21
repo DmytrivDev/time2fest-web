@@ -1,0 +1,99 @@
+{
+  "code": "UG",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "kampala",
+  "names": {
+    "uk": {
+      "name": "Уганда",
+      "city": "Кампала",
+      "cityIn": "у Кампалі",
+      "caps": "УГАНДА"
+    },
+    "en": {
+      "name": "Uganda",
+      "city": "Kampala",
+      "cityIn": "in Kampala",
+      "caps": "UGANDA"
+    },
+    "es": {
+      "name": "Uganda",
+      "city": "Kampala",
+      "cityIn": "en Kampala",
+      "caps": "UGANDA"
+    },
+    "fr": {
+      "name": "Ouganda",
+      "city": "Kampala",
+      "cityIn": "à Kampala",
+      "caps": "OUGANDA"
+    }
+  },
+  "picto": "M2.5 34 H37.5 M4.5 34 C4.8 24.5 11.6 14.2 18.2 8.6 Q20 7.2 21.8 8.6 C28.4 14.2 35.2 24.5 35.5 34 M13.4 14.6 Q20 16.8 26.6 14.6 M9.2 21.6 Q20 24.8 30.8 21.6 M14.5 34 V30.4 Q14.5 26.2 20 26.1 Q25.5 26.2 25.5 30.4 V34 M18 34 V27.6 M22 34 V27.6 M18.2 8.4 Q18.2 5.5 20 5.4 Q21.8 5.5 21.8 8.4 M20 5.4 V2",
+  "flagColors": [
+    "#FCDC04",
+    "#D90000",
+    "#F2EBDD"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Кампалі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Kampala"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Kampala"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Kampala"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -3174,5 +3174,341 @@
       "description": "Djibouti greets 2027 at 21:00 UTC: a free city hall concert outside the Palais du Peuple, lit-up roundabouts in the capital and a family kermesse on 1 January."
     },
     "kit": "dj"
+  },
+  "BY": {
+    "text": "In Belarus New Year is the main winter holiday: 1 and 2 January are days off, and midnight arrives at 21:00 UTC. It is welcomed at home around a festive table with Olivier salad, herring under a fur coat and tangerines, a custom kept since Soviet times. Presents for children come from Ded Moroz, Dzied Maroz in Belarusian, whose official residence is in the Białowieża Forest. The holiday sits between two Christmases, Catholic on 25 December and Orthodox on 7 January, both called Kalady here, when carollers go from house to house singing.\n\nIn Minsk the country's main New Year tree is lit in mid-December on October Square. On New Year's Eve festive venues open in every district of the city, and near the Palace of Sports the celebrations go on until four in the morning. For the night into 2025 the authorities planned no fireworks at the city events.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Olivier, “fur coat”, tangerines",
+        "text": "A Belarusian New Year table rarely goes without Olivier salad, herring under a fur coat with beetroot, and tangerines."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Gifts from Dzied Maroz",
+        "text": "Presents under the tree come from Dzied Maroz, the Belarusian Ded Moroz, whose official residence is in the Białowieża Forest."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Carols for Kalady",
+        "text": "New Year falls between two Christmases, on 25 December and 7 January. At Kalady children and young people go from house to house singing carols and get small treats."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Belarus: Minsk | Time2Fest",
+      "description": "Belarus greets 2027 at 21:00 UTC: the main tree glows on October Square in Minsk, and home tables fill with Olivier salad, herring and tangerines."
+    },
+    "kit": "by"
+  },
+  "IQ": {
+    "text": "Iraq has several New Years: the Islamic one, 1 Muharram, and spring Nowruz, celebrated mostly by Kurds. But 1 January is a public holiday too, and the night before it is loud in the country's cities: families and friends head out to squares and streets, trees and gardens glow with lights, children crowd around balloon sellers, and at midnight fireworks fill the sky.\n\nIn Baghdad many go down to the Tigris, to the Abu Nuwas corniche and Karrada: families sit right in the riverside gardens, music plays in the party halls and drums thunder. Others stroll Al-Rasheed and Al-Mutanabbi streets under winter lights. At the end of 2024 the city put up 14 decorated trees, the tallest, 30 metres high, in Al-Zawraa Park, where a concert went on all night.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "An evening on the Tigris",
+        "text": "In Baghdad families head to the Abu Nuwas corniche: they sit right in the gardens above the river, listen to the drums and wait for midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Trees in lights",
+        "text": "Streets and squares are hung with lights. At the end of 2024 Baghdad had 14 festive trees, the tallest, 30 metres, in Al-Zawraa Park."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks at midnight",
+        "text": "At midnight fireworks fill the sky over Iraq's cities. They may be set off only in designated places, and celebratory gunfire is banned."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Iraq: Baghdad | Time2Fest",
+      "description": "Iraq greets 2027 at 21:00 UTC: fireworks over the Tigris, families in the gardens of Baghdad's Abu Nuwas corniche, trees in lights and an all-night concert."
+    },
+    "kit": "iq"
+  },
+  "JO": {
+    "text": "In Jordan 1 January is a public holiday, just like Christmas and the Islamic New Year. Yet there is no shared countdown in city squares: people see the year in at hotels and restaurants, over a festive dinner with live music and a DJ, and some head to the sea, to the resorts of the Dead Sea or Aqaba. In the Christian town of Fuheis near Amman a huge Christmas tree is usually lit, and Muslims come for the holidays too. And in Petra, from Sunday to Thursday evenings, some two thousand candles light up the Siq gorge.\n\nAmman greets the year with concerts: on New Year's Eve 2025 Nancy Ajram and Mohamed Hamaki sang in the capital's hotels, and at midnight the star of the night takes the stage. Abdali Boulevard closed at 8 pm on 31 December 2024, so the city celebrates at the table and begins 1 January with a leisurely brunch.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "A concert at a hotel",
+        "text": "On New Year's Eve stars of Arab pop sing in Amman's hotels, and the headliner takes the stage at midnight. Book a ticket with dinner in advance."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Petra by candlelight",
+        "text": "From Sunday to Thursday evenings some two thousand candles light the Siq gorge all the way to the Treasury. 31 December 2026 is a Thursday."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "New Year by the sea",
+        "text": "Resorts on the Dead Sea, the lowest point on land, and hotels in Aqaba on the Red Sea hold New Year's Eve dinners with live music."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Jordan: Amman | Time2Fest",
+      "description": "Jordan greets 2027 at 21:00 UTC: Arab pop stars on stage in Amman's hotels, dinners by the Dead Sea and in Aqaba, and candles lining the Siq in Petra."
+    },
+    "kit": "jo"
+  },
+  "KG": {
+    "text": "In Kyrgyzstan the traditional new year is Nooruz, a spring holiday on 21 March. Yet the night of 1 January is loved here too: it is a public holiday, celebrated with family around a big table. The main dish is beshbarmak made with horse meat or lamb, alongside manti, baked chicken and boorsoki, pieces of fried dough. Cooking is often done together, with old Soviet films playing in the background. The whole country reaches midnight at 18:00 UTC, and on 7 January Orthodox Christians mark Christmas.\n\nIn Bishkek the country's main New Year tree, 32 metres tall, glows on Ala-Too Square from mid-December, and nearby children get presents from Ayaz-Ata. On 31 December a concert starts there at 18:00, with an ice rink and a food court. The city fireworks have been cancelled two years running because of air pollution.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Beshbarmak on the festive table",
+        "text": "Beshbarmak with horse meat or lamb is the main dish of New Year's Eve, served with manti and boorsoki."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "The tree and Ayaz-Ata",
+        "text": "From mid-December the country's 32-metre main tree glows on Ala-Too Square in Bishkek, and children collect presents at Ayaz-Ata's residence."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Concert and ice rink",
+        "text": "On 31 December Ala-Too hosts a concert from 18:00, with an ice rink and a food court. Bishkek's mayor saw in 2025 here together with residents."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Kyrgyzstan: Bishkek | Time2Fest",
+      "description": "Kyrgyzstan welcomes 2027 at 18:00 UTC: a 32-metre tree glows on Bishkek's Ala-Too Square, and family tables fill with beshbarmak, manti and boorsoki."
+    },
+    "kit": "kg"
+  },
+  "KM": {
+    "text": "The Comoros has two New Years, and both are public holidays: 1 January and the Islamic New Year, 1 Muharram, whose date shifts every year. For many Comorians the end of December is a time to celebrate: on the 31st some go out to a restaurant, others head to the beach. The busiest is Mitsamiouli beach in the north of Grande Comore, where families, young people and their elders gather to sing and dance. For many it is a rare moment when the whole family is together, with adults off work and children out of school. The end of the year is also wedding season.\n\nIn Moroni people see the year in at hotels and restaurants over a festive dinner, with tables booked in advance; some celebrate 1 January at home with family. On New Year's night police patrols drive around the capital, keeping an eye on the roads and beaches.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "To the beach as a family",
+        "text": "On 31 December and 1 January Comorians head to the sea. Mitsamiouli beach draws the biggest crowd: families, young and old sing and dance."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Dinner at a restaurant",
+        "text": "In Moroni New Year's Eve is spent at hotels and restaurants over a festive dinner. Book a table in advance."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Two New Years",
+        "text": "1 January is a public holiday. The Islamic New Year, 1 Muharram, is one too, but its date shifts every year with the lunar calendar."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Comoros: Moroni | Time2Fest",
+      "description": "The Comoros greets 2027 at 21:00 UTC: festive dinners in Moroni's restaurants, then families singing and dancing on Mitsamiouli beach on 31 Dec and 1 Jan."
+    },
+    "kit": "km"
+  },
+  "KW": {
+    "text": "In Kuwait 1 January is a day off: last year the government made Thursday, 1 January, a holiday, and state offices stayed closed until Sunday. The country also has its own New Year, the Islamic one on 1 Muharram, while its biggest celebrations are National Day and Liberation Day on 25–26 February. There are no mass midnight street parties with fireworks: fireworks need prior security approval, and last year the displays at shopping malls and on Messilah Beach were cancelled.\n\nSo the year is welcomed among your own people: at a hotel dinner in Kuwait City with live music until 1 a.m., at a mall, at a beach chalet or on a farm. And in winter many head to the desert: from mid-November to mid-March camps stand there, with coffee brewed over the fire.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "A hotel dinner",
+        "text": "On 31 December hotels in Kuwait City host dinners with a live band, a pianist or the oud, from 8 p.m. to 1 a.m."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "A desert camp",
+        "text": "From mid-November to mid-March Kuwaitis set up camps in the desert: coffee, a fire, traditional games and long talks into the night."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A long weekend",
+        "text": "1 January is a public holiday; last year, with the weekend, it made three days off. The biggest celebrations come later, on 25–26 February."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Kuwait: Kuwait City | Time2Fest",
+      "description": "Kuwait greets 2027 at 21:00 UTC with no city fireworks: hotel dinners with live music, nights at beach chalets and winter desert camps, and 1 January off."
+    },
+    "kit": "kw"
+  },
+  "MV": {
+    "text": "The Maldives has two New Year holidays: 1 January and the Islamic New Year, 1 Muharram, whose date shifts every year. In this Muslim island nation the night before 1 January has no rowdy streets, but plenty of light over the water: resorts across the atolls hold their own fireworks and music nights. The sky has its say too: in 2023 the state night programme was postponed over a thunderstorm warning.\n\nThe capital sees the year in at Hulhumalé, a reclaimed island that is a district of Malé. For the past two years its Central Park has hosted a festival: Maldivian dishes from local stalls, boduberu drums, live bands. Before midnight a drone show rises, and at 19:00 UTC come the fireworks.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Festival in Hulhumalé",
+        "text": "For a few days Central Park feeds and entertains everyone who comes: Maldivian dishes from local stalls, boduberu drums by day and live bands in the evening."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Drones, then fireworks",
+        "text": "To welcome 2026, about 600 drones rose over the park, 75 of them carrying pyrotechnics. At midnight came five minutes of fireworks that draw people from all over Greater Malé."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Midnight on a resort island",
+        "text": "Resorts across the country greet the year with their own fireworks and music over the lagoon. And 1 January is a public holiday, so there is no rush on the first day of the year."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Maldives: Malé | Time2Fest",
+      "description": "The Maldives greets 2027 at 19:00 UTC: a food festival and boduberu drums in Hulhumalé, a drone show, midnight fireworks and resort lights over the lagoon."
+    },
+    "kit": "mv"
+  },
+  "SO": {
+    "text": "In Somalia, 1 January is a public holiday, as is the Islamic New Year, 1 Muharram. But there are no mass celebrations on New Year's Eve: in 2015 the Ministry of Religious Affairs banned public Christmas and New Year festivities as foreign to Islamic culture. The Somali New Year of its own, Dabshid, falls in July: young people jump over a bonfire to leap over the hardships of the year ahead, and in Afgooye people stage Istunka, a mock fight with sticks.\n\nIn Mogadishu the New Year is seen in at hotels: at the start of 2016, musicians played to a large crowd at one of the capital's best-known hotels. And on 16 July 2026 the city formally opened year 1117 of the Dabshid calendar.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "An evening at a hotel",
+        "text": "New Year's night in Mogadishu is spent at hotels: a concert, musicians and plenty of guests — that is how the year was greeted at the start of 2016."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "A day off by the ocean",
+        "text": "1 January is a public holiday. Mogadishu's favourite place to unwind is Lido Beach in the north of the city, with its seafood restaurants and hotels."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "The Dabshid bonfire",
+        "text": "The Somali New Year comes in July: people light a bonfire of sticks and hay, and young people jump over the flames to leave the year's hardships behind."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Somalia: Mogadishu | Time2Fest",
+      "description": "Somalia meets 2027 at 21:00 UTC: a quiet 1 January holiday and hotel evenings in Mogadishu, while the Somali New Year, Dabshid, comes in July with bonfires."
+    },
+    "kit": "so"
+  },
+  "TJ": {
+    "text": "In Tajikistan the traditional new year is Navruz, a spring holiday in March. Still, 1 January is a public day off, and the night before is mostly spent at home with family and friends. The festive table mixes the familiar with the local: osh, the Tajik pilaf, with green tea, sambusa and qurutob, and for dessert baklava, halva and chak-chak. Children wait for Boboi Barfi, 'Grandfather Snow': they recite poems to him and get presents. The whole country reaches midnight at 19:00 UTC.\n\nIn Dushanbe the country's main New Year tree, about 30 metres tall, stands on Istiklol Square, surrounded by light arches, a house for Ded Moroz and a Ferris wheel. At midnight thousands gather around it, some from distant regions, a concert plays, and a big fireworks display crowns the night.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Osh and sambusa on the table",
+        "text": "A New Year table in Tajikistan means osh with green tea, sambusa and qurutob, then baklava, halva and chak-chak for dessert."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Poems for Boboi Barfi",
+        "text": "Children recite poems to Boboi Barfi, 'Grandfather Snow', and receive New Year presents from him in return."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight on Istiklol Square",
+        "text": "In Dushanbe thousands see in the New Year by the 30-metre tree on Istiklol Square: a concert, a fair and big fireworks at midnight."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Tajikistan: Dushanbe | Time2Fest",
+      "description": "Tajikistan greets 2027 at 19:00 UTC: fireworks burst over the 30-metre tree on Istiklol Square, while homes wait for osh, sambusa and Boboi Barfi."
+    },
+    "kit": "tj"
+  },
+  "TZ": {
+    "text": "In Tanzania, 1 January is a public holiday, and for many the night before it begins in church. On the evening of 31 December congregations across the country gather for New Year's services, giving thanks for the year that is ending and praying for peace and unity. Many hold a mkesha, an all-night vigil of songs and prayer that runs from nine in the evening until dawn. Others head to beach parties and clubs, while climbers set off for the summit of Kilimanjaro at midnight to greet the first sunrise of the year at 5,895 metres.\n\nDar es Salaam has no single city countdown: the city celebrates all along its coast. On the night into 2026, big crowds of all ages filled Coco Beach, and at midnight fireworks burst over the city, reflected in the Indian Ocean. St Joseph's Cathedral can be so full for the New Year's Mass that some people follow the service from outside.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Mkesha: a night in church",
+        "text": "On the evening of 31 December churches hold New Year's thanksgiving services, and many congregations keep an all-night vigil of songs and prayer until five in the morning."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Midnight at Coco Beach",
+        "text": "The busiest spot on New Year's Eve in Dar es Salaam is the public Coco Beach: families and groups of friends gather there, and at midnight fireworks light up the coast."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Sunrise on Kilimanjaro",
+        "text": "Climbs of Africa's highest mountain, which also appears on the national coat of arms, are timed so that you set off at midnight and meet the year's first sunrise on Uhuru Peak."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Tanzania: Dar es Salaam | Time2Fest",
+      "description": "Tanzania meets 2027 at 21:00 UTC: all-night church vigils, crowds and fireworks on Coco Beach in Dar es Salaam, and the year's first sunrise on Kilimanjaro."
+    },
+    "kit": "tz"
+  },
+  "UG": {
+    "text": "In Uganda, 1 January is a public holiday, and the festive season starts at Christmas: many city dwellers head to their home villages, and the big towns noticeably empty. New Year's Eve here is mostly a night of prayer — over 80 percent of Ugandans are Christian, and on 31 December churches hold overnight 'crossover' services to carry people into the new year. What began as small prayer meetings now draws tens of thousands. At midnight the fireworks go up: ahead of 2025, police approved some 2,900 applications from hotels, entertainment venues and churches, each display no longer than five minutes.\n\nIn Kampala, the 'Night of Prayer' in Naguru draws thousands of worshippers, and services fill the Lubaga and All Saints cathedrals too. At the royal Lubiri in Mengo, the Buganda Kingdom stages the Enkuuka festival, with concerts, tens of thousands of guests and the Kabaka, the king of Buganda, in attendance.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A crossover night service",
+        "text": "On 31 December, join an overnight service: prayers and songs carry on to midnight, and the year turns in the middle of the service."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "The Enkuuka festival",
+        "text": "At the Lubiri in Mengo, the Buganda Kingdom sees out the year with the Enkuuka festival: a stage, musicians and tens of thousands of guests, with the Kabaka present."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Five minutes of fireworks",
+        "text": "At midnight, fireworks from hotels, clubs and churches flare over Kampala — under police rules, each lasts no longer than five minutes."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Uganda: Kampala | Time2Fest",
+      "description": "Uganda greets 2027 at 21:00 UTC: overnight crossover services in Kampala's churches, the Enkuuka festival at the Lubiri and five-minute fireworks at midnight."
+    },
+    "kit": "ug"
+  },
+  "YT": {
+    "text": "Mayotte keeps UTC+3, so midnight arrives here at 21:00 UTC. Most people on the island are Muslim, and the New Year is seen in with family on the shore of the lagoon, one of the largest in the world. The heart of the holiday is the voulé, a beach picnic: chicken, skewers, cassava, breadfruit and bananas go on the embers and the music goes on. In the old days people even pooled money for shared feasts at «bonne année». On 1 January the beaches in the south of the island fill up every year.\n\nIn Mamoudzou shoppers stock up on meat and drinks for the voulé before the holiday. Across the water on Petite-Terre, reached by ferry from the city, nearly a thousand people in home-made costumes join the carnival in Labattoir on 25 December. After Cyclone Chido in December 2024 the holiday was quiet, but the New Year’s Day picnics carried on.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A voulé on the shore",
+        "text": "Gather family or friends on the beach, light the embers and grill chicken, skewers, cassava, breadfruit and bananas, with music playing."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "New Year’s Day by the lagoon",
+        "text": "On 1 January families head for the beaches in the south of the island, where rescuers keep watch and volunteers clean the shore."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Carnival in Labattoir",
+        "text": "At the end of the year, on 25 December, nearly a thousand people parade through Labattoir on Petite-Terre with home-made costumes, decorated floats and their own songs."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Mayotte: Mamoudzou | Time2Fest",
+      "description": "Mayotte greets 2027 at 21:00 UTC. On 1 January families from Mamoudzou and all over the island hold a voulé, a grill-and-music picnic on the lagoon beaches."
+    },
+    "kit": "yt"
   }
 }

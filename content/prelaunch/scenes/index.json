@@ -702,6 +702,78 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "BY": {
+      "src": "/scenes/BY-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#3a4a61"
+    },
+    "IQ": {
+      "src": "/scenes/IQ-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#443842"
+    },
+    "JO": {
+      "src": "/scenes/JO-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#523742"
+    },
+    "KG": {
+      "src": "/scenes/KG-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#494e6c"
+    },
+    "KM": {
+      "src": "/scenes/KM-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "KW": {
+      "src": "/scenes/KW-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "MV": {
+      "src": "/scenes/MV-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#143c44"
+    },
+    "SO": {
+      "src": "/scenes/SO-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "TJ": {
+      "src": "/scenes/TJ-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#464d5a"
+    },
+    "TZ": {
+      "src": "/scenes/TZ-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "UG": {
+      "src": "/scenes/UG-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#54333b"
+    },
+    "YT": {
+      "src": "/scenes/YT-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#273d49"
     }
   }
 }

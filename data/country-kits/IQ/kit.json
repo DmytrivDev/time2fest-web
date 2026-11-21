@@ -1,0 +1,100 @@
+{
+  "code": "IQ",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "baghdad",
+  "names": {
+    "uk": {
+      "name": "Ірак",
+      "city": "Багдад",
+      "cityIn": "у Багдаді",
+      "caps": "ІРАК"
+    },
+    "en": {
+      "name": "Iraq",
+      "city": "Baghdad",
+      "cityIn": "in Baghdad",
+      "caps": "IRAQ"
+    },
+    "es": {
+      "name": "Irak",
+      "city": "Bagdad",
+      "cityIn": "en Bagdad",
+      "caps": "IRAK"
+    },
+    "fr": {
+      "name": "Irak",
+      "city": "Bagdad",
+      "cityIn": "à Bagdad",
+      "caps": "IRAK"
+    }
+  },
+  "picto": "M3 35 H37 M5 35 V31.5 H35 V35 M8.0 31.5 L15.2 9.5 M32.0 31.5 L24.8 9.5 M7.9 29.5 L30.0 23.0 M7.5 30.5 L30.3 24.0 M9.7 24.0 L28.2 17.5 M9.3 25.0 L28.5 18.5 M11.5 18.5 L26.4 12.0 M11.1 19.5 L26.7 13.0 M13.1 13.5 L25.6 9.5 M12.8 14.5 L25.9 10.5 M17.6 9.5 V3.6 H22.4 V9.5 M16.6 3.6 H23.4 M20 8 V5.8",
+  "flagColors": [
+    "#A2001D",
+    "#FFFFFF",
+    "#333333",
+    "#496E2D"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Багдаді"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Baghdad"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Bagdad"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Bagdad"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

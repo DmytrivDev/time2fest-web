@@ -1,0 +1,99 @@
+{
+  "code": "KG",
+  "zone": "UTC+6",
+  "zoneId": "utc+0600",
+  "cityId": "bishkek",
+  "names": {
+    "uk": {
+      "name": "Киргизстан",
+      "city": "Бішкек",
+      "cityIn": "у Бішкеку",
+      "caps": "КИРГИЗСТАН"
+    },
+    "en": {
+      "name": "Kyrgyzstan",
+      "city": "Bishkek",
+      "cityIn": "in Bishkek",
+      "caps": "KYRGYZSTAN"
+    },
+    "es": {
+      "name": "Kirguistán",
+      "city": "Biskek",
+      "cityIn": "en Biskek",
+      "caps": "KIRGUISTÁN"
+    },
+    "fr": {
+      "name": "Kirghizistan",
+      "city": "Bichkek",
+      "cityIn": "à Bichkek",
+      "caps": "KIRGHIZISTAN"
+    }
+  },
+  "picto": "M2 37.6 H38 M7 37.6 V35 H33 V37.6 M10 35 V28 H30 V35 M8.4 28 H31.6 M11 17 Q11.5 14.4 15 14.2 L24 14.4 Q27.6 14.6 28 17.4 Q28.2 20.6 25.6 21.2 L14 21.4 Q11 21 11 17 Z M15 14.2 L9.8 7.6 L8.6 7.8 L5.2 11 L6.2 12.4 L9.2 11.2 L11.2 16.4 M9.8 7.6 L10.3 6.1 M14.8 13.9 Q14.2 11.2 10.6 7.4 M13.6 21.3 L13.2 28 M12.2 20.8 L9.6 23 L10.4 25.4 M24.6 21.2 L25.4 24.6 L24.8 28 M26.8 20.4 L28 24.6 L27.4 28 M28 16.2 Q30.8 17.6 30.4 23.4 M19.6 14.3 L19.2 7.4 M19.6 14.3 L18.6 17.6 L19.8 19.6 M19.3 9.2 L16.4 6 L16 2.6 M19.1 4.7 A1.3 1.3 0 1 1 19.09 4.7",
+  "flagColors": [
+    "#E8112D",
+    "#FFEF00",
+    "#E8112D"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Бішкеку"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Bishkek"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Biskek"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Bichkek"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

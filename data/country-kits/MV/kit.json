@@ -1,0 +1,99 @@
+{
+  "code": "MV",
+  "zone": "UTC+5",
+  "zoneId": "utc+0500",
+  "cityId": "maldives",
+  "names": {
+    "uk": {
+      "name": "Мальдіви",
+      "city": "Мальдіви",
+      "cityIn": "на Мальдівах",
+      "caps": "МАЛЬДІВИ"
+    },
+    "en": {
+      "name": "Maldives",
+      "city": "Maldives",
+      "cityIn": "in the Maldives",
+      "caps": "MALDIVES"
+    },
+    "es": {
+      "name": "Maldivas",
+      "city": "Maldivas",
+      "cityIn": "en Maldivas",
+      "caps": "MALDIVAS"
+    },
+    "fr": {
+      "name": "Maldives",
+      "city": "Maldives",
+      "cityIn": "aux Maldives",
+      "caps": "MALDIVES"
+    }
+  },
+  "picto": "M2 34 H38 M17.5 27 V34 M23 27 V34 M31 27 V34 M36.5 27 V34 M15.5 27 H38.5 M20 27 V19.5 H34 V27 M25.5 27 V22 H28.5 V27 M15 19.5 L24.5 8.5 H29.5 L39 19.5 Z M2 34 Q7 30 12 34 M7 32 Q5.5 23 9 14 M9 14 Q4 11.5 1.8 15.5 M9 14 Q5.5 8.6 2.4 9.4 M9 14 Q11 8.4 15 8.8 M9 14 Q13 13 14.4 16.8",
+  "flagColors": [
+    "#D21034",
+    "#007E3A",
+    "#FFFFFF"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Мальдівах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Maldives"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Maldivas"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux Maldives"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

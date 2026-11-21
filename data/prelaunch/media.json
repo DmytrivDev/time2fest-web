@@ -2029,6 +2029,198 @@
         "x": 18,
         "y": 45
       }
+    },
+    "country:BY": {
+      "src": "/media/photos/minsk.webp",
+      "alt": {
+        "uk": "Проспект Незалежності в Мінську зимовим вечором: святкове освітлення й перехожі",
+        "en": "Independence Avenue in Minsk on a winter evening: festive lights and passers-by",
+        "es": "La avenida de la Independencia de Minsk una tarde de invierno: iluminación festiva y transeúntes",
+        "fr": "L’avenue de l’Indépendance à Minsk un soir d’hiver : illuminations de fête et passants"
+      },
+      "author": "Chakhovich Uladzislau",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D0%9D%D0%B0%D1%87%D0%BD%D1%8B_%D0%B7%D1%96%D0%BC%D0%BE%D0%B2%D1%8B_%D0%9C%D1%96%D0%BD%D1%81%D0%BA._2022_%2804%29.jpg",
+      "position": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "country:IQ": {
+      "src": "/media/photos/baghdad.webp",
+      "alt": {
+        "uk": "Міст 14 Рамадану через Тигр у Багдаді вночі: ванти в підсвітці й відблиски в річці",
+        "en": "The 14 Ramadan Bridge over the Tigris in Baghdad at night: lit cables and reflections in the river",
+        "es": "El puente 14 de Ramadán sobre el Tigris en Bagdad de noche: tirantes iluminados y reflejos en el río",
+        "fr": "Le pont du 14-Ramadan sur le Tigre à Bagdad la nuit : haubans illuminés et reflets dans le fleuve"
+      },
+      "author": "Ameerpics",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D8%AC%D8%B3%D8%B1_14_%D8%B1%D9%85%D8%B6%D8%A7%D9%86.jpg",
+      "position": {
+        "x": 35,
+        "y": 50
+      }
+    },
+    "country:JO": {
+      "src": "/media/photos/petra.webp",
+      "alt": {
+        "uk": "Скарбниця Аль-Хазне в Петрі вночі під час Petra by Night: рожевий фасад у скелі, на майдані перед ним — ряди свічок",
+        "en": "Al-Khazneh (the Treasury) in Petra at night during Petra by Night: the pink rock-cut façade with rows of candles on the square in front",
+        "es": "Al-Khazneh (el Tesoro) de Petra de noche durante Petra by Night: la fachada rosada tallada en la roca y filas de velas en la explanada",
+        "fr": "Al-Khazneh (le Trésor) à Pétra la nuit pendant Petra by Night : façade rose taillée dans la roche, rangées de bougies sur l’esplanade"
+      },
+      "author": "Susanahajer",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al_khazneh.jpg",
+      "position": {
+        "x": 62,
+        "y": 45
+      }
+    },
+    "country:KG": {
+      "src": "/media/photos/bishkek.webp",
+      "alt": {
+        "uk": "Площа Ала-Тоо в Бішкеку вночі на святі: сцена з прожекторами, натовп і підсвічені фонтани",
+        "en": "Ala-Too Square in Bishkek on a festive night: a stage with spotlights, the crowd and lit fountains",
+        "es": "La plaza Ala-Too de Biskek en una noche de fiesta: escenario con focos, multitud y fuentes iluminadas",
+        "fr": "La place Ala-Too à Bichkek un soir de fête : scène et projecteurs, foule et fontaines illuminées"
+      },
+      "author": "Ekaterina Borisova",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D0%91%D0%B8%D1%88%D0%BA%D0%B5%D0%BA,_%D0%B4%D0%B5%D0%BD%D1%8C_%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B0_02.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:KM": {
+      "src": "/media/photos/moroni.webp",
+      "alt": {
+        "uk": "Стара П’ятнична мечеть Мороні в сутінках: біла аркада й мінарет над старою гаванню, позаду — схил вулкана Картала",
+        "en": "The old Friday Mosque of Moroni at dusk: the white arcade and minaret above the old harbour, the slope of Mount Karthala behind",
+        "es": "La antigua mezquita del Viernes de Moroni al anochecer: la arcada blanca y el minarete sobre el puerto viejo y, detrás, la ladera del volcán Karthala",
+        "fr": "L’ancienne mosquée du Vendredi de Moroni au crépuscule : arcades blanches et minaret au-dessus du vieux port, les pentes du Karthala derrière"
+      },
+      "author": "Daryl Wallace",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mosque_in_Moroni,_Comoros_(3922246919).jpg",
+      "position": {
+        "x": 70,
+        "y": 48
+      }
+    },
+    "country:KW": {
+      "src": "/media/photos/kuwait.webp",
+      "alt": {
+        "uk": "Кувейтські вежі вночі з боку затоки: кулі світяться синім узором дисків, вогні набережної відбиваються у воді",
+        "en": "The Kuwait Towers at night from the bay: the spheres glow with a blue disc pattern, waterfront lights reflected in the water",
+        "es": "Las Torres de Kuwait de noche desde la bahía: las esferas brillan con un dibujo de discos azules y las luces del paseo se reflejan en el agua",
+        "fr": "Les tours du Koweït la nuit côté baie : sphères illuminées d’un motif de disques bleus, lumières du front de mer reflétées dans l’eau"
+      },
+      "author": "Jaafar Alnasser",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kuwait_(31420655062).jpg",
+      "position": {
+        "x": 25,
+        "y": 45
+      }
+    },
+    "country:MV": {
+      "src": "/media/photos/maldives.webp",
+      "alt": {
+        "uk": "Курорт на Мальдівах увечері: освітлений дерев’яний місток на палях веде до бунгало над лагуною з солом’яними дахами",
+        "en": "A Maldives resort in the evening: a lit wooden walkway on stilts leads to thatched water bungalows over the lagoon",
+        "es": "Un complejo en Maldivas al anochecer: una pasarela de madera iluminada sobre pilotes lleva a los bungalós con techo de paja sobre la laguna",
+        "fr": "Un complexe aux Maldives le soir : un ponton de bois éclairé sur pilotis mène aux bungalows au toit de chaume sur le lagon"
+      },
+      "author": "Saumesh Kumar",
+      "license": "CC0 1.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beautifully_lighted_pathway_to_water_bungalows_-_Rannalhi,_Maldives_-_2016.jpg",
+      "position": {
+        "x": 60,
+        "y": 45
+      }
+    },
+    "country:SO": {
+      "src": "/media/photos/mogadishu.webp",
+      "alt": {
+        "uk": "Могадішо вночі: вогні низької забудови міста з висоти, тепле світло вулиць і будинків",
+        "en": "Mogadishu at night from above: the lights of the low-rise city, warm glow of streets and houses",
+        "es": "Mogadiscio de noche desde lo alto: las luces de la ciudad baja y el brillo cálido de calles y casas",
+        "fr": "Mogadiscio la nuit vu d’en haut : lumières de la ville basse, éclat chaud des rues et des maisons"
+      },
+      "author": "Naimaisse",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:MOGADISHU_AT_NIGHT.jpg",
+      "position": {
+        "x": 50,
+        "y": 62
+      }
+    },
+    "country:TJ": {
+      "src": "/media/photos/dushanbe.webp",
+      "alt": {
+        "uk": "Нічний Душанбе: Палац націй у золотому підсвічуванні над парком, алеї з вогнями й ілюмінацією, позаду — вогні міста й флагшток",
+        "en": "Dushanbe at night: the Palace of Nations in golden light above the park, illuminated alleys, the city lights and flagpole behind",
+        "es": "Dusambé de noche: el Palacio de las Naciones con iluminación dorada sobre el parque, paseos iluminados y, detrás, las luces de la ciudad y el mástil",
+        "fr": "Douchanbé la nuit : le palais des Nations doré au-dessus du parc, allées illuminées, et derrière les lumières de la ville et le grand mât"
+      },
+      "author": "Shukhrat Sadiev",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dushanbe_citu_-_panoramio_area_01.jpg",
+      "position": {
+        "x": 36,
+        "y": 35
+      }
+    },
+    "country:TZ": {
+      "src": "/media/photos/dar-es-salaam.webp",
+      "alt": {
+        "uk": "Дар-ес-Салам уночі: хмарочос і вогні центру над станцією швидкісних автобусів DART, світлові сліди машин на проспекті",
+        "en": "Dar es Salaam at night: a skyscraper and downtown lights above a DART rapid bus station, light trails of cars on the avenue",
+        "es": "Dar es Salaam de noche: un rascacielos y las luces del centro sobre una estación del autobús rápido DART, estelas de luz de los coches en la avenida",
+        "fr": "Dar es Salaam la nuit : un gratte-ciel et les lumières du centre au-dessus d’une station de bus rapide DART, traînées lumineuses des voitures sur l’avenue"
+      },
+      "author": "Mazupixel",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bus_rapid_transit_in_Dar_es_Salaam,_Tanzania.jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:UG": {
+      "src": "/media/photos/kampala.webp",
+      "alt": {
+        "uk": "Кампала на заході сонця: пагорби, вкриті містом, під вогненно-червоним небом — вид із мінарета Національної мечеті",
+        "en": "Kampala at sunset: city-covered hills under a fiery red sky, seen from the minaret of the National Mosque",
+        "es": "Kampala al atardecer: colinas cubiertas por la ciudad bajo un cielo rojo fuego, vista desde el minarete de la Mezquita Nacional",
+        "fr": "Kampala au coucher du soleil : collines couvertes par la ville sous un ciel rouge feu, vue depuis le minaret de la Mosquée nationale"
+      },
+      "author": "Isac Fridlund",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kampala_sunset_20221101.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:YT": {
+      "src": "/media/photos/mamoudzou.webp",
+      "alt": {
+        "uk": "Захід сонця над лагуною Майотти з борту судна: темні силуети пагорбів острова, золоте небо й відблиски на воді",
+        "en": "Sunset over the Mayotte lagoon from a ship: dark silhouettes of the island’s hills, a golden sky and reflections on the water",
+        "es": "Atardecer sobre la laguna de Mayotte desde un barco: siluetas oscuras de las colinas de la isla, cielo dorado y reflejos en el agua",
+        "fr": "Coucher de soleil sur le lagon de Mayotte depuis un navire : silhouettes sombres des collines de l’île, ciel doré et reflets sur l’eau"
+      },
+      "author": "Louis Bouscary (Ifremer)",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Coucher_de_soleil_sur_Mayotte_(Ifremer_00808-91957).jpg",
+      "position": {
+        "x": 30,
+        "y": 55
+      }
     }
   }
 }

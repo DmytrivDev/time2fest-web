@@ -1,0 +1,99 @@
+{
+  "code": "BY",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "minsk",
+  "names": {
+    "uk": {
+      "name": "Білорусь",
+      "city": "Мінськ",
+      "cityIn": "у Мінську",
+      "caps": "БІЛОРУСЬ"
+    },
+    "en": {
+      "name": "Belarus",
+      "city": "Minsk",
+      "cityIn": "in Minsk",
+      "caps": "BELARUS"
+    },
+    "es": {
+      "name": "Bielorrusia",
+      "city": "Minsk",
+      "cityIn": "en Minsk",
+      "caps": "BIELORRUSIA"
+    },
+    "fr": {
+      "name": "Biélorussie",
+      "city": "Minsk",
+      "cityIn": "à Minsk",
+      "caps": "BIÉLORUSSIE"
+    }
+  },
+  "picto": "M4 37.5 H36 M7 37.5 V22 H33 V37.5 M17.5 37.5 V32 Q20 29.5 22.5 32 V37.5 M7.5 22 V15 H15.5 V22 M24.5 22 V15 H33 V22 M8.8 15 V10.5 H14.2 V15 M25.8 15 V10.5 H31.2 V15 M9 10.5 Q9 7.6 11.5 7 Q14 7.6 14 10.5 M26 10.5 Q26 7.6 28.5 7 Q31 7.6 31 10.5 M11.5 7 V2.5 M10 4 H13 M28.5 7 V2.5 M27 4 H30 M15.5 22 V17 Q17.5 15.5 18.5 13.5 Q20 12.5 21.5 13.5 Q22.5 15.5 24.5 17 V22 M20 13 V9.5 M18.8 10.7 H21.2 M11.5 26 V29 M28.5 26 V29 M20 18.5 V21",
+  "flagColors": [
+    "#C8313E",
+    "#FFFFFF",
+    "#4AA657"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Мінську"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Minsk"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Minsk"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Minsk"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

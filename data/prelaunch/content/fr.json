@@ -3174,5 +3174,341 @@
       "description": "Djibouti accueille 2027 à 21 h UTC : concert gratuit de la mairie devant le Palais du Peuple, ronds-points illuminés et kermesse familiale le 1er janvier."
     },
     "kit": "dj"
+  },
+  "BY": {
+    "text": "En Biélorussie, le Nouvel An est la grande fête de l’hiver : les 1er et 2 janvier sont fériés, et minuit sonne à 21 h UTC. On le fête chez soi autour d’une table de fête avec salade Olivier, hareng « sous un manteau de fourrure » et mandarines, une habitude héritée de l’époque soviétique. Les cadeaux des enfants viennent de Ded Moroz, Dzied Maroz en biélorusse, dont la résidence officielle se trouve dans la forêt de Białowieża. La fête se place entre deux Noëls, catholique le 25 décembre et orthodoxe le 7 janvier, tous deux appelés Kalady, quand les chanteurs de chants de Noël vont de maison en maison.\n\nÀ Minsk, le sapin principal du pays s’allume à la mi-décembre sur la place d’Octobre. Le soir du 31, des scènes festives ouvrent dans tous les quartiers, et près du palais des Sports la fête dure jusqu’à quatre heures du matin. Pour la nuit du passage à 2025, les autorités n’avaient prévu aucun feu d’artifice aux fêtes de la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Olivier, hareng et mandarines",
+        "text": "La table du Nouvel An biélorusse se passe rarement de salade Olivier, de hareng « sous un manteau de fourrure » à la betterave et de mandarines."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Cadeaux de Dzied Maroz",
+        "text": "Les cadeaux sous le sapin viennent de Dzied Maroz, le Ded Moroz biélorusse, dont la résidence officielle est dans la forêt de Białowieża."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Chants de Kalady",
+        "text": "Le Nouvel An tombe entre deux Noëls, le 25 décembre et le 7 janvier. À Kalady, enfants et jeunes vont de maison en maison chanter des chants de Noël et reçoivent des friandises."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Biélorussie : Minsk | Time2Fest",
+      "description": "La Biélorussie fête 2027 à 21 h UTC : le grand sapin brille place d’Octobre à Minsk, et l’on sert salade Olivier, hareng et mandarines à la maison."
+    },
+    "kit": "by"
+  },
+  "IQ": {
+    "text": "L’Irak a plusieurs Nouvel An : l’islamique, le 1er mouharram, et Norouz au printemps, fêté surtout par les Kurdes. Mais le 1er janvier est lui aussi férié, et la nuit qui le précède est bruyante dans les villes du pays : familles et amis sortent sur les places et dans les rues, arbres et jardins scintillent, les enfants se pressent autour des vendeurs de ballons et, à minuit, les feux d’artifice remplissent le ciel.\n\nÀ Bagdad, beaucoup descendent vers le Tigre, sur la corniche Abou Nouwas et à Karrada : les familles s’installent dans les jardins au bord du fleuve, la musique joue dans les salles de fête et les tambours résonnent. D’autres flânent rue Al-Rachid et rue Al-Moutanabbi sous les lumières d’hiver. Fin 2024, la ville a dressé 14 arbres décorés, le plus haut, de 30 mètres, au parc Al-Zawraa, où un concert a duré toute la nuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Un soir au bord du Tigre",
+        "text": "À Bagdad, les familles se rendent sur la corniche Abou Nouwas : elles s’assoient dans les jardins au-dessus du fleuve, écoutent les tambours et attendent minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Des arbres illuminés",
+        "text": "Rues et squares se parent de guirlandes. Fin 2024, Bagdad comptait 14 arbres de fête, le plus haut, 30 mètres, au parc Al-Zawraa."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux d’artifice à minuit",
+        "text": "À minuit, les feux d’artifice remplissent le ciel des villes irakiennes. Ils ne sont permis que dans des lieux autorisés, et les tirs de joie sont interdits."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Irak : Bagdad | Time2Fest",
+      "description": "L’Irak accueille 2027 à 21 h UTC : feux d’artifice sur le Tigre, familles dans les jardins de la corniche Abou Nouwas à Bagdad et arbres illuminés."
+    },
+    "kit": "iq"
+  },
+  "JO": {
+    "text": "En Jordanie, le 1er janvier est férié, tout comme Noël et le Nouvel An islamique. Mais pas de compte à rebours commun sur les places : on accueille l’année à l’hôtel ou au restaurant, autour d’un dîner de fête avec musique live et DJ, et certains partent vers la mer, dans les stations de la mer Morte ou d’Aqaba. À Fuheis, ville chrétienne près d’Amman, on allume d’habitude un grand sapin, et des musulmans viennent aussi pour les fêtes. Et à Pétra, du dimanche au jeudi soir, quelque deux mille bougies éclairent la gorge du Siq.\n\nAmman accueille l’année en concerts : pour le réveillon 2025, Nancy Ajram et Mohamed Hamaki ont chanté dans les hôtels de la capitale, et à minuit la star de la soirée monte sur scène. Le boulevard Abdali a fermé à 20 h le 31 décembre 2024 : la ville fête à table et commence le 1er janvier par un brunch tranquille.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Concert à l’hôtel",
+        "text": "Le soir du réveillon, des stars de la chanson arabe chantent dans les hôtels d’Amman, et la vedette monte sur scène à minuit. Mieux vaut réserver billet et dîner."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Pétra aux chandelles",
+        "text": "Du dimanche au jeudi soir, quelque deux mille bougies éclairent le Siq jusqu’au Trésor. Le 31 décembre 2026 tombe un jeudi."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Nouvel An au bord de la mer",
+        "text": "Les stations de la mer Morte, point le plus bas des terres émergées, et les hôtels d’Aqaba, sur la mer Rouge, proposent des dîners du réveillon en musique live."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Jordanie : Amman | Time2Fest",
+      "description": "La Jordanie accueille 2027 à 21 h UTC : stars arabes sur scène dans les hôtels d’Amman, dîners au bord de la mer Morte et à Aqaba, bougies dans le Siq."
+    },
+    "kit": "jo"
+  },
+  "KG": {
+    "text": "Au Kirghizistan, le nouvel an traditionnel, c’est Nooruz, une fête du printemps le 21 mars. Mais la nuit du 1er janvier est aussi très aimée : c’est un jour férié, fêté en famille autour d’une grande table. Le plat principal est le beshbarmak de viande de cheval ou d’agneau, avec des manti, du poulet rôti et des boorsoki, des morceaux de pâte frite. On cuisine souvent ensemble, avec de vieux films soviétiques en fond. Tout le pays passe minuit à 18 h UTC, et le 7 janvier les orthodoxes fêtent Noël.\n\nÀ Bichkek, le grand sapin du pays, haut de 32 mètres, brille sur la place Ala-Too dès la mi-décembre, et tout près les enfants reçoivent des cadeaux d’Ayaz-Ata. Le 31 décembre, un concert y commence à 18 h, avec patinoire et espace restauration. Le feu d’artifice de la ville a été annulé deux années de suite à cause de la pollution de l’air.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le beshbarmak à la table de fête",
+        "text": "Le beshbarmak de cheval ou d’agneau est le plat phare du réveillon, servi avec des manti et des boorsoki."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Le sapin et Ayaz-Ata",
+        "text": "Dès la mi-décembre, le grand sapin du pays, haut de 32 mètres, brille sur la place Ala-Too à Bichkek, et les enfants reçoivent des cadeaux chez Ayaz-Ata."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Concert et patinoire",
+        "text": "Le 31 décembre, Ala-Too accueille un concert dès 18 h, avec patinoire et espace restauration. Le maire de Bichkek y a fêté 2025 avec les habitants."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Kirghizistan : Bichkek | Time2Fest",
+      "description": "Le Kirghizistan fête 2027 à 18 h UTC : un sapin de 32 mètres brille sur la place Ala-Too de Bichkek, et l’on sert beshbarmak, manti et boorsoki."
+    },
+    "kit": "kg"
+  },
+  "KM": {
+    "text": "Les Comores ont deux Nouvel An, tous deux fériés : le 1er janvier et le Nouvel An islamique, le 1er mouharram, dont la date change chaque année. Pour beaucoup de Comoriens, la fin décembre est un temps de fête : le 31, les uns vont au restaurant, les autres à la plage. La plus fréquentée est celle de Mitsamiouli, au nord de la Grande Comore, où familles, jeunes et aînés se retrouvent pour chanter et danser. Pour beaucoup, c’est un moment rare où toute la famille est réunie : les adultes ne travaillent pas, les enfants n’ont pas école. La fin d’année est aussi la saison des mariages.\n\nÀ Moroni, on réveillonne dans les hôtels et les restaurants autour d’un dîner de fête, en réservant sa table à l’avance ; certains fêtent le 1er janvier à la maison, en famille. La nuit du Nouvel An, des patrouilles de police sillonnent la capitale et veillent sur les routes et les plages.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "À la plage en famille",
+        "text": "Le 31 décembre et le 1er janvier, les Comoriens vont à la mer. La plage de Mitsamiouli est la plus animée : familles, jeunes et aînés chantent et dansent."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Dîner au restaurant",
+        "text": "À Moroni, on réveillonne dans les hôtels et les restaurants autour d’un dîner de fête. Mieux vaut réserver sa table à l’avance."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Deux Nouvel An",
+        "text": "Le 1er janvier est férié. Le Nouvel An islamique, le 1er mouharram, l’est aussi, mais sa date change chaque année avec le calendrier lunaire."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Comores : Moroni | Time2Fest",
+      "description": "Les Comores accueillent 2027 à 21 h UTC : dîners de fête dans les restaurants de Moroni, puis chants et danses en famille sur la plage de Mitsamiouli."
+    },
+    "kit": "km"
+  },
+  "KW": {
+    "text": "Au Koweït, le 1er janvier est un jour de repos : l'an dernier, le gouvernement a déclaré chômé le jeudi 1er janvier, et les administrations sont restées fermées jusqu'au dimanche. Le pays a aussi son propre Nouvel An, islamique, le 1er mouharram, et ses plus grandes fêtes sont la fête nationale et le jour de la Libération, les 25 et 26 février. Pas de grandes fêtes de rue avec feux d'artifice à minuit : les feux exigent une autorisation de sécurité préalable, et l'an dernier ceux des centres commerciaux et de la plage de Messilah ont été annulés.\n\nAlors on accueille l'année entre proches : au dîner d'un hôtel de Koweït City avec musique live jusqu'à 1 h, dans un centre commercial, dans un chalet au bord de la mer ou dans une ferme. Et en hiver, beaucoup partent dans le désert : de mi-novembre à mi-mars, des campements s'y dressent, avec du café préparé sur le feu.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Dîner à l'hôtel",
+        "text": "Le 31 décembre, les hôtels de Koweït City proposent des dîners avec groupe live, pianiste ou oud, de 20 h à 1 h."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Un camp dans le désert",
+        "text": "De mi-novembre à mi-mars, les Koweïtiens installent des camps dans le désert : café, feu, jeux traditionnels et longues discussions."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Un long week-end",
+        "text": "Le 1er janvier est férié ; l'an dernier, avec le week-end, cela a fait trois jours de repos. Les plus grandes fêtes viennent ensuite, les 25 et 26 février."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Koweït : Koweït City | Time2Fest",
+      "description": "Le Koweït accueille 2027 à 21 h UTC sans feux en ville : dîners en musique à l'hôtel, nuits en chalet au bord de mer et camps d'hiver dans le désert."
+    },
+    "kit": "kw"
+  },
+  "MV": {
+    "text": "Les Maldives fêtent deux Nouvel An fériés : le 1er janvier et le Nouvel An islamique, le 1er mouharram, dont la date change chaque année. Dans ce pays insulaire musulman, la nuit avant le 1er janvier ne remplit pas les rues de bruit, mais allume l’eau : les resorts de tous les atolls organisent leurs propres feux d’artifice et soirées musicales. Le ciel a aussi son mot à dire : en 2023, le programme nocturne officiel a été reporté à cause d’une alerte aux orages.\n\nLa capitale accueille l’année à Hulhumalé, une île gagnée sur la mer qui est un quartier de Malé. Ces deux dernières années, son Central Park a accueilli un festival : plats maldiviens des stands locaux, tambours boduberu, groupes live. Avant minuit s’élève un spectacle de drones, puis, à 19 h UTC, le feu d’artifice.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Festival à Hulhumalé",
+        "text": "Pendant quelques jours, le Central Park nourrit et divertit tous les visiteurs : plats maldiviens des stands locaux, tambours boduberu le jour et groupes live le soir."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Des drones, puis le feu d’artifice",
+        "text": "Pour accueillir 2026, environ 600 drones se sont élevés au-dessus du parc, dont 75 avec de la pyrotechnie. À minuit, cinq minutes de feu d’artifice qui attirent tout le Grand Malé."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Minuit sur une île-resort",
+        "text": "Les resorts de tout le pays accueillent l’année avec leurs propres feux d’artifice et de la musique au-dessus du lagon. Et le 1er janvier est férié : le premier jour de l’année, rien ne presse."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Maldives : Malé | Time2Fest",
+      "description": "Les Maldives accueillent 2027 à 19 h UTC : festival culinaire et tambours boduberu à Hulhumalé, drones, feu d’artifice à minuit et resorts illuminés."
+    },
+    "kit": "mv"
+  },
+  "SO": {
+    "text": "En Somalie, le 1er janvier est férié, tout comme le Nouvel An islamique, le 1er mouharram. Mais la nuit du réveillon ne connaît pas de grandes fêtes : en 2015, le ministère des Affaires religieuses a interdit les célébrations publiques de Noël et du Nouvel An, jugées étrangères à la culture islamique. Le Nouvel An propre aux Somaliens, le Dabshid, tombe en juillet : les jeunes sautent par-dessus un feu de joie pour franchir les difficultés de l’année à venir, et à Afgooye on organise l’Istunka, un combat simulé au bâton.\n\nÀ Mogadiscio, on accueille l’année à l’hôtel : début 2016, des musiciens ont joué devant de nombreux invités dans l’un des hôtels les plus connus de la capitale. Et le 16 juillet 2026, la ville a ouvert en cérémonie l’an 1117 du calendrier Dabshid.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Une soirée à l’hôtel",
+        "text": "À Mogadiscio, le réveillon se passe à l’hôtel : concert, musiciens et nombreux invités — c’est ainsi qu’on a accueilli l’année début 2016."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Un jour de congé face à l’océan",
+        "text": "Le 1er janvier est férié. Le lieu de détente préféré des habitants de Mogadiscio est la plage du Lido, au nord de la ville, avec ses restaurants de poisson et ses hôtels."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Le feu du Dabshid",
+        "text": "Le Nouvel An somalien arrive en juillet : on allume un feu de branchages et de foin, et les jeunes sautent par-dessus les flammes pour laisser derrière eux les difficultés de l’année."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Somalie : Mogadiscio | Time2Fest",
+      "description": "La Somalie accueille 2027 à 21 h UTC : un 1er janvier férié et calme, des soirées à l’hôtel à Mogadiscio, puis en juillet le Dabshid somalien et ses feux."
+    },
+    "kit": "so"
+  },
+  "TJ": {
+    "text": "Au Tadjikistan, le nouvel an traditionnel, c’est Navruz, une fête du printemps en mars. Pourtant, le 1er janvier est un jour férié, et la nuit qui le précède se passe surtout à la maison, en famille et entre amis. La table de fête mêle l’habituel et le local : l’osh, le plov tadjik, avec du thé vert, des sambusas et du qurutob, puis baklava, halva et chak-chak en dessert. Les enfants attendent Boboi Barfi, « Grand-père Neige » : ils lui récitent des poèmes et reçoivent des cadeaux. Tout le pays passe minuit à 19 h UTC.\n\nÀ Douchanbé, le grand sapin du pays, haut d’environ 30 mètres, se dresse sur la place Istiklol, entouré d’arches lumineuses, d’une maisonnette de Ded Moroz et d’une grande roue. À minuit, des milliers de personnes s’y rassemblent, certaines venues de régions lointaines, un concert joue et un grand feu d’artifice couronne la nuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Osh et sambusas à table",
+        "text": "Au Tadjikistan, la table du Nouvel An, c’est l’osh avec du thé vert, des sambusas et du qurutob, puis baklava, halva et chak-chak."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Des poèmes pour Boboi Barfi",
+        "text": "Les enfants récitent des poèmes à Boboi Barfi, « Grand-père Neige », et reçoivent en échange des cadeaux du Nouvel An."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Minuit place Istiklol",
+        "text": "À Douchanbé, des milliers de personnes fêtent le Nouvel An près du sapin de 30 mètres de la place Istiklol : concert, marché et grand feu d’artifice à minuit."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Tadjikistan : Douchanbé | Time2Fest",
+      "description": "Le Tadjikistan fête 2027 à 19 h UTC : feu d’artifice au-dessus du sapin de 30 mètres place Istiklol et, à la maison, osh, sambusas et Boboi Barfi."
+    },
+    "kit": "tj"
+  },
+  "TZ": {
+    "text": "En Tanzanie, le 1er janvier est férié, et pour beaucoup la nuit qui le précède commence à l’église. Le soir du 31 décembre, les paroisses de tout le pays se réunissent pour les offices du Nouvel An : on rend grâce pour l’année qui s’achève et on prie pour la paix et l’unité. De nombreuses communautés tiennent un mkesha, une veillée de chants et de prières de neuf heures du soir jusqu’à l’aube. D’autres partent faire la fête sur la plage ou en boîte, tandis que des alpinistes s’élancent à minuit vers le sommet du Kilimandjaro pour saluer le premier lever de soleil de l’année à 5 895 mètres.\n\nDar es Salaam n’a pas de décompte officiel unique : la ville fait la fête tout le long de sa côte. Pour le passage à 2026, une foule de tous âges a envahi Coco Beach, et à minuit un feu d’artifice a éclaté au-dessus de la ville, se reflétant dans l’océan Indien. La cathédrale Saint-Joseph peut être si pleine pour la messe du Nouvel An qu’une partie des fidèles suit l’office depuis l’extérieur.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Mkesha : une nuit à l’église",
+        "text": "Le soir du 31 décembre, les églises célèbrent des offices d’action de grâce, et beaucoup de communautés veillent toute la nuit en chants et en prières jusqu’à cinq heures du matin."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Minuit à Coco Beach",
+        "text": "L’endroit le plus animé du réveillon à Dar es Salaam est la plage publique de Coco Beach : familles et bandes d’amis s’y retrouvent, et à minuit des feux d’artifice illuminent la côte."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Aube sur le Kilimandjaro",
+        "text": "L’ascension du plus haut sommet d’Afrique, qui figure aussi sur les armoiries du pays, est calée pour partir à minuit et voir le premier lever de soleil de l’année au pic Uhuru."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Tanzanie : Dar es Salaam | Time2Fest",
+      "description": "La Tanzanie accueille 2027 à 21 h UTC : veillées dans les églises, foule et feux sur Coco Beach à Dar es Salaam, puis l’aube du 1er janvier au Kilimandjaro."
+    },
+    "kit": "tz"
+  },
+  "UG": {
+    "text": "En Ouganda, le 1er janvier est férié, et la saison des fêtes commence dès Noël : beaucoup de citadins rentrent dans leur village natal, et les grandes villes se vident nettement. Le réveillon y est surtout une nuit de prière : plus de 80 % des Ougandais sont chrétiens, et le 31 décembre les églises organisent des veillées « crossover » pour passer dans la nouvelle année. Nées de petites réunions de prière, elles rassemblent aujourd’hui des dizaines de milliers de personnes. À minuit, les feux d’artifice s’élèvent : avant 2025, la police a approuvé quelque 2 900 demandes d’hôtels, de lieux de divertissement et d’églises, chaque spectacle limité à cinq minutes.\n\nÀ Kampala, la « Nuit de prière » à Naguru réunit des milliers de fidèles, et les cathédrales de Lubaga et de Tous-les-Saints se remplissent aussi. Au Lubiri royal de Mengo, le royaume du Buganda organise le festival Enkuuka, avec concerts, des dizaines de milliers d’invités et la présence du kabaka, le roi du Buganda.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Veillée « crossover »",
+        "text": "Le 31 décembre, rejoins une veillée de nuit : prières et chants continuent jusqu’à minuit, et l’année change en pleine célébration."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Le festival Enkuuka",
+        "text": "Au Lubiri de Mengo, le royaume du Buganda clôt l’année avec le festival Enkuuka : scène, musiciens et des dizaines de milliers d’invités en présence du kabaka."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Cinq minutes de feux",
+        "text": "À minuit, les feux d’hôtels, de clubs et d’églises illuminent Kampala ; selon les règles de la police, chacun dure cinq minutes au plus."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Ouganda : Kampala | Time2Fest",
+      "description": "L’Ouganda accueille 2027 à 21 h UTC : veillées « crossover » dans les églises de Kampala, festival Enkuuka au Lubiri et feux de cinq minutes à minuit."
+    },
+    "kit": "ug"
+  },
+  "YT": {
+    "text": "Mayotte vit à l’heure UTC+3 : minuit y sonne à 21 h UTC. La plupart des habitants de l’île sont musulmans, et le Nouvel An se fête en famille au bord du lagon, l’un des plus grands du monde. Le cœur de la fête, c’est le voulé, le pique-nique sur la plage : poulet, brochettes, manioc, fruit à pain et bananes sur la braise, et de la musique. Autrefois, on se cotisait même pour des « festas » réservées aux grandes occasions comme la bonne année. Le 1er janvier, les plages du sud de l’île sont prises d’assaut chaque année.\n\nÀ Mamoudzou, on fait le plein de viande et de boissons pour le voulé avant la fête. De l’autre côté de l’eau, en Petite-Terre, qu’on rejoint en barge depuis la ville, près d’un millier de personnes en costumes faits main défilent au carnaval de Labattoir le 25 décembre. Après le cyclone Chido, en décembre 2024, la fête a été discrète, mais les pique-niques du 1er janvier ont tenu bon.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le voulé au bord de l’eau",
+        "text": "Réunis famille ou amis sur la plage, allume la braise et fais griller poulet, brochettes, manioc, fruit à pain et bananes, en musique."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Le 1er janvier au lagon",
+        "text": "Le 1er janvier, les familles filent vers les plages du sud, où veillent les secouristes et où des bénévoles nettoient le rivage."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Le carnaval de Labattoir",
+        "text": "En fin d’année, le 25 décembre, près d’un millier de personnes défilent dans Labattoir, en Petite-Terre, avec costumes faits main, chars décorés et chants de chaque groupe."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Mayotte : Mamoudzou | Time2Fest",
+      "description": "Mayotte fête 2027 à 21 h UTC. Le 1er janvier, les familles de Mamoudzou et de toute l’île font le voulé, pique-nique grillades et musique au bord du lagon."
+    },
+    "kit": "yt"
   }
 }

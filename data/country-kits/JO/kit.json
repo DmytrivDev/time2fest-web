@@ -1,0 +1,99 @@
+{
+  "code": "JO",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "amman",
+  "names": {
+    "uk": {
+      "name": "Йорданія",
+      "city": "Амман",
+      "cityIn": "в Аммані",
+      "caps": "ЙОРДАНІЯ"
+    },
+    "en": {
+      "name": "Jordan",
+      "city": "Amman",
+      "cityIn": "in Amman",
+      "caps": "JORDAN"
+    },
+    "es": {
+      "name": "Jordania",
+      "city": "Amán",
+      "cityIn": "en Amán",
+      "caps": "JORDANIA"
+    },
+    "fr": {
+      "name": "Jordanie",
+      "city": "Amman",
+      "cityIn": "à Amman",
+      "caps": "JORDANIE"
+    }
+  },
+  "picto": "M6 37 H34 M8 37 V12 M32 37 V12 M12.5 37 V24 M17 37 V24 M23 37 V24 M27.5 37 V24 M8 24 H32 M12.5 24 L20 19.5 L27.5 24 M8 19.5 H32 M13 19.5 V12 M27 19.5 V12 M7 12 H14 M8 12 L13.5 9 V12 M26 12 H33 M32 12 L26.5 9 V12 M16.5 19.5 V11.5 M23.5 19.5 V11.5 M16 11.5 H24 M16.5 11.5 L20 6 L23.5 11.5 M20 6 V5.6 M18.9 4.5 A1.1 1.1 0 1 0 21.1 4.5 A1.1 1.1 0 1 0 18.9 4.5",
+  "flagColors": [
+    "#CE1126",
+    "#007A3D",
+    "#FFFFFF"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Аммані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Amman"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Amán"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Amman"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
