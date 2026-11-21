@@ -314,8 +314,9 @@ describe('одне правило індексації сторінки краї
     const { countryIndexable } = await import('@/lib/prelaunch/siteData');
     expect(countryIndexable('JP', ['en', 'uk'], true)).toBe(true);
     expect(countryIndexable('AD', ['en', 'uk'], true)).toBe(false);
-    // Перемикач (рішення власника 2026-11-19): поки розповіді неповні, закриті всі країни.
-    expect(countryIndexable('JP', ['en', 'uk'])).toBe(false);
+    // Перемикач: з 2026-11-21 відкрито (опубліковані набори); `false` закриває всі країни.
+    expect(countryIndexable('JP', ['en', 'uk'])).toBe(true);
+    expect(countryIndexable('JP', ['en', 'uk'], false)).toBe(false);
     // Тексти задачі C — власні розповіді всіма чотирма мовами: описана країна відкрита й в іспанській збірці.
     expect(countryIndexable('JP', ['en', 'uk', 'es', 'fr'], true)).toBe(true);
     expect(countryIndexable('AD', ['en', 'uk', 'es', 'fr'], true)).toBe(false);

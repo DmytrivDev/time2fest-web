@@ -75,10 +75,11 @@ describe('метатексти сторінок країн — унікальн�
 });
 
 describe('sitemap і robots', () => {
-  it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті — 119 × 4 (8 + 111 описаних країн)', () => {
-    expect(files.openRoutes(ALL)).toEqual(routes.STATIC_ROUTES);
-    expect(files.sitemapXml(ALL).count).toBe(32);
-    expect(files.sitemapXml(ALL).text).not.toContain('/country/');
+  it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті (типово з 2026-11-21) — 119 × 4 (8 + 111 описаних країн)', () => {
+    expect(files.openRoutes(ALL, false)).toEqual(routes.STATIC_ROUTES);
+    expect(files.sitemapXml(ALL, false).count).toBe(32);
+    expect(files.sitemapXml(ALL, false).text).not.toContain('/country/');
+    expect(files.openRoutes(ALL)).toEqual(files.openRoutes(ALL, true));
     const open = files.openRoutes(ALL, true);
     expect(open).toHaveLength(119);
     for (const r of routes.STATIC_ROUTES) expect(open).toContain(r);

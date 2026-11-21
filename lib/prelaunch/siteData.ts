@@ -4,6 +4,8 @@ import storiesEs from '@/data/prelaunch/content/es.json';
 import storiesFr from '@/data/prelaunch/content/fr.json';
 import storiesUk from '@/data/prelaunch/content/uk.json';
 import inCountryJson from '@/content/prelaunch/in-country.json';
+import scenesJson from '@/content/prelaunch/scenes/index.json';
+import mediaJson from '@/data/prelaunch/media.json';
 import namesEn from '@/data/prelaunch/names/en.json';
 import namesEs from '@/data/prelaunch/names/es.json';
 import namesFr from '@/data/prelaunch/names/fr.json';
@@ -53,14 +55,24 @@ const OWN_STORIES: Partial<Record<Locale, Stories>> = {
   fr: storiesFr as Stories,
 };
 
+const SCENES = (scenesJson as { scenes: Record<string, unknown> }).scenes;
+const MEDIA = (mediaJson as { items: Record<string, unknown> }).items;
+
 /**
- * Одне правило «сторінку країни відкрити пошуковикам» (план, розділ 8; звіт SEO): є власна розповідь кожною мовою
- * цієї збірки. Інакше сторінка країни — `noindex` і поза `sitemap` (усіма мовами однаково).
+ * Одне правило «сторінку країни відкрити пошуковикам» (план, розділ 8; рішення власника 2026-11-21): опубліковано набір
+ * головного поясу — власна розповідь із позначкою набору (`kit`) кожною мовою цієї збірки, сцена й фото країни.
+ * Інакше сторінка країни — `noindex` і поза `sitemap` (усіма мовами однаково). Те саме правило — `openRoutes`
+ * у `scripts/prelaunch/seo-files.mjs`.
  */
 export function countryIndexable(
   iso: string,
   locales: readonly Locale[] = SITE_LOCALES,
   enabled: boolean = COUNTRY_PAGES_INDEXED,
 ): boolean {
-  return enabled && locales.every((l) => Boolean(OWN_STORIES[l]?.[iso]));
+  return (
+    enabled &&
+    locales.every((l) => Boolean((OWN_STORIES[l]?.[iso] as { kit?: string } | undefined)?.kit)) &&
+    Boolean(SCENES[iso]) &&
+    Boolean(MEDIA[`country:${iso}`])
+  );
 }

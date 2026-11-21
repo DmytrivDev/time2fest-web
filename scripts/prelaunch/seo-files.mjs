@@ -16,8 +16,9 @@ export const localePath = (locale, route) =>
   locale === DEFAULT_LOCALE ? route : `/${locale}${route}`;
 
 /**
- * Відкриті сторінки (SEO-звіт, розділ 6): головна, список країн, пас, тости, документи — і країни з власною
- * розповіддю кожною мовою збірки (те саме правило, що `countryIndexable` у `lib/prelaunch/siteData.ts`).
+ * Відкриті сторінки (SEO-звіт, розділ 6): головна, список країн, пас, тости, документи — і країни з опублікованим
+ * набором головного поясу: розповідь із позначкою `kit` кожною мовою збірки, сцена й фото (те саме правило, що
+ * `countryIndexable` у `lib/prelaunch/siteData.ts`; рішення власника 2026-11-21).
  */
 export function openRoutes(locales, countriesIndexed = COUNTRY_PAGES_INDEXED) {
   const countries = readJson('data/prelaunch/countries.json').countries;
@@ -25,8 +26,10 @@ export function openRoutes(locales, countriesIndexed = COUNTRY_PAGES_INDEXED) {
     const file = path.join(root, 'data', 'prelaunch', 'content', `${l}.json`);
     return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
   });
+  const scenes = readJson('content/prelaunch/scenes/index.json').scenes;
+  const media = readJson('data/prelaunch/media.json').items;
   const described = Object.keys(countries)
-    .filter((iso) => stories.every((s) => s[iso]))
+    .filter((iso) => stories.every((s) => s[iso]?.kit) && scenes[iso] && media[`country:${iso}`])
     .sort();
   if (!countriesIndexed) return [...STATIC_ROUTES];
   return [...STATIC_ROUTES, ...described.map((iso) => `/country/${countries[iso].urlSlug}/`)];
