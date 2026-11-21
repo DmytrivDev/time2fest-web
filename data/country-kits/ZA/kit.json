@@ -1,0 +1,99 @@
+{
+  "code": "ZA",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "johannesburg",
+  "names": {
+    "uk": {
+      "name": "Південна Африка",
+      "city": "Йоганнесбург",
+      "cityIn": "у Йоганнесбурзі",
+      "caps": "ПІВДЕННА АФРИКА"
+    },
+    "en": {
+      "name": "South Africa",
+      "city": "Johannesburg",
+      "cityIn": "in Johannesburg",
+      "caps": "SOUTH AFRICA"
+    },
+    "es": {
+      "name": "Sudáfrica",
+      "city": "Johannesburgo",
+      "cityIn": "en Johannesburgo",
+      "caps": "SUDÁFRICA"
+    },
+    "fr": {
+      "name": "Afrique du Sud",
+      "city": "Johannesburg",
+      "cityIn": "à Johannesburg",
+      "caps": "AFRIQUE DU SUD"
+    }
+  },
+  "picto": "M1.8 26.2 L6 23.4 L9.2 18.8 L11.6 12.6 L13.6 17 L15.6 18 L16.6 16.6 L17 13.4 L19.2 13 L19.6 11.8 L29.8 10.6 L30.6 13.2 L31.8 17.2 L33 18.6 C33.6 14.2 37.6 13.2 38.2 17.4 C38.5 20 38 22.6 38.6 26.2 M3.5 29.4 Q6.5 28.2 9.5 29.4 Q12.5 30.6 15.5 29.4 Q18.5 28.2 21.5 29.4 Q24.5 30.6 27.5 29.4 Q30.5 28.2 33.5 29.4 Q35.5 30.2 37 29.6 M7.5 33 Q10.5 31.8 13.5 33 Q16.5 34.2 19.5 33 Q22.5 31.8 25.5 33 Q28.5 34.2 31.5 33",
+  "flagColors": [
+    "#007749",
+    "#FFB81C",
+    "#E03C31"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Йоганнесбурзі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Johannesburg"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Johannesburgo"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Johannesburg"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

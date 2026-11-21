@@ -2557,6 +2557,22 @@
         "x": 50,
         "y": 50
       }
+    },
+    "country:ZA": {
+      "src": "/media/photos/cape-town.webp",
+      "alt": {
+        "uk": "Новорічний салют над набережною V&A Waterfront у Кейптауні",
+        "en": "New Year fireworks over the V&A Waterfront in Cape Town",
+        "es": "Fuegos artificiales de Año Nuevo sobre el V&A Waterfront de Ciudad del Cabo",
+        "fr": "Feu d’artifice du Nouvel An au-dessus du V&A Waterfront au Cap"
+      },
+      "author": "Olga Ernst",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Year%27s_Eve_at_V%26A_Waterfront,_Cape_Town_(2017).jpg",
+      "position": {
+        "x": 45,
+        "y": 40
+      }
     }
   }
 }

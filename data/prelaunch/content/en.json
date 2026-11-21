@@ -4098,5 +4098,33 @@
       "description": "South Sudan greets 2027 at 22:00 UTC: night services in Juba's churches, prayers for a peaceful year and a quiet night without fireworks on the White Nile."
     },
     "kit": "ss"
+  },
+  "ZA": {
+    "text": "In South Africa the New Year arrives at the height of summer, and 1 January is a public holiday. On the evening of 31 December people hold a braai, grilling meat over an open fire, and at midnight fireworks go up all over the country. In Cape Town the party on the V&A Waterfront is free, from 6 pm until 1 am, and at the stroke of midnight a five-minute fireworks show lights up the harbour. Yet Cape Town's biggest celebration comes on 2 January, the «Second New Year»: thousands of minstrels in bright costumes and with umbrellas march through the city to the beat of the ghoema drum. The day goes back to the time of slavery, when enslaved people were given 2 January off.\n\nIn Johannesburg fireworks are allowed only from 11 pm to 1 am, so the sky over the city flares up right around midnight. And for the arrival of 2025, the 269-metre Hillbrow Tower lit up at midnight with the words «Happy New Year».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over the harbour",
+        "text": "In Cape Town the party on the V&A Waterfront is free, and at midnight fireworks light up the harbour for five minutes."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "A braai under the sky",
+        "text": "New Year's Eve falls in midsummer and often means a braai, meat grilled over a fire, with fireworks flaring across the country at midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "The Second New Year",
+        "text": "On 2 January Cape Town holds its carnival: up to 13,000 minstrels in bright costumes, with umbrellas and the ghoema drum."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in South Africa: Johannesburg | Time2Fest",
+      "description": "South Africa greets 2027 at 22:00 UTC with midsummer braais, a midnight fireworks show over Cape Town's harbour and the Second New Year carnival on 2 January."
+    },
+    "kit": "za"
   }
 }

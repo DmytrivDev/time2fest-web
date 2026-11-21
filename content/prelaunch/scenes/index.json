@@ -900,6 +900,12 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#2c393a"
+    },
+    "ZA": {
+      "src": "/scenes/ZA-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

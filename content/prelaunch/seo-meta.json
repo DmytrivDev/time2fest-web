@@ -2376,6 +2376,24 @@
         "title": "Nouvel An au Soudan du Sud : Djouba | Time2Fest",
         "description": "Le Soudan du Sud accueille 2027 à 22 h UTC : offices de nuit dans les églises de Djouba, prières pour une année de paix, nuit sans feux sur le Nil Blanc."
       }
+    },
+    "ZA": {
+      "uk": {
+        "title": "Новий рік у Південній Африці: Йоганнесбург | Time2Fest",
+        "description": "Південна Африка зустрічає 2027 рік о 22:00 UTC: браай посеред літа, салют опівночі над гаванню Кейптауна й карнавал «Другий Новий рік» 2 січня."
+      },
+      "en": {
+        "title": "New Year in South Africa: Johannesburg | Time2Fest",
+        "description": "South Africa greets 2027 at 22:00 UTC with midsummer braais, a midnight fireworks show over Cape Town's harbour and the Second New Year carnival on 2 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Sudáfrica: Johannesburgo | Time2Fest",
+        "description": "Sudáfrica recibe 2027 a las 22:00 UTC con braais de verano, fuegos a medianoche sobre el puerto de Ciudad del Cabo y el carnaval del Segundo Año Nuevo."
+      },
+      "fr": {
+        "title": "Nouvel An en Afrique du Sud : Johannesburg | Time2Fest",
+        "description": "L’Afrique du Sud fête 2027 à 22 h UTC : braais d’été, feu d’artifice à minuit sur le port du Cap et carnaval du Second Nouvel An le 2 janvier."
+      }
     }
   }
 }

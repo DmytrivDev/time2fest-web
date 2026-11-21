@@ -4098,5 +4098,33 @@
       "description": "Sudán del Sur recibe 2027 a las 22:00 UTC: servicios nocturnos en las iglesias de Yuba, oraciones por un año de paz y una noche sin fuegos junto al Nilo Blanco."
     },
     "kit": "ss"
+  },
+  "ZA": {
+    "text": "En Sudáfrica el Año Nuevo llega en pleno verano, y el 1 de enero es festivo. La tarde del 31 de diciembre se hace un braai, carne a la brasa al aire libre, y a medianoche se lanzan fuegos artificiales por todo el país. En Ciudad del Cabo la fiesta del V&A Waterfront es gratuita, de las 18:00 a la 1:00, y justo a medianoche un espectáculo de fuegos de cinco minutos ilumina el puerto. Pero la gran fiesta de Ciudad del Cabo llega el 2 de enero, el «Segundo Año Nuevo»: miles de músicos con trajes de colores y sombrillas desfilan por la ciudad al ritmo del tambor ghoema. El día nació en tiempos de la esclavitud, cuando a los esclavos se les daba libre el 2 de enero.\n\nEn Johannesburgo los fuegos artificiales solo se permiten de las 23:00 a la 1:00, así que el cielo de la ciudad se enciende justo alrededor de la medianoche. Y para recibir 2025, la torre Hillbrow, de 269 metros, se iluminó a medianoche con las palabras «Happy New Year».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el puerto",
+        "text": "En Ciudad del Cabo la fiesta del V&A Waterfront es gratuita, y a medianoche los fuegos iluminan el puerto durante cinco minutos."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Un braai al aire libre",
+        "text": "La Nochevieja cae en pleno verano y suele ser un braai, carne a la brasa, con fuegos artificiales por todo el país a medianoche."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "El Segundo Año Nuevo",
+        "text": "El 2 de enero Ciudad del Cabo celebra su carnaval: hasta 13 000 músicos con trajes de colores, sombrillas y el tambor ghoema."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Sudáfrica: Johannesburgo | Time2Fest",
+      "description": "Sudáfrica recibe 2027 a las 22:00 UTC con braais de verano, fuegos a medianoche sobre el puerto de Ciudad del Cabo y el carnaval del Segundo Año Nuevo."
+    },
+    "kit": "za"
   }
 }

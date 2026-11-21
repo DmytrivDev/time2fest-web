@@ -4098,5 +4098,33 @@
       "description": "Le Soudan du Sud accueille 2027 à 22 h UTC : offices de nuit dans les églises de Djouba, prières pour une année de paix, nuit sans feux sur le Nil Blanc."
     },
     "kit": "ss"
+  },
+  "ZA": {
+    "text": "En Afrique du Sud, le Nouvel An tombe en plein été, et le 1er janvier est férié. Le soir du 31 décembre, on fait un braai, de la viande grillée au feu de bois en plein air, et à minuit les feux d’artifice partent dans tout le pays. Au Cap, la fête du V&A Waterfront est gratuite, de 18 h à 1 h, et à minuit pile un feu d’artifice de cinq minutes illumine le port. Mais la grande fête du Cap arrive le 2 janvier, le « Second Nouvel An » : des milliers de musiciens en costumes éclatants, ombrelles à la main, défilent dans la ville au son du tambour ghoema. Ce jour remonte à l’époque de l’esclavage, quand les esclaves avaient congé le 2 janvier.\n\nÀ Johannesburg, les feux d’artifice ne sont permis que de 23 h à 1 h : le ciel de la ville s’embrase donc autour de minuit. Et pour l’arrivée de 2025, la tour Hillbrow, haute de 269 mètres, s’est illuminée à minuit des mots « Happy New Year ».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur le port",
+        "text": "Au Cap, la fête du V&A Waterfront est gratuite, et à minuit le feu d’artifice illumine le port pendant cinq minutes."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Un braai en plein air",
+        "text": "Le réveillon tombe en plein été et rime souvent avec braai, viande grillée au feu, avant les feux d’artifice de minuit dans tout le pays."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Le Second Nouvel An",
+        "text": "Le 2 janvier, Le Cap fête son carnaval : jusqu’à 13 000 musiciens en costumes éclatants, avec ombrelles et tambour ghoema."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Afrique du Sud : Johannesburg | Time2Fest",
+      "description": "L’Afrique du Sud fête 2027 à 22 h UTC : braais d’été, feu d’artifice à minuit sur le port du Cap et carnaval du Second Nouvel An le 2 janvier."
+    },
+    "kit": "za"
   }
 }
