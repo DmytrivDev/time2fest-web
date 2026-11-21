@@ -2418,5 +2418,89 @@
       "description": "Vanuatu welcomes 2027 at 13:00 UTC. Port Vila marks midnight with fireworks and church services, while island groups tour villages singing Bonne année."
     },
     "kit": "vu"
+  },
+  "BN": {
+    "text": "Brunei is a sultanate where Islam is the state religion and Muslims make up about 80% of its nearly 460,000 people. Public Christmas celebrations have been banned here since 2015, while New Year's Day is a public holiday — and a double one: on 1 January 1984 Brunei became fully independent. On the first Friday of January, imams in mosques across the country urge the faithful to give thanks for the past year and become better people. The whole country reaches midnight at 16:00 UTC.\n\nIn Bandar Seri Begawan, as everywhere in Brunei, the New Year brings Sultan Hassanal Bolkiah's address, broadcast nationwide: he sums up the year, speaks about young people and jobs, and wishes a happy year to all Bruneians, even those abroad. And 2027 has been named Visit Brunei Year, coinciding with the Sultan's Diamond Jubilee.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "A double holiday on 1 January",
+        "text": "The first day of the year in Brunei is a holiday and also the anniversary of the 1984 Proclamation of Independence. So the new year begins as the country's birthday too."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "The Sultan's address",
+        "text": "On New Year's Day Sultan Hassanal Bolkiah gives an address — on peace, young people and the country's future — and wishes a happy year to all Bruneians, even those abroad."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Taking stock at the mosque",
+        "text": "At the first Friday prayers of the year, imams across the country invite worshippers to look back on the past year, give thanks for it and resolve to become better."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Brunei: Bandar Seri Begawan | Time2Fest",
+      "description": "Brunei greets 2027 at 16:00 UTC: 1 January is a double holiday here, New Year and Independence anniversary, marked by the Sultan's New Year address."
+    },
+    "kit": "bn"
+  },
+  "PW": {
+    "text": "Palau lives in a single time zone, UTC+9. Two-thirds of its people live on Koror, so New Year's Eve mostly happens there, at parties in restaurants and festive venues in Koror and other states. Sources mention no big city fireworks at New Year: Palau's main fireworks boom on 1 October, Independence Day, at the Capitol. New Year's Day is a public holiday, easy to spend on the water among the Rock Islands, a UNESCO World Heritage Site.\n\nThe holidays here are above all about family: relatives cook together and gather around a table of Palauan staples such as taro, cassava, fish and pork, and count down to midnight together. Nearly eight in ten Palauans are Christian, so many go to church on New Year's Eve or New Year's Day. The capital, Ngerulmud, is the least-populous in the world: no one lives there permanently.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "A quiet night in Koror",
+        "text": "People see in the New Year at parties in restaurants and festive venues in Koror and other states. The night usually passes calmly, without big incidents."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "A pledge in the passport",
+        "text": "Every visitor to Palau signs the Palau Pledge, a promise to the islands’ children to protect their nature. Its text is stamped right into the passport."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "New Year’s Day on the water",
+        "text": "New Year’s Day is a day off, perfect for the Rock Islands. Hundreds of green mushroom-shaped islets stand in the lagoon between Koror and Peleliu."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Ngerulmud, Palau | Time2Fest",
+      "description": "Palau rings in 2027 at midnight UTC+9: a quiet night of parties in Koror, the Capitol in Ngerulmud, the Palau Pledge in the passport and the Rock Islands."
+    },
+    "kit": "pw"
+  },
+  "TL": {
+    "text": "Timor-Leste lives in a single time zone, UTC+9, and almost all of its people are Catholic, so the year-end holidays follow one another: Christmas, and on 31 December another public holiday, National Heroes Day. At midnight people count down the last seconds of the year, set off fireworks and party, and New Year's Day is a day off. In early 2024 the President thanked the people and the security forces for a calm Christmas and New Year.\n\nThe capital welcomed 2024 with a celebration at the State Palace and a speech by the President, and the night passed calmly. Above the bay, on Cape Fatucama, stands the 27-metre Cristo Rei statue on a globe — 570 steps lead up to it.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Countdown and fireworks",
+        "text": "At midnight people count down the last seconds of the year, set off fireworks and party. New Year’s Day is a public holiday."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Heroes Day on 31 December",
+        "text": "The last day of the year is a public holiday, National Heroes Day. It was on 31 December 1978 that Nicolau Lobato, the country’s first prime minister, was killed."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "570 steps to Cristo Rei",
+        "text": "The first morning of the year is lovely on Cape Fatucama: 570 steps with 14 Stations of the Cross lead to the statue, with views of Dili Bay and Atauro Island."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Dili, Timor-Leste | Time2Fest",
+      "description": "Timor-Leste rings in 2027 at midnight UTC+9: a countdown and fireworks in Dili, National Heroes Day on 31 December and 570 steps up to Cristo Rei."
+    },
+    "kit": "tl"
   }
 }

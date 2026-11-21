@@ -1597,6 +1597,54 @@
         "x": 35,
         "y": 50
       }
+    },
+    "country:BN": {
+      "src": "/media/photos/bandar-seri-begawan.webp",
+      "alt": {
+        "uk": "Мечеть Омара Алі Сайфуддіна вночі: золотий купол, мінарет і королівський човен на лагуні у віддзеркаленні",
+        "en": "The Omar Ali Saifuddien Mosque at night: golden dome, minaret and the royal barge reflected in the lagoon",
+        "es": "La mezquita Omar Ali Saifuddien de noche: cúpula dorada, minarete y la barcaza real reflejada en la laguna",
+        "fr": "La mosquée Omar Ali Saifuddien la nuit : dôme doré, minaret et barge royale se reflétant dans le lagon"
+      },
+      "author": "Muhammad NurHanif bin Haji Med Ali",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sultan_Omar_Ali_Saifuddin_Mosque,_Brunei_Darussalam.jpg",
+      "position": {
+        "x": 60,
+        "y": 55
+      }
+    },
+    "country:PW": {
+      "src": "/media/photos/koror.webp",
+      "alt": {
+        "uk": "Захід сонця над лагуною Корора й Скелястими островами, Палау",
+        "en": "Sunset over the Koror lagoon and the Rock Islands, Palau",
+        "es": "Atardecer sobre la laguna de Koror y las islas Rocosas, Palaos",
+        "fr": "Coucher de soleil sur le lagon de Koror et les îles Chelbacheb, Palaos"
+      },
+      "author": "Dbuges33",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Palau_Sunset.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:TL": {
+      "src": "/media/photos/dili.webp",
+      "alt": {
+        "uk": "Захід сонця над затокою Ділі й горами Тимору",
+        "en": "Sunset over Dili Bay and the mountains of Timor",
+        "es": "Atardecer sobre la bahía de Dili y las montañas de Timor",
+        "fr": "Coucher de soleil sur la baie de Dili et les montagnes de Timor"
+      },
+      "author": "Graham Crumb",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dili_Sunset_(Imagicity_84).jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
     }
   }
 }

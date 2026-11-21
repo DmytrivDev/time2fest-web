@@ -2418,5 +2418,89 @@
       "description": "Le Vanuatu fête 2027 à 13 h UTC. À Port-Vila, feu d’artifice et messe de minuit ; dans les îles, des groupes font le tour des villages en chantant Bonne année."
     },
     "kit": "vu"
+  },
+  "BN": {
+    "text": "Brunei est un sultanat dont l’islam est la religion d’État ; les musulmans y représentent environ 80 % de près de 460 000 habitants. Les célébrations publiques de Noël y sont interdites depuis 2015, tandis que le jour de l’An est férié, et doublement : le 1er janvier 1984, Brunei est devenu pleinement indépendant. Le premier vendredi de janvier, les imams des mosquées de tout le pays invitent à remercier pour l’année écoulée et à devenir meilleur. Tout le pays passe minuit à 16 h UTC.\n\nÀ Bandar Seri Begawan, comme partout à Brunei, le Nouvel An s’accompagne du discours du sultan Hassanal Bolkiah, diffusé dans tout le pays : il dresse le bilan de l’année, parle de la jeunesse et de l’emploi, et souhaite une bonne année à tous les Brunéiens, même à ceux de l’étranger. Et 2027 a été proclamée Année de la visite de Brunei, en même temps que le jubilé de diamant du sultan.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sun",
+        "title": "Double fête le 1er janvier",
+        "text": "Le premier jour de l’année est férié à Brunei et marque aussi l’anniversaire de la proclamation d’indépendance de 1984. L’année commence donc aussi comme l’anniversaire du pays."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Le discours du sultan",
+        "text": "Le jour de l’An, le sultan Hassanal Bolkiah prononce un discours sur la paix, la jeunesse et l’avenir du pays, et souhaite une bonne année à tous les Brunéiens, même à ceux de l’étranger."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Bilan de l’année à la mosquée",
+        "text": "Lors de la première prière du vendredi de l’année, les imams de tout le pays invitent à revenir sur l’année écoulée, à en remercier et à se promettre de devenir meilleur."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Brunei : Bandar Seri Begawan | Time2Fest",
+      "description": "Brunei fête 2027 à 16 h UTC : le 1er janvier y est une double fête, Nouvel An et anniversaire de l’indépendance, avec le discours du sultan à la nation."
+    },
+    "kit": "bn"
+  },
+  "PW": {
+    "text": "Palaos vit sur un seul fuseau horaire, UTC+9. Les deux tiers des habitants vivent à Koror, si bien que la nuit du Nouvel An s’y passe surtout, lors de fêtes dans les restaurants et les lieux festifs de Koror et d’autres États. Les sources ne mentionnent pas de grand feu d’artifice urbain au Nouvel An : le principal éclate le 1er octobre, jour de l’Indépendance, près du Capitole. Le 1er janvier est férié, idéal pour une journée sur l’eau parmi les îles Rock, inscrites au patrimoine mondial de l’UNESCO.\n\nIci, les fêtes sont avant tout familiales : on cuisine ensemble et l’on se retrouve autour d’une table de taro, manioc, poisson et porc, bases de la cuisine palaosienne, pour faire ensemble le compte à rebours. Près de huit Palaosiens sur dix sont chrétiens, et beaucoup vont à l’église le soir du réveillon ou le 1er janvier. La capitale, Ngerulmud, est la moins peuplée du monde : personne n’y vit en permanence.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Une nuit calme à Koror",
+        "text": "On accueille le Nouvel An lors de fêtes dans les restaurants et les lieux festifs de Koror et d’autres États. La nuit se passe en général dans le calme, sans incident."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Une promesse dans le passeport",
+        "text": "Chaque visiteur de Palaos signe le Palau Pledge, une promesse faite aux enfants des îles de protéger leur nature. Son texte est tamponné dans le passeport."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Le 1er janvier sur l’eau",
+        "text": "Le 1er janvier est férié, idéal pour les îles Rock. Des centaines d’îlots verts en forme de champignon se dressent dans le lagon entre Koror et Peleliu."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Ngerulmud (Palaos) | Time2Fest",
+      "description": "Palaos entre en 2027 à minuit UTC+9 : une nuit calme de fêtes à Koror, le Capitole de Ngerulmud, le Palau Pledge dans le passeport et les îles Rock."
+    },
+    "kit": "pw"
+  },
+  "TL": {
+    "text": "Le Timor-Leste vit sur un seul fuseau horaire, UTC+9, et presque tous ses habitants sont catholiques : les fêtes de fin d’année s’enchaînent, Noël puis, le 31 décembre, un autre jour férié, la Journée des héros nationaux. À minuit, on compte les dernières secondes de l’année, on tire des feux d’artifice et on fait la fête ; le 1er janvier est chômé. Début 2024, le président a remercié la population et les forces de sécurité pour un Noël et un Nouvel An calmes.\n\nLa capitale a accueilli 2024 par une fête au palais d’État avec un discours du président, et la nuit s’est passée dans le calme. Au-dessus de la baie, sur le cap Fatucama, se dresse le Cristo Rei de 27 mètres posé sur un globe, auquel mènent 570 marches.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Compte à rebours et feux",
+        "text": "À minuit, on compte les dernières secondes de l’année, on tire des feux d’artifice et on fait la fête. Le 1er janvier est férié."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Journée des héros, le 31/12",
+        "text": "Le dernier jour de l’année est férié : la Journée des héros nationaux. C’est un 31 décembre, en 1978, qu’a été tué Nicolau Lobato, premier Premier ministre du pays."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "570 marches vers le Cristo Rei",
+        "text": "Le premier matin de l’année se savoure au cap Fatucama : 570 marches et 14 stations du chemin de croix mènent à la statue, face à la baie de Dili et à l’île d’Atauro."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Dili (Timor-Leste) | Time2Fest",
+      "description": "Le Timor-Leste entre en 2027 à minuit UTC+9 : compte à rebours et feux à Dili, Journée des héros le 31 décembre et 570 marches vers le Cristo Rei."
+    },
+    "kit": "tl"
   }
 }

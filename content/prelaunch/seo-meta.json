@@ -1296,6 +1296,60 @@
         "title": "Nouvel An au Vanuatu : Port-Vila | Time2Fest",
         "description": "Le Vanuatu fête 2027 à 13 h UTC. À Port-Vila, feu d’artifice et messe de minuit ; dans les îles, des groupes font le tour des villages en chantant Bonne année."
       }
+    },
+    "BN": {
+      "uk": {
+        "title": "Новий рік у Брунеї: Бандар-Сері-Бегаван | Time2Fest",
+        "description": "Бруней зустрічає 2027 рік о 16:00 UTC: 1 січня тут подвійне свято — Новий рік і річниця незалежності, а султан звертається до народу з новорічною промовою."
+      },
+      "en": {
+        "title": "New Year in Brunei: Bandar Seri Begawan | Time2Fest",
+        "description": "Brunei greets 2027 at 16:00 UTC: 1 January is a double holiday here, New Year and Independence anniversary, marked by the Sultan's New Year address."
+      },
+      "es": {
+        "title": "Año Nuevo en Brunéi: Bandar Seri Begawan | Time2Fest",
+        "description": "Brunéi recibe 2027 a las 16:00 UTC: el 1 de enero es aquí doble fiesta, Año Nuevo y aniversario de la independencia, con el mensaje del sultán."
+      },
+      "fr": {
+        "title": "Nouvel An à Brunei : Bandar Seri Begawan | Time2Fest",
+        "description": "Brunei fête 2027 à 16 h UTC : le 1er janvier y est une double fête, Nouvel An et anniversaire de l’indépendance, avec le discours du sultan à la nation."
+      }
+    },
+    "PW": {
+      "uk": {
+        "title": "Новий рік у Нгерулмуді, Палау | Time2Fest",
+        "description": "Палау зустрічає 2027 рік опівночі за UTC+9: тиха ніч і вечірки в Корорі, Капітолій у Нгерулмуді, «Обіцянка Палау» в паспорті та свято на Скелястих островах."
+      },
+      "en": {
+        "title": "New Year in Ngerulmud, Palau | Time2Fest",
+        "description": "Palau rings in 2027 at midnight UTC+9: a quiet night of parties in Koror, the Capitol in Ngerulmud, the Palau Pledge in the passport and the Rock Islands."
+      },
+      "es": {
+        "title": "Año Nuevo en Ngerulmud, Palaos | Time2Fest",
+        "description": "Palaos recibe 2027 a medianoche UTC+9: una noche tranquila de fiestas en Koror, el Capitolio de Ngerulmud, el Compromiso de Palau y las Islas Rocosas."
+      },
+      "fr": {
+        "title": "Nouvel An à Ngerulmud (Palaos) | Time2Fest",
+        "description": "Palaos entre en 2027 à minuit UTC+9 : une nuit calme de fêtes à Koror, le Capitole de Ngerulmud, le Palau Pledge dans le passeport et les îles Rock."
+      }
+    },
+    "TL": {
+      "uk": {
+        "title": "Новий рік у Ділі, Тимор-Лешті | Time2Fest",
+        "description": "Тимор-Лешті зустрічає 2027 рік опівночі за UTC+9: відлік і феєрверки в Ділі, День національних героїв 31 грудня й 570 сходинок до статуї Крішту-Рей."
+      },
+      "en": {
+        "title": "New Year in Dili, Timor-Leste | Time2Fest",
+        "description": "Timor-Leste rings in 2027 at midnight UTC+9: a countdown and fireworks in Dili, National Heroes Day on 31 December and 570 steps up to Cristo Rei."
+      },
+      "es": {
+        "title": "Año Nuevo en Dili, Timor-Leste | Time2Fest",
+        "description": "Timor-Leste recibe 2027 a medianoche UTC+9: cuenta atrás y fuegos en Dili, el Día de los Héroes el 31 de diciembre y 570 escalones al Cristo Rei."
+      },
+      "fr": {
+        "title": "Nouvel An à Dili (Timor-Leste) | Time2Fest",
+        "description": "Le Timor-Leste entre en 2027 à minuit UTC+9 : compte à rebours et feux à Dili, Journée des héros le 31 décembre et 570 marches vers le Cristo Rei."
+      }
     }
   }
 }

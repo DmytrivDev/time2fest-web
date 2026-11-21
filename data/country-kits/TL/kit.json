@@ -1,0 +1,98 @@
+{
+  "code": "TL",
+  "zone": "UTC+9",
+  "zoneId": "utc+0900",
+  "cityId": "dili",
+  "names": {
+    "uk": {
+      "name": "Тимор-Лешті",
+      "city": "Ділі",
+      "cityIn": "у Ділі",
+      "caps": "ТИМОР-ЛЕШТІ"
+    },
+    "en": {
+      "name": "Timor-Leste",
+      "city": "Dili",
+      "cityIn": "in Dili",
+      "caps": "TIMOR-LESTE"
+    },
+    "es": {
+      "name": "Timor-Leste",
+      "city": "Dili",
+      "cityIn": "en Dili",
+      "caps": "TIMOR-LESTE"
+    },
+    "fr": {
+      "name": "Timor-Leste",
+      "city": "Dili",
+      "cityIn": "à Dili",
+      "caps": "TIMOR-LESTE"
+    }
+  },
+  "picto": "M8.5 38 H31.5 M11 38 V35.8 H29 V38 M14.6 35.8 L16 33.8 M25.4 35.8 L24 33.8 M15.2 31.2 A4.8 4.8 0 1 0 24.8 31.2 A4.8 4.8 0 1 0 15.2 31.2 M15.4 30 H24.6 M20 26.4 C17.4 28.4 17.4 34 20 36 M20 26.4 C22.6 28.4 22.6 34 20 36 M15.86 26.6 L14.89 19.7 L13.65 13.63 L12.27 8.66 L11.17 4.24 L12.27 3.42 L13.65 7.83 L17.38 11.7 L19.17 11.56 M20.83 11.56 L22.62 11.7 L26.62 9.21 L30.76 6.45 L31.59 7.14 L30.76 8.38 L27.45 11.97 L25.93 16.39 L24.83 21.08 L24.14 26.6 M18.1 9.49 A1.9 1.9 0 1 0 21.9 9.49 A1.9 1.9 0 1 0 18.1 9.49 M19.5 14.2 L19 25.8",
+  "flagColors": [
+    "#DC241F",
+    "#FFC726"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ділі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Dili"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Dili"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Dili"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

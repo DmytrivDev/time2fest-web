@@ -1,0 +1,98 @@
+{
+  "code": "PW",
+  "zone": "UTC+9",
+  "zoneId": "utc+0900",
+  "cityId": "ngerulmud",
+  "names": {
+    "uk": {
+      "name": "Палау",
+      "city": "Нгерулмуд",
+      "cityIn": "у Нгерулмуді",
+      "caps": "ПАЛАУ"
+    },
+    "en": {
+      "name": "Palau",
+      "city": "Ngerulmud",
+      "cityIn": "in Ngerulmud",
+      "caps": "PALAU"
+    },
+    "es": {
+      "name": "Palaos",
+      "city": "Ngerulmud",
+      "cityIn": "en Ngerulmud",
+      "caps": "PALAOS"
+    },
+    "fr": {
+      "name": "Palaos",
+      "city": "Ngerulmud",
+      "cityIn": "à Ngerulmud",
+      "caps": "PALAOS"
+    }
+  },
+  "picto": "M2 36 H38 M4 36 V25 H36 V36 M13 25 L20 21 L27 25 M15 25 V36 M18.3 25 V36 M21.7 25 V36 M25 25 V36 M14.5 25 V17 H25.5 V25 M14.5 17 C14.5 9.6 25.5 9.6 25.5 17 M18.5 11.8 V8.4 H21.5 V11.8 M20 8.4 V2.6 M20 2.8 H24.6 V5.8 H20 M7 28 V31.5 M10 28 V31.5 M30 28 V31.5 M33 28 V31.5",
+  "flagColors": [
+    "#4AADD6",
+    "#FFDE00"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нгерулмуді"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Ngerulmud"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Ngerulmud"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Ngerulmud"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
