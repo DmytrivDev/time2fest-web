@@ -4014,5 +4014,89 @@
       "description": "Ruanda recibe 2027 a las 22:00 UTC con misas por la noche, fuegos a medianoche junto al Centro de Convenciones de Kigali y comida familiar con regalos."
     },
     "kit": "rw"
+  },
+  "LB": {
+    "text": "En el Líbano el 1 de enero es festivo, y las fiestas se suceden una tras otra: Navidad el 25 de diciembre, Año Nuevo y, el 6 de enero, la Navidad de los armenios. La Nochevieja es sobre todo una cena con familia y amigos, con tabulé, hummus y kibbe en la mesa. Otros van a restaurantes y clubes, la fiesta suele durar hasta el amanecer y los fuegos artificiales suben toda la noche. A finales de 2025 los hoteles de Beirut y de las estaciones de esquí estaban llenos al 80–100 %.\n\nBeirut recibe el año con conciertos y fiestas, así que mesas y entradas se agotan pronto. En diciembre se encienden árboles en el centro, con mercadillos y conciertos. Y en 2018 National Geographic incluyó la noche de Beirut entre las diez mejores del mundo: miles de personas se reunían en la plaza Nejmeh junto a la torre del reloj de 1933, y hacia la medianoche estallaban los fuegos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cena en familia",
+        "text": "El Año Nuevo en el Líbano empieza a la mesa con familia y amigos: tabulé, hummus, kibbe y otros platos libaneses."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Una noche hasta el alba",
+        "text": "Restaurantes, clubes y conciertos siguen hasta la mañana; para la noche de 2023/24 se anunciaron unas 750 fiestas en el país. Reserva mesa con tiempo."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Mercadillos y luces",
+        "text": "En diciembre las ciudades brillan con árboles: mercadillos y conciertos en el centro de Beirut, fiesta junto al viejo puerto de Biblos y calles de Batrún llenas de luces."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en el Líbano: Beirut | Time2Fest",
+      "description": "El Líbano recibe 2027 a las 22:00 UTC: cena en familia con tabulé y kibbe, conciertos y clubes de Beirut hasta el alba, y luces de fiesta en Biblos y Batrún."
+    },
+    "kit": "lb"
+  },
+  "LS": {
+    "text": "En Lesoto el 1 de enero es festivo nacional, aunque el Año Nuevo propio de los basotos, Selemo sa Basotho, se celebra en agosto, cuando la naturaleza despierta tras el invierno. Diciembre y enero son la temporada de los regresos: los basotos que trabajan en Sudáfrica vuelven a casa por Navidad y Año Nuevo. Los reciben con cariño y buena comida, la familia se reúne y los niños esperan con ilusión los regalos.\n\nEn diciembre de 2025, la Rotonda Principal de Maseru se iluminó con luces festivas y fuentes de colores, y familias y grupos de amigos acudieron a verlas. Para el 31 de diciembre, el Gobierno anunció una fiesta nacional en la renovada plaza Makoanyane, desde las 18:00 hasta la medianoche.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "A casa por las fiestas",
+        "text": "Por Navidad y Año Nuevo, los basotos que trabajan en Sudáfrica vuelven con los suyos. Los espera buena comida, y a los niños, regalos."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Luces en la Rotonda Principal",
+        "text": "En diciembre de 2025, la rotonda del centro de Maseru se llenó de luces festivas y fuentes iluminadas. Al anochecer se reúnen aquí familias y amigos."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Hasta medianoche en la plaza",
+        "text": "Para el 31 de diciembre de 2025, el Gobierno anunció una fiesta nacional en la plaza Makoanyane de Maseru, de las 18:00 a medianoche. Consulta el programa de 2027 cuando se acerque la fecha."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Lesoto: Maseru | Time2Fest",
+      "description": "Lesoto recibe 2027 a las 22:00 UTC: los basotos que trabajan en Sudáfrica vuelven con su familia y Maseru brilla con las luces de su gran rotonda."
+    },
+    "kit": "ls"
+  },
+  "SS": {
+    "text": "En Sudán del Sur el Año Nuevo llega una semana después de Navidad, así que el final de diciembre es una larga temporada festiva: el 25 y el 26 de diciembre y el 1 de enero son feriados nacionales. Para muchos, lo central de la Nochevieja es la iglesia: el año se despide rezando en un servicio nocturno. En sus mensajes de Año Nuevo, los líderes de las iglesias piden que el año que empieza sea de paz, amor e integridad.\n\nYuba está a orillas del Nilo Blanco. A medianoche no hay fuegos artificiales de la ciudad: la policía los ha prohibido y pide recibir el año con calma. Esa noche hay agentes junto a las iglesias y en las calles para que el servicio y el regreso a casa sean seguros. Y un consejo de la capital: si sales en grupo, uno no bebe y lleva a los demás a casa.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un servicio nocturno",
+        "text": "Pasa las últimas horas del año en un servicio nocturno: en Yuba, esa noche hay policías junto a las iglesias para que todo transcurra en calma."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Un deseo de paz",
+        "text": "Los mensajes de Año Nuevo de las iglesias llaman a rezar por un año de paz, amor e integridad: suma ese deseo a tus felicitaciones."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Alguien sobrio al volante",
+        "text": "¿Salís en grupo? Acordad quién no bebe esta noche y lleva a todos a casa: es lo que aconsejaban en Yuba antes del Año Nuevo."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Sudán del Sur: Yuba | Time2Fest",
+      "description": "Sudán del Sur recibe 2027 a las 22:00 UTC: servicios nocturnos en las iglesias de Yuba, oraciones por un año de paz y una noche sin fuegos junto al Nilo Blanco."
+    },
+    "kit": "ss"
   }
 }

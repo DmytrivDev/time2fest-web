@@ -4014,5 +4014,89 @@
       "description": "Le Rwanda accueille 2027 à 22 h UTC : messes du soir, feu d’artifice à minuit pile au Centre de conventions de Kigali et repas de famille avec cadeaux."
     },
     "kit": "rw"
+  },
+  "LB": {
+    "text": "Au Liban, le 1er janvier est férié, et les fêtes s’enchaînent : Noël le 25 décembre, le Nouvel An, puis le 6 janvier le Noël arménien. Le réveillon, c’est d’abord un dîner en famille et entre amis, avec taboulé, houmous et kebbé sur la table. D’autres sortent au restaurant ou en club, la fête dure souvent jusqu’à l’aube et les feux d’artifice partent toute la nuit. Fin 2025, les hôtels de Beyrouth et des stations de ski étaient remplis à 80–100 %.\n\nBeyrouth accueille l’année en concerts et en soirées, alors tables et billets partent tôt. En décembre, des sapins s’allument au centre-ville, avec marchés de fête et concerts. Et en 2018, National Geographic a classé la nuit beyrouthine parmi les dix plus belles du monde : des milliers de personnes se réunissaient place de l’Étoile, près de la tour de l’horloge de 1933, et les feux d’artifice partaient vers minuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dîner en famille",
+        "text": "Au Liban, le Nouvel An commence à table en famille et entre amis : taboulé, houmous, kebbé et autres plats libanais."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Une nuit jusqu’à l’aube",
+        "text": "Restaurants, clubs et concerts continuent jusqu’au matin ; pour la nuit 2023/24, quelque 750 fêtes étaient prévues dans le pays. Réserve ta table tôt."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Marchés et lumières",
+        "text": "En décembre, les villes brillent de sapins : marchés et concerts au centre de Beyrouth, fête autour du vieux port de Byblos, rues de Batroun illuminées."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Liban : Beyrouth | Time2Fest",
+      "description": "Le Liban accueille 2027 à 22 h UTC : dîner en famille avec taboulé et kebbé, concerts et clubs de Beyrouth jusqu’à l’aube, lumières de fête à Byblos et Batroun."
+    },
+    "kit": "lb"
+  },
+  "LS": {
+    "text": "Au Lesotho, le 1er janvier est un jour férié, même si le Nouvel An propre aux Basothos, Selemo sa Basotho, se fête en août, quand la nature se réveille après l'hiver. Décembre et janvier sont la saison des retours : les Basothos qui travaillent en Afrique du Sud rentrent chez eux pour Noël et le Nouvel An. On les accueille avec chaleur et de bons plats, la famille se réunit et les enfants attendent les cadeaux avec impatience.\n\nEn décembre 2025, le grand rond-point de Maseru s'est paré de lumières festives et de fontaines colorées illuminées, et familles et bandes d'amis sont venues les admirer. Pour le 31 décembre, le gouvernement a annoncé une fête nationale sur la place Makoanyane rénovée, de 18 h jusqu'à minuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Rentrer pour les fêtes",
+        "text": "Pour Noël et le Nouvel An, les Basothos qui travaillent en Afrique du Sud rentrent auprès des leurs. De bons plats les attendent, et les enfants guettent les cadeaux."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Lumières du grand rond-point",
+        "text": "En décembre 2025, le rond-point du centre de Maseru s'est orné de lumières festives et de fontaines illuminées. Le soir, familles et amis s'y retrouvent."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Jusqu'à minuit sur la place",
+        "text": "Pour le 31 décembre 2025, le gouvernement a annoncé une fête nationale place Makoanyane, à Maseru, de 18 h à minuit. Vérifie le programme 2027 à l'approche de la date."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Lesotho : Maseru | Time2Fest",
+      "description": "Le Lesotho accueille 2027 à 22 h UTC : les Basothos d'Afrique du Sud rentrent en famille et Maseru brille des lumières de son grand rond-point."
+    },
+    "kit": "ls"
+  },
+  "SS": {
+    "text": "Au Soudan du Sud, le Nouvel An arrive une semaine après Noël : la fin décembre forme une longue saison de fêtes, et les 25 et 26 décembre comme le 1er janvier sont fériés. Pour beaucoup, l’essentiel de la nuit du Nouvel An se passe à l’église : on dit au revoir à l’année en priant lors d’un office de nuit. Dans leurs messages du Nouvel An, les responsables des Églises appellent à faire de l’année nouvelle une année de paix, d’amour et d’intégrité.\n\nDjouba se trouve au bord du Nil Blanc. Pas de feu d’artifice municipal à minuit : la police a interdit les feux d’artifice et demande d’accueillir l’année dans le calme. Cette nuit-là, des agents veillent près des églises et dans les rues pour que l’office et le retour se passent en sécurité. Et un conseil de la capitale : si tu sors en groupe, l’un de vous reste sobre et ramène les autres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un office de nuit",
+        "text": "Passe les dernières heures de l’année à un office de nuit : à Djouba, la police veille près des églises cette nuit-là pour que tout se passe dans le calme."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Un vœu de paix",
+        "text": "Les messages du Nouvel An des Églises appellent à prier pour une année de paix, d’amour et d’intégrité : ajoute ce vœu à tes souhaits."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Un conducteur sobre",
+        "text": "Vous sortez en groupe ? Décidez qui reste sobre ce soir et ramène tout le monde : c’était le conseil donné à Djouba avant le Nouvel An."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Soudan du Sud : Djouba | Time2Fest",
+      "description": "Le Soudan du Sud accueille 2027 à 22 h UTC : offices de nuit dans les églises de Djouba, prières pour une année de paix, nuit sans feux sur le Nil Blanc."
+    },
+    "kit": "ss"
   }
 }

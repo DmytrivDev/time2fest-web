@@ -1,0 +1,99 @@
+{
+  "code": "SS",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "juba",
+  "names": {
+    "uk": {
+      "name": "Південний Судан",
+      "city": "Джуба",
+      "cityIn": "у Джубі",
+      "caps": "ПІВДЕННИЙ СУДАН"
+    },
+    "en": {
+      "name": "South Sudan",
+      "city": "Juba",
+      "cityIn": "in Juba",
+      "caps": "SOUTH SUDAN"
+    },
+    "es": {
+      "name": "Sudán del Sur",
+      "city": "Yuba",
+      "cityIn": "en Yuba",
+      "caps": "SUDÁN DEL SUR"
+    },
+    "fr": {
+      "name": "Soudan du Sud",
+      "city": "Djouba",
+      "cityIn": "à Djouba",
+      "caps": "SOUDAN DU SUD"
+    }
+  },
+  "picto": "M16.6 16.4 C10 15 4.2 11.4 3.4 6 C3 3.4 4 1.4 6 0.4 M6 0.4 C5.8 3.6 6.8 7 10.4 9.6 C12.8 11.4 15.6 12.4 18.2 12.8 M23.4 16.4 C30 15 35.8 11.4 36.6 6 C37 3.4 36 1.4 34 0.4 M34 0.4 C34.2 3.6 33.2 7 29.6 9.6 C27.2 11.4 24.4 12.4 21.8 12.8 M18.2 12.8 Q20 12 21.8 12.8 M16.6 16.4 L11 19 L16.3 21.2 M23.4 16.4 L29 19 L23.7 21.2 M16.6 16.4 C16 23 17.4 30 17.6 35 Q20 38 22.4 35 C22.6 30 24 23 23.4 16.4 M18.7 33.4 H19.2 M20.8 33.4 H21.3",
+  "flagColors": [
+    "#FCDD09",
+    "#DA121A",
+    "#0F47AF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Джубі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Juba"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Yuba"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Djouba"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

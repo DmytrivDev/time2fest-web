@@ -2322,6 +2322,60 @@
         "title": "Nouvel An au Rwanda : Kigali | Time2Fest",
         "description": "Le Rwanda accueille 2027 à 22 h UTC : messes du soir, feu d’artifice à minuit pile au Centre de conventions de Kigali et repas de famille avec cadeaux."
       }
+    },
+    "LB": {
+      "uk": {
+        "title": "Новий рік у Лівані: Бейрут | Time2Fest",
+        "description": "Ліван зустрічає 2027 рік о 22:00 UTC: вечеря з табуле й кеббе в колі рідних, концерти й клуби Бейрута до світанку, ярмарки й вогні в Біблі та Батруні."
+      },
+      "en": {
+        "title": "New Year in Lebanon: Beirut | Time2Fest",
+        "description": "Lebanon greets 2027 at 22:00 UTC: a family dinner of tabbouleh and kibbeh, Beirut's concerts and clubs until sunrise, and festive lights in Byblos and Batroun."
+      },
+      "es": {
+        "title": "Año Nuevo en el Líbano: Beirut | Time2Fest",
+        "description": "El Líbano recibe 2027 a las 22:00 UTC: cena en familia con tabulé y kibbe, conciertos y clubes de Beirut hasta el alba, y luces de fiesta en Biblos y Batrún."
+      },
+      "fr": {
+        "title": "Nouvel An au Liban : Beyrouth | Time2Fest",
+        "description": "Le Liban accueille 2027 à 22 h UTC : dîner en famille avec taboulé et kebbé, concerts et clubs de Beyrouth jusqu’à l’aube, lumières de fête à Byblos et Batroun."
+      }
+    },
+    "LS": {
+      "uk": {
+        "title": "Новий рік у Лесото: Масеру | Time2Fest",
+        "description": "Лесото зустрічає 2027 рік о 22:00 UTC: басото з ПАР з'їжджаються додому до родин, Масеру сяє вогнями Головного кола й чекає півночі на площі."
+      },
+      "en": {
+        "title": "New Year in Lesotho: Maseru | Time2Fest",
+        "description": "Lesotho greets 2027 at 22:00 UTC: Basotho working in South Africa head home to family, and Maseru glows with Main Circle lights before midnight."
+      },
+      "es": {
+        "title": "Año Nuevo en Lesoto: Maseru | Time2Fest",
+        "description": "Lesoto recibe 2027 a las 22:00 UTC: los basotos que trabajan en Sudáfrica vuelven con su familia y Maseru brilla con las luces de su gran rotonda."
+      },
+      "fr": {
+        "title": "Nouvel An au Lesotho : Maseru | Time2Fest",
+        "description": "Le Lesotho accueille 2027 à 22 h UTC : les Basothos d'Afrique du Sud rentrent en famille et Maseru brille des lumières de son grand rond-point."
+      }
+    },
+    "SS": {
+      "uk": {
+        "title": "Новий рік у Південному Судані: Джуба | Time2Fest",
+        "description": "Південний Судан зустрічає 2027 рік опівночі, о 22:00 UTC: нічні служби в церквах Джуби, молитви за мирний рік і тиха ніч без салюту над Білим Нілом."
+      },
+      "en": {
+        "title": "New Year in South Sudan: Juba | Time2Fest",
+        "description": "South Sudan greets 2027 at 22:00 UTC: night services in Juba's churches, prayers for a peaceful year and a quiet night without fireworks on the White Nile."
+      },
+      "es": {
+        "title": "Año Nuevo en Sudán del Sur: Yuba | Time2Fest",
+        "description": "Sudán del Sur recibe 2027 a las 22:00 UTC: servicios nocturnos en las iglesias de Yuba, oraciones por un año de paz y una noche sin fuegos junto al Nilo Blanco."
+      },
+      "fr": {
+        "title": "Nouvel An au Soudan du Sud : Djouba | Time2Fest",
+        "description": "Le Soudan du Sud accueille 2027 à 22 h UTC : offices de nuit dans les églises de Djouba, prières pour une année de paix, nuit sans feux sur le Nil Blanc."
+      }
     }
   }
 }

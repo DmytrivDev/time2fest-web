@@ -4014,5 +4014,89 @@
       "description": "Rwanda greets 2027 at 22:00 UTC with evening church services, fireworks at exactly midnight by the Kigali Convention Centre and a family feast with gifts."
     },
     "kit": "rw"
+  },
+  "LB": {
+    "text": "In Lebanon 1 January is a public holiday, and the holidays come one after another: Christmas on 25 December, New Year, and on 6 January Armenians mark their own Christmas. New Year's Eve is above all a dinner with family and friends, with tabbouleh, hummus and kibbeh on the table. Others head to restaurants and clubs, the party often lasts until sunrise, and fireworks go up all night. At the end of 2025 hotels in Beirut and at the ski resorts were 80–100% full.\n\nBeirut greets the year with concerts and parties, so tables and tickets go early. In December trees are lit downtown, with holiday markets and concerts. And in 2018 National Geographic put Beirut's night among the world's top ten: thousands gathered in Nejmeh Square by the 1933 clock tower, and fireworks went up around midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dinner with family",
+        "text": "New Year in Lebanon starts at the table with family and friends: tabbouleh, hummus, kibbeh and other Lebanese dishes."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "A night until dawn",
+        "text": "Restaurants, clubs and concerts go on until morning; for the night of 2023/24 about 750 parties were planned nationwide. Book a table early."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Markets and lights",
+        "text": "In December the towns glow with trees: markets and concerts in downtown Beirut, festivities by the old port of Byblos, and Batroun's streets strung with lights."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Lebanon: Beirut | Time2Fest",
+      "description": "Lebanon greets 2027 at 22:00 UTC: a family dinner of tabbouleh and kibbeh, Beirut's concerts and clubs until sunrise, and festive lights in Byblos and Batroun."
+    },
+    "kit": "lb"
+  },
+  "LS": {
+    "text": "In Lesotho 1 January is a public holiday, even though the Basotho's own New Year, Selemo sa Basotho, is marked in August, when nature wakes after winter. December and January are the season of homecomings: Basotho who work in South Africa travel home for Christmas and New Year. They are welcomed with warmth and good food, families gather, and children wait eagerly for the gifts they bring.\n\nIn December 2025 Maseru's Main Circle lit up with festive lights and colourful illuminated fountains, and families and groups of friends came to watch. For 31 December the government announced a national celebration on the renewed Makoanyane Square, from 18:00 right up to midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Home for the holidays",
+        "text": "For Christmas and New Year, Basotho working in South Africa come home to their families. Good food awaits them, and children wait for gifts."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Lights on the Main Circle",
+        "text": "In December 2025 the roundabout in central Maseru was decked with festive lights and illuminated fountains. In the evening families and friends gather here."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Until midnight on the square",
+        "text": "For 31 December 2025 the government announced a national celebration on Makoanyane Square in Maseru, from 18:00 until midnight. Check the 2027 programme closer to the date."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Lesotho: Maseru | Time2Fest",
+      "description": "Lesotho greets 2027 at 22:00 UTC: Basotho working in South Africa head home to family, and Maseru glows with Main Circle lights before midnight."
+    },
+    "kit": "ls"
+  },
+  "SS": {
+    "text": "In South Sudan the New Year comes a week after Christmas, so the end of December is one long festive season: 25 and 26 December and 1 January are public holidays. For many, the heart of New Year's night is church: the year is seen off with prayer at a night service. In their New Year messages, church leaders call for the coming year to be one of peace, love and integrity.\n\nJuba stands on the White Nile. There is no city fireworks show at midnight: police have banned fireworks and asked people to welcome the year calmly. Officers are posted at churches and on the streets that night so the service and the way home stay safe. And the capital's advice: if you go out as a group, one person stays sober and drives the others home.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A night service at church",
+        "text": "Spend the last hours of the year at a night service: in Juba, police are posted at churches that night so it all passes peacefully."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "A wish for peace",
+        "text": "Church New Year messages call for prayer for a year of peace, love and integrity — add that wish to your own greetings."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "One sober driver",
+        "text": "Going out as a group? Agree who stays sober tonight and drives everyone home — that was Juba's advice before the New Year."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in South Sudan: Juba | Time2Fest",
+      "description": "South Sudan greets 2027 at 22:00 UTC: night services in Juba's churches, prayers for a peaceful year and a quiet night without fireworks on the White Nile."
+    },
+    "kit": "ss"
   }
 }

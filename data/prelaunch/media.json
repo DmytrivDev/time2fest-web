@@ -2509,6 +2509,54 @@
         "x": 50,
         "y": 55
       }
+    },
+    "country:LB": {
+      "src": "/media/photos/beirut.webp",
+      "alt": {
+        "uk": "Набережна Корніш у Бейруті вночі: темне море, вигин набережної, освітлені висотки на березі й вогні узбережжя вдалині",
+        "en": "The Corniche in Beirut at night: the dark sea, the curve of the promenade, lit high-rises on the shore and coastal lights in the distance",
+        "es": "La Corniche de Beirut de noche: el mar oscuro, la curva del paseo, edificios iluminados en la orilla y las luces de la costa a lo lejos",
+        "fr": "La Corniche de Beyrouth la nuit : mer sombre, courbe de la promenade, tours illuminées sur le rivage et lumières de la côte au loin"
+      },
+      "author": "Wusel007",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beirut_Corniche_at_Night.JPG",
+      "position": {
+        "x": 78,
+        "y": 45
+      }
+    },
+    "country:LS": {
+      "src": "/media/photos/maseru.webp",
+      "alt": {
+        "uk": "Масеру в сутінках: вогні міста в долині й столові гори на тлі вечірнього неба",
+        "en": "Maseru at dusk: city lights in the valley and table mountains against the evening sky",
+        "es": "Maseru al anochecer: luces de la ciudad en el valle y mesetas contra el cielo de la tarde",
+        "fr": "Maseru au crépuscule : lumières de la ville dans la vallée et montagnes tabulaires sur le ciel du soir"
+      },
+      "author": "Galak76",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Maseru_night.jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
+    },
+    "country:SS": {
+      "src": "/media/photos/terekeka.webp",
+      "alt": {
+        "uk": "Білий Ніл на світанку біля табору худоби мундарі (Терекека): золоте світло над водою, на березі — жінка-мундарі",
+        "en": "The White Nile at dawn by a Mundari cattle camp (Terekeka): golden light over the water, a Mundari woman on the bank",
+        "es": "El Nilo Blanco al amanecer junto a un campamento de ganado mundari (Terekeka): luz dorada sobre el agua y una mujer mundari en la orilla",
+        "fr": "Le Nil Blanc à l’aube près d’un camp de bétail mundari (Terekeka) : lumière dorée sur l’eau, une femme mundari sur la rive"
+      },
+      "author": "Diego Delso",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Campamento_de_ganado_de_la_tribu_Mundari,_Terekeka,_Sud%C3%A1n_del_Sur,_2024-01-28,_DD_36.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
     }
   }
 }

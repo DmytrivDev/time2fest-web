@@ -882,6 +882,24 @@
       "wide": true,
       "sky": "#10162e",
       "water": "#26313a"
+    },
+    "LB": {
+      "src": "/scenes/LB-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#464442"
+    },
+    "LS": {
+      "src": "/scenes/LS-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#203b37"
+    },
+    "SS": {
+      "src": "/scenes/SS-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#2c393a"
     }
   }
 }
