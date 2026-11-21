@@ -1494,6 +1494,276 @@
         "title": "Nouvel An en Ouzbékistan : Tachkent | Time2Fest",
         "description": "Minuit à Tachkent, 19 h UTC : l’Ouzbékistan fête 2027 avec des cadeaux sous l’archa, un dastarkhan débordant, un vœu au champagne et Qorbobo sur son âne."
       }
+    },
+    "BD": {
+      "uk": {
+        "title": "Новий рік у Бангладеш: Дакка | Time2Fest",
+        "description": "Опівночі в Дацці, о 18:00 UTC, Бангладеш зустрічає 2027 рік «тридцять першою ніччю»: вогні з дахів попри заборони, а 1 січня — нові підручники."
+      },
+      "en": {
+        "title": "New Year in Bangladesh: Dhaka | Time2Fest",
+        "description": "At midnight in Dhaka, 18:00 UTC, Bangladesh greets 2027 on “31st night”: lights from rooftops despite police bans, and new textbooks on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Bangladés: Daca | Time2Fest",
+        "description": "A medianoche en Daca, a las 18:00 UTC, Bangladés recibe 2027 en «la noche del 31»: luces en las azoteas pese a la prohibición y, el día 1, libros escolares."
+      },
+      "fr": {
+        "title": "Nouvel An au Bangladesh : Dacca | Time2Fest",
+        "description": "À minuit à Dacca, 18 h UTC, le Bangladesh accueille 2027 lors de « la nuit du 31 » : lumières sur les toits malgré l’interdit et manuels neufs le 1er janvier."
+      }
+    },
+    "BH": {
+      "uk": {
+        "title": "Новий рік у Бахрейні: Манама | Time2Fest",
+        "description": "Бахрейн зустрічає 2027 рік о 21:00 UTC: салют одразу на восьми майданчиках, шоу дронів над затокою Манами й гала-вечері в пляжних готелях до другої ночі."
+      },
+      "en": {
+        "title": "New Year in Bahrain: Manama | Time2Fest",
+        "description": "Bahrain welcomes 2027 at 21:00 UTC with fireworks at eight sites at once, a drone show over Manama's bay and beach hotel galas that run until 2 a.m."
+      },
+      "es": {
+        "title": "Año Nuevo en Baréin: Manama | Time2Fest",
+        "description": "Baréin recibe 2027 a las 21:00 UTC con fuegos en ocho lugares a la vez, drones sobre la bahía de Manama y cenas de gala en hoteles de playa hasta tarde."
+      },
+      "fr": {
+        "title": "Nouvel An à Bahreïn : Manama | Time2Fest",
+        "description": "Bahreïn accueille 2027 à 21 h UTC : feux d'artifice sur huit sites à la fois, drones au-dessus de la baie de Manama et dîners de gala dans les hôtels de plage."
+      }
+    },
+    "CX": {
+      "uk": {
+        "title": "Новий рік на Острові Різдва: Флаїнг-Фіш-Ков | Time2Fest",
+        "description": "Острів Різдва зустрічає 2027 рік о 17:00 UTC, на годину пізніше за Перт. Тут колядки при свічках, захід сонця в бухті й нерест червоних крабів на початку січня."
+      },
+      "en": {
+        "title": "New Year on Christmas Island: Flying Fish Cove | Time2Fest",
+        "description": "Christmas Island greets 2027 at 17:00 UTC, an hour after Perth. Expect carols by candlelight, sunset over the cove and red crabs spawning in early January."
+      },
+      "es": {
+        "title": "Año Nuevo en la Isla de Navidad: Flying Fish Cove | Time2Fest",
+        "description": "La Isla de Navidad recibe 2027 a las 17:00 UTC, una hora después que Perth. Villancicos con velas, atardecer en la bahía y desove de cangrejos rojos en enero."
+      },
+      "fr": {
+        "title": "Nouvel An à l’Île Christmas : Flying Fish Cove | Time2Fest",
+        "description": "L’Île Christmas fête 2027 à 17 h UTC, une heure après Perth. Chants aux chandelles, coucher de soleil sur l’anse et ponte des crabes rouges début janvier."
+      }
+    },
+    "ER": {
+      "uk": {
+        "title": "Новий рік в Еритреї: Асмера | Time2Fest",
+        "description": "Еритрея зустрічає 2027 рік о 21:00 UTC: вечір у кафе Асмери, концерт і салют, а за тиждень — Різдво 7 січня з кавою, вівцею на столі й рідними."
+      },
+      "en": {
+        "title": "New Year in Eritrea: Asmara | Time2Fest",
+        "description": "Eritrea greets 2027 at 21:00 UTC: an evening in Asmara's cafés, a concert and fireworks, then a week later Christmas on 7 January with coffee and family."
+      },
+      "es": {
+        "title": "Año Nuevo en Eritrea: Asmara | Time2Fest",
+        "description": "Eritrea recibe 2027 a las 21:00 UTC: cafés de Asmara, concierto y fuegos, y una semana después la Navidad del 7 de enero con café, cordero y familia."
+      },
+      "fr": {
+        "title": "Nouvel An en Érythrée : Asmara | Time2Fest",
+        "description": "L’Érythrée accueille 2027 à 21 h UTC : cafés d’Asmara, concert et feu d’artifice, puis une semaine plus tard Noël le 7 janvier, café et famille."
+      }
+    },
+    "ET": {
+      "uk": {
+        "title": "Новий рік в Ефіопії: Аддис-Абеба | Time2Fest",
+        "description": "Ефіопія зустрічає 2027 рік о 21:00 UTC: вечірки з салютом у готелях Аддис-Абеби, а свій рік тут почали ще у вересні, на Енкутаташ, і попереду Генна."
+      },
+      "en": {
+        "title": "New Year in Ethiopia: Addis Ababa | Time2Fest",
+        "description": "Ethiopia meets 2027 at 21:00 UTC with hotel parties and fireworks in Addis Ababa, though its own year began in September at Enkutatash and Genna lies ahead."
+      },
+      "es": {
+        "title": "Año Nuevo en Etiopía: Adís Abeba | Time2Fest",
+        "description": "Etiopía recibe 2027 a las 21:00 UTC con fiestas y fuegos en los hoteles de Adís Abeba, aunque su propio año empezó en septiembre, con Enkutatash, y llega Genna."
+      },
+      "fr": {
+        "title": "Nouvel An en Éthiopie : Addis-Abeba | Time2Fest",
+        "description": "L’Éthiopie accueille 2027 à 21 h UTC avec soirées et feux d’artifice dans les hôtels d’Addis-Abeba ; son année a pourtant commencé en septembre, à Enkutatash."
+      }
+    },
+    "IR": {
+      "uk": {
+        "title": "Новий рік в Ірані: Тегеран | Time2Fest",
+        "description": "Іран зустрічає 2027 рік о 20:30 UTC: у Тегерані ялинки з вулиці Мірзає-Ширазі й дзвони вірменських церков, хоча головне свято країни — весняний Новруз."
+      },
+      "en": {
+        "title": "New Year in Iran: Tehran | Time2Fest",
+        "description": "Iran reaches 2027 at 20:30 UTC: in Tehran, trees from Mirzaye Shirazi Street and Armenian church bells, though the country's main feast is spring Nowruz."
+      },
+      "es": {
+        "title": "Año Nuevo en Irán: Teherán | Time2Fest",
+        "description": "Irán llega a 2027 a las 20:30 UTC: en Teherán, árboles de la calle Mirzaye Shirazi y campanas armenias, aunque la gran fiesta del país es el Nowruz."
+      },
+      "fr": {
+        "title": "Nouvel An en Iran : Téhéran | Time2Fest",
+        "description": "L’Iran passe en 2027 à 20 h 30 UTC : à Téhéran, sapins de la rue Mirzaye Shirazi et cloches arméniennes, mais la grande fête du pays reste Norouz."
+      }
+    },
+    "KH": {
+      "uk": {
+        "title": "Новий рік у Камбоджі: Пномпень | Time2Fest",
+        "description": "Камбоджа зустрічає 2027 рік у дорозі й на набережній перед палацом у Пномпені: парад, концерт, страви провінцій. Північ у Пномпені — 17:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Cambodia: Phnom Penh | Time2Fest",
+        "description": "Cambodia greets 2027 on the road and on the riverside by the Royal Palace in Phnom Penh: parade, concert, food from every province. Midnight: 17:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Camboya: Phnom Penh | Time2Fest",
+        "description": "Camboya recibe 2027 de viaje y en la ribera del Palacio Real de Phnom Penh: desfile, concierto y comida de las provincias. Medianoche: 17:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An au Cambodge : Phnom Penh | Time2Fest",
+        "description": "Le Cambodge fête 2027 en voyage et sur les quais du Palais royal à Phnom Penh : défilé, concert, plats des provinces. Minuit à Phnom Penh : 17 h 00 UTC."
+      }
+    },
+    "MN": {
+      "uk": {
+        "title": "Новий рік у Монголії: Улан-Батор | Time2Fest",
+        "description": "Опівночі в Улан-Баторі, о 16:00 UTC, Монголія зустрічає 2027 рік: святковий салют над центральною площею, 22-метрова ялинка й подарунки від Діда Зими."
+      },
+      "en": {
+        "title": "New Year in Mongolia: Ulaanbaatar | Time2Fest",
+        "description": "At midnight in Ulaanbaatar, 16:00 UTC, Mongolia greets 2027 with a salute over the central square, a 22-metre tree and gifts from Grandfather Winter."
+      },
+      "es": {
+        "title": "Año Nuevo en Mongolia: Ulán Bator | Time2Fest",
+        "description": "A medianoche en Ulán Bator, 16:00 UTC, Mongolia recibe 2027 con un saludo festivo en la plaza central, un árbol de 22 metros y el Abuelo Invierno."
+      },
+      "fr": {
+        "title": "Nouvel An en Mongolie : Oulan-Bator | Time2Fest",
+        "description": "À minuit à Oulan-Bator, 16 h UTC, la Mongolie fête 2027 avec un salut sur la place centrale, un sapin de 22 mètres et les cadeaux de Grand-père Hiver."
+      }
+    },
+    "MU": {
+      "uk": {
+        "title": "Новий рік на Маврикії: Порт-Луї | Time2Fest",
+        "description": "Маврикій зустрічає 2027 рік о 20:00 UTC: родинне барбекю, намети на пляжах, петарди опівночі по всьому острову й салюти над Порт-Луї, видні з Цитаделі."
+      },
+      "en": {
+        "title": "New Year in Mauritius: Port Louis | Time2Fest",
+        "description": "Mauritius greets 2027 at 20:00 UTC: family barbecues, tents on the beaches, firecrackers across the island at midnight and fireworks over Port Louis."
+      },
+      "es": {
+        "title": "Año Nuevo en Mauricio: Port Louis | Time2Fest",
+        "description": "Mauricio recibe 2027 a las 20:00 UTC: barbacoas en familia, tiendas en la playa, petardos por toda la isla a medianoche y fuegos sobre Port Louis."
+      },
+      "fr": {
+        "title": "Nouvel An à Maurice : Port-Louis | Time2Fest",
+        "description": "Maurice accueille 2027 à 20 h UTC : barbecue en famille, tentes sur les plages, pétards dans toute l’île à minuit et feux d’artifice sur Port-Louis."
+      }
+    },
+    "OM": {
+      "uk": {
+        "title": "Новий рік в Омані: Маскат | Time2Fest",
+        "description": "Оман зустрічає 2027 рік о 20:00 UTC: святкові вечері в готелях Маскату, а з 1 січня — фестиваль «Маскатські ночі» з шоу дронів і Селищем спадщини."
+      },
+      "en": {
+        "title": "New Year in Oman: Muscat | Time2Fest",
+        "description": "Oman greets 2027 at 20:00 UTC: festive dinners in Muscat's hotels, then from 1 January the Muscat Nights festival with drone shows and a Heritage Village."
+      },
+      "es": {
+        "title": "Año Nuevo en Omán: Mascate | Time2Fest",
+        "description": "Omán recibe 2027 a las 20:00 UTC: cenas de fiesta en los hoteles de Mascate y, desde el 1 de enero, el festival Muscat Nights con drones y artesanía."
+      },
+      "fr": {
+        "title": "Nouvel An à Oman : Mascate | Time2Fest",
+        "description": "Oman accueille 2027 à 20 h UTC : dîners de fête dans les hôtels de Mascate, puis dès le 1er janvier le festival Muscat Nights, ses drones et son artisanat."
+      }
+    },
+    "RE": {
+      "uk": {
+        "title": "Новий рік на Реюньйоні: Сен-Дені | Time2Fest",
+        "description": "Реюньйон зустрічає 2027 рік о 20:00 UTC. Опівночі по всьому острову гримлять петарди, а на пляжах заходу ночують у наметах і пірнають у теплу лагуну."
+      },
+      "en": {
+        "title": "New Year in Réunion: Saint-Denis | Time2Fest",
+        "description": "Réunion greets 2027 at 20:00 UTC. Firecrackers crackle across the island at midnight, and on the western beaches people camp in tents and dive into the lagoon."
+      },
+      "es": {
+        "title": "Año Nuevo en Reunión: Saint-Denis | Time2Fest",
+        "description": "Reunión recibe 2027 a las 20:00 UTC. A medianoche estallan petardos por toda la isla, y en las playas del oeste la gente acampa y se baña en la laguna."
+      },
+      "fr": {
+        "title": "Nouvel An à La Réunion : Saint-Denis | Time2Fest",
+        "description": "La Réunion fête 2027 à 20 h UTC. À minuit, les pétards éclatent dans toute l’île, et sur les plages de l’Ouest on campe sous les filaos avant de plonger."
+      }
+    },
+    "SC": {
+      "uk": {
+        "title": "Новий рік на Сейшельських Островах: Вікторія | Time2Fest",
+        "description": "Сейшельські Острови зустрічають 2027 рік о 20:00 UTC: усе нове вбрання, свинина й кокосовий карі, побажання від дому до дому й «Ревейон» у Вікторії."
+      },
+      "en": {
+        "title": "New Year in Seychelles: Victoria | Time2Fest",
+        "description": "Seychelles greets 2027 at 20:00 UTC: new clothes, pork and coconut curry, New Year wishes from house to house and the Reveyon street party in Victoria."
+      },
+      "es": {
+        "title": "Año Nuevo en Seychelles: Victoria | Time2Fest",
+        "description": "Seychelles recibe 2027 a las 20:00 UTC: ropa nueva, cerdo y curry de coco, buenos deseos de casa en casa y la fiesta Reveyon en las calles de Victoria."
+      },
+      "fr": {
+        "title": "Nouvel An aux Seychelles : Victoria | Time2Fest",
+        "description": "Les Seychelles accueillent 2027 à 20 h UTC : vêtements neufs, porc et cari coco, vœux de maison en maison et la fête du Réveillon dans les rues de Victoria."
+      }
+    },
+    "SY": {
+      "uk": {
+        "title": "Новий рік у Сирії: Дамаск | Time2Fest",
+        "description": "Сирія зустрічає 2027 рік о 21:00 UTC: гірлянди і ялинки в Баб-Тумі, смажені каштани на ярмарку старого Дамаска й північ на площі Омейядів у новорічну ніч."
+      },
+      "en": {
+        "title": "New Year in Syria: Damascus | Time2Fest",
+        "description": "Syria greets 2027 at 21:00 UTC: fairy lights and Christmas trees in Bab Touma, roasted chestnuts at the Old Damascus market and midnight on Umayyad Square."
+      },
+      "es": {
+        "title": "Año Nuevo en Siria: Damasco | Time2Fest",
+        "description": "Siria recibe 2027 a las 21:00 UTC: guirnaldas y árboles de Navidad en Bab Tuma, castañas asadas en el viejo Damasco y medianoche en la plaza de los Omeyas."
+      },
+      "fr": {
+        "title": "Nouvel An en Syrie : Damas | Time2Fest",
+        "description": "La Syrie accueille 2027 à 21 h UTC : guirlandes et sapins à Bab Touma, marrons grillés au marché du vieux Damas et minuit sur la place des Omeyyades."
+      }
+    },
+    "TM": {
+      "uk": {
+        "title": "Новий рік у Туркменістані: Ашгабат | Time2Fest",
+        "description": "Туркменістан зустрічає 2027 рік о 19:00 UTC: в Ашгабаті світиться головна ялинка біля «Алему», опівночі лунає салют, а вдома на килимі чекає плов."
+      },
+      "en": {
+        "title": "New Year in Turkmenistan: Ashgabat | Time2Fest",
+        "description": "Turkmenistan welcomes 2027 at 19:00 UTC: Ashgabat's main tree glows by the Älem centre, fireworks burst at midnight, and pilaf waits on the carpet."
+      },
+      "es": {
+        "title": "Año Nuevo en Turkmenistán: Asjabad | Time2Fest",
+        "description": "Turkmenistán recibe 2027 a las 19:00 UTC: en Asjabad brilla el gran árbol junto a Älem, hay fuegos a medianoche y el plov espera sobre la alfombra."
+      },
+      "fr": {
+        "title": "Nouvel An au Turkménistan : Achgabat | Time2Fest",
+        "description": "Le Turkménistan fête 2027 à 19 h UTC : à Achgabat, le grand sapin brille devant Älem, un feu d’artifice éclate à minuit et le plov attend sur le tapis."
+      }
+    },
+    "TR": {
+      "uk": {
+        "title": "Новий рік у Туреччині: Стамбул | Time2Fest",
+        "description": "Туреччина зустрічає 2027 рік о 21:00 UTC: індичка з каштанами, гранат на порозі, щось червоне на щастя, а в Стамбулі — салют над Босфором і натовпи на Таксимі."
+      },
+      "en": {
+        "title": "New Year in Türkiye: Istanbul | Time2Fest",
+        "description": "Türkiye greets 2027 at 21:00 UTC: turkey with chestnuts, a pomegranate broken on the doorstep, red for luck, and in Istanbul fireworks over the Bosphorus."
+      },
+      "es": {
+        "title": "Año Nuevo en Turquía: Estambul | Time2Fest",
+        "description": "Turquía recibe 2027 a las 21:00 UTC: pavo con castañas, una granada rota en el umbral, algo rojo para la suerte y, en Estambul, fuegos sobre el Bósforo."
+      },
+      "fr": {
+        "title": "Nouvel An en Turquie : Istanbul | Time2Fest",
+        "description": "La Turquie accueille 2027 à 21 h UTC : dinde aux châtaignes, grenade brisée sur le seuil, rouge porte-bonheur et, à Istanbul, feu d’artifice sur le Bosphore."
+      }
     }
   }
 }

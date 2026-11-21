@@ -2726,5 +2726,425 @@
       "description": "Minuit à Tachkent, 19 h UTC : l’Ouzbékistan fête 2027 avec des cadeaux sous l’archa, un dastarkhan débordant, un vœu au champagne et Qorbobo sur son âne."
     },
     "kit": "uz"
+  },
+  "BD": {
+    "text": "Le Bangladesh a son propre Nouvel An : Pohela Boishakh, le 14 avril, selon le calendrier bengali ; sa procession de l’aube à Dacca est inscrite par l’UNESCO au patrimoine de l’humanité depuis 2016. Pourtant, la nuit avant le 1er janvier n’a rien de calme : on l’appelle simplement « la nuit du 31 ». Et le matin du 1er janvier, les écoliers de tout le pays reçoivent leurs nouveaux manuels gratuits : c’est la fête du Livre.\n\nÀ Dacca, minuit sonne à 18 h UTC. Chaque année, la police de la ville interdit pétards, feux d’artifice et lanternes célestes fanush, et certaines années elle a fermé les bars et interdit les fêtes en plein air. Mais à minuit, les lumières jaillissent quand même des toits des quartiers : c’est ainsi que la capitale a accueilli 2026.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "« La nuit du 31 »",
+        "text": "C’est ainsi qu’on appelle le réveillon au Bangladesh. À Dacca, on le passe entre amis et en famille, chez soi ou dans des salles : certaines années, la police n’a autorisé ni fêtes en plein air ni soirées DJ."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Des lumières sur les toits",
+        "text": "Pétards et feux d’artifice sont interdits, et l’amende pour bruit peut atteindre 5 000 takas. Pourtant, à minuit, des lumières s’élèvent encore au-dessus de Dacca, depuis les toits et les cours."
+      },
+      {
+        "id": "t3",
+        "iconId": "book",
+        "title": "Fête du Livre le 1er janvier",
+        "text": "Les écoliers commencent l’année avec une pile de manuels neufs distribués gratuitement par l’État : environ 300 millions ont été imprimés pour 2026."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Bangladesh : Dacca | Time2Fest",
+      "description": "À minuit à Dacca, 18 h UTC, le Bangladesh accueille 2027 lors de « la nuit du 31 » : lumières sur les toits malgré l’interdit et manuels neufs le 1er janvier."
+    },
+    "kit": "bd"
+  },
+  "BH": {
+    "text": "À Bahreïn, le 1er janvier est férié, même si le pays a aussi son propre Nouvel An, islamique : le 1er mouharram, dont la date change chaque année. Le réveillon clôt une saison de fêtes qui commence le 1er décembre et comprend la fête nationale des 16 et 17 décembre. À minuit, le royaume accueille l'année sur huit sites à la fois : les feux d'artifice montent à 250–300 mètres et le plus grand spectacle de drones du pays, 2 500 appareils, illumine le ciel.\n\nÀ Manama, les lieux phares sont la baie de Bahrain Bay, la plage et l'hôtel Four Seasons, dont la façade accueille un spectacle de lumière en 3D, le Bahrain World Trade Center et le front de mer entre les ponts Cheikh Hamad et Cheikh Issa. On arrive tôt et on prend les transports en commun. Et pour passer à table, un hôtel de plage propose un dîner de gala jusqu'à 2 h, avec feux d'artifice au bord de la mer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feux et drones",
+        "text": "À minuit, l'année arrive en même temps sur huit sites du pays : feux d'artifice à 250–300 mètres et dix minutes de spectacle de 2 500 drones au-dessus de la baie."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Dîner de gala en bord de mer",
+        "text": "Le 31 décembre, un hôtel de plage organise un dîner de gala de 20 h à 2 h, avec feux d'artifice sur le rivage. La table se réserve à l'avance."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Une saison dès décembre",
+        "text": "Dès le 1er décembre, Bahreïn vit une saison de fêtes : événements dans tout le pays et fête nationale les 16 et 17 décembre. Et le 1er janvier est férié pour se reposer après la nuit."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Bahreïn : Manama | Time2Fest",
+      "description": "Bahreïn accueille 2027 à 21 h UTC : feux d'artifice sur huit sites à la fois, drones au-dessus de la baie de Manama et dîners de gala dans les hôtels de plage."
+    },
+    "kit": "bh"
+  },
+  "CX": {
+    "text": "L’Île Christmas a reçu son nom le jour de Noël 1643 : décembre y est donc particulier, avec des illuminations, des chants de Noël aux chandelles, des fêtes et la visite du père Noël. La nouvelle année y arrive à 17 h UTC, une heure après Perth. Mais l’île compte plus d’un nouvel an : parmi ses 1 692 habitants, il y a des familles chinoises, australiennes et malaises, et la fête la plus bruyante est le Nouvel An chinois. C’est le seul endroit d’Australie où il donne droit à deux jours fériés : danses du lion, lanternes, dîner de fondue chinoise au club de Poon Saan et feu d’artifice.\n\nFlying Fish Cove est le village principal et le seul port de l’île. Sa plage regarde vers l’ouest, avec barbecues et tables de pique-nique, et ses couchers de soleil comptent parmi les plus beaux de l’île. La ponte des crabes rouges est prévue les 2 et 3 janvier 2027, et l’anse est l’un des endroits où il est le plus facile de l’observer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Chants aux chandelles",
+        "text": "L’île a été baptisée le jour de Noël, alors la fête y est particulière : illuminations, chants aux chandelles, fêtes et visite du père Noël."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "Le dernier coucher de soleil",
+        "text": "La plage de Flying Fish Cove regarde vers l’ouest : on y voit certains des plus beaux couchers de soleil de l’île, avec barbecues et tables de pique-nique."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Les crabes avant l’aube",
+        "text": "Plus de 100 millions de crabes rouges vivent sur l’île. Les 2 et 3 janvier 2027, ils devraient libérer leurs œufs dans la mer avant l’aube, et l’anse est l’un des meilleurs endroits pour le voir."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à l’Île Christmas : Flying Fish Cove | Time2Fest",
+      "description": "L’Île Christmas fête 2027 à 17 h UTC, une heure après Perth. Chants aux chandelles, coucher de soleil sur l’anse et ponte des crabes rouges début janvier."
+    },
+    "kit": "cx"
+  },
+  "ER": {
+    "text": "En Érythrée, le Nouvel An tombe entre deux Noëls. Le 25 décembre est surtout fêté par les jeunes des villes, tandis que le grand Noël arrive le 7 janvier, selon le calendrier de l’Église : après un jeûne, les familles nettoient la maison, sacrifient un mouton, préparent le café et souhaitent la fête à leurs proches. Le 1er janvier est aussi férié. La Saint-Sylvestre se passe dans les bars, les restaurants et les lieux animés, et se termine d’ordinaire par un feu d’artifice. Ici, on prend rarement de bonnes résolutions : les aînés souhaitent simplement une année prospère, saine et paisible.\n\nEn décembre, les cafés de l’avenue Harnet, à Asmara, brillent de lumières de Noël et des chants s’élèvent de la cathédrale catholique. Chaque 31 décembre a lieu un concert du Nouvel An : autrefois sur la place Bahti Meskerem, où se pressaient des milliers de personnes, et en 2024 au cinéma Roma, avec chansons, danse et poésie.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Cafés et concert",
+        "text": "En Érythrée, la Saint-Sylvestre se passe dans les bars, les restaurants et les lieux animés. À Asmara, un concert de chansons, de danse et de poésie a lieu le 31 décembre."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice final",
+        "text": "La Saint-Sylvestre se termine d’ordinaire par un feu d’artifice. À Asmara, il a été tiré au-dessus de l’avenue Harnet, l’artère principale."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Noël le 7 janvier",
+        "text": "Une semaine après le Nouvel An vient le grand Noël, jour férié. Après le jeûne de Tsome Tahsas, les familles sacrifient un mouton, préparent le café et rendent visite à leurs proches."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Érythrée : Asmara | Time2Fest",
+      "description": "L’Érythrée accueille 2027 à 21 h UTC : cafés d’Asmara, concert et feu d’artifice, puis une semaine plus tard Noël le 7 janvier, café et famille."
+    },
+    "kit": "er"
+  },
+  "ET": {
+    "text": "L’Éthiopie a son propre calendrier et son propre Nouvel An, Enkutatash, le 11 septembre : depuis septembre 2026, le pays vit déjà en l’an 2019. À Enkutatash, les filles vont de maison en maison avec des tambours, chantent la chanson du Nouvel An et offrent des bouquets de marguerites jaunes adey abeba, tandis que les familles rentrent de l’église pour partager l’injera et le doro wat. Le 1er janvier est un jour ouvré et, pour les orthodoxes, il tombe pendant le jeûne de 43 jours qui précède Noël, Genna, le 7 janvier.\n\nAinsi, la nuit du 1er janvier, Addis-Abeba fête surtout dans ses hôtels internationaux. En 2025, la soirée du Sheraton a duré de six heures du soir à deux heures du matin, avec concerts, DJ et feu d’artifice, et l’on attendait 3 000 à 4 000 invités ; ailleurs, une soirée jazz était à entrée libre. La grande nuit d’hiver reste à venir : la veille de Genna, les offices durent jusqu’à trois heures du matin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "Genna, le 7 janvier",
+        "text": "Le Noël éthiopien se fête à l’église : l’office de nuit dure de six heures du soir à trois heures du matin. Beaucoup partent en pèlerinage vers les églises rupestres de Lalibela."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Enkutatash en septembre",
+        "text": "Le Nouvel An éthiopien tombe le 11 septembre : les filles chantent de porte en porte et offrent des marguerites jaunes adey abeba, et la famille se retrouve autour de l’injera et du doro wat."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Soirée à l’hôtel",
+        "text": "Le 31 décembre, les hôtels internationaux d’Addis-Abeba réunissent des milliers d’invités autour de concerts, d’un DJ et d’un feu d’artifice jusqu’à deux heures. Les billets augmentent chaque année : mieux vaut les prendre tôt."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Éthiopie : Addis-Abeba | Time2Fest",
+      "description": "L’Éthiopie accueille 2027 à 21 h UTC avec soirées et feux d’artifice dans les hôtels d’Addis-Abeba ; son année a pourtant commencé en septembre, à Enkutatash."
+    },
+    "kit": "et"
+  },
+  "IR": {
+    "text": "Le grand Nouvel An d’Iran, c’est Norouz : il arrive à l’équinoxe de printemps, le 20 ou le 21 mars, premier jour de farvardin dans le calendrier solaire iranien. On dresse la table du haft-sin, sept choses commençant par la lettre sin — pousses, vinaigre, pomme, ail, sumac —, et le treizième jour de l’année, tout le monde part au grand air. Le 1er janvier n’est pas férié.\n\nTéhéran fête pourtant aussi ce Nouvel An, d’abord ses Arméniens et ses Assyriens, les communautés chrétiennes du pays. Dès la fin décembre, les rues Mirzaye Shirazi et Nejatollahi, près des églises arméniennes, se remplissent d’acheteurs : sapins, guirlandes lumineuses, pères Noël, pâtisseries. Dans la nuit du 1er janvier, les cloches sonnent, et les fêtes arméniennes durent jusqu’au 13 janvier.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Un sapin de Mirzaye Shirazi",
+        "text": "Les boutiques près de la cathédrale Saint-Sarkis vendent sapins, guirlandes et pères Noël. Pas seulement aux chrétiens : de plus en plus de familles de Téhéran font la fête chez elles."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Les cloches du 1er janvier",
+        "text": "Dans la nuit du 1er janvier, les cloches annoncent la nouvelle année. Les Arméniens continuent : le 5 janvier, veillée de Noël et bénédiction de l’eau, et la fête dure jusqu’au 13."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "La fête à l’Ararat",
+        "text": "Le lieu phare du Nouvel An arménien est le complexe sportif et culturel Ararat, à Vanak : stands caritatifs de douceurs et d’artisanat, et musique arménienne en live."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Iran : Téhéran | Time2Fest",
+      "description": "L’Iran passe en 2027 à 20 h 30 UTC : à Téhéran, sapins de la rue Mirzaye Shirazi et cloches arméniennes, mais la grande fête du pays reste Norouz."
+    },
+    "kit": "ir"
+  },
+  "KH": {
+    "text": "Au Cambodge, le 1er janvier est férié, mais un seul jour : le grand Nouvel An, ici, c’est le Nouvel An khmer, Choul Chnam Thmey — trois jours à la mi-avril, avec visites aux pagodes et stupas de sable. Le réveillon du calendrier gagne pourtant du terrain chaque année : les 30 et 31 décembre 2024, le pays a accueilli 3,53 millions de touristes, presque tous cambodgiens. La plupart partent pour Phnom Penh, la côte de Sihanoukville, Siem Reap, Battambang et Kampot.\n\nÀ Phnom Penh, la fête se retrouve sur les quais, devant le Palais royal. L’accueil de 2025 a commencé dès 15 h : le défilé « Celebrating Cambodia » avec trois mille participants, géants du théâtre traditionnel et marionnettes Ting Mong, plats de 25 provinces, concert et feu d’artifice à minuit. L’année suivante, le feu d’artifice a été annulé en raison des tensions à la frontière thaïlandaise, et la ville a accueilli 2026 dans la rue piétonne Chaktomuk, avec cuisine, produits locaux et danse.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "suitcase",
+        "title": "Nouvel An en voyage",
+        "text": "Fin décembre, les Cambodgiens voyagent en masse dans leur propre pays : près de 3,5 millions de voyageurs les deux derniers jours de 2024. Les favoris : Phnom Penh, la mer à Sihanoukville, Siem Reap, près d’Angkor Vat, Battambang et Kampot."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Les quais du palais",
+        "text": "À Phnom Penh, le compte à rebours se vit sur les quais devant le Palais royal : défilé de géants et de marionnettes Ting Mong, concert, plats de toutes les provinces. Sans feu d’artifice, comme en 2026, on flâne rue piétonne Chaktomuk."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "Leur Nouvel An, en avril",
+        "text": "Choul Chnam Thmey, le Nouvel An khmer, dure trois jours à la mi-avril. Les familles vont à la pagode, élèvent des stupas de sable, lavent les statues du Bouddha et versent de l’eau parfumée sur les aînés."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Cambodge : Phnom Penh | Time2Fest",
+      "description": "Le Cambodge fête 2027 en voyage et sur les quais du Palais royal à Phnom Penh : défilé, concert, plats des provinces. Minuit à Phnom Penh : 17 h 00 UTC."
+    },
+    "kit": "kh"
+  },
+  "MN": {
+    "text": "La Mongolie a commencé à fêter le Nouvel An le 1er janvier à l’époque socialiste, sous l’influence soviétique. C’est aujourd’hui un jour férié et l’une des plus grandes fêtes de l’année, et le réveillon se passe surtout en famille. Les cadeaux des enfants comme des adultes sont apportés par Övliin Övgön, Grand-père Hiver, cousin mongol de Ded Moroz. À ne pas confondre avec Tsagaan Sar : la « Lune blanche » est un autre Nouvel An, fêté plus tard selon le calendrier lunaire.\n\nOulan-Bator est la capitale la plus froide du monde : à minuit, il gèle généralement très fort. Les habitants se retrouvent pourtant sur la place centrale, près du sapin de 22 mètres, pour un concert, des tentes chauffées et des plats chauds, et au passage de l’année un salut festif, une tradition depuis près d’un quart de siècle.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Le sapin et Grand-père Hiver",
+        "text": "Le grand sapin du pays, haut de 22 mètres, se dresse sur la place centrale d’Oulan-Bator, et Övliin Övgön gâte enfants comme adultes."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Minuit sur la place centrale",
+        "text": "Le 31 décembre, la place accueille un concert, des tentes chauffées et des plats chauds, puis un salut au passage de l’année. Ensuite, des bus gratuits ramènent chacun dans son quartier."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Le premier soleil de l’année",
+        "text": "Le matin du 1er janvier, on accueille le premier lever du soleil avec du lait et du thé en offrande, en se souhaitant santé et réussite : bon présage pour l’année."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Mongolie : Oulan-Bator | Time2Fest",
+      "description": "À minuit à Oulan-Bator, 16 h UTC, la Mongolie fête 2027 avec un salut sur la place centrale, un sapin de 22 mètres et les cadeaux de Grand-père Hiver."
+    },
+    "kit": "mn+8"
+  },
+  "MU": {
+    "text": "À Maurice, toutes les communautés de l’île fêtent le Nouvel An, d’où deux jours fériés : le 1er et le 2 janvier. Le soir du 31 décembre se passe en famille, souvent autour d’un barbecue. Dès le 30, beaucoup de familles plantent leurs tentes sur des plages comme Albion et préparent un repas partagé au bord de la mer. À minuit, les pétards éclatent dans toute l’île : on dit que le vacarme chasse les mauvais esprits. Même quand leur prix grimpe, on continue d’en acheter pour ne pas rompre la tradition.\n\nÀ Port-Louis, minuit sonne à 20 h UTC. Le meilleur endroit pour l’accueillir est le Fort Adélaïde, la Citadelle perchée sur une colline au-dessus de la capitale : de là, on voit d’un coup plusieurs feux d’artifice sur la ville et ses faubourgs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Une nuit sur la plage",
+        "text": "Fin décembre, les plages deviennent des villages éphémères : les familles plantent leurs tentes, apportent marmites et glacières, et restent parfois ensemble jusqu’au lever du soleil."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Des pétards à minuit",
+        "text": "Pétards et feux d’artifice se vendent sur les marchés, dans les supermarchés et dans la rue. À minuit, on les allume dans toute l’île pour chasser les mauvais esprits."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Deux jours de fête",
+        "text": "Le 1er et le 2 janvier sont fériés : rien ne presse. Et le Nouvel An chinois, la fête du Printemps, est aussi férié à Maurice."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Maurice : Port-Louis | Time2Fest",
+      "description": "Maurice accueille 2027 à 20 h UTC : barbecue en famille, tentes sur les plages, pétards dans toute l’île à minuit et feux d’artifice sur Port-Louis."
+    },
+    "kit": "mu"
+  },
+  "OM": {
+    "text": "Oman a deux Nouvel An, mais un seul est férié : le Nouvel An islamique, le 1er mouharram, dont la date change chaque année. Le 1er janvier ne figure pas parmi les jours fériés : la Saint-Sylvestre est donc calme, sans compte à rebours sur les places, et l’on accueille l’année surtout dans les hôtels et les restaurants, autour d’un dîner de fête avec musique live et DJ jusqu’à trois heures du matin.\n\nEn revanche, le premier jour de l’année ouvre la fête d’hiver de Mascate : le 1er janvier 2026 a débuté le festival Muscat Nights, pour un mois, dans les parcs de Qurum et d’Al Amerat, près de l’Opéra royal et sur la plage de Seeb. Chaque soir, un spectacle de drones ; au Village du patrimoine, artisanat, arts populaires et cuisine omanaise. Et le 11 janvier, jour de l’Accession du sultan, un feu d’artifice a illuminé Seeb.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Dîner à l’hôtel",
+        "text": "Le 31 décembre, les hôtels de Mascate organisent des dîners de fête : groupes live, DJ et danse jusqu’à trois heures du matin. Mieux vaut réserver sa table à l’avance."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Muscat Nights",
+        "text": "Dès le 1er janvier, un mois de festival dans les parcs de Mascate : drones chaque soir, concerts et un Village du patrimoine avec artisanat et plats omanais."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice le 11 janvier",
+        "text": "Le jour de l’Accession du sultan au trône est férié. En 2026, il a été fêté par un feu d’artifice à Seeb, sur la côte du gouvernorat de Mascate."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Oman : Mascate | Time2Fest",
+      "description": "Oman accueille 2027 à 20 h UTC : dîners de fête dans les hôtels de Mascate, puis dès le 1er janvier le festival Muscat Nights, ses drones et son artisanat."
+    },
+    "kit": "om"
+  },
+  "RE": {
+    "text": "La Réunion vit à l’heure UTC+4 toute l’année : minuit y sonne à 20 h UTC. Le Nouvel An tombe en plein été austral, et le soir du 31 décembre réunit famille et amis : rhum arrangé ou punch avec samoussas et bouchons, puis cari camarons ou cari canard et massalé cabri, et des letchis au dessert. Dans l’Ouest, des milliers de personnes plantent leur tente sous les filaos des plages de L’Ermitage et de La Saline dès le 30 décembre, et à minuit elles plongent dans le lagon. Aux douze coups, les pétards éclatent dans toute l’île, pour chasser les mauvais esprits, dit-on.\n\nÀ Saint-Denis, on fait le plein de pétards à l’avance. Certains fêtent l’année en pique-nique à Mamode-Camp, au Brûlé, sur les hauteurs de la ville ; d’autres filent vers les plages de l’Ouest. En 2025, le seul feu d’artifice municipal de l’île a été tiré à Saint-Pierre : à minuit, dans le chef-lieu, ce sont surtout les pétards des cours et des rues.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Les pétards de minuit",
+        "text": "À minuit pile, toute l’île crépite de pétards, et l’on allume de longues « mitraillettes » devant les maisons : le bruit chasse, dit-on, les mauvais esprits de l’année passée."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Une nuit sous les filaos",
+        "text": "Dès le 30 décembre, on plante la tente sur les plages de L’Ermitage et de La Saline, on lance grillades et musique, et à minuit on plonge dans le lagon tiède."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "La part de pâté créole",
+        "text": "Le jour de l’An, on découpe le pâté créole, salé au porc ou au poulet, ou sucré à la confiture, avec un petit verre d’anisette."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à La Réunion : Saint-Denis | Time2Fest",
+      "description": "La Réunion fête 2027 à 20 h UTC. À minuit, les pétards éclatent dans toute l’île, et sur les plages de l’Ouest on campe sous les filaos avant de plonger."
+    },
+    "kit": "re"
+  },
+  "SC": {
+    "text": "Aux Seychelles, le Nouvel An est plus bruyant que Noël, et il y a deux jours fériés : le 1er et le 2 janvier. Le 31 décembre, on rend grâce pour l’année écoulée, et la ville se remplit de gens qui achètent de quoi manger et des vêtements neufs : on accueille l’année tout de neuf vêtu. Autrefois, les familles tuaient leur propre cochon et partageaient la viande avec les voisins, préparaient ragoût et boudin, rôtissaient le porc dans la marmite en fonte, puis allaient de maison en maison présenter leurs vœux. À minuit, le compte à rebours, les bouchons de champagne sautent et la fête dure jusqu’au matin ; le 1er janvier, beaucoup vont à la messe.\n\nÀ Victoria, minuit sonne à 20 h UTC. Le programme festif de la mairie anime l’avenue de l’Indépendance tout le mois de décembre, et le 31 il s’achève par le Réveillon au Stad Popiler : groupes en live, stands de nourriture, compte à rebours sur écran géant et danse jusqu’à 2 h.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Porc et cari coco",
+        "text": "La table de fête traditionnelle, c’est le porc sous toutes ses formes, le boudin et le cari de poulet au lait de coco, avec des confitures maison de papaye et de jamalac."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "De maison en maison",
+        "text": "Une vieille coutume : faire le tour des voisins et des proches pour souhaiter la bonne année et, dans chaque maison, lever un petit verre de lasante, à la santé."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Merci et premier jour",
+        "text": "Le 31 décembre, on rend grâce pour l’année écoulée, et le 1er janvier on va à l’église. Certains se rendent ce jour-là ou le lendemain sur la tombe de leurs proches."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Seychelles : Victoria | Time2Fest",
+      "description": "Les Seychelles accueillent 2027 à 20 h UTC : vêtements neufs, porc et cari coco, vœux de maison en maison et la fête du Réveillon dans les rues de Victoria."
+    },
+    "kit": "sc"
+  },
+  "SY": {
+    "text": "En Syrie, le 1er janvier est férié, tout comme Noël le 25 décembre et le Nouvel An islamique du calendrier lunaire. Fin décembre, les fêtes s’enchaînent donc : les quartiers chrétiens se parent de couronnes, de décorations rouges et blanches et de marchés de fête, et des hommes déguisés en père Noël saluent les familles en pleine rue.\n\nÀ Damas, la vieille ville s’illumine : guirlandes et sapins à Bab Touma et rue Droite, marrons grillés près du marché. La nuit du passage à 2025, des milliers de personnes ont fêté minuit sous un feu d’artifice place des Omeyyades ; celle du passage à 2026, selon l’agence SANA, la foule a de nouveau rempli ses rues.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Lumières de la vieille ville",
+        "text": "À Bab Touma et Bab Charqi, cafés, boutiques et balcons se parent de guirlandes, de couronnes et de sapins, et les petits restaurants restent ouverts tard."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Marrons grillés",
+        "text": "Au marché de Noël du vieux Damas, des marchands ambulants grillent des marrons, un en-cas chaud pour une fraîche soirée de décembre."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Minuit place des Omeyyades",
+        "text": "La place des Omeyyades est le lieu où les Damascènes se retrouvent le soir du réveillon : début 2025, des milliers de personnes y ont vu un feu d’artifice."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Syrie : Damas | Time2Fest",
+      "description": "La Syrie accueille 2027 à 21 h UTC : guirlandes et sapins à Bab Touma, marrons grillés au marché du vieux Damas et minuit sur la place des Omeyyades."
+    },
+    "kit": "sy"
+  },
+  "TM": {
+    "text": "Le nouvel an ancien du Turkménistan arrive au printemps : c’est Norouz, les 21 et 22 mars. Mais le 1er janvier est aussi un jour férié, et la nuit qui le précède se passe en famille. La table est souvent dressée à même le tapis, sur une grande nappe. Au centre trône le plov au riz elengi, aux grains gros et juteux, à côté de la salade Olivier, héritage de l’époque soviétique. Les enfants écrivent à l’avance des lettres à Ayaz Baba pour faire leurs vœux. Minuit arrive ici à 19 h UTC.\n\nÀ Achgabat, le grand sapin du pays s’illumine le 15 décembre devant le centre Älem, au pied du Kopet-Dag : en 2024, il atteignait 44 mètres, avec une étoile à huit branches au sommet. Ayaz Baba et Garpamyk allument les lumières, et les pins et cyprès des rues brillent de guirlandes. À minuit, l’hymne retentit et un feu d’artifice éclate au-dessus de la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le plov sur la nappe",
+        "text": "La table du Nouvel An est souvent dressée sur le tapis : au centre, le plov au riz elengi, à côté, la salade Olivier."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Le grand sapin d’Älem",
+        "text": "Dès la mi-décembre, le grand sapin du pays brille devant le centre Älem à Achgabat, en même temps que ceux des places de toutes les provinces."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Hymne et feu d’artifice à minuit",
+        "text": "À minuit, l’hymne national retentit à Achgabat, puis un feu d’artifice colore le ciel de la ville."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Turkménistan : Achgabat | Time2Fest",
+      "description": "Le Turkménistan fête 2027 à 19 h UTC : à Achgabat, le grand sapin brille devant Älem, un feu d’artifice éclate à minuit et le plov attend sur le tapis."
+    },
+    "kit": "tm"
+  },
+  "TR": {
+    "text": "En Turquie, le Nouvel An est une fête laïque, sans lien avec Noël, et le 1er janvier est férié. Maisons et rues s’illuminent, de plus en plus de familles dressent un sapin du Nouvel An, et Noel Baba, le père Noël local, passe justement pour le Nouvel An. On accueille surtout l’année chez soi, en famille et entre amis : au menu, une dinde farcie au riz et aux châtaignes, puis du potiron au kaymak en dessert. Le soir, on tire la loterie du Nouvel An, Milli Piyango : en 2026, le gros lot de 800 millions de livres a été partagé entre trois gagnants. À minuit, on porte un peu de rouge pour la chance et on brise une grenade sur le seuil pour une année généreuse.\n\nIstanbul fête aussi dans la rue : la foule remplit la place Taksim, l’avenue İstiklal et Kadıköy, sur la rive asiatique. À minuit, un feu d’artifice s’élève au-dessus du Bosphore et de la vieille ville, et à Kadıköy, en 2026, on a compté les dernières secondes à la lumière des téléphones.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dinde aux châtaignes",
+        "text": "Le plat vedette du réveillon est la dinde farcie au riz épicé et aux châtaignes. Vient ensuite le kabak tatlısı, dessert de potiron au kaymak."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Une grenade sur le seuil",
+        "text": "À minuit, brise une grenade sur le seuil de ta maison pour attirer la prospérité. Et porte un peu de rouge pour la chance."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu sur le Bosphore",
+        "text": "À minuit, un feu d’artifice s’élève au-dessus du Bosphore. En 2026, la foule l’a admiré à Ortaköy et à la pointe de Sarayburnu, près de la vieille ville."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Turquie : Istanbul | Time2Fest",
+      "description": "La Turquie accueille 2027 à 21 h UTC : dinde aux châtaignes, grenade brisée sur le seuil, rouge porte-bonheur et, à Istanbul, feu d’artifice sur le Bosphore."
+    },
+    "kit": "tr"
   }
 }

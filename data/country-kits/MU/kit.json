@@ -1,0 +1,100 @@
+{
+  "code": "MU",
+  "zone": "UTC+4",
+  "zoneId": "utc+0400",
+  "cityId": "port-louis",
+  "names": {
+    "uk": {
+      "name": "Маврикій",
+      "city": "Порт-Луї",
+      "cityIn": "у Порт-Луї",
+      "caps": "МАВРИКІЙ"
+    },
+    "en": {
+      "name": "Mauritius",
+      "city": "Port Louis",
+      "cityIn": "in Port Louis",
+      "caps": "MAURITIUS"
+    },
+    "es": {
+      "name": "Mauricio",
+      "city": "Port Louis",
+      "cityIn": "en Port Louis",
+      "caps": "MAURICIO"
+    },
+    "fr": {
+      "name": "Maurice",
+      "city": "Port-Louis",
+      "cityIn": "à Port-Louis",
+      "caps": "MAURICE"
+    }
+  },
+  "picto": "M2 36 H38 M4 36 V18 H12 V36 M2.8 18 L8 13.4 L13.2 18 M4 29 H12 M4 23.5 H12 M28 36 V18 H36 V36 M26.8 18 L32 13.4 L37.2 18 M28 29 H36 M28 23.5 H36 M12 22 H28 M11.6 22 L15 18.6 H25 L28.4 22 M12 29 H16 M24 29 H28 M20 18.6 V11.6 M20 11.8 H24 V14.6 H20 M6 36 V32.8 Q8 30.4 10 32.8 V36 M30 36 V32.8 Q32 30.4 34 32.8 V36 M17.2 36 V33.6 H22.8 V36 M18.6 33.6 V30 H21.4 V33.6 M18 30 L19.1 25 Q20 24 20.9 25 L22 30 M18.8 22.6 A1.2 1.2 0 1 0 21.2 22.6 A1.2 1.2 0 1 0 18.8 22.6",
+  "flagColors": [
+    "#EA2839",
+    "#1A206D",
+    "#FFD500",
+    "#00A551"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Порт-Луї"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Port Louis"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Port Louis"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Port-Louis"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "SY",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "damascus",
+  "names": {
+    "uk": {
+      "name": "Сирія",
+      "city": "Дамаск",
+      "cityIn": "у Дамаску",
+      "caps": "СИРІЯ"
+    },
+    "en": {
+      "name": "Syria",
+      "city": "Damascus",
+      "cityIn": "in Damascus",
+      "caps": "SYRIA"
+    },
+    "es": {
+      "name": "Siria",
+      "city": "Damasco",
+      "cityIn": "en Damasco",
+      "caps": "SIRIA"
+    },
+    "fr": {
+      "name": "Syrie",
+      "city": "Damas",
+      "cityIn": "à Damas",
+      "caps": "SYRIE"
+    }
+  },
+  "picto": "M2.5 35 H37.5 M3 35 V27.5 H30 V35 M3 27.5 L5.4 24.6 H10.2 M21.8 24.6 H28 L30 27.5 M10.2 35 V22.6 L16 20.6 L21.8 22.6 V35 M12.8 35 V28.6 A3.2 3.2 0 0 1 19.2 28.6 V35 M11 20.9 V16 M21 16 V20.9 M10.4 16 H21.6 M11 16 Q11 10.2 16 9.6 Q21 10.2 21 16 M16 9.6 V5.4 M31.6 35 V15.6 M36 35 V15.6 M30.8 15.6 H36.8 M32.6 15.6 V10.4 M35 15.6 V10.4 M32.2 10.4 H35.4 M32.6 10.4 L33.8 2.6 L35 10.4",
+  "flagColors": [
+    "#007A3D",
+    "#FFFFFF",
+    "#CE1126"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Дамаску"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Damascus"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Damasco"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Damas"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

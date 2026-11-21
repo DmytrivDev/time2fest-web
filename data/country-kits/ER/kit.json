@@ -1,0 +1,100 @@
+{
+  "code": "ER",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "asmara",
+  "names": {
+    "uk": {
+      "name": "Еритрея",
+      "city": "Асмера",
+      "cityIn": "в Асмері",
+      "caps": "ЕРИТРЕЯ"
+    },
+    "en": {
+      "name": "Eritrea",
+      "city": "Asmara",
+      "cityIn": "in Asmara",
+      "caps": "ERITREA"
+    },
+    "es": {
+      "name": "Eritrea",
+      "city": "Asmara",
+      "cityIn": "en Asmara",
+      "caps": "ERITREA"
+    },
+    "fr": {
+      "name": "Érythrée",
+      "city": "Asmara",
+      "cityIn": "à Asmara",
+      "caps": "ÉRYTHRÉE"
+    }
+  },
+  "picto": "M3 35 H37 M8.5 35 V15 H15.5 V35 M7.8 15 H16.2 M8.6 15 L12 4.8 L15.4 15 M12 4.8 V1.8 M10.8 3 H13.2 M10.2 21.4 V18.6 Q12 15.6 13.8 18.6 V21.4 M13.8 26 A1.8 1.8 0 1 0 10.2 26 A1.8 1.8 0 1 0 13.8 26 M21 35 V20.6 L26.5 17.6 L32 20.6 V35 M21 20.6 V17.2 M26.5 17.6 V14.2 M32 20.6 V17.2 M32 25 L36.5 27.2 V35 M28.2 24.2 A1.7 1.7 0 1 0 24.8 24.2 A1.7 1.7 0 1 0 28.2 24.2 M24.2 35 V31 Q26.5 28 28.8 31 V35",
+  "flagColors": [
+    "#12AD2B",
+    "#4189DD",
+    "#EA0437",
+    "#FFC726"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Асмері"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Asmara"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Asmara"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Asmara"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

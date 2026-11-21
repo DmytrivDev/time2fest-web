@@ -124,7 +124,8 @@ export type IconName =
   | 'tradition-glass'
   | 'tradition-clock'
   | 'tradition-sunset'
-  | 'tradition-cliff';
+  | 'tradition-cliff'
+  | 'tradition-book';
 
 export type IconSize = 9 | 12 | 14 | 15 | 16 | 18 | 20 | 22 | 24 | 26 | 32;
 
@@ -752,6 +753,13 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M3 7h9l1.5 3-.8 3 1.3 3 .5 3" />
       <path d="M3 7v12" />
       <path d="M15.5 17c1.4-1 2.8-1 4.2 0M15 20.5c1.6-1 3.4-1 5 0" />
+    </>
+  ),
+  'tradition-book': (
+    <>
+      <path d="M12 6.5C10 5 7 4.6 4 5v13c3-.4 6 0 8 1.5" />
+      <path d="M12 6.5C14 5 17 4.6 20 5v13c-3-.4-6 0-8 1.5" />
+      <path d="M12 6.5v13" />
     </>
   ),
 };

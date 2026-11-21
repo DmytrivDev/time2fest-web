@@ -1773,6 +1773,246 @@
         "x": 50,
         "y": 30
       }
+    },
+    "country:BD": {
+      "src": "/media/photos/dhaka.webp",
+      "alt": {
+        "uk": "Салют і петарди над житловими кварталами Дакки в новорічну ніч на 2019 рік",
+        "en": "Fireworks and firecrackers over the residential districts of Dhaka on New Year’s Eve 2019",
+        "es": "Fuegos artificiales y petardos sobre los barrios residenciales de Daca en la Nochevieja de 2019",
+        "fr": "Feux d’artifice et pétards au-dessus des quartiers résidentiels de Dacca, nuit du Nouvel An 2019"
+      },
+      "author": "Syed Sajidul Islam",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fireworks_at_the_beginning_of_the_new_year_2019_in_Dhaka.jpg",
+      "position": {
+        "x": 60,
+        "y": 45
+      }
+    },
+    "country:BH": {
+      "src": "/media/photos/manama.webp",
+      "alt": {
+        "uk": "Бахрейнський всесвітній торговий центр у сутінках: дві вежі-вітрила з вітряками на мостах, вогні Манами відбиваються в затоці",
+        "en": "The Bahrain World Trade Center at dusk: two sail-shaped towers with wind turbines on the bridges, Manama’s lights reflected in the bay",
+        "es": "El Bahrain World Trade Center al anochecer: dos torres en forma de vela con aerogeneradores en los puentes y las luces de Manama reflejadas en la bahía",
+        "fr": "Le Bahrain World Trade Center au crépuscule : deux tours en forme de voiles avec éoliennes sur les passerelles, les lumières de Manama reflétées dans la baie"
+      },
+      "author": "B.alotaby",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bahrain_World_trade_Center_.jpg",
+      "position": {
+        "x": 25,
+        "y": 55
+      }
+    },
+    "country:CX": {
+      "src": "/media/photos/christmas-island.webp",
+      "alt": {
+        "uk": "Захід сонця над Флаїнг-Фіш-Ков: скелястий мис із пальмами",
+        "en": "Sunset over Flying Fish Cove: a rocky headland with palm trees",
+        "es": "Atardecer sobre Flying Fish Cove: un cabo rocoso con palmeras",
+        "fr": "Coucher de soleil sur Flying Fish Cove : un cap rocheux planté de palmiers"
+      },
+      "author": "DIAC images",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Christmas_Island_(5775094028).jpg",
+      "position": {
+        "x": 40,
+        "y": 55
+      }
+    },
+    "country:ER": {
+      "src": "/media/photos/asmara.webp",
+      "alt": {
+        "uk": "Захід сонця над Асмерою: дзвіниця католицького собору з годинником над дахами центру, пальми проспекту Харнет на передньому плані",
+        "en": "Sunset over Asmara: the Catholic cathedral’s clock tower above the rooftops of the centre, palms of Harnet Avenue in the foreground",
+        "es": "Atardecer sobre Asmara: el campanario con reloj de la catedral católica sobre los tejados del centro y las palmeras de la avenida Harnet en primer plano",
+        "fr": "Coucher de soleil sur Asmara : le clocher à horloge de la cathédrale catholique au-dessus des toits du centre, palmiers de l’avenue Harnet au premier plan"
+      },
+      "author": "Awet Amine",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Piccola_Roma_(Asmara).jpg",
+      "position": {
+        "x": 52,
+        "y": 40
+      }
+    },
+    "country:ET": {
+      "src": "/media/photos/lalibela.webp",
+      "alt": {
+        "uk": "Нічне чування в Лалібелі: віряни в білих накидках із запаленими свічками моляться біля церкви Еммануїла",
+        "en": "A night vigil in Lalibela: worshippers in white shawls pray with lit candles by the Church of Emmanuel",
+        "es": "Vigilia nocturna en Lalibela: fieles con mantos blancos rezan con velas encendidas junto a la iglesia de Emanuel",
+        "fr": "Veillée nocturne à Lalibela : des fidèles en châles blancs prient, cierges allumés, près de l’église d’Emmanuel"
+      },
+      "author": "Tanjagari",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Christmas_Vigil_Lalibela.jpg",
+      "position": {
+        "x": 40,
+        "y": 50
+      }
+    },
+    "country:IR": {
+      "src": "/media/photos/tehran.webp",
+      "alt": {
+        "uk": "Вежа Азаді вночі з повним місяцем в арці, у теплому підсвічуванні з червоною смугою",
+        "en": "The Azadi Tower at night with a full moon in the arch, in warm lighting with a red stripe",
+        "es": "La torre Azadi de noche con la luna llena en el arco, con iluminación cálida y una franja roja",
+        "fr": "La tour Azadi la nuit, la pleine lune dans l’arche, sous un éclairage chaud à bande rouge"
+      },
+      "author": "احمد جمالی مقدم",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Azadi_Tower_at_night,_September_2016.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:KH": {
+      "src": "/media/photos/angkor.webp",
+      "alt": {
+        "uk": "Ангкор-Ват увечері 31 грудня 2008 року: вежі в кольоровому підсвічуванні, попереду пальми",
+        "en": "Angkor Wat on the evening of 31 December 2008: towers in coloured lighting, palm trees in front",
+        "es": "Angkor Wat la tarde del 31 de diciembre de 2008: torres con iluminación de colores y palmeras delante",
+        "fr": "Angkor Vat le soir du 31 décembre 2008 : tours sous un éclairage coloré, palmiers au premier plan"
+      },
+      "author": "McKay Savage",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cambodia_08_-_064_-_Angkor_Wat_(3225029040).jpg",
+      "position": {
+        "x": 55,
+        "y": 40
+      }
+    },
+    "country:MN": {
+      "src": "/media/photos/ulaanbaatar.webp",
+      "alt": {
+        "uk": "Державний палац на площі Сухе-Батора вночі: підсвічена колонада й статуя Чингісхана в арці, Улан-Батор",
+        "en": "The Government Palace on Sükhbaatar Square at night: the lit colonnade and the statue of Genghis Khan in the arch, Ulaanbaatar",
+        "es": "El Palacio de Gobierno en la plaza Sükhbaatar de noche: la columnata iluminada y la estatua de Gengis Kan en el arco, Ulán Bator",
+        "fr": "Le palais du gouvernement sur la place Sükhbaatar la nuit : colonnade illuminée et statue de Gengis Khan sous l’arche, Oulan-Bator"
+      },
+      "author": "Oleg Afonin",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Government_Palace_of_Mongolia_at_night.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:MU": {
+      "src": "/media/photos/port-louis.webp",
+      "alt": {
+        "uk": "Порт-Луї вночі з висоти: вогні міста, гавань Ле-Кодан і дороги, що світяться",
+        "en": "Port Louis at night from above: city lights, Le Caudan harbour and glowing roads",
+        "es": "Port Louis de noche desde lo alto: luces de la ciudad, el puerto de Le Caudan y carreteras iluminadas",
+        "fr": "Port-Louis la nuit vu d’en haut : lumières de la ville, port du Caudan et routes illuminées"
+      },
+      "author": "carrotmadman6",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Port_Louis,_Mauritius_at_night.jpg",
+      "position": {
+        "x": 45,
+        "y": 60
+      }
+    },
+    "country:OM": {
+      "src": "/media/photos/muscat.webp",
+      "alt": {
+        "uk": "Палац Аль-Алам увечері фронтально: синьо-золоті колони-«гриби», широкий плаский дах і підсвічений золотий фасад",
+        "en": "Al Alam Palace in the evening, front view: blue-and-gold mushroom columns, a wide flat roof and a lit golden façade",
+        "es": "El palacio Al Alam al anochecer, de frente: columnas azul y oro en forma de seta, amplia azotea plana y fachada dorada iluminada",
+        "fr": "Le palais Al Alam le soir, de face : colonnes bleu et or en forme de champignon, large toit plat et façade dorée illuminée"
+      },
+      "author": "Attumm",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al_Alam_Palace-_Muscat.jpg",
+      "position": {
+        "x": 45,
+        "y": 50
+      }
+    },
+    "country:RE": {
+      "src": "/media/photos/saint-denis.webp",
+      "alt": {
+        "uk": "Сен-Дені на початку вечора з гори: освітлені вулиці міста, що спускаються до моря",
+        "en": "Saint-Denis in the early evening from the hillside: lit streets running down to the sea",
+        "es": "Saint-Denis al caer la tarde desde la montaña: calles iluminadas que bajan hasta el mar",
+        "fr": "Saint-Denis en début de soirée depuis les hauteurs : rues illuminées descendant vers la mer"
+      },
+      "author": "franek2",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Saint_Denis,_d%C3%A9but_de_soir%C3%A9e_-_panoramio.jpg",
+      "position": {
+        "x": 60,
+        "y": 40
+      }
+    },
+    "country:SC": {
+      "src": "/media/photos/victoria-sc.webp",
+      "alt": {
+        "uk": "Світанок над Вікторією: місто й гавань під горами Мае, золоте небо над морем",
+        "en": "Sunrise over Victoria: the town and harbour beneath the mountains of Mahé, a golden sky over the sea",
+        "es": "Amanecer sobre Victoria: la ciudad y el puerto bajo las montañas de Mahé, cielo dorado sobre el mar",
+        "fr": "Lever du soleil sur Victoria : la ville et le port au pied des montagnes de Mahé, ciel doré sur la mer"
+      },
+      "author": "Andrew Moore",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Victoria_Sunrise_(14625666105).jpg",
+      "position": {
+        "x": 60,
+        "y": 70
+      }
+    },
+    "country:SY": {
+      "src": "/media/photos/damascus.webp",
+      "alt": {
+        "uk": "Нічний Дамаск зі схилу гори Касьюн: вогні міста до обрію",
+        "en": "Damascus at night from the slope of Mount Qasioun: city lights to the horizon",
+        "es": "Damasco de noche desde la ladera del monte Qasioun: luces de la ciudad hasta el horizonte",
+        "fr": "Damas la nuit depuis le mont Qassioun : les lumières de la ville jusqu’à l’horizon"
+      },
+      "author": "Mohamadmahfod",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Damascus_from_qasioun_mountain.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:TM": {
+      "src": "/media/photos/ashgabat.webp",
+      "alt": {
+        "uk": "Нічний проспект Ашгабата: мокра дорога, ліхтарі й підсвічений готель «Йилдиз» удалині",
+        "en": "An Ashgabat avenue at night: a wet road, streetlights and the lit Yyldyz Hotel in the distance",
+        "es": "Una avenida de Asjabad de noche: calzada mojada, farolas y el hotel Yyldyz iluminado a lo lejos",
+        "fr": "Une avenue d’Achgabat la nuit : chaussée mouillée, réverbères et l’hôtel Yyldyz illuminé au loin"
+      },
+      "author": "Hans Birger Nilsen",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ashgabat_by_night_%2832291466468%29.jpg",
+      "position": {
+        "x": 60,
+        "y": 45
+      }
+    },
+    "country:TR": {
+      "src": "/media/photos/istanbul.webp",
+      "alt": {
+        "uk": "Блакитна мечеть (Султанахмет) у Стамбулі вночі: підсвічені куполи й мінарети за мокрою бруківкою площі, ліхтарі й дерева, праворуч — візок із симітами",
+        "en": "The Blue Mosque (Sultanahmet) in Istanbul at night: lit domes and minarets beyond the wet cobblestones of the square, lamps and trees, a simit cart on the right",
+        "es": "La Mezquita Azul (Sultanahmet) de Estambul de noche: cúpulas y minaretes iluminados tras el empedrado mojado de la plaza, farolas y árboles; a la derecha, un carrito de simit",
+        "fr": "La mosquée Bleue (Sultanahmet) à Istanbul la nuit : coupoles et minarets illuminés au-delà des pavés mouillés de la place, lampadaires et arbres, à droite une charrette de simits"
+      },
+      "author": "Nan Palmero",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Blue_Mosque_at_Night_(52556947044).jpg",
+      "position": {
+        "x": 30,
+        "y": 35
+      }
     }
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "IR",
+  "zone": "UTC+3:30",
+  "zoneId": "utc+0330",
+  "cityId": "tehran",
+  "names": {
+    "uk": {
+      "name": "Іран",
+      "city": "Тегеран",
+      "cityIn": "у Тегерані",
+      "caps": "ІРАН"
+    },
+    "en": {
+      "name": "Iran",
+      "city": "Tehran",
+      "cityIn": "in Tehran",
+      "caps": "IRAN"
+    },
+    "es": {
+      "name": "Irán",
+      "city": "Teherán",
+      "cityIn": "en Teherán",
+      "caps": "IRÁN"
+    },
+    "fr": {
+      "name": "Iran",
+      "city": "Téhéran",
+      "cityIn": "à Téhéran",
+      "caps": "IRAN"
+    }
+  },
+  "picto": "M2.5 34 H37.5 M4 34 C9.5 32 13.6 25.5 14.6 19 L15.2 9.4 M36 34 C30.5 32 26.4 25.5 25.4 19 L24.8 9.4 M15.2 9.4 H24.8 M15.2 9.4 L14.4 5.2 L17.4 6.8 Q20 7.8 22.6 6.8 L25.6 5.2 L24.8 9.4 M15.4 34 V29.4 Q15.6 23.4 20 20 Q24.4 23.4 24.6 29.4 V34 M16.8 23.2 Q17.4 17.4 20 14.2 Q22.6 17.4 23.2 23.2",
+  "flagColors": [
+    "#239F40",
+    "#FFFFFF",
+    "#DA0000"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Тегерані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Tehran"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Teherán"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Téhéran"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

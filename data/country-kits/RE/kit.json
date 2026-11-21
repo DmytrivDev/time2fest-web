@@ -1,0 +1,99 @@
+{
+  "code": "RE",
+  "zone": "UTC+4",
+  "zoneId": "utc+0400",
+  "cityId": "saint-denis",
+  "names": {
+    "uk": {
+      "name": "Реюньйон",
+      "city": "Сен-Дені",
+      "cityIn": "у Сен-Дені",
+      "caps": "РЕЮНЬЙОН"
+    },
+    "en": {
+      "name": "Réunion",
+      "city": "Saint-Denis",
+      "cityIn": "in Saint-Denis",
+      "caps": "RÉUNION"
+    },
+    "es": {
+      "name": "Reunión",
+      "city": "Saint-Denis",
+      "cityIn": "en Saint-Denis",
+      "caps": "REUNIÓN"
+    },
+    "fr": {
+      "name": "La Réunion",
+      "city": "Saint-Denis",
+      "cityIn": "à Saint-Denis",
+      "caps": "LA RÉUNION"
+    }
+  },
+  "picto": "M2 34.5 H38 M4.5 34.5 V22.5 H13 V34.5 M3.2 22.5 L6.6 17.4 H10.9 L14.3 22.5 M27 34.5 V22.5 H35.5 V34.5 M25.7 22.5 L29.1 17.4 H33.4 L36.8 22.5 M13 24.6 L15.4 20.4 H24.6 L27 24.6 M4.5 28.6 H17.4 M22.6 28.6 H35.5 M17.4 34.5 V24.6 H22.6 V34.5 M16.6 24.6 L20 22 L23.4 24.6 M18.4 34.5 V30.4 Q20 28.2 21.6 30.4 V34.5 M20 20.4 V6.4 H26.2 V10.6 H20",
+  "flagColors": [
+    "#0055A4",
+    "#FFFFFF",
+    "#EF4135"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сен-Дені"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Saint-Denis"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Saint-Denis"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Saint-Denis"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

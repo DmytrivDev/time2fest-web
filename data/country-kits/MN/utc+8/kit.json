@@ -1,0 +1,99 @@
+{
+  "code": "MN",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "ulaanbaatar",
+  "names": {
+    "uk": {
+      "name": "Монголія",
+      "city": "Улан-Батор",
+      "cityIn": "в Улан-Баторі",
+      "caps": "МОНГОЛІЯ"
+    },
+    "en": {
+      "name": "Mongolia",
+      "city": "Ulaanbaatar",
+      "cityIn": "in Ulaanbaatar",
+      "caps": "MONGOLIA"
+    },
+    "es": {
+      "name": "Mongolia",
+      "city": "Ulán Bator",
+      "cityIn": "en Ulán Bator",
+      "caps": "MONGOLIA"
+    },
+    "fr": {
+      "name": "Mongolie",
+      "city": "Oulan-Bator",
+      "cityIn": "à Oulan-Bator",
+      "caps": "MONGOLIE"
+    }
+  },
+  "picto": "M2 34 H38 V37 H2 Z M15 37 V35.6 H25 V37 M3 34 V23 H12.6 M27.4 23 H37 V34 M2.4 23 H12.6 M27.4 23 H37.6 M6.6 25.4 V34 M9.8 25.4 V34 M30.2 25.4 V34 M33.4 25.4 V34 M3.6 23 Q3.6 19.2 6.6 19 Q9.6 19.2 9.6 23 M30.4 23 Q30.4 19.2 33.4 19 Q36.4 19.2 36.4 23 M12.6 34 V18.4 H16 M24 18.4 H27.4 V34 M16 34 V14.6 H24 V34 M15.2 14.6 H24.8 M16.6 14.6 Q17.2 11.2 20 10.8 Q22.8 11.2 23.4 14.6 M20 10.8 V3.4 M20 3.4 H24.8 V6.4 H20 M17.4 34 V26.8 A2.6 2.6 0 0 1 22.6 26.8 V34 M18.9 32.6 L19.3 30.8 H20.7 L21.1 32.6 Z M20 28.9 V29",
+  "flagColors": [
+    "#C4272F",
+    "#015197",
+    "#F9CF02"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Улан-Баторі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Ulaanbaatar"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Ulán Bator"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Oulan-Bator"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

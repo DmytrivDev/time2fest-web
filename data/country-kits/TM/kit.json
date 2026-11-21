@@ -1,0 +1,99 @@
+{
+  "code": "TM",
+  "zone": "UTC+5",
+  "zoneId": "utc+0500",
+  "cityId": "ashgabat",
+  "names": {
+    "uk": {
+      "name": "Туркменістан",
+      "city": "Ашгабат",
+      "cityIn": "в Ашгабаті",
+      "caps": "ТУРКМЕНІСТАН"
+    },
+    "en": {
+      "name": "Turkmenistan",
+      "city": "Ashgabat",
+      "cityIn": "in Ashgabat",
+      "caps": "TURKMENISTAN"
+    },
+    "es": {
+      "name": "Turkmenistán",
+      "city": "Asjabad",
+      "cityIn": "en Asjabad",
+      "caps": "TURKMENISTÁN"
+    },
+    "fr": {
+      "name": "Turkménistan",
+      "city": "Achgabat",
+      "cityIn": "à Achgabat",
+      "caps": "TURKMÉNISTAN"
+    }
+  },
+  "picto": "M2 37.6 H38 M6 37.6 V34.6 H34 V37.6 M8.6 34.6 L14.6 26.6 H25.4 L31.4 34.6 M17.2 34.6 V28.6 H22.8 V34.6 M20 4.6 A11 11 0 1 1 19.99 4.6 M20 8.6 L28.4 15.6 L20 22.6 L11.6 15.6 Z M14 9.6 H26 V21.6 H14 Z M20 13.4 A2.2 2.2 0 1 1 19.99 13.4 M17.4 4.9 Q17.6 2.6 20 2.2 Q22.4 2.6 22.6 4.9 M20 2.2 V0.6",
+  "flagColors": [
+    "#00843D",
+    "#D22630",
+    "#FFFFFF"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Ашгабаті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Ashgabat"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Asjabad"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Achgabat"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

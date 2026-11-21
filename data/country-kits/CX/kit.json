@@ -1,0 +1,99 @@
+{
+  "code": "CX",
+  "zone": "UTC+7",
+  "zoneId": "utc+0700",
+  "cityId": "christmas",
+  "names": {
+    "uk": {
+      "name": "Острів Різдва",
+      "city": "Флаїнг-Фіш-Ков",
+      "cityIn": "у Флаїнг-Фіш-Кові",
+      "caps": "ОСТРІВ РІЗДВА"
+    },
+    "en": {
+      "name": "Christmas Island",
+      "city": "Flying Fish Cove",
+      "cityIn": "in Flying Fish Cove",
+      "caps": "CHRISTMAS ISLAND"
+    },
+    "es": {
+      "name": "Isla de Navidad",
+      "city": "Flying Fish Cove",
+      "cityIn": "en Flying Fish Cove",
+      "caps": "ISLA DE NAVIDAD"
+    },
+    "fr": {
+      "name": "Île Christmas",
+      "city": "Flying Fish Cove",
+      "cityIn": "à Flying Fish Cove",
+      "caps": "ÎLE CHRISTMAS"
+    }
+  },
+  "picto": "M11.6 16.2 Q20.0 15.0 28.4 16.2 Q30.2 16.6 29.4 18.4 L26.6 25.6 Q26.0 26.8 24.6 26.8 H15.4 Q14.0 26.8 13.4 25.6 L10.6 18.4 Q9.8 16.6 11.6 16.2 Z M16.6 15.8 V13.6 M23.4 15.8 V13.6 M15.7 13.0 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M22.5 13.0 a0.9 0.9 0 1 0 1.8 0 a0.9 0.9 0 1 0 -1.8 0 M12.0 16.6 Q8.4 15.2 9.0 11.2 M9.0 11.2 Q6.6 6.4 11.0 5.6 Q15.6 5.2 16.4 9.0 L13.0 9.4 Q14.8 11.2 12.4 12.4 Q10.2 13.0 9.0 11.2 Z M28.0 16.6 Q31.6 15.2 31.0 11.2 M31.0 11.2 Q33.4 6.4 29.0 5.6 Q24.4 5.2 23.6 9.0 L27.0 9.4 Q25.2 11.2 27.6 12.4 Q29.8 13.0 31.0 11.2 Z M10.8 18.4 L5.6 16.8 L2.4 22.2 M29.2 18.4 L34.4 16.8 L37.6 22.2 M11.6 21.0 L4.6 20.4 L1.6 26.4 M28.4 21.0 L35.4 20.4 L38.4 26.4 M12.6 23.4 L5.0 24.6 L2.6 30.8 M27.4 23.4 L35.0 24.6 L37.4 30.8 M13.8 25.6 L7.0 28.2 L5.0 34.4 M26.2 25.6 L33.0 28.2 L35.0 34.4",
+  "flagColors": [
+    "#0021AD",
+    "#1C8A42",
+    "#FFC639"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Флаїнг-Фіш-Кові"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Flying Fish Cove"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Flying Fish Cove"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Flying Fish Cove"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
