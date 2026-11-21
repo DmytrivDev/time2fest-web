@@ -2221,6 +2221,118 @@
         "x": 30,
         "y": 55
       }
+    },
+    "country:AX": {
+      "src": "/media/photos/mariehamn.webp",
+      "alt": {
+        "uk": "Марієгамн зимової ночі: засніжене місто на березі Західної гавані й барка «Поммерн» біля набережної",
+        "en": "Mariehamn on a winter night: the snowy town on the West Harbour and the barque Pommern by the quay",
+        "es": "Mariehamn en una noche de invierno: la ciudad nevada junto al puerto Oeste y la barca Pommern en el muelle",
+        "fr": "Mariehamn par une nuit d’hiver : la ville enneigée au bord du port Ouest et le trois-mâts Pommern à quai"
+      },
+      "author": "Guntars Mednis",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mariehamn_at_night_-_panoramio.jpg",
+      "position": {
+        "x": 32,
+        "y": 60
+      }
+    },
+    "country:BG": {
+      "src": "/media/photos/sofia.webp",
+      "alt": {
+        "uk": "Собор Олександра Невського в Софії зимовою ніччю, у снігу, з ліхтарями на площі",
+        "en": "The Alexander Nevsky Cathedral in Sofia on a snowy winter night, with lamps on the square",
+        "es": "La catedral de Alejandro Nevski en Sofía en una noche nevada de invierno, con farolas en la plaza",
+        "fr": "La cathédrale Alexandre-Nevski à Sofia par une nuit d’hiver enneigée, réverbères sur la place"
+      },
+      "author": "Nikolai Karaneschev",
+      "license": "CC BY 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D0%A1%D0%BE%D1%84%D0%B8%D1%8F_%D0%BF%D1%80%D0%B5%D0%B7_%D0%B7%D0%B8%D0%BC%D0%B0%D1%82%D0%B0_(Alexander_Nevsky_Cathedral_-_07.Feb.2015)_-_panoramio.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:BI": {
+      "src": "/media/photos/burundi-drums.webp",
+      "alt": {
+        "uk": "Барабани Бурунді: тамбурини в червоно-біло-зеленому несуть барабани на головах під час виступу",
+        "en": "The drums of Burundi: drummers in red, white and green carry drums on their heads during a performance",
+        "es": "Los tambores de Burundi: tamborileros de rojo, blanco y verde llevan los tambores sobre la cabeza durante una actuación",
+        "fr": "Les tambours du Burundi : des tambourinaires en rouge, blanc et vert portent les tambours sur la tête pendant un spectacle"
+      },
+      "author": "Salvator NSHIMIRIMANA",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tambours,_une_force_monumentale_du_Burundi.jpg",
+      "position": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "country:BW": {
+      "src": "/media/photos/chobe.webp",
+      "alt": {
+        "uk": "Слони переходять річку Чобе на заході сонця",
+        "en": "Elephants crossing the Chobe River at sunset",
+        "es": "Elefantes cruzando el río Chobe al atardecer",
+        "fr": "Des éléphants traversent la rivière Chobe au coucher du soleil"
+      },
+      "author": "NikSimpson",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Elephants_at_Sunset.JPG",
+      "position": {
+        "x": 50,
+        "y": 65
+      }
+    },
+    "country:MG": {
+      "src": "/media/photos/antananarivo.webp",
+      "alt": {
+        "uk": "Антананаріву вночі з пагорба: вогні міста, озеро Аносі й освітлений стадіон Махамасіна, зоряне небо",
+        "en": "Antananarivo at night from a hill: city lights, Lake Anosy and the lit Mahamasina stadium under a starry sky",
+        "es": "Antananarivo de noche desde una colina: luces de la ciudad, el lago Anosy y el estadio Mahamasina iluminado bajo un cielo estrellado",
+        "fr": "Antananarivo la nuit depuis une colline : lumières de la ville, lac Anosy et stade de Mahamasina illuminé sous un ciel étoilé"
+      },
+      "author": "Souvaroff",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tana_De_nuit.jpg",
+      "position": {
+        "x": 45,
+        "y": 65
+      }
+    },
+    "country:SA": {
+      "src": "/media/photos/riyadh.webp",
+      "alt": {
+        "uk": "Бульвар у Ер-Ріяді вночі, зона «Сезону Ер-Ріяда»: озеро в синій підсвітці, вагончик канатної дороги, оглядове колесо й вежа з годинником",
+        "en": "Boulevard Riyadh City at night, a Riyadh Season zone: a lake in blue light, a cable car cabin, a Ferris wheel and a clock tower",
+        "es": "Boulevard Riyadh City de noche, zona de la Riyadh Season: un lago con luz azul, una cabina de teleférico, una noria y una torre con reloj",
+        "fr": "Boulevard Riyadh City la nuit, zone de la Riyadh Season : lac éclairé en bleu, cabine de téléphérique, grande roue et tour horloge"
+      },
+      "author": "Humanized",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Boulevard_Riyadh_City.jpg",
+      "position": {
+        "x": 50,
+        "y": 62
+      }
+    },
+    "country:YE": {
+      "src": "/media/photos/sanaa.webp",
+      "alt": {
+        "uk": "Нічна Сана з висоти: вогні старого міста й баштових будинків до обрію",
+        "en": "Sanaa at night from above: lights of the old city and its tower houses to the horizon",
+        "es": "Saná de noche desde lo alto: las luces de la ciudad vieja y sus casas torre hasta el horizonte",
+        "fr": "Sanaa la nuit vue d’en haut : lumières de la vieille ville et de ses maisons-tours jusqu’à l’horizon"
+      },
+      "author": "Rod Waddington",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sanaa_Night,_Yemen_(10283232685).jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
     }
   }
 }

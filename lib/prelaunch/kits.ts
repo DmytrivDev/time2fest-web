@@ -33,6 +33,7 @@ const KIT_ICONS: Readonly<Record<string, IconName>> = {
   sunset: 'tradition-sunset',
   cliff: 'tradition-cliff',
   book: 'tradition-book',
+  ladle: 'tradition-ladle',
 };
 
 export function kitIcon(iconId: string | undefined): IconName | undefined {

@@ -1,0 +1,99 @@
+{
+  "code": "YE",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "aden",
+  "names": {
+    "uk": {
+      "name": "Ємен",
+      "city": "Аден",
+      "cityIn": "в Адені",
+      "caps": "ЄМЕН"
+    },
+    "en": {
+      "name": "Yemen",
+      "city": "Aden",
+      "cityIn": "in Aden",
+      "caps": "YEMEN"
+    },
+    "es": {
+      "name": "Yemen",
+      "city": "Adén",
+      "cityIn": "en Adén",
+      "caps": "YEMEN"
+    },
+    "fr": {
+      "name": "Yémen",
+      "city": "Aden",
+      "cityIn": "à Aden",
+      "caps": "YÉMEN"
+    }
+  },
+  "picto": "M3 35 H37 M8 35 V10 H25 V35 M12 10 V4.5 H21 V10 M8 10 V7.2 M25 10 V7.2 M12 4.5 V2 M21 4.5 V2 M8 18 L10 16 L12 18 L14 16 L16 18 L18 16 L20 18 L22 16 L24 18 L25 17 M8 27 H25 M10.8 24.6 V21.6 A1.8 1.8 0 0 1 14.4 21.6 V24.6 M18.6 24.6 V21.6 A1.8 1.8 0 0 1 22.2 21.6 V24.6 M15 9.6 V7.4 A1.5 1.5 0 0 1 18 7.4 V9.6 M11.4 15.4 V13.2 A1.5 1.5 0 0 1 14.4 13.2 V15.4 M18.6 15.4 V13.2 A1.5 1.5 0 0 1 21.6 13.2 V15.4 M14.6 35 V31.4 A1.9 1.9 0 0 1 18.4 31.4 V35 M25 35 V19 H33 V35 M33 19 V16.2 M25 27 H33 M27.2 24.6 V22.4 A1.8 1.8 0 0 1 30.8 22.4 V24.6 M27.2 32.6 V30.4 A1.8 1.8 0 0 1 30.8 30.4 V32.6",
+  "flagColors": [
+    "#CE1126",
+    "#FFFFFF",
+    "#000000"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Адені"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Aden"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Adén"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Aden"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

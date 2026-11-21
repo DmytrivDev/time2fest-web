@@ -3510,5 +3510,201 @@
       "description": "Mayotte fête 2027 à 21 h UTC. Le 1er janvier, les familles de Mamoudzou et de toute l’île font le voulé, pique-nique grillades et musique au bord du lagon."
     },
     "kit": "yt"
+  },
+  "AX": {
+    "text": "Les îles Åland forment une région autonome suédophone de la Finlande : le Nouvel An y suit donc les coutumes finno-suédoises. Noël se passe en famille, la Saint-Sylvestre entre amis et invités. En Finlande, on prend de bonnes résolutions depuis les années 1880, les feux d’artifice sont arrivés au XXe siècle et le plus ancien passe-temps consiste à lire l’avenir dans l’étain fondu. Autrefois, le 1er janvier, on rendait aussi visite à ses connaissances.\n\nMariehamn commence à fêter la fin de l’année en plein jour : le 31 décembre part sa course du Nouvel An. À minuit, la ville tire son propre feu d’artifice côté est, entre la bibliothèque et la salle Alandica. En 2025, la municipalité a signé un contrat pluriannuel : les gens veulent un vrai feu d’artifice plutôt qu’un spectacle laser, et cela limite les fusées privées.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Couler l’étain porte-bonheur",
+        "text": "On verse l’étain fondu dans l’eau froide et la forme prédit l’année : un bateau annonce un voyage, une fleur un mariage. Les kits au plomb sont interdits depuis 2018."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "« Gott nytt år ! » à minuit",
+        "text": "La Saint-Sylvestre se passe entre amis. Au douzième coup de minuit, on crie « Gott nytt år ! », bonne année en suédois, on ouvre le champagne et on trinque."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "La course Nyårsruset",
+        "text": "Le 31 décembre à 12 h 30, la course du Nouvel An part de la piscine Mariebad à Mariehamn, sur 7,4 ou 9,5 km. On court ou on marche, poussette et chien bienvenus."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An aux Îles Åland : Mariehamn | Time2Fest",
+      "description": "Les Îles Åland fêtent 2027 à 22 h UTC. Mariehamn tire son feu d’artifice à minuit, après la course Nyårsruset du 31 décembre et l’étain fondu de la soirée."
+    },
+    "kit": "ax"
+  },
+  "BG": {
+    "text": "En Bulgarie, la vedette de la table du Nouvel An est la banitsa aux kasmetcheta, de petits porte-bonheur : dans la pâte feuilletée on cache des brindilles de cornouiller pour la santé, des pièces et des vœux enveloppés de papier d’aluminium. On la coupe dès les premières heures de l’année : on fait tourner le plateau trois fois et chacun prend la part placée devant lui, et avec elle sa chance. Le matin du 1er janvier, jour de la Saint-Basile, les plus jeunes de la famille prennent une survachka, une branche de cornouiller ornée de rubans, de fruits secs et de pop-corn, et tapotent doucement le dos de leurs proches en leur souhaitant la santé.\n\nSofia fête le Nouvel An en plein air sur la place Knyaz Alexander I, où le concert commence à 21 h 30. À minuit retentit le chant « Mnogaya leta », puis tout le monde se prend par la main pour danser le horo. Ces dernières années, un spectacle de lumières remplace le feu d’artifice officiel, mais des feux privés illuminent toujours les quartiers.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cherche ta chance dans la banitsa",
+        "text": "Dans la banitsa, on cache des brindilles de cornouiller, des pièces et des vœux écrits. On tourne le plateau trois fois, et chacun prend la part devant lui."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Survakane le 1er janvier",
+        "text": "Les enfants tapotent le dos de leurs proches avec une survachka, une branche de cornouiller décorée, leur souhaitent la santé et reçoivent bonbons ou pièces."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Le horo à minuit",
+        "text": "Après le chant « Mnogaya leta », on se prend par la main pour lancer le horo, la danse en chaîne préférée des Bulgares."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Bulgarie : Sofia | Time2Fest",
+      "description": "La Bulgarie fête 2027 à 22 h UTC : Sofia danse le horo place Knyaz Alexander I, et chacun cherche sa chance dans la banitsa avant la survachka du matin."
+    },
+    "kit": "bg"
+  },
+  "BI": {
+    "text": "Le 1er janvier est férié au Burundi, et le Nouvel An se fête dans tout le pays comme une journée de famille. Les enfants rendent visite aux aînés pour recevoir leurs vœux pour l’année, et le repas passe de maison en maison pour qu’aucune famille n’ait à nourrir tout le monde. On chante, on danse, on bat le tambour : la danse rituelle du tambour royal figure depuis 2014 sur la liste du patrimoine immatériel de l’UNESCO et se joue lors des fêtes. On se salue d’un « Umwaka mwiza » — « belle année » en kirundi.\n\nÀ Bujumbura, le réveillon s’appelle « Bonane ». Le 31 décembre, les rues autour du marché Kuri Plaza se couvrent d’étals à prix cassés dès l’après-midi. À minuit, les uns sont aux offices dans des églises combles, les autres place de l’Indépendance, où, la nuit du passage à 2026, la foule a accueilli l’année au son des DJ.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Repas de maison en maison",
+        "text": "Le 1er janvier, les enfants rendent visite aux aînés pour leurs vœux, et le repas passe d’une maison à l’autre : personne ne nourrit tout le monde seul."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Veillée de minuit",
+        "text": "Le soir du réveillon, les églises de Bujumbura sont pleines : aux veillées de prière, on accueille l’année par un compte à rebours et des prières."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Place de l’Indépendance",
+        "text": "À minuit, la foule remplit la place centrale de Bujumbura : la nuit du passage à 2026, des DJ y ont joué, et la ville a salué l’année d’un « Bonane ! »."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Burundi : Bujumbura | Time2Fest",
+      "description": "Le Burundi accueille 2027 à 22 h UTC : offices de minuit et DJ place de l’Indépendance à Bujumbura, et dans tout le pays visites aux aînés et tambours."
+    },
+    "kit": "bi"
+  },
+  "BW": {
+    "text": "Au Botswana, le 1er et le 2 janvier sont tous deux fériés : pour beaucoup, les fêtes riment avec retour à la maison. Avant Noël, les citadins regagnent leur village natal, et les familles se rendent à leur cattlepost, ces pâturages lointains où vit le troupeau familial, pour y abattre une chèvre ou une vache et partager un copieux repas de viande. Les offices du Nouvel An s’appellent ici « crossover », le passage à la nouvelle année : les églises rassemblent les fidèles dès le soir du 31 décembre, et certaines communautés prient toute la nuit, vêtues de blanc.\n\nGaborone accueille minuit dans les soirées et les festivals organisés dans les fermes autour de la ville, tandis que le Stade national accueille chaque année un crossover aux chandelles. Il n’y a pas de feu d’artifice municipal, mais pour le passage à 2026 le complexe Grand Palm a organisé une soirée avec DJ et feu d’artifice à minuit pile.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Crossover à l’église",
+        "text": "Le soir du 31 décembre, les églises appellent aux offices « crossover », et certaines communautés accueillent l’année vêtues de blanc, aux chandelles, en priant jusqu’au matin."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Les fêtes au village natal",
+        "text": "Avant les fêtes, les citadins rentrent au village natal, et les familles partent au cattlepost abattre une chèvre ou une vache pour le repas partagé."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Minuit à Gaborone",
+        "text": "La capitale fait la fête en soirée et dans les festivals des fermes alentour ; pour le passage à 2026, le complexe Grand Palm a tiré un feu d’artifice à minuit pile."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Botswana : Gaborone | Time2Fest",
+      "description": "Le Botswana accueille 2027 à 22 h UTC : offices crossover en blanc aux chandelles, retour au village natal et soirées avec feu d’artifice à Gaborone."
+    },
+    "kit": "bw"
+  },
+  "MG": {
+    "text": "À Madagascar, le 1er janvier est férié et le réveillon est avant tout une fête de famille. Les proches se retrouvent chez l’un d’eux, se cotisent souvent pour le repas, puis mangent, chantent et dansent jusqu’à minuit. Le lendemain, nouveau repas : ceux qui le peuvent préparent une oie ou une dinde, et tout le monde échange des vœux : « Arahaba tratry ny taona ! ». Les Malgaches ont aussi leur propre Nouvel An, l’Alahamady Be : en mars 2026, il a de nouveau été largement fêté avec un feu sacré et du tatao, riz au lait et au miel.\n\nÀ Antananarivo, les uns passent minuit dans des soirées d’hôtel ou des bals en plein air, d’autres à l’église. Ces dernières années, de plus en plus de gens viennent à minuit sur la place illuminée d’Antaninarenina. Et le matin du 1er janvier, les aires de jeux d’Anosy et de Mahamasina se remplissent de familles en tee-shirts blancs de fête.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un repas en cotisant",
+        "text": "La grande famille se retrouve dans une maison et se cotise souvent pour le repas. Le 1er janvier, on déjeune ensemble ; ceux qui le peuvent préparent une oie ou une dinde."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "« Arahaba tratry ny taona ! »",
+        "text": "C’est « Bonne année ! » en malgache. Les premiers jours de l’année, on retrouve la famille et on se souhaite une bonne année."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Un autre Nouvel An au printemps",
+        "text": "L’ancien Nouvel An malgache, l’Alahamady Be, est de nouveau fêté : en mars 2026, avec un feu sacré, une bénédiction et du tatao, riz au lait et au miel."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Madagascar : Antananarivo | Time2Fest",
+      "description": "Madagascar accueille 2027 à 21 h UTC : repas de famille en cotisant, vœux « Arahaba tratry ny taona ! » et place illuminée d’Antaninarenina."
+    },
+    "kit": "mg"
+  },
+  "SA": {
+    "text": "L’Arabie saoudite ne compte que quatre jours fériés : les deux Aïd, le jour de la Fondation et la fête nationale. Ni le 1er janvier ni le Nouvel An islamique (1er mouharram) ne sont chômés. Il y a quelques années, la Saint-Sylvestre passait ici en silence ; aujourd’hui, les grandes villes l’accueillent avec compte à rebours et feux d’artifice. À Djeddah, on se retrouve sur la Corniche, au bord de la mer Rouge, où les hôtels organisent fêtes, comptes à rebours sur les toits et sets de DJ tard dans la nuit.\n\nÀ Riyad, la Saint-Sylvestre tombe en pleine Riyadh Season, un festival d’hiver de dix semaines : concerts, spectacles et sport. Le lieu principal est Boulevard City, avec musique live et jeux pour toute la famille. L’année 2026 y est arrivée sous un feu d’artifice à minuit pile, et la pyrotechnie a aussi illuminé les tours Kingdom Centre et Al Faisaliah.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à Boulevard City",
+        "text": "Le grand compte à rebours de Riyad a lieu à Boulevard City : musique live, jeux pour toute la famille et feu d’artifice à minuit pile."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Dîner au-dessus de la ville",
+        "text": "Restaurants et hôtels de Riyad organisent des dîners de réveillon. Dans la sphère de verre au sommet de la tour Al Faisaliah, le dîner a duré de 19 h jusqu’à minuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "La Corniche de Djeddah",
+        "text": "On se retrouve sur le front de mer de la mer Rouge, où les hôtels organisent fêtes, comptes à rebours sur les toits et sets de DJ."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Arabie saoudite : Riyad | Time2Fest",
+      "description": "L’Arabie saoudite accueille 2027 à 21 h UTC : compte à rebours et feu d’artifice à minuit à Boulevard City, à Riyad, et fêtes sur la Corniche de Djeddah."
+    },
+    "kit": "sa"
+  },
+  "YE": {
+    "text": "Au Yémen, le 1er janvier est un jour ouvré comme un autre. Le jour férié revient à un autre Nouvel An : le Nouvel An islamique, le 1er mouharram du calendrier lunaire, tombé le 16 juin en 2026. La nuit du 1er janvier n’est pas une fête officielle : le 31 décembre, le chef de l’État adresse ses vœux de Nouvel An aux dirigeants d’autres pays, comme fin 2024. À Sanaa et dans d’autres villes contrôlées par les Houthis, les fêtes du Nouvel An dans les hôtels et les cafés sont interdites, selon le quotidien Asharq Al-Awsat en 2019.\n\nAden est surnommée « la fille de la mer » : l’eau entoure la ville presque de tous côtés. Les jours de fête, habitants et visiteurs d’autres provinces gagnent ses plages — Gold Mohur, Al-Arousa et la baie de Khor al-Fil, à Tawahi.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sunset",
+        "title": "Le Nouvel An islamique",
+        "text": "Le Nouvel An férié au Yémen suit le calendrier lunaire : le 1er mouharram. En 2026, il tombait le 16 juin."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Du bint al-sahn à table",
+        "text": "L’un des mets préférés du Yémen : de fines couches de pâte au beurre clarifié. On le cuit à la maison et on le sert tiède, avec du miel et du cumin noir."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Fête au bord de la mer",
+        "text": "Aden est entourée par la mer presque de tous côtés : les jours de fête, on file aux plages de Gold Mohur, d’Al-Arousa ou à la baie de Khor al-Fil."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Yémen : Aden | Time2Fest",
+      "description": "Le Yémen passe à 2027 à 21 h UTC : le 1er janvier est travaillé, le férié est le Nouvel An islamique, et Aden, fille de la mer, fête sur la plage de Gold Mohur."
+    },
+    "kit": "ye"
   }
 }

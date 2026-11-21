@@ -1998,6 +1998,132 @@
         "title": "Nouvel An à Mayotte : Mamoudzou | Time2Fest",
         "description": "Mayotte fête 2027 à 21 h UTC. Le 1er janvier, les familles de Mamoudzou et de toute l’île font le voulé, pique-nique grillades et musique au bord du lagon."
       }
+    },
+    "AX": {
+      "uk": {
+        "title": "Новий рік на Аландських островах: Марієгамн | Time2Fest",
+        "description": "Аландські острови зустрічають 2027 рік о 22:00 UTC. Опівночі Марієгамн запускає міський салют, а вдень 31 грудня збирає людей на новорічний забіг Nyårsruset."
+      },
+      "en": {
+        "title": "New Year in the Åland Islands: Mariehamn | Time2Fest",
+        "description": "The Åland Islands greet 2027 at 22:00 UTC. Mariehamn fires its town display at midnight, after the Nyårsruset run on 31 December and an evening of tin casting."
+      },
+      "es": {
+        "title": "Año Nuevo en las Islas Åland: Mariehamn | Time2Fest",
+        "description": "Las Islas Åland reciben 2027 a las 22:00 UTC. Mariehamn lanza sus fuegos a medianoche, tras la carrera Nyårsruset del 31 de diciembre y el estaño fundido."
+      },
+      "fr": {
+        "title": "Nouvel An aux Îles Åland : Mariehamn | Time2Fest",
+        "description": "Les Îles Åland fêtent 2027 à 22 h UTC. Mariehamn tire son feu d’artifice à minuit, après la course Nyårsruset du 31 décembre et l’étain fondu de la soirée."
+      }
+    },
+    "BG": {
+      "uk": {
+        "title": "Новий рік у Болгарії: Софія | Time2Fest",
+        "description": "Болгарія зустрічає 2027 рік о 22:00 UTC: у Софії танцюють хоро на площі Князя Олександра I, а вдома шукають щастя в баниці й плескають рідних сурвачкою."
+      },
+      "en": {
+        "title": "New Year in Bulgaria: Sofia | Time2Fest",
+        "description": "Bulgaria greets 2027 at 22:00 UTC: Sofia dances the horo on Knyaz Alexander I Square, and at home families seek their luck in the banitsa and tap backs."
+      },
+      "es": {
+        "title": "Año Nuevo en Bulgaria: Sofía | Time2Fest",
+        "description": "Bulgaria recibe 2027 a las 22:00 UTC: Sofía baila el horo en la plaza Knyaz Alexander I y en casa cada uno busca su suerte escondida en la banitsa."
+      },
+      "fr": {
+        "title": "Nouvel An en Bulgarie : Sofia | Time2Fest",
+        "description": "La Bulgarie fête 2027 à 22 h UTC : Sofia danse le horo place Knyaz Alexander I, et chacun cherche sa chance dans la banitsa avant la survachka du matin."
+      }
+    },
+    "BI": {
+      "uk": {
+        "title": "Новий рік у Бурунді: Бужумбура | Time2Fest",
+        "description": "Бурунді зустрічає 2027 рік о 22:00 UTC: у Бужумбурі — нічні служби й діджеї на площі Незалежності, по країні — гостини в старших і барабани."
+      },
+      "en": {
+        "title": "New Year in Burundi: Bujumbura | Time2Fest",
+        "description": "Burundi greets 2027 at 22:00 UTC: midnight services and DJs in Bujumbura's Independence Square, and across the country visits to elders and drums."
+      },
+      "es": {
+        "title": "Año Nuevo en Burundi: Buyumbura | Time2Fest",
+        "description": "Burundi recibe 2027 a las 22:00 UTC: misas de medianoche y DJ en la plaza de la Independencia de Buyumbura, y en todo el país visitas a los mayores."
+      },
+      "fr": {
+        "title": "Nouvel An au Burundi : Bujumbura | Time2Fest",
+        "description": "Le Burundi accueille 2027 à 22 h UTC : offices de minuit et DJ place de l’Indépendance à Bujumbura, et dans tout le pays visites aux aînés et tambours."
+      }
+    },
+    "BW": {
+      "uk": {
+        "title": "Новий рік у Ботсвані: Габороне | Time2Fest",
+        "description": "Ботсвана зустрічає 2027 рік о 22:00 UTC: служби «кросовер» у білому й при свічках, дорога в рідні села на свята й вечірки з феєрверком у Габороне."
+      },
+      "en": {
+        "title": "New Year in Botswana: Gaborone | Time2Fest",
+        "description": "Botswana greets 2027 at 22:00 UTC: candlelit all-white crossover services, trips home to the villages and parties with fireworks at midnight in Gaborone."
+      },
+      "es": {
+        "title": "Año Nuevo en Botsuana: Gaborone | Time2Fest",
+        "description": "Botsuana recibe 2027 a las 22:00 UTC: cultos crossover de blanco y con velas, viajes a la aldea natal y fiestas con fuegos a medianoche en Gaborone."
+      },
+      "fr": {
+        "title": "Nouvel An au Botswana : Gaborone | Time2Fest",
+        "description": "Le Botswana accueille 2027 à 22 h UTC : offices crossover en blanc aux chandelles, retour au village natal et soirées avec feu d’artifice à Gaborone."
+      }
+    },
+    "MG": {
+      "uk": {
+        "title": "Новий рік на Мадагаскарі: Антананаріву | Time2Fest",
+        "description": "Мадагаскар зустрічає 2027 рік о 21:00 UTC: родинне застілля спільним коштом, побажання «Арахаба тратри ни таона!» і світла площа в Антанінаренині."
+      },
+      "en": {
+        "title": "New Year in Madagascar: Antananarivo | Time2Fest",
+        "description": "Madagascar greets 2027 at 21:00 UTC: family feasts everyone chips in for, wishes of \"Arahaba tratry ny taona!\" and the lit square of Antaninarenina."
+      },
+      "es": {
+        "title": "Año Nuevo en Madagascar: Antananarivo | Time2Fest",
+        "description": "Madagascar recibe 2027 a las 21:00 UTC: cenas en familia a escote, el deseo «Arahaba tratry ny taona!» y la plaza iluminada de Antaninarenina."
+      },
+      "fr": {
+        "title": "Nouvel An à Madagascar : Antananarivo | Time2Fest",
+        "description": "Madagascar accueille 2027 à 21 h UTC : repas de famille en cotisant, vœux « Arahaba tratry ny taona ! » et place illuminée d’Antaninarenina."
+      }
+    },
+    "SA": {
+      "uk": {
+        "title": "Новий рік у Саудівській Аравії: Ер-Ріяд | Time2Fest",
+        "description": "Саудівська Аравія зустрічає 2027 рік о 21:00 UTC: відлік і салют опівночі в Бульвар-Сіті Ер-Ріяда, вечірки в готелях на набережній Корніш у Джидді."
+      },
+      "en": {
+        "title": "New Year in Saudi Arabia: Riyadh | Time2Fest",
+        "description": "Saudi Arabia greets 2027 at 21:00 UTC: a countdown and midnight fireworks at Riyadh's Boulevard City, and hotel parties along the Jeddah Corniche."
+      },
+      "es": {
+        "title": "Año Nuevo en Arabia Saudí: Riad | Time2Fest",
+        "description": "Arabia Saudí recibe 2027 a las 21:00 UTC: cuenta atrás y fuegos a medianoche en Boulevard City de Riad, y fiestas en los hoteles de la Corniche de Yeda."
+      },
+      "fr": {
+        "title": "Nouvel An en Arabie saoudite : Riyad | Time2Fest",
+        "description": "L’Arabie saoudite accueille 2027 à 21 h UTC : compte à rebours et feu d’artifice à minuit à Boulevard City, à Riyad, et fêtes sur la Corniche de Djeddah."
+      }
+    },
+    "YE": {
+      "uk": {
+        "title": "Новий рік в Ємені: Аден | Time2Fest",
+        "description": "Ємен зустрічає 2027 рік о 21:00 UTC: 1 січня тут робочий день, вихідний — ісламський Новий рік, а Аден, «дочка моря», на свята їде на пляж Голд-Мохур."
+      },
+      "en": {
+        "title": "New Year in Yemen: Aden | Time2Fest",
+        "description": "Yemen reaches 2027 at 21:00 UTC: 1 January is a working day, the holiday is the Islamic New Year, and Aden, daughter of the sea, spends holidays at Gold Mohur."
+      },
+      "es": {
+        "title": "Año Nuevo en Yemen: Adén | Time2Fest",
+        "description": "Yemen llega a 2027 a las 21:00 UTC: el 1 de enero se trabaja, el feriado es el Año Nuevo islámico y Adén, la hija del mar, pasa las fiestas en Gold Mohur."
+      },
+      "fr": {
+        "title": "Nouvel An au Yémen : Aden | Time2Fest",
+        "description": "Le Yémen passe à 2027 à 21 h UTC : le 1er janvier est travaillé, le férié est le Nouvel An islamique, et Aden, fille de la mer, fête sur la plage de Gold Mohur."
+      }
     }
   }
 }

@@ -3510,5 +3510,201 @@
       "description": "Mayotte recibe 2027 a las 21:00 UTC. El 1 de enero, familias de Mamoudzou y de toda la isla hacen el voulé, un pícnic con brasas y música junto a la laguna."
     },
     "kit": "yt"
+  },
+  "AX": {
+    "text": "Las islas Åland son una región autónoma de Finlandia de habla sueca, así que el Año Nuevo sigue las costumbres finlandesas de lengua sueca. La Navidad es cosa de familia; la Nochevieja, de amigos e invitados. En Finlandia se hacen propósitos de Año Nuevo desde la década de 1880, los fuegos artificiales llegaron en el siglo XX y el pasatiempo más antiguo es adivinar el futuro con estaño fundido. Antiguamente, el 1 de enero también se visitaba a los conocidos.\n\nMariehamn empieza a despedir el año de día: el 31 de diciembre sale su carrera de Nochevieja. A medianoche la ciudad lanza sus propios fuegos en el lado este, entre la biblioteca y la sala Alandica. En 2025 el ayuntamiento firmó un contrato de varios años: la gente quiere fuegos de verdad y no un espectáculo láser, y así se lanzan menos cohetes particulares.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Echar estaño para la suerte",
+        "text": "El estaño fundido se vierte en agua fría y la forma predice el año: un barco anuncia un viaje; una flor, una boda. Los kits con plomo están prohibidos desde 2018."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "«Gott nytt år!» a medianoche",
+        "text": "La Nochevieja se pasa con amigos. Al dar la medianoche se grita «Gott nytt år!», feliz año nuevo en sueco, se abre el champán y se brinda."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "La carrera Nyårsruset",
+        "text": "El 31 de diciembre a las 12:30 sale desde la piscina Mariebad de Mariehamn la carrera de Nochevieja, de 7,4 o 9,5 km. Se puede correr o caminar, con carrito y perro."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en las Islas Åland: Mariehamn | Time2Fest",
+      "description": "Las Islas Åland reciben 2027 a las 22:00 UTC. Mariehamn lanza sus fuegos a medianoche, tras la carrera Nyårsruset del 31 de diciembre y el estaño fundido."
+    },
+    "kit": "ax"
+  },
+  "BG": {
+    "text": "En Bulgaria la estrella de la mesa de Año Nuevo es la banitsa con kasmetcheta, pequeñas suertes: en el hojaldre se esconden ramitas de cornejo para la salud, monedas y deseos envueltos en papel de aluminio. Se corta en las primeras horas del año nuevo: la bandeja gira tres veces y cada uno toma el trozo que le queda delante, y con él su suerte. La mañana del 1 de enero, día de San Basilio, los más pequeños de la familia toman una survachka, una rama de cornejo adornada con cintas, fruta seca y palomitas, y dan suaves golpecitos en la espalda de sus parientes deseándoles salud.\n\nSofía recibe el Año Nuevo al aire libre en la plaza Knyaz Alexander I, donde el concierto empieza a las nueve y media. A medianoche suena el canto «Mnogaya leta» y después todos se dan la mano para bailar el horo. En los últimos años un espectáculo de luces sustituye a los fuegos oficiales, pero los fuegos particulares siguen iluminando los barrios.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Busca tu suerte en la banitsa",
+        "text": "En la banitsa se esconden ramitas de cornejo, monedas y deseos escritos. La bandeja gira tres veces y cada uno toma el trozo que tiene delante."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Survakane el 1 de enero",
+        "text": "Los niños dan golpecitos en la espalda de sus parientes con una survachka, una rama de cornejo adornada, les desean salud y reciben dulces o monedas."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Horo a medianoche",
+        "text": "Tras el canto «Mnogaya leta», la gente se da la mano y empieza el horo, la danza en cadena más popular de Bulgaria."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Bulgaria: Sofía | Time2Fest",
+      "description": "Bulgaria recibe 2027 a las 22:00 UTC: Sofía baila el horo en la plaza Knyaz Alexander I y en casa cada uno busca su suerte escondida en la banitsa."
+    },
+    "kit": "bg"
+  },
+  "BI": {
+    "text": "El 1 de enero es festivo en Burundi, y el Año Nuevo se celebra en todo el país como un día de familia. Los niños visitan a los mayores para escuchar sus deseos para el año, y el banquete pasa de casa en casa para que ninguna familia tenga que dar de comer a todos. Hay cantos, bailes y tambores: la danza ritual del tambor real figura desde 2014 en la lista del patrimonio inmaterial de la UNESCO y se interpreta en las fiestas. La gente se saluda con «Umwaka mwiza», «un año hermoso» en kirundi.\n\nEn Buyumbura la Nochevieja se llama «Bonane». El 31 de diciembre las calles en torno al mercado Kuri Plaza se llenan desde la tarde de puestos con rebajas. A medianoche unos están en misas con las iglesias llenas, otros en la plaza de la Independencia, donde en la noche hacia 2026 una multitud recibió el año con sesiones de DJ.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Banquete de casa en casa",
+        "text": "El 1 de enero los niños visitan a los parientes mayores para recibir sus deseos, y la comida pasa de casa en casa: así nadie alimenta a todos solo."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Vigilia de medianoche",
+        "text": "En Nochevieja las iglesias de Buyumbura se llenan: en las vigilias de oración el año llega con una cuenta atrás y rezos por un nuevo comienzo."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Plaza de la Independencia",
+        "text": "A medianoche una multitud llena la plaza central de Buyumbura: en la noche hacia 2026 pincharon DJ y la ciudad recibió el año al grito de «¡Bonane!»."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Burundi: Buyumbura | Time2Fest",
+      "description": "Burundi recibe 2027 a las 22:00 UTC: misas de medianoche y DJ en la plaza de la Independencia de Buyumbura, y en todo el país visitas a los mayores."
+    },
+    "kit": "bi"
+  },
+  "BW": {
+    "text": "En Botsuana son festivos tanto el 1 como el 2 de enero, así que para muchos estas fechas significan volver a casa. Antes de Navidad la gente de las ciudades viaja a sus aldeas natales, y las familias visitan sus cattleposts, los pastos lejanos donde vive el ganado familiar, y sacrifican una cabra o una vaca para un gran banquete de carne. Los cultos de Nochevieja se llaman aquí «crossover», el paso al año nuevo: las iglesias reúnen a la gente desde la tarde del 31 de diciembre, y algunas comunidades rezan toda la noche vestidas de blanco.\n\nGaborone recibe la medianoche en fiestas y en festivales en granjas de los alrededores, y el Estadio Nacional acoge cada año un crossover a la luz de las velas. No hay un espectáculo de fuegos de la ciudad, pero en la noche hacia 2026 el complejo Grand Palm organizó una fiesta con DJ y fuegos artificiales justo a medianoche.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Crossover en la iglesia",
+        "text": "La tarde del 31 de diciembre las iglesias convocan a los cultos «crossover», y algunas comunidades reciben el año vestidas de blanco, con velas y rezando hasta la mañana."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Fiestas en la aldea natal",
+        "text": "Antes de las fiestas la gente de la ciudad viaja a su aldea natal, y las familias van a sus cattleposts a sacrificar una cabra o una vaca para la mesa común."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Medianoche en Gaborone",
+        "text": "La capital lo celebra en fiestas y en festivales en granjas cercanas; en la noche hacia 2026 el complejo Grand Palm lanzó fuegos artificiales justo a medianoche."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Botsuana: Gaborone | Time2Fest",
+      "description": "Botsuana recibe 2027 a las 22:00 UTC: cultos crossover de blanco y con velas, viajes a la aldea natal y fiestas con fuegos a medianoche en Gaborone."
+    },
+    "kit": "bw"
+  },
+  "MG": {
+    "text": "En Madagascar el 1 de enero es festivo, y la Nochevieja es ante todo una noche en familia. Los parientes se reúnen en una casa, a menudo ponen dinero entre todos para la cena, y comen, cantan y bailan hasta medianoche. Al día siguiente hay otra comida: quien puede prepara oca o pavo, y todos se desean «Arahaba tratry ny taona!». Los malgaches tienen además su propio Año Nuevo, el Alahamady Be: en marzo de 2026 volvió a celebrarse a lo grande con un fuego sagrado y tatao, arroz con leche y miel.\n\nEn Antananarivo unos reciben la medianoche en fiestas de hotel y bailes al aire libre, otros en la iglesia. En los últimos años cada vez más gente acude a medianoche a la plaza iluminada de Antaninarenina. Y la mañana del 1 de enero los parques infantiles de Anosy y Mahamasina se llenan de familias con camisetas blancas de fiesta.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Una cena a escote",
+        "text": "La familia extensa se reúne en una casa y a menudo pone dinero entre todos para la comida. El 1 de enero almuerzan juntos; quien puede prepara oca o pavo."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "«Arahaba tratry ny taona!»",
+        "text": "Así se dice «¡Feliz Año Nuevo!» en malgache. Los primeros días del año son para reunirse en familia y desearse un buen año."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Otro Año Nuevo en marzo",
+        "text": "El antiguo Año Nuevo malgache, el Alahamady Be, vuelve a celebrarse: en marzo de 2026, con fuego sagrado, una bendición y tatao, arroz con leche y miel."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Madagascar: Antananarivo | Time2Fest",
+      "description": "Madagascar recibe 2027 a las 21:00 UTC: cenas en familia a escote, el deseo «Arahaba tratry ny taona!» y la plaza iluminada de Antaninarenina."
+    },
+    "kit": "mg"
+  },
+  "SA": {
+    "text": "Arabia Saudí tiene solo cuatro fiestas oficiales: los dos Eid, el Día de la Fundación y el Día Nacional. Ni el 1 de enero ni el Año Nuevo islámico (1 de muharram) son festivos. Hace unos años la Nochevieja pasaba aquí en silencio; hoy las grandes ciudades la reciben con cuenta atrás y fuegos artificiales. En Yeda la gente se reúne en la Corniche, junto al mar Rojo, donde los hoteles organizan fiestas, cuentas atrás en las azoteas y sesiones de DJ hasta tarde.\n\nEn Riad, la Nochevieja cae en plena Riyadh Season, un festival de invierno de diez semanas con conciertos, espectáculos y deporte. El lugar principal es Boulevard City, con música en directo y juegos para toda la familia. Allí 2026 llegó con fuegos artificiales a medianoche en punto, y la pirotecnia iluminó también las torres Kingdom Centre y Al Faisaliah.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos en Boulevard City",
+        "text": "La gran cuenta atrás de Riad es en Boulevard City: música en directo, juegos para toda la familia y fuegos artificiales a medianoche en punto."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cena sobre la ciudad",
+        "text": "Restaurantes y hoteles de Riad organizan cenas de Nochevieja. En la esfera de cristal de la torre Al Faisaliah, la cena duró de las 19:00 hasta la medianoche."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "La Corniche de Yeda",
+        "text": "La gente se reúne en el paseo junto al mar Rojo, y los hoteles organizan fiestas, cuentas atrás en las azoteas y sesiones de DJ."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Arabia Saudí: Riad | Time2Fest",
+      "description": "Arabia Saudí recibe 2027 a las 21:00 UTC: cuenta atrás y fuegos a medianoche en Boulevard City de Riad, y fiestas en los hoteles de la Corniche de Yeda."
+    },
+    "kit": "sa"
+  },
+  "YE": {
+    "text": "En Yemen el 1 de enero es un día laborable más. El feriado oficial es para otro Año Nuevo: el islámico, el 1 de muharram del calendario lunar, que en 2026 cayó el 16 de junio. La noche del 1 de enero no es una fiesta oficial: el 31 de diciembre el jefe del Estado envía felicitaciones de Año Nuevo a los líderes de otros países, como a finales de 2024. En Saná y otras ciudades bajo control hutí, las fiestas de Año Nuevo en hoteles y cafés están prohibidas, según informó el diario Asharq Al-Awsat en 2019.\n\nA Adén la llaman la «hija del mar»: el agua rodea la ciudad casi por todos lados. En las fiestas, vecinos y visitantes de otras provincias van a sus playas: Gold Mohur, Al-Arousa y la bahía de Jor al-Fil, en Tawahi.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sunset",
+        "title": "El Año Nuevo islámico",
+        "text": "El Año Nuevo que es feriado en Yemen sigue el calendario lunar: el 1 de muharram. En 2026 cayó el 16 de junio."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Bint al-sahn en la mesa",
+        "text": "Uno de los platos favoritos de Yemen: capas finas como el papel de masa con mantequilla clarificada. Se hornea en casa y se sirve caliente, con miel y comino negro."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Fiesta junto al mar",
+        "text": "Adén está rodeada de mar casi por todos lados, así que en las fiestas la gente va a las playas de Gold Mohur, Al-Arousa o la bahía de Jor al-Fil."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Yemen: Adén | Time2Fest",
+      "description": "Yemen llega a 2027 a las 21:00 UTC: el 1 de enero se trabaja, el feriado es el Año Nuevo islámico y Adén, la hija del mar, pasa las fiestas en Gold Mohur."
+    },
+    "kit": "ye"
   }
 }

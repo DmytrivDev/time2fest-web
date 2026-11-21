@@ -3510,5 +3510,201 @@
       "description": "Mayotte greets 2027 at 21:00 UTC. On 1 January families from Mamoudzou and all over the island hold a voulé, a grill-and-music picnic on the lagoon beaches."
     },
     "kit": "yt"
+  },
+  "AX": {
+    "text": "The Åland Islands are a Swedish-speaking autonomous region of Finland, so the New Year follows Finland-Swedish customs. Christmas belongs to the family, while New Year's Eve is a night for friends and guests. Finns have made New Year's resolutions since the 1880s, fireworks joined the celebration in the 20th century, and the oldest pastime is fortune-telling with molten tin. In the old days people also paid visits to friends on 1 January.\n\nMariehamn starts seeing the year out in daylight: on 31 December the town's New Year run sets off. At midnight the town fires its own display on the east side, between the library and the Alandica hall. In 2025 the council signed a multi-year deal: people want real fireworks rather than a laser show, and it means fewer private rockets.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Cast tin for luck",
+        "text": "Molten tin is poured into cold water and the shape tells your fortune: a boat means a journey, a flower a wedding. Kits containing lead have been banned since 2018."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "«Gott nytt år!» at midnight",
+        "text": "New Year's Eve is spent with friends. As midnight strikes, everyone shouts «Gott nytt år!» — Happy New Year in Swedish — opens the champagne and clinks glasses."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "The Nyårsruset run",
+        "text": "At 12:30 on 31 December the New Year run sets off from the Mariebad pool in Mariehamn, over 7.4 or 9.5 km. Run or walk, prams and dogs welcome."
+      }
+    ],
+    "meta": {
+      "title": "New Year in the Åland Islands: Mariehamn | Time2Fest",
+      "description": "The Åland Islands greet 2027 at 22:00 UTC. Mariehamn fires its town display at midnight, after the Nyårsruset run on 31 December and an evening of tin casting."
+    },
+    "kit": "ax"
+  },
+  "BG": {
+    "text": "In Bulgaria the star of the New Year table is banitsa with kasmetcheta, little pieces of luck: cornel twigs for health, coins and foil-wrapped wishes are hidden in the flaky pastry. It is cut in the first hours of the new year: the tray is turned three times and everyone takes the piece in front of them, and with it their fortune. On the morning of 1 January, St Basil's Day, the youngest in the family take a survachka, a cornel branch decked with ribbons, dried fruit and popcorn, and gently tap relatives on the back, wishing them good health.\n\nSofia welcomes the New Year in the open air on Knyaz Alexander I Square, where the concert starts at half past nine. At midnight the chant \"Mnogaya leta\" rings out, and then everyone joins hands for the horo. In recent years a light show has replaced the official fireworks, yet private fireworks still flash over the neighbourhoods.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Find your luck in the banitsa",
+        "text": "Cornel twigs, coins and written wishes are baked into the banitsa. The tray is turned three times, and everyone takes the piece in front of them."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Survakane on 1 January",
+        "text": "Children gently tap relatives on the back with a survachka, a decorated cornel branch, wishing them health, and get sweets or a few coins in return."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Horo at midnight",
+        "text": "After the chant \"Mnogaya leta\", people join hands and start the horo, Bulgaria's best-loved chain dance."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Bulgaria: Sofia | Time2Fest",
+      "description": "Bulgaria greets 2027 at 22:00 UTC: Sofia dances the horo on Knyaz Alexander I Square, and at home families seek their luck in the banitsa and tap backs."
+    },
+    "kit": "bg"
+  },
+  "BI": {
+    "text": "1 January is a public holiday in Burundi, and New Year is celebrated across the country as a family day. Children visit their elders to hear their wishes for the year, and the feast moves from house to house so that no single family has to feed everyone. There is singing, dancing and drumming: the ritual dance of the royal drum has been on UNESCO's intangible heritage list since 2014 and is performed at feasts. People greet each other with \"Umwaka mwiza\" — \"a beautiful year\" in Kirundi.\n\nIn Bujumbura New Year's Eve is called \"Bonane\". On 31 December the streets around the Kuri Plaza market fill with discount stalls from the afternoon. At midnight some stand at services in packed churches, others in Independence Square, where on the night into 2026 a crowd saw in the year to DJ sets.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "House-to-house feast",
+        "text": "On 1 January children visit older relatives for their wishes for the year, and the meal moves from home to home, so nobody feeds everyone alone."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Midnight service",
+        "text": "On New Year's Eve Bujumbura's churches are full: at prayer vigils the year is greeted with a countdown and prayers for a fresh start."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Independence Square",
+        "text": "At midnight a crowd gathers in Bujumbura's central square: on the night into 2026 DJs played here, and the city greeted the year with a cry of \"Bonane!\"."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Burundi: Bujumbura | Time2Fest",
+      "description": "Burundi greets 2027 at 22:00 UTC: midnight services and DJs in Bujumbura's Independence Square, and across the country visits to elders and drums."
+    },
+    "kit": "bi"
+  },
+  "BW": {
+    "text": "In Botswana both 1 and 2 January are public holidays, so for many people the season means heading home. Before Christmas town dwellers set off for their home villages, and families visit their cattleposts, the remote grazing grounds where the family herd is kept, slaughtering a goat or a cow for a generous meat feast. New Year's Eve services here are called 'crossover', a crossing into the new year: churches gather people from the evening of 31 December, and some congregations pray all night dressed in white.\n\nGaborone sees in midnight at parties and at festivals on farms around the city, while the National Stadium hosts a candlelit crossover every year. There is no single city fireworks show, but on the night into 2026 the Grand Palm resort threw a party with DJs and fireworks right at midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Crossover in church",
+        "text": "On the evening of 31 December churches call people to 'crossover' services, and some congregations meet the new year dressed in white, by candlelight, praying until morning."
+      },
+      {
+        "id": "t2",
+        "iconId": "suitcase",
+        "title": "Holidays in the home village",
+        "text": "Before the holidays town dwellers travel to their home villages, and families head out to their cattleposts to slaughter a goat or a cow for a shared feast."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight in Gaborone",
+        "text": "The capital celebrates at parties and at festivals on farms around the city; on the night into 2026 the Grand Palm resort set off fireworks right at midnight."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Botswana: Gaborone | Time2Fest",
+      "description": "Botswana greets 2027 at 22:00 UTC: candlelit all-white crossover services, trips home to the villages and parties with fireworks at midnight in Gaborone."
+    },
+    "kit": "bw"
+  },
+  "MG": {
+    "text": "In Madagascar 1 January is a public holiday, and New Year's Eve is above all a family night. Relatives gather at one home, often pooling money for the feast, and eat, sing and dance until midnight. The next day brings another meal: those who can afford it cook goose or turkey, and everyone exchanges wishes of \"Arahaba tratry ny taona!\". The Malagasy also have a New Year of their own, Alahamady Be: in March 2026 it was widely celebrated again with a sacred fire and tatao, rice cooked in milk with honey.\n\nIn Antananarivo some see in midnight at hotel parties and open-air dances, others at church. In recent years more and more people come at midnight to the illuminated square in Antaninarenina. And on the morning of 1 January the playgrounds of Anosy and Mahamasina fill with families in festive white T-shirts.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A feast everyone chips in for",
+        "text": "The extended family gathers in one home and often pools money for the feast. On 1 January they lunch together; those who can afford it cook goose or turkey."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "\"Arahaba tratry ny taona!\"",
+        "text": "That is \"Happy New Year!\" in Malagasy. The first days of the year are a time to meet the family and wish each other a good year."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Another New Year in spring",
+        "text": "The old Malagasy New Year, Alahamady Be, is celebrated again: in March 2026 with a sacred fire, a blessing and tatao, rice cooked in milk with honey."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Madagascar: Antananarivo | Time2Fest",
+      "description": "Madagascar greets 2027 at 21:00 UTC: family feasts everyone chips in for, wishes of \"Arahaba tratry ny taona!\" and the lit square of Antaninarenina."
+    },
+    "kit": "mg"
+  },
+  "SA": {
+    "text": "Saudi Arabia has only four public holidays: the two Eids, Founding Day and National Day. Neither 1 January nor the Islamic New Year (1 Muharram) is a day off. A few years ago New Year's Eve passed quietly here; now the big cities greet it with a countdown and fireworks. In Jeddah people gather on the Corniche above the Red Sea, where the hotels along it host parties, rooftop countdowns and DJ sets late into the night.\n\nIn Riyadh, New Year's Eve falls during Riyadh Season, a ten-week winter festival of concerts, shows and sport. The main venue is Boulevard City, with live music and games for the whole family. The year 2026 arrived there with fireworks at the stroke of midnight, and pyrotechnics also lit up the Kingdom Centre and Al Faisaliah towers.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks at Boulevard City",
+        "text": "Riyadh's main countdown is at Boulevard City: live music, games for the whole family and fireworks at the stroke of midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Dinner above the city",
+        "text": "Riyadh's restaurants and hotels host New Year's Eve dinners. In the glass globe atop Al Faisaliah Tower, dinner ran from 7 pm right up to midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Jeddah Corniche",
+        "text": "People gather on the Red Sea waterfront, and the hotels along it host parties, rooftop countdowns and DJ sets."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Saudi Arabia: Riyadh | Time2Fest",
+      "description": "Saudi Arabia greets 2027 at 21:00 UTC: a countdown and midnight fireworks at Riyadh's Boulevard City, and hotel parties along the Jeddah Corniche."
+    },
+    "kit": "sa"
+  },
+  "YE": {
+    "text": "In Yemen 1 January is an ordinary working day. The public holiday goes to a different New Year — the Islamic one, 1 Muharram of the lunar calendar, which in 2026 fell on 16 June. The night of 1 January is not an official celebration: on 31 December the head of state sends New Year greetings to the leaders of other countries, as at the end of 2024. In Sanaa and other cities under Houthi control, New Year parties in hotels and cafes are banned, as the newspaper Asharq Al-Awsat reported in 2019.\n\nAden is called the “daughter of the sea”: water surrounds the city on almost every side. On holidays both locals and visitors from other provinces head to its beaches — Gold Mohur, Al-Arousa and the Khor al-Fil bay in Tawahi.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sunset",
+        "title": "The Islamic New Year",
+        "text": "The New Year that is a public holiday in Yemen follows the lunar calendar — 1 Muharram. In 2026 it fell on 16 June."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Bint al-sahn on the table",
+        "text": "One of Yemen’s favourite dishes: paper-thin layers of dough with clarified butter. It is baked at home and served warm with honey and black cumin."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "A holiday by the sea",
+        "text": "Aden is surrounded by the sea on almost every side, so on holidays people head to the beaches of Gold Mohur, Al-Arousa or Khor al-Fil bay."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Yemen: Aden | Time2Fest",
+      "description": "Yemen reaches 2027 at 21:00 UTC: 1 January is a working day, the holiday is the Islamic New Year, and Aden, daughter of the sea, spends holidays at Gold Mohur."
+    },
+    "kit": "ye"
   }
 }

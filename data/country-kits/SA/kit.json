@@ -1,0 +1,99 @@
+{
+  "code": "SA",
+  "zone": "UTC+3",
+  "zoneId": "utc+0300",
+  "cityId": "riyadh",
+  "names": {
+    "uk": {
+      "name": "Саудівська Аравія",
+      "city": "Ер-Ріяд",
+      "cityIn": "в Ер-Ріяді",
+      "caps": "САУДІВСЬКА АРАВІЯ"
+    },
+    "en": {
+      "name": "Saudi Arabia",
+      "city": "Riyadh",
+      "cityIn": "in Riyadh",
+      "caps": "SAUDI ARABIA"
+    },
+    "es": {
+      "name": "Arabia Saudí",
+      "city": "Riad",
+      "cityIn": "en Riad",
+      "caps": "ARABIA SAUDÍ"
+    },
+    "fr": {
+      "name": "Arabie saoudite",
+      "city": "Riyad",
+      "cityIn": "à Riyad",
+      "caps": "ARABIE SAOUDITE"
+    }
+  },
+  "picto": "M4.5 37 H35.5 M7 37 V33.5 H33 V37 M13 33.5 C12.5 20 13.4 9.5 15 3 M27 33.5 C27.5 20 26.6 9.5 25 3 M15 3 C15.6 10 18 14.5 20 14.5 C22 14.5 24.4 10 25 3 M15.3 6.6 H24.7",
+  "flagColors": [
+    "#006C35",
+    "#FFFFFF",
+    "#006C35"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Ер-Ріяді"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Riyadh"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Riad"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Riyad"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

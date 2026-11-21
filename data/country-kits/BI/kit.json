@@ -1,0 +1,99 @@
+{
+  "code": "BI",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "bujumbura",
+  "names": {
+    "uk": {
+      "name": "Бурунді",
+      "city": "Бужумбура",
+      "cityIn": "у Бужумбурі",
+      "caps": "БУРУНДІ"
+    },
+    "en": {
+      "name": "Burundi",
+      "city": "Bujumbura",
+      "cityIn": "in Bujumbura",
+      "caps": "BURUNDI"
+    },
+    "es": {
+      "name": "Burundi",
+      "city": "Buyumbura",
+      "cityIn": "en Buyumbura",
+      "caps": "BURUNDI"
+    },
+    "fr": {
+      "name": "Burundi",
+      "city": "Bujumbura",
+      "cityIn": "à Bujumbura",
+      "caps": "BURUNDI"
+    }
+  },
+  "picto": "M8 9 C8 6.6 32 6.6 32 9 C32 11.4 8 11.4 8 9 Z M8 9 L8.6 12.4 Q20 15.4 31.4 12.4 L32 9 M9.4 13.2 L12 18 L14.6 13.9 L17.2 18.4 L20 14.3 L22.8 18.4 L25.4 13.9 L28 18 L30.6 13.2 M8.6 12.4 C8 22 11.4 30 12.2 34 L11.4 36.4 Q20 38 28.6 36.4 L27.8 34 C28.6 30 32 22 31.4 12.4 M11.4 19.6 L27.4 33 M28.6 19.6 L12.6 33 M23 26.3 A3 3 0 1 1 17 26.3 A3 3 0 1 1 23 26.3 Z",
+  "flagColors": [
+    "#CE1126",
+    "#1EB53A",
+    "#F2EBDD"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Бужумбурі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Bujumbura"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Buyumbura"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Bujumbura"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

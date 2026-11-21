@@ -1,0 +1,99 @@
+{
+  "code": "BG",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "sofia",
+  "names": {
+    "uk": {
+      "name": "Болгарія",
+      "city": "Софія",
+      "cityIn": "у Софії",
+      "caps": "БОЛГАРІЯ"
+    },
+    "en": {
+      "name": "Bulgaria",
+      "city": "Sofia",
+      "cityIn": "in Sofia",
+      "caps": "BULGARIA"
+    },
+    "es": {
+      "name": "Bulgaria",
+      "city": "Sofía",
+      "cityIn": "en Sofía",
+      "caps": "BULGARIA"
+    },
+    "fr": {
+      "name": "Bulgarie",
+      "city": "Sofia",
+      "cityIn": "à Sofia",
+      "caps": "BULGARIE"
+    }
+  },
+  "picto": "M3 37.5 H37 M5 37.5 V28.5 H35.5 V37.5 M20.5 37.5 V33.5 Q23.5 30 26.5 33.5 V37.5 M8.5 32 V35 M12 32 V35 M30 32 V35 M33 32 V35 M7 28.5 V14 H14 V28.5 M9.5 18 V21 M11.5 18 V21 M8 14 V10 H13 V14 M8 10 Q10.5 6 13 10 M10.5 8 V3.5 M9.2 5 H11.8 M14 28.5 V22.5 H34 V28.5 M17.5 22.5 V16.5 H31.5 V22.5 M20.5 18.5 V20.5 M24.5 18.5 V20.5 M28.5 18.5 V20.5 M17 16.5 Q17.5 9 24.5 8.6 Q31.5 9 32 16.5 M24.5 8.6 V4 M23 5.6 H26",
+  "flagColors": [
+    "#FFFFFF",
+    "#00966E",
+    "#D62612"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Софії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Sofia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Sofía"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Sofia"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
