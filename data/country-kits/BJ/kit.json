@@ -1,0 +1,99 @@
+{
+  "code": "BJ",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "porto-novo",
+  "names": {
+    "uk": {
+      "name": "Бенін",
+      "city": "Порто-Ново",
+      "cityIn": "у Порто-Ново",
+      "caps": "БЕНІН"
+    },
+    "en": {
+      "name": "Benin",
+      "city": "Porto-Novo",
+      "cityIn": "in Porto-Novo",
+      "caps": "BENIN"
+    },
+    "es": {
+      "name": "Benín",
+      "city": "Porto Novo",
+      "cityIn": "en Porto Novo",
+      "caps": "BENÍN"
+    },
+    "fr": {
+      "name": "Bénin",
+      "city": "Porto-Novo",
+      "cityIn": "à Porto-Novo",
+      "caps": "BÉNIN"
+    }
+  },
+  "picto": "M6 13 L11 6 H29 L34 13 Z M15 6.4 L13.5 12.6 M20 6.4 V12.6 M25 6.4 L26.5 12.6 M9 13 V22 H31 V13 M13 22 V16.5 H17.5 V22 M22.5 15.5 H28 V19.5 H22.5 Z M7 22 H33 M10.4 22 V28.6 M11.6 22 V28.6 M16.8 22 V28.6 M18 22 V28.6 M22 22 V28.6 M23.2 22 V28.6 M28.4 22 V28.6 M29.6 22 V28.6 M3 29.2 Q5.5 27.9 8 29.2 T13 29.2 T18 29.2 T23 29.2 T28 29.2 T33 29.2 T38 29.2 M6 31.6 Q8 36.6 12.5 36.6 H27.5 Q32 36.6 34 31.6 Z",
+  "flagColors": [
+    "#008751",
+    "#FCD116",
+    "#E8112D"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Беніні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Benin"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Benín"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Bénin"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

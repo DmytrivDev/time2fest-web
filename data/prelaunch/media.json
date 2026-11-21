@@ -2573,6 +2573,102 @@
         "x": 45,
         "y": 40
       }
+    },
+    "country:BJ": {
+      "src": "/media/photos/porto-novo.webp",
+      "alt": {
+        "uk": "Головна вулиця Порто-Ново в сутінках: освітлені фасади й вогні вздовж дороги",
+        "en": "The main street of Porto-Novo at dusk: lit façades and lights along the road",
+        "es": "La calle principal de Porto Novo al anochecer: fachadas iluminadas y luces a lo largo de la calzada",
+        "fr": "L’axe principal de Porto-Novo au crépuscule : façades éclairées et lumières le long de la route"
+      },
+      "author": "Ozz 229",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Axe_principal_%C3%A0_Porto-Novo.jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:CF": {
+      "src": "/media/photos/bangui.webp",
+      "alt": {
+        "uk": "Собор Нотр-Дам у Бангі (червона цегла, дві вежі) і люди перед ним, 7 травня 2018",
+        "en": "Notre-Dame Cathedral in Bangui (red brick, two towers) with people in front, 7 May 2018",
+        "es": "La catedral de Notre-Dame de Bangui (ladrillo rojo, dos torres) con gente delante, 7 de mayo de 2018",
+        "fr": "La cathédrale Notre-Dame de Bangui (brique rouge, deux tours) et la foule devant, 7 mai 2018"
+      },
+      "author": "Freeman Sipila (VOA)",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Une_foule_devant_la_Cath%C3%A9drale_de_Bangui,_le_7_mai_2018.jpg",
+      "position": {
+        "x": 50,
+        "y": 22
+      }
+    },
+    "country:SD": {
+      "src": "/media/photos/khartoum.webp",
+      "alt": {
+        "uk": "Хартум на заході сонця: міст Ель-Мек Німр через Блакитний Ніл, висотки Хартума-Бахрі й човен на воді",
+        "en": "Khartoum at sunset: the El Mek Nimir Bridge over the Blue Nile, the high-rises of Khartoum North and a boat on the water",
+        "es": "Jartum al atardecer: el puente El Mek Nimir sobre el Nilo Azul, los edificios de Jartum Norte y una barca en el agua",
+        "fr": "Khartoum au coucher du soleil : le pont El Mek Nimir sur le Nil Bleu, les tours de Khartoum-Nord et un bateau sur l’eau"
+      },
+      "author": "Mojtaba Abdlbagi",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D9%83%D8%A8%D8%B1%D9%8A_%D8%A7%D9%84%D9%85%D9%83_%D9%86%D9%85%D8%B1_%D9%85%D8%B4%D9%87%D8%AF_%D9%84%D9%84%D8%BA%D8%B1%D9%88%D8%A8_%D9%88%D9%82%D8%A7%D8%B1%D8%A8_%D9%8A%D8%B9%D8%A8%D8%B1_%D8%B9%D9%84%D9%89_%D8%A7%D9%84%D9%86%D9%8A%D9%84_%D8%A7%D9%84%D8%A3%D8%B2%D8%B1%D9%82.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:SZ": {
+      "src": "/media/photos/mbabane.webp",
+      "alt": {
+        "uk": "Мбабане серед пагорбів",
+        "en": "Mbabane among the hills",
+        "es": "Mbabane entre colinas",
+        "fr": "Mbabane au milieu des collines"
+      },
+      "author": "Athena Lao",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mbabane_(6035476964).jpg",
+      "position": {
+        "x": 50,
+        "y": 62
+      }
+    },
+    "country:ZM": {
+      "src": "/media/photos/lusaka.webp",
+      "alt": {
+        "uk": "Лусака в сутінках: вежа Findeco House і центр міста над дахами",
+        "en": "Lusaka at dusk: Findeco House and the city centre above the rooftops",
+        "es": "Lusaka al anochecer: la torre Findeco House y el centro de la ciudad sobre los tejados",
+        "fr": "Lusaka au crépuscule : la tour Findeco House et le centre-ville au-dessus des toits"
+      },
+      "author": "Rik Dekker",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lusaka_(Zambia)_at_dusk..jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:ZW": {
+      "src": "/media/photos/harare.webp",
+      "alt": {
+        "uk": "Вечірній Хараре: вулиця Роттен-Роу, світлові сліди машин і підсвічений готель під нічним небом",
+        "en": "Harare in the evening: Rotten Row, car light trails and a lit hotel under the night sky",
+        "es": "Harare al anochecer: la calle Rotten Row, estelas de luz de los coches y un hotel iluminado bajo el cielo nocturno",
+        "fr": "Harare le soir : la rue Rotten Row, traînées lumineuses des voitures et un hôtel éclairé sous le ciel nocturne"
+      },
+      "author": "Rufouslark",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:N1_Hotel_Rotten_Row.jpg",
+      "position": {
+        "x": 55,
+        "y": 60
+      }
     }
   }
 }

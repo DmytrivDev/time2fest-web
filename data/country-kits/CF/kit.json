@@ -1,0 +1,101 @@
+{
+  "code": "CF",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "bangui",
+  "names": {
+    "uk": {
+      "name": "ЦАР",
+      "city": "Бангі",
+      "cityIn": "у Бангі",
+      "caps": "ЦАР"
+    },
+    "en": {
+      "name": "Central African Republic",
+      "city": "Bangui",
+      "cityIn": "in Bangui",
+      "caps": "CENTRAL AFRICAN REPUBLIC"
+    },
+    "es": {
+      "name": "República Centroafricana",
+      "city": "Bangui",
+      "cityIn": "en Bangui",
+      "caps": "REPÚBLICA CENTROAFRICANA"
+    },
+    "fr": {
+      "name": "Centrafrique",
+      "city": "Bangui",
+      "cityIn": "à Bangui",
+      "caps": "CENTRAFRIQUE"
+    }
+  },
+  "picto": "M8 35 V4.8 H10.4 V7.4 H13.6 V4.8 H16 V35 M24 35 V4.8 H26.4 V7.4 H29.6 V4.8 H32 V35 M7.4 10.6 H16.6 M23.4 10.6 H32.6 M7.4 21.4 H16.6 M23.4 21.4 H32.6 M10 19 V15.4 Q12 12.6 14 15.4 V19 Z M12 14.4 V19 M26 19 V15.4 Q28 12.6 30 15.4 V19 Z M28 14.4 V19 M10 31 V26 Q12 23.2 14 26 V31 Z M12 25 V31 M26 31 V26 Q28 23.2 30 26 V31 Z M28 25 V31 M16 19 L20 14.4 L24 19 M20 14.4 V9.4 M18.3 11.2 H21.7 M18.7 26 V23 Q20 21 21.3 23 V26 Z M17.4 35 V31.2 Q20 28 22.6 31.2 V35 M5 35 H35",
+  "flagColors": [
+    "#003082",
+    "#FFFFFF",
+    "#289728",
+    "#FFCE00",
+    "#D21034"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у ЦАР"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Central African Republic"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en la República Centroafricana"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Centrafrique"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

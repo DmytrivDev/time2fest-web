@@ -4126,5 +4126,173 @@
       "description": "L’Afrique du Sud fête 2027 à 22 h UTC : braais d’été, feu d’artifice à minuit sur le port du Cap et carnaval du Second Nouvel An le 2 janvier."
     },
     "kit": "za"
+  },
+  "BJ": {
+    "text": "Les pétards sont proscrits la nuit de la Saint-Sylvestre au Bénin : un décret de 2022 les interdit, et la police demande de fêter sans excès. Pour beaucoup, la nuit se passe donc à l’église : messes d’action de grâce, prières et veillées traversent minuit, et certains restent jusqu’au matin pour remettre la nouvelle année entre les mains de Dieu. Avant la fête, on balaie les cours et on range la maison, pour commencer l’année propre et en famille. Début janvier, Ouidah rassemble des milliers de personnes pour les Vodun Days, la fête de la culture vodun.\n\nArches lumineuses, sapins scintillants et lanternes parent pour les fêtes les places et carrefours de Porto-Novo et de la voisine Cotonou. Dès le soir du 1er janvier, jour férié, les familles viennent s’y promener, pique-niquer sur l’herbe et se prendre en photo sous les lumières.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Une nuit à l’église",
+        "text": "Les églises de Cotonou sont bondées le 31 décembre : messes d’action de grâce et veillées traversent minuit, et certains prient jusqu’au matin."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Maison propre pour l’année",
+        "text": "Cours balayées, maison rangée, vaisselle lavée : on commence l’année propre, au calme et en famille."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Les masques kaléta",
+        "text": "Masqués, en costumes de chiffons et de raphia, des enfants dansent tout le mois de décembre dans les rues de Cotonou au son des percussions, contre des friandises ou des pièces."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Bénin : Porto-Novo | Time2Fest",
+      "description": "Le Bénin fête 2027 à 23 h UTC : veillées dans les églises, maison balayée de frais et arches lumineuses sur les places de Porto-Novo et de Cotonou."
+    },
+    "kit": "bj"
+  },
+  "CF": {
+    "text": "En Centrafrique, la nuit du Nouvel An se passe d’abord en famille et à l’église : beaucoup vont à l’office de nuit pour remercier Dieu de l’année écoulée, d’autres partent vers les kermesses et la danse. À table, du poulet, du gnetum (feuilles de koko), de la viande de brousse et des boissons maison ; les anciens en grand boubou racontent les réveillons d’autrefois, et chacun souhaite la santé aux autres. Le pays connaît un conflit armé depuis 2012 : tirs et pétards sont donc interdits cette nuit-là, et pour l’arrivée de 2026 même les 21 coups de canon traditionnels ont été supprimés.\n\nÀ Bangui, coiffeurs et couturiers travaillent jusqu’à la dernière minute avant la fête, et le marché du KM5 déborde d’acheteurs. À minuit, les fidèles se retrouvent à la cathédrale Notre-Dame, et le 1er janvier les rues sont pleines de monde : certains fêtent en famille, d’autres entre amis dans les bars.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le poulet de fête",
+        "text": "Le poulet est le plat phare du Nouvel An à Bangui : on l’achète au marché la veille et on le sert avec du gnetum, de la viande de brousse et des boissons maison."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "La messe du réveillon",
+        "text": "Le 31 décembre, beaucoup vont à l’église remercier Dieu pour l’année écoulée ; la cathédrale Notre-Dame de Bangui célèbre la messe du réveillon."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Un feu dans la cour",
+        "text": "Certaines familles allument le soir un feu au milieu de la cour : autour, on raconte des histoires, on chante de vieux chants du village et on se souhaite la santé."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Centrafrique : Bangui | Time2Fest",
+      "description": "La Centrafrique fête 2027 à 23 h UTC : Bangui va à la messe du réveillon à Notre-Dame, sert le poulet au gnetum, puis remplit les rues le 1er janvier."
+    },
+    "kit": "cf"
+  },
+  "SD": {
+    "text": "Au Soudan, le premier jour de l'année est une double fête : le pays est devenu indépendant le 1er janvier 1956, si bien que le Nouvel An est aussi la fête de l'Indépendance et un jour férié. Ce jour-là, le Premier ministre Ismaïl al-Azhari a hissé pour la première fois le drapeau soudanais. La saison des fêtes est longue : Noël, le 25 décembre, et le Noël copte, le 7 janvier, sont aussi fériés. En 2019, les cloches de Noël ont sonné à Khartoum pour la première fois en dix ans, et chrétiens et musulmans ont fêté ensemble.\n\nÀ Khartoum, le 1er janvier 2020, l'indépendance et la nouvelle année ont été célébrées place de la Liberté. Depuis avril 2023, le Soudan est en guerre. Le 1er janvier 2026, la capitale a marqué les 70 ans de l'indépendance par un Festival sportif de la jeunesse : des courses pour adultes et enfants et une course cycliste dans les rues ont été le premier grand événement depuis le début de la guerre.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "L'an neuf et l'indépendance",
+        "text": "Minuit ouvre non seulement l'année, mais aussi la fête de l'Indépendance, jour férié en souvenir du 1er janvier 1956."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Noëls jusqu'au 7 janvier",
+        "text": "Le 25 décembre et le 7 janvier, Noël copte, sont fériés ; en 2019, chrétiens et musulmans ont fêté Noël ensemble à Khartoum."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Un 1er janvier sportif",
+        "text": "En 2026, Khartoum a fêté l'anniversaire de l'indépendance avec des courses pour adultes et enfants et une course cycliste en ville."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Soudan : Khartoum | Time2Fest",
+      "description": "Le Soudan accueille 2027 à 22 h UTC, et le 1er janvier y est aussi la fête de l'Indépendance de 1956. Les fêtes vont de Noël au 7 janvier, Noël copte."
+    },
+    "kit": "sd"
+  },
+  "SZ": {
+    "text": "En Eswatini, la nuit du 1er janvier s’appelle le « crossover », le passage à la nouvelle année, et le jour de l’An est férié. Beaucoup accueillent minuit à l’église ou à un concert de gospel : les offices de nuit durent du soir jusqu’aux premières heures de l’année, et à minuit on prie et on chante. Depuis des années, les plus grands crossovers gospel remplissent le parc des expositions de Mavuso, à Manzini, de 18 h à 6 h. Le Nouvel An tombe aussi pendant la saison de l’Incwala, la cérémonie la plus importante du pays, consacrée à la royauté et aux premiers fruits.\n\nÀ Mbabane, le crossover vers 2025 a réuni des stars du gospel au stade Prince of Wales, et l’argent des billets est allé à une œuvre caritative. Les feux d’artifice en Eswatini sont privés et brefs : Manzini ne les a autorisés que de 23 h 30 à 1 h 30.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Office de nuit",
+        "text": "Le 31 décembre, les églises réunissent les fidèles pour des offices de crossover, de 19 h jusqu’aux premières heures de l’année : minuit arrive dans la prière et le chant."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Gospel jusqu’à l’aube",
+        "text": "Le grand crossover gospel de Mavuso dure de 18 h à 6 h : chants, danses, prière et remerciements pour l’année écoulée."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Une nuit sur quatre scènes",
+        "text": "Les crossovers en club à Manzini durent de l’après-midi au matin : amapiano, deep house, hip-hop et gospel, chacun sur sa scène."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Eswatini : Mbabane | Time2Fest",
+      "description": "L’Eswatini passe à 2027 à 22 h UTC : offices de nuit, crossover gospel jusqu’à l’aube à Mavuso, brefs feux d’artifice privés et saison de l’Incwala."
+    },
+    "kit": "sz"
+  },
+  "ZM": {
+    "text": "En Zambie, le 1er janvier est férié, et pour beaucoup la nuit du Nouvel An commence à l’église. Les églises organisent des crossovers, des offices de nuit faits de chants et de prières qui traversent minuit ; dans les églises charismatiques, ils se terminent souvent par l’annonce du thème avec lequel la communauté entre dans la nouvelle année. Sur bien des tables familiales, on sert du poulet au riz : on en mange à Noël et au jour de l’An par une longue tradition, si bien qu’en décembre les éleveurs de volailles peinent à suivre les commandes.\n\nÀ Lusaka, à minuit, les pétards éclatent et les klaxons retentissent, et les bars débordent de musique. Des milliers de personnes fêtent l’arrivée de l’année au parc des expositions Showgrounds, où DJ, compte à rebours et feu d’artifice sont un rendez-vous annuel depuis plus de huit ans. Pour l’arrivée de 2025, un feu d’artifice a aussi illuminé le ciel du centre-ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Une nuit de crossover",
+        "text": "Le soir du 31 décembre, beaucoup de Zambiens vont à l’église pour un crossover, un office de nuit de chants et de prières qui traverse minuit et s’achève dans la nouvelle année."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Poulet au riz",
+        "text": "Au jour de l’An, beaucoup de familles servent du poulet au riz, et les œufs finissent en salades, gâteaux et pâtisseries : une table de fête transmise de génération en génération."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Compte à rebours à Showgrounds",
+        "text": "La plus grande fête du Nouvel An de Lusaka a lieu aux Showgrounds : DJ, compte à rebours et feu d’artifice à minuit, pendant que les klaxons résonnent dans toute la ville."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Zambie : Lusaka | Time2Fest",
+      "description": "La Zambie fête 2027 à 22 h UTC : offices crossover toute la nuit, poulet au riz en famille et compte à rebours avec feu d’artifice aux Showgrounds de Lusaka."
+    },
+    "kit": "zm"
+  },
+  "ZW": {
+    "text": "Au Zimbabwe, le 1er janvier est férié, et le 31 décembre est une journée de courses : on fait le plein de nourriture, de boissons et de pétards. Le soir, certains vont à l’église pour le crossover, un office qui dure toute la nuit : vers minuit, on annonce le thème de la nouvelle année, puis on prie jusqu’au petit matin. D’autres accueillent l’année en famille ou entre amis. Et pas de fête sans riz au poulet, le plat préféré de toutes les célébrations zimbabwéennes, du mariage à Noël.\n\nÀ Harare, des milliers de personnes envahissent les rues et les lieux de sortie : musique live, cuisine de rue et, à minuit, un ciel couvert de feux d’artifice. Le 1er janvier, le Centre international de conférences réunit des milliers de personnes pour le concert gospel A Night of Thanksgiving ; pour accueillir 2026, sa session de nuit a commencé dès 23 h.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Une nuit de crossover",
+        "text": "Le soir du 31 décembre, beaucoup vont à l’église pour le crossover : vers minuit, on y annonce le thème de l’année, et la prière dure jusqu’au petit matin."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Riz au poulet",
+        "text": "Le riz au poulet est le plat sans lequel aucune fête zimbabwéenne n’est complète, du mariage à la remise de diplômes et à Noël."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "La musique d’Harare",
+        "text": "Harare accueille l’année dans la rue, en musique live et sous les feux d’artifice ; le 1er janvier, des milliers de personnes vont au concert gospel A Night of Thanksgiving."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Zimbabwe : Harare | Time2Fest",
+      "description": "Le Zimbabwe fête 2027 à 22 h UTC : offices crossover jusqu’au matin, riz au poulet sur la table, musique live et feux d’artifice dans les rues d’Harare."
+    },
+    "kit": "zw"
   }
 }

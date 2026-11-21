@@ -2394,6 +2394,114 @@
         "title": "Nouvel An en Afrique du Sud : Johannesburg | Time2Fest",
         "description": "L’Afrique du Sud fête 2027 à 22 h UTC : braais d’été, feu d’artifice à minuit sur le port du Cap et carnaval du Second Nouvel An le 2 janvier."
       }
+    },
+    "BJ": {
+      "uk": {
+        "title": "Новий рік у Беніні: Порто-Ново | Time2Fest",
+        "description": "Бенін зустрічає 2027 рік о 23:00 UTC: нічні чування в церквах, чистий дім до свята й світлові арки на площах Порто-Ново та Котону з першого вечора року."
+      },
+      "en": {
+        "title": "New Year in Benin: Porto-Novo | Time2Fest",
+        "description": "Benin greets 2027 at 23:00 UTC with church vigils through the night, a freshly swept home and light arches on the squares of Porto-Novo and Cotonou."
+      },
+      "es": {
+        "title": "Año Nuevo en Benín: Porto Novo | Time2Fest",
+        "description": "Benín recibe 2027 a las 23:00 UTC con vigilias en las iglesias, la casa recién barrida y arcos de luz el 1 de enero en las plazas de Porto Novo y Cotonú."
+      },
+      "fr": {
+        "title": "Nouvel An au Bénin : Porto-Novo | Time2Fest",
+        "description": "Le Bénin fête 2027 à 23 h UTC : veillées dans les églises, maison balayée de frais et arches lumineuses sur les places de Porto-Novo et de Cotonou."
+      }
+    },
+    "CF": {
+      "uk": {
+        "title": "Новий рік у ЦАР: Бангі | Time2Fest",
+        "description": "ЦАР зустрічає 2027 рік о 23:00 UTC: Бангі йде на нічну месу до собору Нотр-Дам, ставить на стіл курку з гнетумом, а 1 січня святкує на людних вулицях."
+      },
+      "en": {
+        "title": "New Year in the Central African Republic | Time2Fest",
+        "description": "The Central African Republic greets 2027 at 23:00 UTC: Bangui goes to mass at Notre-Dame, serves chicken with gnetum and fills the streets on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en la República Centroafricana | Time2Fest",
+        "description": "La República Centroafricana recibe 2027 a las 23:00 UTC: Bangui va a la misa de Notre-Dame, cena pollo con gnetum y el 1 de enero llena las calles."
+      },
+      "fr": {
+        "title": "Nouvel An en Centrafrique : Bangui | Time2Fest",
+        "description": "La Centrafrique fête 2027 à 23 h UTC : Bangui va à la messe du réveillon à Notre-Dame, sert le poulet au gnetum, puis remplit les rues le 1er janvier."
+      }
+    },
+    "SD": {
+      "uk": {
+        "title": "Новий рік у Судані: Хартум | Time2Fest",
+        "description": "Судан зустрічає 2027 рік о 22:00 UTC, і перший день року тут ще й День незалежності 1956 року. Свята тривають від Різдва 25 грудня до коптського 7 січня."
+      },
+      "en": {
+        "title": "New Year in Sudan: Khartoum | Time2Fest",
+        "description": "Sudan greets 2027 at 22:00 UTC, and here the first day of the year is also Independence Day, marking 1956. Holidays run from Christmas to Coptic 7 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Sudán: Jartum | Time2Fest",
+        "description": "Sudán recibe 2027 a las 22:00 UTC y el primer día del año es también el Día de la Independencia de 1956. Las fiestas van de Navidad al 7 de enero copto."
+      },
+      "fr": {
+        "title": "Nouvel An au Soudan : Khartoum | Time2Fest",
+        "description": "Le Soudan accueille 2027 à 22 h UTC, et le 1er janvier y est aussi la fête de l'Indépendance de 1956. Les fêtes vont de Noël au 7 janvier, Noël copte."
+      }
+    },
+    "SZ": {
+      "uk": {
+        "title": "Новий рік в Есватіні: Мбабане | Time2Fest",
+        "description": "Есватіні зустрічає 2027 рік о 22:00 UTC: нічні служби, госпел-кросовер до світанку в Мавусо, короткий приватний салют і сезон Інквали в королівстві."
+      },
+      "en": {
+        "title": "New Year in Eswatini: Mbabane | Time2Fest",
+        "description": "Eswatini crosses into 2027 at 22:00 UTC with night church services, a gospel crossover until dawn at Mavuso, brief private fireworks and the Incwala season."
+      },
+      "es": {
+        "title": "Año Nuevo en Esuatini: Mbabane | Time2Fest",
+        "description": "Esuatini entra en 2027 a las 22:00 UTC con cultos nocturnos, un crossover de góspel hasta el alba en Mavuso, fuegos privados breves y la temporada del Incwala."
+      },
+      "fr": {
+        "title": "Nouvel An en Eswatini : Mbabane | Time2Fest",
+        "description": "L’Eswatini passe à 2027 à 22 h UTC : offices de nuit, crossover gospel jusqu’à l’aube à Mavuso, brefs feux d’artifice privés et saison de l’Incwala."
+      }
+    },
+    "ZM": {
+      "uk": {
+        "title": "Новий рік у Замбії: Лусака | Time2Fest",
+        "description": "Замбія зустрічає 2027 рік о 22:00 UTC: нічні кросовери в церквах, курка з рисом на святковому столі й відлік із салютом на Showgrounds у Лусаці."
+      },
+      "en": {
+        "title": "New Year in Zambia: Lusaka | Time2Fest",
+        "description": "Zambia greets 2027 at 22:00 UTC with crossover church services through the night, chicken and rice at home and a fireworks countdown at the Lusaka Showgrounds."
+      },
+      "es": {
+        "title": "Año Nuevo en Zambia: Lusaka | Time2Fest",
+        "description": "Zambia recibe 2027 a las 22:00 UTC con cultos crossover toda la noche, pollo con arroz en casa y cuenta atrás con fuegos en el recinto Showgrounds de Lusaka."
+      },
+      "fr": {
+        "title": "Nouvel An en Zambie : Lusaka | Time2Fest",
+        "description": "La Zambie fête 2027 à 22 h UTC : offices crossover toute la nuit, poulet au riz en famille et compte à rebours avec feu d’artifice aux Showgrounds de Lusaka."
+      }
+    },
+    "ZW": {
+      "uk": {
+        "title": "Новий рік у Зімбабве: Хараре | Time2Fest",
+        "description": "Зімбабве зустрічає 2027 рік о 22:00 UTC: нічні кросовери в церквах, рис із куркою на святковому столі, жива музика й феєрверки над вулицями Хараре."
+      },
+      "en": {
+        "title": "New Year in Zimbabwe: Harare | Time2Fest",
+        "description": "Zimbabwe welcomes 2027 at 22:00 UTC with all-night crossover services, rice and chicken on the table, and live music and fireworks across the streets of Harare."
+      },
+      "es": {
+        "title": "Año Nuevo en Zimbabue: Harare | Time2Fest",
+        "description": "Zimbabue recibe 2027 a las 22:00 UTC con cultos crossover nocturnos, arroz con pollo en la mesa, música en vivo y fuegos artificiales en las calles de Harare."
+      },
+      "fr": {
+        "title": "Nouvel An au Zimbabwe : Harare | Time2Fest",
+        "description": "Le Zimbabwe fête 2027 à 22 h UTC : offices crossover jusqu’au matin, riz au poulet sur la table, musique live et feux d’artifice dans les rues d’Harare."
+      }
     }
   }
 }

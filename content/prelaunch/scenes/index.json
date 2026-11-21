@@ -906,6 +906,42 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#173244"
+    },
+    "BJ": {
+      "src": "/scenes/BJ-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "CF": {
+      "src": "/scenes/CF-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "SD": {
+      "src": "/scenes/SD-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#816147"
+    },
+    "SZ": {
+      "src": "/scenes/SZ-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#34373c"
+    },
+    "ZM": {
+      "src": "/scenes/ZM-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#392c28"
+    },
+    "ZW": {
+      "src": "/scenes/ZW-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#363d41"
     }
   }
 }

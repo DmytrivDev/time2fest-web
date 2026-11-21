@@ -4126,5 +4126,173 @@
       "description": "Sudáfrica recibe 2027 a las 22:00 UTC con braais de verano, fuegos a medianoche sobre el puerto de Ciudad del Cabo y el carnaval del Segundo Año Nuevo."
     },
     "kit": "za"
+  },
+  "BJ": {
+    "text": "Los petardos están vetados en la Nochevieja de Benín: un decreto de 2022 los prohíbe y la policía pide celebrar sin excesos. Así que para muchos la noche transcurre en la iglesia, con misas de acción de gracias, oraciones y vigilias que atraviesan la medianoche, y hay quien se queda hasta el amanecer para poner el año nuevo en manos de Dios. Antes de la fiesta se barren los patios y se ordena la casa, para empezar el año limpio y en familia. A principios de enero Ouidah reúne a miles de personas en los Vodun Days, la fiesta de la cultura vudú.\n\nArcos de luz, árboles brillantes y farolillos visten para las fiestas las plazas y cruces de Porto Novo y de la vecina Cotonú. Desde la tarde del 1 de enero, día festivo, las familias llegan a pasear, hacer pícnic en la hierba y fotografiarse bajo las luces.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Una noche en la iglesia",
+        "text": "Las iglesias de Cotonú se llenan el 31 de diciembre: misas de acción de gracias y vigilias atraviesan la medianoche, y hay quien reza hasta el amanecer."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Casa limpia para el año",
+        "text": "Se barre el patio, se ordena la casa y se friega la vajilla, para empezar el año limpio, en calma y en familia."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Máscaras kaléta",
+        "text": "Niños con máscaras y trajes de retales y rafia bailan todo diciembre por las calles de Cotonú al ritmo de tambores y reciben dulces o monedas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Benín: Porto Novo | Time2Fest",
+      "description": "Benín recibe 2027 a las 23:00 UTC con vigilias en las iglesias, la casa recién barrida y arcos de luz el 1 de enero en las plazas de Porto Novo y Cotonú."
+    },
+    "kit": "bj"
+  },
+  "CF": {
+    "text": "En la República Centroafricana la Nochevieja se pasa sobre todo en familia y en la iglesia: muchos van a un oficio nocturno para dar gracias a Dios por el año vivido, y otros se van a las kermeses y a bailar. En la mesa hay pollo, gnetum (hojas de koko), carne de caza y bebidas caseras; los mayores, con sus grandes bubús, recuerdan fiestas de antaño y todos se desean salud. El país vive un conflicto armado desde 2012, así que esa noche están prohibidos los disparos y los petardos, y para recibir 2026 se suspendieron incluso las 21 salvas de cañón tradicionales.\n\nEn Bangui, peluquerías y sastres trabajan hasta el último minuto antes de la fiesta, y el mercado del KM5 bulle de compradores. A medianoche los fieles se reúnen en la catedral de Notre-Dame, y el 1 de enero las calles se llenan de gente: unos celebran en casa y otros con amigos en los bares.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Pollo para la fiesta",
+        "text": "El pollo es el plato principal de Año Nuevo en Bangui: se compra en el mercado la víspera y se sirve con gnetum, carne de caza y bebidas caseras."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Un oficio de gracias",
+        "text": "El 31 de diciembre muchos van a la iglesia a dar gracias a Dios por el año vivido; en la catedral de Notre-Dame de Bangui se celebra la misa de Nochevieja."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Una hoguera en el patio",
+        "text": "Algunas familias encienden por la noche una hoguera en el patio: a su alrededor se cuentan historias, se cantan viejas canciones del pueblo y todos se desean salud."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en la República Centroafricana | Time2Fest",
+      "description": "La República Centroafricana recibe 2027 a las 23:00 UTC: Bangui va a la misa de Notre-Dame, cena pollo con gnetum y el 1 de enero llena las calles."
+    },
+    "kit": "cf"
+  },
+  "SD": {
+    "text": "En Sudán el primer día del año es una doble fiesta: el país se independizó el 1 de enero de 1956, así que Año Nuevo coincide con el Día de la Independencia y es festivo nacional. Ese día el primer ministro Ismail al-Azhari izó por primera vez la bandera sudanesa. Las fiestas son largas: Navidad, el 25 de diciembre, y la Navidad copta, el 7 de enero, también son festivos. En 2019 las campanas navideñas sonaron en Jartum por primera vez en diez años, y cristianos y musulmanes lo celebraron juntos.\n\nEn Jartum, el 1 de enero de 2020, la independencia y el año nuevo se celebraron en la plaza de la Libertad. Desde abril de 2023 Sudán está en guerra. El 1 de enero de 2026 la capital celebró 70 años de independencia con un Festival Deportivo Juvenil: carreras para adultos y niños y una carrera ciclista por las calles fueron el primer gran evento desde el inicio de la guerra.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Año e independencia juntos",
+        "text": "La medianoche trae no solo un año nuevo, sino también el Día de la Independencia, festivo que recuerda el 1 de enero de 1956."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Navidades hasta el 7 de enero",
+        "text": "Son festivos el 25 de diciembre y el 7 de enero, Navidad copta; en 2019 cristianos y musulmanes celebraron juntos la Navidad en Jartum."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Un 1 de enero deportivo",
+        "text": "En 2026 Jartum celebró el aniversario de la independencia con carreras para adultos y niños y una carrera ciclista por sus calles."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Sudán: Jartum | Time2Fest",
+      "description": "Sudán recibe 2027 a las 22:00 UTC y el primer día del año es también el Día de la Independencia de 1956. Las fiestas van de Navidad al 7 de enero copto."
+    },
+    "kit": "sd"
+  },
+  "SZ": {
+    "text": "En Esuatini la noche hacia el 1 de enero se llama «crossover», el paso al año nuevo, y el día de Año Nuevo es festivo. Mucha gente recibe la medianoche en la iglesia o en un concierto de góspel: los cultos nocturnos van desde la tarde hasta las primeras horas del año, y a medianoche se reza y se canta. Desde hace años, los mayores crossovers de góspel llenan el recinto ferial de Mavuso, en Manzini, de las 18:00 a las 6:00. Además, el Año Nuevo cae en la temporada del Incwala, la ceremonia más importante del país, dedicada a la realeza y a los primeros frutos.\n\nEn Mbabane, el crossover hacia 2025 llevó estrellas del góspel al estadio Prince of Wales, y lo recaudado con las entradas fue a obras benéficas. Los fuegos artificiales en Esuatini son privados y breves: Manzini solo los permitió de 23:30 a 1:30.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Culto de medianoche",
+        "text": "El 31 de diciembre las iglesias reúnen a los fieles en cultos de crossover desde las 19:00 hasta las primeras horas del año, y la medianoche llega con oración y canto."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Góspel hasta el alba",
+        "text": "El gran crossover de góspel en Mavuso dura de las 18:00 a las 6:00: cantos, bailes, oración y gratitud por el año que se va."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Una noche en cuatro escenarios",
+        "text": "Los crossovers de discoteca en Manzini van de la tarde a la mañana: amapiano, deep house, hip hop y góspel suenan en escenarios distintos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Esuatini: Mbabane | Time2Fest",
+      "description": "Esuatini entra en 2027 a las 22:00 UTC con cultos nocturnos, un crossover de góspel hasta el alba en Mavuso, fuegos privados breves y la temporada del Incwala."
+    },
+    "kit": "sz"
+  },
+  "ZM": {
+    "text": "En Zambia el 1 de enero es festivo, y para muchos la Nochevieja empieza en la iglesia. Las iglesias celebran crossovers, cultos nocturnos de cantos y oración que atraviesan la medianoche; en las iglesias carismáticas suelen terminar con el anuncio del tema con el que la comunidad entra en el año nuevo. En muchas mesas familiares hay pollo con arroz: se come en Navidad y el día de Año Nuevo por una larga tradición, así que en diciembre los avicultores apenas dan abasto con los pedidos.\n\nEn Lusaka, a medianoche estallan los petardos y suenan las bocinas, y los bares se llenan de música. Miles de personas reciben el año en el recinto ferial Showgrounds, donde los DJ, la cuenta atrás y los fuegos artificiales son una cita anual desde hace más de ocho años. Para recibir 2025 los fuegos iluminaron también el cielo del centro.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Una noche de crossover",
+        "text": "La tarde del 31 de diciembre muchos zambianos van a la iglesia a un crossover, un culto nocturno de cantos y oración que atraviesa la medianoche y termina ya en el año nuevo."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Pollo con arroz",
+        "text": "El día de Año Nuevo muchas familias sirven pollo con arroz, y los huevos acaban en ensaladas, tartas y bollería: una mesa festiva que pasa de generación en generación."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás en Showgrounds",
+        "text": "La mayor fiesta de Año Nuevo de Lusaka está en el recinto Showgrounds: DJ, cuenta atrás y fuegos a medianoche, mientras por toda la ciudad suenan las bocinas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Zambia: Lusaka | Time2Fest",
+      "description": "Zambia recibe 2027 a las 22:00 UTC con cultos crossover toda la noche, pollo con arroz en casa y cuenta atrás con fuegos en el recinto Showgrounds de Lusaka."
+    },
+    "kit": "zm"
+  },
+  "ZW": {
+    "text": "En Zimbabue el 1 de enero es festivo, y el 31 de diciembre es día de compras: la gente se abastece de comida, bebidas y petardos. Por la noche, unos van a la iglesia al crossover, un culto que dura toda la noche: hacia la medianoche se anuncia el lema del nuevo año y después se reza hasta la madrugada. Otros reciben el año con la familia y los amigos. Y no hay fiesta sin arroz con pollo, el plato preferido de toda celebración zimbabuense, de las bodas a la Navidad.\n\nEn Harare miles de personas salen a las calles y a los locales: música en directo, comida callejera y, a medianoche, el cielo se llena de fuegos artificiales. El 1 de enero el Centro Internacional de Conferencias reúne a miles de personas en el concierto góspel A Night of Thanksgiving; para recibir 2026, su sesión nocturna empezó ya a las 23:00.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Noche de crossover",
+        "text": "La noche del 31 de diciembre muchos van a la iglesia al crossover: hacia la medianoche se anuncia el lema del nuevo año y se reza hasta la madrugada."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Arroz con pollo",
+        "text": "El arroz con pollo es el plato sin el que no hay fiesta en Zimbabue: de las bodas y graduaciones a la Navidad."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "La música de Harare",
+        "text": "Harare recibe el año en la calle con música en directo y fuegos artificiales, y el 1 de enero miles acuden al concierto góspel A Night of Thanksgiving."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Zimbabue: Harare | Time2Fest",
+      "description": "Zimbabue recibe 2027 a las 22:00 UTC con cultos crossover nocturnos, arroz con pollo en la mesa, música en vivo y fuegos artificiales en las calles de Harare."
+    },
+    "kit": "zw"
   }
 }

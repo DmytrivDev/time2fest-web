@@ -4126,5 +4126,173 @@
       "description": "South Africa greets 2027 at 22:00 UTC with midsummer braais, a midnight fireworks show over Cape Town's harbour and the Second New Year carnival on 2 January."
     },
     "kit": "za"
+  },
+  "BJ": {
+    "text": "Firecrackers are off limits on New Year's Eve in Benin: a 2022 decree bans them, and the police ask people to celebrate without excess. So for many the night is spent in church, with thanksgiving masses, prayers and vigils running through midnight, and some stay until morning to place the new year in God's hands. Before the holiday yards are swept and houses tidied, so the year begins clean and with the family together. Early in January Ouidah draws thousands to Vodun Days, a festival of Vodun culture.\n\nLight arches, glittering trees and lanterns dress the squares and crossroads of Porto-Novo and neighbouring Cotonou for the holidays. From the evening of 1 January, a public holiday, families come to stroll, picnic on the grass and take photos under the lights.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A night in church",
+        "text": "Cotonou's churches are packed on 31 December: thanksgiving masses and night vigils run through midnight, and some people pray until morning."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "A clean home for the year",
+        "text": "Yards are swept, houses tidied and dishes washed, so the year begins clean, calm and with the family together."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Kaléta masks",
+        "text": "All through December children in masks and costumes of rags and raffia dance through Cotonou's streets to drums and are given sweets or coins for it."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Benin: Porto-Novo | Time2Fest",
+      "description": "Benin greets 2027 at 23:00 UTC with church vigils through the night, a freshly swept home and light arches on the squares of Porto-Novo and Cotonou."
+    },
+    "kit": "bj"
+  },
+  "CF": {
+    "text": "In the Central African Republic New Year's Eve is spent above all with family and in church: many go to a night service to thank God for the year they have lived through, while others head for kermesses and dancing. On the table there is chicken, gnetum (koko leaves), bushmeat and home-made drinks; elders in their grand boubous recall past celebrations, and everyone wishes each other good health. The country has lived with armed conflict since 2012, so gunfire and firecrackers are banned that night, and for the arrival of 2026 even the traditional 21 cannon shots were called off.\n\nIn Bangui hairdressers and tailors work until the last minute before the holiday, and the KM5 market buzzes with shoppers. At midnight the faithful gather in Notre-Dame Cathedral, and on 1 January the streets are full of people: some celebrate at home, others with friends in bars.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Chicken for the feast",
+        "text": "Chicken is the main New Year dish in Bangui: it is bought at the market the day before and served with gnetum, bushmeat and home-made drinks."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "A night service of thanks",
+        "text": "On 31 December many people go to church to thank God for the year gone by; Notre-Dame Cathedral in Bangui holds a New Year's Eve mass."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "A fire in the courtyard",
+        "text": "Some families light a fire in the courtyard in the evening: around it people tell stories, sing old village songs and wish each other good health."
+      }
+    ],
+    "meta": {
+      "title": "New Year in the Central African Republic | Time2Fest",
+      "description": "The Central African Republic greets 2027 at 23:00 UTC: Bangui goes to mass at Notre-Dame, serves chicken with gnetum and fills the streets on 1 January."
+    },
+    "kit": "cf"
+  },
+  "SD": {
+    "text": "In Sudan the first day of the year is a double celebration: the country became independent on 1 January 1956, so New Year's Day is also Independence Day and a public holiday. That day Prime Minister Ismail al-Azhari raised the Sudanese flag for the first time. The holiday season is long: Christmas on 25 December and Coptic Christmas on 7 January are days off too. In 2019 Christmas bells rang in Khartoum for the first time in ten years, and Christians and Muslims celebrated together.\n\nIn Khartoum, on 1 January 2020, independence and the new year were celebrated in Freedom Square. Since April 2023 Sudan has been at war. On 1 January 2026 the capital marked 70 years of independence with a Youth Sports Festival: races for adults and children and a cycling race through the city's streets became the first large event since the war began.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "New Year and independence",
+        "text": "Midnight brings not only a new year but also Independence Day, a public holiday that recalls 1 January 1956."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Christmas days to 7 January",
+        "text": "Both 25 December and 7 January, Coptic Christmas, are days off; in 2019 Christians and Muslims celebrated Christmas together in Khartoum."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A sporting 1 January",
+        "text": "In 2026 Khartoum greeted the independence anniversary with races for adults and children and a cycling race through its streets."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Sudan: Khartoum | Time2Fest",
+      "description": "Sudan greets 2027 at 22:00 UTC, and here the first day of the year is also Independence Day, marking 1956. Holidays run from Christmas to Coptic 7 January."
+    },
+    "kit": "sd"
+  },
+  "SZ": {
+    "text": "In Eswatini the night into 1 January is called the «crossover» — the step into the new year — and New Year's Day itself is a public holiday. Many people greet midnight in church or at a gospel concert: night services run from the evening into the first hours of the year, and at midnight people pray and sing. For years the biggest gospel crossovers have filled the Mavuso Trade Fair in Manzini, from 6 pm until 6 am. The New Year also falls in the season of Incwala, the country's most important ceremony, devoted to kingship and the first fruits.\n\nIn Mbabane, the crossover into 2025 brought gospel stars to Prince of Wales Stadium, with ticket money going to charity. Fireworks in Eswatini are private and brief: Manzini allowed them only from 23:30 to 01:30.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A night service",
+        "text": "On 31 December churches gather believers for crossover services from 7 pm into the first hours of the new year, greeting midnight with prayer and song."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Gospel until dawn",
+        "text": "The big gospel crossover at Mavuso runs from 6 pm to 6 am: singing, dancing, prayer and thanks for the year gone by."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "A night on four stages",
+        "text": "Club crossovers in Manzini run from afternoon to morning, with amapiano, deep house, hip hop and gospel on separate stages."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Eswatini: Mbabane | Time2Fest",
+      "description": "Eswatini crosses into 2027 at 22:00 UTC with night church services, a gospel crossover until dawn at Mavuso, brief private fireworks and the Incwala season."
+    },
+    "kit": "sz"
+  },
+  "ZM": {
+    "text": "In Zambia 1 January is a public holiday, and for many people New Year's Eve begins in church. Churches hold crossovers, night services of song and prayer that run through midnight; in charismatic churches they often end with the announcement of the theme the congregation carries into the new year. On many family tables there is chicken with rice: it is eaten at Christmas and on New Year's Day by long tradition, so in December poultry farmers can barely keep up with orders.\n\nIn Lusaka fireworks crack and car horns sound at midnight, and the bars are full of music. Thousands see the year in at the Showgrounds, where DJs, a countdown and fireworks have been an annual fixture for more than eight years. For the arrival of 2025 fireworks also lit up the sky over the city centre.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A crossover night",
+        "text": "On the evening of 31 December many Zambians head to church for a crossover, a night service of song and prayer that runs through midnight and ends in the new year."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Chicken with rice",
+        "text": "On New Year's Day many families serve chicken with rice, and eggs go into salads, cakes and pastries — a holiday table handed down for generations."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Countdown at the Showgrounds",
+        "text": "Lusaka's biggest New Year party is at the Showgrounds: DJs, a countdown and fireworks at midnight, while car horns sound across the city."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Zambia: Lusaka | Time2Fest",
+      "description": "Zambia greets 2027 at 22:00 UTC with crossover church services through the night, chicken and rice at home and a fireworks countdown at the Lusaka Showgrounds."
+    },
+    "kit": "zm"
+  },
+  "ZW": {
+    "text": "In Zimbabwe 1 January is a public holiday, and 31 December is a day of errands: people stock up on food, drinks and firecrackers. In the evening some head to church for a crossover — an all-night service where the theme of the new year is unveiled around midnight, followed by prayer into the early hours. Others see the year in with family and friends. And no celebration is complete without rice and chicken, the favourite dish of every Zimbabwean feast, from weddings to Christmas.\n\nIn Harare thousands spill into the streets and entertainment spots for live music and street food, and at midnight the sky bursts with fireworks. On 1 January the Harare International Conference Centre fills with thousands for the gospel concert A Night of Thanksgiving; for 2026 its overnight session began as early as 11 pm.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A night at crossover",
+        "text": "On the evening of 31 December many go to church for a crossover: the theme of the new year is unveiled around midnight, and prayer goes on into the early hours."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Rice and chicken",
+        "text": "Rice and chicken is the dish no Zimbabwean celebration goes without — from weddings and graduations to Christmas."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Harare's music night",
+        "text": "Harare sees the year in on the streets with live music and fireworks, and on 1 January thousands gather for the gospel concert A Night of Thanksgiving."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Zimbabwe: Harare | Time2Fest",
+      "description": "Zimbabwe welcomes 2027 at 22:00 UTC with all-night crossover services, rice and chicken on the table, and live music and fireworks across the streets of Harare."
+    },
+    "kit": "zw"
   }
 }
