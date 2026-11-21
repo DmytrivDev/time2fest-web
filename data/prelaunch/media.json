@@ -1645,6 +1645,134 @@
         "x": 50,
         "y": 55
       }
+    },
+    "country:AF": {
+      "src": "/media/photos/kabul.webp",
+      "alt": {
+        "uk": "Захід сонця над Кабулом: низьке сонце, хмари в помаранчевому світлі й силуети гір довкола долини",
+        "en": "Sunset over Kabul: a low sun, clouds in orange light and mountain silhouettes around the valley",
+        "es": "Atardecer sobre Kabul: sol bajo, nubes con luz anaranjada y siluetas de montañas alrededor del valle",
+        "fr": "Coucher de soleil sur Kaboul : soleil bas, nuages orangés et silhouettes des montagnes autour de la vallée"
+      },
+      "author": "Afghanistan Matters",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kabul_Sunset_(4250617108).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:BT": {
+      "src": "/media/photos/thimphu.webp",
+      "alt": {
+        "uk": "Ташичо-дзонг уночі: освітлені білі стіни з червоним поясом, золоті дахи веж і центральна вежа-уце; на схилі позаду — вогні Тхімпху",
+        "en": "Tashichho Dzong at night: lit white walls with a red band, golden tower roofs and the central utse; the lights of Thimphu on the slope behind",
+        "es": "El Tashichho Dzong de noche: muros blancos iluminados con franja roja, tejados dorados y la torre central utse; detrás, en la ladera, las luces de Timbu",
+        "fr": "Le Tashichho Dzong la nuit : murs blancs illuminés à bande rouge, toits dorés et tour centrale utse ; derrière, sur la pente, les lumières de Thimphou"
+      },
+      "author": "Christopher J. Fynn",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tashichodzong_at_night.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:CC": {
+      "src": "/media/photos/cocos.webp",
+      "alt": {
+        "uk": "Захід сонця над лагуною Кокосових островів: смуга кокосових пальм на березі атолу",
+        "en": "Sunset over the Cocos Islands lagoon: a line of coconut palms on the atoll shore",
+        "es": "Atardecer sobre la laguna de las islas Cocos: una franja de cocoteros en la orilla del atolón",
+        "fr": "Coucher de soleil sur le lagon des îles Cocos : une rangée de cocotiers sur le rivage de l’atoll"
+      },
+      "author": "paullymac",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cocos_(Keeling)_Islands_2017_(2).jpg",
+      "position": {
+        "x": 60,
+        "y": 60
+      }
+    },
+    "country:LA": {
+      "src": "/media/photos/vientiane.webp",
+      "alt": {
+        "uk": "Пха Тат Луанг — національний символ Лаосу — на світанку: сонце над ступою, пальми й порожня площа",
+        "en": "Pha That Luang, Laos’s national symbol, at sunrise: the sun above the stupa, palm trees and an empty square",
+        "es": "Pha That Luang, símbolo nacional de Laos, al amanecer: el sol sobre la estupa, palmeras y la plaza vacía",
+        "fr": "Pha That Luang, symbole national du Laos, au lever du soleil : le soleil au-dessus du stupa, palmiers et place déserte"
+      },
+      "author": "Benh LIEU SONG",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pha_That_Luang_Sunrise_Panorama_BLS.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:MM": {
+      "src": "/media/photos/yangon.webp",
+      "alt": {
+        "uk": "Пагода Шведагон уночі зі сходу: освітлена золота ступа, малі ступи й ярусні дахи критих сходів на пагорбі Сінгуттара",
+        "en": "Shwedagon Pagoda at night from the east: the lit golden stupa, small stupas and tiered roofs of the covered stairways on Singuttara Hill",
+        "es": "La pagoda Shwedagon de noche desde el este: la estupa dorada iluminada, pequeñas estupas y los tejados escalonados de las escaleras cubiertas en la colina Singuttara",
+        "fr": "La pagode Shwedagon la nuit, côté est : stupa doré illuminé, petits stupas et toits étagés des escaliers couverts sur la colline Singuttara"
+      },
+      "author": "Z3144228",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Shwedagon_Pagoda_at_night_from_the_East_side.jpg",
+      "position": {
+        "x": 58,
+        "y": 45
+      }
+    },
+    "country:MO": {
+      "src": "/media/photos/macau.webp",
+      "alt": {
+        "uk": "Руїни собору Святого Павла вночі: освітлений фасад над широкими сходами, люди й святкові вогні",
+        "en": "The Ruins of St. Paul’s at night: the lit façade above the wide steps, people and festive lights",
+        "es": "Las ruinas de San Pablo de noche: la fachada iluminada sobre la amplia escalinata, gente y luces festivas",
+        "fr": "Les ruines de Saint-Paul la nuit : façade illuminée au-dessus du grand escalier, promeneurs et lumières de fête"
+      },
+      "author": "Abasaa",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Night_at_Ruins_of_St._Paul%27s_(Macau)_01.JPG",
+      "position": {
+        "x": 38,
+        "y": 45
+      }
+    },
+    "country:NP": {
+      "src": "/media/photos/kathmandu.webp",
+      "alt": {
+        "uk": "Ступа Боднатх уночі: білий купол, золота башта з очима Будди й гірлянди молитовних прапорців, позаду вогні Катманду",
+        "en": "Boudhanath Stupa at night: the white dome, the golden tower with the Buddha’s eyes and strings of prayer flags, the lights of Kathmandu behind",
+        "es": "La estupa de Boudhanath de noche: la cúpula blanca, la torre dorada con los ojos de Buda y guirnaldas de banderas de oración; detrás, las luces de Katmandú",
+        "fr": "Le stupa de Bodnath la nuit : dôme blanc, tour dorée aux yeux du Bouddha et guirlandes de drapeaux de prière, les lumières de Katmandou derrière"
+      },
+      "author": "Roshan Kumar Ban",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Boudha_Stupa_in_Kathmandu.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:UZ": {
+      "src": "/media/photos/tashkent.webp",
+      "alt": {
+        "uk": "Новорічна ніч на площі Мустакіллік у Ташкенті: висока ялинка з гірляндами, святкові фігури й натовп",
+        "en": "New Year’s Eve on Mustaqillik Square in Tashkent: a tall tree with garlands, festive figures and a crowd",
+        "es": "Nochevieja en la plaza Mustaqillik de Taskent: un árbol alto con guirnaldas, figuras festivas y una multitud",
+        "fr": "Réveillon sur la place Moustaqillik à Tachkent : un grand sapin illuminé, des figures de fête et la foule"
+      },
+      "author": "Bekhruzbek Ochilov",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Independence_Square_in_New_Year_2015.JPG",
+      "position": {
+        "x": 50,
+        "y": 30
+      }
     }
   }
 }

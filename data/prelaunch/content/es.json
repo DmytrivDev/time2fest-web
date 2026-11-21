@@ -2502,5 +2502,229 @@
       "description": "Timor-Leste recibe 2027 a medianoche UTC+9: cuenta atrás y fuegos en Dili, el Día de los Héroes el 31 de diciembre y 570 escalones al Cristo Rei."
     },
     "kit": "tl"
+  },
+  "AF": {
+    "text": "En Afganistán el 1 de enero no es el comienzo del año: la vida diaria sigue el calendario solar de la hégira, y el año nuevo llega con el Nouruz el 21 de marzo. Desde 2021 las autoridades suprimieron el Nouruz como festivo oficial, aunque no prohíben celebrarlo en privado. En cambio, muchos afganos tienen el 1 de enero como cumpleaños: cuando nadie había registrado un nacimiento, en los documentos se ponía la fecha más fácil de recordar.\n\nEn Kabul el 1 de enero no es festivo, y en 2027 cae en viernes, el día de descanso semanal. La medianoche llega aquí a las 19:30 UTC. Ese día las felicitaciones viajan por mensajería: los jóvenes se desean feliz cumpleaños «compartido».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Cumpleaños de todos",
+        "text": "Muchos afganos tienen el 1 de enero como fecha de nacimiento en sus papeles. Así que ese día felicita a tus amigos afganos: para muchos es de verdad su día."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Noche de Yalda con granadas",
+        "text": "En la noche más larga del año, hacia el 21 de diciembre, las familias afganas trasnochan alrededor de la mesa. La fruta de la noche es la granada, y algunos lo celebran en un restaurante."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Haft mewa para el Nouruz",
+        "text": "Para el Nouruz del 21 de marzo se prepara haft mewa, siete frutos secos en su propio almíbar, y samanak, un dulce de trigo germinado."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Afganistán: Kabul | Time2Fest",
+      "description": "Afganistán llega a 2027 a las 19:30 UTC: en Kabul el 1 de enero es viernes de descanso y, para muchos afganos, el cumpleaños que figura en sus papeles."
+    },
+    "kit": "af"
+  },
+  "BT": {
+    "text": "En Bután el 1 de enero no es festivo: el Año Nuevo principal, Losar, sigue el calendario lunar y en 2027 cae el 7 de febrero. Aun así, principios de enero es época de fiesta: el 2 de enero de 2027 es feriado por Nyilo, el solsticio de invierno, a partir del cual los días se alargan. En parte del oeste de Bután el año nuevo empieza con él, y se celebra con tiro con arco y banquetes. Todo el país recibe la medianoche a las 18:00 UTC.\n\nEn Timbu la Nochevieja se vive de distintas maneras: los jóvenes van a discotecas con baile, karaoke y sorteos, los hoteles organizan cenas con música en vivo y muchos se quedan en casa con padres e hijos. En Nyilo los niños van de casa en casa recitando el lolay, deseos de abundancia para cada parte del hogar; en 2024 unos 750 niños saludaron así a las familias de Timbu.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Lolay de puerta en puerta",
+        "text": "En Nyilo los niños visitan las casas recitando el lolay, deseos de abundancia para el hogar y cada parte de la finca. Los dueños les dan comida y al final los niños hacen un pícnic juntos."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Nyilo: vuelve la luz",
+        "text": "El solsticio de invierno es feriado en Bután: en 2027 cae el 2 de enero. El día más corto del año se celebra con tiro con arco y un buen banquete."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Discoteca o casa",
+        "text": "El 31 de diciembre las discotecas de Timbu se llenan de baile, karaoke y sorteos, y en los bares hay música en vivo. Otros reciben la medianoche en casa con una cena familiar."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Bután: Timbu | Time2Fest",
+      "description": "Bután llega a 2027 a las 18:00 UTC: en Timbu la noche se pasa en discotecas o en casa, y el 2 de enero, en Nyilo, los niños van de puerta en puerta con deseos."
+    },
+    "kit": "bt"
+  },
+  "CC": {
+    "text": "En las islas Cocos (Keeling) el 1 de enero es festivo, como en toda Australia, pero aquí no es una gran fiesta. La mayoría de los casi seiscientos isleños son malayos de Cocos, musulmanes suníes, y sus días grandes siguen el calendario islámico: Hari Raya Puasa al final del Ramadán y Hari Raya Haji. Y el 6 de abril las islas celebran su propio Día de la Autodeterminación.\n\nEl año nuevo llega aquí a las 17:30 UTC, en una noche cálida: ni de noche suele bajar de 24 °C, y el agua de la laguna ronda los 26 °C. El 1 de enero no hay ferri entre West Island y Home Island: no navega los días festivos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Barbacoa junto a un pondok",
+        "text": "Los malayos de Cocos tienen pondoks, cabañas de fin de semana en los islotes más grandes del atolón. Lleva barbacoa y sedal y pasa la tarde junto a la laguna: ni de noche suele bajar de 24 °C."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Año Nuevo sin ferri",
+        "text": "El 1 de enero es festivo y el ferri entre West Island y Home Island no circula, igual que los domingos. Así que cada cual pasa el primer día del año en su propia isla."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "El perdón de Hari Raya",
+        "text": "La gran fiesta de Home Island es Hari Raya Puasa, tras el Ramadán (hacia el 9 de marzo de 2027). Por la mañana las familias, vestidas a juego, visitan las tumbas de sus parientes y se piden perdón por las ofensas del año."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en las Islas Cocos (Keeling) | Time2Fest",
+      "description": "Las Islas Cocos (Keeling) reciben 2027 a las 17:30 UTC en una noche cálida junto a la laguna. El 1 de enero no hay ferri; la gran fiesta malaya es Hari Raya."
+    },
+    "kit": "cc"
+  },
+  "LA": {
+    "text": "El Año Nuevo principal de Laos es Pi Mai Lao, a mediados de abril: en los feriados del 14 al 16 de abril se lavan las imágenes de Buda, la gente se moja con agua, los jóvenes primero a sus mayores, y se hacen estupas de arena para los templos. Pero el 1 de enero también es festivo, y la noche anterior se pasa en casa, en los pueblos, en las oficinas y en las grandes plazas de todo el país. La medianoche llega a Laos a las 17:00 UTC.\n\nEn Vientián, el corazón de la noche es el parque del arco de Patuxai. Suena música folclórica, se proyectan motivos laosianos sobre los arcos del monumento y, cuando la cuenta atrás llega a cero, los fuegos artificiales estallan sobre Patuxai. Según el Vientiane Times, más de 100 000 personas acudieron a la cuenta atrás de 2026, y en la noche hacia 2025 se bailó el lamvong, recién inscrito por la UNESCO como patrimonio de la humanidad.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás en Patuxai",
+        "text": "A medianoche el parque del arco de Patuxai cuenta hasta cero, motivos laosianos iluminan el monumento y estallan los fuegos. En la noche hacia 2025 Laos vio su primer espectáculo de drones, con la estupa de That Luang en el cielo."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "La danza lamvong",
+        "text": "En diciembre de 2024 la UNESCO inscribió la danza laosiana lamvong como patrimonio inmaterial de la humanidad, y en Nochevieja el parque de Patuxai vio más de ocho de sus estilos."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Otro Año Nuevo en abril",
+        "text": "En Pi Mai Lao, del 14 al 16 de abril, se lavan las imágenes de Buda, se vierte agua sobre los mayores y se hacen estupas de arena para ofrecer a los monjes."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Laos: Vientián | Time2Fest",
+      "description": "Laos recibe 2027 a las 17:00 UTC: Vientián cuenta hacia atrás en el arco de Patuxai con fuegos y motivos laosianos, y Pi Mai llega en abril."
+    },
+    "kit": "la"
+  },
+  "MM": {
+    "text": "Myanmar tiene dos Años Nuevos. El tradicional es Thingyan, en abril: una fiesta del agua en la que la gente se moja para lavar la mala suerte del año viejo; en 2027 sus feriados van del 10 al 18 de abril. Hasta 2012 la noche del 1 de enero se pasaba sobre todo en casa o en hoteles, y en 2018 el primer día del año fue festivo oficial por primera vez. Todo el país recibe la medianoche a las 17:30 UTC.\n\nEn Yangon, la ciudad más grande, la primera cuenta atrás pública se celebró el 31 de diciembre de 2012 en el campo de Myoma: concierto, pantalla gigante y fuegos artificiales, con unas 90 000 personas según los organizadores. En 2022 las autoridades de la ciudad levantaron el toque de queda por una noche para una cuenta atrás con fuegos y música en el People's Park, y volvieron a hacerlo el 31 de diciembre de 2023.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Un Año Nuevo de agua en abril",
+        "text": "En Thingyan los jóvenes lavan el pelo a sus mayores en señal de respeto, la gente libera peces y pájaros y se cocinan bolitas de arroz rellenas de azúcar de palma."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Cuenta atrás con fuegos",
+        "text": "La primera cuenta atrás pública de Yangon, con concierto y fuegos artificiales, fue el 31 de diciembre de 2012; en 2022 hubo otra en el People's Park con música y fuegos."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "Ceremonia en Shwedagon",
+        "text": "El 1 de enero se celebra una ceremonia budista de Año Nuevo en la pagoda de Shwedagon: en 2018 reunió a unos 18 000 monjes y monjas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Myanmar: Yangon | Time2Fest",
+      "description": "Myanmar recibe 2027 a las 17:30 UTC: Yangon espera la medianoche con cuenta atrás y fuegos, y el 1 de enero hay ceremonia budista en la pagoda Shwedagon."
+    },
+    "kit": "mm"
+  },
+  "MO": {
+    "text": "Macao, bajo dominio portugués durante 442 años, recibe el Año Nuevo dos veces. El 1 de enero es festivo, pero la gran fiesta es el Año Nuevo lunar: se libra la víspera y los tres primeros días, y en 2027 cae el 6 de febrero. El primer día un dragón dorado de 238 metros con dieciocho leones desfila desde las Ruinas de San Pablo hasta la plaza del Senado, donde se encienden petardos, y en los días siguientes los fuegos suben frente a la Torre de Macao.\n\nLa noche del 31 de diciembre trae conciertos gratuitos con cuenta atrás junto al lago Sai Van y en las Casas de Taipa, donde canta el conjunto Tuna Macaense junto a grupos de las comunidades filipina, vietnamita y birmana. En los conciertos de la ciudad no hay fuegos, pero a medianoche los resorts de Cotai han lanzado 8 minutos de fuegos artificiales. En la Nochevieja de 2023 llegaron a Macao más de 175.000 visitantes, un récord desde la pandemia.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Dragón y petardos",
+        "text": "La gran fiesta es el Año Nuevo lunar, el 6 de febrero en 2027. El primer día un dragón dorado de 238 metros con dieciocho leones desfila desde las Ruinas de San Pablo hasta la plaza del Senado, donde se encienden petardos."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Cuenta atrás al aire libre",
+        "text": "La ciudad organiza dos conciertos gratuitos: junto al lago Sai Van, de 22:00 a 00:10, y en las Casas de Taipa, con el conjunto Tuna Macaense y grupos de danza de las comunidades."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre Cotai",
+        "text": "A medianoche los resorts de Cotai han lanzado 8 minutos de fuegos. En el Año Nuevo lunar los fuegos suben frente a la Torre de Macao y se ven desde la orilla del lago Nam Van."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Macao | Time2Fest",
+      "description": "A las 16:00 UTC Macao recibe 2027 con cuenta atrás junto al lago Sai Van y en Taipa y fuegos de los resorts de Cotai; en febrero, un dragón dorado."
+    },
+    "kit": "mo"
+  },
+  "NP": {
+    "text": "El calendario oficial de Nepal es el Bikram Sambat, así que el Año Nuevo del país llega en abril, el 1 de Baisakh, cuando Bhaktapur celebra los nueve días del Bisket Jatra. Pero finales de diciembre también es festivo. El 30 de diciembre los gurung celebran el Tamu Lhosar, su Año Nuevo, con banquetes y espectáculos, y el 1 de enero es el Día del Traje y el Gorro Nacional, en que los jóvenes se ponen el daura suruwal, el gunyu choli y el topi. Nepal llega a la medianoche del 1 de enero a las 18:15 UTC.\n\nEn Katmandú, la Nochevieja es de Thamel. El consejo de turismo del barrio organiza cada año un festival en la calle principal con música y actuaciones: en 2022 duró hasta las doce y media, y para recibir 2024 se esperaban unas 180 000 personas. También hay actividades junto a la estupa de Boudhanath, y los hoteles despiden el año con bandas en vivo y banquetes.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Thamel a medianoche",
+        "text": "El 31 de diciembre la calle principal de Thamel se convierte en un festival de música y luces, lleno de vecinos y viajeros. Los clubes y restaurantes del barrio siguen abiertos mucho después de medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Tamu Lhosar, 30 de diciembre",
+        "text": "Los gurung despiden un año de su ciclo de doce animales y reciben al siguiente. En Katmandú la fiesta reúne a la gente en la explanada de Tundikhel con espectáculos y banquetes."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "El 1 de enero, con topi",
+        "text": "El primer día del año es en Nepal el Día del Traje y el Gorro Nacional. Los jóvenes se visten con daura suruwal y gunyu choli, se ponen el topi y comparten fotos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Nepal: Katmandú | Time2Fest",
+      "description": "Nepal llega a 2027 a las 18:15 UTC: en Katmandú la noche es del festival callejero de Thamel, y la víspera los gurung celebran su propio Tamu Lhosar."
+    },
+    "kit": "np"
+  },
+  "UZ": {
+    "text": "En Uzbekistán el Año Nuevo es una de las fiestas más queridas, y los preparativos empiezan con un mes de antelación o incluso antes. En casa se pone el árbol —la archa, en uzbeko— y se dejan los regalos debajo. El dastarján festivo se prepara con la mayor abundancia posible: se cree que cuanto más rica es la mesa, más próspero será el año. A medianoche se abre el champán y cada uno pide un deseo. A los niños los saludan Qorbobo, con su chapán, y su compañera Qorqiz; según la leyenda, Qorbobo vive en el pico más alto de la cordillera de Chimgan y llega en burro.\n\nEn Taskent, la temporada pasada, las celebraciones principales se hicieron en la plaza frente a la Biblioteca Nacional Alisher Navoí, cada día del 25 de diciembre al 10 de enero. Tashkent City y los parques y calles de todos los distritos tuvieron también sus árboles, mercadillos y conciertos.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Una archa con regalos",
+        "text": "El árbol de Año Nuevo, la archa, se pone en cada casa, y los regalos para la familia se dejan debajo con antelación."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Un dastarján abundante",
+        "text": "La mesa se llena hasta rebosar: cuanto más rico el dastarján, más próspero el año. A medianoche, champán y un deseo."
+      },
+      {
+        "id": "t3",
+        "iconId": "horseshoe",
+        "title": "El burro de Qorbobo",
+        "text": "Qorbobo y Qorqiz salen a las calles y plazas céntricas. Dicen que quien monta en el burro de Qorbobo en Nochevieja tendrá suerte todo el año."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Uzbekistán: Taskent | Time2Fest",
+      "description": "Medianoche en Taskent, 19:00 UTC: Uzbekistán recibe 2027 con regalos bajo la archa, un dastarján rebosante, champán con un deseo y Qorbobo en su burro."
+    },
+    "kit": "uz"
   }
 }

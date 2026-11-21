@@ -1,0 +1,99 @@
+{
+  "code": "CC",
+  "zone": "UTC+6:30",
+  "zoneId": "utc+0630",
+  "cityId": "cocos",
+  "names": {
+    "uk": {
+      "name": "Кокосові острови",
+      "city": "Кокосові острови",
+      "cityIn": "на Кокосових островах",
+      "caps": "КОКОСОВІ ОСТРОВИ"
+    },
+    "en": {
+      "name": "Cocos (Keeling) Islands",
+      "city": "Cocos Islands",
+      "cityIn": "on the Cocos Islands",
+      "caps": "COCOS ISLANDS"
+    },
+    "es": {
+      "name": "Islas Cocos (Keeling)",
+      "city": "Islas Cocos",
+      "cityIn": "en las islas Cocos",
+      "caps": "ISLAS COCOS"
+    },
+    "fr": {
+      "name": "Îles Cocos (Keeling)",
+      "city": "Îles Cocos",
+      "cityIn": "aux îles Cocos",
+      "caps": "ÎLES COCOS"
+    }
+  },
+  "picto": "M3 36 H37 M5 36 V27 M35 36 V27 M3 27 H37 L32 23 H8 Z M8.5 36 V31 A2 2 0 0 1 12.5 31 V36 M18 36 V30.5 A2 2 0 0 1 22 30.5 V36 M27.5 36 V31 A2 2 0 0 1 31.5 31 V36 M16.6 23 V20 H23.4 V23 M17.4 20 C13.6 18 13.8 13 20 8.4 C26.2 13 26.4 18 22.6 20 M15.1 16.6 H24.9 M20 8.4 V4.6 M18.4 3 A1.6 1.6 0 0 0 21.6 3",
+  "flagColors": [
+    "#6DA544",
+    "#FFDA44",
+    "#9BCB7A"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Кокосових островах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on the Cocos Islands"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en las islas Cocos"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux îles Cocos"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "code": "MM",
+  "zone": "UTC+6:30",
+  "zoneId": "utc+0630",
+  "cityId": "yangon",
+  "names": {
+    "uk": {
+      "name": "М’янма",
+      "city": "Янгон",
+      "cityIn": "у Янгоні",
+      "caps": "М’ЯНМА"
+    },
+    "en": {
+      "name": "Myanmar",
+      "city": "Yangon",
+      "cityIn": "in Yangon",
+      "caps": "MYANMAR"
+    },
+    "es": {
+      "name": "Myanmar",
+      "city": "Yangon",
+      "cityIn": "en Yangon",
+      "caps": "MYANMAR"
+    },
+    "fr": {
+      "name": "Myanmar",
+      "city": "Yangon",
+      "cityIn": "à Yangon",
+      "caps": "MYANMAR"
+    }
+  },
+  "picto": "M2 37 H38 M6.5 37 V35 H33.5 V37 M8.5 35 V33 H31.5 V35 M10.2 33 C10.6 29 12.6 26.4 15 24.6 M29.8 33 C29.4 29 27.4 26.4 25 24.6 M15 24.6 H25 M15.4 24.6 V22.2 H24.6 V24.6 M15.4 22.2 Q16 20.2 17.6 19.8 H22.4 Q24 20.2 24.6 22.2 M17.6 19.8 Q18.8 17.8 20 19.8 Q21.2 17.8 22.4 19.8 M18.1 19.2 L19 13.4 M21.9 19.2 L21 13.4 M18.5 16.8 H21.5 M18.8 15 H21.2 M19 13.4 C17.4 12 17.8 9.4 20 7 C22.2 9.4 22.6 12 21 13.4 M20 7 V5.6 M18.6 5.6 H21.4 L20.6 4.2 H19.4 Z M20 4.2 V1.8 M3.4 37 Q3.8 33.4 5 31.6 Q6.2 33.4 6.6 37 M5 31.6 V29 M33.4 37 Q33.8 33.4 35 31.6 Q36.2 33.4 36.6 37 M35 31.6 V29",
+  "flagColors": [
+    "#FECB00",
+    "#34B233",
+    "#EA2839"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Янгоні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Yangon"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Yangon"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Yangon"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

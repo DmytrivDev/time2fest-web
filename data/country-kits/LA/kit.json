@@ -1,0 +1,99 @@
+{
+  "code": "LA",
+  "zone": "UTC+7",
+  "zoneId": "utc+0700",
+  "cityId": "vientiane",
+  "names": {
+    "uk": {
+      "name": "Лаос",
+      "city": "В’єнтьян",
+      "cityIn": "у В’єнтьяні",
+      "caps": "ЛАОС"
+    },
+    "en": {
+      "name": "Laos",
+      "city": "Vientiane",
+      "cityIn": "in Vientiane",
+      "caps": "LAOS"
+    },
+    "es": {
+      "name": "Laos",
+      "city": "Vientián",
+      "cityIn": "en Vientián",
+      "caps": "LAOS"
+    },
+    "fr": {
+      "name": "Laos",
+      "city": "Vientiane",
+      "cityIn": "à Vientiane",
+      "caps": "LAOS"
+    }
+  },
+  "picto": "M3 36.5 H37 M5 36.5 V32.5 H35 V36.5 M10.5 32.5 Q11.5 25.5 15.5 24 H24.5 Q28.5 25.5 29.5 32.5 M16.6 24 V19.6 H23.4 V24 M18 19.6 C16.4 15.6 17.4 11.4 20 7.6 C22.6 11.4 23.6 15.6 22 19.6 M20 7.6 V2.4 M5.4 32.5 V29.4 H9.6 V32.5 M6.3 29.4 Q6.3 24.6 7.5 20.4 Q8.7 24.6 8.7 29.4 M30.4 32.5 V29.4 H34.6 V32.5 M31.3 29.4 Q31.3 24.6 32.5 20.4 Q33.7 24.6 33.7 29.4",
+  "flagColors": [
+    "#CE1126",
+    "#002868",
+    "#FFFFFF"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у В’єнтьяні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Vientiane"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Vientián"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Vientiane"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

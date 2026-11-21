@@ -1,0 +1,99 @@
+{
+  "code": "BT",
+  "zone": "UTC+6",
+  "zoneId": "utc+0600",
+  "cityId": "thimphu",
+  "names": {
+    "uk": {
+      "name": "Бутан",
+      "city": "Тхімпху",
+      "cityIn": "у Тхімпху",
+      "caps": "БУТАН"
+    },
+    "en": {
+      "name": "Bhutan",
+      "city": "Thimphu",
+      "cityIn": "in Thimphu",
+      "caps": "BHUTAN"
+    },
+    "es": {
+      "name": "Bután",
+      "city": "Timbu",
+      "cityIn": "en Timbu",
+      "caps": "BUTÁN"
+    },
+    "fr": {
+      "name": "Bhoutan",
+      "city": "Thimphou",
+      "cityIn": "à Thimphou",
+      "caps": "BHOUTAN"
+    }
+  },
+  "picto": "M1.5 33 H38.5 M3 33 V23 H12 V33 M3 26 H12 M28 33 V23 H37 V33 M28 26 H37 M12 27 H16 M24 27 H28 M12 29.2 H16 M24 29.2 H28 M16 33 V18.5 H24 V33 M16 21.2 H24 M1.5 23 L4 21 H11 L13.5 23 M4.5 21 L6 19.3 H9 L10.5 21 M7.5 19.3 V16.8 M26.5 23 L29 21 H36 L38.5 23 M29.5 21 L31 19.3 H34 L35.5 21 M32.5 19.3 V16.8 M13.6 18.5 L16.3 16.1 H23.7 L26.4 18.5 M16.7 16.1 L18.1 14.3 H21.9 L23.3 16.1 M18.4 14.3 L19.3 12.9 H20.7 L21.6 14.3 M20 12.9 V10 M6 31.3 V30.1 M9 31.3 V30.1 M31 31.3 V30.1 M34 31.3 V30.1 M18.6 24.6 V23.2 M21.4 24.6 V23.2 M20 31.3 V28.6",
+  "flagColors": [
+    "#FFDA44",
+    "#FF9811",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Тхімпху"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Thimphu"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Timbu"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Thimphou"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

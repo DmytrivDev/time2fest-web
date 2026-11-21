@@ -1350,6 +1350,150 @@
         "title": "Nouvel An à Dili (Timor-Leste) | Time2Fest",
         "description": "Le Timor-Leste entre en 2027 à minuit UTC+9 : compte à rebours et feux à Dili, Journée des héros le 31 décembre et 570 marches vers le Cristo Rei."
       }
+    },
+    "AF": {
+      "uk": {
+        "title": "Новий рік в Афганістані: Кабул | Time2Fest",
+        "description": "Афганістан зустрічає 2027 рік о 19:30 UTC: у Кабулі 1 січня — вихідна п’ятниця, а для багатьох афганців ще й день народження, записаний у документах."
+      },
+      "en": {
+        "title": "New Year in Afghanistan: Kabul | Time2Fest",
+        "description": "Afghanistan reaches 2027 at 19:30 UTC: in Kabul 1 January is a Friday off, and for many Afghans it is also the birthday written in their documents."
+      },
+      "es": {
+        "title": "Año Nuevo en Afganistán: Kabul | Time2Fest",
+        "description": "Afganistán llega a 2027 a las 19:30 UTC: en Kabul el 1 de enero es viernes de descanso y, para muchos afganos, el cumpleaños que figura en sus papeles."
+      },
+      "fr": {
+        "title": "Nouvel An en Afghanistan : Kaboul | Time2Fest",
+        "description": "L'Afghanistan passe en 2027 à 19 h 30 UTC : à Kaboul, le 1er janvier est un vendredi chômé et, pour bien des Afghans, l'anniversaire inscrit dans leurs papiers."
+      }
+    },
+    "BT": {
+      "uk": {
+        "title": "Новий рік у Бутані: Тхімпху | Time2Fest",
+        "description": "Бутан зустрічає 2027 рік о 18:00 UTC: у Тхімпху ніч минає в клубах або вдома з родиною, а 2 січня на Ньїло діти ходять від дому до дому з побажаннями."
+      },
+      "en": {
+        "title": "New Year in Bhutan: Thimphu | Time2Fest",
+        "description": "Bhutan reaches 2027 at 18:00 UTC: Thimphu spends the night in clubs or at home with family, and on 2 January, Nyilo, children go door to door with wishes."
+      },
+      "es": {
+        "title": "Año Nuevo en Bután: Timbu | Time2Fest",
+        "description": "Bután llega a 2027 a las 18:00 UTC: en Timbu la noche se pasa en discotecas o en casa, y el 2 de enero, en Nyilo, los niños van de puerta en puerta con deseos."
+      },
+      "fr": {
+        "title": "Nouvel An au Bhoutan : Thimphou | Time2Fest",
+        "description": "Le Bhoutan passe en 2027 à 18 h UTC : Thimphou fête la nuit en boîte ou en famille, et le 2 janvier, à Nyilo, les enfants vont de porte en porte avec des vœux."
+      }
+    },
+    "CC": {
+      "uk": {
+        "title": "Новий рік на Кокосових (Кілінг) островах | Time2Fest",
+        "description": "Кокосові острови зустрічають 2027 рік о 17:30 UTC теплою ніччю над лагуною. 1 січня тут вихідний без порома, а головне свято малайців — Харі Рая."
+      },
+      "en": {
+        "title": "New Year on the Cocos (Keeling) Islands | Time2Fest",
+        "description": "The Cocos (Keeling) Islands greet 2027 at 17:30 UTC on a warm night by the lagoon. 1 January is a ferry-free holiday; the Malay big day is Hari Raya."
+      },
+      "es": {
+        "title": "Año Nuevo en las Islas Cocos (Keeling) | Time2Fest",
+        "description": "Las Islas Cocos (Keeling) reciben 2027 a las 17:30 UTC en una noche cálida junto a la laguna. El 1 de enero no hay ferri; la gran fiesta malaya es Hari Raya."
+      },
+      "fr": {
+        "title": "Nouvel An aux Îles Cocos (Keeling) | Time2Fest",
+        "description": "Les Îles Cocos (Keeling) fêtent 2027 à 17 h 30 UTC, par une nuit chaude au bord du lagon. Le 1er janvier, pas de ferry ; la grande fête malaise reste Hari Raya."
+      }
+    },
+    "LA": {
+      "uk": {
+        "title": "Новий рік у Лаосі: В’єнтьян | Time2Fest",
+        "description": "Лаос зустрічає 2027 рік о 17:00 UTC: у В’єнтьяні північ рахують біля арки Патусай під салют і лаоські візерунки на монументі, а Пі Май чекає у квітні."
+      },
+      "en": {
+        "title": "New Year in Laos: Vientiane | Time2Fest",
+        "description": "Laos greets 2027 at 17:00 UTC: Vientiane counts down at the Patuxai arch with fireworks and Lao motifs on the monument, while Pi Mai waits until April."
+      },
+      "es": {
+        "title": "Año Nuevo en Laos: Vientián | Time2Fest",
+        "description": "Laos recibe 2027 a las 17:00 UTC: Vientián cuenta hacia atrás en el arco de Patuxai con fuegos y motivos laosianos, y Pi Mai llega en abril."
+      },
+      "fr": {
+        "title": "Nouvel An au Laos : Vientiane | Time2Fest",
+        "description": "Le Laos fête 2027 à 17 h UTC : Vientiane compte jusqu’à minuit à l’arc de Patuxai sous le feu d’artifice et les motifs laotiens, puis Pi Mai en avril."
+      }
+    },
+    "MM": {
+      "uk": {
+        "title": "Новий рік у М’янмі: Янгон | Time2Fest",
+        "description": "М’янма зустрічає 2027 рік о 17:30 UTC: у Янгоні північ вітають відліком під феєрверк, а 1 січня в пагоді Шведагон проходить буддійська церемонія."
+      },
+      "en": {
+        "title": "New Year in Myanmar: Yangon | Time2Fest",
+        "description": "Myanmar greets 2027 at 17:30 UTC: Yangon meets midnight with a countdown and fireworks, and on 1 January a Buddhist ceremony is held at Shwedagon Pagoda."
+      },
+      "es": {
+        "title": "Año Nuevo en Myanmar: Yangon | Time2Fest",
+        "description": "Myanmar recibe 2027 a las 17:30 UTC: Yangon espera la medianoche con cuenta atrás y fuegos, y el 1 de enero hay ceremonia budista en la pagoda Shwedagon."
+      },
+      "fr": {
+        "title": "Nouvel An au Myanmar : Yangon | Time2Fest",
+        "description": "Le Myanmar fête 2027 à 17 h 30 UTC : Yangon attend minuit avec compte à rebours et feu d’artifice, puis le 1er janvier une cérémonie a lieu à Shwedagon."
+      }
+    },
+    "MO": {
+      "uk": {
+        "title": "Новий рік у Макао | Time2Fest",
+        "description": "О 16:00 UTC Макао зустрічає 2027 рік концертами з відліком біля озера Сай-Ван і в Тайпі та салютом курортів Котаю, а в лютому — золотим драконом."
+      },
+      "en": {
+        "title": "New Year in Macau | Time2Fest",
+        "description": "At 16:00 UTC Macau greets 2027 with countdown concerts by Sai Van Lake and in Taipa and Cotai resort fireworks, then a golden dragon parade in February."
+      },
+      "es": {
+        "title": "Año Nuevo en Macao | Time2Fest",
+        "description": "A las 16:00 UTC Macao recibe 2027 con cuenta atrás junto al lago Sai Van y en Taipa y fuegos de los resorts de Cotai; en febrero, un dragón dorado."
+      },
+      "fr": {
+        "title": "Nouvel An à Macao | Time2Fest",
+        "description": "À 16 h UTC, Macao fête 2027 avec un décompte au bord du lac Sai Van et à Taipa et les feux des hôtels de Cotai, puis un dragon doré en février."
+      }
+    },
+    "NP": {
+      "uk": {
+        "title": "Новий рік у Непалі: Катманду | Time2Fest",
+        "description": "Непал зустрічає 2027 рік о 18:15 UTC: у Катманду ніч на 1 січня — це вуличний фестиваль Тамелу, а напередодні ґурунги святкують свій Таму Лхосар."
+      },
+      "en": {
+        "title": "New Year in Nepal: Kathmandu | Time2Fest",
+        "description": "Nepal reaches 2027 at 18:15 UTC: in Kathmandu the night belongs to the Thamel street festival, while the Gurungs mark their own Tamu Lhosar the day before."
+      },
+      "es": {
+        "title": "Año Nuevo en Nepal: Katmandú | Time2Fest",
+        "description": "Nepal llega a 2027 a las 18:15 UTC: en Katmandú la noche es del festival callejero de Thamel, y la víspera los gurung celebran su propio Tamu Lhosar."
+      },
+      "fr": {
+        "title": "Nouvel An au Népal : Katmandou | Time2Fest",
+        "description": "Le Népal passe en 2027 à 18 h 15 UTC : à Katmandou, la nuit appartient au festival de rue de Thamel, et la veille les Gurung fêtent leur Tamu Lhosar."
+      }
+    },
+    "UZ": {
+      "uk": {
+        "title": "Новий рік в Узбекистані: Ташкент | Time2Fest",
+        "description": "О 00:00 у Ташкенті, 19:00 UTC, Узбекистан зустрічає 2027 рік: арча з подарунками, щедрий дастархан, шампанське з бажанням і Корбобо на віслюку."
+      },
+      "en": {
+        "title": "New Year in Uzbekistan: Tashkent | Time2Fest",
+        "description": "Midnight in Tashkent is 19:00 UTC: Uzbekistan greets 2027 with gifts under the archa, an overflowing dastarkhan, a champagne wish and Qorbobo on his donkey."
+      },
+      "es": {
+        "title": "Año Nuevo en Uzbekistán: Taskent | Time2Fest",
+        "description": "Medianoche en Taskent, 19:00 UTC: Uzbekistán recibe 2027 con regalos bajo la archa, un dastarján rebosante, champán con un deseo y Qorbobo en su burro."
+      },
+      "fr": {
+        "title": "Nouvel An en Ouzbékistan : Tachkent | Time2Fest",
+        "description": "Minuit à Tachkent, 19 h UTC : l’Ouzbékistan fête 2027 avec des cadeaux sous l’archa, un dastarkhan débordant, un vœu au champagne et Qorbobo sur son âne."
+      }
     }
   }
 }

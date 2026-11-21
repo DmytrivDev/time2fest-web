@@ -1,0 +1,99 @@
+{
+  "code": "AF",
+  "zone": "UTC+4:30",
+  "zoneId": "utc+0430",
+  "cityId": "kabul",
+  "names": {
+    "uk": {
+      "name": "Афганістан",
+      "city": "Кабул",
+      "cityIn": "у Кабулі",
+      "caps": "АФГАНІСТАН"
+    },
+    "en": {
+      "name": "Afghanistan",
+      "city": "Kabul",
+      "cityIn": "in Kabul",
+      "caps": "AFGHANISTAN"
+    },
+    "es": {
+      "name": "Afganistán",
+      "city": "Kabul",
+      "cityIn": "en Kabul",
+      "caps": "AFGANISTÁN"
+    },
+    "fr": {
+      "name": "Afghanistan",
+      "city": "Kaboul",
+      "cityIn": "à Kaboul",
+      "caps": "AFGHANISTAN"
+    }
+  },
+  "picto": "M2 31 H38 M3 31 V22 H9 V31 M31 31 V22 H37 V31 M9 24 H15 M25 24 H31 M15 31 V21 H25 V31 M2.5 22 L4.5 18.5 H7.5 L9.5 22 M30.5 22 L32.5 18.5 H35.5 L37.5 22 M4.2 18.5 V15.9 Q4.2 14.4 5.7 14.4 H6.3 Q7.8 14.4 7.8 15.9 V18.5 M32.2 18.5 V15.9 Q32.2 14.4 33.7 14.4 H34.3 Q35.8 14.4 35.8 15.9 V18.5 M14.5 21 L17 17 H23 L25.5 21 M17.5 17 V13.6 Q17.5 12 19.1 12 H20.9 Q22.5 12 22.5 13.6 V17 M18.5 31 V27.6 C18.5 25.6 21.5 25.6 21.5 27.6 V31 M11 26.5 V28.5 M13 26.5 V28.5 M27 26.5 V28.5 M29 26.5 V28.5",
+  "flagColors": [
+    "#D80027",
+    "#496E2D",
+    "#FFDA44"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Кабулі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Kabul"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Kabul"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Kaboul"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

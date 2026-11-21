@@ -1,0 +1,98 @@
+{
+  "code": "UZ",
+  "zone": "UTC+5",
+  "zoneId": "utc+0500",
+  "cityId": "tashkent",
+  "names": {
+    "uk": {
+      "name": "Узбекистан",
+      "city": "Ташкент",
+      "cityIn": "у Ташкенті",
+      "caps": "УЗБЕКИСТАН"
+    },
+    "en": {
+      "name": "Uzbekistan",
+      "city": "Tashkent",
+      "cityIn": "in Tashkent",
+      "caps": "UZBEKISTAN"
+    },
+    "es": {
+      "name": "Uzbekistán",
+      "city": "Taskent",
+      "cityIn": "en Taskent",
+      "caps": "UZBEKISTÁN"
+    },
+    "fr": {
+      "name": "Ouzbékistan",
+      "city": "Tachkent",
+      "cityIn": "à Tachkent",
+      "caps": "OUZBÉKISTAN"
+    }
+  },
+  "picto": "M20 6.6 V11 M13 18.2 C13 13.6 16.2 11 20 11 C23.8 11 27 13.6 27 18.2 M20 11 V18.2 M5 21 Q20 15.4 35 21 L34 25.6 Q20 21 6 25.6 Z M8 20 V17.8 M11.6 19.1 V16.9 M28.4 19.1 V16.9 M32 20 V17.8 M9 24.7 V32 M14 23.8 V32 M26 23.8 V32 M31 24.7 V32 M17.2 32 V27.6 Q20 24.4 22.8 27.6 V32 M4 32 H36 M2.5 35.6 H37.5",
+  "flagColors": [
+    "#0099B5",
+    "#1EB53A"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ташкенті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Tashkent"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Taskent"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Tachkent"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

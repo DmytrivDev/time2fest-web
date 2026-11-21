@@ -1,0 +1,99 @@
+{
+  "code": "MO",
+  "zone": "UTC+8",
+  "zoneId": "utc+0800",
+  "cityId": "macau",
+  "names": {
+    "uk": {
+      "name": "Макао",
+      "city": "Макао",
+      "cityIn": "у Макао",
+      "caps": "МАКАО"
+    },
+    "en": {
+      "name": "Macau",
+      "city": "Macau",
+      "cityIn": "in Macau",
+      "caps": "MACAU"
+    },
+    "es": {
+      "name": "Macao",
+      "city": "Macao",
+      "cityIn": "en Macao",
+      "caps": "MACAO"
+    },
+    "fr": {
+      "name": "Macao",
+      "city": "Macao",
+      "cityIn": "à Macao",
+      "caps": "MACAO"
+    }
+  },
+  "picto": "M4 34 V19.8 H12 V13.4 H14 V9.4 H15.3 L20 6.2 L24.7 9.4 H26 V13.4 H28 V19.8 H36 V34 Z M4 27 H36 M4 19.8 Q9 19.4 12 16 M36 19.8 Q31 19.4 28 16 M5.8 19.8 V14.6 M34.2 19.8 V14.6 M20 6.2 V2.6 M18.4 4 H21.6 M18.3 34 V29.8 H21.7 V34 M18.5 25 V22.6 Q20 20.9 21.5 22.6 V25 Z M10 25 V22 M30 25 V22 M10 34 V30.2 M30 34 V30.2 M2.5 36.4 H37.5 M1 38.6 H39",
+  "flagColors": [
+    "#00785E",
+    "#FFFFFF",
+    "#FBD116"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Макао"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Macau"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Macao"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Macao"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

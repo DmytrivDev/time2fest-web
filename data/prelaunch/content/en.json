@@ -2502,5 +2502,229 @@
       "description": "Timor-Leste rings in 2027 at midnight UTC+9: a countdown and fireworks in Dili, National Heroes Day on 31 December and 570 steps up to Cristo Rei."
     },
     "kit": "tl"
+  },
+  "AF": {
+    "text": "In Afghanistan 1 January is not the start of the year: daily life runs on the Solar Hijri calendar, and the new year arrives with Nowruz on 21 March. After 2021 the authorities cancelled Nowruz as a public holiday, though they do not forbid celebrating it privately. Instead, many Afghans count 1 January as their birthday: when no one had recorded a birth, documents were given the date that is easiest to remember.\n\nIn Kabul 1 January is not a holiday, and in 2027 it falls on a Friday, the weekly day off. Midnight comes here at 19:30 UTC. Greetings that day travel by messenger: young people wish each other a happy 'shared' birthday.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Everyone's birthday",
+        "text": "Many Afghans have 1 January written in their papers as their birthday. So greet your Afghan friends that day — for many it really is their day."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Yalda night with pomegranates",
+        "text": "On the longest night of the year, around 21 December, Afghan families stay up late around the table. The fruit of the night is the pomegranate, and some celebrate in a restaurant."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Haft mewa for Nowruz",
+        "text": "For Nowruz on 21 March people make haft mewa, seven dried fruits and nuts in their own syrup, and samanak, a sweet dish of sprouted wheat."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Afghanistan: Kabul | Time2Fest",
+      "description": "Afghanistan reaches 2027 at 19:30 UTC: in Kabul 1 January is a Friday off, and for many Afghans it is also the birthday written in their documents."
+    },
+    "kit": "af"
+  },
+  "BT": {
+    "text": "In Bhutan 1 January is not a public holiday: the main New Year, Losar, follows the lunar calendar and in 2027 falls on 7 February. Early January is still festive, though — on 2 January 2027 the country has a day off for Nyilo, the winter solstice, after which the days grow longer. In parts of western Bhutan the new year begins with it, and it is marked with archery and feasting. The whole country reaches midnight at 18:00 UTC.\n\nIn Thimphu people spend New Year's Eve in different ways: the young go to clubs with dancing, karaoke and lucky draws, hotels hold dinners with live music, and many stay at home with parents and children. On Nyilo children go from house to house reciting lolay, wishes of plenty for every part of the homestead; in 2024 about 750 children greeted households this way in Thimphu.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Lolay from door to door",
+        "text": "On Nyilo children visit homes reciting lolay, wishes of plenty for the house and every part of the homestead. Hosts give them food, and the children end the day with a picnic together."
+      },
+      {
+        "id": "t2",
+        "iconId": "sun",
+        "title": "Nyilo: the days turn",
+        "text": "The winter solstice is a public holiday in Bhutan, falling on 2 January in 2027. The shortest day of the year is marked with archery and a generous feast."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A club night or home",
+        "text": "On 31 December Thimphu's clubs fill up for dancing, karaoke and lucky draws, and bars have live music. Others greet midnight at home over a family dinner."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Bhutan: Thimphu | Time2Fest",
+      "description": "Bhutan reaches 2027 at 18:00 UTC: Thimphu spends the night in clubs or at home with family, and on 2 January, Nyilo, children go door to door with wishes."
+    },
+    "kit": "bt"
+  },
+  "CC": {
+    "text": "On the Cocos (Keeling) Islands 1 January is a public holiday, as everywhere in Australia, but it is hardly a big celebration here. Most of the nearly six hundred islanders are Cocos Malays, Sunni Muslims, and their main days of the year follow the Islamic calendar: Hari Raya Puasa at the end of Ramadan and Hari Raya Haji. And on 6 April the islands mark their own Act of Self Determination Day.\n\nThe new year arrives here at 17:30 UTC, on a warm night: even after dark it rarely drops below 24 °C, and the lagoon stays around 26 °C. On 1 January the ferry between West Island and Home Island does not run — it never sails on public holidays.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "A barbecue by a pondok",
+        "text": "Cocos Malays keep pondoks — weekend shacks on the larger islets of the atoll. Bring a barbecue and a fishing line and spend the evening by the lagoon: even at night it rarely drops below 24 °C."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "New Year's Day without a ferry",
+        "text": "1 January is a public holiday, and the ferry between West Island and Home Island does not run, just as on Sundays. So everyone spends the first day of the year on their own island."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Forgiveness at Hari Raya",
+        "text": "Home Island's biggest celebration is Hari Raya Puasa after Ramadan (around 9 March in 2027). In the morning families in matching outfits visit their relatives' graves and ask one another's forgiveness for the past year's wrongs."
+      }
+    ],
+    "meta": {
+      "title": "New Year on the Cocos (Keeling) Islands | Time2Fest",
+      "description": "The Cocos (Keeling) Islands greet 2027 at 17:30 UTC on a warm night by the lagoon. 1 January is a ferry-free holiday; the Malay big day is Hari Raya."
+    },
+    "kit": "cc"
+  },
+  "LA": {
+    "text": "The main New Year in Laos is Pi Mai Lao in mid-April: during the 14–16 April holiday people wash Buddha images, splash one another with water, the young first pouring it on their elders, and build sand stupas for the temples. Yet 1 January is a public holiday too, and the night before it is spent at home, in villages, at offices and in big public squares across the country. Midnight in Laos comes at 17:00 UTC.\n\nIn Vientiane the heart of the night is the park around the Patuxai arch. Folk music plays, Lao motifs are projected onto the monument's arches, and when the countdown hits zero fireworks burst above Patuxai. According to the Vientiane Times, more than 100,000 people came for the 2026 countdown, and on the night into 2025 the crowd danced the lamvong, freshly inscribed by UNESCO as heritage of humanity.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Countdown at Patuxai",
+        "text": "At midnight the park around the Patuxai arch counts down to zero, Lao motifs light up the monument and fireworks burst above it. On the night into 2025 Laos saw its first drone show, with That Luang stupa in the sky."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "The lamvong dance",
+        "text": "In December 2024 UNESCO inscribed the Lao lamvong dance as intangible heritage of humanity, and on New Year's Eve Patuxai Park saw more than eight of its styles danced to folk music."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "A second New Year in April",
+        "text": "At Pi Mai Lao, on 14–16 April, people wash Buddha images, pour water over their elders and build sand stupas to offer to the monks at the temple."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Laos: Vientiane | Time2Fest",
+      "description": "Laos greets 2027 at 17:00 UTC: Vientiane counts down at the Patuxai arch with fireworks and Lao motifs on the monument, while Pi Mai waits until April."
+    },
+    "kit": "la"
+  },
+  "MM": {
+    "text": "Myanmar has two New Years. The traditional one is Thingyan in April, a water festival when people drench each other to wash away the bad luck of the old year; in 2027 its holiday runs from 10 to 18 April. Until 2012 the night of 1 January was mostly spent at home or in hotels, and in 2018 the first day of the year became a public holiday for the first time. The whole country reaches midnight at 17:30 UTC.\n\nIn Yangon, the largest city, the first public countdown took place on 31 December 2012 at the Myoma grounds: a concert, a big screen and fireworks, with about 90,000 people according to the organisers. In 2022 the city authorities lifted the curfew for one night for a countdown with fireworks and music at People's Park, and did so again on 31 December 2023.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "A water New Year in April",
+        "text": "During Thingyan the young wash the hair of their elders as a sign of respect, people release fish and birds, and rice balls filled with palm sugar are cooked in the streets."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "A countdown with fireworks",
+        "text": "Yangon's first public countdown with a concert and fireworks took place on 31 December 2012, and in 2022 one was held at People's Park with music and fireworks."
+      },
+      {
+        "id": "t3",
+        "iconId": "shrine",
+        "title": "A ceremony at Shwedagon",
+        "text": "On 1 January a Buddhist New Year's Day ceremony is held at Shwedagon Pagoda: in 2018 some 18,000 monks and nuns gathered for it."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Myanmar: Yangon | Time2Fest",
+      "description": "Myanmar greets 2027 at 17:30 UTC: Yangon meets midnight with a countdown and fireworks, and on 1 January a Buddhist ceremony is held at Shwedagon Pagoda."
+    },
+    "kit": "mm"
+  },
+  "MO": {
+    "text": "Macau, under Portuguese rule for 442 years, welcomes the New Year twice. 1 January is a holiday, but the biggest festival is Lunar New Year: the eve and the first three days are off, and in 2027 it falls on 6 February. On the first day a 238-metre golden dragon with eighteen lions parades from the Ruins of St. Paul's to Senado Square, where firecrackers are lit, and on later days fireworks rise opposite Macau Tower.\n\nThe night of 31 December means free countdown concerts by Sai Van Lake and at the Taipa Houses, where the Tuna Macaense ensemble sings alongside Filipino, Vietnamese and Myanmar community groups. The city concerts have no fireworks, but at midnight the Cotai resorts have fired 8 minutes of them. On New Year's Eve 2023 more than 175,000 visitors came to Macau, a post-pandemic record.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Dragon and firecrackers",
+        "text": "The main festival is Lunar New Year, on 6 February in 2027. On the first day a 238-metre golden dragon with eighteen lions parades from the Ruins of St. Paul's to Senado Square, where firecrackers are lit."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Count down at an open-air gig",
+        "text": "The city stages two free concerts: by Sai Van Lake from 22:00 to 00:10, and at the Taipa Houses, with the Tuna Macaense ensemble and community dance groups."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over Cotai",
+        "text": "At midnight the Cotai resorts have fired 8 minutes of fireworks. At Lunar New Year the fireworks rise opposite Macau Tower, watched from the shore of Nam Van Lake."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Macau | Time2Fest",
+      "description": "At 16:00 UTC Macau greets 2027 with countdown concerts by Sai Van Lake and in Taipa and Cotai resort fireworks, then a golden dragon parade in February."
+    },
+    "kit": "mo"
+  },
+  "NP": {
+    "text": "Nepal's official calendar is Bikram Sambat, so the country's own New Year comes in April, on 1 Baisakh, when Bhaktapur fills with the nine-day Bisket Jatra. Late December is festive too. On 30 December the Gurungs celebrate Tamu Lhosar, their New Year, with feasts and cultural shows, and 1 January is National Costume and Hat Day, when young people put on daura suruwal, gunyu choli and the topi. Nepal reaches midnight on 1 January at 18:15 UTC.\n\nIn Kathmandu, New Year's Eve belongs to Thamel. The local tourism council holds a festival every year on the main street with music and cultural shows — in 2022 it ran until half past midnight, and about 180,000 people were expected to welcome 2024. Visitors also find events around the Boudhanath stupa, and hotels see the year in with live bands and banquets.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Thamel at midnight",
+        "text": "On 31 December Thamel's main street turns into a festival of music and lights, packed with locals and travellers. The area's clubs and restaurants stay open well past midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Tamu Lhosar on 30 December",
+        "text": "The Gurungs see off one year of their twelve-year animal cycle and welcome the next. In Kathmandu the festival gathers people on the Tundikhel parade ground for cultural shows and feasting."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "1 January in a topi",
+        "text": "The first day of the year is National Costume and Hat Day in Nepal. Young people dress in daura suruwal and gunyu choli, put on a topi and share photos."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Nepal: Kathmandu | Time2Fest",
+      "description": "Nepal reaches 2027 at 18:15 UTC: in Kathmandu the night belongs to the Thamel street festival, while the Gurungs mark their own Tamu Lhosar the day before."
+    },
+    "kit": "np"
+  },
+  "UZ": {
+    "text": "In Uzbekistan New Year is one of the most beloved holidays, and preparations start a month ahead or even earlier. At home people put up a tree — the archa in Uzbek — and place gifts beneath it. The festive dastarkhan is laid as generously as possible: the richer the table, the luckier the year, people believe. At midnight the champagne is opened and everyone makes a wish. Children are greeted by Qorbobo in his chapan and his companion Qorqiz; legend says Qorbobo lives on the highest peak of the Chimgan range and arrives on a donkey.\n\nIn Tashkent last season the main celebrations took place on the square in front of the Alisher Navoi National Library, every day from 25 December to 10 January. Tashkent City, the parks and streets of every district had their own trees, fairs and concerts too.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "An archa with gifts",
+        "text": "The New Year tree, the archa, goes up in every home, and gifts for the family are placed beneath it in advance."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "A generous dastarkhan",
+        "text": "The table is laid so that food overflows: the richer the dastarkhan, the luckier the year. At midnight — champagne and a wish."
+      },
+      {
+        "id": "t3",
+        "iconId": "horseshoe",
+        "title": "Qorbobo’s donkey for luck",
+        "text": "Qorbobo and Qorqiz come out on central streets and squares. They say whoever rides Qorbobo’s donkey on New Year’s night stays lucky all year."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Uzbekistan: Tashkent | Time2Fest",
+      "description": "Midnight in Tashkent is 19:00 UTC: Uzbekistan greets 2027 with gifts under the archa, an overflowing dastarkhan, a champagne wish and Qorbobo on his donkey."
+    },
+    "kit": "uz"
   }
 }

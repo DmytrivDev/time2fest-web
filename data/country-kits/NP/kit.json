@@ -1,0 +1,99 @@
+{
+  "code": "NP",
+  "zone": "UTC+5:45",
+  "zoneId": "utc+0545",
+  "cityId": "kathmandu",
+  "names": {
+    "uk": {
+      "name": "Непал",
+      "city": "Катманду",
+      "cityIn": "у Катманду",
+      "caps": "НЕПАЛ"
+    },
+    "en": {
+      "name": "Nepal",
+      "city": "Kathmandu",
+      "cityIn": "in Kathmandu",
+      "caps": "NEPAL"
+    },
+    "es": {
+      "name": "Nepal",
+      "city": "Katmandú",
+      "cityIn": "en Katmandú",
+      "caps": "NEPAL"
+    },
+    "fr": {
+      "name": "Népal",
+      "city": "Katmandou",
+      "cityIn": "à Katmandou",
+      "caps": "NÉPAL"
+    }
+  },
+  "picto": "M2 36.5 H38 M4 36.5 V33.6 H36 V36.5 M7 33.6 V30.9 H33 V33.6 M9.6 30.9 V28.4 H30.4 V30.9 M9.8 28.4 C10.4 23.4 14.8 21.4 20 21.4 C25.2 21.4 29.6 23.4 30.2 28.4 M16 21.4 V16.8 H24 V21.4 M17 19.4 Q18.2 18.4 19.3 19.4 M20.7 19.4 Q21.8 18.4 23 19.4 M16.4 16.8 L18.3 9.6 H21.7 L23.6 16.8 M17.4 14.2 H22.6 M17.9 11.9 H22.1 M17.8 9.6 Q18 7.1 20 6.7 Q22 7.1 22.2 9.6 M20 6.7 V3",
+  "flagColors": [
+    "#DC143C",
+    "#003893",
+    "#FFFFFF"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Катманду"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Kathmandu"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Katmandú"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Katmandou"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
