@@ -3146,5 +3146,33 @@
       "description": "Turquía recibe 2027 a las 21:00 UTC: pavo con castañas, una granada rota en el umbral, algo rojo para la suerte y, en Estambul, fuegos sobre el Bósforo."
     },
     "kit": "tr"
+  },
+  "DJ": {
+    "text": "Yibuti es un país musulmán con dos Años Nuevos, y ambos son festivos: el islámico, el 1 de muharram, que cambia cada año, y el civil, el 1 de enero. La noche del 31 de diciembre el presidente dirige por tradición sus buenos deseos a la nación, y la ciudad se viste de luces: para recibir 2022 se iluminaron todas las rotondas y zonas verdes de la capital.\n\nEl gran momento de la noche en la ciudad de Yibuti es el concierto gratuito del ayuntamiento en la explanada del Palacio del Pueblo. Miles de personas llegan al anochecer, grupos folclóricos y estrellas de la canción yibutiana se turnan hasta la duodécima campanada, y la fiesta sigue hasta bien entrada la noche. El 1 de enero, en la misma explanada, empieza por la tarde la kermés, una feria familiar.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Concierto en el Palacio del Pueblo",
+        "text": "En Nochevieja el ayuntamiento de Yibuti ofrece un concierto gratuito ante el Palacio del Pueblo: grupos folclóricos, danzas tradicionales y canciones queridas hasta la medianoche y más allá."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Kermés el 1 de enero",
+        "text": "El primer día del año, por la tarde, abre la kermés, una feria familiar, en la explanada del Palacio del Pueblo. En 2020 se celebró por quinta vez."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Ciudad de luces",
+        "text": "Por Año Nuevo el ayuntamiento decora la capital: para 2022 se iluminaron todas las rotondas y zonas verdes, y se abrió el jardín renovado de la plaza Lagarde."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Yibuti: ciudad de Yibuti | Time2Fest",
+      "description": "Yibuti recibe 2027 a las 21:00 UTC: concierto gratuito del ayuntamiento ante el Palacio del Pueblo, rotondas iluminadas y, el 1 de enero, una kermés familiar."
+    },
+    "kit": "dj"
   }
 }

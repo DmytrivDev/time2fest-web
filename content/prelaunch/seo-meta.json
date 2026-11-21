@@ -1764,6 +1764,24 @@
         "title": "Nouvel An en Turquie : Istanbul | Time2Fest",
         "description": "La Turquie accueille 2027 à 21 h UTC : dinde aux châtaignes, grenade brisée sur le seuil, rouge porte-bonheur et, à Istanbul, feu d’artifice sur le Bosphore."
       }
+    },
+    "DJ": {
+      "uk": {
+        "title": "Новий рік у Джибуті: місто Джибуті | Time2Fest",
+        "description": "Джибуті зустрічає 2027 рік о 21:00 UTC: безплатний концерт мерії перед Палацом народу, вогні на розв’язках столиці, а 1 січня — сімейний ярмарок-кермес."
+      },
+      "en": {
+        "title": "New Year in Djibouti: Djibouti City | Time2Fest",
+        "description": "Djibouti greets 2027 at 21:00 UTC: a free city hall concert outside the Palais du Peuple, lit-up roundabouts in the capital and a family kermesse on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Yibuti: ciudad de Yibuti | Time2Fest",
+        "description": "Yibuti recibe 2027 a las 21:00 UTC: concierto gratuito del ayuntamiento ante el Palacio del Pueblo, rotondas iluminadas y, el 1 de enero, una kermés familiar."
+      },
+      "fr": {
+        "title": "Nouvel An à Djibouti : Djibouti-ville | Time2Fest",
+        "description": "Djibouti accueille 2027 à 21 h UTC : concert gratuit de la mairie devant le Palais du Peuple, ronds-points illuminés et kermesse familiale le 1er janvier."
+      }
     }
   }
 }

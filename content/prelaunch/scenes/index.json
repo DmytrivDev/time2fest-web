@@ -696,6 +696,12 @@
       "wide": true,
       "sky": "#10162e",
       "water": "#1a2a44"
+    },
+    "DJ": {
+      "src": "/scenes/DJ-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

@@ -3146,5 +3146,33 @@
       "description": "La Turquie accueille 2027 à 21 h UTC : dinde aux châtaignes, grenade brisée sur le seuil, rouge porte-bonheur et, à Istanbul, feu d’artifice sur le Bosphore."
     },
     "kit": "tr"
+  },
+  "DJ": {
+    "text": "Djibouti est un pays musulman qui a deux Nouvel An, tous deux fériés : l’islamique, le 1er mouharram, qui change chaque année, et le civil, le 1er janvier. Le soir du 31 décembre, le président adresse traditionnellement ses vœux à la nation, et la ville se pare de lumières : pour accueillir 2022, tous les ronds-points et espaces verts de la capitale ont été illuminés.\n\nLe grand moment de la nuit à Djibouti-ville, c’est le concert gratuit de la mairie sur l’esplanade du Palais du Peuple. Des milliers de personnes arrivent dès le soir, troupes folkloriques et vedettes de la chanson djiboutienne se relaient jusqu’aux douze coups de minuit, et la fête dure tard dans la nuit. Le 1er janvier, sur la même esplanade, la kermesse, une fête familiale, commence l’après-midi.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Concert au Palais du Peuple",
+        "text": "La nuit du Nouvel An, la mairie de Djibouti offre un concert gratuit devant le Palais du Peuple : troupes folkloriques, danses traditionnelles et chansons aimées jusqu’à minuit et au-delà."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Kermesse du 1er janvier",
+        "text": "Le premier jour de l’année, une kermesse familiale ouvre l’après-midi sur l’esplanade du Palais du Peuple. En 2020, elle en était à sa cinquième édition."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "La ville en lumières",
+        "text": "Pour le Nouvel An, la mairie décore la capitale : pour 2022, tous les ronds-points et espaces verts ont été illuminés, et le jardin rénové de la place Lagarde a ouvert."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Djibouti : Djibouti-ville | Time2Fest",
+      "description": "Djibouti accueille 2027 à 21 h UTC : concert gratuit de la mairie devant le Palais du Peuple, ronds-points illuminés et kermesse familiale le 1er janvier."
+    },
+    "kit": "dj"
   }
 }

@@ -3146,5 +3146,33 @@
       "description": "Türkiye greets 2027 at 21:00 UTC: turkey with chestnuts, a pomegranate broken on the doorstep, red for luck, and in Istanbul fireworks over the Bosphorus."
     },
     "kit": "tr"
+  },
+  "DJ": {
+    "text": "Djibouti is a Muslim country with two New Years, and both are public holidays: the Islamic one, 1 Muharram, which shifts every year, and the civil one, 1 January. On the evening of 31 December the president traditionally addresses the nation with New Year wishes, and the city dresses up in lights: for the arrival of 2022, light displays lit up every roundabout and green space in the capital.\n\nThe main event of the night in Djibouti City is the city hall's free concert on the square in front of the Palais du Peuple. Thousands arrive in the evening, folk troupes and stars of Djiboutian song take turns until the twelfth stroke of midnight, and the party goes on late into the night. On 1 January the same square hosts the kermesse, a family fair, from the afternoon.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Concert at the Palais du Peuple",
+        "text": "On New Year's night Djibouti's city hall holds a free concert in front of the Palais du Peuple: folk troupes, traditional dances and favourite songs until midnight and beyond."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Kermesse on 1 January",
+        "text": "On the first day of the year a kermesse, a family fair, opens in the afternoon on the square in front of the Palais du Peuple. For New Year 2020 it was held for the fifth time."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "A city of lights",
+        "text": "For New Year the city hall decorates the capital: for 2022, light displays lit up every roundabout and green space, and a renovated garden opened on Place Lagarde."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Djibouti: Djibouti City | Time2Fest",
+      "description": "Djibouti greets 2027 at 21:00 UTC: a free city hall concert outside the Palais du Peuple, lit-up roundabouts in the capital and a family kermesse on 1 January."
+    },
+    "kit": "dj"
   }
 }

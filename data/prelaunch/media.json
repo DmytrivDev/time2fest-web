@@ -2013,6 +2013,22 @@
         "x": 30,
         "y": 35
       }
+    },
+    "country:DJ": {
+      "src": "/media/photos/djibouti.webp",
+      "alt": {
+        "uk": "Мінарет мечеті Хамуді в місті Джибуті у вечірньому світлі над центральним автовокзалом і низьким містом",
+        "en": "The minaret of the Hamoudi Mosque in Djibouti City in evening light, above the central bus station and the low-rise city",
+        "es": "El minarete de la mezquita Hamoudi en la ciudad de Yibuti con luz de tarde, sobre la estación central de autobuses y la ciudad baja",
+        "fr": "Le minaret de la mosquée Hamoudi à Djibouti dans la lumière du soir, au-dessus de la gare routière centrale et de la ville basse"
+      },
+      "author": "Ch1pabeck",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Minaret_of_Hamoudi_Mosque_overlooking_Djibouti_City%27s_central_bus_terminal_(May_2024).jpg",
+      "position": {
+        "x": 18,
+        "y": 45
+      }
     }
   }
 }
