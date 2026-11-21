@@ -1,0 +1,99 @@
+{
+  "code": "CY",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "nicosia",
+  "names": {
+    "uk": {
+      "name": "Кіпр",
+      "city": "Нікосія",
+      "cityIn": "у Нікосії",
+      "caps": "КІПР"
+    },
+    "en": {
+      "name": "Cyprus",
+      "city": "Nicosia",
+      "cityIn": "in Nicosia",
+      "caps": "CYPRUS"
+    },
+    "es": {
+      "name": "Chipre",
+      "city": "Nicosia",
+      "cityIn": "en Nicosia",
+      "caps": "CHIPRE"
+    },
+    "fr": {
+      "name": "Chypre",
+      "city": "Nicosie",
+      "cityIn": "à Nicosie",
+      "caps": "CHYPRE"
+    }
+  },
+  "picto": "M2.5 29 H37.5 M13 29 L13.6 24 Q14.6 21.6 16.6 21 L17.2 16.4 Q18 12.4 20.6 11.8 Q23 11.6 24 13.4 Q28.5 14.4 32.6 17.4 Q35.8 20.4 36.2 25 L36 29 M20.4 15.6 L21.2 19.6 M27 17.6 L26.4 21.6 M32 21 L32.8 24.6 M17.6 24.6 L23.5 24.2 M3.5 29 L4 25.2 Q4.8 22.4 6.4 22.4 Q7.8 22.4 8.4 24.6 Q9.4 23.8 10.2 25.6 L10.6 29 M6 33.5 Q8.5 32 11 33.5 T16 33.5 T21 33.5 T26 33.5 T31 33.5 T36 33.5 M10 37 Q12.5 35.5 15 37 T20 37 T25 37 T30 37",
+  "flagColors": [
+    "#FFFFFF",
+    "#D57800",
+    "#4E5B31"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нікосії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Nicosia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Nicosia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Nicosie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

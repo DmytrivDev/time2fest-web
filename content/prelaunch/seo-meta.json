@@ -2124,6 +2124,204 @@
         "title": "Nouvel An au Yémen : Aden | Time2Fest",
         "description": "Le Yémen passe à 2027 à 21 h UTC : le 1er janvier est travaillé, le férié est le Nouvel An islamique, et Aden, fille de la mer, fête sur la plage de Gold Mohur."
       }
+    },
+    "CD": {
+      "uk": {
+        "title": "Новий рік у ДР Конго: Кіншаса | Time2Fest",
+        "description": "ДР Конго зустрічає 2027 рік о 23:00 UTC: Кіншаса проводить «ніч переправи» в церквах, а ввечері 1 січня танцює на вулицях у новому святковому вбранні."
+      },
+      "en": {
+        "title": "New Year in DR Congo: Kinshasa | Time2Fest",
+        "description": "DR Congo greets 2027 at 23:00 UTC: Kinshasa spends the night of the crossing in church, then dances in the streets in new clothes on the evening of 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en la RD del Congo: Kinsasa | Time2Fest",
+        "description": "La RD del Congo recibe 2027 a las 23:00 UTC: Kinsasa pasa la noche de la travesía en la iglesia y la tarde del 1 de enero baila en la calle con ropa nueva."
+      },
+      "fr": {
+        "title": "Nouvel An en RD Congo : Kinshasa | Time2Fest",
+        "description": "La RD Congo fête 2027 à 23 h UTC : Kinshasa passe la nuit de la traversée à l’église, puis danse dans la rue en habits neufs le soir du 1er janvier."
+      }
+    },
+    "CY": {
+      "uk": {
+        "title": "Новий рік на Кіпрі: Нікосія | Time2Fest",
+        "description": "Кіпр зустрічає 2027 рік о 22:00 UTC: у Нікосії замість салюту — шоу дронів, а вдома ріжуть василопиту з монеткою й розбивають гранат на порозі."
+      },
+      "en": {
+        "title": "New Year in Cyprus: Nicosia | Time2Fest",
+        "description": "Cyprus greets 2027 at 22:00 UTC: Nicosia swaps fireworks for drone shows, and families cut the vasilopita with its lucky coin and break a pomegranate."
+      },
+      "es": {
+        "title": "Año Nuevo en Chipre: Nicosia | Time2Fest",
+        "description": "Chipre recibe 2027 a las 22:00 UTC: Nicosia cambia los fuegos por drones, y en casa se corta la vasilopita con su moneda y se rompe una granada."
+      },
+      "fr": {
+        "title": "Nouvel An à Chypre : Nicosie | Time2Fest",
+        "description": "Chypre fête 2027 à 22 h UTC : Nicosie remplace les feux d’artifice par des drones, et l’on coupe la vassilopita à la pièce porte-bonheur en famille."
+      }
+    },
+    "EE": {
+      "uk": {
+        "title": "Новий рік в Естонії: Таллінн | Time2Fest",
+        "description": "Опівночі в Таллінні, о 22:00 UTC, Естонія зустрічає 2027 рік сімома трапезами, квашеною капустою й концертом на площі Свободи замість міського салюту."
+      },
+      "en": {
+        "title": "New Year in Estonia: Tallinn | Time2Fest",
+        "description": "At midnight in Tallinn, 22:00 UTC, Estonia greets 2027 with seven meals, sauerkraut and a Freedom Square concert of flames and lasers in place of fireworks."
+      },
+      "es": {
+        "title": "Año Nuevo en Estonia: Tallin | Time2Fest",
+        "description": "A medianoche en Tallin, 22:00 UTC, Estonia recibe 2027 con siete comidas, chucrut y un concierto en la plaza de la Libertad con llamas y láseres y no fuegos."
+      },
+      "fr": {
+        "title": "Nouvel An en Estonie : Tallinn | Time2Fest",
+        "description": "À minuit à Tallinn, 22 h UTC, l’Estonie fête 2027 avec sept repas, de la choucroute et un concert place de la Liberté, flammes et lasers au lieu de feux."
+      }
+    },
+    "FI": {
+      "uk": {
+        "title": "Новий рік у Фінляндії: Гельсінкі | Time2Fest",
+        "description": "Фінляндія зустрічає 2027 рік о 22:00 UTC: Гельсінкі святкує з концертом і феєрверком на Кансалайсторі, а вдома відливають олово й ворожать за тінню."
+      },
+      "en": {
+        "title": "New Year in Finland: Helsinki | Time2Fest",
+        "description": "Finland greets 2027 at 22:00 UTC: Helsinki parties with a concert and fireworks on Kansalaistori, while at home families cast tin and read its shadow."
+      },
+      "es": {
+        "title": "Año Nuevo en Finlandia: Helsinki | Time2Fest",
+        "description": "Finlandia recibe 2027 a las 22:00 UTC: Helsinki lo celebra con concierto y fuegos en Kansalaistori, y en casa se funde estaño para leer su sombra."
+      },
+      "fr": {
+        "title": "Nouvel An en Finlande : Helsinki | Time2Fest",
+        "description": "La Finlande fête 2027 à 22 h UTC : Helsinki fait la fête sur Kansalaistori jusqu’au feu d’artifice de minuit, et chez soi on coule l’étain pour lire son ombre."
+      }
+    },
+    "IL": {
+      "uk": {
+        "title": "Новий рік в Ізраїлі: Єрусалим | Time2Fest",
+        "description": "Ізраїль зустрічає 2027 рік о 22:00 UTC: «Сильвестр» із вечірками в Тель-Авіві, «Новий год» за сімейним столом і ялинки біля воріт Старого міста."
+      },
+      "en": {
+        "title": "New Year in Israel: Jerusalem | Time2Fest",
+        "description": "Israel welcomes 2027 at 22:00 UTC: Silvester parties in Tel Aviv, Novy God dinners with a tree and Ded Moroz, and free trees at Jerusalem's Old City gates."
+      },
+      "es": {
+        "title": "Año Nuevo en Israel: Jerusalén | Time2Fest",
+        "description": "Israel recibe 2027 a las 22:00 UTC: fiestas de Silvester en Tel Aviv, cenas de Novy God con árbol y Ded Moroz, y árboles junto a las puertas de Jerusalén."
+      },
+      "fr": {
+        "title": "Nouvel An en Israël : Jérusalem | Time2Fest",
+        "description": "Israël accueille 2027 à 22 h UTC : soirées Silvester à Tel-Aviv, dîners du Novy God avec sapin et Ded Moroz, et sapins offerts aux portes de Jérusalem."
+      }
+    },
+    "LY": {
+      "uk": {
+        "title": "Новий рік у Лівії: Триполі | Time2Fest",
+        "description": "Лівія зустрічає 2027 рік о 22:00 UTC тихо: удома, у колі родини й зі святковим тортом. 1 січня не вихідний, а 13 січня амазизькі міста святкують Єннаєр."
+      },
+      "en": {
+        "title": "New Year in Libya: Tripoli | Time2Fest",
+        "description": "Libya greets 2027 at 22:00 UTC quietly, at home with family and a festive cake. 1 January is not a holiday, and on 13 January Amazigh towns mark Yennayer."
+      },
+      "es": {
+        "title": "Año Nuevo en Libia: Trípoli | Time2Fest",
+        "description": "Libia recibe 2027 a las 22:00 UTC en calma, en casa y con tarta de fiesta. El 1 de enero no es festivo; el 13, las ciudades amazigh celebran Yennayer."
+      },
+      "fr": {
+        "title": "Nouvel An en Libye : Tripoli | Time2Fest",
+        "description": "La Libye accueille 2027 à 22 h UTC en toute discrétion, en famille et autour d'un gâteau. Le 1er janvier n'est pas férié ; le 13, place à Yennayer."
+      }
+    },
+    "MW": {
+      "uk": {
+        "title": "Новий рік у Малаві: Блантайр | Time2Fest",
+        "description": "Малаві зустрічає 2027 рік о 22:00 UTC: нічні служби «кросовер» у церквах, сільські танці мчезо з чітерерою й новорічний салют міської ради Блантайра."
+      },
+      "en": {
+        "title": "New Year in Malawi: Blantyre | Time2Fest",
+        "description": "Malawi welcomes 2027 at 22:00 UTC with all-night crossover church services, village mchezo dances like chiterera and city council fireworks in Blantyre."
+      },
+      "es": {
+        "title": "Año Nuevo en Malaui: Blantyre | Time2Fest",
+        "description": "Malaui recibe 2027 a las 22:00 UTC con cultos crossover en las iglesias, danzas mchezo como la chiterera en las aldeas y fuegos municipales en Blantyre."
+      },
+      "fr": {
+        "title": "Nouvel An au Malawi : Blantyre | Time2Fest",
+        "description": "Le Malawi accueille 2027 à 22 h UTC : offices crossover dans les églises, danses du mchezo comme la chiterera au village et feu d’artifice à Blantyre."
+      }
+    },
+    "MZ": {
+      "uk": {
+        "title": "Новий рік у Мозамбіку: Мапуту | Time2Fest",
+        "description": "Мозамбік зустрічає 2027 рік о 22:00 UTC: у Мапуту салют дозволено з 23:50 до 00:10, пляжі відкриті до ранку, на вугіллі смажать рибу до шими."
+      },
+      "en": {
+        "title": "New Year in Mozambique: Maputo | Time2Fest",
+        "description": "Mozambique sees in 2027 at 22:00 UTC: in Maputo fireworks fly only from 23:50 to 00:10, beaches stay open till dawn and fish sizzles over charcoal."
+      },
+      "es": {
+        "title": "Año Nuevo en Mozambique: Maputo | Time2Fest",
+        "description": "Mozambique recibe 2027 a las 22:00 UTC: en Maputo hay fuegos solo de 23:50 a 00:10, playas abiertas hasta el alba y pescado asado al carbón."
+      },
+      "fr": {
+        "title": "Nouvel An au Mozambique : Maputo | Time2Fest",
+        "description": "Le Mozambique fête 2027 à 22 h UTC : à Maputo, feux de 23 h 50 à 0 h 10 seulement, plages ouvertes jusqu'à l'aube et poisson grillé au charbon."
+      }
+    },
+    "NA": {
+      "uk": {
+        "title": "Новий рік у Намібії: Віндгук | Time2Fest",
+        "description": "Намібія зустрічає 2027 рік о 22:00 UTC у розпал літа: браай у друзів до півночі, людні пляжі узбережжя й міський салют над проспектом Незалежності у Віндгуку."
+      },
+      "en": {
+        "title": "New Year in Namibia: Windhoek | Time2Fest",
+        "description": "Namibia meets 2027 at 22:00 UTC in high summer: a braai with friends till midnight, busy coastal beaches and city fireworks over Independence Avenue, Windhoek."
+      },
+      "es": {
+        "title": "Año Nuevo en Namibia: Windhoek | Time2Fest",
+        "description": "Namibia recibe 2027 a las 22:00 UTC en pleno verano: braai con amigos hasta medianoche, playas llenas y fuegos sobre la avenida de la Independencia en Windhoek."
+      },
+      "fr": {
+        "title": "Nouvel An en Namibie : Windhoek | Time2Fest",
+        "description": "La Namibie fête 2027 à 22 h UTC en plein été : braai entre amis jusqu’à minuit, plages bondées et feu d’artifice sur l’avenue de l’Indépendance à Windhoek."
+      }
+    },
+    "PS": {
+      "uk": {
+        "title": "Новий рік у Палестині: Газа | Time2Fest",
+        "description": "Палестина зустрічає 2027 рік о 22:00 UTC. 1 січня — вихідний, у Віфлеємі світиться ялинка на Ясельній площі, а 7 січня настає православне Різдво."
+      },
+      "en": {
+        "title": "New Year in Palestine: Gaza | Time2Fest",
+        "description": "Palestine greets 2027 at 22:00 UTC. 1 January is a public holiday, a giant tree glows in Bethlehem's Manger Square, and Orthodox Christmas follows on 7 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Palestina: Gaza | Time2Fest",
+        "description": "Palestina recibe 2027 a las 22:00 UTC. El 1 de enero es festivo, un gran árbol brilla en la plaza del Pesebre de Belén y el 7 llega la Navidad ortodoxa."
+      },
+      "fr": {
+        "title": "Nouvel An en Palestine : Gaza | Time2Fest",
+        "description": "La Palestine accueille 2027 à 22 h UTC. Le 1er janvier est férié, un grand sapin brille à Bethléem, puis le Noël orthodoxe arrive le 7 janvier."
+      }
+    },
+    "RW": {
+      "uk": {
+        "title": "Новий рік у Руанді: Кігалі | Time2Fest",
+        "description": "Руанда зустрічає 2027 рік о 22:00 UTC: вечірні служби в церквах, салют рівно опівночі біля Конференц-центру Кігалі й родинний стіл з подарунками."
+      },
+      "en": {
+        "title": "New Year in Rwanda: Kigali | Time2Fest",
+        "description": "Rwanda greets 2027 at 22:00 UTC with evening church services, fireworks at exactly midnight by the Kigali Convention Centre and a family feast with gifts."
+      },
+      "es": {
+        "title": "Año Nuevo en Ruanda: Kigali | Time2Fest",
+        "description": "Ruanda recibe 2027 a las 22:00 UTC con misas por la noche, fuegos a medianoche junto al Centro de Convenciones de Kigali y comida familiar con regalos."
+      },
+      "fr": {
+        "title": "Nouvel An au Rwanda : Kigali | Time2Fest",
+        "description": "Le Rwanda accueille 2027 à 22 h UTC : messes du soir, feu d’artifice à minuit pile au Centre de conventions de Kigali et repas de famille avec cadeaux."
+      }
     }
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "PS",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "gaza",
+  "names": {
+    "uk": {
+      "name": "Палестина",
+      "city": "Газа",
+      "cityIn": "у Газі",
+      "caps": "ПАЛЕСТИНА"
+    },
+    "en": {
+      "name": "Palestine",
+      "city": "Gaza",
+      "cityIn": "in Gaza",
+      "caps": "PALESTINE"
+    },
+    "es": {
+      "name": "Palestina",
+      "city": "Gaza",
+      "cityIn": "en Gaza",
+      "caps": "PALESTINA"
+    },
+    "fr": {
+      "name": "Palestine",
+      "city": "Gaza",
+      "cityIn": "à Gaza",
+      "caps": "PALESTINE"
+    }
+  },
+  "picto": "M6 31 H34 V35.5 H6 Z M13 31 V35.5 M27 31 V35.5 M15 31 C17 28 17.5 25 16.5 22 C16 20 13.4 18.2 9.6 17 M25 31 C23 28 22.6 25 23.6 22 C24.2 20 26.6 18.2 30.4 17 M13 18.4 C16.4 19.4 19.2 18.4 20 15.5 C20.8 18.4 23.6 19.4 27 18.4 M20 15.5 V12.4 M18.4 31 C18.8 28.4 21.2 28.4 21.6 31 M9.6 17 C5.6 18.4 1.8 16.6 2.2 13.6 C1.0 11 3.6 8.6 6.6 9.4 C8.0 7.4 11.6 7.6 12.6 9.8 C14.6 10.4 14.8 13.4 13.2 14.6 C13.2 16.4 11.2 17.4 9.6 17 Z M30.4 17 C34.4 18.4 38.2 16.6 37.8 13.6 C39.0 11 36.4 8.6 33.4 9.4 C32.0 7.4 28.4 7.6 27.4 9.8 C25.4 10.4 25.2 13.4 26.8 14.6 C26.8 16.4 28.8 17.4 30.4 17 Z M20 12.4 C16.6 13 14.4 11 15.6 8.8 C14.6 6 17 3.6 19 4.6 C20.4 3 23.6 3.6 24 6 C26 6.6 26.2 10 24.4 10.8 C24 12.2 22 13 20 12.4 Z",
+  "flagColors": [
+    "#CE1126",
+    "#007A3D",
+    "#FFFFFF"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Газі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Gaza"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Gaza"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Gaza"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -816,6 +816,72 @@
       "wide": true,
       "sky": "#2a1d3c",
       "water": "#392a39"
+    },
+    "CD": {
+      "src": "/scenes/CD-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "CY": {
+      "src": "/scenes/CY-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#183241"
+    },
+    "EE": {
+      "src": "/scenes/EE-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#5a5f77"
+    },
+    "FI": {
+      "src": "/scenes/FI-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#607386"
+    },
+    "IL": {
+      "src": "/scenes/IL-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#2e353a"
+    },
+    "LY": {
+      "src": "/scenes/LY-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#5d584d"
+    },
+    "MW": {
+      "src": "/scenes/MW-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#7a796c"
+    },
+    "MZ": {
+      "src": "/scenes/MZ-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#393a4d"
+    },
+    "NA": {
+      "src": "/scenes/NA-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#a98f94"
+    },
+    "PS": {
+      "src": "/scenes/PS-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#413b3b"
+    },
+    "RW": {
+      "src": "/scenes/RW-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#26313a"
     }
   }
 }

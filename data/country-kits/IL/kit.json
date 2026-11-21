@@ -1,0 +1,99 @@
+{
+  "code": "IL",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "jerusalem",
+  "names": {
+    "uk": {
+      "name": "Ізраїль",
+      "city": "Єрусалим",
+      "cityIn": "в Єрусалимі",
+      "caps": "ІЗРАЇЛЬ"
+    },
+    "en": {
+      "name": "Israel",
+      "city": "Jerusalem",
+      "cityIn": "in Jerusalem",
+      "caps": "ISRAEL"
+    },
+    "es": {
+      "name": "Israel",
+      "city": "Jerusalén",
+      "cityIn": "en Jerusalén",
+      "caps": "ISRAEL"
+    },
+    "fr": {
+      "name": "Israël",
+      "city": "Jérusalem",
+      "cityIn": "à Jérusalem",
+      "caps": "ISRAËL"
+    }
+  },
+  "picto": "M2 37.5 H38 M3.5 37.5 L6.5 30.5 V25 H8.5 V16 H16.5 V25 H22.5 V15.5 H24.5 V12.5 H31.5 V15.5 H33.5 V30.5 L36.5 37.5 M6.5 30.5 H33.5 M8.5 16 V14.6 H10 V16 M15 16 V14.6 H16.5 V16 M18.6 25 V23.6 H20.4 V25 M24.5 12.5 V11.1 H26.2 V12.5 M29.8 12.5 V11.1 H31.5 V12.5 M10.8 16 V10.2 M14.2 16 V10.2 M10.8 10.2 L9.2 9 H15.8 L14.2 10.2 M9.2 9 V7.6 H15.8 V9 M11.2 7.6 V5.2 H13.8 V7.6 M10.9 5.2 Q10.9 3 12.5 2.6 Q14.1 3 14.1 5.2 M12.5 2.6 V0.8 M26.8 22 V19.6 Q28 18.2 29.2 19.6 V22",
+  "flagColors": [
+    "#0038B8",
+    "#FFFFFF",
+    "#5A7FD6"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Єрусалимі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Jerusalem"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Jerusalén"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Jérusalem"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

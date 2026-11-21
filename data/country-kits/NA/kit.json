@@ -1,0 +1,100 @@
+{
+  "code": "NA",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "windhoek",
+  "names": {
+    "uk": {
+      "name": "Намібія",
+      "city": "Віндгук",
+      "cityIn": "у Віндгуку",
+      "caps": "НАМІБІЯ"
+    },
+    "en": {
+      "name": "Namibia",
+      "city": "Windhoek",
+      "cityIn": "in Windhoek",
+      "caps": "NAMIBIA"
+    },
+    "es": {
+      "name": "Namibia",
+      "city": "Windhoek",
+      "cityIn": "en Windhoek",
+      "caps": "NAMIBIA"
+    },
+    "fr": {
+      "name": "Namibie",
+      "city": "Windhoek",
+      "cityIn": "à Windhoek",
+      "caps": "NAMIBIE"
+    }
+  },
+  "picto": "M4 38 H36 M2.4 33.8 Q5 28.2 9 27.4 Q13 27.2 16.8 30.4 M23.4 30.1 Q31 29.6 37.6 34.1 M9 27.4 Q11.6 31.9 13.8 38.0 M16 38.0 Q18.2 36.3 18.4 31.9 L18.4 27.4 M24 38.0 Q21.8 36.3 21.6 31.9 L21.6 27.4 M18.4 27.4 Q15 20.8 10 17.7 M21.6 27.4 Q25.2 20.8 30.4 17.3 M10 17.7 Q6.5 14.6 3.4 13.9 M10 17.7 Q8 11.4 7 6.8 M14.6 22.3 Q13.8 13.9 13.2 6.0 M30.4 17.3 Q34 14.6 37 14.1 M30.4 17.3 Q32.2 11.4 33.4 7.0 M25.6 22.0 Q26.4 13.9 27.2 5.8",
+  "flagColors": [
+    "#003580",
+    "#D21034",
+    "#009543",
+    "#FFCE00"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Віндгуку"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Windhoek"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Windhoek"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Windhoek"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

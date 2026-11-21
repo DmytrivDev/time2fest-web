@@ -3706,5 +3706,313 @@
       "description": "Yemen reaches 2027 at 21:00 UTC: 1 January is a working day, the holiday is the Islamic New Year, and Aden, daughter of the sea, spends holidays at Gold Mohur."
     },
     "kit": "ye"
+  },
+  "CD": {
+    "text": "In DR Congo, for many people the night into 1 January is the \"night of the crossing\": in churches they pray, sing and look back on the year, staying awake until morning. Others greet the year in bars, where bands and DJs play until dawn. Children look forward to new clothes and gifts, and families set money aside for a generous table and sweet drinks.\n\nIn Kinshasa churches pray from evening until dawn; in 2024 large services gathered on the esplanade of the Palais du Peuple and by the Échangeur tower in Limete. The real street party starts on the evening of 1 January: in communes such as Bandalungwa people put on their \"New Year clothes\", carry speakers out to the gate and dance. And in Matete the New Year is celebrated on 2 January, with a festival of its own.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Night of the crossing",
+        "text": "On 31 December churches pray and sing from evening until morning, giving thanks for the year that is ending, and cross into the new one together."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "New clothes, a full table",
+        "text": "For the holidays children hope for new clothes and gifts, and families prepare a generous meal with sweet drinks."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Street party on 1 January",
+        "text": "On the evening of 1 January people put on their New Year clothes, carry speakers to the gate and dance; Matete moves the party to 2 January."
+      }
+    ],
+    "meta": {
+      "title": "New Year in DR Congo: Kinshasa | Time2Fest",
+      "description": "DR Congo greets 2027 at 23:00 UTC: Kinshasa spends the night of the crossing in church, then dances in the streets in new clothes on the evening of 1 January."
+    },
+    "kit": "cd+1"
+  },
+  "CY": {
+    "text": "In Cyprus the New Year belongs to Saint Basil. On New Year's Eve households once set a separate table for him with a candle, wine and the vasilopita, so the saint would bless the home. Today the cake with a hidden coin is cut at the family gathering: the head of the house crosses it and gives the first slices to Christ, Saint Basil and the home, and whoever finds the coin, the flouri, is the lucky one of the year. The first to cross the threshold should be a kind person or a child, right foot first, and a pomegranate is broken at the door for plenty and health.\n\nNicosia celebrates quietly: at city events drone shows have replaced loud fireworks, out of care for older people, babies and anyone frightened by bangs. And, as everywhere on the island, children go from house to house singing carols and receive sweets or a few coins.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Find the flouri in the vasilopita",
+        "text": "The first slices of Saint Basil's cake go to Christ, the saint and the home. Whoever gets the coin is the lucky one of the year and keeps it as a charm."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Break a pomegranate at the door",
+        "text": "The first to enter the house should be a kind person or a child, right foot first. A pomegranate broken at the door calls in plenty and health."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Carols from door to door",
+        "text": "Children go from house to house singing New Year carols, and hosts thank them with sweets or a few coins."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Cyprus: Nicosia | Time2Fest",
+      "description": "Cyprus greets 2027 at 22:00 UTC: Nicosia swaps fireworks for drone shows, and families cut the vasilopita with its lucky coin and break a pomegranate."
+    },
+    "kit": "cy"
+  },
+  "EE": {
+    "text": "Estonians call the last evening of the year vana-aasta õhtu, the evening of the old year. Old belief says you should eat seven, nine or twelve times that night: each time you sit down to the table, you gain the strength of that many people for the year ahead. A little food is left on the plates for the ancestors and spirits said to visit that night. The table holds pork with sauerkraut, blood and white sausage, baked potatoes and swede, and for something sweet, gingerbread and marzipan.\n\nIn Tallinn the night draws people to Freedom Square: last year a free concert began at 10 p.m., and just before midnight everyone listened to the President’s New Year speech together. The city has skipped its own fireworks for several years, using flames, sparks and lasers timed to the music instead, though residents still light up the sky. On Town Hall Square stands a Christmas tree whose story Tallinn traces back to 1441.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Eat seven or nine times",
+        "text": "Sit down to eat seven, nine or twelve times: folk belief says you’ll have the strength of that many people next year. Leave a little on the plate for the ancestors."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Sauerkraut and blood sausage",
+        "text": "Serve pork with sauerkraut, blood sausage and baked potatoes with swede, then gingerbread and marzipan with your coffee."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Midnight in Freedom Square",
+        "text": "Tallinn sees in midnight with a live concert in Freedom Square, where flames, sparks and lasers move to the music instead of a city fireworks show."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Estonia: Tallinn | Time2Fest",
+      "description": "At midnight in Tallinn, 22:00 UTC, Estonia greets 2027 with seven meals, sauerkraut and a Freedom Square concert of flames and lasers in place of fireworks."
+    },
+    "kit": "ee"
+  },
+  "FI": {
+    "text": "In Finland, New Year's Eve is usually spent with family or friends. The late supper is simple and filling: sausages, potato salad and Jansson's temptation, a potato and sprat bake. The favourite fortune-telling game is tin casting: the metal is melted in a tiny ladle on the stove and splashed into a bucket of cold water, then the odd lump is turned by candlelight and its shadow is read. A ship, they say, means travel. Since lead was banned, the pieces are mostly lead-free tin, and nobody takes the predictions seriously anyway. From six in the evening until two at night, fireworks can be set off without prior notice, and the sky over the towns barely goes quiet.\n\nHelsinki welcomes the year on Kansalaistori square by Oodi library. In the evening there is a family pyro show, at half past ten a concert begins that runs until the midnight fireworks, and the mayor gives the traditional New Year's speech.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Cast your tin",
+        "text": "Melt lead-free tin in a ladle, splash it into cold water and read the lump's shadow by candlelight: a ship means travel."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Sausages and potato salad",
+        "text": "The Finnish late New Year's supper is simple: sausages, potato salad and sometimes Jansson's temptation bake."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks from 18:00 to 02:00",
+        "text": "On New Year's Eve, from 6 pm to 2 am, Finns set off their own fireworks without prior notice, unless the town has banned them in the centre."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Finland: Helsinki | Time2Fest",
+      "description": "Finland greets 2027 at 22:00 UTC: Helsinki parties with a concert and fireworks on Kansalaistori, while at home families cast tin and read its shadow."
+    },
+    "kit": "fi"
+  },
+  "IL": {
+    "text": "Israel's own New Year, Rosh Hashanah, falls in September or October, so the night before 1 January is known here as Silvester. It is not a public holiday: 1 January is an ordinary working day unless it falls on a weekend. Still, Tel Aviv makes it a loud night: restaurants serve festive menus, bars and clubs throw parties, and in Florentin and Jaffa people celebrate right in the street at midnight. Immigrants from the former Soviet Union mark Novy God in their own way, with a tree, Ded Moroz and a big family dinner.\n\nJerusalem greets the year more quietly, mostly at home. Before the holidays the city hands out about 350 trees at the Old City gates to Christians and immigrants from the former Soviet Union, and the Christian Quarter glows with festive lights.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Silvester in Tel Aviv",
+        "text": "On the night before 1 January Tel Aviv's bars, clubs and restaurants hold parties and festive dinners, and in Florentin and Jaffa people celebrate midnight right in the street."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Novy God at the table",
+        "text": "Families who came from the former Soviet Union lay a big table: festive salads, clementines, presents by the tree and Ded Moroz."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "A tree from the Old City",
+        "text": "The holiday tree is often bought from Christians in Jerusalem's Old City or in Jaffa, and every year Jerusalem's municipality gives out about 350 trees at the Old City gates."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Israel: Jerusalem | Time2Fest",
+      "description": "Israel welcomes 2027 at 22:00 UTC: Silvester parties in Tel Aviv, Novy God dinners with a tree and Ded Moroz, and free trees at Jerusalem's Old City gates."
+    },
+    "kit": "il"
+  },
+  "LY": {
+    "text": "In Libya, 1 January is an ordinary day: the public holidays include the Islamic New Year and Independence Day, so the end of December here is mostly about 24 December 1951, when the country became independent. Those who mark New Year's Eve do it quietly, at home with family, and its main sign is a festive cake. Libyans once even competed over whose New Year cake was decorated best and invited friends to house parties. And on 13 January the Amazigh towns take a day off to welcome their own New Year, Yennayer.\n\nTripoli has no city-wide countdown in its squares. In recent years the authorities of some districts of the capital, such as Abu Salim, have banned the sale of New Year decorations and sweets, and bakeries in the centre stopped taking cake orders on the eve of the holiday. So the capital usually sees the year in among close family and friends.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A New Year cake at home",
+        "text": "The centrepiece of the night before 1 January is a festive cake, cut among family; people once even competed over whose was decorated best."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Independence Day, 24 December",
+        "text": "The main state holiday of late December: Libya's independence was declared in Benghazi on 24 December 1951, and the day is a public holiday."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Yennayer on 13 January",
+        "text": "The Amazigh New Year: in Amazigh-speaking towns, 13 January is an official day off."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Libya: Tripoli | Time2Fest",
+      "description": "Libya greets 2027 at 22:00 UTC quietly, at home with family and a festive cake. 1 January is not a holiday, and on 13 January Amazigh towns mark Yennayer."
+    },
+    "kit": "ly"
+  },
+  "MW": {
+    "text": "In Malawi 1 January is a public holiday, and New Year's Eve here is above all a church night. Most people spend it at a crossover service, a crossing into the new year, while others gather for parties. The biggest services draw thousands: on the night into 2026 the crossover of the Enlightened Christian Gathering church drew about 17,000 people, including guests from more than 70 countries. Villages meanwhile celebrate mchezo with all kinds of dances, chiterera among them. At midnight shouts of joy ring out and some people set off fireworks.\n\nIn Blantyre the city council has already staged New Year fireworks: for the arrival of 2018 the show was held at the Old Town Hall on Victoria Avenue, with live music from Mingoli Band. That same night the Lilongwe council laid on fireworks and a concert too.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "A night at crossover",
+        "text": "On the evening of 31 December most Malawians go to church for a crossover service and meet the new year in prayer; the biggest services draw thousands."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Mchezo dances in the village",
+        "text": "Villages celebrate the night with mchezo: people perform all kinds of dances, chiterera among them, and greet the year with shouts of joy at midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks at the Town Hall",
+        "text": "Blantyre city council has staged New Year fireworks at the Old Town Hall on Victoria Avenue; for the arrival of 2018 Mingoli Band also played live there."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Malawi: Blantyre | Time2Fest",
+      "description": "Malawi welcomes 2027 at 22:00 UTC with all-night crossover church services, village mchezo dances like chiterera and city council fireworks in Blantyre."
+    },
+    "kit": "mw"
+  },
+  "MZ": {
+    "text": "In Mozambique, New Year's Eve is one of the best-loved celebrations of the year: houses are decorated with lights, people party in the streets, and fireworks go up at midnight. 1 January is a public holiday, and Christmas here is officially called Family Day, so the whole end of December is about big family gatherings. Many head for the ocean: in the 2025/26 festive season the country welcomed over 311,000 tourists and held 199 New Year events.\n\nIn Maputo it is the liveliest night of the year, with several fireworks displays over the city and parties in hotels and right in the streets. The city council allowed fireworks only from 23:50 to 00:10 and kept the beaches open until morning that night. Some years are quieter: on the night into 2025, fireworks were banned amid tension after the elections.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Family Day, 25 December",
+        "text": "Christmas in Mozambique is officially Family Day: a holiday of music and big family gatherings, shared by Christians and people of other faiths alike."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks from 23:50 to 00:10",
+        "text": "In Maputo the city council allowed fireworks only in these twenty minutes, so all the bangs land right on midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "A beach night till morning",
+        "text": "On New Year's Eve Maputo's beaches stay open until morning instead of 20:00. On the sand, fish or chicken is grilled over charcoal and served with xima, a maize porridge."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Mozambique: Maputo | Time2Fest",
+      "description": "Mozambique sees in 2027 at 22:00 UTC: in Maputo fireworks fly only from 23:50 to 00:10, beaches stay open till dawn and fish sizzles over charcoal."
+    },
+    "kit": "mz"
+  },
+  "NA": {
+    "text": "In Namibia the New Year falls in high summer: the holidays run from early December to mid-January, so many people head to the ocean or to family in the north, where about half the country lives. The night itself is often spent at a friend's home around a braai, meat on the fire, with dancing and food until midnight, while towns from Ondangwa to Okakarara hold countdown parties. On the coast Long Beach, between Walvis Bay and Swakopmund, fills with holidaymakers, and on the night into 2024 fireworks went up at midnight over Independence Beach in Walvis Bay.\n\nIn Windhoek the city council holds a free party every year by its head office on Independence Avenue: on the night into 2026 it was the All-White Party with local musicians. Only the city is licensed to set off fireworks, so at midnight they rise over the avenue.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "A braai till midnight",
+        "text": "New Year's Eve is often spent at a friend's home: meat goes on the fire, people dance and keep eating right up to midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Summer by the ocean",
+        "text": "The holidays fall in the summer break, so many head to the coast: on New Year's Eve Long Beach near Swakopmund is packed with holidaymakers."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the avenue",
+        "text": "In Windhoek only the city council is licensed for fireworks: at midnight they light up Independence Avenue during the free city party."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Namibia: Windhoek | Time2Fest",
+      "description": "Namibia meets 2027 at 22:00 UTC in high summer: a braai with friends till midnight, busy coastal beaches and city fireworks over Independence Avenue, Windhoek."
+    },
+    "kit": "na"
+  },
+  "PS": {
+    "text": "In Palestine, 1 January is a public holiday, and winter brings several celebrations in a row: Christmas on 25 December, New Year and Orthodox Christmas on 7 January. Bethlehem marks them most visibly: a giant tree glows in Manger Square and scout bands with bagpipes parade through town. Because of the war in Gaza, the city cancelled its celebrations two years running; in December 2025 the tree was lit again, and thousands came to the square on Christmas Eve.\n\nIn Gaza, restaurants, hotels and cafés used to host private New Year's Eve parties. At the end of 2025, after the ceasefire of 10 October, a local artist sculpted \"2026\" in sand in Deir el-Balah, and the Holy Family Church lit its Christmas tree for the first time in two years.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "The tree in Manger Square",
+        "text": "Bethlehem's season opens with the lighting of a giant tree; on 6 December 2025 it was lit for the first time after two years without celebrations."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Scouts with bagpipes",
+        "text": "On Christmas Eve, 24 December, scout bands with bagpipes parade across Manger Square, and on 6 January scouts welcome the patriarch there before Orthodox Christmas."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Days off on 1 and 7 January",
+        "text": "New Year's Day is a public holiday, and a week later, on 7 January, Orthodox Christmas is a day off too."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Palestine: Gaza | Time2Fest",
+      "description": "Palestine greets 2027 at 22:00 UTC. 1 January is a public holiday, a giant tree glows in Bethlehem's Manger Square, and Orthodox Christmas follows on 7 January."
+    },
+    "kit": "ps"
+  },
+  "RW": {
+    "text": "In Rwanda the New Year is celebrated more than Christmas, and both 1 and 2 January are public holidays. New Year's Eve is above all a church and family night: Catholic services start at 6 pm, Protestant ones at 10 pm, and afterwards people head to friends and relatives. On 1 January the family gathers for a festive meal and exchanges gifts. Among New Year songs the best loved is «Bonane» by Orchestre Impala.\n\nKigali's first fireworks went up in 2005 at Amahoro Stadium; today the main countdown is held at the Kigali Convention Centre. The city sets the fireworks for exactly midnight at several venues, and for the arrival of 2025 Musanze and Nyagatare put on displays for the first time too.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "An evening service",
+        "text": "On the evening of 31 December many Rwandans go to church: Catholic services begin at 6 pm, Protestant ones at 10 pm."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Midnight at the Convention Centre",
+        "text": "Kigali's main countdown is at the Convention Centre; the city launches fireworks at exactly midnight there and at several other venues."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "A family table on 1 January",
+        "text": "On 1 January families gather for a festive meal and exchange gifts; visits can last longer, since 2 January is a holiday too."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Rwanda: Kigali | Time2Fest",
+      "description": "Rwanda greets 2027 at 22:00 UTC with evening church services, fireworks at exactly midnight by the Kigali Convention Centre and a family feast with gifts."
+    },
+    "kit": "rw"
   }
 }

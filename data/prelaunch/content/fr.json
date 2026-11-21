@@ -3706,5 +3706,313 @@
       "description": "Le Yémen passe à 2027 à 21 h UTC : le 1er janvier est travaillé, le férié est le Nouvel An islamique, et Aden, fille de la mer, fête sur la plage de Gold Mohur."
     },
     "kit": "ye"
+  },
+  "CD": {
+    "text": "En RD Congo, pour beaucoup, la nuit du 31 décembre est la « nuit de la traversée » : dans les églises on prie, on chante et on fait le bilan de l’année sans dormir jusqu’au matin. D’autres accueillent l’année dans les bars, où orchestres et DJ jouent jusqu’à l’aube. Les enfants attendent des habits neufs et des cadeaux, et les familles mettent de l’argent de côté pour une table copieuse et des boissons sucrées.\n\nÀ Kinshasa, les églises prient du soir jusqu’à l’aube ; en 2024, de grands cultes se sont tenus sur l’esplanade du Palais du Peuple et près de la tour de l’Échangeur, à Limete. La vraie fête de rue commence le soir du 1er janvier : dans des communes comme Bandalungwa, on enfile les « habits de la bonne année », on sort les baffles devant la parcelle et on danse. Et à Matete, la bonne année se fête le 2 janvier, avec son propre festival.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Nuit de la traversée",
+        "text": "Le 31 décembre, les églises prient et chantent du soir au matin, rendent grâce pour l’année qui s’achève et passent ensemble dans la nouvelle."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Habits neufs et table garnie",
+        "text": "Pour les fêtes, les enfants espèrent des habits neufs et des cadeaux, et les familles préparent un repas copieux avec des boissons sucrées."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fête de rue le 1er janvier",
+        "text": "Le soir du 1er janvier, on enfile les habits de la bonne année, on sort les baffles et on danse ; à Matete, la fête a lieu le 2 janvier."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en RD Congo : Kinshasa | Time2Fest",
+      "description": "La RD Congo fête 2027 à 23 h UTC : Kinshasa passe la nuit de la traversée à l’église, puis danse dans la rue en habits neufs le soir du 1er janvier."
+    },
+    "kit": "cd+1"
+  },
+  "CY": {
+    "text": "À Chypre, le Nouvel An est la fête de saint Basile. Autrefois, le soir du réveillon, on lui dressait une table à part avec une bougie, du vin et la vassilopita, pour que le saint bénisse la maison. Aujourd’hui, le gâteau à la pièce cachée se coupe en famille : le maître de maison le marque d’une croix et offre les premières parts au Christ, à saint Basile et à la maison, et celui qui trouve la pièce, le flouri, sera le chanceux de l’année. Le premier à franchir le seuil doit être une personne bienveillante ou un enfant, du pied droit, et l’on brise une grenade devant la porte pour l’abondance et la santé.\n\nNicosie fête l’année dans le calme : lors des événements municipaux, des spectacles de drones ont remplacé les feux d’artifice bruyants, par égard pour les aînés, les bébés et ceux que les détonations effraient. Et, comme partout sur l’île, les enfants vont de maison en maison chanter des chants de Nouvel An et reçoivent des friandises ou quelques pièces.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Trouve le flouri dans la vassilopita",
+        "text": "Les premières parts du gâteau de saint Basile vont au Christ, au saint et à la maison. Qui trouve la pièce sera chanceux toute l’année et la garde en porte-bonheur."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Brise une grenade sur le seuil",
+        "text": "Le premier à entrer doit être une personne bienveillante ou un enfant, du pied droit. Une grenade brisée devant la porte appelle l’abondance et la santé."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Chants de porte en porte",
+        "text": "Les enfants vont de maison en maison chanter des chants de Nouvel An, et on les remercie avec des friandises ou quelques pièces."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Chypre : Nicosie | Time2Fest",
+      "description": "Chypre fête 2027 à 22 h UTC : Nicosie remplace les feux d’artifice par des drones, et l’on coupe la vassilopita à la pièce porte-bonheur en famille."
+    },
+    "kit": "cy"
+  },
+  "EE": {
+    "text": "Les Estoniens appellent le dernier soir de l’année vana-aasta õhtu, le soir de la vieille année. Une vieille croyance veut qu’on mange ce soir-là sept, neuf ou douze fois : autant de fois tu passes à table, autant de personnes tu auras de force dans l’année. On laisse un peu de nourriture dans les assiettes pour les ancêtres et les esprits qui, dit-on, passent cette nuit-là. Sur la table : porc à la choucroute, boudin noir et saucisse blanche, pommes de terre et rutabaga au four, puis pain d’épices et massepain.\n\nÀ Tallinn, la nuit rassemble les gens sur la place de la Liberté : l’an dernier, un concert gratuit a commencé à 22 h, et juste avant minuit tout le monde a écouté ensemble le discours de Nouvel An du président. La ville n’organise plus de feu d’artifice depuis plusieurs années : flammes, étincelles et lasers suivent la musique, même si les habitants lancent encore les leurs. Sur la place de l’Hôtel-de-Ville se dresse un sapin dont Tallinn fait remonter l’histoire à 1441.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Mange sept ou neuf fois",
+        "text": "Passe à table sept, neuf ou douze fois : selon la croyance, tu auras la force d’autant de personnes l’an prochain. Laisse un peu dans l’assiette pour les ancêtres."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Choucroute et boudin",
+        "text": "Sers du porc à la choucroute, du boudin noir et des pommes de terre au four avec du rutabaga, puis pain d’épices et massepain avec le café."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Minuit place de la Liberté",
+        "text": "Tallinn accueille minuit avec un concert live place de la Liberté, où flammes, étincelles et lasers suivent la musique à la place d’un feu d’artifice municipal."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Estonie : Tallinn | Time2Fest",
+      "description": "À minuit à Tallinn, 22 h UTC, l’Estonie fête 2027 avec sept repas, de la choucroute et un concert place de la Liberté, flammes et lasers au lieu de feux."
+    },
+    "kit": "ee"
+  },
+  "FI": {
+    "text": "En Finlande, on passe généralement la Saint-Sylvestre en famille ou entre amis. Le souper tardif est simple et copieux : saucisses, salade de pommes de terre et « tentation de Jansson », un gratin de pommes de terre aux sprats. Le jeu divinatoire préféré consiste à couler de l’« étain » : on le fait fondre dans une petite louche sur le feu, on le jette d’un coup dans un seau d’eau froide, puis on lit l’ombre de la forme étrange à la lueur d’une bougie. Un bateau, dit-on, annonce un voyage. Depuis l’interdiction du plomb, on utilise surtout de l’étain sans plomb, et personne ne prend les prédictions au sérieux. De six heures du soir à deux heures du matin, on peut tirer des feux d’artifice sans déclaration préalable, et le ciel des villes ne se tait presque jamais.\n\nHelsinki accueille l’année sur la place Kansalaistori, près de la bibliothèque Oodi. En soirée, un spectacle pyrotechnique familial ouvre la fête, à 22 h 30 commence un concert qui dure jusqu’au feu d’artifice de minuit, et le maire prononce le traditionnel discours du Nouvel An.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Coule ton étain",
+        "text": "Fais fondre de l’étain sans plomb dans une louche, jette-le dans l’eau froide et lis l’ombre de la forme à la bougie : un bateau annonce un voyage."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Saucisses et salade de patates",
+        "text": "Le souper tardif du Nouvel An finlandais est simple : saucisses, salade de pommes de terre et parfois le gratin « tentation de Jansson »."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux de 18 h à 2 h",
+        "text": "Le soir du Nouvel An, de 18 h à 2 h, les Finlandais tirent leurs propres feux sans déclaration préalable, sauf si la ville les interdit au centre."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Finlande : Helsinki | Time2Fest",
+      "description": "La Finlande fête 2027 à 22 h UTC : Helsinki fait la fête sur Kansalaistori jusqu’au feu d’artifice de minuit, et chez soi on coule l’étain pour lire son ombre."
+    },
+    "kit": "fi"
+  },
+  "IL": {
+    "text": "Le Nouvel An propre à Israël, Roch Hachana, tombe en septembre ou en octobre : la nuit du 31 décembre s’appelle donc ici Silvester. Ce n’est pas un jour férié : le 1er janvier est un jour ouvré ordinaire, sauf s’il tombe un week-end. Tel-Aviv en fait pourtant une nuit animée : menus de fête au restaurant, soirées dans les bars et les clubs, et à Florentin comme à Jaffa on fête minuit en pleine rue. Les immigrés de l’ex-URSS célèbrent le Novy God à leur façon, avec un sapin, Ded Moroz et un grand dîner en famille.\n\nJérusalem accueille l’année plus calmement, surtout à la maison. Avant les fêtes, la municipalité distribue environ 350 sapins aux portes de la Vieille Ville aux chrétiens et aux immigrés de l’ex-URSS, et le quartier chrétien brille de lumières festives.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Silvester à Tel-Aviv",
+        "text": "La nuit du 31 décembre, bars, clubs et restaurants de Tel-Aviv organisent soirées et dîners de fête, et à Florentin comme à Jaffa on fête minuit en pleine rue."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Novy God à table",
+        "text": "Les familles venues de l’ex-URSS dressent une grande table : salades de fête, clémentines, cadeaux au pied du sapin et Ded Moroz."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Un sapin de la Vieille Ville",
+        "text": "Le sapin s’achète souvent auprès de chrétiens de la Vieille Ville de Jérusalem ou de Jaffa, et chaque année la municipalité de Jérusalem en distribue environ 350 à ses portes."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Israël : Jérusalem | Time2Fest",
+      "description": "Israël accueille 2027 à 22 h UTC : soirées Silvester à Tel-Aviv, dîners du Novy God avec sapin et Ded Moroz, et sapins offerts aux portes de Jérusalem."
+    },
+    "kit": "il"
+  },
+  "LY": {
+    "text": "En Libye, le 1er janvier est un jour ordinaire : parmi les fêtes officielles figurent le Nouvel An islamique et la fête de l'Indépendance, si bien que la fin décembre tourne surtout autour du 24 décembre 1951, date de l'indépendance du pays. Ceux qui fêtent la Saint-Sylvestre le font discrètement, en famille à la maison, et son grand symbole est un gâteau de fête. Autrefois, les Libyens rivalisaient même pour le gâteau du Nouvel An le mieux décoré et invitaient leurs amis à des soirées à la maison. Et le 13 janvier, les villes amazighes chôment pour accueillir leur propre Nouvel An, Yennayer.\n\nÀ Tripoli, pas de compte à rebours sur les places. Ces dernières années, les autorités de certains quartiers de la capitale, comme Abou Salim, ont interdit la vente de décorations et de douceurs du Nouvel An, et les pâtisseries du centre cessaient de prendre les commandes de gâteaux à la veille de la fête. Dans la capitale, on accueille donc l'année le plus souvent entre proches.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un gâteau du Nouvel An",
+        "text": "Le cœur de la nuit du 31 est un gâteau de fête partagé en famille ; on rivalisait autrefois pour le mieux décoré."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "L'Indépendance, le 24 décembre",
+        "text": "La grande fête nationale de fin décembre : l'indépendance de la Libye fut proclamée à Benghazi le 24 décembre 1951, jour férié."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Yennayer, le 13 janvier",
+        "text": "Le Nouvel An amazigh : dans les villes amazighophones, le 13 janvier est un jour férié officiel."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Libye : Tripoli | Time2Fest",
+      "description": "La Libye accueille 2027 à 22 h UTC en toute discrétion, en famille et autour d'un gâteau. Le 1er janvier n'est pas férié ; le 13, place à Yennayer."
+    },
+    "kit": "ly"
+  },
+  "MW": {
+    "text": "Au Malawi, le 1er janvier est férié, et la nuit du Nouvel An est avant tout une nuit d’église. La plupart des gens la passent à un office crossover, le passage à la nouvelle année, d’autres se retrouvent en soirée. Les plus grands offices attirent des milliers de personnes : pour le passage à 2026, le crossover de l’église Enlightened Christian Gathering a réuni environ 17 000 fidèles, dont des invités de plus de 70 pays. Dans les villages, on fête le mchezo avec toutes sortes de danses, dont la chiterera. À minuit retentissent des cris de joie et certains tirent des feux d’artifice.\n\nÀ Blantyre, la mairie a déjà organisé un feu d’artifice du Nouvel An : pour l’arrivée de 2018, il a eu lieu devant l’ancien hôtel de ville de Victoria Avenue, avec un concert du Mingoli Band. La même nuit, la mairie de Lilongwe a elle aussi préparé feu d’artifice et concert.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Une nuit de crossover",
+        "text": "Le soir du 31 décembre, la plupart des Malawites vont à l’église pour un office crossover et accueillent l’année en prière ; les plus grands offices réunissent des milliers de fidèles."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Les danses du mchezo",
+        "text": "Dans les villages, la nuit se fête avec le mchezo : on y danse toutes sortes de danses, dont la chiterera, et on salue l’année à minuit par des cris de joie."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à l’hôtel de ville",
+        "text": "La mairie de Blantyre a organisé un feu d’artifice du Nouvel An devant l’ancien hôtel de ville de Victoria Avenue ; pour l’arrivée de 2018, le Mingoli Band y a aussi joué en direct."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Malawi : Blantyre | Time2Fest",
+      "description": "Le Malawi accueille 2027 à 22 h UTC : offices crossover dans les églises, danses du mchezo comme la chiterera au village et feu d’artifice à Blantyre."
+    },
+    "kit": "mw"
+  },
+  "MZ": {
+    "text": "Au Mozambique, la Saint-Sylvestre est l'une des fêtes les plus aimées de l'année : les maisons s'illuminent, on fait la fête dans les rues et les feux d'artifice éclatent à minuit. Le 1er janvier est férié, et Noël s'appelle officiellement la fête de la Famille, si bien que toute la fin décembre tourne autour de grandes réunions familiales. Beaucoup partent vers l'océan : pendant les fêtes 2025/26, le pays a accueilli plus de 311 000 touristes et organisé 199 événements du Nouvel An.\n\nÀ Maputo, c'est la nuit la plus animée de l'année, avec plusieurs feux d'artifice au-dessus de la ville et des fêtes dans les hôtels comme en pleine rue. La mairie n'autorisait les feux que de 23 h 50 à 0 h 10 et laissait ce soir-là les plages ouvertes jusqu'au matin. Certaines années sont plus calmes : pour le passage à 2025, les feux ont été interdits en raison des tensions après les élections.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Fête de la Famille, le 25",
+        "text": "Au Mozambique, Noël est officiellement la fête de la Famille : musique et grands repas de famille, pour les chrétiens comme pour les autres croyants."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feux de 23 h 50 à 0 h 10",
+        "text": "À Maputo, la mairie n'autorisait les feux que pendant ces vingt minutes : tout le spectacle tombe pile à minuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Nuit à la plage jusqu'à l'aube",
+        "text": "Le soir du 31, les plages de Maputo restent ouvertes jusqu'au matin, au lieu de 20 h. Sur le sable, on grille poisson ou poulet au charbon, servis avec la xima, une bouillie de maïs."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Mozambique : Maputo | Time2Fest",
+      "description": "Le Mozambique fête 2027 à 22 h UTC : à Maputo, feux de 23 h 50 à 0 h 10 seulement, plages ouvertes jusqu'à l'aube et poisson grillé au charbon."
+    },
+    "kit": "mz"
+  },
+  "NA": {
+    "text": "En Namibie, le Nouvel An tombe en plein été : les vacances durent de début décembre à mi-janvier, alors beaucoup partent vers l’océan ou rejoignent la famille dans le nord, où vit près de la moitié du pays. La nuit se passe souvent chez des amis autour d’un braai, la viande grillée au feu, avec danse et repas jusqu’à minuit, et des villes d’Ondangwa à Okakarara organisent des soirées avec compte à rebours. Sur la côte, la plage de Long Beach, entre Walvis Bay et Swakopmund, se remplit de vacanciers, et pour la nuit vers 2024 un feu d’artifice a éclaté à minuit au-dessus d’Independence Beach, à Walvis Bay.\n\nÀ Windhoek, la municipalité organise chaque année une fête gratuite devant son siège, sur l’avenue de l’Indépendance : pour la nuit vers 2026, c’était la Soirée en blanc avec des musiciens locaux. Seule la ville a le droit de tirer des feux d’artifice, alors à minuit ils montent au-dessus de l’avenue.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Un braai jusqu’à minuit",
+        "text": "Le réveillon se passe souvent chez un ami : la viande grille sur le feu, on danse et on mange jusqu’à minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "L’été au bord de l’océan",
+        "text": "Les fêtes tombent pendant les vacances d’été, alors beaucoup filent sur la côte : le soir du réveillon, Long Beach, près de Swakopmund, est bondée."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur l’avenue",
+        "text": "À Windhoek, seule la municipalité a le droit de tirer un feu d’artifice : à minuit, il illumine l’avenue de l’Indépendance pendant la fête gratuite de la ville."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Namibie : Windhoek | Time2Fest",
+      "description": "La Namibie fête 2027 à 22 h UTC en plein été : braai entre amis jusqu’à minuit, plages bondées et feu d’artifice sur l’avenue de l’Indépendance à Windhoek."
+    },
+    "kit": "na"
+  },
+  "PS": {
+    "text": "En Palestine, le 1er janvier est férié, et l'hiver enchaîne plusieurs fêtes : Noël le 25 décembre, le Nouvel An puis le Noël orthodoxe le 7 janvier. C'est à Bethléem qu'on les voit le mieux : un grand sapin brille sur la place de la Mangeoire et les fanfares scoutes défilent en ville avec leurs cornemuses. À cause de la guerre à Gaza, la ville a annulé ses festivités deux années de suite ; en décembre 2025, le sapin s'est rallumé et des milliers de personnes sont venues sur la place la veille de Noël.\n\nÀ Gaza, restaurants, hôtels et cafés organisaient autrefois des soirées privées du Nouvel An. Fin 2025, après le cessez-le-feu du 10 octobre, un artiste local a sculpté « 2026 » dans le sable à Deir el-Balah, et l'église de la Sainte-Famille a rallumé son sapin pour la première fois en deux ans.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "tree",
+        "title": "Le sapin de Bethléem",
+        "text": "À Bethléem, la saison s'ouvre avec l'illumination d'un grand sapin ; le 6 décembre 2025, il s'est allumé pour la première fois après deux ans sans fêtes."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Scouts et cornemuses",
+        "text": "La veille de Noël, le 24 décembre, les fanfares scoutes défilent avec leurs cornemuses sur la place de la Mangeoire ; le 6 janvier, les scouts y accueillent le patriarche avant le Noël orthodoxe."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Fériés les 1er et 7 janvier",
+        "text": "Le jour de l'An est férié, et une semaine plus tard, le 7 janvier, le Noël orthodoxe l'est aussi."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Palestine : Gaza | Time2Fest",
+      "description": "La Palestine accueille 2027 à 22 h UTC. Le 1er janvier est férié, un grand sapin brille à Bethléem, puis le Noël orthodoxe arrive le 7 janvier."
+    },
+    "kit": "ps"
+  },
+  "RW": {
+    "text": "Au Rwanda, on fête le Nouvel An davantage que Noël, et le 1er comme le 2 janvier sont fériés. La nuit du réveillon est avant tout une nuit d’église et de famille : les messes catholiques commencent à 18 h, les cultes protestants à 22 h, puis on rejoint amis et proches. Le 1er janvier, la famille se retrouve autour d’un repas de fête et échange des cadeaux. Parmi les chansons du Nouvel An, la plus aimée est « Bonane » d’Orchestre Impala.\n\nÀ Kigali, le premier feu d’artifice a été tiré en 2005 au stade Amahoro ; aujourd’hui, le grand compte à rebours a lieu au Centre de conventions de Kigali. La ville fixe les feux à minuit pile sur plusieurs sites, et pour l’arrivée de 2025, Musanze et Nyagatare en ont tiré pour la première fois.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Un office du soir",
+        "text": "Le soir du 31 décembre, beaucoup de Rwandais vont à l’église : les messes catholiques commencent à 18 h, les cultes protestants à 22 h."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Minuit au Centre de conventions",
+        "text": "Le grand compte à rebours de Kigali a lieu au Centre de conventions ; la ville y tire un feu d’artifice à minuit pile, comme sur d’autres sites."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "La table familiale du 1er janvier",
+        "text": "Le 1er janvier, les familles se retrouvent pour un repas de fête et échangent des cadeaux ; les visites peuvent durer, car le 2 janvier est aussi férié."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Rwanda : Kigali | Time2Fest",
+      "description": "Le Rwanda accueille 2027 à 22 h UTC : messes du soir, feu d’artifice à minuit pile au Centre de conventions de Kigali et repas de famille avec cadeaux."
+    },
+    "kit": "rw"
   }
 }

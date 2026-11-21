@@ -1,0 +1,99 @@
+{
+  "code": "MW",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "blantyre",
+  "names": {
+    "uk": {
+      "name": "Малаві",
+      "city": "Блантайр",
+      "cityIn": "у Блантайрі",
+      "caps": "МАЛАВІ"
+    },
+    "en": {
+      "name": "Malawi",
+      "city": "Blantyre",
+      "cityIn": "in Blantyre",
+      "caps": "MALAWI"
+    },
+    "es": {
+      "name": "Malaui",
+      "city": "Blantyre",
+      "cityIn": "en Blantyre",
+      "caps": "MALAUI"
+    },
+    "fr": {
+      "name": "Malawi",
+      "city": "Blantyre",
+      "cityIn": "à Blantyre",
+      "caps": "MALAWI"
+    }
+  },
+  "picto": "M3.5 22.5 L7.5 16.5 L10.8 11 Q12.2 8.6 13.6 10.6 L15.6 13.4 L18 14.4 L19.8 16.6 L22.4 17.6 L25 20 L28.5 22.5 M2 24.2 Q4.2 26.4 7.5 26.4 H32.5 Q35.8 26.4 38 24.2 L36.2 28.6 Q35 30.6 32 30.6 H8 Q5 30.6 3.8 28.6 Z M33.5 26.4 V17.5 M31.7 17.5 H35.3 V13.8 H31.7 Z M33.5 13.8 V12.3 M8 34.5 h8 M22 34.5 h10",
+  "flagColors": [
+    "#CE1126",
+    "#339E35",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Блантайрі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Blantyre"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Blantyre"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Blantyre"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

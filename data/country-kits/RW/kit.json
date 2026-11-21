@@ -1,0 +1,99 @@
+{
+  "code": "RW",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "kigali",
+  "names": {
+    "uk": {
+      "name": "Руанда",
+      "city": "Кігалі",
+      "cityIn": "у Кігалі",
+      "caps": "РУАНДА"
+    },
+    "en": {
+      "name": "Rwanda",
+      "city": "Kigali",
+      "cityIn": "in Kigali",
+      "caps": "RWANDA"
+    },
+    "es": {
+      "name": "Ruanda",
+      "city": "Kigali",
+      "cityIn": "en Kigali",
+      "caps": "RUANDA"
+    },
+    "fr": {
+      "name": "Rwanda",
+      "city": "Kigali",
+      "cityIn": "à Kigali",
+      "caps": "RWANDA"
+    }
+  },
+  "picto": "M8 28 V22.5 Q8.4 15 12.2 11 Q15.8 7.6 20 7.6 Q24.2 7.6 27.8 11 Q31.6 15 32 22.5 V28 M8.1 23.4 Q20 21.4 31.9 23.4 M8.6 18.4 Q20 16 31.4 18.4 M10.6 13.8 Q20 11.4 29.4 13.8 M14.4 9.8 Q20 8.4 25.6 9.8 M17.8 7.9 L20 4.4 L22.2 7.9 M20 4.4 V1.6 M4.5 28 H35.5 V31.5 H4.5 Z",
+  "flagColors": [
+    "#00A1DE",
+    "#FAD201",
+    "#20603D"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Кігалі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Kigali"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Kigali"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Kigali"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

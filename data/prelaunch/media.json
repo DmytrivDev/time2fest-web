@@ -2333,6 +2333,182 @@
         "x": 50,
         "y": 50
       }
+    },
+    "country:CD": {
+      "src": "/media/photos/kinshasa.webp",
+      "alt": {
+        "uk": "Нічна Кіншаса згори: центр Гомбе, бульвар 30 Червня з вогнями машин і освітлені висотки",
+        "en": "Kinshasa at night from above: central Gombe, the 30 June Boulevard with car lights and lit high-rises",
+        "es": "Kinsasa de noche desde lo alto: el centro de Gombe, el bulevar del 30 de Junio con luces de coches y edificios altos iluminados",
+        "fr": "Kinshasa la nuit vue d’en haut : le centre de la Gombe, le boulevard du 30-Juin et ses phares, tours illuminées"
+      },
+      "author": "MONUSCO Photos",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kinshasa_by_night_(23769991270).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:CY": {
+      "src": "/media/photos/nicosia.webp",
+      "alt": {
+        "uk": "Проспект Нікосії вночі у святковій ілюмінації",
+        "en": "A Nicosia avenue at night with festive lights",
+        "es": "Una avenida de Nicosia de noche con iluminación festiva",
+        "fr": "Une avenue de Nicosie la nuit sous les illuminations de fête"
+      },
+      "author": "FromNicosia",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nicosia_avenues_by_night_Republic_of_Cyprus_during_Christmas.jpg",
+      "position": {
+        "x": 60,
+        "y": 40
+      }
+    },
+    "country:EE": {
+      "src": "/media/photos/tallinn.webp",
+      "alt": {
+        "uk": "Таллінська ратуша вночі: вежа зі «Старим Тоомасом» над Ратушною площею, поруч висока ялинка",
+        "en": "Tallinn Town Hall at night: the tower with Old Thomas above Town Hall Square, a tall Christmas tree beside it",
+        "es": "El ayuntamiento de Tallin de noche: la torre con el Viejo Tomás sobre la plaza del Ayuntamiento y un abeto alto al lado",
+        "fr": "L’hôtel de ville de Tallinn la nuit : la tour du Vieux Thomas au-dessus de la place, un grand sapin à côté"
+      },
+      "author": "Pauloleong2002",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tallinn_Town_Hall_at_night.jpg",
+      "position": {
+        "x": 45,
+        "y": 55
+      }
+    },
+    "country:FI": {
+      "src": "/media/photos/helsinki.webp",
+      "alt": {
+        "uk": "Новорічний салют біля Кафедрального собору Гельсінкі в ніч на 2016 рік",
+        "en": "New Year fireworks by Helsinki Cathedral, welcoming 2016",
+        "es": "Fuegos artificiales de Año Nuevo junto a la catedral de Helsinki, llegada de 2016",
+        "fr": "Feu d’artifice du Nouvel An près de la cathédrale d’Helsinki, passage à 2016"
+      },
+      "author": "Olga1969",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Year_2016_in_the_city_of_Helsinki.jpg",
+      "position": {
+        "x": 62,
+        "y": 50
+      }
+    },
+    "country:IL": {
+      "src": "/media/photos/jerusalem.webp",
+      "alt": {
+        "uk": "Єрусалим уночі: Цитадель із Вежею Давида й мури Старого міста над освітленою дорогою, над ними — місяць",
+        "en": "Jerusalem at night: the Citadel with the Tower of David and the Old City walls above a lit road, the moon above",
+        "es": "Jerusalén de noche: la Ciudadela con la Torre de David y las murallas de la Ciudad Vieja sobre una carretera iluminada, con la luna encima",
+        "fr": "Jérusalem la nuit : la citadelle et la tour de David, les remparts de la vieille ville au-dessus d’une route éclairée, la lune au-dessus"
+      },
+      "author": "Adiel lo",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jerusalem_walls_night_2.JPG",
+      "position": {
+        "x": 35,
+        "y": 55
+      }
+    },
+    "country:LY": {
+      "src": "/media/photos/tripoli.webp",
+      "alt": {
+        "uk": "Червоний замок (Ассай-аль-Хамра) у Триполі вночі: підсвічені мури фортеці над водою, пальми й вогні набережної біля Мученицької площі, відблиски у воді",
+        "en": "The Red Castle (Assaraya al-Hamra) in Tripoli at night: lit fortress walls above the water, palms and waterfront lights by Martyrs’ Square, reflections in the water",
+        "es": "El Castillo Rojo (Assaraya al-Hamra) de Trípoli de noche: murallas iluminadas sobre el agua, palmeras y luces del paseo junto a la plaza de los Mártires, reflejos en el agua",
+        "fr": "Le château Rouge (Assaraya al-Hamra) à Tripoli la nuit : remparts illuminés au-dessus de l’eau, palmiers et lumières du front de mer près de la place des Martyrs, reflets dans l’eau"
+      },
+      "author": "Mohamed Tailamun",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tripoli_red_castle_CBL_night_time.jpg",
+      "position": {
+        "x": 35,
+        "y": 40
+      }
+    },
+    "country:MW": {
+      "src": "/media/photos/blantyre.webp",
+      "alt": {
+        "uk": "Новорічний салют у Блантайрі опівночі 1 січня 2018 року",
+        "en": "New Year fireworks in Blantyre at midnight on 1 January 2018",
+        "es": "Fuegos artificiales de Año Nuevo en Blantyre a medianoche del 1 de enero de 2018",
+        "fr": "Feu d’artifice du Nouvel An à Blantyre à minuit le 1er janvier 2018"
+      },
+      "author": "Lisungu Kajawa",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Firweworks_on_New_Year%E2%80%99s_Day.jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:MZ": {
+      "src": "/media/photos/maputo.webp",
+      "alt": {
+        "uk": "Новорічний салют над Мапуту опівночі 31 грудня 2010 року: спалахи над пагорбом і висотками міста, ліхтарі вздовж дороги",
+        "en": "New Year fireworks over Maputo at midnight on 31 December 2010: bursts above the hill and city towers, streetlights along the road",
+        "es": "Fuegos artificiales de Año Nuevo sobre Maputo a medianoche del 31 de diciembre de 2010: destellos sobre la colina y los edificios, farolas a lo largo de la carretera",
+        "fr": "Feu d’artifice du Nouvel An sur Maputo à minuit le 31 décembre 2010 : gerbes au-dessus de la colline et des tours, réverbères le long de la route"
+      },
+      "author": "Meraj Chhaya",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fireworks_in_Maputo.jpg",
+      "position": {
+        "x": 55,
+        "y": 38
+      }
+    },
+    "country:NA": {
+      "src": "/media/photos/windhoek.webp",
+      "alt": {
+        "uk": "Христова церква у Віндгуку вночі з підсвіткою, довкола — кільцева дорога й вогні міста",
+        "en": "Christ Church in Windhoek lit at night, with the ring road and city lights around it",
+        "es": "La iglesia de Cristo de Windhoek iluminada de noche, rodeada por la rotonda y las luces de la ciudad",
+        "fr": "L’église du Christ de Windhoek illuminée la nuit, entourée du rond-point et des lumières de la ville"
+      },
+      "author": "Zairon",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Windhuk_Independence_Memorial_Museum_Blick_auf_die_Christuskirche_bei_Nacht_1.jpg",
+      "position": {
+        "x": 62,
+        "y": 72
+      }
+    },
+    "country:PS": {
+      "src": "/media/photos/bethlehem.webp",
+      "alt": {
+        "uk": "Ясельна площа у Віфлеємі на Різдво вночі: велика ялинка з вогнями, святкові гірлянди-зірки над площею, підсвічені кам’яні мури й дзвіниця",
+        "en": "Manger Square in Bethlehem on Christmas night: a big lit tree, star garlands above the square, lit stone walls and the bell tower",
+        "es": "La plaza del Pesebre de Belén en Nochebuena: un gran árbol iluminado, guirnaldas de estrellas sobre la plaza, muros de piedra y campanario iluminados",
+        "fr": "La place de la Mangeoire à Bethléem la nuit de Noël : grand sapin illuminé, guirlandes d’étoiles au-dessus de la place, murs de pierre et clocher éclairés"
+      },
+      "author": "Fjmustak",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Manger_square_on_Christmas.jpg",
+      "position": {
+        "x": 57,
+        "y": 50
+      }
+    },
+    "country:RW": {
+      "src": "/media/photos/kigali.webp",
+      "alt": {
+        "uk": "Конференц-центр Кігалі вночі, купол підсвічено кольорами прапора",
+        "en": "The Kigali Convention Centre at night, its dome lit in the colours of the flag",
+        "es": "El Centro de Convenciones de Kigali de noche, con la cúpula iluminada con los colores de la bandera",
+        "fr": "Le centre de congrès de Kigali la nuit, son dôme éclairé aux couleurs du drapeau"
+      },
+      "author": "IGANZE",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kigali_Convention_Center.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
     }
   }
 }

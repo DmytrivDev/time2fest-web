@@ -1,0 +1,99 @@
+{
+  "code": "LY",
+  "zone": "UTC+2",
+  "zoneId": "utc+0200",
+  "cityId": "tripoli",
+  "names": {
+    "uk": {
+      "name": "Лівія",
+      "city": "Триполі",
+      "cityIn": "у Триполі",
+      "caps": "ЛІВІЯ"
+    },
+    "en": {
+      "name": "Libya",
+      "city": "Tripoli",
+      "cityIn": "in Tripoli",
+      "caps": "LIBYA"
+    },
+    "es": {
+      "name": "Libia",
+      "city": "Trípoli",
+      "cityIn": "en Trípoli",
+      "caps": "LIBIA"
+    },
+    "fr": {
+      "name": "Libye",
+      "city": "Tripoli",
+      "cityIn": "à Tripoli",
+      "caps": "LIBYE"
+    }
+  },
+  "picto": "M3 35 H37 M5.5 35 V32.6 H34.5 V35 M7.5 32.6 V15.4 H32.5 V32.6 M15.6 32.6 V23.4 A4.4 4.4 0 0 1 24.4 23.4 V32.6 M9.6 26.4 V17.6 M13.4 26.4 V17.6 M26.6 26.4 V17.6 M30.4 26.4 V17.6 M8.2 26.4 H14.8 M25.2 26.4 H31.8 M6 15.4 H34 M6 13 H34 V15.4 M6 13 V15.4 M6.6 13 L11.5 6.8 L16.4 13 M23.6 13 L28.5 6.8 L33.4 13 M16.4 13 V10 H23.6 V13",
+  "flagColors": [
+    "#E70013",
+    "#239E46",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Триполі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Tripoli"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Trípoli"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Tripoli"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
