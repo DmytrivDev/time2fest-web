@@ -104,7 +104,9 @@ describe('deploy workflow', () => {
     expect(at).toBeGreaterThanOrEqual(0);
     const body = code.slice(at + 1);
     expect(body.some((l) => /^ {8}if:\s*always\(\)\s*$/.test(l))).toBe(true);
-    expect(body.some((l) => /^ {8}run:\s*rm -f "\$RUNNER_TEMP"\/t2f_\*\s*$/.test(l))).toBe(true);
+    expect(body.some((l) => /^ {8}run:\s*rm -f "\$RUNNER_TEMP"\/t2f_\* "\$HOME\/\.ssh\/id_ed25519"\s*$/.test(l))).toBe(true);
+    // Копія ключа в ~/.ssh (ssh з `-F none` і без `-i` шукає її там) прибирається тим самим кроком.
+    if (text.includes('$HOME/.ssh/id_ed25519')) expect(body.join('\n')).toContain('"$HOME/.ssh/id_ed25519"');
     // Обидва файли, що пише крок «SSH material», підпадають під шаблон t2f_*.
     for (const f of text.matchAll(/"\$RUNNER_TEMP\/(t2f_[a-z_]+)"/g)) expect(f[1]).toMatch(/^t2f_/);
   });
