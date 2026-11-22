@@ -4406,5 +4406,61 @@
       "description": "Esquí a medianoche en Jahorina, concierto en Sarajevo y «Sarajevo, ljubavi moja»: Bosnia y Herzegovina recibe 2027 a las 23:00 UTC y sigue hasta el alba."
     },
     "kit": "ba"
+  },
+  "LI": {
+    "text": "«Un buen año nuevo, una vida larga, salud y un lugar en el cielo»: con este viejo deseo los niños de Liechtenstein saludan a los mayores en Año Nuevo, y reciben monedas a cambio. Aquí las fiestas de Año Nuevo forman parte de una larga temporada que va de Navidad a la Epifanía: el 6 de enero los cantores de la estrella recorren las calles y los niños donan todo lo que recogen a un proyecto solidario.\n\nVaduz recibe la medianoche en una pista de hielo en pleno centro: en Nochevieja la pista de la Rathausplatz abre hasta la 1 con entrada libre. Los fuegos privados solo se toleran en torno a la medianoche y hasta la 1; después, el silencio nocturno cae sobre todo el país. Los grandes fuegos de Liechtenstein son el 15 de agosto, fiesta nacional, junto al castillo de Vaduz.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "letter",
+        "title": "Un deseo por una moneda",
+        "text": "Por una vieja costumbre, los niños desean a los mayores un buen año, una vida larga, salud y un lugar en el cielo, y reciben monedas por ello."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Patinaje hasta la 1",
+        "text": "En Nochevieja, la pista Vaduz on Ice de la Rathausplatz abre hasta la 1 con entrada libre, junto a una discoteca al aire libre."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos solo a medianoche",
+        "text": "En Liechtenstein los fuegos se lanzan en torno a la medianoche y no más tarde de la 1; luego llega el silencio. Los municipios aconsejan volcanes silenciosos en vez de petardos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Liechtenstein: Vaduz | Time2Fest",
+      "description": "Liechtenstein recibe 2027 a las 23:00 UTC: patinaje en la Rathausplatz de Vaduz hasta la 1, fuegos en torno a medianoche y un viejo deseo infantil."
+    },
+    "kit": "li"
+  },
+  "NE": {
+    "text": "Níger recibe el año nuevo dos veces: el musulmán, en el mes de muharram, según el calendario lunar, y el gregoriano, cuyo 1 de enero es festivo nacional. La noche anterior cada cual la pasa a su manera. Unos invitan a amigos a cenar en casa, otros se quedan en su fada, un círculo de amigos que se reúne a tomar té y que esa noche añade brochetas a la parrilla. Parte de los creyentes no celebra la fiesta en absoluto.\n\nA medianoche Niamey estalla en bocinazos: caravanas de motos y coches dan vueltas a las grandes rotondas entre el estruendo de los petardos, y los jóvenes de la plaza Anoutab lanzan sus propios fuegos artificiales. La fiesta en la calle es corta: después unos vuelven a casa y otros siguen en las discotecas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Una noche en la fada",
+        "text": "La fada es un círculo de amigos que se reúne a charlar con un té. En Nochevieja, el té llega acompañado de brochetas de carne a la parrilla."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Bocinas en las rotondas",
+        "text": "A medianoche, motos y coches recorren en caravana las grandes rotondas de Niamey —Mali Béro, Martyrs, Liberté— tocando la bocina y tirando petardos."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Cena en casa con amigos",
+        "text": "No todos salen a la calle: muchos invitan a sus amigos a una cena de Año Nuevo en casa, a veces con hasta cincuenta invitados."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Níger: Niamey | Time2Fest",
+      "description": "Níger recibe 2027 a las 23:00 UTC: Niamey toca la bocina en caravanas por sus rotondas, las fadas se juntan con té y brochetas y los amigos cenan en casa."
+    },
+    "kit": "ne"
   }
 }

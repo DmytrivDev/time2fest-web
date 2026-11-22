@@ -966,6 +966,18 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#193b4d"
+    },
+    "LI": {
+      "src": "/scenes/LI-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#232f52"
+    },
+    "NE": {
+      "src": "/scenes/NE-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#6e4f46"
     }
   }
 }

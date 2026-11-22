@@ -2733,6 +2733,38 @@
         "x": 50,
         "y": 45
       }
+    },
+    "country:LI": {
+      "src": "/media/photos/vaduz.webp",
+      "alt": {
+        "uk": "Замок Вадуц уночі взимку: підсвічений бергфрід і кругла вежа-рондель над засніженим схилом",
+        "en": "Vaduz Castle on a winter night: the lit keep and round rondel tower above a snowy slope",
+        "es": "El castillo de Vaduz en una noche de invierno: la torre del homenaje iluminada y el torreón redondo sobre una ladera nevada",
+        "fr": "Le château de Vaduz par une nuit d’hiver : donjon illuminé et tour ronde au-dessus d’un versant enneigé"
+      },
+      "author": "Shesmax",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Schloss_Vaduz._Ansicht_von_Osten._2021-01-27_20-17-46.jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
+    },
+    "country:NE": {
+      "src": "/media/photos/niamey.webp",
+      "alt": {
+        "uk": "Ніамей уночі згори: вогні вулиць і перехрестя, будинки в зелені, темне небо",
+        "en": "Niamey at night from above: street lights and a crossroads, houses among trees, a dark sky",
+        "es": "Niamey de noche desde lo alto: luces de calles y un cruce, casas entre árboles y el cielo oscuro",
+        "fr": "Niamey la nuit vue d’en haut : lumières des rues et d’un carrefour, maisons dans la verdure, ciel sombre"
+      },
+      "author": "Roland (rolandh)",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Niamey_night.jpg",
+      "position": {
+        "x": 55,
+        "y": 70
+      }
     }
   }
 }

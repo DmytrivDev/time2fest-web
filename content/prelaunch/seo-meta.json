@@ -2574,6 +2574,42 @@
         "title": "Nouvel An en Bosnie-Herzégovine : Sarajevo | Time2Fest",
         "description": "Ski à minuit à Jahorina, grand concert à Sarajevo et « Sarajevo, ljubavi moja » : la Bosnie-Herzégovine fête 2027 à 23 h UTC, et la nuit dure jusqu’à l’aube."
       }
+    },
+    "LI": {
+      "uk": {
+        "title": "Новий рік у Ліхтенштейні: Вадуц | Time2Fest",
+        "description": "Ліхтенштейн зустрічає 2027 рік о 23:00 UTC: ковзанка на Ратушній площі Вадуца до першої, феєрверки довкола півночі й давнє дитяче побажання за монету."
+      },
+      "en": {
+        "title": "New Year in Liechtenstein: Vaduz | Time2Fest",
+        "description": "Liechtenstein greets 2027 at 23:00 UTC: skating on the Vaduz Rathausplatz until 1 am, fireworks around midnight and an old children's wish paid in coins."
+      },
+      "es": {
+        "title": "Año Nuevo en Liechtenstein: Vaduz | Time2Fest",
+        "description": "Liechtenstein recibe 2027 a las 23:00 UTC: patinaje en la Rathausplatz de Vaduz hasta la 1, fuegos en torno a medianoche y un viejo deseo infantil."
+      },
+      "fr": {
+        "title": "Nouvel An au Liechtenstein : Vaduz | Time2Fest",
+        "description": "Le Liechtenstein fête 2027 à 23 h UTC : patinoire de la Rathausplatz de Vaduz ouverte jusqu'à 1 h, feux autour de minuit et un vieux vœu d'enfants."
+      }
+    },
+    "NE": {
+      "uk": {
+        "title": "Новий рік у Нігері: Ніамей | Time2Fest",
+        "description": "Нігер зустрічає 2027 рік о 23:00 UTC: Ніамей сигналить кортежами на кругових розв’язках, фади збираються за чаєм і брошетами, а друзі — на вечерю вдома."
+      },
+      "en": {
+        "title": "New Year in Niger: Niamey | Time2Fest",
+        "description": "Niger greets 2027 at 23:00 UTC: Niamey honks in motorcades round its big roundabouts, fadas gather over tea and brochettes, and friends share dinner at home."
+      },
+      "es": {
+        "title": "Año Nuevo en Níger: Niamey | Time2Fest",
+        "description": "Níger recibe 2027 a las 23:00 UTC: Niamey toca la bocina en caravanas por sus rotondas, las fadas se juntan con té y brochetas y los amigos cenan en casa."
+      },
+      "fr": {
+        "title": "Nouvel An au Niger : Niamey | Time2Fest",
+        "description": "Le Niger fête 2027 à 23 h UTC : Niamey klaxonne en cortège autour des ronds-points, les fadas se réunissent autour du thé et des brochettes, on dîne entre amis."
+      }
     }
   }
 }

@@ -4406,5 +4406,61 @@
       "description": "Ski à minuit à Jahorina, grand concert à Sarajevo et « Sarajevo, ljubavi moja » : la Bosnie-Herzégovine fête 2027 à 23 h UTC, et la nuit dure jusqu’à l’aube."
     },
     "kit": "ba"
+  },
+  "LI": {
+    "text": "« Une bonne année, une longue vie, la santé et une place au ciel » : avec ce vieux vœu, les enfants du Liechtenstein saluent les adultes au Nouvel An, qui les remercient de quelques pièces. Ici, les fêtes du Nouvel An font partie d’une longue saison qui va de Noël à l’Épiphanie : le 6 janvier, les chanteurs à l’étoile parcourent les rues et les enfants donnent tout ce qu’ils récoltent à un projet d’entraide.\n\nVaduz accueille minuit sur une patinoire en plein centre : le soir du réveillon, la patinoire de la Rathausplatz reste ouverte jusqu’à 1 h, entrée libre. Les feux d’artifice privés ne sont tolérés qu’autour de minuit et jusqu’à 1 h ; ensuite, le repos nocturne s’impose dans tout le pays. Le grand feu d’artifice du Liechtenstein a lieu le 15 août, fête nationale, près du château de Vaduz.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "letter",
+        "title": "Un vœu contre une pièce",
+        "text": "Selon une vieille coutume, les enfants souhaitent aux adultes une bonne année, une longue vie, la santé et une place au ciel — et reçoivent des pièces en retour."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Patiner jusqu’à 1 h",
+        "text": "Le soir du réveillon, la patinoire Vaduz on Ice de la Rathausplatz reste ouverte jusqu’à 1 h, entrée libre, à côté d’une disco en plein air."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux autour de minuit",
+        "text": "Au Liechtenstein, les feux partent autour de minuit et pas après 1 h ; ensuite, c’est le repos nocturne. Les communes conseillent des volcans discrets plutôt que des pétards."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Liechtenstein : Vaduz | Time2Fest",
+      "description": "Le Liechtenstein fête 2027 à 23 h UTC : patinoire de la Rathausplatz de Vaduz ouverte jusqu'à 1 h, feux autour de minuit et un vieux vœu d'enfants."
+    },
+    "kit": "li"
+  },
+  "NE": {
+    "text": "Le Niger fête le nouvel an deux fois : l’an musulman, au mois de mouharram, selon le calendrier lunaire, et le 1er janvier grégorien, jour férié. La nuit qui le précède, chacun la passe à sa façon. Certains invitent des amis à dîner à la maison, d’autres restent dans leur fada, ce cercle d’amis qui se retrouve autour d’un thé et, cette nuit-là, de brochettes grillées. Une partie des croyants ne fête pas du tout le réveillon.\n\nÀ minuit, Niamey éclate en concert de klaxons : des cortèges de motos et de voitures tournent autour des grands ronds-points au son des pétards, et des jeunes tirent leur propre feu d’artifice place Anoutab. La fête de rue est brève : ensuite, les uns rentrent chez eux, les autres filent en boîte de nuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Une nuit à la fada",
+        "text": "La fada, c’est un cercle d’amis qui se retrouve pour discuter autour d’un thé. Le soir du réveillon, on y ajoute des brochettes grillées."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Klaxons aux ronds-points",
+        "text": "À minuit, motos et voitures font le tour des grands ronds-points de Niamey — Mali Béro, Martyrs, Liberté — en cortège, klaxons et pétards à l’appui."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Dîner entre amis à la maison",
+        "text": "Tout le monde ne descend pas dans la rue : beaucoup invitent leurs amis à un dîner du Nouvel An à la maison, parfois une cinquantaine de convives."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Niger : Niamey | Time2Fest",
+      "description": "Le Niger fête 2027 à 23 h UTC : Niamey klaxonne en cortège autour des ronds-points, les fadas se réunissent autour du thé et des brochettes, on dîne entre amis."
+    },
+    "kit": "ne"
   }
 }

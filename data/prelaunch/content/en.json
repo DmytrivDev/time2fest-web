@@ -4406,5 +4406,61 @@
       "description": "Midnight skiing on Jahorina, a big concert in Sarajevo and \"Sarajevo, ljubavi moja\": Bosnia and Herzegovina greets 2027 at 23:00 UTC and parties till dawn."
     },
     "kit": "ba"
+  },
+  "LI": {
+    "text": "“A good new year, a long life, good health and a place in heaven” — with this old wish children in Liechtenstein greet the grown-ups at New Year, and are thanked with coins. The New Year days here belong to one long season from Christmas to Epiphany: on 6 January the star singers walk the streets, and the children give everything they collect to an aid project.\n\nVaduz meets midnight on an ice rink in the middle of town: on New Year’s Eve the rink on the Rathausplatz stays open until 1 am with free entry. Private fireworks are tolerated only around midnight and until 1 am — after that, night rest falls across the country. Liechtenstein saves its big fireworks for 15 August, the national holiday by Vaduz Castle.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "letter",
+        "title": "A wish for a coin",
+        "text": "By old custom, children wish the grown-ups a good new year, a long life, good health and a place in heaven — and get coins for it."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Skating until 1 am",
+        "text": "On New Year’s Eve the Vaduz on Ice rink on the Rathausplatz stays open until 1 am with free entry, next to an open-air disco."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks only at midnight",
+        "text": "In Liechtenstein fireworks go up around midnight and no later than 1 am, then night rest begins. Towns suggest quiet fountains instead of loud bangers."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Liechtenstein: Vaduz | Time2Fest",
+      "description": "Liechtenstein greets 2027 at 23:00 UTC: skating on the Vaduz Rathausplatz until 1 am, fireworks around midnight and an old children's wish paid in coins."
+    },
+    "kit": "li"
+  },
+  "NE": {
+    "text": "Niger welcomes the new year twice: the Muslim one in the month of Muharram, by the lunar calendar, while the Gregorian 1 January is a public holiday. Everyone spends the night before it in their own way. Some invite friends for dinner at home, others sit in their fada — a circle of friends who meet over tea, and on this night over grilled brochettes too. Some believers don't mark the holiday at all.\n\nAt midnight Niamey bursts into car horns: motorcades of motorbikes and cars circle the big roundabouts to the crackle of firecrackers, and young people on Place Anoutab launch their own fireworks. The street party is short — afterwards some head home, others go on to the nightclubs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "A night at the fada",
+        "text": "A fada is a circle of friends who meet to talk over tea. On New Year's Eve the tea comes with brochettes — grilled meat on skewers."
+      },
+      {
+        "id": "t2",
+        "iconId": "address",
+        "title": "Horns at the roundabouts",
+        "text": "At midnight motorbikes and cars drive in convoys round Niamey's big roundabouts — Mali Béro, Martyrs, Liberté — honking and setting off firecrackers."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Dinner with friends at home",
+        "text": "Not everyone takes to the streets: many invite friends for a New Year dinner at home — sometimes as many as fifty guests."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Niger: Niamey | Time2Fest",
+      "description": "Niger greets 2027 at 23:00 UTC: Niamey honks in motorcades round its big roundabouts, fadas gather over tea and brochettes, and friends share dinner at home."
+    },
+    "kit": "ne"
   }
 }

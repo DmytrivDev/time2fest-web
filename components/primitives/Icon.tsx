@@ -126,7 +126,8 @@ export type IconName =
   | 'tradition-sunset'
   | 'tradition-cliff'
   | 'tradition-book'
-  | 'tradition-ladle';
+  | 'tradition-ladle'
+  | 'tradition-letter';
 
 export type IconSize = 9 | 12 | 14 | 15 | 16 | 18 | 20 | 22 | 24 | 26 | 32;
 
@@ -768,6 +769,13 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M3.5 10.5h9a4.5 4.5 0 0 1-9 0z" />
       <path d="M12.5 10.5L20 4" />
       <path d="M8 17.6c-.9 1.1-.9 2 0 2.6.9-.6.9-1.5 0-2.6z" />
+    </>
+  ),
+  'tradition-letter': (
+    <>
+      <path d="M6 3h9l4 4v14H6z" />
+      <path d="M15 3v4h4" />
+      <path d="M9 11h7M9 14.5h7M9 18h4" />
     </>
   ),
 };

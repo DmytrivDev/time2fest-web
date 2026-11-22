@@ -1,0 +1,103 @@
+{
+  "code": "LI",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "vaduz",
+  "names": {
+    "uk": {
+      "name": "Ліхтенштейн",
+      "city": "Вадуц",
+      "cityIn": "у Вадуці",
+      "countryIn": "у Ліхтенштейні",
+      "caps": "ЛІХТЕНШТЕЙН"
+    },
+    "en": {
+      "name": "Liechtenstein",
+      "city": "Vaduz",
+      "cityIn": "in Vaduz",
+      "countryIn": "in Liechtenstein",
+      "caps": "LIECHTENSTEIN"
+    },
+    "es": {
+      "name": "Liechtenstein",
+      "city": "Vaduz",
+      "cityIn": "en Vaduz",
+      "countryIn": "en Liechtenstein",
+      "caps": "LIECHTENSTEIN"
+    },
+    "fr": {
+      "name": "Liechtenstein",
+      "city": "Vaduz",
+      "cityIn": "à Vaduz",
+      "countryIn": "au Liechtenstein",
+      "caps": "LIECHTENSTEIN"
+    }
+  },
+  "picto": "M5 25 L5 17.5 L7.2 17.5 L7.2 14.5 L9.4 14.5 L9.4 11.5 L11.6 11.5 L11.6 14.5 L13.8 14.5 L13.8 17.5 L14.6 17.5 L14.6 10.4 L13.6 10.4 L20.3 3.4 L27 10.4 L26 10.4 L26 16.6 L27 16.6 Q31.2 12.6 35.4 16.6 L35.4 25 M5 25 L35.4 25 M14.6 17.5 L14.6 25 M26 16.6 L26 25 M5 22.8 L7 22.8 M9.6 22.8 L11.8 22.8 M28 22.8 L30 22.8 M32.4 22.8 L34.4 22.8 M5 25 L6.6 29.2 L10.4 30.4 L13.2 33.8 L17.6 32.6 L21.4 35.4 L25.8 32.4 L30.2 31.4 L33.4 28.6 L35.4 25 M12.4 27.6 L13.6 30.6 M21 27.4 L21.6 31.4 M28.4 27.6 L27.6 30 M18.4 13 L18.4 15.4 M22.2 13 L22.2 15.4 M26.6 19.4 L35.4 19.4",
+  "flagColors": [
+    "#002B7F",
+    "#CE1126",
+    "#FFD83D"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ліхтенштейні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Liechtenstein"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Liechtenstein"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Liechtenstein"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

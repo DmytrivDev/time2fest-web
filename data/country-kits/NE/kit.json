@@ -1,0 +1,103 @@
+{
+  "code": "NE",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "niamey",
+  "names": {
+    "uk": {
+      "name": "Нігер",
+      "city": "Ніамей",
+      "cityIn": "у Ніамеї",
+      "caps": "НІГЕР",
+      "countryIn": "у Нігері"
+    },
+    "en": {
+      "name": "Niger",
+      "city": "Niamey",
+      "cityIn": "in Niamey",
+      "caps": "NIGER",
+      "countryIn": "in Niger"
+    },
+    "es": {
+      "name": "Níger",
+      "city": "Niamey",
+      "cityIn": "en Niamey",
+      "caps": "NÍGER",
+      "countryIn": "en Níger"
+    },
+    "fr": {
+      "name": "Niger",
+      "city": "Niamey",
+      "cityIn": "à Niamey",
+      "caps": "NIGER",
+      "countryIn": "au Niger"
+    }
+  },
+  "picto": "M16.40 7.00 L16.24 9.14 L15.95 11.28 L15.60 13.42 L15.18 15.56 L14.72 17.70 L14.21 19.84 L13.66 21.98 L13.07 24.12 L12.45 26.26 L11.80 28.40 M23.60 7.00 L23.76 9.14 L24.05 11.28 L24.40 13.42 L24.82 15.56 L25.28 17.70 L25.79 19.84 L26.34 21.98 L26.93 24.12 L27.55 26.26 L28.20 28.40 M16.4 7 V4.2 M23.6 7 V4.2 M16.4 7 H18.2 Q20 2.4 21.8 7 H23.6 M16.27 10.30 L12.87 11.20 L16.27 12.10 M23.73 10.30 L27.13 11.20 L23.73 12.10 M15.47 14.70 L12.07 15.60 L15.47 16.50 M24.53 14.70 L27.93 15.60 L24.53 16.50 M14.47 19.10 L11.07 20.00 L14.47 20.90 M25.53 19.10 L28.93 20.00 L25.53 20.90 M13.29 23.50 L9.89 24.40 L13.29 25.30 M26.71 23.50 L30.11 24.40 L26.71 25.30 M3.5 35 V29 Q5.2 26.4 6.9 29 Q8.6 26.4 10.3 29 Q11.4 26.6 11.9 28.4 M36.5 35 V29 Q34.8 26.4 33.1 29 Q31.4 26.4 29.7 29 Q28.6 26.6 28.1 28.4 M17.6 35 V31.4 Q20 28.6 22.4 31.4 V35 M2.5 35 H37.5",
+  "flagColors": [
+    "#E05206",
+    "#FFFFFF",
+    "#0DB02B"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нігері"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Niger"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Níger"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Niger"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
