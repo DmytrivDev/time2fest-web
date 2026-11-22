@@ -55,6 +55,9 @@ jobs:
         run: |
           umask 077
           printf '%s\n' "$T2F_REHEARSAL_SSH_KEY" > "$RUNNER_TEMP/t2f_key"
+          # infra/ops викликає ssh з `-F none` і без `-i`: ключ має лежати там, де ssh шукає його сам.
+          mkdir -p "$HOME/.ssh"
+          cp "$RUNNER_TEMP/t2f_key" "$HOME/.ssh/id_ed25519"
           printf '%s\n' "$T2F_REHEARSAL_KNOWN_HOSTS" > "$RUNNER_TEMP/t2f_known_hosts"
           echo "T2F_SSH_KEY_FILE=$RUNNER_TEMP/t2f_key" >> "$GITHUB_ENV"
           echo "T2F_KNOWN_HOSTS_FILE=$RUNNER_TEMP/t2f_known_hosts" >> "$GITHUB_ENV"
@@ -68,4 +71,4 @@ jobs:
         run: pnpm deploy:env -- --env "$T2F_DEPLOY_ENV" --target "$T2F_REHEARSAL_HOST"
       - name: Remove SSH material
         if: always()
-        run: rm -f "$RUNNER_TEMP"/t2f_*
+        run: rm -f "$RUNNER_TEMP"/t2f_* "$HOME/.ssh/id_ed25519"
