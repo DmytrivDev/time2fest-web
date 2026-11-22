@@ -2765,6 +2765,54 @@
         "x": 55,
         "y": 70
       }
+    },
+    "country:LU": {
+      "src": "/media/photos/luxembourg.webp",
+      "alt": {
+        "uk": "Новорічні феєрверки над нічним містом у долині (Люксембург)",
+        "en": "New Year fireworks over the city at night in the valley (Luxembourg)",
+        "es": "Fuegos artificiales de Año Nuevo sobre la ciudad nocturna en el valle (Luxemburgo)",
+        "fr": "Feux d’artifice du Nouvel An au-dessus de la ville la nuit dans la vallée (Luxembourg)"
+      },
+      "author": "felix_w",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Luxembourg_fireworks.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:ME": {
+      "src": "/media/photos/kotor.webp",
+      "alt": {
+        "uk": "Салют над Которською затокою вночі: кулі феєрверку над водою й вогні узбережжя",
+        "en": "Fireworks over the Bay of Kotor at night: bursts above the water and lights along the shore",
+        "es": "Fuegos artificiales sobre la bahía de Kotor de noche: palmeras de fuego sobre el agua y las luces de la costa",
+        "fr": "Feu d’artifice sur les bouches de Kotor la nuit : gerbes au-dessus de l’eau et lumières du rivage"
+      },
+      "author": "Miomir Magdevski",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Boka_Night_Festival,_Fireworks_18.jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
+    },
+    "country:MT": {
+      "src": "/media/photos/valletta.webp",
+      "alt": {
+        "uk": "Салют над Валлеттою вночі: бастіони над водою, купол кармелітської базиліки й шпиль собору Святого Павла, відблиски в гавані Марсамшетт",
+        "en": "Fireworks over Valletta at night: bastions above the water, the dome of the Carmelite Basilica and the spire of St Paul’s Cathedral, reflections in Marsamxett Harbour",
+        "es": "Fuegos artificiales sobre La Valeta de noche: bastiones sobre el agua, la cúpula de la basílica del Carmen y la aguja de la catedral de San Pablo, reflejos en el puerto de Marsamxett",
+        "fr": "Feu d’artifice sur La Valette la nuit : bastions au-dessus de l’eau, dôme de la basilique des Carmes et flèche de la cathédrale Saint-Paul, reflets dans le port de Marsamxett"
+      },
+      "author": "MarcScic",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_Glowing_Night_Over_the_Grand_Harbour.jpg",
+      "position": {
+        "x": 55,
+        "y": 60
+      }
     }
   }
 }

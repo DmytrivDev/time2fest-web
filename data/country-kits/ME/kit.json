@@ -1,0 +1,103 @@
+{
+  "code": "ME",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "podgorica",
+  "names": {
+    "uk": {
+      "name": "Чорногорія",
+      "city": "Подгориця",
+      "cityIn": "у Подгориці",
+      "countryIn": "у Чорногорії",
+      "caps": "ЧОРНОГОРІЯ"
+    },
+    "en": {
+      "name": "Montenegro",
+      "city": "Podgorica",
+      "cityIn": "in Podgorica",
+      "countryIn": "in Montenegro",
+      "caps": "MONTENEGRO"
+    },
+    "es": {
+      "name": "Montenegro",
+      "city": "Podgorica",
+      "cityIn": "en Podgorica",
+      "countryIn": "en Montenegro",
+      "caps": "MONTENEGRO"
+    },
+    "fr": {
+      "name": "Monténégro",
+      "city": "Podgorica",
+      "cityIn": "à Podgorica",
+      "countryIn": "au Monténégro",
+      "caps": "MONTÉNÉGRO"
+    }
+  },
+  "picto": "M7 31 V20.6 H12.4 V31 M7.8 20.6 V16.8 H11.6 V20.6 M7.2 16.8 Q7.4 11.2 9.7 11 Q12 11.2 12.2 16.8 Z M9.7 11 V5.8 M8.4 7.4 H11 M12.4 22 L13.6 19.4 H18.2 V31 M18.2 31 V18.4 L22 14.2 L25.8 18.4 V31 M21 21.4 a1 1 0 1 0 2 0 a1 1 0 1 0 -2 0 M20.9 31 V27.6 Q22 26.2 23.1 27.6 V31 M25.8 31 V10.6 H31.4 V31 M27.4 16 V13.4 Q28.6 12 29.8 13.4 V16 M25.8 20.6 H31.4 M26.2 10.6 Q26.4 7 28.6 6.8 Q30.8 7 31 10.6 M28.6 6.8 V2.8 M27.3 4.2 H29.9 M3 31 H37 M4.4 31 L5.6 33.2 H34.4 L35.6 31 M5 36.6 Q7.5 35.2 10 36.6 T15 36.6 T20 36.6 T25 36.6 T30 36.6 T35 36.6",
+  "flagColors": [
+    "#C40308",
+    "#D3AE3B",
+    "#1D5E91"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Чорногорії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Montenegro"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Montenegro"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Monténégro"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

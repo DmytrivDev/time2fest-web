@@ -978,6 +978,24 @@
       "wide": true,
       "sky": "#2a1d3c",
       "water": "#6e4f46"
+    },
+    "LU": {
+      "src": "/scenes/LU-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#2d3733"
+    },
+    "ME": {
+      "src": "/scenes/ME-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "MT": {
+      "src": "/scenes/MT-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
     }
   }
 }

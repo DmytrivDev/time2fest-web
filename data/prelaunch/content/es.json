@@ -4462,5 +4462,89 @@
       "description": "Níger recibe 2027 a las 23:00 UTC: Niamey toca la bocina en caravanas por sus rotondas, las fadas se juntan con té y brochetas y los amigos cenan en casa."
     },
     "kit": "ne"
+  },
+  "LU": {
+    "text": "«Todo lo mejor en el año nuevo, y una peluca de pelo de cabra, y siete piojos en un solo pelo»: así suena completo el dicho luxemburgués de Año Nuevo, aunque normalmente solo se dice la primera mitad, «Alles Guddes am neie Joer». La mayoría recibe la medianoche en casa, con la familia o los amigos, y la invitación puede llegar ya en otoño. En la mesa hay paté, foie gras, fondue u ostras, y justo antes de las doce los anfitriones sacan de la nevera el crémant, el espumoso local. El 1 de enero, festivo, se duerme hasta tarde y se visita a la familia, y los niños reciben de abuelos y padrinos un «neit Jäerchen»: dulces o algo de dinero.\n\nLa capital no organiza fuegos artificiales y los petardos están prohibidos en la ciudad, así que la noche transcurre en bares, discotecas y bailes. Solo algunos municipios permiten la pirotecnia, y únicamente en una breve franja alrededor de la medianoche.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Crémant a medianoche",
+        "text": "A medianoche los luxemburgueses brindan con crémant, el espumoso local, y a los niños se les sirve algo sin alcohol. Levanta tu copa con ellos."
+      },
+      {
+        "id": "t2",
+        "iconId": "letter",
+        "title": "El deseo de la peluca",
+        "text": "A medianoche se desea «Alles Guddes am neie Joer», y quienes lo saben terminan la rima: «an eng Paréck mat Geessenhoer, a siwe Lais op engem Hoer»."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Un neit Jäerchen para los niños",
+        "text": "El 1 de enero se duerme hasta tarde y se visita a tíos y tías, y los niños reciben de abuelos y padrinos un neit Jäerchen, un «pequeño año nuevo»: caramelos o unas monedas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Luxemburgo | Time2Fest",
+      "description": "Luxemburgo recibe 2027 a las 23:00 UTC con crémant a medianoche entre amigos, una rima sobre una peluca de cabra y visitas en familia con neit Jäerchen."
+    },
+    "kit": "lu"
+  },
+  "ME": {
+    "text": "Desde hace un cuarto de siglo, Budva recibe el Año Nuevo en la plaza frente a las murallas de su casco antiguo: en 2024 la fiesta, gratuita, se celebró por vigésima quinta vez y dura varias noches. A medianoche del 31 de diciembre estallan fuegos sobre la ciudad vieja, y el 1 de enero suena un concierto de Año Nuevo en la plaza. Kotor responde con su «Rock Año Nuevo»: en 1997 organizó el primer concierto de Año Nuevo al aire libre de Montenegro. En Tivat la cuenta atrás se vive junto a la marina de Porto Montenegro, con fuegos sobre los muelles.\n\nOtra noche de fuego llega el 6 de enero, Badnji dan: los hombres traen ramas de roble del bosque y arden grandes hogueras junto a las iglesias. En Navidad hay priganice y bollos con queso casero y pršut, y la noche del 14 de enero muchos reciben el Año Nuevo por segunda vez, según el calendario antiguo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre Budva",
+        "text": "A medianoche estallan fuegos sobre el casco antiguo de Budva, y los conciertos en la plaza principal siguen varias noches seguidas: para recibir 2026 hubo siete."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Rock Año Nuevo en Kotor",
+        "text": "En la plaza principal del casco antiguo de Kotor el Año Nuevo llega con un concierto de rock de grupos de toda la antigua Yugoslavia; el primero al aire libre fue en 1997."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Hogueras de Badnji dan",
+        "text": "El 6 de enero los hombres traen ramas de roble del bosque y arden grandes hogueras junto a las iglesias; al día siguiente, en Navidad, las familias fríen priganice."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Montenegro: Podgorica | Time2Fest",
+      "description": "Montenegro recibe 2027 a las 23:00 UTC: fuegos sobre las murallas de Budva, rock en la plaza de Kotor, la marina de Tivat y otro Año Nuevo el 14 de enero."
+    },
+    "kit": "me"
+  },
+  "MT": {
+    "text": "Cal blanca en el umbral: así recibían antes los malteses el año nuevo, espolvoreando la entrada de casa como señal de pureza y de un nuevo comienzo, mientras el 1 de enero los niños recorrían a sus parientes para pedir l-istrina, monedas y golosinas. Esas costumbres casi han desaparecido, pero la comida familiar de Año Nuevo sigue en pie; una vieja creencia dice que quien come col ese día se quejará todo el año. En las fiestas de invierno se prepara imbuljuta, una bebida caliente de cacao, castañas, clavo y piel de cítricos. Los jóvenes, en cambio, reciben la medianoche en discotecas y fiestas de música electrónica.\n\nLa gran noche del país está en La Valeta: desde 2010 la cuenta atrás se celebra en la plaza de San Jorge con un concierto al aire libre. La última vez, según el Gobierno, acudieron unas 70 000 personas, y a medianoche unos fuegos de 25 minutos, los mayores de la historia de la fiesta, iluminaron el Gran Puerto. Al otro lado del puerto, en el paseo marítimo de Cospicua, sonaba otro concierto.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos en el Gran Puerto",
+        "text": "A medianoche, los malteses ocupan sitios frente al agua del Gran Puerto, en los bastiones y el paseo: el año pasado los fuegos duraron 25 minutos."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Imbuljuta de castañas",
+        "text": "Prepara una imbuljuta caliente con cacao, castañas, clavo y piel de cítricos, la bebida maltesa de las fiestas de invierno."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Comida del 1 de enero",
+        "text": "Reúne a la familia en la mesa el 1 de enero y deja la col para otro día: según una vieja creencia maltesa, quien la come ese día se queja todo el año."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Malta: La Valeta | Time2Fest",
+      "description": "Malta recibe 2027 a las 23:00 UTC con un concierto en la plaza de San Jorge de La Valeta, fuegos sobre el Gran Puerto e imbuljuta caliente de castañas."
+    },
+    "kit": "mt"
   }
 }

@@ -4462,5 +4462,89 @@
       "description": "Le Niger fête 2027 à 23 h UTC : Niamey klaxonne en cortège autour des ronds-points, les fadas se réunissent autour du thé et des brochettes, on dîne entre amis."
     },
     "kit": "ne"
+  },
+  "LU": {
+    "text": "« Tous mes vœux pour la nouvelle année, et une perruque en poils de chèvre, et sept poux sur un seul cheveu » : voilà la comptine luxembourgeoise du Nouvel An en entier, même si l'on n'en dit d'habitude que la première moitié, « Alles Guddes am neie Joer ». La plupart fêtent minuit chez soi, en famille ou entre amis, et l'invitation peut arriver dès l'automne. Sur la table : pâté, foie gras, fondue ou huîtres, et juste avant les douze coups, les hôtes sortent du frigo le crémant, le mousseux local. Le 1er janvier, jour férié, on fait la grasse matinée puis on rend visite à la famille, et les enfants reçoivent de leurs grands-parents et parrains un « neit Jäerchen » : des friandises ou un peu d'argent.\n\nLa capitale n'organise pas de feu d'artifice et les pétards y sont interdits : la nuit se passe dans les bars, les clubs et les bals. Seules quelques communes autorisent la pyrotechnie, et seulement pendant un court créneau autour de minuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Du crémant à minuit",
+        "text": "À minuit, les Luxembourgeois trinquent au crémant, le mousseux local, et les enfants ont une boisson sans alcool. Lève ton verre avec eux."
+      },
+      {
+        "id": "t2",
+        "iconId": "letter",
+        "title": "Le vœu de la perruque",
+        "text": "À minuit, on se souhaite « Alles Guddes am neie Joer », et les connaisseurs finissent la comptine : « an eng Paréck mat Geessenhoer, a siwe Lais op engem Hoer »."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Un neit Jäerchen aux enfants",
+        "text": "Le 1er janvier, on fait la grasse matinée puis on rend visite aux oncles et tantes, et les enfants reçoivent un neit Jäerchen, « petit nouvel an » : bonbons ou quelques pièces."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Luxembourg | Time2Fest",
+      "description": "Le Luxembourg fête 2027 à 23 h UTC : crémant à minuit entre amis, comptine de la perruque en poils de chèvre et visites en famille avec un neit Jäerchen."
+    },
+    "kit": "lu"
+  },
+  "ME": {
+    "text": "Depuis un quart de siècle, Budva fête le Nouvel An sur la place devant les remparts de sa vieille ville : en 2024, la fête gratuite a eu lieu pour la 25e fois, et elle s’étend sur plusieurs soirées. À minuit le 31 décembre, un feu d’artifice éclate au-dessus de la vieille ville, et le 1er janvier un concert du Nouvel An résonne sur la place. Kotor répond avec son « Rock Nouvel An » : en 1997, elle a organisé le premier concert du Nouvel An en plein air du Monténégro. À Tivat, on compte les dernières secondes près de la marina de Porto Montenegro, sous un feu d’artifice au-dessus des pontons.\n\nUne autre nuit de feu arrive le 6 janvier, Badnji dan : les hommes rapportent de la forêt des branches de chêne, et de grands feux brûlent près des églises. À Noël, la table accueille des priganice et des petits pains au fromage maison et au pršut, et dans la nuit du 14 janvier beaucoup fêtent le Nouvel An une seconde fois, selon l’ancien calendrier.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à Budva",
+        "text": "À minuit, un feu d’artifice éclate au-dessus de la vieille ville de Budva, et les concerts sur la place principale durent plusieurs soirs de suite — sept pour l’arrivée de 2026."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Rock Nouvel An à Kotor",
+        "text": "Sur la place principale de la vieille ville de Kotor, le Nouvel An arrive avec un concert de rock de groupes de toute l’ex-Yougoslavie ; le premier en plein air a eu lieu en 1997."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Feux de Badnji dan",
+        "text": "Le 6 janvier, les hommes rapportent des branches de chêne de la forêt et de grands feux brûlent près des églises ; le lendemain, à Noël, les familles font frire des priganice."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Monténégro : Podgorica | Time2Fest",
+      "description": "Le Monténégro fête 2027 à 23 h UTC : feu d’artifice sur les remparts de Budva, rock à Kotor, décompte à la marina de Tivat, second Nouvel An le 14 janvier."
+    },
+    "kit": "me"
+  },
+  "MT": {
+    "text": "De la chaux blanche sur le seuil : c’est ainsi que les Maltais accueillaient autrefois la nouvelle année, en saupoudrant le pas de la porte en signe de pureté et de nouveau départ, tandis que le 1er janvier les enfants faisaient le tour de la famille pour réclamer l-istrina, des pièces et des friandises. Ces coutumes ont presque disparu, mais le déjeuner familial du jour de l’An demeure ; selon une vieille croyance, qui mange du chou ce jour-là gémira toute l’année. Pendant les fêtes d’hiver, on prépare l’imbuljuta, une boisson chaude au cacao, aux châtaignes, au clou de girofle et aux zestes d’agrumes. Les jeunes, eux, fêtent minuit en boîte et dans les soirées électro.\n\nLa grande nuit du pays se passe à La Valette : depuis 2010, le compte à rebours a lieu place Saint-Georges, avec un concert en plein air. La dernière fois, selon le gouvernement, quelque 70 000 personnes sont venues, et à minuit un feu d’artifice de 25 minutes, le plus grand de l’histoire de la fête, a illuminé le Grand Port. De l’autre côté du port, sur le front de mer de Cospicua, un autre concert battait son plein.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu sur le Grand Port",
+        "text": "À minuit, les Maltais prennent place face au Grand Port, sur les bastions et les quais : l’an dernier, le feu d’artifice a duré 25 minutes."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Imbuljuta aux châtaignes",
+        "text": "Prépare une imbuljuta bien chaude au cacao, aux châtaignes, au clou de girofle et aux zestes d’agrumes : la boisson maltaise des fêtes d’hiver."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Déjeuner du 1er janvier",
+        "text": "Réunis la famille à table le 1er janvier et oublie le chou : selon une vieille croyance maltaise, qui en mange ce jour-là gémit toute l’année."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Malte : La Valette | Time2Fest",
+      "description": "Malte fête 2027 à 23 h UTC : concert place Saint-Georges à La Valette, grand feu d’artifice sur le Grand Port et imbuljuta chaude aux châtaignes."
+    },
+    "kit": "mt"
   }
 }

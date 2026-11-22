@@ -2610,6 +2610,60 @@
         "title": "Nouvel An au Niger : Niamey | Time2Fest",
         "description": "Le Niger fête 2027 à 23 h UTC : Niamey klaxonne en cortège autour des ronds-points, les fadas se réunissent autour du thé et des brochettes, on dîne entre amis."
       }
+    },
+    "LU": {
+      "uk": {
+        "title": "Новий рік у Люксембурзі | Time2Fest",
+        "description": "Люксембург зустрічає 2027 рік о 23:00 UTC: креман опівночі вдома з друзями, примовка про козячу перуку, а першого січня — гостини й neit Jäerchen дітям."
+      },
+      "en": {
+        "title": "New Year in Luxembourg | Time2Fest",
+        "description": "Luxembourg greets 2027 at 23:00 UTC with crémant at midnight among friends, a rhyme about a goat-hair wig and family visits with a neit Jäerchen on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Luxemburgo | Time2Fest",
+        "description": "Luxemburgo recibe 2027 a las 23:00 UTC con crémant a medianoche entre amigos, una rima sobre una peluca de cabra y visitas en familia con neit Jäerchen."
+      },
+      "fr": {
+        "title": "Nouvel An au Luxembourg | Time2Fest",
+        "description": "Le Luxembourg fête 2027 à 23 h UTC : crémant à minuit entre amis, comptine de la perruque en poils de chèvre et visites en famille avec un neit Jäerchen."
+      }
+    },
+    "ME": {
+      "uk": {
+        "title": "Новий рік у Чорногорії: Подгориця | Time2Fest",
+        "description": "Чорногорія зустрічає 2027 рік о 23:00 UTC: салют над мурами Будви, рок-концерт на площі Котора, відлік біля марини в Тіваті, а 14 січня — ще один Новий рік."
+      },
+      "en": {
+        "title": "New Year in Montenegro: Podgorica | Time2Fest",
+        "description": "Montenegro greets 2027 at 23:00 UTC: fireworks over Budva’s walls, rock on Kotor’s main square, a countdown at Tivat’s marina, a second New Year on 14 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Montenegro: Podgorica | Time2Fest",
+        "description": "Montenegro recibe 2027 a las 23:00 UTC: fuegos sobre las murallas de Budva, rock en la plaza de Kotor, la marina de Tivat y otro Año Nuevo el 14 de enero."
+      },
+      "fr": {
+        "title": "Nouvel An au Monténégro : Podgorica | Time2Fest",
+        "description": "Le Monténégro fête 2027 à 23 h UTC : feu d’artifice sur les remparts de Budva, rock à Kotor, décompte à la marina de Tivat, second Nouvel An le 14 janvier."
+      }
+    },
+    "MT": {
+      "uk": {
+        "title": "Новий рік на Мальті: Валлетта | Time2Fest",
+        "description": "Мальта зустрічає 2027 рік о 23:00 UTC: концерт на площі Святого Георгія у Валлетті, салют над Великою гаванню й гаряча імбульюта з каштанів і какао."
+      },
+      "en": {
+        "title": "New Year in Malta: Valletta | Time2Fest",
+        "description": "Malta greets 2027 at 23:00 UTC with an open-air concert in St George's Square, Valletta, fireworks over the Grand Harbour and hot chestnut imbuljuta."
+      },
+      "es": {
+        "title": "Año Nuevo en Malta: La Valeta | Time2Fest",
+        "description": "Malta recibe 2027 a las 23:00 UTC con un concierto en la plaza de San Jorge de La Valeta, fuegos sobre el Gran Puerto e imbuljuta caliente de castañas."
+      },
+      "fr": {
+        "title": "Nouvel An à Malte : La Valette | Time2Fest",
+        "description": "Malte fête 2027 à 23 h UTC : concert place Saint-Georges à La Valette, grand feu d’artifice sur le Grand Port et imbuljuta chaude aux châtaignes."
+      }
     }
   }
 }

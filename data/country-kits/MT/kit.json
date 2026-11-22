@@ -1,0 +1,103 @@
+{
+  "code": "MT",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "valletta",
+  "names": {
+    "uk": {
+      "name": "Мальта",
+      "city": "Валлетта",
+      "cityIn": "у Валлетті",
+      "countryIn": "на Мальті",
+      "caps": "МАЛЬТА"
+    },
+    "en": {
+      "name": "Malta",
+      "city": "Valletta",
+      "cityIn": "in Valletta",
+      "countryIn": "in Malta",
+      "caps": "MALTA"
+    },
+    "es": {
+      "name": "Malta",
+      "city": "La Valeta",
+      "cityIn": "en La Valeta",
+      "countryIn": "en Malta",
+      "caps": "MALTA"
+    },
+    "fr": {
+      "name": "Malte",
+      "city": "La Valette",
+      "cityIn": "à La Valette",
+      "countryIn": "à Malte",
+      "caps": "MALTE"
+    }
+  },
+  "picto": "M3 35.6 L5.2 28.5 H34.8 L37 35.6 M4.3 31 H35.7 M6 38.4 Q9.5 37.2 13 38.4 Q16.5 39.6 20 38.4 Q23.5 37.2 27 38.4 Q30.5 39.6 34 38.4 M6 28.5 V22.5 H24 V28.5 M9.5 27 V24.4 M15 27 V24.4 M20.5 27 V24.4 M5.6 22.5 C5.6 13.6 9.8 9.6 15 9.4 C20.2 9.6 24.4 13.6 24.4 22.5 Z M10.4 22.5 Q10.6 14 15 9.4 M19.6 22.5 Q19.4 14 15 9.4 M13 9.6 V6.4 H17 V9.6 M13 6.4 Q15 4.4 17 6.4 M15 5.2 V1.4 M13.6 2.8 H16.4 M27 28.5 V14 H33.5 V28.5 M30.25 16.6 V20 M28.95 23.6 A1.3 1.3 0 1 0 31.55 23.6 A1.3 1.3 0 1 0 28.95 23.6 M27 14 V11.6 M33.5 14 V11.6 M27.9 14 L30.25 1.2 L32.6 14",
+  "flagColors": [
+    "#FFFFFF",
+    "#CF142B",
+    "#FFFFFF"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Мальті"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Malta"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Malta"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Malte"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

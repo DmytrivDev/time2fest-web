@@ -4462,5 +4462,89 @@
       "description": "Niger greets 2027 at 23:00 UTC: Niamey honks in motorcades round its big roundabouts, fadas gather over tea and brochettes, and friends share dinner at home."
     },
     "kit": "ne"
+  },
+  "LU": {
+    "text": "“All the best in the new year — and a wig of goat's hair, and seven lice on one hair”: that is the full Luxembourgish New Year rhyme, though people usually say only the first half, “Alles Guddes am neie Joer”. Most celebrate midnight at home with family or friends, and the invitation may arrive as early as autumn. The table holds pâté, foie gras, fondue or oysters, and just before the stroke of twelve the hosts take a bottle of crémant, the local sparkling wine, out of the fridge. On 1 January, a public holiday, people sleep in and then visit relatives, while children receive a “neit Jäerchen” — sweets or a little money — from grandparents and godparents.\n\nThe capital holds no fireworks display, and firecrackers are banned in the city, so the night plays out in bars, clubs and at balls. Only some municipalities allow fireworks — and only in a short window around midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Crémant at midnight",
+        "text": "At midnight Luxembourgers clink glasses of crémant, the local sparkling wine, while children get something alcohol-free. Raise a glass with them."
+      },
+      {
+        "id": "t2",
+        "iconId": "letter",
+        "title": "The goat-hair wig wish",
+        "text": "At midnight people wish “Alles Guddes am neie Joer”, and those in the know finish the rhyme: “an eng Paréck mat Geessenhoer, a siwe Lais op engem Hoer”."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "A neit Jäerchen for kids",
+        "text": "On 1 January people sleep in and visit aunts and uncles, and children get a neit Jäerchen — a “little new year” of sweets or a few coins — from grandparents and godparents."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Luxembourg | Time2Fest",
+      "description": "Luxembourg greets 2027 at 23:00 UTC with crémant at midnight among friends, a rhyme about a goat-hair wig and family visits with a neit Jäerchen on 1 January."
+    },
+    "kit": "lu"
+  },
+  "ME": {
+    "text": "For a quarter of a century Budva has greeted the New Year on the square in front of its Old Town walls: in 2024 the free celebration was held for the 25th time, and it runs over several evenings. At midnight on 31 December fireworks burst over the Old Town, and on 1 January a New Year concert plays on the square. Kotor answers with its “Rock New Year”: in 1997 it held the first open-air New Year concert in Montenegro. In Tivat the last seconds are counted by the Porto Montenegro marina, with fireworks over the berths.\n\nAnother night of fire comes on 6 January, Badnji dan: men bring oak branches from the forest, and large bonfires burn by the churches. At Christmas the table holds priganice and buns with homemade cheese and pršut, and on the night of 14 January many people greet the New Year a second time — by the old calendar.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over Budva’s walls",
+        "text": "At midnight fireworks burst over Budva’s Old Town, and concerts on the main square go on for several evenings in a row — seven of them for the arrival of 2026."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Rock New Year in Kotor",
+        "text": "On the main square of Kotor’s Old Town the New Year arrives with a rock concert by bands from across the former Yugoslavia; the first open-air show of this kind took place in 1997."
+      },
+      {
+        "id": "t3",
+        "iconId": "flame",
+        "title": "Badnji dan bonfires",
+        "text": "On 6 January men bring oak branches from the forest and large bonfires burn by the churches; the next day, at Christmas, families fry priganice."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Montenegro: Podgorica | Time2Fest",
+      "description": "Montenegro greets 2027 at 23:00 UTC: fireworks over Budva’s walls, rock on Kotor’s main square, a countdown at Tivat’s marina, a second New Year on 14 January."
+    },
+    "kit": "me"
+  },
+  "MT": {
+    "text": "White lime on the doorstep: that is how the Maltese once greeted the new year, sprinkling their thresholds as a sign of purity and a fresh start, while on 1 January children went round their relatives collecting l-istrina, coins and treats. These customs have all but gone, but the family lunch on New Year's Day remains; an old belief says that whoever eats cabbage that day will groan all year. Over the winter holidays people brew imbuljuta, a hot drink of cocoa, chestnuts, cloves and citrus peel. The young, meanwhile, see in midnight at clubs and dance parties.\n\nThe country's big night is in Valletta: since 2010 the countdown has taken place in St George's Square with an open-air concert. Last time, by the government's estimate, about 70,000 people came, and at midnight a 25-minute fireworks display, the largest in the event's history, lit up the Grand Harbour. Across the harbour, on the Cospicua waterfront, another concert was playing.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over Grand Harbour",
+        "text": "At midnight, the Maltese take their places above the Grand Harbour, on the bastions and the waterfront: last year the fireworks over it lasted 25 minutes."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Chestnut imbuljuta",
+        "text": "Brew a hot imbuljuta of cocoa, chestnuts, cloves and citrus peel, the Maltese drink of the winter holidays."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "New Year's Day lunch",
+        "text": "Gather the family at the table on 1 January and leave out the cabbage: an old Maltese belief says whoever eats it that day will groan all year."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Malta: Valletta | Time2Fest",
+      "description": "Malta greets 2027 at 23:00 UTC with an open-air concert in St George's Square, Valletta, fireworks over the Grand Harbour and hot chestnut imbuljuta."
+    },
+    "kit": "mt"
   }
 }
