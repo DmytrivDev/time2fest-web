@@ -540,7 +540,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Feu d’artifice sur Marina Bay",
-        "text": "Le plus grand feu d’artifice du pays est tiré sur Marina Bay ; pour accueillir 2026, il s’est déroulé en quatre parties. La police ferme les quais une fois pleins : mieux vaut suivre l’affluence sur Crowd@MarinaBay."
+        "text": "Le plus grand feu d’artifice du pays est tiré sur Marina Bay ; pour accueillir 2026, il s’est déroulé en quatre parties. La police ferme les quais une fois pleins : l’affluence se suit sur Crowd@MarinaBay."
       },
       {
         "id": "t3",
@@ -561,19 +561,19 @@
       {
         "id": "t1",
         "iconId": "fireworks",
-        "title": "Fête minuit au Niagara",
+        "title": "Minuit au Niagara",
         "text": "Des milliers de personnes fêtent le Nouvel An à Niagara Falls, en Ontario : à minuit, les feux éclatent au-dessus des chutes illuminées."
       },
       {
         "id": "t2",
         "iconId": "door",
-        "title": "Passe à une levée",
-        "text": "Le 1er janvier, le gouverneur général et les lieutenants-gouverneurs des provinces ouvrent leurs portes à tous : serre-leur la main et souhaite-leur bonne année."
+        "title": "Une levée du Nouvel An",
+        "text": "Le 1er janvier, le gouverneur général et les lieutenants-gouverneurs des provinces ouvrent leurs portes à tous : les visiteurs leur serrent la main et leur souhaitent bonne année."
       },
       {
         "id": "t3",
         "iconId": "wave",
-        "title": "Plonge dans le lac glacé",
+        "title": "Plongeon dans le lac glacé",
         "text": "Le 1er janvier, des centaines de personnes sautent dans le lac Ontario glacé à Oakville, souvent déguisées, pour financer l’accès à l’eau potable ailleurs dans le monde."
       }
     ],
@@ -602,7 +602,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Feux tirés des balcons",
-        "text": "La capitale n’a pas de spectacle unique : à minuit, les feux partent des balcons de tout Tbilissi. Le jour, promène-toi sur la place festive de la Première République."
+        "text": "La capitale n’a pas de spectacle unique : à minuit, les feux partent des balcons de tout Tbilissi. Le jour, on se promène sur la place festive de la Première République."
       }
     ],
     "meta": {
@@ -630,7 +630,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Hora et feu d’artifice en ville",
-        "text": "À Chișinău, va place de la Grande Assemblée nationale : l’an dernier, le concert a commencé à 20 h, le feu d’artifice a éclaté à minuit et la hora a duré presque jusqu’à 3 h."
+        "text": "À Chișinău, la fête a lieu place de la Grande Assemblée nationale : l’an dernier, le concert a commencé à 20 h, le feu d’artifice a éclaté à minuit et la hora a duré presque jusqu’à 3 h."
       }
     ],
     "meta": {
@@ -652,7 +652,7 @@
         "id": "t2",
         "iconId": "wave",
         "title": "Minuit à Sea View",
-        "text": "L’an dernier, à minuit, jeunes et familles dansaient au son des tambours sur la plage de Sea View. Pars tôt : voitures et motos affluent, et police et Rangers renforcent les contrôles."
+        "text": "L’an dernier, à minuit, jeunes et familles dansaient au son des tambours sur la plage de Sea View. On y arrive tôt : voitures et motos affluent, et police et Rangers renforcent les contrôles."
       },
       {
         "id": "t3",
@@ -674,7 +674,7 @@
         "id": "t1",
         "iconId": "fireworks",
         "title": "Décompte à Lusail",
-        "text": "En 2026, lasers et musique ont commencé dès 18 h, et à minuit pyrodrones et feu d’artifice ont pris le ciel. Prends le métro : au réveillon, il roulait jusque vers 1 h ou 2 h."
+        "text": "En 2026, lasers et musique ont commencé dès 18 h, et à minuit pyrodrones et feu d’artifice ont pris le ciel. Au réveillon, le métro roulait jusque vers 1 h ou 2 h."
       },
       {
         "id": "t2",
@@ -742,7 +742,7 @@
         "id": "t3",
         "iconId": "suitcase",
         "title": "Le tour avec une valise",
-        "text": "Envie de voyages ? Juste après le toast de minuit, prends une valise et fais le tour du pâté de maisons."
+        "text": "Ceux qui rêvent de voyages prennent une valise juste après le toast de minuit et font le tour du pâté de maisons."
       }
     ],
     "meta": {
@@ -764,7 +764,7 @@
         "id": "t2",
         "iconId": "address",
         "title": "Zones gratuites à Downtown",
-        "text": "À Downtown, les zones publiques sont gratuites, premier arrivé, premier servi, le spectacle passe sur écrans LED, et nourriture et boissons sans alcool sont permises. Les routes y seront fermées dès 16 h : prends le métro, plus de 1,1 million de passagers l’ont pris pour accueillir 2025."
+        "text": "À Downtown, les zones publiques sont gratuites, premier arrivé, premier servi, le spectacle passe sur écrans LED, et nourriture et boissons sans alcool sont permises. Les routes y seront fermées dès 16 h : on y va donc en métro, plus de 1,1 million de passagers l’ont pris pour accueillir 2025."
       },
       {
         "id": "t3",
@@ -792,13 +792,13 @@
         "id": "t2",
         "iconId": "door",
         "title": "Une semaine de visites",
-        "text": "Du 1er janvier jusqu’à Noël, le 6 janvier, rends visite avec cadeaux et vœux : les foyers arméniens ouvrent leurs portes à tous."
+        "text": "Du 1er janvier jusqu’à Noël, le 6 janvier, les Arméniens se rendent visite avec cadeaux et vœux : les foyers ouvrent leurs portes à tous."
       },
       {
         "id": "t3",
         "iconId": "fireworks",
         "title": "Minuit place de la République",
-        "text": "À Erevan, viens au grand sapin de la place de la République : l’an dernier, un concert y a joué dès 23 h, et à minuit, 2 026 drones et un feu d’artifice ont pris le ciel."
+        "text": "À Erevan, la foule se retrouve au grand sapin de la place de la République : l’an dernier, un concert y a joué dès 23 h, et à minuit, 2 026 drones et un feu d’artifice ont pris le ciel."
       }
     ],
     "meta": {
@@ -848,13 +848,13 @@
         "id": "t2",
         "iconId": "suitcase",
         "title": "Jaune et valise",
-        "text": "Porte des sous-vêtements jaunes pour la joie et l’argent. Envie de voyager ? À minuit, fais le tour du pâté de maisons avec une valise."
+        "text": "Porte des sous-vêtements jaunes pour la joie et l’argent. Qui rêve de voyages fait le tour du pâté de maisons avec une valise à minuit."
       },
       {
         "id": "t3",
         "iconId": "fireworks",
         "title": "Feux sur la mer et l’Alameda",
-        "text": "Pas de feux d’artifice privés ici : va voir un spectacle officiel, tiré depuis la mer à Valparaíso, au pied de la tour Entel à Santiago."
+        "text": "Pas de feux d’artifice privés ici : on va voir un spectacle officiel, tiré depuis la mer à Valparaíso, au pied de la tour Entel à Santiago."
       }
     ],
     "meta": {
@@ -904,13 +904,13 @@
         "id": "t2",
         "iconId": "boat",
         "title": "Croisière sur le Nil",
-        "text": "Embarque sur un bateau au Caire : dîner, musique live, danse orientale et tanoura, puis à minuit le compte à rebours sur l’eau."
+        "text": "Au Caire, beaucoup réveillonnent sur un bateau : dîner, musique live, danse orientale et tanoura, puis à minuit le compte à rebours sur l’eau."
       },
       {
         "id": "t3",
         "iconId": "fireworks",
         "title": "Minuit sur la Corniche",
-        "text": "Rends-toi au bord du Nil ou sur un pont : l’an dernier, à minuit, un feu d’artifice nourri a illuminé le centre du Caire et la Corniche."
+        "text": "La foule se masse au bord du Nil et sur les ponts : l’an dernier, à minuit, un feu d’artifice nourri a illuminé le centre du Caire et la Corniche."
       }
     ],
     "meta": {
@@ -988,13 +988,13 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Feu d’artifice sur la tour du KICC",
-        "text": "À Nairobi, compte les secondes au pied de la tour du KICC, en plein centre. Pour accueillir 2025, les spectacles ici et au-dessus de la tour Old Mutual étaient gratuits et ont duré environ 25 minutes."
+        "text": "À Nairobi, la foule compte les secondes au pied de la tour du KICC, en plein centre. Pour accueillir 2025, les spectacles ici et au-dessus de la tour Old Mutual étaient gratuits et ont duré environ 25 minutes."
       },
       {
         "id": "t3",
         "iconId": "music",
         "title": "Cris, danse et klaxons",
-        "text": "À minuit, les Kényans saluent l’année avec des cris de joie et des danses. À Nairobi, l’an dernier, les klaxons s’y sont joints : ajoute ta voix au vacarme."
+        "text": "À minuit, les Kényans saluent l’année avec des cris de joie et des danses. À Nairobi, l’an dernier, les klaxons s’y sont joints aussi dans les rues de la ville."
       }
     ],
     "meta": {
@@ -1022,7 +1022,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Feu d’artifice place Astana",
-        "text": "À Almaty, file sur la Vieille Place : l’an dernier, un concert y a duré jusqu’à minuit et demi, et le feu d’artifice a commencé à minuit."
+        "text": "À Almaty, la foule se retrouve sur la Vieille Place : l’an dernier, un concert y a duré jusqu’à minuit et demi, et le feu d’artifice a commencé à minuit."
       }
     ],
     "meta": {
@@ -1038,7 +1038,7 @@
         "id": "t1",
         "iconId": "fireworks",
         "title": "Minuit sur Galle Face Green",
-        "text": "L’an dernier, à minuit, les feux d’artifice ont éclaté au-dessus de la promenade de Galle Face Green, de Port City et de la Lotus Tower. Viens tôt : la police prévoit foule et embouteillages à Fort, Pettah et Kollupitiya."
+        "text": "L’an dernier, à minuit, les feux d’artifice ont éclaté au-dessus de la promenade de Galle Face Green, de Port City et de la Lotus Tower. On vient tôt : la police prévoit foule et embouteillages à Fort, Pettah et Kollupitiya."
       },
       {
         "id": "t2",
@@ -1078,7 +1078,7 @@
         "id": "t3",
         "iconId": "tree",
         "title": "Place de l’Hôtel-de-Ville, Riga",
-        "text": "Cherche dans les pavés la plaque du sapin de 1510, près de la Maison des Têtes noires. L’an dernier, des DJ ont joué ici et sur les places voisines jusqu’à 2 h."
+        "text": "Une plaque dans les pavés, près de la Maison des Têtes noires, marque l’emplacement du sapin de 1510. L’an dernier, des DJ ont joué ici et sur les places voisines jusqu’à 2 h."
       }
     ],
     "meta": {
@@ -1100,13 +1100,13 @@
         "id": "t2",
         "iconId": "suitcase",
         "title": "Le tour avec la valise",
-        "text": "Dès minuit, prends une valise et fais le tour du pâté de maisons : plus tu vas loin, plus tu voyageras loin cette année. Le jaune, c’est pour l’argent."
+        "text": "Dès minuit, certains prennent une valise et font le tour du pâté de maisons : plus on va loin, plus on voyagera loin cette année. Le jaune, c’est pour l’argent."
       },
       {
         "id": "t3",
         "iconId": "music",
         "title": "Fête au pied de l’Ange",
-        "text": "À Mexico, va sur le Paseo de la Reforma : l’an dernier, des DJ ont joué au pied de l’Ange de l’Indépendance de 18 h à 2 h, entrée libre."
+        "text": "À Mexico, la fête se tient sur le Paseo de la Reforma : l’an dernier, des DJ ont joué au pied de l’Ange de l’Indépendance de 18 h à 2 h, entrée libre."
       }
     ],
     "meta": {
@@ -1184,7 +1184,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Feu d’artifice sur la Save",
-        "text": "À minuit, lève les yeux vers le ciel au-dessus de la Save : pour le Nouvel An 2026, le feu d’artifice tiré de la tour Kula Beograd a duré quinze minutes et se voyait dans tout le Nouveau Belgrade."
+        "text": "À minuit, tous les regards se tournent vers le ciel au-dessus de la Save : pour le Nouvel An 2026, le feu d’artifice tiré de la tour Kula Beograd a duré quinze minutes et se voyait dans tout le Nouveau Belgrade."
       },
       {
         "id": "t3",
@@ -1246,7 +1246,7 @@
         "id": "t3",
         "iconId": "music",
         "title": "Minuit sur la place Brion",
-        "text": "Prends une chaise et de quoi manger, direction la place Brion à Otrobanda : groupes, bénédiction de l’évêque et, à minuit, embrassades avec tous tes voisins et feux d’artifice sur la baie."
+        "text": "Chacun apporte sa chaise et de quoi manger sur la place Brion à Otrobanda : groupes, bénédiction de l’évêque et, à minuit, embrassades avec tous les voisins et feux d’artifice sur la baie."
       }
     ],
     "meta": {
@@ -1346,7 +1346,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Feu d’artifice à Bakou",
-        "text": "Va sur le boulevard du bord de mer, face à la Caspienne : en décembre dernier, marché et patinoire, et à minuit le feu d’artifice éclate sur la baie."
+        "text": "La foule se retrouve sur le boulevard du bord de mer, face à la Caspienne : en décembre dernier, marché et patinoire, et à minuit le feu d’artifice éclate sur la baie."
       }
     ],
     "meta": {
@@ -1398,7 +1398,7 @@
         "id": "t3",
         "iconId": "tree",
         "title": "Lumières place de la Cathédrale",
-        "text": "Fête minuit à Vilnius près du sapin : à la place du feu d’artifice, des projections colorées sur le clocher et un spectacle de lumière. La pyrotechnie près des églises est interdite par la loi."
+        "text": "À Vilnius, on fête minuit près du sapin : à la place du feu d’artifice, des projections colorées sur le clocher et un spectacle de lumière. La pyrotechnie près des églises est interdite par la loi."
       }
     ],
     "meta": {
@@ -1420,7 +1420,7 @@
         "id": "t2",
         "iconId": "wave",
         "title": "Sept vagues, sept vœux",
-        "text": "À minuit, entre dans les vagues et saute-en sept, avec un vœu pour chacune : sept est un nombre sacré dans l’umbanda."
+        "text": "À minuit, on entre dans les vagues et on en saute sept, avec un vœu pour chacune : sept est un nombre sacré dans l’umbanda."
       },
       {
         "id": "t3",
@@ -1462,7 +1462,7 @@
         "id": "t1",
         "iconId": "suitcase",
         "title": "Trois horloges au mur",
-        "text": "Au poste-frontière et au-dessus de l’entrée du motel d’Eucla, trois horloges donnent l’heure d’Adélaïde, de Perth et d’Eucla. Ici, le téléphone reste à l’heure de Perth : compte jusqu’au minuit d’Eucla avec l’horloge murale ou règle-le à la main."
+        "text": "Au poste-frontière et au-dessus de l’entrée du motel d’Eucla, trois horloges donnent l’heure d’Adélaïde, de Perth et d’Eucla. Ici, le téléphone reste à l’heure de Perth : on compte jusqu’au minuit d’Eucla avec l’horloge murale ou en réglant son téléphone à la main."
       },
       {
         "id": "t2",
@@ -1522,7 +1522,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Une couverture à Waikiki",
-        "text": "Le feu d’artifice de minuit à Honolulu se voit le mieux depuis la plage de Waikiki : apporte une chaise ou une couverture. La plus grande foule se rassemble près du Hilton Hawaiian Village."
+        "text": "Le feu d’artifice de minuit à Honolulu se voit le mieux depuis la plage de Waikiki : on y vient avec chaises et couvertures. La plus grande foule se rassemble près du Hilton Hawaiian Village."
       }
     ],
     "kit": "us-10"
@@ -1564,7 +1564,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Deux feux sur Denver",
-        "text": "Le spectacle gratuit part des toits du centre à 21 h, puis de nouveau à minuit ; regarde-le depuis la 16th Street. De 19 h à 7 h, les bus et trains de RTD sont gratuits."
+        "text": "Le spectacle gratuit part des toits du centre à 21 h, puis de nouveau à minuit ; on le voit bien depuis la 16th Street. De 19 h à 7 h, les bus et trains de RTD sont gratuits."
       },
       {
         "id": "t3",
@@ -1594,7 +1594,7 @@
         "id": "t3",
         "iconId": "sun",
         "title": "Première randonnée de l’année",
-        "text": "Le 1er janvier est férié, et les parcs d’État de tout le pays organisent des randonnées du premier jour. En Alaska, pars vers midi : fin décembre, Anchorage a moins de six heures de jour."
+        "text": "Le 1er janvier est férié, et les parcs d’État de tout le pays organisent des randonnées du premier jour. En Alaska, on part vers midi : fin décembre, Anchorage a moins de six heures de jour."
       }
     ],
     "kit": "us-9"
@@ -1612,13 +1612,13 @@
         "id": "t2",
         "iconId": "music",
         "title": "Dîner aux chants rapanui",
-        "text": "Réserve un dîner de réveillon à Hanga Roa avec musique live, chants et danses rapanui, puis file voir le feu d’artifice à Hanga Vare Vare."
+        "text": "À Hanga Roa, le dîner de réveillon se fait avec musique live, chants et danses rapanui, puis on file voir le feu d’artifice à Hanga Vare Vare."
       },
       {
         "id": "t3",
         "iconId": "sunset",
         "title": "Soleil et moaïs",
-        "text": "Admire le dernier coucher de soleil de l’année près des moaïs de Tahai, sans guide obligatoire. Le 1er janvier, Tongariki ouvre au lever du soleil, avec billet du parc et guide local."
+        "text": "Le dernier coucher de soleil de l’année se contemple près des moaïs de Tahai, sans guide obligatoire. Le 1er janvier, Tongariki ouvre au lever du soleil, avec billet du parc et guide local."
       }
     ],
     "kit": "cl-5"
@@ -1690,7 +1690,7 @@
         "id": "t3",
         "iconId": "music",
         "title": "Une nuit au Malecón Tajamar",
-        "text": "À Cancún, va sur le front de mer du Malecón Tajamar : l’an dernier, des groupes y ont joué jusqu’à 5 h et des drones ont illuminé minuit."
+        "text": "À Cancún, la fête se tient sur le front de mer du Malecón Tajamar : l’an dernier, des groupes y ont joué jusqu’à 5 h et des drones ont illuminé minuit."
       }
     ],
     "kit": "mx-5"
@@ -1701,14 +1701,14 @@
       {
         "id": "t1",
         "iconId": "door",
-        "title": "Salue le lieutenant-gouverneur",
+        "title": "Levée chez le lieutenant-gouverneur",
         "text": "Le 1er janvier, le lieutenant-gouverneur de la province, comme le gouverneur général, reçoit les visiteurs du Nouvel An : la porte est ouverte à tous, enfants compris."
       },
       {
         "id": "t2",
         "iconId": "bell",
-        "title": "Ouvre aux mummers",
-        "text": "Si des visiteurs déguisés frappent à ta porte pendant les jours de Noël, fais-les entrer, offre-leur un verre et devine qui se cache sous le masque."
+        "title": "Des mummers à la porte",
+        "text": "Pendant les jours de Noël, des visiteurs déguisés frappent aux portes : les hôtes les font entrer, leur offrent un verre et devinent qui se cache sous le masque."
       },
       {
         "id": "t3",
@@ -1731,13 +1731,13 @@
       {
         "id": "t2",
         "iconId": "door",
-        "title": "Passe à Government House",
+        "title": "Levée à Government House",
         "text": "Le 1er janvier, le lieutenant-gouverneur ouvre ses portes à tous, sans invitation ; environ 700 invités viennent chaque année. Le Nouveau-Brunswick tient aussi sa levée."
       },
       {
         "id": "t3",
         "iconId": "wave",
-        "title": "Plonge dans le lac Banook",
+        "title": "Plongeon dans le lac Banook",
         "text": "Le 1er janvier à Dartmouth, on taille un grand bassin dans la glace, et des centaines de courageux sautent à l’eau sous les encouragements depuis la rive."
       }
     ],
@@ -1762,7 +1762,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Minuit sur le Malecón",
-        "text": "À Mazatlán, va sur le front de mer près des grandes lettres de la ville : l’an dernier, musique dès 21 h, drones et feu d’artifice, entrée libre."
+        "text": "À Mazatlán, la fête a lieu sur le front de mer près des grandes lettres de la ville : l’an dernier, musique dès 21 h, drones et feu d’artifice, entrée libre."
       }
     ],
     "kit": "mx-7"
@@ -1774,7 +1774,7 @@
         "id": "t1",
         "iconId": "suitcase",
         "title": "Une valise pour voyager",
-        "text": "Dès les douze coups, sors avec une valise et fais le tour du pâté de maisons : plus tu vas loin, dit-on, plus tu voyageras loin cette année."
+        "text": "Dès les douze coups, certains sortent avec une valise et font le tour du pâté de maisons : plus on va loin, dit-on, plus on voyagera loin cette année."
       },
       {
         "id": "t2",
@@ -1786,7 +1786,7 @@
         "id": "t3",
         "iconId": "feast",
         "title": "La rosca devant le Cecut",
-        "text": "Début janvier, passe au Centre culturel de Tijuana : l’an dernier, le 10 janvier, une rosca des Rois géante y a été partagée gratuitement autour du dôme IMAX."
+        "text": "La fête ne s’arrête pas au réveillon : l’an dernier, le 10 janvier, une rosca des Rois géante a été partagée gratuitement autour du dôme IMAX du Centre culturel de Tijuana."
       }
     ],
     "kit": "mx-8"
@@ -1798,7 +1798,7 @@
         "id": "t1",
         "iconId": "fireworks",
         "title": "Le Strip à pied",
-        "text": "Le soir du Nouvel An, le Strip de Las Vegas est fermé aux voitures et le boulevard se remplit de piétons. À minuit, les feux partent des toits des complexes pendant huit minutes : laisse les grands sacs à l’hôtel."
+        "text": "Le soir du Nouvel An, le Strip de Las Vegas est fermé aux voitures et le boulevard se remplit de piétons. À minuit, les feux partent des toits des complexes pendant huit minutes ; l’an dernier, les grands sacs étaient interdits."
       },
       {
         "id": "t2",
@@ -1873,19 +1873,19 @@
       {
         "id": "t1",
         "iconId": "door",
-        "title": "Salue le gouverneur",
-        "text": "Le 1er janvier, tout le monde peut entrer à une levée du Nouvel An, enfants compris : serre la main de l’hôte et souhaite-lui une bonne année."
+        "title": "Levée chez le gouverneur",
+        "text": "Le 1er janvier, tout le monde peut entrer à une levée du Nouvel An, enfants compris : les invités serrent la main de l’hôte et lui souhaitent une bonne année."
       },
       {
         "id": "t2",
         "iconId": "fireworks",
-        "title": "Fête minuit sur la montagne",
+        "title": "Minuit sur la montagne",
         "text": "L’an dernier, sur le mont Grouse au-dessus de Vancouver, on a patiné au son d’un DJ, puis à minuit un feu d’artifice en musique a illuminé le sommet."
       },
       {
         "id": "t3",
         "iconId": "wave",
-        "title": "Rejoins le Polar Bear Swim",
+        "title": "Le Polar Bear Swim",
         "text": "Chaque 1er janvier depuis 1920, Vancouver plonge dans l’eau froide d’English Bay ; c’est gratuit, et plus de 11 000 nageurs se sont inscrits l’an dernier."
       }
     ],
@@ -1897,19 +1897,19 @@
       {
         "id": "t1",
         "iconId": "music",
-        "title": "Danse à une Malanka",
+        "title": "Une soirée Malanka",
         "text": "En janvier, les communautés ukrainiennes d’Edmonton et de Winnipeg organisent des Malankas, galas du Nouvel An selon l’ancien calendrier, avec souper, musique live et danse tard dans la nuit."
       },
       {
         "id": "t2",
         "iconId": "fireworks",
-        "title": "Patine, puis vois les feux",
-        "text": "À Edmonton et à Calgary, la fête de la ville est gratuite : patine en musique et, avec des enfants, viens avant 20 h, quand Edmonton tire un premier feu d’artifice."
+        "title": "Patinoire, puis feux",
+        "text": "À Edmonton et à Calgary, la fête de la ville est gratuite : on patine en musique et les familles arrivent avant 20 h, quand Edmonton tire un premier feu d’artifice."
       },
       {
         "id": "t3",
         "iconId": "door",
-        "title": "Va à la levée du Nouvel An",
+        "title": "La levée du Nouvel An",
         "text": "Le 1er janvier, le lieutenant-gouverneur de l’Alberta ouvre à tous la Maison du gouvernement d’Edmonton : rafraîchissements, visite et carte postale aux soldats canadiens à l’étranger."
       }
     ],
@@ -2124,7 +2124,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Feu de minuit à Garapan",
-        "text": "À minuit, un feu d’artifice s’élève au-dessus de la plage d’un hôtel de Garapan. Les familles de l’île viennent aussi le voir : mieux vaut trouver une place de parking à l’avance."
+        "text": "À minuit, un feu d’artifice s’élève au-dessus de la plage d’un hôtel de Garapan. Les familles de l’île viennent aussi le voir : les places de parking autour partent tôt."
       },
       {
         "id": "t3",
@@ -2298,7 +2298,7 @@
         "id": "t3",
         "iconId": "wave",
         "title": "Une plage propre au matin",
-        "text": "Après le feu d’artifice qui a accueilli 2025, des jeunes de Port Moresby ont nettoyé la plage d’Ela. Commence l’année de la même façon : avec une plage propre pour tous."
+        "text": "Après le feu d’artifice qui a accueilli 2025, des jeunes de Port Moresby ont nettoyé la plage d’Ela : l’année a commencé avec une plage propre pour tous."
       }
     ],
     "meta": {
@@ -2494,7 +2494,7 @@
         "id": "t3",
         "iconId": "sun",
         "title": "570 marches vers le Cristo Rei",
-        "text": "Le premier matin de l’année se savoure au cap Fatucama : 570 marches et 14 stations du chemin de croix mènent à la statue, face à la baie de Dili et à l’île d’Atauro."
+        "text": "Certains accueillent le premier matin de l’année au cap Fatucama : 570 marches et 14 stations du chemin de croix mènent à la statue, face à la baie de Dili et à l’île d’Atauro."
       }
     ],
     "meta": {
@@ -2566,7 +2566,7 @@
         "id": "t1",
         "iconId": "flame",
         "title": "Un barbecue près d’un pondok",
-        "text": "Les Malais des Cocos ont des pondoks, des cabanes de week-end sur les plus grands îlots de l’atoll. Emporte barbecue et ligne de pêche pour une soirée au bord du lagon : même la nuit, il fait rarement moins de 24 °C."
+        "text": "Les Malais des Cocos ont des pondoks, des cabanes de week-end sur les plus grands îlots de l’atoll. On y emporte barbecue et ligne de pêche pour une soirée au bord du lagon : même la nuit, il fait rarement moins de 24 °C."
       },
       {
         "id": "t2",
@@ -2858,7 +2858,7 @@
         "id": "t3",
         "iconId": "glass",
         "title": "Soirée à l’hôtel",
-        "text": "Le 31 décembre, les hôtels internationaux d’Addis-Abeba réunissent des milliers d’invités autour de concerts, d’un DJ et d’un feu d’artifice jusqu’à deux heures. Les billets augmentent chaque année : mieux vaut les prendre tôt."
+        "text": "Le 31 décembre, les hôtels internationaux d’Addis-Abeba réunissent des milliers d’invités autour de concerts, d’un DJ et d’un feu d’artifice jusqu’à deux heures. Les billets augmentent chaque année, alors on les prend tôt."
       }
     ],
     "meta": {
@@ -3238,7 +3238,7 @@
         "id": "t1",
         "iconId": "music",
         "title": "Concert à l’hôtel",
-        "text": "Le soir du réveillon, des stars de la chanson arabe chantent dans les hôtels d’Amman, et la vedette monte sur scène à minuit. Mieux vaut réserver billet et dîner."
+        "text": "Le soir du réveillon, des stars de la chanson arabe chantent dans les hôtels d’Amman, et la vedette monte sur scène à minuit. Billets et dîners se réservent à l’avance."
       },
       {
         "id": "t2",
@@ -3300,7 +3300,7 @@
         "id": "t2",
         "iconId": "glass",
         "title": "Dîner au restaurant",
-        "text": "À Moroni, on réveillonne dans les hôtels et les restaurants autour d’un dîner de fête. Mieux vaut réserver sa table à l’avance."
+        "text": "À Moroni, on réveillonne dans les hôtels et les restaurants autour d’un dîner de fête. Les tables se réservent à l’avance."
       },
       {
         "id": "t3",
@@ -3462,7 +3462,7 @@
         "id": "t1",
         "iconId": "bell",
         "title": "Veillée « crossover »",
-        "text": "Le 31 décembre, rejoins une veillée de nuit : prières et chants continuent jusqu’à minuit, et l’année change en pleine célébration."
+        "text": "Le 31 décembre, on se rassemble pour une veillée de nuit : prières et chants continuent jusqu’à minuit, et l’année change en pleine célébration."
       },
       {
         "id": "t2",
@@ -3490,7 +3490,7 @@
         "id": "t1",
         "iconId": "feast",
         "title": "Le voulé au bord de l’eau",
-        "text": "Réunis famille ou amis sur la plage, allume la braise et fais griller poulet, brochettes, manioc, fruit à pain et bananes, en musique."
+        "text": "Familles et amis se réunissent sur la plage, allument la braise et font griller poulet, brochettes, manioc, fruit à pain et bananes, en musique."
       },
       {
         "id": "t2",
@@ -4028,7 +4028,7 @@
         "id": "t2",
         "iconId": "music",
         "title": "Une nuit jusqu’à l’aube",
-        "text": "Restaurants, clubs et concerts continuent jusqu’au matin ; pour la nuit 2023/24, quelque 750 fêtes étaient prévues dans le pays. Réserve ta table tôt."
+        "text": "Restaurants, clubs et concerts continuent jusqu’au matin ; pour la nuit 2023/24, quelque 750 fêtes étaient prévues dans le pays. Les tables se réservent tôt."
       },
       {
         "id": "t3",
@@ -4062,7 +4062,7 @@
         "id": "t3",
         "iconId": "clock",
         "title": "Jusqu'à minuit sur la place",
-        "text": "Pour le 31 décembre 2025, le gouvernement a annoncé une fête nationale place Makoanyane, à Maseru, de 18 h à minuit. Vérifie le programme 2027 à l'approche de la date."
+        "text": "Pour le 31 décembre 2025, le gouvernement a annoncé une fête nationale place Makoanyane, à Maseru, de 18 h à minuit. Le programme 2027 sera annoncé à l’approche de la date."
       }
     ],
     "meta": {
@@ -4078,7 +4078,7 @@
         "id": "t1",
         "iconId": "bell",
         "title": "Un office de nuit",
-        "text": "Passe les dernières heures de l’année à un office de nuit : à Djouba, la police veille près des églises cette nuit-là pour que tout se passe dans le calme."
+        "text": "Beaucoup passent les dernières heures de l’année à un office de nuit : à Djouba, la police veille près des églises cette nuit-là pour que tout se passe dans le calme."
       },
       {
         "id": "t2",
@@ -4090,7 +4090,7 @@
         "id": "t3",
         "iconId": "door",
         "title": "Un conducteur sobre",
-        "text": "Vous sortez en groupe ? Décidez qui reste sobre ce soir et ramène tout le monde : c’était le conseil donné à Djouba avant le Nouvel An."
+        "text": "Les groupes qui sortent décident qui reste sobre ce soir-là et ramène tout le monde : c’était le conseil donné à Djouba avant le Nouvel An."
       }
     ],
     "meta": {
@@ -4358,13 +4358,13 @@
         "id": "t1",
         "iconId": "feast",
         "title": "Une bûche sur la table",
-        "text": "Commande ta bûche à l’avance : le 31 décembre, les files sont longues devant les pâtisseries, et un réveillon algérien s’en passe rarement."
+        "text": "La bûche se commande à l’avance : le 31 décembre, les files sont longues devant les pâtisseries, et un réveillon algérien s’en passe rarement."
       },
       {
         "id": "t2",
         "iconId": "sunset",
         "title": "Les fêtes dans une oasis",
-        "text": "Accueille l’année au milieu des dunes : chaque fin d’année, des milliers de personnes partent à Taghit, Djanet et Tamanrasset."
+        "text": "Beaucoup accueillent l’année au milieu des dunes : chaque fin d’année, des milliers de personnes partent à Taghit, Djanet et Tamanrasset."
       },
       {
         "id": "t3",

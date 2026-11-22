@@ -540,7 +540,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Fireworks over Marina Bay",
-        "text": "The country's biggest fireworks are over Marina Bay; to welcome 2026 they came in four parts. Police close waterfronts once they fill up, so it's worth checking crowd levels on Crowd@MarinaBay."
+        "text": "The country's biggest fireworks are over Marina Bay; to welcome 2026 they came in four parts. Police close waterfronts once they fill up, so people track crowd levels on Crowd@MarinaBay."
       },
       {
         "id": "t3",
@@ -561,19 +561,19 @@
       {
         "id": "t1",
         "iconId": "fireworks",
-        "title": "See in midnight at Niagara",
+        "title": "Midnight at Niagara",
         "text": "Thousands see in the New Year in Niagara Falls, Ontario: at midnight fireworks burst over the illuminated falls."
       },
       {
         "id": "t2",
         "iconId": "door",
-        "title": "Drop in at a levee",
-        "text": "On 1 January the Governor General and the provincial lieutenant governors open their doors to all: shake hands and wish them a Happy New Year."
+        "title": "A New Year's levee",
+        "text": "On 1 January the Governor General and the provincial lieutenant governors open their doors to all: guests shake hands and wish them a Happy New Year."
       },
       {
         "id": "t3",
         "iconId": "wave",
-        "title": "Take a polar bear dip",
+        "title": "A polar bear dip",
         "text": "On 1 January hundreds of people in Oakville jump into icy Lake Ontario, often in costume, raising money for clean water in other countries."
       }
     ],
@@ -602,7 +602,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Fireworks from Tbilisi balconies",
-        "text": "The capital has no single city show: at midnight fireworks go up from balconies all over Tbilisi. By day, stroll the festive First Republic Square."
+        "text": "The capital has no single city show: at midnight fireworks go up from balconies all over Tbilisi. By day, people stroll the festive First Republic Square."
       }
     ],
     "meta": {
@@ -630,7 +630,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Hora and fireworks downtown",
-        "text": "In Chișinău, head to Great National Assembly Square: last year the concert began at 8 p.m., fireworks went up at midnight and the hora went on until almost 3 a.m."
+        "text": "In Chișinău, the party is on Great National Assembly Square: last year the concert began at 8 p.m., fireworks went up at midnight and the hora went on until almost 3 a.m."
       }
     ],
     "meta": {
@@ -652,7 +652,7 @@
         "id": "t2",
         "iconId": "wave",
         "title": "Midnight at Sea View",
-        "text": "Last year at midnight young people and families danced to drums on Sea View beach. Set off early: cars and motorbikes pour in, and police and Rangers step up checks."
+        "text": "Last year at midnight young people and families danced to drums on Sea View beach. People set off early: cars and motorbikes pour in, and police and Rangers step up checks."
       },
       {
         "id": "t3",
@@ -674,7 +674,7 @@
         "id": "t1",
         "iconId": "fireworks",
         "title": "Countdown on Lusail Boulevard",
-        "text": "In 2026 laser shows and music ran there from 6 pm, and at midnight pyrodrones and fireworks took off. Take the metro: on New Year's Eve it ran late, until about 1–2 am."
+        "text": "In 2026 laser shows and music ran there from 6 pm, and at midnight pyrodrones and fireworks took off. On New Year's Eve the metro ran late, until about 1–2 am."
       },
       {
         "id": "t2",
@@ -742,7 +742,7 @@
         "id": "t3",
         "iconId": "suitcase",
         "title": "A walk with a suitcase",
-        "text": "Dreaming of travel? Right after the midnight toast, grab a suitcase and walk it around the block."
+        "text": "Those dreaming of travel grab a suitcase right after the midnight toast and walk it around the block."
       }
     ],
     "meta": {
@@ -764,7 +764,7 @@
         "id": "t2",
         "iconId": "address",
         "title": "Free viewing areas Downtown",
-        "text": "Public viewing areas in Downtown are free and first come, first served, with LED screens showing the show, and you can bring food and non-alcoholic drinks. Roads there are due to close from 4 pm, so take the metro: over 1.1 million passengers rode it to welcome 2025."
+        "text": "Public viewing areas in Downtown are free and first come, first served, with LED screens showing the show, and food and non-alcoholic drinks are allowed. Roads there are due to close from 4 pm, so people take the metro: over 1.1 million passengers rode it to welcome 2025."
       },
       {
         "id": "t3",
@@ -792,13 +792,13 @@
         "id": "t2",
         "iconId": "door",
         "title": "A week of visits to Christmas",
-        "text": "From 1 January until Christmas on 6 January, go visiting with gifts and wishes: Armenian homes keep their doors open to everyone."
+        "text": "From 1 January until Christmas on 6 January, Armenians go visiting with gifts and wishes: homes keep their doors open to everyone."
       },
       {
         "id": "t3",
         "iconId": "fireworks",
         "title": "Midnight on Republic Square",
-        "text": "In Yerevan, come to the main tree on Republic Square: last year a concert played there from 11 pm, and at midnight 2,026 drones and fireworks took off."
+        "text": "In Yerevan, crowds gather by the main tree on Republic Square: last year a concert played there from 11 pm, and at midnight 2,026 drones and fireworks took off."
       }
     ],
     "meta": {
@@ -848,13 +848,13 @@
         "id": "t2",
         "iconId": "suitcase",
         "title": "Yellow underwear, a suitcase",
-        "text": "Wear yellow underwear for joy and money. Dreaming of travel? At midnight, walk around the block with a suitcase."
+        "text": "Wear yellow underwear for joy and money. Those dreaming of travel walk around the block with a suitcase at midnight."
       },
       {
         "id": "t3",
         "iconId": "fireworks",
         "title": "Fireworks by sea and tower",
-        "text": "There are no private fireworks here, so go to an official show: in Valparaíso they rise from the sea, in Santiago by the Entel Tower."
+        "text": "There are no private fireworks here, so people go to an official show: in Valparaíso they rise from the sea, in Santiago by the Entel Tower."
       }
     ],
     "meta": {
@@ -904,13 +904,13 @@
         "id": "t2",
         "iconId": "boat",
         "title": "A Nile cruise countdown",
-        "text": "Board a Nile boat in Cairo: dinner, live music, belly dancing and tanoura, and at midnight a countdown right on the water."
+        "text": "In Cairo many see in the year on Nile boats: dinner, live music, belly dancing and tanoura, and at midnight a countdown right on the water."
       },
       {
         "id": "t3",
         "iconId": "fireworks",
         "title": "Midnight on the Corniche",
-        "text": "Head to the Nile bank or a bridge: last year a dense barrage of fireworks lit up central Cairo and the Corniche at midnight."
+        "text": "Crowds gather on the Nile bank and bridges: last year a dense barrage of fireworks lit up central Cairo and the Corniche at midnight."
       }
     ],
     "meta": {
@@ -988,13 +988,13 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Fireworks over the KICC tower",
-        "text": "In Nairobi, count down beneath the KICC tower in the centre. For the start of 2025 the shows here and over Old Mutual Tower were free and lasted about 25 minutes."
+        "text": "In Nairobi, crowds count down beneath the KICC tower in the centre. For the start of 2025 the shows here and over Old Mutual Tower were free and lasted about 25 minutes."
       },
       {
         "id": "t3",
         "iconId": "music",
         "title": "Cheers, dancing and car horns",
-        "text": "At midnight Kenyans greet the year with joyful cries and dancing. In Nairobi last year car horns joined in — add your voice to the noise."
+        "text": "At midnight Kenyans greet the year with joyful cries and dancing. In Nairobi last year car horns joined in too, sounding across the city streets."
       }
     ],
     "meta": {
@@ -1022,7 +1022,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Fireworks on Astana Square",
-        "text": "In Almaty, head to Old Square: last year a concert ran there until half past midnight, and the fireworks began at midnight."
+        "text": "In Almaty, crowds gather on Old Square: last year a concert ran there until half past midnight, and the fireworks began at midnight."
       }
     ],
     "meta": {
@@ -1038,7 +1038,7 @@
         "id": "t1",
         "iconId": "fireworks",
         "title": "Midnight on Galle Face Green",
-        "text": "Last year at midnight fireworks burst over the Galle Face Green promenade, Port City and the Lotus Tower. Come early: police expect crowds and heavy traffic in Fort, Pettah and Kollupitiya."
+        "text": "Last year at midnight fireworks burst over the Galle Face Green promenade, Port City and the Lotus Tower. People come early: police expect crowds and heavy traffic in Fort, Pettah and Kollupitiya."
       },
       {
         "id": "t2",
@@ -1078,7 +1078,7 @@
         "id": "t3",
         "iconId": "tree",
         "title": "Town Hall Square, Riga",
-        "text": "Find the plaque in the cobblestones where the 1510 tree stood, by the House of the Blackheads. Last year DJs played here and in nearby squares until 2 a.m."
+        "text": "A plaque in the cobblestones by the House of the Blackheads marks where the 1510 tree stood. Last year DJs played here and in nearby squares until 2 a.m."
       }
     ],
     "meta": {
@@ -1100,13 +1100,13 @@
         "id": "t2",
         "iconId": "suitcase",
         "title": "Suitcase round the block",
-        "text": "As soon as midnight strikes, grab a suitcase and walk round the block: the further you go, the further you’ll travel this year. Yellow underwear is for money."
+        "text": "As soon as midnight strikes, some people grab a suitcase and walk round the block: the further they go, the further they’ll travel this year. Yellow underwear is for money."
       },
       {
         "id": "t3",
         "iconId": "music",
         "title": "Party at the Angel",
-        "text": "In Mexico City head to Paseo de la Reforma: last year DJs played at the Angel of Independence from 6 p.m. to 2 a.m., with free entry."
+        "text": "In Mexico City the party is on Paseo de la Reforma: last year DJs played at the Angel of Independence from 6 p.m. to 2 a.m., with free entry."
       }
     ],
     "meta": {
@@ -1184,7 +1184,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Fireworks over the Sava",
-        "text": "At midnight, look to the sky over the Sava: for New Year 2026 the fireworks from the Kula Beograd tower lasted fifteen minutes and could be seen across New Belgrade."
+        "text": "At midnight all eyes turn to the sky over the Sava: for New Year 2026 the fireworks from the Kula Beograd tower lasted fifteen minutes and could be seen across New Belgrade."
       },
       {
         "id": "t3",
@@ -1246,7 +1246,7 @@
         "id": "t3",
         "iconId": "music",
         "title": "Midnight on Brionplein",
-        "text": "Grab a chair and some food and head to Brionplein in Otrobanda: bands, a blessing from the bishop and, at midnight, hugs with everyone around you and fireworks over the bay."
+        "text": "People bring chairs and food to Brionplein in Otrobanda: bands, a blessing from the bishop and, at midnight, hugs with everyone around and fireworks over the bay."
       }
     ],
     "meta": {
@@ -1346,7 +1346,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Fireworks on Baku’s boulevard",
-        "text": "Head to the Seaside Boulevard by the Caspian: last December it had a fair and an ice rink, and at midnight fireworks burst over the bay."
+        "text": "Crowds gather on the Seaside Boulevard by the Caspian: last December it had a fair and an ice rink, and at midnight fireworks burst over the bay."
       }
     ],
     "meta": {
@@ -1398,7 +1398,7 @@
         "id": "t3",
         "iconId": "tree",
         "title": "Lights on Cathedral Square",
-        "text": "Meet midnight in Vilnius by the Christmas tree: instead of fireworks there are colourful projections on the bell tower and a light show. Pyrotechnics near churches are banned by law."
+        "text": "In Vilnius people meet midnight by the Christmas tree: instead of fireworks there are colourful projections on the bell tower and a light show. Pyrotechnics near churches are banned by law."
       }
     ],
     "meta": {
@@ -1420,7 +1420,7 @@
         "id": "t2",
         "iconId": "wave",
         "title": "Seven waves, seven wishes",
-        "text": "At midnight, step into the surf and jump seven waves, making a wish on each: seven is a sacred number in Umbanda."
+        "text": "At midnight, people step into the surf and jump seven waves, making a wish on each: seven is a sacred number in Umbanda."
       },
       {
         "id": "t3",
@@ -1462,7 +1462,7 @@
         "id": "t1",
         "iconId": "suitcase",
         "title": "Three clocks on the wall",
-        "text": "At the border checkpoint and above the Eucla Motel entrance hang three clocks: Adelaide, Perth and Eucla time. Phones here show Perth time, so count down to Eucla's midnight by the clock on the wall or set yours by hand."
+        "text": "At the border checkpoint and above the Eucla Motel entrance hang three clocks: Adelaide, Perth and Eucla time. Phones here show Perth time, so locals count down to Eucla's midnight by the clock on the wall or set their phones by hand."
       },
       {
         "id": "t2",
@@ -1522,7 +1522,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "A blanket on Waikiki Beach",
-        "text": "Honolulu’s midnight fireworks are best seen right from Waikiki Beach, so bring a chair or a blanket. The biggest crowds gather near the Hilton Hawaiian Village."
+        "text": "Honolulu’s midnight fireworks are best seen right from Waikiki Beach, where people come with chairs and blankets. The biggest crowds gather near the Hilton Hawaiian Village."
       }
     ],
     "kit": "us-10"
@@ -1564,7 +1564,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Two shows over Denver",
-        "text": "The free show launches from downtown rooftops at 9 p.m. and again at midnight; watch it from 16th Street. From 7 p.m. to 7 a.m. RTD buses and trains are free."
+        "text": "The free show launches from downtown rooftops at 9 p.m. and again at midnight; it’s easy to see from 16th Street. From 7 p.m. to 7 a.m. RTD buses and trains are free."
       },
       {
         "id": "t3",
@@ -1594,7 +1594,7 @@
         "id": "t3",
         "iconId": "sun",
         "title": "A First Day Hike",
-        "text": "1 January is a day off, and state parks across the country hold First Day Hikes. In Alaska head out near noon: in late December Anchorage gets less than six hours of daylight."
+        "text": "1 January is a day off, and state parks across the country hold First Day Hikes. In Alaska people set out near noon: in late December Anchorage gets less than six hours of daylight."
       }
     ],
     "kit": "us-9"
@@ -1612,13 +1612,13 @@
         "id": "t2",
         "iconId": "music",
         "title": "Dinner with Rapa Nui songs",
-        "text": "Book a New Year's Eve dinner in Hanga Roa with live music and Rapa Nui songs and dances, then walk to the fireworks at Hanga Vare Vare."
+        "text": "In Hanga Roa, New Year's Eve dinners come with live music and Rapa Nui songs and dances, then people walk to the fireworks at Hanga Vare Vare."
       },
       {
         "id": "t3",
         "iconId": "sunset",
         "title": "Sunset and sunrise by the moai",
-        "text": "See the year's last sunset by the moai at Tahai, where no guide is needed. Greet 1 January at Tongariki: it opens at sunrise, but you need a park ticket and a local guide."
+        "text": "The year's last sunset is watched by the moai at Tahai, where no guide is needed. On 1 January, Tongariki opens at sunrise, but only with a park ticket and a local guide."
       }
     ],
     "kit": "cl-5"
@@ -1690,7 +1690,7 @@
         "id": "t3",
         "iconId": "music",
         "title": "A night on Malecón Tajamar",
-        "text": "In Cancún, head to the Malecón Tajamar waterfront: last year bands played there until 5 a.m. and a drone show lit up midnight."
+        "text": "In Cancún, the party is on the Malecón Tajamar waterfront: last year bands played there until 5 a.m. and a drone show lit up midnight."
       }
     ],
     "kit": "mx-5"
@@ -1701,19 +1701,19 @@
       {
         "id": "t1",
         "iconId": "door",
-        "title": "Greet the lieutenant governor",
+        "title": "The lieutenant governor's levee",
         "text": "On 1 January the provincial lieutenant governor, like the Governor General, receives New Year guests: the doors are open to everyone, children included."
       },
       {
         "id": "t2",
         "iconId": "bell",
-        "title": "Let the mummers in",
-        "text": "If disguised visitors knock during the Christmas days, let them in, offer a drink and try to guess who is behind the mask."
+        "title": "Mummers at the door",
+        "text": "During the Christmas days disguised visitors knock on doors: hosts let them in, offer a drink and try to guess who is behind the mask."
       },
       {
         "id": "t3",
         "iconId": "music",
-        "title": "Count down on George Street",
+        "title": "Countdown on George Street",
         "text": "Last year the outdoor party in downtown St. John's was free for all ages: live music, DJs and pyrotechnics at midnight."
       }
     ],
@@ -1731,13 +1731,13 @@
       {
         "id": "t2",
         "iconId": "door",
-        "title": "Visit Government House",
+        "title": "Levee at Government House",
         "text": "On 1 January the lieutenant governor opens the doors to everyone, no invitation needed; about 700 guests come each year. New Brunswick holds its own levee too."
       },
       {
         "id": "t3",
         "iconId": "wave",
-        "title": "Take the plunge at Banook",
+        "title": "The plunge at Banook",
         "text": "On 1 January in Dartmouth a big pool is cut in the ice, and hundreds of brave souls jump in while friends cheer from the shore."
       }
     ],
@@ -1762,7 +1762,7 @@
         "id": "t3",
         "iconId": "fireworks",
         "title": "Midnight on the Malecón",
-        "text": "In Mazatlán head to the seafront by the city’s giant letters: last year there was live music from 9 p.m., a drone show and fireworks, all free."
+        "text": "In Mazatlán the party is on the seafront by the city’s giant letters: last year there was live music from 9 p.m., a drone show and fireworks, all free."
       }
     ],
     "kit": "mx-7"
@@ -1774,7 +1774,7 @@
         "id": "t1",
         "iconId": "suitcase",
         "title": "A suitcase for the road",
-        "text": "As soon as midnight strikes, take a suitcase and walk round the block: they say the further you go, the further you will travel this year."
+        "text": "As soon as midnight strikes, some people take a suitcase and walk round the block: they say the further you go, the further you will travel this year."
       },
       {
         "id": "t2",
@@ -1786,7 +1786,7 @@
         "id": "t3",
         "iconId": "feast",
         "title": "Rosca by the Cecut dome",
-        "text": "In early January head to the Tijuana Cultural Centre: last year, on 10 January, a giant Three Kings rosca was shared for free around its IMAX dome."
+        "text": "The celebrations go on past New Year’s Eve: last year, on 10 January, a giant Three Kings rosca was shared for free around the IMAX dome of the Tijuana Cultural Centre."
       }
     ],
     "kit": "mx-8"
@@ -1798,7 +1798,7 @@
         "id": "t1",
         "iconId": "fireworks",
         "title": "Walk the Strip at midnight",
-        "text": "On New Year’s Eve the Las Vegas Strip closes to cars and the boulevard fills with people on foot. At midnight fireworks fly from resort rooftops for eight minutes, so leave big bags at the hotel."
+        "text": "On New Year’s Eve the Las Vegas Strip closes to cars and the boulevard fills with people on foot. At midnight fireworks fly from resort rooftops for eight minutes; last year large bags were not allowed."
       },
       {
         "id": "t2",
@@ -1873,19 +1873,19 @@
       {
         "id": "t1",
         "iconId": "door",
-        "title": "Greet the governor",
-        "text": "On 1 January anyone can walk into a New Year's levee, children too: shake the host's hand and wish them a good year."
+        "title": "The governor's levee",
+        "text": "On 1 January anyone can walk into a New Year's levee, children too: guests shake the host's hand and wish them a good year."
       },
       {
         "id": "t2",
         "iconId": "fireworks",
-        "title": "Meet midnight on a mountain",
+        "title": "Midnight on a mountain",
         "text": "Last year on Grouse Mountain above Vancouver people skated to a DJ, and at midnight fireworks set to music lit up the summit."
       },
       {
         "id": "t3",
         "iconId": "wave",
-        "title": "Join the Polar Bear Swim",
+        "title": "The Polar Bear Swim",
         "text": "Every 1 January since 1920 Vancouver has plunged into chilly English Bay; it is free, and more than 11,000 swimmers registered last year."
       }
     ],
@@ -1897,19 +1897,19 @@
       {
         "id": "t1",
         "iconId": "music",
-        "title": "Dance at a Malanka",
+        "title": "Dancing at a Malanka",
         "text": "In January the Ukrainian communities of Edmonton and Winnipeg hold Malankas, Old New Year galas with dinner, live music and dancing late into the night."
       },
       {
         "id": "t2",
         "iconId": "fireworks",
-        "title": "Skate, then watch fireworks",
-        "text": "In Edmonton and Calgary the city party is free: skate to music, and bring the kids by 8 pm, when Edmonton sets off an early fireworks show."
+        "title": "Skating, then fireworks",
+        "text": "In Edmonton and Calgary the city party is free: people skate to music, and families with kids come by 8 pm, when Edmonton sets off an early fireworks show."
       },
       {
         "id": "t3",
         "iconId": "door",
-        "title": "Visit the New Year's levee",
+        "title": "The New Year's levee",
         "text": "On 1 January Alberta's lieutenant governor opens Government House in Edmonton to all: refreshments, a tour and a postcard for Canadian troops abroad."
       }
     ],
@@ -2124,7 +2124,7 @@
         "id": "t2",
         "iconId": "fireworks",
         "title": "Midnight fireworks in Garapan",
-        "text": "At midnight fireworks rise over a hotel beach in Garapan. Local families come to watch too, so it pays to find a parking spot early."
+        "text": "At midnight fireworks rise over a hotel beach in Garapan. Local families come to watch too, so parking spots near the beach fill up early."
       },
       {
         "id": "t3",
@@ -2298,7 +2298,7 @@
         "id": "t3",
         "iconId": "wave",
         "title": "A clean beach by morning",
-        "text": "After the fireworks that welcomed 2025, young people in Port Moresby turned out to clean up Ela Beach. Start the year the same way — with a clean shore for everyone."
+        "text": "After the fireworks that welcomed 2025, young people in Port Moresby turned out to clean up Ela Beach, so the year began with a clean shore for everyone."
       }
     ],
     "meta": {
@@ -2494,7 +2494,7 @@
         "id": "t3",
         "iconId": "sun",
         "title": "570 steps to Cristo Rei",
-        "text": "The first morning of the year is lovely on Cape Fatucama: 570 steps with 14 Stations of the Cross lead to the statue, with views of Dili Bay and Atauro Island."
+        "text": "Some greet the first morning of the year on Cape Fatucama: 570 steps with 14 Stations of the Cross lead to the statue, with views of Dili Bay and Atauro Island."
       }
     ],
     "meta": {
@@ -2566,7 +2566,7 @@
         "id": "t1",
         "iconId": "flame",
         "title": "A barbecue by a pondok",
-        "text": "Cocos Malays keep pondoks — weekend shacks on the larger islets of the atoll. Bring a barbecue and a fishing line and spend the evening by the lagoon: even at night it rarely drops below 24 °C."
+        "text": "Cocos Malays keep pondoks — weekend shacks on the larger islets of the atoll. They take a barbecue and a fishing line there and spend the evening by the lagoon: even at night it rarely drops below 24 °C."
       },
       {
         "id": "t2",
@@ -2858,7 +2858,7 @@
         "id": "t3",
         "iconId": "glass",
         "title": "A party at a hotel",
-        "text": "On 31 December Addis Ababa's international hotels draw thousands of guests to concerts, a DJ and fireworks until two in the morning. Tickets get pricier every year, so buy early."
+        "text": "On 31 December Addis Ababa's international hotels draw thousands of guests to concerts, a DJ and fireworks until two in the morning. Tickets get pricier every year, so people buy them early."
       }
     ],
     "meta": {
@@ -3238,7 +3238,7 @@
         "id": "t1",
         "iconId": "music",
         "title": "A concert at a hotel",
-        "text": "On New Year's Eve stars of Arab pop sing in Amman's hotels, and the headliner takes the stage at midnight. Book a ticket with dinner in advance."
+        "text": "On New Year's Eve stars of Arab pop sing in Amman's hotels, and the headliner takes the stage at midnight. Tickets with dinner are booked well in advance."
       },
       {
         "id": "t2",
@@ -3300,7 +3300,7 @@
         "id": "t2",
         "iconId": "glass",
         "title": "Dinner at a restaurant",
-        "text": "In Moroni New Year's Eve is spent at hotels and restaurants over a festive dinner. Book a table in advance."
+        "text": "In Moroni New Year's Eve is spent at hotels and restaurants over a festive dinner. Tables are booked well in advance."
       },
       {
         "id": "t3",
@@ -3462,7 +3462,7 @@
         "id": "t1",
         "iconId": "bell",
         "title": "A crossover night service",
-        "text": "On 31 December, join an overnight service: prayers and songs carry on to midnight, and the year turns in the middle of the service."
+        "text": "On 31 December, people gather for an overnight service: prayers and songs carry on to midnight, and the year turns in the middle of the service."
       },
       {
         "id": "t2",
@@ -3490,7 +3490,7 @@
         "id": "t1",
         "iconId": "feast",
         "title": "A voulé on the shore",
-        "text": "Gather family or friends on the beach, light the embers and grill chicken, skewers, cassava, breadfruit and bananas, with music playing."
+        "text": "Families and friends gather on the beach, light the embers and grill chicken, skewers, cassava, breadfruit and bananas, with music playing."
       },
       {
         "id": "t2",
@@ -4028,7 +4028,7 @@
         "id": "t2",
         "iconId": "music",
         "title": "A night until dawn",
-        "text": "Restaurants, clubs and concerts go on until morning; for the night of 2023/24 about 750 parties were planned nationwide. Book a table early."
+        "text": "Restaurants, clubs and concerts go on until morning; for the night of 2023/24 about 750 parties were planned nationwide. Tables are booked early."
       },
       {
         "id": "t3",
@@ -4062,7 +4062,7 @@
         "id": "t3",
         "iconId": "clock",
         "title": "Until midnight on the square",
-        "text": "For 31 December 2025 the government announced a national celebration on Makoanyane Square in Maseru, from 18:00 until midnight. Check the 2027 programme closer to the date."
+        "text": "For 31 December 2025 the government announced a national celebration on Makoanyane Square in Maseru, from 18:00 until midnight. The 2027 programme will be announced closer to the date."
       }
     ],
     "meta": {
@@ -4078,7 +4078,7 @@
         "id": "t1",
         "iconId": "bell",
         "title": "A night service at church",
-        "text": "Spend the last hours of the year at a night service: in Juba, police are posted at churches that night so it all passes peacefully."
+        "text": "Many spend the last hours of the year at a night service: in Juba, police are posted at churches that night so it all passes peacefully."
       },
       {
         "id": "t2",
@@ -4090,7 +4090,7 @@
         "id": "t3",
         "iconId": "door",
         "title": "One sober driver",
-        "text": "Going out as a group? Agree who stays sober tonight and drives everyone home — that was Juba's advice before the New Year."
+        "text": "Groups going out agree who stays sober that night and drives everyone home — that was Juba's advice before the New Year."
       }
     ],
     "meta": {
@@ -4358,13 +4358,13 @@
         "id": "t1",
         "iconId": "feast",
         "title": "A bûche for the table",
-        "text": "Order your log cake early: on 31 December the pastry shops have long queues, and an Algerian New Year dinner is hardly complete without a bûche."
+        "text": "Log cakes are ordered early: on 31 December the pastry shops have long queues, and an Algerian New Year dinner is hardly complete without a bûche."
       },
       {
         "id": "t2",
         "iconId": "sunset",
         "title": "Holidays in an oasis",
-        "text": "See in the year among the sand dunes: every year-end thousands of people travel to Taghit, Djanet and Tamanrasset."
+        "text": "Many see in the year among the sand dunes: every year-end thousands of people travel to Taghit, Djanet and Tamanrasset."
       },
       {
         "id": "t3",
