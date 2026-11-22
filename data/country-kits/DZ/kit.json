@@ -1,0 +1,103 @@
+{
+  "code": "DZ",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "algiers",
+  "names": {
+    "uk": {
+      "name": "Алжир",
+      "city": "Алжир",
+      "cityIn": "в Алжирі",
+      "countryIn": "в Алжирі",
+      "caps": "АЛЖИР"
+    },
+    "en": {
+      "name": "Algeria",
+      "city": "Algiers",
+      "cityIn": "in Algiers",
+      "countryIn": "in Algeria",
+      "caps": "ALGERIA"
+    },
+    "es": {
+      "name": "Argelia",
+      "city": "Argel",
+      "cityIn": "en Argel",
+      "countryIn": "en Argelia",
+      "caps": "ARGELIA"
+    },
+    "fr": {
+      "name": "Algérie",
+      "city": "Alger",
+      "cityIn": "à Alger",
+      "countryIn": "en Algérie",
+      "caps": "ALGÉRIE"
+    }
+  },
+  "picto": "M5 35.5 L35 35.5 M15.2 4 C14.8 10 14.6 15 14.4 19.5 C13.8 26 12.2 31.5 9.6 35.5 M24.8 4 C25.2 10 25.4 15 25.6 19.5 C26.2 26 27.8 31.5 30.4 35.5 M13.6 35.5 C15.1 29 17.1 23.2 20 22.2 C22.9 23.2 24.9 29 26.4 35.5 M15.2 4 L18.3 9.4 L18.3 22.8 M24.8 4 L21.7 9.4 L21.7 22.8 M20 25.2 L20 35.5 M18.3 14 Q20 11.2 21.7 14 M20 11.6 L20 8",
+  "flagColors": [
+    "#006233",
+    "#FFFFFF",
+    "#D21034"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Алжирі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Algeria"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Argelia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Algérie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

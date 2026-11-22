@@ -1,0 +1,103 @@
+{
+  "code": "CM",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "yaounde",
+  "names": {
+    "uk": {
+      "name": "Камерун",
+      "city": "Яунде",
+      "cityIn": "у Яунде",
+      "countryIn": "у Камеруні",
+      "caps": "КАМЕРУН"
+    },
+    "en": {
+      "name": "Cameroon",
+      "city": "Yaoundé",
+      "cityIn": "in Yaoundé",
+      "countryIn": "in Cameroon",
+      "caps": "CAMEROON"
+    },
+    "es": {
+      "name": "Camerún",
+      "city": "Yaundé",
+      "cityIn": "en Yaundé",
+      "countryIn": "en Camerún",
+      "caps": "CAMERÚN"
+    },
+    "fr": {
+      "name": "Cameroun",
+      "city": "Yaoundé",
+      "cityIn": "à Yaoundé",
+      "countryIn": "au Cameroun",
+      "caps": "CAMEROUN"
+    }
+  },
+  "picto": "M9 31 Q14.6 28.6 17.6 23.6 Q20 18.6 21.4 13.8 L22.2 12 L23.2 13 L24.2 12 L25 13.8 Q26.2 17.4 28.2 19.6 L29.6 19 L31 20.8 Q34.6 26.6 38 31 M23.2 13.6 Q22.6 18.6 20.4 24 M29.8 20.4 Q30.4 23.6 31.6 26 M3 31 H38 M6 31 Q5.4 27.8 6.2 25 M6.2 25 Q4.4 23.8 3.2 25.2 M6.2 25 Q5.2 22.8 3.6 22.6 M6.2 25 Q7 22.8 8.8 22.8 M6.2 25 Q8.2 24.4 9 26 M4 34.6 Q7.5 33.2 11 34.6 T18 34.6 T25 34.6 T32 34.6 T37 34",
+  "flagColors": [
+    "#007A5E",
+    "#CE1126",
+    "#FCD116"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Камеруні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Cameroon"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Camerún"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Cameroun"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

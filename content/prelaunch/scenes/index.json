@@ -942,6 +942,30 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#363d41"
+    },
+    "CM": {
+      "src": "/scenes/CM-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#253743"
+    },
+    "AO": {
+      "src": "/scenes/AO-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#224359"
+    },
+    "DZ": {
+      "src": "/scenes/DZ-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1a2a44"
+    },
+    "BA": {
+      "src": "/scenes/BA-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#193b4d"
     }
   }
 }

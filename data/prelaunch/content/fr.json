@@ -4294,5 +4294,117 @@
       "description": "Le Zimbabwe fête 2027 à 22 h UTC : offices crossover jusqu’au matin, riz au poulet sur la table, musique live et feux d’artifice dans les rues d’Harare."
     },
     "kit": "zw"
+  },
+  "CM": {
+    "text": "Les églises du Cameroun appellent la nuit du 1er janvier le « crossover » : des cultes baptisés « Cross over night » ou « Breakthrough night » traversent minuit, et les catholiques suivent la messe de la traversée pour rendre grâce et prier pour l’année nouvelle. Avant la fête, les marchés bourdonnent, car il faut le nnam ngon : des graines de courge moulues avec de la viande ou du poisson fumé, emballées dans des feuilles de bananier, mijotées deux à trois heures et servies avec des bâtons de manioc. Les enfants reçoivent des vêtements neufs et des jouets, souvent petites voitures et poupées.\n\nVers vingt-deux heures, Yaoundé part dans toutes les directions : églises, restaurants et boîtes de nuit, grands carrefours ou table familiale. On vient en blanc au culte de nuit de la chapelle Glory of Christ, et la cathédrale Notre-Dame-des-Victoires célèbre une messe spéciale. À minuit, « Happy New Year ! » résonne partout, et les feux d’artifice des voisins illuminent le ciel.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le nnam ngon des fêtes",
+        "text": "Graines de courge moulues, viande ou poisson fumé : on emballe le tout dans des feuilles de bananier, on laisse mijoter deux à trois heures et on le mange avec des bâtons de manioc."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Un culte « crossover »",
+        "text": "Le 31 décembre, les églises rassemblent les fidèles de vingt-deux heures jusqu’aux premières heures de l’année ; à certains cultes de nuit, on vient en blanc."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Minuit au carrefour",
+        "text": "Grands carrefours, bars et restaurants de Yaoundé se remplissent de musique et de danse avant minuit, et à la première minute de l’année chacun échange ses vœux."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Cameroun : Yaoundé | Time2Fest",
+      "description": "Le Cameroun passe à 2027 à 23 h UTC : cultes « crossover », nnam ngon cuit en feuilles de bananier et « Happy New Year ! » aux carrefours de Yaoundé."
+    },
+    "kit": "cm"
+  },
+  "AO": {
+    "text": "Soixante-cinq veillées de prière et 126 fêtes : c’est le nombre de rendez-vous que Luanda seule a autorisés pour accueillir 2026 ; les uns finissent l’année à l’église, les autres dansent jusqu’au matin. À minuit, les feux d’artifice s’élèvent dans tout l’Angola, et le 1er janvier est férié. Sur la table de fête, du calulu, poisson séché aux légumes, ou une feijoada de haricots et de viande, et l’on trinque au vin pétillant.\n\nLuanda commence la fête en plein jour : à 18 h, la course de São Silvestre, 10 km courus depuis 1954, part du Largo da Mutamba. Le parcours longe la baie par la Marginal, et sur la plage de Nicha, minuit a été accueilli par un concert gratuit et un feu d’artifice.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Course de São Silvestre, 18 h",
+        "text": "La plus grande épreuve d’athlétisme de l’année en Angola : dix kilomètres du Largo da Mutamba à travers la Marginal jusqu’au stade. En 2022, 2 241 coureurs se sont inscrits."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Veillée ou fête",
+        "text": "Ici, on accueille minuit aussi bien en veillée de prière qu’en fête : pour 2026, Luanda a autorisé 65 veillées et 126 fêtes."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Calulu et pétillant",
+        "text": "Le calulu, poisson séché mijoté aux légumes, ou une copieuse feijoada de haricots et de viande. À minuit, les verres se remplissent de vin pétillant."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Angola : Luanda | Time2Fest",
+      "description": "L’Angola fête 2027 à 23 h UTC : Luanda court la São Silvestre le long de la Marginal au crépuscule, puis feux de minuit, calulu et vin pétillant."
+    },
+    "kit": "ao"
+  },
+  "DZ": {
+    "text": "Le 31 décembre, les files s’allongent devant les pâtisseries d’Alger : chacun vient chercher sa bûche, au citron, au chocolat ou au moka. Un dîner du Nouvel An s’en passe rarement : la famille ou les amis se retrouvent autour d’une table bien garnie, et les bandes d’amis reçoivent à tour de rôle, chacun apportant quelque chose. Certains partent dans le désert pour les fêtes — à l’oasis de Taghit, à Djanet ou à Tamanrasset. D’autres ne fêtent pas du tout la Saint-Sylvestre, qu’ils ne considèrent pas comme leur fête. Le 1er janvier est férié.\n\nDouze jours plus tard arrive un autre Nouvel An : Yennayer, le Nouvel An amazigh, férié lui aussi depuis 2018. Pour le dîner d’imensi n yennayer, on prépare un couscous au poulet ou à la viande, et chacun doit manger à sa faim pour que l’année soit prospère. Le plus jeune enfant de la famille reçoit en pluie douce le « treize », un mélange de bonbons, de chocolat et de fruits secs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Une bûche sur la table",
+        "text": "Commande ta bûche à l’avance : le 31 décembre, les files sont longues devant les pâtisseries, et un réveillon algérien s’en passe rarement."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "Les fêtes dans une oasis",
+        "text": "Accueille l’année au milieu des dunes : chaque fin d’année, des milliers de personnes partent à Taghit, Djanet et Tamanrasset."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "Un couscous pour Yennayer",
+        "text": "Le 12 janvier, prépare un couscous pour le dîner d’imensi n yennayer, mange à ta faim et couvre le plus jeune de la famille de bonbons et de fruits secs, pour une année prospère."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Algérie : Alger | Time2Fest",
+      "description": "L’Algérie fête 2027 à 23 h UTC : files devant les pâtisseries pour la bûche, dîner en famille ou dans l’oasis de Taghit, couscous de Yennayer le 12 janvier."
+    },
+    "kit": "dz"
+  },
+  "BA": {
+    "text": "Skier à minuit n’a rien d’une blague à Jahorina : le soir du réveillon, la station ouvre ses pistes de 22 h à 2 h et, au sommet, près du bar Olimp, une fête en plein air accueille skieurs et visiteurs montés sans skis. En bas, dans les grandes villes de Bosnie-Herzégovine, les rues sont décorées, les places accueillent concerts et feux d’artifice, et restaurants, cafés et hôtels organisent leurs soirées du Nouvel An. Les 1er et 2 janvier sont fériés, et en Republika Srpska le Nouvel An orthodoxe se fête encore le 14 janvier.\n\nDeux années de suite, le sommet du réveillon à Sarajevo est venu avec une même chanson : « Sarajevo, ljubavi moja » de Kemal Monteno. Severina a fait entrer la ville en 2025 avec elle, et un an plus tard Jelena Rozga l’a chantée. Ce soir-là, environ 64 000 personnes se sont réunies sur le plateau de Vrbanja, près du Sarajevo City Center, et les fanfares de trompettes et les groupes de rock jouent en ville jusqu’au matin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Ski jusqu’à 2 h",
+        "text": "Le soir du réveillon, les pistes de Jahorina restent ouvertes de 22 h à 2 h, et l’on fête minuit au sommet, près du bar Olimp."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "« Sarajevo, ljubavi moja »",
+        "text": "Sarajevo est entrée dans la nouvelle année sur la chanson de Kemal Monteno deux fois de suite, en 2025 et 2026. Apprends le refrain."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur la Neretva",
+        "text": "Mostar a accueilli 2025 avec un feu d’artifice sur la ville au bord de la Neretva et un concert ; le 1er janvier, Prljavo kazalište a pris le relais."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Bosnie-Herzégovine : Sarajevo | Time2Fest",
+      "description": "Ski à minuit à Jahorina, grand concert à Sarajevo et « Sarajevo, ljubavi moja » : la Bosnie-Herzégovine fête 2027 à 23 h UTC, et la nuit dure jusqu’à l’aube."
+    },
+    "kit": "ba"
   }
 }

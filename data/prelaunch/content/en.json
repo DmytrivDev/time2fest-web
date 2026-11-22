@@ -4294,5 +4294,117 @@
       "description": "Zimbabwe welcomes 2027 at 22:00 UTC with all-night crossover services, rice and chicken on the table, and live music and fireworks across the streets of Harare."
     },
     "kit": "zw"
+  },
+  "CM": {
+    "text": "Cameroon's churches call the night into 1 January the 'crossover': services named 'Cross over night' or 'Breakthrough night' run through midnight, and Catholics go to the crossing mass to give thanks and pray for the year ahead. Markets buzz before the holiday, because the table needs nnam ngon: ground pumpkin seeds with meat or smoked fish, wrapped in banana leaves, simmered for two or three hours and served with cassava sticks. Children get new clothes and toys, often little cars and dolls.\n\nAround ten in the evening Yaoundé heads out in every direction: to churches, restaurants and clubs, to the big junctions or to the family table. People come dressed in white to the night service at Glory of Christ Chapel, and Our Lady of Victories Cathedral holds a special mass. At midnight 'Happy New Year!' rings out everywhere, and neighbours' fireworks light up the sky.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Nnam ngon for the feast",
+        "text": "Ground pumpkin seeds with meat or smoked fish are wrapped in banana leaves and simmered for two or three hours, then eaten with cassava sticks."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "A crossover service",
+        "text": "On 31 December churches gather people from ten in the evening into the first hours of the new year; some night services ask everyone to wear white."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Midnight at the junction",
+        "text": "Yaoundé's big junctions, bars and restaurants fill with music and dancing before midnight, and at the first minute of the year everyone trades greetings."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Cameroon: Yaoundé | Time2Fest",
+      "description": "Cameroon reaches 2027 at 23:00 UTC with crossover church services, nnam ngon slow-cooked in banana leaves and 'Happy New Year!' at Yaoundé's junctions."
+    },
+    "kit": "cm"
+  },
+  "AO": {
+    "text": "Sixty-five night prayer vigils and 126 parties: that is how many New Year gatherings Luanda alone authorised for the arrival of 2026, so some people see the year out in church and others dance until morning. At midnight fireworks go up across Angola, and 1 January is a public holiday. On the festive table there is calulu, dried fish with vegetables, or feijoada, a bean and meat stew, and glasses are raised with sparkling wine.\n\nLuanda starts celebrating while it is still light: at six in the evening the 10 km São Silvestre race, run since 1954, sets off from Largo da Mutamba. The course follows the Marginal along the bay, and at Praia da Nicha midnight was greeted with a free concert and fireworks.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "São Silvestre race at 18:00",
+        "text": "Angola's biggest athletics event of the year: ten kilometres from Largo da Mutamba along the Marginal to the stadium. In 2022, 2,241 runners signed up."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Church vigil or party",
+        "text": "Midnight here is met both at night prayer vigils and at parties: for the arrival of 2026, Luanda authorised 65 vigils and 126 parties."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Calulu and a sparkling toast",
+        "text": "Calulu, dried fish stewed with vegetables, or a hearty feijoada of beans and meat. At midnight the glasses are filled with sparkling wine."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Angola: Luanda | Time2Fest",
+      "description": "Angola meets 2027 at 23:00 UTC: Luanda runs the São Silvestre race along the Marginal at dusk, then midnight fireworks, calulu and sparkling wine."
+    },
+    "kit": "ao"
+  },
+  "DZ": {
+    "text": "On 31 December queues form outside the pastry shops of Algiers as people collect their festive bûche, a log cake in lemon, chocolate or mocha. A New Year dinner is hardly complete without one: families or friends gather round a generous table, and groups of friends take turns hosting, each bringing something along. Some head for the desert for the holidays — to the oasis of Taghit, to Djanet or Tamanrasset. Others do not celebrate 31 December at all, as they do not see it as their holiday. New Year’s Day is a public holiday.\n\nTwelve days later comes another New Year: Amazigh Yennayer, also a public holiday since 2018. For the imensi n yennayer dinner, couscous is cooked with chicken or meat, and everyone must eat their fill so the year will be one of plenty. The youngest child in the family is gently showered with “treize”, a mix of sweets, chocolate and nuts.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A bûche for the table",
+        "text": "Order your log cake early: on 31 December the pastry shops have long queues, and an Algerian New Year dinner is hardly complete without a bûche."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "Holidays in an oasis",
+        "text": "See in the year among the sand dunes: every year-end thousands of people travel to Taghit, Djanet and Tamanrasset."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "Couscous for Yennayer",
+        "text": "On 12 January cook couscous for the imensi n yennayer dinner, eat your fill and shower the youngest in the family with sweets and nuts for a year of plenty."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Algeria: Algiers | Time2Fest",
+      "description": "Algeria greets 2027 at 23:00 UTC with queues for the festive bûche, family dinners or a night in the Taghit oasis, and Yennayer couscous on 12 January."
+    },
+    "kit": "dz"
+  },
+  "BA": {
+    "text": "Skiing at midnight is no joke on Jahorina: on New Year's Eve the resort opens its slopes from 22:00 to 02:00, and up on the summit, by the Olimp bar, an open-air party welcomes skiers and anyone who came up without skis. Down in the bigger cities of Bosnia and Herzegovina the streets are decorated, squares fill with concerts and fireworks, and restaurants, cafés and hotels throw New Year's parties. The 1st and 2nd of January are days off, and in Republika Srpska the Orthodox New Year is marked again on 14 January.\n\nTwo years running, the peak of Sarajevo's New Year's night came with one song — Kemal Monteno's \"Sarajevo, ljubavi moja\": Severina led the city into 2025 with it, and a year later Jelena Rozga sang it. That night about 64,000 people gathered on the Vrbanja plateau by Sarajevo City Center, and trumpet and rock bands play across town until morning.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Skiing till 2 a.m.",
+        "text": "On New Year's Eve Jahorina's slopes stay open from 22:00 to 02:00, and midnight is met on the summit at the party by the Olimp bar."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "\"Sarajevo, ljubavi moja\"",
+        "text": "Sarajevo entered the new year with Kemal Monteno's song two years running — 2025 and 2026. Learn the chorus and sing along."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the Neretva",
+        "text": "Mostar welcomed 2025 with fireworks over the city on the Neretva and a concert; on 1 January Prljavo kazalište kept the party going."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Bosnia and Herzegovina: Sarajevo | Time2Fest",
+      "description": "Midnight skiing on Jahorina, a big concert in Sarajevo and \"Sarajevo, ljubavi moja\": Bosnia and Herzegovina greets 2027 at 23:00 UTC and parties till dawn."
+    },
+    "kit": "ba"
   }
 }
