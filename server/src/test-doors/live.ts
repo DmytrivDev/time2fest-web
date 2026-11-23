@@ -61,8 +61,9 @@ function viewerEntries(people: number, countries: readonly string[], perCountry:
   const placed = unique.length * perCountry;
   if (placed > people) return null;
   const entries: PresenceEntry[] = [];
-  for (const c of unique) for (let i = 0; i < perCountry; i += 1) entries.push({ chanInfo: { p: 1, c } });
-  for (let i = placed; i < people; i += 1) entries.push({ chanInfo: { p: 1 } });
+  // Every person carries its own nonce: the aggregate counts one person per nonce (presence entries without one are dropped).
+  for (const c of unique) for (let i = 0; i < perCountry; i += 1) entries.push({ chanInfo: { p: 1, n: `door-${entries.length}`, c } });
+  for (let i = placed; i < people; i += 1) entries.push({ chanInfo: { p: 1, n: `door-${entries.length}` } });
   return entries;
 }
 

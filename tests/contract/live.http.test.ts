@@ -20,6 +20,8 @@ beforeAll(async () => {
 }, 60_000);
 
 /** The adapter itself, with the server's absolute address; no realtime (the suite reads, it does not wait for events). */
-const serverFetch: LiveFetch = (input, init) => fetch(`${BASE}${input}`, init);
+// Node's fetch sends no `Origin`; a browser's same-origin POST does, so the harness adds the site origin.
+const serverFetch: LiveFetch = (input, init) =>
+  fetch(`${BASE}${input}`, { ...init, headers: { ...init.headers, origin: ORIGIN } });
 
 describeDomain('live (http)', () => createHttpLive({ fetch: serverFetch, loadTransport: null, prelaunch: false }));

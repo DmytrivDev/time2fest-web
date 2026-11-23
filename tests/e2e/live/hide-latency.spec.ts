@@ -5,11 +5,17 @@
  * Written only; run in L (`-c playwright.http.config.ts --workers=2`).
  */
 import type { Page, Response } from '@playwright/test';
-import { SERVER, SKIP_REASON } from '../fixtures/serverClock';
+import { SERVER, SKIP_REASON, setDoorClock } from '../fixtures/serverClock';
+import { DEFAULT_START } from '../fixtures/time';
 import { expect, test } from '../fixtures/youtube-stub';
 
 test.describe.configure({ mode: 'serial', timeout: 240_000 });
 test.skip(!SERVER, SKIP_REASON);
+
+// The http build shows the server test clock: put it on the default start (a live London air) before every test.
+test.beforeEach(async ({ request }) => {
+  await setDoorClock(request, { at: Date.parse(DEFAULT_START), speed: 1 });
+});
 
 const HIDES = 20;
 const P95_MS = 3_000;
@@ -42,10 +48,15 @@ test('AC-21: 20 hides reach the open tab, p95 <= 3 s', async ({ page, request })
 
   const chains = (await (await request.get(`${SERVER}/api/live/chains`)).json()) as Chains;
   const pairs = chains.chains.flatMap((c) => c.sources.map((s) => ({ eventId: c.eventId, sourceId: s.id })));
-  expect(pairs.length, 'the seed has at least 20 sources to hide').toBeGreaterThanOrEqual(HIDES);
+  expect(pairs.length, 'the seed has sources to hide').toBeGreaterThan(0);
 
+  // The seed has fewer than 20 sources: once every one is hidden, `reset-live` restores them and the hides go on.
   const samples: number[] = [];
-  for (const pair of pairs.slice(0, HIDES)) {
+  for (let i = 0; i < HIDES; i += 1) {
+    if (i > 0 && i % pairs.length === 0) {
+      expect((await request.post(`${SERVER}/api/_test/live`, { data: { door: 'reset-live' } })).ok()).toBe(true);
+    }
+    const pair = pairs[i % pairs.length]!;
     const sentAt = Date.now();
     const res = await request.post(`${SERVER}/api/_test/live`, { data: { door: 'hide', ...pair } });
     expect(res.ok()).toBe(true);

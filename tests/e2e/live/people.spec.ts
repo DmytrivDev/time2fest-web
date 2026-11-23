@@ -3,11 +3,17 @@
  * browser counts, Web Locks). Reads the count from the line next to the player.
  * Needs T2F_E2E_SERVER and the integration build with realtime. Written only; run in L.
  */
-import { SERVER, SKIP_REASON } from '../fixtures/serverClock';
+import { SERVER, SKIP_REASON, setDoorClock } from '../fixtures/serverClock';
+import { DEFAULT_START } from '../fixtures/time';
 import { expect, test } from '../fixtures/youtube-stub';
 
 test.describe.configure({ mode: 'serial', timeout: 120_000 });
 test.skip(!SERVER, SKIP_REASON);
+
+// The http build shows the server test clock: put it on the default start (a live London air) before every test.
+test.beforeEach(async ({ request }) => {
+  await setDoorClock(request, { at: Date.parse(DEFAULT_START), speed: 1 });
+});
 
 test.afterAll(async ({ request }) => {
   await request.post(`${SERVER}/api/_test/live`, { data: { door: 'reset-live' } });
@@ -20,7 +26,7 @@ test('AC-61: 3 contexts (one with 2 pages) -> aggregate 3', async ({ browser }) 
   const second = await contexts[0]!.newPage();
   await second.goto('/');
 
-  const line = pages[1]!.getByText(/Зараз на Time2Fest|Now on Time2Fest/i).first();
+  const line = pages[1]!.getByText(/(Зараз на|^На|now on|^On) Time2Fest/i).first();
   await expect(line).toContainText(/\b3\b/, { timeout: 30_000 });
   await Promise.all(contexts.map((c) => c.close()));
 });

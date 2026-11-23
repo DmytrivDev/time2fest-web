@@ -273,7 +273,10 @@ export function createHttpLive(options: HttpLiveOptions = {}): LiveService {
     async viewers() {
       const r = await getJson(LIVE_VIEWERS_URL);
       if (!r.ok) return r;
-      const summary = parseViewerSummary(r.value) as unknown as ViewerSummary | null;
+      // The route answers through the server pipeline as `{ok: true, value: summary}`; the bare summary is accepted too.
+      const body = r.value as { ok?: unknown; value?: unknown } | null | undefined;
+      const wire = body && typeof body === 'object' && body.ok === true && 'value' in body ? body.value : body;
+      const summary = parseViewerSummary(wire) as unknown as ViewerSummary | null;
       return summary ? ok(summary) : fail('unavailable', { message: 'invalid viewer summary' });
     },
     subscribeViewers(cb) {
