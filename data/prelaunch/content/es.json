@@ -4546,5 +4546,61 @@
       "description": "Malta recibe 2027 a las 23:00 UTC con un concierto en la plaza de San Jorge de La Valeta, fuegos sobre el Gran Puerto e imbuljuta caliente de castañas."
     },
     "kit": "mt"
+  },
+  "HR": {
+    "text": "En Croacia la cuenta atrás empieza a mediodía: Zagreb y Ogulin celebran una «medianoche» al mediodía para los niños, y en Fužine y Novi Vinodolski esa cuenta atrás reúne a miles de personas. Por la noche se recibe a los invitados con una copa de rakija, y en la mesa hay cochinillo o cordero, sarma de chucrut y una «ensalada francesa» que dura varios días. A medianoche se brinda con espumoso, mejor si es de los viñedos de Plešivica.\n\nDe noche, Zagreb se reúne en la plaza del Ban Jelačić: concierto al aire libre y el alcalde contando los últimos segundos con todos. En la costa, el gran escenario es el Stradun de Dubrovnik, donde la medianoche llega con los tradicionales fuegos artificiales sobre la Ciudad Vieja. Y en Osijek, desde hace más de treinta años, el año se despide con un baño en el Drava.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Medianoche al mediodía",
+        "text": "El 31 de diciembre, en Zagreb y Ogulin, los niños se reúnen antes del mediodía en una fiesta infantil: allí el año nuevo se recibe simbólicamente a las doce del día."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cochinillo, sarma y ensalada",
+        "text": "Pon la mesa a la croata: cochinillo o cordero, sarma en hojas de chucrut y una «ensalada francesa» que dure varios días."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el Stradun",
+        "text": "A medianoche, Dubrovnik se reúne en el Stradun: tras el concierto al aire libre, los fuegos tradicionales iluminan la Ciudad Vieja."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Croacia: Zagreb | Time2Fest",
+      "description": "Croacia recibe 2027 a las 23:00 UTC: cuenta atrás infantil al mediodía, cochinillo y sarma, concierto en Zagreb y fuegos sobre el Stradun de Dubrovnik."
+    },
+    "kit": "hr"
+  },
+  "NO": {
+    "text": "Los noruegos pasan la Nochebuena en familia y la Nochevieja con amigos: es la segunda gran fiesta del año. En la mesa suele haber pavo relleno asado con patatas, coles de Bruselas, salsa y ensalada Waldorf, y en algunas casas costillas de cordero curadas o panceta de cerdo asada. De postre, crema de arroz o pudin de vainilla, y más tarde café, pasteles y una copa de coñac. Por la noche llega el discurso de Año Nuevo del rey, una tradición que se remonta a Haakon VII.\n\nCerca de la medianoche todos salen a la calle con cohetes: los fuegos privados solo se permiten de 18:00 a 02:00. En Oslo están prohibidos por completo dentro de la carretera de circunvalación Ring 2, y para que se lancen menos entre las casas, las ciudades noruegas organizan grandes fuegos públicos que la gente va a ver a las plazas centrales. El 1 de enero es el primer ministro quien se dirige al país.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Pavo y crema de arroz",
+        "text": "Los noruegos suelen organizar la cena de Nochevieja en torno al pavo asado con ensalada Waldorf y la terminan con crema de arroz, café y una copa de coñac."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "El discurso del rey",
+        "text": "La noche del 31 de diciembre el rey se dirige al país por radio y televisión, como es costumbre desde Haakon VII, y el 1 de enero habla el primer ministro."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Cohetes hasta las dos",
+        "text": "En Noruega los fuegos privados solo se permiten de 18:00 a 02:00, y cerca de la medianoche todos salen a la calle; en el centro de Oslo, dentro del Ring 2, están prohibidos."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Noruega: Oslo | Time2Fest",
+      "description": "Noruega recibe 2027 a las 23:00 UTC con pavo asado y crema de arroz, el discurso del rey, cohetes hasta las dos y fuegos públicos sobre las ciudades."
+    },
+    "kit": "no"
   }
 }

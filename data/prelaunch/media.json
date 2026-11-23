@@ -2813,6 +2813,38 @@
         "x": 55,
         "y": 60
       }
+    },
+    "country:HR": {
+      "src": "/media/photos/dubrovnik.webp",
+      "alt": {
+        "uk": "Новорічний салют над Старим містом Дубровника, 31 грудня 2016: підсвічені мури, старий порт і дзвіниці",
+        "en": "New Year fireworks over Dubrovnik’s Old Town, 31 December 2016: lit walls, the old harbour and bell towers",
+        "es": "Fuegos artificiales de Año Nuevo sobre el casco antiguo de Dubrovnik, 31 de diciembre de 2016: murallas iluminadas, el puerto viejo y los campanarios",
+        "fr": "Feu d’artifice du Nouvel An sur la vieille ville de Dubrovnik, 31 décembre 2016 : remparts illuminés, vieux port et clochers"
+      },
+      "author": "Donald Judge",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:31.12.16_Dubrovnik_4_New_Year%27s_Eve_34_(31639508440).jpg",
+      "position": {
+        "x": 55,
+        "y": 60
+      }
+    },
+    "country:NO": {
+      "src": "/media/photos/oslo.webp",
+      "alt": {
+        "uk": "Новорічний салют над гаванню Осло в ніч на 1 січня 2010 року: великі кулі феєрверку над вогнями міста й відблиски у воді",
+        "en": "New Year fireworks over Oslo harbour on the night of 1 January 2010: large bursts above the city lights and reflections in the water",
+        "es": "Fuegos artificiales de Año Nuevo sobre el puerto de Oslo la noche del 1 de enero de 2010: grandes palmeras sobre las luces de la ciudad y reflejos en el agua",
+        "fr": "Feu d’artifice du Nouvel An sur le port d’Oslo dans la nuit du 1er janvier 2010 : grandes gerbes au-dessus des lumières de la ville et reflets dans l’eau"
+      },
+      "author": "Geir Hval",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oslo_New_Year%27s_Eve_(2010.01.01).jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
     }
   }
 }

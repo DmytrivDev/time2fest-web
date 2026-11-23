@@ -4546,5 +4546,61 @@
       "description": "Malta greets 2027 at 23:00 UTC with an open-air concert in St George's Square, Valletta, fireworks over the Grand Harbour and hot chestnut imbuljuta."
     },
     "kit": "mt"
+  },
+  "HR": {
+    "text": "Croatia starts counting down at noon: Zagreb and Ogulin hold a midday “midnight” for children, and in Fužine and Novi Vinodolski the noon countdown draws thousands. In the evening guests are greeted with a glass of rakija, and the table holds suckling pig or lamb, sarma made with sauerkraut and a “French salad” that lasts for days. At midnight comes a glass of sparkling wine, ideally from the Plešivica vineyards.\n\nAt night Zagreb gathers on Ban Jelačić Square: an open-air concert, with the mayor counting down the last seconds along with everyone. On the coast the main stage is Stradun in Dubrovnik, where midnight brings the traditional fireworks over the Old Town. And in Osijek people have been seeing off the old year with a swim in the Drava for more than thirty years.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Midnight at noon",
+        "text": "On 31 December, children in Zagreb and Ogulin gather for a party before noon: there the new year is greeted symbolically at twelve o'clock in the day."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Pig, sarma and salad",
+        "text": "Set the table the Croatian way: suckling pig or lamb, sarma in sauerkraut leaves and a “French salad” big enough to last for days."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over Stradun",
+        "text": "At midnight, Dubrovnik gathers on Stradun: after the open-air concert the traditional New Year fireworks light up the Old Town."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Croatia: Zagreb | Time2Fest",
+      "description": "Croatia greets 2027 at 23:00 UTC with a noon countdown for kids, suckling pig and sarma, a concert in Zagreb and fireworks over Stradun in Dubrovnik."
+    },
+    "kit": "hr"
+  },
+  "NO": {
+    "text": "Norwegians spend Christmas Eve with family and New Year's Eve with friends: it is the second biggest celebration of the year. The table often holds a stuffed roast turkey with potatoes, sprouts, gravy and Waldorf salad, while some serve cured lamb ribs or roast pork belly instead. Dessert is rice cream or vanilla pudding, followed later by coffee, cakes and a glass of cognac. In the evening comes the King's New Year speech, a tradition dating back to Haakon VII.\n\nAs midnight approaches, everyone steps outside with rockets: private fireworks are allowed only from 18:00 to 02:00. In Oslo they are banned altogether inside the Ring 2 road, and to keep fireworks away from houses, Norwegian cities stage large public displays that people gather to watch in central squares. On 1 January it is the Prime Minister's turn to address the country.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Turkey and rice cream",
+        "text": "Norwegians often build the New Year's Eve dinner around roast turkey with Waldorf salad and finish it with rice cream, coffee and a glass of cognac."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "The King's speech",
+        "text": "On the evening of 31 December the King addresses the country on radio and TV, as kings have done since Haakon VII, and on 1 January the Prime Minister speaks."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Rockets until 2 a.m.",
+        "text": "Private fireworks in Norway are allowed only from 18:00 to 02:00, and close to midnight everyone goes outside; in central Oslo, inside Ring 2, fireworks are banned."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Norway: Oslo | Time2Fest",
+      "description": "Norway welcomes 2027 at 23:00 UTC with roast turkey and rice cream, the King's New Year speech, rockets until 2 a.m. and public fireworks over the cities."
+    },
+    "kit": "no"
   }
 }

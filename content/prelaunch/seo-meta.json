@@ -2664,6 +2664,42 @@
         "title": "Nouvel An à Malte : La Valette | Time2Fest",
         "description": "Malte fête 2027 à 23 h UTC : concert place Saint-Georges à La Valette, grand feu d’artifice sur le Grand Port et imbuljuta chaude aux châtaignes."
       }
+    },
+    "HR": {
+      "uk": {
+        "title": "Новий рік у Хорватії: Загреб | Time2Fest",
+        "description": "Хорватія зустрічає 2027 рік о 23:00 UTC: дитячий відлік опівдні, порося й сарма на столі, концерт у Загребі й салют над Страдуном у Дубровнику."
+      },
+      "en": {
+        "title": "New Year in Croatia: Zagreb | Time2Fest",
+        "description": "Croatia greets 2027 at 23:00 UTC with a noon countdown for kids, suckling pig and sarma, a concert in Zagreb and fireworks over Stradun in Dubrovnik."
+      },
+      "es": {
+        "title": "Año Nuevo en Croacia: Zagreb | Time2Fest",
+        "description": "Croacia recibe 2027 a las 23:00 UTC: cuenta atrás infantil al mediodía, cochinillo y sarma, concierto en Zagreb y fuegos sobre el Stradun de Dubrovnik."
+      },
+      "fr": {
+        "title": "Nouvel An en Croatie : Zagreb | Time2Fest",
+        "description": "La Croatie fête 2027 à 23 h UTC : décompte de midi pour les enfants, cochon de lait et sarma, concert à Zagreb et feu d’artifice sur le Stradun."
+      }
+    },
+    "NO": {
+      "uk": {
+        "title": "Новий рік у Норвегії: Осло | Time2Fest",
+        "description": "Норвегія зустрічає 2027 рік о 23:00 UTC: печена індичка й рисовий крем, промова короля, ракети до другої ночі й публічні салюти над містами."
+      },
+      "en": {
+        "title": "New Year in Norway: Oslo | Time2Fest",
+        "description": "Norway welcomes 2027 at 23:00 UTC with roast turkey and rice cream, the King's New Year speech, rockets until 2 a.m. and public fireworks over the cities."
+      },
+      "es": {
+        "title": "Año Nuevo en Noruega: Oslo | Time2Fest",
+        "description": "Noruega recibe 2027 a las 23:00 UTC con pavo asado y crema de arroz, el discurso del rey, cohetes hasta las dos y fuegos públicos sobre las ciudades."
+      },
+      "fr": {
+        "title": "Nouvel An en Norvège : Oslo | Time2Fest",
+        "description": "La Norvège fête 2027 à 23 h UTC : dinde rôtie et crème de riz, discours du roi, fusées jusqu’à 2 h du matin et grands feux publics au-dessus des villes."
+      }
     }
   }
 }

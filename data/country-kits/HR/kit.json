@@ -1,0 +1,103 @@
+{
+  "code": "HR",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "zagreb",
+  "names": {
+    "uk": {
+      "name": "Хорватія",
+      "city": "Загреб",
+      "cityIn": "у Загребі",
+      "countryIn": "у Хорватії",
+      "caps": "ХОРВАТІЯ"
+    },
+    "en": {
+      "name": "Croatia",
+      "city": "Zagreb",
+      "cityIn": "in Zagreb",
+      "countryIn": "in Croatia",
+      "caps": "CROATIA"
+    },
+    "es": {
+      "name": "Croacia",
+      "city": "Zagreb",
+      "cityIn": "en Zagreb",
+      "countryIn": "en Croacia",
+      "caps": "CROACIA"
+    },
+    "fr": {
+      "name": "Croatie",
+      "city": "Zagreb",
+      "cityIn": "à Zagreb",
+      "countryIn": "en Croatie",
+      "caps": "CROATIE"
+    }
+  },
+  "picto": "M14.8 12.6 V3 H16.4 V5.6 H19.2 V3 H20.8 V5.6 H23.6 V3 H25.2 V12.6 M12.4 15.6 V12.6 H27.6 V15.6 Z M13.4 15.6 L12.2 32 M26.6 15.6 L27.8 32 M20 20.2 V23.6 M20 8.4 V10 M12.7 25.4 L10.6 26.7 V24.9 H8.6 V27.9 L6.4 29.3 V27.5 H4.4 V30.5 L3 31.4 M27.3 25.4 L29.4 26.7 V24.9 H31.4 V27.9 L33.6 29.3 V27.5 H35.6 V30.5 L37 31.4 M2 32 H38 M5 36.2 Q7.5 34.8 10 36.2 T15 36.2 T20 36.2 T25 36.2 T30 36.2 T35 36.2",
+  "flagColors": [
+    "#FF0000",
+    "#FFFFFF",
+    "#171796"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Хорватії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Croatia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Croacia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Croatie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

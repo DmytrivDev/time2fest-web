@@ -1,0 +1,103 @@
+{
+  "code": "NO",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "oslo",
+  "names": {
+    "uk": {
+      "name": "Норвегія",
+      "city": "Осло",
+      "cityIn": "в Осло",
+      "countryIn": "у Норвегії",
+      "caps": "НОРВЕГІЯ"
+    },
+    "en": {
+      "name": "Norway",
+      "city": "Oslo",
+      "cityIn": "in Oslo",
+      "countryIn": "in Norway",
+      "caps": "NORWAY"
+    },
+    "es": {
+      "name": "Noruega",
+      "city": "Oslo",
+      "cityIn": "en Oslo",
+      "countryIn": "en Noruega",
+      "caps": "NORUEGA"
+    },
+    "fr": {
+      "name": "Norvège",
+      "city": "Oslo",
+      "cityIn": "à Oslo",
+      "countryIn": "en Norvège",
+      "caps": "NORVÈGE"
+    }
+  },
+  "picto": "M3 37.5 H37 M6 37.5 V33.6 M34 37.5 V33.6 M17.8 37.5 V34.6 Q20 32.2 22.2 34.6 V37.5 M3 33.6 H37 L31.6 28.4 H8.4 Z M10.4 28.4 V26.4 M29.6 28.4 V26.4 M7.8 26.4 H32.2 L27.2 20.2 H12.8 Z M12.8 20.2 Q11.2 17.4 9 17.4 Q7.6 17.6 8 19 M27.2 20.2 Q28.8 17.4 31 17.4 Q32.4 17.6 32 19 M14.6 20.2 V18.2 M25.4 20.2 V18.2 M12.2 18.2 H27.8 L23.6 11.8 H16.4 Z M16.4 11.8 Q15 9.2 13 9.2 Q11.8 9.4 12.2 10.6 M23.6 11.8 Q25 9.2 27 9.2 Q28.2 9.4 27.8 10.6 M18 11.8 V9.2 M22 11.8 V9.2 M16.8 9.2 H23.2 M18 9.2 L20 3.2 L22 9.2 M20 3.2 V1.2 M19 2 H21",
+  "flagColors": [
+    "#FFFFFF",
+    "#E0474C",
+    "#5B7FD0"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Норвегії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Norway"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Noruega"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Norvège"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

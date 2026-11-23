@@ -4546,5 +4546,61 @@
       "description": "Malte fête 2027 à 23 h UTC : concert place Saint-Georges à La Valette, grand feu d’artifice sur le Grand Port et imbuljuta chaude aux châtaignes."
     },
     "kit": "mt"
+  },
+  "HR": {
+    "text": "En Croatie, le compte à rebours commence à midi : Zagreb et Ogulin organisent un « minuit » de midi pour les enfants, et à Fužine comme à Novi Vinodolski ce décompte réunit des milliers de personnes. Le soir, on accueille les invités avec un verre de rakija ; sur la table, cochon de lait ou agneau, sarma au chou aigre et une « salade française » qui dure plusieurs jours. À minuit, on lève un verre de mousseux, idéalement des vignes de Plešivica.\n\nLa nuit, Zagreb se retrouve sur la place du Ban-Jelačić : concert en plein air, et le maire compte les dernières secondes avec tout le monde. Sur la côte, la grande scène est le Stradun de Dubrovnik, où minuit s’accompagne du traditionnel feu d’artifice au-dessus de la vieille ville. Et à Osijek, depuis plus de trente ans, on dit adieu à l’année par une baignade dans la Drave.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Minuit à midi",
+        "text": "Le 31 décembre, à Zagreb et à Ogulin, les enfants se retrouvent avant midi pour une fête : on y accueille symboliquement la nouvelle année à midi."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cochon, sarma et salade",
+        "text": "Dresse la table à la croate : cochon de lait ou agneau, sarma au chou aigre et une « salade française » qui tiendra plusieurs jours."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur le Stradun",
+        "text": "À minuit, Dubrovnik se retrouve sur le Stradun : après le concert en plein air, le feu d’artifice traditionnel illumine la vieille ville."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Croatie : Zagreb | Time2Fest",
+      "description": "La Croatie fête 2027 à 23 h UTC : décompte de midi pour les enfants, cochon de lait et sarma, concert à Zagreb et feu d’artifice sur le Stradun."
+    },
+    "kit": "hr"
+  },
+  "NO": {
+    "text": "Les Norvégiens passent le réveillon de Noël en famille et celui du Nouvel An entre amis : c’est la deuxième grande fête de l’année. Sur la table, souvent une dinde farcie rôtie avec pommes de terre, choux de Bruxelles, sauce et salade Waldorf, ou bien des côtes d’agneau séchées ou de la poitrine de porc rôtie. En dessert, crème de riz ou pudding à la vanille, puis plus tard café, gâteaux et un verre de cognac. Dans la soirée vient le discours du Nouvel An du roi, une tradition qui remonte à Haakon VII.\n\nÀ l’approche de minuit, tout le monde sort avec des fusées : les feux d’artifice privés ne sont permis que de 18 h à 2 h. À Oslo, ils sont totalement interdits à l’intérieur du périphérique Ring 2, et pour qu’on en tire moins entre les maisons, les villes norvégiennes organisent de grands feux publics que l’on vient regarder sur les places centrales. Le 1er janvier, c’est au Premier ministre de s’adresser au pays.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dinde et crème de riz",
+        "text": "Les Norvégiens articulent souvent le dîner du réveillon autour d’une dinde rôtie avec salade Waldorf, et le terminent par une crème de riz, un café et un verre de cognac."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Le discours du roi",
+        "text": "Le soir du 31 décembre, le roi s’adresse au pays à la radio et à la télévision, comme depuis Haakon VII, et le 1er janvier, c’est le Premier ministre qui prend la parole."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Des fusées jusqu’à 2 h",
+        "text": "En Norvège, les feux privés ne sont permis que de 18 h à 2 h, et peu avant minuit tout le monde sort ; dans le centre d’Oslo, à l’intérieur du Ring 2, ils sont interdits."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Norvège : Oslo | Time2Fest",
+      "description": "La Norvège fête 2027 à 23 h UTC : dinde rôtie et crème de riz, discours du roi, fusées jusqu’à 2 h du matin et grands feux publics au-dessus des villes."
+    },
+    "kit": "no"
   }
 }

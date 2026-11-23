@@ -996,6 +996,18 @@
       "wide": true,
       "sky": "#10162e",
       "water": "#1a2a44"
+    },
+    "HR": {
+      "src": "/scenes/HR-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "NO": {
+      "src": "/scenes/NO-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#4d546e"
     }
   }
 }
