@@ -43,10 +43,10 @@ describe('SiteStateView', () => {
     expect(out).toMatch(/<option value="pass-b" selected/);
   });
 
-  it('renders nine switch rows with values, rooms and tiers', () => {
+  it('renders ten switch rows with values, rooms and tiers', () => {
     const out = html(base);
     const rows = out.match(/data-testid="switch-[A-Za-z]+"/g) ?? [];
-    expect(rows).toHaveLength(9);
+    expect(rows).toHaveLength(10);
     expect(out).toContain('Чат: вимкнено');
     expect(out).toContain('room-ua — вимкнено');
     expect(out).toContain('$5: вимкнено');

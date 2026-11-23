@@ -47,6 +47,7 @@ export const SITE_SWITCH_LABELS: Record<string, string> = {
   passGift: 'Пас у подарунок',
   payments: 'Платежі',
   viewersMap: 'Мапа глядачів',
+  viewersCount: 'Число людей біля плеєра',
   passOffer: 'Пропозиція паса',
   chatRooms: 'Кімнати чату',
   toastTiers: 'Рівні тостів',

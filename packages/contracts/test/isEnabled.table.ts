@@ -16,6 +16,7 @@ const base = (): SiteSwitches => ({
   passGift: true,
   payments: true,
   viewersMap: true,
+  viewersCount: true,
   passOffer: true,
   chatRooms: {},
   toastTiers: { '2': true, '5': true, '10': true },
@@ -54,7 +55,7 @@ export function buildIsEnabledTable(): IsEnabledCase[] {
     const chatRooms: Record<string, boolean> = roomState === 'absent' ? {} : { kyiv: roomState === 'true' };
     rows.push({ name: `room chat=${chat} room=${roomState}`, switches: { ...base(), chat, chatRooms }, target: { kind: 'room', room: 'kyiv' }, expected: chat && roomState !== 'false' });
   }
-  for (const key of ['chat', 'viewersMap', 'passOffer'] as const) {
+  for (const key of ['chat', 'viewersMap', 'viewersCount', 'passOffer'] as const) {
     for (const value of [true, false]) {
       rows.push({ name: `switch ${key}=${value}`, switches: { ...base(), [key]: value }, target: { kind: 'switch', key }, expected: value });
     }

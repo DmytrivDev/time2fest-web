@@ -8,3 +8,10 @@ describe('isEnabled on the site (AC-15)', () => {
     expect(isEnabled(row.switches, row.target)).toBe(row.expected);
   });
 });
+
+describe('viewersCount switch (SPEC-12 AC-66)', () => {
+  it.each([true, false])('isEnabled switch viewersCount = %s', (value) => {
+    const base = buildIsEnabledTable().find((r) => r.target.kind === 'switch')!.switches;
+    expect(isEnabled({ ...base, viewersCount: value }, { kind: 'switch', key: 'viewersCount' })).toBe(value);
+  });
+});

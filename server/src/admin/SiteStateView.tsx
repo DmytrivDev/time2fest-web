@@ -29,7 +29,7 @@ export interface SiteStateViewProps {
   onProduct?: (key: ProductKey, productId: string) => void;
 }
 
-const BOOLEAN_KEYS = ['chat', 'toasts', 'pass', 'passGift', 'payments', 'viewersMap', 'passOffer'] as const;
+const BOOLEAN_KEYS = ['chat', 'toasts', 'pass', 'passGift', 'payments', 'viewersMap', 'viewersCount', 'passOffer'] as const;
 const TIERS = ['2', '5', '10'] as const;
 const PRODUCT_KEYS: readonly ProductKey[] = ['pass', 'toast:2', 'toast:5', 'toast:10'];
 const PAUSE: Record<string, string> = { manual: SITE_TEXT.pauseManual, auto: SITE_TEXT.pauseAuto };
