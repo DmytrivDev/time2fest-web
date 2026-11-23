@@ -57,7 +57,7 @@ import { createPayloadCorrectionReader, payloadCorrectionDeps } from './adapters
 import { createPayloadFanOutClaim, createPayloadRebuildStore, createPayloadSiteReset, createPayloadSiteStore } from './adapters/payloadSiteState';
 import { createFakeProducts, emptyProducts } from './adapters/products';
 import { createCfPurge } from './adapters/cfPurge';
-import { catalogVersionOf } from '@time2fest/contracts';
+import { catalogVersionOf, LIVE_VIEWERS_CLASS } from '@time2fest/contracts';
 import { createGithubDispatch } from './adapters/githubDispatch';
 import { REBUILD_TICK_MS } from './domain/site/rebuild';
 import { parseLiveConfig } from './domain/live/config';
@@ -81,7 +81,9 @@ import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
-import type { ChannelPublisher, Scheduler } from './realtime/ports';
+import type { CentrifugoPresenceApi, ChannelPublisher, Scheduler, SubscriptionSigner } from './realtime/ports';
+import { channelName } from './domain/realtime/channels';
+import { createViewersAggregator, VIEWERS_PASS_MS, viewerCatalogFrom } from './live/viewers';
 import { isRevertible } from './registries/revertHandlers';
 import { momentActionsFor } from './registries/moments';
 import { routeRegistry } from './registries/routes';
@@ -100,6 +102,7 @@ const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
 const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
 const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
 const LIVE_POLLER_KEY = Symbol.for('t2f.livePoller');
+const LIVE_VIEWERS_KEY = Symbol.for('t2f.liveViewers');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -258,8 +261,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const { url: centrifugoUrl, apiKey: centrifugoApiKey } = realtime.config;
   const centrifugoApi =
     centrifugoUrl !== undefined && centrifugoApiKey !== undefined ? createCentrifugoApi({ url: centrifugoUrl, apiKey: centrifugoApiKey, log }) : undefined;
+  const signer = tokenSecret !== undefined ? createHs256Signer(tokenSecret) : undefined;
   deps.realtime = overrides.realtime ?? {
-    ...(tokenSecret !== undefined ? { signer: createHs256Signer(tokenSecret) } : {}),
+    ...(signer !== undefined ? { signer } : {}),
     random: () => randomInt(0, 2 ** 32) / 2 ** 32,
     prefix: realtime.config.prefix,
     ...(centrifugoApi !== undefined
@@ -271,7 +275,45 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
         }
       : {}),
   };
+  // The viewers (SPEC-12 S9): built once realtime is wired; the ticker starts only in `startProcessBackground`.
+  if (deps.live !== undefined && deps.live.viewers === undefined) {
+    deps.live = { ...deps.live, viewers: createViewersWiring(deps, centrifugoApi, signer) };
+  }
   return deps;
+}
+
+/**
+ * The viewers wiring (SPEC-12 AC-59 … AC-63): the aggregator over Centrifugo presence of `live:viewers` (unavailable
+ * without the realtime API) and the viewer-token deps (no signer without the token secret → 503).
+ */
+function createViewersWiring(
+  deps: Deps,
+  presence: CentrifugoPresenceApi | undefined,
+  signer: SubscriptionSigner | undefined,
+): NonNullable<LiveWiring['viewers']> {
+  const live = deps.live;
+  if (live === undefined) throw new Error('deps: live is not built');
+  const row = channelClassesFor(deps.env.class).find((r) => r.key === LIVE_VIEWERS_CLASS);
+  const channel = row === undefined ? undefined : channelName(row, undefined, deps.realtime?.prefix ?? '');
+  if (channel === undefined) throw new Error('realtime: live:viewers has no channel name');
+  return {
+    aggregator: createViewersAggregator({
+      presence: presence ?? { presence: () => Promise.resolve({ status: 'unavailable' }) },
+      channel,
+      lease: live.lease,
+      ...(deps.realtime?.publisher !== undefined ? { publisher: deps.realtime.publisher } : {}),
+      switches: async () => {
+        const site = deps.site;
+        if (site === undefined) throw new Error('deps: site is not built');
+        return (await site.store.read()).switches;
+      },
+      countries: async () => viewerCatalogFrom((await catalogStoreOf(deps).read()).countries),
+      cfg: live.cfg,
+      // Real time, never the virtual clock: presence and the token's `exp` are checked by Centrifugo on real time.
+      clock: realClock,
+    }),
+    token: { ...(signer !== undefined ? { signer } : {}), channel, clock: realClock },
+  };
 }
 
 /**
@@ -656,6 +698,32 @@ export function startLivePoller(deps: Deps, intervalMs: number = LIVE_PASS_MS): 
 }
 
 /**
+ * The viewers ticker of one process (SPEC-12 AC-60): a pass every 30 s on real time; only the `live-viewers` lease
+ * holder reads presence and publishes. A failing pass raises a log-level alarm (code only, never a count source)
+ * and the ticker keeps going. Not started without the viewers wiring.
+ */
+export function startViewersTicker(deps: Deps, intervalMs: number = VIEWERS_PASS_MS): Ticker | undefined {
+  const viewers = deps.live?.viewers;
+  if (!viewers) return undefined;
+  const ticker = startTicker({
+    tick: async () => {
+      await viewers.aggregator.tick();
+    },
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'live', code: 'viewers_tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    intervalMs,
+  });
+  return {
+    async stop() {
+      await ticker.stop();
+      await viewers.aggregator.release().catch(() => {});
+    },
+  };
+}
+
+/**
  * The catalog rebuild ticker of one process (SPEC-08 AC-61 … AC-63): every 15 s on the server clock. A failing
  * tick (database down) raises a log-level alarm (code only) and the ticker keeps going.
  */
@@ -750,6 +818,7 @@ export function startProcessBackground(): void {
     g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
     g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
     g[LIVE_POLLER_KEY] ??= startLivePoller(getDeps());
+    g[LIVE_VIEWERS_KEY] ??= startViewersTicker(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());

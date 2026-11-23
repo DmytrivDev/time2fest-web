@@ -15,7 +15,8 @@
         "allow_subscribe_for_client": true,
         "force_recovery": true,
         "history_size": 10,
-        "history_ttl": "300s"
+        "history_ttl": "300s",
+        "presence": true
       },
       {
         "name": "notif",

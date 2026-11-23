@@ -27,9 +27,25 @@ export interface TokenClaims {
   exp: number;
 }
 
+/**
+ * The claims of a subscription token (SPEC-12 [П-2]): an anonymous subscriber (`sub` is always empty),
+ * one channel, and the `info` Centrifugo attaches to the subscription's presence entry (`chan_info`).
+ * Epoch seconds for `exp`.
+ */
+export interface SubscriptionClaims {
+  channel: string;
+  info: Record<string, unknown>;
+  exp: number;
+}
+
 /** Signs connection tokens with the shared Centrifugo secret. */
 export interface TokenSigner {
   sign(claims: TokenClaims): Promise<string>;
+}
+
+/** Signs subscription tokens with the same secret; `iat` (epoch seconds) comes from the caller's clock. */
+export interface SubscriptionSigner {
+  signSubscription(claims: SubscriptionClaims & { iat: number }): Promise<string>;
 }
 
 /** A uniform value in [0, 1); cryptographic in production, seeded in tests. */
@@ -49,10 +65,23 @@ export interface CentrifugoPublishInput {
   idempotencyKey: string;
 }
 
+/** One presence entry as the server reads it: only the subscription's `chan_info`, never a client id. */
+export interface PresenceInfo {
+  chanInfo?: unknown;
+}
+
+/** What Centrifugo answered to one presence call. */
+export type PresenceOutcome = { status: 'ok'; entries: PresenceInfo[] } | { status: 'unavailable' };
+
 /** Centrifugo's server API (process boundary). Implementations never throw. */
 export interface CentrifugoApi {
   publish(input: CentrifugoPublishInput): Promise<PublishOutcome>;
   disconnectUser(user: string, code: number, reason: string): Promise<'ok' | 'unavailable'>;
+}
+
+/** Centrifugo's presence read (SPEC-12 AC-61). Never throws; a namespace without presence reads as unavailable. */
+export interface CentrifugoPresenceApi {
+  presence(channel: string): Promise<PresenceOutcome>;
 }
 
 /** Timers, substituted by a manual scheduler in tests. */

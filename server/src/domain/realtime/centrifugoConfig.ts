@@ -40,6 +40,8 @@ export interface CentrifugoChannelOptions {
   history_meta_ttl?: string;
   history_size: number;
   history_ttl: string;
+  /** Presence kept for server API reads only (SPEC-12 AC-61); never an `allow_presence_for_*`. */
+  presence?: boolean;
 }
 
 export interface CentrifugoNamespace extends CentrifugoChannelOptions {
@@ -82,7 +84,9 @@ function channelOptions(rows: readonly ChannelClassRow[], label: string): Centri
   }
   const historySize = Math.max(...rows.map((r) => r.history.size));
   const historyTtl = Math.max(...rows.map((r) => r.history.ttlSeconds));
-  return visibility === 'public' ? publicOptions(historySize, historyTtl) : personalOptions(historySize, historyTtl);
+  const options = visibility === 'public' ? publicOptions(historySize, historyTtl) : personalOptions(historySize, historyTtl);
+  // Presence is per namespace too: any row that needs it turns it on for the whole namespace.
+  return rows.some((r) => r.presence === true) ? { ...options, presence: true } : options;
 }
 
 function publicOptions(size: number, ttlSeconds: number): CentrifugoChannelOptions {

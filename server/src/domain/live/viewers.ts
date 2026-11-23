@@ -26,12 +26,17 @@ export interface ViewerCatalogCountry {
 const ISO = /^[A-Z]{2}$/;
 const SERVICE_CODES: ReadonlySet<string> = new Set(['XX', 'T1']);
 
+/** A viewer's country as counted (AC-59): a valid ISO code other than `XX` / `T1`, else `null`. */
+export function viewerCountry(c: unknown): string | null {
+  return typeof c === 'string' && ISO.test(c) && !SERVICE_CODES.has(c) ? c : null;
+}
+
 /** The country of a counted entry, `null` for an entry counted without a country, `undefined` when not counted. */
 function readEntry(info: unknown): string | null | undefined {
   if (!info || typeof info !== 'object') return undefined;
   const { p, c } = info as { p?: unknown; c?: unknown };
   if (p !== 1) return undefined;
-  return typeof c === 'string' && ISO.test(c) && !SERVICE_CODES.has(c) ? c : null;
+  return viewerCountry(c);
 }
 
 /** Catalog countries ordered by popularity (desc), then ISO; compute once per catalog version. */

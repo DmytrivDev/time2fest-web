@@ -27,6 +27,7 @@ import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolve
 import type { SchedulerHandle } from '../scheduler/service';
 import type { FanOutDeps } from '../site/fanout';
 import type { LiveFanOutDeps } from '../live/fanout';
+import type { ViewerTokenDeps, ViewersAggregator } from '../live/viewers';
 import type { RebuildDeps } from '../site/rebuild';
 import type { CatalogProduct } from '../site/ports';
 import type { SiteDeps } from '../site/service';
@@ -109,6 +110,8 @@ export interface LiveWiring {
   cfg: LiveConfig;
   caller: CallerContext;
   statuses?: VideoStatusSource & SearchSource;
+  /** The viewers aggregator and the viewer-token deps (SPEC-12 S9); set by `createDeps` once realtime is wired. */
+  viewers?: { aggregator: ViewersAggregator; token: ViewerTokenDeps };
 }
 
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */

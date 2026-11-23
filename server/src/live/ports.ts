@@ -1,6 +1,6 @@
 /**
  * Ports of the live-air capability (SPEC-12), ring 2. They name the conversation, never a vendor type.
- * `PresenceSource` is filled in by a later phase (S9).
+ * `PresenceSource` is the realtime presence read (S9): only each entry's `chan_info`, never a client id.
  */
 import type { StreamStatus } from '@time2fest/contracts';
 import type { ZoneLive, StoredSource } from '../domain/live/chain';
@@ -9,6 +9,7 @@ import type { LiveEvent } from '../domain/live/moment';
 import type { QuotaCounterKey, QuotaState } from '../domain/live/quota';
 import type { YoutubeVideoState } from '../domain/live/status';
 import type { Tx } from '../events/ports';
+import type { CentrifugoPresenceApi } from '../realtime/ports';
 
 export type { Tx };
 
@@ -107,9 +108,8 @@ export interface LiveEventSource {
   events(): Promise<LiveEvent[]>;
 }
 
-export interface PresenceSource {
-  presence(channel: string): Promise<number>;
-}
+/** The presence of one channel (SPEC-12 AC-61): `unavailable` when the transport cannot answer now. */
+export type PresenceSource = CentrifugoPresenceApi;
 
 export type LiveLeaseName = 'live-poller' | 'live-viewers';
 

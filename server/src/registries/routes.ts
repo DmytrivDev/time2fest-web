@@ -5,6 +5,8 @@ import { catalogRoute } from '../endpoints/catalog';
 import { healthRoute } from '../endpoints/health';
 import { liveChainsRoute } from '../endpoints/liveChains';
 import { liveSourceErrorsRoute } from '../endpoints/liveSourceErrors';
+import { liveViewerTokenRoute } from '../endpoints/liveViewerToken';
+import { liveViewersRoute } from '../endpoints/liveViewers';
 import { realtimeTokenRoute } from '../endpoints/realtimeToken';
 import { siteStateRoute } from '../endpoints/siteState';
 import { timeRoute } from '../endpoints/time';
@@ -17,6 +19,8 @@ export const routeRegistry: readonly RouteRow[] = [
   healthRoute,
   liveChainsRoute,
   liveSourceErrorsRoute,
+  liveViewerTokenRoute,
+  liveViewersRoute,
   realtimeTokenRoute,
   siteStateRoute,
   timeRoute,
