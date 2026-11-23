@@ -1,0 +1,103 @@
+{
+  "code": "VA",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "vatican",
+  "names": {
+    "uk": {
+      "name": "Ватикан",
+      "city": "Ватикан",
+      "cityIn": "у Ватикані",
+      "countryIn": "у Ватикані",
+      "caps": "ВАТИКАН"
+    },
+    "en": {
+      "name": "Vatican City",
+      "city": "Vatican City",
+      "cityIn": "in Vatican City",
+      "countryIn": "in Vatican City",
+      "caps": "VATICAN CITY"
+    },
+    "es": {
+      "name": "Ciudad del Vaticano",
+      "city": "Ciudad del Vaticano",
+      "cityIn": "en la Ciudad del Vaticano",
+      "countryIn": "en el Vaticano",
+      "caps": "VATICANO"
+    },
+    "fr": {
+      "name": "Vatican",
+      "city": "Vatican",
+      "cityIn": "au Vatican",
+      "countryIn": "au Vatican",
+      "caps": "VATICAN"
+    }
+  },
+  "picto": "M12.6 25.6 V19.6 H27.4 V25.6 M12.6 19.6 C12.6 13.4 16 9.6 18.4 9.2 H21.6 C24 9.6 27.4 13.4 27.4 19.6 M16.6 19.6 C16.6 15.2 17.8 11.6 18.9 9.4 M23.4 19.6 C23.4 15.2 22.2 11.6 21.1 9.4 M18.6 9.2 V6.2 H21.4 V9.2 M20 6.2 V1.8 M18.5 3.4 H21.5 M4 36.6 V25.6 H36 V36.6 M4 29.6 H36 M1.8 36.6 H38.2 M9.4 36.6 V29.6 M14.6 36.6 V29.6 M25.4 36.6 V29.6 M30.6 36.6 V29.6 M18 36.6 V32.4 H22 V36.6",
+  "flagColors": [
+    "#FFE000",
+    "#FFFFFF",
+    "#E8C872"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Ватикані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Vatican City"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en el Vaticano"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Vatican"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

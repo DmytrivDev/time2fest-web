@@ -3096,6 +3096,60 @@
         "title": "Nouvel An à Saint-Marin | Time2Fest",
         "description": "Saint-Marin fête 2027 à 23:00 UTC : toast au panettone sur la piazza Sant’Agata, tubes des années 2000, lentilles à table et patinoire sous le Titano."
       }
+    },
+    "TD": {
+      "uk": {
+        "title": "Новий рік у Чаді: Нджамена | Time2Fest",
+        "description": "Північ у Нджамені — о 23:00 UTC: Чад зустрічає 2027-й родинною вечерею й танцями, фестиваль Дарі на площі Нації збирає 23 провінції, а 1 січня гудуть вувузели."
+      },
+      "en": {
+        "title": "New Year in Chad: N'Djamena | Time2Fest",
+        "description": "Midnight in N'Djamena falls at 23:00 UTC: Chad meets 2027 with family dinners and dancing, the Dary festival gathers 23 provinces and vuvuzelas sound."
+      },
+      "es": {
+        "title": "Año Nuevo en Chad: Yamena | Time2Fest",
+        "description": "La medianoche de Yamena llega a las 23:00 UTC: Chad recibe 2027 con cenas en familia y baile, el festival Dary reúne a 23 provincias y suenan las vuvuzelas."
+      },
+      "fr": {
+        "title": "Nouvel An au Tchad : N’Djamena | Time2Fest",
+        "description": "Minuit sonne à N’Djamena à 23 h UTC : le Tchad accueille 2027 en famille et en dansant, le festival Dary réunit les 23 provinces et les vuvuzelas résonnent."
+      }
+    },
+    "TN": {
+      "uk": {
+        "title": "Новий рік у Тунісі: місто Туніс | Time2Fest",
+        "description": "Північ у Тунісі — о 23:00 UTC: країна зустрічає 2027-й удома зі смаженою куркою й тортом, що чекає 00:00, а хтось дарує квіти у ресторанах і готелях."
+      },
+      "en": {
+        "title": "New Year in Tunisia: Tunis | Time2Fest",
+        "description": "Midnight in Tunis falls at 23:00 UTC: Tunisia greets 2027 at home over roast chicken, saves the cake for 00:00 and swaps gifts and flowers in restaurants."
+      },
+      "es": {
+        "title": "Año Nuevo en Túnez: la ciudad de Túnez | Time2Fest",
+        "description": "La medianoche tunecina llega a las 23:00 UTC: Túnez recibe 2027 en casa con pollo asado, guarda la tarta para las 00:00 y regala flores en restaurantes."
+      },
+      "fr": {
+        "title": "Nouvel An en Tunisie : Tunis | Time2Fest",
+        "description": "Minuit sonne à Tunis à 23 h UTC : la Tunisie accueille 2027 en famille autour du poulet rôti, garde le gâteau pour minuit et s’offre cadeaux et fleurs."
+      }
+    },
+    "VA": {
+      "uk": {
+        "title": "Новий рік у Ватикані | Time2Fest",
+        "description": "Ватикан проводжає рік гімном «Te Deum» у соборі Святого Петра, а 2027-й зустрічає о 23:00 UTC; 1 січня — меса, Всесвітній день миру й «Ангел Господній»."
+      },
+      "en": {
+        "title": "New Year in Vatican City | Time2Fest",
+        "description": "Vatican City ends the year with a Te Deum in Saint Peter's Basilica and meets 2027 at 23:00 UTC; 1 January brings Mass, the World Day of Peace and the Angelus."
+      },
+      "es": {
+        "title": "Año Nuevo en la Ciudad del Vaticano | Time2Fest",
+        "description": "La Ciudad del Vaticano despide el año con un Te Deum en San Pedro y recibe 2027 a las 23:00 UTC; el 1 de enero hay misa, Jornada de la Paz y Ángelus."
+      },
+      "fr": {
+        "title": "Nouvel An au Vatican | Time2Fest",
+        "description": "Le Vatican clôt l'année par un Te Deum à Saint-Pierre et accueille 2027 à 23:00 UTC ; le 1er janvier, messe, Journée mondiale de la paix et prière de l'Angélus."
+      }
     }
   }
 }

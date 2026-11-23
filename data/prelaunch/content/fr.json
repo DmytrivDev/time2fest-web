@@ -5218,5 +5218,89 @@
       "description": "Saint-Marin fête 2027 à 23:00 UTC : toast au panettone sur la piazza Sant’Agata, tubes des années 2000, lentilles à table et patinoire sous le Titano."
     },
     "kit": "sm"
+  },
+  "TD": {
+    "text": "La Saint-Sylvestre est la plus bruyante dans les grandes villes, à commencer par N’Djamena. La soirée commence par un repas de fête en famille, puis viennent les amis et la danse ; certains la passent en prière. Plus de la moitié des Tchadiens sont musulmans, environ deux sur cinq chrétiens, et le 1er janvier est férié pour tous.\n\nLe cœur de la fête, c’est le festival Dary, place de la Nation à N’Djamena : pendant deux semaines, les 23 provinces y présentent leurs danses et leur artisanat, et le 31 décembre un concert accompagne le réveillon. Pour accueillir 2026, les organisateurs ont annoncé un grand feu d’artifice. Et le jour de l’An, les vuvuzelas résonnent dans les quartiers de la capitale, tandis que les rues se remplissent de gens en habits neufs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Le festival Dary",
+        "text": "Autour du Nouvel An, la place de la Nation à N’Djamena devient la vitrine du pays : les 23 provinces y apportent leurs danses et leur artisanat, et le 31 décembre, place au concert."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Dîner en famille",
+        "text": "Le réveillon commence souvent par un repas de fête entre proches, avant de rejoindre les amis pour danser. Certains accueillent la nuit en prière."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "Habits neufs et vuvuzelas",
+        "text": "Le 1er janvier, les vuvuzelas résonnent dans les quartiers de la capitale et la foule envahit les rues, le plus souvent en habits neufs."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Tchad : N’Djamena | Time2Fest",
+      "description": "Minuit sonne à N’Djamena à 23 h UTC : le Tchad accueille 2027 en famille et en dansant, le festival Dary réunit les 23 provinces et les vuvuzelas résonnent."
+    },
+    "kit": "td"
+  },
+  "TN": {
+    "text": "Du poulet rôti sur la table et un gâteau gardé pour minuit : c’est ainsi que la plupart des Tunisiens accueillent la nouvelle année, chez eux, en famille et entre amis. D’autres réservent au restaurant ou à l’hôtel, et l’on s’offre cadeaux et fleurs. Les gâteaux viennent de la pâtisserie ou du four familial ; en décembre ils s’arrachent, et en 2023 un gâteau du réveillon coûtait de 80 à 120 dinars. La kemia donne sa saveur à la soirée : olives, fèves au cumin, fenouil au citron. Le 1er janvier est férié, tandis que le Nouvel An de l’hégire, Ras el Am, se fête à part, avec un couscous et une mloukhia verte pour une « année verte ».\n\nLa capitale accueille alors des visiteurs : dans les réservations pour les fêtes 2023, Tunis était la quatrième destination préférée des Français pour la fin d’année. Ici, minuit sonne à 23 h UTC.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Poulet rôti en famille",
+        "text": "La plupart des Tunisiens accueillent l’année autour de la table familiale, avec proches et amis, et le plat principal du soir reste le poulet rôti."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Un gâteau pour minuit",
+        "text": "Le gâteau de fête s’achète à la pâtisserie ou se prépare à la maison, et on le goûte quand l’horloge sonne minuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Fleurs et cadeaux",
+        "text": "Certains passent la soirée au restaurant ou à l’hôtel, et ce soir-là on offre cadeaux et fleurs à ses proches."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Tunisie : Tunis | Time2Fest",
+      "description": "Minuit sonne à Tunis à 23 h UTC : la Tunisie accueille 2027 en famille autour du poulet rôti, garde le gâteau pour minuit et s’offre cadeaux et fleurs."
+    },
+    "kit": "tn"
+  },
+  "VA": {
+    "text": "Le Vatican, plus petit État du monde, termine l'année sur un merci. Le 31 décembre, le pape préside dans la basilique Saint-Pierre les premières vêpres de la solennité de Marie, Mère de Dieu, et le «Te Deum», hymne ancien d'action de grâce pour l'année écoulée, résonne sous la coupole. François l'a célébré en 2024, et Léon XIV a clos 2025 de la même façon.\n\nLe premier jour de l'année est consacré à la paix. Le 1er janvier, la basilique accueille la messe de Marie, Mère de Dieu ; depuis 1968, c'est aussi la Journée mondiale de la paix, instituée par Paul VI. Puis le pape récite l'Angélus avec les fidèles sur la place Saint-Pierre, où un sapin et une crèche accompagnent les fêtes depuis 1982.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Te Deum le dernier soir",
+        "text": "Le 31 décembre, la basilique Saint-Pierre chante le «Te Deum», un hymne de gratitude pour tout ce qu'a apporté l'année qui s'en va."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Un premier jour pour la paix",
+        "text": "Le 1er janvier est la Journée mondiale de la paix : après la messe, le pape récite l'Angélus avec les fidèles réunis sur la place."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Sapin et crèche sur la place",
+        "text": "Chaque saison des fêtes, un grand sapin et une crèche grandeur nature sont installés au centre de la place Saint-Pierre, une coutume depuis 1982."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Vatican | Time2Fest",
+      "description": "Le Vatican clôt l'année par un Te Deum à Saint-Pierre et accueille 2027 à 23:00 UTC ; le 1er janvier, messe, Journée mondiale de la paix et prière de l'Angélus."
+    },
+    "kit": "va"
   }
 }

@@ -1,0 +1,103 @@
+{
+  "code": "TD",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "ndjamena",
+  "names": {
+    "uk": {
+      "name": "Чад",
+      "city": "Нджамена",
+      "cityIn": "у Нджамені",
+      "caps": "ЧАД",
+      "countryIn": "у Чаді"
+    },
+    "en": {
+      "name": "Chad",
+      "city": "N’Djamena",
+      "cityIn": "in N’Djamena",
+      "caps": "CHAD",
+      "countryIn": "in Chad"
+    },
+    "es": {
+      "name": "Chad",
+      "city": "Yamena",
+      "cityIn": "en Yamena",
+      "caps": "CHAD",
+      "countryIn": "en Chad"
+    },
+    "fr": {
+      "name": "Tchad",
+      "city": "N’Djamena",
+      "cityIn": "à N’Djamena",
+      "caps": "TCHAD",
+      "countryIn": "au Tchad"
+    }
+  },
+  "picto": "M2.6 34 L4.2 29 L6 23 L8 18 L10.4 14.2 L13.4 11.2 Q18.6 7.8 24.4 8.6 L25.8 8.6 L27 5.4 L29.6 4.6 L32 6 L33 9.6 L32.6 14 L33.6 17 L35.6 19 L37 24 L38 34 M9.4 34 Q10.4 22 14.4 16.2 Q18.6 10.6 23.4 10.6 Q26.4 11.2 27 15 Q27.8 22 27.6 34 M1.5 34 H38.5",
+  "flagColors": [
+    "#002664",
+    "#FECB00",
+    "#C60C30"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Чаді"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Chad"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Chad"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Tchad"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

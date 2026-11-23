@@ -3197,6 +3197,54 @@
         "x": 50,
         "y": 60
       }
+    },
+    "country:TD": {
+      "src": "/media/photos/ndjamena.webp",
+      "alt": {
+        "uk": "Новорічна ніч 2025/26 у Нджамені: концерт на фестивалі Дарі, сцена в прожекторах",
+        "en": "New Year’s Eve 2025/26 in N’Djamena: a concert at the Dary festival, the stage in spotlights",
+        "es": "Nochevieja 2025/26 en Yamena: concierto en el festival Dary, el escenario bajo los focos",
+        "fr": "Réveillon 2025/26 à N’Djamena : concert au festival Dary, scène sous les projecteurs"
+      },
+      "author": "Abakar B",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:KeBlack_03.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:TN": {
+      "src": "/media/photos/tunis.webp",
+      "alt": {
+        "uk": "Нічний Туніс згори: освітлений проспект Хабіба Бургіби з деревами й готелем «Африка»",
+        "en": "Tunis at night from above: the lit Avenue Habib Bourguiba with its trees and the Hotel Africa",
+        "es": "Túnez de noche desde lo alto: la avenida Habib Burguiba iluminada, con sus árboles y el hotel Africa",
+        "fr": "Tunis la nuit vue d’en haut : l’avenue Habib-Bourguiba illuminée, ses arbres et l’hôtel Africa"
+      },
+      "author": "Habib M'henni",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Avenue_Habib_Bourguiba,_Tunis_by_Night,_20_mars_2015.jpg",
+      "position": {
+        "x": 55,
+        "y": 50
+      }
+    },
+    "country:VA": {
+      "src": "/media/photos/vatican.webp",
+      "alt": {
+        "uk": "Площа Святого Петра в ніч зимових свят 2024/25: ялинка біля обеліска, колонада Берніні й купол собору",
+        "en": "St Peter’s Square on a holiday night in 2024/25: the tree by the obelisk, Bernini’s colonnade and the basilica dome",
+        "es": "La plaza de San Pedro en una noche de fiestas de 2024/25: el árbol junto al obelisco, la columnata de Bernini y la cúpula de la basílica",
+        "fr": "La place Saint-Pierre un soir de fêtes 2024/25 : le sapin près de l’obélisque, la colonnade du Bernin et la coupole de la basilique"
+      },
+      "author": "Cruz.croce",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:VatikanBor20245.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
     }
   }
 }

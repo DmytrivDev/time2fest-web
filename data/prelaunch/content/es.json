@@ -5218,5 +5218,89 @@
       "description": "San Marino recibe 2027 a las 23:00 UTC: brindis con panettone en la plaza Sant’Agata, éxitos de los 2000, lentejas en la mesa y pista de hielo."
     },
     "kit": "sm"
+  },
+  "TD": {
+    "text": "La Saint-Sylvestre —así, a la francesa, se llama aquí la Nochevieja— suena más fuerte en las grandes ciudades, sobre todo en Yamena. La noche empieza con una cena festiva en familia; después llegan los amigos y el baile, y hay quien la pasa rezando. Más de la mitad de los chadianos son musulmanes y cerca de dos de cada cinco, cristianos, y el 1 de enero es festivo para todos.\n\nEl corazón de la fiesta es el festival Dary, en la plaza de la Nación de Yamena: durante dos semanas las 23 provincias muestran allí sus danzas y su artesanía, y el 31 de diciembre suena un concierto de Nochevieja. Para recibir 2026, los organizadores anunciaron un gran espectáculo de fuegos artificiales. Y el día de Año Nuevo suenan las vuvuzelas en los barrios de la capital mientras la gente, con ropa nueva, llena las calles.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "El festival Dary",
+        "text": "En torno al Año Nuevo, la plaza de la Nación de Yamena se convierte en el escaparate del país: las 23 provincias llevan sus danzas y su artesanía, y el 31 de diciembre hay concierto."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cena en familia",
+        "text": "La Nochevieja suele empezar con una cena festiva con los parientes; luego se visita a los amigos y se baila. Hay quien recibe la noche rezando."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "Ropa nueva y vuvuzelas",
+        "text": "El 1 de enero suenan las vuvuzelas por los barrios de la capital y la gente sale en grupo a la calle, casi siempre estrenando ropa de fiesta."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Chad: Yamena | Time2Fest",
+      "description": "La medianoche de Yamena llega a las 23:00 UTC: Chad recibe 2027 con cenas en familia y baile, el festival Dary reúne a 23 provincias y suenan las vuvuzelas."
+    },
+    "kit": "td"
+  },
+  "TN": {
+    "text": "Pollo asado en la mesa y una tarta que espera a la medianoche: así recibe el año la mayoría de los tunecinos, en casa, con la familia y los amigos. Otros reservan cena en un restaurante o un hotel, y se intercambian regalos y flores. Las tartas se compran en pastelerías o se hornean en casa; en diciembre vuelan, y en 2023 una tarta de fiesta costaba entre 80 y 120 dinares. La kemia pone su sabor a la noche: aceitunas, habas con comino, hinojo con limón. El 1 de enero es festivo, y el Año Nuevo de la hégira, Ras el Am, se celebra aparte, con cuscús y mulujía verde para un «año verde».\n\nLa capital recibe visitantes en estas fechas: en las reservas para las fiestas de 2023, Túnez fue el cuarto destino favorito de los franceses para fin de año. Aquí la medianoche llega a las 23:00 UTC.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Pollo asado en casa",
+        "text": "La mayoría de los tunecinos recibe el año en una mesa familiar, con parientes y amigos, y el plato principal de la noche es el pollo asado."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Una tarta para la medianoche",
+        "text": "La tarta de fiesta se compra en la pastelería o se hornea en casa, y se prueba cuando el reloj marca la medianoche."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Flores y regalos",
+        "text": "Hay quien pasa la velada en restaurantes y hoteles, y esa noche los seres queridos se regalan obsequios y flores."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Túnez: la ciudad de Túnez | Time2Fest",
+      "description": "La medianoche tunecina llega a las 23:00 UTC: Túnez recibe 2027 en casa con pollo asado, guarda la tarta para las 00:00 y regala flores en restaurantes."
+    },
+    "kit": "tn"
+  },
+  "VA": {
+    "text": "La Ciudad del Vaticano, el Estado más pequeño del mundo, despide el año dando gracias. El 31 de diciembre el Papa preside en la basílica de San Pedro las primeras vísperas de la solemnidad de Santa María, Madre de Dios, y bajo la cúpula suena el «Te Deum», antiguo himno de acción de gracias por el año que termina. En 2024 lo presidió Francisco, y León XIV despidió 2025 de la misma manera.\n\nEl primer día del año está dedicado a la paz. El 1 de enero la basílica acoge la misa de Santa María, Madre de Dios; desde 1968 es también la Jornada Mundial de la Paz, creada por Pablo VI. Después el Papa reza el Ángelus con la gente en la plaza de San Pedro, donde desde 1982 hay en estas fiestas un árbol de Navidad y un belén.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Te Deum en la última tarde",
+        "text": "El 31 de diciembre la basílica de San Pedro canta el «Te Deum», un himno de gracias por todo lo que dejó el año que termina."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Un primer día por la paz",
+        "text": "El 1 de enero es la Jornada Mundial de la Paz: tras la misa, el Papa reza el Ángelus junto a la gente de la plaza."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Árbol y belén en la plaza",
+        "text": "Cada temporada navideña se levantan en el centro de la plaza de San Pedro un gran árbol y un belén a tamaño natural, costumbre desde 1982."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en la Ciudad del Vaticano | Time2Fest",
+      "description": "La Ciudad del Vaticano despide el año con un Te Deum en San Pedro y recibe 2027 a las 23:00 UTC; el 1 de enero hay misa, Jornada de la Paz y Ángelus."
+    },
+    "kit": "va"
   }
 }

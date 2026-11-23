@@ -5218,5 +5218,89 @@
       "description": "San Marino greets 2027 at 23:00 UTC with a panettone toast on Piazza Sant’Agata, 2000s hits until two, lentils on the table and an ice rink below Titano."
     },
     "kit": "sm"
+  },
+  "TD": {
+    "text": "Saint-Sylvestre — as New Year's Eve is called here, the French way — is loudest in the big cities, above all in N'Djamena. The evening starts with a festive family dinner, then come friends and dancing, while some spend it in prayer. Over half of Chadians are Muslim and about two in five are Christian, and 1 January is a day off for everyone.\n\nThe heart of the holiday is the Dary festival on Place de la Nation in N'Djamena: for two weeks all 23 provinces show their dances and crafts there, and on 31 December a New Year's Eve concert plays. To welcome 2026 the organisers announced a big fireworks display. And on New Year's Day vuvuzelas sound across the capital's neighbourhoods as people in new clothes fill the streets.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "The Dary festival",
+        "text": "Around New Year, Place de la Nation in N'Djamena becomes the country's showcase: all 23 provinces bring their dances and crafts, and on 31 December a concert plays."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Dinner with the family",
+        "text": "New Year's Eve often begins with a festive dinner with relatives, followed by visits to friends and dancing. Some greet the night in prayer."
+      },
+      {
+        "id": "t3",
+        "iconId": "white",
+        "title": "New clothes and vuvuzelas",
+        "text": "On 1 January vuvuzelas sound through the capital's neighbourhoods, and crowds fill the streets, most of them in new festive clothes."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Chad: N'Djamena | Time2Fest",
+      "description": "Midnight in N'Djamena falls at 23:00 UTC: Chad meets 2027 with family dinners and dancing, the Dary festival gathers 23 provinces and vuvuzelas sound."
+    },
+    "kit": "td"
+  },
+  "TN": {
+    "text": "Roast chicken on the table and a cake saved for midnight: that is how most Tunisians see in the new year — at home, with family and friends. Some book dinner at a restaurant or hotel, and gifts and flowers change hands. Cakes come from pastry shops or the home oven; in December they sell out fast, and in 2023 a festive cake cost 80–120 dinars. Kemia adds its own flavour to the evening: olives, broad beans with cumin, fennel with lemon. 1 January is a day off, while the Hijri New Year, Ras el Am, is marked separately with couscous and green mloukhia for a ‘green year’.\n\nThe capital welcomes visitors at this time of year: in bookings for the 2023 holidays, Tunis ranked fourth among French travellers’ favourite year-end destinations. Midnight here falls at 23:00 UTC.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Roast chicken at home",
+        "text": "Most Tunisians see in the year at a family table with relatives and friends, and the main dish of the evening is roast chicken."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "A cake for midnight",
+        "text": "The festive cake is bought at a pastry shop or baked at home, and it is cut when the clock strikes midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "flower",
+        "title": "Flowers and gifts",
+        "text": "Some spend the evening in restaurants and hotels, and loved ones exchange gifts and flowers that night."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Tunisia: Tunis | Time2Fest",
+      "description": "Midnight in Tunis falls at 23:00 UTC: Tunisia greets 2027 at home over roast chicken, saves the cake for 00:00 and swaps gifts and flowers in restaurants."
+    },
+    "kit": "tn"
+  },
+  "VA": {
+    "text": "Vatican City, the world's smallest state, ends the year with thanks. On 31 December the Pope leads First Vespers of the Solemnity of Mary, Mother of God, in Saint Peter's Basilica, and the «Te Deum», an ancient hymn of thanksgiving for the passing year, fills the nave. Francis led it in 2024, and Leo XIV saw out 2025 the same way.\n\nThe first day of the year belongs to peace. On 1 January the basilica hosts Mass for the Solemnity of Mary, Mother of God; since 1968 it has also been the World Day of Peace, created by Paul VI. Then the Pope prays the Angelus with the people in Saint Peter's Square, where a Christmas tree and a nativity scene have stood each season since 1982.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Te Deum on the last evening",
+        "text": "On 31 December Saint Peter's Basilica sings the «Te Deum», a hymn of thanks for everything the passing year has brought."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "A first day for peace",
+        "text": "1 January is the World Day of Peace: after Mass the Pope prays the Angelus together with the people in the square."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Tree and crib in the square",
+        "text": "Every holiday season a tall Christmas tree and a life-size nativity scene go up in the middle of Saint Peter's Square, a custom since 1982."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Vatican City | Time2Fest",
+      "description": "Vatican City ends the year with a Te Deum in Saint Peter's Basilica and meets 2027 at 23:00 UTC; 1 January brings Mass, the World Day of Peace and the Angelus."
+    },
+    "kit": "va"
   }
 }

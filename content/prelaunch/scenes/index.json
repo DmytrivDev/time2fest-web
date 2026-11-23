@@ -1140,6 +1140,24 @@
       "wide": true,
       "sky": "#151a36",
       "water": "#2a2c41"
+    },
+    "TD": {
+      "src": "/scenes/TD-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#5f4b46"
+    },
+    "TN": {
+      "src": "/scenes/TN-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
+    },
+    "VA": {
+      "src": "/scenes/VA-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#2e3047"
     }
   }
 }
