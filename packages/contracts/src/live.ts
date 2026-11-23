@@ -79,7 +79,8 @@ export const LIVE_REASON_MAX = 200;
 
 export type LiveActionBody =
   | { action: 'hide' | 'unhide' | 'main'; eventId: string; sourceId: string; reason: string }
-  | { action: 'override'; eventId: string; sourceId: string; status: StreamStatus; reason: string }
+  /** Forces a source playable; removing or ending a source is `hide` ([А-R3]). */
+  | { action: 'override'; eventId: string; sourceId: string; status: 'live'; reason: string }
   | { action: 'zone-live'; zoneId: string; live: boolean; reason: string }
   | { action: 'replace'; eventId: string; sourceId: string; videoId: string; reason: string };
 

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { applyStreamEvent, parseChainsResponse, parseStreamEvent, parseViewerSummary, type ChainsResponse, type StreamChain, type StreamEvent } from '../src/index';
 import {
   ChainsResponseSchema,
+  LiveActionBodySchema,
   LiveArchiveRowSchema,
   StreamEventSchema,
   ViewerSummarySchema,
@@ -99,5 +100,13 @@ describe('live archive and sizes', () => {
     // Deviation: raw JSON of 3000 full sources is ~1.28 MB (~426 B each), so the cap is checked on the compressed body.
     const body: ChainsResponse = { version: 1, at, chains: Array.from({ length: 300 }, (_, i) => ten(i)) };
     expect(gzipSync(JSON.stringify(body)).byteLength).toBeLessThanOrEqual(524_288);
+  });
+});
+
+describe('owner live action bodies', () => {
+  const base = { action: 'override', eventId: 'evt_a', sourceId: 'src_a', reason: 'r' };
+  it('[А-R3] override forces a source playable: only status live is accepted', () => {
+    expect(LiveActionBodySchema.safeParse({ ...base, status: 'live' }).success).toBe(true);
+    for (const status of ['expected', 'possible', 'ended', 'hidden']) expect(LiveActionBodySchema.safeParse({ ...base, status }).success).toBe(false);
   });
 });

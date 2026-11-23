@@ -18,6 +18,7 @@
  */
 import { fail, LIVE_VIEWERS_CLASS, ok, type ApiResult, type RealtimeTokenValue, type SiteSwitches, type ViewerSummary } from '@time2fest/contracts';
 import type { LiveConfig } from '../domain/live/config';
+import { MS_PER_SECOND } from '../domain/realtime/token';
 import { aggregateViewers, viewerCatalogOrder, viewerCountry, type ViewerCatalogCountry } from '../domain/live/viewers';
 import type { Clock } from '../ports';
 import type { ChannelPublisher, SubscriptionSigner } from '../realtime/ports';
@@ -135,11 +136,11 @@ export interface ViewerTokenDeps {
 /** The subscription token of `live:viewers` for a request whose edge country is `country` (AC-59, AC-61). */
 export async function issueViewerToken(deps: ViewerTokenDeps, country: string): Promise<ApiResult<RealtimeTokenValue>> {
   if (deps.signer === undefined) return fail('unavailable', { reason: 'realtime-not-configured' });
-  const iat = Math.floor(deps.clock.now() / 1_000);
+  const iat = Math.floor(deps.clock.now() / MS_PER_SECOND);
   const exp = iat + VIEWER_TOKEN_TTL_SECONDS;
   const c = viewerCountry(country);
   const token = await deps.signer.signSubscription({ channel: deps.channel, info: c === null ? { p: 1 } : { p: 1, c }, iat, exp });
-  return ok({ token, expiresAt: new Date(exp * 1_000).toISOString() });
+  return ok({ token, expiresAt: new Date(exp * MS_PER_SECOND).toISOString() });
 }
 
 /** The viewer catalog from the stored catalog's country rows: ISO, Ukrainian name, flag code, popularity. */

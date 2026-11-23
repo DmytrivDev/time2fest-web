@@ -82,7 +82,7 @@ export const LiveActionBodySchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('hide'), eventId: id, sourceId: id, reason }).strict(),
   z.object({ action: z.literal('unhide'), eventId: id, sourceId: id, reason }).strict(),
   z.object({ action: z.literal('main'), eventId: id, sourceId: id, reason }).strict(),
-  z.object({ action: z.literal('override'), eventId: id, sourceId: id, status: StatusSchema, reason }).strict(),
+  z.object({ action: z.literal('override'), eventId: id, sourceId: id, status: z.literal('live'), reason }).strict(),
   z.object({ action: z.literal('zone-live'), zoneId: id, live: z.boolean(), reason }).strict(),
   z.object({ action: z.literal('replace'), eventId: id, sourceId: id, videoId: id, reason }).strict(),
 ]) satisfies z.ZodType<LiveActionBody>;

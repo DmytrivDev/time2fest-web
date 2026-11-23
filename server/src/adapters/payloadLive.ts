@@ -25,9 +25,11 @@ import type {
   LiveSource,
   LiveStateRecord,
   LiveStore,
+  NewSource,
   PendingCheck,
   QuotaStore,
   SourceCheck,
+  SourceEdit,
   Tx,
 } from '../live/ports';
 import { createPgScheduler } from './pgScheduler';
@@ -173,6 +175,26 @@ function setsOf(check: SourceCheck, nowIso: string): SqlQuery {
   return sql.join(sets, sql`, `);
 }
 
+/** The SET list of one owner / operator edit. */
+function editSetsOf(edit: SourceEdit, nowIso: string): SqlQuery {
+  const sets: SqlQuery[] = [];
+  if (edit.hidden !== undefined) sets.push(sql`"hidden" = ${edit.hidden}::boolean`);
+  if (edit.hiddenReason !== undefined) sets.push(sql`"hidden_reason" = ${edit.hiddenReason}`);
+  if (edit.order !== undefined) sets.push(sql`"order" = ${edit.order}::numeric`);
+  if (edit.override !== undefined) sets.push(sql`"override" = ${edit.override}::"enum_stream_sources_override"`);
+  if (edit.videoId !== undefined) sets.push(sql`"video_id" = ${edit.videoId}`);
+  if (edit.status !== undefined) sets.push(sql`"status" = ${edit.status}`);
+  if (edit.dead !== undefined) sets.push(sql`"dead" = ${edit.dead}::boolean`);
+  if (edit.deadReason !== undefined) sets.push(sql`"dead_reason" = ${edit.deadReason}`);
+  if (edit.clearYoutube) {
+    sets.push(sql`"live_broadcast_content" = NULL, "privacy_status" = NULL, "embeddable" = NULL, "scheduled_start_time" = NULL,
+      "actual_start_time" = NULL, "actual_end_time" = NULL, "yt_fetched_at" = NULL, "last_checked" = NULL, "starts_at" = NULL`);
+  }
+  if (edit.adminEditedAt !== undefined) sets.push(sql`"admin_edited_at" = ${iso(edit.adminEditedAt)}::timestamptz`);
+  sets.push(sql`"updated_at" = ${nowIso}::timestamptz`);
+  return sql.join(sets, sql`, `);
+}
+
 export interface PayloadLiveDeps {
   payload: () => Promise<Payload>;
   /** Real time: `at` of a version change and `updated_at` of the rows. */
@@ -238,8 +260,27 @@ export function createPayloadLiveStore(deps: PayloadLiveDeps): LiveStore {
       if (!rows[0]) throw new Error('live-state: update returned no row');
       return Number(rows[0].version);
     },
-    async addPendingCheck(check) {
-      await store.inTransaction(null, async (tx) => {
+    async editSource(tx, sourceId, edit) {
+      const conn = await sessionOf(tx);
+      await conn.execute(sql`UPDATE "stream_sources" SET ${editSetsOf(edit, nowIso())} WHERE "source_id" = ${sourceId}`);
+    },
+    async insertSource(tx, source: NewSource) {
+      const conn = await sessionOf(tx);
+      const at = nowIso();
+      await conn.execute(sql`
+        INSERT INTO "stream_sources" ("source_id", "event_id", "platform", "video_id", "kind", "order", "status", "hidden", "dead", "long_news",
+          "admin_edited_at", "updated_at", "created_at")
+        VALUES (${source.sourceId}, ${source.eventId}, 'youtube', ${source.videoId}, 'main', ${source.order}::numeric, ${source.status}, false, false, false,
+          ${iso(source.adminEditedAt)}::timestamptz, ${at}::timestamptz, ${at}::timestamptz)`);
+    },
+    async setZoneLive(tx, zoneLive) {
+      const conn = await sessionOf(tx);
+      await lockRow(conn);
+      await conn.execute(sql`
+        UPDATE "live_state" SET "zone_live" = ${JSON.stringify(zoneLive)}::jsonb, "updated_at" = ${nowIso()}::timestamptz WHERE "id" = ${FIRST_ROW}`);
+    },
+    async addPendingCheck(check, tx) {
+      await store.inTransaction(tx ?? null, async (tx) => {
         const conn = await sessionOf(tx);
         await lockRow(conn);
         const entry = JSON.stringify([{ sourceId: check.sourceId, at: check.at }]);

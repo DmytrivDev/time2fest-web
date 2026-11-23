@@ -58,7 +58,9 @@ const paths = (cls: 'production' | 'rehearsal' | 'test') => cmsEndpointsFor(cls,
 
 describe('root cms endpoints per class', () => {
   // SPEC-08 W18 adds the owner's site-state endpoints in every class (switch, product, view).
-  const site = ['post /site/product', 'post /site/switch', 'get /site/view'];
+  // SPEC-12 W30 appends the owner's live-air endpoints in every class (view + six actions).
+  const liveRows = ['get /live/view', ...['hide', 'unhide', 'main', 'override', 'zone-live', 'replace'].map((a) => `post /live/${a}`)];
+  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows];
   it('AC-52: production has only the read-only slice; rehearsal and test also have POST /clock', () => {
     expect(paths('production')).toEqual(['get /festival-state', ...site]);
     expect(paths('rehearsal')).toEqual(['get /festival-state', 'post /clock', ...site]);

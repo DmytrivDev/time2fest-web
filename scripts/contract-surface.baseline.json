@@ -3704,7 +3704,7 @@
       "text": "ZodObject<{ at: ZodString; chains: ZodArray<ZodObject<{ eventId: ZodString; sources: ZodArray<ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>>; version: ZodOptional<ZodNumber>; }, $strict>>; version: ZodNumber; }, $strict>"
     },
     "packages/contracts/src/live.schemas.ts#LiveActionBodySchema": {
-      "text": "ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\"hide\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"unhide\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"main\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"override\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; }, $strict>, ZodObject<{ action: ZodLiteral<\"zone-live\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"replace\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \"action\">"
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\"hide\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"unhide\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"main\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"override\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodLiteral<\"live\">; }, $strict>, ZodObject<{ action: ZodLiteral<\"zone-live\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"replace\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \"action\">"
     },
     "packages/contracts/src/live.schemas.ts#LiveArchiveRowSchema": {
       "text": "ZodObject<{ decision: ZodEnum<{ dead: \"dead\"; hidden: \"hidden\"; kept: \"kept\"; replaced: \"replaced\"; }>; label: ZodString; order: ZodNumber; videoId: ZodString; }, $strict>"
@@ -3779,7 +3779,7 @@
     "packages/contracts/src/live.ts#LiveActionBody": {
       "union": [
         "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'hide'\",\"'main'\",\"'unhide'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
-        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'override'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"status\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/live.ts#StreamStatus\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'override'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"status\":{\"optional\":false,\"type\":{\"union\":[\"'live'\"]}}}}",
         "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'replace'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
         "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'zone-live'\"]}},\"live\":{\"optional\":false,\"type\":{\"text\":\"boolean\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"zoneId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}"
       ]
@@ -4348,6 +4348,12 @@
             "text": "readonly string[]"
           }
         },
+        "cacheTag": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
         "freshMs": {
           "optional": false,
           "type": {
@@ -4373,7 +4379,7 @@
           }
         },
         "redButton": {
-          "optional": false,
+          "optional": true,
           "type": {
             "text": "string"
           }
@@ -5154,6 +5160,13 @@
         "packages/contracts/src/site.schemas.ts#SiteSwitchBodySchema: text changed (\"ZodObject<{ key: ZodEnum<{ chat: \\\"chat\\\"; chatRooms: \\\"chatRooms\\\"; pass: \\\"pass\\\"; passGift: \\\"passGift\\\"; passOffer: \\\"passOffer\\\"; payments: \\\"payments\\\"; toastTiers: \\\"toastTiers\\\"; toasts: \\\"toasts\\\"; viewersMap: \\\"viewersMap\\\"; }>; reason: ZodString; room: ZodOptional<ZodString>; tier: ZodOptional<ZodEnum<{ 10: \\\"10\\\"; 2: \\\"2\\\"; 5: \\\"5\\\"; }>>; value: ZodBoolean; }, $strict>\" -> \"ZodObject<{ key: ZodEnum<{ chat: \\\"chat\\\"; chatRooms: \\\"chatRooms\\\"; pass: \\\"pass\\\"; passGift: \\\"passGift\\\"; passOffer: \\\"passOffer\\\"; payments: \\\"payments\\\"; toastTiers: \\\"toastTiers\\\"; toasts: \\\"toasts\\\"; viewersCount: \\\"viewersCount\\\"; viewersMap: \\\"viewersMap\\\"; }>; reason: ZodString; room: ZodOptional<ZodString>; tier: ZodOptional<ZodEnum<{ 10: \\\"10\\\"; 2: \\\"2\\\"; 5: \\\"5\\\"; }>>; value: ZodBoolean; }, $strict>\")",
         "packages/contracts/src/site.schemas.ts#SiteSwitchesSchema: text changed (\"ZodObject<{ chat: ZodBoolean; chatRooms: ZodRecord<ZodString, ZodBoolean>; pass: ZodBoolean; passGift: ZodBoolean; passOffer: ZodBoolean; payments: ZodBoolean; toastTiers: ZodObject<{ '10': ZodBoolean; '2': ZodBoolean; '5': ZodBoolean; }, $strict>; toasts: ZodBoolean; viewersMap: ZodBoolean; }, $strict>\" -> \"ZodObject<{ chat: ZodBoolean; chatRooms: ZodRecord<ZodString, ZodBoolean>; pass: ZodBoolean; passGift: ZodBoolean; passOffer: ZodBoolean; payments: ZodBoolean; toastTiers: ZodObject<{ '10': ZodBoolean; '2': ZodBoolean; '5': ZodBoolean; }, $strict>; toasts: ZodBoolean; viewersCount: ZodDefault<ZodBoolean>; viewersMap: ZodBoolean; }, $strict>\")",
         "packages/contracts/src/site.schemas.ts#SiteSwitchKeySchema: text changed (\"ZodEnum<{ chat: \\\"chat\\\"; chatRooms: \\\"chatRooms\\\"; pass: \\\"pass\\\"; passGift: \\\"passGift\\\"; passOffer: \\\"passOffer\\\"; payments: \\\"payments\\\"; toastTiers: \\\"toastTiers\\\"; toasts: \\\"toasts\\\"; viewersMap: \\\"viewersMap\\\"; }>\" -> \"ZodEnum<{ chat: \\\"chat\\\"; chatRooms: \\\"chatRooms\\\"; pass: \\\"pass\\\"; passGift: \\\"passGift\\\"; passOffer: \\\"passOffer\\\"; payments: \\\"payments\\\"; toastTiers: \\\"toastTiers\\\"; toasts: \\\"toasts\\\"; viewersCount: \\\"viewersCount\\\"; viewersMap: \\\"viewersMap\\\"; }>\")"
+      ]
+    },
+    {
+      "recordedAt": "2026-11-23T13:00:34.145Z",
+      "changes": [
+        "packages/contracts/src/live.schemas.ts#LiveActionBodySchema: text changed (\"ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\\\"hide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"unhide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"main\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"override\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodEnum<{ expected: \\\"expected\\\"; live: \\\"live\\\"; possible: \\\"possible\\\"; }>; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"zone-live\\\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"replace\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \\\"action\\\">\" -> \"ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\\\"hide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"unhide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"main\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"override\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodLiteral<\\\"live\\\">; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"zone-live\\\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"replace\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \\\"action\\\">\")",
+        "packages/contracts/src/live.ts#LiveActionBody: union member {\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'override'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"status\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/live.ts#StreamStatus\"}}}} removed"
       ]
     }
   ]

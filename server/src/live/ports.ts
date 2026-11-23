@@ -3,7 +3,7 @@
  * `PresenceSource` is the realtime presence read (S9): only each entry's `chan_info`, never a client id.
  */
 import type { StreamStatus } from '@time2fest/contracts';
-import type { ZoneLive, StoredSource } from '../domain/live/chain';
+import type { SourceOverride, ZoneLive, StoredSource } from '../domain/live/chain';
 import type { QuotaBucket } from '../domain/live/config';
 import type { LiveEvent } from '../domain/live/moment';
 import type { QuotaCounterKey, QuotaState } from '../domain/live/quota';
@@ -70,6 +70,31 @@ export interface PendingCheck {
   at: number;
 }
 
+/** An owner / operator edit of one source (S10, AC-51 … AC-55); an absent field keeps its stored value. */
+export interface SourceEdit {
+  hidden?: boolean;
+  hiddenReason?: string | null;
+  order?: number;
+  override?: SourceOverride | null;
+  videoId?: string;
+  status?: string | null;
+  dead?: boolean;
+  deadReason?: string | null;
+  /** Clears every YouTube field and `ytFetchedAt`, `lastChecked` (a new video is unverified until checked). */
+  clearYoutube?: boolean;
+  adminEditedAt?: number;
+}
+
+/** A source added by the owner (replace by videoId, AC-55): a `youtube` source, unverified. */
+export interface NewSource {
+  sourceId: string;
+  eventId: string;
+  videoId: string;
+  order: number;
+  status: string;
+  adminEditedAt: number;
+}
+
 export interface LiveStateRecord {
   version: number;
   at: number | null;
@@ -89,8 +114,14 @@ export interface LiveStore {
   applyChecks(tx: Tx, checks: readonly SourceCheck[]): Promise<void>;
   /** `version + 1` (and `at` = now) under the live lock in `tx`; returns the new version. */
   bumpVersion(tx: Tx): Promise<number>;
-  /** Queues an ad-hoc check of a source (a source already queued stays queued once). */
-  addPendingCheck(check: PendingCheck): Promise<void>;
+  /** Applies one edit to one source in `tx`. */
+  editSource(tx: Tx, sourceId: string, edit: SourceEdit): Promise<void>;
+  /** Adds one source in `tx`. */
+  insertSource(tx: Tx, source: NewSource): Promise<void>;
+  /** Writes `live-state.zoneLive` under the live lock in `tx`. */
+  setZoneLive(tx: Tx, zoneLive: ZoneLive): Promise<void>;
+  /** Queues an ad-hoc check of a source (a source already queued stays queued once); joins `tx` when given. */
+  addPendingCheck(check: PendingCheck, tx?: Tx): Promise<void>;
   /** Takes every queued check and empties the queue, atomically (one instance gets each). */
   claimPendingChecks(): Promise<PendingCheck[]>;
 }

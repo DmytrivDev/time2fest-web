@@ -20,13 +20,13 @@
  * A write runs in one transaction on the request (record, journal row, outbox event). Refusals:
  * `invalid` → 400 `validation` (with `reason`, e.g. `unknown-product`), `forbidden` → 403. No endpoint
  * accepts an amount: a price is always the listed product's.
+ *
+ * SPEC-12 (AC-50 … AC-56): `GET /cms-api/live/view` and `POST /cms-api/live/<action>` (`admin/liveEndpoints.ts`), every
+ * class, the same gate, role, JSON and 1 KB rules (shared through `admin/cmsHttp.ts`).
  */
 import type { ClockControlValue } from '@time2fest/contracts';
 import { ClockControlBodySchema, SiteProductBodySchema, SiteSwitchBodySchema } from '@time2fest/contracts/schemas';
 import type { Endpoint, PayloadRequest } from 'payload';
-import type { ZodType } from 'zod';
-import { hasJsonContentType, passedGate } from '../access/payloadGuard';
-import { roleOf } from '../access/policies';
 import { clockControlDepsOf, festivalDepsOf, processDeps } from '../adapters/processDeps';
 import { resolveActor } from '../audit/journal';
 import { siteOf } from '../endpoints/deps';
@@ -36,54 +36,8 @@ import { festivalState } from '../scheduler/festival';
 import { chooseProduct, toggle, type SiteResult } from '../site/service';
 import { readSnapshot } from '../site/snapshot';
 import { CLOCK_CONTROL_CLASSES, controlClock } from '../timekeeping/control';
-
-const NO_STORE = { 'cache-control': 'no-store' };
-const MAX_BODY_BYTES = 1024;
-
-type Code = 'forbidden' | 'validation' | 'unavailable';
-const STATUS: Record<Code, number> = { forbidden: 403, validation: 400, unavailable: 503 };
-const fail = (code: Code, reason?: string) =>
-  Response.json({ ok: false, error: reason ? { code, reason } : { code } }, { status: STATUS[code], headers: NO_STORE });
-
-/** Owner who passed the Access gate (or a server-side call carrying an owner user). */
-const isOwner = (req: PayloadRequest) => passedGate(req) && roleOf(req.user) === 'owner';
-
-/** The body as text, read at most `MAX_BODY_BYTES + 1` bytes; `null` when it is longer than the limit. */
-async function boundedText(req: PayloadRequest): Promise<string | null> {
-  const body = (req as { body?: ReadableStream<Uint8Array> | null }).body;
-  if (!body || typeof body.getReader !== 'function') return req.text ? req.text() : '';
-  const reader = body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > MAX_BODY_BYTES) {
-      await reader.cancel().catch(() => undefined);
-      return null;
-    }
-    chunks.push(value);
-  }
-  return Buffer.concat(chunks).toString('utf8');
-}
-
-/** The parsed body of `schema`, or `null` (wrong type, empty, over 1 KB, not JSON, not the strict schema). */
-async function jsonBodyOf<T>(req: PayloadRequest, schema: ZodType<T>): Promise<T | null> {
-  if (!hasJsonContentType(req)) return null;
-  // S07-02: a declared length over the limit (or malformed) is refused before reading; without a declared
-  // length (the request may arrive re-wrapped by Next/Payload) the body is read as a stream and cut at the limit.
-  const declared = req.headers.get('content-length');
-  if (declared !== null && (!/^\d{1,9}$/.test(declared) || Number(declared) > MAX_BODY_BYTES)) return null;
-  try {
-    const text = await boundedText(req);
-    if (text === null || text.length === 0 || Buffer.byteLength(text, 'utf8') > MAX_BODY_BYTES) return null;
-    const parsed = schema.safeParse(JSON.parse(text));
-    return parsed.success ? parsed.data : null;
-  } catch {
-    return null;
-  }
-}
+import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
+import { liveEndpoints } from './liveEndpoints';
 
 function festivalStateEndpoint(resolve: () => Promise<Deps>): Endpoint {
   return {
@@ -202,5 +156,7 @@ export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = pr
   if (CLOCK_CONTROL_CLASSES.includes(cls)) endpoints.push(clockEndpoint(resolve));
   // SPEC-08: the owner's site-state endpoints exist in every class.
   endpoints.push(siteProductEndpoint(resolve), siteSwitchEndpoint(resolve), siteViewEndpoint(resolve));
+  // SPEC-12: the owner's live-air endpoints exist in every class.
+  endpoints.push(...liveEndpoints(resolve));
   return endpoints;
 }

@@ -6,9 +6,12 @@
 import type { PayloadRequest } from 'payload';
 import { resolveActor } from '../audit/journal';
 import type { RevertHandler } from '../audit/ports';
+import { createPayloadJournal } from '../adapters/payloadJournal';
 import { collectionUpdate, correctionSave, unattendedSetManual } from '../adapters/payloadRevert';
 import { processDeps } from '../adapters/processDeps';
-import { siteOf } from '../endpoints/deps';
+import { eventsOf, liveOf, siteOf } from '../endpoints/deps';
+import type { Deps } from '../endpoints/types';
+import { liveRevertHandlers, type LiveActionsDeps } from '../live/actions';
 import { assertRegistry } from '../platform/registry';
 import { siteRevertHandlers, type SiteDeps } from '../site/service';
 
@@ -23,9 +26,32 @@ const [siteProduct, siteSwitch] = siteRevertHandlers(siteDeps, (tx) => {
   return { ...resolveActor(req.user, req.context), kind: 'owner' };
 }) as [RevertHandler, RevertHandler];
 
+/**
+ * The deps of the live actions (SPEC-12 S10) over the process deps: the live store and events, a journal that marks
+ * rows revertible through this registry, the internal-events outbox and the server clock.
+ */
+export function liveActionsOf(deps: Deps): LiveActionsDeps {
+  const live = liveOf(deps);
+  return { store: live.store, events: live.events, cfg: live.cfg, journal: createPayloadJournal(isRevertible), publisher: eventsOf(deps).publisher, clock: deps.clock };
+}
+
+/** `live.hide`, `live.main`, `live.override`, `live.replace`, `live.zone-live`: the reverting owner. */
+const [liveHide, liveMain, liveOverride, liveReplace, liveZoneLive] = liveRevertHandlers(
+  async () => liveActionsOf(await processDeps()),
+  (tx) => {
+    const req = tx as PayloadRequest;
+    return { ...resolveActor(req.user, req.context), kind: 'owner' };
+  },
+) as [RevertHandler, RevertHandler, RevertHandler, RevertHandler, RevertHandler];
+
 export const revertHandlerRegistry: readonly RevertHandler[] = [
   collectionUpdate,
   correctionSave,
+  liveHide,
+  liveMain,
+  liveOverride,
+  liveReplace,
+  liveZoneLive,
   siteProduct,
   siteSwitch,
   unattendedSetManual,
