@@ -892,7 +892,7 @@
         "chains": {
           "optional": false,
           "type": {
-            "fn": "chains(eventIds?: readonly string[]): Promise<ApiResult<readonly StreamChain[]>>;"
+            "fn": "chains(): Promise<ApiResult<ChainsResponse>>;"
           }
         },
         "reportSourceError": {
@@ -920,157 +920,6 @@
           }
         }
       }
-    },
-    "lib/api/contracts/live.ts#SourceErrorReport": {
-      "props": {
-        "code": {
-          "optional": false,
-          "type": {
-            "text": "number"
-          }
-        },
-        "eventId": {
-          "optional": false,
-          "type": {
-            "text": "string"
-          }
-        },
-        "sourceId": {
-          "optional": false,
-          "type": {
-            "text": "string"
-          }
-        }
-      }
-    },
-    "lib/api/contracts/live.ts#StreamEvent": {
-      "variants": {
-        "'chain'": {
-          "props": {
-            "chain": {
-              "optional": false,
-              "type": {
-                "ref": "lib/data/types.ts#StreamChain"
-              }
-            },
-            "type": {
-              "optional": false,
-              "type": {
-                "union": [
-                  "'chain'"
-                ]
-              }
-            },
-            "version": {
-              "optional": true,
-              "type": {
-                "text": "number"
-              }
-            }
-          }
-        },
-        "'hide'": {
-          "props": {
-            "eventId": {
-              "optional": false,
-              "type": {
-                "text": "string"
-              }
-            },
-            "sourceId": {
-              "optional": false,
-              "type": {
-                "text": "string"
-              }
-            },
-            "type": {
-              "optional": false,
-              "type": {
-                "union": [
-                  "'hide'"
-                ]
-              }
-            },
-            "version": {
-              "optional": true,
-              "type": {
-                "text": "number"
-              }
-            }
-          }
-        },
-        "'source'": {
-          "props": {
-            "eventId": {
-              "optional": false,
-              "type": {
-                "text": "string"
-              }
-            },
-            "source": {
-              "optional": false,
-              "type": {
-                "ref": "lib/data/types.ts#StreamSource"
-              }
-            },
-            "type": {
-              "optional": false,
-              "type": {
-                "union": [
-                  "'source'"
-                ]
-              }
-            },
-            "version": {
-              "optional": true,
-              "type": {
-                "text": "number"
-              }
-            }
-          }
-        }
-      }
-    },
-    "lib/api/contracts/live.ts#ViewerCountry": {
-      "props": {
-        "flagCode": {
-          "optional": false,
-          "type": {
-            "text": "string"
-          }
-        },
-        "iso": {
-          "optional": false,
-          "type": {
-            "text": "string"
-          }
-        },
-        "name": {
-          "optional": false,
-          "type": {
-            "text": "string"
-          }
-        }
-      }
-    },
-    "lib/api/contracts/live.ts#ViewerSummary": {
-      "props": {
-        "at": {
-          "optional": false,
-          "type": {
-            "ref": "lib/data/types.ts#ISO"
-          }
-        },
-        "countries": {
-          "optional": false,
-          "type": {
-            "text": "readonly ViewerCountry[]"
-          }
-        }
-      }
-    },
-    "lib/api/contracts/live.ts#applyStreamEvent": {
-      "fn": "export function applyStreamEvent(chains: ReadonlyMap<string, StreamChain>, event: StreamEvent): ReadonlyMap<string, StreamChain>"
     },
     "lib/api/contracts/notifications.ts#DEFAULT_NOTIF_SETTINGS": {
       "text": "NotifSettings"
@@ -5167,6 +5016,17 @@
       "changes": [
         "packages/contracts/src/live.schemas.ts#LiveActionBodySchema: text changed (\"ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\\\"hide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"unhide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"main\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"override\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodEnum<{ expected: \\\"expected\\\"; live: \\\"live\\\"; possible: \\\"possible\\\"; }>; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"zone-live\\\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"replace\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \\\"action\\\">\" -> \"ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\\\"hide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"unhide\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"main\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"override\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodLiteral<\\\"live\\\">; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"zone-live\\\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\\\"replace\\\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \\\"action\\\">\")",
         "packages/contracts/src/live.ts#LiveActionBody: union member {\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'override'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"status\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/live.ts#StreamStatus\"}}}} removed"
+      ]
+    },
+    {
+      "recordedAt": "2026-11-23T19:05:00.763Z",
+      "changes": [
+        "lib/api/contracts/live.ts#applyStreamEvent: declaration removed",
+        "lib/api/contracts/live.ts#LiveService.chains: fn changed (\"chains(eventIds?: readonly string[]): Promise<ApiResult<readonly StreamChain[]>>;\" -> \"chains(): Promise<ApiResult<ChainsResponse>>;\")",
+        "lib/api/contracts/live.ts#SourceErrorReport: declaration removed",
+        "lib/api/contracts/live.ts#StreamEvent: declaration removed",
+        "lib/api/contracts/live.ts#ViewerCountry: declaration removed",
+        "lib/api/contracts/live.ts#ViewerSummary: declaration removed"
       ]
     }
   ]

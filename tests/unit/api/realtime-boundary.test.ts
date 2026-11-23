@@ -7,18 +7,18 @@ import { HTTP_DOMAINS } from '../../../lib/api/http/domains';
 const root = path.resolve(__dirname, '../../..');
 
 describe('межі хвилі realtime', () => {
-  it('AC-55: HTTP_DOMAINS містить лише catalog і site (SPEC-08)', () => {
-    expect([...HTTP_DOMAINS]).toEqual(['catalog', 'site']);
+  it('AC-55: HTTP_DOMAINS містить лише catalog, site (SPEC-08) і live (SPEC-12)', () => {
+    expect([...HTTP_DOMAINS]).toEqual(['catalog', 'site', 'live']);
   });
 
-  it('AC-55: верхньорівневі файли lib/api/http/*.ts не імпортують ./realtime; виняток SPEC-08 — site.ts: лише типи й динамічний import за прапорцем збірки', () => {
+  it('AC-55: верхньорівневі файли lib/api/http/*.ts не імпортують ./realtime; винятки SPEC-08 — site.ts і SPEC-12 — live.ts: лише типи й динамічний import за прапорцем збірки', () => {
     const dir = path.join(root, 'lib/api/http');
     const files = fs.readdirSync(dir).filter((f) => f.endsWith('.ts'));
     expect(files.length).toBeGreaterThan(0);
     const anyImport = /from\s+['"]\.\/realtime(\/[^'"]*)?['"]|import\(\s*['"]\.\/realtime/g;
     for (const f of files) {
       const src = fs.readFileSync(path.join(dir, f), 'utf8');
-      if (f !== 'site.ts') {
+      if (f !== 'site.ts' && f !== 'live.ts') {
         expect(src, f).not.toMatch(anyImport);
         continue;
       }

@@ -4,6 +4,6 @@
  */
 import type { ServiceName } from '../services';
 
-export const HTTP_DOMAINS = ['catalog', 'site'] as const satisfies readonly ServiceName[];
+export const HTTP_DOMAINS = ['catalog', 'site', 'live'] as const satisfies readonly ServiceName[];
 
 export type HttpDomain = (typeof HTTP_DOMAINS)[number];

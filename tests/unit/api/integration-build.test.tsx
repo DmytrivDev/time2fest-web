@@ -13,7 +13,8 @@ import { httpFactories } from '@/lib/api/http';
 import { apiDomains, domainSource, faultControls, MIGRATED_DOMAINS, missingDomains } from '@/lib/api/services';
 import messages from '@/messages/uk.json';
 
-const HTTP_NOW = ['catalog', 'site'];
+/** In `MIGRATED_DOMAINS` order: `live` over http since SPEC-12 (W41). */
+const HTTP_NOW = ['live', 'catalog', 'site'];
 const SIM_REST = MIGRATED_DOMAINS.filter((d) => !HTTP_NOW.includes(d));
 
 describe('who serves a domain — three build kinds', () => {
@@ -25,7 +26,8 @@ describe('who serves a domain — three build kinds', () => {
   it('test + http (integration): catalog over http, the rest derived to sim, nothing missing', () => {
     expect(apiDomains('http', true)).toEqual({ http: HTTP_NOW, sim: SIM_REST, missing: [] });
     expect(domainSource('catalog', 'http', true)).toBe('http');
-    expect(domainSource('live', 'http', true)).toBe('sim');
+    expect(domainSource('live', 'http', true)).toBe('http');
+    expect(domainSource('chat', 'http', true)).toBe('sim');
     expect(domainSource('site', 'http', true)).toBe('http');
     expect(missingDomains('http', true)).toEqual([]);
     expect(faultControls('http', true)).toBeDefined();
@@ -33,7 +35,7 @@ describe('who serves a domain — three build kinds', () => {
 
   it('production + http: no sim at all — the rest is missing, fault controls absent', () => {
     expect(apiDomains('http', false)).toEqual({ http: HTTP_NOW, sim: [], missing: SIM_REST });
-    expect(domainSource('live', 'http', false)).toBeNull();
+    expect(domainSource('chat', 'http', false)).toBeNull();
     expect(faultControls('http', false)).toBeUndefined();
   });
 

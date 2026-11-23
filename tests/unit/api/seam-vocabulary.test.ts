@@ -68,9 +68,11 @@ describe('словник шва', () => {
     for (const s of open) expect(isFinalOrder(s)).toBe(false);
   });
 
-  it('applyStreamEvent: hide ігнорується (та сама мапа)', () => {
+  it('applyStreamEvent: hide прибирає джерело (SPEC-12 AC-18)', () => {
     const chains = data.chainsByEventId;
-    expect(applyStreamEvent(chains, { type: 'hide', eventId, sourceId: chain.sources[0]!.id })).toBe(chains);
+    const hidden = chain.sources[0]!.id;
+    const next = applyStreamEvent(chains, { type: 'hide', eventId, sourceId: hidden, version: 1 }, 0).chains;
+    expect(next.get(eventId)!.sources.some((s) => s.id === hidden)).toBe(false);
   });
 
   it('AC-27: sim-профіль не має ключа reminderEmails', async () => {
