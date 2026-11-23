@@ -5302,5 +5302,33 @@
       "description": "Le Vatican clôt l'année par un Te Deum à Saint-Pierre et accueille 2027 à 23:00 UTC ; le 1er janvier, messe, Journée mondiale de la paix et prière de l'Angélus."
     },
     "kit": "va"
+  },
+  "CI": {
+    "text": "Musulmans et chrétiens sont presque aussi nombreux en Côte d’Ivoire, si bien que la nuit du réveillon a deux visages. Pour les uns, c’est l’église : louange, prière et action de grâce pour l’année qui s’achève. Pour les autres, c’est le maquis, café en plein air avec musique, tandis que poulet et poisson braisés s’arrachent dans la rue cette nuit-là. Le 1er janvier est férié pour tous.\n\nAbidjan s’y prépare tôt : chaque décembre depuis 2011, la ville se pare des illuminations « Abidjan, Ville Lumière ». À minuit, pour le passage à 2025, le feu d’artifice est parti des ponts Charles-de-Gaulle et Félix-Houphouët-Boigny au-dessus de la lagune Ébrié. Yopougon fait la fête dans la rue avec orchestres et DJ, le Plateau et Cocody préfèrent des galas plus calmes.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Action de grâce",
+        "text": "Les paroisses d’Abidjan sont pleines le soir du réveillon : les fidèles accueillent minuit par la louange et la prière, en rendant grâce pour l’année écoulée."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Le feu d’artifice des ponts",
+        "text": "À minuit, le feu d’artifice part des ponts sur la lagune et du carrefour de Koumassi ; des milliers de personnes le regardent depuis les rives et les ponts."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Poulet et poisson braisés",
+        "text": "Le soir du réveillon, poulet et poisson braisés au charbon s’arrachent dans les rues d’Abobo. Fais griller chez toi du poulet ou du poisson et commence l’année à l’abidjanaise."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Côte d’Ivoire : Abidjan | Time2Fest",
+      "description": "La Côte d’Ivoire entre en 2027 à 0 h UTC : à Abidjan, feu d’artifice depuis les ponts de la lagune Ébrié, cultes d’action de grâce et fête de rue à Yopougon."
+    },
+    "kit": "ci"
   }
 }

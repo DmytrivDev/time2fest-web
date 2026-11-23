@@ -5302,5 +5302,33 @@
       "description": "Vatican City ends the year with a Te Deum in Saint Peter's Basilica and meets 2027 at 23:00 UTC; 1 January brings Mass, the World Day of Peace and the Angelus."
     },
     "kit": "va"
+  },
+  "CI": {
+    "text": "Muslims and Christians are almost equal in number in Côte d’Ivoire, so New Year’s Eve has two faces. For some it means church: praise, prayer and thanks for the year that is ending. For others it means the maquis, open-air cafés with music, while grilled chicken and fish sell fast on the streets that night. 1 January is a day off for everyone.\n\nAbidjan gets ready early: every December since 2011 the city dresses up in the “Abidjan, Ville Lumière” illuminations. At midnight into 2025, fireworks rose from the Charles de Gaulle and Félix Houphouët-Boigny bridges over the Ébrié Lagoon. Yopougon parties in the streets with bands and DJs, while Plateau and Cocody keep to quieter gala dinners.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Thanks for the year",
+        "text": "Abidjan’s parishes are full on New Year’s Eve: believers meet midnight with praise and prayer, giving thanks for the year that is ending."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks from the bridges",
+        "text": "At midnight fireworks go up from the bridges over the lagoon and at the Koumassi crossroads; thousands watch from the shores and bridges."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Chicken and fish off the grill",
+        "text": "On New Year’s Eve chicken and fish braised over charcoal sell fast on the streets of Abobo. Grill chicken or fish at home and start the year the Abidjan way."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Côte d’Ivoire: Abidjan | Time2Fest",
+      "description": "Côte d’Ivoire meets 2027 at 00:00 UTC: in Abidjan, fireworks from the bridges over the Ébrié Lagoon, thanksgiving in churches and street parties in Yopougon."
+    },
+    "kit": "ci"
   }
 }

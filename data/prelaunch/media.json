@@ -3245,6 +3245,22 @@
         "x": 50,
         "y": 55
       }
+    },
+    "country:CI": {
+      "src": "/media/photos/abidjan.webp",
+      "alt": {
+        "uk": "Нічний Абіджан через лагуну: висотки Плато, вогні набережної й довгі відблиски у воді",
+        "en": "Abidjan at night across the lagoon: the Plateau high-rises, waterfront lights and long reflections in the water",
+        "es": "Abiyán de noche al otro lado de la laguna: los rascacielos del Plateau, las luces del paseo y largos reflejos en el agua",
+        "fr": "Abidjan la nuit de l’autre côté de la lagune : les tours du Plateau, les lumières des berges et de longs reflets dans l’eau"
+      },
+      "author": "Fawaz.tairou",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Abidjan_Skyline_-_1.jpg",
+      "position": {
+        "x": 50,
+        "y": 52
+      }
     }
   }
 }

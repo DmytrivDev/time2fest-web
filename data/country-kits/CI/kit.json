@@ -1,0 +1,103 @@
+{
+  "code": "CI",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "abidjan",
+  "names": {
+    "uk": {
+      "name": "Кот-д’Івуар",
+      "city": "Абіджан",
+      "cityIn": "в Абіджані",
+      "countryIn": "у Кот-д’Івуарі",
+      "caps": "КОТ-Д’ІВУАР"
+    },
+    "en": {
+      "name": "Côte d’Ivoire",
+      "city": "Abidjan",
+      "cityIn": "in Abidjan",
+      "countryIn": "in Côte d’Ivoire",
+      "caps": "CÔTE D’IVOIRE"
+    },
+    "es": {
+      "name": "Costa de Marfil",
+      "city": "Abiyán",
+      "cityIn": "en Abiyán",
+      "countryIn": "en Costa de Marfil",
+      "caps": "COSTA DE MARFIL"
+    },
+    "fr": {
+      "name": "Côte d’Ivoire",
+      "city": "Abidjan",
+      "cityIn": "à Abidjan",
+      "countryIn": "en Côte d’Ivoire",
+      "caps": "CÔTE D’IVOIRE"
+    }
+  },
+  "picto": "M1 30 H39 M9 30 V19 H14 V30 M15 30 V10 H16.4 V8 H17.6 V6.4 H19.4 V8 H20.6 V10 H22 V30 M18.5 6.4 V2 M23 30 V13 H29 V30 M24.6 13 V11.4 H27.4 V13 M30 30 V19 H34 V30 M32.6 19 V15 M35 30 V23 H38.4 V30 M5 30 Q4.6 25 5.6 21.6 M5.6 21.6 Q3 20.8 1.6 22.6 M5.6 21.6 Q8.2 20.8 9 22 M5.6 21.6 Q4.6 19.4 2.8 19 M5.6 21.6 Q6.8 19.2 8.4 19.2 M4 34.6 Q7 33 10 34.6 M16 34.6 Q19 33 22 34.6 M28 34.6 Q31 33 34 34.6",
+  "flagColors": [
+    "#F77F00",
+    "#FFFFFF",
+    "#009E60"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Кот-д’Івуарі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Côte d’Ivoire"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Costa de Marfil"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Côte d’Ivoire"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -5302,5 +5302,33 @@
       "description": "La Ciudad del Vaticano despide el año con un Te Deum en San Pedro y recibe 2027 a las 23:00 UTC; el 1 de enero hay misa, Jornada de la Paz y Ángelus."
     },
     "kit": "va"
+  },
+  "CI": {
+    "text": "Musulmanes y cristianos son casi el mismo número en Costa de Marfil, así que la Nochevieja tiene dos caras. Para unos es la iglesia: alabanza, oración y gracias por el año que termina. Para otros, los maquis, cafés al aire libre con música, mientras esa noche el pollo y el pescado a la brasa se venden en la calle sin parar. El 1 de enero es festivo para todos.\n\nAbiyán se prepara con tiempo: cada diciembre, desde 2011, la ciudad se viste con la iluminación «Abidjan, Ville Lumière». A la medianoche que abrió 2025, los fuegos artificiales salieron de los puentes Charles de Gaulle y Félix Houphouët-Boigny sobre la laguna Ébrié. Yopougon celebra en la calle con orquestas y DJ; Plateau y Cocody prefieren cenas de gala más tranquilas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Gracias por el año",
+        "text": "Las parroquias de Abiyán se llenan en Nochevieja: los fieles reciben la medianoche con alabanzas y oraciones, dando gracias por el año que se va."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos desde los puentes",
+        "text": "A medianoche los fuegos artificiales suben desde los puentes sobre la laguna y en el cruce de Koumassi; miles de personas los miran desde las orillas y los puentes."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Pollo y pescado a la brasa",
+        "text": "En Nochevieja, el pollo y el pescado a la brasa se venden sin parar en las calles de Abobo. Asa en casa pollo o pescado y empieza el año al estilo de Abiyán."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Costa de Marfil: Abiyán | Time2Fest",
+      "description": "Costa de Marfil recibe 2027 a las 00:00 UTC: en Abiyán, fuegos artificiales desde los puentes de la laguna Ébrié, misas de gracias y fiesta en Yopougon."
+    },
+    "kit": "ci"
   }
 }

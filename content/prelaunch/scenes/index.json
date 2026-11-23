@@ -1158,6 +1158,12 @@
       "wide": true,
       "sky": "#10162e",
       "water": "#2e3047"
+    },
+    "CI": {
+      "src": "/scenes/CI-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#1d2e40"
     }
   }
 }

@@ -3150,6 +3150,24 @@
         "title": "Nouvel An au Vatican | Time2Fest",
         "description": "Le Vatican clôt l'année par un Te Deum à Saint-Pierre et accueille 2027 à 23:00 UTC ; le 1er janvier, messe, Journée mondiale de la paix et prière de l'Angélus."
       }
+    },
+    "CI": {
+      "uk": {
+        "title": "Новий рік у Кот-д’Івуарі: Абіджан | Time2Fest",
+        "description": "Кот-д’Івуар зустрічає 2027 рік о 00:00 UTC: в Абіджані — салют із мостів над лагуною Ебріє, подячні служби в церквах і гуляння з оркестрами в Йопугоні."
+      },
+      "en": {
+        "title": "New Year in Côte d’Ivoire: Abidjan | Time2Fest",
+        "description": "Côte d’Ivoire meets 2027 at 00:00 UTC: in Abidjan, fireworks from the bridges over the Ébrié Lagoon, thanksgiving in churches and street parties in Yopougon."
+      },
+      "es": {
+        "title": "Año Nuevo en Costa de Marfil: Abiyán | Time2Fest",
+        "description": "Costa de Marfil recibe 2027 a las 00:00 UTC: en Abiyán, fuegos artificiales desde los puentes de la laguna Ébrié, misas de gracias y fiesta en Yopougon."
+      },
+      "fr": {
+        "title": "Nouvel An en Côte d’Ivoire : Abidjan | Time2Fest",
+        "description": "La Côte d’Ivoire entre en 2027 à 0 h UTC : à Abidjan, feu d’artifice depuis les ponts de la lagune Ébrié, cultes d’action de grâce et fête de rue à Yopougon."
+      }
     }
   }
 }
