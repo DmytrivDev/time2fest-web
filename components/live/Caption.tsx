@@ -59,7 +59,7 @@ export interface CaptionProps {
   mode?: CaptionMode;
   /** Назва рядка 2 замість «Місто · пам’ятка» (пульт: назва вибраної трансляції). */
   title?: string;
-  /** «Зараз дивляться люди з N країн» (рядок 1, від 768 px). */
+  /** «Зараз на Time2Fest N людей» (рядок 1, від 768 px); без числа рядка немає. */
   watchers?: number;
   /** Остання хвилина до півночі зі штампом: країна для підказки «Будь тут опівночі — отримаєш штамп: …». */
   stampHint?: string | null;
@@ -309,7 +309,7 @@ export function Caption({
         {watchers && !hinted ? (
           <span aria-hidden="true" data-bar-watchers="" className={home.barWatchers}>
             <Icon name="globe" size={14} strokeWidth={2} />
-            {t('watchersShort', { count: watchers })}
+            {t('peopleNowShort', { count: watchers })}
           </span>
         ) : null}
         {/* Підказка займає місце позначки «Наживо» (дошка `Phone-Stamp-Header`, кадр 1). */}
@@ -360,7 +360,7 @@ export function Caption({
         ) : watchers ? (
           <span className={cn(home.badgeItem, home.deskItem)}>
             <Icon name="globe" size={14} strokeWidth={2} />
-            {t('watchersFrom', { count: watchers })}
+            {t('peopleNow', { count: watchers })}
           </span>
         ) : null}
         {phase.flags.delayNotice ? <span>{t('delayNote')}</span> : null}

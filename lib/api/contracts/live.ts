@@ -1,46 +1,36 @@
 /**
- * Контракт домену «Ефір» (`docs/backend/frontend-seam.md`): ланцюжки джерел трансляцій з їхніми статусами і глядачі.
- * Сервер опитує YouTube Data API (статус, вбудовування) і розсилає зміни; клієнт тримає ланцюжок як кеш і далі сам
- * перемикає джерела за помилками плеєра (`lib/player/chain` лишається клієнтською чистою логікою).
+ * Контракт домену «Ефір» (`docs/backend/frontend-seam.md`, SPEC-12): ланцюжки джерел трансляцій з їхніми статусами і
+ * глядачі. Сервер опитує YouTube Data API (статус, вбудовування) і розсилає зміни; клієнт тримає ланцюжки як кеш і далі
+ * сам перемикає джерела за помилками плеєра (`lib/player/chain` лишається клієнтською чистою логікою).
+ * Типи дроту — одна копія в `@time2fest/contracts` (`live.ts`); тут лише інтерфейс сервісу.
  */
+import type { ChainsResponse, SourceErrorReport, StreamEvent, ViewerSummary } from '@time2fest/contracts';
 import type { ApiResult, Unsubscribe } from '../result';
-import type { ISO, StreamChain, StreamSource } from '@/lib/data/types';
 
-export type StreamEvent =
-  /** Змінилось одне джерело (статус, `isLive`, `embeddable`, `startsAt`, запис). */
-  | { type: 'source'; eventId: string; source: StreamSource; version?: number }
-  /** Адмінка переставила чи додала джерела — увесь ланцюжок. */
-  | { type: 'chain'; chain: StreamChain; version?: number }
-  /** `hide` цей клієнт ігнорує — поведінка належить хвилі «живе». */
-  | { type: 'hide'; eventId: string; sourceId: string; version?: number };
-
-export interface ViewerCountry {
-  iso: string;
-  name: string;
-  flagCode: string;
-}
-
-export interface ViewerSummary {
-  /** Країни, звідки дивляться зараз (за IP, агрегат; без людей). */
-  countries: readonly ViewerCountry[];
-  /** Коли сервер порахував. */
-  at: ISO;
-}
-
-export interface SourceErrorReport {
-  eventId: string;
-  sourceId: string;
-  /** Код помилки YouTube IFrame API (101/150 — не вбудовується, 153 — конфігурація). */
-  code: number;
-}
+export type {
+  ChainsResponse,
+  SourceErrorCode,
+  SourceErrorReport,
+  StreamEvent,
+  ViewerCountry,
+  ViewerSummary,
+} from '@time2fest/contracts';
+/**
+ * Чисте правило події `live:streams` (сервер і клієнт — одна функція): старіша за останню застосовану версія
+ * відкидається, `hide` прибирає джерело, `chain` замінює ланцюжок, `source` — джерело з тим самим `id` (AC-17, AC-18).
+ */
+export { applyStreamEvent } from '@time2fest/contracts';
 
 export interface LiveService {
   /**
-   * Ланцюжки подій (усі або вибрані). `GET /api/live/chains?eventIds=…` (CDN `s-maxage=15–30`, запасна копія — статичний
-   * JSON у R2, NFR-6).
+   * Ланцюжки всіх подій з версією: `GET /api/live/chains` — одна публічна адреса без параметрів (AC-3, AC-4; CDN, запасна
+   * копія — `live/chains.json` у R2). `version` порівнюється з версіями подій `live:streams` (AC-17).
    */
-  chains(eventIds?: readonly string[]): Promise<ApiResult<readonly StreamChain[]>>;
-  /** Realtime: канал Centrifugo `live:streams` (один на сайт, рідкі повідомлення). */
+  chains(): Promise<ApiResult<ChainsResponse>>;
+  /**
+   * Зміни ланцюжків: події каналу `live:streams` і результати перечитувань (як події `chain` з версією відповіді).
+   * Події, що не пройшли схему, не доходять (AC-16).
+   */
   subscribeStreams(onEvent: (event: StreamEvent) => void): Unsubscribe;
   /** `GET /api/live/viewers`. */
   viewers(): Promise<ApiResult<ViewerSummary>>;
@@ -50,21 +40,3 @@ export interface LiveService {
   reportSourceError(report: SourceErrorReport): Promise<ApiResult<void>>;
 }
 
-/**
- * Чисте правило застосування події каналу `live:streams` до ланцюжків (сервер і клієнт — одна функція): `source`
- * замінює джерело з тим самим `id` у ланцюжку події (невідомі подія чи джерело — ігноруються: чекаємо `chain`), `chain`
- * замінює ланцюжок цілком, `hide` ігнорується. Не змінилось нічого — повертає ту саму мапу (кеш не будить споживачів).
- */
-export function applyStreamEvent(chains: ReadonlyMap<string, StreamChain>, event: StreamEvent): ReadonlyMap<string, StreamChain> {
-  if (event.type === 'hide') return chains;
-  if (event.type === 'chain') {
-    const next = new Map(chains);
-    next.set(event.chain.eventId, event.chain);
-    return next;
-  }
-  const chain = chains.get(event.eventId);
-  if (!chain || !chain.sources.some((s) => s.id === event.source.id)) return chains;
-  const next = new Map(chains);
-  next.set(event.eventId, { ...chain, sources: chain.sources.map((s) => (s.id === event.source.id ? event.source : s)) });
-  return next;
-}

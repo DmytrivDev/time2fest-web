@@ -5,19 +5,19 @@
  * демо-збірці (`IS_TEST_BUILD`, та сама межа, що в імітованих тостів); у робочій збірці без справжніх даних — порожньо,
  * і рядок «Зараз дивляться люди з …» не показується. Справжнє джерело замінить `currentViewers`.
  */
+import type { ViewerCountry } from '@time2fest/contracts';
 import type { Dataset } from '@/lib/data/types';
 import { IS_TEST_BUILD } from '@/lib/env';
 
+export type { ViewerCountry };
+
 export const SIMULATED_VIEWER_COUNTRIES = 140;
+
+/** Демо-число людей на сайті (рядок «Зараз на Time2Fest {count} людей», [А22], AC-67) — лише за `SIMULATED_PRESENCE`. */
+export const SIMULATED_PEOPLE = 12_480;
 
 /** Чи можна показувати імітовану присутність (лише тестова й демо-збірка). */
 export const SIMULATED_PRESENCE = IS_TEST_BUILD;
-
-export interface ViewerCountry {
-  iso: string;
-  name: string;
-  flagCode: string;
-}
 
 export function simulatedViewers(data: Dataset, count = SIMULATED_VIEWER_COUNTRIES): ViewerCountry[] {
   return [...data.countries]

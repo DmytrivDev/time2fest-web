@@ -25,6 +25,8 @@ export interface SiteSwitches {
   passGift: boolean;
   payments: boolean;
   viewersMap: boolean;
+  /** Show the viewer count beside the player (SPEC-12 AC-66). */
+  viewersCount: boolean;
   passOffer: boolean;
   /** Absent key = room open. */
   chatRooms: Readonly<Record<string, boolean>>;

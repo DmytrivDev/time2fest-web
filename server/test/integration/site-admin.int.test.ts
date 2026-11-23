@@ -133,6 +133,21 @@ describe('owner site-state endpoints', { timeout: 120_000 }, () => {
     expect((after[1] as Row).revertOf).toBe(String(row.id));
   });
 
+  it('AC-66: toggling viewersCount with a reason writes a journal row and the snapshot reads false', async () => {
+    const before = await snapshot();
+    expect(before.switches.viewersCount).toBe(true);
+    const mark = await maxJournalId();
+    const res = await switchCall({ key: 'viewersCount', value: false, reason: `Лічильник вимкнено ${run}` });
+    expect(res.status, await res.clone().text()).toBe(200);
+    expect((await snapshot()).switches.viewersCount).toBe(false);
+    const rows = await rowsAfter(mark, SITE_SWITCH_ACTION);
+    expect(rows).toHaveLength(1);
+    expect((rows[0] as Row).after).toMatchObject({ key: 'viewersCount', value: false, reason: `Лічильник вимкнено ${run}` });
+    const back = await switchCall({ key: 'viewersCount', value: true, reason: `Лічильник увімкнено ${run}` });
+    expect(back.status, await back.clone().text()).toBe(200);
+    expect((await snapshot()).switches.viewersCount).toBe(true);
+  });
+
   it('AC-16: content-agent, stream-agent and anonymous → 403 forbidden; nothing changes, no journal row', async () => {
     const pass = `pass-${run}-a`;
     siteOf(deps).testProducts?.set([{ id: pass, key: 'pass', price: { amount: 500, currency: 'USD' } }]);

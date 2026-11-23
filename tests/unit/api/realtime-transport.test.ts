@@ -12,6 +12,7 @@ import {
   type CentrifugeClientOptions,
   type CentrifugeModuleLike,
   type CentrifugeSubscriptionLike,
+  type CentrifugeSubscriptionOptions,
   type RealtimeFetch,
   type RealtimeTokenResponse,
 } from '@/lib/api/http/realtime/transport';
@@ -32,7 +33,10 @@ class Emitter {
 
 class FakeSubscription extends Emitter implements CentrifugeSubscriptionLike {
   subscribeCalls = 0;
-  constructor(readonly channel: string) {
+  constructor(
+    readonly channel: string,
+    readonly options?: CentrifugeSubscriptionOptions,
+  ) {
     super();
   }
   subscribe(): void {
@@ -52,9 +56,9 @@ class FakeCentrifuge extends Emitter {
   ) {
     super();
   }
-  newSubscription(channel: string): FakeSubscription {
+  newSubscription(channel: string, options?: CentrifugeSubscriptionOptions): FakeSubscription {
     if (this.subs.has(channel)) throw new Error(`duplicate subscription ${channel}`);
-    const sub = new FakeSubscription(channel);
+    const sub = new FakeSubscription(channel, options);
     this.subs.set(channel, sub);
     this.created.push(channel);
     return sub;
@@ -620,5 +624,99 @@ describe('AC-49 — a refresh without a subject (unit part)', () => {
     await expect(c.connectWith()).resolves.toBe('');
     expect(h.transport.state()).toBe('connected');
     expect(h.states).toEqual(['connecting', 'connected', 'connecting', 'connected']);
+  });
+});
+
+describe('SPEC-12 W44 — a subscription with a token', () => {
+  const VIEWERS = 'live:viewers';
+  const viewerEvent = (id: string) => ({ data: { type: 'viewers', id, data: {} } });
+
+  it('a tokened first subscribe creates the subscription with the token source', async () => {
+    const h = harness();
+    const getToken = vi.fn(async () => 'sub-token'); // check-secrets: allow test fake
+    h.transport.subscribe(VIEWERS, listener(), { getToken });
+    await flush();
+    const sub = h.client().sub(VIEWERS);
+    expect(sub.options?.getToken).toBeTypeOf('function');
+    await expect(sub.options?.getToken?.()).resolves.toBe('sub-token');
+    expect(getToken).toHaveBeenCalledTimes(1);
+  });
+
+  it('tokenless → tokened → tokenless: one subscription at a time, the other listener keeps receiving', async () => {
+    const h = harness();
+    const plain = listener();
+    h.transport.subscribe(VIEWERS, plain);
+    await flush();
+    const c = h.client();
+    const first = c.sub(VIEWERS);
+    expect(first.options).toBeUndefined();
+    first.emit('publication', viewerEvent('v1'));
+
+    const counted = listener();
+    const offCounted = h.transport.subscribe(VIEWERS, counted, { getToken: async () => 'sub-token' }); // check-secrets: allow test fake
+    const second = c.sub(VIEWERS);
+    expect(second).not.toBe(first);
+    expect(second.options?.getToken).toBeTypeOf('function');
+    expect(second.subscribeCalls).toBe(1);
+    expect(c.subs.size).toBe(1);
+    // The removed subscription is silent; the new one reaches both listeners.
+    first.emit('publication', viewerEvent('stale'));
+    second.emit('publication', viewerEvent('v2'));
+    expect(plain.events.map((e) => e.id)).toEqual(['v1', 'v2']);
+    expect(counted.events.map((e) => e.id)).toEqual(['v2']);
+
+    offCounted();
+    const third = c.sub(VIEWERS);
+    expect(third).not.toBe(second);
+    expect(third.options).toBeUndefined();
+    third.emit('publication', viewerEvent('v3'));
+    expect(plain.events.map((e) => e.id)).toEqual(['v1', 'v2', 'v3']);
+    expect(counted.events.map((e) => e.id)).toEqual(['v2']);
+    expect(c.created).toEqual([VIEWERS, VIEWERS, VIEWERS]);
+    expect(c.disconnectCalls).toBe(0);
+  });
+
+  it('a second tokened listener reuses the tokened subscription; its source takes over when the first leaves', async () => {
+    const h = harness();
+    const a = vi.fn(async () => 'token-a'); // check-secrets: allow test fake
+    const b = vi.fn(async () => 'token-b'); // check-secrets: allow test fake
+    const offA = h.transport.subscribe(VIEWERS, listener(), { getToken: a });
+    await flush();
+    h.transport.subscribe(VIEWERS, listener(), { getToken: b });
+    const c = h.client();
+    const sub = c.sub(VIEWERS);
+    offA();
+    expect(c.sub(VIEWERS)).toBe(sub);
+    expect(c.created).toEqual([VIEWERS]);
+    await expect(sub.options?.getToken?.()).resolves.toBe('token-b');
+    expect(a).not.toHaveBeenCalled();
+  });
+
+  it('a token switch before the library loads subscribes once, with the token', async () => {
+    const h = harness();
+    const off = h.transport.subscribe(VIEWERS, listener());
+    h.transport.subscribe(VIEWERS, listener(), { getToken: async () => 'sub-token' }); // check-secrets: allow test fake
+    off();
+    await flush();
+    const c = h.client();
+    expect(c.created).toEqual([VIEWERS]);
+    expect(c.sub(VIEWERS).options?.getToken).toBeTypeOf('function');
+  });
+
+  it('a refused token (unsubscribed code 1) → tokenless again, listeners kept', async () => {
+    const h = harness();
+    const l = listener();
+    h.transport.subscribe(VIEWERS, l, { getToken: async () => '' });
+    await flush();
+    const c = h.client();
+    const tokened = c.sub(VIEWERS);
+    tokened.emit('unsubscribed', { code: 1 });
+    const plain = c.sub(VIEWERS);
+    expect(plain).not.toBe(tokened);
+    expect(plain.options).toBeUndefined();
+    expect(plain.subscribeCalls).toBe(1);
+    plain.emit('publication', viewerEvent('v1'));
+    expect(l.events.map((e) => e.id)).toEqual(['v1']);
+    expect(l.onForbidden).not.toHaveBeenCalled();
   });
 });

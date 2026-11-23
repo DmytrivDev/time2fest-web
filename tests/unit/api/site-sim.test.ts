@@ -28,6 +28,7 @@ describe('sim-адаптер site', () => {
         passGift: true,
         payments: true,
         viewersMap: true,
+        viewersCount: true,
         passOffer: true,
         chatRooms: {},
         toastTiers: { '2': true, '5': true, '10': true },

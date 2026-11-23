@@ -2,10 +2,12 @@
  * Import registry (AC-80): sorted, unique rows, one per import domain. `pnpm --dir server import <domain>`
  * runs the row with that key. Later waves (hosting, streams, content) append their rows here.
  */
+import { createPayloadLiveImportStore } from '../adapters/payloadLive';
 import { createPayloadImportStore } from '../adapters/payloadCatalog';
+import { importChains } from '../live/import';
 import { importCatalog, type ImportResult } from '../catalog/import';
 import { assertRegistry } from '../platform/registry';
-import { eventsOf, siteOf } from '../endpoints/deps';
+import { eventsOf, liveOf, siteOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';
 import { createPayloadJournal } from '../adapters/payloadJournal';
 
@@ -39,6 +41,23 @@ export const importRegistry: readonly ImportRow[] = [
         },
         { apply: ctx.apply, readSource: ctx.readSource },
       );
+    },
+  },
+  {
+    key: 'chains',
+    async run(ctx) {
+      const { payloadOf } = await import('../container');
+      const { code, lines } = await importChains(
+        {
+          live: liveOf(ctx.deps).store,
+          sources: createPayloadLiveImportStore({ payload: payloadOf(ctx.deps), clock: ctx.deps.clock }),
+          publisher: eventsOf(ctx.deps).publisher,
+          journal: createPayloadJournal(() => false),
+          clock: ctx.deps.clock,
+        },
+        { apply: ctx.apply, readSource: ctx.readSource },
+      );
+      return { code, lines };
     },
   },
 ];

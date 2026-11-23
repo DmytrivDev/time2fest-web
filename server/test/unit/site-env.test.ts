@@ -61,7 +61,11 @@ function rawEnv(cls: 'test' | 'rehearsal' | 'production', over: Record<string, s
 describe('SPEC-08 env block `site`', () => {
   it('AC-64: the registry gains exactly the five site names over the wave base, and no PayPro name', () => {
     const added = names().filter((n) => !BASE_NAMES.includes(n)).sort();
-    expect(added).toEqual(SITE_NAMES);
+    // Other waves add their own blocks (e.g. `live`); only the `site` block is judged here.
+    const siteAdded = (envRegistry.find((b) => b.key === 'site')?.vars ?? []).map((v) => v.name).filter((n) => !BASE_NAMES.includes(n)).sort();
+    const otherBlocks = envRegistry.filter((b) => b.key !== 'site').flatMap((b) => b.vars.map((v) => v.name));
+    expect(siteAdded).toEqual(SITE_NAMES);
+    expect(SITE_NAMES.filter((n) => otherBlocks.includes(n))).toEqual([]);
     expect(added.filter((n) => /PAYPRO/i.test(n))).toEqual([]);
     expect(BASE_NAMES.filter((n) => !names().includes(n))).toEqual([]);
   });

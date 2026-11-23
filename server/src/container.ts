@@ -47,7 +47,7 @@ import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
 import { alarmStoreOf, catalogStoreOf, eventsOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
-import type { AppEnv, Deps, EventPorts, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
+import type { AppEnv, Deps, EventPorts, LiveWiring, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
 import type { EventSubscriber } from './events/ports';
@@ -57,17 +57,22 @@ import { createPayloadCorrectionReader, payloadCorrectionDeps } from './adapters
 import { createPayloadFanOutClaim, createPayloadRebuildStore, createPayloadSiteReset, createPayloadSiteStore } from './adapters/payloadSiteState';
 import { createFakeProducts, emptyProducts } from './adapters/products';
 import { createCfPurge } from './adapters/cfPurge';
-import { catalogVersionOf } from '@time2fest/contracts';
+import { catalogVersionOf, LIVE_VIEWERS_CLASS } from '@time2fest/contracts';
 import { createGithubDispatch } from './adapters/githubDispatch';
 import { REBUILD_TICK_MS } from './domain/site/rebuild';
+import { parseLiveConfig } from './domain/live/config';
+import { createPayloadLiveFanOutClaim, createPayloadLiveStore, createPayloadQuotaStore, createPgLiveLease } from './adapters/payloadLive';
+import { createYoutubeFakeSource } from './adapters/youtubeFake';
+import { createLivePoller, LIVE_PASS_MS, liveEventsFrom } from './live/poller';
 import { currentPatches } from './corrections/service';
 import type { FanOutDeps } from './site/fanout';
+import { LIVE_CACHE_TAG, type LiveFanOutDeps } from './live/fanout';
 import { tickRebuild, type RebuildDeps } from './site/rebuild';
 import type { SnapshotReadDeps } from './site/snapshot';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
 import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
-import { loadEnv, type RawEnv } from './platform/env';
+import { loadEnv, type EnvClass, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
 import { createAlarm, createLogger } from './platform/logger';
 import type { Alarm, LockState, SeedStore } from './ports';
@@ -76,7 +81,9 @@ import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
-import type { ChannelPublisher, Scheduler } from './realtime/ports';
+import type { CentrifugoPresenceApi, ChannelPublisher, Scheduler, SubscriptionSigner } from './realtime/ports';
+import { channelName } from './domain/realtime/channels';
+import { createViewersAggregator, VIEWERS_PASS_MS, viewerCatalogFrom } from './live/viewers';
 import { isRevertible } from './registries/revertHandlers';
 import { momentActionsFor } from './registries/moments';
 import { routeRegistry } from './registries/routes';
@@ -94,6 +101,8 @@ const UNATTENDED_TICKER_KEY = Symbol.for('t2f.unattendedTicker');
 const CLOCK_REFRESH_KEY = Symbol.for('t2f.clockRefresh');
 const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
 const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
+const LIVE_POLLER_KEY = Symbol.for('t2f.livePoller');
+const LIVE_VIEWERS_KEY = Symbol.for('t2f.liveViewers');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -238,6 +247,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.siteFanOut = overrides.siteFanOut ?? (() => siteFanOutDepsOf(deps));
   deps.rebuild = overrides.rebuild ?? (() => rebuildDepsOf(deps));
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
+  // The live air (SPEC-12): built in every process, the poller started only by `startProcessBackground`.
+  deps.live = overrides.live ?? createLiveWiring(deps, payload);
+  deps.liveFanOut = overrides.liveFanOut ?? (() => liveFanOutDepsOf(deps));
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
@@ -249,8 +261,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const { url: centrifugoUrl, apiKey: centrifugoApiKey } = realtime.config;
   const centrifugoApi =
     centrifugoUrl !== undefined && centrifugoApiKey !== undefined ? createCentrifugoApi({ url: centrifugoUrl, apiKey: centrifugoApiKey, log }) : undefined;
+  const signer = tokenSecret !== undefined ? createHs256Signer(tokenSecret) : undefined;
   deps.realtime = overrides.realtime ?? {
-    ...(tokenSecret !== undefined ? { signer: createHs256Signer(tokenSecret) } : {}),
+    ...(signer !== undefined ? { signer } : {}),
     random: () => randomInt(0, 2 ** 32) / 2 ** 32,
     prefix: realtime.config.prefix,
     ...(centrifugoApi !== undefined
@@ -262,7 +275,47 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
         }
       : {}),
   };
+  // The viewers (SPEC-12 S9): built once realtime is wired; the ticker starts only in `startProcessBackground`.
+  if (deps.live !== undefined && deps.live.viewers === undefined) {
+    deps.live = { ...deps.live, viewers: createViewersWiring(deps, centrifugoApi, signer) };
+  }
   return deps;
+}
+
+/**
+ * The viewers wiring (SPEC-12 AC-59 … AC-63): the aggregator over Centrifugo presence of `live:viewers` (unavailable
+ * without the realtime API) and the viewer-token deps (no signer without the token secret → 503).
+ */
+function createViewersWiring(
+  deps: Deps,
+  presence: CentrifugoPresenceApi | undefined,
+  signer: SubscriptionSigner | undefined,
+): NonNullable<LiveWiring['viewers']> {
+  const live = deps.live;
+  if (live === undefined) throw new Error('deps: live is not built');
+  const row = channelClassesFor(deps.env.class).find((r) => r.key === LIVE_VIEWERS_CLASS);
+  const channel = row === undefined ? undefined : channelName(row, undefined, deps.realtime?.prefix ?? '');
+  if (channel === undefined) throw new Error('realtime: live:viewers has no channel name');
+  return {
+    aggregator: createViewersAggregator({
+      presence: presence ?? { presence: () => Promise.resolve({ status: 'unavailable' }) },
+      channel,
+      lease: live.lease,
+      ...(deps.realtime?.publisher !== undefined ? { publisher: deps.realtime.publisher } : {}),
+      switches: async () => {
+        const site = deps.site;
+        if (site === undefined) throw new Error('deps: site is not built');
+        return (await site.store.read()).switches;
+      },
+      countries: async () => viewerCatalogFrom((await catalogStoreOf(deps).read()).countries),
+      cfg: live.cfg,
+      // Real time, never the virtual clock: presence and the token's `exp` are checked by Centrifugo on real time.
+      clock: realClock,
+      // The live test door's viewer fixtures (SPEC-12 W38) exist only in the `test` class.
+      ...(deps.env.class === 'test' ? { fixtures: true as const } : {}),
+    }),
+    token: { ...(signer !== undefined ? { signer } : {}), channel, clock: realClock },
+  };
 }
 
 /**
@@ -520,6 +573,41 @@ export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
 }
 
 /**
+ * What the after-commit fan-out of the live chains needs (SPEC-12 W21): the chains readers of the live wiring, the
+ * fan-out claim, the server clock, the realtime publisher (when configured), the edge purge of `LIVE_CACHE_TAG` only
+ * with token, zone and site URL (else `live/purge-skipped`, AC-14), the catalog's bucket and prefix (else
+ * `live/r2-copy-skipped`), and the version bump of a correction.
+ */
+export function liveFanOutDepsOf(deps: Deps): LiveFanOutDeps {
+  const payload = payloadOf(deps);
+  const live = deps.live ?? createLiveWiring(deps, payload);
+  const v = deps.env.vars;
+  let publisher: ChannelPublisher | undefined;
+  try {
+    publisher = publisherOf(deps);
+  } catch {
+    publisher = undefined;
+  }
+  const token = v.T2F_CF_PURGE_TOKEN;
+  const zoneId = v.T2F_CF_ZONE_ID;
+  const siteUrl = v.T2F_SITE_URL;
+  const bucket = deps.catalogCopy?.();
+  return {
+    chains: { store: live.store, events: live.events, cfg: live.cfg },
+    claim: createPayloadLiveFanOutClaim(payload),
+    clock: deps.clock,
+    ...(publisher ? { publisher } : {}),
+    ...(token && zoneId && siteUrl
+      ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token), tag: LIVE_CACHE_TAG }), siteUrl: String(siteUrl) } }
+      : {}),
+    ...(bucket ? { copy: { objects: bucket.objects, prefix: bucket.prefix } } : {}),
+    versions: { store: live.store, events: eventsOf(deps).publisher },
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
  * What the catalog rebuild launch needs (SPEC-08 W26): the rebuild state on the site record, the server clock,
  * the class and `T2F_REBUILD_PRODUCTION`, the GitHub dispatch only with `T2F_GITHUB_DISPATCH_TOKEN` (else every
  * scheduled launch logs `site/rebuild-not-configured` — boot never fails, AC-65), and the catalog version.
@@ -543,6 +631,97 @@ export function rebuildDepsOf(deps: Deps, opts: { dispatchBaseUrl?: string } = {
     },
     alarm: deps.alarm,
     log: deps.log,
+  };
+}
+
+/**
+ * Which YouTube adapter a class uses (SPEC-12 [П-4], AC-39): the fake for every class in this wave — the real adapter
+ * is built only by the port suite, pointed at the fake.
+ */
+const YOUTUBE_ADAPTER: Readonly<Record<EnvClass, 'fake' | 'real'>> = { test: 'fake', rehearsal: 'fake', production: 'fake' };
+
+export function youtubeAdapterFor(cls: EnvClass): 'fake' | 'real' {
+  return YOUTUBE_ADAPTER[cls];
+}
+
+/**
+ * The live wiring (SPEC-12): Postgres stores and leases, the configuration of `T2F_LIVE_CONFIG`, and the status
+ * source only with `T2F_YOUTUBE_BASE_URL` (production has none in this wave, so no poller runs there).
+ */
+function createLiveWiring(deps: Deps, payload: () => Promise<Payload>): LiveWiring {
+  const parsed = parseLiveConfig(deps.env.vars.T2F_LIVE_CONFIG as string | undefined);
+  if (!parsed.ok) throw new Error(`env: invalid ${parsed.failing.join(', ')}`);
+  const adapter = youtubeAdapterFor(deps.env.class);
+  const base = deps.env.vars.T2F_YOUTUBE_BASE_URL as string | undefined;
+  return {
+    store: createPayloadLiveStore({ payload, clock: deps.clock }),
+    quota: createPayloadQuotaStore(payload),
+    lease: createPgLiveLease({ payload, journal: createPayloadJournal(isRevertible), holderId: `${hostname()}:${process.pid}:${randomBytes(4).toString('hex')}` }),
+    events: liveEventsFrom(createPayloadCorrectionReader(payload)),
+    cfg: parsed.config,
+    caller: { envClass: deps.env.class, adapter },
+    ...(base !== undefined && adapter === 'fake' ? { statuses: createYoutubeFakeSource(base) } : {}),
+  };
+}
+
+/**
+ * The live status poller of one process (SPEC-12 AC-24, AC-43): a pass every 5 s on the server clock; only the
+ * `live-poller` lease holder works. Not started without a status source. A failing pass raises a log-level alarm
+ * (code only) and the ticker keeps going.
+ */
+export function startLivePoller(deps: Deps, intervalMs: number = LIVE_PASS_MS): Ticker | undefined {
+  const live = deps.live;
+  if (!live?.statuses) return undefined;
+  const poller = createLivePoller({
+    store: live.store,
+    quota: live.quota,
+    lease: live.lease,
+    statuses: live.statuses,
+    events: live.events,
+    publisher: eventsOf(deps).publisher,
+    alarm: deps.alarm,
+    cfg: live.cfg,
+    caller: live.caller,
+  });
+  const ticker = startTicker({
+    tick: () => poller.tick(deps.clock.now()),
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'live', code: 'poller_tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    intervalMs,
+  });
+  return {
+    async stop() {
+      await ticker.stop();
+      await poller.release().catch(() => {});
+    },
+  };
+}
+
+/**
+ * The viewers ticker of one process (SPEC-12 AC-60): a pass every 30 s on real time; only the `live-viewers` lease
+ * holder reads presence and publishes. A failing pass raises a log-level alarm (code only, never a count source)
+ * and the ticker keeps going. Not started without the viewers wiring.
+ */
+export function startViewersTicker(deps: Deps, intervalMs: number = VIEWERS_PASS_MS): Ticker | undefined {
+  const viewers = deps.live?.viewers;
+  if (!viewers) return undefined;
+  const ticker = startTicker({
+    tick: async () => {
+      await viewers.aggregator.tick();
+    },
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'live', code: 'viewers_tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    intervalMs,
+  });
+  return {
+    async stop() {
+      await ticker.stop();
+      await viewers.aggregator.release().catch(() => {});
+    },
   };
 }
 
@@ -640,6 +819,8 @@ export function startProcessBackground(): void {
     g[CLOCK_REFRESH_KEY] = refresher;
     g[UNATTENDED_TICKER_KEY] = startUnattendedTicker(getDeps());
     g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
+    g[LIVE_POLLER_KEY] ??= startLivePoller(getDeps());
+    g[LIVE_VIEWERS_KEY] ??= startViewersTicker(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());

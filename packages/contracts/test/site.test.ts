@@ -20,6 +20,7 @@ const make = (version: number): SiteState => ({
     passGift: true,
     payments: true,
     viewersMap: true,
+    viewersCount: true,
     passOffer: true,
     chatRooms: {},
     toastTiers: { '2': true, '5': true, '10': true },
@@ -30,6 +31,15 @@ const make = (version: number): SiteState => ({
 });
 
 describe('site contract', () => {
+  it('snapshot without the viewersCount key parses with true', () => {
+    const { viewersCount: _omit, ...rest } = make(1).switches;
+    void _omit;
+    const old = { ...make(1), switches: rest };
+    expect(parseSiteState(old)?.switches.viewersCount).toBe(true);
+    expect(SiteStateSchema.parse(old).switches.viewersCount).toBe(true);
+    expect(parseSiteState({ ...make(1), switches: { ...rest, viewersCount: 'x' } })).toBeNull();
+  });
+
   it('rejects unknown fields on the state type', () => {
     const a: SiteState = {
       ...make(1),
@@ -119,8 +129,9 @@ describe('site wire schema and guard (AC-1, NFR-1)', () => {
     expect(SiteDoorBodySchema.safeParse({ action: 'reset', x: 1 }).success).toBe(false);
     expect(siteEventId(7)).toBe('site:7');
     expect(SITE_R2_KEYS.redButton).toBe('site/red-button.json');
-    expect(PUBLIC_ROUTES.map((r) => r.path)).toEqual(['/api/site/state']);
-    expect(PUBLIC_ROUTES[0]).toMatchObject({ freshMs: 10_000, staleMs: 30_000 });
+    // SPEC-12 W23 adds `/api/live/chains` to the one list.
+    expect(PUBLIC_ROUTES.map((r) => r.path)).toEqual(['/api/site/state', '/api/live/chains']);
+    expect(PUBLIC_ROUTES.find((r) => r.key === 'site-state')).toMatchObject({ freshMs: 10_000, staleMs: 30_000 });
   });
 });
 

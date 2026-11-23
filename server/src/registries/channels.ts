@@ -11,7 +11,7 @@ export const channelRegistry: readonly ChannelClassRow[] = [
   { key: 'chat:country', namespace: 'chat', stem: 'country.', shape: 'keyed', visibility: 'public', history: { size: 100, ttlSeconds: 300 }, batched: true },
   { key: 'chat:world', namespace: 'chat', stem: 'world', shape: 'fixed', visibility: 'public', history: { size: 100, ttlSeconds: 300 }, batched: true },
   { key: 'live:streams', namespace: 'live', stem: 'streams', shape: 'fixed', visibility: 'public', history: { size: 10, ttlSeconds: 300 }, batched: false },
-  { key: 'live:viewers', namespace: 'live', stem: 'viewers', shape: 'fixed', visibility: 'public', history: { size: 1, ttlSeconds: 120 }, batched: false },
+  { key: 'live:viewers', namespace: 'live', stem: 'viewers', shape: 'fixed', visibility: 'public', history: { size: 1, ttlSeconds: 120 }, batched: false, presence: true },
   { key: 'notif', namespace: 'notif', stem: 'user#', shape: 'personal', visibility: 'personal', history: { size: 20, ttlSeconds: 600 }, batched: false },
   { key: 'orders', namespace: 'orders', stem: 'user#', shape: 'personal', visibility: 'personal', history: { size: 20, ttlSeconds: 600 }, batched: false },
   { key: 'rating', namespace: null, stem: 'rating', shape: 'fixed', visibility: 'public', history: { size: 20, ttlSeconds: 300 }, batched: false },

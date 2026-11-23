@@ -78,10 +78,12 @@ export interface Config {
     events: Event;
     'idempotency-records': IdempotencyRecord;
     'internal-events': InternalEvent;
+    'live-quota': LiveQuota;
     'run-records': RunRecord;
     'scheduler-leases': SchedulerLease;
     'scheduler-runs': SchedulerRun;
     seasons: Season;
+    'stream-sources': StreamSource;
     traditions: Tradition;
     'unattended-windows': UnattendedWindow;
     zones: Zone;
@@ -103,10 +105,12 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     'idempotency-records': IdempotencyRecordsSelect<false> | IdempotencyRecordsSelect<true>;
     'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
+    'live-quota': LiveQuotaSelect<false> | LiveQuotaSelect<true>;
     'run-records': RunRecordsSelect<false> | RunRecordsSelect<true>;
     'scheduler-leases': SchedulerLeasesSelect<false> | SchedulerLeasesSelect<true>;
     'scheduler-runs': SchedulerRunsSelect<false> | SchedulerRunsSelect<true>;
     seasons: SeasonsSelect<false> | SeasonsSelect<true>;
+    'stream-sources': StreamSourcesSelect<false> | StreamSourcesSelect<true>;
     traditions: TraditionsSelect<false> | TraditionsSelect<true>;
     'unattended-windows': UnattendedWindowsSelect<false> | UnattendedWindowsSelect<true>;
     zones: ZonesSelect<false> | ZonesSelect<true>;
@@ -122,6 +126,7 @@ export interface Config {
   globals: {
     'admin-settings': AdminSetting;
     'clock-state': ClockState;
+    'live-state': LiveState;
     'moderation-settings': ModerationSetting;
     'site-state': SiteState;
     'unattended-state': UnattendedState;
@@ -129,6 +134,7 @@ export interface Config {
   globalsSelect: {
     'admin-settings': AdminSettingsSelect<false> | AdminSettingsSelect<true>;
     'clock-state': ClockStateSelect<false> | ClockStateSelect<true>;
+    'live-state': LiveStateSelect<false> | LiveStateSelect<true>;
     'moderation-settings': ModerationSettingsSelect<false> | ModerationSettingsSelect<true>;
     'site-state': SiteStateSelect<false> | SiteStateSelect<true>;
     'unattended-state': UnattendedStateSelect<false> | UnattendedStateSelect<true>;
@@ -435,6 +441,20 @@ export interface InternalEvent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "live-quota".
+ */
+export interface LiveQuota {
+  id: number;
+  day: string;
+  bucket: string;
+  used: number;
+  alarm80At?: string | null;
+  exceededUntil?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "run-records".
  */
 export interface RunRecord {
@@ -500,6 +520,52 @@ export interface Season {
   generatedAt: string;
   tzdbVersion: string;
   importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stream-sources".
+ */
+export interface StreamSource {
+  id: number;
+  sourceId: string;
+  eventId: string;
+  platform: 'youtube' | 'iframe-official' | 'hls' | 'none';
+  videoId?: string | null;
+  kind?: string | null;
+  label?: string | null;
+  name?: string | null;
+  order: number;
+  startsAt?: string | null;
+  status?: string | null;
+  embeddable?: boolean | null;
+  privacyStatus?: string | null;
+  liveBroadcastContent?: string | null;
+  scheduledStartTime?: string | null;
+  actualStartTime?: string | null;
+  actualEndTime?: string | null;
+  ytFetchedAt?: string | null;
+  lastChecked?: string | null;
+  nextOffWindowCheckAt?: string | null;
+  override?: ('live' | 'ended' | 'hidden') | null;
+  hidden?: boolean | null;
+  hiddenReason?: string | null;
+  dead?: boolean | null;
+  deadReason?: string | null;
+  longNews?: boolean | null;
+  rights?: string | null;
+  evidence?: string | null;
+  geo?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  adminEditedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -627,6 +693,10 @@ export interface PayloadLockedDocument {
         value: number | InternalEvent;
       } | null)
     | ({
+        relationTo: 'live-quota';
+        value: number | LiveQuota;
+      } | null)
+    | ({
         relationTo: 'run-records';
         value: number | RunRecord;
       } | null)
@@ -641,6 +711,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'seasons';
         value: number | Season;
+      } | null)
+    | ({
+        relationTo: 'stream-sources';
+        value: number | StreamSource;
       } | null)
     | ({
         relationTo: 'traditions';
@@ -925,6 +999,19 @@ export interface InternalEventsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "live-quota_select".
+ */
+export interface LiveQuotaSelect<T extends boolean = true> {
+  day?: T;
+  bucket?: T;
+  used?: T;
+  alarm80At?: T;
+  exceededUntil?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "run-records_select".
  */
 export interface RunRecordsSelect<T extends boolean = true> {
@@ -978,6 +1065,43 @@ export interface SeasonsSelect<T extends boolean = true> {
   generatedAt?: T;
   tzdbVersion?: T;
   importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stream-sources_select".
+ */
+export interface StreamSourcesSelect<T extends boolean = true> {
+  sourceId?: T;
+  eventId?: T;
+  platform?: T;
+  videoId?: T;
+  kind?: T;
+  label?: T;
+  name?: T;
+  order?: T;
+  startsAt?: T;
+  status?: T;
+  embeddable?: T;
+  privacyStatus?: T;
+  liveBroadcastContent?: T;
+  scheduledStartTime?: T;
+  actualStartTime?: T;
+  actualEndTime?: T;
+  ytFetchedAt?: T;
+  lastChecked?: T;
+  nextOffWindowCheckAt?: T;
+  override?: T;
+  hidden?: T;
+  hiddenReason?: T;
+  dead?: T;
+  deadReason?: T;
+  longNews?: T;
+  rights?: T;
+  evidence?: T;
+  geo?: T;
+  adminEditedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1105,6 +1229,36 @@ export interface ClockState {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "live-state".
+ */
+export interface LiveState {
+  id: number;
+  version: number;
+  at?: string | null;
+  lastFannedOut?: number | null;
+  zoneLive?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  pendingChecks?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "moderation-settings".
  */
 export interface ModerationSetting {
@@ -1186,6 +1340,20 @@ export interface ClockStateSelect<T extends boolean = true> {
   frozen?: T;
   runEpoch?: T;
   seq?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "live-state_select".
+ */
+export interface LiveStateSelect<T extends boolean = true> {
+  version?: T;
+  at?: T;
+  lastFannedOut?: T;
+  zoneLive?: T;
+  pendingChecks?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

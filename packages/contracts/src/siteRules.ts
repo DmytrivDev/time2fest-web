@@ -5,7 +5,7 @@ export type IsEnabledTarget =
   | { kind: 'product'; key: 'pass' | 'passGift' }
   | { kind: 'tier'; tier: '2' | '5' | '10' }
   | { kind: 'room'; room: string }
-  | { kind: 'switch'; key: 'chat' | 'viewersMap' | 'passOffer' };
+  | { kind: 'switch'; key: 'chat' | 'viewersMap' | 'viewersCount' | 'passOffer' };
 
 export function isEnabled(switches: SiteSwitches, target: IsEnabledTarget): boolean {
   switch (target.kind) {

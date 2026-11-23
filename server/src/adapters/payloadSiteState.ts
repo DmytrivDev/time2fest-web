@@ -50,6 +50,7 @@ function toSwitches(v: unknown): SiteSwitches {
     passGift: bool(v.passGift, d.passGift),
     payments: bool(v.payments, d.payments),
     viewersMap: bool(v.viewersMap, d.viewersMap),
+    viewersCount: bool(v.viewersCount, d.viewersCount),
     passOffer: bool(v.passOffer, d.passOffer),
     chatRooms: rooms,
     toastTiers: { '2': t2 ?? true, '5': t5 ?? true, '10': t10 ?? true },

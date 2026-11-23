@@ -17,12 +17,17 @@ import type { ProviderLayer } from '../moderation/providers';
 import type { ModerationSettingsStore, SpendCounter } from '../moderation/spend';
 import type { TranslationService } from '../moderation/translate';
 import type { VerdictService } from '../moderation/verdict';
+import type { LiveConfig } from '../domain/live/config';
+import type { CallerContext } from '../domain/live/quota';
+import type { LiveEventSource, LiveLease, LiveStore, QuotaStore, SearchSource, VideoStatusSource } from '../live/ports';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
 import type { FanOutDeps } from '../site/fanout';
+import type { LiveFanOutDeps } from '../live/fanout';
+import type { ViewerTokenDeps, ViewersAggregator } from '../live/viewers';
 import type { RebuildDeps } from '../site/rebuild';
 import type { CatalogProduct } from '../site/ports';
 import type { SiteDeps } from '../site/service';
@@ -93,6 +98,22 @@ export interface SiteWiring extends SiteDeps {
   resetForTests?: () => Promise<void>;
 }
 
+/**
+ * The live air (SPEC-12): stores, lease, configuration and, only with `T2F_YOUTUBE_BASE_URL`, the status source the
+ * poller calls (without it no poller runs and statuses stay as imported).
+ */
+export interface LiveWiring {
+  store: LiveStore;
+  quota: QuotaStore;
+  lease: LiveLease;
+  events: LiveEventSource;
+  cfg: LiveConfig;
+  caller: CallerContext;
+  statuses?: VideoStatusSource & SearchSource;
+  /** The viewers aggregator and the viewer-token deps (SPEC-12 S9); set by `createDeps` once realtime is wired. */
+  viewers?: { aggregator: ViewersAggregator; token: ViewerTokenDeps };
+}
+
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
@@ -120,10 +141,14 @@ export interface Deps {
   catalogCopy?: () => CatalogCopyDeps | undefined;
   /** What the after-commit fan-out of the `site` snapshot needs (SPEC-08 AC-5 … AC-7, AC-33 … AC-36). */
   siteFanOut?: () => FanOutDeps;
+  /** What the after-commit fan-out of the live chains needs (SPEC-12 AC-5 … AC-7, AC-14, AC-15). */
+  liveFanOut?: () => LiveFanOutDeps;
   /** What the catalog rebuild launch needs (SPEC-08 AC-61 … AC-66). */
   rebuild?: () => RebuildDeps;
   /** The site state service and snapshot readers (SPEC-08); read through `siteOf`. */
   site?: SiteWiring;
+  /** The live air (SPEC-12); read through `liveOf`. */
+  live?: LiveWiring;
   /** Whether the database and the fast store answer (SPEC-13a AC-5/AC-6). */
   readiness?: ReadinessProbe;
   /** Who a realtime token is for (C5): no session in production until SPEC-10; the doors' resolver in tests. */

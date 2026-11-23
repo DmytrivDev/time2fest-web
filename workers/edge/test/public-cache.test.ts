@@ -1,7 +1,8 @@
 // Node tests of the public site address at the edge (SPEC-08 W30: AC-23 edge half, AC-24 … AC-31,
 // AC-38 … AC-41, NFR-2, NFR-4) with an in-memory cache, an in-memory bucket, a counting origin and a hand clock.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PUBLIC_ROUTES } from '../../../packages/contracts/src/publicRoutes';
+import { PUBLIC_ROUTES, type PublicRoute } from '../../../packages/contracts/src/publicRoutes';
+import { LIVE_CACHE_TAG, LIVE_R2_KEYS } from '../../../packages/contracts/src/live';
 import { SITE_R2_KEYS, SITE_SOURCE_HEADER, SITE_VERSION_HEADER } from '../../../packages/contracts/src/site';
 import { parseSiteState } from '../../../packages/contracts/src/siteGuard';
 import type { EdgeCache, EdgeDeps, EdgeEnv, SiteBucket } from '../src/env';
@@ -11,6 +12,7 @@ import {
   PUBLIC_ORIGIN_BUDGET_MS,
   R2_COPY_MEMO_MS,
   resetPublicCacheMemo,
+  servePublic,
   SITE_CACHE_TAG,
   SOURCE_HEADER,
   VERSION_HEADER,
@@ -38,6 +40,7 @@ function snapshot(version: number, extra: Record<string, unknown> = {}) {
       passGift: true,
       payments: true,
       viewersMap: true,
+      viewersCount: true,
       passOffer: true,
       chatRooms: {},
       toastTiers: { '2': true, '5': true, '10': true },
@@ -169,8 +172,12 @@ describe('contract pins', () => {
 
 describe('public list drives the branch (AC-23 edge half)', () => {
   it('serves every listed path through the public branch', async () => {
+    // A valid body per route: the edge checks each answer with the guard of its row (BODY_GUARDS).
+    const bodyOf = (key: string) => (key === 'live-chains' ? { version: 1, at: '2026-12-31T00:00:00.000Z', chains: [] } : snapshot(1));
+    expect(PUBLIC_ROUTES.map((r) => r.key).sort()).toEqual(['live-chains', 'site-state']);
     for (const route of PUBLIC_ROUTES) {
-      const { get } = setup();
+      const { get, origin } = setup();
+      origin.respond = async () => json(bodyOf(route.key));
       const res = await get(`${HOST}${route.path}`);
       expect(res.headers.get(SOURCE_HEADER), route.path).toBe('origin');
     }
@@ -352,6 +359,8 @@ describe('Set-Cookie and what is stored (AC-30, AC-31, А-2)', () => {
     expect(stored).toBeDefined();
     const h = new Headers(stored?.headers);
     expect(h.get('cache-control')).toBe('public, s-maxage=40');
+    const siteRow = PUBLIC_ROUTES.find((r) => r.key === 'site-state');
+    expect(siteRow && Math.ceil((siteRow.freshMs + siteRow.staleMs) / 1000)).toBe(40);
     expect(h.get('cache-tag')).toBe(SITE_CACHE_TAG);
     expect(SITE_CACHE_TAG).toBe('t2f-site-state');
     expect(h.get(CACHED_AT_HEADER)).toBe(String(T0));
@@ -607,5 +616,136 @@ describe('security-review fixes (S8-01 … S8-06)', () => {
     bucket.objects.set('site/red-button.json', JSON.stringify(snapshot(9, { outage: 'technical' })));
     expect((await get()).status).toBe(503);
     expect(bucket.gets).toEqual([]);
+  });
+});
+
+// SPEC-12 WE2 (AC-12, AC-13): a route row equal to the planned `live-chains` row (it lands in PUBLIC_ROUTES with W23).
+describe('live-like route: cache tag, no red button, 10-minute stale window (SPEC-12 AC-12, AC-13)', () => {
+  const LIVE_ROUTE: PublicRoute = {
+    key: 'live-chains',
+    path: '/api/live/chains',
+    allowedParams: [],
+    freshMs: 10_000,
+    staleMs: 600_000,
+    r2Copy: LIVE_R2_KEYS.chains,
+    cacheTag: LIVE_CACHE_TAG,
+    r2MaxAgeMs: 24 * 3600 * S,
+  };
+  const LIVE = `${HOST}${LIVE_ROUTE.path}`;
+
+  it('the local row equals the live-chains row of PUBLIC_ROUTES (SPEC-12 W23)', () => {
+    expect(PUBLIC_ROUTES.find((r) => r.key === 'live-chains')).toEqual(LIVE_ROUTE);
+  });
+  const chains = (version: number) => ({ version, at: '2026-12-31T00:00:00.000Z', chains: [] });
+
+  function live(over: Partial<EdgeEnv> = {}) {
+    const t = setup(over);
+    t.origin.respond = async () => json(chains(1));
+    const getLive = (url = LIVE) => servePublic(new Request(url), LIVE_ROUTE, t.env, t.deps);
+    return { ...t, getLive };
+  }
+
+  it('pins the planned row values', () => {
+    expect(LIVE_CACHE_TAG).toBe('t2f-live-chains');
+    expect(LIVE_R2_KEYS.chains).toBe('live/chains.json');
+  });
+
+  it('100 requests in 10 s → 1 origin call, then the cache (AC-12)', async () => {
+    const { getLive, calls, clock } = live();
+    const sources: (string | null)[] = [];
+    for (let i = 0; i < 100; i += 1) {
+      clock.t = T0 + i * 100;
+      sources.push((await getLive()).headers.get(SOURCE_HEADER));
+    }
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.input).toBe(`${ORIGIN}/api/live/chains`);
+    expect(sources[0]).toBe('origin');
+    expect(sources.slice(1).every((s) => s === 'cache')).toBe(true);
+  });
+
+  it('at 11 s the stale copy is served, then the new one after one background refresh (AC-12)', async () => {
+    const { getLive, calls, clock, origin, flush } = live();
+    await getLive();
+    origin.respond = async () => json(chains(2));
+    clock.t = T0 + 11 * S;
+    const stale = await getLive();
+    expectHeaders(stale, 'cache', 1);
+    expect(await versionOf(stale)).toBe(1);
+    await flush();
+    expect(calls).toHaveLength(2);
+    const next = await getLive();
+    expectHeaders(next, 'cache', 2);
+    expect(await versionOf(next)).toBe(2);
+    expect(calls).toHaveLength(2);
+  });
+
+  it('origin 530: 9:59 past freshness the cache copy, 10:01 past it the R2 copy with x-t2f-source: r2 (AC-13)', async () => {
+    const { getLive, clock, origin, bucket, cache, flush } = live();
+    await getLive();
+    origin.respond = async () => new Response('tunnel error', { status: 530 });
+    bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify(chains(7)));
+    // The copy is kept for the route's fresh + stale window (s-maxage=610): the in-memory cache honours it.
+    expect(new Headers(cache.entries.get(LIVE)?.headers).get('cache-control')).toBe('public, s-maxage=610');
+    // AC-13 counts the 10 minutes from the moment freshness ended (copy age freshMs + 10 min).
+    clock.t = T0 + LIVE_ROUTE.freshMs + (9 * 60 + 59) * S;
+    const at959 = await getLive();
+    expectHeaders(at959, 'cache', 1);
+    await flush();
+    clock.t = T0 + LIVE_ROUTE.freshMs + (10 * 60 + 1) * S;
+    const at1001 = await getLive();
+    expectHeaders(at1001, 'r2', 7);
+    expect(await at1001.json()).toEqual(chains(7));
+  });
+
+  it('origin 530, no cache copy and no R2 copy → the existing 503 (AC-13)', async () => {
+    const { getLive, origin } = live();
+    origin.respond = async () => new Response('tunnel error', { status: 530 });
+    const res = await getLive();
+    expect(res.status).toBe(503);
+    expect(await res.text()).toBe(UNAVAILABLE_BODY);
+  });
+
+  it('a row without a red button never reads one, even when a site button is present', async () => {
+    const { getLive, bucket } = live();
+    bucket.objects.set(`${PREFIX}${SITE_R2_KEYS.redButton}`, JSON.stringify(snapshot(9, { outage: 'technical' })));
+    const res = await getLive();
+    expectHeaders(res, 'origin', 1);
+    expect(bucket.gets).toEqual([]);
+  });
+
+  it('stores the copy under the row cache tag, never the site tag', async () => {
+    const { getLive, cache } = live();
+    await getLive();
+    const h = new Headers(cache.entries.get(LIVE)?.headers);
+    expect(h.get('cache-tag')).toBe(LIVE_CACHE_TAG);
+    expect(h.get('cache-tag')).not.toBe(SITE_CACHE_TAG);
+  });
+
+  it('S12-02: an R2 copy whose `at` is older than 24 h is refused → 503; at exactly 24 h it is served', async () => {
+    const { getLive, origin, bucket, clock } = live();
+    origin.respond = async () => new Response('tunnel error', { status: 530 });
+    const DAY = 24 * 3600 * S;
+    bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify({ version: 8, at: new Date(T0 - DAY - S).toISOString(), chains: [] }));
+    const old = await getLive();
+    expect(old.status).toBe(503);
+    expect(await old.text()).toBe(UNAVAILABLE_BODY);
+    resetPublicCacheMemo();
+    bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify({ version: 9, at: new Date(T0 - DAY).toISOString(), chains: [] }));
+    clock.t = T0;
+    expectHeaders(await getLive(), 'r2', 9);
+    // The memoised copy is judged again on every request: one second later it is too old.
+    clock.t = T0 + S;
+    expect((await getLive()).status).toBe(503);
+  });
+
+  it('S12-02: the site row has no R2 age bound — an old site copy is still served', async () => {
+    expect(PUBLIC_ROUTES.find((r) => r.key === 'site-state')?.r2MaxAgeMs).toBeUndefined();
+  });
+
+  it('a site-state body from the origin is refused by the chains guard → R2 copy', async () => {
+    const { getLive, origin, bucket } = live();
+    origin.respond = async () => json(snapshot(3));
+    bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify(chains(4)));
+    expectHeaders(await getLive(), 'r2', 4);
   });
 });

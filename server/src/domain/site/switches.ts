@@ -16,7 +16,7 @@
  */
 import type { SiteSwitches } from '@time2fest/contracts';
 
-export const SWITCH_KEYS = ['chat', 'toasts', 'pass', 'passGift', 'payments', 'viewersMap', 'passOffer', 'chatRooms', 'toastTiers'] as const;
+export const SWITCH_KEYS = ['chat', 'toasts', 'pass', 'passGift', 'payments', 'viewersMap', 'viewersCount', 'passOffer', 'chatRooms', 'toastTiers'] as const;
 export type SwitchKey = (typeof SWITCH_KEYS)[number];
 export type BooleanSwitchKey = Exclude<SwitchKey, 'chatRooms' | 'toastTiers'>;
 export const TOAST_TIER_KEYS = ['2', '5', '10'] as const;
@@ -53,6 +53,7 @@ export const DEFAULT_SWITCHES: SiteSwitches = Object.freeze({
   passGift: true,
   payments: true,
   viewersMap: true,
+  viewersCount: true,
   passOffer: true,
   chatRooms: Object.freeze({}),
   toastTiers: Object.freeze({ '2': true, '5': true, '10': true }),

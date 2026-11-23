@@ -3,6 +3,9 @@
  * parameters; nothing here reads time or randomness itself.
  */
 
+/** Milliseconds in one second: epoch ms ↔ token epoch seconds. */
+export const MS_PER_SECOND = 1_000;
+
 /** Shortest default lifetime of a connection token, in seconds. */
 export const TOKEN_TTL_MIN_SECONDS = 2_700;
 /** Longest default lifetime of a connection token, in seconds. */

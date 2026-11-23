@@ -118,6 +118,15 @@ export const envRegistry: readonly EnvBlock[] = [
     ],
   },
   {
+    // SPEC-12: live air. Everything is optional in every class: without T2F_YOUTUBE_BASE_URL the poller does not start.
+    key: 'live',
+    vars: [
+      { name: 'T2F_LIVE_CONFIG', schema: z.string().min(1).optional() },
+      { name: 'T2F_YOUTUBE_API_KEY', schema: z.string().min(1).optional(), secret: true },
+      { name: 'T2F_YOUTUBE_BASE_URL', schema: z.url().optional() },
+    ],
+  },
+  {
     key: 'platform',
     vars: [
       // Classified by envClass(); any string is accepted here, unknown values fall to production.

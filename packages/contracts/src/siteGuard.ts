@@ -11,10 +11,13 @@ const isBool = (x: unknown) => typeof x === 'boolean';
 const onlyKeys = (o: Rec, keys: readonly string[]) => Object.keys(o).every((k) => keys.includes(k));
 const PRODUCT_KEYS = ['pass', 'toast:2', 'toast:5', 'toast:10'];
 const BOOL_SWITCHES = ['chat', 'toasts', 'pass', 'passGift', 'payments', 'viewersMap', 'passOffer'];
+/** Added by SPEC-12: optional on the wire, read as `true` when absent. */
+const OPTIONAL_BOOL_SWITCHES = ['viewersCount'];
 
 function switchesOk(s: unknown): boolean {
-  if (!isRec(s) || !onlyKeys(s, [...BOOL_SWITCHES, 'chatRooms', 'toastTiers'])) return false;
+  if (!isRec(s) || !onlyKeys(s, [...BOOL_SWITCHES, ...OPTIONAL_BOOL_SWITCHES, 'chatRooms', 'toastTiers'])) return false;
   if (!BOOL_SWITCHES.every((k) => isBool(s[k]))) return false;
+  if (s.viewersCount !== undefined && !isBool(s.viewersCount)) return false;
   if (!isRec(s.chatRooms) || !Object.values(s.chatRooms).every(isBool)) return false;
   const t = s.toastTiers;
   return isRec(t) && onlyKeys(t, ['2', '5', '10']) && isBool(t['2']) && isBool(t['5']) && isBool(t['10']);
@@ -60,6 +63,7 @@ export interface SiteStateLike {
     passGift: boolean;
     payments: boolean;
     viewersMap: boolean;
+    viewersCount: boolean;
     passOffer: boolean;
     chatRooms: Readonly<Record<string, boolean>>;
     toastTiers: { '2': boolean; '5': boolean; '10': boolean };
@@ -76,7 +80,7 @@ export interface SiteStateLike {
   outage?: 'technical';
 }
 
-/** Returns the same object when it is a valid `SiteState`, otherwise `null`. Never throws. */
+/** Returns the same object when it is a valid `SiteState` (a copy with `viewersCount: true` when the key is absent), otherwise `null`. Never throws. */
 export function parseSiteState(x: unknown): SiteStateLike | null {
   if (!isRec(x)) return null;
   if (!onlyKeys(x, ['version', 'at', 'switches', 'products', 'catalogVersion', 'eventPatches', 'outage'])) return null;
@@ -87,5 +91,9 @@ export function parseSiteState(x: unknown): SiteStateLike | null {
   if (typeof x.catalogVersion !== 'string' || x.catalogVersion.length === 0) return null;
   if (!isRec(x.eventPatches) || !Object.values(x.eventPatches).every(patchOk)) return null;
   if (x.outage !== undefined && x.outage !== 'technical') return null;
-  return x as unknown as SiteStateLike;
+  const state = x as unknown as SiteStateLike;
+  if ((x.switches as Rec).viewersCount === undefined) {
+    return { ...state, switches: { ...state.switches, viewersCount: true } };
+  }
+  return state;
 }

@@ -1472,6 +1472,8 @@
     }
   },
   "player": {
+    "peopleNow": "En ce moment sur Time2Fest : {count, plural, one {# personne} other {# personnes}}",
+    "peopleNowShort": "Sur Time2Fest : {count, plural, one {# personne} other {# personnes}}",
     "scene": {
       "caption": "Scène de compte à rebours Time2Fest · diffusions en direct dès le 31 décembre",
       "expected": "La diffusion démarrera d’elle-même dès qu’elle apparaîtra",

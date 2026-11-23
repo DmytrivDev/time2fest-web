@@ -110,7 +110,7 @@ describe('next.config — three build kinds (FR-MIG-01, B3)', () => {
     for (const a of SIM_ALIASES) expect(alias[a], a).toBeUndefined();
     expect(alias['@/data/countries.json']).toMatch(/countries\.json$/);
     const lines = log.mock.calls.map(([m]) => String(m)).filter((m) => m.startsWith('[api] integration build'));
-    expect(lines).toEqual(['[api] integration build: http = catalog, site; sim = notifications, rating, live, auth, profile, checkout, toasts, chat, passport']);
+    expect(lines).toEqual(['[api] integration build: http = live, catalog, site; sim = notifications, rating, auth, profile, checkout, toasts, chat, passport']);
     await load({ flavour: 'test', mode: 'http', nodeEnv: 'production' });
     expect(log.mock.calls.filter(([m]) => String(m).startsWith('[api] integration build'))).toHaveLength(1);
     log.mockRestore();

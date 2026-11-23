@@ -21,6 +21,7 @@ const DOORS: Array<[string, string]> = [
   ['GET', '/api/_test/edge-echo'],
   ['POST', '/api/_test/edge-echo'],
   ['POST', '/api/_test/last-code'],
+  ['POST', '/api/_test/live'],
   ['POST', '/api/_test/moderation'],
   ['POST', '/api/_test/paypro-webhook'],
   ['POST', '/api/_test/realtime-token'],
@@ -29,7 +30,6 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/scheduler/night-run'],
   ['GET', '/api/_test/scheduler/night-run'],
   ['POST', '/api/_test/site'],
-  ['POST', '/api/_test/video-status'],
 ];
 
 const VARIANTS: Array<{ name: string; query: string; headers: Record<string, string> }> = [
@@ -52,7 +52,7 @@ async function probe(request: APIRequestContext, method: string, path: string, q
   return { status: res.status(), body: await res.text(), names };
 }
 
-test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19: the registry has 19 door rows', () => {
+test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19, SPEC-12 W38: the registry has 19 door rows', () => {
   expect(DOORS).toHaveLength(19);
 });
 

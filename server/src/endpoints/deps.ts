@@ -11,7 +11,7 @@ import type { ReadinessProbe } from '../health/ports';
 import type { ChannelPublisher, SubjectInvalidator } from '../realtime/ports';
 import type { SubjectResolver } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
-import type { Deps, EventPorts, ModerationDeps, SiteWiring } from './types';
+import type { Deps, EventPorts, LiveWiring, ModerationDeps, SiteWiring } from './types';
 
 function built<T>(value: T | undefined, name: string): T {
   if (value === undefined) throw new Error(`deps: ${name} missing (deps not built by createDeps)`);
@@ -44,3 +44,5 @@ export const readinessOf = (deps: Deps): ReadinessProbe => built(deps.readiness,
 export const moderationOf = (deps: Deps): ModerationDeps => built(deps.moderation, 'moderation');
 /** The site state service and snapshot readers (SPEC-08). */
 export const siteOf = (deps: Deps): SiteWiring => built(deps.site, 'site');
+/** The live air (SPEC-12): stores, lease, configuration, the status source when configured. */
+export const liveOf = (deps: Deps): LiveWiring => built(deps.live, 'live');

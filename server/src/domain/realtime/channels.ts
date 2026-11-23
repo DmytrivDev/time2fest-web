@@ -39,6 +39,11 @@ export interface ChannelClassRow {
   batched: boolean;
   /** Exists only in the `test` class. */
   testOnly?: true;
+  /**
+   * The namespace keeps presence (server-side reads only, SPEC-12 AC-61): clients never get
+   * `allow_presence_for_*` (SPEC-06 AC-3).
+   */
+  presence?: true;
 }
 
 /** The rule a key of `row` must match; `undefined` for a fixed channel, which takes no key. */

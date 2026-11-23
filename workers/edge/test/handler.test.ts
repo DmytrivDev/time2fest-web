@@ -6,6 +6,7 @@ import { EDGE_NOW_HEADER as CONTRACT_EDGE_NOW_HEADER } from '../../../packages/c
 import type { EdgeDeps, EdgeEnv } from '../src/env';
 import { handle, ORIGIN_TIME_BUDGET_MS } from '../src/handler';
 import { EDGE_NOW_HEADER } from '../src/proxy';
+import { resetPublicCacheMemo } from '../src/publicCache';
 import { NOT_FOUND_BODY, UNAVAILABLE_BODY } from '../src/responses';
 
 // Built at runtime so the secret scanner never sees a credential-like literal.
@@ -337,5 +338,34 @@ describe('GET /api/time per class (SPEC-07 AC-15 … AC-17)', () => {
     );
     expect(await res.text()).toBe('{"ok":true}');
     expect(calls).toHaveLength(1);
+  });
+});
+
+// SPEC-12 WE3 (AC-11, AC-12): the real `live-chains` row of PUBLIC_ROUTES behind the handler. Any query is
+// dropped before the cache key and the origin request; one origin call serves every request.
+describe('GET /api/live/chains through the handler (SPEC-12 AC-11, AC-12)', () => {
+  afterEach(() => resetPublicCacheMemo());
+
+  it('AC-11: 20 requests with random params → 1 origin request, path only, no params', async () => {
+    const body = { version: 3, at: '2026-12-31T00:00:00.000Z', chains: [] };
+    const { calls, env, deps } = setup({}, { respond: async () => json(body) });
+    const stored = new Map<string, Response>();
+    deps.cache = {
+      match: async (key) => stored.get(key.url)?.clone(),
+      put: async (key, res) => void stored.set(key.url, res),
+    };
+    const random = () => `${Math.random().toString(36).slice(2)}=${Math.random().toString(36).slice(2)}`;
+    const reqs = Array.from({ length: 20 }, (_, i) => `https://test.time2fest.com/api/live/chains?${random()}&n=${i}`);
+    const first = await handle(new Request(reqs[0] ?? ''), env, deps);
+    const rest = await Promise.all(reqs.slice(1).map((u) => handle(new Request(u), env, deps)));
+    for (const res of [first, ...rest]) {
+      expect(res.status).toBe(200);
+      expect(JSON.parse(await res.text())).toEqual(body);
+    }
+    expect(first.headers.get('x-t2f-source')).toBe('origin');
+    expect(rest.every((r) => r.headers.get('x-t2f-source') === 'cache')).toBe(true);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.input).toBe(`${ORIGIN}/api/live/chains`);
+    expect([...stored.keys()]).toEqual(['https://test.time2fest.com/api/live/chains']);
   });
 });

@@ -14,12 +14,14 @@ import type { Deps } from '../../src/endpoints/types';
 import { middlewareRegistry } from '../../src/registries/middleware';
 import { routeRegistry } from '../../src/registries/routes';
 import { doorRoutes } from '../../src/test-doors/index';
-import { SITE_R2_KEYS, type SiteState } from '@time2fest/contracts';
+import { SITE_R2_KEYS, type SiteState, type ViewerSummary } from '@time2fest/contracts';
 import { SiteStateSchema } from '@time2fest/contracts/schemas';
 import { createPayloadFanOutClaim } from '../../src/adapters/payloadSiteState';
-import { siteOf } from '../../src/endpoints/deps';
+import { liveOf, siteOf } from '../../src/endpoints/deps';
 import { baseSeedRows, runSeed } from '../../src/seed/index';
 import { deleteUnder, listKeys, r2Env, readObject } from './r2-helpers';
+import { quotaDay } from '../../src/domain/live/quota';
+import { startFakeYoutube } from '../../../fakes/youtube/server.mjs';
 
 const BASE = 'http://127.0.0.1:3000';
 const JSON_TYPE = { 'content-type': 'application/json' };
@@ -115,9 +117,9 @@ describe('test doors', () => {
     expect(await clockState(dispatch)).toEqual(before);
   });
 
-  it('AC-32: the three stub doors → 501 with the exact body (moderation is real since SPEC-09)', async () => {
+  it('AC-32: the stub doors → 501 with the exact body (moderation is real since SPEC-09, video-status is the live door since SPEC-12)', async () => {
     const dispatch = await buildDispatcher(depsFor('test'));
-    for (const door of ['last-code', 'paypro-webhook', 'video-status']) {
+    for (const door of ['last-code', 'paypro-webhook']) {
       const res = await dispatch(new Request(`${BASE}/api/_test/${door}`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
       expect(res.status, door).toBe(501);
       expect(await res.text()).toBe('{"ok":false,"error":{"code":"unavailable"}}');
@@ -353,6 +355,117 @@ describe('site door', { timeout: 120_000 }, () => {
     const dispatch = viaEdge(await buildDispatcher(depsFor('rehearsal')));
     const unknown = await dispatch(new Request(`${BASE}/api/_test/nope`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
     const door = await siteDoor(dispatch, { action: 'reset' });
+    expect(unknown.status).toBe(404);
+    expect({ status: door.status, body: await door.text() }).toEqual({ status: unknown.status, body: await unknown.text() });
+  });
+});
+
+/** The sim viewer list of `lib/presence/viewers.ts` (`simulatedViewers`): the 140 most popular countries, stable order. */
+function simViewers(): { iso: string; name: string; flagCode: string }[] {
+  const file = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../data/countries.json'), 'utf8')) as {
+    countries: { iso: string; name: { uk: string }; flagCode: string; popularity: number }[];
+  };
+  return [...file.countries]
+    .sort((a, b) => b.popularity - a.popularity)
+    .slice(0, 140)
+    .map((c) => ({ iso: c.iso, name: c.name.uk, flagCode: c.flagCode }));
+}
+
+describe('live door (SPEC-12 AC-72)', { timeout: 120_000 }, () => {
+  type Fake = { url: string; close: () => Promise<void> };
+  let fake: Fake;
+  let deps: Deps;
+  let dispatch: (r: Request) => Promise<Response>;
+  const liveDoor = (body: unknown) => dispatch(new Request(`${BASE}/api/_test/live`, { method: 'POST', body: JSON.stringify(body), headers: JSON_TYPE }));
+  const ok = async (res: Response) => {
+    expect(res.status, await res.clone().text()).toBe(200);
+    return ((await res.json()) as { value: Record<string, unknown> }).value;
+  };
+  const viewers = async () => {
+    const res = await dispatch(new Request(`${BASE}/api/live/viewers`));
+    return { status: res.status, text: await res.text() };
+  };
+
+  beforeAll(async () => {
+    fake = (await startFakeYoutube({ port: 0 })) as Fake;
+    deps = createDeps(
+      { ...process.env, T2F_ENV: 'test', T2F_TEST_DOORS: '1', T2F_SLUG: SLUG, T2F_YOUTUBE_BASE_URL: fake.url },
+      { log: silent },
+    );
+    // The viewer catalog and the events of the seeded stream sources.
+    await runSeed(seedStoreOf(deps), baseSeedRows());
+    dispatch = await buildDispatcher(deps);
+    await ok(await liveDoor({ door: 'reset-live' }));
+  });
+
+  afterAll(async () => {
+    await liveDoor({ door: 'reset-live' });
+    await fake.close();
+  });
+
+  it('video-status sets the state of one video in the fake (missing → no item, not-embeddable → embeddable false)', async () => {
+    const id = 'dOoRvIdEo01';
+    const item = async () => {
+      const res = await fetch(`${fake.url}/youtube/v3/videos?id=${id}&part=status`);
+      return ((await res.json()) as { items: { status: { embeddable: boolean }; snippet: { liveBroadcastContent: string } }[] }).items[0];
+    };
+    await ok(await liveDoor({ door: 'video-status', videoId: id, state: 'live' }));
+    expect(await item()).toMatchObject({ snippet: { liveBroadcastContent: 'live' }, status: { embeddable: true } });
+    await ok(await liveDoor({ door: 'video-status', videoId: id, state: 'not-embeddable' }));
+    expect((await item())?.status.embeddable).toBe(false);
+    await ok(await liveDoor({ door: 'video-status', videoId: id, state: 'missing' }));
+    expect(await item()).toBeUndefined();
+    expect((await liveDoor({ door: 'video-status', videoId: id, state: 'gone' })).status).toBe(400);
+  });
+
+  it('quota sets the queries counter of the current quota day; exceeded stops the bucket; a lower value replaces', async () => {
+    const live = liveOf(deps);
+    const day = quotaDay(deps.clock.now(), live.cfg.dayTimeZone);
+    expect(await ok(await liveDoor({ door: 'quota', used: 9_000, exceeded: true }))).toEqual({ day });
+    let state = await live.quota.read(day);
+    expect(state.queries?.used).toBe(9_000);
+    expect(state.queries?.exceededUntil).toBeGreaterThan(deps.clock.now());
+    await ok(await liveDoor({ door: 'quota', used: 120 }));
+    state = await live.quota.read(day);
+    expect(state.queries?.used).toBe(120);
+    expect(state.queries?.exceededUntil ?? null).toBeNull();
+  });
+
+  it('viewers fixture → GET /api/live/viewers shows people 12 480 and the 140 sim countries in sim order', async () => {
+    const sim = simViewers();
+    expect(sim).toHaveLength(140);
+    await ok(await liveDoor({ door: 'viewers', people: 12_480, countries: sim.map((c) => c.iso) }));
+    const read = await viewers();
+    expect(read.status, read.text).toBe(200);
+    const { value } = JSON.parse(read.text) as { value: ViewerSummary };
+    expect(value.people).toBe(12_480);
+    expect(value.countries).toEqual(sim);
+    // People cannot cover three entries per country → refused.
+    expect((await liveDoor({ door: 'viewers', people: 10, countries: sim.map((c) => c.iso) })).status).toBe(400);
+  });
+
+  it('hide hides one seeded source as the owner (new version); reset-live brings it back and drops the fixtures', async () => {
+    const live = liveOf(deps);
+    const [source] = await live.store.sources();
+    expect(source, 'the seed has stream sources').toBeDefined();
+    const before = (await live.store.state()).version;
+    const hidden = await ok(await liveDoor({ door: 'hide', eventId: source!.eventId, sourceId: source!.sourceId }));
+    expect(hidden).toEqual({ version: before + 1, changed: true });
+    expect((await live.store.sources({ sourceIds: [source!.sourceId] }))[0]?.hidden).toBe(true);
+    expect((await liveDoor({ door: 'hide', eventId: source!.eventId, sourceId: 'no-such-source' })).status).toBe(404);
+
+    await ok(await liveDoor({ door: 'quota', used: 50 }));
+    await ok(await liveDoor({ door: 'reset-live' }));
+    expect((await live.store.sources({ sourceIds: [source!.sourceId] }))[0]?.hidden ?? false).toBe(false);
+    expect((await live.quota.read(quotaDay(deps.clock.now(), live.cfg.dayTimeZone))).queries).toBeUndefined();
+    const read = await viewers();
+    if (read.status === 200) expect((JSON.parse(read.text) as { value: ViewerSummary }).value.people).not.toBe(12_480);
+  });
+
+  it('in rehearsal the live door answers exactly like an unknown path', async () => {
+    const rehearsal = viaEdge(await buildDispatcher(depsFor('rehearsal')));
+    const unknown = await rehearsal(new Request(`${BASE}/api/_test/nope`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
+    const door = await rehearsal(new Request(`${BASE}/api/_test/live`, { method: 'POST', body: '{"door":"reset-live"}', headers: JSON_TYPE }));
     expect(unknown.status).toBe(404);
     expect({ status: door.status, body: await door.text() }).toEqual({ status: unknown.status, body: await unknown.text() });
   });

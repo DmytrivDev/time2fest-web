@@ -146,4 +146,18 @@ describe('generated Centrifugo configuration (SPEC-06)', () => {
       }
     }
   });
+
+  it('SPEC-12 AC-61: namespace live keeps presence in every class; no other namespace does, none allows client presence', () => {
+    for (const cls of REALTIME_CLASSES) {
+      const withPresence = blocks(stored[cls]).filter(([, options]) => options.presence === true).map(([name]) => name);
+      expect(withPresence, cls).toEqual(['live']);
+      expect(allKeys(stored[cls]).filter((k) => k.startsWith('allow_presence_')), cls).toEqual([]);
+    }
+  });
+
+  it('SPEC-12 AC-61: the stored configuration equals what the registry generates', () => {
+    for (const cls of REALTIME_CLASSES) {
+      expect(stored[cls], cls).toEqual(centrifugoConfig(channelClassesFor(cls), cls, REALTIME_SITE_ORIGINS));
+    }
+  });
 });

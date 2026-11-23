@@ -1,6 +1,8 @@
 /**
  * Centrifugo server HTTP API (ring 4, SPEC-06 AC-32, AC-36, AC-17): the only file that knows its wire
- * shape. `POST <url>/api/publish` and `POST <url>/api/disconnect` with the `X-API-Key` header.
+ * shape. `POST <url>/api/publish`, `POST <url>/api/disconnect` and `POST <url>/api/presence` (SPEC-12 AC-61)
+ * with the `X-API-Key` header. A presence reply is reduced to each entry's `chan_info` at once: client ids,
+ * user ids and connection info never leave this file and are never logged (SPEC-12 AC-63).
  *
  * Never throws: every failure is an outcome. Each call is bounded by `CENTRIFUGO_API_TIMEOUT_MS`, below
  * the 2 s the ports promise, so that the caller's overhead still fits (on Windows a refused loopback
@@ -8,7 +10,14 @@
  * response bodies are never logged; the only line written here is an `error` for a refused key.
  */
 import type { Logger } from '../ports';
-import type { CentrifugoApi, CentrifugoPublishInput, PublishOutcome } from '../realtime/ports';
+import type {
+  CentrifugoApi,
+  CentrifugoPresenceApi,
+  CentrifugoPublishInput,
+  PresenceInfo,
+  PresenceOutcome,
+  PublishOutcome,
+} from '../realtime/ports';
 
 /** Upper bound of one API call, including reading the response body. */
 export const CENTRIFUGO_API_TIMEOUT_MS = 1_800;
@@ -25,10 +34,37 @@ type ApiReply =
   | { kind: 'error'; code: number }
   | { kind: 'unavailable' };
 
-export function createCentrifugoApi({ url, apiKey, log }: CentrifugoApiOptions): CentrifugoApi {
+/**
+ * The `chan_info` of one presence entry: Centrifugo's JSON API returns the token's `info` as JSON; a
+ * base64 string (`b64info`, or a binary-mode reply) is decoded and parsed. Anything else is `undefined`.
+ */
+function readChanInfo(raw: unknown): unknown {
+  if (raw === undefined || raw === null) return undefined;
+  if (typeof raw === 'object') return raw;
+  if (typeof raw !== 'string' || raw === '') return undefined;
+  try {
+    return JSON.parse(Buffer.from(raw, 'base64').toString('utf8')) as unknown;
+  } catch {
+    return undefined;
+  }
+}
+
+function presenceEntries(result: Record<string, unknown>): PresenceInfo[] {
+  const presence = result.presence;
+  if (presence === null || typeof presence !== 'object') return [];
+  const entries: PresenceInfo[] = [];
+  for (const value of Object.values(presence as Record<string, unknown>)) {
+    if (value === null || typeof value !== 'object') continue;
+    const chanInfo = readChanInfo((value as { chan_info?: unknown }).chan_info);
+    entries.push(chanInfo === undefined ? {} : { chanInfo });
+  }
+  return entries;
+}
+
+export function createCentrifugoApi({ url, apiKey, log }: CentrifugoApiOptions): CentrifugoApi & CentrifugoPresenceApi {
   const base = url.replace(/\/+$/, '');
 
-  async function call(method: 'publish' | 'disconnect', body: unknown): Promise<ApiReply> {
+  async function call(method: 'publish' | 'disconnect' | 'presence', body: unknown): Promise<ApiReply> {
     try {
       const res = await fetch(`${base}/api/${method}`, {
         method: 'POST',
@@ -77,6 +113,12 @@ export function createCentrifugoApi({ url, apiKey, log }: CentrifugoApiOptions):
     async disconnectUser(user: string, code: number, reason: string): Promise<'ok' | 'unavailable'> {
       const reply = await call('disconnect', { user, disconnect: { code, reason } });
       return reply.kind === 'result' ? 'ok' : 'unavailable';
+    },
+
+    async presence(channel: string): Promise<PresenceOutcome> {
+      const reply = await call('presence', { channel });
+      if (reply.kind !== 'result') return { status: 'unavailable' };
+      return { status: 'ok', entries: presenceEntries(reply.result) };
     },
   };
 }
