@@ -629,6 +629,7 @@ describe('live-like route: cache tag, no red button, 10-minute stale window (SPE
     staleMs: 600_000,
     r2Copy: LIVE_R2_KEYS.chains,
     cacheTag: LIVE_CACHE_TAG,
+    r2MaxAgeMs: 24 * 3600 * S,
   };
   const LIVE = `${HOST}${LIVE_ROUTE.path}`;
 
@@ -718,6 +719,27 @@ describe('live-like route: cache tag, no red button, 10-minute stale window (SPE
     const h = new Headers(cache.entries.get(LIVE)?.headers);
     expect(h.get('cache-tag')).toBe(LIVE_CACHE_TAG);
     expect(h.get('cache-tag')).not.toBe(SITE_CACHE_TAG);
+  });
+
+  it('S12-02: an R2 copy whose `at` is older than 24 h is refused → 503; at exactly 24 h it is served', async () => {
+    const { getLive, origin, bucket, clock } = live();
+    origin.respond = async () => new Response('tunnel error', { status: 530 });
+    const DAY = 24 * 3600 * S;
+    bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify({ version: 8, at: new Date(T0 - DAY - S).toISOString(), chains: [] }));
+    const old = await getLive();
+    expect(old.status).toBe(503);
+    expect(await old.text()).toBe(UNAVAILABLE_BODY);
+    resetPublicCacheMemo();
+    bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify({ version: 9, at: new Date(T0 - DAY).toISOString(), chains: [] }));
+    clock.t = T0;
+    expectHeaders(await getLive(), 'r2', 9);
+    // The memoised copy is judged again on every request: one second later it is too old.
+    clock.t = T0 + S;
+    expect((await getLive()).status).toBe(503);
+  });
+
+  it('S12-02: the site row has no R2 age bound — an old site copy is still served', async () => {
+    expect(PUBLIC_ROUTES.find((r) => r.key === 'site-state')?.r2MaxAgeMs).toBeUndefined();
   });
 
   it('a site-state body from the origin is refused by the chains guard → R2 copy', async () => {

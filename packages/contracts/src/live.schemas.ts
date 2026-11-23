@@ -19,6 +19,10 @@ import {
 const str = z.string();
 const id = z.string().min(1);
 const int0 = z.number().int().nonnegative();
+/** A YouTube video id as written into requests (security S12-05): 11 characters of the URL-safe alphabet. */
+const videoId = z.string().regex(/^[A-Za-z0-9_-]{11}$/);
+/** A catalog event or source id in a request: no spaces or control characters, like the `live` CLI. */
+const catalogId = z.string().regex(/^[A-Za-z0-9_.:-]{1,128}$/);
 const StatusSchema = z.enum(['live', 'expected', 'possible']);
 
 export const StreamSourceSchema = z
@@ -70,8 +74,8 @@ export const ViewerSummarySchema = z
 
 export const SourceErrorReportSchema = z
   .object({
-    eventId: id,
-    sourceId: id,
+    eventId: catalogId,
+    sourceId: catalogId,
     code: z.number().refine((c): c is SourceErrorReport['code'] => (SOURCE_ERROR_CODES as readonly number[]).includes(c)),
   })
   .strict() satisfies z.ZodType<SourceErrorReport>;
@@ -79,22 +83,22 @@ export const SourceErrorReportSchema = z
 const reason = z.string().min(1).max(LIVE_REASON_MAX);
 
 export const LiveActionBodySchema = z.discriminatedUnion('action', [
-  z.object({ action: z.literal('hide'), eventId: id, sourceId: id, reason }).strict(),
-  z.object({ action: z.literal('unhide'), eventId: id, sourceId: id, reason }).strict(),
-  z.object({ action: z.literal('main'), eventId: id, sourceId: id, reason }).strict(),
-  z.object({ action: z.literal('override'), eventId: id, sourceId: id, status: z.literal('live'), reason }).strict(),
+  z.object({ action: z.literal('hide'), eventId: catalogId, sourceId: catalogId, reason }).strict(),
+  z.object({ action: z.literal('unhide'), eventId: catalogId, sourceId: catalogId, reason }).strict(),
+  z.object({ action: z.literal('main'), eventId: catalogId, sourceId: catalogId, reason }).strict(),
+  z.object({ action: z.literal('override'), eventId: catalogId, sourceId: catalogId, status: z.literal('live'), reason }).strict(),
   z.object({ action: z.literal('zone-live'), zoneId: id, live: z.boolean(), reason }).strict(),
-  z.object({ action: z.literal('replace'), eventId: id, sourceId: id, videoId: id, reason }).strict(),
+  z.object({ action: z.literal('replace'), eventId: catalogId, sourceId: catalogId, videoId, reason }).strict(),
 ]) satisfies z.ZodType<LiveActionBody>;
 
 export const LiveDoorBodySchema = z.discriminatedUnion('door', [
-  z.object({ door: z.literal('video-status'), videoId: id, state: z.enum(LIVE_VIDEO_STATES) }).strict(),
+  z.object({ door: z.literal('video-status'), videoId, state: z.enum(LIVE_VIDEO_STATES) }).strict(),
   z.object({ door: z.literal('quota'), used: int0, exceeded: z.boolean().optional() }).strict(),
   z.object({ door: z.literal('viewers'), people: int0, countries: z.array(str) }).strict(),
-  z.object({ door: z.literal('hide'), eventId: id, sourceId: id }).strict(),
+  z.object({ door: z.literal('hide'), eventId: catalogId, sourceId: catalogId }).strict(),
   z.object({ door: z.literal('reset-live') }).strict(),
 ]) satisfies z.ZodType<LiveDoorBody>;
 
 export const LiveArchiveRowSchema = z
-  .object({ videoId: id, label: str, order: int0, decision: z.enum(LIVE_ARCHIVE_DECISIONS) })
+  .object({ videoId, label: str, order: int0, decision: z.enum(LIVE_ARCHIVE_DECISIONS) })
   .strict() satisfies z.ZodType<LiveArchiveRow>;

@@ -39,6 +39,7 @@ describe('public routes', () => {
       staleMs: 600_000,
       r2Copy: 'live/chains.json',
       cacheTag: 't2f-live-chains',
+      r2MaxAgeMs: 86_400_000, // security S12-02: no R2 fallback copy older than 24 h
     });
     const limit = rateLimitRegistry.find((r) => r.key === 'live-read');
     expect(limit).toMatchObject({ limit: 600, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' });

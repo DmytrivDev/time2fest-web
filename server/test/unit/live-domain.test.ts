@@ -1,11 +1,13 @@
 /** Live domain rules (SPEC-12 AC-8, AC-10, AC-25 … AC-30, AC-57, AC-58, AC-74), without a database. */
 import { describe, expect, it } from 'vitest';
 import { streamSources } from '../../src/collections/streamSources';
-import { LIVE_DEFAULTS, parseLiveConfig, type LiveConfig } from '../../src/domain/live/config';
+import { LIVE_DEFAULTS, MAX_RETENTION_MS, parseLiveConfig, type LiveConfig } from '../../src/domain/live/config';
 import { publicChain, publicChains, servedStatus, type StoredSource } from '../../src/domain/live/chain';
 import { isWindowOpen, liveEventOf, openWindowEvents, type LiveEvent } from '../../src/domain/live/moment';
 import { batchesOf, nextOffWindowCheckAt, planTick, type ScheduledSource } from '../../src/domain/live/schedule';
 import { publishedStatus, statusFromCheck } from '../../src/domain/live/status';
+import type { LiveSource } from '../../src/live/ports';
+import { expiredSources, RETENTION_RUN_MS, retentionRefreshAgeMs } from '../../src/live/retention';
 
 const MIN = 60_000;
 const HOUR = 60 * MIN;
@@ -218,6 +220,15 @@ describe('retention (AC-74)', () => {
     expect(servedStatus(source({ ytFetchedAt: T0 - 30 * DAY - 1 }), event(), ctx(T0))).toBeNull();
     expect(servedStatus(source({ ytFetchedAt: T0 - 2 * DAY }), event(), ctx(T0, { retentionMs: DAY }))).toBeNull();
   });
+  it('S12-03: a source is refreshed one day before the period ends, and the pass runs every 6 h', () => {
+    const src = (id: string, ytFetchedAt: number) => ({ sourceId: id, videoId: id, ytFetchedAt }) as unknown as LiveSource;
+    const sources = [src('a', T0 - 29 * DAY), src('b', T0 - 29 * DAY - 1), src('c', T0 - 30 * DAY - 1)];
+    expect(retentionRefreshAgeMs(LIVE_DEFAULTS)).toBe(29 * DAY);
+    expect(expiredSources(sources, T0, LIVE_DEFAULTS).map((s) => s.sourceId)).toEqual(['b', 'c']);
+    expect(retentionRefreshAgeMs({ ...LIVE_DEFAULTS, retentionMs: DAY })).toBe(DAY / 2);
+    // Refresh age + one run interval stays inside the period: nothing outlives `retentionMs`.
+    expect(retentionRefreshAgeMs(LIVE_DEFAULTS) + RETENTION_RUN_MS).toBeLessThan(LIVE_DEFAULTS.retentionMs);
+  });
 });
 
 describe('long news (AC-57)', () => {
@@ -254,5 +265,10 @@ describe('parseLiveConfig', () => {
     expect(parseLiveConfig('{"unknown":1}').ok).toBe(false);
     expect(parseLiveConfig('{"dayTimeZone":"Nowhere/City"}').ok).toBe(false);
     expect(parseLiveConfig('not json')).toEqual({ ok: false, failing: ['T2F_LIVE_CONFIG'] });
+  });
+  it('S12-03: retentionMs is capped at 30 days', () => {
+    expect(parseLiveConfig(JSON.stringify({ retentionMs: 30 * DAY })).ok).toBe(true);
+    expect(parseLiveConfig(JSON.stringify({ retentionMs: 30 * DAY + 1 }))).toEqual({ ok: false, failing: ['T2F_LIVE_CONFIG.retentionMs'] });
+    expect(MAX_RETENTION_MS).toBe(30 * DAY);
   });
 });

@@ -2,9 +2,10 @@
  * The viewers aggregate (SPEC-12 AC-60, AC-61, AC-62, NFR-6, [П-1]), ring 1 — pure, one pass over the entries.
  *
  * Input: the presence entries of `live:viewers`, each with the `chan_info` of its subscription token. Only the
- * lock-holder tab of a browser subscribes with a token `{p:1, c?}`, so `people` = entries with `p === 1`. A country
- * is listed when it has at least `viewersMinPerCountry` such entries, a valid ISO (`XX`, `T1`, absent, malformed
- * excluded) and a catalog row; the list carries no numbers and follows catalog popularity (the order of the site's
+ * lock-holder tab of a browser subscribes with a token `{p:1, n, c?}`, so `people` = DISTINCT token nonces `n` among
+ * entries with `p === 1` — one token reused on several connections counts once (an entry without a nonce is not
+ * counted). A country is listed when at least `viewersMinPerCountry` distinct nonces carry it, a valid ISO (`XX`,
+ * `T1`, absent, malformed excluded) and a catalog row; the list carries no numbers and follows catalog popularity (the order of the site's
  * `simulatedViewers`). `viewersMap` off → no countries; `viewersCount` off → no `people`. Nothing per person is kept.
  */
 import type { SiteSwitches, ViewerCountry, ViewerSummary } from '@time2fest/contracts';
@@ -31,12 +32,15 @@ export function viewerCountry(c: unknown): string | null {
   return typeof c === 'string' && ISO.test(c) && !SERVICE_CODES.has(c) ? c : null;
 }
 
-/** The country of a counted entry, `null` for an entry counted without a country, `undefined` when not counted. */
-function readEntry(info: unknown): string | null | undefined {
+/** The longest nonce accepted (a UUID is 36 characters). */
+const MAX_NONCE_LENGTH = 64;
+
+/** A counted entry's token nonce and country (`null` = counted without a country); `undefined` when not counted. */
+function readEntry(info: unknown): { nonce: string; country: string | null } | undefined {
   if (!info || typeof info !== 'object') return undefined;
-  const { p, c } = info as { p?: unknown; c?: unknown };
-  if (p !== 1) return undefined;
-  return viewerCountry(c);
+  const { p, c, n } = info as { p?: unknown; c?: unknown; n?: unknown };
+  if (p !== 1 || typeof n !== 'string' || n.length === 0 || n.length > MAX_NONCE_LENGTH) return undefined;
+  return { nonce: n, country: viewerCountry(c) };
 }
 
 /** Catalog countries ordered by popularity (desc), then ISO; compute once per catalog version. */
@@ -51,14 +55,15 @@ export function aggregateViewers(
   at: string,
   cfg: LiveConfig,
 ): ViewerSummary {
-  let people = 0;
+  const seen = new Set<string>();
   const perCountry = new Map<string, number>();
   for (const entry of entries) {
-    const country = readEntry(entry.chanInfo);
-    if (country === undefined) continue;
-    people += 1;
-    if (country !== null) perCountry.set(country, (perCountry.get(country) ?? 0) + 1);
+    const read = readEntry(entry.chanInfo);
+    if (read === undefined || seen.has(read.nonce)) continue;
+    seen.add(read.nonce);
+    if (read.country !== null) perCountry.set(read.country, (perCountry.get(read.country) ?? 0) + 1);
   }
+  const people = seen.size;
   const countries: ViewerCountry[] = [];
   if (switches.viewersMap) {
     for (const c of orderedCountries) {

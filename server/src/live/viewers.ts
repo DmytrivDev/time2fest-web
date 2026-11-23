@@ -9,13 +9,15 @@
  *  - `current` (the `GET` route, any instance): answers from the in-memory pass, re-reading presence on demand at
  *    most once per `VIEWERS_PASS_MS`.
  *
- * `issueViewerToken` signs the subscription token of the lock-holder tab ([П-2]): `info` is `{p: 1}` plus `c` — the
- * Cloudflare IP country of the token request — only when it is a real country (AC-59). The token, the country and
- * the address are never logged.
+ * `issueViewerToken` signs the subscription token of the lock-holder tab ([П-2]): `info` is `{p: 1, n}` plus `c` — the
+ * Cloudflare IP country of the token request — only when it is a real country (AC-59). `n` is a random nonce per
+ * token, stored nowhere: the aggregate counts distinct nonces, so one token reused on many connections is one person.
+ * The token, the nonce, the country and the address are never logged.
  *
  * The cached pass is switch-free; the switches (`viewersMap`, `viewersCount`) are applied on every answer and every
  * publish, so a toggle shows on the next read (AC-62).
  */
+import { randomUUID } from 'node:crypto';
 import { fail, LIVE_VIEWERS_CLASS, ok, type ApiResult, type RealtimeTokenValue, type SiteSwitches, type ViewerSummary } from '@time2fest/contracts';
 import type { LiveConfig } from '../domain/live/config';
 import { MS_PER_SECOND } from '../domain/realtime/token';
@@ -138,8 +140,8 @@ export function createViewersAggregator(deps: ViewersDeps): ViewersAggregator {
   };
 }
 
-/** A viewer token lives one hour; the tab asks again before it expires, which re-reads the country. */
-export const VIEWER_TOKEN_TTL_SECONDS = 3_600;
+/** A viewer token lives ten minutes; the tab asks again before it expires (`getToken`), which re-reads the country. */
+export const VIEWER_TOKEN_TTL_SECONDS = 10 * 60;
 
 export interface ViewerTokenDeps {
   /** Absent without `T2F_CENTRIFUGO_TOKEN_SECRET`: 503 `realtime-not-configured`. */
@@ -147,6 +149,8 @@ export interface ViewerTokenDeps {
   /** The channel name of `live:viewers`. */
   channel: string;
   clock: Clock;
+  /** The per-token nonce; `randomUUID` unless a test injects one. */
+  nonce?: () => string;
 }
 
 /** The subscription token of `live:viewers` for a request whose edge country is `country` (AC-59, AC-61). */
@@ -155,7 +159,8 @@ export async function issueViewerToken(deps: ViewerTokenDeps, country: string): 
   const iat = Math.floor(deps.clock.now() / MS_PER_SECOND);
   const exp = iat + VIEWER_TOKEN_TTL_SECONDS;
   const c = viewerCountry(country);
-  const token = await deps.signer.signSubscription({ channel: deps.channel, info: c === null ? { p: 1 } : { p: 1, c }, iat, exp });
+  const n = (deps.nonce ?? randomUUID)();
+  const token = await deps.signer.signSubscription({ channel: deps.channel, info: c === null ? { p: 1, n } : { p: 1, n, c }, iat, exp });
   return ok({ token, expiresAt: new Date(exp * MS_PER_SECOND).toISOString() });
 }
 

@@ -6,6 +6,8 @@ import {
   ChainsResponseSchema,
   LiveActionBodySchema,
   LiveArchiveRowSchema,
+  LiveDoorBodySchema,
+  SourceErrorReportSchema,
   StreamEventSchema,
   ViewerSummarySchema,
 } from '../src/schemas';
@@ -89,7 +91,7 @@ describe('applyStreamEvent', () => {
 describe('live archive and sizes', () => {
   it('archive row has no YouTube field', () => {
     expect(Object.keys(LiveArchiveRowSchema.shape).sort()).toEqual(['decision', 'label', 'order', 'videoId']);
-    expect(LiveArchiveRowSchema.safeParse({ videoId: 'v', label: 'l', order: 0, decision: 'kept', title: 'x' }).success).toBe(false);
+    expect(LiveArchiveRowSchema.safeParse({ videoId: 'abcdefghijk', label: 'l', order: 0, decision: 'kept', title: 'x' }).success).toBe(false);
   });
   const ten = (i: number): StreamChain => ({ eventId: `e${i}`, sources: Array.from({ length: 10 }, (_, k) => ({ ...src, id: `s${i}_${k}`, order: k })) });
   it('a chain event with 10 sources is at most 65536 bytes', () => {
@@ -108,5 +110,36 @@ describe('owner live action bodies', () => {
   it('[А-R3] override forces a source playable: only status live is accepted', () => {
     expect(LiveActionBodySchema.safeParse({ ...base, status: 'live' }).success).toBe(true);
     for (const status of ['expected', 'possible', 'ended', 'hidden']) expect(LiveActionBodySchema.safeParse({ ...base, status }).success).toBe(false);
+  });
+});
+
+describe('request ids are shaped (security S12-05)', () => {
+  const VIDEO = 'IOGYiO96eHA';
+  const badVideos = ['', 'short', 'not a video', 'abcdefghijkl', 'abc/efghijk', 'abcdefghij\n', 'абвгдеёжзий'];
+  const badIds = ['', 'has space', 'a/b', 'x'.repeat(129), 'a\u0000b', 'utc+0100'];
+  it('videoId: 11 URL-safe characters in action, door and archive bodies', () => {
+    const replace = { action: 'replace', eventId: 'evt_a', sourceId: 'src_a', reason: 'r' };
+    expect(LiveActionBodySchema.safeParse({ ...replace, videoId: VIDEO }).success).toBe(true);
+    expect(LiveDoorBodySchema.safeParse({ door: 'video-status', videoId: 'Ab_-0123456', state: 'live' }).success).toBe(true);
+    expect(LiveArchiveRowSchema.safeParse({ videoId: VIDEO, label: 'l', order: 0, decision: 'kept' }).success).toBe(true);
+    for (const v of badVideos) {
+      expect(LiveActionBodySchema.safeParse({ ...replace, videoId: v }).success, v).toBe(false);
+      expect(LiveDoorBodySchema.safeParse({ door: 'video-status', videoId: v, state: 'live' }).success, v).toBe(false);
+      expect(LiveArchiveRowSchema.safeParse({ videoId: v, label: 'l', order: 0, decision: 'kept' }).success, v).toBe(false);
+    }
+  });
+  it('eventId / sourceId: the catalog id shape, up to 128 characters', () => {
+    const ok = ['evt_kiritimati_2027', 'src_sydney_1', 'a.b:c-d', 'x'.repeat(128)];
+    for (const id of ok) {
+      expect(LiveActionBodySchema.safeParse({ action: 'hide', eventId: id, sourceId: id, reason: 'r' }).success, id).toBe(true);
+      expect(LiveDoorBodySchema.safeParse({ door: 'hide', eventId: id, sourceId: id }).success, id).toBe(true);
+      expect(SourceErrorReportSchema.safeParse({ eventId: id, sourceId: id, code: 150 }).success, id).toBe(true);
+    }
+    for (const id of badIds) {
+      expect(LiveActionBodySchema.safeParse({ action: 'hide', eventId: id, sourceId: 'src_a', reason: 'r' }).success, id).toBe(false);
+      expect(LiveActionBodySchema.safeParse({ action: 'main', eventId: 'evt_a', sourceId: id, reason: 'r' }).success, id).toBe(false);
+      expect(LiveDoorBodySchema.safeParse({ door: 'hide', eventId: id, sourceId: 'src_a' }).success, id).toBe(false);
+      expect(SourceErrorReportSchema.safeParse({ eventId: 'evt_a', sourceId: id, code: 150 }).success, id).toBe(false);
+    }
   });
 });

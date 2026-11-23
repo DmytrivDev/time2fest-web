@@ -67,6 +67,9 @@ export interface LiveConfig {
   viewersMinPerCountry: number;
 }
 
+/** The longest the YouTube fields may be kept (YouTube API Services policy, AC-73). */
+export const MAX_RETENTION_MS = 30 * DAY;
+
 export const LIVE_DEFAULTS: LiveConfig = Object.freeze({
   buckets: Object.freeze({
     queries: Object.freeze({ perDay: 10_000, perMinute: 1_800_000, perUserPerMinute: 180_000 }),
@@ -88,7 +91,7 @@ export const LIVE_DEFAULTS: LiveConfig = Object.freeze({
   offWindowMaxMs: 7 * DAY,
   possibleBeforeMs: 5 * MIN,
   staleMs: 2 * MIN,
-  retentionMs: 30 * DAY,
+  retentionMs: MAX_RETENTION_MS,
   rehearsalDailyUnits: 1_000,
   blackout: Object.freeze({ from: '12-29', to: '01-01' }),
   viewersMinPerCountry: 3,
@@ -124,7 +127,8 @@ const OverrideSchema = z
     offWindowMaxMs: posInt,
     possibleBeforeMs: nonNegInt,
     staleMs: posInt,
-    retentionMs: posInt,
+    /** YouTube API Services policy: never above 30 days (security S12-03). */
+    retentionMs: posInt.max(MAX_RETENTION_MS),
     rehearsalDailyUnits: nonNegInt,
     blackout: z.object({ from: monthDay, to: monthDay }).strict(),
     viewersMinPerCountry: posInt,

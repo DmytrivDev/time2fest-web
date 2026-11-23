@@ -190,6 +190,14 @@ describeRealtime('live viewers (SPEC-12 S9)', () => {
     expect(envelope.data.countries.map((c) => c.iso)).toEqual(['PL']);
   });
 
+  it('S12-01: one viewer token reused on 3 connections → one person, its country not listed', { timeout: 60_000 }, async () => {
+    const token = await viewerToken('PL');
+    for (let i = 0; i < 3; i++) await tab(token);
+    const summary = await fresh(aggregator());
+    expect(summary.people).toBe(1);
+    expect(summary.countries).toEqual([]);
+  });
+
   it('AC-61: 3 browsers (one with a second tab) → people 3; one browser closes → 2 within 60 s', { timeout: 120_000 }, async () => {
     const browsers = [];
     for (const country of ['PL', 'DE', 'UA']) browsers.push(await tab(await viewerToken(country)));

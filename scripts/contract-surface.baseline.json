@@ -4227,6 +4227,12 @@
             "text": "string"
           }
         },
+        "r2MaxAgeMs": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        },
         "redButton": {
           "optional": true,
           "type": {

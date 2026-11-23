@@ -29,7 +29,7 @@ import { asStreamStatus, statusFromCheck, type YoutubeVideoState } from '../doma
 import type { EventPublisher } from '../events/ports';
 import type { Alarm } from '../ports';
 import type { LiveEventSource, LiveLease, LiveSource, LiveStore, QuotaStore, SourceCheck, Tx, VideoStatusSource } from './ports';
-import { expiredSources, runRetention, type Refreshed } from './retention';
+import { expiredSources, RETENTION_RUN_MS, runRetention, type Refreshed } from './retention';
 
 export const LIVE_CHANGED_TOPIC = 'live.changed';
 export const LIVE_POLLER_LEASE = 'live-poller';
@@ -37,7 +37,6 @@ export const LIVE_POLLER_LEASE = 'live-poller';
 export const LIVE_PASS_MS = 5_000;
 /** Lease term: three passes, so one slow pass does not hand the lease over. */
 const LEASE_TTL_MS = 3 * LIVE_PASS_MS;
-const DAY_MS = 86_400_000;
 const ALARM_SOURCE = 'live';
 
 /** Payload of `live.changed`: the new version and the events whose public chain changed. */
@@ -311,7 +310,7 @@ export function createLivePoller(deps: LivePollerDeps): LivePoller {
     }
 
     const checks = checksFor(sources, answers, now);
-    if (cycle && (lastRetentionAt === null || now < lastRetentionAt || now - lastRetentionAt >= DAY_MS)) {
+    if (cycle && (lastRetentionAt === null || now < lastRetentionAt || now - lastRetentionAt >= RETENTION_RUN_MS)) {
       lastRetentionAt = now;
       const checked = new Set(checks.map((c) => c.sourceId));
       const expired = expiredSources(sources, now, cfg, checked);

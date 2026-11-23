@@ -243,17 +243,29 @@ async function readCopy(cache: EdgeCache, key: Request, now: number): Promise<Co
 
 /**
  * The R2 copy `<R2_PREFIX><key>` if present and accepted by the guard; any read error → null. Read at most once
- * per key per `R2_COPY_MEMO_MS` in this isolate; no bucket or a bad prefix → never read (fail closed).
+ * per key per `R2_COPY_MEMO_MS` in this isolate; no bucket or a bad prefix → never read (fail closed). A route with
+ * `r2MaxAgeMs` refuses a copy whose body `at` is older than that (or unreadable), judged on every request.
  */
-function readR2(env: EdgeEnv, route: PublicRoute, now: number): Promise<PublicBody | null> {
+async function readR2(env: EdgeEnv, route: PublicRoute, now: number): Promise<PublicBody | null> {
   const site = siteBucketOf(env);
-  if (!site) return Promise.resolve(null);
+  if (!site) return null;
   const full = `${site.prefix}${route.r2Copy}`;
   const memo = r2Memo.get(full);
-  if (memo && now >= memo.at && now - memo.at < R2_COPY_MEMO_MS) return memo.state;
-  const state = readR2Object(site.bucket, full, guardOf(route));
-  r2Memo.set(full, { at: now, state });
-  return state;
+  let state: Promise<PublicBody | null>;
+  if (memo && now >= memo.at && now - memo.at < R2_COPY_MEMO_MS) state = memo.state;
+  else {
+    state = readR2Object(site.bucket, full, guardOf(route));
+    r2Memo.set(full, { at: now, state });
+  }
+  const body = await state;
+  return body && route.r2MaxAgeMs !== undefined && !youngEnough(body, now, route.r2MaxAgeMs) ? null : body;
+}
+
+/** The body's `at` (ISO) is no older than `maxAgeMs` on the edge clock; a missing or unreadable `at` is too old. */
+function youngEnough(body: PublicBody, now: number, maxAgeMs: number): boolean {
+  const at = (body as { at?: unknown }).at;
+  const ms = typeof at === 'string' ? Date.parse(at) : NaN;
+  return Number.isFinite(ms) && now - ms <= maxAgeMs;
 }
 
 async function readR2Object(
