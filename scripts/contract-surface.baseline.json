@@ -3700,6 +3700,508 @@
         }
       }
     },
+    "packages/contracts/src/live.schemas.ts#ChainsResponseSchema": {
+      "text": "ZodObject<{ at: ZodString; chains: ZodArray<ZodObject<{ eventId: ZodString; sources: ZodArray<ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>>; version: ZodOptional<ZodNumber>; }, $strict>>; version: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/live.schemas.ts#LiveActionBodySchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ action: ZodLiteral<\"hide\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"unhide\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"main\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"override\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; }, $strict>, ZodObject<{ action: ZodLiteral<\"zone-live\">; live: ZodBoolean; reason: ZodString; zoneId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"replace\">; eventId: ZodString; reason: ZodString; sourceId: ZodString; videoId: ZodString; }, $strict>], \"action\">"
+    },
+    "packages/contracts/src/live.schemas.ts#LiveArchiveRowSchema": {
+      "text": "ZodObject<{ decision: ZodEnum<{ dead: \"dead\"; hidden: \"hidden\"; kept: \"kept\"; replaced: \"replaced\"; }>; label: ZodString; order: ZodNumber; videoId: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/live.schemas.ts#LiveDoorBodySchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\"video-status\">; state: ZodEnum<{ \"not-embeddable\": \"not-embeddable\"; ended: \"ended\"; live: \"live\"; missing: \"missing\"; private: \"private\"; upcoming: \"upcoming\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\"quota\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\"viewers\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\"hide\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\"reset-live\">; }, $strict>], \"door\">"
+    },
+    "packages/contracts/src/live.schemas.ts#SourceErrorReportSchema": {
+      "text": "ZodObject<{ code: ZodNumber & ZodType<100 | 2 | 5 | 101 | 150 | 153, number, $ZodTypeInternals<100 | 2 | 5 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/live.schemas.ts#StreamChainSchema": {
+      "text": "ZodObject<{ eventId: ZodString; sources: ZodArray<ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>>; version: ZodOptional<ZodNumber>; }, $strict>"
+    },
+    "packages/contracts/src/live.schemas.ts#StreamEventSchema": {
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ eventId: ZodString; source: ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>; type: ZodLiteral<\"source\">; version: ZodNumber; }, $strict>, ZodObject<{ chain: ZodObject<{ eventId: ZodString; sources: ZodArray<ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>>; version: ZodOptional<ZodNumber>; }, $strict>; type: ZodLiteral<\"chain\">; version: ZodNumber; }, $strict>, ZodObject<{ eventId: ZodString; sourceId: ZodString; type: ZodLiteral<\"hide\">; version: ZodNumber; }, $strict>], \"type\">"
+    },
+    "packages/contracts/src/live.schemas.ts#StreamSourceSchema": {
+      "text": "ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>"
+    },
+    "packages/contracts/src/live.schemas.ts#ViewerSummarySchema": {
+      "text": "ZodObject<{ at: ZodString; countries: ZodArray<ZodObject<{ flagCode: ZodString; iso: ZodString; name: ZodString; }, $strict>>; people: ZodOptional<ZodNumber>; }, $strict>"
+    },
+    "packages/contracts/src/live.ts#ChainsResponse": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#LiveISO"
+          }
+        },
+        "chains": {
+          "optional": false,
+          "type": {
+            "text": "StreamChain[]"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#LIVE_ACTIONS": {
+      "text": "readonly [\"hide\", \"unhide\", \"main\", \"override\", \"zone-live\", \"replace\"]"
+    },
+    "packages/contracts/src/live.ts#LIVE_ARCHIVE_DECISIONS": {
+      "text": "readonly [\"kept\", \"hidden\", \"dead\", \"replaced\"]"
+    },
+    "packages/contracts/src/live.ts#LIVE_CACHE_TAG": {
+      "text": "\"t2f-live-chains\""
+    },
+    "packages/contracts/src/live.ts#LIVE_R2_KEYS": {
+      "text": "{ readonly chains: \"live/chains.json\"; }"
+    },
+    "packages/contracts/src/live.ts#LIVE_REASON_MAX": {
+      "text": "200"
+    },
+    "packages/contracts/src/live.ts#LIVE_STREAMS_CLASS": {
+      "text": "\"live:streams\""
+    },
+    "packages/contracts/src/live.ts#LIVE_VIDEO_STATES": {
+      "text": "readonly [\"live\", \"upcoming\", \"ended\", \"private\", \"not-embeddable\", \"missing\"]"
+    },
+    "packages/contracts/src/live.ts#LIVE_VIEWERS_CLASS": {
+      "text": "\"live:viewers\""
+    },
+    "packages/contracts/src/live.ts#LiveAction": {
+      "text": "(typeof LIVE_ACTIONS)[number]"
+    },
+    "packages/contracts/src/live.ts#LiveActionBody": {
+      "union": [
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'hide'\",\"'main'\",\"'unhide'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'override'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"status\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/live.ts#StreamStatus\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'replace'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'zone-live'\"]}},\"live\":{\"optional\":false,\"type\":{\"text\":\"boolean\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"zoneId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}"
+      ]
+    },
+    "packages/contracts/src/live.ts#LiveArchiveDecision": {
+      "text": "(typeof LIVE_ARCHIVE_DECISIONS)[number]"
+    },
+    "packages/contracts/src/live.ts#LiveArchiveRow": {
+      "props": {
+        "decision": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#LiveArchiveDecision"
+          }
+        },
+        "label": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "order": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "videoId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#LiveDoorBody": {
+      "union": [
+        "{\"props\":{\"countries\":{\"optional\":false,\"type\":{\"text\":\"string[]\"}},\"door\":{\"optional\":false,\"type\":{\"union\":[\"'viewers'\"]}},\"people\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
+        "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'hide'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'quota'\"]}},\"exceeded\":{\"optional\":true,\"type\":{\"text\":\"boolean\"}},\"used\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
+        "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'reset-live'\"]}}}}",
+        "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'video-status'\"]}},\"state\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/live.ts#LiveVideoState\"}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}"
+      ]
+    },
+    "packages/contracts/src/live.ts#LiveISO": {
+      "text": "string"
+    },
+    "packages/contracts/src/live.ts#LiveVideoState": {
+      "text": "(typeof LIVE_VIDEO_STATES)[number]"
+    },
+    "packages/contracts/src/live.ts#SOURCE_ERROR_CODES": {
+      "text": "readonly [2, 5, 100, 101, 150, 153]"
+    },
+    "packages/contracts/src/live.ts#SourceErrorCode": {
+      "text": "(typeof SOURCE_ERROR_CODES)[number]"
+    },
+    "packages/contracts/src/live.ts#SourceErrorReport": {
+      "props": {
+        "code": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#SourceErrorCode"
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "sourceId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#StreamChain": {
+      "props": {
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "sources": {
+          "optional": false,
+          "type": {
+            "text": "StreamSource[]"
+          }
+        },
+        "version": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#StreamEvent": {
+      "variants": {
+        "'chain'": {
+          "props": {
+            "chain": {
+              "optional": false,
+              "type": {
+                "ref": "packages/contracts/src/live.ts#StreamChain"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'chain'"
+                ]
+              }
+            },
+            "version": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        },
+        "'hide'": {
+          "props": {
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "sourceId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'hide'"
+                ]
+              }
+            },
+            "version": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        },
+        "'source'": {
+          "props": {
+            "eventId": {
+              "optional": false,
+              "type": {
+                "text": "string"
+              }
+            },
+            "source": {
+              "optional": false,
+              "type": {
+                "ref": "packages/contracts/src/live.ts#StreamSource"
+              }
+            },
+            "type": {
+              "optional": false,
+              "type": {
+                "union": [
+                  "'source'"
+                ]
+              }
+            },
+            "version": {
+              "optional": false,
+              "type": {
+                "text": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#StreamKind": {
+      "union": [
+        "'main'",
+        "'tv'",
+        "'webcam'"
+      ]
+    },
+    "packages/contracts/src/live.ts#StreamPlatform": {
+      "union": [
+        "'facebook'",
+        "'twitch'",
+        "'youtube'"
+      ]
+    },
+    "packages/contracts/src/live.ts#StreamSource": {
+      "props": {
+        "alwaysOn": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "embeddable": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "isLive": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "isRecording": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#StreamKind"
+          }
+        },
+        "lastChecked": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#LiveISO"
+          }
+        },
+        "order": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "override": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "platform": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#StreamPlatform"
+          }
+        },
+        "replay": {
+          "optional": true,
+          "type": {
+            "props": {
+              "url": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              },
+              "videoId": {
+                "optional": true,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "startsAt": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#LiveISO"
+          }
+        },
+        "status": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#StreamStatus"
+          }
+        },
+        "sync": {
+          "optional": true,
+          "type": {
+            "props": {
+              "durationSec": {
+                "optional": true,
+                "type": {
+                  "text": "number"
+                }
+              },
+              "midnightSec": {
+                "optional": false,
+                "type": {
+                  "text": "number"
+                }
+              }
+            }
+          }
+        },
+        "test": {
+          "optional": true,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "testNote": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "title": {
+          "optional": false,
+          "type": {
+            "props": {
+              "uk": {
+                "optional": false,
+                "type": {
+                  "text": "string"
+                }
+              }
+            }
+          }
+        },
+        "url": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "verified": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "videoId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#StreamStatus": {
+      "union": [
+        "'expected'",
+        "'live'",
+        "'possible'"
+      ]
+    },
+    "packages/contracts/src/live.ts#ViewerCountry": {
+      "props": {
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "iso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#ViewerSummary": {
+      "props": {
+        "at": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/live.ts#LiveISO"
+          }
+        },
+        "countries": {
+          "optional": false,
+          "type": {
+            "text": "ViewerCountry[]"
+          }
+        },
+        "people": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/liveGuard.ts#parseChainsResponse": {
+      "fn": "export function parseChainsResponse(x: unknown): { version: number; at: string; chains: Rec[] } | null"
+    },
+    "packages/contracts/src/liveGuard.ts#parseStreamEvent": {
+      "fn": "export function parseStreamEvent(x: unknown): Rec | null"
+    },
+    "packages/contracts/src/liveGuard.ts#parseViewerSummary": {
+      "fn": "export function parseViewerSummary(x: unknown): { countries: Rec[]; people?: number; at: string } | null"
+    },
+    "packages/contracts/src/liveRules.ts#applyStreamEvent": {
+      "fn": "export function applyStreamEvent( chains: ReadonlyMap<string, StreamChain>, event: StreamEvent, lastVersion: number, ): { chains: ReadonlyMap<string, StreamChain>; version: number }"
+    },
     "packages/contracts/src/moderation.schemas.ts#AiStateReasonSchema": {
       "text": "ZodEnum<{ \"not-configured\": \"not-configured\"; ceiling: \"ceiling\"; slow: \"slow\"; unavailable: \"unavailable\"; }>"
     },
