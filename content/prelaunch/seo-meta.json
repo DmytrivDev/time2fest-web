@@ -2934,6 +2934,42 @@
         "title": "Nouvel An en Hongrie : Budapest | Time2Fest",
         "description": "La Hongrie accueille 2027 à 23 h UTC en chantant le Himnusz, avec un « BUÉK ! », du porc et des lentilles porte-bonheur, et Budapest fête au bord du Danube."
       }
+    },
+    "MC": {
+      "uk": {
+        "title": "Новий рік у Монако | Time2Fest",
+        "description": "Монако зустрічає 2027 рік салютом над портом Еркюль, вечіркою з діджеями на набережній і відліком на площі Казино. Північ у Монако — о 23:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Monaco | Time2Fest",
+        "description": "Monaco sees in 2027 with fireworks over Port Hercule, a free DJ party on the quay and the countdown on Place du Casino. Midnight in Monaco is 23:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Mónaco | Time2Fest",
+        "description": "Mónaco recibe 2027 con fuegos sobre Port Hercule, fiesta gratuita con DJ en el muelle y cuenta atrás en la Place du Casino. Medianoche: 23:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An à Monaco | Time2Fest",
+        "description": "Monaco accueille 2027 avec un feu d’artifice sur le port Hercule, une fête DJ gratuite sur le quai et le décompte place du Casino, à minuit (23 h UTC)."
+      }
+    },
+    "MK": {
+      "uk": {
+        "title": "Новий рік у Північній Македонії: Скоп’є | Time2Fest",
+        "description": "Північна Македонія зустрічає 2027 рік о 23:00 UTC концертом на площі Македонія в Скоп’є, а 13 січня — ще раз, з хлібом-монетою й карнавалом у Вевчанах."
+      },
+      "en": {
+        "title": "New Year in North Macedonia: Skopje | Time2Fest",
+        "description": "North Macedonia greets 2027 at 23:00 UTC with a concert on Skopje's Macedonia Square, then again on 13 January with coin bread and the Vevčani carnival."
+      },
+      "es": {
+        "title": "Año Nuevo en Macedonia del Norte: Skopie | Time2Fest",
+        "description": "Macedonia del Norte recibe 2027 a las 23:00 UTC con un concierto en la plaza Macedonia de Skopie y, el 13 de enero, otra vez: pan con moneda y carnaval."
+      },
+      "fr": {
+        "title": "Nouvel An en Macédoine du Nord : Skopje | Time2Fest",
+        "description": "La Macédoine du Nord fête 2027 à 23 h UTC avec un concert place de Macédoine à Skopje, puis de nouveau le 13 janvier : pain à la pièce et carnaval de Vevčani."
+      }
     }
   }
 }

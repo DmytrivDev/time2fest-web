@@ -4966,5 +4966,61 @@
       "description": "Hungary greets 2027 at 23:00 UTC by singing the Himnusz, clinking glasses to a quick BUÉK and eating pork and lentils, while Budapest fills its Danube banks."
     },
     "kit": "hu"
+  },
+  "MC": {
+    "text": "At midnight the traditional fireworks go up over Port Hercule, their lights reflected in the water between the yachts. Before that, the Mairie de Monaco throws a free party right in the Christmas Village on the quay: DJs play on two stages from nine in the evening until two in the morning. The other countdown spot is Place du Casino in Monte-Carlo, decked out in lights, where the official countdown of the year's last seconds rings out.\n\nThe holidays last longer than one night. In Monegasque families a round loaf, U Pan de Natale, topped with a cross of walnuts, sits on the table from Christmas until Epiphany among olive twigs and thirteen desserts. The Ferris wheel above the port turns into the first days of January, and on 26 January the harbour lights up again: a symbolic fishing boat is burned outside the Church of Saint Devota, followed by fireworks.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over Port Hercule",
+        "text": "At midnight the traditional fireworks rise over the harbour. People greet them on the port's quays, where the town council holds a free party with DJs until 2 am."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Countdown on Casino Square",
+        "text": "The square in front of the Monte-Carlo Casino is decked out in lights, and this is where the official countdown of the year's last seconds rings out."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Bread with a walnut cross",
+        "text": "The round U Pan de Natale, topped with a cross of walnuts, stays on the festive table among olive twigs and thirteen desserts right up to Epiphany."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Monaco | Time2Fest",
+      "description": "Monaco sees in 2027 with fireworks over Port Hercule, a free DJ party on the quay and the countdown on Place du Casino. Midnight in Monaco is 23:00 UTC."
+    },
+    "kit": "mc"
+  },
+  "MK": {
+    "text": "North Macedonia welcomes the new year twice: on 31 December, before Christmas, which Orthodox believers celebrate on 7 January, and again on the evening of 13 January by the old church calendar. The first night is spent at home with family and friends or in restaurants, cafés and clubs, dancing to folk music as much as to modern hits, while children get their presents during the day. For the Old New Year a bread with a hidden coin goes on the table, bringing luck to whoever finds it, and that same evening the village of Vevčani turns out for a carnival said to be more than 1,400 years old.\n\nSkopje sees the year out on Macedonia Square, where the tree is lit in mid-December: on the evening of the 31st a big concert plays there. At midnight fireworks crackle over the city, even though the city authorities and police have more than once asked people to hold back.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "coin",
+        "title": "Bread with a coin",
+        "text": "On the evening of 13 January, the Old New Year, families share a festive bread with a coin hidden inside; whoever gets the piece with it is lucky all year."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "The Vevčani carnival",
+        "text": "The village of Vevčani greets the Old New Year with a carnival: on 13 January costumed revellers poke fun at the year's events, and the custom is said to be over 1,400 years old."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Concert on Macedonia Square",
+        "text": "On 31 December the people of Skopje see the year out in the open air: in the evening a concert by Macedonian pop singers starts on Macedonia Square."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in North Macedonia: Skopje | Time2Fest",
+      "description": "North Macedonia greets 2027 at 23:00 UTC with a concert on Skopje's Macedonia Square, then again on 13 January with coin bread and the Vevčani carnival."
+    },
+    "kit": "mk"
   }
 }

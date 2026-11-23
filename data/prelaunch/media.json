@@ -3053,6 +3053,38 @@
         "x": 48,
         "y": 58
       }
+    },
+    "country:MC": {
+      "src": "/media/photos/monaco.webp",
+      "alt": {
+        "uk": "Нічний порт Еркюль у Монако: яхти, вогні Ла-Кондаміна й Монте-Карло на схилі",
+        "en": "Port Hercule in Monaco at night: yachts and the lights of La Condamine and Monte Carlo on the hillside",
+        "es": "El puerto Hércules de Mónaco de noche: yates y las luces de La Condamine y Montecarlo en la ladera",
+        "fr": "Le port Hercule à Monaco la nuit : yachts et lumières de la Condamine et de Monte-Carlo sur le coteau"
+      },
+      "author": "FromMorningToMidnight",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Monte-Carlo_harbour_at_night.jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
+    },
+    "country:MK": {
+      "src": "/media/photos/skopje.webp",
+      "alt": {
+        "uk": "Новорічна ілюмінація на пішохідній вулиці Македонія в Скоп’є вночі 1 січня, у кінці вулиці — світла ялинка",
+        "en": "New Year lights on Macedonia Street in Skopje on the night of 1 January, a lit tree at the end of the street",
+        "es": "Iluminación de Año Nuevo en la calle peatonal Macedonia de Skopie la noche del 1 de enero, con un árbol iluminado al fondo",
+        "fr": "Illuminations du Nouvel An dans la rue piétonne Macédoine à Skopje la nuit du 1er janvier, un sapin lumineux au bout de la rue"
+      },
+      "author": "Stephan Plepelits",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Christmas_lights_in_Skopje,_Macedonia._January_1st_2009.jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
     }
   }
 }

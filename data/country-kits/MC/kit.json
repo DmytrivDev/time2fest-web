@@ -1,0 +1,102 @@
+{
+  "code": "MC",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "monaco",
+  "names": {
+    "uk": {
+      "name": "Монако",
+      "city": "Монако",
+      "cityIn": "у Монако",
+      "countryIn": "у Монако",
+      "caps": "МОНАКО"
+    },
+    "en": {
+      "name": "Monaco",
+      "city": "Monaco",
+      "cityIn": "in Monaco",
+      "countryIn": "in Monaco",
+      "caps": "MONACO"
+    },
+    "es": {
+      "name": "Mónaco",
+      "city": "Mónaco",
+      "cityIn": "en Mónaco",
+      "countryIn": "en Mónaco",
+      "caps": "MÓNACO"
+    },
+    "fr": {
+      "name": "Monaco",
+      "city": "Monaco",
+      "cityIn": "à Monaco",
+      "countryIn": "à Monaco",
+      "caps": "MONACO"
+    }
+  },
+  "picto": "M3 33 H37 M4 33 V24 H10 M30 24 H36 V33 M4 24 L5.4 21.6 H10 M30 21.6 H34.6 L36 24 M10 33 V16 H15.6 V33 M24.4 33 V16 H30 V33 M10.6 16 V13.4 H15 V16 M25 16 V13.4 H29.4 V16 M10.6 13.4 Q10 10.2 12.8 9.4 Q15.6 10.2 15 13.4 M25 13.4 Q24.4 10.2 27.2 9.4 Q30 10.2 29.4 13.4 M12.8 9.4 V8 M27.2 9.4 V8 M15.6 22 L16.8 19.4 H23.2 L24.4 22 Z M17.4 19.4 Q20 14.8 22.6 19.4 M20 17.1 V15.4 M16.4 33 V28.6 Q17.5 27 18.6 28.6 V33 M18.9 33 V27.6 Q20 25.6 21.1 27.6 V33 M21.4 33 V28.6 Q22.5 27 23.6 28.6 V33 M6 33 V29 Q7 27.6 8 29 V33 M32 33 V29 Q33 27.6 34 29 V33 M11.6 33 V28 Q12.8 26.4 14 28 V33 M26 33 V28 Q27.2 26.4 28.4 28 V33",
+  "flagColors": [
+    "#CE1126",
+    "#FFFFFF"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Монако"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Monaco"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Mónaco"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Monaco"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

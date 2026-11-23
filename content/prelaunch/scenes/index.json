@@ -1086,6 +1086,18 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#344355"
+    },
+    "MC": {
+      "src": "/scenes/MC-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
+    },
+    "MK": {
+      "src": "/scenes/MK-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#173244"
     }
   }
 }

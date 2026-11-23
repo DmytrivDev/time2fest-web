@@ -4966,5 +4966,61 @@
       "description": "La Hongrie accueille 2027 à 23 h UTC en chantant le Himnusz, avec un « BUÉK ! », du porc et des lentilles porte-bonheur, et Budapest fête au bord du Danube."
     },
     "kit": "hu"
+  },
+  "MC": {
+    "text": "À minuit, le traditionnel feu d’artifice s’élève au-dessus du port Hercule, et ses lumières se reflètent dans l’eau entre les yachts. Avant cela, la Mairie de Monaco organise une fête gratuite au cœur du Village de Noël, sur le quai : des DJ jouent sur deux scènes de 21 h à 2 h du matin. L’autre lieu du compte à rebours est la place du Casino à Monte-Carlo, parée de lumières, où résonne le décompte officiel des dernières secondes de l’année.\n\nLes fêtes durent plus d’une nuit. Dans les familles monégasques, un pain rond, U Pan de Natale, orné d’une croix de noix, reste sur la table de Noël à l’Épiphanie, entouré de rameaux d’olivier et de treize desserts. La grande roue au-dessus du port tourne jusqu’aux premiers jours de janvier, et le 26 janvier le port s’illumine de nouveau : devant l’église Sainte-Dévote, on brûle une barque de pêche symbolique, puis vient un feu d’artifice.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur le port",
+        "text": "À minuit, le traditionnel feu d’artifice s’élève au-dessus du port. On l’accueille sur les quais, où la mairie offre une fête gratuite avec DJ jusqu’à 2 h."
+      },
+      {
+        "id": "t2",
+        "iconId": "clock",
+        "title": "Décompte place du Casino",
+        "text": "La place devant le Casino de Monte-Carlo se pare de lumières, et c’est ici que résonne le décompte officiel des dernières secondes de l’année."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Le pain à la croix de noix",
+        "text": "Le pain rond U Pan de Natale, orné d’une croix de noix, reste sur la table de fête parmi les rameaux d’olivier et treize desserts jusqu’à l’Épiphanie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Monaco | Time2Fest",
+      "description": "Monaco accueille 2027 avec un feu d’artifice sur le port Hercule, une fête DJ gratuite sur le quai et le décompte place du Casino, à minuit (23 h UTC)."
+    },
+    "kit": "mc"
+  },
+  "MK": {
+    "text": "La Macédoine du Nord fête le Nouvel An deux fois : le 31 décembre, avant Noël, que les orthodoxes célèbrent le 7 janvier, puis le soir du 13 janvier, selon l’ancien calendrier de l’Église. La première nuit se passe à la maison en famille et entre amis ou au restaurant, au café et en boîte, on danse sur la musique traditionnelle autant que sur les tubes du moment, et les enfants reçoivent leurs cadeaux dans la journée. Pour l’ancien Nouvel An, on pose sur la table un pain où se cache une pièce, porte-bonheur pour qui la trouve, et le même soir le village de Vevčani sort pour un carnaval qu’on dit vieux de plus de 1 400 ans.\n\nSkopje termine l’année place de Macédoine, où le sapin s’illumine dès la mi-décembre : le soir du 31, un grand concert y a lieu. À minuit, les feux d’artifice crépitent au-dessus de la ville, même si la mairie et la police ont plus d’une fois demandé de s’en abstenir.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "coin",
+        "title": "Le pain à la pièce",
+        "text": "Le soir du 13 janvier, l’ancien Nouvel An, les familles partagent un pain de fête où se cache une pièce : celui qui tombe sur le morceau qui la contient aura de la chance toute l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Le carnaval de Vevčani",
+        "text": "Le village de Vevčani accueille l’ancien Nouvel An par un carnaval : le 13 janvier, des participants costumés se moquent des événements de l’année, et l’on dit la fête vieille de plus de 1 400 ans."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Concert place de Macédoine",
+        "text": "Le 31 décembre, les habitants de Skopje fêtent la fin de l’année en plein air : le soir, un concert de chanteurs pop macédoniens commence place de Macédoine."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Macédoine du Nord : Skopje | Time2Fest",
+      "description": "La Macédoine du Nord fête 2027 à 23 h UTC avec un concert place de Macédoine à Skopje, puis de nouveau le 13 janvier : pain à la pièce et carnaval de Vevčani."
+    },
+    "kit": "mk"
   }
 }
