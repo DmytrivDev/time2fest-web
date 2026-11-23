@@ -42,7 +42,7 @@ import { RoomTray } from '@/components/room/RoomTray';
 import { cn } from '@/components/primitives/cn';
 import { Icon } from '@/components/primitives/Icon';
 import { useChatColumn } from '@/components/shell/OverlayManager';
-import { useLiveData, useViewers } from '@/lib/api/hooks/live';
+import { useLiveData, usePeopleNow } from '@/lib/api/hooks/live';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import type { RoomId } from '@/lib/data/types';
 import { eventStatus, stampGrantedAt } from '@time2fest/rules/time';
@@ -110,7 +110,7 @@ export function CountryLive({ iso }: { iso: string }) {
   const toggleSchedule = useCallback(() => {
     if (mainEvent) passWindows.requestSchedule(mainEvent.id);
   }, [mainEvent, passWindows]);
-  const viewers = useViewers();
+  const people = usePeopleNow();
 
   const zoneOptions = useMemo(
     () =>
@@ -231,7 +231,7 @@ export function CountryLive({ iso }: { iso: string }) {
         onToggleSchedule={passWindows.requestSchedule}
         onWatchAgain={watchAgain}
         titleId={PLAYER_TITLE_ID}
-        watchers={viewers.length}
+        watchers={people}
         stampHint
         captionAside={chat.showButton}
         dock={!chatColumn}
@@ -263,10 +263,10 @@ export function CountryLive({ iso }: { iso: string }) {
               </p>
             )}
             {/* Чесне число (2026-11-12): без даних присутності (робоча збірка) рядка немає. */}
-            {viewers.length ? (
+            {people ? (
               <p className={cn(home.watchers, home.watchersPhone)}>
                 <Icon name="globe" size={14} strokeWidth={2} />
-                {tPlayer('watchersShort', { count: viewers.length })}
+                {tPlayer('peopleNowShort', { count: people })}
               </p>
             ) : null}
           </div>

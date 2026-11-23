@@ -419,6 +419,8 @@
     "newMessages": "{count, plural, one {# нове повідомлення} few {# нові повідомлення} many {# нових повідомлень} other {# нового повідомлення}}"
   },
   "player": {
+    "peopleNow": "Зараз на Time2Fest {count, plural, one {# людина} few {# людини} many {# людей} other {# людини}}",
+    "peopleNowShort": "На Time2Fest {count, plural, one {# людина} few {# людини} many {# людей} other {# людини}}",
     "barLabel": "Поточна трансляція",
     "untilMidnight": "до півночі {time}",
     "nextIn": "далі через {time}",
@@ -440,7 +442,6 @@
     "shareStream": "Поділитися трансляцією",
     "moreActions": "Ще дії",
     "delayNote": "Відео може запізнюватися на кілька секунд",
-    "watchersFrom": "Зараз дивляться люди з {count} країн",
     "stampHint": "Будь тут опівночі — отримаєш штамп: {country}",
     "stampHintLead": "Будь тут опівночі —",
     "stampHintTail": "отримаєш штамп: {country}",
@@ -496,7 +497,6 @@
     "inFlowLabel": "Повідомлення під відео",
     "secondsSpoken": "{seconds, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}",
     "lineNextLabel": "Далі:",
-    "watchersShort": "Дивляться люди з {count} країн",
     "timerVeilHint": "Показати",
     "timerVeilTip": "Трансляція відстає на кілька секунд, тому точний відлік може дійти до нуля раніше, ніж північ на відео. Натисни на таймер, щоб усе одно його побачити.",
     "timerReveal": "Показати таймер — до півночі менше хвилини",

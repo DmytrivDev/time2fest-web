@@ -1472,6 +1472,8 @@
     }
   },
   "player": {
+    "peopleNow": "Ahora en Time2Fest: {count, plural, one {# persona} other {# personas}}",
+    "peopleNowShort": "En Time2Fest: {count, plural, one {# persona} other {# personas}}",
     "scene": {
       "caption": "Escena de cuenta regresiva de Time2Fest · transmisiones en vivo desde el 31 de diciembre",
       "expected": "La transmisión empezará sola en cuanto aparezca",

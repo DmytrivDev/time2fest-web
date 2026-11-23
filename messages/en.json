@@ -789,6 +789,8 @@
     }
   },
   "player": {
+    "peopleNow": "Right now on Time2Fest: {count, plural, one {# person} other {# people}}",
+    "peopleNowShort": "On Time2Fest: {count, plural, one {# person} other {# people}}",
     "scene": {
       "caption": "Time2Fest countdown scene · no stream here",
       "expected": "The stream will start on its own as soon as it appears",

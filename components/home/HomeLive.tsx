@@ -45,7 +45,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { WIDE_SLOT_ID } from '@/components/primitives/Panel';
 import { useStreamPicker } from '@/components/live/ActionRow';
 import { useChatColumn, useTabletPortrait } from '@/components/shell/OverlayManager';
-import { useLiveData, useViewers } from '@/lib/api/hooks/live';
+import { useLiveData, usePeopleNow } from '@/lib/api/hooks/live';
 import { useChatRooms } from '@/lib/api/hooks/chat';
 import { getData } from '@/lib/data/load';
 import type { Dataset, Ms, RoomId } from '@/lib/data/types';
@@ -98,8 +98,8 @@ function useNowNextData(now: Ms) {
 
 function useMapData() {
   const mapModel = useMemo(() => buildMapModel(getData()), []);
-  const viewers = useViewers();
-  return { mapModel, viewers };
+  const people = usePeopleNow();
+  return { mapModel, people };
 }
 
 export function HomeLive() {
@@ -161,7 +161,7 @@ export function HomeLive() {
   const backToAir = useCallback(() => watch(null), [watch]);
   const city = current?.city?.name.uk;
   const { items, progress, zoneLabel } = useNowNextData(now);
-  const { mapModel, viewers } = useMapData();
+  const { mapModel, people } = useMapData();
   const wideSlot = chatColumn && typeof document !== 'undefined' ? document.getElementById(WIDE_SLOT_ID) : null;
   const tChat = useTranslations('chat');
   const chat = useLiveChat({
@@ -213,7 +213,7 @@ export function HomeLive() {
         onToggleSchedule={passWindows.requestSchedule}
         scheduleHint={hint}
         titleId={PLAYER_TITLE_ID}
-        watchers={viewers.length}
+        watchers={people}
         stampHint
         captionAside={chat.showButton}
         dock={!chatColumn}
@@ -238,10 +238,10 @@ export function HomeLive() {
           <div className={cn("px-4", home.phoneInflow)}>{inflow}</div>
           <div className={home.events}>
             {/* Чесне число (2026-11-12): без даних присутності (робоча збірка) рядка немає. */}
-            {viewers.length ? (
+            {people ? (
               <p className={home.watchers}>
                 <Icon name="globe" size={14} strokeWidth={2} />
-                {tPlayer('watchersShort', { count: viewers.length })}
+                {tPlayer('peopleNowShort', { count: people })}
               </p>
             ) : null}
             {nowNext(tabletPortrait ? 'grid' : 'stack')}
