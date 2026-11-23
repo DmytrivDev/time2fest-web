@@ -4602,5 +4602,89 @@
       "description": "Noruega recibe 2027 a las 23:00 UTC con pavo asado y crema de arroz, el discurso del rey, cohetes hasta las dos y fuegos públicos sobre las ciudades."
     },
     "kit": "no"
+  },
+  "CG": {
+    "text": "Las últimas horas del año en la República del Congo se pasan en la iglesia o en bares y maquis al aire libre, donde la música suena hasta la mañana: en Brazzaville, de Bacongo a Talangaï, se baila con las canciones de Extra Musica. En casa se pone la mesa y, entre plato y plato, se espera la medianoche para intercambiar buenos deseos.\n\nEl primer día del año es de la familia: saka-saka de hojas de mandioca, frijoles, pollo, pescado fresco y salado, y en la sobremesa se repasa el año y se hacen planes para el siguiente. Al caer la tarde, familias enteras de Brazzaville van a la Corniche, junto al puente atirantado, para hacerse una foto el primer día del año.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Saka-saka en la mesa familiar",
+        "text": "La familia se reúne el 1 de enero en torno al saka-saka de hojas de mandioca, frijoles, pollo y pescado, y en la mesa se hace balance del año."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Iglesia o maquis",
+        "text": "Unos reciben la medianoche en la iglesia y otros bailan hasta la mañana en bares y maquis al aire libre."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "Una foto en la Corniche",
+        "text": "La tarde del 1 de enero las familias de Brazzaville pasean por la Corniche y se fotografían junto al puente atirantado para recordar el primer día del año."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en la República del Congo | Time2Fest",
+      "description": "La República del Congo recibe 2027 a las 23:00 UTC: Brazzaville reza en la iglesia o baila en los maquis y el 1 de enero come saka-saka en familia."
+    },
+    "kit": "cg"
+  },
+  "CH": {
+    "text": "Una olla de caldo caliente en el centro de la mesa: eso es la fondue chinoise. Cada uno sumerge sus trozos de carne, y en Año Nuevo pasa por ser el verdadero plato nacional de Suiza. En Appenzell el año se recibe dos veces: el 31 de diciembre y de nuevo el 13 de enero, según el antiguo calendario juliano. Al amanecer, grupos de Silvesterchläuse vestidos de «bellos», «feos» y «bellos-feos» van de granja en granja, forman un círculo, hacen sonar sus campanas y entonan un yodel sin palabras.\n\nZúrich oye sus campanas veinte minutos antes de la medianoche; suenan hasta las 23:58. A las 00:19 se apagan las luces del centro y desde las 00:20 los fuegos del Silvesterzauber iluminan durante un cuarto de hora la cuenca del lago. La entrada es libre y la música junto al lago sigue hasta la mañana. A medianoche en punto sale la Maratón de Año Nuevo en la vecina Schlieren, con vueltas de 10,55 kilómetros.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Fondue chinoise",
+        "text": "Pon en la mesa una olla de caldo caliente y que cada uno cueza en ella sus trozos de carne: un clásico suizo de Navidad y Año Nuevo."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Campanas al amanecer",
+        "text": "En Appenzell, el 31 de diciembre y el 13 de enero, los Silvesterchläuse visitan las granjas: forman un círculo, tocan sus campanas y cantan un yodel sin palabras para desear un feliz año."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el lago",
+        "text": "Después de medianoche, los zuriqueses se reúnen junto al lago: a las 00:19 se apagan las luces del centro y luego los fuegos iluminan la cuenca durante 15 minutos. Entrada libre."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Suiza: Zúrich | Time2Fest",
+      "description": "Suiza recibe 2027 a las 23:00 UTC con fondue chinoise, campanas y fuegos sobre el lago de Zúrich y los Silvesterchläuse de Appenzell al amanecer."
+    },
+    "kit": "ch"
+  },
+  "SE": {
+    "text": "Una cena tardía de marisco, vino espumoso y muchos aperitivos: así se despide el año en Suecia, en familia o con amigos, a menudo con un menú de tres platos. En el último minuto todos cuentan hacia atrás y a medianoche gritan «Gott nytt år!», descorchan el champán, se besan y hacen propósitos de Año Nuevo. Grandes fuegos artificiales iluminan las ciudades, los barcos del puerto hacen sonar sus sirenas, y solo los mayores de 18 años pueden comprar pirotecnia.\n\nEstocolmo tiene su propio ritual: en el museo al aire libre de Skansen, a medianoche en punto se recita el poema «Nyårsklockan», versión sueca de «Ring Out, Wild Bells» de Tennyson con el verso «Ring, klocka, ring». Se leyó allí por primera vez en 1895, la televisión emite la lectura desde 1977 y desde 2014 cada año se elige a un lector distinto.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cena de marisco",
+        "text": "La noche del 31 de diciembre los suecos se sientan a una cena festiva, a menudo de tres platos y con marisco, y el espumoso y los aperitivos siguen en la mesa hasta medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "«Ring, klocka, ring» a medianoche",
+        "text": "Desde 1895, en Skansen, en Estocolmo, se recita a medianoche el poema «Nyårsklockan»; la lectura se emite por televisión y cada año la pone en voz alguien distinto."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "«Gott nytt år!» y propósitos",
+        "text": "Los suecos cuentan en voz alta el último minuto del año, gritan «Gott nytt år!» a medianoche, brindan con champán, se dan un beso y se hacen un propósito."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Suecia: Estocolmo | Time2Fest",
+      "description": "A medianoche suena «Ring, klocka, ring» en Skansen y Suecia descorcha el champán: así recibe 2027, con cena de marisco, fuegos y sirenas de barcos."
+    },
+    "kit": "se"
   }
 }

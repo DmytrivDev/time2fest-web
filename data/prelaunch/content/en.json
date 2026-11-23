@@ -4602,5 +4602,89 @@
       "description": "Norway welcomes 2027 at 23:00 UTC with roast turkey and rice cream, the King's New Year speech, rockets until 2 a.m. and public fireworks over the cities."
     },
     "kit": "no"
+  },
+  "CG": {
+    "text": "The last hours of the year in the Republic of the Congo are spent either in church or in bars and open-air maquis where the music plays until morning: in Brazzaville, from Bacongo to Talangaï, people dance to songs by Extra Musica. At home the table is laid, and between dishes everyone waits for midnight to exchange good wishes.\n\nThe first day of the year belongs to the family: saka-saka made from cassava leaves, beans, chicken, fresh and salted fish, and over the meal people look back on the year and make plans for the next. Towards evening whole families from Brazzaville head to the Corniche by the cable-stayed bridge to have their photo taken on the first day of the year.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Saka-saka at the family table",
+        "text": "Families gather on 1 January for saka-saka made from cassava leaves, beans, chicken and fish, and sum up the year at the table."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Church or the maquis",
+        "text": "Some greet midnight in church, others dance until morning in bars and open-air maquis."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "A photo on the Corniche",
+        "text": "On the evening of 1 January Brazzaville families stroll along the Corniche and have their photo taken by the cable-stayed bridge to remember the first day of the year."
+      }
+    ],
+    "meta": {
+      "title": "New Year in the Republic of the Congo | Time2Fest",
+      "description": "The Republic of the Congo greets 2027 at 23:00 UTC: Brazzaville prays in church or dances in maquis, then shares saka-saka and walks the Corniche."
+    },
+    "kit": "cg"
+  },
+  "CH": {
+    "text": "A pot of hot broth in the middle of the table means fondue chinoise: everyone dips their own pieces of meat into it, and at New Year it counts as the real national dish of Switzerland. In Appenzell the year is welcomed twice — on 31 December and again on 13 January, by the old Julian calendar. At dawn groups of Silvesterchläuse dressed as the “beautiful”, the “ugly” and the “beautifully ugly” go from farm to farm, form a circle, ring their bells and sing a wordless yodel.\n\nZurich hears its bells twenty minutes before midnight; they ring until 23:58. At 00:19 the lights go out in the city centre, and from 00:20 the Silvesterzauber fireworks light up the lake basin for a quarter of an hour. Entry is free, and the music on the lakeside goes on until morning. At midnight sharp, the New Year’s Marathon sets off in nearby Schlieren, on laps of 10.55 kilometres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Fondue chinoise",
+        "text": "Put a pot of hot broth on the table and let everyone cook their own pieces of meat in it — a Swiss Christmas and New Year classic."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Bells at dawn",
+        "text": "In Appenzell on 31 December and 13 January the Silvesterchläuse visit farms: they form a circle, ring their bells and sing a wordless yodel to wish a happy year."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the lake",
+        "text": "After midnight, Zurich gathers by the lake: at 00:19 the city-centre lights go out, then fireworks light up the lake basin for 15 minutes. Entry is free."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Switzerland: Zurich | Time2Fest",
+      "description": "Switzerland greets 2027 at 23:00 UTC with fondue chinoise, bells and fireworks over Lake Zurich, and bell-ringing Silvesterchläuse at dawn in Appenzell."
+    },
+    "kit": "ch"
+  },
+  "SE": {
+    "text": "A late shellfish dinner, sparkling wine and plenty of snacks: that is how Sweden sees out the year, with people gathered with family or friends, often over a three-course meal. In the last minute everyone counts down, and at midnight they shout «Gott nytt år!», pop the champagne, kiss and make New Year's resolutions. Big fireworks light up the cities, ships in the harbours sound their horns, and only people aged 18 and over may buy fireworks.\n\nStockholm has a ritual of its own: at the Skansen open-air museum, the poem «Nyårsklockan» is read exactly at midnight, a Swedish version of Tennyson's «Ring Out, Wild Bells» with the line «Ring, klocka, ring». It was first read there in 1895, television has shown the reading since 1977, and since 2014 a new reader has been chosen every year.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A shellfish dinner",
+        "text": "Late on 31 December Swedes sit down to a festive dinner, often three courses with shellfish, and sparkling wine and snacks stay on the table until midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "«Ring, klocka, ring» at midnight",
+        "text": "Since 1895 the poem «Nyårsklockan» has been read at midnight at Skansen in Stockholm; the reading is shown on television, and every year a new voice reads it."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "«Gott nytt år!» and resolutions",
+        "text": "Swedes count the last minute of the year out loud, shout «Gott nytt år!» at midnight, clink champagne glasses, share a New Year's kiss and make a resolution."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Sweden: Stockholm | Time2Fest",
+      "description": "At midnight Skansen hears «Ring, klocka, ring» and Sweden pops the champagne: how Swedes greet 2027 with a shellfish dinner, fireworks and ships' horns."
+    },
+    "kit": "se"
   }
 }

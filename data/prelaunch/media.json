@@ -2845,6 +2845,54 @@
         "x": 55,
         "y": 45
       }
+    },
+    "country:CG": {
+      "src": "/media/photos/brazzaville.webp",
+      "alt": {
+        "uk": "Вантовий міст на набережній Корніш у Браззавілі ввечері: пілони підсвічено червоним, вогні міста над річкою Конго",
+        "en": "The cable-stayed bridge on the Corniche in Brazzaville in the evening: pylons lit in red, city lights above the Congo River",
+        "es": "El puente atirantado de la Corniche de Brazzaville al anochecer: pilonos iluminados de rojo y las luces de la ciudad sobre el río Congo",
+        "fr": "Le pont à haubans de la Corniche à Brazzaville le soir : pylônes éclairés en rouge, lumières de la ville au-dessus du fleuve Congo"
+      },
+      "author": "ArnoBOUJIKA",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pont_du_15_Ao%C3%BBt_by_night._01.jpg",
+      "position": {
+        "x": 62,
+        "y": 45
+      }
+    },
+    "country:CH": {
+      "src": "/media/photos/zurich.webp",
+      "alt": {
+        "uk": "Феєрверк над Цюрихським озером, щогли яхт на передньому плані",
+        "en": "Fireworks over Lake Zurich, yacht masts in the foreground",
+        "es": "Fuegos artificiales sobre el lago de Zúrich, con mástiles de veleros en primer plano",
+        "fr": "Feu d’artifice sur le lac de Zurich, mâts de voiliers au premier plan"
+      },
+      "author": "Thomas Woodtli",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lake_Zurich_fireworks_(27471738094).jpg",
+      "position": {
+        "x": 60,
+        "y": 45
+      }
+    },
+    "country:SE": {
+      "src": "/media/photos/stockholm.webp",
+      "alt": {
+        "uk": "Новорічний феєрверк у центрі Стокгольма в ніч на 1 січня 2021 року: різнокольорові кулі салюту над протокою Стреммен біля мосту Норрбро, позаду — Королівський палац",
+        "en": "New Year fireworks in central Stockholm on the night of 1 January 2021: colourful bursts over the Strömmen by the Norrbro bridge, the Royal Palace behind",
+        "es": "Fuegos artificiales de Año Nuevo en el centro de Estocolmo la noche del 1 de enero de 2021: palmeras de colores sobre el Strömmen junto al puente Norrbro y, detrás, el Palacio Real",
+        "fr": "Feu d’artifice du Nouvel An au centre de Stockholm dans la nuit du 1er janvier 2021 : gerbes multicolores au-dessus du Strömmen près du pont Norrbro, le palais royal derrière"
+      },
+      "author": "Frankie Fouganthin",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:-_A_New_Year%27s_fireworks_in_central_Stockholm,_Sweden.jpg",
+      "position": {
+        "x": 35,
+        "y": 40
+      }
     }
   }
 }

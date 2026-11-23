@@ -2700,6 +2700,60 @@
         "title": "Nouvel An en Norvège : Oslo | Time2Fest",
         "description": "La Norvège fête 2027 à 23 h UTC : dinde rôtie et crème de riz, discours du roi, fusées jusqu’à 2 h du matin et grands feux publics au-dessus des villes."
       }
+    },
+    "CG": {
+      "uk": {
+        "title": "Новий рік у Республіці Конго: Браззавіль | Time2Fest",
+        "description": "Республіка Конго зустрічає 2027 рік о 23:00 UTC: Браззавіль молиться в церквах і танцює в макі, 1 січня їсть саку-саку з родиною й іде на Корніш."
+      },
+      "en": {
+        "title": "New Year in the Republic of the Congo | Time2Fest",
+        "description": "The Republic of the Congo greets 2027 at 23:00 UTC: Brazzaville prays in church or dances in maquis, then shares saka-saka and walks the Corniche."
+      },
+      "es": {
+        "title": "Año Nuevo en la República del Congo | Time2Fest",
+        "description": "La República del Congo recibe 2027 a las 23:00 UTC: Brazzaville reza en la iglesia o baila en los maquis y el 1 de enero come saka-saka en familia."
+      },
+      "fr": {
+        "title": "Nouvel An en République du Congo | Time2Fest",
+        "description": "La République du Congo fête 2027 à 23 h UTC : Brazzaville prie à l’église ou danse dans les maquis, puis partage le saka-saka et flâne sur la Corniche."
+      }
+    },
+    "CH": {
+      "uk": {
+        "title": "Новий рік у Швейцарії: Цюрих | Time2Fest",
+        "description": "Швейцарія зустрічає 2027 рік о 23:00 UTC: фондю шинуаз на столі, дзвони й салют над Цюрихським озером, сільвестерклаузи на світанку в Аппенцеллі."
+      },
+      "en": {
+        "title": "New Year in Switzerland: Zurich | Time2Fest",
+        "description": "Switzerland greets 2027 at 23:00 UTC with fondue chinoise, bells and fireworks over Lake Zurich, and bell-ringing Silvesterchläuse at dawn in Appenzell."
+      },
+      "es": {
+        "title": "Año Nuevo en Suiza: Zúrich | Time2Fest",
+        "description": "Suiza recibe 2027 a las 23:00 UTC con fondue chinoise, campanas y fuegos sobre el lago de Zúrich y los Silvesterchläuse de Appenzell al amanecer."
+      },
+      "fr": {
+        "title": "Nouvel An en Suisse : Zurich | Time2Fest",
+        "description": "La Suisse fête 2027 à 23 h UTC : fondue chinoise, cloches et feu d’artifice sur le lac de Zurich, et les Silvesterchläuse d’Appenzell à l’aube."
+      }
+    },
+    "SE": {
+      "uk": {
+        "title": "Новий рік у Швеції: Стокгольм | Time2Fest",
+        "description": "Опівночі на Скансені звучить «Ring, klocka, ring», а Швеція відкорковує шампанське: як шведи зустрічають 2027 рік — морепродукти, салют і гудки суден."
+      },
+      "en": {
+        "title": "New Year in Sweden: Stockholm | Time2Fest",
+        "description": "At midnight Skansen hears «Ring, klocka, ring» and Sweden pops the champagne: how Swedes greet 2027 with a shellfish dinner, fireworks and ships' horns."
+      },
+      "es": {
+        "title": "Año Nuevo en Suecia: Estocolmo | Time2Fest",
+        "description": "A medianoche suena «Ring, klocka, ring» en Skansen y Suecia descorcha el champán: así recibe 2027, con cena de marisco, fuegos y sirenas de barcos."
+      },
+      "fr": {
+        "title": "Nouvel An en Suède : Stockholm | Time2Fest",
+        "description": "À minuit, Skansen entend « Ring, klocka, ring » et la Suède sabre le champagne : fruits de mer, feux d’artifice et sirènes des navires pour fêter 2027."
+      }
     }
   }
 }

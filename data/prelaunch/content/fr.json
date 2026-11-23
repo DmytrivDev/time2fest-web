@@ -4602,5 +4602,89 @@
       "description": "La Norvège fête 2027 à 23 h UTC : dinde rôtie et crème de riz, discours du roi, fusées jusqu’à 2 h du matin et grands feux publics au-dessus des villes."
     },
     "kit": "no"
+  },
+  "CG": {
+    "text": "En République du Congo, les dernières heures de l’année se passent à l’église ou dans les bars et les maquis où la musique joue jusqu’au matin : à Brazzaville, de Bacongo à Talangaï, on danse sur les chansons d’Extra Musica. À la maison, la table est dressée et, entre chaque plat, on attend les coups de minuit pour échanger ses vœux.\n\nLe premier jour de l’an appartient à la famille : saka-saka de feuilles de manioc, haricots, poulet, poisson frais et salé, et à table on revient sur l’année écoulée en faisant des projets pour la suivante. En fin de journée, des familles entières de Brazzaville gagnent la Corniche, près du pont à haubans, pour se faire photographier le premier jour de l’année.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le saka-saka en famille",
+        "text": "La famille se retrouve le 1er janvier autour du saka-saka de feuilles de manioc, des haricots, du poulet et du poisson, et l’on fait le bilan de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Église ou maquis",
+        "text": "Certains accueillent minuit à l’église, d’autres dansent jusqu’au matin dans les bars et les maquis."
+      },
+      {
+        "id": "t3",
+        "iconId": "sunset",
+        "title": "La photo sur la Corniche",
+        "text": "Le soir du 1er janvier, les familles brazzavilloises gagnent la Corniche et se font photographier près du pont à haubans, en souvenir du premier jour de l’année."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en République du Congo | Time2Fest",
+      "description": "La République du Congo fête 2027 à 23 h UTC : Brazzaville prie à l’église ou danse dans les maquis, puis partage le saka-saka et flâne sur la Corniche."
+    },
+    "kit": "cg"
+  },
+  "CH": {
+    "text": "Une marmite de bouillon chaud au milieu de la table : c’est la fondue chinoise. Chacun y plonge ses morceaux de viande, et au Nouvel An elle passe pour le vrai plat national de la Suisse. En Appenzell, on fête l’année deux fois : le 31 décembre, puis le 13 janvier selon l’ancien calendrier julien. À l’aube, des groupes de Silvesterchläuse — les « beaux », les « laids » et les « beaux-laids » — vont de ferme en ferme, forment un cercle, font sonner leurs cloches et chantent un yodel sans paroles.\n\nZurich entend ses cloches vingt minutes avant minuit ; elles sonnent jusqu’à 23 h 58. À 0 h 19, les lumières du centre s’éteignent et dès 0 h 20, le feu d’artifice du Silvesterzauber illumine le bassin du lac pendant un quart d’heure. L’entrée est libre et la musique sur les quais dure jusqu’au matin. À minuit pile, le Marathon du Nouvel An s’élance dans la ville voisine de Schlieren, en boucles de 10,55 kilomètres.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Fondue chinoise",
+        "text": "Pose sur la table une marmite de bouillon chaud et laisse chacun y cuire ses morceaux de viande : un classique suisse de Noël et du Nouvel An."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Cloches à l’aube",
+        "text": "En Appenzell, le 31 décembre et le 13 janvier, les Silvesterchläuse passent de ferme en ferme : en cercle, ils font sonner leurs cloches et chantent un yodel sans paroles pour souhaiter une bonne année."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur le lac",
+        "text": "Après minuit, les Zurichois se massent au bord du lac : à 0 h 19, les lumières du centre s’éteignent, puis le feu d’artifice illumine le bassin pendant 15 minutes. Entrée libre."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Suisse : Zurich | Time2Fest",
+      "description": "La Suisse fête 2027 à 23 h UTC : fondue chinoise, cloches et feu d’artifice sur le lac de Zurich, et les Silvesterchläuse d’Appenzell à l’aube."
+    },
+    "kit": "ch"
+  },
+  "SE": {
+    "text": "Un dîner tardif de fruits de mer, du vin pétillant et une foule d’amuse-bouches : c’est ainsi qu’on dit adieu à l’année en Suède, en famille ou entre amis, souvent autour d’un menu en trois plats. Dans la dernière minute, tout le monde compte à rebours, et à minuit on crie « Gott nytt år ! », on fait sauter le champagne, on s’embrasse et on prend de bonnes résolutions. De grands feux d’artifice illuminent les villes, les navires au port font retentir leurs sirènes, et seules les personnes de 18 ans et plus peuvent acheter des fusées.\n\nStockholm a son propre rituel : au musée de plein air de Skansen, le poème « Nyårsklockan » est lu à minuit pile, version suédoise de « Ring Out, Wild Bells » de Tennyson avec le vers « Ring, klocka, ring ». Il y a été lu pour la première fois en 1895, la télévision diffuse la lecture depuis 1977, et depuis 2014 un nouveau lecteur est choisi chaque année.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un dîner de fruits de mer",
+        "text": "Tard le 31 décembre, les Suédois passent à table pour un dîner de fête, souvent en trois plats avec des fruits de mer, et le pétillant et les amuse-bouches restent servis jusqu’à minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "« Ring, klocka, ring » à minuit",
+        "text": "Depuis 1895, le poème « Nyårsklockan » est lu à minuit à Skansen, à Stockholm ; la lecture passe à la télévision, et chaque année une nouvelle voix le récite."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "« Gott nytt år ! » et résolutions",
+        "text": "Les Suédois comptent à voix haute la dernière minute de l’année, crient « Gott nytt år ! » à minuit, trinquent au champagne, s’embrassent et prennent une résolution."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Suède : Stockholm | Time2Fest",
+      "description": "À minuit, Skansen entend « Ring, klocka, ring » et la Suède sabre le champagne : fruits de mer, feux d’artifice et sirènes des navires pour fêter 2027."
+    },
+    "kit": "se"
   }
 }

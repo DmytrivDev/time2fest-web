@@ -1,0 +1,99 @@
+{
+  "code": "CG",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "brazzaville",
+  "names": {
+    "uk": {
+      "name": "Республіка Конго",
+      "city": "Браззавіль",
+      "cityIn": "у Браззавілі",
+      "caps": "РЕСПУБЛІКА КОНГО"
+    },
+    "en": {
+      "name": "Republic of the Congo",
+      "city": "Brazzaville",
+      "cityIn": "in Brazzaville",
+      "caps": "REPUBLIC OF THE CONGO"
+    },
+    "es": {
+      "name": "República del Congo",
+      "city": "Brazzaville",
+      "cityIn": "en Brazzaville",
+      "caps": "REPÚBLICA DEL CONGO"
+    },
+    "fr": {
+      "name": "République du Congo",
+      "city": "Brazzaville",
+      "cityIn": "à Brazzaville",
+      "caps": "RÉPUBLIQUE DU CONGO"
+    }
+  },
+  "picto": "M5.4 35 V27.4 C5.4 23 9 19.2 12.6 16.6 C16.2 19.2 19.8 23 19.8 27.4 V35 M8.8 35 V29.4 C8.8 27 10.6 24.8 12.6 23.2 C14.6 24.8 16.4 27 16.4 29.4 V35 M11 35 V32 C11 31 11.8 30.2 12.6 29.6 C13.4 30.2 14.2 31 14.2 32 V35 M12.6 16.6 L35.8 18.6 V35 M19.8 26 L22 20.6 L24 26 L26 20.8 L28 26 L30 21 L32 26 L33.9 21.2 L35.8 26 M22 33.6 V30 M26 33.6 V30 M30 33.6 V30 M33.9 33.6 V30 M26.4 17.9 V13.6 M29.6 18.2 V13.6 M25.4 13.6 H30.6 M26.4 13.6 L28 3.6 L29.6 13.6 M27.1 13.6 V11.6 L28 10 L28.9 11.6 V13.6 M28 3.6 V0.8 M26.9 1.9 H29.1 M3 35 H37",
+  "flagColors": [
+    "#009543",
+    "#FBDE4A",
+    "#DC241F"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Республіці Конго"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Republic of the Congo"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en la República del Congo"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en République du Congo"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
