@@ -4854,5 +4854,117 @@
       "description": "Equatorial Guinea greets 2027 at 23:00 UTC: a thanksgiving mass, dinner with family, and on 1 January Malabo dances in the streets of Los Ángeles."
     },
     "kit": "gq"
+  },
+  "CZ": {
+    "text": "A glass of sekt at midnight, a plate of chlebíčky — small open sandwiches — and, for some, boiled pork head with grated horseradish and apples: that is how Czechs see off Silvestr. The first of January is a double holiday here — New Year's Day and the Restoration Day of the Independent Czech State, born in 1993. Lunch is lentils, shaped like little coins, and pork, while poultry and fish are avoided so that luck won't fly or swim away. Then everyone goes for a walk: “As on New Year's Day, so all year round.”\n\nPrague's night gathers on Old Town Square: from five in the evening live bands and DJs play there, and at midnight the crowd counts down the seconds together. There has been no city fireworks display for several years — back in 2019 the council chose quiet for residents and animals. Fireworks are banned in the historic centre, by the Vltava and in parks.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Lentils for luck",
+        "text": "On 1 January cook lentils with pork — the coin-like grains promise money — and skip poultry and fish so your luck won't fly or swim away."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Chlebíčky and sekt",
+        "text": "Make a few kinds of chlebíčky, small open sandwiches, for the evening and pop a bottle of Czech sparkling wine at midnight sharp."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Countdown on Old Town Square",
+        "text": "On Old Town Square in Prague, music and DJs play from 5 pm, and at midnight the whole square counts down together. Fireworks are banned in the centre."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Czechia: Prague | Time2Fest",
+      "description": "Czechia greets 2027 at 23:00 UTC with sekt and chlebíčky at midnight, a shared countdown on Prague's Old Town Square and lentils for money on 1 January."
+    },
+    "kit": "cz"
+  },
+  "GA": {
+    "text": "Many people in Gabon spend the last evening of the year in church: at Sainte-Marie Cathedral, at Saint-Pierre and Sacré-Cœur, in the capital's Protestant churches they sing at the last service of the year and pray for health and prosperity. In the days before the holiday shops have queues as people buy food for the New Year's Eve dinner and the family meal on 1 January, a public holiday. On 2 January Libreville is still resting: roads are empty, few people turn up at work, and schools only reopen on the third.\n\nAt midnight thousands head to the seafront, where fireworks burst over the ocean for about half an hour. People film the sky on their phones, applaud the loudest rockets, and when the last one fades they shout 'Bonne année!' to each other.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over the ocean",
+        "text": "Libreville's seafront is the place to be at midnight: fireworks over the water last up to half an hour, and then everyone greets each other with 'Bonne année!'."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "The last service of the year",
+        "text": "On the evening of 31 December the capital's churches sing and pray for a new year of health, happiness and prosperity."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Family meal on 1 January",
+        "text": "Food is bought in advance: 1 January is a public holiday and a day for the family table, and on the 2nd the city is still taking it slow."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Gabon: Libreville | Time2Fest",
+      "description": "Gabon reaches 2027 at 23:00 UTC with fireworks over the ocean on Libreville's seafront, the year's last church service and 'Bonne année!' at midnight."
+    },
+    "kit": "ga"
+  },
+  "GI": {
+    "text": "The Casemates clock strikes midnight, and confetti and fireworks fill the sky for about ten minutes. Gibraltar's party is put on by the government: bands and DJs play from half past ten in the evening until three in the morning, and the presenters count down the last seconds together with the whole square. People come as families and groups of friends, tourists celebrate alongside them, glasses of champagne go up, and from the stage come greetings to the residents of care homes and to everyone seeing in the year at home. The fireworks returned to Casemates for the start of 2026 after a break.\n\nThe festive days end on the evening of 5 January. The Three Kings' Cavalcade sets off from Casemates along Main Street to the Ince's Hall Theatre with its floats, and sweets are handed out to everyone lining the route.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Countdown under the Casemates clock",
+        "text": "Casemates Square fills up before midnight: the presenters count down the last seconds, and as the clock strikes, confetti and fireworks go up over the square."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Champagne with the whole square",
+        "text": "This is a family party: Gibraltarians see in the year with family and friends, raise a glass with the people around them and dance to the bands and DJs until three in the morning."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Sweets on Main Street",
+        "text": "On the evening of 5 January, families line Main Street: the Three Kings' Cavalcade runs from Casemates to Ince's Hall, and sweets are handed out to everyone who comes."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Gibraltar | Time2Fest",
+      "description": "Gibraltar sees in 2027 on Casemates Square with a countdown under the clock, confetti, fireworks and dancing till 3am. Midnight there is 23:00 UTC."
+    },
+    "kit": "gi"
+  },
+  "HU": {
+    "text": "Midnight in Hungary arrives with the national anthem: as soon as the countdown ends, the Himnusz plays, and many people stand up and sing along. Then glasses clink and a short \"BUÉK!\" rings out, the colloquial abbreviation of the wish for a happy new year. Szilveszter night is spent at home or at street parties, with frankfurters and horseradish and roast pork: the pig, they say, roots up luck from the ground. Chicken stays off the menu on New Year's Day because it scratches luck away, while lentils are cooked for money.\n\nBudapest heads out to its squares and the banks of the Danube, the Christmas markets stay open late into the night, and night buses and tram 6 carry people home until morning. There is no big city fireworks show, and since 2025 private rockets have been allowed only from 20:00 to 2:00 and not in residential areas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "The anthem at midnight",
+        "text": "When the countdown reaches zero, people stand up and sing the Himnusz, and only then clink glasses."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Roast pork, not chicken",
+        "text": "Pork and frankfurters with horseradish go on the table, and on 1 January lentil soup is cooked for luck and money; chicken and fish wait for another day."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "\"BUÉK!\" with a glass",
+        "text": "Clinking glasses, Hungarians greet each other with a short \"BUÉK!\", their abbreviation of the wish for a happy new year."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Hungary: Budapest | Time2Fest",
+      "description": "Hungary greets 2027 at 23:00 UTC by singing the Himnusz, clinking glasses to a quick BUÉK and eating pork and lentils, while Budapest fills its Danube banks."
+    },
+    "kit": "hu"
   }
 }

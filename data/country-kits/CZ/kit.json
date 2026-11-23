@@ -1,0 +1,103 @@
+{
+  "code": "CZ",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "prague",
+  "names": {
+    "uk": {
+      "name": "Чехія",
+      "city": "Прага",
+      "cityIn": "у Празі",
+      "countryIn": "у Чехії",
+      "caps": "ЧЕХІЯ"
+    },
+    "en": {
+      "name": "Czechia",
+      "city": "Prague",
+      "cityIn": "in Prague",
+      "countryIn": "in Czechia",
+      "caps": "CZECHIA"
+    },
+    "es": {
+      "name": "Chequia",
+      "city": "Praga",
+      "cityIn": "en Praga",
+      "countryIn": "en Chequia",
+      "caps": "CHEQUIA"
+    },
+    "fr": {
+      "name": "Tchéquie",
+      "city": "Prague",
+      "cityIn": "à Prague",
+      "countryIn": "en Tchéquie",
+      "caps": "TCHÉQUIE"
+    }
+  },
+  "picto": "M4 35 L36 35 M6 35 L6 16.4 M9.4 16.4 L9.4 35 M6 18 L9.4 18 M6.7 18 L7.7 6.4 L8.7 18 M13 35 L13 16.4 M16.4 16.4 L16.4 35 M13 18 L16.4 18 M13.7 18 L14.7 6.4 L15.7 18 M9.4 21.4 L13 21.4 M11.2 25.6 m-1.4 0 a1.4 1.4 0 1 0 2.8 0 a1.4 1.4 0 1 0 -2.8 0 M16.4 23.4 L19 23.4 M19 35 L19 14 L25 14 L25 35 M19 20 L25 20 M18.4 14 L25.6 14 M20.8 31.4 L20.8 25.6 Q22 23.8 23.2 25.6 L23.2 31.4 M18.8 14 C17.8 11.6 20.2 9.6 22 9.2 C23.8 9.6 26.2 11.6 25.2 14 M21 9.4 L21 6.8 L23 6.8 L23 9.4 M20.6 6.8 C20.6 5.6 21.6 5 22 4.8 C22.4 5 23.4 5.6 23.4 6.8 M22 4.8 L22 1.8 M25 21.4 L31.4 21.4 L34 24.4 L34 35 M25 24.4 L34 24.4 M27.4 35 L27.4 22.8 M29.8 35 L29.8 22.8 M32.2 35 L32.2 23.2",
+  "flagColors": [
+    "#FFFFFF",
+    "#D7141A",
+    "#11457E"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Чехії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Czechia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Chequia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Tchéquie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

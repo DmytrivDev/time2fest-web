@@ -2862,6 +2862,78 @@
         "title": "Nouvel An en Guinée équatoriale : Malabo | Time2Fest",
         "description": "La Guinée équatoriale fête 2027 à 23 h UTC : messe d’action de grâce, dîner en famille, puis le 1er janvier Malabo danse dans les rues de Los Ángeles."
       }
+    },
+    "CZ": {
+      "uk": {
+        "title": "Новий рік у Чехії: Прага | Time2Fest",
+        "description": "Чехія зустрічає 2027 рік о 23:00 UTC: сект і хлебічки опівночі, спільний відлік на Староміській площі Праги, а першого січня — сочевиця на гроші."
+      },
+      "en": {
+        "title": "New Year in Czechia: Prague | Time2Fest",
+        "description": "Czechia greets 2027 at 23:00 UTC with sekt and chlebíčky at midnight, a shared countdown on Prague's Old Town Square and lentils for money on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Chequia: Praga | Time2Fest",
+        "description": "Chequia recibe 2027 a las 23:00 UTC con sekt y chlebíčky a medianoche, cuenta atrás en la plaza de la Ciudad Vieja de Praga y lentejas de la suerte en enero."
+      },
+      "fr": {
+        "title": "Nouvel An en Tchéquie : Prague | Time2Fest",
+        "description": "La Tchéquie fête 2027 à 23 h UTC : sekt et chlebíčky à minuit, décompte sur la place de la Vieille-Ville de Prague et lentilles porte-bonheur le 1er janvier."
+      }
+    },
+    "GA": {
+      "uk": {
+        "title": "Новий рік у Габоні: Лібревіль | Time2Fest",
+        "description": "Габон зустрічає 2027 рік о 23:00 UTC: салют над океаном на набережній Лібревіля, остання служба року в церквах і гучне «Bonne année!» опівночі."
+      },
+      "en": {
+        "title": "New Year in Gabon: Libreville | Time2Fest",
+        "description": "Gabon reaches 2027 at 23:00 UTC with fireworks over the ocean on Libreville's seafront, the year's last church service and 'Bonne année!' at midnight."
+      },
+      "es": {
+        "title": "Año Nuevo en Gabón: Libreville | Time2Fest",
+        "description": "Gabón llega a 2027 a las 23:00 UTC con fuegos sobre el océano en el paseo marítimo de Libreville, el último oficio del año y «Bonne année!» a medianoche."
+      },
+      "fr": {
+        "title": "Nouvel An au Gabon : Libreville | Time2Fest",
+        "description": "Le Gabon passe à 2027 à 23 h UTC : feu d’artifice sur l’océan au front de mer de Libreville, dernier culte de l’année et « Bonne année ! » à minuit."
+      }
+    },
+    "GI": {
+      "uk": {
+        "title": "Новий рік у Гібралтарі | Time2Fest",
+        "description": "Гібралтар зустрічає 2027 рік на площі Касематс: відлік під годинник, конфеті, салют і танці до третьої ночі. Північ у Гібралтарі — 23:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Gibraltar | Time2Fest",
+        "description": "Gibraltar sees in 2027 on Casemates Square with a countdown under the clock, confetti, fireworks and dancing till 3am. Midnight there is 23:00 UTC."
+      },
+      "es": {
+        "title": "Año Nuevo en Gibraltar | Time2Fest",
+        "description": "Gibraltar recibe 2027 en la plaza de Casemates con cuenta atrás bajo el reloj, confeti, fuegos y baile. Allí es medianoche cuando en UTC son las 23:00."
+      },
+      "fr": {
+        "title": "Nouvel An à Gibraltar | Time2Fest",
+        "description": "Gibraltar accueille 2027 place de Casemates : compte à rebours sous l’horloge, confettis, feu d’artifice et danse. Minuit y sonne quand il est 23 h UTC."
+      }
+    },
+    "HU": {
+      "uk": {
+        "title": "Новий рік в Угорщині: Будапешт | Time2Fest",
+        "description": "Угорщина зустрічає 2027 рік о 23:00 UTC Гімном і коротким «БУЕК!», печенею й сочевицею на щастя, а Будапешт святкує на площах і берегах Дунаю."
+      },
+      "en": {
+        "title": "New Year in Hungary: Budapest | Time2Fest",
+        "description": "Hungary greets 2027 at 23:00 UTC by singing the Himnusz, clinking glasses to a quick BUÉK and eating pork and lentils, while Budapest fills its Danube banks."
+      },
+      "es": {
+        "title": "Año Nuevo en Hungría: Budapest | Time2Fest",
+        "description": "Hungría recibe 2027 a las 23:00 UTC cantando el Himnusz, con un breve «BUÉK!», cerdo y lentejas para la suerte, y Budapest celebra junto al Danubio."
+      },
+      "fr": {
+        "title": "Nouvel An en Hongrie : Budapest | Time2Fest",
+        "description": "La Hongrie accueille 2027 à 23 h UTC en chantant le Himnusz, avec un « BUÉK ! », du porc et des lentilles porte-bonheur, et Budapest fête au bord du Danube."
+      }
     }
   }
 }

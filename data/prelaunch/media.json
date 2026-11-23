@@ -2989,6 +2989,70 @@
         "x": 50,
         "y": 50
       }
+    },
+    "country:CZ": {
+      "src": "/media/photos/prague.webp",
+      "alt": {
+        "uk": "Новорічний салют над Старим містом Праги, 1 січня 2016: вежі Тинського храму й дахи в святковому світлі",
+        "en": "New Year fireworks over Prague’s Old Town, 1 January 2016: the towers of the Týn Church and rooftops in festive light",
+        "es": "Fuegos artificiales de Año Nuevo sobre la Ciudad Vieja de Praga, 1 de enero de 2016: las torres de la iglesia de Týn y los tejados con luz festiva",
+        "fr": "Feu d’artifice du Nouvel An sur la vieille ville de Prague, 1er janvier 2016 : les tours de l’église de Týn et les toits dans la lumière de fête"
+      },
+      "author": "Jan Fidler",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Prague_New_Year_2016_fireworks._Happy_New_Year!_(23741249829).jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "country:GA": {
+      "src": "/media/photos/libreville.webp",
+      "alt": {
+        "uk": "Феєрверк над Лібревілем уночі: набережна Баї-де-Руа, вогні міста й естуарію, натовп біля сцени",
+        "en": "Fireworks over Libreville at night: the Baie des Rois waterfront, city and estuary lights, a crowd by the stage",
+        "es": "Fuegos artificiales sobre Libreville de noche: el paseo de la Baie des Rois, luces de la ciudad y del estuario, gente junto al escenario",
+        "fr": "Feu d’artifice sur Libreville la nuit : front de mer de la Baie des Rois, lumières de la ville et de l’estuaire, foule près de la scène"
+      },
+      "author": "Shirmy25",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baie_des_rois_Libreville.jpg",
+      "position": {
+        "x": 45,
+        "y": 35
+      }
+    },
+    "country:GI": {
+      "src": "/media/photos/gibraltar.webp",
+      "alt": {
+        "uk": "Площа Касематс у Гібралтарі вночі — тут щороку зустрічають Новий рік",
+        "en": "Casemates Square in Gibraltar at night, where the New Year is welcomed every year",
+        "es": "La plaza Casemates de Gibraltar de noche, donde cada año se recibe el Año Nuevo",
+        "fr": "La place Casemates à Gibraltar la nuit, où l’on fête chaque année le Nouvel An"
+      },
+      "author": "John Cummings",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Casemates_Square,_Gibraltar_at_night_5.jpg",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:HU": {
+      "src": "/media/photos/budapest.webp",
+      "alt": {
+        "uk": "Новорічний салют поруч із підсвіченим Парламентом над Дунаєм у Будапешті одразу після півночі 1 січня 2026 року",
+        "en": "New Year fireworks beside the lit Parliament above the Danube in Budapest just after midnight on 1 January 2026",
+        "es": "Fuegos artificiales de Año Nuevo junto al Parlamento iluminado sobre el Danubio en Budapest, justo después de la medianoche del 1 de enero de 2026",
+        "fr": "Feu d’artifice du Nouvel An près du Parlement illuminé au-dessus du Danube à Budapest, juste après minuit le 1er janvier 2026"
+      },
+      "author": "Paul Colin Hennig",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New_Year_fireworks_beside_the_Hungarian_Parliament_Building,_Budapest_(2026).jpg",
+      "position": {
+        "x": 48,
+        "y": 58
+      }
     }
   }
 }

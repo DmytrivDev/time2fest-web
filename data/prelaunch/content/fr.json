@@ -4854,5 +4854,117 @@
       "description": "La Guinée équatoriale fête 2027 à 23 h UTC : messe d’action de grâce, dîner en famille, puis le 1er janvier Malabo danse dans les rues de Los Ángeles."
     },
     "kit": "gq"
+  },
+  "CZ": {
+    "text": "Une coupe de sekt à minuit, une assiette de chlebíčky — petites tartines garnies — et, pour certains, de la tête de porc bouillie avec du raifort râpé et des pommes : c’est ainsi que les Tchèques fêtent la Saint-Sylvestre. Le 1er janvier est ici une double fête : le Nouvel An et le Jour de la restauration de l’État tchèque indépendant, né en 1993. Au déjeuner, des lentilles, en forme de petites pièces, et du porc ; on évite la volaille et le poisson pour que la chance ne s’envole pas ou ne file pas à la nage. Puis tout le monde part se promener : « Comme au Nouvel An, ainsi toute l’année. »\n\nLa nuit pragoise se rassemble sur la place de la Vieille-Ville : dès 17 h, groupes et DJ y jouent, et à minuit la foule compte les secondes ensemble. La ville n’organise plus de feu d’artifice depuis plusieurs années : dès 2019, le conseil a choisi le calme pour les habitants et les animaux. Les pétards sont interdits dans le centre historique, au bord de la Vltava et dans les parcs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Des lentilles pour la chance",
+        "text": "Le 1er janvier, cuisine des lentilles au porc — ces petites pièces promettent de l’argent — et laisse de côté volaille et poisson pour garder ta chance."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Chlebíčky et sekt",
+        "text": "Prépare pour la soirée plusieurs sortes de chlebíčky, petites tartines garnies, et débouche un mousseux tchèque à minuit pile."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Décompte à la Vieille-Ville",
+        "text": "Sur la place de la Vieille-Ville, à Prague, musique et DJ dès 17 h, puis à minuit toute la place fait le décompte. Les pétards sont interdits dans le centre."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Tchéquie : Prague | Time2Fest",
+      "description": "La Tchéquie fête 2027 à 23 h UTC : sekt et chlebíčky à minuit, décompte sur la place de la Vieille-Ville de Prague et lentilles porte-bonheur le 1er janvier."
+    },
+    "kit": "cz"
+  },
+  "GA": {
+    "text": "Au Gabon, beaucoup passent la dernière soirée de l’année à l’église : à la cathédrale Sainte-Marie, à Saint-Pierre et au Sacré-Cœur, dans les temples protestants de la capitale, on chante au dernier culte de l’année et on prie pour la santé et la prospérité. Les jours précédents, on fait la queue dans les magasins pour le réveillon et le repas de famille du 1er janvier, jour férié. Le 2 janvier, Libreville se repose encore : routes vides, peu de monde au travail, et les écoles ne rouvrent que le 3.\n\nÀ minuit, des milliers de personnes gagnent le front de mer, où le feu d’artifice éclate au-dessus de l’océan pendant près d’une demi-heure. On filme le ciel au téléphone, on applaudit les fusées les plus bruyantes et, quand la dernière s’éteint, on se lance « Bonne année ! ».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur l’océan",
+        "text": "Le front de mer de Libreville est le rendez-vous de minuit : le feu d’artifice au-dessus de l’eau dure jusqu’à une demi-heure, puis chacun lance « Bonne année ! »."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Le dernier culte de l’année",
+        "text": "Le soir du 31 décembre, les églises de la capitale chantent et prient pour une année de santé, de bonheur et de prospérité."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Repas de famille du 1er janvier",
+        "text": "On fait les courses à l’avance : le 1er janvier est férié et réservé à la table familiale, et le 2, la ville prend encore son temps."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Gabon : Libreville | Time2Fest",
+      "description": "Le Gabon passe à 2027 à 23 h UTC : feu d’artifice sur l’océan au front de mer de Libreville, dernier culte de l’année et « Bonne année ! » à minuit."
+    },
+    "kit": "ga"
+  },
+  "GI": {
+    "text": "L’horloge de Casemates sonne minuit, et confettis et feu d’artifice emplissent le ciel pendant une dizaine de minutes. À Gibraltar, la fête est organisée par le gouvernement : groupes et DJ jouent de 22 h 30 à 3 h du matin, et les animateurs comptent les dernières secondes avec toute la place. On vient en famille ou entre amis, les touristes font la fête à côté, on lève des coupes de champagne, et depuis la scène on salue les résidents des maisons de retraite et ceux qui fêtent l’année chez eux. Le feu d’artifice est revenu à Casemates pour accueillir 2026, après une pause.\n\nLes fêtes s’achèvent le soir du 5 janvier. La cavalcade des Rois mages part de Casemates, remonte Main Street jusqu’au théâtre d’Ince’s Hall avec ses chars, et des bonbons sont distribués à tous ceux qui bordent le parcours.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Compte à rebours sous l’horloge",
+        "text": "La place de Casemates se remplit avant minuit : les animateurs comptent les dernières secondes et, aux coups de l’horloge, confettis et feu d’artifice s’envolent."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Du champagne avec toute la place",
+        "text": "Ici, la fête est familiale : les Gibraltariens accueillent l’année avec leurs proches et leurs amis, trinquent avec leurs voisins de place et dansent avec les groupes et les DJ jusqu’à 3 h du matin."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Des bonbons sur Main Street",
+        "text": "Le soir du 5 janvier, les familles se pressent le long de Main Street : la cavalcade des Rois mages va de Casemates à Ince’s Hall, et des bonbons sont offerts à tous."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Gibraltar | Time2Fest",
+      "description": "Gibraltar accueille 2027 place de Casemates : compte à rebours sous l’horloge, confettis, feu d’artifice et danse. Minuit y sonne quand il est 23 h UTC."
+    },
+    "kit": "gi"
+  },
+  "HU": {
+    "text": "En Hongrie, minuit arrive avec l’hymne national : dès la fin du compte à rebours, le Himnusz retentit et beaucoup se lèvent pour le chanter. Puis les verres s’entrechoquent et l’on lance un bref « BUÉK ! », abréviation familière du vœu de bonne année. La nuit de Szilveszter se passe à la maison ou dans les fêtes de rue, avec des saucisses au raifort et du rôti de porc : le cochon, dit-on, déterre la chance du groin. Le jour de l’An, pas de poulet, car il gratte et chasse la chance, mais on cuisine des lentilles pour l’argent.\n\nBudapest sort sur ses places et sur les quais du Danube, les marchés de Noël restent ouverts tard dans la nuit, et les bus de nuit et le tram 6 ramènent les fêtards jusqu’au matin. Pas de grand feu d’artifice municipal, et depuis 2025 les fusées des particuliers ne sont permises que de 20 h à 2 h et pas dans les quartiers d’habitation.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "L’hymne à minuit",
+        "text": "Quand le compte à rebours atteint zéro, on se lève pour chanter le Himnusz, et c’est seulement ensuite qu’on trinque."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Du porc, pas de poulet",
+        "text": "Sur la table, du porc et des saucisses au raifort ; le 1er janvier, on prépare une soupe de lentilles pour la chance et l’argent, et le poulet comme le poisson attendent un autre jour."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "« BUÉK ! » le verre levé",
+        "text": "En trinquant, les Hongrois se saluent d’un bref « BUÉK ! », l’abréviation de leurs vœux de bonne année."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Hongrie : Budapest | Time2Fest",
+      "description": "La Hongrie accueille 2027 à 23 h UTC en chantant le Himnusz, avec un « BUÉK ! », du porc et des lentilles porte-bonheur, et Budapest fête au bord du Danube."
+    },
+    "kit": "hu"
   }
 }

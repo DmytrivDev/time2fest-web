@@ -1,0 +1,103 @@
+{
+  "code": "HU",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "budapest",
+  "names": {
+    "uk": {
+      "name": "Угорщина",
+      "city": "Будапешт",
+      "cityIn": "у Будапешті",
+      "countryIn": "в Угорщині",
+      "caps": "УГОРЩИНА"
+    },
+    "en": {
+      "name": "Hungary",
+      "city": "Budapest",
+      "cityIn": "in Budapest",
+      "countryIn": "in Hungary",
+      "caps": "HUNGARY"
+    },
+    "es": {
+      "name": "Hungría",
+      "city": "Budapest",
+      "cityIn": "en Budapest",
+      "countryIn": "en Hungría",
+      "caps": "HUNGRÍA"
+    },
+    "fr": {
+      "name": "Hongrie",
+      "city": "Budapest",
+      "cityIn": "à Budapest",
+      "countryIn": "en Hongrie",
+      "caps": "HONGRIE"
+    }
+  },
+  "picto": "M3 34 L37 34 M3 34 L3 28 L4.6 25.6 L6.2 28 L33.8 28 L35.4 25.6 L37 28 L37 34 M6.6 34 L6.6 23 L8.6 19 L10.6 23 L10.6 34 M8.6 19 L8.6 15.8 M29.4 34 L29.4 23 L31.4 19 L33.4 23 L33.4 34 M31.4 19 L31.4 15.8 M13.8 34 L13.8 11 M26.2 34 L26.2 11 M16.4 28 C16.2 21.6 17.8 17.2 20 15.6 C22.2 17.2 23.8 21.6 23.6 28 M20 15.6 L20 7 M18.4 34 L18.4 31.6 Q20 29.8 21.6 31.6 L21.6 34",
+  "flagColors": [
+    "#CE2939",
+    "#FFFFFF",
+    "#477050"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Угорщині"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Hungary"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Hungría"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Hongrie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

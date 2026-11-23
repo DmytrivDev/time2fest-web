@@ -4854,5 +4854,117 @@
       "description": "Guinea Ecuatorial recibe 2027 a las 23:00 UTC: misa de acción de gracias, cena en familia y, el 1 de enero, Malabo baila en las calles de Los Ángeles."
     },
     "kit": "gq"
+  },
+  "CZ": {
+    "text": "Una copa de sekt a medianoche, un plato de chlebíčky —pequeños sándwiches abiertos— y, para algunos, cabeza de cerdo cocida con rábano picante rallado y manzana: así despiden los checos el Silvestr. El 1 de enero es aquí una fiesta doble: Año Nuevo y el Día de la Restauración del Estado Checo Independiente, nacido en 1993. Se comen lentejas, con forma de monedas, y cerdo, y se evitan las aves y el pescado para que la suerte no salga volando ni nadando. Después, todos salen a pasear: «Como en Año Nuevo, así todo el año».\n\nLa noche de Praga se reúne en la plaza de la Ciudad Vieja: desde las cinco de la tarde tocan grupos en directo y DJ, y a medianoche todos cuentan juntos los segundos. Hace varios años que no hay fuegos artificiales municipales: ya en 2019 el ayuntamiento optó por el silencio para vecinos y animales. La pirotecnia está prohibida en el centro histórico, junto al Moldava y en los parques.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Lentejas para la suerte",
+        "text": "El 1 de enero cocina lentejas con cerdo —los granos como monedas prometen dinero— y deja las aves y el pescado para que la suerte no se vaya volando ni nadando."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Chlebíčky y sekt",
+        "text": "Prepara para la noche varios tipos de chlebíčky, pequeños sándwiches abiertos, y descorcha un espumoso checo a medianoche en punto."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Cuenta atrás en la Ciudad Vieja",
+        "text": "En la plaza de la Ciudad Vieja de Praga suenan música y DJ desde las 17:00, y a medianoche toda la plaza hace la cuenta atrás. Los petardos están prohibidos en el centro."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Chequia: Praga | Time2Fest",
+      "description": "Chequia recibe 2027 a las 23:00 UTC con sekt y chlebíčky a medianoche, cuenta atrás en la plaza de la Ciudad Vieja de Praga y lentejas de la suerte en enero."
+    },
+    "kit": "cz"
+  },
+  "GA": {
+    "text": "Muchos en Gabón pasan la última tarde del año en la iglesia: en la catedral de Sainte-Marie, en Saint-Pierre y Sacré-Cœur, en las iglesias protestantes de la capital se canta en el último oficio del año y se pide salud y prosperidad. En los días previos hay colas en las tiendas para comprar la cena de Nochevieja y la comida familiar del 1 de enero, que es festivo. El 2 de enero Libreville aún descansa: carreteras vacías, poca gente en el trabajo y los colegios no abren hasta el día tres.\n\nA medianoche miles de personas acuden al paseo marítimo, donde los fuegos artificiales estallan sobre el océano durante cerca de media hora. La gente graba el cielo con el móvil, aplaude los cohetes más ruidosos y, cuando se apaga el último, se grita «Bonne année!».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el océano",
+        "text": "El paseo marítimo de Libreville es el sitio de la medianoche: los fuegos sobre el agua duran hasta media hora y después todos se saludan con «Bonne année!»."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "El último oficio del año",
+        "text": "La tarde del 31 de diciembre las iglesias de la capital cantan y rezan por un año de salud, felicidad y prosperidad."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Comida familiar el 1 de enero",
+        "text": "La compra se hace con antelación: el 1 de enero es festivo y día de mesa familiar, y el 2 la ciudad aún se lo toma con calma."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Gabón: Libreville | Time2Fest",
+      "description": "Gabón llega a 2027 a las 23:00 UTC con fuegos sobre el océano en el paseo marítimo de Libreville, el último oficio del año y «Bonne année!» a medianoche."
+    },
+    "kit": "ga"
+  },
+  "GI": {
+    "text": "El reloj de la plaza de Casemates da la medianoche y el confeti y los fuegos artificiales llenan el cielo durante unos diez minutos. En Gibraltar, la fiesta la organiza el Gobierno: grupos y DJ tocan desde las diez y media de la noche hasta las tres de la madrugada, y los presentadores cuentan los últimos segundos con toda la plaza. Se va en familia o con amigos, los turistas celebran al lado, se alzan copas de champán, y desde el escenario se saluda a los residentes de las residencias de mayores y a quienes reciben el año en casa. Los fuegos volvieron a Casemates para recibir 2026, tras una pausa.\n\nLas fiestas terminan la tarde del 5 de enero. La Cabalgata de Reyes sale de Casemates, recorre Main Street hasta el teatro Ince's Hall con sus carrozas, y se reparten caramelos a todos los que esperan a lo largo del recorrido.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Cuenta atrás bajo el reloj",
+        "text": "La plaza de Casemates se llena antes de medianoche: los presentadores cuentan los últimos segundos y, cuando da la hora el reloj, suben el confeti y los fuegos."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Champán con toda la plaza",
+        "text": "Aquí la fiesta es familiar: los gibraltareños reciben el año con los suyos y con amigos, brindan con quien tienen al lado y bailan con los grupos y los DJ hasta las tres de la madrugada."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Caramelos en Main Street",
+        "text": "La tarde del 5 de enero, las familias llenan Main Street: la Cabalgata de Reyes va de Casemates a Ince's Hall y se reparten caramelos a todos los que acuden."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Gibraltar | Time2Fest",
+      "description": "Gibraltar recibe 2027 en la plaza de Casemates con cuenta atrás bajo el reloj, confeti, fuegos y baile. Allí es medianoche cuando en UTC son las 23:00."
+    },
+    "kit": "gi"
+  },
+  "HU": {
+    "text": "La medianoche llega a Hungría con el himno nacional: en cuanto termina la cuenta atrás suena el Himnusz, y muchos se ponen de pie para cantarlo. Después chocan las copas y se oye un breve «BUÉK!», la abreviatura coloquial del deseo de feliz año nuevo. La noche de Szilveszter se pasa en casa o en fiestas callejeras, con salchichas con rábano picante y cerdo asado: dicen que el cerdo hoza la tierra y saca la suerte. El día de Año Nuevo no se come pollo, porque escarba y aparta la suerte; en cambio, se cocinan lentejas para tener dinero.\n\nBudapest sale a sus plazas y a las orillas del Danubio, los mercados navideños abren hasta altas horas y los autobuses nocturnos y el tranvía 6 llevan a la gente a casa hasta el amanecer. No hay un gran espectáculo pirotécnico de la ciudad, y desde 2025 los cohetes particulares solo se permiten de 20:00 a 2:00 y no en zonas residenciales.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "El himno a medianoche",
+        "text": "Cuando la cuenta atrás llega a cero, la gente se pone de pie, canta el Himnusz y solo entonces brinda."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cerdo asado, no pollo",
+        "text": "En la mesa hay cerdo y salchichas con rábano picante, y el 1 de enero se prepara sopa de lentejas para la suerte y el dinero; el pollo y el pescado esperan a otro día."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "«BUÉK!» con la copa",
+        "text": "Al brindar, los húngaros se saludan con un breve «BUÉK!», la abreviatura del deseo de feliz año nuevo."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Hungría: Budapest | Time2Fest",
+      "description": "Hungría recibe 2027 a las 23:00 UTC cantando el Himnusz, con un breve «BUÉK!», cerdo y lentejas para la suerte, y Budapest celebra junto al Danubio."
+    },
+    "kit": "hu"
   }
 }
