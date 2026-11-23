@@ -40,6 +40,39 @@ export const SITE_TEXT = {
   choose: 'Оберіть товар',
 } as const;
 
+/** Texts of the «Ефір» slice (SPEC-12 AC-50). */
+export const LIVE_TEXT = {
+  title: 'Ефір',
+  loading: 'Завантаження…',
+  unavailable: 'Ефір недоступний.',
+  saved: 'Збережено.',
+  reason: 'Причина (обов’язкова, до 200 символів)',
+  reasonRequired: 'Вкажіть причину зміни.',
+  videoId: 'Ідентифікатор відео для заміни',
+  videoIdRequired: 'Вкажіть ідентифікатор відео.',
+  current: 'Поточний слот',
+  next: 'Наступний слот',
+  noEvents: 'У слоті немає подій.',
+  noSources: 'Джерел немає.',
+  zone: 'Пояс',
+  zoneLiveUntil: 'наживо до',
+  hide: 'Сховати',
+  unhide: 'Показати',
+  main: 'Основне',
+  override: 'Примусово наживо',
+  zoneLive: 'Пояс наживо',
+  zoneLiveOff: 'Зняти «пояс наживо»',
+  replace: 'Замінити відео',
+  hidden: 'сховано',
+  dead: 'мертве',
+  served: 'віддається',
+  notServed: 'не віддається',
+  quota: 'Квота YouTube',
+  used: 'використано',
+  resetAt: 'скидання (UTC)',
+  bucket: { queries: 'Запити', search: 'Пошук', batchGetStats: 'Статистика пакетом' } as Record<string, string>,
+} as const;
+
 export const SITE_SWITCH_LABELS: Record<string, string> = {
   chat: 'Чат',
   toasts: 'Тости',
