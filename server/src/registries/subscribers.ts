@@ -5,6 +5,7 @@
 import { processDeps } from '../adapters/processDeps';
 import { createCatalogR2Subscriber } from '../catalog/copy';
 import type { EventSubscriber, InternalEvent } from '../events/ports';
+import { createLiveFanOutSubscribers } from '../live/fanout';
 import { assertRegistry } from '../platform/registry';
 import { createSchedulerRecomputeSubscribers } from '../scheduler/recompute';
 import { createSiteFanOutSubscribers } from '../site/fanout';
@@ -40,12 +41,17 @@ const [schedulerRecomputeCatalog, schedulerRecomputePatch] = createSchedulerReco
 /** The `site` snapshot follows every committed site, catalog and correction change (SPEC-08 AC-5 … AC-7, AC-33 … AC-36). */
 const [siteFanOutCatalog, siteFanOutPatch, siteFanOutSite] = createSiteFanOutSubscribers(async () => (await processDeps()).siteFanOut?.());
 
+/** The live chains follow every committed live change and correction (SPEC-12 AC-5 … AC-7, AC-14, AC-15). */
+const [liveFanOutChange, liveFanOutPatch] = createLiveFanOutSubscribers(async () => (await processDeps()).liveFanOut?.());
+
 /** The catalog rebuild follows every committed catalog change, 150 s after the last (SPEC-08 AC-61). */
 const siteRebuild = createRebuildSubscriber(async () => (await processDeps()).rebuild?.());
 
 export const subscriberRegistry: readonly EventSubscriber[] = [
   catalogR2Copy,
   clockRefresh,
+  liveFanOutChange,
+  liveFanOutPatch,
   schedulerRecomputeCatalog,
   schedulerRecomputePatch,
   siteFanOutCatalog,

@@ -94,7 +94,15 @@ export interface LiveStore {
   claimPendingChecks(): Promise<PendingCheck[]>;
 }
 
-/** The events the live air knows: their effective moments and the `hidden` correction (AC-10, AC-58). */
+/**
+ * Claims the fan-out of one live version across instances (AC-5): true for exactly one caller per version, and never
+ * for a version ≤ one already claimed (`live-state.lastFannedOut`).
+ */
+export interface LiveFanOutClaim {
+  claim(version: number): Promise<boolean>;
+}
+
+/** The events the live air knows:their effective moments and the `hidden` correction (AC-10, AC-58). */
 export interface LiveEventSource {
   events(): Promise<LiveEvent[]>;
 }

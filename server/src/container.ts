@@ -61,11 +61,12 @@ import { catalogVersionOf } from '@time2fest/contracts';
 import { createGithubDispatch } from './adapters/githubDispatch';
 import { REBUILD_TICK_MS } from './domain/site/rebuild';
 import { parseLiveConfig } from './domain/live/config';
-import { createPayloadLiveStore, createPayloadQuotaStore, createPgLiveLease } from './adapters/payloadLive';
+import { createPayloadLiveFanOutClaim, createPayloadLiveStore, createPayloadQuotaStore, createPgLiveLease } from './adapters/payloadLive';
 import { createYoutubeFakeSource } from './adapters/youtubeFake';
 import { createLivePoller, LIVE_PASS_MS, liveEventsFrom } from './live/poller';
 import { currentPatches } from './corrections/service';
 import type { FanOutDeps } from './site/fanout';
+import { LIVE_CACHE_TAG, type LiveFanOutDeps } from './live/fanout';
 import { tickRebuild, type RebuildDeps } from './site/rebuild';
 import type { SnapshotReadDeps } from './site/snapshot';
 import { payloadUnattendedDeps } from './adapters/payloadUnattended';
@@ -245,6 +246,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.readiness = overrides.readiness ?? createReadinessProbe({ payload, fast: deps.redis });
   // The live air (SPEC-12): built in every process, the poller started only by `startProcessBackground`.
   deps.live = overrides.live ?? createLiveWiring(deps, payload);
+  deps.liveFanOut = overrides.liveFanOut ?? (() => liveFanOutDepsOf(deps));
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
@@ -521,6 +523,41 @@ export function siteFanOutDepsOf(deps: Deps): FanOutDeps {
     ...(publisher ? { publisher } : {}),
     ...(token && zoneId && siteUrl ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token) }), siteUrl: String(siteUrl) } } : {}),
     ...(bucket ? { copy: { objects: bucket.objects, prefix: bucket.prefix } } : {}),
+    alarm: deps.alarm,
+    log: deps.log,
+  };
+}
+
+/**
+ * What the after-commit fan-out of the live chains needs (SPEC-12 W21): the chains readers of the live wiring, the
+ * fan-out claim, the server clock, the realtime publisher (when configured), the edge purge of `LIVE_CACHE_TAG` only
+ * with token, zone and site URL (else `live/purge-skipped`, AC-14), the catalog's bucket and prefix (else
+ * `live/r2-copy-skipped`), and the version bump of a correction.
+ */
+export function liveFanOutDepsOf(deps: Deps): LiveFanOutDeps {
+  const payload = payloadOf(deps);
+  const live = deps.live ?? createLiveWiring(deps, payload);
+  const v = deps.env.vars;
+  let publisher: ChannelPublisher | undefined;
+  try {
+    publisher = publisherOf(deps);
+  } catch {
+    publisher = undefined;
+  }
+  const token = v.T2F_CF_PURGE_TOKEN;
+  const zoneId = v.T2F_CF_ZONE_ID;
+  const siteUrl = v.T2F_SITE_URL;
+  const bucket = deps.catalogCopy?.();
+  return {
+    chains: { store: live.store, events: live.events, cfg: live.cfg },
+    claim: createPayloadLiveFanOutClaim(payload),
+    clock: deps.clock,
+    ...(publisher ? { publisher } : {}),
+    ...(token && zoneId && siteUrl
+      ? { purge: { sink: createCfPurge({ zoneId: String(zoneId), token: String(token), tag: LIVE_CACHE_TAG }), siteUrl: String(siteUrl) } }
+      : {}),
+    ...(bucket ? { copy: { objects: bucket.objects, prefix: bucket.prefix } } : {}),
+    versions: { store: live.store, events: eventsOf(deps).publisher },
     alarm: deps.alarm,
     log: deps.log,
   };

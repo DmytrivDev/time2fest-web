@@ -19,6 +19,7 @@ import type { QuotaBucket } from '../domain/live/config';
 import { QUOTA_COUNTER_KEYS, type QuotaCounter, type QuotaCounterKey, type QuotaState } from '../domain/live/quota';
 import type { Clock } from '../ports';
 import type {
+  LiveFanOutClaim,
   LiveLease,
   LiveLeaseName,
   LiveSource,
@@ -261,6 +262,22 @@ export function createPayloadLiveStore(deps: PayloadLiveDeps): LiveStore {
     },
   };
   return store;
+}
+
+/**
+ * The live fan-out claim (AC-5): ONE conditional `UPDATE … SET last_fanned_out = v WHERE last_fanned_out < v
+ * RETURNING`, outside any transaction, so exactly one instance and one event claim a version.
+ */
+export function createPayloadLiveFanOutClaim(payload: () => Promise<Payload>): LiveFanOutClaim {
+  return {
+    async claim(version) {
+      const { rows } = await (await drizzleOf(payload)).execute(sql`
+        UPDATE "live_state" SET "last_fanned_out" = ${version}::numeric
+        WHERE "id" = ${FIRST_ROW} AND COALESCE("last_fanned_out", 0) < ${version}::numeric
+        RETURNING "id"`);
+      return rows.length === 1;
+    },
+  };
 }
 
 const KEYS: ReadonlySet<string> = new Set(QUOTA_COUNTER_KEYS);

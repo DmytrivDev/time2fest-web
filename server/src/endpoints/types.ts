@@ -26,6 +26,7 @@ import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } fro
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
 import type { FanOutDeps } from '../site/fanout';
+import type { LiveFanOutDeps } from '../live/fanout';
 import type { RebuildDeps } from '../site/rebuild';
 import type { CatalogProduct } from '../site/ports';
 import type { SiteDeps } from '../site/service';
@@ -137,6 +138,8 @@ export interface Deps {
   catalogCopy?: () => CatalogCopyDeps | undefined;
   /** What the after-commit fan-out of the `site` snapshot needs (SPEC-08 AC-5 … AC-7, AC-33 … AC-36). */
   siteFanOut?: () => FanOutDeps;
+  /** What the after-commit fan-out of the live chains needs (SPEC-12 AC-5 … AC-7, AC-14, AC-15). */
+  liveFanOut?: () => LiveFanOutDeps;
   /** What the catalog rebuild launch needs (SPEC-08 AC-61 … AC-66). */
   rebuild?: () => RebuildDeps;
   /** The site state service and snapshot readers (SPEC-08); read through `siteOf`. */
