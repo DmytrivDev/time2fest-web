@@ -30,6 +30,8 @@ export const TOKEN_RETRY_AFTER_MAX_MS = 60_000;
 export const PERMISSION_DENIED_CODE = 103;
 /** `disconnected` code of the client when a token refresh came back empty (AC-49). */
 const CLIENT_UNAUTHORIZED_CODE = 1;
+/** `unsubscribed` code of a subscription whose token came back empty or expired without a refresh. */
+const SUBSCRIPTION_UNAUTHORIZED_CODE = 1;
 /** `connecting` code of the client's own `connect()`. */
 const CONNECT_CALLED_CODE = 0;
 /** Centrifugo disconnect codes of a refused connection: invalid token, permission denied. */
@@ -59,11 +61,16 @@ export interface CentrifugeClientLike {
   on(event: 'connecting', listener: (ctx: { code: number }) => void): unknown;
   on(event: 'disconnected', listener: (ctx: { code: number }) => void): unknown;
   on(event: 'error', listener: (ctx: { type: string }) => void): unknown;
-  newSubscription(channel: string): CentrifugeSubscriptionLike;
+  newSubscription(channel: string, options?: CentrifugeSubscriptionOptions): CentrifugeSubscriptionLike;
   removeSubscription(sub: CentrifugeSubscriptionLike | null): void;
   setToken(token: string): void;
   connect(): void;
   disconnect(): void;
+}
+
+/** Subscription options the transport passes: a token source for a tokened channel (SPEC-12 W44). */
+export interface CentrifugeSubscriptionOptions {
+  getToken?: () => Promise<string>;
 }
 
 export interface CentrifugeClientOptions {
@@ -122,12 +129,17 @@ const defaultTimers: RealtimeTimers = {
 
 interface ListenerRecord {
   listener: RealtimeListener;
+  getToken?: () => Promise<string>;
 }
 
 interface ChannelEntry {
   records: Set<ListenerRecord>;
   filter: ChannelFilter;
   sub: CentrifugeSubscriptionLike | null;
+  /** The current `sub` was created with a token source. */
+  tokened: boolean;
+  /** Centrifugo refused the token (`unsubscribed` code 1): tokenless until a new tokened listener arrives. */
+  tokenRefused: boolean;
 }
 
 interface RetryHint {
@@ -289,10 +301,36 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     });
   }
 
+  /** The first listener's token source that is still subscribed; none → the channel is tokenless. */
+  function tokenSourceOf(entry: ChannelEntry): (() => Promise<string>) | undefined {
+    if (entry.tokenRefused) return undefined;
+    for (const record of entry.records) if (record.getToken) return record.getToken;
+    return undefined;
+  }
+
+  /**
+   * Centrifugo allows one subscription per channel per client (W44): switching between tokenless and tokened removes
+   * the subscription and subscribes again. Listeners and the de-duplication filter stay on the entry, so the other
+   * listeners keep receiving events.
+   */
+  function sync(channel: string, entry: ChannelEntry): void {
+    if (!client || !entry.sub || channels.get(channel) !== entry) return;
+    if (entry.tokened === (tokenSourceOf(entry) !== undefined)) return;
+    client.removeSubscription(entry.sub);
+    attach(channel, entry, client);
+  }
+
   function attach(channel: string, entry: ChannelEntry, centrifuge: CentrifugeClientLike): void {
-    const sub = centrifuge.newSubscription(channel);
+    const tokened = tokenSourceOf(entry) !== undefined;
+    // The source is looked up on every call: the listener that gave it may have left while another stays.
+    const getToken = () => {
+      const source = tokenSourceOf(entry);
+      return source ? source() : Promise.resolve('');
+    };
+    const sub = tokened ? centrifuge.newSubscription(channel, { getToken }) : centrifuge.newSubscription(channel);
     entry.sub = sub;
-    const isCurrent = () => channels.get(channel) === entry;
+    entry.tokened = tokened;
+    const isCurrent = () => channels.get(channel) === entry && entry.sub === sub;
     sub.on('publication', (ctx) => {
       if (!isCurrent()) return;
       for (const envelope of envelopesOf(ctx.data)) {
@@ -306,7 +344,15 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
       forEachListener(entry, (listener) => listener.onResync?.());
     });
     sub.on('unsubscribed', (ctx) => {
-      if (!isCurrent() || ctx.code !== PERMISSION_DENIED_CODE) return;
+      if (!isCurrent()) return;
+      if (tokened && ctx.code === SUBSCRIPTION_UNAUTHORIZED_CODE) {
+        // The token source gave nothing usable: the channel goes on without a token for every listener.
+        entry.tokenRefused = true;
+        centrifuge.removeSubscription(sub);
+        attach(channel, entry, centrifuge);
+        return;
+      }
+      if (ctx.code !== PERMISSION_DENIED_CODE) return;
       // Refused (AC-51): forget the channel so the client never subscribes to it again.
       channels.delete(channel);
       centrifuge.removeSubscription(sub);
@@ -445,16 +491,21 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
   }
 
   return {
-    subscribe(channel, listener): Unsubscribe {
+    subscribe(channel, listener, options): Unsubscribe {
       if (!url) return () => {};
+      const record: ListenerRecord = { listener };
+      if (options?.getToken) record.getToken = options.getToken;
       let entry = channels.get(channel);
       if (!entry) {
-        entry = { records: new Set(), filter: createChannelFilter(), sub: null };
+        entry = { records: new Set([record]), filter: createChannelFilter(), sub: null, tokened: false, tokenRefused: false };
         channels.set(channel, entry);
         if (client) attach(channel, entry, client);
+      } else {
+        // A new token source tries again after a refused one.
+        if (record.getToken) entry.tokenRefused = false;
+        entry.records.add(record);
+        sync(channel, entry);
       }
-      const record: ListenerRecord = { listener };
-      entry.records.add(record);
       const owner = entry;
       start();
 
@@ -463,7 +514,11 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
         if (!active) return;
         active = false;
         owner.records.delete(record);
-        if (owner.records.size > 0 || channels.get(channel) !== owner) return;
+        if (owner.records.size > 0) {
+          sync(channel, owner);
+          return;
+        }
+        if (channels.get(channel) !== owner) return;
         channels.delete(channel);
         if (owner.sub) client?.removeSubscription(owner.sub);
         if (channels.size === 0) teardown();

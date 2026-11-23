@@ -5,7 +5,8 @@
  *   (AC-16). І перечитування: кожні 15 с, поки realtime не `connected` чи його немає, інакше кожні 30 с; `onResync` —
  *   одразу (AC-19). Різницю перечитаного з останнім застосованим адаптер віддає подіями `chain` з версією відповіді;
  *   старіша відповідь не дає нічого (AC-17). Невдале перечитування лишає останнє застосоване (AC-20).
- * - `viewers()` / `subscribeViewers()` — `GET /api/live/viewers` і агрегат каналу `live:viewers`.
+ * - `viewers()` / `subscribeViewers()` — `GET /api/live/viewers` і агрегат каналу `live:viewers`; підписка лічена
+ *   (`./viewerPresence`: одна вкладка браузера з токеном підписки, решта без нього; AC-59, AC-61).
  * - `reportSourceError()` — `POST /api/live/source-errors`.
  * - Передстартова збірка (`NEXT_PUBLIC_PRELAUNCH=1`) — ланцюжки збірки (впорскує `http/index.ts`), порожні глядачі, без
  *   мережі й таймерів.
@@ -23,6 +24,7 @@ import {
 import type { ChainsResponse, LiveService, StreamEvent, ViewerSummary } from '../contracts/live';
 import { fail, ok, type ApiResult } from '../result';
 import type { ConnectionState, RealtimeTransport } from './realtime/types';
+import { subscribeCountedViewers, type CountedViewersOptions } from './viewerPresence';
 import type { StreamChain } from '@/lib/data/types';
 
 export const LIVE_CHAINS_URL = '/api/live/chains';
@@ -62,6 +64,8 @@ export interface HttpLiveOptions {
   prelaunch?: boolean;
   /** Ланцюжки збірки (`data/streams*.json`); обов'язкові для передстартової збірки. */
   buildChains?: () => readonly StreamChain[];
+  /** Замки, запит токена глядача й події сторінки для лічених глядачів (тести; типово — браузерні). */
+  viewerPresence?: Pick<CountedViewersOptions, 'locks' | 'fetch' | 'page'>;
 }
 
 /** Літерал збирання: без `NEXT_PUBLIC_REALTIME_URL` гілка з `import()` мертва, і `centrifuge` у пакет не потрапляє (AC-23). */
@@ -237,10 +241,15 @@ export function createHttpLive(options: HttpLiveOptions = {}): LiveService {
 
   function startViewers(): { stop(): void } {
     const detach = withTransport((t) => [
-      t.subscribe(LIVE_VIEWERS_CLASS, {
-        onEvent: (envelope: RealtimeEnvelope) => {
-          const summary = parseViewerSummary(envelope.data) as unknown as ViewerSummary | null;
-          if (summary) for (const l of [...viewerListeners]) l(summary);
+      subscribeCountedViewers({
+        ...options.viewerPresence,
+        transport: t,
+        channel: LIVE_VIEWERS_CLASS,
+        listener: {
+          onEvent: (envelope: RealtimeEnvelope) => {
+            const summary = parseViewerSummary(envelope.data) as unknown as ViewerSummary | null;
+            if (summary) for (const l of [...viewerListeners]) l(summary);
+          },
         },
       }),
     ]);

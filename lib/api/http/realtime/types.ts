@@ -13,8 +13,17 @@ export interface RealtimeListener {
 
 export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
 
+/** Options of one `subscribe` call (SPEC-12 W44). */
+export interface SubscribeOptions {
+  /**
+   * Subscription token source: while any listener of the channel gives one, the channel's one Centrifugo
+   * subscription carries a token (the first such listener's source asks). The token is never stored or logged.
+   */
+  getToken?: () => Promise<string>;
+}
+
 export interface RealtimeTransport {
-  subscribe(channel: string, listener: RealtimeListener): Unsubscribe;
+  subscribe(channel: string, listener: RealtimeListener, options?: SubscribeOptions): Unsubscribe;
   state(): ConnectionState;
   onStateChange(listener: (state: ConnectionState) => void): Unsubscribe;
 }
