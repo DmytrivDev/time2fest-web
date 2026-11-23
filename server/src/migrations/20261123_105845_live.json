@@ -2353,6 +2353,12 @@
           "notNull": true,
           "default": "'youtube'"
         },
+        "video_id": {
+          "name": "video_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "kind": {
           "name": "kind",
           "type": "varchar",
@@ -2544,6 +2550,21 @@
           "columns": [
             {
               "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "stream_sources_video_id_idx": {
+          "name": "stream_sources_video_id_idx",
+          "columns": [
+            {
+              "expression": "video_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -4710,6 +4731,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "6606b2c3-7bce-4f54-85a3-124cce5dcf8a",
+  "id": "0d0ebbe8-88a1-4355-86bb-6ff61c78c15c",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

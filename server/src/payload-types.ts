@@ -532,6 +532,7 @@ export interface StreamSource {
   sourceId: string;
   eventId: string;
   platform: 'youtube' | 'iframe-official' | 'hls' | 'none';
+  videoId?: string | null;
   kind?: string | null;
   label?: string | null;
   name?: string | null;
@@ -1075,6 +1076,7 @@ export interface StreamSourcesSelect<T extends boolean = true> {
   sourceId?: T;
   eventId?: T;
   platform?: T;
+  videoId?: T;
   kind?: T;
   label?: T;
   name?: T;

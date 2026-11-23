@@ -20,6 +20,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"source_id" varchar NOT NULL,
   	"event_id" varchar NOT NULL,
   	"platform" "enum_stream_sources_platform" DEFAULT 'youtube' NOT NULL,
+  	"video_id" varchar,
   	"kind" varchar,
   	"label" varchar,
   	"name" varchar,
@@ -69,6 +70,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "day_bucket_idx" ON "live_quota" USING btree ("day","bucket");
   CREATE UNIQUE INDEX "stream_sources_source_id_idx" ON "stream_sources" USING btree ("source_id");
   CREATE INDEX "stream_sources_event_id_idx" ON "stream_sources" USING btree ("event_id");
+  CREATE INDEX "stream_sources_video_id_idx" ON "stream_sources" USING btree ("video_id");
   CREATE INDEX "stream_sources_updated_at_idx" ON "stream_sources" USING btree ("updated_at");
   CREATE INDEX "stream_sources_created_at_idx" ON "stream_sources" USING btree ("created_at");
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_live_quota_fk" FOREIGN KEY ("live_quota_id") REFERENCES "public"."live_quota"("id") ON DELETE cascade ON UPDATE no action;

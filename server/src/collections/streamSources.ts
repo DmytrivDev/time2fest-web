@@ -18,6 +18,7 @@ export const streamSources: CollectionConfig = {
       defaultValue: 'youtube',
       options: ['youtube', 'iframe-official', 'hls', 'none'],
     },
+    { name: 'videoId', type: 'text', index: true },
     { name: 'kind', type: 'text' },
     { name: 'label', type: 'text' },
     { name: 'name', type: 'text' },
