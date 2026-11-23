@@ -90,8 +90,22 @@ describe('test doors gating', () => {
     }
   });
 
-  it('SPEC-07 AC-68: the registry has 19 door rows (SPEC-08 W19: + site), and the production e2e list names exactly them', () => {
+  it('SPEC-12 AC-72: in production the live door answers exactly like an unknown path, whatever its body', async () => {
+    const dispatch = await buildDispatcher(depsFor('production', true));
+    const post = (p: string, body: string) =>
+      dispatch(new Request(`http://server.test${p}`, { method: 'POST', body, headers: { 'content-type': 'application/json', 'X-T2F-Test-Doors': '1' } }));
+    const unknown = await snapshot(await post('/api/nope', '{}'));
+    expect(unknown.status).toBe(404);
+    for (const body of ['{}', '{"door":"reset-live"}', '{"door":"viewers","people":12480,"countries":["UA"]}', '{"door":"video-status","videoId":"abcdefghijk","state":"live"}']) {
+      expect(await snapshot(await post('/api/_test/live', body)), body).toEqual(unknown);
+    }
+    expect(await snapshot(await post('/api/_test/video-status', '{}'))).toEqual(unknown);
+  });
+
+  it('SPEC-07 AC-68: the registry has 19 door rows (SPEC-08 W19: + site; SPEC-12 W38: video-status → live), and the production e2e list names exactly them', () => {
     expect(doorRegistry).toHaveLength(19);
+    expect(doorRegistry.find((d) => d.key === 'live')).toMatchObject({ method: 'POST', path: '/api/_test/live' });
+    expect(doorRegistry.some((d) => d.key === 'video-status')).toBe(false);
     const rows = doorRegistry.map((d) => `${d.method} ${d.path}`).sort();
     const e2e = fs.readFileSync(path.resolve(__dirname, '../e2e/doors-404.e2e.ts'), 'utf8');
     const listed = [...e2e.matchAll(/\['(GET|POST)', '(\/api\/_test\/[^']+)'\]/g)].map((m) => `${m[1]} ${m[2]}`).sort();

@@ -311,6 +311,8 @@ function createViewersWiring(
       cfg: live.cfg,
       // Real time, never the virtual clock: presence and the token's `exp` are checked by Centrifugo on real time.
       clock: realClock,
+      // The live test door's viewer fixtures (SPEC-12 W38) exist only in the `test` class.
+      ...(deps.env.class === 'test' ? { fixtures: true as const } : {}),
     }),
     token: { ...(signer !== undefined ? { signer } : {}), channel, clock: realClock },
   };

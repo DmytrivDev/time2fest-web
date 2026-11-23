@@ -19,7 +19,7 @@
 import { fail, LIVE_VIEWERS_CLASS, ok, type ApiResult, type RealtimeTokenValue, type SiteSwitches, type ViewerSummary } from '@time2fest/contracts';
 import type { LiveConfig } from '../domain/live/config';
 import { MS_PER_SECOND } from '../domain/realtime/token';
-import { aggregateViewers, viewerCatalogOrder, viewerCountry, type ViewerCatalogCountry } from '../domain/live/viewers';
+import { aggregateViewers, viewerCatalogOrder, viewerCountry, type PresenceEntry, type ViewerCatalogCountry } from '../domain/live/viewers';
 import type { Clock } from '../ports';
 import type { ChannelPublisher, SubscriptionSigner } from '../realtime/ports';
 import type { LiveLease, PresenceSource } from './ports';
@@ -47,6 +47,8 @@ export interface ViewersDeps {
   countries: () => Promise<ViewerCatalogCountry[]>;
   cfg: LiveConfig;
   clock: Clock;
+  /** `test` class only (SPEC-12 W38): the aggregator accepts fixture entries from the live test door. */
+  fixtures?: true;
 }
 
 export type ViewersRead = { ok: true; summary: ViewerSummary } | { ok: false };
@@ -57,6 +59,11 @@ export interface ViewersAggregator {
   /** One background pass: the lease holder reads presence and publishes. Returns whether it published. */
   tick(): Promise<boolean>;
   release(): Promise<void>;
+  /**
+   * `test` class only (`fixtures`): entries merged into every pass of this process (`null` drops them); the cached
+   * pass is dropped so the next read shows them. With fixtures set, a presence that does not answer reads as empty.
+   */
+  setFixture?(entries: readonly PresenceEntry[] | null): void;
 }
 
 /** The summary of a switch-free pass under `switches` (AC-62). */
@@ -69,6 +76,7 @@ export function createViewersAggregator(deps: ViewersDeps): ViewersAggregator {
   let pass: { summary: ViewerSummary; readAt: number } | undefined;
   let catalog: { ordered: ViewerCatalogCountry[]; readAt: number } | undefined;
   let inflight: Promise<ViewerSummary | undefined> | undefined;
+  let fixture: readonly PresenceEntry[] | null = null;
 
   async function ordered(now: number): Promise<ViewerCatalogCountry[]> {
     if (catalog === undefined || now - catalog.readAt >= CATALOG_TTL_MS) {
@@ -81,8 +89,10 @@ export function createViewersAggregator(deps: ViewersDeps): ViewersAggregator {
   async function refresh(): Promise<ViewerSummary | undefined> {
     const now = deps.clock.now();
     const read = await deps.presence.presence(deps.channel);
-    if (read.status !== 'ok') return undefined;
-    const summary = aggregateViewers(read.entries, ALL_ON, await ordered(now), new Date(now).toISOString(), deps.cfg);
+    if (read.status !== 'ok' && fixture === null) return undefined;
+    const live = read.status === 'ok' ? read.entries : [];
+    const entries = fixture === null ? live : [...live, ...fixture];
+    const summary = aggregateViewers(entries, ALL_ON, await ordered(now), new Date(now).toISOString(), deps.cfg);
     pass = { summary, readAt: now };
     return summary;
   }
@@ -95,7 +105,13 @@ export function createViewersAggregator(deps: ViewersDeps): ViewersAggregator {
     return inflight;
   }
 
+  const setFixture = (entries: readonly PresenceEntry[] | null): void => {
+    fixture = entries;
+    pass = undefined;
+  };
+
   return {
+    ...(deps.fixtures ? { setFixture } : {}),
     async current() {
       const fresh = pass !== undefined && deps.clock.now() - pass.readAt < VIEWERS_PASS_MS;
       const raw = fresh ? pass?.summary : ((await refreshOnce()) ?? pass?.summary);
