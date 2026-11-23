@@ -4,7 +4,7 @@
  * - `video-status` — sets one video's state in the YouTube fake (`/_control/videos` of `T2F_YOUTUBE_BASE_URL`);
  * - `quota` — the `queries` bucket of the current quota day is `used` (and stopped until the next day boundary when
  *   `exceeded`); the quota counters are replaced, not added to;
- * - `viewers` — fixture entries merged into the viewers aggregator of THIS process: `countries` each get
+ * - `viewers` — fixture entries that replace presence in the viewers aggregator of THIS process: `countries` each get
  *   `viewersMinPerCountry` entries, the rest of `people` are counted without a country (so the summary shows exactly
  *   `people` and the listed countries that have a catalog row);
  * - `hide` — the owner's hide action (journal row, version bump, `live.changed`), reason «test door»;

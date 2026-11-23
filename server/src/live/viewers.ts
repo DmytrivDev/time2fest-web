@@ -62,8 +62,8 @@ export interface ViewersAggregator {
   tick(): Promise<boolean>;
   release(): Promise<void>;
   /**
-   * `test` class only (`fixtures`): entries merged into every pass of this process (`null` drops them); the cached
-   * pass is dropped so the next read shows them. With fixtures set, a presence that does not answer reads as empty.
+   * `test` class only (`fixtures`): entries that replace the presence read in every pass of this process (`null`
+   * drops them); the cached pass is dropped so the next read shows them.
    */
   setFixture?(entries: readonly PresenceEntry[] | null): void;
 }
@@ -93,7 +93,8 @@ export function createViewersAggregator(deps: ViewersDeps): ViewersAggregator {
     const read = await deps.presence.presence(deps.channel);
     if (read.status !== 'ok' && fixture === null) return undefined;
     const live = read.status === 'ok' ? read.entries : [];
-    const entries = fixture === null ? live : [...live, ...fixture];
+    // A set fixture replaces presence: the boards' own browser must not add itself (exactly `people`, AC-76).
+    const entries = fixture === null ? live : fixture;
     const summary = aggregateViewers(entries, ALL_ON, await ordered(now), new Date(now).toISOString(), deps.cfg);
     pass = { summary, readAt: now };
     return summary;
