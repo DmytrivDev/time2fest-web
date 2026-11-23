@@ -6,6 +6,7 @@ import type { GlobalConfig } from 'payload';
 import { assertRegistry } from '../platform/registry';
 import { adminSettings } from '../globals/adminSettings';
 import { clockState } from '../globals/clockState';
+import { liveState } from '../globals/liveState';
 import { moderationSettings } from '../globals/moderationSettings';
 import { siteState } from '../globals/siteState';
 import { unattendedState } from '../globals/unattendedState';
@@ -18,6 +19,7 @@ export interface GlobalRow {
 export const globalRegistry: readonly GlobalRow[] = [
   { key: 'admin-settings', global: adminSettings },
   { key: 'clock-state', global: clockState },
+  { key: 'live-state', global: liveState },
   { key: 'moderation-settings', global: moderationSettings },
   { key: 'site-state', global: siteState },
   { key: 'unattended-state', global: unattendedState },
