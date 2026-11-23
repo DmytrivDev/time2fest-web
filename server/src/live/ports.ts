@@ -1,15 +1,22 @@
 /**
  * Ports of the live-air capability (SPEC-12), ring 2. They name the conversation, never a vendor type.
- * `LiveStore`, `QuotaStore`, `PresenceSource` and `LiveLease` are filled in by the adapters of later phases.
+ * `PresenceSource` is filled in by a later phase (S9).
  */
+import type { StreamStatus } from '@time2fest/contracts';
+import type { ZoneLive, StoredSource } from '../domain/live/chain';
 import type { QuotaBucket } from '../domain/live/config';
+import type { LiveEvent } from '../domain/live/moment';
+import type { QuotaCounterKey, QuotaState } from '../domain/live/quota';
 import type { YoutubeVideoState } from '../domain/live/status';
+import type { Tx } from '../events/ports';
+
+export type { Tx };
 
 export type VideoStatusError = 'quota-exceeded' | 'unavailable' | 'invalid';
 
 export type VideoStatusResult = { items: YoutubeVideoState[] } | { error: VideoStatusError };
 
-/** One `videos.list` conversation: at most 50 ids; an id missing from `items` is gone. */
+/** One `videos.list` conversation: at most B ids; an id missing from `items` is gone. */
 export interface VideoStatusSource {
   list(ids: readonly string[]): Promise<VideoStatusResult>;
 }
@@ -19,21 +26,88 @@ export interface SearchSource {
   search(): Promise<{ ok: true } | { error: VideoStatusError }>;
 }
 
+/**
+ * Quota counters per quota day (AC-31 … AC-35). Every write is one atomic statement, so calls from several
+ * instances are each counted once.
+ */
 export interface QuotaStore {
-  charge(day: string, bucket: QuotaBucket | 'ad-hoc', units: number): Promise<number>;
-  markExceeded(day: string, bucket: QuotaBucket): Promise<void>;
-  mark80(day: string, bucket: QuotaBucket): Promise<boolean>;
+  /** The counters of one quota day (an absent counter = nothing used yet). */
+  read(day: string): Promise<QuotaState>;
+  /** Adds `units` (≥1) to the counter and returns its new `used`. */
+  charge(day: string, key: QuotaCounterKey, units: number): Promise<number>;
+  /** Stops the bucket until `until`; true only for the call that set (or extended) the stop. */
+  markExceeded(day: string, bucket: QuotaBucket, until: number): Promise<boolean>;
+  /** Records the day's 80 % alarm; true only for the first call of the day. */
+  mark80(day: string, bucket: QuotaBucket, at: number): Promise<boolean>;
+}
+
+/** A `stream-sources` row as the live services read it (times as epoch ms). */
+export interface LiveSource extends StoredSource {
+  nextOffWindowCheckAt?: number | null;
+  deadReason?: string | null;
+}
+
+/** The YouTube fields of one source as fetched (AC-73: each carries `ytFetchedAt`). */
+export type YoutubeFields = Omit<YoutubeVideoState, 'videoId'>;
+
+/** The result of one check (or of the retention clearing) written onto one source. */
+export interface SourceCheck {
+  sourceId: string;
+  /** Fetched fields with their fetch time; `null` clears every YouTube field and `ytFetchedAt` (AC-73). */
+  youtube: { fields: YoutubeFields; fetchedAt: number } | null;
+  /** The poller's status; absent while an `override` holds the source (AC-9). */
+  verdict?: { status: StreamStatus | null; startsAt?: number | null; dead: boolean; deadReason: string | null };
+  /** A successful status check at this time; absent leaves `lastChecked` as it is. */
+  lastChecked?: number;
+  /** Absent leaves the stored value. */
+  nextOffWindowCheckAt?: number | null;
+}
+
+/** A queued ad-hoc check (a player report or a replace, AC-43). */
+export interface PendingCheck {
+  sourceId: string;
+  at: number;
+}
+
+export interface LiveStateRecord {
+  version: number;
+  at: number | null;
+  lastFannedOut: number;
+  zoneLive: ZoneLive;
+  pendingChecks: PendingCheck[];
 }
 
 export interface LiveStore {
-  readonly kind: 'live-store';
+  /** Runs `fn` in one transaction (joining `tx`'s when given); a throw rolls it back. */
+  inTransaction<T>(tx: Tx | null, fn: (tx: Tx) => Promise<T>): Promise<T>;
+  /** Stored sources, every one or those of the given events / source ids. */
+  sources(filter?: { eventIds?: readonly string[]; sourceIds?: readonly string[] }, tx?: Tx): Promise<LiveSource[]>;
+  /** The live state; inside `tx` it first takes the live lock (held until `tx` ends). */
+  state(tx?: Tx): Promise<LiveStateRecord>;
+  /** Writes check results in `tx`. */
+  applyChecks(tx: Tx, checks: readonly SourceCheck[]): Promise<void>;
+  /** `version + 1` (and `at` = now) under the live lock in `tx`; returns the new version. */
+  bumpVersion(tx: Tx): Promise<number>;
+  /** Queues an ad-hoc check of a source (a source already queued stays queued once). */
+  addPendingCheck(check: PendingCheck): Promise<void>;
+  /** Takes every queued check and empties the queue, atomically (one instance gets each). */
+  claimPendingChecks(): Promise<PendingCheck[]>;
+}
+
+/** The events the live air knows: their effective moments and the `hidden` correction (AC-10, AC-58). */
+export interface LiveEventSource {
+  events(): Promise<LiveEvent[]>;
 }
 
 export interface PresenceSource {
   presence(channel: string): Promise<number>;
 }
 
+export type LiveLeaseName = 'live-poller' | 'live-viewers';
+
+/** One holder per lease name across every instance (Postgres lease rows, [П-5]). */
 export interface LiveLease {
-  acquire(name: 'live-poller' | 'live-viewers', ttlMs: number): Promise<boolean>;
-  release(name: 'live-poller' | 'live-viewers'): Promise<void>;
+  /** Takes or renews the lease for `ttlMs`; false while another instance holds it. */
+  acquire(name: LiveLeaseName, ttlMs: number): Promise<boolean>;
+  release(name: LiveLeaseName): Promise<void>;
 }

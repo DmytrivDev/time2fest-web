@@ -17,6 +17,9 @@ import type { ProviderLayer } from '../moderation/providers';
 import type { ModerationSettingsStore, SpendCounter } from '../moderation/spend';
 import type { TranslationService } from '../moderation/translate';
 import type { VerdictService } from '../moderation/verdict';
+import type { LiveConfig } from '../domain/live/config';
+import type { CallerContext } from '../domain/live/quota';
+import type { LiveEventSource, LiveLease, LiveStore, QuotaStore, SearchSource, VideoStatusSource } from '../live/ports';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
@@ -93,6 +96,20 @@ export interface SiteWiring extends SiteDeps {
   resetForTests?: () => Promise<void>;
 }
 
+/**
+ * The live air (SPEC-12): stores, lease, configuration and, only with `T2F_YOUTUBE_BASE_URL`, the status source the
+ * poller calls (without it no poller runs and statuses stay as imported).
+ */
+export interface LiveWiring {
+  store: LiveStore;
+  quota: QuotaStore;
+  lease: LiveLease;
+  events: LiveEventSource;
+  cfg: LiveConfig;
+  caller: CallerContext;
+  statuses?: VideoStatusSource & SearchSource;
+}
+
 /** What the composition root provides to route handlers. Every field is a port; no raw Payload. */
 export interface Deps {
   env: AppEnv;
@@ -124,6 +141,8 @@ export interface Deps {
   rebuild?: () => RebuildDeps;
   /** The site state service and snapshot readers (SPEC-08); read through `siteOf`. */
   site?: SiteWiring;
+  /** The live air (SPEC-12); read through `liveOf`. */
+  live?: LiveWiring;
   /** Whether the database and the fast store answer (SPEC-13a AC-5/AC-6). */
   readiness?: ReadinessProbe;
   /** Who a realtime token is for (C5): no session in production until SPEC-10; the doors' resolver in tests. */
