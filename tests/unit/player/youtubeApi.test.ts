@@ -73,3 +73,33 @@ describe('createYouTubePlayer: автозапуск', () => {
     expect(created[0]!.calls).toEqual([]);
   });
 });
+
+describe('createYouTubePlayer: вбудовування (AC-49)', () => {
+  const embed = async (opts: Parameters<typeof createYouTubePlayer>[1]) => {
+    const host = document.createElement('div');
+    const mount = document.createElement('div');
+    host.appendChild(mount);
+    await createYouTubePlayer(mount, opts);
+    return host.querySelector('iframe')!;
+  };
+
+  it('referrerpolicy strict-origin-when-cross-origin, без noreferrer, origin і enablejsapi у src', async () => {
+    const iframe = await embed({ videoId: 'abc', origin: 'https://time2fest.com' });
+    expect(iframe.getAttribute('referrerpolicy')).toBe('strict-origin-when-cross-origin');
+    expect(iframe.getAttribute('rel') ?? '').not.toContain('noreferrer');
+    const url = new URL(iframe.src);
+    expect(url.pathname).toBe('/embed/abc');
+    expect(url.searchParams.get('origin')).toBe('https://time2fest.com');
+    expect(url.searchParams.get('enablejsapi')).toBe('1');
+    expect(url.searchParams.get('playsinline')).toBe('1');
+    expect(url.searchParams.get('mute')).toBe('1');
+    expect(url.searchParams.get('autoplay')).toBe('1');
+    expect(iframe.width).toBe('100%');
+    expect(iframe.height).toBe('100%');
+  });
+
+  it('autoplay:false → autoplay=0 у src', async () => {
+    const iframe = await embed({ videoId: 'abc', autoplay: false });
+    expect(new URL(iframe.src).searchParams.get('autoplay')).toBe('0');
+  });
+});

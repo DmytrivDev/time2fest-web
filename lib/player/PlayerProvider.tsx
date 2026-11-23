@@ -8,8 +8,11 @@
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { emit } from '@/lib/events/bus';
 import { useNow, useTimeSource } from '@/lib/time/TimeProvider';
+import type { SourceErrorCode } from '@time2fest/contracts';
+import { getService } from '@/lib/api/services';
 import { advanceChain, consentEventFor, selectSource, type ChainCause } from './chain';
 import type { ChainSelection, PlayerSlotId, PlayerSource, PlayerSourceSwitched } from './types';
+import { shouldReport } from './sourceErrors';
 import { createYouTubePlayer, YTState, type YouTubePlayerHandle } from './youtubeApi';
 
 const SOUND_KEY = 't2f:session:soundEnabled';
@@ -171,6 +174,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (consent) emit('player:facebook-consent-required', consent);
   }, [chain, selection, now]);
 
+  const lastErrorReport = useRef(new Map<string, number>());
+
+  /** Звіт власнику про помилку джерела (AC-41): fire-and-forget, ≤1 на 30 с на джерело. */
+  const reportError = useCallback(
+    (code: number) => {
+      const { chain: c, selection: sel } = live.current;
+      if (!c || !sel || sel.kind !== 'source') return;
+      const t = Date.now(); // стіна, не годинник сайту: машина часу не скидає ліміт
+      if (!shouldReport(code, sel.source.id, t, lastErrorReport.current)) return;
+      lastErrorReport.current.set(sel.source.id, t);
+      void getService('live')
+        .reportSourceError({ eventId: c.eventId, sourceId: sel.source.id, code: code as SourceErrorCode })
+        .catch(() => undefined);
+    },
+    [],
+  );
+
   const handleBreak = useCallback(
     (cause: ChainCause) => {
       const { chain: c, failed: f, facebookConsent: fbc, selection: sel } = live.current;
@@ -239,7 +259,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           else if (state === YTState.PAUSED) setStatus('paused');
           else if (state === YTState.ENDED) handleBreak({ type: 'ended' });
         },
-        onError: (code) => handleBreak({ type: 'error', code }),
+        onError: (code) => {
+          reportError(code);
+          handleBreak({ type: 'error', code });
+        },
         onAutoplayBlocked: () => {
           const h = handleRef.current;
           if (h && !h.isMuted()) {
@@ -266,7 +289,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         creatingRef.current = false;
       });
-  }, [hostElement, videoId, handleBreak]);
+  }, [hostElement, videoId, handleBreak, reportError]);
 
   // Сторінка без плеєра (графік, паспорт, рейтинг, кабінет, «Підтримати», «Країни й міста»): слоту `main` немає, хост
   // схований — але iframe жив і грав зі звуком (правка власника 2026-11-10). Без слоту — пауза; слот повернувся

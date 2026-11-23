@@ -138,6 +138,35 @@ export interface CreatePlayerOptions {
   handlers?: YouTubePlayerHandlers;
 }
 
+export interface EmbedIframeOptions {
+  videoId?: string;
+  origin: string;
+  autoplay: boolean;
+}
+
+/** iframe плеєра: `referrerpolicy="strict-origin-when-cross-origin"` (без noreferrer), `origin` і `enablejsapi` у src. */
+export function createEmbedIframe(o: EmbedIframeOptions): HTMLIFrameElement {
+  const params = new URLSearchParams({
+    enablejsapi: '1',
+    origin: o.origin,
+    playsinline: '1',
+    mute: '1',
+    rel: '0',
+    autoplay: o.autoplay ? '1' : '0',
+  });
+  const el = document.createElement('iframe');
+  el.src = `${PLAYER_HOST}/embed/${o.videoId ? encodeURIComponent(o.videoId) : ''}?${params.toString()}`;
+  el.referrerPolicy = 'strict-origin-when-cross-origin';
+  el.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+  el.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+  el.allowFullscreen = true;
+  el.width = '100%';
+  el.height = '100%';
+  el.style.border = '0';
+  return el;
+}
+
+
 /**
  * Створює один `YT.Player` у `mount`. `mount` має бути вузлом, яким не керує React:
  * API замінює його на iframe.
@@ -169,7 +198,19 @@ export async function createYouTubePlayer(mount: HTMLElement, opts: CreatePlayer
     if (force || !Number.isFinite(cur) || Math.abs(cur - pos.seconds) > DRIFT_SEC) player.seekTo(pos.seconds, true);
   };
 
-  const player = new YT.Player(mount, {
+  // Вбудовування через власний iframe (задокументована форма YT.Player(iframe)): Referer передається політикою
+  // `strict-origin-when-cross-origin`, `origin` — у src (AC-49). Коробка та сама: 100% × 100%.
+  const iframe = createEmbedIframe({
+    videoId: opts.videoId,
+    origin: opts.origin ?? window.location.origin,
+    autoplay: opts.autoplay !== false,
+  });
+  if (mount.parentNode) mount.replaceWith(iframe);
+  else mount.appendChild(iframe);
+
+  // `videoId`/`playerVars`/`host` для готового iframe YouTube ігнорує (береться з src); лишені для підміни в тестах
+  // і щоб опис плеєра не розходився з src.
+  const player = new YT.Player(iframe, {
     width: '100%',
     height: '100%',
     host: PLAYER_HOST,
