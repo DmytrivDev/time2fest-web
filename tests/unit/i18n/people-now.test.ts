@@ -1,5 +1,4 @@
 import { createTranslator } from 'next-intl';
-import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import uk from '@/messages/uk.json';
 import en from '@/messages/en.json';
@@ -32,19 +31,13 @@ describe('AC-65: ключі player.peopleNow / peopleNowShort', () => {
       expect(t('peopleNow', { count: 2 })).toContain('Time2Fest');
     });
 
-    it(`${lang}: різниця ключів проти master — лише два додані, лише наявні старі прибрано`, () => {
-      let base: string;
-      try {
-        base = execFileSync('git', ['show', `master:messages/${lang}.json`], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
-      } catch {
-        return; // немає гілки master (чиста копія) — перевірка недоступна
-      }
-      const before = new Set(keys(JSON.parse(base)));
-      const after = new Set(keys(row.messages as unknown as Tree));
-      const added = [...after].filter((k) => !before.has(k)).sort();
-      const removed = [...before].filter((k) => !after.has(k)).sort();
-      expect(added).toEqual(['player.peopleNow', 'player.peopleNowShort']);
-      expect(removed).toEqual(lang === 'uk' ? ['player.watchersFrom', 'player.watchersShort'] : []);
+    it(`${lang}: ключі рядка біля плеєра є, старих ключів немає (не залежить від гілки)`, () => {
+      const all = new Set(keys(row.messages as unknown as Tree));
+      expect(all.has('player.peopleNow')).toBe(true);
+      expect(all.has('player.peopleNowShort')).toBe(true);
+      expect(all.has('player.watchersFrom')).toBe(false);
+      expect(all.has('player.watchersShort')).toBe(false);
+      expect(all.has('nav.viewersFrom')).toBe(true);
     });
   }
 
