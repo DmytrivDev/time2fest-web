@@ -9,8 +9,10 @@ export interface PublicRoute {
   staleMs: number;
   /** R2 copy key (relative to the environment prefix). */
   r2Copy: string;
-  /** R2 red-button key. */
-  redButton: string;
+  /** Cache-Tag the edge stores this answer under; the server purges by it. Never sent to clients. */
+  cacheTag: string;
+  /** R2 red-button key; absent → the edge never reads a red button for this address. */
+  redButton?: string;
 }
 
 export const PUBLIC_ROUTES: readonly PublicRoute[] = [
@@ -21,6 +23,7 @@ export const PUBLIC_ROUTES: readonly PublicRoute[] = [
     freshMs: 10_000,
     staleMs: 30_000,
     r2Copy: 'site/latest.json',
+    cacheTag: 't2f-site-state',
     redButton: 'site/red-button.json',
   },
 ];
