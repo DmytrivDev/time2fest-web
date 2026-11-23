@@ -2754,6 +2754,114 @@
         "title": "Nouvel An en Suède : Stockholm | Time2Fest",
         "description": "À minuit, Skansen entend « Ring, klocka, ring » et la Suède sabre le champagne : fruits de mer, feux d’artifice et sirènes des navires pour fêter 2027."
       }
+    },
+    "AD": {
+      "uk": {
+        "title": "Новий рік в Андоррі: Андорра-ла-Велья | Time2Fest",
+        "description": "Андорра зустрічає 2027 рік о 23:00 UTC: дванадцять виноградин під удари годинника, спуск лижників із вогнями в Сольдеу й різдвяне містечко в столиці."
+      },
+      "en": {
+        "title": "New Year in Andorra: Andorra la Vella | Time2Fest",
+        "description": "Andorra greets 2027 at 23:00 UTC with twelve grapes on the midnight chimes, skiers with lights on the slopes of Soldeu and a Christmas village in the capital."
+      },
+      "es": {
+        "title": "Año Nuevo en Andorra: Andorra la Vieja | Time2Fest",
+        "description": "Andorra recibe 2027 a las 23:00 UTC con las doce uvas en cada campanada, esquiadores con antorchas en las pistas de Soldeu y un pueblo navideño en la capital."
+      },
+      "fr": {
+        "title": "Nouvel An en Andorre : Andorre-la-Vieille | Time2Fest",
+        "description": "L’Andorre fête 2027 à 23 h UTC : douze grains de raisin sur les coups de minuit, skieurs aux flambeaux à Soldeu et village de Noël dans la capitale."
+      }
+    },
+    "AL": {
+      "uk": {
+        "title": "Новий рік в Албанії: Тирана | Time2Fest",
+        "description": "Індичка з першешем, баклава й салют над площею Скандербега в Тирані: Албанія зустрічає 2027 рік опівночі, о 23:00 UTC, з концертом просто неба."
+      },
+      "en": {
+        "title": "New Year in Albania: Tirana | Time2Fest",
+        "description": "Turkey with përshesh, baklava and fireworks over Skanderbeg Square in Tirana: Albania welcomes 2027 at midnight, 23:00 UTC, with an open-air concert."
+      },
+      "es": {
+        "title": "Año Nuevo en Albania: Tirana | Time2Fest",
+        "description": "Pavo con përshesh, baklava y fuegos sobre la plaza Skanderbeg de Tirana: Albania recibe 2027 a medianoche, a las 23:00 UTC, con un concierto gratis."
+      },
+      "fr": {
+        "title": "Nouvel An en Albanie : Tirana | Time2Fest",
+        "description": "Dinde au përshesh, baklava et feu d’artifice place Skanderbeg à Tirana : l’Albanie accueille 2027 à minuit, soit 23 h UTC, avec un concert en plein air."
+      }
+    },
+    "AT": {
+      "uk": {
+        "title": "Новий рік в Австрії: Відень | Time2Fest",
+        "description": "Австрія зустрічає 2027 рік о 23:00 UTC під дзвін Пуммерін і вальс «Блакитний Дунай», а Відень святкує на Сильвестровій стежці зі сценами в центрі."
+      },
+      "en": {
+        "title": "New Year in Austria: Vienna | Time2Fest",
+        "description": "Austria rings in 2027 at 23:00 UTC with the Pummerin bell and a Blue Danube waltz, while Vienna parties on the Silvesterpfad with stages across the old town."
+      },
+      "es": {
+        "title": "Año Nuevo en Austria: Viena | Time2Fest",
+        "description": "Austria recibe 2027 a las 23:00 UTC con la campana Pummerin y el vals «El Danubio azul», y Viena lo festeja en el Silvesterpfad con escenarios en el centro."
+      },
+      "fr": {
+        "title": "Nouvel An en Autriche : Vienne | Time2Fest",
+        "description": "L’Autriche accueille 2027 à 23 h UTC avec la cloche Pummerin et la valse du Beau Danube bleu, tandis que Vienne fait la fête sur le Silvesterpfad."
+      }
+    },
+    "BE": {
+      "uk": {
+        "title": "Новий рік у Бельгії: Брюссель | Time2Fest",
+        "description": "Опівночі 2027 року (23:00 UTC) Бельгія цілується й підіймає келихи, а Брюссель запускає салют і лазерне шоу на кулях Атоміума. Вранці — листи хрещеним."
+      },
+      "en": {
+        "title": "New Year in Belgium: Brussels | Time2Fest",
+        "description": "At midnight in 2027 (23:00 UTC) Belgium kisses and raises a glass, while Brussels lights lasers and fireworks at the Atomium. Next morning: rhyming letters."
+      },
+      "es": {
+        "title": "Año Nuevo en Bélgica: Bruselas | Time2Fest",
+        "description": "A medianoche de 2027 (23:00 UTC) Bélgica brinda y se besa, y Bruselas enciende láseres y fuegos artificiales en el Atomium. Por la mañana, cartas en verso."
+      },
+      "fr": {
+        "title": "Nouvel An en Belgique : Bruxelles | Time2Fest",
+        "description": "À minuit en 2027 (23 h UTC), la Belgique s’embrasse et trinque, et Bruxelles allume lasers et feu d’artifice à l’Atomium. Le matin, des lettres aux parrains."
+      }
+    },
+    "DK": {
+      "uk": {
+        "title": "Новий рік у Данії: Копенгаген | Time2Fest",
+        "description": "Данія зустрічає 2027 рік о 23:00 UTC стрибком зі стільця під бій годинника Ратуші, мигдалевим кранселаге з шампанським і салютом над Копенгагеном."
+      },
+      "en": {
+        "title": "New Year in Denmark: Copenhagen | Time2Fest",
+        "description": "Denmark meets 2027 at 23:00 UTC with a leap off a chair as the City Hall clock strikes, almond kransekage with champagne and fireworks over Copenhagen."
+      },
+      "es": {
+        "title": "Año Nuevo en Dinamarca: Copenhague | Time2Fest",
+        "description": "Dinamarca recibe 2027 a las 23:00 UTC saltando de una silla con el reloj del Ayuntamiento, kransekage de almendra con champán y fuegos sobre Copenhague."
+      },
+      "fr": {
+        "title": "Nouvel An au Danemark : Copenhague | Time2Fest",
+        "description": "Le Danemark fête 2027 à 23 h UTC : un saut depuis une chaise au son de l’horloge de l’Hôtel-de-Ville, kransekage et champagne, feux sur Copenhague."
+      }
+    },
+    "GQ": {
+      "uk": {
+        "title": "Новий рік в Екваторіальній Гвінеї: Малабо | Time2Fest",
+        "description": "Екваторіальна Гвінея зустрічає 2027 рік о 23:00 UTC: подячна меса, вечеря з родиною, а 1 січня Малабо танцює на вулицях кварталу Лос-Анхелес."
+      },
+      "en": {
+        "title": "New Year in Equatorial Guinea: Malabo | Time2Fest",
+        "description": "Equatorial Guinea greets 2027 at 23:00 UTC: a thanksgiving mass, dinner with family, and on 1 January Malabo dances in the streets of Los Ángeles."
+      },
+      "es": {
+        "title": "Año Nuevo en Guinea Ecuatorial: Malabo | Time2Fest",
+        "description": "Guinea Ecuatorial recibe 2027 a las 23:00 UTC: misa de acción de gracias, cena en familia y, el 1 de enero, Malabo baila en las calles de Los Ángeles."
+      },
+      "fr": {
+        "title": "Nouvel An en Guinée équatoriale : Malabo | Time2Fest",
+        "description": "La Guinée équatoriale fête 2027 à 23 h UTC : messe d’action de grâce, dîner en famille, puis le 1er janvier Malabo danse dans les rues de Los Ángeles."
+      }
     }
   }
 }

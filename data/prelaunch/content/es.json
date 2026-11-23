@@ -4686,5 +4686,173 @@
       "description": "A medianoche suena «Ring, klocka, ring» en Skansen y Suecia descorcha el champán: así recibe 2027, con cena de marisco, fuegos y sirenas de barcos."
     },
     "kit": "se"
+  },
+  "AD": {
+    "text": "Doce uvas, una por cada campanada de medianoche: en Andorra, quien consigue comérselas todas tendrá un año feliz. Justo después se brinda con vino espumoso. La fiesta llega en plena temporada de esquí: para recibir 2026 estaban abiertas todas las pistas de las tres estaciones del país, y la tarde del 31 de diciembre los esquiadores bajaron la pista de Soldeu con luces.\n\nEl 5 de enero la cabalgata de Reyes va de Andorra la Vieja, la capital más alta de Europa (1023 metros), a Escaldes-Engordany: en 2026 llevó 18 carrozas y unos 500 participantes. El pueblo de Navidad abre hasta ese día, y el 1 de enero de 2026 la orquesta nacional ofreció en el Centro de Congresos un concierto de Año Nuevo con valses de los Strauss.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Una uva por campanada",
+        "text": "A medianoche, cómete una uva con cada campanada y luego brinda con espumoso para tener un año feliz."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Bajada de antorchas",
+        "text": "El año pasado, la tarde del 31 de diciembre, los esquiadores de Soldeu bajaron una pista nevada con luces y luego tomaron chocolate caliente."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Valses de Año Nuevo",
+        "text": "El 1 de enero de 2026 la orquesta nacional de Andorra tocó en la capital el concierto «París–Viena» con valses de los Strauss."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Andorra: Andorra la Vieja | Time2Fest",
+      "description": "Andorra recibe 2027 a las 23:00 UTC con las doce uvas en cada campanada, esquiadores con antorchas en las pistas de Soldeu y un pueblo navideño en la capital."
+    },
+    "kit": "ad"
+  },
+  "AL": {
+    "text": "El pavo asado con përshesh, pan desmenuzado empapado en caldo, es la estrella de la cena albanesa de Año Nuevo, que empieza hacia las nueve. El baklava se hornea días antes y las copas se llenan de raki o vino local: una mesa llena es un deseo de abundancia para todo el año. Cuando las fiestas religiosas estaban prohibidas, fue la noche del 1 de enero la que se quedó con el árbol adornado, que aún suele llamarse árbol de Año Nuevo, y con los regalos del Abuelo del Año Nuevo; por eso sigue siendo la gran fiesta familiar del invierno.\n\nGente de todo el país acude a la plaza Skanderbeg de Tirana para un concierto al aire libre. A medianoche los fuegos artificiales estallan sobre la plaza, todos se abrazan y se desean «Gëzuar Vitin e Ri!». El 1 y el 2 de enero son festivos, así que la fiesta sigue dos días más.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Pavo con përshesh",
+        "text": "El plato estrella de la mesa de Año Nuevo es el pavo asado con përshesh, pan empapado en caldo de pavo. De postre, baklava preparado con antelación."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "El árbol de Año Nuevo",
+        "text": "En Albania el árbol adornado suele llamarse árbol de Año Nuevo, y los regalos los trae Babagjyshi, el Abuelo del Año Nuevo."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Medianoche en la plaza Skanderbeg",
+        "text": "Un concierto al aire libre en la plaza principal de Tirana recibe la medianoche con fuegos: hora de abrazarse y desear «Gëzuar Vitin e Ri!»."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Albania: Tirana | Time2Fest",
+      "description": "Pavo con përshesh, baklava y fuegos sobre la plaza Skanderbeg de Tirana: Albania recibe 2027 a medianoche, a las 23:00 UTC, con un concierto gratis."
+    },
+    "kit": "al"
+  },
+  "AT": {
+    "text": "A medianoche suena en toda Austria una sola campana: la Pummerin de la catedral de San Esteban de Viena, que solo repica en ocasiones especiales. La radio y la televisión transmiten su voz y, a continuación, el vals «El Danubio azul», que muchos bailan en medio del salón o en la calle. Los amuletos se compran con antelación: cerditos, deshollinadores, herraduras y matamoscas. Y la mañana del 1 de enero, desde la Gran Sala del Musikverein, suena el Concierto de Año Nuevo de la Filarmónica de Viena, que termina con el público aplaudiendo al compás de la Marcha Radetzky.\n\nMientras tanto, los vieneses salen al Silvesterpfad, el sendero de Nochevieja: los escenarios de Am Hof, el Graben y la plaza de San Esteban tocan desde las dos de la tarde hasta las dos de la madrugada. Aquí no se lanzan cohetes: están prohibidos en la ciudad, y los fuegos oficiales se suprimieron por el bien de las personas, los animales y el medio ambiente. En su lugar, un beso a medianoche y galletas con forma de pez para la suerte, que se empiezan a comer por la aleta.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "La campana y luego el vals",
+        "text": "Cuando suene la Pummerin, alza la copa y, con los primeros compases de «El Danubio azul», saca a alguien a bailar el vals: así recibe el año todo el país."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Un amuleto del puesto de Año Nuevo",
+        "text": "Del 27 al 31 de diciembre, los vieneses compran en los puestos de toda la ciudad amuletos —un cerdito, un deshollinador, una herradura o un matamoscas— y se los regalan para dar suerte."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Un concierto el 1 de enero",
+        "text": "A las 11:15 el Concierto de Año Nuevo de la Filarmónica de Viena se proyecta en pantallas en la plaza de San Esteban y junto a la noria del Prater; en la Marcha Radetzky, aplaude al compás."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Austria: Viena | Time2Fest",
+      "description": "Austria recibe 2027 a las 23:00 UTC con la campana Pummerin y el vals «El Danubio azul», y Viena lo festeja en el Silvesterpfad con escenarios en el centro."
+    },
+    "kit": "at"
+  },
+  "BE": {
+    "text": "Una carta en verso sobre papel adornado con querubines dorados: así saludan los niños flamencos a sus padres y padrinos la mañana del 1 de enero, y a cambio reciben un regalo o algo de dinero. La víspera, la noche de San Silvestre, los belgas la pasan más a menudo con amigos que en familia: ven a un humorista repasar el año en la televisión y, a medianoche, se besan, se desean suerte y alzan una copa de espumoso, también por quienes no están.\n\nAl pie del Atomium, en Bruselas, pinchan DJ desde las nueve de la noche; veinte minutos antes de medianoche un espectáculo láser ilumina las enormes esferas y, a las doce en punto, los fuegos artificiales de la ciudad estallan sobre ellas. La entrada es libre y, pasada la medianoche, el transporte público es gratuito hasta la mañana.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "letter",
+        "title": "Una carta para los padrinos",
+        "text": "Escribe una carta de Año Nuevo en verso sobre papel festivo y léela en voz alta la mañana del 1 de enero a tus padres o padrinos: así lo hacen los niños flamencos, que reciben un regalo a cambio."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Una canción en la puerta",
+        "text": "El 31 de diciembre, en la Campine y el Hageland, los niños van de puerta en puerta cantando «Nieuwejaarke zoete»: ten listos unos caramelos o unas monedas."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el Atomium",
+        "text": "Los bruselenses toman la línea 6 del metro hasta el Atomium: a las 23:40 empieza el espectáculo láser sobre las esferas, a medianoche los fuegos, y después el transporte público lleva a todos a casa gratis."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Bélgica: Bruselas | Time2Fest",
+      "description": "A medianoche de 2027 (23:00 UTC) Bélgica brinda y se besa, y Bruselas enciende láseres y fuegos artificiales en el Atomium. Por la mañana, cartas en verso."
+    },
+    "kit": "be"
+  },
+  "DK": {
+    "text": "Justo antes de la medianoche, los daneses se suben a una silla y, con la última campanada, saltan todos a la vez para entrar de un brinco en el año nuevo. La velada empieza a las seis, con el discurso de Año Nuevo del rey, una tradición que se remonta al brindis de Cristián IX en la década de 1880. Luego llega la cena de fiesta, con bacalao cocido o col rizada estofada, y al final el kransekage, una torre de anillos de almendra, con una copa de champán.\n\nCopenhague cuenta los últimos segundos en la plaza del Ayuntamiento, al ritmo del reloj de la ciudad, y en cuanto suenan las campanas el cielo se enciende. Los fuegos los lanza la propia gente, algo permitido solo el 31 de diciembre y el 1 de enero. Y la primera mañana del año los más valientes se bañan en el agua helada del puerto.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Un salto al año nuevo",
+        "text": "Antes de la medianoche súbete a una silla con todos los que te rodean y salta con la campanada: así se entra en el año nuevo en Dinamarca."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Kransekage y champán",
+        "text": "A medianoche, parte un anillo de kransekage, la torta de almendra y mazapán, y acompáñalo con champán: así termina la cena de Año Nuevo danesa."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre los lagos",
+        "text": "Para ver cómo se ilumina toda la ciudad, los copenhaguenses se reúnen en el puente de la Reina Luisa, sobre los lagos: desde allí el cielo se abre en todas direcciones."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Dinamarca: Copenhague | Time2Fest",
+      "description": "Dinamarca recibe 2027 a las 23:00 UTC saltando de una silla con el reloj del Ayuntamiento, kransekage de almendra con champán y fuegos sobre Copenhague."
+    },
+    "kit": "dk"
+  },
+  "GQ": {
+    "text": "Primero la misa, luego la cena y solo después el baile: así se ordena la Nochevieja en Guinea Ecuatorial. Las misas del 31 de diciembre y del 1 de enero están entre las más importantes del año: los creyentes acuden a una misa de acción de gracias por el año que se va. De allí las familias pasan a la mesa y, tras la cena, llega la parte profana de la noche: fiestas, discotecas o un simple paseo por calles adornadas con luces.\n\nMalabo, la ciudad más antigua del país, en la isla de Bioko, dedica el primer día del año al barrio de Los Ángeles. Los jóvenes cortan las calles, sacan los altavoces a la acera y bailan al aire libre casi hasta la tarde, con ropa deliberadamente extravagante y canciones de músicos ecuatoguineanos. Dicen que todo empezó en la calle La Ronda; hoy Los Ángeles es el lugar más concurrido de la ciudad cada 1 de enero.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Misa de acción de gracias",
+        "text": "Muchas familias despiden el año en la iglesia: primero dan gracias por los doce meses vividos y solo después se sientan a la cena de fiesta."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Abalá y carne de monte",
+        "text": "En fiestas se prepara abalá —malanga blanca rallada envuelta en hoja de plátano—, carne de monte con aceite de palma y djacató, parecido a una berenjena pequeña. Algunos viajan a su pueblo para reunirse con la familia."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Baile en Los Ángeles",
+        "text": "El 1 de enero los jóvenes de Malabo se reúnen en el barrio de Los Ángeles: altavoces en la acera, baile en las calles cortadas, ropa llamativa y música local."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Guinea Ecuatorial: Malabo | Time2Fest",
+      "description": "Guinea Ecuatorial recibe 2027 a las 23:00 UTC: misa de acción de gracias, cena en familia y, el 1 de enero, Malabo baila en las calles de Los Ángeles."
+    },
+    "kit": "gq"
   }
 }

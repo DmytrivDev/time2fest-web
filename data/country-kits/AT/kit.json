@@ -1,0 +1,103 @@
+{
+  "code": "AT",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "vienna",
+  "names": {
+    "uk": {
+      "name": "Австрія",
+      "city": "Відень",
+      "cityIn": "у Відні",
+      "countryIn": "в Австрії",
+      "caps": "АВСТРІЯ"
+    },
+    "en": {
+      "name": "Austria",
+      "city": "Vienna",
+      "cityIn": "in Vienna",
+      "countryIn": "in Austria",
+      "caps": "AUSTRIA"
+    },
+    "es": {
+      "name": "Austria",
+      "city": "Viena",
+      "cityIn": "en Viena",
+      "countryIn": "en Austria",
+      "caps": "AUSTRIA"
+    },
+    "fr": {
+      "name": "Autriche",
+      "city": "Vienne",
+      "cityIn": "à Vienne",
+      "countryIn": "en Autriche",
+      "caps": "AUTRICHE"
+    }
+  },
+  "picto": "M2.5 37.5 H37.5 M11 37.5 V21 H29 V37.5 M11 30.5 H29 M13.2 28.5 V25.5 A1.4 1.4 0 0 1 16 25.5 V28.5 M18.6 28.5 V25.5 A1.4 1.4 0 0 1 21.4 25.5 V28.5 M24 28.5 V25.5 A1.4 1.4 0 0 1 26.8 25.5 V28.5 M13.2 37.5 V35 A1.4 1.4 0 0 1 16 35 V37.5 M18.6 37.5 V35 A1.4 1.4 0 0 1 21.4 35 V37.5 M24 37.5 V35 A1.4 1.4 0 0 1 26.8 35 V37.5 M3.5 37.5 V25 H11 M29 25 H36.5 V37.5 M3.5 25 L5.5 21.5 H11 M29 21.5 H34.5 L36.5 25 M7.5 21.5 C8 14.5 11.5 13.5 20 13.5 C28.5 13.5 32 14.5 32.5 21.5 M16.5 21 V17 H23.5 V21",
+  "flagColors": [
+    "#ED2939",
+    "#FFFFFF",
+    "#C8102E"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Австрії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Austria"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Austria"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Autriche"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

@@ -4686,5 +4686,173 @@
       "description": "At midnight Skansen hears «Ring, klocka, ring» and Sweden pops the champagne: how Swedes greet 2027 with a shellfish dinner, fireworks and ships' horns."
     },
     "kit": "se"
+  },
+  "AD": {
+    "text": "Twelve grapes, one for each stroke of the clock at midnight: in Andorra, whoever manages to eat them all is promised a happy year. Right after that, glasses of sparkling wine go up. The holiday falls at the height of the ski season: for the arrival of 2026 every slope at all three of the country's resorts was open, and on the evening of 31 December skiers came down the slope in Soldeu carrying lights.\n\nOn 5 January the Three Kings parade makes its way from Andorra la Vella, Europe's highest capital at 1,023 metres, to Escaldes-Engordany: in 2026 it had 18 floats and about 500 participants. The Christmas Village stays open until that day, and on 1 January 2026 the national orchestra played a New Year's concert of Strauss waltzes at the Congress Centre.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "A grape per chime",
+        "text": "At midnight eat one grape on each chime of the clock, then raise a glass of sparkling wine for a happy year."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "A descent of lights",
+        "text": "Last year on the evening of 31 December skiers in Soldeu came down a snowy slope with lights, then warmed up with hot chocolate."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "New Year waltzes",
+        "text": "On 1 January 2026 Andorra's national orchestra played the 'Paris–Vienna' concert of Strauss waltzes in the capital."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Andorra: Andorra la Vella | Time2Fest",
+      "description": "Andorra greets 2027 at 23:00 UTC with twelve grapes on the midnight chimes, skiers with lights on the slopes of Soldeu and a Christmas village in the capital."
+    },
+    "kit": "ad"
+  },
+  "AL": {
+    "text": "Roast turkey with përshesh, crumbled bread soaked in broth, is the star of the Albanian New Year dinner, which starts at around nine. The baklava is baked days in advance and glasses are filled with raki or local wine: a full table is a wish for plenty all year long. When religious holidays were banned, it was the night of 1 January that took over the decorated tree, still often called the New Year tree, and the gifts from the Grandfather of the New Year, so it remains the great family holiday of winter.\n\nPeople from all over the country head to Skanderbeg Square in Tirana for an open-air concert. At midnight fireworks burst over the square, everyone hugs and calls out \"Gëzuar Vitin e Ri!\" The first and second of January are public holidays, so the celebration goes on for two more days.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Turkey with përshesh",
+        "text": "The star of the New Year table is roast turkey with përshesh, bread soaked in turkey broth. Dessert is baklava, baked days ahead."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "The New Year tree",
+        "text": "In Albania the decorated tree is often called the New Year tree, and the presents under it come from Babagjyshi, the Grandfather of the New Year."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Midnight on Skanderbeg Square",
+        "text": "An open-air concert on Tirana's main square greets midnight with fireworks: time to hug and wish \"Gëzuar Vitin e Ri!\""
+      }
+    ],
+    "meta": {
+      "title": "New Year in Albania: Tirana | Time2Fest",
+      "description": "Turkey with përshesh, baklava and fireworks over Skanderbeg Square in Tirana: Albania welcomes 2027 at midnight, 23:00 UTC, with an open-air concert."
+    },
+    "kit": "al"
+  },
+  "AT": {
+    "text": "At midnight a single bell sounds across Austria: the Pummerin of Vienna's St. Stephen's Cathedral, which rings only on special occasions. Radio and television carry its voice, followed by the waltz \"The Blue Danube\", and many people dance right in the living room or out in the street. Lucky charms are bought in advance: little pigs, chimney sweeps, horseshoes and fly agarics. Then on the morning of 1 January the Vienna Philharmonic's New Year's Concert rings out from the Great Hall of the Musikverein, and at the end the audience claps in time to the Radetzky March.\n\nMeanwhile the Viennese head out onto the Silvesterpfad, the New Year's Eve trail: stages from Am Hof along the Graben to Stephansplatz play from two in the afternoon until two at night. Nobody sends up rockets here — they are banned in the city, and the official fireworks were dropped for the sake of people, animals and the environment. Instead there is a kiss at midnight and fish-shaped lucky biscuits, eaten starting from the fin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "The bell, then the waltz",
+        "text": "When the Pummerin rings, raise your glass, and with the first bars of \"The Blue Danube\" ask someone to waltz — that is how the whole country greets the new year."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "A charm from a New Year stall",
+        "text": "From 27 to 31 December, the Viennese buy lucky charms at stalls all over the city — a little pig, a chimney sweep, a horseshoe or a fly agaric — and give them to each other for luck."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A concert on 1 January",
+        "text": "At 11:15 the Vienna Philharmonic's New Year's Concert is shown on screens at Stephansplatz and by the giant wheel in the Prater; clap along in time to the Radetzky March."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Austria: Vienna | Time2Fest",
+      "description": "Austria rings in 2027 at 23:00 UTC with the Pummerin bell and a Blue Danube waltz, while Vienna parties on the Silvesterpfad with stages across the old town."
+    },
+    "kit": "at"
+  },
+  "BE": {
+    "text": "A rhyming letter on paper decorated with golden cherubs: that is how Flemish children greet their parents and godparents on the morning of 1 January, and they get a present or some money in return. The night before, Sint-Silvester, Belgians more often spend with friends than with family: they watch a comedian on TV sum up the year, and at midnight they kiss, wish each other luck and raise a glass of bubbly — including to those who are not there.\n\nAt the foot of the Atomium in Brussels, DJs play from nine in the evening; twenty minutes before midnight a laser show lights up the giant spheres, and at exactly twelve the city fireworks rise above them. Entry is free, and after midnight public transport runs free of charge until morning.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "letter",
+        "title": "A letter for godparents",
+        "text": "Write a rhyming New Year's letter on festive paper and read it aloud on the morning of 1 January to your parents or godparents — Flemish children do it and get a present in return."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "A song at the door",
+        "text": "On 31 December in the Kempen and the Hageland, children go door to door singing \"Nieuwejaarke zoete\" — keep some sweets or a few coins ready for them."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the Atomium",
+        "text": "Brussels residents ride metro line 6 to the Atomium: at 23:40 a laser show starts on the spheres, the fireworks go up at midnight, and afterwards public transport takes everyone home for free."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Belgium: Brussels | Time2Fest",
+      "description": "At midnight in 2027 (23:00 UTC) Belgium kisses and raises a glass, while Brussels lights lasers and fireworks at the Atomium. Next morning: rhyming letters."
+    },
+    "kit": "be"
+  },
+  "DK": {
+    "text": "Just before midnight, Danes climb onto chairs, and as the clock strikes twelve they all jump together, leaping into the new year. The evening starts at six, when the King gives his New Year's speech, a tradition dating back to Christian IX's toast in the 1880s. Then comes the festive dinner of boiled cod or stewed kale, rounded off with kransekage, a tower of almond rings, and a glass of champagne.\n\nCopenhagen counts down the last seconds on City Hall Square to the strike of the city clock, and as soon as the bells ring the sky over the city bursts into light. The fireworks are set off by people themselves, which is allowed only on 31 December and 1 January. And on the first morning the bravest take a dip in the cold harbour.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Leap into the new year",
+        "text": "Before midnight, stand on a chair with everyone around you and jump as the clock strikes: the Danish way to enter the new year."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Kransekage and champagne",
+        "text": "At midnight, break off a ring of kransekage, the almond-marzipan cake, and wash it down with champagne, the Danish end to the New Year dinner."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the Lakes",
+        "text": "To watch the whole city light up, Copenhageners gather on Queen Louise's Bridge over the Lakes: the sky is open in every direction."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Denmark: Copenhagen | Time2Fest",
+      "description": "Denmark meets 2027 at 23:00 UTC with a leap off a chair as the City Hall clock strikes, almond kransekage with champagne and fireworks over Copenhagen."
+    },
+    "kit": "dk"
+  },
+  "GQ": {
+    "text": "Mass first, then dinner, and only then dancing — that is the order of New Year's Eve in Equatorial Guinea. The services of 31 December and 1 January are among the most important of the year: believers go to a mass of thanksgiving for the year gone by. From there families head to the festive table, and after dinner comes the secular side of the night — parties, discos or simply a stroll through streets hung with lights.\n\nMalabo, the oldest city in the country, on the island of Bioko, gives the first day of the year to the Los Ángeles neighbourhood. Young people close off the streets, put speakers outdoors and dance in the open air almost until evening, in deliberately extravagant outfits, to songs by Equatoguinean musicians. People say it all began on Calle La Ronda; now Los Ángeles is the busiest place in town on 1 January.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Thanksgiving mass on 31 December",
+        "text": "Many families see the year out in church: first they give thanks for the past twelve months, and only then sit down to the festive dinner."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Abalá and bushmeat",
+        "text": "Holiday cooking means abalá — grated white malanga wrapped in banana leaf — bushmeat in palm oil and djacató, a vegetable like small aubergines. Some travel home to their village to see the wider family."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Dancing in Los Ángeles",
+        "text": "On 1 January Malabo's young people gather in the Los Ángeles neighbourhood: speakers on the pavement, dancing in the closed-off streets, bright outfits and local music."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Equatorial Guinea: Malabo | Time2Fest",
+      "description": "Equatorial Guinea greets 2027 at 23:00 UTC: a thanksgiving mass, dinner with family, and on 1 January Malabo dances in the streets of Los Ángeles."
+    },
+    "kit": "gq"
   }
 }

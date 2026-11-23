@@ -1,0 +1,104 @@
+{
+  "code": "GQ",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "malabo",
+  "names": {
+    "uk": {
+      "name": "Екваторіальна Гвінея",
+      "city": "Малабо",
+      "cityIn": "у Малабо",
+      "countryIn": "в Екваторіальній Гвінеї",
+      "caps": "ЕКВАТОРІАЛЬНА ГВІНЕЯ"
+    },
+    "en": {
+      "name": "Equatorial Guinea",
+      "city": "Malabo",
+      "cityIn": "in Malabo",
+      "countryIn": "in Equatorial Guinea",
+      "caps": "EQUATORIAL GUINEA"
+    },
+    "es": {
+      "name": "Guinea Ecuatorial",
+      "city": "Malabo",
+      "cityIn": "en Malabo",
+      "countryIn": "en Guinea Ecuatorial",
+      "caps": "GUINEA ECUATORIAL"
+    },
+    "fr": {
+      "name": "Guinée équatoriale",
+      "city": "Malabo",
+      "cityIn": "à Malabo",
+      "countryIn": "en Guinée équatoriale",
+      "caps": "GUINÉE ÉQUATORIALE"
+    }
+  },
+  "picto": "M4 36.5 L36 36.5 M8 36.5 V16 H15 V36.5 M25 36.5 V16 H32 V36.5 M8 16 L11.5 5.2 L15 16 M25 16 L28.5 5.2 L32 16 M11.5 5.2 V1.8 M10.2 3.1 H12.8 M28.5 5.2 V1.8 M27.2 3.1 H29.8 M15 21.5 L20 14.6 L25 21.5 M20 14.6 V11 M18.8 12.3 H21.2 M18.2 23.4 A1.8 1.8 0 1 0 21.8 23.4 A1.8 1.8 0 1 0 18.2 23.4 M17.3 36.5 V32.2 Q17.3 29.6 20 28.7 Q22.7 29.6 22.7 32.2 V36.5 M11.5 27 V21 M28.5 27 V21",
+  "flagColors": [
+    "#3E9A00",
+    "#FFFFFF",
+    "#E32118",
+    "#0073CE"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Екваторіальній Гвінеї"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Equatorial Guinea"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Guinea Ecuatorial"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Guinée équatoriale"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

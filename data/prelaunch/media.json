@@ -2893,6 +2893,102 @@
         "x": 35,
         "y": 40
       }
+    },
+    "country:AD": {
+      "src": "/media/photos/andorra.webp",
+      "alt": {
+        "uk": "Піренеї Андорри в синю годину: засніжені вершини й вогні гірського селища в долині",
+        "en": "The Pyrenees of Andorra at blue hour: snowy peaks and the lights of a mountain village in the valley",
+        "es": "Los Pirineos de Andorra a la hora azul: cumbres nevadas y las luces de un pueblo de montaña en el valle",
+        "fr": "Les Pyrénées d’Andorre à l’heure bleue : sommets enneigés et lumières d’un village de montagne dans la vallée"
+      },
+      "author": "Krzysztof Golik",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pyrenees_in_Andorra_(10).jpg",
+      "position": {
+        "x": 57,
+        "y": 65
+      }
+    },
+    "country:AL": {
+      "src": "/media/photos/tirana.webp",
+      "alt": {
+        "uk": "Салют над площею Скандербега в Тирані вночі після концерту",
+        "en": "Fireworks over Skanderbeg Square in Tirana at night after a concert",
+        "es": "Fuegos artificiales sobre la plaza Skanderbeg de Tirana de noche tras un concierto",
+        "fr": "Feu d’artifice au-dessus de la place Skanderbeg à Tirana, la nuit après un concert"
+      },
+      "author": "Klejdi Shtrepi",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_and_of_Ermal_Meta%27s_concert_-_Downtown,_Tirana,_Albania.jpg",
+      "position": {
+        "x": 50,
+        "y": 35
+      }
+    },
+    "country:AT": {
+      "src": "/media/photos/vienna.webp",
+      "alt": {
+        "uk": "Новорічний салют над нічним Віднем з луки Бельвю на пагорбах Віденського лісу, 31 грудня 2012 року",
+        "en": "New Year fireworks over Vienna at night from the Bellevue meadow in the Vienna Woods hills, 31 December 2012",
+        "es": "Fuegos artificiales de Año Nuevo sobre Viena de noche desde el prado de Bellevue, en las colinas del Bosque de Viena, 31 de diciembre de 2012",
+        "fr": "Feu d’artifice du Nouvel An sur Vienne la nuit depuis la prairie de Bellevue, sur les collines du Wienerwald, 31 décembre 2012"
+      },
+      "author": "Linie29",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Feuerwerk_Bellevuewiese_2012.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:BE": {
+      "src": "/media/photos/brussels.webp",
+      "alt": {
+        "uk": "Гран-Плас у Брюсселі вночі: підсвічені фасади цехових будинків і Будинку короля, ліворуч — ратуша",
+        "en": "The Grand-Place in Brussels at night: the lit façades of the guildhalls and the King’s House, the Town Hall on the left",
+        "es": "La Grand-Place de Bruselas de noche: las fachadas iluminadas de las casas gremiales y la Casa del Rey, con el ayuntamiento a la izquierda",
+        "fr": "La Grand-Place de Bruxelles la nuit : façades illuminées des maisons des corporations et de la Maison du Roi, l’hôtel de ville à gauche"
+      },
+      "author": "Steve Knight",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grand_Place_at_Night,_Brussels,_Belgium_(40415882843).jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
+    },
+    "country:DK": {
+      "src": "/media/photos/copenhagen.webp",
+      "alt": {
+        "uk": "Новорічний салют над дахами Амагера в Копенгагені, ніч на 1 січня 2016 року",
+        "en": "New Year fireworks over the rooftops of Amager in Copenhagen, the night of 1 January 2016",
+        "es": "Fuegos artificiales de Año Nuevo sobre los tejados de Amager en Copenhague, la noche del 1 de enero de 2016",
+        "fr": "Feu d’artifice du Nouvel An au-dessus des toits d’Amager à Copenhague, nuit du 1er janvier 2016"
+      },
+      "author": "Guillaume Baviere",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Copenhagen_2016-01-01_(25036991423).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:GQ": {
+      "src": "/media/photos/luba.webp",
+      "alt": {
+        "uk": "Нічна Луба на острові Біоко: вогні міста й порту віддзеркалюються в затоці",
+        "en": "Luba on Bioko Island at night: the lights of the town and port reflected in the bay",
+        "es": "Luba, en la isla de Bioko, de noche: las luces de la ciudad y del puerto reflejadas en la bahía",
+        "fr": "Luba, sur l’île de Bioko, la nuit : lumières de la ville et du port reflétées dans la baie"
+      },
+      "author": "---=XEON=---",
+      "license": "CC BY 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Luba_City_At_Night_-_panoramio.jpg",
+      "position": {
+        "x": 50,
+        "y": 50
+      }
     }
   }
 }

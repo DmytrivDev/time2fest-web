@@ -1,0 +1,103 @@
+{
+  "code": "BE",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "brussels",
+  "names": {
+    "uk": {
+      "name": "Бельгія",
+      "city": "Брюссель",
+      "cityIn": "у Брюсселі",
+      "countryIn": "у Бельгії",
+      "caps": "БЕЛЬГІЯ"
+    },
+    "en": {
+      "name": "Belgium",
+      "city": "Brussels",
+      "cityIn": "in Brussels",
+      "countryIn": "in Belgium",
+      "caps": "BELGIUM"
+    },
+    "es": {
+      "name": "Bélgica",
+      "city": "Bruselas",
+      "cityIn": "en Bruselas",
+      "countryIn": "en Bélgica",
+      "caps": "BÉLGICA"
+    },
+    "fr": {
+      "name": "Belgique",
+      "city": "Bruxelles",
+      "cityIn": "à Bruxelles",
+      "countryIn": "en Belgique",
+      "caps": "BELGIQUE"
+    }
+  },
+  "picto": "M17.2 6.8 L12.4 8.9 M22.8 6.8 L27.6 8.9 M20.0 8.6 L20.0 12.6 M12.2 12.1 L16.5 14.6 M27.8 12.1 L23.5 14.6 M9.8 13.8 L10.9 19.9 M30.2 13.8 L29.1 19.9 M26.3 21.1 L23.3 18.9 M13.7 21.1 L16.7 18.9 M26.3 24.3 L22.5 27.1 M13.7 24.3 L17.5 27.1 M16.9 5.5 A3.1 3.1 0 1 0 23.1 5.5 A3.1 3.1 0 1 0 16.9 5.5 M5.7 10.3 A3.5 3.5 0 1 0 12.7 10.3 A3.5 3.5 0 1 0 5.7 10.3 M27.3 10.3 A3.5 3.5 0 1 0 34.3 10.3 A3.5 3.5 0 1 0 27.3 10.3 M25.8 22.7 A2.8 2.8 0 1 0 31.4 22.7 A2.8 2.8 0 1 0 25.8 22.7 M8.6 22.7 A2.8 2.8 0 1 0 14.2 22.7 A2.8 2.8 0 1 0 8.6 22.7 M16.9 28.9 A3.1 3.1 0 1 0 23.1 28.9 A3.1 3.1 0 1 0 16.9 28.9 M16.0 16.6 A4.0 4.0 0 1 0 24.0 16.6 A4.0 4.0 0 1 0 16.0 16.6 M29.1 25.4 L29.8 38.5 M10.9 25.4 L10.2 38.5 M18.6 20.4 L15.1 38.5 M21.4 20.4 L24.9 38.5 M6.0 38.5 H34.0",
+  "flagColors": [
+    "#FDDA24",
+    "#EF3340",
+    "#F5F5F5"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Бельгії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Belgium"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Bélgica"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Belgique"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

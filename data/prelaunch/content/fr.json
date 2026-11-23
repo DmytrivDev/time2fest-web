@@ -4686,5 +4686,173 @@
       "description": "À minuit, Skansen entend « Ring, klocka, ring » et la Suède sabre le champagne : fruits de mer, feux d’artifice et sirènes des navires pour fêter 2027."
     },
     "kit": "se"
+  },
+  "AD": {
+    "text": "Douze grains de raisin, un à chaque coup de minuit : en Andorre, qui parvient à tous les manger aura une année heureuse. Juste après, on lève une coupe de vin pétillant. La fête tombe en pleine saison de ski : pour accueillir 2026, toutes les pistes des trois stations du pays étaient ouvertes, et le soir du 31 décembre les skieurs ont descendu la piste de Soldeu avec des lumières.\n\nLe 5 janvier, la cavalcade des Rois va d’Andorre-la-Vieille, la capitale la plus haute d’Europe (1 023 mètres), à Escaldes-Engordany : en 2026, elle comptait 18 chars et environ 500 participants. Le village de Noël reste ouvert jusqu’à ce jour, et le 1er janvier 2026 l’orchestre national a donné au Centre des congrès un concert du Nouvel An avec des valses des Strauss.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Un raisin par coup",
+        "text": "À minuit, mange un grain de raisin à chaque coup de l’horloge, puis lève une coupe de pétillant pour une année heureuse."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Descente aux flambeaux",
+        "text": "L’an dernier, le soir du 31 décembre, les skieurs de Soldeu ont descendu une piste enneigée avec des lumières, avant un chocolat chaud."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Valses du Nouvel An",
+        "text": "Le 1er janvier 2026, l’orchestre national d’Andorre a joué dans la capitale le concert « Paris–Vienne » et ses valses des Strauss."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Andorre : Andorre-la-Vieille | Time2Fest",
+      "description": "L’Andorre fête 2027 à 23 h UTC : douze grains de raisin sur les coups de minuit, skieurs aux flambeaux à Soldeu et village de Noël dans la capitale."
+    },
+    "kit": "ad"
+  },
+  "AL": {
+    "text": "La dinde rôtie au përshesh, du pain émietté imbibé de bouillon, est la vedette du dîner albanais du Nouvel An, qui commence vers 21 h. Le baklava est préparé plusieurs jours avant et l’on remplit les verres de raki ou de vin local : une table bien garnie est un vœu d’abondance pour toute l’année. Quand les fêtes religieuses étaient interdites, c’est la nuit du 1er janvier qui a hérité du sapin décoré, souvent encore appelé arbre du Nouvel An, et des cadeaux du Grand-père du Nouvel An ; elle reste la grande fête familiale de l’hiver.\n\nDes gens venus de tout le pays se retrouvent place Skanderbeg, à Tirana, pour un concert en plein air. À minuit, le feu d’artifice éclate au-dessus de la place, tout le monde s’embrasse et lance « Gëzuar Vitin e Ri ! ». Les 1er et 2 janvier sont fériés : la fête continue encore deux jours.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Dinde au përshesh",
+        "text": "La vedette de la table du Nouvel An est la dinde rôtie au përshesh, du pain imbibé de bouillon de dinde. En dessert, un baklava préparé à l’avance."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "L’arbre du Nouvel An",
+        "text": "En Albanie, le sapin décoré s’appelle souvent l’arbre du Nouvel An, et les cadeaux viennent de Babagjyshi, le Grand-père du Nouvel An."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Minuit place Skanderbeg",
+        "text": "Un concert en plein air sur la grande place de Tirana salue minuit d’un feu d’artifice : on s’embrasse en lançant « Gëzuar Vitin e Ri ! »."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Albanie : Tirana | Time2Fest",
+      "description": "Dinde au përshesh, baklava et feu d’artifice place Skanderbeg à Tirana : l’Albanie accueille 2027 à minuit, soit 23 h UTC, avec un concert en plein air."
+    },
+    "kit": "al"
+  },
+  "AT": {
+    "text": "À minuit, une seule cloche résonne dans toute l’Autriche : la Pummerin de la cathédrale Saint-Étienne de Vienne, qui ne sonne que lors des grandes occasions. La radio et la télévision relaient sa voix, puis la valse « Le Beau Danube bleu », que beaucoup dansent au milieu du salon ou dans la rue. Les porte-bonheur s’achètent à l’avance : petits cochons, ramoneurs, fers à cheval et amanites tue-mouches. Le matin du 1er janvier, le Concert du Nouvel An de l’Orchestre philharmonique de Vienne s’élève de la Grande Salle du Musikverein, et à la fin la salle bat des mains au rythme de la Marche de Radetzky.\n\nPendant ce temps, les Viennois partent sur le Silvesterpfad, le sentier de la Saint-Sylvestre : les scènes d’Am Hof, du Graben et de la place Saint-Étienne jouent de 14 h à 2 h du matin. Ici, pas de fusées : elles sont interdites en ville, et le feu d’artifice officiel a été supprimé pour le bien des gens, des animaux et de l’environnement. À la place, un baiser à minuit et des biscuits porte-bonheur en forme de poisson, que l’on commence par la nageoire.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "La cloche, puis la valse",
+        "text": "Quand la Pummerin sonne, lève ton verre, puis invite quelqu’un à valser dès les premières mesures du « Beau Danube bleu » : c’est ainsi que tout le pays accueille l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Un porte-bonheur du stand",
+        "text": "Du 27 au 31 décembre, les Viennois achètent dans les stands de toute la ville des porte-bonheur — petit cochon, ramoneur, fer à cheval ou amanite — et se les offrent pour porter chance."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Un concert le 1er janvier",
+        "text": "À 11 h 15, le Concert du Nouvel An de l’Orchestre philharmonique de Vienne passe sur écrans place Saint-Étienne et près de la grande roue du Prater ; sur la Marche de Radetzky, tape des mains en rythme."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Autriche : Vienne | Time2Fest",
+      "description": "L’Autriche accueille 2027 à 23 h UTC avec la cloche Pummerin et la valse du Beau Danube bleu, tandis que Vienne fait la fête sur le Silvesterpfad."
+    },
+    "kit": "at"
+  },
+  "BE": {
+    "text": "Une lettre en vers sur un papier orné de chérubins dorés : c’est ainsi que les enfants flamands souhaitent la bonne année à leurs parents, à leur parrain et à leur marraine le matin du 1er janvier, et ils reçoivent en retour un cadeau ou un peu d’argent. La veille, à la Saint-Sylvestre, les Belges se retrouvent plus souvent entre amis qu’en famille : ils regardent un humoriste passer l’année en revue à la télévision, puis, à minuit, s’embrassent, échangent leurs vœux et lèvent une coupe de bulles, y compris aux absents.\n\nAu pied de l’Atomium, à Bruxelles, des DJ mixent dès 21 h ; vingt minutes avant minuit, un spectacle laser illumine les sphères géantes, et à minuit pile le feu d’artifice de la Ville s’élève au-dessus d’elles. L’entrée est libre, et après minuit les transports publics sont gratuits jusqu’au matin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "letter",
+        "title": "Une lettre au parrain",
+        "text": "Écris une lettre de Nouvel An en vers sur du papier de fête et lis-la à voix haute le matin du 1er janvier à tes parents ou à ton parrain : les enfants flamands le font et reçoivent un cadeau en retour."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Une chanson à la porte",
+        "text": "Le 31 décembre, en Campine et dans le Hageland, les enfants vont de porte en porte en chantant « Nieuwejaarke zoete » : prévois des bonbons ou quelques pièces."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice à l’Atomium",
+        "text": "Les Bruxellois prennent la ligne 6 du métro jusqu’à l’Atomium : à 23 h 40 commence le spectacle laser sur les sphères, à minuit le feu d’artifice, et ensuite les transports publics ramènent tout le monde gratuitement."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Belgique : Bruxelles | Time2Fest",
+      "description": "À minuit en 2027 (23 h UTC), la Belgique s’embrasse et trinque, et Bruxelles allume lasers et feu d’artifice à l’Atomium. Le matin, des lettres aux parrains."
+    },
+    "kit": "be"
+  },
+  "DK": {
+    "text": "Juste avant minuit, les Danois montent sur une chaise et, au dernier coup de l’horloge, sautent tous ensemble pour entrer d’un bond dans la nouvelle année. La soirée commence à 18 h avec le discours du Nouvel An du roi, une tradition qui remonte au toast de Christian IX dans les années 1880. Vient ensuite le dîner de fête, cabillaud poché ou chou frisé à la crème, puis le kransekage, une tour d’anneaux d’amande, avec une coupe de champagne.\n\nCopenhague compte les dernières secondes sur la place de l’Hôtel-de-Ville, au rythme de l’horloge de la ville, et dès que les cloches sonnent, le ciel s’embrase. Les feux d’artifice, ce sont les habitants qui les tirent : c’est permis seulement le 31 décembre et le 1er janvier. Et au premier matin de l’année, les plus courageux plongent dans l’eau glacée du port.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Un saut dans l’année",
+        "text": "Avant minuit, monte sur une chaise avec tout le monde et saute au coup de l’horloge : c’est ainsi qu’on entre dans l’année au Danemark."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Kransekage et champagne",
+        "text": "À minuit, détache un anneau de kransekage, le gâteau d’amande et de massepain, avec une coupe de champagne : c’est la fin du dîner du Nouvel An danois."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux sur les lacs",
+        "text": "Pour voir toute la ville s’illuminer, les Copenhaguois se retrouvent sur le pont de la Reine-Louise, au-dessus des lacs : le ciel s’ouvre de tous côtés."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Danemark : Copenhague | Time2Fest",
+      "description": "Le Danemark fête 2027 à 23 h UTC : un saut depuis une chaise au son de l’horloge de l’Hôtel-de-Ville, kransekage et champagne, feux sur Copenhague."
+    },
+    "kit": "dk"
+  },
+  "GQ": {
+    "text": "D’abord la messe, puis le dîner, et seulement ensuite la danse : voilà l’ordre du réveillon en Guinée équatoriale. Les messes du 31 décembre et du 1er janvier comptent parmi les plus importantes de l’année : les fidèles assistent à une messe d’action de grâce pour l’année écoulée. De là, les familles passent à table et, après le dîner, vient le côté profane de la nuit : fêtes, discothèques ou simple promenade dans les rues illuminées.\n\nMalabo, la plus ancienne ville du pays, sur l’île de Bioko, consacre le premier jour de l’an au quartier de Los Ángeles. Les jeunes ferment les rues, sortent les enceintes sur le trottoir et dansent en plein air presque jusqu’au soir, dans des tenues volontairement extravagantes, sur des chansons d’artistes équato-guinéens. On dit que tout a commencé rue La Ronda ; aujourd’hui, Los Ángeles est l’endroit le plus animé de la ville chaque 1er janvier.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Messe d’action de grâce",
+        "text": "Beaucoup de familles terminent l’année à l’église : on rend d’abord grâce pour les douze mois écoulés, puis on se met à table pour le dîner de fête."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Abalá et viande de brousse",
+        "text": "Pour les fêtes, on cuisine l’abalá — malanga blanc râpé enveloppé dans une feuille de bananier —, de la viande de brousse à l’huile de palme et le djacató, proche d’une petite aubergine. Certains rentrent au village retrouver la grande famille."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Danser à Los Ángeles",
+        "text": "Le 1er janvier, les jeunes de Malabo se retrouvent dans le quartier de Los Ángeles : enceintes sur le trottoir, danse dans les rues fermées, tenues éclatantes et musique locale."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Guinée équatoriale : Malabo | Time2Fest",
+      "description": "La Guinée équatoriale fête 2027 à 23 h UTC : messe d’action de grâce, dîner en famille, puis le 1er janvier Malabo danse dans les rues de Los Ángeles."
+    },
+    "kit": "gq"
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "AD",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "andorra",
+  "names": {
+    "uk": {
+      "name": "Андорра",
+      "city": "Андорра-ла-Велья",
+      "cityIn": "в Андорра-ла-Вельї",
+      "caps": "АНДОРРА"
+    },
+    "en": {
+      "name": "Andorra",
+      "city": "Andorra la Vella",
+      "cityIn": "in Andorra la Vella",
+      "caps": "ANDORRA"
+    },
+    "es": {
+      "name": "Andorra",
+      "city": "Andorra la Vieja",
+      "cityIn": "en Andorra la Vieja",
+      "caps": "ANDORRA"
+    },
+    "fr": {
+      "name": "Andorre",
+      "city": "Andorre-la-Vieille",
+      "cityIn": "à Andorre-la-Vieille",
+      "caps": "ANDORRE"
+    }
+  },
+  "picto": "M3 33 L37 33 M13 33 L13.6 9.4 L20.4 9.4 L21 33 M12.2 9.6 L16.4 4.4 Q17 3.8 17.6 4.4 L21.8 9.6 Z M16 12.6 L16 15 M18 12.6 L18 15 M16 18.4 L16 20.8 M18 18.4 L18 20.8 M16 24 L16 26.2 M18 24 L18 26.2 M21 24.6 L32 24.6 L35 27.6 L21 27.6 M25.6 33 L25.6 30.4 Q27.2 28.4 28.8 30.4 L28.8 33 M33.6 27.6 L33.6 33 M33.6 29.4 Q36.8 29.4 36.8 33 M3 24 L6.6 18.6 L9 20.4 L12.9 15.2 M21.1 13.6 L25.2 10.6 L28.6 14.6 L31.2 13 L37 19.6",
+  "flagColors": [
+    "#10069F",
+    "#FEDD00",
+    "#D50032"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Андоррі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Andorra"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Andorra"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Andorre"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
