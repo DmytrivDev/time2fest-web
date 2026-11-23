@@ -26,4 +26,13 @@ export const PUBLIC_ROUTES: readonly PublicRoute[] = [
     cacheTag: 't2f-site-state',
     redButton: 'site/red-button.json',
   },
+  {
+    key: 'live-chains',
+    path: '/api/live/chains',
+    allowedParams: [],
+    freshMs: 10_000,
+    staleMs: 600_000,
+    r2Copy: 'live/chains.json',
+    cacheTag: 't2f-live-chains',
+  },
 ];

@@ -172,8 +172,12 @@ describe('contract pins', () => {
 
 describe('public list drives the branch (AC-23 edge half)', () => {
   it('serves every listed path through the public branch', async () => {
+    // A valid body per route: the edge checks each answer with the guard of its row (BODY_GUARDS).
+    const bodyOf = (key: string) => (key === 'live-chains' ? { version: 1, at: '2026-12-31T00:00:00.000Z', chains: [] } : snapshot(1));
+    expect(PUBLIC_ROUTES.map((r) => r.key).sort()).toEqual(['live-chains', 'site-state']);
     for (const route of PUBLIC_ROUTES) {
-      const { get } = setup();
+      const { get, origin } = setup();
+      origin.respond = async () => json(bodyOf(route.key));
       const res = await get(`${HOST}${route.path}`);
       expect(res.headers.get(SOURCE_HEADER), route.path).toBe('origin');
     }
@@ -625,6 +629,10 @@ describe('live-like route: cache tag, no red button, 10-minute stale window (SPE
     cacheTag: LIVE_CACHE_TAG,
   };
   const LIVE = `${HOST}${LIVE_ROUTE.path}`;
+
+  it('the local row equals the live-chains row of PUBLIC_ROUTES (SPEC-12 W23)', () => {
+    expect(PUBLIC_ROUTES.find((r) => r.key === 'live-chains')).toEqual(LIVE_ROUTE);
+  });
   const chains = (version: number) => ({ version, at: '2026-12-31T00:00:00.000Z', chains: [] });
 
   function live(over: Partial<EdgeEnv> = {}) {
