@@ -126,6 +126,38 @@ export interface LiveStore {
   claimPendingChecks(): Promise<PendingCheck[]>;
 }
 
+/** A source of `data/streams.json` as `import chains` writes it (times as epoch ms). */
+export interface ImportedSource {
+  sourceId: string;
+  eventId: string;
+  platform: SourcePlatformLike;
+  videoId: string | null;
+  kind: string;
+  name: string;
+  order: number;
+  /** Initial poller fields: written on add only, never on change. */
+  status: string | null;
+  startsAt: number | null;
+  embeddable: boolean;
+  lastChecked: number | null;
+}
+
+type SourcePlatformLike = 'youtube' | 'none';
+
+/** A stored source as `import chains` compares it. */
+export interface StoredImportSource extends Omit<ImportedSource, 'status' | 'startsAt' | 'embeddable' | 'lastChecked'> {
+  /** Owner-edited (`adminEditedAt`) or `override` set: the import never writes it. */
+  protected: boolean;
+}
+
+/** The `stream-sources` conversation of `import chains`. */
+export interface LiveImportStore {
+  read(): Promise<StoredImportSource[]>;
+  add(tx: Tx, source: ImportedSource): Promise<void>;
+  /** Writes only the static fields (event, platform, video, kind, name, order). */
+  change(tx: Tx, source: ImportedSource): Promise<void>;
+}
+
 /**
  * Claims the fan-out of one live version across instances (AC-5): true for exactly one caller per version, and never
  * for a version ≤ one already claimed (`live-state.lastFannedOut`).

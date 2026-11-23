@@ -19,7 +19,9 @@ import type { QuotaBucket } from '../domain/live/config';
 import { QUOTA_COUNTER_KEYS, type QuotaCounter, type QuotaCounterKey, type QuotaState } from '../domain/live/quota';
 import type { Clock } from '../ports';
 import type {
+  ImportedSource,
   LiveFanOutClaim,
+  LiveImportStore,
   LiveLease,
   LiveLeaseName,
   LiveSource,
@@ -303,6 +305,43 @@ export function createPayloadLiveStore(deps: PayloadLiveDeps): LiveStore {
     },
   };
   return store;
+}
+
+/** `import chains` storage: raw rows of `stream-sources`, writes on the caller's transaction. */
+export function createPayloadLiveImportStore(deps: PayloadLiveDeps): LiveImportStore {
+  const nowIso = () => new Date(deps.clock.now()).toISOString();
+  return {
+    async read() {
+      const { rows } = await (await drizzleOf(deps.payload)).execute(sql`
+        SELECT "source_id", "event_id", "platform", "video_id", "kind", "name", "order"::text AS "order", "override", "admin_edited_at"
+        FROM "stream_sources" ORDER BY "source_id"`);
+      return rows.map((r) => ({
+        sourceId: String(r.source_id),
+        eventId: String(r.event_id),
+        platform: r.platform === 'youtube' ? 'youtube' : 'none',
+        videoId: str(r.video_id),
+        kind: str(r.kind) ?? '',
+        name: str(r.name) ?? '',
+        order: Number(r.order) || 0,
+        protected: r.admin_edited_at !== null && r.admin_edited_at !== undefined ? true : r.override !== null && r.override !== undefined,
+      }));
+    },
+    async add(tx, s: ImportedSource) {
+      const at = nowIso();
+      await (await sessionOf(tx)).execute(sql`
+        INSERT INTO "stream_sources" ("source_id", "event_id", "platform", "video_id", "kind", "name", "order", "starts_at", "status", "embeddable",
+          "last_checked", "hidden", "dead", "long_news", "updated_at", "created_at")
+        VALUES (${s.sourceId}, ${s.eventId}, ${s.platform}::"enum_stream_sources_platform", ${s.videoId}, ${s.kind}, ${s.name}, ${s.order}::numeric,
+          ${iso(s.startsAt)}::timestamptz, ${s.status}, ${s.embeddable}::boolean, ${iso(s.lastChecked)}::timestamptz, false, false, false,
+          ${at}::timestamptz, ${at}::timestamptz)`);
+    },
+    async change(tx, s: ImportedSource) {
+      await (await sessionOf(tx)).execute(sql`
+        UPDATE "stream_sources" SET "event_id" = ${s.eventId}, "platform" = ${s.platform}::"enum_stream_sources_platform", "video_id" = ${s.videoId},
+          "kind" = ${s.kind}, "name" = ${s.name}, "order" = ${s.order}::numeric, "updated_at" = ${nowIso()}::timestamptz
+        WHERE "source_id" = ${s.sourceId}`);
+    },
+  };
 }
 
 /**

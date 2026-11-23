@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CountriesFileSchema, ScheduleFileSchema } from '@time2fest/contracts/schemas';
 import { fromData, type CatalogCollection } from '../domain/catalog/fromData';
+import { chainsFromData } from '../live/import';
 import { assertRegistry } from '../platform/registry';
 
 /** A source the seed may read (AC-45). */
@@ -53,7 +54,7 @@ export function isAllowedSource(source: string): boolean {
 
 const dataDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../data');
 
-function readData(file: 'schedule.json' | 'countries.json'): unknown {
+function readData(file: 'schedule.json' | 'countries.json' | 'streams.json'): unknown {
   return JSON.parse(fs.readFileSync(path.join(dataDir, file), 'utf8'));
 }
 
@@ -86,6 +87,23 @@ const seasonRow: SeedRow = {
   },
 };
 
+const isoOf = (t: number | null): string | null => (t === null ? null : new Date(t).toISOString());
+
+/** The stream sources of `data/streams.json`: the rows `import chains --apply` adds on an empty database (AC-70). */
+const streamSourcesRow: SeedRow = {
+  key: 'live-1-stream-sources',
+  collection: 'stream-sources',
+  naturalKey: 'sourceId',
+  source: 'data/streams.json',
+  async rows() {
+    return chainsFromData(readData('streams.json')).map((s) => ({
+      ...s,
+      startsAt: isoOf(s.startsAt),
+      lastChecked: isoOf(s.lastChecked),
+    }));
+  },
+};
+
 // The sorted keys give the dependency order: season, zones, countries, cities, events, traditions.
 export const seedRegistry: readonly SeedRow[] = [
   seasonRow,
@@ -94,6 +112,7 @@ export const seedRegistry: readonly SeedRow[] = [
   catalogRow(4, 'cities', 'cityId', 'data/schedule.json'),
   catalogRow(5, 'events', 'eventId', 'data/schedule.json'),
   catalogRow(6, 'traditions', 'traditionId', 'data/countries.json'),
+  streamSourcesRow,
 ];
 
 assertRegistry('seed', seedRegistry, (r) => r.key);
