@@ -204,14 +204,17 @@ async function askOrigin(
   }
 }
 
-/** Stores a good origin body: kept 40 s by the cache, tagged with the route's purge tag, never with `Set-Cookie`. */
+/**
+ * Stores a good origin body: kept by the cache for the route's fresh + stale window (site 40 s, live 610 s),
+ * tagged with the route's purge tag, never with `Set-Cookie`.
+ */
 function store(deps: EdgeDeps, key: Request, route: PublicRoute, state: PublicBody): Promise<void> {
   if (!deps.cache) return Promise.resolve();
   const res = new Response(JSON.stringify(state), {
     status: 200,
     headers: {
       'content-type': JSON_TYPE,
-      'cache-control': 'public, s-maxage=40',
+      'cache-control': `public, s-maxage=${Math.ceil((route.freshMs + route.staleMs) / 1000)}`,
       'cache-tag': route.cacheTag,
       [CACHED_AT_HEADER]: String(Math.trunc(deps.now())),
       [VERSION_HEADER]: String(state.version),

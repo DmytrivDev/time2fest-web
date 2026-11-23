@@ -359,6 +359,8 @@ describe('Set-Cookie and what is stored (AC-30, AC-31, А-2)', () => {
     expect(stored).toBeDefined();
     const h = new Headers(stored?.headers);
     expect(h.get('cache-control')).toBe('public, s-maxage=40');
+    const siteRow = PUBLIC_ROUTES.find((r) => r.key === 'site-state');
+    expect(siteRow && Math.ceil((siteRow.freshMs + siteRow.staleMs) / 1000)).toBe(40);
     expect(h.get('cache-tag')).toBe(SITE_CACHE_TAG);
     expect(SITE_CACHE_TAG).toBe('t2f-site-state');
     expect(h.get(CACHED_AT_HEADER)).toBe(String(T0));
@@ -681,9 +683,8 @@ describe('live-like route: cache tag, no red button, 10-minute stale window (SPE
     await getLive();
     origin.respond = async () => new Response('tunnel error', { status: 530 });
     bucket.objects.set(`${PREFIX}${LIVE_R2_KEYS.chains}`, JSON.stringify(chains(7)));
-    // The runtime cache keeps the copy for s-maxage only; age the entry by hand to test the route's own window.
-    const stored = cache.entries.get(LIVE);
-    if (stored) stored.headers = stored.headers.map(([k, v]) => [k, k === 'cache-control' ? 'public, s-maxage=3600' : v]);
+    // The copy is kept for the route's fresh + stale window (s-maxage=610): the in-memory cache honours it.
+    expect(new Headers(cache.entries.get(LIVE)?.headers).get('cache-control')).toBe('public, s-maxage=610');
     // AC-13 counts the 10 minutes from the moment freshness ended (copy age freshMs + 10 min).
     clock.t = T0 + LIVE_ROUTE.freshMs + (9 * 60 + 59) * S;
     const at959 = await getLive();
