@@ -1,0 +1,102 @@
+{
+  "code": "GL",
+  "zone": "UTC-2",
+  "zoneId": "utc-0200",
+  "cityId": "nuuk",
+  "names": {
+    "uk": {
+      "name": "Гренландія",
+      "city": "Нуук",
+      "cityIn": "у Нууку",
+      "countryIn": "у Гренландії",
+      "caps": "НУУК · ГРЕНЛАНДІЯ"
+    },
+    "en": {
+      "name": "Greenland",
+      "city": "Nuuk",
+      "cityIn": "in Nuuk",
+      "countryIn": "in Greenland",
+      "caps": "NUUK · GREENLAND"
+    },
+    "es": {
+      "name": "Groenlandia",
+      "city": "Nuuk",
+      "cityIn": "en Nuuk",
+      "countryIn": "en Groenlandia",
+      "caps": "NUUK · GROENLANDIA"
+    },
+    "fr": {
+      "name": "Groenland",
+      "city": "Nuuk",
+      "cityIn": "à Nuuk",
+      "countryIn": "au Groenland",
+      "caps": "NUUK · GROENLAND"
+    }
+  },
+  "picto": "M1.6 25 H6.2 M1.6 25 L3.6 22.4 L5.4 19.8 L6.4 15 L7 10.6 L8.4 8.4 L10 7.6 L11.4 6.4 L13 7.4 L14.6 6.8 L16.4 8 L17.4 9.4 L18 12.4 L19 15.6 L21.6 18 M6 24 L9.4 18 H26 M6 24 H26 M7 24 V32 M10.4 31 V27.4 a1 1 0 0 1 2 0 V31 M15 31 V27.4 a1 1 0 0 1 2 0 V31 M19.6 31 V27.4 a1 1 0 0 1 2 0 V31 M26 32 V12.4 H31.4 V32 M28.7 17.2 m-1.5 0 a1.5 1.5 0 1 0 3 0 a1.5 1.5 0 1 0 -3 0 M25.2 12.4 H32.2 L28.7 3.2 Z M28.7 3.2 V0.9 M28.7 1.2 H30.6 M31.4 32 V26.6 L34.8 23.4 L38.2 26.6 V32 M2 32 H38.6 M3 36 q2.5 -1.8 5 0 t5 0 t5 0 t5 0 t5 0 t5 0 t5 0",
+  "flagColors": [
+    "#FFFFFF",
+    "#D00C33"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нууку"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Nuuk"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Nuuk"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Nuuk"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

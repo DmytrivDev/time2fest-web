@@ -1,0 +1,103 @@
+{
+  "code": "GH",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "accra",
+  "names": {
+    "uk": {
+      "name": "Гана",
+      "city": "Аккра",
+      "cityIn": "в Аккрі",
+      "countryIn": "у Гані",
+      "caps": "ГАНА"
+    },
+    "en": {
+      "name": "Ghana",
+      "city": "Accra",
+      "cityIn": "in Accra",
+      "countryIn": "in Ghana",
+      "caps": "GHANA"
+    },
+    "es": {
+      "name": "Ghana",
+      "city": "Acra",
+      "cityIn": "en Acra",
+      "countryIn": "en Ghana",
+      "caps": "GHANA"
+    },
+    "fr": {
+      "name": "Ghana",
+      "city": "Accra",
+      "cityIn": "à Accra",
+      "countryIn": "au Ghana",
+      "caps": "GHANA"
+    }
+  },
+  "picto": "M3 36 H37 M7 36 V19.5 H33 V36 M6 23.2 H34 M12 36 V26.6 H28 V36 M15.3 36 V26.6 M24.7 36 V26.6 M14 19.5 V17.8 H26 V19.5 M16.4 17.8 V16.1 M23.6 17.8 V16.1 M20.00 5.00 L21.37 9.21 L25.80 9.21 L22.22 11.82 L23.59 16.04 L20.00 13.43 L16.41 16.04 L17.78 11.82 L14.20 9.21 L18.63 9.21 Z",
+  "flagColors": [
+    "#CE1126",
+    "#FCD116",
+    "#006B3F"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гані"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Ghana"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Ghana"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Ghana"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

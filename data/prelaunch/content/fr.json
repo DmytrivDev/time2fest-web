@@ -5330,5 +5330,89 @@
       "description": "La Côte d’Ivoire entre en 2027 à 0 h UTC : à Abidjan, feu d’artifice depuis les ponts de la lagune Ébrié, cultes d’action de grâce et fête de rue à Yopougon."
     },
     "kit": "ci"
+  },
+  "FO": {
+    "text": "Des feux de joie sur les collines et un ciel plein de fusées : c’est ainsi que les îles Féroé disent adieu à l’année. Les feux de joie comptent parmi les traditions du Nouvel An les plus aimées, même si les pompiers les interdisent parfois à cause du vent, et la tempête peut être telle qu’à Nólsoy la fête de 2020 a été reportée au 3 janvier. La nuit la plus célèbre est celle de Vágur, dans le sud de l’archipel : à 23 h 45 part une procession aux flambeaux, à minuit tout le monde chante un cantique, on met le feu à un bateau et commence le plus grand feu d’artifice des îles. Il existait aussi des « villages du Nouvel An », où les voisins venaient en visite et pour danser.\n\nTórshavn accueille minuit à 00 h UTC avec des feux d’artifice privés au-dessus du port : même par un vent de 17 m/s en 2020, fusées et fusées éclairantes rouges à parachute ont empli le ciel de la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Feux de la dernière nuit",
+        "text": "Le feu de joie du réveillon est l’une des traditions féroïennes les plus aimées ; par grand vent, les pompiers l’interdisent."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fusées sur le port",
+        "text": "À minuit, les feux d’artifice privés emplissent le ciel de Tórshavn, dont des fusées éclairantes rouges à parachute."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Flambeaux et bateau en feu",
+        "text": "À Vágur, la procession aux flambeaux se rejoint à minuit, on chante un cantique, on embrase un bateau et commence le plus grand feu d’artifice des Féroé."
+      }
+    ],
+    "meta": {
+      "title": "Îles Féroé : le Nouvel An à Tórshavn | Time2Fest",
+      "description": "Îles Féroé, minuit à 00 h UTC : Tórshavn accueille 2027 avec des feux de joie sur les collines, des fusées au-dessus du port et des flambeaux à Vágur."
+    },
+    "kit": "fo"
+  },
+  "GH": {
+    "text": "Habits blancs, cantiques et témoignages jusqu’à l’aube : c’est ainsi que la plupart des Ghanéens disent adieu à l’année. Sept habitants sur dix sont chrétiens, alors le 31 décembre les églises sont pleines dès le soir : l’office de nuit, appelé ici watch night ou crossover, se poursuit en prières, louanges et actions de grâce jusqu’aux premières heures du 1er janvier. Le blanc, disent les fidèles, signifie gratitude et renouveau. Ceux qui ne sont pas à l’église comptent les secondes dans les pubs, hôtels et clubs, en musique et autour d’un plat, ou restent tranquillement en famille à envoyer leurs vœux.\n\nPour Accra, cette nuit clôt le « Detty December » : dès la mi-décembre la capitale vit de concerts et de soirées, et depuis l’« Année du retour » de 2019 la diaspora y afflue pour les fêtes. La cathédrale anglicane de la Très-Sainte-Trinité d’Accra a accueilli 2026 par un office de toute la nuit, ses fidèles vêtus de blanc.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "L’office jusqu’à l’aube",
+        "text": "Le 31 décembre, les églises se remplissent dès le soir : cantiques, témoignages et prières se prolongent après minuit, jusqu’aux premières heures de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Tout de blanc vêtus",
+        "text": "Beaucoup s’habillent de blanc pour l’office de nuit, en signe de gratitude pour l’année écoulée, de renouveau et de bonnes intentions pour la suivante."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Compte à rebours en musique",
+        "text": "Ceux qui ne sont pas à l’église fêtent minuit dans les pubs, hôtels et clubs en musique ; dans les pubs de Tema, près d’Accra, on accompagne les verres de brochettes et de pintade grillée."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Ghana : Accra | Time2Fest",
+      "description": "Le Ghana entre en 2027 à 0 h UTC : offices de nuit en blanc, cantiques jusqu’à l’aube, compte à rebours dans les clubs d’Accra et finale du Detty December."
+    },
+    "kit": "gh"
+  },
+  "GL": {
+    "text": "Ici, minuit sonne deux fois : à 21 h, heure locale, le Nouvel An arrive au Danemark, et on peut le fêter une première fois, puis de nouveau à minuit, cette fois celui du Groenland. La fête tombe en pleine nuit polaire : le jour se réduit à quelques heures de crépuscule, la neige est assurée et une étoile de Noël rouge orangé brille encore à presque chaque fenêtre. On ne décroche les étoiles que le 6 janvier, le jour où les mitaartut font leur tournée : des visiteurs masqués et muets que l’on régale de gâteaux et de friandises.\n\nNuuk accueille minuit à 02 h UTC. Les dernières fusées s’achètent juste avant la soirée, pas de fête sans chapeaux rigolos, et à minuit le ciel de la ville s’épaissit de la fumée des feux d’artifice. On se serre la main en se souhaitant « Ukiortaami pilluaritsi ! » — « Soyez heureux pour le Nouvel An ! ».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Deux Nouvel An en une soirée",
+        "text": "À 21 h, heure locale, il est minuit au Danemark : on fête donc le Nouvel An deux fois, la seconde à minuit, heure du Groenland."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fusées dans la nuit polaire",
+        "text": "À minuit, fusées et batteries de feux d’artifice s’élèvent au-dessus de Nuuk, et l’on se serre la main en se souhaitant une bonne année."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Les mitaartut masqués",
+        "text": "Vers le 6 janvier, des visiteurs masqués et muets frappent aux portes, font rire leurs hôtes sans un mot et reçoivent gâteaux et friandises."
+      }
+    ],
+    "meta": {
+      "title": "Groenland : le Nouvel An à Nuuk | Time2Fest",
+      "description": "Nuuk fête 2027 à 02 h UTC : le Groenland célèbre deux fois, à 21 h avec le Danemark puis à minuit, avec des fusées dans la nuit polaire et des poignées de main."
+    },
+    "kit": "gl-2"
   }
 }

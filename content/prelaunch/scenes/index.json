@@ -1164,6 +1164,24 @@
       "wide": true,
       "sky": "#10162e",
       "water": "#1d2e40"
+    },
+    "FO": {
+      "src": "/scenes/FO-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#6d8193"
+    },
+    "GH": {
+      "src": "/scenes/GH-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#4d5351"
+    },
+    "GL": {
+      "src": "/scenes/GL-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#203955"
     }
   }
 }

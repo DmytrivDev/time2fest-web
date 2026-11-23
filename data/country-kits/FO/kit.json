@@ -1,0 +1,103 @@
+{
+  "code": "FO",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "faroe",
+  "names": {
+    "uk": {
+      "name": "Фарерські острови",
+      "city": "Торсгавн",
+      "cityIn": "у Торсгавні",
+      "countryIn": "на Фарерських островах",
+      "caps": "ФАРЕРСЬКІ ОСТРОВИ"
+    },
+    "en": {
+      "name": "Faroe Islands",
+      "city": "Tórshavn",
+      "cityIn": "in Tórshavn",
+      "countryIn": "in the Faroe Islands",
+      "caps": "FAROE ISLANDS"
+    },
+    "es": {
+      "name": "Islas Feroe",
+      "city": "Tórshavn",
+      "cityIn": "en Tórshavn",
+      "countryIn": "en las Islas Feroe",
+      "caps": "ISLAS FEROE"
+    },
+    "fr": {
+      "name": "Îles Féroé",
+      "city": "Tórshavn",
+      "cityIn": "à Tórshavn",
+      "countryIn": "aux îles Féroé",
+      "caps": "ÎLES FÉROÉ"
+    }
+  },
+  "picto": "M13 29 V17 L21.5 8.6 L30 17 V29 M11 18.4 L21.5 7 L32 18.4 M12.6 15.6 l-0.4 1.6 M30.4 15.6 l0.4 1.6 M14 14.2 l-1.1 -1.3 M16.8 11.2 l-1.1 -1.3 M19.6 8.2 l-1.1 -1.3 M23.4 8.2 l1.1 -1.3 M26.2 11.2 l1.1 -1.3 M29 14.2 l1.1 -1.3 M16 19.6 h2.6 v3 h-2.6 Z M24.4 19.6 h2.6 v3 h-2.6 Z M20.2 13 h2.6 v3 h-2.6 Z M30 21.4 H37.6 V29 M29.4 21.2 L31.6 18.2 H37 L38.6 21.2 M33.2 18.2 v-1.3 M35.8 18.2 v-1.3 M4 24 H13 M4 24 V29 M3.4 24.2 L5.4 21.4 H12.4 M7.2 21.4 v-1.3 M10 21.4 v-1.3 M2.6 29 H38.6 M2 29 Q6 32.4 11 31.2 Q17 33.6 24 31.4 Q31 33.4 38.8 30.6 M3 36 q2.5 -1.8 5 0 t5 0 t5 0 t5 0 t5 0 t5 0 t5 0",
+  "flagColors": [
+    "#FFFFFF",
+    "#E0474C",
+    "#3A6EC8"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Фарерських островах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Faroe Islands"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en las Islas Feroe"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux îles Féroé"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

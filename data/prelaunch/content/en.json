@@ -5330,5 +5330,89 @@
       "description": "Côte d’Ivoire meets 2027 at 00:00 UTC: in Abidjan, fireworks from the bridges over the Ébrié Lagoon, thanksgiving in churches and street parties in Yopougon."
     },
     "kit": "ci"
+  },
+  "FO": {
+    "text": "Bonfires on the hills and a sky full of rockets: that is how the Faroe Islands see out the old year. Bonfires are one of the best-loved New Year traditions, though the fire brigade sometimes bans them because of the wind, and the weather can be wild enough that on the island of Nólsoy the 2020 celebration was moved to 3 January. The best-known night is in Vágur in the south of the archipelago: at 23:45 a torch parade sets off, at midnight everyone sings a hymn together, a boat is set alight and the biggest fireworks show in the islands begins. There used to be ‘New Year villages’ too, where neighbours gathered to visit and dance.\n\nTórshavn meets midnight at 00:00 UTC with private fireworks over the harbour: even in 17 m/s winds in 2020, rockets and red parachute flares filled the town’s sky.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Bonfires on the last night",
+        "text": "A bonfire on New Year's Eve is one of the best-loved Faroese traditions; when a strong wind blows, the fire brigade bans them."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Rockets over the harbour",
+        "text": "At midnight private fireworks fill the sky over Tórshavn, red parachute flares among them."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Torches and a burning boat",
+        "text": "Vágur's torch parade meets at midnight, people sing a hymn, a boat is set alight and the biggest fireworks show in the Faroes begins."
+      }
+    ],
+    "meta": {
+      "title": "New Year in the Faroe Islands: Tórshavn | Time2Fest",
+      "description": "Tórshavn reaches midnight at 00:00 UTC: the Faroe Islands greet 2027 with hilltop bonfires, rockets over the harbour and a torch parade in Vágur."
+    },
+    "kit": "fo"
+  },
+  "GH": {
+    "text": "White clothes, hymns and testimonies until dawn: that is how most Ghanaians see the year out. Seven in ten people in the country are Christians, so on 31 December churches are full from the evening on: the night service, known here as watch night or crossover, carries on with prayer, praise and thanksgiving into the early hours of 1 January. White, churchgoers say, stands for gratitude and renewal. Those not in church count down in pubs, hotels and clubs with music and food, or stay quietly at home with family, sending good wishes.\n\nFor Accra the night is the finale of “Detty December”: from mid-December the capital lives on concerts and parties, and since the 2019 “Year of Return” the diaspora flies in for the holidays. Accra’s Anglican Cathedral of the Most Holy Trinity welcomed 2026 with an all-night service, its congregation dressed in white.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Church until dawn",
+        "text": "On 31 December churches fill up in the evening: hymns, testimonies and prayers go on past midnight into the first hours of the new year."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Dressed in white",
+        "text": "Many wear white to the night service, as a sign of gratitude for the year behind, of renewal and of good intentions for the one ahead."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Countdown to music",
+        "text": "Those not in church meet midnight in pubs, hotels and clubs with music; in the pubs of Tema, near Accra, drinks come with kebabs and grilled guinea fowl."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Ghana: Accra | Time2Fest",
+      "description": "Ghana meets 2027 at 00:00 UTC: watch night services in white, hymns until dawn, countdowns in Accra’s clubs and the grand finale of Detty December."
+    },
+    "kit": "gh"
+  },
+  "GL": {
+    "text": "Midnight comes twice here: at 21:00 local time the New Year reaches Denmark, so it can be greeted once, and then again at midnight, this time Greenland's own. The holiday falls in the polar night, when the day is a few hours of twilight, snow is a certainty and a red-orange Christmas star still glows in almost every window. The stars come down only on 6 January, the same day the mitaartut make their rounds: silent masked visitors who are treated to cakes and sweets.\n\nNuuk meets midnight at 02:00 UTC. The last rockets are bought right before the evening, no party goes without funny hats, and at midnight the sky over the town turns thick with firework smoke. People shake hands and wish each other 'Ukiortaami pilluaritsi!', 'Be happy at the New Year!'.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Two New Years in one evening",
+        "text": "At 21:00 local time it is midnight in Denmark, so the New Year is greeted twice: the second time at midnight, Greenland time."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Rockets in the polar night",
+        "text": "At midnight rockets and firework batteries go up over Nuuk, while people shake hands and wish each other a happy New Year."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Masked mitaartut",
+        "text": "Around 6 January silent masked visitors knock on doors, make their hosts laugh without a word and are rewarded with cakes and sweets."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Greenland: Nuuk | Time2Fest",
+      "description": "Nuuk greets 2027 at 02:00 UTC: Greenland celebrates twice, at 21:00 with Denmark and again at midnight, with rockets in the polar night and handshakes."
+    },
+    "kit": "gl-2"
   }
 }

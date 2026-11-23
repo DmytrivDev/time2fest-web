@@ -3168,6 +3168,60 @@
         "title": "Nouvel An en Côte d’Ivoire : Abidjan | Time2Fest",
         "description": "La Côte d’Ivoire entre en 2027 à 0 h UTC : à Abidjan, feu d’artifice depuis les ponts de la lagune Ébrié, cultes d’action de grâce et fête de rue à Yopougon."
       }
+    },
+    "FO": {
+      "uk": {
+        "title": "Новий рік на Фарерських островах: Торсгавн | Time2Fest",
+        "description": "Північ у Торсгавні — о 00:00 UTC: Фарерські острови зустрічають 2027-й вогнищами на пагорбах, ракетами над гаванню й смолоскипною ходою у Вагурі."
+      },
+      "en": {
+        "title": "New Year in the Faroe Islands: Tórshavn | Time2Fest",
+        "description": "Tórshavn reaches midnight at 00:00 UTC: the Faroe Islands greet 2027 with hilltop bonfires, rockets over the harbour and a torch parade in Vágur."
+      },
+      "es": {
+        "title": "Año Nuevo en las Islas Feroe: Tórshavn | Time2Fest",
+        "description": "En Tórshavn la medianoche llega a las 00:00 UTC: las Islas Feroe reciben 2027 con hogueras en las colinas, cohetes sobre el puerto y antorchas en Vágur."
+      },
+      "fr": {
+        "title": "Îles Féroé : le Nouvel An à Tórshavn | Time2Fest",
+        "description": "Îles Féroé, minuit à 00 h UTC : Tórshavn accueille 2027 avec des feux de joie sur les collines, des fusées au-dessus du port et des flambeaux à Vágur."
+      }
+    },
+    "GH": {
+      "uk": {
+        "title": "Гана зустрічає Новий рік: Аккра | Time2Fest",
+        "description": "О 00:00 UTC Гана входить у 2027 рік: нічні служби в білому, гімни до світанку, відлік у клубах Аккри й фінал святкового місяця «Детті Дісембер»."
+      },
+      "en": {
+        "title": "New Year in Ghana: Accra | Time2Fest",
+        "description": "Ghana meets 2027 at 00:00 UTC: watch night services in white, hymns until dawn, countdowns in Accra’s clubs and the grand finale of Detty December."
+      },
+      "es": {
+        "title": "Año Nuevo en Ghana: Acra | Time2Fest",
+        "description": "Ghana recibe 2027 a las 00:00 UTC: servicios nocturnos vestidos de blanco, himnos hasta el alba, cuenta atrás en los clubes de Acra y el Detty December."
+      },
+      "fr": {
+        "title": "Nouvel An au Ghana : Accra | Time2Fest",
+        "description": "Le Ghana entre en 2027 à 0 h UTC : offices de nuit en blanc, cantiques jusqu’à l’aube, compte à rebours dans les clubs d’Accra et finale du Detty December."
+      }
+    },
+    "GL": {
+      "uk": {
+        "title": "Новий рік у Гренландії: Нуук | Time2Fest",
+        "description": "Нуук зустрічає 2027-й о 02:00 UTC: Гренландія святкує двічі — о 21:00 разом із Данією й опівночі, з ракетами в полярній ночі й рукостисканнями."
+      },
+      "en": {
+        "title": "New Year in Greenland: Nuuk | Time2Fest",
+        "description": "Nuuk greets 2027 at 02:00 UTC: Greenland celebrates twice, at 21:00 with Denmark and again at midnight, with rockets in the polar night and handshakes."
+      },
+      "es": {
+        "title": "Año Nuevo en Groenlandia: Nuuk | Time2Fest",
+        "description": "Nuuk recibe 2027 a las 02:00 UTC: Groenlandia lo celebra dos veces, a las 21:00 con Dinamarca y a medianoche, con cohetes y apretones de manos."
+      },
+      "fr": {
+        "title": "Groenland : le Nouvel An à Nuuk | Time2Fest",
+        "description": "Nuuk fête 2027 à 02 h UTC : le Groenland célèbre deux fois, à 21 h avec le Danemark puis à minuit, avec des fusées dans la nuit polaire et des poignées de main."
+      }
     }
   }
 }

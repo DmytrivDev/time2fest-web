@@ -5330,5 +5330,89 @@
       "description": "Costa de Marfil recibe 2027 a las 00:00 UTC: en Abiyán, fuegos artificiales desde los puentes de la laguna Ébrié, misas de gracias y fiesta en Yopougon."
     },
     "kit": "ci"
+  },
+  "FO": {
+    "text": "Hogueras en las colinas y un cielo lleno de cohetes: así despiden las Islas Feroe el año viejo. Las hogueras son una de las tradiciones de Año Nuevo más queridas, aunque los bomberos a veces las prohíben por el viento, y el temporal puede ser tal que en la isla de Nólsoy la fiesta de 2020 se trasladó al 3 de enero. La noche más famosa es la de Vágur, en el sur del archipiélago: a las 23:45 sale un desfile de antorchas, a medianoche todos cantan juntos un himno, se prende fuego a una barca y empieza el mayor espectáculo de fuegos artificiales de las islas. Antes existían también «pueblos de Año Nuevo», adonde los vecinos acudían de visita y a bailar.\n\nTórshavn recibe la medianoche a las 00:00 UTC con fuegos artificiales privados sobre el puerto: incluso con viento de 17 m/s en 2020, cohetes y bengalas rojas con paracaídas llenaron el cielo de la ciudad.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Hogueras la última noche",
+        "text": "Una hoguera en Nochevieja es una de las tradiciones feroesas más queridas; cuando sopla viento fuerte, los bomberos las prohíben."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Cohetes sobre el puerto",
+        "text": "A medianoche, los fuegos artificiales privados llenan el cielo de Tórshavn, entre ellos bengalas rojas con paracaídas."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Antorchas y una barca en llamas",
+        "text": "El desfile de antorchas de Vágur se reúne a medianoche, se canta un himno, se prende fuego a una barca y empieza el mayor espectáculo pirotécnico de las Feroe."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en las Islas Feroe: Tórshavn | Time2Fest",
+      "description": "En Tórshavn la medianoche llega a las 00:00 UTC: las Islas Feroe reciben 2027 con hogueras en las colinas, cohetes sobre el puerto y antorchas en Vágur."
+    },
+    "kit": "fo"
+  },
+  "GH": {
+    "text": "Ropa blanca, himnos y testimonios hasta el amanecer: así despide el año la mayoría de los ghaneses. Siete de cada diez habitantes son cristianos, por eso el 31 de diciembre las iglesias se llenan desde la tarde: el servicio nocturno, que aquí llaman watch night o crossover, sigue con oraciones, alabanzas y acción de gracias hasta las primeras horas del 1 de enero. El blanco, dicen los fieles, es señal de gratitud y renovación. Quien no está en la iglesia cuenta los segundos en bares, hoteles y clubes con música y comida, o se queda tranquilo en casa con la familia enviando buenos deseos.\n\nPara Acra esta noche es el final del «Detty December»: desde mediados de diciembre la capital vive de conciertos y fiestas, y desde el «Año del Retorno» de 2019 la diáspora vuela hasta aquí por las fiestas. La catedral anglicana de la Santísima Trinidad de Acra recibió 2026 con un servicio de toda la noche, con los fieles vestidos de blanco.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Iglesia hasta el alba",
+        "text": "El 31 de diciembre las iglesias se llenan por la tarde: himnos, testimonios y oraciones siguen pasada la medianoche, hasta las primeras horas del año nuevo."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Todos de blanco",
+        "text": "Muchos van de blanco al servicio nocturno, en señal de gratitud por el año vivido, de renovación y de buenas intenciones para el nuevo."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Cuenta atrás con música",
+        "text": "Quien no está en la iglesia recibe la medianoche en bares, hoteles y clubes con música; en los bares de Tema, junto a Acra, se acompaña con brochetas y pintada a la parrilla."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Ghana: Acra | Time2Fest",
+      "description": "Ghana recibe 2027 a las 00:00 UTC: servicios nocturnos vestidos de blanco, himnos hasta el alba, cuenta atrás en los clubes de Acra y el Detty December."
+    },
+    "kit": "gh"
+  },
+  "GL": {
+    "text": "Aquí la medianoche llega dos veces: a las 21:00 hora local el Año Nuevo alcanza Dinamarca y se puede recibir por primera vez, y a medianoche, de nuevo, ya el groenlandés. La fiesta cae en plena noche polar, cuando el día son unas pocas horas de penumbra, la nieve está asegurada y en casi todas las ventanas aún brilla una estrella navideña rojo anaranjada. Las estrellas se retiran solo el 6 de enero, el mismo día en que los mitaartut recorren las casas: visitantes enmascarados y silenciosos a los que se convida con pasteles y dulces.\n\nNuuk recibe la medianoche a las 02:00 UTC. Los últimos cohetes se compran justo antes de la noche, en las fiestas no faltan los sombreros graciosos y a medianoche el cielo de la ciudad se espesa con el humo de los fuegos artificiales. La gente se da la mano y se desea «Ukiortaami pilluaritsi!», «¡Sed felices en el Año Nuevo!».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Dos Años Nuevos en una noche",
+        "text": "A las 21:00 hora local es medianoche en Dinamarca, así que el Año Nuevo se recibe dos veces: la segunda, a medianoche según la hora de Groenlandia."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Cohetes en la noche polar",
+        "text": "A medianoche suben cohetes y baterías de fuegos artificiales sobre Nuuk, y la gente se da la mano y se desea feliz Año Nuevo."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Mitaartut enmascarados",
+        "text": "Hacia el 6 de enero, visitantes enmascarados y silenciosos llaman a las puertas, hacen reír sin palabras y reciben pasteles y dulces."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Groenlandia: Nuuk | Time2Fest",
+      "description": "Nuuk recibe 2027 a las 02:00 UTC: Groenlandia lo celebra dos veces, a las 21:00 con Dinamarca y a medianoche, con cohetes y apretones de manos."
+    },
+    "kit": "gl-2"
   }
 }
