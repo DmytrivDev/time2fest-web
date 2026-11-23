@@ -1,0 +1,103 @@
+{
+  "code": "NL",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "amsterdam",
+  "names": {
+    "uk": {
+      "name": "Нідерланди",
+      "city": "Амстердам",
+      "cityIn": "в Амстердамі",
+      "countryIn": "у Нідерландах",
+      "caps": "НІДЕРЛАНДИ"
+    },
+    "en": {
+      "name": "Netherlands",
+      "city": "Amsterdam",
+      "cityIn": "in Amsterdam",
+      "countryIn": "in the Netherlands",
+      "caps": "NETHERLANDS"
+    },
+    "es": {
+      "name": "Países Bajos",
+      "city": "Ámsterdam",
+      "cityIn": "en Ámsterdam",
+      "countryIn": "en los Países Bajos",
+      "caps": "PAÍSES BAJOS"
+    },
+    "fr": {
+      "name": "Pays-Bas",
+      "city": "Amsterdam",
+      "cityIn": "à Amsterdam",
+      "countryIn": "aux Pays-Bas",
+      "caps": "PAYS-BAS"
+    }
+  },
+  "picto": "M3 34 H37 M4.5 34 V21 C4.5 17.6 7.2 18 7.2 14.4 Q9.25 11.4 11.3 14.4 C11.3 18 14 17.6 14 21 V34 M7.4 24 V26.6 M11.1 24 V26.6 M7.4 29.4 V32 M11.1 29.4 V32 M26 34 V20 H27.6 V17.6 H29.2 V15.2 H30.8 V12.8 H32.4 V15.2 H34 V17.6 H35.6 V20 H36.8 V34 M29.2 23 V25.6 M33.4 23 V25.6 M29.2 28.6 V31.2 M33.4 28.6 V31.2 M16.4 34 V23 H23.6 V34 M15.4 23 H24.6 M17.2 23 V17 H22.8 V23 M16.2 17 H23.8 M18 17 V11.4 H22 V17 M20 13 V15.4 M18.8 11.4 V9.2 H21.2 V11.4 M17.4 9.2 H22.6 M17.9 9.2 Q17.7 5 20 4.6 Q22.3 5 22.1 9.2 M20 4.6 V1 M18.8 2.3 H21.2",
+  "flagColors": [
+    "#AE1C28",
+    "#FFFFFF",
+    "#21468B"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нідерландах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Netherlands"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en los Países Bajos"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux Pays-Bas"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

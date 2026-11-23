@@ -3085,6 +3085,118 @@
         "x": 55,
         "y": 55
       }
+    },
+    "country:NG": {
+      "src": "/media/photos/lagos.webp",
+      "alt": {
+        "uk": "Вантовий міст Леккі — Ікої в Лагосі вночі: підсвічений пілон, віяло вант і вогні над лагуною",
+        "en": "The Lekki–Ikoyi cable-stayed bridge in Lagos at night: the lit pylon, a fan of cables and lights over the lagoon",
+        "es": "El puente atirantado Lekki-Ikoyi de Lagos de noche: el pilono iluminado, el abanico de tirantes y las luces sobre la laguna",
+        "fr": "Le pont à haubans Lekki–Ikoyi à Lagos la nuit : pylône illuminé, éventail de haubans et lumières sur la lagune"
+      },
+      "author": "S.aderogba",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Night-view-of-lekki-link-bridge.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:NL": {
+      "src": "/media/photos/amsterdam.webp",
+      "alt": {
+        "uk": "Новорічна ніч на каналі Аудезейдс-Ворбургвал в Амстердамі: салют над голими деревами, арковий міст і відблиски у воді",
+        "en": "New Year’s Eve on the Oudezijds Voorburgwal canal in Amsterdam: fireworks above bare trees, an arched bridge and reflections in the water",
+        "es": "Nochevieja en el canal Oudezijds Voorburgwal de Ámsterdam: fuegos artificiales sobre árboles desnudos, un puente en arco y reflejos en el agua",
+        "fr": "Réveillon sur le canal Oudezijds Voorburgwal à Amsterdam : feu d’artifice au-dessus des arbres nus, pont en arche et reflets dans l’eau"
+      },
+      "author": "Syd Storm",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oudezijds_Voorburgwal_New_Year%27s_Eve_2017.jpg",
+      "position": {
+        "x": 55,
+        "y": 45
+      }
+    },
+    "country:PL": {
+      "src": "/media/photos/warsaw.webp",
+      "alt": {
+        "uk": "Замкова площа у Варшаві в сутінках 29 грудня: освітлена новорічна ялинка, колона Сигізмунда, Королівський замок і кам’яниці Старого міста",
+        "en": "Castle Square in Warsaw at dusk on 29 December: the lit New Year tree, Sigismund’s Column, the Royal Castle and Old Town houses",
+        "es": "La plaza del Castillo de Varsovia al anochecer del 29 de diciembre: el árbol de Año Nuevo iluminado, la columna de Segismundo, el Castillo Real y las casas del casco antiguo",
+        "fr": "La place du Château à Varsovie au crépuscule le 29 décembre : sapin du Nouvel An illuminé, colonne de Sigismond, château royal et maisons de la vieille ville"
+      },
+      "author": "Cybularny",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:29-12-2019_Warszawa_Plac_Zamkowy.jpg",
+      "position": {
+        "x": 55,
+        "y": 62
+      }
+    },
+    "country:SI": {
+      "src": "/media/photos/ljubljana.webp",
+      "alt": {
+        "uk": "Новорічний салют над Любляною в ніч на 2014 рік: феєрверк над підсвіченим Люблянським замком",
+        "en": "New Year fireworks over Ljubljana, welcoming 2014: bursts above the lit Ljubljana Castle",
+        "es": "Fuegos artificiales de Año Nuevo sobre Liubliana, llegada de 2014: palmeras sobre el castillo de Liubliana iluminado",
+        "fr": "Feu d’artifice du Nouvel An sur Ljubljana, passage à 2014 : gerbes au-dessus du château de Ljubljana illuminé"
+      },
+      "author": "Suzana Pavšič (Suzi5p)",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ognjemet_Ljubljana_2013-2014.jpg",
+      "position": {
+        "x": 42,
+        "y": 45
+      }
+    },
+    "country:SJ": {
+      "src": "/media/photos/longyearbyen.webp",
+      "alt": {
+        "uk": "Лонг’їр у темну пору року: вогні селища в долині й уздовж Адвентфьорду серед полярної ночі",
+        "en": "Longyearbyen in the dark season: the lights of the settlement in the valley and along Adventfjorden in the polar night",
+        "es": "Longyearbyen en la estación oscura: las luces del pueblo en el valle y a lo largo del Adventfjorden en la noche polar",
+        "fr": "Longyearbyen pendant la saison sombre : lumières du village dans la vallée et le long de l’Adventfjorden en pleine nuit polaire"
+      },
+      "author": "Michelle van Dijk",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Longyearbyen_by_Night.jpg",
+      "position": {
+        "x": 50,
+        "y": 70
+      }
+    },
+    "country:SK": {
+      "src": "/media/photos/bratislava.webp",
+      "alt": {
+        "uk": "Нічна Братислава з Дунаю: підсвічений Братиславський град на пагорбі, собор Святого Мартина, міст СНП і вогні у воді",
+        "en": "Bratislava at night from the Danube: the lit castle on the hill, St Martin’s Cathedral, the SNP Bridge and lights in the water",
+        "es": "Bratislava de noche desde el Danubio: el castillo iluminado en la colina, la catedral de San Martín, el puente SNP y las luces en el agua",
+        "fr": "Bratislava la nuit depuis le Danube : le château illuminé sur la colline, la cathédrale Saint-Martin, le pont SNP et les lumières dans l’eau"
+      },
+      "author": "Ekaterina Polischuk",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:View_to_Bratislava_castle_at_night.jpg",
+      "position": {
+        "x": 30,
+        "y": 40
+      }
+    },
+    "country:SM": {
+      "src": "/media/photos/san-marino.webp",
+      "alt": {
+        "uk": "Нічний вид із Титано на північ: вогні Борго-Маджоре й рівнини Романьї під синім небом",
+        "en": "Night view north from Mount Titano: the lights of Borgo Maggiore and the Romagna plain under a blue sky",
+        "es": "Vista nocturna hacia el norte desde el monte Titano: las luces de Borgo Maggiore y la llanura de la Romaña bajo un cielo azul",
+        "fr": "Vue nocturne vers le nord depuis le mont Titano : lumières de Borgo Maggiore et de la plaine de Romagne sous un ciel bleu"
+      },
+      "author": "Salvatore Gerace",
+      "license": "CC0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:San_Marino_-_landscape_by_night_(52469650114).jpg",
+      "position": {
+        "x": 50,
+        "y": 60
+      }
     }
   }
 }

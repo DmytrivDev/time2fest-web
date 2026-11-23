@@ -2970,6 +2970,132 @@
         "title": "Nouvel An en Macédoine du Nord : Skopje | Time2Fest",
         "description": "La Macédoine du Nord fête 2027 à 23 h UTC avec un concert place de Macédoine à Skopje, puis de nouveau le 13 janvier : pain à la pièce et carnaval de Vevčani."
       }
+    },
+    "NG": {
+      "uk": {
+        "title": "Новий рік у Нігерії: Лагос | Time2Fest",
+        "description": "Нігерія зустрічає 2027 рік о 23:00 UTC: служби crossover у церквах, димний джолоф на вечірках Detty December і афробіт у клубах і на пляжах Лагоса."
+      },
+      "en": {
+        "title": "New Year in Nigeria: Lagos | Time2Fest",
+        "description": "Nigeria crosses into 2027 at 23:00 UTC with crossover services in church, smoky party jollof in Detty December and Afrobeats in Lagos clubs and on its beaches."
+      },
+      "es": {
+        "title": "Año Nuevo en Nigeria: Lagos | Time2Fest",
+        "description": "Nigeria recibe 2027 a las 23:00 UTC con cultos crossover en las iglesias, jollof ahumado de Detty December y afrobeats en los clubes y playas de Lagos."
+      },
+      "fr": {
+        "title": "Nouvel An au Nigeria : Lagos | Time2Fest",
+        "description": "Le Nigeria passe en 2027 à 23 h UTC : offices crossover à l’église, jollof fumé des soirées Detty December et afrobeats dans les clubs et plages de Lagos."
+      }
+    },
+    "NL": {
+      "uk": {
+        "title": "Новий рік у Нідерландах: Амстердам | Time2Fest",
+        "description": "Нідерланди зустрічають 2027 рік о 23:00 UTC: олієболи під цукровою пудрою, перша ніч без домашнього салюту, світлове шоу в Амстердамі й пірнання в море."
+      },
+      "en": {
+        "title": "New Year in the Netherlands: Amsterdam | Time2Fest",
+        "description": "The Netherlands greets 2027 at 23:00 UTC with sugar-dusted oliebollen, a first night without home fireworks, light shows in Amsterdam and a New Year's sea dive."
+      },
+      "es": {
+        "title": "Año Nuevo en los Países Bajos: Ámsterdam | Time2Fest",
+        "description": "Los Países Bajos reciben 2027 a las 23:00 UTC con oliebollen azucarados, la primera noche sin fuegos caseros, luces en Ámsterdam y un chapuzón en el mar."
+      },
+      "fr": {
+        "title": "Nouvel An aux Pays-Bas : Amsterdam | Time2Fest",
+        "description": "Les Pays-Bas fêtent 2027 à 23 h UTC : oliebollen au sucre glace, première nuit sans feux privés, lumières à Amsterdam et plongeon en mer le 1er janvier."
+      }
+    },
+    "PL": {
+      "uk": {
+        "title": "Новий рік у Польщі: Варшава | Time2Fest",
+        "description": "Польща зустрічає 2027 рік о 23:00 UTC: Сильвестр із балами й шампанським опівночі, концерт на Ринковій площі Кракова, гори Закопаного й ялинка у Варшаві."
+      },
+      "en": {
+        "title": "New Year in Poland: Warsaw | Time2Fest",
+        "description": "Poland greets 2027 at 23:00 UTC with Sylwester balls and champagne at midnight, a free concert on Kraków's Main Square, Zakopane's mountains and Warsaw's tree."
+      },
+      "es": {
+        "title": "Año Nuevo en Polonia: Varsovia | Time2Fest",
+        "description": "Polonia recibe 2027 a las 23:00 UTC con bailes de Sylwester y champán a medianoche, un concierto en la plaza de Cracovia, Zakopane y el árbol de Varsovia."
+      },
+      "fr": {
+        "title": "Nouvel An en Pologne : Varsovie | Time2Fest",
+        "description": "La Pologne fête 2027 à 23 h UTC : bals de Sylwester et champagne à minuit, concert gratuit sur la grand-place de Cracovie, Zakopane et le sapin de Varsovie."
+      }
+    },
+    "SI": {
+      "uk": {
+        "title": "Новий рік у Словенії: Любляна | Time2Fest",
+        "description": "Словенія зустрічає 2027 рік о 23:00 UTC: п’ятихвилинний салют над Любляною з замкового пагорба, концерти на чотирьох площах і шоу дронів над озером Блед."
+      },
+      "en": {
+        "title": "New Year in Slovenia: Ljubljana | Time2Fest",
+        "description": "Slovenia meets 2027 at 23:00 UTC with five minutes of fireworks from Ljubljana's castle hill, concerts on four squares and a drone show over Lake Bled."
+      },
+      "es": {
+        "title": "Año Nuevo en Eslovenia: Liubliana | Time2Fest",
+        "description": "Eslovenia recibe 2027 a las 23:00 UTC con fuegos desde la colina del castillo de Liubliana, conciertos en cuatro plazas y drones sobre el lago Bled."
+      },
+      "fr": {
+        "title": "Nouvel An en Slovénie : Ljubljana | Time2Fest",
+        "description": "La Slovénie fête 2027 à 23 h UTC : feu d’artifice depuis la colline du château de Ljubljana, concerts sur quatre places et drones au-dessus du lac de Bled."
+      }
+    },
+    "SJ": {
+      "uk": {
+        "title": "Новий рік на Шпіцбергені: Лонг’їр | Time2Fest",
+        "description": "Полярна ніч, північне сяйво навіть удень і два спільні салюти над Адвентфіордом: Лонг’їр на Шпіцбергені зустрічає 2027 рік опівночі, о 23:00 UTC."
+      },
+      "en": {
+        "title": "New Year in Svalbard: Longyearbyen | Time2Fest",
+        "description": "Polar night, daytime aurora and two joint fireworks over Adventfjorden: Longyearbyen in Svalbard greets 2027 at local midnight, 23:00 UTC, in the dark."
+      },
+      "es": {
+        "title": "Año Nuevo en Svalbard: Longyearbyen | Time2Fest",
+        "description": "Noche polar, auroras de día y dos fuegos conjuntos sobre el Adventfjorden: Longyearbyen, en Svalbard, recibe 2027 a medianoche local, 23:00 UTC."
+      },
+      "fr": {
+        "title": "Nouvel An au Svalbard : Longyearbyen | Time2Fest",
+        "description": "Nuit polaire, aurores en plein jour et deux feux communs sur l’Adventfjorden : Longyearbyen, au Svalbard, accueille 2027 à minuit, soit 23 h UTC."
+      }
+    },
+    "SK": {
+      "uk": {
+        "title": "Новий рік у Словаччині: Братислава | Time2Fest",
+        "description": "Словаччина зустрічає 2027 рік о 23:00 UTC: найгучніший день року, гімн після відліку, «тобі також» у відповідь, а Братислава — на площах без салюту."
+      },
+      "en": {
+        "title": "New Year in Slovakia: Bratislava | Time2Fest",
+        "description": "Slovakia welcomes 2027 at 23:00 UTC: the noisiest day of the year, the anthem after the countdown, lentils on 1 January and Bratislava squares with DJs."
+      },
+      "es": {
+        "title": "Año Nuevo en Eslovaquia: Bratislava | Time2Fest",
+        "description": "Eslovaquia recibe 2027 a las 23:00 UTC: el día más ruidoso del año, himno tras la cuenta atrás, lentejas el 1 de enero y plazas de Bratislava con DJ."
+      },
+      "fr": {
+        "title": "Nouvel An en Slovaquie : Bratislava | Time2Fest",
+        "description": "La Slovaquie fête 2027 à 23:00 UTC : jour le plus bruyant de l’année, hymne après le compte à rebours, lentilles le 1er janvier, DJ sur les places."
+      }
+    },
+    "SM": {
+      "uk": {
+        "title": "Новий рік у Сан-Марино | Time2Fest",
+        "description": "Сан-Марино зустрічає 2027 рік о 23:00 UTC: тост із панетоне на площі Сант’Агата, хіти двотисячних, сочевиця на святковому столі й ковзанка під Титано."
+      },
+      "en": {
+        "title": "New Year in San Marino | Time2Fest",
+        "description": "San Marino greets 2027 at 23:00 UTC with a panettone toast on Piazza Sant’Agata, 2000s hits until two, lentils on the table and an ice rink below Titano."
+      },
+      "es": {
+        "title": "Año Nuevo en San Marino | Time2Fest",
+        "description": "San Marino recibe 2027 a las 23:00 UTC: brindis con panettone en la plaza Sant’Agata, éxitos de los 2000, lentejas en la mesa y pista de hielo."
+      },
+      "fr": {
+        "title": "Nouvel An à Saint-Marin | Time2Fest",
+        "description": "Saint-Marin fête 2027 à 23:00 UTC : toast au panettone sur la piazza Sant’Agata, tubes des années 2000, lentilles à table et patinoire sous le Titano."
+      }
     }
   }
 }

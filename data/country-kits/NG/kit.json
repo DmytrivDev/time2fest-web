@@ -1,0 +1,103 @@
+{
+  "code": "NG",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "lagos",
+  "names": {
+    "uk": {
+      "name": "Нігерія",
+      "city": "Лагос",
+      "cityIn": "у Лагосі",
+      "countryIn": "у Нігерії",
+      "caps": "НІГЕРІЯ"
+    },
+    "en": {
+      "name": "Nigeria",
+      "city": "Lagos",
+      "cityIn": "in Lagos",
+      "countryIn": "in Nigeria",
+      "caps": "NIGERIA"
+    },
+    "es": {
+      "name": "Nigeria",
+      "city": "Lagos",
+      "cityIn": "en Lagos",
+      "countryIn": "en Nigeria",
+      "caps": "NIGERIA"
+    },
+    "fr": {
+      "name": "Nigeria",
+      "city": "Lagos",
+      "cityIn": "à Lagos",
+      "countryIn": "au Nigeria",
+      "caps": "NIGERIA"
+    }
+  },
+  "picto": "M2 28 Q20 24.4 38 28 M18.4 35.6 V12 L16.8 3.4 L18.8 3 L20 8 L21.2 3 L23.2 3.4 L21.6 12 V35.6 M18.4 12.6 L3.6 27.6 M18.4 15 L8.4 26.6 M18.4 17.4 L13 25.8 M21.6 12.6 L36.4 27.6 M21.6 15 L31.6 26.6 M21.6 17.4 L27 25.8 M6 35.6 Q9 34 12 35.6 M28 35.6 Q31 34 34 35.6",
+  "flagColors": [
+    "#008751",
+    "#FFFFFF",
+    "#008751"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Нігерії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Nigeria"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Nigeria"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Nigeria"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

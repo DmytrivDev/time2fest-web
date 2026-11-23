@@ -1,0 +1,103 @@
+{
+  "code": "SJ",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "longyearbyen",
+  "names": {
+    "uk": {
+      "name": "Шпіцберген",
+      "city": "Лонг’їр",
+      "cityIn": "у Лонг’їрі",
+      "countryIn": "на Шпіцбергені",
+      "caps": "ШПІЦБЕРГЕН"
+    },
+    "en": {
+      "name": "Svalbard",
+      "city": "Longyearbyen",
+      "cityIn": "in Longyearbyen",
+      "countryIn": "in Svalbard",
+      "caps": "SVALBARD"
+    },
+    "es": {
+      "name": "Svalbard",
+      "city": "Longyearbyen",
+      "cityIn": "en Longyearbyen",
+      "countryIn": "en Svalbard",
+      "caps": "SVALBARD"
+    },
+    "fr": {
+      "name": "Svalbard",
+      "city": "Longyearbyen",
+      "cityIn": "à Longyearbyen",
+      "countryIn": "au Svalbard",
+      "caps": "SVALBARD"
+    }
+  },
+  "picto": "M2.5 22.5 Q4 20.2 7 19.2 Q9.5 17.6 11 17.4 L11.4 16.2 L12.8 17.2 Q15.5 15.6 18.5 14.2 Q23 13.2 27 14.0 Q32 13.0 35 15.2 Q37.6 17.4 37 21.4 Q36.6 24.4 35.4 25.6 L37.2 31.4 L37.6 33.0 L33.6 33.0 L33.2 31.6 Q32.6 29.0 31.6 27.4 Q30.8 27.6 30.4 27.8 L28.6 31.8 L28.8 33.0 L25.2 33.0 L25.6 31.6 Q26.2 29.2 26.6 27.6 Q22.6 28.4 19.6 27.6 L19.8 31.6 L20.2 33.0 L16.4 33.0 L16.6 31.6 Q16.4 29.6 15.8 27.4 Q15 27.0 14.6 26.6 L11.6 31.6 L12 33.0 L7.8 33.0 L8.6 31.4 Q10 27.8 10.4 25.0 Q9.6 23.4 8 23.2 Q5.4 23.6 3.6 23.6 Q2.4 23.4 2.5 22.5 Z M2.4 35.8 H38 M7.4 20.4 h0.1",
+  "flagColors": [
+    "#FFFFFF",
+    "#E0474C",
+    "#5B7FD0"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Шпіцбергені"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Svalbard"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Svalbard"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Svalbard"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

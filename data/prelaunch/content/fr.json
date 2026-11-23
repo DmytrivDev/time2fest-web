@@ -5022,5 +5022,201 @@
       "description": "La Macédoine du Nord fête 2027 à 23 h UTC avec un concert place de Macédoine à Skopje, puis de nouveau le 13 janvier : pain à la pièce et carnaval de Vevčani."
     },
     "kit": "mk"
+  },
+  "NG": {
+    "text": "Detty December, c’est ainsi que les Nigérians appellent la saison des fêtes, de décembre aux premiers jours de janvier, quand la diaspora rentre au pays et que Lagos vit de concerts, de soirées et de plages. Beaucoup vont plus loin encore, dans leur village natal, auprès de la famille. Et pas de fête sans jollof, un riz cuit dans une seule marmite avec tomates, piment et oignon : en Afrique de l’Ouest, on dit qu’une fête sans jollof n’est qu’une réunion.\n\nLa nuit du 1er janvier, c’est la crossover night, la « nuit du passage ». L’année sera comme on y entre : la plupart des chrétiens accueillent donc minuit à l’église, les autres en boîte ou en soirée, au son des pétards « knock-out ». Depuis 2012, Lagos organisait une grande fête municipale : pour 2025, des stars de l’afrobeats ont joué sur cinq scènes à la fois, puis l’année suivante le gouverneur a annulé la fête et invité les habitants à prier.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Minuit à l’office",
+        "text": "La plupart des chrétiens entrent dans l’année à l’église, au crossover service : on prie et on chante, car l’année sera comme on y entre."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Jollof au feu de bois",
+        "text": "Pas de soirée de Detty December sans jollof : le riz de fête cuit en plein air sur un feu de bois, d’où son goût fumé et sa croûte croustillante au fond."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Afrobeats jusqu’à l’aube",
+        "text": "Lagos fête l’année en boîte, sur les plages et en concert ; pour 2025, des stars de l’afrobeats se sont produites sur cinq scènes de la ville en même temps."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Nigeria : Lagos | Time2Fest",
+      "description": "Le Nigeria passe en 2027 à 23 h UTC : offices crossover à l’église, jollof fumé des soirées Detty December et afrobeats dans les clubs et plages de Lagos."
+    },
+    "kit": "ng"
+  },
+  "NL": {
+    "text": "Deux mille chansons choisies par les auditeurs eux-mêmes passent à la radio de Noël jusqu’à minuit le 31 décembre : depuis 1999, le marathon Top 2000 est pour les Néerlandais une sorte de compte à rebours de l’année. Oud en Nieuw, « l’Ancien et le Nouveau », se fête d’ordinaire tranquillement, chez soi en famille ou entre amis. Sur la table, des oliebollen, beignets aux raisins sous une neige de sucre glace, et des beignets aux pommes.\n\nLa nuit qui ouvre 2027 est la première sans feux d’artifice privés : depuis le 1er août 2026, fusées et pétards sont interdits aux particuliers, le ciel revient donc aux spectacles professionnels, traditionnellement le plus grand à Rotterdam. Amsterdam avait renoncé aux feux privés plus tôt encore et accueillait minuit avec un spectacle de lumière sur le Museumplein. Et le 1er janvier, quelque soixante mille personnes plongent dans la mer glacée à Scheveningen.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Oliebollen et beignets",
+        "text": "À la maison, on fait frire des oliebollen, beignets aux raisins généreusement saupoudrés de sucre glace, et des beignets aux pommes ; ceux qui ne les font pas les achètent à un stand de rue."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Un tir de bidon à lait",
+        "text": "À la campagne, au lieu des feux d’artifice, on tire au carbure : l’explosion fait sauter le couvercle ou un ballon d’un bidon à lait. Depuis 2014, le carbidschieten est patrimoine immatériel du pays."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Le plongeon du Nouvel An",
+        "text": "Le 1er janvier, quelque 60 000 personnes plongent dans la mer froide à Scheveningen, et des milliers d’autres sur des dizaines de plages et de lacs du pays."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Pays-Bas : Amsterdam | Time2Fest",
+      "description": "Les Pays-Bas fêtent 2027 à 23 h UTC : oliebollen au sucre glace, première nuit sans feux privés, lumières à Amsterdam et plongeon en mer le 1er janvier."
+    },
+    "kit": "nl"
+  },
+  "PL": {
+    "text": "En Pologne, le 31 décembre s’appelle Sylwester, d’après la fête de Sylvestre : ce jour-là, l’Église catholique commémore le pape Sylvestre Ier, et la langue populaire nomme aussi cette soirée « la veille grasse ». C’est une nuit de fêtes bruyantes et de bals, de toasts et de feux d’artifice ; on débouche le champagne pile à minuit, la télévision diffuse de grands concerts dans tout le pays, et le 1er janvier est férié.\n\nDepuis des années, le lieu le plus animé de la nuit est la place du Marché de Cracovie : un concert gratuit en plein air y réunit jusqu’à deux cent mille personnes, et minuit arrive avec un feu d’artifice au-dessus de la basilique Sainte-Marie. Ceux qui veulent fuir l’agitation de la ville partent à la montagne, le plus souvent à Zakopane. À Varsovie, un grand sapin illuminé brille sur la place du Château jusqu’en janvier.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Champagne à minuit",
+        "text": "Au douzième coup, on débouche le champagne : la première coupe dit adieu à l’année passée et accueille la nouvelle."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Un bal jusqu’au matin",
+        "text": "Sylwester est une nuit de bals et de fêtes bruyantes ; ceux qui fuient l’agitation de la ville dansent et accueillent l’année à la montagne, le plus souvent à Zakopane."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "La grand-place de Cracovie",
+        "text": "À Cracovie, un concert gratuit en plein air anime la place du Marché, et à minuit un feu d’artifice éclate au-dessus de la basilique Sainte-Marie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Pologne : Varsovie | Time2Fest",
+      "description": "La Pologne fête 2027 à 23 h UTC : bals de Sylwester et champagne à minuit, concert gratuit sur la grand-place de Cracovie, Zakopane et le sapin de Varsovie."
+    },
+    "kit": "pl"
+  },
+  "SI": {
+    "text": "Fin décembre, les enfants slovènes attendent un troisième porteur de cadeaux : après saint Nicolas (Miklavž) le 6 décembre et Božiček la veille de Noël vient Dedek Mraz, Grand-père Gel. Le peintre Maksim Gaspari lui a donné son allure en 1952, et sa maison a plus tard été « déménagée » sur le mont Triglav. La Slovénie chôme deux jours pour le Nouvel An, les 1er et 2 janvier.\n\nÀ minuit, cinq minutes de feu d’artifice illuminent Ljubljana depuis la colline du château, et des concerts animent quatre places dès 21 h. Les petits se retrouvent l’après-midi place du Congrès et entrent symboliquement dans la nouvelle année à 17 h. Au lac de Bled, le Conte d’hiver offre un concert sur la promenade et des drones à minuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu sur le château",
+        "text": "Cinq minutes de feu d’artifice depuis la colline du château ouvrent l’année sur Ljubljana, et les concerts sur quatre places commencent dès 21 h."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Dedek Mraz pour les petits",
+        "text": "Des héros de contes amusent les enfants sur la place du Congrès dès 16 h, Dedek Mraz passe les voir et, à 17 h, les petits fêtent symboliquement la nouvelle année."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Conte d’hiver à Bled",
+        "text": "Sur la promenade du lac de Bled, un concert joue le soir du réveillon et, à minuit pile, un spectacle de drones s’élève au-dessus de l’eau."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Slovénie : Ljubljana | Time2Fest",
+      "description": "La Slovénie fête 2027 à 23 h UTC : feu d’artifice depuis la colline du château de Ljubljana, concerts sur quatre places et drones au-dessus du lac de Bled."
+    },
+    "kit": "si"
+  },
+  "SJ": {
+    "text": "Au Svalbard, le Nouvel An arrive en pleine nuit polaire : à Longyearbyen, le soleil ne paraît pas de fin octobre à mi-février. Il fait nuit même à midi, mais à cette saison les aurores boréales se montrent de jour, aux teintes rougeâtres, comme le soir, plus vertes. On dîne entre amis : les restaurants de la ville préparent des menus dégustation à base de produits des chasseurs locaux, et certains commencent la soirée dans une ancienne cave à champagne où mineurs et employés venaient chercher leur ration d’alcool.\n\nLe soir du 31 décembre, deux feux d’artifice communs s’élèvent au-dessus de l’Adventfjorden, organisés par le conseil local avec les entreprises de la ville : à 19 h, pour que les enfants les voient, puis à minuit. Les artificiers les tirent depuis la mer, et on les voit de presque tout Longyearbyen. La tradition est maintenue au moins jusqu’en 2030.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Deux feux sur le fjord",
+        "text": "Le soir du 31, les artificiers tirent deux fois un feu commun au-dessus de l’Adventfjorden, à 19 h pour les enfants puis à minuit ; les entreprises locales le financent avec le conseil."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "L’aurore boréale sans aube",
+        "text": "À Longyearbyen, le soleil ne se lève pas de fin octobre à mi-février : le premier jour de l’année est donc sombre lui aussi, et pendant la nuit polaire l’aurore boréale peut paraître même en journée."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "La cave des mineurs",
+        "text": "Le dîner de fête est préparé ici avec les produits des chasseurs locaux, et la soirée commence parfois dans une ancienne cave à champagne où les mineurs venaient chercher leur ration d’alcool."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Svalbard : Longyearbyen | Time2Fest",
+      "description": "Nuit polaire, aurores en plein jour et deux feux communs sur l’Adventfjorden : Longyearbyen, au Svalbard, accueille 2027 à minuit, soit 23 h UTC."
+    },
+    "kit": "sj"
+  },
+  "SK": {
+    "text": "En Slovaquie, la Saint-Sylvestre est le jour le plus bruyant de l’année : pétards et fusées éclatent à Bratislava et ailleurs dès avant midi et redoublent jusqu’à minuit. On fête la fin de l’année entre amis, dans les pubs ou sur les places, et après le compte à rebours l’hymne national passe à la télévision ; ces dernières années, certaines chaînes diffusent à minuit l’hymne tchécoslovaque, en souvenir de l’histoire commune. Coupes de champagne, « Šťastný nový rok ! » — et au lieu de « merci », on répond « toi aussi ». Le 1er janvier est aussi le jour de la fondation de la République slovaque, en 1993, et au déjeuner on mange des lentilles pour l’argent.\n\nBratislava ne tire plus de feu d’artifice depuis plusieurs années, pour des raisons écologiques et financières. À la place, la place Hviezdoslav diffuse l’enregistrement du concert de la Saint-Sylvestre de la Philharmonie slovaque, des groupes et des DJ se succèdent, tout le monde compte les secondes ensemble à minuit et les marchés de Noël restent ouverts jusqu’à une heure du matin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Pas de volaille à table",
+        "text": "Le 1er janvier, les Slovaques mangent des lentilles pour l’argent et du porc pour l’abondance, et évitent la volaille pour que la chance ne s’envole pas."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "« Toi aussi ! »",
+        "text": "En trinquant au champagne, on se souhaite « Všetko dobré do nového roku ! » — tout le meilleur pour la nouvelle année — et on répond non pas « merci » mais « toi aussi »."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Des places, pas de feu d’artifice",
+        "text": "Bratislava accueille minuit sur les places Hviezdoslav et des Franciscains, avec groupes, DJ jusqu’à une heure et compte à rebours commun, pendant que les marchés servent le verre du toast."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Slovaquie : Bratislava | Time2Fest",
+      "description": "La Slovaquie fête 2027 à 23:00 UTC : jour le plus bruyant de l’année, hymne après le compte à rebours, lentilles le 1er janvier, DJ sur les places."
+    },
+    "kit": "sk"
+  },
+  "SM": {
+    "text": "Une coupe de bulles et une part de panettone : c’est ainsi que 2026 est arrivé sur la piazza Sant’Agata, dans le centre historique de Saint-Marin, avec la fête gratuite « 2000 Che Stories ! » et ses tubes des années 2000, de dix heures du soir à deux heures du matin. Plus de feu d’artifice depuis plusieurs années : depuis 2022, le toast de minuit se fait sans spectacle, et les défenseurs des animaux réclament l’interdiction des pétards pour tous. À table, comme de l’autre côté de la frontière italienne : lentilles pour l’argent, cotechino ou zampone.\n\nSur le mont Titano, les fêtes durent plus d’une nuit. « Il Natale delle Meraviglie » — marchés, patinoire et lumières dans la vieille ville classée à l’UNESCO — se tient du 20 décembre au 6 janvier, et le 1er janvier des artistes de cirque animent les rues. Pour la table, on cuit le bustrengo, un gâteau de fête au miel, aux noix et aux fruits secs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Un toast au panettone",
+        "text": "À minuit, sur la piazza Sant’Agata, on trinque avec des bulles et on partage le panettone, tandis qu’un DJ passe des tubes des années 2000 jusqu’à deux heures."
+      },
+      {
+        "id": "t2",
+        "iconId": "coin",
+        "title": "Des lentilles pour l’argent",
+        "text": "Comme dans l’Italie voisine, la table du Nouvel An porte des lentilles, rondes comme des pièces, avec un cotechino ou un zampone."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "La fête jusqu’au 6 janvier",
+        "text": "Jusqu’au 6 janvier, la vieille ville garde ses marchés et sa patinoire, et le 1er janvier des artistes de cirque parcourent les rues."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Saint-Marin | Time2Fest",
+      "description": "Saint-Marin fête 2027 à 23:00 UTC : toast au panettone sur la piazza Sant’Agata, tubes des années 2000, lentilles à table et patinoire sous le Titano."
+    },
+    "kit": "sm"
   }
 }

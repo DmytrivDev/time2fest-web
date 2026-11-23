@@ -5022,5 +5022,201 @@
       "description": "North Macedonia greets 2027 at 23:00 UTC with a concert on Skopje's Macedonia Square, then again on 13 January with coin bread and the Vevčani carnival."
     },
     "kit": "mk"
+  },
+  "NG": {
+    "text": "Detty December is what Nigerians call the festive season that runs from December into the first days of January, when the diaspora flies home and Lagos lives on concerts, parties and beaches. Many travel further still, to their home villages and family. And every celebration needs jollof, rice cooked in one pot with tomatoes, hot peppers and onions: in West Africa they say a party without jollof is just a meeting.\n\nThe night into 1 January itself is crossover night. However you enter the year, so it will be, which is why most Christians greet midnight in church, while others are in clubs and at parties to the crack of \"knock-out\" firecrackers. Since 2012 Lagos has staged a city-wide celebration: for 2025, Afrobeats stars played five venues at once, and the following year the governor cancelled the festivities and asked residents to pray.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Midnight at the service",
+        "text": "Most Christians see in the year at church during a crossover service, praying and singing in the belief that the way you enter the year shapes all of it."
+      },
+      {
+        "id": "t2",
+        "iconId": "ladle",
+        "title": "Smoky party jollof",
+        "text": "No Detty December party goes without jollof: party rice is cooked over a wood fire outdoors, so it tastes of smoke and has a crusty layer at the bottom of the pot."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Afrobeats till dawn",
+        "text": "Lagos greets the year in clubs, on beaches and at concerts; for 2025, Afrobeats stars played five city venues at the same time."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Nigeria: Lagos | Time2Fest",
+      "description": "Nigeria crosses into 2027 at 23:00 UTC with crossover services in church, smoky party jollof in Detty December and Afrobeats in Lagos clubs and on its beaches."
+    },
+    "kit": "ng"
+  },
+  "NL": {
+    "text": "Two thousand songs chosen by the listeners themselves play on the radio from Christmas right up to midnight on 31 December: since 1999 the Top 2000 marathon has become a kind of countdown to the new year for the Dutch. Oud en Nieuw, \"Old and New\", is usually a cosy evening at home with family or friends. On the table are oliebollen, raisin doughnuts under a dusting of powdered sugar, and apple beignets.\n\nThe night into 2027 is the first without home fireworks: since 1 August 2026 rockets and firecrackers have been banned for private use, so the sky is left to professional shows, the biggest traditionally in Rotterdam. Amsterdam gave up private fireworks even earlier and greeted midnight with a light show on Museumplein. And on 1 January some sixty thousand people plunge into the icy sea at Scheveningen.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Oliebollen and beignets",
+        "text": "At home people fry oliebollen, raisin doughnuts generously dusted with powdered sugar, and apple beignets; those who don't fry their own buy them from a street stall."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "A shot from a milk churn",
+        "text": "In the countryside people fire carbide instead of fireworks: the blast knocks a lid or a ball off a milk churn. Since 2014 carbidschieten has been national intangible heritage."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "The New Year's dive",
+        "text": "On 1 January some 60,000 people plunge into the cold sea at Scheveningen, and thousands more at dozens of beaches and lakes around the country."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Netherlands: Amsterdam | Time2Fest",
+      "description": "The Netherlands greets 2027 at 23:00 UTC with sugar-dusted oliebollen, a first night without home fireworks, light shows in Amsterdam and a New Year's sea dive."
+    },
+    "kit": "nl"
+  },
+  "PL": {
+    "text": "In Poland, 31 December is called Sylwester, after the name day of Sylvester: the Catholic Church remembers Pope Sylvester I that day, and folk speech also calls the evening the \"fat eve\". It is a night of loud parties and balls, toasts and fireworks; champagne is uncorked exactly at midnight, television carries big concerts across the country, and 1 January is a day off.\n\nFor years the busiest place of the night has been Kraków's Main Market Square: a free open-air concert draws up to two hundred thousand people, and midnight comes with fireworks over St. Mary's Basilica. Those who want to escape the city bustle head for the mountains, most often to Zakopane. In Warsaw, a big Christmas tree glows on Castle Square until January.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Champagne at midnight",
+        "text": "On the stroke of twelve the champagne is uncorked: the first glass says goodbye to the old year and welcomes the new one."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "A ball until morning",
+        "text": "Sylwester is a night of balls and loud parties; those fleeing the city bustle dance in the new year in the mountains, most often in Zakopane."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Kraków's Main Square",
+        "text": "In Kraków a free open-air concert plays on the Main Market Square, and at midnight fireworks burst over St. Mary's Basilica."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Poland: Warsaw | Time2Fest",
+      "description": "Poland greets 2027 at 23:00 UTC with Sylwester balls and champagne at midnight, a free concert on Kraków's Main Square, Zakopane's mountains and Warsaw's tree."
+    },
+    "kit": "pl"
+  },
+  "SI": {
+    "text": "In late December Slovenian children wait for a third gift-bringer: after Saint Nicholas (Miklavž) on 6 December and Božiček on Christmas Eve comes Dedek Mraz, Grandpa Frost. The painter Maksim Gaspari created his look in 1952, and his home was later “moved” to Mount Triglav. Slovenia takes two days off for the New Year, 1 and 2 January.\n\nAt midnight five minutes of fireworks light up Ljubljana from the castle hill, and concerts fill four squares from nine. The youngest gather on Congress Square in the afternoon and symbolically step into the new year at five. Lake Bled holds its Winter Fairytale: a concert on the promenade and a drone show at midnight.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over the castle",
+        "text": "Five minutes of fireworks from the castle hill open the year over Ljubljana, and concerts on four squares start as early as 21:00."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Dedek Mraz for the kids",
+        "text": "Fairy-tale characters entertain children on Congress Square from 16:00, Dedek Mraz drops by, and at 17:00 the little ones symbolically greet the new year."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Winter Fairytale in Bled",
+        "text": "On the Lake Bled promenade a concert plays on New Year's Eve, and at the stroke of midnight a drone show rises over the water."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Slovenia: Ljubljana | Time2Fest",
+      "description": "Slovenia meets 2027 at 23:00 UTC with five minutes of fireworks from Ljubljana's castle hill, concerts on four squares and a drone show over Lake Bled."
+    },
+    "kit": "si"
+  },
+  "SJ": {
+    "text": "In Svalbard, New Year arrives in the middle of the polar night: in Longyearbyen the sun does not appear from late October to mid-February. It is dark even at noon, but at this time of year the northern lights show up both by day, with reddish tones, and in the evening, greener. People have dinner with friends: the town's restaurants prepare tasting menus from local hunters' produce, and some start the evening in an old champagne cellar where miners and officials once collected their alcohol ration.\n\nOn New Year's Eve two joint fireworks displays rise over Adventfjorden, organised by the local council together with the town's businesses: at 19:00 so the children can see them, and at midnight. Pyrotechnicians launch them from the sea, and the lights can be seen from almost anywhere in Longyearbyen. The tradition will continue until at least 2030.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Two displays over the fjord",
+        "text": "On New Year's Eve pyrotechnicians fire a joint display over Adventfjorden twice — at 19:00 for the children and at midnight; local businesses fund it together with the council."
+      },
+      {
+        "id": "t2",
+        "iconId": "sunset",
+        "title": "Aurora instead of dawn",
+        "text": "The sun does not rise in Longyearbyen from late October to mid-February, so the first day of the year is dark too, and in the polar night the northern lights can appear even by day."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "The miners' cellar",
+        "text": "The festive dinner here is made from local hunters' produce, and the evening sometimes starts in an old champagne cellar where miners once collected their alcohol ration."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Svalbard: Longyearbyen | Time2Fest",
+      "description": "Polar night, daytime aurora and two joint fireworks over Adventfjorden: Longyearbyen in Svalbard greets 2027 at local midnight, 23:00 UTC, in the dark."
+    },
+    "kit": "sj"
+  },
+  "SK": {
+    "text": "In Slovakia, Silvester is the noisiest day of the year: firecrackers and rockets go off in Bratislava and other towns before noon and grow thicker towards midnight. People see the year out at parties, in pubs and on town squares, and after the countdown the national anthem plays on TV — in recent years some stations have played the Czechoslovak anthem at midnight in honour of the shared past. Glasses of champagne, «Šťastný nový rok!» — and instead of «thank you» the answer is «you too». The first of January is also the Day of the Establishment of the Slovak Republic in 1993, and lunch means lentils for money.\n\nBratislava has not staged its own fireworks for several years, for ecological and financial reasons. Instead, Hviezdoslav Square plays a recording of the Slovak Philharmonic's New Year's Eve concert, bands and DJs take the stage, everyone counts down together at midnight, and the Christmas markets stay open until one in the morning.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "No poultry on the table",
+        "text": "On 1 January Slovaks eat lentils for money and pork for plenty, and skip poultry so that luck does not fly away."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "«You too!»",
+        "text": "Clinking champagne glasses, people wish «Všetko dobré do nového roku!» — all the best in the new year — and answer not «thank you» but «you too»."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Squares instead of fireworks",
+        "text": "Bratislava greets midnight on Hviezdoslav and Franciscan Squares with bands, DJs until one and a shared countdown, while the markets pour a glass for the toast."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Slovakia: Bratislava | Time2Fest",
+      "description": "Slovakia welcomes 2027 at 23:00 UTC: the noisiest day of the year, the anthem after the countdown, lentils on 1 January and Bratislava squares with DJs."
+    },
+    "kit": "sk"
+  },
+  "SM": {
+    "text": "A glass of bubbles and a slice of panettone — that is how 2026 arrived on Piazza Sant’Agata in the historic centre of San Marino: the free party «2000 Che Stories!», full of 2000s hits, ran from ten in the evening until two in the morning. There have been no fireworks for several years: since 2022 the midnight toast goes without a display, and animal-welfare campaigners want firecrackers banned for everyone else too. The table looks just like across the Italian border: lentils for money, cotechino or zampone.\n\nThe holidays on Mount Titano last longer than one night. «Il Natale delle Meraviglie» — markets, an ice rink and lights in the UNESCO-listed old town — runs from 20 December to 6 January, and on the first of January circus performers take to the streets. For the table there is bustrengo, a festive cake of honey, nuts and dried fruit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "A toast with panettone",
+        "text": "At midnight on Piazza Sant’Agata people clink glasses of bubbles and share panettone, while a DJ plays 2000s hits until two."
+      },
+      {
+        "id": "t2",
+        "iconId": "coin",
+        "title": "Lentils for money",
+        "text": "As in neighbouring Italy, the New Year table has lentils, round like coins, with cotechino or zampone beside them."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Holidays until 6 January",
+        "text": "Until 6 January the old town keeps its markets and ice rink open, and on the first of January circus performers walk the streets."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in San Marino | Time2Fest",
+      "description": "San Marino greets 2027 at 23:00 UTC with a panettone toast on Piazza Sant’Agata, 2000s hits until two, lentils on the table and an ice rink below Titano."
+    },
+    "kit": "sm"
   }
 }

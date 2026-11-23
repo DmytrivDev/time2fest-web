@@ -1,0 +1,103 @@
+{
+  "code": "SI",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "ljubljana",
+  "names": {
+    "uk": {
+      "name": "Словенія",
+      "city": "Любляна",
+      "cityIn": "у Любляні",
+      "countryIn": "у Словенії",
+      "caps": "СЛОВЕНІЯ"
+    },
+    "en": {
+      "name": "Slovenia",
+      "city": "Ljubljana",
+      "cityIn": "in Ljubljana",
+      "countryIn": "in Slovenia",
+      "caps": "SLOVENIA"
+    },
+    "es": {
+      "name": "Eslovenia",
+      "city": "Liubliana",
+      "cityIn": "en Liubliana",
+      "countryIn": "en Eslovenia",
+      "caps": "ESLOVENIA"
+    },
+    "fr": {
+      "name": "Slovénie",
+      "city": "Ljubljana",
+      "cityIn": "à Ljubljana",
+      "countryIn": "en Slovénie",
+      "caps": "SLOVÉNIE"
+    }
+  },
+  "picto": "M4 33.6 C7 27 13 24.8 20 24.8 C27 24.8 33 27 36 33.6 M4.5 35.4 Q7 34.2 9.5 35.4 T14.5 35.4 T19.5 35.4 T24.5 35.4 T29.5 35.4 T34.5 35.4 M11 38.2 Q13.5 37 16 38.2 T21 38.2 T26 38.2 T29 38.2 M16.2 24.8 V13.2 H20.6 V24.8 M15.8 13.2 H21 M16.2 13.2 L18.4 2.6 L20.6 13.2 M18.4 2.6 V0.4 M17.4 1.2 H19.4 M17.5 18 V16.4 A0.9 0.9 0 0 1 19.3 16.4 V18 M18.4 19.6 A1.1 1.1 0 1 1 18.39 19.6 M20.6 21 L22 17.4 H28.4 L29.6 21 V25 M20.6 21 H29.6 M29.6 22.8 L31.4 20.8 L33 22.8 V27.2 M7.4 28.6 L9.6 24.2 L11.8 28.6 M8.2 25.4 L9.6 21.8 L11 25.4 M11.6 26.6 L13.2 23.2 L14.8 26.6 M12.2 24.2 L13.2 21.4 L14.2 24.2",
+  "flagColors": [
+    "#FFFFFF",
+    "#2E5FB8",
+    "#E0453C"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Словенії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Slovenia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Eslovenia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Slovénie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

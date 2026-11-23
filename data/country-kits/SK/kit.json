@@ -1,0 +1,103 @@
+{
+  "code": "SK",
+  "zone": "UTC+1",
+  "zoneId": "utc+0100",
+  "cityId": "bratislava",
+  "names": {
+    "uk": {
+      "name": "Словаччина",
+      "city": "Братислава",
+      "cityIn": "у Братиславі",
+      "countryIn": "у Словаччині",
+      "caps": "СЛОВАЧЧИНА"
+    },
+    "en": {
+      "name": "Slovakia",
+      "city": "Bratislava",
+      "cityIn": "in Bratislava",
+      "countryIn": "in Slovakia",
+      "caps": "SLOVAKIA"
+    },
+    "es": {
+      "name": "Eslovaquia",
+      "city": "Bratislava",
+      "cityIn": "en Bratislava",
+      "countryIn": "en Eslovaquia",
+      "caps": "ESLOVAQUIA"
+    },
+    "fr": {
+      "name": "Slovaquie",
+      "city": "Bratislava",
+      "cityIn": "à Bratislava",
+      "countryIn": "en Slovaquie",
+      "caps": "SLOVAQUIE"
+    }
+  },
+  "picto": "M1.5 36.5 Q4 33 5 32 H35 Q36 33 38.5 36.5 M5 32 V16 H11 V22.5 H29 V16 H35 V32 Z M11 22.5 V32 M29 22.5 V32 M4.5 16 L8 8.5 L11.5 16 M28.5 16 L32 8.5 L35.5 16 M11 22.5 L14.5 14.5 H25.5 L29 22.5 M15 14.5 V11 H18.5 V14.5 M21.5 14.5 V11 H25 V14.5 M14.5 11 L16.75 6 L19 11 M21 11 L23.25 6 L25.5 11 M8 26 V28.5 M15 26 V28.5 M20 26 V28.5 M25 26 V28.5 M32 26 V28.5",
+  "flagColors": [
+    "#FFFFFF",
+    "#0B4EA2",
+    "#EE1C25"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Словаччині"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Slovakia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Eslovaquia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Slovaquie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
