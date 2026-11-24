@@ -104,6 +104,13 @@ jobs:
         run: npx tsc --noEmit -p . && npx eslint . && npx vitest run --maxWorkers=2
       - name: centrifugo ready
         run: curl -sf http://127.0.0.1:8000/health || (docker restart ${{ job.services.centrifugo.id }} && sleep 5 && curl -sf http://127.0.0.1:8000/health)
+      - name: PostgreSQL 17 client (SPEC-13b backup/restore tests)
+        run: |
+          sudo apt-get install -y -q postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -q postgresql-client-17
+          echo /usr/lib/postgresql/17/bin >> "$GITHUB_PATH"
+          /usr/lib/postgresql/17/bin/pg_dump --version
       - name: server integration
         working-directory: server
         env:
